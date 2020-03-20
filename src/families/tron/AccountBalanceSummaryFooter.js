@@ -63,13 +63,6 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
     [],
   );
 
-  const isModalOpen = useMemo(() => !!infoName, [infoName]);
-
-  const data = useMemo(() => (infoName ? infoCandidates[infoName] : []), [
-    infoName,
-    infoCandidates,
-  ]);
-
   if (!account.tronResources) return null;
 
   return (
@@ -78,7 +71,11 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
       showsHorizontalScrollIndicator={false}
       style={styles.root}
     >
-      <InfoModal isOpened={isModalOpen} onClose={onCloseModal} data={data} />
+      <InfoModal
+        isOpened={!!infoName}
+        onClose={onCloseModal}
+        data={infoName ? infoCandidates[infoName] : []}
+      />
 
       <InfoItem
         title={t("account.availableBalance")}
