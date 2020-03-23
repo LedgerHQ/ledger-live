@@ -9,7 +9,6 @@ import {
   getCryptoCurrencyById,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import invariant from "invariant";
 import colors from "../../colors";
 import LText from "../../components/LText";
