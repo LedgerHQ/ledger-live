@@ -6,10 +6,11 @@ import { translate } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import {
   formatCurrencyUnit,
-  findCryptoCurrencyById,
+  getCryptoCurrencyById,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import invariant from "invariant";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
@@ -160,11 +161,9 @@ const styles = StyleSheet.create({
 });
 
 function getInfoCandidates(t: TFunction): { [key: InfoName]: ModalInfo[] } {
-  const currency: CryptoCurrency = (findCryptoCurrencyById("tron"): any);
-  const TronIcon: React$ComponentType<{
-    color: string,
-    size: number,
-  }> = (getCryptoCurrencyIcon(currency): any);
+  const currency = getCryptoCurrencyById("tron");
+  const TronIcon = getCryptoCurrencyIcon(currency);
+  invariant(TronIcon, "Icon is expected");
 
   return {
     available: [
