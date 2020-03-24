@@ -11,6 +11,7 @@ import {
 import type { Account, AccountLike } from "../../../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import { scanAccounts } from "../../../libcore/scanAccounts";
+import { getMainAccount } from "../../../account";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
 import { withLibcore } from "../../../libcore/access";
 import { getGasLimit } from "../transaction";
@@ -197,11 +198,29 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   return t;
 };
 
+const estimateMaxSpendable = async ({
+  account,
+  parentAccount,
+  transaction
+}) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const t = await prepareTransaction(mainAccount, {
+    ...createTransaction(mainAccount),
+    subAccountId: account.type === "Account" ? null : account.id,
+    ...transaction,
+    useAllAmount: true,
+    recipient: "0x0000000000000000000000000000000000000000"
+  });
+  const s = await getTransactionStatus(mainAccount, t);
+  return s.amount;
+};
+
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   sync,
   signOperation,
   broadcast

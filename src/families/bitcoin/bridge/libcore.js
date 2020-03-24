@@ -19,6 +19,8 @@ import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import { makeLRUCache } from "../../../cache";
 import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
+import { getMainAccount } from "../../../account";
+import { abandonSeedLegacyPerCurrency } from "../publicAddresses";
 
 const calculateFees = makeLRUCache(
   async (a, t) => {
@@ -43,6 +45,25 @@ const createTransaction = () => ({
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
+
+const worseCaseCostEstimationAddresses = abandonSeedLegacyPerCurrency;
+
+const estimateMaxSpendable = async ({
+  account,
+  parentAccount,
+  transaction
+}) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const t = await prepareTransaction(mainAccount, {
+    // worse case scenario using a legacy address
+    ...createTransaction(),
+    ...transaction,
+    useAllAmount: true,
+    recipient: worseCaseCostEstimationAddresses[mainAccount.currency.id]
+  });
+  const s = await getTransactionStatus(mainAccount, t);
+  return s.amount;
+};
 
 const getTransactionStatus = async (a, t) => {
   const errors = {};
@@ -138,6 +159,7 @@ const currencyBridge: CurrencyBridge = {
 };
 
 const accountBridge: AccountBridge<Transaction> = {
+  estimateMaxSpendable,
   createTransaction,
   updateTransaction,
   prepareTransaction,

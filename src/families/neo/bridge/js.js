@@ -151,6 +151,9 @@ const getTransactionStatus = a =>
     })
   );
 
+const estimateMaxSpendable = () =>
+  Promise.reject(new Error("estimateMaxSpendable not implemented"));
+
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> =>
   Promise.resolve(t);
 
@@ -159,6 +162,7 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   sync,
   signOperation: () => {
     throw new Error("signOperation not implemented");

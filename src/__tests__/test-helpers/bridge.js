@@ -1,5 +1,6 @@
 // @flow
 
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { Observable, defer, from } from "rxjs";
 import { reduce, filter, map } from "rxjs/operators";
@@ -263,6 +264,26 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
               const testFn = sa.test;
               if (testFn) {
                 await testFn(expect, accounts, bridge);
+              }
+            });
+
+            test("estimateMaxSpendable is between 0 and account balance", async () => {
+              const accounts = await scanAccountsCached(sa.apdus);
+              for (const account of accounts) {
+                const accountBridge = getAccountBridge(account);
+                const estimation = await accountBridge.estimateMaxSpendable({
+                  account
+                });
+                expect(estimation.gte(0)).toBe(true);
+                expect(estimation.lte(account.balance)).toBe(true);
+                for (const sub of account.subAccounts || []) {
+                  const estimation = await accountBridge.estimateMaxSpendable({
+                    parentAccount: account,
+                    account: sub
+                  });
+                  expect(estimation.gte(0)).toBe(true);
+                  expect(estimation.lte(sub.balance)).toBe(true);
+                }
               }
             });
           });
@@ -610,7 +631,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
               test: testFn
             }) => {
               makeTest("transaction " + name, async () => {
-                const account = await getSynced();
+                const account: Account = await getSynced();
                 let t =
                   typeof transaction === "function"
                     ? // $FlowFixMe
@@ -630,12 +651,8 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                       : expectedStatus;
                   const { errors, warnings } = es;
                   // we match errors and warnings
-                  if (s.errors) {
-                    expect(s.errors).toMatchObject(errors);
-                  }
-                  if (s.warnings) {
-                    expect(s.warnings).toMatchObject(warnings);
-                  }
+                  expect(s.errors).toMatchObject(errors);
+                  expect(s.warnings).toMatchObject(warnings);
                   // now we match rest of fields but using the raw version for better readability
                   const restRaw: Object = toTransactionStatusRaw({
                     ...s,
@@ -652,6 +669,30 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                 }
                 if (testFn) {
                   await testFn(expect, t, s, bridge);
+                }
+
+                if (Object.keys(s.errors).length === 0) {
+                  const { subAccountId } = t;
+                  const { subAccounts } = account;
+                  const inferSubAccount = () => {
+                    invariant(subAccounts, "sub accounts available");
+                    const a = subAccounts.find(a => a.id === subAccountId);
+                    invariant(a, "sub account not found");
+                    return a;
+                  };
+                  const obj = subAccountId
+                    ? {
+                        transaction: t,
+                        account: inferSubAccount(),
+                        parentAccount: account
+                      }
+                    : {
+                        transaction: t,
+                        account
+                      };
+                  const estimation = await bridge.estimateMaxSpendable(obj);
+                  expect(estimation.gte(0)).toBe(true);
+                  expect(estimation.lte(obj.account.balance)).toBe(true);
                 }
 
                 if (apdus && impl !== "mock") {

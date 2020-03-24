@@ -29,6 +29,7 @@ import {
   derivationModeSupportsIndex
 } from "../../../derivation";
 import { formatCurrencyUnit } from "../../../currencies";
+import { getMainAccount } from "../../../account";
 import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName
@@ -709,11 +710,28 @@ const getTransactionStatus = async (a, t) => {
   });
 };
 
+const estimateMaxSpendable = async ({
+  account,
+  parentAccount,
+  transaction
+}) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const t = await prepareTransaction(mainAccount, {
+    ...createTransaction(),
+    ...transaction,
+    useAllAmount: true,
+    recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3" // public testing seed abandonx11,about
+  });
+  const s = await getTransactionStatus(mainAccount, t);
+  return s.amount;
+};
+
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   sync,
   signOperation,
   broadcast

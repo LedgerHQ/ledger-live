@@ -11,6 +11,7 @@ import {
 import type { Transaction } from "../types";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
 import { getCryptoCurrencyById } from "../../../data/cryptocurrencies";
+import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
   signOperation,
@@ -40,6 +41,16 @@ const createTransaction = (): Transaction => ({
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
+
+const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const estimatedFees = transaction
+    ? defaultGetFees(mainAccount, transaction)
+    : BigNumber(10);
+  return Promise.resolve(
+    BigNumber.max(0, account.balance.minus(estimatedFees))
+  );
+};
 
 const getTransactionStatus = (a, t) => {
   const minimalBaseAmount = 10 ** a.currency.units[0].magnitude * 20;
@@ -137,6 +148,7 @@ const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
   updateTransaction,
   getTransactionStatus,
+  estimateMaxSpendable,
   prepareTransaction,
   sync,
   signOperation,

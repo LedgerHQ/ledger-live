@@ -16,6 +16,7 @@ import {
   sync,
   isInvalidRecipient
 } from "../../../bridge/mockHelpers";
+import { getMainAccount } from "../../../account";
 
 const defaultGetFees = (a, t: *) => (t.feePerByte || BigNumber(0)).times(250);
 
@@ -29,6 +30,16 @@ const createTransaction = (): Transaction => ({
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
+
+const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const estimatedFees = transaction
+    ? defaultGetFees(mainAccount, transaction)
+    : BigNumber(5000);
+  return Promise.resolve(
+    BigNumber.max(0, account.balance.minus(estimatedFees))
+  );
+};
 
 const getTransactionStatus = (account, t) => {
   const errors = {};
@@ -86,6 +97,7 @@ const prepareTransaction = async (a, t) => {
 };
 
 const accountBridge: AccountBridge<Transaction> = {
+  estimateMaxSpendable,
   createTransaction,
   updateTransaction,
   getTransactionStatus,
