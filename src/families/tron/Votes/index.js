@@ -9,6 +9,7 @@ import {
   getTronSuperRepresentatives,
   getNextVotingDate,
 } from "@ledgerhq/live-common/lib/api/Tron";
+import { useTronSuperRepresentatives } from "@ledgerhq/live-common/lib/families/tron/react";
 
 import { BigNumber } from "bignumber.js";
 import { urls } from "../../../config/urls";
@@ -25,17 +26,6 @@ import DateFromNow from "../../../components/DateFromNow";
 type Props = {
   account: Account,
   parentAccount: ?Account,
-};
-
-// @TODO move this to common
-const useTronSuperRepresentatives = () => {
-  const [sp, setSp] = useState([]);
-
-  useEffect(() => {
-    getTronSuperRepresentatives().then(setSp);
-  }, []);
-
-  return sp;
 };
 
 // @TODO move this to common
