@@ -87,13 +87,13 @@ export interface AccountBridge<T: Transaction> {
     transaction: T
   ): Promise<TransactionStatus>;
 
-  // heuristic that provide the estimated max amount that can be set to a send.
+  // heuristic that provides the estimated max amount that can be set to a send.
   // this is usually the balance minus the fees, but it really depends between coins (reserve, burn, frozen part of the balance,...).
-  // it is an heuristic in that this is not necessarily correct and it can be +-delta (so the info can exceed the spendable or leave some dust).
+  // it is a heuristic in that this is not necessarily correct and it can be +-delta (so the info can exceed the spendable or leave some dust).
   // it's used as informative UI and also used for "dry run" approaches, but it shouldn't be used to determine the final SEND MAX amount.
   // it returns an amount in the account unit
   // if a transaction is provided, it can be used to precise the information
-  // if it not provided, you can assume to take the worse case scenario (like sending all utxo to a legacy cost more fees to it have less spendable)
+  // if it not provided, you can assume to take the worst-case scenario (like sending all UTXOs to a legacy address has higher fees resulting in a lower max spendable)
   estimateMaxSpendable({
     account: AccountLike,
     parentAccount?: ?Account,

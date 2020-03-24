@@ -295,17 +295,17 @@ estimateMaxSpendable({
 }): Promise<BigNumber>;
 ```
 
-is an heuristic that provide the **estimated** max amount that can be set to a send.
+is a heuristic that provides the **estimated** max amount that can be set on a send.
 
-This is often the balance minus the fees, but there are exceptions that depends between coins (reserve, burn, frozen part of the balance,...).
+This is often the balance minus the fees, but there are exceptions that depend between coins (reserve, burn, frozen part of the balance,...).
 
 By "estimated", it means this is not necessarily correct and there might be a delta that is +- the actual reality (meaning trying to send with this amount can either exceed the spendable or leave some dust). It should not be used to do an actual SEND MAX (there is `useAllAmount` for this) but it can be used for an informative UI or also for "dry run" approaches (try a transaction with that, and refine).
 
-The strategy of implementations should be to prefer pessimistic estimation rather than potentially impossible transaction, in other words implementation should consider the worse case scenario (like sending all UTXOs to a legacy cost more fees to it have less spendable)
+The strategy of implementations should be to prefer pessimistic estimation rather than a potentially impossible transaction, in other words, an implementation should consider the worst-case scenario (like sending all UTXOs to a legacy address has higher fees resulting in a lower max spendable)
 
 the parameters `account` and `parentAccount` are the regular account parameter for normal account and token accounts.
 
-The parameter `transaction` allows to refine the estimation to a better precision. If provided, implementation need to be accurate and try to have an actual SEND MAX value. If information of `transaction` are partial, it can still help the calculation but it's not guaranteed.
+The parameter `transaction` allows refining the estimation to better precision. If provided, an implementation needs to be accurate and try to have an actual SEND MAX value. If the information on `transaction` is partial, it can still help the calculation but it's not guaranteed.
 
 ## Serialized usage
 

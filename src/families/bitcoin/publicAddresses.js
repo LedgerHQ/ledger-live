@@ -2,7 +2,7 @@
 /**
  * These addresses are PUBLIC addresses
  * We use them for tests and also for dry-run estimations
- * DO NOT USE AS RECIPIENT OR SIGN TRANSACTION INTO
+ * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
 
 // bip44 legacy addresses from testing seed `abandon*11 about
