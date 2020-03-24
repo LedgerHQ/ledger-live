@@ -1,17 +1,29 @@
 // @flow
 
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { translate } from "react-i18next";
+import type { TFunction } from "react-i18next";
+import {
+  formatCurrencyUnit,
+  getCryptoCurrencyById,
+} from "@ledgerhq/live-common/lib/currencies";
+import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+import invariant from "invariant";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
+import InfoModal from "../../modals/Info";
+import type { ModalInfo } from "../../modals/Info";
+import FreezeIcon from "../../icons/Freeze";
+import BandwidthIcon from "../../icons/Bandwidth";
+import EnergyIcon from "../../icons/Energy";
 
-type Props = {
-  account: any,
-  countervalue: any,
-};
+interface Props {
+  account: any;
+  countervalue: any;
+  t: TFunction;
+}
 
 const formatConfig = {
   disableRounding: true,
@@ -19,24 +31,39 @@ const formatConfig = {
   showCode: true,
 };
 
-const AccountBalanceSummaryFooter = ({ account }: Props) => {
-  if (!account.tronResources) return null;
+type InfoName = "available" | "frozen" | "bandwidth" | "energy";
+
+function AccountBalanceSummaryFooter({ account, t }: Props) {
+  const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
+  const infoCandidates = useMemo(() => getInfoCandidates(t), [t]);
 
   const {
-    energy,
+    energy: formattedEnergy,
     bandwidth: { freeUsed, freeLimit, gainedUsed, gainedLimit } = {},
     tronPower,
   } = account.tronResources;
 
-  const spendableBalance = formatCurrencyUnit(
-    account.unit,
-    account.spendableBalance,
-    formatConfig,
+  const spendableBalance = useMemo(
+    () =>
+      formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig),
+    [account.unit, account.spendableBalance],
   );
 
-  const formatedEnergy = energy;
+  const formattedBandwidth = useMemo(
+    () => freeLimit + gainedLimit - gainedUsed - freeUsed,
+    [freeLimit, gainedLimit, gainedUsed, freeUsed],
+  );
 
-  const formatedBandwidth = freeLimit + gainedLimit - gainedUsed - freeUsed;
+  const onCloseModal = useCallback(() => {
+    setInfoName(undefined);
+  }, []);
+
+  const onPressInfoCreator = useCallback(
+    (infoName: InfoName) => () => setInfoName(infoName),
+    [],
+  );
+
+  if (!account.tronResources) return null;
 
   return (
     <ScrollView
@@ -44,75 +71,57 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
       showsHorizontalScrollIndicator={false}
       style={styles.root}
     >
-      <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.availableBalance" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
-        <LText semiBold style={styles.balance}>
-          {spendableBalance}
-        </LText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.tronPower" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
+      <InfoModal
+        isOpened={!!infoName}
+        onClose={onCloseModal}
+        data={infoName ? infoCandidates[infoName] : []}
+      />
 
-        <LText semiBold style={styles.balance}>
-          {tronPower}
-        </LText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.bandwidth" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
-
-        <LText semiBold style={styles.balance}>
-          {formatedBandwidth || "–"}
-        </LText>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => {
-          /** @TODO redirect to info modal */
-        }}
-        style={styles.balanceContainer}
-      >
-        <View style={styles.balanceLabelContainer}>
-          <LText style={styles.balanceLabel}>
-            <Trans i18nKey="account.energy" />
-          </LText>
-          <Info size={12} color={colors.grey} />
-        </View>
-        <LText semiBold style={styles.balance}>
-          {formatedEnergy || "–"}
-        </LText>
-      </TouchableOpacity>
+      <InfoItem
+        title={t("account.availableBalance")}
+        onPress={onPressInfoCreator("available")}
+        value={spendableBalance}
+      />
+      <InfoItem
+        title={t("account.tronFrozen")}
+        onPress={onPressInfoCreator("frozen")}
+        value={tronPower}
+      />
+      <InfoItem
+        title={t("account.bandwidth")}
+        onPress={onPressInfoCreator("bandwidth")}
+        value={formattedBandwidth.toString() || "–"}
+      />
+      <InfoItem
+        title={t("account.energy")}
+        onPress={onPressInfoCreator("energy")}
+        value={formattedEnergy.toString() || "-"}
+      />
     </ScrollView>
   );
-};
+}
+
+export default translate()(AccountBalanceSummaryFooter);
+
+interface InfoItemProps {
+  onPress: () => void;
+  title: string;
+  value: string;
+}
+
+function InfoItem({ onPress, title, value }: InfoItemProps) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.balanceContainer}>
+      <View style={styles.balanceLabelContainer}>
+        <LText style={styles.balanceLabel}>{title}</LText>
+        <Info size={12} color={colors.grey} />
+      </View>
+      <LText semiBold style={styles.balance}>
+        {value}
+      </LText>
+    </TouchableOpacity>
+  );
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -150,4 +159,39 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountBalanceSummaryFooter;
+function getInfoCandidates(t: TFunction): { [key: InfoName]: ModalInfo[] } {
+  const currency = getCryptoCurrencyById("tron");
+  const TronIcon = getCryptoCurrencyIcon(currency);
+  invariant(TronIcon, "Icon is expected");
+
+  return {
+    available: [
+      {
+        Icon: () => <TronIcon color={currency.color} size={18} />,
+        title: t("tron.info.available.title"),
+        description: t("tron.info.available.description"),
+      },
+    ],
+    frozen: [
+      {
+        Icon: () => <FreezeIcon size={18} />,
+        title: t("tron.info.frozen.title"),
+        description: t("tron.info.frozen.description"),
+      },
+    ],
+    bandwidth: [
+      {
+        Icon: () => <BandwidthIcon size={18} />,
+        title: t("tron.info.bandwidth.title"),
+        description: t("tron.info.bandwidth.description"),
+      },
+    ],
+    energy: [
+      {
+        Icon: () => <EnergyIcon size={18} />,
+        title: t("tron.info.energy.title"),
+        description: t("tron.info.energy.description"),
+      },
+    ],
+  };
+}

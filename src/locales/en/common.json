@@ -765,7 +765,7 @@
       }
     },
     "availableBalance": "TRX available",
-    "tronPower": "Tron Power",
+    "tronFrozen": "Frozen",
     "bandwidth": "Bandwidth",
     "energy": "Energy"
   },
@@ -1424,6 +1424,24 @@
       "vote": {
         "title": "Vote",
         "description": "Cast votes for Super Representatives using your TRON Power to earn TRX rewards."
+      }
+    },
+    "info": {
+      "available": {
+        "title": "TRX available",
+        "description": "This amount can be sent anytime."
+      },
+      "frozen": {
+        "title": "Frozen",
+        "description": "This amount is available 3 days after you have unfrozen it."
+      },
+      "bandwidth": {
+        "title": "Bandwidth",
+        "description": "Bandwidth points are used to make transactions without paying TRX for network fees. Choose Bandwidth to increase your daily free transactions."
+      },
+      "energy": {
+        "title": "Energy",
+        "description": "Energy Points are used when executing smart contracts. As such freezing TRX for Energy will allow you to avoid additional fees when interacting with a smart contract."
       }
     }
   },
