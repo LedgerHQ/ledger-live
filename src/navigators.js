@@ -382,6 +382,7 @@ SendFunds.navigationOptions = ({ navigation }) => ({
 
 const FreezeFunds = createStackNavigator(
   {
+    // $FlowFixMe
     FreezeInfo,
     // $FlowFixMe
     FreezeAmount,

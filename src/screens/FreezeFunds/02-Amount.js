@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
   },
-  inputContainer: { flexBasis: 100, flexShrink: 0.5 },
+  inputContainer: { flexBasis: 75 },
   inputStyle: { flex: 0, flexShrink: 1 },
   currency: {
     color: colors.grey,
