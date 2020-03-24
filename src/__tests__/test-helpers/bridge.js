@@ -690,9 +690,12 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                         transaction: t,
                         account
                       };
-                  const estimation = await bridge.estimateMaxSpendable(obj);
-                  expect(estimation.gte(0)).toBe(true);
-                  expect(estimation.lte(obj.account.balance)).toBe(true);
+
+                  if (typeof t.mode !== "string" || t.mode === "send") {
+                    const estimation = await bridge.estimateMaxSpendable(obj);
+                    expect(estimation.gte(0)).toBe(true);
+                    expect(estimation.lte(obj.account.balance)).toBe(true);
+                  }
                 }
 
                 if (apdus && impl !== "mock") {
