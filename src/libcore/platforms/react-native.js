@@ -1,6 +1,6 @@
 // @flow
 
-import { NotEnoughBalance, NetworkDown } from "@ledgerhq/errors/lib";
+import { NotEnoughBalance, NetworkDown } from "@ledgerhq/errors";
 import type { Core, CoreStatics } from "../types";
 import { reflect } from "../types";
 import { setLoadCoreImplementation } from "../access";
