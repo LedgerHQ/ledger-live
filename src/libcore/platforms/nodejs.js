@@ -5,8 +5,8 @@
 
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
-import { NotEnoughBalance } from "@ledgerhq/errors/lib";
-import { deserializeError, serializeError } from "@ledgerhq/errors/lib/helpers";
+import { NotEnoughBalance } from "@ledgerhq/errors";
+import { deserializeError, serializeError } from "@ledgerhq/errors";
 import { reflect } from "../types";
 import type { Core, CoreStatics } from "../types";
 import { setLoadCoreImplementation } from "../access";

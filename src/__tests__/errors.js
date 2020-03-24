@@ -1,6 +1,6 @@
 // @flow
 import { DeviceHalted, DeviceInOSUExpected } from "@ledgerhq/errors";
-import { deserializeError, serializeError } from "@ledgerhq/errors/lib/helpers";
+import { deserializeError, serializeError } from "@ledgerhq/errors";
 
 test("DeviceHalted", () => {
   const error = new DeviceHalted();
