@@ -5,6 +5,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: ledgerhq/actions/check-member@v1.0.0
+        with:
+          username: ${{ github.actor }}
+          ban: ledgerlive
       - uses: actions/checkout@v1
 
       - uses: actions/setup-node@master
