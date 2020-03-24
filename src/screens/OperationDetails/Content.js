@@ -36,6 +36,8 @@ import colors from "../../colors";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
+import byFamiliesOperationDetails from "../../generated/operationDetails";
+import DefaultOperationDetailsExtra from "./Extra";
 
 type HelpLinkProps = {
   event: string,
@@ -112,7 +114,7 @@ class Content extends PureComponent<Props, State> {
       : 0;
     const uniqueSenders = uniq(operation.senders);
     const uniqueRecipients = uniq(operation.recipients);
-    const { extra } = operation;
+    const { extra, type } = operation;
     const { hasFailed } = operation;
     const subOperations = operation.subOperations || [];
     const internalOperations = operation.internalOperations || [];
@@ -121,6 +123,13 @@ class Content extends PureComponent<Props, State> {
       uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
     const isConfirmed = confirmations >= currencySettings.confirmationsNb;
+
+    const specific = byFamiliesOperationDetails[mainAccount.currency.family];
+    const Extra =
+      specific && specific.OperationDetailsExtra
+        ? specific.OperationDetailsExtra
+        : DefaultOperationDetailsExtra;
+
     return (
       <>
         <View style={styles.header}>
@@ -365,13 +374,7 @@ class Content extends PureComponent<Props, State> {
           </View>
         ) : null}
 
-        {Object.entries(extra).map(([key, value]) => (
-          <Section
-            title={t(`operationDetails.extra.${key}`)}
-            // $FlowFixMe
-            value={value.toString()}
-          />
-        ))}
+        <Extra extra={extra} type={type} />
 
         <Modal
           isOpened={this.state.isModalOpened}

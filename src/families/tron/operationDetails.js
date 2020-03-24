@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import Section from "../../screens/OperationDetails/Section";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360010653260";
 
@@ -26,11 +27,13 @@ function getURLWhatIsThis(op: Operation): ?string {
 interface OperationsDetailsVotesProps {
   votes: Array<Vote>;
   account: Account;
+  t: TFunction;
 }
 
 function OperationDetailsVotes({
   votes,
   account,
+  t,
 }: OperationsDetailsVotesProps) {
   const sp = useTronSuperRepresentatives();
   const formattedVotes = formatVotes(votes, sp);
@@ -46,44 +49,40 @@ function OperationDetailsVotes({
     [account],
   );
 
-  return null;
-  // <Box>
-  //   <OpDetailsTitle>
-  //     <Trans
-  //       i18nKey={"operationDetails.extra.votes"}
-  //       values={{ number: votes.length }}
-  //     />
-  //   </OpDetailsTitle>
-
-  //   {formattedVotes &&
-  //     formattedVotes.map(
-  //       ({ count, validator: { address, name } = {} }, i) => (
-  //         <OpDetailsData key={address}>
-  //           <OpDetailsVoteData>
-  //             <Box>
-  //               <Text>
-  //                 <Trans
-  //                   i18nKey="operationDetails.extra.votesAddress"
-  //                   values={{ votes: count, name }}
-  //                 >
-  //                   <b>{""}</b>
-  //                   {""}
-  //                   <b>{""}</b>
-  //                 </Trans>
-  //               </Text>
-  //             </Box>
-  //             <Address onClick={() => redirectAddress(address)}>
-  //               {address}
-  //             </Address>
-  //           </OpDetailsVoteData>
-  //         </OpDetailsData>
-  //       ),
-  //     )}
-  // </Box>
+  return (
+    <Section
+      title={t("operationDetails.extra.votes", { number: votes.length })}
+    >
+      {/* {formattedVotes &&
+        formattedVotes.map(
+          ({ count, validator: { address, name } = {} }, i) => (
+            <OpDetailsData key={address}>
+              <OpDetailsVoteData>
+                <Box>
+                  <Text>
+                    <Trans
+                      i18nKey="operationDetails.extra.votesAddress"
+                      values={{ votes: count, name }}
+                    >
+                      <b>{""}</b>
+                      {""}
+                      <b>{""}</b>
+                    </Trans>
+                  </Text>
+                </Box>
+                <Address onClick={() => redirectAddress(address)}>
+                  {address}
+                </Address>
+              </OpDetailsVoteData>
+            </OpDetailsData>
+          ),
+        )} */}
+    </Section>
+  );
 }
 
 interface OperationDetailsExtraProps {
-  extra: { [key: string]: Array<Vote> };
+  extra: { [key: string]: any };
   type: string;
   account: Account;
   t: TFunction;
@@ -100,26 +99,24 @@ function OperationDetailsExtra({
       const { votes } = extra;
       if (!votes || !votes.length) return null;
 
-      return <OperationDetailsVotes votes={votes} account={account} />;
+      return <OperationDetailsVotes votes={votes} account={account} t={t} />;
     }
     /** @TODO use formatted number value for the amount */
     case "FREEZE":
-      return null;
-    // <Box>
-    //   <OpDetailsTitle>
-    //     <Trans i18nKey="operationDetails.extra.frozenAmount" />
-    //   </OpDetailsTitle>
-    //   <OpDetailsData>{extra.frozenAmount}</OpDetailsData>
-    // </Box>
+      return (
+        <Section
+          title={t("operationDetails.extra.frozenAmount")}
+          value={extra.frozenAmount}
+        />
+      );
     /** @TODO use formatted number value for the amount */
     case "UNFREEZE":
-      return null;
-    // <Box>
-    //   <OpDetailsTitle>
-    //     <Trans i18nKey="operationDetails.extra.unfreezeAmount" />
-    //   </OpDetailsTitle>
-    //   <OpDetailsData>{extra.unfreezeAmount}</OpDetailsData>
-    // </Box>
+      return (
+        <Section
+          title={t("operationDetails.extra.unfreezeAmount")}
+          value={extra.unfreezeAmount}
+        />
+      );
     default:
       return null;
   }
