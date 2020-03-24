@@ -11,7 +11,7 @@ type Props = {
   validator: *,
   address: string,
   amount: number,
-  duration: number,
+  duration: React$Node,
   percentTP: string,
 };
 

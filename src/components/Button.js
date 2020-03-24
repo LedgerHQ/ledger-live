@@ -44,7 +44,7 @@ export type BaseButtonProps = {
   IconLeft?: *,
   IconRight?: *,
   disabled?: boolean,
-  outline?: Boolean,
+  outline?: boolean,
   // for analytics
   event: string,
   eventProperties?: Object,

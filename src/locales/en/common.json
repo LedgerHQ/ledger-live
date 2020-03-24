@@ -1055,6 +1055,52 @@
       "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH"
     }
   },
+  "freeze": {
+    "stepperHeader": {
+      "info": "Earn rewards",
+      "selectAmount": "Freeze",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "info": {
+      "description": "Freeze your TRX to earn rewards while keeping full security and control of your assets.",
+      "steps": {
+        "0": "Frozen assets stay yours.",
+        "1": "You can unfreeze your assets after 3 days.",
+        "2": "Freeze and vote securely with your Ledger device."
+      },
+      "howVotingWorks": "How voting works",
+      "cta": "Continue"
+    },
+    "amount": {
+      "available": "Total available",
+      "loadingNetwork": "Loading Network fees...",
+      "noRateProvider": "Not available",
+      "infoLabel": "Bandwidth or energy"
+    },
+    "summary": {
+      "amount": "Amount",
+      "resource": "Resource",
+      "address": "Address",
+      "info": "Frozen tokens are locked for a period of 3 days"
+    },
+    "validation": {
+      "message": "Always verify that your device displays the address exactly as provided",
+      "success": "Assets frozen",
+      "amount": "Amount",
+      "info": "You will start earning {{resource}} once the network has confirmed the freeze. You can shortly vote for Super Representatives to also earn rewards.",
+      "button": {
+        "pending": "Transaction under validation",
+        "pendingDesc": "You have to wait 1 minute before being able to vote",
+        "vote": "Vote",
+        "voteTimer": "0:{{time}}",
+        "later": "I'll vote later",
+        "retry": "Retry"
+      }
+    }
+  },
   "addAccounts": {
     "quitConfirmation": {
       "title": "Cancel add account",
@@ -1505,6 +1551,11 @@
       "send": "recipient",
       "delegate": "validator",
       "undelegate": "validator"
+    },
+    "address": "Address",
+    "resource": "Resource",
+    "infoWording": {
+      "freeze": "Frozen tokens are \"locked\" for a period of 3 days"
     }
   },
   "Terms": {

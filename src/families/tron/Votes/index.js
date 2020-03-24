@@ -40,7 +40,7 @@ const useTronSuperRepresentatives = () => {
 
 // @TODO move this to common
 const useNewVotingDate = () => {
-  const [nextVotingDate, setNextVotingDate] = useState("");
+  const [nextVotingDate, setNextVotingDate] = useState(0);
   useEffect(() => {
     getNextVotingDate().then(d => d && setNextVotingDate(d.valueOf()));
   }, []);
@@ -86,7 +86,7 @@ const Delegation = ({ account }: Props) => {
     /** @TODO open delegation modal */
   }, []);
 
-  const hasRewards = unwithdrawnReward > 0;
+  const hasRewards = BigNumber(unwithdrawnReward).gt(0);
 
   return (
     <View style={styles.root}>
