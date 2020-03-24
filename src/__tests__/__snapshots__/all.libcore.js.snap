@@ -21804,7 +21804,7 @@ Array [
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a56t4FLHBhvys6iThqTAyC44jUX5b8fpPWSjrGaBMVdXo49wVVBVGVcRVPGo1eUUZPMFrKriqtL68pEeGCt37UzYXP4h3WX5:",
     "pendingOperations": Array [],
     "starred": false,
-    "tokenId": "ethereum/erc20/compound_dai",
+    "tokenId": "ethereum/erc20/compound_sai",
     "type": "TokenAccountRaw",
   },
   Object {
@@ -22012,7 +22012,7 @@ Array [
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a9pAic1riGLyatUZeYuxqFbewy1Ambuoago6PzkpYQaKgDUPvKD71UEYX4NeimYCG4j1sghLr7soicFV2rGCdxYSJKP4kEQM:",
     "pendingOperations": Array [],
     "starred": false,
-    "tokenId": "ethereum/erc20/compound_dai",
+    "tokenId": "ethereum/erc20/compound_sai",
     "type": "TokenAccountRaw",
   },
   Object {
@@ -22190,7 +22190,7 @@ Array [
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19aFQtJ7g7s4MxvN5GXjZbMz67KpibcW1B2UNnUTRzydJgGQESgjpCme89H7Ekga5E8P9g74JnUs8PVma5YrmKpajdu1j6vWw2:",
     "pendingOperations": Array [],
     "starred": false,
-    "tokenId": "ethereum/erc20/compound_dai",
+    "tokenId": "ethereum/erc20/compound_sai",
     "type": "TokenAccountRaw",
   },
   Object {
