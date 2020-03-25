@@ -1,7 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
 import type {
   Account,
   Operation,
@@ -17,7 +16,8 @@ import {
 import uniq from "lodash/uniq";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { Trans } from "react-i18next";
+import { Trans, translate } from "react-i18next";
+import type { TFunction } from "react-i18next";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/data/tokens";
 import { localeIds } from "../../languages";
 import LText from "../../components/LText";
@@ -34,6 +34,9 @@ import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import colors from "../../colors";
 import DataList from "./DataList";
 import Modal from "./Modal";
+import Section, { styles as sectionStyles } from "./Section";
+import byFamiliesOperationDetails from "../../generated/operationDetails";
+import DefaultOperationDetailsExtra from "./Extra";
 
 type HelpLinkProps = {
   event: string,
@@ -54,6 +57,7 @@ type Props = {
   operation: Operation,
   currencySettings: CurrencySettings,
   navigation: *,
+  t: TFunction,
 };
 
 type State = {
@@ -87,7 +91,13 @@ class Content extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, parentAccount, operation, currencySettings } = this.props;
+    const {
+      account,
+      parentAccount,
+      operation,
+      currencySettings,
+      t,
+    } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
     const isToken =
       listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
@@ -103,7 +113,7 @@ class Content extends PureComponent<Props, State> {
       : 0;
     const uniqueSenders = uniq(operation.senders);
     const uniqueRecipients = uniq(operation.recipients);
-    const { extra } = operation;
+    const { extra, type } = operation;
     const { hasFailed } = operation;
     const subOperations = operation.subOperations || [];
     const internalOperations = operation.internalOperations || [];
@@ -112,6 +122,13 @@ class Content extends PureComponent<Props, State> {
       uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
     const isConfirmed = confirmations >= currencySettings.confirmationsNb;
+
+    const specific = byFamiliesOperationDetails[mainAccount.currency.family];
+    const Extra =
+      specific && specific.OperationDetailsExtra
+        ? specific.OperationDetailsExtra
+        : DefaultOperationDetailsExtra;
+
     return (
       <>
         <View style={styles.header}>
@@ -123,6 +140,7 @@ class Content extends PureComponent<Props, State> {
               parentAccount={parentAccount}
             />
           </View>
+
           <LText
             tertiary
             numberOfLines={1}
@@ -138,6 +156,7 @@ class Content extends PureComponent<Props, State> {
               />
             )}
           </LText>
+
           <LText tertiary style={styles.counterValue}>
             {hasFailed ? null : (
               <CounterValue
@@ -150,6 +169,7 @@ class Content extends PureComponent<Props, State> {
               />
             )}
           </LText>
+
           <View style={styles.confirmationContainer}>
             <View
               style={[
@@ -183,9 +203,10 @@ class Content extends PureComponent<Props, State> {
             )}
           </View>
         </View>
+
         {subOperations.length > 0 && account.type === "Account" && (
           <>
-            <View style={[styles.section, styles.infoContainer]}>
+            <View style={[sectionStyles.wrapper, styles.infoContainer]}>
               <LText style={styles.sectionSeparator} semiBold>
                 <Trans
                   i18nKey={
@@ -227,13 +248,13 @@ class Content extends PureComponent<Props, State> {
             })}
           </>
         )}
+
         {internalOperations.length > 0 && account.type === "Account" && (
           <>
-            <View style={[styles.section, styles.infoContainer]}>
-              <LText style={styles.sectionSeparator} semiBold>
-                <Trans i18nKey="operationDetails.internalOperations" />
-              </LText>
-            </View>
+            <Section
+              title={t("operationDetails.internalOperations")}
+              style={styles.infoContainer}
+            />
             {internalOperations.map((op, i) => (
               <OperationRow
                 key={op.id}
@@ -249,47 +270,34 @@ class Content extends PureComponent<Props, State> {
         )}
 
         {internalOperations.length > 0 || subOperations.length > 0 ? (
-          <View style={styles.section}>
-            <LText style={styles.sectionSeparator} semiBold>
-              <Trans
-                i18nKey="operationDetails.details"
-                values={{
-                  currency: currency.name,
-                }}
-              />
-            </LText>
-          </View>
+          <Section
+            title={t("operationDetails.details", { currency: currency.name })}
+            style={styles.infoContainer}
+          />
         ) : null}
-        <RectButton style={styles.section} onPress={this.onPress}>
-          <LText style={styles.sectionTitle}>
-            <Trans i18nKey="operationDetails.account" />
-          </LText>
-          <LText style={styles.sectionValue} semiBold>
-            {getAccountName(account)}
-          </LText>
-        </RectButton>
-        <View style={styles.section}>
-          <LText style={styles.sectionTitle}>
-            <Trans i18nKey="operationDetails.date" />
-          </LText>
-          <LText style={styles.sectionValue} semiBold>
-            {operation.date.toLocaleDateString(localeIds, {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </LText>
-        </View>
+
+        <Section
+          title={t("operationDetails.account")}
+          value={getAccountName(account)}
+          onPress={this.onPress}
+        />
+
+        <Section
+          title={t("operationDetails.date")}
+          value={operation.date.toLocaleDateString(localeIds, {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        />
+
         {isNegative ? (
-          <View style={styles.section}>
-            <LText style={styles.sectionTitle}>
-              <Trans i18nKey="operationDetails.fees" />
-            </LText>
+          <Section title={t("operationDetails.fees")}>
             {operation.fee ? (
               <View style={styles.feeValueContainer}>
-                <LText style={styles.sectionValue} semiBold>
+                <LText style={sectionStyles.value} semiBold>
                   <CurrencyUnitValue
                     showCode
                     unit={parentUnit}
@@ -311,21 +319,19 @@ class Content extends PureComponent<Props, State> {
                 </LText>
               </View>
             ) : (
-              <LText style={styles.sectionValue} semiBold>
-                <Trans i18nKey="operationDetails.noFees" />
+              <LText style={sectionStyles.value} semiBold>
+                {t("operationDetails.noFees")}
               </LText>
             )}
-          </View>
+          </Section>
         ) : null}
-        <View style={styles.section}>
-          <LText style={styles.sectionTitle}>
-            <Trans i18nKey="operationDetails.identifier" />
-          </LText>
-          <LText style={styles.sectionValue} semiBold selectable>
-            {operation.hash}
-          </LText>
-        </View>
-        <View style={styles.section}>
+
+        <Section
+          title={t("operationDetails.identifier")}
+          value={operation.hash}
+        />
+
+        <View style={sectionStyles.wrapper}>
           <DataList
             data={uniqueSenders}
             title={
@@ -335,11 +341,12 @@ class Content extends PureComponent<Props, State> {
                 values={{ count: uniqueSenders.length }}
               />
             }
-            titleStyle={styles.sectionTitle}
+            titleStyle={sectionStyles.title}
           />
         </View>
+
         {shouldDisplayTo ? (
-          <View style={styles.section}>
+          <View style={sectionStyles.wrapper}>
             <DataList
               data={uniqueRecipients}
               title={
@@ -365,16 +372,9 @@ class Content extends PureComponent<Props, State> {
             />
           </View>
         ) : null}
-        {Object.entries(extra).map(([key, value]) => (
-          <View style={styles.section} key={key}>
-            <LText style={styles.sectionTitle}>
-              <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
-            </LText>
-            <LText style={styles.sectionValue} semiBold selectable>
-              {value}
-            </LText>
-          </View>
-        ))}
+
+        <Extra extra={extra} type={type} account={account} />
+
         <Modal
           isOpened={this.state.isModalOpened}
           onClose={this.onModalClose}
@@ -384,7 +384,7 @@ class Content extends PureComponent<Props, State> {
   }
 }
 
-export default connect(mapStateToProps)(Content);
+export default translate()(connect(mapStateToProps)(Content));
 
 const styles = StyleSheet.create({
   root: {
@@ -430,24 +430,12 @@ const styles = StyleSheet.create({
   confirmation: {
     fontSize: 16,
   },
-  section: {
-    padding: 16,
-    color: colors.darkBlue,
-  },
   info: {
     marginLeft: 5,
   },
   infoContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  sectionTitle: {
-    fontSize: 14,
-    color: colors.grey,
-    marginBottom: 8,
-  },
-  sectionValue: {
-    color: colors.darkBlue,
   },
   sectionSeparator: {
     color: colors.grey,
