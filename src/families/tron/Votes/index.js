@@ -1,15 +1,14 @@
 // @flow
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Linking, TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import {
-  getTronSuperRepresentatives,
-  getNextVotingDate,
-} from "@ledgerhq/live-common/lib/api/Tron";
-import { useTronSuperRepresentatives } from "@ledgerhq/live-common/lib/families/tron/react";
+  useTronSuperRepresentatives,
+  useNextVotingDate,
+} from "@ledgerhq/live-common/lib/families/tron/react";
 
 import { BigNumber } from "bignumber.js";
 import { urls } from "../../../config/urls";
@@ -28,19 +27,9 @@ type Props = {
   parentAccount: ?Account,
 };
 
-// @TODO move this to common
-const useNewVotingDate = () => {
-  const [nextVotingDate, setNextVotingDate] = useState("");
-  useEffect(() => {
-    getNextVotingDate().then(d => d && setNextVotingDate(d.valueOf()));
-  }, []);
-
-  return nextVotingDate;
-};
-
 const Delegation = ({ account }: Props) => {
   const superRepresentatives = useTronSuperRepresentatives();
-  const nextVotingDate = useNewVotingDate();
+  const nextVotingDate = useNextVotingDate();
   const nextDate = <DateFromNow date={nextVotingDate} />;
 
   const {

@@ -1,7 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
 import type {
   Account,
   Operation,

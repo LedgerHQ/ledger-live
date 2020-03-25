@@ -1,8 +1,7 @@
 // @flow
 
 import React, { useCallback } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Linking } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { translate, Trans } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { BigNumber } from "bignumber.js";
@@ -17,7 +16,6 @@ import {
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
 import Section from "../../screens/OperationDetails/Section";
 import colors from "../../colors";
@@ -28,6 +26,7 @@ function getURLWhatIsThis(op: Operation): ?string {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }
+  return undefined;
 }
 
 type OperationDetailsExtraProps = {

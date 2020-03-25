@@ -3,7 +3,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import type { TFunction } from "react-i18next";
 import LText from "../../components/LText";
 import colors from "../../colors";
 
@@ -15,20 +14,18 @@ type Props = FieldWrapperProps & {
 export default function Section({
   title,
   value,
-  children,
+  children = (
+    <LText style={styles.value} semiBold selectable>
+      {value}
+    </LText>
+  ),
   onPress,
   style,
 }: Props) {
   return (
     <SectionWrapper onPress={onPress} style={style}>
       <LText style={styles.title}>{title}</LText>
-      {children ? (
-        children
-      ) : (
-        <LText style={styles.value} semiBold selectable>
-          {value}
-        </LText>
-      )}
+      {children}
     </SectionWrapper>
   );
 }
