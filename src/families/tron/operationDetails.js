@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Linking } from "react-native";
 import { translate, Trans } from "react-i18next";
 import type { TFunction } from "react-i18next";
@@ -82,8 +82,8 @@ function OperationDetailsVotes({
   const sp = useTronSuperRepresentatives();
   const formattedVotes = formatVotes(votes, sp);
 
-  const redirectAddress = useCallback(
-    address => {
+  const redirectAddressCreator = useCallback(
+    address => () => {
       const url = getAddressExplorer(
         getDefaultExplorerView(account.currency),
         address,
@@ -99,19 +99,24 @@ function OperationDetailsVotes({
     >
       {formattedVotes &&
         formattedVotes.map(({ address, voteCount, validator }, i) => (
-          <View>
-            <LText style={styles.text}>
-              <Trans
-                i18nKey="operationDetails.extra.votesAddress"
-                values={{
-                  votes: voteCount,
-                  name: validator && validator.name,
-                }}
-              >
-                <LText semiBold>{{}}</LText>
-              </Trans>
-            </LText>
-            <LText style={styles.text}>{address}</LText>
+          <View key={address + i} style={styles.voteWrapper}>
+            <View style={styles.voteCountWrapper}>
+              <LText style={styles.text}>
+                <Trans
+                  i18nKey="operationDetails.extra.votesAddress"
+                  values={{
+                    votes: voteCount,
+                    name: validator && validator.name,
+                  }}
+                >
+                  <LText semiBold>{{}}</LText>
+                </Trans>
+              </LText>
+            </View>
+
+            <TouchableOpacity onPress={redirectAddressCreator(address)}>
+              <LText style={styles.text}>{address}</LText>
+            </TouchableOpacity>
           </View>
         ))}
     </Section>
@@ -119,8 +124,17 @@ function OperationDetailsVotes({
 }
 
 const styles = StyleSheet.create({
+  voteWrapper: {
+    borderLeftWidth: 3,
+    borderLeftColor: colors.fog,
+    paddingLeft: 16,
+    marginBottom: 24,
+  },
   text: {
     color: colors.darkBlue,
+  },
+  voteCountWrapper: {
+    marginBottom: 16,
   },
 });
 

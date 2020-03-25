@@ -374,7 +374,7 @@ class Content extends PureComponent<Props, State> {
           </View>
         ) : null}
 
-        <Extra extra={extra} type={type} />
+        <Extra extra={extra} type={type} account={account} />
 
         <Modal
           isOpened={this.state.isModalOpened}

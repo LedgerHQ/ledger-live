@@ -41,7 +41,7 @@ type FieldWrapperProps = {
 
 function SectionWrapper({ onPress, children, style }: FieldWrapperProps) {
   if (!onPress) {
-    <View style={[styles.wrapper, style]}>{children}</View>;
+    return <View style={[styles.wrapper, style]}>{children}</View>;
   }
 
   return (
