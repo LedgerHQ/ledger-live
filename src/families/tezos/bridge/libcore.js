@@ -250,10 +250,10 @@ const estimateMaxSpendable = async ({
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     subAccountId: account.type === "Account" ? null : account.id,
-    ...transaction,
-    useAllAmount: true,
     // this seed is empty (worse case scenario is to send to new). addr from: 1. eyebrow 2. odor 3. rice 4. attack 5. loyal 6. tray 7. letter 8. harbor 9. resemble 10. sphere 11. system 12. forward 13. onion 14. buffalo 15. crumble
-    recipient: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6"
+    recipient: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
+    ...transaction,
+    useAllAmount: true
   });
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;
