@@ -65,7 +65,7 @@ const Delegation = ({ account }: Props) => {
     /** @TODO open delegation modal */
   }, []);
 
-  const hasRewards = unwithdrawnReward > 0;
+  const hasRewards = BigNumber(unwithdrawnReward).gt(0);
 
   return (
     <View style={styles.root}>

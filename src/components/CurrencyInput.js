@@ -36,6 +36,7 @@ type Props = {
   showAllDigits?: boolean,
   subMagnitude: number,
   allowZero: boolean,
+  renderLeft?: any,
   renderRight?: any,
   hasError?: boolean,
   hasWarning?: boolean,
@@ -43,6 +44,7 @@ type Props = {
   editable: boolean,
   placeholder?: string,
   style?: *,
+  inputStyle?: *,
 };
 
 type State = {
@@ -132,10 +134,12 @@ class CurrencyInput extends PureComponent<Props, State> {
   render() {
     const {
       style,
+      inputStyle,
       showAllDigits,
       unit,
       subMagnitude,
       isActive,
+      renderLeft,
       renderRight,
       hasError,
       hasWarning,
@@ -157,6 +161,7 @@ class CurrencyInput extends PureComponent<Props, State> {
 
     return (
       <View style={[styles.wrapper, style]}>
+        {renderLeft}
         <TextInput
           allowFontScaling={false}
           hitSlop={{ top: 20, bottom: 20 }}
@@ -165,6 +170,7 @@ class CurrencyInput extends PureComponent<Props, State> {
             hasError ? styles.error : hasWarning ? styles.warning : null,
             editable ? {} : styles.readOnly,
             { fontSize: dynamicFontSize },
+            inputStyle,
           ]}
           editable={editable}
           onChangeText={this.handleChange}
@@ -194,6 +200,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     flex: 1,
