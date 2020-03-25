@@ -1,8 +1,9 @@
 // @flow
 
 import React, { useCallback } from "react";
+import { View, StyleSheet } from "react-native";
 import { Linking } from "react-native";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import {
   getDefaultExplorerView,
@@ -14,7 +15,9 @@ import {
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import LText from "../../components/LText";
 import Section from "../../screens/OperationDetails/Section";
+import colors from "../../colors";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360010653260";
 
@@ -24,69 +27,12 @@ function getURLWhatIsThis(op: Operation): ?string {
   }
 }
 
-interface OperationsDetailsVotesProps {
-  votes: Array<Vote>;
-  account: Account;
-  t: TFunction;
-}
-
-function OperationDetailsVotes({
-  votes,
-  account,
-  t,
-}: OperationsDetailsVotesProps) {
-  const sp = useTronSuperRepresentatives();
-  const formattedVotes = formatVotes(votes, sp);
-
-  const redirectAddress = useCallback(
-    address => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
-      if (url) Linking.openURL(url);
-    },
-    [account],
-  );
-
-  return (
-    <Section
-      title={t("operationDetails.extra.votes", { number: votes.length })}
-    >
-      {/* {formattedVotes &&
-        formattedVotes.map(
-          ({ count, validator: { address, name } = {} }, i) => (
-            <OpDetailsData key={address}>
-              <OpDetailsVoteData>
-                <Box>
-                  <Text>
-                    <Trans
-                      i18nKey="operationDetails.extra.votesAddress"
-                      values={{ votes: count, name }}
-                    >
-                      <b>{""}</b>
-                      {""}
-                      <b>{""}</b>
-                    </Trans>
-                  </Text>
-                </Box>
-                <Address onClick={() => redirectAddress(address)}>
-                  {address}
-                </Address>
-              </OpDetailsVoteData>
-            </OpDetailsData>
-          ),
-        )} */}
-    </Section>
-  );
-}
-
-interface OperationDetailsExtraProps {
-  extra: { [key: string]: any };
-  type: string;
-  account: Account;
-  t: TFunction;
-}
+type OperationDetailsExtraProps = {
+  extra: { [key: string]: any },
+  type: string,
+  account: Account,
+  t: TFunction,
+};
 
 function OperationDetailsExtra({
   extra,
@@ -121,6 +67,62 @@ function OperationDetailsExtra({
       return null;
   }
 }
+
+type OperationsDetailsVotesProps = {
+  votes: Array<Vote>,
+  account: Account,
+  t: TFunction,
+};
+
+function OperationDetailsVotes({
+  votes,
+  account,
+  t,
+}: OperationsDetailsVotesProps) {
+  const sp = useTronSuperRepresentatives();
+  const formattedVotes = formatVotes(votes, sp);
+
+  const redirectAddress = useCallback(
+    address => {
+      const url = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
+      if (url) Linking.openURL(url);
+    },
+    [account],
+  );
+
+  return (
+    <Section
+      title={t("operationDetails.extra.votes", { number: votes.length })}
+    >
+      {formattedVotes &&
+        formattedVotes.map(({ address, voteCount, validator }, i) => (
+          <View>
+            <LText style={styles.text}>
+              <Trans
+                i18nKey="operationDetails.extra.votesAddress"
+                values={{
+                  votes: voteCount,
+                  name: validator && validator.name,
+                }}
+              >
+                <LText semiBold>{{}}</LText>
+              </Trans>
+            </LText>
+            <LText style={styles.text}>{address}</LText>
+          </View>
+        ))}
+    </Section>
+  );
+}
+
+const styles = StyleSheet.create({
+  text: {
+    color: colors.darkBlue,
+  },
+});
 
 export default {
   getURLWhatIsThis,
