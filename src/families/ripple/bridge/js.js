@@ -720,10 +720,10 @@ const estimateMaxSpendable = async ({
     ...createTransaction(),
     recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // public testing seed abandonx11,about
     ...transaction,
-    useAllAmount: true
+    amount: BigNumber(0)
   });
   const s = await getTransactionStatus(mainAccount, t);
-  return s.amount;
+  return account.balance.minus(s.estimatedFees);
 };
 
 const accountBridge: AccountBridge<Transaction> = {
