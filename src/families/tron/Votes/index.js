@@ -3,15 +3,12 @@ import React, { useCallback } from "react";
 import { View, Linking, TouchableOpacity, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { Trans } from "react-i18next";
-
-import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import { BigNumber } from "bignumber.js";
 
 import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account/helpers";
-
 import {
   useTronSuperRepresentatives,
   useNextVotingDate,
@@ -20,9 +17,10 @@ import {
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/lib/explorers";
 
-import { BigNumber } from "bignumber.js";
-import { urls } from "../../../config/urls";
+import type { NavigationScreenProp } from "react-navigation";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { urls } from "../../../config/urls";
 import Row from "./Row";
 import Header from "./Header";
 import LText from "../../../components/LText";

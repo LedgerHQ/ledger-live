@@ -657,7 +657,12 @@
     },
     "details": "{{ currency }} details",
     "extra": {
-      "tag": "Tag"
+      "resource": "Resource",
+      "frozenAmount": "Frozen amount",
+      "unfreezeAmount": "Unfreeze amount",
+      "address": "Address",
+      "votes": "Votes ({{number}})",
+      "votesAddress": "<0>TP {{votes}}</0> to <0>{{name}}</0>"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
