@@ -598,7 +598,7 @@ const estimateMaxSpendable = async ({
   });
   const s = await getTransactionStatus(mainAccount, t);
   return account.type === "Account"
-    ? account.balance.minus(s.estimatedFees)
+    ? BigNumber.max(0, account.balance.minus(s.estimatedFees))
     : account.balance;
 };
 
