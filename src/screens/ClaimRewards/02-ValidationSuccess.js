@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
@@ -12,8 +12,7 @@ import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 
 type Props = {
-  account: ?Account,
-  parentAccount: ?Account,
+  account: Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -24,7 +23,7 @@ type Props = {
   }>,
 };
 
-const ValidationSuccess = ({ navigation, account, parentAccount }: Props) => {
+const ValidationSuccess = ({ navigation, account }: Props) => {
   const dismiss = useCallback(() => {
     if (navigation.dismiss) {
       const dismissed = navigation.dismiss();
@@ -38,10 +37,9 @@ const ValidationSuccess = ({ navigation, account, parentAccount }: Props) => {
     if (!result) return;
     navigation.navigate("OperationDetails", {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
       operation: result,
     });
-  }, [navigation, account, parentAccount]);
+  }, [navigation, account]);
 
   return (
     <View style={styles.root}>
@@ -81,4 +79,4 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = accountAndParentScreenSelector;
 
-export default connect(mapStateToProps)(translate()(ValidationSuccess));
+export default connect(mapStateToProps)(ValidationSuccess);

@@ -1460,6 +1460,11 @@
       "Amount": "Amount",
       "percentageTP": "% of used TP",
       "noRewards": "No rewards available",
+      "votes": {
+        "title": "Votes",
+        "description": "Cast your votes for one or more representatives to start earning staking rewards.",
+        "cta": "Vote"
+      },
       "rewards": {
         "title": "Voting rewards",
         "button": "Claim"

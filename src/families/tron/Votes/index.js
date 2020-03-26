@@ -58,9 +58,14 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
   const accountId = account.id;
   const parentId = parentAccount && parentAccount.id;
 
-  const {
-    tronResources: { votes, tronPower, unwithdrawnReward } = {},
-  } = account;
+  /** @TODO fetch this from common */
+  const minAmount = 10 ** unit.magnitude;
+
+  const { spendableBalance, tronResources } = account;
+
+  const canFreeze = spendableBalance && spendableBalance.gt(minAmount);
+
+  const { votes, tronPower, unwithdrawnReward } = tronResources || {};
 
   const formattedUnwidthDrawnReward = BigNumber(unwithdrawnReward || 0);
 
@@ -74,6 +79,15 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
   const claimRewards = useCallback(
     () =>
       navigation.navigate("ClaimRewardsConnectDevice", {
+        accountId,
+        parentId,
+      }),
+    [accountId, navigation, parentId],
+  );
+
+  const onDelegateFreeze = useCallback(
+    () =>
+      navigation.navigate("FreezeInfo", {
         accountId,
         parentId,
       }),
@@ -127,57 +141,97 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
           </View>
         </>
       ) : null}
-      {tronPower > 0 && formattedVotes.length > 0 ? (
-        <>
-          <Header
-            total={tronPower}
-            used={totalVotesUsed}
-            count={formattedVotes.length}
-            onPress={onDelegate}
-          />
-          <View style={[styles.container, styles.noPadding]}>
-            {formattedVotes.map(({ validator, address, voteCount }, index) => (
-              <Row
-                key={index}
-                validator={validator}
-                address={address}
-                amount={voteCount}
-                duration={nextDate}
-                explorerView={explorerView}
-              />
-            ))}
-          </View>
-        </>
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.container}>
-            <IlluRewards style={styles.illustration} />
-            <LText semiBold style={styles.title}>
-              <Trans i18nKey="tron.voting.earnRewars" />
-            </LText>
-            <LText style={styles.description}>
-              <Trans
-                i18nKey="tron.voting.delegationEarn"
-                values={{ name: account.currency.name }}
-              />
-            </LText>
-            <TouchableOpacity
-              style={styles.infoLinkContainer}
-              onPress={() => Linking.openURL(urls.delegation)}
-            >
-              <LText bold style={styles.infoLink}>
-                <Trans i18nKey="tron.voting.howItWorks" />
+      {tronPower > 0 ? (
+        formattedVotes.length > 0 ? (
+          <>
+            <Header
+              total={tronPower}
+              used={totalVotesUsed}
+              count={formattedVotes.length}
+              onPress={onDelegate}
+            />
+            <View style={[styles.container, styles.noPadding]}>
+              {formattedVotes.map(
+                ({ validator, address, voteCount }, index) => (
+                  <Row
+                    key={index}
+                    validator={validator}
+                    address={address}
+                    amount={voteCount}
+                    duration={nextDate}
+                    explorerView={explorerView}
+                  />
+                ),
+              )}
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={styles.labelContainer}>
+              <LText semiBold style={styles.label}>
+                <Trans i18nKey="tron.voting.votes.title" />
               </LText>
-              <ExternalLink size={11} color={colors.grey} />
-            </TouchableOpacity>
+            </View>
+            <View style={styles.container}>
+              <View style={styles.container}>
+                <LText style={styles.description}>
+                  <Trans
+                    i18nKey="tron.voting.votes.description"
+                    values={{ name: account.currency.name }}
+                  />
+                </LText>
+                <TouchableOpacity
+                  style={styles.infoLinkContainer}
+                  onPress={() => Linking.openURL(urls.delegation)}
+                >
+                  <LText bold style={styles.infoLink}>
+                    <Trans i18nKey="tron.voting.howItWorks" />
+                  </LText>
+                  <ExternalLink size={11} color={colors.live} />
+                </TouchableOpacity>
+              </View>
+              <Button
+                type="primary"
+                onPress={onDelegate}
+                title={<Trans i18nKey="tron.voting.votes.cta" />}
+                event=""
+              />
+            </View>
+          </>
+        )
+      ) : (
+        canFreeze && (
+          <View style={styles.container}>
+            <View style={styles.container}>
+              <IlluRewards style={styles.illustration} />
+              <LText semiBold style={styles.title}>
+                <Trans i18nKey="tron.voting.earnRewars" />
+              </LText>
+              <LText style={styles.description}>
+                <Trans
+                  i18nKey="tron.voting.delegationEarn"
+                  values={{ name: account.currency.name }}
+                />
+              </LText>
+              <TouchableOpacity
+                style={styles.infoLinkContainer}
+                onPress={() => Linking.openURL(urls.delegation)}
+              >
+                <LText bold style={styles.infoLink}>
+                  <Trans i18nKey="tron.voting.howItWorks" />
+                </LText>
+                <ExternalLink size={11} color={colors.live} />
+              </TouchableOpacity>
+            </View>
+            <Button
+              type="primary"
+              disabled={!canFreeze}
+              onPress={onDelegateFreeze}
+              title={<Trans i18nKey="tron.voting.startEarning" />}
+              event=""
+            />
           </View>
-          <Button
-            type="primary"
-            onPress={onDelegate}
-            title={<Trans i18nKey="tron.voting.startEarning" />}
-            event=""
-          />
-        </View>
+        )
       )}
     </View>
   );
@@ -257,7 +311,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingVertical: 8,
     textAlign: "center",
-    color: colors.grey,
+    color: colors.live,
     marginRight: 6,
   },
 });

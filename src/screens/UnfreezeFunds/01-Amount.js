@@ -1,13 +1,14 @@
 /* @flow */
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import i18next from "i18next";
+
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
 
@@ -23,9 +24,9 @@ import StepHeader from "../../components/StepHeader";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import Info from "../../icons/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import TranslatedError from "../../components/TranslatedError";
+import Info from "../../icons/Info";
 import CheckBox from "../../components/CheckBox";
 import Bandwidth from "../../icons/Bandwidth";
 import Bolt from "../../icons/Bolt";
@@ -34,7 +35,6 @@ const forceInset = { bottom: "always" };
 
 type Props = {
   account: Account,
-  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -43,9 +43,22 @@ type Props = {
   }>,
 };
 
-const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
-  const bridge = getAccountBridge(account, parentAccount);
+const UnfreezeAmount = ({ account, navigation }: Props) => {
+  const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
+
+  const { tronResources } = account;
+  invariant(tronResources, "tron resources expected");
+
+  const {
+    frozen: { bandwidth, energy },
+  } = tronResources;
+
+  const UnfreezeBandwidth = BigNumber((bandwidth && bandwidth.amount) || 0);
+  const canUnfreezeBandwidth = UnfreezeBandwidth.gt(0);
+
+  const UnfreezeEnergy = BigNumber((energy && energy.amount) || 0);
+  const canUnfreezeEnergy = UnfreezeEnergy.gt(0);
 
   const {
     transaction,
@@ -54,12 +67,6 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
     bridgePending,
     bridgeError,
   } = useBridgeTransaction(() => {
-    const { tronResources: { frozen: { bandwidth } = {} } = {} } = account;
-
-    const UnfreezeBandwidth = BigNumber((bandwidth && bandwidth.amount) || 0);
-
-    const bridge = getAccountBridge(account, parentAccount);
-
     const t = bridge.createTransaction(account);
 
     const transaction = bridge.updateTransaction(t, {
@@ -67,7 +74,7 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
       resource: UnfreezeBandwidth.gt(0) ? "BANDWIDTH" : "ENERGY",
     });
 
-    return { account, parentAccount, transaction };
+    return { account, transaction };
   });
 
   const resource =
@@ -76,11 +83,10 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
   const onContinue = useCallback(() => {
     navigation.navigate("UnfreezeConnectDevice", {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
       transaction,
       status,
     });
-  }, [account, parentAccount, navigation, transaction, status]);
+  }, [account, navigation, transaction, status]);
 
   const onBridgeErrorCancel = useCallback(() => {
     const parent = navigation.dangerouslyGetParent();
@@ -89,9 +95,8 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
 
   const onBridgeErrorRetry = useCallback(() => {
     if (!transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
-  }, [setTransaction, account, parentAccount, transaction]);
+  }, [bridge, setTransaction, transaction]);
 
   const onChangeResource = useCallback(
     (resource: string) => {
@@ -99,16 +104,6 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
     },
     [bridge, transaction, setTransaction],
   );
-
-  const {
-    tronResources: { frozen: { bandwidth, energy } = {} } = {},
-  } = account;
-
-  const UnfreezeBandwidth = BigNumber((bandwidth && bandwidth.amount) || 0);
-  const canUnfreezeBandwidth = UnfreezeBandwidth.gt(0);
-
-  const UnfreezeEnergy = BigNumber((energy && energy.amount) || 0);
-  const canUnfreezeEnergy = UnfreezeEnergy.gt(0);
 
   const error = useMemo(() => {
     const e = Object.values(status.errors)[0];
@@ -120,7 +115,7 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
     <>
       <TrackScreen category="UnfreezeFunds" name="Amount" />
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
           <View style={styles.wrapper}>
             <LText style={styles.label}>
               <Trans i18nKey="unfreeze.amount.title" />
@@ -184,12 +179,6 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
               </LText>
               <CheckBox isChecked={resource === "ENERGY"} />
             </TouchableOpacity>
-            <LText
-              style={[error ? styles.error : styles.warning]}
-              numberOfLines={2}
-            >
-              <TranslatedError error={error || warning} />
-            </LText>
 
             <View style={styles.infoSection}>
               <Info size={16} color={colors.live} />
@@ -200,6 +189,13 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
                 />
               </LText>
             </View>
+
+            <LText
+              style={[error ? styles.error : styles.warning]}
+              numberOfLines={2}
+            >
+              <TranslatedError error={error || warning} />
+            </LText>
           </View>
 
           <View style={styles.bottomWrapper}>
@@ -217,7 +213,7 @@ const UnfreezeAmount = ({ account, parentAccount, navigation }: Props) => {
                   />
                 }
                 onPress={onContinue}
-                disabled={!!status.errors.amount || bridgePending}
+                disabled={!!error || bridgePending}
                 pending={bridgePending}
               />
             </View>
@@ -265,6 +261,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "stretch",
   },
+  container: { flex: 1 },
   label: {
     fontSize: 14,
     color: colors.grey,
@@ -290,6 +287,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     padding: 16,
     borderRadius: 4,
+    marginTop: 8,
+    marginBottom: 16,
   },
   infoText: { color: colors.live, marginLeft: 16, flex: 1 },
   bottomWrapper: {
@@ -328,7 +327,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  translate(),
-  connect(accountAndParentScreenSelector),
-)(UnfreezeAmount);
+export default connect(accountAndParentScreenSelector)(UnfreezeAmount);

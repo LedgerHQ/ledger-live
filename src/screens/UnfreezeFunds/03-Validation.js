@@ -4,14 +4,16 @@ import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { translate } from "react-i18next";
 import i18next from "i18next";
+
 import type {
   Account,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
+
+import { useSignWithDevice } from "../../logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -20,13 +22,11 @@ import StepHeader from "../../components/StepHeader";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateOnDevice from "../../components/ValidateOnDevice";
 import SkipLock from "../../components/behaviour/SkipLock";
-import { useSignWithDevice } from "../../logic/screenTransactionHooks";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
   account: Account,
-  parentAccount: ?Account,
   updateAccountWithUpdater: (string, (Account) => Account) => void,
   navigation: NavigationScreenProp<{
     params: {
@@ -42,14 +42,13 @@ type Props = {
 
 const Validation = ({
   account,
-  parentAccount,
   navigation,
   updateAccountWithUpdater,
 }: Props) => {
   const [signing, signed] = useSignWithDevice({
     context: "Unfreeze",
     account,
-    parentAccount,
+    parentAccount: undefined,
     navigation,
     updateAccountWithUpdater,
   });
@@ -78,7 +77,7 @@ const Validation = ({
           wired={wired}
           modelId={modelId}
           account={account}
-          parentAccount={parentAccount}
+          parentAccount={undefined}
           status={status}
           transaction={transaction}
         />
@@ -124,4 +123,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(translate()(Validation));
+)(Validation);

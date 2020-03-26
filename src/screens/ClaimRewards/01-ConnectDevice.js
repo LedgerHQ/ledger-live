@@ -3,8 +3,6 @@ import React, { useCallback } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate } from "react-i18next";
 import i18next from "i18next";
 
 import type { NavigationScreenProp } from "react-navigation";
@@ -12,7 +10,6 @@ import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
 
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
@@ -25,18 +22,16 @@ const forceInset = { bottom: "always" };
 
 type Props = {
   account: Account,
-  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
-      parentId: string,
       transaction: Transaction,
     },
   }>,
 };
 
-const ConnectDevice = ({ account, parentAccount, navigation }: Props) => {
-  const bridge = getAccountBridge(account, parentAccount);
+const ConnectDevice = ({ account, navigation }: Props) => {
+  const bridge = getAccountBridge(account, undefined);
 
   const { transaction, status } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(account);
@@ -45,7 +40,7 @@ const ConnectDevice = ({ account, parentAccount, navigation }: Props) => {
       mode: "claimReward",
     });
 
-    return { account, parentAccount, transaction };
+    return { account, transaction };
   });
 
   const onSelectDevice = useCallback(
@@ -58,11 +53,11 @@ const ConnectDevice = ({ account, parentAccount, navigation }: Props) => {
         status,
       });
     },
-    [navigation, transaction],
+    [navigation, status, transaction],
   );
 
   if (!account) return null;
-  const mainAccount = getMainAccount(account, parentAccount);
+
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <ScrollView
@@ -72,7 +67,7 @@ const ConnectDevice = ({ account, parentAccount, navigation }: Props) => {
         <TrackScreen category="ClaimRewards" name="ConnectDevice" />
         <SelectDevice
           onSelect={onSelectDevice}
-          steps={[connectingStep, accountApp(mainAccount)]}
+          steps={[connectingStep, accountApp(account)]}
         />
       </ScrollView>
     </SafeAreaView>
@@ -106,7 +101,4 @@ ConnectDevice.navigationOptions = {
 
 const mapStateToProps = accountAndParentScreenSelector;
 
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(ConnectDevice);
+export default connect(mapStateToProps)(ConnectDevice);

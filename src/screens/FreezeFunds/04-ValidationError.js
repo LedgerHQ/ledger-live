@@ -3,24 +3,23 @@ import React, { Component } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { translate } from "react-i18next";
+
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
-import ValidateError from "../../components/ValidateError";
 import { urls } from "../../config/urls";
+import ValidateError from "../../components/ValidateError";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
   account: Account,
-  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
-      parentId: String,
       deviceId: string,
       transaction: *,
       error: Error,
@@ -77,4 +76,4 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = accountAndParentScreenSelector;
 
-export default connect(mapStateToProps)(translate()(ValidationError));
+export default connect(mapStateToProps)(ValidationError);

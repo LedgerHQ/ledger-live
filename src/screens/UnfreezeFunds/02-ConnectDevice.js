@@ -3,16 +3,17 @@ import React, { Component } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate } from "react-i18next";
 import i18next from "i18next";
+
 import type { NavigationScreenProp } from "react-navigation";
 import type {
   Account,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
+
 import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
+
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -24,7 +25,6 @@ const forceInset = { bottom: "always" };
 
 type Props = {
   account: Account,
-  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -57,9 +57,9 @@ class ConnectDevice extends Component<Props> {
   };
 
   render() {
-    const { account, parentAccount } = this.props;
+    const { account } = this.props;
     if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount);
+    const mainAccount = getMainAccount(account, undefined);
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <ScrollView
@@ -92,7 +92,4 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = accountAndParentScreenSelector;
 
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(ConnectDevice);
+export default connect(mapStateToProps)(ConnectDevice);
