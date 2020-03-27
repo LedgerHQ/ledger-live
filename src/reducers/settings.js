@@ -81,7 +81,7 @@ const INITIAL_STATE: SettingsState = {
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
-  hasInstalledAnyApp: false,
+  hasInstalledAnyApp: true,
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
   countervalueFirst: false,
@@ -194,9 +194,9 @@ const handlers: Object = {
     hasCompletedOnboarding: true,
   }),
 
-  SETTINGS_INSTALL_APP_FIRST_TIME: state => ({
+  SETTINGS_INSTALL_APP_FIRST_TIME: (state, action) => ({
     ...state,
-    hasInstalledAnyApp: true,
+    hasInstalledAnyApp: action.hasInstalledAnyApp,
   }),
 
   SETTINGS_SET_READONLY_MODE: (state, action) => ({
