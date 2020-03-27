@@ -594,10 +594,12 @@ const estimateMaxSpendable = async ({
     ...createTransaction(),
     recipient: "0x0000000000000000000000000000000000000000",
     ...transaction,
-    useAllAmount: true
+    amount: BigNumber(0)
   });
   const s = await getTransactionStatus(mainAccount, t);
-  return s.amount;
+  return account.type === "Account"
+    ? BigNumber.max(0, account.balance.minus(s.estimatedFees))
+    : account.balance;
 };
 
 const accountBridge: AccountBridge<Transaction> = {

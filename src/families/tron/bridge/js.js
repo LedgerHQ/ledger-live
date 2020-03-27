@@ -564,15 +564,16 @@ const estimateMaxSpendable = async ({
   transaction
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const t = await prepareTransaction(mainAccount, {
+  const fees = await getEstimatedFees(mainAccount, {
     ...createTransaction(),
     subAccountId: account.type === "Account" ? null : account.id,
     recipient: "0x0000000000000000000000000000000000000000",
     ...transaction,
-    useAllAmount: true
+    amount: BigNumber(0)
   });
-  const s = await getTransactionStatus(mainAccount, t);
-  return s.amount;
+  return account.type === "Account"
+    ? BigNumber.max(0, account.spendableBalance.minus(fees))
+    : account.balance;
 };
 
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {

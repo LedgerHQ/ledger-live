@@ -716,14 +716,19 @@ const estimateMaxSpendable = async ({
   transaction
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
+  const r = await getServerInfo(mainAccount.endpointConfig);
+  const reserveBaseXRP = parseAPIValue(r.validatedLedger.reserveBaseXRP);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // public testing seed abandonx11,about
     ...transaction,
-    useAllAmount: true
+    amount: BigNumber(0)
   });
   const s = await getTransactionStatus(mainAccount, t);
-  return s.amount;
+  return BigNumber.max(
+    0,
+    account.balance.minus(reserveBaseXRP).minus(s.estimatedFees)
+  );
 };
 
 const accountBridge: AccountBridge<Transaction> = {
