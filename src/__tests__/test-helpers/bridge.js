@@ -275,7 +275,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                   account
                 });
                 expect(estimation.gte(0)).toBe(true);
-                expect(estimation.lte(account.balance)).toBe(true);
+                expect(estimation.lte(account.spendableBalance)).toBe(true);
                 for (const sub of account.subAccounts || []) {
                   const estimation = await accountBridge.estimateMaxSpendable({
                     parentAccount: account,

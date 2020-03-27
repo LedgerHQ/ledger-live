@@ -572,7 +572,7 @@ const estimateMaxSpendable = async ({
     amount: BigNumber(0)
   });
   return account.type === "Account"
-    ? BigNumber.max(0, account.balance.minus(fees))
+    ? BigNumber.max(0, account.spendableBalance.minus(fees))
     : account.balance;
 };
 
