@@ -93,18 +93,21 @@ type GetBalanceHistoryWithCountervalue = (
     TokenCurrency | CryptoCurrency,
     BigNumber,
     Date
-  ) => ?BigNumber
+  ) => ?BigNumber,
+  useEffectiveFrom?: boolean
 ) => AccountPortfolio;
 
 // hash the "stable" part of the histo
 // only the latest datapoint is "unstable" meaning it always changes because it's the current date.
-const accountRateHashCVStable = (account, r, cvRef) =>
-  `${accountRateHash(account, r)}_${cvRef ? cvRef.toString() : "none"}`;
+const accountRateHashCVStable = (account, r, cvRef, useEffectiveFrom) =>
+  `${accountRateHash(account, r)}_${cvRef ? cvRef.toString() : "none"}_${
+    useEffectiveFrom ? "withEffectiveFrom" : ""
+  }`;
 
 const accountCVstableCache = {};
 const ZERO = BigNumber(0);
 
-const percentageHighThreshold = 100;
+const percentageHighThreshold = 100000;
 const meaningfulPercentage = (
   deltaChange: ?BigNumber,
   balanceDivider: ?BigNumber
@@ -117,7 +120,12 @@ const meaningfulPercentage = (
   }
 };
 
-const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
+const getBHWCV: GetBalanceHistoryWithCountervalue = (
+  account,
+  r,
+  calc,
+  useEffectiveFrom = true
+) => {
   const history = getBalanceHistory(account, r);
   const cur = getAccountCurrency(account);
   // a high enough value so we can compare if something changes
@@ -128,7 +136,12 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
     ...p,
     countervalue: (cvRef && calc(cur, p.value, p.date)) || ZERO
   });
-  const stableHash = accountRateHashCVStable(account, r, cvRef);
+  const stableHash = accountRateHashCVStable(
+    account,
+    r,
+    cvRef,
+    useEffectiveFrom
+  );
   let stable = accountCVstableCache[stableHash];
   const lastPoint = mapFn(history[history.length - 1]);
 
@@ -136,8 +149,9 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (account, r, calc) => {
     // previous existing implementation here
     const from = h[0];
     const to = h[history.length - 1];
-    const fromEffective =
-      find(h, record => record.value.isGreaterThan(0)) || from;
+    const fromEffective = useEffectiveFrom
+      ? find(h, record => record.value.isGreaterThan(0)) || from
+      : from;
     return {
       countervalueReceiveSum: BigNumber(0), // not available here
       countervalueSendSum: BigNumber(0),
@@ -206,7 +220,7 @@ export function getPortfolio(
 
   for (let i = 0; i < accounts.length; i++) {
     const account = accounts[i];
-    const r = getBalanceHistoryWithCountervalue(account, range, calc);
+    const r = getBalanceHistoryWithCountervalue(account, range, calc, false);
     if (r.countervalueAvailable) {
       availableAccounts.push(account);
       histories.push(r.history);
