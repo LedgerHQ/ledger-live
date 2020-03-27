@@ -76,36 +76,20 @@ const list = Object.keys(byTicker).map(k => byTicker[k]);
 let userSupportedFiats = [];
 // Current list was established with what our API really supports
 setSupportedFiats([
-  "AED",
-  "AUD",
   "CAD",
   "CHF",
-  "CNY",
-  "DKK",
   "EUR",
   "GBP",
   "HKD",
-  "HRK",
-  "HUF",
-  "IDR",
   "ILS",
-  "INR",
   "JPY",
-  "KES",
   "KRW",
   "MXN",
-  "NOK",
-  "PHP",
-  "PKR",
   "PLN",
-  "RON",
   "RUB",
-  "SEK",
   "SGD",
-  "THB",
   "TRY",
-  "USD",
-  "VEF"
+  "USD"
 ]);
 
 export function hasFiatCurrencyTicker(ticker: string): boolean {
