@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { distribute } from "@ledgerhq/live-common/lib/apps";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
+import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useAppsSections } from "@ledgerhq/live-common/lib/apps/react";
 
 import { TabView, TabBar } from "react-native-tab-view";

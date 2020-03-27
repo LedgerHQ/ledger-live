@@ -9,17 +9,18 @@ import BottomModal from "./BottomModal";
 import LText from "./LText";
 import Button from "./Button";
 
-type Props = {
+type Props = {|
   isOpened: boolean,
   onClose: () => void,
   onConfirm: () => *,
+  onModalHide?: () => *,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
   Icon?: React$ComponentType<*>,
   confirmButtonText?: React$Node,
   rejectButtonText?: React$Node,
   alert: boolean,
-};
+|};
 
 class ConfirmationModal extends PureComponent<Props> {
   static defaultProps = {

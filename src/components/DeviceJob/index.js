@@ -4,8 +4,9 @@ import React, { Component } from "react";
 import { Observable, Subject, from } from "rxjs";
 import debounce from "lodash/debounce";
 import { mergeMap, last, tap, filter } from "rxjs/operators";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import StepRunnerModal from "./StepRunnerModal";
-import type { Step, DeviceMeta } from "./types";
+import type { Step } from "./types";
 import type { DeviceNames } from "../../screens/Onboarding/types";
 
 const runStep = (
@@ -21,7 +22,7 @@ type StepEvent =
 const chainSteps = (
   steps: Step[],
   // meta is an object we accumulates over time to update the UI and yield the result of everything.
-  meta: DeviceMeta,
+  meta: Device,
   onDoneO: Observable<number>,
 ): Observable<StepEvent> =>
   Observable.create(o => {
@@ -61,7 +62,7 @@ const chainSteps = (
 class DeviceJob extends Component<
   {
     // as soon as meta is set, the DeviceJob starts
-    meta: ?DeviceMeta,
+    meta: ?Device,
     steps: Step[],
     onDone: Object => void,
     onCancel: () => void,
@@ -121,7 +122,7 @@ class DeviceJob extends Component<
     this.onDoneSubject.next(this.state.stepIndex);
   };
 
-  onStart = (metaInput: DeviceMeta) => {
+  onStart = (metaInput: Device) => {
     this.debouncedSetStepIndex.cancel();
     if (this.sub) this.sub.unsubscribe();
 

@@ -1,7 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-// $FlowFixMe
 import { withNavigationFocus, ScrollView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
@@ -10,6 +9,7 @@ import i18next from "i18next";
 import { compose } from "redux";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { createStructuredSelector } from "reselect";
 import { removeKnownDevice } from "../../actions/ble";
 import {
@@ -19,7 +19,6 @@ import {
   getDeviceName,
 } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
-import type { DeviceMeta } from "../../components/DeviceJob/types";
 import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
@@ -98,9 +97,9 @@ class ChooseDevice extends Component<
     showMenu: false,
   };
 
-  chosenDevice: DeviceMeta;
+  chosenDevice: Device;
 
-  onShowMenu = (device: DeviceMeta) => {
+  onShowMenu = (device: Device) => {
     this.chosenDevice = device;
     this.setState({ showMenu: true });
   };
@@ -174,7 +173,7 @@ class ChooseDevice extends Component<
             onHideMenu={this.onHideMenu}
             open={showMenu}
             remove={this.remove}
-            deviceName={this.chosenDevice.deviceName}
+            deviceName={this.chosenDevice.deviceName || ""}
           />
         )}
       </ScrollView>

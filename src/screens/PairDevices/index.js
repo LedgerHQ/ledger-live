@@ -94,7 +94,7 @@ class PairDevices extends Component<Props, State> {
       if (this.unmounted) return;
       try {
         const deviceInfo = await getDeviceInfo(transport);
-        if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line
+        if (__DEV__) console.log({ deviceInfo }); // eslint-disable-line no-console
         if (this.unmounted) return;
 
         this.setState({ device, status: "genuinecheck" });

@@ -40,7 +40,10 @@ class CreateModal extends Component<Props> {
       },
       key,
     });
-    onClose();
+
+    if (onClose) {
+      onClose();
+    }
   };
 
   onSendFunds = () => this.onNavigate("SendFunds", "sendfunds");

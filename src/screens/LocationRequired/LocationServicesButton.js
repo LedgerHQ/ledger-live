@@ -28,7 +28,7 @@ export default class LocationServicesButton extends PureComponent<{
         type="primary"
         title={<Trans i18nKey="location.open" />}
         onPress={this.openLocationServicesSetting}
-        iconLeft={SettingsIcon}
+        IconLeft={SettingsIcon}
       />
     );
   }

@@ -3,16 +3,17 @@
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import { translate } from "react-i18next";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import BottomModal from "../BottomModal";
 import Close from "../../icons/Close";
 import Touchable from "../Touchable";
 import colors from "../../colors";
-import type { Step, DeviceMeta } from "./types";
+import type { Step } from "./types";
 import type { DeviceNames } from "../../screens/Onboarding/types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
 
 class SelectDeviceConnectModal extends PureComponent<{
-  meta: ?DeviceMeta,
+  meta: ?Device,
   onClose: () => void,
   onRetry: () => void,
   onStepDone: () => void,

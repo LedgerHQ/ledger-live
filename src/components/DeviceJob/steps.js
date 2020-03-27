@@ -23,7 +23,7 @@ import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import { listApps as listAppsTransport } from "@ledgerhq/live-common/lib/apps/hw";
-import type { GenuineCheckEvent } from "@ledgerhq/live-common/lib/types/manager";
+import type { SocketEvent } from "@ledgerhq/live-common/lib/types/manager";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import Spinning from "../Spinning";
@@ -144,7 +144,7 @@ export const genuineCheck: Step = {
     withDevice(meta.deviceId)(transport =>
       checkDeviceForManager(transport, meta.deviceInfo),
     ).pipe(
-      map((e: GenuineCheckEvent) => {
+      map((e: SocketEvent) => {
         if (e.type === "result") {
           return {
             ...meta,

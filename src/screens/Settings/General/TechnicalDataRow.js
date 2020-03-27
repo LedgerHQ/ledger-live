@@ -1,12 +1,15 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 
 import SettingsRow from "../../../components/SettingsRow";
 import InfoModal from "../../../components/InfoModal";
 
-type Props = {};
+type Props = {|
+  borderTop?: boolean,
+|};
+
 type State = {
   isOpened: boolean,
 };
@@ -23,7 +26,7 @@ class TechnicalDataRow extends PureComponent<Props, State> {
     const { ...props } = this.props;
     const { isOpened } = this.state;
     return (
-      <Fragment>
+      <>
         <SettingsRow
           event="TechnicalDataRow"
           title={<Trans i18nKey="settings.display.technicalData" />}
@@ -52,7 +55,7 @@ class TechnicalDataRow extends PureComponent<Props, State> {
             },
           ]}
         />
-      </Fragment>
+      </>
     );
   }
 }

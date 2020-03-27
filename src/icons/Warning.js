@@ -5,7 +5,7 @@ import Svg, { Path } from "react-native-svg";
 type Props = {
   size: number,
   color: string,
-  bgColor: string,
+  bgColor?: string,
 };
 
 export default function Warning({

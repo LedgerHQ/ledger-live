@@ -10,6 +10,7 @@ import Icon from "react-native-vector-icons/dist/Feather";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import colors from "../colors";
 import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
@@ -20,7 +21,6 @@ import KeyboardView from "../components/KeyboardView";
 import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
 import DeviceJob from "../components/DeviceJob";
 import { saveBleDeviceName } from "../actions/ble";
-import type { DeviceMeta } from "../components/DeviceJob/types";
 
 const MAX_DEVICE_NAME = 32;
 
@@ -55,7 +55,7 @@ class EditDeviceName extends PureComponent<
   {
     name: string,
     error: ?Error,
-    connecting: ?DeviceMeta,
+    connecting: ?Device,
   },
 > {
   static navigationOptions = {

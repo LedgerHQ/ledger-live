@@ -1,5 +1,5 @@
 // @flow
-import React, { Fragment, PureComponent } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import { RectButton } from "react-native-gesture-handler";
@@ -115,8 +115,8 @@ class AccountRow extends PureComponent<Props, State> {
                 </View>
                 <View style={styles.bottomRow}>
                   <AccountSyncStatus
-                    isUpToDateAccount={isUpToDateAccount}
                     {...syncState}
+                    isUpToDateAccount={isUpToDateAccount}
                   />
                   <View style={styles.balanceCounterContainer}>
                     <CounterValue
@@ -133,7 +133,7 @@ class AccountRow extends PureComponent<Props, State> {
             </View>
           </RectButton>
           {subAccounts.length !== 0 ? (
-            <Fragment>
+            <>
               <View
                 style={[
                   styles.subAccountList,
@@ -181,7 +181,7 @@ class AccountRow extends PureComponent<Props, State> {
                   size={13}
                 />
               </View>
-            </Fragment>
+            </>
           ) : null}
         </View>
         {!!this.state.collapsed && subAccounts.length ? (

@@ -9,11 +9,12 @@ import { Trans } from "react-i18next";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { withNavigation } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
 import DeviceJob from "../DeviceJob";
-import type { Step, DeviceMeta } from "../DeviceJob/types";
+import type { Step } from "../DeviceJob/types";
 import { setReadOnlyMode } from "../../actions/settings";
 import BluetoothEmpty from "./BluetoothEmpty";
 import USBEmpty from "./USBEmpty";
@@ -24,9 +25,9 @@ import type { DeviceNames } from "../../screens/Onboarding/types";
 import PairNewDeviceButton from "./PairNewDeviceButton";
 
 type Props = {
-  onBluetoothDeviceAction?: (device: DeviceMeta) => any,
-  onSelect: (meta: DeviceMeta) => void,
-  deviceMeta?: DeviceMeta,
+  onBluetoothDeviceAction?: (device: Device) => any,
+  onSelect: (meta: Device) => void,
+  deviceMeta?: Device,
   steps?: Step[],
   onStepEntered?: (number, Object) => void,
   withArrows?: boolean,
@@ -43,14 +44,14 @@ type OwnProps = Props & {
     name: string,
   }>,
   removeKnownDevice: string => *,
-  onBluetoothDeviceAction: DeviceMeta => any,
+  onBluetoothDeviceAction: Device => any,
   setReadOnlyMode: boolean => void,
 };
 
 type State = {
-  devices: Array<DeviceMeta>,
+  devices: Array<Device>,
   scanning: boolean,
-  connecting: ?DeviceMeta,
+  connecting: ?Device,
   showMenu: boolean,
 };
 
@@ -83,7 +84,7 @@ const ORBar = () => (
   />
 );
 
-const getAll = ({ knownDevices }, { devices }) =>
+const getAll = ({ knownDevices }, { devices }): Device[] =>
   devices.concat(
     knownDevices.map(d => ({
       deviceId: d.id,
@@ -155,7 +156,7 @@ class SelectDevice extends Component<OwnProps, State> {
     });
   }
 
-  onSelect = (connecting: DeviceMeta) => {
+  onSelect = (connecting: Device) => {
     this.setState({ connecting });
   };
 
@@ -190,14 +191,13 @@ class SelectDevice extends Component<OwnProps, State> {
     navigation.navigate("PairDevices", opts);
   };
 
-  renderItem = (item: *) => (
+  renderItem = (item: Device) => (
     <DeviceItem
       key={item.deviceId}
       deviceMeta={item}
       onSelect={this.onSelect}
       withArrow={!!this.props.withArrows}
       onBluetoothDeviceAction={this.props.onBluetoothDeviceAction}
-      {...item}
     />
   );
 
@@ -214,7 +214,7 @@ class SelectDevice extends Component<OwnProps, State> {
     } = this.props;
     const { connecting } = this.state;
 
-    const all: DeviceMeta[] = getAll(this.props, this.state);
+    const all: Device[] = getAll(this.props, this.state);
 
     const [ble, other] = all.reduce(
       ([ble, other], device) =>

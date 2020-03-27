@@ -141,6 +141,7 @@ class Distribution extends PureComponent<Props, *> {
         <TrackScreen category="Distribution" />
         <Header />
         <FlatList
+          // $FlowFixMe
           ref={this.flatListRef}
           data={distribution.list}
           renderItem={this.renderItem}

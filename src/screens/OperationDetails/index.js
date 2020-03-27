@@ -2,7 +2,6 @@
 import React, { PureComponent } from "react";
 import i18next from "i18next";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import { connect } from "react-redux";
 import { translate } from "react-i18next";
@@ -42,15 +41,16 @@ type Navigation = NavigationScreenProp<{
 }>;
 
 const BackButton = ({ navigation }: { navigation: Navigation }) => (
-  <TouchableOpacity style={{ padding: 16 }} onPress={() => navigation.goBack()}>
+  <TouchableOpacity style={styles.buttons} onPress={() => navigation.goBack()}>
     <ArrowLeft size={18} color={colors.grey} />
   </TouchableOpacity>
 );
 
 const CloseButton = ({ navigation }: { navigation: Navigation }) => (
   <TouchableOpacity
+    // $FlowFixMe
     onPress={() => navigation.popToTop()}
-    style={{ padding: 16 }}
+    style={styles.buttons}
   >
     <Close size={18} color={colors.grey} />
   </TouchableOpacity>
@@ -123,5 +123,8 @@ const styles = StyleSheet.create({
   root: {
     paddingTop: 24,
     paddingBottom: 64,
+  },
+  buttons: {
+    padding: 16,
   },
 });

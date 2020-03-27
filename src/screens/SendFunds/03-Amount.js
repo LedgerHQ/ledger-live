@@ -116,7 +116,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.amountWrapper}>
               <AmountInput
                 editable={!useAllAmount}
                 account={account}
@@ -151,7 +151,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                         <Trans i18nKey="send.amount.useMax" />
                       </LText>
                       <Switch
-                        style={{ opacity: 0.99 }}
+                        style={styles.switch}
                         value={useAllAmount}
                         onValueChange={toggleUseAllAmount}
                       />
@@ -173,7 +173,6 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                     }
                     onPress={onContinue}
                     disabled={!!status.errors.amount || bridgePending}
-                    pending={bridgePending}
                   />
                 </View>
               </View>
@@ -264,6 +263,12 @@ const styles = StyleSheet.create({
   },
   buttonRight: {
     marginLeft: 8,
+  },
+  amountWrapper: {
+    flex: 1,
+  },
+  switch: {
+    opacity: 0.99,
   },
 });
 

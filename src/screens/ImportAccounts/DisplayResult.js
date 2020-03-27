@@ -1,8 +1,6 @@
 // @flow
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-
-// $FlowFixMe
 import { SectionList, SafeAreaView } from "react-navigation";
 import { HeaderBackButton } from "react-navigation-stack";
 import groupBy from "lodash/groupBy";
@@ -54,6 +52,7 @@ type State = {
 };
 
 const BackButton = ({ navigation }: { navigation: Nav }) => (
+  // $FlowFixMe
   <HeaderBackButton
     tintColor={colors.grey}
     onPress={() => {
@@ -110,7 +109,6 @@ class DisplayResult extends Component<Props, State> {
 
   close = () => {
     const { navigation } = this.props;
-    // $FlowFixMe
     navigation.dismiss();
   };
 
@@ -188,7 +186,7 @@ class DisplayResult extends Component<Props, State> {
       <SafeAreaView forceInset={forceInset} style={styles.root}>
         <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
-        <Fragment>
+        <>
           <SectionList
             style={styles.body}
             contentContainerStyle={styles.list}
@@ -218,7 +216,7 @@ class DisplayResult extends Component<Props, State> {
               onPress={this.onImport}
             />
           </View>
-        </Fragment>
+        </>
       </SafeAreaView>
     );
   }

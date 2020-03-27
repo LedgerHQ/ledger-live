@@ -1,18 +1,12 @@
 // @flow
 
 import type { Observable } from "rxjs";
-
-export type DeviceMeta = {
-  deviceId: string,
-  deviceName: string,
-  modelId: "blue" | "nanoS" | "nanoX",
-  wired: boolean,
-};
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 // meta object are accumulated over steps
 export type Step = {
   Body: React$ComponentType<{
-    meta: DeviceMeta & Object,
+    meta: Device & Object,
     onDone: () => void,
   }>,
 

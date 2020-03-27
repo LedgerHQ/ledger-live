@@ -9,6 +9,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
+import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import LText from "./LText";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import { track } from "../analytics";
@@ -19,6 +20,9 @@ const WAIT_TIME_BEFORE_SPINNER = 150;
 const BUTTON_HEIGHT = 48;
 const ANIM_OFFSET = 20;
 const ANIM_DURATION = 300;
+
+type LTextProps = React$ElementProps<typeof LText>;
+type LTextStyleProp = $PropertyType<LTextProps, "style">;
 
 type ButtonType =
   | "primary"
@@ -39,24 +43,25 @@ export type BaseButtonProps = {
   onPress?: () => ?Promise<any> | any,
   // text of the button
   title?: React$Node,
-  containerStyle?: *,
-  titleStyle?: *,
-  IconLeft?: *,
-  IconRight?: *,
+  containerStyle?: ViewStyleProp,
+  titleStyle?: LTextStyleProp,
+  IconLeft?: React$ComponentType<{ size: number, color: string }>,
+  IconRight?: React$ComponentType<{ size: number, color: string }>,
   disabled?: boolean,
   outline?: boolean,
   // for analytics
   event: string,
   eventProperties?: Object,
+  size?: number,
 };
 
-type Props = BaseProps & {
+type Props = BaseButtonProps & {
   useTouchable: boolean,
 };
 
 const ButtonWrapped = (props: BaseButtonProps) => (
   <ButtonUseTouchable.Consumer>
-    {useTouchable => <Button useTouchable={useTouchable} {...props} />}
+    {useTouchable => <Button {...props} useTouchable={useTouchable} />}
   </ButtonUseTouchable.Consumer>
 );
 
@@ -221,6 +226,8 @@ class Button extends PureComponent<
       : RectButton;
     const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
 
+    const iconContainerStyle = { paddingRight: 10 };
+
     return (
       // $FlowFixMe
       <Container
@@ -233,7 +240,7 @@ class Button extends PureComponent<
 
         <Animated.View style={titleSliderStyle}>
           {IconLeft ? (
-            <View style={title ? { paddingRight: 10 } : {}}>
+            <View style={title ? iconContainerStyle : {}}>
               <IconLeft size={16} color={iconColor} />
             </View>
           ) : null}
@@ -245,7 +252,7 @@ class Button extends PureComponent<
           ) : null}
 
           {IconRight ? (
-            <View style={title ? { paddingLeft: 10 } : {}}>
+            <View style={title ? iconContainerStyle : {}}>
               <IconRight size={16} color={iconColor} />
             </View>
           ) : null}

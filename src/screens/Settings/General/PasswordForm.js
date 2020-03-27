@@ -68,7 +68,6 @@ class PasswordForm extends PureComponent<Props, State> {
               onPress={onSubmit}
               containerStyle={styles.buttonContainer}
               titleStyle={styles.buttonTitle}
-              secureTextEntry={secureTextEntry}
               disabled={!!error || value.length === 0}
             />
           </View>

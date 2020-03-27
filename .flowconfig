@@ -21,8 +21,10 @@ node_modules/warning/.*
 .*/TcpServer.js
 .*/core-js/.*
 
+.*/.yalc/.*
+
 [untyped]
-.*/node_modules/@react-native-community/cli/.*/.* 
+.*/node_modules/@react-native-community/cli/.*/.*
 
 ; Ignore react native camera until we have defs
 .*/node_modules/react-native-camera/.*

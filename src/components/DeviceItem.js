@@ -4,6 +4,7 @@ import React, { PureComponent } from "react";
 import invariant from "invariant";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import Touchable from "./Touchable";
 import LText from "./LText";
 import colors from "../colors";
@@ -11,15 +12,14 @@ import IconNanoX from "../icons/NanoX";
 import IconArrowRight from "../icons/ArrowRight";
 import USB from "../icons/USB";
 import Ellipsis from "../icons/Ellipsis";
-import type { DeviceMeta } from "./DeviceJob/types";
 
 type Props = {
-  deviceMeta: DeviceMeta,
+  deviceMeta: Device,
   disabled?: boolean,
   withArrow?: boolean,
   description?: React$Node,
-  onSelect?: DeviceMeta => any,
-  onBluetoothDeviceAction?: DeviceMeta => any,
+  onSelect?: Device => any,
+  onBluetoothDeviceAction?: Device => any,
 };
 
 const iconByFamily = {

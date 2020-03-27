@@ -55,7 +55,7 @@ export default class AppPermissionsButton extends PureComponent<
         type="primary"
         title={<Trans i18nKey="permissions.open" />}
         onPress={this.openAppSettings}
-        iconLeft={SettingsIcon}
+        IconLeft={SettingsIcon}
       />
     );
   }
