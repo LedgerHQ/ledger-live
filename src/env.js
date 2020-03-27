@@ -50,7 +50,7 @@ const envDefinitions = {
   API_TRONGRID_PROXY: {
     parser: stringParser,
     //def: "https://api.trongrid.io",
-    def: "https://tron.coin-proxy.dev.aws.ledger.fr",
+    def: "https://tron.coin.ledger.com",
     desc: "proxy url for trongrid API"
   },
   BASE_SOCKET_URL: {
