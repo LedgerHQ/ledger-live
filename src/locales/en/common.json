@@ -1085,12 +1085,6 @@
       "noRateProvider": "Not available",
       "infoLabel": "Bandwidth or energy"
     },
-    "summary": {
-      "amount": "Amount",
-      "resource": "Resource",
-      "address": "Address",
-      "info": "Frozen tokens are locked for a period of 3 days"
-    },
     "validation": {
       "message": "Always verify that your device displays the address exactly as provided",
       "success": "Assets frozen",
@@ -1103,6 +1097,42 @@
         "voteTimer": "0:{{time}}",
         "later": "I'll vote later",
         "retry": "Retry"
+      }
+    }
+  },
+  "unfreeze": {
+    "stepperHeader": {
+      "selectAmount": "Unfreeze",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "amount": {
+      "title": "Select the kind of asset to unfreeze",
+      "info": "Unfreezing will decrease your {{resource}} and will cancel your votes.",
+      "cta": "Continue"
+    },
+    "validation": {
+      "success": "Your assets have been unfrozen successfully.",
+      "info": "Your Bandwidth points will be decreased and your votes will be canceled.",
+      "button": {
+        "done": "Done",
+        "cta": "See details"
+      }
+    }
+  },
+  "claimReward": {
+    "stepperHeader": {
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "validation": {
+      "success": "Your rewards have been added to your balance.",
+      "button": {
+        "done": "Done",
+        "cta": "See details"
       }
     }
   },
@@ -1426,20 +1456,25 @@
   "tron": {
     "voting": {
       "earnRewars": "Earn rewards",
-      "delegationEarn": "You need to freeze assets to earn Tron staking rewards by delegating your account.",
-      "howItWorks": "How delegation works",
-      "startEarning": "Start earning rewards",
+      "delegationEarn": "You can now earn rewards by freezing and voting.",
+      "howItWorks": "How voting works",
+      "startEarning": "Earn rewards",
       "manageTP": "Manage Tron Power",
       "title": "Claim rewards",
-      "header": "Votes",
+      "header": "Votes ({{total}})",
       "Amount": "Amount",
       "percentageTP": "% of used TP",
       "noRewards": "No rewards available",
+      "votes": {
+        "title": "Votes",
+        "description": "Cast your votes for one or more representatives to start earning staking rewards.",
+        "cta": "Vote"
+      },
       "rewards": {
         "title": "Voting rewards",
-        "button": "Collect"
+        "button": "Claim"
       },
-      "allVotesUsed": "All votes are used",
+      "manageVotes": "Manage votes",
       "remainingVotes": {
         "title": "You still have {{amount}}TP remaining",
         "description": "You didn't use all of your frozen assets to vote for a SR.",
@@ -1550,17 +1585,27 @@
     "howDelegationWorks": "How delegation works"
   },
   "ValidateOnDevice": {
-    "title": "Please confirm the operation on your {{productName}} to send it",
-    "warning": "Always verify that your device displays the address exactly as provided by the {{recipientWording}}",
+    "title": {
+      "send": "Please confirm the operation on your {{productName}} to send it",
+      "freeze": "Please confirm the operation on your device to freeze assets",
+      "unfreeze": "Please confirm the operation on your device to unfreeze assets",
+      "claimReward": "Please confirm the operation on your device to claim your rewards"
+    },
+    "warning": "Always verify that your device displays the address exactly as provided{{recipientWording}}",
     "recipientWording": {
-      "send": "recipient",
-      "delegate": "validator",
-      "undelegate": "validator"
+      "send": "by the recipient",
+      "delegate": "by the validator",
+      "undelegate": "by the validator",
+      "freeze": "",
+      "unfreeze": "",
+      "claimReward": ""
     },
     "address": "Address",
     "resource": "Resource",
     "infoWording": {
-      "freeze": "Frozen tokens are \"locked\" for a period of 3 days"
+      "freeze": "Frozen tokens are \"locked\" for a period of 3 days",
+      "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be canceled",
+      "claimReward": "Rewards can be claimed once every 24 hours."
     }
   },
   "Terms": {

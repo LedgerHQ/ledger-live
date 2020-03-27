@@ -12,6 +12,8 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
 
+import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
+
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
@@ -36,8 +38,8 @@ class ConnectDevice extends Component<Props> {
   static navigationOptions = {
     headerTitle: (
       <StepHeader
-        title={i18next.t("freeze.stepperHeader.connectDevice")}
-        subtitle={i18next.t("freeze.stepperHeader.stepRange", {
+        title={i18next.t("unfreeze.stepperHeader.connectDevice")}
+        subtitle={i18next.t("unfreeze.stepperHeader.stepRange", {
           currentStep: "2",
           totalSteps: "3",
         })}
@@ -48,7 +50,7 @@ class ConnectDevice extends Component<Props> {
   onSelectDevice = (meta: *) => {
     const { navigation } = this.props;
     // $FlowFixMe
-    navigation.replace("FreezeValidation", {
+    navigation.replace("UnfreezeValidation", {
       ...navigation.state.params,
       ...meta,
     });
@@ -57,17 +59,17 @@ class ConnectDevice extends Component<Props> {
   render() {
     const { account } = this.props;
     if (!account) return null;
-
+    const mainAccount = getMainAccount(account, undefined);
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <ScrollView
           style={styles.scroll}
           contentContainerStyle={styles.scrollContainer}
         >
-          <TrackScreen category="FreezeFunds" name="ConnectDevice" />
+          <TrackScreen category="UnfreezeFunds" name="ConnectDevice" />
           <SelectDevice
             onSelect={this.onSelectDevice}
-            steps={[connectingStep, accountApp(account)]}
+            steps={[connectingStep, accountApp(mainAccount)]}
           />
         </ScrollView>
       </SafeAreaView>

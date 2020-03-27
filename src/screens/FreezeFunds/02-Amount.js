@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import i18next from "i18next";
+
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
 import {
@@ -55,7 +55,6 @@ const getDecimalPart = (value: BigNumber, magnitude: number) =>
 
 type Props = {
   account: Account,
-  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -64,8 +63,8 @@ type Props = {
   }>,
 };
 
-const FreezeAmount = ({ account, parentAccount, navigation }: Props) => {
-  const bridge = getAccountBridge(account, parentAccount);
+const FreezeAmount = ({ account, navigation }: Props) => {
+  const bridge = getAccountBridge(account, undefined);
 
   const defaultUnit = getAccountUnit(account);
   const { spendableBalance } = account;
@@ -86,7 +85,7 @@ const FreezeAmount = ({ account, parentAccount, navigation }: Props) => {
       resource: "BANDWIDTH",
     });
 
-    return { account, parentAccount, transaction };
+    return { account, transaction };
   });
 
   const onChange = useCallback(
@@ -106,11 +105,10 @@ const FreezeAmount = ({ account, parentAccount, navigation }: Props) => {
   const onContinue = useCallback(() => {
     navigation.navigate("FreezeConnectDevice", {
       accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
       transaction,
       status,
     });
-  }, [account, parentAccount, navigation, transaction, status]);
+  }, [account, navigation, transaction, status]);
 
   const onBridgeErrorCancel = useCallback(() => {
     const parent = navigation.dangerouslyGetParent();
@@ -119,9 +117,8 @@ const FreezeAmount = ({ account, parentAccount, navigation }: Props) => {
 
   const onBridgeErrorRetry = useCallback(() => {
     if (!transaction) return;
-    const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
-  }, [setTransaction, account, parentAccount, transaction]);
+  }, [setTransaction, transaction, bridge]);
 
   const blur = useCallback(() => {
     Keyboard.dismiss();
@@ -214,7 +211,7 @@ const FreezeAmount = ({ account, parentAccount, navigation }: Props) => {
           </View>
 
           <TouchableWithoutFeedback onPress={blur}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.root}>
               <View style={styles.wrapper}>
                 <CurrencyInput
                   editable
@@ -335,6 +332,7 @@ FreezeAmount.navigationOptions = {
       })}
     />
   ),
+  headerLeft: null,
 };
 
 const styles = StyleSheet.create({
@@ -454,7 +452,4 @@ const styles = StyleSheet.create({
   infoLabel: { color: colors.grey, marginRight: 10 },
 });
 
-export default compose(
-  translate(),
-  connect(accountAndParentScreenSelector),
-)(FreezeAmount);
+export default connect(accountAndParentScreenSelector)(FreezeAmount);

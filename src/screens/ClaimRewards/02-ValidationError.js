@@ -3,15 +3,13 @@ import React, { Component } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
-
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
-import { urls } from "../../config/urls";
 import ValidateError from "../../components/ValidateError";
+import { urls } from "../../config/urls";
 
 const forceInset = { bottom: "always" };
 
@@ -55,7 +53,7 @@ class ValidationError extends Component<Props> {
 
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="FreezeFunds" name="ValidationError" />
+        <TrackScreen category="ClaimRewards" name="ValidationError" />
         <ValidateError
           error={error}
           onRetry={this.retry}

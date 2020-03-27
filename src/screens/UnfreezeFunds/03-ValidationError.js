@@ -7,16 +7,17 @@ import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
+import { urls } from "../../config/urls";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
-import { urls } from "../../config/urls";
 import ValidateError from "../../components/ValidateError";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
   account: Account,
+  parentAccount: ?Account,
   navigation: NavigationScreenProp<{
     params: {
       accountId: string,
@@ -55,7 +56,7 @@ class ValidationError extends Component<Props> {
 
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="FreezeFunds" name="ValidationError" />
+        <TrackScreen category="UnfreezeFunds" name="ValidationError" />
         <ValidateError
           error={error}
           onRetry={this.retry}

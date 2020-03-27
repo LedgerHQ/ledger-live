@@ -38,6 +38,8 @@ const InfoSection = ({ transaction }: { transaction: Transaction }) => {
   invariant(transaction.family === "tron", "tron transaction");
 
   switch (transaction.mode) {
+    case "claimReward":
+    case "unfreeze":
     case "freeze":
       return (
         <DataRow>
@@ -47,12 +49,13 @@ const InfoSection = ({ transaction }: { transaction: Transaction }) => {
             style={[styles.text, styles.infoText]}
             numberOfLines={2}
           >
-            <Trans i18nKey="ValidateOnDevice.infoWording.freeze" />
+            <Trans
+              i18nKey={`ValidateOnDevice.infoWording.${transaction.mode}`}
+              values={{ resource: (transaction.resource || "").toLowerCase() }}
+            />
           </LText>
         </DataRow>
       );
-    case "claimReward":
-    case "unfreeze":
     default:
       return null;
   }
@@ -83,7 +86,7 @@ const Post = ({
       {transaction.resource && (
         <DataRow label={<Trans i18nKey="ValidateOnDevice.resource" />}>
           <LText semiBold style={styles.text}>
-            {transaction.resource}
+            {(transaction.resource || "").toLowerCase()}
           </LText>
         </DataRow>
       )}

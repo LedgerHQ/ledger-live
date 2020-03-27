@@ -136,10 +136,11 @@ const ManageAction = ({
         />
         <ChoiceButton
           disabled={!canUnfreeze}
-          onPress={() => onSelectAction()}
+          onPress={() => onSelectAction("UnfreezeAmount")}
           label={<Trans i18nKey="tron.manage.unfreeze.title" />}
           Icon={UnfreezeIcon}
           extra={
+            !canUnfreeze &&
             effectiveTimeToUnfreeze < Infinity && (
               <View style={styles.timeWarn}>
                 <ClockIcon color={colors.grey} size={16} />

@@ -3,9 +3,9 @@ import React from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { connect } from "react-redux";
 import { SafeAreaView } from "react-navigation";
-
 import type { NavigationScreenProp } from "react-navigation";
 import i18next from "i18next";
+
 import type {
   Account,
   Transaction,
@@ -46,7 +46,7 @@ const Validation = ({
   updateAccountWithUpdater,
 }: Props) => {
   const [signing, signed] = useSignWithDevice({
-    context: "Freeze",
+    context: "Unfreeze",
     account,
     parentAccount: undefined,
     navigation,
@@ -60,7 +60,7 @@ const Validation = ({
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
-      <TrackScreen category="FreezeFunds" name="Validation" signed={signed} />
+      <TrackScreen category="UnfreezeFunds" name="Validation" signed={signed} />
       {signing && (
         <>
           <PreventNativeBack />
@@ -89,8 +89,8 @@ const Validation = ({
 Validation.navigationOptions = {
   headerTitle: (
     <StepHeader
-      title={i18next.t("freeze.stepperHeader.verification")}
-      subtitle={i18next.t("freeze.stepperHeader.stepRange", {
+      title={i18next.t("unfreeze.stepperHeader.verification")}
+      subtitle={i18next.t("unfreeze.stepperHeader.stepRange", {
         currentStep: "3",
         totalSteps: "3",
       })}
