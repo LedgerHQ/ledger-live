@@ -990,10 +990,10 @@
     "@ledgerhq/errors" "^5.12.0"
     events "^3.1.0"
 
-"@ledgerhq/ledger-core@^6.2.0-alpha.7":
-  version "6.2.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.2.0-alpha.7.tgz#bacc358a83aecf6c8a710a8ef85526a61a91671a"
-  integrity sha512-Dx6IIvBEJb+X+9zOtT8kD82Y7hmpXDr8NoSTJ3B0GmWrC3hAH6g3B/RSLtIXYcDDgCr2F1bRWiZoBKgXPufblQ==
+"@ledgerhq/ledger-core@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.2.1.tgz#f406aba0296b05a9f8da68761dca1cef668b0b57"
+  integrity sha512-oF2J9QAHmZBNIlnAPF1+tf85S7R5txFweXk35ZeLB/BwZZezFEiZ/PIzkgCg7nRo0fs9Z6eLZ9OtCNJbTvBNnQ==
   dependencies:
     bindings "1.5.0"
     nan "^2.6.2"
@@ -1001,10 +1001,10 @@
     node-pre-gyp "^0.14.0"
     node-pre-gyp-github "^1.4.3"
 
-"@ledgerhq/live-common@^12.7.3":
-  version "12.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.7.3.tgz#e3320a794d217098a8622d881d863defc9b08b02"
-  integrity sha512-1M1+LJX+ycVc8LIZgwHvcQ/RgkX+zAkYHvXPjZsBqo08yoKmpTt/sXyQd1svec1nkgMvknWGlHnRHgwljZR8+A==
+"@ledgerhq/live-common@^12.8.0":
+  version "12.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.8.0.tgz#86b5faf3fe2777e93ea967049fe9d1be9d2fc14a"
+  integrity sha512-aytMJhKXWFmBz3hDDsMGgecbTSBro0aos9WdfFySATimXdclNnkOipKVFMaG4sVkVX3sa7gUByCj5ZO7YhNcuQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.12.0"
@@ -1339,10 +1339,10 @@ array-unique@^0.3.2:
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.3.2.tgz#a894b75d4bc4f6cd679ef3244a9fd8f46ae2d428"
   integrity sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=
 
-asciichart@^1.5.11:
-  version "1.5.11"
-  resolved "https://registry.yarnpkg.com/asciichart/-/asciichart-1.5.11.tgz#4b2e4729eb974a92b698f72621854dc79d39dc6b"
-  integrity sha512-0CoOAZFU+H94x9EvMpw+sMOpbzB93I0L6StXRxlGRxEQC+mHx+V0ArjHIRr+q2W7B/R7elLrkc9RvY5XBmq9Fg==
+asciichart@^1.5.15:
+  version "1.5.15"
+  resolved "https://registry.yarnpkg.com/asciichart/-/asciichart-1.5.15.tgz#dbc7d4bf31437149e3c0cd4dca03bfc9c7d377eb"
+  integrity sha512-0XHe9H/NB1A717Ji8IhNK7NIvdqxQfEVfTVqFqkQAK06N3qqnIldsU1o4O8KuYhHoCADOiC/Xeg6ZmbJyFtrTA==
 
 asn1@~0.2.3:
   version "0.2.4"

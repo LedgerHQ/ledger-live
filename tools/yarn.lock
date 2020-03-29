@@ -1339,10 +1339,10 @@
     "@ledgerhq/errors" "^5.12.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^12.7.3":
-  version "12.7.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.7.3.tgz#e3320a794d217098a8622d881d863defc9b08b02"
-  integrity sha512-1M1+LJX+ycVc8LIZgwHvcQ/RgkX+zAkYHvXPjZsBqo08yoKmpTt/sXyQd1svec1nkgMvknWGlHnRHgwljZR8+A==
+"@ledgerhq/live-common@^12.8.0":
+  version "12.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.8.0.tgz#86b5faf3fe2777e93ea967049fe9d1be9d2fc14a"
+  integrity sha512-aytMJhKXWFmBz3hDDsMGgecbTSBro0aos9WdfFySATimXdclNnkOipKVFMaG4sVkVX3sa7gUByCj5ZO7YhNcuQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.12.0"
@@ -1385,10 +1385,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.11.0.tgz#9ad2aefceeef48cf9d77972f67e63ba478dd04cc"
   integrity sha512-NiFDdxLU/z1VGQy0/cbpv7UScMDQ/rU8SznqILSHYTnhK2xvvNFTUkd1W2mpmf9E/hzXFI0UAOieLQ44qovX3w==
 
-"@material-ui/core@^4.9.7":
-  version "4.9.7"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.9.7.tgz#0c1caf123278770f34c5d8e9ecd9e1314f87a621"
-  integrity sha512-RTRibZgq572GHEskMAG4sP+bt3P3XyIkv3pOTR8grZAW2rSUd6JoGZLRM4S2HkuO7wS7cAU5SpU2s1EsmTgWog==
+"@material-ui/core@^4.9.8":
+  version "4.9.8"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.9.8.tgz#21c37a9aadf4ff8a2719b8cfcad0ae9e6ca53791"
+  integrity sha512-4cslpG6oLoPWUfwPkX+hvbak4hAGiOfgXOu/UIYeeMrtsTEebC0Mirjoby7zhS4ny86YI3rXEFW6EZDmlj5n5w==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@material-ui/styles" "^4.9.6"
