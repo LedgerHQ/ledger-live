@@ -76973,7 +76973,7 @@ Array [
     "tronResources": Object {
       "bandwidth": Object {
         "freeLimit": "5000",
-        "freeUsed": "206",
+        "freeUsed": "183",
         "gainedLimit": "0",
         "gainedUsed": "0",
       },
