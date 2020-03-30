@@ -16,8 +16,6 @@
 		3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */; };
 		381DCCBE6BFC414E8DC790E4 /* OpenSans-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7C5BB743ED04E53A2323979 /* OpenSans-SemiBold.ttf */; };
 		4DDC6F48AE30467DB99F9225 /* Rubik-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F91D74A42E59456DBB925283 /* Rubik-Regular.ttf */; };
-		769457482358A43200229746 /* ledger-core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 769457472358A43200229746 /* ledger-core.framework */; };
-		7694574A2358A58800229746 /* ledger-core.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = 769457472358A43200229746 /* ledger-core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7930A1FF82816135F015ED1B /* libPods-ledgerlivemobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 854A3B027231E885CAD3722D /* libPods-ledgerlivemobileTests.a */; };
 		86DD631BC8AA4C13A80FBD6D /* MuseoSans-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3263CCC7104E4B86AC2ADDB4 /* MuseoSans-Regular.otf */; };
 		9B7ACA23F80A40489C69872B /* libRNAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EEF3655E56C24042B39DF4D3 /* libRNAnalytics.a */; };
@@ -49,17 +47,6 @@
 			files = (
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B91C4698216812CD00E250AB /* Copy Files */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = x86_64;
-			dstSubfolderSpec = 10;
-			files = (
-				7694574A2358A58800229746 /* ledger-core.framework in Copy Files */,
-			);
-			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -116,7 +103,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				769457482358A43200229746 /* ledger-core.framework in Frameworks */,
 				F837348722721A48009D747A /* JavaScriptCore.framework in Frameworks */,
 				9B7ACA23F80A40489C69872B /* libRNAnalytics.a in Frameworks */,
 				BC25CCBE6BEA4D62BE203C17 /* libz.tbd in Frameworks */,
@@ -277,7 +263,6 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				B91C42DB2163F71100E250AB /* Embed Frameworks */,
-				B91C4698216812CD00E250AB /* Copy Files */,
 				76AF0529229C1BFA0087B066 /* ShellScript */,
 				A3B86A0A04E74A989A896DF8 /* Upload Debug Symbols to Sentry */,
 				601C0E870C26FBA5CE65E3B3 /* [CP] Copy Pods Resources */,
