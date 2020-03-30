@@ -2059,6 +2059,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     scheme: "tron",
     color: "#D9012C",
     family: "tron",
+    blockAvgTime: 3,
     units: [
       {
         name: "TRX",
