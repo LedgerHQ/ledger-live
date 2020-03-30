@@ -76950,7 +76950,7 @@ Array [
 exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
 Array [
   Object {
-    "balance": "26000197",
+    "balance": "26000000",
     "currencyId": "tron",
     "derivationMode": "",
     "freshAddress": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
@@ -76964,16 +76964,16 @@ Array [
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
     "index": 0,
     "name": "Tron 1",
-    "operationsCount": 192,
+    "operationsCount": 193,
     "pendingOperations": Array [],
     "seedIdentifier": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
-    "spendableBalance": "197",
+    "spendableBalance": "0",
     "starred": false,
     "subAccounts": Array [],
     "tronResources": Object {
       "bandwidth": Object {
         "freeLimit": "5000",
-        "freeUsed": "0",
+        "freeUsed": "215",
         "gainedLimit": "0",
         "gainedUsed": "0",
       },
@@ -77153,6 +77153,36 @@ Array [
     "type": "TokenAccountRaw",
   },
   Object {
+    "balance": "10000000",
+    "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002814",
+    "operationsCount": 1,
+    "parentId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+    "pendingOperations": Array [],
+    "starred": false,
+    "tokenId": "tron/trc10/1002814",
+    "type": "TokenAccountRaw",
+  },
+  Object {
+    "balance": "10000000",
+    "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002881",
+    "operationsCount": 1,
+    "parentId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+    "pendingOperations": Array [],
+    "starred": false,
+    "tokenId": "tron/trc10/1002881",
+    "type": "TokenAccountRaw",
+  },
+  Object {
+    "balance": "10000000",
+    "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002830",
+    "operationsCount": 1,
+    "parentId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+    "pendingOperations": Array [],
+    "starred": false,
+    "tokenId": "tron/trc10/1002830",
+    "type": "TokenAccountRaw",
+  },
+  Object {
     "balance": "46825830",
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
     "operationsCount": 17,
@@ -77187,7 +77217,7 @@ Array [
       "bandwidth": Object {
         "freeLimit": "5000",
         "freeUsed": "0",
-        "gainedLimit": "14",
+        "gainedLimit": "13",
         "gainedUsed": "0",
       },
       "delegatedFrozen": Object {
@@ -80660,6 +80690,23 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
+      "blockHeight": 18433345,
+      "extra": Object {},
+      "fee": "0",
+      "hash": "f25dc29389dfb6a4a5db41ebf551501b4f5d90e65c0eedd51f4fe037638aeb9e",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-f25dc29389dfb6a4a5db41ebf551501b4f5d90e65c0eedd51f4fe037638aeb9e-OUT",
+      "recipients": Array [
+        "TMn5m53QQBhg2VU1acpZpAbcccxUH2eZzr",
+      ],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "type": "OUT",
+      "value": "197",
+    },
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
       "blockHeight": 8980852,
       "extra": Object {},
       "fee": "2980",
@@ -81682,6 +81729,63 @@ Array [
       ],
       "senders": Array [
         "TCkr7brXgnkET8aw6zcqrMinUbQS9gNtof",
+      ],
+      "type": "IN",
+      "value": "10000000",
+    },
+  ],
+  Array [
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002814",
+      "blockHash": null,
+      "blockHeight": 18433348,
+      "extra": Object {},
+      "fee": "0",
+      "hash": "1016c00e3816fcd24ab5caaa7e57be051061bd8c0042c41d5d8619aeb2f8e548",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002814-1016c00e3816fcd24ab5caaa7e57be051061bd8c0042c41d5d8619aeb2f8e548-IN",
+      "recipients": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "senders": Array [
+        "TF8cTZNXACU1Qq39VRnLKhY6FTJfp1DtS4",
+      ],
+      "type": "IN",
+      "value": "10000000",
+    },
+  ],
+  Array [
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002881",
+      "blockHash": null,
+      "blockHeight": 18433348,
+      "extra": Object {},
+      "fee": "0",
+      "hash": "9429dd93b521ef826c32ac50971f9b9308c06c1f607a7fc7fb40e535a729159c",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002881-9429dd93b521ef826c32ac50971f9b9308c06c1f607a7fc7fb40e535a729159c-IN",
+      "recipients": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "senders": Array [
+        "TGE36a7HRQmojfpLrXx7ZwV12Zj3LDSjzJ",
+      ],
+      "type": "IN",
+      "value": "10000000",
+    },
+  ],
+  Array [
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002830",
+      "blockHash": null,
+      "blockHeight": 18433348,
+      "extra": Object {},
+      "fee": "0",
+      "hash": "cf7c39cb42db5800b69048d7b5ae88e8ebe726dcd992633425beb47796c3b999",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+1002830-cf7c39cb42db5800b69048d7b5ae88e8ebe726dcd992633425beb47796c3b999-IN",
+      "recipients": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "senders": Array [
+        "TW9pxEnBRZ4okFAEx5pWfga2AgYXSKwaAR",
       ],
       "type": "IN",
       "value": "10000000",
