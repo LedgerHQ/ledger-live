@@ -1,11 +1,12 @@
 /* @flow */
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
+import { getLastVotedDate } from "@ledgerhq/live-common/lib/families/tron/react";
 
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -48,11 +49,15 @@ type Props = {
   }>,
 };
 
-const ValidationSuccess = ({ navigation }: Props) => {
+const ValidationSuccess = ({ account, navigation }: Props) => {
   const time = useTimer(60);
 
   const transaction = navigation.getParam("transaction");
   const resource = transaction.resource || "";
+
+  const accountId = account.id;
+
+  const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
   const dismiss = useCallback(() => {
     if (navigation.dismiss) {
@@ -62,11 +67,12 @@ const ValidationSuccess = ({ navigation }: Props) => {
   }, [navigation]);
 
   const goToVote = useCallback(() => {
-    /** @TODO redirect to Vote flow */
-    // navigation.navigate("Vote", {
-    //   accountId: account.id,
-    // });
-  }, []);
+    const screenName = lastVotedDate ? "VoteSelectValidator" : "VoteStarted";
+    navigation.navigate(screenName, {
+      accountId,
+      parentId: undefined,
+    });
+  }, [lastVotedDate, accountId, navigation]);
 
   return (
     <View style={styles.root}>

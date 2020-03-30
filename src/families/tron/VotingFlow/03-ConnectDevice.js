@@ -1,4 +1,5 @@
 // @flow
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { SafeAreaView } from "react-navigation";
@@ -9,14 +10,16 @@ import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
 
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { accountAndParentScreenSelector } from "../../../reducers/accounts";
 
-import colors from "../../colors";
-import { TrackScreen } from "../../analytics";
-import StepHeader from "../../components/StepHeader";
-import SelectDevice from "../../components/SelectDevice";
-import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
+import colors from "../../../colors";
+import { TrackScreen } from "../../../analytics";
+import StepHeader from "../../../components/StepHeader";
+import SelectDevice from "../../../components/SelectDevice";
+import {
+  connectingStep,
+  accountApp,
+} from "../../../components/DeviceJob/steps";
 
 const forceInset = { bottom: "always" };
 
@@ -31,14 +34,13 @@ type Props = {
 };
 
 const ConnectDevice = ({ account, navigation }: Props) => {
-  const bridge = getAccountBridge(account, undefined);
+  invariant(
+    account && account.tronResources,
+    "account and tron resources required",
+  );
 
   const { transaction, status } = useBridgeTransaction(() => {
-    const t = bridge.createTransaction(account);
-
-    const transaction = bridge.updateTransaction(t, {
-      mode: "claimReward",
-    });
+    const transaction = navigation.getParam("transaction");
 
     return { account, transaction };
   });
@@ -46,7 +48,7 @@ const ConnectDevice = ({ account, navigation }: Props) => {
   const onSelectDevice = useCallback(
     (meta: *) => {
       // $FlowFixMe
-      navigation.replace("ClaimRewardsValidation", {
+      navigation.replace("VoteValidation", {
         ...navigation.state.params,
         ...meta,
         transaction,
@@ -64,7 +66,7 @@ const ConnectDevice = ({ account, navigation }: Props) => {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <TrackScreen category="ClaimRewards" name="ConnectDevice" />
+        <TrackScreen category="votes" name="ConnectDevice" />
         <SelectDevice
           onSelect={onSelectDevice}
           steps={[connectingStep, accountApp(account)]}
@@ -90,10 +92,10 @@ const styles = StyleSheet.create({
 ConnectDevice.navigationOptions = {
   headerTitle: (
     <StepHeader
-      title={i18next.t("claimReward.stepperHeader.connectDevice")}
-      subtitle={i18next.t("claimReward.stepperHeader.stepRange", {
-        currentStep: "1",
-        totalSteps: "2",
+      title={i18next.t("vote.stepperHeader.connectDevice")}
+      subtitle={i18next.t("vote.stepperHeader.stepRange", {
+        currentStep: "3",
+        totalSteps: "4",
       })}
     />
   ),

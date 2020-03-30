@@ -33,9 +33,13 @@ import KeyboardView from "../../components/KeyboardView";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import Info from "../../icons/Info";
 import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
+import InfoModal from "../../modals/Info";
+
+import Info from "../../icons/Info";
+import BandwidthIcon from "../../icons/Bandwidth";
+import EnergyIcon from "../../icons/Energy";
 
 const forceInset = { bottom: "always" };
 
@@ -47,6 +51,19 @@ const options = [
   {
     value: "ENERGY",
     label: <Trans i18nKey="account.energy" />,
+  },
+];
+
+const infoModalData = [
+  {
+    Icon: () => <BandwidthIcon size={18} />,
+    title: <Trans i18nKey="tron.info.bandwidth.title" />,
+    description: <Trans i18nKey="tron.info.bandwidth.description" />,
+  },
+  {
+    Icon: () => <EnergyIcon size={18} />,
+    title: <Trans i18nKey="tron.info.energy.title" />,
+    description: <Trans i18nKey="tron.info.energy.description" />,
   },
 ];
 
@@ -70,6 +87,8 @@ const FreezeAmount = ({ account, navigation }: Props) => {
   const { spendableBalance } = account;
 
   const [selectedRatio, selectRatio] = useState();
+
+  const [infoModalOpen, setInfoModalOpen] = useState();
 
   const {
     transaction,
@@ -123,6 +142,14 @@ const FreezeAmount = ({ account, navigation }: Props) => {
   const blur = useCallback(() => {
     Keyboard.dismiss();
   }, []);
+
+  const openInfoModal = useCallback(() => {
+    setInfoModalOpen(true);
+  }, [setInfoModalOpen]);
+
+  const closeInfoModal = useCallback(() => {
+    setInfoModalOpen(false);
+  }, [setInfoModalOpen]);
 
   const onRatioPress = useCallback(
     value => {
@@ -197,12 +224,7 @@ const FreezeAmount = ({ account, navigation }: Props) => {
               options={options}
               onChange={onChangeResource}
             />
-            <TouchableOpacity
-              onPress={() => {
-                /** @TODO open an info modal */
-              }}
-              style={styles.info}
-            >
+            <TouchableOpacity onPress={openInfoModal} style={styles.info}>
               <LText semiBold style={styles.infoLabel}>
                 <Trans i18nKey="freeze.amount.infoLabel" />
               </LText>
@@ -301,6 +323,12 @@ const FreezeAmount = ({ account, navigation }: Props) => {
           </TouchableWithoutFeedback>
         </KeyboardView>
       </SafeAreaView>
+
+      <InfoModal
+        isOpened={!!infoModalOpen}
+        onClose={closeInfoModal}
+        data={infoModalData}
+      />
 
       <GenericErrorBottomModal
         error={bridgeError}

@@ -42,7 +42,7 @@ export type BaseButtonProps = {
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
   onPress?: () => ?Promise<any> | any,
   // text of the button
-  title?: React$Node,
+  title?: React$Node | string,
   containerStyle?: ViewStyleProp,
   titleStyle?: LTextStyleProp,
   IconLeft?: React$ComponentType<{ size: number, color: string }>,

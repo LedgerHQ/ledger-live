@@ -1,14 +1,19 @@
 // @flow
 import invariant from "invariant";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Trans } from "react-i18next";
 import type {
   AccountLike,
   Account,
   Transaction,
 } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { Trans } from "react-i18next";
+import {
+  formatVotes,
+  useTronSuperRepresentatives,
+} from "@ledgerhq/live-common/lib/families/tron/react";
+
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
@@ -32,6 +37,11 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "right",
   },
+  greyText: {
+    color: colors.grey,
+  },
+  lineLabel: { justifyContent: "flex-start" },
+  addressLabel: { fontSize: 12, color: colors.grey },
 });
 
 const InfoSection = ({ transaction }: { transaction: Transaction }) => {
@@ -69,20 +79,62 @@ const Post = ({
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
+  t: *,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
   invariant(transaction.family === "tron", "tron transaction");
 
+  const sp = useTronSuperRepresentatives();
+  const formattedVotes =
+    transaction.votes &&
+    transaction.votes.length &&
+    formatVotes(transaction.votes, sp);
+
+  const from =
+    account.type === "ChildAccount"
+      ? account.address
+      : mainAccount.freshAddress;
+
   return (
     <>
-      <DataRow label={<Trans i18nKey="ValidateOnDevice.address" />}>
+      {formattedVotes && formattedVotes.length > 0 ? (
+        <>
+          <DataRow>
+            <LText
+              style={[styles.text, styles.greyText, { textAlign: "left" }]}
+            >
+              <Trans i18nKey="ValidateOnDevice.name" />
+            </LText>
+            <LText style={[styles.text, styles.greyText]}>
+              <Trans i18nKey="ValidateOnDevice.votes" />
+            </LText>
+          </DataRow>
+          {formattedVotes.map(({ address, voteCount, validator }) => (
+            <DataRow key={address}>
+              <View style={styles.lineLabel}>
+                <LText semiBold>{validator && validator.name}</LText>
+                <LText style={styles.addressLabel}>{address}</LText>
+              </View>
+              <LText semiBold style={styles.text}>
+                {voteCount}
+              </LText>
+            </DataRow>
+          ))}
+        </>
+      ) : null}
+      <DataRow label={<Trans i18nKey="ValidateOnDevice.fromAddress" />}>
         <LText semiBold style={styles.text}>
-          {account.type === "ChildAccount"
-            ? account.address
-            : mainAccount.freshAddress}
+          {from}
         </LText>
       </DataRow>
+      {transaction.recipient && transaction.recipient !== from ? (
+        <DataRow label={<Trans i18nKey="ValidateOnDevice.toAddress" />}>
+          <LText semiBold style={styles.text}>
+            {transaction.recipient}
+          </LText>
+        </DataRow>
+      ) : null}
       {transaction.resource && (
         <DataRow label={<Trans i18nKey="ValidateOnDevice.resource" />}>
           <LText semiBold style={styles.text}>

@@ -5,11 +5,11 @@ import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
-import ValidateError from "../../components/ValidateError";
-import { urls } from "../../config/urls";
+import { accountAndParentScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "../../../analytics";
+import colors from "../../../colors";
+import ValidateError from "../../../components/ValidateError";
+import { urls } from "../../../config/urls";
 
 const forceInset = { bottom: "always" };
 
@@ -44,9 +44,7 @@ class ValidationError extends Component<Props> {
 
   retry = () => {
     const { navigation } = this.props;
-    navigation.navigate("ClaimRewardsConnectDevice", {
-      ...navigation.state.params,
-    });
+    navigation.goBack();
   };
 
   render() {
@@ -55,7 +53,7 @@ class ValidationError extends Component<Props> {
 
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="ClaimRewards" name="ValidationError" />
+        <TrackScreen category="votes" name="ValidationError" />
         <ValidateError
           error={error}
           onRetry={this.retry}

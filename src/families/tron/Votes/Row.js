@@ -1,16 +1,21 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Linking, StyleSheet, TouchableOpacity } from "react-native";
 
 import { getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
 
 import type { ExplorerView } from "@ledgerhq/live-common/lib/types";
 
+import type { SuperRepresentative } from "@ledgerhq/live-common/lib/families/tron/types";
+
+import { SR_THRESHOLD } from "@ledgerhq/live-common/lib/families/tron/react";
+
 import LText from "../../../components/LText";
 import colors from "../../../colors";
 import Clock from "../../../icons/Clock";
 import Trophy from "../../../icons/Trophy";
+import Medal from "../../../icons/Medal";
 
 type Props = {
   validator: *,
@@ -18,10 +23,25 @@ type Props = {
   amount: number,
   duration: ?React$Node,
   explorerView: ?ExplorerView,
+  superRepresentatives: SuperRepresentative[],
 };
 
-const Row = ({ validator, address, amount, duration, explorerView }: Props) => {
+const Row = ({
+  validator,
+  address,
+  amount,
+  duration,
+  explorerView,
+  superRepresentatives,
+}: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
+
+  const isSR = useMemo(
+    () =>
+      superRepresentatives.findIndex(sr => sr.address === address) <
+      SR_THRESHOLD,
+    [address, superRepresentatives],
+  );
 
   const openSR = useCallback(() => {
     if (srURL) Linking.openURL(srURL);
@@ -29,12 +49,16 @@ const Row = ({ validator, address, amount, duration, explorerView }: Props) => {
 
   return (
     <View style={styles.root}>
-      <View style={styles.icon}>
-        <Trophy size={16} color={colors.live} />
+      <View style={[styles.icon, !isSR ? styles.iconCandidate : {}]}>
+        {isSR ? (
+          <Trophy size={16} color={colors.live} />
+        ) : (
+          <Medal size={16} color={colors.grey} />
+        )}
       </View>
       <View style={styles.labelContainer}>
         <TouchableOpacity onPress={openSR}>
-          <LText semiBold style={styles.title}>
+          <LText semiBold style={styles.title} numberOfLines={1}>
             {validator ? validator.name : address}
           </LText>
         </TouchableOpacity>
@@ -68,6 +92,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.lightLive,
     marginRight: 12,
   },
+  iconCandidate: {
+    backgroundColor: colors.lightFog,
+  },
   title: {
     fontSize: 14,
     lineHeight: 16,
@@ -82,6 +109,9 @@ const styles = StyleSheet.create({
   },
   labelContainerRight: {
     alignItems: "flex-end",
+    marginLeft: 10,
+    flexShrink: 1,
+    flex: 0,
   },
   label: {
     fontSize: 13,

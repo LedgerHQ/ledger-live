@@ -13,15 +13,15 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 
-import { useSignWithDevice } from "../../logic/screenTransactionHooks";
-import { updateAccountWithUpdater } from "../../actions/accounts";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
-import StepHeader from "../../components/StepHeader";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import ValidateOnDevice from "../../components/ValidateOnDevice";
-import SkipLock from "../../components/behaviour/SkipLock";
+import { useSignWithDevice } from "../../../logic/screenTransactionHooks";
+import { updateAccountWithUpdater } from "../../../actions/accounts";
+import { accountAndParentScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "../../../analytics";
+import colors from "../../../colors";
+import StepHeader from "../../../components/StepHeader";
+import PreventNativeBack from "../../../components/PreventNativeBack";
+import ValidateOnDevice from "../../../components/ValidateOnDevice";
+import SkipLock from "../../../components/behaviour/SkipLock";
 
 const forceInset = { bottom: "always" };
 
@@ -46,7 +46,7 @@ const Validation = ({
   updateAccountWithUpdater,
 }: Props) => {
   const [signing, signed] = useSignWithDevice({
-    context: "ClaimRewards",
+    context: "Vote",
     account,
     parentAccount: undefined,
     navigation,
@@ -60,7 +60,7 @@ const Validation = ({
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
-      <TrackScreen category="ClaimRewards" name="Validation" signed={signed} />
+      <TrackScreen category="vote" name="Validation" signed={signed} />
       {signing && (
         <>
           <PreventNativeBack />
@@ -89,10 +89,10 @@ const Validation = ({
 Validation.navigationOptions = {
   headerTitle: (
     <StepHeader
-      title={i18next.t("claimReward.stepperHeader.verification")}
-      subtitle={i18next.t("claimReward.stepperHeader.stepRange", {
-        currentStep: "2",
-        totalSteps: "2",
+      title={i18next.t("vote.stepperHeader.verification")}
+      subtitle={i18next.t("vote.stepperHeader.stepRange", {
+        currentStep: "4",
+        totalSteps: "4",
       })}
     />
   ),

@@ -24,4 +24,5 @@ export const urls = {
   delegation: "https://www.ledger.com/staking-tezos",
   appSupport:
     "https://support.ledger.com/hc/en-us/categories/115000811829-Apps",
+  tronStaking: "https://www.ledger.com/staking-tron",
 };

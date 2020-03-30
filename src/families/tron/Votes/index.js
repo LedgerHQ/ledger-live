@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { View, Linking, TouchableOpacity, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { Trans } from "react-i18next";
@@ -11,9 +11,10 @@ import {
 } from "@ledgerhq/live-common/lib/account/helpers";
 import {
   useTronSuperRepresentatives,
-  useNextVotingDate,
   formatVotes,
   getNextRewardDate,
+  getLastVotedDate,
+  MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/lib/explorers";
 
@@ -28,10 +29,22 @@ import Button from "../../../components/Button";
 import colors from "../../../colors";
 import ExternalLink from "../../../icons/ExternalLink";
 import Info from "../../../icons/Info";
+import ArrowRight from "../../../icons/ArrowRight";
 import DateFromNow from "../../../components/DateFromNow";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import IlluRewards from "../IlluRewards";
+import ProgressCircle from "../../../components/ProgressCircle";
+import InfoModal from "../../../modals/Info";
+import ClaimRewards from "../../../icons/ClaimReward";
+
+const infoRewardsModalData = [
+  {
+    Icon: () => <ClaimRewards size={18} color={colors.darkBlue} />,
+    title: <Trans i18nKey="tron.info.claimRewards.title" />,
+    description: <Trans i18nKey="tron.info.claimRewards.description" />,
+  },
+];
 
 type Props = {
   account: Account,
@@ -45,23 +58,25 @@ type Props = {
 };
 
 const Delegation = ({ account, parentAccount, navigation }: Props) => {
+  const [infoRewardsModal, setRewardsInfoModal] = useState();
+
   const superRepresentatives = useTronSuperRepresentatives();
-  const nextVotingDate = useNextVotingDate();
-  const nextDate = nextVotingDate ? (
-    <DateFromNow date={nextVotingDate} />
+  const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
+
+  const lastDate = lastVotedDate ? (
+    <DateFromNow date={lastVotedDate.valueOf()} />
   ) : null;
+
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
   const accountId = account.id;
   const parentId = parentAccount && parentAccount.id;
 
-  /** @TODO fetch this from common */
-  const minAmount = 10 ** unit.magnitude;
-
   const { spendableBalance, tronResources } = account;
 
-  const canFreeze = spendableBalance && spendableBalance.gt(minAmount);
+  const canFreeze =
+    spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
 
   const { votes, tronPower, unwithdrawnReward } = tronResources || {};
 
@@ -73,6 +88,14 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
     (sum, { voteCount }) => sum + voteCount,
     0,
   );
+
+  const openRewardsInfoModal = useCallback(() => setRewardsInfoModal(true), [
+    setRewardsInfoModal,
+  ]);
+
+  const closeRewardsInfoModal = useCallback(() => setRewardsInfoModal(false), [
+    setRewardsInfoModal,
+  ]);
 
   const claimRewards = useCallback(
     () =>
@@ -92,25 +115,41 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
     [accountId, navigation, parentId],
   );
 
+  const onManageVotes = useCallback(() => {
+    navigation.navigate("CastVote", {
+      accountId,
+      parentId,
+    });
+  }, [navigation, accountId, parentId]);
+
   const onDelegate = useCallback(() => {
-    /** @TODO open delegation modal */
-  }, []);
+    const screenName = lastVotedDate ? "VoteSelectValidator" : "VoteStarted";
+    navigation.navigate(screenName, {
+      accountId,
+      parentId,
+    });
+  }, [lastVotedDate, navigation, accountId, parentId]);
 
   const hasRewards = BigNumber(unwithdrawnReward).gt(0);
   const nextRewardDate = getNextRewardDate(account);
 
   const canClaimRewards = hasRewards && !nextRewardDate;
 
+  const percentVotesUsed = totalVotesUsed / tronPower;
+
   return (
     <View style={styles.root}>
       {hasRewards || (tronPower > 0 && formattedVotes.length > 0) ? (
         <>
-          <View style={styles.labelContainer}>
+          <TouchableOpacity
+            style={styles.labelContainer}
+            onPress={openRewardsInfoModal}
+          >
             <LText semiBold style={styles.label}>
               <Trans i18nKey="tron.voting.rewards.title" />
             </LText>
             <Info size={16} color={colors.darkBlue} />
-          </View>
+          </TouchableOpacity>
           <View style={styles.rewardSection}>
             <View style={styles.labelSection}>
               <LText semiBold style={styles.title}>
@@ -142,12 +181,7 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
       {tronPower > 0 ? (
         formattedVotes.length > 0 ? (
           <>
-            <Header
-              total={tronPower}
-              used={totalVotesUsed}
-              count={formattedVotes.length}
-              onPress={onDelegate}
-            />
+            <Header count={formattedVotes.length} onPress={onManageVotes} />
             <View style={[styles.container, styles.noPadding]}>
               {formattedVotes.map(
                 ({ validator, address, voteCount }, index) => (
@@ -156,10 +190,38 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
                     validator={validator}
                     address={address}
                     amount={voteCount}
-                    duration={nextDate}
+                    duration={lastDate}
                     explorerView={explorerView}
+                    superRepresentatives={superRepresentatives}
                   />
                 ),
+              )}
+              {percentVotesUsed < 1 && (
+                <View style={[styles.container]}>
+                  <TouchableOpacity onPress={onDelegate} style={styles.warn}>
+                    <ProgressCircle
+                      size={60}
+                      progress={percentVotesUsed}
+                      backgroundColor={colors.fog}
+                    />
+                    <View style={styles.warnSection}>
+                      <LText
+                        semiBold
+                        style={[styles.warnText, styles.warnTitle]}
+                      >
+                        <Trans
+                          i18nKey="tron.voting.remainingVotes.title"
+                          values={{ amount: tronPower - totalVotesUsed }}
+                        />
+                      </LText>
+                      <LText style={styles.warnText}>
+                        <Trans i18nKey="tron.voting.remainingVotes.description" />
+                      </LText>
+                    </View>
+
+                    <ArrowRight size={16} color={colors.live} />
+                  </TouchableOpacity>
+                </View>
               )}
             </View>
           </>
@@ -180,7 +242,7 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
                 </LText>
                 <TouchableOpacity
                   style={styles.infoLinkContainer}
-                  onPress={() => Linking.openURL(urls.delegation)}
+                  onPress={() => Linking.openURL(urls.tronStaking)}
                 >
                   <LText bold style={styles.infoLink}>
                     <Trans i18nKey="tron.voting.howItWorks" />
@@ -213,7 +275,7 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
               </LText>
               <TouchableOpacity
                 style={styles.infoLinkContainer}
-                onPress={() => Linking.openURL(urls.delegation)}
+                onPress={() => Linking.openURL(urls.tronStaking)}
               >
                 <LText bold style={styles.infoLink}>
                   <Trans i18nKey="tron.voting.howItWorks" />
@@ -231,6 +293,11 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
           </View>
         )
       )}
+      <InfoModal
+        isOpened={!!infoRewardsModal}
+        onClose={closeRewardsInfoModal}
+        data={infoRewardsModalData}
+      />
     </View>
   );
 };
@@ -278,6 +345,33 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.darkBlue,
     marginRight: 6,
+  },
+  warn: {
+    flexDirection: "row",
+    padding: 8,
+    backgroundColor: colors.lightLive,
+    borderRadius: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  warnSection: {
+    flexDirection: "column",
+    flex: 1,
+    marginHorizontal: 6,
+    justifyContent: "center",
+    alignItems: "flex-start",
+  },
+  warnTitle: {
+    fontSize: 14,
+  },
+  warnText: {
+    color: colors.live,
+    marginLeft: 0,
+    fontSize: 13,
+  },
+  cta: {
+    flex: 1,
+    flexGrow: 0.5,
   },
   title: {
     fontSize: 18,

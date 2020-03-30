@@ -171,11 +171,13 @@ class AccountRow extends PureComponent<Props, State> {
                     />
                   }
                   IconRight={() => (
-                    <Icon
-                      color={colors.live}
-                      name={this.state.collapsed ? "angle-down" : "angle-up"}
-                      size={16}
-                    />
+                    <View style={{ paddingLeft: 6 }}>
+                      <Icon
+                        color={colors.live}
+                        name={this.state.collapsed ? "angle-down" : "angle-up"}
+                        size={16}
+                      />
+                    </View>
                   )}
                   onPress={this.onExpandSubAccountsPress}
                   size={13}
