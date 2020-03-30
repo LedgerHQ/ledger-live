@@ -109,7 +109,7 @@ const implementation = (arg: Object): Promise<*> => {
         `${response.status} ${meta.method} ${meta.url} (${(
           Date.now() - meta.startTime
         ).toFixed(0)}ms)`,
-        getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : {}
+        getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : undefined
       );
       return response;
     }),
