@@ -50,7 +50,11 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
   );
 
   const formattedBandwidth = useMemo(
-    () => freeLimit + gainedLimit - gainedUsed - freeUsed,
+    () =>
+      freeLimit
+        .plus(gainedLimit)
+        .minus(gainedUsed)
+        .minus(freeUsed),
     [freeLimit, gainedLimit, gainedUsed, freeUsed],
   );
 
