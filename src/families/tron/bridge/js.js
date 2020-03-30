@@ -72,6 +72,16 @@ const signOperation = ({ account, transaction, deviceId }) =>
           ? account.subAccounts.find(sa => sa.id === transaction.subAccountId)
           : null;
 
+      const fee = await getEstimatedFees(account, transaction);
+
+      const balance = subAccount
+        ? subAccount.balance
+        : BigNumber.max(0, account.spendableBalance.minus(fee));
+
+      transaction.amount = transaction.useAllAmount
+        ? balance
+        : transaction.amount;
+
       // send trc20 to a new account is forbidden by us (because it will not activate the account)
       if (
         transaction.recipient &&
@@ -125,8 +135,6 @@ const signOperation = ({ account, transaction, deviceId }) =>
         o.next({ type: "device-signature-granted" });
 
         const hash = preparedTransaction.txID;
-
-        const fee = await getEstimatedFees(account, transaction);
 
         const getValue = (): BigNumber => {
           switch (transaction.mode) {
@@ -354,6 +362,7 @@ const currencyBridge: CurrencyBridge = {
 const createTransaction = () => ({
   family: "tron",
   amount: BigNumber(0),
+  useAllAmount: false,
   mode: "send",
   duration: 3,
   recipient: "",
@@ -423,16 +432,13 @@ const getTransactionStatus = async (
   const errors: { [string]: Error } = {};
   const warnings: { [string]: Error } = {};
 
-  const { mode, amount, recipient, resource, votes } = t;
+  const { mode, recipient, resource, votes, useAllAmount = false } = t;
 
   const tokenAccount = !t.subAccountId
     ? null
     : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
 
   const account = tokenAccount || a;
-
-  const balance =
-    account.type === "Account" ? account.spendableBalance : account.balance;
 
   if (mode === "send" && !recipient) {
     errors.recipient = new RecipientRequired();
@@ -455,10 +461,6 @@ const getTransactionStatus = async (
       // send trc20 to a new account is forbidden by us (because it will not activate the account)
       errors.recipient = new TronSendTrc20ToNewAccountForbidden();
     }
-  }
-
-  if (mode === "freeze" && amount.lt(BigNumber(1000000))) {
-    errors.amount = new TronInvalidFreezeAmount();
   }
 
   if (mode === "unfreeze") {
@@ -522,12 +524,23 @@ const getTransactionStatus = async (
     }
   }
 
-  const amountSpent = ["send", "freeze"].includes(mode) ? amount : BigNumber(0);
-
   const estimatedFees =
     Object.entries(errors).length > 0
       ? BigNumber(0)
       : await getEstimatedFees(a, t);
+
+  const balance =
+    account.type === "Account"
+      ? account.spendableBalance.minus(estimatedFees)
+      : account.balance;
+
+  const amount = useAllAmount ? balance : t.amount;
+
+  const amountSpent = ["send", "freeze"].includes(mode) ? amount : BigNumber(0);
+
+  if (mode === "freeze" && amount.lt(BigNumber(1000000))) {
+    errors.amount = new TronInvalidFreezeAmount();
+  }
 
   // fees are applied in the parent only (TRX)
   const totalSpent =
@@ -535,7 +548,9 @@ const getTransactionStatus = async (
 
   if (!errors.recipient && ["send", "freeze"].includes(mode)) {
     if (amountSpent.eq(0)) {
-      errors.amount = new AmountRequired();
+      errors.amount = useAllAmount
+        ? new NotEnoughBalance()
+        : new AmountRequired();
     } else if (totalSpent.gt(balance)) {
       errors.amount = new NotEnoughBalance();
     } else if (account.type === "TokenAccount" && estimatedFees.gt(a.balance)) {
