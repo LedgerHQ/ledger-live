@@ -1,9 +1,8 @@
 // @flow
 
-import type { BigNumber } from "bignumber.js";
 import type { CryptoCurrency, TokenAccount, Account } from "../../types";
-import type { CoreAccount, CoreBigInt } from "../../libcore/types";
-import type { CoreEthereumLikeAccount, CoreERC20LikeAccount } from "./types";
+import type { CoreAccount } from "../../libcore/types";
+import type { CoreERC20LikeAccount } from "./types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 import { minimalOperationsBuilder } from "../../reconciliation";
 import { buildERC20Operation } from "./buildERC20Operation";
@@ -67,8 +66,13 @@ async function ethereumBuildTokenAccounts({
 }): Promise<?(TokenAccount[])> {
   if (listTokensForCryptoCurrency(currency).length === 0) return undefined;
   const tokenAccounts = [];
-  const ethAccount: CoreEthereumLikeAccount = await coreAccount.asEthereumLikeAccount();
-  const coreTAS: CoreERC20LikeAccount[] = await ethAccount.getERC20Accounts();
+  const ethAccount = await coreAccount.asEthereumLikeAccount();
+  const allCoreTAS = await ethAccount.getERC20Accounts();
+  const allCoreTAContractAddresses = await promiseAllBatched(
+    4,
+    allCoreTAS,
+    getERC20Address
+  );
 
   const existingAccountByTicker = {}; // used for fast lookup
   const existingAccountTickers = []; // used to keep track of ordering
@@ -82,33 +86,37 @@ async function ethereumBuildTokenAccounts({
     }
   }
 
-  const coreTAContractAddresses = await promiseAllBatched(
-    4,
-    coreTAS,
-    getERC20Address
-  );
+  const tokenAccountData = [];
 
-  const coreTAB: CoreBigInt[] = await ethAccount.getERC20Balances(
-    coreTAContractAddresses
-  );
-
-  for (const [index, coreTA] of coreTAS.entries()) {
-    const contractAddress: string = coreTAContractAddresses[index];
-    const contractBalance: BigNumber = await libcoreBigIntToBigNumber(
-      coreTAB[index]
-    );
+  // filter by token existence
+  for (const [index, coreTA] of allCoreTAS.entries()) {
+    const contractAddress = allCoreTAContractAddresses[index];
     const token = findTokenByAddress(contractAddress);
     if (token) {
-      const existingTokenAccount = existingAccountByTicker[token.ticker];
-      const tokenAccount = await buildERC20TokenAccount({
-        parentAccountId: accountId,
-        existingTokenAccount,
+      tokenAccountData.push({
         token,
-        coreTokenAccount: coreTA,
-        balance: contractBalance
+        coreTA,
+        contractAddress
       });
-      if (tokenAccount) tokenAccounts.push(tokenAccount);
     }
+  }
+
+  // fetch balances for existing tokens
+  const coreTAB = await ethAccount.getERC20Balances(
+    tokenAccountData.map(d => d.contractAddress)
+  );
+
+  for (const [index, { token, coreTA }] of tokenAccountData.entries()) {
+    const contractBalance = await libcoreBigIntToBigNumber(coreTAB[index]);
+    const existingTokenAccount = existingAccountByTicker[token.ticker];
+    const tokenAccount = await buildERC20TokenAccount({
+      parentAccountId: accountId,
+      existingTokenAccount,
+      token,
+      coreTokenAccount: coreTA,
+      balance: contractBalance
+    });
+    if (tokenAccount) tokenAccounts.push(tokenAccount);
   }
 
   // Preserve order of tokenAccounts from the existing token accounts
