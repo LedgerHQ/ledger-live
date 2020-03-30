@@ -166,6 +166,11 @@ export async function fetchTronAccount(addr: string) {
   }
 }
 
+export async function fetchCurrentBlockHeight() {
+  const data = await fetch(`${baseApiUrl}/wallet/getnowblock`);
+  return data.block_header.raw_data.number;
+}
+
 // For the moment, fetching transaction info is the only way to get fees from a transaction
 function fetchTronTxDetail(txId: string) {
   return fetch(

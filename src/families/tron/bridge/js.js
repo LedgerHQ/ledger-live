@@ -60,7 +60,8 @@ import {
   validateAddress,
   freezeTronTransaction,
   unfreezeTronTransaction,
-  voteTronSuperRepresentatives
+  voteTronSuperRepresentatives,
+  fetchCurrentBlockHeight
 } from "../../../api/Tron";
 
 const signOperation = ({ account, transaction, deviceId }) =>
@@ -227,10 +228,11 @@ const broadcast = async ({
 };
 
 const getAccountShape = async info => {
+  const blockHeight = await fetchCurrentBlockHeight();
   const tronAcc = await fetchTronAccount(info.address);
 
   if (tronAcc.length === 0) {
-    return { balance: BigNumber(0) };
+    return { blockHeight, balance: BigNumber(0) };
   }
 
   const acc = tronAcc[0];
@@ -321,7 +323,8 @@ const getAccountShape = async info => {
     operationsCount: parentOpsAndSubOutOpsWithFee.length,
     operations: parentOpsAndSubOutOpsWithFee,
     subAccounts,
-    tronResources
+    tronResources,
+    blockHeight
   };
 };
 
