@@ -76973,7 +76973,7 @@ Array [
     "tronResources": Object {
       "bandwidth": Object {
         "freeLimit": "5000",
-        "freeUsed": "19",
+        "freeUsed": "0",
         "gainedLimit": "0",
         "gainedUsed": "0",
       },
@@ -76981,7 +76981,7 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "1602",
+      "energy": "1601",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": Object {
@@ -76990,7 +76990,6 @@ Array [
         },
       },
       "tronPower": 26,
-      "unwithdrawnReward": "171223",
       "votes": Array [
         Object {
           "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
@@ -77235,7 +77234,6 @@ Array [
         "energy": undefined,
       },
       "tronPower": 8.4,
-      "unwithdrawnReward": "0",
       "votes": Array [],
     },
     "unitMagnitude": 6,
@@ -77418,7 +77416,6 @@ Array [
         "energy": undefined,
       },
       "tronPower": 0,
-      "unwithdrawnReward": "0",
       "votes": Array [],
     },
     "unitMagnitude": 6,
@@ -77491,7 +77488,6 @@ Array [
         "energy": undefined,
       },
       "tronPower": 0,
-      "unwithdrawnReward": "0",
       "votes": Array [],
     },
     "unitMagnitude": 6,
@@ -77544,7 +77540,6 @@ Array [
         "energy": undefined,
       },
       "tronPower": 0,
-      "unwithdrawnReward": "0",
       "votes": Array [],
     },
     "unitMagnitude": 6,
@@ -77607,7 +77602,6 @@ Array [
         "energy": undefined,
       },
       "tronPower": 0,
-      "unwithdrawnReward": "0",
       "votes": Array [],
     },
     "unitMagnitude": 6,
@@ -77670,7 +77664,6 @@ Array [
         "energy": undefined,
       },
       "tronPower": 0,
-      "unwithdrawnReward": "0",
       "votes": Array [],
     },
     "unitMagnitude": 6,
