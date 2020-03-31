@@ -69,6 +69,7 @@ export const makeSync = (
             ...a,
             spendableBalance: shape.balance || a.balance,
             operationsCount: shape.operationsCount || operations.length,
+            lastSyncDate: new Date(),
             ...shape,
             operations,
             pendingOperations: a.pendingOperations.filter(op =>
