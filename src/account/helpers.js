@@ -206,3 +206,19 @@ export const accountWithMandatoryTokens = (
     subAccounts: subAccounts.concat(addition)
   };
 };
+
+/**
+ * Patch account to enforce the removal of a blacklisted token
+ */
+export const withoutToken = (account: Account, tokenId: string): Account => {
+  const { subAccounts } = account;
+  if (!subAccounts) return account;
+  const tokenAccount = subAccounts.find(
+    a => a.type === "TokenAccount" && a.token.id === tokenId
+  );
+  if (!tokenAccount) return account;
+  return {
+    ...account,
+    subAccounts: subAccounts.filter(sa => sa.id !== tokenAccount.id)
+  };
+};
