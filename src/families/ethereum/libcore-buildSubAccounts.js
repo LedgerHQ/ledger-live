@@ -1,6 +1,11 @@
 // @flow
 
-import type { CryptoCurrency, TokenAccount, Account } from "../../types";
+import type {
+  CryptoCurrency,
+  TokenAccount,
+  Account,
+  SyncConfig
+} from "../../types";
 import type { CoreAccount } from "../../libcore/types";
 import type { CoreERC20LikeAccount } from "./types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
@@ -57,13 +62,16 @@ async function ethereumBuildTokenAccounts({
   currency,
   coreAccount,
   accountId,
-  existingAccount
+  existingAccount,
+  syncConfig
 }: {
   currency: CryptoCurrency,
   coreAccount: CoreAccount,
   accountId: string,
-  existingAccount: ?Account
+  existingAccount: ?Account,
+  syncConfig: SyncConfig
 }): Promise<?(TokenAccount[])> {
+  const { blacklistedTokenIds = [] } = syncConfig;
   if (listTokensForCryptoCurrency(currency).length === 0) return undefined;
   const tokenAccounts = [];
   const ethAccount = await coreAccount.asEthereumLikeAccount();
@@ -79,9 +87,11 @@ async function ethereumBuildTokenAccounts({
   if (existingAccount && existingAccount.subAccounts) {
     for (const existingSubAccount of existingAccount.subAccounts) {
       if (existingSubAccount.type === "TokenAccount") {
-        const { ticker } = existingSubAccount.token;
-        existingAccountTickers.push(ticker);
-        existingAccountByTicker[ticker] = existingSubAccount;
+        const { ticker, id } = existingSubAccount.token;
+        if (!blacklistedTokenIds.includes(id)) {
+          existingAccountTickers.push(ticker);
+          existingAccountByTicker[ticker] = existingSubAccount;
+        }
       }
     }
   }
@@ -92,7 +102,7 @@ async function ethereumBuildTokenAccounts({
   for (const [index, coreTA] of allCoreTAS.entries()) {
     const contractAddress = allCoreTAContractAddresses[index];
     const token = findTokenByAddress(contractAddress);
-    if (token) {
+    if (token && !blacklistedTokenIds.includes(token.id)) {
       tokenAccountData.push({
         token,
         coreTA,

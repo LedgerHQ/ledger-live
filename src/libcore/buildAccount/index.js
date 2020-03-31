@@ -128,7 +128,8 @@ export async function buildAccount({
     coreAccount,
     accountId,
     existingAccount,
-    logId
+    logId,
+    syncConfig
   });
 
   // We have pre-fetched the operations in "partial" mode
