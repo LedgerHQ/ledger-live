@@ -27,6 +27,7 @@ export type State = {
 export type Result = {
   transaction: ?Transaction,
   setTransaction: Transaction => void,
+  updateTransaction: (updater: (Transaction) => Transaction) => void,
   account: ?AccountLike,
   parentAccount: ?Account,
   setAccount: (AccountLike, ?Account) => void,
@@ -98,6 +99,13 @@ const reducer = (s: State, a): State => {
       if (s.transaction === a.transaction) return s;
       return { ...s, transaction: a.transaction };
 
+    case "updateTransaction": {
+      if (!s.transaction) return s;
+      const transaction = a.updater(s.transaction);
+      if (s.transaction === transaction) return s;
+      return { ...s, transaction };
+    }
+
     case "onStatus":
       // if (a.transaction === s.transaction && !s.errorStatus) {
       //   return s;
@@ -149,6 +157,11 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
 
   const setTransaction = useCallback(
     transaction => dispatch({ type: "setTransaction", transaction }),
+    [dispatch]
+  );
+
+  const updateTransaction = useCallback(
+    updater => dispatch({ type: "updateTransaction", updater }),
     [dispatch]
   );
 
@@ -231,6 +244,7 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
   return {
     transaction,
     setTransaction,
+    updateTransaction,
     status,
     account,
     parentAccount,
