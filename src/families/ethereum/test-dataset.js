@@ -10,6 +10,7 @@ import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import ethereumScanAccounts1 from "./datasets/ethereum.scanAccounts.1";
 import ethereum_classic from "./datasets/ethereum_classic";
+import { syncAccount } from "../../__tests__/test-helpers/bridge";
 
 export const ethereum2 = {
   id:
@@ -132,6 +133,35 @@ const dataset: DatasetTest<Transaction> = {
               }
             }
           ],
+          test: async (expect, account, bridge) => {
+            if (account.subAccounts) {
+              const blacklistedTokenIds = [
+                "ethereum/erc20/weth",
+                "ethereum/erc20/amber_token",
+                "ethereum/erc20/ampleforth"
+              ];
+
+              const rawTokenIds = account.subAccounts
+                .map(sa => (sa.type === "TokenAccount" ? sa.token.id : ""))
+                .filter(Boolean);
+
+              const syncedAccount = await syncAccount(bridge, account, {
+                paginationConfig: {},
+                blacklistedTokenIds
+              });
+
+              const filteredTokenIds =
+                syncedAccount.subAccounts &&
+                syncedAccount.subAccounts
+                  .map(sa => (sa.type === "TokenAccount" ? sa.token.id : ""))
+                  .filter(Boolean);
+
+              for (const tokenId of blacklistedTokenIds) {
+                expect(rawTokenIds).toContain(tokenId);
+                expect(filteredTokenIds).not.toContain(tokenId);
+              }
+            }
+          },
           raw: {
             id:
               "libcore:1:ethereum:xpub6BemYiVNp19a1XgWqLcpWd1pBDZTgzPEcVvhR15cpXPVQjuEnrU7fa3TUatX2NbRWNkqx51jmyukisqGokHq5dyK5uYcbwQBF7nJyAdpYZy:",

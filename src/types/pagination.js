@@ -19,5 +19,6 @@ export type PaginationConfig = {
 export type SyncConfig = {
   paginationConfig: PaginationConfig,
   // allows to disable the synchronization part – typically to only paginate more
-  withoutSynchronize?: boolean
+  withoutSynchronize?: boolean,
+  blacklistedTokenIds?: string[]
 };

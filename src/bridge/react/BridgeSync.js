@@ -38,7 +38,9 @@ export type Props = {
   // load all data needed for a currency (it's calling currencyBridge prepare mechanism)
   prepareCurrency: (currency: CryptoCurrency) => Promise<void>,
   // provide an implementation of hydrate (it preload from a local storage impl the data cached from a previous prepare)
-  hydrateCurrency: (currency: CryptoCurrency) => Promise<void>
+  hydrateCurrency: (currency: CryptoCurrency) => Promise<void>,
+  // an array of token ids to blacklist from the account sync
+  blacklistedTokenIds?: string[]
 };
 
 export const BridgeSync = ({
@@ -48,7 +50,8 @@ export const BridgeSync = ({
   recoverError,
   trackAnalytics,
   prepareCurrency,
-  hydrateCurrency
+  hydrateCurrency,
+  blacklistedTokenIds
 }: Props) => {
   useHydrate({
     accounts,
@@ -60,7 +63,8 @@ export const BridgeSync = ({
     prepareCurrency,
     recoverError,
     trackAnalytics,
-    updateAccountWithUpdater
+    updateAccountWithUpdater,
+    blacklistedTokenIds
   });
 
   const sync = useSync({
@@ -114,7 +118,8 @@ function useSyncQueue({
   prepareCurrency,
   recoverError,
   trackAnalytics,
-  updateAccountWithUpdater
+  updateAccountWithUpdater,
+  blacklistedTokenIds
 }) {
   const [bridgeSyncState, setBridgeSyncState]: [BridgeSyncState, *] = useState(
     {}
@@ -185,8 +190,8 @@ function useSyncQueue({
         };
 
         const syncConfig = {
-          // TODO paginationConfig will come from redux
-          paginationConfig: {}
+          paginationConfig: {},
+          blacklistedTokenIds
         };
 
         concat(
@@ -237,7 +242,8 @@ function useSyncQueue({
       recoverError,
       setAccountSyncState,
       trackAnalytics,
-      updateAccountWithUpdater
+      updateAccountWithUpdater,
+      blacklistedTokenIds
     ]
   );
 
