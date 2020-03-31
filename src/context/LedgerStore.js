@@ -11,13 +11,20 @@ import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
 
+const logger = store => next => action => {
+  console.log("dispatching", action);
+  let result = next(action);
+  console.log("next state", store.getState());
+  return result;
+};
+
 const createLedgerStore = () =>
   createStore(
     reducers,
     undefined,
     // $FlowFixMe
     compose(
-      applyMiddleware(thunk),
+      applyMiddleware(thunk, logger),
       typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"
         ? __REDUX_DEVTOOLS_EXTENSION__()
         : f => f,

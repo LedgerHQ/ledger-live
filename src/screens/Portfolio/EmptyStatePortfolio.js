@@ -41,9 +41,15 @@ class EmptyStatePortfolio extends PureComponent<Props, State> {
   render() {
     const { navigation, hasInstalledAnyApp } = this.props;
     const { isAddModalOpened } = this.state;
+
     return (
       <View style={styles.root}>
         <View style={styles.body}>
+          <LText secondary semiBold style={styles.title}>
+            {!hasInstalledAnyApp
+              ? "no app installed, seeing this"
+              : "no accounts yet"}
+          </LText>
           <EmptyAccountsIllustration />
           <LText secondary semiBold style={styles.title}>
             {<Trans i18nKey="portfolio.emptyState.title" />}

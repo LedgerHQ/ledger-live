@@ -99,8 +99,7 @@ class PortfolioScreen extends Component<
   };
 
   ListEmptyComponent = () => {
-    const { accounts } = this.props;
-    const { navigation } = this.props;
+    const { accounts, navigation } = this.props;
 
     if (accounts.length === 0) {
       return <EmptyStatePortfolio navigation={navigation} />;

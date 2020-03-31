@@ -7,16 +7,17 @@ import {
   ScrollView,
 } from "react-native";
 import ReactNativeModal from "react-native-modal";
-
+import { useDispatch, useSelector } from "react-redux";
 import i18next from "i18next";
 import { Trans } from "react-i18next";
 
+import { listTokens } from "@ledgerhq/live-common/lib/currencies";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
 
-import { listTokens } from "@ledgerhq/live-common/lib/currencies";
-
+import { installAppFirstTime } from "../../../actions/settings";
+import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import Button from "../../../components/Button";
 
 import SearchIcon from "../../../icons/Search";
@@ -178,6 +179,8 @@ export default ({
 }: Props) => {
   const textInput = useRef();
   const listRef = useRef();
+  const reduxDispatch = useDispatch();
+  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
   const [isOpened, setIsOpen] = useState(false);
   const [depInstall, setDepsInstall] = useState();
   const [depUninstall, setDepsUninstall] = useState();
@@ -231,10 +234,13 @@ export default ({
 
   const onInstall = useCallback(
     name => {
+      if (!hasInstalledAnyApp) {
+        reduxDispatch(installAppFirstTime(true));
+      }
       dispatch({ type: "install", name });
       setIsOpen(false);
     },
-    [dispatch],
+    [dispatch, reduxDispatch, hasInstalledAnyApp],
   );
 
   const NoResult = useMemo(

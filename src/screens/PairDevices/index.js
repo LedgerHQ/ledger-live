@@ -115,14 +115,15 @@ class PairDevices extends Component<Props, State> {
           .subscribe({
             next: e => {
               if (e.type === "result") {
-                const hasAnyAppInstalled =
-                  e.result && e.result.installed.length > 0;
+                if (!hasCompletedOnboarding) {
+                  const hasAnyAppInstalled =
+                    e.result && e.result.installed.length > 0;
 
-                if (!hasAnyAppInstalled && !hasCompletedOnboarding) {
-                  installAppFirstTime(false);
+                  if (!hasAnyAppInstalled) {
+                    installAppFirstTime(false);
+                  }
                 }
 
-                installAppFirstTime(true);
                 return;
               }
               this.setState({
