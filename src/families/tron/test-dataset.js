@@ -26,6 +26,9 @@ const dataset: DatasetTest<Transaction> = {
   implementations: ["tronjs"],
   currencies: {
     tron: {
+      FIXME_ignoreAccountFields: [
+        "tronResources.unwithdrawnReward" // it changes every vote cycles
+      ],
       scanAccounts: [
         {
           name: "tron seed 1",
@@ -93,6 +96,27 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
                 totalSpent: BigNumber("1606000"),
                 estimatedFees: BigNumber("0")
+              }
+            },
+            {
+              name: "useAllAmountToUnactivatedAddressSuccess",
+              transaction: fromTransactionRaw({
+                family: "tron",
+                recipient: "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD",
+                amount: "0",
+                useAllAmount: true,
+                networkInfo: null,
+                mode: "send",
+                duration: undefined,
+                resource: undefined,
+                votes: []
+              }),
+              expectedStatus: {
+                amount: BigNumber("1506000"),
+                errors: {},
+                warnings: {},
+                totalSpent: BigNumber("1606000"),
+                estimatedFees: BigNumber("100000")
               }
             },
             {
