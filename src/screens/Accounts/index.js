@@ -1,8 +1,7 @@
 // @flow
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-// $FlowFixMe
 import { FlatList } from "react-navigation";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
@@ -60,15 +59,15 @@ class Accounts extends Component<Props> {
 
     if (accounts.length === 0) {
       return (
-        <Fragment>
+        <>
           <TrackScreen category="Accounts" accountsLength={0} />
           <NoAccounts navigation={navigation} />
-        </Fragment>
+        </>
       );
     }
 
     return (
-      <Fragment>
+      <>
         <TrackScreen category="Accounts" accountsLength={accounts.length} />
         <List
           data={accounts}
@@ -78,7 +77,7 @@ class Accounts extends Component<Props> {
           contentContainerStyle={styles.contentContainer}
         />
         <MigrateAccountsBanner />
-      </Fragment>
+      </>
     );
   }
 }
