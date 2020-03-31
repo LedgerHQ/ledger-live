@@ -51,7 +51,15 @@
     "update": "Update available",
     "install": "Install",
     "installed": "Installed",
-    "uninstall": "Uninstall"
+    "uninstall": "Uninstall",
+    "fromNow": {
+      "minutes": "in one minute",
+      "minutes_plural": "in {{time}} minutes",
+      "hours": "in one hour",
+      "hours_plural": "in {{time}} hours",
+      "days": "in one day",
+      "days_plural": "in {{time}} days"
+    }
   },
   "errors": {
     "AccountNameRequired": {
@@ -615,7 +623,11 @@
       "CREATE": "Created",
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
-      "UNDELEGATE": "Undelegated"
+      "UNDELEGATE": "Undelegated",
+      "VOTE": "Voted",
+      "FREEZE": "Frozen",
+      "UNFREEZE": "Unfrozen",
+      "REWARD": "Claimed reward"
     }
   },
   "operationDetails": {
@@ -645,7 +657,12 @@
     },
     "details": "{{ currency }} details",
     "extra": {
-      "tag": "Tag"
+      "resource": "Resource",
+      "frozenAmount": "Frozen amount",
+      "unfreezeAmount": "Unfreeze amount",
+      "address": "Address",
+      "votes": "Votes ({{number}})",
+      "votesAddress": "<0>TP {{votes}}</0> to <0>{{name}}</0>"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -676,6 +693,7 @@
     },
     "send": "Send",
     "receive": "Receive",
+    "manage": "Manage",
     "lastOperations": "Last operations",
     "emptyState": {
       "title": "No crypto assets yet?",
@@ -750,7 +768,11 @@
         "desc": "Please enable Camera in Settings to scan QR codes",
         "buttonTitle": "Go to Settings"
       }
-    }
+    },
+    "availableBalance": "TRX available",
+    "tronFrozen": "Frozen",
+    "bandwidth": "Bandwidth",
+    "energy": "Energy"
   },
   "accounts": {
     "title": "Accounts",
@@ -1036,6 +1058,82 @@
         "title": "Choose Unit"
       },
       "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH"
+    }
+  },
+  "freeze": {
+    "stepperHeader": {
+      "info": "Earn rewards",
+      "selectAmount": "Freeze",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "info": {
+      "description": "Freeze your TRX to earn rewards while keeping full security and control of your assets.",
+      "steps": {
+        "0": "Frozen assets stay yours.",
+        "1": "You can unfreeze your assets after 3 days.",
+        "2": "Freeze and vote securely with your Ledger device."
+      },
+      "howVotingWorks": "How voting works",
+      "cta": "Continue"
+    },
+    "amount": {
+      "available": "Total available",
+      "loadingNetwork": "Loading Network fees...",
+      "noRateProvider": "Not available",
+      "infoLabel": "Bandwidth or energy"
+    },
+    "validation": {
+      "message": "Always verify that your device displays the address exactly as provided",
+      "success": "Assets frozen",
+      "amount": "Amount",
+      "info": "You will start earning {{resource}} once the network has confirmed the freeze. You can shortly vote for Super Representatives to also earn rewards.",
+      "button": {
+        "pending": "Transaction under validation",
+        "pendingDesc": "You have to wait 1 minute before being able to vote",
+        "vote": "Vote",
+        "voteTimer": "0:{{time}}",
+        "later": "I'll vote later",
+        "retry": "Retry"
+      }
+    }
+  },
+  "unfreeze": {
+    "stepperHeader": {
+      "selectAmount": "Unfreeze",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "amount": {
+      "title": "Select the kind of asset to unfreeze",
+      "info": "Unfreezing will decrease your {{resource}} and will cancel your votes.",
+      "cta": "Continue"
+    },
+    "validation": {
+      "success": "Your assets have been unfrozen successfully.",
+      "info": "Your Bandwidth points will be decreased and your votes will be canceled.",
+      "button": {
+        "done": "Done",
+        "cta": "See details"
+      }
+    }
+  },
+  "claimReward": {
+    "stepperHeader": {
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "validation": {
+      "success": "Your rewards have been added to your balance.",
+      "button": {
+        "done": "Done",
+        "cta": "See details"
+      }
     }
   },
   "addAccounts": {
@@ -1355,6 +1453,84 @@
       "btn": "Earn rewards"
     }
   },
+  "tron": {
+    "voting": {
+      "earnRewars": "Earn rewards",
+      "delegationEarn": "You can now earn rewards by freezing and voting.",
+      "howItWorks": "How voting works",
+      "startEarning": "Earn rewards",
+      "manageTP": "Manage Tron Power",
+      "title": "Claim rewards",
+      "header": "Votes ({{total}})",
+      "Amount": "Amount",
+      "percentageTP": "% of used TP",
+      "noRewards": "No rewards available",
+      "votes": {
+        "title": "Votes",
+        "description": "Cast your votes for one or more representatives to start earning staking rewards.",
+        "cta": "Vote"
+      },
+      "rewards": {
+        "title": "Voting rewards",
+        "button": "Claim"
+      },
+      "manageVotes": "Manage votes",
+      "remainingVotes": {
+        "title": "You still have {{amount}}TP remaining",
+        "description": "You didn't use all of your frozen assets to vote for a SR.",
+        "button": "Vote now"
+      },
+      "flow": {
+        "steps": {
+          "starter": {
+            "title": "Earn staking rewards",
+            "description": "Delegate TRX to a third party candidate to earn staking rewards. Click on continue to freeze assets and vote.",
+            "bullet": {
+              "delegate": "Delegated assets stay yours.",
+              "access": "You can access your assets 3 days after you froze them.",
+              "ledger": "Delegate securely with your Ledger device."
+            },
+            "button": {
+              "cta": "Continue"
+            }
+          }
+        }
+      }
+    },
+    "manage": {
+      "title": "Manage Tron Power",
+      "freeze": {
+        "title": "Freeze",
+        "description": "Freeze TRX to earn Bandwidth or Energy. You'll also earn TRON Power to vote for Super Representatives."
+      },
+      "unfreeze": {
+        "title": "Unfreeze",
+        "description": "Unfreeze TRX if you want to spend them. You will stop earning rewards and TRON Power to vote with."
+      },
+      "vote": {
+        "title": "Vote",
+        "description": "Cast votes for Super Representatives using your TRON Power to earn TRX rewards."
+      }
+    },
+    "info": {
+      "available": {
+        "title": "TRX available",
+        "description": "This amount can be sent anytime."
+      },
+      "frozen": {
+        "title": "Frozen",
+        "description": "This amount is available 3 days after you have unfrozen it."
+      },
+      "bandwidth": {
+        "title": "Bandwidth",
+        "description": "Bandwidth points are used to make transactions without paying TRX for network fees. Choose Bandwidth to increase your daily free transactions."
+      },
+      "energy": {
+        "title": "Energy",
+        "description": "Energy Points are used when executing smart contracts. As such freezing TRX for Energy will allow you to avoid additional fees when interacting with a smart contract."
+      }
+    }
+  },
   "delegation": {
     "overdelegated": "Overdelegated",
     "delegationSendWarnDesc": "The amount to be sent will be deducted from the balance of your delegated account.",
@@ -1409,12 +1585,27 @@
     "howDelegationWorks": "How delegation works"
   },
   "ValidateOnDevice": {
-    "title": "Please confirm the operation on your {{productName}} to send it",
-    "warning": "Always verify that your device displays the address exactly as provided by the {{recipientWording}}",
+    "title": {
+      "send": "Please confirm the operation on your {{productName}} to send it",
+      "freeze": "Please confirm the operation on your device to freeze assets",
+      "unfreeze": "Please confirm the operation on your device to unfreeze assets",
+      "claimReward": "Please confirm the operation on your device to claim your rewards"
+    },
+    "warning": "Always verify that your device displays the address exactly as provided{{recipientWording}}",
     "recipientWording": {
-      "send": "recipient",
-      "delegate": "validator",
-      "undelegate": "validator"
+      "send": "by the recipient",
+      "delegate": "by the validator",
+      "undelegate": "by the validator",
+      "freeze": "",
+      "unfreeze": "",
+      "claimReward": ""
+    },
+    "address": "Address",
+    "resource": "Resource",
+    "infoWording": {
+      "freeze": "Frozen tokens are \"locked\" for a period of 3 days",
+      "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be canceled",
+      "claimReward": "Rewards can be claimed once every 24 hours."
     }
   },
   "Terms": {
