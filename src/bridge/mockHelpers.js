@@ -82,7 +82,7 @@ export const signOperation: $PropertyType<
 
       o.next({ type: "device-signature-granted" });
 
-      const rng = new Prando();
+      const rng = new Prando("");
       const op = genOperation(account, account, account.operations, rng);
       op.type = "OUT";
       op.value = transaction.amount;

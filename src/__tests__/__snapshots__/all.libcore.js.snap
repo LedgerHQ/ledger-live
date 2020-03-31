@@ -76973,7 +76973,7 @@ Array [
     "tronResources": Object {
       "bandwidth": Object {
         "freeLimit": "5000",
-        "freeUsed": "183",
+        "freeUsed": "34",
         "gainedLimit": "0",
         "gainedUsed": "0",
       },
@@ -76990,7 +76990,7 @@ Array [
         },
       },
       "tronPower": 26,
-      "unwithdrawnReward": "169522",
+      "unwithdrawnReward": "171223",
       "votes": Array [
         Object {
           "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
