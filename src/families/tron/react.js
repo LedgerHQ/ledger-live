@@ -134,7 +134,7 @@ export function useSortedSr(
         name: sr.name,
         address: sr.address,
         rank: rank + 1,
-        isSR: rank <= SR_THRESHOLD
+        isSR: rank < SR_THRESHOLD
       })),
     [superRepresentatives]
   );
