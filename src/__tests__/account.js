@@ -105,7 +105,7 @@ test("accountWithMandatoryTokens ethereum", () => {
   expect((enhance.subAccounts || []).map(a => a.id)).toMatchSnapshot();
 });
 
-test("withoutToken", () => {
+test("withoutToken ethereum", () => {
   const isTokenAccount = (account, tokenId) =>
     account.type === "TokenAccount" && account.token.id === tokenId;
 
@@ -116,6 +116,41 @@ test("withoutToken", () => {
     "ethereum/erc20/huobitoken"
   ];
   const currency = getCryptoCurrencyById("ethereum");
+  const account = genAccount("", { currency, subAccountsCount: 0 });
+
+  //Enhance the account with some tokens
+  const enhance = accountWithMandatoryTokens(
+    account,
+    tokenIds.map(getTokenById)
+  );
+
+  //Get a version of that account without all the tokens
+  let demote = enhance;
+  for (const tokenId of tokenIds) {
+    demote = withoutToken(demote, tokenId);
+  }
+
+  const saTokens = enhance.subAccounts || [];
+  const saNoTokens = demote.subAccounts || [];
+
+  //See if we have added/removed them correctly
+  for (const tokenId of tokenIds) {
+    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
+    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
+  }
+});
+
+test("withoutToken tron", () => {
+  const isTokenAccount = (account, tokenId) =>
+    account.type === "TokenAccount" && account.token.id === tokenId;
+
+  const tokenIds = [
+    "tron/trc10/1002000",
+    "tron/trc10/1002398",
+    "tron/trc10/1000226",
+    "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+  ];
+  const currency = getCryptoCurrencyById("tron");
   const account = genAccount("", { currency, subAccountsCount: 0 });
 
   //Enhance the account with some tokens

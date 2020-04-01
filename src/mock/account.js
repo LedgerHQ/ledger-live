@@ -137,7 +137,23 @@ const hardcodedMarketcap = [
   "ethereum/erc20/bancor",
   "ethereum/erc20/bread",
   "ethereum/erc20/powerledger",
-  "ethereum/erc20/telcoin"
+  "ethereum/erc20/telcoin",
+  "tron/trc10/1002000",
+  "tron/trc10/1002398",
+  "tron/trc10/1000226",
+  "tron/trc10/1002517",
+  "tron/trc10/1002544",
+  "tron/trc10/1002573",
+  "tron/trc10/1002597",
+  "tron/trc10/1002672",
+  "tron/trc10/1002736",
+  "tron/trc10/1002798",
+  "tron/trc10/1002578",
+  "tron/trc10/1002845",
+  "tron/trc10/1002775",
+  "tron/trc10/1002858",
+  "tron/trc10/1002876",
+  "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
 ];
 
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
@@ -291,6 +307,7 @@ function genTokenAccount(
     hardcodedMarketcap.includes(t.id)
   );
   const token = rng.nextArrayItem(tokens);
+
   const tokenAccount = {
     type: "TokenAccount",
     starred: false,
@@ -352,7 +369,7 @@ export function genAccount(
     lastSyncDate: new Date()
   };
 
-  if (currency.id === "ethereum" || currency.id === "ethereum_ropsten") {
+  if (["ethereum", "ethereum_ropsten", "tron"].includes(currency.id)) {
     const tokenCount =
       typeof opts.subAccountsCount === "number"
         ? opts.subAccountsCount
