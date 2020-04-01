@@ -12,6 +12,7 @@ import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import noAccountsImg from "../../images/noAccounts.png";
 import noAppsImg from "../../images/noApps.png";
 import HelpLink from "../../components/HelpLink";
+import { urls } from "../../config/urls";
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -38,7 +39,10 @@ const EmptyStatePortfolio = ({ navigation, showHelp = true }: Props) => {
     <>
       {showHelp ? (
         <View style={styles.help}>
-          <HelpLink color={colors.grey} />
+          <HelpLink
+            url={hasInstalledAnyApp ? urls.addAccount : urls.goToManager}
+            color={colors.grey}
+          />
         </View>
       ) : null}
       <View style={styles.root}>
