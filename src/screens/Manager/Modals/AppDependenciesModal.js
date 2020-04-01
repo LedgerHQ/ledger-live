@@ -1,4 +1,5 @@
 import React, { memo, useMemo, useCallback } from "react";
+import { compose } from "redux";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
@@ -44,10 +45,6 @@ const AppDependenciesModal = ({
     if (!hasInstalledAnyApp) {
       installAppFirstTime(true);
     }
-    dispatch({
-      type: "SETTINGS_INSTALL_APP_FIRST_TIME",
-      hasInstalledAnyApp: true,
-    });
     dispatch({ type: "install", name });
     onClose();
   }, [dispatch, onClose, name, hasInstalledAnyApp, installAppFirstTime]);
@@ -154,4 +151,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(AppDependenciesModal);
+export default compose(
+  connect(
+    mapStateToProps,
+    { installAppFirstTime },
+  ),
+  memo,
+)(AppDependenciesModal);
