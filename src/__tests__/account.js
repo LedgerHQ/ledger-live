@@ -7,7 +7,8 @@ import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   shortAddressPreview,
-  accountWithMandatoryTokens
+  accountWithMandatoryTokens,
+  withoutToken
 } from "../account";
 import { genAccount } from "../mock/account";
 
@@ -102,4 +103,39 @@ test("accountWithMandatoryTokens ethereum", () => {
     subAccounts: []
   });
   expect((enhance.subAccounts || []).map(a => a.id)).toMatchSnapshot();
+});
+
+test("withoutToken", () => {
+  const isTokenAccount = (account, tokenId) =>
+    account.type === "TokenAccount" && account.token.id === tokenId;
+
+  const tokenIds = [
+    "ethereum/erc20/0x_project",
+    "ethereum/erc20/leo_token",
+    "ethereum/erc20/cro",
+    "ethereum/erc20/huobitoken"
+  ];
+  const currency = getCryptoCurrencyById("ethereum");
+  const account = genAccount("", { currency, subAccountsCount: 0 });
+
+  //Enhance the account with some tokens
+  const enhance = accountWithMandatoryTokens(
+    account,
+    tokenIds.map(getTokenById)
+  );
+
+  //Get a version of that account without all the tokens
+  let demote = enhance;
+  for (const tokenId of tokenIds) {
+    demote = withoutToken(demote, tokenId);
+  }
+
+  const saTokens = enhance.subAccounts || [];
+  const saNoTokens = demote.subAccounts || [];
+
+  //See if we have added/removed them correctly
+  for (const tokenId of tokenIds) {
+    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
+    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
+  }
 });
