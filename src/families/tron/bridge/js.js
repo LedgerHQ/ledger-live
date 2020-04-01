@@ -235,7 +235,7 @@ const broadcast = async ({
   return operation;
 };
 
-const getAccountShape = async info => {
+const getAccountShape = async (info, syncConfig) => {
   const blockHeight = await fetchCurrentBlockHeight();
   const tronAcc = await fetchTronAccount(info.address);
 
@@ -291,8 +291,10 @@ const getAccountShape = async info => {
   // TRC10 and TRC20 accounts
   const subAccounts: SubAccount[] = compact(
     trc10Tokens.concat(trc20Tokens).map(({ type, key, value }) => {
-      const token = findTokenById(`tron/${type}/${key}`);
-      if (!token) return;
+      const { blacklistedTokenIds = [] } = syncConfig;
+      const tokenId = `tron/${type}/${key}`;
+      const token = findTokenById(tokenId);
+      if (!token || blacklistedTokenIds.includes(tokenId)) return;
       const id = info.id + "+" + key;
       const tokenTxs = txs.filter(tx => tx.tokenId === key);
       const operations = compact(
