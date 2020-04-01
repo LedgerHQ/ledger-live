@@ -209,30 +209,27 @@ export async function fetchTronAccountTxs(
       return resultsWithTxInfo;
     });
 
-  const getEntireTxs = async (url: string) => {
-    const response = await getTxs(url);
-
-    if (shouldFetchMoreTxs(response.results) && response.nextUrl) {
-      const nextResponse = await getEntireTxs(response.nextUrl);
-      return {
-        results: response.results.concat(nextResponse.results),
-        nextUrl: nextResponse.nextUrl
-      };
-    } else {
-      return response;
+  const getEntireTxs = async (initialUrl: string) => {
+    let all = [];
+    let url = initialUrl;
+    while (url && shouldFetchMoreTxs(all)) {
+      const { nextUrl, results } = await getTxs(url);
+      url = nextUrl;
+      all = all.concat(results);
     }
+    return all;
   };
 
   const entireTxs = (
     await getEntireTxs(
       `${baseApiUrl}/v1/accounts/${addr}/transactions?limit=100`
     )
-  ).results.map(tx => formatTrongridTxResponse(tx));
+  ).map(tx => formatTrongridTxResponse(tx));
 
   // we need to fetch and filter trc20 'IN' transactions from another endpoint
   const entireTrc20InTxs = (
     await getEntireTxs(`${baseApiUrl}/v1/accounts/${addr}/transactions/trc20`)
-  ).results
+  )
     .filter(tx => tx.to === addr)
     .map(tx => formatTrongridTxResponse(tx, true));
 

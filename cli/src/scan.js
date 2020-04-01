@@ -181,7 +181,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
 
   const syncConfig = { paginationConfig: {} };
 
-  if (paginateOperations) {
+  if (typeof paginateOperations === "number") {
     syncConfig.paginationConfig.operations = paginateOperations;
   }
 
