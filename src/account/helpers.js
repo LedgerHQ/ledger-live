@@ -91,6 +91,10 @@ export function clearAccount<T: AccountLike>(account: T): T {
 
   return {
     ...account,
+    tronResources: account.tronResources && {
+      ...account.tronResources,
+      cacheTransactionInfoById: {}
+    },
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],

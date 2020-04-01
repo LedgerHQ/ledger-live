@@ -132,6 +132,10 @@ export const inferManagerApp = (keyword: string): string => {
   }
 };
 
+const implTypePerFamily = {
+  tron: "js"
+};
+
 export const inferCurrency = <
   T: {
     device: string,
@@ -230,7 +234,10 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               seedIdentifier: xpub,
               starred: true,
               id: encodeAccountId({
-                type: getEnv("BRIDGE_FORCE_IMPLEMENTATION") || "libcore",
+                type:
+                  getEnv("BRIDGE_FORCE_IMPLEMENTATION") ||
+                  implTypePerFamily[cur.family] ||
+                  "libcore",
                 version: "1",
                 currencyId: cur.id,
                 xpubOrAddress: xpub,

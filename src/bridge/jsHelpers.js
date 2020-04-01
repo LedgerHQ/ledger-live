@@ -29,7 +29,7 @@ import getAddress from "../hw/getAddress";
 import { open } from "../hw";
 
 type GetAccountShape = (
-  { address: string, id: string },
+  { address: string, id: string, initialAccount?: Account },
   SyncConfig
 ) => Promise<$Shape<Account>>;
 
@@ -59,7 +59,8 @@ export const makeSync = (
         const shape = await getAccountShape(
           {
             id: initial.id,
-            address: initial.freshAddress
+            address: initial.freshAddress,
+            initialAccount: initial
           },
           syncConfig
         );
