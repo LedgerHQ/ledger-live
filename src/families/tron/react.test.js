@@ -3,13 +3,20 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import {
   useTronSuperRepresentatives,
   useNextVotingDate,
+  getLastVotedDate,
   getNextRewardDate,
   formatVotes,
   useSortedSr,
   useVotesReducer
 } from "./react";
 
-import { __NEXT_REWARD_DATE__, mockAccount, mockAccountNoReward } from "./mock";
+import {
+  __NEXT_REWARD_DATE__,
+  __LAST_VOTING_DATE__,
+  mockAccount,
+  mockAccountNoReward,
+  mockAccountNoVote
+} from "./mock";
 
 jest.mock("../../api/Tron");
 
@@ -32,6 +39,11 @@ test("Tron next voting date hook - useNextVotingDate - Expect to get next voting
   process.nextTick(() =>
     expect(result.current).toBe(__NEXT_VOTING_DATE__.valueOf())
   );
+});
+
+test("Tron get last voting date - getLastVotedDate - Expect to get last voted date", () => {
+  expect(getLastVotedDate(mockAccount)).toStrictEqual(__LAST_VOTING_DATE__);
+  expect(getLastVotedDate(mockAccountNoVote)).toStrictEqual(null);
 });
 
 test("Tron get next reward date - getNextRewardDate - Expect to get next reward date", () => {

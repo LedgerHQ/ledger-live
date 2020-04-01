@@ -54,6 +54,19 @@ export const useNextVotingDate = (): ?number => {
   return nextVotingDate;
 };
 
+/** Get last time voted */
+export const getLastVotedDate = (account: Account): ?Date => {
+  const { operations } = account;
+  const lastOp = operations.find(({ type }) => type === "VOTE");
+
+  if (lastOp) {
+    const { date } = lastOp;
+    return date;
+  }
+
+  return null;
+};
+
 /** Get next available date to claim rewards */
 export const getNextRewardDate = (account: Account): ?number => {
   const { operations } = account;
