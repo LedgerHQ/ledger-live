@@ -144,12 +144,23 @@ export const toTronResourcesRaw = ({
   tronPower,
   energy,
   bandwidth,
-  unwithdrawnReward
+  unwithdrawnReward,
+  cacheTransactionInfoById: cacheTx
 }: TronResources): TronResourcesRaw => {
   const frozenBandwidth = frozen.bandwidth;
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
+  const cacheTransactionInfoById = {};
+  for (let k in cacheTx) {
+    const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
+    cacheTransactionInfoById[k] = [
+      fee,
+      blockNumber,
+      withdraw_amount,
+      unfreeze_amount
+    ];
+  }
 
   return {
     frozen: {
@@ -189,7 +200,8 @@ export const toTronResourcesRaw = ({
       gainedUsed: bandwidth.gainedUsed.toString(),
       gainedLimit: bandwidth.gainedLimit.toString()
     },
-    unwithdrawnReward: unwithdrawnReward.toString()
+    unwithdrawnReward: unwithdrawnReward.toString(),
+    cacheTransactionInfoById
   };
 };
 
@@ -200,12 +212,30 @@ export const fromTronResourcesRaw = ({
   tronPower,
   energy,
   bandwidth,
-  unwithdrawnReward
+  unwithdrawnReward,
+  cacheTransactionInfoById: cacheTransactionInfoByIdRaw
 }: TronResourcesRaw): TronResources => {
   const frozenBandwidth = frozen.bandwidth;
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
+  const cacheTransactionInfoById = {};
+  if (cacheTransactionInfoByIdRaw) {
+    for (let k in cacheTransactionInfoByIdRaw) {
+      const [
+        fee,
+        blockNumber,
+        withdraw_amount,
+        unfreeze_amount
+      ] = cacheTransactionInfoByIdRaw[k];
+      cacheTransactionInfoById[k] = {
+        fee,
+        blockNumber,
+        withdraw_amount,
+        unfreeze_amount
+      };
+    }
+  }
   return {
     frozen: {
       bandwidth: frozenBandwidth
@@ -244,7 +274,8 @@ export const fromTronResourcesRaw = ({
       gainedUsed: BigNumber(bandwidth.gainedUsed),
       gainedLimit: BigNumber(bandwidth.gainedLimit)
     },
-    unwithdrawnReward: BigNumber(unwithdrawnReward)
+    unwithdrawnReward: BigNumber(unwithdrawnReward),
+    cacheTransactionInfoById
   };
 };
 

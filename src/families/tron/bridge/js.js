@@ -246,9 +246,23 @@ const getAccountShape = async (info, syncConfig) => {
   const acc = tronAcc[0];
   const spendableBalance = acc.balance ? BigNumber(acc.balance) : BigNumber(0);
 
-  const txs = await fetchTronAccountTxs(info.address, txs => txs.length < 1000);
+  const cacheTransactionInfoById = {
+    ...(info.initialAccount &&
+      info.initialAccount.tronResources &&
+      info.initialAccount.tronResources.cacheTransactionInfoById)
+  };
 
-  const tronResources = await getTronResources(acc, txs);
+  const txs = await fetchTronAccountTxs(
+    info.address,
+    txs => txs.length < 1000,
+    cacheTransactionInfoById
+  );
+
+  const tronResources = await getTronResources(
+    acc,
+    txs,
+    cacheTransactionInfoById
+  );
 
   const balance = spendableBalance
     .plus(

@@ -12,7 +12,8 @@ import type {
   BandwidthInfo,
   SuperRepresentative,
   SuperRepresentativeData,
-  TronResources
+  TronResources,
+  TronTransactionInfo
 } from "../families/tron/types";
 import type { Account, SubAccount } from "../types";
 import {
@@ -172,17 +173,19 @@ export async function fetchCurrentBlockHeight() {
 }
 
 // For the moment, fetching transaction info is the only way to get fees from a transaction
-function fetchTronTxDetail(txId: string) {
-  return fetch(
+async function fetchTronTxDetail(txId: string): Promise<TronTransactionInfo> {
+  const { fee, blockNumber, withdraw_amount, unfreeze_amount } = await fetch(
     `${baseApiUrl}/wallet/gettransactioninfobyid?value=${encodeURIComponent(
       txId
     )}`
   );
+  return { fee, blockNumber, withdraw_amount, unfreeze_amount };
 }
 
 export async function fetchTronAccountTxs(
   addr: string,
-  shouldFetchMoreTxs: (Object[]) => boolean
+  shouldFetchMoreTxs: (Object[]) => boolean,
+  cacheTransactionInfoById: { [_: string]: TronTransactionInfo }
 ): Promise<TrongridTxInfo[]> {
   const getTxs = async (url: string) =>
     fetch(url).then(resp => {
@@ -195,7 +198,10 @@ export async function fetchTronAccountTxs(
           if (!tx.txID) {
             return tx;
           }
-          const detail = await fetchTronTxDetail(tx.txID);
+          const detail =
+            cacheTransactionInfoById[tx.txID] ||
+            (await fetchTronTxDetail(tx.txID));
+          cacheTransactionInfoById[tx.txID] = detail;
           return { ...tx, detail };
         }
       ).then(results => ({ results, nextUrl }));
@@ -218,7 +224,9 @@ export async function fetchTronAccountTxs(
   };
 
   const entireTxs = (
-    await getEntireTxs(`${baseApiUrl}/v1/accounts/${addr}/transactions`)
+    await getEntireTxs(
+      `${baseApiUrl}/v1/accounts/${addr}/transactions?limit=100`
+    )
   ).results.map(tx => formatTrongridTxResponse(tx));
 
   // we need to fetch and filter trc20 'IN' transactions from another endpoint
@@ -428,7 +436,8 @@ export const extractBandwidthInfo = (
 
 export const getTronResources = async (
   acc: Object,
-  txs: TrongridTxInfo[]
+  txs: TrongridTxInfo[],
+  cacheTransactionInfoById: { [_: string]: TronTransactionInfo }
 ): Promise<TronResources> => {
   const frozenBandwidth = get(acc, "frozen[0]", undefined);
   const frozenEnergy = get(
@@ -522,7 +531,8 @@ export const getTronResources = async (
     delegatedFrozen,
     votes,
     tronPower,
-    unwithdrawnReward
+    unwithdrawnReward,
+    cacheTransactionInfoById
   };
 };
 

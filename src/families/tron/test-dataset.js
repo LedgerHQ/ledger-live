@@ -27,6 +27,7 @@ const dataset: DatasetTest<Transaction> = {
   currencies: {
     tron: {
       FIXME_ignoreAccountFields: [
+        "tronResources.cacheTransactionInfoById", // this is a cache, don't save it
         "tronResources.unwithdrawnReward" // it changes every vote cycles
       ],
       scanAccounts: [
