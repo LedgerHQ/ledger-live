@@ -184,7 +184,7 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
             <Header count={formattedVotes.length} onPress={onManageVotes} />
             <View style={[styles.container, styles.noPadding]}>
               {formattedVotes.map(
-                ({ validator, address, voteCount }, index) => (
+                ({ validator, address, voteCount, isSR }, index) => (
                   <Row
                     key={index}
                     validator={validator}
@@ -192,7 +192,7 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
                     amount={voteCount}
                     duration={lastDate}
                     explorerView={explorerView}
-                    superRepresentatives={superRepresentatives}
+                    isSR={isSR}
                   />
                 ),
               )}

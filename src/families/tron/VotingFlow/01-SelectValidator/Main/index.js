@@ -6,6 +6,7 @@ import { SectionList } from "react-navigation";
 import type { SuperRepresentative } from "@ledgerhq/live-common/lib/families/tron/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 
+import { Trans } from "react-i18next";
 import colors from "../../../../../colors";
 import CheckBox from "../../../../../components/CheckBox";
 import LText from "../../../../../components/LText";
@@ -13,7 +14,6 @@ import Trophy from "../../../../../icons/Trophy";
 import Medal from "../../../../../icons/Medal";
 import { getIsVoted, useSelectValidatorContext } from "../utils";
 import SelectValidatorSearchBox from "./SearchBox";
-import { Trans } from "react-i18next";
 
 type ItemProps = {
   item: {

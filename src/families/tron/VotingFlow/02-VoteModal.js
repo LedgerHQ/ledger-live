@@ -11,12 +11,14 @@ import { Trans } from "react-i18next";
 
 import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
 
+import { Switch } from "react-native-gesture-handler";
 import BottomModal from "../../../components/BottomModal";
 import Button from "../../../components/Button";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
 import Close from "../../../icons/Close";
 import Trash from "../../../icons/Trash";
+import Check from "../../../icons/Check";
 
 type Props = {
   vote: Vote,
@@ -41,6 +43,8 @@ const VoteModal = ({
 
   const [value, setValue] = useState(voteCount);
 
+  const [useAllAmount, setUseAllAmount] = useState(false);
+
   const { current: votesAvailable } = useRef(
     tronPower -
       votes
@@ -51,9 +55,15 @@ const VoteModal = ({
   const handleChange = useCallback(
     text => {
       setValue(parseInt(text || "0", 10));
+      setUseAllAmount(false);
     },
     [setValue],
   );
+
+  const toggleUseAllAmount = useCallback(() => {
+    handleChange(!useAllAmount ? votesAvailable : 0);
+    setUseAllAmount(!useAllAmount);
+  }, [handleChange, useAllAmount, votesAvailable]);
 
   const onContinue = useCallback(
     () => onChange({ address, voteCount: value }),
@@ -104,28 +114,71 @@ const VoteModal = ({
           />
         </View>
         <View style={styles.bottomWrapper}>
-          <View style={styles.available}>
-            {error && value <= 0 ? (
-              <LText style={[styles.availableAmount, styles.error]}>
-                <Trans i18nKey="vote.castVotes.votesRequired" />
-              </LText>
-            ) : null}
-            <LText style={[styles.availableAmount, error ? styles.error : {}]}>
-              <Trans
-                i18nKey="vote.castVotes.votesRemaining"
-                values={{ total: votesRemaining }}
-              >
+          <View style={[styles.availableRow, styles.row]}>
+            <View style={styles.available}>
+              {error && value <= 0 ? (
+                <LText style={[styles.availableAmount, styles.error]}>
+                  <Trans i18nKey="vote.castVotes.votesRequired" />
+                </LText>
+              ) : null}
+              {error ? (
                 <LText
-                  semiBold
                   style={[
                     styles.availableAmount,
-                    error ? styles.error : styles.regularText,
+                    error
+                      ? styles.error
+                      : votesRemaining === 0
+                      ? styles.success
+                      : {},
                   ]}
                 >
-                  text
+                  <Trans
+                    i18nKey="vote.castVotes.maxVotesAvailable"
+                    values={{ total: votesAvailable }}
+                  >
+                    <LText
+                      semiBold
+                      style={[styles.availableAmount, styles.error]}
+                    >
+                      text
+                    </LText>
+                  </Trans>
                 </LText>
-              </Trans>
-            </LText>
+              ) : votesRemaining === 0 ? (
+                <View style={styles.row}>
+                  <Check size={16} color={colors.success} />
+                  <LText
+                    style={[styles.availableAmount, styles.availableSuccess]}
+                  >
+                    <Trans i18nKey="vote.castVotes.allVotesUsed" />
+                  </LText>
+                </View>
+              ) : (
+                <LText style={styles.availableAmount}>
+                  <Trans
+                    i18nKey="vote.castVotes.votesRemaining"
+                    values={{ total: votesRemaining }}
+                  >
+                    <LText
+                      semiBold
+                      style={[styles.availableAmount, styles.regularText]}
+                    >
+                      text
+                    </LText>
+                  </Trans>
+                </LText>
+              )}
+            </View>
+            <View style={styles.availableRight}>
+              <LText style={styles.maxLabel}>
+                <Trans i18nKey="send.amount.useMax" />
+              </LText>
+              <Switch
+                style={styles.switch}
+                value={useAllAmount}
+                onValueChange={toggleUseAllAmount}
+              />
+            </View>
           </View>
           <View style={styles.continueWrapper}>
             <Button
@@ -212,16 +265,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: "stretch",
   },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "nowrap",
+  },
+  availableRow: {
+    width: "100%",
+  },
   available: {
+    flex: 1,
     flexDirection: "column",
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "flex-end",
     fontSize: 16,
     paddingVertical: 8,
     color: colors.grey,
     marginBottom: 8,
     height: 50,
+  },
+  availableRight: {
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flexDirection: "row",
   },
   availableAmount: {
     color: colors.grey,
@@ -264,6 +331,14 @@ const styles = StyleSheet.create({
   disabledButtonText: {
     color: colors.grey,
   },
+  maxLabel: {
+    color: colors.grey,
+    marginRight: 4,
+  },
+  switch: {
+    opacity: 0.99,
+  },
+  availableSuccess: { color: colors.success, marginLeft: 10 },
 });
 
 export default memo<Props>(VoteModal);

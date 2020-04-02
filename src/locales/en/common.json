@@ -1160,9 +1160,11 @@
       "estYield": "Est. yield",
       "addMoreVotes": "Add more votes",
       "votesRemaining": "Votes remaining: <0>{{total}}</0>",
+      "maxVotesAvailable": "Max votes available: <0>{{total}}</0>",
       "voteFor": "Vote for",
       "validateVotes": "Validate votes",
-      "votesRequired": "Votes required "
+      "votesRequired": "Votes required ",
+      "allVotesUsed": "All votes used"
     },
     "validation": {
       "message": "Always verify that your device displays the address exactly as provided",

@@ -1,15 +1,11 @@
 // @flow
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { View, Linking, StyleSheet, TouchableOpacity } from "react-native";
 
 import { getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
 
 import type { ExplorerView } from "@ledgerhq/live-common/lib/types";
-
-import type { SuperRepresentative } from "@ledgerhq/live-common/lib/families/tron/types";
-
-import { SR_THRESHOLD } from "@ledgerhq/live-common/lib/families/tron/react";
 
 import LText from "../../../components/LText";
 import colors from "../../../colors";
@@ -23,7 +19,7 @@ type Props = {
   amount: number,
   duration: ?React$Node,
   explorerView: ?ExplorerView,
-  superRepresentatives: SuperRepresentative[],
+  isSR: boolean,
 };
 
 const Row = ({
@@ -32,16 +28,9 @@ const Row = ({
   amount,
   duration,
   explorerView,
-  superRepresentatives,
+  isSR,
 }: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
-
-  const isSR = useMemo(
-    () =>
-      superRepresentatives.findIndex(sr => sr.address === address) <
-      SR_THRESHOLD,
-    [address, superRepresentatives],
-  );
 
   const openSR = useCallback(() => {
     if (srURL) Linking.openURL(srURL);

@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useCallback, useMemo, memo, useRef } from "react";
+import React, { useCallback, memo, useRef } from "react";
 import { View, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { Trans } from "react-i18next";
 
@@ -52,25 +52,20 @@ const RightAction = ({
 };
 
 type VoteRowProps = {
-  vote: Vote,
-  superRepresentatives: SuperRepresentative[],
+  vote: {|
+    ...Vote,
+    isSR: boolean,
+    rank: number,
+    validator: ?SuperRepresentative,
+  |},
   onEdit: (vote: Vote, name: string) => void,
   onRemove: (vote: Vote) => void,
 };
 
-const VoteRow = ({
-  vote,
-  superRepresentatives = [],
-  onEdit,
-  onRemove,
-}: VoteRowProps) => {
+const VoteRow = ({ vote, onEdit, onRemove }: VoteRowProps) => {
   const rowRef = useRef();
-  const { address, voteCount } = vote;
-
-  const srIndex = useMemo(
-    () => superRepresentatives.findIndex(sr => sr.address === address),
-    [superRepresentatives, address],
-  );
+  const { address, voteCount, isSR, rank, validator } = vote;
+  const { name } = validator || {};
 
   const removeVote = useCallback(() => onRemove(vote), [vote, onRemove]);
 
@@ -82,15 +77,6 @@ const VoteRow = ({
       );
     else removeVote();
   }, [rowRef, removeVote]);
-
-  const { name, rank, isSR } = useMemo(
-    () => ({
-      ...superRepresentatives[srIndex],
-      rank: srIndex + 1,
-      isSR: srIndex < 27,
-    }),
-    [superRepresentatives, srIndex],
-  );
 
   return (
     <Animatable.View

@@ -21,6 +21,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   useTronSuperRepresentatives,
   SR_MAX_VOTES,
+  formatVotes,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 
 import { accountAndParentScreenSelector } from "../../../reducers/accounts";
@@ -36,6 +37,7 @@ import ArrowRight from "../../../icons/ArrowRight";
 
 import VoteRow from "./02-VoteRow";
 import VoteModal from "./02-VoteModal";
+import Check from "../../../icons/Check";
 
 const forceInset = { bottom: "always" };
 
@@ -87,6 +89,8 @@ const CastVote = ({ account, navigation }: Props) => {
   const { votes } = transaction;
 
   const sp = useTronSuperRepresentatives();
+
+  const formattedVotes = useMemo(() => formatVotes(votes, sp), [sp, votes]);
 
   const votesRemaining = useMemo(
     () => tronPower - votes.reduce((sum, { voteCount }) => sum + voteCount, 0),
@@ -169,11 +173,10 @@ const CastVote = ({ account, navigation }: Props) => {
       <TrackScreen category="Vote" name="CastVote" />
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <ScrollView style={[styles.root]}>
-          {votes.map((vote, i) => (
+          {formattedVotes.map((vote, i) => (
             <VoteRow
               key={vote.address + i}
               vote={vote}
-              superRepresentatives={sp}
               onEdit={openEditModal}
               onRemove={onRemove}
             />
@@ -196,16 +199,28 @@ const CastVote = ({ account, navigation }: Props) => {
         </ScrollView>
         <View style={styles.bottomWrapper}>
           <View style={styles.available}>
-            <LText style={styles.availableAmount}>
-              <Trans
-                i18nKey="vote.castVotes.votesRemaining"
-                values={{ total: votesRemaining }}
-              >
-                <LText semiBold style={styles.availableAmount}>
-                  text
+            {votesRemaining <= 0 ? (
+              <>
+                <Check size={16} color={colors.success} />
+                <LText
+                  semiBold
+                  style={[styles.availableAmount, styles.votesSuccess]}
+                >
+                  <Trans i18nKey="vote.castVotes.allVotesUsed" />
                 </LText>
-              </Trans>
-            </LText>
+              </>
+            ) : (
+              <LText style={styles.availableAmount}>
+                <Trans
+                  i18nKey="vote.castVotes.votesRemaining"
+                  values={{ total: votesRemaining }}
+                >
+                  <LText semiBold style={styles.availableAmount}>
+                    text
+                  </LText>
+                </Trans>
+              </LText>
+            )}
           </View>
           <View style={styles.continueWrapper}>
             <Button
@@ -319,6 +334,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   addMoreVotesLabel: { color: colors.live, fontSize: 16 },
+  votesSuccess: { color: colors.success, marginLeft: 10 },
 });
 
 export default connect(accountAndParentScreenSelector)(CastVote);
