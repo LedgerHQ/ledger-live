@@ -54,7 +54,7 @@
     "@ledgerhq/logs": "5.11.0",
     "@ledgerhq/react-native-hid": "5.12.0",
     "@ledgerhq/react-native-hw-transport-ble": "5.12.0",
-    "@ledgerhq/react-native-ledger-core": "^4.7.1",
+    "@ledgerhq/react-native-ledger-core": "4.10.1-dev.0",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@react-native-community/art": "^1.0.3",
     "@react-native-community/async-storage": "^1.6.2",
