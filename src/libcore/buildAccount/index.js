@@ -19,7 +19,7 @@ import type { CoreWallet, CoreAccount } from "../types";
 import { buildOperation } from "./buildOperation";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { minimalOperationsBuilder } from "../../reconciliation";
-import { getOperationsPageSize } from "../pagination";
+import { getOperationsPageSize } from "../../pagination";
 import getAccountBalanceHistory from "../getAccountBalanceHistory";
 import { getRanges } from "../../portfolio";
 

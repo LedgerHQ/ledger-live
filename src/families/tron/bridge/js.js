@@ -26,6 +26,7 @@ import signTransaction from "../../../hw/signTransaction";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import { getAccountUnit, getMainAccount } from "../../../account";
+import { getOperationsPageSize } from "../../../pagination";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -252,9 +253,17 @@ const getAccountShape = async (info, syncConfig) => {
       info.initialAccount.tronResources.cacheTransactionInfoById)
   };
 
+  const operationsPageSize = Math.min(
+    1000,
+    getOperationsPageSize(
+      info.initialAccount && info.initialAccount.id,
+      syncConfig
+    )
+  );
+
   const txs = await fetchTronAccountTxs(
     info.address,
-    txs => txs.length < 1000,
+    txs => txs.length < operationsPageSize,
     cacheTransactionInfoById
   );
 

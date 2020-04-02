@@ -34,6 +34,7 @@ export const SR_MAX_VOTES = 5;
 
 /** Fetch the list of super representatives */
 export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
+  // TODO: to optim we should init it to the latest seen SR list (local variable can work)
   const [sp, setSp] = useState([]);
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
 
 /** Get next voting date window */
 export const useNextVotingDate = (): ?number => {
+  console.warn("DEPRECATED: useNextVotingDate");
   const [nextVotingDate, setNextVotingDate] = useState();
   useEffect(() => {
     getNextVotingDate().then(d => d && setNextVotingDate(d.valueOf()));
@@ -150,6 +152,8 @@ export function useSortedSr(
 
 /** Tron vote flow state reducer */
 function votesReducer(state: State, { type, address, value }: Action) {
+  console.warn("DEPRECATED: votesReducer");
+
   switch (type) {
     case "updateVote": {
       const voteCount = value
@@ -209,6 +213,8 @@ function votesReducer(state: State, { type, address, value }: Action) {
 
 /** Vote flow init state */
 function initState(initialVotes, tronResources): State {
+  console.warn("DEPRECATED: initState");
+
   const votes = initialVotes.reduce(
     (sum, { voteCount, address }) => ({ ...sum, [address]: voteCount }),
     {}
@@ -232,6 +238,7 @@ function initState(initialVotes, tronResources): State {
 export function toTransactionVotes(votes: {
   [address: string]: number
 }): Vote[] {
+  console.warn("DEPRECATED: toTransactionVotes");
   return Object.keys(votes)
     .map(address => ({ address, voteCount: votes[address] }))
     .filter(({ voteCount }) => voteCount > 0);
@@ -242,6 +249,8 @@ export function useVotesReducer(
   initialVotes: Vote[],
   tronResources: ?TronResources
 ): [State, (action: Action) => void] {
+  console.warn("DEPRECATED: useVotesReducer");
+
   const [state, dispatch]: [State, (action: Action) => void] = useReducer(
     votesReducer,
     initState(initialVotes, tronResources)
