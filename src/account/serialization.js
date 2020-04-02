@@ -197,7 +197,9 @@ export const toTronResourcesRaw = ({
       gainedLimit: bandwidth.gainedLimit.toString()
     },
     unwithdrawnReward: unwithdrawnReward.toString(),
-    lastWithdrawnRewardDate: lastWithdrawnRewardDate ? lastWithdrawnRewardDate.toISOString() : undefined,
+    lastWithdrawnRewardDate: lastWithdrawnRewardDate
+      ? lastWithdrawnRewardDate.toISOString()
+      : undefined,
     lastVotedDate: lastVotedDate ? lastVotedDate.toISOString() : undefined,
     cacheTransactionInfoById
   };
@@ -269,7 +271,9 @@ export const fromTronResourcesRaw = ({
       gainedLimit: BigNumber(bandwidth.gainedLimit)
     },
     unwithdrawnReward: BigNumber(unwithdrawnReward),
-    lastWithdrawnRewardDate: lastWithdrawnRewardDate ? new Date(lastWithdrawnRewardDate) : undefined,
+    lastWithdrawnRewardDate: lastWithdrawnRewardDate
+      ? new Date(lastWithdrawnRewardDate)
+      : undefined,
     lastVotedDate: lastVotedDate ? new Date(lastVotedDate) : undefined,
     cacheTransactionInfoById
   };

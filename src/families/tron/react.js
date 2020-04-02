@@ -63,10 +63,11 @@ export const getLastVotedDate = (account: Account): ?Date => {
 
 /** Get next available date to claim rewards */
 export const getNextRewardDate = (account: Account): ?number => {
-  const lastWithdrawnRewardDate = account.tronResources && account.tronResources.lastWithdrawnRewardDate
-    ? account.tronResources.lastWithdrawnRewardDate
-    : null;
-    
+  const lastWithdrawnRewardDate =
+    account.tronResources && account.tronResources.lastWithdrawnRewardDate
+      ? account.tronResources.lastWithdrawnRewardDate
+      : null;
+
   if (lastWithdrawnRewardDate) {
     // add 24hours
     const nextDate = lastWithdrawnRewardDate.getTime() + 24 * 60 * 60 * 1000;

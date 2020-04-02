@@ -482,14 +482,12 @@ export const getTronResources = async (
   };
 
   const delegatedFrozen = {
-    bandwidth:
-      delegatedFrozenBandwidth
-        ? { amount: BigNumber(delegatedFrozenBandwidth) }
-        : undefined,
-    energy:
-      delegatedFrozenEnergy
-        ? { amount: BigNumber(delegatedFrozenEnergy) }
-        : undefined
+    bandwidth: delegatedFrozenBandwidth
+      ? { amount: BigNumber(delegatedFrozenBandwidth) }
+      : undefined,
+    energy: delegatedFrozenEnergy
+      ? { amount: BigNumber(delegatedFrozenEnergy) }
+      : undefined
   };
 
   const tronPower = BigNumber(get(frozen, "bandwidth.amount", 0))
@@ -505,14 +503,14 @@ export const getTronResources = async (
     voteCount: v.vote_count
   }));
 
-  const lastWithdrawnRewardDate = acc.latest_withdraw_time ? new Date(acc.latest_withdraw_time) : undefined;
+  const lastWithdrawnRewardDate = acc.latest_withdraw_time
+    ? new Date(acc.latest_withdraw_time)
+    : undefined;
 
   // TODO: rely on the account object when trongrid will provide this info.
   const getLastVotedDate = (txs: TrongridTxInfo[]): ?Date => {
     const lastOp = txs.find(({ type }) => type === "VoteWitnessContract");
-    return lastOp
-      ? lastOp.date
-      : null;
+    return lastOp ? lastOp.date : null;
   };
   const lastVotedDate = getLastVotedDate(txs);
 
