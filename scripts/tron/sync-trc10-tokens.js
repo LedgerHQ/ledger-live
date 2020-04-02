@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const get = require("lodash/get");
+const compact = require("lodash/compact");
 const bs58check = require("bs58check");
 const network = require("axios");
 const trc10Tokens = require("./trc10-tokens");
@@ -60,12 +61,14 @@ async function fetchTrc10Tokens() {
             undefined
           );
 
-        const delisted = !ledgerSignature || !whitelist.some(id => id.toString() === r.id);
+        if (!ledgerSignature) return null;
+
+        const delisted = !whitelist.some(id => id.toString() === r.id);
 
         return convertTRC10({ ...r, delisted, ledgerSignature })
       });  
 
-  return tokens;
+  return compact(tokens);
 }
 
 const outputFolder = path.join(__dirname, "../../src/load");
