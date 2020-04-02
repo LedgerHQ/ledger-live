@@ -464,7 +464,6 @@ export const getTronResources = async (
 
   const energy = BigNumber(tronNetworkInfo.energyLimit || 0);
   const bandwidth = extractBandwidthInfo(tronNetworkInfo);
-  const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
 
   const frozen = {
     bandwidth: frozenBandwidth
