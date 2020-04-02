@@ -83,15 +83,26 @@ export const getNextRewardDate = (account: Account): ?number => {
 export const formatVotes = (
   votes: ?Array<Vote>,
   superRepresentatives: ?Array<SuperRepresentative>
-): Array<{| ...Vote, validator: ?SuperRepresentative |}> => {
-  return votes
-    ? votes.map(({ address, voteCount }) => ({
-        validator:
-          superRepresentatives &&
-          superRepresentatives.find(sp => sp.address === address),
-        address,
-        voteCount
-      }))
+): Array<{|
+  ...Vote,
+  validator: ?SuperRepresentative,
+  isSR: boolean,
+  rank: number
+|}> => {
+  return votes && superRepresentatives
+    ? votes.map(({ address, voteCount }) => {
+        const srIndex = superRepresentatives.findIndex(
+          sp => sp.address === address
+        );
+
+        return {
+          validator: superRepresentatives[srIndex],
+          rank: srIndex + 1,
+          isSR: srIndex < SR_THRESHOLD,
+          address,
+          voteCount
+        };
+      })
     : [];
 };
 
