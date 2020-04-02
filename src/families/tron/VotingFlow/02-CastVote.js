@@ -179,6 +179,7 @@ const CastVote = ({ account, navigation }: Props) => {
               vote={vote}
               onEdit={openEditModal}
               onRemove={onRemove}
+              index={i}
             />
           ))}
           {votes.length < SR_MAX_VOTES ? (

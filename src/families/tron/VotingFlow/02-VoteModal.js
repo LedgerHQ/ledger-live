@@ -83,8 +83,8 @@ const VoteModal = ({
     <BottomModal isOpened={!!vote} onClose={onClose}>
       <SafeAreaView style={styles.root}>
         <View style={styles.topContainer}>
-          <TouchableOpacity style={styles.removeButton} onPress={remove}>
-            <Trash size={16} color={colors.white} />
+          <TouchableOpacity style={styles.topButton} onPress={remove}>
+            <Trash size={16} color={colors.grey} />
           </TouchableOpacity>
 
           <View style={styles.topLabel}>
@@ -96,7 +96,7 @@ const VoteModal = ({
             </LText>
           </View>
 
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <TouchableOpacity style={styles.topButton} onPress={onClose}>
             <Close size={16} color={colors.grey} />
           </TouchableOpacity>
         </View>
@@ -128,7 +128,7 @@ const VoteModal = ({
                     error
                       ? styles.error
                       : votesRemaining === 0
-                      ? styles.success
+                      ? styles.availableSuccess
                       : {},
                   ]}
                 >
@@ -202,19 +202,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     height: "auto",
   },
-  closeButton: {
+  topButton: {
     width: 40,
     height: 40,
     justifyContent: "center",
     alignItems: "center",
-  },
-  removeButton: {
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 4,
-    backgroundColor: colors.alert,
   },
   topContainer: {
     width: "100%",

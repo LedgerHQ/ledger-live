@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useCallback, memo, useRef } from "react";
+import React, { useCallback, memo, useRef, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { Trans } from "react-i18next";
 
@@ -60,14 +60,35 @@ type VoteRowProps = {
   |},
   onEdit: (vote: Vote, name: string) => void,
   onRemove: (vote: Vote) => void,
+  index: number,
 };
 
-const VoteRow = ({ vote, onEdit, onRemove }: VoteRowProps) => {
+const VoteRow = ({ vote, onEdit, onRemove, index }: VoteRowProps) => {
   const rowRef = useRef();
+  const swipeRef = useRef();
   const { address, voteCount, isSR, rank, validator } = vote;
   const { name } = validator || {};
 
-  const removeVote = useCallback(() => onRemove(vote), [vote, onRemove]);
+  /** Animate swipe gesture at the begining */
+  useEffect(() => {
+    if (index === 0 && swipeRef && swipeRef.current) {
+      setTimeout(() => {
+        if (swipeRef.current && swipeRef.current.openRight) {
+          swipeRef.current.openRight();
+          setTimeout(() => {
+            if (swipeRef.current && swipeRef.current.close)
+              swipeRef.current.close();
+          }, 800);
+        }
+      }, 400);
+    }
+  }, [index, swipeRef]);
+
+  const removeVote = useCallback(() => onRemove({ address, voteCount }), [
+    address,
+    voteCount,
+    onRemove,
+  ]);
 
   const removeVoteAnimStart = useCallback(() => {
     if (rowRef && rowRef.current && rowRef.current.transitionTo)
@@ -85,6 +106,7 @@ const VoteRow = ({ vote, onEdit, onRemove }: VoteRowProps) => {
       onTransitionEnd={removeVote}
     >
       <Swipeable
+        ref={swipeRef}
         friction={2}
         rightThreshold={27}
         overshootRight={false}
@@ -92,7 +114,11 @@ const VoteRow = ({ vote, onEdit, onRemove }: VoteRowProps) => {
           <RightAction dragX={dragX} onRemove={removeVoteAnimStart} />
         )}
       >
-        <View style={styles.srRow}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={styles.srRow}
+          onPress={() => onEdit({ address, voteCount }, name || address)}
+        >
           <View style={styles.row}>
             <View
               style={[styles.rowIcon, !isSR ? styles.rowIconCandidate : {}]}
@@ -115,17 +141,14 @@ const VoteRow = ({ vote, onEdit, onRemove }: VoteRowProps) => {
                 </Trans>
               </LText>
             </View>
-            <TouchableOpacity
-              onPress={() => onEdit(vote, name || address)}
-              style={styles.editButton}
-            >
+            <View style={styles.editButton}>
               <Edit size={14} color={colors.live} />
               <LText semiBold style={styles.editVoteCount}>
                 {voteCount}
               </LText>
-            </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </Swipeable>
     </Animatable.View>
   );
