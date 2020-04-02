@@ -24,6 +24,7 @@ import {
   hexToAscii
 } from "../families/tron/utils";
 import { log } from "@ledgerhq/logs";
+import { TronTransactionExpired } from "../errors";
 import network from "../network";
 import { promiseAllBatched } from "../promise";
 import { makeLRUCache } from "../cache";
@@ -155,6 +156,11 @@ export const broadcastTron = async (
     `${baseApiUrl}/wallet/broadcasttransaction`,
     trxTransaction
   );
+
+  if (result.code === "TRANSACTION_EXPIRATION_ERROR") {
+    throw new TronTransactionExpired();
+  }
+
   return result;
 };
 
