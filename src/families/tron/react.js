@@ -56,29 +56,21 @@ export const useNextVotingDate = (): ?number => {
 
 /** Get last time voted */
 export const getLastVotedDate = (account: Account): ?Date => {
-  const { operations } = account;
-  const lastOp = operations.find(({ type }) => type === "VOTE");
-
-  if (lastOp) {
-    const { date } = lastOp;
-    return date;
-  }
-
-  return null;
+  return account.tronResources && account.tronResources.lastVotedDate
+    ? account.tronResources.lastVotedDate
+    : null;
 };
 
 /** Get next available date to claim rewards */
 export const getNextRewardDate = (account: Account): ?number => {
-  const { operations } = account;
-  const lastRewardOp = operations.find(({ type }) => type === "REWARD");
-
-  if (lastRewardOp) {
-    const { date } = lastRewardOp;
-    if (date) {
-      // add 24hours
-      const nextDate = date.getTime() + 24 * 60 * 60 * 1000;
-      if (nextDate > Date.now()) return nextDate;
-    }
+  const lastWithdrawnRewardDate = account.tronResources && account.tronResources.lastWithdrawnRewardDate
+    ? account.tronResources.lastWithdrawnRewardDate
+    : null;
+    
+  if (lastWithdrawnRewardDate) {
+    // add 24hours
+    const nextDate = lastWithdrawnRewardDate.getTime() + 24 * 60 * 60 * 1000;
+    if (nextDate > Date.now()) return nextDate;
   }
 
   return null;

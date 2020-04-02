@@ -145,6 +145,8 @@ export const toTronResourcesRaw = ({
   energy,
   bandwidth,
   unwithdrawnReward,
+  lastWithdrawnRewardDate,
+  lastVotedDate,
   cacheTransactionInfoById: cacheTx
 }: TronResources): TronResourcesRaw => {
   const frozenBandwidth = frozen.bandwidth;
@@ -179,16 +181,10 @@ export const toTronResourcesRaw = ({
     },
     delegatedFrozen: {
       bandwidth: delegatedFrozenBandwidth
-        ? {
-            amount: delegatedFrozenBandwidth.amount.toString(),
-            expiredAt: delegatedFrozenBandwidth.expiredAt.toISOString()
-          }
+        ? { amount: delegatedFrozenBandwidth.amount.toString() }
         : undefined,
       energy: delegatedFrozenEnergy
-        ? {
-            amount: delegatedFrozenEnergy.amount.toString(),
-            expiredAt: delegatedFrozenEnergy.expiredAt.toISOString()
-          }
+        ? { amount: delegatedFrozenEnergy.amount.toString() }
         : undefined
     },
     votes,
@@ -201,6 +197,8 @@ export const toTronResourcesRaw = ({
       gainedLimit: bandwidth.gainedLimit.toString()
     },
     unwithdrawnReward: unwithdrawnReward.toString(),
+    lastWithdrawnRewardDate: lastWithdrawnRewardDate ? lastWithdrawnRewardDate.toISOString() : undefined,
+    lastVotedDate: lastVotedDate ? lastVotedDate.toISOString() : undefined,
     cacheTransactionInfoById
   };
 };
@@ -213,6 +211,8 @@ export const fromTronResourcesRaw = ({
   energy,
   bandwidth,
   unwithdrawnReward,
+  lastWithdrawnRewardDate,
+  lastVotedDate,
   cacheTransactionInfoById: cacheTransactionInfoByIdRaw
 }: TronResourcesRaw): TronResources => {
   const frozenBandwidth = frozen.bandwidth;
@@ -253,16 +253,10 @@ export const fromTronResourcesRaw = ({
     },
     delegatedFrozen: {
       bandwidth: delegatedFrozenBandwidth
-        ? {
-            amount: BigNumber(delegatedFrozenBandwidth.amount),
-            expiredAt: new Date(delegatedFrozenBandwidth.expiredAt)
-          }
+        ? { amount: BigNumber(delegatedFrozenBandwidth.amount) }
         : undefined,
       energy: delegatedFrozenEnergy
-        ? {
-            amount: BigNumber(delegatedFrozenEnergy.amount),
-            expiredAt: new Date(delegatedFrozenEnergy.expiredAt)
-          }
+        ? { amount: BigNumber(delegatedFrozenEnergy.amount) }
         : undefined
     },
     votes,
@@ -275,6 +269,8 @@ export const fromTronResourcesRaw = ({
       gainedLimit: BigNumber(bandwidth.gainedLimit)
     },
     unwithdrawnReward: BigNumber(unwithdrawnReward),
+    lastWithdrawnRewardDate: lastWithdrawnRewardDate ? new Date(lastWithdrawnRewardDate) : undefined,
+    lastVotedDate: lastVotedDate ? new Date(lastVotedDate) : undefined,
     cacheTransactionInfoById
   };
 };

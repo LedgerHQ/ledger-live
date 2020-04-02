@@ -257,7 +257,9 @@ export const mockAccount = fromAccountRaw({
       gainedUsed: "201",
       gainedLimit: "679"
     },
-    unwithdrawnReward: "13602"
+    unwithdrawnReward: "13602",
+    lastWithdrawnRewardDate: __NEXT_REWARD_DATE__.toISOString(),
+    lastVotedDate: __LAST_VOTING_DATE__.toISOString()
   }
 });
 
@@ -465,7 +467,9 @@ export const mockAccountNoReward = fromAccountRaw({
       gainedUsed: "201",
       gainedLimit: "679"
     },
-    unwithdrawnReward: "13602"
+    unwithdrawnReward: "13602",
+    lastWithdrawnRewardDate: null,
+    lastVotedDate: "2020-03-09T08:44:39.000Z"
   }
 });
 
@@ -631,6 +635,8 @@ export const mockAccountNoVote = fromAccountRaw({
       gainedUsed: "201",
       gainedLimit: "679"
     },
-    unwithdrawnReward: "13602"
+    unwithdrawnReward: "13602",
+    lastWithdrawnRewardDate: null,
+    lastVotedDate: null
   }
 });

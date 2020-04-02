@@ -457,15 +457,6 @@ export const getTronResources = async (
     undefined
   );
 
-  const lastDelegatedFrozenBandwidthOp = txs.find(
-    t =>
-      t.type === "FreezeBalanceContract" && t.to && t.resource === "BANDWIDTH"
-  );
-
-  const lastDelegatedFrozenEnergyOp = txs.find(
-    t => t.type === "FreezeBalanceContract" && t.to && t.resource === "ENERGY"
-  );
-
   const encodedAddress = encode58Check(acc.address);
 
   const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
@@ -492,22 +483,12 @@ export const getTronResources = async (
 
   const delegatedFrozen = {
     bandwidth:
-      delegatedFrozenBandwidth && lastDelegatedFrozenBandwidthOp
-        ? {
-            amount: BigNumber(delegatedFrozenBandwidth),
-            expiredAt: new Date(
-              lastDelegatedFrozenBandwidthOp.date.getTime() + threeDaysInMs
-            ) // + 3 days
-          }
+      delegatedFrozenBandwidth
+        ? { amount: BigNumber(delegatedFrozenBandwidth) }
         : undefined,
     energy:
-      delegatedFrozenEnergy && lastDelegatedFrozenEnergyOp
-        ? {
-            amount: BigNumber(delegatedFrozenEnergy),
-            expiredAt: new Date(
-              lastDelegatedFrozenEnergyOp.date.getTime() + threeDaysInMs
-            ) // + 3 days
-          }
+      delegatedFrozenEnergy
+        ? { amount: BigNumber(delegatedFrozenEnergy) }
         : undefined
   };
 
@@ -524,6 +505,17 @@ export const getTronResources = async (
     voteCount: v.vote_count
   }));
 
+  const lastWithdrawnRewardDate = acc.latest_withdraw_time ? new Date(acc.latest_withdraw_time) : undefined;
+
+  // TODO: rely on the account object when trongrid will provide this info.
+  const getLastVotedDate = (txs: TrongridTxInfo[]): ?Date => {
+    const lastOp = txs.find(({ type }) => type === "VoteWitnessContract");
+    return lastOp
+      ? lastOp.date
+      : null;
+  };
+  const lastVotedDate = getLastVotedDate(txs);
+
   return {
     energy,
     bandwidth,
@@ -532,6 +524,8 @@ export const getTronResources = async (
     votes,
     tronPower,
     unwithdrawnReward,
+    lastWithdrawnRewardDate,
+    lastVotedDate,
     cacheTransactionInfoById
   };
 };
