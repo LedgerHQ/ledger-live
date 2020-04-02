@@ -44,3 +44,7 @@ export const TronUnexpectedFees = createCustomErrorClass("TronUnexpectedFees");
 export const TronNotEnoughTronPower = createCustomErrorClass(
   "TronNotEnoughTronPower"
 );
+
+export const TronTransactionExpired = createCustomErrorClass(
+  "TronTransactionExpired"
+);
