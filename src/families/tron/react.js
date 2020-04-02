@@ -3,10 +3,9 @@ import { useState, useEffect, useMemo, useReducer, useRef } from "react";
 import { getTronSuperRepresentatives, getNextVotingDate } from "../../api/Tron";
 
 import { BigNumber } from "bignumber.js";
-
 import type { SuperRepresentative, Vote, TronResources } from "./types";
 import type { Account } from "../../types";
-
+import { useBridgeSync } from "../../bridge/react";
 import { getCryptoCurrencyById } from "../../currencies";
 
 export type Action = {
@@ -94,6 +93,38 @@ export const formatVotes = (
       }))
     : [];
 };
+
+// wait an effect of a tron freeze until it effectively change
+export function useTronPowerLoading(account: Account) {
+  const tronPower =
+    (account.tronResources && account.tronResources.tronPower) || 0;
+  const initialTronPower = useRef(tronPower);
+  const initialAccount = useRef(account);
+
+  const [isLoading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (initialTronPower.current !== tronPower) {
+      setLoading(false);
+    }
+  }, [tronPower]);
+
+  const sync = useBridgeSync();
+
+  useEffect(() => {
+    if (!isLoading) return;
+    const interval = setInterval(() => {
+      sync({
+        type: "SYNC_ONE_ACCOUNT",
+        priority: 10,
+        accountId: initialAccount.current.id
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [initialAccount, sync, isLoading]);
+
+  return isLoading;
+}
 
 /** Search filters for SR list */
 const searchFilter = (query?: string) => ({
