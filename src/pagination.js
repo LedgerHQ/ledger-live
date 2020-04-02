@@ -15,7 +15,7 @@ export function getOperationsPageSize(
   ) {
     numbers.push(operationsPerAccountId[accountId]);
   }
-  if (operations) {
+  if (typeof operations === "number") {
     numbers.push(operations);
   }
   if (numbers.length === 0) return Infinity;
