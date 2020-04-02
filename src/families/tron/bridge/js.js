@@ -556,7 +556,7 @@ const getTransactionStatus = async (
 
   const balance =
     account.type === "Account"
-      ? account.spendableBalance.minus(estimatedFees)
+      ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
       : account.balance;
 
   const amount = useAllAmount ? balance : t.amount;
@@ -576,7 +576,7 @@ const getTransactionStatus = async (
       errors.amount = useAllAmount
         ? new NotEnoughBalance()
         : new AmountRequired();
-    } else if (totalSpent.gt(balance)) {
+    } else if (amount.gt(balance)) {
       errors.amount = new NotEnoughBalance();
     } else if (account.type === "TokenAccount" && estimatedFees.gt(a.balance)) {
       errors.amount = new NotEnoughBalance();
