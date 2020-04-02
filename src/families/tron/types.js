@@ -171,14 +171,16 @@ export type TronResources = {|
     energy: ?FrozenInfo
   },
   delegatedFrozen: {
-    bandwidth: ?FrozenInfo,
-    energy: ?FrozenInfo
+    bandwidth: ?DelegatedFrozenInfo,
+    energy: ?DelegatedFrozenInfo
   },
   votes: Vote[],
   tronPower: number,
   energy: BigNumber,
   bandwidth: BandwidthInfo,
   unwithdrawnReward: BigNumber,
+  lastWithdrawnRewardDate: ?Date,
+  lastVotedDate: ?Date,
   cacheTransactionInfoById: { [_: string]: TronTransactionInfo }
 |};
 
@@ -188,14 +190,16 @@ export type TronResourcesRaw = {|
     energy: ?FrozenInfoRaw
   },
   delegatedFrozen: {
-    bandwidth: ?FrozenInfoRaw,
-    energy: ?FrozenInfoRaw
+    bandwidth: ?DelegatedFrozenInfoRaw,
+    energy: ?DelegatedFrozenInfoRaw
   },
   votes: Vote[],
   tronPower: number,
   energy: string,
   bandwidth: BandwidthInfoRaw,
   unwithdrawnReward: string,
+  lastWithdrawnRewardDate: ?string,
+  lastVotedDate: ?string,
   cacheTransactionInfoById?: { [_: string]: TronTransactionInfoRaw }
 |};
 
@@ -212,6 +216,14 @@ export type FrozenInfo = {|
 export type FrozenInfoRaw = {|
   amount: string,
   expiredAt: string
+|};
+
+export type DelegatedFrozenInfo = {|
+  amount: BigNumber
+|};
+
+export type DelegatedFrozenInfoRaw = {|
+  amount: string
 |};
 
 export type BandwidthInfo = {|
