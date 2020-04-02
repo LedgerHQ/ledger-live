@@ -57,11 +57,15 @@ const __VOTES__ = superRepresentatives
   .slice(0, 2)
   .map(({ address }) => ({ address, voteCount: 100 }));
 
-const __FORMATTED_VOTES__ = superRepresentatives.slice(0, 2).map(validator => ({
-  address: validator.address,
-  voteCount: 100,
-  validator
-}));
+const __FORMATTED_VOTES__ = superRepresentatives
+  .slice(0, 2)
+  .map((validator, i) => ({
+    address: validator.address,
+    voteCount: 100,
+    validator,
+    rank: i + 1,
+    isSR: true
+  }));
 
 test("Tron format votes - formatVotes - Expect to get formatted votes", () => {
   expect(formatVotes(undefined, superRepresentatives)).toStrictEqual([]);
