@@ -1089,7 +1089,6 @@
     },
     "amount": {
       "available": "Total available",
-      "loadingNetwork": "Loading Network fees...",
       "noRateProvider": "Not available",
       "infoLabel": "Bandwidth or energy"
     },

@@ -203,15 +203,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
               <Button
                 event="UnfreezeAmountContinue"
                 type="primary"
-                title={
-                  <Trans
-                    i18nKey={
-                      !bridgePending
-                        ? "common.continue"
-                        : "unfreeze.amount.loadingNetwork"
-                    }
-                  />
-                }
+                title={<Trans i18nKey="common.continue" />}
                 onPress={onContinue}
                 disabled={!!error || bridgePending}
                 pending={bridgePending}
