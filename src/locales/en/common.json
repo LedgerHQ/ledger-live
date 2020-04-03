@@ -1496,11 +1496,9 @@
       "delegationEarn": "You can now earn rewards by freezing and voting.",
       "howItWorks": "How voting works",
       "startEarning": "Earn rewards",
-      "manageTP": "Manage Tron Power",
       "title": "Claim rewards",
       "header": "Votes ({{total}})",
       "Amount": "Amount",
-      "percentageTP": "% of used TP",
       "noRewards": "No rewards available",
       "votes": {
         "title": "Votes",

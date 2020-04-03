@@ -209,10 +209,7 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
                         semiBold
                         style={[styles.warnText, styles.warnTitle]}
                       >
-                        <Trans
-                          i18nKey="tron.voting.remainingVotes.title"
-                          values={{ amount: tronPower - totalVotesUsed }}
-                        />
+                        <Trans i18nKey="tron.voting.remainingVotes.title" />
                       </LText>
                       <LText style={styles.warnText}>
                         <Trans i18nKey="tron.voting.remainingVotes.description" />
