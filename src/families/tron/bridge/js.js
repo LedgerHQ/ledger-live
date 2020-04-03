@@ -140,7 +140,9 @@ const signOperation = ({ account, transaction, deviceId }) =>
         const getValue = (): BigNumber => {
           switch (transaction.mode) {
             case "send":
-              return transaction.amount;
+              return subAccount
+                ? fee
+                : BigNumber(transaction.amount || 0).plus(fee);
             case "claimReward":
               return account.tronResources
                 ? account.tronResources.unwithdrawnReward
@@ -183,20 +185,43 @@ const signOperation = ({ account, transaction, deviceId }) =>
 
         const extra = getExtra() || {};
 
-        const operation = {
+        const operation: $Exact<Operation> = {
           id: `${account.id}-${hash}-${operationType}`,
           hash,
-          accountId: account.id,
-          type: operationType,
+          // if it's a token op and there is no fee, this operation does not exist and is a "NONE"
+          type: subAccount && value.eq(0) ? "NONE" : operationType,
           value,
           fee,
           blockHash: null,
           blockHeight: null,
           senders: [account.freshAddress],
           recipients: [transaction.recipient],
+          accountId: account.id,
           date: new Date(),
           extra
         };
+
+        if (subAccount) {
+          operation.subOperations = [
+            {
+              id: `${subAccount.id}-${hash}-OUT`,
+              hash,
+              type: "OUT",
+              value:
+                transaction.useAllAmount && subAccount
+                  ? subAccount.balance
+                  : BigNumber(transaction.amount || 0),
+              fee: BigNumber(0),
+              blockHash: null,
+              blockHeight: null,
+              senders: [account.freshAddress],
+              recipients: [transaction.recipient],
+              accountId: subAccount.id,
+              date: new Date(),
+              extra: {}
+            }
+          ];
+        }
 
         o.next({
           type: "signed",
