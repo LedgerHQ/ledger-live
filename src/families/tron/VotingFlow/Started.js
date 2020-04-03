@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { Trans } from "react-i18next";
@@ -7,24 +7,6 @@ import colors from "../../../colors";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import IlluVotes from "../IlluVotes";
-import ExternalLink from "../../../components/ExternalLink";
-import InfoModal from "../../../modals/Info";
-
-import Trophy from "../../../icons/Trophy";
-import Medal from "../../../icons/Medal";
-
-const infoModalData = [
-  {
-    Icon: () => <Trophy size={18} color={colors.live} />,
-    title: <Trans i18nKey="tron.info.superRepresentative.title" />,
-    description: <Trans i18nKey="tron.info.superRepresentative.description" />,
-  },
-  {
-    Icon: () => <Medal size={18} color={colors.grey} />,
-    title: <Trans i18nKey="tron.info.candidates.title" />,
-    description: <Trans i18nKey="tron.info.candidates.description" />,
-  },
-];
 
 type Props = {
   navigation: any,
@@ -41,16 +23,6 @@ function VoteStarted({ navigation }: Props) {
     navigation.dismiss();
   }, [navigation]);
 
-  const [infoModalOpen, setInfoModalOpen] = useState();
-
-  const openInfoModal = useCallback(() => {
-    setInfoModalOpen(true);
-  }, [setInfoModalOpen]);
-
-  const closeInfoModal = useCallback(() => {
-    setInfoModalOpen(false);
-  }, [setInfoModalOpen]);
-
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.main}>
@@ -59,16 +31,6 @@ function VoteStarted({ navigation }: Props) {
         <LText style={styles.description}>
           <Trans i18nKey="tron.voting.flow.started.description" />
         </LText>
-        <View style={styles.howVotingWorks}>
-          <ExternalLink
-            event="VoteInfoSRCandidate"
-            onPress={openInfoModal}
-            text={<Trans i18nKey="tron.voting.flow.started.srOrCandidate" />}
-            ltextProps={{
-              secondary: true,
-            }}
-          />
-        </View>
       </View>
 
       <View style={styles.footer}>
@@ -86,12 +48,6 @@ function VoteStarted({ navigation }: Props) {
           containerStyle={styles.buttonContainer}
         />
       </View>
-
-      <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
-        data={infoModalData}
-      />
     </SafeAreaView>
   );
 }

@@ -1,11 +1,11 @@
 /* @flow */
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { useSelector } from "react-redux";
 import i18next from "i18next";
-import { translate } from "react-i18next";
+import { translate, Trans } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -24,6 +24,25 @@ import SelectValidatorMain from "./Main";
 import SelectValidatorFooter from "./Footer";
 import { getIsVoted, SelectValidatorProvider } from "./utils";
 import type { Section } from "./utils";
+
+import InfoModal from "../../../../modals/Info";
+
+import Trophy from "../../../../icons/Trophy";
+import Medal from "../../../../icons/Medal";
+import Info from "../../../../icons/Info";
+
+const infoModalData = [
+  {
+    Icon: () => <Trophy size={18} color={colors.live} />,
+    title: <Trans i18nKey="tron.info.superRepresentative.title" />,
+    description: <Trans i18nKey="tron.info.superRepresentative.description" />,
+  },
+  {
+    Icon: () => <Medal size={18} color={colors.grey} />,
+    title: <Trans i18nKey="tron.info.candidates.title" />,
+    description: <Trans i18nKey="tron.info.candidates.description" />,
+  },
+];
 
 const forceInset = { bottom: "always" };
 
@@ -184,6 +203,31 @@ function SelectValidator({ navigation, t }: Props) {
 
 const DEFAULT_REPRESENTATIVES_COUNT = 5;
 
+const HeaderLeft = () => {
+  const [infoModalOpen, setInfoModalOpen] = useState();
+
+  const openInfoModal = useCallback(() => {
+    setInfoModalOpen(true);
+  }, [setInfoModalOpen]);
+
+  const closeInfoModal = useCallback(() => {
+    setInfoModalOpen(false);
+  }, [setInfoModalOpen]);
+
+  return (
+    <>
+      <TouchableOpacity style={styles.headerButton} onPress={openInfoModal}>
+        <Info size={16} color={colors.grey} />
+      </TouchableOpacity>
+      <InfoModal
+        isOpened={!!infoModalOpen}
+        onClose={closeInfoModal}
+        data={infoModalData}
+      />
+    </>
+  );
+};
+
 SelectValidator.navigationOptions = {
   headerTitle: (
     <StepHeader
@@ -194,7 +238,7 @@ SelectValidator.navigationOptions = {
       })}
     />
   ),
-  headerLeft: null,
+  headerLeft: <HeaderLeft />,
   headerStyle: {
     ...defaultNavigationOptions.headerStyle,
     elevation: 0,
@@ -209,6 +253,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
+  },
+  headerButton: {
+    width: 50,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
   },
   topContainer: { paddingHorizontal: 32 },
 });
