@@ -1580,11 +1580,11 @@
       },
       "energy": {
         "title": "Energy",
-        "description": "Energy Points are used when executing smart contracts. As such freezing TRX for Energy will allow you to avoid additional fees when interacting with a smart contract."
+        "description": "Energy points are required to execute smart contracts. If you don't run any smart contracts, there is no need to choose rewards in Energy."
       },
       "claimRewards": {
         "title": "Voting rewards",
-        "description": "Each time a Super Representative finishes block production, rewards are sent to the sub-account in the superledger. Super Representatives can check, but not directly make use of this asset. A withdrawal can be made once every 24 hours, transferring the reward from the sub-account to the Super Representative’s account."
+        "description": "TRX generated during block production and available as rewards can be claimed once every 24 hours."
       }
     }
   },

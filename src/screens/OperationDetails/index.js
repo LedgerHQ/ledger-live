@@ -59,19 +59,19 @@ const CloseButton = ({ navigation }: { navigation: Navigation }) => (
 class OperationDetails extends PureComponent<Props, *> {
   static navigationOptions = ({ navigation }) => {
     const {
-      params: { isSubOperation },
+      params: { isSubOperation, operation },
     } = navigation.state;
 
     if (isSubOperation) {
       return {
-        title: i18next.t("operationDetails.title"),
+        title: i18next.t(`operations.types.${operation.type}`),
         headerLeft: <BackButton navigation={navigation} />,
         headerRight: <CloseButton navigation={navigation} />,
       };
     }
 
     return {
-      title: i18next.t("operationDetails.title"),
+      title: i18next.t(`operations.types.${operation.type}`),
       headerLeft: <BackButton navigation={navigation} />,
       headerRight: null,
     };
