@@ -62,7 +62,7 @@ const ChoiceButton = ({
   </TouchableOpacity>
 );
 
-const ManageAction = ({
+const Manage = ({
   // account,
   style,
   account,
@@ -175,6 +175,21 @@ const ManageAction = ({
       </BottomModal>
     </>
   );
+};
+
+const ManageAction = ({
+  // account,
+  style,
+  account,
+  onNavigate,
+}: {
+  account: Account,
+  onNavigate: (selection: string) => void,
+  style: *,
+}) => {
+  if (!account.tronResources) return null;
+
+  return <Manage style={style} account={account} onNavigate={onNavigate} />;
 };
 
 const styles = StyleSheet.create({

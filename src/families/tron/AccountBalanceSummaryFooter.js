@@ -9,6 +9,9 @@ import {
   getCryptoCurrencyById,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+
+import type { Account } from "@ledgerhq/live-common/lib/types";
+
 import invariant from "invariant";
 import colors from "../../colors";
 import LText from "../../components/LText";
@@ -20,8 +23,7 @@ import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
 
 interface Props {
-  account: any;
-  countervalue: any;
+  account: Account;
   t: TFunction;
 }
 
@@ -37,11 +39,10 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useMemo(() => getInfoCandidates(t), [t]);
 
-  const {
-    energy: formattedEnergy,
-    bandwidth: { freeUsed, freeLimit, gainedUsed, gainedLimit } = {},
-    tronPower,
-  } = account.tronResources;
+  const { energy: formattedEnergy, bandwidth, tronPower } =
+    account.tronResources || {};
+
+  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
 
   const spendableBalance = useMemo(
     () =>
@@ -66,8 +67,6 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
     (infoName: InfoName) => () => setInfoName(infoName),
     [],
   );
-
-  if (!account.tronResources) return null;
 
   return (
     <ScrollView
@@ -105,12 +104,18 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
   );
 }
 
-export default translate()(AccountBalanceSummaryFooter);
+const AccountBalanceFooter = ({ account, t }: Props) => {
+  if (!account.tronResources) return null;
+
+  return <AccountBalanceSummaryFooter account={account} t={t} />;
+};
+
+export default translate()(AccountBalanceFooter);
 
 interface InfoItemProps {
   onPress: () => void;
-  title: string;
-  value: string;
+  title: React$Node;
+  value: React$Node;
 }
 
 function InfoItem({ onPress, title, value }: InfoItemProps) {
