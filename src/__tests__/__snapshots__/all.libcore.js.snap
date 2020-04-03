@@ -76981,7 +76981,7 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "1602",
+      "energy": "1600",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": Object {
@@ -77197,7 +77197,7 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "tronPower": 8.4,
+      "tronPower": 8,
       "votes": Array [],
     },
     "unitMagnitude": 6,
@@ -81606,7 +81606,7 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16110435,
       "extra": Object {},
       "fee": "0",
       "hash": "068ce945e4cf0bdd27fd4c3d7b632564ce7323844d25214b276b85f1fea0fcad",
@@ -81698,9 +81698,9 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 11593961,
       "extra": Object {},
-      "fee": "0",
+      "fee": "123110",
       "hash": "68cb2a4e6a600626afdeda8f07904b4e55a388c2b267d12176f9186727afdf68",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7-68cb2a4e6a600626afdeda8f07904b4e55a388c2b267d12176f9186727afdf68-IN",
       "recipients": Array [
@@ -81715,7 +81715,7 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16110228,
       "extra": Object {},
       "fee": "0",
       "hash": "78e334e9e297120c054d849571f7c121380cc2494895e0d1331066a0578592fa",
@@ -81732,7 +81732,7 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16110394,
       "extra": Object {},
       "fee": "0",
       "hash": "a869e16565f3b73f3b4dd8554431469bdef1d452043c5cfd96686dad96eebd67",
@@ -81749,7 +81749,7 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16110326,
       "extra": Object {},
       "fee": "0",
       "hash": "bfc280056910bb0220d13876fff1023bb981e486c96697b2c0a5648dbd145334",
@@ -81826,7 +81826,7 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16335243,
       "extra": Object {},
       "fee": "0",
       "hash": "f5e423534ce66e37ae51e77196c25ac2b8ee92a4a8a46ac1ec38e47632d03381",
@@ -81858,7 +81858,7 @@ Array [
     Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16243678,
       "extra": Object {},
       "fee": "0",
       "hash": "fd7fdb42d69df344659746d482cabb6cfe34291fb594397e3742b64ca85f6530",
@@ -82483,7 +82483,7 @@ Array [
     Object {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16112143,
       "extra": Object {},
       "fee": "0",
       "hash": "f6551432995fc64e304f0ca205d12918873ebca880192f8f110c5cb93aa5cfe8",
@@ -82557,7 +82557,7 @@ Array [
     Object {
       "accountId": "js:2:tron:TWepUnyBzHx2aoEgNGotZHCybZJZe1AHdW:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
       "blockHash": null,
-      "blockHeight": undefined,
+      "blockHeight": 16138146,
       "extra": Object {},
       "fee": "0",
       "hash": "3f2e16fab36eab882dc64699c2593a6e4da8c184d2d32c100bf1aaf910b33ba4",
