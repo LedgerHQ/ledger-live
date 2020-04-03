@@ -7,7 +7,11 @@ import type {
   AccountLike,
   Account,
   Transaction,
+  Unit,
 } from "@ledgerhq/live-common/lib/types";
+
+import type { BigNumber } from "bignumber.js";
+
 import {
   shortAddressPreview,
   getMainAccount,
@@ -17,7 +21,10 @@ import {
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 
-import { DataRow } from "../../components/ValidateOnDeviceDataRow";
+import {
+  DataRow,
+  DataRowUnitValue,
+} from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
 import colors from "../../colors";
@@ -158,7 +165,33 @@ const Pre = ({ transaction }: { transaction: Transaction }) => {
   return null;
 };
 
+const Fees = ({
+  transaction,
+  mainAccountUnit,
+  estimatedFees,
+}: {
+  transaction: Transaction,
+  mainAccountUnit: Unit,
+  estimatedFees: BigNumber,
+}) => {
+  invariant(transaction.family === "tron", "tron transaction");
+
+  switch (transaction.mode) {
+    case "send":
+      return null;
+    default:
+      return (
+        <DataRowUnitValue
+          label={<Trans i18nKey="send.validation.fees" />}
+          unit={mainAccountUnit}
+          value={estimatedFees}
+        />
+      );
+  }
+};
+
 export default {
   pre: Pre,
   post: Post,
+  fees: Fees,
 };

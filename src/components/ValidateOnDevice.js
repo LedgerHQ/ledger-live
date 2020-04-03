@@ -49,6 +49,7 @@ const ValidateOnDevice = ({
   const mainAccountUnit = getAccountUnit(mainAccount);
   const unit = getAccountUnit(account);
   const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
+  const Fees = r && r.fee;
   const Pre = r && r.pre;
   const Post = r && r.post;
   const transRecipientWording = t(
@@ -106,11 +107,19 @@ const ValidateOnDevice = ({
               />
             ) : null}
             {!estimatedFees.isZero() ? (
-              <DataRowUnitValue
-                label={<Trans i18nKey="send.validation.fees" />}
-                unit={mainAccountUnit}
-                value={estimatedFees}
-              />
+              Fees ? (
+                <Fees
+                  transaction={transaction}
+                  unit={mainAccountUnit}
+                  value={estimatedFees}
+                />
+              ) : (
+                <DataRowUnitValue
+                  label={<Trans i18nKey="send.validation.fees" />}
+                  unit={mainAccountUnit}
+                  value={estimatedFees}
+                />
+              )
             ) : null}
 
             {Post ? (
