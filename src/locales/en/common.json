@@ -1528,9 +1528,6 @@
               "superRepresentatives": "Super representatives",
               "candidates": "Candidates"
             }
-          },
-          "footer": {
-            "remaining": "Representatives remaining: "
           }
         }
       }
