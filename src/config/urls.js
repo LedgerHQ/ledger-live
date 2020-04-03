@@ -25,4 +25,10 @@ export const urls = {
   appSupport:
     "https://support.ledger.com/hc/en-us/categories/115000811829-Apps",
   tronStaking: "https://www.ledger.com/staking-tron",
+  supportLinkByTokenType: {
+    erc20:
+      "https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens",
+    trc10: "https://support.ledger.com/hc/en-us/articles/360013062159",
+    trc20: "https://support.ledger.com/hc/en-us/articles/360013062159",
+  },
 };
