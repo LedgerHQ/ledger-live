@@ -1,12 +1,16 @@
 /* @flow */
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
+import {
+  useTronPowerLoading,
+  getLastVotedDate,
+} from "@ledgerhq/live-common/lib/families/tron/react";
+import { useTimer } from "@ledgerhq/live-common/lib/hooks/useTimer";
 
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-import { getLastVotedDate } from "@ledgerhq/live-common/lib/families/tron/react";
 
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -15,27 +19,6 @@ import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
-
-const useTimer = (timer: number) => {
-  const [time, setTime] = useState(timer);
-
-  useEffect(() => {
-    let T = timer;
-    const int = setInterval(() => {
-      if (T <= 0) {
-        clearInterval(int);
-      } else {
-        T--;
-        setTime(T);
-      }
-    }, 1000);
-    return () => {
-      if (int) clearInterval(int);
-    };
-  }, [timer]);
-
-  return time;
-};
 
 type Props = {
   account: Account,
@@ -51,6 +34,7 @@ type Props = {
 
 const ValidationSuccess = ({ account, navigation }: Props) => {
   const time = useTimer(60);
+  const isLoading = useTronPowerLoading(account);
 
   const transaction = navigation.getParam("transaction");
   const resource = transaction.resource || "";
@@ -112,7 +96,8 @@ const ValidationSuccess = ({ account, navigation }: Props) => {
                   <Trans i18nKey="freeze.validation.button.vote" />
                 )
               }
-              disabled={time > 0}
+              isLoading={isLoading && time === 0}
+              disabled={isLoading}
               type="primary"
               containerStyle={styles.button}
               onPress={goToVote}
