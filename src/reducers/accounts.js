@@ -9,6 +9,7 @@ import {
   flattenAccounts,
   getAccountCurrency,
   importAccountsReduce,
+  withoutToken,
 } from "@ledgerhq/live-common/lib/account";
 import accountModel from "../logic/accountModel";
 import { UP_TO_DATE_THRESHOLD } from "../constants";
@@ -75,6 +76,11 @@ const handlers: Object = {
       pendingOperations: [],
     })),
   }),
+
+  BLACKLIST_TOKEN: (
+    state: AccountsState,
+    { payload: tokenId }: { payload: string },
+  ) => ({ active: state.active.map(a => withoutToken(a, tokenId)) }),
 };
 
 // Selectors

@@ -9,14 +9,18 @@ import { ScrollView } from "react-navigation";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Config from "react-native-config";
 import type { NavigationScreenProp } from "react-navigation";
-import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import type { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
 import i18next from "i18next";
-import { cryptoCurrenciesSelector } from "../../reducers/accounts";
+import {
+  accountsSelector,
+  cryptoCurrenciesSelector,
+} from "../../reducers/accounts";
 import type { T } from "../../types/common";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
 import Assets from "../../icons/Assets";
+import Accounts from "../../icons/Accounts";
 import LiveLogoIcon from "../../icons/LiveLogoIcon";
 import Atom from "../../icons/Atom";
 import Help from "../../icons/Help";
@@ -28,11 +32,13 @@ import timer from "../../timer";
 type Props = {
   navigation: NavigationScreenProp<*>,
   currencies: CryptoCurrency[],
+  accounts: Account[],
   t: T,
 };
 
 const mapStateToProps = createStructuredSelector({
   currencies: cryptoCurrenciesSelector,
+  accounts: accountsSelector,
 });
 
 class Settings extends Component<Props, *> {
@@ -63,7 +69,7 @@ class Settings extends Component<Props, *> {
   };
 
   render() {
-    const { t, currencies } = this.props;
+    const { t, currencies, accounts } = this.props;
     const { debugVisible } = this.state;
     return (
       <ScrollView>
@@ -83,6 +89,14 @@ class Settings extends Component<Props, *> {
               onClick={() =>
                 this.props.navigation.navigate("CryptoAssetsSettings")
               }
+            />
+          )}
+          {accounts.length > 0 && (
+            <SettingsCard
+              title={t("settings.accounts.title")}
+              desc={t("settings.accounts.desc")}
+              icon={<Accounts size={16} color={colors.live} />}
+              onClick={() => this.props.navigation.navigate("AccountsSettings")}
             />
           )}
           <SettingsCard
