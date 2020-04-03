@@ -139,7 +139,10 @@ const SubAccountsList = ({
             <Icon color={colors.live} size={26} name="plus" />
             <View style={styles.footerText}>
               <LText style={{ fontSize: 16 }}>
-                <Trans i18nKey="account.tokens.howTo" values={{ currency: parentAccount.currency.family}}>
+                <Trans
+                  i18nKey="account.tokens.howTo"
+                  values={{ currency: parentAccount.currency.family }}
+                >
                   <LText semiBold>text</LText>
                   <LText semiBold>text</LText>
                 </Trans>

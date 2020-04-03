@@ -1,42 +1,51 @@
 // @flow
-import React, { useMemo } from "react";
+import React, { memo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import colors from "../../../../../colors";
-import CheckBox from "../../../../../components/CheckBox";
-import LText from "../../../../../components/LText";
-import Trophy from "../../../../../icons/Trophy";
-import Medal from "../../../../../icons/Medal";
-import { getIsVoted } from "../utils";
-import type { Item as ItemProp } from "../utils";
+
+import type { SuperRepresentative } from "@ledgerhq/live-common/lib/families/tron/types";
+
+import colors from "../../../../colors";
+import CheckBox from "../../../../components/CheckBox";
+import LText from "../../../../components/LText";
+import Trophy from "../../../../icons/Trophy";
+import Medal from "../../../../icons/Medal";
+
+type ItemProp = {
+  address: string,
+  sr: SuperRepresentative,
+  isSR: boolean,
+  rank: number,
+  name: ?string,
+};
 
 type Props = {
   item: ItemProp,
-  transaction: Transaction,
-  remainingCount: number,
-  onSelectSuperRepresentative: (item: ItemProp) => void,
+  disabled: boolean,
+  onSelectSuperRepresentative: (item: ItemProp, selected: boolean) => void,
+  selected: boolean,
 };
 
-export default function Item({
+function Item({
   item,
-  transaction,
-  remainingCount,
+  selected,
+  disabled,
   onSelectSuperRepresentative,
 }: Props) {
-  const { address, sr, isSR, rank } = item;
-  const isVoted = useMemo(
-    () => getIsVoted(transaction, address),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [transaction.votes, address],
+  const { sr, isSR, rank, address } = item;
+
+  const onSelect = useCallback(
+    () => onSelectSuperRepresentative(item, selected),
+    [onSelectSuperRepresentative, item, selected],
   );
-  const disabled = !isVoted && remainingCount <= 0;
+
+  const isDisabled = !selected && disabled;
 
   return (
     <TouchableOpacity
-      onPress={() => onSelectSuperRepresentative(item)}
-      disabled={disabled}
-      style={styles.wrapper}
+      onPress={onSelect}
+      disabled={isDisabled}
+      style={[styles.wrapper, isDisabled ? styles.disabledWrapper : {}]}
     >
       <View
         style={[styles.iconWrapper, !isSR ? styles.iconWrapperCandidate : {}]}
@@ -49,8 +58,12 @@ export default function Item({
       </View>
 
       <View style={styles.nameWrapper}>
-        <LText semiBold style={styles.nameText} numberOfLines={1}>
-          {rank}. {sr.name}
+        <LText
+          semiBold
+          style={[styles.nameText, isDisabled ? styles.disabledText : {}]}
+          numberOfLines={1}
+        >
+          {rank}. {(sr && sr.name) || address}
         </LText>
 
         <LText style={styles.subText} numberOfLines={1}>
@@ -70,7 +83,7 @@ export default function Item({
       </View> */}
 
       <View>
-        <CheckBox isChecked={isVoted} disabled={disabled} />
+        <CheckBox isChecked={selected} disabled={disabled} />
       </View>
     </TouchableOpacity>
   );
@@ -105,6 +118,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.grey,
   },
+  disabledWrapper: {
+    backgroundColor: colors.lightGrey,
+  },
+  disabledText: {
+    color: colors.grey,
+  },
   // yieldWrapper: {
   //   alignItems: "center",
   //   marginRight: 12,
@@ -113,3 +132,5 @@ const styles = StyleSheet.create({
   //   fontSize: 17,
   // },
 });
+
+export default memo<Props>(Item);

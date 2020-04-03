@@ -14,7 +14,7 @@ type Props = {
 
 function VoteStarted({ navigation }: Props) {
   const onNext = useCallback(() => {
-    navigation.navigate("VoteSelectValidator", {
+    navigation.replace("VoteSelectValidator", {
       ...navigation.state.params,
     });
   }, [navigation]);

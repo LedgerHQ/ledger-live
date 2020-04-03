@@ -4,12 +4,15 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Button from "../../../../components/Button";
 import colors from "../../../../colors";
-import { useSelectValidatorContext } from "./utils";
 import { useKeyboardVisible } from "../../../../logic/keyboardVisible";
 
-export default function SelectValidatorFooter() {
-  const { bridgePending, onContinue, status } = useSelectValidatorContext();
-
+export default function SelectValidatorFooter({
+  disabled,
+  onContinue,
+}: {
+  disabled: boolean,
+  onContinue: () => void,
+}) {
   const isKeyBoardVisible = useKeyboardVisible();
 
   if (isKeyBoardVisible) {
@@ -24,8 +27,7 @@ export default function SelectValidatorFooter() {
           type="primary"
           title={<Trans i18nKey="common.continue" />}
           onPress={onContinue}
-          disabled={!!status.errors.amount || bridgePending}
-          pending={bridgePending}
+          disabled={disabled}
         />
       </View>
     </View>

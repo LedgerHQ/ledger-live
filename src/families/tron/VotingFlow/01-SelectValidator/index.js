@@ -1,12 +1,11 @@
 /* @flow */
 import invariant from "invariant";
-import React, { useCallback, useMemo, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import React, { useCallback, useState, useMemo } from "react";
+import { StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaView } from "react-navigation";
 import { useSelector } from "react-redux";
 import i18next from "i18next";
-import { translate, Trans } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import { Trans } from "react-i18next";
 import type { NavigationScreenProp } from "react-navigation";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
@@ -14,22 +13,24 @@ import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import {
   useTronSuperRepresentatives,
   useSortedSr,
+  SR_MAX_VOTES,
+  SR_THRESHOLD,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import { accountAndParentScreenSelector } from "../../../../reducers/accounts";
 import colors from "../../../../colors";
 import { TrackScreen } from "../../../../analytics";
 import { defaultNavigationOptions } from "../../../../navigation/navigatorConfig";
 import StepHeader from "../../../../components/StepHeader";
-import SelectValidatorMain from "./Main";
+
 import SelectValidatorFooter from "./Footer";
-import { getIsVoted, SelectValidatorProvider } from "./utils";
-import type { Section } from "./utils";
 
 import InfoModal from "../../../../modals/Info";
 
 import Trophy from "../../../../icons/Trophy";
 import Medal from "../../../../icons/Medal";
 import Info from "../../../../icons/Info";
+import SelectValidatorSearchBox from "./SearchBox";
+import Item from "./Item";
 
 const infoModalData = [
   {
@@ -53,10 +54,9 @@ type Props = {
       transaction: Transaction,
     },
   }>,
-  t: TFunction,
 };
 
-function SelectValidator({ navigation, t }: Props) {
+function SelectValidator({ navigation }: Props) {
   const { account } = useSelector(state =>
     accountAndParentScreenSelector(state, { navigation }),
   );
@@ -68,12 +68,7 @@ function SelectValidator({ navigation, t }: Props) {
 
   const { tronPower } = tronResources;
 
-  const {
-    transaction,
-    status,
-    setTransaction,
-    bridgePending,
-  } = useBridgeTransaction(() => {
+  const { transaction, setTransaction } = useBridgeTransaction(() => {
     const tx = navigation.getParam("transaction");
 
     if (!tx) {
@@ -97,62 +92,26 @@ function SelectValidator({ navigation, t }: Props) {
 
   const [searchQuery, setSearchQuery] = useState("");
   const superRepresentatives = useTronSuperRepresentatives();
+
+  const { votes } = transaction;
+
   const sortedSuperRepresentatives = useSortedSr(
     searchQuery,
     superRepresentatives,
-    transaction.votes || [],
+    votes || [],
   );
 
-  const sections = useMemo<Section[]>(() => {
-    const selected = sortedSuperRepresentatives.filter(({ address }) =>
-      getIsVoted(transaction, address),
-    );
-
-    if (!selected.length) {
-      return [
-        {
-          type: "superRepresentatives",
-          data: sortedSuperRepresentatives.filter(({ isSR }) => isSR),
-        },
-        {
-          type: "candidates",
-          data: sortedSuperRepresentatives.filter(({ isSR }) => !isSR),
-        },
-      ];
-    }
-
-    return [
-      {
-        type: "selected",
-        data: selected,
-      },
-      {
-        type: "superRepresentatives",
-        data: sortedSuperRepresentatives.filter(
-          ({ address, isSR }) => !getIsVoted(transaction, address) && isSR,
-        ),
-      },
-      {
-        type: "candidates",
-        data: sortedSuperRepresentatives.filter(
-          ({ address, isSR }) => !getIsVoted(transaction, address) && !isSR,
-        ),
-      },
-    ];
-  }, [sortedSuperRepresentatives, transaction]);
-
   const onSelectSuperRepresentative = useCallback(
-    ({ address }) => {
-      const isVoted = getIsVoted(transaction, address);
-      const newVotes = isVoted
-        ? transaction.votes.filter(v => v.address !== address)
-        : [...transaction.votes, { address, voteCount: 0 }];
+    ({ address }, selected) => {
+      const newVotes = selected
+        ? votes.filter(v => v.address !== address)
+        : [...votes, { address, voteCount: 0 }];
       const tx = bridge.updateTransaction(transaction, {
         votes: newVotes,
       });
       setTransaction(tx);
     },
-    [bridge, setTransaction, transaction],
+    [bridge, setTransaction, transaction, votes],
   );
 
   const onContinue = useCallback(() => {
@@ -167,41 +126,47 @@ function SelectValidator({ navigation, t }: Props) {
     navigation.navigate("CastVote", {
       accountId: account.id,
       transaction: tx,
-      status,
     });
-  }, [account, navigation, transaction, status, tronPower, bridge]);
+  }, [account, navigation, transaction, tronPower, bridge]);
 
-  const remainingCount =
-    DEFAULT_REPRESENTATIVES_COUNT - transaction.votes.length;
+  const remainingCount = SR_MAX_VOTES - votes.length;
+
+  const disabled = useMemo(
+    () => votes.length === 0 || votes.length > SR_MAX_VOTES,
+    [votes],
+  );
+
+  const renderItem = useCallback(
+    ({ item }) => (
+      <Item
+        item={item}
+        selected={votes.some(v => v.address === item.address)}
+        disabled={remainingCount === 0}
+        onSelectSuperRepresentative={onSelectSuperRepresentative}
+      />
+    ),
+    [onSelectSuperRepresentative, remainingCount, votes],
+  );
 
   return (
     <>
       <TrackScreen category="Vote" name="SelectValidator" />
-
-      <SelectValidatorProvider
-        value={{
-          bridgePending,
-          onContinue,
-          onSelectSuperRepresentative,
-          remainingCount,
-          searchQuery,
-          sections,
-          setSearchQuery,
-          status,
-          transaction,
-          t,
-        }}
-      >
-        <SafeAreaView style={styles.root} forceInset={forceInset}>
-          <SelectValidatorMain />
-          <SelectValidatorFooter />
-        </SafeAreaView>
-      </SelectValidatorProvider>
+      <SafeAreaView style={styles.root} forceInset={forceInset}>
+        <SelectValidatorSearchBox
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+        <FlatList
+          keyExtractor={({ address }) => address}
+          initialNumToRender={SR_THRESHOLD}
+          data={sortedSuperRepresentatives}
+          renderItem={renderItem}
+        />
+        <SelectValidatorFooter onContinue={onContinue} disabled={disabled} />
+      </SafeAreaView>
     </>
   );
 }
-
-const DEFAULT_REPRESENTATIVES_COUNT = 5;
 
 const HeaderLeft = () => {
   const [infoModalOpen, setInfoModalOpen] = useState();
@@ -245,9 +210,10 @@ SelectValidator.navigationOptions = {
     shadowOpacity: 0,
     borderBottomWidth: 0,
   },
+  gesturesEnabled: false,
 };
 
-export default translate()(SelectValidator);
+export default SelectValidator;
 
 const styles = StyleSheet.create({
   root: {
