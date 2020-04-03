@@ -123,9 +123,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const deviceId = navigation.getParam("deviceId");
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
-      // TODO later we need to paginate only a few ops, not all (for add accounts)
-      // paginationConfig will come from redux
-      paginationConfig: {},
+      paginationConfig: {
+        operation: 0,
+      },
     };
     this.scanSubscription = concat(
       from(prepareCurrency(currency)).pipe(ignoreElements()),

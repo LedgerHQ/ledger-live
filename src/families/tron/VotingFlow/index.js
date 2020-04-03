@@ -22,6 +22,7 @@ const VoteFlow = createStackNavigator(
         title: i18next.t("tron.voting.flow.started.title"),
       },
     },
+    // $FlowFixMe
     VoteSelectValidator,
     CastVote,
     VoteConnectDevice,
