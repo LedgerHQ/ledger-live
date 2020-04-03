@@ -8,7 +8,10 @@ import type {
   Account,
   Transaction,
 } from "@ledgerhq/live-common/lib/types";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import {
+  shortAddressPreview,
+  getMainAccount,
+} from "@ledgerhq/live-common/lib/account";
 import {
   formatVotes,
   useTronSuperRepresentatives,
@@ -114,7 +117,9 @@ const Post = ({
             <DataRow key={address}>
               <View style={styles.lineLabel}>
                 <LText semiBold>{validator && validator.name}</LText>
-                <LText style={styles.addressLabel}>{address}</LText>
+                <LText style={styles.addressLabel}>
+                  {shortAddressPreview(address)}
+                </LText>
               </View>
               <LText semiBold style={styles.text}>
                 {voteCount}
