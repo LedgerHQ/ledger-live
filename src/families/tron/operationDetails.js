@@ -113,7 +113,7 @@ function OperationDetailsVotes({
         formattedVotes.map(({ address, voteCount, validator }, i) => (
           <View key={address + i} style={styles.voteWrapper}>
             <View style={styles.voteCountWrapper}>
-              <LText style={styles.text}>
+              <LText style={styles.greyText}>
                 <Trans
                   i18nKey="operationDetails.extra.votesAddress"
                   values={{
@@ -121,13 +121,15 @@ function OperationDetailsVotes({
                     name: validator && validator.name,
                   }}
                 >
-                  <LText semiBold>{{}}</LText>
+                  <LText semiBold style={styles.text}>
+                    text
+                  </LText>
                 </Trans>
               </LText>
             </View>
 
             <TouchableOpacity onPress={redirectAddressCreator(address)}>
-              <LText style={styles.text}>{address}</LText>
+              <LText style={styles.greyText}>{address}</LText>
             </TouchableOpacity>
           </View>
         ))}
@@ -145,8 +147,9 @@ const styles = StyleSheet.create({
   text: {
     color: colors.darkBlue,
   },
+  greyText: { color: colors.grey },
   voteCountWrapper: {
-    marginBottom: 16,
+    marginBottom: 6,
   },
 });
 

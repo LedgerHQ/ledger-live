@@ -141,12 +141,12 @@ class Content extends PureComponent<Props, State> {
             />
           </View>
 
-          <LText
-            tertiary
-            numberOfLines={1}
-            style={[styles.currencyUnitValue, { color: valueColor }]}
-          >
-            {hasFailed ? null : (
+          {hasFailed || amount.isZero() ? null : (
+            <LText
+              tertiary
+              numberOfLines={1}
+              style={[styles.currencyUnitValue, { color: valueColor }]}
+            >
               <CurrencyUnitValue
                 showCode
                 disableRounding={true}
@@ -154,11 +154,11 @@ class Content extends PureComponent<Props, State> {
                 value={amount}
                 alwaysShowSign
               />
-            )}
-          </LText>
+            </LText>
+          )}
 
-          <LText tertiary style={styles.counterValue}>
-            {hasFailed ? null : (
+          {hasFailed || amount.isZero() ? null : (
+            <LText tertiary style={styles.counterValue}>
               <CounterValue
                 showCode
                 alwaysShowSign
@@ -167,8 +167,8 @@ class Content extends PureComponent<Props, State> {
                 date={operation.date}
                 subMagnitude={1}
               />
-            )}
-          </LText>
+            </LText>
+          )}
 
           <View style={styles.confirmationContainer}>
             <View

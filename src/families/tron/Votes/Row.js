@@ -38,39 +38,52 @@ const Row = ({
 
   return (
     <View style={styles.root}>
-      <View style={[styles.icon, !isSR ? styles.iconCandidate : {}]}>
-        {isSR ? (
-          <Trophy size={16} color={colors.live} />
-        ) : (
-          <Medal size={16} color={colors.grey} />
-        )}
-      </View>
-      <View style={styles.labelContainer}>
-        <TouchableOpacity onPress={openSR}>
-          <LText semiBold style={styles.title} numberOfLines={1}>
-            {validator ? validator.name : address}
+      <View style={styles.row}>
+        <View style={[styles.icon, !isSR ? styles.iconCandidate : {}]}>
+          {isSR ? (
+            <Trophy size={16} color={colors.live} />
+          ) : (
+            <Medal size={16} color={colors.grey} />
+          )}
+        </View>
+        <View style={styles.labelContainer}>
+          <TouchableOpacity onPress={openSR}>
+            <LText semiBold style={styles.title} numberOfLines={1}>
+              {validator ? validator.name : address}
+            </LText>
+          </TouchableOpacity>
+          <View style={styles.durationContainer}>
+            <Clock size={12} color={colors.grey} />
+            <LText style={styles.label}>{duration}</LText>
+          </View>
+        </View>
+        <View style={[styles.labelContainer, styles.labelContainerRight]}>
+          <LText semiBold style={styles.title}>
+            {amount}
           </LText>
-        </TouchableOpacity>
-        <View style={styles.durationContainer}>
-          <Clock size={12} color={colors.grey} />
-          <LText style={styles.label}>{duration}</LText>
         </View>
       </View>
-      <View style={[styles.labelContainer, styles.labelContainerRight]}>
-        <LText semiBold style={styles.title}>
-          {amount}
-        </LText>
-      </View>
+      <View style={styles.separator} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingTop: 12,
+  },
+  separator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: colors.lightFog,
+    marginTop: 12,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   icon: {
     alignItems: "center",

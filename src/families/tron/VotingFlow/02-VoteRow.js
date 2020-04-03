@@ -61,9 +61,18 @@ type VoteRowProps = {
   onEdit: (vote: Vote, name: string) => void,
   onRemove: (vote: Vote) => void,
   index: number,
+  onOpen: (i: number) => void,
+  openIndex: number,
 };
 
-const VoteRow = ({ vote, onEdit, onRemove, index }: VoteRowProps) => {
+const VoteRow = ({
+  vote,
+  onEdit,
+  onRemove,
+  index,
+  onOpen,
+  openIndex,
+}: VoteRowProps) => {
   const rowRef = useRef();
   const swipeRef = useRef();
   const { address, voteCount, isSR, rank, validator } = vote;
@@ -78,7 +87,7 @@ const VoteRow = ({ vote, onEdit, onRemove, index }: VoteRowProps) => {
           setTimeout(() => {
             if (swipeRef.current && swipeRef.current.close)
               swipeRef.current.close();
-          }, 800);
+          }, 1000);
         }
       }, 400);
     }
@@ -89,6 +98,11 @@ const VoteRow = ({ vote, onEdit, onRemove, index }: VoteRowProps) => {
     voteCount,
     onRemove,
   ]);
+
+  useEffect(() => {
+    if (openIndex !== index && swipeRef.current && swipeRef.current.close)
+      swipeRef.current.close();
+  }, [index, openIndex, swipeRef]);
 
   const removeVoteAnimStart = useCallback(() => {
     if (rowRef && rowRef.current && rowRef.current.transitionTo)
@@ -113,6 +127,7 @@ const VoteRow = ({ vote, onEdit, onRemove, index }: VoteRowProps) => {
         renderRightActions={(progress, dragX) => (
           <RightAction dragX={dragX} onRemove={removeVoteAnimStart} />
         )}
+        onSwipeableRightWillOpen={() => onOpen(index)}
       >
         <TouchableOpacity
           activeOpacity={0.8}
@@ -156,7 +171,7 @@ const VoteRow = ({ vote, onEdit, onRemove, index }: VoteRowProps) => {
 
 const styles = StyleSheet.create({
   root: {
-    height: 75,
+    height: 80,
     width: "100%",
     marginVertical: 5,
     overflow: "visible",
@@ -170,6 +185,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     zIndex: 10,
     paddingHorizontal: 16,
+    borderColor: colors.lightFog,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   row: {
     flex: 1,

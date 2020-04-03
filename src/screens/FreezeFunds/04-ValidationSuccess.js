@@ -145,12 +145,14 @@ const styles = StyleSheet.create({
   },
   button: {
     alignSelf: "stretch",
-    marginTop: 24,
+    marginBottom: 16,
   },
   labelContainer: {
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: 16,
+    paddingHorizontal: 16,
+    marginTop: 48,
+    marginBottom: 16,
   },
   label: { fontSize: 12 },
   subLabel: { color: colors.grey },

@@ -8,8 +8,6 @@ import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 import i18next from "i18next";
 
-import * as Animatable from "react-native-animatable";
-
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type {
@@ -121,8 +119,18 @@ const CastVote = ({ account, navigation }: Props) => {
   const openEditModal = useCallback(
     (vote: Vote, name: string) => {
       setEditVote({ vote, name });
+      setopenIndex(-1);
     },
     [setEditVote],
+  );
+
+  const [openIndex, setopenIndex] = useState(-1);
+
+  const onOpen = useCallback(
+    i => {
+      setopenIndex(i);
+    },
+    [setopenIndex],
   );
 
   const onRemove = useCallback(
@@ -164,8 +172,6 @@ const CastVote = ({ account, navigation }: Props) => {
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, transaction, bridge]);
 
-  if (!account || !transaction) return null;
-
   const error = bridgePending ? null : status.errors.vote;
 
   return (
@@ -179,23 +185,20 @@ const CastVote = ({ account, navigation }: Props) => {
               vote={vote}
               onEdit={openEditModal}
               onRemove={onRemove}
+              onOpen={onOpen}
+              openIndex={openIndex}
               index={i}
             />
           ))}
           {votes.length < SR_MAX_VOTES ? (
-            <Animatable.View
-              animation="slideInLeft"
-              duration={400}
-              useNativeDriver
-              style={styles.addMoreVotesContainer}
-            >
+            <View style={styles.addMoreVotesContainer}>
               <TouchableOpacity onPress={onBack} style={styles.addMoreVotes}>
                 <LText semiBold style={styles.addMoreVotesLabel}>
                   <Trans i18nKey="vote.castVotes.addMoreVotes" />
                 </LText>
                 <ArrowRight size={16} color={colors.live} />
               </TouchableOpacity>
-            </Animatable.View>
+            </View>
           ) : null}
         </ScrollView>
         <View style={styles.bottomWrapper}>
