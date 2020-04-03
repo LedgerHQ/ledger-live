@@ -345,4 +345,8 @@ export const exportSettingsSelector = createSelector(
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 
+const JUAN_FIXME_REPLACE_WITH_THE_FEATURE = [];
+export const blacklistedTokenIdsSelector = () =>
+  JUAN_FIXME_REPLACE_WITH_THE_FEATURE;
+
 export default handleActions(handlers, INITIAL_STATE);
