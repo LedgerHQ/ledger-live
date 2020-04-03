@@ -497,7 +497,7 @@ export const getTronResources = async (
     .plus(get(delegatedFrozen, "bandwidth.amount", 0))
     .plus(get(delegatedFrozen, "energy.amount", 0))
     .dividedBy(1000000)
-    .decimalPlaces(3, BigNumber.ROUND_HALF_DOWN)
+    .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
 
   const votes = get(acc, "votes", []).map(v => ({
