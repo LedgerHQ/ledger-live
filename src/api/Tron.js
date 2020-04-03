@@ -201,13 +201,13 @@ export async function fetchTronAccountTxs(
         3,
         resp.data || [],
         async tx => {
-          if (!tx.txID) {
+          const txID = tx.txID || tx.transaction_id;
+          if (!txID) {
             return tx;
           }
           const detail =
-            cacheTransactionInfoById[tx.txID] ||
-            (await fetchTronTxDetail(tx.txID));
-          cacheTransactionInfoById[tx.txID] = detail;
+            cacheTransactionInfoById[txID] || (await fetchTronTxDetail(txID));
+          cacheTransactionInfoById[txID] = detail;
           return { ...tx, detail };
         }
       ).then(results => ({ results, nextUrl }));
