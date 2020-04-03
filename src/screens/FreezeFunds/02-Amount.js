@@ -296,7 +296,10 @@ const FreezeAmount = ({ account, navigation }: Props) => {
                     <CurrencyUnitValue
                       showCode
                       unit={unit}
-                      value={account.spendableBalance}
+                      value={getDecimalPart(
+                        account.spendableBalance,
+                        defaultUnit.magnitude,
+                      )}
                     />
                   </LText>
                 </View>

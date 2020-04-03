@@ -1,20 +1,36 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-navigation";
-import { translate } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import { Trans } from "react-i18next";
 import colors from "../../../colors";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import IlluVotes from "../IlluVotes";
+import ExternalLink from "../../../components/ExternalLink";
+import InfoModal from "../../../modals/Info";
+
+import Trophy from "../../../icons/Trophy";
+import Medal from "../../../icons/Medal";
+
+const infoModalData = [
+  {
+    Icon: () => <Trophy size={18} color={colors.live} />,
+    title: <Trans i18nKey="tron.info.superRepresentative.title" />,
+    description: <Trans i18nKey="tron.info.superRepresentative.description" />,
+  },
+  {
+    Icon: () => <Medal size={18} color={colors.grey} />,
+    title: <Trans i18nKey="tron.info.candidates.title" />,
+    description: <Trans i18nKey="tron.info.candidates.description" />,
+  },
+];
 
 type Props = {
   navigation: any,
-  t: TFunction,
 };
 
-function VoteStarted({ navigation, t }: Props) {
+function VoteStarted({ navigation }: Props) {
   const onNext = useCallback(() => {
     navigation.navigate("VoteSelectValidator", {
       ...navigation.state.params,
@@ -25,31 +41,57 @@ function VoteStarted({ navigation, t }: Props) {
     navigation.dismiss();
   }, [navigation]);
 
+  const [infoModalOpen, setInfoModalOpen] = useState();
+
+  const openInfoModal = useCallback(() => {
+    setInfoModalOpen(true);
+  }, [setInfoModalOpen]);
+
+  const closeInfoModal = useCallback(() => {
+    setInfoModalOpen(false);
+  }, [setInfoModalOpen]);
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.main}>
         <IlluVotes />
 
         <LText style={styles.description}>
-          {t("tron.voting.flow.started.description")}
+          <Trans i18nKey="tron.voting.flow.started.description" />
         </LText>
+        <View style={styles.howVotingWorks}>
+          <ExternalLink
+            event="VoteInfoSRCandidate"
+            onPress={openInfoModal}
+            text={<Trans i18nKey="tron.voting.flow.started.srOrCandidate" />}
+            ltextProps={{
+              secondary: true,
+            }}
+          />
+        </View>
       </View>
 
       <View style={styles.footer}>
         <Button
           event="VoteStartedContinueBtn"
           onPress={onNext}
-          title={t("tron.voting.flow.started.button.continue")}
+          title={<Trans i18nKey="tron.voting.flow.started.button.continue" />}
           type="primary"
         />
         <Button
           event="VoteStartedCancelBtn"
           onPress={onCancel}
-          title={t("common.cancel")}
+          title={<Trans i18nKey="common.cancel" />}
           type="negativePrimary"
           containerStyle={styles.buttonContainer}
         />
       </View>
+
+      <InfoModal
+        isOpened={!!infoModalOpen}
+        onClose={closeInfoModal}
+        data={infoModalData}
+      />
     </SafeAreaView>
   );
 }
@@ -78,6 +120,15 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 4,
   },
+  howVotingWorks: {
+    marginTop: 32,
+    borderRadius: 32,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: colors.live,
+    flexDirection: "row",
+  },
 });
 
-export default translate()(VoteStarted);
+export default VoteStarted;

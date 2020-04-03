@@ -693,7 +693,7 @@
       "seeMore": "See more Tokens",
       "seeLess": "See less Tokens",
       "addTokens": "Add token",
-      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>{{currency}} address</1>."
     },
     "subaccounts": {
       "seeMore": "See more subaccounts",
@@ -1528,6 +1528,7 @@
       "flow": {
         "started": {
           "title": "Vote",
+          "srOrCandidate": "SR or Candidate?",
           "description": "Vote for one or more Super Representatives to start earning rewards.",
           "button": {
             "continue": "Cast Votes"
@@ -1597,6 +1598,14 @@
       "claimRewards": {
         "title": "Voting rewards",
         "description": "TRX generated during block production and available as rewards can be claimed once every 24 hours."
+      },
+      "superRepresentative": {
+        "title": "Super Representatives (SR)",
+        "description": "Super Representatives play a key role in governing the TRON community by ensuring basic functions, e.g. block generation and bookkeeping."
+      },
+      "candidates": {
+        "title": "Candidates",
+        "description": "127 individuals elected through voting by the entire token holder community. Votes are updated once every 6 hours."
       }
     }
   },
