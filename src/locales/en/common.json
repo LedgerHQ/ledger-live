@@ -1524,6 +1524,7 @@
         "selectValidator": {
           "sections": {
             "title": {
+              "selected": "Selected",
               "superRepresentatives": "Super representatives",
               "candidates": "Candidates"
             }
