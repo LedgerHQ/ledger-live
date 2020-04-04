@@ -48,7 +48,8 @@ export function mergeOps(
 }
 
 export const makeSync = (
-  getAccountShape: GetAccountShape
+  getAccountShape: GetAccountShape,
+  postSync: Account => Account = a => a
 ): $PropertyType<AccountBridge<any>, "sync"> => (
   initial,
   syncConfig
@@ -66,7 +67,7 @@ export const makeSync = (
         );
         o.next(a => {
           const operations = mergeOps(a.operations, shape.operations || []);
-          return {
+          return postSync({
             ...a,
             spendableBalance: shape.balance || a.balance,
             operationsCount: shape.operationsCount || operations.length,
@@ -76,7 +77,7 @@ export const makeSync = (
             pendingOperations: a.pendingOperations.filter(op =>
               shouldRetainPendingOperation(a, op)
             )
-          };
+          });
         });
         o.complete();
       } catch (e) {
