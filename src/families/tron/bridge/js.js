@@ -286,6 +286,8 @@ const getAccountShape = async (info, syncConfig) => {
     )
   );
 
+  // FIXME: this is not optional especially that we might already have info.initialAccount
+  // use minimalOperationsBuilderSync to reconciliate and KEEP REF
   const txs = await fetchTronAccountTxs(
     info.address,
     txs => txs.length < operationsPageSize,
@@ -337,6 +339,8 @@ const getAccountShape = async (info, syncConfig) => {
   });
 
   // TRC10 and TRC20 accounts
+  // FIXME: this is bad for perf: we should reconciliate with potential existing data
+  // we need to KEEP REF as much as possible & use minimalOperationsBuilderSync
   const subAccounts: SubAccount[] = compact(
     trc10Tokens.concat(trc20Tokens).map(({ type, key, value }) => {
       const { blacklistedTokenIds = [] } = syncConfig;
@@ -348,6 +352,10 @@ const getAccountShape = async (info, syncConfig) => {
       const operations = compact(
         tokenTxs.map(tx => txInfoToOperation(id, info.address, tx))
       );
+      const maybeExistingSubAccount =
+        info.initialAccount &&
+        info.initialAccount.subAccounts &&
+        info.initialAccount.subAccounts.find(a => a.id === id);
       const sub: TokenAccount = {
         type: "TokenAccount",
         id,
@@ -357,7 +365,9 @@ const getAccountShape = async (info, syncConfig) => {
         balance: BigNumber(value),
         operationsCount: operations.length,
         operations,
-        pendingOperations: []
+        pendingOperations: maybeExistingSubAccount
+          ? maybeExistingSubAccount.pendingOperations
+          : []
       };
       return sub;
     })
@@ -388,7 +398,29 @@ const getAccountShape = async (info, syncConfig) => {
 
 const scanAccounts = makeScanAccounts(getAccountShape);
 
-const sync = makeSync(getAccountShape);
+// the balance does not update straightaway so we should ignore recent operations if they are in pending for a bit
+const preferPendingOperationsUntilBlockValidation = 35;
+
+const postSync = parent => {
+  function evictRecentOpsIfPending(a) {
+    a.pendingOperations.forEach(pending => {
+      const i = a.operations.findIndex(o => o.id === pending.id);
+      if (i !== -1) {
+        const diff = parent.blockHeight - (a.operations[i].blockHeight || 0);
+        if (diff < preferPendingOperationsUntilBlockValidation) {
+          a.operations.splice(i, 1);
+        }
+      }
+    });
+  }
+
+  evictRecentOpsIfPending(parent);
+  parent.subAccounts && parent.subAccounts.forEach(evictRecentOpsIfPending);
+
+  return parent;
+};
+
+const sync = makeSync(getAccountShape, postSync);
 
 const currencyBridge: CurrencyBridge = {
   preload: async () => {
