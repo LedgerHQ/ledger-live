@@ -98,7 +98,7 @@ const Post = ({
   const sp = useTronSuperRepresentatives();
   const formattedVotes =
     transaction.votes &&
-    transaction.votes.length &&
+    transaction.votes.length > 0 &&
     formatVotes(transaction.votes, sp);
 
   const from =
@@ -135,20 +135,20 @@ const Post = ({
           ))}
         </>
       ) : null}
-      <DataRow label={<Trans i18nKey="ValidateOnDevice.fromAddress" />}>
+      <DataRow label="From">
         <LText semiBold style={styles.text}>
           {from}
         </LText>
       </DataRow>
       {transaction.recipient && transaction.recipient !== from ? (
-        <DataRow label={<Trans i18nKey="ValidateOnDevice.toAddress" />}>
+        <DataRow label="To">
           <LText semiBold style={styles.text}>
             {transaction.recipient}
           </LText>
         </DataRow>
       ) : null}
       {transaction.resource && (
-        <DataRow label={<Trans i18nKey="ValidateOnDevice.resource" />}>
+        <DataRow label="Resource">
           <LText semiBold style={styles.text}>
             {(transaction.resource || "").toLowerCase()}
           </LText>

@@ -1680,12 +1680,8 @@
       "claimReward": "",
       "vote": ""
     },
-    "address": "Address",
-    "fromAddress": "From",
-    "toAddress": "To",
     "name": "Name",
     "votes": "Votes",
-    "resource": "Resource",
     "infoWording": {
       "freeze": "Frozen tokens are \"locked\" for a period of 3 days",
       "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be canceled",
