@@ -10,7 +10,8 @@ import type {
   Account,
   AccountRaw,
   SubAccount,
-  SubAccountRaw
+  SubAccountRaw,
+  BalanceHistoryRawMap
 } from "./types";
 import {
   fromAccountRaw,
@@ -151,6 +152,28 @@ export function minimalOperationsBuilderSync<CO>(
   return operations;
 }
 
+const shouldRefreshBalanceHistory = (
+  balanceHistory: BalanceHistoryRawMap,
+  account: Account
+): boolean => {
+  const { week } = balanceHistory;
+  const accountWeek = account.balanceHistory && account.balanceHistory.week;
+  if (!week || !accountWeek) return true; // there is no week yet || there were no balance history yet
+
+  const [firstDate] = week[0];
+  const [, lastValue] = week[week.length - 1];
+  const { date: firstAccountDate } = accountWeek[0];
+  const { value: lastAccountValue } = accountWeek[accountWeek.length - 1];
+
+  const isSameDate = firstDate === firstAccountDate.toISOString();
+
+  return (
+    !isSameDate || // start date of the range has changed
+    lastValue !== lastAccountValue.toString() || // final balance has changed
+    week.length !== accountWeek.length // number of endpoints has changed
+  );
+};
+
 export function patchAccount(
   account: Account,
   updatedRaw: AccountRaw
@@ -221,20 +244,10 @@ export function patchAccount(
     next.balance = BigNumber(updatedRaw.balance);
     changed = true;
   }
-
-  if (updatedRaw.balanceHistory) {
-    const { week } = updatedRaw.balanceHistory;
-    const accountWeek = account.balanceHistory && account.balanceHistory.week;
-    const refreshBalanceHistory =
-      !week || // there is no week yet
-      !accountWeek || // there were no balance history yet
-      // last datapoint changes will force a refresh
-      week[week.length - 1][1] !==
-        accountWeek[accountWeek.length - 1].value.toString();
-    if (refreshBalanceHistory) {
-      next.balanceHistory = fromBalanceHistoryRawMap(updatedRaw.balanceHistory);
-      changed = true;
-    }
+  const { balanceHistory } = updatedRaw;
+  if (balanceHistory && shouldRefreshBalanceHistory(balanceHistory, account)) {
+    next.balanceHistory = fromBalanceHistoryRawMap(balanceHistory);
+    changed = true;
   } else if (account.balanceHistory) {
     delete next.balanceHistory;
     changed = true;

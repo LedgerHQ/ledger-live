@@ -159,9 +159,6 @@ export async function buildAccount({
 
   const balanceHistory = {};
 
-  // FIXME we are having bug TECHSUPPORT-598
-  // TBD what we do next, @juan-cortes to create a LL- task to fix this impl
-  /*
   if (!libcoreNoGoBalanceHistory().includes(currency.id)) {
     await Promise.all(
       getRanges().map(async range => {
@@ -178,7 +175,6 @@ export async function buildAccount({
       })
     );
   }
-  */
 
   log("libcore", `sync(${logId}) DONE balanceHistory`);
 
