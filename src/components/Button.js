@@ -226,7 +226,7 @@ class Button extends PureComponent<
       : RectButton;
     const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
 
-    const iconContainerStyle = { paddingRight: 10 };
+    const iconContainerStyle = { padding: 10 };
 
     return (
       // $FlowFixMe
