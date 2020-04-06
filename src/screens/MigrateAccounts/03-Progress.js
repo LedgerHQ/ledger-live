@@ -28,9 +28,11 @@ import {
   accountsSelector,
   migratableAccountsSelector,
 } from "../../reducers/accounts";
+import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 
 const mapStateToProps = createStructuredSelector({
   accounts: accountsSelector,
+  blacklistedTokenIds: blacklistedTokenIdsSelector,
   migratableAccounts: migratableAccountsSelector,
   currencyIds: state =>
     migratableAccountsSelector(state)
@@ -53,6 +55,7 @@ type Props = {
   setAccounts: (Account[]) => void,
   currencyIds: string[],
   migratableAccounts: Account[],
+  blacklistedTokenIds: string[],
 };
 
 const Progress = ({
@@ -61,6 +64,7 @@ const Progress = ({
   setAccounts,
   currencyIds,
   migratableAccounts,
+  blacklistedTokenIds,
 }: Props) => {
   const [status, setStatus] = useState("pending");
   const [error, setError] = useState(null);
@@ -122,8 +126,8 @@ const Progress = ({
   const startScanAccountsDevice = useCallback(() => {
     const syncConfig = {
       // TODO later we need to paginate only a few ops, not all (for add accounts)
-      // paginationConfig will come from redux
       paginationConfig: {},
+      blacklistedTokenIds,
     };
     unsub();
     scanSubscription.current = getCurrencyBridge(currency)
@@ -148,7 +152,7 @@ const Progress = ({
           setError(err);
         },
       });
-  }, [currency, deviceId, setAccounts, unsub, accounts, setStatus, setError]);
+  }, [blacklistedTokenIds, unsub, currency, deviceId, setAccounts, accounts]);
 
   useEffect(() => {
     startScanAccountsDevice();

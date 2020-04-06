@@ -68,6 +68,7 @@ export type SettingsState = {
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
   hideEmptyTokenAccounts: boolean,
+  blacklistedTokenIds: string[],
 };
 
 const INITIAL_STATE: SettingsState = {
@@ -86,6 +87,7 @@ const INITIAL_STATE: SettingsState = {
   experimentalUSBEnabled: false,
   countervalueFirst: false,
   hideEmptyTokenAccounts: false,
+  blacklistedTokenIds: [],
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -218,6 +220,20 @@ const handlers: Object = {
     ...state,
     hideEmptyTokenAccounts,
   }),
+  SHOW_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+    const ids = state.blacklistedTokenIds;
+    return {
+      ...state,
+      blacklistedTokenIds: ids.filter(id => id !== tokenId),
+    };
+  },
+  BLACKLIST_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+    const ids = state.blacklistedTokenIds;
+    return {
+      ...state,
+      blacklistedTokenIds: [...ids, tokenId],
+    };
+  },
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -323,6 +339,9 @@ export const countervalueFirstSelector = (state: State) =>
 export const readOnlyModeEnabledSelector = (state: State) =>
   Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
 
+export const blacklistedTokenIdsSelector = (state: State) =>
+  state.settings.blacklistedTokenIds;
+
 // $FlowFixMe
 export const exportSettingsSelector = createSelector(
   counterValueCurrencySelector,
@@ -344,9 +363,5 @@ export const exportSettingsSelector = createSelector(
 
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
-
-const JUAN_FIXME_REPLACE_WITH_THE_FEATURE = [];
-export const blacklistedTokenIdsSelector = () =>
-  JUAN_FIXME_REPLACE_WITH_THE_FEATURE;
 
 export default handleActions(handlers, INITIAL_STATE);

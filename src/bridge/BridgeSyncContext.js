@@ -6,9 +6,9 @@ import { useSelector, useDispatch } from "react-redux";
 import logger from "../logger";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import { accountsSelector } from "../reducers/accounts";
+import { blacklistedTokenIdsSelector } from "../reducers/settings";
 import { track } from "../analytics/segment";
 import { prepareCurrency, hydrateCurrency } from "./cache";
-import { blacklistedTokenIdsSelector } from "../reducers/settings";
 
 export const BridgeSyncProvider = ({ children }: { children: React$Node }) => {
   const accounts = useSelector(accountsSelector);

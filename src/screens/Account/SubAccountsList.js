@@ -7,7 +7,11 @@ import take from "lodash/take";
 import { Platform, StyleSheet, View } from "react-native";
 // !! Using nested list via react-navigation prompts some ui warnings some investigating needed to fully resolve this issue !!
 import { FlatList, withNavigation } from "react-navigation";
-import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  SubAccount,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import MaterialIcon from "react-native-vector-icons/dist/MaterialIcons";
 import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
@@ -18,6 +22,7 @@ import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Touchable from "../../components/Touchable";
+import BlacklistTokenModal from "../Settings/Accounts/BlacklistTokenModal";
 
 const keyExtractor = o => o.id;
 
@@ -88,11 +93,22 @@ const SubAccountsList = ({
   accountId: string,
 }) => {
   const [isCollapsed, setCollapsed] = useState(true);
+  const [blacklistToken, setBlacklistToken] = useState<
+    TokenCurrency | typeof undefined,
+  >();
   const subAccounts = listSubAccounts(parentAccount);
 
   const isToken = useMemo(
     () => listTokenTypesForCryptoCurrency(parentAccount.currency).length > 0,
     [parentAccount],
+  );
+
+  const onBlacklistToken = useCallback(token => setBlacklistToken(token), [
+    setBlacklistToken,
+  ]);
+  const onClearBlacklistToken = useCallback(
+    () => setBlacklistToken(undefined),
+    [setBlacklistToken],
   );
 
   const renderHeader = useCallback(
@@ -190,10 +206,14 @@ const SubAccountsList = ({
   const renderItem = useCallback(
     ({ item }) => (
       <Card>
-        <SubAccountRow account={item} onSubAccountPress={onAccountPress} />
+        <SubAccountRow
+          account={item}
+          onBlacklistToken={onBlacklistToken}
+          onSubAccountPress={onAccountPress}
+        />
       </Card>
     ),
-    [onAccountPress],
+    [onAccountPress, onBlacklistToken],
   );
 
   if (
@@ -212,6 +232,11 @@ const SubAccountsList = ({
         keyExtractor={keyExtractor}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
+      />
+      <BlacklistTokenModal
+        onClose={onClearBlacklistToken}
+        isOpened={!!blacklistToken}
+        token={blacklistToken}
       />
     </View>
   );

@@ -14,7 +14,6 @@ import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { translate, Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationStackProp } from "react-navigation-stack";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
@@ -36,6 +35,7 @@ import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { prepareCurrency } from "../../bridge/cache";
+import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 
 const forceInset = { bottom: "always" };
 
@@ -62,6 +62,7 @@ type Props = {
     renamings: { [id: string]: string },
   }) => void,
   existingAccounts: Account[],
+  blacklistedTokenIds?: string[],
 };
 
 type State = {
@@ -74,6 +75,7 @@ type State = {
 
 const mapStateToProps = createStructuredSelector({
   existingAccounts: accountsSelector,
+  blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
 
 const mapDispatchToProps = {
@@ -118,7 +120,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   };
 
   startSubscription = () => {
-    const { navigation } = this.props;
+    const { navigation, blacklistedTokenIds } = this.props;
     const currency = navigation.getParam("currency");
     const deviceId = navigation.getParam("deviceId");
     const bridge = getCurrencyBridge(currency);
@@ -126,6 +128,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       paginationConfig: {
         operation: 0,
       },
+      blacklistedTokenIds,
     };
     this.scanSubscription = concat(
       from(prepareCurrency(currency)).pipe(ignoreElements()),

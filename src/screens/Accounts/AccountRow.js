@@ -10,7 +10,11 @@ import {
   isUpToDateAccount,
 } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
-import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  SubAccount,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -26,6 +30,7 @@ type Props = {
   accountId: string,
   navigation: *,
   isLast: boolean,
+  onBlacklistToken: TokenCurrency => void,
 };
 
 const placeholderProps = {
@@ -36,7 +41,12 @@ const placeholderProps = {
 const TICK_W = 6;
 const TICK_H = 20;
 
-const AccountRow = ({ navigation, account, accountId }: Props) => {
+const AccountRow = ({
+  navigation,
+  account,
+  accountId,
+  onBlacklistToken,
+}: Props) => {
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
@@ -137,6 +147,7 @@ const AccountRow = ({ navigation, account, accountId }: Props) => {
                   key={i}
                   account={tkn}
                   onSubAccountPress={onSubAccountPress}
+                  onBlacklistToken={onBlacklistToken}
                 />
               ))}
             </View>
