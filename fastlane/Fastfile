@@ -30,13 +30,26 @@ lane :internal_release do
     next
   end
 
-  system "yarn"
+  system "yarn --frozen-lockfile"
 
   ensure_git_status_clean
 
   Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
   Fastlane::LaneManager.cruise_lane('android', 'beta')
 
+end
+
+lane :beta do
+  ensure_git_status_clean
+  ensure_git_branch(
+    branch: 'develop'
+  )
+  git_pull
+
+  system "yarn --frozen-lockfile"
+
+  Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
+  Fastlane::LaneManager.cruise_lane('android', 'beta')
 end
 
 platform :ios do
@@ -81,17 +94,6 @@ platform :ios do
         }
       )
     end
-
-  end
-
-  desc "private: upload to Testflight"
-  private_lane :upload_beta do
-    pilot(
-      skip_submission: true,
-      app_identifier: "com.ledger.live",
-      skip_waiting_for_build_processing: true,
-      ipa: 'ios/ledgerlivemobile.ipa'
-    )
   end
 
   desc "private: bump build number"
@@ -116,6 +118,16 @@ platform :ios do
       sign: true
     )
     push_to_git_remote
+  end
+
+  desc "upload to Testflight"
+  lane :upload_beta do
+    pilot(
+      skip_submission: true,
+      app_identifier: "com.ledger.live",
+      skip_waiting_for_build_processing: true,
+      ipa: 'ios/ledgerlivemobile.ipa'
+    )
   end
 
   desc "build and push to TestFlight"
@@ -193,22 +205,24 @@ platform :android do
     push_to_git_remote
   end
 
-  desc "build and upload beta to Google Play Store"
-  lane :beta do
-    prepare_android_internal
-    build(type: "Release")
+  desc "upload to Play Store"
+  lane :upload_beta do
     upload_to_play_store(
       track: 'internal',
       package_name: 'com.ledger.live'
     )
   end
 
+  desc "build and upload beta to Google Play Store"
+  lane :beta do
+    prepare_android_internal
+    build(type: "Release")
+    upload_beta
+  end
+
   desc "rebuild and upload beta to Google Play Store"
   lane :redo_beta do
     build(type: "Release")
-    upload_to_play_store(
-      track: 'internal',
-      package_name: 'com.ledger.live'
-    )
+    upload_beta
   end
 end
