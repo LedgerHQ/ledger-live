@@ -1,7 +1,7 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -20,6 +20,7 @@ import type {
   Account,
   Transaction,
 } from "@ledgerhq/live-common/lib/types";
+import { useDebounce } from "@ledgerhq/live-common/lib//hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
@@ -49,6 +50,8 @@ type Props = {
 };
 
 const SendAmount = ({ account, parentAccount, navigation }: Props) => {
+  const [maxSpendable, setMaxSpendable] = useState(null);
+
   const {
     transaction,
     setTransaction,
@@ -60,6 +63,30 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
     account,
     parentAccount,
   }));
+
+  const debouncedTransaction = useDebounce(transaction, 500);
+
+  useEffect(() => {
+    if (!account) return;
+
+    let cancelled = false;
+    getAccountBridge(account, parentAccount)
+      .estimateMaxSpendable({
+        account,
+        parentAccount,
+        transaction: debouncedTransaction,
+      })
+      .then(estimate => {
+        if (cancelled) return;
+
+        setMaxSpendable(estimate);
+      });
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      cancelled = true;
+    };
+  }, [account, parentAccount, debouncedTransaction]);
 
   const onChange = useCallback(
     amount => {
@@ -141,7 +168,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                       <CurrencyUnitValue
                         showCode
                         unit={unit}
-                        value={account.balance}
+                        value={maxSpendable}
                       />
                     </LText>
                   </View>
