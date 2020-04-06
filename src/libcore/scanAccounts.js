@@ -120,7 +120,7 @@ async function scanNextAccount(props: {
     `scanning ${currency.id} ${derivationMode ||
       "default"}@${accountIndex}: resulted of ${
       account && !shouldSkip
-        ? `Account with ${account.operations.length} txs (xpub ${String(
+        ? `Account with ${account.operationsCount} txs (xpub ${String(
             account.xpub
           )}, fresh ${account.freshAddressPath} ${account.freshAddress})`
         : "no account"

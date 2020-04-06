@@ -64,7 +64,7 @@ export const getAccountName = (account: AccountLike): string => {
 export const isAccountEmpty = (a: AccountLike): boolean => {
   const hasSubAccounts =
     a.type === "Account" && a.subAccounts && a.subAccounts.length;
-  return a.operations.length === 0 && a.balance.isZero() && !hasSubAccounts;
+  return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
 };
 
 export const isAccountBalanceSignificant = (a: AccountLike): boolean =>

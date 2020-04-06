@@ -124,6 +124,7 @@ export const makeScanAccounts = (
 
       const freshAddress = address;
       const operations = accountShape.operations || [];
+      const operationsCount = accountShape.operationsCount || operations.length;
       const balance = accountShape.balance || BigNumber(0);
       const spendableBalance = accountShape.spendableBalance || BigNumber(0);
 
@@ -132,7 +133,7 @@ export const makeScanAccounts = (
       const isAccountEmpty =
         currency.id === "tron" && accountShape.tronResources
           ? accountShape.tronResources.bandwidth.freeLimit === 0
-          : operations.length === 0 && balance.isZero();
+          : operationsCount === 0 && balance.isZero();
 
       if (isAccountEmpty) {
         // this is an empty account
