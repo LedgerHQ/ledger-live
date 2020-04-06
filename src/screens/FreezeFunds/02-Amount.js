@@ -16,10 +16,7 @@ import i18next from "i18next";
 
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -200,18 +197,11 @@ const FreezeAmount = ({ account, navigation }: Props) => {
 
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
 
   const resource = transaction.resource || "";
 
   const error = amount.eq(0) || bridgePending ? null : status.errors.amount;
   const warning = status.warnings.amount;
-
-  const tickerStyle = amount.gt(0)
-    ? {
-        color: error ? colors.alert : warning ? colors.orange : colors.darkBlue,
-      }
-    : {};
 
   return (
     <>
@@ -244,11 +234,6 @@ const FreezeAmount = ({ account, navigation }: Props) => {
                   autoFocus
                   style={styles.inputContainer}
                   inputStyle={styles.inputStyle}
-                  renderLeft={
-                    <LText style={[styles.currency, tickerStyle]} tertiary>
-                      {currency.ticker}
-                    </LText>
-                  }
                   hasError={!!error}
                   hasWarning={!!warning}
                 />
@@ -449,7 +434,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputContainer: { flexBasis: 75 },
-  inputStyle: { flex: 0, flexShrink: 1 },
+  inputStyle: { flex: 1, flexShrink: 1, textAlign: "center" },
   currency: {
     color: colors.grey,
     fontSize: 32,

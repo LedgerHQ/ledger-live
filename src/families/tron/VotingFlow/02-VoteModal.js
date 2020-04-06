@@ -111,6 +111,7 @@ const VoteModal = ({
             autoFocus
             keyboardType="numeric"
             blurOnSubmit
+            placeholder="0"
           />
         </View>
         <View style={styles.bottomWrapper}>
