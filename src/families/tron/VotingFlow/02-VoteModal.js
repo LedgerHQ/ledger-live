@@ -107,7 +107,7 @@ const VoteModal = ({
             onChangeText={handleChange}
             style={[styles.inputStyle, error ? styles.error : {}]}
             autoCorrect={false}
-            value={`${value || 0}`}
+            value={`${value || ""}`}
             autoFocus
             keyboardType="numeric"
             blurOnSubmit
