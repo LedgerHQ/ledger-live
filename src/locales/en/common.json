@@ -860,6 +860,20 @@
       "currencySettingsTitle": "{{currencyName}} Settings",
       "placeholder": "No settings for this asset"
     },
+    "accounts": {
+      "header": "Accounts",
+      "title": "Accounts",
+      "desc": "Manage assets display in the app.",
+      "hideTokenCTA": "Hide token",
+      "showContractCTA": "Show contract",
+      "blacklistedTokens": "Hidden token list",
+      "blacklistedTokensDesc": "You can hide a token by long-pressing on it in accounts list and selecting \"Hide token\"",
+      "blacklistedTokensModal": {
+        "title": "Hide token",
+        "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can restore their visibility at any time from <3>Settings > Accounts</3>",
+        "confirm": "Hide token"
+      }
+    },
     "rates": {
       "header": "Rates",
       "desc": "Here are all the rates used by Ledger Live to calculate countervalues. Choose which rate providers are used for each rate.",

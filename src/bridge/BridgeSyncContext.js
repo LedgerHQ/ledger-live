@@ -25,6 +25,7 @@ import {
   syncStateLocalSelector,
 } from "../reducers/bridgeSync";
 import { prepareCurrency, hydrateCurrency } from "./cache";
+import { blacklistedTokenIdsSelector } from "../reducers/settings";
 
 type BridgeSyncProviderProps = {
   children: *,
@@ -36,6 +37,7 @@ type BridgeSyncProviderOwnProps = BridgeSyncProviderProps & {
   isUpToDate: boolean,
   updateAccountWithUpdater: (string, (Account) => Account) => void,
   setAccountSyncState: (string, AsyncState) => *,
+  blacklistedTokenIds?: string[],
 };
 
 type AsyncState = {
@@ -74,6 +76,7 @@ const BridgeSyncContext = React.createContext((_: BehaviorAction) => {});
 
 const mapStateToProps = createStructuredSelector({
   accounts: accountsSelector,
+  blacklistedTokenIds: blacklistedTokenIdsSelector,
   bridgeSync: bridgeSyncSelector,
   isUpToDate: isUpToDateSelector,
 });
@@ -143,6 +146,7 @@ class Provider extends Component<BridgeSyncProviderOwnProps, Sync> {
       const syncConfig = {
         // paginationConfig will come from redux
         paginationConfig: {},
+        blacklistedTokenIds: this.props.blacklistedTokenIds,
       };
       concat(
         from(prepareCurrency(account.currency)).pipe(ignoreElements()),

@@ -8,7 +8,11 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
-import type { Account, SubAccount } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  SubAccount,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -34,6 +38,7 @@ type Props = {
   isUpToDateAccount: boolean,
   navigation: *,
   isLast: boolean,
+  onBlacklistToken: TokenCurrency => void,
 };
 
 type State = {
@@ -73,7 +78,12 @@ class AccountRow extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, isUpToDateAccount, syncState } = this.props;
+    const {
+      account,
+      isUpToDateAccount,
+      syncState,
+      onBlacklistToken,
+    } = this.props;
     const subAccounts = listSubAccounts(account);
 
     const isToken =
@@ -146,6 +156,7 @@ class AccountRow extends PureComponent<Props, State> {
                     key={i}
                     account={tkn}
                     onSubAccountPress={this.onSubAccountPress}
+                    onBlacklistToken={onBlacklistToken}
                   />
                 ))}
               </View>

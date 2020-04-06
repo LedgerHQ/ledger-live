@@ -36,6 +36,7 @@ import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { prepareCurrency } from "../../bridge/cache";
+import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 
 const forceInset = { bottom: "always" };
 
@@ -62,6 +63,7 @@ type Props = {
     renamings: { [id: string]: string },
   }) => void,
   existingAccounts: Account[],
+  blacklistedTokenIds?: string[],
 };
 
 type State = {
@@ -74,6 +76,7 @@ type State = {
 
 const mapStateToProps = createStructuredSelector({
   existingAccounts: accountsSelector,
+  blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
 
 const mapDispatchToProps = {
@@ -118,14 +121,14 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   };
 
   startSubscription = () => {
-    const { navigation } = this.props;
+    const { navigation, blacklistedTokenIds } = this.props;
     const currency = navigation.getParam("currency");
     const deviceId = navigation.getParam("deviceId");
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       // TODO later we need to paginate only a few ops, not all (for add accounts)
-      // paginationConfig will come from redux
       paginationConfig: {},
+      blacklistedTokenIds,
     };
     this.scanSubscription = concat(
       from(prepareCurrency(currency)).pipe(ignoreElements()),
