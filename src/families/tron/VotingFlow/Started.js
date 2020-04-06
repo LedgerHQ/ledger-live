@@ -44,7 +44,8 @@ function VoteStarted({ navigation }: Props) {
           event="VoteStartedCancelBtn"
           onPress={onCancel}
           title={<Trans i18nKey="common.cancel" />}
-          type="negativePrimary"
+          type="secondary"
+          outline={false}
           containerStyle={styles.buttonContainer}
         />
       </View>
