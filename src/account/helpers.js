@@ -98,7 +98,8 @@ export function clearAccount<T: AccountLike>(account: T): T {
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],
-    subAccounts: account.subAccounts && account.subAccounts.map(clearAccount)
+    subAccounts: account.subAccounts && account.subAccounts.map(clearAccount),
+    balanceHistory: {}
   };
 }
 
