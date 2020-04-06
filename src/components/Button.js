@@ -226,8 +226,6 @@ class Button extends PureComponent<
       : RectButton;
     const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
 
-    const iconContainerStyle = { padding: 10 };
-
     return (
       // $FlowFixMe
       <Container
@@ -240,7 +238,7 @@ class Button extends PureComponent<
 
         <Animated.View style={titleSliderStyle}>
           {IconLeft ? (
-            <View style={title ? iconContainerStyle : {}}>
+            <View style={{ paddingRight: title ? 10 : null }}>
               <IconLeft size={16} color={iconColor} />
             </View>
           ) : null}
@@ -252,7 +250,7 @@ class Button extends PureComponent<
           ) : null}
 
           {IconRight ? (
-            <View style={title ? iconContainerStyle : {}}>
+            <View style={{ paddingLeft: title ? 10 : null }}>
               <IconRight size={16} color={iconColor} />
             </View>
           ) : null}
