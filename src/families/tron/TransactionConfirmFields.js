@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   lineLabel: { justifyContent: "flex-start" },
-  addressLabel: { fontSize: 12, color: colors.grey },
+  validatorLabel: { fontSize: 12, color: colors.grey },
 });
 
 const InfoSection = ({ transaction }: { transaction: Transaction }) => {
@@ -81,6 +81,58 @@ const InfoSection = ({ transaction }: { transaction: Transaction }) => {
   }
 };
 
+const Pre = ({ transaction }: { transaction: Transaction }) => {
+  invariant(transaction.family === "tron", "tron transaction");
+
+  const { votes, resource } = transaction;
+
+  const sp = useTronSuperRepresentatives();
+  const formattedVotes =
+    votes && votes.length > 0 ? formatVotes(votes, sp) : null;
+
+  return (
+    <>
+      {resource && (
+        <DataRow label="Resource">
+          <LText semiBold style={styles.text}>
+            {resource.slice(0, 1).toUpperCase() +
+              resource.slice(1).toLowerCase()}
+          </LText>
+        </DataRow>
+      )}
+
+      {formattedVotes ? (
+        <>
+          <DataRow>
+            <LText
+              style={[styles.text, styles.greyText, { textAlign: "left" }]}
+            >
+              <Trans i18nKey="ValidateOnDevice.name" />
+            </LText>
+            <LText style={[styles.text, styles.greyText]}>
+              <Trans i18nKey="ValidateOnDevice.votes" />
+            </LText>
+          </DataRow>
+
+          {formattedVotes.map(({ address, voteCount, validator }) => (
+            <DataRow key={address}>
+              <View style={styles.lineLabel}>
+                <LText semiBold>{shortAddressPreview(address)}</LText>
+                <LText style={styles.validatorLabel}>
+                  {validator && validator.name}
+                </LText>
+              </View>
+              <LText semiBold style={styles.text}>
+                {voteCount}
+              </LText>
+            </DataRow>
+          ))}
+        </>
+      ) : null}
+    </>
+  );
+};
+
 const Post = ({
   account,
   parentAccount,
@@ -95,11 +147,7 @@ const Post = ({
 
   invariant(transaction.family === "tron", "tron transaction");
 
-  const sp = useTronSuperRepresentatives();
-  const formattedVotes =
-    transaction.votes &&
-    transaction.votes.length > 0 &&
-    formatVotes(transaction.votes, sp);
+  const { mode } = transaction;
 
   const from =
     account.type === "ChildAccount"
@@ -108,61 +156,25 @@ const Post = ({
 
   return (
     <>
-      {formattedVotes && formattedVotes.length > 0 ? (
-        <>
-          <DataRow>
-            <LText
-              style={[styles.text, styles.greyText, { textAlign: "left" }]}
-            >
-              <Trans i18nKey="ValidateOnDevice.name" />
-            </LText>
-            <LText style={[styles.text, styles.greyText]}>
-              <Trans i18nKey="ValidateOnDevice.votes" />
-            </LText>
-          </DataRow>
-          {formattedVotes.map(({ address, voteCount, validator }) => (
-            <DataRow key={address}>
-              <View style={styles.lineLabel}>
-                <LText semiBold>{validator && validator.name}</LText>
-                <LText style={styles.addressLabel}>
-                  {shortAddressPreview(address)}
-                </LText>
-              </View>
-              <LText semiBold style={styles.text}>
-                {voteCount}
-              </LText>
-            </DataRow>
-          ))}
-        </>
-      ) : null}
-      <DataRow label="From">
-        <LText semiBold style={styles.text}>
-          {from}
-        </LText>
-      </DataRow>
-      {transaction.recipient && transaction.recipient !== from ? (
-        <DataRow label="To">
+      {mode === "freeze" || mode === "unfreeze" ? (
+        <DataRow label={mode === "freeze" ? "Freeze To" : "Delegate To"}>
           <LText semiBold style={styles.text}>
-            {transaction.recipient}
+            {mainAccount.freshAddress}
           </LText>
         </DataRow>
       ) : null}
-      {transaction.resource && (
-        <DataRow label="Resource">
+
+      {mode !== "send" ? (
+        <DataRow label="From Address">
           <LText semiBold style={styles.text}>
-            {(transaction.resource || "").toLowerCase()}
+            {from}
           </LText>
         </DataRow>
-      )}
+      ) : null}
+
       <InfoSection transaction={transaction} />
     </>
   );
-};
-
-const Pre = ({ transaction }: { transaction: Transaction }) => {
-  invariant(transaction.family === "tron", "tron transaction");
-
-  return null;
 };
 
 const Fees = ({
