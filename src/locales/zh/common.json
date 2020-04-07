@@ -59,6 +59,14 @@
       "hours_plural": "in {{time}} hours",
       "days": "in one day",
       "days_plural": "in {{time}} days"
+    },
+    "timeAgo": {
+      "minutes": "one minute ago",
+      "minutes_plural": "{{time}} minutes ago",
+      "hours": "one hour ago",
+      "hours_plural": "{{time}} hours ago",
+      "days": "yesterday",
+      "days_plural": "{{time}} days ago"
     }
   },
   "errors": {
@@ -289,6 +297,49 @@
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device.",
       "description": "{{message}}"
+    },
+    "TronNoFrozenForBandwidth": {
+      "title": "No assets to unfreeze",
+      "description": "You do not have assets to unfreeze associated to Bandwidth"
+    },
+    "TronNoFrozenForEnergy": {
+      "title": "No assets to unfreeze",
+      "description": "You do not have assets to unfreeze associated to Energy"
+    },
+    "TronUnfreezeNotExpired": {
+      "title": "Unfreeze is not available yet",
+      "description": "You need to wait 3 days before your last Freeze operation"
+    },
+    "TronVoteRequired": {
+      "title": "At least 1 vote is needed"
+    },
+    "TronInvalidVoteCount": {
+      "title": "Vote format is incorrect",
+      "description": "You can only vote using round numbers"
+    },
+    "TronRewardNotAvailable": {
+      "title": "Reward is not claimable yet",
+      "description": "You need to wait 24 hours between claims"
+    },
+    "TronNoReward": {
+      "title": "There is no reward to claim"
+    },
+    "TronInvalidFreezeAmount": {
+      "title": "Amount to freeze cannot be lower than 1"
+    },
+    "TronSendTrc20ToNewAccountForbidden": {
+      "title": "Sending TRC20 to a new account won't activate it",
+      "description": "The recipient account must be activated prior to sending TRC20 to it. Send either TRX or TRC10 to an account to activate it."
+    },
+    "TronUnexpectedFees": {
+      "title": "Additional fees may be applied"
+    },
+    "TronNotEnoughTronPower": {
+      "title": "Not enough votes available"
+    },
+    "TronTransactionExpired": {
+      "title": "Transaction has expired",
+      "description": "Signature must be applied within 30 seconds. Please try again."
     },
     "UpdateYourApp": {
       "title": "App update required",
@@ -685,7 +736,7 @@
       "seeMore": "See more Tokens",
       "seeLess": "See less Tokens",
       "addTokens": "Add token",
-      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>{{currency}} address</1>."
     },
     "subaccounts": {
       "seeMore": "See more subaccounts",
@@ -859,6 +910,20 @@
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings",
       "placeholder": "No settings for this asset"
+    },
+    "accounts": {
+      "header": "Accounts",
+      "title": "Accounts",
+      "desc": "Manage assets display in the app.",
+      "hideTokenCTA": "Hide token",
+      "showContractCTA": "Show contract",
+      "blacklistedTokens": "Hidden token list",
+      "blacklistedTokensDesc": "You can hide a token by long-pressing on it in accounts list and selecting \"Hide token\"",
+      "blacklistedTokensModal": {
+        "title": "Hide token",
+        "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can restore their visibility at any time from <3>Settings > Accounts</3>",
+        "confirm": "Hide token"
+      }
     },
     "rates": {
       "header": "Rates",
@@ -1072,7 +1137,7 @@
     "info": {
       "description": "Freeze your TRX to earn rewards while keeping full security and control of your assets.",
       "steps": {
-        "0": "Frozen assets stay yours.",
+        "0": "Delegated assets stay yours.",
         "1": "You can unfreeze your assets after 3 days.",
         "2": "Freeze and vote securely with your Ledger device."
       },
@@ -1081,7 +1146,6 @@
     },
     "amount": {
       "available": "Total available",
-      "loadingNetwork": "Loading Network fees...",
       "noRateProvider": "Not available",
       "infoLabel": "Bandwidth or energy"
     },
@@ -1110,12 +1174,12 @@
     },
     "amount": {
       "title": "Select the kind of asset to unfreeze",
-      "info": "Unfreezing will decrease your {{resource}} and will cancel your votes.",
+      "info": "Unfreezing will decrease your {{resource}} and will cancel all your votes.",
       "cta": "Continue"
     },
     "validation": {
       "success": "Your assets have been unfrozen successfully.",
-      "info": "Your Bandwidth points will be decreased and your votes will be canceled.",
+      "info": "Your {{resource}} points will be decreased and all your votes will be canceled.",
       "button": {
         "done": "Done",
         "cta": "See details"
@@ -1134,6 +1198,35 @@
         "done": "Done",
         "cta": "See details"
       }
+    }
+  },
+  "vote": {
+    "stepperHeader": {
+      "selectValidator": "Cast votes",
+      "castVote": "My votes",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "selectValidator": {},
+    "castVotes": {
+      "ranking": "Ranking: <0>{{rank}}</0>",
+      "nbOfVotes": "Nb of votes {{amount}}",
+      "percentage": "Percentage",
+      "estYield": "Est. yield",
+      "addMoreVotes": "Add more votes",
+      "votesRemaining": "Votes remaining: <0>{{total}}</0>",
+      "maxVotesAvailable": "Max votes available: <0>{{total}}</0>",
+      "voteFor": "Vote for",
+      "validateVotes": "Validate votes",
+      "votesRequired": "Votes required ",
+      "allVotesUsed": "All votes used"
+    },
+    "validation": {
+      "message": "Always verify that your device displays the address exactly as provided",
+      "success": "Your votes were cast successfully",
+      "info": "",
+      "button": {}
     }
   },
   "addAccounts": {
@@ -1171,9 +1264,21 @@
     "noAccountToCreate": "No <1><0>{{currencyName}}</></> account was found to create. Restart the flow and sync your accounts",
     "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one.",
     "tokens": {
-      "title": "Add Token",
-      "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly on an Ethereum account",
-      "learnMore": "Learn more about ERC20"
+      "erc20": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly on an Ethereum account",
+        "learnMore": "Learn more about ERC20"
+      },
+      "trc10": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an TRC10 Token.\nYou can receive tokens directly on an Tron account",
+        "learnMore": "Learn more about TRC10"
+      },
+      "trc20": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an TRC20 Token.\nYou can receive tokens directly on an Tron account",
+        "learnMore": "Learn more about TRC20"
+      }
     }
   },
   "SelectDevice": {
@@ -1475,9 +1580,29 @@
       "manageVotes": "Manage votes",
       "remainingVotes": {
         "title": "You still have votes remaining",
-        "description": "You didn't use all of your frozen assets to vote for a SR.",
-        "button": "Vote now"
+        "description": "Cast your remaining votes to earn more XTZ"
       },
+      "flow": {
+        "started": {
+          "title": "Vote",
+          "srOrCandidate": "SR or Candidate?",
+          "description": "Vote for one or more Super Representatives to start earning rewards.",
+          "button": {
+            "continue": "Cast Votes"
+          }
+        },
+        "selectValidator": {
+          "sections": {
+            "title": {
+              "selected": "Selected",
+              "superRepresentatives": "Super representatives",
+              "candidates": "Candidates"
+            }
+          }
+        }
+      }
+    },
+    "freeze": {
       "flow": {
         "steps": {
           "starter": {
@@ -1499,15 +1624,15 @@
       "title": "Manage Tron Power",
       "freeze": {
         "title": "Freeze",
-        "description": "Freeze TRX to earn Bandwidth or Energy. You'll also earn TRON Power to vote for Super Representatives."
+        "description": "Freeze TRX to earn Bandwidth or Energy. You'll also be able to vote for Super Representatives."
       },
       "unfreeze": {
         "title": "Unfreeze",
-        "description": "Unfreeze TRX if you want to spend them. You will stop earning rewards and TRON Power to vote with."
+        "description": "Unfreeze TRX if you want to spend them. You will no longer earn rewards."
       },
       "vote": {
         "title": "Vote",
-        "description": "Cast votes for Super Representatives using your TRON Power to earn TRX rewards."
+        "description": "Cast votes for Super Representatives to earn rewards."
       }
     },
     "info": {
@@ -1525,7 +1650,19 @@
       },
       "energy": {
         "title": "Energy",
-        "description": "Energy Points are used when executing smart contracts. As such freezing TRX for Energy will allow you to avoid additional fees when interacting with a smart contract."
+        "description": "Energy points are required to execute smart contracts. If you don't run any smart contracts, there is no need to choose rewards in Energy."
+      },
+      "claimRewards": {
+        "title": "Voting rewards",
+        "description": "TRX generated during block production and available as rewards can be claimed once every 24 hours."
+      },
+      "superRepresentative": {
+        "title": "Super Representatives (SR)",
+        "description": "Super Representatives play a key role in governing the TRON community by ensuring basic functions, e.g. block generation and bookkeeping."
+      },
+      "candidates": {
+        "title": "Candidates",
+        "description": "127 individuals elected through voting by the entire token holder community. Votes are updated once every 6 hours."
       }
     }
   },
@@ -1587,19 +1724,21 @@
       "send": "Please confirm the operation on your {{productName}} to send it",
       "freeze": "Please confirm the operation on your device to freeze assets",
       "unfreeze": "Please confirm the operation on your device to unfreeze assets",
-      "claimReward": "Please confirm the operation on your device to claim your rewards"
+      "claimReward": "Please confirm the operation on your device to claim your rewards",
+      "vote": "Please confirm the operation on your device to cast your votes"
     },
-    "warning": "Always verify that your device displays the address exactly as provided{{recipientWording}}",
+    "warning": "Always verify that your device displays the address exactly as provided {{recipientWording}}",
     "recipientWording": {
       "send": "by the recipient",
       "delegate": "by the validator",
       "undelegate": "by the validator",
       "freeze": "",
       "unfreeze": "",
-      "claimReward": ""
+      "claimReward": "",
+      "vote": ""
     },
-    "address": "Address",
-    "resource": "Resource",
+    "name": "Name",
+    "votes": "Votes",
     "infoWording": {
       "freeze": "Frozen tokens are \"locked\" for a period of 3 days",
       "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be canceled",
