@@ -166,7 +166,7 @@ function useSyncQueue({
             currencyName: account.currency.name,
             derivationMode: account.derivationMode,
             freshAddressPath: account.freshAddressPath,
-            operationsLength: account.operations.length,
+            operationsLength: account.operationsCount,
             tokensLength: subAccounts.length,
             votesCount: getVotesCount(account)
           });
@@ -180,7 +180,7 @@ function useSyncQueue({
               trackAnalytics("SyncSuccessToken", {
                 tokenId,
                 tokenTicker: getAccountCurrency(a).ticker,
-                operationsLength: a.operations.length,
+                operationsLength: a.operationsCount,
                 parentCurrencyName: account.currency.name,
                 parentDerivationMode: account.derivationMode,
                 votesCount: getVotesCount(a, account)

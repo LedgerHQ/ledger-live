@@ -64,7 +64,7 @@ export const getAccountName = (account: AccountLike): string => {
 export const isAccountEmpty = (a: AccountLike): boolean => {
   const hasSubAccounts =
     a.type === "Account" && a.subAccounts && a.subAccounts.length;
-  return a.operations.length === 0 && a.balance.isZero() && !hasSubAccounts;
+  return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
 };
 
 export const isAccountBalanceSignificant = (a: AccountLike): boolean =>
@@ -98,7 +98,8 @@ export function clearAccount<T: AccountLike>(account: T): T {
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],
-    subAccounts: account.subAccounts && account.subAccounts.map(clearAccount)
+    subAccounts: account.subAccounts && account.subAccounts.map(clearAccount),
+    balanceHistory: {}
   };
 }
 

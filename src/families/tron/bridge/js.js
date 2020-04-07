@@ -378,7 +378,7 @@ const getAccountShape = async (info, syncConfig) => {
     subAccounts.map(s => s.operations)
   )
     .filter(o => o.type === "OUT" && o.fee.isGreaterThan(0))
-    .map(o => ({ ...o, accountId: info.id, value: o.fee }));
+    .map(o => ({ ...o, accountId: info.id, value: o.fee, id: `${info.id}-${o.hash}-OUT` }));
 
   // add them to the parent operations and sort by date desc
   const parentOpsAndSubOutOpsWithFee = parentOperations

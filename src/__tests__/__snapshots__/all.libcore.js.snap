@@ -21818,7 +21818,7 @@ Array [
     "type": "TokenAccountRaw",
   },
   Object {
-    "balance": "0",
+    "balance": "1",
     "id": "libcore:1:ethereum:xpub6BemYiVNp19a56t4FLHBhvys6iThqTAyC44jUX5b8fpPWSjrGaBMVdXo49wVVBVGVcRVPGo1eUUZPMFrKriqtL68pEeGCt37UzYXP4h3WX5:+0xD46bA6D942050d489DBd938a2C909A5d5039A161",
     "operationsCount": 2,
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a56t4FLHBhvys6iThqTAyC44jUX5b8fpPWSjrGaBMVdXo49wVVBVGVcRVPGo1eUUZPMFrKriqtL68pEeGCt37UzYXP4h3WX5:",
@@ -76981,7 +76981,7 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "1601",
+      "energy": "1689",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": Object {
