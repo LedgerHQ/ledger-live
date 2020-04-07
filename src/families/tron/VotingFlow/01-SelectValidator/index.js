@@ -52,7 +52,7 @@ type Props = {
     params: {
       accountId: string,
       transaction: Transaction,
-      fronStep2?: boolean,
+      fromStep2?: boolean,
     },
   }>,
 };
