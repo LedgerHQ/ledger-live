@@ -1,11 +1,14 @@
 // @flow
 
+import toPairs from "lodash/toPairs";
+import flatMap from "lodash/flatMap";
+import groupBy from "lodash/groupBy";
 import { reduce, filter, map } from "rxjs/operators";
 import "./test-helpers/setup";
 import { getAccountBridge, getCurrencyBridge } from "../bridge";
 import { setEnv } from "../env";
 import { getCryptoCurrencyById } from "../currencies";
-import { toAccountRaw } from "../account";
+import { toAccountRaw, flattenAccounts } from "../account";
 
 jest.setTimeout(120000);
 
@@ -38,6 +41,14 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
         .toPromise();
 
       expect(accounts.length).toBeGreaterThan(0);
+
+      const allOps = flatMap(flattenAccounts(accounts), a => a.operations);
+
+      const operationIdCollisions = toPairs(groupBy(allOps, "id"))
+        .filter(([_, coll]) => coll.length > 1)
+        .map(([id]) => id);
+
+      expect(operationIdCollisions).toEqual([]);
 
       const [first, second] = await Promise.all(
         accounts.map(async a => {
