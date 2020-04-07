@@ -28,7 +28,8 @@ export type NetworkInfo = {|
   freeNetLimit: BigNumber,
   netUsed: BigNumber,
   netLimit: BigNumber,
-  energyLimit: ?BigNumber
+  energyUsed: BigNumber,
+  energyLimit: BigNumber
 |};
 
 export type NetworkInfoRaw = {|
@@ -37,7 +38,8 @@ export type NetworkInfoRaw = {|
   freeNetLimit: string,
   netUsed: string,
   netLimit: string,
-  energyLimit: ?string
+  energyUsed: string,
+  energyLimit: string
 |};
 
 export type Transaction = {|
@@ -81,7 +83,8 @@ export type TrongridTxInfo = {|
   fee?: BigNumber,
   resource?: TronResource,
   blockHeight?: number,
-  extra?: TrongridExtraTxInfo
+  extra?: TrongridExtraTxInfo,
+  hasFailed: boolean
 |};
 
 export type TrongridExtraTxInfo =
