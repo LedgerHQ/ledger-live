@@ -33,6 +33,50 @@ import Bolt from "../../icons/Bolt";
 import ClockIcon from "../../icons/Clock";
 import DateFromNow from "../../components/DateFromNow";
 
+/** @TODO move this to common */
+const getUnfreezeData = (
+  account: Account,
+): {
+  unfreezeBandwidth: BigNumber,
+  unfreezeEnergy: BigNumber,
+  canUnfreezeBandwidth: boolean,
+  canUnfreezeEnergy: boolean,
+  bandwidthExpiredAt: Date,
+  energyExpiredAt: Date,
+} => {
+  const { tronResources } = account;
+  const {
+    frozen: { bandwidth, energy },
+  } = tronResources || {};
+
+  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
+  const { amount: bandwidthAmount, expiredAt: bandwidthExpiredAt } =
+    bandwidth || {};
+  // eslint-disable-next-line no-underscore-dangle
+  const _bandwidthExpiredAt = +new Date(bandwidthExpiredAt);
+
+  const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
+  // eslint-disable-next-line no-underscore-dangle
+  const _energyExpiredAt = +new Date(energyExpiredAt);
+
+  const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
+  const canUnfreezeBandwidth =
+    unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
+
+  const unfreezeEnergy = BigNumber(energyAmount || 0);
+  const canUnfreezeEnergy =
+    unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
+
+  return {
+    unfreezeBandwidth,
+    unfreezeEnergy,
+    canUnfreezeBandwidth,
+    canUnfreezeEnergy,
+    bandwidthExpiredAt,
+    energyExpiredAt,
+  };
+};
+
 const forceInset = { bottom: "always" };
 
 type Props = {
@@ -53,32 +97,13 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
   invariant(tronResources, "tron resources expected");
 
   const {
-    frozen: { bandwidth, energy },
-  } = tronResources;
-
-  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
-  const { amount: bandwidthAmount, expiredAt: _bandwidthExpiredAt } =
-    bandwidth || {};
-  const bandwidthExpiredAt = +new Date(_bandwidthExpiredAt);
-
-  const { amount: energyAmount, expiredAt: _energyExpiredAt } = energy || {};
-  const energyExpiredAt = +new Date(_energyExpiredAt);
-
-  const UnfreezeBandwidth = useMemo(() => BigNumber(bandwidthAmount || 0), [
-    bandwidthAmount,
-  ]);
-  const canUnfreezeBandwidth = useMemo(
-    () => UnfreezeBandwidth.gt(0) && Date.now() > bandwidthExpiredAt,
-    [UnfreezeBandwidth, bandwidthExpiredAt],
-  );
-
-  const UnfreezeEnergy = useMemo(() => BigNumber(energyAmount || 0), [
-    energyAmount,
-  ]);
-  const canUnfreezeEnergy = useMemo(
-    () => UnfreezeEnergy.gt(0) && Date.now() > energyExpiredAt,
-    [UnfreezeEnergy, energyExpiredAt],
-  );
+    unfreezeBandwidth,
+    unfreezeEnergy,
+    canUnfreezeBandwidth,
+    canUnfreezeEnergy,
+    bandwidthExpiredAt,
+    energyExpiredAt,
+  } = useMemo(() => getUnfreezeData(account), [account]);
 
   const {
     transaction,
@@ -91,7 +116,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
 
     const transaction = bridge.updateTransaction(t, {
       mode: "unfreeze",
-      resource: UnfreezeBandwidth.gt(0) ? "BANDWIDTH" : "ENERGY",
+      resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
     });
 
     return { account, transaction };
@@ -159,11 +184,11 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
               >
                 <Trans i18nKey="account.bandwidth" />
               </LText>
-              {UnfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
+              {unfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
                 <View style={styles.timeWarn}>
                   <ClockIcon color={colors.grey} size={16} />
                   <LText style={styles.timeLabel} semiBold>
-                    <DateFromNow date={bandwidthExpiredAt} />
+                    <DateFromNow date={+bandwidthExpiredAt} />
                   </LText>
                 </View>
               ) : null}
@@ -174,7 +199,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                   !canUnfreezeBandwidth ? styles.disabledLabel : {},
                 ]}
               >
-                <CurrencyUnitValue unit={unit} value={UnfreezeBandwidth} />
+                <CurrencyUnitValue unit={unit} value={unfreezeBandwidth} />
               </LText>
               <CheckBox isChecked={resource === "BANDWIDTH"} />
             </TouchableOpacity>
@@ -196,11 +221,11 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
               >
                 <Trans i18nKey="account.energy" />
               </LText>
-              {UnfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
+              {unfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
                 <View style={styles.timeWarn}>
                   <ClockIcon color={colors.grey} size={16} />
                   <LText style={styles.timeLabel} semiBold>
-                    <DateFromNow date={energyExpiredAt} />
+                    <DateFromNow date={+energyExpiredAt} />
                   </LText>
                 </View>
               ) : null}
@@ -211,7 +236,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                   !canUnfreezeEnergy ? styles.disabledLabel : {},
                 ]}
               >
-                <CurrencyUnitValue unit={unit} value={UnfreezeEnergy} />
+                <CurrencyUnitValue unit={unit} value={unfreezeEnergy} />
               </LText>
               <CheckBox isChecked={resource === "ENERGY"} />
             </TouchableOpacity>
@@ -309,6 +334,7 @@ const styles = StyleSheet.create({
   disabledLabel: { color: colors.grey },
   frozenAmount: { flex: 1, textAlign: "right", marginRight: 16 },
   infoSection: {
+    flexShrink: 1,
     flexDirection: "row",
     backgroundColor: colors.lightLive,
     alignItems: "center",
@@ -359,12 +385,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     borderRadius: 4,
     backgroundColor: colors.lightFog,
-    padding: 8,
-    marginLeft: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 7,
+    marginLeft: 12,
   },
   timeLabel: {
     marginLeft: 8,
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 16,
     color: colors.grey,
   },
