@@ -147,10 +147,11 @@ const CastVote = ({ account, navigation }: Props) => {
 
   const onBack = useCallback(() => {
     // $FlowFixMe
-    navigation.replace("VoteSelectValidator", {
+    navigation.push("VoteSelectValidator", {
       accountId: account.id,
       transaction,
       status,
+      fromStep2: true,
     });
   }, [account, navigation, transaction, status]);
 
