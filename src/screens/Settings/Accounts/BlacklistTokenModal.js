@@ -41,16 +41,21 @@ const BlacklistTokenModal = ({
 }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  const onCloseModal = useCallback(() => {
+    setShowConfirmation(false);
+    onClose();
+  }, [onClose]);
+
   const onBlacklistToken = useCallback(() => {
     blacklistToken(token.id);
-    onClose();
-  }, [onClose, blacklistToken, token]);
+    onCloseModal();
+  }, [onCloseModal, blacklistToken, token]);
 
   return isOpened ? (
     showConfirmation ? (
       <ConfirmationModal
         isOpened
-        onClose={onClose}
+        onClose={onCloseModal}
         onConfirm={onBlacklistToken}
         confirmationTitle={
           <Trans i18nKey="settings.accounts.blacklistedTokensModal.title" />
@@ -72,7 +77,7 @@ const BlacklistTokenModal = ({
         id="BlacklistModal"
         isOpened
         preventBackdropClick={false}
-        onClose={onClose}
+        onClose={onCloseModal}
       >
         <SafeAreaView style={styles.modal}>
           <View style={styles.header}>
