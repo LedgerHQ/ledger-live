@@ -1,9 +1,10 @@
 // @flow
-import { useState, useEffect, useMemo, useReducer, useRef } from "react";
-import { getTronSuperRepresentatives, getNextVotingDate } from "../../api/Tron";
+import invariant from "invariant";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { getTronSuperRepresentatives } from "../../api/Tron";
 
 import { BigNumber } from "bignumber.js";
-import type { SuperRepresentative, Vote, TronResources } from "./types";
+import type { SuperRepresentative, Vote } from "./types";
 import type { Account } from "../../types";
 import { useBridgeSync } from "../../bridge/react";
 import { getCryptoCurrencyById } from "../../currencies";
@@ -41,7 +42,7 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
     let unsub = false;
     getTronSuperRepresentatives().then((sr: SuperRepresentative[]) => {
       __lastSeenSR = sr;
-      if (!unsub) return;
+      if (unsub) return;
       setSr(sr);
     });
     return () => {
@@ -50,17 +51,6 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
   }, []);
 
   return sr;
-};
-
-/** Get next voting date window */
-export const useNextVotingDate = (): ?number => {
-  console.warn("DEPRECATED: useNextVotingDate");
-  const [nextVotingDate, setNextVotingDate] = useState();
-  useEffect(() => {
-    getNextVotingDate().then(d => d && setNextVotingDate(d.valueOf()));
-  }, []);
-
-  return nextVotingDate;
 };
 
 /** Get last time voted */
@@ -200,111 +190,46 @@ export function useSortedSr(
   return sr;
 }
 
-/** Tron vote flow state reducer */
-function votesReducer(state: State, { type, address, value }: Action) {
-  console.warn("DEPRECATED: votesReducer");
+/** format account to retrieve unfreeze data */
+export const getUnfreezeData = (
+  account: Account
+): {
+  unfreezeBandwidth: BigNumber,
+  unfreezeEnergy: BigNumber,
+  canUnfreezeBandwidth: boolean,
+  canUnfreezeEnergy: boolean,
+  bandwidthExpiredAt: ?Date,
+  energyExpiredAt: ?Date
+} => {
+  const { tronResources } = account;
+  invariant(tronResources, "getUnfreezeData: tron account is expected");
+  const {
+    frozen: { bandwidth, energy }
+  } = tronResources;
 
-  switch (type) {
-    case "updateVote": {
-      const voteCount = value
-        ? parseInt(Number(value.replace(/[^0-9]/g, "")))
-        : 0;
-      const currentVotes = Object.values({
-        ...state.votes,
-        [address]: voteCount
-      }).filter(Boolean);
+  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
+  const bandwidthExpiredAt = bandwidth ? bandwidth.expiredAt : null;
+  // eslint-disable-next-line no-underscore-dangle
+  const _bandwidthExpiredAt = +new Date(+bandwidthExpiredAt);
 
-      const votes = {
-        ...state.votes,
-        [address]:
-          voteCount <= 0 || currentVotes.length > SR_MAX_VOTES ? 0 : voteCount
-      };
+  const energyExpiredAt = energy ? energy.expiredAt : null;
+  // eslint-disable-next-line no-underscore-dangle
+  const _energyExpiredAt = +new Date(+energyExpiredAt);
 
-      const votesUsed = Object.values(votes).reduce(
-        (sum, count) => sum + Number(count),
-        0
-      );
+  const unfreezeBandwidth = BigNumber(bandwidth ? bandwidth.amount : 0);
+  const canUnfreezeBandwidth =
+    unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
 
-      return {
-        ...state,
-        votes,
-        votesUsed,
-        votesSelected: Object.values(votes).filter(Boolean).length,
-        max: Math.max(0, state.votesAvailable - votesUsed)
-      };
-    }
-    case "resetVotes": {
-      const { initialVotes, votesAvailable } = state;
-      const votesUsed = Object.values(initialVotes).reduce(
-        (sum, voteCount) => sum + Number(voteCount),
-        0
-      );
-      return {
-        ...state,
-        votes: initialVotes,
-        votesUsed,
-        votesSelected: Object.keys(initialVotes).length,
-        max: Math.max(0, votesAvailable - votesUsed)
-      };
-    }
-    case "clearVotes": {
-      return {
-        ...state,
-        votes: {},
-        votesUsed: 0,
-        votesSelected: 0,
-        max: state.votesAvailable
-      };
-    }
-    default:
-      return state;
-  }
-}
-
-/** Vote flow init state */
-function initState(initialVotes, tronResources): State {
-  console.warn("DEPRECATED: initState");
-
-  const votes = initialVotes.reduce(
-    (sum, { voteCount, address }) => ({ ...sum, [address]: voteCount }),
-    {}
-  );
-  const votesAvailable = tronResources ? tronResources.tronPower : 0;
-  const votesUsed = Object.values(votes).reduce(
-    (sum, voteCount) => sum + Number(voteCount),
-    0
-  );
+  const unfreezeEnergy = BigNumber(energy ? energy.amount : 0);
+  const canUnfreezeEnergy =
+    unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
 
   return {
-    votes,
-    votesAvailable,
-    votesUsed,
-    votesSelected: initialVotes.length,
-    max: Math.max(0, votesAvailable - votesUsed),
-    initialVotes: votes
+    unfreezeBandwidth,
+    unfreezeEnergy,
+    canUnfreezeBandwidth,
+    canUnfreezeEnergy,
+    bandwidthExpiredAt,
+    energyExpiredAt
   };
-}
-
-export function toTransactionVotes(votes: {
-  [address: string]: number
-}): Vote[] {
-  console.warn("DEPRECATED: toTransactionVotes");
-  return Object.keys(votes)
-    .map(address => ({ address, voteCount: votes[address] }))
-    .filter(({ voteCount }) => voteCount > 0);
-}
-
-/** Hook to retrieve and update voting flow state */
-export function useVotesReducer(
-  initialVotes: Vote[],
-  tronResources: ?TronResources
-): [State, (action: Action) => void] {
-  console.warn("DEPRECATED: useVotesReducer");
-
-  const [state, dispatch]: [State, (action: Action) => void] = useReducer(
-    votesReducer,
-    initState(initialVotes, tronResources)
-  );
-
-  return [state, dispatch];
-}
+};

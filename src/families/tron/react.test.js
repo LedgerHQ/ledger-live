@@ -2,12 +2,11 @@
 import { renderHook, act } from "@testing-library/react-hooks";
 import {
   useTronSuperRepresentatives,
-  useNextVotingDate,
   getLastVotedDate,
   getNextRewardDate,
   formatVotes,
   useSortedSr,
-  useVotesReducer
+  getUnfreezeData
 } from "./react";
 
 import {
@@ -21,23 +20,14 @@ import {
 jest.mock("../../api/Tron");
 
 import superRepresentatives from "../../api/__mocks__/superRepresentativesData";
-import { __NEXT_VOTING_DATE__ } from "../../api/__mocks__/Tron.js";
 
 test("Tron SuperRepresentatives hook - useTronSuperRepresentatives - Expect super representatives list", async () => {
   const { result } = renderHook(() => useTronSuperRepresentatives());
   await act(async () => {
     expect(result.current).toStrictEqual([]);
   });
-  process.nextTick(() => expect(result.current).toBe(superRepresentatives));
-});
-
-test("Tron next voting date hook - useNextVotingDate - Expect to get next voting date", async () => {
-  const { result } = renderHook(() => useNextVotingDate());
-  await act(async () => {
-    expect(result.current).toBeUndefined();
-  });
   process.nextTick(() =>
-    expect(result.current).toBe(__NEXT_VOTING_DATE__.valueOf())
+    expect(result.current).toStrictEqual(superRepresentatives)
   );
 });
 
@@ -76,11 +66,9 @@ test("Tron format votes - formatVotes - Expect to get formatted votes", () => {
 
 const SR_INDEX_1 = 9;
 const SR_INDEX_2 = 2;
-const SR_INDEX_3 = 1;
 
 const VOTE_AMOUNT_1 = 10;
 const VOTE_AMOUNT_2 = 50;
-const VOTE_AMOUNT_3 = 60;
 
 const votes = [
   {
@@ -92,11 +80,6 @@ const votes = [
     voteCount: VOTE_AMOUNT_2
   }
 ];
-
-const formattedVotes = {
-  [superRepresentatives[SR_INDEX_1].address]: VOTE_AMOUNT_1,
-  [superRepresentatives[SR_INDEX_2].address]: VOTE_AMOUNT_2
-};
 
 test("Tron search SR - search SR in the list - Expect to retrieve a specific list SR", () => {
   const { result } = renderHook(() =>
@@ -126,81 +109,20 @@ test("Tron search SR - search SR in the list - Expect to retrieve all the list i
   });
 });
 
-test("Tron vote State - manage tron voting state - Expect to retrieve the current voting state", () => {
-  const { tronResources } = mockAccount;
-  const tronPower = tronResources ? tronResources.tronPower : 0;
+test("Tron unfreeze - get unfreeze data - Expect to retrieve unfreeze data from account", () => {
+  const {
+    unfreezeBandwidth,
+    unfreezeEnergy,
+    canUnfreezeBandwidth,
+    canUnfreezeEnergy,
+    bandwidthExpiredAt,
+    energyExpiredAt
+  } = getUnfreezeData(mockAccount);
 
-  const UPDATE_ACTION = {
-    type: "updateVote",
-    address: superRepresentatives[SR_INDEX_3].address,
-    value: String(VOTE_AMOUNT_3)
-  };
-
-  const RESET_ACTION = {
-    type: "resetVotes"
-  };
-
-  const CLEAR_ACTION = {
-    type: "clearVotes"
-  };
-
-  const DEFAULT_ACTION = {};
-
-  const INIT_STATE = {
-    initialVotes: formattedVotes,
-    max: tronPower - (VOTE_AMOUNT_1 + VOTE_AMOUNT_2),
-    votes: formattedVotes,
-    votesAvailable: tronPower,
-    votesSelected: 2,
-    votesUsed: VOTE_AMOUNT_1 + VOTE_AMOUNT_2
-  };
-
-  const UPDATED_STATE = {
-    initialVotes: formattedVotes,
-    max: tronPower - (VOTE_AMOUNT_1 + VOTE_AMOUNT_2 + VOTE_AMOUNT_3),
-    votes: {
-      ...formattedVotes,
-      [superRepresentatives[SR_INDEX_3].address]: VOTE_AMOUNT_3
-    },
-    votesAvailable: tronPower,
-    votesSelected: 3,
-    votesUsed: VOTE_AMOUNT_1 + VOTE_AMOUNT_2 + VOTE_AMOUNT_3
-  };
-
-  const CLEAR_STATE = {
-    initialVotes: formattedVotes,
-    max: tronPower,
-    votes: {},
-    votesAvailable: tronPower,
-    votesSelected: 0,
-    votesUsed: 0
-  };
-
-  const { result } = renderHook(() => useVotesReducer(votes, tronResources));
-
-  expect(Array.isArray(result.current)).toStrictEqual(true);
-  expect(result.current[0]).toStrictEqual(INIT_STATE);
-  expect(typeof result.current[1] === "function").toBe(true);
-
-  act(() => {
-    result.current[1](UPDATE_ACTION);
-  });
-  expect(result.current[0]).toStrictEqual(UPDATED_STATE);
-
-  act(() => {
-    result.current[1](CLEAR_ACTION);
-  });
-
-  expect(result.current[0]).toStrictEqual(CLEAR_STATE);
-
-  act(() => {
-    result.current[1](RESET_ACTION);
-  });
-
-  expect(result.current[0]).toStrictEqual(INIT_STATE);
-
-  act(() => {
-    result.current[1](DEFAULT_ACTION);
-  });
-  expect(result.current[0]).toStrictEqual(INIT_STATE);
+  expect(unfreezeBandwidth.toString()).toBe("375000000");
+  expect(unfreezeEnergy.toString()).toBe("0");
+  expect(canUnfreezeBandwidth).toBe(true);
+  expect(canUnfreezeEnergy).toBe(false);
+  expect(bandwidthExpiredAt).toBeDefined();
+  expect(energyExpiredAt).toBeNull();
 });
