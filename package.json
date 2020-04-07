@@ -7,6 +7,7 @@
     "start": "react-native start",
     "android": "react-native run-android --appIdSuffix=debug",
     "android:internal": "bundle exec fastlane android redo_beta",
+    "android:beta": "bundle exec fastlane android beta",
     "preandroid:internal": "bundle install",
     "android:clean": "$ANDROID_HOME/platform-tools/adb shell pm clear com.ledger.live",
     "android:import": "./scripts/android-import.sh",
