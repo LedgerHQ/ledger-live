@@ -39,6 +39,10 @@ Object {
     "exporterVersion": "0.0.0",
   },
   "settings": Object {
+    "blacklistedTokenIds": Array [
+      "tokenid1",
+      "tokenid2",
+    ],
     "counterValue": "USD",
     "currenciesSettings": Object {
       "bitcoin": Object {
