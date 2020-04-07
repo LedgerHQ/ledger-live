@@ -37,7 +37,6 @@ let __lastSeenSR: SuperRepresentative[] = [];
 /** Fetch the list of super representatives */
 export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
   const [sr, setSr] = useState(__lastSeenSR);
-
   useEffect(() => {
     let unsub = false;
     getTronSuperRepresentatives().then((sr: SuperRepresentative[]) => {
@@ -49,7 +48,6 @@ export const useTronSuperRepresentatives = (): Array<SuperRepresentative> => {
       unsub = true;
     };
   }, []);
-
   return sr;
 };
 

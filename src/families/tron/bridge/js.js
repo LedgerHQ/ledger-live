@@ -45,7 +45,8 @@ import {
   TronNoReward,
   TronSendTrc20ToNewAccountForbidden,
   TronUnexpectedFees,
-  TronNotEnoughTronPower
+  TronNotEnoughTronPower,
+  TronNotEnoughEnergy
 } from "../../../errors";
 import {
   broadcastTron,
@@ -62,7 +63,8 @@ import {
   freezeTronTransaction,
   unfreezeTronTransaction,
   voteTronSuperRepresentatives,
-  fetchCurrentBlockHeight
+  fetchCurrentBlockHeight,
+  getContractUserEnergyRatioConsumption
 } from "../../../api/Tron";
 
 const signOperation = ({ account, transaction, deviceId }) =>
@@ -378,7 +380,12 @@ const getAccountShape = async (info, syncConfig) => {
     subAccounts.map(s => s.operations)
   )
     .filter(o => o.type === "OUT" && o.fee.isGreaterThan(0))
-    .map(o => ({ ...o, accountId: info.id, value: o.fee, id: `${info.id}-${o.hash}-OUT` }));
+    .map(o => ({
+      ...o,
+      accountId: info.id,
+      value: o.fee,
+      id: `${info.id}-${o.hash}-OUT`
+    }));
 
   // add them to the parent operations and sort by date desc
   const parentOpsAndSubOutOpsWithFee = parentOperations
@@ -637,6 +644,27 @@ const getTransactionStatus = async (
       errors.amount = new NotEnoughBalance();
     } else if (account.type === "TokenAccount" && estimatedFees.gt(a.balance)) {
       errors.amount = new NotEnoughBalance();
+    }
+
+    const energy = (a.tronResources && a.tronResources.energy) || BigNumber(0);
+
+    // For the moment, we rely on this rule:
+    // Add a 'TronNotEnoughEnergy' warning only if the account sastifies theses 3 conditions:
+    // - no energy
+    // - balance is lower than 1 TRX
+    // - contract consumes user energy (ie: user's ratio > 0%)
+    if (
+      account.type === "TokenAccount" &&
+      account.token.tokenType === "trc20" &&
+      energy.eq(0) &&
+      a.spendableBalance.lt(1000000)
+    ) {
+      const contractUserEnergyConsumption = await getContractUserEnergyRatioConsumption(
+        account.token.contractAddress
+      );
+      if (contractUserEnergyConsumption > 0) {
+        warnings.amount = new TronNotEnoughEnergy();
+      }
     }
   }
 

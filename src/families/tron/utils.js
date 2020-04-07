@@ -145,7 +145,8 @@ export const formatTrongridTxResponse = (
         to,
         blockHeight,
         value: formattedValue,
-        fee
+        fee,
+        hasFailed: false // trc20 'IN' txs are succeeded if returned by trongrid,
       };
     } else {
       const { txID, block_timestamp, detail } = tx;
@@ -165,6 +166,8 @@ export const formatTrongridTxResponse = (
         frozen_balance,
         votes
       } = get(tx, "raw_data.contract[0].parameter.value", {});
+
+      const hasFailed = get(tx, "ret[0].contractRet", "") !== "SUCCESS";
 
       const tokenId =
         type === "TransferAssetContract"
@@ -206,7 +209,8 @@ export const formatTrongridTxResponse = (
         value,
         fee,
         resource,
-        blockHeight
+        blockHeight,
+        hasFailed
       };
 
       const getExtra = (): ?TrongridExtraTxInfo => {
@@ -263,7 +267,8 @@ export const txInfoToOperation = (
     value = BigNumber(0),
     fee = BigNumber(0),
     blockHeight,
-    extra = {}
+    extra = {},
+    hasFailed
   } = tx;
   const hash = txID;
 
@@ -285,7 +290,8 @@ export const txInfoToOperation = (
       senders: [from],
       recipients: to ? [to] : [],
       date,
-      extra
+      extra,
+      hasFailed
     };
   }
 
