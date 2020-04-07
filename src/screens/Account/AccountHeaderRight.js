@@ -6,6 +6,12 @@ import { connect } from "react-redux";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 
+import {
+  getDefaultExplorerView,
+  getAccountContractExplorer,
+} from "@ledgerhq/live-common/lib/explorers";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
+
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import Touchable from "../../components/Touchable";
 import BottomModal from "../../components/BottomModal";
@@ -39,6 +45,15 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
   if (!account) return null;
 
   if (account.type === "TokenAccount" && parentAccount) {
+    const mainAccount = getMainAccount(account, parentAccount);
+    const explorerView = getDefaultExplorerView(mainAccount.currency);
+
+    const url = getAccountContractExplorer(
+      explorerView,
+      account,
+      parentAccount,
+    );
+
     return (
       <>
         <Touchable event="ShowContractAddress" onPress={toggleModal}>
@@ -47,7 +62,7 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
           </View>
         </Touchable>
         {isOpened ? (
-          isShowingContract ? (
+          isShowingContract && url ? (
             <BottomModal
               id="ContractAddress"
               isOpened={isOpened}
@@ -56,15 +71,15 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
             >
               <TokenContractAddress
                 account={account}
-                parentAccount={parentAccount}
                 onClose={closeModal}
+                url={url}
               />
             </BottomModal>
           ) : (
             <BlacklistTokenModal
               isOpened={isOpened}
               onClose={closeModal}
-              onShowContract={setIsShowingContract}
+              onShowContract={url ? setIsShowingContract : null}
               token={account.token}
             />
           )
