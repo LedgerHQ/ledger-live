@@ -18,7 +18,7 @@
     "ios:internal": "bundle exec fastlane ios redo_beta --env production",
     "ios:ipa": "bundle exec fastlane ios build_ipa --env production",
     "preios:internal": "bundle install",
-    "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Release",
+    "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Staging",
     "staging-android": "yarn android:staging && yarn android:install",
     "mock-android": "yarn android:mock && yarn android:install",
     "prettier": "prettier --write \"src/**/*.js\"",
