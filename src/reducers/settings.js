@@ -7,6 +7,7 @@ import {
   findCurrencyByTicker,
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
+  listSupportedFiats,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import { createSelector } from "reselect";
@@ -24,6 +25,10 @@ import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
+export const supportedCountervalues = [
+  ...listSupportedFiats(),
+  ...possibleIntermediaries,
+];
 export const intermediaryCurrency = (from: Currency, _to: Currency) => {
   if (from === ethereum || from.type === "TokenCurrency") return ethereum;
   return bitcoin;
@@ -71,7 +76,7 @@ export type SettingsState = {
   blacklistedTokenIds: string[],
 };
 
-const INITIAL_STATE: SettingsState = {
+export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
   privacy: null,
