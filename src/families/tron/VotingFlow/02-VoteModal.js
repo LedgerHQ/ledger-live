@@ -6,9 +6,9 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 import { Trans } from "react-i18next";
-
 import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
 
 import { Switch } from "react-native-gesture-handler";
@@ -82,115 +82,121 @@ const VoteModal = ({
   return (
     <BottomModal isOpened={!!vote} onClose={onClose}>
       <SafeAreaView style={styles.root}>
-        <View style={styles.topContainer}>
-          <TouchableOpacity style={styles.topButton} onPress={remove}>
-            <Trash size={16} color={colors.grey} />
-          </TouchableOpacity>
+        <KeyboardAvoidingView
+          style={styles.rootKeyboard}
+          behavior="padding"
+          enabled
+        >
+          <View style={styles.topContainer}>
+            <TouchableOpacity style={styles.topButton} onPress={remove}>
+              <Trash size={16} color={colors.grey} />
+            </TouchableOpacity>
 
-          <View style={styles.topLabel}>
-            <LText style={styles.topSubTitle}>
-              <Trans i18nKey="vote.castVotes.voteFor" />
-            </LText>
-            <LText semiBold style={styles.topTitle}>
-              {name || address}
-            </LText>
-          </View>
-
-          <TouchableOpacity style={styles.topButton} onPress={onClose}>
-            <Close size={16} color={colors.grey} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.wrapper}>
-          <TextInput
-            allowFontScaling={false}
-            hitSlop={{ top: 20, bottom: 20 }}
-            onChangeText={handleChange}
-            style={[styles.inputStyle, error ? styles.error : {}]}
-            autoCorrect={false}
-            value={`${value || ""}`}
-            autoFocus
-            keyboardType="numeric"
-            blurOnSubmit
-            placeholder="0"
-          />
-        </View>
-        <View style={styles.bottomWrapper}>
-          <View style={[styles.availableRow, styles.row]}>
-            <View style={styles.available}>
-              {error && value <= 0 ? (
-                <LText style={[styles.availableAmount, styles.error]}>
-                  <Trans i18nKey="vote.castVotes.votesRequired" />
-                </LText>
-              ) : null}
-              {error ? (
-                <LText
-                  style={[
-                    styles.availableAmount,
-                    error
-                      ? styles.error
-                      : votesRemaining === 0
-                      ? styles.availableSuccess
-                      : {},
-                  ]}
-                >
-                  <Trans
-                    i18nKey="vote.castVotes.maxVotesAvailable"
-                    values={{ total: votesAvailable }}
-                  >
-                    <LText
-                      semiBold
-                      style={[styles.availableAmount, styles.error]}
-                    >
-                      text
-                    </LText>
-                  </Trans>
-                </LText>
-              ) : votesRemaining === 0 ? (
-                <View style={styles.row}>
-                  <Check size={16} color={colors.success} />
-                  <LText
-                    style={[styles.availableAmount, styles.availableSuccess]}
-                  >
-                    <Trans i18nKey="vote.castVotes.allVotesUsed" />
-                  </LText>
-                </View>
-              ) : (
-                <LText style={styles.availableAmount}>
-                  <Trans
-                    i18nKey="vote.castVotes.votesRemaining"
-                    values={{ total: votesRemaining }}
-                  >
-                    <LText
-                      semiBold
-                      style={[styles.availableAmount, styles.regularText]}
-                    >
-                      text
-                    </LText>
-                  </Trans>
-                </LText>
-              )}
-            </View>
-            <View style={styles.availableRight}>
-              <LText style={styles.maxLabel}>
-                <Trans i18nKey="send.amount.useMax" />
+            <View style={styles.topLabel}>
+              <LText style={styles.topSubTitle}>
+                <Trans i18nKey="vote.castVotes.voteFor" />
               </LText>
-              <Switch
-                style={styles.switch}
-                value={useAllAmount}
-                onValueChange={toggleUseAllAmount}
+              <LText semiBold style={styles.topTitle}>
+                {name || address}
+              </LText>
+            </View>
+
+            <TouchableOpacity style={styles.topButton} onPress={onClose}>
+              <Close size={16} color={colors.grey} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.wrapper}>
+            <TextInput
+              allowFontScaling={false}
+              hitSlop={{ top: 20, bottom: 20 }}
+              onChangeText={handleChange}
+              style={[styles.inputStyle, error ? styles.error : {}]}
+              autoCorrect={false}
+              value={`${value || ""}`}
+              autoFocus
+              keyboardType="numeric"
+              blurOnSubmit
+              placeholder="0"
+            />
+          </View>
+          <View style={styles.bottomWrapper}>
+            <View style={[styles.availableRow, styles.row]}>
+              <View style={styles.available}>
+                {error && value <= 0 ? (
+                  <LText style={[styles.availableAmount, styles.error]}>
+                    <Trans i18nKey="vote.castVotes.votesRequired" />
+                  </LText>
+                ) : null}
+                {error ? (
+                  <LText
+                    style={[
+                      styles.availableAmount,
+                      error
+                        ? styles.error
+                        : votesRemaining === 0
+                        ? styles.availableSuccess
+                        : {},
+                    ]}
+                  >
+                    <Trans
+                      i18nKey="vote.castVotes.maxVotesAvailable"
+                      values={{ total: votesAvailable }}
+                    >
+                      <LText
+                        semiBold
+                        style={[styles.availableAmount, styles.error]}
+                      >
+                        text
+                      </LText>
+                    </Trans>
+                  </LText>
+                ) : votesRemaining === 0 ? (
+                  <View style={styles.row}>
+                    <Check size={16} color={colors.success} />
+                    <LText
+                      style={[styles.availableAmount, styles.availableSuccess]}
+                    >
+                      <Trans i18nKey="vote.castVotes.allVotesUsed" />
+                    </LText>
+                  </View>
+                ) : (
+                  <LText style={styles.availableAmount}>
+                    <Trans
+                      i18nKey="vote.castVotes.votesRemaining"
+                      values={{ total: votesRemaining }}
+                    >
+                      <LText
+                        semiBold
+                        style={[styles.availableAmount, styles.regularText]}
+                      >
+                        text
+                      </LText>
+                    </Trans>
+                  </LText>
+                )}
+              </View>
+              <View style={styles.availableRight}>
+                <LText style={styles.maxLabel}>
+                  <Trans i18nKey="send.amount.useMax" />
+                </LText>
+                <Switch
+                  style={styles.switch}
+                  value={useAllAmount}
+                  onValueChange={toggleUseAllAmount}
+                />
+              </View>
+            </View>
+            <View style={styles.continueWrapper}>
+              <Button
+                type="primary"
+                event="TronValidateVote"
+                title={<Trans i18nKey="vote.castVotes.validateVotes" />}
+                onPress={onContinue}
+                disabled={!!error}
               />
             </View>
           </View>
-          <View style={styles.continueWrapper}>
-            <Button
-              type="primary"
-              event="TronValidateVote"
-              title={<Trans i18nKey="vote.castVotes.validateVotes" />}
-              onPress={onContinue}
-              disabled={!!error}
-            />
-          </View>
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </BottomModal>
   );
@@ -198,6 +204,9 @@ const VoteModal = ({
 
 const styles = StyleSheet.create({
   root: {
+    alignItems: "center",
+  },
+  rootKeyboard: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
@@ -288,10 +297,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
   },
   wrapper: {
-    width: "100%",
-    flexDirection: "column",
-    alignContent: "center",
-    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
     flexBasis: 200,
     flexGrow: 1,
   },
