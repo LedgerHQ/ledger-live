@@ -206,4 +206,5 @@ export default {
   pre: Pre,
   post: Post,
   fees: Fees,
+  disableFees: () => true,
 };

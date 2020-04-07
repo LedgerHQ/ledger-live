@@ -52,6 +52,7 @@ const ValidateOnDevice = ({
   const Fees = r && r.fee;
   const Pre = r && r.pre;
   const Post = r && r.post;
+  const noFees = r && r.disableFees && r.disableFees(transaction);
   const transRecipientWording = t(
     `ValidateOnDevice.recipientWording.${transaction.mode || "send"}`,
   );
@@ -106,7 +107,7 @@ const ValidateOnDevice = ({
                 value={amount}
               />
             ) : null}
-            {!estimatedFees.isZero() ? (
+            {!noFees ? (
               Fees ? (
                 <Fees
                   transaction={transaction}
