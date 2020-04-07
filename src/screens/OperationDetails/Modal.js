@@ -19,10 +19,15 @@ const forceInset = { bottom: "always" };
 export type Props = {|
   isOpened: boolean,
   onClose: () => void,
+  currency: *,
 |};
 
 class Modal extends PureComponent<Props> {
   render() {
+    const tokenType =
+      this.props.currency.type === "TokenCurrency"
+        ? this.props.currency.tokenType
+        : "erc20";
     return (
       <BottomModal
         id="TokenOperationsInfo"
@@ -49,7 +54,9 @@ class Modal extends PureComponent<Props> {
               type="primary"
               title={<Trans i18nKey="common.learnMore" />}
               containerStyle={[styles.modalBtn, styles.learnMore]}
-              onPress={() => Linking.openURL(urls.erc20)}
+              onPress={() =>
+                Linking.openURL(urls.supportLinkByTokenType[tokenType])
+              }
             />
           </View>
         </SafeAreaView>

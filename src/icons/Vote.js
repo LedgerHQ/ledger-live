@@ -1,23 +1,21 @@
 // @flow
 
 import React from "react";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Path, G, Defs, ClipPath, Rect } from "react-native-svg";
 
 const Vote = ({ size, color }: { size: number, color: string }) => (
-  <Svg viewBox="0 0 16 16" height={size} width={size}>
-    <Path
-      d="M5.91699 8.36389L7.30542 9.75232L10.0823 6.97546"
-      stroke={color}
-      strokeOpacity="0.5"
-      strokeWidth="1.5"
-    />
-    <Path
-      fillRule="evenodd"
-      clipRule="evenodd"
-      d="M1.4541 0.000244141V16.0002H2.18137H2.9541H13.045L13.8177 16.0002L14.545 16.0002V5.09115L13.045 3.59115L10.9541 1.50024L9.4541 0.000244141H2.9541H2.18137H1.4541ZM9.4541 1.50024H2.9541V14.5002L13.045 14.5002V5.09115H12.4237H10.9541H9.4541V3.59115V2.12156V1.50024Z"
-      fill={color}
-      fillOpacity="0.4"
-    />
+  <Svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+    <G clip-path="url(#clip0)">
+      <Path
+        d="M12.8 11.143V3.293C12.8 2.853 12.437 2.5 11.993 2.5H4.01C3.563 2.5 3.2 2.856 3.2 3.293V11.143H12.8V11.143ZM7.132 8.88L5.28 7.047C5.173 6.944 5.175 6.777 5.28 6.674L5.918 6.053C6.023 5.95 6.193 5.95 6.298 6.055L7.33 7.077L9.71 4.759C9.815 4.656 9.985 4.656 10.09 4.761L10.723 5.387C10.827 5.491 10.827 5.657 10.72 5.761L7.512 8.884C7.407 8.987 7.238 8.987 7.132 8.881V8.88ZM15.2 13.5C15.643 13.5 16 13.149 16 12.714V10.357C16 9.923 15.643 9.571 15.2 9.571H13.6V11.143H14.16C14.293 11.143 14.4 11.231 14.4 11.339V11.732C14.4 11.84 14.293 11.929 14.16 11.929H1.84C1.707 11.929 1.6 11.84 1.6 11.732V11.34C1.6 11.232 1.707 11.144 1.84 11.144H2.4V9.57H0.8C0.357 9.57 0 9.922 0 10.356V12.713C0 13.148 0.357 13.499 0.8 13.499H15.2V13.5Z"
+        fill={color}
+      />
+    </G>
+    <Defs>
+      <ClipPath id="clip0">
+        <Rect y="2.5" width={size} height={(size * 11) / 16} fill="white" />
+      </ClipPath>
+    </Defs>
   </Svg>
 );
 

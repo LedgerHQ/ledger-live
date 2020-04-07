@@ -131,7 +131,7 @@ class AccountScreen extends PureComponent<Props, State> {
       perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
 
     if (AccountBalanceSummaryFooter)
-      return <AccountBalanceSummaryFooter account={mainAccount} />;
+      return <AccountBalanceSummaryFooter account={account} />;
     return null;
   };
 

@@ -16,10 +16,7 @@ import i18next from "i18next";
 
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/lib/account";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -33,9 +30,13 @@ import KeyboardView from "../../components/KeyboardView";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import Info from "../../icons/Info";
 import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
+import InfoModal from "../../modals/Info";
+
+import Info from "../../icons/Info";
+import BandwidthIcon from "../../icons/Bandwidth";
+import EnergyIcon from "../../icons/Energy";
 
 const forceInset = { bottom: "always" };
 
@@ -47,6 +48,19 @@ const options = [
   {
     value: "ENERGY",
     label: <Trans i18nKey="account.energy" />,
+  },
+];
+
+const infoModalData = [
+  {
+    Icon: () => <BandwidthIcon size={18} />,
+    title: <Trans i18nKey="tron.info.bandwidth.title" />,
+    description: <Trans i18nKey="tron.info.bandwidth.description" />,
+  },
+  {
+    Icon: () => <EnergyIcon size={18} />,
+    title: <Trans i18nKey="tron.info.energy.title" />,
+    description: <Trans i18nKey="tron.info.energy.description" />,
   },
 ];
 
@@ -70,6 +84,8 @@ const FreezeAmount = ({ account, navigation }: Props) => {
   const { spendableBalance } = account;
 
   const [selectedRatio, selectRatio] = useState();
+
+  const [infoModalOpen, setInfoModalOpen] = useState();
 
   const {
     transaction,
@@ -124,6 +140,14 @@ const FreezeAmount = ({ account, navigation }: Props) => {
     Keyboard.dismiss();
   }, []);
 
+  const openInfoModal = useCallback(() => {
+    setInfoModalOpen(true);
+  }, [setInfoModalOpen]);
+
+  const closeInfoModal = useCallback(() => {
+    setInfoModalOpen(false);
+  }, [setInfoModalOpen]);
+
   const onRatioPress = useCallback(
     value => {
       blur();
@@ -173,18 +197,11 @@ const FreezeAmount = ({ account, navigation }: Props) => {
 
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const currency = getAccountCurrency(account);
 
   const resource = transaction.resource || "";
 
   const error = amount.eq(0) || bridgePending ? null : status.errors.amount;
   const warning = status.warnings.amount;
-
-  const tickerStyle = amount.gt(0)
-    ? {
-        color: error ? colors.alert : warning ? colors.orange : colors.darkBlue,
-      }
-    : {};
 
   return (
     <>
@@ -197,12 +214,7 @@ const FreezeAmount = ({ account, navigation }: Props) => {
               options={options}
               onChange={onChangeResource}
             />
-            <TouchableOpacity
-              onPress={() => {
-                /** @TODO open an info modal */
-              }}
-              style={styles.info}
-            >
+            <TouchableOpacity onPress={openInfoModal} style={styles.info}>
               <LText semiBold style={styles.infoLabel}>
                 <Trans i18nKey="freeze.amount.infoLabel" />
               </LText>
@@ -222,11 +234,6 @@ const FreezeAmount = ({ account, navigation }: Props) => {
                   autoFocus
                   style={styles.inputContainer}
                   inputStyle={styles.inputStyle}
-                  renderLeft={
-                    <LText style={[styles.currency, tickerStyle]} tertiary>
-                      {currency.ticker}
-                    </LText>
-                  }
                   hasError={!!error}
                   hasWarning={!!warning}
                 />
@@ -274,7 +281,10 @@ const FreezeAmount = ({ account, navigation }: Props) => {
                     <CurrencyUnitValue
                       showCode
                       unit={unit}
-                      value={account.spendableBalance}
+                      value={getDecimalPart(
+                        account.spendableBalance,
+                        defaultUnit.magnitude,
+                      )}
                     />
                   </LText>
                 </View>
@@ -282,15 +292,7 @@ const FreezeAmount = ({ account, navigation }: Props) => {
                   <Button
                     event="FreezeAmountContinue"
                     type="primary"
-                    title={
-                      <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "freeze.amount.loadingNetwork"
-                        }
-                      />
-                    }
+                    title={<Trans i18nKey="common.continue" />}
                     onPress={onContinue}
                     disabled={!!status.errors.amount || bridgePending}
                     pending={bridgePending}
@@ -301,6 +303,12 @@ const FreezeAmount = ({ account, navigation }: Props) => {
           </TouchableWithoutFeedback>
         </KeyboardView>
       </SafeAreaView>
+
+      <InfoModal
+        isOpened={!!infoModalOpen}
+        onClose={closeInfoModal}
+        data={infoModalData}
+      />
 
       <GenericErrorBottomModal
         error={bridgeError}
@@ -426,7 +434,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputContainer: { flexBasis: 75 },
-  inputStyle: { flex: 0, flexShrink: 1 },
+  inputStyle: { flex: 1, flexShrink: 1, textAlign: "center" },
   currency: {
     color: colors.grey,
     fontSize: 32,

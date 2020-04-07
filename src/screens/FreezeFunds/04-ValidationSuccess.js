@@ -1,8 +1,13 @@
 /* @flow */
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
+import {
+  useTronPowerLoading,
+  getLastVotedDate,
+} from "@ledgerhq/live-common/lib/families/tron/react";
+import { useTimer } from "@ledgerhq/live-common/lib/hooks/useTimer";
 
 import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
@@ -14,27 +19,6 @@ import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
-
-const useTimer = (timer: number) => {
-  const [time, setTime] = useState(timer);
-
-  useEffect(() => {
-    let T = timer;
-    const int = setInterval(() => {
-      if (T <= 0) {
-        clearInterval(int);
-      } else {
-        T--;
-        setTime(T);
-      }
-    }, 1000);
-    return () => {
-      if (int) clearInterval(int);
-    };
-  }, [timer]);
-
-  return time;
-};
 
 type Props = {
   account: Account,
@@ -48,11 +32,16 @@ type Props = {
   }>,
 };
 
-const ValidationSuccess = ({ navigation }: Props) => {
+const ValidationSuccess = ({ account, navigation }: Props) => {
   const time = useTimer(60);
+  const isLoading = useTronPowerLoading(account);
 
   const transaction = navigation.getParam("transaction");
   const resource = transaction.resource || "";
+
+  const accountId = account.id;
+
+  const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
   const dismiss = useCallback(() => {
     if (navigation.dismiss) {
@@ -62,11 +51,12 @@ const ValidationSuccess = ({ navigation }: Props) => {
   }, [navigation]);
 
   const goToVote = useCallback(() => {
-    /** @TODO redirect to Vote flow */
-    // navigation.navigate("Vote", {
-    //   accountId: account.id,
-    // });
-  }, []);
+    const screenName = lastVotedDate ? "VoteSelectValidator" : "VoteStarted";
+    navigation.navigate(screenName, {
+      accountId,
+      parentId: undefined,
+    });
+  }, [lastVotedDate, accountId, navigation]);
 
   return (
     <View style={styles.root}>
@@ -106,7 +96,8 @@ const ValidationSuccess = ({ navigation }: Props) => {
                   <Trans i18nKey="freeze.validation.button.vote" />
                 )
               }
-              disabled={time > 0}
+              isLoading={isLoading && time === 0}
+              disabled={isLoading}
               type="primary"
               containerStyle={styles.button}
               onPress={goToVote}
@@ -139,12 +130,14 @@ const styles = StyleSheet.create({
   },
   button: {
     alignSelf: "stretch",
-    marginTop: 24,
+    marginBottom: 16,
   },
   labelContainer: {
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: 16,
+    paddingHorizontal: 16,
+    marginTop: 48,
+    marginBottom: 16,
   },
   label: { fontSize: 12 },
   subLabel: { color: colors.grey },

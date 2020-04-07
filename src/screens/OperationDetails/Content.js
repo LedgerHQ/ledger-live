@@ -6,6 +6,7 @@ import type {
   Operation,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
+
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
   getMainAccount,
@@ -18,7 +19,6 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Trans, translate } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/data/tokens";
 import { localeIds } from "../../languages";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -99,11 +99,11 @@ class Content extends PureComponent<Props, State> {
       t,
     } = this.props;
     const mainAccount = getMainAccount(account, parentAccount);
-    const isToken =
-      listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
+    const currency = getAccountCurrency(account);
+    const isToken = currency.type === "TokenCurrency";
     const unit = getAccountUnit(account);
     const parentUnit = getAccountUnit(mainAccount);
-    const currency = getAccountCurrency(account);
+
     const parentCurrency = getAccountCurrency(mainAccount);
     const amount = getOperationAmountNumber(operation);
     const isNegative = amount.isNegative();
@@ -141,12 +141,12 @@ class Content extends PureComponent<Props, State> {
             />
           </View>
 
-          <LText
-            tertiary
-            numberOfLines={1}
-            style={[styles.currencyUnitValue, { color: valueColor }]}
-          >
-            {hasFailed ? null : (
+          {hasFailed || amount.isZero() ? null : (
+            <LText
+              tertiary
+              numberOfLines={1}
+              style={[styles.currencyUnitValue, { color: valueColor }]}
+            >
               <CurrencyUnitValue
                 showCode
                 disableRounding={true}
@@ -154,11 +154,11 @@ class Content extends PureComponent<Props, State> {
                 value={amount}
                 alwaysShowSign
               />
-            )}
-          </LText>
+            </LText>
+          )}
 
-          <LText tertiary style={styles.counterValue}>
-            {hasFailed ? null : (
+          {hasFailed || amount.isZero() ? null : (
+            <LText tertiary style={styles.counterValue}>
               <CounterValue
                 showCode
                 alwaysShowSign
@@ -167,8 +167,8 @@ class Content extends PureComponent<Props, State> {
                 date={operation.date}
                 subMagnitude={1}
               />
-            )}
-          </LText>
+            </LText>
+          )}
 
           <View style={styles.confirmationContainer}>
             <View
@@ -378,6 +378,7 @@ class Content extends PureComponent<Props, State> {
         <Modal
           isOpened={this.state.isModalOpened}
           onClose={this.onModalClose}
+          currency={currency}
         />
       </>
     );

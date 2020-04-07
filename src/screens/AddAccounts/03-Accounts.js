@@ -14,7 +14,6 @@ import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { translate, Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-// $FlowFixMe
 import { SafeAreaView, ScrollView } from "react-navigation";
 import type { NavigationStackProp } from "react-navigation-stack";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
@@ -126,8 +125,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const deviceId = navigation.getParam("deviceId");
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
-      // TODO later we need to paginate only a few ops, not all (for add accounts)
-      paginationConfig: {},
+      paginationConfig: {
+        operation: 0,
+      },
       blacklistedTokenIds,
     };
     this.scanSubscription = concat(

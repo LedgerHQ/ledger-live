@@ -1,47 +1,35 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { connect } from "react-redux";
 import { RefreshControl } from "react-native";
-import { createStructuredSelector } from "reselect";
-import type { BehaviorAction } from "../bridge/BridgeSyncContext";
-import type { AsyncState } from "../reducers/bridgeSync";
-import { accountSyncStateSelector } from "../reducers/bridgeSync";
-import { BridgeSyncConsumer } from "../bridge/BridgeSyncContext";
+import type { Sync } from "@ledgerhq/live-common/lib/bridge/react/types";
+import {
+  useBridgeSync,
+  useAccountSyncState,
+} from "@ledgerhq/live-common/lib/bridge/react";
 import CounterValues from "../countervalues";
 import { SYNC_DELAY } from "../constants";
 
-const mapStateToProps = createStructuredSelector({
-  accountSyncState: accountSyncStateSelector,
-});
-
 const Connector = (Decorated: React$ComponentType<any>) => {
-  const SyncIndicator = ({
-    accountSyncState,
-    ...rest
-  }: {
-    accountSyncState: AsyncState,
-  }) => (
-    <BridgeSyncConsumer>
-      {setSyncBehavior => {
-        const isPending = accountSyncState.pending;
-        return (
-          <CounterValues.PollingConsumer>
-            {cvPolling => (
-              <Decorated
-                cvPoll={cvPolling.poll}
-                isPending={isPending}
-                setSyncBehavior={setSyncBehavior}
-                {...rest}
-              />
-            )}
-          </CounterValues.PollingConsumer>
-        );
-      }}
-    </BridgeSyncConsumer>
-  );
+  const SyncIndicator = (rest: *) => {
+    const accountSyncState = useAccountSyncState({ accountId: rest.accountId });
+    const setSyncBehavior = useBridgeSync();
+    const isPending = accountSyncState.pending;
+    return (
+      <CounterValues.PollingConsumer>
+        {cvPolling => (
+          <Decorated
+            cvPoll={cvPolling.poll}
+            isPending={isPending}
+            setSyncBehavior={setSyncBehavior}
+            {...rest}
+          />
+        )}
+      </CounterValues.PollingConsumer>
+    );
+  };
 
-  return connect(mapStateToProps)(SyncIndicator);
+  return SyncIndicator;
 };
 
 type Props = {
@@ -52,7 +40,7 @@ type Props = {
   cvPoll: *,
   setSyncBehavior: *,
   forwardedRef?: *,
-  provideSyncRefreshControlBehavior?: BehaviorAction,
+  provideSyncRefreshControlBehavior?: Sync,
 };
 
 export default (ScrollListLike: any) => {

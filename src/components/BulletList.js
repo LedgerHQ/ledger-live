@@ -40,6 +40,7 @@ export class BulletItem extends PureComponent<{
   value: React$Node | (() => React$Node),
   index: number,
   animated?: boolean,
+  itemContainerStyle?: *,
   itemStyle?: *,
   itemTextStyle?: *,
   Bullet: React$ComponentType<*>,
@@ -61,11 +62,18 @@ export class BulletItem extends PureComponent<{
   }
 
   render() {
-    const { index, value, Bullet, itemStyle, itemTextStyle } = this.props;
+    const {
+      index,
+      value,
+      Bullet,
+      itemContainerStyle,
+      itemStyle,
+      itemTextStyle,
+    } = this.props;
     const { opacity } = this;
 
     return (
-      <Animated.View style={[styles.item, { opacity }]}>
+      <Animated.View style={[styles.item, { opacity }, itemContainerStyle]}>
         <Bullet>{index + 1}</Bullet>
         <View style={itemStyle || styles.textContainer}>
           {typeof value === "function" ? (
@@ -103,6 +111,7 @@ class BulletList extends PureComponent<{
   list: *,
   animated?: boolean,
   Bullet: React$ComponentType<*>,
+  itemContainerStyle?: *,
   itemStyle?: *,
   style?: *,
 }> {
@@ -110,11 +119,19 @@ class BulletList extends PureComponent<{
     Bullet,
   };
   render() {
-    const { list, animated, Bullet, itemStyle, style } = this.props;
+    const {
+      list,
+      animated,
+      Bullet,
+      itemContainerStyle,
+      itemStyle,
+      style,
+    } = this.props;
     return (
       <View style={style}>
         {list.map((value, index) => (
           <BulletItem
+            itemContainerStyle={itemContainerStyle}
             itemStyle={itemStyle}
             Bullet={Bullet}
             animated={animated}

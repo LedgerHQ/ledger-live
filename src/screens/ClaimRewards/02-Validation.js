@@ -91,8 +91,8 @@ Validation.navigationOptions = {
     <StepHeader
       title={i18next.t("claimReward.stepperHeader.verification")}
       subtitle={i18next.t("claimReward.stepperHeader.stepRange", {
-        currentStep: "3",
-        totalSteps: "3",
+        currentStep: "2",
+        totalSteps: "2",
       })}
     />
   ),

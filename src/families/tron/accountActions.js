@@ -1,12 +1,15 @@
 // @flow
-import React, { useCallback, useState } from "react";
-import { View, TouchableHighlight, StyleSheet } from "react-native";
+import React, { useCallback, useState, useMemo } from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import { BigNumber } from "bignumber.js";
 
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import {
+  MIN_TRANSACTION_AMOUNT,
+  getLastVotedDate,
+} from "@ledgerhq/live-common/lib/families/tron/react";
 
 import Button from "../../components/Button";
 import BottomModal from "../../components/BottomModal";
@@ -23,6 +26,7 @@ type ChoiceButtonProps = {
   disabled: boolean,
   onPress: () => void,
   label: React$Node,
+  description: React$Node,
   Icon: any,
   extra?: React$Node,
 };
@@ -31,29 +35,34 @@ const ChoiceButton = ({
   disabled,
   onPress,
   label,
+  description,
   Icon,
   extra,
 }: ChoiceButtonProps) => (
-  <TouchableHighlight
-    underlayColor={colors.lightFog}
-    style={styles.button}
-    disabled={disabled}
-    onPress={onPress}
-  >
-    <>
-      <Icon color={disabled ? colors.grey : colors.darkBlue} size={22} />
+  <TouchableOpacity style={styles.button} disabled={disabled} onPress={onPress}>
+    <View
+      style={[
+        styles.buttonIcon,
+        disabled ? { backgroundColor: colors.lightFog } : {},
+      ]}
+    >
+      <Icon color={disabled ? colors.grey : colors.live} size={18} />
+    </View>
+
+    <View style={styles.buttonLabelContainer}>
       <LText
         style={[styles.buttonLabel, disabled ? styles.disabledButton : {}]}
         semiBold
       >
         {label}
       </LText>
-      <View style={styles.extraButton}>{extra}</View>
-    </>
-  </TouchableHighlight>
+      <LText style={[styles.buttonDesc]}>{description}</LText>
+    </View>
+    {extra && <View style={styles.extraButton}>{extra}</View>}
+  </TouchableOpacity>
 );
 
-const ManageAction = ({
+const Manage = ({
   // account,
   style,
   account,
@@ -67,10 +76,6 @@ const ManageAction = ({
   const onOpenModal = useCallback(() => setModalOpen(true), []);
   const onCloseModal = useCallback(() => setModalOpen(false), []);
 
-  /** @TODO fetch this from common */
-  const unit = getAccountUnit(account);
-  const minAmount = 10 ** unit.magnitude;
-
   const {
     spendableBalance,
     tronResources: {
@@ -80,7 +85,8 @@ const ManageAction = ({
     } = {},
   } = account;
 
-  const canFreeze = spendableBalance && spendableBalance.gt(minAmount);
+  const canFreeze =
+    spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
 
   const timeToUnfreezeBandwidth =
     bandwidth && bandwidth.expiredAt ? +bandwidth.expiredAt : Infinity;
@@ -97,10 +103,12 @@ const ManageAction = ({
     frozen &&
     BigNumber((bandwidth && bandwidth.amount) || 0)
       .plus((energy && energy.amount) || 0)
-      .gt(minAmount) &&
+      .gt(MIN_TRANSACTION_AMOUNT) &&
     effectiveTimeToUnfreeze < Date.now();
 
   const canVote = tronPower > 0;
+
+  const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
   const onSelectAction = useCallback(
     (selection: ?string) => {
@@ -132,12 +140,14 @@ const ManageAction = ({
             onSelectAction(canVote ? "FreezeAmount" : "FreezeInfo")
           }
           label={<Trans i18nKey="tron.manage.freeze.title" />}
+          description={<Trans i18nKey="tron.manage.freeze.description" />}
           Icon={FreezeIcon}
         />
         <ChoiceButton
           disabled={!canUnfreeze}
           onPress={() => onSelectAction("UnfreezeAmount")}
           label={<Trans i18nKey="tron.manage.unfreeze.title" />}
+          description={<Trans i18nKey="tron.manage.unfreeze.description" />}
           Icon={UnfreezeIcon}
           extra={
             !canUnfreeze &&
@@ -153,8 +163,13 @@ const ManageAction = ({
         />
         <ChoiceButton
           disabled={!canVote}
-          onPress={() => onSelectAction()}
+          onPress={() =>
+            onSelectAction(
+              lastVotedDate ? "VoteSelectValidator" : "VoteStarted",
+            )
+          }
           label={<Trans i18nKey="tron.manage.vote.title" />}
+          description={<Trans i18nKey="tron.manage.vote.description" />}
           Icon={VoteIcon}
         />
       </BottomModal>
@@ -162,29 +177,64 @@ const ManageAction = ({
   );
 };
 
+const ManageAction = ({
+  // account,
+  style,
+  account,
+  onNavigate,
+}: {
+  account: Account,
+  onNavigate: (selection: string) => void,
+  style: *,
+}) => {
+  if (!account.tronResources) return null;
+
+  return <Manage style={style} account={account} onNavigate={onNavigate} />;
+};
+
 const styles = StyleSheet.create({
   modal: {
     paddingTop: 16,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
   },
   button: {
     width: "100%",
     height: "auto",
-    padding: 16,
     marginVertical: 8,
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
     borderRadius: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+  },
+  buttonIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: colors.lightLive,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonLabelContainer: {
+    flex: 1,
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "flex-start",
+    marginHorizontal: 10,
   },
   buttonLabel: {
     color: colors.darkBlue,
     fontSize: 18,
     lineHeight: 22,
-    marginHorizontal: 10,
+  },
+  buttonDesc: {
+    color: colors.grey,
+    fontSize: 13,
+    lineHeight: 16,
   },
   extraButton: {
-    flex: 1,
+    flexShrink: 1,
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "flex-end",

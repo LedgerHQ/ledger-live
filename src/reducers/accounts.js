@@ -9,10 +9,10 @@ import {
   flattenAccounts,
   getAccountCurrency,
   importAccountsReduce,
+  isUpToDateAccount,
   withoutToken,
 } from "@ledgerhq/live-common/lib/account";
 import accountModel from "../logic/accountModel";
-import { UP_TO_DATE_THRESHOLD } from "../constants";
 
 export type AccountsState = {
   active: Account[],
@@ -168,21 +168,6 @@ export const accountAndParentScreenSelector = (state: *, { navigation }: *) => {
   }
   return { parentAccount, account };
 };
-
-const isUpToDateAccount = a => {
-  const { lastSyncDate } = a;
-  const { blockAvgTime } = a.currency;
-  const outdated =
-    Date.now() - (lastSyncDate || 0) >
-    (blockAvgTime || 0) * 1000 + UP_TO_DATE_THRESHOLD;
-  return !outdated;
-};
-
-// $FlowFixMe
-export const isUpToDateAccountSelector = createSelector(
-  accountSelector,
-  isUpToDateAccount,
-);
 
 // $FlowFixMe
 export const isUpToDateSelector = createSelector(

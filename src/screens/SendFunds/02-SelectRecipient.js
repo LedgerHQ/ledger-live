@@ -16,9 +16,11 @@ import type { NavigationScreenProp } from "react-navigation";
 import { SafeAreaView } from "react-navigation";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import {
+  SyncOneAccountOnMount,
+  SyncSkipUnderPriority,
+} from "@ledgerhq/live-common/lib/bridge/react";
 import { track, TrackScreen } from "../../analytics";
-import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
-import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
 import colors from "../../colors";
 import { accountAndParentScreenSelector } from "../../reducers/accounts";
 import type { T } from "../../types/common";

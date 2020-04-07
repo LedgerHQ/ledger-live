@@ -125,12 +125,14 @@ class OperationRow extends PureComponent<Props, *> {
                 numberOfLines={1}
                 style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
               >
-                <CurrencyUnitValue
-                  showCode
-                  unit={unit}
-                  value={amount}
-                  alwaysShowSign
-                />
+                {amount.isZero() ? null : (
+                  <CurrencyUnitValue
+                    showCode
+                    unit={unit}
+                    value={amount}
+                    alwaysShowSign
+                  />
+                )}
               </LText>
             </View>
             <View style={styles.body}>
@@ -157,16 +159,18 @@ class OperationRow extends PureComponent<Props, *> {
                 </LText>
               )}
               <View style={styles.bodyRight}>
-                <CounterValue
-                  showCode
-                  date={operation.date}
-                  currency={currency}
-                  value={amount}
-                  alwaysShowSign
-                  withPlaceholder
-                  placeholderProps={placeholderProps}
-                  Wrapper={OpCounterValue}
-                />
+                {amount.isZero() ? null : (
+                  <CounterValue
+                    showCode
+                    date={operation.date}
+                    currency={currency}
+                    value={amount}
+                    alwaysShowSign
+                    withPlaceholder
+                    placeholderProps={placeholderProps}
+                    Wrapper={OpCounterValue}
+                  />
+                )}
               </View>
             </View>
           </View>

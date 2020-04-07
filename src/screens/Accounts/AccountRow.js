@@ -1,12 +1,14 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { useState, useCallback } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import { RectButton } from "react-native-gesture-handler";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
+import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
+import { useAccountSyncState } from "@ledgerhq/live-common/lib/bridge/react";
+import {
+  listSubAccounts,
+  isUpToDateAccount,
+} from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import type {
   Account,
@@ -19,30 +21,16 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import colors from "../../colors";
-import { isUpToDateAccountSelector } from "../../reducers/accounts";
-import { accountSyncStateSelector } from "../../reducers/bridgeSync";
-import type { AsyncState } from "../../reducers/bridgeSync";
 import AccountSyncStatus from "./AccountSyncStatus";
 import Button from "../../components/Button";
 import SubAccountRow from "../../components/SubAccountRow";
-import withEnv from "../../logic/withEnv";
-
-const mapStateToProps = createStructuredSelector({
-  syncState: accountSyncStateSelector,
-  isUpToDateAccount: isUpToDateAccountSelector,
-});
 
 type Props = {
   account: Account,
-  syncState: AsyncState,
-  isUpToDateAccount: boolean,
+  accountId: string,
   navigation: *,
   isLast: boolean,
   onBlacklistToken: TokenCurrency => void,
-};
-
-type State = {
-  collapsed: boolean,
 };
 
 const placeholderProps = {
@@ -53,155 +41,159 @@ const placeholderProps = {
 const TICK_W = 6;
 const TICK_H = 20;
 
-class AccountRow extends PureComponent<Props, State> {
-  state = {
-    collapsed: true,
-  };
+const AccountRow = ({
+  navigation,
+  account,
+  accountId,
+  onBlacklistToken,
+}: Props) => {
+  // makes it refresh if this changes
+  useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
-  onAccountPress = () => {
-    this.props.navigation.navigate("Account", {
-      accountId: this.props.account.id,
+  const syncState = useAccountSyncState({ accountId });
+
+  const upToDate = isUpToDateAccount(account);
+
+  const [collapsed, setCollapsed] = useState(true);
+
+  const onAccountPress = useCallback(() => {
+    navigation.navigate("Account", {
+      accountId,
     });
-  };
+  }, [accountId, navigation]);
 
-  onSubAccountPress = (subAccount: SubAccount) => {
-    this.props.navigation.navigate("Account", {
-      parentId: this.props.account.id,
-      accountId: subAccount.id,
-    });
-  };
+  const onSubAccountPress = useCallback(
+    (subAccount: SubAccount) => {
+      navigation.navigate("Account", {
+        parentId: accountId,
+        accountId: subAccount.id,
+      });
+    },
+    [accountId, navigation],
+  );
 
-  onExpandSubAccountsPress = () => {
-    this.setState(s => ({
-      collapsed: !s.collapsed,
-    }));
-  };
+  const onExpandSubAccountsPress = useCallback(() => {
+    setCollapsed(collapsed => !collapsed);
+  }, []);
 
-  render() {
-    const {
-      account,
-      isUpToDateAccount,
-      syncState,
-      onBlacklistToken,
-    } = this.props;
-    const subAccounts = listSubAccounts(account);
+  const subAccounts = listSubAccounts(account);
 
-    const isToken =
-      listTokenTypesForCryptoCurrency(account.currency).length > 0;
+  const isToken = listTokenTypesForCryptoCurrency(account.currency).length > 0;
 
-    return (
-      <View style={styles.root}>
-        <View
-          style={[
-            styles.accountRowCard,
-            {
-              elevation: subAccounts && this.state.collapsed ? 2 : 1,
-            },
-          ]}
+  return (
+    <View style={styles.root}>
+      <View
+        style={[
+          styles.accountRowCard,
+          {
+            elevation: subAccounts && collapsed ? 2 : 1,
+          },
+        ]}
+      >
+        <RectButton
+          style={styles.button}
+          underlayColor={colors.grey}
+          onPress={onAccountPress}
         >
-          <RectButton
-            style={styles.button}
-            underlayColor={colors.grey}
-            onPress={this.onAccountPress}
-          >
-            <View accessible style={styles.innerContainer}>
-              <CurrencyIcon size={24} currency={account.currency} />
-              <View style={styles.rowContainer}>
-                <View style={styles.topRow}>
-                  <LText
-                    semiBold
-                    numberOfLines={1}
-                    style={styles.accountNameText}
-                  >
-                    {account.name}
-                  </LText>
-                  <LText tertiary style={styles.balanceNumText}>
-                    <CurrencyUnitValue
-                      showCode
-                      unit={account.unit}
-                      value={account.balance}
-                    />
-                  </LText>
-                </View>
-                <View style={styles.bottomRow}>
-                  <AccountSyncStatus
-                    {...syncState}
-                    isUpToDateAccount={isUpToDateAccount}
+          <View accessible style={styles.innerContainer}>
+            <CurrencyIcon size={24} currency={account.currency} />
+            <View style={styles.rowContainer}>
+              <View style={styles.topRow}>
+                <LText
+                  semiBold
+                  numberOfLines={1}
+                  style={styles.accountNameText}
+                >
+                  {account.name}
+                </LText>
+                <LText tertiary style={styles.balanceNumText}>
+                  <CurrencyUnitValue
+                    showCode
+                    unit={account.unit}
+                    value={account.balance}
                   />
-                  <View style={styles.balanceCounterContainer}>
-                    <CounterValue
-                      showCode
-                      currency={account.currency}
-                      value={account.balance}
-                      withPlaceholder
-                      placeholderProps={placeholderProps}
-                      Wrapper={AccountCv}
-                    />
-                  </View>
+                </LText>
+              </View>
+              <View style={styles.bottomRow}>
+                <AccountSyncStatus
+                  {...syncState}
+                  isUpToDateAccount={upToDate}
+                />
+                <View style={styles.balanceCounterContainer}>
+                  <CounterValue
+                    showCode
+                    currency={account.currency}
+                    value={account.balance}
+                    withPlaceholder
+                    placeholderProps={placeholderProps}
+                    Wrapper={AccountCv}
+                  />
                 </View>
               </View>
             </View>
-          </RectButton>
-          {subAccounts.length !== 0 ? (
-            <>
-              <View
-                style={[
-                  styles.subAccountList,
-                  { display: this.state.collapsed ? "none" : "flex" },
-                ]}
-              >
-                {subAccounts.map((tkn, i) => (
-                  <SubAccountRow
-                    nested
-                    key={i}
-                    account={tkn}
-                    onSubAccountPress={this.onSubAccountPress}
-                    onBlacklistToken={onBlacklistToken}
+          </View>
+        </RectButton>
+        {subAccounts.length !== 0 ? (
+          <>
+            <View
+              style={[
+                styles.subAccountList,
+                { display: collapsed ? "none" : "flex" },
+              ]}
+            >
+              {subAccounts.map((tkn, i) => (
+                <SubAccountRow
+                  nested
+                  key={i}
+                  account={tkn}
+                  onSubAccountPress={onSubAccountPress}
+                  onBlacklistToken={onBlacklistToken}
+                />
+              ))}
+            </View>
+            <View style={styles.subAccountButton}>
+              <Button
+                type="lightSecondary"
+                event="expandSubAccountList"
+                title={
+                  <Trans
+                    i18nKey={
+                      collapsed
+                        ? `accounts.row.${
+                            isToken ? "showTokens" : "showSubAccounts"
+                          }`
+                        : `accounts.row.${
+                            isToken ? "hideTokens" : "hideSubAccounts"
+                          }`
+                    }
+                    values={{
+                      length: subAccounts.length,
+                    }}
+                    count={subAccounts.length}
                   />
-                ))}
-              </View>
-              <View style={styles.subAccountButton}>
-                <Button
-                  type="lightSecondary"
-                  event="expandSubAccountList"
-                  title={
-                    <Trans
-                      i18nKey={
-                        this.state.collapsed
-                          ? `accounts.row.${
-                              isToken ? "showTokens" : "showSubAccounts"
-                            }`
-                          : `accounts.row.${
-                              isToken ? "hideTokens" : "hideSubAccounts"
-                            }`
-                      }
-                      values={{
-                        length: subAccounts.length,
-                      }}
-                      count={subAccounts.length}
-                    />
-                  }
-                  IconRight={() => (
+                }
+                IconRight={() => (
+                  <View style={{ paddingLeft: 6 }}>
                     <Icon
                       color={colors.live}
-                      name={this.state.collapsed ? "angle-down" : "angle-up"}
+                      name={collapsed ? "angle-down" : "angle-up"}
                       size={16}
                     />
-                  )}
-                  onPress={this.onExpandSubAccountsPress}
-                  size={13}
-                />
-              </View>
-            </>
-          ) : null}
-        </View>
-        {!!this.state.collapsed && subAccounts.length ? (
-          <View style={styles.subAccountIndicator} />
+                  </View>
+                )}
+                onPress={onExpandSubAccountsPress}
+                size={13}
+              />
+            </View>
+          </>
         ) : null}
       </View>
-    );
-  }
-}
+      {!!collapsed && subAccounts.length ? (
+        <View style={styles.subAccountIndicator} />
+      ) : null}
+    </View>
+  );
+};
 
 const AccountCv = ({ children }: { children: * }) => (
   <LText tertiary style={styles.balanceCounterText}>
@@ -209,10 +201,7 @@ const AccountCv = ({ children }: { children: * }) => (
   </LText>
 );
 
-export default compose(
-  connect(mapStateToProps),
-  withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
-)(AccountRow);
+export default React.memo<Props>(AccountRow);
 
 const styles = StyleSheet.create({
   button: {

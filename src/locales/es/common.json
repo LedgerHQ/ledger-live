@@ -662,7 +662,7 @@
       "unfreezeAmount": "Unfreeze amount",
       "address": "Address",
       "votes": "Votes ({{number}})",
-      "votesAddress": "<0>TP {{votes}}</0> to <0>{{name}}</0>"
+      "votesAddress": "<0>{{votes}}</0> to <0>{{name}}</0>"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -1459,11 +1459,9 @@
       "delegationEarn": "You can now earn rewards by freezing and voting.",
       "howItWorks": "How voting works",
       "startEarning": "Earn rewards",
-      "manageTP": "Manage Tron Power",
       "title": "Claim rewards",
       "header": "Votes ({{total}})",
       "Amount": "Amount",
-      "percentageTP": "% of used TP",
       "noRewards": "No rewards available",
       "votes": {
         "title": "Votes",
@@ -1476,7 +1474,7 @@
       },
       "manageVotes": "Manage votes",
       "remainingVotes": {
-        "title": "You still have {{amount}}TP remaining",
+        "title": "You still have votes remaining",
         "description": "You didn't use all of your frozen assets to vote for a SR.",
         "button": "Vote now"
       },

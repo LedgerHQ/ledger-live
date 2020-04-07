@@ -942,10 +942,10 @@
     "@ledgerhq/errors" "^5.12.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@12.12.1":
-  version "12.12.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.12.1.tgz#24d7c1370395940e9a2db02ba9af3e7a765030a4"
-  integrity sha512-6yxSfho7igHEOyWQjICe72w/RfD81BcxW8E77y50eGHtL6KvB3szJuFyYC2DaO27PrTpKY2QOOHdz3EBSWhORA==
+"@ledgerhq/live-common@12.14.1":
+  version "12.14.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.14.1.tgz#d1378b258c4ee7179d384ecf0650e0d4e621acf2"
+  integrity sha512-QQW7FEJxWite6sxF+Xpsp13+XYEjHe6F+tSqbxTHL9aCAWyz4/0fDfraRyJYRVUAhzbsrSSKUErF/mF/ytuPsA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.12.0"
@@ -978,8 +978,8 @@
     ripple-bs58check "^2.0.2"
     ripple-hashes "^0.3.1"
     ripple-lib "1.1.2"
-    rxjs "^6.5.4"
-    rxjs-compat "^6.5.4"
+    rxjs "^6.5.5"
+    rxjs-compat "^6.5.5"
     semver "^7.1.3"
     sha.js "^2.4.11"
 
@@ -988,10 +988,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.11.0.tgz#9ad2aefceeef48cf9d77972f67e63ba478dd04cc"
   integrity sha512-NiFDdxLU/z1VGQy0/cbpv7UScMDQ/rU8SznqILSHYTnhK2xvvNFTUkd1W2mpmf9E/hzXFI0UAOieLQ44qovX3w==
 
-"@ledgerhq/react-native-hid@5.12.0":
-  version "5.12.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-5.12.0.tgz#8377bc31f169c64d039cf61b58a4dae776db1d70"
-  integrity sha512-PVj3At+Mhjs0E+cmDcWcRciIrC3pDru7nU/2rI2BJsnriRRM4HISlLrTU5r8pqs/8KuXFm98Md1H4vo7Y+PBjw==
+"@ledgerhq/react-native-hid@5.12.3":
+  version "5.12.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-hid/-/react-native-hid-5.12.3.tgz#4794f524bf083e40937bf509c93ad48cc8187ec9"
+  integrity sha512-f6+2Be/rqdpICcSniSI6eyAkzNs2UkdCJP7sdXDdPsaJRXBA9zEmXdvySLRTulGM+PDmXemAP+jyKXNaScd3jA==
   dependencies:
     "@ledgerhq/devices" "^5.12.0"
     "@ledgerhq/errors" "^5.12.0"
@@ -1012,10 +1012,10 @@
     rxjs "^6.5.4"
     uuid "^3.4.0"
 
-"@ledgerhq/react-native-ledger-core@^4.7.1":
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.7.1.tgz#47de6a004b2437fa1067270fd475ec08f266b5bc"
-  integrity sha512-1cZdFNlb5qqD+uXQnn64R+1qAGpe7n72+p0YVFp3m/TNmgxWrU3KPCwVKPruCnJhndbdYNIM1YdNcg4K5elBbg==
+"@ledgerhq/react-native-ledger-core@^4.10.0":
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.10.0.tgz#9c540890add75c4c757b433756ea8c87f5cf4160"
+  integrity sha512-T1JcnL4wCPtBh7KsMX68Qzmaki3ZIyk5ZUQHnoXn2yvIQtbo14lWyTqBqdRvRDJAP71C9ZKhkVxspO02DMcQnQ==
 
 "@ledgerhq/react-native-passcode-auth@^2.1.0":
   version "2.1.0"
@@ -8235,6 +8235,11 @@ rxjs-compat@^6.5.4:
   resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.5.4.tgz#03825692af3fe363e04c43f41ff4113d76bbd305"
   integrity sha512-rkn+lbOHUQOurdd74J/hjmDsG9nFx0z66fvnbs8M95nrtKvNqCKdk7iZqdY51CGmDemTQk+kUPy4s8HVOHtkfA==
 
+rxjs-compat@^6.5.5:
+  version "6.5.5"
+  resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.5.5.tgz#073c40510f29c45a2a5fc02dde87f8c3ad75f2c2"
+  integrity sha512-F42sssVbUyWH4vJswEo6m+Eh02xHv3q93n8S7nUJO58R7sbc3CvJIOts605zdaBhWa1xMB9aVSyqPqhQ5q3eXg==
+
 rxjs@5.5.2:
   version "5.5.2"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.2.tgz#28d403f0071121967f18ad665563255d54236ac3"
@@ -8260,6 +8265,13 @@ rxjs@^6.5.4:
   version "6.5.4"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.4.tgz#e0777fe0d184cec7872df147f303572d414e211c"
   integrity sha512-naMQXcgEo3csAEGvw/NydRA0fuS2nDZJiw1YUWFKU7aPPAPGZEsD4Iimit96qwCieH6y614MCLYwdkrWx7z/7Q==
+  dependencies:
+    tslib "^1.9.0"
+
+rxjs@^6.5.5:
+  version "6.5.5"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.5.tgz#c5c884e3094c8cfee31bf27eb87e54ccfc87f9ec"
+  integrity sha512-WfQI+1gohdf0Dai/Bbmk5L5ItH5tYqm3ki2c5GdWhKjalzjg93N3avFjVStyZZz+A2Em+ZxKH5bNghw9UeylGQ==
   dependencies:
     tslib "^1.9.0"
 
