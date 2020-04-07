@@ -31,6 +31,7 @@ import repl from "./commands/repl";
 import send from "./commands/send";
 import signMessage from "./commands/signMessage";
 import sync from "./commands/sync";
+import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import validRecipient from "./commands/validRecipient";
 import version from "./commands/version";
@@ -69,6 +70,7 @@ export default {
   send,
   signMessage,
   sync,
+  testDetectOpCollision,
   testGetTrustedInputFromTxHash,
   validRecipient,
   version,
