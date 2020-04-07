@@ -17,9 +17,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       freeNetLimit: BigNumber(networkInfo.freeNetLimit),
       netUsed: BigNumber(networkInfo.netUsed),
       netLimit: BigNumber(networkInfo.netLimit),
-      energyLimit: networkInfo.energyLimit
-        ? BigNumber(networkInfo.energyLimit)
-        : undefined
+      energyUsed: BigNumber(networkInfo.energyUsed),
+      energyLimit: BigNumber(networkInfo.energyLimit)
     },
     family: tr.family,
     mode: tr.mode,
@@ -40,9 +39,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       freeNetLimit: networkInfo.freeNetLimit.toString(),
       netUsed: networkInfo.netUsed.toString(),
       netLimit: networkInfo.netLimit.toString(),
-      energyLimit: networkInfo.energyLimit
-        ? networkInfo.energyLimit.toString()
-        : undefined
+      energyUsed: networkInfo.energyUsed.toString(),
+      energyLimit: networkInfo.energyLimit.toString()
     },
     family: t.family,
     mode: t.mode,

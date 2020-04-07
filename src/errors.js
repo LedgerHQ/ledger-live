@@ -48,3 +48,7 @@ export const TronNotEnoughTronPower = createCustomErrorClass(
 export const TronTransactionExpired = createCustomErrorClass(
   "TronTransactionExpired"
 );
+
+export const TronNotEnoughEnergy = createCustomErrorClass(
+  "TronNotEnoughEnergy"
+);

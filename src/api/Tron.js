@@ -246,6 +246,19 @@ export async function fetchTronAccountTxs(
   return txInfos;
 }
 
+export const getContractUserEnergyRatioConsumption = async (
+  address: string
+): Promise<number> => {
+  const { consume_user_resource_percent = 0 } = await post(
+    `${baseApiUrl}/wallet/getcontract`,
+    {
+      value: decode58Check(address)
+    }
+  );
+
+  return consume_user_resource_percent;
+};
+
 export const getTronAccountNetwork = async (
   address: string
 ): Promise<NetworkInfo> => {
@@ -260,6 +273,7 @@ export const getTronAccountNetwork = async (
     freeNetLimit = 0,
     NetUsed = 0,
     NetLimit = 0,
+    EnergyUsed = 0,
     EnergyLimit = 0
   } = result;
 
@@ -269,7 +283,8 @@ export const getTronAccountNetwork = async (
     freeNetLimit: BigNumber(freeNetLimit),
     netUsed: BigNumber(NetUsed),
     netLimit: BigNumber(NetLimit),
-    energyLimit: EnergyLimit ? BigNumber(EnergyLimit) : undefined
+    energyUsed: BigNumber(EnergyUsed),
+    energyLimit: BigNumber(EnergyLimit)
   };
 };
 
@@ -465,7 +480,7 @@ export const getTronResources = async (
   const tronNetworkInfo = await getTronAccountNetwork(encodedAddress);
   const unwithdrawnReward = await getUnwithdrawnReward(encodedAddress);
 
-  const energy = BigNumber(tronNetworkInfo.energyLimit || 0);
+  const energy = tronNetworkInfo.energyLimit.minus(tronNetworkInfo.energyUsed);
   const bandwidth = extractBandwidthInfo(tronNetworkInfo);
 
   const frozen = {
