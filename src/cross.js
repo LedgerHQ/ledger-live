@@ -35,7 +35,8 @@ export type Settings = {
   pairExchanges: {
     [_: string]: string
   },
-  developerModeEnabled?: boolean
+  developerModeEnabled?: boolean,
+  blacklistedTokenIds?: string[]
 };
 
 export type DataIn = {
@@ -172,7 +173,8 @@ const asResultSettings = (unsafe: mixed): Settings => {
     counterValue,
     currenciesSettings,
     pairExchanges,
-    developerModeEnabled
+    developerModeEnabled,
+    blacklistedTokenIds
   } = unsafe;
 
   const currenciesSettingsSafe: {
@@ -205,6 +207,16 @@ const asResultSettings = (unsafe: mixed): Settings => {
   if (developerModeEnabled && typeof developerModeEnabled === "boolean") {
     res.developerModeEnabled = developerModeEnabled;
   }
+  const blacklistedTokenIdsSafe: string[] = [];
+  if (blacklistedTokenIds && Array.isArray(blacklistedTokenIds)) {
+    for (let b of blacklistedTokenIds) {
+      if (typeof b === "string") {
+        blacklistedTokenIdsSafe.push(b);
+      }
+    }
+    res.blacklistedTokenIds = blacklistedTokenIdsSafe;
+  }
+
   return res;
 };
 
