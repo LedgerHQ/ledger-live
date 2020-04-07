@@ -58,11 +58,10 @@ const reservedAmountForStorageLimit = storageLimit =>
   BigNumber(storageLimit || 0).times("1000");
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: [
-    // "libcore" //  LIBCORE IS KINDA BROKEN STATE FOR TEZOS !!!
-  ],
+  implementations: ["libcore"],
   currencies: {
-    tezos: {
+    //  FIXME: LIBCORE IS KINDA BROKEN STATE FOR TEZOS !!!
+    tezos: {} || {
       FIXME_ignoreOperationFields: ["blockHeight"],
       scanAccounts: [tezosScanAccounts1],
       accounts: [
