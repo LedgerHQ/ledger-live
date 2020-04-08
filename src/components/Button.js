@@ -212,7 +212,7 @@ class Button extends PureComponent<
     ];
 
     const spinnerSliderStyle = [
-      styles.slider,
+      styles.spinnerSlider,
       {
         opacity: anim,
         transform: [{ translateY: spinnerSliderOffset }],
@@ -274,11 +274,17 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   slider: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+  },
+  spinnerSlider: {
     position: "absolute",
     top: 0,
     left: 0,
-    bottom: 0,
     right: 0,
+    bottom: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -287,7 +293,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
   },
-
   outlineBorder: {
     position: "absolute",
     top: 0,
