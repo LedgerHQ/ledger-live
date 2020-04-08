@@ -341,6 +341,9 @@
       "title": "Transaction has expired",
       "description": "Signature must be applied within 30 seconds. Please try again."
     },
+    "TronNotEnoughEnergy": {
+      "title": "Not enough Energy to send this token"
+    },
     "UpdateYourApp": {
       "title": "App update required",
       "description": "Uninstall and reinstall the {{managerAppName}} app in the Manager"
