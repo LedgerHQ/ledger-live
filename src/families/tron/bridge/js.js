@@ -66,6 +66,7 @@ import {
   fetchCurrentBlockHeight,
   getContractUserEnergyRatioConsumption
 } from "../../../api/Tron";
+import { activationFees, oneTrx } from "../constants";
 
 const signOperation = ({ account, transaction, deviceId }) =>
   Observable.create(o => {
@@ -496,7 +497,7 @@ const getFeesFromAccountActivation = async (
   const estimatedBandwidthCost = getEstimatedBlockSize(a, t);
 
   if (recipientAccount.length === 0 && available.lt(estimatedBandwidthCost)) {
-    return BigNumber(100000); // cost is around 0.1 TRX
+    return activationFees; // cost is around 0.1 TRX
   }
 
   return BigNumber(0); // no fee
@@ -627,7 +628,7 @@ const getTransactionStatus = async (
 
   const amountSpent = ["send", "freeze"].includes(mode) ? amount : BigNumber(0);
 
-  if (mode === "freeze" && amount.lt(BigNumber(1000000))) {
+  if (mode === "freeze" && amount.lt(oneTrx)) {
     errors.amount = new TronInvalidFreezeAmount();
   }
 

@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
+import { activationFees } from "./constants";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -22,6 +23,9 @@ import {
   TronUnexpectedFees,
   TronNotEnoughEnergy
 } from "../../errors";
+
+const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
+const activatedAddress1 = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["tronjs"],
@@ -65,7 +69,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "sendSuccess",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 amount: "1000000",
                 networkInfo: null,
                 mode: "send",
@@ -85,7 +89,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "useAllAmountSuccess",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 amount: "0",
                 useAllAmount: true,
                 networkInfo: null,
@@ -106,7 +110,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "useAllAmountToUnactivatedAddressSuccess",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD",
+                recipient: unactivatedAddress,
                 amount: "0",
                 useAllAmount: true,
                 networkInfo: null,
@@ -167,7 +171,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "voteSuccess",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 amount: "0",
                 networkInfo: null,
                 mode: "vote",
@@ -258,7 +262,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "amountRequired",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 amount: "0",
                 networkInfo: null,
                 mode: "send",
@@ -278,7 +282,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "notEnoughBalance",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 amount: "1000000000",
                 networkInfo: null,
                 mode: "send",
@@ -295,10 +299,43 @@ const dataset: DatasetTest<Transaction> = {
               }
             },
             {
+              name: "notEnoughBalance to unactivated",
+              transaction: (t, account) => ({
+                ...t,
+                recipient: unactivatedAddress,
+                amount: account.spendableBalance.minus(1)
+              }),
+              expectedStatus: () => ({
+                errors: { amount: new NotEnoughBalance() }
+              })
+            },
+            {
+              name: "enoughBalance near the max",
+              transaction: (t, account) => ({
+                ...t,
+                recipient: unactivatedAddress,
+                amount: account.spendableBalance.minus(activationFees).minus(1)
+              }),
+              expectedStatus: () => ({
+                errors: {}
+              })
+            },
+            {
+              name: "enoughBalance at exactly the max",
+              transaction: (t, account) => ({
+                ...t,
+                recipient: unactivatedAddress,
+                amount: account.spendableBalance.minus(activationFees)
+              }),
+              expectedStatus: () => ({
+                errors: {}
+              })
+            },
+            {
               name: "estimatedFeesWarning", // send 1TRX to new account = +0.1TRX of fees
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD",
+                recipient: unactivatedAddress,
                 amount: "1000000",
                 networkInfo: null,
                 mode: "send",
@@ -318,7 +355,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "tronSendTrc20ToNewAccountForbidden",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD",
+                recipient: unactivatedAddress,
                 subAccountId:
                   "tronjs:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
                 amount: "1000000",
@@ -340,7 +377,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "tronSendTrc20NotEnoughEnergyWarning",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 subAccountId:
                   "tronjs:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
                 amount: "1000000",
@@ -362,7 +399,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "tronSendTrc20Success",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 subAccountId:
                   "tronjs:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
                 amount: "1000000",
@@ -444,7 +481,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "invalidVoteAddress",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 amount: "0",
                 networkInfo: null,
                 mode: "vote",
@@ -464,7 +501,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "tronInvalidVoteCount",
               transaction: fromTransactionRaw({
                 family: "tron",
-                recipient: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                recipient: activatedAddress1,
                 amount: "0",
                 networkInfo: null,
                 mode: "vote",
@@ -643,11 +680,11 @@ const dataset: DatasetTest<Transaction> = {
           ],
           raw: {
             id: "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
-            seedIdentifier: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+            seedIdentifier: activatedAddress1,
             name: "Tron 1",
             derivationMode: "",
             index: 0,
-            freshAddress: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+            freshAddress: activatedAddress1,
             freshAddressPath: "44'/195'/0'/0/0",
             pendingOperations: [],
             currencyId: "tron",
@@ -658,7 +695,7 @@ const dataset: DatasetTest<Transaction> = {
             operations: [],
             freshAddresses: [
               {
-                address: "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+                address: activatedAddress1,
                 derivationPath: "44'/195'/0'/0/0"
               }
             ],
