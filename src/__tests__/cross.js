@@ -72,7 +72,8 @@ test("encode/decode", () => {
         bitcoin: {
           confirmationsNb: 3
         }
-      }
+      },
+      blacklistedTokenIds: ["tokenid1", "tokenid2"]
     },
     exporterName: "test",
     exporterVersion: "0.0.0",
@@ -98,7 +99,20 @@ test("encode/decode", () => {
       bitcoin: {
         confirmationsNb: 3
       }
-    }
+    },
+    blacklistedTokenIds: ["tokenid1", "tokenid2"]
+  });
+  expect(res.settings).not.toMatchObject({
+    counterValue: "USD",
+    pairExchanges: {
+      BTC_USD: "KRAKEN"
+    },
+    currenciesSettings: {
+      bitcoin: {
+        confirmationsNb: 3
+      }
+    },
+    blacklistedTokenIds: ["tokenid3"]
   });
   expect(res).toMatchSnapshot();
 });
