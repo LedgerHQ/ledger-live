@@ -76975,7 +76975,6 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "1693",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": Object {
@@ -77175,7 +77174,6 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "0",
       "frozen": Object {
         "bandwidth": Object {
           "amount": "9400000",
@@ -77366,7 +77364,6 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "0",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
@@ -77424,7 +77421,6 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "0",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
@@ -77462,7 +77458,6 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "0",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
@@ -77510,7 +77505,6 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "0",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,
@@ -77558,7 +77552,6 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "energy": "0",
       "frozen": Object {
         "bandwidth": undefined,
         "energy": undefined,

@@ -1,23 +1,24 @@
 // @flow
 import { useState, useEffect } from "react";
 
-export const useTimer = (timer: number) => {
-  const [time, setTime] = useState(timer);
+export const useTimer = (seconds: number) => {
+  const [time, setTime] = useState(seconds);
 
   useEffect(() => {
-    let t = timer;
+    const startTime = Date.now();
     const int = setInterval(() => {
+      const t = Math.ceil(seconds - (Date.now() - startTime) / 1000);
       if (t <= 0) {
         clearInterval(int);
+        setTime(0);
       } else {
-        t--;
         setTime(t);
       }
-    }, 1000);
+    }, 100);
     return () => {
       if (int) clearInterval(int);
     };
-  }, [timer]);
+  }, [seconds]);
 
   return time;
 };
