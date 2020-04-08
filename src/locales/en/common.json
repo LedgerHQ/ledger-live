@@ -1642,7 +1642,7 @@
       },
       "frozen": {
         "title": "Frozen",
-        "description": "This amount is available 3 days after you have unfrozen it."
+        "description": "Frozen assets are used in the Tron voting process. This represents your total number of votes."
       },
       "bandwidth": {
         "title": "Bandwidth",
