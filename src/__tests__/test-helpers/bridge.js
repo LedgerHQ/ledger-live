@@ -651,8 +651,8 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                       : expectedStatus;
                   const { errors, warnings } = es;
                   // we match errors and warnings
-                  expect(s.errors).toMatchObject(errors);
-                  expect(s.warnings).toMatchObject(warnings);
+                  errors && expect(s.errors).toMatchObject(errors);
+                  warnings && expect(s.warnings).toMatchObject(warnings);
                   // now we match rest of fields but using the raw version for better readability
                   const restRaw: Object = toTransactionStatusRaw({
                     ...s,

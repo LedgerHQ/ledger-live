@@ -1,12 +1,10 @@
 // @flow
 import { useState, useEffect, useMemo, useReducer, useRef } from "react";
 import { getTronSuperRepresentatives, getNextVotingDate } from "../../api/Tron";
-
-import { BigNumber } from "bignumber.js";
 import type { SuperRepresentative, Vote, TronResources } from "./types";
 import type { Account } from "../../types";
 import { useBridgeSync } from "../../bridge/react";
-import { getCryptoCurrencyById } from "../../currencies";
+import { oneTrx } from "./constants";
 
 export type Action = {
   type: "updateVote" | "resetVotes" | "clearVotes",
@@ -23,9 +21,6 @@ export type State = {
   initialVotes: { [address: string]: number } // initial Map of votes
 };
 
-const oneTrx = BigNumber(10).pow(
-  getCryptoCurrencyById("tron").units[0].magnitude
-);
 export const MIN_TRANSACTION_AMOUNT = oneTrx;
 
 export const SR_THRESHOLD = 27;

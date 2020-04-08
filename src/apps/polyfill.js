@@ -28,6 +28,7 @@ listCryptoCurrencies(true, true).forEach(a => {
 // extra dependencies
 [
   ["ARTIS sigma1", "Ethereum"],
+  ["EnergyWebChain", "Ethereum"],
   ["kUSD", "Ethereum"],
   ["LBRY", "Bitcoin"],
   ["Ravencoin", "Bitcoin"],
