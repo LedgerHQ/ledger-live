@@ -52,6 +52,7 @@ const ValidationSuccess = ({ account, navigation }: Props) => {
 
   const goToVote = useCallback(() => {
     const screenName = lastVotedDate ? "VoteSelectValidator" : "VoteStarted";
+    navigation.dismiss();
     navigation.navigate(screenName, {
       accountId,
       parentId: undefined,
