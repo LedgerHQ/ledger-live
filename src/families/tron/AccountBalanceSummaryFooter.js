@@ -4,10 +4,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import {
-  formatCurrencyUnit,
-  getCryptoCurrencyById,
-} from "@ledgerhq/live-common/lib/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -21,17 +19,12 @@ import type { ModalInfo } from "../../modals/Info";
 import FreezeIcon from "../../icons/Freeze";
 import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
 interface Props {
   account: Account;
   t: TFunction;
 }
-
-const formatConfig = {
-  disableRounding: true,
-  alwaysShowSign: false,
-  showCode: true,
-};
 
 type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
@@ -44,11 +37,7 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
 
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
 
-  const spendableBalance = useMemo(
-    () =>
-      formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig),
-    [account.unit, account.spendableBalance],
-  );
+  const unit = getAccountUnit(account);
 
   const formattedBandwidth = useMemo(
     () =>
@@ -83,7 +72,9 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
       <InfoItem
         title={t("account.availableBalance")}
         onPress={onPressInfoCreator("available")}
-        value={spendableBalance}
+        value={
+          <CurrencyUnitValue unit={unit} value={account.spendableBalance} />
+        }
       />
       <InfoItem
         title={t("account.tronFrozen")}
