@@ -1,6 +1,6 @@
 /* @flow */
 import React, { useCallback } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { withNavigation } from "react-navigation";
 import { createStructuredSelector } from "reselect";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
@@ -12,6 +12,10 @@ import {
   SendActionDefault,
 } from "./AccountActionsDefault";
 import perFamilyAccountActions from "../../generated/accountActions";
+
+import getWindowDimensions from "../../logic/getWindowDimensions";
+
+const { width } = getWindowDimensions();
 
 type Props = {
   account: AccountLike,
@@ -60,20 +64,23 @@ const AccountActions = ({
     onNavigate("ReceiveConnectDevice");
   }, [onNavigate]);
 
+  const Container = ManageAction ? ScrollViewContainer : View;
+  const btnStyle = ManageAction ? styles.scrollBtn : styles.btn;
+
   return (
-    <View style={styles.root}>
+    <Container style={styles.root}>
       {!readOnlyModeEnabled && (
         <SendAction
           account={account}
           parentAccount={parentAccount}
-          style={[styles.btn, styles.marginRight]}
+          style={[btnStyle]}
           onPress={onSend}
         />
       )}
       <ReceiveAction
         account={account}
         parentAccount={parentAccount}
-        style={[styles.btn, !readOnlyModeEnabled ? styles.marginLeft : null]}
+        style={[btnStyle]}
         onPress={onReceive}
       />
       {ManageAction && (
@@ -81,31 +88,59 @@ const AccountActions = ({
           account={account}
           parentAccount={parentAccount}
           onNavigate={onNavigate}
-          style={[styles.btn, styles.manageAction]}
+          style={[btnStyle]}
         />
       )}
-    </View>
+    </Container>
   );
 };
 
+const ScrollViewContainer = ({ children }: { children: React$Node }) => (
+  <View style={styles.scrollContainer}>
+    <ScrollView
+      showsHorizontalScrollIndicator={false}
+      horizontal
+      style={styles.scrollView}
+    >
+      <View style={styles.scrollRoot}>{children}</View>
+    </ScrollView>
+  </View>
+);
+
 const styles = StyleSheet.create({
   root: {
+    width: "100%",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingTop: 8,
+    paddingBottom: 12,
+    paddingHorizontal: 12,
+  },
+  scrollContainer: {
+    paddingHorizontal: 12,
+    overflow: "visible",
+    width: "100%",
+  },
+  scrollView: {
+    overflow: "visible",
+    width: "100%",
+  },
+  scrollRoot: {
+    minWidth: width - 30,
     flexDirection: "row",
     paddingTop: 8,
     paddingBottom: 12,
-    paddingHorizontal: 16,
+    justifyContent: "space-between",
   },
   btn: {
     flex: 1,
+    marginHorizontal: 4,
+    paddingHorizontal: 6,
   },
-  marginRight: {
-    marginRight: 8,
-  },
-  marginLeft: {
-    marginLeft: 8,
-  },
-  manageAction: {
-    marginLeft: 16,
+  scrollBtn: {
+    flexGrow: 1,
+    marginHorizontal: 4,
+    paddingHorizontal: 6,
   },
 });
 

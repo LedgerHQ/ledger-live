@@ -214,16 +214,15 @@ const FreezeAmount = ({ account, navigation }: Props) => {
               options={options}
               onChange={onChangeResource}
             />
-            <TouchableOpacity onPress={openInfoModal} style={styles.info}>
-              <LText semiBold style={styles.infoLabel}>
-                <Trans i18nKey="freeze.amount.infoLabel" />
-              </LText>
-              <Info size={16} color={colors.grey} />
-            </TouchableOpacity>
           </View>
-
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.root}>
+              <TouchableOpacity onPress={openInfoModal} style={styles.info}>
+                <LText semiBold style={styles.infoLabel}>
+                  <Trans i18nKey="freeze.amount.infoLabel" />
+                </LText>
+                <Info size={16} color={colors.grey} />
+              </TouchableOpacity>
               <View style={styles.wrapper}>
                 <CurrencyInput
                   editable
@@ -243,35 +242,34 @@ const FreezeAmount = ({ account, navigation }: Props) => {
                 >
                   <TranslatedError error={error || warning} />
                 </LText>
-                {amountButtons && amountButtons.length > 0 && (
-                  <View style={styles.amountRatioContainer}>
-                    {amountButtons.map(({ value, label }, key) => (
-                      <TouchableOpacity
+              </View>
+              {amountButtons && amountButtons.length > 0 && (
+                <View style={styles.amountRatioContainer}>
+                  {amountButtons.map(({ value, label }, key) => (
+                    <TouchableOpacity
+                      style={[
+                        styles.amountRatioButton,
+                        selectedRatio === value
+                          ? styles.amountRatioButtonActive
+                          : {},
+                      ]}
+                      key={key}
+                      onPress={() => onRatioPress(value)}
+                    >
+                      <LText
                         style={[
-                          styles.amountRatioButton,
+                          styles.amountRatioLabel,
                           selectedRatio === value
-                            ? styles.amountRatioButtonActive
+                            ? styles.amountRatioLabelActive
                             : {},
                         ]}
-                        key={key}
-                        onPress={() => onRatioPress(value)}
                       >
-                        <LText
-                          style={[
-                            styles.amountRatioLabel,
-                            selectedRatio === value
-                              ? styles.amountRatioLabelActive
-                              : {},
-                          ]}
-                        >
-                          {label}
-                        </LText>
-                      </TouchableOpacity>
-                    ))}
-                  </View>
-                )}
-              </View>
-
+                        {label}
+                      </LText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
               <View style={styles.bottomWrapper}>
                 <View style={styles.available}>
                   <LText semiBold style={styles.availableAmount}>
@@ -348,12 +346,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  topContainer: { paddingHorizontal: 32 },
+  topContainer: { paddingHorizontal: 32, flexShrink: 1 },
   container: {
     flex: 1,
     paddingTop: 16,
     paddingHorizontal: 16,
     alignItems: "stretch",
+    justifyContent: "flex-start",
   },
   available: {
     flexDirection: "row",
@@ -361,6 +360,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexGrow: 1,
+    flexShrink: 1,
     fontSize: 16,
     paddingVertical: 8,
     color: colors.grey,
@@ -386,6 +386,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
+    flexShrink: 1,
   },
   continueWrapper: {
     alignSelf: "stretch",
@@ -401,7 +402,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   amountRatioContainer: {
-    marginTop: 16,
+    flexGrow: 1,
+    marginBottom: 16,
     flexDirection: "row",
     alignItems: "flex-start",
     justifyContent: "center",
@@ -428,7 +430,8 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   wrapper: {
-    flex: 1,
+    flexGrow: 1,
+    flexShrink: 1,
     flexDirection: "column",
     alignContent: "center",
     justifyContent: "center",
@@ -451,7 +454,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   info: {
-    marginTop: 16,
+    flexShrink: 1,
+    marginTop: 8,
     padding: 16,
     flexDirection: "row",
     alignItems: "center",

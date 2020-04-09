@@ -20,7 +20,7 @@ const Header = ({ count, onPress }: Props) => {
           <Trans i18nKey="tron.voting.header" values={{ total: count }} />
         </LText>
         <Button
-          containerStyle={{ flexGrow: 0.5 }}
+          containerStyle={styles.button}
           type="lightSecondary"
           event="TronManageVotes"
           onPress={onPress}
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     color: colors.darkBlue,
   },
+  button: { paddingRight: 0 },
 });
 
 export default Header;

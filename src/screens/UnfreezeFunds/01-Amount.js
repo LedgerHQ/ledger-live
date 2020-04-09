@@ -175,23 +175,22 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                 size={16}
                 color={!canUnfreezeBandwidth ? colors.grey : colors.darkBlue}
               />
-              <LText
-                semiBold
-                style={[
-                  styles.selectCardLabel,
-                  !canUnfreezeBandwidth ? styles.disabledLabel : {},
-                ]}
-              >
-                <Trans i18nKey="account.bandwidth" />
-              </LText>
-              {unfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
-                <View style={styles.timeWarn}>
-                  <ClockIcon color={colors.grey} size={16} />
-                  <LText style={styles.timeLabel} semiBold>
-                    <DateFromNow date={+bandwidthExpiredAt} />
-                  </LText>
-                </View>
-              ) : null}
+              <View style={styles.selectCardLabelContainer}>
+                <LText
+                  semiBold
+                  style={!canUnfreezeBandwidth ? styles.disabledLabel : {}}
+                >
+                  <Trans i18nKey="account.bandwidth" />
+                </LText>
+                {unfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
+                  <View style={styles.timeWarn}>
+                    <ClockIcon color={colors.grey} size={12} />
+                    <LText style={styles.timeLabel} semiBold>
+                      <DateFromNow date={+bandwidthExpiredAt} />
+                    </LText>
+                  </View>
+                ) : null}
+              </View>
               <LText
                 semiBold
                 style={[
@@ -212,23 +211,22 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                 size={16}
                 color={!canUnfreezeEnergy ? colors.grey : colors.darkBlue}
               />
-              <LText
-                semiBold
-                style={[
-                  styles.selectCardLabel,
-                  !canUnfreezeEnergy ? styles.disabledLabel : {},
-                ]}
-              >
-                <Trans i18nKey="account.energy" />
-              </LText>
-              {unfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
-                <View style={styles.timeWarn}>
-                  <ClockIcon color={colors.grey} size={16} />
-                  <LText style={styles.timeLabel} semiBold>
-                    <DateFromNow date={+energyExpiredAt} />
-                  </LText>
-                </View>
-              ) : null}
+              <View style={styles.selectCardLabelContainer}>
+                <LText
+                  semiBold
+                  style={!canUnfreezeEnergy ? styles.disabledLabel : {}}
+                >
+                  <Trans i18nKey="account.energy" />
+                </LText>
+                {unfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
+                  <View style={styles.timeWarn}>
+                    <ClockIcon color={colors.grey} size={12} />
+                    <LText style={styles.timeLabel} semiBold>
+                      <DateFromNow date={+energyExpiredAt} />
+                    </LText>
+                  </View>
+                ) : null}
+              </View>
               <LText
                 semiBold
                 style={[
@@ -321,7 +319,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   selectCard: {
-    padding: 16,
+    paddingHorizontal: 16,
+    height: 55,
     borderRadius: 4,
     backgroundColor: colors.white,
     flexDirection: "row",
@@ -330,7 +329,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     elevation: 1,
   },
-  selectCardLabel: { marginLeft: 16 },
+  selectCardLabelContainer: { marginLeft: 8 },
   disabledLabel: { color: colors.grey },
   frozenAmount: { flex: 1, textAlign: "right", marginRight: 16 },
   infoSection: {
@@ -381,16 +380,15 @@ const styles = StyleSheet.create({
   },
   timeWarn: {
     flexDirection: "row",
-    alignContent: "center",
+    alignItems: "center",
     justifyContent: "flex-end",
     borderRadius: 4,
     backgroundColor: colors.lightFog,
-    paddingVertical: 5,
+    paddingVertical: 2,
     paddingHorizontal: 7,
-    marginLeft: 12,
   },
   timeLabel: {
-    marginLeft: 8,
+    marginLeft: 4,
     fontSize: 11,
     lineHeight: 16,
     color: colors.grey,
