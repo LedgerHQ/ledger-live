@@ -115,12 +115,12 @@ export const createAction = (
       account: mainAccount
     });
 
-    const { device, opened } = appState;
+    const { device, opened, inWrongDeviceForAccount, error } = appState;
 
     const [state, setState] = useState(initialState);
 
     useEffect(() => {
-      if (!device || !opened) {
+      if (!device || !opened || inWrongDeviceForAccount || error) {
         setState(initialState);
         return;
       }
@@ -143,7 +143,14 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [device, mainAccount, transaction, opened]);
+    }, [
+      device,
+      mainAccount,
+      transaction,
+      opened,
+      inWrongDeviceForAccount,
+      error
+    ]);
 
     return {
       ...appState,
