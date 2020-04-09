@@ -1685,6 +1685,13 @@
       "title": "Memo",
       "warning": "When using a Memo, carefully verify the type used with the recipient"
     },
+    "memoType": {
+      "MEMO_TEXT": "Memo Text",
+      "NO_MEMO": "Memo",
+      "MEMO_ID": "Memo ID",
+      "MEMO_HASH": "Memo Hash",
+      "MEMO_RETURN": "Memo Return"
+    },
     "network": "Network",
     "networkPublic": "Public",
     "sourceAddress": "Source address"

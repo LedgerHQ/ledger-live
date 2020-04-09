@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { StyleSheet } from "react-native";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
 import { shortAddressPreview } from "@ledgerhq/live-common/lib/account";
 import { translate } from "react-i18next";
 
@@ -19,9 +19,28 @@ const styles = StyleSheet.create({
   },
 });
 
-const Post = ({ account, t }: { account: Account, t: T }) => {
+const Post = ({
+  account,
+  transaction,
+  t,
+}: {
+  account: Account,
+  transaction: Transaction,
+  t: T,
+}) => {
   return (
     <>
+      <DataRow
+        label={t(
+          `stellar.memoType.${
+            transaction.memoType ? transaction.memoType : "NO_MEMO"
+          }`,
+        )}
+      >
+        <LText semiBold style={styles.text}>
+          {transaction.memoValue ? `${transaction.memoValue} ` : "[none]"}
+        </LText>
+      </DataRow>
       <DataRow label={t("stellar.network")}>
         <LText semiBold style={styles.text}>
           {t("stellar.networkPublic")}
