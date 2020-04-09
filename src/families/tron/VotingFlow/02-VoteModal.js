@@ -3,10 +3,11 @@ import React, { memo, useCallback, useState, useMemo, useRef } from "react";
 import {
   View,
   StyleSheet,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
   KeyboardAvoidingView,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import { Trans } from "react-i18next";
 import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
@@ -19,6 +20,10 @@ import LText from "../../../components/LText";
 import Close from "../../../icons/Close";
 import Trash from "../../../icons/Trash";
 import Check from "../../../icons/Check";
+
+import getWindowDimensions from "../../../logic/getWindowDimensions";
+
+const { height } = getWindowDimensions();
 
 type Props = {
   vote: Vote,
@@ -80,11 +85,12 @@ const VoteModal = ({
   const error = value <= 0 || value > votesAvailable;
 
   return (
-    <BottomModal isOpened={!!vote} onClose={onClose}>
-      <SafeAreaView style={styles.root}>
+    <BottomModal isOpened={!!vote} onClose={onClose} coverScreen>
+      <SafeAreaView>
         <KeyboardAvoidingView
           style={styles.rootKeyboard}
-          behavior="padding"
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={100}
           enabled
         >
           <View style={styles.topContainer}>
@@ -203,14 +209,12 @@ const VoteModal = ({
 };
 
 const styles = StyleSheet.create({
-  root: {
-    alignItems: "center",
-  },
   rootKeyboard: {
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-start",
-    height: "auto",
+    justifyContent: "flex-end",
+    height: height - 100,
+    flexShrink: 1,
   },
   topButton: {
     width: 40,
@@ -224,6 +228,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
+    flexBasis: 50,
+    flexShrink: 0,
   },
   topLabel: {
     flex: 1,
@@ -244,8 +250,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
-    padding: 16,
-    backgroundColor: colors.white,
+    paddingHorizontal: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.lightGrey,
   },
@@ -283,7 +288,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     fontSize: 16,
     paddingVertical: 8,
-    color: colors.grey,
     marginBottom: 8,
     height: 50,
   },
@@ -293,14 +297,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   availableAmount: {
-    color: colors.grey,
     marginHorizontal: 3,
   },
   wrapper: {
     flexDirection: "row",
     alignItems: "center",
-    flexBasis: 200,
     flexGrow: 1,
+    flexShrink: 1,
   },
   inputStyle: {
     flex: 1,
