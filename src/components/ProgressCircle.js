@@ -52,7 +52,7 @@ export default ({
       y={CENTER + 6}
       textAnchor="middle"
     >
-      {Number(progress * 1e2).toFixed(0)}%
+      {Math.floor(progress * 1e2)}%
     </Text>
   </Svg>
 );
