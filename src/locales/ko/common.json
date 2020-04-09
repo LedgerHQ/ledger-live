@@ -257,7 +257,7 @@
       "title": "Insufficient balance in parent account"
     },
     "NotEnoughSpendableBalance": {
-      "title": "Insufficient balance for this operation"
+      "title": "Balance cannot get below {{minimumAmount}}"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
       "title": "Minimum of {{minimalAmount}} required to activate recipient address"
@@ -340,6 +340,9 @@
     "TronTransactionExpired": {
       "title": "Transaction has expired",
       "description": "Signature must be applied within 30 seconds. Please try again."
+    },
+    "TronNotEnoughEnergy": {
+      "title": "Not enough Energy to send this token"
     },
     "UpdateYourApp": {
       "title": "App update required",
@@ -1642,7 +1645,7 @@
       },
       "frozen": {
         "title": "Frozen",
-        "description": "This amount is available 3 days after you have unfrozen it."
+        "description": "Frozen assets are used in the Tron voting process. This represents your total number of votes."
       },
       "bandwidth": {
         "title": "Bandwidth",
