@@ -51,73 +51,74 @@ const BlacklistTokenModal = ({
     onCloseModal();
   }, [onCloseModal, blacklistToken, token]);
 
-  return (
-    <>
-      <ConfirmationModal
-        isOpened={isOpened && showConfirmation}
-        onClose={onCloseModal}
-        onConfirm={onBlacklistToken}
-        confirmationTitle={
-          <Trans i18nKey="settings.accounts.blacklistedTokensModal.title" />
-        }
-        confirmationDesc={
-          <Trans i18nKey="settings.accounts.blacklistedTokensModal.desc">
-            {"1This action will hide all "}
-            <LText bold>{token && token.name}</LText>
-            {" accounts, you can restore their visibility at any time from "}
-            <LText bold>{"1Settings"}</LText>
-          </Trans>
-        }
-        confirmButtonText={
-          <Trans i18nKey="settings.accounts.blacklistedTokensModal.confirm" />
-        }
-      />
-      <BottomModal
-        id="BlacklistModal"
-        isOpened={isOpened && !showConfirmation}
-        preventBackdropClick={false}
-        onClose={onCloseModal}
-      >
-        {token ? (
-          <SafeAreaView style={styles.modal}>
-            <View style={styles.header}>
-              <View style={{ marginRight: 12 }}>
-                <CurrencyIcon currency={token} size={24} />
-              </View>
-              <LText>{token.name}</LText>
+  if (!isOpened) return null;
+
+  return showConfirmation ? (
+    <ConfirmationModal
+      isOpened
+      onClose={onCloseModal}
+      onConfirm={onBlacklistToken}
+      confirmationTitle={
+        <Trans i18nKey="settings.accounts.blacklistedTokensModal.title" />
+      }
+      confirmationDesc={
+        <Trans i18nKey="settings.accounts.blacklistedTokensModal.desc">
+          {"1This action will hide all "}
+          <LText bold>{token && token.name}</LText>
+          {" accounts, you can restore their visibility at any time from "}
+          <LText bold>{"1Settings"}</LText>
+        </Trans>
+      }
+      confirmButtonText={
+        <Trans i18nKey="settings.accounts.blacklistedTokensModal.confirm" />
+      }
+    />
+  ) : (
+    <BottomModal
+      id="BlacklistModal"
+      isOpened
+      preventBackdropClick={false}
+      onClose={onCloseModal}
+    >
+      {token ? (
+        <SafeAreaView style={styles.modal}>
+          <View style={styles.header}>
+            <View style={{ marginRight: 12 }}>
+              <CurrencyIcon currency={token} size={24} />
             </View>
+            <LText>{token.name}</LText>
+          </View>
+          <Touchable
+            hitSlop={hitSlop}
+            onPress={() => setShowConfirmation(true)}
+            style={styles.item}
+            event="blacklistToken"
+          >
+            <View style={{ marginRight: 8 }}>
+              <BanIcon size={18} color={colors.smoke} />
+            </View>
+            <LText tertiary>
+              <Trans i18nKey="settings.accounts.hideTokenCTA" />
+            </LText>
+          </Touchable>
+          {onShowContract ? (
             <Touchable
               hitSlop={hitSlop}
-              onPress={() => setShowConfirmation(true)}
+              onPress={() => onShowContract(true)}
               style={styles.item}
               event="blacklistToken"
             >
               <View style={{ marginRight: 8 }}>
-                <BanIcon size={18} color={colors.smoke} />
+                <Icon name="file-text" size={18} color={colors.smoke} />
               </View>
               <LText tertiary>
-                <Trans i18nKey="settings.accounts.hideTokenCTA" />
+                <Trans i18nKey="settings.accounts.showContractCTA" />
               </LText>
             </Touchable>
-            {onShowContract ? (
-              <Touchable
-                hitSlop={hitSlop}
-                onPress={() => onShowContract(true)}
-                style={styles.item}
-                event="blacklistToken"
-              >
-                <View style={{ marginRight: 8 }}>
-                  <Icon name="file-text" size={18} color={colors.smoke} />
-                </View>
-                <LText tertiary>
-                  <Trans i18nKey="settings.accounts.showContractCTA" />
-                </LText>
-              </Touchable>
-            ) : null}
-          </SafeAreaView>
-        ) : null}
-      </BottomModal>
-    </>
+          ) : null}
+        </SafeAreaView>
+      ) : null}
+    </BottomModal>
   );
 };
 
