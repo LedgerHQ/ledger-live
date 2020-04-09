@@ -12,9 +12,9 @@
     "android:build": "yarn start & bundle exec fastlane android build"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^5.12.0",
-    "@ledgerhq/live-common": "^12.12.2",
-    "@ledgerhq/react-native-ledger-core": "^4.9.1",
+    "@ledgerhq/errors": "^5.13.0",
+    "@ledgerhq/live-common": "^12.15.0",
+    "@ledgerhq/react-native-ledger-core": "^4.10.0",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
     "axios": "^0.19.2",
