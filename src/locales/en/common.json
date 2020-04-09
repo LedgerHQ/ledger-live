@@ -257,7 +257,7 @@
       "title": "Insufficient balance in parent account"
     },
     "NotEnoughSpendableBalance": {
-      "title": "Insufficient balance for this operation"
+      "title": "Balance cannot get below {{minimumAmount}}"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
       "title": "Minimum of {{minimalAmount}} required to activate recipient address"
