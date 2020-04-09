@@ -177,7 +177,7 @@ const Manage = ({
   );
 };
 
-const ManageAction = ({
+const getManageAction = ({
   // account,
   style,
   account,
@@ -259,5 +259,5 @@ const styles = StyleSheet.create({
 });
 
 export default {
-  ManageAction,
+  getManageAction,
 };
