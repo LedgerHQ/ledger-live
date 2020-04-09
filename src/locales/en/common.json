@@ -1583,7 +1583,7 @@
       "manageVotes": "Manage votes",
       "remainingVotes": {
         "title": "You still have votes remaining",
-        "description": "Cast your remaining votes to earn more XTZ"
+        "description": "Cast your remaining votes to earn more rewards"
       },
       "flow": {
         "started": {
