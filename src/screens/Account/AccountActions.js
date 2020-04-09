@@ -44,8 +44,6 @@ const AccountActions = ({
   const ReceiveAction =
     (decorators && decorators.ReceiveAction) || ReceiveActionDefault;
 
-  const ManageAction = (decorators && decorators.ManageAction) || null;
-
   const onNavigate = useCallback(
     (route: string) => {
       navigation.navigate(route, {
@@ -56,6 +54,17 @@ const AccountActions = ({
     [accountId, parentId, navigation],
   );
 
+  const manageAction =
+    (decorators &&
+      decorators.getManageAction &&
+      decorators.getManageAction({
+        account,
+        parentAccount,
+        onNavigate,
+        style: styles.scrollBtn,
+      })) ||
+    null;
+
   const onSend = useCallback(() => {
     onNavigate("SendSelectRecipient");
   }, [onNavigate]);
@@ -64,8 +73,8 @@ const AccountActions = ({
     onNavigate("ReceiveConnectDevice");
   }, [onNavigate]);
 
-  const Container = ManageAction ? ScrollViewContainer : View;
-  const btnStyle = ManageAction ? styles.scrollBtn : styles.btn;
+  const Container = manageAction ? ScrollViewContainer : View;
+  const btnStyle = manageAction ? styles.scrollBtn : styles.btn;
 
   return (
     <Container style={styles.root}>
@@ -83,14 +92,7 @@ const AccountActions = ({
         style={[btnStyle]}
         onPress={onReceive}
       />
-      {ManageAction && (
-        <ManageAction
-          account={account}
-          parentAccount={parentAccount}
-          onNavigate={onNavigate}
-          style={[btnStyle]}
-        />
-      )}
+      {manageAction}
     </Container>
   );
 };
@@ -111,7 +113,6 @@ const styles = StyleSheet.create({
   root: {
     width: "100%",
     flexDirection: "row",
-    flexWrap: "wrap",
     paddingTop: 8,
     paddingBottom: 12,
     paddingHorizontal: 12,
