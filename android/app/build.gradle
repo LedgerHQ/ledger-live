@@ -146,8 +146,8 @@ android {
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 86
-        versionName "2.1.0"
+        versionCode 87
+        versionName "2.2.0"
         resValue "string", "build_config_package", "com.ledger.live"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
