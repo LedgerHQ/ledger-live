@@ -87,7 +87,7 @@ class AddAccountsTokenCurrencyDisclaimer extends Component<Props> {
         <View style={styles.buttonWrapper}>
           <Button
             event="AddAccountTokenDisclaimerBack"
-            title="change assets"
+            title={i18next.t("addAccounts.tokens.changeAssets")}
             type="secondary"
             onPress={this.onBack}
             containerStyle={[styles.button, styles.buttonSpace]}
@@ -95,7 +95,7 @@ class AddAccountsTokenCurrencyDisclaimer extends Component<Props> {
 
           <Button
             event="AddAccountTokenDisclaimerClose"
-            title="close"
+            title={i18next.t("common.close")}
             type="primary"
             onPress={this.onClose}
             containerStyle={styles.button}
