@@ -52,6 +52,7 @@ type Props = {
     params: {
       accountId: string,
       transaction: Transaction,
+      fromStep2?: boolean,
     },
   }>,
 };
@@ -122,6 +123,10 @@ function SelectValidator({ navigation }: Props) {
             votes: [{ ...votes[0], voteCount: tronPower }],
           })
         : transaction;
+
+    if (navigation.getParam("fromStep2")) {
+      navigation.pop(2);
+    }
 
     navigation.navigate("CastVote", {
       accountId: account.id,
