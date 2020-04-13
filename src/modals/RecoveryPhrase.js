@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
   buttonWrapper: { marginTop: 16, flexDirection: "row" },
   buttonContainer: {
     flexGrow: 1,
-    paddingTop: 24,
     paddingHorizontal: 8,
   },
   text: {
