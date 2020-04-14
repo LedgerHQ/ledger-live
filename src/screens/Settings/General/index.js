@@ -11,7 +11,6 @@ import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
 import ReportErrorsRow from "./ReportErrorsRow";
 import AnalyticsRow from "./AnalyticsRow";
-import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 
 class GeneralSettings extends PureComponent<{
   navigation: NavigationScreenProp<*>,
@@ -26,7 +25,6 @@ class GeneralSettings extends PureComponent<{
       <ScrollView contentContainerStyle={styles.root}>
         <TrackScreen category="Settings" name="General" />
         <CountervalueSettingsRow navigation={navigation} />
-        <HideEmptyTokenAccountsRow />
         <AuthSecurityToggle navigation={navigation} />
         <ReportErrorsRow />
         <AnalyticsRow />

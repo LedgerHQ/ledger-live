@@ -4,11 +4,12 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { translate } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import {
-  formatCurrencyUnit,
-  getCryptoCurrencyById,
-} from "@ledgerhq/live-common/lib/currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+
+import type { Account } from "@ledgerhq/live-common/lib/types";
+
 import invariant from "invariant";
 import colors from "../../colors";
 import LText from "../../components/LText";
@@ -18,18 +19,12 @@ import type { ModalInfo } from "../../modals/Info";
 import FreezeIcon from "../../icons/Freeze";
 import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
 interface Props {
-  account: any;
-  countervalue: any;
+  account: Account;
   t: TFunction;
 }
-
-const formatConfig = {
-  disableRounding: true,
-  alwaysShowSign: false,
-  showCode: true,
-};
 
 type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
@@ -37,17 +32,12 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useMemo(() => getInfoCandidates(t), [t]);
 
-  const {
-    energy: formattedEnergy,
-    bandwidth: { freeUsed, freeLimit, gainedUsed, gainedLimit } = {},
-    tronPower,
-  } = account.tronResources;
+  const { energy: formattedEnergy, bandwidth, tronPower } =
+    account.tronResources || {};
 
-  const spendableBalance = useMemo(
-    () =>
-      formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig),
-    [account.unit, account.spendableBalance],
-  );
+  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
+
+  const unit = getAccountUnit(account);
 
   const formattedBandwidth = useMemo(
     () =>
@@ -67,8 +57,6 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
     [],
   );
 
-  if (!account.tronResources) return null;
-
   return (
     <ScrollView
       horizontal
@@ -84,7 +72,9 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
       <InfoItem
         title={t("account.availableBalance")}
         onPress={onPressInfoCreator("available")}
-        value={spendableBalance}
+        value={
+          <CurrencyUnitValue unit={unit} value={account.spendableBalance} />
+        }
       />
       <InfoItem
         title={t("account.tronFrozen")}
@@ -105,12 +95,18 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
   );
 }
 
-export default translate()(AccountBalanceSummaryFooter);
+const AccountBalanceFooter = ({ account, t }: Props) => {
+  if (!account.tronResources) return null;
+
+  return <AccountBalanceSummaryFooter account={account} t={t} />;
+};
+
+export default translate()(AccountBalanceFooter);
 
 interface InfoItemProps {
   onPress: () => void;
-  title: string;
-  value: string;
+  title: React$Node;
+  value: React$Node;
 }
 
 function InfoItem({ onPress, title, value }: InfoItemProps) {

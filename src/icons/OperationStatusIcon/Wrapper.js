@@ -1,24 +1,39 @@
 // @flow
+import type { OperationType } from "@ledgerhq/live-common/lib/types";
 import React from "react";
 import Svg, { Circle, G, Rect, Path } from "react-native-svg";
+import colors from "../../colors";
+
+function inferColor(type: OperationType) {
+  switch (type) {
+    case "IN":
+      return colors.success;
+    case "FREEZE":
+      return colors.live;
+    case "REWARD":
+      return colors.yellow;
+    default:
+      return colors.grey;
+  }
+}
 
 type Props = {
   size?: number,
-  income?: boolean,
   Icon: React$ComponentType<*>,
   confirmed?: boolean,
   failed?: boolean,
+  type: OperationType,
 };
 
 export default function Wrapper({
   size,
-  income,
   Icon,
   failed,
   confirmed,
+  type,
 }: Props) {
   const opacity = !confirmed ? 0.05 : 0.2;
-  const color = failed ? "#EA2E49" : income ? "#66BE54" : "#999999";
+  const color = failed ? colors.alert : inferColor(type);
 
   return (
     <Svg viewBox="0 0 25 25" width={size} height={size}>

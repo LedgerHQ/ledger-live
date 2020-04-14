@@ -11,6 +11,7 @@ import LText from "../../../components/LText";
 import colors from "../../../colors";
 import Clock from "../../../icons/Clock";
 import Trophy from "../../../icons/Trophy";
+import Medal from "../../../icons/Medal";
 
 type Props = {
   validator: *,
@@ -18,9 +19,17 @@ type Props = {
   amount: number,
   duration: ?React$Node,
   explorerView: ?ExplorerView,
+  isSR: boolean,
 };
 
-const Row = ({ validator, address, amount, duration, explorerView }: Props) => {
+const Row = ({
+  validator,
+  address,
+  amount,
+  duration,
+  explorerView,
+  isSR,
+}: Props) => {
   const srURL = explorerView && getAddressExplorer(explorerView, address);
 
   const openSR = useCallback(() => {
@@ -29,35 +38,52 @@ const Row = ({ validator, address, amount, duration, explorerView }: Props) => {
 
   return (
     <View style={styles.root}>
-      <View style={styles.icon}>
-        <Trophy size={16} color={colors.live} />
-      </View>
-      <View style={styles.labelContainer}>
-        <TouchableOpacity onPress={openSR}>
+      <View style={styles.row}>
+        <View style={[styles.icon, !isSR ? styles.iconCandidate : {}]}>
+          {isSR ? (
+            <Trophy size={16} color={colors.live} />
+          ) : (
+            <Medal size={16} color={colors.grey} />
+          )}
+        </View>
+        <View style={styles.labelContainer}>
+          <TouchableOpacity onPress={openSR}>
+            <LText semiBold style={styles.title} numberOfLines={1}>
+              {validator ? validator.name : address}
+            </LText>
+          </TouchableOpacity>
+          <View style={styles.durationContainer}>
+            <Clock size={12} color={colors.grey} />
+            <LText style={styles.label}>{duration}</LText>
+          </View>
+        </View>
+        <View style={[styles.labelContainer, styles.labelContainerRight]}>
           <LText semiBold style={styles.title}>
-            {validator ? validator.name : address}
+            {amount}
           </LText>
-        </TouchableOpacity>
-        <View style={styles.durationContainer}>
-          <Clock size={12} color={colors.grey} />
-          <LText style={styles.label}>{duration}</LText>
         </View>
       </View>
-      <View style={[styles.labelContainer, styles.labelContainerRight]}>
-        <LText semiBold style={styles.title}>
-          {amount}
-        </LText>
-      </View>
+      <View style={styles.separator} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   root: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingTop: 12,
+  },
+  separator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: colors.lightFog,
+    marginTop: 12,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   icon: {
     alignItems: "center",
@@ -67,6 +93,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: colors.lightLive,
     marginRight: 12,
+  },
+  iconCandidate: {
+    backgroundColor: colors.lightFog,
   },
   title: {
     fontSize: 14,
@@ -82,6 +111,9 @@ const styles = StyleSheet.create({
   },
   labelContainerRight: {
     alignItems: "flex-end",
+    marginLeft: 10,
+    flexShrink: 1,
+    flex: 0,
   },
   label: {
     fontSize: 13,

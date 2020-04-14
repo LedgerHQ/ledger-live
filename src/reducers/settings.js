@@ -7,6 +7,7 @@ import {
   findCurrencyByTicker,
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
+  listSupportedFiats,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import { createSelector } from "reselect";
@@ -24,6 +25,10 @@ import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
+export const supportedCountervalues = [
+  ...listSupportedFiats(),
+  ...possibleIntermediaries,
+];
 export const intermediaryCurrency = (from: Currency, _to: Currency) => {
   if (from === ethereum || from.type === "TokenCurrency") return ethereum;
   return bitcoin;
@@ -68,9 +73,10 @@ export type SettingsState = {
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
   hideEmptyTokenAccounts: boolean,
+  blacklistedTokenIds: string[],
 };
 
-const INITIAL_STATE: SettingsState = {
+export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
   privacy: null,
@@ -86,6 +92,7 @@ const INITIAL_STATE: SettingsState = {
   experimentalUSBEnabled: false,
   countervalueFirst: false,
   hideEmptyTokenAccounts: false,
+  blacklistedTokenIds: [],
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -218,6 +225,20 @@ const handlers: Object = {
     ...state,
     hideEmptyTokenAccounts,
   }),
+  SHOW_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+    const ids = state.blacklistedTokenIds;
+    return {
+      ...state,
+      blacklistedTokenIds: ids.filter(id => id !== tokenId),
+    };
+  },
+  BLACKLIST_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+    const ids = state.blacklistedTokenIds;
+    return {
+      ...state,
+      blacklistedTokenIds: [...ids, tokenId],
+    };
+  },
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -322,6 +343,9 @@ export const countervalueFirstSelector = (state: State) =>
 
 export const readOnlyModeEnabledSelector = (state: State) =>
   Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
+
+export const blacklistedTokenIdsSelector = (state: State) =>
+  state.settings.blacklistedTokenIds;
 
 // $FlowFixMe
 export const exportSettingsSelector = createSelector(

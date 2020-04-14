@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
   storageImage: {
     width: 80,
     marginBottom: 24,
+    marginTop: 16,
   },
   title: {
     fontSize: 16,

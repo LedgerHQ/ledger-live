@@ -131,7 +131,7 @@ class AccountScreen extends PureComponent<Props, State> {
       perFamilyAccountBalanceSummaryFooter[mainAccount.currency.family];
 
     if (AccountBalanceSummaryFooter)
-      return <AccountBalanceSummaryFooter account={mainAccount} />;
+      return <AccountBalanceSummaryFooter account={account} />;
     return null;
   };
 
@@ -170,12 +170,12 @@ class AccountScreen extends PureComponent<Props, State> {
         <View style={styles.balanceContainer}>
           {items[0] ? (
             <LText style={styles.balanceText} tertiary>
-              <CurrencyUnitValue {...items[0]} />
+              <CurrencyUnitValue {...items[0]} disableRounding />
             </LText>
           ) : null}
           {items[1] ? (
             <LText style={styles.balanceSubText} tertiary>
-              <CurrencyUnitValue {...items[1]} />
+              <CurrencyUnitValue {...items[1]} disableRounding />
             </LText>
           ) : null}
         </View>

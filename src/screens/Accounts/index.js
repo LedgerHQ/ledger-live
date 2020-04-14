@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 // $FlowFixMe
 import { FlatList } from "react-navigation";
@@ -9,7 +9,7 @@ import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { compose } from "redux";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
@@ -20,6 +20,7 @@ import AccountRow from "./AccountRow";
 import AccountOrder from "./AccountOrder";
 import AddAccount from "./AddAccount";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
+import BlacklistTokenModal from "../Settings/Accounts/BlacklistTokenModal";
 
 const List = globalSyncRefreshControl(FlatList);
 
@@ -41,14 +42,26 @@ type Props = {
   accounts: Account[],
 };
 
-class Accounts extends Component<Props> {
+type State = {
+  blacklistToken?: TokenCurrency,
+};
+
+class Accounts extends Component<Props, State> {
   static navigationOptions = navigationOptions;
+
+  state = {
+    blacklistToken: undefined,
+  };
+
+  blacklistToken = blacklistToken => this.setState({ blacklistToken });
+  clearBlacklistToken = () => this.setState({ blacklistToken: undefined });
 
   renderItem = ({ item, index }: { item: Account, index: number }) => (
     <AccountRow
       navigation={this.props.navigation}
       account={item}
       accountId={item.id}
+      onBlacklistToken={this.blacklistToken}
       isLast={index === this.props.accounts.length - 1}
     />
   );
@@ -57,18 +70,19 @@ class Accounts extends Component<Props> {
 
   render() {
     const { accounts, navigation } = this.props;
+    const { blacklistToken } = this.state;
 
     if (accounts.length === 0) {
       return (
-        <Fragment>
+        <>
           <TrackScreen category="Accounts" accountsLength={0} />
           <NoAccounts navigation={navigation} />
-        </Fragment>
+        </>
       );
     }
 
     return (
-      <Fragment>
+      <>
         <TrackScreen category="Accounts" accountsLength={accounts.length} />
         <List
           data={accounts}
@@ -78,7 +92,12 @@ class Accounts extends Component<Props> {
           contentContainerStyle={styles.contentContainer}
         />
         <MigrateAccountsBanner />
-      </Fragment>
+        <BlacklistTokenModal
+          onClose={this.clearBlacklistToken}
+          isOpened={!!blacklistToken}
+          token={blacklistToken}
+        />
+      </>
     );
   }
 }

@@ -1,17 +1,15 @@
 // @flow
-import React, { Component } from "react";
+import React, { useCallback } from "react";
 import {
   StyleSheet,
   View,
   TouchableWithoutFeedback,
   Platform,
 } from "react-native";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { useSelector } from "react-redux";
 import { withNavigation } from "react-navigation";
+import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import type { NavigationScreenProp } from "react-navigation";
-import type { AsyncState } from "../../reducers/bridgeSync";
-import { globalSyncStateSelector } from "../../reducers/bridgeSync";
 import { isUpToDateSelector } from "../../reducers/accounts";
 import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
@@ -21,74 +19,65 @@ import IconPie from "../../icons/Pie";
 import colors from "../../colors";
 import Touchable from "../../components/Touchable";
 
-const mapStateToProps = createStructuredSelector({
-  networkError: networkErrorSelector,
-  globalSyncState: globalSyncStateSelector,
-  isUpToDate: isUpToDateSelector,
-});
-
-class PortfolioHeader extends Component<{
+type Props = {
   showDistribution?: boolean,
   nbAccounts: number,
-  isUpToDate: boolean,
-  globalSyncState: AsyncState,
   showGreeting: boolean,
-  networkError: ?Error,
   navigation: { emit: (event: string) => void } & NavigationScreenProp<*>,
-}> {
-  onRefocus = () => {
-    this.props.navigation.emit("refocus");
-  };
+};
 
-  onDistributionButtonPress = () => {
-    this.props.navigation.navigate("Distribution");
-  };
+const PortfolioHeader = ({
+  navigation,
+  nbAccounts,
+  showGreeting,
+  showDistribution,
+}: Props) => {
+  const onRefocus = useCallback(() => {
+    navigation.emit("refocus");
+  }, [navigation]);
 
-  render() {
-    const {
-      nbAccounts,
-      isUpToDate,
-      showGreeting,
-      networkError,
-      globalSyncState: { pending, error },
-      showDistribution,
-    } = this.props;
+  const onDistributionButtonPress = useCallback(() => {
+    navigation.navigate("Distribution");
+  }, [navigation]);
 
-    const content =
-      pending && !isUpToDate ? (
-        <HeaderSynchronizing />
-      ) : error ? (
-        <HeaderErrorTitle
-          withDescription
-          withDetail
-          error={networkError || error}
-        />
-      ) : showGreeting ? (
-        <Greetings nbAccounts={nbAccounts} />
-      ) : null;
+  const isUpToDate = useSelector(isUpToDateSelector);
+  const networkError = useSelector(networkErrorSelector);
+  const { pending, error } = useGlobalSyncState();
 
-    if (content) {
-      return (
-        <View style={styles.wrapper}>
-          <TouchableWithoutFeedback onPress={this.onRefocus}>
-            <View style={styles.content}>{content}</View>
-          </TouchableWithoutFeedback>
-          {showDistribution && (
-            <View style={styles.distributionButton}>
-              <Touchable
-                event="DistributionCTA"
-                onPress={this.onDistributionButtonPress}
-              >
-                <IconPie size={16} color={colors.live} />
-              </Touchable>
-            </View>
-          )}
-        </View>
-      );
-    }
-    return null;
+  const content =
+    pending && !isUpToDate ? (
+      <HeaderSynchronizing />
+    ) : error ? (
+      <HeaderErrorTitle
+        withDescription
+        withDetail
+        error={networkError || error}
+      />
+    ) : showGreeting ? (
+      <Greetings nbAccounts={nbAccounts} />
+    ) : null;
+
+  if (content) {
+    return (
+      <View style={styles.wrapper}>
+        <TouchableWithoutFeedback onPress={onRefocus}>
+          <View style={styles.content}>{content}</View>
+        </TouchableWithoutFeedback>
+        {showDistribution && (
+          <View style={styles.distributionButton}>
+            <Touchable
+              event="DistributionCTA"
+              onPress={onDistributionButtonPress}
+            >
+              <IconPie size={16} color={colors.live} />
+            </Touchable>
+          </View>
+        )}
+      </View>
+    );
   }
-}
+  return null;
+};
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -122,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(withNavigation(PortfolioHeader));
+export default withNavigation(PortfolioHeader);

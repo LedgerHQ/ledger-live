@@ -13,9 +13,9 @@ interface Props {
 }
 
 export interface ModalInfo {
-  description: string;
+  description: React$Node;
   Icon: () => React$Element<React$ElementType>;
-  title: string;
+  title: React$Node;
 }
 
 export default function InfoModal({ data, isOpened, onClose }: Props) {
@@ -27,7 +27,7 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
       onClose={onClose}
     >
       {data.map(({ description, Icon, title }, i) => (
-        <View key={i}>
+        <View style={styles.section} key={i}>
           <View style={styles.header}>
             <View style={styles.iconWrapper}>
               <Icon />
@@ -46,6 +46,9 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
 const styles = StyleSheet.create({
   root: {
     padding: 16,
+  },
+  section: {
+    marginVertical: 8,
   },
   header: {
     flexDirection: "row",
