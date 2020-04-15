@@ -1000,10 +1000,10 @@
     rxjs "^6.5.5"
     uuid "^3.4.0"
 
-"@ledgerhq/react-native-ledger-core@^4.10.0":
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.10.0.tgz#9c540890add75c4c757b433756ea8c87f5cf4160"
-  integrity sha512-T1JcnL4wCPtBh7KsMX68Qzmaki3ZIyk5ZUQHnoXn2yvIQtbo14lWyTqBqdRvRDJAP71C9ZKhkVxspO02DMcQnQ==
+"@ledgerhq/react-native-ledger-core@4.11.0-beta.3":
+  version "4.11.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.11.0-beta.3.tgz#fd67903c41bd249c4b6de0f7cf2dbaa33fbc4716"
+  integrity sha512-GbJ8jltjxU9jRws+/dPtLldwOAELsz8GoiOHNFNwpTm/8OXlsEsG/YYvOzRMKBR9oNA2zAUqk/3SE3ACq+BLUg==
 
 "@ledgerhq/react-native-passcode-auth@^2.1.0":
   version "2.1.0"
