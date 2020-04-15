@@ -155,6 +155,9 @@ const modes = Object.freeze({
     isUnsplit: true,
     tag: "segwit unsplit"
   },
+  sep5: {
+    overridesDerivation: "44'/148'/<account>'"
+  },
   unsplit: {
     isUnsplit: true,
     tag: "unsplit"
@@ -169,7 +172,8 @@ const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "etcM", "ethMM"],
-  tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"]
+  tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
+  stellar: ["sep5"]
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
@@ -309,7 +313,8 @@ export const runDerivationScheme = (
 
 const disableBIP44 = {
   aeternity: true,
-  tezos: true // current workaround, device app does not seem to support bip44
+  tezos: true, // current workaround, device app does not seem to support bip44
+  stellar: true
 };
 
 const seedIdentifierPath = {

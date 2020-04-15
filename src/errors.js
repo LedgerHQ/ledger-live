@@ -52,3 +52,13 @@ export const TronTransactionExpired = createCustomErrorClass(
 export const TronNotEnoughEnergy = createCustomErrorClass(
   "TronNotEnoughEnergy"
 );
+
+export const StellarMemoRecommended = createCustomErrorClass(
+  "StellarMemoRecommended"
+);
+
+export const StellarWrongMemoFormat = createCustomErrorClass(
+  "StellarWrongMemoFormat"
+);
+
+export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");

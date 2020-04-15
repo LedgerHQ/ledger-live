@@ -14,7 +14,7 @@ import type {
   Transaction,
   DerivationMode
 } from "../types";
-import type { Core, CoreAccount, CoreCurrency } from "./types";
+import type { Core, CoreAccount, CoreCurrency, CoreWallet } from "./types";
 import { withDevice } from "../hw/deviceAccess";
 import { toTransactionRaw, toSignOperationEventRaw } from "../transaction";
 import { getCoreAccount } from "./getCoreAccount";
@@ -27,6 +27,7 @@ export type Arg<T, CT> = {
     core: Core,
     coreCurrency: CoreCurrency,
     coreAccount: CoreAccount,
+    coreWallet: CoreWallet,
     transaction: T,
     isPartial: boolean,
     isCancelled: () => boolean
@@ -42,6 +43,7 @@ export type Arg<T, CT> = {
     coreAccount: CoreAccount,
     transaction: T,
     coreTransaction: CT,
+    coreAccount: CoreAccount,
     isCancelled: () => boolean,
     onDeviceStreaming: ({
       progress: number,
@@ -80,6 +82,7 @@ export const makeSignOperation = <T: Transaction, CT>({
         coreCurrency,
         coreAccount,
         transaction,
+        coreWallet,
         isPartial: false,
         isCancelled: () => cancelled
       });

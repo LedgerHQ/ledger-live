@@ -58,7 +58,8 @@ setSupportedCurrencies([
   "decred",
   "bitcoin_testnet",
   "ethereum_ropsten",
-  "tron"
+  "tron",
+  "stellar"
 ]);
 
 const webusbDevices = {};

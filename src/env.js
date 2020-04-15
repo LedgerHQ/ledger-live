@@ -47,6 +47,12 @@ const envDefinitions = {
     parser: stringParser,
     desc: "node API for tezos (for broadcast only)"
   },
+  API_STELLAR_MEMO: {
+    def: "https://api.stellar.expert/",
+    parser: stringParser,
+    desc:
+      "Stellar Foundation recommended us to use this api to know if the recipient have a Memo type"
+  },
   API_TRONGRID_PROXY: {
     parser: stringParser,
     //def: "https://api.trongrid.io",
@@ -200,7 +206,7 @@ const envDefinitions = {
     desc: "enable sending to KT accounts. Not tested."
   },
   LIBCORE_BALANCE_HISTORY_NOGO: {
-    def: "ripple,ethereum,tezos", // LLC-475
+    def: "ripple,ethereum,tezos,stellar", // LLC-475
     parser: stringParser,
     desc:
       "comma-separated list of currencies which does not properly support balance history libcore implementation"

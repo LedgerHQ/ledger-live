@@ -14,7 +14,8 @@ type Param = {
 type F = Param => Promise<CoreAccount>;
 
 const restoreWithAccountCreationInfo = {
-  tezos: true
+  tezos: true,
+  stellar: true
 };
 
 export const getOrCreateAccount: F = atomicQueue(
