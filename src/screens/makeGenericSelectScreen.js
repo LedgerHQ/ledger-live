@@ -22,6 +22,7 @@ type Opts<Item> = {
   formatItem?: Item => string,
   Entry?: EntryComponent<Item>,
   navigationOptions?: Object,
+  ListHeaderComponent?: *,
   // TODO in future: searchable: boolean
 };
 
@@ -70,13 +71,16 @@ export default <Item>(opts: Opts<Item>) => {
     items: Item[],
     onValueChange: (Item, *) => void,
     navigation: NavigationScreenProp<*>,
+    cancelNavigateBack: ?boolean,
   }> {
     static navigationOptions = { title, ...navigationOptions };
 
     onPress = (item: Item) => {
-      const { navigation, onValueChange } = this.props;
+      const { navigation, onValueChange, cancelNavigateBack } = this.props;
       onValueChange(item, this.props);
-      navigation.goBack();
+      if (!cancelNavigateBack) {
+        navigation.goBack();
+      }
       track(id, itemEventProperties(item));
     };
 
@@ -91,6 +95,7 @@ export default <Item>(opts: Opts<Item>) => {
     render() {
       return (
         <FlatList
+          ListHeaderComponent={opts.ListHeaderComponent}
           data={this.props.items}
           renderItem={this.renderItem}
           keyExtractor={keyExtractor}
