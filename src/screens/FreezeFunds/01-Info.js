@@ -31,7 +31,8 @@ const FreezeInfo = ({ navigation }: Props) => {
   }, [navigation]);
 
   const onCancel = useCallback(() => {
-    navigation.goBack();
+    // $FlowFixMe
+    navigation.popToTop();
   }, [navigation]);
 
   const howVotingWorks = useCallback(() => {

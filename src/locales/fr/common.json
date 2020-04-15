@@ -257,7 +257,7 @@
       "title": "Insufficient balance in parent account"
     },
     "NotEnoughSpendableBalance": {
-      "title": "Insufficient balance for this operation"
+      "title": "Balance cannot get below {{minimumAmount}}"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
       "title": "Minimum of {{minimalAmount}} required to activate recipient address"
@@ -340,6 +340,9 @@
     "TronTransactionExpired": {
       "title": "Transaction has expired",
       "description": "Signature must be applied within 30 seconds. Please try again."
+    },
+    "TronNotEnoughEnergy": {
+      "title": "Not enough Energy to send this token"
     },
     "UpdateYourApp": {
       "title": "App update required",
@@ -1264,6 +1267,8 @@
     "noAccountToCreate": "No <1><0>{{currencyName}}</></> account was found to create. Restart the flow and sync your accounts",
     "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one.",
     "tokens": {
+      "title": "Add Token",
+      "changeAssets": "Change assets",
       "erc20": {
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly on an Ethereum account",
@@ -1642,7 +1647,7 @@
       },
       "frozen": {
         "title": "Frozen",
-        "description": "This amount is available 3 days after you have unfrozen it."
+        "description": "Frozen assets are used in the Tron voting process. This represents your total number of votes."
       },
       "bandwidth": {
         "title": "Bandwidth",

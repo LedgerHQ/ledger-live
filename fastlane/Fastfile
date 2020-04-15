@@ -16,40 +16,42 @@ update_fastlane
 default_platform(:ios)
 package = load_json(json_path: "./package.json")
 
-lane :internal_release do
+lane :beta do |options|
   ensure_git_status_clean
   ensure_git_branch(
     branch: 'develop'
   )
-  commit = last_git_commit
-  git_pull
-  new_commit = last_git_commit
+
+  release = options.fetch(:release, false)
+
+  if (release == true)
+    commit = last_git_commit
+    git_pull
+    new_commit = last_git_commit
 
 
-  if commit[:commit_hash] == new_commit[:commit_hash]
-    next
+    if commit[:commit_hash] == new_commit[:commit_hash]
+      next
+    end
+
+    system "yarn -s --frozen-lockfile"
+
+    system "yarn version --prerelease"
+
+    Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
+    Fastlane::LaneManager.cruise_lane('android', 'beta')
+
+  else
+    git_pull
+
+    system "yarn -s --frozen-lockfile"
+
+    Fastlane::LaneManager.cruise_lane('ios', 'beta', { :remote => "upstream"}, 'production')
+    Fastlane::LaneManager.cruise_lane('android', 'beta', { :remote => "upstream"})
   end
 
-  system "yarn --frozen-lockfile"
 
-  ensure_git_status_clean
 
-  Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
-  Fastlane::LaneManager.cruise_lane('android', 'beta')
-
-end
-
-lane :beta do
-  ensure_git_status_clean
-  ensure_git_branch(
-    branch: 'develop'
-  )
-  git_pull
-
-  system "yarn --frozen-lockfile"
-
-  Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
-  Fastlane::LaneManager.cruise_lane('android', 'beta')
 end
 
 platform :ios do
@@ -102,7 +104,7 @@ platform :ios do
   end
 
   desc "private: prepare iOS for internal"
-  private_lane :prepare_ios_internal do
+  private_lane :prepare_ios_internal do |options|
     bump_build_number
     build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
     git_commit(
@@ -117,11 +119,13 @@ platform :ios do
       tag: "ios-v#{package["version"]}-#{build_number}",
       sign: true
     )
-    push_to_git_remote
+    push_to_git_remote(
+      remote: options.fetch(:remote,  "origin")
+    )
   end
 
   desc "upload to Testflight"
-  lane :upload_beta do
+  lane :upload do
     pilot(
       skip_submission: true,
       app_identifier: "com.ledger.live",
@@ -130,23 +134,25 @@ platform :ios do
     )
   end
 
+  desc "build IPA (this IPA type cannot be pushed to App Store)"
+  lane :build_ipa do |options|
+    build(development: options.fetch(:development, false))
+  end
+
+  desc "rebuild and push to TestFlight without bumping version or tagging"
+  lane :clean_beta do
+    build
+    upload
+  end
+
   desc "build and push to TestFlight"
-  lane :beta do
-    prepare_ios_internal
-    build
-    upload_beta
+  lane :beta do |options|
+    prepare_ios_internal(
+      remote: options.fetch(:remote, "origin")
+    )
+    clean_beta
   end
 
-  desc "rebuild and push to TestFlight"
-  lane :redo_beta do
-    build
-    upload_beta
-  end
-
-  desc "build without uploading"
-  lane :build_ipa do
-    build(development: true)
-  end
 end
 
 platform :android do
@@ -189,7 +195,7 @@ platform :android do
   end
 
   desc "private: prepare android for internal"
-  private_lane :prepare_android_internal do
+  private_lane :prepare_android_internal do |options|
     bump_version_code
     version_code = android_get_version_code(gradle_file: 'android/app/build.gradle')
     git_commit(
@@ -202,27 +208,33 @@ platform :android do
       tag: "android-v#{package["version"]}-#{version_code}",
       sign: true
     )
-    push_to_git_remote
+    push_to_git_remote(
+      remote: options.fetch(:remote,  "origin")
+    )
+  end
+
+  desc "build APK (can be uploaded to Play Store)"
+  lane :apk do
+    build(type: "Release")
   end
 
   desc "upload to Play Store"
-  lane :upload_beta do
+  lane :upload do
     upload_to_play_store(
       track: 'internal',
       package_name: 'com.ledger.live'
     )
   end
 
+  desc "rebuild and upload beta to Google Play Store without bumping version or tagging"
+  lane :clean_beta do
+    build(type: "Release")
+    upload
+  end
+
   desc "build and upload beta to Google Play Store"
   lane :beta do
     prepare_android_internal
-    build(type: "Release")
-    upload_beta
-  end
-
-  desc "rebuild and upload beta to Google Play Store"
-  lane :redo_beta do
-    build(type: "Release")
-    upload_beta
+    clean_beta
   end
 end

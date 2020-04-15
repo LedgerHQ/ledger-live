@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
   appButton: {
     flexGrow: 1,
     flexBasis: "auto",
-    alignItems: "flex-start",
     height: 38,
     paddingHorizontal: 10,
     paddingVertical: 12,
