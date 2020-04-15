@@ -1,6 +1,6 @@
 {
   "name": "ledgerlivemobile",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "scripts": {
     "postinstall": "./scripts/post.sh",
@@ -33,8 +33,6 @@
     "ios:internal": "bundle exec fastlane ios beta --env production",
     "preios:internal": "bundle install",
     "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Release",
-    "staging-android": "yarn android:staging && yarn android:install",
-    "mock-android": "yarn android:mock && yarn android:install",
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
