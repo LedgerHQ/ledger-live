@@ -401,6 +401,15 @@
     "NotSupportedLegacyAddress": {
       "title": "This legacy address format is no longer supported"
     },
+    "StellarWrongMemoFormat": {
+      "title": "Memo format is wrong"
+    },
+    "SourceHasMultiSign": {
+      "title": "Please disable multisign to send {{currencyName}}"
+    },
+    "StellarMemoRecommended": {
+      "title": "When sending to this recipient, a memo may be required"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
@@ -1103,7 +1112,12 @@
       "infoTotalTitle": "Total to spend",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas Limit",
-      "validateGasLimit": "Validate Gas Limit"
+      "validateGasLimit": "Validate Gas Limit",
+      "memo": {
+        "type": "Memo type",
+        "value": "Memo value"
+      },
+      "validateMemo": "Validate memo"
     },
     "validation": {
       "message": "Confirm the transaction on your device to securely sign it",
@@ -1669,6 +1683,19 @@
         "title": "Candidates",
         "description": "127 individuals elected through voting by the entire token holder community. Votes are updated once every 6 hours."
       }
+    }
+  },
+  "stellar": {
+    "memo": {
+      "title": "Memo",
+      "warning": "When using a Memo, carefully verify the type used with the recipient"
+    },
+    "memoType": {
+      "MEMO_TEXT": "Memo Text",
+      "NO_MEMO": "No Memo",
+      "MEMO_ID": "Memo ID",
+      "MEMO_HASH": "Memo Hash",
+      "MEMO_RETURN": "Memo Return"
     }
   },
   "delegation": {
