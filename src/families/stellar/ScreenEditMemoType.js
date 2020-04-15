@@ -1,10 +1,14 @@
 /* @flow */
+import React from "react";
+import { View, StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import { StellarMemoType } from "@ledgerhq/live-common/lib/families/stellar/types";
+import { Trans } from "react-i18next";
 import i18next from "i18next";
+import { StellarMemoType } from "@ledgerhq/live-common/lib/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-
+import LText from "../../components/LText";
 import type { State } from "../../reducers";
+import colors from "../../colors";
 import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
 
 const items = StellarMemoType.map(type => ({
@@ -46,7 +50,25 @@ const Screen = makeGenericSelectScreen({
   itemEventProperties: item => ({ memoType: item.value }),
   title: i18next.t("send.summary.memo.type"),
   keyExtractor: item => item.value,
-  formatItem: item => item.label,
+  formatItem: item => i18next.t(`stellar.memoType.${item.label}`),
+  ListHeaderComponent: () => (
+    <View style={styles.memo}>
+      <LText style={styles.text}>
+        <Trans i18nKey="stellar.memo.warning" />
+      </LText>
+    </View>
+  ),
+});
+
+const styles = StyleSheet.create({
+  memo: {
+    marginBottom: 16,
+    padding: 16,
+  },
+  text: {
+    fontSize: 14,
+    color: colors.darkBlue,
+  },
 });
 
 export default connect(mapStateToProps)(Screen);

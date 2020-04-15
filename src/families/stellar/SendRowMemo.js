@@ -35,25 +35,26 @@ class StellarMemoValueRow extends PureComponent<Props, State> {
     const memoValue = transaction.memoValue;
     return (
       <View>
-        <SummaryRow
-          title={<Trans i18nKey="stellar.memo.title" />}
-          onPress={this.editMemo}
-        >
-          <LText style={styles.link} onPress={this.editMemo}>
-            <Trans i18nKey="common.edit" />
-          </LText>
-        </SummaryRow>
-        <View style={styles.memo}>
-          <LText>
-            <Trans i18nKey="stellar.memo.warning" />
-          </LText>
-        </View>
-        {memoType && memoValue && (
-          <View style={styles.memo}>
-            <LText semiBold style={styles.tagText}>
-              {`${memoType.toString()}: ${memoValue.toString()}`}
+        {!memoType || !memoValue ? (
+          <SummaryRow
+            title={<Trans i18nKey="stellar.memo.title" />}
+            onPress={this.editMemo}
+          >
+            <LText style={styles.link} onPress={this.editMemo}>
+              <Trans i18nKey="common.edit" />
             </LText>
-          </View>
+          </SummaryRow>
+        ) : (
+          <SummaryRow
+            title={
+              <Trans i18nKey={`stellar.memoType.${memoType || "NO_MEMO"}`} />
+            }
+            onPress={this.editMemo}
+          >
+            <LText semiBold style={styles.tagText} onPress={this.editMemo}>
+              {String(memoValue)}
+            </LText>
+          </SummaryRow>
         )}
       </View>
     );

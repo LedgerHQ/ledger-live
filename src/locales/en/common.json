@@ -407,6 +407,9 @@
     "SourceHasMultiSign": {
       "title": "Please disable multisign to send {{currencyName}}"
     },
+    "StellarMemoRecommended": {
+      "title": "When sending to this recipient, a memo may be required"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
@@ -1689,14 +1692,11 @@
     },
     "memoType": {
       "MEMO_TEXT": "Memo Text",
-      "NO_MEMO": "Memo",
+      "NO_MEMO": "No Memo",
       "MEMO_ID": "Memo ID",
       "MEMO_HASH": "Memo Hash",
       "MEMO_RETURN": "Memo Return"
-    },
-    "network": "Network",
-    "networkPublic": "Public",
-    "sourceAddress": "Source address"
+    }
   },
   "delegation": {
     "overdelegated": "Overdelegated",

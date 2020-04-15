@@ -127,6 +127,11 @@ const SendSummary = ({ account, parentAccount, navigation }: Props) => {
         <SummaryFromSection account={account} parentAccount={parentAccount} />
         <VerticalConnector />
         <SummaryToSection recipient={transaction.recipient} />
+        {status.warnings.recipient ? (
+          <LText style={styles.warning}>
+            <TranslatedError error={status.warnings.recipient} />
+          </LText>
+        ) : null}
         <SendRowsCustom
           transaction={transaction}
           account={mainAccount}
@@ -218,6 +223,12 @@ const styles = StyleSheet.create({
     color: colors.alert,
     fontSize: 12,
     marginBottom: 5,
+  },
+  warning: {
+    color: colors.orange,
+    fontSize: 14,
+    marginBottom: 16,
+    paddingLeft: 50,
   },
   verticalConnector: {
     position: "absolute",

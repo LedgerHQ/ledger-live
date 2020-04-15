@@ -22,6 +22,7 @@ type Opts<Item> = {
   formatItem?: Item => string,
   Entry?: EntryComponent<Item>,
   navigationOptions?: Object,
+  ListHeaderComponent?: *,
   // TODO in future: searchable: boolean
 };
 
@@ -94,6 +95,7 @@ export default <Item>(opts: Opts<Item>) => {
     render() {
       return (
         <FlatList
+          ListHeaderComponent={opts.ListHeaderComponent}
           data={this.props.items}
           renderItem={this.renderItem}
           keyExtractor={keyExtractor}
