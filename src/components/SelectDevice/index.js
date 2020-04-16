@@ -15,7 +15,7 @@ import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
 import DeviceJob from "../DeviceJob";
 import type { Step } from "../DeviceJob/types";
-import { setReadOnlyMode } from "../../actions/settings";
+import { setReadOnlyMode, installAppFirstTime } from "../../actions/settings";
 import BluetoothEmpty from "./BluetoothEmpty";
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
@@ -46,6 +46,7 @@ type OwnProps = Props & {
   removeKnownDevice: string => *,
   onBluetoothDeviceAction: Device => any,
   setReadOnlyMode: boolean => void,
+  installAppFirstTime: boolean => void,
 };
 
 type State = {
@@ -161,6 +162,14 @@ class SelectDevice extends Component<OwnProps, State> {
   };
 
   onDone = info => {
+    /** if list apps succeed we update settings with state of apps installed */
+    if (info && info.appRes) {
+      const hasAnyAppinstalled =
+        info.appRes.installed && info.appRes.installed.length > 0;
+
+      this.props.installAppFirstTime(hasAnyAppinstalled);
+    }
+
     this.setState({ connecting: null }, () => {
       this.props.onSelect(info);
     });
@@ -263,6 +272,7 @@ export default connect(
   {
     removeKnownDevice,
     setReadOnlyMode,
+    installAppFirstTime,
   },
 )(withNavigation(SelectDevice));
 
