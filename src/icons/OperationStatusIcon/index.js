@@ -39,5 +39,5 @@ export default ({
   };
 
   const Icon = IconsComponent[type] || OperationStatusIconSend;
-  return <Icon size={size} confirmed={confirmed} failed={failed} />;
+  return <Icon size={size} confirmed={confirmed} failed={failed} type={type} />;
 };

@@ -44,6 +44,7 @@ import PasswordAdd from "./screens/Settings/General/PasswordAdd";
 import PasswordRemove from "./screens/Settings/General/PasswordRemove";
 import ConfirmPassword from "./screens/Settings/General/ConfirmPassword";
 import GeneralSettings from "./screens/Settings/General";
+import AccountsSettings from "./screens/Settings/Accounts";
 import AboutSettings from "./screens/Settings/About";
 import HelpSettings from "./screens/Settings/Help";
 import ExperimentalSettings from "./screens/Settings/Experimental";
@@ -162,6 +163,8 @@ const SettingsStack = createStackNavigator(
     CountervalueSettings,
     // $FlowFixMe
     GeneralSettings,
+    // $FlowFixMe
+    AccountsSettings,
     // $FlowFixMe
     AboutSettings,
     // $FlowFixMe

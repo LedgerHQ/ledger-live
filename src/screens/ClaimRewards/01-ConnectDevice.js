@@ -92,8 +92,8 @@ ConnectDevice.navigationOptions = {
     <StepHeader
       title={i18next.t("claimReward.stepperHeader.connectDevice")}
       subtitle={i18next.t("claimReward.stepperHeader.stepRange", {
-        currentStep: "2",
-        totalSteps: "3",
+        currentStep: "1",
+        totalSteps: "2",
       })}
     />
   ),

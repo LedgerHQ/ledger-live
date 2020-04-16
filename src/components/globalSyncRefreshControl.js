@@ -1,42 +1,28 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { connect } from "react-redux";
 import { RefreshControl } from "react-native";
-import { createStructuredSelector } from "reselect";
-import type { AsyncState } from "../reducers/bridgeSync";
-import { globalSyncStateSelector } from "../reducers/bridgeSync";
-import { BridgeSyncConsumer } from "../bridge/BridgeSyncContext";
+import { useBridgeSync } from "@ledgerhq/live-common/lib/bridge/react";
 import CounterValues from "../countervalues";
 import { SYNC_DELAY } from "../constants";
 
-const mapStateToProps = createStructuredSelector({
-  globalSyncState: globalSyncStateSelector,
-});
-
 const Connector = (Decorated: React$ComponentType<any>) => {
-  const SyncIndicator = ({
-    globalSyncState,
-    ...rest
-  }: {
-    globalSyncState: AsyncState,
-  }) => (
-    <BridgeSyncConsumer>
-      {setSyncBehavior => (
-        <CounterValues.PollingConsumer>
-          {cvPolling => (
-            <Decorated
-              cvPoll={cvPolling.poll}
-              setSyncBehavior={setSyncBehavior}
-              {...rest}
-            />
-          )}
-        </CounterValues.PollingConsumer>
-      )}
-    </BridgeSyncConsumer>
-  );
+  const SyncIndicator = (rest: *) => {
+    const setSyncBehavior = useBridgeSync();
+    return (
+      <CounterValues.PollingConsumer>
+        {cvPolling => (
+          <Decorated
+            cvPoll={cvPolling.poll}
+            setSyncBehavior={setSyncBehavior}
+            {...rest}
+          />
+        )}
+      </CounterValues.PollingConsumer>
+    );
+  };
 
-  return connect(mapStateToProps)(SyncIndicator);
+  return SyncIndicator;
 };
 
 type Props = {

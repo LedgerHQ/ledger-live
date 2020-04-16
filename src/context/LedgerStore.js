@@ -10,6 +10,7 @@ import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
+import { INITIAL_STATE, supportedCountervalues } from "../reducers/settings";
 
 const createLedgerStore = () =>
   createStore(
@@ -55,6 +56,15 @@ export default class LedgerStoreProvider extends Component<
     store.dispatch(importBle(bleData));
 
     const settingsData = await db.get("settings");
+    if (
+      settingsData &&
+      settingsData.counterValue &&
+      !supportedCountervalues.find(
+        ({ ticker }) => ticker === settingsData.counterValue,
+      )
+    ) {
+      settingsData.counterValue = INITIAL_STATE.counterValue;
+    }
     store.dispatch(importSettings(settingsData));
 
     const accountsData = await db.get("accounts");

@@ -30,6 +30,52 @@ import Info from "../../icons/Info";
 import CheckBox from "../../components/CheckBox";
 import Bandwidth from "../../icons/Bandwidth";
 import Bolt from "../../icons/Bolt";
+import ClockIcon from "../../icons/Clock";
+import DateFromNow from "../../components/DateFromNow";
+
+/** @TODO move this to common */
+const getUnfreezeData = (
+  account: Account,
+): {
+  unfreezeBandwidth: BigNumber,
+  unfreezeEnergy: BigNumber,
+  canUnfreezeBandwidth: boolean,
+  canUnfreezeEnergy: boolean,
+  bandwidthExpiredAt: Date,
+  energyExpiredAt: Date,
+} => {
+  const { tronResources } = account;
+  const {
+    frozen: { bandwidth, energy },
+  } = tronResources || {};
+
+  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
+  const { amount: bandwidthAmount, expiredAt: bandwidthExpiredAt } =
+    bandwidth || {};
+  // eslint-disable-next-line no-underscore-dangle
+  const _bandwidthExpiredAt = +new Date(bandwidthExpiredAt);
+
+  const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
+  // eslint-disable-next-line no-underscore-dangle
+  const _energyExpiredAt = +new Date(energyExpiredAt);
+
+  const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
+  const canUnfreezeBandwidth =
+    unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
+
+  const unfreezeEnergy = BigNumber(energyAmount || 0);
+  const canUnfreezeEnergy =
+    unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
+
+  return {
+    unfreezeBandwidth,
+    unfreezeEnergy,
+    canUnfreezeBandwidth,
+    canUnfreezeEnergy,
+    bandwidthExpiredAt,
+    energyExpiredAt,
+  };
+};
 
 const forceInset = { bottom: "always" };
 
@@ -51,14 +97,13 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
   invariant(tronResources, "tron resources expected");
 
   const {
-    frozen: { bandwidth, energy },
-  } = tronResources;
-
-  const UnfreezeBandwidth = BigNumber((bandwidth && bandwidth.amount) || 0);
-  const canUnfreezeBandwidth = UnfreezeBandwidth.gt(0);
-
-  const UnfreezeEnergy = BigNumber((energy && energy.amount) || 0);
-  const canUnfreezeEnergy = UnfreezeEnergy.gt(0);
+    unfreezeBandwidth,
+    unfreezeEnergy,
+    canUnfreezeBandwidth,
+    canUnfreezeEnergy,
+    bandwidthExpiredAt,
+    energyExpiredAt,
+  } = useMemo(() => getUnfreezeData(account), [account]);
 
   const {
     transaction,
@@ -71,7 +116,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
 
     const transaction = bridge.updateTransaction(t, {
       mode: "unfreeze",
-      resource: UnfreezeBandwidth.gt(0) ? "BANDWIDTH" : "ENERGY",
+      resource: canUnfreezeBandwidth ? "BANDWIDTH" : "ENERGY",
     });
 
     return { account, transaction };
@@ -130,15 +175,22 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                 size={16}
                 color={!canUnfreezeBandwidth ? colors.grey : colors.darkBlue}
               />
-              <LText
-                semiBold
-                style={[
-                  styles.selectCardLabel,
-                  !canUnfreezeBandwidth ? styles.disabledLabel : {},
-                ]}
-              >
-                <Trans i18nKey="account.bandwidth" />
-              </LText>
+              <View style={styles.selectCardLabelContainer}>
+                <LText
+                  semiBold
+                  style={!canUnfreezeBandwidth ? styles.disabledLabel : {}}
+                >
+                  <Trans i18nKey="account.bandwidth" />
+                </LText>
+                {unfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
+                  <View style={styles.timeWarn}>
+                    <ClockIcon color={colors.grey} size={12} />
+                    <LText style={styles.timeLabel} semiBold>
+                      <DateFromNow date={+bandwidthExpiredAt} />
+                    </LText>
+                  </View>
+                ) : null}
+              </View>
               <LText
                 semiBold
                 style={[
@@ -146,7 +198,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                   !canUnfreezeBandwidth ? styles.disabledLabel : {},
                 ]}
               >
-                <CurrencyUnitValue unit={unit} value={UnfreezeBandwidth} />
+                <CurrencyUnitValue unit={unit} value={unfreezeBandwidth} />
               </LText>
               <CheckBox isChecked={resource === "BANDWIDTH"} />
             </TouchableOpacity>
@@ -159,15 +211,22 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                 size={16}
                 color={!canUnfreezeEnergy ? colors.grey : colors.darkBlue}
               />
-              <LText
-                semiBold
-                style={[
-                  styles.selectCardLabel,
-                  !canUnfreezeEnergy ? styles.disabledLabel : {},
-                ]}
-              >
-                <Trans i18nKey="account.energy" />
-              </LText>
+              <View style={styles.selectCardLabelContainer}>
+                <LText
+                  semiBold
+                  style={!canUnfreezeEnergy ? styles.disabledLabel : {}}
+                >
+                  <Trans i18nKey="account.energy" />
+                </LText>
+                {unfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
+                  <View style={styles.timeWarn}>
+                    <ClockIcon color={colors.grey} size={12} />
+                    <LText style={styles.timeLabel} semiBold>
+                      <DateFromNow date={+energyExpiredAt} />
+                    </LText>
+                  </View>
+                ) : null}
+              </View>
               <LText
                 semiBold
                 style={[
@@ -175,7 +234,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
                   !canUnfreezeEnergy ? styles.disabledLabel : {},
                 ]}
               >
-                <CurrencyUnitValue unit={unit} value={UnfreezeEnergy} />
+                <CurrencyUnitValue unit={unit} value={unfreezeEnergy} />
               </LText>
               <CheckBox isChecked={resource === "ENERGY"} />
             </TouchableOpacity>
@@ -203,15 +262,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
               <Button
                 event="UnfreezeAmountContinue"
                 type="primary"
-                title={
-                  <Trans
-                    i18nKey={
-                      !bridgePending
-                        ? "common.continue"
-                        : "unfreeze.amount.loadingNetwork"
-                    }
-                  />
-                }
+                title={<Trans i18nKey="common.continue" />}
                 onPress={onContinue}
                 disabled={!!error || bridgePending}
                 pending={bridgePending}
@@ -268,7 +319,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   selectCard: {
-    padding: 16,
+    paddingHorizontal: 16,
+    height: 55,
     borderRadius: 4,
     backgroundColor: colors.white,
     flexDirection: "row",
@@ -277,10 +329,11 @@ const styles = StyleSheet.create({
     marginVertical: 6,
     elevation: 1,
   },
-  selectCardLabel: { marginLeft: 16 },
+  selectCardLabelContainer: { marginLeft: 8 },
   disabledLabel: { color: colors.grey },
   frozenAmount: { flex: 1, textAlign: "right", marginRight: 16 },
   infoSection: {
+    flexShrink: 1,
     flexDirection: "row",
     backgroundColor: colors.lightLive,
     alignItems: "center",
@@ -324,6 +377,21 @@ const styles = StyleSheet.create({
     color: colors.orange,
     fontSize: 14,
     textAlign: "center",
+  },
+  timeWarn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    borderRadius: 4,
+    backgroundColor: colors.lightFog,
+    paddingVertical: 2,
+    paddingHorizontal: 7,
+  },
+  timeLabel: {
+    marginLeft: 4,
+    fontSize: 11,
+    lineHeight: 16,
+    color: colors.grey,
   },
 });
 

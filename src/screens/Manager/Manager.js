@@ -109,6 +109,10 @@ const Manager = ({ navigation }: Props) => {
     setQuitManagerAction,
   ]);
 
+  const resetStorageWarning = useCallback(() => setStorageWarning(null), [
+    setStorageWarning,
+  ]);
+
   return (
     <>
       <TrackScreen category="Manager" name="AppsList" />
@@ -135,7 +139,7 @@ const Manager = ({ navigation }: Props) => {
       />
       <StorageWarningModal
         warning={storageWarning}
-        onClose={setStorageWarning}
+        onClose={resetStorageWarning}
       />
       <AppDependenciesModal
         appInstallWithDependencies={appInstallWithDependencies}

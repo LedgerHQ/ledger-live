@@ -47,10 +47,14 @@ class ValidationSuccess extends Component<Props> {
     if (!account) return;
     const result = navigation.getParam("result");
     if (!result) return;
+
     navigation.navigate("OperationDetails", {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
-      operation: result,
+      operation:
+        result.subOperations && result.subOperations[0]
+          ? result.subOperations[0]
+          : result,
     });
   };
 

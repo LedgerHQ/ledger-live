@@ -44,7 +44,9 @@ class ValidationError extends Component<Props> {
 
   retry = () => {
     const { navigation } = this.props;
-    navigation.goBack();
+    navigation.navigate("ClaimRewardsConnectDevice", {
+      ...navigation.state.params,
+    });
   };
 
   render() {

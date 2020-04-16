@@ -28,7 +28,7 @@ import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
 import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import AppStateListener from "./components/AppStateListener";
-import SyncNewAccounts from "./bridge/SyncNewAccounts";
+import { SyncNewAccounts } from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";

@@ -1,16 +1,15 @@
 /* @flow */
 import { connect } from "react-redux";
-import { listSupportedFiats } from "@ledgerhq/live-common/lib/currencies";
 import i18next from "i18next";
 import { setCountervalue } from "../../../actions/settings";
 import {
   counterValueCurrencySelector,
-  possibleIntermediaries,
+  supportedCountervalues,
 } from "../../../reducers/settings";
 import type { State } from "../../../reducers";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 
-const items = [...listSupportedFiats(), ...possibleIntermediaries]
+const items = supportedCountervalues
   .map(cur => ({ value: cur.ticker, label: `${cur.name} (${cur.ticker})` }))
   .sort((a, b) => a.label.localeCompare(b.label));
 

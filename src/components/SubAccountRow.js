@@ -6,8 +6,15 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { RectButton } from "react-native-gesture-handler";
-import type { SubAccount } from "@ledgerhq/live-common/lib/types";
+import {
+  RectButton,
+  LongPressGestureHandler,
+  State,
+} from "react-native-gesture-handler";
+import type {
+  SubAccount,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
@@ -17,6 +24,7 @@ import colors from "../colors";
 type Props = {
   account: SubAccount,
   onSubAccountPress: SubAccount => *,
+  onBlacklistToken: TokenCurrency => *,
 };
 
 const placeholderProps = {
@@ -26,42 +34,58 @@ const placeholderProps = {
 
 class SubAccountRow extends PureComponent<Props> {
   render() {
-    const { account, onSubAccountPress } = this.props;
+    const { account, onSubAccountPress, onBlacklistToken } = this.props;
 
     const currency = getAccountCurrency(account);
     const name = getAccountName(account);
     const unit = getAccountUnit(account);
 
     return (
-      <RectButton
-        style={styles.container}
-        underlayColor={colors.grey}
-        onPress={() => onSubAccountPress(account)}
+      <LongPressGestureHandler
+        onHandlerStateChange={({ nativeEvent }) => {
+          if (nativeEvent.state === State.ACTIVE) {
+            const token = getAccountCurrency(account);
+            if (token.type === "TokenCurrency") {
+              onBlacklistToken(token);
+            }
+          }
+        }}
+        minDurationMs={600}
       >
-        <View accessible style={styles.innerContainer}>
-          <CurrencyIcon size={24} currency={currency} />
-          <View style={styles.inner}>
-            <LText semiBold numberOfLines={1} style={styles.accountNameText}>
-              {name}
-            </LText>
-          </View>
-          <View style={styles.balanceContainer}>
-            <LText tertiary style={styles.balanceNumText}>
-              <CurrencyUnitValue showCode unit={unit} value={account.balance} />
-            </LText>
-            <View style={styles.balanceCounterContainer}>
-              <CounterValue
-                showCode
-                currency={currency}
-                value={account.balance}
-                withPlaceholder
-                placeholderProps={placeholderProps}
-                Wrapper={AccountCv}
-              />
+        <RectButton
+          style={styles.container}
+          underlayColor={colors.grey}
+          onPress={() => onSubAccountPress(account)}
+        >
+          <View accessible style={styles.innerContainer}>
+            <CurrencyIcon size={24} currency={currency} />
+            <View style={styles.inner}>
+              <LText semiBold numberOfLines={1} style={styles.accountNameText}>
+                {name}
+              </LText>
+            </View>
+            <View style={styles.balanceContainer}>
+              <LText tertiary style={styles.balanceNumText}>
+                <CurrencyUnitValue
+                  showCode
+                  unit={unit}
+                  value={account.balance}
+                />
+              </LText>
+              <View style={styles.balanceCounterContainer}>
+                <CounterValue
+                  showCode
+                  currency={currency}
+                  value={account.balance}
+                  withPlaceholder
+                  placeholderProps={placeholderProps}
+                  Wrapper={AccountCv}
+                />
+              </View>
             </View>
           </View>
-        </View>
-      </RectButton>
+        </RectButton>
+      </LongPressGestureHandler>
     );
   }
 }

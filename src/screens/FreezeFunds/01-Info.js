@@ -32,12 +32,11 @@ const FreezeInfo = ({ navigation }: Props) => {
 
   const onCancel = useCallback(() => {
     // $FlowFixMe
-    navigation.pop();
+    navigation.popToTop();
   }, [navigation]);
 
   const howVotingWorks = useCallback(() => {
-    /** @TODO get the correct support page link for the voting part */
-    Linking.openURL(urls.delegation);
+    Linking.openURL(urls.tronStaking);
   }, []);
 
   return (
@@ -52,6 +51,8 @@ const FreezeInfo = ({ navigation }: Props) => {
           <Trans i18nKey="freeze.info.description" />
         </LText>
         <BulletList
+          style={{ paddingHorizontal: 16 }}
+          itemContainerStyle={{ height: 48 }}
           Bullet={BulletGreenCheck}
           list={[
             <Trans i18nKey="freeze.info.steps.0" />,
@@ -87,6 +88,7 @@ const FreezeInfo = ({ navigation }: Props) => {
           title={<Trans i18nKey="common.cancel" />}
           type="secondary"
           outline={false}
+          containerStyle={styles.buttonContainer}
         />
       </View>
     </SafeAreaView>
@@ -143,6 +145,9 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
+  },
+  buttonContainer: {
+    marginTop: 4,
   },
 });
 

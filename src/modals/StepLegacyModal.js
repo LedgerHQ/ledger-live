@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexGrow: 1,
-    paddingTop: 24,
     paddingHorizontal: 8,
   },
 });

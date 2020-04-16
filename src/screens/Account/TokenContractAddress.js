@@ -4,15 +4,8 @@ import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-navigation";
 import Icon from "react-native-vector-icons/dist/Feather";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import {
-  getDefaultExplorerView,
-  getAccountContractExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import {
-  getMainAccount,
-  shortAddressPreview,
-} from "@ledgerhq/live-common/lib/account/helpers";
+import type { TokenAccount } from "@ledgerhq/live-common/lib/types";
+import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
 
 import colors from "../../colors";
 import LText from "../../components/LText";
@@ -21,27 +14,18 @@ import Button from "../../components/Button";
 type Props = {
   onClose: () => void,
   account: TokenAccount,
-  parentAccount: Account,
+  url: string,
 };
 
 const forceInset = { bottom: "always" };
 
-const TokenContractAddress = ({ account, parentAccount, onClose }: Props) => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const explorerView = getDefaultExplorerView(mainAccount.currency);
-
+const TokenContractAddress = ({ account, onClose, url }: Props) => {
   const viewInExplorer = useCallback(() => {
-    const url = getAccountContractExplorer(
-      explorerView,
-      account,
-      parentAccount,
-    );
-
     if (url) {
       Linking.openURL(url);
       onClose();
     }
-  }, [explorerView, account, parentAccount, onClose]);
+  }, [onClose, url]);
 
   return (
     <SafeAreaView forceInset={forceInset} style={styles.root}>
