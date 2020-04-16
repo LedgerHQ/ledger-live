@@ -4,8 +4,8 @@ import Stellar from "@ledgerhq/hw-app-str";
 import type { CoreStellarLikeTransaction, Transaction } from "./types";
 import { makeSignOperation } from "../../libcore/signOperation";
 import {
-  libcoreAmountToBigNumber
-  // libcoreBigIntToBigNumber
+  libcoreAmountToBigNumber,
+  libcoreBigIntToBigNumber
 } from "../../libcore/buildBigNumber";
 import buildTransaction from "./libcore-buildTransaction";
 import { checkRecipientExist } from "./bridge/libcore";
@@ -15,7 +15,7 @@ async function signTransaction({
   transport,
   transaction,
   coreTransaction,
-  // coreAccount,
+  coreAccount,
   isCancelled,
   onDeviceSignatureGranted,
   onDeviceSignatureRequested
@@ -50,11 +50,11 @@ async function signTransaction({
   const fee = await libcoreAmountToBigNumber(feesRaw);
   if (isCancelled()) return;
 
-  // const stellarLikeAccount = await coreAccount.asStellarLikeAccount();
-  // const transactionSequenceNumberRaw = await stellarLikeAccount.getSequence();
-  // const transactionSequenceNumber = await libcoreBigIntToBigNumber(
-  //   transactionSequenceNumberRaw
-  // );
+  const stellarLikeAccount = await coreAccount.asStellarLikeAccount();
+  const transactionSequenceNumberRaw = await stellarLikeAccount.getSequence();
+  const transactionSequenceNumber = await libcoreBigIntToBigNumber(
+    transactionSequenceNumberRaw
+  );
 
   const op = {
     id: `${id}--OUT`,
@@ -71,9 +71,8 @@ async function signTransaction({
     recipients,
     accountId: id,
     date: new Date(),
-    // Javascript number is not precise, so we desactivated it since the
-    // transactionSequenceNumber was always the same
-    // transactionSequenceNumber: transactionSequenceNumber.plus(1).toNumber(),
+    // Warning: Javascript number is not precise
+    transactionSequenceNumber: transactionSequenceNumber.plus(1).toNumber(),
     extra: {}
   };
 
