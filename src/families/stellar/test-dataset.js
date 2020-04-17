@@ -317,7 +317,8 @@ const dataset: DatasetTest<Transaction> = {
               "libcore:1:stellar:f30b743cb3a8bc8c3ea8fe8455c6a52221cc6cf867f7f1f5861dd52aba1d0b8a:sep5",
             seedIdentifier: "gre",
             name: "GRE's Stellar 2",
-            xpub: "f30b743cb3a8bc8c3ea8fe8455c6a52221cc6cf867f7f1f5861dd52aba1d0b8a",
+            xpub:
+              "f30b743cb3a8bc8c3ea8fe8455c6a52221cc6cf867f7f1f5861dd52aba1d0b8a",
             derivationMode: "sep5",
             index: 1,
             freshAddress: "",
