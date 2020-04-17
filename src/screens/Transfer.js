@@ -4,7 +4,7 @@ import Touchable from "../components/Touchable";
 import TabIcon from "../components/TabIcon";
 import CreateModal from "../modals/Create";
 import TransferIcon from "../icons/Transfer";
-import ExchangeScreen from "./Partners";
+import ExchangeScreen from "./Exchange";
 
 const hitSlop = {
   top: 10,
