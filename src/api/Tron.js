@@ -230,7 +230,22 @@ export async function fetchTronAccountTxs(
     await getEntireTxs(
       `${baseApiUrl}/v1/accounts/${addr}/transactions?limit=100`
     )
-  ).map(tx => formatTrongridTxResponse(tx));
+  )
+    .filter(tx => {
+      // custom smart contract tx has internal txs
+      const hasInternalTxs =
+        tx.txID &&
+        tx.internal_transactions &&
+        tx.internal_transactions.length > 0;
+      // and also a duplicated malformed tx that we have to ignore
+      const isDuplicated = tx.tx_id;
+      if (hasInternalTxs) {
+        // log once
+        log("tron-error", `unsupported transaction ${tx.txID}`);
+      }
+      return !isDuplicated && !hasInternalTxs;
+    })
+    .map(tx => formatTrongridTxResponse(tx));
 
   // we need to fetch and filter trc20 'IN' transactions from another endpoint
   const entireTrc20InTxs = (
