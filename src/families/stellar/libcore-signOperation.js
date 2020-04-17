@@ -15,6 +15,7 @@ async function signTransaction({
   transport,
   transaction,
   coreTransaction,
+  coreAccount,
   isCancelled,
   onDeviceSignatureGranted,
   onDeviceSignatureRequested
@@ -49,10 +50,11 @@ async function signTransaction({
   const fee = await libcoreAmountToBigNumber(feesRaw);
   if (isCancelled()) return;
 
-  const transactionSequenceNumberRaw = await coreTransaction.getSourceAccountSequence();
-  const transactionSequenceNumber = (
-    await libcoreBigIntToBigNumber(transactionSequenceNumberRaw)
-  ).toNumber();
+  const stellarLikeAccount = await coreAccount.asStellarLikeAccount();
+  const transactionSequenceNumberRaw = await stellarLikeAccount.getSequence();
+  const transactionSequenceNumber = await libcoreBigIntToBigNumber(
+    transactionSequenceNumberRaw
+  );
 
   const op = {
     id: `${id}--OUT`,
@@ -69,7 +71,8 @@ async function signTransaction({
     recipients,
     accountId: id,
     date: new Date(),
-    transactionSequenceNumber,
+    // Warning: Javascript number is not precise
+    transactionSequenceNumber: transactionSequenceNumber.plus(1).toNumber(),
     extra: {}
   };
 

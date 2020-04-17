@@ -40,7 +40,6 @@ export type Arg<T, CT> = {
     currency: CryptoCurrency,
     derivationMode: DerivationMode,
     coreCurrency: CoreCurrency,
-    coreAccount: CoreAccount,
     transaction: T,
     coreTransaction: CT,
     coreAccount: CoreAccount,
