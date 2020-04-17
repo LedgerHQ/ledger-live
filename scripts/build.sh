@@ -3,7 +3,6 @@
 set -e
 
 rm -rf lib src/data/icons/react*
-node scripts/buildPartnersReactLogos.js
 bash ./scripts/sync-families-dispatch.sh
 node scripts/buildReactIcons.js
 
