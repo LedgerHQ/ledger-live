@@ -122,7 +122,9 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
       currency
     });
 
-    (currencyData.accounts || []).forEach(accountData =>
+    const accounts = currencyData.accounts || [];
+
+    accounts.forEach(accountData =>
       implementations.forEach(impl => {
         if (
           accountData.implementations &&
@@ -316,6 +318,29 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
         );
       }
     });
+
+    const accounts = currencyData.accounts || [];
+    if (accounts.length) {
+      const accountsInScan = [];
+      const accountsNotInScan = [];
+      accounts.forEach(({ raw }) => {
+        if (accountsFoundInScanAccountsMap[raw.id]) {
+          accountsInScan.push(raw.id);
+        } else {
+          accountsNotInScan.push(raw.id);
+        }
+      });
+      if (accountsInScan.length === 0) {
+        console.warn(
+          `/!\\ CURRENCY '${currency.id}' define accounts that are NOT in scanAccounts. please add at least one account that is from scanAccounts. This helps testing scanned accounts are fine and it also help performance.`
+        );
+      }
+      if (accountsNotInScan.length === 0) {
+        console.warn(
+          `/!\\ CURRENCY '${currency.id}' define accounts that are ONLY in scanAccounts. please add one account that is NOT from scanAccounts. This helps covering the "recovering from xpub" mecanism.`
+        );
+      }
+    }
   });
 
   accountsRelated
@@ -330,14 +355,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
       return { getSynced, bridge, initialAccount: account, ...rest };
     })
     .forEach(arg => {
-      const {
-        getSynced,
-        bridge,
-        initialAccount,
-        accountData,
-        impl,
-        currencyData
-      } = arg;
+      const { getSynced, bridge, initialAccount, accountData, impl } = arg;
 
       const makeTest = (name, fn) => {
         if (
@@ -369,17 +387,6 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                   const acc = await getSynced();
                   expect(acc).toMatchObject(accFromScanAccounts);
                 }
-              );
-            } else {
-              console.warn(
-                initialAccount.id +
-                  " is NOT present in scanAccounts tests. " +
-                  (currencyData.scanAccounts
-                    ? "scanAccounts tests should covers the same accounts & same account ids were used. "
-                    : "") +
-                  "ProTip: with the same seed and a fresh db, `ledger-live generateTestScanAccounts -c " +
-                  initialAccount.currency.id +
-                  "`"
               );
             }
           }
