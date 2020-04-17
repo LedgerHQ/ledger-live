@@ -1,4 +1,5 @@
 // @flow
+import invariant from "invariant";
 import axios from "axios";
 import { log } from "@ledgerhq/logs";
 import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
@@ -80,6 +81,7 @@ const userFriendlyError = <A>(p: Promise<A>, meta): Promise<A> =>
   });
 
 const implementation = (arg: Object): Promise<*> => {
+  invariant(typeof arg === "object", "network takes an object as parameter");
   let promise;
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
