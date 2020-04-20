@@ -11,8 +11,9 @@ import { validateNameEdition } from "../account";
 import { delay } from "../promise";
 import type { Operation } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
+import { getEnv } from "../env";
 
-const MOCK_DATA_SEED = process.env.MOCK_DATA_SEED || Math.random();
+const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 
 const broadcasted: { [_: string]: Operation[] } = {};
 
