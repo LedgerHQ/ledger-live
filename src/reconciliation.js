@@ -18,6 +18,7 @@ import {
   fromOperationRaw,
   fromSubAccountRaw,
   fromTronResourcesRaw,
+  fromCosmosResourcesRaw,
   fromBalanceHistoryRawMap
 } from "./account";
 
@@ -285,6 +286,14 @@ export function patchAccount(
     account.tronResources !== updatedRaw.tronResources
   ) {
     next.tronResources = fromTronResourcesRaw(updatedRaw.tronResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.cosmosResources &&
+    account.cosmosResources !== updatedRaw.cosmosResources
+  ) {
+    next.cosmosResources = fromCosmosResourcesRaw(updatedRaw.cosmosResources);
     changed = true;
   }
 

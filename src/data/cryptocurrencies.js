@@ -611,6 +611,35 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
       }
     ]
   },
+  cosmos: {
+    type: "CryptoCurrency",
+    id: "cosmos",
+    coinType: 118,
+    name: "Cosmos",
+    managerAppName: "Cosmos",
+    ticker: "ATOM",
+    scheme: "cosmos",
+    color: "#16192f",
+    family: "cosmos",
+    blockAvgTime: 8,
+    units: [
+      {
+        name: "Atom",
+        code: "ATOM",
+        magnitude: 6
+      },
+      {
+        name: "microAtom",
+        code: "uatom",
+        magnitude: 0
+      }
+    ],
+    explorerViews: [
+      {
+        tx: "https://coin.atom.dev.ledger.fr/txs/$hash"
+      }
+    ]
+  },
   dash: {
     type: "CryptoCurrency",
     id: "dash",

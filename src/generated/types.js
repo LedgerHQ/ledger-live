@@ -8,6 +8,15 @@ import type { Transaction as bitcoinTransaction } from "../families/bitcoin/type
 import type { TransactionRaw as bitcoinTransactionRaw } from "../families/bitcoin/types";
 import type { NetworkInfo as bitcoinNetworkInfo } from "../families/bitcoin/types";
 import type { NetworkInfoRaw as bitcoinNetworkInfoRaw } from "../families/bitcoin/types";
+import { reflect as cosmosReflect } from "../families/cosmos/types";
+import type { CoreStatics as CoreStatics_cosmos } from "../families/cosmos/types";
+import type { CoreAccountSpecifics as CoreAccountSpecifics_cosmos } from "../families/cosmos/types";
+import type { CoreOperationSpecifics as CoreOperationSpecifics_cosmos } from "../families/cosmos/types";
+import type { CoreCurrencySpecifics as CoreCurrencySpecifics_cosmos } from "../families/cosmos/types";
+import type { Transaction as cosmosTransaction } from "../families/cosmos/types";
+import type { TransactionRaw as cosmosTransactionRaw } from "../families/cosmos/types";
+import type { NetworkInfo as cosmosNetworkInfo } from "../families/cosmos/types";
+import type { NetworkInfoRaw as cosmosNetworkInfoRaw } from "../families/cosmos/types";
 import { reflect as ethereumReflect } from "../families/ethereum/types";
 import type { CoreStatics as CoreStatics_ethereum } from "../families/ethereum/types";
 import type { CoreAccountSpecifics as CoreAccountSpecifics_ethereum } from "../families/ethereum/types";
@@ -65,6 +74,7 @@ import type { NetworkInfoRaw as tronNetworkInfoRaw } from "../families/tron/type
 
 export type SpecificStatics = {}
 & CoreStatics_bitcoin
+& CoreStatics_cosmos
 & CoreStatics_ethereum
 & CoreStatics_neo
 & CoreStatics_ripple
@@ -73,6 +83,7 @@ export type SpecificStatics = {}
 & CoreStatics_tron
 export type CoreAccountSpecifics = {}
 & CoreAccountSpecifics_bitcoin
+& CoreAccountSpecifics_cosmos
 & CoreAccountSpecifics_ethereum
 & CoreAccountSpecifics_neo
 & CoreAccountSpecifics_ripple
@@ -81,6 +92,7 @@ export type CoreAccountSpecifics = {}
 & CoreAccountSpecifics_tron
 export type CoreOperationSpecifics = {}
 & CoreOperationSpecifics_bitcoin
+& CoreOperationSpecifics_cosmos
 & CoreOperationSpecifics_ethereum
 & CoreOperationSpecifics_neo
 & CoreOperationSpecifics_ripple
@@ -89,6 +101,7 @@ export type CoreOperationSpecifics = {}
 & CoreOperationSpecifics_tron
 export type CoreCurrencySpecifics = {}
 & CoreCurrencySpecifics_bitcoin
+& CoreCurrencySpecifics_cosmos
 & CoreCurrencySpecifics_ethereum
 & CoreCurrencySpecifics_neo
 & CoreCurrencySpecifics_ripple
@@ -97,6 +110,7 @@ export type CoreCurrencySpecifics = {}
 & CoreCurrencySpecifics_tron
 export type Transaction =
   | bitcoinTransaction
+  | cosmosTransaction
   | ethereumTransaction
   | neoTransaction
   | rippleTransaction
@@ -105,6 +119,7 @@ export type Transaction =
   | tronTransaction
 export type TransactionRaw =
   | bitcoinTransactionRaw
+  | cosmosTransactionRaw
   | ethereumTransactionRaw
   | neoTransactionRaw
   | rippleTransactionRaw
@@ -113,6 +128,7 @@ export type TransactionRaw =
   | tronTransactionRaw
 export type NetworkInfo =
   | bitcoinNetworkInfo
+  | cosmosNetworkInfo
   | ethereumNetworkInfo
   | neoNetworkInfo
   | rippleNetworkInfo
@@ -121,6 +137,7 @@ export type NetworkInfo =
   | tronNetworkInfo
 export type NetworkInfoRaw =
   | bitcoinNetworkInfoRaw
+  | cosmosNetworkInfoRaw
   | ethereumNetworkInfoRaw
   | neoNetworkInfoRaw
   | rippleNetworkInfoRaw
@@ -129,6 +146,7 @@ export type NetworkInfoRaw =
   | tronNetworkInfoRaw
 export const reflectSpecifics = (declare: *) => [
   bitcoinReflect(declare),
+  cosmosReflect(declare),
   ethereumReflect(declare),
   neoReflect(declare),
   rippleReflect(declare),
