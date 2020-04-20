@@ -238,9 +238,10 @@ const envDefinitions = {
     desc: "maximum size of account names"
   },
   MOCK: {
-    def: false,
-    parser: boolParser,
-    desc: "switch the app into a MOCK mode for test purpose"
+    def: "",
+    parser: stringParser,
+    desc:
+      "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values."
   },
   OPERATION_ADDRESSES_LIMIT: {
     def: 100,

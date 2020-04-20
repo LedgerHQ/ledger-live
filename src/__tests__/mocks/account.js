@@ -5,11 +5,19 @@ import "../../load/tokens/tron/trc20";
 
 import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "../../portfolio";
+import { getEnv, setEnv } from "../../env";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");
   const b = genAccount("seed");
   expect(a).toEqual(b);
+});
+
+test("generate an account from different seed should generate a different account", () => {
+  const a = genAccount(getEnv("MOCK"));
+  setEnv("MOCK", "çacestvraiça");
+  const b = genAccount(getEnv("MOCK"));
+  expect(a).not.toEqual(b);
 });
 
 test("dont generate negative balance", () => {
