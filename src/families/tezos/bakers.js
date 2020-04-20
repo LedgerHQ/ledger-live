@@ -43,7 +43,9 @@ export type Delegation = {|
 const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
     const base = getEnv("API_TEZOS_BAKER");
-    const { data }: { data: mixed } = await network(`${base}/v1/bakers`);
+    const { data }: { data: mixed } = await network({
+      url: `${base}/v1/bakers`
+    });
     const bakers = [];
     if (data && typeof data === "object") {
       const bakersRaw = data.bakers;
