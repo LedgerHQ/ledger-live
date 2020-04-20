@@ -9,7 +9,7 @@ import { createStructuredSelector } from "reselect";
 import { translate } from "react-i18next";
 import i18next from "i18next";
 import { compose } from "redux";
-import type { Account, TokenCurrency } from "@ledgerhq/live-common/lib/types";
+import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
 import AccountsIcon from "../../icons/Accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
@@ -20,7 +20,7 @@ import AccountRow from "./AccountRow";
 import AccountOrder from "./AccountOrder";
 import AddAccount from "./AddAccount";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
-import BlacklistTokenModal from "../Settings/Accounts/BlacklistTokenModal";
+import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 
 const List = globalSyncRefreshControl(FlatList);
 
@@ -43,25 +43,27 @@ type Props = {
 };
 
 type State = {
-  blacklistToken?: TokenCurrency,
+  account?: TokenAccount,
+  parentAccount?: Account,
 };
 
 class Accounts extends Component<Props, State> {
   static navigationOptions = navigationOptions;
 
   state = {
-    blacklistToken: undefined,
+    account: undefined,
   };
 
-  blacklistToken = blacklistToken => this.setState({ blacklistToken });
-  clearBlacklistToken = () => this.setState({ blacklistToken: undefined });
+  setAccount = account => this.setState({ account });
+
+  clearBlacklistToken = () => this.setState({ account: undefined });
 
   renderItem = ({ item, index }: { item: Account, index: number }) => (
     <AccountRow
       navigation={this.props.navigation}
       account={item}
       accountId={item.id}
-      onBlacklistToken={this.blacklistToken}
+      onSetAccount={this.setAccount}
       isLast={index === this.props.accounts.length - 1}
     />
   );
@@ -70,7 +72,7 @@ class Accounts extends Component<Props, State> {
 
   render() {
     const { accounts, navigation } = this.props;
-    const { blacklistToken } = this.state;
+    const { account } = this.state;
 
     if (accounts.length === 0) {
       return (
@@ -92,10 +94,10 @@ class Accounts extends Component<Props, State> {
           contentContainerStyle={styles.contentContainer}
         />
         <MigrateAccountsBanner />
-        <BlacklistTokenModal
+        <TokenContextualModal
           onClose={this.clearBlacklistToken}
-          isOpened={!!blacklistToken}
-          token={blacklistToken}
+          isOpened={account}
+          account={account}
         />
       </>
     );

@@ -13,18 +13,23 @@ import {
 } from "react-native-gesture-handler";
 import type {
   SubAccount,
-  TokenCurrency,
+  TokenAccount,
+  Account,
 } from "@ledgerhq/live-common/lib/types";
+import { createStructuredSelector } from "reselect";
+import { connect } from "react-redux";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
 import colors from "../colors";
+import { accountSelector } from "../reducers/accounts";
 
 type Props = {
   account: SubAccount,
+  parentAccount: Account,
   onSubAccountPress: SubAccount => *,
-  onBlacklistToken: TokenCurrency => *,
+  onSubAccountLongPress: (TokenAccount, Account) => *,
 };
 
 const placeholderProps = {
@@ -34,7 +39,12 @@ const placeholderProps = {
 
 class SubAccountRow extends PureComponent<Props> {
   render() {
-    const { account, onSubAccountPress, onBlacklistToken } = this.props;
+    const {
+      account,
+      parentAccount,
+      onSubAccountPress,
+      onSubAccountLongPress,
+    } = this.props;
 
     const currency = getAccountCurrency(account);
     const name = getAccountName(account);
@@ -44,9 +54,8 @@ class SubAccountRow extends PureComponent<Props> {
       <LongPressGestureHandler
         onHandlerStateChange={({ nativeEvent }) => {
           if (nativeEvent.state === State.ACTIVE) {
-            const token = getAccountCurrency(account);
-            if (token.type === "TokenCurrency") {
-              onBlacklistToken(token);
+            if (account.type === "TokenAccount") {
+              onSubAccountLongPress(account, parentAccount);
             }
           }
         }}
@@ -96,7 +105,11 @@ const AccountCv = ({ children }: { children: * }) => (
   </LText>
 );
 
-export default SubAccountRow;
+const mapStateToProps = createStructuredSelector({
+  parentAccount: accountSelector,
+});
+
+export default connect(mapStateToProps)(SubAccountRow);
 
 const styles = StyleSheet.create({
   container: {

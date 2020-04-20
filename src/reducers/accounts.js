@@ -145,6 +145,13 @@ export const accountSelector = createSelector(
 );
 
 // $FlowFixMe
+export const parentAccountSelector = createSelector(
+  accountsSelector,
+  (_, { account }) => (account ? account.parentId : null),
+  (accounts, accountId) => accounts.find(a => a.id === accountId),
+);
+
+// $FlowFixMe
 export const accountScreenSelector = createSelector(
   // DEPRECATED
   accountsSelector,
