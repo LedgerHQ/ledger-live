@@ -24,6 +24,8 @@ export const urls = {
   delegation: "https://www.ledger.com/staking-tezos",
   appSupport:
     "https://support.ledger.com/hc/en-us/categories/115000811829-Apps",
+  goToManager: "https://support.ledger.com/hc/en-us/articles/360020436654",
+  addAccount: "https://support.ledger.com/hc/en-us/articles/360020435654",
   tronStaking: "https://www.ledger.com/staking-tron",
   supportLinkByTokenType: {
     erc20:

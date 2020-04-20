@@ -96,8 +96,9 @@ export const updateCurrencySettings = (
 export const completeOnboarding = () => ({
   type: "SETTINGS_COMPLETE_ONBOARDING",
 });
-export const installAppFirstTime = () => ({
+export const installAppFirstTime = (bool: boolean) => ({
   type: "SETTINGS_INSTALL_APP_FIRST_TIME",
+  hasInstalledAnyApp: bool,
 });
 
 export const switchCountervalueFirst = () => ({

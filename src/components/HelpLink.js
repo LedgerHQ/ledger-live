@@ -9,17 +9,21 @@ import colors from "../colors";
 import { urls } from "../config/urls";
 import Help from "../icons/Help";
 
-class HelpLink extends PureComponent<{ url?: string, style?: * }> {
+class HelpLink extends PureComponent<{
+  url?: string,
+  style?: *,
+  color?: string,
+}> {
   render() {
-    const { url, style } = this.props;
+    const { url, style, color } = this.props;
     return (
       <Touchable
         event="HelpLink"
         style={[styles.linkContainer, style]}
         onPress={() => Linking.openURL(url || urls.faq)}
       >
-        <Help size={16} color={colors.live} />
-        <LText style={styles.linkText} semiBold>
+        <Help size={16} color={color || colors.live} />
+        <LText style={[styles.linkText, color ? { color } : null]} semiBold>
           <Trans i18nKey="common.needHelp" />
         </LText>
       </Touchable>
