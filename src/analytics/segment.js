@@ -41,6 +41,10 @@ const extraProperties = store => {
   };
 };
 
+const context = {
+  ip: "0.0.0.0",
+};
+
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
 
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
@@ -66,7 +70,7 @@ export const start = async (store: *) => {
     if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
     if (token) {
       await analytics.reset();
-      await analytics.identify(user.id, extraProperties(store));
+      await analytics.identify(user.id, extraProperties(store), context);
     }
   }
   track("Start", extraProperties(store), true);
@@ -97,10 +101,14 @@ export const track = (
   }
   if (ANALYTICS_LOGS) console.log("analytics:track", event, properties);
   if (!token) return;
-  analytics.track(event, {
-    ...extraProperties(storeInstance),
-    ...properties,
-  });
+  analytics.track(
+    event,
+    {
+      ...extraProperties(storeInstance),
+      ...properties,
+    },
+    context,
+  );
 };
 
 export const screen = (
@@ -121,8 +129,12 @@ export const screen = (
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, properties);
   if (!token) return;
-  analytics.screen(title, {
-    ...extraProperties(storeInstance),
-    ...properties,
-  });
+  analytics.screen(
+    title,
+    {
+      ...extraProperties(storeInstance),
+      ...properties,
+    },
+    context,
+  );
 };
