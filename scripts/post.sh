@@ -5,6 +5,7 @@ cd $(dirname $0)/..
 ./scripts/sync-families-dispatch.sh
 
 patch --forward -i scripts/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
+cp scripts/RNAnalyticsModule.kt node_modules/@segment/analytics-react-native/android/src/main/java/com/segment/analytics/reactnative/core/RNAnalyticsModule.kt 
 
 rm -f 'node_modules/@segment/analytics-ios/.clang-format' 'third-party/glog-0.3.5/test-driver'
 
