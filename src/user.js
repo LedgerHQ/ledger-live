@@ -1,18 +1,18 @@
 // @flow
 
 import uuid from "uuid/v4";
-import db from "./db";
+import { getUser, setUser } from "./db";
 
 // a user is an anonymous way to identify a same instance of the app
 let user;
 
 export default async () => {
   if (!user) {
-    user = await db.get("user");
+    user = await getUser();
   }
   if (!user) {
     user = { id: uuid() };
-    await db.update("user", user);
+    await setUser(user);
     return { user, created: true };
   }
   return { user, created: false };

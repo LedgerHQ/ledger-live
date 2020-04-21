@@ -13,6 +13,7 @@ import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import logger from "./logger";
+import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
@@ -34,6 +35,7 @@ import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import AppContainer from "./navigators";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
+import type { State } from "./reducers";
 
 checkLibs({
   NotEnoughBalance,
@@ -57,39 +59,54 @@ Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 
 class App extends Component<*> {
-  hasCountervaluesChanged = (a, b) => a.countervalues !== b.countervalues;
+  getCountervaluesChanged = (a, b) => a.countervalues !== b.countervalues;
 
-  hasSettingsChanged = (a, b) => a.settings !== b.settings;
+  getSettingsChanged = (a, b) => a.settings !== b.settings;
 
-  hasAccountsChanged = (a, b) => a.accounts !== b.accounts;
+  getAccountsChanged = (
+    oldState: State,
+    newState: State,
+  ): ?{ changed: string[] } => {
+    if (oldState.accounts !== newState.accounts) {
+      return {
+        changed: newState.accounts.active
+          .filter(a => {
+            const old = oldState.accounts.active.find(b => a.id === b.id);
+            return !old || old !== a;
+          })
+          .map(a => a.id),
+      };
+    }
+    return null;
+  };
 
-  hasBleChanged = (a, b) => a.ble !== b.ble;
+  getBleChanged = (a, b) => a.ble !== b.ble;
 
   render() {
     return (
       <View style={styles.root}>
         <DBSave
-          dbKey="countervalues"
+          save={saveCountervalues}
           throttle={2000}
-          hasChanged={this.hasCountervaluesChanged}
+          getChangesStats={this.getCountervaluesChanged}
           lense={CounterValues.exportSelector}
         />
         <DBSave
-          dbKey="settings"
+          save={saveSettings}
           throttle={400}
-          hasChanged={this.hasSettingsChanged}
+          getChangesStats={this.getSettingsChanged}
           lense={settingsExportSelector}
         />
         <DBSave
-          dbKey="accounts"
+          save={saveAccounts}
           throttle={500}
-          hasChanged={this.hasAccountsChanged}
+          getChangesStats={this.getAccountsChanged}
           lense={accountsExportSelector}
         />
         <DBSave
-          dbKey="ble"
+          save={saveBle}
           throttle={500}
-          hasChanged={this.hasBleChanged}
+          getChangesStats={this.getBleChanged}
           lense={bleSelector}
         />
 

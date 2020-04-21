@@ -1,7 +1,7 @@
 // @flow
 import React, { Fragment } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
-import db from "../db";
+import { clearDb } from "../db";
 import clearLibcore from "../helpers/clearLibcore";
 
 // $FlowFixMe
@@ -28,9 +28,7 @@ export default class RebootProvider extends React.Component<
       rebootId: state.rebootId + 1,
     }));
     if (resetData) {
-      await clearLibcore(() =>
-        db.delete(["settings", "accounts", "countervalues", "ble"]),
-      );
+      await clearLibcore(clearDb);
     }
     if (onRebootEnd) onRebootEnd();
   };

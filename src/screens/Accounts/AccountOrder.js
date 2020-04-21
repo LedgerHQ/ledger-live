@@ -10,11 +10,7 @@ import RefreshAccountsOrdering from "../../components/RefreshAccountOrdering";
 
 // update at boot and each time focus or open state changes
 const RefreshAccounts = withNavigationFocus(({ isFocused, isOpened }) => (
-  <RefreshAccountsOrdering
-    onMount
-    onUpdate
-    nonce={`${isFocused}_${isOpened}`}
-  />
+  <RefreshAccountsOrdering onUpdate nonce={`${isFocused}_${isOpened}`} />
 ));
 
 class AccountOrder extends PureComponent<{}, { isOpened: boolean }> {

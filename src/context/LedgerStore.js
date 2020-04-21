@@ -4,7 +4,7 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
-import db from "../db";
+import { getAccounts, getCountervalues, getSettings, getBle } from "../db";
 import CounterValues from "../countervalues";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
@@ -52,10 +52,10 @@ export default class LedgerStoreProvider extends Component<
   async init() {
     const { store } = this.state;
 
-    const bleData = await db.get("ble");
+    const bleData = await getBle();
     store.dispatch(importBle(bleData));
 
-    const settingsData = await db.get("settings");
+    const settingsData = await getSettings();
     if (
       settingsData &&
       settingsData.counterValue &&
@@ -67,10 +67,10 @@ export default class LedgerStoreProvider extends Component<
     }
     store.dispatch(importSettings(settingsData));
 
-    const accountsData = await db.get("accounts");
+    const accountsData = await getAccounts();
     store.dispatch(importAccounts(accountsData));
 
-    const countervaluesData = await db.get("countervalues");
+    const countervaluesData = await getCountervalues();
     store.dispatch(CounterValues.importAction(countervaluesData));
 
     this.setState({ ready: true }, () => {
