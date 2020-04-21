@@ -33,6 +33,7 @@ import get from "lodash/get";
 import drop from "lodash/drop";
 import sumBy from "lodash/sumBy";
 import take from "lodash/take";
+import compact from "lodash/compact";
 
 const baseApiUrl: string = getEnv("API_TRONGRID_PROXY");
 
@@ -254,9 +255,9 @@ export async function fetchTronAccountTxs(
     .filter(tx => tx.to === addr)
     .map(tx => formatTrongridTxResponse(tx, true));
 
-  const txInfos: TrongridTxInfo[] = entireTxs
-    .concat(entireTrc20InTxs)
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+  const txInfos: TrongridTxInfo[] = compact(
+    entireTxs.concat(entireTrc20InTxs)
+  ).sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return txInfos;
 }
