@@ -240,23 +240,26 @@ export async function fetchTronAccountTxs(
         tx.internal_transactions.length > 0;
       // and also a duplicated malformed tx that we have to ignore
       const isDuplicated = tx.tx_id;
+
+      const type = get(tx, "raw_data.contract[0].type", "");
+
       if (hasInternalTxs) {
         // log once
         log("tron-error", `unsupported transaction ${tx.txID}`);
       }
-      return !isDuplicated && !hasInternalTxs;
+      return (
+        !isDuplicated && !hasInternalTxs && type !== "TriggerSmartContract"
+      );
     })
     .map(tx => formatTrongridTxResponse(tx));
 
-  // we need to fetch and filter trc20 'IN' transactions from another endpoint
-  const entireTrc20InTxs = (
+  // we need to fetch and filter trc20 transactions from another endpoint
+  const entireTrc20Txs = (
     await getEntireTxs(`${baseApiUrl}/v1/accounts/${addr}/transactions/trc20`)
-  )
-    .filter(tx => tx.to === addr)
-    .map(tx => formatTrongridTxResponse(tx, true));
+  ).map(tx => formatTrongridTxResponse(tx, true));
 
   const txInfos: TrongridTxInfo[] = compact(
-    entireTxs.concat(entireTrc20InTxs)
+    entireTxs.concat(entireTrc20Txs)
   ).sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return txInfos;
