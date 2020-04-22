@@ -20,8 +20,7 @@ import {
   TronNotEnoughTronPower,
   TronSendTrc20ToNewAccountForbidden,
   TronVoteRequired,
-  TronUnexpectedFees,
-  TronNotEnoughEnergy
+  TronUnexpectedFees
 } from "../../errors";
 
 const unactivatedAddress = "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD";
