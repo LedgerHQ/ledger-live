@@ -1154,7 +1154,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     coinType: 4801368,
     name: "ICON",
     managerAppName: "ICON",
-    ticker: "ICON",
+    ticker: "ICX",
     scheme: "icon",
     color: "#00A3B4",
     family: "icon",
