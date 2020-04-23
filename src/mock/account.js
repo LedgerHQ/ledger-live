@@ -369,6 +369,17 @@ export function genAccount(
     lastSyncDate: new Date()
   };
 
+  if (currency.id === "cosmos") {
+    account.cosmosResources = {
+      // TODO variation in these
+      delegations: [],
+      delegatedBalance: BigNumber(0),
+      pendingRewardsBalance: BigNumber(0),
+      unboundingBalance: BigNumber(0),
+      withdrawAddress: address
+    };
+  }
+
   if (["ethereum", "ethereum_ropsten", "tron"].includes(currency.id)) {
     const tokenCount =
       typeof opts.subAccountsCount === "number"

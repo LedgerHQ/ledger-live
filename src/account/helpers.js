@@ -168,6 +168,8 @@ export const getVotesCount = (
     return isAccountDelegating(account) ? 1 : 0;
   } else if (mainAccount.tronResources) {
     return mainAccount.tronResources.votes.length;
+  } else if (mainAccount.cosmosResources) {
+    return mainAccount.cosmosResources.delegations.length;
   }
   return 0;
 };

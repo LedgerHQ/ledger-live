@@ -6,6 +6,10 @@ import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "../derivation";
 import type { TronResources, TronResourcesRaw } from "../families/tron/types";
 import type {
+  CosmosResources,
+  CosmosResourcesRaw
+} from "../families/cosmos/types";
+import type {
   BalanceHistory,
   BalanceHistoryRaw,
   PortfolioRange
@@ -157,7 +161,8 @@ export type Account = {
   balanceHistory?: BalanceHistoryMap,
 
   // On some blockchain, an account can have resources (gained, delegated, ...)
-  tronResources?: TronResources
+  tronResources?: TronResources,
+  cosmosResources?: CosmosResources
 };
 
 export type SubAccount = TokenAccount | ChildAccount;
@@ -220,7 +225,8 @@ export type AccountRaw = {
   endpointConfig?: ?string,
   subAccounts?: SubAccountRaw[],
   balanceHistory?: BalanceHistoryRawMap,
-  tronResources?: TronResourcesRaw
+  tronResources?: TronResourcesRaw,
+  cosmosResources?: CosmosResourcesRaw
 };
 
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
