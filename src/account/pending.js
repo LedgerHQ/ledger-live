@@ -7,6 +7,17 @@ export function shouldRetainPendingOperation(
   op: Operation
 ): boolean {
   const delay = new Date() - op.date;
+
+  const last = account.operations[0];
+  if (
+    last &&
+    last.transactionSequenceNumber &&
+    op.transactionSequenceNumber &&
+    op.transactionSequenceNumber >= last.transactionSequenceNumber
+  ) {
+    return false;
+  }
+
   return delay < getEnv("OPERATION_OPTIMISTIC_RETENTION");
 }
 

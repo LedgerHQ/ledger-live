@@ -1,6 +1,7 @@
 // @flow
 
 import type { CoreOperation } from "../../libcore/types";
+import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 
 async function stellarBuildOperation({
   coreOperation
@@ -8,9 +9,17 @@ async function stellarBuildOperation({
   coreOperation: CoreOperation
 }) {
   const stellarLikeOperation = await coreOperation.asStellarLikeOperation();
-  const stellarLikeTransaction = await stellarLikeOperation.getRecord();
-  const hash = await stellarLikeTransaction.getTransactionHash();
-  return { hash };
+  const stellarLikeRecord = await stellarLikeOperation.getRecord();
+  const stellarLikeTransaction = await stellarLikeOperation.getTransaction();
+  const hash = await stellarLikeRecord.getTransactionHash();
+  const transactionSequenceNumberRaw = await stellarLikeTransaction.getSourceAccountSequence();
+  const transactionSequenceNumber = await libcoreBigIntToBigNumber(
+    transactionSequenceNumberRaw
+  );
+  return {
+    hash,
+    transactionSequenceNumber: transactionSequenceNumber.toNumber()
+  };
 }
 
 export default stellarBuildOperation;

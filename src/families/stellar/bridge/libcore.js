@@ -12,7 +12,8 @@ import {
 import {
   StellarWrongMemoFormat,
   SourceHasMultiSign,
-  StellarMemoRecommended
+  StellarMemoRecommended,
+  AccountAwaitingSendPendingOperations
 } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge, Account } from "../../../types";
@@ -114,10 +115,14 @@ const isAccountIsMultiSign = async account =>
     return signers.length > 1;
   });
 
-const getTransactionStatus = async (a, t) => {
+const getTransactionStatus = async (a: Account, t) => {
   const errors = {};
   const warnings = {};
   const useAllAmount = !!t.useAllAmount;
+
+  if (a.pendingOperations.length > 0) {
+    throw new AccountAwaitingSendPendingOperations();
+  }
 
   if (a.freshAddress === t.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
