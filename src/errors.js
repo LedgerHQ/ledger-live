@@ -61,4 +61,8 @@ export const StellarWrongMemoFormat = createCustomErrorClass(
   "StellarWrongMemoFormat"
 );
 
+export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
+  "AccountAwaitingSendPendingOperations"
+);
+
 export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
