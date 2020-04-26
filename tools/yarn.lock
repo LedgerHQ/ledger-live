@@ -1257,10 +1257,10 @@
     ripemd160 "2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.13.1":
-  version "5.13.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.13.1.tgz#73c8a339b00c7fce66a1cadad9a7bcedadc71bb5"
-  integrity sha512-ICqdRgaY9eSlxADAQDe6bVJZxf3Fyb6AcqyTmnANaIHioNeIDYm+gQI9DNq5FpgPxONVaDptqr4MFPswobVmEQ==
+"@ledgerhq/hw-app-eth@5.14.0":
+  version "5.14.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.14.0.tgz#a268c8f86035e88e637c38254cc7847a7dadf169"
+  integrity sha512-JCgKcyr/oQl4PW1uHlhCvgmqzoJZNQWrXiWZHrrvaCwZTJicGW8UlY8Gy/EWNbMG0yf591qk4bIOoXXFd3fjgg==
   dependencies:
     "@ledgerhq/errors" "^5.13.1"
     "@ledgerhq/hw-transport" "^5.13.1"
@@ -1350,16 +1350,16 @@
     "@ledgerhq/errors" "^5.13.1"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^12.16.1":
-  version "12.16.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.16.1.tgz#72140677c47cfce361f31a71f4bc8c47ccb510f6"
-  integrity sha512-i5AbIit8xiaAhKWgDy6h1UxaZcFrolN5dDmwHok0hEDdcRRMCl6xWP5CWKWP/cXQgTQDP608ZkCj2BRCL/utjw==
+"@ledgerhq/live-common@^12.18.0":
+  version "12.18.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.18.0.tgz#5353d312114df9814f9269cc02ac671e1238ab3b"
+  integrity sha512-E9LoB7F3QSubhg6pRJH/0MIOXX4vWj+flMKwYQ9LPAYFyQVs28hPYhbtnX4Qr4tds4VLtaFvb8Ov8r0GkQQ2Gg==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.13.1"
     "@ledgerhq/errors" "5.13.1"
     "@ledgerhq/hw-app-btc" "^5.13.1"
-    "@ledgerhq/hw-app-eth" "5.13.1"
+    "@ledgerhq/hw-app-eth" "5.14.0"
     "@ledgerhq/hw-app-str" "^5.13.1"
     "@ledgerhq/hw-app-trx" "5.13.1"
     "@ledgerhq/hw-app-xrp" "5.13.1"
@@ -1397,12 +1397,13 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.13.1.tgz#80a13031c9e0a9b874b96b6636f3f6df603ec1b2"
   integrity sha512-ag2wX5VcAqPMKooCn/S6kKblVlsn74ixtagpwR+6GdFqYa/bspH8mWw+zwcdzSwa/wbOQRuY75zH52qBonfXBA==
 
-"@material-ui/core@^4.9.10":
-  version "4.9.10"
-  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.9.10.tgz#53f1d18bd274c258698b6cfdab3c4bee0edf7892"
-  integrity sha512-CQuZU9Y10RkwSdxjn785kw2EPcXhv5GKauuVQufR9LlD37kjfn21Im1yvr6wsUzn81oLhEvVPz727UWC0gbqxg==
+"@material-ui/core@^4.9.11":
+  version "4.9.11"
+  resolved "https://registry.yarnpkg.com/@material-ui/core/-/core-4.9.11.tgz#02f45f4dbea6db191fdc0d993323d64cfae613fd"
+  integrity sha512-S2Ha9GpTxzl29XMeMc8dQX2pj97yApNzuhe/23If53fMdg5Fmd3SgbE1bMbyXeKhxwtXZjOFxd0vU+W/sez8Ew==
   dependencies:
     "@babel/runtime" "^7.4.4"
+    "@material-ui/react-transition-group" "^4.2.0"
     "@material-ui/styles" "^4.9.10"
     "@material-ui/system" "^4.9.10"
     "@material-ui/types" "^5.0.1"
@@ -1414,6 +1415,16 @@
     prop-types "^15.7.2"
     react-is "^16.8.0"
     react-transition-group "^4.3.0"
+
+"@material-ui/react-transition-group@^4.2.0":
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/@material-ui/react-transition-group/-/react-transition-group-4.3.0.tgz#92529142addb5cc179dbf42d246c7e3fe4d6104b"
+  integrity sha512-CwQ0aXrlUynUTY6sh3UvKuvye1o92en20VGAs6TORnSxUYeRmkX8YeTUN3lAkGiBX1z222FxLFO36WWh6q73rQ==
+  dependencies:
+    "@babel/runtime" "^7.5.5"
+    dom-helpers "^5.0.1"
+    loose-envify "^1.4.0"
+    prop-types "^15.6.2"
 
 "@material-ui/styles@^4.9.10":
   version "4.9.10"
@@ -5128,10 +5139,10 @@ flatten@^1.0.2:
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
   integrity sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
 
-flow-bin@^0.122.0:
-  version "0.122.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.122.0.tgz#c723a2b33b1a70bd10204704ae1dc776d5d89d79"
-  integrity sha512-my8N5jgl/A+UVby9E7NDppHdhLgRbWgKbmFZSx2MSYMRh3d9YGnM2MM+wexpUpl0ftY1IM6ZcUwaAhrypLyvlA==
+flow-bin@^0.123.0:
+  version "0.123.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.123.0.tgz#7ba61a0b8775928cf4943ccf78eed2b1b05f7b3a"
+  integrity sha512-Ylcf8YDIM/KrqtxkPuq+f8O+6sdYA2Nuz5f+sWHlp539DatZz3YMcsO1EiXaf1C11HJgpT/3YGYe7xZ9/UZmvQ==
 
 flush-write-stream@^1.0.0:
   version "1.0.3"
