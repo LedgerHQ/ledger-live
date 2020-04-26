@@ -52,14 +52,14 @@
 508: nanos/1.4.2/hcash/app_1.2.10: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1038: nanos/1.5.5/decred_testnet/app_1.3.0: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1039: nanos/1.5.5/none/app_1.0.1: KO: list apps don't find installed app? Found these: [{"hash": "049d9ca6c77d181687c63035719bfc9b5acbe943a8e3ffc871a230ebf88308c4","name": "MISC"}]
-3413: nanox/1.2.4-1.6/dexon/app_1.2.13: KO: have BAD HASH. API have f557d5bfec7d596b432c3737ebf08139af636499cddd101453a9b1853b30f3d2 but device have 51fb3700af30e24ef38a203ec3f02e3d455ffa309e8a65f0ad276ea360aaa134
-3397: nanox/1.2.4-1.6/ewc/app_1.2.13: KO: have BAD HASH. API have 269ef354e4b886b3204b940c89e2c818487459199ae2f891b20b0cd7ef7ac053 but device have 1e2a7e8c365b48200d81e1c23d167fb8bc386aaf7258412fd6083b13f2ff7734
-3390: nanox/1.2.4-1.6/hpb/app_1.2.13: KO: have BAD HASH. API have 56052f113a061fef89ac3fb4e76a415906c513e8496a6674cd66946eb16e86e9 but device have 72515842328d1fdeefb1fef72ec9fbaf50fa81043895a9390528aed8c85eb2de
-3388: nanox/1.2.4-1.6/reosc/app_1.2.13: KO: have BAD HASH. API have c104344605923a8ee935b972eb82ee2991ada7d2c0ab78fd00765d23762a2b3d but device have 2f0d954349b01ca0565b68c2bacca5b1ac8b8f1c5a79d47ed8768b2447ff08e0
-3386: nanox/1.2.4-1.6/thundercore/app_1.2.13: KO: have BAD HASH. API have 16bfb277d16b195b21c7d21af3d57d982c4f27137206040e3fc2433ba6277777 but device have be6794771ece9eed13a21f3c4ea00d3b578a5cb8a3612d600ae6f4a1e35d9925
-3389: nanox/1.2.4-1.6/tomochain/app_1.2.13: KO: have BAD HASH. API have 98ee2ab164648d61992a2d2b701f13be2586cebda64a86055746991c188447a4 but device have 649a4dfdc2cfb8fb0d876b658e58dfc7fcfc5a80dbd4f612b441c88dff9b80ee
-1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: FAILED installing, got DisconnectedDeviceDuringOperation
-2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+3413: nanox/1.2.4-1.6/dexon/app_1.2.13: KO:  have BAD HASH. API have f557d5bfec7d596b432c3737ebf08139af636499cddd101453a9b1853b30f3d2 but device have 51fb3700af30e24ef38a203ec3f02e3d455ffa309e8a65f0ad276ea360aaa134
+3397: nanox/1.2.4-1.6/ewc/app_1.2.13: KO:  have BAD HASH. API have 269ef354e4b886b3204b940c89e2c818487459199ae2f891b20b0cd7ef7ac053 but device have 1e2a7e8c365b48200d81e1c23d167fb8bc386aaf7258412fd6083b13f2ff7734
+3390: nanox/1.2.4-1.6/hpb/app_1.2.13: KO:  have BAD HASH. API have 56052f113a061fef89ac3fb4e76a415906c513e8496a6674cd66946eb16e86e9 but device have 72515842328d1fdeefb1fef72ec9fbaf50fa81043895a9390528aed8c85eb2de
+3388: nanox/1.2.4-1.6/reosc/app_1.2.13: KO:  have BAD HASH. API have c104344605923a8ee935b972eb82ee2991ada7d2c0ab78fd00765d23762a2b3d but device have 2f0d954349b01ca0565b68c2bacca5b1ac8b8f1c5a79d47ed8768b2447ff08e0
+3386: nanox/1.2.4-1.6/thundercore/app_1.2.13: KO:  have BAD HASH. API have 16bfb277d16b195b21c7d21af3d57d982c4f27137206040e3fc2433ba6277777 but device have be6794771ece9eed13a21f3c4ea00d3b578a5cb8a3612d600ae6f4a1e35d9925
+3389: nanox/1.2.4-1.6/tomochain/app_1.2.13: KO:  have BAD HASH. API have 98ee2ab164648d61992a2d2b701f13be2586cebda64a86055746991c188447a4 but device have 649a4dfdc2cfb8fb0d876b658e58dfc7fcfc5a80dbd4f612b441c88dff9b80ee
+1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 2619: blue/2.1.1.1/bitcoin_cash/app_1.3.13: OK: 
 2623: blue/2.1.1.1/bitcoin_gold/app_1.3.13: OK: 
 2632: blue/2.1.1.1/bitcoin_private/app_1.3.13: OK: 
