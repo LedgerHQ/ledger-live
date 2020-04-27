@@ -7,7 +7,7 @@ import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "../../portfolio";
 import { getEnv, setEnv } from "../../env";
 import { findCryptoCurrencyById } from "../../data/cryptocurrencies";
-import { canBeMigrated, decodeAccountId } from "../../account";
+import { canBeMigrated } from "../../account";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");
@@ -36,7 +36,7 @@ test("generate an account eligible to be migrated for mocked currencies", () => 
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("dogecoin")
+        currency: findCryptoCurrencyById("ethereum_classic") // should ignore libcore's no-go
       })
     )
   ).toBeTruthy();
