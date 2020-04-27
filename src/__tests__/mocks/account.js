@@ -6,6 +6,8 @@ import "../../load/tokens/tron/trc20";
 import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "../../portfolio";
 import { getEnv, setEnv } from "../../env";
+import { findCryptoCurrencyById } from "../../data/cryptocurrencies";
+import { canBeMigrated, decodeAccountId } from "../../account";
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");
@@ -18,6 +20,78 @@ test("generate an account from different seed should generate a different accoun
   setEnv("MOCK", "çacestvraiça");
   const b = genAccount(getEnv("MOCK"));
   expect(a).not.toEqual(b);
+});
+
+test("generate an account eligible to be migrated for mocked currencies", () => {
+  setEnv("MOCK", "#-extexist");
+  const mock = getEnv("MOCK");
+
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_0`, {
+        currency: findCryptoCurrencyById("ethereum_classic")
+      })
+    )
+  ).toBeFalsy(); // only the third mock account should be
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_2`, {
+        currency: findCryptoCurrencyById("dogecoin")
+      })
+    )
+  ).toBeTruthy();
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_2`, {
+        currency: findCryptoCurrencyById("dogecoin")
+      })
+    )
+  ).toBeTruthy();
+});
+
+test("generate no migratable accounts for other currencies", () => {
+  setEnv("MOCK", "MOCK");
+  const mock = getEnv("MOCK");
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_2`, {
+        currency: findCryptoCurrencyById("bitcoin")
+      })
+    )
+  ).toBeFalsy();
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_2`, {
+        currency: findCryptoCurrencyById("ethereum")
+      })
+    )
+  ).toBeFalsy();
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_2`, {
+        currency: findCryptoCurrencyById("tezos")
+      })
+    )
+  ).toBeFalsy();
+});
+
+test("generate no migratable accounts if not mock", () => {
+  setEnv("MOCK", "");
+  const mock = getEnv("MOCK");
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_2`, {
+        currency: findCryptoCurrencyById("dogecoin")
+      })
+    )
+  ).toBeFalsy();
+  expect(
+    canBeMigrated(
+      genAccount(`${mock}_2`, {
+        currency: findCryptoCurrencyById("ethereum_classic")
+      })
+    )
+  ).toBeFalsy();
 });
 
 test("dont generate negative balance", () => {

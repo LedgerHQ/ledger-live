@@ -69,9 +69,10 @@ export function canSend(
 
 export function canBeMigrated(account: Account) {
   try {
-    const { type } = decodeAccountId(account.id);
-    if (libcoreNoGo.includes(account.currency.id)) return false;
-    return type === "ethereumjs";
+    const { type, version } = decodeAccountId(account.id);
+    const mock = getEnv("MOCK");
+    if (!mock && libcoreNoGo.includes(account.currency.id)) return false;
+    return type === "ethereumjs" || (mock && version === "0");
   } catch (e) {
     return false;
   }
@@ -84,7 +85,7 @@ export function findAccountMigration(
 ): ?Account {
   if (!canBeMigrated(account)) return;
   const { type } = decodeAccountId(account.id);
-  if (type === "ethereumjs") {
+  if (type === "ethereumjs" || getEnv("MOCK")) {
     return scannedAccounts.find(
       a =>
         a.id !== account.id && // a migration assume an id changes
