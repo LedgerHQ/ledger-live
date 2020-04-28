@@ -19,6 +19,7 @@ bridge/mock.js \
 cli-transaction.js \
 test-dataset.js \
 test-specifics.js \
+mock.js \
 "
 
 cd ../src

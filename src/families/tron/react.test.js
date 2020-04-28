@@ -15,7 +15,7 @@ import {
   mockAccount,
   mockAccountNoReward,
   mockAccountNoVote
-} from "./mock";
+} from "./data.mock";
 
 jest.mock("../../api/Tron");
 

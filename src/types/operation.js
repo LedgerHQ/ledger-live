@@ -10,6 +10,7 @@ export type OperationType =
   | "REVEAL"
   | "DELEGATE"
   | "UNDELEGATE"
+  | "REDELEGATE"
   | "FREEZE"
   | "UNFREEZE"
   | "VOTE"

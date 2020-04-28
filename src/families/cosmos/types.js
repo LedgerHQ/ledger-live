@@ -115,7 +115,7 @@ export type CosmosDelegateTxInfo = {|
 |};
 
 export type CosmosUndelegateTxInfo = {|
-  validators: CosmosDelegationInfo[]
+  validator: CosmosDelegationInfo
 |};
 export type CosmosRedelegateTxInfo = {|
   validator: CosmosDelegationInfo,
@@ -123,7 +123,7 @@ export type CosmosRedelegateTxInfo = {|
 |};
 
 export type CosmosClaimRewardsTxInfo = {|
-  validator: CosmosDelegationInfo[]
+  validator: CosmosDelegationInfo
 |};
 
 export type CosmosDelegationInfo = {
