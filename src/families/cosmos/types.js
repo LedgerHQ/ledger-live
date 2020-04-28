@@ -6,6 +6,8 @@ import type {
   TransactionCommonRaw
 } from "../../types/transaction";
 
+import type { Operation, OperationRaw } from "../../types/operation";
+
 export type CoreStatics = {};
 export type CoreAccountSpecifics = {};
 export type CoreOperationSpecifics = {};
@@ -92,8 +94,39 @@ export type NetworkInfoRaw = {|
   fees: string
 |};
 
-// TODO suggest to rename to CosmosValidatorInput?
-export type CosmosValidator = {
+export type CosmosOperation = {|
+  ...Operation,
+  extra: CosmosExtraTxInfo
+|};
+
+export type CosmosOperationRaw = {|
+  ...OperationRaw,
+  extra: CosmosExtraTxInfo
+|};
+
+export type CosmosExtraTxInfo =
+  | CosmosDelegateTxInfo
+  | CosmosUndelegateTxInfo
+  | CosmosRedelegateTxInfo
+  | CosmosClaimRewardsTxInfo;
+
+export type CosmosDelegateTxInfo = {|
+  validators: CosmosDelegationInfo[]
+|};
+
+export type CosmosUndelegateTxInfo = {|
+  validators: CosmosDelegationInfo[]
+|};
+export type CosmosRedelegateTxInfo = {|
+  validator: CosmosDelegationInfo,
+  cosmosSourceValidator: ?string
+|};
+
+export type CosmosClaimRewardsTxInfo = {|
+  validator: CosmosDelegationInfo[]
+|};
+
+export type CosmosDelegationInfo = {
   address: string,
   amount: BigNumber
 };
@@ -111,7 +144,7 @@ export type Transaction = {|
   fees: ?BigNumber,
   gasLimit: ?BigNumber,
   memo: ?string,
-  validators: ?(CosmosValidator[]),
+  validators: ?(CosmosDelegationInfo[]),
   cosmosSourceValidator: ?string
 |};
 
