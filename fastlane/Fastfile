@@ -24,6 +24,21 @@ lane :beta do |options|
 
   release = options.fetch(:release, false)
 
+
+  # Makes sure Android Keystore File is set for release
+  # as we need to sign Android app (which can still complete even without signing)
+  if (ENV["ANDROID_KEYSTORE_FILE"] == nil)
+    puts "You need to set an ANDROID_KEYSTORE_FILE env variable to sign Android app"
+    next
+  end
+
+  # Makes sur the Appfile is present
+  if (!File.file?('Appfile'))
+    puts "You need to create an Appfile."
+    puts "You can copy and update Appfile.template"
+    next
+  end
+
   if (release == true)
     commit = last_git_commit
     git_pull
