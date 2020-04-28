@@ -346,9 +346,14 @@ export function genAccount(
   );
   const freshAddress = { address, derivationPath };
 
+  // nb Make the third (ethereum_classic, dogecoin) account originally migratable
+  const outdated =
+    ["ethereum_classic", "dogecoin"].includes(currency.id) &&
+    `${id}`.endsWith("_2");
+
   const account: $Exact<Account> = {
     type: "Account",
-    id: `mock:1:${currency.id}:${id}:`,
+    id: `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`,
     seedIdentifier: "mock",
     derivationMode: "",
     xpub: genHex(64, rng),

@@ -28,7 +28,7 @@ Object {
       "currencyId": "dogecoin",
       "derivationMode": "",
       "freshAddress": "1CWNKLfcukxxXRNRK1DpYwPA6Hb1h",
-      "id": "mock:1:dogecoin:export_2:",
+      "id": "mock:0:dogecoin:export_2:",
       "index": 1,
       "name": "s9dZEiOrwfEPOXbKgNKq88aQZ",
       "seedIdentifier": "mock",
