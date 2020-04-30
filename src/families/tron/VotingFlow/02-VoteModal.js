@@ -50,12 +50,18 @@ const VoteModal = ({
 
   const [useAllAmount, setUseAllAmount] = useState(false);
 
+  const inputRef = useRef();
+
   const { current: votesAvailable } = useRef(
     tronPower -
       votes
         .filter(v => v.address !== address)
         .reduce((sum, { voteCount }) => sum + voteCount, 0),
   );
+
+  const focusInput = useCallback(() => {
+    if (inputRef && inputRef.current) inputRef.current.focus();
+  }, [inputRef]);
 
   const handleChange = useCallback(
     text => {
@@ -85,7 +91,12 @@ const VoteModal = ({
   const error = value <= 0 || value > votesAvailable;
 
   return (
-    <BottomModal isOpened={!!vote} onClose={onClose} coverScreen>
+    <BottomModal
+      isOpened={!!vote}
+      onClose={onClose}
+      coverScreen
+      onModalShow={focusInput}
+    >
       <SafeAreaView>
         <KeyboardAvoidingView
           style={styles.rootKeyboard}
@@ -113,13 +124,13 @@ const VoteModal = ({
           </View>
           <View style={styles.wrapper}>
             <TextInput
+              ref={inputRef}
               allowFontScaling={false}
               hitSlop={{ top: 20, bottom: 20 }}
               onChangeText={handleChange}
               style={[styles.inputStyle, error ? styles.error : {}]}
               autoCorrect={false}
               value={`${value || ""}`}
-              autoFocus
               keyboardType="numeric"
               blurOnSubmit
               placeholder="0"
