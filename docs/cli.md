@@ -9,7 +9,7 @@ To install it, you will need to have an instance of [Node 12 (LTS)](https://node
 You can then install it with
 
 ```
-npm i -s ledger-live
+npm i -g ledger-live
 ```
 
 You can now run:
