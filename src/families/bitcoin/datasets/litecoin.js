@@ -1,35 +1,135 @@
 // @flow
+
+import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "../../../__tests__/test-helpers/bridge";
-import type { Transaction } from "../types";
+import type { NetworkInfoRaw, Transaction } from "../types";
+import { fromTransactionRaw } from "../transaction";
+import scanAccounts1 from "./litecoin.scanAccounts.1";
+
+const networkInfo: NetworkInfoRaw = {
+  family: "bitcoin",
+  feeItems: {
+    items: [
+      { key: "0", speed: "high", feePerByte: "100" },
+      { key: "1", speed: "standard", feePerByte: "100" },
+      { key: "2", speed: "low", feePerByte: "100" }
+    ],
+    defaultFeePerByte: "39"
+  }
+};
 
 const dataset: CurrenciesData<Transaction> = {
-  scanAccounts: [
+  scanAccounts: [scanAccounts1],
+
+  accounts: [
     {
-      name: "litecoin seed 1",
-      apdus: `
-      => e040000009028000002c80000002
-      <= 4104cf7ed8d669b968501978d55273cd9e6d9fd4a449621a1d370f08b80f9dafd44bf778d6f66d645f0022c9507308c6b7cb56ef46051be6a5001a9fd4e27af1a9f7224c5050754532576b36534b77533653715557434b426356764b524b4146364d386f68e55bf2a45e01baac8f17d2da4a2f1dfb2d7e5d9d0294aff5d60b5bc82897c9639000
-      => e016000000
-      <= 0030003201084c697465636f696e034c54439000
-      => e040000009028000002c80000002
-      <= 4104cf7ed8d669b968501978d55273cd9e6d9fd4a449621a1d370f08b80f9dafd44bf778d6f66d645f0022c9507308c6b7cb56ef46051be6a5001a9fd4e27af1a9f7224c5050754532576b36534b77533653715557434b426356764b524b4146364d386f68e55bf2a45e01baac8f17d2da4a2f1dfb2d7e5d9d0294aff5d60b5bc82897c9639000
-      => e04000000d038000002c8000000280000000
-      <= 4104fb4805746848cbf5abdf143659a6ceb5ed0f894bd2a0a76a881b03e2f9be00d910c746046fdd40c1ad48b6b0479c4410248f6d3d625793865e13ff3f9bcc861f224c623143387a6b794a6b66724661455371577378314a45536638766d646934567779dab20cb5eab22b54c2c4e7125d0de57b6eb835a93b7a11a15b1d226f57e1d5e49000
-      => e04000000d038000002c8000000280000001
-      <= 4104d2d77944c0bafc86d9b657955fb2c8387700b193dcda0228faba15ce828148389fa13e3d1662bfc6df298a241175cb4652934123a0427b683f909765696ac9be224c68734a524a4e6162536e6a456b4a3573583256585a4c6a574d4458745957616e436f37edde1a50ef2a64ee24f316bc771fe046deb7300a03164455da983881a2959000
-      => e040000109028000003180000002
-      <= 410456c3892650e87b1c0664b86f97dea8253ba0199e1d5bbbb280c26e56a4df22b4eb970fdf51222609264aba62f5d106f66c67743ee02c6af6b7bf9b39a4bf4bf2224d5045614b4565586542597144476175376b646a47413351537434314879344a3665daf23e1ffdc18a4f077f4c05523dc730b6e91bc70ab0238e48999211246820599000
-      => e016000000
-      <= 0030003201084c697465636f696e034c54439000
-      => e040000109028000003180000002
-      <= 410456c3892650e87b1c0664b86f97dea8253ba0199e1d5bbbb280c26e56a4df22b4eb970fdf51222609264aba62f5d106f66c67743ee02c6af6b7bf9b39a4bf4bf2224d5045614b4565586542597144476175376b646a47413351537434314879344a3665daf23e1ffdc18a4f077f4c05523dc730b6e91bc70ab0238e48999211246820599000
-      => e04000010d03800000318000000280000000
-      <= 4104921553e9c4ff6ef39e98f2e8a7719d76e6ecdc67cbb65dcdfd4d04b7e0386524daf087032c6a2ab4280d343d8f4d086e1ef78d9acc1e2464282feb75abf624aa224d50644e774461693159417761347973574236754832735657674258426a74664c62c9e0df7f3e7c7983bb724ac8c7b71b2ebc2cfd32dcf4160f7897944b368496db9000
-      => e04000010d03800000318000000280000001
-      <= 4104068196790d254d12bf7d8590cba4ca20d5bfa55b5cefb85cee30d9cf5b540d0a95f18869210cb8e207a65df2c5f3e9fab10904a9297737f38a5e33954d0f2d7b224d39464b6677384e5976735a626b4a7a36396344626134506a4c34696271624c627aa52962349eeecf826d4b43e35af52d4a3ec6878cd177f1d3adc5e589d92240bb9000
-      => e04000010d03800000318000000280000002
-      <= 4104f19ee6215d26b75ef1d73899c4737ed9d28de2489e187dfc97849696f4ee4034e5dc688b63a03a6149cd35da8ac2ece06d16cac6b293a45c9bd36881fcbf2fe0224d54666d437a696b5361365258355569356265315a6e784b426e39664e48546452322b448f9974800cb787b285b7c29296100eaff4174639db065fe658cd0d596a439000
-      `
+      transactions: [
+        {
+          name: "on legacy recipient",
+          transaction: fromTransactionRaw({
+            amount: "200000",
+            recipient: "LLVLXPBzLTHYjF5Q4r6iCEEztCmWecazwP",
+            useAllAmount: false,
+            family: "bitcoin",
+            feePerByte: "39",
+            networkInfo
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+            //  estimatedFees: BigNumber("5694"),
+            amount: BigNumber("200000")
+            //  totalSpent: BigNumber("205694")
+          }
+        },
+        {
+          name: "on segwit recipient",
+          transaction: fromTransactionRaw({
+            amount: "147200",
+            recipient: "MGWgRF4qLAHtYhEe6VcQNeQRxVhPd3evHc",
+            useAllAmount: false,
+            family: "bitcoin",
+            feePerByte: "39",
+            networkInfo
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+            //  estimatedFees: BigNumber("5694"),
+            amount: BigNumber("147200")
+            //  totalSpent: BigNumber("152894")
+          }
+        },
+        {
+          name: "on nativ_segwit recipient",
+          transaction: fromTransactionRaw({
+            amount: "205273",
+            recipient: "ltc1qd2x2x0wf3wgkka87qlm8772tuw6yx6fl9j07ag",
+            useAllAmount: false,
+            family: "bitcoin",
+            feePerByte: "39",
+            networkInfo
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+            //  estimatedFees: BigNumber("5694"),
+            amount: BigNumber("205273")
+            //  totalSpent: BigNumber("210967")
+          }
+        }
+      ],
+      raw: {
+        id:
+          "libcore:1:litecoin:Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF:native_segwit",
+        seedIdentifier:
+          "046fc19d6536e34ada42efa9e41aa2e6c316ce2844b57feb82155c2f4fdbbd5fddf2e03996787af3d982648f7ea2243bd60885d34658bd55b8470e6809a4c04fc3",
+        name: "Litecoin 1 (native segwit)",
+        derivationMode: "native_segwit",
+        index: 0,
+        freshAddress: "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
+        freshAddressPath: "84'/2'/0'/0/3",
+        freshAddresses: [
+          {
+            address: "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
+            derivationPath: "84'/2'/0'/0/3"
+          }
+        ],
+        blockHeight: 0,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "litecoin",
+        unitMagnitude: 8,
+        lastSyncDate: "",
+        balance: "2183515",
+        xpub:
+          "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF"
+      }
+    },
+    {
+      raw: {
+        id: "libcore:1:litecoin:Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr:segwit",
+        seedIdentifier: "04d7d329aa21c8425cf58ebf7f3c27afe3967c44bd23d3caccfa6beff04110c249418a6a98a1145b0ea1bf489ea84ebe3e66e46f4bd376130b16823a2805ba6ec9",
+        name: "Litecoin 3 (segwit)",
+        derivationMode: "segwit",
+        index: 2,
+        freshAddress: "MKLFUqcvJkqqvF48BFTFLxDvJk43cqbhk1",
+        freshAddressPath: "49'/2'/2'/0/1",
+        freshAddresses: [
+          {
+            address: "MKLFUqcvJkqqvF48BFTFLxDvJk43cqbhk1",
+            derivationPath: "49'/2'/2'/0/1"
+          }
+        ],
+        blockHeight: 0,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "litecoin",
+        unitMagnitude: 8,
+        lastSyncDate: "",
+        balance: "0",
+        xpub: "Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr"
+      }
     }
   ]
 };
