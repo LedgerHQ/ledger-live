@@ -62,7 +62,7 @@ export default function AccountActions({ account, parentAccount }: Props) {
         account,
         parentAccount,
         onNavigate,
-        style: styles.scrollBtn,
+        style: !readOnlyModeEnabled ? styles.scrollBtn : styles.btn,
       })) ||
     null;
 
@@ -78,8 +78,10 @@ export default function AccountActions({ account, parentAccount }: Props) {
     });
   }, [onNavigate]);
 
-  const Container = manageAction ? ScrollViewContainer : View;
-  const btnStyle = manageAction ? styles.scrollBtn : styles.btn;
+  const Container =
+    !readOnlyModeEnabled && manageAction ? ScrollViewContainer : View;
+  const btnStyle =
+    !readOnlyModeEnabled && manageAction ? styles.scrollBtn : styles.btn;
 
   return (
     <Container style={styles.root}>
