@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
@@ -149,7 +149,7 @@ class GraphCardHeader extends PureComponent<{
     const item = hoveredItem || to;
 
     return (
-      <Fragment>
+      <>
         <View style={styles.balanceTextContainer}>
           {renderTitle ? (
             renderTitle({
@@ -166,30 +166,30 @@ class GraphCardHeader extends PureComponent<{
         </View>
         <View style={styles.subtitleContainer}>
           {isLoading ? (
-            <Fragment>
+            <>
               <Placeholder
                 width={50}
                 containerHeight={19}
                 style={{ marginRight: 10 }}
               />
               <Placeholder width={50} containerHeight={19} />
-            </Fragment>
+            </>
           ) : hoveredItem ? (
             <LText>
-              <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
+              <FormatDate date={hoveredItem.date} />
             </LText>
           ) : valueChange ? (
-            <Fragment>
+            <>
               <Delta
                 percent
                 valueChange={valueChange}
                 style={styles.deltaPercent}
               />
               <Delta valueChange={valueChange} unit={unit} />
-            </Fragment>
+            </>
           ) : null}
         </View>
-      </Fragment>
+      </>
     );
   }
 }
@@ -236,9 +236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-)(AssetGraphCard);
+export default compose(connect(null, mapDispatchToProps))(AssetGraphCard);

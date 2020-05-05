@@ -1,31 +1,34 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName, NavigatorName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
-import { withOnboardingContext } from "../../Onboarding/onboardingContext";
-import type { OnboardingStepProps } from "../../Onboarding/types";
+import { useNavigationInterceptor } from "../../Onboarding/onboardingContext";
 
-class ConfigureDeviceRow extends PureComponent<OnboardingStepProps> {
-  onPress = async () => {
-    this.props.setShowWelcome(false);
-    this.props.setFirstTimeOnboarding(false);
-    this.props.navigation.navigate("OnboardingStepChooseDevice", {
-      goingBackToScreen: "HelpSettings",
+export default function ConfigureDeviceRow() {
+  const { navigate } = useNavigation();
+  const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
+
+  function onPress() {
+    setShowWelcome(false);
+    setFirstTimeOnboarding(false);
+    navigate(NavigatorName.Onboarding, {
+      screen: ScreenName.OnboardingStepChooseDevice,
+      params: {
+        goingBackToScreen: ScreenName.HelpSettings,
+      },
     });
-  };
-
-  render() {
-    return (
-      <SettingsRow
-        event="ConfigureDeviceRow"
-        title={<Trans i18nKey="settings.help.configureDevice" />}
-        desc={<Trans i18nKey="settings.help.configureDeviceDesc" />}
-        arrowRight
-        onPress={this.onPress}
-        alignedTop
-      />
-    );
   }
-}
 
-export default withOnboardingContext(ConfigureDeviceRow);
+  return (
+    <SettingsRow
+      event="ConfigureDeviceRow"
+      title={<Trans i18nKey="settings.help.configureDevice" />}
+      desc={<Trans i18nKey="settings.help.configureDeviceDesc" />}
+      arrowRight
+      onPress={onPress}
+      alignedTop
+    />
+  );
+}

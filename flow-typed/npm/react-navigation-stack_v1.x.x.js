@@ -1,5 +1,5 @@
-// flow-typed signature: 1b989a59cd93fc966ab15b80edcd4d43
-// flow-typed version: 16cbaddecd/react-navigation-stack_v1.x.x/flow_>=v0.104.x
+// flow-typed signature: c160a027e33cf97235b8234433c6420e
+// flow-typed version: b527cb0ea1/react-navigation-stack_v1.x.x/flow_>=v0.104.x
 
 // @flow
 
@@ -624,9 +624,7 @@ declare module 'react-navigation-stack' {
     backTitleVisible?: boolean,
     allowFontScaling?: boolean,
     titleStyle?: ?TextStyleProp,
-    headerLayoutPreset: 'left' | 'center',
     width?: ?number,
-    scene: NavigationStackScene,
   |};
 
   declare export type NavigationStackScreenOptions = NavigationScreenOptions & {

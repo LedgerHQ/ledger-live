@@ -6,17 +6,17 @@ import BottomModal from "../components/BottomModal";
 import LText from "../components/LText";
 import colors from "../colors";
 
-interface Props {
-  data: ModalInfo[];
-  isOpened: boolean;
-  onClose: () => void;
-}
+type Props = {
+  data: ModalInfo[],
+  isOpened: boolean,
+  onClose: () => void,
+};
 
-export interface ModalInfo {
-  description: React$Node;
-  Icon: () => React$Element<React$ElementType>;
-  title: React$Node;
-}
+export type ModalInfo = {
+  description: React$Node,
+  Icon: () => React$Element<React$ElementType>,
+  title: React$Node,
+};
 
 export default function InfoModal({ data, isOpened, onClose }: Props) {
   return (

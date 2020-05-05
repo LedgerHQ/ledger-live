@@ -1,10 +1,9 @@
 // @flow
 import React, { useCallback, useState, useMemo } from "react";
 import { View, Linking, TouchableOpacity, StyleSheet } from "react-native";
-import { withNavigation } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -17,16 +16,14 @@ import {
   MIN_TRANSACTION_AMOUNT,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/lib/explorers";
-
-import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-
 import { urls } from "../../../config/urls";
 import Row from "./Row";
 import Header from "./Header";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import colors from "../../../colors";
+import { NavigatorName, ScreenName } from "../../../const";
 import ExternalLink from "../../../icons/ExternalLink";
 import Info from "../../../icons/Info";
 import ArrowRight from "../../../icons/ArrowRight";
@@ -49,15 +46,10 @@ const infoRewardsModalData = [
 type Props = {
   account: Account,
   parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      parentId: string,
-    },
-  }>,
 };
 
-const Delegation = ({ account, parentAccount, navigation }: Props) => {
+const Delegation = ({ account, parentAccount }: Props) => {
+  const navigation = useNavigation();
   const [infoRewardsModal, setRewardsInfoModal] = useState();
 
   const superRepresentatives = useTronSuperRepresentatives();
@@ -97,36 +89,46 @@ const Delegation = ({ account, parentAccount, navigation }: Props) => {
     setRewardsInfoModal,
   ]);
 
-  const claimRewards = useCallback(
-    () =>
-      navigation.navigate("ClaimRewardsConnectDevice", {
+  const claimRewards = useCallback(() => {
+    navigation.navigate(NavigatorName.ClaimRewards, {
+      screen: ScreenName.ClaimRewardsConnectDevice,
+      params: {
         accountId,
         parentId,
-      }),
-    [accountId, navigation, parentId],
-  );
+      },
+    });
+  }, [accountId, navigation, parentId]);
 
-  const onDelegateFreeze = useCallback(
-    () =>
-      navigation.navigate("FreezeInfo", {
+  const onDelegateFreeze = useCallback(() => {
+    navigation.navigate(NavigatorName.Freeze, {
+      screen: ScreenName.FreezeInfo,
+      params: {
         accountId,
         parentId,
-      }),
-    [accountId, navigation, parentId],
-  );
+      },
+    });
+  }, [accountId, navigation, parentId]);
 
   const onManageVotes = useCallback(() => {
-    navigation.navigate("CastVote", {
-      accountId,
-      parentId,
+    navigation.navigate(NavigatorName.TronVoteFlow, {
+      screen: ScreenName.VoteCast,
+      params: {
+        accountId,
+        parentId,
+      },
     });
   }, [navigation, accountId, parentId]);
 
   const onDelegate = useCallback(() => {
-    const screenName = lastVotedDate ? "VoteSelectValidator" : "VoteStarted";
-    navigation.navigate(screenName, {
-      accountId,
-      parentId,
+    const screenName = lastVotedDate
+      ? ScreenName.VoteSelectValidator
+      : ScreenName.VoteStarted;
+    navigation.navigate(NavigatorName.TronVoteFlow, {
+      screen: screenName,
+      params: {
+        accountId,
+        parentId,
+      },
     });
   }, [lastVotedDate, navigation, accountId, parentId]);
 
@@ -405,16 +407,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const Votes = ({ account, parentAccount, navigation }: Props) => {
+export default function Votes({ account, parentAccount }: Props) {
   if (!account || !account.tronResources) return null;
 
-  return (
-    <Delegation
-      account={account}
-      parentAccount={parentAccount}
-      navigation={navigation}
-    />
-  );
-};
-
-export default withNavigation(Votes);
+  return <Delegation account={account} parentAccount={parentAccount} />;
+}

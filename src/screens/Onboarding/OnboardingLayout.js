@@ -1,10 +1,8 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
-import { StatusBar, StyleSheet, View } from "react-native";
-// $FlowFixMe
-import { ScrollView, SafeAreaView } from "react-navigation";
-
+import React, { PureComponent } from "react";
+import { StatusBar, StyleSheet, View, ScrollView } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import colors from "../../colors";
 import OnboardingHeader from "./OnboardingHeader";
 
@@ -50,7 +48,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
 
     if (isCentered) {
       inner = (
-        <Fragment>
+        <>
           <View>{inner}</View>
           {Footer && (
             <View
@@ -62,7 +60,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
               <Footer />
             </View>
           )}
-        </Fragment>
+        </>
       );
     }
 
@@ -80,7 +78,7 @@ export default class OnboardingLayout extends PureComponent<Props> {
 
     if (header) {
       inner = (
-        <Fragment>
+        <>
           <OnboardingHeader
             stepId={header}
             withSkip={withSkip}
@@ -101,15 +99,12 @@ export default class OnboardingLayout extends PureComponent<Props> {
               <Footer />
             </View>
           )}
-        </Fragment>
+        </>
       );
     }
 
     return (
-      <SafeAreaView
-        forceInset={{ bottom: "always", top: "always" }}
-        style={[styles.root, isCentered && styles.centered, style]}
-      >
+      <SafeAreaView style={[styles.root, isCentered && styles.centered, style]}>
         {inner}
       </SafeAreaView>
     );

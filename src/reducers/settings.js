@@ -14,8 +14,7 @@ import { createSelector } from "reselect";
 import type {
   CryptoCurrency,
   Currency,
-  Account,
-  TokenAccount,
+  AccountLike,
 } from "@ledgerhq/live-common/lib/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
@@ -283,10 +282,7 @@ export const currencySettingsSelector = (
 });
 
 // $FlowFixMe
-export const privacySelector = createSelector(
-  storeSelector,
-  s => s.privacy,
-);
+export const privacySelector = createSelector(storeSelector, s => s.privacy);
 
 // $FlowFixMe
 export const reportErrorsEnabledSelector = createSelector(
@@ -308,7 +304,7 @@ export const experimentalUSBEnabledSelector = createSelector(
 
 export const currencySettingsForAccountSelector = (
   s: *,
-  { account }: { account: TokenAccount | Account },
+  { account }: { account: AccountLike },
 ) => currencySettingsSelector(s, { currency: getAccountCurrency(account) });
 
 export const exchangeSettingsForPairSelector = (

@@ -1,13 +1,14 @@
 // @flow
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { withNavigation } from "react-navigation";
 import { StyleSheet, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import { isAccountDelegating } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import IlluStaking from "./IlluStaking";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
@@ -39,19 +40,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const TezosAccountHeader = ({
-  account,
-  parentAccount,
-  navigation,
-}: {
+type Props = {
   account: AccountLike,
   parentAccount: ?Account,
-  navigation: *,
-}) => {
+};
+
+export default function TezosAccountHeader({ account, parentAccount }: Props) {
+  const navigation = useNavigation();
+
   const onEarnRewards = useCallback(() => {
-    navigation.navigate("DelegationStarted", {
-      accountId: account.id,
-      parentId: parentAccount ? parentAccount.id : undefined,
+    navigation.navigate(ScreenName.TezosDelegationFlow, {
+      screen: "DelegationStarted",
+      params: {
+        accountId: account.id,
+        parentId: parentAccount ? parentAccount.id : undefined,
+      },
     });
   }, [navigation, account, parentAccount]);
 
@@ -75,6 +78,4 @@ const TezosAccountHeader = ({
       <IlluStaking style={styles.bannerImage} />
     </View>
   );
-};
-
-export default withNavigation(TezosAccountHeader);
+}

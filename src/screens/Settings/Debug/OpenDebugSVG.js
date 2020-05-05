@@ -1,13 +1,16 @@
 // @flow
 import React from "react";
-import { withNavigation } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
 
-const OpenDebugSVG = ({ navigation }: { navigation: * }) => (
-  <SettingsRow
-    title="Debug SVG"
-    onPress={() => navigation.navigate("DebugSVG")}
-  />
-);
+export default function OpenDebugSVG() {
+  const navigation = useNavigation();
 
-export default withNavigation(OpenDebugSVG);
+  return (
+    <SettingsRow
+      title="Debug SVG"
+      onPress={() => navigation.navigate(ScreenName.DebugSVG)}
+    />
+  );
+}

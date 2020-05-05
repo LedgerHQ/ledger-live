@@ -1,24 +1,21 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { Trans, translate } from "react-i18next";
+import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
 import {
   TouchableOpacity,
   View,
   StyleSheet,
   Platform,
   Dimensions,
+  FlatList,
 } from "react-native";
-// $FlowFixMe
-import { FlatList, SafeAreaView, withNavigation } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import i18next from "i18next";
+import SafeAreaView from "react-native-safe-area-view";
 import { getAssetsDistribution } from "@ledgerhq/live-common/lib/portfolio";
-import { createStructuredSelector, createSelector } from "reselect";
+import { createSelector } from "reselect";
 import type { AssetsDistribution } from "@ledgerhq/live-common/lib/types/portfolio";
 import type { Currency } from "@ledgerhq/live-common/lib/types/currencies";
-import type { T } from "../../types/common";
+import { ScreenName } from "../../const";
 import TrackScreen from "../../analytics/TrackScreen";
 import { accountsSelector } from "../../reducers/accounts";
 import DistributionCard from "./DistributionCard";
@@ -33,10 +30,12 @@ import { calculateCountervalueSelector } from "../../actions/general";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
+};
+
+type DistributionProps = Props & {
   distribution: AssetsDistribution,
   counterValueCurrency: Currency,
-  t: T,
 };
 
 const distributionSelector = createSelector(
@@ -45,27 +44,17 @@ const distributionSelector = createSelector(
   getAssetsDistribution,
 );
 
-const mapStateToProps = createStructuredSelector({
-  distribution: distributionSelector,
-  counterValueCurrency: counterValueCurrencySelector,
-});
-
-class Distribution extends PureComponent<Props, *> {
+class Distribution extends PureComponent<DistributionProps, *> {
   state = {
     highlight: -1,
   };
   flatListRef = React.createRef();
 
-  static navigationOptions = {
-    title: i18next.t("distribution.header"),
-    headerLeft: null,
-  };
-
   renderItem = ({ item, index }: { item: DistributionItem, index: number }) => (
     <TouchableOpacity
       onPress={() => this.onHighlightChange(index)}
       onLongPress={() =>
-        this.props.navigation.navigate("Asset", {
+        this.props.navigation.navigate(ScreenName.Asset, {
           currency: item.currency,
         })
       }
@@ -153,10 +142,18 @@ class Distribution extends PureComponent<Props, *> {
   }
 }
 
-export default compose(
-  translate(),
-  connect(mapStateToProps),
-)(withNavigation(Distribution));
+export default function Screen({ navigation }: Props) {
+  const distribution = useSelector(distributionSelector);
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  return (
+    <Distribution
+      navigation={navigation}
+      distribution={distribution}
+      counterValueCurrency={counterValueCurrency}
+    />
+  );
+}
 
 const styles = StyleSheet.create({
   wrapper: {

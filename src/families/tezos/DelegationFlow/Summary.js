@@ -1,14 +1,11 @@
 /* @flow */
 import React, { useCallback, useEffect, useState } from "react";
 import { View, StyleSheet, Animated } from "react-native";
-// $FlowFixMe
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { translate, Trans } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
 import invariant from "invariant";
 import Icon from "react-native-vector-icons/dist/Feather";
-import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   getAccountCurrency,
@@ -25,16 +22,16 @@ import {
   useRandomBaker,
 } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/lib/families/tezos/bakers.whitelist-default";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { accountAndParentScreenSelector } from "../../../reducers/accounts";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { accountScreenSelector } from "../../../reducers/accounts";
 import colors, { rgba } from "../../../colors";
+import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import Circle from "../../../components/Circle";
 import CurrencyIcon from "../../../components/CurrencyIcon";
-import StepHeader from "../../../components/StepHeader";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import Touchable from "../../../components/Touchable";
 import VerifyAddressDisclaimer from "../../../components/VerifyAddressDisclaimer";
@@ -44,15 +41,14 @@ import BakerImage from "../BakerImage";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      mode?: "delegate" | "undelegate",
-      accountId: string,
-      parentId?: string,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
+};
+
+type RouteParams = {
+  mode?: "delegate" | "undelegate",
+  accountId: string,
+  parentId?: string,
 };
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
@@ -83,7 +79,7 @@ const Words = ({
 }: {
   children: React$Node,
   highlighted?: boolean,
-  style?: *,
+  style?: any,
 }) => (
   <LText
     numberOfLines={1}
@@ -118,7 +114,8 @@ const BakerSelection = ({
   </View>
 );
 
-const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
+export default function DelegationSummary({ navigation, route }: Props) {
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const bakers = useBakers(whitelist);
   const randomBaker = useRandomBaker(bakers);
 
@@ -143,7 +140,7 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
 
     // make sure the mode is in sync (an account changes can reset it)
     const patch: Object = {
-      mode: navigation.getParam("mode") || "delegate",
+      mode: route.params?.mode ?? "delegate",
     };
 
     // make sure that in delegate mode, a transaction recipient is set (random pick)
@@ -167,6 +164,7 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
     parentAccount,
     setTransaction,
     transaction,
+    route.params,
   ]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
@@ -203,11 +201,11 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
 
   const onChangeDelegator = useCallback(() => {
     rotateAnim.setValue(0);
-    navigation.navigate("DelegationSelectValidator", {
-      ...navigation.state.params,
+    navigation.navigate(ScreenName.DelegationSelectValidator, {
+      ...route.params,
       transaction,
     });
-  }, [rotateAnim, navigation, transaction]);
+  }, [rotateAnim, navigation, transaction, route.params]);
 
   const delegation = useDelegation(account);
   const addr =
@@ -221,13 +219,10 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
   const accountName = getAccountName(account);
 
   // handle any edit screen changes
-  useTransactionChangeFromNavigation({
-    navigation,
-    setTransaction,
-  });
+  useTransactionChangeFromNavigation(setTransaction);
 
   const onContinue = useCallback(async () => {
-    navigation.navigate("DelegationConnectDevice", {
+    navigation.navigate(ScreenName.DelegationConnectDevice, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
@@ -359,21 +354,7 @@ const DelegationSummary = ({ account, parentAccount, navigation }: Props) => {
       </View>
     </SafeAreaView>
   );
-};
-
-DelegationSummary.navigationOptions = {
-  headerLeft: null,
-  gesturesEnabled: false,
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("delegation.summaryTitle")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "1",
-        totalSteps: "3",
-      })}
-    />
-  ),
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -483,7 +464,3 @@ const styles = StyleSheet.create({
     left: 16,
   },
 });
-
-export default connect(accountAndParentScreenSelector)(
-  translate()(DelegationSummary),
-);

@@ -1,70 +1,74 @@
 /* @flow */
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import invariant from "invariant";
 import {
   useTronPowerLoading,
   getLastVotedDate,
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/lib/hooks/useTimer";
-
-import type { NavigationScreenProp } from "react-navigation";
-import type { Account, Operation } from "@ledgerhq/live-common/lib/types";
-
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import type { Operation } from "@ledgerhq/live-common/lib/types";
+import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
+import { NavigatorName, ScreenName } from "../../const";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 
 type Props = {
-  account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      deviceId: string,
-      transaction: *,
-      result: Operation,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const ValidationSuccess = ({ account, navigation }: Props) => {
+type RouteParams = {
+  accountId: string,
+  deviceId: string,
+  transaction: any,
+  result: Operation,
+};
+
+export default function ValidationSuccess({ navigation, route }: Props) {
+  const { account } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is required");
+
   const time = useTimer(60);
   const isLoading = useTronPowerLoading(account);
 
-  const transaction = navigation.getParam("transaction");
+  const transaction = route.params.transaction;
   const resource = transaction.resource || "";
 
   const accountId = account.id;
 
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
-  const dismiss = useCallback(() => {
-    if (navigation.dismiss) {
-      const dismissed = navigation.dismiss();
-      if (!dismissed) navigation.goBack();
-    }
+  const onClose = useCallback(() => {
+    navigation.dangerouslyGetParent().pop();
   }, [navigation]);
 
   const goToVote = useCallback(() => {
-    const screenName = lastVotedDate ? "VoteSelectValidator" : "VoteStarted";
-    navigation.dismiss();
-    navigation.navigate(screenName, {
-      accountId,
-      parentId: undefined,
+    onClose();
+    const screenName = lastVotedDate
+      ? ScreenName.VoteSelectValidator
+      : ScreenName.VoteStarted;
+    navigation.navigate(NavigatorName.TronVoteFlow, {
+      screen: screenName,
+      params: {
+        accountId,
+        parentId: undefined,
+      },
     });
-  }, [lastVotedDate, accountId, navigation]);
+  }, [lastVotedDate, accountId, navigation, onClose]);
 
   return (
     <View style={styles.root}>
       <TrackScreen category="FreezeFunds" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess
-        onClose={dismiss}
+        onClose={onClose}
         onViewDetails={goToVote}
         title={<Trans i18nKey="freeze.validation.success" />}
         description={
@@ -111,18 +115,13 @@ const ValidationSuccess = ({ account, navigation }: Props) => {
             title={<Trans i18nKey="freeze.validation.button.later" />}
             type="lightSecondary"
             containerStyle={styles.button}
-            onPress={dismiss}
+            onPress={onClose}
           />
         }
       />
     </View>
   );
-};
-
-ValidationSuccess.navigationOptions = {
-  header: null,
-  gesturesEnabled: false,
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -143,7 +142,3 @@ const styles = StyleSheet.create({
   label: { fontSize: 12 },
   subLabel: { color: colors.grey },
 });
-
-const mapStateToProps = accountAndParentScreenSelector;
-
-export default connect(mapStateToProps)(ValidationSuccess);

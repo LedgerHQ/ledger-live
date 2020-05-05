@@ -1,10 +1,8 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-// $FlowFixMe
-import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import colors from "../../colors";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -12,28 +10,18 @@ import ComingSoon from "../../icons/ComingSoon";
 
 const forceInset = { bottom: "always" };
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-};
-
-class ExchangeScreen extends Component<Props> {
-  static navigationOptions = {
-    header: null,
-  };
-
-  render() {
-    return (
-      <SafeAreaView
-        style={[styles.root, { paddingTop: extraStatusBarPadding }]}
-        forceInset={forceInset}
-      >
-        <TrackScreen category="Exchange" />
-        <View style={styles.body}>
-          <ComingSoon />
-        </View>
-      </SafeAreaView>
-    );
-  }
+export default function ExchangeScreen() {
+  return (
+    <SafeAreaView
+      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      forceInset={forceInset}
+    >
+      <TrackScreen category="Exchange" />
+      <View style={styles.body}>
+        <ComingSoon />
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -50,5 +38,3 @@ const styles = StyleSheet.create({
     paddingBottom: 64,
   },
 });
-
-export default ExchangeScreen;

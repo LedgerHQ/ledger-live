@@ -2,12 +2,8 @@
 
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-import i18next from "i18next";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { translate } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
+import { useDispatch, useSelector } from "react-redux";
 import { timeout } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
@@ -31,15 +27,19 @@ import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
 
 type Props = {
-  navigation: NavigationScreenProp<{
-    params: {
-      onDone?: (deviceId: string) => void,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
+};
+
+type PairDevicesProps = Props & {
   knownDevices: DeviceLike[],
   hasCompletedOnboarding: boolean,
-  addKnownDevice: DeviceLike => *,
-  installAppFirstTime: boolean => void,
+  addKnownDevice: DeviceLike => void,
+  installAppFirstTime: (value: boolean) => void,
+};
+
+type RouteParams = {
+  onDone?: (deviceId: string) => void,
 };
 
 type Device = {
@@ -58,11 +58,7 @@ type State = {
   genuineAskedOnDevice: boolean,
 };
 
-class PairDevices extends Component<Props, State> {
-  static navigationOptions = {
-    title: i18next.t("SelectDevice.title"),
-  };
-
+class PairDevices extends Component<PairDevicesProps, State> {
   state = {
     status: "scanning",
     device: null,
@@ -166,8 +162,8 @@ class PairDevices extends Component<Props, State> {
   };
 
   onDone = (deviceId: string) => {
-    const { navigation } = this.props;
-    const onDone = navigation.getParam("onDone");
+    const { navigation, route } = this.props;
+    const onDone = route.params?.onDone;
     navigation.goBack();
     if (onDone) {
       onDone(deviceId);
@@ -233,33 +229,27 @@ class PairDevices extends Component<Props, State> {
 
 const forceInset = { bottom: "always" };
 
-class Screen extends Component<Props, State> {
-  static navigationOptions = {
-    title: i18next.t("SelectDevice.title"),
-    headerLeft: null,
-  };
+export default function Screen(props: Props) {
+  const dispatch = useDispatch();
+  const knownDevices = useSelector(knownDevicesSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
-  render() {
-    return (
-      <RequiresBLE>
-        <SafeAreaView forceInset={forceInset} style={styles.root}>
-          <PairDevices {...this.props} />
-        </SafeAreaView>
-      </RequiresBLE>
-    );
-  }
+  return (
+    <RequiresBLE>
+      <SafeAreaView forceInset={forceInset} style={styles.root}>
+        <PairDevices
+          {...props}
+          knownDevices={knownDevices}
+          hasCompletedOnboarding={hasCompletedOnboarding}
+          addKnownDevice={(...args) => dispatch(addKnownDevice(...args))}
+          installAppFirstTime={(...args) =>
+            dispatch(installAppFirstTime(...args))
+          }
+        />
+      </SafeAreaView>
+    </RequiresBLE>
+  );
 }
-
-export default connect(
-  createStructuredSelector({
-    knownDevices: knownDevicesSelector,
-    hasCompletedOnboarding: hasCompletedOnboardingSelector,
-  }),
-  {
-    addKnownDevice,
-    installAppFirstTime,
-  },
-)(translate()(Screen));
 
 const styles = StyleSheet.create({
   root: {

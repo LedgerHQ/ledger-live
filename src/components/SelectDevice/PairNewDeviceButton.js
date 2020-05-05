@@ -1,9 +1,7 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-
-import { withNavigation } from "react-navigation";
 
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
@@ -13,25 +11,22 @@ import LText from "../LText";
 import Circle from "../Circle";
 
 type Props = {
-  navigation: *,
-  onPress: () => *,
+  onPress: () => void,
 };
 
-class PairNewDeviceButton extends PureComponent<Props> {
-  render() {
-    return (
-      <Touchable event="AddDevice" onPress={this.props.onPress}>
-        <View style={styles.root}>
-          <Circle bg={colors.pillActiveBackground} size={30}>
-            <Icon name="plus" size={20} color={colors.pillActiveForeground} />
-          </Circle>
-          <LText semiBold style={styles.text}>
-            <Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />
-          </LText>
-        </View>
-      </Touchable>
-    );
-  }
+export default function PairNewDeviceButton({ onPress }: Props) {
+  return (
+    <Touchable event="AddDevice" onPress={onPress}>
+      <View style={styles.root}>
+        <Circle bg={colors.pillActiveBackground} size={30}>
+          <Icon name="plus" size={20} color={colors.pillActiveForeground} />
+        </Circle>
+        <LText semiBold style={styles.text}>
+          <Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />
+        </LText>
+      </View>
+    </Touchable>
+  );
 }
 
 // Word of caution, to make the + button align we are not following the
@@ -55,5 +50,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default withNavigation(PairNewDeviceButton);

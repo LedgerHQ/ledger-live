@@ -1,94 +1,83 @@
 /* @flow */
 
-import React, { Component } from "react";
-import { withNavigation, SafeAreaView } from "react-navigation";
-import { translate } from "react-i18next";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import React, { useCallback } from "react";
+import SafeAreaView from "react-native-safe-area-view";
+import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
+import { NavigatorName, ScreenName } from "../const";
 import { accountsCountSelector } from "../reducers/accounts";
 import IconSend from "../icons/Send";
 import IconReceive from "../icons/Receive";
 import IconExchange from "../icons/Exchange";
-import type { T } from "../types/common";
 import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
 import type { Props as ModalProps } from "../components/BottomModal";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
 
-type Props = ModalProps & {
-  navigation: *,
-  t: T,
-  accountsCount: number,
-  readOnlyModeEnabled: boolean,
-};
-
 const forceInset = { bottom: "always" };
 
-const mapStateToProps = createStructuredSelector({
-  readOnlyModeEnabled: readOnlyModeEnabledSelector,
-  accountsCount: accountsCountSelector,
-});
+export default function CreateModal({ isOpened, onClose }: ModalProps) {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
 
-class CreateModal extends Component<Props> {
-  onNavigate = (routeName: string, key: string) => {
-    const { navigation, onClose } = this.props;
-    navigation.navigate({
-      routeName,
-      params: {
-        goBackKey: navigation.state.key,
-      },
-      key,
-    });
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const accountsCount = useSelector(accountsCountSelector);
 
-    if (onClose) {
-      onClose();
-    }
-  };
+  const onNavigate = useCallback(
+    (name: string, options?: { [key: string]: any }) => {
+      navigation.navigate(name, options);
 
-  onSendFunds = () => this.onNavigate("SendFunds", "sendfunds");
-  onReceiveFunds = () => this.onNavigate("ReceiveFunds", "receivefunds");
-  onExchange = () => this.onNavigate("Transfer", "transfer");
+      if (onClose) {
+        onClose();
+      }
+    },
+    [navigation, onClose],
+  );
 
-  render() {
-    const {
-      readOnlyModeEnabled,
-      onClose,
-      isOpened,
-      accountsCount,
-      t,
-    } = this.props;
-    return (
-      <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
-        <SafeAreaView forceInset={forceInset}>
-          <BottomModalChoice
-            event="TransferSend"
-            title={t("transfer.send.title")}
-            onPress={
-              accountsCount > 0 && !readOnlyModeEnabled
-                ? this.onSendFunds
-                : null
-            }
-            Icon={IconSend}
-          />
-          <BottomModalChoice
-            event="TransferReceive"
-            title={t("transfer.receive.title")}
-            onPress={accountsCount > 0 ? this.onReceiveFunds : null}
-            Icon={IconReceive}
-          />
-          <BottomModalChoice
-            event="TransferExchange"
-            title={t("transfer.exchange.title")}
-            Icon={IconExchange}
-            onPress={this.onExchange}
-          />
-        </SafeAreaView>
-      </BottomModal>
-    );
-  }
+  const onSendFunds = useCallback(
+    () =>
+      onNavigate(NavigatorName.SendFunds, {
+        screen: ScreenName.SendFundsMain,
+      }),
+    [onNavigate],
+  );
+  const onReceiveFunds = useCallback(
+    () =>
+      onNavigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectAccount,
+      }),
+    [onNavigate],
+  );
+  const onExchange = useCallback(() => onNavigate(ScreenName.Transfer), [
+    onNavigate,
+  ]);
+
+  return (
+    <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
+      <SafeAreaView forceInset={forceInset}>
+        <BottomModalChoice
+          event="TransferSend"
+          title={t("transfer.send.title")}
+          onPress={
+            accountsCount > 0 && !readOnlyModeEnabled ? onSendFunds : null
+          }
+          Icon={IconSend}
+        />
+        <BottomModalChoice
+          event="TransferReceive"
+          title={t("transfer.receive.title")}
+          onPress={accountsCount > 0 ? onReceiveFunds : null}
+          Icon={IconReceive}
+        />
+        <BottomModalChoice
+          event="TransferExchange"
+          title={t("transfer.exchange.title")}
+          Icon={IconExchange}
+          onPress={onExchange}
+        />
+      </SafeAreaView>
+    </BottomModal>
+  );
 }
-
-export default translate()(
-  withNavigation(connect(mapStateToProps)(CreateModal)),
-);

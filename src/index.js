@@ -1,13 +1,16 @@
 // @flow
-/* eslint-disable import/first */
 import "../shim";
 import "./polyfill";
 import "./live-common-setup";
 import "./implement-react-native-libcore";
-import React, { Component } from "react";
+import "react-native-gesture-handler";
+import React, { Component, useCallback } from "react";
 import { connect } from "react-redux";
 import { StyleSheet, View, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { I18nextProvider } from "react-i18next";
+import { NavigationContainer } from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -18,7 +21,7 @@ import { exportSelector as settingsExportSelector } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
 import CounterValues from "./countervalues";
-import LocaleProvider from "./context/Locale";
+import LocaleProvider, { i18n } from "./context/Locale";
 import RebootProvider from "./context/Reboot";
 import ButtonUseTouchable from "./context/ButtonUseTouchable";
 import AuthPass from "./context/AuthPass";
@@ -28,12 +31,12 @@ import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import DBSave from "./components/DBSave";
 import DebugRejectSwitch from "./components/DebugRejectSwitch";
-import AppStateListener from "./components/AppStateListener";
-import { SyncNewAccounts } from "./bridge/SyncNewAccounts";
+import useAppStateListener from "./components/useAppStateListener";
+import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
-import AppContainer from "./navigators";
+import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import type { State } from "./reducers";
 
@@ -58,15 +61,26 @@ Text.defaultProps = Text.defaultProps || {};
 // $FlowFixMe
 Text.defaultProps.allowFontScaling = false;
 
-class App extends Component<*> {
-  getCountervaluesChanged = (a, b) => a.countervalues !== b.countervalues;
+type AppProps = {
+  importDataString: boolean,
+};
 
-  getSettingsChanged = (a, b) => a.settings !== b.settings;
+function App({ importDataString }: AppProps) {
+  useAppStateListener();
 
-  getAccountsChanged = (
-    oldState: State,
-    newState: State,
-  ): ?{ changed: string[] } => {
+  const getCountervaluesChanged = useCallback(
+    (a, b) => a.countervalues !== b.countervalues,
+    [],
+  );
+
+  const getSettingsChanged = useCallback(
+    (a, b) => a.settings !== b.settings,
+    [],
+  );
+
+  const getAccountsChanged = useCallback((oldState: State, newState: State): ?{
+    changed: string[],
+  } => {
     if (oldState.accounts !== newState.accounts) {
       return {
         changed: newState.accounts.active
@@ -78,52 +92,44 @@ class App extends Component<*> {
       };
     }
     return null;
-  };
+  }, []);
 
-  getBleChanged = (a, b) => a.ble !== b.ble;
+  const getBleChanged = (a, b) => a.ble !== b.ble;
 
-  render() {
-    return (
-      <View style={styles.root}>
-        <DBSave
-          save={saveCountervalues}
-          throttle={2000}
-          getChangesStats={this.getCountervaluesChanged}
-          lense={CounterValues.exportSelector}
-        />
-        <DBSave
-          save={saveSettings}
-          throttle={400}
-          getChangesStats={this.getSettingsChanged}
-          lense={settingsExportSelector}
-        />
-        <DBSave
-          save={saveAccounts}
-          throttle={500}
-          getChangesStats={this.getAccountsChanged}
-          lense={accountsExportSelector}
-        />
-        <DBSave
-          save={saveBle}
-          throttle={500}
-          getChangesStats={this.getBleChanged}
-          lense={bleSelector}
-        />
+  return (
+    <View style={styles.root}>
+      <DBSave
+        save={saveCountervalues}
+        throttle={2000}
+        getChangesStats={getCountervaluesChanged}
+        lense={CounterValues.exportSelector}
+      />
+      <DBSave
+        save={saveSettings}
+        throttle={400}
+        getChangesStats={getSettingsChanged}
+        lense={settingsExportSelector}
+      />
+      <DBSave
+        save={saveAccounts}
+        throttle={500}
+        getChangesStats={getAccountsChanged}
+        lense={accountsExportSelector}
+      />
+      <DBSave
+        save={saveBle}
+        throttle={500}
+        getChangesStats={getBleChanged}
+        lense={bleSelector}
+      />
 
-        <AppStateListener />
+      <SyncNewAccounts priority={5} />
 
-        <SyncNewAccounts priority={5} />
+      <RootNavigator importDataString={importDataString} />
 
-        <AppContainer
-          screenProps={{
-            importDataString: this.props.importDataString,
-          }}
-        />
-
-        <DebugRejectSwitch />
-      </View>
-    );
-  }
+      <DebugRejectSwitch />
+    </View>
+  );
 }
 
 export default class Root extends Component<
@@ -163,19 +169,25 @@ export default class Root extends Component<
                 <SetEnvsFromSettings />
                 <HookSentry />
                 <HookAnalytics store={store} />
-                <AuthPass>
-                  <LocaleProvider>
-                    <BridgeSyncProvider>
-                      <CounterValues.PollingProvider>
-                        <ButtonUseTouchable.Provider value={true}>
-                          <OnboardingContextProvider>
-                            <App importDataString={importDataString} />
-                          </OnboardingContextProvider>
-                        </ButtonUseTouchable.Provider>
-                      </CounterValues.PollingProvider>
-                    </BridgeSyncProvider>
-                  </LocaleProvider>
-                </AuthPass>
+                <SafeAreaProvider>
+                  <AuthPass>
+                    <NavigationContainer>
+                      <I18nextProvider i18n={i18n}>
+                        <LocaleProvider>
+                          <BridgeSyncProvider>
+                            <CounterValues.PollingProvider>
+                              <ButtonUseTouchable.Provider value={true}>
+                                <OnboardingContextProvider>
+                                  <App importDataString={importDataString} />
+                                </OnboardingContextProvider>
+                              </ButtonUseTouchable.Provider>
+                            </CounterValues.PollingProvider>
+                          </BridgeSyncProvider>
+                        </LocaleProvider>
+                      </I18nextProvider>
+                    </NavigationContainer>
+                  </AuthPass>
+                </SafeAreaProvider>
               </>
             ) : (
               <LoadingApp />

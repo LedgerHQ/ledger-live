@@ -1,19 +1,16 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { StyleSheet } from "react-native";
-// $FlowFixMe
-import { FlatList } from "react-navigation";
+import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
-import i18next from "i18next";
 import { createStructuredSelector } from "reselect";
-import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import { ScreenName } from "../../../../const";
 import { cryptoCurrenciesSelector } from "../../../../reducers/accounts";
 import SettingsRow from "../../../../components/SettingsRow";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   currencies: CryptoCurrency[],
 };
 
@@ -22,10 +19,6 @@ const mapStateToProps = createStructuredSelector({
 });
 
 class CurrenciesList extends PureComponent<Props> {
-  static navigationOptions = () => ({
-    title: i18next.t("settings.currencies.header"),
-  });
-
   renderItem = ({ item }) => (
     <SettingsRow
       event="CurrenciesList"
@@ -36,7 +29,7 @@ class CurrenciesList extends PureComponent<Props> {
       desc={null}
       arrowRight
       onPress={() =>
-        this.props.navigation.navigate("CurrencySettings", {
+        this.props.navigation.navigate(ScreenName.CurrencySettings, {
           currencyId: item.id,
         })
       }

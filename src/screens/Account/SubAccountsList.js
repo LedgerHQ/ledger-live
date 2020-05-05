@@ -1,23 +1,22 @@
 // @flow
 
 import React, { useCallback, useState, useMemo } from "react";
-import { compose } from "redux";
 import { Trans } from "react-i18next";
 import take from "lodash/take";
-import { Platform, StyleSheet, View } from "react-native";
-// !! Using nested list via react-navigation prompts some ui warnings some investigating needed to fully resolve this issue !!
-import { FlatList, withNavigation } from "react-navigation";
+import { Platform, StyleSheet, View, FlatList } from "react-native";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
+import MaterialIcon from "react-native-vector-icons/dist/MaterialIcons";
+import { useNavigation } from "@react-navigation/native";
 import type {
   Account,
   SubAccount,
   TokenAccount,
 } from "@ledgerhq/live-common/lib/types";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
-import MaterialIcon from "react-native-vector-icons/dist/MaterialIcons";
+import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import { NavigatorName, ScreenName } from "../../const";
 import SubAccountRow from "../../components/SubAccountRow";
-import withEnv from "../../logic/withEnv";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -81,18 +80,24 @@ const Card = ({ children }: { children: any }) => (
   <View style={styles.card}>{children}</View>
 );
 
-const SubAccountsList = ({
+type Props = {
+  parentAccount: Account,
+  onAccountPress: (subAccount: SubAccount) => void,
+  accountId: string,
+  isCollapsed: boolean,
+  onToggle: () => void,
+};
+
+export default function SubAccountsList({
   parentAccount,
   onAccountPress,
-  navigation,
   accountId,
-}: {
-  parentAccount: Account,
-  onAccountPress: SubAccount => *,
-  navigation: *,
-  accountId: string,
-}) => {
-  const [isCollapsed, setCollapsed] = useState(true);
+  isCollapsed,
+  onToggle,
+}: Props) {
+  useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
+
+  const navigation = useNavigation();
   const [account, setAccount] = useState<TokenAccount | typeof undefined>();
   const subAccounts = listSubAccounts(parentAccount);
 
@@ -100,6 +105,15 @@ const SubAccountsList = ({
     () => listTokenTypesForCryptoCurrency(parentAccount.currency).length > 0,
     [parentAccount],
   );
+
+  const navigateToReceiveConnectDevice = useCallback(() => {
+    navigation.navigate(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConnectDevice,
+      params: {
+        accountId,
+      },
+    });
+  }, [accountId, navigation]);
 
   const onClearAccount = useCallback(() => setAccount(undefined), [setAccount]);
 
@@ -122,15 +136,13 @@ const SubAccountsList = ({
             IconLeft={() => (
               <MaterialIcon color={colors.live} name="add" size={20} />
             )}
-            onPress={() =>
-              navigation.navigate("ReceiveConnectDevice", { accountId })
-            }
+            onPress={navigateToReceiveConnectDevice}
             size={14}
           />
         ) : null}
       </View>
     ),
-    [isToken, subAccounts, navigation, accountId],
+    [isToken, subAccounts, navigateToReceiveConnectDevice],
   );
 
   const renderFooter = useCallback(() => {
@@ -139,9 +151,7 @@ const SubAccountsList = ({
       return (
         <Touchable
           event="AccountReceiveSubAccount"
-          onPress={() =>
-            navigation.navigate("ReceiveConnectDevice", { accountId })
-          }
+          onPress={navigateToReceiveConnectDevice}
         >
           <View style={styles.footer}>
             <Icon color={colors.live} size={26} name="plus" />
@@ -188,7 +198,7 @@ const SubAccountsList = ({
               size={16}
             />
           )}
-          onPress={() => setCollapsed(isCollapsed => !isCollapsed)}
+          onPress={onToggle}
           size={13}
         />
       </Card>
@@ -197,9 +207,9 @@ const SubAccountsList = ({
     subAccounts.length,
     isCollapsed,
     isToken,
+    navigateToReceiveConnectDevice,
     parentAccount.currency.family,
-    navigation,
-    accountId,
+    onToggle,
   ]);
 
   const renderItem = useCallback(
@@ -239,9 +249,4 @@ const SubAccountsList = ({
       />
     </View>
   );
-};
-
-export default compose(
-  withNavigation,
-  withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
-)(SubAccountsList);
+}

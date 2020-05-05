@@ -1,68 +1,50 @@
 // @flow
 
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
-import { ScrollView, StyleSheet } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-import { withNavigation, SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
+import { StyleSheet } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
-import StepHeader from "../../components/StepHeader";
+import NavigationScrollView from "../../components/NavigationScrollView";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
+  route: any,
 };
 
-const ConnectDevice = ({ navigation }: Props) => {
+export default function ConnectDevice({ navigation, route }: Props) {
   const onSelectDevice = useCallback(
     deviceMeta => {
-      navigation.navigate("MigrateAccountsProgress", {
-        currency: navigation.getParam("currency"),
+      navigation.navigate(ScreenName.MigrateAccountsProgress, {
+        currency: route.params?.currency,
         deviceMeta,
       });
     },
-    [navigation],
+    [navigation, route.params],
   );
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="MigrateAccount" name="ConnectDevice" />
-      <ScrollView
+      <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
         <SelectDevice
-          deviceMeta={navigation.getParam("deviceMeta")}
+          deviceMeta={route.params?.deviceMeta}
           onSelect={onSelectDevice}
           autoSelectOnAdd
-          steps={[connectingStep, currencyApp(navigation.getParam("currency"))]}
+          steps={[connectingStep, currencyApp(route.params?.currency)]}
         />
-      </ScrollView>
+      </NavigationScrollView>
     </SafeAreaView>
   );
-};
-
-ConnectDevice.navigationOptions = () => ({
-  headerTitle: (
-    <StepHeader
-      title={<Trans i18nKey="migrateAccounts.connectDevice.headerTitle" />}
-      subtitle={
-        <Trans
-          i18nKey="send.stepperHeader.stepRange"
-          values={{
-            currentStep: "2",
-            totalSteps: "3",
-          }}
-        />
-      }
-    />
-  ),
-});
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -81,5 +63,3 @@ const styles = StyleSheet.create({
     borderTopColor: colors.lightFog,
   },
 });
-
-export default connect()(withNavigation(ConnectDevice)); // NB flow issue if not connected

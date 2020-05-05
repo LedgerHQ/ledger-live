@@ -1,7 +1,7 @@
 /* @flow */
 import React, { Component } from "react";
 import { Text } from "react-native";
-import getFontStyle from "./getFontStyle"; // eslint-disable-line
+import getFontStyle from "./getFontStyle";
 
 export { getFontStyle };
 

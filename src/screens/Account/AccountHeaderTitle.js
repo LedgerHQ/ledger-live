@@ -1,51 +1,38 @@
 /* @flow */
-import React, { Component } from "react";
+import React from "react";
 import { TouchableWithoutFeedback, View, StyleSheet } from "react-native";
-import { connect } from "react-redux";
-import type { NavigationScreenProp } from "react-navigation";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { useRoute } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import {
   getAccountCurrency,
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import LText from "../../components/LText";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
+import { scrollToTop } from "../../navigation/utils";
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  account: AccountLike,
-};
-const mapStateToProps = accountAndParentScreenSelector;
+export default function AccountHeaderTitle() {
+  const route = useRoute();
+  const { account } = useSelector(accountScreenSelector(route));
 
-class AccountHeaderTitle extends Component<Props> {
-  onPress = () => {
-    // $FlowFixMe flowtyped not up to date
-    this.props.navigation.emit("refocus");
-  };
-
-  render() {
-    const { account } = this.props;
-    if (!account) return null;
-    return (
-      <TouchableWithoutFeedback onPress={this.onPress}>
-        <View style={styles.headerContainer}>
-          <View style={styles.iconContainer}>
-            <ParentCurrencyIcon
-              size={18}
-              currency={getAccountCurrency(account)}
-            />
-          </View>
-          <LText semiBold secondary numberOfLines={1} style={styles.title}>
-            {getAccountName(account)}
-          </LText>
+  if (!account) return null;
+  return (
+    <TouchableWithoutFeedback onPress={scrollToTop}>
+      <View style={styles.headerContainer}>
+        <View style={styles.iconContainer}>
+          <ParentCurrencyIcon
+            size={18}
+            currency={getAccountCurrency(account)}
+          />
         </View>
-      </TouchableWithoutFeedback>
-    );
-  }
+        <LText semiBold secondary numberOfLines={1} style={styles.title}>
+          {getAccountName(account)}
+        </LText>
+      </View>
+    </TouchableWithoutFeedback>
+  );
 }
-
-export default connect(mapStateToProps)(AccountHeaderTitle);
 
 const styles = StyleSheet.create({
   title: {

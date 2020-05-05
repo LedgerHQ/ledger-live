@@ -1,7 +1,8 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
   getMainAccount,
@@ -23,6 +24,7 @@ import CounterValue from "./CounterValue";
 
 import OperationIcon from "./OperationIcon";
 import colors from "../colors";
+import { ScreenName } from "../const";
 import OperationRowDate from "./OperationRowDate";
 import LiveLogo from "../icons/LiveLogoIcon";
 import Spinning from "./Spinning";
@@ -33,7 +35,6 @@ type Props = {
   operation: Operation,
   parentAccount: ?Account,
   account: AccountLike,
-  navigation: *,
   multipleAccounts?: boolean,
   isLast: boolean,
   isSubOperation?: boolean,
@@ -44,33 +45,34 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
-class OperationRow extends PureComponent<Props> {
-  static defaultProps = {
-    displayCurrencyLogo: false,
-  };
+export default function OperationRow({
+  account,
+  parentAccount,
+  operation,
+  isSubOperation,
+  multipleAccounts,
+  isLast,
+}: Props) {
+  const navigation = useNavigation();
 
-  goToOperationDetails = debounce(() => {
-    const {
-      navigation,
-      account,
-      parentAccount,
-      operation,
-      isSubOperation,
-    } = this.props;
-    const params = {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
-      operation, // FIXME we should pass a operationId instead because data can changes over time.
-      isSubOperation,
-      key: operation.id,
-    };
+  const goToOperationDetails = debounce(() => {
+    const params = [
+      ScreenName.OperationDetails,
+      {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+        operation, // FIXME we should pass a operationId instead because data can changes over time.
+        isSubOperation,
+        key: operation.id,
+      },
+    ];
 
-    navigation.push("OperationDetails", params);
+    /** if suboperation push to stack navigation else we simply navigate */
+    if (isSubOperation) navigation.push(...params);
+    else navigation.navigate(...params);
   }, 300);
 
-  renderAmountCellExtra() {
-    const { operation, account, parentAccount } = this.props;
-
+  const renderAmountCellExtra = useCallback(() => {
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
@@ -86,120 +88,100 @@ class OperationRow extends PureComponent<Props> {
     return Element ? (
       <Element operation={operation} unit={unit} currency={currency} />
     ) : null;
-  }
+  }, [account, parentAccount, operation]);
 
-  render() {
-    const {
-      operation,
-      account,
-      parentAccount,
-      multipleAccounts,
-      isLast,
-    } = this.props;
-    const amount = getOperationAmountNumber(operation);
-    const valueColor = amount.isNegative() ? colors.darkBlue : colors.green;
-    const currency = getAccountCurrency(account);
-    const unit = getAccountUnit(account);
+  const amount = getOperationAmountNumber(operation);
+  const valueColor = amount.isNegative() ? colors.darkBlue : colors.green;
+  const currency = getAccountCurrency(account);
+  const unit = getAccountUnit(account);
 
-    const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
+  const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
+  const isOptimistic = operation.blockHeight === null;
+  const spinner = (
+    <View style={styles.spinner}>
+      <Spinning>
+        <LiveLogo color={colors.grey} size={10} />
+      </Spinning>
+    </View>
+  );
 
-    const isOptimistic = operation.blockHeight === null;
-    const spinner = (
-      <View style={styles.spinner}>
-        <Spinning>
-          <LiveLogo color={colors.grey} size={10} />
-        </Spinning>
-      </View>
-    );
+  return (
+    <View style={[styles.root, isLast ? styles.last : null]}>
+      <TouchableOpacity onPress={goToOperationDetails} style={styles.button}>
+        <View style={isOptimistic ? styles.optimistic : null}>
+          <OperationIcon
+            size={40}
+            operation={operation}
+            account={account}
+            parentAccount={parentAccount}
+          />
+        </View>
 
-    return (
-      <View style={[styles.root, isLast ? styles.last : null]}>
-        <TouchableOpacity
-          onPress={this.goToOperationDetails}
-          style={styles.button}
-        >
-          <View style={isOptimistic ? styles.optimistic : null}>
-            <OperationIcon
-              size={40}
-              operation={operation}
-              account={account}
-              parentAccount={parentAccount}
-            />
-          </View>
-          <View
-            style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}
-          >
-            <View style={styles.bodyLeft}>
-              <LText
-                numberOfLines={1}
-                semiBold
-                style={[styles.bodyLeft, styles.topRow]}
-              >
-                {multipleAccounts ? getAccountName(account) : text}
-              </LText>
-              {isOptimistic ? (
-                <View style={styles.optimisticRow}>
-                  {spinner}
-                  <LText
-                    numberOfLines={1}
-                    style={[styles.bodyLeft, styles.bottomRow]}
-                  >
-                    <Trans
-                      i18nKey={
-                        amount.isNegative()
-                          ? "operationDetails.sending"
-                          : "operationDetails.receiving"
-                      }
-                    />
-                  </LText>
-                </View>
-              ) : (
-                <LText numberOfLines={1} style={[styles.bottomRow]}>
-                  {text} <OperationRowDate date={operation.date} />
-                </LText>
-              )}
-            </View>
-            {
-              <View style={styles.bodyRight}>
-                {this.renderAmountCellExtra()}
-              </View>
-            }
+        <View style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}>
+          <View style={styles.bodyLeft}>
+            <LText
+              numberOfLines={1}
+              semiBold
+              style={[styles.bodyLeft, styles.topRow]}
+            >
+              {multipleAccounts ? getAccountName(account) : text}
+            </LText>
 
-            {amount.isZero() ? null : (
-              <View style={styles.bodyRight}>
+            {isOptimistic ? (
+              <View style={styles.optimisticRow}>
+                {spinner}
                 <LText
-                  tertiary
                   numberOfLines={1}
-                  style={[
-                    styles.bodyRight,
-                    styles.topRow,
-                    { color: valueColor },
-                  ]}
+                  style={[styles.bodyLeft, styles.bottomRow]}
                 >
-                  <CurrencyUnitValue
-                    showCode
-                    unit={unit}
-                    value={amount}
-                    alwaysShowSign
+                  <Trans
+                    i18nKey={
+                      amount.isNegative()
+                        ? "operationDetails.sending"
+                        : "operationDetails.receiving"
+                    }
                   />
                 </LText>
-                <CounterValue
-                  showCode
-                  date={operation.date}
-                  currency={currency}
-                  value={amount}
-                  alwaysShowSign
-                  withPlaceholder
-                  placeholderProps={placeholderProps}
-                  Wrapper={OpCounterValue}
-                />
               </View>
+            ) : (
+              <LText numberOfLines={1} style={[styles.bottomRow]}>
+                {text} <OperationRowDate date={operation.date} />
+              </LText>
             )}
           </View>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+
+          <View style={styles.bodyRight}>{renderAmountCellExtra()}</View>
+
+          {amount.isZero() ? null : (
+            <View style={styles.bodyRight}>
+              <LText
+                tertiary
+                numberOfLines={1}
+                style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
+              >
+                <CurrencyUnitValue
+                  showCode
+                  unit={unit}
+                  value={amount}
+                  alwaysShowSign
+                />
+              </LText>
+              <CounterValue
+                showCode
+                date={operation.date}
+                currency={currency}
+                value={amount}
+                alwaysShowSign
+                withPlaceholder
+                placeholderProps={placeholderProps}
+                Wrapper={OpCounterValue}
+              />
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 const OpCounterValue = ({ children }: { children: React$Node }) => (
@@ -207,8 +189,6 @@ const OpCounterValue = ({ children }: { children: React$Node }) => (
     {children}
   </LText>
 );
-
-export default OperationRow;
 
 const styles = StyleSheet.create({
   root: {

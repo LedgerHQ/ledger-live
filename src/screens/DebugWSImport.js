@@ -2,22 +2,20 @@
 
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView, withNavigation } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
+import { useNavigation } from "@react-navigation/native";
 import { decode } from "@ledgerhq/live-common/lib/cross";
 import { RNCamera } from "react-native-camera";
+import { ScreenName } from "../const";
 import colors from "../colors";
 import CameraScreen from "../components/CameraScreen";
 
 const forceInset = { bottom: "always" };
 
 class DebugWSImport extends Component<
-  { navigation: * },
+  { navigation: any },
   { ip: string, secret: string, scanning: boolean },
 > {
-  static navigationOptions = {
-    title: "Experimental WS Import",
-  };
-
   state = {
     secret: "",
     ip: "",
@@ -30,14 +28,13 @@ class DebugWSImport extends Component<
       this.setState({ secret: share[0], ip: share[1], scanning: false }, () => {
         const { ip, secret } = this.state;
 
-        /* global WebSocket */
         const ws = new WebSocket(`ws://${ip}:1234`);
         ws.onopen = () => {
           ws.send(secret);
         };
 
         ws.onmessage = event => {
-          this.props.navigation.navigate("DisplayResult", {
+          this.props.navigation.navigate(ScreenName.DisplayResult, {
             // $FlowFixMe
             result: decode(event.data),
           });
@@ -79,4 +76,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withNavigation(DebugWSImport);
+export default function Screen() {
+  const navigation = useNavigation();
+
+  return <DebugWSImport navigation={navigation} />;
+}

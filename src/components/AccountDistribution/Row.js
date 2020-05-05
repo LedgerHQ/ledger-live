@@ -12,10 +12,9 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import { withNavigation } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { ScreenName } from "../../const";
 import CounterValue from "../CounterValue";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import colors from "../../colors";
@@ -33,22 +32,17 @@ export type AccountDistributionItem = {
 
 type Props = {
   item: AccountDistributionItem,
-  accounts: Account[],
-  navigation: NavigationScreenProp<*>,
 };
 
-const mapStateToProps = createStructuredSelector({
-  accounts: accountsSelector,
-});
-
-const Row = ({
+export default function Row({
   item: { currency, distribution, account, amount },
-  accounts,
-  navigation,
-}: Props) => {
+}: Props) {
+  const accounts = useSelector(accountsSelector);
+  const navigation = useNavigation();
+
   const onAccountPress = useCallback(
     (parentAccount?: ?Account) => {
-      navigation.navigate("Account", {
+      navigation.navigate(ScreenName.Account, {
         accountId: account.id,
         parentId: parentAccount ? parentAccount.id : undefined,
       });
@@ -106,7 +100,7 @@ const Row = ({
       </View>
     </RectButton>
   );
-};
+}
 
 const styles = StyleSheet.create({
   row: {
@@ -169,5 +163,3 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
 });
-
-export default connect(mapStateToProps)(withNavigation(Row));

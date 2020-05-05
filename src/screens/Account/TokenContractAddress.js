@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/dist/Feather";
 import type {
   TokenAccount,

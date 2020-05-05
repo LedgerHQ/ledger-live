@@ -1,13 +1,16 @@
 // @flow
 import React from "react";
-import { withNavigation } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
 
-const BenchmarkQRStream = ({ navigation }: { navigation: * }) => (
-  <SettingsRow
-    title="Benchmark QRStream"
-    onPress={() => navigation.navigate("BenchmarkQRStream")}
-  />
-);
+export default function BenchmarkQRStream() {
+  const navigation = useNavigation();
 
-export default withNavigation(BenchmarkQRStream);
+  return (
+    <SettingsRow
+      title="Benchmark QRStream"
+      onPress={() => navigation.navigate(ScreenName.BenchmarkQRStream)}
+    />
+  );
+}

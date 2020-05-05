@@ -1,110 +1,97 @@
-/* @flow */
-import React, { PureComponent } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
-// $FlowFixMe
-import { SafeAreaView, ScrollView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { translate } from "react-i18next";
+// @flow
+import invariant from "invariant";
+import React, { useCallback, useState } from "react";
+import { View, StyleSheet, TextInput, ScrollView } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
+import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import colors from "../../colors";
-import type { T } from "../../types/common";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-      memoType: string,
-    },
-  }>,
-  t: T,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-type State = {
-  memoValue: ?string,
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+  memoType: string,
 };
 
-class StellarEditMemoValue extends PureComponent<Props, State> {
-  static navigationOptions = {
-    title: i18next.t("send.summary.memo.value"),
-    headerLeft: null,
-  };
+function StellarEditMemoValue({ navigation, route }: Props) {
+  const { t } = useTranslation();
+  const { account } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is required");
 
-  constructor({ navigation }) {
-    super();
-    const transaction = navigation.getParam("transaction");
-    this.state = {
-      memoValue: transaction.memoValue,
-    };
-  }
+  const [memoValue, setMemoValue] = useState(
+    route.params.transaction.memoValue,
+  );
 
-  onChangeMemoValue = (str: string) => {
-    this.setState({ memoValue: str });
-  };
+  const onChangeMemoValue = useCallback((str: string) => {
+    setMemoValue(str);
+  }, []);
 
-  onValidateText = () => {
-    const { navigation, account } = this.props;
-    const { memoValue } = this.state;
+  const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
-    const transaction = navigation.getParam("transaction");
-    const memoType = navigation.getParam("memoType");
-    navigation.navigate("SendSummary", {
+    const { transaction, memoType } = route.params;
+    navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, {
         memoValue: memoValue && memoValue.toString(),
         memoType: memoType && memoType.toString(),
       }),
     });
-  };
+  }, [navigation, route.params, account, memoValue]);
 
-  render() {
-    const { memoValue } = this.state;
-    const { t } = this.props;
-    return (
-      <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
-        <KeyboardView style={styles.body}>
-          <ScrollView
-            contentContainerStyle={styles.root}
-            keyboardShouldPersistTaps="always"
-          >
-            <TextInput
-              allowFontScaling={false}
-              autoFocus
-              style={styles.textInputAS}
-              defaultValue={memoValue ? memoValue.toString() : ""}
-              keyboardType="default"
-              returnKeyType="done"
-              onChangeText={this.onChangeMemoValue}
-              onSubmitEditing={this.onValidateText}
+  return (
+    <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
+      <KeyboardView style={styles.body}>
+        <ScrollView
+          contentContainerStyle={styles.root}
+          keyboardShouldPersistTaps="always"
+        >
+          <TextInput
+            allowFontScaling={false}
+            autoFocus
+            style={styles.textInputAS}
+            defaultValue={memoValue ? memoValue.toString() : ""}
+            keyboardType="default"
+            returnKeyType="done"
+            onChangeText={onChangeMemoValue}
+            onSubmitEditing={onValidateText}
+          />
+
+          <View style={styles.flex}>
+            <Button
+              event="StellarEditMemoValue"
+              type="primary"
+              title={t("send.summary.validateMemo")}
+              onPress={onValidateText}
+              containerStyle={styles.buttonContainer}
             />
-
-            <View style={styles.flex}>
-              <Button
-                event="StellarEditMemoValue"
-                type="primary"
-                title={t("send.summary.validateMemo")}
-                onPress={this.onValidateText}
-                containerStyle={styles.buttonContainer}
-              />
-            </View>
-          </ScrollView>
-        </KeyboardView>
-      </SafeAreaView>
-    );
-  }
+          </View>
+        </ScrollView>
+      </KeyboardView>
+    </SafeAreaView>
+  );
 }
+
+const options = {
+  title: i18next.t("send.summary.memo.value"),
+  headerLeft: null,
+};
+
+export { StellarEditMemoValue as component, options };
 
 const styles = StyleSheet.create({
   root: {
@@ -130,9 +117,3 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
 });
-
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
-
-export default connect(mapStateToProps)(translate()(StellarEditMemoValue));

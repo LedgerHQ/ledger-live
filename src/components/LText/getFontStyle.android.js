@@ -1,6 +1,6 @@
 /* @flow */
 import invariant from "invariant";
-import type { Opts, Res } from "."; // eslint-disable-line
+import type { Opts, Res } from ".";
 
 export default ({
   bold,

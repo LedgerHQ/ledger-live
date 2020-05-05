@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Component } from "react";
+import React, { PureComponent, useCallback } from "react";
 import { Trans } from "react-i18next";
 import {
   Animated,
@@ -9,11 +9,11 @@ import {
   TouchableOpacity,
   PanResponder,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { withNavigation } from "react-navigation";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import type { NavigationScreenProp } from "react-navigation";
+import { ScreenName } from "../const";
 import { track } from "../analytics";
 import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
@@ -30,8 +30,7 @@ const selectAllHitSlop = {
   bottom: 16,
 };
 
-type ListProps = {
-  navigation: NavigationScreenProp<*>,
+type Props = {
   accounts: Account[],
   onPressAccount?: Account => void,
   onSelectAll?: (Account[]) => void,
@@ -47,72 +46,61 @@ type ListProps = {
   onAccountNameChange?: (name: string, changedAccount: Account) => void,
 };
 
-class SelectableAccountsList extends Component<ListProps> {
-  static defaultProps = {
-    selectedIds: [],
-    isDisabled: false,
-    showHint: false,
-    index: -1,
-  };
+export default function SelectableAccountsList({
+  accounts,
+  onPressAccount,
+  onSelectAll: onSelectAllProp,
+  onUnselectAll: onUnselectAllProp,
+  selectedIds = [],
+  isDisabled = false,
+  forceSelected,
+  emptyState,
+  header,
+  showHint = false,
+  index = -1,
+  onAccountNameChange,
+  style,
+}: Props) {
+  const navigation = useNavigation();
 
-  onSelectAll = () => {
-    const { onSelectAll, accounts } = this.props;
+  const onSelectAll = useCallback(() => {
     track("SelectAllAccounts");
-    onSelectAll && onSelectAll(accounts);
-  };
+    onSelectAllProp && onSelectAllProp(accounts);
+  }, [accounts, onSelectAllProp]);
 
-  onUnselectAll = () => {
-    const { onUnselectAll, accounts } = this.props;
+  const onUnselectAll = useCallback(() => {
     track("UnselectAllAccounts");
-    onUnselectAll && onUnselectAll(accounts);
-  };
+    onUnselectAllProp && onUnselectAllProp(accounts);
+  }, [accounts, onUnselectAllProp]);
 
-  render() {
-    const {
-      accounts,
-      onPressAccount,
-      onSelectAll,
-      onUnselectAll,
-      selectedIds,
-      isDisabled,
-      forceSelected,
-      emptyState,
-      header,
-      showHint,
-      index,
-      navigation,
-      onAccountNameChange,
-      style,
-    } = this.props;
-    const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
-    return (
-      <View style={[styles.root, style]}>
-        {header ? (
-          <Header
-            text={header}
-            areAllSelected={areAllSelected}
-            onSelectAll={onSelectAll ? this.onSelectAll : undefined}
-            onUnselectAll={onUnselectAll ? this.onUnselectAll : undefined}
-          />
-        ) : null}
-        {accounts.map((account, rowIndex) => (
-          <SelectableAccount
-            navigation={navigation}
-            showHint={!rowIndex && showHint}
-            rowIndex={rowIndex}
-            listIndex={index}
-            key={account.id}
-            account={account}
-            onAccountNameChange={onAccountNameChange}
-            isSelected={forceSelected || selectedIds.indexOf(account.id) > -1}
-            isDisabled={isDisabled}
-            onPress={onPressAccount}
-          />
-        ))}
-        {accounts.length === 0 && emptyState ? emptyState : null}
-      </View>
-    );
-  }
+  const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
+  return (
+    <View style={[styles.root, style]}>
+      {header ? (
+        <Header
+          text={header}
+          areAllSelected={areAllSelected}
+          onSelectAll={onSelectAllProp ? onSelectAll : undefined}
+          onUnselectAll={onUnselectAllProp ? onUnselectAll : undefined}
+        />
+      ) : null}
+      {accounts.map((account, rowIndex) => (
+        <SelectableAccount
+          navigation={navigation}
+          showHint={!rowIndex && showHint}
+          rowIndex={rowIndex}
+          listIndex={index}
+          key={account.id}
+          account={account}
+          onAccountNameChange={onAccountNameChange}
+          isSelected={forceSelected || selectedIds.indexOf(account.id) > -1}
+          isDisabled={isDisabled}
+          onPress={onPressAccount}
+        />
+      ))}
+      {accounts.length === 0 && emptyState ? emptyState : null}
+    </View>
+  );
 }
 
 class SelectableAccount extends PureComponent<
@@ -124,7 +112,7 @@ class SelectableAccount extends PureComponent<
     showHint: boolean,
     rowIndex: number,
     listIndex: number,
-    navigation: NavigationScreenProp<*>,
+    navigation: *,
     onAccountNameChange?: (name: string, changedAccount: Account) => void,
   },
   { stopAnimation: boolean },
@@ -174,7 +162,7 @@ class SelectableAccount extends PureComponent<
     const { account, navigation, onAccountNameChange } = this.props;
     if (!onAccountNameChange) return;
     swipedAccountSubject.next({ row: -1, list: -1 });
-    navigation.navigate("EditAccountName", {
+    navigation.navigate(ScreenName.EditAccountName, {
       onAccountNameChange,
       account,
     });
@@ -374,5 +362,3 @@ const styles = StyleSheet.create({
     color: colors.pillActiveForeground,
   },
 });
-
-export default withNavigation(SelectableAccountsList);

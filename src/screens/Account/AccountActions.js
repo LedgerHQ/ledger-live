@@ -1,11 +1,11 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
-import { withNavigation } from "react-navigation";
-import { createStructuredSelector } from "reselect";
+import { useNavigation } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
+import { NavigatorName, ScreenName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import {
   ReceiveActionDefault,
@@ -20,19 +20,16 @@ const { width } = getWindowDimensions();
 type Props = {
   account: AccountLike,
   parentAccount: ?Account,
-  navigation: *,
-  readOnlyModeEnabled: boolean,
 };
-const mapStateToProps = createStructuredSelector({
-  readOnlyModeEnabled: readOnlyModeEnabledSelector,
-});
 
-const AccountActions = ({
-  readOnlyModeEnabled,
-  navigation,
-  account,
-  parentAccount,
-}: Props) => {
+type NavOptions = {
+  screen: string,
+  params?: { [key: string]: any },
+};
+
+export default function AccountActions({ account, parentAccount }: Props) {
+  const navigation = useNavigation();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const mainAccount = getMainAccount(account, parentAccount);
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
 
@@ -45,13 +42,17 @@ const AccountActions = ({
     (decorators && decorators.ReceiveAction) || ReceiveActionDefault;
 
   const onNavigate = useCallback(
-    (route: string) => {
-      navigation.navigate(route, {
-        accountId,
-        parentId,
+    (name: string, options?: NavOptions) => {
+      navigation.navigate(name, {
+        ...options,
+        params: {
+          accountId,
+          parentId,
+          ...(options ? options.params : {}),
+        },
       });
     },
-    [accountId, parentId, navigation],
+    [accountId, navigation, parentId],
   );
 
   const manageAction =
@@ -66,11 +67,15 @@ const AccountActions = ({
     null;
 
   const onSend = useCallback(() => {
-    onNavigate("SendSelectRecipient");
+    onNavigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendSelectRecipient,
+    });
   }, [onNavigate]);
 
   const onReceive = useCallback(() => {
-    onNavigate("ReceiveConnectDevice");
+    onNavigate(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConnectDevice,
+    });
   }, [onNavigate]);
 
   const Container = manageAction ? ScrollViewContainer : View;
@@ -95,7 +100,7 @@ const AccountActions = ({
       {manageAction}
     </Container>
   );
-};
+}
 
 const ScrollViewContainer = ({ children }: { children: React$Node }) => (
   <View style={styles.scrollContainer}>
@@ -144,5 +149,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
 });
-
-export default withNavigation(connect(mapStateToProps)(AccountActions));

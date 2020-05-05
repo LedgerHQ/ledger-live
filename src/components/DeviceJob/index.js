@@ -86,7 +86,7 @@ class DeviceJob extends Component<
     meta: null,
   };
 
-  sub: *;
+  sub: any;
 
   onDoneSubject: Subject<number> = new Subject();
 

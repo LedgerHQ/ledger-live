@@ -1,6 +1,6 @@
 // @flow
 
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 import { getUser, setUser } from "./db";
 
 // a user is an anonymous way to identify a same instance of the app

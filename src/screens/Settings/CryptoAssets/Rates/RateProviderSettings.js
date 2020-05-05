@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { View, StyleSheet } from "react-native";
-import i18next from "i18next";
 import { Trans } from "react-i18next";
 import { findCurrencyByTicker } from "@ledgerhq/live-common/lib/currencies";
 
@@ -18,7 +17,7 @@ const getExchanges = (from: Currency, to: Currency) =>
   CounterValues.fetchExchangesForPair(from, to);
 
 const extractFromTo = props => {
-  const { params } = props.navigation.state;
+  const { params } = props.route;
   const from = findCurrencyByTicker(params.from);
   const to = findCurrencyByTicker(params.to);
   return { from, to };
@@ -71,14 +70,12 @@ const injectItems = C => {
       return <C {...this.props} from={from} to={to} items={items} />;
     }
   }
-  // $FlowFixMe
-  Clz.navigationOptions = C.navigationOptions;
 
   return Clz;
 };
 
 const mapStateToProps = (state: State, props: *) => ({
-  selectedKey: props.navigation.state.params.selected,
+  selectedKey: props.route.params.selected,
 });
 
 const mapDispatchToProps = {
@@ -89,17 +86,11 @@ const mapDispatchToProps = {
 const Screen = makeGenericSelectScreen({
   id: "RateProviderSettingsSelect",
   itemEventProperties: item => ({ exchange: item.id }),
-  title: i18next.t("settings.cryptoAssets.rateProviderHeader"),
   keyExtractor: item => item.id,
   formatItem: item => item.name,
-  navigationOptions: {
-    headerRight: null,
-  },
 });
 
 export default injectItems(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(Screen),
+  // $FlowFixMe
+  connect(mapStateToProps, mapDispatchToProps)(Screen),
 );

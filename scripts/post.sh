@@ -31,7 +31,7 @@ if [ "$(uname)" == "Darwin" ]; then
   fi
 
   bundle install
-  cd ios && bundle exec pod install --deployment
+  cd ios && bundle exec pod install --deployment --repo-update
 
   if [ $? -ne 0 ]; then
     echo "

@@ -9,27 +9,20 @@ import {
   Switch,
   Keyboard,
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate, Trans } from "react-i18next";
-import i18next from "i18next";
-import type { NavigationScreenProp } from "react-navigation";
-import type {
-  AccountLike,
-  Account,
-  Transaction,
-} from "@ledgerhq/live-common/lib/types";
-import { useDebounce } from "@ledgerhq/live-common/lib//hooks/useDebounce";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Button from "../../components/Button";
-import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
@@ -39,17 +32,17 @@ import AmountInput from "./AmountInput";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const SendAmount = ({ account, parentAccount, navigation }: Props) => {
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+};
+
+export default function SendAmount({ navigation, route }: Props) {
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [maxSpendable, setMaxSpendable] = useState(null);
 
   const {
@@ -59,7 +52,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
     bridgePending,
     bridgeError,
   } = useBridgeTransaction(() => ({
-    transaction: navigation.getParam("transaction"),
+    transaction: route.params.transaction,
     account,
     parentAccount,
   }));
@@ -111,7 +104,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
   }, [setTransaction, account, parentAccount, transaction]);
 
   const onContinue = useCallback(() => {
-    navigation.navigate("SendSummary", {
+    navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
@@ -226,19 +219,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
       />
     </>
   );
-};
-
-SendAmount.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("send.stepperHeader.selectAmount")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "3",
-        totalSteps: "6",
-      })}
-    />
-  ),
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -298,8 +279,3 @@ const styles = StyleSheet.create({
     opacity: 0.99,
   },
 });
-
-export default compose(
-  translate(),
-  connect(accountAndParentScreenSelector),
-)(SendAmount);

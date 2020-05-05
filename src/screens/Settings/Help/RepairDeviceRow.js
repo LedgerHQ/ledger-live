@@ -1,16 +1,16 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
+import { ScreenName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
 
 type Props = {
-  navigation: NavigationScreenProp<{}>,
+  navigation: any,
 };
 
 class RepairDeviceRow extends PureComponent<Props> {
   onPress = async () => {
-    this.props.navigation.navigate("RepairDevice");
+    this.props.navigation.navigate(ScreenName.RepairDevice);
   };
 
   render() {

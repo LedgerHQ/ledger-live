@@ -3,9 +3,9 @@ import React, { memo, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
 import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
@@ -15,11 +15,11 @@ import HelpLink from "../../components/HelpLink";
 import { urls } from "../../config/urls";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
   showHelp?: boolean,
 };
 
-const EmptyStatePortfolio = ({ navigation, showHelp = true }: Props) => {
+function EmptyStatePortfolio({ navigation, showHelp = true }: Props) {
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
   const [isAddModalOpened, setAddModalOpened] = useState(false);
 
@@ -32,7 +32,7 @@ const EmptyStatePortfolio = ({ navigation, showHelp = true }: Props) => {
   ]);
 
   const navigateToManager = useCallback(() => {
-    navigation.navigate("Manager");
+    navigation.navigate(ScreenName.Manager);
   }, [navigation]);
 
   return (
@@ -102,7 +102,7 @@ const EmptyStatePortfolio = ({ navigation, showHelp = true }: Props) => {
       </View>
     </>
   );
-};
+}
 
 export default memo<Props>(EmptyStatePortfolio);
 

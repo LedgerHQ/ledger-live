@@ -1,7 +1,7 @@
 // @flow
 /* eslint-disable no-console */
 
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 import { Sentry } from "react-native-sentry";
 import Config from "react-native-config";
 import { Platform } from "react-native";

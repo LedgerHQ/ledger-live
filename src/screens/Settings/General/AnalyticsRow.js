@@ -116,7 +116,4 @@ class AnalyticsRow extends PureComponent<Props, State> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AnalyticsRow);
+export default connect(mapStateToProps, mapDispatchToProps)(AnalyticsRow);

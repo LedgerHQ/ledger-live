@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import LText from "../components/LText";
 import colors from "../colors";
 import FaceID from "../icons/FaceID";
@@ -67,9 +67,6 @@ import Assets from "../icons/Assets";
 import Pause from "../icons/Pause";
 /* THIS FILE IS GENERATED, DO NOT EDIT */
 class DebugSVG extends Component<{}> {
-  static navigationOptions = {
-    title: "Debug Svg Icons",
-  };
   icons = (): Array<Object> =>
     [
       { name: "FaceID", bitmap: 0, square: 1, component: FaceID },

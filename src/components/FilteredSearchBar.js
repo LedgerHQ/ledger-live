@@ -1,7 +1,7 @@
 // @flow
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
-import { translate } from "react-i18next";
+import { withTranslation } from "react-i18next";
 
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
@@ -63,7 +63,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
     const { query, focused } = this.state;
 
     return (
-      <Fragment>
+      <>
         <TouchableOpacity
           onPress={query ? null : this.focusInput}
           style={[styles.wrapper, inputWrapperStyle]}
@@ -98,7 +98,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
           render={renderList}
           renderEmptySearch={renderEmptySearch}
         />
-      </Fragment>
+      </>
     );
   }
 }
@@ -125,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default translate()(FilteredSearchBar);
+export default withTranslation()(FilteredSearchBar);

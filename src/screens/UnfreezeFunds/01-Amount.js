@@ -1,26 +1,21 @@
 /* @flow */
-import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import i18next from "i18next";
-
-import type { NavigationScreenProp } from "react-navigation";
 import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
-
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
-import StepHeader from "../../components/StepHeader";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
@@ -80,16 +75,18 @@ const getUnfreezeData = (
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const UnfreezeAmount = ({ account, navigation }: Props) => {
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+};
+
+export default function UnfreezeAmount({ navigation, route }: Props) {
+  const { account } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is required");
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
 
@@ -126,7 +123,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
     transaction && transaction.resource ? transaction.resource : "";
 
   const onContinue = useCallback(() => {
-    navigation.navigate("UnfreezeConnectDevice", {
+    navigation.navigate(ScreenName.UnfreezeConnectDevice, {
       accountId: account.id,
       transaction,
       status,
@@ -290,19 +287,7 @@ const UnfreezeAmount = ({ account, navigation }: Props) => {
       />
     </>
   );
-};
-
-UnfreezeAmount.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("unfreeze.stepperHeader.selectAmount")}
-      subtitle={i18next.t("unfreeze.stepperHeader.stepRange", {
-        currentStep: "1",
-        totalSteps: "3",
-      })}
-    />
-  ),
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -394,5 +379,3 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
 });
-
-export default connect(accountAndParentScreenSelector)(UnfreezeAmount);

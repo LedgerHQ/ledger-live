@@ -1,36 +1,37 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { withNavigation } from "react-navigation";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { deviceNameByDeviceIdSelector } from "../../../reducers/ble";
+import { deviceNameByDeviceIdSelectorCreator } from "../../../reducers/ble";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import colors from "../../../colors";
 import Edit from "../../../icons/Edit";
 
+import { ScreenName } from "../../../const";
+
 type Props = {
-  navigation: *,
   deviceId: string,
   initialDeviceName: string,
-  savedName: string,
   deviceModel: { id: string, productName: string },
   disabled: boolean,
 };
 
-const DeviceNameRow = ({
-  navigation,
-  savedName,
+export default function DeviceNameRow({
   deviceId,
   initialDeviceName,
   deviceModel: { id, productName },
   disabled,
-}: Props) => {
+}: Props) {
+  const navigation = useNavigation();
+
+  const savedName = useSelector(deviceNameByDeviceIdSelectorCreator(deviceId));
+
   const onPress = useCallback(
     () =>
-      navigation.navigate("EditDeviceName", {
+      navigation.navigate(ScreenName.EditDeviceName, {
         deviceId,
         deviceName: savedName,
       }),
@@ -63,13 +64,7 @@ const DeviceNameRow = ({
       )}
     </View>
   );
-};
-
-export default connect(
-  createStructuredSelector({
-    savedName: deviceNameByDeviceIdSelector,
-  }),
-)(withNavigation(DeviceNameRow));
+}
 
 const styles = StyleSheet.create({
   root: {

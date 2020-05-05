@@ -16,6 +16,7 @@ import type {
   TokenAccount,
 } from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
+import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
@@ -57,14 +58,15 @@ const AccountRow = ({
   const [collapsed, setCollapsed] = useState(true);
 
   const onAccountPress = useCallback(() => {
-    navigation.navigate("Account", {
+    navigation.navigate(ScreenName.Account, {
       accountId,
+      isForwardedFromAccounts: true,
     });
   }, [accountId, navigation]);
 
   const onSubAccountPress = useCallback(
     (subAccount: SubAccount) => {
-      navigation.navigate("Account", {
+      navigation.navigate(ScreenName.Account, {
         parentId: accountId,
         accountId: subAccount.id,
       });

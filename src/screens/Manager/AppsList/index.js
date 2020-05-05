@@ -61,7 +61,7 @@ const AppsList = ({
     ],
   );
 
-  if (apps.length <= 0)
+  if (!apps || apps.length <= 0)
     return (
       <View style={styles.renderNoResult}>
         {renderNoResults && renderNoResults()}

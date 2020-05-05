@@ -102,10 +102,7 @@ class ClearCacheRow extends PureComponent<Props, State> {
   }
 }
 
-export default connect(
-  null,
-  mapDispatchToProps,
-)(withReboot(ClearCacheRow));
+export default connect(null, mapDispatchToProps)(withReboot(ClearCacheRow));
 
 const styles = StyleSheet.create({
   footerContainer: {

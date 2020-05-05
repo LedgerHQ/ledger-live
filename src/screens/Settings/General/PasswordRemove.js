@@ -1,11 +1,9 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import type { NavigationScreenProp } from "react-navigation";
 import * as Keychain from "react-native-keychain";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { translate } from "react-i18next";
-import i18next from "i18next";
+import { withTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
 import { Vibration } from "react-native";
 import { disablePrivacy } from "../../../actions/settings";
@@ -15,9 +13,10 @@ import { VIBRATION_PATTERN_ERROR } from "../../../constants";
 
 type Props = {
   t: T,
-  disablePrivacy(): () => *,
-  navigation: NavigationScreenProp<{}>,
+  disablePrivacy: () => void,
+  navigation: any,
 };
+
 type State = {
   error: ?Error,
   confirmPassword: string,
@@ -28,10 +27,6 @@ const mapDispatchToProps = {
 };
 
 class PasswordRemove extends PureComponent<Props, State> {
-  static navigationOptions = {
-    title: i18next.t("auth.confirmPassword.title"),
-  };
-
   state = {
     error: null,
     confirmPassword: "",
@@ -82,9 +77,7 @@ class PasswordRemove extends PureComponent<Props, State> {
 }
 
 export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-  translate(),
+  // $FlowFixMe
+  connect(null, mapDispatchToProps),
+  withTranslation(),
 )(PasswordRemove);

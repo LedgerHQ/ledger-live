@@ -2,8 +2,7 @@
 
 import React, { useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
-import { translate, Trans } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import {
@@ -40,21 +39,21 @@ type OperationDetailsExtraProps = {
   extra: { [key: string]: any },
   type: string,
   account: Account,
-  t: TFunction,
 };
 
 function OperationDetailsExtra({
   extra,
   type,
   account,
-  t,
 }: OperationDetailsExtraProps) {
+  const { t } = useTranslation();
+
   switch (type) {
     case "VOTE": {
       const { votes } = extra;
       if (!votes || !votes.length) return null;
 
-      return <OperationDetailsVotes votes={votes} account={account} t={t} />;
+      return <OperationDetailsVotes votes={votes} account={account} />;
     }
     case "FREEZE": {
       const value = formatCurrencyUnit(
@@ -90,14 +89,13 @@ function OperationDetailsExtra({
 type OperationsDetailsVotesProps = {
   votes: Array<Vote>,
   account: Account,
-  t: TFunction,
 };
 
 function OperationDetailsVotes({
   votes,
   account,
-  t,
 }: OperationsDetailsVotesProps) {
+  const { t } = useTranslation();
   const sp = useTronSuperRepresentatives();
   const formattedVotes = formatVotes(votes, sp);
 
@@ -261,6 +259,6 @@ const amountCell = {
 
 export default {
   getURLWhatIsThis,
-  OperationDetailsExtra: translate()(OperationDetailsExtra),
+  OperationDetailsExtra,
   amountCell,
 };

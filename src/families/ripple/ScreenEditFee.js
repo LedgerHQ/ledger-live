@@ -1,58 +1,47 @@
 // @flow
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import i18next from "i18next";
-import { createStructuredSelector } from "reselect";
-import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
-
 import colors from "../../colors";
+import { i18n } from "../../context/Locale";
 import { accountScreenSelector } from "../../reducers/accounts";
-import type { T } from "../../types/common";
-
 import KeyboardView from "../../components/KeyboardView";
 import EditFeeUnit from "../../components/EditFeeUnit";
 
 const forceInset = { bottom: "always" };
 
-type Props = {
-  account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
-  t: T,
+const options = {
+  title: i18n.t("send.fees.title"),
+  headerLeft: null,
 };
 
-class RippleEditFee extends Component<Props> {
-  static navigationOptions = {
-    title: i18next.t("send.fees.title"),
-    headerLeft: null,
-  };
+type Props = {
+  route: { params: RouteParams },
+};
 
-  render() {
-    const { navigation, account } = this.props;
-    const transaction: Transaction = navigation.getParam("transaction");
-    if (!transaction) return null;
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <KeyboardView style={styles.container}>
-          <EditFeeUnit
-            account={account}
-            transaction={transaction}
-            navigation={navigation}
-            field="fee"
-          />
-        </KeyboardView>
-      </SafeAreaView>
-    );
-  }
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+};
+
+function RippleEditFee({ route }: Props) {
+  const { account } = useSelector(accountScreenSelector(route));
+  const transaction = route.params?.transaction;
+
+  if (!transaction) return null;
+
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <KeyboardView style={styles.container}>
+        <EditFeeUnit account={account} field="fee" />
+      </KeyboardView>
+    </SafeAreaView>
+  );
 }
+
+export { options, RippleEditFee as component };
 
 const styles = StyleSheet.create({
   root: {
@@ -63,9 +52,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
-
-export default connect(mapStateToProps)(RippleEditFee);

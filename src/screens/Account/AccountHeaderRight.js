@@ -1,23 +1,21 @@
 /* @flow */
 import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
 import Wrench from "../../icons/Wrench";
 import colors from "../../colors";
+import { accountScreenSelector } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  account: ?(Account | TokenAccount),
-  parentAccount: ?Account,
-};
+export default function AccountHeaderRight() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
-const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
   const [isOpened, setOpened] = useState(false);
 
   const toggleModal = useCallback(() => setOpened(!isOpened), [isOpened]);
@@ -27,7 +25,7 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
 
   useEffect(() => {
     if (!account) {
-      navigation.navigate("Accounts");
+      navigation.navigate(ScreenName.Accounts);
     }
   }, [account, navigation]);
 
@@ -55,8 +53,11 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
       <Touchable
         event="AccountGoSettings"
         onPress={() => {
-          navigation.navigate("AccountSettings", {
-            accountId: account.id,
+          navigation.navigate(NavigatorName.AccountSettings, {
+            screen: ScreenName.AccountSettingsMain,
+            params: {
+              accountId: account.id,
+            },
           });
         }}
       >
@@ -68,6 +69,4 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
   }
 
   return null;
-};
-
-export default connect(accountAndParentScreenSelector)(AccountHeaderRight);
+}

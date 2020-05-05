@@ -1,8 +1,7 @@
 import React, { memo, useMemo, useCallback } from "react";
-import { compose } from "redux";
+import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import { connect } from "react-redux";
 
 import type { Action } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
@@ -17,37 +16,30 @@ import LinkIcon from "../../../icons/LinkIcon";
 
 import ActionModal from "./ActionModal";
 
-const mapStateToProps = state => {
-  return {
-    hasInstalledAnyApp: hasInstalledAnyAppSelector(state),
-  };
-};
-
 type Props = {
   appInstallWithDependencies: ?{ app: App, dependencies: App[] },
-  dispatch: Action => void,
+  dispatch: (action: Action) => void,
   onClose: () => void,
-  hasInstalledAnyApp: boolean,
-  installAppFirstTime: boolean => void,
 };
 
-const AppDependenciesModal = ({
+function AppDependenciesModal({
   appInstallWithDependencies,
-  dispatch,
+  dispatch: dispatchProps,
   onClose,
-  hasInstalledAnyApp,
-  installAppFirstTime,
-}: Props) => {
+}: Props) {
+  const dispatch = useDispatch();
+  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
+
   const { app, dependencies = [] } = appInstallWithDependencies || {};
   const { name } = app || {};
 
   const installAppDependencies = useCallback(() => {
     if (!hasInstalledAnyApp) {
-      installAppFirstTime(true);
+      dispatch(installAppFirstTime(true));
     }
-    dispatch({ type: "install", name });
+    dispatchProps({ type: "install", name });
     onClose();
-  }, [dispatch, onClose, name, hasInstalledAnyApp, installAppFirstTime]);
+  }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   const modalActions = useMemo(
     () => [
@@ -107,7 +99,7 @@ const AppDependenciesModal = ({
       )}
     </ActionModal>
   );
-};
+}
 
 const styles = StyleSheet.create({
   imageSection: {
@@ -151,10 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    { installAppFirstTime },
-  ),
-  memo,
-)(AppDependenciesModal);
+export default memo(AppDependenciesModal);

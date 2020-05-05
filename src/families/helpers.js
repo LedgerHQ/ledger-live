@@ -1,25 +1,27 @@
 /* @flow */
 
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { NavigationScreenProp } from "react-navigation";
+import { useRoute } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
-export const getFieldByFamily = (
-  account: Account,
-  navigation: NavigationScreenProp<*>,
-  field: string,
-) => {
-  const transaction = navigation.getParam("transaction");
-  return transaction[field];
-};
-export const editTxFeeByFamily = (
-  account: Account,
-  navigation: NavigationScreenProp<*>,
-  field: string,
-  fee: ?BigNumber,
-) => {
-  const transaction = navigation.getParam("transaction");
-  const bridge = getAccountBridge(account);
-  return bridge.updateTransaction(transaction, { [field]: fee });
-};
+export function useFieldByFamily(field: string): ?BigNumber {
+  return useRoute().params?.transaction[field];
+}
+
+export function useEditTxFeeByFamily() {
+  const transaction = useRoute().params?.transaction;
+
+  return ({
+    account,
+    field,
+    fee,
+  }: {
+    account: Account,
+    field: string,
+    fee: ?BigNumber,
+  }) => {
+    const bridge = getAccountBridge(account);
+    return bridge.updateTransaction(transaction, { [field]: fee });
+  };
+}

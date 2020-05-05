@@ -1,38 +1,31 @@
 /* @flow */
 import { RecipientRequired } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-} from "@ledgerhq/live-common/lib/types";
-import i18next from "i18next";
-import React, { useCallback, useRef, useEffect } from "react";
-import { Trans, translate } from "react-i18next";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
-import type { NavigationScreenProp } from "react-navigation";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
 import {
   SyncOneAccountOnMount,
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/lib/bridge/react";
+import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import React, { useCallback, useRef, useEffect } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { Platform, StyleSheet, View } from "react-native";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
 import { track, TrackScreen } from "../../analytics";
+import { ScreenName } from "../../const";
 import colors from "../../colors";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import type { T } from "../../types/common";
+import { accountScreenSelector } from "../../reducers/accounts";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText, { getFontStyle } from "../../components/LText";
-import StepHeader from "../../components/StepHeader";
 import TextInput from "../../components/TextInput";
 import TranslatedError from "../../components/TranslatedError";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import NavigationScrollView from "../../components/NavigationScrollView";
 
 const withoutHiddenError = error =>
   error instanceof RecipientRequired ? null : error;
@@ -40,25 +33,20 @@ const withoutHiddenError = error =>
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      parentId: string,
-      transaction: Transaction,
-      justScanned?: boolean,
-    },
-  }>,
-  t: T,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const SendSelectRecipient = ({
-  account,
-  parentAccount,
-  navigation,
-  t,
-}: Props) => {
+type RouteParams = {
+  accountId: string,
+  parentId: string,
+  transaction: Transaction,
+  justScanned?: boolean,
+};
+
+export default function SendSelectRecipient({ navigation, route }: Props) {
+  const { t } = useTranslation();
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const {
     transaction,
     setTransaction,
@@ -69,7 +57,7 @@ const SendSelectRecipient = ({
 
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
-  const navigationTransaction = navigation.getParam("transaction");
+  const navigationTransaction = route.params?.transaction;
   useEffect(() => {
     if (
       initialTransaction.current !== navigationTransaction &&
@@ -84,12 +72,12 @@ const SendSelectRecipient = ({
   }, []);
 
   const onPressScan = useCallback(() => {
-    navigation.navigate("ScanRecipient", {
-      accountId: navigation.getParam("accountId"),
-      parentId: navigation.getParam("parentId"),
+    navigation.navigate(ScreenName.ScanRecipient, {
+      accountId: route.params?.accountId,
+      parentId: route.params?.parentId,
       transaction,
     });
-  }, [navigation, transaction]);
+  }, [navigation, transaction, route.params]);
 
   const onChangeText = useCallback(
     recipient => {
@@ -114,7 +102,7 @@ const SendSelectRecipient = ({
   const onPressContinue = useCallback(async () => {
     if (!account) return;
 
-    navigation.navigate("SendAmount", {
+    navigation.navigate(ScreenName.SendAmount, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
@@ -135,7 +123,7 @@ const SendSelectRecipient = ({
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>
-          <ScrollView
+          <NavigationScrollView
             style={styles.container}
             keyboardShouldPersistTaps="handled"
           >
@@ -184,7 +172,7 @@ const SendSelectRecipient = ({
                 <TranslatedError error={error || warning} />
               </LText>
             )}
-          </ScrollView>
+          </NavigationScrollView>
           <View style={[styles.container, styles.containerFlexEnd]}>
             <Button
               event="SendRecipientContinue"
@@ -215,19 +203,7 @@ const SendSelectRecipient = ({
       />
     </>
   );
-};
-
-SendSelectRecipient.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("send.stepperHeader.recipientAddress")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "2",
-        totalSteps: "6",
-      })}
-    />
-  ),
-};
+}
 
 const IconQRCode = ({ size, color }: { size: number, color: string }) => (
   <Icon name="qrcode" size={size} color={color} />
@@ -298,8 +274,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
-export default compose(
-  translate(),
-  connect(accountAndParentScreenSelector),
-)(SendSelectRecipient);

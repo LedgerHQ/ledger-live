@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
@@ -11,31 +11,24 @@ import { installAppFirstTime } from "../../../actions/settings";
 
 import Button from "../../../components/Button";
 
-const mapStateToProps = state => {
-  return {
-    hasInstalledAnyApp: hasInstalledAnyAppSelector(state),
-  };
-};
-
 type Props = {
   app: App,
   state: State,
-  dispatch: Action => void,
+  dispatch: (action: Action) => void,
   notEnoughMemoryToInstall: boolean,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
-  hasInstalledAnyApp: boolean,
-  installAppFirstTime: boolean => void,
 };
 
-const AppInstallButton = ({
+export default function AppInstallButton({
   app,
   state,
-  dispatch,
+  dispatch: dispatchProps,
   notEnoughMemoryToInstall,
   setAppInstallWithDependencies,
-  hasInstalledAnyApp,
-  installAppFirstTime,
-}: Props) => {
+}: Props) {
+  const dispatch = useDispatch();
+  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
+
   const { name } = app;
   const { installed, updateAllQueue } = state;
 
@@ -50,17 +43,17 @@ const AppInstallButton = ({
     if (needsDependencies && setAppInstallWithDependencies) {
       setAppInstallWithDependencies(needsDependencies);
     } else {
-      dispatch({ type: "install", name });
+      dispatchProps({ type: "install", name });
     }
     if (!hasInstalledAnyApp) {
-      installAppFirstTime(true);
+      dispatch(installAppFirstTime(true));
     }
   }, [
     dispatch,
+    dispatchProps,
     name,
     needsDependencies,
     setAppInstallWithDependencies,
-    installAppFirstTime,
     hasInstalledAnyApp,
   ]);
 
@@ -78,7 +71,7 @@ const AppInstallButton = ({
       eventProperties={{ appName: name }}
     />
   );
-};
+}
 
 const styles = StyleSheet.create({
   appStateText: {
@@ -92,10 +85,3 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
 });
-
-const Comp = connect(
-  mapStateToProps,
-  { installAppFirstTime },
-)(AppInstallButton);
-
-export default Comp;

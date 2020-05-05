@@ -1,5 +1,5 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
@@ -42,7 +42,7 @@ class HardResetRow extends PureComponent<Props, State> {
     const { isModalOpened } = this.state;
 
     return (
-      <Fragment>
+      <>
         <SettingsRow
           event="HardResetRow"
           title={<Trans i18nKey="settings.help.hardReset" />}
@@ -65,7 +65,7 @@ class HardResetRow extends PureComponent<Props, State> {
             onHardReset={this.onHardReset}
           />
         </BottomModal>
-      </Fragment>
+      </>
     );
   }
 }

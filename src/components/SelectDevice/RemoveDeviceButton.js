@@ -1,11 +1,10 @@
 // @flow
 import React, { PureComponent } from "react";
 import { StyleSheet, Animated } from "react-native";
-import { SafeAreaView, withNavigation } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import { compose } from "redux";
+import SafeAreaView from "react-native-safe-area-view";
+import { useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import { removeKnownDevices } from "../../actions/ble";
 
@@ -17,14 +16,17 @@ const AnimatedSafeView = Animated.createAnimatedComponent(SafeAreaView);
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   show: boolean,
   deviceIds: string[],
-  removeKnownDevices: (deviceIds: string[]) => void,
   reset: () => void,
 };
 
-class RemoveDeviceButton extends PureComponent<Props> {
+type RemoveDeviceButtonProps = Props & {
+  navigation: any,
+  removeKnownDevices: (deviceIds: string[]) => void,
+};
+
+class RemoveDeviceButton extends PureComponent<RemoveDeviceButtonProps> {
   opacity: * = new Animated.Value(0);
 
   toggleEditMode = () => {
@@ -49,7 +51,7 @@ class RemoveDeviceButton extends PureComponent<Props> {
     }).start(this.toggleEditMode);
   };
 
-  componentDidUpdate({ show: prevShow }: Props) {
+  componentDidUpdate({ show: prevShow }: RemoveDeviceButton) {
     const { show } = this.props;
     if (show && !prevShow) {
       this.showbutton();
@@ -120,10 +122,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  connect(
-    null,
-    { removeKnownDevices },
-  ),
-  withNavigation,
-)(RemoveDeviceButton);
+export default function Screen(props: Props) {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  return (
+    <RemoveDeviceButton
+      {...props}
+      navigation={navigation}
+      removeKnownDevices={(...args) => dispatch(removeKnownDevices(...args))}
+    />
+  );
+}

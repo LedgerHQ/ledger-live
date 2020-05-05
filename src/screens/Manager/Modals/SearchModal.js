@@ -1,35 +1,26 @@
 import React, { useState, useMemo, useCallback, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  Platform,
-  VirtualizedList,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Platform, VirtualizedList } from "react-native";
 import ReactNativeModal from "react-native-modal";
-import { useDispatch, useSelector } from "react-redux";
-import i18next from "i18next";
-import { Trans } from "react-i18next";
-
-import { listTokens } from "@ledgerhq/live-common/lib/currencies";
+import { Trans, useTranslation } from "react-i18next";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
-
+import { listTokens } from "@ledgerhq/live-common/lib/currencies";
+import { useDispatch, useSelector } from "react-redux";
 import { installAppFirstTime } from "../../../actions/settings";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
-import Button from "../../../components/Button";
 
+import Button from "../../../components/Button";
 import SearchIcon from "../../../icons/Search";
 import NoResults from "../../../icons/NoResults";
 import colors from "../../../colors";
+import { NavigatorName } from "../../../const";
 import TextInput from "../../../components/TextInput";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
+import NavigationScrollView from "../../../components/NavigationScrollView";
 import Styles from "../../../navigation/styles";
-
 import AppRow from "../AppsList/AppRow";
-
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import AppIcon from "../AppsList/AppIcon";
 
@@ -82,7 +73,7 @@ const Placeholder = ({
   ]);
 
   return found && parent ? (
-    <ScrollView>
+    <NavigationScrollView>
       <View style={styles.noResult}>
         <View style={styles.placeholderIcon}>
           <AppIcon icon={parent.icon} size={60} />
@@ -139,7 +130,7 @@ const Placeholder = ({
           />
         </View>
       </View>
-    </ScrollView>
+    </NavigationScrollView>
   ) : (
     <View style={styles.noResult}>
       <View style={styles.noResultIcon}>
@@ -177,6 +168,7 @@ export default ({
   setAppUninstallWithDependencies,
   navigation,
 }: Props) => {
+  const { t } = useTranslation();
   const textInput = useRef();
   const listRef = useRef();
   const reduxDispatch = useDispatch();
@@ -228,7 +220,7 @@ export default ({
   );
 
   const addAccount = useCallback(() => {
-    navigation.navigate("AddAccounts");
+    navigation.navigate(NavigatorName.AddAccounts);
     setIsOpen(false);
   }, [navigation]);
 
@@ -284,9 +276,9 @@ export default ({
   const placeholder = useMemo(
     () =>
       !isInstalledView
-        ? i18next.t("manager.appList.searchAppsCatalog")
-        : i18next.t("manager.appList.searchAppsInstalled"),
-    [isInstalledView],
+        ? t("manager.appList.searchAppsCatalog")
+        : t("manager.appList.searchAppsInstalled"),
+    [isInstalledView, t],
   );
 
   /** use this on modal show instead of textinput autofocus since we have to wait for the modal to be visible before focusing */

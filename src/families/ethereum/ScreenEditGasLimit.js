@@ -1,109 +1,89 @@
 /* @flow */
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import { BigNumber } from "bignumber.js";
-import i18next from "i18next";
-import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
-import {
-  Keyboard,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Keyboard, StyleSheet, TextInput, View } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import { i18n } from "../../context/Locale";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
-
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import type { T } from "../../types/common";
+import NavigationScrollView from "../../components/NavigationScrollView";
+import { accountScreenSelector } from "../../reducers/accounts";
 
 const forceInset = { bottom: "always" };
 
+const options = {
+  title: i18n.t("send.summary.gasLimit"),
+  headerLeft: null,
+};
+
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
-  t: T,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-type State = {
-  gasLimit: string,
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
 };
 
-class EthereumEditGasLimit extends PureComponent<Props, State> {
-  static navigationOptions = {
-    title: i18next.t("send.summary.gasLimit"),
-    headerLeft: null,
-  };
+function EthereumEditGasLimit({ navigation, route }: Props) {
+  const { t } = useTranslation();
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const transaction = route.params?.transaction;
+  const [gasLimit, setGasLimit] = useState(
+    transaction.userGasLimit || transaction.estimatedGasLimit,
+  );
 
-  constructor({ navigation }) {
-    super();
-    const transaction = navigation.getParam("transaction");
-    this.state = {
-      gasLimit: transaction.userGasLimit || transaction.estimatedGasLimit,
-    };
-  }
-
-  onValidateText = () => {
-    const { navigation, account, parentAccount } = this.props;
-    const { gasLimit } = this.state;
+  function onValidateText() {
     const bridge = getAccountBridge(account, parentAccount);
-    const transaction = navigation.getParam("transaction");
 
     Keyboard.dismiss();
-    navigation.navigate("SendSummary", {
+    navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction: bridge.updateTransaction(transaction, {
         userGasLimit: BigNumber(gasLimit),
       }),
     });
-  };
-
-  render() {
-    const { gasLimit } = this.state;
-    const { t } = this.props;
-    return (
-      <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
-        <KeyboardView style={styles.body}>
-          <ScrollView contentContainerStyle={styles.root}>
-            <TextInput
-              autoFocus
-              style={styles.textInputAS}
-              defaultValue={gasLimit ? gasLimit.toString() : ""}
-              keyboardType="numeric"
-              returnKeyType="done"
-              maxLength={10}
-              onChangeText={gasLimit => this.setState({ gasLimit })}
-              onSubmitEditing={this.onValidateText}
-            />
-
-            <View style={styles.flex}>
-              <Button
-                event="EthereumSetGasLimit"
-                type="primary"
-                title={t("send.summary.validateGasLimit")}
-                onPress={this.onValidateText}
-                containerStyle={styles.buttonContainer}
-              />
-            </View>
-          </ScrollView>
-        </KeyboardView>
-      </SafeAreaView>
-    );
   }
+
+  return (
+    <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
+      <KeyboardView style={styles.body}>
+        <NavigationScrollView contentContainerStyle={styles.root}>
+          <TextInput
+            autoFocus
+            style={styles.textInputAS}
+            defaultValue={gasLimit ? gasLimit.toString() : ""}
+            keyboardType="numeric"
+            returnKeyType="done"
+            maxLength={10}
+            onChangeText={setGasLimit}
+            onSubmitEditing={onValidateText}
+          />
+
+          <View style={styles.flex}>
+            <Button
+              event="EthereumSetGasLimit"
+              type="primary"
+              title={t("send.summary.validateGasLimit")}
+              onPress={onValidateText}
+              containerStyle={styles.buttonContainer}
+            />
+          </View>
+        </NavigationScrollView>
+      </KeyboardView>
+    </SafeAreaView>
+  );
 }
+
+export { options, EthereumEditGasLimit as component };
 
 const styles = StyleSheet.create({
   root: {
@@ -129,7 +109,3 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
 });
-
-export default connect(accountAndParentScreenSelector)(
-  translate()(EthereumEditGasLimit),
-);

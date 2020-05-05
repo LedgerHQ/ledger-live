@@ -1,10 +1,8 @@
 // @flow
 
-import React from "react";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { translate } from "react-i18next";
-import { compose } from "redux";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import {
   useBridgeSync,
@@ -13,36 +11,23 @@ import {
 import { isUpToDateSelector } from "../reducers/accounts";
 import CounterValues from "../countervalues";
 
-const mapStateToProps = createStructuredSelector({
-  isUpToDate: isUpToDateSelector,
-});
-
-export default (Decorated: React$ComponentType<any>) => {
-  const SyncIndicator = ({ isUpToDate, ...rest }: { isUpToDate: boolean }) => {
+export default (Decorated: React$ComponentType<any>) =>
+  function SyncIndicator(props: any) {
+    const isUpToDate = useSelector(isUpToDateSelector);
     const globalSyncState = useGlobalSyncState();
     const setSyncBehavior = useBridgeSync();
+    const { t } = useTranslation();
+    const cvPolling = useContext(CounterValues.PollingContext);
+
     return (
-      <CounterValues.PollingConsumer>
-        {cvPolling => {
-          const isPending = cvPolling.pending || globalSyncState.pending;
-          const error = globalSyncState.error;
-          return (
-            <Decorated
-              isUpToDate={isUpToDate}
-              isPending={isPending}
-              error={error}
-              cvPoll={cvPolling.poll}
-              setSyncBehavior={setSyncBehavior}
-              {...rest}
-            />
-          );
-        }}
-      </CounterValues.PollingConsumer>
+      <Decorated
+        isUpToDate={isUpToDate}
+        isPending={cvPolling.pending || globalSyncState.pending}
+        error={globalSyncState.error}
+        cvPoll={cvPolling.poll}
+        setSyncBehavior={setSyncBehavior}
+        t={t}
+        {...props}
+      />
     );
   };
-
-  return compose(
-    connect(mapStateToProps),
-    translate(),
-  )(SyncIndicator);
-};

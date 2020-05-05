@@ -1,5 +1,5 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
@@ -49,7 +49,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
     const unit = getAccountUnit(account);
     const currency = getAccountCurrency(account);
     return (
-      <Fragment>
+      <>
         <SummaryRow
           title={<Trans i18nKey="send.summary.total" />}
           additionalInfo={
@@ -98,7 +98,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             }
           />
         </BottomModal>
-      </Fragment>
+      </>
     );
   }
 }

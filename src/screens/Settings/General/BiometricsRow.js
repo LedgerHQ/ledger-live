@@ -1,121 +1,95 @@
 /* @flow */
-import React, { Component } from "react";
-import { createStructuredSelector } from "reselect";
+import React, { useCallback, useState } from "react";
 import { Switch, Alert } from "react-native";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate, Trans } from "react-i18next";
-import type { T } from "../../../types/common";
+import { useDispatch, useSelector } from "react-redux";
+import { Trans, useTranslation } from "react-i18next";
 import { setPrivacyBiometrics } from "../../../actions/settings";
 import { privacySelector } from "../../../reducers/settings";
-import type { Privacy } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
-import RequestBiometricModal from "../../../components/RequestBiometricModal";
+import { useBiometricAuth } from "../../../components/RequestBiometricAuth";
 
 type Props = {
-  privacy: ?Privacy,
-  setPrivacyBiometrics: boolean => *,
-  iconLeft: *,
-  t: T,
-};
-type State = {
-  validationPending: boolean,
+  iconLeft: any,
 };
 
-const mapStateToProps = createStructuredSelector({
-  privacy: privacySelector,
-});
+export default function BiometricsRow({ iconLeft }: Props) {
+  const { t } = useTranslation();
 
-const mapDispatchToProps = {
-  setPrivacyBiometrics,
-};
+  const dispatch = useDispatch();
+  const privacy = useSelector(privacySelector);
 
-class BiometricsRow extends Component<Props, State> {
-  state = {
-    validationPending: false,
-  };
+  const [validationPending, setValidationPending] = useState(false);
 
-  onValueChange = async (biometricsEnabled: boolean) => {
-    if (this.state.validationPending) return;
-    if (biometricsEnabled) {
-      this.setState({ validationPending: true });
-    } else {
-      this.props.setPrivacyBiometrics(false);
-    }
-  };
+  const onValueChange = useCallback(
+    async (biometricsEnabled: boolean) => {
+      if (validationPending) return;
+      if (biometricsEnabled) {
+        setValidationPending(true);
+      } else {
+        dispatch(setPrivacyBiometrics(false));
+      }
+    },
+    [dispatch, validationPending],
+  );
 
-  onSuccess = () => {
-    this.setState({ validationPending: false });
-    this.props.setPrivacyBiometrics(true);
-  };
+  const onSuccess = useCallback(() => {
+    setValidationPending(false);
+    dispatch(setPrivacyBiometrics(true));
+  }, [dispatch]);
 
-  onError = error => {
-    const { t } = this.props;
-    this.setState({ validationPending: false });
-    Alert.alert(
-      t("auth.failed.title"),
-      `${t("auth.failed.denied")}\n${String(error || "")}`,
-    );
-  };
+  const onError = useCallback(
+    error => {
+      setValidationPending(false);
+      Alert.alert(
+        t("auth.failed.title"),
+        `${t("auth.failed.denied")}\n${String(error || "")}`,
+      );
+    },
+    [t],
+  );
 
-  onCancel = () => {
-    this.setState({ validationPending: false });
-  };
+  useBiometricAuth({
+    disabled: !validationPending,
+    onSuccess,
+    onError,
+  });
 
-  render() {
-    const { privacy, iconLeft } = this.props;
-    const { validationPending } = this.state;
-    if (!privacy) return null;
+  if (!privacy) return null;
 
-    return (
-      <>
-        {privacy.biometricsType && (
-          <>
-            <SettingsRow
-              event="BiometricsRow"
-              iconLeft={iconLeft}
-              centeredIcon
-              title={
-                <Trans
-                  i18nKey="auth.enableBiometrics.title"
-                  values={{
-                    ...privacy,
-                    biometricsType: privacy.biometricsType,
-                  }}
-                />
-              }
-              desc={
-                <Trans
-                  i18nKey="auth.enableBiometrics.desc"
-                  values={{
-                    ...privacy,
-                    biometricsType: privacy.biometricsType,
-                  }}
-                />
-              }
-            >
-              <Switch
-                value={privacy.biometricsEnabled || validationPending}
-                onValueChange={this.onValueChange}
+  return (
+    <>
+      {privacy.biometricsType && (
+        <>
+          <SettingsRow
+            event="BiometricsRow"
+            iconLeft={iconLeft}
+            centeredIcon
+            title={
+              <Trans
+                i18nKey="auth.enableBiometrics.title"
+                values={{
+                  ...privacy,
+                  biometricsType: privacy.biometricsType,
+                }}
               />
-            </SettingsRow>
-            <RequestBiometricModal
-              isVisible={validationPending}
-              onSuccess={this.onSuccess}
-              onError={this.onError}
-              onCancel={this.onCancel}
+            }
+            desc={
+              <Trans
+                i18nKey="auth.enableBiometrics.desc"
+                values={{
+                  ...privacy,
+                  biometricsType: privacy.biometricsType,
+                }}
+              />
+            }
+          >
+            <Switch
+              value={privacy.biometricsEnabled || validationPending}
+              onValueChange={onValueChange}
             />
-          </>
-        )}
-      </>
-    );
-  }
+          </SettingsRow>
+        </>
+      )}
+    </>
+  );
 }
-
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(BiometricsRow);

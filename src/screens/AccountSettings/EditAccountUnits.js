@@ -1,95 +1,71 @@
 /* @flow */
-import React, { PureComponent } from "react";
-import i18next from "i18next";
-import { View, StyleSheet } from "react-native";
-// $FlowFixMe
-import { ScrollView, FlatList } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate } from "react-i18next";
-import { createStructuredSelector } from "reselect";
+import React, { useCallback } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import SettingsRow from "../../components/SettingsRow";
 import Touchable from "../../components/Touchable";
+import NavigationScrollView from "../../components/NavigationScrollView";
 
 type Props = {
-  navigation: NavigationScreenProp<{
-    accountId: string,
-  }>,
-  updateAccount: Function,
-  account: Account,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
-const mapDispatchToProps = {
-  updateAccount,
+type RouteParams = {
+  accountId: string,
 };
-class EditAccountUnits extends PureComponent<Props> {
-  static navigationOptions = {
-    title: i18next.t("account.settings.accountUnits.title"),
-    headerRight: null,
-  };
 
-  keyExtractor = (item: any) => item.code;
+export default function EditAccountUnits({ navigation, route }: Props) {
+  const dispatch = useDispatch();
+  const { account } = useSelector(accountScreenSelector(route));
 
-  updateAccount = (item: any) => {
-    const { account, navigation, updateAccount } = this.props;
-    const updatedAccount = {
-      ...account,
-      unit: item,
-    };
-    updateAccount(updatedAccount);
-    navigation.goBack();
-  };
+  const onPressItem = useCallback(
+    (item: any) => {
+      const newAccount = {
+        ...account,
+        unit: item,
+      };
+      dispatch(updateAccount(newAccount));
+      navigation.goBack();
+    },
+    [account, navigation, dispatch],
+  );
 
-  render() {
-    const { account } = this.props;
-    const accountUnits = account.currency.units;
-    return (
-      <ScrollView contentContainerStyle={styles.root}>
-        <View style={styles.body}>
-          <FlatList
-            data={accountUnits}
-            keyExtractor={this.keyExtractor}
-            renderItem={({ item }) => (
-              <Touchable
-                event="EditAccountUnits"
-                eventProperties={{
-                  currency: account.currency.id,
-                  unit: item.code,
-                }}
-                onPress={() => {
-                  this.updateAccount(item);
-                }}
-              >
-                <SettingsRow
-                  title={item.code}
-                  selected={account.unit.code === item.code}
-                  compact
-                />
-              </Touchable>
-            )}
-          >
-            {account.unit.code}
-          </FlatList>
-        </View>
-      </ScrollView>
-    );
-  }
+  const accountUnits = account.currency.units;
+
+  return (
+    <NavigationScrollView contentContainerStyle={styles.root}>
+      <View style={styles.body}>
+        <FlatList
+          data={accountUnits}
+          keyExtractor={(item: any) => item.code}
+          renderItem={({ item }) => (
+            <Touchable
+              event="EditAccountUnits"
+              eventProperties={{
+                currency: account.currency.id,
+                unit: item.code,
+              }}
+              onPress={() => {
+                onPressItem(item);
+              }}
+            >
+              <SettingsRow
+                title={item.code}
+                selected={account.unit.code === item.code}
+                compact
+              />
+            </Touchable>
+          )}
+        >
+          {account.unit.code}
+        </FlatList>
+      </View>
+    </NavigationScrollView>
+  );
 }
-
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(EditAccountUnits);
 
 const styles = StyleSheet.create({
   root: {

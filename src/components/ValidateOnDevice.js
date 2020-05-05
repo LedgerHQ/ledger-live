@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Trans, translate } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import type {
   Account,
   AccountLike,
@@ -30,20 +30,19 @@ type Props = {
   transaction: Transaction,
   account: AccountLike,
   parentAccount: ?Account,
-  t: *,
 };
 
 const { width } = getWindowDimensions();
 
-const ValidateOnDevice = ({
+export default function ValidateOnDevice({
   modelId,
   wired,
   account,
   parentAccount,
   status,
   transaction,
-  t,
-}: Props) => {
+}: Props) {
+  const { t } = useTranslation();
   const { amount, estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);
   const mainAccountUnit = getAccountUnit(mainAccount);
@@ -146,7 +145,7 @@ const ValidateOnDevice = ({
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -185,5 +184,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-export default translate()(ValidateOnDevice);

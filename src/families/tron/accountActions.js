@@ -21,6 +21,7 @@ import ClockIcon from "../../icons/Clock";
 import LText from "../../components/LText";
 import DateFromNow from "../../components/DateFromNow";
 import colors from "../../colors";
+import { NavigatorName, ScreenName } from "../../const";
 
 type ChoiceButtonProps = {
   disabled: boolean,
@@ -69,8 +70,8 @@ const Manage = ({
   onNavigate,
 }: {
   account: Account,
-  onNavigate: (selection: string) => void,
-  style: *,
+  onNavigate: OnNavigate,
+  style: any,
 }) => {
   const [modalOpen, setModalOpen] = useState();
   const onOpenModal = useCallback(() => setModalOpen(true), []);
@@ -84,6 +85,8 @@ const Manage = ({
       frozen,
     } = {},
   } = account;
+
+  const accountId = account.id;
 
   const canFreeze =
     spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
@@ -111,11 +114,12 @@ const Manage = ({
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
   const onSelectAction = useCallback(
-    (selection: ?string) => {
+    (selection: ?string, options?: NavOptions) => {
       onCloseModal();
-      if (selection) onNavigate(selection);
+      if (selection)
+        onNavigate(selection, { ...options, params: { accountId } });
     },
-    [onCloseModal, onNavigate],
+    [onCloseModal, onNavigate, accountId],
   );
 
   return (
@@ -137,7 +141,9 @@ const Manage = ({
         <ChoiceButton
           disabled={!canFreeze}
           onPress={() =>
-            onSelectAction(canVote ? "FreezeAmount" : "FreezeInfo")
+            onSelectAction(NavigatorName.Freeze, {
+              screen: canVote ? ScreenName.FreezeAmount : ScreenName.FreezeInfo,
+            })
           }
           label={<Trans i18nKey="tron.manage.freeze.title" />}
           description={<Trans i18nKey="tron.manage.freeze.description" />}
@@ -145,7 +151,11 @@ const Manage = ({
         />
         <ChoiceButton
           disabled={!canUnfreeze}
-          onPress={() => onSelectAction("UnfreezeAmount")}
+          onPress={() =>
+            onSelectAction(NavigatorName.Unfreeze, {
+              screen: ScreenName.UnfreezeAmount,
+            })
+          }
           label={<Trans i18nKey="tron.manage.unfreeze.title" />}
           description={<Trans i18nKey="tron.manage.unfreeze.description" />}
           Icon={UnfreezeIcon}
@@ -164,9 +174,9 @@ const Manage = ({
         <ChoiceButton
           disabled={!canVote}
           onPress={() =>
-            onSelectAction(
-              lastVotedDate ? "VoteSelectValidator" : "VoteStarted",
-            )
+            onSelectAction(NavigatorName.TronVoteFlow, {
+              screen: lastVotedDate ? "VoteSelectValidator" : "VoteStarted",
+            })
           }
           label={<Trans i18nKey="tron.manage.vote.title" />}
           description={<Trans i18nKey="tron.manage.vote.description" />}
@@ -184,12 +194,19 @@ const getManageAction = ({
   onNavigate,
 }: {
   account: Account,
-  onNavigate: (selection: string) => void,
-  style: *,
+  onNavigate: OnNavigate,
+  style: any,
 }) => {
   if (!account.tronResources) return null;
 
   return <Manage style={style} account={account} onNavigate={onNavigate} />;
+};
+
+type OnNavigate = (name: string, optinos?: NavOptions) => void;
+
+type NavOptions = {
+  screen: string,
+  params?: { [key: string]: any },
 };
 
 const styles = StyleSheet.create({

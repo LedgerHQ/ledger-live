@@ -1,58 +1,51 @@
 // @flow
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import i18next from "i18next";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
-
+import { i18n } from "../../context/Locale";
 import colors from "../../colors";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import type { T } from "../../types/common";
-
+import { accountScreenSelector } from "../../reducers/accounts";
 import KeyboardView from "../../components/KeyboardView";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 
 const forceInset = { bottom: "always" };
 
-type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
-  t: T,
+const options = {
+  title: i18n.t("send.fees.title"),
+  headerLeft: null,
 };
 
-class EthereumEditFee extends Component<Props> {
-  static navigationOptions = {
-    title: i18next.t("send.fees.title"),
-    headerLeft: null,
-  };
+type Props = {
+  route: { params: RouteParams },
+};
 
-  render() {
-    const { navigation, account, parentAccount } = this.props;
-    const transaction: Transaction = navigation.getParam("transaction");
-    if (!transaction) return null;
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <KeyboardView style={styles.container}>
-          <EditFeeUnitEthereum
-            account={account}
-            parentAccount={parentAccount}
-            transaction={transaction}
-            navigation={navigation}
-          />
-        </KeyboardView>
-      </SafeAreaView>
-    );
-  }
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+};
+
+function EthereumEditFee({ route }: Props) {
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const transaction = route.params?.transaction;
+
+  if (!transaction) return null;
+
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <KeyboardView style={styles.container}>
+        <EditFeeUnitEthereum
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+        />
+      </KeyboardView>
+    </SafeAreaView>
+  );
 }
+
+export { options, EthereumEditFee as component };
 
 const styles = StyleSheet.create({
   root: {
@@ -63,7 +56,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-const mapStateToProps = accountAndParentScreenSelector;
-
-export default connect(mapStateToProps)(EthereumEditFee);

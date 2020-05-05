@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useBridgeSync } from "@ledgerhq/live-common/lib/bridge/react";
 import { accountsSelector } from "../reducers/accounts";
 
-export const SyncNewAccounts = ({ priority }: { priority: number }) => {
+export default function SyncNewAccounts({ priority }: { priority: number }) {
   const ids = useSelector(accountsSelector).map(a => a.id);
   const ref = useRef(ids);
   const sync = useBridgeSync();
@@ -23,4 +23,4 @@ export const SyncNewAccounts = ({ priority }: { priority: number }) => {
   }, [ids, sync, priority]);
 
   return null;
-};
+}

@@ -1,79 +1,65 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import type { NavigationStackProp } from "react-navigation-stack";
-import { translate, Trans } from "react-i18next";
-
+import SafeAreaView from "react-native-safe-area-view";
+import { Trans } from "react-i18next";
 import { TrackScreen } from "../../analytics";
 import GenericErrorView from "../../components/GenericErrorView";
 import Button from "../../components/Button";
 import NeedHelp from "../../components/NeedHelp";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 
 const forceInset = { bottom: "always" };
 
-type Navigation = NavigationStackProp<{
-  params: {
-    deviceId: string,
-    error: Error,
-  },
-}>;
-
 type Props = {
-  navigation: Navigation,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-type State = {};
+type RouteParams = {
+  deviceId: string,
+  error: Error,
+};
 
-class FirmwareUpdateFailure extends Component<Props, State> {
-  static navigationOptions = {
-    header: null,
-  };
-
-  onRetry = () => {
-    const { navigation } = this.props;
+export default function FirmwareUpdateFailure({ navigation, route }: Props) {
+  const onRetry = useCallback(() => {
     if (navigation.replace) {
-      navigation.replace("FirmwareUpdateMCU", {
-        ...navigation.state.params,
-      });
+      navigation.replace(ScreenName.FirmwareUpdateMCU, route.params);
     }
-  };
+  }, [navigation, route.params]);
 
-  onClose = () => {
-    const n = this.props.navigation.dangerouslyGetParent();
+  const onClose = useCallback(() => {
+    const n = navigation.dangerouslyGetParent();
     if (n) n.goBack();
-  };
+  }, [navigation]);
 
-  render() {
-    const { navigation } = this.props;
-    const error = navigation.getParam("error");
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="FirmwareUpdate" name="Failure" />
-        <View style={styles.body}>
-          <GenericErrorView error={error} />
-          <Button
-            event="FirmwareUpdateFailureRetry"
-            type="primary"
-            onPress={this.onRetry}
-            title={<Trans i18nKey="common.retry" />}
-            containerStyle={styles.button}
-          />
-          <Button
-            event="FirmwareUpdateFailureClose"
-            type="lightSecondary"
-            onPress={this.onClose}
-            title={<Trans i18nKey="common.close" />}
-            containerStyle={styles.button}
-          />
-        </View>
-        <View style={styles.footer}>
-          <NeedHelp />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  const error = route.params.error;
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="FirmwareUpdate" name="Failure" />
+      <View style={styles.body}>
+        <GenericErrorView error={error} />
+        <Button
+          event="FirmwareUpdateFailureRetry"
+          type="primary"
+          onPress={onRetry}
+          title={<Trans i18nKey="common.retry" />}
+          containerStyle={styles.button}
+        />
+        <Button
+          event="FirmwareUpdateFailureClose"
+          type="lightSecondary"
+          onPress={onClose}
+          title={<Trans i18nKey="common.close" />}
+          containerStyle={styles.button}
+        />
+      </View>
+      <View style={styles.footer}>
+        <NeedHelp />
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -116,5 +102,3 @@ const styles = StyleSheet.create({
     borderColor: colors.lightFog,
   },
 });
-
-export default translate()(FirmwareUpdateFailure);

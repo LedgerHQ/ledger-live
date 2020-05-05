@@ -2,20 +2,14 @@
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import React, { useState, useCallback, Component } from "react";
 import { View, StyleSheet } from "react-native";
-// $FlowFixMe
-import { SafeAreaView, ScrollView } from "react-navigation";
-import { connect } from "react-redux";
-import { translate, Trans } from "react-i18next";
-import i18next from "i18next";
-import type { NavigationScreenProp } from "react-navigation";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-} from "@ledgerhq/live-common/lib/types";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
 import Button from "../../components/Button";
@@ -27,46 +21,43 @@ import SummaryFromSection from "./SummaryFromSection";
 import SummaryToSection from "./SummaryToSection";
 import SummaryAmountSection from "./SummaryAmountSection";
 import SummaryTotalSection from "./SummaryTotalSection";
-import StepHeader from "../../components/StepHeader";
 import SectionSeparator from "../../components/SectionSeparator";
 import AlertTriangle from "../../icons/AlertTriangle";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import NavigationScrollView from "../../components/NavigationScrollView";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const SendSummary = ({ account, parentAccount, navigation }: Props) => {
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+};
+
+export default function SendSummary({ navigation, route }: Props) {
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const {
     transaction,
     setTransaction,
     status,
     bridgePending,
   } = useBridgeTransaction(() => ({
-    transaction: navigation.getParam("transaction"),
+    transaction: route.params.transaction,
     account,
     parentAccount,
   }));
 
   // handle any edit screen changes like fees changes
-  useTransactionChangeFromNavigation({
-    navigation,
-    setTransaction,
-  });
+  useTransactionChangeFromNavigation(setTransaction);
 
   const [highFeesOpen, setHighFeesOpen] = useState(false);
 
   const onAcceptFees = useCallback(async () => {
-    navigation.navigate("SendConnectDevice", {
+    navigation.navigate(ScreenName.SendConnectDevice, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
@@ -94,7 +85,7 @@ const SendSummary = ({ account, parentAccount, navigation }: Props) => {
       return;
     }
 
-    navigation.navigate("SendConnectDevice", {
+    navigation.navigate(ScreenName.SendConnectDevice, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
@@ -123,7 +114,7 @@ const SendSummary = ({ account, parentAccount, navigation }: Props) => {
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="SendFunds" name="Summary" />
-      <ScrollView style={styles.body}>
+      <NavigationScrollView style={styles.body}>
         <SummaryFromSection account={account} parentAccount={parentAccount} />
         <VerticalConnector />
         <SummaryToSection recipient={transaction.recipient} />
@@ -155,7 +146,7 @@ const SendSummary = ({ account, parentAccount, navigation }: Props) => {
           parentAccount={parentAccount}
           amount={totalSpent}
         />
-      </ScrollView>
+      </NavigationScrollView>
       <View style={styles.footer}>
         <LText style={styles.error}>
           <TranslatedError error={transactionError} />
@@ -185,19 +176,7 @@ const SendSummary = ({ account, parentAccount, navigation }: Props) => {
       />
     </SafeAreaView>
   );
-};
-
-SendSummary.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("send.stepperHeader.summary")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "4",
-        totalSteps: "6",
-      })}
-    />
-  ),
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -239,10 +218,6 @@ const styles = StyleSheet.create({
     left: 16,
   },
 });
-
-export default connect(accountAndParentScreenSelector)(
-  translate()(SendSummary),
-);
 
 class VerticalConnector extends Component<*> {
   render() {

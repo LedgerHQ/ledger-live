@@ -1,12 +1,10 @@
 // @flow
 
-import React, { Component } from "react";
-import { translate, Trans } from "react-i18next";
-import i18next from "i18next";
+import React from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, Linking } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 
-import type { NavigationScreenProp } from "react-navigation";
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 
 import colors from "../../colors";
@@ -45,65 +43,64 @@ const Disclaimer = ({
   </View>
 );
 
-type Props = {
-  navigation: NavigationScreenProp<{
-    params: {
-      token: TokenCurrency,
-    },
-  }>,
+type RouteParams = {
+  token: TokenCurrency,
 };
 
-class AddAccountsTokenCurrencyDisclaimer extends Component<Props> {
-  static navigationOptions = {
-    title: i18next.t("addAccounts.tokens.title"),
-  };
+type Props = {
+  navigation: any,
+  route: { params: RouteParams },
+};
 
-  onBack = () => this.props.navigation.goBack();
+export default function AddAccountsTokenCurrencyDisclaimer({
+  navigation,
+  route,
+}: Props) {
+  const { t } = useTranslation();
 
-  onClose = () => {
-    const { navigation } = this.props;
-    if (navigation && navigation.dismiss) navigation.dismiss();
-  };
+  const token = route.params.token;
+  const tokenName = `${token.name} (${token.ticker})`;
 
-  render() {
-    const { navigation } = this.props;
-    const token = navigation.getParam("token");
-
-    const tokenName = `${token.name} (${token.ticker})`;
-
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <View style={styles.wrapper}>
-          <CurrencyIcon size={56} radius={16} currency={token} />
-        </View>
-        <View style={[styles.wrapper, styles.spacer]}>
-          <LText secondary bold style={styles.tokenName}>
-            {tokenName}
-          </LText>
-        </View>
-        <View style={styles.disclaimerWrapper}>
-          <Disclaimer tokenName={tokenName} tokenType={token.tokenType} />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            event="AddAccountTokenDisclaimerBack"
-            title={i18next.t("addAccounts.tokens.changeAssets")}
-            type="secondary"
-            onPress={this.onBack}
-            containerStyle={[styles.button, styles.buttonSpace]}
-          />
-
-          <Button
-            event="AddAccountTokenDisclaimerClose"
-            title={i18next.t("common.close")}
-            type="primary"
-            onPress={this.onClose}
-            containerStyle={styles.button}
-          />
-        </View>
-      </SafeAreaView>
-    );
+  function onBack(): void {
+    navigation.goBack();
   }
+
+  function onClose(): void {
+    navigation.dangerouslyGetParent().pop();
+  }
+
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <View style={styles.wrapper}>
+        <CurrencyIcon size={56} radius={16} currency={token} />
+      </View>
+      <View style={[styles.wrapper, styles.spacer]}>
+        <LText secondary bold style={styles.tokenName}>
+          {tokenName}
+        </LText>
+      </View>
+      <View style={styles.disclaimerWrapper}>
+        <Disclaimer tokenName={tokenName} tokenType={token.tokenType} />
+      </View>
+      <View style={styles.buttonWrapper}>
+        <Button
+          event="AddAccountTokenDisclaimerBack"
+          title={t("addAccounts.tokens.changeAssets")}
+          type="secondary"
+          onPress={onBack}
+          containerStyle={[styles.button, styles.buttonSpace]}
+        />
+
+        <Button
+          event="AddAccountTokenDisclaimerClose"
+          title={t("common.close")}
+          type="primary"
+          onPress={onClose}
+          containerStyle={styles.button}
+        />
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -155,5 +152,3 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
-
-export default translate()(AddAccountsTokenCurrencyDisclaimer);

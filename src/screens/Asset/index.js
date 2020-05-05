@@ -13,20 +13,12 @@ import type {
   PortfolioRange,
   Unit,
 } from "@ledgerhq/live-common/lib/types";
-import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
-import { StyleSheet, View } from "react-native";
-import { compose } from "redux";
-import { connect } from "react-redux";
+import React, { PureComponent, useMemo } from "react";
+import { StyleSheet, View, SectionList } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
-import {
-  // prettier-ignore
-  // $FlowFixMe
-  SectionList,
-  SafeAreaView,
-  withNavigation,
-} from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import colors from "../../colors";
 import { switchCountervalueFirst } from "../../actions/settings";
@@ -35,7 +27,7 @@ import type { Item } from "../../components/Graph/types";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import AssetGraphCard from "../../components/AssetGraphCard";
-import { currencyPortfolioSelector } from "../../actions/portfolio";
+import { currencyPortfolioSelectorCreator } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import LoadingFooter from "../../components/LoadingFooter";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
@@ -43,7 +35,6 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import AccountDistribution from "../../components/AccountDistribution";
 import OperationRow from "../../components/OperationRow";
 import SectionHeader from "../../components/SectionHeader";
-import type { State } from "../../reducers";
 import { accountsSelector } from "../../reducers/accounts";
 import {
   counterValueCurrencySelector,
@@ -55,37 +46,37 @@ import {
 const List = globalSyncRefreshControl(SectionList);
 
 type Props = {
-  accounts: any, // Fixme doesn't want AccountLikeArray
-  allAccounts: Account[],
-  useCounterValue: boolean,
+  route: { params: any },
   counterValueUnit: Unit,
-  switchCountervalueFirst: () => *,
-  range: PortfolioRange,
-  currency: Currency,
-  portfolio: *,
-  counterValueCurrency: Currency,
-  navigation: NavigationScreenProp<*>,
 };
 
-class Asset extends PureComponent<Props, *> {
-  static navigationOptions = ({ navigation }) => ({
-    headerTitle: (
-      <View
-        style={{
-          flexDirection: "row",
-        }}
-      >
-        <View style={{ marginRight: 5, justifyContent: "center" }}>
-          <CurrencyIcon size={16} currency={navigation.state.params.currency} />
-        </View>
-        <LText semiBold secondary style={{ fontSize: 16 }}>
-          {navigation.state.params.currency.name}
-        </LText>
-      </View>
-    ),
-    headerRight: null,
-  });
+type AssetProps = Props & {
+  currency: Currency,
+  range: PortfolioRange,
+  counterValue: any,
+  accounts: any, // Fixme doesn't want AccountLikeArray
+  allAccounts: Account[],
+  counterValueCurrency: Currency,
+  useCounterValue: boolean,
+  portfolio: any,
+  switchCountervalueFirst: () => void,
+};
 
+export function HeaderTitle() {
+  const route = useRoute();
+  return (
+    <View style={{ flexDirection: "row" }}>
+      <View style={{ marginRight: 5, justifyContent: "center" }}>
+        <CurrencyIcon size={16} currency={route.params?.currency} />
+      </View>
+      <LText semiBold secondary style={{ fontSize: 16 }}>
+        {route.params?.currency.name}
+      </LText>
+    </View>
+  );
+}
+
+class Asset extends PureComponent<AssetProps, any> {
   state = {
     opCount: 50,
   };
@@ -180,7 +171,7 @@ class Asset extends PureComponent<Props, *> {
     index: number,
     section: SectionBase<*>,
   }) => {
-    const { allAccounts, accounts, navigation } = this.props;
+    const { allAccounts, accounts } = this.props;
     const account = accounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
@@ -194,7 +185,6 @@ class Asset extends PureComponent<Props, *> {
         operation={item}
         parentAccount={parentAccount}
         account={account}
-        navigation={navigation}
         multipleAccounts
         isLast={section.data.length - 1 === index}
       />
@@ -249,33 +239,45 @@ class Asset extends PureComponent<Props, *> {
   }
 }
 
-const mapStateToProps = (state: State, props: *) => {
-  const currency = props.navigation.state.params.currency;
-  return {
-    currency,
-    range: selectedTimeRangeSelector(state),
-    counterValue: counterValueCurrencySelector(state),
-    accounts: flattenAccounts(accountsSelector(state))
-      .filter(a => getAccountCurrency(a) === currency)
-      .sort((a, b) => b.balance.comparedTo(a.balance)),
-    allAccounts: accountsSelector(state),
-    counterValueCurrency: counterValueCurrencySelector(state),
-    useCounterValue: countervalueFirstSelector(state),
-    portfolio: currencyPortfolioSelector(state, {
+export default function Screen(props: Props) {
+  const dispatch = useDispatch();
+  const currency = props.route.params.currency;
+  const range = useSelector(selectedTimeRangeSelector);
+  const counterValue = useSelector(counterValueCurrencySelector);
+  const allAccounts = useSelector(accountsSelector);
+  const accounts = useMemo(
+    () =>
+      flattenAccounts(allAccounts)
+        .filter(a => getAccountCurrency(a) === currency)
+        .sort((a, b) => b.balance.comparedTo(a.balance)),
+    [allAccounts, currency],
+  );
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const useCounterValue = useSelector(countervalueFirstSelector);
+  const portfolio = useSelector(
+    currencyPortfolioSelectorCreator({
       currency,
-      range: selectedTimeRangeSelector(state),
+      range,
     }),
-  };
-};
+  );
 
-const mapDispatchToProps = { switchCountervalueFirst };
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(withNavigation(Asset));
+  return (
+    <Asset
+      {...props}
+      currency={currency}
+      range={range}
+      counterValue={counterValue}
+      accounts={accounts}
+      allAccounts={allAccounts}
+      counterValueCurrency={counterValueCurrency}
+      useCounterValue={useCounterValue}
+      portfolio={portfolio}
+      switchCountervalueFirst={(...args) =>
+        dispatch(switchCountervalueFirst(...args))
+      }
+    />
+  );
+}
 
 const styles = StyleSheet.create({
   root: {

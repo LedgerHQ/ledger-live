@@ -8,8 +8,8 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { connect } from "react-redux";
-import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
+import { ScreenName } from "../const";
 import { addKnownDevice } from "../actions/ble";
 import colors from "../colors";
 import { getFontStyle } from "../components/LText";
@@ -21,17 +21,13 @@ const forceInset = { bottom: "always" };
 
 class DebugHttpTransport extends Component<
   {
-    navigation: NavigationScreenProp<*>,
+    navigation: *,
     addKnownDevice: (*) => void,
   },
   {
     text: string,
   },
 > {
-  static navigationOptions = {
-    title: "Debug Http Transport",
-  };
-
   state = {
     text: "",
   };
@@ -51,7 +47,7 @@ class DebugHttpTransport extends Component<
       id: `httpdebug|ws://${ip}:${port}`,
       name: ip,
     });
-    this.props.navigation.navigate("Manager");
+    this.props.navigation.navigate(ScreenName.Manager);
   };
 
   render() {
@@ -110,9 +106,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(
-  null,
-  {
-    addKnownDevice,
-  },
-)(DebugHttpTransport);
+export default connect(null, {
+  addKnownDevice,
+})(DebugHttpTransport);

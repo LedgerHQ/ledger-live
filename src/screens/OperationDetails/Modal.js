@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 
 import BottomModal from "../../components/BottomModal";
 import Circle from "../../components/Circle";

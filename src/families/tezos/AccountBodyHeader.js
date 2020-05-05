@@ -1,8 +1,7 @@
 // @flow
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
-import { withNavigation } from "react-navigation";
-import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
+import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
@@ -91,13 +90,13 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
-const TezosAccountBodyHeader = ({
+export default function TezosAccountBodyHeader({
   account,
   parentAccount,
 }: {
   account: AccountLike,
   parentAccount: ?Account,
-}) => {
+}) {
   const [openedModal, setOpenedModal] = useState(false);
 
   const onModalClose = useCallback(() => {
@@ -183,6 +182,4 @@ const TezosAccountBodyHeader = ({
       />
     </View>
   );
-};
-
-export default withNavigation(TezosAccountBodyHeader);
+}

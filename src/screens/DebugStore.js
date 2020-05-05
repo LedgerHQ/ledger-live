@@ -1,9 +1,9 @@
 // @flow
 
-import React, { PureComponent, Component } from "react";
-import { ScrollView, Text, StyleSheet, View } from "react-native";
-import { connect } from "react-redux";
-import type { NavigationScreenProp } from "react-navigation";
+import React, { PureComponent } from "react";
+import { Text, StyleSheet, View } from "react-native";
+import { useSelector } from "react-redux";
+import NavigationScrollView from "../components/NavigationScrollView";
 
 import colors from "../colors";
 
@@ -59,25 +59,14 @@ class CollapsibleThingy extends PureComponent<
   }
 }
 
-class DebugStore extends Component<
-  {
-    navigation: NavigationScreenProp<*>,
-    state: *,
-  },
-  {},
-> {
-  static navigationOptions = {
-    title: "Debug Store",
-  };
+export default function DebugStore() {
+  const state = useSelector(s => s);
 
-  render() {
-    const { state } = this.props;
-    return (
-      <ScrollView>
-        <CollapsibleThingy obj={state} depth={1} />
-      </ScrollView>
-    );
-  }
+  return (
+    <NavigationScrollView>
+      <CollapsibleThingy obj={state} depth={1} />
+    </NavigationScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -113,5 +102,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-export default connect(state => ({ state }))(DebugStore);

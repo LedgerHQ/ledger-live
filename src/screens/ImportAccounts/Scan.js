@@ -2,31 +2,28 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import { RNCamera } from "react-native-camera";
-import type { NavigationScreenProp } from "react-navigation";
 import {
   parseFramesReducer,
   framesToData,
   areFramesComplete,
   progressOfFrames,
-} from "qrloop/importer";
+} from "qrloop";
 import { decode } from "@ledgerhq/live-common/lib/cross";
-import { translate } from "react-i18next";
-import i18next from "i18next";
 
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
-import HeaderRightClose from "../../components/HeaderRightClose";
 import StyledStatusBar from "../../components/StyledStatusBar";
+import { ScreenName } from "../../const";
 import FallBackCamera from "./FallBackCamera";
 import CameraScreen from "../../components/CameraScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
+  route: any,
 };
 
-class Scan extends PureComponent<
+export default class Scan extends PureComponent<
   Props,
   {
     progress: number,
@@ -35,18 +32,6 @@ class Scan extends PureComponent<
     height: number,
   },
 > {
-  static navigationOptions = ({
-    navigation,
-  }: {
-    navigation: NavigationScreenProp<*>,
-  }) => ({
-    title: i18next.t("account.import.scan.title"),
-    headerRight: (
-      <HeaderRightClose navigation={navigation} color={colors.white} />
-    ),
-    headerLeft: null,
-  });
-
   state = {
     progress: 0,
     error: null,
@@ -54,8 +39,7 @@ class Scan extends PureComponent<
   };
 
   componentDidMount() {
-    const { navigation } = this.props;
-    const data = navigation.getParam("data");
+    const data = this.props.route.params?.data;
     if (data) {
       const frames = data.reduce(parseFramesReducer, null);
       if (areFramesComplete(frames)) {
@@ -98,10 +82,11 @@ class Scan extends PureComponent<
   };
 
   onResult = result => {
-    // $FlowFixMe
-    this.props.navigation.replace("DisplayResult", {
+    const onFinish = this.props.route.params?.onFinish;
+
+    this.props.navigation.replace(ScreenName.DisplayResult, {
       result,
-      onFinish: this.props.navigation.getParam("onFinish"),
+      onFinish,
     });
   };
 
@@ -148,8 +133,6 @@ class Scan extends PureComponent<
     );
   }
 }
-
-export default translate()(Scan);
 
 const styles = StyleSheet.create({
   root: {

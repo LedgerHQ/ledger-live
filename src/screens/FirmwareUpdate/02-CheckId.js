@@ -1,17 +1,15 @@
 /* @flow */
-/* eslint-disable no-console */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import type { NavigationStackProp } from "react-navigation-stack";
-import { translate, Trans } from "react-i18next";
+import SafeAreaView from "react-native-safe-area-view";
+import { Trans } from "react-i18next";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/lib/hw/firmwareUpdate-prepare";
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { TrackScreen } from "../../analytics";
 import { deviceNames } from "../../wording";
 import colors from "../../colors";
-import StepHeader from "../../components/StepHeader";
+import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import LiveLogo from "../../icons/LiveLogoIcon";
@@ -21,15 +19,14 @@ import getWindowDimensions from "../../logic/getWindowDimensions";
 
 const forceInset = { bottom: "always" };
 
-type Navigation = NavigationStackProp<{
-  params: {
-    deviceId: string,
-    firmware: FirmwareUpdateContext,
-  },
-}>;
-
 type Props = {
-  navigation: Navigation,
+  navigation: any,
+  route: { params: RouteParams },
+};
+
+type RouteParams = {
+  deviceId: string,
+  firmware: FirmwareUpdateContext,
 };
 
 type State = {
@@ -37,35 +34,22 @@ type State = {
   displayedOnDevice: boolean,
 };
 
-class FirmwareUpdateCheckId extends Component<Props, State> {
+export default class FirmwareUpdateCheckId extends Component<Props, State> {
   state = {
     progress: 0,
     displayedOnDevice: false,
   };
 
-  static navigationOptions = {
-    headerLeft: null,
-    headerTitle: (
-      <StepHeader
-        subtitle={<Trans i18nKey="FirmwareUpdate.title" />}
-        title={<Trans i18nKey="FirmwareUpdateCheckId.title" />}
-      />
-    ),
-  };
-
   sub: *;
 
   componentDidMount() {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
-    const firmware = navigation.getParam("firmware");
+    const { navigation, route } = this.props;
+    const { deviceId, firmware } = route.params || {};
 
     if (!firmware) {
       // if there is no latest firmware we'll jump to success screen
       if (navigation.replace) {
-        navigation.replace("FirmwareUpdateConfirmation", {
-          ...navigation.state.params,
-        });
+        navigation.replace(ScreenName.FirmwareUpdateConfirmation, route.params);
       }
       return;
     }
@@ -76,15 +60,13 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
       },
       complete: () => {
         if (navigation.replace) {
-          navigation.replace("FirmwareUpdateMCU", {
-            ...navigation.state.params,
-          });
+          navigation.replace(ScreenName.FirmwareUpdateMCU, route.params);
         }
       },
       error: error => {
         if (navigation.replace) {
-          navigation.replace("FirmwareUpdateFailure", {
-            ...navigation.state.params,
+          navigation.replace(ScreenName.FirmwareUpdateFailure, {
+            ...route.params,
             error,
           });
         }
@@ -97,9 +79,8 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   }
 
   render() {
-    const { navigation } = this.props;
     const { progress } = this.state;
-    const { osu } = navigation.getParam("firmware");
+    const { osu } = this.props.route.params?.firmware.osu;
     const windowWidth = getWindowDimensions().width;
 
     return (
@@ -176,5 +157,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default translate()(FirmwareUpdateCheckId);

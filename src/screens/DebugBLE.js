@@ -9,12 +9,11 @@ import {
   ToastAndroid,
   Switch,
 } from "react-native";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 import { from, Observable } from "rxjs";
 import { listen } from "@ledgerhq/logs";
 import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
-import type { NavigationScreenProp } from "react-navigation";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import LText from "../components/LText";
@@ -73,15 +72,18 @@ class LogItem extends PureComponent<{ log: Log }> {
   }
 }
 
+type Props = {
+  navigation: any,
+  route: { params: RouteParams },
+  device: any,
+};
+
+type RouteParams = {
+  deviceId: string,
+};
+
 class DebugBLE extends Component<
-  {
-    navigation: NavigationScreenProp<{
-      params: {
-        deviceId: string,
-      },
-    }>,
-    device: *,
-  },
+  Props,
   {
     logs: Log[],
     apdu: string,
@@ -89,23 +91,6 @@ class DebugBLE extends Component<
     useBLEframe: boolean,
   },
 > {
-  static navigationOptions = ({ navigation }: *) => ({
-    title: "Debug BLE",
-    headerRight: (
-      <Button
-        event="DebugBLEBenchmark"
-        type="lightSecondary"
-        containerStyle={{ width: 100 }}
-        onPress={() =>
-          navigation.navigate("DebugBLEBenchmark", {
-            deviceId: navigation.getParam("deviceId"),
-          })
-        }
-        title="Benchmark"
-      />
-    ),
-  });
-
   state = {
     logs: [],
     apdu: "E0FF0000FE000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfd".toUpperCase(),
@@ -161,8 +146,7 @@ class DebugBLE extends Component<
 
   send = async () => {
     const { apdu, bleframe, useBLEframe } = this.state;
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
+    const deviceId = this.props.route.params?.deviceId;
     const msg = Buffer.from(useBLEframe ? bleframe : apdu, "hex");
     try {
       await withDevice(deviceId)(t =>
@@ -175,8 +159,7 @@ class DebugBLE extends Component<
   };
 
   inferMTU = async () => {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
+    const deviceId = this.props.route.params?.deviceId;
     try {
       const mtu = await withDevice(deviceId)(t =>
         // $FlowFixMe bro i know
@@ -190,8 +173,7 @@ class DebugBLE extends Component<
 
   currentConnectionPriority = "Balanced";
   toggleConnectionPriority = async () => {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
+    const deviceId = this.props.route.params?.deviceId;
     const choices = ["Balanced", "High", "LowPower"];
     const nextPriority =
       choices[
@@ -213,8 +195,7 @@ class DebugBLE extends Component<
   };
 
   connect = async () => {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
+    const deviceId = this.props.route.params?.deviceId;
     try {
       await withDevice(deviceId)(() => from([{}])).toPromise();
     } catch (error) {
@@ -223,8 +204,7 @@ class DebugBLE extends Component<
   };
 
   disconnect = async () => {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
+    const deviceId = this.props.route.params?.deviceId;
     try {
       await disconnect(deviceId);
     } catch (error) {
@@ -237,8 +217,7 @@ class DebugBLE extends Component<
   };
 
   render() {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
+    const deviceId = this.props.route.params?.deviceId;
     const { logs, useBLEframe } = this.state;
     return (
       <KeyboardView style={{ flex: 1 }}>

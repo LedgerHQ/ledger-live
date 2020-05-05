@@ -1,7 +1,7 @@
 /* @flow */
 
-import React, { Component } from "react";
-import { Trans, translate } from "react-i18next";
+import React, { useCallback } from "react";
+import { Trans } from "react-i18next";
 import { Image, View, StyleSheet } from "react-native";
 import BottomModal from "../components/BottomModal";
 import Button from "../components/Button";
@@ -12,70 +12,64 @@ import BulletList, {
 } from "../components/BulletList";
 import LText from "../components/LText";
 
-type Props = { onClose: *, isOpened: *, onAccept: () => * };
+type Props = { onClose: any, isOpened: any, onAccept: () => void };
 
-class PinModal extends Component<Props> {
-  static defaultProps = {
-    onAccept: () => {},
-  };
-
-  accept = () => {
-    const { onClose, onAccept } = this.props;
+export default function PinModal({
+  isOpened,
+  onClose,
+  onAccept = () => {},
+}: Props) {
+  const accept = useCallback(() => {
     onClose();
     onAccept();
-  };
+  }, [onClose, onAccept]);
 
-  render() {
-    const { onClose, isOpened } = this.props;
-    return (
-      <BottomModal
-        id="PinModal"
-        style={styles.root}
-        isOpened={isOpened}
-        onClose={onClose}
-      >
-        <Image
-          style={styles.image}
-          source={require("../images/shield-red.png")}
+  return (
+    <BottomModal
+      id="PinModal"
+      style={styles.root}
+      isOpened={isOpened}
+      onClose={onClose}
+    >
+      <Image
+        style={styles.image}
+        source={require("../images/shield-red.png")}
+      />
+      <View style={styles.wrapper}>
+        <BulletList
+          Bullet={BulletChevron}
+          itemStyle={styles.item}
+          list={[
+            <BulletItemText style={styles.text}>
+              <Trans i18nKey="onboarding.stepSetupPin.modal.step1">
+                {"text"}
+                <LText semiBold style={styles.textBlue}>
+                  bold text
+                </LText>
+                {"text"}
+              </Trans>
+            </BulletItemText>,
+            <BulletItemText style={styles.text}>
+              <Trans i18nKey="onboarding.stepSetupPin.modal.step2" />
+            </BulletItemText>,
+            <BulletItemText style={styles.text}>
+              <Trans i18nKey="onboarding.stepSetupPin.modal.step3" />
+            </BulletItemText>,
+          ]}
         />
-        <View style={styles.wrapper}>
-          <BulletList
-            Bullet={BulletChevron}
-            itemStyle={styles.item}
-            list={[
-              <BulletItemText style={styles.text}>
-                <Trans i18nKey="onboarding.stepSetupPin.modal.step1">
-                  {"text"}
-                  <LText semiBold style={styles.textBlue}>
-                    bold text
-                  </LText>
-                  {"text"}
-                </Trans>
-              </BulletItemText>,
-              <BulletItemText style={styles.text}>
-                <Trans i18nKey="onboarding.stepSetupPin.modal.step2" />
-              </BulletItemText>,
-              <BulletItemText style={styles.text}>
-                <Trans i18nKey="onboarding.stepSetupPin.modal.step3" />
-              </BulletItemText>,
-            ]}
-          />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            event="PinGotIt"
-            type="primary"
-            containerStyle={styles.buttonContainer}
-            title={<Trans i18nKey="common.gotit" />}
-            onPress={this.accept}
-          />
-        </View>
-      </BottomModal>
-    );
-  }
+      </View>
+      <View style={styles.buttonWrapper}>
+        <Button
+          event="PinGotIt"
+          type="primary"
+          containerStyle={styles.buttonContainer}
+          title={<Trans i18nKey="common.gotit" />}
+          onPress={accept}
+        />
+      </View>
+    </BottomModal>
+  );
 }
-
-export default translate()(PinModal);
 
 const styles = StyleSheet.create({
   root: {

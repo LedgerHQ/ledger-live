@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import { Subject, Observable, throwError } from "rxjs";
 import Config from "react-native-config";
 import { flatMap } from "rxjs/operators";

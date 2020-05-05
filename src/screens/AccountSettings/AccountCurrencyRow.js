@@ -1,12 +1,12 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import type { NavigationScreenProp } from "react-navigation";
 import { Trans } from "react-i18next";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
+import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   currency: CryptoCurrency,
 };
 
@@ -21,7 +21,7 @@ class AccountCurrencyRow extends PureComponent<Props> {
         key={currency.id}
         arrowRight
         onPress={() =>
-          this.props.navigation.navigate("AccountCurrencySettings", {
+          this.props.navigation.navigate(ScreenName.AccountCurrencySettings, {
             currencyId: currency.id,
             fromAccount: true,
           })

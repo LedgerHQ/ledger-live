@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import type { Portfolio, Currency } from "@ledgerhq/live-common/lib/types";
@@ -9,30 +9,33 @@ import LText from "../../components/LText";
 import Space from "../../components/Space";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-class BalanceHeader extends PureComponent<{
+type Props = {
   portfolio: Portfolio,
   counterValueCurrency: Currency,
-}> {
-  render() {
-    const { portfolio, counterValueCurrency } = this.props;
-    return (
-      <View style={styles.content}>
-        <LText secondary semiBold style={styles.labelText}>
-          <Trans i18nKey="portfolio.totalBalance" />
-        </LText>
-        <Space h={5} />
-        <LText tertiary style={styles.balanceText}>
-          <CurrencyUnitValue
-            unit={counterValueCurrency.units[0]}
-            value={
-              portfolio.balanceHistory[portfolio.balanceHistory.length - 1]
-                .value
-            }
-          />
-        </LText>
-      </View>
-    );
-  }
+  style?: any,
+};
+
+export default function BalanceHeader({
+  portfolio,
+  counterValueCurrency,
+  style,
+}: Props) {
+  return (
+    <View style={[styles.content, style]}>
+      <LText secondary semiBold style={styles.labelText}>
+        <Trans i18nKey="portfolio.totalBalance" />
+      </LText>
+      <Space h={5} />
+      <LText tertiary style={styles.balanceText}>
+        <CurrencyUnitValue
+          unit={counterValueCurrency.units[0]}
+          value={
+            portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value
+          }
+        />
+      </LText>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -51,5 +54,3 @@ const styles = StyleSheet.create({
     color: colors.darkBlue,
   },
 });
-
-export default BalanceHeader;

@@ -1,7 +1,7 @@
 /* @flow */
-import React, { Fragment, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { Trans, translate } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
@@ -13,9 +13,8 @@ import EthereumGasLimit from "./SendRowGasLimit";
 import ExternalLink from "../../icons/ExternalLink";
 import Info from "../../icons/Info";
 import { urls } from "../../config/urls";
-
-import type { T } from "../../types/common";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import BottomModal from "../../components/BottomModal";
 import TokenNetworkFeeInfo from "./TokenNetworkFeeInfo";
 
@@ -23,17 +22,16 @@ type Props = {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  navigation: *,
-  t: T,
+  navigation: any,
 };
 
-const EthereumFeeRow = ({
+export default function EthereumFeeRow({
   account,
   parentAccount,
   transaction,
   navigation,
-  t,
-}: Props) => {
+}: Props) {
+  const { t } = useTranslation();
   const [isNetworkFeeHelpOpened, setNetworkFeeHelpOpened] = useState(false);
   const toggleNetworkFeeHelpModal = useCallback(
     () => setNetworkFeeHelpOpened(!isNetworkFeeHelpOpened),
@@ -47,7 +45,7 @@ const EthereumFeeRow = ({
   }, []);
 
   const openFees = useCallback(() => {
-    navigation.navigate("EthereumEditFee", {
+    navigation.navigate(ScreenName.EthereumEditFee, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
@@ -64,7 +62,7 @@ const EthereumFeeRow = ({
 
   const InfoIcon = account.type === "TokenAccount" ? Info : ExternalLink;
   return (
-    <Fragment>
+    <>
       <BottomModal
         id="TokenNetworkFee"
         isOpened={isNetworkFeeHelpOpened}
@@ -119,14 +117,12 @@ const EthereumFeeRow = ({
       <EthereumGasLimit
         account={account}
         parentAccount={parentAccount}
-        navigation={navigation}
         transaction={transaction}
       />
-    </Fragment>
+    </>
   );
-};
+}
 
-export default translate()(EthereumFeeRow);
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,

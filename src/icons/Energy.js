@@ -3,10 +3,10 @@ import React from "react";
 import Svg, { Path, Mask } from "react-native-svg";
 import colors from "../colors";
 
-interface Props {
-  color?: string;
-  size?: number;
-}
+type Props = {
+  color?: string,
+  size?: number,
+};
 
 export default function EnergyIcon({
   color = colors.darkBlue,

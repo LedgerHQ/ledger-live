@@ -1,13 +1,16 @@
 // @flow
 import React from "react";
-import { withNavigation } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
 
-const OpenDebugCrash = ({ navigation }: { navigation: * }) => (
-  <SettingsRow
-    title="Debug crash"
-    onPress={() => navigation.navigate("DebugCrash")}
-  />
-);
+export default function OpenDebugCrash() {
+  const navigation = useNavigation();
 
-export default withNavigation(OpenDebugCrash);
+  return (
+    <SettingsRow
+      title="Debug crash"
+      onPress={() => navigation.navigate(ScreenName.DebugCrash)}
+    />
+  );
+}

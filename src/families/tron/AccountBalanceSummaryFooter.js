@@ -2,8 +2,7 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
@@ -21,16 +20,16 @@ import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 
-interface Props {
-  account: Account;
-  t: TFunction;
-}
+type Props = {
+  account: Account,
+};
 
 type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
-function AccountBalanceSummaryFooter({ account, t }: Props) {
+function AccountBalanceSummaryFooter({ account }: Props) {
+  const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
-  const infoCandidates = useMemo(() => getInfoCandidates(t), [t]);
+  const infoCandidates = useInfoCandidates();
 
   const { energy: formattedEnergy, bandwidth, tronPower } =
     account.tronResources || {};
@@ -95,19 +94,17 @@ function AccountBalanceSummaryFooter({ account, t }: Props) {
   );
 }
 
-const AccountBalanceFooter = ({ account, t }: Props) => {
+export default function AccountBalanceFooter({ account }: Props) {
   if (!account.tronResources) return null;
 
-  return <AccountBalanceSummaryFooter account={account} t={t} />;
-};
-
-export default translate()(AccountBalanceFooter);
-
-interface InfoItemProps {
-  onPress: () => void;
-  title: React$Node;
-  value: React$Node;
+  return <AccountBalanceSummaryFooter account={account} />;
 }
+
+type InfoItemProps = {
+  onPress: () => void,
+  title: React$Node,
+  value: React$Node,
+};
 
 function InfoItem({ onPress, title, value }: InfoItemProps) {
   return (
@@ -159,7 +156,8 @@ const styles = StyleSheet.create({
   },
 });
 
-function getInfoCandidates(t: TFunction): { [key: InfoName]: ModalInfo[] } {
+function useInfoCandidates(): { [key: InfoName]: ModalInfo[] } {
+  const { t } = useTranslation();
   const currency = getCryptoCurrencyById("tron");
   const TronIcon = getCryptoCurrencyIcon(currency);
   invariant(TronIcon, "Icon is expected");

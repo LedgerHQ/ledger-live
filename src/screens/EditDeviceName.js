@@ -2,12 +2,9 @@
 
 import React, { PureComponent } from "react";
 import { Keyboard, View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import { translate, Trans } from "react-i18next";
-import i18next from "i18next";
+import SafeAreaView from "react-native-safe-area-view";
+import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
-import { compose } from "redux";
 import { connect } from "react-redux";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
@@ -41,29 +38,27 @@ const mapDispatchToProps = {
   saveBleDeviceName,
 };
 
+type Props = {
+  navigation: any,
+  route: { params: RouteParams },
+  deviceName: string,
+  saveBleDeviceName: (string, string) => void,
+};
+
+type RouteParams = {
+  deviceId: string,
+  deviceName: string,
+};
+
 class EditDeviceName extends PureComponent<
-  {
-    navigation: NavigationScreenProp<{
-      params: {
-        deviceId: string,
-        deviceName: string,
-      },
-    }>,
-    deviceName: string,
-    saveBleDeviceName: (string, string) => *,
-  },
+  Props,
   {
     name: string,
     error: ?Error,
     connecting: ?Device,
   },
 > {
-  static navigationOptions = {
-    title: i18next.t("EditDeviceName.title"),
-    headerLeft: null,
-  };
-
-  initialName = this.props.navigation.getParam("deviceName");
+  initialName = this.props.route.params?.deviceName;
 
   state = {
     name: this.initialName,
@@ -99,7 +94,7 @@ class EditDeviceName extends PureComponent<
           this.setState(prevState => ({
             name: prevState.name.trim(),
             connecting: {
-              deviceId: this.props.navigation.getParam("deviceId"),
+              deviceId: this.props.route.params?.deviceId,
               deviceName: prevState.name.trim(),
               modelId: "nanoX",
               wired: false,
@@ -117,14 +112,15 @@ class EditDeviceName extends PureComponent<
   };
 
   onDone = () => {
-    const { saveBleDeviceName, navigation } = this.props;
-    saveBleDeviceName(navigation.getParam("deviceId"), this.state.name);
+    const { saveBleDeviceName, route } = this.props;
+    saveBleDeviceName(route.params?.deviceId, this.state.name);
     this.props.navigation.goBack();
   };
 
   render() {
     const { name, error, connecting } = this.state;
     const remainingCount = MAX_DEVICE_NAME - name.length;
+
     return (
       <SafeAreaView style={styles.safearea} forceInset={forceInset}>
         <TrackScreen category="EditDeviceName" />
@@ -173,13 +169,8 @@ class EditDeviceName extends PureComponent<
   }
 }
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(EditDeviceName);
+// $FlowFixMe
+export default connect(null, mapDispatchToProps)(EditDeviceName);
 
 const styles = StyleSheet.create({
   safearea: {

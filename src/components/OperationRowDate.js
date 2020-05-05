@@ -1,27 +1,22 @@
 // @flow
-import { Component } from "react";
-import compareDate from "../logic/compareDate";
-import { withLocale } from "../context/Locale";
+import { useMemo } from "react";
+import { useLocale } from "../context/Locale";
 
 type Props = {
   date: Date,
-  locale: string,
 };
 
-class OperationRowDate extends Component<Props> {
-  shouldComponentUpdate({ date: nextDate }: Props) {
-    const { date } = this.props;
-    const isSameDate = compareDate(date, nextDate);
-    return !isSameDate;
-  }
+export default function OperationRowDate({ date }: Props) {
+  const { locale } = useLocale();
 
-  render() {
-    const { date, locale } = this.props;
-    return `at ${date.toLocaleTimeString(locale, {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
-  }
+  const localeTimeString = useMemo(
+    () =>
+      date.toLocaleTimeString(locale, {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    [date, locale],
+  );
+
+  return `at ${localeTimeString}`;
 }
-
-export default withLocale(OperationRowDate);

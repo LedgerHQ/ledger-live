@@ -10,7 +10,7 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account/helpers";
-import { translate } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { compose } from "redux";
 import { track } from "../../analytics";
 import {
@@ -232,5 +232,5 @@ const mapStateToProps = (state: State, props: OwnProps) => {
 
 export default compose(
   connect(mapStateToProps),
-  translate(),
+  withTranslation(),
 )(AmountInput);

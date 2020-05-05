@@ -2,14 +2,13 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Platform, Image } from "react-native";
 import Config from "react-native-config";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
+import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
+import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
-import { withNavigation } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import { removeKnownDevice } from "../../actions/ble";
 import DeviceItem from "../DeviceItem";
@@ -34,17 +33,16 @@ type Props = {
   usbOnly?: boolean,
   filter?: TransportModule => boolean,
   deviceModelId: DeviceNames,
-  navigation: NavigationScreenProp<*>,
   autoSelectOnAdd?: boolean,
 };
 
-type OwnProps = Props & {
+type SelectDeviceProps = Props & {
+  navigation: any,
   knownDevices: Array<{
     id: string,
     name: string,
   }>,
   removeKnownDevice: string => *,
-  onBluetoothDeviceAction: Device => any,
   setReadOnlyMode: boolean => void,
   installAppFirstTime: boolean => void,
 };
@@ -95,7 +93,7 @@ const getAll = ({ knownDevices }, { devices }): Device[] =>
     })),
   );
 
-class SelectDevice extends Component<OwnProps, State> {
+class SelectDevice extends Component<SelectDeviceProps, State> {
   static defaultProps = {
     steps: [],
     filter: () => true,
@@ -117,7 +115,7 @@ class SelectDevice extends Component<OwnProps, State> {
     this.observe();
   }
 
-  componentDidUpdate({ knownDevices }) {
+  componentDidUpdate({ knownDevices }: SelectDeviceProps) {
     if (this.props.knownDevices !== knownDevices) {
       this.observe();
     }
@@ -147,7 +145,8 @@ class SelectDevice extends Component<OwnProps, State> {
                   deviceName: e.name || "",
                   modelId:
                     (e.deviceModel && e.deviceModel.id) ||
-                    (Config.FALLBACK_DEVICE_MODEL_ID || "nanoX"),
+                    Config.FALLBACK_DEVICE_MODEL_ID ||
+                    "nanoX",
                   wired: e.id.startsWith("httpdebug|")
                     ? Config.FALLBACK_DEVICE_WIRED === "YES"
                     : e.id.startsWith("usb|"),
@@ -161,7 +160,7 @@ class SelectDevice extends Component<OwnProps, State> {
     this.setState({ connecting });
   };
 
-  onDone = info => {
+  onDone = (info: any) => {
     /** if list apps succeed we update settings with state of apps installed */
     if (info && info.appRes) {
       const hasAnyAppinstalled =
@@ -197,7 +196,7 @@ class SelectDevice extends Component<OwnProps, State> {
         },
       };
     }
-    navigation.navigate("PairDevices", opts);
+    navigation.navigate(ScreenName.PairDevices, opts);
   };
 
   renderItem = (item: Device) => (
@@ -265,16 +264,22 @@ class SelectDevice extends Component<OwnProps, State> {
   }
 }
 
-export default connect(
-  createStructuredSelector({
-    knownDevices: knownDevicesSelector,
-  }),
-  {
-    removeKnownDevice,
-    setReadOnlyMode,
-    installAppFirstTime,
-  },
-)(withNavigation(SelectDevice));
+export default function Screen(props: Props) {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const knownDevices = useSelector(knownDevicesSelector);
+
+  return (
+    <SelectDevice
+      {...props}
+      navigation={navigation}
+      knownDevices={knownDevices}
+      removeKnownDevice={(...args) => dispatch(removeKnownDevice(...args))}
+      setReadOnlyMode={(...args) => dispatch(setReadOnlyMode(...args))}
+      installAppFirstTime={(...args) => dispatch(installAppFirstTime(...args))}
+    />
+  );
+}
 
 const styles = StyleSheet.create({
   section: {

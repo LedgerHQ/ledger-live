@@ -1,12 +1,15 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
+import uniq from "lodash/uniq";
+import { useSelector } from "react-redux";
+import { Trans, useTranslation } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 import type {
   Account,
   Operation,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
-
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
   getMainAccount,
@@ -14,11 +17,7 @@ import {
   getAccountUnit,
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
-import uniq from "lodash/uniq";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { Trans, translate } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import { NavigatorName, ScreenName } from "../../const";
 import { localeIds } from "../../languages";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
@@ -29,7 +28,6 @@ import Touchable from "../../components/Touchable";
 import { urls } from "../../config/urls";
 import Info from "../../icons/Info";
 import ExternalLink from "../../icons/ExternalLink";
-import type { CurrencySettings } from "../../reducers/settings";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import colors from "../../colors";
 import DataList from "./DataList";
@@ -55,337 +53,319 @@ type Props = {
   account: AccountLike,
   parentAccount: ?Account,
   operation: Operation,
-  currencySettings: CurrencySettings,
-  navigation: *,
-  t: TFunction,
 };
 
-type State = {
-  isModalOpened: boolean,
-};
+export default function Content({ account, parentAccount, operation }: Props) {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
+  const currencySettings = useSelector(s =>
+    currencySettingsForAccountSelector(s, { account }),
+  );
 
-const mapStateToProps = createStructuredSelector({
-  currencySettings: currencySettingsForAccountSelector,
-});
+  const [isModalOpened, setIsModalOpened] = useState(false);
 
-class Content extends PureComponent<Props, State> {
-  state = {
-    isModalOpened: false,
-  };
+  const onPress = useCallback(() => {
+    navigation.navigate(NavigatorName.Accounts);
+    // setTimeout is the way to make sure that it navigates to accounts screen first
+    // then stack account screen on top
+    setTimeout(() =>
+      navigation.navigate(ScreenName.Account, {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+      }),
+    );
+  }, [account.id, navigation, parentAccount]);
 
-  onPress = () => {
-    const { navigation, account, parentAccount } = this.props;
+  const onPressInfo = useCallback(() => {
+    setIsModalOpened(true);
+  }, []);
 
-    navigation.navigate("Account", {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
-    });
-  };
+  const onModalClose = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
 
-  onPressInfo = () => {
-    this.setState({ isModalOpened: true });
-  };
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currency = getAccountCurrency(account);
+  const isToken = currency.type === "TokenCurrency";
+  const unit = getAccountUnit(account);
+  const parentUnit = getAccountUnit(mainAccount);
 
-  onModalClose = () => {
-    this.setState({ isModalOpened: false });
-  };
+  const parentCurrency = getAccountCurrency(mainAccount);
+  const amount = getOperationAmountNumber(operation);
+  const isNegative = amount.isNegative();
+  const valueColor = isNegative ? colors.smoke : colors.green;
+  const confirmations = operation.blockHeight
+    ? mainAccount.blockHeight - operation.blockHeight
+    : 0;
+  const uniqueSenders = uniq(operation.senders);
+  const uniqueRecipients = uniq(operation.recipients);
+  const { extra, type } = operation;
+  const { hasFailed } = operation;
+  const subOperations = operation.subOperations || [];
+  const internalOperations = operation.internalOperations || [];
 
-  render() {
-    const {
-      account,
-      parentAccount,
-      operation,
-      currencySettings,
-      t,
-    } = this.props;
-    const mainAccount = getMainAccount(account, parentAccount);
-    const currency = getAccountCurrency(account);
-    const isToken = currency.type === "TokenCurrency";
-    const unit = getAccountUnit(account);
-    const parentUnit = getAccountUnit(mainAccount);
+  const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
-    const parentCurrency = getAccountCurrency(mainAccount);
-    const amount = getOperationAmountNumber(operation);
-    const isNegative = amount.isNegative();
-    const valueColor = isNegative ? colors.smoke : colors.green;
-    const confirmations = operation.blockHeight
-      ? mainAccount.blockHeight - operation.blockHeight
-      : 0;
-    const uniqueSenders = uniq(operation.senders);
-    const uniqueRecipients = uniq(operation.recipients);
-    const { extra, type } = operation;
-    const { hasFailed } = operation;
-    const subOperations = operation.subOperations || [];
-    const internalOperations = operation.internalOperations || [];
+  const isConfirmed = confirmations >= currencySettings.confirmationsNb;
 
-    const shouldDisplayTo =
-      uniqueRecipients.length > 0 && !!uniqueRecipients[0];
+  const specific = byFamiliesOperationDetails[mainAccount.currency.family];
+  const Extra =
+    specific && specific.OperationDetailsExtra
+      ? specific.OperationDetailsExtra
+      : DefaultOperationDetailsExtra;
 
-    const isConfirmed = confirmations >= currencySettings.confirmationsNb;
-
-    const specific = byFamiliesOperationDetails[mainAccount.currency.family];
-    const Extra =
-      specific && specific.OperationDetailsExtra
-        ? specific.OperationDetailsExtra
-        : DefaultOperationDetailsExtra;
-
-    return (
-      <>
-        <View style={styles.header}>
-          <View style={styles.icon}>
-            <OperationIcon
-              size={57}
-              operation={operation}
-              account={account}
-              parentAccount={parentAccount}
-            />
-          </View>
-
-          {hasFailed || amount.isZero() ? null : (
-            <LText
-              tertiary
-              numberOfLines={1}
-              style={[styles.currencyUnitValue, { color: valueColor }]}
-            >
-              <CurrencyUnitValue
-                showCode
-                disableRounding={true}
-                unit={unit}
-                value={amount}
-                alwaysShowSign
-              />
-            </LText>
-          )}
-
-          {hasFailed || amount.isZero() ? null : (
-            <LText tertiary style={styles.counterValue}>
-              <CounterValue
-                showCode
-                alwaysShowSign
-                currency={currency}
-                value={amount}
-                date={operation.date}
-                subMagnitude={1}
-              />
-            </LText>
-          )}
-
-          <View style={styles.confirmationContainer}>
-            <View
-              style={[
-                styles.bulletPoint,
-                {
-                  backgroundColor: hasFailed
-                    ? colors.alert
-                    : isConfirmed
-                    ? colors.green
-                    : colors.grey,
-                },
-              ]}
-            />
-            {hasFailed ? (
-              <LText style={[styles.confirmation, { color: colors.alert }]}>
-                <Trans i18nKey="operationDetails.failed" />
-              </LText>
-            ) : isConfirmed ? (
-              <LText
-                semiBold
-                style={[styles.confirmation, { color: colors.green }]}
-              >
-                <Trans i18nKey="operationDetails.confirmed" />{" "}
-                {`(${confirmations})`}
-              </LText>
-            ) : (
-              <LText style={[styles.confirmation, { color: colors.grey }]}>
-                <Trans i18nKey="operationDetails.notConfirmed" />{" "}
-                {`(${confirmations})`}
-              </LText>
-            )}
-          </View>
+  return (
+    <>
+      <View style={styles.header}>
+        <View style={styles.icon}>
+          <OperationIcon
+            size={57}
+            operation={operation}
+            account={account}
+            parentAccount={parentAccount}
+          />
         </View>
 
-        {subOperations.length > 0 && account.type === "Account" && (
-          <>
-            <View style={[sectionStyles.wrapper, styles.infoContainer]}>
-              <LText style={styles.sectionSeparator} semiBold>
-                <Trans
-                  i18nKey={
-                    isToken
-                      ? "operationDetails.tokenOperations"
-                      : "operationDetails.subAccountOperations"
-                  }
-                />
-              </LText>
-              {isToken ? (
-                <Touchable
-                  style={styles.info}
-                  onPress={this.onPressInfo}
-                  event="TokenOperationsInfo"
-                >
-                  <Info size={12} color={colors.grey} />
-                </Touchable>
-              ) : null}
-            </View>
-            {subOperations.map((op, i) => {
-              const opAccount = (account.subAccounts || []).find(
-                acc => acc.id === op.accountId,
-              );
-
-              if (!opAccount) return null;
-
-              return (
-                <OperationRow
-                  isSubOperation
-                  key={op.id}
-                  operation={op}
-                  parentAccount={account}
-                  account={opAccount}
-                  navigation={this.props.navigation}
-                  multipleAccounts
-                  isLast={subOperations.length - 1 === i}
-                />
-              );
-            })}
-          </>
+        {hasFailed || amount.isZero() ? null : (
+          <LText
+            tertiary
+            numberOfLines={1}
+            style={[styles.currencyUnitValue, { color: valueColor }]}
+          >
+            <CurrencyUnitValue
+              showCode
+              disableRounding={true}
+              unit={unit}
+              value={amount}
+              alwaysShowSign
+            />
+          </LText>
         )}
 
-        {internalOperations.length > 0 && account.type === "Account" && (
-          <>
-            <Section
-              title={t("operationDetails.internalOperations")}
-              style={styles.infoContainer}
+        {hasFailed || amount.isZero() ? null : (
+          <LText tertiary style={styles.counterValue}>
+            <CounterValue
+              showCode
+              alwaysShowSign
+              currency={currency}
+              value={amount}
+              date={operation.date}
+              subMagnitude={1}
             />
-            {internalOperations.map((op, i) => (
+          </LText>
+        )}
+
+        <View style={styles.confirmationContainer}>
+          <View
+            style={[
+              styles.bulletPoint,
+              {
+                backgroundColor: hasFailed
+                  ? colors.alert
+                  : isConfirmed
+                  ? colors.green
+                  : colors.grey,
+              },
+            ]}
+          />
+          {hasFailed ? (
+            <LText style={[styles.confirmation, { color: colors.alert }]}>
+              <Trans i18nKey="operationDetails.failed" />
+            </LText>
+          ) : isConfirmed ? (
+            <LText
+              semiBold
+              style={[styles.confirmation, { color: colors.green }]}
+            >
+              <Trans i18nKey="operationDetails.confirmed" />{" "}
+              {`(${confirmations})`}
+            </LText>
+          ) : (
+            <LText style={[styles.confirmation, { color: colors.grey }]}>
+              <Trans i18nKey="operationDetails.notConfirmed" />{" "}
+              {`(${confirmations})`}
+            </LText>
+          )}
+        </View>
+      </View>
+
+      {subOperations.length > 0 && account.type === "Account" && (
+        <>
+          <View style={[sectionStyles.wrapper, styles.infoContainer]}>
+            <LText style={styles.sectionSeparator} semiBold>
+              <Trans
+                i18nKey={
+                  isToken
+                    ? "operationDetails.tokenOperations"
+                    : "operationDetails.subAccountOperations"
+                }
+              />
+            </LText>
+            {isToken ? (
+              <Touchable
+                style={styles.info}
+                onPress={onPressInfo}
+                event="TokenOperationsInfo"
+              >
+                <Info size={12} color={colors.grey} />
+              </Touchable>
+            ) : null}
+          </View>
+          {subOperations.map((op, i) => {
+            const opAccount = (account.subAccounts || []).find(
+              acc => acc.id === op.accountId,
+            );
+
+            if (!opAccount) return null;
+
+            return (
               <OperationRow
+                isSubOperation
                 key={op.id}
                 operation={op}
-                parentAccount={null}
-                account={account}
-                navigation={this.props.navigation}
+                parentAccount={account}
+                account={opAccount}
                 multipleAccounts
-                isLast={internalOperations.length - 1 === i}
+                isLast={subOperations.length - 1 === i}
               />
-            ))}
-          </>
-        )}
+            );
+          })}
+        </>
+      )}
 
-        {internalOperations.length > 0 || subOperations.length > 0 ? (
+      {internalOperations.length > 0 && account.type === "Account" && (
+        <>
           <Section
-            title={t("operationDetails.details", { currency: currency.name })}
+            title={t("operationDetails.internalOperations")}
             style={styles.infoContainer}
           />
-        ) : null}
+          {internalOperations.map((op, i) => (
+            <OperationRow
+              key={op.id}
+              operation={op}
+              parentAccount={null}
+              account={account}
+              multipleAccounts
+              isLast={internalOperations.length - 1 === i}
+            />
+          ))}
+        </>
+      )}
 
+      {internalOperations.length > 0 || subOperations.length > 0 ? (
         <Section
-          title={t("operationDetails.account")}
-          value={getAccountName(account)}
-          onPress={this.onPress}
+          title={t("operationDetails.details", { currency: currency.name })}
+          style={styles.infoContainer}
         />
+      ) : null}
 
-        <Section
-          title={t("operationDetails.date")}
-          value={operation.date.toLocaleDateString(localeIds, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        />
+      <Section
+        title={t("operationDetails.account")}
+        value={getAccountName(account)}
+        onPress={onPress}
+      />
 
-        {isNegative ? (
-          <Section title={t("operationDetails.fees")}>
-            {operation.fee ? (
-              <View style={styles.feeValueContainer}>
-                <LText style={sectionStyles.value} semiBold>
-                  <CurrencyUnitValue
-                    showCode
-                    unit={parentUnit}
-                    value={operation.fee}
-                  />
-                </LText>
-                <LText style={styles.feeCounterValue} semiBold>
-                  ≈
-                </LText>
-                <LText style={styles.feeCounterValue} semiBold>
-                  <CounterValue
-                    showCode
-                    disableRounding={true}
-                    date={operation.date}
-                    subMagnitude={1}
-                    currency={parentCurrency}
-                    value={operation.fee}
-                  />
-                </LText>
-              </View>
-            ) : (
+      <Section
+        title={t("operationDetails.date")}
+        value={operation.date.toLocaleDateString(localeIds, {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      />
+
+      {isNegative ? (
+        <Section title={t("operationDetails.fees")}>
+          {operation.fee ? (
+            <View style={styles.feeValueContainer}>
               <LText style={sectionStyles.value} semiBold>
-                {t("operationDetails.noFees")}
+                <CurrencyUnitValue
+                  showCode
+                  unit={parentUnit}
+                  value={operation.fee}
+                />
               </LText>
-            )}
-          </Section>
-        ) : null}
+              <LText style={styles.feeCounterValue} semiBold>
+                ≈
+              </LText>
+              <LText style={styles.feeCounterValue} semiBold>
+                <CounterValue
+                  showCode
+                  disableRounding={true}
+                  date={operation.date}
+                  subMagnitude={1}
+                  currency={parentCurrency}
+                  value={operation.fee}
+                />
+              </LText>
+            </View>
+          ) : (
+            <LText style={sectionStyles.value} semiBold>
+              {t("operationDetails.noFees")}
+            </LText>
+          )}
+        </Section>
+      ) : null}
 
-        <Section
-          title={t("operationDetails.identifier")}
-          value={operation.hash}
+      <Section
+        title={t("operationDetails.identifier")}
+        value={operation.hash}
+      />
+
+      <View style={sectionStyles.wrapper}>
+        <DataList
+          data={uniqueSenders}
+          title={
+            <Trans
+              i18nKey="operationDetails.from"
+              count={uniqueSenders.length}
+              values={{ count: uniqueSenders.length }}
+            />
+          }
+          titleStyle={sectionStyles.title}
         />
+      </View>
 
+      {shouldDisplayTo ? (
         <View style={sectionStyles.wrapper}>
           <DataList
-            data={uniqueSenders}
+            data={uniqueRecipients}
             title={
               <Trans
-                i18nKey="operationDetails.from"
-                count={uniqueSenders.length}
-                values={{ count: uniqueSenders.length }}
+                i18nKey="operationDetails.to"
+                count={uniqueRecipients.length}
+                values={{ count: uniqueRecipients.length }}
               />
             }
-            titleStyle={sectionStyles.title}
+            rightComp={
+              uniqueRecipients.length > 1 ? (
+                <View style={{ marginLeft: "auto" }}>
+                  <HelpLink
+                    event="MultipleAddressesSupport"
+                    onPress={() => Linking.openURL(urls.multipleAddresses)}
+                    title={
+                      <Trans i18nKey="operationDetails.multipleAddresses" />
+                    }
+                  />
+                </View>
+              ) : null
+            }
           />
         </View>
+      ) : null}
 
-        {shouldDisplayTo ? (
-          <View style={sectionStyles.wrapper}>
-            <DataList
-              data={uniqueRecipients}
-              title={
-                <Trans
-                  i18nKey="operationDetails.to"
-                  count={uniqueRecipients.length}
-                  values={{ count: uniqueRecipients.length }}
-                />
-              }
-              rightComp={
-                uniqueRecipients.length > 1 ? (
-                  <View style={{ marginLeft: "auto" }}>
-                    <HelpLink
-                      event="MultipleAddressesSupport"
-                      onPress={() => Linking.openURL(urls.multipleAddresses)}
-                      title={
-                        <Trans i18nKey="operationDetails.multipleAddresses" />
-                      }
-                    />
-                  </View>
-                ) : null
-              }
-            />
-          </View>
-        ) : null}
+      <Extra extra={extra} type={type} account={account} />
 
-        <Extra extra={extra} type={type} account={account} />
-
-        <Modal
-          isOpened={this.state.isModalOpened}
-          onClose={this.onModalClose}
-          currency={currency}
-        />
-      </>
-    );
-  }
+      <Modal
+        isOpened={isModalOpened}
+        onClose={onModalClose}
+        currency={currency}
+      />
+    </>
+  );
 }
-
-export default translate()(connect(mapStateToProps)(Content));
 
 const styles = StyleSheet.create({
   root: {

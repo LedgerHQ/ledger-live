@@ -1,14 +1,11 @@
 /* @flow */
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
-// $FlowFixMe
-import { SafeAreaView, FlatList } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import { View, StyleSheet, FlatList } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import i18next from "i18next";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import type {
   Account,
   AccountLikeArray,
@@ -21,11 +18,11 @@ import {
 } from "../../reducers/accounts";
 import withEnv from "../../logic/withEnv";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
-import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
@@ -36,26 +33,12 @@ const forceInset = { bottom: "always" };
 type Props = {
   accounts: Account[],
   allAccounts: AccountLikeArray,
-  navigation: NavigationScreenProp<{
-    params: {},
-  }>,
+  navigation: any,
 };
 
 type State = {};
 
 class SendFundsSelectAccount extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("send.stepperHeader.selectAccount")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "1",
-          totalSteps: "6",
-        })}
-      />
-    ),
-  };
-
   renderList = items => {
     const { accounts } = this.props;
     const formatedList = formatSearchResults(items, accounts);
@@ -83,7 +66,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
           account={account}
           style={styles.cardStyle}
           onPress={() => {
-            this.props.navigation.navigate("SendSelectRecipient", {
+            this.props.navigation.navigate(ScreenName.SendSelectRecipient, {
               accountId: account.id,
               parentId:
                 account.type !== "Account" ? account.parentId : undefined,
@@ -170,5 +153,4 @@ const styles = StyleSheet.create({
 export default compose(
   connect(mapStateToProps),
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
-  translate(),
 )(SendFundsSelectAccount);

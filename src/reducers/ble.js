@@ -51,9 +51,8 @@ export const exportSelector = (s: State) => s.ble;
 
 export const knownDevicesSelector = (s: State) => s.ble.knownDevices;
 
-export const deviceNameByDeviceIdSelector = (
+export const deviceNameByDeviceIdSelectorCreator = (deviceId: string) => (
   s: State,
-  { deviceId }: { deviceId: string },
 ) => {
   const d = s.ble.knownDevices.find(d => d.id === deviceId);
   return d ? d.name : "";

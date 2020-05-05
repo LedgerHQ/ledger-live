@@ -1,18 +1,13 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-// $FlowFixMe
-import { ScrollView } from "react-navigation";
-import { translate } from "react-i18next";
-import i18next from "i18next";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { NavigationScreenProp } from "react-navigation";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { createStructuredSelector } from "reselect";
+import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import BottomModal from "../../components/BottomModal";
+import NavigationScrollView from "../../components/NavigationScrollView";
 import { TrackScreen } from "../../analytics";
 
 import AccountNameRow from "./AccountNameRow";
@@ -23,27 +18,28 @@ import DeleteAccountModal from "./DeleteAccountModal";
 import AccountAdvancedLogsRow from "./AccountAdvancedLogsRow";
 
 type Props = {
-  navigation: NavigationScreenProp<{
-    accountId: string,
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
   account: Account,
   deleteAccount: Function,
+};
+
+type RouteParams = {
+  accountId: string,
 };
 
 type State = {
   isModalOpened: boolean,
 };
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+
+const mapStateToProps = (state, { route }) =>
+  accountScreenSelector(route)(state);
+
 const mapDispatchToProps = {
   deleteAccount,
 };
-class AccountSettings extends PureComponent<Props, State> {
-  static navigationOptions = {
-    title: i18next.t("account.settings.header"),
-  };
 
+class AccountSettings extends PureComponent<Props, State> {
   state = {
     isModalOpened: false,
   };
@@ -59,7 +55,7 @@ class AccountSettings extends PureComponent<Props, State> {
   deleteAccount = () => {
     const { account, deleteAccount, navigation } = this.props;
     deleteAccount(account);
-    navigation.navigate("Accounts");
+    navigation.navigate(ScreenName.Accounts);
   };
 
   render() {
@@ -68,7 +64,7 @@ class AccountSettings extends PureComponent<Props, State> {
 
     if (!account) return null;
     return (
-      <ScrollView>
+      <NavigationScrollView>
         <TrackScreen category="AccountSettings" />
         <View style={styles.sectionRow}>
           <AccountNameRow account={account} navigation={navigation} />
@@ -93,18 +89,13 @@ class AccountSettings extends PureComponent<Props, State> {
             account={account}
           />
         </BottomModal>
-      </ScrollView>
+      </NavigationScrollView>
     );
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(AccountSettings);
+// $FlowFixMe
+export default connect(mapStateToProps, mapDispatchToProps)(AccountSettings);
 
 const styles = StyleSheet.create({
   sectionRow: {

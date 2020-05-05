@@ -2,10 +2,34 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import { translate } from "react-i18next";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import colors from "../../colors";
+
+type Props = {
+  transaction: Transaction,
+};
+
+function Post({ transaction }: Props) {
+  return (
+    <>
+      <DataRow label={deviceMemoLabels[transaction.memoType || "NO_MEMO"]}>
+        <LText semiBold style={styles.text}>
+          {transaction.memoValue ? `${transaction.memoValue} ` : "[none]"}
+        </LText>
+      </DataRow>
+      <DataRow label="Network">
+        <LText semiBold style={styles.text}>
+          {"Public"}
+        </LText>
+      </DataRow>
+    </>
+  );
+}
+
+export default {
+  post: Post,
+};
 
 const deviceMemoLabels = {
   MEMO_TEXT: "Memo Text",
@@ -23,24 +47,3 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
 });
-
-const Post = ({ transaction }: { transaction: Transaction }) => {
-  return (
-    <>
-      <DataRow label={deviceMemoLabels[transaction.memoType || "NO_MEMO"]}>
-        <LText semiBold style={styles.text}>
-          {transaction.memoValue ? `${transaction.memoValue} ` : "[none]"}
-        </LText>
-      </DataRow>
-      <DataRow label="Network">
-        <LText semiBold style={styles.text}>
-          {"Public"}
-        </LText>
-      </DataRow>
-    </>
-  );
-};
-
-export default {
-  post: translate()(Post),
-};

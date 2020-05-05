@@ -91,7 +91,7 @@ const TokenContextualModal = ({
         </LText>
       ) : null}
 
-      {showContract ? (
+      {showContract && url ? (
         <TokenContractAddress
           token={account.token}
           onClose={onCloseModal}
@@ -144,19 +144,21 @@ const TokenContextualModal = ({
               <Trans i18nKey="settings.accounts.hideTokenCTA" />
             </LText>
           </Touchable>
-          <Touchable
-            hitSlop={hitSlop}
-            onPress={() => setShowContract(true)}
-            style={styles.item}
-            event="blacklistToken"
-          >
-            <View style={{ marginRight: 8 }}>
-              <Icon name="file-text" size={18} color={colors.smoke} />
-            </View>
-            <LText tertiary>
-              <Trans i18nKey="settings.accounts.showContractCTA" />
-            </LText>
-          </Touchable>
+          {url && (
+            <Touchable
+              hitSlop={hitSlop}
+              onPress={() => setShowContract(true)}
+              style={styles.item}
+              event="blacklistToken"
+            >
+              <View style={{ marginRight: 8 }}>
+                <Icon name="file-text" size={18} color={colors.smoke} />
+              </View>
+              <LText tertiary>
+                <Trans i18nKey="settings.accounts.showContractCTA" />
+              </LText>
+            </Touchable>
+          )}
         </>
       )}
     </BottomModal>

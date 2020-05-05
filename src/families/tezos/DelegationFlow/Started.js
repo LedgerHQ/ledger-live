@@ -1,35 +1,32 @@
 // @flow
 import React, { useCallback } from "react";
-import { StyleSheet, ScrollView, View, Linking } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { translate, Trans } from "react-i18next";
-import i18next from "i18next";
-import type { NavigationScreenProp } from "react-navigation";
+import { StyleSheet, View, Linking } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { Trans } from "react-i18next";
 import colors from "../../../colors";
+import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import StepHeader from "../../../components/StepHeader";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
+import NavigationScrollView from "../../../components/NavigationScrollView";
 import IlluStaking from "../IlluStaking";
 import { urls } from "../../../config/urls";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: NavigationScreenProp<{
-    params: {},
-  }>,
+  navigation: any,
+  route: { params: any },
 };
 
-const DelegationStarted = ({ navigation }: Props) => {
+export default function DelegationStarted({ navigation, route }: Props) {
   const onNext = useCallback(() => {
-    // $FlowFixMe
-    navigation.navigate("DelegationSummary", {
-      ...navigation.state.params,
+    navigation.navigate(ScreenName.DelegationSummary, {
+      ...route.params,
     });
-  }, [navigation]);
+  }, [navigation, route.params]);
 
   const howDelegationWorks = useCallback(() => {
     Linking.openURL(urls.delegation);
@@ -37,7 +34,7 @@ const DelegationStarted = ({ navigation }: Props) => {
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
-      <ScrollView
+      <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
@@ -71,7 +68,7 @@ const DelegationStarted = ({ navigation }: Props) => {
             }}
           />
         </View>
-      </ScrollView>
+      </NavigationScrollView>
       <View style={styles.footer}>
         <Button
           event="DelegationStartedBtn"
@@ -82,11 +79,7 @@ const DelegationStarted = ({ navigation }: Props) => {
       </View>
     </SafeAreaView>
   );
-};
-
-DelegationStarted.navigationOptions = {
-  headerTitle: <StepHeader title={i18next.t("delegation.started.title")} />,
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -135,5 +128,3 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-
-export default translate()(DelegationStarted);

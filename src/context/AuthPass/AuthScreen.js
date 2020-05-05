@@ -1,14 +1,15 @@
 // @flow
 import React, { PureComponent } from "react";
-import { translate, Trans } from "react-i18next";
+import { withTranslation, Trans } from "react-i18next";
 import {
   TouchableWithoutFeedback,
   View,
   StyleSheet,
   Image,
   Vibration,
+  Platform,
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import * as Keychain from "react-native-keychain";
 import { PasswordIncorrectError } from "@ledgerhq/errors";
 import type { T } from "../../types/common";
@@ -126,7 +127,15 @@ class AuthScreen extends PureComponent<Props, State> {
     const { unlock } = this.props;
     if (!password) return;
     try {
-      const credentials = await Keychain.getGenericPassword();
+      const options =
+        Platform.OS === "ios"
+          ? {}
+          : {
+              accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
+              rules: Keychain.SECURITY_RULES.NONE,
+            };
+
+      const credentials = await Keychain.getGenericPassword(options);
       if (id !== this.submitId) return;
       if (credentials && credentials.password === password) {
         unlock();
@@ -137,11 +146,11 @@ class AuthScreen extends PureComponent<Props, State> {
           password: "",
         });
       } else {
-        console.log("no credentials stored"); // eslint-disable-line
+        console.log("no credentials stored"); // eslint-disable-line no-console
       }
     } catch (err) {
       if (id !== this.submitId) return;
-      console.log("could not load credentials"); // eslint-disable-line
+      console.log("could not load credentials"); // eslint-disable-line no-console
       this.setState({ passwordError: err, password: "" });
     }
   };
@@ -246,7 +255,7 @@ class AuthScreen extends PureComponent<Props, State> {
   }
 }
 
-export default translate()(withReboot(AuthScreen));
+export default withTranslation()(withReboot(AuthScreen));
 
 const styles = StyleSheet.create({
   root: {

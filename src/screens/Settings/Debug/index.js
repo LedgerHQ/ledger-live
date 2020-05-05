@@ -1,16 +1,14 @@
 /* @flow */
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
-import type { NavigationScreenProp } from "react-navigation";
+import React from "react";
+import { useSelector } from "react-redux";
 import { StyleSheet } from "react-native";
-// $FlowFixMe
-import { ScrollView } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
 import config from "react-native-config";
-import { createStructuredSelector } from "reselect";
 import { accountsSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import SettingsRow from "../../../components/SettingsRow";
 import SelectDevice from "../../../components/SelectDevice";
+import { ScreenName } from "../../../const";
 
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import ImportBridgeStreamData from "./ImportBridgeStreamData";
@@ -23,96 +21,68 @@ import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenLottie from "./OpenDebugLottie";
 import SkipLock from "../../../components/behaviour/SkipLock";
+import NavigationScrollView from "../../../components/NavigationScrollView";
 
-class DebugMocks_ extends PureComponent<{
-  accounts: *,
-  navigation: NavigationScreenProp<*>,
-}> {
-  static navigationOptions = {
-    title: "Mock & Test",
-  };
+export function DebugMocks() {
+  const accounts = useSelector(accountsSelector);
 
-  render() {
-    const { accounts } = this.props;
-    return (
-      <ScrollView contentContainerStyle={styles.root}>
-        {config.BRIDGESTREAM_DATA ? (
-          // $FlowFixMe
-          <ImportBridgeStreamData
-            title="Import .env BRIDGESTREAM_DATA"
-            dataStr={config.BRIDGESTREAM_DATA}
-          />
-        ) : null}
-        {accounts.length === 0 ? (
-          <GenerateMockAccounts title="Generate 10 mock Accounts" count={10} />
-        ) : null}
-        <OpenDebugCrash />
-        <OpenDebugStore />
-        <OpenDebugIcons />
-        <OpenLottie />
-        <OpenDebugSVG />
-        <ReadOnlyModeRow />
-        <SkipLock />
-      </ScrollView>
-    );
-  }
+  return (
+    <NavigationScrollView contentContainerStyle={styles.root}>
+      {config.BRIDGESTREAM_DATA ? (
+        // $FlowFixMe
+        <ImportBridgeStreamData
+          title="Import .env BRIDGESTREAM_DATA"
+          dataStr={config.BRIDGESTREAM_DATA}
+        />
+      ) : null}
+      {accounts.length === 0 ? (
+        <GenerateMockAccounts title="Generate 10 mock Accounts" count={10} />
+      ) : null}
+      <OpenDebugCrash />
+      <OpenDebugStore />
+      <OpenDebugIcons />
+      <OpenLottie />
+      <OpenDebugSVG />
+      <ReadOnlyModeRow />
+      <SkipLock />
+    </NavigationScrollView>
+  );
 }
 
-export const DebugMocks = connect(
-  createStructuredSelector({
-    accounts: accountsSelector,
-  }),
-)(DebugMocks_);
+export function DebugDevices() {
+  const { navigate } = useNavigation();
 
-export class DebugDevices extends PureComponent<{
-  navigation: NavigationScreenProp<*>,
-}> {
-  static navigationOptions = {
-    title: "Debug Devices",
-  };
-
-  onSelect = (meta: *) => {
-    this.props.navigation.navigate("DebugBLE", meta);
-  };
-
-  render() {
-    return (
-      <ScrollView contentContainerStyle={styles.root}>
-        <OpenDebugHttpTransport />
-        <ConfigUSBDeviceSupport />
-        <SelectDevice onSelect={this.onSelect} />
-      </ScrollView>
-    );
+  function onSelect(meta: *): void {
+    navigate(ScreenName.DebugBLE, meta);
   }
+
+  return (
+    <NavigationScrollView contentContainerStyle={styles.root}>
+      <OpenDebugHttpTransport />
+      <ConfigUSBDeviceSupport />
+      <SelectDevice onSelect={onSelect} />
+    </NavigationScrollView>
+  );
 }
 
-class DebugSettings extends PureComponent<{
-  navigation: NavigationScreenProp<*>,
-}> {
-  static navigationOptions = {
-    title: "Debug",
-  };
-
-  render() {
-    const { navigation } = this.props;
-    return (
-      <ScrollView contentContainerStyle={styles.root}>
-        <TrackScreen category="Settings" name="Debug" />
-        <SettingsRow
-          title="Mock & Test"
-          onPress={() => navigation.navigate("DebugMocks")}
-        />
-        <SettingsRow
-          title="Debug Devices"
-          onPress={() => navigation.navigate("DebugDevices")}
-        />
-        <SettingsRow
-          title="Export accounts (LiveQR)"
-          onPress={() => navigation.navigate("DebugExport")}
-        />
-      </ScrollView>
-    );
-  }
+export default function DebugSettings({ navigation: { navigate } }: any) {
+  return (
+    <NavigationScrollView contentContainerStyle={styles.root}>
+      <TrackScreen category="Settings" name="Debug" />
+      <SettingsRow
+        title="Mock & Test"
+        onPress={() => navigate(ScreenName.DebugMocks)}
+      />
+      <SettingsRow
+        title="Debug Devices"
+        onPress={() => navigate(ScreenName.DebugDevices)}
+      />
+      <SettingsRow
+        title="Export accounts (LiveQR)"
+        onPress={() => navigate(ScreenName.DebugExport)}
+      />
+    </NavigationScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -124,5 +94,3 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
 });
-
-export default DebugSettings;

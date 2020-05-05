@@ -1,9 +1,7 @@
 // @flow
 
-import React, { Component, Fragment } from "react";
-import { StyleSheet } from "react-native";
-// $FlowFixMe
-import { FlatList } from "react-navigation";
+import React, { Component } from "react";
+import { StyleSheet, FlatList } from "react-native";
 import { connect } from "react-redux";
 import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
@@ -107,7 +105,7 @@ class Scanning extends Component<Props, State> {
   render() {
     const { devices } = this.state;
     return (
-      <Fragment>
+      <>
         <TrackScreen category="PairDevices" name="Scanning" />
         <FlatList
           style={styles.list}
@@ -116,7 +114,7 @@ class Scanning extends Component<Props, State> {
           keyExtractor={this.keyExtractor}
           ListHeaderComponent={this.ListHeader}
         />
-      </Fragment>
+      </>
     );
   }
 }

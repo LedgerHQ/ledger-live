@@ -3,24 +3,24 @@ import React, { Component } from "react";
 import invariant from "invariant";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike, Transaction } from "@ledgerhq/live-common/lib/types";
-import { Trans, translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
-
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
 type Props = {
   account: AccountLike,
   transaction: Transaction,
-  navigation: *,
+  navigation: any,
 };
 
-class BitcoinFeePerByteRow extends Component<Props> {
+export default class BitcoinFeePerByteRow extends Component<Props> {
   openFees = () => {
     const { account, navigation, transaction } = this.props;
-    navigation.navigate("BitcoinEditFeePerByte", {
+    navigation.navigate(ScreenName.BitcoinEditFeePerByte, {
       accountId: account.id,
       transaction,
     });
@@ -61,6 +61,7 @@ class BitcoinFeePerByteRow extends Component<Props> {
     );
   }
 }
+
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,
@@ -82,5 +83,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
-export default translate()(BitcoinFeePerByteRow);

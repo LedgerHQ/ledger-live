@@ -2,10 +2,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { Trans, translate } from "react-i18next";
+import { Trans, withTranslation, useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import Slider from "react-native-slider";
-import type { NavigationScreenProp } from "react-navigation";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import SettingsRow from "../../../../components/SettingsRow";
@@ -21,7 +20,7 @@ import CurrencyIcon from "../../../../components/CurrencyIcon";
 
 type Props = {
   confirmationsNb: number,
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   updateCurrencySettings: Function,
   t: T,
   defaults: *,
@@ -32,11 +31,9 @@ type LocalState = {
 };
 const mapStateToProps = (
   state: State,
-  props: { navigation: NavigationScreenProp<*>, currencyId: string },
+  props: { navigation: *, currencyId: string },
 ) => {
-  const currency = getCryptoCurrencyById(
-    props.navigation.state.params.currencyId,
-  );
+  const currency = getCryptoCurrencyById(props.route.params.currencyId);
   return {
     confirmationsNb: confirmationsNbForCurrencySelector(state, { currency }),
     defaults: currencySettingsDefaults(currency),
@@ -49,15 +46,10 @@ const mapDispatchToProps = {
 };
 
 class EachCurrencySettings extends Component<Props, LocalState> {
-  static navigationOptions = ({ navigation }) => ({
-    headerTitle: navigation.state.params.headerTitle,
-    headerRight: null,
-  });
-
   componentDidMount() {
-    const { navigation, t, currency } = this.props;
-    navigation.setParams({
-      headerTitle: <CustomCurrencyHeader currency={currency} t={t} />,
+    const { navigation, currency } = this.props;
+    navigation.setOptions({
+      headerTitle: () => <CustomCurrencyHeader currency={currency} />,
     });
   }
 
@@ -143,11 +135,8 @@ class EachCurrencySettings extends Component<Props, LocalState> {
 }
 
 export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
+  connect(mapStateToProps, mapDispatchToProps),
+  withTranslation(),
 )(EachCurrencySettings);
 
 const styles = StyleSheet.create({
@@ -199,11 +188,10 @@ const styles = StyleSheet.create({
 
 export function CustomCurrencyHeader({
   currency,
-  t,
 }: {
   currency: CryptoCurrency,
-  t: T,
 }) {
+  const { t } = useTranslation();
   return (
     <View
       style={{

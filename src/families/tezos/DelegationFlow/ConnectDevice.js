@@ -1,84 +1,64 @@
 // @flow
-import React, { Component } from "react";
-import { StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate } from "react-i18next";
-import i18next from "i18next";
-import type { NavigationScreenProp } from "react-navigation";
+import React from "react";
+import { StyleSheet } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import type {
-  Account,
-  AccountLike,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
-import { accountAndParentScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "../../../reducers/accounts";
 import colors from "../../../colors";
+import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
-import StepHeader from "../../../components/StepHeader";
 import SelectDevice from "../../../components/SelectDevice";
 import {
   connectingStep,
   accountApp,
 } from "../../../components/DeviceJob/steps";
+import NavigationScrollView from "../../../components/NavigationScrollView";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-      status: TransactionStatus,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-class ConnectDevice extends Component<Props> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("send.stepperHeader.connectDevice")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "2",
-          totalSteps: "3",
-        })}
-      />
-    ),
-  };
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+  status: TransactionStatus,
+};
 
-  onSelectDevice = (meta: *) => {
-    const { navigation } = this.props;
-    // $FlowFixMe
-    navigation.replace("DelegationValidation", {
-      ...navigation.state.params,
+export default function ConnectDevice({ navigation, route }: Props) {
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
+  function onSelectDevice(meta: any): void {
+    navigation.replace(ScreenName.DelegationValidation, {
+      ...route.params,
       ...meta,
     });
-  };
-
-  render() {
-    const { account, parentAccount } = this.props;
-    if (!account) return null;
-    const mainAccount = getMainAccount(account, parentAccount);
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
-          <TrackScreen category="DelegationFlow" name="ConnectDevice" />
-          <SelectDevice
-            onSelect={this.onSelectDevice}
-            steps={[connectingStep, accountApp(mainAccount)]}
-          />
-        </ScrollView>
-      </SafeAreaView>
-    );
   }
+
+  if (!account) return null;
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <NavigationScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContainer}
+      >
+        <TrackScreen category="DelegationFlow" name="ConnectDevice" />
+        <SelectDevice
+          onSelect={onSelectDevice}
+          steps={[connectingStep, accountApp(mainAccount)]}
+        />
+      </NavigationScrollView>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -93,10 +73,3 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-
-const mapStateToProps = accountAndParentScreenSelector;
-
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(ConnectDevice);

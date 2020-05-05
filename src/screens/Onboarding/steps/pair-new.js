@@ -4,6 +4,7 @@ import React, { Component } from "react";
 import { Linking } from "react-native";
 
 import { TrackScreen } from "../../../analytics";
+import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SelectDevice from "../../../components/SelectDevice";
 import OnboardingLayout from "../OnboardingLayout";
@@ -31,7 +32,7 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
 
   help = () => Linking.openURL(urls.faq);
 
-  pairNew = () => this.props.navigation.navigate("PairDevices");
+  pairNew = () => this.props.navigation.navigate(ScreenName.PairDevices);
 
   render() {
     const { deviceModelId, t } = this.props;

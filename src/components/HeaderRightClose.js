@@ -1,6 +1,6 @@
 /* @flow */
-import React, { Component } from "react";
-import type { NavigationScreenProp } from "react-navigation";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 import Touchable from "./Touchable";
 import CloseIcon from "../icons/Close";
@@ -9,89 +9,75 @@ import ConfirmationModal from "./ConfirmationModal";
 
 type Props = {
   preferDismiss: boolean,
-  navigation: NavigationScreenProp<*>,
   color: string,
   withConfirmation?: boolean,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
 };
 
-type State = {
-  isConfirmationModalOpened: boolean,
-  onModalHide: () => void,
-};
+export default function HeaderRightClose({
+  color = colors.grey,
+  preferDismiss = true,
+  withConfirmation,
+  confirmationTitle,
+  confirmationDesc,
+}: Props) {
+  const navigation = useNavigation();
 
-class HeaderRightClose extends Component<Props, State> {
-  static defaultProps = {
-    color: colors.grey,
-    preferDismiss: true,
-  };
+  const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(
+    false,
+  );
+  const [onModalHide, setOnModalHide] = useState();
 
-  state = {
-    isConfirmationModalOpened: false,
-    onModalHide: () => {},
-  };
-
-  close = () => {
-    const { navigation, preferDismiss } = this.props;
-    if (navigation.dismiss && preferDismiss) {
-      const dismissed = navigation.dismiss();
-      if (!dismissed) navigation.goBack();
+  function close(): void {
+    if (navigation.dangerouslyGetParent().pop && preferDismiss) {
+      navigation.dangerouslyGetParent().pop();
+      return;
     }
-    // $FlowFixMe
+
     if (navigation.closeDrawer) navigation.closeDrawer();
 
     navigation.goBack();
-  };
-
-  onPress = () => {
-    const { withConfirmation } = this.props;
-    if (withConfirmation) {
-      this.openConfirmationModal();
-    } else {
-      this.close();
-    }
-  };
-
-  openConfirmationModal = () =>
-    this.setState({ isConfirmationModalOpened: true });
-
-  closeConfirmationModal = () =>
-    this.setState({ isConfirmationModalOpened: false });
-
-  onConfirm = () =>
-    this.setState({
-      onModalHide: this.close,
-      isConfirmationModalOpened: false,
-    });
-
-  render() {
-    const {
-      withConfirmation,
-      confirmationTitle,
-      confirmationDesc,
-    } = this.props;
-    const { isConfirmationModalOpened, onModalHide } = this.state;
-    return (
-      <Touchable
-        event="HeaderRightClose"
-        onPress={this.onPress}
-        style={{ marginHorizontal: 16 }}
-      >
-        <CloseIcon size={18} color={this.props.color} />
-        {withConfirmation && (
-          <ConfirmationModal
-            isOpened={isConfirmationModalOpened}
-            onClose={this.closeConfirmationModal}
-            onConfirm={this.onConfirm}
-            confirmationTitle={confirmationTitle}
-            confirmationDesc={confirmationDesc}
-            onModalHide={onModalHide}
-          />
-        )}
-      </Touchable>
-    );
   }
-}
 
-export default HeaderRightClose;
+  function onPress(): void {
+    if (withConfirmation) {
+      openConfirmationModal();
+    } else {
+      close();
+    }
+  }
+
+  function openConfirmationModal(): void {
+    setIsConfirmationModalOpened(true);
+  }
+
+  function closeConfirmationModal(): void {
+    setIsConfirmationModalOpened(false);
+  }
+
+  function onConfirm() {
+    setOnModalHide(close);
+    setIsConfirmationModalOpened(false);
+  }
+
+  return (
+    <Touchable
+      event="HeaderRightClose"
+      onPress={onPress}
+      style={{ marginHorizontal: 16 }}
+    >
+      <CloseIcon size={18} color={color} />
+      {withConfirmation && (
+        <ConfirmationModal
+          isOpened={isConfirmationModalOpened}
+          onClose={closeConfirmationModal}
+          onConfirm={onConfirm}
+          confirmationTitle={confirmationTitle}
+          confirmationDesc={confirmationDesc}
+          onModalHide={onModalHide}
+        />
+      )}
+    </Touchable>
+  );
+}

@@ -1,28 +1,24 @@
 /* @flow */
-import React, { Component } from "react";
-import { translate } from "react-i18next";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import type { T } from "../../types/common";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import LedgerLogoRec from "../../icons/LedgerLogoRec";
 
-class PoweredByLedger extends Component<{
-  t: T,
-}> {
-  render() {
-    const { t } = this.props;
-    return (
-      <View style={styles.container}>
-        <LText secondary semiBold style={styles.textStyle}>
-          {t("common.poweredBy")}
-        </LText>
-        <View style={styles.iconStyle}>
-          <LedgerLogoRec height={17} width={68} color={colors.grey} />
-        </View>
+export default function PoweredByLedger() {
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.container}>
+      <LText secondary semiBold style={styles.textStyle}>
+        {t("common.poweredBy")}
+      </LText>
+      <View style={styles.iconStyle}>
+        <LedgerLogoRec height={17} width={68} color={colors.grey} />
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -41,5 +37,3 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
   },
 });
-
-export default translate()(PoweredByLedger);

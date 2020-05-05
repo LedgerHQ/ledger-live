@@ -24,16 +24,17 @@ import CounterValues from "../countervalues";
 import { accountsSelector } from "../reducers/accounts";
 import type { State } from "../reducers";
 
-export const balanceHistoryWithCountervalueSelector = (
-  state: State,
-  {
-    account,
-    range,
-  }: {
-    account: AccountLike,
-    range: PortfolioRange,
-  },
-) => {
+export const balanceHistoryWithCountervalueSelectorCreator = ({
+  account,
+  range,
+}: {
+  account?: AccountLike,
+  range: PortfolioRange,
+}) => (state: State) => {
+  if (!account) {
+    return {};
+  }
+
   const counterValueCurrency = counterValueCurrencySelector(state);
   const currency = getAccountCurrency(account);
   const intermediary = intermediaryCurrency(currency, counterValueCurrency);
@@ -47,6 +48,7 @@ export const balanceHistoryWithCountervalueSelector = (
   });
   return getBalanceHistoryWithCountervalue(account, range, (_, value, date) =>
     CounterValues.calculateWithIntermediarySelector(state, {
+      counterValueCurrency,
       value,
       date,
       from: currency,
@@ -83,16 +85,13 @@ export const portfolioSelector = (state: State) => {
   });
 };
 
-export const currencyPortfolioSelector = (
-  state: State,
-  {
-    currency,
-    range,
-  }: {
-    currency: CryptoCurrency | TokenCurrency,
-    range: PortfolioRange,
-  },
-) => {
+export const currencyPortfolioSelectorCreator = ({
+  currency,
+  range,
+}: {
+  currency: CryptoCurrency | TokenCurrency,
+  range: PortfolioRange,
+}) => (state: State) => {
   const accounts = flattenAccounts(accountsSelector(state)).filter(
     a => getAccountCurrency(a) === currency,
   );

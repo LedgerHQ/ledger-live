@@ -1,14 +1,11 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
-// $FlowFixMe
-import { FlatList } from "react-navigation";
+import { StyleSheet, View, FlatList } from "react-native";
 import { connect } from "react-redux";
-import i18next from "i18next";
 import { Trans } from "react-i18next";
 import { createStructuredSelector } from "reselect";
-import type { NavigationScreenProp } from "react-navigation";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import { ScreenName } from "../../../../const";
 import { pairsSelector } from "../../../../countervalues";
 import SettingsRow from "../../../../components/SettingsRow";
 import LText from "../../../../components/LText";
@@ -22,7 +19,7 @@ type Pair = {|
 |};
 
 type Props = {|
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   pairs: Pair[],
 |};
 
@@ -36,10 +33,6 @@ const currencyColors = {
 };
 
 class CurrenciesList extends PureComponent<Props> {
-  static navigationOptions = () => ({
-    title: i18next.t("settings.rates.header"),
-  });
-
   renderItem = ({ index, item: p }: { index: number, item: Pair }) => (
     <SettingsRow
       title={
@@ -63,13 +56,13 @@ class CurrenciesList extends PureComponent<Props> {
       arrowRight
       compact
       event="RateSettingsRow"
-      onPress={() =>
-        this.props.navigation.navigate("RateProviderSettings", {
+      onPress={() => {
+        this.props.navigation.navigate(ScreenName.RateProviderSettings, {
           from: p.from.ticker,
           to: p.to.ticker,
           selected: p.exchange,
-        })
-      }
+        });
+      }}
     >
       {/* FIXME display actual name instead of ID */}
       <LText>{p.exchange || ""}</LText>

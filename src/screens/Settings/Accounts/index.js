@@ -4,10 +4,8 @@ import { Trans } from "react-i18next";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
-import { TouchableOpacity, View, StyleSheet } from "react-native";
+import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { findTokenById } from "@ledgerhq/live-common/lib/data/tokens";
-// $FlowFixMe
-import { NavigationScreenProp, SectionList } from "react-navigation";
 import i18next from "i18next";
 import type {
   CryptoCurrency,
@@ -26,7 +24,7 @@ import Close from "../../../icons/Close";
 type Props = {
   blacklistedTokenIds: string[],
   showToken: string => void,
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
 };
 
 const mapDispatchToProps = {
@@ -79,7 +77,7 @@ const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
     [showToken],
   );
 
-  const keyExtractor = useCallback(() => token => token.id, []);
+  const keyExtractor = useCallback(token => token.id, []);
 
   const renderHeader = useCallback(
     () => (
@@ -122,6 +120,7 @@ const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
   }, [blacklistedTokenIds]);
 
   return (
+    // $FlowFixMe
     <SectionList
       ListHeaderComponent={renderHeader}
       stickySectionHeadersEnabled
@@ -171,9 +170,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-)(AccountsSettings);
+export default compose(connect(mapStateToProps, mapDispatchToProps))(
+  AccountsSettings,
+);

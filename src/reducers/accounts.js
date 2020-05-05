@@ -120,12 +120,10 @@ export const someAccountsNeedMigrationSelector = createSelector(
 );
 
 // $FlowFixMe
-export const currenciesSelector = createSelector(
-  accountsSelector,
-  accounts =>
-    uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort(
-      (a, b) => a.name.localeCompare(b.name),
-    ),
+export const currenciesSelector = createSelector(accountsSelector, accounts =>
+  uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  ),
 );
 
 // $FlowFixMe
@@ -151,17 +149,8 @@ export const parentAccountSelector = createSelector(
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 
-// $FlowFixMe
-export const accountScreenSelector = createSelector(
-  // DEPRECATED
-  accountsSelector,
-  (_, { navigation }) => navigation.state.params.accountId,
-  (accounts, accountId) => accounts.find(a => a.id === accountId),
-);
-
-// FIXME rename to accountScreenSeelctor
-export const accountAndParentScreenSelector = (state: *, { navigation }: *) => {
-  const { accountId, parentId } = navigation.state.params;
+export const accountScreenSelector = (route: any) => (state: any) => {
+  const { accountId, parentId } = route.params;
   const parentAccount: ?Account =
     parentId && accountSelector(state, { accountId: parentId });
   let account: ?AccountLike;
@@ -177,9 +166,8 @@ export const accountAndParentScreenSelector = (state: *, { navigation }: *) => {
 };
 
 // $FlowFixMe
-export const isUpToDateSelector = createSelector(
-  accountsSelector,
-  accounts => accounts.every(isUpToDateAccount),
+export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
+  accounts.every(isUpToDateAccount),
 );
 
 export default handleActions(handlers, initialState);

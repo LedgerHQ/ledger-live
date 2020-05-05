@@ -3,29 +3,26 @@
 import React, { PureComponent, createRef, useEffect } from "react";
 import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
-import { compose } from "redux";
 import { connect } from "react-redux";
-import i18next from "i18next";
 import {
   isAccountEmpty,
   groupAddAccounts,
 } from "@ledgerhq/live-common/lib/account";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView, ScrollView } from "react-navigation";
-import type { NavigationStackProp } from "react-navigation-stack";
+import SafeAreaView from "react-native-safe-area-view";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import StepHeader from "../../components/StepHeader";
 import SelectableAccountsList from "../../components/SelectableAccountsList";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import IconPause from "../../icons/Pause";
@@ -34,12 +31,13 @@ import LText from "../../components/LText";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 
 const forceInset = { bottom: "always" };
 
-const SectionAccounts = ({ defaultSelected, ...rest }: *) => {
+const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
   useEffect(() => {
     if (defaultSelected && rest.onSelectAll) {
       rest.onSelectAll(rest.accounts);
@@ -49,13 +47,14 @@ const SectionAccounts = ({ defaultSelected, ...rest }: *) => {
   return <SelectableAccountsList {...rest} />;
 };
 
+type RouteParams = {
+  currency: CryptoCurrency,
+  deviceId: string,
+};
+
 type Props = {
-  navigation: NavigationStackProp<{
-    params: {
-      currency: CryptoCurrency,
-      deviceId: string,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
   replaceAccounts: ({
     scannedAccounts: Account[],
     selectedIds: string[],
@@ -83,19 +82,6 @@ const mapDispatchToProps = {
 };
 
 class AddAccountsAccounts extends PureComponent<Props, State> {
-  static navigationOptions = {
-    headerTitle: (
-      <StepHeader
-        title={i18next.t("tabs.accounts")}
-        subtitle={i18next.t("send.stepperHeader.stepRange", {
-          currentStep: "3",
-          totalSteps: "3",
-        })}
-      />
-    ),
-    gesturesEnabled: false,
-  };
-
   state = {
     // we assume status is scanning at beginning because we start sync at mount
     scanning: true,
@@ -120,9 +106,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   };
 
   startSubscription = () => {
-    const { navigation, blacklistedTokenIds } = this.props;
-    const currency = navigation.getParam("currency");
-    const deviceId = navigation.getParam("deviceId");
+    const { route, blacklistedTokenIds } = this.props;
+    const { currency, deviceId } = route.params || {};
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {
@@ -175,7 +160,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     this.startSubscription();
   };
 
-  stopSubscription = (syncUI = true) => {
+  stopSubscription = (syncUI?: boolean = true) => {
     if (this.scanSubscription) {
       this.scanSubscription.unsubscribe();
       this.scanSubscription = null;
@@ -186,10 +171,10 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   };
 
   quitFlow = () => {
-    this.props.navigation.navigate("Accounts");
+    this.props.navigation.navigate(ScreenName.Accounts);
   };
 
-  scanSubscription: *;
+  scanSubscription: any;
 
   onPressAccount = (account: Account) => {
     const { selectedIds } = this.state;
@@ -200,27 +185,27 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     this.setState({ selectedIds: newSelectedIds });
   };
 
-  selectAll = accounts =>
+  selectAll = (accounts: Account[]) =>
     this.setState(({ selectedIds }) => ({
       selectedIds: uniq([...selectedIds, ...accounts.map(a => a.id)]),
     }));
 
-  unselectAll = accounts =>
+  unselectAll = (accounts: Account[]) =>
     this.setState(({ selectedIds }) => ({
       selectedIds: selectedIds.filter(id => !accounts.find(a => a.id === id)),
     }));
 
   import = () => {
-    const { replaceAccounts, navigation } = this.props;
+    const { replaceAccounts, navigation, route } = this.props;
     const { scannedAccounts, selectedIds } = this.state;
-    const currency = navigation.getParam("currency");
+    const currency = route.params?.currency;
     replaceAccounts({
       scannedAccounts,
       selectedIds,
       renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
     });
     if (navigation.replace) {
-      navigation.replace("AddAccountsSuccess", { currency });
+      navigation.replace(ScreenName.AddAccountsSuccess, { currency });
     }
   };
 
@@ -235,8 +220,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const { cancelled } = this.state;
     const { navigation } = this.props;
 
-    if (cancelled && navigation.dismiss) {
-      navigation.dismiss();
+    if (cancelled) {
+      navigation.dangerouslyGetParent().pop();
     }
   };
 
@@ -251,8 +236,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   scrollView = createRef();
 
   render() {
-    const { existingAccounts, navigation } = this.props;
-    const currency = navigation.getParam("currency");
+    const { existingAccounts, route } = this.props;
+    const currency = route.params?.currency;
     const { selectedIds, scanning, scannedAccounts, error } = this.state;
 
     const { sections, alreadyEmptyAccount } = groupAddAccounts(
@@ -292,7 +277,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="AddAccounts" name="Accounts" />
         <PreventNativeBack />
-        <ScrollView
+        <NavigationScrollView
           style={styles.inner}
           contentContainerStyle={styles.innerContent}
           // $FlowFixMe
@@ -332,7 +317,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           ) : null}
 
           {scanning ? <ScanLoading /> : null}
-        </ScrollView>
+        </NavigationScrollView>
         {!!scannedAccounts.length && (
           <Footer
             isScanning={scanning}
@@ -495,10 +480,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  translate(),
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
+// $FlowFixMe
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
 )(AddAccountsAccounts);

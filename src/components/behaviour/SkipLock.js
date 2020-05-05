@@ -1,23 +1,11 @@
 // @flow
-import React, { PureComponent } from "react";
-import { withNavigationFocus } from "react-navigation";
+import React, { PureComponent, useContext } from "react";
+import { useIsFocused } from "@react-navigation/native";
 
 // $FlowFixMe
 export const SkipLockContext = React.createContext((_: boolean) => {});
 
-class SkipLock extends PureComponent<*> {
-  render() {
-    return (
-      <SkipLockContext.Consumer>
-        {setEnabled => (
-          <SkipLockInner setEnabled={setEnabled} {...this.props} />
-        )}
-      </SkipLockContext.Consumer>
-    );
-  }
-}
-
-class SkipLockInner extends PureComponent<{
+class SkipLock extends PureComponent<{
   setEnabled: (enabled: boolean) => void,
   isFocused: boolean,
 }> {
@@ -47,4 +35,9 @@ class SkipLockInner extends PureComponent<{
   }
 }
 
-export default withNavigationFocus(SkipLock);
+export default function(props: any) {
+  const isFocused = useIsFocused();
+  const setEnabled = useContext(SkipLockContext);
+
+  return <SkipLock {...props} isFocused={isFocused} setEnabled={setEnabled} />;
+}

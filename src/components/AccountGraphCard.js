@@ -187,7 +187,7 @@ class GraphCardHeader extends PureComponent<{
             </>
           ) : hoveredItem ? (
             <LText>
-              <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
+              <FormatDate date={hoveredItem.date} />
             </LText>
           ) : valueChange ? (
             <>
@@ -254,9 +254,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-)(AccountGraphCard);
+export default compose(connect(null, mapDispatchToProps))(AccountGraphCard);

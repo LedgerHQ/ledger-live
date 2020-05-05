@@ -1,13 +1,11 @@
 // @flow
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import i18next from "i18next";
-import type { NavigationScreenProp } from "react-navigation";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
-import StepHeader from "../../components/StepHeader";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import ExternalLink from "../../components/ExternalLink";
@@ -18,20 +16,18 @@ import IlluRewards from "../../families/tron/IlluRewards";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: NavigationScreenProp<{
-    params: {},
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const FreezeInfo = ({ navigation }: Props) => {
+type RouteParams = {};
+
+export default function FreezeInfo({ navigation, route }: Props) {
   const onNext = useCallback(() => {
-    navigation.navigate("FreezeAmount", {
-      ...navigation.state.params,
-    });
-  }, [navigation]);
+    navigation.navigate(ScreenName.FreezeAmount, route.params);
+  }, [navigation, route.params]);
 
   const onCancel = useCallback(() => {
-    // $FlowFixMe
     navigation.popToTop();
   }, [navigation]);
 
@@ -75,6 +71,7 @@ const FreezeInfo = ({ navigation }: Props) => {
           />
         </View>
       </ScrollView>
+
       <View style={styles.footer}>
         <Button
           event="FreezeInfoBtn"
@@ -93,11 +90,7 @@ const FreezeInfo = ({ navigation }: Props) => {
       </View>
     </SafeAreaView>
   );
-};
-
-FreezeInfo.navigationOptions = {
-  headerTitle: <StepHeader title={i18next.t("freeze.stepperHeader.info")} />,
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -150,5 +143,3 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-
-export default FreezeInfo;

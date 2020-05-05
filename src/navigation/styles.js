@@ -1,6 +1,6 @@
 // @flow
 
-import { StyleSheet, Platform, StatusBar } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 import colors from "../colors";
 
 let headerStyle;
@@ -8,7 +8,6 @@ let headerStyleShadow;
 
 if (Platform.OS === "ios") {
   headerStyle = {
-    height: 48,
     borderBottomWidth: 0,
   };
   headerStyleShadow = {
@@ -19,10 +18,7 @@ if (Platform.OS === "ios") {
     },
   };
 } else {
-  const statusBarPadding = StatusBar.currentHeight;
   headerStyle = {
-    height: 48 + statusBarPadding,
-    paddingTop: statusBarPadding,
     elevation: 0,
   };
   headerStyleShadow = {
@@ -45,7 +41,6 @@ export default StyleSheet.create({
     ...headerStyle,
   },
   bottomTabBar: {
-    height: 56,
     borderTopColor: colors.lightFog,
     backgroundColor: colors.white,
   },

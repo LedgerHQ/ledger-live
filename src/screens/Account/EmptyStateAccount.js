@@ -2,10 +2,10 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, Image, StyleSheet } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import { ScreenName, NavigatorName } from "../../const";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -14,13 +14,16 @@ import Receive from "../../icons/Receive";
 class EmptyStateAccount extends PureComponent<{
   account: AccountLike,
   parentAccount: ?Account,
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
 }> {
   goToReceiveFunds = () => {
     const { navigation, account, parentAccount } = this.props;
-    navigation.navigate("ReceiveConnectDevice", {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+    navigation.navigate(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConnectDevice,
+      params: {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+      },
     });
   };
 

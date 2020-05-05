@@ -1,16 +1,14 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
-import { View, StyleSheet, Keyboard } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-// $FlowFixMe
-import { FlatList } from "react-navigation";
+import React, { useState } from "react";
+import { FlatList, View, StyleSheet, Keyboard } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { translate } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getFieldByFamily, editTxFeeByFamily } from "../families/helpers";
-import type { T } from "../types/common";
+import { ScreenName } from "../const";
+import { useFieldByFamily, useEditTxFeeByFamily } from "../families/helpers";
 import SettingsRow from "./SettingsRow";
 import LText from "./LText";
 import CurrencyInput from "./CurrencyInput";
@@ -22,150 +20,136 @@ import CloseIcon from "../icons/Close";
 
 type Props = {
   account: Account,
-  t: T,
-  navigation: NavigationScreenProp<*>,
   field: string,
 };
 
-type State = {
-  fee: ?BigNumber,
-  isModalOpened: boolean,
-  isValid: boolean,
-};
+export default function EditFreeUnit({ account, field }: Props) {
+  const { navigate } = useNavigation();
+  const route = useRoute();
+  const { t } = useTranslation();
+  const fieldByFamily = useFieldByFamily(field);
 
-class EditFeeUnit extends PureComponent<Props, State> {
-  constructor({ account, navigation, field }) {
-    super();
-    this.state = {
-      fee: getFieldByFamily(account, navigation, field),
-      isModalOpened: false,
-      isValid: true,
-    };
+  const [fee, setFee] = useState<BigNumber | null | typeof undefined>(
+    fieldByFamily,
+  );
+  const [isModalOpened, setIsModalOpened] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+  const [transaction, setTransaction] = useState(route.params?.transaction);
+
+  const feeCustomUnit = transaction.feeCustomUnit || account.unit;
+  const editTxFeeByFamily = useEditTxFeeByFamily();
+
+  function onRequestClose() {
+    setIsModalOpened(false);
   }
 
-  onRequestClose = () => {
-    this.setState({ isModalOpened: false });
-  };
+  function onPress() {
+    setIsModalOpened(true);
+  }
 
-  onPress = () => {
-    this.setState({ isModalOpened: true });
-  };
+  function keyExtractor(item: any): string {
+    return item.code;
+  }
 
-  keyExtractor = (item: any) => item.code;
+  function onChange(fee: ?BigNumber) {
+    setFee(fee);
+    setIsValid(!(fee && fee.isZero()));
+  }
 
-  onChange = (fee: ?BigNumber) => {
-    fee && fee.isZero()
-      ? this.setState({ fee, isValid: false })
-      : this.setState({ fee, isValid: true });
-  };
-
-  updateTransaction = (feeCustomUnit: any) => {
-    const { account, navigation } = this.props;
-    const transaction = navigation.getParam("transaction");
+  function updateTransaction(feeCustomUnit: any) {
     const bridge = getAccountBridge(account);
-    navigation.setParams({
-      transaction: bridge.updateTransaction(transaction, { feeCustomUnit }),
-    });
-    this.onRequestClose();
-  };
+    setTransaction(bridge.updateTransaction(transaction, { feeCustomUnit }));
+    onRequestClose();
+  }
 
-  onValidateFees = () => {
-    const { navigation, account, field } = this.props;
-    const { fee } = this.state;
+  function onValidateFees() {
     Keyboard.dismiss();
 
-    navigation.navigate("SendSummary", {
+    navigate(ScreenName.SendSummary, {
       accountId: account.id,
-      transaction: editTxFeeByFamily(account, navigation, field, fee),
+      transaction: editTxFeeByFamily({ account, field, fee }),
     });
-  };
-
-  render() {
-    const { account, t, navigation } = this.props;
-    const { isModalOpened, fee, isValid } = this.state;
-    const transaction = navigation.getParam("transaction");
-    const feeCustomUnit = transaction.feeCustomUnit || account.unit;
-    return (
-      <Fragment>
-        <View style={styles.inputContainer}>
-          <View style={styles.inputRow}>
-            <CurrencyInput
-              style={{ flex: 1 }}
-              autoFocus
-              unit={feeCustomUnit}
-              value={fee}
-              onChange={this.onChange}
-            />
-            <Touchable
-              event="EditFeeUnitOpen"
-              onPress={this.onPress}
-              style={styles.unitContainer}
-            >
-              <View style={styles.unitSelectRow}>
-                <LText secondary semiBold style={styles.unitStyle}>
-                  {feeCustomUnit.code}
-                </LText>
-                <View style={styles.arrowDown}>
-                  <Icon name="angle-down" size={12} />
-                </View>
-              </View>
-            </Touchable>
-          </View>
-          <View style={styles.buttonContainer}>
-            <Button
-              event="EditFeeUnitConfirm"
-              type="primary"
-              title={t("common.confirm")}
-              containerStyle={styles.continueButton}
-              onPress={this.onValidateFees}
-              disabled={!isValid}
-            />
-          </View>
-        </View>
-        <BottomModal
-          id="EditFeeUnitModal"
-          isOpened={isModalOpened}
-          onClose={this.onRequestClose}
-        >
-          <View style={styles.editFeesUnitsModalTitleRow}>
-            <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
-              {t("send.fees.edit.title")}
-            </LText>
-            <Touchable
-              event="EditFeeUnitClose"
-              style={{ position: "absolute", top: 2, right: 16 }}
-              onPress={this.onRequestClose}
-            >
-              <CloseIcon size={16} color={colors.grey} />
-            </Touchable>
-          </View>
-          <FlatList
-            data={account.currency.units}
-            keyExtractor={this.keyExtractor}
-            extraData={feeCustomUnit}
-            renderItem={({ item }) => (
-              <Touchable
-                event="EditFeeUnit"
-                eventProperties={{ unit: item.code }}
-                onPress={() => {
-                  this.updateTransaction(item);
-                }}
-              >
-                <SettingsRow
-                  title={item.code}
-                  selected={feeCustomUnit === item}
-                />
-              </Touchable>
-            )}
-          >
-            {account.unit.code}
-          </FlatList>
-        </BottomModal>
-      </Fragment>
-    );
   }
+
+  return (
+    <>
+      <View style={styles.inputContainer}>
+        <View style={styles.inputRow}>
+          <CurrencyInput
+            style={{ flex: 1 }}
+            autoFocus
+            unit={feeCustomUnit}
+            value={fee}
+            onChange={onChange}
+          />
+          <Touchable
+            event="EditFeeUnitOpen"
+            onPress={onPress}
+            style={styles.unitContainer}
+          >
+            <View style={styles.unitSelectRow}>
+              <LText secondary semiBold style={styles.unitStyle}>
+                {feeCustomUnit.code}
+              </LText>
+              <View style={styles.arrowDown}>
+                <Icon name="angle-down" size={12} />
+              </View>
+            </View>
+          </Touchable>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            event="EditFeeUnitConfirm"
+            type="primary"
+            title={t("common.confirm")}
+            containerStyle={styles.continueButton}
+            onPress={onValidateFees}
+            disabled={!isValid}
+          />
+        </View>
+      </View>
+      <BottomModal
+        id="EditFeeUnitModal"
+        isOpened={isModalOpened}
+        onClose={onRequestClose}
+      >
+        <View style={styles.editFeesUnitsModalTitleRow}>
+          <LText secondary semiBold style={styles.editFeesUnitModalTitle}>
+            {t("send.fees.edit.title")}
+          </LText>
+          <Touchable
+            event="EditFeeUnitClose"
+            style={{ position: "absolute", top: 2, right: 16 }}
+            onPress={onRequestClose}
+          >
+            <CloseIcon size={16} color={colors.grey} />
+          </Touchable>
+        </View>
+        <FlatList
+          data={account.currency.units}
+          keyExtractor={keyExtractor}
+          extraData={feeCustomUnit}
+          renderItem={({ item }) => (
+            <Touchable
+              event="EditFeeUnit"
+              eventProperties={{ unit: item.code }}
+              onPress={() => {
+                updateTransaction(item);
+              }}
+            >
+              <SettingsRow
+                title={item.code}
+                selected={feeCustomUnit === item}
+              />
+            </Touchable>
+          )}
+        >
+          {account.unit.code}
+        </FlatList>
+      </BottomModal>
+    </>
+  );
 }
-export default translate()(EditFeeUnit);
 
 const styles = StyleSheet.create({
   buttonContainer: {

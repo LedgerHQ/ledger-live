@@ -1,36 +1,35 @@
 // @flow
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import i18next from "i18next";
-
-import type { NavigationScreenProp } from "react-navigation";
-import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
-
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import invariant from "invariant";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
-import StepHeader from "../../components/StepHeader";
+import colors from "../../colors";
+import { ScreenName } from "../../const";
 import SelectDevice from "../../components/SelectDevice";
 import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
+import { accountScreenSelector } from "../../reducers/accounts";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const ConnectDevice = ({ account, navigation }: Props) => {
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+};
+
+export default function ConnectDevice({ navigation, route }: Props) {
+  const { account } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is required");
+
   const bridge = getAccountBridge(account, undefined);
 
   const { transaction, status } = useBridgeTransaction(() => {
@@ -45,15 +44,14 @@ const ConnectDevice = ({ account, navigation }: Props) => {
 
   const onSelectDevice = useCallback(
     (meta: *) => {
-      // $FlowFixMe
-      navigation.replace("ClaimRewardsValidation", {
-        ...navigation.state.params,
+      navigation.replace(ScreenName.ClaimRewardsValidation, {
+        ...route.params,
         ...meta,
         transaction,
         status,
       });
     },
-    [navigation, status, transaction],
+    [navigation, status, transaction, route.params],
   );
 
   if (!account) return null;
@@ -72,7 +70,7 @@ const ConnectDevice = ({ account, navigation }: Props) => {
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -86,19 +84,3 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-
-ConnectDevice.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("claimReward.stepperHeader.connectDevice")}
-      subtitle={i18next.t("claimReward.stepperHeader.stepRange", {
-        currentStep: "1",
-        totalSteps: "2",
-      })}
-    />
-  ),
-};
-
-const mapStateToProps = accountAndParentScreenSelector;
-
-export default connect(mapStateToProps)(ConnectDevice);

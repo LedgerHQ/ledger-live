@@ -4,9 +4,6 @@ import { StyleSheet, View } from "react-native";
 import { RNCamera } from "react-native-camera";
 import { connect } from "react-redux";
 import Config from "react-native-config";
-import type { NavigationScreenProp } from "react-navigation";
-import { translate } from "react-i18next";
-import i18next from "i18next";
 import { decodeURIScheme } from "@ledgerhq/live-common/lib/currencies";
 import type {
   Account,
@@ -14,23 +11,23 @@ import type {
   Transaction,
 } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import HeaderRightClose from "../../components/HeaderRightClose";
+import { ScreenName } from "../../const";
+import { accountScreenSelector } from "../../reducers/accounts";
 import StyledStatusBar from "../../components/StyledStatusBar";
 import CameraScreen from "../../components/CameraScreen";
-import colors from "../../colors";
 import FallBackCamera from "./FallbackCamera/Fallback";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
 type Props = {
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
   account: AccountLike,
   parentAccount: ?Account,
+};
+
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
 };
 
 type State = {
@@ -39,22 +36,6 @@ type State = {
 };
 
 class ScanRecipient extends PureComponent<Props, State> {
-  static navigationOptions = ({
-    navigation,
-  }: {
-    navigation: NavigationScreenProp<*>,
-  }) => ({
-    title: i18next.t("send.scan.title"),
-    headerRight: (
-      <HeaderRightClose
-        navigation={navigation}
-        color={colors.white}
-        preferDismiss={false}
-      />
-    ),
-    headerLeft: null,
-  });
-
   state = {
     ...getWindowDimensions(),
   };
@@ -78,11 +59,11 @@ class ScanRecipient extends PureComponent<Props, State> {
   };
 
   onResult = (result: string) => {
-    const { account, parentAccount, navigation } = this.props;
+    const { account, parentAccount, route } = this.props;
     if (!account) return;
     const bridge = getAccountBridge(account, parentAccount);
     const { amount, address, currency, ...rest } = decodeURIScheme(result);
-    const transaction = navigation.getParam("transaction");
+    const transaction = route.params?.transaction;
     const patch: Object = {};
     patch.recipient = address;
     if (amount) {
@@ -94,7 +75,7 @@ class ScanRecipient extends PureComponent<Props, State> {
       }
     }
 
-    this.props.navigation.navigate("SendSelectRecipient", {
+    this.props.navigation.navigate(ScreenName.SendSelectRecipient, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction: bridge.updateTransaction(transaction, patch),
@@ -139,9 +120,10 @@ class ScanRecipient extends PureComponent<Props, State> {
   }
 }
 
-const mapStateToProps = accountAndParentScreenSelector;
+const mapStateToProps = (state, { route }) =>
+  accountScreenSelector(route)(state);
 
-export default translate()(connect(mapStateToProps)(ScanRecipient));
+export default connect(mapStateToProps)(ScanRecipient);
 
 const styles = StyleSheet.create({
   root: {

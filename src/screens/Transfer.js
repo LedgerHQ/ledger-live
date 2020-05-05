@@ -1,10 +1,11 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Touchable from "../components/Touchable";
 import TabIcon from "../components/TabIcon";
 import CreateModal from "../modals/Create";
 import TransferIcon from "../icons/Transfer";
 import ExchangeScreen from "./Exchange";
+import { lockSubject } from "../components/RootNavigator/CustomBlockRouterNavigator";
 
 const hitSlop = {
   top: 10,
@@ -13,68 +14,36 @@ const hitSlop = {
   bottom: 25,
 };
 
-class Transfer extends Component<
-  { tintColor: string, navigation: * },
-  { isModalOpened: boolean },
-> {
-  state = {
-    isModalOpened: false,
-  };
+type Props = {
+  tintColor: string,
+  navigation: any,
+};
 
-  openModal = () => this.setState({ isModalOpened: true });
+export default ExchangeScreen;
 
-  onModalClose = () => this.setState({ isModalOpened: false });
+export function TransferTabIcon(props: Props) {
+  const [isModalOpened, setIsModalOpened] = useState(false);
 
-  isDisabled() {
-    const { navigation } = this.props;
-    const n =
-      navigation &&
-      navigation.dangerouslyGetParent &&
-      navigation.dangerouslyGetParent();
-    if (n && n.state) {
-      const { state } = n;
-      return (
-        state.routes[state.index].params &&
-        state.routes[state.index].params.blockNavigation
-      );
-    }
-
-    return false;
+  function openModal() {
+    setIsModalOpened(true);
   }
 
-  render() {
-    const { isModalOpened } = this.state;
-    return (
-      <>
-        <Touchable
-          event="Transfer"
-          disabled={this.isDisabled()}
-          hitSlop={hitSlop}
-          onPress={this.openModal}
-        >
-          {/* $FlowFixMe */}
-          <TabIcon
-            Icon={TransferIcon}
-            i18nKey="tabs.transfer"
-            {...this.props}
-          />
-        </Touchable>
-        <CreateModal isOpened={isModalOpened} onClose={this.onModalClose} />
-      </>
-    );
+  function onModalClose() {
+    setIsModalOpened(false);
   }
-}
 
-export default class Create extends Component<*> {
-  static navigationOptions = (navOpts: { navigation: * }) => ({
-    tabBarIcon: (props: *) => (
-      <Transfer {...props} navigation={navOpts.navigation} />
-    ),
-    tabBarOnPress: () => {}, // noop
-  });
-
-  render() {
-    const { ...props } = this.props;
-    return <ExchangeScreen {...props} />;
-  }
+  return (
+    <>
+      <Touchable
+        event="Transfer"
+        disabled={lockSubject.getValue()}
+        hitSlop={hitSlop}
+        onPress={openModal}
+      >
+        {/* $FlowFixMe */}
+        <TabIcon Icon={TransferIcon} i18nKey="tabs.transfer" {...props} />
+      </Touchable>
+      <CreateModal isOpened={isModalOpened} onClose={onModalClose} />
+    </>
+  );
 }

@@ -9,6 +9,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import LText from "../../components/LText";
 import type { State } from "../../reducers";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
 
 const items = StellarMemoType.map(type => ({
@@ -16,19 +17,18 @@ const items = StellarMemoType.map(type => ({
   value: type,
 }));
 
-const mapStateToProps = (state: State, props: *) => ({
-  selectedKey: props.navigation.state.params.transaction.memoType
-    ? props.navigation.state.params.transaction.memoType
+const mapStateToProps = (state: State, props: any) => ({
+  selectedKey: props.route.params.transaction.memoType
+    ? props.route.params.transaction.memoType
     : "NO_MEMO",
   items,
   cancelNavigateBack: true,
   onValueChange: ({ value }) => {
-    const { navigation } = props;
-    const transaction = navigation.getParam("transaction");
-    const account = navigation.getParam("account");
+    const { navigation, route } = props;
+    const { transaction, account } = route.params;
     if (value === "NO_MEMO") {
       const bridge = getAccountBridge(account);
-      navigation.navigate("SendSummary", {
+      navigation.navigate(ScreenName.SendSummary, {
         accountId: account.id,
         transaction: bridge.updateTransaction(transaction, {
           memoType: value,
@@ -36,7 +36,7 @@ const mapStateToProps = (state: State, props: *) => ({
         }),
       });
     } else {
-      navigation.navigate("StellarEditMemoValue", {
+      navigation.navigate(ScreenName.StellarEditMemoValue, {
         accountId: account.id,
         transaction,
         memoType: value,
@@ -45,20 +45,27 @@ const mapStateToProps = (state: State, props: *) => ({
   },
 });
 
-const Screen = makeGenericSelectScreen({
-  id: "StellarEditMemoType",
-  itemEventProperties: item => ({ memoType: item.value }),
+// $FlowFixMe
+const Screen = connect(mapStateToProps)(
+  makeGenericSelectScreen({
+    id: "StellarEditMemoType",
+    itemEventProperties: item => ({ memoType: item.value }),
+    keyExtractor: item => item.value,
+    formatItem: item => i18next.t(`stellar.memoType.${item.label}`),
+    ListHeaderComponent: () => (
+      <View style={styles.memo}>
+        <LText style={styles.text}>
+          <Trans i18nKey="stellar.memo.warning" />
+        </LText>
+      </View>
+    ),
+  }),
+);
+
+const options = {
   title: i18next.t("send.summary.memo.type"),
-  keyExtractor: item => item.value,
-  formatItem: item => i18next.t(`stellar.memoType.${item.label}`),
-  ListHeaderComponent: () => (
-    <View style={styles.memo}>
-      <LText style={styles.text}>
-        <Trans i18nKey="stellar.memo.warning" />
-      </LText>
-    </View>
-  ),
-});
+  headerLeft: null,
+};
 
 const styles = StyleSheet.create({
   memo: {
@@ -71,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps)(Screen);
+export { Screen as component, options };

@@ -1,28 +1,20 @@
 // @flow
 
 import React from "react";
-import { Trans, translate } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
-
+import { Trans } from "react-i18next";
+import { useRoute } from "@react-navigation/native";
 import HeaderRightClose from "../../components/HeaderRightClose";
-
-type Props = {
-  navigation: NavigationScreenProp<*>,
-};
 
 const routesWithConfirmation = ["AddAccountsAccounts"];
 
-function AddAccountsHeaderRightClose({ navigation }: Props) {
+export default function AddAccountsHeaderRightClose() {
+  const route = useRoute();
+
   return (
     <HeaderRightClose
-      navigation={navigation}
-      withConfirmation={routesWithConfirmation.includes(
-        navigation.state.routeName,
-      )}
+      withConfirmation={routesWithConfirmation.includes(route.name)}
       confirmationTitle={<Trans i18nKey="addAccounts.quitConfirmation.title" />}
       confirmationDesc={<Trans i18nKey="addAccounts.quitConfirmation.desc" />}
     />
   );
 }
-
-export default translate()(AddAccountsHeaderRightClose);

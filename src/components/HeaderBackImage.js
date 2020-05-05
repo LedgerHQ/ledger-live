@@ -1,20 +1,16 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React from "react";
 import { View, Platform, StyleSheet } from "react-native";
 import ArrowLeft from "../icons/ArrowLeft";
 import colors from "../colors";
 
-class HeaderBackImage extends PureComponent<*> {
-  render() {
-    return (
-      <View style={styles.root}>
-        <ArrowLeft size={16} color={colors.grey} />
-      </View>
-    );
-  }
+export default function HeaderBackImage() {
+  return (
+    <View style={styles.root}>
+      <ArrowLeft size={16} color={colors.grey} />
+    </View>
+  );
 }
-
-export default HeaderBackImage;
 
 const styles = StyleSheet.create({
   root: {
