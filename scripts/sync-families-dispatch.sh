@@ -76,14 +76,18 @@ done
 genDeviceTransactionConfig () {
   for family in $families; do
     if [ -f $family/deviceTransactionConfig.js ]; then
-      echo 'import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_'$family' } from "../families/'$family'/deviceTransactionConfig";'
+      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.js"; then
+        echo 'import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_'$family' } from "../families/'$family'/deviceTransactionConfig";'
+      fi
     fi
   done
 
   echo 'export type ExtraDeviceTransactionField ='
   for family in $families; do
     if [ -f $family/deviceTransactionConfig.js ]; then
-      echo '| ExtraDeviceTransactionField_'$family
+      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.js"; then
+        echo '| ExtraDeviceTransactionField_'$family
+      fi
     fi
   done
 }

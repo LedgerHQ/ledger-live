@@ -6,7 +6,7 @@ import { getMainAccount } from "../../account";
 import type { DeviceTransactionField } from "../../transaction";
 
 export type ExtraDeviceTransactionField =
-  | { type: "tron.resources", label: string, value: string }
+  | { type: "tron.resource", label: string, value: string }
   | { type: "tron.votes", label: string };
 
 function getDeviceTransactionConfig({
@@ -20,8 +20,7 @@ function getDeviceTransactionConfig({
   status: TransactionStatus
 }): Array<DeviceTransactionField> {
   const mainAccount = getMainAccount(account, parentAccount);
-  const { votes, resource, mode } = transaction;
-  const { amount } = transaction;
+  const { amount, votes, resource, mode } = transaction;
   const fields = [];
 
   if (resource) {

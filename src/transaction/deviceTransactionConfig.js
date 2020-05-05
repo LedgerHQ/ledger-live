@@ -12,7 +12,8 @@ import { getMainAccount } from "../account";
 export type CommonDeviceTransactionField =
   | { type: "amount", label: string }
   | { type: "address", label: string, address: string }
-  | { type: "fees", label: string };
+  | { type: "fees", label: string }
+  | { type: "text", label: string, value: string };
 
 export type DeviceTransactionField =
   | CommonDeviceTransactionField
