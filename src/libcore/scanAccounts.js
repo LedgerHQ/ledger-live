@@ -180,9 +180,14 @@ export const scanAccounts = ({
             let result;
 
             if (derivationMode === "native_segwit") {
-              const { name, version } = await getAppAndVersion(transport);
-              if (nativeSegwitAppsVersionsMap[name]) {
-                if (!semver.gte(version, nativeSegwitAppsVersionsMap[name])) {
+              if (nativeSegwitAppsVersionsMap[currency.managerAppName]) {
+                const { version } = await getAppAndVersion(transport);
+                if (
+                  !semver.gte(
+                    version,
+                    nativeSegwitAppsVersionsMap[currency.managerAppName]
+                  )
+                ) {
                   return;
                 }
               }
