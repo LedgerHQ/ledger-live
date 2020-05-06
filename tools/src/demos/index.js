@@ -7,7 +7,6 @@ import qrstreambenchmark from "./qrstreambenchmark";
 import qrledger from "./qrledger";
 import explorers from "./explorers";
 import apps from "./apps";
-import Partners from "./Partners";
 import erc20 from "./erc20";
 import assets from "./assets";
 import manager from "./manager";
@@ -19,7 +18,6 @@ export default {
   LogsViewer,
   Derivations,
   Currencies,
-  Partners,
   bridgestream,
   qrstreambenchmark,
   qrledger,
