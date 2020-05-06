@@ -13,6 +13,8 @@ import type { Operation } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import { getEnv } from "../env";
 
+import perFamilyMock from "../generated/mock";
+
 const MOCK_DATA_SEED = getEnv("MOCK") || "MOCK";
 
 const broadcasted: { [_: string]: Operation[] } = {};
@@ -35,7 +37,8 @@ export const sync: $PropertyType<AccountBridge<*>, "sync"> = initialAccount =>
           (sum, op) => sum.plus(getOperationAmountNumber(op)),
           acc.balance
         );
-        return {
+
+        const nextAcc = {
           ...acc,
           blockHeight: acc.blockHeight + 1,
           lastSyncDate: new Date(),
@@ -44,6 +47,14 @@ export const sync: $PropertyType<AccountBridge<*>, "sync"> = initialAccount =>
           balance,
           spendableBalance: balance
         };
+
+        const perFamilyOperation = perFamilyMock[acc.currency.id];
+        const postSyncAccount =
+          perFamilyOperation && perFamilyOperation.postSyncAccount;
+
+        if (postSyncAccount) return postSyncAccount(nextAcc);
+
+        return nextAcc;
       });
       o.complete();
     };
@@ -151,6 +162,12 @@ export const scanAccounts: $PropertyType<CurrencyBridge, "scanAccounts"> = ({
         if (isLast) {
           account.spendableBalance = account.balance = BigNumber(0);
         }
+
+        const perFamilyOperation = perFamilyMock[currency.id];
+        const postScanAccount =
+          perFamilyOperation && perFamilyOperation.postScanAccount;
+
+        if (postScanAccount) postScanAccount(account, { isEmpty: isLast });
 
         if (!unsubscribed) o.next({ type: "discovered", account });
       }

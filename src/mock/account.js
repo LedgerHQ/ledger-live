@@ -13,12 +13,15 @@ import type {
   Account,
   AccountLike,
   Operation,
-  CryptoCurrency,
-  TokenCurrency
+  CryptoCurrency
 } from "../types";
 import { getOperationAmountNumber } from "../operation";
 import { inferSubOperations } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
+
+import { genHex, genAddress } from "./helpers";
+
+import perFamilyMock from "../generated/mock";
 
 function ensureNoNegative(operations) {
   let total = BigNumber(0);
@@ -176,38 +179,6 @@ const currencies = listCryptoCurrencies().filter(
   c => tickerApproxMarketPrice[c.ticker]
 );
 
-/**
- * @memberof mock/account
- */
-export function genBitcoinAddressLike(rng: Prando) {
-  const charset = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-  return `1${rng.nextString(rng.nextInt(25, 34), charset)}`;
-}
-
-/**
- * @memberof mock/account
- */
-export function genHex(length: number, rng: Prando) {
-  return rng.nextString(length, "0123456789ABCDEF");
-}
-
-/**
- * @memberof mock/account
- */
-export function genAddress(
-  currency: CryptoCurrency | TokenCurrency,
-  rng: Prando
-) {
-  if (
-    currency.type === "CryptoCurrency"
-      ? currency.family === "ethereum" // all eth family
-      : currency.id.startsWith("ethereum") // erc20 case
-  ) {
-    return `0x${genHex(40, rng)}`;
-  }
-  return genBitcoinAddressLike(rng);
-}
-
 // TODO fix the mock to never generate negative balance...
 /**
  * @memberof mock/account
@@ -285,6 +256,13 @@ export function genAddingOperationsInAccount(
       return ops.concat(op);
     }, copy.operations);
   copy.spendableBalance = copy.balance = ensureNoNegative(copy.operations);
+
+  const perFamilyOperation = perFamilyMock[account.currency.id];
+  const postSyncAccount =
+    perFamilyOperation && perFamilyOperation.postSyncAccount;
+
+  if (postSyncAccount) postSyncAccount(copy);
+
   return copy;
 }
 
@@ -407,5 +385,12 @@ export function genAccount(
   account.spendableBalance = account.balance = ensureNoNegative(
     account.operations
   );
+
+  const perFamilyOperation = perFamilyMock[currency.id];
+  const genAccountEnhanceOperations =
+    perFamilyOperation && perFamilyOperation.genAccountEnhanceOperations;
+
+  if (genAccountEnhanceOperations) genAccountEnhanceOperations(account, rng);
+
   return account;
 }
