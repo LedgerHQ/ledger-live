@@ -108,8 +108,10 @@ const dataset: CurrenciesData<Transaction> = {
     },
     {
       raw: {
-        id: "libcore:1:litecoin:Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr:segwit",
-        seedIdentifier: "04d7d329aa21c8425cf58ebf7f3c27afe3967c44bd23d3caccfa6beff04110c249418a6a98a1145b0ea1bf489ea84ebe3e66e46f4bd376130b16823a2805ba6ec9",
+        id:
+          "libcore:1:litecoin:Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr:segwit",
+        seedIdentifier:
+          "04d7d329aa21c8425cf58ebf7f3c27afe3967c44bd23d3caccfa6beff04110c249418a6a98a1145b0ea1bf489ea84ebe3e66e46f4bd376130b16823a2805ba6ec9",
         name: "Litecoin 3 (segwit)",
         derivationMode: "segwit",
         index: 2,
@@ -128,7 +130,8 @@ const dataset: CurrenciesData<Transaction> = {
         unitMagnitude: 8,
         lastSyncDate: "",
         balance: "0",
-        xpub: "Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr"
+        xpub:
+          "Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr"
       }
     }
   ]
