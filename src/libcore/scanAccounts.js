@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError } from "@ledgerhq/errors";
+import semver from "semver";
 import {
   getDerivationModesForCurrency,
   getSeedIdentifierDerivation,
@@ -26,6 +27,7 @@ import type {
 } from "../types";
 import { withDevice } from "../hw/deviceAccess";
 import getAddress from "../hw/getAddress";
+import getAppAndVersion from "../hw/getAppAndVersion";
 import { withLibcoreF } from "./access";
 import { syncCoreAccount, newSyncLogId } from "./syncAccount";
 import { getOrCreateWallet } from "./getOrCreateWallet";
@@ -34,6 +36,7 @@ import {
   createAccountFromDevice
 } from "./createAccountFromDevice";
 import { remapLibcoreErrors, isNonExistingAccountError } from "./errors";
+import nativeSegwitAppsVersionsMap from "./nativeSegwitAppsVersionsMap";
 import type { Core, CoreWallet } from "./types";
 
 async function scanNextAccount(props: {
@@ -175,6 +178,20 @@ export const scanAccounts = ({
             const path = getSeedIdentifierDerivation(currency, derivationMode);
 
             let result;
+
+            if (derivationMode === "native_segwit") {
+              if (nativeSegwitAppsVersionsMap[currency.managerAppName]) {
+                const { version } = await getAppAndVersion(transport);
+                if (
+                  !semver.gte(
+                    version,
+                    nativeSegwitAppsVersionsMap[currency.managerAppName]
+                  )
+                ) {
+                  return;
+                }
+              }
+            }
 
             try {
               result = await getAddress(transport, {

@@ -751,6 +751,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     color: "#0066cc",
     family: "bitcoin",
     supportsSegwit: true,
+    supportsNativeSegwit: true,
     blockAvgTime: 60,
     bitcoinLikeInfo: {
       P2PKH: 30,
@@ -1285,6 +1286,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     scheme: "litecoin",
     color: "#cccccc",
     supportsSegwit: true,
+    supportsNativeSegwit: true,
     family: "bitcoin",
     blockAvgTime: 5 * 60,
     bitcoinLikeInfo: {

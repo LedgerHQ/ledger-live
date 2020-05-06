@@ -1,35 +1,135 @@
 // @flow
+
+import { BigNumber } from "bignumber.js";
 import type { CurrenciesData } from "../../../__tests__/test-helpers/bridge";
-import type { Transaction } from "../types";
+import type { NetworkInfoRaw, Transaction } from "../types";
+import { fromTransactionRaw } from "../transaction";
+import scanAccounts1 from "./digibyte.scanAccounts.1";
+
+const networkInfo: NetworkInfoRaw = {
+  family: "bitcoin",
+  feeItems: {
+    items: [
+      { key: "0", speed: "high", feePerByte: "12" },
+      { key: "1", speed: "standard", feePerByte: "8" },
+      { key: "2", speed: "low", feePerByte: "1" }
+    ],
+    defaultFeePerByte: "1"
+  }
+};
 
 const dataset: CurrenciesData<Transaction> = {
-  scanAccounts: [
+  scanAccounts: [scanAccounts1],
+
+  accounts: [
     {
-      name: "digibyte seed 1",
-      apdus: `
-      => e040000009028000002c80000014
-      <= 4104ad8d18368af30dd84743b3c330389438a9b51f527027c6778acd02cf99f8969de4b26e5e09252aeb0a4be6dcb5e302c13d5852c42f0a83017390dc9d044c9d842244546e4646666a714842696a394b6e3378466852777635585952586150464e51787583fa17a7241a2da8da53eefb676806dc53cd58e60f7116ad54182939b598a4b29000
-      => e016000000
-      <= 001e003f01084469676942797465034447429000
-      => e040000009028000002c80000014
-      <= 4104ad8d18368af30dd84743b3c330389438a9b51f527027c6778acd02cf99f8969de4b26e5e09252aeb0a4be6dcb5e302c13d5852c42f0a83017390dc9d044c9d842244546e4646666a714842696a394b6e3378466852777635585952586150464e51787583fa17a7241a2da8da53eefb676806dc53cd58e60f7116ad54182939b598a4b29000
-      => e04000000d038000002c8000001480000000
-      <= 4104f84e496b260969a531d4f3a8d47ce995a27cd99c9d59f7955147f6310d23766dd3dfa64d18f8716b9ac9e977b9f14eb83d9a8470e9545796a8a210c9e0854cb6224451366d5a68376731366b6a5167323432594372564c6a6e5255734336644b5231553f5cdaf5b04f956af072cd49216edc8b1abe2a14a7be4aab7cf33fe9ab90841e9000
-      => e04000000d038000002c8000001480000001
-      <= 4104db24111634df368d0b337913f201a91a307e377b73e4ff489566c2f9467b3e9cc3756930391e07d597a0842774c98cb58aaac996a611550045b74eb4d4d19e9f22445371613941656255657538576e3458354d6653344877644274557639466a645279bccfc7e3a9709f65e6efee4765606b5a7d0c06d0a7c4467d927eccbb87bb56a19000
-      => e040000109028000003180000014
-      <= 410471f6964640c38ea382a82cf8683fbf8ab17350938827a05aa13bfc6fb539454610d286eee372cdd90d52ea03caa7a4820261d06dbd9573570965682a14d1d6b222536751756d5355594665744b5a764d4d666b386f515157703268317443383446426ed75bc095cfc28ea96f57b9e30d87d9eb06ba71420b1a5cb956812de696ab47ef9000
-      => e016000000
-      <= 001e003f01084469676942797465034447429000
-      => e040000109028000003180000014
-      <= 410471f6964640c38ea382a82cf8683fbf8ab17350938827a05aa13bfc6fb539454610d286eee372cdd90d52ea03caa7a4820261d06dbd9573570965682a14d1d6b222536751756d5355594665744b5a764d4d666b386f515157703268317443383446426ed75bc095cfc28ea96f57b9e30d87d9eb06ba71420b1a5cb956812de696ab47ef9000
-      => e04000010d03800000318000001480000000
-      <= 4104f5b072bf6220a4788ff43ee9b0b12bc18384bbf5348883f307ee5b3516ba50caaef64ab0635c753c0afebe4c1a8a3f318a427dbd3ac20a6bdce014ebe23a463b22535a5670333375533164313879574141426b58676a466455564e4d5864343758354b5133fb184414b1027bcb641aef39aa430b3ca8e706ed4be6c9ce5b5b1ebe3bf99000
-      => e04000010d03800000318000001480000001
-      <= 410482388feddb8103ae4905bc3c12d0819ad1051220c6a4ce1b4d8e17160df54bafecee4592b1e7913064eafbbd61c2f22102baefa9e6aa41fc78186db3131c95f322535276363539376f764c3446456d59625a376164355837576e686445775235475054b079a7c02d519369785273f8dbe35676a3af42e1f305e26b2e2a31eba34bedcc9000
-      => e04000010d03800000318000001480000002
-      <= 4104134332fed18ebd49f27c816190e1d2f588712ae16e6b103d4a7bf6b547082d844f0fd566dfaeba04e4c54f00dabaf2b68999dfc3ac06ec398e130519f31f18772253537935417343727762344134354463764d5045777a4a7769644b7768446d6779516a4d38472d90cda4440db8ede658fffc79b6b451484c80778d2a7db4fc6fd1769000
-      `
+      transactions: [
+        {
+          name: "on legacy recipient",
+          transaction: fromTransactionRaw({
+            family: "bitcoin",
+            recipient: "DMtVdcKhnbntP1dSYYmSFNg8GK1T8aCwCb",
+            amount: "500000000",
+            feePerByte: "1",
+            networkInfo
+          }),
+          expectedStatus: {
+            amount: BigNumber("500000000"),
+            //  totalSpent: BigNumber("500000146"),
+            //  estimatedFees: BigNumber("146"),
+            errors: {},
+            warnings: {}
+          }
+        },
+        {
+          name: "on segwit recipient",
+          transaction: fromTransactionRaw({
+            family: "bitcoin",
+            recipient: "Sb4r6mx1WEZGzJvXZVqr17vYQ9yLhmjuSz",
+            amount: "500000000",
+            feePerByte: "1",
+            networkInfo
+          }),
+          expectedStatus: {
+            amount: BigNumber("500000000"),
+            //  totalSpent: BigNumber("500000146"),
+            //  estimatedFees: BigNumber("146"),
+            errors: {},
+            warnings: {}
+          }
+        },
+        {
+          name: "on native_segwit recipient",
+          transaction: fromTransactionRaw({
+            family: "bitcoin",
+            recipient: "dgb1q6c5jzgduyje29w9lsdwkd52dn3qxpcch87urdm",
+            amount: "500000000",
+            feePerByte: "1",
+            networkInfo
+          }),
+          expectedStatus: {
+            amount: BigNumber("500000000"),
+            //  totalSpent: BigNumber("500000146"),
+            //  estimatedFees: BigNumber("146"),
+            errors: {},
+            warnings: {}
+          }
+        }
+      ],
+      raw: {
+        id:
+          "libcore:1:digibyte:xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98:native_segwit",
+        seedIdentifier:
+          "04840767650708aa9bfb14ff87409b36ee7054d635b686536d6b0c36557709dd42dbf69ae9e2e37e151140a95a400ddd2440505eb70190bb057a32f3a21766baa3",
+        name: "DigiByte 1 (native segwit)",
+        derivationMode: "native_segwit",
+        index: 0,
+        freshAddress: "dgb1qs45s7zq4gn6uygzrthyh067crzphvhwu33a8sl",
+        freshAddressPath: "84'/20'/0'/0/3",
+        freshAddresses: [
+          {
+            address: "dgb1qs45s7zq4gn6uygzrthyh067crzphvhwu33a8sl",
+            derivationPath: "84'/20'/0'/0/3"
+          }
+        ],
+        blockHeight: 0,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "digibyte",
+        unitMagnitude: 8,
+        lastSyncDate: "",
+        balance: "2302647120",
+        xpub:
+          "xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98"
+      }
+    },
+    {
+      raw: {
+        id:
+          "libcore:1:digibyte:xpub6CsavyNsoieEiR5QNsHZ3VQt7UzRcnKcFNXkadn1kaxsysqa2L79m3iNw6bFyJ1Vz8xYNu9ivECVvFTxydqMp4C3njLGA5PFxBid81Jinkh:segwit",
+        seedIdentifier:
+          "0465c9588be7d647beab52586495e2ad2dfba7bcfb9e61426cf5529016daaca48b079e38af109d588f161767318453fdcbd8e17b1f069fce4386c5147615cd41a8",
+        name: "DigiByte 3 (segwit)",
+        derivationMode: "segwit",
+        index: 2,
+        freshAddress: "SgsKPQg9CbXnon6LUeBwiwsWggQN5fUHno",
+        freshAddressPath: "49'/20'/2'/0/1",
+        freshAddresses: [
+          {
+            address: "SgsKPQg9CbXnon6LUeBwiwsWggQN5fUHno",
+            derivationPath: "49'/20'/2'/0/1"
+          }
+        ],
+        blockHeight: 0,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "digibyte",
+        unitMagnitude: 8,
+        lastSyncDate: "",
+        balance: "0",
+        xpub:
+          "xpub6CsavyNsoieEiR5QNsHZ3VQt7UzRcnKcFNXkadn1kaxsysqa2L79m3iNw6bFyJ1Vz8xYNu9ivECVvFTxydqMp4C3njLGA5PFxBid81Jinkh"
+      }
     }
   ]
 };
