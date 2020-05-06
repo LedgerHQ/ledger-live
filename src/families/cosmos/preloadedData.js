@@ -1,4 +1,5 @@
 // @flow
+import { Observable, Subject } from "rxjs";
 import type { CosmosPreloadData } from "./types";
 
 // this module holds the cached state of preload()
@@ -47,7 +48,18 @@ export function asSafeCosmosPreloadData(data: mixed): CosmosPreloadData {
   };
 }
 
+const updates = new Subject<CosmosPreloadData>();
+
 export function setCosmosPreloadData(data: CosmosPreloadData) {
+  if (data === currentCosmosPreloadedData) return;
   currentCosmosPreloadedData = data;
-  // NB in future we could emit for potential renderer to refresh
+  updates.next(data);
+}
+
+export function getCurrentCosmosPreloadData(): CosmosPreloadData {
+  return currentCosmosPreloadedData;
+}
+
+export function getCosmosPreloadDataUpdates(): Observable<CosmosPreloadData> {
+  return updates.asObservable();
 }
