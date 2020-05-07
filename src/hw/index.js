@@ -12,13 +12,17 @@ type Discovery = Observable<{
   name: string
 }>;
 
+// NB open/close/disconnect semantic will have to be refined...
 export type TransportModule = {
   // unique transport name that identify the transport module
   id: string,
   // open a device by an id, this id must be unique across all modules
   // you can typically prefix it with `something|` that identify it globally
   // returns falsy if the transport module can't handle this id
+  // here, open means we want to START doing something with the transport
   open: (id: string) => ?Promise<Transport<*>>,
+  // here, close means we want to STOP doing something with the transport
+  close?: (transport: Transport<*>, id: string) => ?Promise<void>,
   // disconnect/interrupt a device connection globally
   // returns falsy if the transport module can't handle this id
   disconnect: (id: string) => ?Promise<void>,
@@ -64,6 +68,19 @@ export const open = (deviceId: string): Promise<Transport<*>> => {
     if (p) return p;
   }
   return Promise.reject(new Error(`Can't find handler to open ${deviceId}`));
+};
+
+export const close = (
+  transport: Transport<*>,
+  deviceId: string
+): Promise<void> => {
+  for (let i = 0; i < modules.length; i++) {
+    const m = modules[i];
+    const p = m.close && m.close(transport, deviceId);
+    if (p) return p;
+  }
+  // fallback on an actual close
+  return transport.close();
 };
 
 export const disconnect = (deviceId: string): Promise<void> => {

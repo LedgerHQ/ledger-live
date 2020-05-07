@@ -35,7 +35,7 @@ import {
   getNewAccountPlaceholderName
 } from "../../../account";
 import getAddress from "../../../hw/getAddress";
-import { open } from "../../../hw";
+import { open, close } from "../../../hw";
 import {
   apiForEndpointConfig,
   parseAPIValue,
@@ -91,7 +91,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
           );
           o.next({ type: "device-signature-granted" });
         } finally {
-          transport.close();
+          close(transport, deviceId);
         }
 
         const hash = computeBinaryTransactionHash(transaction);
@@ -492,7 +492,7 @@ const currencyBridge: CurrencyBridge = {
         } finally {
           api.disconnect();
           if (transport) {
-            await transport.close();
+            await close(transport, deviceId);
           }
         }
       }

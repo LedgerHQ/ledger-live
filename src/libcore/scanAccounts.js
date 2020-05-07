@@ -259,10 +259,6 @@ export const scanAccounts = ({
         } catch (e) {
           o.error(remapLibcoreErrors(e));
         }
-
-        if (transport) {
-          await transport.close();
-        }
       });
 
       main();

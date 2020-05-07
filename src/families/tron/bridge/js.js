@@ -21,7 +21,7 @@ import {
 } from "../utils";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { findTokenById } from "../../../data/tokens";
-import { open } from "../../../hw";
+import { open, close } from "../../../hw";
 import signTransaction from "../../../hw/signTransaction";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
@@ -236,7 +236,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
           }
         });
       } finally {
-        transport.close();
+        close(transport, deviceId);
       }
     }
 

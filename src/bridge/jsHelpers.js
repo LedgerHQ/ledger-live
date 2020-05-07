@@ -26,7 +26,7 @@ import type {
 } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
-import { open } from "../hw";
+import { open, close } from "../hw";
 
 type GetAccountShape = (
   { address: string, id: string, initialAccount?: Account },
@@ -277,7 +277,9 @@ export const makeScanAccounts = (
       } catch (e) {
         o.error(e);
       } finally {
-        if (transport) transport.close();
+        if (transport) {
+          close(transport, deviceId);
+        }
       }
     }
 
