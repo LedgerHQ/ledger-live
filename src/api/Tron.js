@@ -345,9 +345,8 @@ const srBrokeragesCache = makeLRUCache(
 export const getAccountName = async (addr: string): Promise<?string> => {
   const tronAcc = await fetchTronAccount(addr);
   const acc = tronAcc[0];
-  const accountName: ?string = acc.account_name
-    ? hexToAscii(acc.account_name)
-    : undefined;
+  const accountName: ?string =
+    acc && acc.account_name ? hexToAscii(acc.account_name) : undefined;
 
   accountNamesCache.hydrate(addr, accountName); // put it in cache
 
