@@ -3,6 +3,7 @@
 export * from "./common";
 export * from "./status";
 export * from "./signOperation";
+export * from "./deviceTransactionConfig";
 import type { Transaction, TransactionRaw } from "../types";
 import transactionModulePerFamily from "../generated/transaction";
 

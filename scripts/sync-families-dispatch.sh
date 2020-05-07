@@ -17,6 +17,7 @@ bridge/js.js \
 bridge/libcore.js \
 bridge/mock.js \
 cli-transaction.js \
+deviceTransactionConfig.js \
 test-dataset.js \
 test-specifics.js \
 mock.js \
@@ -73,6 +74,25 @@ done
 
 # types
 
+genDeviceTransactionConfig () {
+  for family in $families; do
+    if [ -f $family/deviceTransactionConfig.js ]; then
+      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.js"; then
+        echo 'import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_'$family' } from "../families/'$family'/deviceTransactionConfig";'
+      fi
+    fi
+  done
+
+  echo 'export type ExtraDeviceTransactionField ='
+  for family in $families; do
+    if [ -f $family/deviceTransactionConfig.js ]; then
+      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.js"; then
+        echo '| ExtraDeviceTransactionField_'$family
+      fi
+    fi
+  done
+}
+
 genTypesFile () {
   echo '// @flow'
   for family in $families; do
@@ -127,3 +147,5 @@ genTypesFile () {
 }
 
 genTypesFile > ../generated/types.js
+
+genDeviceTransactionConfig >> ../generated/deviceTransactionConfig.js
