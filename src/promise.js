@@ -80,11 +80,22 @@ export async function promiseAllBatched<A, B>(
   items: Array<A>,
   fn: (A, number) => Promise<B>
 ): Promise<B[]> {
-  let data = [];
-  for (let i = 0; i < items.length; i += batch) {
-    data = data.concat(
-      await Promise.all(items.slice(i, i + batch).map((o, j) => fn(o, i + j)))
-    );
+  const data = Array(items.length);
+  const queue = items.map((item, index) => ({ item, index }));
+
+  async function step() {
+    if (queue.length === 0) return;
+    const { item, index } = queue.shift();
+    data[index] = await fn(item, index);
+    await step(); // each time an item redeem, we schedule another one
   }
+
+  // initially, we schedule <batch> items in parallel
+  await Promise.all(
+    Array(Math.min(batch, items.length))
+      .fill()
+      .map(step)
+  );
+
   return data;
 }
