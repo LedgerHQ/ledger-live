@@ -154,6 +154,23 @@ export async function buildAccount({
         contextualSubAccounts: subAccounts
       })
   );
+  let lastOperation;
+
+  if (partialOperations.length > 0) {
+    if (operations.length === partialOperations.length) {
+      // we already have lastOperation
+      lastOperation = operations[operations.length - 1];
+    } else {
+      // we need to fetch lastOperation. partialOperations is older first
+      const coreOperation = await inferCoreOperation(partialOperations[0]);
+      lastOperation = await buildOperation({
+        coreOperation,
+        accountId,
+        currency,
+        contextualSubAccounts: subAccounts
+      });
+    }
+  }
 
   log("libcore", `sync(${logId}) DONE operations`);
 
@@ -178,6 +195,20 @@ export async function buildAccount({
 
   log("libcore", `sync(${logId}) DONE balanceHistory`);
 
+  let creationDate = new Date();
+
+  if (lastOperation) {
+    creationDate = lastOperation.date;
+  }
+
+  if (subAccounts) {
+    subAccounts.forEach(a => {
+      if (a.creationDate < creationDate) {
+        creationDate = a.creationDate;
+      }
+    });
+  }
+
   const account: $Exact<Account> = {
     type: "Account",
     id: accountId,
@@ -199,7 +230,8 @@ export async function buildAccount({
     operationsCount: partialOperations.length,
     operations,
     pendingOperations: [],
-    lastSyncDate: new Date()
+    lastSyncDate: new Date(),
+    creationDate
   };
 
   if (subAccounts) {

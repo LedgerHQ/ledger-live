@@ -428,7 +428,8 @@ const currencyBridge: CurrencyBridge = {
                       pendingOperations: [],
                       unit: currency.units[0],
                       archived: false,
-                      lastSyncDate: new Date()
+                      lastSyncDate: new Date(),
+                      creationDate: new Date()
                     }
                   });
                 }
@@ -477,12 +478,17 @@ const currencyBridge: CurrencyBridge = {
                 operations: [],
                 pendingOperations: [],
                 unit: currency.units[0],
-                lastSyncDate: new Date()
+                lastSyncDate: new Date(),
+                creationDate: new Date()
               };
               account.operations = transactions
                 .map(txToOperation(account))
                 .filter(Boolean);
               account.operationsCount = account.operations.length;
+              if (account.operations.length > 0) {
+                account.creationDate =
+                  account.operations[account.operations.length - 1].date;
+              }
               o.next({ type: "discovered", account });
             }
           }

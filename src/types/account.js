@@ -31,6 +31,7 @@ export type TokenAccount = {
   parentId: string,
   token: TokenCurrency,
   balance: BigNumber,
+  creationDate: Date,
   operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
@@ -49,6 +50,7 @@ export type ChildAccount = {
   currency: CryptoCurrency,
   address: string,
   balance: BigNumber,
+  creationDate: Date,
   operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
@@ -108,6 +110,10 @@ export type Account = {
 
   // part of the balance that can effectively be spent
   spendableBalance: BigNumber,
+
+  // date the account started "existing", essentially the date of the older tx received/done of this account
+  // It is equal to Date.now() for EMPTY accounts because empty account don't really "exists"
+  creationDate: Date,
 
   // the last block height currently synchronized
   blockHeight: number,
@@ -179,6 +185,7 @@ export type TokenAccountRaw = {
   starred?: boolean,
   parentId: string,
   tokenId: string,
+  creationDate?: string,
   operationsCount?: number,
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
@@ -194,6 +201,7 @@ export type ChildAccountRaw = {
   parentId: string,
   currencyId: string,
   address: string,
+  creationDate?: string,
   operationsCount?: number,
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
@@ -215,6 +223,7 @@ export type AccountRaw = {
   balance: string,
   spendableBalance?: string,
   blockHeight: number,
+  creationDate?: string,
   operationsCount?: number, // this is optional for backward compat
   // ------------------------------------- Specific raw fields
   currencyId: string,

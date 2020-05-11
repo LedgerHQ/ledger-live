@@ -295,7 +295,8 @@ function genTokenAccount(
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    balance: BigNumber(0)
+    balance: BigNumber(0),
+    creationDate: new Date()
   };
 
   const operationsSize = rng.nextInt(1, 200);
@@ -307,6 +308,10 @@ function genTokenAccount(
     }, []);
   tokenAccount.operationsCount = tokenAccount.operations.length;
   tokenAccount.balance = ensureNoNegative(tokenAccount.operations);
+  tokenAccount.creationDate =
+    tokenAccount.operations.length > 0
+      ? tokenAccount.operations[tokenAccount.operations.length - 1].date
+      : new Date();
   return tokenAccount;
 }
 
@@ -349,7 +354,8 @@ export function genAccount(
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    lastSyncDate: new Date()
+    lastSyncDate: new Date(),
+    creationDate: new Date()
   };
 
   if (currency.id === "cosmos") {
@@ -379,6 +385,11 @@ export function genAccount(
       const op = genOperation(account, account, ops, rng);
       return ops.concat(op);
     }, []);
+
+  account.creationDate =
+    account.operations.length > 0
+      ? account.operations[account.operations.length - 1].date
+      : new Date();
 
   account.operationsCount = account.operations.length;
 

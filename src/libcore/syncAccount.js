@@ -115,6 +115,7 @@ export function sync(
     map(syncedAccount => initialAccount =>
       postSyncPatch(initialAccount, {
         ...initialAccount,
+        // FIXME, the "patching" logic should be somewhere else, especially that it's also in jsHelpers
         id: syncedAccount.id,
         freshAddress: syncedAccount.freshAddress,
         freshAddressPath: syncedAccount.freshAddressPath,
@@ -123,6 +124,7 @@ export function sync(
         spendableBalance: syncedAccount.spendableBalance,
         blockHeight: syncedAccount.blockHeight,
         lastSyncDate: new Date(),
+        creationDate: syncedAccount.creationDate,
         operations: syncedAccount.operations,
         subAccounts: syncedAccount.subAccounts,
         pendingOperations: initialAccount.pendingOperations.filter(op =>

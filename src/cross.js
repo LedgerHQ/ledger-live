@@ -315,7 +315,8 @@ export const accountDataToAccount = ({
     operations: [],
     pendingOperations: [],
     unit: currency.units[0],
-    lastSyncDate: new Date(0)
+    lastSyncDate: new Date(0),
+    creationDate: new Date()
   };
   return account;
 };

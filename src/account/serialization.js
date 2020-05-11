@@ -293,6 +293,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     starred,
     operations,
     pendingOperations,
+    creationDate,
     balance,
     balanceHistory
   } = raw;
@@ -306,6 +307,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     starred: starred || false,
     balance: BigNumber(balance),
     balanceHistory: fromBalanceHistoryRawMap(balanceHistory || {}),
+    creationDate: new Date(creationDate || Date.now()),
     operationsCount:
       raw.operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
@@ -333,6 +335,7 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     tokenId: token.id,
     balance: balance.toString(),
     balanceHistory: toBalanceHistoryRawMap(balanceHistory || {}),
+    creationDate: ta.creationDate.toISOString(),
     operationsCount,
     operations: operations.map(o => toOperationRaw(o)),
     pendingOperations: pendingOperations.map(o => toOperationRaw(o))
@@ -346,6 +349,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     parentId,
     currencyId,
     starred,
+    creationDate,
     operations,
     operationsCount,
     pendingOperations,
@@ -365,6 +369,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     address,
     balance: BigNumber(balance),
     balanceHistory: fromBalanceHistoryRawMap(balanceHistory || {}),
+    creationDate: new Date(creationDate || Date.now()),
     operationsCount: operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation)
@@ -383,7 +388,8 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     pendingOperations,
     balance,
     balanceHistory,
-    address
+    address,
+    creationDate
   } = ca;
   return {
     type: "ChildAccountRaw",
@@ -396,6 +402,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     currencyId: currency.id,
     balance: balance.toString(),
     balanceHistory: toBalanceHistoryRawMap(balanceHistory || {}),
+    creationDate: creationDate.toISOString(),
     operations: operations.map(o => toOperationRaw(o)),
     pendingOperations: pendingOperations.map(o => toOperationRaw(o))
   };
@@ -463,6 +470,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     operationsCount,
     pendingOperations,
     lastSyncDate,
+    creationDate,
     balance,
     balanceHistory,
     spendableBalance,
@@ -508,6 +516,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     ],
     name,
     blockHeight,
+    creationDate: new Date(creationDate || Date.now()),
     balance: BigNumber(balance),
     balanceHistory: fromBalanceHistoryRawMap(balanceHistory || {}),
     spendableBalance: BigNumber(spendableBalance || balance),
@@ -555,6 +564,7 @@ export function toAccountRaw({
   freshAddresses,
   blockHeight,
   currency,
+  creationDate,
   operationsCount,
   operations,
   pendingOperations,
@@ -579,6 +589,7 @@ export function toAccountRaw({
     freshAddressPath,
     freshAddresses,
     blockHeight,
+    creationDate: creationDate.toISOString(),
     operationsCount,
     operations: (operations || []).map(o => toOperationRaw(o)),
     pendingOperations: (pendingOperations || []).map(o => toOperationRaw(o)),

@@ -72,6 +72,10 @@ export const makeSync = (
             spendableBalance: shape.balance || a.balance,
             operationsCount: shape.operationsCount || operations.length,
             lastSyncDate: new Date(),
+            creationDate:
+              operations.length > 0
+                ? operations[operations.length - 1].date
+                : new Date(),
             ...shape,
             operations,
             pendingOperations: a.pendingOperations.filter(op =>
@@ -125,6 +129,10 @@ export const makeScanAccounts = (
       const freshAddress = address;
       const operations = accountShape.operations || [];
       const operationsCount = accountShape.operationsCount || operations.length;
+      const creationDate =
+        operations.length > 0
+          ? operations[operations.length - 1].date
+          : new Date();
       const balance = accountShape.balance || BigNumber(0);
       const spendableBalance = accountShape.spendableBalance || BigNumber(0);
 
@@ -167,6 +175,7 @@ export const makeScanAccounts = (
               pendingOperations: [],
               unit: currency.units[0],
               lastSyncDate: new Date(),
+              creationDate,
               // overrides
               balance,
               spendableBalance,
@@ -207,6 +216,7 @@ export const makeScanAccounts = (
         pendingOperations: [],
         unit: currency.units[0],
         lastSyncDate: new Date(),
+        creationDate,
         // overrides
         balance,
         spendableBalance,
