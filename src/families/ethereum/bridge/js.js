@@ -38,7 +38,7 @@ import type { Transaction } from "../types";
 import { getGasLimit } from "../transaction";
 import getAddress from "../../../hw/getAddress";
 import { withDevice } from "../../../hw/deviceAccess";
-import { open } from "../../../hw";
+import { open, close } from "../../../hw";
 import { apiForCurrency } from "../../../api/Ethereum";
 import { getEstimatedFees } from "../../../api/Fees";
 import type { Tx } from "../../../api/Ethereum";
@@ -402,7 +402,7 @@ const currencyBridge: CurrencyBridge = {
         } catch (e) {
           o.error(e);
         } finally {
-          if (transport) transport.close();
+          if (transport) close(transport, deviceId);
         }
       }
 

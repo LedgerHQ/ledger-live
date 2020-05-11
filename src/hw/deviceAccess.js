@@ -16,7 +16,7 @@ import {
   DeviceHalted
 } from "@ledgerhq/errors";
 import { getEnv } from "../env";
-import { open } from ".";
+import { open, close } from ".";
 
 export type AccessHook = () => () => void;
 
@@ -91,8 +91,7 @@ export const withDevice = (deviceId: string) => <T>(
     const deviceQueue = deviceQueues[deviceId] || Promise.resolve();
 
     const finalize = (transport, cleanups) =>
-      transport
-        .close()
+      close(transport, deviceId)
         .catch(() => {})
         .then(() => {
           cleanups.forEach(c => c());
