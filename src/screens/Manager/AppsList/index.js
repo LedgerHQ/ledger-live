@@ -70,7 +70,7 @@ const AppsList = ({
 
   return (
     <VirtualizedList
-      style={{ height: viewHeight }}
+      style={{ height: viewHeight || 0 }}
       listKey={isInstalledView ? "Installed" : "Catalog"}
       data={apps}
       renderItem={renderRow}
