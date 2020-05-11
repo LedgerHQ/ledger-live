@@ -22,7 +22,8 @@ import {
   fromAccountRaw,
   toAccountRaw,
   decodeAccountId,
-  encodeAccountId
+  encodeAccountId,
+  flattenAccounts
 } from "../../account";
 import { getCryptoCurrencyById } from "../../currencies";
 import { getOperationAmountNumber } from "../../operation";
@@ -239,6 +240,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                     [
                       "operations",
                       "lastSyncDate",
+                      "creationDate",
                       "blockHeight",
                       "balanceHistory"
                     ].concat(FIXME_ignoreAccountFields || [])
@@ -285,6 +287,25 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                   });
                   expect(estimation.gte(0)).toBe(true);
                   expect(estimation.lte(sub.balance)).toBe(true);
+                }
+              }
+            });
+
+            test("creationDate is correct", async () => {
+              const accounts = await scanAccountsCached(sa.apdus);
+              for (const account of flattenAccounts(accounts)) {
+                if (account.operations.length) {
+                  const op = account.operations[account.operations.length - 1];
+                  if (account.creationDate.getTime() > op.date.getTime()) {
+                    console.warn(
+                      `OP ${
+                        op.id
+                      } have date=${op.date.toISOString()} older than account.creationDate=${account.creationDate.toISOString()}`
+                    );
+                  }
+                  expect(account.creationDate.getTime()).not.toBeGreaterThan(
+                    op.date.getTime()
+                  );
                 }
               }
             });

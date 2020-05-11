@@ -201,6 +201,7 @@ export const accountWithMandatoryTokens = (
       token,
       balance: BigNumber(0),
       operationsCount: 0,
+      creationDate: new Date(),
       operations: [],
       pendingOperations: [],
       starred: false

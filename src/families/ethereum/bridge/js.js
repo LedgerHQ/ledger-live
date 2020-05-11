@@ -282,7 +282,8 @@ const currencyBridge: CurrencyBridge = {
                 operations: [],
                 pendingOperations: [],
                 unit: currency.units[0],
-                lastSyncDate: new Date()
+                lastSyncDate: new Date(),
+                creationDate: new Date()
               };
               return { account, complete: true };
             }
@@ -320,7 +321,8 @@ const currencyBridge: CurrencyBridge = {
           operations: [],
           pendingOperations: [],
           unit: currency.units[0],
-          lastSyncDate: new Date()
+          lastSyncDate: new Date(),
+          creationDate: new Date()
         };
         for (let i = 0; i < 50; i++) {
           const last = txs[txs.length - 1];
@@ -337,6 +339,10 @@ const currencyBridge: CurrencyBridge = {
         txs.reverse();
         account.operations = mergeOps([], flatMap(txs, txToOps(account)));
         account.operationsCount = account.operations.length;
+        if (account.operations.length > 0) {
+          account.creationDate =
+            account.operations[account.operations.length - 1].date;
+        }
         return { account };
       }
 

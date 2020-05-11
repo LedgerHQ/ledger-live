@@ -47,7 +47,11 @@ async function buildERC20TokenAccount({
     operationsCount: operations.length,
     operations,
     pendingOperations: [],
-    balance
+    balance,
+    creationDate:
+      operations.length > 0
+        ? operations[operations.length - 1].date
+        : new Date()
   };
 
   return tokenAccount;

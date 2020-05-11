@@ -266,6 +266,14 @@ export function patchAccount(
     changed = true;
   }
 
+  if (
+    updatedRaw.creationDate &&
+    updatedRaw.creationDate !== account.creationDate.toISOString()
+  ) {
+    next.creationDate = new Date(updatedRaw.creationDate);
+    changed = true;
+  }
+
   if (account.freshAddress !== updatedRaw.freshAddress) {
     next.freshAddress = updatedRaw.freshAddress;
     changed = true;
@@ -339,6 +347,14 @@ export function patchSubAccount(
     updatedRaw.operationsCount
   ) {
     next.operationsCount = updatedRaw.operationsCount;
+    changed = true;
+  }
+
+  if (
+    updatedRaw.creationDate &&
+    updatedRaw.creationDate !== account.creationDate.toISOString()
+  ) {
+    next.creationDate = new Date(updatedRaw.creationDate);
     changed = true;
   }
 

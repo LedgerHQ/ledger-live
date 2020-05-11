@@ -250,6 +250,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               freshAddress: xpub, // HACK for JS impl force mode that would only support address version
               freshAddressPath: "",
               freshAddresses: [],
+              creationDate: new Date(),
               lastSyncDate: new Date(0),
               blockHeight: 0,
               balance: new BigNumber(0),

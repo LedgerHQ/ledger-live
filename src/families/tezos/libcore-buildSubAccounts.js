@@ -59,7 +59,11 @@ async function buildOriginatedAccount({
     balance,
     operationsCount: operations.length,
     operations,
-    pendingOperations: []
+    pendingOperations: [],
+    creationDate:
+      operations.length > 0
+        ? operations[operations.length - 1].date
+        : new Date()
   };
 
   return originatedAccount;
