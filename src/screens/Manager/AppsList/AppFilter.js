@@ -66,6 +66,9 @@ const styles = StyleSheet.create({
   searchBarFilters: {
     width: 44,
     height: 44,
+    flexDirection: "row",
+    alignContent: "center",
+    justifyContent: "center",
   },
 });
 
