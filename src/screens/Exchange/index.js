@@ -6,7 +6,7 @@ import SafeAreaView from "react-native-safe-area-view";
 import colors from "../../colors";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
-import ComingSoon from "../../icons/ComingSoon";
+import Exchange from "./Exchange";
 
 const forceInset = { bottom: "always" };
 
@@ -18,7 +18,7 @@ export default function ExchangeScreen() {
     >
       <TrackScreen category="Exchange" />
       <View style={styles.body}>
-        <ComingSoon />
+        <Exchange />
       </View>
     </SafeAreaView>
   );
@@ -34,7 +34,5 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 64,
   },
 });

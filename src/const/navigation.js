@@ -53,6 +53,7 @@ export const ScreenName = {
   EditDeviceName: "EditDeviceName",
   EthereumEditFee: "EthereumEditFee",
   EthereumEditGasLimit: "EthereumEditGasLimit",
+  Exchange: "Exchance",
   ExperimentalSettings: "ExperimentalSettings",
   FallBackCameraScreen: "FallBackCameraScreen",
   FallbackCameraSend: "FallbackCameraSend",
