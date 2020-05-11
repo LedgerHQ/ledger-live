@@ -71,7 +71,7 @@ const AppStateButton = ({
           />
         );
       case uninstalling:
-        return <UninstallProgress />;
+        return <UninstallProgress uninstalling={uninstallQueue[0] === name} />;
       case isInstalledView && isInstalled:
         return (
           <AppUninstallButton

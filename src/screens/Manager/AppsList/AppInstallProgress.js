@@ -44,25 +44,21 @@ export const InstallProgress = ({
           />
         </LText>
       </View>
-      {progress !== 1 && installing ? (
-        <ProgressBar
-          progressColor={colors.live}
-          style={styles.progressBar}
-          height={6}
-          progress={progress * 1e2}
-        />
-      ) : (
-        <InfiniteProgressBar
-          progressColor={colors.live}
-          style={styles.progressBar}
-          height={6}
-        />
-      )}
+      <ProgressBar
+        progressColor={colors.live}
+        style={styles.progressBar}
+        height={6}
+        progress={installing ? progress * 1e2 : 0}
+      />
     </View>
   );
 };
 
-export const UninstallProgress = () => {
+type UninstallProgressProps = {
+  uninstalling: boolean,
+};
+
+export const UninstallProgress = ({ uninstalling }: UninstallProgressProps) => {
   return (
     <View style={styles.progressContainer}>
       <View style={styles.progressLabel}>
@@ -74,11 +70,20 @@ export const UninstallProgress = () => {
           <Trans i18nKey="AppAction.uninstall.loading.button" />
         </LText>
       </View>
-      <InfiniteProgressBar
-        progressColor={colors.live}
-        style={styles.progressBar}
-        height={6}
-      />
+      {uninstalling ? (
+        <InfiniteProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+        />
+      ) : (
+        <ProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+          progress={0}
+        />
+      )}
     </View>
   );
 };
