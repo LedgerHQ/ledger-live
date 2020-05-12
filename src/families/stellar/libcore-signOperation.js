@@ -5,7 +5,7 @@ import type { CoreStellarLikeTransaction, Transaction } from "./types";
 import { makeSignOperation } from "../../libcore/signOperation";
 import {
   libcoreAmountToBigNumber,
-  libcoreBigIntToBigNumber
+  libcoreBigIntToBigNumber,
 } from "../../libcore/buildBigNumber";
 import buildTransaction from "./libcore-buildTransaction";
 import { checkRecipientExist } from "./bridge/libcore";
@@ -18,7 +18,7 @@ async function signTransaction({
   coreAccount,
   isCancelled,
   onDeviceSignatureGranted,
-  onDeviceSignatureRequested
+  onDeviceSignatureRequested,
 }) {
   // Sign with the device
   const hwApp = new Stellar(transport);
@@ -73,7 +73,7 @@ async function signTransaction({
     date: new Date(),
     // Warning: Javascript number is not precise
     transactionSequenceNumber: transactionSequenceNumber.plus(1).toNumber(),
-    extra: {}
+    extra: {},
   };
 
   checkRecipientExist.clear(transaction.recipient);
@@ -81,11 +81,11 @@ async function signTransaction({
   return {
     operation: op,
     expirationDate: null,
-    signature: hex
+    signature: hex,
   };
 }
 
 export default makeSignOperation<Transaction, CoreStellarLikeTransaction>({
   buildTransaction,
-  signTransaction
+  signTransaction,
 });

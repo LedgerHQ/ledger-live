@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import {
   createTransportReplayer,
-  RecordStore
+  RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import { registerTransportModule } from "../../hw";
 
@@ -28,11 +28,11 @@ export function mockDeviceWithAPDUs(apdus: string) {
 
 registerTransportModule({
   id: "mock",
-  open: id => {
+  open: (id) => {
     if (id in transports) {
       const Tr = transports[id];
       return Tr.open();
     }
   },
-  disconnect: () => Promise.resolve()
+  disconnect: () => Promise.resolve(),
 });

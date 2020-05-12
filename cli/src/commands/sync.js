@@ -14,13 +14,13 @@ export default {
       alias: "f",
       type: String,
       typeDesc: Object.keys(accountFormatters).join(" | "),
-      desc: "how to display the data"
-    }
+      desc: "how to display the data",
+    },
   ],
   job: (opts: ScanCommonOpts & { format: string }) =>
     scan(opts).pipe(
-      map(account =>
+      map((account) =>
         (accountFormatters[opts.format] || accountFormatters.default)(account)
       )
-    )
+    ),
 };

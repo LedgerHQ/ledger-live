@@ -13,7 +13,7 @@ type F = ({
   core: Core,
   walletName: string,
   currency: CryptoCurrency,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 }) => Promise<CoreWallet>;
 
 export const getOrCreateWallet: F = atomicQueue(

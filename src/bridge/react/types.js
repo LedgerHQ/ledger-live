@@ -9,11 +9,11 @@ export type SyncAction =
 
 export type SyncState = {
   pending: boolean,
-  error: ?Error
+  error: ?Error,
 };
 
 export type BridgeSyncState = {
-  [accountId: string]: SyncState
+  [accountId: string]: SyncState,
 };
 
 // trigger an action

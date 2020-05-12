@@ -15,20 +15,20 @@ async function rippleBuildTransaction({
   coreAccount,
   coreCurrency,
   transaction,
-  isCancelled
+  isCancelled,
 }: {
   account: Account,
   core: Core,
   coreAccount: CoreAccount,
   coreCurrency: CoreCurrency,
   transaction: Transaction,
-  isCancelled: () => boolean
+  isCancelled: () => boolean,
 }): Promise<?CoreRippleLikeTransaction> {
   const rippleLikeAccount = await coreAccount.asRippleLikeAccount();
 
   const isValid = await isValidRecipient({
     currency: account.currency,
-    recipient: transaction.recipient
+    recipient: transaction.recipient,
   });
 
   if (isValid !== null) {

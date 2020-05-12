@@ -7,13 +7,13 @@ export type Range = {
   min: BigNumber,
   max: BigNumber,
   step: BigNumber,
-  steps: number
+  steps: number,
 };
 
 const defaultOpts: InferDynamicRangeOpts = {
   minMult: 0.3,
   maxMult: 2,
-  targetSteps: 20
+  targetSteps: 20,
 };
 
 export type InferDynamicRangeOpts = typeof defaultOpts;
@@ -36,11 +36,7 @@ export function inferDynamicRange(
   const initial = stepping(amount, step, BigNumber.ROUND_HALF_UP);
   const min = stepping(targetMin, step, BigNumber.ROUND_FLOOR);
   const max = stepping(targetMax, step, BigNumber.ROUND_CEIL);
-  const steps = max
-    .minus(min)
-    .div(step)
-    .plus(1)
-    .toNumber();
+  const steps = max.minus(min).div(step).plus(1).toNumber();
   return { initial, min, max, step, steps };
 }
 
@@ -50,18 +46,12 @@ export function projectRangeIndex(range: Range, index: number): BigNumber {
 
 export function reverseRangeIndex(range: Range, n: BigNumber): number {
   const x = n.minus(range.min).div(range.max.minus(range.min));
-  const i = x
-    .times(range.steps)
-    .integerValue(BigNumber.ROUND_FLOOR)
-    .toNumber();
+  const i = x.times(range.steps).integerValue(BigNumber.ROUND_FLOOR).toNumber();
   return Math.max(0, Math.min(i, range.steps - 1));
 }
 
 function stepping(n, step, roundingMode) {
-  return n
-    .div(step)
-    .integerValue(roundingMode)
-    .times(step);
+  return n.div(step).integerValue(roundingMode).times(step);
 }
 
 const log10 = Math.log(10);

@@ -11,14 +11,14 @@ import {
   accountDataToAccount,
   accountToAccountData,
   encode,
-  decode
+  decode,
 } from "../cross";
 
 test("accountDataToAccount / accountToAccountData", () => {
-  listCryptoCurrencies().forEach(currency => {
-    getDerivationModesForCurrency(currency).forEach(derivationMode => {
+  listCryptoCurrencies().forEach((currency) => {
+    getDerivationModesForCurrency(currency).forEach((derivationMode) => {
       const account = genAccount(`${currency.id}_${derivationMode}`, {
-        currency
+        currency,
       });
       const data = accountToAccountData(account);
       expect(accountToAccountData(accountDataToAccount(data))).toMatchObject(
@@ -32,9 +32,9 @@ test("encode/decode", () => {
   const accounts = listCryptoCurrencies().reduce(
     (acc, currency) =>
       acc.concat(
-        getDerivationModesForCurrency(currency).map(derivationMode => {
+        getDerivationModesForCurrency(currency).map((derivationMode) => {
           const account = genAccount(`${currency.id}_${derivationMode}`, {
-            currency
+            currency,
           });
           return account;
         })
@@ -46,10 +46,10 @@ test("encode/decode", () => {
     accounts,
     settings: {
       currenciesSettings: {},
-      pairExchanges: {}
+      pairExchanges: {},
     },
     exporterName: "test你好👋",
-    exporterVersion: "0.0.0"
+    exporterVersion: "0.0.0",
   };
   const exp = decode(encode(data));
   expect(exp.meta.exporterName).toEqual(data.exporterName);
@@ -66,53 +66,53 @@ test("encode/decode", () => {
     settings: {
       counterValue: "USD",
       pairExchanges: {
-        BTC_USD: "KRAKEN"
+        BTC_USD: "KRAKEN",
       },
       currenciesSettings: {
         bitcoin: {
-          confirmationsNb: 3
-        }
+          confirmationsNb: 3,
+        },
       },
-      blacklistedTokenIds: ["tokenid1", "tokenid2"]
+      blacklistedTokenIds: ["tokenid1", "tokenid2"],
     },
     exporterName: "test",
     exporterVersion: "0.0.0",
-    chunkSize: 100
+    chunkSize: 100,
   };
   const data = encode(arg);
   const res = decode(data);
   expect(res.accounts).toMatchObject(
-    accounts.map(a => ({
+    accounts.map((a) => ({
       balance: a.balance.toString(),
       currencyId: a.currency.id,
       id: a.id,
       name: a.name,
-      index: a.index
+      index: a.index,
     }))
   );
   expect(res.settings).toMatchObject({
     counterValue: "USD",
     pairExchanges: {
-      BTC_USD: "KRAKEN"
+      BTC_USD: "KRAKEN",
     },
     currenciesSettings: {
       bitcoin: {
-        confirmationsNb: 3
-      }
+        confirmationsNb: 3,
+      },
     },
-    blacklistedTokenIds: ["tokenid1", "tokenid2"]
+    blacklistedTokenIds: ["tokenid1", "tokenid2"],
   });
   expect(res.settings).not.toMatchObject({
     counterValue: "USD",
     pairExchanges: {
-      BTC_USD: "KRAKEN"
+      BTC_USD: "KRAKEN",
     },
     currenciesSettings: {
       bitcoin: {
-        confirmationsNb: 3
-      }
+        confirmationsNb: 3,
+      },
     },
-    blacklistedTokenIds: ["tokenid3"]
+    blacklistedTokenIds: ["tokenid3"],
   });
   expect(res).toMatchSnapshot();
 });

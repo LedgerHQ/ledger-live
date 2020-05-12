@@ -13,7 +13,7 @@ export type Polling = {
   // true when the polling is in progress
   pending: boolean,
   // if the last polling failed, there will be an error
-  error: ?Error
+  error: ?Error,
 };
 
 export type PairConversion = {
@@ -21,33 +21,33 @@ export type PairConversion = {
   fromExchange: ?string,
   intermediary: Currency,
   toExchange: ?string,
-  to: Currency
+  to: Currency,
 };
 
 export type PairOptExchange = {
   from: Currency,
   to: Currency,
-  exchange: ?string
+  exchange: ?string,
 };
 
 export type PairsSelector<State> = (state: State) => PairOptExchange[];
 
 export type Histodays = {
   latest: number,
-  [day: string]: number
+  [day: string]: number,
 };
 
 export type RatesMap = {
   [to: string]: {
     [from: string]: {
-      [exchange: string]: Histodays
-    }
-  }
+      [exchange: string]: Histodays,
+    },
+  },
 };
 
 export type CounterValuesState = {
   daily: RatesMap,
-  hourly: RatesMap
+  hourly: RatesMap,
 };
 
 export type Input<State> = {
@@ -71,7 +71,7 @@ export type Input<State> = {
     Array<{
       from: Currency,
       to: Currency,
-      exchange: ?string
+      exchange: ?string,
     }>
   ) => Object,
 
@@ -108,27 +108,27 @@ export type Input<State> = {
   ) => Promise<mixed>,
 
   fetchExchangesForPairImplementation?: () => Promise<Exchange[]>,
-  fetchTickersByMarketcapImplementation?: () => Promise<string[]>
+  fetchTickersByMarketcapImplementation?: () => Promise<string[]>,
 };
 
 export type PollAPIPair = {
   from: string,
   to: string,
   exchange?: string,
-  after?: string
+  after?: string,
 };
 
 export type Exchange = {
   id: string,
   name: string,
-  website: ?string
+  website: ?string,
 };
 
 type PollingProviderProps = {
   children: React$Element<*>,
   pollThrottle?: number,
   pollInitDelay?: number,
-  autopollInterval?: number
+  autopollInterval?: number,
 };
 
 export type RateGranularity = "daily" | "hourly";
@@ -147,7 +147,7 @@ export type Module<State> = {
       to: Currency,
       exchange: ?string,
       disableRounding?: boolean,
-      date?: Date
+      date?: Date,
     }
   ) => ?BigNumber,
 
@@ -161,7 +161,7 @@ export type Module<State> = {
       to: Currency,
       exchange: ?string,
       disableRounding?: boolean,
-      date?: Date
+      date?: Date,
     }
   ) => ?BigNumber,
 
@@ -178,7 +178,7 @@ export type Module<State> = {
       toExchange: ?string,
       to: Currency,
       disableRounding?: boolean,
-      date?: Date
+      date?: Date,
     }
   ) => ?BigNumber,
 
@@ -194,7 +194,7 @@ export type Module<State> = {
       toExchange: ?string,
       to: Currency,
       disableRounding?: boolean,
-      date?: Date
+      date?: Date,
     }
   ) => ?BigNumber,
 
@@ -209,7 +209,7 @@ export type Module<State> = {
 
   // Get access to the Polling object to have control on the polling
   PollingConsumer: React$ComponentType<{
-    children: Polling => *
+    children: (Polling) => *,
   }>,
 
   PollingContext: React$Context<Polling>,
@@ -217,5 +217,5 @@ export type Module<State> = {
   // Complementary APIs, independently of the store
 
   fetchExchangesForPair: (from: Currency, to: Currency) => Promise<Exchange[]>,
-  fetchTickersByMarketcap: () => Promise<string[]>
+  fetchTickersByMarketcap: () => Promise<string[]>,
 };

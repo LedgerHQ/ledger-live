@@ -14,13 +14,13 @@ let lastFlush: Promise<void> = Promise.resolve();
 let flushTimeout = null;
 const libcoreJobsCounterSubject: Subject<number> = new Subject();
 export const libcoreJobBusy: Observable<boolean> = libcoreJobsCounterSubject.pipe(
-  map(v => v > 0),
+  map((v) => v > 0),
   distinctUntilChanged()
 );
 
 type AfterGCJob<R> = {
-  job: Core => Promise<R>,
-  resolve: R => void
+  job: (Core) => Promise<R>,
+  resolve: (R) => void,
 };
 const afterLibcoreFlushes: Array<AfterGCJob<any>> = [];
 
@@ -35,7 +35,7 @@ function flush(c: Core) {
       }
       log("libcore/access", "flush end");
     })
-    .catch(e => {
+    .catch((e) => {
       log("libcore/access", "flush error " + String(e));
       console.error(e);
     });
@@ -44,7 +44,7 @@ function flush(c: Core) {
 export async function afterLibcoreGC<R>(
   job: (core: Core) => Promise<R>
 ): Promise<R> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     if (!core) return;
     log("libcore/access", "new after gc job");
     afterLibcoreFlushes.push({ job, resolve });
@@ -85,7 +85,7 @@ type Fn<A, R> = (...args: A) => Promise<R>;
 
 export const withLibcoreF = <A: Array<any>, R>(
   job: (core: Core) => Fn<A, R>
-): Fn<A, R> => (...args) => withLibcore(c => job(c)(...args));
+): Fn<A, R> => (...args) => withLibcore((c) => job(c)(...args));
 
 let loadCoreImpl: ?() => Promise<Core>;
 

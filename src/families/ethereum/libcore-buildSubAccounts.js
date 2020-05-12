@@ -4,7 +4,7 @@ import type {
   CryptoCurrency,
   TokenAccount,
   Account,
-  SyncConfig
+  SyncConfig,
 } from "../../types";
 import type { CoreAccount } from "../../libcore/types";
 import type { CoreERC20LikeAccount } from "./types";
@@ -13,7 +13,7 @@ import { minimalOperationsBuilder } from "../../reconciliation";
 import { buildERC20Operation } from "./buildERC20Operation";
 import {
   findTokenByAddress,
-  listTokensForCryptoCurrency
+  listTokensForCryptoCurrency,
 } from "../../currencies";
 import { promiseAllBatched } from "../../promise";
 
@@ -22,7 +22,7 @@ async function buildERC20TokenAccount({
   token,
   coreTokenAccount,
   existingTokenAccount,
-  balance
+  balance,
 }) {
   const coreOperations = await coreTokenAccount.getOperations();
   const id = parentAccountId + "+" + token.contractAddress;
@@ -30,11 +30,11 @@ async function buildERC20TokenAccount({
   const operations = await minimalOperationsBuilder(
     (existingTokenAccount && existingTokenAccount.operations) || [],
     coreOperations,
-    coreOperation =>
+    (coreOperation) =>
       buildERC20Operation({
         coreOperation,
         accountId: id,
-        token
+        token,
       })
   );
 
@@ -51,7 +51,7 @@ async function buildERC20TokenAccount({
     creationDate:
       operations.length > 0
         ? operations[operations.length - 1].date
-        : new Date()
+        : new Date(),
   };
 
   return tokenAccount;
@@ -67,13 +67,13 @@ async function ethereumBuildTokenAccounts({
   coreAccount,
   accountId,
   existingAccount,
-  syncConfig
+  syncConfig,
 }: {
   currency: CryptoCurrency,
   coreAccount: CoreAccount,
   accountId: string,
   existingAccount: ?Account,
-  syncConfig: SyncConfig
+  syncConfig: SyncConfig,
 }): Promise<?(TokenAccount[])> {
   const { blacklistedTokenIds = [] } = syncConfig;
   if (listTokensForCryptoCurrency(currency).length === 0) return undefined;
@@ -110,14 +110,14 @@ async function ethereumBuildTokenAccounts({
       tokenAccountData.push({
         token,
         coreTA,
-        contractAddress
+        contractAddress,
       });
     }
   }
 
   // fetch balances for existing tokens
   const coreTAB = await ethAccount.getERC20Balances(
-    tokenAccountData.map(d => d.contractAddress)
+    tokenAccountData.map((d) => d.contractAddress)
   );
 
   for (const [index, { token, coreTA }] of tokenAccountData.entries()) {
@@ -128,7 +128,7 @@ async function ethereumBuildTokenAccounts({
       existingTokenAccount,
       token,
       coreTokenAccount: coreTA,
-      balance: contractBalance
+      balance: contractBalance,
     });
     if (tokenAccount) tokenAccounts.push(tokenAccount);
   }

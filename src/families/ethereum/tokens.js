@@ -3,7 +3,7 @@
 import type { TokenCurrency } from "../../types";
 import {
   getCryptoCurrencyById,
-  findCryptoCurrencyByTicker
+  findCryptoCurrencyByTicker,
 } from "../../data/cryptocurrencies";
 import { addTokens } from "../../data/tokens";
 
@@ -16,7 +16,7 @@ const convertERC20 = ([
   ledgerSignature,
   contractAddress,
   disableCountervalue,
-  delisted
+  delisted,
 ]): TokenCurrency => ({
   type: "TokenCurrency",
   id: "ethereum/erc20/" + token,
@@ -33,13 +33,13 @@ const convertERC20 = ([
     {
       name,
       code: ticker,
-      magnitude
-    }
-  ]
+      magnitude,
+    },
+  ],
 });
 
 const converters = {
-  erc20: convertERC20
+  erc20: convertERC20,
 };
 
 export function add(type: string, list: any[]) {

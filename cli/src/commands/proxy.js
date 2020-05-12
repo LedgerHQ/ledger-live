@@ -2,7 +2,7 @@
 import {
   RecordStore,
   createTransportRecorder,
-  createTransportReplayer
+  createTransportReplayer,
 } from "@ledgerhq/hw-transport-mocker";
 import { log, listen } from "@ledgerhq/logs";
 import { open } from "@ledgerhq/live-common/lib/hw";
@@ -23,37 +23,37 @@ const args = [
     alias: "f",
     type: String,
     desc:
-      "in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU."
+      "in combination with --record, will save all the proxied APDUs to a provided file. If --record is not provided, proxy will start in replay mode of the provided file. If --file is not used at all, the proxy will just act as a proxy without saving the APDU.",
   },
   {
     name: "verbose",
     alias: "v",
     type: Boolean,
-    desc: "verbose mode"
+    desc: "verbose mode",
   },
   {
     name: "silent",
     alias: "s",
     type: Boolean,
-    desc: "do not output the proxy logs"
+    desc: "do not output the proxy logs",
   },
   {
     name: "auto-skip",
     type: Boolean,
-    desc: "auto skip apdu that don't replay instead of error"
+    desc: "auto skip apdu that don't replay instead of error",
   },
   {
     name: "port",
     alias: "p",
     type: String,
-    desc: "specify the http port to use (default: 8435)"
+    desc: "specify the http port to use (default: 8435)",
   },
   {
     name: "record",
     alias: "r",
     type: Boolean,
-    desc: "see the description of --file"
-  }
+    desc: "see the description of --file",
+  },
 ];
 
 const job = ({
@@ -63,10 +63,10 @@ const job = ({
   port,
   silent,
   verbose,
-  "auto-skip": autoSkipUnknownApdu
+  "auto-skip": autoSkipUnknownApdu,
 }) =>
-  Observable.create(o => {
-    const unsub = listen(l => {
+  Observable.create((o) => {
+    const unsub = listen((l) => {
       if (verbose) {
         o.next(l.type + ": " + l.message);
       } else if (!silent && l.type === "proxy") {
@@ -81,7 +81,7 @@ const job = ({
     const getTransportLike = () => {
       return {
         open: () => open(device || ""),
-        create: () => open(device || "")
+        create: () => open(device || ""),
       };
     };
 
@@ -97,7 +97,7 @@ const job = ({
         Transport = createTransportRecorder(getTransportLike(), recordStore);
       } else {
         recordStore = RecordStore.fromString(fs.readFileSync(file, "utf8"), {
-          autoSkipUnknownApdu
+          autoSkipUnknownApdu,
         });
         if (recordStore.isEmpty()) {
           process.exit(0);
@@ -117,7 +117,7 @@ const job = ({
       .reduce(
         (acc, ifname) =>
           acc.concat(
-            ifaces[ifname].map(iface => {
+            ifaces[ifname].map((iface) => {
               if (iface.family !== "IPv4" || iface.internal !== false) {
                 // skip over internal (i.e. 127.0.0.1) and non-ipv4 addresses
                 return;
@@ -127,7 +127,7 @@ const job = ({
           ),
         []
       )
-      .filter(a => a);
+      .filter((a) => a);
 
     const PORT = port || "8435";
 
@@ -202,7 +202,7 @@ const job = ({
     let wsIndex = 0;
     let wsBusyIndex = 0;
 
-    wss.on("connection", ws => {
+    wss.on("connection", (ws) => {
       const index = ++wsIndex;
       try {
         let transport;
@@ -215,7 +215,7 @@ const job = ({
           if (wsBusyIndex === index) {
             log("proxy", `WS(${index}): close`);
             await transportP.then(
-              t => t.close(),
+              (t) => t.close(),
               () => {}
             );
             wsBusyIndex = 0;
@@ -231,14 +231,14 @@ const job = ({
 
         ws.on("close", onClose);
 
-        ws.on("message", async apduHex => {
+        ws.on("message", async (apduHex) => {
           if (destroyed) return;
 
           if (apduHex === "open") {
             if (wsBusyIndex) {
               ws.send(
                 JSON.stringify({
-                  error: "WebSocket is busy (previous session not closed)"
+                  error: "WebSocket is busy (previous session not closed)",
                 })
               );
               ws.close();
@@ -258,7 +258,7 @@ const job = ({
               log("proxy", `WS(${index}): open failed! ${e}`);
               ws.send(
                 JSON.stringify({
-                  error: e.message
+                  error: e.message,
                 })
               );
               ws.close();
@@ -298,8 +298,8 @@ const job = ({
     });
 
     ["localhost", ...ips]
-      .map(ip => `ws://${ip}:${PORT}`)
-      .forEach(ip => {
+      .map((ip) => `ws://${ip}:${PORT}`)
+      .forEach((ip) => {
         log("proxy", "DEVICE_PROXY_URL=" + ip);
       });
 

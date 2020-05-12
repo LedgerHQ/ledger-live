@@ -9,7 +9,7 @@ export const formatSize = (size?: number, blockSize: number = 4096) => {
 };
 
 export const prettyActionPlan = (ops: AppOp[]) =>
-  ops.map(op => (op.type === "install" ? "+" : "-") + op.name).join(", ");
+  ops.map((op) => (op.type === "install" ? "+" : "-") + op.name).join(", ");
 
 export const prettyInstalled = (items: InstalledItem[]) =>
   items

@@ -8,8 +8,8 @@ const options = [
   {
     name: "feePerByte",
     type: String,
-    desc: "how much fee per byte"
-  }
+    desc: "how much fee per byte",
+  },
 ];
 
 function inferTransactions(
@@ -23,12 +23,12 @@ function inferTransactions(
     invariant(transaction.family === "bitcoin", "bitcoin family");
     return {
       ...transaction,
-      feePerByte
+      feePerByte,
     };
   });
 }
 
 export default {
   options,
-  inferTransactions
+  inferTransactions,
 };

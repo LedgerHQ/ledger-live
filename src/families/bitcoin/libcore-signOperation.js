@@ -8,7 +8,7 @@ import type {
   CoreBitcoinLikeTransaction,
   CoreBitcoinLikeInput,
   CoreBitcoinLikeOutput,
-  Transaction
+  Transaction,
 } from "./types";
 import type { Operation } from "../../types";
 import { promiseAllBatched } from "../../promise";
@@ -27,7 +27,7 @@ async function signTransaction({
   derivationMode,
   onDeviceStreaming,
   onDeviceSignatureRequested,
-  onDeviceSignatureGranted
+  onDeviceSignatureGranted,
 }) {
   log("hw", `signTransaction ${currency.id} for account ${account.id}`);
 
@@ -88,7 +88,7 @@ async function signTransaction({
       supportsSegwit: currency.supportsSegwit,
       inputHasTimestamp,
       hasExtraData,
-      additionals
+      additionals,
     });
     const previousTransaction = hwApp.splitTransaction(
       hexPreviousTransaction,
@@ -105,13 +105,13 @@ async function signTransaction({
     log("libcore", "inputs[" + i + "]", {
       previousTransaction: JSON.stringify(previousTransaction),
       outputIndex,
-      sequence
+      sequence,
     });
     return [
       previousTransaction,
       outputIndex,
       undefined, // we don't use that TODO: document
-      sequence // 0xffffffff,
+      sequence, // 0xffffffff,
     ];
   });
   if (isCancelled()) return;
@@ -119,7 +119,7 @@ async function signTransaction({
   const associatedKeysets = await promiseAllBatched(
     5,
     rawInputs,
-    async input => {
+    async (input) => {
       const derivationPaths = await input.getDerivationPath();
       const [first] = derivationPaths;
       if (!first) throw new Error("unexpected empty derivationPaths");
@@ -184,7 +184,7 @@ async function signTransaction({
     isSegwit: isSegwitDerivationMode(derivationMode),
     timestamp: initialTimestamp || undefined,
     additionals,
-    expiryHeight: expiryHeight && expiryHeight.toString("hex")
+    expiryHeight: expiryHeight && expiryHeight.toString("hex"),
   });
 
   const signature = await hwApp.createPaymentTransactionNew({
@@ -201,19 +201,19 @@ async function signTransaction({
     expiryHeight,
     onDeviceSignatureGranted,
     onDeviceSignatureRequested,
-    onDeviceStreaming
+    onDeviceStreaming,
   });
 
   const sendersInput = await coreTransaction.getInputs();
   const senders = (
-    await promiseAllBatched(5, sendersInput, senderInput =>
+    await promiseAllBatched(5, sendersInput, (senderInput) =>
       senderInput.getAddress()
     )
   ).filter(Boolean);
 
   const recipientsOutput = await coreTransaction.getOutputs();
   const recipients = (
-    await promiseAllBatched(5, recipientsOutput, recipientOutput =>
+    await promiseAllBatched(5, recipientsOutput, (recipientOutput) =>
       recipientOutput.getAddress()
     )
   ).filter(Boolean);
@@ -238,17 +238,17 @@ async function signTransaction({
     recipients,
     accountId: account.id,
     date: new Date(),
-    extra: {}
+    extra: {},
   };
 
   return {
     operation,
     expirationDate: null,
-    signature
+    signature,
   };
 }
 
 export default makeSignOperation<Transaction, CoreBitcoinLikeTransaction>({
   buildTransaction,
-  signTransaction
+  signTransaction,
 });

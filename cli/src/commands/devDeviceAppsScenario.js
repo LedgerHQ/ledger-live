@@ -40,24 +40,26 @@ const scenarios: { [_: string]: Scenario } = {
     3301,
     3315,
     3314,
-    3323
-  ]
+    3323,
+  ],
 };
 
 const scenariosValues = Object.keys(scenarios).join(" | ");
 
 const installScenario = (apps, transport, deviceInfo, scene) => {
   const appVersionsPerId = {};
-  apps.forEach(a =>
-    a.application_versions.forEach(av => {
+  apps.forEach((a) =>
+    a.application_versions.forEach((av) => {
       appVersionsPerId[av.id] = av;
     })
   );
   return concat(
     ...scene
-      .map(id => appVersionsPerId[id])
+      .map((id) => appVersionsPerId[id])
       .filter(Boolean)
-      .map(app => defer(() => installApp(transport, deviceInfo.targetId, app)))
+      .map((app) =>
+        defer(() => installApp(transport, deviceInfo.targetId, app))
+      )
   );
 };
 
@@ -65,13 +67,13 @@ export default {
   description: "dev feature to enter into a specific device apps scenario",
   args: [
     deviceOpt,
-    { name: "scenario", alias: "s", type: String, desc: scenariosValues }
+    { name: "scenario", alias: "s", type: String, desc: scenariosValues },
   ],
   job: ({
     device,
-    scenario
+    scenario,
   }: $Shape<{ device: string, scenario: $Keys<typeof scenarios> }>) =>
-    withDevice(device || "")(t => {
+    withDevice(device || "")((t) => {
       const scene = scenarios[scenario];
       if (!scene)
         throw new Error(
@@ -80,20 +82,20 @@ export default {
       const exec = execWithTransport(t);
       // $FlowFixMe
       return from(getDeviceInfo(t)).pipe(
-        mergeMap(deviceInfo =>
+        mergeMap((deviceInfo) =>
           listApps(t, deviceInfo).pipe(
-            filter(e => e.type === "result"),
-            map(e => e.result),
-            mergeMap(listAppsResult => {
+            filter((e) => e.type === "result"),
+            map((e) => e.result),
+            mergeMap((listAppsResult) => {
               const s = reducer(initState(listAppsResult), { type: "wipe" });
               return concat(
                 runAll(s, exec).pipe(ignoreElements()),
                 from(ManagerAPI.listApps())
               );
             }),
-            mergeMap(apps => installScenario(apps, t, deviceInfo, scene))
+            mergeMap((apps) => installScenario(apps, t, deviceInfo, scene))
           )
         )
       );
-    })
+    }),
 };

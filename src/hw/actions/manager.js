@@ -6,7 +6,7 @@ import {
   debounceTime,
   catchError,
   switchMap,
-  tap
+  tap,
 } from "rxjs/operators";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
@@ -16,7 +16,7 @@ import { useReplaySubject } from "../../observable";
 import manager from "../../manager";
 import type {
   ConnectManagerEvent,
-  Input as ConnectManagerInput
+  Input as ConnectManagerInput,
 } from "../connectManager";
 import type { Action, Device } from "./types";
 
@@ -29,7 +29,7 @@ type State = {|
   device: ?Device,
   deviceInfo: ?DeviceInfo,
   result: ?ListAppsResult,
-  error: ?Error
+  error: ?Error,
 |};
 
 type ManagerState = {|
@@ -37,14 +37,14 @@ type ManagerState = {|
   repairModalOpened: ?{ auto: boolean },
   onRetry: () => void,
   onAutoRepair: () => void,
-  onRepairModal: boolean => void,
-  closeRepairModal: () => void
+  onRepairModal: (boolean) => void,
+  closeRepairModal: () => void,
 |};
 
 type Result = {|
   device: Device,
   deviceInfo: DeviceInfo,
-  result: ?ListAppsResult
+  result: ?ListAppsResult,
 |};
 
 type ManagerAction = Action<void, ManagerState, Result>;
@@ -59,7 +59,7 @@ const mapResult = ({ deviceInfo, device, result }): ?Result =>
     ? {
         device,
         deviceInfo,
-        result
+        result,
       }
     : null;
 
@@ -72,7 +72,7 @@ const getInitialState = (device?: ?Device): State => ({
   device,
   deviceInfo: null,
   result: null,
-  error: null
+  error: null,
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -80,7 +80,7 @@ const reducer = (state: State, e: Event): State => {
     case "unresponsiveDevice":
       return {
         ...state,
-        unresponsive: true
+        unresponsive: true,
       };
 
     case "deviceChange":
@@ -90,14 +90,14 @@ const reducer = (state: State, e: Event): State => {
       return {
         ...getInitialState(state.device),
         error: e.error,
-        isLoading: false
+        isLoading: false,
       };
 
     case "appDetected":
       return {
         ...state,
         unresponsive: false,
-        requestQuitApp: true
+        requestQuitApp: true,
       };
 
     case "osu":
@@ -107,7 +107,7 @@ const reducer = (state: State, e: Event): State => {
         isLoading: false,
         unresponsive: false,
         requestQuitApp: false,
-        deviceInfo: e.deviceInfo
+        deviceInfo: e.deviceInfo,
       };
 
     case "listingApps":
@@ -115,14 +115,14 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         requestQuitApp: false,
         unresponsive: false,
-        deviceInfo: e.deviceInfo
+        deviceInfo: e.deviceInfo,
       };
 
     case "device-permission-requested":
       return {
         ...state,
         unresponsive: false,
-        allowManagerRequestedWording: e.wording
+        allowManagerRequestedWording: e.wording,
       };
 
     case "device-permission-granted":
@@ -130,7 +130,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         allowManagerRequestedWording: null,
-        allowManagerGranted: true
+        allowManagerGranted: true,
       };
 
     case "result":
@@ -138,16 +138,16 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         isLoading: false,
         unresponsive: false,
-        result: e.result
+        result: e.result,
       };
   }
   return state;
 };
 
 export const createAction = (
-  connectManagerExec: ConnectManagerInput => Observable<ConnectManagerEvent>
+  connectManagerExec: (ConnectManagerInput) => Observable<ConnectManagerEvent>
 ): ManagerAction => {
-  const connectManager = device =>
+  const connectManager = (device) =>
     concat(
       of({ type: "deviceChange", device }),
       !device
@@ -173,13 +173,13 @@ export const createAction = (
           debounceTime(1000),
           // each time there is a device change, we pipe to the command
           switchMap(connectManager),
-          tap(e => log("actions-manager-event", e.type, e)),
+          tap((e) => log("actions-manager-event", e.type, e)),
           // tap(e => console.log("connectManager event", e)),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState()),
           // tap(s => console.log("connectManager state", s)),
           // we debounce the UI state to not blink on the UI
-          debounce(s => {
+          debounce((s) => {
             if (s.allowManagerRequestedWording || s.allowManagerGranted) {
               // no debounce for allow manager
               return empty();
@@ -205,7 +205,7 @@ export const createAction = (
       });
     }, [deviceInfo]);
 
-    const onRepairModal = useCallback(open => {
+    const onRepairModal = useCallback((open) => {
       setRepairModalOpened(open ? { auto: false } : null);
     }, []);
 
@@ -214,8 +214,8 @@ export const createAction = (
     }, []);
 
     const onRetry = useCallback(() => {
-      setResetIndex(currIndex => currIndex + 1);
-      setState(s => getInitialState(s.device));
+      setResetIndex((currIndex) => currIndex + 1);
+      setState((s) => getInitialState(s.device));
     }, []);
 
     const onAutoRepair = useCallback(() => {
@@ -228,12 +228,12 @@ export const createAction = (
       onRetry,
       onAutoRepair,
       closeRepairModal,
-      onRepairModal
+      onRepairModal,
     };
   };
 
   return {
     useHook,
-    mapResult
+    mapResult,
   };
 };

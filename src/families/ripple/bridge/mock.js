@@ -6,7 +6,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   InvalidAddress,
   RecipientRequired,
-  FeeTooHigh
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
@@ -17,7 +17,7 @@ import {
   signOperation,
   broadcast,
   sync,
-  isInvalidRecipient
+  isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 
@@ -37,7 +37,7 @@ const createTransaction = (): Transaction => ({
   feeCustomUnit: getCryptoCurrencyById("ripple").units[1],
   tag: undefined,
   networkInfo: null,
-  useAllAmount: false
+  useAllAmount: false,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -81,9 +81,9 @@ const getTransactionStatus = (a, t) => {
         {
           disableRounding: true,
           useGrouping: false,
-          showCode: true
+          showCode: true,
         }
-      )
+      ),
     });
   } else if (
     minimalBaseAmount &&
@@ -96,9 +96,9 @@ const getTransactionStatus = (a, t) => {
         {
           disableRounding: true,
           useGrouping: false,
-          showCode: true
+          showCode: true,
         }
-      )
+      ),
     });
   } else if (
     minimalBaseAmount &&
@@ -108,7 +108,7 @@ const getTransactionStatus = (a, t) => {
   ) {
     // mimic XRP base minimal for new addresses
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated(null, {
-      minimalAmount: `XRP Minimum reserve`
+      minimalAmount: `XRP Minimum reserve`,
     });
   }
 
@@ -125,7 +125,7 @@ const getTransactionStatus = (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
@@ -137,8 +137,8 @@ const prepareTransaction = async (a, t) => {
       networkInfo: {
         family: "ripple",
         serverFee: BigNumber(10),
-        baseReserve: BigNumber(20)
-      }
+        baseReserve: BigNumber(20),
+      },
     };
   }
   return t;
@@ -152,13 +152,13 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccounts
+  scanAccounts,
 };
 
 export default { currencyBridge, accountBridge };

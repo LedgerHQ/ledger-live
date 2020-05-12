@@ -42,7 +42,7 @@ const getAccountBalanceHistory = async (
 
   const balanceHistory = balances.map((value, i) => ({
     date: dates[i],
-    value
+    value,
   }));
 
   log(

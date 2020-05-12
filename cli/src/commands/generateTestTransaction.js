@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { toAccountRaw } from "@ledgerhq/live-common/lib/account";
 import {
   toTransactionRaw,
-  toSignedOperationRaw
+  toSignedOperationRaw,
 } from "@ledgerhq/live-common/lib/transaction";
 import { listen } from "@ledgerhq/logs";
 import { from, defer, concat, empty } from "rxjs";
@@ -15,10 +15,10 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { InferTransactionsOpts } from "../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../transaction";
 
-const toJS = obj => {
+const toJS = (obj) => {
   if (typeof obj === "object" && obj) {
     if (Array.isArray(obj)) {
-      return "[" + obj.map(o => toJS(o)).join(", ") + "]";
+      return "[" + obj.map((o) => toJS(o)).join(", ") + "]";
     }
     if (obj instanceof Error) {
       return `new ${obj.name || "Error"}()`;
@@ -31,7 +31,7 @@ const toJS = obj => {
     return (
       "{\n" +
       keys
-        .map(key => {
+        .map((key) => {
           return `  ${key}: ${toJS(obj[key])}`;
         })
         .join(",\n") +
@@ -42,16 +42,16 @@ const toJS = obj => {
   return String(obj);
 };
 
-const toTransactionStatusJS = status => toJS(status);
+const toTransactionStatusJS = (status) => toJS(status);
 
 export default {
   description: "Generate a test for transaction (live-common dataset)",
   args: [...scanCommonOpts, ...inferTransactionsOpts],
   job: (opts: ScanCommonOpts & InferTransactionsOpts) =>
     scan(opts).pipe(
-      switchMap(account =>
+      switchMap((account) =>
         from(inferTransactions(account, opts)).pipe(
-          concatMap(inferred =>
+          concatMap((inferred) =>
             inferred.reduce(
               (acc, t) =>
                 concat(
@@ -59,7 +59,7 @@ export default {
                   from(
                     defer(() => {
                       const apdus: string[] = [];
-                      const unsubscribe = listen(log => {
+                      const unsubscribe = listen((log) => {
                         if (log.type === "apdu" && log.message) {
                           apdus.push(log.message);
                         }
@@ -69,16 +69,16 @@ export default {
                         .signOperation({
                           account,
                           transaction: t,
-                          deviceId: opts.device || ""
+                          deviceId: opts.device || "",
                         })
                         .pipe(
-                          filter(e => e.type === "signed"),
-                          map(e => e.signedOperation),
-                          concatMap(signedOperation =>
+                          filter((e) => e.type === "signed"),
+                          map((e) => e.signedOperation),
+                          concatMap((signedOperation) =>
                             from(
                               bridge
                                 .getTransactionStatus(account, t)
-                                .then(s => [signedOperation, s])
+                                .then((s) => [signedOperation, s])
                             )
                           ),
                           map(([signedOperation, status]) => {
@@ -98,7 +98,7 @@ export default {
     )})
   },
   apdus: \`
-${apdus.map(a => "  " + a).join("\n")}
+${apdus.map((a) => "  " + a).join("\n")}
   \`
 }`;
                           })
@@ -111,7 +111,7 @@ ${apdus.map(a => "  " + a).join("\n")}
           ),
           reduce((jsCodes, code) => jsCodes.concat(code), []),
           map(
-            codes =>
+            (codes) =>
               `{
   name: "${account.name}",
   raw: ${JSON.stringify(
@@ -119,7 +119,7 @@ ${apdus.map(a => "  " + a).join("\n")}
       ...account,
       operations: [],
       balanceHistory: undefined,
-      freshAddresses: []
+      freshAddresses: [],
     })
   )},
   transactions: [
@@ -129,5 +129,5 @@ ${apdus.map(a => "  " + a).join("\n")}
           )
         )
       )
-    )
+    ),
 };

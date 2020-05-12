@@ -10,29 +10,29 @@ export default {
       name: "recipient",
       alias: "r",
       type: String,
-      desc: "the address to validate"
+      desc: "the address to validate",
     },
     currencyOpt,
-    deviceOpt
+    deviceOpt,
   ],
   job: (
     arg: $Shape<{
       recipient: string,
       currency: string,
-      device: string
+      device: string,
     }>
   ) =>
     inferCurrency(arg)
       .toPromise()
-      .then(currency =>
+      .then((currency) =>
         isValidRecipient({
           currency,
-          recipient: arg.recipient
+          recipient: arg.recipient,
         })
       )
       .then(
-        warning =>
+        (warning) =>
           warning ? { type: "warning", warning } : { type: "success" },
-        error => ({ type: "error", error: error.message })
-      )
+        (error) => ({ type: "error", error: error.message })
+      ),
 };

@@ -6,6 +6,6 @@ const aliases = {
   ethereum: "ethereumClassic",
   ethereum_classic: "ethereumClassic",
   ethereum_ropsten: "ethereumClassic",
-  poswallet: "posw"
+  poswallet: "posw",
 };
 export default (id: string) => aliases[id] || id;

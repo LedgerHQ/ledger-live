@@ -8,7 +8,7 @@ const THRESHOLD_FALSE_NEGATIVE_BROADCAST_FAILURE = 20 * 1000;
 
 async function broadcast({
   coreAccount,
-  signedOperation: { operation, signature }
+  signedOperation: { operation, signature },
 }): Promise<Operation> {
   const stellarLikeAccount = await coreAccount.asStellarLikeAccount();
   let hash = "";

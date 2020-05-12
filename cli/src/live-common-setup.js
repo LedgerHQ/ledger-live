@@ -13,7 +13,7 @@ import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
 import {
   registerTransportModule,
-  disconnect
+  disconnect,
 } from "@ledgerhq/live-common/lib/hw";
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
@@ -23,13 +23,13 @@ checkLibs({
   React,
   log,
   Transport,
-  connect
+  connect,
 });
 
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 implementLibcore({
   lib: () => require("@ledgerhq/ledger-core"), // eslint-disable-line global-require
-  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata"
+  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
 });
 
 if (process.env.DEVICE_PROXY_URL) {
@@ -38,14 +38,14 @@ if (process.env.DEVICE_PROXY_URL) {
     id: "http",
     open: () =>
       retry(() => Tr.create(3000, 5000), { context: "open-http-proxy" }),
-    disconnect: () => Promise.resolve()
+    disconnect: () => Promise.resolve(),
   });
 }
 
 const { SPECULOS_APDU_PORT, SPECULOS_BUTTON_PORT, SPECULOS_HOST } = process.env;
 if (SPECULOS_APDU_PORT) {
   const req: Object = {
-    apduPort: parseInt(SPECULOS_APDU_PORT, 10)
+    apduPort: parseInt(SPECULOS_APDU_PORT, 10),
   };
   if (SPECULOS_BUTTON_PORT) {
     req.buttonPort = parseInt(SPECULOS_BUTTON_PORT, 10);
@@ -57,9 +57,9 @@ if (SPECULOS_APDU_PORT) {
     id: "tcp",
     open: () =>
       retry(() => SpeculosTransport.open(req), {
-        context: "open-tcp-speculos"
+        context: "open-tcp-speculos",
       }),
-    disconnect: () => Promise.resolve()
+    disconnect: () => Promise.resolve(),
   });
 }
 
@@ -75,7 +75,7 @@ if (!process.env.CI) {
     return TransportNodeBle;
   };
 
-  const openBleByQuery = async query => {
+  const openBleByQuery = async (query) => {
     const m = query.match(/^ble:?(.*)/);
     if (!m) throw new Error("ble regexp should match");
     const [, q] = m;
@@ -85,11 +85,11 @@ if (!process.env.CI) {
       : Observable.create(getTransport().listen)
           .pipe(
             first(
-              e =>
+              (e) =>
                 (e.device.name || "").toLowerCase().includes(q.toLowerCase()) ||
                 e.device.id.toLowerCase() === q.toLowerCase()
             ),
-            switchMap(e => TransportNodeBle.open(e.descriptor))
+            switchMap((e) => TransportNodeBle.open(e.descriptor))
           )
           .toPromise());
     cacheBle[query] = t;
@@ -100,47 +100,47 @@ if (!process.env.CI) {
   };
   registerTransportModule({
     id: "ble",
-    open: query => {
+    open: (query) => {
       if (query.startsWith("ble")) {
         return openBleByQuery(query);
       }
     },
-    discovery: Observable.create(o => {
+    discovery: Observable.create((o) => {
       const s = getTransport().listen(o);
       return () => s.unsubscribe();
     }).pipe(
-      map(e => ({
+      map((e) => ({
         type: e.type,
         id: "ble:" + e.device.id,
-        name: e.device.name || ""
+        name: e.device.name || "",
       }))
     ),
-    disconnect: query =>
+    disconnect: (query) =>
       query.startsWith("ble")
         ? cacheBle[query]
           ? getTransport().disconnect(cacheBle[query].id)
           : Promise.resolve()
-        : null
+        : null,
   });
 
   const {
-    default: TransportNodeHid
+    default: TransportNodeHid,
     // eslint-disable-next-line global-require
   } = require("@ledgerhq/hw-transport-node-hid");
   registerTransportModule({
     id: "hid",
-    open: devicePath =>
+    open: (devicePath) =>
       retry(() => TransportNodeHid.open(devicePath), {
-        context: "open-hid"
+        context: "open-hid",
       }),
     discovery: Observable.create(TransportNodeHid.listen).pipe(
-      map(e => ({
+      map((e) => ({
         type: e.type,
         id: e.device.path,
-        name: e.device.deviceName || ""
+        name: e.device.deviceName || "",
       }))
     ),
-    disconnect: () => Promise.resolve()
+    disconnect: () => Promise.resolve(),
   });
 }
 

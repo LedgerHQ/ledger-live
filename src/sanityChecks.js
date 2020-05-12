@@ -12,7 +12,7 @@ export function checkLibs(
     React: typeof React,
     log: typeof log,
     Transport: typeof Transport,
-    connect: typeof connect
+    connect: typeof connect,
   }>
 ) {
   check(libs.NotEnoughBalance, NotEnoughBalance, "@ledgerhq/errors");

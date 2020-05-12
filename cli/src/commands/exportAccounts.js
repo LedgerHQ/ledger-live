@@ -16,40 +16,40 @@ export default {
       name: "out",
       alias: "o",
       type: Boolean,
-      desc: "output to console"
-    }
+      desc: "output to console",
+    },
   ],
   job: (
     opts: ScanCommonOpts &
       $Shape<{
-        out: boolean
+        out: boolean,
       }>
   ) =>
     scan(opts).pipe(
       reduce((accounts, account) => accounts.concat(account), []),
-      mergeMap(accounts => {
+      mergeMap((accounts) => {
         const data = encode({
           accounts,
           settings: {
             pairExchanges: {},
-            currenciesSettings: {}
+            currenciesSettings: {},
           },
           exporterName: "ledger-live-cli",
-          exporterVersion: "0.0.0"
+          exporterVersion: "0.0.0",
         });
         const frames = dataToFrames(data, 80, 4);
 
         if (opts.out) {
           return of(Buffer.from(JSON.stringify(frames)).toString("base64"));
         } else {
-          const qrObservables = frames.map(str =>
+          const qrObservables = frames.map((str) =>
             asQR(str).pipe(shareReplay())
           );
           return interval(300).pipe(
-            mergeMap(i => qrObservables[i % qrObservables.length])
+            mergeMap((i) => qrObservables[i % qrObservables.length])
           );
         }
       }),
       tap(() => console.clear()) // eslint-disable-line no-console
-    )
+    ),
 };

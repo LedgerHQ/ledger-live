@@ -37,7 +37,7 @@ const whitelist = [
   "tz1STeamwbp68THcny9zk3LsbG3H36DMvbRK",
   "tz1bLwpPfr3xqy1gWBF4sGvv8bLJyPHR11kx",
   "tz1TaLYBeGZD3yKVHQGBM857CcNnFFNceLYh",
-  "tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g"
+  "tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g",
 ];
 
 // we give no ordering preference. it's settled at module load time

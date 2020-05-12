@@ -7,7 +7,7 @@ import type {
   Account,
   Unit,
   SubAccount,
-  TokenCurrency
+  TokenCurrency,
 } from "../types";
 import { getEnv } from "../env";
 import { isAccountDelegating } from "../families/tezos/bakers";
@@ -77,7 +77,7 @@ export function clearAccount<T: AccountLike>(account: T): T {
     return {
       ...account,
       operations: [],
-      pendingOperations: []
+      pendingOperations: [],
     };
   }
 
@@ -85,7 +85,7 @@ export function clearAccount<T: AccountLike>(account: T): T {
     return {
       ...account,
       operations: [],
-      pendingOperations: []
+      pendingOperations: [],
     };
   }
 
@@ -93,31 +93,31 @@ export function clearAccount<T: AccountLike>(account: T): T {
     ...account,
     tronResources: account.tronResources && {
       ...account.tronResources,
-      cacheTransactionInfoById: {}
+      cacheTransactionInfoById: {},
     },
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],
     subAccounts: account.subAccounts && account.subAccounts.map(clearAccount),
-    balanceHistory: {}
+    balanceHistory: {},
   };
 }
 
 export function findSubAccountById(account: Account, id: string): ?SubAccount {
-  return (account.subAccounts || []).find(a => a.id === id);
+  return (account.subAccounts || []).find((a) => a.id === id);
 }
 
 // get the token accounts of an account, ignoring those that are zero IF user don't want them
 export function listSubAccounts(account: Account): SubAccount[] {
   const accounts = account.subAccounts || [];
   if (getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS")) {
-    return accounts.filter(a => !a.balance.isZero());
+    return accounts.filter((a) => !a.balance.isZero());
   }
   return accounts;
 }
 
 export type FlattenAccountsOptions = {
-  enforceHideEmptySubAccounts?: boolean
+  enforceHideEmptySubAccounts?: boolean,
 };
 
 export function flattenAccounts(
@@ -184,17 +184,17 @@ export const accountWithMandatoryTokens = (
   const { subAccounts } = account;
   if (!subAccounts) return account;
   const existingTokens = subAccounts
-    .map(a => a.type === "TokenAccount" && a.token)
+    .map((a) => a.type === "TokenAccount" && a.token)
     .filter(Boolean);
   const addition = tokenCurrencies
     .filter(
-      t =>
+      (t) =>
         // token of the same currency
         t.parentCurrency === account.currency &&
         // not yet in the sub accounts
         !existingTokens.includes(t)
     )
-    .map(token => ({
+    .map((token) => ({
       type: "TokenAccount",
       id: account.id + "+" + token.contractAddress,
       parentId: account.id,
@@ -204,14 +204,14 @@ export const accountWithMandatoryTokens = (
       creationDate: new Date(),
       operations: [],
       pendingOperations: [],
-      starred: false
+      starred: false,
     }));
 
   if (addition.length === 0) return account;
 
   return {
     ...account,
-    subAccounts: subAccounts.concat(addition)
+    subAccounts: subAccounts.concat(addition),
   };
 };
 
@@ -222,11 +222,11 @@ export const withoutToken = (account: Account, tokenId: string): Account => {
   const { subAccounts } = account;
   if (!subAccounts) return account;
   const tokenAccount = subAccounts.find(
-    a => a.type === "TokenAccount" && a.token.id === tokenId
+    (a) => a.type === "TokenAccount" && a.token.id === tokenId
   );
   if (!tokenAccount) return account;
   return {
     ...account,
-    subAccounts: subAccounts.filter(sa => sa.id !== tokenAccount.id)
+    subAccounts: subAccounts.filter((sa) => sa.id !== tokenAccount.id),
   };
 };

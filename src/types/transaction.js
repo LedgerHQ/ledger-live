@@ -12,14 +12,14 @@ export type SignedOperation = {|
   // sometimes a coin needs the raw object (it must be serializable)
   signatureRaw?: Object,
   // date calculated as expiring
-  expirationDate: ?Date
+  expirationDate: ?Date,
 |};
 
 export type SignedOperationRaw = {|
   operation: OperationRaw,
   signature: string,
   signatureRaw?: Object,
-  expirationDate: ?string
+  expirationDate: ?string,
 |};
 
 export type SignOperationEvent =
@@ -46,14 +46,14 @@ export type TransactionCommon = {|
   amount: BigNumber,
   recipient: string,
   useAllAmount?: boolean,
-  subAccountId?: ?string
+  subAccountId?: ?string,
 |};
 
 export type TransactionCommonRaw = {|
   amount: string,
   recipient: string,
   useAllAmount?: boolean,
-  subAccountId?: ?string
+  subAccountId?: ?string,
 |};
 
 // TransactionStatus is a view of Transaction with general info to be used on the UI and status info.
@@ -69,7 +69,7 @@ export type TransactionStatus = {|
   // total amount that the sender will spend (in account currency)
   totalSpent: BigNumber,
   // should the recipient be non editable
-  recipientIsReadOnly?: boolean
+  recipientIsReadOnly?: boolean,
 |};
 
 export type TransactionStatusRaw = {|
@@ -79,5 +79,5 @@ export type TransactionStatusRaw = {|
   amount: string,
   totalSpent: string,
   useAllAmount?: boolean,
-  recipientIsReadOnly?: boolean
+  recipientIsReadOnly?: boolean,
 |};

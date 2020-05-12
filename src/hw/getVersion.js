@@ -6,7 +6,7 @@ export type FirmwareInfo = {
   targetId: number,
   seVersion: string,
   flags: Buffer,
-  mcuVersion: string
+  mcuVersion: string,
 };
 
 /**
@@ -45,7 +45,7 @@ export default async function getVersion(
       targetId,
       seVersion: "0.0.0",
       flags: Buffer.allocUnsafeSlow(0),
-      mcuVersion: ""
+      mcuVersion: "",
     };
   }
 

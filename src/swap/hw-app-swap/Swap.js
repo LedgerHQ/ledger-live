@@ -21,7 +21,7 @@ export default class Swap {
     0x6a85,
     0x6e00,
     0x6d00,
-    0x9d1a
+    0x9d1a,
   ];
 
   constructor(transport: Transport<*>) {
@@ -159,7 +159,7 @@ export default class Swap {
       payoutCurrencyConfig,
       currencyConfigSignature,
       Buffer.from([addressParameters.length]),
-      addressParameters
+      addressParameters,
     ]);
     let result: Buffer = await this.transport.send(
       0xe0,
@@ -196,7 +196,7 @@ export default class Swap {
       refundCurrencyConfig,
       currencyConfigSignature,
       Buffer.from([addressParameters.length]),
-      addressParameters
+      addressParameters,
     ]);
     let result: Buffer = await this.transport.send(
       0xe0,

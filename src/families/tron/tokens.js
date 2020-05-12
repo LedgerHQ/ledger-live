@@ -13,7 +13,7 @@ const convertTokens = (type: TokenType) => ([
   contractAddress,
   precision,
   delisted,
-  ledgerSignature
+  ledgerSignature,
 ]): TokenCurrency => ({
   type: "TokenCurrency",
   id: `tron/${type}/${id}`,
@@ -29,14 +29,14 @@ const convertTokens = (type: TokenType) => ([
     {
       name,
       code: abbr,
-      magnitude: precision
-    }
-  ]
+      magnitude: precision,
+    },
+  ],
 });
 
 const converters = {
   trc10: convertTokens("trc10"),
-  trc20: convertTokens("trc20")
+  trc20: convertTokens("trc20"),
 };
 
 export function add(type: TokenType, list: any[]) {

@@ -8,7 +8,7 @@ export type AccountIdParams = {
   version: string,
   currencyId: string,
   xpubOrAddress: string,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 };
 
 function ensureNoColon(value: string, ctx: string): string {
@@ -25,7 +25,7 @@ export function encodeAccountId({
   version,
   currencyId,
   xpubOrAddress,
-  derivationMode
+  derivationMode,
 }: AccountIdParams) {
   return `${ensureNoColon(type, "type")}:${ensureNoColon(
     version,
@@ -46,7 +46,7 @@ export function decodeAccountId(accountId: string): AccountIdParams {
     version,
     currencyId,
     xpubOrAddress,
-    derivationMode: asDerivationMode(derivationMode)
+    derivationMode: asDerivationMode(derivationMode),
   };
 }
 
@@ -55,11 +55,11 @@ export function decodeAccountId(accountId: string): AccountIdParams {
 export function getWalletName({
   seedIdentifier,
   derivationMode,
-  currency
+  currency,
 }: {
   seedIdentifier: string,
   derivationMode: DerivationMode,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 }) {
   return `${seedIdentifier}_${currency.id}_${derivationMode}`;
 }

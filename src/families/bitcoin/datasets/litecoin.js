@@ -12,10 +12,10 @@ const networkInfo: NetworkInfoRaw = {
     items: [
       { key: "0", speed: "high", feePerByte: "100" },
       { key: "1", speed: "standard", feePerByte: "100" },
-      { key: "2", speed: "low", feePerByte: "100" }
+      { key: "2", speed: "low", feePerByte: "100" },
     ],
-    defaultFeePerByte: "39"
-  }
+    defaultFeePerByte: "39",
+  },
 };
 
 const dataset: CurrenciesData<Transaction> = {
@@ -32,15 +32,15 @@ const dataset: CurrenciesData<Transaction> = {
             useAllAmount: false,
             family: "bitcoin",
             feePerByte: "39",
-            networkInfo
+            networkInfo,
           }),
           expectedStatus: {
             errors: {},
             warnings: {},
             //  estimatedFees: BigNumber("5694"),
-            amount: BigNumber("200000")
+            amount: BigNumber("200000"),
             //  totalSpent: BigNumber("205694")
-          }
+          },
         },
         {
           name: "on segwit recipient",
@@ -50,15 +50,15 @@ const dataset: CurrenciesData<Transaction> = {
             useAllAmount: false,
             family: "bitcoin",
             feePerByte: "39",
-            networkInfo
+            networkInfo,
           }),
           expectedStatus: {
             errors: {},
             warnings: {},
             //  estimatedFees: BigNumber("5694"),
-            amount: BigNumber("147200")
+            amount: BigNumber("147200"),
             //  totalSpent: BigNumber("152894")
-          }
+          },
         },
         {
           name: "on nativ_segwit recipient",
@@ -68,16 +68,16 @@ const dataset: CurrenciesData<Transaction> = {
             useAllAmount: false,
             family: "bitcoin",
             feePerByte: "39",
-            networkInfo
+            networkInfo,
           }),
           expectedStatus: {
             errors: {},
             warnings: {},
             //  estimatedFees: BigNumber("5694"),
-            amount: BigNumber("205273")
+            amount: BigNumber("205273"),
             //  totalSpent: BigNumber("210967")
-          }
-        }
+          },
+        },
       ],
       raw: {
         id:
@@ -92,8 +92,8 @@ const dataset: CurrenciesData<Transaction> = {
         freshAddresses: [
           {
             address: "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
-            derivationPath: "84'/2'/0'/0/3"
-          }
+            derivationPath: "84'/2'/0'/0/3",
+          },
         ],
         blockHeight: 0,
         operations: [],
@@ -103,8 +103,8 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "2183515",
         xpub:
-          "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF"
-      }
+          "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF",
+      },
     },
     {
       raw: {
@@ -120,8 +120,8 @@ const dataset: CurrenciesData<Transaction> = {
         freshAddresses: [
           {
             address: "MKLFUqcvJkqqvF48BFTFLxDvJk43cqbhk1",
-            derivationPath: "49'/2'/2'/0/1"
-          }
+            derivationPath: "49'/2'/2'/0/1",
+          },
         ],
         blockHeight: 0,
         operations: [],
@@ -131,10 +131,10 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "0",
         xpub:
-          "Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr"
-      }
-    }
-  ]
+          "Ltub2Yz97oUCaVDo1Ak6FJ1Fvg2EscNzrWvLYxnXeY7rrArUPpdfgUAEWM49MrjVBNrdjwgFnMbqKGh8XkUdQFx3h8y1SDcak4vGSbqKM5PR8Rr",
+      },
+    },
+  ],
 };
 
 export default dataset;

@@ -23,10 +23,10 @@ export type Tx = {
   block?: {
     hash: string,
     height: number,
-    time: string
+    time: string,
   },
   confirmations: number,
-  status: number
+  status: number,
 };
 
 export type API = {
@@ -35,20 +35,20 @@ export type API = {
     blockHash: ?string
   ) => Promise<{
     truncated: boolean,
-    txs: Tx[]
+    txs: Tx[],
   }>,
   getCurrentBlock: () => Promise<Block>,
   getAccountNonce: (address: string) => Promise<number>,
   broadcastTransaction: (signedTransaction: string) => Promise<string>,
   getAccountBalance: (address: string) => Promise<BigNumber>,
-  estimateGasLimitForERC20: (address: string) => Promise<number>
+  estimateGasLimitForERC20: (address: string) => Promise<number>,
 };
 
 export const apiForCurrency = (currency: CryptoCurrency): API => {
   const baseURL = blockchainBaseURL(currency);
   if (!baseURL) {
     throw new LedgerAPINotAvailable(`LedgerAPINotAvailable ${currency.id}`, {
-      currencyName: currency.name
+      currencyName: currency.name,
     });
   }
   return {
@@ -60,20 +60,22 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           getCurrencyExplorer(currency).version === "v2"
             ? {
                 blockHash,
-                noToken: 1
+                noToken: 1,
               }
             : {
                 batch_size: 2000,
                 no_token: true,
                 block_hash: blockHash,
-                partial: true
-              }
+                partial: true,
+              },
       });
       // v3 have a bug that still includes the tx of the paginated block_hash, we're cleaning it up
       if (blockHash && getCurrencyExplorer(currency).version === "v3") {
         data = {
           ...data,
-          txs: data.txs.filter(tx => !tx.block || tx.block.hash !== blockHash)
+          txs: data.txs.filter(
+            (tx) => !tx.block || tx.block.hash !== blockHash
+          ),
         };
       }
       return data;
@@ -82,7 +84,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getCurrentBlock() {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/blocks/current`
+        url: `${baseURL}/blocks/current`,
       });
       return data;
     },
@@ -90,7 +92,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getAccountNonce(address) {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/addresses/${address}/nonce`
+        url: `${baseURL}/addresses/${address}/nonce`,
       });
       return data[0].nonce;
     },
@@ -100,7 +102,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
 
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/addresses/${address}/estimate-gas-limit`
+        url: `${baseURL}/addresses/${address}/estimate-gas-limit`,
       });
       return data.estimated_gas_limit;
     },
@@ -109,7 +111,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/transactions/send`,
-        data: { tx }
+        data: { tx },
       });
       return data.result;
     },
@@ -117,10 +119,10 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getAccountBalance(address) {
       const { data } = await network({
         method: "GET",
-        url: `${baseURL}/addresses/${address}/balance`
+        url: `${baseURL}/addresses/${address}/balance`,
       });
       // FIXME precision lost here. nothing we can do easily
       return BigNumber(data[0].balance);
-    }
+    },
   };
 };

@@ -6,7 +6,7 @@ import { getEstimatedFees } from "./Fees";
 export const speeds = {
   "1": "high",
   "3": "standard",
-  "6": "low"
+  "6": "low",
 };
 
 export const defaultBlockCount = 3;
@@ -28,7 +28,7 @@ export const getFeeItems = async (currency: CryptoCurrency): Promise<*> => {
         key,
         speed: speeds[blockCount],
         blockCount,
-        feePerByte
+        feePerByte,
       });
     }
   }

@@ -4,7 +4,7 @@ import type { BigNumber } from "bignumber.js";
 import type { Unit } from "../../types";
 import type {
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "../../types/transaction";
 import type { CoreAmount, CoreBigInt, Spec } from "../../libcore/types";
 
@@ -50,7 +50,7 @@ export type CoreStatics = {
   RippleLikeTransaction: Class<CoreRippleLikeTransaction>,
   RippleLikeAccount: Class<CoreRippleLikeAccount>,
   RippleLikeTransactionBuilder: Class<CoreRippleLikeTransactionBuilder>,
-  RippleLikeTransaction: Class<CoreRippleLikeTransaction>
+  RippleLikeTransaction: Class<CoreRippleLikeTransaction>,
 };
 
 export type {
@@ -58,15 +58,15 @@ export type {
   CoreRippleLikeAddress,
   CoreRippleLikeOperation,
   CoreRippleLikeTransaction,
-  CoreRippleLikeTransactionBuilder
+  CoreRippleLikeTransactionBuilder,
 };
 
 export type CoreAccountSpecifics = {
-  asRippleLikeAccount(): Promise<CoreRippleLikeAccount>
+  asRippleLikeAccount(): Promise<CoreRippleLikeAccount>,
 };
 
 export type CoreOperationSpecifics = {
-  asRippleLikeOperation(): Promise<CoreRippleLikeOperation>
+  asRippleLikeOperation(): Promise<CoreRippleLikeOperation>,
 };
 
 export type CoreCurrencySpecifics = {};
@@ -74,13 +74,13 @@ export type CoreCurrencySpecifics = {};
 export type NetworkInfo = {|
   family: "ripple",
   serverFee: BigNumber,
-  baseReserve: BigNumber
+  baseReserve: BigNumber,
 |};
 
 export type NetworkInfoRaw = {|
   family: "ripple",
   serverFee: string,
-  baseReserve: string
+  baseReserve: string,
 |};
 
 export type Transaction = {|
@@ -89,7 +89,7 @@ export type Transaction = {|
   fee: ?BigNumber,
   networkInfo: ?NetworkInfo,
   tag: ?number,
-  feeCustomUnit: ?Unit
+  feeCustomUnit: ?Unit,
 |};
 
 export type TransactionRaw = {|
@@ -98,22 +98,22 @@ export type TransactionRaw = {|
   fee: ?string,
   networkInfo: ?NetworkInfoRaw,
   tag: ?number,
-  feeCustomUnit: ?Unit
+  feeCustomUnit: ?Unit,
 |};
 
 export const reflect = (declare: (string, Spec) => void) => {
   declare("RippleLikeAddress", {
     methods: {
-      toBase58: {}
-    }
+      toBase58: {},
+    },
   });
 
   declare("RippleLikeOperation", {
     methods: {
       getTransaction: {
-        returns: "RippleLikeTransaction"
-      }
-    }
+        returns: "RippleLikeTransaction",
+      },
+    },
   });
 
   declare("RippleLikeTransaction", {
@@ -126,58 +126,58 @@ export const reflect = (declare: (string, Spec) => void) => {
       getSender: { returns: "RippleLikeAddress" },
       serialize: { returns: "hex" },
       setSignature: {
-        params: ["hex", "hex"]
+        params: ["hex", "hex"],
       },
       setDERSignature: {
-        params: ["hex"]
-      }
-    }
+        params: ["hex"],
+      },
+    },
   });
 
   declare("RippleLikeTransactionBuilder", {
     methods: {
       wipeToAddress: {},
       sendToAddress: {
-        params: ["Amount"]
+        params: ["Amount"],
       },
       setFees: {
-        params: ["Amount"]
+        params: ["Amount"],
       },
       setDestinationTag: {},
       build: {
-        returns: "RippleLikeTransaction"
-      }
-    }
+        returns: "RippleLikeTransaction",
+      },
+    },
   });
 
   declare("RippleLikeAccount", {
     methods: {
       buildTransaction: {
-        returns: "RippleLikeTransactionBuilder"
+        returns: "RippleLikeTransactionBuilder",
       },
       broadcastRawTransaction: {
-        params: ["hex"]
+        params: ["hex"],
       },
       getFees: {
-        returns: "Amount"
+        returns: "Amount",
       },
       getBaseReserve: {
-        returns: "Amount"
+        returns: "Amount",
       },
-      isAddressActivated: {}
-    }
+      isAddressActivated: {},
+    },
   });
 
   return {
     OperationMethods: {
       asRippleLikeOperation: {
-        returns: "RippleLikeOperation"
-      }
+        returns: "RippleLikeOperation",
+      },
     },
     AccountMethods: {
       asRippleLikeAccount: {
-        returns: "RippleLikeAccount"
-      }
-    }
+        returns: "RippleLikeAccount",
+      },
+    },
   };
 };

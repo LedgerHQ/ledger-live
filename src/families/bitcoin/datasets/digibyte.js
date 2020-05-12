@@ -12,10 +12,10 @@ const networkInfo: NetworkInfoRaw = {
     items: [
       { key: "0", speed: "high", feePerByte: "12" },
       { key: "1", speed: "standard", feePerByte: "8" },
-      { key: "2", speed: "low", feePerByte: "1" }
+      { key: "2", speed: "low", feePerByte: "1" },
     ],
-    defaultFeePerByte: "1"
-  }
+    defaultFeePerByte: "1",
+  },
 };
 
 const dataset: CurrenciesData<Transaction> = {
@@ -31,15 +31,15 @@ const dataset: CurrenciesData<Transaction> = {
             recipient: "DMtVdcKhnbntP1dSYYmSFNg8GK1T8aCwCb",
             amount: "500000000",
             feePerByte: "1",
-            networkInfo
+            networkInfo,
           }),
           expectedStatus: {
             amount: BigNumber("500000000"),
             //  totalSpent: BigNumber("500000146"),
             //  estimatedFees: BigNumber("146"),
             errors: {},
-            warnings: {}
-          }
+            warnings: {},
+          },
         },
         {
           name: "on segwit recipient",
@@ -48,15 +48,15 @@ const dataset: CurrenciesData<Transaction> = {
             recipient: "Sb4r6mx1WEZGzJvXZVqr17vYQ9yLhmjuSz",
             amount: "500000000",
             feePerByte: "1",
-            networkInfo
+            networkInfo,
           }),
           expectedStatus: {
             amount: BigNumber("500000000"),
             //  totalSpent: BigNumber("500000146"),
             //  estimatedFees: BigNumber("146"),
             errors: {},
-            warnings: {}
-          }
+            warnings: {},
+          },
         },
         {
           name: "on native_segwit recipient",
@@ -65,16 +65,16 @@ const dataset: CurrenciesData<Transaction> = {
             recipient: "dgb1q6c5jzgduyje29w9lsdwkd52dn3qxpcch87urdm",
             amount: "500000000",
             feePerByte: "1",
-            networkInfo
+            networkInfo,
           }),
           expectedStatus: {
             amount: BigNumber("500000000"),
             //  totalSpent: BigNumber("500000146"),
             //  estimatedFees: BigNumber("146"),
             errors: {},
-            warnings: {}
-          }
-        }
+            warnings: {},
+          },
+        },
       ],
       raw: {
         id:
@@ -89,8 +89,8 @@ const dataset: CurrenciesData<Transaction> = {
         freshAddresses: [
           {
             address: "dgb1qs45s7zq4gn6uygzrthyh067crzphvhwu33a8sl",
-            derivationPath: "84'/20'/0'/0/3"
-          }
+            derivationPath: "84'/20'/0'/0/3",
+          },
         ],
         blockHeight: 0,
         operations: [],
@@ -100,8 +100,8 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "2302647120",
         xpub:
-          "xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98"
-      }
+          "xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98",
+      },
     },
     {
       raw: {
@@ -117,8 +117,8 @@ const dataset: CurrenciesData<Transaction> = {
         freshAddresses: [
           {
             address: "SgsKPQg9CbXnon6LUeBwiwsWggQN5fUHno",
-            derivationPath: "49'/20'/2'/0/1"
-          }
+            derivationPath: "49'/20'/2'/0/1",
+          },
         ],
         blockHeight: 0,
         operations: [],
@@ -128,10 +128,10 @@ const dataset: CurrenciesData<Transaction> = {
         lastSyncDate: "",
         balance: "0",
         xpub:
-          "xpub6CsavyNsoieEiR5QNsHZ3VQt7UzRcnKcFNXkadn1kaxsysqa2L79m3iNw6bFyJ1Vz8xYNu9ivECVvFTxydqMp4C3njLGA5PFxBid81Jinkh"
-      }
-    }
-  ]
+          "xpub6CsavyNsoieEiR5QNsHZ3VQt7UzRcnKcFNXkadn1kaxsysqa2L79m3iNw6bFyJ1Vz8xYNu9ivECVvFTxydqMp4C3njLGA5PFxBid81Jinkh",
+      },
+    },
+  ],
 };
 
 export default dataset;

@@ -6,12 +6,12 @@ import type { DeviceTransactionField } from "../../transaction";
 
 function getDeviceTransactionConfig({
   transaction,
-  status
+  status,
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  status: TransactionStatus
+  status: TransactionStatus,
 }): Array<DeviceTransactionField> {
   const { amount, tag } = transaction;
   const { estimatedFees } = status;
@@ -21,14 +21,14 @@ function getDeviceTransactionConfig({
   if (!amount.isZero()) {
     fields.push({
       type: "amount",
-      label: "Amount"
+      label: "Amount",
     });
   }
 
   if (!estimatedFees.isZero()) {
     fields.push({
       type: "fees",
-      label: "Fees"
+      label: "Fees",
     });
   }
 
@@ -36,7 +36,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "text",
       label: "Tag",
-      value: tag ? String(tag) : ""
+      value: tag ? String(tag) : "",
     });
   }
 

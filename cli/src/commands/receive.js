@@ -15,26 +15,26 @@ export default {
     {
       name: "qr",
       type: Boolean,
-      desc: "also display a QR Code"
-    }
+      desc: "also display a QR Code",
+    },
   ],
   job: (opts: ScanCommonOpts & { qr: boolean }) =>
     scan(opts).pipe(
-      concatMap(account =>
+      concatMap((account) =>
         concat(
           of(account.freshAddress),
           opts.qr ? asQR(account.freshAddress) : empty(),
-          withDevice(opts.device || "")(t =>
+          withDevice(opts.device || "")((t) =>
             from(
               getAddress(t, {
                 currency: account.currency,
                 derivationMode: account.derivationMode,
                 path: account.freshAddressPath,
-                verify: true
+                verify: true,
               })
             )
           ).pipe(ignoreElements())
         )
       )
-    )
+    ),
 };

@@ -6,7 +6,7 @@ import "./implement-react-native-libcore";
 
 jest.setTimeout(180000);
 
-export const setup = testName => {
+export const setup = (testName) => {
   global._JEST_SETUP(testName);
 };
 

@@ -7,13 +7,13 @@ import {
   getActionPlan,
   predictOptimisticState,
   updateAllProgress,
-  getNextAppOp
+  getNextAppOp,
 } from "./logic";
 import { runAll, runOneAppOp } from "./runner";
 import {
   deviceInfo155,
   mockListAppsResult,
-  mockExecWithInstalledContext
+  mockExecWithInstalledContext,
 } from "./mock";
 import { prettyActionPlan, prettyInstalled } from "./formatting";
 import { setEnv } from "../env";
@@ -29,9 +29,9 @@ const scenarios = [
       {
         dispatch: { type: "wipe" },
         expectPlan: "-Litecoin, -Bitcoin, -XRP, -Ethereum Classic, -Ethereum",
-        expectInstalled: ""
-      }
-    ]
+        expectInstalled: "",
+      },
+    ],
   },
 
   {
@@ -42,14 +42,14 @@ const scenarios = [
       {
         dispatch: { type: "install", name: "Dogecoin" },
         expectPlan: "+Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin"
+        expectInstalled: "Bitcoin, Dogecoin",
       },
       {
         dispatch: { type: "install", name: "Litecoin" },
         expectPlan: "+Litecoin",
-        expectInstalled: "Bitcoin, Dogecoin, Litecoin"
-      }
-    ]
+        expectInstalled: "Bitcoin, Dogecoin, Litecoin",
+      },
+    ],
   },
 
   {
@@ -60,14 +60,14 @@ const scenarios = [
       {
         dispatch: { type: "install", name: "XRP" },
         expectPlan: "+XRP",
-        expectInstalled: "XRP"
+        expectInstalled: "XRP",
       },
       {
         dispatch: { type: "uninstall", name: "XRP" },
         expectPlan: "-XRP",
-        expectInstalled: ""
-      }
-    ]
+        expectInstalled: "",
+      },
+    ],
   },
 
   {
@@ -78,14 +78,14 @@ const scenarios = [
       {
         dispatch: { type: "install", name: "Dogecoin" },
         expectPlan: "+Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin"
+        expectInstalled: "Bitcoin, Dogecoin",
       },
       {
         dispatch: { type: "install", name: "Litecoin" },
         expectPlan: "+Litecoin",
-        expectInstalled: "Bitcoin, Dogecoin, Litecoin"
-      }
-    ]
+        expectInstalled: "Bitcoin, Dogecoin, Litecoin",
+      },
+    ],
   },
 
   {
@@ -96,9 +96,9 @@ const scenarios = [
       {
         dispatch: { type: "uninstall", name: "Bitcoin" },
         expectPlan: "-Litecoin, -Dogecoin, -Bitcoin",
-        expectInstalled: ""
-      }
-    ]
+        expectInstalled: "",
+      },
+    ],
   },
 
   {
@@ -109,9 +109,9 @@ const scenarios = [
       {
         dispatch: { type: "install", name: "Bitcoin" },
         expectPlan: "",
-        expectInstalled: "Bitcoin"
-      }
-    ]
+        expectInstalled: "Bitcoin",
+      },
+    ],
   },
 
   {
@@ -122,9 +122,9 @@ const scenarios = [
       {
         dispatch: { type: "uninstall", name: "Bitcoin" },
         expectPlan: "",
-        expectInstalled: ""
-      }
-    ]
+        expectInstalled: "",
+      },
+    ],
   },
 
   {
@@ -135,9 +135,9 @@ const scenarios = [
       {
         dispatch: { type: "install", name: "Bitcoin" },
         expectPlan: "-Bitcoin, +Bitcoin",
-        expectInstalled: "Bitcoin"
-      }
-    ]
+        expectInstalled: "Bitcoin",
+      },
+    ],
   },
 
   {
@@ -148,9 +148,9 @@ const scenarios = [
       {
         dispatch: { type: "install", name: "Dogecoin" },
         expectPlan: "-Dogecoin, -Bitcoin, +Bitcoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Dogecoin"
-      }
-    ]
+        expectInstalled: "Bitcoin, Dogecoin",
+      },
+    ],
   },
 
   {
@@ -161,9 +161,9 @@ const scenarios = [
       {
         dispatch: { type: "install", name: "Dogecoin" },
         expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin, +Dogecoin",
-        expectInstalled: "Bitcoin, Litecoin, Dogecoin"
-      }
-    ]
+        expectInstalled: "Bitcoin, Litecoin, Dogecoin",
+      },
+    ],
   },
 
   {
@@ -174,9 +174,9 @@ const scenarios = [
       {
         dispatch: { type: "updateAll" },
         expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin",
-        expectInstalled: "Ethereum, Bitcoin, Litecoin"
-      }
-    ]
+        expectInstalled: "Ethereum, Bitcoin, Litecoin",
+      },
+    ],
   },
 
   {
@@ -187,9 +187,9 @@ const scenarios = [
       {
         dispatch: { type: "updateAll" },
         expectPlan: "-Litecoin, -Bitcoin, +Bitcoin, +Litecoin",
-        expectInstalled: "Ethereum, Unknown, Bitcoin, Litecoin"
-      }
-    ]
+        expectInstalled: "Ethereum, Unknown, Bitcoin, Litecoin",
+      },
+    ],
   },
 
   {
@@ -200,12 +200,12 @@ const scenarios = [
       {
         dispatch: [
           { type: "install", name: "Bitcoin" },
-          { type: "uninstall", name: "Bitcoin" }
+          { type: "uninstall", name: "Bitcoin" },
         ],
         expectPlan: "",
-        expectInstalled: ""
-      }
-    ]
+        expectInstalled: "",
+      },
+    ],
   },
 
   {
@@ -218,14 +218,14 @@ const scenarios = [
           { type: "install", name: "XRP" },
           { type: "install", name: "Ethereum Classic" },
           { type: "install", name: "Dogecoin" },
-          { type: "install", name: "Zcash" }
+          { type: "install", name: "Zcash" },
         ],
         expectPlan:
           "+XRP, +Ethereum, +Ethereum Classic, +Bitcoin, +Dogecoin, +Zcash",
         expectInstalled:
-          "XRP, Ethereum, Ethereum Classic, Bitcoin, Dogecoin, Zcash"
-      }
-    ]
+          "XRP, Ethereum, Ethereum Classic, Bitcoin, Dogecoin, Zcash",
+      },
+    ],
   },
 
   {
@@ -238,17 +238,17 @@ const scenarios = [
           { type: "uninstall", name: "XRP" },
           { type: "uninstall", name: "Ethereum" },
           { type: "uninstall", name: "Dogecoin" },
-          { type: "uninstall", name: "Bitcoin" }
+          { type: "uninstall", name: "Bitcoin" },
         ],
         expectPlan:
           "-XRP, -Ethereum Classic, -Ethereum, -Dogecoin, -Zcash, -Bitcoin",
-        expectInstalled: ""
-      }
-    ]
-  }
+        expectInstalled: "",
+      },
+    ],
+  },
 ];
 
-scenarios.forEach(scenario => {
+scenarios.forEach((scenario) => {
   test("Scenario: " + scenario.name, async () => {
     let state = initState(
       mockListAppsResult(scenario.apps, scenario.installed, deviceInfo155)
@@ -271,7 +271,7 @@ scenarios.forEach(scenario => {
       const d: any = distribute(state);
       d.apps = d.apps.map(({ currency, ...rest }) => ({
         ...rest,
-        currencyId: currency && currency.id
+        currencyId: currency && currency.id,
       }));
       expect(d).toMatchSnapshot();
     }

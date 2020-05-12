@@ -5,14 +5,14 @@ import { flattenOperationWithInternals } from "../operation";
 
 export type DailyOperationsSection = {
   day: Date,
-  data: Operation[]
+  data: Operation[],
 };
 
 export type DailyOperations = {
   // operations grouped by day
   sections: DailyOperationsSection[],
   // Is the sections complete? means there is no more operations to pull
-  completed: boolean
+  completed: boolean,
 };
 
 function startOfDay(t) {
@@ -23,11 +23,11 @@ const emptyDailyOperations = { sections: [], completed: true };
 
 type GroupOpsByDayOpts = {
   count: number,
-  withSubAccounts?: boolean
+  withSubAccounts?: boolean,
 };
 
 const hasStableOperation = (account, hash) =>
-  account.operations.some(op => op.hash === hash);
+  account.operations.some((op) => op.hash === hash);
 
 /**
  * @memberof account
@@ -106,7 +106,7 @@ export function groupAccountsOperationsByDay(
   }
   return {
     sections,
-    completed: !next
+    completed: !next,
   };
 }
 

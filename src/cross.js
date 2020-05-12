@@ -7,7 +7,7 @@ import type { Account, CryptoCurrencyIds } from "./types";
 import {
   runDerivationScheme,
   getDerivationScheme,
-  asDerivationMode
+  asDerivationMode,
 } from "./derivation";
 import { decodeAccountId } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
@@ -20,23 +20,23 @@ export type AccountData = {
   derivationMode: string, // we are unsafe at this stage, validation is done later
   name: string,
   index: number,
-  balance: string
+  balance: string,
 };
 
 export type CryptoSettings = {
-  confirmationsNb?: number
+  confirmationsNb?: number,
 };
 
 export type Settings = {
   counterValue?: string,
   currenciesSettings: {
-    [_: CryptoCurrencyIds]: CryptoSettings
+    [_: CryptoCurrencyIds]: CryptoSettings,
   },
   pairExchanges: {
-    [_: string]: string
+    [_: string]: string,
   },
   developerModeEnabled?: boolean,
-  blacklistedTokenIds?: string[]
+  blacklistedTokenIds?: string[],
 };
 
 export type DataIn = {
@@ -47,25 +47,25 @@ export type DataIn = {
   // the name of the exporter. e.g. "desktop" for the desktop app
   exporterName: string,
   // the version of the exporter. e.g. the desktop app version
-  exporterVersion: string
+  exporterVersion: string,
 };
 
 type Meta = {
   exporterName: string,
-  exporterVersion: string
+  exporterVersion: string,
 };
 
 export type Result = {
   accounts: AccountData[],
   settings: Settings,
-  meta: Meta
+  meta: Meta,
 };
 
 export function encode({
   accounts,
   settings,
   exporterName,
-  exporterVersion
+  exporterVersion,
 }: DataIn): string {
   return Buffer.from(
     compressjs.Bzip2.compressFile(
@@ -73,7 +73,7 @@ export function encode({
         JSON.stringify({
           meta: { exporterName, exporterVersion },
           accounts: accounts.map(accountToAccountData),
-          settings
+          settings,
         })
       )
     )
@@ -93,7 +93,7 @@ const asResultMeta = (unsafe: mixed): Meta => {
   }
   return {
     exporterName,
-    exporterVersion
+    exporterVersion,
   };
 };
 
@@ -109,7 +109,7 @@ const asResultAccount = (unsafe: mixed): AccountData => {
     derivationMode,
     name,
     index,
-    balance
+    balance,
   } = unsafe;
   if (typeof id !== "string") {
     throw new Error("invalid account.id");
@@ -139,7 +139,7 @@ const asResultAccount = (unsafe: mixed): AccountData => {
     derivationMode,
     name,
     index,
-    balance
+    balance,
   };
   if (typeof freshAddress === "string" && freshAddress) {
     o.freshAddress = freshAddress;
@@ -174,11 +174,11 @@ const asResultSettings = (unsafe: mixed): Settings => {
     currenciesSettings,
     pairExchanges,
     developerModeEnabled,
-    blacklistedTokenIds
+    blacklistedTokenIds,
   } = unsafe;
 
   const currenciesSettingsSafe: {
-    [_: CryptoCurrencyIds]: CryptoSettings
+    [_: CryptoCurrencyIds]: CryptoSettings,
   } = {};
   if (currenciesSettings && typeof currenciesSettings === "object") {
     for (let k in currenciesSettings) {
@@ -186,7 +186,7 @@ const asResultSettings = (unsafe: mixed): Settings => {
     }
   }
   const pairExchangesSafe: {
-    [_: string]: string
+    [_: string]: string,
   } = {};
   if (pairExchanges && typeof pairExchanges === "object") {
     for (let k in pairExchanges) {
@@ -199,7 +199,7 @@ const asResultSettings = (unsafe: mixed): Settings => {
 
   const res: Settings = {
     currenciesSettings: currenciesSettingsSafe,
-    pairExchanges: pairExchangesSafe
+    pairExchanges: pairExchangesSafe,
   };
   if (counterValue && typeof counterValue === "string") {
     res.counterValue = counterValue;
@@ -232,7 +232,7 @@ export function decode(bytes: string): Result {
   return {
     meta: asResultMeta(unsafe.meta),
     accounts: asResultAccounts(unsafe.accounts),
-    settings: asResultSettings(unsafe.settings)
+    settings: asResultSettings(unsafe.settings),
   };
 }
 
@@ -244,7 +244,7 @@ export function accountToAccountData({
   freshAddress,
   currency,
   index,
-  balance
+  balance,
 }: Account): AccountData {
   return {
     id,
@@ -254,7 +254,7 @@ export function accountToAccountData({
     freshAddress,
     currencyId: currency.id,
     index,
-    balance: balance.toString()
+    balance: balance.toString(),
   };
 }
 
@@ -269,7 +269,7 @@ export const accountDataToAccount = ({
   index,
   balance,
   derivationMode: derivationModeStr,
-  seedIdentifier
+  seedIdentifier,
 }: AccountData): Account => {
   const { type, xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
   const derivationMode = asDerivationMode(derivationModeStr);
@@ -316,7 +316,7 @@ export const accountDataToAccount = ({
     pendingOperations: [],
     unit: currency.units[0],
     lastSyncDate: new Date(0),
-    creationDate: new Date()
+    creationDate: new Date(),
   };
   return account;
 };

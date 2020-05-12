@@ -6,7 +6,7 @@ import { useMemo } from "react";
 
 export type SortOptions = {
   type: "name" | "marketcap" | "default",
-  order: "asc" | "desc"
+  order: "asc" | "desc",
 };
 
 export type AppType =
@@ -21,11 +21,11 @@ export type FilterOptions = {
   query?: string,
   installQueue?: string[],
   installedApps: InstalledItem[],
-  type: AppType[]
+  type: AppType[],
 };
 
 type UpdateAwareInstalledApps = {
-  [string]: boolean // NB [AppName]: isUpdated
+  [string]: boolean, // NB [AppName]: isUpdated
 };
 
 const searchFilter = (query?: string) => ({ name, currencyId }) => {
@@ -41,8 +41,8 @@ const typeFilter = (
   filters: AppType[] = ["all"],
   updateAwareInstalledApps: UpdateAwareInstalledApps,
   installQueue: string[] = []
-) => app =>
-  filters.every(filter => {
+) => (app) =>
+  filters.every((filter) => {
     switch (filter) {
       case "installed":
         return (
@@ -116,7 +116,7 @@ export const useSortedFilteredApps = (
     query,
     installedApps,
     type: filterType,
-    installQueue
+    installQueue,
   } = _filterOptions;
   const { type: sortType, order } = _sortOptions;
 

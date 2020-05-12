@@ -21,7 +21,7 @@ export async function ethereumBuildTransaction({
   coreAccount,
   coreCurrency,
   transaction,
-  isCancelled
+  isCancelled,
 }: {
   account: Account,
   core: Core,
@@ -29,18 +29,18 @@ export async function ethereumBuildTransaction({
   coreCurrency: CoreCurrency,
   transaction: Transaction,
   isPartial: boolean,
-  isCancelled: () => boolean
+  isCancelled: () => boolean,
 }): Promise<?CoreEthereumLikeTransaction> {
   const { subAccountId, gasPrice } = transaction;
   const subAccount = subAccountId
     ? account.subAccounts &&
-      account.subAccounts.find(t => t.id === subAccountId)
+      account.subAccounts.find((t) => t.id === subAccountId)
     : null;
   const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
 
   await isValidRecipient({
     currency: account.currency,
-    recipient: transaction.recipient
+    recipient: transaction.recipient,
   });
 
   const recipient = eip55.encode(transaction.recipient);
@@ -80,7 +80,7 @@ export async function ethereumBuildTransaction({
     }
     const to256 = Buffer.concat([
       Buffer.alloc(12),
-      Buffer.from(recipient.replace("0x", ""), "hex")
+      Buffer.from(recipient.replace("0x", ""), "hex"),
     ]);
     invariant(to256.length === 32, "recipient is invalid");
     const amountHex = amount.toString(16);
@@ -90,7 +90,7 @@ export async function ethereumBuildTransaction({
     );
     const amount256 = Buffer.concat([
       Buffer.alloc(32 - amountBuf.length),
-      amountBuf
+      amountBuf,
     ]);
     const data = Buffer.concat([ethereumTransferMethodID, to256, amount256]);
 

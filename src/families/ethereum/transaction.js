@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 import {
   fromTransactionCommonRaw,
-  toTransactionCommonRaw
+  toTransactionCommonRaw,
 } from "../../transaction/common";
 
 const defaultGasLimit = BigNumber(0x5208);
@@ -25,8 +25,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     feeCustomUnit: tr.feeCustomUnit, // FIXME this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: BigNumber(networkInfo.gasPrice)
-    }
+      gasPrice: BigNumber(networkInfo.gasPrice),
+    },
   };
 };
 
@@ -44,8 +44,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     feeCustomUnit: t.feeCustomUnit, // FIXME this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: networkInfo.gasPrice.toString()
-    }
+      gasPrice: networkInfo.gasPrice.toString(),
+    },
   };
 };
 

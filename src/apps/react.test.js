@@ -7,7 +7,7 @@ import {
   useAppInstallNeedsDeps,
   useAppInstallProgress,
   useAppsSections,
-  useAppUninstallNeedsDeps
+  useAppUninstallNeedsDeps,
 } from "./react";
 import { useNotEnoughMemoryToInstall } from "./react";
 
@@ -67,7 +67,7 @@ test("Apps hooks - useAppInstallProgress - Current app", () => {
       {
         ...mockedState,
         currentProgressSubject,
-        currentAppOp: { type: "install", name: "XRP" }
+        currentAppOp: { type: "install", name: "XRP" },
       },
       "XRP"
     )
@@ -113,7 +113,7 @@ test("Apps hooks - useAppsSections - Correct number of updatable apps", () => {
     useAppsSections(mockedState, {
       query: "",
       appFilter: "all",
-      sort: { type: "name", order: "desc" }
+      sort: { type: "name", order: "desc" },
     })
   );
   expect(result.current.update.length).toBe(1);
@@ -124,7 +124,7 @@ test("Apps hooks - useAppsSections - Correct number of installed apps", () => {
     useAppsSections(mockedState, {
       query: "",
       appFilter: "all",
-      sort: { type: "name", order: "desc" }
+      sort: { type: "name", order: "desc" },
     })
   );
   expect(result.current.device.length).toBe(3);
@@ -135,7 +135,7 @@ test("Apps hooks - useAppsSections - Correct number of catalog apps", () => {
     useAppsSections(mockedState, {
       query: "",
       appFilter: "all",
-      sort: { type: "name", order: "desc" }
+      sort: { type: "name", order: "desc" },
     })
   );
   expect(result.current.catalog.length).toBe(7);
@@ -146,7 +146,7 @@ test("Apps hooks - useAppsSections - Correct number of catalog apps with query",
     useAppsSections(mockedState, {
       query: "coin",
       appFilter: "all",
-      sort: { type: "name", order: "desc" }
+      sort: { type: "name", order: "desc" },
     })
   );
   expect(result.current.catalog.length).toBe(4);
@@ -157,7 +157,7 @@ test("Apps hooks - useAppsSections - Correct number of installed apps with query
     useAppsSections(mockedState, {
       query: "coin",
       appFilter: "all",
-      sort: { type: "name", order: "desc" }
+      sort: { type: "name", order: "desc" },
     })
   );
   expect(result.current.device.length).toBe(1);

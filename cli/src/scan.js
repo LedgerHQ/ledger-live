@@ -9,18 +9,18 @@ import {
   mergeMap,
   map,
   filter,
-  concatMap
+  concatMap,
 } from "rxjs/operators";
 import type { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import {
   fromAccountRaw,
-  encodeAccountId
+  encodeAccountId,
 } from "@ledgerhq/live-common/lib/account";
 import { asDerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import {
   getAccountBridge,
-  getCurrencyBridge
+  getCurrencyBridge,
 } from "@ledgerhq/live-common/lib/bridge";
 import { findCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
@@ -34,7 +34,7 @@ export const deviceOpt = {
   name: "device",
   type: String,
   descOpt: "usb path",
-  desc: "provide a specific HID path of a device"
+  desc: "provide a specific HID path of a device",
 };
 
 export const currencyOpt = {
@@ -42,7 +42,7 @@ export const currencyOpt = {
   alias: "c",
   type: String,
   desc:
-    "Currency name or ticker. If not provided, it will be inferred from the device."
+    "Currency name or ticker. If not provided, it will be inferred from the device.",
 };
 
 export type ScanCommonOpts = $Shape<{
@@ -54,7 +54,7 @@ export type ScanCommonOpts = $Shape<{
   scheme: string,
   index: number,
   length: number,
-  paginateOperations: number
+  paginateOperations: number,
 }>;
 
 export const scanCommonOpts = [
@@ -63,19 +63,20 @@ export const scanCommonOpts = [
     name: "xpub",
     type: String,
     desc: "use an xpub (alternatively to --device)",
-    multiple: true
+    multiple: true,
   },
   {
     name: "file",
     type: String,
     typeDesc: "filename",
-    desc: "use a JSON account file or '-' for stdin (alternatively to --device)"
+    desc:
+      "use a JSON account file or '-' for stdin (alternatively to --device)",
   },
   {
     name: "appjsonFile",
     type: String,
     typeDesc: "filename",
-    desc: "use a desktop app.json (alternatively to --device)"
+    desc: "use a desktop app.json (alternatively to --device)",
   },
   currencyOpt,
   {
@@ -83,30 +84,30 @@ export const scanCommonOpts = [
     alias: "s",
     type: String,
     desc:
-      "if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme."
+      "if provided, filter the derivation path that are scanned by a given sceme. Providing '' empty string will only use the default standard derivation scheme.",
   },
   {
     name: "index",
     alias: "i",
     type: Number,
-    desc: "select the account by index"
+    desc: "select the account by index",
   },
   {
     name: "length",
     alias: "l",
     type: Number,
     desc:
-      "set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise."
+      "set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.",
   },
   {
     name: "paginateOperations",
     type: Number,
-    desc: "if defined, will paginate operations"
-  }
+    desc: "if defined, will paginate operations",
+  },
 ];
 
 export const getCurrencyByKeyword = (keyword: string): CryptoCurrency => {
-  const r = findCryptoCurrency(c => {
+  const r = findCryptoCurrency((c) => {
     const search = keyword.replace(/ /, "").toLowerCase();
     return (
       c.id === search ||
@@ -133,7 +134,7 @@ export const inferManagerApp = (keyword: string): string => {
 };
 
 const implTypePerFamily = {
-  tron: "js"
+  tron: "js",
 };
 
 export const inferCurrency = <
@@ -141,13 +142,13 @@ export const inferCurrency = <
     device: string,
     currency: string,
     file: string,
-    xpub: string[]
+    xpub: string[],
   }
 >({
   device,
   currency,
   file,
-  xpub
+  xpub,
 }: $Shape<T>) => {
   if (currency) {
     return defer(() => of(getCurrencyByKeyword(currency)));
@@ -155,14 +156,14 @@ export const inferCurrency = <
   if (file || xpub) {
     return of(undefined);
   }
-  return withDevice(device || "")(t =>
+  return withDevice(device || "")((t) =>
     from(
       getAppAndVersion(t)
         .then(
-          r => getCurrencyByKeyword(r.name),
+          (r) => getCurrencyByKeyword(r.name),
           () => undefined
         )
-        .then(r => delay(500).then(() => r))
+        .then((r) => delay(500).then(() => r))
     )
   );
 };
@@ -176,7 +177,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
     scheme,
     index,
     length,
-    paginateOperations
+    paginateOperations,
   } = arg;
 
   const syncConfig = { paginationConfig: {} };
@@ -196,7 +197,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
       );
     }
     return from(
-      appjsondata.data.accounts.map(a => fromAccountRaw(a.data))
+      appjsondata.data.accounts.map((a) => fromAccountRaw(a.data))
     ).pipe(
       skip(index || 0),
       take(length === undefined ? (index !== undefined ? 1 : Infinity) : length)
@@ -206,7 +207,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
   if (typeof file === "string") {
     return jsonFromFile(file).pipe(
       map(fromAccountRaw),
-      concatMap(account =>
+      concatMap((account) =>
         getAccountBridge(account, null)
           .sync(account, syncConfig)
           .pipe(reduce((a, f) => f(a), account))
@@ -215,13 +216,13 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
   }
 
   return inferCurrency(arg).pipe(
-    mergeMap(cur => {
+    mergeMap((cur) => {
       if (!cur) throw new Error("--currency is required");
 
       if (xpubArray) {
         const derivationMode = scheme || "";
         return from(
-          xpubArray.map(xpub => {
+          xpubArray.map((xpub) => {
             const account: $Exact<Account> = {
               type: "Account",
               name:
@@ -241,7 +242,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
                 version: "1",
                 currencyId: cur.id,
                 xpubOrAddress: xpub,
-                derivationMode: asDerivationMode(derivationMode || "")
+                derivationMode: asDerivationMode(derivationMode || ""),
               }),
               derivationMode: asDerivationMode(derivationMode),
               currency: cur,
@@ -257,12 +258,12 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               spendableBalance: new BigNumber(0),
               operationsCount: 0,
               operations: [],
-              pendingOperations: []
+              pendingOperations: [],
             };
             return account;
           })
         ).pipe(
-          concatMap(account =>
+          concatMap((account) =>
             getAccountBridge(account, null)
               .sync(account, syncConfig)
               .pipe(reduce((a: Account, f: *) => f(a), account))
@@ -274,11 +275,11 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
           currency: cur,
           deviceId: device || "",
           scheme: scheme && asDerivationMode(scheme),
-          syncConfig
+          syncConfig,
         })
         .pipe(
-          filter(e => e.type === "discovered"),
-          map(e => e.account)
+          filter((e) => e.type === "discovered"),
+          map((e) => e.account)
         );
     }),
     skip(index || 0),

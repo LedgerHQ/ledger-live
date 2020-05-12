@@ -11,7 +11,7 @@ import {
   NotSupportedLegacyAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecommendSubAccountsToEmpty,
-  RecommendUndelegation
+  RecommendUndelegation,
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
@@ -31,7 +31,7 @@ import {
   fetchAllBakers,
   hydrateBakers,
   asBaker,
-  isAccountDelegating
+  isAccountDelegating,
 } from "../bakers";
 import { getEnv } from "../../../env";
 
@@ -41,7 +41,7 @@ type EstimateGasLimitAndStorage = (
 ) => Promise<{ gasLimit: BigNumber, storage: BigNumber }>;
 export const estimateGasLimitAndStorage: EstimateGasLimitAndStorage = makeLRUCache(
   (account, addr) =>
-    withLibcore(async core => {
+    withLibcore(async (core) => {
       const { coreAccount } = await getCoreAccount(core, account);
       const tezosLikeAccount = await coreAccount.asTezosLikeAccount();
       const gasLimit = await libcoreBigIntToBigNumber(
@@ -64,7 +64,7 @@ const calculateFees = makeLRUCache(
   async (a, t) => {
     return getFeesForTransaction({
       account: a,
-      transaction: t
+      transaction: t,
     });
   },
   (a, t) =>
@@ -84,7 +84,7 @@ const createTransaction = () => ({
   storageLimit: null,
   recipient: "",
   networkInfo: null,
-  useAllAmount: false
+  useAllAmount: false,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -94,7 +94,7 @@ const getTransactionStatus = async (a, t) => {
   const warnings = {};
   const subAcc = !t.subAccountId
     ? null
-    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
+    : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
 
   invariant(
     t.mode === "send" || !subAcc,
@@ -137,11 +137,11 @@ const getTransactionStatus = async (a, t) => {
     errors.fees = new FeeNotLoaded();
   } else if (!errors.recipient) {
     await calculateFees(a, t).then(
-      res => {
+      (res) => {
         estimatedFees = res.estimatedFees;
         amount = res.value;
       },
-      error => {
+      (error) => {
         if (error.name === "NotEnoughBalance") {
           errors.amount = error;
         } else {
@@ -201,7 +201,7 @@ const getTransactionStatus = async (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
@@ -244,7 +244,7 @@ const prepareTransaction = async (a, t) => {
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
-  transaction
+  transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
@@ -253,7 +253,7 @@ const estimateMaxSpendable = async ({
     // this seed is empty (worse case scenario is to send to new). addr from: 1. eyebrow 2. odor 3. rice 4. attack 5. loyal 6. tray 7. letter 8. harbor 9. resemble 10. sphere 11. system 12. forward 13. onion 14. buffalo 15. crumble
     recipient: "tz1VJitLYB31fEC82efFkLRU4AQUH9QgH3q6",
     ...transaction,
-    useAllAmount: true
+    useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;
@@ -274,7 +274,7 @@ const hydrate = (data: mixed) => {
 const currencyBridge: CurrencyBridge = {
   preload,
   hydrate,
-  scanAccounts
+  scanAccounts,
 };
 
 const accountBridge: AccountBridge<Transaction> = {
@@ -285,7 +285,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 export default { currencyBridge, accountBridge };

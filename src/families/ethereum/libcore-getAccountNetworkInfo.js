@@ -6,7 +6,7 @@ import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 
 type Input = {
   coreAccount: CoreAccount,
-  account: Account
+  account: Account,
 };
 
 type Output = Promise<NetworkInfo>;
@@ -17,7 +17,7 @@ async function ethereum({ coreAccount }: Input): Output {
   const gasPrice = await libcoreBigIntToBigNumber(bigInt);
   return {
     family: "ethereum",
-    gasPrice
+    gasPrice,
   };
 }
 

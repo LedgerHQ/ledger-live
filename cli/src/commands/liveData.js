@@ -15,25 +15,25 @@ export default {
       name: "appjson",
       type: String,
       typeDesc: "filename",
-      desc: "path to a live desktop app.json"
+      desc: "path to a live desktop app.json",
     },
     {
       name: "add",
       alias: "a",
       type: Boolean,
-      desc: "add accounts to live data"
-    }
+      desc: "add accounts to live data",
+    },
   ],
   job: (
     opts: ScanCommonOpts &
       $Shape<{
         appjson: string,
-        add: boolean
+        add: boolean,
       }>
   ) =>
     scan(opts).pipe(
       reduce((accounts, account) => accounts.concat(account), []),
-      mergeMap(accounts => {
+      mergeMap((accounts) => {
         const appjsondata = opts.appjson
           ? JSON.parse(fs.readFileSync(opts.appjson, "utf-8"))
           : { data: { accounts: [] } };
@@ -42,12 +42,12 @@ export default {
             new Error("encrypted ledger live data is not supported")
           );
         }
-        const existingIds = appjsondata.data.accounts.map(a => a.data.id);
+        const existingIds = appjsondata.data.accounts.map((a) => a.data.id);
         const append = accounts
-          .filter(a => !existingIds.includes(a.id))
-          .map(account => ({
+          .filter((a) => !existingIds.includes(a.id))
+          .map((account) => ({
             data: toAccountRaw(account),
-            version: 1
+            version: 1,
           }));
         appjsondata.data.accounts = appjsondata.data.accounts.concat(append);
         if (opts.appjson) {
@@ -57,5 +57,5 @@ export default {
           return of(JSON.stringify(appjsondata));
         }
       })
-    )
+    ),
 };

@@ -6,7 +6,7 @@ import {
   getNextRewardDate,
   formatVotes,
   useSortedSr,
-  getUnfreezeData
+  getUnfreezeData,
 } from "./react";
 
 import {
@@ -14,7 +14,7 @@ import {
   __LAST_VOTING_DATE__,
   mockAccount,
   mockAccountNoReward,
-  mockAccountNoVote
+  mockAccountNoVote,
 } from "./data.mock";
 
 jest.mock("../../api/Tron");
@@ -54,7 +54,7 @@ const __FORMATTED_VOTES__ = superRepresentatives
     voteCount: 100,
     validator,
     rank: i + 1,
-    isSR: true
+    isSR: true,
   }));
 
 test("Tron format votes - formatVotes - Expect to get formatted votes", () => {
@@ -73,12 +73,12 @@ const VOTE_AMOUNT_2 = 50;
 const votes = [
   {
     address: superRepresentatives[SR_INDEX_1].address,
-    voteCount: VOTE_AMOUNT_1
+    voteCount: VOTE_AMOUNT_1,
   },
   {
     address: superRepresentatives[SR_INDEX_2].address,
-    voteCount: VOTE_AMOUNT_2
-  }
+    voteCount: VOTE_AMOUNT_2,
+  },
 ];
 
 test("Tron search SR - search SR in the list - Expect to retrieve a specific list SR", () => {
@@ -116,7 +116,7 @@ test("Tron unfreeze - get unfreeze data - Expect to retrieve unfreeze data from 
     canUnfreezeBandwidth,
     canUnfreezeEnergy,
     bandwidthExpiredAt,
-    energyExpiredAt
+    energyExpiredAt,
   } = getUnfreezeData(mockAccount);
 
   expect(unfreezeBandwidth.toString()).toBe("375000000");

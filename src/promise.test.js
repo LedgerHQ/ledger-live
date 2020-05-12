@@ -3,7 +3,7 @@
 import { promiseAllBatched } from "./promise";
 
 test("promiseAllBatched", async () => {
-  const promisifyIdPlusOne = a => Promise.resolve(a + 1);
+  const promisifyIdPlusOne = (a) => Promise.resolve(a + 1);
 
   const p = promiseAllBatched(5, [], promisifyIdPlusOne);
   expect(typeof p.then).toBe("function");

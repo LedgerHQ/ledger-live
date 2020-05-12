@@ -21,7 +21,7 @@ import type {
   Exchange,
   RatesMap,
   RateGranularity,
-  PollAPIPair
+  PollAPIPair,
 } from "./types";
 import network from "../network";
 import { getEnv } from "../env";
@@ -33,7 +33,7 @@ type PollingProviderOwnProps = {
   autopollInterval: number,
   poll: () => *,
   wipe: () => *,
-  pairsKey: string
+  pairsKey: string,
 };
 
 const POLL = "LEDGER_CV:POLL";
@@ -43,13 +43,13 @@ const IMPORT = "LEDGER_CV:IMPORT";
 type PollAction = {
   type: *,
   hourly?: *,
-  daily?: *
+  daily?: *,
 };
 
 type ImportAction = {
   type: *,
   hourly: *,
-  daily: *
+  daily: *,
 };
 
 const twoDigits = (n: number) => (n > 9 ? `${n}` : `0${n}`);
@@ -80,8 +80,8 @@ export const getRatesAllInOnce = async (
     method: "POST",
     url: getAPIBaseURL() + "/rates/" + rate,
     data: {
-      pairs
-    }
+      pairs,
+    },
   });
   return data;
 };
@@ -93,14 +93,14 @@ export const getRatesBatched = (batchSize: number) => async (
 ) => {
   const url = getAPIBaseURL() + "/rates/" + rate;
   const all = await Promise.all(
-    chunk(allPairs, batchSize).map(pairs =>
+    chunk(allPairs, batchSize).map((pairs) =>
       network({ method: "POST", url, data: { pairs } })
-        .then(r => ({ error: null, result: r.data }))
-        .catch(error => ({ result: null, error }))
+        .then((r) => ({ error: null, result: r.data }))
+        .catch((error) => ({ result: null, error }))
     )
   );
-  const errors = all.map(o => o.error).filter(e => e);
-  const results = all.map(o => o.result).filter(r => r);
+  const errors = all.map((o) => o.error).filter((e) => e);
+  const results = all.map((o) => o.result).filter((r) => r);
   if (results.length === 0 && errors.length > 0) throw errors[0];
   return merge({}, ...results);
 };
@@ -109,7 +109,7 @@ export const getRatesBatched = (batchSize: number) => async (
 export const getRatesSplitPerRate = getRatesBatched(1);
 
 export const defaultTickerAliases = {
-  WETH: "ETH"
+  WETH: "ETH",
 };
 
 const defaultGetAPIBaseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
@@ -127,7 +127,7 @@ function createCounterValues<State>({
   getDailyRatesImplementation,
   getHourlyRatesImplementation,
   fetchExchangesForPairImplementation,
-  fetchTickersByMarketcapImplementation
+  fetchTickersByMarketcapImplementation,
 }: Input<State>): Module<State> {
   type Poll = () => (
     Dispatch<*>,
@@ -150,7 +150,7 @@ function createCounterValues<State>({
   ): PairOptExchange => ({
     from,
     to,
-    exchange
+    exchange,
   });
 
   const conversionExtractor = (
@@ -161,7 +161,7 @@ function createCounterValues<State>({
     fromExchange,
     intermediary,
     toExchange,
-    to
+    to,
   });
 
   const valueExtractor = (_, { value }: { value: BigNumber }) => value;
@@ -173,7 +173,7 @@ function createCounterValues<State>({
 
   const dateExtractor = (_, { date }: { date?: Date }) => date;
 
-  const currencyTicker = c => aliases[c.ticker] || c.ticker;
+  const currencyTicker = (c) => aliases[c.ticker] || c.ticker;
 
   function lenseRatesInMap(
     rates: RatesMap,
@@ -295,10 +295,10 @@ function createCounterValues<State>({
       const res = {
         version: EXPORT_VERSION,
         daily: {},
-        hourly: {}
+        hourly: {},
       };
       // filter rates to only those of interest (in current pairs)
-      pairs.forEach(pair => {
+      pairs.forEach((pair) => {
         let map = lenseRatesInMap(state.daily, pair);
         if (map) {
           putMapInRates(res.daily, pair, map);
@@ -312,12 +312,13 @@ function createCounterValues<State>({
     }
   );
 
-  const pairsKeySelector = createSelector(pairsSelector, pairs =>
+  const pairsKeySelector = createSelector(pairsSelector, (pairs) =>
     pairs
       .map(
-        p =>
-          `${currencyTicker(p.from)}-${currencyTicker(p.to)}-${p.exchange ||
-            ""}`
+        (p) =>
+          `${currencyTicker(p.from)}-${currencyTicker(p.to)}-${
+            p.exchange || ""
+          }`
       )
       .sort()
       .join("|")
@@ -354,7 +355,7 @@ function createCounterValues<State>({
       log(`invalid data detected for ${from}-${to}-${exchange}`, {
         min,
         max,
-        h
+        h,
       });
     }
     return accept;
@@ -415,7 +416,7 @@ function createCounterValues<State>({
       ? formatCounterValueHour(
           new Date(Date.now() - (maxHours + 1) * 60 * 60 * 1000)
         )
-      : null
+      : null,
   };
 
   const poll: Poll = () => async (dispatch, getState) => {
@@ -426,7 +427,7 @@ function createCounterValues<State>({
     async function run({ rate, fetch, mandatory }) {
       const pairs = [];
       const dedupKeys = {};
-      userPairs.forEach(p => {
+      userPairs.forEach((p) => {
         const fromTicker = currencyTicker(p.from);
         const toTicker = currencyTicker(p.to);
         const key = `${fromTicker}|${toTicker}|${p.exchange || ""}`;
@@ -442,7 +443,7 @@ function createCounterValues<State>({
           const histodays = lenseRatesInMap(store[rate], p);
           if (histodays) {
             const keys = Object.keys(histodays)
-              .filter(a => a !== "latest")
+              .filter((a) => a !== "latest")
               .sort((a, b) => (a < b ? 1 : -1));
             if (keys[0]) {
               pair.after = keys[0];
@@ -463,7 +464,7 @@ function createCounterValues<State>({
               )
               .join(" ")
         );
-      const data = await fetch(getAPIBaseURL, pairs, rate).catch(e => {
+      const data = await fetch(getAPIBaseURL, pairs, rate).catch((e) => {
         if (mandatory) {
           throw e;
         }
@@ -476,7 +477,7 @@ function createCounterValues<State>({
     const daily = await run({
       rate: "daily",
       fetch: getDailyRates,
-      mandatory: true
+      mandatory: true,
     });
     if (daily) {
       const ev: PollAction = { type: POLL, daily };
@@ -489,7 +490,7 @@ function createCounterValues<State>({
       // so diffing can properly work the next time
       // and asking with different exchanges will prevent to happen (over times, as arbitrary fallback can change)
       const pairsToUpdate = [];
-      userPairs.forEach(pair => {
+      userPairs.forEach((pair) => {
         const { exchange } = pair;
         const toTicker = currencyTicker(pair.to);
         const fromTicker = currencyTicker(pair.from);
@@ -511,7 +512,7 @@ function createCounterValues<State>({
           pairsToUpdate.push({
             from: pair.from,
             to: pair.to,
-            exchange: fallback
+            exchange: fallback,
           });
         }
       });
@@ -524,7 +525,7 @@ function createCounterValues<State>({
       ? await run({
           rate: "hourly",
           fetch: getHourlyRates,
-          mandatory: false
+          mandatory: false,
         })
       : null;
 
@@ -538,13 +539,13 @@ function createCounterValues<State>({
 
   const initialState: CounterValuesState = {
     daily: {},
-    hourly: {}
+    hourly: {},
   };
 
   const reducerImport = (state: CounterValuesState, action: ImportAction) => {
     return {
       daily: merge({}, state.daily, action.daily),
-      hourly: merge({}, state.hourly, action.hourly)
+      hourly: merge({}, state.hourly, action.hourly),
     };
   };
 
@@ -557,7 +558,7 @@ function createCounterValues<State>({
       hourly:
         action.hourly && typeof action.hourly === "object"
           ? merge({}, state.hourly, action.hourly)
-          : state.hourly
+          : state.hourly,
     };
   };
 
@@ -584,7 +585,7 @@ function createCounterValues<State>({
           "/exchanges/" +
           currencyTicker(from) +
           "/" +
-          currencyTicker(to)
+          currencyTicker(to),
       });
       invariant(
         typeof data === "object" && Array.isArray(data),
@@ -603,7 +604,7 @@ function createCounterValues<State>({
     (async (): Promise<string[]> => {
       const { data } = await network({
         method: "GET",
-        url: getAPIBaseURL() + "/tickers"
+        url: getAPIBaseURL() + "/tickers",
       });
       invariant(
         typeof data === "object" && Array.isArray(data),
@@ -626,7 +627,7 @@ function createCounterValues<State>({
       // the time to wait before the first poll when app starts (allow things to render to not do all at boot time)
       pollInitDelay: 1 * 1000,
       // the minimum time to wait before two automatic polls (then one that happen whatever network/appstate events)
-      autopollInterval: 120 * 1000
+      autopollInterval: 120 * 1000,
     };
 
     schedulePoll = (ms: number) => {
@@ -643,8 +644,8 @@ function createCounterValues<State>({
       // this is not in a setInterval because we don't want poll() to happen too often & always will push the next automatic call as far as possible
       this.schedulePoll(this.props.autopollInterval);
 
-      return new Promise(success => {
-        this.setState(prevState => {
+      return new Promise((success) => {
+        this.setState((prevState) => {
           if (prevState.pending) return null; // prevent concurrency calls.
 
           this.props
@@ -655,7 +656,7 @@ function createCounterValues<State>({
                 success(true);
               });
             })
-            .catch(error => {
+            .catch((error) => {
               if (this.unmounted) return;
               this.setState({ pending: false, error }, () => {
                 // we don't reject the promise because we handle the error.
@@ -677,7 +678,7 @@ function createCounterValues<State>({
       poll: this.poll,
       wipe: this.wipe,
       flush: this.poll.flush,
-      error: null
+      error: null,
     };
 
     pollTimeout: *;
@@ -735,7 +736,7 @@ function createCounterValues<State>({
     fetchExchangesForPair,
     fetchTickersByMarketcap,
     exportSelector,
-    importAction
+    importAction,
   };
 }
 

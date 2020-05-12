@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import {
   DeviceAppVerifyNotSupported,
-  UserRefusedAddress
+  UserRefusedAddress,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { Resolver } from "./types";
@@ -13,7 +13,7 @@ const dispatch: Resolver = (transport, opts) => {
   const getAddress = perFamily[currency.family];
   invariant(getAddress, `signMessage is not implemented for ${currency.id}`);
   return getAddress(transport, opts)
-    .then(result => {
+    .then((result) => {
       log(
         "hw",
         `signMessage ${currency.id} on ${opts.path} with message [${opts.message}]`,
@@ -21,7 +21,7 @@ const dispatch: Resolver = (transport, opts) => {
       );
       return result;
     })
-    .catch(e => {
+    .catch((e) => {
       log(
         "hw",
         `signMessage ${currency.id} on ${opts.path} FAILED ${String(e)}`

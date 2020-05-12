@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import {
   parseCurrencyUnit,
   getCryptoCurrencyById,
-  formatCurrencyUnit
+  formatCurrencyUnit,
 } from "../currencies";
 
 const rippleUnit = getCryptoCurrencyById("ripple").units[0];
@@ -27,10 +27,10 @@ export const parseAPIValue = (value: string) =>
 
 export const parseAPICurrencyObject = ({
   currency,
-  value
+  value,
 }: {
   currency: string,
-  value: string
+  value: string,
 }) => {
   if (currency !== "XRP") {
     console.warn(`RippleJS: attempt to parse unknown currency ${currency}`);
@@ -43,7 +43,7 @@ export const formatAPICurrencyXRP = (amount: BigNumber) => {
   const value = formatCurrencyUnit(rippleUnit, amount, {
     showAllDigits: true,
     disableRounding: true,
-    useGrouping: false
+    useGrouping: false,
   });
   return { currency: "XRP", value };
 };

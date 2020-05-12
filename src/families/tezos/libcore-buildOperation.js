@@ -7,14 +7,14 @@ import { tezosOperationTag } from "./types";
 const opTagToType = {
   [tezosOperationTag.OPERATION_TAG_REVEAL]: "REVEAL",
   [tezosOperationTag.OPERATION_TAG_ORIGINATION]: "CREATE",
-  [tezosOperationTag.OPERATION_TAG_DELEGATION]: "DELEGATE"
+  [tezosOperationTag.OPERATION_TAG_DELEGATION]: "DELEGATE",
 };
 
 async function tezosBuildOperation(
   {
-    coreOperation
+    coreOperation,
   }: {
-    coreOperation: CoreOperation
+    coreOperation: CoreOperation,
   },
   partialOp: $Shape<Operation>
 ) {

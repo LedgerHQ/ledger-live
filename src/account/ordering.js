@@ -4,7 +4,7 @@ import type {
   AccountLike,
   Account,
   TokenCurrency,
-  CryptoCurrency
+  CryptoCurrency,
 } from "../types";
 import { flattenAccounts, getAccountCurrency } from "./helpers";
 import type { FlattenAccountsOptions } from "./helpers";
@@ -38,7 +38,7 @@ export const sortAccountsComparatorFromOrder = (
       ascValue * sortNameLense(a).localeCompare(sortNameLense(b));
   }
   const cvCaches = {};
-  const lazyCalcCV = a => {
+  const lazyCalcCV = (a) => {
     if (a.id in cvCaches) return cvCaches[a.id];
     const v =
       calculateCountervalue(getAccountCurrency(a), a.balance) || BigNumber(-1);
@@ -46,11 +46,7 @@ export const sortAccountsComparatorFromOrder = (
     return v;
   };
   return (a, b) => {
-    const diff =
-      ascValue *
-      lazyCalcCV(a)
-        .minus(lazyCalcCV(b))
-        .toNumber();
+    const diff = ascValue * lazyCalcCV(a).minus(lazyCalcCV(b)).toNumber();
     if (diff === 0) return sortNameLense(a).localeCompare(sortNameLense(b));
     return diff;
   };
@@ -63,7 +59,7 @@ export const comparatorSortAccounts = <TA: AccountLike>(
   const meta = accounts
     .map((ta, index) => ({
       account: ta,
-      index
+      index,
     }))
     .sort((a, b) => comparator(a.account, b.account));
   if (meta.every((m, i) => m.index === i)) {
@@ -71,7 +67,7 @@ export const comparatorSortAccounts = <TA: AccountLike>(
     return accounts;
   }
   // otherwise, need to reorder
-  return meta.map(m => accounts[m.index]);
+  return meta.map((m) => accounts[m.index]);
 };
 
 // flatten accounts and sort between them (used for grid mode)
@@ -90,14 +86,14 @@ export const nestedSortAccounts = (
 ): Account[] => {
   let oneAccountHaveChanged = false;
   // first of all we sort the inner token accounts
-  const accounts = topAccounts.map(a => {
+  const accounts = topAccounts.map((a) => {
     if (!a.subAccounts) return a;
     const subAccounts = comparatorSortAccounts(a.subAccounts, comparator);
     if (subAccounts === a.subAccounts) return a;
     oneAccountHaveChanged = true;
     return {
       ...a,
-      subAccounts
+      subAccounts,
     };
   });
   // then we sort again between them

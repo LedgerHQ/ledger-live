@@ -4,7 +4,7 @@ import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import {
   NotEnoughSpendableBalance,
   // NotEnoughBalanceBecauseDestinationNotCreated,
-  InvalidAddressBecauseDestinationIsAlsoSource
+  InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
@@ -30,8 +30,8 @@ const dataset: DatasetTest<Transaction> = {
           <= 21036da109ee84825eab0f55fb57bcf9ef0b05621e71fb0400266fb42d6f68f9487c2272425065393169766d67384347573450414e6f657555555173756d337470786a55469000
           => e002004015058000002c80000090800000020000000000000000
           <= 2102df9a55b79fb3668dac70fee7372806195841cd713ab8da9fba82240f9db8a23921725a76426335653259523141396f745333723944794768334e445038584c4c70349000
-          `
-        }
+          `,
+        },
       ],
       accounts: [
         {
@@ -45,7 +45,7 @@ const dataset: DatasetTest<Transaction> = {
                 tag: null,
                 fee: "1",
                 feeCustomUnit: null,
-                networkInfo: null
+                networkInfo: null,
               }),
               expectedStatus: {
                 amount: BigNumber("15000000"),
@@ -58,14 +58,14 @@ const dataset: DatasetTest<Transaction> = {
                       {
                         disableRounding: true,
                         useGrouping: false,
-                        showCode: true
+                        showCode: true,
                       }
-                    )
-                  })
+                    ),
+                  }),
                 },
                 warnings: {},
-                totalSpent: BigNumber("15000001")
-              }
+                totalSpent: BigNumber("15000001"),
+              },
             },
             // FIXME
             /*
@@ -100,17 +100,17 @@ const dataset: DatasetTest<Transaction> = {
                 tag: null,
                 fee: "1",
                 feeCustomUnit: null,
-                networkInfo: null
+                networkInfo: null,
               }),
               expectedStatus: {
                 amount: BigNumber("10000000"),
                 estimatedFees: BigNumber("1"),
                 errors: {
-                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource()
+                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
                 warnings: {},
-                totalSpent: BigNumber("10000001")
-              }
+                totalSpent: BigNumber("10000001"),
+              },
             },
             {
               name: "Operation with tag succeed",
@@ -121,16 +121,16 @@ const dataset: DatasetTest<Transaction> = {
                 tag: 12345,
                 fee: "1",
                 feeCustomUnit: null,
-                networkInfo: null
+                networkInfo: null,
               }),
               expectedStatus: {
                 amount: BigNumber("10000000"),
                 estimatedFees: BigNumber("1"),
                 errors: {},
                 warnings: {},
-                totalSpent: BigNumber("10000001")
-              }
-            }
+                totalSpent: BigNumber("10000001"),
+              },
+            },
           ],
           raw: {
             id: "ripplejs:2:ripple:rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7:",
@@ -147,12 +147,12 @@ const dataset: DatasetTest<Transaction> = {
             currencyId: "ripple",
             unitMagnitude: 6,
             lastSyncDate: "",
-            balance: "21000310"
-          }
-        }
-      ]
-    }
-  }
+            balance: "21000310",
+          },
+        },
+      ],
+    },
+  },
 };
 
 export default dataset;

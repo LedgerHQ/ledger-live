@@ -5,7 +5,7 @@ import {
   RecipientRequired,
   InvalidAddress,
   FeeTooHigh,
-  GasLessThanEstimate
+  GasLessThanEstimate,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
@@ -15,7 +15,7 @@ import {
   signOperation,
   broadcast,
   sync,
-  isInvalidRecipient
+  isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { getGasLimit } from "../transaction";
 
@@ -32,7 +32,7 @@ const createTransaction = (account): Transaction => ({
   feeCustomUnit: account.currency.units[1],
   networkInfo: null,
   useAllAmount: false,
-  subAccountId: null
+  subAccountId: null,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -54,7 +54,7 @@ const getTransactionStatus = (a, t) => {
   const warnings = {};
   const tokenAccount = !t.subAccountId
     ? null
-    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
+    : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
   const account = tokenAccount || a;
 
   const useAllAmount = !!t.useAllAmount;
@@ -102,7 +102,7 @@ const getTransactionStatus = (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
@@ -113,7 +113,7 @@ const prepareTransaction = async (a, t) => {
       ...res,
       estimatedGasLimit: t.subAccountId
         ? BigNumber("100000")
-        : BigNumber("21000")
+        : BigNumber("21000"),
     };
   }
   if (!res.networkInfo) {
@@ -121,8 +121,8 @@ const prepareTransaction = async (a, t) => {
       ...res,
       networkInfo: {
         family: "ethereum",
-        gasPrice: BigNumber(300000)
-      }
+        gasPrice: BigNumber(300000),
+      },
     };
   }
   return res;
@@ -136,13 +136,13 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccounts
+  scanAccounts,
 };
 
 export default { currencyBridge, accountBridge };

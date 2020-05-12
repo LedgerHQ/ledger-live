@@ -3,7 +3,7 @@ import eip55 from "eip55";
 import { InvalidAddress, ETHAddressNonEIP } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "../../types";
 
-export default async function(
+export default async function (
   _core: *,
   { currency, recipient }: { currency: CryptoCurrency, recipient: string }
 ): Promise<?Error> {

@@ -3,7 +3,7 @@
 import getMemoType from "./memo-type-check.js";
 import {
   memoTypeSelectStellarMockAddress,
-  notCreatedStellarMockAddress
+  notCreatedStellarMockAddress,
 } from "./test-dataset";
 
 export default () => {

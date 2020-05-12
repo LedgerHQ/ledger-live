@@ -6,13 +6,13 @@ import {
   encodeAccountId,
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
-  libcoreNoGoBalanceHistory
+  libcoreNoGoBalanceHistory,
 } from "../../account";
 import type {
   SyncConfig,
   Account,
   CryptoCurrency,
-  DerivationMode
+  DerivationMode,
 } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import type { CoreWallet, CoreAccount } from "../types";
@@ -25,7 +25,7 @@ import { getRanges } from "../../portfolio";
 
 // FIXME how to get that
 const OperationOrderKey = {
-  date: 0
+  date: 0,
 };
 
 async function queryOps(coreAccount) {
@@ -43,7 +43,7 @@ export async function buildAccount({
   seedIdentifier,
   existingAccount,
   logId,
-  syncConfig
+  syncConfig,
 }: {
   coreWallet: CoreWallet,
   coreAccount: CoreAccount,
@@ -53,7 +53,7 @@ export async function buildAccount({
   seedIdentifier: string,
   existingAccount: ?Account,
   logId: number,
-  syncConfig: SyncConfig
+  syncConfig: SyncConfig,
 }): Promise<Account> {
   log("libcore", `sync(${logId}) start buildAccount`);
 
@@ -64,7 +64,7 @@ export async function buildAccount({
     version: "1",
     currencyId: currency.id,
     xpubOrAddress: restoreKey,
-    derivationMode
+    derivationMode,
   });
 
   const query = await queryOps(coreAccount);
@@ -97,10 +97,10 @@ export async function buildAccount({
     throw new Error("expected at least one fresh address");
 
   const freshAddresses = await Promise.all(
-    coreFreshAddresses.map(async item => {
+    coreFreshAddresses.map(async (item) => {
       const [address, path] = await Promise.all([
         item.toString(),
-        item.getDerivationPath()
+        item.getDerivationPath(),
       ]);
 
       const derivationPath = path ? `${accountPath}/${path}` : accountPath;
@@ -115,12 +115,12 @@ export async function buildAccount({
       ? getNewAccountPlaceholderName({
           currency,
           index: accountIndex,
-          derivationMode
+          derivationMode,
         })
       : getAccountPlaceholderName({
           currency,
           index: accountIndex,
-          derivationMode
+          derivationMode,
         });
 
   const subAccounts = await buildSubAccounts({
@@ -129,12 +129,12 @@ export async function buildAccount({
     accountId,
     existingAccount,
     logId,
-    syncConfig
+    syncConfig,
   });
 
   // We have pre-fetched the operations in "partial" mode
   // now we will need to complete them lazily
-  const inferCoreOperation = async corePartialOperation => {
+  const inferCoreOperation = async (corePartialOperation) => {
     const query = await queryOps(coreAccount);
     await query.limit(1);
     await query.offset(partialOperations.indexOf(corePartialOperation));
@@ -146,12 +146,12 @@ export async function buildAccount({
   const operations = await minimalOperationsBuilder(
     (existingAccount && existingAccount.operations) || [],
     paginatedPartialOperations,
-    async corePartialOperation =>
+    async (corePartialOperation) =>
       buildOperation({
         coreOperation: await inferCoreOperation(corePartialOperation),
         accountId,
         currency,
-        contextualSubAccounts: subAccounts
+        contextualSubAccounts: subAccounts,
       })
   );
   let lastOperation;
@@ -167,7 +167,7 @@ export async function buildAccount({
         coreOperation,
         accountId,
         currency,
-        contextualSubAccounts: subAccounts
+        contextualSubAccounts: subAccounts,
       });
     }
   }
@@ -178,7 +178,7 @@ export async function buildAccount({
 
   if (!libcoreNoGoBalanceHistory().includes(currency.id)) {
     await Promise.all(
-      getRanges().map(async range => {
+      getRanges().map(async (range) => {
         // NB if we find this not optimized, we can implement this cache strategy:
         // if for this range a balanceHistory exists in "existingAccount"
         // compare the last data point {value} with `balance`, re-calc if differ
@@ -202,7 +202,7 @@ export async function buildAccount({
   }
 
   if (subAccounts) {
-    subAccounts.forEach(a => {
+    subAccounts.forEach((a) => {
       if (a.creationDate < creationDate) {
         creationDate = a.creationDate;
       }
@@ -231,7 +231,7 @@ export async function buildAccount({
     operations,
     pendingOperations: [],
     lastSyncDate: new Date(),
-    creationDate
+    creationDate,
   };
 
   if (subAccounts) {

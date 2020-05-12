@@ -5,7 +5,7 @@ import {
   delay,
   scan,
   distinctUntilChanged,
-  throttleTime
+  throttleTime,
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
@@ -19,7 +19,7 @@ const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
 type Res = {
   installing: ?string,
-  progress: number
+  progress: number,
 };
 
 const main = (
@@ -28,24 +28,24 @@ const main = (
 ): Observable<Res> => {
   log("hw", "firmwareUpdate-main started");
   const withDeviceInfo = withDevicePolling(deviceId)(
-    transport => from(getDeviceInfo(transport)),
+    (transport) => from(getDeviceInfo(transport)),
     () => true // accept all errors. we're waiting forever condition that make getDeviceInfo work
   );
 
-  const withDeviceInstall = install =>
+  const withDeviceInstall = (install) =>
     withDevicePolling(deviceId)(
       install,
-      e => e instanceof CantOpenDevice // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
+      (e) => e instanceof CantOpenDevice // this can happen if withDevicePolling was still seeing the device but it was then interrupted by a device reboot
     );
 
   const waitForBootloader = withDeviceInfo.pipe(
-    concatMap(deviceInfo =>
+    concatMap((deviceInfo) =>
       deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
     )
   );
 
   const bootloaderLoop = withDeviceInfo.pipe(
-    concatMap(deviceInfo =>
+    concatMap((deviceInfo) =>
       !deviceInfo.isBootloader
         ? empty()
         : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop)
@@ -53,7 +53,7 @@ const main = (
   );
 
   const finalStep = withDeviceInfo.pipe(
-    concatMap(deviceInfo =>
+    concatMap((deviceInfo) =>
       !deviceInfo.isOSU
         ? throwError(new DeviceInOSUExpected())
         : withDeviceInstall(installFinalFirmware)

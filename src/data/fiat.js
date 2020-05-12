@@ -14,9 +14,9 @@ function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {
         code: ticker, // for now, code is the ticker (when formatting currencies)
         name,
         magnitude: defaultMagnitude,
-        showAllDigits: true
-      }
-    ]
+        showAllDigits: true,
+      },
+    ],
   };
 }
 
@@ -69,10 +69,10 @@ const byTicker: { [key: string]: FiatCurrency } = {
   VEF: fiat("Venezuelan bolivar", "VEF", "Bs. F.", 2),
   VND: fiat("Vietnamese Dong", "VND", "₫", 1),
   VUV: fiat("Ni-Vanuatu Vatu", "VUV", "VT", 0),
-  ZAR: fiat("South African Rand", "ZAR", "R", 2)
+  ZAR: fiat("South African Rand", "ZAR", "R", 2),
 };
 
-const list = Object.keys(byTicker).map(k => byTicker[k]);
+const list = Object.keys(byTicker).map((k) => byTicker[k]);
 let userSupportedFiats = [];
 // Current list was established with what our API really supports
 setSupportedFiats([
@@ -89,7 +89,7 @@ setSupportedFiats([
   "RUB",
   "SGD",
   "TRY",
-  "USD"
+  "USD",
 ]);
 
 export function hasFiatCurrencyTicker(ticker: string): boolean {

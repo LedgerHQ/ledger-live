@@ -9,12 +9,12 @@ export type AddAccountsSection = {
   id: string,
   selectable: boolean,
   defaultSelected: boolean,
-  data: Account[]
+  data: Account[],
 };
 
 export type AddAccountsSectionResult = {
   sections: AddAccountsSection[],
-  alreadyEmptyAccount: ?Account
+  alreadyEmptyAccount: ?Account,
 };
 
 /**
@@ -24,7 +24,7 @@ export function groupAddAccounts(
   existingAccounts: Account[],
   scannedAccounts: Account[],
   context: {
-    scanning: boolean
+    scanning: boolean,
   }
 ): AddAccountsSectionResult {
   const importedAccounts = [];
@@ -34,7 +34,7 @@ export function groupAddAccounts(
   let alreadyEmptyAccount;
 
   const scannedAccountsWithoutMigrate = [...scannedAccounts];
-  existingAccounts.forEach(existingAccount => {
+  existingAccounts.forEach((existingAccount) => {
     const migrate = findAccountMigration(
       existingAccount,
       scannedAccountsWithoutMigrate
@@ -42,7 +42,7 @@ export function groupAddAccounts(
     if (migrate) {
       migrateAccounts.push({
         ...migrate,
-        name: existingAccount.name
+        name: existingAccount.name,
       });
       const index = scannedAccountsWithoutMigrate.indexOf(migrate);
       if (index !== -1) {
@@ -55,9 +55,9 @@ export function groupAddAccounts(
     }
   });
 
-  scannedAccountsWithoutMigrate.forEach(acc => {
+  scannedAccountsWithoutMigrate.forEach((acc) => {
     const existingAccount = existingAccounts.find(
-      a =>
+      (a) =>
         a.id === acc.id ||
         (a.freshAddress &&
           a.currency === acc.currency &&
@@ -83,7 +83,7 @@ export function groupAddAccounts(
       id: "importable",
       selectable: true,
       defaultSelected: true,
-      data: importableAccounts
+      data: importableAccounts,
     });
   }
   if (migrateAccounts.length) {
@@ -91,7 +91,7 @@ export function groupAddAccounts(
       id: "migrate",
       selectable: true,
       defaultSelected: true,
-      data: migrateAccounts
+      data: migrateAccounts,
     });
   }
   if (!context.scanning || creatableAccounts.length) {
@@ -100,7 +100,7 @@ export function groupAddAccounts(
       id: "creatable",
       selectable: true,
       defaultSelected: false,
-      data: creatableAccounts
+      data: creatableAccounts,
     });
   }
 
@@ -109,13 +109,13 @@ export function groupAddAccounts(
       id: "imported",
       selectable: false,
       defaultSelected: false,
-      data: importedAccounts
+      data: importedAccounts,
     });
   }
 
   return {
     sections,
-    alreadyEmptyAccount
+    alreadyEmptyAccount,
   };
 }
 
@@ -123,34 +123,34 @@ export type AddAccountsProps = {
   existingAccounts: Account[],
   scannedAccounts: Account[],
   selectedIds: string[],
-  renamings: { [_: string]: string }
+  renamings: { [_: string]: string },
 };
 
 const preserveUserData = (update: Account, existing: Account) => ({
   ...update,
-  name: existing.name
+  name: existing.name,
 });
 
 export function migrateAccounts({
   scannedAccounts,
-  existingAccounts
+  existingAccounts,
 }: {
   scannedAccounts: Account[],
-  existingAccounts: Account[]
+  existingAccounts: Account[],
 }): Account[] {
   // subset of scannedAccounts that exists to not add them but just do migration part
   const subset = [];
-  existingAccounts.forEach(existing => {
+  existingAccounts.forEach((existing) => {
     const migration = findAccountMigration(existing, scannedAccounts);
-    if (migration && !subset.some(a => a.id === migration.id)) {
+    if (migration && !subset.some((a) => a.id === migration.id)) {
       subset.push(migration);
     }
   });
   return addAccounts({
     scannedAccounts: subset,
     existingAccounts,
-    selectedIds: subset.map(a => a.id),
-    renamings: {}
+    selectedIds: subset.map((a) => a.id),
+    renamings: {},
   });
 }
 
@@ -158,18 +158,18 @@ export function addAccounts({
   scannedAccounts,
   existingAccounts,
   selectedIds,
-  renamings
+  renamings,
 }: AddAccountsProps): Account[] {
   const newAccounts = [];
 
   // scanned accounts that was selected
-  const selected = scannedAccounts.filter(a => selectedIds.includes(a.id));
+  const selected = scannedAccounts.filter((a) => selectedIds.includes(a.id));
 
   // we'll search for potential migration and append to newAccounts
-  existingAccounts.forEach(existing => {
+  existingAccounts.forEach((existing) => {
     const migration = findAccountMigration(existing, selected);
     if (migration) {
-      if (!newAccounts.some(a => a.id === migration.id)) {
+      if (!newAccounts.some((a) => a.id === migration.id)) {
         newAccounts.push(preserveUserData(migration, existing));
         const index = selected.indexOf(migration);
         if (index !== -1) {
@@ -179,7 +179,7 @@ export function addAccounts({
       }
     } else {
       // we'll try to find an updated version of the existing account as opportunity to refresh the operations
-      const update = selected.find(a => a.id === existing.id);
+      const update = selected.find((a) => a.id === existing.id);
       if (update) {
         // preserve existing name
         newAccounts.push(preserveUserData(update, existing));
@@ -190,15 +190,15 @@ export function addAccounts({
   });
 
   // append the new accounts
-  selected.forEach(acc => {
-    const alreadyThere = newAccounts.find(a => a.id === acc.id);
+  selected.forEach((acc) => {
+    const alreadyThere = newAccounts.find((a) => a.id === acc.id);
     if (!alreadyThere) {
       newAccounts.push(acc);
     }
   });
 
   // dedup and apply the renaming
-  return uniqBy(newAccounts, "id").map(a => {
+  return uniqBy(newAccounts, "id").map((a) => {
     const name = validateNameEdition(a, renamings[a.id]);
     if (name) return { ...a, name };
     return a;

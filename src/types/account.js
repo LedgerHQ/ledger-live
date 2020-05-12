@@ -7,20 +7,20 @@ import type { DerivationMode } from "../derivation";
 import type { TronResources, TronResourcesRaw } from "../families/tron/types";
 import type {
   CosmosResources,
-  CosmosResourcesRaw
+  CosmosResourcesRaw,
 } from "../families/cosmos/types";
 import type {
   BalanceHistory,
   BalanceHistoryRaw,
-  PortfolioRange
+  PortfolioRange,
 } from "./portfolio";
 
 export type BalanceHistoryMap = {
-  [_: PortfolioRange]: BalanceHistory
+  [_: PortfolioRange]: BalanceHistory,
 };
 
 export type BalanceHistoryRawMap = {
-  [_: PortfolioRange]: BalanceHistoryRaw
+  [_: PortfolioRange]: BalanceHistoryRaw,
 };
 
 // A token belongs to an Account and share the parent account address
@@ -36,7 +36,7 @@ export type TokenAccount = {
   operations: Operation[],
   pendingOperations: Operation[],
   starred: boolean,
-  balanceHistory?: BalanceHistoryMap
+  balanceHistory?: BalanceHistoryMap,
 };
 
 // A child account belongs to an Account but has its own address
@@ -54,12 +54,12 @@ export type ChildAccount = {
   operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
-  balanceHistory?: BalanceHistoryMap
+  balanceHistory?: BalanceHistoryMap,
 };
 
 export type Address = {|
   address: string,
-  derivationPath: string
+  derivationPath: string,
 |};
 
 export type Account = {
@@ -168,7 +168,7 @@ export type Account = {
 
   // On some blockchain, an account can have resources (gained, delegated, ...)
   tronResources?: TronResources,
-  cosmosResources?: CosmosResources
+  cosmosResources?: CosmosResources,
 };
 
 export type SubAccount = TokenAccount | ChildAccount;
@@ -190,7 +190,7 @@ export type TokenAccountRaw = {
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
   balance: string,
-  balanceHistory?: BalanceHistoryRawMap
+  balanceHistory?: BalanceHistoryRawMap,
 };
 
 export type ChildAccountRaw = {
@@ -206,7 +206,7 @@ export type ChildAccountRaw = {
   operations: OperationRaw[],
   pendingOperations: OperationRaw[],
   balance: string,
-  balanceHistory?: BalanceHistoryRawMap
+  balanceHistory?: BalanceHistoryRawMap,
 };
 
 export type AccountRaw = {
@@ -235,7 +235,7 @@ export type AccountRaw = {
   subAccounts?: SubAccountRaw[],
   balanceHistory?: BalanceHistoryRawMap,
   tronResources?: TronResourcesRaw,
-  cosmosResources?: CosmosResourcesRaw
+  cosmosResources?: CosmosResourcesRaw,
 };
 
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;

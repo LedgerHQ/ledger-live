@@ -14,7 +14,7 @@ export type DataModel<R, M> = {
   // export data into a serializable object (can be saved to a JSON file)
   encode(model: M): { data: R, version: number },
   // current version of the model
-  version: number
+  version: number,
 };
 
 /**
@@ -27,7 +27,7 @@ export type DataSchema<R, M> = {
   // reverse version of wrap, that will transform it back to a serializable object
   encode(data: M): R,
   // A map of migrations functions that are unrolled when an old version is imported
-  migrations: Array<(any) => R | any>
+  migrations: Array<(any) => R | any>,
 };
 
 /**

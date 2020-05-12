@@ -8,7 +8,7 @@ import getDeviceInfo from "./getDeviceInfo";
 import type { FinalFirmware, DeviceInfo, McuVersion } from "../types/manager";
 
 const blVersionAliases = {
-  "0.0": "0.6"
+  "0.0": "0.6",
 };
 
 export default (finalFirmware: FinalFirmware) => (
@@ -20,10 +20,10 @@ export default (finalFirmware: FinalFirmware) => (
         ? of(blVersionAliases[blVersion])
         : from(
             // we pick the best MCU to install in the context of the firmware
-            ManagerAPI.getMcus().then(mcus =>
+            ManagerAPI.getMcus().then((mcus) =>
               ManagerAPI.findBestMCU(
                 finalFirmware.mcu_versions
-                  .map(id => mcus.find(mcu => mcu.id === id))
+                  .map((id) => mcus.find((mcu) => mcu.id === id))
                   .filter(Boolean)
               )
             )
@@ -48,18 +48,18 @@ export default (finalFirmware: FinalFirmware) => (
               blVersion,
               mcuFromBootloader,
               version,
-              isMCU
+              isMCU,
             });
           }
 
           return concat(
             of({
               type: "install",
-              step: "flash-" + (isMCU ? "mcu" : "bootloader")
+              step: "flash-" + (isMCU ? "mcu" : "bootloader"),
             }),
             ManagerAPI.installMcu(transport, "mcu", {
               targetId,
-              version
+              version,
             })
           );
         })

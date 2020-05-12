@@ -11,8 +11,10 @@ export const sortByMarketcap = <C: Currency>(
 ): C[] => {
   const list = currencies.slice(0);
   const prependList = [];
-  tickers.forEach(ticker => {
-    const item = list.find(c => !c.disableCountervalue && c.ticker === ticker);
+  tickers.forEach((ticker) => {
+    const item = list.find(
+      (c) => !c.disableCountervalue && c.ticker === ticker
+    );
     if (item) {
       list.splice(list.indexOf(item), 1);
       prependList.push(item);
@@ -25,7 +27,7 @@ let marketcapTickersCache;
 export const getMarketcapTickers: () => Promise<string[]> = makeLRUCache(() =>
   getCountervalues()
     .fetchTickersByMarketcap()
-    .then(tickers => {
+    .then((tickers) => {
       marketcapTickersCache = tickers;
       return tickers;
     })
@@ -44,7 +46,7 @@ export const currenciesByMarketcap = <C: Currency>(
   currencies: C[]
 ): Promise<C[]> =>
   getMarketcapTickers().then(
-    tickers => sortByMarketcap(currencies, tickers),
+    (tickers) => sortByMarketcap(currencies, tickers),
     () => currencies
   );
 

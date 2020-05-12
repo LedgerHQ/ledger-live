@@ -9,7 +9,7 @@ export default [
     latestSlotNum: 528177564,
     isJobs: true,
     name: "Binance Staking",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
@@ -21,7 +21,7 @@ export default [
     latestSlotNum: 528177565,
     isJobs: true,
     name: "Skypeople",
-    brokerage: 0
+    brokerage: 0,
   },
   {
     address: "TV9QitxEJ3pdiAUAfJ2QuPxLKp9qTTR3og",
@@ -33,7 +33,7 @@ export default [
     latestSlotNum: 528177539,
     isJobs: true,
     name: "BitGuild",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TJvaAeFb8Lykt9RQcVyyTFN2iDvGMuyD4M",
@@ -44,7 +44,7 @@ export default [
     latestSlotNum: 528177540,
     isJobs: true,
     name: "Poloniex",
-    brokerage: 0
+    brokerage: 0,
   },
   {
     address: "THYPk7Z72REsPrHtZkcwp9pWJadsPxp1UP",
@@ -56,7 +56,7 @@ export default [
     latestSlotNum: 528177541,
     isJobs: true,
     name: "bitwirespool",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TGzz8gjYiYRqpfmDwnLxfgPuLVNmpCswVp",
@@ -68,7 +68,7 @@ export default [
     latestSlotNum: 528177542,
     isJobs: true,
     name: "Sesameseed",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TTcYhypP8m4phDhN6oRexz2174zAerjEWP",
@@ -80,7 +80,7 @@ export default [
     latestSlotNum: 528177543,
     isJobs: true,
     name: "CryptoGuyInZA",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TUD4YXYdj2t1gP5th3A7t97mx1AUmrrQRt",
@@ -92,7 +92,7 @@ export default [
     latestSlotNum: 528177544,
     isJobs: true,
     name: "TRONGrid",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TWkpg1ZQ4fTv7sj41zBUTMo1kuJEUWTere",
@@ -104,7 +104,7 @@ export default [
     latestSlotNum: 528177545,
     isJobs: true,
     name: "TRONLink",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TPMGfspxLQGom8sKutrbHcDKtHjRHFbGKw",
@@ -116,7 +116,7 @@ export default [
     latestSlotNum: 528177546,
     isJobs: true,
     name: "Infinity-Stones",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TY65QiDt4hLTMpf3WRzcX357BnmdxT2sw9",
@@ -128,7 +128,7 @@ export default [
     latestSlotNum: 528177547,
     isJobs: true,
     name: "uTorrent",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TTMNxTmRpBZnjtUnohX84j25NLkTqDga7j",
@@ -140,7 +140,7 @@ export default [
     latestSlotNum: 528177548,
     isJobs: true,
     name: "TronSpark",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TVFKwzE8qeETLaZEHMx2tjEsdnujAgAWaA",
@@ -152,7 +152,7 @@ export default [
     latestSlotNum: 528177549,
     isJobs: true,
     name: "BlockchainOrg",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TTW663tQYJTTCtHh6DWKAfexRhPMf2DxQ1",
@@ -164,7 +164,7 @@ export default [
     latestSlotNum: 528177550,
     isJobs: true,
     name: "TRONALLIANCE",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TFA1qpUkQ1yBDw4pgZKx25wEZAqkjGoZo1",
@@ -176,7 +176,7 @@ export default [
     latestSlotNum: 528177551,
     isJobs: true,
     name: "JustinSunTron",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF",
@@ -188,7 +188,7 @@ export default [
     latestSlotNum: 528177552,
     isJobs: true,
     name: "CryptoChain",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TCEo1hMAdaJrQmvnGTCcGT2LqrGU4N7Jqf",
@@ -200,7 +200,7 @@ export default [
     latestSlotNum: 528177553,
     isJobs: true,
     name: "TRONScan",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TSNbzxac4WhxN91XvaUfPTKP2jNT18mP6T",
@@ -212,7 +212,7 @@ export default [
     latestSlotNum: 528177554,
     isJobs: true,
     name: "BitTorrent",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TSzoLaVCdSNDpNxgChcFt9rSRF5wWAZiR4",
@@ -224,7 +224,7 @@ export default [
     latestSlotNum: 528177555,
     isJobs: true,
     name: "TRXMarket",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TNaJADoq1u2atryP1ZzwvmEE4ZBELXfMqw",
@@ -236,7 +236,7 @@ export default [
     latestSlotNum: 528177556,
     isJobs: true,
     name: "callmeSR",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TVa6MF7SgZa8PToLoQ9PNq6KQHyTXLBz1p",
@@ -248,7 +248,7 @@ export default [
     latestSlotNum: 528177557,
     isJobs: true,
     name: "KryptoKnight",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TRTC1DxDg2eWPHmyc3DTGR672rVHoZQa8h",
@@ -259,7 +259,7 @@ export default [
     latestBlockNum: 18090218,
     latestSlotNum: 528177558,
     isJobs: true,
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TAHg5zi2ejWeWiE6bqtDT9vfbH3zNTWrfA",
@@ -271,7 +271,7 @@ export default [
     latestSlotNum: 528177559,
     isJobs: true,
     name: "TRXUltra",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TMG95kirH4cKW5GnKoCcCye1dBqbt77yGu",
@@ -283,7 +283,7 @@ export default [
     latestSlotNum: 528177560,
     isJobs: true,
     name: "MinerGate",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TNmas2SUNGJ2R1jq4Sivya5nHDLYN9ggpG",
@@ -295,7 +295,7 @@ export default [
     latestSlotNum: 528177561,
     isJobs: true,
     name: "TheLastMe",
-    brokerage: 20
+    brokerage: 20,
   },
   {
     address: "TJ2aDMgeipmoZRuUEru2ri8t7TGkxnm6qY",
@@ -307,7 +307,7 @@ export default [
     latestSlotNum: 528177562,
     isJobs: true,
     name: "Huobi_pool",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TE7hnUtWRRBz3SkFrX8JESWUmEvxxAhoPt",
@@ -319,7 +319,7 @@ export default [
     latestSlotNum: 528177563,
     isJobs: true,
     name: "TronWalletMe",
-    brokerage: 100
+    brokerage: 100,
   },
   {
     address: "TBXB5tobBPCFkC8ihFDBWjaiwW2iSpzSfr",
@@ -331,7 +331,7 @@ export default [
     latestSlotNum: 527385598,
     name: "TRONVIETNAM",
     brokerage: 19,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TVSdAnnZUdSH8gdeUgMPTht1mXmhtEXAN3",
@@ -343,7 +343,7 @@ export default [
     latestSlotNum: 527371181,
     name: "TRON-BOOM",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TW5oEHAE2LqMdozna7HBDiW6U56f6m8Vfa",
@@ -354,7 +354,7 @@ export default [
     latestSlotNum: 527392797,
     name: "TRON-Ace",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNMcBfKauBykfamL2YkE8WFNDUBmahQzYx",
@@ -362,7 +362,7 @@ export default [
     url: "https://tron.newdex.one",
     name: "Newpool-TRON",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TN2MEB71iox2mDwwngdTrUyUZXeENcb79F",
@@ -374,7 +374,7 @@ export default [
     latestSlotNum: 527032788,
     name: "SR-TRON-Europe",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYVJ8JuQ6ctzCa2u79MFmvvNQ1U2tYQEUM",
@@ -386,14 +386,14 @@ export default [
     latestSlotNum: 525232781,
     name: "TRON-ONE",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TPjc5LNkpa5iwjUv8u4XXV92JA2JaAxHgL",
     voteCount: 35000141,
     url: "http://bz.com/",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TQwqK8LhHGria5gkkfCVqQfE5mSwpvdp3B",
@@ -405,7 +405,7 @@ export default [
     latestSlotNum: 518255974,
     name: "Tron-Society",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGfUjDNr5Huk8DumHfmzY2ksE6RRYpuGLG",
@@ -417,7 +417,7 @@ export default [
     latestSlotNum: 524159989,
     name: "BeatzCoin",
     brokerage: 30,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TN2W4cc7a4dsYyTLiLMWa9m7jVpdLjGvYs",
@@ -425,7 +425,7 @@ export default [
     url: "https://www.huobiwallet.com/",
     name: "Huobi_Wallet",
     brokerage: 5,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEe7HDXdHJemT142R643cajh8BbKdWgR3H",
@@ -433,7 +433,7 @@ export default [
     url: "\thttps://www.cashierest.com",
     name: "CashierestStaking",
     brokerage: 10,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDGmmTC7xDgQGwH4FYRGuE7SFH2MePHYeH",
@@ -445,7 +445,7 @@ export default [
     latestSlotNum: 514187999,
     name: "TeamTronics",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TV6qcwSp38uESiDczxxb7zbJX1h2LfDs78",
@@ -457,7 +457,7 @@ export default [
     latestSlotNum: 516002399,
     name: "TronsTronics",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEKUPpjTMKWw9LJZ9YJ4enhCjAmVXSL7M6",
@@ -469,7 +469,7 @@ export default [
     latestSlotNum: 521575194,
     name: "lianjinshu",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSbhZijH2t7Qn1UAHAu7PBHQdVAvRwSyYr",
@@ -481,7 +481,7 @@ export default [
     latestSlotNum: 518464799,
     name: "Intergalactic-Gaming",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWGGB35HUudizmcLheQN7kANDnD8KfgKkK",
@@ -489,7 +489,7 @@ export default [
     url: "https://www.tron-family.de",
     name: "TRON-Family",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAD78uBWAveGNg3nDN8Ku18MSDeHmTRpbB",
@@ -497,7 +497,7 @@ export default [
     url: "XREGlobal.com",
     name: "SmartRealEstateXRE",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TKV52nvtpLe5uapeTabyAYANMQYBXPGVds",
@@ -509,14 +509,14 @@ export default [
     latestSlotNum: 510263985,
     name: "TronKorea",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TB6nqQpQDoiWm3VKFjxQrEDi7m84jXjfus",
     voteCount: 3408540,
     url: "https://bixin.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TK4qxwmq8nDeymtjxzXMkPzq4Gsb39fkLu",
@@ -524,7 +524,7 @@ export default [
     url: "https://activ8coin.com",
     name: "Activ8Coin",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRXDEXMoaAprSGJSwKanEUBqfQjvQEDuaw",
@@ -535,7 +535,7 @@ export default [
     latestSlotNum: 511120783,
     name: "TrxDexCom",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDGy2M9qWBepSHDEutWWxWd1JZfmAed3BP",
@@ -543,7 +543,7 @@ export default [
     url: "http://www.communitynode.org/",
     name: "CommunityNode",
     brokerage: 5,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TVMP5r12ymtNerq5KB4E8zAgLDmg2FqsEG",
@@ -555,14 +555,14 @@ export default [
     latestSlotNum: 514036796,
     name: "CryptoGirls",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFQVyHpWSRtH7YbH6xYDamNmKpqBGHmWwc",
     voteCount: 2138672,
     url: "https://www.coinnest.co.kr",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TJgmwx9TYaqujmdthJkjaLyWXrwTCmmTan",
@@ -570,7 +570,7 @@ export default [
     url: "www",
     name: "ZADEA-MadeInItaly",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TPRxUBEakukBMwTScCHgvCPSBYk5UhfboJ",
@@ -582,7 +582,7 @@ export default [
     latestSlotNum: 524087980,
     name: "CryptoDivaSR",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWEcP8CPhcdmmo1R2RANXGBRYAHvxNoLst",
@@ -590,7 +590,7 @@ export default [
     url: "https://www.millioncoinx.com/pl",
     name: "OneMillionCom_Community",
     brokerage: 50,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TN8Y2ZztFHW3CrgPYQMK3BPp7VYiHKfvF9",
@@ -598,7 +598,7 @@ export default [
     url: "https://twitter.com/TronsRocknRoll",
     name: "SexTronsAndRocknRoll",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TA43K3sTFYstnRu5ku7DtyzjsR4MLdUgEu",
@@ -606,7 +606,7 @@ export default [
     url: "https://www.tronmacau.com",
     name: "TronMacau",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMEQ4hu7DtLTHPn6qPsYktk1QGdTbAyTEK",
@@ -618,7 +618,7 @@ export default [
     latestSlotNum: 515111693,
     name: "Tron-Europe",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEsRRMAs4n1yBwzdMuTFEdaKsYANzprtUb",
@@ -626,7 +626,7 @@ export default [
     url: "https://noraigi.com/en/home",
     name: "NORA-IGI",
     brokerage: 10,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMwGtBQioBk2pjCsLWUaQ4rcQNf5DS6FLQ",
@@ -634,7 +634,7 @@ export default [
     url: "http://tronsiqveland.co.uk/",
     name: "siqveland",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TVGYho2v6mUhFMuhYy4sWx8BA79b4FzwSg",
@@ -642,7 +642,7 @@ export default [
     url: "HTTPS://AOCOIN.IO",
     name: "AOCOINIO",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWcebMiHwZbnt6viAtyVEG57bj7DWcZUPx",
@@ -650,7 +650,7 @@ export default [
     url: "https://www.whaleex.com",
     name: "whaleexbp",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TJQHeWxaxaSskBmi7EN19psRe5s9Xn8AcY",
@@ -658,7 +658,7 @@ export default [
     url: "https://www.cityuptake.com",
     name: "mrlavman",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TBzwNEE7D3DdTB4wALiSBaMmpSK7jdoxYF",
@@ -670,7 +670,7 @@ export default [
     latestSlotNum: 514129269,
     name: "TRONSiliconValley",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TG519wQRpmBNSzVUiHVx6wkVZkLKmxTXxS",
@@ -682,14 +682,14 @@ export default [
     latestSlotNum: 515131163,
     name: "ALLE_Exchange",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAyVDZqhtymJq32itDSxdkRKTRTEb8kkXE",
     voteCount: 778643,
     url: "http://test.com",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TKYW4wDGg3FcaAR8cP8sbmiU8RdZwcK7Bz",
@@ -701,14 +701,14 @@ export default [
     latestSlotNum: 514782404,
     name: "WINTokenCommunity",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TZ1ZBqgZ8PUdEk6dxEYwyZCqxYwHj9PmS2",
     voteCount: 432428,
     url: "https://metronix.imba-exchange.co",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLpWEwR5bXM1GBJ2P3BgXLa8DzWTGsaRPb",
@@ -716,7 +716,7 @@ export default [
     url: "http://tronshares.com",
     name: "TronShares",
     brokerage: 12,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFDEzwPqeyKyYGQrXtUTJqiLNKCqBHhVi6",
@@ -724,7 +724,7 @@ export default [
     url: ".",
     name: "TronCommunityGroup",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNddBi3qJv26Ghqqd3qb97ERx47AwMWhR6",
@@ -732,7 +732,7 @@ export default [
     url: "https://www.baggi.co/",
     name: "Segrith1",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMXiQ2W35fDochXM6dDUrF3ZDnWR2uwcRW",
@@ -740,7 +740,7 @@ export default [
     url: " https://www.phituasesor.com/smart-2/",
     name: "PHI-ECAFE",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TK9qME8revUZ2KfuZApTHwGqqXS9AoTuBX",
@@ -748,7 +748,7 @@ export default [
     url: "https://tran.systems/tronhub/",
     name: "Tronhuborg",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLxcpCwAPTnBVYYrL7JeQCohnLVAfnyQQf",
@@ -756,7 +756,7 @@ export default [
     url: "https://kryptowaluty.org.pl",
     name: "becometa",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TJPgacRkihkAxtsEgH3VY5R6fr8bqykf4j",
@@ -764,7 +764,7 @@ export default [
     url: "https://tronhope.org/",
     name: "TronHope",
     brokerage: 1,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TCKLRjJmhFABs4Hbjy5S3DBFoytMQ95hS4",
@@ -772,7 +772,7 @@ export default [
     url: "digitalgeotreasure.com/",
     name: "GeoTreasureSR",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMAbjAuefZqzJAyGhkn4AbWa3jinzcZtGc",
@@ -784,7 +784,7 @@ export default [
     latestSlotNum: 511336789,
     name: "MLG-Global",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TX663KZ2dKmLvxhCnyY3rytowLNR4TmdVf",
@@ -792,7 +792,7 @@ export default [
     url: "https://www.musiccasper.com/",
     name: "MusicCasper",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TXnqPcy9zWHYyCiQ7Kmvt3aCx5jm9Qnq3e",
@@ -800,7 +800,7 @@ export default [
     url: "https://TRON-Want",
     name: "TRON-Want",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYftfpnCitoxju9rMYx6XNegUHmFoPMary",
@@ -808,7 +808,7 @@ export default [
     url: "https://reyna.exchange/",
     name: "ReynaExchange",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TXUqMBAisbzUg3myoZys7q9wQqafyUUJib",
@@ -816,7 +816,7 @@ export default [
     url: "https://pyro.network",
     name: "PYRO-Network",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TKXnhSWxKAfYhsYLkh5wS8qUT1ESBbMSpn",
@@ -824,7 +824,7 @@ export default [
     url: "https://promo.network/",
     name: "PROMO-NETWORK",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWjGyMHSxx4pJ3V4ES5E4ANE2NWW9xcWcp",
@@ -832,7 +832,7 @@ export default [
     url: "https://tronvote.club",
     name: "TronVote",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAKFctfLwhcUwU7PPfijB35GzpPuiph2XE",
@@ -840,7 +840,7 @@ export default [
     url: "https://twitter.com/mr_oceanview",
     name: "oceanview",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TJX4T7AgfkvWbNAyWTxhgXrJv6Yed6BgDx",
@@ -848,7 +848,7 @@ export default [
     url: "https://www.tron-mining.com",
     name: "TRON-MINING",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSyG9BdjsGE2GoHG9eeYKMns6zMQFDmbvS",
@@ -856,14 +856,14 @@ export default [
     url: "xreglobal.com",
     name: "TarquinRealEstate",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGnTYAB6XjLWoAGYXmDoLeLeX9X59JFBVK",
     voteCount: 137713,
     url: "https://cobo.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGiDnq7cxAFwProHPo8MFwhs7C5PU7EyJR",
@@ -871,7 +871,7 @@ export default [
     url: "https://twitter.com/1000WONG",
     name: "1000WONG",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "THM4SAoJrNebe8zdQJ8d6eu41XFHHNbb8N",
@@ -879,7 +879,7 @@ export default [
     url: "https://CharityCompassionCoin.com",
     name: "CharityCompassionCoin-CCC",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYTYuSyiEpxNsjakQSRmjiZAymvxoBbziH",
@@ -887,7 +887,7 @@ export default [
     url: "https://www.tronlabs.ro",
     name: "TronLabsRomania",
     brokerage: 40,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTENv9A7zf543xdVmnaon42SqsGGd7L7p8",
@@ -895,7 +895,7 @@ export default [
     url: "https://bankroll.network",
     name: "Bankroll_Network",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFcBLX6W4u7xAFYvcyUDEHT6Cy7GroVLfD",
@@ -907,7 +907,7 @@ export default [
     latestSlotNum: 514245587,
     name: "TRONbet",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TA8VRz8ofdpmqAvxTKDVGkQRHRWxmRTXGA",
@@ -915,7 +915,7 @@ export default [
     url: "https://tronpad.com",
     name: "TRONPADCOM",
     brokerage: 1,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TZ8NZA6PPKSK2wHuFAo8vzf4VZnMtmDugF",
@@ -923,7 +923,7 @@ export default [
     url: "https://t.me/tron_my",
     name: "Surface-Foundation",
     brokerage: 25,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNkRSKWP7VvdrisTwC8iNzUV6MRoEJh6xx",
@@ -931,7 +931,7 @@ export default [
     url: "https://healthport.io/",
     name: "Health-Port-EHR-Issuing-Account",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSRmKPv8kvokcHKfLeySQ3gNHyYrAAXrnc",
@@ -943,7 +943,7 @@ export default [
     latestSlotNum: 518435979,
     name: "DAPPHOUSE",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TD4anu8auWfCDYqQpAEcLXVK6UgME9Jsid",
@@ -951,7 +951,7 @@ export default [
     url: "https://tronsecure.io",
     name: "TronSecure-Super-Representative",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TE7BWvxSPbsxZ5MVFFLfmkDnBw3MRFQGtw",
@@ -959,14 +959,14 @@ export default [
     url: "https://sites.google.com/view/proudbtc1nvest/startsida",
     name: "ProudBTC1nvest",
     brokerage: 0,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAXZHpzFwGdqMzF7w8KkFhWkikGY12yUpk",
     voteCount: 82613,
     url: "https://dexnode.net",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTCrBKXyTCS2B5ktjivNtHiSyCPTCLWv3v",
@@ -974,7 +974,7 @@ export default [
     url: "https://www.tronvietnam.org",
     name: "TronVietNam",
     brokerage: 15,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTuT2AG5q37f74zra7PjAApUmyVaXmFvC4",
@@ -986,7 +986,7 @@ export default [
     latestSlotNum: 518572799,
     name: "RayboTron",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TUHkTGbNAYWVbJ8WCcUJj66ui1nrFd9k2m",
@@ -994,7 +994,7 @@ export default [
     url: "https://huxlium.org",
     name: "Huxliumworkforce",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDdYEXqbqYGXaufkh2kiZhFQA3oi6A8yoi",
@@ -1002,7 +1002,7 @@ export default [
     url: "https://www.tronboston.com",
     name: "TronBoston",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGBnYeW24FC9zcVmV3T2Vrz21hJQrHWfJW",
@@ -1010,7 +1010,7 @@ export default [
     url: "https://www.tron.buzz",
     name: "Swisstron",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDJ8A5jRuAmb2ctYvZcwtPQaGDv33sVbDD",
@@ -1018,7 +1018,7 @@ export default [
     url: "https://tronlottery.io",
     name: "TronLottery",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMs377k86n2NXwoZoN6gNCf929u6BKdbvn",
@@ -1026,7 +1026,7 @@ export default [
     url: "https://twitter.com/black0din",
     name: "odintron",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TCf5cqLffPccEY7hcsabiFnMfdipfyryvr",
@@ -1036,7 +1036,7 @@ export default [
     latestBlockNum: 1549970,
     latestSlotNum: 511516780,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TN9rYynDSPinTuvRg8G1TdrEjAc2f3X2dX",
@@ -1044,7 +1044,7 @@ export default [
     url: "http://www.tron-france.com",
     name: "Tron-France",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TBkF5gRmwxq4Zm4K7oBMHvfvUKxD8KYkJ5",
@@ -1052,14 +1052,14 @@ export default [
     url: "http://tronjapan.io",
     name: "TRONJAPAN",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "THX1ZF1CNdcDMNai2QUSYgdBmsECah6vtJ",
     voteCount: 20658,
     url: "https://www.thz.net",
     brokerage: 11,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TU5gKG2QrysL4wmjM6ydonVDcEtupuVHCN",
@@ -1067,7 +1067,7 @@ export default [
     url: "https://dexexchange.us",
     name: "DEXExchange-DEXCOIN",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TS4vTdFRNJCHZex8j7bozAiRXGXvtRjhAF",
@@ -1075,7 +1075,7 @@ export default [
     url: "https://teamhelios.org/",
     name: "TEAMHELIOS",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "THWCmwMwtc97qDd1fqkeK8LBwSPgwTeq79",
@@ -1083,7 +1083,7 @@ export default [
     url: "https://www.neoply.com",
     name: "NEOPLY-TRON",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TN8jmSQv79QHa37cckKMguDyf3vAKtpvDs",
@@ -1094,7 +1094,7 @@ export default [
     latestSlotNum: 513892774,
     name: "BlockChainRealEstate",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLTeJxavvgAC5opkDXfXfhRXp4thLfHL5p",
@@ -1106,7 +1106,7 @@ export default [
     latestSlotNum: 513208790,
     name: "BitDogSR",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TELjcuZeP3vCXjq2zvgLsi7dNQry6pDKn5",
@@ -1114,7 +1114,7 @@ export default [
     url: "http://the-crazy-once.de",
     name: "SteveJobs",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TX3ZceVew6yLC5hWTXnjrUFtiFfUDGKGty",
@@ -1124,7 +1124,7 @@ export default [
     latestBlockNum: 1492396,
     latestSlotNum: 511459189,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TCjwPyWLgry8dD8QCgpYv7cvKe6oK5PM1j",
@@ -1132,7 +1132,7 @@ export default [
     url: "https://theseusx.net",
     name: "theseusx",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TUpoK1NUFcXpVjn7AvTsSCAYwD559CEaxr",
@@ -1140,7 +1140,7 @@ export default [
     url: "https://trip4web.com",
     name: "TrIP4web",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TQxyQu5d76MaxsEF4nBf9tFa8s93nSHe8M",
@@ -1152,7 +1152,7 @@ export default [
     latestSlotNum: 511271991,
     name: "tronproio",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLaqfGrxZ3dykAFps7M2B4gETTX1yixPgN",
@@ -1163,7 +1163,7 @@ export default [
     latestBlockNum: 1650121,
     latestSlotNum: 511617598,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRSZydUjAZaA5aMYA21J9iWriNF1q1bwzW",
@@ -1171,14 +1171,14 @@ export default [
     url: "https://www.troncanada.com/",
     name: "TRONCanada",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TUbPJqc7pw9iSkWC2a3dWJAThSnnesAwFq",
     voteCount: 6020,
     url: "https://www.hashfin.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRKJzrZxN34YyB8aBqqPDt7g4fv6sieemz",
@@ -1188,7 +1188,7 @@ export default [
     latestBlockNum: 1614750,
     latestSlotNum: 511581580,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "THKJYuUmMKKARNf7s2VT51g5uPY6KEqnat",
@@ -1198,14 +1198,14 @@ export default [
     latestBlockNum: 1621714,
     latestSlotNum: 511588788,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLCuBEirVzB6V4menLZKw1jfBTFMZbuKq7",
     voteCount: 5597,
     url: "https://game.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFuC2Qge4GxA2U9abKxk1pw3YZvGM5XRir",
@@ -1216,7 +1216,7 @@ export default [
     latestBlockNum: 1463589,
     latestSlotNum: 511430374,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWwaKmzCGF4Hka99GHuR8Waz1mrEtkByeN",
@@ -1224,7 +1224,7 @@ export default [
     url: "https://www.troninvestgroup.org",
     name: "TronInvestGroup",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TQQ6akqQfkUoB26PfnkLkEqKoh1BNvQoFs",
@@ -1232,7 +1232,7 @@ export default [
     url: "https://www.bitcoinworld.com/",
     name: "BitcoinWorld",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLF5cNeWQKGUyDDHebQnLTfCNCKGCb4wiu",
@@ -1240,7 +1240,7 @@ export default [
     url: "https://tronvip.io",
     name: "TeamTronVIP",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWeZZDaDu63CebHsnDGUhsKAZ2cHz7uFJt",
@@ -1248,7 +1248,7 @@ export default [
     url: "http://www.nodecap.com/",
     name: "NodeCapital",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYNh7Td8z7jga1tZYvkZvn4AKxq8aPmGZm",
@@ -1256,14 +1256,14 @@ export default [
     url: "http://newgenesiscap.com/",
     name: "genesiscap",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TH4nPzmbioavDew4GPxD4hHzsLXAetDFSA",
     voteCount: 5004,
     url: "https://tron.34rth.com/",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWmYacoioZVVDn3jwVCd28sEJpJARyybSF",
@@ -1271,7 +1271,7 @@ export default [
     url: "http://bt.co",
     name: "BitTorrentNow",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFYhSxKGD7Ysqi96wozmpGw5P3vC324Kem",
@@ -1279,7 +1279,7 @@ export default [
     url: "https://helloworldteam.org",
     name: "HelloWorld",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGK6iAKgBmHeQyp5hn3imB71EDnFPkXiPR",
@@ -1290,7 +1290,7 @@ export default [
     latestBlockNum: 1542790,
     latestSlotNum: 511509598,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TM2WoRPjYAWjJuR6QSZgaGWkr2qDP2d6sA",
@@ -1298,7 +1298,7 @@ export default [
     url: "http://tron-man.com/",
     name: "Tron-Man",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNHpUuakVeceLagF9k6j8HU9KruSQ23cXW",
@@ -1306,7 +1306,7 @@ export default [
     url: "https://www.google.com/",
     name: "TronWatch",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNEqakRxoJ1YsLK2t5c57vZyWWbDpetq7y",
@@ -1314,7 +1314,7 @@ export default [
     url: "https://www.gameoftron.net/",
     name: "GameOfTron",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNGoca1VHC6Y5Jd2B1VFpFEhizVk92Rz85",
@@ -1324,7 +1324,7 @@ export default [
     latestBlockNum: 1492394,
     latestSlotNum: 511459187,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TK6V5Pw2UWQWpySnZyCDZaAvu1y48oRgXN",
@@ -1335,7 +1335,7 @@ export default [
     latestBlockNum: 1513988,
     latestSlotNum: 511480787,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYy6xnc35LkyEuU9fJv4x89vkhLZim1yJv",
@@ -1347,7 +1347,7 @@ export default [
     latestSlotNum: 513532790,
     name: "EtherPoker",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TVDmPWGYxgi5DNeW8hXrzrhY8Y6zgxPNg4",
@@ -1358,7 +1358,7 @@ export default [
     latestBlockNum: 1549967,
     latestSlotNum: 511516777,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGgF85TNinitZZ1zTf1bKbUyTByAxHLd7G",
@@ -1366,7 +1366,7 @@ export default [
     url: "https://t.me/joinchat/F5QrYU9C8y-nAN2w0M327Q",
     name: "HOLDTRON",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDarXEG2rAD57oa7JTK785Yb2Et32UzY32",
@@ -1376,7 +1376,7 @@ export default [
     latestBlockNum: 1513990,
     latestSlotNum: 511480789,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMXamLGmArfCEFoVXbrvbyXpzMT2Tq1FBy",
@@ -1385,7 +1385,7 @@ export default [
       'Change Your Vote From This SR Position, To Our New SR Position: "DEXExchange-DEXCOIN"',
     name: "DEXExchange-DEXCOIN-XDEX",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWm3id3mrQ42guf7c4oVpYExyTYnEGy3JL",
@@ -1395,7 +1395,7 @@ export default [
     latestBlockNum: 1362829,
     latestSlotNum: 511329585,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEuVwDCt4qGehQTg7DJEC1EsJHpTkWHhqJ",
@@ -1403,14 +1403,14 @@ export default [
     url: "http://www.meg4tron.com/",
     name: "MEG4TRON",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRLnLri5w7q9VigSeTJEjog4RuVtwoqvCr",
     voteCount: 2001,
     url: "https://mdt.co",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEEzguTtCihbRPfjf1CvW8Euxz1kKuvtR9",
@@ -1420,7 +1420,7 @@ export default [
     latestBlockNum: 760520,
     latestSlotNum: 510724788,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRE6JANcQBfmXTDooRyStoALZNWvEgNpsE",
@@ -1432,7 +1432,7 @@ export default [
     latestSlotNum: 524080797,
     name: "Tronbite",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRMP6SKeFUt5NtMLzJv8kdpYuHRnEGjGfe",
@@ -1443,14 +1443,14 @@ export default [
     latestBlockNum: 1542791,
     latestSlotNum: 511509599,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSkXBuJBsnjdVFADqU2CsmD6YaCuxN7AHe",
     voteCount: 1589,
     url: "https://antpool.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEVAq8dmSQyTYK7uP1ZnZpa6MBVR83GsV6",
@@ -1460,7 +1460,7 @@ export default [
     latestBlockNum: 1557177,
     latestSlotNum: 511523990,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAa14iLEKPAetX49mzaxZmH6saRxcX7dT5",
@@ -1470,7 +1470,7 @@ export default [
     latestBlockNum: 1614751,
     latestSlotNum: 511581581,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDEhi48MepJYzdb2XfEKe294prSiMssmTx",
@@ -1478,7 +1478,7 @@ export default [
     url: "http://www.trongalaxy.io",
     name: "trongalaxy",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TBzaVm3e3QmoaG5xjR98DNqZE9bYwqgZcg",
@@ -1486,14 +1486,14 @@ export default [
     url: "https://trx.bitcoingod.org",
     name: "BitcoinGOD",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGXRA72hwr47NDezgfSqhBJczxsYFQcK2H",
     voteCount: 1377,
     url: "http://VeganIS.ME/",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TJz3YaEaeceU3qhsanaomQp9oomR2Rbecf",
@@ -1501,7 +1501,7 @@ export default [
     url: "www.tronixglobal.com",
     name: "Tronix_Global",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TVsofxarmK6TYPzF7QkYsKxUhYtKFzrsRW",
@@ -1509,7 +1509,7 @@ export default [
     url: "https://coinhe.io",
     name: "COINHEIO",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFuWG1FeQ3CXTsXnuydHahy3JsZZy11w5M",
@@ -1517,7 +1517,7 @@ export default [
     url: "https://globalricetoken.wixsite.com/grttoken",
     name: "Lucky2019YearOfThePig",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDbNE1VajxjpgM5p7FyGNDASt3UVoFbiD3",
@@ -1527,7 +1527,7 @@ export default [
     latestBlockNum: 1104788,
     latestSlotNum: 511070388,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTyNZXwUjF9g8us4HUgEXMvNuzRkcvopbL",
@@ -1535,7 +1535,7 @@ export default [
     url: "http://tronbitcoin.io",
     name: "TRONBITCOIN",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNi5gk1xVLR3QddJ5t6ReraYed63WjWGPj",
@@ -1543,14 +1543,14 @@ export default [
     url: "ffgtrgh",
     name: "smoksolutios",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TBWMoK75hMmjRUtDrEEweA7g8nkSPUzDjG",
     voteCount: 1087,
     url: "http://www.ocoins.cc/",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TQ4EtNraCeAh4xkw7xLGiWZMbtMtbBv7Bj",
@@ -1558,7 +1558,7 @@ export default [
     url: "https://trontx.com",
     name: "TronTexas",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TCvwc3FV3ssq2rD82rMmjhT4PVXYTsFcKV",
@@ -1568,7 +1568,7 @@ export default [
     latestBlockNum: 1076255,
     latestSlotNum: 511041581,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTTZFEVSxpZ8gVHwJVs6yhzBuN4xbHuoES",
@@ -1576,7 +1576,7 @@ export default [
     url: "www.tbd.com",
     name: "--BANK--",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "THWeUoi3HYEnLDXigeyejjFSFAMaAJGnDU",
@@ -1584,7 +1584,7 @@ export default [
     url: "VoteTronicStorm",
     name: "TronicStorm",
     brokerage: 15,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGK8YYb9bJVnkw2hRFG1FyNVvXuqkWB4VD",
@@ -1592,7 +1592,7 @@ export default [
     url: "https://trongameglobal.network",
     name: "TronGameGlobal",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TQq5ynrFUoDt338dXSWM4abFfF8YQ1PysX",
@@ -1600,14 +1600,14 @@ export default [
     url: "https://www.trxkings.com",
     name: "TRXKings",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TQNCne1UuKFmihsHjzebNSob7nS9xk9JNL",
     voteCount: 750,
     url: "https://TRXGUARDIAN.ORG",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYEYCoYyKdH2zekWo7fy77sALpQJmSTixr",
@@ -1615,7 +1615,7 @@ export default [
     url: "http://www.dagbvi.com",
     name: "Tron-DAG",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TG6Nn9pnTv6XLKqoda1CHpaEYYFfyLS9T6",
@@ -1623,7 +1623,7 @@ export default [
     url: "http://jdi.group",
     name: "JDI-Venture",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEbYtf3gRudzLGEGhfqxkVuUWsNAqmjCLi",
@@ -1631,7 +1631,7 @@ export default [
     url: "https://www.robocoinexchange.com",
     name: "RoboCoin",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFsgyrtVwUFdc5uZSprhyBJNQzpuoMXjwC",
@@ -1639,7 +1639,7 @@ export default [
     url: "https://tronkh.org",
     name: "TRONCAMBODIA",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TC1ZCj9Ne3j5v3TLx5ZCDLD55MU9g3XqQW",
@@ -1650,14 +1650,14 @@ export default [
     latestBlockNum: 1650122,
     latestSlotNum: 511617599,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDpzrQUkUuMBsx67HXByZZNT6u9PUvbifE",
     voteCount: 600,
     url: "http://www.linkvc.com/",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGZdwPPqsR3B9JghJryozpBtZz3kbDEjGM",
@@ -1665,7 +1665,7 @@ export default [
     url: "https://DoNotVote-Not-Active-SR",
     name: "MyTronScan-FullNode",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDGAnbNhYA1dsbPSF2RBNEu1fz4c2vRWbU",
@@ -1673,7 +1673,7 @@ export default [
     url: "https://www.museprotocol.com",
     name: "Muse_Incorporated",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TBYsHxDmFaRmfCF3jZNmgeJE8sDnTNKHbz",
@@ -1683,7 +1683,7 @@ export default [
     latestBlockNum: 1593157,
     latestSlotNum: 511559981,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTxt1K49riY6FvAkk84xJzBEBPtMbFa85M",
@@ -1691,7 +1691,7 @@ export default [
     url: "https://global.bittrex.com/",
     name: "BittrexStaking",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSeJtWDCowLuYnibVsZVr3N2U3ypVap5hG",
@@ -1699,7 +1699,7 @@ export default [
     url: "https://tronswap.io",
     name: "TronSwap",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNRKgJ6Le7xLsewFayFonaVhftxV5KNVnC",
@@ -1707,7 +1707,7 @@ export default [
     url: "http://www.tronium.net",
     name: "TRONIUM-SR",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TJuRfL3tRdSQvVPKDXi6FRivcbZpsbz7AD",
@@ -1715,14 +1715,14 @@ export default [
     url: "http://www.apexinformatics.com",
     name: "ApexInformatics",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TKEppdcqcY73hgeL9ogta6ZoXR1jfzA2gV",
     voteCount: 501,
     url: "http://d2fapp.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRni6NxF8CQVcywcDm67sEpCYCo7BUGXCD",
@@ -1730,7 +1730,7 @@ export default [
     url: "https://youtu.be/pWhw_NjVV68",
     name: "FreeSpace",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TJE3hXDseyEgwv31QzysrNBJyDjEhVDBVQ",
@@ -1738,7 +1738,7 @@ export default [
     url: "Https://www.numeriuno.eu",
     name: "PRESIDENT",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TZ2iD3EW2fGSkez7zZXEo7VwXhQPPXRkVR",
@@ -1746,7 +1746,7 @@ export default [
     url: "http://bit.ly/libertytron",
     name: "rewards-for-all-not-just-for-SR",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLCjmH6SqGK8twZ9XrBDWpBbfyvEXihhNS",
@@ -1756,7 +1756,7 @@ export default [
     latestBlockNum: 1571564,
     latestSlotNum: 511538381,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLTDZBcPoJ8tZ6TTEeEqEvwYFk2wgotSfD",
@@ -1766,7 +1766,7 @@ export default [
     latestBlockNum: 1513987,
     latestSlotNum: 511480786,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDirsgwgL8i95nzQqyPZ6XuHv9jvJQfTmF",
@@ -1774,7 +1774,7 @@ export default [
     url: "http://hqn.vn",
     name: "vongabau",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNaMNHgtqS763tXwbzGDRhn5qUL9RwfcTn",
@@ -1782,7 +1782,7 @@ export default [
     url: "https://tronix.international/",
     name: "TronixInternational",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNfqpGrR3v4bQo8jemVyEpiUGFipQxj8sH",
@@ -1790,7 +1790,7 @@ export default [
     url: "www.dtroynx.com",
     name: "TheProphet",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTDY8aQQizYCHA7qdmgtLgPNEe2YWEfPZa",
@@ -1802,14 +1802,14 @@ export default [
     latestSlotNum: 513950399,
     name: "TEAMX-SR",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMNUDeyr6ZEW8vHAUnaKi2Bbgi14TPq63q",
     voteCount: 167,
     url: "https://cobo.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TA5Ub5djuEe8naTMxyXyRoKjemqFiE3RmC",
@@ -1817,7 +1817,7 @@ export default [
     url: "firekraken.media",
     name: "FireKrakenMedia",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TPtryrrXSVT9cefs4wvL3ks2J5sr8PJLcg",
@@ -1825,7 +1825,7 @@ export default [
     url: "https://tronblock.co",
     name: "TronBlock",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TX9nw7PXpGHLqRNMWmj8izyNvzy7JU5qXi",
@@ -1833,7 +1833,7 @@ export default [
     url: "http://www.troncenter.com",
     name: "TronCenter",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDo2qwRLEkTZCXzcotiEQLt2wLeTttKTnZ",
@@ -1841,7 +1841,7 @@ export default [
     url: "http://www.tron.school/",
     name: "TronSchool",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSQ8c97uCRG5ZugLDZ8jdbhtktNLgh6f26",
@@ -1849,7 +1849,7 @@ export default [
     url: " ",
     name: "AurumCryptoCompany",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGuS4RVh8wpQCtAdxij6pYSk9ur6J8fsmb",
@@ -1857,7 +1857,7 @@ export default [
     url: "http://he.capital/",
     name: "Happy_East_Capital",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TZHvwiw9cehbMxrtTbmAexm9oPo4eFFvLS",
@@ -1867,14 +1867,14 @@ export default [
     latestBlockNum: 1549971,
     latestSlotNum: 511516781,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAEw4zwwYMiDcWFC9xQrLP9moMi34YAZbz",
     voteCount: 114,
     url: "http://imcash.io",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TVQ6wERJ4YBd1TqH9bdYT1VV93CP393eiT",
@@ -1885,7 +1885,7 @@ export default [
     latestSlotNum: 527392798,
     name: "TRON-Bet",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYqxoFgQLtq7f146uJS533GMU88nEpwKgz",
@@ -1893,7 +1893,7 @@ export default [
     url: "https://www.gm-informatics.com",
     name: "GM-Informatics-SR-001",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAmFfS4Tmm8yKeoqZN8x51ASwdQBdnVizt",
@@ -1903,7 +1903,7 @@ export default [
     latestBlockNum: 1226106,
     latestSlotNum: 511192800,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWKZN1JJPFydd5rMgMCV5aZTSiwmoksSZv",
@@ -1913,7 +1913,7 @@ export default [
     latestBlockNum: 681353,
     latestSlotNum: 510645598,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TAhXnVYaAKx6xa8E6JeASR5SrGXHSeyqaL",
@@ -1921,7 +1921,7 @@ export default [
     url: "https://rinzler.eu",
     name: "RinzlerSR",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "THyFzhbcfWw2CJa4eAaHRCst3d5hnyqXLL",
@@ -1929,7 +1929,7 @@ export default [
     url: "https://www.livenodes.network/",
     name: "LivenodesNetwork",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TPsQ4XsQEFwSWGr2Zae62kuo69MABA1cVU",
@@ -1937,21 +1937,21 @@ export default [
     url: "http://www.contactnetwork.fr/",
     name: "FedayKeen",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TL8rrg2ZNPHtpPFp3j2nwH9BLhN7qg32dh",
     voteCount: 90,
     url: "https://cobo.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSEHJbvpnevJP4zR3uTgXJ1toZ16bPz3uW",
     voteCount: 80,
     url: "https://zhizhu.top/",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TRAzTRvjfd7TCqfUkB1zJ6vMv7Y7F7puZr",
@@ -1959,7 +1959,7 @@ export default [
     url: "https://www.vena.network",
     name: "Vena_Family",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGMZpmGpx8KTGJc8NzBkEBnfzpWGp9Rar8",
@@ -1967,7 +1967,7 @@ export default [
     url: "http://www.nextgenius.com.au",
     name: "NextGenius",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TXSh73A7dwbQU3Navx5217hf9Yjp3QEGD1",
@@ -1975,21 +1975,21 @@ export default [
     url: "https://t.me/TronParty",
     name: "LUCKYGAMES",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFkHXapDnFCq8Cw4LFUzM3cSe6EGnMb4pk",
     voteCount: 54,
     url: "https://atticlab.net",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TXio2SKopbzwyZ5XPxfFwceBFFHDKjEvUZ",
     voteCount: 53,
     url: "www",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TQANnQ4DwspKuuF3BCvaukwXGHD4G36XGH",
@@ -1997,7 +1997,7 @@ export default [
     url: "https://mobile.twitter.com/busyblaze",
     name: "BlakeStorie",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TGqFJPFiEqdZx52ZR4QcKHz4Zr3QXA24VL",
@@ -2007,7 +2007,7 @@ export default [
     latestBlockNum: 1571562,
     latestSlotNum: 511538379,
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMofnVBZeuFTrkYAnQ54TDWNyMbrHzXkwy",
@@ -2015,7 +2015,7 @@ export default [
     url: "https://twitter.com/@brianjun09",
     name: "BrianJun_Web",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TZBABURn1nNxw63QiezbTvhRPmFjomSz2Q",
@@ -2023,7 +2023,7 @@ export default [
     url: "https://cryptotalkers.com",
     name: "RB-Main-L",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TCmubWCoL7cLA2VDkVn4WGWCT7nqcFavXX",
@@ -2031,7 +2031,7 @@ export default [
     url: "https://twitter.com/KaanKOZANn",
     name: "KaanKOZAN",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEVwq7bwFf6ToBu8M3ydD96tnVPyGXf394",
@@ -2039,7 +2039,7 @@ export default [
     url: "https://darano.network/",
     name: "daranonetwork",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TK1Q72E87K9T8evFW2ucBGByf96WEbX777",
@@ -2047,21 +2047,21 @@ export default [
     url: "https://molotovlab.com",
     name: "MolotovLab",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "THpWeDXW422Suo5fNZtz1XU8kpPJ3jo4q1",
     voteCount: 35,
     url: "https://www.rightbtc.com",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLipnfPL5ajqYB9eqEJuaUBqr2jEG75X2B",
     voteCount: 35,
     url: "https://gconnect.io/",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TFxanMr7ffV9YsbXcaSzA9Eja7AA318rha",
@@ -2069,7 +2069,7 @@ export default [
     url: "http://tronman.io/",
     name: "TRONMANkr",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TTiAHqKadiLPVZjiKaAjHDXkq7sfEozQZr",
@@ -2077,7 +2077,7 @@ export default [
     url: "Can",
     name: "Cancancan",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TPVMxXoci8SAoJMF1Xyqzethg4Qzoh51Z7",
@@ -2085,7 +2085,7 @@ export default [
     url: "https://www.facebook.com/sevo.nikolov",
     name: "SevoNikolovTRX",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TSeU7Sa22kRVo2gUSt47S6PiW8NRktPt8o",
@@ -2093,7 +2093,7 @@ export default [
     url: "https://a4oo.ml",
     name: "a4ooooooo",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TEsuA4ULsZwfvSRSbu8yx7K3UB6aLi5Djn",
@@ -2101,7 +2101,7 @@ export default [
     url: "http://t.me/TheL1Crew",
     name: "TheL1Crew",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TU5Td1DnsL84aeoMXTm7HGW7Nt5kuxHoCs",
@@ -2109,14 +2109,14 @@ export default [
     url: "https://gsc.social",
     name: "GSC-GlobalSocialChain",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TVMC8C7Y4f4ABr48PJencVdunVVB4XUW96",
     voteCount: 26,
     url: "https://dootron.com/en/home",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TNd2MPxccwBZoqpJuCrDEeNJizx5tmyNLs",
@@ -2124,7 +2124,7 @@ export default [
     url: "www.upvote.world TBD",
     name: "TRAC_REG",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TC1yZaa75GPPzM26pxfSP3AxsPT8yartQR",
@@ -2132,7 +2132,7 @@ export default [
     url: "https://twitter.com/Filo_0x",
     name: "CBD-OIL-NETWORK-TOKEN",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TMykaWQe9YinNb36yE5k4MH9VUEGyKgQQA",
@@ -2140,7 +2140,7 @@ export default [
     url: "https://www.wunderchain.com",
     name: "testmain",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TWT4BantYCwgQCN9ubxd8Lz765Sw8yv8iL",
@@ -2148,7 +2148,7 @@ export default [
     url: "    ",
     name: "ROCA-TRON",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TC34KZDLwARaBrZ2B8eet9GqgLGDpvifiz",
@@ -2156,7 +2156,7 @@ export default [
     url: "http://blog.naver.com/coolkim01",
     name: "Peterkim7238",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TDUjtGPXM6UJkxREWyNV53c9r1L5ZVJLPb",
@@ -2164,7 +2164,7 @@ export default [
     url: "https://reyna2.com",
     name: "justanthonyhero",
     brokerage: 100,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TLyKxzA5QUkV6R4PCZKZiLaKeoyT5qnEAA",
@@ -2172,7 +2172,7 @@ export default [
     url: "https://c773.com/",
     name: "C773Tron",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TPr4Po9LHUuxqfuRyjpiWctkP39EbpujXH",
@@ -2180,7 +2180,7 @@ export default [
     url: "https://t.me/ONGISTRON_NewsChannel",
     name: 'ONGISTRONb\u0004" ',
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYShuadcBNBKgk8UgxsnB43yeBdyioswHh",
@@ -2191,7 +2191,7 @@ export default [
     latestSlotNum: 512452775,
     name: "tronfans",
     brokerage: 20,
-    isJobs: false
+    isJobs: false,
   },
   {
     address: "TYednHaV9zXpnPchSywVpnseQxY9Pxw4do",
@@ -2201,6 +2201,6 @@ export default [
     latestBlockNum: 1621715,
     latestSlotNum: 511588789,
     brokerage: 20,
-    isJobs: false
-  }
+    isJobs: false,
+  },
 ];

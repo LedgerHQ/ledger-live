@@ -14,7 +14,7 @@ async function signTransaction({
   coreTransaction,
   isCancelled,
   onDeviceSignatureGranted,
-  onDeviceSignatureRequested
+  onDeviceSignatureRequested,
 }) {
   // Sign with the device
 
@@ -40,7 +40,7 @@ async function signTransaction({
   if (isCancelled()) return;
 
   const recipients = [
-    transaction.mode === "undelegate" ? "" : await receiver.toBase58()
+    transaction.mode === "undelegate" ? "" : await receiver.toBase58(),
   ];
   if (isCancelled()) return;
 
@@ -67,7 +67,7 @@ async function signTransaction({
 
   const subAccount =
     transaction.subAccountId && subAccounts
-      ? subAccounts.find(a => a.id === transaction.subAccountId)
+      ? subAccounts.find((a) => a.id === transaction.subAccountId)
       : null;
   if (!subAccount) {
     op = {
@@ -82,7 +82,7 @@ async function signTransaction({
       recipients,
       accountId: id,
       date: new Date(),
-      extra: {}
+      extra: {},
     };
   } else {
     invariant(
@@ -117,20 +117,20 @@ async function signTransaction({
           recipients: [transaction.recipient],
           accountId: subAccount.id,
           date: new Date(),
-          extra: {}
-        }
-      ]
+          extra: {},
+        },
+      ],
     };
   }
 
   return {
     operation: op,
     expirationDate: null,
-    signature: hex
+    signature: hex,
   };
 }
 
 export default makeSignOperation<Transaction, CoreTezosLikeTransaction>({
   buildTransaction,
-  signTransaction
+  signTransaction,
 });

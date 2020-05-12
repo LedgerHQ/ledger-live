@@ -29,17 +29,17 @@ export default {
       name: "period",
       alias: "p",
       type: String,
-      desc: getRanges().join(" | ")
-    }
+      desc: getRanges().join(" | "),
+    },
   ],
   job: (
     opts: ScanCommonOpts & {
-      period: string
+      period: string,
     }
   ) =>
     scan(opts).pipe(
       reduce((all, a) => all.concat(a), []),
-      map(accounts => {
+      map((accounts) => {
         const currency = accounts[0].currency;
         const period = asPortfolioRange(opts.period || "month");
         const portfolio = getPortfolio(accounts, period, (c, v) => {
@@ -56,7 +56,7 @@ export default {
           " accounts, total of " +
           formatCurrencyUnit(unit, balance, {
             showCode: true,
-            disableRounding: true
+            disableRounding: true,
           }) +
           "\n" +
           "on a " +
@@ -69,29 +69,29 @@ export default {
                 .toString() +
               "% (" +
               formatCurrencyUnit(unit, portfolio.countervalueChange.value, {
-                showCode: true
+                showCode: true,
               }) +
               ")"
             : "") +
           "\n" +
           asciichart.plot(
-            portfolio.balanceHistory.map(h =>
+            portfolio.balanceHistory.map((h) =>
               h.value.div(BigNumber(10).pow(unit.magnitude)).toNumber()
             ),
             {
               height: 10,
-              format: value =>
+              format: (value) =>
                 formatCurrencyUnit(
                   unit,
                   BigNumber(value).times(BigNumber(10).pow(unit.magnitude)),
                   {
                     showCode: true,
-                    disableRounding: true
+                    disableRounding: true,
                   }
-                ).padStart(20)
+                ).padStart(20),
             }
           )
         );
       })
-    )
+    ),
 };

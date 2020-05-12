@@ -9,9 +9,9 @@ const getBitcoinLikeInfo = (
   P2PKH: number,
   P2SH: number,
   message: Buffer,
-  short: Buffer
+  short: Buffer,
 }> =>
-  transport.send(0xe0, 0x16, 0x00, 0x00).then(res => {
+  transport.send(0xe0, 0x16, 0x00, 0x00).then((res) => {
     const P2PKH = res.readUInt16BE(0);
     const P2SH = res.readUInt16BE(2);
     try {

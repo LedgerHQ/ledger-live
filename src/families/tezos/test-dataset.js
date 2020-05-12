@@ -5,7 +5,7 @@ import {
   NotEnoughBalanceInParentAccount,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecommendUndelegation,
-  NotSupportedLegacyAddress
+  NotSupportedLegacyAddress,
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { fromTransactionRaw } from "./transaction";
@@ -54,7 +54,7 @@ const addressTZnew = "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii";
 const addressKT = "KT1V99vDN5DHNpU9swVXg1cAT2ji981cccXC";
 const addressDelegator = "tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q";
 
-const reservedAmountForStorageLimit = storageLimit =>
+const reservedAmountForStorageLimit = (storageLimit) =>
   BigNumber(storageLimit || 0).times("1000");
 
 const dataset: DatasetTest<Transaction> = {
@@ -67,7 +67,7 @@ const dataset: DatasetTest<Transaction> = {
       accounts: [
         {
           FIXME_tests: [
-            "balance is sum of ops" // https://ledgerhq.atlassian.net/browse/LLC-591
+            "balance is sum of ops", // https://ledgerhq.atlassian.net/browse/LLC-591
           ],
           raw: accountTZrevealedDelegating,
           transactions: [
@@ -82,93 +82,93 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: { family: "tezos", fees: "3075" },
                 fees: "3075",
                 gasLimit: "10600",
-                storageLimit: "300"
+                storageLimit: "300",
               }),
-              expectedStatus: account => ({
+              expectedStatus: (account) => ({
                 errors: {},
                 warnings: {
-                  amount: new RecommendUndelegation()
+                  amount: new RecommendUndelegation(),
                 },
                 estimatedFees: BigNumber("3075"),
                 amount: account.balance
                   .minus(reservedAmountForStorageLimit("300"))
                   .minus("3075"),
-                totalSpent: account.balance
-              })
+                totalSpent: account.balance,
+              }),
             },
             {
               name: "overflow send to new account",
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance.minus(t.fees || 0).minus("1000"),
-                recipient: addressTZnew
+                recipient: addressTZnew,
               }),
               expectedStatus: {
                 errors: { amount: new NotEnoughBalance() },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "send max to new account (dynamic)",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 recipient: addressTZnew,
-                useAllAmount: true
+                useAllAmount: true,
               }),
               expectedStatus: (account, { storageLimit, fees }) => (
                 invariant(fees, "fees are required"),
                 {
                   errors: {},
                   warnings: {
-                    amount: new RecommendUndelegation()
+                    amount: new RecommendUndelegation(),
                   },
                   estimatedFees: fees,
                   amount: account.balance
                     .minus(reservedAmountForStorageLimit(storageLimit))
                     .minus(fees),
-                  totalSpent: account.balance
+                  totalSpent: account.balance,
                 }
-              )
+              ),
             },
             {
               name: "send max to existing account",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 recipient: addressTZregular,
-                useAllAmount: true
+                useAllAmount: true,
               }),
               expectedStatus: (account, { fees }) => (
                 invariant(fees, "fees are required"),
                 {
                   errors: {},
                   warnings: {
-                    amount: new RecommendUndelegation()
+                    amount: new RecommendUndelegation(),
                   },
                   estimatedFees: fees,
                   amount: account.balance.minus(fees),
-                  totalSpent: account.balance
+                  totalSpent: account.balance,
                 }
-              )
+              ),
             },
             {
               name: "self tx forbidden",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 recipient: addressAccountTZrevealedDelegating,
-                amount: BigNumber(0.1)
+                amount: BigNumber(0.1),
               }),
               expectedStatus: {
                 errors: {
-                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource()
+                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "undelegate",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
-                mode: "undelegate"
+                mode: "undelegate",
               }),
               expectedStatus: (account, { fees }) => (
                 invariant(fees, "fees are required"),
@@ -176,25 +176,25 @@ const dataset: DatasetTest<Transaction> = {
                   errors: {},
                   warnings: {},
                   amount: BigNumber(0),
-                  estimatedFees: fees
+                  estimatedFees: fees,
                 }
-              )
-            }
-          ]
+              ),
+            },
+          ],
         },
 
         {
           FIXME_tests: [
-            "balance is sum of ops" // https://ledgerhq.atlassian.net/browse/LLC-591
+            "balance is sum of ops", // https://ledgerhq.atlassian.net/browse/LLC-591
           ],
           raw: accountTZRevealedNoDelegate,
           transactions: [
             {
               name: "send max to new account",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 recipient: addressTZnew,
-                useAllAmount: true
+                useAllAmount: true,
               }),
               expectedStatus: (account, { storageLimit, fees }) => (
                 invariant(fees, "fees are required"),
@@ -205,16 +205,16 @@ const dataset: DatasetTest<Transaction> = {
                   amount: account.balance
                     .minus(reservedAmountForStorageLimit(storageLimit))
                     .minus(fees),
-                  totalSpent: account.balance
+                  totalSpent: account.balance,
                 }
-              )
+              ),
             },
             {
               name: "send max to existing account",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 recipient: addressTZregular,
-                useAllAmount: true
+                useAllAmount: true,
               }),
               expectedStatus: (account, { fees }) => (
                 invariant(fees, "fees are required"),
@@ -223,16 +223,16 @@ const dataset: DatasetTest<Transaction> = {
                   warnings: {},
                   estimatedFees: fees,
                   amount: account.balance.minus(fees),
-                  totalSpent: account.balance
+                  totalSpent: account.balance,
                 }
-              )
+              ),
             },
             {
               name: "delegate",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 recipient: addressDelegator,
-                mode: "delegate"
+                mode: "delegate",
               }),
               expectedStatus: (account, { fees }) => (
                 invariant(fees, "fees are required"),
@@ -240,11 +240,11 @@ const dataset: DatasetTest<Transaction> = {
                   errors: {},
                   warnings: {},
                   amount: BigNumber(0),
-                  estimatedFees: fees
+                  estimatedFees: fees,
                 }
-              )
-            }
-          ]
+              ),
+            },
+          ],
         },
 
         {
@@ -255,19 +255,19 @@ const dataset: DatasetTest<Transaction> = {
               transaction: (t, account) => ({
                 ...t,
                 recipient: addressKT,
-                amount: account.balance.div(10)
+                amount: account.balance.div(10),
               }),
               expectedStatus: {
                 errors: { recipient: new NotSupportedLegacyAddress() },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "send 10% to existing tz",
               transaction: (t, account) => ({
                 ...t,
                 recipient: addressTZnew,
-                amount: account.balance.div(10)
+                amount: account.balance.div(10),
               }),
               expectedStatus: (account, { fees }) => (
                 invariant(fees, "fees are required"),
@@ -276,11 +276,11 @@ const dataset: DatasetTest<Transaction> = {
                   warnings: {},
                   estimatedFees: fees.times(2),
                   amount: account.balance.div(10),
-                  totalSpent: account.balance.div(10).plus(fees.times(2))
+                  totalSpent: account.balance.div(10).plus(fees.times(2)),
                 }
-              )
-            }
-          ]
+              ),
+            },
+          ],
         },
 
         {
@@ -291,26 +291,26 @@ const dataset: DatasetTest<Transaction> = {
           transactions: [
             {
               name: "send 10% to existing tz",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 recipient: addressTZregular,
-                useAllAmount: true
+                useAllAmount: true,
               }),
               expectedStatus: {
                 errors: {
-                  amount: new NotEnoughBalance()
+                  amount: new NotEnoughBalance(),
                 },
-                warnings: {}
-              }
-            }
-          ]
+                warnings: {},
+              },
+            },
+          ],
         },
 
         {
           FIXME_tests: [
             "balance is sum of ops", // https://ledgerhq.atlassian.net/browse/LLC-503
             // because of prev bug we have bug on:
-            "from KT 2, send max to existing account"
+            "from KT 2, send max to existing account",
           ],
           raw: accountTZwithKT,
           transactions: [
@@ -322,7 +322,7 @@ const dataset: DatasetTest<Transaction> = {
                   ...t,
                   subAccountId: account.subAccounts[0].id,
                   recipient: addressTZnew,
-                  useAllAmount: true
+                  useAllAmount: true,
                 }
               ),
               expectedStatus: ({ subAccounts }, { storageLimit, fees }) => (
@@ -334,9 +334,9 @@ const dataset: DatasetTest<Transaction> = {
                   amount: subAccounts[0].balance.minus(
                     reservedAmountForStorageLimit(storageLimit)
                   ),
-                  totalSpent: subAccounts[0].balance
+                  totalSpent: subAccounts[0].balance,
                 }
-              )
+              ),
             },
             {
               name: "from KT 2, send max to existing account",
@@ -349,7 +349,7 @@ const dataset: DatasetTest<Transaction> = {
                   ...t,
                   subAccountId: account.subAccounts[1].id,
                   recipient: addressTZnew,
-                  useAllAmount: true
+                  useAllAmount: true,
                 }
               ),
               expectedStatus: ({ subAccounts }, { fees, storageLimit }) => (
@@ -362,15 +362,15 @@ const dataset: DatasetTest<Transaction> = {
                   warnings: {},
                   estimatedFees: fees,
                   amount: subAccounts[1].balance,
-                  totalSpent: subAccounts[1].balance
+                  totalSpent: subAccounts[1].balance,
                 }
-              )
-            }
-          ]
+              ),
+            },
+          ],
         },
         {
           FIXME_tests: [
-            "balance is sum of ops" // https://ledgerhq.atlassian.net/browse/LLC-591
+            "balance is sum of ops", // https://ledgerhq.atlassian.net/browse/LLC-591
           ],
           raw: accountTZemptyWithKT,
           transactions: [
@@ -382,13 +382,13 @@ const dataset: DatasetTest<Transaction> = {
                   ...t,
                   subAccountId: account.subAccounts[0].id,
                   recipient: addressTZregular,
-                  useAllAmount: true
+                  useAllAmount: true,
                 }
               ),
               expectedStatus: {
                 errors: { amount: new NotEnoughBalanceInParentAccount() },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
 
             {
@@ -399,19 +399,19 @@ const dataset: DatasetTest<Transaction> = {
                   ...t,
                   subAccountId: account.subAccounts[0].id,
                   amount: account.balance.div(10),
-                  recipient: addressTZregular
+                  recipient: addressTZregular,
                 }
               ),
               expectedStatus: {
                 errors: { amount: new NotEnoughBalanceInParentAccount() },
-                warnings: {}
-              }
-            }
-          ]
-        }
-      ]
-    }
-  }
+                warnings: {},
+              },
+            },
+          ],
+        },
+      ],
+    },
+  },
 };
 
 export default dataset;
@@ -434,6 +434,6 @@ function makeAccount(name, pubKey, derivationMode) {
     lastSyncDate: "",
     balance: "0",
     xpub: pubKey,
-    subAccounts: []
+    subAccounts: [],
   };
 }

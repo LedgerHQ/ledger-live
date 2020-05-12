@@ -9,7 +9,7 @@ export default () => {
   describe("tezos bakers", () => {
     test("getting the bakers", async () => {
       const list = await listBakers(whitelist);
-      expect(list.map(o => o.address)).toEqual(whitelist);
+      expect(list.map((o) => o.address)).toEqual(whitelist);
     });
 
     // TODO we'll need two accounts to test diff cases

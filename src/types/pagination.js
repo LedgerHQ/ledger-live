@@ -9,16 +9,16 @@
 export type PaginationConfig = {
   // operations to pull for each account
   operationsPerAccountId?: {
-    [_: string]: number
+    [_: string]: number,
   },
   // if define and there is no specific account in operationsPerAccountId,
   // this will be the operations count used
-  operations?: number
+  operations?: number,
 };
 
 export type SyncConfig = {
   paginationConfig: PaginationConfig,
   // allows to disable the synchronization part – typically to only paginate more
   withoutSynchronize?: boolean,
-  blacklistedTokenIds?: string[]
+  blacklistedTokenIds?: string[],
 };

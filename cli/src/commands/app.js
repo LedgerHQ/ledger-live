@@ -19,34 +19,34 @@ export default {
       name: "verbose",
       alias: "v",
       type: Boolean,
-      desc: "enable verbose logs"
+      desc: "enable verbose logs",
     },
     {
       name: "install",
       alias: "i",
       type: String,
       desc: "install an application by its name",
-      multiple: true
+      multiple: true,
     },
     {
       name: "uninstall",
       alias: "u",
       type: String,
       desc: "uninstall an application by its name",
-      multiple: true
+      multiple: true,
     },
     {
       name: "open",
       alias: "o",
       type: String,
-      desc: "open an application by its display name"
+      desc: "open an application by its display name",
     },
     {
       name: "quit",
       alias: "q",
       type: Boolean,
-      desc: "close current application"
-    }
+      desc: "close current application",
+    },
   ],
   job: ({
     device,
@@ -54,28 +54,28 @@ export default {
     install,
     uninstall,
     open,
-    quit
+    quit,
   }: $Shape<{
     device: string,
     verbose: boolean,
     install: string[],
     uninstall: string[],
     open: string,
-    quit: string
+    quit: string,
   }>) =>
-    withDevice(device || "")(t => {
+    withDevice(device || "")((t) => {
       if (quit) return from(quitApp(t));
       if (open) return from(openApp(t, inferManagerApp(open)));
 
       return from(getDeviceInfo(t)).pipe(
-        mergeMap(deviceInfo =>
+        mergeMap((deviceInfo) =>
           from(manager.getAppsList(deviceInfo, true)).pipe(
-            mergeMap(list =>
+            mergeMap((list) =>
               concat(
-                ...(uninstall || []).map(application => {
+                ...(uninstall || []).map((application) => {
                   const { targetId } = deviceInfo;
                   const app = list.find(
-                    item =>
+                    (item) =>
                       item.name.toLowerCase() ===
                       inferManagerApp(application).toLowerCase()
                   );
@@ -86,10 +86,10 @@ export default {
                   }
                   return uninstallApp(t, targetId, app);
                 }),
-                ...(install || []).map(application => {
+                ...(install || []).map((application) => {
                   const { targetId } = deviceInfo;
                   const app = list.find(
-                    item =>
+                    (item) =>
                       item.name.toLowerCase() ===
                       inferManagerApp(application).toLowerCase()
                   );
@@ -104,7 +104,7 @@ export default {
             )
           )
         ),
-        verbose ? map(a => a) : ignoreElements()
+        verbose ? map((a) => a) : ignoreElements()
       );
-    })
+    }),
 };

@@ -5,7 +5,7 @@ import type {
   Account,
   AccountLike,
   CurrencyBridge,
-  AccountBridge
+  AccountBridge,
 } from "../types";
 import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "../env";
@@ -25,7 +25,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
     throw new CurrencyNotSupported(
       "no mock implementation available for currency " + currency.id,
       {
-        currencyName: currency.name
+        currencyName: currency.name,
       }
     );
   }
@@ -41,7 +41,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   throw new CurrencyNotSupported(
     "no implementation available for currency " + currency.id,
     {
-      currencyName: currency.name
+      currencyName: currency.name,
     }
   );
 };
@@ -66,7 +66,7 @@ export const getAccountBridge = (
     throw new CurrencyNotSupported(
       "no mock implementation available for currency " + currency.id,
       {
-        currencyName: currency.name
+        currencyName: currency.name,
       }
     );
   }
@@ -76,7 +76,7 @@ export const getAccountBridge = (
     throw new CurrencyNotSupported(
       "no libcore implementation available for currency " + currency.id,
       {
-        currencyName: currency.name
+        currencyName: currency.name,
       }
     );
   }
@@ -85,6 +85,6 @@ export const getAccountBridge = (
     return jsBridge.accountBridge;
   }
   throw new CurrencyNotSupported("currency not supported " + currency.id, {
-    currencyName: mainAccount.currency.name
+    currencyName: mainAccount.currency.name,
   });
 };

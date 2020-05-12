@@ -12,7 +12,7 @@ import { log } from "@ledgerhq/logs";
 import {
   listCryptoCurrencies,
   currenciesByMarketcap,
-  findCryptoCurrencyById
+  findCryptoCurrencyById,
 } from "../currencies";
 import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
@@ -42,16 +42,16 @@ export const listApps = (
     // $FlowFixMe
     (transport.deviceModel && transport.deviceModel.id) || "nanoS";
 
-  return Observable.create(o => {
+  return Observable.create((o) => {
     let sub;
 
     async function main() {
       const installedP = new Promise((resolve, reject) => {
         sub = ManagerAPI.listInstalledApps(transport, {
           targetId: deviceInfo.targetId,
-          perso: "perso_11"
+          perso: "perso_11",
         }).subscribe({
-          next: e => {
+          next: (e) => {
             if (e.type === "result") {
               resolve(e.payload);
             } else if (
@@ -61,22 +61,24 @@ export const listApps = (
               o.next(e);
             }
           },
-          error: reject
+          error: reject,
         });
       })
-        .then(apps => apps.map(({ name, hash }) => ({ name, hash, blocks: 0 })))
-        .catch(e => {
+        .then((apps) =>
+          apps.map(({ name, hash }) => ({ name, hash, blocks: 0 }))
+        )
+        .catch((e) => {
           log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
           if (getEnv("EXPERIMENTAL_FALLBACK_APDU_LISTAPPS")) {
             return hwListApps(transport)
-              .then(apps =>
+              .then((apps) =>
                 apps.map(({ name, hash, blocks }) => ({
                   name,
                   hash,
-                  blocks
+                  blocks,
                 }))
               )
-              .catch(e => {
+              .catch((e) => {
                 log(
                   "hw",
                   "failed to device list apps " + String(e) + "\n" + e.stack
@@ -87,29 +89,29 @@ export const listApps = (
             throw e;
           }
         })
-        .then(apps => [apps, true]);
+        .then((apps) => [apps, true]);
 
       const deviceVersionP = ManagerAPI.getDeviceVersion(
         deviceInfo.targetId,
         deviceInfo.providerId
       );
 
-      const firmwareDataP = deviceVersionP.then(deviceVersion =>
+      const firmwareDataP = deviceVersionP.then((deviceVersion) =>
         ManagerAPI.getCurrentFirmware({
           deviceId: deviceVersion.id,
           version: deviceInfo.version,
-          provider: deviceInfo.providerId
+          provider: deviceInfo.providerId,
         })
       );
 
       const applicationsByDeviceP = Promise.all([
         deviceVersionP,
-        firmwareDataP
+        firmwareDataP,
       ]).then(([deviceVersion, firmwareData]) =>
         ManagerAPI.applicationsByDevice({
           provider: deviceInfo.providerId,
           current_se_firmware_final_version: firmwareData.id,
-          device_version: deviceVersion.id
+          device_version: deviceVersion.id,
         })
       );
 
@@ -118,15 +120,15 @@ export const listApps = (
         applicationsList,
         compatibleAppVersionsList,
         firmware,
-        sortedCryptoCurrencies
+        sortedCryptoCurrencies,
       ] = await Promise.all([
         installedP,
-        ManagerAPI.listApps().then(apps => apps.map(polyfillApplication)),
+        ManagerAPI.listApps().then((apps) => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareDataP,
         currenciesByMarketcap(
           listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
-        )
+        ),
       ]);
 
       // unfortunately we sometimes (nano s 1.3.1) miss app.name (it's set as "" from list apps)
@@ -134,13 +136,13 @@ export const listApps = (
       // for performance we might eventually only load applications in case one name is missing
       let installedList = partialInstalledList;
       const shouldCompleteInstalledList = partialInstalledList.some(
-        a => !a.name
+        (a) => !a.name
       );
       if (shouldCompleteInstalledList) {
-        installedList = installedList.map(a => {
+        installedList = installedList.map((a) => {
           if (a.name) return a; // already present
-          const application = applicationsList.find(e =>
-            e.application_versions.some(v => v.hash === a.hash)
+          const application = applicationsList.find((e) =>
+            e.application_versions.some((v) => v.hash === a.hash)
           );
           if (!application) return a; // still no luck with our api
           return { ...a, name: application.name };
@@ -148,8 +150,10 @@ export const listApps = (
       }
 
       const apps = compatibleAppVersionsList
-        .map(version => {
-          const application = applicationsList.find(e => e.id === version.app);
+        .map((version) => {
+          const application = applicationsList.find(
+            (e) => e.id === version.app
+          );
           if (!application) return;
           const isDevTools = application.category === 2;
 
@@ -164,11 +168,11 @@ export const listApps = (
             try {
               const parsed = JSON.parse(application.compatibleWalletsJSON);
               if (parsed && Array.isArray(parsed)) {
-                parsed.forEach(w => {
+                parsed.forEach((w) => {
                   if (w && typeof w === "object" && w.name) {
                     compatibleWallets.push({
                       name: w.name,
-                      url: w.url
+                      url: w.url,
                     });
                   }
                 });
@@ -204,7 +208,7 @@ export const listApps = (
             bytes: version.bytes,
             warning: version.warning,
             indexOfMarketCap,
-            isDevTools
+            isDevTools,
           });
 
           return app;
@@ -220,16 +224,16 @@ export const listApps = (
       const deviceModel = getDeviceModel(deviceModelId);
 
       const appByName = {};
-      apps.forEach(app => {
+      apps.forEach((app) => {
         appByName[app.name] = app;
       });
 
       // Infer more data on the app installed
       const installed = installedList.map(({ name, hash, blocks }) => {
-        const app = applicationsList.find(a => a.name === name);
+        const app = applicationsList.find((a) => a.name === name);
         const installedAppVersion =
           app && hash
-            ? app.application_versions.find(v => v.hash === hash)
+            ? app.application_versions.find((v) => v.hash === hash)
             : null;
         const availableAppVersion = appByName[name];
         const blocksSize =
@@ -251,16 +255,17 @@ export const listApps = (
           blocks: blocksSize,
           hash,
           version,
-          availableVersion
+          availableVersion,
         };
       });
 
       const appsListNames = (getEnv("MANAGER_DEV_MODE")
         ? apps
         : apps.filter(
-            a => !a.isDevTools || installed.some(({ name }) => name === a.name)
+            (a) =>
+              !a.isDevTools || installed.some(({ name }) => name === a.name)
           )
-      ).map(a => a.name);
+      ).map((a) => a.name);
 
       const result: ListAppsResult = {
         appByName,
@@ -269,12 +274,12 @@ export const listApps = (
         installedAvailable,
         deviceInfo,
         deviceModelId,
-        firmware
+        firmware,
       };
 
       o.next({
         type: "result",
-        result
+        result,
       });
     }
 
@@ -282,7 +287,7 @@ export const listApps = (
       () => {
         o.complete();
       },
-      e => {
+      (e) => {
         o.error(e);
       }
     );

@@ -8,36 +8,39 @@ import { getOrCreateWallet } from "./getOrCreateWallet";
 import { getOrCreateAccount } from "./getOrCreateAccount";
 import byFamily from "../generated/libcore-getAccountNetworkInfo";
 
-type F = Account => Promise<NetworkInfo>;
+type F = (Account) => Promise<NetworkInfo>;
 
-export const getAccountNetworkInfo: F = withLibcoreF(core => async account => {
-  try {
-    const { derivationMode, currency } = account;
-    const f = byFamily[currency.family];
-    if (!f) {
-      throw new Error(
-        "getAccountNetworkInfo is not implemented by family " + currency.family
-      );
+export const getAccountNetworkInfo: F = withLibcoreF(
+  (core) => async (account) => {
+    try {
+      const { derivationMode, currency } = account;
+      const f = byFamily[currency.family];
+      if (!f) {
+        throw new Error(
+          "getAccountNetworkInfo is not implemented by family " +
+            currency.family
+        );
+      }
+
+      const walletName = getWalletName(account);
+
+      const coreWallet = await getOrCreateWallet({
+        core,
+        walletName,
+        currency,
+        derivationMode,
+      });
+
+      const coreAccount = await getOrCreateAccount({
+        core,
+        coreWallet,
+        account,
+      });
+
+      const res = await f({ account, coreAccount });
+      return res;
+    } catch (error) {
+      throw remapLibcoreErrors(error);
     }
-
-    const walletName = getWalletName(account);
-
-    const coreWallet = await getOrCreateWallet({
-      core,
-      walletName,
-      currency,
-      derivationMode
-    });
-
-    const coreAccount = await getOrCreateAccount({
-      core,
-      coreWallet,
-      account
-    });
-
-    const res = await f({ account, coreAccount });
-    return res;
-  } catch (error) {
-    throw remapLibcoreErrors(error);
   }
-});
+);

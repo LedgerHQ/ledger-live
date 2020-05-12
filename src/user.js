@@ -15,7 +15,7 @@ export const getUserHashes = () => {
   }
   cache = {
     userId,
-    value: userHashesPerUserId(userId)
+    value: userHashesPerUserId(userId),
   };
   return cache.value;
 };

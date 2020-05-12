@@ -7,25 +7,25 @@ import { blockchainBaseURL } from "./Ledger";
 import network from "../network";
 
 export type Fees = {
-  [_: string]: number
+  [_: string]: number,
 };
 
 export const getEstimatedFees: (
   currency: CryptoCurrency
 ) => Promise<Fees> = makeLRUCache(
-  async currency => {
+  async (currency) => {
     const baseURL = blockchainBaseURL(currency);
     invariant(baseURL, `Fees for ${currency.id} are not supported`);
     const { data, status } = await network({
       method: "GET",
-      url: `${baseURL}/fees`
+      url: `${baseURL}/fees`,
     });
     if (data) {
       return data;
     }
     throw new FeeEstimationFailed(`FeeEstimationFailed ${status}`, {
-      httpStatus: status
+      httpStatus: status,
     });
   },
-  c => c.id
+  (c) => c.id
 );

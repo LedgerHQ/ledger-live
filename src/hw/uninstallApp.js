@@ -17,7 +17,7 @@ export default function uninstallApp(
     deleteKey: app.delete_key,
     firmware: app.delete,
     firmwareKey: app.delete_key,
-    hash: app.hash
+    hash: app.hash,
   }).pipe(
     ignoreElements(),
     catchError((e: Error) => {
@@ -26,7 +26,7 @@ export default function uninstallApp(
       if (status === "6a83") {
         return throwError(
           new ManagerAppDepUninstallRequired("", {
-            appName: app.name
+            appName: app.name,
           })
         );
       }

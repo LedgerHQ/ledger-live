@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 import {
   fromTransactionCommonRaw,
-  toTransactionCommonRaw
+  toTransactionCommonRaw,
 } from "../../transaction/common";
 
 const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
@@ -21,8 +21,8 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: BigNumber(networkInfo.fees),
-      baseReserve: BigNumber(networkInfo.baseReserve)
-    }
+      baseReserve: BigNumber(networkInfo.baseReserve),
+    },
   };
 };
 
@@ -40,8 +40,8 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: networkInfo.fees.toString(),
-      baseReserve: networkInfo.baseReserve.toString()
-    }
+      baseReserve: networkInfo.baseReserve.toString(),
+    },
   };
 };
 

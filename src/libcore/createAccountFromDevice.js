@@ -19,7 +19,7 @@ type F = ({
   index: number,
   derivationMode: DerivationMode,
   isUnsubscribed: () => boolean,
-  derivationsCache: DerivationsCache
+  derivationsCache: DerivationsCache,
 }) => Promise<?CoreAccount>;
 
 export const createAccountFromDevice: F = async ({
@@ -29,7 +29,7 @@ export const createAccountFromDevice: F = async ({
   currency,
   derivationMode,
   isUnsubscribed,
-  derivationsCache
+  derivationsCache,
 }) => {
   log(
     "libcore",
@@ -60,7 +60,7 @@ export const createAccountFromDevice: F = async ({
             path: derivation,
             derivationMode,
             askChainCode: true,
-            skipAppFailSafeCheck: true
+            skipAppFailSafeCheck: true,
           });
           derivationsCache.store[derivation] = cache;
         }
@@ -77,7 +77,7 @@ export const createAccountFromDevice: F = async ({
     owners,
     derivations,
     publicKeys,
-    chainCodes
+    chainCodes,
   });
   const newAccountCreationInfos = await core.AccountCreationInfo.init(
     index,

@@ -31,7 +31,7 @@ export default async (
     // these are in hexa string format (e.g. '0xABCDEF')
     gasPrice: string,
     gasLimit: string,
-    amount: string
+    amount: string,
   }
 ) => {
   // First, we need to create a partial tx and send to the device
@@ -44,7 +44,7 @@ export default async (
     gasLimit: t.gasLimit,
     to: t.recipient,
     value: t.amount,
-    chainId
+    chainId,
   });
   tx.raw[6] = Buffer.from([chainId]); // v
   tx.raw[7] = Buffer.from([]); // r

@@ -4,9 +4,9 @@ import type { CoreOperation } from "../../libcore/types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 
 async function stellarBuildOperation({
-  coreOperation
+  coreOperation,
 }: {
-  coreOperation: CoreOperation
+  coreOperation: CoreOperation,
 }) {
   const stellarLikeOperation = await coreOperation.asStellarLikeOperation();
   const stellarLikeRecord = await stellarLikeOperation.getRecord();
@@ -18,7 +18,7 @@ async function stellarBuildOperation({
   );
   return {
     hash,
-    transactionSequenceNumber: transactionSequenceNumber.toNumber()
+    transactionSequenceNumber: transactionSequenceNumber.toNumber(),
   };
 }
 

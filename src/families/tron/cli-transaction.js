@@ -10,7 +10,7 @@ import type {
   Transaction,
   Account,
   AccountLike,
-  AccountLikeArray
+  AccountLikeArray,
 } from "../../types";
 import type { SuperRepresentativeData, Vote } from "./types";
 
@@ -19,44 +19,44 @@ const options = [
     name: "token",
     alias: "t",
     type: String,
-    desc: "use an token account children of the account"
+    desc: "use an token account children of the account",
   },
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, freeze, unfreeze"
+    desc: "mode of transaction: send, freeze, unfreeze",
   },
   {
     name: "duration",
     type: String,
-    desc: "duration in day"
+    desc: "duration in day",
   },
   {
     name: "resource",
     type: String,
-    desc: "reward ENERGY or BANDWIDTH"
+    desc: "reward ENERGY or BANDWIDTH",
   },
   {
     name: "tronVoteAddress",
     type: String,
     multiple: true,
-    desc: "address of the super representative voting"
+    desc: "address of the super representative voting",
   },
   {
     name: "tronVoteCount",
     type: String,
     multiple: true,
-    desc: "number of votes for the vote address"
-  }
+    desc: "number of votes for the vote address",
+  },
 ];
 
 function inferAccounts(account: Account, opts: Object): AccountLikeArray {
   invariant(account.currency.family === "tron", "tron family");
   if (!opts.token) return [account];
-  return opts.token.map(token => {
+  return opts.token.map((token) => {
     const subAccounts = account.subAccounts || [];
     if (token) {
-      const subAccount = subAccounts.find(t => {
+      const subAccount = subAccounts.find((t) => {
         const currency = getAccountCurrency(t);
         return (
           token.toLowerCase() === currency.ticker.toLowerCase() ||
@@ -68,7 +68,7 @@ function inferAccounts(account: Account, opts: Object): AccountLikeArray {
           "token account '" +
             token +
             "' not found. Available: " +
-            subAccounts.map(t => getAccountCurrency(t).ticker).join(", ")
+            subAccounts.map((t) => getAccountCurrency(t).ticker).join(", ")
         );
       }
       return subAccount;
@@ -97,13 +97,13 @@ function inferTransactions(
   }
 
   const voteAddresses: string[] = opts["tronVoteAddress"] || [];
-  const voteCounts: number[] = (opts["tronVoteCount"] || []).map(value => {
+  const voteCounts: number[] = (opts["tronVoteCount"] || []).map((value) => {
     invariant(Number.isInteger(Number(value)), `Invalid integer: ${value}`);
     return parseInt(value);
   });
   const votes: Vote[] = zipWith(voteAddresses, voteCounts, (a, c) => ({
     address: a,
-    voteCount: c
+    voteCount: c,
   }));
 
   return flatMap(transactions, ({ transaction, account }) => {
@@ -124,7 +124,7 @@ function inferTransactions(
       subAccountId: account.type === "TokenAccount" ? account.id : null,
       mode,
       resource,
-      votes
+      votes,
     };
   });
 }
@@ -132,12 +132,12 @@ function inferTransactions(
 const formatOptStr = (str: ?string): string => str || "";
 
 const superRepresentativesFormatters = {
-  json: srData => JSON.stringify(srData),
-  default: srData => {
+  json: (srData) => JSON.stringify(srData),
+  default: (srData) => {
     const headerList = 'address "name" url voteCount brokerage isJobs';
 
     const strList = srData.list.map(
-      sr =>
+      (sr) =>
         `${sr.address} "${formatOptStr(sr.name)}" ${formatOptStr(sr.url)} ${
           sr.voteCount
         } ${sr.brokerage} ${sr.isJobs}`
@@ -145,14 +145,11 @@ const superRepresentativesFormatters = {
 
     const metaData = [
       `nextVotingDate: ${srData.nextVotingDate}`,
-      `totalVotes: ${srData.totalVotes}`
+      `totalVotes: ${srData.totalVotes}`,
     ];
 
-    return [headerList]
-      .concat(strList)
-      .concat(metaData)
-      .join("\n");
-  }
+    return [headerList].concat(strList).concat(metaData).join("\n");
+  },
 };
 
 const tronSuperRepresentative = {
@@ -160,20 +157,20 @@ const tronSuperRepresentative = {
     {
       name: "max",
       desc: "max number of super representatives to return",
-      type: Number
+      type: Number,
     },
     {
       name: "format",
       desc: Object.keys(superRepresentativesFormatters).join(" | "),
-      type: String
-    }
+      type: String,
+    },
   ],
   job: ({
     max,
-    format
+    format,
   }: $Shape<{
     max: ?number,
-    format: string
+    format: string,
   }>): Observable<string> =>
     from(getTronSuperRepresentativeData(max)).pipe(
       map((srData: SuperRepresentativeData) => {
@@ -182,7 +179,7 @@ const tronSuperRepresentative = {
           superRepresentativesFormatters.default;
         return f(srData);
       })
-    )
+    ),
 };
 
 export default {
@@ -190,6 +187,6 @@ export default {
   inferAccounts,
   inferTransactions,
   commands: {
-    tronSuperRepresentative
-  }
+    tronSuperRepresentative,
+  },
 };

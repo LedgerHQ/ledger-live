@@ -5,7 +5,7 @@ import uniq from "lodash/uniq";
 import type { App, Application } from "../types/manager";
 import {
   listCryptoCurrencies,
-  findCryptoCurrencyById
+  findCryptoCurrencyById,
 } from "../data/cryptocurrencies";
 
 const directDep = {};
@@ -14,7 +14,7 @@ export function declareDep(name: string, dep: string) {
   directDep[name] = (directDep[name] || []).concat(dep);
   reverseDep[dep] = (reverseDep[dep] || []).concat(name);
 }
-listCryptoCurrencies(true, true).forEach(a => {
+listCryptoCurrencies(true, true).forEach((a) => {
   if (!a.managerAppName) return; // no app for this currency
   const dep = findCryptoCurrencyById(a.family);
   if (!dep || !dep.managerAppName) return; // no dep
@@ -37,7 +37,7 @@ listCryptoCurrencies(true, true).forEach(a => {
   ["RSK", "Ethereum"],
   ["ThunderCore", "Ethereum"],
   ["Volta", "Ethereum"],
-  ["ZenCash", "Bitcoin"]
+  ["ZenCash", "Bitcoin"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 
 export const getDependencies = (appName: string): string[] =>
@@ -48,7 +48,7 @@ export const getDependents = (appName: string): string[] =>
 
 export const polyfillApplication = (app: Application): Application => {
   const crypto = listCryptoCurrencies(true, true).find(
-    crypto => app.name.toLowerCase() === crypto.managerAppName.toLowerCase()
+    (crypto) => app.name.toLowerCase() === crypto.managerAppName.toLowerCase()
   );
   let o = app;
   if (crypto && !app.currencyId) {
@@ -60,6 +60,6 @@ export const polyfillApplication = (app: Application): Application => {
 export const polyfillApp = (app: $Exact<App>): $Exact<App> => {
   return {
     ...app,
-    dependencies: uniq(app.dependencies.concat(getDependencies(app.name)))
+    dependencies: uniq(app.dependencies.concat(getDependencies(app.name))),
   };
 };

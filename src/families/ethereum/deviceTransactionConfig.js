@@ -5,12 +5,12 @@ import type { Account, AccountLike, TransactionStatus } from "../../types";
 import type { Transaction } from "../bitcoin/types";
 
 function getDeviceTransactionConfig({
-  status
+  status,
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  status: TransactionStatus
+  status: TransactionStatus,
 }): Array<DeviceTransactionField> {
   const { amount, estimatedFees } = status;
   const fields = [];
@@ -18,14 +18,14 @@ function getDeviceTransactionConfig({
   if (!amount.isZero()) {
     fields.push({
       type: "amount",
-      label: "Amount"
+      label: "Amount",
     });
   }
 
   if (estimatedFees && !estimatedFees.isZero()) {
     fields.push({
       type: "fees",
-      label: "Max fees"
+      label: "Max fees",
     });
   }
 

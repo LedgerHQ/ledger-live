@@ -11,7 +11,7 @@ import type {
   Transaction,
   TransactionStatus,
   SignedOperation,
-  SignOperationEvent
+  SignOperationEvent,
 } from "../../types";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
@@ -25,12 +25,12 @@ type State = {|
   signedOperation: ?SignedOperation,
   deviceSignatureRequested: boolean,
   deviceStreamingProgress: ?number,
-  transactionSignError: ?Error
+  transactionSignError: ?Error,
 |};
 
 type TransactionState = {|
   ...AppState,
-  ...State
+  ...State,
 |};
 
 type TransactionRequest = {
@@ -38,16 +38,16 @@ type TransactionRequest = {
   parentAccount: ?Account,
   account: AccountLike,
   transaction: Transaction,
-  status: TransactionStatus
+  status: TransactionStatus,
 };
 
 type TransactionResult =
   | {
       signedOperation: SignedOperation,
-      device: Device
+      device: Device,
     }
   | {
-      transactionSignError: Error
+      transactionSignError: Error,
     };
 
 type TransactionAction = Action<
@@ -59,7 +59,7 @@ type TransactionAction = Action<
 const mapResult = ({
   device,
   signedOperation,
-  transactionSignError
+  transactionSignError,
 }: TransactionState): ?TransactionResult =>
   signedOperation && device
     ? { signedOperation, device }
@@ -73,7 +73,7 @@ const initialState = {
   signedOperation: null,
   deviceSignatureRequested: false,
   deviceStreamingProgress: null,
-  transactionSignError: null
+  transactionSignError: null,
 };
 
 const reducer = (state: State, e: Event): State => {
@@ -99,7 +99,7 @@ const reducer = (state: State, e: Event): State => {
 };
 
 export const createAction = (
-  connectAppExec: ConnectAppInput => Observable<ConnectAppEvent>
+  connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>
 ): TransactionAction => {
   const useHook = (
     reduxDevice: ?Device,
@@ -112,7 +112,7 @@ export const createAction = (
     );
 
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
-      account: mainAccount
+      account: mainAccount,
     });
 
     const { device, opened, inWrongDeviceForAccount, error } = appState;
@@ -131,11 +131,11 @@ export const createAction = (
         .signOperation({
           account: mainAccount,
           transaction,
-          deviceId: device.deviceId
+          deviceId: device.deviceId,
         })
         .pipe(
-          catchError(error => of({ type: "error", error })),
-          tap(e => log("actions-transaction-event", e.type, e)),
+          catchError((error) => of({ type: "error", error })),
+          tap((e) => log("actions-transaction-event", e.type, e)),
           scan(reducer, initialState)
         )
         .subscribe(setState);
@@ -149,7 +149,7 @@ export const createAction = (
       transaction,
       opened,
       inWrongDeviceForAccount,
-      error
+      error,
     ]);
 
     return {
@@ -159,12 +159,12 @@ export const createAction = (
         state.signedOperation || state.transactionSignError
           ? null
           : // when good app is opened, we start the progress so it doesn't "blink"
-            state.deviceStreamingProgress || (appState.opened ? 0 : null)
+            state.deviceStreamingProgress || (appState.opened ? 0 : null),
     };
   };
 
   return {
     useHook,
-    mapResult
+    mapResult,
   };
 };

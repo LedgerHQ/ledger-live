@@ -21,7 +21,7 @@ export default async (
     recipient: string,
     gasPrice: string,
     gasLimit: string,
-    amount: string
+    amount: string,
   }
 ) => {
   const tokenInfo = byContractAddress(token.contractAddress);
@@ -34,7 +34,7 @@ export default async (
   invariant(chainId, `chainId not found for currency ${ethereum.name}`);
   const to256 = Buffer.concat([
     Buffer.alloc(12),
-    Buffer.from(t.recipient.replace(/^0x/g, ""), "hex")
+    Buffer.from(t.recipient.replace(/^0x/g, ""), "hex"),
   ]);
   invariant(to256.length === 32, "recipient is invalid");
   const amountHex = t.amount.replace(/^0x/g, "");
@@ -52,7 +52,7 @@ export default async (
     to: token.contractAddress,
     value: 0x00,
     data: "0x" + data.toString("hex"),
-    chainId
+    chainId,
   });
   tx.raw[6] = Buffer.from([chainId]); // v
   tx.raw[7] = Buffer.from([]); // r

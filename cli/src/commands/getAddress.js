@@ -19,8 +19,8 @@ export default {
       name: "verify",
       alias: "v",
       type: Boolean,
-      desc: "also ask verification on device"
-    }
+      desc: "also ask verification on device",
+    },
   ],
   job: (
     arg: $Shape<{
@@ -28,11 +28,11 @@ export default {
       device: string,
       path: string,
       derivationMode: string,
-      verify: boolean
+      verify: boolean,
     }>
   ) =>
     inferCurrency(arg).pipe(
-      mergeMap(currency => {
+      mergeMap((currency) => {
         if (!currency) {
           throw new Error("no currency provided");
         }
@@ -40,15 +40,15 @@ export default {
           throw new Error("--path is required");
         }
         asDerivationMode(arg.derivationMode);
-        return withDevice(arg.device || "")(t =>
+        return withDevice(arg.device || "")((t) =>
           from(
             getAddress(t, {
               currency,
               path: arg.path,
-              derivationMode: asDerivationMode(arg.derivationMode || "")
+              derivationMode: asDerivationMode(arg.derivationMode || ""),
             })
           )
         );
       })
-    )
+    ),
 };

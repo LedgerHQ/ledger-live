@@ -9,7 +9,7 @@ import type Transport from "@ledgerhq/hw-transport";
 type Discovery = Observable<{
   type: "add" | "remove",
   id: string,
-  name: string
+  name: string,
 }>;
 
 // NB open/close/disconnect semantic will have to be refined...
@@ -27,7 +27,7 @@ export type TransportModule = {
   // returns falsy if the transport module can't handle this id
   disconnect: (id: string) => ?Promise<void>,
   // optional observable that allows to discover a transport
-  discovery?: Discovery
+  discovery?: Discovery,
 };
 
 const modules: TransportModule[] = [];
@@ -40,7 +40,7 @@ export const discoverDevices = (
   accept: (module: TransportModule) => boolean = () => true
 ): Observable<{
   id: string,
-  name: string
+  name: string,
 }> => {
   const all: Discovery[] = [];
   for (let i = 0; i < modules.length; i++) {
@@ -50,9 +50,9 @@ export const discoverDevices = (
     }
   }
   return merge(
-    ...all.map(o =>
+    ...all.map((o) =>
       o.pipe(
-        catchError(e => {
+        catchError((e) => {
           console.warn(`One Transport provider failed: ${e}`);
           return empty();
         })

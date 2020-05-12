@@ -3,7 +3,7 @@
 import { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "../../types/transaction";
 
 export type CoreStatics = {};
@@ -29,7 +29,7 @@ export type NetworkInfo = {|
   netUsed: BigNumber,
   netLimit: BigNumber,
   energyUsed: BigNumber,
-  energyLimit: BigNumber
+  energyLimit: BigNumber,
 |};
 
 export type NetworkInfoRaw = {|
@@ -39,7 +39,7 @@ export type NetworkInfoRaw = {|
   netUsed: string,
   netLimit: string,
   energyUsed: string,
-  energyLimit: string
+  energyLimit: string,
 |};
 
 export type Transaction = {|
@@ -49,7 +49,7 @@ export type Transaction = {|
   resource: ?TronResource,
   networkInfo: ?NetworkInfo,
   duration: ?number,
-  votes: Vote[]
+  votes: Vote[],
 |};
 
 export type TransactionRaw = {|
@@ -59,7 +59,7 @@ export type TransactionRaw = {|
   resource: ?TronResource,
   networkInfo: ?NetworkInfoRaw,
   duration: ?number,
-  votes: Vote[]
+  votes: Vote[],
 |};
 
 export type TrongridTxType =
@@ -84,7 +84,7 @@ export type TrongridTxInfo = {|
   resource?: TronResource,
   blockHeight?: number,
   extra?: TrongridExtraTxInfo,
-  hasFailed: boolean
+  hasFailed: boolean,
 |};
 
 export type TrongridExtraTxInfo =
@@ -94,16 +94,16 @@ export type TrongridExtraTxInfo =
 
 export type TrongridFreezeTxInfo = {|
   frozenAmount: BigNumber,
-  resource: TronResource
+  resource: TronResource,
 |};
 
 export type TrongridUnfreezeTxInfo = {|
   unfreezeAmount: BigNumber,
-  resource: TronResource
+  resource: TronResource,
 |};
 
 export type TrongridVotesTxInfo = {|
-  votes: Vote[]
+  votes: Vote[],
 |};
 
 /** Payload types to send to trongrid */
@@ -111,7 +111,7 @@ export type SendTransactionData = {|
   to_address: string,
   owner_address: string,
   amount: number,
-  asset_name: ?string
+  asset_name: ?string,
 |};
 
 export type SmartContractFunction = "transfer(address,uint256)";
@@ -122,13 +122,13 @@ export type SmartContractTransactionData = {|
   call_value: number,
   contract_address: string,
   parameter: string,
-  owner_address: string
+  owner_address: string,
 |};
 
 export type UnfreezeTransactionData = {|
   receiver_address?: string,
   owner_address: string,
-  resource: ?TronResource
+  resource: ?TronResource,
 |};
 
 export type FreezeTransactionData = {|
@@ -136,14 +136,14 @@ export type FreezeTransactionData = {|
   owner_address: string,
   frozen_balance: number,
   frozen_duration: number,
-  resource: ?TronResource
+  resource: ?TronResource,
 |};
 
 export type SendTransactionDataSuccess = {|
   raw_data_hex?: string,
   raw_data: Object,
   txID: string,
-  signature: ?(string[])
+  signature: ?(string[]),
 |};
 /** */
 
@@ -152,7 +152,7 @@ export const reflect = (_declare: *) => {};
 export type SuperRepresentativeData = {|
   list: SuperRepresentative[],
   totalVotes: number,
-  nextVotingDate: Date
+  nextVotingDate: Date,
 |};
 
 export type SuperRepresentative = {|
@@ -165,17 +165,17 @@ export type SuperRepresentative = {|
   totalProduced: ?number,
   totalMissed: ?number,
   latestBlockNum: ?number,
-  latestSlotNum: ?number
+  latestSlotNum: ?number,
 |};
 
 export type TronResources = {|
   frozen: {
     bandwidth: ?FrozenInfo,
-    energy: ?FrozenInfo
+    energy: ?FrozenInfo,
   },
   delegatedFrozen: {
     bandwidth: ?DelegatedFrozenInfo,
-    energy: ?DelegatedFrozenInfo
+    energy: ?DelegatedFrozenInfo,
   },
   votes: Vote[],
   tronPower: number,
@@ -184,17 +184,17 @@ export type TronResources = {|
   unwithdrawnReward: BigNumber,
   lastWithdrawnRewardDate: ?Date,
   lastVotedDate: ?Date,
-  cacheTransactionInfoById: { [_: string]: TronTransactionInfo }
+  cacheTransactionInfoById: { [_: string]: TronTransactionInfo },
 |};
 
 export type TronResourcesRaw = {|
   frozen: {
     bandwidth: ?FrozenInfoRaw,
-    energy: ?FrozenInfoRaw
+    energy: ?FrozenInfoRaw,
   },
   delegatedFrozen: {
     bandwidth: ?DelegatedFrozenInfoRaw,
-    energy: ?DelegatedFrozenInfoRaw
+    energy: ?DelegatedFrozenInfoRaw,
   },
   votes: Vote[],
   tronPower: number,
@@ -203,51 +203,51 @@ export type TronResourcesRaw = {|
   unwithdrawnReward: string,
   lastWithdrawnRewardDate: ?string,
   lastVotedDate: ?string,
-  cacheTransactionInfoById?: { [_: string]: TronTransactionInfoRaw }
+  cacheTransactionInfoById?: { [_: string]: TronTransactionInfoRaw },
 |};
 
 export type Vote = {|
   address: string,
-  voteCount: number
+  voteCount: number,
 |};
 
 export type FrozenInfo = {|
   amount: BigNumber,
-  expiredAt: Date
+  expiredAt: Date,
 |};
 
 export type FrozenInfoRaw = {|
   amount: string,
-  expiredAt: string
+  expiredAt: string,
 |};
 
 export type DelegatedFrozenInfo = {|
-  amount: BigNumber
+  amount: BigNumber,
 |};
 
 export type DelegatedFrozenInfoRaw = {|
-  amount: string
+  amount: string,
 |};
 
 export type BandwidthInfo = {|
   freeUsed: BigNumber,
   freeLimit: BigNumber,
   gainedUsed: BigNumber,
-  gainedLimit: BigNumber
+  gainedLimit: BigNumber,
 |};
 
 export type BandwidthInfoRaw = {|
   freeUsed: string,
   freeLimit: string,
   gainedUsed: string,
-  gainedLimit: string
+  gainedLimit: string,
 |};
 
 export type TronTransactionInfo = {|
   fee: number,
   blockNumber: number,
   withdraw_amount: number,
-  unfreeze_amount: number
+  unfreeze_amount: number,
 |};
 
 export type TronTransactionInfoRaw = [number, number, number, number];

@@ -8,7 +8,7 @@ export type Unit = {
   // number of digits after the '.'
   magnitude: number,
   // should it always print all digits even if they are 0 (usually: true for fiats, false for cryptos)
-  showAllDigits?: boolean
+  showAllDigits?: boolean,
 };
 
 type CurrencyCommon = {
@@ -23,7 +23,7 @@ type CurrencyCommon = {
   symbol?: string,
   // tells if countervalue need to be disabled (typically because colliding with other coins)
   disableCountervalue?: boolean,
-  delisted?: boolean
+  delisted?: boolean,
 };
 
 export type TokenCurrency = CurrencyCommon & {
@@ -34,17 +34,17 @@ export type TokenCurrency = CurrencyCommon & {
   // the currency it belongs to. e.g. 'ethereum'
   parentCurrency: CryptoCurrency,
   // the type of token in the blockchain it belongs. e.g. 'erc20'
-  tokenType: string
+  tokenType: string,
 };
 
 export type FiatCurrency = CurrencyCommon & {
-  type: "FiatCurrency"
+  type: "FiatCurrency",
 };
 
 export type ExplorerView = {
   tx?: string,
   address?: string,
-  token?: string
+  token?: string,
 };
 
 export type CryptoCurrency = CurrencyCommon & {
@@ -71,15 +71,15 @@ export type CryptoCurrency = CurrencyCommon & {
   bitcoinLikeInfo?: {
     P2PKH: number,
     P2SH: number,
-    hasTimestamp?: boolean
+    hasTimestamp?: boolean,
   },
   ethereumLikeInfo?: {
-    chainId: number
+    chainId: number,
   },
   explorerViews: ExplorerView[],
   terminated?: {
-    link: string
-  }
+    link: string,
+  },
 };
 
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;

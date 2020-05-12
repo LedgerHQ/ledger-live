@@ -4,7 +4,7 @@ import { patchOperationWithHash } from "../../operation";
 
 async function broadcast({
   coreAccount,
-  signedOperation: { operation, signature }
+  signedOperation: { operation, signature },
 }) {
   const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
   const txHash = await ethereumLikeAccount.broadcastRawTransaction(signature);
@@ -12,5 +12,5 @@ async function broadcast({
 }
 
 export default makeBroadcast({
-  broadcast
+  broadcast,
 });

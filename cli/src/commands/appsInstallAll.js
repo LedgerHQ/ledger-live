@@ -13,21 +13,21 @@ export default {
   description: "test script to install and uninstall all apps",
   args: [deviceOpt],
   job: ({ device }: $Shape<{ device: string }>) =>
-    withDevice(device || "")(t => {
+    withDevice(device || "")((t) => {
       const exec = execWithTransport(t);
       return from(getDeviceInfo(t)).pipe(
-        mergeMap(deviceInfo =>
+        mergeMap((deviceInfo) =>
           listApps(t, deviceInfo).pipe(
-            filter(e => e.type === "result"),
-            map(e =>
+            filter((e) => e.type === "result"),
+            map((e) =>
               e.result.appsListNames.reduce(
                 (s, name) => reducer(s, { type: "install", name }),
                 initState(e.result)
               )
             ),
-            mergeMap(s => runAll(s, exec))
+            mergeMap((s) => runAll(s, exec))
           )
         )
       );
-    })
+    }),
 };

@@ -32,5 +32,5 @@ export const abandonSeedLegacyPerCurrency = {
   zclassic: "t1Qmwyih5F7Mw6Vts4tSnXuA2o3NgJPYNgP",
   zcoin: "a1bW3sVVUsLqgKuTMXtSaAHGvpxKwugxPH",
   zencash: "zngWJRgpBa45KUeRuCmdMsqti4ohhe9sVwC",
-  bitcoin_testnet: "mkpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV"
+  bitcoin_testnet: "mkpZhYtJu2r87Js3pDiWJDmPte2NRZ8bJV",
 };

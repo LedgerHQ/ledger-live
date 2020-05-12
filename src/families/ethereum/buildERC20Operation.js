@@ -6,13 +6,13 @@ import type { CoreERC20LikeOperation } from "./types";
 
 const OperationTypeMap = {
   "0": "OUT",
-  "1": "IN"
+  "1": "IN",
 };
 
 export async function buildERC20Operation(arg: {
   coreOperation: CoreERC20LikeOperation,
   accountId: string,
-  token: TokenCurrency
+  token: TokenCurrency,
 }) {
   const { coreOperation, accountId } = arg;
 
@@ -60,7 +60,7 @@ export async function buildERC20Operation(arg: {
     accountId,
     date,
     transactionSequenceNumber,
-    extra: {}
+    extra: {},
   };
 
   return op;

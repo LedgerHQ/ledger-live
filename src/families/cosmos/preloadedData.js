@@ -19,8 +19,8 @@ let currentCosmosPreloadedData: CosmosPreloadData = {
     averageTimePerBlock: 0,
     totalSupply: 0,
     averageDailyFees: 0,
-    currentValueInflation: 0
-  }
+    currentValueInflation: 0,
+  },
 };
 
 export function asSafeCosmosPreloadData(data: mixed): CosmosPreloadData {
@@ -33,7 +33,7 @@ export function asSafeCosmosPreloadData(data: mixed): CosmosPreloadData {
       validatorsUnsafe &&
       Array.isArray(validatorsUnsafe)
     ) {
-      validatorsUnsafe.forEach(v => {
+      validatorsUnsafe.forEach((v) => {
         // FIXME if model changes, we should validate the object
         validators.push(v);
       });
@@ -44,7 +44,7 @@ export function asSafeCosmosPreloadData(data: mixed): CosmosPreloadData {
   const rewardsState = data.rewardsState;
   return {
     validators,
-    rewardsState
+    rewardsState,
   };
 }
 

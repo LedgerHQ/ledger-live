@@ -4,7 +4,7 @@ import memoize from "lodash/memoize";
 
 const options = { style: "currency", currency: "USD" };
 const localeNotAvailable = (1.2).toLocaleString("en", options) !== "$1.20";
-const getFallback = locale =>
+const getFallback = (locale) =>
   staticFallback[Object.keys(staticFallback).includes(locale) ? locale : "en"];
 const staticFallback: { [string]: [string, string] } = {
   en: ["-$1.00", "10,000.2"],
@@ -13,11 +13,11 @@ const staticFallback: { [string]: [string, string] } = {
   ja: ["-US$1.00", "10,000.2"],
   ko: ["-US$1.00", "10,000.2"],
   ru: ["-1,00 $", "10 000,2"],
-  zh: ["-US$1.00", "10,000.2"]
+  zh: ["-US$1.00", "10,000.2"],
 };
 
 export const getFragPositions: (locale: string) => Array<*> = memoize(
-  locale => {
+  (locale) => {
     let oneChar;
     let res;
 
@@ -63,9 +63,9 @@ export type GetSeparators = (
   locale: string
 ) => {
   decimal: ?string,
-  thousands: ?string
+  thousands: ?string,
 };
-export const getSeparators: GetSeparators = memoize(locale => {
+export const getSeparators: GetSeparators = memoize((locale) => {
   let res = localeNotAvailable
     ? getFallback(locale)[1]
     : (10000.2).toLocaleString(locale);

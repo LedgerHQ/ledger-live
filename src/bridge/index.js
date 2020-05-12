@@ -6,7 +6,7 @@ import type {
   CurrencyBridge,
   AccountBridge,
   ScanAccountEventRaw,
-  ScanAccountEvent
+  ScanAccountEvent,
 } from "../types";
 import { fromAccountRaw, toAccountRaw } from "../account";
 
@@ -14,7 +14,7 @@ import * as impl from "./impl";
 
 export type Proxy = {
   getAccountBridge: typeof getAccountBridge,
-  getCurrencyBridge: typeof getCurrencyBridge
+  getCurrencyBridge: typeof getCurrencyBridge,
 };
 
 let proxy: ?Proxy;
@@ -43,7 +43,7 @@ export function fromScanAccountEventRaw(
     case "discovered":
       return {
         type: raw.type,
-        account: fromAccountRaw(raw.account)
+        account: fromAccountRaw(raw.account),
       };
     default:
       throw new Error("unsupported ScanAccountEvent " + raw.type);
@@ -57,7 +57,7 @@ export function toScanAccountEventRaw(
     case "discovered":
       return {
         type: e.type,
-        account: toAccountRaw(e.account)
+        account: toAccountRaw(e.account),
       };
     default:
       throw new Error("unsupported ScanAccountEvent " + e.type);

@@ -7,14 +7,14 @@ import type { Account } from "../../types";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import {
   bigNumberToLibcoreAmount,
-  bigNumberToLibcoreBigInt
+  bigNumberToLibcoreBigInt,
 } from "../../libcore/buildBigNumber";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
 import type {
   CoreTezosLikeOriginatedAccount,
   CoreTezosLikeAccount,
   CoreTezosLikeTransaction,
-  Transaction
+  Transaction,
 } from "./types";
 import { tezosOperationTag } from "./types";
 import { upperModulo } from "../../modulo";
@@ -25,7 +25,7 @@ export async function tezosBuildTransaction({
   coreAccount,
   coreCurrency,
   transaction,
-  isCancelled
+  isCancelled,
 }: {
   account: Account,
   core: Core,
@@ -33,14 +33,14 @@ export async function tezosBuildTransaction({
   coreCurrency: CoreCurrency,
   transaction: Transaction,
   isPartial: boolean,
-  isCancelled: () => boolean
+  isCancelled: () => boolean,
 }): Promise<?CoreTezosLikeTransaction> {
   const { currency } = account;
   const { recipient, fees, gasLimit, storageLimit, subAccountId } = transaction;
 
   const subAccount = subAccountId
     ? account.subAccounts &&
-      account.subAccounts.find(t => t.id === subAccountId)
+      account.subAccounts.find((t) => t.id === subAccountId)
     : null;
 
   let tezosAccount: ?CoreTezosLikeAccount | ?CoreTezosLikeOriginatedAccount;

@@ -70,12 +70,12 @@ test("toLocaleString minimumFractionDigits", () => {
   ).toBe("1,123.0");
   expect(
     toLocaleString(BigNumber("9999999999999999"), "en", {
-      minimumFractionDigits: 1
+      minimumFractionDigits: 1,
     })
   ).toBe("9,999,999,999,999,999.0");
   expect(
     toLocaleString(BigNumber("9999999999999.999"), "en", {
-      minimumFractionDigits: 5
+      minimumFractionDigits: 5,
     })
   ).toBe("9,999,999,999,999.99900");
 });
@@ -84,55 +84,55 @@ test("toLocaleString minimumFractionDigits and maximumFractionDigits", () => {
   expect(
     toLocaleString(BigNumber(1), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
     })
   ).toBe("1.0");
   expect(
     toLocaleString(BigNumber(1.003), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
     })
   ).toBe("1.003");
   expect(
     toLocaleString(BigNumber(1.000003), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
     })
   ).toBe("1.0");
   expect(
     toLocaleString(BigNumber(1.333333333333), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
     })
   ).toBe("1.33333");
   expect(
     toLocaleString(BigNumber(0), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
     })
   ).toBe("0.0");
   expect(
     toLocaleString(BigNumber(0.003), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
     })
   ).toBe("0.003");
   expect(
     toLocaleString(BigNumber(0.000003), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 5
+      maximumFractionDigits: 5,
     })
   ).toBe("0.0");
   expect(
     toLocaleString(BigNumber(9.7), "en", {
       minimumFractionDigits: 1,
-      maximumFractionDigits: 1
+      maximumFractionDigits: 1,
     })
   ).toBe("9.7");
 
   expect(
     toLocaleString(BigNumber("4.4444444444444444444411111111111111"), "en", {
-      maximumFractionDigits: 20
+      maximumFractionDigits: 20,
     })
   ).toBe("4.44444444444444444444");
 });

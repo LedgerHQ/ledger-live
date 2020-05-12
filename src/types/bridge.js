@@ -20,17 +20,17 @@ import type {
   SignedOperation,
   Operation,
   DerivationMode,
-  SyncConfig
+  SyncConfig,
 } from ".";
 
 export type ScanAccountEvent = {
   type: "discovered",
-  account: Account
+  account: Account,
 }; // more events will come in the future
 
 export type ScanAccountEventRaw = {
   type: "discovered",
-  account: AccountRaw
+  account: AccountRaw,
 };
 
 // unique identifier of a device. it will depends on the underlying implementation.
@@ -53,7 +53,7 @@ export interface CurrencyBridge {
     currency: CryptoCurrency,
     deviceId: DeviceId,
     scheme?: ?DerivationMode,
-    syncConfig: SyncConfig
+    syncConfig: SyncConfig,
   }): Observable<ScanAccountEvent>;
 }
 
@@ -97,7 +97,7 @@ export interface AccountBridge<T: Transaction> {
   estimateMaxSpendable({
     account: AccountLike,
     parentAccount?: ?Account,
-    transaction?: ?T
+    transaction?: ?T,
   }): Promise<BigNumber>;
 
   // finalizing a transaction by signing it with the ledger device
@@ -106,13 +106,13 @@ export interface AccountBridge<T: Transaction> {
   signOperation({
     account: Account,
     transaction: T,
-    deviceId: DeviceId
+    deviceId: DeviceId,
   }): Observable<SignOperationEvent>;
 
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast({
     account: Account,
-    signedOperation: SignedOperation
+    signedOperation: SignedOperation,
   }): Promise<Operation>;
 }

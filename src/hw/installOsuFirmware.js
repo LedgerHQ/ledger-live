@@ -13,7 +13,7 @@ export default (
     targetId,
     firmware: firmware.firmware,
     perso: firmware.perso,
-    firmwareKey: firmware.firmware_key
+    firmwareKey: firmware.firmware_key,
   };
   return ManagerAPI.install(transport, "firmware", params, true);
 };

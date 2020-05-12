@@ -3,7 +3,7 @@ import Transport from "@ledgerhq/hw-transport";
 import getAppAndVersion from "./getAppAndVersion";
 import {
   DeviceOnDashboardUnexpected,
-  WrongAppForCurrency
+  WrongAppForCurrency,
 } from "@ledgerhq/errors";
 import getAddress from "./getAddress";
 import type { CryptoCurrency } from "../types";
@@ -16,7 +16,7 @@ export default async (
   currency: CryptoCurrency,
   devicePath: string
 ): Promise<void> => {
-  const currentApp = await getAppAndVersion(transport).catch(e => {
+  const currentApp = await getAppAndVersion(transport).catch((e) => {
     if (e.status === 0x6e00) return null;
     throw e;
   });
@@ -41,7 +41,7 @@ export default async (
         getDerivationScheme({ currency, derivationMode: "" }),
         currency
       ),
-      segwit: false
+      segwit: false,
     });
   }
 };

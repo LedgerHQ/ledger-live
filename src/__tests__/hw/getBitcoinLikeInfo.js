@@ -1,7 +1,7 @@
 // @flow
 import {
   createTransportReplayer,
-  RecordStore
+  RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import getBitcoinLikeInfo from "../../hw/getBitcoinLikeInfo";
 

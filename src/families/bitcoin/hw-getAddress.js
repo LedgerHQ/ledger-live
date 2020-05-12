@@ -9,7 +9,7 @@ import { getAddressFormatDerivationMode } from "../../derivation";
 import type { Resolver } from "../../hw/getAddress/types";
 
 const oldP2SH = {
-  digibyte: 5
+  digibyte: 5,
 };
 
 const resolver: Resolver = async (
@@ -28,7 +28,7 @@ const resolver: Resolver = async (
     path,
     {
       verify,
-      format
+      format,
     }
   );
 

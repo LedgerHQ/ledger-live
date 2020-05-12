@@ -6,18 +6,18 @@ import type { Account } from "../../types";
 import {
   bigNumberToLibcoreAmount,
   bigNumberToLibcoreBigInt,
-  libcoreBigIntToBigNumber
+  libcoreBigIntToBigNumber,
 } from "../../libcore/buildBigNumber";
 import type {
   Core,
   CoreCurrency,
   CoreAccount,
-  CoreWallet
+  CoreWallet,
 } from "../../libcore/types";
 import type {
   CoreStellarLikeTransaction,
   CoreStellarLikeTransactionBuilder,
-  Transaction
+  Transaction,
 } from "./types";
 
 const setSequenceToTransactionBuilder = async (
@@ -112,7 +112,7 @@ export async function stellarBuildTransaction({
   coreCurrency,
   coreWallet,
   transaction,
-  isCancelled
+  isCancelled,
 }: {
   account: Account,
   core: Core,
@@ -121,7 +121,7 @@ export async function stellarBuildTransaction({
   coreWallet: CoreWallet,
   transaction: Transaction,
   isPartial: boolean,
-  isCancelled: () => boolean
+  isCancelled: () => boolean,
 }): Promise<?CoreStellarLikeTransaction> {
   const { recipient, fees, memoType, memoValue } = transaction;
   if (!fees) {

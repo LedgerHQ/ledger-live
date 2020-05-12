@@ -18,7 +18,7 @@ import type {
   Portfolio,
   AssetsDistribution,
   TokenCurrency,
-  CryptoCurrency
+  CryptoCurrency,
 } from "../types";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { flattenAccounts, getAccountCurrency } from "../account";
@@ -132,9 +132,9 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (
   const cacheReferenceValue = BigNumber("10").pow(3 + cur.units[0].magnitude);
   // pick a stable countervalue point in time to hash for the cache
   const cvRef = calc(cur, cacheReferenceValue, history[0].date);
-  const mapFn = p => ({
+  const mapFn = (p) => ({
     ...p,
-    countervalue: (cvRef && calc(cur, p.value, p.date)) || ZERO
+    countervalue: (cvRef && calc(cur, p.value, p.date)) || ZERO,
   });
   const stableHash = accountRateHashCVStable(
     account,
@@ -150,14 +150,14 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (
     const from = h[0];
     const to = h[history.length - 1];
     const fromEffective = useEffectiveFrom
-      ? find(h, record => record.value.isGreaterThan(0)) || from
+      ? find(h, (record) => record.value.isGreaterThan(0)) || from
       : from;
     return {
       countervalueReceiveSum: BigNumber(0), // not available here
       countervalueSendSum: BigNumber(0),
       cryptoChange: {
         value: to.value.minus(fromEffective.value),
-        percentage: null
+        percentage: null,
       },
       countervalueChange: {
         value: (to.countervalue || ZERO).minus(
@@ -166,8 +166,8 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (
         percentage: meaningfulPercentage(
           (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
           fromEffective.countervalue
-        )
-      }
+        ),
+      },
     };
   };
 
@@ -176,7 +176,7 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (
     stable = {
       history: h,
       countervalueAvailable: !!cvRef,
-      ...calcChanges(h)
+      ...calcChanges(h),
     };
     accountCVstableCache[stableHash] = stable;
     return stable;
@@ -190,7 +190,7 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (
   const copy = {
     ...stable,
     history: h,
-    ...calcChanges(h)
+    ...calcChanges(h),
   };
   accountCVstableCache[stableHash] = copy;
   return copy;
@@ -233,7 +233,7 @@ export function getPortfolio(
   }
 
   const unavailableCurrencies = [
-    ...new Set(unavailableAccounts.map(getAccountCurrency))
+    ...new Set(unavailableAccounts.map(getAccountCurrency)),
   ];
 
   const balanceAvailable =
@@ -265,12 +265,12 @@ export function getPortfolio(
         histories,
         countervalueChange: memo.countervalueChange,
         countervalueReceiveSum: memo.countervalueReceiveSum,
-        countervalueSendSum: memo.countervalueSendSum
+        countervalueSendSum: memo.countervalueSendSum,
       };
     }
   }
 
-  const balanceHistory = getDates(range).map(date => ({ date, value: ZERO }));
+  const balanceHistory = getDates(range).map((date) => ({ date, value: ZERO }));
 
   for (let i = 0; i < histories.length; i++) {
     const history = histories[i];
@@ -328,8 +328,8 @@ export function getPortfolio(
     countervalueSendSum,
     countervalueChange: {
       percentage: countervalueChangePercentage,
-      value: countervalueChangeValue
-    }
+      value: countervalueChangeValue,
+    },
   };
 
   portfolioMemo[range] = ret;
@@ -379,15 +379,15 @@ export function getCurrencyPortfolio(
         countervalueAvailable,
         histories,
         countervalueChange: memo.countervalueChange,
-        cryptoChange: memo.cryptoChange
+        cryptoChange: memo.cryptoChange,
       };
     }
   }
 
-  const history = getDates(range).map(date => ({
+  const history = getDates(range).map((date) => ({
     date,
     value: ZERO,
-    countervalue: ZERO
+    countervalue: ZERO,
   }));
 
   for (let i = 0; i < histories.length; i++) {
@@ -403,17 +403,17 @@ export function getCurrencyPortfolio(
   const from = history[0];
   const to = history[history.length - 1];
   const fromEffective =
-    find(history, record => record.value.isGreaterThan(0)) || from;
+    find(history, (record) => record.value.isGreaterThan(0)) || from;
   const cryptoChange = {
     value: to.value.minus(from.value),
-    percentage: null
+    percentage: null,
   };
   const countervalueChange = {
     value: (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
     percentage: meaningfulPercentage(
       (to.countervalue || ZERO).minus(fromEffective.countervalue || ZERO),
       fromEffective.countervalue
-    )
+    ),
   };
 
   const ret = {
@@ -423,7 +423,7 @@ export function getCurrencyPortfolio(
     range,
     histories,
     cryptoChange,
-    countervalueChange
+    countervalueChange,
   };
 
   currencyPortfolioMemo[range] = ret;
@@ -434,7 +434,7 @@ export function getCurrencyPortfolio(
 const defaultAssetsDistribution = {
   minShowFirst: 1,
   maxShowFirst: 6,
-  showFirstThreshold: 0.95
+  showFirstThreshold: 0.95,
 };
 
 type AssetsDistributionOpts = typeof defaultAssetsDistribution;
@@ -443,12 +443,12 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
   isAvailable: false,
   list: [],
   showFirst: 0,
-  sum: BigNumber(0)
+  sum: BigNumber(0),
 };
 
 const previousDistributionCache = {
   hash: "",
-  data: assetsDistributionNotAvailable
+  data: assetsDistributionNotAvailable,
 };
 
 export function getAssetsDistribution(
@@ -461,7 +461,7 @@ export function getAssetsDistribution(
 ): AssetsDistribution {
   const { minShowFirst, maxShowFirst, showFirstThreshold } = {
     ...defaultAssetsDistribution,
-    ...opts
+    ...opts,
   };
   let sum = BigNumber(0);
   const idBalances = {};
@@ -503,7 +503,7 @@ export function getAssetsDistribution(
   }
 
   const list = idCurrenciesKeys
-    .map(id => {
+    .map((id) => {
       const currency = idCurrencies[id];
       const amount = idBalances[id];
       const countervalue = idCountervalues[id] || BigNumber(0);
@@ -511,7 +511,7 @@ export function getAssetsDistribution(
         currency,
         countervalue,
         amount,
-        distribution: isAvailable ? countervalue.div(sum).toNumber() : 0
+        distribution: isAvailable ? countervalue.div(sum).toNumber() : 0,
       };
     })
     .sort((a, b) => {

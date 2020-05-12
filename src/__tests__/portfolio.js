@@ -12,7 +12,7 @@ import {
   getBalanceHistoryWithCountervalue,
   getPortfolio,
   getCurrencyPortfolio,
-  getAssetsDistribution
+  getAssetsDistribution,
 } from "../portfolio";
 import type { Account } from "../types";
 import { genAccount } from "../mock/account";
@@ -39,7 +39,7 @@ test("getBalanceHistory(*,year) works as well", () => {
 test("getDates matches getBalanceHistory dates", () => {
   const history = getBalanceHistory(genAccount("seed_2"), "year");
   const dates = getDates("year");
-  expect(history.map(p => p.date)).toMatchObject(dates);
+  expect(history.map((p) => p.date)).toMatchObject(dates);
 });
 
 test("getBalanceHistory last item is now and have an amount equals to account balance", () => {
@@ -60,11 +60,11 @@ test("getBalanceHistoryWithCountervalue basic", () => {
   );
   expect(cv.countervalueAvailable).toBe(true);
   expect(
-    cv.history.map(p => ({ date: p.date, value: p.countervalue }))
+    cv.history.map((p) => ({ date: p.date, value: p.countervalue }))
   ).toMatchObject(history);
-  expect(cv.history.map(p => ({ date: p.date, value: p.value }))).toMatchObject(
-    history
-  );
+  expect(
+    cv.history.map((p) => ({ date: p.date, value: p.value }))
+  ).toMatchObject(history);
 });
 
 test("getPortfolio works with one account and is identically to that account history", () => {
@@ -98,7 +98,7 @@ test("getBalanceHistoryWithCountervalue to have proper countervalues", () => {
   const calc = (account, value) => value.times(3);
   const cv = getBalanceHistoryWithCountervalue(account, "week", calc);
   expect(
-    cv.history.map(p => ({ date: p.date, value: p.countervalue.div(3) }))
+    cv.history.map((p) => ({ date: p.date, value: p.countervalue.div(3) }))
   ).toMatchObject(history);
 });
 
@@ -108,18 +108,18 @@ test("getBalanceHistoryWithCountervalue is same as getPortfolio with one account
   const cv = getBalanceHistoryWithCountervalue(account, "month", calc);
   const portfolio = getPortfolio([account], "month", calc);
   expect(
-    cv.history.map(p => ({ date: p.date, value: p.countervalue }))
+    cv.history.map((p) => ({ date: p.date, value: p.countervalue }))
   ).toMatchObject(portfolio.balanceHistory);
 });
 
 test("getPortfolio calculateCounterValue can returns missing countervalue", () => {
   const account = genAccount("seed_6", {
     currency: getCryptoCurrencyById("bitcoin"),
-    subAccountsCount: 0
+    subAccountsCount: 0,
   });
   const account2 = genAccount("seed_7", {
     currency: getCryptoCurrencyById("ethereum"),
-    subAccountsCount: 0
+    subAccountsCount: 0,
   });
   const history = getBalanceHistory(account, "month");
   const portfolio = getPortfolio([account, account2], "month", (c, value) =>
@@ -177,22 +177,22 @@ test("getCurrencyPortfolio calculateCounterValue is taken into account", () => {
   const portfolio = getCurrencyPortfolio(accounts, "month", (c, value) =>
     value.div(2)
   );
-  expect(portfolio.history.map(h => h.value.div(2).toString())).toMatchObject(
-    history.map(h => h.value.toString())
+  expect(portfolio.history.map((h) => h.value.div(2).toString())).toMatchObject(
+    history.map((h) => h.value.toString())
   );
-  expect(portfolio.history.map(h => h.countervalue.toString())).toMatchObject(
-    history.map(h => h.countervalue.toString())
+  expect(portfolio.history.map((h) => h.countervalue.toString())).toMatchObject(
+    history.map((h) => h.countervalue.toString())
   );
 });
 
 test("getPortfolio calculateCounterValue can returns missing countervalue", () => {
   const account = genAccount("seed_6", {
     currency: getCryptoCurrencyById("bitcoin"),
-    subAccountsCount: 0
+    subAccountsCount: 0,
   });
   const account2 = genAccount("seed_7", {
     currency: getCryptoCurrencyById("ethereum"),
-    subAccountsCount: 0
+    subAccountsCount: 0,
   });
   const history = getBalanceHistory(account, "month");
   const portfolio = getPortfolio([account, account2], "month", (c, value) =>
@@ -206,11 +206,11 @@ test("getPortfolio calculateCounterValue can returns missing countervalue", () =
 test("getCurrencyPortfolio calculateCounterValue can miss countervalue", () => {
   const account = genAccount("seed_6", {
     currency: getCryptoCurrencyById("bitcoin"),
-    subAccountsCount: 0
+    subAccountsCount: 0,
   });
   const account2 = genAccount("seed_7", {
     currency: getCryptoCurrencyById("bitcoin"),
-    subAccountsCount: 0
+    subAccountsCount: 0,
   });
   const history = getBalanceHistory(account, "month");
   const history2 = getBalanceHistory(account2, "month");
@@ -252,11 +252,11 @@ test("getAssetsDistribution 1", () => {
     assetsDistribution.list.reduce((sum, o) => sum + o.distribution, 0)
   ).toBeCloseTo(1);
   expect(
-    assetsDistribution.list.map(o => [
+    assetsDistribution.list.map((o) => [
       o.currency.ticker,
       o.amount,
       o.countervalue,
-      o.distribution
+      o.distribution,
     ])
   ).toMatchSnapshot();
 });

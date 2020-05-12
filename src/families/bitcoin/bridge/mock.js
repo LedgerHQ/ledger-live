@@ -4,7 +4,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
   InvalidAddress,
-  FeeTooHigh
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
@@ -14,7 +14,7 @@ import {
   signOperation,
   broadcast,
   sync,
-  isInvalidRecipient
+  isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
 
@@ -26,7 +26,7 @@ const createTransaction = (): Transaction => ({
   recipient: "",
   feePerByte: BigNumber(10),
   networkInfo: null,
-  useAllAmount: false
+  useAllAmount: false,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -77,7 +77,7 @@ const getTransactionStatus = (account, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
@@ -89,8 +89,8 @@ const prepareTransaction = async (a, t) => {
       ...t,
       networkInfo: {
         family: "bitcoin",
-        feeItems
-      }
+        feeItems,
+      },
     };
   }
   return t;
@@ -104,13 +104,13 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
   preload: () => Promise.resolve(),
-  hydrate: () => {}
+  hydrate: () => {},
 };
 
 export default { currencyBridge, accountBridge };

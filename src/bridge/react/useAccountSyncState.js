@@ -6,9 +6,9 @@ import { useBridgeSyncState } from "./context";
 const nothingState = { pending: false, error: null };
 
 export function useAccountSyncState({
-  accountId
+  accountId,
 }: {
-  accountId: string
+  accountId: string,
 }): SyncState {
   const syncState = useBridgeSyncState();
   return syncState[accountId] || nothingState;

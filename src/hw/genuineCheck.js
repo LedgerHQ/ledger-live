@@ -14,19 +14,19 @@ export default (
   from(
     ManagerAPI.getDeviceVersion(deviceInfo.targetId, deviceInfo.providerId)
   ).pipe(
-    switchMap(deviceVersion =>
+    switchMap((deviceVersion) =>
       from(
         ManagerAPI.getCurrentFirmware({
           deviceId: deviceVersion.id,
           version: deviceInfo.version,
-          provider: deviceInfo.providerId
+          provider: deviceInfo.providerId,
         })
       )
     ),
-    switchMap(firmware =>
+    switchMap((firmware) =>
       ManagerAPI.genuineCheck(transport, {
         targetId: deviceInfo.targetId,
-        perso: firmware.perso
+        perso: firmware.perso,
       })
     )
   );

@@ -12,7 +12,7 @@ import type {
   CryptoCurrency,
   SignedOperation,
   Transaction,
-  DerivationMode
+  DerivationMode,
 } from "../types";
 import type { Core, CoreAccount, CoreCurrency, CoreWallet } from "./types";
 import { withDevice } from "../hw/deviceAccess";
@@ -30,7 +30,7 @@ export type Arg<T, CT> = {
     coreWallet: CoreWallet,
     transaction: T,
     isPartial: boolean,
-    isCancelled: () => boolean
+    isCancelled: () => boolean,
   }) => Promise<?CT>,
 
   signTransaction: ({
@@ -47,23 +47,23 @@ export type Arg<T, CT> = {
     onDeviceStreaming: ({
       progress: number,
       index: number,
-      total: number
+      total: number,
     }) => void,
     onDeviceSignatureRequested: () => void,
-    onDeviceSignatureGranted: () => void
-  }) => Promise<?SignedOperation>
+    onDeviceSignatureGranted: () => void,
+  }) => Promise<?SignedOperation>,
 };
 
 type SignOperation<T> = $PropertyType<AccountBridge<T>, "signOperation">;
 
 export const makeSignOperation = <T: Transaction, CT>({
   buildTransaction,
-  signTransaction
+  signTransaction,
 }: Arg<T, CT>): SignOperation<T> => ({ account, transaction, deviceId }) =>
-  Observable.create(o => {
+  Observable.create((o) => {
     let cancelled = false;
 
-    withLibcore(async core => {
+    withLibcore(async (core) => {
       if (cancelled) return;
       const { currency, derivationMode } = account;
 
@@ -83,12 +83,12 @@ export const makeSignOperation = <T: Transaction, CT>({
         transaction,
         coreWallet,
         isPartial: false,
-        isCancelled: () => cancelled
+        isCancelled: () => cancelled,
       });
 
       if (cancelled || !builded) return;
 
-      const signedOperation = await withDevice(deviceId)(transport =>
+      const signedOperation = await withDevice(deviceId)((transport) =>
         from(
           signTransaction({
             account,
@@ -106,8 +106,8 @@ export const makeSignOperation = <T: Transaction, CT>({
             onDeviceSignatureRequested: () =>
               o.next({ type: "device-signature-requested" }),
             onDeviceSignatureGranted: () =>
-              o.next({ type: "device-signature-granted" })
-          }).catch(e => {
+              o.next({ type: "device-signature-granted" }),
+          }).catch((e) => {
             // TODO where to remap this generically???
             if (e && e.statusCode === StatusCodes.INCORRECT_P1_P2) {
               throw new UpdateYourApp(`UpdateYourApp ${currency.id}`, currency);
@@ -122,14 +122,14 @@ export const makeSignOperation = <T: Transaction, CT>({
       o.next({ type: "signed", signedOperation });
     }).then(
       () => o.complete(),
-      e => o.error(remapLibcoreErrors(e))
+      (e) => o.error(remapLibcoreErrors(e))
     );
 
     return () => {
       cancelled = true;
     };
   }).pipe(
-    tap(e =>
+    tap((e) =>
       log("signOperation", "event " + e.type, toSignOperationEventRaw(e))
     )
   );

@@ -4,13 +4,13 @@ import type { BigNumber } from "bignumber.js";
 import type { Unit } from "../../types";
 import type {
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "../../types/transaction";
 import type {
   CoreAmount,
   CoreBigInt,
   OperationType,
-  Spec
+  Spec,
 } from "../../libcore/types";
 
 declare class CoreEthereumLikeAddress {
@@ -98,7 +98,7 @@ export type CoreStatics = {
   EthereumLikeTransaction: Class<CoreEthereumLikeTransaction>,
   ERC20LikeAccount: Class<CoreERC20LikeAccount>,
   ERC20LikeOperation: Class<CoreERC20LikeOperation>,
-  ERC20Token: Class<CoreERC20Token>
+  ERC20Token: Class<CoreERC20Token>,
 };
 
 export type {
@@ -109,27 +109,27 @@ export type {
   CoreEthereumLikeTransactionBuilder,
   CoreERC20LikeAccount,
   CoreERC20LikeOperation,
-  CoreERC20Token
+  CoreERC20Token,
 };
 
 export type CoreAccountSpecifics = {
-  asEthereumLikeAccount(): Promise<CoreEthereumLikeAccount>
+  asEthereumLikeAccount(): Promise<CoreEthereumLikeAccount>,
 };
 
 export type CoreOperationSpecifics = {
-  asEthereumLikeOperation(): Promise<CoreEthereumLikeOperation>
+  asEthereumLikeOperation(): Promise<CoreEthereumLikeOperation>,
 };
 
 export type CoreCurrencySpecifics = {};
 
 export type NetworkInfo = {|
   family: "ethereum",
-  gasPrice: BigNumber
+  gasPrice: BigNumber,
 |};
 
 export type NetworkInfoRaw = {|
   family: "ethereum",
-  gasPrice: string
+  gasPrice: string,
 |};
 
 export type Transaction = {|
@@ -139,7 +139,7 @@ export type Transaction = {|
   userGasLimit: ?BigNumber,
   estimatedGasLimit: ?BigNumber,
   feeCustomUnit: ?Unit,
-  networkInfo: ?NetworkInfo
+  networkInfo: ?NetworkInfo,
 |};
 
 export type TransactionRaw = {|
@@ -149,7 +149,7 @@ export type TransactionRaw = {|
   userGasLimit: ?string,
   estimatedGasLimit: ?string,
   feeCustomUnit: ?Unit,
-  networkInfo: ?NetworkInfoRaw
+  networkInfo: ?NetworkInfoRaw,
 |};
 
 export const reflect = (declare: (string, Spec) => void) => {
@@ -160,25 +160,25 @@ export const reflect = (declare: (string, Spec) => void) => {
       getSender: {},
       getReceiver: {},
       getValue: { returns: "BigInt" },
-      getOperationType: {}
-    }
+      getOperationType: {},
+    },
   });
 
   declare("EthereumLikeOperation", {
     methods: {
       getTransaction: {
-        returns: "EthereumLikeTransaction"
+        returns: "EthereumLikeTransaction",
       },
       getInternalTransactions: {
-        returns: ["InternalTransaction"]
-      }
-    }
+        returns: ["InternalTransaction"],
+      },
+    },
   });
 
   declare("EthereumLikeAddress", {
     methods: {
-      toEIP55: {}
-    }
+      toEIP55: {},
+    },
   });
 
   declare("EthereumLikeTransaction", {
@@ -192,54 +192,54 @@ export const reflect = (declare: (string, Spec) => void) => {
       getSender: { returns: "EthereumLikeAddress" },
       serialize: { returns: "hex" },
       setSignature: {
-        params: ["hex", "hex", "hex"]
+        params: ["hex", "hex", "hex"],
       },
-      getStatus: {}
-    }
+      getStatus: {},
+    },
   });
 
   declare("EthereumLikeTransactionBuilder", {
     methods: {
       wipeToAddress: {},
       sendToAddress: {
-        params: ["Amount"]
+        params: ["Amount"],
       },
       setGasPrice: {
-        params: ["Amount"]
+        params: ["Amount"],
       },
       setGasLimit: {
-        params: ["Amount"]
+        params: ["Amount"],
       },
       setInputData: {
-        params: ["hex"]
+        params: ["hex"],
       },
       build: {
-        returns: "EthereumLikeTransaction"
-      }
-    }
+        returns: "EthereumLikeTransaction",
+      },
+    },
   });
 
   declare("EthereumLikeAccount", {
     methods: {
       buildTransaction: {
-        returns: "EthereumLikeTransactionBuilder"
+        returns: "EthereumLikeTransactionBuilder",
       },
       broadcastRawTransaction: {
-        params: ["hex"]
+        params: ["hex"],
       },
       getERC20Accounts: {
-        returns: ["ERC20LikeAccount"]
+        returns: ["ERC20LikeAccount"],
       },
       getGasPrice: {
-        returns: "BigInt"
+        returns: "BigInt",
       },
       getEstimatedGasLimit: {
-        returns: "BigInt"
+        returns: "BigInt",
       },
       getERC20Balances: {
-        returns: ["BigInt"]
-      }
-    }
+        returns: ["BigInt"],
+      },
+    },
   });
 
   declare("ERC20LikeAccount", {
@@ -247,8 +247,8 @@ export const reflect = (declare: (string, Spec) => void) => {
       getBalance: { returns: "BigInt" },
       getAddress: {},
       getToken: { returns: "ERC20Token" },
-      getOperations: { returns: ["ERC20LikeOperation"] }
-    }
+      getOperations: { returns: ["ERC20LikeOperation"] },
+    },
   });
 
   declare("ERC20LikeOperation", {
@@ -264,29 +264,29 @@ export const reflect = (declare: (string, Spec) => void) => {
       getTime: {},
       getOperationType: {},
       getStatus: {},
-      getBlockHeight: {}
-    }
+      getBlockHeight: {},
+    },
   });
 
   declare("ERC20Token", {
     njsUsesPlainObject: true,
     methods: {
       getContractAddress: {
-        njsField: "contractAddress"
-      }
-    }
+        njsField: "contractAddress",
+      },
+    },
   });
 
   return {
     OperationMethods: {
       asEthereumLikeOperation: {
-        returns: "EthereumLikeOperation"
-      }
+        returns: "EthereumLikeOperation",
+      },
     },
     AccountMethods: {
       asEthereumLikeAccount: {
-        returns: "EthereumLikeAccount"
-      }
-    }
+        returns: "EthereumLikeAccount",
+      },
+    },
   };
 };

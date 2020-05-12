@@ -6,7 +6,7 @@ import mapValues from "lodash/mapValues";
 type EnvDef<V> = {
   desc: string,
   def: V,
-  parser: mixed => ?V
+  parser: (mixed) => ?V,
 };
 
 type ExtractEnvValue = <V>(EnvDef<V>) => V;
@@ -35,281 +35,282 @@ const envDefinitions = {
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
-    desc: "bakers API for tezos"
+    desc: "bakers API for tezos",
   },
   API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://xtz-explorer.api.live.ledger.com/explorer",
     parser: stringParser,
-    desc: "Ledger explorer API for tezos"
+    desc: "Ledger explorer API for tezos",
   },
   API_TEZOS_NODE: {
     def: "https://xtz-node.api.live.ledger.com",
     parser: stringParser,
-    desc: "node API for tezos (for broadcast only)"
+    desc: "node API for tezos (for broadcast only)",
   },
   API_STELLAR_MEMO: {
     def: "https://api.stellar.expert/",
     parser: stringParser,
     desc:
-      "Stellar Foundation recommended us to use this api to know if the recipient have a Memo type"
+      "Stellar Foundation recommended us to use this api to know if the recipient have a Memo type",
   },
   API_TRONGRID_PROXY: {
     parser: stringParser,
     //def: "https://api.trongrid.io",
     def: "https://tron.coin.ledger.com",
-    desc: "proxy url for trongrid API"
+    desc: "proxy url for trongrid API",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
-    desc: "Ledger script runner API"
+    desc: "Ledger script runner API",
   },
   BRIDGE_FORCE_IMPLEMENTATION: {
     def: "",
     parser: stringParser,
     desc:
-      "force implementation for ALL currency bridges (affects scanning accounts)"
+      "force implementation for ALL currency bridges (affects scanning accounts)",
   },
   DEBUG_HTTP_RESPONSE: {
     def: false,
     parser: boolParser,
-    desc: "includes HTTP response body in logs"
+    desc: "includes HTTP response body in logs",
   },
   DEVICE_CANCEL_APDU_FLUSH_MECHANISM: {
     def: true,
     parser: boolParser,
     desc:
-      "enable a mechanism that send a 0x00 apdu to force device to awake from its 'Processing' UI state"
+      "enable a mechanism that send a 0x00 apdu to force device to awake from its 'Processing' UI state",
   },
   DEVICE_PROXY_URL: {
     def: "",
     parser: stringParser,
-    desc: "enable a proxy to use instead of a physical device"
+    desc: "enable a proxy to use instead of a physical device",
   },
   DISABLE_TRANSACTION_BROADCAST: {
     def: false,
     parser: boolParser,
-    desc: "disable broadcast of transactions"
+    desc: "disable broadcast of transactions",
   },
   DISABLE_SYNC_TOKEN: {
     def: false,
     parser: boolParser,
-    desc: "Hack to disable a problematic mechanism of our API"
+    desc: "Hack to disable a problematic mechanism of our API",
   },
   EXPERIMENTAL_BLE: {
     def: false,
     parser: boolParser,
-    desc: "enable experimental support of Bluetooth"
+    desc: "enable experimental support of Bluetooth",
   },
   EXPERIMENTAL_CURRENCIES: {
     def: "",
     parser: stringParser,
-    desc: "enable experimental support of currencies (comma separated)"
+    desc: "enable experimental support of currencies (comma separated)",
   },
   EXPERIMENTAL_DEVICE_FLOW: {
     def: false,
     parser: boolParser,
     desc:
-      "enable a new flow implementation (at the moment we're having early support of 'openApp')"
+      "enable a new flow implementation (at the moment we're having early support of 'openApp')",
   },
   EXPERIMENTAL_EXPLORERS: {
     def: false,
     parser: boolParser,
-    desc: "enable experimental explorer APIs"
+    desc: "enable experimental explorer APIs",
   },
   EXPERIMENTAL_FALLBACK_APDU_LISTAPPS: {
     def: false,
     parser: boolParser,
-    desc: "if HSM list apps fails, fallback on APDU version (>=1.6.0)"
+    desc: "if HSM list apps fails, fallback on APDU version (>=1.6.0)",
   },
   EXPERIMENTAL_LANGUAGES: {
     def: false,
     parser: boolParser,
-    desc: "enable experimental languages"
+    desc: "enable experimental languages",
   },
   EXPERIMENTAL_LIBCORE: {
     def: false,
     parser: boolParser,
     desc:
-      "enable experimental libcore implementation of a currency (affects scan accounts)"
+      "enable experimental libcore implementation of a currency (affects scan accounts)",
   },
   EXPERIMENTAL_MANAGER: {
     def: false,
     parser: boolParser,
-    desc: "enable an experimental version of Manager"
+    desc: "enable an experimental version of Manager",
   },
   EXPERIMENTAL_PORTFOLIO_RANGE: {
     def: false,
     parser: boolParser,
     desc:
-      "enable an experimental version of available graph ranges and granularity"
+      "enable an experimental version of available graph ranges and granularity",
   },
   EXPERIMENTAL_ROI_CALCULATION: {
     def: false,
     parser: boolParser,
     desc:
-      "enable an experimental version of the portfolio percentage calculation"
+      "enable an experimental version of the portfolio percentage calculation",
   },
   EXPERIMENTAL_SEND_MAX: {
     def: false,
     parser: boolParser,
-    desc: "force enabling SEND MAX even if not yet stable"
+    desc: "force enabling SEND MAX even if not yet stable",
   },
   EXPERIMENTAL_USB: {
     def: false,
     parser: boolParser,
-    desc: "enable an experimental implementation of USB support"
+    desc: "enable an experimental implementation of USB support",
   },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
-    desc: "Ledger main explorer API (multi currencies)"
+    desc: "Ledger main explorer API (multi currencies)",
   },
   FORCE_PROVIDER: {
     def: 1,
     parser: intParser,
-    desc: "use a different provider for app store (for developers only)"
+    desc: "use a different provider for app store (for developers only)",
   },
   GET_CALLS_RETRY: {
     def: 2,
     parser: intParser,
-    desc: "how many times to retry a GET http call"
+    desc: "how many times to retry a GET http call",
   },
   GET_CALLS_TIMEOUT: {
     def: 60 * 1000,
     parser: intParser,
-    desc: "how much time to timeout a GET http call"
+    desc: "how much time to timeout a GET http call",
   },
   HIDE_EMPTY_TOKEN_ACCOUNTS: {
     def: false,
     parser: boolParser,
-    desc: "hide the sub accounts when they are empty"
+    desc: "hide the sub accounts when they are empty",
   },
   KEYCHAIN_OBSERVABLE_RANGE: {
     def: 0,
     parser: intParser,
-    desc: "overrides the gap limit specified by BIP44 (default to 20)"
+    desc: "overrides the gap limit specified by BIP44 (default to 20)",
   },
   LEDGER_COUNTERVALUES_API: {
     def: "https://countervalues.api.live.ledger.com",
     parser: stringParser,
-    desc: "Ledger countervalues API"
+    desc: "Ledger countervalues API",
   },
   LEDGER_REST_API_BASE: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
-    desc: "DEPRECATED"
+    desc: "DEPRECATED",
   },
   LEGACY_KT_SUPPORT_TO_YOUR_OWN_RISK: {
     def: false,
     parser: boolParser,
-    desc: "enable sending to KT accounts. Not tested."
+    desc: "enable sending to KT accounts. Not tested.",
   },
   LIBCORE_BALANCE_HISTORY_NOGO: {
     def: "ripple,ethereum,tezos,stellar", // LLC-475
     parser: stringParser,
     desc:
-      "comma-separated list of currencies which does not properly support balance history libcore implementation"
+      "comma-separated list of currencies which does not properly support balance history libcore implementation",
   },
   LIBCORE_PASSWORD: {
     def: "",
     parser: stringParser,
-    desc: "libcore encryption password"
+    desc: "libcore encryption password",
   },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",
     parser: stringParser,
-    desc: "Ledger Manager API"
+    desc: "Ledger Manager API",
   },
   MANAGER_DEV_MODE: {
     def: false,
     parser: boolParser,
-    desc: "enable visibility of utility apps in Manager"
+    desc: "enable visibility of utility apps in Manager",
   },
   MANAGER_INSTALL_DELAY: {
     def: 1000,
     parser: intParser,
     desc:
-      "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs"
+      "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
     parser: intParser,
-    desc: "maximum size of account names"
+    desc: "maximum size of account names",
   },
   MOCK: {
     def: "",
     parser: stringParser,
     desc:
-      "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values."
+      "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
   },
   OPERATION_ADDRESSES_LIMIT: {
     def: 100,
     parser: intParser,
-    desc: "limit the number of addresses in from/to of operations"
+    desc: "limit the number of addresses in from/to of operations",
   },
   OPERATION_OPTIMISTIC_RETENTION: {
     def: 30 * 60 * 1000,
     parser: intParser,
     desc:
-      "timeout to keep an optimistic operation that was broadcasted but not yet visible from libcore or the API"
+      "timeout to keep an optimistic operation that was broadcasted but not yet visible from libcore or the API",
   },
   OPERATION_PAGE_SIZE_INITIAL: {
     def: 100,
     parser: intParser,
-    desc: "defines the initial default operation length page to use"
+    desc: "defines the initial default operation length page to use",
   },
   SCAN_FOR_INVALID_PATHS: {
     def: false,
     parser: boolParser,
-    desc: "enable searching accounts in exotic derivation paths"
+    desc: "enable searching accounts in exotic derivation paths",
   },
   SHOW_LEGACY_NEW_ACCOUNT: {
     def: false,
     parser: boolParser,
-    desc: "allow the creation of legacy accounts"
+    desc: "allow the creation of legacy accounts",
   },
   SKIP_ONBOARDING: {
     def: false,
     parser: boolParser,
-    desc: "dev flag to skip onboarding flow"
+    desc: "dev flag to skip onboarding flow",
   },
   SYNC_ALL_INTERVAL: {
     def: 2 * 60 * 1000,
     parser: intParser,
-    desc: "delay between successive sync"
+    desc: "delay between successive sync",
   },
   SYNC_BOOT_DELAY: {
     def: 2 * 1000,
     parser: intParser,
-    desc: "delay before the sync starts"
+    desc: "delay before the sync starts",
   },
   SYNC_PENDING_INTERVAL: {
     def: 10 * 1000,
     parser: intParser,
-    desc: "delay between sync when an operation is still pending"
+    desc: "delay between sync when an operation is still pending",
   },
   SYNC_OUTDATED_CONSIDERED_DELAY: {
     def: 2 * 60 * 1000,
     parser: intParser,
-    desc: "delay until Live consider a sync outdated"
+    desc: "delay until Live consider a sync outdated",
   },
   SYNC_MAX_CONCURRENT: {
     def: 4,
     parser: intParser,
-    desc: "maximum limit to synchronize accounts concurrently to limit overload"
+    desc:
+      "maximum limit to synchronize accounts concurrently to limit overload",
   },
   USER_ID: {
     def: "",
     parser: stringParser,
     desc:
-      "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment)."
+      "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment).",
   },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
     parser: floatParser,
-    desc: "delay when polling device"
-  }
+    desc: "delay when polling device",
+  },
 };
 
 const getDefinition = (name: string): ?EnvDef<any> => envDefinitions[name];
@@ -318,7 +319,7 @@ const getDefinition = (name: string): ?EnvDef<any> => envDefinitions[name];
 
 const defaults: $ObjMap<EnvDefs, ExtractEnvValue> = mapValues(
   envDefinitions,
-  o => o.def
+  (o) => o.def
 );
 
 // private local state
@@ -343,7 +344,7 @@ export const getEnvDesc = <Name: EnvName>(name: Name): string =>
 type ChangeValue<T> = {
   name: EnvName,
   value: EnvValue<T>,
-  oldValue: EnvValue<T>
+  oldValue: EnvValue<T>,
 };
 
 export const changes: Subject<ChangeValue<any>> = new Subject();

@@ -17,7 +17,7 @@ const accounts = [
     currencyId: "ethereum",
     unitMagnitude: 18,
     lastSyncDate: "2019-07-17T15:13:30.318Z",
-    balance: "1000000000000000000"
+    balance: "1000000000000000000",
   },
   {
     id: "ethereumjs:2:ethereum:0x02:",
@@ -34,7 +34,7 @@ const accounts = [
     currencyId: "ethereum",
     unitMagnitude: 18,
     lastSyncDate: "2019-07-17T15:13:29.306Z",
-    balance: "2000000000000000000"
+    balance: "2000000000000000000",
   },
   {
     id: "libcore:1:ethereum:xpub3:",
@@ -51,7 +51,7 @@ const accounts = [
     currencyId: "ethereum",
     unitMagnitude: 18,
     lastSyncDate: "2019-07-17T15:13:29.306Z",
-    balance: "3000000000000000000"
+    balance: "3000000000000000000",
   },
   {
     id: "libcore:1:ethereum:xpub3B:",
@@ -68,7 +68,7 @@ const accounts = [
     currencyId: "ethereum",
     unitMagnitude: 18,
     lastSyncDate: "2019-07-17T15:13:29.306Z",
-    balance: "3000000000000000000"
+    balance: "3000000000000000000",
   },
   {
     id: "libcore:1:ethereum:xpub1B:",
@@ -85,8 +85,8 @@ const accounts = [
     currencyId: "ethereum",
     unitMagnitude: 18,
     lastSyncDate: "2019-07-17T15:13:29.306Z",
-    balance: "4000000000000000000"
-  }
+    balance: "4000000000000000000",
+  },
 ].map(fromAccountRaw);
 
 const mockedCalculateCountervalue = (_, balance) => balance;
@@ -97,7 +97,13 @@ test("Accounts ordering | name asc", () => {
     mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => a.name)).toEqual(["A", "AA", "B", "C", "CA"]);
+  expect(sortedAccounts.map((a) => a.name)).toEqual([
+    "A",
+    "AA",
+    "B",
+    "C",
+    "CA",
+  ]);
 });
 
 test("Accounts ordering | name desc", () => {
@@ -106,7 +112,13 @@ test("Accounts ordering | name desc", () => {
     mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => a.name)).toEqual(["CA", "C", "B", "AA", "A"]);
+  expect(sortedAccounts.map((a) => a.name)).toEqual([
+    "CA",
+    "C",
+    "B",
+    "AA",
+    "A",
+  ]);
 });
 
 test("Accounts ordering | balance asc", () => {
@@ -115,7 +127,13 @@ test("Accounts ordering | balance asc", () => {
     mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => a.name)).toEqual(["A", "B", "C", "CA", "AA"]);
+  expect(sortedAccounts.map((a) => a.name)).toEqual([
+    "A",
+    "B",
+    "C",
+    "CA",
+    "AA",
+  ]);
 });
 
 test("Accounts ordering | balance desc", () => {
@@ -124,5 +142,11 @@ test("Accounts ordering | balance desc", () => {
     mockedCalculateCountervalue
   );
   const sortedAccounts = accounts.sort(compareFn);
-  expect(sortedAccounts.map(a => a.name)).toEqual(["AA", "C", "CA", "B", "A"]);
+  expect(sortedAccounts.map((a) => a.name)).toEqual([
+    "AA",
+    "C",
+    "CA",
+    "B",
+    "A",
+  ]);
 });

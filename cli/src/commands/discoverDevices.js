@@ -9,24 +9,24 @@ export default {
       name: "module",
       alias: "m",
       type: String,
-      desc: "filter a specific module (either hid | ble)"
+      desc: "filter a specific module (either hid | ble)",
     },
     {
       name: "interactive",
       alias: "i",
       type: Boolean,
       desc:
-        "interactive mode that accumulate the events instead of showing them"
-    }
+        "interactive mode that accumulate the events instead of showing them",
+    },
   ],
   job: ({
     module,
-    interactive
+    interactive,
   }: $Shape<{
     module: string,
-    interactive: boolean
+    interactive: boolean,
   }>) => {
-    const events = discoverDevices(m =>
+    const events = discoverDevices((m) =>
       !module ? true : module.split(",").includes(m.id)
     );
     if (!interactive) return events;
@@ -35,9 +35,9 @@ export default {
         rxScan((acc, value) => {
           let copy;
           if (value.type === "remove") {
-            copy = acc.filter(a => a.id === value.id);
+            copy = acc.filter((a) => a.id === value.id);
           } else {
-            const existing = acc.find(o => o.id === value.id);
+            const existing = acc.find((o) => o.id === value.id);
             if (existing) {
               const i = acc.indexOf(existing);
               copy = [...acc];
@@ -56,11 +56,11 @@ export default {
           // eslint-disable-next-line no-console
           console.clear();
         }),
-        map(acc =>
+        map((acc) =>
           acc
-            .map(o => `${(o.name || "(no name)").padEnd(40)} ${o.id}`)
+            .map((o) => `${(o.name || "(no name)").padEnd(40)} ${o.id}`)
             .join("\n")
         )
       );
-  }
+  },
 };

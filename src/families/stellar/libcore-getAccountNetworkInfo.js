@@ -7,7 +7,7 @@ import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 
 type Input = {
   coreAccount: CoreAccount,
-  account: Account
+  account: Account,
 };
 
 type Output = Promise<NetworkInfo>;
@@ -22,7 +22,7 @@ async function stellar({ coreAccount }: Input): Output {
     fees: BigNumber(fees),
     baseReserve: await libcoreAmountToBigNumber(
       await stellarLikeAccount.getBaseReserve()
-    )
+    ),
   };
 }
 

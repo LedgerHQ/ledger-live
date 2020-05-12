@@ -13,12 +13,12 @@ function getDeviceTransactionConfig({
   account,
   parentAccount,
   transaction,
-  status
+  status,
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  status: TransactionStatus
+  status: TransactionStatus,
 }): Array<DeviceTransactionField> {
   const { amount } = transaction;
   const { estimatedFees } = status;
@@ -33,20 +33,20 @@ function getDeviceTransactionConfig({
     {
       type: "address",
       label: "Source",
-      address: source
-    }
+      address: source,
+    },
   ];
 
   if (isDelegateOperation) {
     fields.push(
       {
         type: "tezos.delegateValidator",
-        label: "Validator"
+        label: "Validator",
       },
       {
         type: "address",
         label: "Delegate",
-        address: transaction.recipient
+        address: transaction.recipient,
       }
     );
   }
@@ -54,20 +54,20 @@ function getDeviceTransactionConfig({
   if (!amount.isZero()) {
     fields.push({
       type: "amount",
-      label: "Amount"
+      label: "Amount",
     });
   }
 
   if (!estimatedFees.isZero()) {
     fields.push({
       type: "fees",
-      label: "Fees"
+      label: "Fees",
     });
   }
 
   fields.push({
     type: "tezos.storageLimit",
-    label: "Storage Limit"
+    label: "Storage Limit",
   });
 
   return fields;

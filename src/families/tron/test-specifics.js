@@ -4,7 +4,7 @@ import {
   fetchTronAccountTxs,
   getAccountName,
   getBrokerage,
-  getTronSuperRepresentativeData
+  getTronSuperRepresentativeData,
 } from "../../api/Tron";
 import sumBy from "lodash/sumBy";
 
@@ -56,7 +56,7 @@ export default () => {
     test("should not contain unsupported custom smart contract tx", async () => {
       const txs = await fetchTronAccountTxs(
         "TPvDn5oQ5uzhDnohWNhQeDu47GJYwxBpqj",
-        txs => txs.length < 1000,
+        (txs) => txs.length < 1000,
         {}
       );
 
@@ -66,10 +66,10 @@ export default () => {
         "0b2f6c549c47c56f3524478f133bc98f8b4c89962bf3c915ed06ddb5def5ea2a",
         "822f8af2e82aee52276b480e9937e82631cfc9ff2d6ce089c796c24baccaab31",
         "80e47e1c203e06363684c007c76defce8f8d55e2f2f7f701ddcde6940c3f2567",
-        "ce7c33737d6ad3052a6f25cd6cacb8cc1496c27667ed43c2a5188044191734bf"
+        "ce7c33737d6ad3052a6f25cd6cacb8cc1496c27667ed43c2a5188044191734bf",
       ];
 
-      const hasUnsupportedTxs = txs.some(tx =>
+      const hasUnsupportedTxs = txs.some((tx) =>
         unsupportedTxIds.includes(tx.txID)
       );
 

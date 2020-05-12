@@ -26,7 +26,7 @@ test("a new operation gets added", () => {
     const raw = toAccountRaw(expected);
     const account = {
       ...expected,
-      operations: expected.operations.slice(1)
+      operations: expected.operations.slice(1),
     };
     const next = patchAccount(account, raw);
     expect(next).toMatchObject(expected);
@@ -43,7 +43,7 @@ test("missing operations gets added", () => {
     const account = {
       ...expected,
       operations: [],
-      pendingOperations: []
+      pendingOperations: [],
     };
     const next = patchAccount(account, raw);
     expect(next).toMatchObject(expected);

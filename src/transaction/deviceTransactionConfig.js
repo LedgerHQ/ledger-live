@@ -5,7 +5,7 @@ import type {
   Transaction,
   TransactionStatus,
   Account,
-  AccountLike
+  AccountLike,
 } from "../types";
 import { getMainAccount } from "../account";
 
@@ -23,7 +23,7 @@ export function getDeviceTransactionConfig(arg: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  status: TransactionStatus
+  status: TransactionStatus,
 }): Array<DeviceTransactionField> {
   const mainAccount = getMainAccount(arg.account, arg.parentAccount);
   const f = perFamily[mainAccount.currency.family];

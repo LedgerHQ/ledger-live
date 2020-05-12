@@ -6,7 +6,7 @@ import {
   materialize,
   reduce,
   ignoreElements,
-  throttleTime
+  throttleTime,
 } from "rxjs/operators";
 import type { Exec, State, AppOp, RunnerEvent } from "./types";
 import { reducer, getActionPlan, getNextAppOp } from "./logic";
@@ -23,7 +23,7 @@ export const runAppOp = (
     // app not in list, we skip it.
     return from([
       { type: "runStart", appOp },
-      { type: "runSuccess", appOp }
+      { type: "runSuccess", appOp },
     ]);
   }
   return concat(
@@ -33,7 +33,7 @@ export const runAppOp = (
     defer(() => exec(appOp, deviceInfo.targetId, app)).pipe(
       throttleTime(100),
       materialize(),
-      map(n => {
+      map((n) => {
         switch (n.kind) {
           case "N":
             return { type: "runProgress", appOp, progress: n.value.progress };
@@ -52,9 +52,9 @@ export const runAppOp = (
 // use for CLI, no change of the state over time
 export const runAll = (state: State, exec: Exec): Observable<State> =>
   concat(
-    ...getActionPlan(state).map(appOp => runAppOp(state, appOp, exec))
+    ...getActionPlan(state).map((appOp) => runAppOp(state, appOp, exec))
   ).pipe(
-    map(event => ({ type: "onRunnerEvent", event })),
+    map((event) => ({ type: "onRunnerEvent", event })),
     reduce(reducer, state)
   );
 
@@ -64,7 +64,7 @@ export const runOneAppOp = (
   exec: Exec
 ): Observable<State> =>
   runAppOp(state, appOp, exec).pipe(
-    map(event => ({ type: "onRunnerEvent", event })),
+    map((event) => ({ type: "onRunnerEvent", event })),
     reduce(reducer, state)
   );
 

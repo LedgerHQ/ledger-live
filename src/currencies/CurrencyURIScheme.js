@@ -8,7 +8,7 @@ import { findCryptoCurrencyByScheme } from "../data/cryptocurrencies";
 type Data = {
   address: string,
   currency?: CryptoCurrency,
-  amount?: BigNumber // IN SATOSHI !! not in actual 'real' value
+  amount?: BigNumber, // IN SATOSHI !! not in actual 'real' value
   // ... any other field specific to a coin that will be put in query
 };
 
@@ -38,7 +38,7 @@ export function decodeURIScheme(str: string): Data {
   }
   const data: Data = {
     currency,
-    address
+    address,
   };
   const { amount, ...specificFields } = { ...query };
   Object.assign(data, specificFields);

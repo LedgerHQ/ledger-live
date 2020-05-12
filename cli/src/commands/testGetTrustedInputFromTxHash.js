@@ -39,9 +39,7 @@ const command = async (transport, currencyId, hash) => {
 
   const outHash = await btc.getTrustedInput(0, tx, [currency.id]);
   const ouHash = outHash.substring(8, 72);
-  const finalOut = Buffer.from(ouHash, "hex")
-    .reverse()
-    .toString("hex");
+  const finalOut = Buffer.from(ouHash, "hex").reverse().toString("hex");
 
   return { inHash: hash, finalOut };
 };
@@ -50,14 +48,14 @@ export default {
   args: [
     deviceOpt,
     { name: "currency", alias: "c", type: String },
-    { name: "hash", alias: "h", type: String }
+    { name: "hash", alias: "h", type: String },
   ],
   job: ({
     device,
     currency,
-    hash
+    hash,
   }: $Shape<{ device: string, currency: string, hash: string }>) =>
-    withDevice(device || "")(transport =>
+    withDevice(device || "")((transport) =>
       from(command(transport, currency, hash))
-    )
+    ),
 };

@@ -8,7 +8,7 @@ import { fromSignedOperationRaw } from "@ledgerhq/live-common/lib/transaction";
 import { jsonFromFile } from "./stream";
 
 export type InferSignedOperationsOpts = $Shape<{
-  "signed-operation": string
+  "signed-operation": string,
 }>;
 
 export const inferSignedOperationsOpts = [
@@ -16,8 +16,8 @@ export const inferSignedOperationsOpts = [
     name: "signed-operation",
     alias: "t",
     type: String,
-    desc: "JSON file of a signed operation (- for stdin)"
-  }
+    desc: "JSON file of a signed operation (- for stdin)",
+  },
 ];
 
 export function inferSignedOperations(
@@ -27,7 +27,7 @@ export function inferSignedOperations(
   const file = opts["signed-operation"];
   invariant(file, "--signed-operation file is required");
   return jsonFromFile(file).pipe(
-    map(json => {
+    map((json) => {
       invariant(typeof json === "object", "not an object JSON");
       invariant(typeof json.signature === "string", "missing signature");
       invariant(typeof json.operation === "object", "missing operation object");

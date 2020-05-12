@@ -1,7 +1,7 @@
 // @flow
 import {
   createTransportReplayer,
-  RecordStore
+  RecordStore,
 } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 import manager from "../../manager";
@@ -38,7 +38,7 @@ test("1.3.1", async () => {
     isOSU: false,
     isBootloader: false,
     managerAllowed: true,
-    pinValidated: true
+    pinValidated: true,
   };
   const res = await manager.getLatestFirmwareForDevice(deviceInfo);
   expect(res).toMatchObject({ final: {}, osu: {} });
@@ -54,7 +54,7 @@ test("1.4.2", async () => {
     pinValidated: true,
     providerId: 1,
     majMin: "1.4",
-    targetId: 823132163
+    targetId: 823132163,
   };
   const res = await manager.getLatestFirmwareForDevice(deviceInfo);
   expect(res).toMatchObject({ final: {}, osu: {} });
@@ -88,7 +88,7 @@ test("nano x 1.1.6", async () => {
     managerAllowed: false,
     pinValidated: true,
     providerId: 1,
-    targetId: 855638020
+    targetId: 855638020,
   };
   const res = await manager.getLatestFirmwareForDevice(deviceInfo);
   expect(res).toBe(null);
@@ -104,7 +104,7 @@ test("nano x 1.2.4-1", async () => {
     isOSU: false,
     isBootloader: false,
     managerAllowed: true,
-    pinValidated: true
+    pinValidated: true,
   };
   const res = await manager.getLatestFirmwareForDevice(deviceInfo);
   expect(res).toBe(null);
@@ -120,7 +120,7 @@ test("nanoS das", async () => {
     pinValidated: true,
     providerId: 2,
     targetId: 823132163,
-    version: "1.4.2-das"
+    version: "1.4.2-das",
   };
   const res = await manager.getLatestFirmwareForDevice(deviceInfo);
   expect(res).toBe(null);

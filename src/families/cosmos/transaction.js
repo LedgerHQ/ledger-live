@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 import {
   fromTransactionCommonRaw,
-  toTransactionCommonRaw
+  toTransactionCommonRaw,
 } from "../../transaction/common";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
@@ -15,18 +15,18 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     mode: tr.mode,
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      fees: BigNumber(networkInfo.fees)
+      fees: BigNumber(networkInfo.fees),
     },
     fees: tr.fees ? BigNumber(tr.fees) : null,
     gasLimit: tr.gasLimit ? BigNumber(tr.gasLimit) : null,
     memo: tr.memo,
     cosmosSourceValidator: tr.cosmosSourceValidator,
     validators: tr.validators
-      ? tr.validators.map(v => ({
+      ? tr.validators.map((v) => ({
           ...v,
-          amount: BigNumber(v.amount)
+          amount: BigNumber(v.amount),
         }))
-      : []
+      : [],
   };
 };
 
@@ -39,18 +39,18 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     mode: t.mode,
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      fees: networkInfo.fees.toString()
+      fees: networkInfo.fees.toString(),
     },
     fees: t.fees ? t.fees.toString() : null,
     gasLimit: t.gasLimit ? t.gasLimit.toString() : null,
     memo: t.memo,
     cosmosSourceValidator: t.cosmosSourceValidator,
     validators: t.validators
-      ? t.validators.map(v => ({
+      ? t.validators.map((v) => ({
           ...v,
-          amount: v.amount.toString()
+          amount: v.amount.toString(),
         }))
-      : []
+      : [],
   };
 };
 

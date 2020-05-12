@@ -4,7 +4,7 @@ import type {
   SignOperationEventRaw,
   SignOperationEvent,
   SignedOperationRaw,
-  SignedOperation
+  SignedOperation,
 } from "../types/transaction";
 
 import { fromOperationRaw, toOperationRaw } from "../account";
@@ -17,7 +17,7 @@ export const fromSignedOperationRaw = (
   const out: SignedOperation = {
     operation: fromOperationRaw(operation, accountId),
     signature,
-    expirationDate: expirationDate ? new Date(expirationDate) : null
+    expirationDate: expirationDate ? new Date(expirationDate) : null,
   };
   if (signatureRaw) {
     out.signatureRaw = signatureRaw;
@@ -33,7 +33,7 @@ export const toSignedOperationRaw = (
   const out: SignedOperationRaw = {
     operation: toOperationRaw(operation, preserveSubOperation),
     signature,
-    expirationDate: expirationDate ? expirationDate.toISOString() : null
+    expirationDate: expirationDate ? expirationDate.toISOString() : null,
   };
   if (signatureRaw) {
     out.signatureRaw = signatureRaw;
@@ -49,7 +49,7 @@ export const fromSignOperationEventRaw = (
     case "signed":
       return {
         type: "signed",
-        signedOperation: fromSignedOperationRaw(e.signedOperation, accountId)
+        signedOperation: fromSignedOperationRaw(e.signedOperation, accountId),
       };
     default:
       return e;
@@ -63,7 +63,7 @@ export const toSignOperationEventRaw = (
     case "signed":
       return {
         type: "signed",
-        signedOperation: toSignedOperationRaw(e.signedOperation, true)
+        signedOperation: toSignedOperationRaw(e.signedOperation, true),
       };
     default:
       return e;

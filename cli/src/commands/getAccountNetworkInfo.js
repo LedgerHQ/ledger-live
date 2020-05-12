@@ -7,7 +7,7 @@ import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 
 const getAccountNetworkInfoFormatters = {
-  json: e => JSON.stringify(e)
+  json: (e) => JSON.stringify(e),
 };
 
 export default {
@@ -19,13 +19,13 @@ export default {
       alias: "f",
       type: String,
       typeDesc: Object.keys(getAccountNetworkInfoFormatters).join(" | "),
-      desc: "how to display the data"
-    }
+      desc: "how to display the data",
+    },
   ],
   job: (opts: ScanCommonOpts & { format: string }) =>
     scan(opts).pipe(
-      mergeMap(account => from(getAccountNetworkInfo(account))),
-      map(e => {
+      mergeMap((account) => from(getAccountNetworkInfo(account))),
+      map((e) => {
         const f = getAccountNetworkInfoFormatters[opts.format || "json"];
         if (!f) {
           throw new Error(
@@ -34,5 +34,5 @@ export default {
         }
         return f(e);
       })
-    )
+    ),
 };

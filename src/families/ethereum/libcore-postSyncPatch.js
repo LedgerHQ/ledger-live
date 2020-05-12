@@ -18,31 +18,33 @@ const postSyncPatchGen = <T: AccountLike>(
   if (pendingOperations.length === 0) return synced;
   const { operations } = synced;
   synced.pendingOperations = pendingOperations.filter(
-    op =>
+    (op) =>
       (!parentPendingOperation ||
         // a child pending parent need to disappear if parent eth op disappear
-        parentPendingOperation.some(o => o.hash === op.hash)) &&
+        parentPendingOperation.some((o) => o.hash === op.hash)) &&
       op.transactionSequenceNumber &&
       op.transactionSequenceNumber >= latestNonce &&
       // retain logic
       (shouldRetainPendingOperation(mainAccount, op) ||
         // after retain logic, we need operation to appear
-        !operations.some(o => o.hash === op.hash))
+        !operations.some((o) => o.hash === op.hash))
   );
   return synced;
 };
 
 const postSyncPatch = (initial: Account, synced: Account): Account => {
-  const sendingOps = (synced.operations || []).filter(op => op.type === "OUT");
+  const sendingOps = (synced.operations || []).filter(
+    (op) => op.type === "OUT"
+  );
   const latestNonce =
     (sendingOps.length > 0 && sendingOps[0].transactionSequenceNumber) || 0;
   const acc = postSyncPatchGen(initial, synced, latestNonce, synced);
   const { subAccounts, pendingOperations } = acc;
   const initialSubAccounts = initial.subAccounts;
   if (subAccounts && initialSubAccounts) {
-    acc.subAccounts = subAccounts.map(subAccount => {
+    acc.subAccounts = subAccounts.map((subAccount) => {
       const initialSubAccount = initialSubAccounts.find(
-        a => a.id === subAccount.id
+        (a) => a.id === subAccount.id
       );
       if (!initialSubAccount) return subAccount;
       return postSyncPatchGen(

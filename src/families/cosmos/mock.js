@@ -29,7 +29,7 @@ function setCosmosResources(
     unboundingBalance: account.cosmosResources
       ? account.cosmosResources.unboundingBalance.plus(unboundingBalance)
       : unboundingBalance,
-    withdrawAddress: account.id
+    withdrawAddress: account.id,
   };
 
   return account;
@@ -75,7 +75,7 @@ function genBaseOperation(
     blockHeight: account.blockHeight - Math.floor((Date.now() - date) / 900000),
     accountId: account.id,
     date,
-    extra: {}
+    extra: {},
   };
 }
 
@@ -95,7 +95,7 @@ function addDelegationOperation(account: Account, rng: Prando): Account {
         delegatedBalance: BigNumber(0),
         pendingRewardsBalance: BigNumber(0),
         unboundingBalance: BigNumber(0),
-        withdrawAddress: ""
+        withdrawAddress: "",
       };
 
   if (spendableBalance.isZero()) return account;
@@ -113,14 +113,14 @@ function addDelegationOperation(account: Account, rng: Prando): Account {
     .filter(
       (validator, index, arr) =>
         arr.findIndex(
-          v => v.validatorAddress === validator.validatorAddress
+          (v) => v.validatorAddress === validator.validatorAddress
         ) === index
     )
     .map(({ validatorAddress }, i, arr) => ({
       address: validatorAddress,
       amount: BigNumber(
         Math.round(value.toNumber() * rng.next(0.1, 1 / arr.length))
-      )
+      ),
     }));
 
   delegationOp.extra = { validators: delegatedValidators };
@@ -133,7 +133,7 @@ function addDelegationOperation(account: Account, rng: Prando): Account {
       pendingRewards: rng.nextBoolean()
         ? BigNumber(Math.round(amount.toNumber() * 0.01))
         : BigNumber(0),
-      status: rng.next() > 0.33 ? "bonded" : "unbonded"
+      status: rng.next() > 0.33 ? "bonded" : "unbonded",
     })
   );
 
@@ -167,7 +167,7 @@ function addRedelegationOperation(account: Account, rng: Prando): Account {
         delegatedBalance: BigNumber(0),
         pendingRewardsBalance: BigNumber(0),
         unboundingBalance: BigNumber(0),
-        withdrawAddress: ""
+        withdrawAddress: "",
       };
 
   if (!cosmosResources.delegations.length) return account;
@@ -188,9 +188,9 @@ function addRedelegationOperation(account: Account, rng: Prando): Account {
   redelegationOp.extra = {
     validator: {
       address: toDelegation.validatorAddress,
-      amount
+      amount,
     },
-    cosmosSourceValidator: fromDelegation.validatorAddress
+    cosmosSourceValidator: fromDelegation.validatorAddress,
   };
 
   const delegations = cosmosResources.delegations
@@ -205,8 +205,8 @@ function addRedelegationOperation(account: Account, rng: Prando): Account {
         pendingRewards: rng.nextBoolean()
           ? BigNumber(Math.round(amount.toNumber() * 0.01))
           : BigNumber(0),
-        status: rng.next() > 0.33 ? "bonded" : "unbonded"
-      }
+        status: rng.next() > 0.33 ? "bonded" : "unbonded",
+      },
     ]);
 
   setCosmosResources(account, delegations);
@@ -233,7 +233,7 @@ function addClaimRewardsOperation(account: Account, rng: Prando): Account {
         delegatedBalance: BigNumber(0),
         pendingRewardsBalance: BigNumber(0),
         unboundingBalance: BigNumber(0),
-        withdrawAddress: ""
+        withdrawAddress: "",
       };
 
   if (!cosmosResources.delegations.length) return account;
@@ -252,16 +252,16 @@ function addClaimRewardsOperation(account: Account, rng: Prando): Account {
   claimRewardOp.extra = {
     validator: {
       address: fromDelegation.validatorAddress,
-      amount
-    }
+      amount,
+    },
   };
 
-  const delegations = cosmosResources.delegations.map(delegation => ({
+  const delegations = cosmosResources.delegations.map((delegation) => ({
     ...delegation,
     pendingRewards:
       delegation.validatorAddress === fromDelegation.validatorAddress
         ? BigNumber(0)
-        : delegation.pendingRewards
+        : delegation.pendingRewards,
   }));
 
   setCosmosResources(account, delegations);
@@ -290,7 +290,7 @@ function addUndelegationOperation(account: Account, rng: Prando): Account {
         delegatedBalance: BigNumber(0),
         pendingRewardsBalance: BigNumber(0),
         unboundingBalance: BigNumber(0),
-        withdrawAddress: ""
+        withdrawAddress: "",
       };
 
   if (!cosmosResources.delegations.length) return account;
@@ -314,18 +314,18 @@ function addUndelegationOperation(account: Account, rng: Prando): Account {
   undelegationOp.extra = {
     validator: {
       address: fromDelegation.validatorAddress,
-      amount
-    }
+      amount,
+    },
   };
 
   const delegations = cosmosResources.delegations
-    .map(delegation => ({
+    .map((delegation) => ({
       ...delegation,
       amount:
         delegation.validatorAddress === fromDelegation.validatorAddress
           ? delegation.amount.minus(amount)
           : delegation.amount,
-      pendingRewards: BigNumber(0)
+      pendingRewards: BigNumber(0),
     }))
     .filter(({ amount }) => amount.gt(0));
 
@@ -389,7 +389,7 @@ function postScanAccount(
       delegatedBalance: BigNumber(0),
       pendingRewardsBalance: BigNumber(0),
       unboundingBalance: BigNumber(0),
-      withdrawAddress: account.id
+      withdrawAddress: account.id,
     };
     account.operations = [];
   }
@@ -400,5 +400,5 @@ function postScanAccount(
 export default {
   genAccountEnhanceOperations,
   postSyncAccount,
-  postScanAccount
+  postScanAccount,
 };

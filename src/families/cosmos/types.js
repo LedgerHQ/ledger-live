@@ -3,7 +3,7 @@
 import type { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "../../types/transaction";
 
 import type { Operation, OperationRaw } from "../../types/operation";
@@ -22,7 +22,7 @@ export type CosmosDelegation = {|
   validatorAddress: string,
   amount: BigNumber,
   pendingRewards: BigNumber,
-  status: CosmosDelegationStatus
+  status: CosmosDelegationStatus,
 |};
 
 export type CosmosResources = {|
@@ -30,14 +30,14 @@ export type CosmosResources = {|
   delegatedBalance: BigNumber,
   pendingRewardsBalance: BigNumber,
   unboundingBalance: BigNumber,
-  withdrawAddress: string
+  withdrawAddress: string,
 |};
 
 export type CosmosDelegationRaw = {|
   validatorAddress: string,
   amount: string,
   pendingRewards: string,
-  status: CosmosDelegationStatus
+  status: CosmosDelegationStatus,
 |};
 
 export type CosmosResourcesRaw = {|
@@ -45,7 +45,7 @@ export type CosmosResourcesRaw = {|
   delegatedBalance: string,
   pendingRewardsBalance: string,
   unboundingBalance: string,
-  withdrawAddress: string
+  withdrawAddress: string,
 |};
 
 // NB this must be serializable (no Date, no BigNumber)
@@ -53,7 +53,7 @@ export type CosmosValidatorItem = {|
   validatorAddress: string,
   name: string,
   votingPower: number, // value from 0.0 to 1.0 (normalized percentage)
-  commission: number // value from 0.0 to 1.0 (normalized percentage)
+  commission: number, // value from 0.0 to 1.0 (normalized percentage)
 |};
 
 export type CosmosRewardsState = {|
@@ -67,13 +67,13 @@ export type CosmosRewardsState = {|
   averageTimePerBlock: number,
   totalSupply: number,
   averageDailyFees: number,
-  currentValueInflation: number
+  currentValueInflation: number,
 |};
 
 // by convention preload would return a Promise of CosmosPreloadData
 export type CosmosPreloadData = {
   validators: CosmosValidatorItem[],
-  rewardsState: CosmosRewardsState
+  rewardsState: CosmosRewardsState,
 };
 
 export type CosmosOperationMode =
@@ -86,22 +86,22 @@ export type CosmosOperationMode =
 
 export type NetworkInfo = {|
   family: "cosmos",
-  fees: BigNumber
+  fees: BigNumber,
 |};
 
 export type NetworkInfoRaw = {|
   family: "cosmos",
-  fees: string
+  fees: string,
 |};
 
 export type CosmosOperation = {|
   ...Operation,
-  extra: CosmosExtraTxInfo
+  extra: CosmosExtraTxInfo,
 |};
 
 export type CosmosOperationRaw = {|
   ...OperationRaw,
-  extra: CosmosExtraTxInfo
+  extra: CosmosExtraTxInfo,
 |};
 
 export type CosmosExtraTxInfo =
@@ -111,29 +111,29 @@ export type CosmosExtraTxInfo =
   | CosmosClaimRewardsTxInfo;
 
 export type CosmosDelegateTxInfo = {|
-  validators: CosmosDelegationInfo[]
+  validators: CosmosDelegationInfo[],
 |};
 
 export type CosmosUndelegateTxInfo = {|
-  validator: CosmosDelegationInfo
+  validator: CosmosDelegationInfo,
 |};
 export type CosmosRedelegateTxInfo = {|
   validator: CosmosDelegationInfo,
-  cosmosSourceValidator: ?string
+  cosmosSourceValidator: ?string,
 |};
 
 export type CosmosClaimRewardsTxInfo = {|
-  validator: CosmosDelegationInfo
+  validator: CosmosDelegationInfo,
 |};
 
 export type CosmosDelegationInfo = {
   address: string,
-  amount: BigNumber
+  amount: BigNumber,
 };
 
 export type CosmosValidatorRaw = {
   address: string,
-  amount: string
+  amount: string,
 };
 
 export type Transaction = {|
@@ -145,7 +145,7 @@ export type Transaction = {|
   gasLimit: ?BigNumber,
   memo: ?string,
   validators: ?(CosmosDelegationInfo[]),
-  cosmosSourceValidator: ?string
+  cosmosSourceValidator: ?string,
 |};
 
 export type TransactionRaw = {|
@@ -157,7 +157,7 @@ export type TransactionRaw = {|
   gasLimit: ?string,
   memo: ?string,
   validators: ?(CosmosValidatorRaw[]),
-  cosmosSourceValidator: ?string
+  cosmosSourceValidator: ?string,
 |};
 
 export const reflect = (_declare: *) => {};

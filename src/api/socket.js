@@ -10,7 +10,7 @@ import {
   DisconnectedDeviceDuringOperation,
   TransportStatusError,
   UserRefusedAllowManager,
-  ManagerDeviceLockedError
+  ManagerDeviceLockedError,
 } from "@ledgerhq/errors";
 import { cancelDeviceAction } from "../hw/deviceAccess";
 import { getEnv } from "../env";
@@ -29,13 +29,13 @@ export const createDeviceSocket = (
   transport: Transport<*>,
   {
     url,
-    unresponsiveExpectedDuringBulk
+    unresponsiveExpectedDuringBulk,
   }: {
     url: string,
-    unresponsiveExpectedDuringBulk?: boolean
+    unresponsiveExpectedDuringBulk?: boolean,
   }
 ): Observable<SocketEvent> =>
-  Observable.create(o => {
+  Observable.create((o) => {
     let deviceError = null; // the socket was interrupted by device problem
     let unsubscribed = false; // subscriber wants to stops everything
     let correctlyFinished = false; // the socket logic reach a normal termination
@@ -49,7 +49,7 @@ export const createDeviceSocket = (
       o.next({ type: "opened" });
     };
 
-    ws.onerror = e => {
+    ws.onerror = (e) => {
       log("socket-error", e.message);
       if (inBulk) return; // in bulk case, we ignore any network events because we just need to unroll APDUs with the device
       o.error(new WebsocketConnectionError(e.message, { url }));
@@ -65,7 +65,7 @@ export const createDeviceSocket = (
       }
     };
 
-    ws.onmessage = async e => {
+    ws.onmessage = async (e) => {
       if (unsubscribed) return;
       try {
         const input = JSON.parse(e.data);
@@ -85,7 +85,7 @@ export const createDeviceSocket = (
                 allowManagerAwaitingUser = true;
                 o.next({
                   type: "device-permission-requested",
-                  wording: "Allow Ledger Manager"
+                  wording: "Allow Ledger Manager",
                 });
               }, ALLOW_MANAGER_DELAY);
             }
@@ -115,7 +115,7 @@ export const createDeviceSocket = (
             const msg = {
               nonce,
               response: status === 0x9000 ? "success" : "error",
-              data: data.toString("hex")
+              data: data.toString("hex"),
             };
             log("socket-out", msg.response);
             const strMsg = JSON.stringify(msg);
@@ -130,12 +130,12 @@ export const createDeviceSocket = (
             ws.close();
 
             const { data } = input;
-            const notify = index =>
+            const notify = (index) =>
               o.next({
                 type: "bulk-progress",
                 progress: index / data.length,
                 index,
-                total: data.length
+                total: data.length,
               });
 
             notify(0);
@@ -176,7 +176,7 @@ export const createDeviceSocket = (
           default:
             console.warn(`Cannot handle msg of type ${input.query}`, {
               query: input.query,
-              url
+              url,
             });
         }
       } catch (err) {
@@ -186,7 +186,7 @@ export const createDeviceSocket = (
       }
     };
 
-    const onDisconnect = e => {
+    const onDisconnect = (e) => {
       transport.off("disconnect", onDisconnect);
       const error = new DisconnectedDeviceDuringOperation(
         (e && e.message) || ""

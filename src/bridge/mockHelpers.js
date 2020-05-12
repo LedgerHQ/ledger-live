@@ -21,8 +21,8 @@ const broadcasted: { [_: string]: Operation[] } = {};
 
 const syncTimeouts = {};
 
-export const sync: $PropertyType<AccountBridge<*>, "sync"> = initialAccount =>
-  Observable.create(o => {
+export const sync: $PropertyType<AccountBridge<*>, "sync"> = (initialAccount) =>
+  Observable.create((o) => {
     const accountId = initialAccount.id;
 
     const sync = () => {
@@ -32,7 +32,7 @@ export const sync: $PropertyType<AccountBridge<*>, "sync"> = initialAccount =>
       }
       const ops = broadcasted[accountId] || [];
       broadcasted[accountId] = [];
-      o.next(acc => {
+      o.next((acc) => {
         const balance = ops.reduce(
           (sum, op) => sum.plus(getOperationAmountNumber(op)),
           acc.balance
@@ -45,7 +45,7 @@ export const sync: $PropertyType<AccountBridge<*>, "sync"> = initialAccount =>
           operations: ops.concat(acc.operations.slice(0)),
           pendingOperations: [],
           balance,
-          spendableBalance: balance
+          spendableBalance: balance,
         };
 
         const perFamilyOperation = perFamilyMock[acc.currency.id];
@@ -68,14 +68,14 @@ export const sync: $PropertyType<AccountBridge<*>, "sync"> = initialAccount =>
   });
 
 export const broadcast: $PropertyType<AccountBridge<*>, "broadcast"> = ({
-  signedOperation
+  signedOperation,
 }) => Promise.resolve(signedOperation.operation);
 
 export const signOperation: $PropertyType<
   AccountBridge<any>,
   "signOperation"
 > = ({ account, transaction }) =>
-  Observable.create(o => {
+  Observable.create((o) => {
     let cancelled = false;
 
     async function main() {
@@ -113,14 +113,14 @@ export const signOperation: $PropertyType<
         signedOperation: {
           operation: { ...op },
           expirationDate: null,
-          signature: ""
-        }
+          signature: "",
+        },
       });
     }
 
     main().then(
       () => o.complete(),
-      e => o.error(e)
+      (e) => o.error(e)
     );
 
     return () => {
@@ -131,13 +131,13 @@ export const signOperation: $PropertyType<
 export const isInvalidRecipient = (recipient: string) =>
   recipient.includes("invalid") || recipient.length <= 3;
 
-const subtractOneYear = date =>
+const subtractOneYear = (date) =>
   new Date(new Date(date).setFullYear(new Date(date).getFullYear() - 1));
 
 export const scanAccounts: $PropertyType<CurrencyBridge, "scanAccounts"> = ({
-  currency
+  currency,
 }) =>
-  Observable.create(o => {
+  Observable.create((o) => {
     let unsubscribed = false;
     async function job() {
       // TODO offer a way to mock a failure
@@ -147,15 +147,15 @@ export const scanAccounts: $PropertyType<CurrencyBridge, "scanAccounts"> = ({
         await delay(500);
         const account = genAccount(`${MOCK_DATA_SEED}_${currency.id}_${i}`, {
           operationsSize: isLast ? 0 : 100,
-          currency
+          currency,
         });
         account.unit = currency.units[0];
         account.index = i;
         account.operations = isLast
           ? []
-          : account.operations.map(operation => ({
+          : account.operations.map((operation) => ({
               ...operation,
-              date: subtractOneYear(operation.date)
+              date: subtractOneYear(operation.date),
             }));
         account.name = "";
         account.name = validateNameEdition(account);

@@ -12,12 +12,12 @@ export type ExtraDeviceTransactionField =
 function getDeviceTransactionConfig({
   transaction,
   account,
-  parentAccount
+  parentAccount,
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  status: TransactionStatus
+  status: TransactionStatus,
 }): Array<DeviceTransactionField> {
   const mainAccount = getMainAccount(account, parentAccount);
   const { amount, votes, resource, mode } = transaction;
@@ -28,7 +28,7 @@ function getDeviceTransactionConfig({
       type: "tron.resource",
       label: "Resource",
       value:
-        resource.slice(0, 1).toUpperCase() + resource.slice(1).toLowerCase()
+        resource.slice(0, 1).toUpperCase() + resource.slice(1).toLowerCase(),
     });
   }
 
@@ -36,14 +36,14 @@ function getDeviceTransactionConfig({
     // NB in future if we unify UI with other coin, we could converge to a "votes" top level
     fields.push({
       type: "tron.votes",
-      label: "Votes"
+      label: "Votes",
     });
   }
 
   if (!amount.isZero()) {
     fields.push({
       type: "amount",
-      label: "Amount"
+      label: "Amount",
     });
   }
 
@@ -51,7 +51,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "address",
       label: "Freeze To",
-      address: mainAccount.freshAddress
+      address: mainAccount.freshAddress,
     });
   }
 
@@ -59,7 +59,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "address",
       label: "Delegate To",
-      address: mainAccount.freshAddress
+      address: mainAccount.freshAddress,
     });
   }
 
@@ -67,7 +67,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "address",
       label: "From Address",
-      address: mainAccount.freshAddress
+      address: mainAccount.freshAddress,
     });
   }
 

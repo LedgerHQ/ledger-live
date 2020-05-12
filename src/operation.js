@@ -38,11 +38,11 @@ export function patchOperationWithHash(
     id: `${operation.accountId}-${hash}-${operation.type}`,
     subOperations:
       operation.subOperations &&
-      operation.subOperations.map(op => ({
+      operation.subOperations.map((op) => ({
         ...op,
         hash,
-        id: `${op.accountId}-${hash}-${op.type}`
-      }))
+        id: `${op.accountId}-${hash}-${op.type}`,
+      })),
   };
 }
 

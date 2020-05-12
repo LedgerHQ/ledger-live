@@ -5,7 +5,7 @@ import { patchOperationWithHash } from "../../operation";
 
 async function broadcast({
   coreAccount,
-  signedOperation: { operation, signature }
+  signedOperation: { operation, signature },
 }): Promise<Operation> {
   const tezosLikeAccount = await coreAccount.asTezosLikeAccount();
   const hash = await tezosLikeAccount.broadcastRawTransaction(signature);

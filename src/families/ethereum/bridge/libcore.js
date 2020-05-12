@@ -6,7 +6,7 @@ import {
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
-  GasLessThanEstimate
+  GasLessThanEstimate,
 } from "@ledgerhq/errors";
 import type { Account, AccountLike } from "../../../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
@@ -28,11 +28,11 @@ import broadcast from "../libcore-broadcast";
 const getTransactionAccount = (a, t): AccountLike => {
   const { subAccountId } = t;
   return subAccountId
-    ? (a.subAccounts || []).find(ta => ta.id === subAccountId) || a
+    ? (a.subAccounts || []).find((ta) => ta.id === subAccountId) || a
     : a;
 };
 
-const createTransaction = a => ({
+const createTransaction = (a) => ({
   family: "ethereum",
   amount: BigNumber(0),
   recipient: "",
@@ -41,7 +41,7 @@ const createTransaction = a => ({
   estimatedGasLimit: null,
   networkInfo: null,
   feeCustomUnit: a.currency.units[1] || a.currency.units[0],
-  useAllAmount: false
+  useAllAmount: false,
 });
 
 const updateTransaction = (t, patch) => {
@@ -55,7 +55,7 @@ const calculateFees = makeLRUCache(
   async (a, t) => {
     return getFeesForTransaction({
       account: a,
-      transaction: t
+      transaction: t,
     });
   },
   (a, t) =>
@@ -69,7 +69,7 @@ const getTransactionStatus = async (a, t) => {
   const warnings = {};
   const tokenAccount = !t.subAccountId
     ? null
-    : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
+    : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
   const account = tokenAccount || a;
 
   const useAllAmount = !!t.useAllAmount;
@@ -96,10 +96,10 @@ const getTransactionStatus = async (a, t) => {
     errors.gasLimit = new FeeRequired();
   } else if (!errors.recipient) {
     await calculateFees(a, t).then(
-      res => {
+      (res) => {
         estimatedFees = res.estimatedFees;
       },
-      error => {
+      (error) => {
         if (error.name === "NotEnoughBalance") {
           errors.amount = error;
         } else if (error.name === "NotEnoughGas") {
@@ -140,13 +140,13 @@ const getTransactionStatus = async (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
 const estimateGasLimitForERC20 = makeLRUCache(
   (account: Account, addr: string) =>
-    withLibcore(async core => {
+    withLibcore(async (core) => {
       const { coreAccount } = await getCoreAccount(core, account);
       const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
       const r = await ethereumLikeAccount.getEstimatedGasLimit(addr);
@@ -201,7 +201,7 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
-  transaction
+  transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
@@ -209,7 +209,7 @@ const estimateMaxSpendable = async ({
     subAccountId: account.type === "Account" ? null : account.id,
     recipient: "0x0000000000000000000000000000000000000000",
     ...transaction,
-    useAllAmount: true
+    useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;
@@ -223,13 +223,13 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccounts
+  scanAccounts,
 };
 
 export default { currencyBridge, accountBridge };

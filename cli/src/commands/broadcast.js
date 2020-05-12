@@ -9,7 +9,7 @@ import type { ScanCommonOpts } from "../scan";
 import type { InferSignedOperationsOpts } from "../signedOperation";
 import {
   inferSignedOperations,
-  inferSignedOperationsOpts
+  inferSignedOperationsOpts,
 } from "../signedOperation";
 
 export default {
@@ -17,18 +17,18 @@ export default {
   args: [...scanCommonOpts, ...inferSignedOperationsOpts],
   job: (opts: ScanCommonOpts & InferSignedOperationsOpts) =>
     scan(opts).pipe(
-      concatMap(account =>
+      concatMap((account) =>
         inferSignedOperations(account, opts).pipe(
-          concatMap(signedOperation =>
+          concatMap((signedOperation) =>
             from(
               getAccountBridge(account).broadcast({
                 account,
-                signedOperation
+                signedOperation,
               })
             )
           )
         )
       ),
-      map(obj => JSON.stringify(toOperationRaw(obj)))
-    )
+      map((obj) => JSON.stringify(toOperationRaw(obj)))
+    ),
 };

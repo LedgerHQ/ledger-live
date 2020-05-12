@@ -9,7 +9,7 @@ import type {
   Transaction,
   Account,
   AccountLike,
-  AccountLikeArray
+  AccountLikeArray,
 } from "../../types";
 import type { Baker } from "./bakers";
 import { listBakers, fetchAllBakers } from "./bakers";
@@ -19,29 +19,29 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction"
+    desc: "mode of transaction",
   },
   {
     name: "storageLimit",
     type: String,
-    desc: "how much storageLimit. default is estimated with the recipient"
+    desc: "how much storageLimit. default is estimated with the recipient",
   },
   {
     name: "subAccount",
     type: String,
     desc: "use a sub account instead of the parent by index",
-    multiple: true
+    multiple: true,
   },
   {
     name: "fees",
     type: String,
-    desc: "how much fees"
+    desc: "how much fees",
   },
   {
     name: "gasLimit",
     type: String,
-    desc: "how much gasLimit. default is estimated with the recipient"
-  }
+    desc: "how much gasLimit. default is estimated with the recipient",
+  },
 ];
 
 function inferAccounts(account: Account, opts: Object): AccountLikeArray {
@@ -49,7 +49,7 @@ function inferAccounts(account: Account, opts: Object): AccountLikeArray {
   if (!opts.subAccount) return [account];
   const { subAccounts } = account;
   invariant(subAccounts, "no sub accounts");
-  return opts.subAccount.map(i => {
+  return opts.subAccount.map((i) => {
     const acc = subAccounts[i];
     invariant(acc, "sub account not found (index %s)", i);
     return acc;
@@ -73,20 +73,20 @@ function inferTransactions(
       subAccountId,
       fees: opts.fees ? inferAmount(account, opts.fees) : null,
       gasLimit: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
-      storageLimit: opts.storageLimit ? new BigNumber(opts.storageLimit) : null
+      storageLimit: opts.storageLimit ? new BigNumber(opts.storageLimit) : null,
     };
   });
 }
 
 const bakersFormatters = {
-  json: list => JSON.stringify(list),
-  default: list =>
+  json: (list) => JSON.stringify(list),
+  default: (list) =>
     list
       .map(
-        b =>
+        (b) =>
           `${b.address} "${b.name}" ${b.nominalYield} ${b.capacityStatus} ${b.logoURL}`
       )
-      .join("\n")
+      .join("\n"),
 };
 
 const tezosListBakers = {
@@ -94,27 +94,27 @@ const tezosListBakers = {
     {
       name: "whitelist",
       desc: "filter whitelist",
-      type: Boolean
+      type: Boolean,
     },
     {
       name: "format",
       desc: Object.keys(bakersFormatters).join(" | "),
-      type: String
-    }
+      type: String,
+    },
   ],
   job: ({
     whitelist,
-    format
+    format,
   }: $Shape<{
     whitelist: boolean,
-    format: string
+    format: string,
   }>): Observable<string> =>
     from(whitelist ? listBakers(defaultList) : fetchAllBakers()).pipe(
       map((list: Baker[]) => {
         const f = bakersFormatters[format] || bakersFormatters.default;
         return f(list);
       })
-    )
+    ),
 };
 
 export default {
@@ -122,6 +122,6 @@ export default {
   inferAccounts,
   inferTransactions,
   commands: {
-    tezosListBakers
-  }
+    tezosListBakers,
+  },
 };

@@ -5,10 +5,10 @@ import { useBridgeSync } from "./context";
 
 export const SyncOneAccountOnMount = ({
   priority,
-  accountId
+  accountId,
 }: {
   accountId: string,
-  priority: number
+  priority: number,
 }) => {
   const sync = useBridgeSync();
 

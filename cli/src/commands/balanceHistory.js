@@ -8,7 +8,7 @@ import { toBalanceHistoryRaw } from "@ledgerhq/live-common/lib/account";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/types";
 import {
   getBalanceHistory,
-  getRanges
+  getRanges,
 } from "@ledgerhq/live-common/lib/portfolio";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { scan, scanCommonOpts } from "../scan";
@@ -23,12 +23,12 @@ const histoFormatters = {
           " " +
           formatCurrencyUnit(account.unit, value, {
             showCode: true,
-            disableRounding: true
+            disableRounding: true,
           })
       )
       .join("\n"),
 
-  json: histo => toBalanceHistoryRaw(histo),
+  json: (histo) => toBalanceHistoryRaw(histo),
 
   asciichart: (history, account) =>
     "\n" +
@@ -37,26 +37,26 @@ const histoFormatters = {
     ": " +
     formatCurrencyUnit(account.unit, account.balance, {
       showCode: true,
-      disableRounding: true
+      disableRounding: true,
     }) +
     "\n" +
     asciichart.plot(
-      history.map(h =>
+      history.map((h) =>
         h.value.div(BigNumber(10).pow(account.unit.magnitude)).toNumber()
       ),
       {
         height: 10,
-        format: value =>
+        format: (value) =>
           formatCurrencyUnit(
             account.unit,
             BigNumber(value).times(BigNumber(10).pow(account.unit.magnitude)),
             {
               showCode: true,
-              disableRounding: true
+              disableRounding: true,
             }
-          ).padStart(20)
+          ).padStart(20),
       }
-    )
+    ),
 };
 
 function asPortfolioRange(period: string): PortfolioRange {
@@ -78,24 +78,24 @@ export default {
       name: "period",
       alias: "p",
       type: String,
-      desc: getRanges().join(" | ")
+      desc: getRanges().join(" | "),
     },
     {
       name: "format",
       alias: "f",
       type: String,
       typeDesc: Object.keys(histoFormatters).join(" | "),
-      desc: "how to display the data"
-    }
+      desc: "how to display the data",
+    },
   ],
   job: (
     opts: ScanCommonOpts & {
       format: string,
-      period: string
+      period: string,
     }
   ) =>
     scan(opts).pipe(
-      map(account => {
+      map((account) => {
         const histo = getBalanceHistory(
           account,
           asPortfolioRange(opts.period || "month")
@@ -103,5 +103,5 @@ export default {
         const format = histoFormatters[opts.format || "default"];
         return format(histo, account);
       })
-    )
+    ),
 };

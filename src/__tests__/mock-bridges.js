@@ -19,10 +19,10 @@ const mockedCoins = [
   "ethereum_classic",
   "ripple",
   "tezos",
-  "stellar"
+  "stellar",
 ];
 
-mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
+mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {
   describe("mock " + currency.id, () => {
     setEnv("MOCK", true);
     const bridge = getCurrencyBridge(currency);
@@ -32,18 +32,18 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
         .scanAccounts({
           currency,
           deviceId: "",
-          syncConfig: { paginationConfig: {} }
+          syncConfig: { paginationConfig: {} },
         })
         .pipe(
-          filter(e => e.type === "discovered"),
-          map(e => e.account),
+          filter((e) => e.type === "discovered"),
+          map((e) => e.account),
           reduce((all, a) => all.concat(a), [])
         )
         .toPromise();
 
       expect(accounts.length).toBeGreaterThan(0);
 
-      const allOps = flatMap(flattenAccounts(accounts), a => a.operations);
+      const allOps = flatMap(flattenAccounts(accounts), (a) => a.operations);
 
       const operationIdCollisions = toPairs(groupBy(allOps, "id"))
         .filter(([_, coll]) => coll.length > 1)
@@ -52,7 +52,7 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
       expect(operationIdCollisions).toEqual([]);
 
       const [first, second] = await Promise.all(
-        accounts.map(async a => {
+        accounts.map(async (a) => {
           const bridge = getAccountBridge(a, null);
           const synced = await bridge
             .sync(a, { paginationConfig: {} })
@@ -72,24 +72,24 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
         t = await bridge.prepareTransaction(first, t);
         t = bridge.updateTransaction(t, {
           recipient: second.freshAddress,
-          amount: second.balance.div(3)
+          amount: second.balance.div(3),
         });
         t = await bridge.prepareTransaction(first, t);
         const s = await bridge.getTransactionStatus(first, t);
         expect(s).toMatchObject({
           amount: t.amount,
           errors: {},
-          warnings: {}
+          warnings: {},
         });
         const signedOperation = await bridge
           .signOperation({
             account: first,
             transaction: t,
-            deviceId: ""
+            deviceId: "",
           })
           .pipe(
-            filter(e => e.type === "signed"),
-            map(e => e.signedOperation)
+            filter((e) => e.type === "signed"),
+            map((e) => e.signedOperation)
           )
           .toPromise();
 
@@ -97,7 +97,7 @@ mockedCoins.map(getCryptoCurrencyById).forEach(currency => {
 
         const operation = await bridge.broadcast({
           account: first,
-          signedOperation
+          signedOperation,
         });
 
         expect(operation.hash).toBeTruthy();

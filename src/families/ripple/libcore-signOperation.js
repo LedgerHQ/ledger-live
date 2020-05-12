@@ -8,7 +8,7 @@ import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
 import {
   libcoreBigIntToBigNumber,
-  libcoreAmountToBigNumber
+  libcoreAmountToBigNumber,
 } from "../../libcore/buildBigNumber";
 
 async function signTransaction({
@@ -17,7 +17,7 @@ async function signTransaction({
   transaction,
   coreTransaction,
   onDeviceSignatureRequested,
-  onDeviceSignatureGranted
+  onDeviceSignatureGranted,
 }) {
   const hwApp = new Xrp(transport);
   const serialized = await coreTransaction.serialize();
@@ -62,18 +62,18 @@ async function signTransaction({
     date: new Date(),
     transactionSequenceNumber,
     extra: {
-      tag
-    }
+      tag,
+    },
   };
 
   return {
     signature,
     operation,
-    expirationDate: null // TODO
+    expirationDate: null, // TODO
   };
 }
 
 export default makeSignOperation<Transaction, CoreRippleLikeTransaction>({
   signTransaction,
-  buildTransaction
+  buildTransaction,
 });

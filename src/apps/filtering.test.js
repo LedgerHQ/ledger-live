@@ -12,7 +12,7 @@ type FilteringScenario = {
   installed: string,
   expectedApps: string,
   _sortOptions: SortOptions,
-  _filterOptions: FilterOptions
+  _filterOptions: FilterOptions,
 };
 setSupportedCurrencies([
   "ethereum",
@@ -20,7 +20,7 @@ setSupportedCurrencies([
   "dogecoin",
   "ethereum_classic",
   "ripple",
-  "litecoin"
+  "litecoin",
 ]);
 
 const apps =
@@ -34,7 +34,7 @@ const scenarios: FilteringScenario[] = [
     _sortOptions: { type: "default", order: "asc" },
     _filterOptions: {},
     expectedApps:
-      "Bitcoin, Ethereum, Litecoin, Dogecoin, HODL, Password Manager, Ethereum Classic, XRP, Stellar"
+      "Bitcoin, Ethereum, Litecoin, Dogecoin, HODL, Password Manager, Ethereum Classic, XRP, Stellar",
   },
   {
     name: "Catalog - Marketcap sorting, desc",
@@ -43,7 +43,7 @@ const scenarios: FilteringScenario[] = [
     _sortOptions: { type: "marketcap", order: "desc" },
     _filterOptions: {},
     expectedApps:
-      "Bitcoin, Ethereum, XRP, Litecoin, Stellar, Ethereum Classic, Dogecoin, Password Manager, HODL"
+      "Bitcoin, Ethereum, XRP, Litecoin, Stellar, Ethereum Classic, Dogecoin, Password Manager, HODL",
   },
   {
     name: "Catalog - Marketcap sorting, asc",
@@ -52,7 +52,7 @@ const scenarios: FilteringScenario[] = [
     _sortOptions: { type: "marketcap", order: "asc" },
     _filterOptions: {},
     expectedApps:
-      "Dogecoin, Ethereum Classic, Stellar, Litecoin, XRP, Ethereum, Bitcoin, HODL, Password Manager"
+      "Dogecoin, Ethereum Classic, Stellar, Litecoin, XRP, Ethereum, Bitcoin, HODL, Password Manager",
   },
   {
     name: "Catalog - Name sorting, desc",
@@ -61,7 +61,7 @@ const scenarios: FilteringScenario[] = [
     _sortOptions: { type: "name", order: "desc" },
     _filterOptions: {},
     expectedApps:
-      "XRP, Stellar, Password Manager, Litecoin, HODL, Ethereum Classic, Ethereum, Dogecoin, Bitcoin"
+      "XRP, Stellar, Password Manager, Litecoin, HODL, Ethereum Classic, Ethereum, Dogecoin, Bitcoin",
   },
   {
     name: "Catalog - Name sorting, asc",
@@ -70,7 +70,7 @@ const scenarios: FilteringScenario[] = [
     _sortOptions: { type: "name", order: "asc" },
     _filterOptions: {},
     expectedApps:
-      "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, HODL, Litecoin, Password Manager, Stellar, XRP"
+      "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, HODL, Litecoin, Password Manager, Stellar, XRP",
   },
   {
     name: "Catalog - Only apps supported by Live",
@@ -78,7 +78,8 @@ const scenarios: FilteringScenario[] = [
     installed: "",
     _sortOptions: { type: "name", order: "asc" },
     _filterOptions: { type: ["supported"], installedApps: [] },
-    expectedApps: "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, Litecoin, XRP"
+    expectedApps:
+      "Bitcoin, Dogecoin, Ethereum, Ethereum Classic, Litecoin, XRP",
   },
   {
     name: "Catalog - Only apps not supported by Live",
@@ -86,7 +87,7 @@ const scenarios: FilteringScenario[] = [
     installed: "",
     _sortOptions: { type: "name", order: "asc" },
     _filterOptions: { type: ["not_supported"], installedApps: [] },
-    expectedApps: "HODL, Password Manager, Stellar"
+    expectedApps: "HODL, Password Manager, Stellar",
   },
   {
     name: "Installed - Filtering outdated apps only",
@@ -94,7 +95,7 @@ const scenarios: FilteringScenario[] = [
     installed: "Bitcoin (outdated), Dogecoin (outdated), XRP",
     _sortOptions: { type: "name", order: "asc" },
     _filterOptions: { type: ["updatable"], installedApps: [] },
-    expectedApps: "Bitcoin, Dogecoin"
+    expectedApps: "Bitcoin, Dogecoin",
   },
   {
     name: "Installed - Only not supported by live",
@@ -102,7 +103,7 @@ const scenarios: FilteringScenario[] = [
     installed: "Bitcoin, Dogecoin, XRP, Stellar, HODL",
     _sortOptions: { type: "name", order: "asc" },
     _filterOptions: { type: ["installed", "not_supported"], installedApps: [] },
-    expectedApps: "HODL, Stellar"
+    expectedApps: "HODL, Stellar",
   },
   {
     name: "Installed - Marketcap sorting asc, no filters",
@@ -110,7 +111,7 @@ const scenarios: FilteringScenario[] = [
     installed: "Bitcoin, Stellar, Ethereum",
     _sortOptions: { type: "marketcap", order: "asc" },
     _filterOptions: { type: ["installed"], installedApps: [] },
-    expectedApps: "Stellar, Ethereum, Bitcoin"
+    expectedApps: "Stellar, Ethereum, Bitcoin",
   },
   {
     name: "Installed - Search query, no matches",
@@ -120,9 +121,9 @@ const scenarios: FilteringScenario[] = [
     _filterOptions: {
       query: "IMNOTHERE",
       type: ["installed"],
-      installedApps: []
+      installedApps: [],
     },
-    expectedApps: ""
+    expectedApps: "",
   },
   {
     name: "Installed - With install queue param no sort",
@@ -132,9 +133,9 @@ const scenarios: FilteringScenario[] = [
     _filterOptions: {
       type: ["installed"],
       installQueue: ["XRP", "Dogecoin"],
-      installedApps: []
+      installedApps: [],
     },
-    expectedApps: "XRP, Stellar, Ethereum, Dogecoin, Bitcoin"
+    expectedApps: "XRP, Stellar, Ethereum, Dogecoin, Bitcoin",
   },
   {
     name: "Not Installed - Search query 'ethereum'",
@@ -144,9 +145,9 @@ const scenarios: FilteringScenario[] = [
     _filterOptions: {
       query: "ethereum",
       type: ["not_installed"],
-      installedApps: []
+      installedApps: [],
     },
-    expectedApps: "Ethereum, Ethereum Classic"
+    expectedApps: "Ethereum, Ethereum Classic",
   },
   {
     name: "Compatible compound filters - Installed and also supported by live",
@@ -156,9 +157,9 @@ const scenarios: FilteringScenario[] = [
     _filterOptions: {
       query: "",
       type: ["installed", "supported"],
-      installedApps: []
+      installedApps: [],
     },
-    expectedApps: "Bitcoin, Ethereum"
+    expectedApps: "Bitcoin, Ethereum",
   },
   {
     name: "Incompatible compound filters - Installed but also not installed",
@@ -168,13 +169,13 @@ const scenarios: FilteringScenario[] = [
     _filterOptions: {
       query: "",
       type: ["not_installed", "installed"],
-      installedApps: []
+      installedApps: [],
     },
-    expectedApps: ""
-  }
+    expectedApps: "",
+  },
 ];
 
-scenarios.forEach(scenario => {
+scenarios.forEach((scenario) => {
   test("Scenario: " + scenario.name, async () => {
     let { apps, installed: installedApps } = initState(
       mockListAppsResult(scenario.apps, scenario.installed, deviceInfo155)
@@ -186,7 +187,7 @@ scenarios.forEach(scenario => {
       scenario._sortOptions
     );
 
-    expect(sortedFilteredApps.map(app => app.name)).toEqual(
+    expect(sortedFilteredApps.map((app) => app.name)).toEqual(
       scenario.expectedApps ? scenario.expectedApps.split(", ") : []
     );
   });

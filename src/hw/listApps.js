@@ -36,7 +36,7 @@ export default async (transport: Transport<*>) => {
         hash,
         hashCodeData,
         blocks,
-        flags
+        flags,
       });
     }
 

@@ -18,25 +18,25 @@ export default {
     {
       name: "ignore-errors",
       type: Boolean,
-      desc: "when using multiple transactions, an error won't stop the flow"
+      desc: "when using multiple transactions, an error won't stop the flow",
     },
     {
       name: "disable-broadcast",
       type: Boolean,
-      desc: "do not broadcast the transaction"
-    }
+      desc: "do not broadcast the transaction",
+    },
   ],
   job: (
     opts: ScanCommonOpts &
       InferTransactionsOpts & {
         "ignore-errors": boolean,
-        "disable-broadcast": boolean
+        "disable-broadcast": boolean,
       }
   ) =>
     scan(opts).pipe(
-      switchMap(account =>
+      switchMap((account) =>
         from(inferTransactions(account, opts)).pipe(
-          concatMap(inferred =>
+          concatMap((inferred) =>
             inferred.reduce(
               (acc, t) =>
                 concat(
@@ -48,7 +48,7 @@ export default {
                         .signOperation({
                           account,
                           transaction: t,
-                          deviceId: opts.device || ""
+                          deviceId: opts.device || "",
                         })
                         .pipe(
                           map(toSignOperationEventRaw),
@@ -56,27 +56,27 @@ export default {
                           getEnv("DISABLE_TRANSACTION_BROADCAST")
                             ? []
                             : [
-                                concatMap(e => {
+                                concatMap((e) => {
                                   if (e.type === "signed") {
                                     return from(
                                       bridge.broadcast({
                                         account,
-                                        signedOperation: e.signedOperation
+                                        signedOperation: e.signedOperation,
                                       })
                                     );
                                   }
                                   return of(e);
-                                })
+                                }),
                               ]),
                           ...(opts["ignore-errors"]
                             ? [
-                                catchError(e => {
+                                catchError((e) => {
                                   return of({
                                     type: "error",
                                     error: e,
-                                    transaction: t
+                                    transaction: t,
                                   });
-                                })
+                                }),
                               ]
                             : [])
                         );
@@ -86,8 +86,8 @@ export default {
               empty()
             )
           ),
-          map(obj => JSON.stringify(obj))
+          map((obj) => JSON.stringify(obj))
         )
       )
-    )
+    ),
 };

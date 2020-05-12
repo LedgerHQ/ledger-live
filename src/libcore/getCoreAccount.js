@@ -11,27 +11,27 @@ export const getCoreAccount = async (
 ): Promise<{
   coreWallet: CoreWallet,
   coreAccount: CoreAccount,
-  walletName: string
+  walletName: string,
 }> => {
   const { currency, derivationMode, seedIdentifier } = account;
 
   const walletName = getWalletName({
     currency,
     seedIdentifier,
-    derivationMode
+    derivationMode,
   });
 
   const coreWallet = await getOrCreateWallet({
     core,
     walletName,
     currency,
-    derivationMode
+    derivationMode,
   });
 
   const coreAccount = await getOrCreateAccount({
     core,
     coreWallet,
-    account
+    account,
   });
 
   return { walletName, coreWallet, coreAccount };

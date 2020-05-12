@@ -15,27 +15,27 @@ export default {
       name: "format",
       alias: "f",
       type: String,
-      typeDesc: "raw | json | default"
-    }
+      typeDesc: "raw | json | default",
+    },
   ],
   job: ({ device, format }: $Shape<{ device: string, format: string }>) =>
-    withDevice(device || "")(t =>
+    withDevice(device || "")((t) =>
       from(getDeviceInfo(t)).pipe(
-        mergeMap(deviceInfo =>
+        mergeMap((deviceInfo) =>
           listApps(t, deviceInfo).pipe(
-            filter(e => e.type === "result"),
-            map(e => e.result)
+            filter((e) => e.type === "result"),
+            map((e) => e.result)
           )
         ),
-        map(r =>
+        map((r) =>
           format === "raw"
             ? r
             : format === "json"
             ? JSON.stringify(r)
             : r.appsListNames
-                .map(name => {
+                .map((name) => {
                   const item = r.appByName[name];
-                  const ins = r.installed.find(i => i.name === item.name);
+                  const ins = r.installed.find((i) => i.name === item.name);
                   return (
                     `- ${item.name} ${item.version}` +
                     (ins ? (ins.updated ? " (installed)" : " (outdated!)") : "")
@@ -44,5 +44,5 @@ export default {
                 .join("\n")
         )
       )
-    )
+    ),
 };

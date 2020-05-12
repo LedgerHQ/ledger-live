@@ -3,13 +3,13 @@
 import type { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "../../types/transaction";
 import type {
   CoreAmount,
   CoreBigInt,
   Spec,
-  CoreAddress
+  CoreAddress,
 } from "../../libcore/types";
 
 declare class CoreStellarLikeWallet {
@@ -82,7 +82,7 @@ export type CoreStatics = {
   StellarLikeOperation: Class<CoreStellarLikeOperation>,
   StellarLikeTransaction: Class<CoreStellarLikeTransaction>,
   StellarLikeAddress: Class<CoreStellarLikeAccount>,
-  StellerLikeWallet: Class<CoreStellarLikeWallet>
+  StellerLikeWallet: Class<CoreStellarLikeWallet>,
 };
 
 export type {
@@ -91,15 +91,15 @@ export type {
   CoreStellarLikeTransaction,
   CoreStellarLikeAccount,
   CoreStellarLikeTransactionBuilder,
-  CoreStellarLikeWallet
+  CoreStellarLikeWallet,
 };
 
 export type CoreAccountSpecifics = {
-  asStellarLikeAccount(): Promise<CoreStellarLikeAccount>
+  asStellarLikeAccount(): Promise<CoreStellarLikeAccount>,
 };
 
 export type CoreOperationSpecifics = {
-  asStellarLikeOperation(): Promise<CoreStellarLikeOperation>
+  asStellarLikeOperation(): Promise<CoreStellarLikeOperation>,
 };
 
 export type CoreCurrencySpecifics = {};
@@ -107,13 +107,13 @@ export type CoreCurrencySpecifics = {};
 export type NetworkInfo = {|
   family: "stellar",
   fees: BigNumber,
-  baseReserve: BigNumber
+  baseReserve: BigNumber,
 |};
 
 export type NetworkInfoRaw = {|
   family: "stellar",
   fees: string,
-  baseReserve: string
+  baseReserve: string,
 |};
 
 export const StellarMemoType = [
@@ -121,7 +121,7 @@ export const StellarMemoType = [
   "MEMO_TEXT",
   "MEMO_ID",
   "MEMO_HASH",
-  "MEMO_RETURN"
+  "MEMO_RETURN",
 ];
 
 export type Transaction = {|
@@ -132,7 +132,7 @@ export type Transaction = {|
   baseReserve: ?BigNumber,
   memoType: ?string,
   memoValue: ?string,
-  memoTypeRecommended: ?boolean
+  memoTypeRecommended: ?boolean,
 |};
 
 export type TransactionRaw = {|
@@ -143,151 +143,151 @@ export type TransactionRaw = {|
   baseReserve: ?string,
   memoType: ?string,
   memoValue: ?string,
-  memoTypeRecommended: ?boolean
+  memoTypeRecommended: ?boolean,
 |};
 
 export const reflect = (declare: (string, Spec) => void) => {
   declare("StellarLikeTransactionBuilder", {
     methods: {
       setHashMemo: {
-        params: ["hex"]
+        params: ["hex"],
       },
       setReturnMemo: {
-        params: ["hex"]
+        params: ["hex"],
       },
       setSequence: {
-        params: ["BigInt"]
+        params: ["BigInt"],
       },
       setBaseFee: {
-        params: ["Amount"]
+        params: ["Amount"],
       },
       addCreateAccount: {
-        params: ["String", "Amount"]
+        params: ["String", "Amount"],
       },
       addNativePayment: {
-        params: ["String", "Amount"]
+        params: ["String", "Amount"],
       },
       setTextMemo: {},
       setNumberMemo: {
-        params: ["BigInt"]
+        params: ["BigInt"],
       },
       build: {
-        returns: "StellarLikeTransaction"
-      }
-    }
+        returns: "StellarLikeTransaction",
+      },
+    },
   });
 
   declare("StellarLikeWallet", {
     methods: {
-      exists: {}
-    }
+      exists: {},
+    },
   });
 
   declare("StellarLikeFeeStats", {
     njsUsesPlainObject: true,
     methods: {
       getLastBaseFee: {
-        njsField: "lastBaseFee"
+        njsField: "lastBaseFee",
       },
       getModeAcceptedFee: {
-        njsField: "modeAcceptedFee"
-      }
-    }
+        njsField: "modeAcceptedFee",
+      },
+    },
   });
 
   declare("StellarLikeAccountSigner", {
     njsUsesPlainObject: true,
     methods: {
       getType: {
-        njsField: "type"
+        njsField: "type",
       },
       getKey: {
-        njsField: "key"
-      }
-    }
+        njsField: "key",
+      },
+    },
   });
 
   declare("StellarLikeOperationRecord", {
     njsUsesPlainObject: true,
     methods: {
       getTransactionHash: {
-        njsField: "transactionHash"
-      }
-    }
+        njsField: "transactionHash",
+      },
+    },
   });
 
   declare("StellarLikeOperation", {
     methods: {
       getRecord: {
-        returns: "StellarLikeOperationRecord"
+        returns: "StellarLikeOperationRecord",
       },
       getTransaction: {
-        returns: "StellarLikeTransaction"
-      }
-    }
+        returns: "StellarLikeTransaction",
+      },
+    },
   });
 
   declare("StellarLikeTransaction", {
     methods: {
       putSignature: {
-        params: ["hex", "Address"]
+        params: ["hex", "Address"],
       },
       toRawTransaction: {
-        returns: "hex"
+        returns: "hex",
       },
       getSourceAccount: {
-        returns: "Address"
+        returns: "Address",
       },
       getFee: {
-        returns: "Amount"
+        returns: "Amount",
       },
       getSourceAccountSequence: {
-        returns: "BigInt"
+        returns: "BigInt",
       },
       toSignatureBase: {
-        returns: "hex"
-      }
-    }
+        returns: "hex",
+      },
+    },
   });
 
   declare("StellarLikeAccount", {
     methods: {
       buildTransaction: {
-        returns: "StellarLikeTransactionBuilder"
+        returns: "StellarLikeTransactionBuilder",
       },
       broadcastRawTransaction: {
-        params: ["hex"]
+        params: ["hex"],
       },
       getBaseReserve: {
-        returns: "Amount"
+        returns: "Amount",
       },
       getFeeStats: {
-        returns: "StellarLikeFeeStats"
+        returns: "StellarLikeFeeStats",
       },
       getSequence: {
-        returns: "BigInt"
+        returns: "BigInt",
       },
       getSigners: {
-        returns: ["StellarLikeAccountSigner"]
-      }
-    }
+        returns: ["StellarLikeAccountSigner"],
+      },
+    },
   });
 
   return {
     OperationMethods: {
       asStellarLikeOperation: {
-        returns: "StellarLikeOperation"
-      }
+        returns: "StellarLikeOperation",
+      },
     },
     AccountMethods: {
       asStellarLikeAccount: {
-        returns: "StellarLikeAccount"
-      }
+        returns: "StellarLikeAccount",
+      },
     },
     WalletMethods: {
       asStellarLikeWallet: {
-        returns: "StellarLikeWallet"
-      }
-    }
+        returns: "StellarLikeWallet",
+      },
+    },
   };
 };

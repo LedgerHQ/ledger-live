@@ -12,7 +12,7 @@ import { oneTrx } from "./constants";
 export type Action = {
   type: "updateVote" | "resetVotes" | "clearVotes",
   address: string,
-  value: string
+  value: string,
 };
 
 export type State = {
@@ -21,7 +21,7 @@ export type State = {
   votesUsed: number, // total of TP used
   votesSelected: number, // number of SR votes selected
   max: number, // votes remaining
-  initialVotes: { [address: string]: number } // initial Map of votes
+  initialVotes: { [address: string]: number }, // initial Map of votes
 };
 
 export const MIN_TRANSACTION_AMOUNT = oneTrx;
@@ -79,12 +79,12 @@ export const formatVotes = (
   ...Vote,
   validator: ?SuperRepresentative,
   isSR: boolean,
-  rank: number
+  rank: number,
 |}> => {
   return votes && superRepresentatives
     ? votes.map(({ address, voteCount }) => {
         const srIndex = superRepresentatives.findIndex(
-          sp => sp.address === address
+          (sp) => sp.address === address
         );
 
         return {
@@ -92,7 +92,7 @@ export const formatVotes = (
           rank: srIndex + 1,
           isSR: srIndex < SR_THRESHOLD,
           address,
-          voteCount
+          voteCount,
         };
       })
     : [];
@@ -121,7 +121,7 @@ export function useTronPowerLoading(account: Account) {
       sync({
         type: "SYNC_ONE_ACCOUNT",
         priority: 10,
-        accountId: initialAccount.current.id
+        accountId: initialAccount.current.id,
       });
     }, 5000);
     return () => clearInterval(interval);
@@ -133,10 +133,10 @@ export function useTronPowerLoading(account: Account) {
 /** Search filters for SR list */
 const searchFilter = (query?: string) => ({
   name,
-  address
+  address,
 }: {
   name: ?string,
-  address: string
+  address: string,
 }) => {
   if (!query) return true;
   const terms = `${name || ""} ${address}`;
@@ -153,7 +153,7 @@ export function useSortedSr(
   name: ?string,
   address: string,
   rank: number,
-  isSR: boolean
+  isSR: boolean,
 }[] {
   const { current: initialVotes } = useRef(votes.map(({ address }) => address));
 
@@ -164,7 +164,7 @@ export function useSortedSr(
         name: sr.name,
         address: sr.address,
         rank: rank + 1,
-        isSR: rank < SR_THRESHOLD
+        isSR: rank < SR_THRESHOLD,
       })),
     [superRepresentatives]
   );
@@ -194,12 +194,12 @@ export const getUnfreezeData = (
   canUnfreezeBandwidth: boolean,
   canUnfreezeEnergy: boolean,
   bandwidthExpiredAt: ?Date,
-  energyExpiredAt: ?Date
+  energyExpiredAt: ?Date,
 } => {
   const { tronResources } = account;
   invariant(tronResources, "getUnfreezeData: tron account is expected");
   const {
-    frozen: { bandwidth, energy }
+    frozen: { bandwidth, energy },
   } = tronResources;
 
   /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
@@ -225,6 +225,6 @@ export const getUnfreezeData = (
     canUnfreezeBandwidth,
     canUnfreezeEnergy,
     bandwidthExpiredAt,
-    energyExpiredAt
+    energyExpiredAt,
   };
 };

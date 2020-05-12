@@ -3,7 +3,7 @@
 import {
   importAccountsMakeItems,
   importAccountsReduce,
-  fromAccountRaw
+  fromAccountRaw,
 } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
 
@@ -21,7 +21,7 @@ test("importAccountsMakeItems", () => {
         freshAddress: "0x01",
         currencyId: "ethereum",
         index: 0,
-        balance: "51281813126095913"
+        balance: "51281813126095913",
       },
       {
         id: "libcore:1:ethereum:xpub2:",
@@ -31,7 +31,7 @@ test("importAccountsMakeItems", () => {
         freshAddress: "0x02",
         currencyId: "ethereum",
         index: 1,
-        balance: "1081392000000000"
+        balance: "1081392000000000",
       },
       {
         id: "libcore:1:ethereum:xpub4:",
@@ -41,7 +41,7 @@ test("importAccountsMakeItems", () => {
         freshAddress: "0x04",
         currencyId: "ethereum",
         index: 3,
-        balance: "1000000000000000"
+        balance: "1000000000000000",
       },
       {
         id: "libcore:1:ethereum:xpub3:",
@@ -51,7 +51,7 @@ test("importAccountsMakeItems", () => {
         freshAddress: "0x03",
         currencyId: "ethereum",
         index: 2,
-        balance: "0"
+        balance: "0",
       },
       {
         id: "libcore:1:ethereum:xpub5:",
@@ -61,15 +61,15 @@ test("importAccountsMakeItems", () => {
         freshAddress: "0x05",
         currencyId: "ethereum",
         index: 4,
-        balance: "0"
-      }
+        balance: "0",
+      },
     ],
     settings: {
       counterValue: "USD",
       currenciesSettings: {},
       pairExchanges: {},
-      developerModeEnabled: false
-    }
+      developerModeEnabled: false,
+    },
   };
   const accounts = [
     {
@@ -87,7 +87,7 @@ test("importAccountsMakeItems", () => {
       currencyId: "ethereum",
       unitMagnitude: 18,
       lastSyncDate: "2019-07-17T15:13:30.318Z",
-      balance: "51281813126095910"
+      balance: "51281813126095910",
     },
     {
       id: "ethereumjs:2:ethereum:0x02:",
@@ -104,7 +104,7 @@ test("importAccountsMakeItems", () => {
       currencyId: "ethereum",
       unitMagnitude: 18,
       lastSyncDate: "2019-07-17T15:13:29.306Z",
-      balance: "1081392000000000"
+      balance: "1081392000000000",
     },
     {
       id: "libcore:1:ethereum:xpub3:",
@@ -121,8 +121,8 @@ test("importAccountsMakeItems", () => {
       currencyId: "ethereum",
       unitMagnitude: 18,
       lastSyncDate: "2019-07-17T15:13:29.306Z",
-      balance: "1081392000000000"
-    }
+      balance: "1081392000000000",
+    },
   ].map(fromAccountRaw);
 
   const items = importAccountsMakeItems({ result, accounts });
@@ -131,28 +131,28 @@ test("importAccountsMakeItems", () => {
     {
       initialAccountId: "libcore:1:ethereum:xpub4:",
       account: { id: "libcore:1:ethereum:xpub4:", name: "Ethereum 4" },
-      mode: "create"
+      mode: "create",
     },
     {
       initialAccountId: "libcore:1:ethereum:xpub5:",
       account: { id: "libcore:1:ethereum:xpub5:", name: "Ethereum 5" },
-      mode: "create"
+      mode: "create",
     },
     {
       initialAccountId: "ethereumjs:2:ethereum:0x01:",
       account: { id: "libcore:1:ethereum:xpub1:", name: "Ethereum 1" },
-      mode: "update"
+      mode: "update",
     },
     {
       initialAccountId: "ethereumjs:2:ethereum:0x02:",
       account: { id: "libcore:1:ethereum:xpub2:", name: "Ethereum 2" },
-      mode: "update"
+      mode: "update",
     },
     {
       initialAccountId: "libcore:1:ethereum:xpub3:",
       account: { id: "libcore:1:ethereum:xpub3:", name: "ETH3 name edited" },
-      mode: "update"
-    }
+      mode: "update",
+    },
   ]);
 
   const reduced = importAccountsReduce(accounts, {
@@ -160,14 +160,14 @@ test("importAccountsMakeItems", () => {
     selectedAccounts: [
       "libcore:1:ethereum:xpub3:",
       "libcore:1:ethereum:xpub2:",
-      "libcore:1:ethereum:xpub5:"
-    ]
+      "libcore:1:ethereum:xpub5:",
+    ],
   });
 
   expect(reduced).toMatchObject([
     { id: "ethereumjs:2:ethereum:0x01:", name: "Ethereum 1" },
     { id: "libcore:1:ethereum:xpub2:", name: "Ethereum 2" },
     { id: "libcore:1:ethereum:xpub3:", name: "ETH3 name edited" },
-    { id: "libcore:1:ethereum:xpub5:", name: "Ethereum 5" }
+    { id: "libcore:1:ethereum:xpub5:", name: "Ethereum 5" },
   ]);
 });

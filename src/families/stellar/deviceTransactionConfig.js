@@ -10,12 +10,12 @@ export type ExtraDeviceTransactionField =
 
 function getDeviceTransactionConfig({
   transaction,
-  status
+  status,
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  status: TransactionStatus
+  status: TransactionStatus,
 }): Array<DeviceTransactionField> {
   const { amount } = transaction;
   const { estimatedFees } = status;
@@ -25,19 +25,19 @@ function getDeviceTransactionConfig({
   if (!amount.isZero()) {
     fields.push({
       type: "amount",
-      label: "Amount"
+      label: "Amount",
     });
   }
 
   fields.push({
     type: "stellar.memo",
-    label: "Memo"
+    label: "Memo",
   }); //NB device displays [none] for an empty memo
 
   if (estimatedFees && !estimatedFees.isZero()) {
     fields.push({
       type: "fees",
-      label: "Fees"
+      label: "Fees",
     });
   }
 

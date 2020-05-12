@@ -5,7 +5,7 @@ import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughSpendableBalance,
-  NotEnoughBalanceBecauseDestinationNotCreated
+  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
@@ -13,7 +13,7 @@ import { StellarWrongMemoFormat } from "../../errors";
 import {
   addNotCreatedStellarMockAddresses,
   addMultisignStellarMockAddresses,
-  addMemotypeTextStellarMockAddresses
+  addMemotypeTextStellarMockAddresses,
 } from "./bridge/mock";
 
 export const notCreatedStellarMockAddress =
@@ -49,8 +49,8 @@ const dataset: DatasetTest<Transaction> = {
             <= 60c75356c268ff0158eeca556526830761327693a93cf4754020fadbe04d0f2b9000
             => e002000017038000002c8000009480000005766961206c756d696e61
             <= 124516f8ffb161c9492486e54b4432a2c11e4817414dea54fb8bde13b5ac49439000
-          `
-        }
+          `,
+        },
       ],
       accounts: [
         {
@@ -71,8 +71,8 @@ const dataset: DatasetTest<Transaction> = {
               {
                 address:
                   "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-                derivationPath: "44'/148'/0'"
-              }
+                derivationPath: "44'/148'/0'",
+              },
             ],
             unit: { name: "Lumen", code: "XLM", magnitude: 7 },
             blockHeight: 28884793,
@@ -82,23 +82,23 @@ const dataset: DatasetTest<Transaction> = {
             unitMagnitude: 7,
             lastSyncDate: "",
             balance: "371210662",
-            spendableBalance: "371210662"
+            spendableBalance: "371210662",
           },
           transactions: [
             {
               name: "Same as Recipient",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient:
-                  "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV"
+                  "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
               }),
               expectedStatus: {
                 errors: {
-                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource()
+                  recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
                 },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "Send To New Account - amount is too low",
@@ -112,19 +112,19 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
-                  baseReserve: "1500000"
+                  baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
-                memoTypeRecommended: false
+                memoTypeRecommended: false,
               }),
               expectedStatus: {
                 errors: {
-                  amount: new NotEnoughBalanceBecauseDestinationNotCreated()
+                  amount: new NotEnoughBalanceBecauseDestinationNotCreated(),
                 },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "send amount more than fees + base reserve",
@@ -132,12 +132,12 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: account.balance,
                 recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z"
+                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
               }),
               expectedStatus: {
                 errors: { amount: new NotEnoughSpendableBalance() },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "send more than base reserve",
@@ -145,12 +145,12 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: account.balance.minus("100"),
                 recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z"
+                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
               }),
               expectedStatus: {
                 errors: { amount: new NotEnoughSpendableBalance() },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "send max to new account (explicit)",
@@ -164,97 +164,97 @@ const dataset: DatasetTest<Transaction> = {
                 networkInfo: {
                   family: "stellar",
                   fees: "100",
-                  baseReserve: "1500000"
+                  baseReserve: "1500000",
                 },
                 fees: "100",
                 memoType: null,
                 memoValue: null,
-                memoTypeRecommended: false
+                memoTypeRecommended: false,
               }),
-              expectedStatus: account => ({
+              expectedStatus: (account) => ({
                 errors: {},
                 warnings: {},
                 estimatedFees: BigNumber("100"),
                 amount: account.balance.minus("1500000").minus("100"),
-                totalSpent: account.balance.minus("1500000")
-              })
+                totalSpent: account.balance.minus("1500000"),
+              }),
             },
             {
               name: "memo text - success",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient:
                   "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_TEXT",
-                memoValue: "01234"
+                memoValue: "01234",
               }),
               expectedStatus: {
                 errors: {},
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "memo text - error",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient:
                   "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_TEXT",
-                memoValue: "0123456789012345678901234567890123456789"
+                memoValue: "0123456789012345678901234567890123456789",
               }),
               expectedStatus: {
                 errors: { transaction: new StellarWrongMemoFormat() },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "memo id - success",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient:
                   "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_ID",
-                memoValue: "22"
+                memoValue: "22",
               }),
               expectedStatus: {
                 errors: {},
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "memo id - error",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient:
                   "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_ID",
-                memoValue: "btest2"
+                memoValue: "btest2",
               }),
               expectedStatus: {
                 errors: { transaction: new StellarWrongMemoFormat() },
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "memo hash - error",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient:
                   "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_HASH",
-                memoValue: "dsadsdasdsasseeee"
+                memoValue: "dsadsdasdsasseeee",
               }),
               expectedStatus: {
                 errors: { transaction: new StellarWrongMemoFormat() },
-                warnings: {}
-              }
-            }
-          ]
+                warnings: {},
+              },
+            },
+          ],
         },
         {
           FIXME_tests: [
@@ -262,7 +262,7 @@ const dataset: DatasetTest<Transaction> = {
             // We prevent user to do anything if we detect that he is a multisign user
             // SourceHasMultiSign will be launch first
             "Default empty recipient have a recipientError",
-            "invalid recipient have a recipientError"
+            "invalid recipient have a recipientError",
           ],
           raw: {
             id:
@@ -279,8 +279,8 @@ const dataset: DatasetTest<Transaction> = {
               {
                 address:
                   "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-                derivationPath: "44'/148'/2'"
-              }
+                derivationPath: "44'/148'/2'",
+              },
             ],
             name: "Stellar 3",
             unit: { name: "Lumen", code: "XLM", magnitude: 7 },
@@ -291,25 +291,25 @@ const dataset: DatasetTest<Transaction> = {
             unitMagnitude: 7,
             lastSyncDate: "",
             balance: "59999500",
-            spendableBalance: "59999500"
+            spendableBalance: "59999500",
           },
           transactions: [
             {
               name: "Multisign - error",
-              transaction: t => ({
+              transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient:
                   "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_HASH",
-                memoValue: "dsadsdasdsasseeee"
+                memoValue: "dsadsdasdsasseeee",
               }),
               expectedStatus: {
                 errors: { transaction: new StellarWrongMemoFormat() },
-                warnings: {}
-              }
-            }
-          ]
+                warnings: {},
+              },
+            },
+          ],
         },
         {
           raw: {
@@ -330,12 +330,12 @@ const dataset: DatasetTest<Transaction> = {
             lastSyncDate: "",
             operations: [],
             pendingOperations: [],
-            unitMagnitude: 7
-          }
-        }
-      ]
-    }
-  }
+            unitMagnitude: 7,
+          },
+        },
+      ],
+    },
+  },
 };
 
 export default dataset;

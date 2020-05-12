@@ -8,7 +8,7 @@ import {
   groupAccountsOperationsByDay,
   shortAddressPreview,
   accountWithMandatoryTokens,
-  withoutToken
+  withoutToken,
 } from "../account";
 import { genAccount } from "../mock/account";
 
@@ -25,10 +25,10 @@ test("groupAccountOperationsByDay", () => {
   expect(res2.completed).toBe(true);
   expect(
     // $FlowFixMe
-    flatMap(res2.sections, s => s.data).slice(0, 10)
+    flatMap(res2.sections, (s) => s.data).slice(0, 10)
   ).toMatchObject(
     // $FlowFixMe
-    flatMap(res1.sections, s => s.data)
+    flatMap(res1.sections, (s) => s.data)
   );
 });
 
@@ -43,23 +43,23 @@ test("groupAccountsOperationsByDay", () => {
   expect(res2.completed).toBe(true);
   expect(
     // $FlowFixMe
-    flatMap(res2.sections, s => s.data).slice(0, 100)
+    flatMap(res2.sections, (s) => s.data).slice(0, 100)
   ).toMatchObject(
     // $FlowFixMe
-    flatMap(res1.sections, s => s.data)
+    flatMap(res1.sections, (s) => s.data)
   );
 });
 
 test("groupAccountsOperationsByDay provide at least the requested count even if some op yield nothing", () => {
   const ethAccount = genAccount("eth_1", {
     currency: getCryptoCurrencyById("ethereum"),
-    operationsSize: 300
+    operationsSize: 300,
   });
   ethAccount.operations = Array(50)
     .fill({
       ...ethAccount.operations[0],
       value: BigNumber(0),
-      type: "NONE"
+      type: "NONE",
     })
     .concat(ethAccount.operations);
 
@@ -92,17 +92,17 @@ test("accountWithMandatoryTokens ethereum", () => {
   const currency = getCryptoCurrencyById("ethereum");
   const account = genAccount("", { currency, subAccountsCount: 5 });
   const enhance = accountWithMandatoryTokens(account, [
-    getTokenById("ethereum/erc20/0x_project")
+    getTokenById("ethereum/erc20/0x_project"),
   ]);
   const doubleEnhance = accountWithMandatoryTokens(enhance, [
-    getTokenById("ethereum/erc20/0x_project")
+    getTokenById("ethereum/erc20/0x_project"),
   ]);
   expect(doubleEnhance).toEqual(enhance);
   expect({ ...enhance, subAccounts: [] }).toMatchObject({
     ...account,
-    subAccounts: []
+    subAccounts: [],
   });
-  expect((enhance.subAccounts || []).map(a => a.id)).toMatchSnapshot();
+  expect((enhance.subAccounts || []).map((a) => a.id)).toMatchSnapshot();
 });
 
 test("withoutToken ethereum", () => {
@@ -113,7 +113,7 @@ test("withoutToken ethereum", () => {
     "ethereum/erc20/0x_project",
     "ethereum/erc20/leo_token",
     "ethereum/erc20/cro",
-    "ethereum/erc20/huobitoken"
+    "ethereum/erc20/huobitoken",
   ];
   const currency = getCryptoCurrencyById("ethereum");
   const account = genAccount("", { currency, subAccountsCount: 0 });
@@ -135,8 +135,8 @@ test("withoutToken ethereum", () => {
 
   //See if we have added/removed them correctly
   for (const tokenId of tokenIds) {
-    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
-    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
+    expect(saTokens.find((a) => isTokenAccount(a, tokenId))).toBeTruthy();
+    expect(saNoTokens.find((a) => isTokenAccount(a, tokenId))).toBeFalsy();
   }
 });
 
@@ -148,7 +148,7 @@ test("withoutToken tron", () => {
     "tron/trc10/1002000",
     "tron/trc10/1002398",
     "tron/trc10/1000226",
-    "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+    "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
   ];
   const currency = getCryptoCurrencyById("tron");
   const account = genAccount("", { currency, subAccountsCount: 0 });
@@ -170,7 +170,7 @@ test("withoutToken tron", () => {
 
   //See if we have added/removed them correctly
   for (const tokenId of tokenIds) {
-    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
-    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
+    expect(saTokens.find((a) => isTokenAccount(a, tokenId))).toBeTruthy();
+    expect(saNoTokens.find((a) => isTokenAccount(a, tokenId))).toBeFalsy();
   }
 });

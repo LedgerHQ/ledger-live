@@ -5,7 +5,7 @@ import { concatMap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   getAccountUnit,
-  getAccountName
+  getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { scan, scanCommonOpts } from "../scan";
@@ -23,28 +23,28 @@ export default {
   args: [...scanCommonOpts],
   job: (opts: ScanCommonOpts) =>
     scan(opts).pipe(
-      concatMap(account => {
+      concatMap((account) => {
         const bridge = getAccountBridge(account);
         return concat(
           from(
             bridge
               .estimateMaxSpendable({
                 account,
-                parentAccount: null
+                parentAccount: null,
               })
-              .then(maxSpendable => format(account, maxSpendable))
+              .then((maxSpendable) => format(account, maxSpendable))
           ),
-          ...(account.subAccounts || []).map(subAccount =>
+          ...(account.subAccounts || []).map((subAccount) =>
             from(
               bridge
                 .estimateMaxSpendable({
                   account: subAccount,
-                  parentAccount: account
+                  parentAccount: account,
                 })
-                .then(maxSpendable => "  " + format(subAccount, maxSpendable))
+                .then((maxSpendable) => "  " + format(subAccount, maxSpendable))
             )
           )
         );
       })
-    )
+    ),
 };

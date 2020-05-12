@@ -6,14 +6,14 @@ import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import {
   listCryptoCurrencies,
-  listTokensForCryptoCurrency
+  listTokensForCryptoCurrency,
 } from "../currencies";
 import type {
   TokenAccount,
   Account,
   AccountLike,
   Operation,
-  CryptoCurrency
+  CryptoCurrency,
 } from "../types";
 import { getOperationAmountNumber } from "../operation";
 import { inferSubOperations } from "../account";
@@ -156,7 +156,7 @@ const hardcodedMarketcap = [
   "tron/trc10/1002775",
   "tron/trc10/1002858",
   "tron/trc10/1002876",
-  "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7"
+  "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
 ];
 
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
@@ -171,12 +171,12 @@ const tickerApproxMarketPrice = {
   DOGE: 4.9e-9,
   DASH: 0.0003367,
   PPC: 0.000226,
-  ZEC: 0.000205798
+  ZEC: 0.000205798,
 };
 
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
 const currencies = listCryptoCurrencies().filter(
-  c => tickerApproxMarketPrice[c.ticker]
+  (c) => tickerApproxMarketPrice[c.ticker]
 );
 
 // TODO fix the mock to never generate negative balance...
@@ -218,14 +218,14 @@ export function genOperation(
     fee: BigNumber(Math.round(value.toNumber() * 0.01)),
     senders: [type !== "IN" ? genAddress(superAccount.currency, rng) : address],
     recipients: [
-      type === "IN" ? genAddress(superAccount.currency, rng) : address
+      type === "IN" ? genAddress(superAccount.currency, rng) : address,
     ],
     blockHash: genHex(64, rng),
     blockHeight:
       superAccount.blockHeight - Math.floor((Date.now() - date) / 900000),
     accountId: account.id,
     date,
-    extra: {}
+    extra: {},
   };
 
   if (account.type === "Account") {
@@ -251,7 +251,7 @@ export function genAddingOperationsInAccount(
   const copy: Account = { ...account };
   copy.operations = Array(count)
     .fill(null)
-    .reduce(ops => {
+    .reduce((ops) => {
       const op = genOperation(copy, copy, ops, rng);
       return ops.concat(op);
     }, copy.operations);
@@ -273,7 +273,7 @@ export function genAddingOperationsInAccount(
 type GenAccountOptions = {
   operationsSize?: number,
   currency?: CryptoCurrency,
-  subAccountsCount?: number
+  subAccountsCount?: number,
 };
 
 function genTokenAccount(
@@ -281,7 +281,7 @@ function genTokenAccount(
   account: Account
 ): $Exact<TokenAccount> {
   const rng = new Prando(account.id + "|" + index);
-  const tokens = listTokensForCryptoCurrency(account.currency).filter(t =>
+  const tokens = listTokensForCryptoCurrency(account.currency).filter((t) =>
     hardcodedMarketcap.includes(t.id)
   );
   const token = rng.nextArrayItem(tokens);
@@ -296,7 +296,7 @@ function genTokenAccount(
     operations: [],
     pendingOperations: [],
     balance: BigNumber(0),
-    creationDate: new Date()
+    creationDate: new Date(),
   };
 
   const operationsSize = rng.nextInt(1, 200);
@@ -355,7 +355,7 @@ export function genAccount(
     operations: [],
     pendingOperations: [],
     lastSyncDate: new Date(),
-    creationDate: new Date()
+    creationDate: new Date(),
   };
 
   if (currency.id === "cosmos") {
@@ -365,7 +365,7 @@ export function genAccount(
       delegatedBalance: BigNumber(0),
       pendingRewardsBalance: BigNumber(0),
       unboundingBalance: BigNumber(0),
-      withdrawAddress: address
+      withdrawAddress: address,
     };
   }
 

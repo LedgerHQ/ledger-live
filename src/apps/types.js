@@ -16,7 +16,7 @@ export type InstalledItem = {
   hash: string,
   blocks: number,
   version: string,
-  availableVersion: string
+  availableVersion: string,
 };
 
 export type ListAppsEvent =
@@ -31,7 +31,7 @@ export type ListAppsResult = {
   installed: InstalledItem[],
   deviceInfo: DeviceInfo,
   deviceModelId: DeviceModelId,
-  firmware: ?FinalFirmware
+  firmware: ?FinalFirmware,
 };
 
 export type State = {
@@ -51,8 +51,8 @@ export type State = {
   currentProgressSubject: ?Subject<number>,
   currentError: ?{
     error: Error,
-    appOp: AppOp
-  }
+    appOp: AppOp,
+  },
 };
 
 export type AppOp =
@@ -83,12 +83,12 @@ export type AppData = {
   currency: ?CryptoCurrency,
   name: string,
   blocks: number,
-  bytes: number
+  bytes: number,
 };
 
 export type UnrecognizedAppData = {
   name: string,
-  hash: string
+  hash: string,
 };
 
 export type AppsDistribution = {
@@ -103,5 +103,5 @@ export type AppsDistribution = {
   totalAppsBytes: number,
   freeSpaceBlocks: number,
   freeSpaceBytes: number,
-  shouldWarnMemory: boolean
+  shouldWarnMemory: boolean,
 };

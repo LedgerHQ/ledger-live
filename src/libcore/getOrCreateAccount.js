@@ -9,13 +9,13 @@ import { isNonExistingAccountError } from "./errors";
 type Param = {
   core: Core,
   coreWallet: CoreWallet,
-  account: Account
+  account: Account,
 };
-type F = Param => Promise<CoreAccount>;
+type F = (Param) => Promise<CoreAccount>;
 
 const restoreWithAccountCreationInfo = {
   tezos: true,
-  stellar: true
+  stellar: true,
 };
 
 export const getOrCreateAccount: F = atomicQueue(
@@ -45,7 +45,7 @@ export const getOrCreateAccount: F = atomicQueue(
           owners,
           derivations,
           publicKeys,
-          chainCodes
+          chainCodes,
         });
         const newAccountCreationInfos = await core.AccountCreationInfo.init(
           index,

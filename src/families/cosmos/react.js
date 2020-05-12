@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   getCurrentCosmosPreloadData,
-  getCosmosPreloadDataUpdates
+  getCosmosPreloadDataUpdates,
 } from "./preloadedData";
 
 export function useCosmosPreloadData() {

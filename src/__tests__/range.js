@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import {
   inferDynamicRange,
   projectRangeIndex,
-  reverseRangeIndex
+  reverseRangeIndex,
 } from "../range";
 
 function asString(bn) {

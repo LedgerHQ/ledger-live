@@ -11,7 +11,7 @@ export const sanitizeValueString = (
   locale?: string
 ): {
   display: string,
-  value: string
+  value: string,
 } => {
   const s = getSeparators(locale || "en-US");
   const dot = s.decimal || ".";

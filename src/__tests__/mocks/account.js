@@ -29,21 +29,21 @@ test("generate an account eligible to be migrated for mocked currencies", () => 
   expect(
     canBeMigrated(
       genAccount(`${mock}_0`, {
-        currency: findCryptoCurrencyById("ethereum_classic")
+        currency: findCryptoCurrencyById("ethereum_classic"),
       })
     )
   ).toBeFalsy(); // only the third mock account should be
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("ethereum_classic") // should ignore libcore's no-go
+        currency: findCryptoCurrencyById("ethereum_classic"), // should ignore libcore's no-go
       })
     )
   ).toBeTruthy();
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("dogecoin")
+        currency: findCryptoCurrencyById("dogecoin"),
       })
     )
   ).toBeTruthy();
@@ -55,21 +55,21 @@ test("generate no migratable accounts for other currencies", () => {
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("bitcoin")
+        currency: findCryptoCurrencyById("bitcoin"),
       })
     )
   ).toBeFalsy();
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("ethereum")
+        currency: findCryptoCurrencyById("ethereum"),
       })
     )
   ).toBeFalsy();
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("tezos")
+        currency: findCryptoCurrencyById("tezos"),
       })
     )
   ).toBeFalsy();
@@ -81,14 +81,14 @@ test("generate no migratable accounts if not mock", () => {
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("dogecoin")
+        currency: findCryptoCurrencyById("dogecoin"),
       })
     )
   ).toBeFalsy();
   expect(
     canBeMigrated(
       genAccount(`${mock}_2`, {
-        currency: findCryptoCurrencyById("ethereum_classic")
+        currency: findCryptoCurrencyById("ethereum_classic"),
       })
     )
   ).toBeFalsy();
@@ -109,7 +109,7 @@ test("mock generators don't generate negative balances", () => {
   for (let i = 0; i < 100; i++) {
     const account = genAccount("negative?" + i);
     const history = getBalanceHistory(account, "year");
-    const invalidDataPoints = history.filter(h => h.value.isNegative());
+    const invalidDataPoints = history.filter((h) => h.value.isNegative());
     expect(invalidDataPoints).toMatchObject([]);
   }
 });

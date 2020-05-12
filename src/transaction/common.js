@@ -2,7 +2,7 @@
 import { BigNumber } from "bignumber.js";
 import type {
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "../types/transaction";
 import type { Transaction, TransactionRaw } from "../types";
 
@@ -11,7 +11,7 @@ export const fromTransactionCommonRaw = (
 ): TransactionCommon => {
   const common: TransactionCommon = {
     amount: BigNumber(raw.amount),
-    recipient: raw.recipient
+    recipient: raw.recipient,
   };
   if ("useAllAmount" in raw) {
     common.useAllAmount = raw.useAllAmount;
@@ -27,7 +27,7 @@ export const toTransactionCommonRaw = (
 ): TransactionCommonRaw => {
   const common: TransactionCommonRaw = {
     amount: raw.amount.toString(),
-    recipient: raw.recipient
+    recipient: raw.recipient,
   };
   if ("useAllAmount" in raw) {
     common.useAllAmount = raw.useAllAmount;

@@ -8,7 +8,7 @@ import type {
   SyncConfig,
   Account,
   CryptoCurrency,
-  DerivationMode
+  DerivationMode,
 } from "../types";
 import { withLibcore } from "./access";
 import { buildAccount } from "./buildAccount";
@@ -30,7 +30,7 @@ export async function syncCoreAccount({
   seedIdentifier,
   existingAccount,
   logId,
-  syncConfig
+  syncConfig,
 }: {
   core: *,
   coreWallet: *,
@@ -41,7 +41,7 @@ export async function syncCoreAccount({
   seedIdentifier: string,
   existingAccount?: ?Account,
   logId: number,
-  syncConfig: SyncConfig
+  syncConfig: SyncConfig,
 }): Promise<Account> {
   try {
     if (!syncConfig.withoutSynchronize) {
@@ -67,7 +67,7 @@ export async function syncCoreAccount({
       seedIdentifier,
       existingAccount,
       logId,
-      syncConfig
+      syncConfig,
     });
 
     return account;
@@ -91,7 +91,7 @@ export function sync(
     postSyncPatchPerFamily[currency.family] || defaultPostSyncPatch;
   return defer(() =>
     from(
-      withLibcore(core => {
+      withLibcore((core) => {
         log("libcore", `sync(${logId}) started. ${existingAccount.id}`);
         return getCoreAccount(core, existingAccount).then(
           ({ coreWallet, coreAccount, walletName }) =>
@@ -106,13 +106,13 @@ export function sync(
               seedIdentifier,
               existingAccount,
               logId,
-              syncConfig
+              syncConfig,
             })
         );
       })
     )
   ).pipe(
-    map(syncedAccount => initialAccount =>
+    map((syncedAccount) => (initialAccount) =>
       postSyncPatch(initialAccount, {
         ...initialAccount,
         // FIXME, the "patching" logic should be somewhere else, especially that it's also in jsHelpers
@@ -127,9 +127,9 @@ export function sync(
         creationDate: syncedAccount.creationDate,
         operations: syncedAccount.operations,
         subAccounts: syncedAccount.subAccounts,
-        pendingOperations: initialAccount.pendingOperations.filter(op =>
+        pendingOperations: initialAccount.pendingOperations.filter((op) =>
           shouldRetainPendingOperation(syncedAccount, op)
-        )
+        ),
       })
     )
   );

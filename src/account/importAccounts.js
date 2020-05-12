@@ -9,29 +9,29 @@ const itemModeDisplaySort = {
   create: 1,
   update: 2,
   id: 3,
-  unsupported: 4
+  unsupported: 4,
 };
 
 export type ImportItemMode = $Keys<typeof itemModeDisplaySort>;
 export type ImportItem = {
   initialAccountId: string,
   account: Account,
-  mode: ImportItemMode
+  mode: ImportItemMode,
 };
 
 export const importAccountsMakeItems = ({
   result,
   accounts,
-  items
+  items,
 }: {
   result: Result,
   accounts: Account[],
-  items?: ImportItem[]
+  items?: ImportItem[],
 }): ImportItem[] =>
   result.accounts
-    .map(accInput => {
+    .map((accInput) => {
       const prevItem = (items || []).find(
-        item => item.account.id === accInput.id
+        (item) => item.account.id === accInput.id
       );
       if (prevItem) return prevItem;
 
@@ -42,10 +42,10 @@ export const importAccountsMakeItems = ({
           return {
             initialAccountId: account.id,
             account,
-            mode: "unsupported"
+            mode: "unsupported",
           };
         }
-        const migratableAccount = accounts.find(a =>
+        const migratableAccount = accounts.find((a) =>
           findAccountMigration(a, [account])
         );
         if (migratableAccount) {
@@ -53,30 +53,30 @@ export const importAccountsMakeItems = ({
           return {
             initialAccountId: migratableAccount.id,
             account,
-            mode: "update"
+            mode: "update",
           };
         }
-        const existingAccount = accounts.find(a => a.id === accInput.id);
+        const existingAccount = accounts.find((a) => a.id === accInput.id);
         if (existingAccount) {
           // only the name is supposed to change. rest is never changing
           if (existingAccount.name === accInput.name) {
             return {
               initialAccountId: existingAccount.id,
               account: existingAccount,
-              mode: "id"
+              mode: "id",
             };
           }
           return {
             initialAccountId: existingAccount.id,
             account: { ...existingAccount, name: accInput.name },
-            mode: "update"
+            mode: "update",
           };
         }
 
         return {
           initialAccountId: account.id,
           account,
-          mode: "create"
+          mode: "create",
         };
       } catch (e) {
         log("error", String(e));
@@ -90,14 +90,14 @@ export const importAccountsReduce = (
   existingAccounts: Account[],
   {
     items,
-    selectedAccounts
+    selectedAccounts,
   }: {
     items: ImportItem[],
-    selectedAccounts: string[]
+    selectedAccounts: string[],
   }
 ): Account[] => {
   const accounts = existingAccounts.slice(0);
-  const selectedItems = items.filter(item =>
+  const selectedItems = items.filter((item) =>
     selectedAccounts.includes(item.account.id)
   );
   for (const { mode, account, initialAccountId } of selectedItems) {
@@ -106,7 +106,7 @@ export const importAccountsReduce = (
         accounts.push(account);
         break;
       case "update": {
-        const item = accounts.find(a => a.id === initialAccountId);
+        const item = accounts.find((a) => a.id === initialAccountId);
         const i = accounts.indexOf(item);
         accounts[i] = account;
         break;

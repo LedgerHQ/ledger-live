@@ -18,13 +18,13 @@ export default async (
     devicePath,
     currency,
     path: account.freshAddressPath,
-    segwit: isSegwitDerivationMode(account.derivationMode)
+    segwit: isSegwitDerivationMode(account.derivationMode),
   });
 
   const { freshAddress } = account;
   if (freshAddress !== address) {
     throw new WrongDeviceForAccount(`WrongDeviceForAccount ${account.name}`, {
-      accountName: account.name
+      accountName: account.name,
     });
   }
 };

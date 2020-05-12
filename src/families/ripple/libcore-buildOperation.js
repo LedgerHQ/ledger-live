@@ -3,9 +3,9 @@
 import type { CoreOperation } from "../../libcore/types";
 
 async function rippleBuildOperation({
-  coreOperation
+  coreOperation,
 }: {
-  coreOperation: CoreOperation
+  coreOperation: CoreOperation,
 }) {
   const rippleLikeOperation = await coreOperation.asRippleLikeOperation();
   const rippleLikeTransaction = await rippleLikeOperation.getTransaction();

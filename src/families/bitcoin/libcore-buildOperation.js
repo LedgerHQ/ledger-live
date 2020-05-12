@@ -3,9 +3,9 @@
 import type { CoreOperation } from "../../libcore/types";
 
 async function bitcoinBuildOperation({
-  coreOperation
+  coreOperation,
 }: {
-  coreOperation: CoreOperation
+  coreOperation: CoreOperation,
 }) {
   const bitcoinLikeOperation = await coreOperation.asBitcoinLikeOperation();
   const bitcoinLikeTransaction = await bitcoinLikeOperation.getTransaction();

@@ -7,10 +7,10 @@ import customAddressValidationByFamily from "../generated/customAddressValidatio
 
 type F = ({
   currency: CryptoCurrency,
-  recipient: string
+  recipient: string,
 }) => Promise<?Error>;
 
-export const isValidRecipient: F = withLibcoreF(core => async arg => {
+export const isValidRecipient: F = withLibcoreF((core) => async (arg) => {
   const { currency, recipient } = arg;
   if (!recipient) {
     return Promise.reject(new RecipientRequired(""));

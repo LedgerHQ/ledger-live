@@ -16,23 +16,25 @@ const checkId = (
   { osu }: FirmwareUpdateContext
 ): Observable<{ progress: number, displayedOnDevice: boolean }> => {
   log("hw", "firmwareUpdate-prepare");
-  return withDevice(deviceId)(transport => from(getDeviceInfo(transport))).pipe(
-    mergeMap(deviceInfo =>
+  return withDevice(deviceId)((transport) =>
+    from(getDeviceInfo(transport))
+  ).pipe(
+    mergeMap((deviceInfo) =>
       // if in bootloader or OSU we'll directly jump to MCU step
       deviceInfo.isBootloader || deviceInfo.isOSU
         ? throwError(new DeviceOnDashboardExpected())
         : concat(
-            withDevice(deviceId)(transport =>
+            withDevice(deviceId)((transport) =>
               installOsuFirmware(transport, deviceInfo.targetId, osu)
             ),
             waitEnd // the device is likely rebooting now, we give it some time
           )
     ),
 
-    filter(e => e.type === "bulk-progress"),
-    map(e => ({
+    filter((e) => e.type === "bulk-progress"),
+    map((e) => ({
       progress: e.progress,
-      displayedOnDevice: e.index >= e.total - 1
+      displayedOnDevice: e.index >= e.total - 1,
     }))
   );
 };

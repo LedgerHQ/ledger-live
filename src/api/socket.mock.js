@@ -7,7 +7,7 @@ import {
   throwError,
   interval,
   concat,
-  of
+  of,
 } from "rxjs";
 import { mergeMap, take, map, ignoreElements } from "rxjs/operators";
 import type { SocketEvent } from "../types/manager";
@@ -17,9 +17,9 @@ export const socketErrorSubject: Subject<*> = new Subject();
 export const withSocketErrors = (
   observable: Observable<SocketEvent>
 ): Observable<SocketEvent> =>
-  merge(observable, socketErrorSubject.pipe(mergeMap(e => throwError(e))));
+  merge(observable, socketErrorSubject.pipe(mergeMap((e) => throwError(e))));
 
-const pause = ms => interval(ms).pipe(take(1), ignoreElements());
+const pause = (ms) => interval(ms).pipe(take(1), ignoreElements());
 
 export const secureChannelMock = (
   managerGranted: boolean = false
@@ -29,11 +29,11 @@ export const secureChannelMock = (
         pause(500),
         of({
           type: "device-permission-requested",
-          wording: "Allow Ledger manager"
+          wording: "Allow Ledger manager",
         }),
         pause(500),
         of({
-          type: "device-permission-granted"
+          type: "device-permission-granted",
         }),
         pause(500)
       )
@@ -45,11 +45,11 @@ export const bulkSocketMock = (
   const total = Math.floor((duration - 100) / 100);
   return interval(100).pipe(
     take(total + 1),
-    map(index => ({
+    map((index) => ({
       type: "bulk-progress",
       progress: index / total,
       index,
-      total
+      total,
     }))
   );
 };

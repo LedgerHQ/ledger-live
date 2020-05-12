@@ -4,7 +4,7 @@ import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import {
   FeeTooHigh,
   GasLessThanEstimate,
-  NotEnoughBalance
+  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
@@ -31,7 +31,7 @@ export const ethereum2 = {
   blockHeight: 0,
   lastSyncDate: "",
   xpub:
-    "xpub6BemYiVNp19a1XgWqLcpWd1pBDZTgzPEcVvhR15cpXPVQjuEnrU7fa3TUatX2NbRWNkqx51jmyukisqGokHq5dyK5uYcbwQBF7nJyAdpYZy"
+    "xpub6BemYiVNp19a1XgWqLcpWd1pBDZTgzPEcVvhR15cpXPVQjuEnrU7fa3TUatX2NbRWNkqx51jmyukisqGokHq5dyK5uYcbwQBF7nJyAdpYZy",
 };
 
 const dataset: DatasetTest<Transaction> = {
@@ -53,7 +53,7 @@ const dataset: DatasetTest<Transaction> = {
                 userGasLimit: "21000",
                 estimatedGasLimit: null,
                 feeCustomUnit: null,
-                networkInfo: null
+                networkInfo: null,
               }),
               expectedStatus: {
                 amount: BigNumber("10000000000000"),
@@ -61,9 +61,9 @@ const dataset: DatasetTest<Transaction> = {
                 totalSpent: BigNumber("12100000000000"),
                 errors: {},
                 warnings: {
-                  feeTooHigh: new FeeTooHigh()
-                }
-              }
+                  feeTooHigh: new FeeTooHigh(),
+                },
+              },
             },
             {
               name: "Send token must succeed",
@@ -77,15 +77,15 @@ const dataset: DatasetTest<Transaction> = {
                 gasPrice: "0",
                 estimatedGasLimit: null,
                 feeCustomUnit: null,
-                networkInfo: null
+                networkInfo: null,
               }),
               expectedStatus: {
                 amount: BigNumber("800000000000000"),
                 estimatedFees: BigNumber("0"),
                 totalSpent: BigNumber("800000000000000"),
                 errors: {},
-                warnings: {}
-              }
+                warnings: {},
+              },
             },
             {
               name: "Not enough gasLimit for token operation must warn",
@@ -99,7 +99,7 @@ const dataset: DatasetTest<Transaction> = {
                 gasPrice: "100",
                 estimatedGasLimit: null,
                 feeCustomUnit: null,
-                networkInfo: null
+                networkInfo: null,
               }),
               expectedStatus: {
                 amount: BigNumber("800000000000000"),
@@ -107,9 +107,9 @@ const dataset: DatasetTest<Transaction> = {
                 totalSpent: BigNumber("800000000000000"),
                 errors: {},
                 warnings: {
-                  gasLimit: new GasLessThanEstimate()
-                }
-              }
+                  gasLimit: new GasLessThanEstimate(),
+                },
+              },
             },
             {
               name: "Not enough token balance show an error",
@@ -123,37 +123,37 @@ const dataset: DatasetTest<Transaction> = {
                 gasPrice: "10",
                 estimatedGasLimit: null,
                 feeCustomUnit: null,
-                networkInfo: null
+                networkInfo: null,
               }),
               expectedStatus: {
                 errors: {
-                  amount: new NotEnoughBalance()
+                  amount: new NotEnoughBalance(),
                 },
-                warnings: {}
-              }
-            }
+                warnings: {},
+              },
+            },
           ],
           test: async (expect, account, bridge) => {
             if (account.subAccounts) {
               const blacklistedTokenIds = [
                 "ethereum/erc20/weth",
                 "ethereum/erc20/amber_token",
-                "ethereum/erc20/ampleforth"
+                "ethereum/erc20/ampleforth",
               ];
 
               const rawTokenIds = account.subAccounts
-                .map(sa => (sa.type === "TokenAccount" ? sa.token.id : ""))
+                .map((sa) => (sa.type === "TokenAccount" ? sa.token.id : ""))
                 .filter(Boolean);
 
               const syncedAccount = await syncAccount(bridge, account, {
                 paginationConfig: {},
-                blacklistedTokenIds
+                blacklistedTokenIds,
               });
 
               const filteredTokenIds =
                 syncedAccount.subAccounts &&
                 syncedAccount.subAccounts
-                  .map(sa => (sa.type === "TokenAccount" ? sa.token.id : ""))
+                  .map((sa) => (sa.type === "TokenAccount" ? sa.token.id : ""))
                   .filter(Boolean);
 
               for (const tokenId of blacklistedTokenIds) {
@@ -183,20 +183,20 @@ const dataset: DatasetTest<Transaction> = {
             freshAddresses: [
               {
                 address: "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
-                derivationPath: "44'/60'/0'/0/0"
-              }
+                derivationPath: "44'/60'/0'/0/0",
+              },
             ],
             lastSyncDate: "",
-            blockHeight: 0
-          }
+            blockHeight: 0,
+          },
         },
         {
-          raw: ethereum2
-        }
-      ]
+          raw: ethereum2,
+        },
+      ],
     },
-    ethereum_classic
-  }
+    ethereum_classic,
+  },
 };
 
 export default dataset;

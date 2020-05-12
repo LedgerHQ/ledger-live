@@ -4,7 +4,7 @@ import {
   NotEnoughBalance,
   RecipientRequired,
   InvalidAddress,
-  FeeTooHigh
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
@@ -13,11 +13,11 @@ import {
   signOperation,
   broadcast,
   sync,
-  isInvalidRecipient
+  isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import {
   setCosmosPreloadData,
-  asSafeCosmosPreloadData
+  asSafeCosmosPreloadData,
 } from "../preloadedData";
 import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
@@ -36,7 +36,7 @@ const createTransaction = (): Transaction => ({
   validators: null,
   cosmosSourceValidator: null,
   networkInfo: null,
-  useAllAmount: false
+  useAllAmount: false,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -87,7 +87,7 @@ const getTransactionStatus = (account, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
@@ -99,8 +99,8 @@ const prepareTransaction = async (a, t) => {
       fees: BigNumber(500),
       networkInfo: {
         family: "cosmos",
-        fees: BigNumber(500)
-      }
+        fees: BigNumber(500),
+      },
     };
   }
   return t;
@@ -114,7 +114,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 const currencyBridge: CurrencyBridge = {
@@ -125,7 +125,7 @@ const currencyBridge: CurrencyBridge = {
   },
   hydrate: (data: mixed) => {
     setCosmosPreloadData(asSafeCosmosPreloadData(data));
-  }
+  },
 };
 
 export default { currencyBridge, accountBridge };

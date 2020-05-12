@@ -18,11 +18,11 @@ export default function installApp(
     deleteKey: app.delete_key,
     firmware: app.firmware,
     firmwareKey: app.firmware_key,
-    hash: app.hash
+    hash: app.hash,
   }).pipe(
-    filter(e => e.type === "bulk-progress"), // only bulk progress interests the UI
+    filter((e) => e.type === "bulk-progress"), // only bulk progress interests the UI
     throttleTime(100), // throttle to only emit 10 event/s max, to not spam the UI
-    map(e => ({ progress: e.progress })), // extract a stream of progress percentage
+    map((e) => ({ progress: e.progress })), // extract a stream of progress percentage
     catchError((e: Error) => {
       if (!e || !e.message) return throwError(e);
       const status = e.message.slice(e.message.length - 4);
@@ -31,7 +31,7 @@ export default function installApp(
         return throwError(
           new ManagerAppDepInstallRequired("", {
             appName: app.name,
-            dependency: dependencies.join(", ")
+            dependency: dependencies.join(", "),
           })
         );
       }

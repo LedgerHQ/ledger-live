@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
 import {
   fromTransactionCommonRaw,
-  toTransactionCommonRaw
+  toTransactionCommonRaw,
 } from "../../transaction/common";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
@@ -15,11 +15,11 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     mode: tr.mode,
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      fees: BigNumber(networkInfo.fees)
+      fees: BigNumber(networkInfo.fees),
     },
     fees: tr.fees ? BigNumber(tr.fees) : null,
     gasLimit: tr.gasLimit ? BigNumber(tr.gasLimit) : null,
-    storageLimit: tr.storageLimit ? BigNumber(tr.storageLimit) : null
+    storageLimit: tr.storageLimit ? BigNumber(tr.storageLimit) : null,
   };
 };
 
@@ -32,11 +32,11 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     mode: t.mode,
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      fees: networkInfo.fees.toString()
+      fees: networkInfo.fees.toString(),
     },
     fees: t.fees ? t.fees.toString() : null,
     gasLimit: t.gasLimit ? t.gasLimit.toString() : null,
-    storageLimit: t.storageLimit ? t.storageLimit.toString() : null
+    storageLimit: t.storageLimit ? t.storageLimit.toString() : null,
   };
 };
 

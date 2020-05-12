@@ -18,24 +18,24 @@ const crypto = require("crypto");
 const path = require("path");
 const fs = require("fs");
 
-const prefixHex0x = str => (str.startsWith("0x") ? str : "0x" + str);
+const prefixHex0x = (str) => (str.startsWith("0x") ? str : "0x" + str);
 
-const unprefixHex0x = str => (str.startsWith("0x") ? str.slice(2) : str);
+const unprefixHex0x = (str) => (str.startsWith("0x") ? str.slice(2) : str);
 
-const hexToBytes = str => Array.from(Buffer.from(unprefixHex0x(str), "hex"));
+const hexToBytes = (str) => Array.from(Buffer.from(unprefixHex0x(str), "hex"));
 
-const bytesToHex = buf => Buffer.from(buf).toString("hex");
+const bytesToHex = (buf) => Buffer.from(buf).toString("hex");
 
 const bytesArrayToString = (bytesArray = []) =>
   Buffer.from(bytesArray).toString();
 
-const stringToBytesArray = str => Array.from(Buffer.from(str));
+const stringToBytesArray = (str) => Array.from(Buffer.from(str));
 
 export default (arg: {
   // the actual @ledgerhq/ledger-core lib or a function that returns it
   lib: any,
   dbPath: string,
-  dbPassword?: string
+  dbPassword?: string,
 }) => {
   let lib;
   const lazyLoad = () => {
@@ -62,10 +62,10 @@ export default (arg: {
     log("libcore", "using array of bytes = " + String(isUsingArrayOfBytes));
 
     const wrappers = {
-      hex: isUsingArrayOfBytes ? hexToBytes : prefixHex0x
+      hex: isUsingArrayOfBytes ? hexToBytes : prefixHex0x,
     };
     const unwrappers = {
-      hex: isUsingArrayOfBytes ? bytesToHex : unprefixHex0x
+      hex: isUsingArrayOfBytes ? bytesToHex : unprefixHex0x,
     };
 
     const MAX_RANDOM = 2684869021;
@@ -75,7 +75,7 @@ export default (arg: {
     const sqlitePrefix = `v${stringVersion.split(".")[0]}`;
 
     const NJSExecutionContextImpl = {
-      execute: runnable => {
+      execute: (runnable) => {
         try {
           const runFunction = () => runnable.run();
           setImmediate(runFunction);
@@ -83,12 +83,12 @@ export default (arg: {
           log("libcore-Error", String(e));
         }
       },
-      delay: (runnable, ms) => setTimeout(() => runnable.run(), ms)
+      delay: (runnable, ms) => setTimeout(() => runnable.run(), ms),
     };
 
     const ThreadContexts = {};
 
-    const getSerialExecutionContext = name => {
+    const getSerialExecutionContext = (name) => {
       let currentContext = ThreadContexts[name];
       if (!currentContext) {
         currentContext = new lib.NJSExecutionContext(NJSExecutionContextImpl);
@@ -101,7 +101,7 @@ export default (arg: {
 
     const NJSThreadDispatcher = new lib.NJSThreadDispatcher({
       contexts: ThreadContexts,
-      getThreadPoolExecutionContext: name => getSerialExecutionContext(name),
+      getThreadPoolExecutionContext: (name) => getSerialExecutionContext(name),
       getMainExecutionContext,
       getSerialExecutionContext,
       newLock: () => {
@@ -109,7 +109,7 @@ export default (arg: {
           "libcore-Warn",
           "libcore NJSThreadDispatcher: newLock: Not implemented"
         );
-      }
+      },
     });
 
     NJSThreadDispatcher.getMainExecutionContext = getMainExecutionContext;
@@ -119,7 +119,7 @@ export default (arg: {
         return null;
       }
       const headersMap = new Map();
-      Object.keys(res.headers).forEach(key => {
+      Object.keys(res.headers).forEach((key) => {
         if (typeof res.headers[key] === "string") {
           headersMap.set(key, res.headers[key]);
         }
@@ -130,14 +130,14 @@ export default (arg: {
         getHeaders: () => headersMap,
         readBody: () => ({
           error: libcoreError,
-          data: isUsingArrayOfBytes ? stringToBytesArray(res.data) : res.data
-        })
+          data: isUsingArrayOfBytes ? stringToBytesArray(res.data) : res.data,
+        }),
       };
       return new lib.NJSHttpUrlConnection(NJSHttpUrlConnectionImpl);
     }
 
     const NJSHttpClient = new lib.NJSHttpClient({
-      execute: async r => {
+      execute: async (r) => {
         const method = r.getMethod();
         const headersMap = r.getHeaders();
         const url = r.getUrl();
@@ -151,12 +151,12 @@ export default (arg: {
           method: lib.METHODS[method],
           url,
           headers,
-          validateStatus: status =>
+          validateStatus: (status) =>
             // FIXME in future, everything should passthrough libcore
             // for now as we need to have the server error we will only pass-in 2xx and 404
             (status >= 200 && status < 300) || status === 404,
           // the default would parse the request, we want to preserve the string
-          transformResponse: data => data
+          transformResponse: (data) => data,
         };
 
         if (isUsingArrayOfBytes) {
@@ -191,15 +191,15 @@ export default (arg: {
             message: JSON.stringify(
               serializeError({
                 message: err.message,
-                name: err.name
+                name: err.name,
               })
             ),
-            stack: err.stack
+            stack: err.stack,
           };
           const urlConnection = createHttpConnection(res, libcoreError);
           r.complete(urlConnection, libcoreError);
         }
-      }
+      },
     });
 
     const NJSWebSocketClient = new lib.NJSWebSocketClient({
@@ -209,28 +209,28 @@ export default (arg: {
       send: (connection, data) => {
         connection.OnMessage(data);
       },
-      disconnect: connection => {
+      disconnect: (connection) => {
         connection.OnClose();
-      }
+      },
     });
 
     const NJSLogPrinter = new lib.NJSLogPrinter({
       context: {},
-      printError: message => log("libcore-Error", message),
-      printInfo: message => log("libcore-Info", message),
-      printDebug: message => log("libcore-Debug", message),
-      printWarning: message => log("libcore-Warning", message),
-      printApdu: message => log("libcore-Apdu", message),
-      printCriticalError: message => log("libcore-CriticalError", message),
-      getContext: () => new lib.NJSExecutionContext(NJSExecutionContextImpl)
+      printError: (message) => log("libcore-Error", message),
+      printInfo: (message) => log("libcore-Info", message),
+      printDebug: (message) => log("libcore-Debug", message),
+      printWarning: (message) => log("libcore-Warning", message),
+      printApdu: (message) => log("libcore-Apdu", message),
+      printCriticalError: (message) => log("libcore-CriticalError", message),
+      getContext: () => new lib.NJSExecutionContext(NJSExecutionContextImpl),
     });
 
     const NJSRandomNumberGenerator = new lib.NJSRandomNumberGenerator({
       getRandomBytes: isUsingArrayOfBytes
-        ? size => Array.from(Buffer.from(crypto.randomBytes(size), "hex"))
-        : size => "0x" + crypto.randomBytes(size).toString("hex"),
+        ? (size) => Array.from(Buffer.from(crypto.randomBytes(size), "hex"))
+        : (size) => "0x" + crypto.randomBytes(size).toString("hex"),
       getRandomInt: () => Math.random() * MAX_RANDOM,
-      getRandomLong: () => Math.random() * MAX_RANDOM * MAX_RANDOM
+      getRandomLong: () => Math.random() * MAX_RANDOM * MAX_RANDOM,
     });
 
     const NJSDatabaseBackend = new lib.NJSDatabaseBackend();
@@ -255,18 +255,18 @@ export default (arg: {
       }
 
       const NJSPathResolver = new lib.NJSPathResolver({
-        resolveLogFilePath: pathToResolve => {
+        resolveLogFilePath: (pathToResolve) => {
           const hash = pathToResolve.replace(/\//g, "__");
           return path.resolve(dbPath, `./log_file_${sqlitePrefix}_${hash}`);
         },
-        resolvePreferencesPath: pathToResolve => {
+        resolvePreferencesPath: (pathToResolve) => {
           const hash = pathToResolve.replace(/\//g, "__");
           return path.resolve(dbPath, `./preferences_${sqlitePrefix}_${hash}`);
         },
-        resolveDatabasePath: pathToResolve => {
+        resolveDatabasePath: (pathToResolve) => {
           const hash = pathToResolve.replace(/\//g, "__");
           return path.resolve(dbPath, `./database_${sqlitePrefix}_${hash}`);
-        }
+        },
       });
 
       walletPoolInstance = new lib.NJSWalletPool(
@@ -294,7 +294,7 @@ export default (arg: {
     };
 
     const mappings = {};
-    Object.keys(lib).forEach(k => {
+    Object.keys(lib).forEach((k) => {
       if (k.startsWith("NJS")) {
         mappings[k.slice(3)] = lib[k];
       }
@@ -304,7 +304,7 @@ export default (arg: {
       if (!value || !id) return value;
       if (Array.isArray(id)) {
         const [actualId] = id;
-        return value.map(a => wrapResult(actualId, a));
+        return value.map((a) => wrapResult(actualId, a));
       }
       if (id in unwrappers) {
         return unwrappers[id](value);
@@ -321,7 +321,7 @@ export default (arg: {
       if (!value || !id) return value;
       if (Array.isArray(id)) {
         const [actualId] = id;
-        return value.map(v => unwrapArg(actualId, v));
+        return value.map((v) => unwrapArg(actualId, v));
       }
       if (id in wrappers) {
         return wrappers[id](value);
@@ -346,18 +346,18 @@ export default (arg: {
       }
 
       if (statics) {
-        Object.keys(statics).forEach(method => {
+        Object.keys(statics).forEach((method) => {
           const {
             njsInstanciateClass,
             njsBuggyMethodIsNotStatic,
-            params
+            params,
           } = statics[method];
           if (njsInstanciateClass) {
             m[method] = function met(...vargs) {
               if (process.env.VERBOSE_LIBCORE_CALL) {
                 log("libcore-call", id + "." + method, vargs);
               }
-              const args = njsInstanciateClass.map(arg => {
+              const args = njsInstanciateClass.map((arg) => {
                 if (typeof arg === "object") {
                   const o = {};
                   for (const k in arg) {
@@ -395,7 +395,7 @@ export default (arg: {
       }
 
       if (methods) {
-        Object.keys(methods).forEach(method => {
+        Object.keys(methods).forEach((method) => {
           const { njsField, params, returns, nodejsNotAvailable } = methods[
             method
           ];
@@ -460,7 +460,7 @@ export default (arg: {
 
     mappings.EventReceiver.newInstance = () => {
       const receiver = new mappings.EventReceiver({
-        onEvent: e => {
+        onEvent: (e) => {
           const code = e.getCode();
           if (
             code === lib.EVENT_CODE.UNDEFINED ||
@@ -485,7 +485,7 @@ export default (arg: {
           ) {
             receiver._resolve();
           }
-        }
+        },
       });
       return receiver;
     };
@@ -497,7 +497,7 @@ export default (arg: {
       ...cs,
       flush: () => Promise.resolve(),
       getPoolInstance,
-      getThreadDispatcher: () => NJSThreadDispatcher
+      getThreadDispatcher: () => NJSThreadDispatcher,
     };
 
     return Promise.resolve(core);

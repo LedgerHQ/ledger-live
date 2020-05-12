@@ -9,7 +9,7 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     delegations,
     pendingRewardsBalance,
     unboundingBalance,
-    withdrawAddress
+    withdrawAddress,
   } = r;
   return {
     delegations: delegations.map(
@@ -17,13 +17,13 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
         amount: amount.toString(),
         status,
         pendingRewards: pendingRewards.toString(),
-        validatorAddress
+        validatorAddress,
       })
     ),
     delegatedBalance: delegatedBalance.toString(),
     pendingRewardsBalance: pendingRewardsBalance.toString(),
     unboundingBalance: unboundingBalance.toString(),
-    withdrawAddress
+    withdrawAddress,
   };
 }
 
@@ -33,7 +33,7 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     delegations,
     pendingRewardsBalance,
     unboundingBalance,
-    withdrawAddress
+    withdrawAddress,
   } = r;
   return {
     delegations: delegations.map(
@@ -41,12 +41,12 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
         amount: BigNumber(amount),
         status,
         pendingRewards: BigNumber(pendingRewards),
-        validatorAddress
+        validatorAddress,
       })
     ),
     delegatedBalance: BigNumber(delegatedBalance),
     pendingRewardsBalance: BigNumber(pendingRewardsBalance),
     unboundingBalance: BigNumber(unboundingBalance),
-    withdrawAddress
+    withdrawAddress,
   };
 }

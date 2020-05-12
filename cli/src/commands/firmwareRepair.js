@@ -10,9 +10,9 @@ export default {
     {
       name: "forceMCU",
       type: String,
-      desc: "force a mcu version to install"
-    }
+      desc: "force a mcu version to install",
+    },
   ],
   job: ({ device, forceMCU }: $Shape<{ device: string, forceMCU: string }>) =>
-    repairFirmwareUpdate(device || "", forceMCU)
+    repairFirmwareUpdate(device || "", forceMCU),
 };

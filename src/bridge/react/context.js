@@ -4,7 +4,7 @@ import React, { useContext } from "react";
 import type { BridgeSyncState, Sync } from "./types";
 
 export const BridgeSyncContext: React$Context<Sync> = React.createContext(
-  _ => {}
+  (_) => {}
 );
 
 export const BridgeSyncStateContext: React$Context<BridgeSyncState> = React.createContext(

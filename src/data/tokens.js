@@ -15,7 +15,7 @@ function comparePriority(a: TokenCurrency, b: TokenCurrency) {
 }
 
 export function addTokens(list: TokenCurrency[]) {
-  list.forEach(token => {
+  list.forEach((token) => {
     if (!token.delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
     tokensById[token.id] = token;
@@ -41,11 +41,11 @@ export function addTokens(list: TokenCurrency[]) {
 }
 
 type TokensListOptions = {
-  withDelisted: boolean
+  withDelisted: boolean,
 };
 
 const defaultTokenListOptions: TokensListOptions = {
-  withDelisted: false
+  withDelisted: false,
 };
 
 export function listTokens(

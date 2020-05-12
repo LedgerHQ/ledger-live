@@ -11,9 +11,9 @@ export default {
   description: "Perform a genuine check with Ledger's HSM",
   args: [deviceOpt],
   job: ({ device }: $Shape<{ device: string }>) =>
-    withDevice(device || "")(t =>
+    withDevice(device || "")((t) =>
       from(getDeviceInfo(t)).pipe(
-        mergeMap(deviceInfo => genuineCheck(t, deviceInfo))
+        mergeMap((deviceInfo) => genuineCheck(t, deviceInfo))
       )
-    )
+    ),
 };

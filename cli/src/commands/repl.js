@@ -14,11 +14,11 @@ export default {
       alias: "f",
       type: String,
       typeDesc: "filename",
-      desc: "A file can also be provided. By default stdin is used."
-    }
+      desc: "A file can also be provided. By default stdin is used.",
+    },
   ],
   job: ({ device, file }: { device: string, file: string }) =>
-    withDevice(device || "")(t =>
-      apdusFromFile(file || "-").pipe(concatMap(apdu => t.exchange(apdu)))
-    ).pipe(map(res => res.toString("hex")))
+    withDevice(device || "")((t) =>
+      apdusFromFile(file || "-").pipe(concatMap((apdu) => t.exchange(apdu)))
+    ).pipe(map((res) => res.toString("hex"))),
 };

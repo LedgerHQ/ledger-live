@@ -10,7 +10,7 @@ const resolver: Resolver = async (transport, { path, verify }) => {
   return {
     path,
     address: r.publicKey,
-    publicKey: r.raw.toString("hex")
+    publicKey: r.raw.toString("hex"),
   };
 };
 

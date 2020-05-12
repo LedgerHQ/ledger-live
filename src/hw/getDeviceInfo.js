@@ -12,7 +12,7 @@ const PROVIDERS: { [_: string]: number } = {
   das: 2,
   club: 3,
   shitcoins: 4,
-  ee: 5
+  ee: 5,
 };
 
 const ManagerAllowedFlag = 0x08;
@@ -54,6 +54,6 @@ export default async function getDeviceInfo(
     isOSU,
     isBootloader,
     managerAllowed,
-    pinValidated
+    pinValidated,
   };
 }

@@ -24,25 +24,25 @@ import type Transport from "@ledgerhq/hw-transport";
 export const TezosCurves = {
   ED25519: 0x00,
   SECP256K1: 0x01,
-  SECP256R1: 0x02
+  SECP256R1: 0x02,
 };
 
 export type Curve = $Values<typeof TezosCurves>;
 
 export type GetAddressResult = {|
   address: string,
-  publicKey: string
+  publicKey: string,
 |};
 
 export type SignOperationResult = {|
-  signature: string
+  signature: string,
 |};
 
 export type GetVersionResult = {|
   major: number,
   minor: number,
   patch: number,
-  bakingApp: boolean
+  bakingApp: boolean,
 |};
 
 /**
@@ -82,7 +82,7 @@ export default class Tezos {
     options: {
       verify?: boolean,
       curve?: Curve,
-      ins?: number // TODO specify
+      ins?: number, // TODO specify
     } = {}
   ): Promise<GetAddressResult> {
     const cla = 0x80;
@@ -110,7 +110,7 @@ export default class Tezos {
     let publicKey = payload.slice(1, 1 + publicKeyLength);
     const res: GetAddressResult = {
       publicKey: publicKey.toString("hex"),
-      address: encodeAddress(publicKey, p2)
+      address: encodeAddress(publicKey, p2),
     };
     return res;
   }
@@ -119,7 +119,7 @@ export default class Tezos {
     path: string,
     rawTxHex: string,
     options: {
-      curve?: Curve
+      curve?: Curve,
     } = {}
   ): Promise<SignOperationResult> {
     const curve = options.curve || 0;
@@ -185,7 +185,7 @@ export default class Tezos {
 function splitPath(path: string): number[] {
   let result = [];
   let components = path.split("/");
-  components.forEach(element => {
+  components.forEach((element) => {
     let number = parseInt(element, 10);
     if (isNaN(number)) {
       return; // FIXME shouldn't it throws instead?
@@ -201,13 +201,13 @@ function splitPath(path: string): number[] {
 type CurveData = {
   pkB58Prefix: Buffer,
   pkhB58Prefix: Buffer,
-  compressPublicKey: (publicKey: Buffer, curve: Curve) => Buffer
+  compressPublicKey: (publicKey: Buffer, curve: Curve) => Buffer,
 };
 
 const compressPublicKeySECP256 = (publicKey: Buffer, curve: Curve) =>
   Buffer.concat([
     Buffer.from([curve, 0x02 + (publicKey[64] & 0x01)]),
-    publicKey.slice(1, 33)
+    publicKey.slice(1, 33),
   ]);
 
 const curves: Array<CurveData> = [
@@ -218,18 +218,18 @@ const curves: Array<CurveData> = [
       publicKey = publicKey.slice(0);
       publicKey[0] = curve;
       return publicKey;
-    }
+    },
   },
   {
     pkB58Prefix: Buffer.from([3, 254, 226, 86]),
     pkhB58Prefix: Buffer.from([6, 161, 161]),
-    compressPublicKey: compressPublicKeySECP256
+    compressPublicKey: compressPublicKeySECP256,
   },
   {
     pkB58Prefix: Buffer.from([3, 178, 139, 127]),
     pkhB58Prefix: Buffer.from([6, 161, 164]),
-    compressPublicKey: compressPublicKeySECP256
-  }
+    compressPublicKey: compressPublicKeySECP256,
+  },
 ];
 
 const encodeAddress = (publicKey: Buffer, curve: Curve) => {

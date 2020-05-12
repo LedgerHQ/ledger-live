@@ -5,7 +5,7 @@ import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "./env";
 
 type LibcoreConfig = {
-  [_: string]: mixed
+  [_: string]: mixed,
 };
 
 export type ModeSpec = {
@@ -21,7 +21,7 @@ export type ModeSpec = {
   purpose?: number,
   isInvalid?: boolean, // invalid means it's not a path we ever supported. some users fall into this and we support scanning for them in SCAN_FOR_INVALID_PATHS is set.
   tag?: string,
-  addressFormat?: string
+  addressFormat?: string,
 };
 
 export type DerivationMode = $Keys<typeof modes>;
@@ -32,8 +32,8 @@ const extraConfigPerCurrency: { [_: string]: LibcoreConfig } = {
     BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
       getEnv("API_TEZOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
     TEZOS_PROTOCOL_UPDATE: "TEZOS_PROTOCOL_UPDATE_BABYLON",
-    TEZOS_NODE: () => getEnv("API_TEZOS_NODE")
-  }
+    TEZOS_NODE: () => getEnv("API_TEZOS_NODE"),
+  },
 };
 
 const modes = Object.freeze({
@@ -44,23 +44,23 @@ const modes = Object.freeze({
   ethM: {
     mandatoryEmptyAccountSkip: 10,
     overridesDerivation: "44'/60'/0'/<account>",
-    tag: "legacy"
+    tag: "legacy",
   },
   // MetaMask style
   ethMM: {
     overridesDerivation: "44'/60'/0'/0/<account>",
     skipFirst: true, // already included in the normal bip44,
-    tag: "metamask"
+    tag: "metamask",
   },
   // many users have wrongly sent BTC on BCH paths
   legacy_on_bch: {
     overridesCoinType: 145,
-    isInvalid: true
+    isInvalid: true,
   },
   // chrome app and LL wrongly used to derivate vertcoin on 128
   vertcoin_128: {
     tag: "legacy",
-    overridesCoinType: 128
+    overridesCoinType: 128,
   },
   vertcoin_128_segwit: {
     tag: "legacy",
@@ -68,100 +68,100 @@ const modes = Object.freeze({
     isSegwit: true,
     purpose: 49,
     libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH"
+      KEYCHAIN_ENGINE: "BIP49_P2SH",
     },
-    addressFormat: "p2sh"
+    addressFormat: "p2sh",
   },
   // MEW legacy derivation for eth
   etcM: {
     mandatoryEmptyAccountSkip: 10,
     overridesDerivation: "44'/60'/160720'/0'/<account>",
-    tag: "legacy"
+    tag: "legacy",
   },
   aeternity: {
-    overridesDerivation: "<account>"
+    overridesDerivation: "<account>",
   },
   // default derivation of tezbox offerred to users
   tezbox: {
     overridesDerivation: "44'/1729'/<account>'/0'",
     libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519"
-    }
+      TEZOS_XPUB_CURVE: "ED25519",
+    },
   },
   tezosbip44h: {
     tag: "galleon",
     overridesDerivation: "44'/1729'/<account>'/0'/0'",
     libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519"
-    }
+      TEZOS_XPUB_CURVE: "ED25519",
+    },
   },
   galleonL: {
     tag: "legacy",
     startsAt: 1,
     overridesDerivation: "44'/1729'/0'/0'/<account>'",
     libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519"
-    }
+      TEZOS_XPUB_CURVE: "ED25519",
+    },
   },
   tezboxL: {
     tag: "legacy",
     startsAt: 1,
     overridesDerivation: "44'/1729'/0'/<account>'",
     libcoreConfig: {
-      TEZOS_XPUB_CURVE: "ED25519"
-    }
+      TEZOS_XPUB_CURVE: "ED25519",
+    },
   },
   native_segwit: {
     purpose: 84,
     libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP173_P2WPKH"
+      KEYCHAIN_ENGINE: "BIP173_P2WPKH",
     },
     addressFormat: "bech32",
     tag: "native segwit",
-    isSegwit: true
+    isSegwit: true,
   },
   segwit: {
     isSegwit: true,
     purpose: 49,
     libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH"
+      KEYCHAIN_ENGINE: "BIP49_P2SH",
     },
     tag: "segwit",
-    addressFormat: "p2sh"
+    addressFormat: "p2sh",
   },
   segwit_on_legacy: {
     isSegwit: true,
     purpose: 44,
     libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH"
+      KEYCHAIN_ENGINE: "BIP49_P2SH",
     },
     addressFormat: "p2sh",
-    isInvalid: true
+    isInvalid: true,
   },
   legacy_on_segwit: {
     purpose: 49,
     libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP32_P2PKH"
+      KEYCHAIN_ENGINE: "BIP32_P2PKH",
     },
-    isInvalid: true
+    isInvalid: true,
   },
   segwit_unsplit: {
     isSegwit: true,
     purpose: 49,
     libcoreConfig: {
-      KEYCHAIN_ENGINE: "BIP49_P2SH"
+      KEYCHAIN_ENGINE: "BIP49_P2SH",
     },
     addressFormat: "p2sh",
     isUnsplit: true,
-    tag: "segwit unsplit"
+    tag: "segwit unsplit",
   },
   sep5: {
-    overridesDerivation: "44'/148'/<account>'"
+    overridesDerivation: "44'/148'/<account>'",
   },
   unsplit: {
     isUnsplit: true,
-    tag: "unsplit"
-  }
+    tag: "unsplit",
+  },
 });
 
 (modes: { [_: DerivationMode]: ModeSpec }); // eslint-disable-line
@@ -173,7 +173,7 @@ const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "etcM", "ethMM"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
-  stellar: ["sep5"]
+  stellar: ["sep5"],
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
@@ -208,7 +208,7 @@ export const getLibcoreConfig = (
   const extra = {
     ...extraConfigPerCurrency[currency.id],
     // $FlowFixMe
-    ...modes[derivationMode].libcoreConfig
+    ...modes[derivationMode].libcoreConfig,
   };
   for (let k in extra) {
     const v = extra[k];
@@ -269,7 +269,7 @@ export const derivationModeSupportsIndex = (
 };
 
 const currencyForceCoinType = {
-  vertcoin: true
+  vertcoin: true,
 };
 
 /**
@@ -278,10 +278,10 @@ const currencyForceCoinType = {
  */
 export const getDerivationScheme = ({
   derivationMode,
-  currency
+  currency,
 }: {
   derivationMode: DerivationMode,
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 }): string => {
   const { overridesDerivation, overridesCoinType } = modes[derivationMode];
   if (overridesDerivation) return overridesDerivation;
@@ -302,7 +302,7 @@ export const runDerivationScheme = (
   opts: {
     account?: number,
     node?: number,
-    address?: number
+    address?: number,
   } = {}
 ) =>
   derivationScheme
@@ -314,12 +314,12 @@ export const runDerivationScheme = (
 const disableBIP44 = {
   aeternity: true,
   tezos: true, // current workaround, device app does not seem to support bip44
-  stellar: true
+  stellar: true,
 };
 
 const seedIdentifierPath = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
-  _: ({ purpose, coinType }) => `${purpose}'/${coinType}'`
+  _: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
 };
 
 export const getSeedIdentifierDerivation = (
@@ -365,7 +365,7 @@ export const getDerivationModesForCurrency = (
     all.push("native_segwit");
   }
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {
-    return all.filter(a => !isInvalidDerivationMode(a));
+    return all.filter((a) => !isInvalidDerivationMode(a));
   }
   return all;
 };

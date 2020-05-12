@@ -16,14 +16,14 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
 
     const wrappers = {
       // FIXME need to fix it in RN bindings
-      hex: value => value.replace(/[< >]/g, "")
+      hex: (value) => value.replace(/[< >]/g, ""),
     };
 
     function wrap(id, ref) {
       if (!ref) return ref;
       if (Array.isArray(id)) {
         const [actualId] = id;
-        return ref.map(r => wrap(actualId, r));
+        return ref.map((r) => wrap(actualId, r));
       }
       if (id in wrappers) {
         return wrappers[id](ref);
@@ -40,7 +40,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
       if (!instance) return instance;
       if (Array.isArray(id)) {
         const [actualId] = id;
-        return instance.map(inst => unwrap(actualId, inst));
+        return instance.map((inst) => unwrap(actualId, inst));
       }
       const Clz = mappings[id];
       if (!Clz) {
@@ -63,7 +63,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
       "DatabaseBackend",
       "DynamicObject",
       "WalletPool",
-      "SerialContext"
+      "SerialContext",
     ];
 
     function declare(id, { methods, statics }) {
@@ -95,7 +95,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
         let res = r;
         if (res && typeof res === "object") {
           if (res.then) {
-            return res.then(re => wrapResult(re, returns));
+            return res.then((re) => wrapResult(re, returns));
           }
           if ("value" in res) {
             res = res.value;
@@ -107,7 +107,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
 
       const proto = {};
       if (methods) {
-        Object.keys(methods).forEach(method => {
+        Object.keys(methods).forEach((method) => {
           const { returns, params } = methods[method];
           const f = native && native[method];
           if (!f) {
@@ -131,7 +131,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
       constructor.prototype = proto;
 
       if (statics) {
-        Object.keys(statics).forEach(method => {
+        Object.keys(statics).forEach((method) => {
           const { returns, params } = statics[method];
           const f = native && native[method];
           if (!f) {
@@ -184,11 +184,11 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
     const core: Core = {
       ...cs,
 
-      flush: () => Promise.all(flushes.map(f => f())).then(() => undefined),
+      flush: () => Promise.all(flushes.map((f) => f())).then(() => undefined),
 
       getPoolInstance: () => walletPoolInstance,
 
-      getThreadDispatcher: () => threadDispatcher
+      getThreadDispatcher: () => threadDispatcher,
     };
 
     return core;

@@ -15,7 +15,7 @@ import {
   FeeTooHigh,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughSpendableBalance,
-  NotEnoughBalanceBecauseDestinationNotCreated
+  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import { makeLRUCache } from "../../../cache";
 import type { Account } from "../../../types";
@@ -32,14 +32,14 @@ const createTransaction = () => ({
   tag: undefined,
   fee: null,
   feeCustomUnit: null,
-  networkInfo: null
+  networkInfo: null,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const isAddressActivated = makeLRUCache(
   (account: Account, addr: string) =>
-    withLibcore(async core => {
+    withLibcore(async (core) => {
       const { coreAccount } = await getCoreAccount(core, account);
       const rippleLikeAccount = await coreAccount.asRippleLikeAccount();
       return await rippleLikeAccount.isAddressActivated(addr);
@@ -73,8 +73,8 @@ const getTransactionStatus = async (a, t) => {
       minimumAmount: formatCurrencyUnit(a.currency.units[0], baseReserve, {
         disableRounding: true,
         useGrouping: false,
-        showCode: true
-      })
+        showCode: true,
+      }),
     });
   } else if (
     amount.lt(baseReserve) &&
@@ -109,7 +109,7 @@ const getTransactionStatus = async (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
@@ -127,7 +127,7 @@ const prepareTransaction = async (a, t) => {
     return {
       ...t,
       networkInfo,
-      fee
+      fee,
     };
   }
 
@@ -137,14 +137,14 @@ const prepareTransaction = async (a, t) => {
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
-  transaction
+  transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // public testing seed abandonx11,about
     ...transaction,
-    useAllAmount: true
+    useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;
@@ -153,7 +153,7 @@ const estimateMaxSpendable = async ({
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
-  scanAccounts
+  scanAccounts,
 };
 
 const accountBridge: AccountBridge<Transaction> = {
@@ -164,7 +164,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 export default { currencyBridge, accountBridge };

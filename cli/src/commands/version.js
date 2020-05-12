@@ -18,8 +18,8 @@ export default {
         "@ledgerhq/ledger-core: " +
           require("@ledgerhq/ledger-core/package.json").version
       ),
-      from(withLibcore(core => core.LedgerCore.getStringVersion())).pipe(
-        map(v => "libcore: " + v)
+      from(withLibcore((core) => core.LedgerCore.getStringVersion())).pipe(
+        map((v) => "libcore: " + v)
       )
-    )
+    ),
 };

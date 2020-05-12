@@ -41,8 +41,8 @@ const dataset: DatasetTest<Transaction> = {
     stealthcoin,
     vertcoin,
     viacoin,
-    zcash
-  }
+    zcash,
+  },
 };
 
 export default dataset;

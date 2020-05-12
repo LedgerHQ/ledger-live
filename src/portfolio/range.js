@@ -32,20 +32,20 @@ const stable: { [k: PortfolioRange]: PortfolioRangeConfig } = {
     count: 365,
     increment: dayIncrement,
     startOf: startOfDay,
-    granularityId: "DAY"
+    granularityId: "DAY",
   },
   month: {
     count: 30,
     increment: dayIncrement,
     startOf: startOfDay,
-    granularityId: "DAY"
+    granularityId: "DAY",
   },
   week: {
     count: 7,
     increment: dayIncrement,
     startOf: startOfDay,
-    granularityId: "DAY"
-  }
+    granularityId: "DAY",
+  },
 };
 
 const experimental: { [k: PortfolioRange]: PortfolioRangeConfig } = {
@@ -53,8 +53,8 @@ const experimental: { [k: PortfolioRange]: PortfolioRangeConfig } = {
     count: 52,
     increment: weekIncrement,
     startOf: startOfWeek,
-    granularityId: "WEEK"
-  }
+    granularityId: "WEEK",
+  },
   /*
   week: {
     count: 7 * 24,
@@ -66,7 +66,7 @@ const experimental: { [k: PortfolioRange]: PortfolioRangeConfig } = {
 };
 
 const getPerPortfolioRanges = (): {
-  [k: PortfolioRange]: PortfolioRangeConfig
+  [k: PortfolioRange]: PortfolioRangeConfig,
 } => {
   if (!getEnv("EXPERIMENTAL_PORTFOLIO_RANGE")) return stable;
   return { ...stable, ...experimental };

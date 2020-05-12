@@ -13,14 +13,14 @@ import {
   TransportInterfaceNotAvailable,
   FirmwareOrAppUpdateRequired,
   TransportStatusError,
-  DeviceHalted
+  DeviceHalted,
 } from "@ledgerhq/errors";
 import { getEnv } from "../env";
 import { open, close } from ".";
 
 export type AccessHook = () => () => void;
 
-const initialErrorRemapping = error =>
+const initialErrorRemapping = (error) =>
   throwError(
     error &&
       error instanceof TransportStatusError &&
@@ -32,13 +32,13 @@ const initialErrorRemapping = error =>
   );
 
 const accessHooks = [];
-let errorRemapping = e => throwError(e);
+let errorRemapping = (e) => throwError(e);
 
 export const addAccessHook = (accessHook: AccessHook) => {
   accessHooks.push(accessHook);
 };
 
-export const setErrorRemapping = (f: Error => Observable<*>) => {
+export const setErrorRemapping = (f: (Error) => Observable<*>) => {
   errorRemapping = f;
 };
 
@@ -47,7 +47,7 @@ const never = new Promise(() => {});
 const transportFinally = (cleanup: () => Promise<void>) => <T>(
   observable: Observable<T>
 ): Observable<T> =>
-  Observable.create(o => {
+  Observable.create((o) => {
     let done = false;
     const finalize = () => {
       if (done) return never;
@@ -55,13 +55,13 @@ const transportFinally = (cleanup: () => Promise<void>) => <T>(
       return cleanup();
     };
     const sub = observable.subscribe({
-      next: e => o.next(e),
+      next: (e) => o.next(e),
       complete: () => {
         finalize().then(() => o.complete());
       },
-      error: e => {
+      error: (e) => {
         finalize().then(() => o.error(e));
-      }
+      },
     });
     return () => {
       sub.unsubscribe();
@@ -69,7 +69,7 @@ const transportFinally = (cleanup: () => Promise<void>) => <T>(
     };
   });
 
-const identifyTransport = t => (typeof t.id === "string" ? t.id : "");
+const identifyTransport = (t) => (typeof t.id === "string" ? t.id : "");
 
 const needsCleanup = {};
 
@@ -84,7 +84,7 @@ const deviceQueues = {};
 export const withDevice = (deviceId: string) => <T>(
   job: (t: Transport<*>) => Observable<T>
 ): Observable<T> =>
-  Observable.create(o => {
+  Observable.create((o) => {
     let unsubscribed;
     let sub;
 
@@ -94,20 +94,20 @@ export const withDevice = (deviceId: string) => <T>(
       close(transport, deviceId)
         .catch(() => {})
         .then(() => {
-          cleanups.forEach(c => c());
+          cleanups.forEach((c) => c());
         });
 
     // when we'll finish all the current job, we'll call finish
     let finish;
     // this new promise is the next exec queue
-    deviceQueues[deviceId] = new Promise(resolve => {
+    deviceQueues[deviceId] = new Promise((resolve) => {
       finish = resolve;
     });
 
     // for any new job, we'll now wait the exec queue to be available
     deviceQueue
       .then(() => open(deviceId)) // open the transport
-      .then(async transport => {
+      .then(async (transport) => {
         if (unsubscribed) {
           // it was unsubscribed prematurely
           return finalize(transport, [finish]);
@@ -119,14 +119,14 @@ export const withDevice = (deviceId: string) => <T>(
         }
         return transport;
       })
-      .catch(e => {
+      .catch((e) => {
         finish();
         if (e instanceof BluetoothRequired) throw e;
         if (e instanceof TransportWebUSBGestureRequired) throw e;
         if (e instanceof TransportInterfaceNotAvailable) throw e;
         throw new CantOpenDevice(e.message);
       })
-      .then(transport => {
+      .then((transport) => {
         if (!transport) return;
 
         if (unsubscribed) {
@@ -134,7 +134,7 @@ export const withDevice = (deviceId: string) => <T>(
           return finalize(transport, [finish]);
         }
 
-        const cleanups = accessHooks.map(hook => hook());
+        const cleanups = accessHooks.map((hook) => hook());
         sub = job(transport)
           .pipe(
             catchError(initialErrorRemapping),
@@ -145,7 +145,7 @@ export const withDevice = (deviceId: string) => <T>(
           )
           .subscribe(o);
       })
-      .catch(error => o.error(error));
+      .catch((error) => o.error(error));
 
     return () => {
       unsubscribed = true;
@@ -166,11 +166,11 @@ export const genericCanRetryOnError = (err: ?Error) => {
   return true;
 };
 
-export const retryWhileErrors = (acceptError: Error => boolean) => (
+export const retryWhileErrors = (acceptError: (Error) => boolean) => (
   attempts: Observable<any>
 ): Observable<any> =>
   attempts.pipe(
-    mergeMap(error => {
+    mergeMap((error) => {
       if (!acceptError(error)) {
         return throwError(error);
       }
@@ -180,7 +180,7 @@ export const retryWhileErrors = (acceptError: Error => boolean) => (
 
 export const withDevicePolling = (deviceId: string) => <T>(
   job: (Transport<*>) => Observable<T>,
-  acceptError: Error => boolean = genericCanRetryOnError
+  acceptError: (Error) => boolean = genericCanRetryOnError
 ): Observable<T> =>
   withDevice(deviceId)(job).pipe(
     // $FlowFixMe

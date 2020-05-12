@@ -10,7 +10,7 @@ import {
   mcuOutdated,
   mcuNotGenuine,
   followDeviceRepair,
-  followDeviceUpdate
+  followDeviceUpdate,
 } from "../deviceWordings";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
@@ -19,7 +19,7 @@ export const repairChoices = [
   { id: "mcuOutdated", label: mcuOutdated, forceMCU: "0.7" },
   { id: "mcuNotGenuine", label: mcuNotGenuine, forceMCU: "0.7" },
   { id: "followDeviceRepair", label: followDeviceRepair, forceMCU: "0.9" },
-  { id: "followDeviceUpdate", label: followDeviceUpdate, forceMCU: "0.9" }
+  { id: "followDeviceUpdate", label: followDeviceUpdate, forceMCU: "0.9" },
 ];
 
 const repair = (
@@ -30,24 +30,24 @@ const repair = (
   const mcusPromise = ManagerAPI.getMcus();
 
   const withDeviceInfo = withDevicePolling(deviceId)(
-    transport => from(getDeviceInfo(transport)),
+    (transport) => from(getDeviceInfo(transport)),
     () => true // accept all errors. we're waiting forever condition that make getDeviceInfo work
   );
 
   const waitForBootloader = withDeviceInfo.pipe(
-    concatMap(deviceInfo =>
+    concatMap((deviceInfo) =>
       deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
     )
   );
 
   const loop = (forceMCU: ?string) =>
     withDeviceInfo.pipe(
-      concatMap(deviceInfo => {
+      concatMap((deviceInfo) => {
         const installMcu = (version: string) =>
-          withDevice(deviceId)(transport =>
+          withDevice(deviceId)((transport) =>
             ManagerAPI.installMcu(transport, "mcu", {
               targetId: deviceInfo.targetId,
-              version
+              version,
             })
           );
 
@@ -84,7 +84,7 @@ const repair = (
             return installMcu("1.7");
           default:
             return from(mcusPromise).pipe(
-              concatMap(mcus => {
+              concatMap((mcus) => {
                 const next = ManagerAPI.findBestMCU(
                   ManagerAPI.compatibleMCUForDeviceInfo(mcus, deviceInfo)
                 );
@@ -98,8 +98,8 @@ const repair = (
 
   // TODO ideally we should race waitForBootloader with an event "display-bootloader-reboot", it should be a delayed event that is not emitted if waitForBootloader is fast enough..
   return concat(waitForBootloader, loop(forceMCU_)).pipe(
-    filter(e => e.type === "bulk-progress"),
-    map(e => ({ progress: e.progress })),
+    filter((e) => e.type === "bulk-progress"),
+    map((e) => ({ progress: e.progress })),
     throttleTime(100)
   );
 };

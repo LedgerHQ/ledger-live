@@ -7,7 +7,7 @@ import { getEnv } from "../env";
 type LedgerExplorer = {
   version: string,
   id: string,
-  endpoint: string
+  endpoint: string,
 };
 
 export const findCurrencyExplorer = (
@@ -21,7 +21,7 @@ export const findCurrencyExplorer = (
     return {
       endpoint: explorer,
       id: idV3,
-      version: "v3"
+      version: "v3",
     };
   }
   if (idV2) {
@@ -65,7 +65,7 @@ const ledgerExplorersV2 = {
   viacoin: "via",
   zcash: "zec",
   zencash: "zen",
-  bitcoin_testnet: "btc_testnet"
+  bitcoin_testnet: "btc_testnet",
 };
 
 const ledgerExplorersV3 = {
@@ -74,7 +74,7 @@ const ledgerExplorersV3 = {
   ethereum: "eth",
   ethereum_ropsten: "eth_ropsten",
   ethereum_classic: "etc",
-  litecoin: "ltc"
+  litecoin: "ltc",
   // tezos: "xtz"
 };
 

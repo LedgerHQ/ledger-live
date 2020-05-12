@@ -12,9 +12,9 @@ import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/data/cryptocur
 
 implementCountervalues({
   getAPIBaseURL: () => window.LEDGER_CV_API,
-  storeSelector: state => state.countervalues,
+  storeSelector: (state) => state.countervalues,
   pairsSelector: () => [],
-  setExchangePairsAction: () => {}
+  setExchangePairsAction: () => {},
 });
 
 setSupportedCurrencies([
@@ -47,7 +47,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "tron",
-  "stellar"
+  "stellar",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k, process.env[k]);
@@ -56,7 +56,7 @@ const { VERBOSE, VERBOSE_FILE } = process.env;
 
 const logger = winston.createLogger({
   level: "debug",
-  transports: []
+  transports: [],
 });
 
 const { format } = winston;
@@ -69,7 +69,7 @@ if (VERBOSE_FILE) {
     new winston.transports.File({
       format: winstonFormat,
       filename: VERBOSE_FILE,
-      level: "debug"
+      level: "debug",
     })
   );
 }
@@ -77,7 +77,7 @@ if (VERBOSE_FILE) {
 logger.add(
   new winston.transports.Console({
     format: winstonFormat,
-    silent: !VERBOSE
+    silent: !VERBOSE,
   })
 );
 
@@ -86,11 +86,11 @@ listen(({ id, date, type, message, ...rest }) => {
   logger.log("debug", {
     message: type + (message ? ": " + message : ""),
     // $FlowFixMe
-    ...rest
+    ...rest,
   });
 });
 
 implementLibcore({
   lib: () => require("@ledgerhq/ledger-core"), // eslint-disable-line global-require
-  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata"
+  dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
 });

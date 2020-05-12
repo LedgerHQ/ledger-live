@@ -9,33 +9,33 @@ import {
   initState,
   reducer,
   runAll,
-  getActionPlan
+  getActionPlan,
 } from "@ledgerhq/live-common/lib/apps";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import type { AppOp } from "@ledgerhq/live-common/lib/apps/types";
 import { deviceOpt } from "../scan";
 
 const prettyActionPlan = (ops: AppOp[]) =>
-  ops.map(op => (op.type === "install" ? "+" : "-") + op.name).join(", ");
+  ops.map((op) => (op.type === "install" ? "+" : "-") + op.name).join(", ");
 
 export default {
   description: "test script to install and uninstall all apps",
   args: [deviceOpt, { name: "index", type: Number }],
   job: ({ device, index }: $Shape<{ device: string, index: number }>) =>
-    withDevice(device || "")(t => {
+    withDevice(device || "")((t) => {
       const exec = execWithTransport(t);
       // $FlowFixMe
       return from(getDeviceInfo(t)).pipe(
         mergeMap(
-          deviceInfo =>
+          (deviceInfo) =>
             listApps(t, deviceInfo).pipe(
-              filter(e => e.type === "result"),
-              map(e => e.result),
-              mergeMap(listAppsResult => {
+              filter((e) => e.type === "result"),
+              map((e) => e.result),
+              mergeMap((listAppsResult) => {
                 return listAppsResult.appsListNames.slice(index || 0).reduce(
                   ($state, name) =>
                     $state.pipe(
-                      mergeMap(s => {
+                      mergeMap((s) => {
                         if (s.currentError) {
                           console.error(
                             "FAILED " +
@@ -50,7 +50,8 @@ export default {
                           "on device: " +
                             s.installed
                               .map(
-                                i => i.name + (!i.updated ? " (outdated)" : "")
+                                (i) =>
+                                  i.name + (!i.updated ? " (outdated)" : "")
                               )
                               .join(", ")
                         );
@@ -61,7 +62,7 @@ export default {
                         );
                         return runAll(s, exec);
                       }),
-                      mergeMap(s => {
+                      mergeMap((s) => {
                         s = reducer(s, { type: "install", name });
                         console.log(
                           "install '" +
@@ -71,8 +72,8 @@ export default {
                         );
                         return runAll(s, exec);
                       }),
-                      mergeMap(state =>
-                        Observable.create(o => {
+                      mergeMap((state) =>
+                        Observable.create((o) => {
                           let sub;
                           const timeout = setTimeout(() => {
                             sub = listApps(t, deviceInfo).subscribe(o);
@@ -82,11 +83,11 @@ export default {
                             if (sub) sub.unsubscribe();
                           };
                         }).pipe(
-                          filter(e => e.type === "result"),
-                          map(e => e.result),
-                          map(results => {
+                          filter((e) => e.type === "result"),
+                          map((e) => e.result),
+                          map((results) => {
                             const app = results.installed.find(
-                              a => a.name === name
+                              (a) => a.name === name
                             );
                             if (!app) {
                               throw new Error(
@@ -116,5 +117,5 @@ export default {
           ignoreElements()
         )
       );
-    })
+    }),
 };

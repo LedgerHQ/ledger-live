@@ -4,7 +4,7 @@ import { patchOperationWithHash } from "../../operation";
 
 async function broadcast({
   coreAccount,
-  signedOperation: { operation, signature }
+  signedOperation: { operation, signature },
 }) {
   const rippleLikeAccount = await coreAccount.asRippleLikeAccount();
   const txHash = await rippleLikeAccount.broadcastRawTransaction(signature);

@@ -4,7 +4,7 @@ import type { CoreAccount } from "../../libcore/types";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 
 type Input = {
-  coreAccount: CoreAccount
+  coreAccount: CoreAccount,
 };
 
 type Output = Promise<NetworkInfo>;
@@ -19,7 +19,7 @@ async function ripple({ coreAccount }: Input): Output {
   return {
     family: "ripple",
     serverFee,
-    baseReserve
+    baseReserve,
   };
 }
 

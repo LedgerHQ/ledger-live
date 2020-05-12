@@ -2,7 +2,7 @@
 
 import type {
   TransactionCommon,
-  TransactionCommonRaw
+  TransactionCommonRaw,
 } from "../../types/transaction";
 
 export type CoreStatics = {};
@@ -14,21 +14,21 @@ export type CoreOperationSpecifics = {};
 export type CoreCurrencySpecifics = {};
 
 export type NetworkInfo = {|
-  family: "neo"
+  family: "neo",
 |};
 
 export type NetworkInfoRaw = {|
-  family: "neo"
+  family: "neo",
 |};
 
 export type Transaction = {|
   ...TransactionCommon,
-  family: "neo"
+  family: "neo",
 |};
 
 export type TransactionRaw = {|
   ...TransactionCommonRaw,
-  family: "neo"
+  family: "neo",
 |};
 
 export const reflect = (_declare: *) => {};

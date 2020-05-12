@@ -7,19 +7,19 @@ import {
   debounceTime,
   catchError,
   switchMap,
-  tap
+  tap,
 } from "rxjs/operators";
 import { useEffect, useCallback, useState, useMemo } from "react";
 import { log } from "@ledgerhq/logs";
 import {
   getDerivationScheme,
   getDerivationModesForCurrency,
-  runDerivationScheme
+  runDerivationScheme,
 } from "../../derivation";
 import type {
   AppAndVersion,
   ConnectAppEvent,
-  Input as ConnectAppInput
+  Input as ConnectAppInput,
 } from "../connectApp";
 import type { Account, CryptoCurrency, TokenCurrency } from "../../types";
 import { useReplaySubject } from "../../observable";
@@ -38,25 +38,25 @@ type State = {|
   allowOpeningGranted: boolean,
   device: ?Device,
   error: ?Error,
-  derivation: ?{ address: string }
+  derivation: ?{ address: string },
 |};
 
 export type AppState = {|
   ...State,
   onRetry: () => void,
-  inWrongDeviceForAccount: ?{ accountName: string }
+  inWrongDeviceForAccount: ?{ accountName: string },
 |};
 
 export type AppRequest = {
   appName?: ?string,
   currency?: ?CryptoCurrency,
   account?: ?Account,
-  tokenCurrency?: ?TokenCurrency
+  tokenCurrency?: ?TokenCurrency,
 };
 
 export type AppResult = {|
   device: Device,
-  appAndVersion: ?AppAndVersion
+  appAndVersion: ?AppAndVersion,
 |};
 
 type AppAction = Action<AppRequest, AppState, AppResult>;
@@ -81,7 +81,7 @@ const getInitialState = (device?: ?Device): State => ({
   opened: false,
   appAndVersion: null,
   error: null,
-  derivation: null
+  derivation: null,
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -89,41 +89,41 @@ const reducer = (state: State, e: Event): State => {
     case "unresponsiveDevice":
       return {
         ...state,
-        unresponsive: true
+        unresponsive: true,
       };
 
     case "deviceChange":
       return {
         ...getInitialState(e.device),
-        device: e.device
+        device: e.device,
       };
 
     case "error":
       return {
         ...getInitialState(),
         error: e.error,
-        isLoading: false
+        isLoading: false,
       };
 
     case "ask-open-app":
       return {
         ...state,
         unresponsive: false,
-        requestOpenApp: e.appName
+        requestOpenApp: e.appName,
       };
 
     case "ask-quit-app":
       return {
         ...state,
         unresponsive: false,
-        requestQuitApp: true
+        requestQuitApp: true,
       };
 
     case "device-permission-requested":
       return {
         ...state,
         unresponsive: false,
-        allowOpeningRequestedWording: e.wording
+        allowOpeningRequestedWording: e.wording,
       };
 
     case "device-permission-granted":
@@ -131,7 +131,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         allowOpeningRequestedWording: null,
-        allowOpeningGranted: true
+        allowOpeningGranted: true,
       };
 
     case "app-not-installed":
@@ -140,7 +140,7 @@ const reducer = (state: State, e: Event): State => {
         isLoading: false,
         unresponsive: false,
         allowOpeningRequestedWording: null,
-        requiresAppInstallation: { appName: e.appName }
+        requiresAppInstallation: { appName: e.appName },
       };
 
     case "opened":
@@ -150,7 +150,7 @@ const reducer = (state: State, e: Event): State => {
         unresponsive: false,
         opened: true,
         appAndVersion: e.app,
-        derivation: e.derivation
+        derivation: e.derivation,
       };
   }
   return state;
@@ -193,13 +193,13 @@ function inferCommandParams(appRequest: AppRequest) {
     requiresDerivation: {
       derivationMode,
       derivationPath,
-      currencyId: currency.id
-    }
+      currencyId: currency.id,
+    },
   };
 }
 
 export const createAction = (
-  connectAppExec: ConnectAppInput => Observable<ConnectAppEvent>
+  connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>
 ): AppAction => {
   const connectApp = (device, params) =>
     concat(
@@ -208,7 +208,7 @@ export const createAction = (
         ? empty()
         : connectAppExec({
             devicePath: device.deviceId,
-            ...params
+            ...params,
           }).pipe(catchError((error: Error) => of({ type: "error", error })))
     );
 
@@ -227,7 +227,7 @@ export const createAction = (
         // eslint-disable-next-line react-hooks/exhaustive-deps
         appRequest.account && appRequest.account.id,
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        appRequest.currency && appRequest.currency.id
+        appRequest.currency && appRequest.currency.id,
       ]
     );
 
@@ -237,14 +237,14 @@ export const createAction = (
           // debounce a bit the connect/disconnect event that we don't need
           debounceTime(1000),
           // each time there is a device change, we pipe to the command
-          switchMap(device => connectApp(device, params)),
-          tap(e => log("actions-app-event", e.type, e)),
+          switchMap((device) => connectApp(device, params)),
+          tap((e) => log("actions-app-event", e.type, e)),
           // tap(e => console.log("connectApp event", e)),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState()),
           // tap(s => console.log("connectApp state", s)),
           // we debounce the UI state to not blink on the UI
-          debounce(s => {
+          debounce((s) => {
             if (s.allowOpeningRequestedWording || s.allowOpeningGranted) {
               // no debounce for allow event
               return empty();
@@ -262,7 +262,7 @@ export const createAction = (
     }, [params, deviceSubject, resetIndex]);
 
     const onRetry = useCallback(() => {
-      setResetIndex(currIndex => currIndex + 1);
+      setResetIndex((currIndex) => currIndex + 1);
     }, []);
 
     return {
@@ -273,12 +273,12 @@ export const createAction = (
             ? { accountName: getAccountName(appRequest.account) }
             : null
           : null,
-      onRetry
+      onRetry,
     };
   };
 
   return {
     useHook,
-    mapResult
+    mapResult,
   };
 };

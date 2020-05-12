@@ -5,7 +5,7 @@ import { BigNumber } from "bignumber.js";
 import { deserializeError, serializeError } from "@ledgerhq/errors";
 import type {
   TransactionStatusRaw,
-  TransactionStatus
+  TransactionStatus,
 } from "../types/transaction";
 
 const fromErrorRaw = (raw: string): Error => {
@@ -23,7 +23,7 @@ export const fromTransactionStatusRaw = (
   estimatedFees: BigNumber(ts.estimatedFees),
   amount: BigNumber(ts.amount),
   totalSpent: BigNumber(ts.totalSpent),
-  recipientIsReadOnly: ts.recipientIsReadOnly
+  recipientIsReadOnly: ts.recipientIsReadOnly,
 });
 
 export const toTransactionStatusRaw = (
@@ -34,5 +34,5 @@ export const toTransactionStatusRaw = (
   estimatedFees: ts.estimatedFees.toString(),
   amount: ts.amount.toString(),
   totalSpent: ts.totalSpent.toString(),
-  recipientIsReadOnly: ts.recipientIsReadOnly
+  recipientIsReadOnly: ts.recipientIsReadOnly,
 });

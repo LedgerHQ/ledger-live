@@ -15,8 +15,8 @@ test("export CSV", () => {
       [
         getCryptoCurrencyById("bitcoin"),
         getCryptoCurrencyById("ethereum"),
-        getCryptoCurrencyById("ripple")
-      ].map(currency => genAccount(`${currency.id}_export`))
+        getCryptoCurrencyById("ripple"),
+      ].map((currency) => genAccount(`${currency.id}_export`))
     )
   ).toMatchSnapshot();
 });

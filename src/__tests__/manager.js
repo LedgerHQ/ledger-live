@@ -25,7 +25,7 @@ describe("getDeviceVersion", () => {
   test("it throw FirmwareNotRecognized with dumb data", async () => {
     const r = await Manager.getDeviceVersion(42, 1).then(
       () => null,
-      e => e
+      (e) => e
     );
     expect(r).toBeDefined();
     expect(r).toBeInstanceOf(FirmwareNotRecognized);

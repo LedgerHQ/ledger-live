@@ -13,8 +13,8 @@ const account = fromAccountRaw({
   freshAddresses: [
     {
       address: "me",
-      derivationPath: "44'/1729'/2'/0'"
-    }
+      derivationPath: "44'/1729'/2'/0'",
+    },
   ],
   blockHeight: 140408643618744,
   operations: [
@@ -30,7 +30,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T15:29:27.000Z",
       value: "211000",
-      fee: "11000"
+      fee: "11000",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -44,7 +44,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T15:29:27.000Z",
       value: "11000",
-      fee: "11000"
+      fee: "11000",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -58,7 +58,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T12:52:07.000Z",
       value: "500000",
-      fee: "259500"
+      fee: "259500",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -72,7 +72,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T12:49:07.000Z",
       value: "986580",
-      fee: "13420"
+      fee: "13420",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -86,7 +86,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T12:49:07.000Z",
       value: "13420",
-      fee: "13420"
+      fee: "13420",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -100,7 +100,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T12:42:07.000Z",
       value: "1000000",
-      fee: "262000"
+      fee: "262000",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -114,7 +114,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T12:39:07.000Z",
       value: "949990",
-      fee: "50010"
+      fee: "50010",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -128,7 +128,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T12:39:07.000Z",
       value: "50010",
-      fee: "50010"
+      fee: "50010",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -142,8 +142,8 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T12:37:07.000Z",
       value: "1000000",
-      fee: "285160"
-    }
+      fee: "285160",
+    },
   ],
   pendingOperations: [
     {
@@ -158,7 +158,7 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T15:29:03.215Z",
       value: "222000",
-      fee: "22000"
+      fee: "22000",
     },
     {
       accountId: "libcore:1:tezos:A:tezbox",
@@ -172,8 +172,8 @@ const account = fromAccountRaw({
       extra: {},
       date: "2019-11-27T15:30:07.689Z",
       value: "234420",
-      fee: "34420"
-    }
+      fee: "34420",
+    },
   ],
   currencyId: "tezos",
   unitMagnitude: 6,
@@ -181,18 +181,18 @@ const account = fromAccountRaw({
   balance: "278000",
   spendableBalance: "278000",
   xpub: "A",
-  subAccounts: []
+  subAccounts: [],
 });
 
 test("pending operation are in order", () => {
   const byDay = groupAccountOperationsByDay(account, { count: 100 });
   expect(byDay.completed).toBe(true);
 
-  const dates = flatMap(byDay.sections, s => s.data.map(o => o.date));
+  const dates = flatMap(byDay.sections, (s) => s.data.map((o) => o.date));
   const sortedByDates = dates.slice(0).sort((a, b) => b - a);
   expect(dates).toMatchObject(sortedByDates);
 
-  expect(byDay.sections.map(s => s.data.map(o => o.id))).toMatchObject([
+  expect(byDay.sections.map((s) => s.data.map((o) => o.id))).toMatchObject([
     [
       "libcore:1:tezos:A:tezbox-seven-OUT",
       "libcore:1:tezos:A:tezbox-one-OUT",
@@ -203,7 +203,7 @@ test("pending operation are in order", () => {
       "libcore:1:tezos:A:tezbox-four-IN",
       "libcore:1:tezos:A:tezbox-five-OUT",
       "libcore:1:tezos:A:tezbox-five-REVEAL",
-      "libcore:1:tezos:A:tezbox-six-IN"
-    ]
+      "libcore:1:tezos:A:tezbox-six-IN",
+    ],
   ]);
 });

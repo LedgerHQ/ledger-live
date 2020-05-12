@@ -8,9 +8,9 @@ import "../../load/tokens/tron/trc20";
 
 implementCountervalues({
   getAPIBaseURL: () => window.LEDGER_CV_API,
-  storeSelector: state => state.countervalues,
+  storeSelector: (state) => state.countervalues,
   pairsSelector: () => [],
-  setExchangePairsAction: () => {}
+  setExchangePairsAction: () => {},
 });
 
 setSupportedCurrencies([
@@ -43,5 +43,5 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "tron",
-  "stellar"
+  "stellar",
 ]);

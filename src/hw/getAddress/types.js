@@ -7,7 +7,7 @@ export type Result = {
   address: string,
   path: string,
   publicKey: string,
-  chainCode?: string
+  chainCode?: string,
 };
 
 export type Resolver = (
@@ -18,6 +18,6 @@ export type Resolver = (
     derivationMode: DerivationMode,
     verify?: boolean,
     skipAppFailSafeCheck?: boolean,
-    askChainCode?: boolean
+    askChainCode?: boolean,
   }
 ) => Promise<Result>;

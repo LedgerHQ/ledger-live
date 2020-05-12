@@ -11,7 +11,7 @@ const memoTypeCheckCache: CacheRes<Array<string>, ?string> = makeLRUCache(
   (addr: string) => addr,
   {
     max: 300,
-    maxAge: 180 * 60 * 1000 // 3hours
+    maxAge: 180 * 60 * 1000, // 3hours
   }
 );
 

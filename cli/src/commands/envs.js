@@ -5,7 +5,7 @@ import { map } from "rxjs/operators";
 import {
   getEnvDesc,
   getEnv,
-  getAllEnvNames
+  getAllEnvNames,
 } from "@ledgerhq/live-common/lib/env";
 
 export default {
@@ -14,10 +14,10 @@ export default {
   job: () =>
     from(getAllEnvNames()).pipe(
       map(
-        name =>
+        (name) =>
           `# ${name} ${getEnvDesc(name)}\n${name}=${JSON.stringify(
             getEnv(name)
           )}\n`
       )
-    )
+    ),
 };

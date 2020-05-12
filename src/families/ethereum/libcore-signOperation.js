@@ -16,20 +16,20 @@ async function signTransaction({
     freshAddressPath,
     balance,
     id: accountId,
-    subAccounts
+    subAccounts,
   },
   transport,
   transaction,
   coreTransaction,
   onDeviceSignatureGranted,
-  onDeviceSignatureRequested
+  onDeviceSignatureRequested,
 }) {
   // sign with device
 
   const hwApp = new Eth(transport);
   const subAccount =
     transaction.subAccountId && subAccounts
-      ? subAccounts.find(t => t.id === transaction.subAccountId)
+      ? subAccounts.find((t) => t.id === transaction.subAccountId)
       : null;
 
   if (subAccount && subAccount.type === "TokenAccount") {
@@ -84,7 +84,7 @@ async function signTransaction({
     recipients,
     accountId,
     date: new Date(),
-    extra: {}
+    extra: {},
   };
 
   if (subAccountId && subAccount) {
@@ -105,19 +105,19 @@ async function signTransaction({
         recipients: [transaction.recipient],
         accountId: subAccountId,
         date: new Date(),
-        extra: {}
-      }
+        extra: {},
+      },
     ];
   }
 
   return {
     operation,
     signature,
-    expirationDate: null
+    expirationDate: null,
   };
 }
 
 export default makeSignOperation<Transaction, CoreEthereumLikeTransaction>({
   buildTransaction,
-  signTransaction
+  signTransaction,
 });

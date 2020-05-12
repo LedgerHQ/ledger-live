@@ -5,7 +5,7 @@ import { makeBroadcast } from "../../libcore/broadcast";
 
 async function broadcast({
   coreAccount,
-  signedOperation: { signature, operation }
+  signedOperation: { signature, operation },
 }) {
   const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
   const txHash = await bitcoinLikeAccount.broadcastRawTransaction(signature);

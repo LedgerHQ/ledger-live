@@ -17,8 +17,8 @@ export const mockAccount = fromAccountRaw({
   freshAddresses: [
     {
       address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0"
-    }
+      derivationPath: "44'/195'/0'/0/0",
+    },
   ],
   name: "Tron 1",
   blockHeight: 0,
@@ -40,7 +40,7 @@ export const mockAccount = fromAccountRaw({
       value: "622168",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -56,7 +56,7 @@ export const mockAccount = fromAccountRaw({
       value: "0",
       fee: "0",
       extra: { frozenAmount: "1000000", resource: "BANDWIDTH" },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -72,7 +72,7 @@ export const mockAccount = fromAccountRaw({
       value: "98952",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -88,7 +88,7 @@ export const mockAccount = fromAccountRaw({
       value: "1187199",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -106,10 +106,10 @@ export const mockAccount = fromAccountRaw({
       extra: {
         votes: [
           { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", count: 281 },
-          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 55 }
-        ]
+          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 55 },
+        ],
       },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -125,7 +125,7 @@ export const mockAccount = fromAccountRaw({
       value: "700000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -143,10 +143,10 @@ export const mockAccount = fromAccountRaw({
       extra: {
         votes: [
           { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", count: 300 },
-          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 74 }
-        ]
+          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 74 },
+        ],
       },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -162,7 +162,7 @@ export const mockAccount = fromAccountRaw({
       value: "0",
       fee: "0",
       extra: { frozenAmount: "374000000", resource: "BANDWIDTH" },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -178,7 +178,7 @@ export const mockAccount = fromAccountRaw({
       value: "50000000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -194,7 +194,7 @@ export const mockAccount = fromAccountRaw({
       value: "50000000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -210,7 +210,7 @@ export const mockAccount = fromAccountRaw({
       value: "364769811",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -226,8 +226,8 @@ export const mockAccount = fromAccountRaw({
       value: "10000000",
       fee: "100000",
       extra: {},
-      subOperations: []
-    }
+      subOperations: [],
+    },
   ],
   operationsCount: 12,
   pendingOperations: [],
@@ -240,14 +240,14 @@ export const mockAccount = fromAccountRaw({
     frozen: {
       bandwidth: {
         amount: "375000000",
-        expiredAt: "2020-03-20T11:23:09.000Z"
+        expiredAt: "2020-03-20T11:23:09.000Z",
       },
-      energy: null
+      energy: null,
     },
     delegatedFrozen: { bandwidth: null, energy: null },
     votes: [
       { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 281 },
-      { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 55 }
+      { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 55 },
     ],
     tronPower: 375,
     energy: "0",
@@ -255,12 +255,12 @@ export const mockAccount = fromAccountRaw({
       freeUsed: "0",
       freeLimit: "5000",
       gainedUsed: "201",
-      gainedLimit: "679"
+      gainedLimit: "679",
     },
     unwithdrawnReward: "13602",
     lastWithdrawnRewardDate: __NEXT_REWARD_DATE__.toISOString(),
-    lastVotedDate: __LAST_VOTING_DATE__.toISOString()
-  }
+    lastVotedDate: __LAST_VOTING_DATE__.toISOString(),
+  },
 });
 
 export const mockAccountNoReward = fromAccountRaw({
@@ -275,8 +275,8 @@ export const mockAccountNoReward = fromAccountRaw({
   freshAddresses: [
     {
       address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0"
-    }
+      derivationPath: "44'/195'/0'/0/0",
+    },
   ],
   name: "Tron 1",
   blockHeight: 0,
@@ -298,7 +298,7 @@ export const mockAccountNoReward = fromAccountRaw({
       value: "0",
       fee: "0",
       extra: { frozenAmount: "1000000", resource: "BANDWIDTH" },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -316,10 +316,10 @@ export const mockAccountNoReward = fromAccountRaw({
       extra: {
         votes: [
           { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", count: 281 },
-          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 55 }
-        ]
+          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 55 },
+        ],
       },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -335,7 +335,7 @@ export const mockAccountNoReward = fromAccountRaw({
       value: "700000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -353,10 +353,10 @@ export const mockAccountNoReward = fromAccountRaw({
       extra: {
         votes: [
           { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", count: 300 },
-          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 74 }
-        ]
+          { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", count: 74 },
+        ],
       },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -372,7 +372,7 @@ export const mockAccountNoReward = fromAccountRaw({
       value: "0",
       fee: "0",
       extra: { frozenAmount: "374000000", resource: "BANDWIDTH" },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -388,7 +388,7 @@ export const mockAccountNoReward = fromAccountRaw({
       value: "50000000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -404,7 +404,7 @@ export const mockAccountNoReward = fromAccountRaw({
       value: "50000000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -420,7 +420,7 @@ export const mockAccountNoReward = fromAccountRaw({
       value: "364769811",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -436,8 +436,8 @@ export const mockAccountNoReward = fromAccountRaw({
       value: "10000000",
       fee: "100000",
       extra: {},
-      subOperations: []
-    }
+      subOperations: [],
+    },
   ],
   operationsCount: 12,
   pendingOperations: [],
@@ -450,14 +450,14 @@ export const mockAccountNoReward = fromAccountRaw({
     frozen: {
       bandwidth: {
         amount: "375000000",
-        expiredAt: "2020-03-20T11:23:09.000Z"
+        expiredAt: "2020-03-20T11:23:09.000Z",
       },
-      energy: null
+      energy: null,
     },
     delegatedFrozen: { bandwidth: null, energy: null },
     votes: [
       { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 281 },
-      { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 55 }
+      { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 55 },
     ],
     tronPower: 375,
     energy: "0",
@@ -465,12 +465,12 @@ export const mockAccountNoReward = fromAccountRaw({
       freeUsed: "0",
       freeLimit: "5000",
       gainedUsed: "201",
-      gainedLimit: "679"
+      gainedLimit: "679",
     },
     unwithdrawnReward: "13602",
     lastWithdrawnRewardDate: null,
-    lastVotedDate: "2020-03-09T08:44:39.000Z"
-  }
+    lastVotedDate: "2020-03-09T08:44:39.000Z",
+  },
 });
 
 export const mockAccountNoVote = fromAccountRaw({
@@ -485,8 +485,8 @@ export const mockAccountNoVote = fromAccountRaw({
   freshAddresses: [
     {
       address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0"
-    }
+      derivationPath: "44'/195'/0'/0/0",
+    },
   ],
   name: "Tron 1",
   blockHeight: 0,
@@ -508,7 +508,7 @@ export const mockAccountNoVote = fromAccountRaw({
       value: "0",
       fee: "0",
       extra: { frozenAmount: "1000000", resource: "BANDWIDTH" },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -524,7 +524,7 @@ export const mockAccountNoVote = fromAccountRaw({
       value: "700000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -540,7 +540,7 @@ export const mockAccountNoVote = fromAccountRaw({
       value: "0",
       fee: "0",
       extra: { frozenAmount: "374000000", resource: "BANDWIDTH" },
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -556,7 +556,7 @@ export const mockAccountNoVote = fromAccountRaw({
       value: "50000000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -572,7 +572,7 @@ export const mockAccountNoVote = fromAccountRaw({
       value: "50000000",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -588,7 +588,7 @@ export const mockAccountNoVote = fromAccountRaw({
       value: "364769811",
       fee: "0",
       extra: {},
-      subOperations: []
+      subOperations: [],
     },
     {
       id:
@@ -604,8 +604,8 @@ export const mockAccountNoVote = fromAccountRaw({
       value: "10000000",
       fee: "100000",
       extra: {},
-      subOperations: []
-    }
+      subOperations: [],
+    },
   ],
   operationsCount: 12,
   pendingOperations: [],
@@ -618,14 +618,14 @@ export const mockAccountNoVote = fromAccountRaw({
     frozen: {
       bandwidth: {
         amount: "375000000",
-        expiredAt: "2020-03-20T11:23:09.000Z"
+        expiredAt: "2020-03-20T11:23:09.000Z",
       },
-      energy: null
+      energy: null,
     },
     delegatedFrozen: { bandwidth: null, energy: null },
     votes: [
       { address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH", voteCount: 281 },
-      { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 55 }
+      { address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U", voteCount: 55 },
     ],
     tronPower: 375,
     energy: "0",
@@ -633,10 +633,10 @@ export const mockAccountNoVote = fromAccountRaw({
       freeUsed: "0",
       freeLimit: "5000",
       gainedUsed: "201",
-      gainedLimit: "679"
+      gainedLimit: "679",
     },
     unwithdrawnReward: "13602",
     lastWithdrawnRewardDate: null,
-    lastVotedDate: null
-  }
+    lastVotedDate: null,
+  },
 });

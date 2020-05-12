@@ -18,7 +18,7 @@ import {
   NetworkDown,
   InvalidAddressBecauseDestinationIsAlsoSource,
   FeeRequired,
-  RecipientRequired
+  RecipientRequired,
 } from "@ledgerhq/errors";
 import type { Account, Operation } from "../../../types";
 import {
@@ -26,13 +26,13 @@ import {
   getDerivationScheme,
   runDerivationScheme,
   isIterableDerivationMode,
-  derivationModeSupportsIndex
+  derivationModeSupportsIndex,
 } from "../../../derivation";
 import { formatCurrencyUnit } from "../../../currencies";
 import { getMainAccount } from "../../../account";
 import {
   getAccountPlaceholderName,
-  getNewAccountPlaceholderName
+  getNewAccountPlaceholderName,
 } from "../../../account";
 import getAddress from "../../../hw/getAddress";
 import { open, close } from "../../../hw";
@@ -40,14 +40,14 @@ import {
   apiForEndpointConfig,
   parseAPIValue,
   parseAPICurrencyObject,
-  formatAPICurrencyXRP
+  formatAPICurrencyXRP,
 } from "../../../api/Ripple";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import signTransaction from "../../../hw/signTransaction";
 import type { Transaction, NetworkInfo } from "../types";
 
 const signOperation = ({ account, transaction, deviceId }) =>
-  Observable.create(o => {
+  Observable.create((o) => {
     delete cacheRecipientsNew[transaction.recipient];
     const api = apiForEndpointConfig(RippleAPI, account.endpointConfig);
     const { fee } = transaction;
@@ -60,17 +60,17 @@ const signOperation = ({ account, transaction, deviceId }) =>
         const payment = {
           source: {
             address: account.freshAddress,
-            amount
+            amount,
           },
           destination: {
             address: transaction.recipient,
             minAmount: amount,
-            tag: transaction.tag ? transaction.tag : undefined
-          }
+            tag: transaction.tag ? transaction.tag : undefined,
+          },
         };
         const instruction = {
           fee: formatAPICurrencyXRP(fee).value,
-          maxLedgerVersionOffset: 12
+          maxLedgerVersionOffset: 12,
         };
 
         const prepared = await api.preparePayment(
@@ -112,7 +112,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
             (account.operations.length > 0
               ? account.operations[0].transactionSequenceNumber
               : 0) + account.pendingOperations.length,
-          extra: {}
+          extra: {},
         };
 
         if (transaction.tag) {
@@ -124,8 +124,8 @@ const signOperation = ({ account, transaction, deviceId }) =>
           signedOperation: {
             operation,
             signature,
-            expirationDate: null
-          }
+            expirationDate: null,
+          },
         });
       } catch (e) {
         if (e && e.name === "RippledError" && e.data.resultMessage) {
@@ -139,7 +139,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
 
     main().then(
       () => o.complete(),
-      e => o.error(e)
+      (e) => o.error(e)
     );
   });
 
@@ -169,8 +169,8 @@ function isRecipientValid(recipient) {
 }
 
 function mergeOps(existing: Operation[], newFetched: Operation[]) {
-  const ids = existing.map(o => o.id);
-  const all = existing.concat(newFetched.filter(o => !ids.includes(o.id)));
+  const ids = existing.map((o) => o.id);
+  const all = existing.concat(newFetched.filter((o) => !ids.includes(o.id)));
   return all.sort((a, b) => b.date - a.date);
 }
 
@@ -184,18 +184,18 @@ type Tx = {
       address: string,
       maxAmount: {
         currency: string,
-        value: string
-      }
+        value: string,
+      },
     },
     destination: {
       address: string,
       amount: {
         currency: string,
-        value: string
+        value: string,
       },
-      tag?: string
+      tag?: string,
     },
-    paths: string
+    paths: string,
   },
   outcome: {
     result: string,
@@ -204,42 +204,42 @@ type Tx = {
     deliveredAmount?: {
       currency: string,
       value: string,
-      counterparty: string
+      counterparty: string,
     },
     balanceChanges: {
       [addr: string]: Array<{
         counterparty: string,
         currency: string,
-        value: string
-      }>
+        value: string,
+      }>,
     },
     orderbookChanges: {
       [addr: string]: Array<{
         direction: string,
         quantity: {
           currency: string,
-          value: string
+          value: string,
         },
         totalPrice: {
           currency: string,
           counterparty: string,
-          value: string
+          value: string,
         },
         makeExchangeRate: string,
         sequence: number,
-        status: string
-      }>
+        status: string,
+      }>,
     },
     ledgerVersion: number,
-    indexInLedger: number
-  }
+    indexInLedger: number,
+  },
 };
 
 const txToOperation = (account: Account) => ({
   id,
   sequence,
   outcome: { fee, deliveredAmount, ledgerVersion, timestamp },
-  specification: { source, destination }
+  specification: { source, destination },
 }: Tx): ?Operation => {
   const type = source.address === account.freshAddress ? "OUT" : "IN";
   let value = deliveredAmount
@@ -265,7 +265,7 @@ const txToOperation = (account: Account) => ({
     recipients: [destination.address],
     date: new Date(timestamp),
     transactionSequenceNumber: sequence,
-    extra: {}
+    extra: {},
   };
   if (destination.tag) {
     op.extra.tag = destination.tag;
@@ -273,7 +273,7 @@ const txToOperation = (account: Account) => ({
   return op;
 };
 
-const getServerInfo = (map => endpointConfig => {
+const getServerInfo = ((map) => (endpointConfig) => {
   if (!endpointConfig) endpointConfig = "";
   if (map[endpointConfig]) return map[endpointConfig]();
   const f = throttle(async () => {
@@ -313,7 +313,7 @@ const recipientIsNew = async (endpointConfig, recipient) => {
 };
 
 // FIXME this could be cleaner
-const remapError = error => {
+const remapError = (error) => {
   const msg = error.message;
 
   if (
@@ -337,7 +337,7 @@ const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
   scanAccounts: ({ currency, deviceId }) =>
-    Observable.create(o => {
+    Observable.create((o) => {
       let finished = false;
       const unsubscribe = () => {
         finished = true;
@@ -358,7 +358,7 @@ const currencyBridge: CurrencyBridge = {
           for (const derivationMode of derivationModes) {
             const derivationScheme = getDerivationScheme({
               derivationMode,
-              currency
+              currency,
             });
             const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
             for (let index = 0; index < stopAt; index++) {
@@ -367,14 +367,14 @@ const currencyBridge: CurrencyBridge = {
                 derivationScheme,
                 currency,
                 {
-                  account: index
+                  account: index,
                 }
               );
 
               const { address } = await getAddress(transport, {
                 currency,
                 path: freshAddressPath,
-                derivationMode
+                derivationMode,
               });
 
               if (finished) return;
@@ -407,7 +407,7 @@ const currencyBridge: CurrencyBridge = {
                       name: getNewAccountPlaceholderName({
                         currency,
                         index,
-                        derivationMode
+                        derivationMode,
                       }),
                       starred: false,
                       freshAddress,
@@ -415,8 +415,8 @@ const currencyBridge: CurrencyBridge = {
                       freshAddresses: [
                         {
                           address: freshAddress,
-                          derivationPath: freshAddressPath
-                        }
+                          derivationPath: freshAddressPath,
+                        },
                       ],
                       balance: BigNumber(0),
                       spendableBalance: BigNumber(0),
@@ -429,8 +429,8 @@ const currencyBridge: CurrencyBridge = {
                       unit: currency.units[0],
                       archived: false,
                       lastSyncDate: new Date(),
-                      creationDate: new Date()
-                    }
+                      creationDate: new Date(),
+                    },
                   });
                 }
                 break;
@@ -446,7 +446,7 @@ const currencyBridge: CurrencyBridge = {
               const transactions = await api.getTransactions(address, {
                 minLedgerVersion,
                 maxLedgerVersion,
-                types: ["payment"]
+                types: ["payment"],
               });
               if (finished) return;
 
@@ -458,7 +458,7 @@ const currencyBridge: CurrencyBridge = {
                 name: getAccountPlaceholderName({
                   currency,
                   index,
-                  derivationMode
+                  derivationMode,
                 }),
                 starred: false,
                 freshAddress,
@@ -466,8 +466,8 @@ const currencyBridge: CurrencyBridge = {
                 freshAddresses: [
                   {
                     address: freshAddress,
-                    derivationPath: freshAddressPath
-                  }
+                    derivationPath: freshAddressPath,
+                  },
                 ],
                 balance,
                 spendableBalance: balance, // TODO calc with base reserve
@@ -479,7 +479,7 @@ const currencyBridge: CurrencyBridge = {
                 pendingOperations: [],
                 unit: currency.units[0],
                 lastSyncDate: new Date(),
-                creationDate: new Date()
+                creationDate: new Date(),
               };
               account.operations = transactions
                 .map(txToOperation(account))
@@ -506,16 +506,16 @@ const currencyBridge: CurrencyBridge = {
       main();
 
       return unsubscribe;
-    })
+    }),
 };
 
 const sync = ({
   endpointConfig,
   freshAddress,
   blockHeight,
-  operations: { length: currentOpsLength }
+  operations: { length: currentOpsLength },
 }) =>
-  Observable.create(o => {
+  Observable.create((o) => {
     let finished = false;
     const unsubscribe = () => {
       finished = true;
@@ -544,9 +544,9 @@ const sync = ({
 
         if (!info) {
           // account does not exist, we have nothing to sync but to update the last sync date
-          o.next(a => ({
+          o.next((a) => ({
             ...a,
-            lastSyncDate: new Date()
+            lastSyncDate: new Date(),
           }));
           o.complete();
           return;
@@ -564,18 +564,18 @@ const sync = ({
             minLedgerVersion
           ),
           maxLedgerVersion,
-          types: ["payment"]
+          types: ["payment"],
         });
 
         if (finished) return;
 
-        o.next(a => {
+        o.next((a) => {
           const newOps = transactions.map(txToOperation(a));
           const operations = mergeOps(a.operations, newOps);
           const [last] = operations;
           const pendingOperations = a.pendingOperations.filter(
-            oo =>
-              !operations.some(op => oo.hash === op.hash) &&
+            (oo) =>
+              !operations.some((op) => oo.hash === op.hash) &&
               last &&
               last.transactionSequenceNumber &&
               oo.transactionSequenceNumber &&
@@ -588,7 +588,7 @@ const sync = ({
             operations,
             pendingOperations,
             blockHeight: maxLedgerVersion,
-            lastSyncDate: new Date()
+            lastSyncDate: new Date(),
           };
         });
 
@@ -612,7 +612,7 @@ const createTransaction = () => ({
   fee: null,
   tag: undefined,
   networkInfo: null,
-  feeCustomUnit: null
+  feeCustomUnit: null,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -628,7 +628,7 @@ const prepareTransaction = async (a: Account, t: Transaction) => {
       networkInfo = {
         family: "ripple",
         serverFee,
-        baseReserve: BigNumber(0) // NOT USED. will refactor later.
+        baseReserve: BigNumber(0), // NOT USED. will refactor later.
       };
     } catch (e) {
       throw remapError(e);
@@ -643,7 +643,7 @@ const prepareTransaction = async (a: Account, t: Transaction) => {
     return {
       ...t,
       networkInfo,
-      fee
+      fee,
     };
   }
 
@@ -675,8 +675,8 @@ const getTransactionStatus = async (a, t) => {
       minimumAmount: formatCurrencyUnit(a.currency.units[0], reserveBaseXRP, {
         disableRounding: true,
         useGrouping: false,
-        showCode: true
-      })
+        showCode: true,
+      }),
     });
   } else if (
     t.recipient &&
@@ -685,7 +685,7 @@ const getTransactionStatus = async (a, t) => {
   ) {
     const f = formatAPICurrencyXRP(reserveBaseXRP);
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
-      minimalAmount: `${f.currency} ${BigNumber(f.value).toFixed()}`
+      minimalAmount: `${f.currency} ${BigNumber(f.value).toFixed()}`,
     });
   }
 
@@ -698,7 +698,7 @@ const getTransactionStatus = async (a, t) => {
       bs58check.decode(t.recipient);
     } catch (e) {
       errors.recipient = new InvalidAddress("", {
-        currencyName: a.currency.name
+        currencyName: a.currency.name,
       });
     }
   }
@@ -712,14 +712,14 @@ const getTransactionStatus = async (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
-  transaction
+  transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const r = await getServerInfo(mainAccount.endpointConfig);
@@ -728,7 +728,7 @@ const estimateMaxSpendable = async ({
     ...createTransaction(),
     recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // public testing seed abandonx11,about
     ...transaction,
-    amount: BigNumber(0)
+    amount: BigNumber(0),
   });
   const s = await getTransactionStatus(mainAccount, t);
   return BigNumber.max(
@@ -745,7 +745,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 export default { currencyBridge, accountBridge };

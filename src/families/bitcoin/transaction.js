@@ -4,29 +4,29 @@ import type {
   Transaction,
   TransactionRaw,
   FeeItems,
-  FeeItemsRaw
+  FeeItemsRaw,
 } from "./types";
 import {
   fromTransactionCommonRaw,
-  toTransactionCommonRaw
+  toTransactionCommonRaw,
 } from "../../transaction/common";
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
-  items: fir.items.map(fi => ({
+  items: fir.items.map((fi) => ({
     key: fi.key,
     speed: fi.speed,
-    feePerByte: BigNumber(fi.feePerByte)
+    feePerByte: BigNumber(fi.feePerByte),
   })),
-  defaultFeePerByte: BigNumber(fir.defaultFeePerByte)
+  defaultFeePerByte: BigNumber(fir.defaultFeePerByte),
 });
 
 const toFeeItemsRaw = (fir: FeeItems): FeeItemsRaw => ({
-  items: fir.items.map(fi => ({
+  items: fir.items.map((fi) => ({
     key: fi.key,
     speed: fi.speed,
-    feePerByte: fi.feePerByte.toString()
+    feePerByte: fi.feePerByte.toString(),
   })),
-  defaultFeePerByte: fir.defaultFeePerByte.toString()
+  defaultFeePerByte: fir.defaultFeePerByte.toString(),
 });
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
@@ -37,8 +37,8 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     feePerByte: tr.feePerByte ? BigNumber(tr.feePerByte) : null,
     networkInfo: tr.networkInfo && {
       family: tr.networkInfo.family,
-      feeItems: fromFeeItemsRaw(tr.networkInfo.feeItems)
-    }
+      feeItems: fromFeeItemsRaw(tr.networkInfo.feeItems),
+    },
   };
 };
 
@@ -50,8 +50,8 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     feePerByte: t.feePerByte ? t.feePerByte.toString() : null,
     networkInfo: t.networkInfo && {
       family: t.networkInfo.family,
-      feeItems: toFeeItemsRaw(t.networkInfo.feeItems)
-    }
+      feeItems: toFeeItemsRaw(t.networkInfo.feeItems),
+    },
   };
 };
 

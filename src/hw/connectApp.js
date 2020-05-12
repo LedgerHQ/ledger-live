@@ -6,7 +6,7 @@ import {
   TransportStatusError,
   FirmwareOrAppUpdateRequired,
   UserRefusedOnDevice,
-  BtcUnmatchedApp
+  BtcUnmatchedApp,
 } from "@ledgerhq/errors";
 import { getEnv } from "../env";
 import type { DerivationMode } from "../types";
@@ -19,19 +19,19 @@ import openApp from "./openApp";
 export type RequiresDerivation = {|
   currencyId: string,
   derivationPath: string,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 |};
 
 export type Input = {
   devicePath: string,
   appName: string,
-  requiresDerivation?: RequiresDerivation
+  requiresDerivation?: RequiresDerivation,
 };
 
 export type AppAndVersion = {
   name: string,
   version: string,
-  flags: number
+  flags: number,
 };
 
 export type ConnectAppEvent =
@@ -56,7 +56,7 @@ const openAppFromDashboard = (
         of({ type: "device-permission-requested", wording: appName }),
         defer(() => from(openApp(transport, appName))).pipe(
           concatMap(() => of({ type: "device-permission-granted" })),
-          catchError(e => {
+          catchError((e) => {
             if (e && e instanceof TransportStatusError) {
               switch (e.statusCode) {
                 case 0x6984:
@@ -75,11 +75,11 @@ const derivationLogic = (
   {
     requiresDerivation,
     appAndVersion,
-    appName
+    appName,
   }: {
     requiresDerivation: RequiresDerivation,
     appAndVersion?: AppAndVersion,
-    appName: string
+    appName: string,
   }
 ): Observable<ConnectAppEvent> =>
   defer(() =>
@@ -87,16 +87,16 @@ const derivationLogic = (
       getAddress(transport, {
         currency: getCryptoCurrencyById(requiresDerivation.currencyId),
         path: requiresDerivation.derivationPath,
-        derivationMode: requiresDerivation.derivationMode
+        derivationMode: requiresDerivation.derivationMode,
       })
     )
   ).pipe(
     map(({ address }) => ({
       type: "opened",
       appAndVersion,
-      derivation: { address }
+      derivation: { address },
     })),
-    catchError(e => {
+    catchError((e) => {
       if (!e) return throwError(e);
       if (e instanceof BtcUnmatchedApp) {
         return of({ type: "ask-open-app", appName });
@@ -121,17 +121,17 @@ const derivationLogic = (
 const cmd = ({
   devicePath,
   appName,
-  requiresDerivation
+  requiresDerivation,
 }: Input): Observable<ConnectAppEvent> =>
-  withDevice(devicePath)(transport =>
-    Observable.create(o => {
+  withDevice(devicePath)((transport) =>
+    Observable.create((o) => {
       const timeoutSub = of({ type: "unresponsiveDevice" })
         .pipe(delay(1000))
-        .subscribe(e => o.next(e));
+        .subscribe((e) => o.next(e));
 
       const sub = defer(() => from(getAppAndVersion(transport)))
         .pipe(
-          concatMap(appAndVersion => {
+          concatMap((appAndVersion) => {
             timeoutSub.unsubscribe();
 
             if (dashboardNames.includes(appAndVersion.name)) {
@@ -147,7 +147,7 @@ const cmd = ({
               return derivationLogic(transport, {
                 requiresDerivation,
                 appAndVersion,
-                appName
+                appName,
               });
             } else {
               return of({ type: "opened", appAndVersion });
@@ -167,7 +167,7 @@ const cmd = ({
               }
               return derivationLogic(transport, {
                 requiresDerivation,
-                appName
+                appName,
               });
             }
             return throwError(e);

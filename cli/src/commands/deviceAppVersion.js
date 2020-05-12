@@ -8,5 +8,5 @@ import { deviceOpt } from "../scan";
 export default {
   args: [deviceOpt],
   job: ({ device }: $Shape<{ device: string }>) =>
-    withDevice(device || "")(t => from(getAppAndVersion(t)))
+    withDevice(device || "")((t) => from(getAppAndVersion(t))),
 };

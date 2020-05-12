@@ -10,7 +10,7 @@ type Pair = {
   exchange: string,
   dateFrom: Date,
   dateTo: Date,
-  rate: Date => number
+  rate: (Date) => number,
 };
 
 export const genDateRange = (
@@ -28,7 +28,7 @@ export const genDateRange = (
 
 export const genStoreState = (pairs: Pair[]): CounterValuesState => {
   const state = { daily: {}, hourly: {} };
-  pairs.forEach(pair => {
+  pairs.forEach((pair) => {
     const { from, to, exchange } = pair;
     const a = (state.daily[to.ticker] = state.daily[to.ticker] || {});
     const b = (a[from.ticker] = a[from.ticker] || {});
@@ -58,7 +58,7 @@ export const baseMockBTCRates = {
   VTC: 0.00009569,
   VIA: 0.0001065,
   XRP: 0.006208,
-  ZEC: 0.0133534
+  ZEC: 0.0133534,
 };
 
 export const getDailyRatesImplementation = async (
@@ -67,7 +67,7 @@ export const getDailyRatesImplementation = async (
 ) => {
   const rates = {
     USD: { BTC: { SIMEX: { latest: 0.00521587214628 } } },
-    BTC: {}
+    BTC: {},
   };
 
   const fallbackRate = 0;
@@ -75,12 +75,12 @@ export const getDailyRatesImplementation = async (
   const arbitraryRateEpoch = 1555452000000; // 17th April 2019 00:00
   const todayTimestamp = new Date().setHours(0, 0, 0, 0);
 
-  const hms = date =>
+  const hms = (date) =>
     new Date(date.getTime() - date.getTimezoneOffset() * 60000)
       .toISOString()
       .split("T")[0];
 
-  const buildDays = from => {
+  const buildDays = (from) => {
     const outputDays = {};
     const baseRate = baseMockBTCRates[from] || fallbackRate;
     const todayDate = new Date(todayTimestamp);
@@ -113,8 +113,8 @@ export const getDailyRatesImplementation = async (
       default:
         acc.BTC[pair.from] = {
           [pair.exchange || "fallback"]: {
-            ...buildDays(pair.from)
-          }
+            ...buildDays(pair.from),
+          },
         };
         break;
     }
@@ -132,7 +132,7 @@ export const fetchExchangesForPairImplementation = async () => {
   return [
     { id: "good", name: "good", website: "#" },
     { id: "ugly", name: "ugly", website: "#" },
-    { id: "bad", name: "bad", website: "#" }
+    { id: "bad", name: "bad", website: "#" },
   ];
 };
 
@@ -1013,7 +1013,7 @@ export const tickersByMarketCap = [
   "TOK",
   "CTT",
   "DXN",
-  "ACC"
+  "ACC",
 ];
 
 export const fetchTickersByMarketcapImplementation = async (): Promise<

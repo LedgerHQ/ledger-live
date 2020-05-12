@@ -4,7 +4,7 @@ import type {
   CryptoCurrency,
   ExplorerView,
   TokenAccount,
-  Account
+  Account,
 } from "./types";
 
 export const getDefaultExplorerView = (

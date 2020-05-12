@@ -8,13 +8,13 @@ const options = [
   {
     name: "fee",
     type: String,
-    desc: "how much fee"
+    desc: "how much fee",
   },
   {
     name: "tag",
     type: Number,
-    desc: "ripple tag"
-  }
+    desc: "ripple tag",
+  },
 ];
 
 function inferTransactions(
@@ -27,12 +27,12 @@ function inferTransactions(
     return {
       ...transaction,
       fee: inferAmount(account, opts.fee || "0.001xrp"),
-      tag: opts.tag
+      tag: opts.tag,
     };
   });
 }
 
 export default {
   options,
-  inferTransactions
+  inferTransactions,
 };

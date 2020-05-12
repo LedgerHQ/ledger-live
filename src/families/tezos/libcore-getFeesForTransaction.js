@@ -13,7 +13,7 @@ async function tezos(args: {
   coreCurrency: CoreCurrency,
   transaction: Transaction,
   isPartial: boolean,
-  isCancelled: () => boolean
+  isCancelled: () => boolean,
 }) {
   const builded = await buildTransaction(args);
   if (!builded) return;

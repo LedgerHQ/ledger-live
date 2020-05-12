@@ -36,7 +36,7 @@
     "@ledgerhq/hw-transport-node-hid": "5.15.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.15.0",
     "@ledgerhq/ledger-core": "^6.3.0",
-    "@ledgerhq/live-common": "^12.20.0",
+    "@ledgerhq/live-common": "^12.21.0",
     "@ledgerhq/logs": "5.15.0",
     "asciichart": "^1.5.17",
     "bignumber.js": "^9.0.0",

@@ -20,7 +20,7 @@ const all = {
   ethereum_classic: ethereum,
   ethereum_classic_testnet: ethereum,
   ripple,
-  tron
+  tron,
 };
 
 const m: Resolver = (currency, transport, path, transaction) => {

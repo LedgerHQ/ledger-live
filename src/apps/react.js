@@ -10,7 +10,7 @@ import {
   initState,
   getNextAppOp,
   isOutOfMemoryState,
-  predictOptimisticState
+  predictOptimisticState,
 } from "./logic";
 import { runAppOp } from "./runner";
 
@@ -30,7 +30,7 @@ export const useAppsRunner = (
   const appOp = state.currentAppOp || nextAppOp;
   useEffect(() => {
     if (appOp) {
-      const sub = runAppOp(state, appOp, exec).subscribe(event => {
+      const sub = runAppOp(state, appOp, exec).subscribe((event) => {
         dispatch({ type: "onRunnerEvent", event });
       });
       return () => {
@@ -59,13 +59,13 @@ export function useNotEnoughMemoryToInstall(state: State, name: string) {
 type AppsSections = {
   catalog: App[],
   device: App[],
-  update: App[]
+  update: App[],
 };
 
 type AppsSectionsOpts = {
   query: string,
   appFilter: AppType,
-  sort: SortOptions
+  sort: SortOptions,
 };
 
 export function useAppsSections(
@@ -75,14 +75,14 @@ export function useAppsSections(
   const { updateAllQueue, appByName, installed, installQueue, apps } = state;
 
   const appsUpdating = useMemo(
-    () => updateAllQueue.map(name => appByName[name]).filter(Boolean),
+    () => updateAllQueue.map((name) => appByName[name]).filter(Boolean),
     [appByName, updateAllQueue]
   );
 
   const updatableAppList = useMemo(
     () =>
       apps.filter(({ name }) =>
-        installed.some(i => i.name === name && !i.updated)
+        installed.some((i) => i.name === name && !i.updated)
       ),
     [apps, installed]
   );
@@ -93,7 +93,7 @@ export function useAppsSections(
     () => ({
       query: opts.query,
       installedApps: installed,
-      type: [opts.appFilter]
+      type: [opts.appFilter],
     }),
     [installed, opts.appFilter, opts.query]
   );
@@ -106,7 +106,7 @@ export function useAppsSections(
       query: opts.query,
       installedApps: installed,
       installQueue,
-      type: ["installed"]
+      type: ["installed"],
     },
     { type: "default", order: "asc" }
   );
@@ -155,11 +155,11 @@ export function useAppInstallNeedsDeps(
 
   const res = useMemo(() => {
     const dependencies = (app.dependencies || [])
-      .map(name => appByName[name])
+      .map((name) => appByName[name])
       .filter(
-        dep =>
+        (dep) =>
           dep &&
-          !installedList.some(app => app.name === dep.name) &&
+          !installedList.some((app) => app.name === dep.name) &&
           !installQueue.includes(dep.name)
       );
     if (dependencies.length) {
@@ -181,8 +181,8 @@ export function useAppUninstallNeedsDeps(
 
   const res = useMemo(() => {
     const dependents = apps.filter(
-      a =>
-        installed.some(i => i.name === a.name) &&
+      (a) =>
+        installed.some((i) => i.name === a.name) &&
         a.dependencies.includes(app.name)
     );
 

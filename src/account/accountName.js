@@ -7,11 +7,11 @@ const MAX_ACCOUNT_NAME_SIZE = 50;
 export const getAccountPlaceholderName = ({
   currency,
   index,
-  derivationMode
+  derivationMode,
 }: {
   currency: CryptoCurrency,
   index: number,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 }) => {
   const tag = getTagDerivationMode(currency, derivationMode);
   return `${currency.name} ${index + 1}${tag ? ` (${tag})` : ""}`;

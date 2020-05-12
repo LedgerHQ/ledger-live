@@ -11,7 +11,7 @@ import network from "../../network";
 
 const capacityStatuses: { [_: CapacityStatus]: * } = {
   normal: null,
-  full: null
+  full: null,
 };
 
 export type CapacityStatus = $Keys<typeof capacityStatuses>;
@@ -21,7 +21,7 @@ export type Baker = {|
   name: string,
   logoURL: string,
   nominalYield: string,
-  capacityStatus: CapacityStatus
+  capacityStatus: CapacityStatus,
 |};
 
 // type used by UI to facilitate business logic of current delegation data
@@ -37,14 +37,14 @@ export type Delegation = {|
   // true if a receive should inform it will top up the delegation
   receiveShouldWarnDelegation: boolean,
   // true if a send should inform it will top down the delegation
-  sendShouldWarnDelegation: boolean
+  sendShouldWarnDelegation: boolean,
 |};
 
 const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
     const base = getEnv("API_TEZOS_BAKER");
     const { data }: { data: mixed } = await network({
-      url: `${base}/v1/bakers`
+      url: `${base}/v1/bakers`,
     });
     const bakers = [];
     if (data && typeof data === "object") {
@@ -55,7 +55,7 @@ const cache = makeLRUCache(
         Array.isArray(bakersRaw)
       ) {
         log("tezos/bakers", "found " + bakersRaw.length + " bakers");
-        bakersRaw.forEach(raw => {
+        bakersRaw.forEach((raw) => {
           if (raw && typeof raw === "object") {
             const { available_capacity } = raw;
             const availableCapacity = BigNumber(
@@ -70,7 +70,7 @@ const cache = makeLRUCache(
               name: raw.baker_name,
               logoURL: raw.logo,
               nominalYield: raw.nominal_staking_yield,
-              capacityStatus
+              capacityStatus,
             });
             if (baker) {
               bakers.push(baker);
@@ -95,10 +95,10 @@ export const fetchAllBakers = async () => {
 
 function whitelist(all: Baker[], addresses: string[]) {
   const map = {};
-  all.forEach(b => {
+  all.forEach((b) => {
     map[b.address] = b;
   });
-  return addresses.map(addr => map[addr]).filter(Boolean);
+  return addresses.map((addr) => map[addr]).filter(Boolean);
 }
 
 export const listBakers = async (
@@ -116,7 +116,7 @@ export function useBakers(whitelistAddresses: string[]) {
 
   useEffect(() => {
     let cancelled;
-    listBakers(whitelistAddresses).then(bakers => {
+    listBakers(whitelistAddresses).then((bakers) => {
       if (cancelled) return;
       setBakers(bakers);
     });
@@ -130,17 +130,18 @@ export function useBakers(whitelistAddresses: string[]) {
 
 export function getBakerSync(addr: string): ?Baker {
   if (_lastBakers) {
-    return _lastBakers.find(baker => baker.address === addr);
+    return _lastBakers.find((baker) => baker.address === addr);
   }
 }
 
 export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   const op = account.operations.find(
-    op => !op.hasFailed && (op.type === "DELEGATE" || op.type === "UNDELEGATE")
+    (op) =>
+      !op.hasFailed && (op.type === "DELEGATE" || op.type === "UNDELEGATE")
   );
   const pendingOp = account.pendingOperations
-    .filter(op => !account.operations.some(o => op.hash === o.hash))
-    .find(op => op.type === "DELEGATE" || op.type === "UNDELEGATE");
+    .filter((op) => !account.operations.some((o) => op.hash === o.hash))
+    .find((op) => op.type === "DELEGATE" || op.type === "UNDELEGATE");
 
   const isPending = !!pendingOp;
   const operation = pendingOp && pendingOp.type === "DELEGATE" ? pendingOp : op;
@@ -149,10 +150,10 @@ export function getAccountDelegationSync(account: AccountLike): ?Delegation {
   }
 
   const recentOps = account.operations
-    .filter(op => op.date > operation.date)
+    .filter((op) => op.date > operation.date)
     .concat(account.pendingOperations);
-  const sendShouldWarnDelegation = !recentOps.some(op => op.type === "OUT");
-  const receiveShouldWarnDelegation = !recentOps.some(op => op.type === "IN");
+  const sendShouldWarnDelegation = !recentOps.some((op) => op.type === "OUT");
+  const receiveShouldWarnDelegation = !recentOps.some((op) => op.type === "IN");
 
   return {
     isPending,
@@ -160,7 +161,7 @@ export function getAccountDelegationSync(account: AccountLike): ?Delegation {
     address: operation.recipients[0],
     baker: null,
     sendShouldWarnDelegation,
-    receiveShouldWarnDelegation
+    receiveShouldWarnDelegation,
   };
 }
 
@@ -172,7 +173,7 @@ export async function loadBaker(addr: string): Promise<?Baker> {
   const cacheBaker = getBakerSync(addr);
   if (cacheBaker) return Promise.resolve(cacheBaker);
   const bakers = await cache();
-  const baker = bakers.find(baker => baker.address === addr);
+  const baker = bakers.find((baker) => baker.address === addr);
   return baker;
 }
 
@@ -184,7 +185,7 @@ export async function loadAccountDelegation(
   const baker = await loadBaker(d.address);
   return {
     ...d,
-    baker
+    baker,
   };
 }
 
@@ -194,7 +195,7 @@ export function useDelegation(account: AccountLike): ?Delegation {
   );
   useEffect(() => {
     let cancelled;
-    loadAccountDelegation(account).then(delegation => {
+    loadAccountDelegation(account).then((delegation) => {
       if (cancelled) return;
       setDelegation(delegation);
     });
@@ -209,7 +210,7 @@ export function useBaker(addr: string): ?Baker {
   const [baker, setBaker] = useState(() => getBakerSync(addr));
   useEffect(() => {
     let cancelled;
-    loadBaker(addr).then(baker => {
+    loadBaker(addr).then((baker) => {
       if (cancelled) return;
       setBaker(baker);
     });
@@ -223,7 +224,7 @@ export function useBaker(addr: string): ?Baker {
 //  select a random baker for the mount time (assuming bakers length don't change)
 export function useRandomBaker(bakers: Baker[]) {
   const randomBakerIndex = useMemo(() => {
-    const nonFullBakers = bakers.filter(b => b.capacityStatus !== "full");
+    const nonFullBakers = bakers.filter((b) => b.capacityStatus !== "full");
     if (nonFullBakers.length > 0) {
       // if there are non full bakers, we pick one
       const i = Math.floor(Math.random() * nonFullBakers.length);
@@ -255,7 +256,7 @@ export const asBaker = (data: mixed): ?Baker => {
         address,
         logoURL,
         nominalYield,
-        capacityStatus
+        capacityStatus,
       };
     }
   }

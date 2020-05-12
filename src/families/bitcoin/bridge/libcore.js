@@ -6,7 +6,7 @@ import {
   FeeNotLoaded,
   FeeRequired,
   FeeTooHigh,
-  NotEnoughBalance
+  NotEnoughBalance,
 } from "@ledgerhq/errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
@@ -26,7 +26,7 @@ const calculateFees = makeLRUCache(
   async (a, t) => {
     return getFeesForTransaction({
       account: a,
-      transaction: t
+      transaction: t,
     });
   },
   (a, t) =>
@@ -41,7 +41,7 @@ const createTransaction = () => ({
   recipient: "",
   feePerByte: null,
   networkInfo: null,
-  useAllAmount: false
+  useAllAmount: false,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -51,7 +51,7 @@ const worseCaseCostEstimationAddresses = abandonSeedLegacyPerCurrency;
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
-  transaction
+  transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
@@ -59,7 +59,7 @@ const estimateMaxSpendable = async ({
     ...createTransaction(),
     ...transaction,
     useAllAmount: true,
-    recipient: worseCaseCostEstimationAddresses[mainAccount.currency.id]
+    recipient: worseCaseCostEstimationAddresses[mainAccount.currency.id],
   });
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;
@@ -90,10 +90,10 @@ const getTransactionStatus = async (a, t) => {
     errors.feePerByte = new FeeRequired();
   } else if (!errors.recipient) {
     await calculateFees(a, t).then(
-      res => {
+      (res) => {
         estimatedFees = res.estimatedFees;
       },
-      error => {
+      (error) => {
         if (error.name === "NotEnoughBalance") {
           errors.amount = error;
         } else {
@@ -124,7 +124,7 @@ const getTransactionStatus = async (a, t) => {
     warnings,
     estimatedFees,
     amount,
-    totalSpent
+    totalSpent,
   });
 };
 
@@ -148,14 +148,14 @@ const prepareTransaction = async (
   return {
     ...t,
     networkInfo,
-    feePerByte
+    feePerByte,
   };
 };
 
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
   preload: () => Promise.resolve(),
-  hydrate: () => {}
+  hydrate: () => {},
 };
 
 const accountBridge: AccountBridge<Transaction> = {
@@ -166,7 +166,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   sync,
   signOperation,
-  broadcast
+  broadcast,
 };
 
 export default { currencyBridge, accountBridge };
