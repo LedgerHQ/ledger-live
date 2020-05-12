@@ -55,7 +55,7 @@ export default function Row({
       ? accounts.find(a => a.id === account.parentId)
       : null;
   const color = getCurrencyColor(currency);
-  const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
+  const percentage = Math.round(distribution * 1e4) / 1e2;
   const icon = <ParentCurrencyIcon currency={currency} size={18} />;
 
   return (
