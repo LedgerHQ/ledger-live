@@ -844,7 +844,8 @@
     "header": "Asset allocation",
     "list": "Asset allocation ({{count}})",
     "assets": "assets",
-    "total": "Total balance:"
+    "total": "Total balance:",
+    "listAccount": "Account allocation ({{count}})"
   },
   "settings": {
     "header": "Settings",
