@@ -1,6 +1,7 @@
 // @flow
 
 import React, { PureComponent, createRef, useEffect } from "react";
+import { StyleSheet, View, Linking } from "react-native";
 import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { connect } from "react-redux";
@@ -11,7 +12,6 @@ import {
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
-import { StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -26,6 +26,7 @@ import PreventNativeBack from "../../components/PreventNativeBack";
 import SelectableAccountsList from "../../components/SelectableAccountsList";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import IconPause from "../../icons/Pause";
+import ExternalLink from "../../icons/ExternalLink";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
 import RetryButton from "../../components/RetryButton";
@@ -273,6 +274,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       ),
     };
 
+    const supportLink = sections.map(s => s.supportLink).find(Boolean);
+
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="AddAccounts" name="Accounts" />
@@ -320,6 +323,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
         </NavigationScrollView>
         {!!scannedAccounts.length && (
           <Footer
+            supportLink={supportLink}
             isScanning={scanning}
             canRetry={!scanning && noImportableAccounts && !cantCreateAccount}
             canDone={!scanning && cantCreateAccount && noImportableAccounts}
@@ -360,6 +364,7 @@ class Footer extends PureComponent<{
   onRetry: () => void,
   onDone: () => void,
   isDisabled: boolean,
+  supportLink?: { url: string, id: string },
 }> {
   render() {
     const {
@@ -371,10 +376,23 @@ class Footer extends PureComponent<{
       canDone,
       onRetry,
       onDone,
+      supportLink,
     } = this.props;
 
     return (
       <View style={styles.footer}>
+        {supportLink ? (
+          <Button
+            event={"AddAccountsSupportLink_" + supportLink.id}
+            type="lightSecondary"
+            title={
+              <Trans i18nKey={`addAccounts.supportLinks.${supportLink.id}`} />
+            }
+            IconLeft={ExternalLink}
+            onPress={() => Linking.openURL(supportLink.url)}
+          />
+        ) : null}
+
         {isScanning ? (
           <Button
             event="AddAccountsStopScan"
