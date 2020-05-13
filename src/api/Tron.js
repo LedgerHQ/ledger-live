@@ -21,6 +21,7 @@ import {
   encode58Check,
   abiEncodeTrc20Transfer,
   formatTrongridTxResponse,
+  formatTrongridTrc20TxResponse,
   hexToAscii,
 } from "../families/tron/utils";
 import { log } from "@ledgerhq/logs";
@@ -258,7 +259,7 @@ export async function fetchTronAccountTxs(
     await getEntireTxs(
       `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20`
     )
-  ).map((tx) => formatTrongridTxResponse(tx, true));
+  ).map((tx) => formatTrongridTrc20TxResponse(tx));
 
   const txInfos: TrongridTxInfo[] = compact(
     entireTxs.concat(entireTrc20Txs)
