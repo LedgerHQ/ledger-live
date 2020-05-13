@@ -5,11 +5,20 @@ import { validateNameEdition } from "./accountName";
 import { isAccountEmpty } from "./helpers";
 import { findAccountMigration } from "./support";
 
+// Reference all possible support link
+// For now we have only one, but we can union type in future
+// We can map .id to a wording.
+export type AddAccountSupportLink = {
+  id: "segwit_or_native_segwit",
+  url: string,
+};
+
 export type AddAccountsSection = {
   id: string,
   selectable: boolean,
   defaultSelected: boolean,
   data: Account[],
+  supportLink?: AddAccountSupportLink,
 };
 
 export type AddAccountsSectionResult = {
@@ -95,12 +104,26 @@ export function groupAddAccounts(
     });
   }
   if (!context.scanning || creatableAccounts.length) {
+    let supportLink = undefined;
+    if (
+      creatableAccounts.length > 1 &&
+      creatableAccounts.some((a) => a.derivationMode === "segwit") &&
+      creatableAccounts.some((a) => a.derivationMode === "native_segwit")
+    ) {
+      supportLink = {
+        id: "segwit_or_native_segwit",
+        url:
+          "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
+      };
+    }
+
     // NB if data is empty, need to do custom placeholder that depends on alreadyEmptyAccount
     sections.push({
       id: "creatable",
       selectable: true,
       defaultSelected: false,
       data: creatableAccounts,
+      supportLink,
     });
   }
 
