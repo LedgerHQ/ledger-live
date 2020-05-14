@@ -82,7 +82,7 @@ export type CosmosOperationMode =
   | "undelegate"
   | "redelegate"
   | "claimReward"
-  | "claimAllRewards";
+  | "claimRewardCompound";
 
 export type NetworkInfo = {|
   family: "cosmos",
