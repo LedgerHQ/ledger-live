@@ -1177,10 +1177,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.15.0.tgz#e5d5b5ad48fc07f6308b78b065242e158bc044a2"
   integrity sha512-ZlLhR7qaChPgEbvcqOptRepWGm8VhhwOM6kC1gx3WErutbtaOjUX8lLA4ButWFU2f+xTl2rS/5c86wC7qGqGXQ==
 
-"@ledgerhq/hw-app-btc@^5.15.1":
-  version "5.15.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.15.1.tgz#6e9f31f581b6899b1496e11a91d38134260bc958"
-  integrity sha512-0+2wZEJ3Ud6N5Vr++qTfIImee8HjoHC1hZB98MkCeNGG6zizESbcXL9RJI88gV2fk3b9o1HUd86po1P7QvEpcQ==
+"@ledgerhq/hw-app-btc@^5.15.2":
+  version "5.15.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.15.2.tgz#a1c8b5a16915c92d4d21ad5e2962b0310c4473e8"
+  integrity sha512-mpjANAFEtFfvb9BwiijDZOAEWlON/G6ieORNpJ4GM2u7Lanlo39IANo3K68ootGnS15QdfAdZw34SzdzLfIIYg==
   dependencies:
     "@ledgerhq/hw-transport" "^5.15.0"
     bip32-path "^0.4.2"
@@ -1232,10 +1232,10 @@
     "@ledgerhq/hw-transport" "^5.15.0"
     "@ledgerhq/logs" "^5.15.0"
 
-"@ledgerhq/hw-transport-node-speculos@^5.15.0":
-  version "5.15.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-speculos/-/hw-transport-node-speculos-5.15.0.tgz#df1d782b0ace14beaa66cd6d6dd2f1fa83e5f40d"
-  integrity sha512-7m4LLofrJHpr1cPLUqKqjyQkBOss+e+JWzAdQAQCUPn1IyQyaJf87h3DsbQuqu3cAU0umMy0GlXoNFh4oED+Iw==
+"@ledgerhq/hw-transport-node-speculos@^5.15.2":
+  version "5.15.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-speculos/-/hw-transport-node-speculos-5.15.2.tgz#3e347120faa9765d75ac88adca12e4ec54416d36"
+  integrity sha512-lhM0EYCtnuzTl8Xpgp/CVsupw4u+KCCtvIL2kqOygXccvfX8VdQuo03C/JXm8mJoH99EHK+lJHqTdhorg2Yl7A==
   dependencies:
     "@ledgerhq/errors" "^5.15.0"
     "@ledgerhq/hw-transport" "^5.15.0"

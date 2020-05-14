@@ -2,7 +2,10 @@
 // Ledger internal speculos testing framework.
 // loading this file have side effects and is only for Node.
 
+import path from "path";
+import semver from "semver";
 import { spawn, exec } from "child_process";
+import { promises as fsp } from "fs";
 import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
@@ -17,6 +20,86 @@ export function releaseSpeculosDevice(id: ?string) {
   const obj = data[id];
   if (obj) obj.destroy();
 }
+
+export type AppCandidate = {
+  path: string,
+  model: DeviceModelId,
+  firmware: string,
+  appName: string,
+  appVersion: string,
+};
+
+const modelMap: { [_: string]: DeviceModelId } = {
+  blue: "blue",
+  nanox: "nanoX",
+  nanos: "nanoS",
+};
+
+// list all possible apps. sorted by latest first
+export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
+  let candidates = [];
+  const models = await fsp.readdir(cwd);
+  for (const modelName of models) {
+    const model = modelMap[modelName.toLowerCase()];
+    if (!model) continue;
+    const p1 = path.join(cwd, modelName);
+    const firmwares = (await fsp.readdir(p1)).filter(semver.valid);
+    firmwares.sort((a, b) => semver.compare(a, b));
+    for (const firmware of firmwares) {
+      const p2 = path.join(p1, firmware);
+      const appNames = await fsp.readdir(p2);
+      for (const appName of appNames) {
+        const p3 = path.join(p2, appName);
+        const elfs = await fsp.readdir(p3);
+        const c = [];
+        for (const elf of elfs) {
+          if (elf.startsWith("app_") && elf.endsWith(".elf")) {
+            const p4 = path.join(p3, elf);
+            const appVersion = elf.slice(4, elf.length - 4);
+            if (semver.valid(appVersion)) {
+              c.push({
+                path: p4,
+                model,
+                firmware,
+                appName,
+                appVersion,
+              });
+            }
+          }
+        }
+        c.sort((a, b) => semver.compare(a.appVersion, b.appVersion));
+        candidates = candidates.concat(c);
+      }
+    }
+  }
+  return candidates;
+}
+
+export type AppSearch = {
+  model: DeviceModelId,
+  firmware: string,
+  appName: string,
+  appVersion: string,
+};
+
+export function appCandidatesMatches(
+  appCandidate: AppCandidate,
+  search: $Shape<AppSearch>
+): boolean {
+  return (
+    (!search.model || search.model === appCandidate.model) &&
+    (!search.appName || search.appName === appCandidate.appName) &&
+    (!search.firmware ||
+      semver.satisfies(appCandidate.firmware, search.firmware)) &&
+    (!search.appVersion ||
+      semver.satisfies(appCandidate.appVersion, search.appVersion))
+  );
+}
+
+export const findAppCandidate = (
+  appCandidates: AppCandidate[],
+  search: $Shape<AppSearch>
+): ?AppCandidate => appCandidates.find((c) => appCandidatesMatches(c, search));
 
 export async function createSpeculosDevice({
   model,
@@ -34,7 +117,7 @@ export async function createSpeculosDevice({
   dependency?: string,
   seed: string,
   // Folder where we have app binaries
-  coinapps: string
+  coinapps: string,
 }): Promise<{
   transport: SpeculosTransport,
   id: string,
