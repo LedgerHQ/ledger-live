@@ -1307,7 +1307,11 @@
       },
       "currencyApp": {
         "title": "Open the {{managerAppName}} app on your {{productName}}",
-        "description": ""
+        "description": "",
+        "footer": {
+          "appInstalled": "Don't have the app installed?",
+          "goManager": "Go to manager"
+        }
       },
       "accountApp": {
         "title": "Open the {{managerAppName}} app on your {{productName}}",

@@ -1,10 +1,12 @@
 // @flow
 
-import React from "react";
+import React, { useCallback } from "react";
+import { View, StyleSheet } from "react-native";
 import last from "lodash/last";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { from, of } from "rxjs";
 import { map, first } from "rxjs/operators";
+import { useNavigation } from "@react-navigation/native";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
@@ -32,6 +34,8 @@ import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import { rejectionOp } from "../DebugRejectSwitch";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
+import LText from "../LText";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
@@ -201,12 +205,24 @@ export const listApps: Step = {
 };
 
 export const currencyApp: CryptoCurrency => Step = currency => ({
-  Body: ({ meta }: *) => {
+  Body: ({ meta, onClose }: *) => {
+    const { t } = useTranslation();
+    const navigation = useNavigation();
+
+    const goManager = useCallback(() => {
+      if (onClose) {
+        onClose();
+      }
+
+      navigation.navigate(ScreenName.Manager);
+    }, [onClose, navigation]);
+
     const wordingValues = {
       ...inferWordingValues(meta),
       managerAppName: currency.managerAppName,
       currencyName: currency.name,
     };
+
     return (
       <RenderStep
         icon={<RoundedCurrencyIcon currency={currency} size={32} />}
@@ -222,7 +238,19 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
             values={wordingValues}
           />
         }
-      />
+      >
+        <View style={styles.footer}>
+          <LText secondary semiBold style={styles.appInstalled}>
+            {t("SelectDevice.steps.currencyApp.footer.appInstalled")}
+          </LText>
+          <Button
+            title={t("SelectDevice.steps.currencyApp.footer.goManager")}
+            onPress={goManager}
+            event="DeviceJobGoToManager"
+            type="primary"
+          />
+        </View>
+      </RenderStep>
     );
   },
   run: meta =>
@@ -254,6 +282,21 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
       })),
       rejectionOp(() => new CantOpenDevice()),
     ),
+});
+
+const styles = StyleSheet.create({
+  footer: {
+    borderTopWidth: 1,
+    borderColor: colors.lightFog,
+    alignItems: "stretch",
+    padding: 16,
+  },
+  appInstalled: {
+    color: colors.darkBlue,
+    fontSize: 16,
+    paddingVertical: 16,
+    textAlign: "center",
+  },
 });
 
 export const accountApp: Account => Step = account => ({

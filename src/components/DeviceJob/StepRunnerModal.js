@@ -43,7 +43,12 @@ export default function SelectDeviceConnectModal({
           Footer={step.ErrorFooter || ErrorFooterGeneric}
         />
       ) : meta ? (
-        <step.Body meta={meta} step={step} onDone={onStepDone} />
+        <step.Body
+          meta={meta}
+          step={step}
+          onDone={onStepDone}
+          onClose={onClose}
+        />
       ) : null}
       <Touchable event="DeviceJobClose" style={styles.close} onPress={onClose}>
         <Close color={colors.fog} size={20} />
@@ -53,31 +58,9 @@ export default function SelectDeviceConnectModal({
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
   close: {
     position: "absolute",
     right: 16,
     top: 16,
-  },
-  headIcon: {
-    padding: 10,
-  },
-  title: {
-    marginBottom: 10,
-    fontSize: 18,
-    color: colors.black,
-  },
-  description: {
-    fontSize: 14,
-    color: colors.grey,
-  },
-  retryButton: {
-    marginTop: 20,
-    alignSelf: "stretch",
   },
 });
