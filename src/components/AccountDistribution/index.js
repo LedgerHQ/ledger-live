@@ -44,7 +44,7 @@ const AccountDistribution = ({
   <View>
     <LText bold secondary style={styles.distributionTitle}>
       <Trans
-        i18nKey="distribution.list"
+        i18nKey="distribution.listAccount"
         count={accountDistribution.length}
         values={{ count: accountDistribution.length }}
       />
