@@ -142,6 +142,7 @@ class Explorers extends Component<*> {
     const coins = listCryptoCurrencies(true);
     return (
       <Main>
+        <h1 style={{ color: "red" }}>Are you still using this page? Please contact @gre. We are about to disrupt it. We no longer support this, https://github.com/LedgerHQ/ledger-live-common and INFRA team have enough tests to cover this.</h1>
         {coins
           .filter(c => hasCurrencyExplorer(c))
           .map(c => (
