@@ -45,6 +45,7 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
     const p1 = path.join(cwd, modelName);
     const firmwares = (await fsp.readdir(p1)).filter(semver.valid);
     firmwares.sort((a, b) => semver.compare(a, b));
+    firmwares.reverse();
     for (const firmware of firmwares) {
       const p2 = path.join(p1, firmware);
       const appNames = await fsp.readdir(p2);
@@ -68,6 +69,7 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
           }
         }
         c.sort((a, b) => semver.compare(a.appVersion, b.appVersion));
+        c.reverse();
         candidates = candidates.concat(c);
       }
     }
