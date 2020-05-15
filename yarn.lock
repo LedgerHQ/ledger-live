@@ -1232,10 +1232,10 @@
     "@ledgerhq/hw-transport" "^5.15.0"
     "@ledgerhq/logs" "^5.15.0"
 
-"@ledgerhq/hw-transport-node-speculos@^5.15.2":
-  version "5.15.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-speculos/-/hw-transport-node-speculos-5.15.2.tgz#3e347120faa9765d75ac88adca12e4ec54416d36"
-  integrity sha512-lhM0EYCtnuzTl8Xpgp/CVsupw4u+KCCtvIL2kqOygXccvfX8VdQuo03C/JXm8mJoH99EHK+lJHqTdhorg2Yl7A==
+"@ledgerhq/hw-transport-node-speculos@^5.15.3":
+  version "5.15.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-transport-node-speculos/-/hw-transport-node-speculos-5.15.3.tgz#108ef55db006d3cc027a66c0c94ab45579fd26aa"
+  integrity sha512-6FiMMUWwWSFnj9yX3BjGD1kgnr+wKA7t2ZwUFyA+4IPf3gGIGDuiBiFViKPjqmQDsRUZgjsaqRLabpq2umsh4Q==
   dependencies:
     "@ledgerhq/errors" "^5.15.0"
     "@ledgerhq/hw-transport" "^5.15.0"

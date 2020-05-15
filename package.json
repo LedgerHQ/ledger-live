@@ -71,7 +71,7 @@
     "@ledgerhq/hw-app-xrp": "5.15.0",
     "@ledgerhq/hw-transport": "5.15.0",
     "@ledgerhq/hw-transport-mocker": "^5.15.0",
-    "@ledgerhq/hw-transport-node-speculos": "^5.15.2",
+    "@ledgerhq/hw-transport-node-speculos": "^5.15.3",
     "@ledgerhq/logs": "5.15.0",
     "async": "^3.2.0",
     "axios": "0.19.0",
