@@ -199,7 +199,13 @@ export async function createSpeculosDevice({
   });
 
   const destroy = () => {
-    exec(`/usr/local/bin/docker rm -f ${id}`);
+    exec(`docker rm -f ${id}`, (error, stdout, stderr) => {
+      if (error) {
+        log("speculos", `ERROR: could not destroy ${id}: ${error} ${stderr}`);
+      } else {
+        log("speculos", `destroyed ${id}`);
+      }
+    });
     delete data[id];
   };
 
