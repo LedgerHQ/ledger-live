@@ -1,21 +1,17 @@
 // @flow
 
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useState } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
-import i18next from "i18next";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { createStructuredSelector } from "reselect";
 // $FlowFixMe
 import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate, Trans } from "react-i18next";
 import type {
   Account,
   AccountLikeArray,
 } from "@ledgerhq/live-common/lib/types";
+import { useSelector } from "react-redux";
 import { getConfig } from "./coinifyConfig";
 import colors from "../../colors";
 import {
@@ -23,8 +19,14 @@ import {
   flattenAccountsSelector,
 } from "../../reducers/accounts";
 
-import StepHeader from "../../components/StepHeader";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import DeviceJob from "../../components/DeviceJob";
+import {
+  accountApp,
+  connectingStep,
+  receiveVerifyStep,
+} from "../../components/DeviceJob/steps";
+import KeyboardView from "../../components/KeyboardView";
 
 type Navigation = NavigationScreenProp<{ params: {} }>;
 
@@ -32,17 +34,20 @@ type Props = {
   accounts: Account[],
   allAccounts: AccountLikeArray,
   navigation: Navigation,
+  route: { params: RouteParams },
 };
 
-const CoinifyWidget = ({ navigation, allAccounts }: Props) => {
+const runFirst = `window.postMessage = e => window.ReactNativeWebView.postMessage(JSON.stringify(e))`;
+
+export default function CoinifyWidget({ navigation, route }: Props) {
+  const [isWaitingDeviceJob, setWaitingDeviceJob] = useState(false);
   const webView = useRef(null);
-  const accountId = navigation.getParam("accountId");
+  const allAccounts = useSelector(flattenAccountsSelector);
+  const accountId = route.params.accountId;
+  const mode = route.params.mode;
+  const meta = route.params.meta;
 
   const account = allAccounts.find(a => a.id === accountId);
-
-  const handleMessage = useCallback(event => {
-    console.log("event: ", event);
-  }, []);
 
   const coinifyConfig = getConfig("developpement");
   const widgetConfig = {
@@ -51,12 +56,39 @@ const CoinifyWidget = ({ navigation, allAccounts }: Props) => {
     partnerId: coinifyConfig.partnerId,
     cryptoCurrencies: account.currency.ticker,
     address: account.freshAddress,
+    targetPage: mode,
   };
+
+  if (mode === "buy") {
+    widgetConfig.transferOutMedia = "blockchain";
+  }
+
+  if (mode === "sell") {
+    widgetConfig.transferInMedia = "blockchain";
+  }
+
+  const handleMessage = useCallback(message => {
+    console.log("GOT MSG");
+    //    if (message.url !== coinifyConfig.url || !message.nativeEvent.data) return;
+    message.persist();
+
+    const { type, event, context } = JSON.parse(message.nativeEvent.data);
+    if (type !== "event") return;
+    switch (event) {
+      case "trade.receive-account-changed":
+        console.log("VERIFY PLS");
+        if (context.address === account.freshAddress) {
+          setWaitingDeviceJob(true);
+          console.log("ADDRESS PLS");
+        } else {
+          // TODO this is a problem, it should not occur.
+        }
+        break;
+    }
+  }, []);
 
   const url = `${coinifyConfig.url}?${querystring.stringify(widgetConfig)}`;
   const forceInset = { bottom: "always" };
-
-  console.log(coinifyConfig, widgetConfig, url);
 
   return (
     <SafeAreaView
@@ -65,8 +97,6 @@ const CoinifyWidget = ({ navigation, allAccounts }: Props) => {
     >
       <WebView
         ref={webView}
-        onError={console.log}
-        onLoad={console.log}
         startInLoadingState={true}
         renderLoading={() => (
           <View style={styles.center}>
@@ -76,6 +106,7 @@ const CoinifyWidget = ({ navigation, allAccounts }: Props) => {
         source={{
           uri: url,
         }}
+        injectedJavaScript={runFirst}
         overScrollMode={false}
         onMessage={handleMessage}
         automaticallyAdjustContentInsets={false}
@@ -86,26 +117,28 @@ const CoinifyWidget = ({ navigation, allAccounts }: Props) => {
           height: "100%",
         }}
       />
+      {isWaitingDeviceJob ? (
+        <DeviceJob
+          deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
+          meta={meta}
+          onCancel={() => {
+            console.log("cancel")
+            setWaitingDeviceJob(false);
+          }}
+          onDone={() => {
+            console.log("done")
+            setWaitingDeviceJob(false);
+          }}
+          steps={[
+            connectingStep,
+            accountApp(account),
+            receiveVerifyStep(account),
+          ]}
+        />
+      ) : null}
     </SafeAreaView>
   );
-};
-
-CoinifyWidget.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("transfer.receive.headerTitle")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "3",
-        totalSteps: "3",
-      })}
-    />
-  ),
-};
-
-const mapStateToProps = createStructuredSelector({
-  allAccounts: flattenAccountsSelector,
-  accounts: accountsSelector,
-});
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -124,8 +157,3 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
-
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(CoinifyWidget);

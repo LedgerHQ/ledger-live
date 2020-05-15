@@ -1,12 +1,10 @@
 // @flow
 
 import React, { useMemo } from "react";
-import { translate, Trans } from "react-i18next";
-import { StyleSheet, View } from "react-native";
+import { Trans } from "react-i18next";
+import { StyleSheet, View, FlatList } from "react-native";
 // $FlowFixMe
-import { SafeAreaView, FlatList } from "react-navigation";
-import i18next from "i18next";
-import { compose } from "redux";
+import { SafeAreaView } from "react-navigation";
 import type { NavigationScreenProp } from "react-navigation";
 import type {
   CryptoCurrency,
@@ -17,16 +15,15 @@ import {
   useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/lib/currencies";
 
+import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
-import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 
 import colors from "../../colors";
-import withEnv from "../../logic/withEnv";
 
 const SEARCH_KEYS = ["name", "ticker"];
 const forceInset = { bottom: "always" };
@@ -50,9 +47,17 @@ const renderEmptyList = () => (
 
 
 // hardcoded for now, maybe it could be dynamically fetched from coinify API ?
-const supportedCurrenciesIds = ["bitcoin", "ethereum", "ethereum/erc20/weth"];
+const supportedCurrenciesIds = [
+  "bitcoin",
+  "ethereum",
+  "bitcoin_cash",
+  "dash",
+  "stellar",
+];
 
-const ExchangeSelectCrypto = ({ devMode, navigation }: Props) => {
+export default function ExchangeSelectCrypto({ navigation }: Props) {
+  const devMode = useEnv("MANAGER_DEV_MODE");
+
   const cryptoCurrencies = useMemo(
     () => listCryptoCurrencies(devMode).concat(listTokens()),
     [devMode],
@@ -113,18 +118,6 @@ const ExchangeSelectCrypto = ({ devMode, navigation }: Props) => {
   );
 };
 
-ExchangeSelectCrypto.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("common.cryptoAsset")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "1",
-        totalSteps: "3",
-      })}
-    />
-  ),
-};
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -147,10 +140,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-const enhancer = compose(
-  translate(),
-  withEnv("MANAGER_DEV_MODE", "devMode"),
-);
-
-export default enhancer(ExchangeSelectCrypto);

@@ -1,18 +1,16 @@
 /* @flow */
 import React, { useCallback } from "react";
-import i18next from "i18next";
-import { View, StyleSheet, Text } from "react-native";
-import { createStructuredSelector } from "reselect";
+import { View, StyleSheet, FlatList } from "react-native";
 // $FlowFixMe
-import { SafeAreaView, FlatList } from "react-navigation";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
+import SafeAreaView from "react-native-safe-area-view";
 import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate, Trans } from "react-i18next";
+import { Trans } from "react-i18next";
 import type {
   Account,
   AccountLikeArray,
 } from "@ledgerhq/live-common/lib/types";
+import { useSelector } from "react-redux";
 import {
   accountsSelector,
   flattenAccountsSelector,
@@ -22,11 +20,11 @@ import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
-import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import Card from "../../components/Card";
+import Circle from "../../components/Circle";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 const forceInset = { bottom: "always" };
@@ -37,20 +35,36 @@ type Props = {
   accounts: Account[],
   allAccounts: AccountLikeArray,
   navigation: Navigation,
+  route: { params: RouteParams },
 };
 
 // type State = {};
 
 const AddAccountButton = ({ onPress }) => {
   return (
-    <Card onPress={onPress} style={styles.addAccountButton}>
-      <Text>jello</Text>
+    <Card onPress={onPress} style={{ ...styles.addAccountButton, ...styles.card }}>
+      <Icon name="plus" size={20} color={colors.live} />
+      <LText
+        semiBold
+        numberOfLines={1}
+        style={[
+          styles.accountNameText,
+          {
+            marginLeft: 8,
+            fontSize: 14,
+          }
+        ]}
+      >
+        Add account
+      </LText>
     </Card>
   );
 };
 
-const ReceiveFunds = ({ accounts, allAccounts, navigation }: Props) => {
-  const currency = navigation.getParam("currency");
+export default function SelectAccount({ navigation, route }: Props) {
+  const currency = route.params.currency;
+  const allAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSelector(accountsSelector);
 
   const keyExtractor = item => item.account.id;
   const renderItem = useCallback(
@@ -65,8 +79,9 @@ const ReceiveFunds = ({ accounts, allAccounts, navigation }: Props) => {
             account={account}
             style={styles.card}
             onPress={() => {
-              navigation.navigate("ExchangeCoinifyWidget", {
+              navigation.navigate("ExchangeConnectDevice", {
                 accountId: account.id,
+                mode: "buy",
                 parentId:
                   account.type !== "Account" ? account.parentId : undefined,
               });
@@ -135,24 +150,7 @@ const ReceiveFunds = ({ accounts, allAccounts, navigation }: Props) => {
       </KeyboardView>
     </SafeAreaView>
   );
-};
-
-ReceiveFunds.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("transfer.receive.headerTitle")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "2",
-        totalSteps: "3",
-      })}
-    />
-  ),
-};
-
-const mapStateToProps = createStructuredSelector({
-  allAccounts: flattenAccountsSelector,
-  accounts: accountsSelector,
-});
+}
 
 const styles = StyleSheet.create({
   addAccountButton: {
@@ -193,8 +191,3 @@ const styles = StyleSheet.create({
     color: colors.fog,
   },
 });
-
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(ReceiveFunds);

@@ -21,6 +21,7 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
+import ExchangeNavigator from "./ExchangeNavigator";
 import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
@@ -67,13 +68,8 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name={NavigatorName.AddAccounts}
-        component={AddAccountsNavigator}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={NavigatorName.FirmwareUpdate}
-        component={FirmwareUpdateNavigator}
+        name={NavigatorName.Exchange}
+        component={ExchangeNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
