@@ -136,7 +136,7 @@ export async function createSpeculosDevice({
 
   log("speculos", "spawning with apdu=" + apduPort + " button=" + buttonPort);
 
-  const p = spawn("/usr/local/bin/docker", [
+  const p = spawn("docker", [
     "run",
     "-v",
     `${coinapps}:/speculos/apps`,
