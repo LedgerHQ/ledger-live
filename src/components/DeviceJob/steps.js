@@ -247,7 +247,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
             title={t("SelectDevice.steps.currencyApp.footer.goManager")}
             onPress={goManager}
             event="DeviceJobGoToManager"
-            type="primary"
+            type="secondary"
           />
         </View>
       </RenderStep>
