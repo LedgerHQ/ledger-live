@@ -63,7 +63,7 @@ export default function Accounts({ navigation }: Props) {
       <MigrateAccountsBanner />
       <TokenContextualModal
         onClose={() => setAccount(undefined)}
-        isOpened={account}
+        isOpened={!!account}
         account={account}
       />
     </>

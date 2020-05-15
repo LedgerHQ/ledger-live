@@ -115,8 +115,6 @@ export default function SubAccountsList({
     });
   }, [accountId, navigation]);
 
-  const onClearAccount = useCallback(() => setAccount(undefined), [setAccount]);
-
   const renderHeader = useCallback(
     () => (
       <View style={styles.header}>
@@ -217,12 +215,12 @@ export default function SubAccountsList({
       <Card>
         <SubAccountRow
           account={item}
-          onSubAccountLongPress={setAccount}
+          onSubAccountLongPress={account => setAccount(account)}
           onSubAccountPress={onAccountPress}
         />
       </Card>
     ),
-    [onAccountPress, setAccount],
+    [onAccountPress],
   );
 
   if (
@@ -243,7 +241,7 @@ export default function SubAccountsList({
         ListFooterComponent={renderFooter}
       />
       <TokenContextualModal
-        onClose={onClearAccount}
+        onClose={() => setAccount()}
         isOpened={!!account}
         account={account}
       />
