@@ -52,6 +52,16 @@ const modes = Object.freeze({
     skipFirst: true, // already included in the normal bip44,
     tag: "metamask",
   },
+  bch_on_bitcoin_segwit: {
+    overridesCoinType: 0,
+    isInvalid: true,
+    isSegwit: true,
+    purpose: 49,
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: "BIP49_P2SH",
+    },
+    addressFormat: "p2sh",
+  },
   // many users have wrongly sent BTC on BCH paths
   legacy_on_bch: {
     overridesCoinType: 145,
@@ -168,6 +178,7 @@ const modes = Object.freeze({
 
 const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
   aeternity: ["aeternity"],
+  bitcoin_cash: ["bch_on_bitcoin_segwit"],
   bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   ethereum: ["ethM", "ethMM"],
@@ -289,8 +300,11 @@ export const getDerivationScheme = ({
     isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
-    : overridesCoinType ||
-      (currencyForceCoinType ? currency.coinType : "<coin_type>");
+    : typeof overridesCoinType === "number"
+    ? overridesCoinType
+    : currencyForceCoinType
+    ? currency.coinType
+    : "<coin_type>";
   const purpose = getPurposeDerivationMode(derivationMode);
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
