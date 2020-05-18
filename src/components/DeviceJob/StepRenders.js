@@ -63,7 +63,6 @@ export const RenderStep = ({
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
-    paddingHorizontal: 16,
   },
   body: {
     flexDirection: "column",

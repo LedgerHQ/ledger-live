@@ -8,6 +8,7 @@ export type Step = {
   Body: React$ComponentType<{
     meta: Device & Object,
     onDone: () => void,
+    onClose?: () => void,
   }>,
 
   ErrorFooter?: React$ComponentType<{
