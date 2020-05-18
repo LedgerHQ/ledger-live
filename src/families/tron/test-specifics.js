@@ -65,15 +65,15 @@ export default () => {
         "45ba987d98a271d424a2f0043c72c8897d52316d709cb43ff274ca154f210d10",
         "0b2f6c549c47c56f3524478f133bc98f8b4c89962bf3c915ed06ddb5def5ea2a",
         "822f8af2e82aee52276b480e9937e82631cfc9ff2d6ce089c796c24baccaab31",
-        "80e47e1c203e06363684c007c76defce8f8d55e2f2f7f701ddcde6940c3f2567",
+        // "80e47e1c203e06363684c007c76defce8f8d55e2f2f7f701ddcde6940c3f2567",
         "ce7c33737d6ad3052a6f25cd6cacb8cc1496c27667ed43c2a5188044191734bf",
       ];
 
-      const hasUnsupportedTxs = txs.some((tx) =>
+      const hasUnsupportedTxs = txs.filter((tx) =>
         unsupportedTxIds.includes(tx.txID)
       );
 
-      expect(hasUnsupportedTxs).toEqual(false);
+      expect(hasUnsupportedTxs).toEqual([]);
     });
   });
 };
