@@ -5,6 +5,52 @@ import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
+import type { Account } from "../../types";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
+
+export const formatTransaction = (
+  {
+    mode,
+    amount,
+    fees,
+    recipient,
+    validators,
+    memo,
+    cosmosSourceValidator,
+  }: Transaction,
+  account: Account
+): string =>
+  `
+  ${mode.toUpperCase()} ${
+    amount.isZero()
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountUnit(account), amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }${
+    !validators
+      ? ""
+      : " " +
+        validators
+          .map(
+            (v) =>
+              formatCurrencyUnit(getAccountUnit(account), v.amount) +
+              "->" +
+              v.address
+          )
+          .join(" ")
+  }${
+    !cosmosSourceValidator
+      ? ""
+      : "\n  source validator=" + cosmosSourceValidator
+  }
+  TO ${recipient}
+  with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}${
+    !memo ? "" : `\n  memo=${memo}`
+  }`;
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -54,4 +100,4 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default { fromTransactionRaw, toTransactionRaw };
+export default { formatTransaction, fromTransactionRaw, toTransactionRaw };

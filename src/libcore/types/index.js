@@ -198,6 +198,7 @@ declare class CoreExtendedKeyAccountCreationInfo {
 declare class CoreDynamicObject {
   static newInstance(): Promise<CoreDynamicObject>;
   static flush(): Promise<void>;
+  putBoolean(string, boolean): Promise<void>;
   putString(string, string): Promise<void>;
   putInt(string, number): Promise<void>;
 }
@@ -566,6 +567,7 @@ export const reflect = (declare: (string, Spec) => void) => {
       },
     },
     methods: {
+      putBoolean: {},
       putString: {},
       putInt: {},
     },

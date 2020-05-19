@@ -167,6 +167,9 @@ function useSyncQueue({
             derivationMode: account.derivationMode,
             freshAddressPath: account.freshAddressPath,
             operationsLength: account.operationsCount,
+            accountsCountForCurrency: accounts.filter(
+              (a) => a.currency === account.currency
+            ).length,
             tokensLength: subAccounts.length,
             votesCount: getVotesCount(account),
           });

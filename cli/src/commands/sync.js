@@ -1,7 +1,7 @@
 // @flow
 
 import { map } from "rxjs/operators";
-import accountFormatters from "../accountFormatters";
+import { accountFormatters } from "@ledgerhq/live-common/lib/account";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 

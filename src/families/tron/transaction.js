@@ -5,6 +5,9 @@ import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
+import type { Account } from "../../types";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -50,4 +53,29 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default { fromTransactionRaw, toTransactionRaw };
+export const formatTransaction = (
+  t: Transaction,
+  mainAccount: Account
+): string => {
+  const account =
+    (t.subAccountId &&
+      (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
+    mainAccount;
+  return `
+  ${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
+    t.amount.isZero()
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountUnit(account), t.amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }${
+    !t.votes
+      ? ""
+      : " " + t.votes.map((v) => v.voteCount + "->" + v.address).join(" ")
+  }
+  TO ${t.recipient}`;
+};
+
+export default { formatTransaction, fromTransactionRaw, toTransactionRaw };
