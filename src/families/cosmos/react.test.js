@@ -67,12 +67,35 @@ describe("cosmos/react", () => {
       });
 
       expect(result.current.length).toBe(2);
-      expect(result.current[0].reward.split(" ")[0]).toBe(
+      expect(result.current[0].reward.split(" ")[0]).toBe(
         getAccountUnit(account).code
       );
     });
 
-    it.todo("should return formatted delegations for redelegate/undelegate");
+    it("should return formatted delegations for redelegate/undelegate", async () => {
+      const { account, currencyBridge } = setup();
+      const { result } = renderHook(() =>
+        hooks.useCosmosFormattedDelegations(account, "redelegate")
+      );
+
+      const { result: result2 } = renderHook(() =>
+        hooks.useCosmosFormattedDelegations(account, "undelegate")
+      );
+
+      await act(async () => {
+        await currencyBridge.preload();
+      });
+
+      expect(result).toStrictEqual(result2);
+
+      const delegations = account.cosmosResources?.delegations;
+      invariant(delegations, "cosmos: delegations is required");
+
+      expect(result.current.length).toBe(delegations.length);
+      expect(result.current[0].formattedAmount.split(" ")[0]).toBe(
+        getAccountUnit(account).code
+      );
+    });
   });
 
   describe("useCosmosDelegationsQuerySelector", () => {
