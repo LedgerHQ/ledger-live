@@ -54,6 +54,20 @@ describe("cosmos/react", () => {
       );
       expect(result.current[0].status).toStrictEqual(delegations[0].status);
     });
+
+    it.todo("should return formatted delegations for claimReward");
+
+    it.todo("should return formatted delegations for redelegate/undelegate");
+  });
+
+  describe("useCosmosDelegationsQuerySelector", () => {
+    it.todo("should return selected delegation as value");
+    it.todo("should return delegations as options");
+    it.todo("should update options when calling setQuery");
+  });
+
+  describe("useSortedValidators", () => {
+    it.todo("should reutrn sorted validators");
   });
 });
 
