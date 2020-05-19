@@ -1,6 +1,7 @@
 // @flow
 import invariant from "invariant";
 import { renderHook, act } from "@testing-library/react-hooks";
+import { getAccountUnit } from "../../account";
 import { getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "../../env";
@@ -55,7 +56,21 @@ describe("cosmos/react", () => {
       expect(result.current[0].status).toStrictEqual(delegations[0].status);
     });
 
-    it.todo("should return formatted delegations for claimReward");
+    it("should return formatted delegations for claimReward", async () => {
+      const { account, currencyBridge } = setup();
+      const { result } = renderHook(() =>
+        hooks.useCosmosFormattedDelegations(account, "claimReward")
+      );
+
+      await act(async () => {
+        await currencyBridge.preload();
+      });
+
+      expect(result.current.length).toBe(2);
+      expect(result.current[0].reward.split(" ")[0]).toBe(
+        getAccountUnit(account).code
+      );
+    });
 
     it.todo("should return formatted delegations for redelegate/undelegate");
   });
