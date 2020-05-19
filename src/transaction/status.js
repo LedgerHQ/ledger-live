@@ -4,11 +4,10 @@ import mapValues from "lodash/mapValues";
 import { BigNumber } from "bignumber.js";
 import { deserializeError, serializeError } from "@ledgerhq/errors";
 import type {
-  TransactionCommon,
   TransactionStatusRaw,
   TransactionStatus,
 } from "../types/transaction";
-import type { Account } from "../types";
+import type { Account, Transaction } from "../types";
 import { getAccountUnit } from "../account";
 import { formatCurrencyUnit } from "../currencies";
 
@@ -45,7 +44,7 @@ const formatErrorSmall = (e: Error): string =>
   e.name === "Error" ? e.message : e.name;
 
 export const formatTransactionStatus = (
-  t: TransactionCommon,
+  t: Transaction,
   { errors, warnings, estimatedFees, amount, totalSpent }: TransactionStatus,
   mainAccount: Account
 ): string => {
