@@ -36,3 +36,24 @@ export const formatDelegationsInfo = (
     amount: d.amount,
   }));
 };
+
+export const MAX_VOTES = 5;
+
+export const formatValue = (value: BigNumber, unit: Unit): number =>
+  value
+    .dividedBy(10 ** unit.magnitude)
+    .integerValue(BigNumber.ROUND_FLOOR)
+    .toNumber();
+
+/** Search filters for validator list */
+export const searchFilter = (query?: string) => ({
+  name,
+  address,
+}: {
+  name: ?string,
+  address: string,
+}) => {
+  if (!query) return true;
+  const terms = `${name || ""} ${address}`;
+  return terms.toLowerCase().includes(query.toLowerCase().trim());
+};
