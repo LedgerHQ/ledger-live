@@ -161,3 +161,11 @@ export type TransactionRaw = {|
 |};
 
 export const reflect = (_declare: *) => {};
+
+export type CosmosFormattedDelegation = {|
+  validator: ?CosmosValidatorItem,
+  address: string,
+  pendingRewards: BigNumber,
+  amount: BigNumber,
+  status: CosmosDelegationStatus,
+|};

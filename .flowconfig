@@ -13,3 +13,4 @@ flow
 [lints]
 
 [options]
+esproposal.optional_chaining=enable
