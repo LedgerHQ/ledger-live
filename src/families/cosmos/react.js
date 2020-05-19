@@ -9,10 +9,11 @@ import type {
   CosmosDelegation,
   CosmosValidatorItem,
   CosmosFormattedDelegation,
+  FormatOption,
 } from "./types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import type { Account } from "../../types";
+import type { Account, Transaction } from "../../types";
 
 export function useCosmosPreloadData() {
   const [state, setState] = useState(getCurrentCosmosPreloadData);
@@ -40,12 +41,8 @@ function formatDelegations(
 
 export function useCosmosFormattedDelegations(
   account: Account,
-  option?: "claimReward" | "undelegate"
-): (
-  | CosmosFormattedDelegation
-  | (CosmosFormattedDelegation & { formattedAmount: string })
-  | (CosmosFormattedDelegation & { reward: string })
-)[] {
+  option?: FormatOption
+): CosmosFormattedDelegation[] {
   const { validators } = useCosmosPreloadData();
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
@@ -69,6 +66,7 @@ export function useCosmosFormattedDelegations(
             showCode: true,
           }),
         }));
+    case "redelegate":
     case "undelegate":
       return formattedDelegations.map((d) => ({
         ...d,
@@ -81,4 +79,51 @@ export function useCosmosFormattedDelegations(
     default:
       return formattedDelegations;
   }
+}
+
+export function useCosmosDelegationsQuerySelector(
+  account: Account,
+  transaction: Transaction,
+  option?: FormatOption
+) {
+  const [query, setQuery] = useState<string>("");
+  const delegations = useCosmosFormattedDelegations(account, option);
+
+  const options = useMemo<CosmosFormattedDelegation[]>(
+    () =>
+      delegations.filter(
+        // [TODO] better query test
+        ({ validator }) =>
+          !query || !validator || new RegExp(query, "gi").test(validator.name)
+      ),
+    [query, delegations]
+  );
+
+  const selectedValidator = useMemo(
+    () => transaction.validators && transaction.validators[0],
+    [transaction]
+  );
+
+  const value = useMemo(() => {
+    switch (option) {
+      case "redelegate":
+        return options.find(
+          ({ address }) => address === transaction.cosmosSourceValidator
+        );
+      default:
+        return (
+          selectedValidator &&
+          delegations.find(
+            ({ address }) => address === selectedValidator.address
+          )
+        );
+    }
+  }, [delegations, selectedValidator, transaction, options, option]);
+
+  return {
+    query,
+    setQuery,
+    options,
+    value,
+  };
 }

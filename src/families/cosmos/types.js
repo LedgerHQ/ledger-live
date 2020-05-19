@@ -162,10 +162,17 @@ export type TransactionRaw = {|
 
 export const reflect = (_declare: *) => {};
 
-export type CosmosFormattedDelegation = {
+type CosmosFormattedDelegationRaw = {
   validator: ?CosmosValidatorItem,
   address: string,
   pendingRewards: BigNumber,
   amount: BigNumber,
   status: CosmosDelegationStatus,
 };
+
+export type CosmosFormattedDelegation =
+  | CosmosFormattedDelegationRaw
+  | (CosmosFormattedDelegationRaw & { formattedAmount: string })
+  | (CosmosFormattedDelegationRaw & { reward: string });
+
+export type FormatOption = "claimReward" | "redelegate" | "undelegate";
