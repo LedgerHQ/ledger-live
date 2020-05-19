@@ -5,6 +5,28 @@ import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
+import type { Account } from "../../types";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
+
+export const formatTransaction = (
+  { amount, recipient, fees, memoValue }: Transaction,
+  account: Account
+): string =>
+  `
+    SEND ${formatCurrencyUnit(getAccountUnit(account), amount, {
+      showCode: true,
+      disableRounding: true,
+    })}
+    TO ${recipient}
+    with fees=${
+      !fees
+        ? "?"
+        : formatCurrencyUnit(getAccountUnit(account), fees, {
+            showCode: true,
+            disableRounding: true,
+          })
+    }${memoValue ? "\n  memo=" + memoValue : ""}`;
 
 const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -45,4 +67,4 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default { fromTransactionRaw, toTransactionRaw };
+export default { formatTransaction, fromTransactionRaw, toTransactionRaw };
