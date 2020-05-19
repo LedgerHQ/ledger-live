@@ -5,12 +5,8 @@ import {
   getCurrentCosmosPreloadData,
   getCosmosPreloadDataUpdates,
 } from "./preloadedData";
-import type {
-  CosmosDelegation,
-  CosmosValidatorItem,
-  CosmosFormattedDelegation,
-  FormatOption,
-} from "./types";
+import type { CosmosFormattedDelegation, FormatOption } from "./types";
+import { formatDelegations } from "./utils";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { Account, Transaction } from "../../types";
@@ -22,21 +18,6 @@ export function useCosmosPreloadData() {
     return () => sub.unsubscribe();
   }, []);
   return state;
-}
-
-function formatDelegations(
-  delegations: CosmosDelegation[],
-  validators: CosmosValidatorItem[]
-): CosmosFormattedDelegation[] {
-  return delegations.map((d) => ({
-    validator: validators.find(
-      (v) => v.validatorAddress === d.validatorAddress
-    ),
-    address: d.validatorAddress,
-    amount: d.amount,
-    pendingRewards: d.pendingRewards,
-    status: d.status,
-  }));
 }
 
 export function useCosmosFormattedDelegations(
