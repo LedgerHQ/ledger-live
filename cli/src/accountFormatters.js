@@ -42,6 +42,22 @@ const formatOp = (unitByAccountId) => {
   return (op) => format(op, 0);
 };
 
+function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
+  const sumOfOps = ops.reduce(
+    (sum, op) => sum.plus(getOperationAmountNumber(op)),
+    BigNumber(0)
+  );
+  if (sumOfOps.eq(balance)) return "";
+  return (
+    " (! sum of ops is different: " +
+    formatCurrencyUnit(unit, sumOfOps, {
+      showCode: true,
+      disableRounding: true,
+    }) +
+    ")"
+  );
+}
+
 const cliFormat = (account, summaryOnly) => {
   const {
     name,
@@ -62,7 +78,11 @@ const cliFormat = (account, summaryOnly) => {
   const derivationInfo = `${derivationMode}#${index}`;
   const head = `${name}: ${balance} (${opsCount}) (${freshInfo}) (${derivationInfo} ${
     xpub || ""
-  })`;
+  })${maybeDisplaySumOfOpsIssue(
+    operations,
+    account.balance,
+    getAccountUnit(account)
+  )}`;
 
   const subAccounts = account.subAccounts || [];
   const ops = operations
@@ -90,7 +110,8 @@ const cliFormat = (account, summaryOnly) => {
         }) +
         " (" +
         ta.operations.length +
-        " ops)"
+        " ops)" +
+        maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountUnit(ta))
     )
     .join("");
 
