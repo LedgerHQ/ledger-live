@@ -578,6 +578,9 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
   },
   clubcoin: {
+    terminated: {
+      link: "https://support.ledger.com/",
+    },
     type: "CryptoCurrency",
     id: "clubcoin",
     coinType: 79,
@@ -585,7 +588,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     managerAppName: "Clubcoin",
     ticker: "CLUB",
     scheme: "club",
-    color: "#000000", // FIXME
+    color: "#000000",
     family: "bitcoin",
     blockAvgTime: 140,
     bitcoinLikeInfo: {
