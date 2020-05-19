@@ -1,5 +1,4 @@
 // @flow
-import type { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -9,9 +8,10 @@ import {
 import type {
   CosmosDelegation,
   CosmosValidatorItem,
-  CosmosDelegationStatus,
   CosmosFormattedDelegation,
 } from "./types";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
 import type { Account } from "../../types";
 
 export function useCosmosPreloadData() {
@@ -27,7 +27,7 @@ function formatDelegations(
   delegations: CosmosDelegation[],
   validators: CosmosValidatorItem[]
 ): CosmosFormattedDelegation[] {
-  return delegations.map((d, i, arr) => ({
+  return delegations.map((d) => ({
     validator: validators.find(
       (v) => v.validatorAddress === d.validatorAddress
     ),
@@ -39,14 +39,46 @@ function formatDelegations(
 }
 
 export function useCosmosFormattedDelegations(
-  account: Account
-): CosmosFormattedDelegation[] {
+  account: Account,
+  option?: "claimReward" | "undelegate"
+): (
+  | CosmosFormattedDelegation
+  | (CosmosFormattedDelegation & { formattedAmount: string })
+  | (CosmosFormattedDelegation & { reward: string })
+)[] {
   const { validators } = useCosmosPreloadData();
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
 
-  return useMemo(() => formatDelegations(delegations, validators), [
-    delegations,
-    validators,
-  ]);
+  const formattedDelegations = useMemo(
+    () => formatDelegations(delegations, validators),
+    [delegations, validators]
+  );
+  const unit = useMemo(() => getAccountUnit(account), [account]);
+
+  switch (option) {
+    case "claimReward":
+      return formattedDelegations
+        .filter(({ pendingRewards }) => pendingRewards.gt(0))
+        .map(({ pendingRewards, ...rest }) => ({
+          ...rest,
+          pendingRewards,
+          reward: formatCurrencyUnit(unit, pendingRewards, {
+            disableRounding: true,
+            alwaysShowSign: false,
+            showCode: true,
+          }),
+        }));
+    case "undelegate":
+      return formattedDelegations.map((d) => ({
+        ...d,
+        formattedAmount: formatCurrencyUnit(unit, d.amount, {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+        }),
+      }));
+    default:
+      return formattedDelegations;
+  }
 }
