@@ -6,6 +6,7 @@ import type {
   CosmosValidatorItem,
   CosmosFormattedDelegation,
 } from "./types";
+import type { Unit } from "../../types";
 
 export function formatDelegations(
   delegations: CosmosDelegation[],

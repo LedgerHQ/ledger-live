@@ -93,6 +93,10 @@ export function useCosmosDelegationsQuerySelector(
   const value = useMemo(() => {
     switch (option) {
       case "redelegate":
+        invariant(
+          transaction.cosmosSourceValidator,
+          "cosmos: cosmosSourceValidator is required"
+        );
         return options.find(
           ({ address }) => address === transaction.cosmosSourceValidator
         );
