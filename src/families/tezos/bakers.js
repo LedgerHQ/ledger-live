@@ -4,7 +4,6 @@
 import { useEffect, useState, useMemo } from "react";
 import type { Operation, AccountLike } from "../../types";
 import { log } from "@ledgerhq/logs";
-import { BigNumber } from "bignumber.js";
 import { makeLRUCache } from "../../cache";
 import { getEnv } from "../../env";
 import network from "../../network";
@@ -44,40 +43,17 @@ const cache = makeLRUCache(
   async (): Promise<Baker[]> => {
     const base = getEnv("API_TEZOS_BAKER");
     const { data }: { data: mixed } = await network({
-      url: `${base}/v1/bakers`,
+      url: `${base}/v2/bakers`,
     });
     const bakers = [];
-    if (data && typeof data === "object") {
-      const bakersRaw = data.bakers;
-      if (
-        bakersRaw &&
-        typeof bakersRaw === "object" &&
-        Array.isArray(bakersRaw)
-      ) {
-        log("tezos/bakers", "found " + bakersRaw.length + " bakers");
-        bakersRaw.forEach((raw) => {
-          if (raw && typeof raw === "object") {
-            const { available_capacity } = raw;
-            const availableCapacity = BigNumber(
-              typeof available_capacity === "string" ? available_capacity : "0"
-            );
-            const capacityStatus =
-              availableCapacity.isNaN() || availableCapacity.lte(0)
-                ? "full"
-                : "normal";
-            const baker: ?Baker = asBaker({
-              address: raw.delegation_code,
-              name: raw.baker_name,
-              logoURL: raw.logo,
-              nominalYield: raw.nominal_staking_yield,
-              capacityStatus,
-            });
-            if (baker) {
-              bakers.push(baker);
-            }
-          }
-        });
-      }
+    if (data && typeof data === "object" && Array.isArray(data)) {
+      log("tezos/bakers", "found " + data.length + " bakers");
+      data.forEach((raw) => {
+        const baker: ?Baker = asBaker(raw);
+        if (baker) {
+          bakers.push(baker);
+        }
+      });
     }
 
     log("tezos/bakers", "loaded " + bakers.length + " bakers");
@@ -241,22 +217,23 @@ export function useRandomBaker(bakers: Baker[]) {
 
 export const asBaker = (data: mixed): ?Baker => {
   if (data && typeof data === "object") {
-    const { address, name, logoURL, nominalYield, capacityStatus } = data;
+    const { address, name, logo, freeSpace, estimatedRoi } = data;
     if (
       typeof name === "string" &&
       typeof address === "string" &&
-      typeof logoURL === "string" &&
-      (logoURL.startsWith("https://") || logoURL.startsWith("http://")) &&
-      typeof nominalYield === "string" &&
-      typeof capacityStatus === "string" &&
-      capacityStatus in capacityStatuses
+      typeof logo === "string" &&
+      (logo.startsWith("https://") || logo.startsWith("http://")) &&
+      typeof freeSpace === "number" &&
+      typeof estimatedRoi === "number" &&
+      0 <= estimatedRoi &&
+      estimatedRoi <= 1
     ) {
       return {
         name,
         address,
-        logoURL,
-        nominalYield,
-        capacityStatus,
+        logoURL: logo,
+        nominalYield: Math.floor(10000 * estimatedRoi) / 100 + " %",
+        capacityStatus: freeSpace <= 0 ? "full" : "normal",
       };
     }
   }
