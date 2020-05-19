@@ -1,18 +1,18 @@
 // @flow
 
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import {
   toAccountRaw,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { getOperationAmountNumberWithInternals } from "@ledgerhq/live-common/lib/operation";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+} from ".";
+import type { Account } from "../types";
+import { getOperationAmountNumberWithInternals } from "../operation";
+import { formatCurrencyUnit } from "../currencies";
+import { getOperationAmountNumber } from "../operation";
 
-// TODO move to live common
 const isSignificantAccount = (acc) =>
   acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
 
@@ -42,6 +42,22 @@ const formatOp = (unitByAccountId) => {
   return (op) => format(op, 0);
 };
 
+function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
+  const sumOfOps = ops.reduce(
+    (sum, op) => sum.plus(getOperationAmountNumber(op)),
+    BigNumber(0)
+  );
+  if (sumOfOps.eq(balance)) return "";
+  return (
+    " (! sum of ops is different: " +
+    formatCurrencyUnit(unit, sumOfOps, {
+      showCode: true,
+      disableRounding: true,
+    }) +
+    ")"
+  );
+}
+
 const cliFormat = (account, summaryOnly) => {
   const {
     name,
@@ -62,7 +78,11 @@ const cliFormat = (account, summaryOnly) => {
   const derivationInfo = `${derivationMode}#${index}`;
   const head = `${name}: ${balance} (${opsCount}) (${freshInfo}) (${derivationInfo} ${
     xpub || ""
-  })`;
+  })${maybeDisplaySumOfOpsIssue(
+    operations,
+    account.balance,
+    getAccountUnit(account)
+  )}`;
 
   const subAccounts = account.subAccounts || [];
   const ops = operations
@@ -90,7 +110,8 @@ const cliFormat = (account, summaryOnly) => {
         }) +
         " (" +
         ta.operations.length +
-        " ops)"
+        " ops)" +
+        maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountUnit(ta))
     )
     .join("");
 
@@ -121,7 +142,7 @@ const stats = (account) => {
   };
 };
 
-const all: { [_: string]: (Account) => any } = {
+export const accountFormatters: { [_: string]: (Account) => any } = {
   json: (account) => JSON.stringify(toAccountRaw(account)),
   default: (account) => cliFormat(account),
   summary: (account) => cliFormat(account, true),
@@ -133,4 +154,11 @@ const all: { [_: string]: (Account) => any } = {
       .join("\n"),
 };
 
-export default all;
+export function formatAccount(
+  account: Account,
+  format: string = "default"
+): string {
+  const f = accountFormatters[format];
+  invariant(f, "missing account formatter=" + format);
+  return f(account);
+}
