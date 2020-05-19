@@ -1,5 +1,6 @@
 // @flow
 import bitcoin from "../families/bitcoin/deviceTransactionConfig.js";
+import cosmos from "../families/cosmos/deviceTransactionConfig.js";
 import ethereum from "../families/ethereum/deviceTransactionConfig.js";
 import ripple from "../families/ripple/deviceTransactionConfig.js";
 import stellar from "../families/stellar/deviceTransactionConfig.js";
@@ -8,16 +9,19 @@ import tron from "../families/tron/deviceTransactionConfig.js";
 
 export default {
   bitcoin,
+  cosmos,
   ethereum,
   ripple,
   stellar,
   tezos,
   tron,
 };
+import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from "../families/tezos/deviceTransactionConfig";
 import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "../families/tron/deviceTransactionConfig";
 export type ExtraDeviceTransactionField =
+| ExtraDeviceTransactionField_cosmos
 | ExtraDeviceTransactionField_stellar
 | ExtraDeviceTransactionField_tezos
 | ExtraDeviceTransactionField_tron
