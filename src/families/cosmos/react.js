@@ -6,19 +6,15 @@ import {
   getCosmosPreloadDataUpdates,
 } from "./preloadedData";
 import type {
-  CosmosFormattedDelegation,
+  CosmosMappedDelegation,
   CosmosValidatorItem,
-  CosmosFormattedValidator,
+  CosmosMappedValidator,
   CosmosDelegationInfo,
   CosmosOperationMode,
-  CosmosDelegationSearchFilter,
-  CosmosValidatorSearchFilter,
+  CosmosSearchFilter,
   Transaction,
 } from "./types";
-import {
-  formatDelegations,
-  delegationSearchFilter as defaultDelegationSearchFilter,
-} from "./utils";
+import { mapDelegations, searchFilter as defaultSearchFilter } from "./utils";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import type { Account } from "../../types";
@@ -35,7 +31,7 @@ export function useCosmosPreloadData() {
 export function useCosmosFormattedDelegations(
   account: Account,
   mode?: CosmosOperationMode
-): CosmosFormattedDelegation[] {
+): CosmosMappedDelegation[] {
   const { validators } = useCosmosPreloadData();
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
@@ -43,29 +39,23 @@ export function useCosmosFormattedDelegations(
   const unit = getAccountUnit(account);
 
   return useMemo(() => {
-    const formattedDelegations = formatDelegations(
-      delegations,
-      validators,
-      unit
-    );
+    const mappedDelegations = mapDelegations(delegations, validators, unit);
 
     return mode === "claimReward"
-      ? formattedDelegations.filter(({ pendingRewards }) =>
-          pendingRewards.gt(0)
-        )
-      : formattedDelegations;
+      ? mappedDelegations.filter(({ pendingRewards }) => pendingRewards.gt(0))
+      : mappedDelegations;
   }, [delegations, validators, mode, unit]);
 }
 
 export function useCosmosDelegationsQuerySelector(
   account: Account,
   transaction: Transaction,
-  delegationSearchFilter?: CosmosDelegationSearchFilter = defaultDelegationSearchFilter
+  delegationSearchFilter?: CosmosSearchFilter = defaultSearchFilter
 ) {
   const [query, setQuery] = useState<string>("");
   const delegations = useCosmosFormattedDelegations(account, transaction.mode);
 
-  const options = useMemo<CosmosFormattedDelegation[]>(
+  const options = useMemo<CosmosMappedDelegation[]>(
     () => delegations.filter(delegationSearchFilter(query)),
     [query, delegations, delegationSearchFilter]
   );
@@ -107,13 +97,13 @@ export function useSortedValidators(
   search: string,
   validators: CosmosValidatorItem[],
   delegations: CosmosDelegationInfo[],
-  validatorSearchFilter?: CosmosValidatorSearchFilter = defaultDelegationSearchFilter
-): CosmosFormattedValidator[] {
+  validatorSearchFilter?: CosmosSearchFilter = defaultSearchFilter
+): CosmosMappedValidator[] {
   const initialVotes = useMemoOnce(() =>
     delegations.map(({ address }) => address)
   );
 
-  const formattedValidators = useMemo(
+  const mappedValidators = useMemo(
     () =>
       validators.map((validator, rank) => ({
         rank: rank + 1,
@@ -124,25 +114,25 @@ export function useSortedValidators(
 
   const sortedVotes = useMemo(
     () =>
-      formattedValidators
+      mappedValidators
         .filter(({ validator }) =>
           initialVotes.includes(validator.validatorAddress)
         )
         .concat(
-          formattedValidators.filter(
+          mappedValidators.filter(
             ({ validator }) =>
               !initialVotes.includes(validator.validatorAddress)
           )
         ),
-    [formattedValidators, initialVotes]
+    [mappedValidators, initialVotes]
   );
 
   const sr = useMemo(
     () =>
       search
-        ? formattedValidators.filter(validatorSearchFilter(search))
+        ? mappedValidators.filter(validatorSearchFilter(search))
         : sortedVotes,
-    [search, formattedValidators, sortedVotes, validatorSearchFilter]
+    [search, mappedValidators, sortedVotes, validatorSearchFilter]
   );
 
   return sr;

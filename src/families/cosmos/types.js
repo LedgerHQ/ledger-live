@@ -162,24 +162,18 @@ export type TransactionRaw = {|
 
 export const reflect = (_declare: *) => {};
 
-export type CosmosFormattedDelegation = CosmosDelegation & {
+export type CosmosMappedDelegation = CosmosDelegation & {
   formattedAmount: string,
   formattedPendingRewards: string,
   rank: number,
   validator: CosmosValidatorItem,
 };
 
-export type CosmosFormattedValidator = {
+export type CosmosMappedValidator = {
   rank: number,
   validator: CosmosValidatorItem,
 };
 
-export type CosmosValidatorSearchFilter = (
+export type CosmosSearchFilter = (
   query: string
-) => (validator: CosmosFormattedValidator) => boolean;
-
-export type CosmosDelegationSearchFilter = (
-  query: string
-) => (
-  delegation: CosmosFormattedDelegation | CosmosFormattedValidator
-) => boolean;
+) => (delegation: CosmosMappedDelegation | CosmosMappedValidator) => boolean;

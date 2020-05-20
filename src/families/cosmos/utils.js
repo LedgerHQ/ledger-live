@@ -6,16 +6,16 @@ import type {
   CosmosDelegation,
   CosmosDelegationInfo,
   CosmosValidatorItem,
-  CosmosFormattedDelegation,
-  CosmosDelegationSearchFilter,
+  CosmosMappedDelegation,
+  CosmosSearchFilter,
 } from "./types";
 import type { Unit } from "../../types";
 
-export function formatDelegations(
+export function mapDelegations(
   delegations: CosmosDelegation[],
   validators: CosmosValidatorItem[],
   unit: Unit
-): CosmosFormattedDelegation[] {
+): CosmosMappedDelegation[] {
   return delegations.map((d) => {
     const rank = validators.findIndex(
       (v) => v.validatorAddress === d.validatorAddress
@@ -64,9 +64,7 @@ export const formatValue = (value: BigNumber, unit: Unit): number =>
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
 
-export const delegationSearchFilter: CosmosDelegationSearchFilter = (
-  query
-) => ({ validator }) => {
+export const searchFilter: CosmosSearchFilter = (query) => ({ validator }) => {
   const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
   return terms.toLowerCase().includes(query.toLowerCase().trim());
 };
