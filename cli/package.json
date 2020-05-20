@@ -35,8 +35,8 @@
     "@ledgerhq/hw-transport-mocker": "5.15.0",
     "@ledgerhq/hw-transport-node-hid": "5.15.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.15.3",
-    "@ledgerhq/ledger-core": "^6.4.0",
-    "@ledgerhq/live-common": "^12.22.5",
+    "@ledgerhq/ledger-core": "^6.4.1",
+    "@ledgerhq/live-common": "^12.23.0",
     "@ledgerhq/logs": "5.15.0",
     "asciichart": "^1.5.19",
     "bignumber.js": "^9.0.0",
@@ -68,6 +68,6 @@
     "@babel/preset-typescript": "^7.9.0",
     "@types/command-line-args": "^5.0.0",
     "ts-node": "^8.10.1",
-    "typescript": "^3.9.2"
+    "typescript": "^3.9.3"
   }
 }
