@@ -138,9 +138,6 @@ export async function createSpeculosDevice({
   transport: SpeculosTransport,
   id: string,
 }> {
-  invariant(model === "nanoS", "only model=nanoS supported");
-  invariant(firmware === "1.6.0", "only firmware=1.6.0 supported");
-
   const id = `speculos-${++idCounter}`;
 
   const apduPort = 40000 + idCounter;
