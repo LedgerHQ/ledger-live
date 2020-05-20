@@ -34,38 +34,38 @@ export function useCosmosFormattedDelegations(
   const delegations = account.cosmosResources?.delegations;
   invariant(delegations, "cosmos: delegations is required");
 
-  const formattedDelegations = useMemo(
-    () => formatDelegations(delegations, validators),
-    [delegations, validators]
-  );
-  const unit = useMemo(() => getAccountUnit(account), [account]);
+  const unit = getAccountUnit(account);
 
-  switch (mode) {
-    case "claimReward":
-      return formattedDelegations
-        .filter(({ pendingRewards }) => pendingRewards.gt(0))
-        .map(({ pendingRewards, ...rest }) => ({
-          ...rest,
-          pendingRewards,
-          reward: formatCurrencyUnit(unit, pendingRewards, {
+  return useMemo(() => {
+    const formattedDelegations = formatDelegations(delegations, validators);
+
+    switch (mode) {
+      case "claimReward":
+        return formattedDelegations
+          .filter(({ pendingRewards }) => pendingRewards.gt(0))
+          .map(({ pendingRewards, ...rest }) => ({
+            ...rest,
+            pendingRewards,
+            reward: formatCurrencyUnit(unit, pendingRewards, {
+              disableRounding: true,
+              alwaysShowSign: false,
+              showCode: true,
+            }),
+          }));
+      case "redelegate":
+      case "undelegate":
+        return formattedDelegations.map((d) => ({
+          ...d,
+          formattedAmount: formatCurrencyUnit(unit, d.amount, {
             disableRounding: true,
             alwaysShowSign: false,
             showCode: true,
           }),
         }));
-    case "redelegate":
-    case "undelegate":
-      return formattedDelegations.map((d) => ({
-        ...d,
-        formattedAmount: formatCurrencyUnit(unit, d.amount, {
-          disableRounding: true,
-          alwaysShowSign: false,
-          showCode: true,
-        }),
-      }));
-    default:
-      return formattedDelegations;
-  }
+      default:
+        return formattedDelegations;
+    }
+  }, [delegations, validators, unit, mode]);
 }
 
 export function useCosmosDelegationsQuerySelector(
@@ -85,10 +85,7 @@ export function useCosmosDelegationsQuerySelector(
     [query, delegations]
   );
 
-  const selectedValidator = useMemo(
-    () => transaction.validators && transaction.validators[0],
-    [transaction]
-  );
+  const selectedValidator = transaction.validators && transaction.validators[0];
 
   const value = useMemo(() => {
     switch (transaction.mode) {
