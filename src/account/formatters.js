@@ -8,7 +8,7 @@ import {
   getAccountName,
   getAccountUnit,
 } from ".";
-import type { Account } from "../types";
+import type { Account, Operation, Unit } from "../types";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
@@ -16,16 +16,16 @@ import { getOperationAmountNumber } from "../operation";
 const isSignificantAccount = (acc) =>
   acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
 
-const formatOp = (unitByAccountId) => {
-  const format = (op, level = 0) => {
-    const amount = formatCurrencyUnit(
-      unitByAccountId(op.accountId),
-      getOperationAmountNumber(op),
-      {
-        showCode: true,
-        alwaysShowSign: true,
-      }
-    );
+const formatOp = (unitByAccountId: (string) => ?Unit) => {
+  const format = (op: Operation, level = 0) => {
+    const unit = unitByAccountId(op.accountId);
+    const amountBN = getOperationAmountNumber(op);
+    const amount = unit
+      ? formatCurrencyUnit(unit, amountBN, {
+          showCode: true,
+          alwaysShowSign: true,
+        })
+      : "? " + amountBN.toString();
     const spaces = Array((level + 1) * 2)
       .fill(" ")
       .join("");
@@ -39,7 +39,7 @@ const formatOp = (unitByAccountId) => {
       .join("");
     return `\n${head}${sub}`;
   };
-  return (op) => format(op, 0);
+  return (op: Operation) => format(op, 0);
 };
 
 function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
@@ -161,4 +161,14 @@ export function formatAccount(
   const f = accountFormatters[format];
   invariant(f, "missing account formatter=" + format);
   return f(account);
+}
+
+export function formatOperation(account: ?Account): (Operation) => string {
+  const unitByAccountId = (id: string) => {
+    if (!account) return;
+    if (account.id === id) return account.unit;
+    const ta = (account.subAccounts || []).find((a) => a.id === id);
+    if (ta) return getAccountUnit(ta);
+  };
+  return formatOp(unitByAccountId);
 }
