@@ -63,7 +63,9 @@ export const formatTransaction = (
     mainAccount;
   return `
   ${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
-    t.amount.isZero()
+    t.useAllAmount
+      ? "MAX"
+      : t.amount.isZero()
       ? ""
       : " " +
         formatCurrencyUnit(getAccountUnit(account), t.amount, {

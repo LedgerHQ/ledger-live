@@ -67,10 +67,14 @@ const formatNetworkInfo = (networkInfo: ?{ feeItems: FeeItems }) => {
 
 export const formatTransaction = (t: Transaction, account: Account): string =>
   `
-  SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
-    showCode: true,
-    disableRounding: true,
-  })}
+  SEND ${
+    t.useAllAmount
+      ? "MAX"
+      : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }
   TO ${t.recipient}
   with feePerByte=${
     t.feePerByte ? t.feePerByte.toString() : "?"

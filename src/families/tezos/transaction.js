@@ -18,6 +18,7 @@ export const formatTransaction = (
     gasLimit,
     storageLimit,
     fees,
+    useAllAmount,
   }: Transaction,
   mainAccount: Account
 ): string => {
@@ -26,10 +27,14 @@ export const formatTransaction = (
       (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
     mainAccount;
   return `
-  ${mode.toUpperCase()} ${formatCurrencyUnit(getAccountUnit(account), amount, {
-    showCode: true,
-    disableRounding: true,
-  })}
+  ${mode.toUpperCase()} ${
+    useAllAmount
+      ? "MAX"
+      : formatCurrencyUnit(getAccountUnit(account), amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }
   TO ${recipient}
   with fees=${!fees ? "?" : formatCurrencyUnit(mainAccount.unit, fees)}
   with gasLimit=${!gasLimit ? "?" : gasLimit.toString()}

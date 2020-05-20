@@ -18,12 +18,15 @@ export const formatTransaction = (
     validators,
     memo,
     cosmosSourceValidator,
+    useAllAmount,
   }: Transaction,
   account: Account
 ): string =>
   `
   ${mode.toUpperCase()} ${
-    amount.isZero()
+    useAllAmount
+      ? "MAX"
+      : amount.isZero()
       ? ""
       : " " +
         formatCurrencyUnit(getAccountUnit(account), amount, {

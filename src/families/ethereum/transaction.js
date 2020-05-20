@@ -19,10 +19,14 @@ export const formatTransaction = (
       (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
     mainAccount;
   return `
-  SEND ${formatCurrencyUnit(getAccountUnit(account), t.amount, {
-    showCode: true,
-    disableRounding: true,
-  })}
+  SEND ${
+    t.useAllAmount
+      ? "MAX"
+      : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }
   TO ${t.recipient}
   with gasPrice=${formatCurrencyUnit(
     mainAccount.currency.units[1],
