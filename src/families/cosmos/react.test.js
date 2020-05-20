@@ -6,7 +6,8 @@ import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "../../env";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import type { Account, CurrencyBridge, Transaction } from "../../types";
+import type { Account, CurrencyBridge } from "../../types";
+import type { Transaction } from "./types";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
@@ -108,7 +109,7 @@ describe("cosmos/react", () => {
       const delegations = account.cosmosResources.delegations || [];
       const newTx = {
         ...transaction,
-        mode: "delegation",
+        mode: "delegate",
         validators: delegations.map(({ validatorAddress, amount }) => ({
           address: validatorAddress,
           amount,
@@ -140,7 +141,7 @@ describe("cosmos/react", () => {
       const delegations = account.cosmosResources.delegations || [];
       const newTx = {
         ...transaction,
-        mode: "delegation",
+        mode: "delegate",
         validators: delegations.map(({ validatorAddress, amount }) => ({
           address: validatorAddress,
           amount,
