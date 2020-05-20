@@ -35,6 +35,10 @@ export const getOrCreateWallet: F = atomicQueue(
 
     const derivationScheme = getDerivationScheme({ currency, derivationMode });
     await config.putString("KEYCHAIN_DERIVATION_SCHEME", derivationScheme);
+    await config.putBoolean(
+      "DEACTIVATE_SYNC_TOKEN",
+      getEnv("DISABLE_SYNC_TOKEN")
+    );
 
     const KEYCHAIN_OBSERVABLE_RANGE = getEnv("KEYCHAIN_OBSERVABLE_RANGE");
     if (KEYCHAIN_OBSERVABLE_RANGE) {

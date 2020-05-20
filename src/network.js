@@ -119,43 +119,4 @@ const implementation = (arg: Object): Promise<*> => {
   );
 };
 
-function SyncTokenDisabled(response) {
-  this.response = response;
-}
-
-const Header = "X-LedgerWallet-SyncToken";
-axios.interceptors.request.use((config) => {
-  if (getEnv("DISABLE_SYNC_TOKEN")) {
-    if (config.url.endsWith("/syncToken")) {
-      throw new SyncTokenDisabled({
-        status: 200,
-        statusText: "OK",
-        headers: {
-          "content-type": "application/json; charset=utf-8",
-        },
-        config,
-        data: '{"token":""}',
-      });
-    }
-    if (config.headers && Header in config.headers) {
-      delete config.headers[Header];
-      const prop = config.url.includes("v2") ? "noToken=true" : "no_token=true";
-      config.url = config.url + (config.url.includes("?") ? "&" : "?") + prop;
-    }
-  }
-  return config;
-});
-
-axios.interceptors.response.use(
-  (r) => {
-    return r;
-  },
-  (e) => {
-    if (e instanceof SyncTokenDisabled) {
-      return e.response;
-    }
-    return Promise.reject(e);
-  }
-);
-
 export default implementation;

@@ -92,9 +92,9 @@ const envDefinitions = {
     desc: "disable broadcast of transactions",
   },
   DISABLE_SYNC_TOKEN: {
-    def: false,
+    def: true,
     parser: boolParser,
-    desc: "Hack to disable a problematic mechanism of our API",
+    desc: "disable a problematic mechanism of our API",
   },
   EXPERIMENTAL_BLE: {
     def: false,

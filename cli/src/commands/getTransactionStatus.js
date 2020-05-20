@@ -4,8 +4,9 @@ import { from, defer, concat, empty } from "rxjs";
 import { map, mergeMap, concatMap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
-  toTransactionStatusRaw,
   toTransactionRaw,
+  formatTransactionStatus,
+  formatTransaction,
 } from "@ledgerhq/live-common/lib/transaction";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
@@ -13,10 +14,13 @@ import type { InferTransactionsOpts } from "../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../transaction";
 
 const getTransactionStatusFormatters = {
-  json: ({ status, transaction }) => ({
-    status: JSON.stringify(toTransactionStatusRaw(status)),
-    transaction: JSON.stringify(toTransactionRaw(transaction)),
-  }),
+  json: ({ status, transaction, account }) =>
+    "TRANSACTION " +
+    (formatTransaction(transaction, account) ||
+      JSON.stringify(toTransactionRaw(transaction))) +
+    "\n" +
+    "STATUS " +
+    formatTransactionStatus(transaction, status, account),
 };
 
 export default {
@@ -46,7 +50,7 @@ export default {
                     defer(() =>
                       getAccountBridge(account)
                         .getTransactionStatus(account, transaction)
-                        .then((status) => ({ transaction, status }))
+                        .then((status) => ({ transaction, status, account }))
                     )
                   )
                 ),

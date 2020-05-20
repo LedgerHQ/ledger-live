@@ -5,6 +5,35 @@ import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
+import type { Account } from "../../types";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
+
+export const formatTransaction = (
+  t: Transaction,
+  mainAccount: Account
+): string => {
+  const gasLimit = getGasLimit(t);
+  const account =
+    (t.subAccountId &&
+      (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
+    mainAccount;
+  return `
+  SEND ${
+    t.useAllAmount
+      ? "MAX"
+      : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }
+  TO ${t.recipient}
+  with gasPrice=${formatCurrencyUnit(
+    mainAccount.currency.units[1],
+    t.gasPrice || BigNumber(0)
+  )}
+  with gasLimit=${gasLimit.toString()}`;
+};
 
 const defaultGasLimit = BigNumber(0x5208);
 
@@ -49,4 +78,4 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default { fromTransactionRaw, toTransactionRaw };
+export default { formatTransaction, fromTransactionRaw, toTransactionRaw };

@@ -5,6 +5,41 @@ import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
+import type { Account } from "../../types";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
+
+export const formatTransaction = (
+  {
+    mode,
+    subAccountId,
+    amount,
+    recipient,
+    gasLimit,
+    storageLimit,
+    fees,
+    useAllAmount,
+  }: Transaction,
+  mainAccount: Account
+): string => {
+  const account =
+    (subAccountId &&
+      (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
+    mainAccount;
+  return `
+  ${mode.toUpperCase()} ${
+    useAllAmount
+      ? "MAX"
+      : formatCurrencyUnit(getAccountUnit(account), amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }
+  TO ${recipient}
+  with fees=${!fees ? "?" : formatCurrencyUnit(mainAccount.unit, fees)}
+  with gasLimit=${!gasLimit ? "?" : gasLimit.toString()}
+  with storageLimit=${!storageLimit ? "?" : storageLimit.toString()}`;
+};
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
@@ -40,4 +75,4 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default { fromTransactionRaw, toTransactionRaw };
+export default { formatTransaction, fromTransactionRaw, toTransactionRaw };

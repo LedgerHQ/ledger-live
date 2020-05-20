@@ -6,10 +6,13 @@ import type {
   FeeItems,
   FeeItemsRaw,
 } from "./types";
+import type { Account } from "../../types";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
+import { getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
   items: fir.items.map((fi) => ({
@@ -55,4 +58,26 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-export default { fromTransactionRaw, toTransactionRaw };
+const formatNetworkInfo = (networkInfo: ?{ feeItems: FeeItems }) => {
+  if (!networkInfo) return "network info not loaded";
+  return `network fees: ${networkInfo.feeItems.items
+    .map((i) => i.key + "=" + i.feePerByte.toString())
+    .join(", ")}`;
+};
+
+export const formatTransaction = (t: Transaction, account: Account): string =>
+  `
+  SEND ${
+    t.useAllAmount
+      ? "MAX"
+      : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+          showCode: true,
+          disableRounding: true,
+        })
+  }
+  TO ${t.recipient}
+  with feePerByte=${
+    t.feePerByte ? t.feePerByte.toString() : "?"
+  } (${formatNetworkInfo(t.networkInfo)})`;
+
+export default { fromTransactionRaw, toTransactionRaw, formatTransaction };

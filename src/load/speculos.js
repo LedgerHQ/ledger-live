@@ -35,6 +35,14 @@ const modelMap: { [_: string]: DeviceModelId } = {
   nanos: "nanoS",
 };
 
+function hackBadSemver(str) {
+  let [x, y, z, ...rest] = str.split(".");
+  if (rest.length) {
+    z += "-" + rest.join("-");
+  }
+  return [x, y, z].filter(Boolean).join(".");
+}
+
 // list all possible apps. sorted by latest first
 export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
   let candidates = [];
@@ -43,8 +51,10 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
     const model = modelMap[modelName.toLowerCase()];
     if (!model) continue;
     const p1 = path.join(cwd, modelName);
-    const firmwares = (await fsp.readdir(p1)).filter(semver.valid);
-    firmwares.sort((a, b) => semver.compare(a, b));
+    const firmwares = await fsp.readdir(p1);
+    firmwares.sort((a, b) =>
+      semver.compare(hackBadSemver(a), hackBadSemver(b))
+    );
     firmwares.reverse();
     for (const firmware of firmwares) {
       const p2 = path.join(p1, firmware);
@@ -92,7 +102,11 @@ export function appCandidatesMatches(
     (!search.model || search.model === appCandidate.model) &&
     (!search.appName || search.appName === appCandidate.appName) &&
     (!search.firmware ||
-      semver.satisfies(appCandidate.firmware, search.firmware)) &&
+      appCandidate.firmware === search.firmware ||
+      semver.satisfies(
+        hackBadSemver(appCandidate.firmware),
+        search.firmware
+      )) &&
     (!search.appVersion ||
       semver.satisfies(appCandidate.appVersion, search.appVersion))
   );
@@ -124,9 +138,6 @@ export async function createSpeculosDevice({
   transport: SpeculosTransport,
   id: string,
 }> {
-  invariant(model === "nanoS", "only model=nanoS supported");
-  invariant(firmware === "1.6.0", "only firmware=1.6.0 supported");
-
   const id = `speculos-${++idCounter}`;
 
   const apduPort = 40000 + idCounter;

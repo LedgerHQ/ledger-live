@@ -1,31 +1,31 @@
 // @flow
 
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import {
   toAccountRaw,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
-} from "@ledgerhq/live-common/lib/account";
-import type { Account } from "@ledgerhq/live-common/lib/types";
-import { getOperationAmountNumberWithInternals } from "@ledgerhq/live-common/lib/operation";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+} from ".";
+import type { Account, Operation, Unit } from "../types";
+import { getOperationAmountNumberWithInternals } from "../operation";
+import { formatCurrencyUnit } from "../currencies";
+import { getOperationAmountNumber } from "../operation";
 
-// TODO move to live common
 const isSignificantAccount = (acc) =>
   acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
 
-const formatOp = (unitByAccountId) => {
-  const format = (op, level = 0) => {
-    const amount = formatCurrencyUnit(
-      unitByAccountId(op.accountId),
-      getOperationAmountNumber(op),
-      {
-        showCode: true,
-        alwaysShowSign: true,
-      }
-    );
+const formatOp = (unitByAccountId: (string) => ?Unit) => {
+  const format = (op: Operation, level = 0) => {
+    const unit = unitByAccountId(op.accountId);
+    const amountBN = getOperationAmountNumber(op);
+    const amount = unit
+      ? formatCurrencyUnit(unit, amountBN, {
+          showCode: true,
+          alwaysShowSign: true,
+        })
+      : "? " + amountBN.toString();
     const spaces = Array((level + 1) * 2)
       .fill(" ")
       .join("");
@@ -39,7 +39,7 @@ const formatOp = (unitByAccountId) => {
       .join("");
     return `\n${head}${sub}`;
   };
-  return (op) => format(op, 0);
+  return (op: Operation) => format(op, 0);
 };
 
 function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
@@ -142,7 +142,7 @@ const stats = (account) => {
   };
 };
 
-const all: { [_: string]: (Account) => any } = {
+export const accountFormatters: { [_: string]: (Account) => any } = {
   json: (account) => JSON.stringify(toAccountRaw(account)),
   default: (account) => cliFormat(account),
   summary: (account) => cliFormat(account, true),
@@ -154,4 +154,21 @@ const all: { [_: string]: (Account) => any } = {
       .join("\n"),
 };
 
-export default all;
+export function formatAccount(
+  account: Account,
+  format: string = "default"
+): string {
+  const f = accountFormatters[format];
+  invariant(f, "missing account formatter=" + format);
+  return f(account);
+}
+
+export function formatOperation(account: ?Account): (Operation) => string {
+  const unitByAccountId = (id: string) => {
+    if (!account) return;
+    if (account.id === id) return account.unit;
+    const ta = (account.subAccounts || []).find((a) => a.id === id);
+    if (ta) return getAccountUnit(ta);
+  };
+  return formatOp(unitByAccountId);
+}
