@@ -54,8 +54,8 @@ export function useCosmosDelegationsQuerySelector(
 ): {
   query: string,
   setQuery: (query: string) => void,
-  options: CosmosMappedDelegation,
-  value: CosmosMappedDelegation,
+  options: CosmosMappedDelegation[],
+  value: ?CosmosMappedDelegation,
 } {
   const [query, setQuery] = useState<string>("");
   const delegations = useCosmosMappedDelegations(account, transaction.mode);
