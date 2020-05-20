@@ -32,13 +32,11 @@ describe("cosmos/react", () => {
   describe("useCosmosFormattedDelegations", () => {
     it("should return formatted delegations", async () => {
       const { account, currencyBridge } = setup();
+      await currencyBridge.preload();
+
       const { result } = renderHook(() =>
         hooks.useCosmosFormattedDelegations(account)
       );
-
-      await act(async () => {
-        await currencyBridge.preload();
-      });
 
       const delegations = account.cosmosResources?.delegations;
       invariant(delegations, "cosmos: delegations is required");
@@ -59,13 +57,11 @@ describe("cosmos/react", () => {
 
     it("should return formatted delegations for claimReward", async () => {
       const { account, currencyBridge } = setup();
+      await currencyBridge.preload();
+
       const { result } = renderHook(() =>
         hooks.useCosmosFormattedDelegations(account, "claimReward")
       );
-
-      await act(async () => {
-        await currencyBridge.preload();
-      });
 
       expect(result.current.length).toBe(2);
       expect(result.current[0].reward.split(" ")[0]).toBe(
@@ -75,17 +71,14 @@ describe("cosmos/react", () => {
 
     it("should return formatted delegations for redelegate/undelegate", async () => {
       const { account, currencyBridge } = setup();
+      await currencyBridge.preload();
+
       const { result: redelegateResult } = renderHook(() =>
         hooks.useCosmosFormattedDelegations(account, "redelegate")
       );
-
       const { result: undelegateResult } = renderHook(() =>
         hooks.useCosmosFormattedDelegations(account, "undelegate")
       );
-
-      await act(async () => {
-        await currencyBridge.preload();
-      });
 
       expect(redelegateResult).toStrictEqual(undelegateResult);
 
@@ -102,6 +95,8 @@ describe("cosmos/react", () => {
   describe("useCosmosDelegationsQuerySelector", () => {
     it("should return delegations filtered by query as options", async () => {
       const { account, transaction, currencyBridge } = setup();
+      await currencyBridge.preload();
+
       invariant(
         account.cosmosResources,
         "cosmos: account and cosmos resources required"
@@ -118,10 +113,6 @@ describe("cosmos/react", () => {
       const { result } = renderHook(() =>
         hooks.useCosmosDelegationsQuerySelector(account, newTx)
       );
-
-      await act(async () => {
-        await currencyBridge.preload();
-      });
 
       expect(result.current.options.length).toBe(delegations.length);
 
@@ -134,6 +125,8 @@ describe("cosmos/react", () => {
 
     it("should return the first delegation as value", async () => {
       const { account, transaction, currencyBridge } = setup();
+      await currencyBridge.preload();
+
       invariant(
         account.cosmosResources,
         "cosmos: account and cosmos resources required"
@@ -151,10 +144,6 @@ describe("cosmos/react", () => {
         hooks.useCosmosDelegationsQuerySelector(account, newTx)
       );
 
-      await act(async () => {
-        await currencyBridge.preload();
-      });
-
       expect(result.current.value.address).toBe(
         delegations[0].validatorAddress
       );
@@ -162,6 +151,8 @@ describe("cosmos/react", () => {
 
     it("should find delegation by cosmosSourceValidator field and return as value for redelegate", async () => {
       const { account, transaction, currencyBridge } = setup();
+      await currencyBridge.preload();
+
       invariant(
         account.cosmosResources,
         "cosmos: account and cosmos resources required"
@@ -182,10 +173,6 @@ describe("cosmos/react", () => {
         hooks.useCosmosDelegationsQuerySelector(account, newTx)
       );
 
-      await act(async () => {
-        await currencyBridge.preload();
-      });
-
       expect(result.current.value.address).toBe(cosmosSourceValidator);
     });
   });
@@ -193,14 +180,11 @@ describe("cosmos/react", () => {
   describe("useSortedValidators", () => {
     it("should reutrn sorted validators", async () => {
       const { account, currencyBridge } = setup();
+      await currencyBridge.preload();
 
       const { result: preloadDataResult } = renderHook(() =>
         hooks.useCosmosPreloadData()
       );
-
-      await act(async () => {
-        await currencyBridge.preload();
-      });
 
       const { validators } = preloadDataResult.current;
       const delegations = (account.cosmosResources?.delegations || []).map(
