@@ -670,6 +670,7 @@
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
       "UNDELEGATE": "Undelegated",
+      "REDELEGATE": "Redelegated",
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
