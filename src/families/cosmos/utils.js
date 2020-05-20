@@ -1,28 +1,44 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
+import { formatCurrencyUnit } from "../../currencies";
 import type {
   CosmosDelegation,
   CosmosDelegationInfo,
   CosmosValidatorItem,
   CosmosFormattedDelegation,
-  CosmosValidatorSearchFilter,
   CosmosDelegationSearchFilter,
 } from "./types";
 import type { Unit } from "../../types";
 
 export function formatDelegations(
   delegations: CosmosDelegation[],
-  validators: CosmosValidatorItem[]
+  validators: CosmosValidatorItem[],
+  unit: Unit
 ): CosmosFormattedDelegation[] {
-  return delegations.map((d) => ({
-    validator: validators.find(
+  return delegations.map((d) => {
+    const rank = validators.findIndex(
       (v) => v.validatorAddress === d.validatorAddress
-    ),
-    address: d.validatorAddress,
-    amount: d.amount,
-    pendingRewards: d.pendingRewards,
-    status: d.status,
-  }));
+    );
+    const validator = validators[rank];
+    invariant(validator, "cosmos: cannot find validator");
+
+    return {
+      ...d,
+      formattedAmount: formatCurrencyUnit(unit, d.amount, {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      }),
+      formattedPendingRewards: formatCurrencyUnit(unit, d.pendingRewards, {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      }),
+      rank,
+      validator,
+    };
+  });
 }
 
 export const formatDelegationsInfo = (
@@ -48,18 +64,9 @@ export const formatValue = (value: BigNumber, unit: Unit): number =>
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
 
-/** Search filters for validator list */
-export const validatorSearchFilter: CosmosValidatorSearchFilter = (query) => ({
-  name,
-  address,
-}) => {
-  const terms = `${name || ""} ${address}`;
-  return terms.toLowerCase().includes(query.toLowerCase().trim());
-};
-
 export const delegationSearchFilter: CosmosDelegationSearchFilter = (
   query
-) => ({ validator, address }) => {
-  const terms = `${validator?.name ?? ""} ${address}`;
+) => ({ validator }) => {
+  const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
   return terms.toLowerCase().includes(query.toLowerCase().trim());
 };

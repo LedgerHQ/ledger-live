@@ -18,12 +18,12 @@ export type CosmosDelegationStatus =
   | "unbonding" // doesn't generate rewards. means the validator has been removed from the active set, but has its voting power "frozen" in case they misbehaved (just like a delegator undelegating). This last 21 days
   | "unbonded"; // doesn't generate rewards. means the validator has been removed from the active set for more than 21 days basically
 
-export type CosmosDelegation = {|
+export type CosmosDelegation = {
   validatorAddress: string,
   amount: BigNumber,
   pendingRewards: BigNumber,
   status: CosmosDelegationStatus,
-|};
+};
 
 export type CosmosResources = {|
   delegations: CosmosDelegation[],
@@ -162,22 +162,17 @@ export type TransactionRaw = {|
 
 export const reflect = (_declare: *) => {};
 
-export type CosmosFormattedDelegation = {|
-  validator: ?CosmosValidatorItem,
-  address: string,
-  pendingRewards: BigNumber,
-  amount: BigNumber,
-  status: CosmosDelegationStatus,
-  formattedAmount?: string,
-  reward?: string,
-|};
-
-export type CosmosFormattedValidator = {|
-  validator: ?CosmosValidatorItem,
-  name: string,
-  address: string,
+export type CosmosFormattedDelegation = CosmosDelegation & {
+  formattedAmount: string,
+  formattedPendingRewards: string,
   rank: number,
-|};
+  validator: CosmosValidatorItem,
+};
+
+export type CosmosFormattedValidator = {
+  rank: number,
+  validator: CosmosValidatorItem,
+};
 
 export type CosmosValidatorSearchFilter = (
   query: string
@@ -185,4 +180,6 @@ export type CosmosValidatorSearchFilter = (
 
 export type CosmosDelegationSearchFilter = (
   query: string
-) => (delegation: CosmosFormattedDelegation) => boolean;
+) => (
+  delegation: CosmosFormattedDelegation | CosmosFormattedValidator
+) => boolean;

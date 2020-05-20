@@ -44,51 +44,28 @@ describe("cosmos/react", () => {
       expect(Array.isArray(result.current)).toBe(true);
       expect(result.current.length).toBe(delegations.length);
 
+      const { code } = getAccountUnit(account);
+      expect(result.current[0].formattedAmount.split(" ")[0]).toBe(code);
+      expect(result.current[0].formattedPendingRewards.split(" ")[0]).toBe(
+        code
+      );
+      expect(typeof result.current[0].rank).toBe("number");
       expect(result.current[0].validator.validatorAddress).toBe(
         delegations[0].validatorAddress
       );
-      expect(result.current[0].address).toBe(delegations[0].validatorAddress);
-      expect(result.current[0].amount).toBe(delegations[0].amount);
-      expect(result.current[0].pendingRewards.toString()).toBe(
-        delegations[0].pendingRewards.toString()
-      );
-      expect(result.current[0].status).toStrictEqual(delegations[0].status);
     });
 
-    it("should return formatted delegations for claimReward", async () => {
-      const { account, currencyBridge } = setup();
-      await currencyBridge.preload();
+    describe("mode: claimReward", () => {
+      it("should only return delegations which have some pending rewards", async () => {
+        const { account, currencyBridge } = setup();
+        await currencyBridge.preload();
 
-      const { result } = renderHook(() =>
-        hooks.useCosmosFormattedDelegations(account, "claimReward")
-      );
+        const { result } = renderHook(() =>
+          hooks.useCosmosFormattedDelegations(account, "claimReward")
+        );
 
-      expect(result.current.length).toBe(2);
-      expect(result.current[0].reward.split(" ")[0]).toBe(
-        getAccountUnit(account).code
-      );
-    });
-
-    it("should return formatted delegations for redelegate/undelegate", async () => {
-      const { account, currencyBridge } = setup();
-      await currencyBridge.preload();
-
-      const { result: redelegateResult } = renderHook(() =>
-        hooks.useCosmosFormattedDelegations(account, "redelegate")
-      );
-      const { result: undelegateResult } = renderHook(() =>
-        hooks.useCosmosFormattedDelegations(account, "undelegate")
-      );
-
-      expect(redelegateResult).toStrictEqual(undelegateResult);
-
-      const delegations = account.cosmosResources?.delegations;
-      invariant(delegations, "cosmos: delegations is required");
-
-      expect(redelegateResult.current.length).toBe(delegations.length);
-      expect(redelegateResult.current[0].formattedAmount.split(" ")[0]).toBe(
-        getAccountUnit(account).code
-      );
+        expect(result.current.length).toBe(2);
+      });
     });
   });
 
@@ -144,7 +121,7 @@ describe("cosmos/react", () => {
         hooks.useCosmosDelegationsQuerySelector(account, newTx)
       );
 
-      expect(result.current.value.address).toBe(
+      expect(result.current.value.validator.validatorAddress).toBe(
         delegations[0].validatorAddress
       );
     });
@@ -173,7 +150,9 @@ describe("cosmos/react", () => {
         hooks.useCosmosDelegationsQuerySelector(account, newTx)
       );
 
-      expect(result.current.value.address).toBe(cosmosSourceValidator);
+      expect(result.current.value.validator.validatorAddress).toBe(
+        cosmosSourceValidator
+      );
     });
   });
 

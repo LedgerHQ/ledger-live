@@ -7,8 +7,8 @@ import {
 } from "./preloadedData";
 import type {
   CosmosFormattedDelegation,
-  CosmosFormattedValidator,
   CosmosValidatorItem,
+  CosmosFormattedValidator,
   CosmosDelegationInfo,
   CosmosOperationMode,
   CosmosDelegationSearchFilter,
@@ -18,10 +18,8 @@ import type {
 import {
   formatDelegations,
   delegationSearchFilter as defaultDelegationSearchFilter,
-  validatorSearchFilter as defaultValidatorSearchFilter,
 } from "./utils";
 import { getAccountUnit } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import type { Account } from "../../types";
 
@@ -45,35 +43,18 @@ export function useCosmosFormattedDelegations(
   const unit = getAccountUnit(account);
 
   return useMemo(() => {
-    const formattedDelegations = formatDelegations(delegations, validators);
+    const formattedDelegations = formatDelegations(
+      delegations,
+      validators,
+      unit
+    );
 
-    switch (mode) {
-      case "claimReward":
-        return formattedDelegations
-          .filter(({ pendingRewards }) => pendingRewards.gt(0))
-          .map(({ pendingRewards, ...rest }) => ({
-            ...rest,
-            pendingRewards,
-            reward: formatCurrencyUnit(unit, pendingRewards, {
-              disableRounding: true,
-              alwaysShowSign: false,
-              showCode: true,
-            }),
-          }));
-      case "redelegate":
-      case "undelegate":
-        return formattedDelegations.map((d) => ({
-          ...d,
-          formattedAmount: formatCurrencyUnit(unit, d.amount, {
-            disableRounding: true,
-            alwaysShowSign: false,
-            showCode: true,
-          }),
-        }));
-      default:
-        return formattedDelegations;
-    }
-  }, [delegations, validators, unit, mode]);
+    return mode === "claimReward"
+      ? formattedDelegations.filter(({ pendingRewards }) =>
+          pendingRewards.gt(0)
+        )
+      : formattedDelegations;
+  }, [delegations, validators, mode, unit]);
 }
 
 export function useCosmosDelegationsQuerySelector(
@@ -99,13 +80,15 @@ export function useCosmosDelegationsQuerySelector(
           "cosmos: cosmosSourceValidator is required"
         );
         return options.find(
-          ({ address }) => address === transaction.cosmosSourceValidator
+          ({ validatorAddress }) =>
+            validatorAddress === transaction.cosmosSourceValidator
         );
       default:
         return (
           selectedValidator &&
           delegations.find(
-            ({ address }) => address === selectedValidator.address
+            ({ validatorAddress }) =>
+              validatorAddress === selectedValidator.address
           )
         );
     }
@@ -124,7 +107,7 @@ export function useSortedValidators(
   search: string,
   validators: CosmosValidatorItem[],
   delegations: CosmosDelegationInfo[],
-  validatorSearchFilter?: CosmosValidatorSearchFilter = defaultValidatorSearchFilter
+  validatorSearchFilter?: CosmosValidatorSearchFilter = defaultDelegationSearchFilter
 ): CosmosFormattedValidator[] {
   const initialVotes = useMemoOnce(() =>
     delegations.map(({ address }) => address)
@@ -133,10 +116,8 @@ export function useSortedValidators(
   const formattedValidators = useMemo(
     () =>
       validators.map((validator, rank) => ({
-        validator,
-        name: validator.name,
-        address: validator.validatorAddress,
         rank: rank + 1,
+        validator,
       })),
     [validators]
   );
@@ -144,10 +125,13 @@ export function useSortedValidators(
   const sortedVotes = useMemo(
     () =>
       formattedValidators
-        .filter(({ address }) => initialVotes.includes(address))
+        .filter(({ validator }) =>
+          initialVotes.includes(validator.validatorAddress)
+        )
         .concat(
           formattedValidators.filter(
-            ({ address }) => !initialVotes.includes(address)
+            ({ validator }) =>
+              !initialVotes.includes(validator.validatorAddress)
           )
         ),
     [formattedValidators, initialVotes]
