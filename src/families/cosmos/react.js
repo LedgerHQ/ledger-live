@@ -79,9 +79,12 @@ export function useCosmosDelegationsQuerySelector(
   const options = useMemo<CosmosFormattedDelegation[]>(
     () =>
       delegations.filter(
-        // [TODO] better query test
         ({ validator }) =>
-          !query || !validator || new RegExp(query, "gi").test(validator.name)
+          validator &&
+          searchFilter(query)({
+            name: validator.name,
+            address: validator.validatorAddress,
+          })
       ),
     [query, delegations]
   );
