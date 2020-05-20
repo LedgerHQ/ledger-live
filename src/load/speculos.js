@@ -6,7 +6,6 @@ import path from "path";
 import semver from "semver";
 import { spawn, exec } from "child_process";
 import { promises as fsp } from "fs";
-import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
 import SpeculosTransport from "@ledgerhq/hw-transport-node-speculos";
 import type { DeviceModelId } from "@ledgerhq/devices";
