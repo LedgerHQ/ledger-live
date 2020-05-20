@@ -191,7 +191,35 @@ describe("cosmos/react", () => {
   });
 
   describe("useSortedValidators", () => {
-    it.todo("should reutrn sorted validators");
+    it("should reutrn sorted validators", async () => {
+      const { account, currencyBridge } = setup();
+
+      const { result: preloadDataResult } = renderHook(() =>
+        hooks.useCosmosPreloadData()
+      );
+
+      await act(async () => {
+        await currencyBridge.preload();
+      });
+
+      const { validators } = preloadDataResult.current;
+      const delegations = (account.cosmosResources?.delegations || []).map(
+        ({ validatorAddress, amount }) => ({
+          address: validatorAddress,
+          amount,
+        })
+      );
+      const { result } = renderHook(() =>
+        hooks.useSortedValidators("", validators, delegations)
+      );
+
+      expect(result.current.length).toBe(validators.length);
+
+      const { result: searchResult } = renderHook(() =>
+        hooks.useSortedValidators("Nodeasy.com", validators, delegations)
+      );
+      expect(searchResult.current.length).toBe(1);
+    });
   });
 });
 
