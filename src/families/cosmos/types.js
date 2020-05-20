@@ -171,3 +171,18 @@ export type CosmosFormattedDelegation = {|
   formattedAmount?: string,
   reward?: string,
 |};
+
+export type CosmosFormattedValidator = {|
+  validator: ?CosmosValidatorItem,
+  name: string,
+  address: string,
+  rank: number,
+|};
+
+export type CosmosValidatorSearchFilter = (
+  query: string
+) => (validator: CosmosFormattedValidator) => boolean;
+
+export type CosmosDelegationSearchFilter = (
+  query: string
+) => (delegation: CosmosFormattedDelegation) => boolean;

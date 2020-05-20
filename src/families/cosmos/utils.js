@@ -5,6 +5,8 @@ import type {
   CosmosDelegationInfo,
   CosmosValidatorItem,
   CosmosFormattedDelegation,
+  CosmosValidatorSearchFilter,
+  CosmosDelegationSearchFilter,
 } from "./types";
 import type { Unit } from "../../types";
 
@@ -47,14 +49,17 @@ export const formatValue = (value: BigNumber, unit: Unit): number =>
     .toNumber();
 
 /** Search filters for validator list */
-export const searchFilter = (query?: string) => ({
+export const validatorSearchFilter: CosmosValidatorSearchFilter = (query) => ({
   name,
   address,
-}: {
-  name: ?string,
-  address: string,
 }) => {
-  if (!query) return true;
   const terms = `${name || ""} ${address}`;
+  return terms.toLowerCase().includes(query.toLowerCase().trim());
+};
+
+export const delegationSearchFilter: CosmosDelegationSearchFilter = (
+  query
+) => ({ validator, address }) => {
+  const terms = `${validator?.name ?? ""} ${address}`;
   return terms.toLowerCase().includes(query.toLowerCase().trim());
 };
