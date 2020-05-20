@@ -15,6 +15,7 @@ import type {
 import { formatDelegations, searchFilter } from "./utils";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
+import useMemoOnce from "../../hooks/useMemoOnce";
 import type { Account } from "../../types";
 
 export function useCosmosPreloadData() {
@@ -126,7 +127,7 @@ export function useSortedValidators(
   address: string,
   rank: number,
 }[] {
-  const { current: initialVotes } = useRef(
+  const initialVotes = useMemoOnce(() =>
     delegations.map(({ address }) => address)
   );
 
