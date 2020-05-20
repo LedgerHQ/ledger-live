@@ -7,14 +7,15 @@ import {
 } from "./preloadedData";
 import type {
   CosmosFormattedDelegation,
-  FormatOption,
   CosmosValidatorItem,
   CosmosDelegationInfo,
+  CosmosOperationMode,
+  Transaction,
 } from "./types";
 import { formatDelegations, searchFilter } from "./utils";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import type { Account, Transaction } from "../../types";
+import type { Account } from "../../types";
 
 export function useCosmosPreloadData() {
   const [state, setState] = useState(getCurrentCosmosPreloadData);
@@ -27,7 +28,7 @@ export function useCosmosPreloadData() {
 
 export function useCosmosFormattedDelegations(
   account: Account,
-  option?: FormatOption
+  mode?: CosmosOperationMode
 ): CosmosFormattedDelegation[] {
   const { validators } = useCosmosPreloadData();
   const delegations = account.cosmosResources?.delegations;
@@ -39,7 +40,7 @@ export function useCosmosFormattedDelegations(
   );
   const unit = useMemo(() => getAccountUnit(account), [account]);
 
-  switch (option) {
+  switch (mode) {
     case "claimReward":
       return formattedDelegations
         .filter(({ pendingRewards }) => pendingRewards.gt(0))
@@ -69,11 +70,10 @@ export function useCosmosFormattedDelegations(
 
 export function useCosmosDelegationsQuerySelector(
   account: Account,
-  transaction: Transaction,
-  option?: FormatOption
+  transaction: Transaction
 ) {
   const [query, setQuery] = useState<string>("");
-  const delegations = useCosmosFormattedDelegations(account, option);
+  const delegations = useCosmosFormattedDelegations(account, transaction.mode);
 
   const options = useMemo<CosmosFormattedDelegation[]>(
     () =>
@@ -91,7 +91,7 @@ export function useCosmosDelegationsQuerySelector(
   );
 
   const value = useMemo(() => {
-    switch (option) {
+    switch (transaction.mode) {
       case "redelegate":
         invariant(
           transaction.cosmosSourceValidator,
@@ -108,7 +108,7 @@ export function useCosmosDelegationsQuerySelector(
           )
         );
     }
-  }, [delegations, selectedValidator, transaction, options, option]);
+  }, [delegations, selectedValidator, transaction, options]);
 
   return {
     query,

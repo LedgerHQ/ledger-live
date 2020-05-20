@@ -174,5 +174,3 @@ export type CosmosFormattedDelegation =
   | CosmosFormattedDelegationRaw
   | (CosmosFormattedDelegationRaw & { formattedAmount: string })
   | (CosmosFormattedDelegationRaw & { reward: string });
-
-export type FormatOption = "claimReward" | "redelegate" | "undelegate";
