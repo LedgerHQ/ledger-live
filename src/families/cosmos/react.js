@@ -28,7 +28,7 @@ export function useCosmosPreloadData() {
   return state;
 }
 
-export function useCosmosFormattedDelegations(
+export function useCosmosMappedDelegations(
   account: Account,
   mode?: CosmosOperationMode
 ): CosmosMappedDelegation[] {
@@ -51,9 +51,14 @@ export function useCosmosDelegationsQuerySelector(
   account: Account,
   transaction: Transaction,
   delegationSearchFilter?: CosmosSearchFilter = defaultSearchFilter
-) {
+): {
+  query: string,
+  setQuery: (query: string) => void,
+  options: CosmosMappedDelegation,
+  value: CosmosMappedDelegation,
+} {
   const [query, setQuery] = useState<string>("");
-  const delegations = useCosmosFormattedDelegations(account, transaction.mode);
+  const delegations = useCosmosMappedDelegations(account, transaction.mode);
 
   const options = useMemo<CosmosMappedDelegation[]>(
     () => delegations.filter(delegationSearchFilter(query)),

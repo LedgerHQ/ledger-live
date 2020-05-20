@@ -171,8 +171,8 @@ export type CosmosMappedDelegation = CosmosDelegation & {
 
 export type CosmosMappedDelegationInfo = {
   validator: CosmosValidatorItem,
-  address: string,
   amount: BigNumber,
+  formattedAmount: string,
 };
 
 export type CosmosMappedValidator = {

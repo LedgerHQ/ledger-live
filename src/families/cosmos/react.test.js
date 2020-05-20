@@ -35,7 +35,7 @@ describe("cosmos/react", () => {
       await currencyBridge.preload();
 
       const { result } = renderHook(() =>
-        hooks.useCosmosFormattedDelegations(account)
+        hooks.useCosmosMappedDelegations(account)
       );
 
       const delegations = account.cosmosResources?.delegations;
@@ -61,7 +61,7 @@ describe("cosmos/react", () => {
         await currencyBridge.preload();
 
         const { result } = renderHook(() =>
-          hooks.useCosmosFormattedDelegations(account, "claimReward")
+          hooks.useCosmosMappedDelegations(account, "claimReward")
         );
 
         expect(result.current.length).toBe(2);

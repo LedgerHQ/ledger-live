@@ -44,7 +44,8 @@ export function mapDelegations(
 
 export const mapDelegationInfo = (
   delegations: CosmosDelegationInfo[],
-  validators: CosmosValidatorItem[]
+  validators: CosmosValidatorItem[],
+  unit: Unit
 ): CosmosMappedDelegationInfo[] => {
   return delegations.map((d) => {
     const validator = validators.find((v) => v.validatorAddress === d.address);
@@ -52,8 +53,12 @@ export const mapDelegationInfo = (
 
     return {
       validator,
-      address: d.address,
       amount: d.amount,
+      formattedAmount: formatCurrencyUnit(unit, d.amount, {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      }),
     };
   });
 };
