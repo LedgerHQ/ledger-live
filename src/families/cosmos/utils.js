@@ -7,6 +7,7 @@ import type {
   CosmosDelegationInfo,
   CosmosValidatorItem,
   CosmosMappedDelegation,
+  CosmosMappedDelegationInfo,
   CosmosSearchFilter,
 } from "./types";
 import type { Unit } from "../../types";
@@ -41,19 +42,20 @@ export function mapDelegations(
   });
 }
 
-export const formatDelegationsInfo = (
+export const mapDelegationInfo = (
   delegations: CosmosDelegationInfo[],
   validators: CosmosValidatorItem[]
-): {
-  validator: ?CosmosValidatorItem,
-  address: string,
-  amount: BigNumber,
-}[] => {
-  return delegations.map((d) => ({
-    validator: validators.find((v) => v.validatorAddress === d.address),
-    address: d.address,
-    amount: d.amount,
-  }));
+): CosmosMappedDelegationInfo[] => {
+  return delegations.map((d) => {
+    const validator = validators.find((v) => v.validatorAddress === d.address);
+    invariant(validator, "cosmos: cannot find validator");
+
+    return {
+      validator,
+      address: d.address,
+      amount: d.amount,
+    };
+  });
 };
 
 export const MAX_VOTES = 5;

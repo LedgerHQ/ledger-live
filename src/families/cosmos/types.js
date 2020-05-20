@@ -169,6 +169,12 @@ export type CosmosMappedDelegation = CosmosDelegation & {
   validator: CosmosValidatorItem,
 };
 
+export type CosmosMappedDelegationInfo = {
+  validator: CosmosValidatorItem,
+  address: string,
+  amount: BigNumber,
+};
+
 export type CosmosMappedValidator = {
   rank: number,
   validator: CosmosValidatorItem,
