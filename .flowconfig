@@ -21,8 +21,6 @@ node_modules/warning/.*
 .*/TcpServer.js
 .*/core-js/.*
 
-.*/.yalc/.*
-
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
 

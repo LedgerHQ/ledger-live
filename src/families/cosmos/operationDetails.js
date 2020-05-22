@@ -1,10 +1,20 @@
 // @flow
-import React from "react";
-import { useTranslation } from "react-i18next";
+import React, { useCallback } from "react";
+import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { useTranslation, Trans } from "react-i18next";
+import {
+  getDefaultExplorerView,
+  getAddressExplorer,
+} from "@ledgerhq/live-common/lib/explorers";
 import type { Account, OperationType } from "@ledgerhq/live-common/lib/types";
-import type { CosmosExtraTxInfo } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import { useMappedExtraOperationDetials } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import type {
+  CosmosExtraTxInfo,
+  CosmosMappedDelegationInfo,
+} from "@ledgerhq/live-common/lib/families/cosmos/types";
+import colors from "../../colors";
 import LText from "../../components/LText";
-import Section, { styles } from "../../screens/OperationDetails/Section";
+import Section from "../../screens/OperationDetails/Section";
 
 type Props = {
   extra: CosmosExtraTxInfo,
@@ -12,20 +22,23 @@ type Props = {
   account: Account,
 };
 
-function OperationDetailsExtra({ extra, type }: Props) {
+function OperationDetailsExtra({ extra, type, account }: Props) {
   const { t } = useTranslation();
+
+  console.log(extra);
+
+  const mappedExtra = useMappedExtraOperationDetials({
+    extra,
+    account,
+  });
 
   switch (type) {
     case "DELEGATE":
       return (
-        <Section title={t("operationDetails.extra.validatorAddress")}>
-          {/* $FlowFixMe */}
-          {extra.validators.map(({ address }) => (
-            <LText style={styles.value} semiBold selectable>
-              {address}
-            </LText>
-          ))}
-        </Section>
+        <OperationDetailsValidators
+          account={account}
+          delegations={mappedExtra.validators}
+        />
       );
     case "REDELEGATE":
       return (
@@ -52,3 +65,71 @@ function OperationDetailsExtra({ extra, type }: Props) {
 export default {
   OperationDetailsExtra,
 };
+
+type OperationDetialsValidatorsProps = {
+  account: Account,
+  delegations: CosmosMappedDelegationInfo[],
+};
+
+function OperationDetailsValidators({
+  account,
+  delegations,
+}: OperationDetialsValidatorsProps) {
+  const { t } = useTranslation();
+
+  const redirectAddressCreator = useCallback(
+    address => () => {
+      const url = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
+      if (url) Linking.openURL(url);
+    },
+    [account],
+  );
+
+  return (
+    <Section
+      title={t("operationDetails.extra.validators", {
+        number: delegations.length,
+      })}
+    >
+      {delegations.map(({ validator, formattedAmount }, i) => (
+        <View key={validator.validatorAddress + i} style={styles.wrapper}>
+          <LText style={styles.greyText}>
+            <Trans
+              i18nKey="operationDetails.extra.validatorAddress"
+              values={{
+                amount: formattedAmount,
+                name: validator && validator.name,
+              }}
+            >
+              <LText semiBold style={styles.text}>
+                text
+              </LText>
+            </Trans>
+          </LText>
+
+          <TouchableOpacity
+            onPress={redirectAddressCreator(validator.validatorAddress)}
+          >
+            <LText style={styles.greyText}>{validator.validatorAddress}</LText>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </Section>
+  );
+}
+
+const styles = StyleSheet.create({
+  wrapper: {
+    borderLeftWidth: 3,
+    borderLeftColor: colors.fog,
+    paddingLeft: 16,
+    marginBottom: 24,
+  },
+  text: {
+    color: colors.darkBlue,
+  },
+  greyText: { color: colors.grey },
+});
