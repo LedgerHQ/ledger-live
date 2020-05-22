@@ -130,6 +130,7 @@ export function sync(
         pendingOperations: initialAccount.pendingOperations.filter((op) =>
           shouldRetainPendingOperation(syncedAccount, op)
         ),
+        cosmosResources: syncedAccount.cosmosResources,
       })
     )
   );

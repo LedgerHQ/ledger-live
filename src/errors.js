@@ -66,3 +66,30 @@ export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
 );
 
 export const SourceHasMultiSign = createCustomErrorClass("SourceHasMultiSign");
+
+export const CosmosRedelegationInProgress = createCustomErrorClass(
+  "CosmosRedelegationInProgress"
+);
+
+// Note : info of this code can be found here :
+// https://github.com/cosmos/cosmos-sdk/blob/v0.37.9/types/errors.go#L28
+export const CosmosBroadcastError = {
+  "0": createCustomErrorClass("CosmosBroadcastCodeOK"),
+  "1": createCustomErrorClass("CosmosBroadcastCodeInternal"),
+  "2": createCustomErrorClass("CosmosBroadcastCodeTxDecode"),
+  "3": createCustomErrorClass("CosmosBroadcastCodeInvalidSequence"),
+  "4": createCustomErrorClass("CosmosBroadcastCodeUnauthorized"),
+  "5": createCustomErrorClass("CosmosBroadcastCodeInsufficientFunds"),
+  "6": createCustomErrorClass("CosmosBroadcastCodeUnknownRequest"),
+  "7": createCustomErrorClass("CosmosBroadcastCodeInvalidAddress"),
+  "8": createCustomErrorClass("CosmosBroadcastCodeInvalidPubKey"),
+  "9": createCustomErrorClass("CosmosBroadcastCodeUnknownAddress"),
+  "10": createCustomErrorClass(" CosmosBroadcastCodeInsufficientCoins"),
+  "11": createCustomErrorClass(" CosmosBroadcastCodeInvalidCoins"),
+  "12": createCustomErrorClass(" CosmosBroadcastCodeOutOfGas"),
+  "13": createCustomErrorClass(" CosmosBroadcastCodeMemoTooLarge"),
+  "14": createCustomErrorClass(" CosmosBroadcastCodeInsufficientFee"),
+  "15": createCustomErrorClass(" CosmosBroadcastCodeTooManySignatures"),
+  "16": createCustomErrorClass(" CosmosBroadcastCodeGasOverflow"),
+  "17": createCustomErrorClass(" CosmosBroadcastCodeNoSignatures"),
+};

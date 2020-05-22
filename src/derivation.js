@@ -34,6 +34,10 @@ const extraConfigPerCurrency: { [_: string]: LibcoreConfig } = {
     TEZOS_PROTOCOL_UPDATE: "TEZOS_PROTOCOL_UPDATE_BABYLON",
     TEZOS_NODE: () => getEnv("API_TEZOS_NODE"),
   },
+  cosmos: {
+    BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
+      getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
+  },
 };
 
 const modes = Object.freeze({

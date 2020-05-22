@@ -20,6 +20,7 @@ const mockedCoins = [
   "ripple",
   "tezos",
   "stellar",
+  "cosmos",
 ];
 
 mockedCoins.map(getCryptoCurrencyById).forEach((currency) => {

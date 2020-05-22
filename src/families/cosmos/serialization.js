@@ -8,8 +8,10 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     delegatedBalance,
     delegations,
     pendingRewardsBalance,
-    unboundingBalance,
+    unbondingBalance,
     withdrawAddress,
+    redelegations,
+    unbondings,
   } = r;
   return {
     delegations: delegations.map(
@@ -20,9 +22,29 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
         validatorAddress,
       })
     ),
+    redelegations: redelegations.map(
+      ({
+        amount,
+        completionDate,
+        validatorSrcAddress,
+        validatorDstAddress,
+      }) => ({
+        amount: amount.toString(),
+        completionDate: completionDate.toString(),
+        validatorSrcAddress,
+        validatorDstAddress,
+      })
+    ),
+    unbondings: unbondings.map(
+      ({ amount, completionDate, validatorAddress }) => ({
+        amount: amount.toString(),
+        completionDate: completionDate.toString(),
+        validatorAddress,
+      })
+    ),
     delegatedBalance: delegatedBalance.toString(),
     pendingRewardsBalance: pendingRewardsBalance.toString(),
-    unboundingBalance: unboundingBalance.toString(),
+    unbondingBalance: unbondingBalance.toString(),
     withdrawAddress,
   };
 }
@@ -32,8 +54,10 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     delegatedBalance,
     delegations,
     pendingRewardsBalance,
-    unboundingBalance,
+    redelegations,
+    unbondingBalance,
     withdrawAddress,
+    unbondings,
   } = r;
   return {
     delegations: delegations.map(
@@ -44,9 +68,29 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
         validatorAddress,
       })
     ),
+    redelegations: redelegations.map(
+      ({
+        amount,
+        completionDate,
+        validatorSrcAddress,
+        validatorDstAddress,
+      }) => ({
+        amount: BigNumber(amount),
+        completionDate: new Date(completionDate),
+        validatorSrcAddress,
+        validatorDstAddress,
+      })
+    ),
+    unbondings: unbondings.map(
+      ({ amount, completionDate, validatorAddress }) => ({
+        amount: BigNumber(amount),
+        completionDate: new Date(completionDate),
+        validatorAddress,
+      })
+    ),
     delegatedBalance: BigNumber(delegatedBalance),
     pendingRewardsBalance: BigNumber(pendingRewardsBalance),
-    unboundingBalance: BigNumber(unboundingBalance),
+    unbondingBalance: BigNumber(unbondingBalance),
     withdrawAddress,
   };
 }

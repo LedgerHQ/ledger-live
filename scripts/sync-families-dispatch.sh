@@ -11,6 +11,7 @@ libcore-buildOperation.js \
 libcore-buildSubAccounts.js \
 libcore-getFeesForTransaction.js \
 libcore-postSyncPatch.js \
+libcore-postBuildAccount.js \
 libcore-getAccountNetworkInfo.js \
 transaction.js \
 bridge/js.js \

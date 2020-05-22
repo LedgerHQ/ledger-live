@@ -1,5 +1,6 @@
 // @flow
 import bitcoin from "../families/bitcoin/hw-getAddress.js";
+import cosmos from "../families/cosmos/hw-getAddress.js";
 import ethereum from "../families/ethereum/hw-getAddress.js";
 import neo from "../families/neo/hw-getAddress.js";
 import ripple from "../families/ripple/hw-getAddress.js";
@@ -9,6 +10,7 @@ import tron from "../families/tron/hw-getAddress.js";
 
 export default {
   bitcoin,
+  cosmos,
   ethereum,
   neo,
   ripple,

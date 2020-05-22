@@ -40,11 +40,8 @@ export function asSafeCosmosPreloadData(data: mixed): CosmosPreloadData {
     }
   }
 
-  // $FlowFixMe TODO more validation
-  const rewardsState = data.rewardsState;
   return {
     validators,
-    rewardsState,
   };
 }
 

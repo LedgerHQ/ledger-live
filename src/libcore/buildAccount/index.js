@@ -22,11 +22,14 @@ import { minimalOperationsBuilder } from "../../reconciliation";
 import { getOperationsPageSize } from "../../pagination";
 import getAccountBalanceHistory from "../getAccountBalanceHistory";
 import { getRanges } from "../../portfolio";
+import byFamily from "../../generated/libcore-postBuildAccount";
 
 // FIXME how to get that
 const OperationOrderKey = {
   date: 0,
 };
+
+type F = ({ account: Account, coreAccount: CoreAccount }) => Promise<Account>;
 
 async function queryOps(coreAccount) {
   const query = await coreAccount.queryOperations();
@@ -236,6 +239,11 @@ export async function buildAccount({
 
   if (subAccounts) {
     account.subAccounts = subAccounts;
+  }
+
+  const f: F = byFamily[currency.family];
+  if (f) {
+    return await f({ account, coreAccount });
   }
 
   return account;

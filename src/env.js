@@ -32,6 +32,11 @@ const stringParser = (v: mixed): ?string =>
   typeof v === "string" ? v : undefined;
 
 const envDefinitions = {
+  API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
+    def: "https://cosmos.coin-proxy.dev.aws.ledger.fr",
+    parser: stringParser,
+    desc: "node API for cosmos",
+  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
@@ -69,6 +74,17 @@ const envDefinitions = {
     parser: stringParser,
     desc:
       "force implementation for ALL currency bridges (affects scanning accounts)",
+  },
+  COSMOS_GAS_AMPLIFIER: {
+    def: 2,
+    parser: intParser,
+    desc: "estimate gas multiplier",
+  },
+  COSMOS_GAS_PRICE: {
+    def: 0.025,
+    parser: floatParser,
+    desc:
+      "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
   DEBUG_HTTP_RESPONSE: {
     def: false,

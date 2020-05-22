@@ -48,6 +48,7 @@ setSupportedCurrencies([
   "ethereum_ropsten",
   "tron",
   "stellar",
+  "cosmos"
 ]);
 
 for (const k in process.env) setEnvUnsafe(k, process.env[k]);

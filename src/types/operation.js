@@ -14,7 +14,8 @@ export type OperationType =
   | "FREEZE"
   | "UNFREEZE"
   | "VOTE"
-  | "REWARD";
+  | "REWARD"
+  | "FEES";
 
 export type Operation = {
   // unique identifier (usually hash)

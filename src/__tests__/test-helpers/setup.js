@@ -44,4 +44,5 @@ setSupportedCurrencies([
   "ethereum_ropsten",
   "tron",
   "stellar",
+  "cosmos",
 ]);
