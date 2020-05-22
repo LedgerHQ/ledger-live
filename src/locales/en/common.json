@@ -710,7 +710,8 @@
       "address": "Address",
       "votes": "Votes ({{number}})",
       "votesAddress": "<0>{{votes}}</0> to <0>{{name}}</0>",
-      "validatorAddress": "Validator Address"
+      "validatorAddress": "Validator address",
+      "redelegatedTo": "Redelegated to"
     },
     "multipleAddresses": "Why multiple addresses?"
   },

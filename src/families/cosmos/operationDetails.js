@@ -12,7 +12,7 @@ type Props = {
   account: Account,
 };
 
-function OperationDetailsExtra({ extra, type, account }: Props) {
+function OperationDetailsExtra({ extra, type }: Props) {
   const { t } = useTranslation();
 
   switch (type) {
@@ -27,6 +27,23 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
           ))}
         </Section>
       );
+    case "REDELEGATE":
+      return (
+        <Section
+          title={t("operationDetails.extra.redelegatedTo")}
+          // $FlowFixMe
+          value={extra.validator.address}
+        />
+      );
+    case "UNDELEGATE":
+      return (
+        <Section
+          title={t("operationDetails.extra.validatorAddress")}
+          // $FlowFixMe
+          value={extra.validator.address}
+        />
+      );
+    case "REWARD":
     default:
       return null;
   }
