@@ -1,4 +1,5 @@
 // @flow
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { useTranslation, Trans } from "react-i18next";
@@ -25,8 +26,6 @@ type Props = {
 function OperationDetailsExtra({ extra, type, account }: Props) {
   const { t } = useTranslation();
 
-  console.log(extra);
-
   const mappedExtra = useMappedExtraOperationDetials({
     extra,
     account,
@@ -34,6 +33,10 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
 
   switch (type) {
     case "DELEGATE":
+      invariant(
+        mappedExtra.validators,
+        "cosmos: mapped validators is required",
+      );
       return (
         <OperationDetailsValidators
           account={account}
