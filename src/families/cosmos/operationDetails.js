@@ -1,8 +1,8 @@
 // @flow
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
-import { useTranslation, Trans } from "react-i18next";
+import { Linking } from "react-native";
+import { useTranslation } from "react-i18next";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
@@ -13,8 +13,7 @@ import type {
   CosmosExtraTxInfo,
   CosmosMappedDelegationInfo,
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import colors from "../../colors";
-import LText from "../../components/LText";
+import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
 
 type Props = {
@@ -97,42 +96,17 @@ function OperationDetailsValidators({
         number: delegations.length,
       })}
     >
-      {delegations.map(({ validator, formattedAmount }, i) => (
-        <View key={validator.validatorAddress + i} style={styles.wrapper}>
-          <LText style={styles.greyText}>
-            <Trans
-              i18nKey="operationDetails.extra.validatorAddress"
-              values={{
-                amount: formattedAmount,
-                name: validator && validator.name,
-              }}
-            >
-              <LText semiBold style={styles.text}>
-                text
-              </LText>
-            </Trans>
-          </LText>
-
-          <TouchableOpacity
-            onPress={redirectAddressCreator(validator.validatorAddress)}
-          >
-            <LText style={styles.greyText}>{validator.validatorAddress}</LText>
-          </TouchableOpacity>
-        </View>
-      ))}
+      {delegations.map(
+        ({ validator: { validatorAddress, name }, formattedAmount }, i) => (
+          <DelegationInfo
+            key={validatorAddress + i}
+            address={validatorAddress}
+            name={name || validatorAddress}
+            formattedAmount={formattedAmount}
+            onPress={redirectAddressCreator(validatorAddress)}
+          />
+        ),
+      )}
     </Section>
   );
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    borderLeftWidth: 3,
-    borderLeftColor: colors.fog,
-    paddingLeft: 16,
-    marginBottom: 24,
-  },
-  text: {
-    color: colors.darkBlue,
-  },
-  greyText: { color: colors.grey },
-});
