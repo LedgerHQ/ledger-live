@@ -14,15 +14,15 @@ export type CoreStatics = {
   CosmosLikeAddress: Class<CoreCosmosLikeAddress>,
   CosmosLikeTransactionBuilder: Class<CoreCosmosLikeTransactionBuilder>,
   CosmosLikeTransaction: Class<CoreCosmosLikeTransaction>,
-  CosmosLikeMessage: Class<CoreCosmosLikeMessage>
+  CosmosLikeMessage: Class<CoreCosmosLikeMessage>,
 };
 
 export type CoreAccountSpecifics = {
-  asCosmosLikeAccount(): Promise<CoreCosmosLikeAccount>
+  asCosmosLikeAccount(): Promise<CoreCosmosLikeAccount>,
 };
 
 export type CoreOperationSpecifics = {
-  asCosmosLikeOperation(): Promise<CoreCosmosLikeOperation>
+  asCosmosLikeOperation(): Promise<CoreCosmosLikeOperation>,
 };
 
 export type CoreCurrencySpecifics = {};
@@ -38,18 +38,18 @@ export type CosmosDelegation = {
   status: CosmosDelegationStatus,
 };
 
-export type CosmosRedelegation = {|
+export type CosmosRedelegation = {
   validatorSrcAddress: string,
   validatorDstAddress: string,
   amount: BigNumber,
-  completionDate: Date
-|};
+  completionDate: Date,
+};
 
-export type CosmosUnbonding = {|
+export type CosmosUnbonding = {
   validatorAddress: string,
   amount: BigNumber,
-  completionDate: Date
-|};
+  completionDate: Date,
+};
 
 export type CosmosResources = {|
   delegations: CosmosDelegation[],
@@ -71,14 +71,14 @@ export type CosmosDelegationRaw = {|
 export type CosmosUnbondingRaw = {|
   validatorAddress: string,
   amount: string,
-  completionDate: string
+  completionDate: string,
 |};
 
 export type CosmosRedelegationRaw = {|
   validatorSrcAddress: string,
   validatorDstAddress: string,
   amount: string,
-  completionDate: string
+  completionDate: string,
 |};
 
 export type CosmosResourcesRaw = {|
@@ -97,7 +97,7 @@ export type CosmosValidatorItem = {|
   name: string,
   votingPower: number, // value from 0.0 to 1.0 (normalized percentage)
   commission: number, // value from 0.0 to 1.0 (normalized percentage)
-  estimatedYearlyRewardsRate: number // value from 0.0 to 1.0 (normalized percentage)
+  estimatedYearlyRewardsRate: number, // value from 0.0 to 1.0 (normalized percentage)
 |};
 
 export type CosmosRewardsState = {|
@@ -116,7 +116,7 @@ export type CosmosRewardsState = {|
 
 // by convention preload would return a Promise of CosmosPreloadData
 export type CosmosPreloadData = {
-  validators: CosmosValidatorItem[]
+  validators: CosmosValidatorItem[],
 };
 
 export type CosmosOperationMode =
@@ -184,13 +184,13 @@ export type CosmosMessage = CoreCosmosLikeMessage;
 type CosmosMsgSend = {
   fromAddress: string,
   toAddress: string,
-  amount: Array<CoreCosmosLikeAmount>
+  amount: Array<CoreCosmosLikeAmount>,
 };
 
 type CosmosMsgDelegate = {
   delegatorAddress: string,
   validatorAddress: string,
-  amount: CoreCosmosLikeAmount
+  amount: CoreCosmosLikeAmount,
 };
 
 type CosmosMsgUndelegate = CosmosMsgDelegate;
@@ -199,17 +199,17 @@ type CosmosMsgRedelegate = {
   delegatorAddress: string,
   validatorSourceAddress: string,
   validatorDestinationAddress: string,
-  amount: CoreCosmosLikeAmount
+  amount: CoreCosmosLikeAmount,
 };
 
 type CoreCosmosLikeAmount = {
   amount: string,
-  denom: string
+  denom: string,
 };
 
 type CosmosMsgWithdrawDelegationReward = {
   delegatorAddress: string,
-  validatorAddress: string
+  validatorAddress: string,
 };
 
 type CosmosLikeEntry = {
@@ -220,26 +220,26 @@ type CosmosLikeEntry = {
   // Balance requested to redelegate
   getInitialBalance(): Promise<CoreBigInt>,
   // Current amount being redelegated (i.e. less than initialBalance if slashed)
-  getBalance(): Promise<CoreBigInt>
+  getBalance(): Promise<CoreBigInt>,
 };
 
 export type CosmosLikeRedelegation = {
   getDelegatorAddress(): string,
   getSrcValidatorAddress(): string,
   getDstValidatorAddress(): string,
-  getEntries(): CosmosLikeEntry[]
+  getEntries(): CosmosLikeEntry[],
 };
 
 export type CosmosLikeUnbonding = {
   getDelegatorAddress(): string,
   getValidatorAddress(): string,
-  getEntries(): CosmosLikeEntry[]
+  getEntries(): CosmosLikeEntry[],
 };
 
 export type CosmosLikeDelegation = {
   getDelegatorAddress(): string,
   getValidatorAddress(): string,
-  getDelegatedAmount(): CoreAmount
+  getDelegatedAmount(): CoreAmount,
 };
 
 declare class CoreCosmosLikeAddress {
@@ -301,7 +301,7 @@ declare class CoreCosmosLikeTransaction {
 export type CoreCosmosGasLimitRequest = {
   memo: string,
   amplifier: number,
-  messages: CoreCosmosLikeMessage[]
+  messages: CoreCosmosLikeMessage[],
 };
 
 declare class CosmosLikeReward {
@@ -314,15 +314,15 @@ declare class CosmosLikeReward {
 // the API for our current version goes by 0 to 2
 // and it will be go to 1 to 3 when the explorer version will update
 export type CosmosLikeValidator = {
-  activeStatus: 0 | 1 | 2;
-  getActiveStatus(): Promise<0 | 1 | 2>
-}
+  activeStatus: 0 | 1 | 2,
+  getActiveStatus(): Promise<0 | 1 | 2>,
+};
 
 export type CosmosBroadcastResponse = {
   code: number,
   raw_log: string,
   txhash: string,
-  raw_log: string
+  raw_log: string,
 };
 
 declare class CoreCosmosLikeAccount {
@@ -351,10 +351,8 @@ export type {
   CoreCosmosLikeAddress,
   CoreCosmosLikeOperation,
   CoreCosmosLikeTransaction,
-  CoreCosmosLikeTransactionBuilder
+  CoreCosmosLikeTransactionBuilder,
 };
-
-
 
 export type Transaction = {|
   ...TransactionCommon,
@@ -384,7 +382,18 @@ export type CosmosMappedDelegation = CosmosDelegation & {
   formattedAmount: string,
   formattedPendingRewards: string,
   rank: number,
-  validator: CosmosValidatorItem,
+  validator: ?CosmosValidatorItem,
+};
+
+export type CosmosMappedUnbonding = CosmosUnbonding & {
+  formattedAmount: string,
+  validator: ?CosmosValidatorItem,
+};
+
+export type CosmosMappedRedelegation = CosmosRedelegation & {
+  formattedAmount: string,
+  validatorSrc: ?CosmosValidatorItem,
+  validatorDst: ?CosmosValidatorItem,
 };
 
 export type CosmosMappedDelegationInfo = {
@@ -406,54 +415,54 @@ export const reflect = (declare: (string, Spec) => void) => {
   declare("CosmosLikeTransactionBuilder", {
     methods: {
       addMessage: {
-        params: ["CosmosLikeMessage"]
+        params: ["CosmosLikeMessage"],
       },
       build: {
-        returns: "CosmosLikeTransaction"
+        returns: "CosmosLikeTransaction",
       },
       setMemo: {},
       setSequence: {},
       setAccountNumber: {},
       setFee: {},
       setGas: {
-        params: ["Amount"]
-      }
-    }
+        params: ["Amount"],
+      },
+    },
   });
 
   declare("CosmosLikeAccount", {
     methods: {
       estimateGas: {
         params: ["CosmosGasLimitRequest"],
-        returns: "BigInt"
+        returns: "BigInt",
       },
       buildTransaction: {},
       broadcastRawTransaction: {},
       broadcastTransaction: {},
       getEstimatedGasLimit: {
-        params: ["CosmosLikeTransaction"]
+        params: ["CosmosLikeTransaction"],
       },
       estimateGas: {
-        params: ["CosmosGasLimitRequest"]
+        params: ["CosmosGasLimitRequest"],
       },
       getSequence: {},
       getAccountNumber: {},
       getPendingRewards: {
-        returns: ["CosmosLikeReward"]
+        returns: ["CosmosLikeReward"],
       },
       getRedelegations: {
-        returns: ["CosmosLikeRedelegation"]
+        returns: ["CosmosLikeRedelegation"],
       },
       getUnbondings: {
-        returns: ["CosmosLikeUnbonding"]
+        returns: ["CosmosLikeUnbonding"],
       },
       getDelegations: {
-        returns: ["CosmosLikeDelegation"]
+        returns: ["CosmosLikeDelegation"],
       },
       getValidatorInfo: {
-        returns: "CosmosLikeValidator"
-      }
-    }
+        returns: "CosmosLikeValidator",
+      },
+    },
   });
 
   declare("CosmosLikeValidator", {
@@ -462,86 +471,86 @@ export const reflect = (declare: (string, Spec) => void) => {
       getActiveStatus: {
         njsField: "activeStatus",
       },
-    }
-  })
+    },
+  });
 
   declare("CosmosLikeReward", {
     methods: {
       getDelegatorAddress: {},
       getValidatorAddress: {},
       getRewardAmount: {
-        returns: "Amount"
-      }
-    }
-  })
+        returns: "Amount",
+      },
+    },
+  });
 
-declare("CosmosLikeUnbonding", {
-  methods: {
-    getDelegatorAddress: {},
-    getValidatorAddress: {},
-    getEntries: {
-      returns: ["CosmosLikeUnbondingEntry"]
-    }
-  }
-})
+  declare("CosmosLikeUnbonding", {
+    methods: {
+      getDelegatorAddress: {},
+      getValidatorAddress: {},
+      getEntries: {
+        returns: ["CosmosLikeUnbondingEntry"],
+      },
+    },
+  });
 
   declare("CosmosLikeTransaction", {
     methods: {
       getHash: {},
       setDERSignature: {
-        params: ["hex"]
+        params: ["hex"],
       },
       getFee: {},
       getGas: {},
       serializeForSignature: {},
-      serializeForBroadcast: {}
-    }
+      serializeForBroadcast: {},
+    },
   });
 
   declare("CosmosLikeOperation", {
     methods: {
       getTransaction: {
-        returns: "CosmosLikeTransaction"
+        returns: "CosmosLikeTransaction",
       },
       getMessage: {
-        returns: "CosmosLikeMessage"
-      }
-    }
+        returns: "CosmosLikeMessage",
+      },
+    },
   });
 
   declare("CosmosLikeRedelegationEntry", {
     methods: {
       getInitialBalance: {
-        returns: "BigInt"
+        returns: "BigInt",
       },
-      getCompletionTime: {}
-    }
-  })
+      getCompletionTime: {},
+    },
+  });
 
   declare("CosmosLikeUnbondingEntry", {
     methods: {
       getInitialBalance: {
-        returns: "BigInt"
+        returns: "BigInt",
       },
-      getCompletionTime: {}
-    }
-  })
+      getCompletionTime: {},
+    },
+  });
 
   declare("CosmosLikeRedelegation", {
     methods: {
       getDelegatorAddress: {
-        returns: "string"
+        returns: "string",
       },
       getSrcValidatorAddress: {
-        return: "string"
+        return: "string",
       },
       getDstValidatorAddress: {
-        return: "string"
+        return: "string",
       },
       getEntries: {
-        returns: ["CosmosLikeRedelegationEntry"]
-      }
-    }
+        returns: ["CosmosLikeRedelegationEntry"],
+      },
+    },
   });
 
   declare("CosmosLikeDelegation", {
@@ -549,9 +558,9 @@ declare("CosmosLikeUnbonding", {
       getDelegatorAddress: {},
       getValidatorAddress: {},
       getDelegatedAmount: {
-        returns: "Amount"
-      }
-    }
+        returns: "Amount",
+      },
+    },
   });
 
   declare("CosmosLikeMessage", {
@@ -559,46 +568,46 @@ declare("CosmosLikeUnbonding", {
       wrapMsgSend: {
         params: ["CosmosLikeMsgSend"],
         returns: "CosmosLikeMessage",
-        njsBuggyMethodIsNotStatic: true
+        njsBuggyMethodIsNotStatic: true,
       },
       wrapMsgDelegate: {
         params: ["CosmosLikeMsgDelegate"],
         returns: "CosmosLikeMessage",
-        njsBuggyMethodIsNotStatic: true
+        njsBuggyMethodIsNotStatic: true,
       },
       wrapMsgUndelegate: {
         params: ["CosmosLikeMsgUndelegate"],
         returns: "CosmosLikeMessage",
-        njsBuggyMethodIsNotStatic: true
+        njsBuggyMethodIsNotStatic: true,
       },
       wrapMsgBeginRedelegate: {
         params: ["CosmosLikeMsgBeginRelegate"],
         returns: "CosmosLikeMessage",
-        njsBuggyMethodIsNotStatic: true
+        njsBuggyMethodIsNotStatic: true,
       },
       wrapMsgWithdrawDelegationReward: {
         params: ["CosmosLikeMsgWithdrawDelegationReward"],
         returns: "CosmosLikeMessage",
-        njsBuggyMethodIsNotStatic: true
-      }
+        njsBuggyMethodIsNotStatic: true,
+      },
     },
     methods: {
       getMessageType: {},
       getRawMessageType: {},
-      getIndex: {}
-    }
+      getIndex: {},
+    },
   });
 
   return {
     OperationMethods: {
       asCosmosLikeOperation: {
-        returns: "CosmosLikeOperation"
-      }
+        returns: "CosmosLikeOperation",
+      },
     },
     AccountMethods: {
       asCosmosLikeAccount: {
-        returns: "CosmosLikeAccount"
-      }
-    }
+        returns: "CosmosLikeAccount",
+      },
+    },
   };
 };

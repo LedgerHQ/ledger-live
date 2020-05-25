@@ -2,7 +2,12 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import type { Account, Operation, OperationType } from "../../types";
-import type { CosmosResources, CosmosDelegation } from "./types";
+import type {
+  CosmosResources,
+  CosmosDelegation,
+  CosmosUnbonding,
+  CosmosRedelegation,
+} from "./types";
 
 import preloadedData from "./preloadedData.mock";
 
@@ -13,7 +18,9 @@ const { validators } = preloadedData;
 function setCosmosResources(
   account: Account,
   delegations: CosmosDelegation[],
-  unbondingBalance: BigNumber = BigNumber(0)
+  unbondingBalance: BigNumber = BigNumber(0),
+  unbondings: ?(CosmosUnbonding[]),
+  redelegations: ?(CosmosRedelegation[])
 ): Account {
   /** format cosmosResources given the new delegations */
   account.cosmosResources = {
@@ -30,8 +37,9 @@ function setCosmosResources(
       ? account.cosmosResources.unbondingBalance.plus(unbondingBalance)
       : unbondingBalance,
     withdrawAddress: account.id,
-    unbondings: [],
-    redelegations: [],
+    unbondings: unbondings ?? account.cosmosResources?.unbondings ?? [],
+    redelegations:
+      redelegations ?? account.cosmosResources?.redelegations ?? [],
   };
 
   return account;
@@ -66,7 +74,7 @@ function genBaseOperation(
   const hash = genHex(64, rng);
   /** generate given operation */
   return {
-    id: String(`mock_op_${ops.length}_${account.id}`),
+    id: String(`mock_op_${ops.length}_${type}_${account.id}`),
     hash,
     type,
     value: BigNumber(0),
@@ -108,6 +116,7 @@ function addDelegationOperation(account: Account, rng: Prando): Account {
   const opIndex = rng.next(0, 10);
 
   const delegationOp = genBaseOperation(account, rng, "DELEGATE", opIndex);
+  const feeOp = genBaseOperation(account, rng, "FEES", opIndex);
 
   const value = spendableBalance.plus(cosmosResources.delegatedBalance);
 
@@ -150,9 +159,16 @@ function addDelegationOperation(account: Account, rng: Prando): Account {
       : BigNumber(0)
   );
 
+  setOperationFeeValue(
+    feeOp,
+    account.cosmosResources
+      ? account.cosmosResources.delegatedBalance
+      : BigNumber(0)
+  );
+
   postSyncAccount(account);
-  account.operations.splice(opIndex, 0, delegationOp);
-  account.operationsCount++;
+  account.operations.splice(opIndex, 0, delegationOp, feeOp);
+  account.operationsCount += 2;
 
   return account;
 }
@@ -215,7 +231,14 @@ function addRedelegationOperation(account: Account, rng: Prando): Account {
       },
     ]);
 
-  setCosmosResources(account, delegations);
+  setCosmosResources(account, delegations, undefined, undefined, [
+    {
+      validatorSrcAddress: fromDelegation.validatorAddress,
+      validatorDstAddress: toDelegation.validatorAddress,
+      amount,
+      completionDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
+    },
+  ]);
 
   setOperationFeeValue(redelegationOp, amount);
 
@@ -339,7 +362,13 @@ function addUndelegationOperation(account: Account, rng: Prando): Account {
     }))
     .filter(({ amount }) => amount.gt(0));
 
-  setCosmosResources(account, delegations, amount);
+  setCosmosResources(account, delegations, amount, [
+    {
+      validatorAddress: fromDelegation.validatorAddress,
+      amount,
+      completionDate: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000),
+    },
+  ]);
 
   undelegationOp.fee = BigNumber(Math.round(amount.toNumber() * 0.001));
 

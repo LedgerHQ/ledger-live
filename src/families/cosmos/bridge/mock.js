@@ -124,7 +124,12 @@ const currencyBridge: CurrencyBridge = {
     return Promise.resolve(mockPreloadedData);
   },
   hydrate: (data: mixed) => {
-    setCosmosPreloadData(asSafeCosmosPreloadData(data));
+    setCosmosPreloadData(
+      asSafeCosmosPreloadData({
+        ...data,
+        validatorsUnsafe: data && data.validators ? data.validators : [],
+      })
+    );
   },
 };
 

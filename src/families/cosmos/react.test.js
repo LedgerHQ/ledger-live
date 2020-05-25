@@ -94,7 +94,7 @@ describe("cosmos/react", () => {
       expect(result.current.options.length).toBe(delegations.length);
 
       act(() => {
-        result.current.setQuery("Nodeasy.com");
+        result.current.setQuery("FRESHATOMS");
       });
 
       expect(result.current.options.length).toBe(1);
