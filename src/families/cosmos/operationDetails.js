@@ -8,7 +8,7 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/lib/explorers";
 import type { Account, OperationType } from "@ledgerhq/live-common/lib/types";
-import { useMappedExtraOperationDetials } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useMappedExtraOperationDetails } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import type {
   CosmosExtraTxInfo,
   CosmosMappedDelegationInfo,
@@ -25,7 +25,7 @@ type Props = {
 function OperationDetailsExtra({ extra, type, account }: Props) {
   const { t } = useTranslation();
 
-  const mappedExtra = useMappedExtraOperationDetials({
+  const mappedExtra = useMappedExtraOperationDetails({
     extra,
     account,
   });
@@ -68,7 +68,7 @@ export default {
   OperationDetailsExtra,
 };
 
-type OperationDetialsValidatorsProps = {
+type OperationDetailsValidatorsProps = {
   account: Account,
   delegations: CosmosMappedDelegationInfo[],
 };
@@ -76,7 +76,7 @@ type OperationDetialsValidatorsProps = {
 function OperationDetailsValidators({
   account,
   delegations,
-}: OperationDetialsValidatorsProps) {
+}: OperationDetailsValidatorsProps) {
   const { t } = useTranslation();
 
   const redirectAddressCreator = useCallback(
