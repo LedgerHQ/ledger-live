@@ -9,6 +9,10 @@ import type {
   CosmosMappedDelegation,
   CosmosMappedDelegationInfo,
   CosmosSearchFilter,
+  CosmosUnbonding,
+  CosmosMappedUnbonding,
+  CosmosRedelegation,
+  CosmosMappedRedelegation,
 } from "./types";
 import type { Unit } from "../../types";
 
@@ -22,7 +26,6 @@ export function mapDelegations(
       (v) => v.validatorAddress === d.validatorAddress
     );
     const validator = validators[rank];
-    invariant(validator, "cosmos: cannot find validator");
 
     return {
       ...d,
@@ -38,6 +41,55 @@ export function mapDelegations(
       }),
       rank,
       validator,
+    };
+  });
+}
+
+export function mapUnbondings(
+  unbondings: CosmosUnbonding[],
+  validators: CosmosValidatorItem[],
+  unit: Unit
+): CosmosMappedUnbonding[] {
+  return unbondings.map((u) => {
+    const validator = validators.find(
+      (v) => v.validatorAddress === u.validatorAddress
+    );
+
+    return {
+      ...u,
+      formattedAmount: formatCurrencyUnit(unit, u.amount, {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      }),
+      validator,
+    };
+  });
+}
+
+export function mapRedelegations(
+  redelegations: CosmosRedelegation[],
+  validators: CosmosValidatorItem[],
+  unit: Unit
+): CosmosMappedRedelegation[] {
+  return redelegations.map((r) => {
+    const validatorSrc = validators.find(
+      (v) => v.validatorAddress === r.validatorSrcAddress
+    );
+
+    const validatorDst = validators.find(
+      (v) => v.validatorAddress === r.validatorDstAddress
+    );
+
+    return {
+      ...r,
+      formattedAmount: formatCurrencyUnit(unit, r.amount, {
+        disableRounding: true,
+        alwaysShowSign: false,
+        showCode: true,
+      }),
+      validatorSrc,
+      validatorDst,
     };
   });
 }
