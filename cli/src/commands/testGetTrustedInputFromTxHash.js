@@ -4,8 +4,8 @@ import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { deviceOpt } from "../scan";
 import { from } from "rxjs";
 import invariant from "invariant";
-import axios from "axios";
 import Btc from "@ledgerhq/hw-app-btc";
+import network from "@ledgerhq/live-common/lib/network";
 import { findCurrencyExplorer } from "@ledgerhq/live-common/lib/api/Ledger";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
 
@@ -22,9 +22,9 @@ const command = async (transport, currencyId, hash) => {
   invariant(ledgerExplorer, "ledgerExplorer not found");
   const { endpoint, version, id } = ledgerExplorer;
 
-  const res = await axios.get(
-    `${endpoint}/blockchain/${version}/${id}/transactions/${hash}/hex`
-  );
+  const res = await network({
+    url: `${endpoint}/blockchain/${version}/${id}/transactions/${hash}/hex`,
+  });
 
   const hex = res.data[0] && res.data[0].hex;
 
