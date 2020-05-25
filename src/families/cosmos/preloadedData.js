@@ -8,19 +8,6 @@ import type { CosmosPreloadData } from "./types";
 let currentCosmosPreloadedData: CosmosPreloadData = {
   // NB initial state because UI need to work even if it's currently "loading", typically after clear cache
   validators: [],
-  rewardsState: {
-    targetBondedRatio: 0,
-    communityPoolCommission: 0,
-    assumedTimePerBlock: 0,
-    inflationRateChange: 0,
-    inflationMaxRate: 0,
-    inflationMinRate: 0,
-    actualBondedRatio: 0,
-    averageTimePerBlock: 0,
-    totalSupply: 0,
-    averageDailyFees: 0,
-    currentValueInflation: 0,
-  },
 };
 
 export function asSafeCosmosPreloadData(data: mixed): CosmosPreloadData {
