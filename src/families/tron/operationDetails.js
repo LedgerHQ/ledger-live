@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback } from "react";
-import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
@@ -23,6 +23,7 @@ import type {
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
+import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
 import colors from "../../colors";
 
@@ -116,27 +117,13 @@ function OperationDetailsVotes({
     >
       {formattedVotes &&
         formattedVotes.map(({ address, voteCount, validator }, i) => (
-          <View key={address + i} style={styles.voteWrapper}>
-            <View style={styles.voteCountWrapper}>
-              <LText style={styles.greyText}>
-                <Trans
-                  i18nKey="operationDetails.extra.votesAddress"
-                  values={{
-                    votes: voteCount,
-                    name: validator && validator.name,
-                  }}
-                >
-                  <LText semiBold style={styles.text}>
-                    text
-                  </LText>
-                </Trans>
-              </LText>
-            </View>
-
-            <TouchableOpacity onPress={redirectAddressCreator(address)}>
-              <LText style={styles.greyText}>{address}</LText>
-            </TouchableOpacity>
-          </View>
+          <DelegationInfo
+            key={address + i}
+            address={address}
+            name={validator?.name ?? address}
+            formattedAmount={voteCount.toString()}
+            onPress={redirectAddressCreator(address)}
+          />
         ))}
     </Section>
   );
@@ -225,19 +212,6 @@ const VoteAmountCell = ({ operation }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  voteWrapper: {
-    borderLeftWidth: 3,
-    borderLeftColor: colors.fog,
-    paddingLeft: 16,
-    marginBottom: 24,
-  },
-  text: {
-    color: colors.darkBlue,
-  },
-  greyText: { color: colors.grey },
-  voteCountWrapper: {
-    marginBottom: 6,
-  },
   amountText: {
     color: colors.grey,
     fontSize: 14,

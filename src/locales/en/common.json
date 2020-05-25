@@ -709,7 +709,9 @@
       "unfreezeAmount": "Unfreeze amount",
       "address": "Address",
       "votes": "Votes ({{number}})",
-      "votesAddress": "<0>{{votes}}</0> to <0>{{name}}</0>"
+      "validators": "Validators ({{number}})",
+      "delegateTo": "<0>{{amount}}</0> to <0>{{name}}</0>",
+      "redelegatedTo": "Redelegated to"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
