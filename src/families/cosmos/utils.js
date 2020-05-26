@@ -1,6 +1,5 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
 import { formatCurrencyUnit } from "../../currencies";
 import type {
   CosmosDelegation,
@@ -99,20 +98,15 @@ export const mapDelegationInfo = (
   validators: CosmosValidatorItem[],
   unit: Unit
 ): CosmosMappedDelegationInfo[] => {
-  return delegations.map((d) => {
-    const validator = validators.find((v) => v.validatorAddress === d.address);
-    invariant(validator, "cosmos: cannot find validator");
-
-    return {
-      validator,
-      amount: d.amount,
-      formattedAmount: formatCurrencyUnit(unit, d.amount, {
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-      }),
-    };
-  });
+  return delegations.map((d) => ({
+    ...d,
+    validator: validators.find((v) => v.validatorAddress === d.address),
+    formattedAmount: formatCurrencyUnit(unit, d.amount, {
+      disableRounding: true,
+      alwaysShowSign: false,
+      showCode: true,
+    }),
+  }));
 };
 
 export const MAX_VOTES = 5;
