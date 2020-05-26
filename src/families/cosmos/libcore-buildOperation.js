@@ -16,8 +16,26 @@ async function cosmosBuildOperation({
     hash: `${hash}-${await message.getIndex()}`,
   };
 
-  if (message && (await message.getRawMessageType()) === "internal/MsgFees") {
-    out.type = "FEES";
+  switch (await message.getRawMessageType()) {
+    case "internal/MsgFees":
+      out.type = "FEES";
+      break;
+
+    case "cosmos-sdk/MsgDelegate":
+      out.type = "DELEGATE";
+      break;
+
+    case "cosmos-sdk/MsgUndelegate":
+      out.type = "UNDELEGATE";
+      break;
+
+    case "cosmos-sdk/MsgWithdrawDelegationReward":
+      out.type = "REWARD";
+      break;
+
+    case "cosmos-sdk/MsgBeginRedelegate":
+      out.type = "REDELEGATE";
+      break;
   }
 
   return out;

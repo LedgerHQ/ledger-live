@@ -54,6 +54,8 @@ async function signTransaction({
       ? "UNDELEGATE"
       : transaction.mode === "delegate"
       ? "DELEGATE"
+      : transaction.mode === "redelegate"
+      ? "REDELEGATE"
       : "OUT";
 
   const op = {
