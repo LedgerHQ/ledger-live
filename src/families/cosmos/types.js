@@ -396,9 +396,8 @@ export type CosmosMappedRedelegation = CosmosRedelegation & {
   validatorDst: ?CosmosValidatorItem,
 };
 
-export type CosmosMappedDelegationInfo = {
-  validator: CosmosValidatorItem,
-  amount: BigNumber,
+export type CosmosMappedDelegationInfo = CosmosDelegationInfo & {
+  validator: ?CosmosValidatorItem,
   formattedAmount: string,
 };
 
