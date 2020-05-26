@@ -40,6 +40,7 @@
     "@ledgerhq/logs": "5.15.0",
     "asciichart": "^1.5.19",
     "bignumber.js": "^9.0.0",
+    "bip39": "^3.0.2",
     "body-parser": "^1.19.0",
     "command-line-args": "^5.1.1",
     "cors": "^2.8.5",

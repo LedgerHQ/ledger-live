@@ -75,6 +75,12 @@ const envDefinitions = {
     desc:
       "force implementation for ALL currency bridges (affects scanning accounts)",
   },
+  COINAPPS: {
+    def: "",
+    parser: stringParser,
+    desc:
+      "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
+  },
   COSMOS_GAS_AMPLIFIER: {
     def: 2,
     parser: intParser,
@@ -279,6 +285,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "enable searching accounts in exotic derivation paths",
+  },
+  SEED: {
+    def: "",
+    parser: stringParser,
+    desc: "(dev feature) seed to be used by speculos (device simulator)",
   },
   SHOW_LEGACY_NEW_ACCOUNT: {
     def: false,

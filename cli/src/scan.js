@@ -32,6 +32,7 @@ import fs from "fs";
 
 export const deviceOpt = {
   name: "device",
+  alias: "d",
   type: String,
   descOpt: "usb path",
   desc: "provide a specific HID path of a device",

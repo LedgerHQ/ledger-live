@@ -18,6 +18,8 @@ bridge/js.js \
 bridge/libcore.js \
 bridge/mock.js \
 cli-transaction.js \
+specs.js \
+speculos-deviceActions.js \
 deviceTransactionConfig.js \
 test-dataset.js \
 test-specifics.js \

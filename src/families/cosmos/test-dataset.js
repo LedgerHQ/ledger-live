@@ -14,6 +14,7 @@ import { getEnv } from "../../env";
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore"],
+  // TODO re-enable when libcore is fixed
   currencies: {
     cosmos: {
       FIXME_ignoreAccountFields: [

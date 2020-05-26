@@ -3,7 +3,9 @@ import appsCheckAllAppVersions from "./commands/appsCheckAllAppVersions";
 import appsInstallAll from "./commands/appsInstallAll";
 import appsUpdateTestAll from "./commands/appsUpdateTestAll";
 import balanceHistory from "./commands/balanceHistory";
+import bot from "./commands/bot";
 import broadcast from "./commands/broadcast";
+import cleanSpeculos from "./commands/cleanSpeculos";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
 import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
@@ -42,7 +44,9 @@ export default {
   appsInstallAll,
   appsUpdateTestAll,
   balanceHistory,
+  bot,
   broadcast,
+  cleanSpeculos,
   devDeviceAppsScenario,
   deviceAppVersion,
   deviceInfo,

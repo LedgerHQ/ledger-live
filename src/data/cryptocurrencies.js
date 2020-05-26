@@ -2530,6 +2530,22 @@ export function findCryptoCurrencyById(id: string): ?CryptoCurrency {
   return cryptocurrenciesById[id];
 }
 
+export const findCryptoCurrencyByKeyword = (
+  keyword: string
+): ?CryptoCurrency => {
+  const r = findCryptoCurrency((c) => {
+    const search = keyword.replace(/ /, "").toLowerCase();
+    return (
+      c.id === search ||
+      c.name.replace(/ /, "").toLowerCase() === search ||
+      (c.managerAppName &&
+        c.managerAppName.replace(/ /, "").toLowerCase() === search) ||
+      c.ticker.toLowerCase() === search
+    );
+  });
+  return r;
+};
+
 export const hasCryptoCurrencyId = (id: string): boolean =>
   id in cryptocurrenciesById;
 

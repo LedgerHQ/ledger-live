@@ -100,3 +100,7 @@ from(cmd.job(options)).subscribe({
     closeAllDevices();
   },
 });
+
+process.on("SIGINT", () => {
+  closeAllDevices();
+});
