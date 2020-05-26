@@ -378,25 +378,29 @@ export type TransactionRaw = {|
   cosmosSourceValidator: ?string,
 |};
 
-export type CosmosMappedDelegation = CosmosDelegation & {
+export type CosmosMappedDelegation = {
+  ...CosmosDelegation,
   formattedAmount: string,
   formattedPendingRewards: string,
   rank: number,
   validator: ?CosmosValidatorItem,
 };
 
-export type CosmosMappedUnbonding = CosmosUnbonding & {
+export type CosmosMappedUnbonding = {
+  ...CosmosUnbonding,
   formattedAmount: string,
   validator: ?CosmosValidatorItem,
 };
 
-export type CosmosMappedRedelegation = CosmosRedelegation & {
+export type CosmosMappedRedelegation = {
+  ...CosmosRedelegation,
   formattedAmount: string,
   validatorSrc: ?CosmosValidatorItem,
   validatorDst: ?CosmosValidatorItem,
 };
 
-export type CosmosMappedDelegationInfo = CosmosDelegationInfo & {
+export type CosmosMappedDelegationInfo = {
+  ...CosmosDelegationInfo,
   validator: ?CosmosValidatorItem,
   formattedAmount: string,
 };
