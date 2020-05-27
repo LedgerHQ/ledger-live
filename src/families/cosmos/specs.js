@@ -1,4 +1,5 @@
 // @flow
+import expect from "expect";
 import sample from "lodash/sample";
 import invariant from "invariant";
 import type { Transaction } from "../../families/cosmos/types";

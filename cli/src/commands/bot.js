@@ -4,6 +4,7 @@ import { generateMnemonic } from "bip39";
 import { from } from "rxjs";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { runWithAppSpec } from "@ledgerhq/live-common/lib/bot/engine";
+import { formatReportForConsole } from "@ledgerhq/live-common/lib/bot/formatters";
 import allSpecs from "@ledgerhq/live-common/lib/generated/specs";
 
 export default {
@@ -44,7 +45,15 @@ export default {
       const errorCases = combinedResults.flat().filter((r) => r.error);
 
       if (errorCases.length) {
-        errorCases.forEach((c) => console.error(c.error));
+        console.error(`================== ERRORS =====================\n`);
+        errorCases.forEach((c) => {
+          console.error(formatReportForConsole(c));
+          console.error(c.error);
+          console.error("");
+        });
+        console.error(
+          `/!\\ ${errorCases.length} failures out of ${combinedResults.length} mutations. Check above!\n`
+        );
         process.exit(1);
       }
     }

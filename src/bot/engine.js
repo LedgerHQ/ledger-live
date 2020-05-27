@@ -14,7 +14,7 @@ import type {
 } from "../types";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
-import { formatAccount } from "../account";
+import { isAccountEmpty, formatAccount } from "../account";
 import { isCurrencySupported } from "../currencies";
 import { getEnv } from "../env";
 import { delay } from "../promise";
@@ -93,12 +93,16 @@ export async function runWithAppSpec<T: Transaction>(
         currency.name
       } accounts:\n${accounts
         .map((a) => "  - " + formatAccount(a, "summary"))
-        .join("\n")}`
+        .join("\n")}\n`
     );
 
-    if (accounts.length < 2) {
+    if (accounts.every(isAccountEmpty)) {
       reportLog(
-        `This SEED does not have ${currency.name}. Please send funds to ${accounts[0].freshAddress}`
+        `This SEED does not have ${
+          currency.name
+        }. Please send funds to ${accounts
+          .map((a) => a.freshAddress)
+          .join(" or ")}\n`
       );
       return reports;
     }

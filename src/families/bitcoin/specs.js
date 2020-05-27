@@ -1,4 +1,5 @@
 // @flow
+import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import type { Transaction } from "./types";
@@ -8,7 +9,7 @@ import type { MutationSpec, AppSpec } from "../../bot/types";
 
 const bitcoinLikeMutations = ({
   minimalAmount = BigNumber("10000"),
-  targetAccountSize = 5,
+  targetAccountSize = 2,
 }: $Shape<{
   minimalAmount: BigNumber,
   targetAccountSize: number,
@@ -66,6 +67,7 @@ const dogecoin: AppSpec<Transaction> = {
     appName: "Dogecoin",
   },
   mutations: bitcoinLikeMutations({
+    targetAccountSize: 5,
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("dogecoin").units[0],
       "1"
@@ -84,7 +86,7 @@ const zcash: AppSpec<Transaction> = {
     appVersion: "1.4",
   },
   mutations: bitcoinLikeMutations({
-    targetAccountSize: 1,
+    targetAccountSize: 1, // this is to investigate the bug
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("zcash").units[0],
       "0.0002"
@@ -92,4 +94,94 @@ const zcash: AppSpec<Transaction> = {
   }),
 };
 
-export default { bitcoin, dogecoin, zcash };
+const zencash: AppSpec<Transaction> = {
+  name: "Horizen",
+  currency: getCryptoCurrencyById("zencash"),
+  dependency: "Bitcoin",
+  appQuery: {
+    model: "nanoS",
+    appName: "Horizen",
+  },
+  mutations: bitcoinLikeMutations({
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("zencash").units[0],
+      "0.1"
+    ),
+  }),
+};
+
+const digibyte: AppSpec<Transaction> = {
+  name: "Digibyte",
+  currency: getCryptoCurrencyById("digibyte"),
+  dependency: "Bitcoin",
+  appQuery: {
+    model: "nanoS",
+    appName: "Digibyte",
+  },
+  mutations: bitcoinLikeMutations({
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("digibyte").units[0],
+      "5"
+    ),
+  }),
+};
+
+const komodo: AppSpec<Transaction> = {
+  name: "Komodo",
+  currency: getCryptoCurrencyById("komodo"),
+  dependency: "Bitcoin",
+  appQuery: {
+    model: "nanoS",
+    appName: "Komodo",
+  },
+  mutations: bitcoinLikeMutations({
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("komodo").units[0],
+      "5"
+    ),
+  }),
+};
+
+const litecoin: AppSpec<Transaction> = {
+  name: "Litecoin",
+  currency: getCryptoCurrencyById("litecoin"),
+  dependency: "Bitcoin",
+  appQuery: {
+    model: "nanoS",
+    appName: "Litecoin",
+  },
+  mutations: bitcoinLikeMutations({
+    targetAccountSize: 3,
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("litecoin").units[0],
+      "0.01"
+    ),
+  }),
+};
+
+const stealthcoin: AppSpec<Transaction> = {
+  name: "Stealth",
+  currency: getCryptoCurrencyById("stealthcoin"),
+  dependency: "Bitcoin",
+  appQuery: {
+    model: "nanoS",
+    appName: "Stealth",
+  },
+  mutations: bitcoinLikeMutations({
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("stealthcoin").units[0],
+      "10"
+    ),
+  }),
+};
+
+export default {
+  bitcoin,
+  dogecoin,
+  zcash,
+  zencash,
+  litecoin,
+  stealthcoin,
+  komodo,
+  digibyte,
+};
