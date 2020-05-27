@@ -41,5 +41,5 @@ jobs:
       - name: BOT
         env:
           SEED: ${{ secrets.SEED1 }}
-          COINAPPS: $PWD/coin-apps
+          COINAPPS: ../coin-apps
         run: node cli/bin/index.js bot
