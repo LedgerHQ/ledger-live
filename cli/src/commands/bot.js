@@ -61,6 +61,9 @@ export default {
           await network({
             url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
             method: "POST",
+            headers: {
+              Authorization: `token ${GITHUB_TOKEN}`,
+            },
             data: {
               body:
                 "## 🤖 Oops\n\n" +
