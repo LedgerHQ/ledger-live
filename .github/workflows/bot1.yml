@@ -37,9 +37,6 @@ jobs:
         run: |
           yarn global add yalc
           yarn --frozen-lockfile
-          cd cli
-          yarn --frozen-lockfile
-          cd -
           yarn ci-setup-cli
       - name: BOT
         env:
