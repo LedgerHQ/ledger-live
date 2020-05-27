@@ -1,0 +1,48 @@
+name: Bot 1
+on:
+  schedule:
+    - cron: "0 */4 * * *"
+  push:
+    branches:
+      - master
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Retrieving coin apps
+        uses: actions/checkout@v2
+        with:
+          repository: LedgerHQ/coin-apps
+          token: ${{ secrets.PAT }}
+          path: coin-apps
+      - uses: actions/setup-node@master
+        with:
+          node-version: 12.x
+      - name: pull docker image
+        run: docker pull ledgerhq/speculos
+      - name: Install linux deps
+        run: sudo apt-get install -y libusb-1.0-0-dev jq
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: |
+          yarn global add yalc
+          yarn --frozen-lockfile
+          cd cli
+          yarn --frozen-lockfile
+          cd -
+          yarn ci-setup-cli
+      - name: BOT
+        env:
+          SEED: ${{ secrets.SEED1 }}
+          COINAPPS: $PWD/coin-apps
+        run: ledger-live bot
