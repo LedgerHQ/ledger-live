@@ -1,21 +1,16 @@
 // @flow
 
 import type { Resolver } from "../../hw/getAddress/types";
-import CosmosApp from "./app";
-import BIPPath from "bip32-path";
+import Cosmos from "./ledger-app/Cosmos";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
-  const cosmos = new CosmosApp(transport);
-  const bipPath = BIPPath.fromString(path).toPathArray();
+  const cosmos = new Cosmos(transport);
 
-  const r = await cosmos.getAddressAndPubKey(
-    bipPath,
-    "cosmos",
-    verify || false
-  );
+  const r = await cosmos.getAddress(path, "cosmos", verify || false);
+
   return {
-    address: r.bech32_address,
-    publicKey: r.compressed_pk.toString("hex"),
+    address: r.address,
+    publicKey: r.publicKey,
     path,
   };
 };
