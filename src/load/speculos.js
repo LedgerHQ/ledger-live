@@ -56,7 +56,9 @@ export async function createSpeculosDevice({
   const buttonPort = 42000 + idCounter;
   const automationPort = 43000 + idCounter;
 
-  log("speculos", "spawning with apdu=" + apduPort + " button=" + buttonPort);
+  const appPath = `./apps/${model.toLowerCase()}/${firmware}/${appName}/app_${appVersion}.elf`;
+
+  log("speculos", `spawning ${id} with coinapps=${coinapps} on app ${appPath}`);
 
   const p = spawn("docker", [
     "run",
@@ -77,7 +79,7 @@ export async function createSpeculosDevice({
     "ledgerhq/speculos",
     "--model",
     model.toLowerCase(),
-    `./apps/${model.toLowerCase()}/${firmware}/${appName}/app_${appVersion}.elf`,
+    appPath,
     ...(dependency
       ? [
           "-l",
@@ -110,14 +112,14 @@ export async function createSpeculosDevice({
   });
 
   p.stdout.on("data", (data) => {
-    log("speculos", data);
+    log("speculos-stdout", `${id}: ${data}`);
   });
 
   p.stderr.on("data", (data) => {
+    log("speculos-stderr", `${id}: ${data}`);
     if (data.includes("using SDK")) {
       resolveReady();
     }
-    if (process.env.VERBOSE) console.error(`${id}: ${data}`);
   });
 
   const destroy = () =>
@@ -136,6 +138,7 @@ export async function createSpeculosDevice({
     });
 
   p.on("close", () => {
+    log("speculos", `${id} closed`);
     destroy();
     rejectReady(
       new Error(
