@@ -107,6 +107,7 @@ export async function runWithAppSpec<T: Transaction>(
       return reports;
     }
 
+    const mutationsCount = {};
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
     for (let i = 0; i < length; i++) {
@@ -119,6 +120,7 @@ export async function runWithAppSpec<T: Transaction>(
         device,
         account,
         accounts,
+        mutationsCount,
       });
       reportLog(formatReportForConsole(report));
       reports.push(report);
@@ -135,12 +137,14 @@ export async function runOnAccount<T: Transaction>({
   device,
   account,
   accounts,
+  mutationsCount,
 }: {
   appCandidate: *,
   spec: AppSpec<T>,
   device: *,
   account: *,
   accounts: *,
+  mutationsCount: { [_: string]: number },
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
 
@@ -155,6 +159,12 @@ export async function runOnAccount<T: Transaction>({
 
     for (const mutation of mutations) {
       try {
+        const count = mutationsCount[mutation.name] || 0;
+        invariant(
+          count < (mutation.maxRun || Infinity),
+          "maximum mutation run reached (%s)",
+          count
+        );
         const tx = mutation.transaction({
           appCandidate,
           account,
@@ -182,6 +192,7 @@ export async function runOnAccount<T: Transaction>({
     report.mutation = mutation;
     report.transaction = tx;
     report.destination = accounts.find((a) => a.freshAddress === tx.recipient);
+    mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
 
     // prepare the transaction and ensure it's valid
     const transaction = await accountBridge.prepareTransaction(account, tx);

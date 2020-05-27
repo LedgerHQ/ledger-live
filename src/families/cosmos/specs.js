@@ -19,6 +19,7 @@ const cosmos: AppSpec<Transaction> = {
   mutations: [
     {
       name: "split half to another account",
+      maxRun: 6,
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.balance.gt(10000), "balance is too low");
         let t = bridge.createTransaction(account);
@@ -38,6 +39,7 @@ const cosmos: AppSpec<Transaction> = {
 
     {
       name: "delegate 10% to ONE validator",
+      maxRun: 3,
       transaction: ({ account, bridge }) => {
         invariant(account.balance.gt(10000), "balance is too low");
         const { cosmosResources } = account;
@@ -76,6 +78,7 @@ const cosmos: AppSpec<Transaction> = {
     // TODO undelegation
     {
       name: "claim rewards",
+      maxRun: 1,
       transaction: ({ account, bridge }) => {
         invariant(account.balance.gt(10000), "balance is too low");
         const { cosmosResources } = account;

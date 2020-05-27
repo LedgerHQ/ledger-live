@@ -33,6 +33,7 @@ export type MutationSpec<T: Transaction> = {
     bridge: AccountBridge<T>,
   }) => ?T,
   deviceAction?: DeviceAction<T, any>,
+  maxRun?: number,
   test?: ({
     account: Account,
     accountBeforeTransaction: Account,
