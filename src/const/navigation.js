@@ -128,6 +128,13 @@ export const ScreenName = {
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
   /* eslint-disable sort-keys */
+  CosmosDelegationStarted: "CosmosDelegationStarted",
+  CosmosDelegationValidator: "CosmosDelegationValidator",
+  CosmosDelegationAmount: "CosmosDelegationAmount",
+  CosmosDelegationConnectDevice: "CosmosDelegationConnectDevice",
+  CosmosDelegationValidation: "CosmosDelegationValidation",
+  CosmosDelegationValidationError: "CosmosDelegationValidationError",
+  CosmosDelegationValidationSuccess: "CosmosDelegationValidationSuccess",
 };
 
 export const NavigatorName = {
@@ -156,6 +163,7 @@ export const NavigatorName = {
   TronVoteFlow: "TronVoteFlow",
   Unfreeze: "Unfreeze",
   /* eslint-disable sort-keys */
+  CosmosDelegationFlow: "CosmosDelegationFlow",
 
   // Tab
   CryptoAssetsSettings: "CryptoAssetsSettings",

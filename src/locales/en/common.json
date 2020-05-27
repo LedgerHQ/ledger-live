@@ -818,7 +818,7 @@
         "buttonTitle": "Go to Settings"
       }
     },
-    "availableBalance": "TRX available",
+    "availableBalance": "Available balance",
     "tronFrozen": "Frozen",
     "bandwidth": "Bandwidth",
     "energy": "Energy",
@@ -1580,6 +1580,71 @@
       "undelegating": {
         "title": "Undelegating",
         "description": "Undelegated assets are in a timelock of 21 days, before being available."
+      }
+    },
+    "delegation": {
+      "claimRewards": "Claim rewards",
+      "claimAvailableRewards": "Claim {{amount}}",
+      "header": "Delegation(s)",
+      "Amount": "Amount",
+      "noRewards": "No rewards available",
+      "delegate": "Delegate",
+      "undelegate": "Undelegate",
+      "redelegate": "Redelegate",
+      "reward": "Collect rewards",
+      "votingPower": "Voting power: {{amount}}%",
+      "estYield": "est. yield",
+      "stepperHeader": {
+        "starter": "Earn rewards",
+        "validator": "Validators",
+        "amountSubTitle": "Amount to delegate",
+        "summary": "Summary",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "title": "Delegate assets",
+        "steps": {
+          "starter": {
+            "description": "Delegate your ATOM to earn rewards while keeping full security  and control on your assets.",
+            "steps": {
+              "0": "Delegated assets stay yours",
+              "1": "You’ll have to wait for 21 days to complete an undelegation",
+              "2": "Delegate securely with your Ledger device"
+            },
+            "warning": {
+              "description": "Delegate ATOM asset can imply some losses if the chosen delegator doesn’t act rightfully on the network. "
+            },
+            "cta": "Continue"
+          },
+          "validator": {
+            "validators": "Validators",
+            "myDelegations": "My delegations",
+            "cta": "Continue",
+            "estYield": "Est. yield: {{amount}}",
+            "totalAvailable": "Total available: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "noResultsFound": "No validators found for <0>{{search}}</0>"
+          },
+          "amount": {
+            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "incorrectAmount": "Incorrect amount",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully delegated your assets",
+              "text": "Your account balance will update once the blockchain has confirmed the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
       }
     }
   },

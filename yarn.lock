@@ -1163,6 +1163,18 @@
     semver "^7.3.2"
     sha.js "2"
 
+"@ledgerhq/hw-app-btc@^5.15.2":
+  version "5.15.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.15.2.tgz#a1c8b5a16915c92d4d21ad5e2962b0310c4473e8"
+  integrity sha512-mpjANAFEtFfvb9BwiijDZOAEWlON/G6ieORNpJ4GM2u7Lanlo39IANo3K68ootGnS15QdfAdZw34SzdzLfIIYg==
+  dependencies:
+    "@ledgerhq/hw-transport" "^5.15.0"
+    bip32-path "^0.4.2"
+    invariant "^2.2.4"
+    ripemd160 "2"
+    semver "^7.3.2"
+    sha.js "2"
+
 "@ledgerhq/hw-app-eth@5.15.0":
   version "5.15.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.15.0.tgz#44487340ec3bfef61951ebd721213da369933989"

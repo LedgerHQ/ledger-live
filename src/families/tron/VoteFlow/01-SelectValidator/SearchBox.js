@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: colors.lightGrey,
+    backgroundColor: colors.lightFog,
     borderRadius: 3,
     paddingRight: Platform.OS === "ios" ? 0 : 44,
   },
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: colors.lightGrey,
     borderRadius: 3,
   },
   searchBarText: {
