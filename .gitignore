@@ -37,3 +37,4 @@ src/data/icons/reactNative
 
 cli/tests/*/output
 cli/tests/tmp
+.env
