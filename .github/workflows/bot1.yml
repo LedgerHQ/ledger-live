@@ -41,12 +41,11 @@ jobs:
       - name: BOT
         env:
           SEED: ${{ secrets.SEED1 }}
-          COINAPPS: coin-apps
-          VERBOSE_FILE: output.txt
-        run: node cli/bin/index.js bot
+          VERBOSE_FILE: bot-tests.txt
+        run: COINAPPS=$PWD/coin-apps node cli/bin/index.js bot
       - name: upload logs
         if: failure() || success()
         uses: actions/upload-artifact@v1
         with:
           name: bot-tests.txt
-          path: output.txt
+          path: bot-tests.txt
