@@ -4,8 +4,7 @@ import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
 import type { Transaction, CoreCosmosLikeTransaction } from "./types";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
-import CosmosApp from "./app";
-import BIPPath from "bip32-path";
+import CosmosApp from "./ledger-app/Cosmos";
 
 async function signTransaction({
   account: { freshAddressPath, balance, id, freshAddress },
@@ -19,13 +18,15 @@ async function signTransaction({
   const hwApp = new CosmosApp(transport);
   const serialized = await coreTransaction.serializeForSignature();
 
-  const bipPath = BIPPath.fromString(freshAddressPath).toPathArray();
-
   onDeviceSignatureRequested();
-  const { signature } = await hwApp.sign(bipPath, serialized);
+  const { signature } = await hwApp.sign(freshAddressPath, serialized);
   onDeviceSignatureGranted();
 
-  await coreTransaction.setDERSignature(signature.toString("hex"));
+  if (signature) {
+    await coreTransaction.setDERSignature(signature.toString("hex"));
+  } else {
+    throw new Error("Cosmos: no Signature Found");
+  }
   if (isCancelled()) return;
 
   // Serialize the transaction to be broadcast
