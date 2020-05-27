@@ -14,7 +14,7 @@ export function asSafeCosmosPreloadData(data: mixed): CosmosPreloadData {
   // NB this function must not break and be resilient to changes in data
   const validators = [];
   if (typeof data === "object" && data) {
-    const validatorsUnsafe = data.validatorsUnsafe;
+    const validatorsUnsafe = data.validators;
     if (
       typeof validatorsUnsafe === "object" &&
       validatorsUnsafe &&
