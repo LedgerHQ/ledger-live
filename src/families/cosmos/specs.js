@@ -1,4 +1,5 @@
 // @flow
+import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import sample from "lodash/sample";
 import invariant from "invariant";
@@ -38,7 +39,7 @@ const cosmos: AppSpec<Transaction> = {
     },
 
     {
-      name: "delegate 10% to ONE validator",
+      name: "delegate 10% to a NEW validator",
       maxRun: 3,
       transaction: ({ account, bridge }) => {
         invariant(account.balance.gt(10000), "balance is too low");
@@ -74,8 +75,85 @@ const cosmos: AppSpec<Transaction> = {
         // TODO check the delegations appears
       },
     },
-    // TODO redelegation
-    // TODO undelegation
+
+    {
+      name: "undelegate an existing delegation without existing unbondings",
+      maxRun: 1,
+      transaction: ({ account, bridge }) => {
+        invariant(account.balance.gt(10000), "balance is too low");
+        const { cosmosResources } = account;
+        invariant(cosmosResources, "cosmos");
+        invariant(
+          cosmosResources.delegations.length > 0,
+          "already enough delegations"
+        );
+        invariant(
+          cosmosResources.unbondings.length === 0,
+          "already ongoing unbonding"
+        );
+        const sourceDelegation = sample(cosmosResources.delegations);
+        const data = getCurrentCosmosPreloadData();
+        const delegation = sample(
+          data.validators.filter(
+            (v) => !sourceDelegation.validatorAddress === v.validatorAddress
+          )
+        );
+        let t = bridge.createTransaction(account);
+        t = bridge.updateTransaction(t, {
+          mode: "undelegate",
+          validators: [
+            {
+              address: delegation.validatorAddress,
+              amount: BigNumber(0),
+            },
+          ],
+        });
+        return t;
+      },
+      test: () => {
+        // TODO check the unbonding appears
+      },
+    },
+
+    {
+      name: "redelegate a delegation without existing redelegation/unbonding",
+      maxRun: 1,
+      transaction: ({ account, bridge }) => {
+        invariant(account.balance.gt(10000), "balance is too low");
+        const { cosmosResources } = account;
+        invariant(cosmosResources, "cosmos");
+        invariant(
+          cosmosResources.delegations.length > 0,
+          "already enough delegations"
+        );
+        invariant(
+          cosmosResources.unbondings.length === 0,
+          "already ongoing unbonding"
+        );
+        invariant(
+          cosmosResources.redelegations.length === 0,
+          "already ongoing redelegation"
+        );
+        const sourceDelegation = sample(cosmosResources.delegations);
+        const delegation = sample(cosmosResources.delegations);
+        let t = bridge.createTransaction(account);
+        t = bridge.updateTransaction(t, {
+          mode: "redelegate",
+          cosmosSourceValidator: sourceDelegation.validatorAddress,
+          validators: [
+            {
+              address: delegation.validatorAddress,
+              amount: BigNumber(0),
+            },
+          ],
+        });
+        return t;
+      },
+      test: () => {
+        // TODO check the redelegation appears
+      },
+    },
+
     {
       name: "claim rewards",
       maxRun: 1,
