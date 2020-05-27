@@ -104,7 +104,9 @@ const cosmos: AppSpec<Transaction> = {
           validators: [
             {
               address: delegation.validatorAddress,
-              amount: BigNumber(0),
+              amount: sourceDelegation.amount
+                .times(Math.random())
+                .integerValue(),
             },
           ],
         });
@@ -143,7 +145,7 @@ const cosmos: AppSpec<Transaction> = {
           validators: [
             {
               address: delegation.validatorAddress,
-              amount: BigNumber(0),
+              amount: delegation.amount.times(Math.random()).integerValue(),
             },
           ],
         });
