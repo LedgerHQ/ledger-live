@@ -57,6 +57,8 @@ async function signTransaction({
       ? "DELEGATE"
       : transaction.mode === "redelegate"
       ? "REDELEGATE"
+      : ["claimReward", "claimRewardCompound"].includes(transaction.mode)
+      ? "REWARD"
       : "OUT";
 
   const op = {
