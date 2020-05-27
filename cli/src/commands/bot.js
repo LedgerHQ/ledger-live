@@ -6,6 +6,7 @@ import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { runWithAppSpec } from "@ledgerhq/live-common/lib/bot/engine";
 import { formatReportForConsole } from "@ledgerhq/live-common/lib/bot/formatters";
 import allSpecs from "@ledgerhq/live-common/lib/generated/specs";
+import network from "@ledgerhq/live-common/lib/network";
 
 export default {
   description:
@@ -54,6 +55,30 @@ export default {
         console.error(
           `/!\\ ${errorCases.length} failures out of ${combinedResults.length} mutations. Check above!\n`
         );
+
+        const { GITHUB_SHA, GITHUB_TOKEN } = process.env;
+        if (GITHUB_TOKEN && GITHUB_SHA) {
+          await network({
+            url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
+            method: "POST",
+            data: {
+              body:
+                "## 🤖 Oops\n\n" +
+                `ledger-live bot reached ${errorCases.length} failures out of ${combinedResults.length} mutations:\n\n` +
+                errorCases
+                  .map(
+                    (c) =>
+                      "```\n" +
+                      formatReportForConsole(c) +
+                      "\n" +
+                      String(c.error) +
+                      "```\n"
+                  )
+                  .join("\n"),
+            },
+          });
+        }
+
         process.exit(1);
       }
     }
