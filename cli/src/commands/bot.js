@@ -11,10 +11,17 @@ import network from "@ledgerhq/live-common/lib/network";
 export default {
   description:
     "Run a bot test engine with speculos that automatically create accounts and do transactions",
-  args: [],
-  job: () => {
+  args: [
+    {
+      name: "families",
+      alias: "f",
+      type: String,
+      desc: "specify a family or families of coins to test",
+      multiple: true,
+    },
+  ],
+  job: ({ families }: { families: string[] }) => {
     // TODO have a way to filter a spec by name / family
-
     async function test() {
       const SEED = getEnv("SEED");
 
@@ -33,8 +40,16 @@ export default {
 
       for (const family in allSpecs) {
         const familySpecs = allSpecs[family];
-        for (const key in familySpecs) {
-          specs.push(familySpecs[key]);
+        if (families.length && families.includes(family)) {
+          for (const key in familySpecs) {
+            specs.push(familySpecs[key]);
+          }
+        } else if (families.length === 0) {
+          for (const key in familySpecs) {
+            specs.push(familySpecs[key]);
+          }
+        } else {
+          continue;
         }
       }
 
