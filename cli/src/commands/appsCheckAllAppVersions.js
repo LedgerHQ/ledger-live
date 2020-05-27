@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 // @flow
 
+import invariant from "invariant";
 import fs from "fs";
 import { from, empty, concat, defer, of } from "rxjs";
 import {
@@ -338,9 +339,10 @@ export default {
       return from(
         Promise.all([getDeviceInfo(t), ManagerAPI.listApps()]).then(
           async ([deviceInfo, applications]) => {
+            const { deviceModel } = t;
+            invariant(deviceModel, "device model mandatory");
             const candidates = await findCandidates(
-              // $FlowFixMe
-              t.deviceModel,
+              deviceModel,
               applications,
               deviceInfo
             );

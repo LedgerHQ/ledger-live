@@ -37,11 +37,7 @@ export default {
       }
 
       const results = specs.map((spec) =>
-        runWithAppSpec(
-          // $FlowFixMe i'm not sure what happens with parametric type here
-          spec,
-          (log) => console.log(log)
-        )
+        runWithAppSpec(spec, (log) => console.log(log))
       );
       const combinedResults = await Promise.all(results);
 

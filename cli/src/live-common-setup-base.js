@@ -84,9 +84,9 @@ logger.add(
 
 // eslint-disable-next-line no-unused-vars
 listen(({ id, date, type, message, ...rest }) => {
+  // $FlowFixMe
   logger.log("debug", {
     message: type + (message ? ": " + message : ""),
-    // $FlowFixMe
     ...rest,
   });
 });
