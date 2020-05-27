@@ -2,6 +2,9 @@ name: Bot 1
 on:
   schedule:
     - cron: "0 */4 * * *"
+  push:
+    branches:
+      - bots
 
 jobs:
   run-bot:
