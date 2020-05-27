@@ -40,11 +40,11 @@ export default {
 
       for (const family in allSpecs) {
         const familySpecs = allSpecs[family];
-        if (families.length && families.includes(family)) {
+        if (families && families.includes(family)) {
           for (const key in familySpecs) {
             specs.push(familySpecs[key]);
           }
-        } else if (families.length === 0) {
+        } else if (!families) {
           for (const key in familySpecs) {
             specs.push(familySpecs[key]);
           }
