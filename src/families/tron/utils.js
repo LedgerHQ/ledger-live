@@ -143,7 +143,7 @@ export const formatTrongridTrc20TxResponse = (tx: Object): ?TrongridTxInfo => {
       blockHeight,
       value: formattedValue,
       fee,
-      hasFailed: false, // trc20 'IN' txs are succeeded if returned by trongrid,
+      hasFailed: false, // trc20 txs are succeeded if returned by trongrid,
     };
   } catch (e) {
     log("tron-error", "could not parse transaction", tx);
@@ -171,7 +171,7 @@ export const formatTrongridTxResponse = (tx: Object): ?TrongridTxInfo => {
       votes,
     } = get(tx, "raw_data.contract[0].parameter.value", {});
 
-    const hasFailed = get(tx, "ret[0].contractRet", "") !== "SUCCESS";
+    const hasFailed = get(tx, "ret[0].contractRet", "SUCCESS") !== "SUCCESS";
 
     const tokenId =
       type === "TransferAssetContract"
