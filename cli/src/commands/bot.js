@@ -7,20 +7,25 @@ import { runWithAppSpec } from "@ledgerhq/live-common/lib/bot/engine";
 import { formatReportForConsole } from "@ledgerhq/live-common/lib/bot/formatters";
 import allSpecs from "@ledgerhq/live-common/lib/generated/specs";
 import network from "@ledgerhq/live-common/lib/network";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
+import { currencyOpt } from "../scan";
 
 export default {
   description:
     "Run a bot test engine with speculos that automatically create accounts and do transactions",
   args: [
+    currencyOpt,
     {
-      name: "families",
-      alias: "f",
+      name: "mutation",
+      alias: "m",
       type: String,
-      desc: "specify a family or families of coins to test",
-      multiple: true,
+      desc: "filter the mutation to run by a regexp pattern",
     },
   ],
-  job: ({ families }: { families: string[] }) => {
+  job: ({
+    currency,
+    mutation,
+  }: $Shape<{ currency: string, mutation: string }>) => {
     // TODO have a way to filter a spec by name / family
     async function test() {
       const SEED = getEnv("SEED");
@@ -38,18 +43,25 @@ export default {
 
       const specs = [];
 
+      const maybeCurrency = currency
+        ? findCryptoCurrencyByKeyword(currency)
+        : undefined;
+
       for (const family in allSpecs) {
         const familySpecs = allSpecs[family];
-        if (families && families.includes(family)) {
-          for (const key in familySpecs) {
-            specs.push(familySpecs[key]);
+        for (const key in familySpecs) {
+          let spec = familySpecs[key];
+          if (!maybeCurrency || maybeCurrency === spec.currency) {
+            if (mutation) {
+              spec = {
+                ...spec,
+                mutations: spec.mutation.filter((m) =>
+                  new RegExp(mutation).test(m.name)
+                ),
+              };
+            }
+            specs.push(spec);
           }
-        } else if (!families) {
-          for (const key in familySpecs) {
-            specs.push(familySpecs[key]);
-          }
-        } else {
-          continue;
         }
       }
 
@@ -57,8 +69,9 @@ export default {
         runWithAppSpec(spec, (log) => console.log(log))
       );
       const combinedResults = await Promise.all(results);
+      const combinedResultsFlat = combinedResults.flat();
 
-      const errorCases = combinedResults.flat().filter((r) => r.error);
+      const errorCases = combinedResultsFlat.filter((r) => r.error);
 
       if (errorCases.length) {
         console.error(`================== ERRORS =====================\n`);
@@ -68,7 +81,7 @@ export default {
           console.error("");
         });
         console.error(
-          `/!\\ ${errorCases.length} failures out of ${combinedResults.length} mutations. Check above!\n`
+          `/!\\ ${errorCases.length} failures out of ${combinedResultsFlat.length} mutations. Check above!\n`
         );
 
         const { GITHUB_SHA, GITHUB_TOKEN } = process.env;
@@ -77,12 +90,12 @@ export default {
             url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
             method: "POST",
             headers: {
-              Authorization: `token ${GITHUB_TOKEN}`,
+              Authorization: `Bearer ${GITHUB_TOKEN}`,
             },
             data: {
               body:
                 "## 🤖 Oops\n\n" +
-                `ledger-live bot reached ${errorCases.length} failures out of ${combinedResults.length} mutations:\n\n` +
+                `ledger-live bot reached ${errorCases.length} failures out of ${combinedResultsFlat.length} mutations:\n\n` +
                 errorCases
                   .map(
                     (c) =>
@@ -90,7 +103,7 @@ export default {
                       formatReportForConsole(c) +
                       "\n" +
                       String(c.error) +
-                      "```\n"
+                      "\n```\n"
                   )
                   .join("\n"),
             },

@@ -1,5 +1,4 @@
 // @flow
-import { BigNumber } from "bignumber.js";
 import expect from "expect";
 import sample from "lodash/sample";
 import invariant from "invariant";

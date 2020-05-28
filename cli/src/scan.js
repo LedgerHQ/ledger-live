@@ -22,7 +22,7 @@ import {
   getAccountBridge,
   getCurrencyBridge,
 } from "@ledgerhq/live-common/lib/bridge";
-import { findCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { delay } from "@ledgerhq/live-common/lib/promise";
@@ -108,16 +108,7 @@ export const scanCommonOpts = [
 ];
 
 export const getCurrencyByKeyword = (keyword: string): CryptoCurrency => {
-  const r = findCryptoCurrency((c) => {
-    const search = keyword.replace(/ /, "").toLowerCase();
-    return (
-      c.id === search ||
-      c.name.replace(/ /, "").toLowerCase() === search ||
-      (c.managerAppName &&
-        c.managerAppName.replace(/ /, "").toLowerCase() === search) ||
-      c.ticker.toLowerCase() === search
-    );
-  });
+  const r = findCryptoCurrencyByKeyword(keyword);
   if (!r) {
     throw new Error("currency '" + keyword + "' not found");
   }
