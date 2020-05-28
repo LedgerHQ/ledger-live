@@ -33,6 +33,7 @@ type RouteParams = {
   max?: BigNumber,
   value?: BigNumber,
   redelegatedBalance?: BigNumber,
+  mode: string,
   nextScreen: string,
 };
 
@@ -56,10 +57,8 @@ function DelegationAmount({ navigation, route }: Props) {
     route,
   ]);
 
-  const redelegatedBalance = useMemo(
-    () => route?.params?.redelegatedBalance ?? BigNumber(0),
-    [route],
-  );
+  const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);
+  const mode = route?.params?.mode ?? "delegation";
 
   const [value, setValue] = useState(() => initialValue);
 
@@ -164,7 +163,9 @@ function DelegationAmount({ navigation, route }: Props) {
           <View style={styles.labelContainer}>
             <Check size={16} color={colors.success} />
             <LText style={[styles.assetsRemaining, styles.success]}>
-              <Trans i18nKey="cosmos.delegation.flow.steps.amount.allAssetsUsed" />
+              <Trans
+                i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}
+              />
             </LText>
           </View>
         )}

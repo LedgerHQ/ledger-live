@@ -1699,6 +1699,33 @@
           }
         }
       }
+    },
+    "undelegation": {
+      "stepperHeader": {
+        "amountSubTitle": "Amount to undelegate",
+        "summary": "Summary",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "amount": {
+            "allAssetsUsed": "All assets undelegated"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully undelegated your assets",
+              "text": "Your account balance will update once the blockchain has confirmed the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
     }
   },
   "tezos": {

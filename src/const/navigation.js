@@ -141,6 +141,11 @@ export const ScreenName = {
   CosmosRedelegationValidation: "CosmosRedelegationValidation",
   CosmosRedelegationValidationError: "CosmosRedelegationValidationError",
   CosmosRedelegationValidationSuccess: "CosmosRedelegationValidationSuccess",
+  CosmosUndelegationAmount: "CosmosUndelegationAmount",
+  CosmosUndelegationConnectDevice: "CosmosUndelegationConnectDevice",
+  CosmosUndelegationValidation: "CosmosUndelegationValidation",
+  CosmosUndelegationValidationError: "CosmosUndelegationValidationError",
+  CosmosUndelegationValidationSuccess: "CosmosUndelegationValidationSuccess",
 };
 
 export const NavigatorName = {
@@ -173,6 +178,10 @@ export const NavigatorName = {
   TronVoteFlow: "TronVoteFlow",
   Unfreeze: "Unfreeze",
   /* eslint-disable sort-keys */
+  CosmosDelegationFlow: "CosmosDelegationFlow",
+  CosmosRedelegationFlow: "CosmosRedelegationFlow",
+  CosmosUndelegationFlow: "CosmosUndelegationFlow",
+
 
   // Tab
   CryptoAssetsSettings: "CryptoAssetsSettings",
