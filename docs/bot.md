@@ -4,6 +4,24 @@
 
 # Ledger-Live Bot
 
+## Philosophy of ledger-live bot
+
+- **Stateless**: My state is on the blockchain.
+
+- **Configless**: I only need a seed and a coinapps folder.
+
+- **Autonomous**: I simply restore on existing seed accounts and continue from existing blockchain state.
+
+- **Data driven**: My engine is simple and I do actions based on data specs that drives my capabilities.
+
+- **End to End**: I rely on the complete "Ledger stack": live-common which is the same logic behind Ledger Live (derives same accounts, use same transaction logic,..) and Speculos which is the Ledger devices simulator!
+
+- **Realistic**: I am very close to what is the flow of Ledger Live's users and what they would do with the device, I even press device buttons.
+
+- **Completeness**: I can technically do everything our user can do on Ledger Live with their account (send but also any feature of Ledger Live like delegation, freeze, rewards,...)
+
+- My law is https://en.wikipedia.org/wiki/Three_Laws_of_Robotics
+
 ## Getting started
 
 (1) You need a docker instance. on Mac you can install with:
@@ -145,22 +163,6 @@ We can see here that for EACH account of my seed, it tries to do a transaction. 
 Essentially, 95% of the focus of Ledger-Live Bot is about maintaining and defining all possible scenarios one can do with Ledger Live and the bot autonomously do them with the whole Ledger stack (libcore, live-common, nano app running in speculos).
 
 > Note: in the example above, we can see some errors are happening, which actually made the test fails. This is because we are too optimistic on the minimal account required for the fees. In the future, when we fix this, everything should fall into the case `🤷‍♂️ couldn't find a mutation to do!` which is not an error.
-
-## Key points
-
-- **Stateless**: My state is on the blockchain.
-
-- **Configless**: I only need a seed and a coinapps folder.
-
-- **Autonomous**: you just need to have a seed and it will be fully autonomous. It is able to "continue" on any existing seed.
-
-- **Data driven**: the engine is relatively simple, the data drives the capabilities.
-
-- **End to End**: It uses the "full Ledger stack" and the same logic behind Ledger Live (derives same accounts, use same transaction logic,..)
-
-- **Realistic**: It follows the same flow a user would do with device's logic and device button actions
-
-- **Completeness**: It allows to cover any possible action we can also do on Ledger Live (send but also any feature of Ledger Live like delegation, freeze, rewards,...)
 
 ### Test expectations
 
