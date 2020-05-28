@@ -33,4 +33,6 @@ export const urls = {
     trc10: "https://support.ledger.com/hc/en-us/articles/360013062159",
     trc20: "https://support.ledger.com/hc/en-us/articles/360013062159",
   },
+  // Todo: paste proper URL
+  cosmosStaking: "https://www.ledger.com/staking-cosmos",
 };

@@ -152,6 +152,10 @@ export const NavigatorName = {
   AddAccounts: "AddAccounts",
   Base: "Base",
   BaseOnboarding: "BaseOnboarding",
+  CosmosCollectRewardsFlow: "CosmosCollectRewardsFlow",
+  CosmosDelegationFlow: "CosmosDelegationFlow",
+  CosmosRedelegationFlow: "CosmosRedelegationFlow",
+  CosmosUndelegationFlow: "CosmosUndelegationFlow",
   ClaimRewards: "ClaimRewards",
   FirmwareUpdate: "FirmwareUpdate",
   Freeze: "Freeze",
@@ -169,8 +173,6 @@ export const NavigatorName = {
   TronVoteFlow: "TronVoteFlow",
   Unfreeze: "Unfreeze",
   /* eslint-disable sort-keys */
-  CosmosDelegationFlow: "CosmosDelegationFlow",
-  CosmosRedelegationFlow: "CosmosRedelegationFlow",
 
   // Tab
   CryptoAssetsSettings: "CryptoAssetsSettings",

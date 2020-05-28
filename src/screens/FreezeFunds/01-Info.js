@@ -10,8 +10,8 @@ import Button from "../../components/Button";
 import LText from "../../components/LText";
 import ExternalLink from "../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../components/BulletList";
+import IlluRewards from "../../components/IlluRewards";
 import { urls } from "../../config/urls";
-import IlluRewards from "../../families/tron/IlluRewards";
 
 const forceInset = { bottom: "always" };
 

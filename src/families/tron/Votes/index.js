@@ -1,8 +1,8 @@
 // @flow
 import React, { useCallback, useState, useMemo } from "react";
-import { View, Linking, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import {
   getAccountUnit,
@@ -24,16 +24,17 @@ import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import colors from "../../../colors";
 import { NavigatorName, ScreenName } from "../../../const";
-import ExternalLink from "../../../icons/ExternalLink";
 import Info from "../../../icons/Info";
 import ArrowRight from "../../../icons/ArrowRight";
 import DateFromNow from "../../../components/DateFromNow";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
-import IlluRewards from "../IlluRewards";
+import IlluRewards from "../../../components/IlluRewards";
 import ProgressCircle from "../../../components/ProgressCircle";
 import InfoModal from "../../../modals/Info";
 import ClaimRewards from "../../../icons/ClaimReward";
+import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
+import AccountSectionLabel from "../../../components/AccountSectionLabel";
 
 const infoRewardsModalData = [
   {
@@ -49,6 +50,7 @@ type Props = {
 };
 
 const Delegation = ({ account, parentAccount }: Props) => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [infoRewardsModal, setRewardsInfoModal] = useState();
 
@@ -141,17 +143,13 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
   return (
     <View style={styles.root}>
-      {hasRewards || (tronPower > 0 && formattedVotes.length > 0) ? (
+      {(hasRewards || (tronPower > 0 && formattedVotes.length > 0)) && (
         <>
-          <TouchableOpacity
-            style={styles.labelContainer}
+          <AccountSectionLabel
+            name={t("tron.voting.rewards.title")}
+            icon={<Info size={16} color={colors.darkBlue} />}
             onPress={openRewardsInfoModal}
-          >
-            <LText semiBold style={styles.label}>
-              <Trans i18nKey="tron.voting.rewards.title" />
-            </LText>
-            <Info size={16} color={colors.darkBlue} />
-          </TouchableOpacity>
+          />
           <View style={styles.rewardSection}>
             <View style={styles.labelSection}>
               <LText semiBold style={styles.title}>
@@ -179,7 +177,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
             />
           </View>
         </>
-      ) : null}
+      )}
       {tronPower > 0 ? (
         formattedVotes.length > 0 ? (
           <>
@@ -226,70 +224,32 @@ const Delegation = ({ account, parentAccount }: Props) => {
           </>
         ) : (
           <>
-            <View style={styles.labelContainer}>
-              <LText semiBold style={styles.label}>
-                <Trans i18nKey="tron.voting.votes.title" />
-              </LText>
-            </View>
-            <View style={styles.container}>
-              <View style={styles.container}>
-                <LText style={styles.description}>
-                  <Trans
-                    i18nKey="tron.voting.votes.description"
-                    values={{ name: account.currency.name }}
-                  />
-                </LText>
-                <TouchableOpacity
-                  style={styles.infoLinkContainer}
-                  onPress={() => Linking.openURL(urls.tronStaking)}
-                >
-                  <LText bold style={styles.infoLink}>
-                    <Trans i18nKey="tron.voting.howItWorks" />
-                  </LText>
-                  <ExternalLink size={11} color={colors.live} />
-                </TouchableOpacity>
-              </View>
-              <Button
-                type="primary"
-                onPress={onDelegate}
-                title={<Trans i18nKey="tron.voting.votes.cta" />}
-                event=""
-              />
-            </View>
+            <AccountSectionLabel name={t("tron.voting.votes.title")} />
+            <AccountDelegationInfo
+              description={t("tron.voting.votes.description", {
+                name: account.currency.name,
+              })}
+              infoUrl={urls.tronStaking}
+              infoTitle={t("tron.voting.howItWorks")}
+              onPress={onDelegate}
+              ctaTitle={t("tron.voting.votes.cta")}
+            />
           </>
         )
       ) : (
         canFreeze && (
-          <View style={styles.container}>
-            <View style={styles.container}>
-              <IlluRewards style={styles.illustration} />
-              <LText semiBold style={styles.title}>
-                <Trans i18nKey="tron.voting.earnRewars" />
-              </LText>
-              <LText style={styles.description}>
-                <Trans
-                  i18nKey="tron.voting.delegationEarn"
-                  values={{ name: account.currency.name }}
-                />
-              </LText>
-              <TouchableOpacity
-                style={styles.infoLinkContainer}
-                onPress={() => Linking.openURL(urls.tronStaking)}
-              >
-                <LText bold style={styles.infoLink}>
-                  <Trans i18nKey="tron.voting.howItWorks" />
-                </LText>
-                <ExternalLink size={11} color={colors.live} />
-              </TouchableOpacity>
-            </View>
-            <Button
-              type="primary"
-              disabled={!canFreeze}
-              onPress={onDelegateFreeze}
-              title={<Trans i18nKey="tron.voting.startEarning" />}
-              event=""
-            />
-          </View>
+          <AccountDelegationInfo
+            title={t("account.delegation.info.title")}
+            image={<IlluRewards style={styles.illustration} />}
+            description={t("tron.voting.delegationEarn", {
+              name: account.currency.name,
+            })}
+            infoUrl={urls.tronStaking}
+            infoTitle={t("tron.voting.howItWorks")}
+            disabled={!canFreeze}
+            onPress={onDelegateFreeze}
+            ctaTitle={t("account.delegation.info.cta")}
+          />
         )
       )}
       <InfoModal
@@ -312,7 +272,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "stretch",
   },
-  illustration: { alignSelf: "center", marginBottom: 16 },
   noPadding: {
     padding: 0,
   },
@@ -325,6 +284,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
+  illustration: { alignSelf: "center", marginBottom: 16 },
   collectButton: {
     flexBasis: "auto",
     flexGrow: 0.5,
@@ -334,16 +294,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "center",
-  },
-  labelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-  },
-  label: {
-    fontSize: 18,
-    color: colors.darkBlue,
-    marginRight: 6,
   },
   warn: {
     flexDirection: "row",

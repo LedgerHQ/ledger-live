@@ -68,7 +68,8 @@
       "hours_plural": "{{time}} hours ago",
       "days": "yesterday",
       "days_plural": "{{time}} days ago"
-    }
+    },
+    "seeMore": "See more"
   },
   "errors": {
     "AccountAwaitingSendPendingOperations": {
@@ -823,7 +824,15 @@
     "bandwidth": "Bandwidth",
     "energy": "Energy",
     "delegatedAssets": "Delegated assets",
-    "undelegating": "Undelegating"
+    "undelegating": "Undelegating",
+    "delegation": {
+      "sectionLabel": "Delegations",
+      "addDelegation": "Add delegation",
+      "info": {
+        "title": "Earn rewards",
+        "cta": "Earn rewards"
+      }
+    }
   },
   "accounts": {
     "title": "Accounts",
@@ -1644,6 +1653,12 @@
             "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
           }
         }
+      },
+      "drawer": {
+        "status": "Status",
+        "rewards": "Rewards",
+        "active": "Active",
+        "inactive": "Inactive"
       }
     },
     "redelegation": {
@@ -1864,7 +1879,13 @@
     },
     "summaryTitle": "Summary",
     "goToAccount": "Go to account",
-    "howDelegationWorks": "How delegation works"
+    "howDelegationWorks": "How delegation works",
+    "actions": {
+      "delegate": "Delegate",
+      "redelegate": "Redelegate",
+      "collectRewards": "Collect rewards",
+      "undelegate": "Undelegate"
+    }
   },
   "ValidateOnDevice": {
     "title": {
