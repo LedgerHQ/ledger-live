@@ -42,6 +42,8 @@ export default {
       }
 
       const specs = [];
+      const specsLogs = [];
+      const specFatals = [];
 
       const maybeCurrency = currency
         ? findCryptoCurrencyByKeyword(currency)
@@ -65,16 +67,38 @@ export default {
         }
       }
 
-      const results = specs.map((spec) =>
-        runWithAppSpec(spec, (log) => console.log(log))
-      );
+      const results = specs.map((spec) => {
+        const logs = [];
+        specsLogs.push(logs);
+        return runWithAppSpec(spec, (log) => {
+          console.log(log);
+          logs.push(log);
+        }).catch((error) => {
+          specFatals.push({ spec, error });
+          console.error(error);
+          logs.push(`FATAL:\n${"```"}\n${String(error)}\n${"```"}\n`);
+          return [];
+        });
+      });
       const combinedResults = await Promise.all(results);
       const combinedResultsFlat = combinedResults.flat();
 
       const errorCases = combinedResultsFlat.filter((r) => r.error);
 
+      const botHaveFailed = specFatals.length > 0 || errorCases.length > 0;
+
+      if (specFatals.length) {
+        console.error(`================== SPEC ERRORS =====================\n`);
+        specFatals.forEach((c) => {
+          console.error(c.error);
+          console.error("");
+        });
+      }
+
       if (errorCases.length) {
-        console.error(`================== ERRORS =====================\n`);
+        console.error(
+          `================== MUTATION ERRORS =====================\n`
+        );
         errorCases.forEach((c) => {
           console.error(formatReportForConsole(c));
           console.error(c.error);
@@ -83,33 +107,57 @@ export default {
         console.error(
           `/!\\ ${errorCases.length} failures out of ${combinedResultsFlat.length} mutations. Check above!\n`
         );
+      }
 
-        const { GITHUB_SHA, GITHUB_TOKEN } = process.env;
-        if (GITHUB_TOKEN && GITHUB_SHA) {
-          await network({
-            url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${GITHUB_TOKEN}`,
-            },
-            data: {
-              body:
-                "## 🤖 Oops\n\n" +
-                `ledger-live bot reached ${errorCases.length} failures out of ${combinedResultsFlat.length} mutations:\n\n` +
-                errorCases
-                  .map(
-                    (c) =>
-                      "```\n" +
-                      formatReportForConsole(c) +
-                      "\n" +
-                      String(c.error) +
-                      "\n```\n"
-                  )
-                  .join("\n"),
-            },
-          });
+      const { GITHUB_SHA, GITHUB_TOKEN } = process.env;
+      if (GITHUB_TOKEN && GITHUB_SHA) {
+        let body = "";
+        if (errorCases.length) {
+          body += `## 🤖❌ ${errorCases.length} mutations failed`;
+        } else if (specFatals.length) {
+          body += `## 🤖❌ ${specFatals.length} specs failed`;
+        } else {
+          body += `## 🤖👏 ${combinedResultsFlat.length} mutations succeed!`;
         }
+        body += "\n\n";
 
+        specFatals.forEach(({ spec, error }) => {
+          body += `**Spec '${spec.name}' failed:**\n`;
+          body += "```\n" + String(error) + "\n```\n\n";
+        });
+
+        errorCases.forEach((c) => {
+          body +=
+            "```\n" +
+            formatReportForConsole(c) +
+            "\n" +
+            String(c.error) +
+            "\n```\n\n";
+        });
+
+        body += "<details>\n";
+        body += `<summary>Details of the ${combinedResultsFlat.length} mutations</summary>\n\n`;
+        combinedResults.forEach((specResults, i) => {
+          const spec = specs[i];
+          const logs = specsLogs[i];
+          body += `### Spec '${spec.name}'\n`;
+          body += "\n```\n";
+          body += logs.join("\n");
+          body += "\n```\n";
+        });
+        body += "</details>\n";
+
+        await network({
+          url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${GITHUB_TOKEN}`,
+          },
+          data: { body },
+        });
+      }
+
+      if (botHaveFailed) {
         process.exit(1);
       }
     }

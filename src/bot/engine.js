@@ -154,6 +154,8 @@ export async function runOnAccount<T: Transaction>({
     const accountBeforeTransaction = account;
     report.account = account;
 
+    const maxSpendable = await accountBridge.estimateMaxSpendable({ account });
+
     const candidates = [];
     const unavailableMutationReasons = [];
 
@@ -170,6 +172,7 @@ export async function runOnAccount<T: Transaction>({
           account,
           bridge: accountBridge,
           siblings: accounts.filter((a) => a !== account),
+          maxSpendable,
         });
         if (tx) {
           candidates.push({ mutation, tx });

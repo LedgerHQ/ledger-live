@@ -1,4 +1,5 @@
 // @flow
+import { BigNumber } from "bignumber.js";
 import type Transport from "@ledgerhq/hw-transport";
 import type {
   Account,
@@ -31,6 +32,7 @@ export type MutationSpec<T: Transaction> = {
     account: Account,
     siblings: Account[],
     bridge: AccountBridge<T>,
+    maxSpendable: BigNumber,
   }) => ?T,
   deviceAction?: DeviceAction<T, any>,
   maxRun?: number,
