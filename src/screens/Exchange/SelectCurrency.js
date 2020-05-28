@@ -52,7 +52,6 @@ const supportedCurrenciesIds = [
   "ethereum",
   "bitcoin_cash",
   "dash",
-  "stellar",
 ];
 
 export default function ExchangeSelectCrypto({ navigation }: Props) {

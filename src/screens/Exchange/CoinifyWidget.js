@@ -30,6 +30,17 @@ import KeyboardView from "../../components/KeyboardView";
 
 type Navigation = NavigationScreenProp<{ params: {} }>;
 
+type CoinifyWidgetConfig = {
+  primaryColor?: string,
+  partnerId: number,
+  cryptoCurrencies?: string | null,
+  address?: string | null,
+  targetPage: string,
+  addressConfirmation?: boolean,
+  transferOutMedia?: string,
+  transferInMedia?: string,
+};
+
 type Props = {
   accounts: Account[],
   allAccounts: AccountLikeArray,
@@ -37,7 +48,14 @@ type Props = {
   route: { params: RouteParams },
 };
 
-const runFirst = `window.postMessage = e => window.ReactNativeWebView.postMessage(JSON.stringify(e))`;
+const injectedCode = `
+  var originalPostMessage = window.postMessage
+  window.postMessage = e => window.ReactNativeWebView.postMessage(JSON.stringify(e))
+
+  window.addEventListener("message", event => {
+      originalPostMessage(JSON.parse(event.data), "*")
+  });
+`;
 
 export default function CoinifyWidget({ navigation, route }: Props) {
   const [isWaitingDeviceJob, setWaitingDeviceJob] = useState(false);
@@ -50,13 +68,14 @@ export default function CoinifyWidget({ navigation, route }: Props) {
   const account = allAccounts.find(a => a.id === accountId);
 
   const coinifyConfig = getConfig("developpement");
-  const widgetConfig = {
+  const widgetConfig: CoinifyWidgetConfig = {
     fontColor: colors.darkBlue,
     primaryColor: colors.live,
     partnerId: coinifyConfig.partnerId,
     cryptoCurrencies: account.currency.ticker,
     address: account.freshAddress,
     targetPage: mode,
+    addressConfirmation: true,
   };
 
   if (mode === "buy") {
@@ -68,7 +87,7 @@ export default function CoinifyWidget({ navigation, route }: Props) {
   }
 
   const handleMessage = useCallback(message => {
-    console.log("GOT MSG");
+    console.log("GOT MSG", message);
     //    if (message.url !== coinifyConfig.url || !message.nativeEvent.data) return;
     message.persist();
 
@@ -86,6 +105,25 @@ export default function CoinifyWidget({ navigation, route }: Props) {
         break;
     }
   }, []);
+
+  const settleTrade = useCallback(
+    status => {
+      if (account && webView.current) {
+        console.log("sent message to webview");
+        webView.current.postMessage(
+          JSON.stringify({
+            type: "event",
+            event: "trade.receive-account-confirmed",
+            context: {
+              address: account.freshAddress,
+              status,
+            },
+          }),
+        );
+      }
+    },
+    [account],
+  );
 
   const url = `${coinifyConfig.url}?${querystring.stringify(widgetConfig)}`;
   const forceInset = { bottom: "always" };
@@ -106,7 +144,7 @@ export default function CoinifyWidget({ navigation, route }: Props) {
         source={{
           uri: url,
         }}
-        injectedJavaScript={runFirst}
+        injectedJavaScript={injectedCode}
         overScrollMode={false}
         onMessage={handleMessage}
         automaticallyAdjustContentInsets={false}
@@ -122,12 +160,14 @@ export default function CoinifyWidget({ navigation, route }: Props) {
           deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
           meta={meta}
           onCancel={() => {
-            console.log("cancel")
+            console.log("cancel");
+            settleTrade("rejected");
             setWaitingDeviceJob(false);
           }}
           onDone={() => {
-            console.log("done")
+            settleTrade("accepted");
             setWaitingDeviceJob(false);
+            console.log("done");
           }}
           steps={[
             connectingStep,
