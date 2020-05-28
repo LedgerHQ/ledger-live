@@ -24,7 +24,7 @@
 
 ## Getting started
 
-(0) You need `ledger-live` as documented in (cli.md)[https://github.com/LedgerHQ/ledger-live-common/blob/master/docs/cli.md]
+(0) You need `ledger-live` as documented in [cli.md](https://github.com/LedgerHQ/ledger-live-common/blob/master/docs/cli.md)
 
 (1) You need a docker instance. on Mac you can install with:
 
