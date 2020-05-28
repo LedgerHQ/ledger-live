@@ -2,7 +2,10 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import type { CosmosMappedDelegation } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type {
+  CosmosMappedDelegation,
+  CosmosMappedUnbonding,
+} from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import CounterValue from "../../../components/CounterValue";
 import colors from "../../../colors";
@@ -11,9 +14,9 @@ import LText from "../../../components/LText";
 import FirstLetterIcon from "../../../components/FirstLetterIcon";
 
 type Props = {
-  delegation: CosmosMappedDelegation,
+  delegation: CosmosMappedDelegation | CosmosMappedUnbonding,
   currency: Currency,
-  onPress: (delegation: CosmosMappedDelegation) => void,
+  onPress: (delegation: CosmosMappedDelegation | CosmosMappedUnbonding) => void,
   isLast?: boolean,
 };
 

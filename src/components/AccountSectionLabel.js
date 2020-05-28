@@ -1,6 +1,5 @@
 // @flow
 import React from "react";
-import type { ComponentType } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import colors from "../colors";
 import LText from "./LText";
@@ -9,7 +8,7 @@ type Props = {
   name: string,
   icon?: React$Node,
   onPress?: () => void,
-  RightComponent?: ComponentType<{}>,
+  RightComponent?: React$Node,
 };
 
 export default function AccountSectionLabel({
@@ -30,10 +29,8 @@ export default function AccountSectionLabel({
         </LText>
         {icon}
       </View>
-      {typeof RightComponent !== "undefined" && (
-        <View style={styles.rightWrapper}>
-          <RightComponent />
-        </View>
+      {!!RightComponent && (
+        <View style={styles.rightWrapper}>{RightComponent}</View>
       )}
     </TouchableOpacity>
   );

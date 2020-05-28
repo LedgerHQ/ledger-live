@@ -42,18 +42,24 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params, navigation]);
 
+  const mode = route.params.transaction.mode;
+
   return (
     <View style={styles.root}>
-      <TrackScreen category="CosmosUndelegation" name="ValidationSuccess" />
+      <TrackScreen category="CosmosClaimRewards" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
         title={
-          <Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.title" />
+          <Trans
+            i18nKey={`cosmos.claimRewards.flow.steps.verification.success.title${
+              mode !== "claimReward" ? "Compound" : ""
+            }`}
+          />
         }
         description={
-          <Trans i18nKey="cosmos.undelegation.flow.steps.verification.success.text" />
+          <Trans i18nKey="cosmos.claimRewards.flow.steps.verification.success.text" />
         }
       />
     </View>

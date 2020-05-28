@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 
 import type {
   CosmosMappedValidator,
+  CosmosMappedDelegation,
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
@@ -17,7 +18,7 @@ import ArrowRight from "../../../icons/ArrowRight";
 import FirstLetterIcon from "../../../components/FirstLetterIcon";
 
 type Props = {
-  item: CosmosMappedValidator,
+  item: CosmosMappedValidator | CosmosMappedDelegation,
   disabled: boolean,
   value: ?BigNumber,
   showVal?: boolean,

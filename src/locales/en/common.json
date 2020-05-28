@@ -826,12 +826,19 @@
     "delegatedAssets": "Delegated assets",
     "undelegating": "Undelegating",
     "delegation": {
-      "sectionLabel": "Delegations",
+      "sectionLabel": "Delegation(s)",
       "addDelegation": "Add delegation",
       "info": {
         "title": "Earn rewards",
         "cta": "Earn rewards"
       }
+    },
+    "claimReward": {
+      "sectionLabel": "Rewards",
+      "cta": "Claim rewards"
+    },
+    "undelegation": {
+      "sectionLabel": "Undelegation(s)"
     }
   },
   "accounts": {
@@ -1716,6 +1723,44 @@
           "verification": {
             "success": {
               "title": "You have successfully undelegated your assets",
+              "text": "Your account balance will update once the blockchain has confirmed the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
+    },
+    "claimRewards": {
+      "stepperHeader": {
+        "validator": "Select reward to collect",
+        "method": "Collect Rewards",
+        "summary": "Summary",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "method": {
+            "youEarned": "You earned",
+            "byDelegationAssetsTo": "by delegating assets to",
+            "claimReward": "Cash in",
+            "claimRewardCompound": "Compound",
+            "claimRewardInfo": "They will be claimed now be added to your available balance",
+            "claimRewardCompoundInfo": "They will be claimed now and automatically redelegated to the same validator",
+            "compoundOrCashIn": "Compound or Cash in?",
+            "claimRewardTooltip": "Rewards will be added to the available balance",
+            "claimRewardCompoundTooltip": "Rewards will be added to delegated amount",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully claimed your rewards",
+              "titleCompound": "Your rewards have been automaticaly redelegated",
               "text": "Your account balance will update once the blockchain has confirmed the transaction.",
               "cta": "View details"
             },

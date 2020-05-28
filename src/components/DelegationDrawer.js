@@ -153,23 +153,33 @@ type Action = {
   label: string,
   Icon: string | ComponentType<IconProps>,
   event: string,
+  disabled?: boolean,
   onPress: () => void,
 };
 
 export type IconProps = {
   size: number,
   style: ViewStyleProp,
+  bg?: string,
 };
 
-function ActionButton({ label, Icon, event, onPress }: Action) {
+function ActionButton({ label, Icon, event, onPress, disabled }: Action) {
   return (
     <Touchable
+      disabled={disabled}
       event={event}
       style={styles.actionButtonWrapper}
       onPress={onPress}
     >
       <Icon size={48} style={styles.actionIcon} />
-      <LText semiBold style={[styles.text, styles.actionText]}>
+      <LText
+        semiBold
+        style={[
+          styles.text,
+          styles.actionText,
+          disabled ? styles.disabledText : {},
+        ]}
+      >
         {label}
       </LText>
     </Touchable>
@@ -247,5 +257,8 @@ export const styles = StyleSheet.create({
   actionButtonWrapper: {
     width: 80,
     alignItems: "center",
+  },
+  disabledText: {
+    color: colors.grey,
   },
 });
