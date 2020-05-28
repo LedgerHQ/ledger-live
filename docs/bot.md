@@ -18,7 +18,7 @@
 
 - **Realistic**: I am very close to what is the flow of Ledger Live's users and what they would do with the device, I even press device buttons.
 
-- **Completeness**: I can technically do everything our user can do on Ledger Live with their account (send but also any feature of Ledger Live like delegation, freeze, rewards,...)
+- **Completeness**: I can technically do everything a user can do on Ledger Live with their account (send but also any feature of Ledger Live like delegation, freeze, rewards,...) but I'm faster at this job 🤖
 
 - My law is https://en.wikipedia.org/wiki/Three_Laws_of_Robotics
 
