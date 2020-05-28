@@ -22,6 +22,7 @@ import {
   asSafeCosmosPreloadData,
 } from "../preloadedData";
 import { getValidators, hydrateValidators } from "../validators";
+import { getMaxEstimatedBalance } from "../utils";
 
 export const COSMOS_MAX_REDELEGATIONS = 6;
 export const COSMOS_MAX_UNBONDINGS = 6;
@@ -69,29 +70,19 @@ const redelegationStatusError = (a, t) => {
       "redelegation should not have more than 6 entries"
     );
 
-    for (let i = 0; redelegations.length < i; i++) {
-      let dstValidator = redelegations[i].validatorDstAddress;
-      if (
-        dstValidator === t.cosmosSourceValidator &&
-        redelegations[i].completionDate > new Date()
-      ) {
-        return new CosmosRedelegationInProgress();
-      }
-    }
+    if (
+      redelegations.some((redelegation) => {
+        let dstValidator = redelegation.validatorDstAddress;
+        return (
+          dstValidator === t.cosmosSourceValidator &&
+          redelegation.completionDate > new Date()
+        );
+      })
+    )
+      return new CosmosRedelegationInProgress();
   }
+
   return null;
-};
-
-const getMaxEstimatedBalance = (a, t, estimatedFees) => {
-  const { cosmosResources } = a;
-  let blockBalance = BigNumber(0);
-  if (cosmosResources) {
-    blockBalance = cosmosResources.pendingRewardsBalance
-      .plus(cosmosResources.unbondingBalance)
-      .plus(cosmosResources.delegatedBalance);
-  }
-
-  return a.balance.minus(estimatedFees).minus(blockBalance);
 };
 
 const getTransactionStatus = async (a, t) => {
@@ -141,33 +132,26 @@ const getTransactionStatus = async (a, t) => {
   }
 
   let estimatedFees = BigNumber(0);
-  let amount = t.amount;
 
   if (!errors.recipient) {
-    await calculateFees(a, t).then(
-      (res) => {
-        estimatedFees = res.estimatedFees;
-      },
-      (error) => {
-        if (error.name === "NotEnoughBalance") {
-          errors.amount = error;
-        } else {
-          throw error;
-        }
-      }
-    );
+    if (t.useAllAmount) {
+      t.amount = getMaxEstimatedBalance(a, t, estimatedFees);
+    }
+    const res = await calculateFees(a, t);
+    estimatedFees = res.estimatedFees;
   }
 
-  if (!amount && t.mode !== "send") {
-    amount = t.validators.reduce(
-      (old, current) => old.plus(current.amount),
-      BigNumber(0)
-    );
-  }
+  let amount =
+    t.mode !== "send"
+      ? t.validators.reduce(
+          (old, current) => old.plus(current.amount),
+          BigNumber(0)
+        )
+      : !t.useAllAmount
+      ? t.amount
+      : getMaxEstimatedBalance(a, t, estimatedFees);
 
-  let totalSpent = !t.useAllAmount
-    ? amount.plus(estimatedFees)
-    : getMaxEstimatedBalance(a, t, estimatedFees);
+  let totalSpent = amount.plus(estimatedFees);
 
   if (
     !errors.recipient &&
@@ -221,7 +205,7 @@ const estimateMaxSpendable = async ({
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
-    recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // public testing seed abandonx11,about
+    recipient: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4", // abandon seed generate with ledger-live-bot
     ...transaction,
     useAllAmount: true,
   });

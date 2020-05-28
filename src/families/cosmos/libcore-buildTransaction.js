@@ -15,6 +15,7 @@ import { BigNumber } from "bignumber.js";
 import { cosmosCreateMessage } from "./message";
 import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
+import { getMaxEstimatedBalance } from "./utils";
 
 export async function cosmosBuildTransaction({
   account,
@@ -40,16 +41,15 @@ export async function cosmosBuildTransaction({
   const transactionBuilder = await cosmosLikeAccount.buildTransaction();
   if (isCancelled()) return;
 
-  const messages = await cosmosCreateMessage(
+  let messages = await cosmosCreateMessage(
     account.freshAddress,
-    transaction,
+    {
+      ...transaction,
+      amount: transaction.useAllAmount
+        ? getMaxEstimatedBalance(account, transaction, BigNumber(0))
+        : transaction.amount,
+    },
     core
-  );
-
-  promiseAllBatched(
-    3,
-    messages,
-    async (message) => await transactionBuilder.addMessage(message)
   );
 
   const memoTransaction = memo || "";
@@ -77,13 +77,34 @@ export async function cosmosBuildTransaction({
 
   const gasPrice = getEnv("COSMOS_GAS_PRICE");
 
+  const feesBigNumber = gas
+    .multipliedBy(gasPrice)
+    .integerValue(BigNumber.ROUND_CEIL);
+
   const feesAmount = await bigNumberToLibcoreAmount(
     core,
     coreCurrency,
-    fees ? fees : gas.multipliedBy(gasPrice).integerValue(BigNumber.ROUND_CEIL)
+    fees || feesBigNumber
   );
   if (isCancelled()) return;
   await transactionBuilder.setFee(feesAmount);
+
+  if (transaction.useAllAmount && transaction.amount) {
+    messages = await cosmosCreateMessage(
+      account.freshAddress,
+      {
+        ...transaction,
+        amount: getMaxEstimatedBalance(account, transaction, feesBigNumber),
+      },
+      core
+    );
+  }
+
+  promiseAllBatched(
+    3,
+    messages,
+    async (message) => await transactionBuilder.addMessage(message)
+  );
 
   // Signature information
   const seq = await cosmosLikeAccount.getSequence();

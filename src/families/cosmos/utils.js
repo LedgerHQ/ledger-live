@@ -13,7 +13,7 @@ import type {
   CosmosRedelegation,
   CosmosMappedRedelegation,
 } from "./types";
-import type { Unit } from "../../types";
+import type { Unit, Account, Transaction } from "../../types";
 
 export function mapDelegations(
   delegations: CosmosDelegation[],
@@ -120,4 +120,20 @@ export const formatValue = (value: BigNumber, unit: Unit): number =>
 export const searchFilter: CosmosSearchFilter = (query) => ({ validator }) => {
   const terms = `${validator?.name ?? ""} ${validator?.validatorAddress ?? ""}`;
   return terms.toLowerCase().includes(query.toLowerCase().trim());
+};
+
+export const getMaxEstimatedBalance = (
+  a: Account,
+  t: Transaction,
+  estimatedFees: BigNumber
+): BigNumber => {
+  const { cosmosResources } = a;
+  let blockBalance = BigNumber(0);
+  if (cosmosResources) {
+    blockBalance = cosmosResources.pendingRewardsBalance
+      .plus(cosmosResources.unbondingBalance)
+      .plus(cosmosResources.delegatedBalance);
+  }
+
+  return a.balance.minus(estimatedFees).minus(blockBalance);
 };
