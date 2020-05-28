@@ -80,11 +80,11 @@ export default function Deleagations({ account }: Props) {
       route: NavigatorName.CosmosRedelegationFlow,
       screen: ScreenName.CosmosRedelegationValidator,
       params: {
-        validatorSrcAddress:
-          account.cosmosResources?.delegations[0].validatorAddress,
+        accountId: account.id,
+        validatorSrcAddress: delegation?.validatorAddress,
       },
     });
-  }, [onNavigate, account]);
+  }, [onNavigate, delegation, account]);
 
   const onCollectRewards = useCallback(() => {
     // TODO: check destination and params.
@@ -92,9 +92,15 @@ export default function Deleagations({ account }: Props) {
   }, [onNavigate]);
 
   const onUndelegate = useCallback(() => {
-    // TODO: check destination and params.
-    onNavigate({ route: NavigatorName.CosmosUndelegationFlow });
-  }, [onNavigate]);
+    onNavigate({
+      route: NavigatorName.CosmosUndelegationFlow,
+      screen: ScreenName.CosmosUndelegationAmount,
+      params: {
+        accountId: account.id,
+        delegation,
+      },
+    });
+  }, [onNavigate, delegation, account]);
 
   const onSeeMore = useCallback((delegation: CosmosMappedDelegation) => {
     setDelegation(delegation);
