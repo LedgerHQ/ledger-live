@@ -9,15 +9,14 @@ import {
 } from "../../../navigation/navigatorConfig";
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
-import DelegationStarted from "./01-Started";
-import DelegationSelectValidator from "./02-SelectValidator";
-import DelegationAmount from "../shared/02-SelectAmount";
-import DelegationConnectDevice from "./03-ConnectDevice";
-import DelegationValidation from "./04-Validation";
-import DelegationValidationError from "./04-ValidationError";
-import DelegationValidationSuccess from "./04-ValidationSuccess";
+import RedelegationSelectValidator from "./01-SelectValidator";
+import RedelegationAmount from "../shared/02-SelectAmount";
+import RedelegationConnectDevice from "./03-ConnectDevice";
+import RedelegationValidation from "./04-Validation";
+import RedelegationValidationError from "./04-ValidationError";
+import RedelegationValidationSuccess from "./04-ValidationSuccess";
 
-function DelegationFlow() {
+function RedelegationFlow() {
   const { t } = useTranslation();
 
   return (
@@ -28,20 +27,13 @@ function DelegationFlow() {
       }}
     >
       <Stack.Screen
-        name={ScreenName.CosmosDelegationStarted}
-        component={DelegationStarted}
-        options={{
-          title: t("cosmos.delegation.stepperHeader.starter"),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.CosmosDelegationValidator}
-        component={DelegationSelectValidator}
+        name={ScreenName.CosmosRedelegationValidator}
+        component={RedelegationSelectValidator}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.delegation.stepperHeader.validator")}
-              subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
+              title={t("cosmos.redelegation.stepperHeader.validator")}
+              subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
                 currentStep: "1",
                 totalSteps: "3",
               })}
@@ -58,25 +50,28 @@ function DelegationFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CosmosDelegationAmount}
-        component={DelegationAmount}
+        name={ScreenName.CosmosRedelegationAmount}
+        component={RedelegationAmount}
         options={({ route }) => ({
           headerTitle: () => (
             <StepHeader
-              title={route.params?.validator?.name ?? ""}
-              subtitle={t("cosmos.delegation.stepperHeader.amountSubTitle")}
+              title={t("cosmos.redelegation.stepperHeader.amountTitle", {
+                from: route.params?.validatorSrc?.name ?? "",
+                to: route.params?.validator?.name ?? "",
+              })}
+              subtitle={t("cosmos.redelegation.stepperHeader.amountSubTitle")}
             />
           ),
         })}
       />
       <Stack.Screen
-        name={ScreenName.CosmosDelegationConnectDevice}
-        component={DelegationConnectDevice}
+        name={ScreenName.CosmosRedelegationConnectDevice}
+        component={RedelegationConnectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.delegation.stepperHeader.connectDevice")}
-              subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
+              title={t("cosmos.redelegation.stepperHeader.connectDevice")}
+              subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
                 currentStep: "2",
                 totalSteps: "3",
               })}
@@ -85,13 +80,13 @@ function DelegationFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CosmosDelegationValidation}
-        component={DelegationValidation}
+        name={ScreenName.CosmosRedelegationValidation}
+        component={RedelegationValidation}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.delegation.stepperHeader.verification")}
-              subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
+              title={t("cosmos.redelegation.stepperHeader.verification")}
+              subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
                 currentStep: "3",
                 totalSteps: "3",
               })}
@@ -103,15 +98,15 @@ function DelegationFlow() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.CosmosDelegationValidationError}
-        component={DelegationValidationError}
+        name={ScreenName.CosmosRedelegationValidationError}
+        component={RedelegationValidationError}
         options={{
           headerTitle: null,
         }}
       />
       <Stack.Screen
-        name={ScreenName.CosmosDelegationValidationSuccess}
-        component={DelegationValidationSuccess}
+        name={ScreenName.CosmosRedelegationValidationSuccess}
+        component={RedelegationValidationSuccess}
         options={{
           headerTitle: null,
           gestureEnabled: false,
@@ -125,6 +120,6 @@ const options = {
   headerShown: false,
 };
 
-export { DelegationFlow as component, options };
+export { RedelegationFlow as component, options };
 
 const Stack = createStackNavigator();

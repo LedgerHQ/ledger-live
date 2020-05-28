@@ -2,7 +2,6 @@
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, SectionList } from "react-native";
-import { BigNumber } from "bignumber.js";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -20,19 +19,17 @@ import {
   useCosmosPreloadData,
   useSortedValidators,
 } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
 import { accountScreenSelector } from "../../../reducers/accounts";
 import colors from "../../../colors";
 import { ScreenName } from "../../../const";
-import Button from "../../../components/Button";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import LText from "../../../components/LText";
 import Item from "../shared/Item";
-import Check from "../../../icons/Check";
 
 type RouteParams = {
   accountId: string,
+  validatorSrcAddress: string,
   transaction: Transaction,
 };
 
@@ -41,7 +38,7 @@ type Props = {
   route: { params: RouteParams },
 };
 
-function DelegationSelectValidator({ navigation, route }: Props) {
+function RedelegationSelectValidator({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(account, "account required");
@@ -56,31 +53,23 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   const delegations = cosmosResources.delegations;
 
   const { transaction, status } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+    const t = bridge.createTransaction(mainAccount);
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
-
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "delegate",
-          validators: delegations.map(({ validatorAddress, amount }) => ({
-            address: validatorAddress,
-            amount,
-          })),
-          /** @TODO remove this once the bridge handles it */
-          recipient: mainAccount.freshAddress,
-        }),
-      };
-    }
-
-    return { account, transaction: tx };
+    return {
+      account,
+      transaction: bridge.updateTransaction(t, {
+        mode: "redelegate",
+        validators: [],
+        cosmosSourceValidator: route.params?.validatorSrcAddress,
+        /** @TODO remove this once the bridge handles it */
+        recipient: mainAccount.freshAddress,
+      }),
+    };
   });
 
   invariant(
-    transaction && transaction.validators,
-    "transaction and validators required",
+    transaction && transaction.cosmosSourceValidator,
+    "transaction src validator required",
   );
 
   const unit = getAccountUnit(account);
@@ -88,95 +77,104 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { validators } = useCosmosPreloadData();
+
+  const validatorSrc = useMemo(
+    () =>
+      validators.find(
+        ({ validatorAddress }) =>
+          validatorAddress === transaction.cosmosSourceValidator,
+      ),
+    [validators, transaction.cosmosSourceValidator],
+  );
+
   const SR = useSortedValidators(searchQuery, validators, []);
 
-  const delegationsAvailable = cosmosResources.delegatedBalance.plus(
-    mainAccount.spendableBalance,
+  const srcDelegation = useMemo(
+    () =>
+      delegations.find(
+        ({ validatorAddress }) =>
+          validatorAddress === transaction.cosmosSourceValidator,
+      ),
+    [delegations, transaction.cosmosSourceValidator],
   );
-  const delegationsUsed = transaction.validators.reduce(
-    (sum, v) => sum.plus(v.amount),
-    BigNumber(0),
-  );
-  const max = delegationsAvailable.minus(delegationsUsed);
 
-  const selectedValidators = transaction.validators;
+  invariant(srcDelegation, "source delegation required");
+
+  const max = srcDelegation.amount;
 
   const sections = useMemo(
     () =>
       SR.reduce(
         (data, validator) => {
-          const isSelected = selectedValidators.some(
-            ({ address }) => address === validator.validator.validatorAddress,
-          );
-          if (isSelected) data[0].data.push(validator);
+          if (
+            validator.validator.validatorAddress ===
+            transaction?.cosmosSourceValidator
+          )
+            return data;
+
+          if (
+            delegations.some(
+              ({ validatorAddress }) =>
+                validatorAddress === validator.validator.validatorAddress,
+            )
+          )
+            data[0].data.push(validator);
           else data[1].data.push(validator);
           return data;
         },
         [
           {
             title: (
-              <Trans i18nKey="cosmos.delegation.flow.steps.validator.myDelegations" />
+              <Trans i18nKey="cosmos.redelegation.flow.steps.validator.myDelegations" />
             ),
             data: [],
           },
           {
             title: (
-              <Trans i18nKey="cosmos.delegation.flow.steps.validator.validators" />
+              <Trans i18nKey="cosmos.redelegation.flow.steps.validator.validators" />
             ),
             data: [],
           },
         ],
       ).filter(({ data }) => data.length > 0),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedValidators, selectedValidators.length, SR],
+    [delegations, transaction, SR],
   );
 
-  const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.CosmosDelegationConnectDevice, {
-      ...route.params,
-      transaction,
-      status,
-    });
-  }, [navigation, route.params, transaction, status]);
-
   const onSelect = useCallback(
-    (validator, value) => {
-      const initialDelegation = delegations.find(
-        ({ validatorAddress }) =>
-          validatorAddress === validator.validatorAddress,
-      );
-
-      navigation.navigate(ScreenName.CosmosDelegationAmount, {
+    (validator, redelegatedBalance) => {
+      navigation.navigate(ScreenName.CosmosRedelegationAmount, {
         ...route.params,
         transaction,
+        validatorSrc,
         validator,
-        min: initialDelegation?.amount ?? null,
         max,
-        value,
+        redelegatedBalance,
         status,
-        nextScreen: ScreenName.CosmosDelegationValidator,
+        nextScreen: ScreenName.CosmosRedelegationConnectDevice,
       });
     },
-    [navigation, route.params, transaction, status, max, delegations],
+    [navigation, route.params, transaction, status, max, validatorSrc],
   );
 
   const renderItem = useCallback(
     ({ item }) => {
-      const val = selectedValidators.find(
-        ({ address }) => address === item.validator.validatorAddress,
+      const val = delegations.find(
+        ({ validatorAddress }) =>
+          validatorAddress === item.validator.validatorAddress,
       );
       const disabled = (!val || val.amount.lte(0)) && max.lte(0);
       return (
         <Item
           disabled={disabled}
           value={val ? val.amount : null}
+          showVal={false}
           unit={unit}
           item={item}
           onSelect={onSelect}
         />
       );
     },
-    [selectedValidators, unit, onSelect, max],
+    [delegations, unit, onSelect, max],
   );
 
   return (
@@ -192,7 +190,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
           <View style={styles.noResult}>
             <LText>
               <Trans
-                i18nKey="cosmos.delegation.flow.steps.validator.noResultsFound"
+                i18nKey="cosmos.redelegation.flow.steps.validator.noResultsFound"
                 values={{ search: searchQuery }}
               >
                 <LText bold>{""}</LText>
@@ -208,39 +206,6 @@ function DelegationSelectValidator({ navigation, route }: Props) {
           renderSectionHeader={({ section: { title } }) => (
             <LText style={styles.header}>{title}</LText>
           )}
-        />
-      </View>
-
-      <View style={styles.footer}>
-        {max.isZero() && (
-          <View style={styles.labelContainer}>
-            <Check size={16} color={colors.success} />
-            <LText style={[styles.assetsRemaining, styles.success]}>
-              <Trans i18nKey="cosmos.delegation.flow.steps.validator.allAssetsUsed" />
-            </LText>
-          </View>
-        )}
-        {max.gt(0) && (
-          <View style={styles.labelContainer}>
-            <LText style={styles.assetsRemaining}>
-              <Trans
-                i18nKey="cosmos.delegation.flow.steps.validator.totalAvailable"
-                values={{
-                  amount: formatCurrencyUnit(unit, max, {
-                    showCode: true,
-                  }),
-                }}
-              >
-                <LText semiBold>{""}</LText>
-              </Trans>
-            </LText>
-          </View>
-        )}
-        <Button
-          event="Cosmos DelegationSelectValidatorContinueBtn"
-          onPress={onNext}
-          title={<Trans i18nKey="cosmos.delegation.flow.steps.validator.cta" />}
-          type="primary"
         />
       </View>
     </SafeAreaView>
@@ -298,4 +263,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DelegationSelectValidator;
+export default RedelegationSelectValidator;

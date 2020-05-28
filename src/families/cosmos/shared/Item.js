@@ -4,7 +4,10 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 
-import type { CosmosMappedValidator } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type {
+  CosmosMappedValidator,
+  CosmosValidatorItem,
+} from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import colors from "../../../colors";
@@ -17,11 +20,19 @@ type Props = {
   item: CosmosMappedValidator,
   disabled: boolean,
   value: ?BigNumber,
-  onSelect: (validator: CosmosMappedValidator, value: ?BigNumber) => void,
+  showVal?: boolean,
+  onSelect: (validator: CosmosValidatorItem, value: ?BigNumber) => void,
   unit: Unit,
 };
 
-function Item({ item, value, disabled, onSelect, unit }: Props) {
+function Item({
+  item,
+  value,
+  disabled,
+  onSelect,
+  unit,
+  showVal = true,
+}: Props) {
   const {
     rank,
     validator: { validatorAddress, estimatedYearlyRewardsRate, name },
@@ -69,16 +80,18 @@ function Item({ item, value, disabled, onSelect, unit }: Props) {
         </LText>
       </View>
       <View style={styles.value}>
-        <LText
-          semiBold
-          style={[styles.valueLabel, isDisabled ? styles.disabledText : {}]}
-        >
-          {value ? (
-            <CurrencyUnitValue value={value} unit={unit} showCode={false} />
-          ) : (
-            "0"
-          )}
-        </LText>
+        {(showVal || value) && (
+          <LText
+            semiBold
+            style={[styles.valueLabel, isDisabled ? styles.disabledText : {}]}
+          >
+            {value ? (
+              <CurrencyUnitValue value={value} unit={unit} showCode={false} />
+            ) : (
+              "0"
+            )}
+          </LText>
+        )}
         <ArrowRight size={16} color={colors.grey} />
       </View>
     </TouchableOpacity>

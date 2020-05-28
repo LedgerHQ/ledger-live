@@ -1592,7 +1592,6 @@
       "undelegate": "Undelegate",
       "redelegate": "Redelegate",
       "reward": "Collect rewards",
-      "votingPower": "Voting power: {{amount}}%",
       "estYield": "est. yield",
       "stepperHeader": {
         "starter": "Earn rewards",
@@ -1604,7 +1603,6 @@
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
-        "title": "Delegate assets",
         "steps": {
           "starter": {
             "description": "Delegate your ATOM to earn rewards while keeping full security  and control on your assets.",
@@ -1630,12 +1628,52 @@
           "amount": {
             "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
-            "incorrectAmount": "Incorrect amount",
+            "minAmount": "Minimum amount: <0>{{min}}</0>",
+            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
             "cta": "Continue"
           },
           "verification": {
             "success": {
               "title": "You have successfully delegated your assets",
+              "text": "Your account balance will update once the blockchain has confirmed the transaction.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
+    },
+    "redelegation": {
+      "estYield": "est. yield",
+      "stepperHeader": {
+        "validator": "Choose new validator",
+        "amountSubTitle": "Amount to redelegate",
+        "amountTitle": "{{from}} → {{to}}",
+        "summary": "Summary",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "validator": {
+            "validators": "Validators",
+            "myDelegations": "My delegations",
+            "cta": "Continue",
+            "estYield": "Est. yield: {{amount}}",
+            "totalAvailable": "Total available: <0>{{amount}}</0>",
+            "allAssetsUsed": "All assets used",
+            "noResultsFound": "No validators found for <0>{{search}}</0>"
+          },
+          "amount": {
+            "newRedelegatedBalance": "New total for <0>{{name}}</0> after redelegation: <0>{{amount}}</0>"
+          },
+          "verification": {
+            "success": {
+              "title": "You have successfully redelegated your assets",
               "text": "Your account balance will update once the blockchain has confirmed the transaction.",
               "cta": "View details"
             },

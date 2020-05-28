@@ -135,6 +135,12 @@ export const ScreenName = {
   CosmosDelegationValidation: "CosmosDelegationValidation",
   CosmosDelegationValidationError: "CosmosDelegationValidationError",
   CosmosDelegationValidationSuccess: "CosmosDelegationValidationSuccess",
+  CosmosRedelegationValidator: "CosmosRedelegationValidator",
+  CosmosRedelegationAmount: "CosmosRedelegationAmount",
+  CosmosRedelegationConnectDevice: "CosmosRedelegationConnectDevice",
+  CosmosRedelegationValidation: "CosmosRedelegationValidation",
+  CosmosRedelegationValidationError: "CosmosRedelegationValidationError",
+  CosmosRedelegationValidationSuccess: "CosmosRedelegationValidationSuccess",
 };
 
 export const NavigatorName = {
@@ -164,6 +170,7 @@ export const NavigatorName = {
   Unfreeze: "Unfreeze",
   /* eslint-disable sort-keys */
   CosmosDelegationFlow: "CosmosDelegationFlow",
+  CosmosRedelegationFlow: "CosmosRedelegationFlow",
 
   // Tab
   CryptoAssetsSettings: "CryptoAssetsSettings",
