@@ -34,13 +34,14 @@ const styles = StyleSheet.create({
 export class DataRow extends PureComponent<{
   label?: React$Node,
   children: React$Node,
+  numberOfLines?: number,
 }> {
   render() {
-    const { label, children } = this.props;
+    const { label, children, numberOfLines } = this.props;
     return (
       <View style={styles.dataRow}>
         {label ? (
-          <LText numberOfLines={1} style={styles.dataRowLabel}>
+          <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel}>
             {label}
           </LText>
         ) : null}
