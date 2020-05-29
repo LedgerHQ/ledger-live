@@ -20,6 +20,8 @@
 
 - **Completeness**: I can technically do everything a user can do on Ledger Live with their account (send but also any feature of Ledger Live like delegation, freeze, rewards,...) but I'm faster at this job 🤖
 
+- **Automated**: I can run in Github Actions and comments on the Pull Requests and Commits.
+
 - My law is https://en.wikipedia.org/wiki/Three_Laws_of_Robotics
 
 ## Getting started
