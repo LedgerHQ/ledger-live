@@ -30,13 +30,13 @@
   },
   "dependencies": {
     "@ledgerhq/errors": "5.15.0",
-    "@ledgerhq/hw-app-btc": "^5.15.2",
+    "@ledgerhq/hw-app-btc": "^5.16.0",
     "@ledgerhq/hw-transport-http": "5.15.0",
     "@ledgerhq/hw-transport-mocker": "5.15.0",
-    "@ledgerhq/hw-transport-node-hid": "5.15.0",
+    "@ledgerhq/hw-transport-node-hid": "5.16.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.15.3",
     "@ledgerhq/ledger-core": "^6.4.2",
-    "@ledgerhq/live-common": "^12.26.0",
+    "@ledgerhq/live-common": "^12.27.0",
     "@ledgerhq/logs": "5.15.0",
     "asciichart": "^1.5.19",
     "bignumber.js": "^9.0.0",
@@ -68,7 +68,7 @@
     "@babel/preset-flow": "^7.10.1",
     "@babel/preset-typescript": "^7.10.1",
     "@types/command-line-args": "^5.0.0",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "typescript": "^3.9.3"
   }
 }
