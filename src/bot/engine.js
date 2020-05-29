@@ -57,7 +57,12 @@ export async function runWithAppSpec<T: Transaction>(
       appCandidatesMatches(appCandidate, appQuery)
     )
   );
-  invariant(appCandidate, "no app found for appQuery of " + spec.name);
+  invariant(
+    appCandidate,
+    "%s: no app found. Are you sure your COINAPPS is up to date?",
+    spec.name,
+    coinapps
+  );
 
   const device = await createSpeculosDevice({
     ...appCandidate,

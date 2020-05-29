@@ -83,7 +83,7 @@ const zcash: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Zcash",
-    appVersion: "1.4",
+    appVersion: ">= 1.4.1",
   },
   mutations: bitcoinLikeMutations({
     targetAccountSize: 1, // this is to investigate the bug

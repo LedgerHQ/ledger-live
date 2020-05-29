@@ -116,7 +116,9 @@ export async function createSpeculosDevice({
   });
 
   p.stderr.on("data", (data) => {
-    log("speculos-stderr", `${id}: ${data}`);
+    if (!data.includes("apdu: ")) {
+      log("speculos-stderr", `${id}: ${data}`);
+    }
     if (data.includes("using SDK")) {
       resolveReady();
     }
