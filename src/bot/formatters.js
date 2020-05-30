@@ -8,7 +8,7 @@ import {
 } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
-import type { MutationReport } from "./types";
+import type { MutationReport, AppCandidate } from "./types";
 
 export const formatTime = (t: number) =>
   t > 3000
@@ -50,6 +50,10 @@ const formatOp = (account: ?Account) => {
   return (op) => format(op, 0);
 };
 
+export function formatAppCandidate(appCandidate: AppCandidate) {
+  return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
+}
+
 export function formatReportForConsole<T: Transaction>({
   syncAllAccountsTime,
   spec,
@@ -75,7 +79,7 @@ export function formatReportForConsole<T: Transaction>({
   str += `on ${spec.name}, all accounts sync in ${formatTime(
     syncAllAccountsTime
   )}\n`;
-  str += `▬ app ${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}\n`;
+  str += `▬ app ${formatAppCandidate(appCandidate)}\n`;
   if (account) {
     str += `→ FROM ${formatAccount(account, "summary")}\n`;
   }

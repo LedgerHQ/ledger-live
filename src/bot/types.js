@@ -13,6 +13,8 @@ import type {
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { AppCandidate } from "../load/speculos";
 
+export type { AppCandidate };
+
 type DeviceActionEvent = { text: string, x: number, y: number };
 
 export type DeviceActionArg<T, S> = {

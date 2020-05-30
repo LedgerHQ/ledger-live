@@ -61,34 +61,76 @@ const logger = winston.createLogger({
 });
 
 const { format } = winston;
-const { combine, timestamp, json } = format;
+const { combine, json } = format;
+const winstonFormatJSON = json();
+const winstonFormatConsole = combine(
+  // eslint-disable-next-line no-unused-vars
+  format(({ type, id, date, ...rest }) => rest)(),
+  format.colorize(),
+  format.simple()
+);
 
-const winstonFormat = combine(timestamp(), json());
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  http: 3,
+  verbose: 4,
+  debug: 5,
+  silly: 6,
+};
+
+const level = VERBOSE && VERBOSE in levels ? VERBOSE : "debug";
 
 if (VERBOSE_FILE) {
   logger.add(
     new winston.transports.File({
-      format: winstonFormat,
+      format: winstonFormatJSON,
       filename: VERBOSE_FILE,
-      level: "debug",
+      level,
     })
   );
 }
 
-logger.add(
-  new winston.transports.Console({
-    format: winstonFormat,
-    silent: !VERBOSE,
-  })
-);
+if (VERBOSE && VERBOSE !== "json") {
+  logger.add(
+    new winston.transports.Console({
+      format: winstonFormatConsole,
+      colorize: true,
+      level,
+    })
+  );
+} else {
+  logger.add(
+    new winston.transports.Console({
+      format: winstonFormatJSON,
+      silent: !VERBOSE,
+      level,
+    })
+  );
+}
 
-// eslint-disable-next-line no-unused-vars
-listen(({ id, date, type, message, ...rest }) => {
-  // $FlowFixMe
-  logger.log("debug", {
-    message: type + (message ? ": " + message : ""),
-    ...rest,
-  });
+listen((log) => {
+  const { type } = log;
+  let level = "info";
+  if (type === "libcore-call" || type === "libcore-result") {
+    level = "silly";
+  } else if (
+    type === "apdu" ||
+    type === "hw" ||
+    type === "speculos" ||
+    type.includes("debug") ||
+    type.startsWith("libcore")
+  ) {
+    level = "debug";
+  } else if (type.includes("warn")) {
+    level = "warn";
+  } else if (type.startsWith("network") || type.startsWith("socket")) {
+    level = "http";
+  } else if (type.includes("error")) {
+    level = "error";
+  }
+  logger.log(level, log);
 });
 
 implementLibcore({

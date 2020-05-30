@@ -14,6 +14,7 @@ import { registerTransportModule } from "../hw";
 import { getEnv } from "../env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
+import { formatAppCandidate } from "../bot/formatters";
 
 let idCounter = 0;
 const data = {};
@@ -49,16 +50,22 @@ export async function createSpeculosDevice({
   transport: SpeculosTransport,
   id: string,
 }> {
-  const id = `speculosID-${++idCounter}`;
+  const speculosID = `speculosID-${++idCounter}`;
 
   const apduPort = 40000 + idCounter;
   const vncPort = 41000 + idCounter;
   const buttonPort = 42000 + idCounter;
   const automationPort = 43000 + idCounter;
 
-  const appPath = `./apps/${model.toLowerCase()}/${firmware}/${appName}/app_${appVersion}.elf`;
+  const appPath = `./apps/${model.toLowerCase()}/${firmware}/${appName.replace(
+    / /g,
+    ""
+  )}/app_${appVersion}.elf`;
 
-  log("speculos", `spawning ${id} with coinapps=${coinapps} on app ${appPath}`);
+  log(
+    "speculos",
+    `${speculosID}: spawning with coinapps=${coinapps} on app ${appPath}`
+  );
 
   const p = spawn("docker", [
     "run",
@@ -75,7 +82,7 @@ export async function createSpeculosDevice({
     "-e",
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
-    `${id}`,
+    `${speculosID}`,
     "ledgerhq/speculos",
     "--model",
     model.toLowerCase(),
@@ -112,35 +119,41 @@ export async function createSpeculosDevice({
   });
 
   p.stdout.on("data", (data) => {
-    log("speculos-stdout", `${id}: ${data}`);
+    if (data) {
+      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
+    }
   });
 
   p.stderr.on("data", (data) => {
+    if (!data) return;
     if (!data.includes("apdu: ")) {
-      log("speculos-stderr", `${id}: ${data}`);
+      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
     }
     if (data.includes("using SDK")) {
-      resolveReady();
+      setTimeout(resolveReady, 500);
     }
   });
 
   const destroy = () =>
     new Promise((resolve, reject) => {
-      if (!data[id]) return;
-      delete data[id];
-      exec(`docker rm -f ${id}`, (error, stdout, stderr) => {
+      if (!data[speculosID]) return;
+      delete data[speculosID];
+      exec(`docker rm -f ${speculosID}`, (error, stdout, stderr) => {
         if (error) {
-          log("speculos", `ERROR: could not destroy ${id}: ${error} ${stderr}`);
+          log(
+            "speculos-error",
+            `${speculosID} not destroyed ${error} ${stderr}`
+          );
           reject(error);
         } else {
-          log("speculos", `destroyed ${id}`);
+          log("speculos", `destroyed ${speculosID}`);
           resolve();
         }
       });
     });
 
   p.on("close", () => {
-    log("speculos", `${id} closed`);
+    log("speculos", `${speculosID} closed`);
     destroy();
     rejectReady(
       new Error(
@@ -157,7 +170,7 @@ export async function createSpeculosDevice({
     automationPort,
   });
 
-  data[id] = {
+  data[speculosID] = {
     process: p,
     apduPort,
     buttonPort,
@@ -166,7 +179,7 @@ export async function createSpeculosDevice({
     destroy,
   };
 
-  return { id, transport };
+  return { id: speculosID, transport };
 }
 
 export type AppCandidate = {
@@ -305,13 +318,13 @@ function parseAppSearch(
   const [nameQ, versionQ] = parts[0].split("@");
   const currency = findCryptoCurrencyByKeyword(nameQ);
   const appName = currency ? currency.managerAppName : nameQ;
-  const version = versionQ || undefined;
+  const appVersion = versionQ || undefined;
   let dependency;
   if (currency) {
     dependency = getDependencies(currency.managerAppName)[0];
   }
   return {
-    search: { model, firmware, appName, version },
+    search: { model, firmware, appName, appVersion },
     appName,
     dependency,
   };
@@ -322,7 +335,7 @@ async function openImplicitSpeculos(query: string) {
   invariant(coinapps, "COINAPPS folder is missing!");
   const seed = getEnv("SEED");
   invariant(seed, "SEED is missing!");
-  const appCandidates = await listAppCandidates(coinapps);
+  const apps = await listAppCandidates(coinapps);
   const match = parseAppSearch(query);
   invariant(
     match,
@@ -330,8 +343,23 @@ async function openImplicitSpeculos(query: string) {
     query
   );
   const { search, dependency, appName } = match;
-  const appCandidate = findAppCandidate(appCandidates, search);
+  const appCandidates = apps.filter((c) => appCandidatesMatches(c, search));
+  const appCandidate = appCandidates[0];
   invariant(appCandidate, "could not find an app that matches '%s'", query);
+  if (appCandidates.length > 1) {
+    log(
+      "speculos",
+      appCandidates.length +
+        " app candidates (out of " +
+        apps.length +
+        "):\n" +
+        appCandidates
+          .map((a, i) => " [" + i + "] " + formatAppCandidate(a))
+          .join("\n")
+    );
+  }
+  log("speculos", "using app " + formatAppCandidate(appCandidate));
+
   const device = await createSpeculosDevice({
     ...appCandidate,
     coinapps,
