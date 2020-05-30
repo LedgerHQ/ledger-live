@@ -1,4 +1,4 @@
-name: Bot 1
+name: Bot 'Mere Denis'
 on:
   schedule:
     - cron: "0 */4 * * *"
@@ -44,7 +44,10 @@ jobs:
           VERBOSE_FILE: bot-tests.txt
           GITHUB_SHA: ${GITHUB_SHA}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: COINAPPS=$PWD/coin-apps node cli/bin/index.js bot
+        run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
+        timeout-minutes: 60
+      - name: Run coverage
+        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
       - name: upload logs
         if: failure() || success()
         uses: actions/upload-artifact@v1

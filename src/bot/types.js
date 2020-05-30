@@ -60,9 +60,11 @@ export type AppSpec<T: Transaction> = {
 };
 
 export type MutationReport<T: Transaction> = {
+  syncAllAccountsTime: number,
   spec: AppSpec<T>,
   appCandidate: AppCandidate,
   account?: Account,
+  maxSpendable?: BigNumber,
   unavailableMutationReasons?: string[],
   mutation?: MutationSpec<T>,
   destination?: Account,
