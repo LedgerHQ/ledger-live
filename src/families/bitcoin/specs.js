@@ -16,6 +16,7 @@ const bitcoinLikeMutations = ({
 }> = {}): MutationSpec<Transaction>[] => [
   {
     name: "move 50% to another account",
+    maxRun: 2,
     transaction: ({ account, siblings, bridge }) => {
       invariant(account.balance.gt(minimalAmount), "balance is too low");
       let t = bridge.createTransaction(account);
@@ -34,6 +35,7 @@ const bitcoinLikeMutations = ({
   },
   {
     name: "send max to another account",
+    maxRun: 1,
     transaction: ({ account, siblings, bridge }) => {
       invariant(account.balance.gt(minimalAmount), "balance is too low");
       let t = bridge.createTransaction(account);
@@ -58,6 +60,96 @@ const bitcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
 };
 
+const bitcoinGold: AppSpec<Transaction> = {
+  name: "Bitcoin Gold",
+  currency: getCryptoCurrencyById("bitcoin_gold"),
+  appQuery: {
+    model: "nanoS",
+    appName: "BitcoinGold",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const bitcoinCash: AppSpec<Transaction> = {
+  name: "Bitcoin Cash",
+  currency: getCryptoCurrencyById("bitcoin_cash"),
+  appQuery: {
+    model: "nanoS",
+    appName: "BitcoinCash",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const peercoin: AppSpec<Transaction> = {
+  name: "Peercoin",
+  currency: getCryptoCurrencyById("peercoin"),
+  appQuery: {
+    model: "nanoS",
+    appName: "Peercoin",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const pivx: AppSpec<Transaction> = {
+  name: "PivX",
+  currency: getCryptoCurrencyById("pivx"),
+  appQuery: {
+    model: "nanoS",
+    appName: "PivX",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const qtum: AppSpec<Transaction> = {
+  name: "Qtum",
+  currency: getCryptoCurrencyById("qtum"),
+  appQuery: {
+    model: "nanoS",
+    appName: "Qtum",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const stakenet: AppSpec<Transaction> = {
+  name: "Stakenet",
+  currency: getCryptoCurrencyById("stakenet"),
+  appQuery: {
+    model: "nanoS",
+    appName: "XSN",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const stratis: AppSpec<Transaction> = {
+  name: "Stratis",
+  currency: getCryptoCurrencyById("stratis"),
+  appQuery: {
+    model: "nanoS",
+    appName: "Stratis",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const vertcoin: AppSpec<Transaction> = {
+  name: "Vertcoin",
+  currency: getCryptoCurrencyById("vertcoin"),
+  appQuery: {
+    model: "nanoS",
+    appName: "Vertcoin",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
+const viacoin: AppSpec<Transaction> = {
+  name: "Viacoin",
+  currency: getCryptoCurrencyById("viacoin"),
+  appQuery: {
+    model: "nanoS",
+    appName: "Viacoin",
+  },
+  mutations: bitcoinLikeMutations(),
+};
+
 const dogecoin: AppSpec<Transaction> = {
   name: "DogeCoin",
   currency: getCryptoCurrencyById("dogecoin"),
@@ -75,7 +167,6 @@ const dogecoin: AppSpec<Transaction> = {
   }),
 };
 
-// NB at the moment this spec is used to show a bug. LL-2288
 const zcash: AppSpec<Transaction> = {
   name: "ZCash",
   currency: getCryptoCurrencyById("zcash"),
@@ -83,10 +174,8 @@ const zcash: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Zcash",
-    appVersion: ">= 1.4.1",
   },
   mutations: bitcoinLikeMutations({
-    targetAccountSize: 1, // this is to investigate the bug
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("zcash").units[0],
       "0.0002"
@@ -184,4 +273,13 @@ export default {
   stealthcoin,
   komodo,
   digibyte,
+  bitcoinGold,
+  bitcoinCash,
+  peercoin,
+  pivx,
+  qtum,
+  stakenet,
+  stratis,
+  vertcoin,
+  viacoin,
 };

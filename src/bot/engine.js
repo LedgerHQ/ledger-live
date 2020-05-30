@@ -2,6 +2,7 @@
 import invariant from "invariant";
 import now from "performance-now";
 import sample from "lodash/sample";
+import { Subject, Observable } from "rxjs";
 import { first, filter, map, reduce, tap } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import type {
@@ -26,7 +27,7 @@ import {
 } from "../load/speculos";
 import deviceActions from "../generated/speculos-deviceActions";
 import type { AppCandidate } from "../load/speculos";
-import { formatReportForConsole } from "./formatters";
+import { formatReportForConsole, formatTime } from "./formatters";
 import type { AppSpec, MutationReport, DeviceAction } from "./types";
 
 let appCandidates;
@@ -76,15 +77,27 @@ export async function runWithAppSpec<T: Transaction>(
     const bridge = getCurrencyBridge(currency);
     const syncConfig = { paginationConfig: {} };
 
+    let t = now();
     await bridge.preload();
+    const preloadTime = now() - t;
 
     // Scan all existing accounts
+    t = now();
+    const firstSyncDurations = {};
     let accounts = await bridge
       .scanAccounts({ currency, deviceId: device.id, syncConfig })
       .pipe(
         filter((e) => e.type === "discovered"),
         map((e) => e.account),
-        reduce((all, a) => all.concat(a), [])
+        tap((account) => {
+          firstSyncDurations[account.id] = now() - t;
+          t = now();
+        }),
+        reduce<Account>((all, a) => all.concat(a), []),
+        timeoutWithError(
+          15 * 60 * 1000,
+          () => new Error("scan accounts timeout for currency " + currency.name)
+        )
       )
       .toPromise();
 
@@ -93,11 +106,19 @@ export async function runWithAppSpec<T: Transaction>(
       "unexpected empty accounts for " + currency.name
     );
 
+    const preloadStats =
+      preloadTime > 10 ? `(preload: ${formatTime(preloadTime)})` : "";
     reportLog(
       `Spec '${spec.name}' found ${accounts.length} ${
         currency.name
-      } accounts:\n${accounts
-        .map((a) => "  - " + formatAccount(a, "summary"))
+      } accounts. ${preloadStats}\n${accounts
+        .map(
+          (a) =>
+            "(" +
+            formatTime(firstSyncDurations[a.id] || 0) +
+            ") " +
+            formatAccount(a, "summary")
+        )
         .join("\n")}\n`
     );
 
@@ -117,7 +138,9 @@ export async function runWithAppSpec<T: Transaction>(
     const length = accounts.length;
     for (let i = 0; i < length; i++) {
       // resync all accounts (necessary between mutations)
+      t = now();
       accounts = await promiseAllBatched(5, accounts, syncAccount);
+      const syncAllAccountsTime = now() - t;
       const account = accounts[i];
       const report = await runOnAccount({
         appCandidate,
@@ -126,6 +149,7 @@ export async function runWithAppSpec<T: Transaction>(
         account,
         accounts,
         mutationsCount,
+        syncAllAccountsTime,
       });
       reportLog(formatReportForConsole(report));
       reports.push(report);
@@ -143,6 +167,7 @@ export async function runOnAccount<T: Transaction>({
   account,
   accounts,
   mutationsCount,
+  syncAllAccountsTime,
 }: {
   appCandidate: *,
   spec: AppSpec<T>,
@@ -150,16 +175,18 @@ export async function runOnAccount<T: Transaction>({
   account: *,
   accounts: *,
   mutationsCount: { [_: string]: number },
+  syncAllAccountsTime: number,
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
 
-  let report: MutationReport<T> = { spec, appCandidate };
+  let report: MutationReport<T> = { spec, appCandidate, syncAllAccountsTime };
   try {
     const accountBridge = getAccountBridge(account);
     const accountBeforeTransaction = account;
     report.account = account;
 
     const maxSpendable = await accountBridge.estimateMaxSpendable({ account });
+    report.maxSpendable = maxSpendable;
 
     const candidates = [];
     const unavailableMutationReasons = [];
@@ -285,7 +312,17 @@ export async function runOnAccount<T: Transaction>({
 async function syncAccount(initialAccount: Account): Promise<Account> {
   const acc = await getAccountBridge(initialAccount)
     .sync(initialAccount, { paginationConfig: {} })
-    .pipe(reduce((a, f: (Account) => Account) => f(a), initialAccount))
+    .pipe(
+      reduce((a, f: (Account) => Account) => f(a), initialAccount),
+      timeoutWithError(
+        5 * 60 * 1000,
+        () =>
+          new Error(
+            "account sync timeout for " +
+              formatAccount(initialAccount, "summary")
+          )
+      )
+    )
     .toPromise();
   return acc;
 }
@@ -303,21 +340,36 @@ export function autoSignTransaction<T: Transaction>({
 }) {
   let sub;
   let state;
+  const recentEvents = [];
   return tap<SignOperationEvent>((e: SignOperationEvent) => {
     log("engine", `device-event: ${e.type}`);
     if (e.type === "device-signature-requested") {
       // TODO we need a timeout on this.
       // TODO event probably can be pushed in the report because it will be useful to debug.
-      sub = transport.automationEvents.subscribe((event) => {
-        log("speculos", "automationEvents: " + JSON.stringify(event)); // TODO move in transport itself
-        state = deviceAction({
-          appCandidate,
-          transaction,
-          event,
-          transport,
-          state,
+      sub = transport.automationEvents
+        .pipe(
+          timeoutWithError(
+            10 * 1000,
+            () =>
+              new Error(
+                "device action timeout. Recent events was:\n" +
+                  recentEvents.map((e) => JSON.stringify(e)).join("\n")
+              )
+          )
+        )
+        .subscribe((event) => {
+          recentEvents.push(event);
+          if (recentEvents.length > 5) {
+            recentEvents.shift();
+          }
+          state = deviceAction({
+            appCandidate,
+            transaction,
+            event,
+            transport,
+            state,
+          });
         });
-      });
     }
     if (e.type === "signed" && sub) {
       sub.unsubscribe();
@@ -375,4 +427,22 @@ function awaitAccountOperation<T>({
   }
 
   return loop();
+}
+
+function timeoutWithError<T>(
+  time: number,
+  errorFn: () => Error
+): rxjs$MonoTypeOperatorFunction<T> {
+  // $FlowFixMe
+  return (observable: Observable<T>): Observable<T> => {
+    const subject = new Subject();
+    const timeout = setTimeout(() => subject.error(errorFn()), time);
+    return Observable.create((o) => {
+      const s = observable.subscribe(o);
+      return () => {
+        s.unsubscribe();
+        clearTimeout(timeout);
+      };
+    });
+  };
 }

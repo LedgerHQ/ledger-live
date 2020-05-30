@@ -10,7 +10,7 @@ import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import type { MutationReport } from "./types";
 
-const formatTime = (t) =>
+export const formatTime = (t: number) =>
   t > 3000
     ? `${Math.round(t / 100) / 10}s`
     : `${t < 5 ? t.toFixed(2) : t.toFixed(0)}ms`;
@@ -51,9 +51,11 @@ const formatOp = (account: ?Account) => {
 };
 
 export function formatReportForConsole<T: Transaction>({
+  syncAllAccountsTime,
   spec,
   appCandidate,
   account,
+  maxSpendable,
   unavailableMutationReasons,
   mutation,
   destination,
@@ -70,10 +72,18 @@ export function formatReportForConsole<T: Transaction>({
   error,
 }: MutationReport<T>) {
   let str = "";
-  str += `(spec '${spec.name}')\n`;
+  str += `on ${spec.name}, all accounts sync in ${formatTime(
+    syncAllAccountsTime
+  )}\n`;
   str += `▬ app ${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}\n`;
   if (account) {
     str += `→ FROM ${formatAccount(account, "summary")}\n`;
+  }
+  if (account && maxSpendable) {
+    str += `max spendable ~ ${formatCurrencyUnit(
+      account.unit,
+      maxSpendable
+    )}\n`;
   }
   if (unavailableMutationReasons) {
     const detail =

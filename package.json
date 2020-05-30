@@ -18,11 +18,11 @@
     "flow": "flow src",
     "jest": "rimraf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
     "test": "yarn jest",
-    "test:watch": "yarn test --watch --coverage=false",
     "ci-lint": "yarn lint && yarn flow",
     "ci-test-common": "yarn test --ci",
     "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
-    "ci-test-cli": "cd cli && yarn test"
+    "ci-test-cli": "cd cli && yarn test",
+    "ci-test-bot": "yarn jest --testMatch '**/*.bot.js'"
   },
   "files": [
     "lib",
@@ -72,7 +72,7 @@
     "@ledgerhq/hw-app-xrp": "5.15.0",
     "@ledgerhq/hw-transport": "5.15.0",
     "@ledgerhq/hw-transport-mocker": "^5.15.0",
-    "@ledgerhq/hw-transport-node-speculos": "^5.15.3",
+    "@ledgerhq/hw-transport-node-speculos": "^5.16.1",
     "@ledgerhq/logs": "5.15.0",
     "async": "^3.2.0",
     "axios": "0.19.0",

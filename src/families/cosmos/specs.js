@@ -41,7 +41,10 @@ const cosmos: AppSpec<Transaction> = {
       name: "delegate 10% to a NEW validator",
       maxRun: 3,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(0), "account don't have remaining spendable");
+        invariant(
+          maxSpendable.gt(100),
+          "account don't have remaining spendable"
+        );
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         invariant(
@@ -79,7 +82,10 @@ const cosmos: AppSpec<Transaction> = {
       name: "undelegate an existing delegation without existing unbondings",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(0), "account don't have remaining spendable");
+        invariant(
+          maxSpendable.gt(100),
+          "account don't have remaining spendable"
+        );
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         invariant(
@@ -120,7 +126,10 @@ const cosmos: AppSpec<Transaction> = {
       name: "redelegate a delegation without existing redelegation/unbonding",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(0), "account don't have remaining spendable");
+        invariant(
+          maxSpendable.gt(100),
+          "account don't have remaining spendable"
+        );
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         invariant(
@@ -159,11 +168,14 @@ const cosmos: AppSpec<Transaction> = {
       name: "claim rewards",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(0), "account don't have remaining spendable");
+        invariant(
+          maxSpendable.gt(100),
+          "account don't have remaining spendable"
+        );
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         const delegation = cosmosResources.delegations.find((d) =>
-          d.pendingRewards.gt(0)
+          d.pendingRewards.gt(100)
         );
         invariant(delegation, "no delegation to claim");
         let t = bridge.createTransaction(account);
