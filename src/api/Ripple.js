@@ -8,7 +8,7 @@ import {
 
 const rippleUnit = getCryptoCurrencyById("ripple").units[0];
 
-export const defaultEndpoint = "wss://s2.ripple.com";
+export const defaultEndpoint = "wss://xrpl.ws";
 
 export const apiForEndpointConfig = (
   RippleAPI: *, // you must provide {RippleAPI} from "ripple-lib"
