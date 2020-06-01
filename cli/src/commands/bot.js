@@ -23,7 +23,7 @@ export default {
 
     if (!SEED) {
       console.log(
-        "You didn't define SEED yet. Please use a new one SPECIFICALLY to this test and with NOT TOO MUCH funds. USE THIS BOT TO YOUR OWN RISK!\n" +
+        "You have not defined a SEED yet. Please use a new one SPECIFICALLY to this test and with NOT TOO MUCH funds. USE THIS BOT TO YOUR OWN RISK!\n" +
           "here is a possible software seed you can use:\n" +
           "SEED='" +
           generateMnemonic(256) +
