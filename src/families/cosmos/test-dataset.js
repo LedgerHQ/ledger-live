@@ -22,6 +22,7 @@ const dataset: DatasetTest<Transaction> = {
         "cosmosResources.delegations", // They are always movings because of pending Rewards
         "cosmosResources.redelegations", // will change ince a redelegation it's done
         "cosmosResources.unbondings", // will change once a unbonding it's done
+        "cosmosResources.spendableBalance", // will change with the rewards that automatically up
       ],
       scanAccounts: [
         {

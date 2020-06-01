@@ -8,9 +8,7 @@ import { BigNumber } from "bignumber.js";
 import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
-import { makeLRUCache } from "../../../cache";
 import { validateRecipient } from "../../../bridge/shared";
-import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
 import {
   NotEnoughBalance,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -22,28 +20,12 @@ import {
   asSafeCosmosPreloadData,
 } from "../preloadedData";
 import { getValidators, hydrateValidators } from "../validators";
-import { getMaxEstimatedBalance } from "../utils";
-
-export const COSMOS_MAX_REDELEGATIONS = 6;
-export const COSMOS_MAX_UNBONDINGS = 6;
-
-const calculateFees = makeLRUCache(
-  async (a, t) => {
-    return getFeesForTransaction({
-      account: a,
-      transaction: t,
-    });
-  },
-  (a, t) =>
-    `${a.id}_${t.amount.toString()}_${t.recipient}_${
-      t.gasLimit ? t.gasLimit.toString() : ""
-    }_${t.fees ? t.fees.toString() : ""}
-    _${String(t.useAllAmount)}_${t.mode}_${
-      t.validators ? t.validators.map((v) => v.address).join("-") : ""
-    }_${t.memo ? t.memo.toString() : ""}_${
-      t.cosmosSourceValidator ? t.cosmosSourceValidator : ""
-    }`
-);
+import {
+  calculateFees,
+  getMaxEstimatedBalance,
+  COSMOS_MAX_REDELEGATIONS,
+  COSMOS_MAX_UNBONDINGS,
+} from "../utils";
 
 const createTransaction = () => ({
   family: "cosmos",
@@ -137,7 +119,7 @@ const getTransactionStatus = async (a, t) => {
     if (t.useAllAmount) {
       t.amount = getMaxEstimatedBalance(a, estimatedFees);
     }
-    const res = await calculateFees(a, t);
+    const res = await calculateFees({ a, t });
     estimatedFees = res.estimatedFees;
   }
 

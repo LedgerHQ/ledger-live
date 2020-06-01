@@ -13,7 +13,14 @@ import type {
   CosmosRedelegation,
   CosmosMappedRedelegation,
 } from "./types";
+import type { CacheRes } from "../../cache";
 import type { Unit, Account } from "../../types";
+import type { Transaction } from "./types";
+import { getFeesForTransaction } from "../../libcore/getFeesForTransaction";
+import { makeLRUCache } from "../../cache";
+
+export const COSMOS_MAX_REDELEGATIONS = 6;
+export const COSMOS_MAX_UNBONDINGS = 6;
 
 export function mapDelegations(
   delegations: CosmosDelegation[],
@@ -136,3 +143,24 @@ export const getMaxEstimatedBalance = (
 
   return a.balance.minus(estimatedFees).minus(blockBalance);
 };
+
+export const calculateFees: CacheRes<
+  Array<{ a: Account, t: Transaction }>,
+  { estimatedFees: BigNumber }
+> = makeLRUCache(
+  async ({ a, t }): Promise<{ estimatedFees: BigNumber }> => {
+    return getFeesForTransaction({
+      account: a,
+      transaction: t,
+    });
+  },
+  ({ a, t }) =>
+    `${a.id}_${t.amount.toString()}_${t.recipient}_${
+      t.gasLimit ? t.gasLimit.toString() : ""
+    }_${t.fees ? t.fees.toString() : ""}
+    _${String(t.useAllAmount)}_${t.mode}_${
+      t.validators ? t.validators.map((v) => v.address).join("-") : ""
+    }_${t.memo ? t.memo.toString() : ""}_${
+      t.cosmosSourceValidator ? t.cosmosSourceValidator : ""
+    }`
+);
