@@ -19,14 +19,16 @@ import { formatAppCandidate } from "../bot/formatters";
 let idCounter = 0;
 const data = {};
 
-export function releaseSpeculosDevice(id: string) {
+export async function releaseSpeculosDevice(id: string) {
   log("speculos", "release " + id);
   const obj = data[id];
-  if (obj) obj.destroy();
+  if (obj) {
+    await obj.destroy();
+  }
 }
 
 export function closeAllSpeculosDevices() {
-  Object.keys(data).forEach(releaseSpeculosDevice);
+  return Promise.all(Object.keys(data).map(releaseSpeculosDevice));
 }
 
 export async function createSpeculosDevice({
@@ -389,8 +391,5 @@ registerTransportModule({
       return Promise.resolve();
     }
   },
-  disconnect: (deviceId) => {
-    const obj = data[deviceId];
-    if (obj) obj.destroy();
-  },
+  disconnect: releaseSpeculosDevice,
 });

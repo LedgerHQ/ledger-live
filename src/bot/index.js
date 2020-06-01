@@ -47,7 +47,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     }
   }
 
-  const results = await promiseAllBatched(10, specs, (spec) => {
+  const results = await promiseAllBatched(4, specs, (spec) => {
     const logs = [];
     specsLogs.push(logs);
     return runWithAppSpec(spec, (message) => {
@@ -90,6 +90,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
   const { GITHUB_SHA, GITHUB_TOKEN } = process.env;
   if (GITHUB_TOKEN && GITHUB_SHA) {
+    log("github", "will send a report to " + GITHUB_SHA);
     let body = "";
     if (errorCases.length) {
       body += `## 🤖❌ ${errorCases.length} mutations failed`;
@@ -116,7 +117,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     }
 
     specFatals.forEach(({ spec, error }) => {
-      body += `**Spec '${spec.name}' failed!**\n`;
+      body += `**Spec ${spec.name} failed!**\n`;
       body += "```\n" + String(error) + "\n```\n\n";
     });
 
@@ -134,7 +135,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     results.forEach((specResults, i) => {
       const spec = specs[i];
       const logs = specsLogs[i];
-      body += `### Spec '${spec.name}'\n`;
+      body += `### Spec ${spec.name}\n`;
       body += "\n```\n";
       body += logs.join("\n");
       body += "\n```\n";
@@ -149,6 +150,14 @@ export async function bot({ currency, mutation }: Arg = {}) {
       },
       data: { body },
     });
+  } else {
+    log(
+      "github",
+      "will NOT send a report. Missing " +
+        [GITHUB_SHA ? "" : "commit", GITHUB_TOKEN ? "" : "token"]
+          .filter(Boolean)
+          .join(" ")
+    );
   }
 
   if (botHaveFailed) {

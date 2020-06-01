@@ -9,6 +9,7 @@ import type {
   SignedOperation,
   Operation,
   CryptoCurrency,
+  SignOperationEvent,
 } from "../types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { AppCandidate } from "../load/speculos";
@@ -74,6 +75,7 @@ export type MutationReport<T: Transaction> = {
   transactionTime?: number,
   status?: TransactionStatus,
   statusTime?: number,
+  latestSignOperationEvent?: SignOperationEvent,
   signedOperation?: SignedOperation,
   signedTime?: number,
   optimisticOperation?: Operation,

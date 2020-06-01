@@ -2,8 +2,16 @@
 import invariant from "invariant";
 import now from "performance-now";
 import sample from "lodash/sample";
-import { Subject, Observable } from "rxjs";
-import { first, filter, map, reduce, tap } from "rxjs/operators";
+import { throwError, of, Observable } from "rxjs";
+import {
+  first,
+  filter,
+  map,
+  reduce,
+  tap,
+  mergeMap,
+  timeoutWith,
+} from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import type {
   Transaction,
@@ -74,13 +82,14 @@ export async function runWithAppSpec<T: Transaction>(
     "engine",
     `spec ${spec.name} will use ${formatAppCandidate(appCandidate)}`
   );
-  const device = await createSpeculosDevice({
+  const deviceParams = {
     ...appCandidate,
     appName: spec.currency.managerAppName,
     seed,
     dependency,
     coinapps,
-  });
+  };
+  let device = await createSpeculosDevice(deviceParams);
 
   try {
     const bridge = getCurrencyBridge(currency);
@@ -103,9 +112,11 @@ export async function runWithAppSpec<T: Transaction>(
           t = now();
         }),
         reduce<Account>((all, a) => all.concat(a), []),
-        timeoutWithError(
+        timeoutWith(
           15 * 60 * 1000,
-          () => new Error("scan accounts timeout for currency " + currency.name)
+          throwError(
+            new Error("scan accounts timeout for currency " + currency.name)
+          )
         )
       )
       .toPromise();
@@ -118,7 +129,7 @@ export async function runWithAppSpec<T: Transaction>(
     const preloadStats =
       preloadTime > 10 ? ` (preload: ${formatTime(preloadTime)})` : "";
     reportLog(
-      `Spec '${spec.name}' found ${accounts.length} ${
+      `Spec ${spec.name} found ${accounts.length} ${
         currency.name
       } accounts${preloadStats}. Will use ${formatAppCandidate(
         appCandidate
@@ -148,10 +159,7 @@ export async function runWithAppSpec<T: Transaction>(
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
     for (let i = 0; i < length; i++) {
-      log(
-        "engine",
-        `spec ${spec.name} on account ${i + 1}/${length} (${accounts[i].name})`
-      );
+      log("engine", `spec ${spec.name} sync all accounts`);
       // resync all accounts (necessary between mutations)
       t = now();
       accounts = await promiseAllBatched(5, accounts, syncAccount);
@@ -168,10 +176,25 @@ export async function runWithAppSpec<T: Transaction>(
       });
       reportLog(formatReportForConsole(report));
       reports.push(report);
+
+      if (
+        report.latestSignOperationEvent &&
+        report.latestSignOperationEvent.type === "device-signature-requested"
+      ) {
+        log(
+          "engine",
+          `spec ${spec.name} is recreating the device because deviceAction didn't finished`
+        );
+        await releaseSpeculosDevice(device.id);
+        device = await createSpeculosDevice(deviceParams);
+      }
     }
+  } catch (e) {
+    log("engine", `spec ${spec.name} failed with ${String(e)}`);
+    throw e;
   } finally {
-    releaseSpeculosDevice(device.id);
     log("engine", `spec ${spec.name} finished`);
+    await releaseSpeculosDevice(device.id);
   }
   return reports;
 }
@@ -195,14 +218,23 @@ export async function runOnAccount<T: Transaction>({
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
 
+  let latestSignOperationEvent;
   let report: MutationReport<T> = { spec, appCandidate, syncAllAccountsTime };
   try {
     const accountBridge = getAccountBridge(account);
     const accountBeforeTransaction = account;
     report.account = account;
 
+    log("engine", `spec ${spec.name}/${account.name}`);
+
     const maxSpendable = await accountBridge.estimateMaxSpendable({ account });
     report.maxSpendable = maxSpendable;
+    log(
+      "engine",
+      `spec ${spec.name}/${
+        account.name
+      } maxSpendable=${maxSpendable.toString()}`
+    );
 
     const candidates = [];
     const unavailableMutationReasons = [];
@@ -265,9 +297,14 @@ export async function runOnAccount<T: Transaction>({
 
     // sign the transaction with speculos
 
+    log("engine", `spec ${spec.name}/${account.name} signing`);
     const signedOperation = await accountBridge
       .signOperation({ account, transaction, deviceId: device.id })
       .pipe(
+        tap((e) => {
+          latestSignOperationEvent = e;
+          log("engine", `spec ${spec.name}/${account.name}: ${e.type}`);
+        }),
         autoSignTransaction({
           transport: device.transport,
           deviceAction:
@@ -296,6 +333,10 @@ export async function runOnAccount<T: Transaction>({
         });
     report.optimisticOperation = optimisticOperation;
     report.broadcastedTime = now();
+    log(
+      "engine",
+      `spec ${spec.name}/${account.name}/${optimisticOperation.hash} broadcasted`
+    );
 
     // wait the condition are good (operation confirmed)
     const result = await awaitAccountOperation({
@@ -307,6 +348,10 @@ export async function runOnAccount<T: Transaction>({
     report.finalAccount = result.account;
     report.operation = result.operation;
     report.confirmedTime = now();
+    log(
+      "engine",
+      `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
+    );
 
     // do potential final tests
     if (mutation.test) {
@@ -323,6 +368,7 @@ export async function runOnAccount<T: Transaction>({
     log("mutation-error", spec.name + ": " + String(error));
     report.error = error;
   }
+  report.latestSignOperationEvent = latestSignOperationEvent;
   return report;
 }
 
@@ -331,13 +377,9 @@ async function syncAccount(initialAccount: Account): Promise<Account> {
     .sync(initialAccount, { paginationConfig: {} })
     .pipe(
       reduce((a, f: (Account) => Account) => f(a), initialAccount),
-      timeoutWithError(
+      timeoutWith(
         5 * 60 * 1000,
-        () =>
-          new Error(
-            "account sync timeout for " +
-              formatAccount(initialAccount, "summary")
-          )
+        throwError(new Error("account sync timeout for " + initialAccount.name))
       )
     )
     .toPromise();
@@ -356,42 +398,73 @@ export function autoSignTransaction<T: Transaction>({
   transaction: T,
 }) {
   let sub;
+  let observer;
   let state;
   const recentEvents = [];
-  return tap<SignOperationEvent>((e: SignOperationEvent) => {
-    log("engine", `device-event: ${e.type}`);
-    if (e.type === "device-signature-requested") {
-      // TODO we need a timeout on this.
-      // TODO event probably can be pushed in the report because it will be useful to debug.
-      sub = transport.automationEvents
-        .pipe(
-          timeoutWithError(
-            10 * 1000,
-            () =>
+
+  return mergeMap<SignOperationEvent, SignOperationEvent, SignOperationEvent>(
+    (e) => {
+      if (e.type === "device-signature-requested") {
+        return Observable.create((o) => {
+          if (observer) {
+            o.error(
+              new Error(
+                "device-signature-requested should not be called twice!"
+              )
+            );
+            return;
+          }
+          observer = o;
+          o.next(e);
+
+          const timeout = setTimeout(() => {
+            o.error(
               new Error(
                 "device action timeout. Recent events was:\n" +
                   recentEvents.map((e) => JSON.stringify(e)).join("\n")
               )
-          )
-        )
-        .subscribe((event) => {
-          recentEvents.push(event);
-          if (recentEvents.length > 5) {
-            recentEvents.shift();
-          }
-          state = deviceAction({
-            appCandidate,
-            transaction,
-            event,
-            transport,
-            state,
+            );
+          }, 10 * 1000);
+
+          sub = transport.automationEvents.subscribe({
+            next: (event) => {
+              recentEvents.push(event);
+              if (recentEvents.length > 5) {
+                recentEvents.shift();
+              }
+              state = deviceAction({
+                appCandidate,
+                transaction,
+                event,
+                transport,
+                state,
+              });
+            },
+            complete: () => {
+              o.complete();
+            },
+            error: (e) => {
+              o.error(e);
+            },
           });
+
+          return () => {
+            clearTimeout(timeout);
+            sub.unsubscribe();
+          };
         });
+      } else if (observer) {
+        observer.complete();
+        observer = null;
+      }
+
+      if (sub) {
+        sub.unsubscribe();
+      }
+
+      return of(e);
     }
-    if (e.type === "signed" && sub) {
-      sub.unsubscribe();
-    }
-  });
+  );
 }
 
 export function getImplicitDeviceAction(currency: CryptoCurrency) {
@@ -408,7 +481,7 @@ export function getImplicitDeviceAction(currency: CryptoCurrency) {
 function awaitAccountOperation<T>({
   account,
   optimisticOperation,
-  timeout = 1000 * 60 * 5, // 5mn
+  timeout,
 }: {
   account: Account,
   accountBridge: AccountBridge<T>,
@@ -427,9 +500,6 @@ function awaitAccountOperation<T>({
         "could not find optimisticOperation " + optimisticOperation.id
       );
     }
-    log("engine", "sync #" + syncCounter++ + " on " + account.name);
-    await delay(5000);
-    acc = await syncAccount(acc);
 
     const operation = acc.operations.find(
       (o) => o.id === optimisticOperation.id
@@ -439,29 +509,13 @@ function awaitAccountOperation<T>({
       return { account: acc, operation };
     }
 
+    await delay(5000);
+    log("engine", "sync #" + syncCounter++ + " on " + account.name);
+    acc = await syncAccount(acc);
+
     const r = await loop();
     return r;
   }
 
   return loop();
-}
-
-function timeoutWithError<T>(
-  time: number,
-  errorFn: () => Error
-): rxjs$MonoTypeOperatorFunction<T> {
-  // $FlowFixMe
-  return (observable: Observable<T>): Observable<T> => {
-    return Observable.create((o) => {
-      const subject = new Subject();
-      const timeout = setTimeout(() => subject.error(errorFn()), time);
-      const s1 = observable.subscribe(o);
-      const s2 = subject.subscribe(o);
-      return () => {
-        clearTimeout(timeout);
-        s1.unsubscribe();
-        s2.unsubscribe();
-      };
-    });
-  };
 }
