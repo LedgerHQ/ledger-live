@@ -240,7 +240,8 @@ const dataset: DatasetTest<Transaction> = {
                     amount: BigNumber(0),
                   },
                 ],
-                cosmosSourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+                cosmosSourceValidator:
+                  "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
               }),
               expectedStatus: {
                 errors: { amount: new AmountRequired() },
