@@ -302,7 +302,7 @@ export const findAppCandidate = (
       "speculos",
       apps.length +
         " app candidates (out of " +
-        appCandidatesMatches.length +
+        appCandidates.length +
         "):\n" +
         apps.map((a, i) => " [" + i + "] " + formatAppCandidate(a)).join("\n")
     );
