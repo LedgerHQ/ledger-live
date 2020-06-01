@@ -6,6 +6,7 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  AmountRequired,
 } from "@ledgerhq/errors";
 import invariant from "invariant";
 import type { Transaction } from "./types";
@@ -22,7 +23,7 @@ const dataset: DatasetTest<Transaction> = {
         "cosmosResources.delegations", // They are always movings because of pending Rewards
         "cosmosResources.redelegations", // will change ince a redelegation it's done
         "cosmosResources.unbondings", // will change once a unbonding it's done
-        "cosmosResources.spendableBalance", // will change with the rewards that automatically up
+        "spendableBalance", // will change with the rewards that automatically up
       ],
       scanAccounts: [
         {
@@ -228,6 +229,25 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
+              name: "redelegation - AmountRequired",
+              transaction: (t) => ({
+                ...t,
+                mode: "redelegate",
+                validators: [
+                  {
+                    address:
+                      "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
+                    amount: BigNumber(0),
+                  },
+                ],
+                cosmosSourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+              }),
+              expectedStatus: {
+                errors: { amount: new AmountRequired() },
+                warnings: {},
+              },
+            },
+            {
               name: "Unbonding - success",
               transaction: (t) => ({
                 ...t,
@@ -242,6 +262,24 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 errors: {},
+                warnings: {},
+              },
+            },
+            {
+              name: "Unbonding - AmountRequired",
+              transaction: (t) => ({
+                ...t,
+                mode: "undelegate",
+                validators: [
+                  {
+                    address:
+                      "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
+                    amount: BigNumber(0),
+                  },
+                ],
+              }),
+              expectedStatus: {
+                errors: { amount: new AmountRequired() },
                 warnings: {},
               },
             },
