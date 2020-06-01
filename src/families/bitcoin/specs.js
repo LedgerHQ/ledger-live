@@ -56,7 +56,6 @@ const bitcoin: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Bitcoin",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -68,7 +67,6 @@ const bitcoinGold: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "BitcoinGold",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -80,7 +78,6 @@ const bitcoinCash: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "BitcoinCash",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -92,7 +89,6 @@ const peercoin: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Peercoin",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -104,7 +100,6 @@ const pivx: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "PivX",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -116,7 +111,6 @@ const qtum: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Qtum",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -128,7 +122,6 @@ const stakenet: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "XSN",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -140,7 +133,6 @@ const stratis: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Stratis",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -152,7 +144,6 @@ const vertcoin: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Vertcoin",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -164,7 +155,6 @@ const viacoin: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Viacoin",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations(),
 };
@@ -176,7 +166,6 @@ const dogecoin: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Dogecoin",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
@@ -194,7 +183,6 @@ const zcash: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Zcash",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -211,7 +199,6 @@ const zencash: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Horizen",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -228,7 +215,6 @@ const digibyte: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Digibyte",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -245,7 +231,6 @@ const komodo: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Komodo",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
@@ -262,7 +247,6 @@ const litecoin: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Litecoin",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations({
     targetAccountSize: 3,
@@ -280,7 +264,6 @@ const stealthcoin: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Stealth",
-    appVersion: ">= 1.3.1",
   },
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(

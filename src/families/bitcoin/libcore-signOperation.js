@@ -45,23 +45,18 @@ async function signTransaction({
   if (isCancelled()) return;
 
   const hwApp = new Btc(transport);
-  const additionals = [];
+  const additionals = [currency.id];
+
   let expiryHeight;
-  if (currency.id === "bitcoin_cash" || currency.id === "bitcoin_gold")
+  if (currency.id === "bitcoin_cash" || currency.id === "bitcoin_gold") {
     additionals.push("bip143");
-  if (currency.id === "zcash" || currency.id === "komodo") {
+  } else if (currency.id === "zcash" || currency.id === "komodo") {
     expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
-    if (account.blockHeight >= 419200) {
-      additionals.push("sapling");
-    }
+    additionals.push("sapling"); // FIXME drop in ledgerjs. we always use sapling now for zcash & kmd
   } else if (currency.id === "decred") {
     expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
-    additionals.push("decred");
-  } else if (currency.id === "stealthcoin") {
-    additionals.push("stealthcoin");
-  } else if (currency.id === "zencash") {
-    additionals.push("zencash");
   }
+
   if (account.derivationMode === "native_segwit") {
     additionals.push("bech32");
   }
@@ -69,7 +64,7 @@ async function signTransaction({
   const rawInputs: CoreBitcoinLikeInput[] = await coreTransaction.getInputs();
   if (isCancelled()) return;
 
-  const hasExtraData =
+  const hasExtraData = // FIXME investigate why we need this here and drop
     currency.id === "zcash" ||
     currency.id === "komodo" ||
     currency.id === "zencash";

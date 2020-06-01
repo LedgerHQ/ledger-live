@@ -174,8 +174,9 @@ export async function runWithAppSpec<T: Transaction>(
       reports.push(report);
 
       if (
-        report.latestSignOperationEvent &&
-        report.latestSignOperationEvent.type === "device-signature-requested"
+        report.error ||
+        (report.latestSignOperationEvent &&
+          report.latestSignOperationEvent.type === "device-signature-requested")
       ) {
         log(
           "engine",

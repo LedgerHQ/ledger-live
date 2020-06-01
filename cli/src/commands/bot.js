@@ -18,7 +18,7 @@ export default {
       desc: "filter the mutation to run by a regexp pattern",
     },
   ],
-  job: (arg) => {
+  job: (arg: *) => {
     const SEED = getEnv("SEED");
 
     if (!SEED) {

@@ -121,6 +121,10 @@ export async function bot({ currency, mutation }: Arg = {}) {
       body += "```\n" + String(error) + "\n```\n\n";
     });
 
+    if (specFatals.length) {
+      body += "----\n\n";
+    }
+
     errorCases.forEach((c) => {
       body +=
         "```\n" +
@@ -129,6 +133,10 @@ export async function bot({ currency, mutation }: Arg = {}) {
         String(c.error) +
         "\n```\n\n";
     });
+
+    if (errorCases.length) {
+      body += "----\n\n";
+    }
 
     body += "<details>\n";
     body += `<summary>Details of the ${resultsFlat.length} mutations</summary>\n\n`;

@@ -1982,7 +1982,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     bitcoinLikeInfo: {
       P2PKH: 62,
       P2SH: 85,
-      hasTimestamp: true,
+      hasTimestamp: false,
     },
     units: [
       {
