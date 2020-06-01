@@ -135,7 +135,7 @@ const getTransactionStatus = async (a, t) => {
 
   if (!errors.recipient) {
     if (t.useAllAmount) {
-      t.amount = getMaxEstimatedBalance(a, t, estimatedFees);
+      t.amount = getMaxEstimatedBalance(a, estimatedFees);
     }
     const res = await calculateFees(a, t);
     estimatedFees = res.estimatedFees;
@@ -149,7 +149,7 @@ const getTransactionStatus = async (a, t) => {
         )
       : !t.useAllAmount
       ? t.amount
-      : getMaxEstimatedBalance(a, t, estimatedFees);
+      : getMaxEstimatedBalance(a, estimatedFees);
 
   let totalSpent = amount.plus(estimatedFees);
 

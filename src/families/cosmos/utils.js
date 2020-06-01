@@ -13,7 +13,7 @@ import type {
   CosmosRedelegation,
   CosmosMappedRedelegation,
 } from "./types";
-import type { Unit, Account, Transaction } from "../../types";
+import type { Unit, Account } from "../../types";
 
 export function mapDelegations(
   delegations: CosmosDelegation[],
@@ -124,7 +124,6 @@ export const searchFilter: CosmosSearchFilter = (query) => ({ validator }) => {
 
 export const getMaxEstimatedBalance = (
   a: Account,
-  t: Transaction,
   estimatedFees: BigNumber
 ): BigNumber => {
   const { cosmosResources } = a;
