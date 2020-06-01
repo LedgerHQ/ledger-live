@@ -127,13 +127,22 @@ export async function createSpeculosDevice({
     }
   });
 
+  let latestStderr;
+
   p.stderr.on("data", (data) => {
     if (!data) return;
+    latestStderr = data;
     if (!data.includes("apdu: ")) {
       log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
     }
     if (data.includes("using SDK")) {
       setTimeout(resolveReady, 500);
+    } else if (data.includes("is already in use by container")) {
+      rejectReady(
+        new Error(
+          "speculos already in use! Try `ledger-live cleanSpeculos` or check logs"
+        )
+      );
     }
   });
 
@@ -158,11 +167,7 @@ export async function createSpeculosDevice({
   p.on("close", () => {
     log("speculos", `${speculosID} closed`);
     destroy();
-    rejectReady(
-      new Error(
-        "speculos process failure. Try `ledger-live cleanSpeculos` or check logs"
-      )
-    );
+    rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
   });
 
   await ready;
