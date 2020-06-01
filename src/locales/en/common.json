@@ -675,7 +675,8 @@
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
-      "REWARD": "Claimed reward"
+      "REWARD": "Claimed reward",
+      "FEES": "Fees"
     }
   },
   "operationDetails": {

@@ -13,6 +13,7 @@ import OperationStatusIconUnfreeze from "./Unfreeze";
 import OperationStatusIconVote from "./Vote";
 import OperationStatusIconClaimRewards from "./ClaimReward";
 import OperationStatusIconRedelegate from "./Redelegate";
+import OperationStatusIconFees from "./Fees";
 
 export default ({
   type,
@@ -38,6 +39,7 @@ export default ({
     UNFREEZE: OperationStatusIconUnfreeze,
     VOTE: OperationStatusIconVote,
     REWARD: OperationStatusIconClaimRewards,
+    FEES: OperationStatusIconFees,
   };
 
   const Icon = IconsComponent[type] || OperationStatusIconSend;
