@@ -9,6 +9,7 @@ import colors from "../../colors";
 type Props = FieldWrapperProps & {
   title: string,
   value?: string,
+  headerRight?: React$Node,
 };
 
 export default function Section({
@@ -19,12 +20,17 @@ export default function Section({
       {value}
     </LText>
   ),
+  headerRight,
   onPress,
   style,
 }: Props) {
   return (
     <SectionWrapper onPress={onPress} style={style}>
-      <LText style={styles.title}>{title}</LText>
+      <View style={styles.titleWrapper}>
+        <LText style={styles.title}>{title}</LText>
+        {headerRight}
+      </View>
+
       {children}
     </SectionWrapper>
   );
@@ -53,10 +59,15 @@ export const styles = StyleSheet.create({
     padding: 16,
     color: colors.darkBlue,
   },
+  titleWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
   title: {
     fontSize: 14,
     color: colors.grey,
-    marginBottom: 8,
+    marginRight: 8,
   },
   value: {
     color: colors.darkBlue,

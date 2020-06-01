@@ -7,7 +7,11 @@ import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/lib/explorers";
-import type { Account, OperationType } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  OperationType,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
 import { useMappedExtraOperationDetails } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import type {
   CosmosExtraTxInfo,
@@ -15,6 +19,17 @@ import type {
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
+
+/** @TODO cosmos update this url */
+const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
+
+function getURLFeesInfo(op: Operation): ?string {
+  return op.fee.gt(200000) ? helpURL : undefined;
+}
+
+function getURLWhatIsThis(op: Operation): ?string {
+  return op.type !== "IN" && op.type !== "OUT" ? helpURL : undefined;
+}
 
 type Props = {
   extra: CosmosExtraTxInfo,
@@ -65,6 +80,8 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
 }
 
 export default {
+  getURLFeesInfo,
+  getURLWhatIsThis,
   OperationDetailsExtra,
 };
 
