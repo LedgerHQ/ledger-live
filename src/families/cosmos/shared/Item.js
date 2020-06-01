@@ -24,6 +24,7 @@ type Props = {
   showVal?: boolean,
   onSelect: (validator: CosmosValidatorItem, value: ?BigNumber) => void,
   unit: Unit,
+  delegatedValue: ?BigNumber,
 };
 
 function Item({
@@ -33,15 +34,16 @@ function Item({
   onSelect,
   unit,
   showVal = true,
+  delegatedValue,
 }: Props) {
-  const {
-    rank,
-    validator: { validatorAddress, estimatedYearlyRewardsRate, name },
-  } = item;
+  const { rank, validator } = item;
 
-  const select = useCallback(() => onSelect(item.validator, value), [
+  const { validatorAddress, estimatedYearlyRewardsRate, name } =
+    validator || {};
+
+  const select = useCallback(() => validator && onSelect(validator, value), [
     onSelect,
-    item,
+    validator,
     value,
   ]);
 
@@ -82,16 +84,33 @@ function Item({
       </View>
       <View style={styles.value}>
         {(showVal || value) && (
-          <LText
-            semiBold
-            style={[styles.valueLabel, isDisabled ? styles.disabledText : {}]}
-          >
-            {value ? (
-              <CurrencyUnitValue value={value} unit={unit} showCode={false} />
-            ) : (
-              "0"
-            )}
-          </LText>
+          <View style={styles.valueContainer}>
+            <LText
+              semiBold
+              style={[styles.valueLabel, isDisabled ? styles.disabledText : {}]}
+            >
+              {value ? (
+                <CurrencyUnitValue value={value} unit={unit} showCode={false} />
+              ) : (
+                "0"
+              )}
+            </LText>
+
+            {delegatedValue && delegatedValue.gt(0) ? (
+              <LText
+                style={[styles.valueLabel, styles.subText]}
+                numberOfLines={1}
+              >
+                <Trans i18nKey="cosmos.delegation.flow.steps.validator.currentAmount">
+                  <CurrencyUnitValue
+                    value={delegatedValue}
+                    unit={unit}
+                    showCode={false}
+                  />
+                </Trans>
+              </LText>
+            ) : null}
+          </View>
         )}
         <ArrowRight size={16} color={colors.grey} />
       </View>
@@ -134,15 +153,9 @@ const styles = StyleSheet.create({
   disabledText: {
     color: colors.grey,
   },
+  valueContainer: { alignItems: "flex-end" },
   value: { flexDirection: "row", alignItems: "center" },
-  valueLabel: { padding: 8, fontSize: 16 },
-  // yieldWrapper: {
-  //   alignItems: "center",
-  //   marginRight: 12,
-  // },
-  // yieldText: {
-  //   fontSize: 17,
-  // },
+  valueLabel: { paddingHorizontal: 8, fontSize: 16 },
 });
 
 export default memo<Props>(Item);

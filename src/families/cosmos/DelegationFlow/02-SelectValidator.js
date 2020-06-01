@@ -53,8 +53,6 @@ function DelegationSelectValidator({ navigation, route }: Props) {
 
   invariant(cosmosResources, "cosmosResources required");
 
-  const delegations = cosmosResources.delegations;
-
   const { transaction, status } = useBridgeTransaction(() => {
     const tx = route.params.transaction;
 
@@ -65,10 +63,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
         account,
         transaction: bridge.updateTransaction(t, {
           mode: "delegate",
-          validators: delegations.map(({ validatorAddress, amount }) => ({
-            address: validatorAddress,
-            amount,
-          })),
+          validators: [],
           /** @TODO remove this once the bridge handles it */
           recipient: mainAccount.freshAddress,
         }),
@@ -90,9 +85,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   const { validators } = useCosmosPreloadData();
   const SR = useSortedValidators(searchQuery, validators, []);
 
-  const delegationsAvailable = cosmosResources.delegatedBalance.plus(
-    mainAccount.spendableBalance,
-  );
+  const delegationsAvailable = mainAccount.spendableBalance;
   const delegationsUsed = transaction.validators.reduce(
     (sum, v) => sum.plus(v.amount),
     BigNumber(0),
@@ -100,12 +93,19 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   const max = delegationsAvailable.minus(delegationsUsed);
 
   const selectedValidators = transaction.validators;
+  const delegations = cosmosResources.delegations;
+  const allSelectedValidators = delegations
+    .map(d => ({
+      ...d,
+      address: d.validatorAddress,
+    }))
+    .concat(selectedValidators);
 
   const sections = useMemo(
     () =>
       SR.reduce(
         (data, validator) => {
-          const isSelected = selectedValidators.some(
+          const isSelected = allSelectedValidators.some(
             ({ address }) => address === validator.validator.validatorAddress,
           );
           if (isSelected) data[0].data.push(validator);
@@ -128,7 +128,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
         ],
       ).filter(({ data }) => data.length > 0),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedValidators, selectedValidators.length, SR],
+    [allSelectedValidators, allSelectedValidators.length, SR],
   );
 
   const onNext = useCallback(() => {
@@ -141,20 +141,19 @@ function DelegationSelectValidator({ navigation, route }: Props) {
 
   const onSelect = useCallback(
     (validator, value) => {
-      const initialDelegation = delegations.find(
-        ({ validatorAddress }) =>
-          validatorAddress === validator.validatorAddress,
+      const d = delegations.find(
+        d => d.validatorAddress === validator.validatorAddress,
       );
-
       navigation.navigate(ScreenName.CosmosDelegationAmount, {
         ...route.params,
         transaction,
         validator,
-        min: initialDelegation?.amount ?? null,
+        min: null,
         max,
         value,
         status,
         nextScreen: ScreenName.CosmosDelegationValidator,
+        redelegatedBalance: d ? d.amount : null,
       });
     },
     [navigation, route.params, transaction, status, max, delegations],
@@ -165,19 +164,25 @@ function DelegationSelectValidator({ navigation, route }: Props) {
       const val = selectedValidators.find(
         ({ address }) => address === item.validator.validatorAddress,
       );
+      const d = delegations.find(
+        d => d.validatorAddress === item.validator.validatorAddress,
+      );
       const disabled = (!val || val.amount.lte(0)) && max.lte(0);
       return (
         <Item
           disabled={disabled}
           value={val ? val.amount : null}
+          delegatedValue={d ? d.amount : 0}
           unit={unit}
           item={item}
           onSelect={onSelect}
         />
       );
     },
-    [selectedValidators, unit, onSelect, max],
+    [selectedValidators, unit, onSelect, max, delegations],
   );
+
+  const error = status && status.errors && Object.values(status.errors)[0];
 
   return (
     <SafeAreaView style={styles.root}>
@@ -237,6 +242,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
           </View>
         )}
         <Button
+          disabled={!!error}
           event="Cosmos DelegationSelectValidatorContinueBtn"
           onPress={onNext}
           title={<Trans i18nKey="cosmos.delegation.flow.steps.validator.cta" />}

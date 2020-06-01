@@ -1612,7 +1612,7 @@
       "estYield": "est. yield",
       "stepperHeader": {
         "starter": "Earn rewards",
-        "validator": "Validators",
+        "validator": "Delegate more assets",
         "amountSubTitle": "Amount to delegate",
         "summary": "Summary",
         "connectDevice": "Connect device",
@@ -1640,7 +1640,8 @@
             "estYield": "Est. yield: {{amount}}",
             "totalAvailable": "Total available: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
-            "noResultsFound": "No validators found for <0>{{search}}</0>"
+            "noResultsFound": "No validators found for <0>{{search}}</0>",
+            "currentAmount": "(+ <0>{{amount}}</0>)"
           },
           "amount": {
             "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
@@ -1692,7 +1693,7 @@
             "noResultsFound": "No validators found for <0>{{search}}</0>"
           },
           "amount": {
-            "newRedelegatedBalance": "New total for <0>{{name}}</0> after redelegation: <0>{{amount}}</0>"
+            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>"
           },
           "verification": {
             "success": {
