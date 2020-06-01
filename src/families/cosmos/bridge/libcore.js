@@ -13,7 +13,7 @@ import {
   NotEnoughBalance,
   InvalidAddressBecauseDestinationIsAlsoSource,
   InvalidAddress,
-  AmountRequired
+  AmountRequired,
 } from "@ledgerhq/errors";
 import { CosmosRedelegationInProgress } from "../../../errors";
 import {
@@ -122,7 +122,7 @@ const getTransactionStatus = async (a, t) => {
           (old, current) => old.plus(current.amount),
           BigNumber(0)
         )
-      : t.amount
+      : t.amount;
 
   if (amount.eq(0)) {
     errors.amount = new AmountRequired();
@@ -136,8 +136,10 @@ const getTransactionStatus = async (a, t) => {
     estimatedFees = res.estimatedFees;
   }
 
-  amount = (t.mode === "send") && t.useAllAmount ? 
-        getMaxEstimatedBalance(a, estimatedFees) : amount;
+  amount =
+    t.mode === "send" && t.useAllAmount
+      ? getMaxEstimatedBalance(a, estimatedFees)
+      : amount;
 
   let totalSpent = amount.plus(estimatedFees);
 
