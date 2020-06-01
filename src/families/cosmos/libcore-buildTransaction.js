@@ -46,7 +46,7 @@ export async function cosmosBuildTransaction({
     {
       ...transaction,
       amount: transaction.useAllAmount
-        ? getMaxEstimatedBalance(account, transaction, BigNumber(0))
+        ? getMaxEstimatedBalance(account, BigNumber(0))
         : transaction.amount,
     },
     core
@@ -94,7 +94,7 @@ export async function cosmosBuildTransaction({
       account.freshAddress,
       {
         ...transaction,
-        amount: getMaxEstimatedBalance(account, transaction, feesBigNumber),
+        amount: getMaxEstimatedBalance(account, feesBigNumber),
       },
       core
     );
