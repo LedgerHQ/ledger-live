@@ -54,12 +54,11 @@ setSupportedCurrencies([
   "stakenet",
   "stealthcoin",
   "poswallet",
-  "clubcoin",
   "decred",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "tron",
-  "stellar"
+  "stellar",
 ]);
 
 const webusbDevices = {};
@@ -78,10 +77,10 @@ registerTransportModule({
     return null;
   },
 
-  disconnect: id =>
+  disconnect: (id) =>
     id.startsWith("webhid")
       ? Promise.resolve() // nothing to do
-      : null
+      : null,
 });
 
 registerTransportModule({
@@ -98,22 +97,22 @@ registerTransportModule({
     return null;
   },
 
-  disconnect: id =>
+  disconnect: (id) =>
     id.startsWith("webusb")
       ? Promise.resolve() // nothing to do
       : null,
 
   discovery: Observable.create(TransportWebUSB.listen).pipe(
-    map(usbDevice => {
+    map((usbDevice) => {
       const id = "webusb|" + usbDevice.vendorId + "_" + usbDevice.productId;
       webusbDevices[id] = usbDevice;
       return {
         type: "add",
         id,
-        name: usbDevice.productName
+        name: usbDevice.productName,
       };
     })
-  )
+  ),
 });
 
 const webbleDevices = {};
@@ -132,22 +131,22 @@ registerTransportModule({
     return null;
   },
 
-  disconnect: id =>
+  disconnect: (id) =>
     id.startsWith("webble")
       ? Promise.resolve() // nothing to do
       : null,
 
   discovery: Observable.create(TransportWebUSB.listen).pipe(
-    map(bleDevice => {
+    map((bleDevice) => {
       const id = "webble|" + bleDevice.id;
       webbleDevices[id] = bleDevice;
       return {
         type: "add",
         id,
-        name: bleDevice.name
+        name: bleDevice.name,
       };
     })
-  )
+  ),
 });
 
 // provide a basic mecanism to stop polling when you leave the tab
@@ -170,8 +169,8 @@ const addExtraPollingHooks = (schedulePoll, cancelPoll) => {
 implementCountervalues({
   log: (...args) => console.log(...args), // eslint-disable-line no-console
   getAPIBaseURL: () => window.LEDGER_CV_API,
-  storeSelector: state => state.countervalues,
+  storeSelector: (state) => state.countervalues,
   pairsSelector,
   setExchangePairsAction,
-  addExtraPollingHooks
+  addExtraPollingHooks,
 });

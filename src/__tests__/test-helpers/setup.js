@@ -38,7 +38,6 @@ setSupportedCurrencies([
   "stakenet",
   "stealthcoin",
   "poswallet",
-  "clubcoin",
   "decred",
   "bitcoin_testnet",
   "ethereum_ropsten",
