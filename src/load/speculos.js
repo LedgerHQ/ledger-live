@@ -2,6 +2,7 @@
 // Ledger internal speculos testing framework.
 // loading this file have side effects and is only for Node.
 
+import sample from "lodash/sample";
 import invariant from "invariant";
 import path from "path";
 import semver from "semver";
@@ -287,8 +288,27 @@ export function appCandidatesMatches(
 
 export const findAppCandidate = (
   appCandidates: AppCandidate[],
-  search: AppSearch
-): ?AppCandidate => appCandidates.find((c) => appCandidatesMatches(c, search));
+  search: AppSearch,
+  picker: (AppCandidate[]) => AppCandidate = sample
+): ?AppCandidate => {
+  let apps = appCandidates.filter((c) => appCandidatesMatches(c, search));
+  if (!search.appVersion && apps.length > 0) {
+    const appVersion = apps[0].appVersion;
+    apps = apps.filter((a) => a.appVersion === appVersion);
+  }
+  const app = picker(apps);
+  if (apps.length > 1) {
+    log(
+      "speculos",
+      apps.length +
+        " app candidates (out of " +
+        appCandidatesMatches.length +
+        "):\n" +
+        apps.map((a, i) => " [" + i + "] " + formatAppCandidate(a)).join("\n")
+    );
+  }
+  return app;
+};
 
 function eatDevice(
   parts: string[]
@@ -345,21 +365,8 @@ async function openImplicitSpeculos(query: string) {
     query
   );
   const { search, dependency, appName } = match;
-  const appCandidates = apps.filter((c) => appCandidatesMatches(c, search));
-  const appCandidate = appCandidates[0];
+  const appCandidate = findAppCandidate(apps, search);
   invariant(appCandidate, "could not find an app that matches '%s'", query);
-  if (appCandidates.length > 1) {
-    log(
-      "speculos",
-      appCandidates.length +
-        " app candidates (out of " +
-        apps.length +
-        "):\n" +
-        appCandidates
-          .map((a, i) => " [" + i + "] " + formatAppCandidate(a))
-          .join("\n")
-    );
-  }
   log("speculos", "using app " + formatAppCandidate(appCandidate));
 
   const device = await createSpeculosDevice({

@@ -31,7 +31,7 @@ import {
   listAppCandidates,
   createSpeculosDevice,
   releaseSpeculosDevice,
-  appCandidatesMatches,
+  findAppCandidate,
 } from "../load/speculos";
 import deviceActions from "../generated/speculos-deviceActions";
 import type { AppCandidate } from "../load/speculos";
@@ -66,11 +66,7 @@ export async function runWithAppSpec<T: Transaction>(
 
   const { appQuery, currency, dependency } = spec;
 
-  const appCandidate = sample(
-    appCandidates.filter((appCandidate) =>
-      appCandidatesMatches(appCandidate, appQuery)
-    )
-  );
+  const appCandidate = findAppCandidate(appCandidates, appQuery);
   invariant(
     appCandidate,
     "%s: no app found. Are you sure your COINAPPS is up to date?",
