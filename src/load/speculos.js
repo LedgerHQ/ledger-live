@@ -279,7 +279,9 @@ export function appCandidatesMatches(
 ): boolean {
   return (
     (!search.model || search.model === appCandidate.model) &&
-    (!search.appName || search.appName === appCandidate.appName) &&
+    (!search.appName ||
+      search.appName.replace(/ /s, "").toLowerCase() ===
+        appCandidate.appName.replace(/ /s, "").toLowerCase()) &&
     (!search.firmware ||
       appCandidate.firmware === search.firmware ||
       semver.satisfies(

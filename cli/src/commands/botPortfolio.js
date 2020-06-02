@@ -1,21 +1,11 @@
-/* eslint-disable no-console */
 // @flow
-import { from } from "rxjs";
-import { filter, map, mergeMap } from "rxjs/operators";
+import { from, defer } from "rxjs";
+import { filter, map, mergeAll } from "rxjs/operators";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import { formatAccount } from "@ledgerhq/live-common/lib/account/formatters";
 
-const blacklist = [
-  "decred",
-  "tezos",
-  "stellar",
-  "bitcoin_cash",
-  "bitcoin_gold",
-  "ethereum_classic",
-  "hcash",
-  "poswallet",
-];
+const blacklist = ["decred", "tezos", "stellar", "ethereum_classic"];
 
 export default {
   description:
@@ -23,15 +13,17 @@ export default {
   args: [],
   job: () => {
     return from(listSupportedCurrencies()).pipe(
-      filter((c) => !blacklist.includes(c.id)),
-      filter((c) => !c.isTestnetFor),
-      mergeMap((currency) =>
-        getCurrencyBridge(currency).scanAccounts({
-          currency,
-          deviceId: `speculos:nanos:${currency.id}`,
-          syncConfig: { paginationConfig: {} },
-        })
+      filter((c) => !blacklist.includes(c.id) && !c.isTestnetFor),
+      map((currency) =>
+        defer(() =>
+          getCurrencyBridge(currency).scanAccounts({
+            currency,
+            deviceId: `speculos:nanos:${currency.id}`,
+            syncConfig: { paginationConfig: {} },
+          })
+        )
       ),
+      mergeAll(5),
       filter((e) => e.type === "discovered"),
       map((e) => formatAccount(e.account, "summary"))
     );
