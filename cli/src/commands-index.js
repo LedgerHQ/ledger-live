@@ -4,6 +4,7 @@ import appsInstallAll from "./commands/appsInstallAll";
 import appsUpdateTestAll from "./commands/appsUpdateTestAll";
 import balanceHistory from "./commands/balanceHistory";
 import bot from "./commands/bot";
+import botPortfolio from "./commands/botPortfolio";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
@@ -45,6 +46,7 @@ export default {
   appsUpdateTestAll,
   balanceHistory,
   bot,
+  botPortfolio,
   broadcast,
   cleanSpeculos,
   devDeviceAppsScenario,
