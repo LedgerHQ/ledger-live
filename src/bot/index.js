@@ -88,7 +88,12 @@ export async function bot({ currency, mutation }: Arg = {}) {
     );
   }
 
-  const { GITHUB_SHA, GITHUB_TOKEN } = process.env;
+  const {
+    GITHUB_SHA,
+    GITHUB_TOKEN,
+    GITHUB_RUN_ID,
+    GITHUB_WORKFLOW,
+  } = process.env;
   if (GITHUB_TOKEN && GITHUB_SHA) {
     log("github", "will send a report to " + GITHUB_SHA);
     let body = "";
@@ -100,6 +105,10 @@ export async function bot({ currency, mutation }: Arg = {}) {
       body += `## 🤖👏 ${resultsFlat.length} mutations succeed!`;
     }
     body += "\n\n";
+
+    if (GITHUB_RUN_ID && GITHUB_WORKFLOW) {
+      body += `> **${GITHUB_WORKFLOW}** [Open in Github Actions](https://github.com/LedgerHQ/ledger-live-common/actions/runs/${GITHUB_RUN_ID})\n\n`;
+    }
 
     const withoutResults = results
       .map((result, i) => ({

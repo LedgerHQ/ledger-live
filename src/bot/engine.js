@@ -16,7 +16,6 @@ import { log } from "@ledgerhq/logs";
 import type {
   Transaction,
   Account,
-  AccountBridge,
   Operation,
   SignOperationEvent,
   CryptoCurrency,
@@ -336,11 +335,49 @@ export async function runOnAccount<T: Transaction>({
     );
 
     // wait the condition are good (operation confirmed)
+    const startTime = Date.now();
+
+    const step = (account) => {
+      const timedOut = Date.now() - startTime > 60 * 1000;
+
+      const operation = account.operations.find(
+        (o) => o.id === optimisticOperation.id
+      );
+
+      if (timedOut && !operation) {
+        throw new Error(
+          "could not find optimisticOperation " + optimisticOperation.id
+        );
+      }
+
+      if (operation && mutation.test) {
+        try {
+          mutation.test({
+            accountBeforeTransaction,
+            transaction,
+            status,
+            optimisticOperation,
+            operation,
+            account,
+          });
+        } catch (e) {
+          // We never reach the final test success
+          if (timedOut) {
+            throw e;
+          }
+          // We will try again
+          return;
+        }
+      }
+
+      return operation;
+    };
+
     const result = await awaitAccountOperation({
       account,
       accountBridge,
       optimisticOperation,
-      timeout: 60 * 1000,
+      step,
     });
     report.finalAccount = result.account;
     report.operation = result.operation;
@@ -349,18 +386,6 @@ export async function runOnAccount<T: Transaction>({
       "engine",
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
     );
-
-    // do potential final tests
-    if (mutation.test) {
-      mutation.test({
-        accountBeforeTransaction,
-        transaction,
-        status,
-        optimisticOperation,
-        operation: result.operation,
-        account: result.account,
-      });
-    }
   } catch (error) {
     log("mutation-error", spec.name + ": " + String(error));
     report.error = error;
@@ -475,32 +500,20 @@ export function getImplicitDeviceAction(currency: CryptoCurrency) {
   return accept;
 }
 
-function awaitAccountOperation<T>({
+function awaitAccountOperation({
   account,
-  optimisticOperation,
-  timeout,
+  step,
 }: {
   account: Account,
-  accountBridge: AccountBridge<T>,
-  optimisticOperation: Operation,
-  timeout: number,
+  step: (Account) => ?Operation,
 }): Promise<{ account: Account, operation: Operation }> {
   log("engine", "awaitAccountOperation on " + account.name);
   let syncCounter = 0;
   let acc = account;
 
-  const startTime = Date.now();
-
   async function loop() {
-    if (Date.now() - startTime > timeout) {
-      throw new Error(
-        "could not find optimisticOperation " + optimisticOperation.id
-      );
-    }
+    const operation = step(acc);
 
-    const operation = acc.operations.find(
-      (o) => o.id === optimisticOperation.id
-    );
     if (operation) {
       log("engine", "found " + operation.id);
       return { account: acc, operation };

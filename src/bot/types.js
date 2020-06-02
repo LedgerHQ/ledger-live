@@ -29,7 +29,11 @@ export type DeviceActionArg<T, S> = {
 export type DeviceAction<T, S> = (DeviceActionArg<T, S>) => ?S;
 
 export type MutationSpec<T: Transaction> = {
+  // Name what this mutation is doing
   name: string,
+  // The maximum number of times to execute this mutation for a given test run
+  maxRun?: number,
+  // Express the transaction to be done
   transaction: ({
     appCandidate: AppCandidate,
     account: Account,
@@ -37,8 +41,9 @@ export type MutationSpec<T: Transaction> = {
     bridge: AccountBridge<T>,
     maxSpendable: BigNumber,
   }) => ?T,
+  // Express the device actions to do (buttons,..) and validate the device screen
   deviceAction?: DeviceAction<T, any>,
-  maxRun?: number,
+  // Implement a test that runs after the operation is applied to the account
   test?: ({
     account: Account,
     accountBeforeTransaction: Account,
