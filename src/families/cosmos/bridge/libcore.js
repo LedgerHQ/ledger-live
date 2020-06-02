@@ -15,7 +15,10 @@ import {
   InvalidAddress,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { CosmosRedelegationInProgress } from "../../../errors";
+import {
+  CosmosRedelegationInProgress,
+  CosmosClaimRewardsFeesWarning,
+} from "../../../errors";
 import {
   setCosmosPreloadData,
   asSafeCosmosPreloadData,
@@ -90,7 +93,8 @@ const getTransactionStatus = async (a, t) => {
     if (
       t.validators.some(
         (v) => !v.address || !v.address.includes("cosmosvaloper")
-      )
+      ) ||
+      t.validators.length === 0
     )
       errors.recipient = new InvalidAddress(null, {
         currencyName: a.currency.name,
@@ -124,7 +128,7 @@ const getTransactionStatus = async (a, t) => {
         )
       : t.amount;
 
-  if (amount.eq(0)) {
+  if (amount.eq(0) && t.mode !== "claimReward") {
     errors.amount = new AmountRequired();
   }
 
@@ -142,6 +146,17 @@ const getTransactionStatus = async (a, t) => {
       : amount;
 
   let totalSpent = amount.plus(estimatedFees);
+
+  if (t.mode === "claimReward") {
+    const { cosmosResources } = a;
+    invariant(cosmosResources, "cosmosResources should exist");
+    const claimReward = cosmosResources.delegations.find(
+      (delegation) => delegation.validatorAddress === t.validators[0].address
+    );
+    if (claimReward && estimatedFees.gt(claimReward.pendingRewards)) {
+      warnings.claimReward = new CosmosClaimRewardsFeesWarning();
+    }
+  }
 
   if (
     !errors.recipient &&
