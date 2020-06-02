@@ -5,6 +5,7 @@ import { map, mergeMap, concatMap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   toTransactionRaw,
+  toTransactionStatusRaw,
   formatTransactionStatus,
   formatTransaction,
 } from "@ledgerhq/live-common/lib/transaction";
@@ -14,13 +15,20 @@ import type { InferTransactionsOpts } from "../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../transaction";
 
 const getTransactionStatusFormatters = {
-  json: ({ status, transaction, account }) =>
+  default: ({ status, transaction, account }) =>
     "TRANSACTION " +
     (formatTransaction(transaction, account) ||
       JSON.stringify(toTransactionRaw(transaction))) +
     "\n" +
     "STATUS " +
     formatTransactionStatus(transaction, status, account),
+
+  json: ({ status, transaction, account }) =>
+    "TRANSACTION " +
+    JSON.stringify(toTransactionRaw(transaction)) +
+    "\n" +
+    "STATUS " +
+    JSON.stringify(toTransactionStatusRaw(status)),
 };
 
 export default {
@@ -58,7 +66,7 @@ export default {
             )
           ),
           map((e) => {
-            const f = getTransactionStatusFormatters[opts.format || "json"];
+            const f = getTransactionStatusFormatters[opts.format || "default"];
             if (!f) {
               throw new Error(
                 "getTransactionStatusFormatters: no such formatter '" +

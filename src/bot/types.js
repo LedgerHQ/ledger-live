@@ -20,7 +20,9 @@ type DeviceActionEvent = { text: string, x: number, y: number };
 
 export type DeviceActionArg<T, S> = {
   appCandidate: AppCandidate,
+  account: Account,
   transaction: T,
+  status: TransactionStatus,
   transport: Transport<*> & { button: (string) => void },
   event: DeviceActionEvent,
   state: S,
@@ -65,6 +67,15 @@ export type AppSpec<T: Transaction> = {
     appVersion?: string,
   },
   mutations: MutationSpec<T>[],
+};
+
+export type SpecReport<T: Transaction> = {
+  spec: AppSpec<T>,
+  scanTime?: number,
+  accountsBefore?: Account[],
+  accountsAfter?: Account[],
+  mutations?: MutationReport<T>[],
+  fatalError?: Error,
 };
 
 export type MutationReport<T: Transaction> = {

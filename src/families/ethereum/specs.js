@@ -6,7 +6,6 @@ import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
-import deviceActions from "./speculos-deviceActions";
 
 const currency = getCryptoCurrencyById("ethereum");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.003");
@@ -30,7 +29,6 @@ const ethereum: AppSpec<Transaction> = {
         t = bridge.updateTransaction(t, { amount, recipient });
         return t;
       },
-      deviceAction: deviceActions.acceptTransaction,
       test: ({ account, accountBeforeTransaction, operation }) => {
         // can be generalized!
         expect(account.balance.toString()).toBe(
@@ -58,7 +56,6 @@ const ethereum: AppSpec<Transaction> = {
         });
         return t;
       },
-      deviceAction: deviceActions.acceptTransaction,
       test: ({ account, transaction }) => {
         if (account.subAccounts) {
           const erc20account = account.subAccounts.find(

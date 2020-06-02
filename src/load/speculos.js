@@ -404,6 +404,7 @@ registerTransportModule({
     if (id.startsWith("speculos")) {
       return Promise.resolve();
     }
+    // todo close the speculos: case
   },
   disconnect: releaseSpeculosDevice,
 });

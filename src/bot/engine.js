@@ -14,6 +14,7 @@ import {
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import type {
+  TransactionStatus,
   Transaction,
   Account,
   Operation,
@@ -23,7 +24,6 @@ import type {
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
 import { isAccountEmpty, formatAccount } from "../account";
-import { isCurrencySupported } from "../currencies";
 import { getEnv } from "../env";
 import { delay } from "../promise";
 import {
@@ -39,17 +39,19 @@ import {
   formatTime,
   formatAppCandidate,
 } from "./formatters";
-import type { AppSpec, MutationReport, DeviceAction } from "./types";
+import type {
+  AppSpec,
+  SpecReport,
+  MutationReport,
+  DeviceAction,
+} from "./types";
 
 let appCandidates;
 
 export async function runWithAppSpec<T: Transaction>(
   spec: AppSpec<T>,
   reportLog: (string) => void
-): Promise<MutationReport<T>[]> {
-  if (!isCurrencySupported(spec.currency)) {
-    return Promise.resolve([]);
-  }
+): Promise<SpecReport<T>> {
   log("engine", `spec ${spec.name}`);
 
   const seed = getEnv("SEED");
@@ -61,7 +63,7 @@ export async function runWithAppSpec<T: Transaction>(
   if (!appCandidates) {
     appCandidates = await listAppCandidates(coinapps);
   }
-  const reports = [];
+  const mutationReports: MutationReport<T>[] = [];
 
   const { appQuery, currency, dependency } = spec;
 
@@ -84,9 +86,13 @@ export async function runWithAppSpec<T: Transaction>(
     dependency,
     coinapps,
   };
-  let device = await createSpeculosDevice(deviceParams);
+  let device;
+
+  const appReport: SpecReport<T> = { spec };
 
   try {
+    device = await createSpeculosDevice(deviceParams);
+
     const bridge = getCurrencyBridge(currency);
     const syncConfig = { paginationConfig: {} };
 
@@ -96,6 +102,7 @@ export async function runWithAppSpec<T: Transaction>(
 
     // Scan all existing accounts
     t = now();
+    let scanTime = 0;
     const firstSyncDurations = {};
     let accounts = await bridge
       .scanAccounts({ currency, deviceId: device.id, syncConfig })
@@ -103,8 +110,10 @@ export async function runWithAppSpec<T: Transaction>(
         filter((e) => e.type === "discovered"),
         map((e) => e.account),
         tap((account) => {
-          firstSyncDurations[account.id] = now() - t;
+          const dt = now() - t;
+          firstSyncDurations[account.id] = dt;
           t = now();
+          scanTime += dt;
         }),
         reduce<Account>((all, a) => all.concat(a), []),
         timeoutWith(
@@ -115,6 +124,9 @@ export async function runWithAppSpec<T: Transaction>(
         )
       )
       .toPromise();
+
+    appReport.scanTime = scanTime;
+    appReport.accountsBefore = accounts;
 
     invariant(
       accounts.length > 0,
@@ -147,7 +159,8 @@ export async function runWithAppSpec<T: Transaction>(
           .map((a) => a.freshAddress)
           .join(" or ")}\n`
       );
-      return reports;
+      appReport.accountsAfter = accounts;
+      return appReport;
     }
 
     const mutationsCount = {};
@@ -158,6 +171,7 @@ export async function runWithAppSpec<T: Transaction>(
       // resync all accounts (necessary between mutations)
       t = now();
       accounts = await promiseAllBatched(5, accounts, syncAccount);
+      appReport.accountsAfter = accounts;
       const syncAllAccountsTime = now() - t;
       const account = accounts[i];
       const report = await runOnAccount({
@@ -170,7 +184,7 @@ export async function runWithAppSpec<T: Transaction>(
         syncAllAccountsTime,
       });
       reportLog(formatReportForConsole(report));
-      reports.push(report);
+      mutationReports.push(report);
 
       if (
         report.error ||
@@ -185,14 +199,19 @@ export async function runWithAppSpec<T: Transaction>(
         device = await createSpeculosDevice(deviceParams);
       }
     }
+    accounts = await promiseAllBatched(5, accounts, syncAccount);
+
+    appReport.mutations = mutationReports;
+    appReport.accountsAfter = accounts;
   } catch (e) {
+    appReport.fatalError = e;
     log("engine", `spec ${spec.name} failed with ${String(e)}`);
-    throw e;
   } finally {
     log("engine", `spec ${spec.name} finished`);
-    await releaseSpeculosDevice(device.id);
+    if (device) await releaseSpeculosDevice(device.id);
   }
-  return reports;
+
+  return appReport;
 }
 
 export async function runOnAccount<T: Transaction>({
@@ -306,7 +325,9 @@ export async function runOnAccount<T: Transaction>({
           deviceAction:
             mutation.deviceAction || getImplicitDeviceAction(account.currency),
           appCandidate,
+          account,
           transaction,
+          status,
         }),
         first((e) => e.type === "signed"),
         map(
@@ -412,12 +433,16 @@ export function autoSignTransaction<T: Transaction>({
   transport,
   deviceAction,
   appCandidate,
+  account,
   transaction,
+  status,
 }: {
   transport: *,
   deviceAction: DeviceAction<T, *>,
   appCandidate: AppCandidate,
+  account: Account,
   transaction: T,
+  status: TransactionStatus,
 }) {
   let sub;
   let observer;
@@ -446,7 +471,7 @@ export function autoSignTransaction<T: Transaction>({
                   recentEvents.map((e) => JSON.stringify(e)).join("\n")
               )
             );
-          }, 10 * 1000);
+          }, 20 * 1000);
 
           sub = transport.automationEvents.subscribe({
             next: (event) => {
@@ -454,13 +479,19 @@ export function autoSignTransaction<T: Transaction>({
               if (recentEvents.length > 5) {
                 recentEvents.shift();
               }
-              state = deviceAction({
-                appCandidate,
-                transaction,
-                event,
-                transport,
-                state,
-              });
+              try {
+                state = deviceAction({
+                  appCandidate,
+                  account,
+                  transaction,
+                  event,
+                  transport,
+                  state,
+                  status,
+                });
+              } catch (e) {
+                o.error(e);
+              }
             },
             complete: () => {
               o.complete();

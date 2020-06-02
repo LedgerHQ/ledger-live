@@ -17,14 +17,14 @@ const bitcoinLikeMutations = ({
   targetAccountSize = 2,
 }: Arg = {}): MutationSpec<Transaction>[] => [
   {
-    name: "move 50% to another account",
+    name: "move ~50% to another account",
     maxRun: 2,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       let t = bridge.createTransaction(account);
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = sibling.freshAddress;
-      const amount = maxSpendable.div(2).integerValue();
+      const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
       t = bridge.updateTransaction(t, { amount, recipient });
       return t;
     },
