@@ -1778,7 +1778,12 @@
       "tabTitle": "Buy",
       "title": "Buy crypto via our partner",
       "description": "Purchase crypto assets via Coinify and receive your coins directly in your Ledger account",
-      "CTAButton": "Buy now"
+      "CTAButton": "Buy now",
+      "emptyState": {
+        "title": "No {{currency}} account",
+        "description": "You need to add an account before buying {{currency}}",
+        "CTAButton": "Add account"
+      }
     },
     "history": {
       "tabTitle": "History"

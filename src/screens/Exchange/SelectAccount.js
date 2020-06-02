@@ -4,7 +4,7 @@ import { View, StyleSheet, FlatList } from "react-native";
 // $FlowFixMe
 import SafeAreaView from "react-native-safe-area-view";
 import type { NavigationScreenProp } from "react-navigation";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import type {
   Account,
   AccountLikeArray,
@@ -22,6 +22,9 @@ import AccountCard from "../../components/AccountCard";
 import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
+import InfoIcon from "../../icons/Info";
+import Button from "../../components/Button";
+import { NavigatorName } from "../../const";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 const forceInset = { bottom: "always" };
@@ -39,6 +42,7 @@ export default function SelectAccount({ navigation, route }: Props) {
   const currency = route.params.currency;
   const allAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSelector(accountsSelector);
+  const { t } = useTranslation();
 
   const keyExtractor = item => item.account.id;
   const renderItem = useCallback(
@@ -67,19 +71,16 @@ export default function SelectAccount({ navigation, route }: Props) {
     [navigation],
   );
 
+  const elligibleAccountsForSelectedCurrency = allAccounts.filter(
+    account =>
+      (account.type === "TokenAccount"
+        ? account.token.id
+        : account.currency.id) === currency.id,
+  );
+
   const renderList = useCallback(
     items => {
-      const elligibleAccountsForSelectedCurrency = items.filter(
-        account =>
-          (account.type === "TokenAccount"
-            ? account.token.id
-            : account.currency.id) === currency.id,
-      );
-      const formatedList = formatSearchResults(
-        elligibleAccountsForSelectedCurrency,
-        accounts,
-      );
-
+      const formatedList = formatSearchResults(items, accounts);
       return (
         <FlatList
           data={formatedList}
@@ -90,8 +91,36 @@ export default function SelectAccount({ navigation, route }: Props) {
         />
       );
     },
-    [accounts, currency.id, navigation, renderItem],
+    [accounts, renderItem],
   );
+
+  // empty state if no accounts available for this currency
+  if (!elligibleAccountsForSelectedCurrency.length) {
+    return (
+      <View style={styles.emptyStateBody}>
+        <View style={styles.iconContainer}>
+          <InfoIcon size={22} color={colors.live} />
+        </View>
+        <LText style={styles.title}>
+          {t("exchange.buy.emptyState.title", { currency: currency.name })}
+        </LText>
+        <LText style={styles.description}>
+          {t("exchange.buy.emptyState.description", {
+            currency: currency.name,
+          })}
+        </LText>
+        <View style={styles.buttonContainer}>
+          <Button
+            containerStyle={styles.button}
+            event="ExchangeStartBuyFlow"
+            type="primary"
+            title={t("exchange.buy.emptyState.CTAButton")}
+            onPress={() => navigation.navigate(NavigatorName.AddAccounts, {})}
+          />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
@@ -101,7 +130,7 @@ export default function SelectAccount({ navigation, route }: Props) {
           <FilteredSearchBar
             keys={SEARCH_KEYS}
             inputWrapperStyle={styles.card}
-            list={allAccounts}
+            list={elligibleAccountsForSelectedCurrency}
             renderList={renderList}
             renderEmptySearch={() => (
               <View style={styles.emptyResults}>
@@ -154,5 +183,41 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: colors.fog,
+  },
+  emptyStateBody: {
+    flex: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 50,
+    backgroundColor: colors.lightLive,
+    marginBottom: 24,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    textAlign: "center",
+    color: colors.darkBlue,
+    fontSize: 16,
+    marginBottom: 16,
+  },
+  description: {
+    textAlign: "center",
+    color: colors.smoke,
+    fontSize: 14,
+  },
+  buttonContainer: {
+    paddingTop: 24,
+    paddingLeft: 16,
+    paddingRight: 16,
+    flexDirection: "row",
+  },
+  button: {
+    flex: 1,
   },
 });

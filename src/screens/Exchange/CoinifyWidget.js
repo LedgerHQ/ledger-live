@@ -48,7 +48,7 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
   const [isWaitingDeviceJob, setWaitingDeviceJob] = useState(false);
   const webView = useRef(null);
 
-  const coinifyConfig = getConfig("developpement");
+  const coinifyConfig = getConfig();
   const widgetConfig: CoinifyWidgetConfig = {
     fontColor: colors.darkBlue,
     primaryColor: colors.live,

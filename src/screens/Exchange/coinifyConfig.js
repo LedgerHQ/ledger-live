@@ -1,7 +1,8 @@
 // @flow
+import Config from "react-native-config";
 
 const config = {
-  developpement: {
+  sandbox: {
     url: "https://trade-ui.sandbox.coinify.com/widget",
     partnerId: 104,
   },
@@ -11,4 +12,5 @@ const config = {
   },
 };
 
-export const getConfig = (env: string) => config[env];
+export const getConfig = () =>
+  Config.COINIFY_SANDBOX ? config.sandbox : config.production;

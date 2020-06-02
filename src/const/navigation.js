@@ -1,8 +1,6 @@
 // @flow
 
 // This will be converted into string enum once TypeScript is supported in this project.
-import ExchangeCoinifyWidget from "../screens/Exchange/CoinifyWidgetScreen";
-
 export const ScreenName = {
   /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
   AboutSettings: "AboutSettings",
@@ -57,9 +55,9 @@ export const ScreenName = {
   EthereumEditGasLimit: "EthereumEditGasLimit",
   Exchange: "Exchange",
   ExchangeBuy: "ExchangeBuy",
-  ExchangeHistory: "ExchangeHistory",
   ExchangeCoinifyWidget: "ExchangeCoinifyWidget",
   ExchangeConnectDevice: "ExchangeConnectDevice",
+  ExchangeHistory: "ExchangeHistory",
   ExchangeSelectAccount: "ExchangeSelectAccount",
   ExchangeSelectCurrency: "ExchangeSelectCurrency",
   ExperimentalSettings: "ExperimentalSettings",

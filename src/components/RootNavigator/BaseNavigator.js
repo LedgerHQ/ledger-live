@@ -69,6 +69,16 @@ export default function BaseNavigator() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
+        name={NavigatorName.AddAccounts}
+        component={AddAccountsNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.FirmwareUpdate}
+        component={FirmwareUpdateNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
         name={NavigatorName.Exchange}
         component={ExchangeNavigator}
       />
