@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
 import {
   getMainAccount,
   getReceiveFlowError,
@@ -13,11 +12,7 @@ import colors from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import {
-  connectingStep,
-  accountApp,
-  receiveVerifyStep,
-} from "../../components/DeviceJob/steps";
+import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import GenericErrorView from "../../components/GenericErrorView";
@@ -55,7 +50,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   );
 
   const onSelectDevice = useCallback(
-    (meta : *) => {
+    (meta: *) => {
       if (!account) return;
       navigation.navigate(ScreenName.ExchangeCoinifyWidget, {
         accountId: account.id,
@@ -81,11 +76,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
 
-//   if (!mainAccount.freshAddress) {
-//     return (
-//       <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />
-//     );
-//   }
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="ReceiveFunds" name="ConnectDevice" />

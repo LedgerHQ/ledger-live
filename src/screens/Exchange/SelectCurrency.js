@@ -45,14 +45,8 @@ const renderEmptyList = () => (
   </View>
 );
 
-
 // hardcoded for now, maybe it could be dynamically fetched from coinify API ?
-const supportedCurrenciesIds = [
-  "bitcoin",
-  "ethereum",
-  "bitcoin_cash",
-  "dash",
-];
+const supportedCurrenciesIds = ["bitcoin", "ethereum", "bitcoin_cash", "dash"];
 
 export default function ExchangeSelectCrypto({ navigation }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
@@ -115,7 +109,7 @@ export default function ExchangeSelectCrypto({ navigation }: Props) {
       </KeyboardView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {

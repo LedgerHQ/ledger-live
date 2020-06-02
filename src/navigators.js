@@ -63,7 +63,7 @@ import ReceiveConfirmation from "./screens/ReceiveFunds/03-Confirmation";
 
 import ExchangeSelectCurrency from "./screens/Exchange/SelectCurrency";
 import ExchangeSelectAccount from "./screens/Exchange/SelectAccount";
-import ExchangeCoinifyWidget from "./screens/Exchange/CoinifyWidget";
+import ExchangeCoinifyWidget from "./screens/Exchange/CoinifyWidgetScreen";
 
 import SendFundsMain from "./screens/SendFunds/01-SelectAccount";
 import FallbackCameraSend from "./screens/SendFunds/FallbackCamera/FallbackCameraSend";

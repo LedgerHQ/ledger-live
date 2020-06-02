@@ -2,7 +2,6 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 // $FlowFixMe
-import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SafeAreaView from "react-native-safe-area-view";
 import type { NavigationScreenProp } from "react-navigation";
 import { Trans } from "react-i18next";
@@ -23,8 +22,6 @@ import AccountCard from "../../components/AccountCard";
 import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
-import Card from "../../components/Card";
-import Circle from "../../components/Circle";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 const forceInset = { bottom: "always" };
@@ -36,29 +33,6 @@ type Props = {
   allAccounts: AccountLikeArray,
   navigation: Navigation,
   route: { params: RouteParams },
-};
-
-// type State = {};
-
-const AddAccountButton = ({ onPress }) => {
-  return (
-    <Card onPress={onPress} style={{ ...styles.addAccountButton, ...styles.card }}>
-      <Icon name="plus" size={20} color={colors.live} />
-      <LText
-        semiBold
-        numberOfLines={1}
-        style={[
-          styles.accountNameText,
-          {
-            marginLeft: 8,
-            fontSize: 14,
-          }
-        ]}
-      >
-        Add account
-      </LText>
-    </Card>
-  );
 };
 
 export default function SelectAccount({ navigation, route }: Props) {
@@ -113,15 +87,6 @@ export default function SelectAccount({ navigation, route }: Props) {
           keyExtractor={keyExtractor}
           showsVerticalScrollIndicator={false}
           keyboardDismissMode="on-drag"
-          ListFooterComponent={
-            <AddAccountButton
-              onPress={() => {
-                navigation.navigate("AddAccountsSelectDevice", {
-                  currency,
-                });
-              }}
-            />
-          }
         />
       );
     },

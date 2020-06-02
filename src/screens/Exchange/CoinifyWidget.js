@@ -6,29 +6,17 @@ import querystring from "querystring";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 // $FlowFixMe
 import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import type {
-  Account,
-  AccountLikeArray,
-} from "@ledgerhq/live-common/lib/types";
-import { useSelector } from "react-redux";
+import type { Account } from "@ledgerhq/live-common/lib/types";
 import { getConfig } from "./coinifyConfig";
 import colors from "../../colors";
-import {
-  accountsSelector,
-  flattenAccountsSelector,
-} from "../../reducers/accounts";
 
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import DeviceJob from "../../components/DeviceJob";
 import {
   accountApp,
   connectingStep,
-  receiveVerifyStep,
+  verifyAddressOnDeviceStep,
 } from "../../components/DeviceJob/steps";
-import KeyboardView from "../../components/KeyboardView";
-
-type Navigation = NavigationScreenProp<{ params: {} }>;
 
 type CoinifyWidgetConfig = {
   primaryColor?: string,
@@ -41,13 +29,6 @@ type CoinifyWidgetConfig = {
   transferInMedia?: string,
 };
 
-type Props = {
-  accounts: Account[],
-  allAccounts: AccountLikeArray,
-  navigation: Navigation,
-  route: { params: RouteParams },
-};
-
 const injectedCode = `
   var originalPostMessage = window.postMessage
   window.postMessage = e => window.ReactNativeWebView.postMessage(JSON.stringify(e))
@@ -57,59 +38,60 @@ const injectedCode = `
   });
 `;
 
-export default function CoinifyWidget({ navigation, route }: Props) {
+type Props = {
+  account?: Account,
+  mode: string,
+  meta?: *,
+};
+
+export default function CoinifyWidget({ mode, account, meta }: Props) {
   const [isWaitingDeviceJob, setWaitingDeviceJob] = useState(false);
   const webView = useRef(null);
-  const allAccounts = useSelector(flattenAccountsSelector);
-  const accountId = route.params.accountId;
-  const mode = route.params.mode;
-  const meta = route.params.meta;
-
-  const account = allAccounts.find(a => a.id === accountId);
 
   const coinifyConfig = getConfig("developpement");
   const widgetConfig: CoinifyWidgetConfig = {
     fontColor: colors.darkBlue,
     primaryColor: colors.live,
     partnerId: coinifyConfig.partnerId,
-    cryptoCurrencies: account.currency.ticker,
-    address: account.freshAddress,
     targetPage: mode,
     addressConfirmation: true,
   };
 
   if (mode === "buy") {
     widgetConfig.transferOutMedia = "blockchain";
+    widgetConfig.cryptoCurrencies = account.currency.ticker;
+    widgetConfig.address = account.freshAddress;
   }
 
   if (mode === "sell") {
     widgetConfig.transferInMedia = "blockchain";
+    widgetConfig.cryptoCurrencies = account.currency.ticker;
+    widgetConfig.address = account.freshAddress;
+  }
+
+  if (mode === "trade-history") {
+    widgetConfig.transferOutMedia = "";
+    widgetConfig.transferInMedia = "";
   }
 
   const handleMessage = useCallback(message => {
-    console.log("GOT MSG", message);
     //    if (message.url !== coinifyConfig.url || !message.nativeEvent.data) return;
     message.persist();
 
     const { type, event, context } = JSON.parse(message.nativeEvent.data);
     if (type !== "event") return;
-    switch (event) {
-      case "trade.receive-account-changed":
-        console.log("VERIFY PLS");
-        if (context.address === account.freshAddress) {
-          setWaitingDeviceJob(true);
-          console.log("ADDRESS PLS");
-        } else {
-          // TODO this is a problem, it should not occur.
-        }
-        break;
+    if (event === "trade.receive-account-changed") {
+      if (context.address === account.freshAddress) {
+        setWaitingDeviceJob(true);
+      } else {
+        // TODO this is a problem, it should not occur.
+      }
     }
   }, []);
 
   const settleTrade = useCallback(
     status => {
       if (account && webView.current) {
-        console.log("sent message to webview");
         webView.current.postMessage(
           JSON.stringify({
             type: "event",
@@ -160,19 +142,17 @@ export default function CoinifyWidget({ navigation, route }: Props) {
           deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
           meta={meta}
           onCancel={() => {
-            console.log("cancel");
             settleTrade("rejected");
             setWaitingDeviceJob(false);
           }}
           onDone={() => {
             settleTrade("accepted");
             setWaitingDeviceJob(false);
-            console.log("done");
           }}
           steps={[
             connectingStep,
             accountApp(account),
-            receiveVerifyStep(account),
+            verifyAddressOnDeviceStep(account),
           ]}
         />
       ) : null}

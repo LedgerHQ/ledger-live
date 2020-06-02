@@ -1772,5 +1772,16 @@
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
     "switchLabel": "I have read and agree with the Terms of Use and Privacy Policy"
+  },
+  "exchange": {
+    "buy": {
+      "tabTitle": "Buy",
+      "title": "Buy crypto via our partner",
+      "description": "Purchase crypto assets via Coinify and receive your coins directly in your Ledger account",
+      "CTAButton": "Buy now"
+    },
+    "history": {
+      "tabTitle": "History"
+    }
   }
 }

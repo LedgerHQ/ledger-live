@@ -1,109 +1,33 @@
 // @flow
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
-import ExchangeSelectCurrency from "../../screens/Exchange/SelectCurrency";
-import ExchangeSelectAccount from "../../screens/Exchange/SelectAccount";
-import ExchangeConnectDevice from "../../screens/Exchange/ConnectDevice";
-import ExchangeCoinifyWidget from "../../screens/Exchange/CoinifyWidget";
-import {
-  closableStackNavigatorConfig,
-} from "../../navigation/navigatorConfig";
-import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHeaderRightClose";
-import StepHeader from "../StepHeader";
+import styles from "../../navigation/styles";
+import Buy from "../../screens/Exchange/Buy";
+import History from "../../screens/Exchange/History";
 
-// const Exchange = createStackNavigator(
-//   {
-//     ExchangeSelectCurrency,
-//     ExchangeSelectAccount,
-//     ExchangeCoinifyWidget,
-//   },
-//   {
-//     headerMode: "float",
-//     ...closableStackNavigatorConfig,
-//   },
-// );
-// Exchange.navigationOptions = ({ navigation }) => ({
-//   header: null,
-//   gesturesEnabled:
-//     Platform.OS === "ios"
-//       ? navigation.getParam("allowNavigation", true)
-//       : false,
-// });
-
-export default function ExchangeNavigator() {
+export default function CryptoAssetsSettingsNavigator() {
   const { t } = useTranslation();
+
   return (
-    <Stack.Navigator
-      headerMode="float"
-      screenOptions={{
-        ...closableStackNavigatorConfig,
-        headerRight: () => <AddAccountsHeaderRightClose />,
+    <Tab.Navigator
+      tabBarOptions={{
+        headerStyle: styles.headerNoShadow,
       }}
     >
-      <Stack.Screen
-        name={ScreenName.ExchangeSelectCurrency}
-        component={ExchangeSelectCurrency}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps: "3",
-              })}
-            />
-          ),
-        }}
+      <Tab.Screen
+        name={ScreenName.ExchangeBuy}
+        component={Buy}
+        options={{ title: t("exchange.buy.tabTitle") }}
       />
-      <Stack.Screen
-        name={ScreenName.ExchangeSelectAccount}
-        component={ExchangeSelectAccount}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps: "3",
-              })}
-            />
-          ),
-        }}
+      <Tab.Screen
+        name={ScreenName.ExchangeHistory}
+        component={History}
+        options={{ title: t("exchange.history.tabTitle") }}
       />
-      <Stack.Screen
-        name={ScreenName.ExchangeConnectDevice}
-        component={ExchangeConnectDevice}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps: "3",
-              })}
-            />
-          ),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.ExchangeCoinifyWidget}
-        component={ExchangeCoinifyWidget}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "3",
-                totalSteps: "3",
-              })}
-            />
-          ),
-        }}
-      />
-    </Stack.Navigator>
+    </Tab.Navigator>
   );
 }
 
-const Stack = createStackNavigator();
+const Tab = createMaterialTopTabNavigator();
