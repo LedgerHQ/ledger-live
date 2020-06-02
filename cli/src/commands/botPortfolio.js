@@ -9,6 +9,7 @@ import { formatAccount } from "@ledgerhq/live-common/lib/account/formatters";
 const blacklist = [
   "decred",
   "tezos",
+  "stellar",
   "bitcoin_cash",
   "bitcoin_gold",
   "ethereum_classic",
