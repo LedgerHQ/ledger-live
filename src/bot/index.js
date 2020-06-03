@@ -14,6 +14,7 @@ import {
   isCurrencySupported,
   formatCurrencyUnit,
 } from "../currencies";
+import { isAccountEmpty } from "../account";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole } from "./formatters";
 
@@ -132,7 +133,9 @@ export async function bot({ currency, mutation }: Arg = {}) {
     const withoutFunds = results
       .filter(
         (s) =>
-          !s.fatalError && s.mutations && s.mutations.every((r) => !r.mutation)
+          !s.fatalError &&
+          ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
+            (s.mutations && s.mutations.every((r) => !r.mutation)))
       )
       .map((s) => s.spec.name);
 
