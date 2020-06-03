@@ -1,9 +1,9 @@
 // @flow
+import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
 import colors from "../../colors";
 import { i18n } from "../../context/Locale";
@@ -28,11 +28,11 @@ type RouteParams = {
 };
 
 function RippleEditFee({ route }: Props) {
-  const { account: accountLike } = useSelector(accountScreenSelector(route));
+  const { account } = useSelector(accountScreenSelector(route));
 
-  if (!accountLike) return null;
+  if (!account) return null;
+  invariant(account.type === "Account", "account must be Account type");
 
-  const account = getMainAccount(accountLike);
   const transaction = route.params?.transaction;
 
   if (!transaction) return null;

@@ -89,11 +89,13 @@ type RouteParams = {
 };
 
 export default function UnfreezeAmount({ route }: Props) {
-  const { account: accountLike } = useSelector(accountScreenSelector(route));
+  const { account: accountLike, parentAccount } = useSelector(
+    accountScreenSelector(route),
+  );
   if (!accountLike) {
     return null;
   }
-  const account = getMainAccount(accountLike);
+  const account = getMainAccount(accountLike, parentAccount);
   return <UnfreezeAmountInner account={account} />;
 }
 
