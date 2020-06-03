@@ -60,12 +60,13 @@ export function formatCurrencyUnitFragment(
     useGrouping,
     subMagnitude,
     discreet,
-  } = {
-    ...defaultFormatOptions,
+  } =
     // $FlowFixMe
-    ...unit,
-    ...options,
-  };
+    {
+      ...defaultFormatOptions,
+      ...unit,
+      ...options,
+    };
   const { magnitude, code } = unit;
   const floatValue = value.div(BigNumber(10).pow(magnitude));
   const floatValueAbs = floatValue.abs();

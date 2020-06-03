@@ -194,18 +194,44 @@ export async function bot({ currency, mutation }: Arg = {}) {
     body += "<details>\n";
     body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
     body +=
-      "| Spec | Accounts | Operations | Funds before | Funds after | Receive |\n";
+      "| Spec (accounts) | Operations | Balance | remaining | Receive |\n";
     body +=
       "|------|----------|------------|--------------|-------------|---------|\n";
     results.forEach((r) => {
-      function formatAccounts(all) {
-        if (!all || all.lengnth === 0) return "???";
-        return formatCurrencyUnit(
-          r.spec.currency.units[0],
-          all.reduce((sum, a) => sum.plus(a.spendableBalance), BigNumber(0)),
-          { showCode: true }
+      function sumAccounts(all) {
+        if (!all || all.lengnth === 0) return;
+        return all.reduce(
+          (sum, a) => sum.plus(a.spendableBalance),
+          BigNumber(0)
         );
       }
+      const accountsBeforeBalance = sumAccounts(r.accountsBefore);
+      const accountsAfterBalance = sumAccounts(r.accountsAfter);
+
+      let balance = !accountsBeforeBalance
+        ? "???"
+        : formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
+            showCode: true,
+          });
+
+      let etaTxs = "???";
+      if (
+        accountsBeforeBalance &&
+        accountsAfterBalance &&
+        accountsAfterBalance.lt(accountsBeforeBalance)
+      ) {
+        const txCount = r.mutations
+          ? r.mutations.filter((m) => m.operation).length
+          : 0;
+        const d = accountsAfterBalance.minus(accountsBeforeBalance);
+        balance +=
+          "(- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
+        etaTxs = `~${accountsAfterBalance
+          .div(d.div(txCount))
+          .integerValue()
+          .toString()} txs`;
+      }
+
       function countOps(all) {
         if (!all) return 0;
         return all.reduce((sum, a) => sum + a.operations.length, 0);
@@ -214,14 +240,14 @@ export async function bot({ currency, mutation }: Arg = {}) {
       const afterOps = countOps(r.accountsAfter);
       const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
 
-      body += `| ${r.spec.name} `;
-      body += `| ${(r.accountsBefore || []).length} `;
+      body += `| ${r.spec.name} (${
+        (r.accountsBefore || []).filter((a) => !isAccountEmpty(a)).length
+      }) `;
       body += `| ${afterOps || beforeOps}${
         afterOps > beforeOps ? ` (+ ${afterOps - beforeOps})` : ""
       } `;
-      body += `| ${formatAccounts(r.accountsBefore)} | ${formatAccounts(
-        r.accountsAfter
-      )} `;
+      body += `| ${balance} `;
+      body += `| ${etaTxs} `;
       body += `| ${(firstAccount && firstAccount.freshAddress) || ""} `;
       body += "|\n";
     });

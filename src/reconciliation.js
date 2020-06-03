@@ -336,7 +336,7 @@ export function patchSubAccount(
   );
 
   // $FlowFixMe destructing union type?
-  const next: $Exact<SubAccount> = {
+  const next: SubAccount = {
     ...account,
   };
 

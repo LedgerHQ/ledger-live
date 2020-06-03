@@ -34,7 +34,10 @@ const options = [
 
 function inferAccounts(account: Account, opts: Object): AccountLikeArray {
   invariant(account.currency.family === "ethereum", "ethereum family");
-  if (!opts.token) return [account];
+  if (!opts.token) {
+    const accounts: Account[] = [account];
+    return accounts;
+  }
   return opts.token.map((token) => {
     const subAccounts = account.subAccounts || [];
     if (token) {

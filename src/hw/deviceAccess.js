@@ -136,6 +136,7 @@ export const withDevice = (deviceId: string) => <T>(
 
         const cleanups = accessHooks.map((hook) => hook());
         sub = job(transport)
+          // $FlowFixMe
           .pipe(
             catchError(initialErrorRemapping),
             catchError(errorRemapping),
@@ -182,6 +183,7 @@ export const withDevicePolling = (deviceId: string) => <T>(
   job: (Transport<*>) => Observable<T>,
   acceptError: (Error) => boolean = genericCanRetryOnError
 ): Observable<T> =>
+  // $FlowFixMe
   withDevice(deviceId)(job).pipe(
     // $FlowFixMe
     retryWhen(retryWhileErrors(acceptError))

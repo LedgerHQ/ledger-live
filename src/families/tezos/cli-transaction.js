@@ -46,7 +46,10 @@ const options = [
 
 function inferAccounts(account: Account, opts: Object): AccountLikeArray {
   invariant(account.currency.family === "tezos", "tezos family");
-  if (!opts.subAccount) return [account];
+  if (!opts.subAccount) {
+    const accounts: Account[] = [account];
+    return accounts;
+  }
   const { subAccounts } = account;
   invariant(subAccounts, "no sub accounts");
   return opts.subAccount.map((i) => {

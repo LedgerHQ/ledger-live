@@ -732,6 +732,7 @@ function createCounterValues<State>({
     reducer,
     PollingContext,
     PollingProvider,
+    // $FlowFixMe
     PollingConsumer,
     fetchExchangesForPair,
     fetchTickersByMarketcap,
