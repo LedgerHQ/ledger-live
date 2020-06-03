@@ -155,7 +155,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     if (errorCases.length) {
       body += "<details>\n";
 
-      body += `<summary>${errorCases.length} critical mutation errors</summary>\n\n`;
+      body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
 
       errorCases.forEach((c) => {
         body +=
