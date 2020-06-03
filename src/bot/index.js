@@ -210,9 +210,11 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
       let balance = !accountsBeforeBalance
         ? "???"
-        : "**" + formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
+        : "**" +
+          formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
             showCode: true,
-          }) + "**";
+          }) +
+          "**";
 
       let etaTxs = "???";
       if (
