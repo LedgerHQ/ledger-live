@@ -149,7 +149,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
         body += "```\n" + String(fatalError) + "\n```\n\n";
       });
 
-      body += "</details>\n";
+      body += "</details>\n\n";
     }
 
     if (errorCases.length) {
@@ -166,7 +166,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
           "\n```\n\n";
       });
 
-      body += "</details>\n";
+      body += "</details>\n\n";
     }
 
     body += "<details>\n";
@@ -174,14 +174,14 @@ export async function bot({ currency, mutation }: Arg = {}) {
     results.forEach((r, i) => {
       const spec = specs[i];
       const logs = specsLogs[i];
-      body += `### Spec ${spec.name} (${
+      body += `#### Spec ${spec.name} (${
         r.mutations ? r.mutations.length : "failed"
       } mutations)\n`;
       body += "\n```\n";
       body += logs.join("\n");
       body += "\n```\n";
     });
-    body += "</details>\n";
+    body += "</details>\n\n";
 
     body += "### Portfolio\n\n";
 
