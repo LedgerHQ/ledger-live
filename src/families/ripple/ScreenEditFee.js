@@ -1,4 +1,5 @@
 // @flow
+import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
@@ -28,6 +29,10 @@ type RouteParams = {
 
 function RippleEditFee({ route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
+
+  if (!account) return null;
+  invariant(account.type === "Account", "account must be Account type");
+
   const transaction = route.params?.transaction;
 
   if (!transaction) return null;
