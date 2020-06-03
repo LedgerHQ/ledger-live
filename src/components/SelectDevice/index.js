@@ -31,7 +31,7 @@ type Props = {
   onStepEntered?: (number, Object) => void,
   withArrows?: boolean,
   usbOnly?: boolean,
-  filter?: TransportModule => boolean,
+  filter?: (transportModule: TransportModule) => boolean,
   deviceModelId: DeviceNames,
   autoSelectOnAdd?: boolean,
 };
@@ -42,9 +42,9 @@ type SelectDeviceProps = Props & {
     id: string,
     name: string,
   }>,
-  removeKnownDevice: string => *,
-  setReadOnlyMode: boolean => void,
-  installAppFirstTime: boolean => void,
+  removeKnownDevice: (val: string) => void,
+  setReadOnlyMode: (val: boolean) => void,
+  installAppFirstTime: (val: boolean) => void,
 };
 
 type State = {
@@ -85,7 +85,7 @@ const ORBar = () => (
 
 const getAll = ({ knownDevices }, { devices }): Device[] =>
   devices.concat(
-    knownDevices.map(d => ({
+    knownDevices.map((d) => ({
       deviceId: d.id,
       deviceName: d.name || "",
       wired: false,
@@ -136,7 +136,7 @@ class SelectDevice extends Component<SelectDeviceProps, State> {
       complete: () => {
         this.setState({ scanning: false });
       },
-      next: e =>
+      next: (e) =>
         this.setState(({ devices }) => ({
           devices:
             e.type === "add"
@@ -151,7 +151,7 @@ class SelectDevice extends Component<SelectDeviceProps, State> {
                     ? Config.FALLBACK_DEVICE_WIRED === "YES"
                     : e.id.startsWith("usb|"),
                 })
-              : devices.filter(d => d.deviceId !== e.id),
+              : devices.filter((d) => d.deviceId !== e.id),
         })),
     });
   }
@@ -186,9 +186,9 @@ class SelectDevice extends Component<SelectDeviceProps, State> {
     let opts;
     if (autoSelectOnAdd) {
       opts = {
-        onDone: deviceId => {
+        onDone: (deviceId) => {
           const device = getAll(this.props, this.state).find(
-            d => d.deviceId === deviceId,
+            (d) => d.deviceId === deviceId,
           );
           if (device) {
             this.onSelect(device);
