@@ -196,7 +196,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     body +=
       "| Spec (accounts) | Operations | Balance | remaining | Receive |\n";
     body +=
-      "|------|----------|------------|--------------|-------------|---------|\n";
+      "|-----------------|------------|---------|-----------|---------|\n";
     results.forEach((r) => {
       function sumAccounts(all) {
         if (!all || all.lengnth === 0) return;
@@ -210,9 +210,9 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
       let balance = !accountsBeforeBalance
         ? "???"
-        : formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
+        : "**" + formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
             showCode: true,
-          });
+          }) + "**";
 
       let etaTxs = "???";
       if (
@@ -223,9 +223,9 @@ export async function bot({ currency, mutation }: Arg = {}) {
         const txCount = r.mutations
           ? r.mutations.filter((m) => m.operation).length
           : 0;
-        const d = accountsAfterBalance.minus(accountsBeforeBalance);
+        const d = accountsBeforeBalance.minus(accountsAfterBalance);
         balance +=
-          "(- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
+          " (- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
         etaTxs = `~${accountsAfterBalance
           .div(d.div(txCount))
           .integerValue()
