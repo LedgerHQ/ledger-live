@@ -31,7 +31,7 @@ type Props = {
   onStepEntered?: (number, Object) => void,
   withArrows?: boolean,
   usbOnly?: boolean,
-  filter?: TransportModule => boolean,
+  filter?: (transportModule: TransportModule) => boolean,
   deviceModelId: DeviceNames,
   autoSelectOnAdd?: boolean,
 };
@@ -42,9 +42,9 @@ type SelectDeviceProps = Props & {
     id: string,
     name: string,
   }>,
-  removeKnownDevice: string => *,
-  setReadOnlyMode: boolean => void,
-  installAppFirstTime: boolean => void,
+  removeKnownDevice: (val: string) => void,
+  setReadOnlyMode: (val: boolean) => void,
+  installAppFirstTime: (val: boolean) => void,
 };
 
 type State = {

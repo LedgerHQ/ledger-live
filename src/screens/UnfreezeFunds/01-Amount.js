@@ -6,8 +6,12 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 import type { Account, Transaction } from "@ledgerhq/live-common/lib/types";
-import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
+import {
+  getMainAccount,
+  getAccountUnit,
+} from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -84,9 +88,23 @@ type RouteParams = {
   transaction: Transaction,
 };
 
-export default function UnfreezeAmount({ navigation, route }: Props) {
-  const { account } = useSelector(accountScreenSelector(route));
-  invariant(account, "account is required");
+export default function UnfreezeAmount({ route }: Props) {
+  const { account: accountLike, parentAccount } = useSelector(
+    accountScreenSelector(route),
+  );
+  if (!accountLike) {
+    return null;
+  }
+  const account = getMainAccount(accountLike, parentAccount);
+  return <UnfreezeAmountInner account={account} />;
+}
+
+type InnerProps = {
+  account: Account,
+};
+
+function UnfreezeAmountInner({ account }: InnerProps) {
+  const navigation = useNavigation();
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
 

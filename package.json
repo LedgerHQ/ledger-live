@@ -175,7 +175,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^2.5.0",
-    "flow-bin": "^0.105.0",
+    "flow-bin": "0.113.0",
     "flow-typed": "^2.6.2",
     "jest": "^25.1.0",
     "jetifier": "^1.6.5",
