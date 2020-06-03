@@ -46,6 +46,7 @@ setSupportedCurrencies([
   "zcash",
   "zencash",
   "tron",
+  "cosmos"
 ]);
 
 if (Config.VERBOSE) {

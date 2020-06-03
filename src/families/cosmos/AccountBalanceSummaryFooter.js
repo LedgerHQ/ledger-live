@@ -28,7 +28,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const info = useInfo();
 
   const { spendableBalance, cosmosResources } = account;
-  const { delegatedBalance, unboundingBalance } = cosmosResources || {};
+  const { delegatedBalance, unbondingBalance } = cosmosResources || {};
 
   const unit = getAccountUnit(account);
 
@@ -66,7 +66,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       <InfoItem
         title={<Trans i18nKey="account.undelegating" />}
         onPress={onPressInfoCreator("undelegating")}
-        value={<CurrencyUnitValue unit={unit} value={unboundingBalance} />}
+        value={<CurrencyUnitValue unit={unit} value={unbondingBalance} />}
       />
     </ScrollView>
   );

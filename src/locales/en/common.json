@@ -1600,6 +1600,8 @@
       }
     },
     "delegation": {
+      "delegationEarn": "You can earn ATOM rewards by delegating your assets.",
+      "info": "How Delegation works",
       "claimRewards": "Claim rewards",
       "claimAvailableRewards": "Claim {{amount}}",
       "header": "Delegation(s)",
@@ -1608,7 +1610,7 @@
       "delegate": "Delegate",
       "undelegate": "Undelegate",
       "redelegate": "Redelegate",
-      "reward": "Collect rewards",
+      "reward": "Claim rewards",
       "estYield": "est. yield",
       "stepperHeader": {
         "starter": "Earn rewards",
@@ -1622,14 +1624,14 @@
       "flow": {
         "steps": {
           "starter": {
-            "description": "Delegate your ATOM to earn rewards while keeping full security  and control on your assets.",
+            "description": "You may earn rewards by delegating your ATOM to a validator.",
             "steps": {
-              "0": "Delegated assets stay yours",
-              "1": "You’ll have to wait for 21 days to complete an undelegation",
-              "2": "Delegate securely with your Ledger device"
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "The undelegation process takes 21 days to finalize"
             },
             "warning": {
-              "description": "Delegate ATOM asset can imply some losses if the chosen delegator doesn’t act rightfully on the network. "
+              "description": "Choose you validator wisely.  Part of your delegated assets may be destroyed if the validator does not behave appropriately."
             },
             "cta": "Continue"
           },
@@ -1641,7 +1643,8 @@
             "totalAvailable": "Total available: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
             "noResultsFound": "No validators found for <0>{{search}}</0>",
-            "currentAmount": "(+ <0>{{amount}}</0>)"
+            "currentAmount": "(+ <0>{{amount}}</0>)",
+            "feesInfo": "Selected amounts are fees included"
           },
           "amount": {
             "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
@@ -1739,7 +1742,7 @@
     "claimRewards": {
       "stepperHeader": {
         "validator": "Select reward to collect",
-        "method": "Collect Rewards",
+        "method": "Claim Rewards",
         "summary": "Summary",
         "connectDevice": "Connect device",
         "verification": "Verification",
@@ -1761,8 +1764,8 @@
           },
           "verification": {
             "success": {
-              "title": "You have successfully claimed your rewards",
-              "titleCompound": "Your rewards have been automaticaly redelegated",
+              "title": "You have successfully claimed your rewards, they automatically added to the available balance.",
+              "titleCompound": "Your rewards have been automaticaly delegated to the same validator.",
               "text": "Your account balance will update once the blockchain has confirmed the transaction.",
               "cta": "View details"
             },

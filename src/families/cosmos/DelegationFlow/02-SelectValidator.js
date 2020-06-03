@@ -241,6 +241,11 @@ function DelegationSelectValidator({ navigation, route }: Props) {
             </LText>
           </View>
         )}
+        <View style={[styles.labelContainer, styles.subLabelContainer]}>
+          <LText style={[styles.assetsRemaining, styles.small]}>
+            <Trans i18nKey="cosmos.delegation.flow.steps.validator.feesInfo" />
+          </LText>
+        </View>
         <Button
           disabled={!!error}
           event="Cosmos DelegationSelectValidatorContinueBtn"
@@ -288,13 +293,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom: 16,
+  },
+  subLabelContainer: {
+    paddingBottom: 8,
   },
   assetsRemaining: {
     fontSize: 16,
     textAlign: "center",
     lineHeight: 32,
     paddingHorizontal: 10,
+  },
+  small: {
+    fontSize: 12,
   },
   error: {
     color: colors.alert,

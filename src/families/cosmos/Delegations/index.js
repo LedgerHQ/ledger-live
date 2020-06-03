@@ -325,11 +325,11 @@ export default function Delegations({ account }: Props) {
         <AccountDelegationInfo
           title={t("account.delegation.info.title")}
           image={<IlluRewards style={styles.illustration} />}
-          description={t("tron.voting.delegationEarn", {
+          description={t("cosmos.delegation.delegationEarn", {
             name: account.currency.name,
           })}
           infoUrl={urls.tronStaking}
-          infoTitle={t("tron.voting.howItWorks")}
+          infoTitle={t("cosmos.delegation.info")}
           onPress={onDelegate}
           ctaTitle={t("account.delegation.info.cta")}
         />
