@@ -739,6 +739,7 @@
     },
     "send": "Send",
     "receive": "Receive",
+    "buy": "Buy",
     "manage": "Manage",
     "lastOperations": "Last operations",
     "emptyState": {

@@ -33,8 +33,12 @@ const injectedCode = `
   var originalPostMessage = window.postMessage
   window.postMessage = e => window.ReactNativeWebView.postMessage(JSON.stringify(e))
 
+  document.addEventListener("message", event => {
+      originalPostMessage(JSON.parse(event.data), "*");
+  });
+
   window.addEventListener("message", event => {
-      originalPostMessage(JSON.parse(event.data), "*")
+      originalPostMessage(JSON.parse(event.data), "*");
   });
 `;
 
@@ -75,9 +79,6 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
   }
 
   const handleMessage = useCallback(message => {
-    //    if (message.url !== coinifyConfig.url || !message.nativeEvent.data) return;
-    message.persist();
-
     const { type, event, context } = JSON.parse(message.nativeEvent.data);
     if (type !== "event") return;
     if (event === "trade.receive-account-changed") {
@@ -127,7 +128,6 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
           uri: url,
         }}
         injectedJavaScript={injectedCode}
-        overScrollMode={false}
         onMessage={handleMessage}
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}

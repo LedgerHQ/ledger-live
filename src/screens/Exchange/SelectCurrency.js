@@ -22,6 +22,7 @@ import FilteredSearchBar from "../../components/FilteredSearchBar";
 import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
+import { supportedCurrenciesIds } from "./coinifyConfig";
 
 import colors from "../../colors";
 
@@ -44,9 +45,6 @@ const renderEmptyList = () => (
     </LText>
   </View>
 );
-
-// hardcoded for now, maybe it could be dynamically fetched from coinify API ?
-const supportedCurrenciesIds = ["bitcoin", "ethereum", "bitcoin_cash", "dash"];
 
 export default function ExchangeSelectCrypto({ navigation }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
