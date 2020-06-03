@@ -136,6 +136,50 @@ export async function bot({ currency, mutation }: Arg = {}) {
       )
       .map((s) => s.spec.name);
 
+    if (specFatals.length) {
+      body += "<details>\n";
+
+      body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
+
+      specFatals.forEach(({ spec, fatalError }) => {
+        body += `**Spec ${spec.name} failed!**\n`;
+        body += "```\n" + String(fatalError) + "\n```\n\n";
+      });
+
+      body += "</details>\n";
+    }
+
+    if (errorCases.length) {
+      body += "<details>\n";
+
+      body += `<summary>${errorCases.length} critical mutation errors</summary>\n\n`;
+
+      errorCases.forEach((c) => {
+        body +=
+          "```\n" +
+          formatReportForConsole(c) +
+          "\n" +
+          String(c.error) +
+          "\n```\n\n";
+      });
+
+      body += "</details>\n";
+    }
+
+    body += "<details>\n";
+    body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
+    results.forEach((r, i) => {
+      const spec = specs[i];
+      const logs = specsLogs[i];
+      body += `### Spec ${spec.name} (${
+        r.mutations ? r.mutations.length : "failed"
+      } mutations)\n`;
+      body += "\n```\n";
+      body += logs.join("\n");
+      body += "\n```\n";
+    });
+    body += "</details>\n";
+
     body += "### Portfolio\n\n";
 
     if (withoutFunds.length) {
@@ -180,52 +224,6 @@ export async function bot({ currency, mutation }: Arg = {}) {
     });
 
     body += "\n</details>\n\n";
-
-    body += "### Full report\n\n";
-
-    if (specFatals.length) {
-      body += "<details>\n";
-
-      body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
-
-      specFatals.forEach(({ spec, fatalError }) => {
-        body += `**Spec ${spec.name} failed!**\n`;
-        body += "```\n" + String(fatalError) + "\n```\n\n";
-      });
-
-      body += "</details>\n";
-    }
-
-    if (errorCases.length) {
-      body += "<details>\n";
-
-      body += `<summary>${errorCases.length} critical mutation errors</summary>\n\n`;
-
-      errorCases.forEach((c) => {
-        body +=
-          "```\n" +
-          formatReportForConsole(c) +
-          "\n" +
-          String(c.error) +
-          "\n```\n\n";
-      });
-
-      body += "</details>\n";
-    }
-
-    body += "<details>\n";
-    body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
-    results.forEach((r, i) => {
-      const spec = specs[i];
-      const logs = specsLogs[i];
-      body += `### Spec ${spec.name} (${
-        r.mutations ? r.mutations.length : "failed"
-      } mutations)\n`;
-      body += "\n```\n";
-      body += logs.join("\n");
-      body += "\n```\n";
-    });
-    body += "</details>\n";
 
     const { data: githubComment } = await network({
       url: `https://api.github.com/repos/LedgerHQ/ledger-live-common/commits/${GITHUB_SHA}/comments`,
