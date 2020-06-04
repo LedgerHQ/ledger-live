@@ -136,9 +136,9 @@ export const getMaxEstimatedBalance = (
   const { cosmosResources } = a;
   let blockBalance = BigNumber(0);
   if (cosmosResources) {
-    blockBalance = cosmosResources.pendingRewardsBalance
-      .plus(cosmosResources.unbondingBalance)
-      .plus(cosmosResources.delegatedBalance);
+    blockBalance = cosmosResources.unbondingBalance.plus(
+      cosmosResources.delegatedBalance
+    );
   }
 
   return a.balance.minus(estimatedFees).minus(blockBalance);
