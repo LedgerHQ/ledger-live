@@ -8,6 +8,7 @@ import {
   FeeTooHigh,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
+import { LowerThanMinimumRelayFee } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Account } from "../../../types/account";
@@ -21,6 +22,7 @@ import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
 import { abandonSeedLegacyPerCurrency } from "../publicAddresses";
+import { getMinRelayFee } from "../fees";
 
 const calculateFees = makeLRUCache(
   async (a, t) => {
@@ -111,7 +113,13 @@ const getTransactionStatus = async (a, t) => {
     errors.amount = new NotEnoughBalance();
   }
 
-  if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+  if (
+    process.env.EXPERIMENTAL_MIN_RELAY_FEE &&
+    estimatedFees.gt(0) &&
+    estimatedFees.lt(getMinRelayFee(a.currency))
+  ) {
+    warnings.feePerByte = new LowerThanMinimumRelayFee();
+  } else if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 

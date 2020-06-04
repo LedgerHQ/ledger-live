@@ -16,6 +16,7 @@ import { getEnv } from "../env";
 import { getDependencies } from "../apps/polyfill";
 import { findCryptoCurrencyByKeyword } from "../currencies";
 import { formatAppCandidate } from "../bot/formatters";
+import { delay } from "../promise";
 
 let idCounter = 0;
 const data = {};
@@ -32,27 +33,32 @@ export function closeAllSpeculosDevices() {
   return Promise.all(Object.keys(data).map(releaseSpeculosDevice));
 }
 
-export async function createSpeculosDevice({
-  model,
-  firmware,
-  appName,
-  appVersion,
-  seed,
-  coinapps,
-  dependency,
-}: {
-  model: DeviceModelId,
-  firmware: string,
-  appName: string,
-  appVersion: string,
-  dependency?: string,
-  seed: string,
-  // Folder where we have app binaries
-  coinapps: string,
-}): Promise<{
+export async function createSpeculosDevice(
+  arg: {
+    model: DeviceModelId,
+    firmware: string,
+    appName: string,
+    appVersion: string,
+    dependency?: string,
+    seed: string,
+    // Folder where we have app binaries
+    coinapps: string,
+  },
+  maxRetry: number = 3
+): Promise<{
   transport: SpeculosTransport,
   id: string,
 }> {
+  const {
+    model,
+    firmware,
+    appName,
+    appVersion,
+    seed,
+    coinapps,
+    dependency,
+  } = arg;
+
   const speculosID = `speculosID-${++idCounter}`;
 
   const apduPort = 40000 + idCounter;
@@ -121,32 +127,11 @@ export async function createSpeculosDevice({
     rejectReady = reject;
   });
 
-  p.stdout.on("data", (data) => {
-    if (data) {
-      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
-    }
-  });
+  let destroyed = false;
 
-  let latestStderr;
-
-  p.stderr.on("data", (data) => {
-    if (!data) return;
-    latestStderr = data;
-    if (!data.includes("apdu: ")) {
-      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
-    }
-    if (data.includes("using SDK")) {
-      setTimeout(resolveReady, 500);
-    } else if (data.includes("is already in use by container")) {
-      rejectReady(
-        new Error(
-          "speculos already in use! Try `ledger-live cleanSpeculos` or check logs"
-        )
-      );
-    }
-  });
-
-  const destroy = () =>
+  const destroy = () => {
+    if (destroyed) return;
+    destroyed = true;
     new Promise((resolve, reject) => {
       if (!data[speculosID]) return;
       delete data[speculosID];
@@ -163,14 +148,54 @@ export async function createSpeculosDevice({
         }
       });
     });
+  };
+
+  p.stdout.on("data", (data) => {
+    if (data) {
+      log("speculos-stdout", `${speculosID}: ${String(data).trim()}`);
+    }
+  });
+
+  let latestStderr;
+
+  p.stderr.on("data", (data) => {
+    if (!data) return;
+    latestStderr = data;
+    if (!data.includes("apdu: ")) {
+      log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
+    }
+
+    if (data.includes("using SDK")) {
+      setTimeout(() => resolveReady(true), 500);
+    } else if (data.includes("is already in use by container")) {
+      rejectReady(
+        new Error(
+          "speculos already in use! Try `ledger-live cleanSpeculos` or check logs"
+        )
+      );
+    } else if (data.includes("address already in use")) {
+      if (maxRetry > 0) {
+        log("speculos", "retrying speculos connection");
+        destroy();
+        resolveReady(false);
+      }
+    }
+  });
 
   p.on("close", () => {
     log("speculos", `${speculosID} closed`);
-    destroy();
-    rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
+    if (!destroyed) {
+      destroy();
+      rejectReady(new Error(`speculos process failure. ${latestStderr || ""}`));
+    }
   });
 
-  await ready;
+  const hasSucceed = await ready;
+
+  if (!hasSucceed) {
+    await delay(1000);
+    return createSpeculosDevice(arg, maxRetry - 1);
+  }
 
   const transport = await SpeculosTransport.open({
     apduPort,

@@ -193,10 +193,8 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
     body += "<details>\n";
     body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
-    body +=
-      "| Spec (accounts) | Operations | Balance | remaining | Receive |\n";
-    body +=
-      "|-----------------|------------|---------|-----------|---------|\n";
+    body += "| Spec (accounts) | Operations | Balance | funds? |\n";
+    body += "|-----------------|------------|---------|--------|\n";
     results.forEach((r) => {
       function sumAccounts(all) {
         if (!all || all.lengnth === 0) return;
@@ -209,14 +207,15 @@ export async function bot({ currency, mutation }: Arg = {}) {
       const accountsAfterBalance = sumAccounts(r.accountsAfter);
 
       let balance = !accountsBeforeBalance
-        ? "???"
+        ? "🤷‍♂️"
         : "**" +
           formatCurrencyUnit(r.spec.currency.units[0], accountsBeforeBalance, {
             showCode: true,
           }) +
           "**";
 
-      let etaTxs = "???";
+      let etaTxs =
+        r.mutations && r.mutations.every((m) => !m.mutation) ? "❌" : "???";
       if (
         accountsBeforeBalance &&
         accountsAfterBalance &&
@@ -228,10 +227,8 @@ export async function bot({ currency, mutation }: Arg = {}) {
         const d = accountsBeforeBalance.minus(accountsAfterBalance);
         balance +=
           " (- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
-        etaTxs = `~${accountsAfterBalance
-          .div(d.div(txCount))
-          .integerValue()
-          .toString()} txs`;
+        const eta = accountsAfterBalance.div(d.div(txCount)).integerValue();
+        etaTxs = eta.lt(50) ? "⚠️" : eta.lt(500) ? "👍" : "💪";
       }
 
       function countOps(all) {
@@ -246,11 +243,12 @@ export async function bot({ currency, mutation }: Arg = {}) {
         (r.accountsBefore || []).filter((a) => !isAccountEmpty(a)).length
       }) `;
       body += `| ${afterOps || beforeOps}${
-        afterOps > beforeOps ? ` (+ ${afterOps - beforeOps})` : ""
+        afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""
       } `;
       body += `| ${balance} `;
-      body += `| ${etaTxs} `;
-      body += `| ${(firstAccount && firstAccount.freshAddress) || ""} `;
+      body += `| ${etaTxs} ${
+        (firstAccount && firstAccount.freshAddress) || ""
+      } `;
       body += "|\n";
     });
 

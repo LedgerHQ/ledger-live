@@ -43,8 +43,17 @@ export type MutationSpec<T: Transaction> = {
     bridge: AccountBridge<T>,
     maxSpendable: BigNumber,
   }) => ?T,
+  // if there is a status errors/warnings of the defined transaction, this function, if define, can try to recover from it
+  recoverBadTransactionStatus?: ({
+    transaction: T,
+    status: TransactionStatus,
+    account: Account,
+    bridge: AccountBridge<T>,
+  }) => ?T,
   // Express the device actions to do (buttons,..) and validate the device screen
   deviceAction?: DeviceAction<T, any>,
+  // how much time to wait in maximum to reach the final state
+  testTimeout?: number,
   // Implement a test that runs after the operation is applied to the account
   test?: ({
     account: Account,
@@ -60,6 +69,7 @@ export type AppSpec<T: Transaction> = {
   name: string,
   currency: CryptoCurrency,
   dependency?: string,
+  testTimeout?: number,
   appQuery: {
     model?: DeviceModelId,
     appName?: string,
@@ -91,6 +101,10 @@ export type MutationReport<T: Transaction> = {
   transactionTime?: number,
   status?: TransactionStatus,
   statusTime?: number,
+  recoveredFromTransactionStatus?: {
+    transaction: T,
+    status: TransactionStatus,
+  },
   latestSignOperationEvent?: SignOperationEvent,
   signedOperation?: SignedOperation,
   signedTime?: number,
@@ -99,5 +113,6 @@ export type MutationReport<T: Transaction> = {
   operation?: Operation,
   confirmedTime?: number,
   finalAccount?: Account,
+  testDuration?: number,
   error?: Error,
 };

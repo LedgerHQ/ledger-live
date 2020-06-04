@@ -2,15 +2,46 @@
 import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import { log } from "@ledgerhq/logs";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { MutationSpec, AppSpec } from "../../bot/types";
+import { LowerThanMinimumRelayFee } from "../../errors";
+import { getMinRelayFee } from "./fees";
 
 type Arg = $Shape<{
   minimalAmount: BigNumber,
   targetAccountSize: number,
 }>;
+
+const recoverBadTransactionStatus = ({
+  bridge,
+  account,
+  transaction,
+  status,
+}) => {
+  const hasErrors = Object.keys(status.errors).length > 0;
+
+  if (
+    !hasErrors &&
+    status.warnings.feePerByte instanceof LowerThanMinimumRelayFee &&
+    status.estimatedFees.gt(0)
+  ) {
+    const feePerByte = BigNumber(getMinRelayFee(account.currency))
+      .times(transaction.feePerByte || 0)
+      .div(status.estimatedFees)
+      .integerValue(BigNumber.ROUND_CEIL);
+    log("specs/bitcoin", "recovering with feePerByte=" + feePerByte.toString());
+    if (feePerByte.lt(1)) return;
+    return bridge.updateTransaction(transaction, { feePerByte });
+  }
+
+  if (!hasErrors) {
+    // ignore other warning cases. recover if there is no errors
+    return transaction;
+  }
+};
 
 const bitcoinLikeMutations = ({
   minimalAmount = BigNumber("10000"),
@@ -28,6 +59,7 @@ const bitcoinLikeMutations = ({
       t = bridge.updateTransaction(t, { amount, recipient });
       return t;
     },
+    recoverBadTransactionStatus,
     test: ({ account, accountBeforeTransaction, operation }) => {
       // can be generalized!
       expect(account.balance.toString()).toBe(
@@ -46,6 +78,7 @@ const bitcoinLikeMutations = ({
       t = bridge.updateTransaction(t, { useAllAmount: true, recipient });
       return t;
     },
+    recoverBadTransactionStatus,
     test: ({ account }) => {
       expect(account.balance.toString()).toBe("0");
     },

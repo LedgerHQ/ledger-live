@@ -66,6 +66,7 @@ export function formatReportForConsole<T: Transaction>({
   transaction,
   statusTime,
   status,
+  recoveredFromTransactionStatus,
   signedOperation,
   signedTime,
   optimisticOperation,
@@ -73,6 +74,7 @@ export function formatReportForConsole<T: Transaction>({
   operation,
   confirmedTime,
   finalAccount,
+  testDuration,
   error,
 }: MutationReport<T>) {
   let str = "";
@@ -112,6 +114,16 @@ export function formatReportForConsole<T: Transaction>({
       account
     )}\n`;
   }
+  if (recoveredFromTransactionStatus && account) {
+    str += `\n⚠️ recovered from transaction ${formatTransaction(
+      recoveredFromTransactionStatus.transaction,
+      account
+    )}\nof status ${formatTransactionStatus(
+      recoveredFromTransactionStatus.transaction,
+      recoveredFromTransactionStatus.status,
+      account
+    )}\n\n`.replace(/\n/g, "\n  ");
+  }
   if (signedOperation) {
     str += `✔️ has been signed! (${formatDt(statusTime, signedTime)}) ${
       !optimisticOperation
@@ -134,6 +146,9 @@ export function formatReportForConsole<T: Transaction>({
   }
   if (finalAccount) {
     str += `account updated:\n ${formatAccount(finalAccount, "summary")}\n`;
+  }
+  if (testDuration) {
+    str += `(final state reached in ${formatTime(testDuration)})\n`;
   }
   if (error) {
     str += `⚠️ ${String(error)}\n`;

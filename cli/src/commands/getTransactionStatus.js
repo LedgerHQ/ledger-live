@@ -23,7 +23,7 @@ const getTransactionStatusFormatters = {
     "STATUS " +
     formatTransactionStatus(transaction, status, account),
 
-  json: ({ status, transaction, account }) =>
+  json: ({ status, transaction }) =>
     "TRANSACTION " +
     JSON.stringify(toTransactionRaw(transaction)) +
     "\n" +

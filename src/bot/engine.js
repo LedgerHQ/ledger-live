@@ -293,20 +293,47 @@ export async function runOnAccount<T: Transaction>({
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
 
     // prepare the transaction and ensure it's valid
-    const transaction = await accountBridge.prepareTransaction(account, tx);
+    let transaction = tx;
+    let status;
+    let errors = [];
+
+    transaction = await accountBridge.prepareTransaction(account, transaction);
     report.transaction = transaction;
     report.transactionTime = now();
 
-    const status = await accountBridge.getTransactionStatus(
-      account,
-      transaction
-    );
+    status = await accountBridge.getTransactionStatus(account, transaction);
     report.status = status;
     report.statusTime = now();
 
-    const errors = Object.values(status.errors);
+    errors = Object.values(status.errors);
+    const warnings = Object.values(status.warnings);
+
+    if (mutation.recoverBadTransactionStatus) {
+      if (errors.length || warnings.length) {
+        // there is something to recover from
+        const recovered = mutation.recoverBadTransactionStatus({
+          transaction,
+          status,
+          account,
+          bridge: accountBridge,
+        });
+
+        if (recovered) {
+          report.recoveredFromTransactionStatus = { transaction, status };
+          report.transaction = transaction = recovered;
+          report.transactionTime = now();
+          status = await accountBridge.getTransactionStatus(
+            account,
+            transaction
+          );
+          report.status = status;
+          report.statusTime = now();
+        }
+      }
+    }
+
+    // without recovering mecanism, we simply assume an error is a failure
     if (errors.length) {
-      // FIXME more errors to be included?
       throw errors[0];
     }
 
@@ -356,10 +383,12 @@ export async function runOnAccount<T: Transaction>({
     );
 
     // wait the condition are good (operation confirmed)
-    const startTime = Date.now();
+    const testBefore = now();
 
     const step = (account) => {
-      const timedOut = Date.now() - startTime > 60 * 1000;
+      const timedOut =
+        now() - testBefore >
+        (spec.testTimeout || mutation.testTimeout || 60 * 1000);
 
       const operation = account.operations.find(
         (o) => o.id === optimisticOperation.id
@@ -381,9 +410,11 @@ export async function runOnAccount<T: Transaction>({
             operation,
             account,
           });
+          report.testDuration = now() - testBefore;
         } catch (e) {
           // We never reach the final test success
           if (timedOut) {
+            report.testDuration = now() - testBefore;
             throw e;
           }
           // We will try again
