@@ -745,9 +745,11 @@
     "emptyState": {
       "title": "No crypto assets yet?",
       "desc": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving",
+      "descWithBuy": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
       "descToken": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> tokens</5>",
       "buttons": {
-        "receiveFunds": "Receive"
+        "receiveFunds": "Receive",
+        "buyCrypto": "Buy"
       }
     },
     "settings": {
@@ -1788,6 +1790,12 @@
     },
     "history": {
       "tabTitle": "History"
+    }
+  },
+  "banner": {
+    "exchangeBuyCrypto": {
+      "title": "BUY CRYPTO",
+      "description": "Purchase crypto assets via Coinify and receive your coins directly in your Ledger account."
     }
   }
 }

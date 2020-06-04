@@ -119,3 +119,8 @@ export const showToken = (tokenId: string) => ({
   type: "SHOW_TOKEN",
   payload: tokenId,
 });
+
+export const dismissBanner = (bannerId: string) => ({
+  type: "SETTINGS_DISMISS_BANNER",
+  payload: bannerId,
+});
