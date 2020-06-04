@@ -50,6 +50,7 @@ jobs:
         run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
         timeout-minutes: 60
       - name: Run coverage
+        if: failure() || success()
         run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
       - name: upload logs
         if: failure() || success()
