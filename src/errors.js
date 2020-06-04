@@ -83,6 +83,14 @@ export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
   "CosmosDelegateAllFundsWarning"
 );
 
+export const CosmosTooManyValidators = createCustomErrorClass(
+  "CosmosTooManyValidators"
+);
+
+export const NotEnoughDelegationBalance = createCustomErrorClass(
+  "NotEnoughDelegationBalance"
+);
+
 // Note : info of this code can be found here :
 // https://github.com/cosmos/cosmos-sdk/blob/v0.37.9/types/errors.go#L28
 export const CosmosBroadcastError = {
