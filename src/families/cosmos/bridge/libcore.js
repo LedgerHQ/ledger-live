@@ -19,6 +19,8 @@ import {
   CosmosRedelegationInProgress,
   CosmosClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
+  CosmosTooManyValidators,
+  NotEnoughDelegationBalance,
 } from "../../../errors";
 import {
   setCosmosPreloadData,
@@ -67,6 +69,19 @@ const redelegationStatusError = (a, t) => {
       })
     )
       return new CosmosRedelegationInProgress();
+
+    if (t.cosmosSourceValidator === t.validators[0].address)
+      return new InvalidAddressBecauseDestinationIsAlsoSource();
+
+    if (
+      redelegations.some((redelegation) => {
+        return (
+          redelegation.validatorSrcAddress === t.cosmosSourceValidator &&
+          redelegation.amount.lt(t.validators[0].amount)
+        );
+      })
+    )
+      return new NotEnoughDelegationBalance();
   }
 
   return null;
@@ -88,6 +103,20 @@ const getTransactionStatus = async (a, t) => {
         a.cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS,
       "unbondings should not have more than 6 entries"
     );
+    if (t.validators.length === 0)
+      errors.recipient = new InvalidAddress(null, {
+        currencyName: a.currency.name,
+      });
+    const { cosmosResources } = a;
+    invariant(cosmosResources, "cosmosResources should exist");
+    if (
+      cosmosResources.delegations.some(
+        (delegation) =>
+          delegation.validatorAddress === t.validators[0].address &&
+          delegation.amount.lt(t.validators[0].amount)
+      )
+    )
+      errors.unbonding = new NotEnoughDelegationBalance();
   } else if (
     ["delegate", "claimReward", "claimRewardCompound"].includes(t.mode)
   ) {
@@ -100,6 +129,9 @@ const getTransactionStatus = async (a, t) => {
       errors.recipient = new InvalidAddress(null, {
         currencyName: a.currency.name,
       });
+    if (t.validators.length > 5) {
+      errors.validators = new CosmosTooManyValidators();
+    }
   } else {
     if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
@@ -129,7 +161,7 @@ const getTransactionStatus = async (a, t) => {
         )
       : t.amount;
 
-  if (amount.eq(0) && t.mode !== "claimReward") {
+  if (amount.eq(0) && t.mode !== "claimReward" && t.useAllAmount !== true) {
     errors.amount = new AmountRequired();
   }
 

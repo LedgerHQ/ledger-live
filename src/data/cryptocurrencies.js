@@ -639,7 +639,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     ],
     explorerViews: [
       {
-        tx: "https://coin.atom.dev.ledger.fr/txs/$hash",
+        tx: "https://www.mintscan.io/txs/$hash",
       },
     ],
   },

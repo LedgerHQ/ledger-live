@@ -254,6 +254,28 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
+              name: "redelegation - Source is Destination",
+              transaction: (t) => ({
+                ...t,
+                mode: "redelegate",
+                validators: [
+                  {
+                    address:
+                      "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+                    amount: BigNumber(100),
+                  },
+                ],
+                cosmosSourceValidator:
+                  "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+              }),
+              expectedStatus: {
+                errors: {
+                  redelegation: new InvalidAddressBecauseDestinationIsAlsoSource(),
+                },
+                warnings: {},
+              },
+            },
+            {
               name: "Unbonding - success",
               transaction: (t) => ({
                 ...t,
