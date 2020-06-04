@@ -104,6 +104,7 @@ const bitcoinTestnet: AppSpec<Transaction> = {
     appName: "Bitcoin Test",
   },
   mutations: bitcoinLikeMutations({
+    targetAccountSize: 8,
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("bitcoin_testnet").units[0],
       "0.001"
