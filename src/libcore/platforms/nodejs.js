@@ -351,6 +351,7 @@ export default (arg: {
             njsInstanciateClass,
             njsBuggyMethodIsNotStatic,
             params,
+            returns
           } = statics[method];
           if (njsInstanciateClass) {
             m[method] = function met(...vargs) {
@@ -387,6 +388,9 @@ export default (arg: {
               const value = new m(...constructorArgs)[method](...args);
               if (process.env.VERBOSE) {
                 log("libcore-result", id + "." + method, { value });
+              }
+              if (returns) {
+                return wrapResult(returns, value);
               }
               return value;
             };

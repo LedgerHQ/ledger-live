@@ -6,10 +6,11 @@ import type {
   CryptoCurrency,
   SyncConfig,
 } from "../../types";
-import type { CoreAccount } from "../types";
+import type { Core, CoreAccount } from "../types";
 import byFamily from "../../generated/libcore-buildSubAccounts";
 
 export async function buildSubAccounts(arg: {
+  core: Core,
   currency: CryptoCurrency,
   coreAccount: CoreAccount,
   accountId: string,

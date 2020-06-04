@@ -19,7 +19,7 @@ async function broadcast({
   return {
     ...operation,
     hash: parsed.txhash,
-    id: `${operation.accountId}-${parsed.txhash}-0-${operation.type}`,
+    id: `${operation.accountId}-${parsed.txhash}-${operation.type}-0`,
   };
 }
 

@@ -15,7 +15,7 @@ import type {
   DerivationMode,
 } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
-import type { CoreWallet, CoreAccount } from "../types";
+import type { CoreWallet, CoreAccount, Core } from "../types";
 import { buildOperation } from "./buildOperation";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { minimalOperationsBuilder } from "../../reconciliation";
@@ -38,6 +38,7 @@ async function queryOps(coreAccount) {
 }
 
 export async function buildAccount({
+  core,
   coreWallet,
   coreAccount,
   currency,
@@ -48,6 +49,7 @@ export async function buildAccount({
   logId,
   syncConfig,
 }: {
+  core: Core,
   coreWallet: CoreWallet,
   coreAccount: CoreAccount,
   currency: CryptoCurrency,
@@ -127,6 +129,7 @@ export async function buildAccount({
         });
 
   const subAccounts = await buildSubAccounts({
+    core,
     currency,
     coreAccount,
     accountId,
@@ -151,6 +154,7 @@ export async function buildAccount({
     paginatedPartialOperations,
     async (corePartialOperation) =>
       buildOperation({
+        core,
         coreOperation: await inferCoreOperation(corePartialOperation),
         accountId,
         currency,
@@ -167,6 +171,7 @@ export async function buildAccount({
       // we need to fetch lastOperation. partialOperations is older first
       const coreOperation = await inferCoreOperation(partialOperations[0]);
       lastOperation = await buildOperation({
+        core,
         coreOperation,
         accountId,
         currency,

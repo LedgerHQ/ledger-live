@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { Operation, CryptoCurrency, SubAccount } from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import { inferSubOperations } from "../../account";
-import type { CoreOperation } from "../types";
+import type { Core, CoreOperation } from "../types";
 import perFamily from "../../generated/libcore-buildOperation";
 import { getEnv } from "../../env";
 
@@ -14,6 +14,7 @@ export const OperationTypeMap = {
 };
 
 export async function buildOperation(arg: {
+  core: Core,
   coreOperation: CoreOperation,
   accountId: string,
   currency: CryptoCurrency,
@@ -63,7 +64,9 @@ export async function buildOperation(arg: {
 
   const rest = await buildOp(arg, partialOp);
   if (!rest) return null;
-  const id = `${accountId}-${rest.hash}-${rest.type || type}`;
+  const id = `${accountId}-${rest.hash}-${rest.type || type}${
+    rest.extra && rest.extra.id ? "-" + rest.extra.id : ""
+  }`;
 
   const op: $Exact<Operation> = {
     id,

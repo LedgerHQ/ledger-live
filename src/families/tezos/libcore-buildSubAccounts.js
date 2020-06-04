@@ -1,7 +1,7 @@
 // @flow
 
 import type { CryptoCurrency, ChildAccount, Account } from "../../types";
-import type { CoreAccount } from "../../libcore/types";
+import type { CoreAccount, Core } from "../../libcore/types";
 import type {
   CoreTezosLikeOriginatedAccount,
   CoreTezosLikeAccount,
@@ -16,11 +16,13 @@ const OperationOrderKey = {
 };
 
 async function buildOriginatedAccount({
+  core,
   parentAccountId,
   currency,
   coreOriginatedAccount,
   existingOriginatedAccount,
 }: {
+  core: Core,
   parentAccountId: string,
   currency: CryptoCurrency,
   coreOriginatedAccount: CoreTezosLikeOriginatedAccount,
@@ -42,6 +44,7 @@ async function buildOriginatedAccount({
     coreOperations,
     (coreOperation) =>
       buildOperation({
+        core,
         coreOperation,
         accountId: id,
         currency,
@@ -70,11 +73,13 @@ async function buildOriginatedAccount({
 }
 
 async function tezosBuildOriginatedAccount({
+  core,
   currency,
   coreAccount,
   accountId,
   existingAccount,
 }: {
+  core: Core,
   currency: CryptoCurrency,
   coreAccount: CoreAccount,
   accountId: string,
@@ -101,6 +106,7 @@ async function tezosBuildOriginatedAccount({
     const address = await coreOA.getAddress();
     const existingOriginatedAccount = existingAccountByAddress[address];
     const originatedAccount = await buildOriginatedAccount({
+      core,
       parentAccountId: accountId,
       currency,
       coreOriginatedAccount: coreOA,

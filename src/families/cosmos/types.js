@@ -158,10 +158,10 @@ export type CosmosDelegateTxInfo = {|
 |};
 
 export type CosmosUndelegateTxInfo = {|
-  validator: CosmosDelegationInfo,
+  validators: CosmosDelegationInfo[],
 |};
 export type CosmosRedelegateTxInfo = {|
-  validator: CosmosDelegationInfo,
+  validators: CosmosDelegationInfo[],
   cosmosSourceValidator: ?string,
 |};
 
@@ -188,14 +188,32 @@ type CosmosMsgSend = {
 };
 
 type CosmosMsgDelegate = {
+  getValidatorAddress(): Promise<string>;
+  getCosmosAmount(): Promise<CosmosAmount>;
+} & CosmosMsgDelegateObject
+
+type CosmosMsgDelegateObject = {
   delegatorAddress: string,
   validatorAddress: string,
   amount: CoreCosmosLikeAmount,
 };
 
 type CosmosMsgUndelegate = CosmosMsgDelegate;
+type CosmosMsgUndelegateObject = CosmosMsgDelegateObject;
+
+type CosmosAmount = {
+  getAmount(): Promise<string>;
+  amount: string;
+  denom: string;
+}
 
 type CosmosMsgRedelegate = {
+  getValidatorDestinationAddress(): Promise<string>;
+  getValidatorSourceAddress(): Promise<string>;
+  getCosmosAmount(): Promise<CosmosAmount>;
+} & CosmosMsgRedelegateObject
+
+type CosmosMsgRedelegateObject = {
   delegatorAddress: string,
   validatorSourceAddress: string,
   validatorDestinationAddress: string,
@@ -207,7 +225,11 @@ type CoreCosmosLikeAmount = {
   denom: string,
 };
 
-type CosmosMsgWithdrawDelegationReward = {
+type CosmosMsgWithdrawDelegationReward  = {
+  getValidatorAddress(): Promise<string>;
+} & CosmosMsgWithdrawDelegationRewardObject
+
+type CosmosMsgWithdrawDelegationRewardObject = {
   delegatorAddress: string,
   validatorAddress: string,
 };
@@ -259,18 +281,23 @@ declare class CoreCosmosLikeMessage {
   getRawMessageType(): Promise<string>;
   static wrapMsgSend(message: CosmosMsgSend): Promise<CoreCosmosLikeMessage>;
   static wrapMsgDelegate(
-    message: CosmosMsgDelegate
+    message: CosmosMsgDelegateObject
   ): Promise<CoreCosmosLikeMessage>;
   static wrapMsgUndelegate(
-    message: CosmosMsgUndelegate
+    message: CosmosMsgUndelegateObject
   ): Promise<CoreCosmosLikeMessage>;
   static wrapMsgBeginRedelegate(
-    message: CosmosMsgRedelegate
+    message: CosmosMsgRedelegateObject
   ): Promise<CoreCosmosLikeMessage>;
   static wrapMsgWithdrawDelegationReward(
-    message: CosmosMsgWithdrawDelegationReward
+    message: CosmosMsgWithdrawDelegationRewardObject
   ): Promise<CoreCosmosLikeMessage>;
-}
+
+  static unwrapMsgDelegate(msg: CosmosMessage): Promise<CosmosMsgDelegate>;
+  static unwrapMsgBeginRedelegate(msg: CosmosMessage): Promise<CosmosMsgRedelegate>;
+  static unwrapMsgUndelegate(msg: CosmosMessage): Promise<CosmosMsgUndelegate>;
+  static unwrapMsgWithdrawDelegationReward(msg: CosmosMessage): Promise<CosmosMsgWithdrawDelegationReward>;
+  }
 
 declare class CoreCosmosLikeTransactionBuilder {
   setMemo(memo: string): Promise<CoreCosmosLikeTransactionBuilder>;
@@ -584,7 +611,7 @@ export const reflect = (declare: (string, Spec) => void) => {
         njsBuggyMethodIsNotStatic: true,
       },
       wrapMsgBeginRedelegate: {
-        params: ["CosmosLikeMsgBeginRelegate"],
+        params: ["CosmosLikeMsgBeginRedelegate"],
         returns: "CosmosLikeMessage",
         njsBuggyMethodIsNotStatic: true,
       },
@@ -593,6 +620,26 @@ export const reflect = (declare: (string, Spec) => void) => {
         returns: "CosmosLikeMessage",
         njsBuggyMethodIsNotStatic: true,
       },
+      unwrapMsgDelegate: {
+        params: ["CosmosLikeMessage"],
+        returns: "CosmosLikeMsgDelegate",
+        njsBuggyMethodIsNotStatic: true,
+      },
+      unwrapMsgBeginRedelegate: {
+        params: ["CosmosLikeMessage"],
+        returns: "CosmosLikeMsgBeginRedelegate",
+        njsBuggyMethodIsNotStatic: true,
+      },
+      unwrapMsgUndelegate: {
+        params: ["CosmosLikeMessage"],
+        returns: "CosmosLikeMsgUndelegate",
+        njsBuggyMethodIsNotStatic: true,
+      },
+      unwrapMsgWithdrawDelegationReward: {
+        params: ["CosmosLikeMessage"],
+        returns: "CosmosLikeMsgWithdrawDelegationReward",
+        njsBuggyMethodIsNotStatic: true,
+      }
     },
     methods: {
       getMessageType: {},
@@ -600,6 +647,66 @@ export const reflect = (declare: (string, Spec) => void) => {
       getIndex: {},
     },
   });
+
+  declare("CosmosLikeMsgDelegate", {
+    njsUsesPlainObject: true,
+    methods: {
+      getValidatorAddress: {
+        njsField: "validatorAddress"
+      },
+      getCosmosAmount: {
+        njsField: "amount",
+        returns: "CosmosAmount"
+      }
+    }
+  });
+
+  declare("CosmosLikeMsgBeginRedelegate", {
+    njsUsesPlainObject: true,
+    methods: {
+      getValidatorDestinationAddress: {
+        njsField: "validatorDestinationAddress"
+      },
+      getValidatorSourceAddress: {
+        njsField: "validatorSourceAddress"
+      },
+      getCosmosAmount: {
+        njsField: "amount",
+        returns: "CosmosAmount"
+      }
+    }
+  });
+
+  declare("CosmosLikeMsgUndelegate", {
+    njsUsesPlainObject: true,
+    methods: {
+      getValidatorAddress: {
+        njsField: "validatorAddress"
+      },
+      getCosmosAmount: {
+        njsField: "amount",
+        returns: "CosmosAmount"
+      }
+    }
+  });
+  
+  declare("CosmosLikeMsgWithdrawDelegationReward", {
+    njsUsesPlainObject: true,
+    methods: {
+      getValidatorAddress: {
+        njsField: "validatorAddress"
+      },
+    }
+  });
+
+  declare("CosmosAmount", {
+    njsUsesPlainObject: true,
+    methods: {
+      getAmount: {
+        njsField: "amount",
+      }
+    }
+  })
 
   return {
     OperationMethods: {

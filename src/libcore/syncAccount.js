@@ -59,6 +59,7 @@ export async function syncCoreAccount({
     }
 
     const account = await buildAccount({
+      core,
       coreWallet,
       coreAccount,
       currency,
