@@ -2428,6 +2428,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     color: "#00ff00",
     symbol: "Ƀ",
     units: bitcoinUnits.map(makeTestnetUnit),
+    deviceTicker: "TEST",
     supportsSegwit: true,
     supportsNativeSegwit: true,
     isTestnetFor: "bitcoin",

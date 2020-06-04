@@ -95,6 +95,22 @@ const bitcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
 };
 
+const bitcoinTestnet: AppSpec<Transaction> = {
+  name: "Bitcoin Testnet",
+  currency: getCryptoCurrencyById("bitcoin_testnet"),
+  dependency: "Bitcoin",
+  appQuery: {
+    model: "nanoS",
+    appName: "Bitcoin Test",
+  },
+  mutations: bitcoinLikeMutations({
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("bitcoin_testnet").units[0],
+      "0.001"
+    ),
+  }),
+};
+
 const bitcoinGold: AppSpec<Transaction> = {
   name: "Bitcoin Gold",
   currency: getCryptoCurrencyById("bitcoin_gold"),
@@ -310,6 +326,7 @@ const stealthcoin: AppSpec<Transaction> = {
 
 export default {
   bitcoin,
+  bitcoinTestnet,
   bitcoinCash,
   bitcoinGold,
   digibyte,
