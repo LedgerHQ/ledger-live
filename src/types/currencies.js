@@ -80,6 +80,7 @@ export type CryptoCurrency = CurrencyCommon & {
   terminated?: {
     link: string,
   },
+  deviceTicker?: string,
 };
 
 export type Currency = FiatCurrency | CryptoCurrency | TokenCurrency;

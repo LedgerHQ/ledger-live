@@ -42,10 +42,17 @@ const acceptTransaction: DeviceAction<Transaction, {}> = ({
   }
 
   if (s.screen === "fees") {
-    let expectedText = formatCurrencyUnit(account.unit, status.estimatedFees, {
-      showCode: true,
-      disableRounding: true,
-    }).replace(/\s/g, " ");
+    let expectedText = formatCurrencyUnit(
+      {
+        ...account.unit,
+        code: account.currency.deviceTicker || account.unit.code,
+      },
+      status.estimatedFees,
+      {
+        showCode: true,
+        disableRounding: true,
+      }
+    ).replace(/\s/g, " ");
     let text = event.text;
 
     if (account.currency.id === "pivx" && text.startsWith("PIV ")) {
@@ -79,10 +86,17 @@ const acceptTransaction: DeviceAction<Transaction, {}> = ({
     s.amount += event.text;
     return s;
   } else if (s.amount) {
-    let expectedText = formatCurrencyUnit(account.unit, status.amount, {
-      showCode: true,
-      disableRounding: true,
-    }).replace(/\s/g, " ");
+    let expectedText = formatCurrencyUnit(
+      {
+        ...account.unit,
+        code: account.currency.deviceTicker || account.unit.code,
+      },
+      status.amount,
+      {
+        showCode: true,
+        disableRounding: true,
+      }
+    ).replace(/\s/g, " ");
 
     if (account.currency.id === "pivx" && s.amount.startsWith("PIV ")) {
       expectedText = expectedText.replace("PIVX", "PIV");
