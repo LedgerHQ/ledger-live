@@ -18,6 +18,7 @@ import {
 import {
   CosmosRedelegationInProgress,
   CosmosClaimRewardsFeesWarning,
+  CosmosDelegateAllFundsWarning,
 } from "../../../errors";
 import {
   setCosmosPreloadData,
@@ -143,6 +144,8 @@ const getTransactionStatus = async (a, t) => {
   amount =
     t.mode === "send" && t.useAllAmount
       ? getMaxEstimatedBalance(a, estimatedFees)
+      : amount.eq(a.spendableBalance)
+      ? amount.minus(estimatedFees)
       : amount;
 
   let totalSpent = amount.plus(estimatedFees);
@@ -156,6 +159,8 @@ const getTransactionStatus = async (a, t) => {
     if (claimReward && estimatedFees.gt(claimReward.pendingRewards)) {
       warnings.claimReward = new CosmosClaimRewardsFeesWarning();
     }
+  } else if (t.mode === "delegate" && totalSpent.eq(a.spendableBalance)) {
+    warnings.delegate = new CosmosDelegateAllFundsWarning();
   }
 
   if (

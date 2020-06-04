@@ -75,6 +75,10 @@ export const CosmosClaimRewardsFeesWarning = createCustomErrorClass(
   "CosmosClaimRewardsFeesWarning"
 );
 
+export const CosmosDelegateAllFundsWarning = createCustomErrorClass(
+  "CosmosDelegateAllFundsWarning"
+);
+
 // Note : info of this code can be found here :
 // https://github.com/cosmos/cosmos-sdk/blob/v0.37.9/types/errors.go#L28
 export const CosmosBroadcastError = {
