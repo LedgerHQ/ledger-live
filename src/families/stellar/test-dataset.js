@@ -312,6 +312,9 @@ const dataset: DatasetTest<Transaction> = {
           ],
         },
         {
+          FIXME_tests: [
+            "balance is sum of ops", // https://github.com/LedgerHQ/lib-ledger-core/pull/580
+          ],
           raw: {
             id:
               "libcore:1:stellar:f30b743cb3a8bc8c3ea8fe8455c6a52221cc6cf867f7f1f5861dd52aba1d0b8a:sep5",
