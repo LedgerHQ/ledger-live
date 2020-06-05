@@ -351,7 +351,7 @@ export default (arg: {
             njsInstanciateClass,
             njsBuggyMethodIsNotStatic,
             params,
-            returns
+            returns,
           } = statics[method];
           if (njsInstanciateClass) {
             m[method] = function met(...vargs) {
