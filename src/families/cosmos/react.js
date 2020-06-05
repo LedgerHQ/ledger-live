@@ -24,6 +24,9 @@ import {
   searchFilter as defaultSearchFilter,
   COSMOS_MAX_REDELEGATIONS,
   COSMOS_MAX_UNBONDINGS,
+  COSMOS_MIN_FEES,
+  COSMOS_MAX_DELEGATIONS,
+  COSMOS_MIN_SAFE,
 } from "./utils";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
@@ -107,6 +110,21 @@ export function useCosmosDelegationsQuerySelector(
   };
 }
 
+export function getMaxDelegationAvailable(
+  account: Account,
+  validatorsLength: number
+): BigNumber {
+  const numberOfDelegations = Math.min(
+    COSMOS_MAX_DELEGATIONS,
+    validatorsLength || 1
+  );
+  const { spendableBalance } = account;
+
+  return spendableBalance
+    .minus(COSMOS_MIN_FEES.multipliedBy(numberOfDelegations))
+    .minus(COSMOS_MIN_SAFE);
+}
+
 /** Hook to search and sort SR list according to initial votes and query */
 export function useSortedValidators(
   search: string,
@@ -184,6 +202,11 @@ export function canUndelegate(account: Account): boolean {
     cosmosResources.unbondings &&
     cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS
   );
+}
+
+export function canDelegate(account: Account): boolean {
+  const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
+  return maxSpendableBalance.gt(0);
 }
 
 export function canRedelegate(

@@ -32,6 +32,7 @@ import {
   getMaxEstimatedBalance,
   COSMOS_MAX_REDELEGATIONS,
   COSMOS_MAX_UNBONDINGS,
+  COSMOS_MAX_DELEGATIONS,
 } from "../utils";
 
 const createTransaction = () => ({
@@ -171,7 +172,7 @@ const getDelegateTransactionStatus = async (a, t) => {
       currencyName: a.currency.name,
     });
 
-  if (t.validators.length > 5) {
+  if (t.validators.length > COSMOS_MAX_DELEGATIONS) {
     errors.validators = new CosmosTooManyValidators();
   }
 
