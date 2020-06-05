@@ -92,6 +92,22 @@ const ethereum: AppSpec<Transaction> = {
   }),
 };
 
+const ethereumClassic = {
+  name: "Ethereum Classic",
+  currency: getCryptoCurrencyById("ethereum_classic"),
+  appQuery: {
+    model: "nanoS",
+    appName: "Ethereum Classic",
+  },
+  mutations: ethereumMutations({
+    maxAccount: 4,
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("ethereum_classic").units[0],
+      "0.01"
+    ),
+  }),
+};
+
 const ethereumRopsten = {
   name: "Ethereum Ropsten",
   currency: getCryptoCurrencyById("ethereum_ropsten"),
@@ -110,5 +126,6 @@ const ethereumRopsten = {
 
 export default {
   ethereum,
+  ethereumClassic,
   ethereumRopsten,
 };
