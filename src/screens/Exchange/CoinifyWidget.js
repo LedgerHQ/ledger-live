@@ -137,8 +137,8 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
         scrollEnabled={true}
         onShouldStartLoadWithRequest={req => {
           if (
-            !req.url.startsWith("https://trade-ui.coinify.com") &&
-            !req.url.startsWith("https://coinify.lon.netverify.com")
+            !req.url.startsWith("https://trade-ui.coinify.com")
+            // && !req.url.startsWith("https://coinify.lon.netverify.com")
           ) {
             Linking.openURL(req.url);
             return false;
