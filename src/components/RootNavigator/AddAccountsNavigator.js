@@ -13,11 +13,21 @@ import EditAccountName from "../../screens/AccountSettings/EditAccountName";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
-export default function AddAccountsNavigator() {
+type Route = {
+  params: ?{ currency: * },
+};
+
+export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { t } = useTranslation();
+  const currency = route && route.params && route.params.currency;
   return (
     <Stack.Navigator
       headerMode="float"
+      initialRouteName={
+        currency
+          ? ScreenName.AddAccountsSelectDevice
+          : ScreenName.AddAccountsSelectCrypto
+      }
       screenOptions={{
         ...closableStackNavigatorConfig,
         headerRight: () => <AddAccountsHeaderRightClose />,
@@ -41,6 +51,7 @@ export default function AddAccountsNavigator() {
       <Stack.Screen
         name={ScreenName.AddAccountsSelectDevice}
         component={AddAccountsSelectDevice}
+        initialParams={currency ? { currency, inline: true } : undefined}
         options={{
           headerTitle: () => (
             <StepHeader

@@ -115,7 +115,11 @@ export default function SelectAccount({ navigation, route }: Props) {
             event="ExchangeStartBuyFlow"
             type="primary"
             title={t("exchange.buy.emptyState.CTAButton")}
-            onPress={() => navigation.navigate(NavigatorName.AddAccounts, {})}
+            onPress={() =>
+              navigation.navigate(NavigatorName.AddAccounts, {
+                currency,
+              })
+            }
           />
         </View>
       </View>
