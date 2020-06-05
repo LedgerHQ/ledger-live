@@ -2,8 +2,6 @@ name: Bot 'Mère Denis'
 on:
   schedule:
     - cron: "0 10,12,14,16,18 * * 1-5"
-  schedule:
-    - cron: "0 12 * * 6,7"
   push:
     branches:
       - bots
