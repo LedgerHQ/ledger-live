@@ -3,7 +3,7 @@
 import React, { useRef, useCallback, useState } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View, Linking } from "react-native";
 // $FlowFixMe
 import { SafeAreaView } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -124,13 +124,27 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
             <ActivityIndicator size="large" />
           </View>
         )}
+        originWhitelist={["https://*"]}
+        allowsInlineMediaPlayback
         source={{
           uri: url,
         }}
         injectedJavaScript={injectedCode}
         onMessage={handleMessage}
+        mediaPlaybackRequiresUserAction={false}
+        scalesPageToFitmediaPlaybackRequiresUserAction
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
+        onShouldStartLoadWithRequest={req => {
+          if (
+            !req.url.startsWith("https://trade-ui.coinify.com") &&
+            !req.url.startsWith("https://coinify.lon.netverify.com")
+          ) {
+            Linking.openURL(req.url);
+            return false;
+          }
+          return true;
+        }}
         style={{
           flex: 0,
           width: "100%",
