@@ -18,7 +18,7 @@ export function BuyCryptoBanner() {
   const [isDismissed, dismiss] = useBanner("EXCHANGE_BUY_CRYPTO_BANNER");
 
   if (isDismissed) {
-    //    return null;
+    return null;
   }
 
   return (

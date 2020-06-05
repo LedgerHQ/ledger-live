@@ -16,6 +16,7 @@ import {
 } from "@ledgerhq/live-common/lib/currencies";
 
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
+import { track } from "../../analytics/segment";
 import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -61,6 +62,7 @@ export default function ExchangeSelectCrypto({ navigation }: Props) {
   );
 
   const onPressCurrency = (currency: CryptoCurrency) => {
+    track("Buy Crypto Continue Button", { currencyName: currency.name });
     navigation.navigate("ExchangeSelectAccount", { currency });
   };
 

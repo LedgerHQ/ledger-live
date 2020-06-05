@@ -112,7 +112,10 @@ class EmptyStateAccount extends PureComponent<{
             />
             {canBeBought ? (
               <Button
-                event="AccountEmptyStateReceive"
+                event="Buy Crypto Empty Account Button"
+                eventProperties={{
+                  currencyName: getAccountCurrency(account).name,
+                }}
                 type="primary"
                 title={<Trans i18nKey="account.emptyState.buttons.buyCrypto" />}
                 onPress={this.goToBuyCrypto}

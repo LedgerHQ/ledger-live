@@ -1,11 +1,12 @@
 // @flow
 
-import React, { useRef, useCallback, useState } from "react";
+import React, { useRef, useCallback, useState, useEffect } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
-import { ActivityIndicator, StyleSheet, View, Linking } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 // $FlowFixMe
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import { getConfig } from "./coinifyConfig";
 import colors from "../../colors";
 import DeviceJob from "../../components/DeviceJob";
@@ -14,6 +15,7 @@ import {
   connectingStep,
   verifyAddressOnDeviceStep,
 } from "../../components/DeviceJob/steps";
+import { track } from "../../analytics";
 
 type CoinifyWidgetConfig = {
   primaryColor?: string,
@@ -59,6 +61,22 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
     addressConfirmation: true,
   };
 
+  useEffect(() => {
+    if (mode === "buy" && account) {
+      track("Coinify Start Buy Widget", {
+        currencyName: getAccountCurrency(account).name,
+      });
+    }
+    if (mode === "sell" && account) {
+      track("Coinify Start Sell Widget", {
+        currencyName: getAccountCurrency(account).name,
+      });
+    }
+    if (mode === "trade-history") {
+      track("Coinify Start History Widget");
+    }
+  }, [account, mode]);
+
   if (mode === "buy") {
     widgetConfig.transferOutMedia = "blockchain";
     widgetConfig.cryptoCurrencies = account.currency.ticker;
@@ -81,10 +99,18 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
     if (type !== "event") return;
     if (event === "trade.receive-account-changed") {
       if (context.address === account.freshAddress) {
+        track("Coinify Confirm Buy Start", {
+          currencyName: getAccountCurrency(account).name,
+        });
         setWaitingDeviceJob(true);
       } else {
         // TODO this is a problem, it should not occur.
       }
+    }
+    if (event === "trade.trade-placed") {
+      track("Coinify Widget Event Trade Placed", {
+        currencyName: getAccountCurrency(account).name,
+      });
     }
   }, []);
 
@@ -101,6 +127,11 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
             },
           }),
         );
+        if (status === "accepted") {
+          track("Coinify Confirm Buy End", {
+            currencyName: getAccountCurrency(account).name,
+          });
+        }
       }
     },
     [account],
@@ -120,7 +151,7 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
             </View>
           ) : null
         }
-        originWhitelist={["https://*"]}
+        originWhitelist={["https://*.coinify.com"]}
         allowsInlineMediaPlayback
         source={{
           uri: url,
@@ -132,16 +163,6 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
         scalesPageToFitmediaPlaybackRequiresUserAction
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
-        onShouldStartLoadWithRequest={req => {
-          if (
-            !req.url.startsWith("https://trade-ui.coinify.com")
-            // && !req.url.startsWith("https://coinify.lon.netverify.com")
-          ) {
-            Linking.openURL(req.url);
-            return false;
-          }
-          return true;
-        }}
         style={{
           flex: 0,
           width: "100%",

@@ -24,7 +24,7 @@ export default function ExchangeScreen() {
       style={[styles.root, { paddingTop: extraStatusBarPadding }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="Exchange" />
+      <TrackScreen category="Buy Crypto" />
       <View style={styles.body}>
         <View style={styles.iconContainer}>
           <ExchangeIcon size={22} color={colors.live} />
