@@ -37,7 +37,7 @@ export default function CoinifyWidgetScreen({ route }: Props) {
 
   return (
     <SafeAreaView
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      style={[styles.root]}
       forceInset={forceInset}
     >
       <CoinifyWidget account={account} meta={meta} mode={mode} />

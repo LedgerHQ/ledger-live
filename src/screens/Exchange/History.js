@@ -13,7 +13,7 @@ const forceInset = { bottom: "always" };
 export default function ExchangeScreen() {
   return (
     <SafeAreaView
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      style={[styles.root]}
       forceInset={forceInset}
     >
       <TrackScreen category="ExchangeHistory" />

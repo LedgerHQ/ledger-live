@@ -50,6 +50,7 @@ type Props = {
 
 export default function CoinifyWidget({ mode, account, meta }: Props) {
   const [isWaitingDeviceJob, setWaitingDeviceJob] = useState(false);
+  const [firstLoadDone, setFirstLoadDone] = useState(false);
   const webView = useRef(null);
 
   const coinifyConfig = getConfig();
@@ -109,26 +110,25 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
   );
 
   const url = `${coinifyConfig.url}?${querystring.stringify(widgetConfig)}`;
-  const forceInset = { bottom: "always" };
 
   return (
-    <SafeAreaView
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
-      forceInset={forceInset}
-    >
+    <View style={[styles.root]}>
       <WebView
         ref={webView}
         startInLoadingState={true}
-        renderLoading={() => (
-          <View style={styles.center}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
+        renderLoading={() =>
+          !firstLoadDone ? (
+            <View style={styles.center}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : null
+        }
         originWhitelist={["https://*"]}
         allowsInlineMediaPlayback
         source={{
           uri: url,
         }}
+        onLoad={() => setFirstLoadDone(true)}
         injectedJavaScript={injectedCode}
         onMessage={handleMessage}
         mediaPlaybackRequiresUserAction={false}
@@ -170,7 +170,7 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
           ]}
         />
       ) : null}
-    </SafeAreaView>
+    </View>
   );
 }
 
