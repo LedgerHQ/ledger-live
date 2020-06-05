@@ -5,12 +5,9 @@ import { WebView } from "react-native-webview";
 import querystring from "querystring";
 import { ActivityIndicator, StyleSheet, View, Linking } from "react-native";
 // $FlowFixMe
-import { SafeAreaView } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { getConfig } from "./coinifyConfig";
 import colors from "../../colors";
-
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import DeviceJob from "../../components/DeviceJob";
 import {
   accountApp,

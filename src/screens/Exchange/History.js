@@ -4,7 +4,6 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import colors from "../../colors";
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 import CoinifyWidget from "./CoinifyWidget";
 
@@ -12,10 +11,7 @@ const forceInset = { bottom: "always" };
 
 export default function ExchangeScreen() {
   return (
-    <SafeAreaView
-      style={[styles.root]}
-      forceInset={forceInset}
-    >
+    <SafeAreaView style={[styles.root]} forceInset={forceInset}>
       <TrackScreen category="ExchangeHistory" />
       <CoinifyWidget mode="trade-history" />
     </SafeAreaView>

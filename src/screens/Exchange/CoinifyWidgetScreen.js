@@ -15,8 +15,6 @@ import { flattenAccountsSelector } from "../../reducers/accounts";
 
 import CoinifyWidget from "./CoinifyWidget";
 
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
-
 type Navigation = NavigationScreenProp<{ params: {} }>;
 
 type Props = {
@@ -36,10 +34,7 @@ export default function CoinifyWidgetScreen({ route }: Props) {
   const forceInset = { bottom: "always" };
 
   return (
-    <SafeAreaView
-      style={[styles.root]}
-      forceInset={forceInset}
-    >
+    <SafeAreaView style={[styles.root]} forceInset={forceInset}>
       <CoinifyWidget account={account} meta={meta} mode={mode} />
     </SafeAreaView>
   );
