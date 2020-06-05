@@ -45,7 +45,7 @@ const recoverBadTransactionStatus = ({
 
 const bitcoinLikeMutations = ({
   minimalAmount = BigNumber("10000"),
-  targetAccountSize = 2,
+  targetAccountSize = 3,
 }: Arg = {}): MutationSpec<Transaction>[] => [
   {
     name: "move ~50% to another account",
@@ -269,6 +269,7 @@ const digibyte: AppSpec<Transaction> = {
     appName: "Digibyte",
   },
   mutations: bitcoinLikeMutations({
+    targetAccountSize: 5,
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("digibyte").units[0],
       "0.1"
@@ -301,7 +302,7 @@ const litecoin: AppSpec<Transaction> = {
     appName: "Litecoin",
   },
   mutations: bitcoinLikeMutations({
-    targetAccountSize: 3,
+    targetAccountSize: 5,
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("litecoin").units[0],
       "0.001"

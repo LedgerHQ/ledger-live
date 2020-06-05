@@ -40,6 +40,7 @@ jobs:
           yarn ci-setup-cli
       - name: BOT
         env:
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
           SEED: ${{ secrets.SEED1 }}
           VERBOSE_FILE: bot-tests.txt
           GITHUB_SHA: ${GITHUB_SHA}
