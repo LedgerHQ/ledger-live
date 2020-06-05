@@ -24,6 +24,8 @@ import {
   searchFilter as defaultSearchFilter,
   COSMOS_MAX_REDELEGATIONS,
   COSMOS_MAX_UNBONDINGS,
+  COSMOS_MIN_FEES,
+  COSMOS_MAX_DELEGATIONS,
 } from "./utils";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
@@ -105,6 +107,21 @@ export function useCosmosDelegationsQuerySelector(
     options,
     value,
   };
+}
+
+export function getMaxDelegationAvailable(
+  account: Account,
+  validatorsLength: number
+): BigNumber {
+  const numberOfDelegations = Math.min(
+    COSMOS_MAX_DELEGATIONS,
+    validatorsLength || 1
+  );
+  const { spendableBalance } = account;
+
+  return spendableBalance.minus(
+    COSMOS_MIN_FEES.multipliedBy(numberOfDelegations)
+  );
 }
 
 /** Hook to search and sort SR list according to initial votes and query */

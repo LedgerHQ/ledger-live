@@ -21,6 +21,8 @@ import { makeLRUCache } from "../../cache";
 
 export const COSMOS_MAX_REDELEGATIONS = 6;
 export const COSMOS_MAX_UNBONDINGS = 6;
+export const COSMOS_MAX_DELEGATIONS = 5;
+export const COSMOS_MIN_FEES = BigNumber(6000); // 6000 uAtom
 
 export function mapDelegations(
   delegations: CosmosDelegation[],
@@ -115,8 +117,6 @@ export const mapDelegationInfo = (
     }),
   }));
 };
-
-export const MAX_VOTES = 5;
 
 export const formatValue = (value: BigNumber, unit: Unit): number =>
   value
