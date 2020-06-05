@@ -84,7 +84,7 @@ const bitcoinLikeMutations = ({
       return t;
     },
     recoverBadTransactionStatus,
-    test: ({ account }) => {
+    test: ({ account, operation }) => {
       // workaround for buggy explorer behavior (nodes desync)
       invariant(
         Date.now() - operation.date > 20000,
