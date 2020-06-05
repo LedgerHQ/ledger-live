@@ -26,6 +26,7 @@ import {
   COSMOS_MAX_UNBONDINGS,
   COSMOS_MIN_FEES,
   COSMOS_MAX_DELEGATIONS,
+  COSMOS_MIN_SAFE,
 } from "./utils";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
@@ -119,9 +120,9 @@ export function getMaxDelegationAvailable(
   );
   const { spendableBalance } = account;
 
-  return spendableBalance.minus(
-    COSMOS_MIN_FEES.multipliedBy(numberOfDelegations)
-  );
+  return spendableBalance
+    .minus(COSMOS_MIN_FEES.multipliedBy(numberOfDelegations))
+    .minus(COSMOS_MIN_SAFE);
 }
 
 /** Hook to search and sort SR list according to initial votes and query */
