@@ -17,6 +17,7 @@ const ethereum: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Ethereum",
   },
+  testTimeout: 5 * 60 * 1000,
   mutations: [
     {
       name: "move 50% to another account",

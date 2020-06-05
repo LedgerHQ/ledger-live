@@ -61,6 +61,11 @@ const bitcoinLikeMutations = ({
     },
     recoverBadTransactionStatus,
     test: ({ account, accountBeforeTransaction, operation }) => {
+      // workaround for buggy explorer behavior (nodes desync)
+      invariant(
+        Date.now() - operation.date > 20000,
+        "operation time to be older than 20s"
+      );
       // can be generalized!
       expect(account.balance.toString()).toBe(
         accountBeforeTransaction.balance.minus(operation.value).toString()
@@ -80,6 +85,11 @@ const bitcoinLikeMutations = ({
     },
     recoverBadTransactionStatus,
     test: ({ account }) => {
+      // workaround for buggy explorer behavior (nodes desync)
+      invariant(
+        Date.now() - operation.date > 20000,
+        "operation time to be older than 20s"
+      );
       expect(account.balance.toString()).toBe("0");
     },
   },

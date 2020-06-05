@@ -388,7 +388,7 @@ export async function runOnAccount<T: Transaction>({
     const step = (account) => {
       const timedOut =
         now() - testBefore >
-        (spec.testTimeout || mutation.testTimeout || 60 * 1000);
+        (mutation.testTimeout || spec.testTimeout || 60 * 1000);
 
       const operation = account.operations.find(
         (o) => o.id === optimisticOperation.id
