@@ -33,7 +33,7 @@ import {
   COSMOS_MAX_REDELEGATIONS,
   COSMOS_MAX_UNBONDINGS,
   COSMOS_MAX_DELEGATIONS,
-} from "../utils";
+} from "../logic";
 
 const createTransaction = () => ({
   family: "cosmos",

@@ -15,7 +15,7 @@ import { BigNumber } from "bignumber.js";
 import { cosmosCreateMessage } from "./message";
 import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
-import { getMaxEstimatedBalance } from "./utils";
+import { getMaxEstimatedBalance } from "./logic";
 
 export async function cosmosBuildTransaction({
   account,
