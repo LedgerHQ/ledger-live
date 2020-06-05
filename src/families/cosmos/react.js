@@ -203,6 +203,11 @@ export function canUndelegate(account: Account): boolean {
   );
 }
 
+export function canDelegate(account: Account): boolean {
+  const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
+  return maxSpendableBalance.gt(0);
+}
+
 export function canRedelegate(
   account: Account,
   delegation: CosmosDelegation
