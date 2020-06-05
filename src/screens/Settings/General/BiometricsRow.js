@@ -18,28 +18,29 @@ export default function BiometricsRow({ iconLeft }: Props) {
   const dispatch = useDispatch();
   const privacy = useSelector(privacySelector);
 
+  const [biometricsEnabled, setBiometricsEnabled] = useState(
+    privacy.biometricsEnabled || validationPending,
+  );
   const [validationPending, setValidationPending] = useState(false);
 
   const onValueChange = useCallback(
     async (biometricsEnabled: boolean) => {
       if (validationPending) return;
-      if (biometricsEnabled) {
-        setValidationPending(true);
-      } else {
-        dispatch(setPrivacyBiometrics(false));
-      }
+      setValidationPending(true);
+      setBiometricsEnabled(biometricsEnabled);
     },
-    [dispatch, validationPending],
+    [validationPending],
   );
 
   const onSuccess = useCallback(() => {
     setValidationPending(false);
-    dispatch(setPrivacyBiometrics(true));
-  }, [dispatch]);
+    dispatch(setPrivacyBiometrics(biometricsEnabled));
+  }, [dispatch, biometricsEnabled]);
 
   const onError = useCallback(
     error => {
       setValidationPending(false);
+      setBiometricsEnabled(val => !val);
       Alert.alert(
         t("auth.failed.title"),
         `${t("auth.failed.denied")}\n${String(error || "")}`,
@@ -83,10 +84,7 @@ export default function BiometricsRow({ iconLeft }: Props) {
               />
             }
           >
-            <Switch
-              value={privacy.biometricsEnabled || validationPending}
-              onValueChange={onValueChange}
-            />
+            <Switch value={biometricsEnabled} onValueChange={onValueChange} />
           </SettingsRow>
         </>
       )}
