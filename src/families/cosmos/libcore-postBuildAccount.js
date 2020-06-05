@@ -9,7 +9,7 @@ import {
   libcoreBigIntToBigNumber,
 } from "../../libcore/buildBigNumber";
 import { promiseAllBatched } from "../../promise";
-import { getMaxEstimatedBalance } from "./utils";
+import { getMaxEstimatedBalance } from "./logic";
 
 const getValidatorStatus = async (
   cosmosAccount: CoreCosmosLikeAccount,

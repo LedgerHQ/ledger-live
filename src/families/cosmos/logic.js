@@ -1,4 +1,5 @@
 // @flow
+import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "../../currencies";
 import type {
@@ -130,6 +131,21 @@ export const searchFilter: CosmosSearchFilter = (query) => ({ validator }) => {
   return terms.toLowerCase().includes(query.toLowerCase().trim());
 };
 
+export function getMaxDelegationAvailable(
+  account: Account,
+  validatorsLength: number
+): BigNumber {
+  const numberOfDelegations = Math.min(
+    COSMOS_MAX_DELEGATIONS,
+    validatorsLength || 1
+  );
+  const { spendableBalance } = account;
+
+  return spendableBalance
+    .minus(COSMOS_MIN_FEES.multipliedBy(numberOfDelegations))
+    .minus(COSMOS_MIN_SAFE);
+}
+
 export const getMaxEstimatedBalance = (
   a: Account,
   estimatedFees: BigNumber
@@ -165,3 +181,66 @@ export const calculateFees: CacheRes<
       t.cosmosSourceValidator ? t.cosmosSourceValidator : ""
     }`
 );
+
+export function canUndelegate(account: Account): boolean {
+  const { cosmosResources } = account;
+
+  invariant(cosmosResources, "cosmosResources should exist");
+  return (
+    cosmosResources.unbondings &&
+    cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS
+  );
+}
+
+export function canDelegate(account: Account): boolean {
+  const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
+  return maxSpendableBalance.gt(0);
+}
+
+export function canRedelegate(
+  account: Account,
+  delegation: CosmosDelegation
+): boolean {
+  const { cosmosResources } = account;
+
+  invariant(cosmosResources, "cosmosResources should exist");
+  return (
+    cosmosResources.redelegations.length < COSMOS_MAX_REDELEGATIONS &&
+    !cosmosResources.redelegations.some(
+      (rd) => rd.validatorDstAddress === delegation.validatorAddress
+    )
+  );
+}
+
+export async function canClaimRewards(
+  account: Account,
+  delegation: CosmosDelegation
+): Promise<boolean> {
+  const { cosmosResources } = account;
+
+  invariant(cosmosResources, "cosmosResources should exist");
+
+  const res = await calculateFees({
+    a: account,
+    t: {
+      family: "cosmos",
+      mode: "claimReward",
+      amount: BigNumber(0),
+      fees: null,
+      gasLimit: null,
+      recipient: "",
+      useAllAmount: false,
+      networkInfo: null,
+      memo: null,
+      cosmosSourceValidator: null,
+      validators: [
+        { address: delegation.validatorAddress, amount: BigNumber(0) },
+      ],
+    },
+  });
+
+  return (
+    res.estimatedFees.lt(account.spendableBalance) &&
+    res.estimatedFees.lt(delegation.pendingRewards)
+  );
+}

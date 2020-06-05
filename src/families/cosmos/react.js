@@ -1,6 +1,5 @@
 // @flow
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
 import { useEffect, useMemo, useState } from "react";
 import {
   getCurrentCosmosPreloadData,
@@ -15,19 +14,12 @@ import type {
   CosmosSearchFilter,
   Transaction,
   CosmosExtraTxInfo,
-  CosmosDelegation,
 } from "./types";
 import {
-  calculateFees,
   mapDelegations,
   mapDelegationInfo,
   searchFilter as defaultSearchFilter,
-  COSMOS_MAX_REDELEGATIONS,
-  COSMOS_MAX_UNBONDINGS,
-  COSMOS_MIN_FEES,
-  COSMOS_MAX_DELEGATIONS,
-  COSMOS_MIN_SAFE,
-} from "./utils";
+} from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import type { Account } from "../../types";
@@ -110,21 +102,6 @@ export function useCosmosDelegationsQuerySelector(
   };
 }
 
-export function getMaxDelegationAvailable(
-  account: Account,
-  validatorsLength: number
-): BigNumber {
-  const numberOfDelegations = Math.min(
-    COSMOS_MAX_DELEGATIONS,
-    validatorsLength || 1
-  );
-  const { spendableBalance } = account;
-
-  return spendableBalance
-    .minus(COSMOS_MIN_FEES.multipliedBy(numberOfDelegations))
-    .minus(COSMOS_MIN_SAFE);
-}
-
 /** Hook to search and sort SR list according to initial votes and query */
 export function useSortedValidators(
   search: string,
@@ -192,67 +169,4 @@ export function useMappedExtraOperationDetails({
       ? extra.cosmosSourceValidator
       : undefined,
   };
-}
-
-export function canUndelegate(account: Account): boolean {
-  const { cosmosResources } = account;
-
-  invariant(cosmosResources, "cosmosResources should exist");
-  return (
-    cosmosResources.unbondings &&
-    cosmosResources.unbondings.length < COSMOS_MAX_UNBONDINGS
-  );
-}
-
-export function canDelegate(account: Account): boolean {
-  const maxSpendableBalance = getMaxDelegationAvailable(account, 1);
-  return maxSpendableBalance.gt(0);
-}
-
-export function canRedelegate(
-  account: Account,
-  delegation: CosmosDelegation
-): boolean {
-  const { cosmosResources } = account;
-
-  invariant(cosmosResources, "cosmosResources should exist");
-  return (
-    cosmosResources.redelegations.length < COSMOS_MAX_REDELEGATIONS &&
-    !cosmosResources.redelegations.some(
-      (rd) => rd.validatorDstAddress === delegation.validatorAddress
-    )
-  );
-}
-
-export async function canClaimRewards(
-  account: Account,
-  delegation: CosmosDelegation
-): Promise<boolean> {
-  const { cosmosResources } = account;
-
-  invariant(cosmosResources, "cosmosResources should exist");
-
-  const res = await calculateFees({
-    a: account,
-    t: {
-      family: "cosmos",
-      mode: "claimReward",
-      amount: BigNumber(0),
-      fees: null,
-      gasLimit: null,
-      recipient: "",
-      useAllAmount: false,
-      networkInfo: null,
-      memo: null,
-      cosmosSourceValidator: null,
-      validators: [
-        { address: delegation.validatorAddress, amount: BigNumber(0) },
-      ],
-    },
-  });
-
-  return (
-    res.estimatedFees.lt(account.spendableBalance) &&
-    res.estimatedFees.lt(delegation.pendingRewards)
-  );
 }

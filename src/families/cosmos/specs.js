@@ -7,6 +7,12 @@ import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData
 import { getCryptoCurrencyById } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
+import {
+  canClaimRewards,
+  canDelegate,
+  canUndelegate,
+  canRedelegate,
+} from "./logic";
 
 const cosmos: AppSpec<Transaction> = {
   name: "Cosmos",
@@ -41,10 +47,7 @@ const cosmos: AppSpec<Transaction> = {
       name: "delegate 10% to a NEW validator",
       maxRun: 3,
       transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(
-          maxSpendable.gt(5000),
-          "account don't have remaining spendable"
-        );
+        invariant(canDelegate(account), "can delegate");
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         invariant(
@@ -82,6 +85,7 @@ const cosmos: AppSpec<Transaction> = {
       name: "undelegate an existing delegation without existing unbondings",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
+        invariant(canUndelegate(account), "can undelegate");
         invariant(
           maxSpendable.gt(5000),
           "account don't have remaining spendable"
@@ -144,7 +148,10 @@ const cosmos: AppSpec<Transaction> = {
           cosmosResources.redelegations.length === 0,
           "already ongoing redelegation"
         );
-        const sourceDelegation = sample(cosmosResources.delegations);
+        const sourceDelegation = sample(
+          cosmosResources.delegations.filter((d) => canRedelegate(account, d))
+        );
+        invariant(sourceDelegation, "none can redelegate");
         const delegation = sample(cosmosResources.delegations);
         let t = bridge.createTransaction(account);
         t = bridge.updateTransaction(t, {
@@ -174,8 +181,8 @@ const cosmos: AppSpec<Transaction> = {
         );
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
-        const delegation = cosmosResources.delegations.find((d) =>
-          d.pendingRewards.gt(5000)
+        const delegation = sample(
+          cosmosResources.delegations.filter((d) => canClaimRewards(account, d))
         );
         invariant(delegation, "no delegation to claim");
         let t = bridge.createTransaction(account);
