@@ -2452,6 +2452,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     name: "Ethereum Ropsten",
     managerAppName: "Ethereum",
     ticker: "ETH",
+    deviceTicker: "ETH",
     scheme: "ethereum_ropsten",
     color: "#00ff00",
     units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),

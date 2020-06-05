@@ -187,8 +187,6 @@ const getDelegateTransactionStatus = async (a, t) => {
 
   const estimatedFees = await getEstimatedFees(a, t, errors);
 
-  amount = amount.eq(a.spendableBalance) ? amount.minus(estimatedFees) : amount;
-
   let totalSpent = amount.plus(estimatedFees);
 
   if (totalSpent.eq(a.spendableBalance)) {
@@ -271,10 +269,6 @@ const getTransactionStatus = async (a, t) => {
   }
 
   const estimatedFees = await getEstimatedFees(a, t, errors);
-
-  validatorAmount = validatorAmount.eq(a.spendableBalance)
-    ? validatorAmount.minus(estimatedFees)
-    : validatorAmount;
 
   let totalSpent = estimatedFees;
 
