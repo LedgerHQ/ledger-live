@@ -65,7 +65,7 @@ async function bitcoinBuildTransaction({
     if (isCancelled()) return;
   }
 
-  await transactionBuilder.pickInputs(0, 0xffffffff);
+  await transactionBuilder.pickInputs(0, 0xffffff);
   if (isCancelled()) return;
 
   await transactionBuilder.setFeesPerByte(fees);
