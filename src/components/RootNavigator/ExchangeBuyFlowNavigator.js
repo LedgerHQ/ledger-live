@@ -26,13 +26,7 @@ export default function ExchangeNavigator() {
         component={ExchangeSelectCurrency}
         options={{
           headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps: "3",
-              })}
-            />
+            <StepHeader title={t("exchange.buy.selectCurrency")} />
           ),
         }}
       />
@@ -41,13 +35,7 @@ export default function ExchangeNavigator() {
         component={ExchangeSelectAccount}
         options={{
           headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps: "3",
-              })}
-            />
+            <StepHeader title={t("exchange.buy.selectAccount")} />
           ),
         }}
       />
@@ -56,13 +44,7 @@ export default function ExchangeNavigator() {
         component={ExchangeConnectDevice}
         options={{
           headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps: "3",
-              })}
-            />
+            <StepHeader title={t("exchange.buy.connectDevice")} />
           ),
         }}
       />
@@ -70,15 +52,7 @@ export default function ExchangeNavigator() {
         name={ScreenName.ExchangeCoinifyWidget}
         component={ExchangeCoinifyWidget}
         options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("common.cryptoAsset")}
-              subtitle={t("send.stepperHeader.stepRange", {
-                currentStep: "3",
-                totalSteps: "3",
-              })}
-            />
-          ),
+          headerTitle: () => null,
         }}
       />
     </Stack.Navigator>

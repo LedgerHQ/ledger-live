@@ -1779,6 +1779,9 @@
   "exchange": {
     "buy": {
       "tabTitle": "Buy",
+      "selectCurrency": "Select a currency",
+      "selectAccount": "Select an account",
+      "connectDevice": "Connect your device",
       "title": "Buy crypto via our partner",
       "description": "Purchase crypto assets via Coinify and receive your coins directly in your Ledger account",
       "CTAButton": "Buy now",
