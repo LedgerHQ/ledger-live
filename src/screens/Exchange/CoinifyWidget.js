@@ -3,7 +3,7 @@
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View, Linking } from "react-native";
 // $FlowFixMe
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
@@ -39,6 +39,32 @@ const injectedCode = `
   window.addEventListener("message", event => {
       originalPostMessage(JSON.parse(event.data), "*");
   });
+  
+  function getExternalLink(domNode) {
+    let curNode = domNode;
+
+    while (curNode) {
+       if (curNode.tagName === "A" && curNode.target === "_blank")
+          return curNode;
+       else
+          curNode = curNode.parentNode;
+    }
+    return null;
+  }
+  
+  document.addEventListener('click', event => {
+    const externalLink = getExternalLink(event.target)
+    if (externalLink) {
+      window.postMessage({
+        type: "event",
+        event: "misc.opened-external-link",
+        context: {
+          url: externalLink.href
+        },
+      });
+      event.preventDefault();
+    }
+  }, false);
 `;
 
 type Props = {
@@ -97,6 +123,11 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
   const handleMessage = useCallback(message => {
     const { type, event, context } = JSON.parse(message.nativeEvent.data);
     if (type !== "event") return;
+    if (event === "misc.opened-external-link") {
+      if (Linking.canOpenURL(context.url)) {
+        Linking.openURL(context.url);
+      }
+    }
     if (event === "trade.receive-account-changed") {
       if (context.address === account.freshAddress) {
         track("Coinify Confirm Buy Start", {
