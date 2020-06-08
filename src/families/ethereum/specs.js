@@ -99,6 +99,7 @@ const ethereumClassic = {
     model: "nanoS",
     appName: "Ethereum Classic",
   },
+  dependency: "Ethereum",
   mutations: ethereumMutations({
     maxAccount: 4,
     minimalAmount: parseCurrencyUnit(
