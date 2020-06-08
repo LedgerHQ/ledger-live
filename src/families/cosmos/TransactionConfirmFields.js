@@ -11,7 +11,7 @@ import type {
   Unit,
 } from "@ledgerhq/live-common/lib/types";
 import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import LText from "../../components/LText";
 import {
   DataRow,

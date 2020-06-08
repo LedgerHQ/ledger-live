@@ -15,6 +15,10 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import {
+  COSMOS_MAX_DELEGATIONS,
+  getMaxDelegationAvailable,
+} from "@ledgerhq/live-common/lib/families/cosmos/logic";
 
 import {
   useCosmosPreloadData,
@@ -85,12 +89,14 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   const { validators } = useCosmosPreloadData();
   const SR = useSortedValidators(searchQuery, validators, []);
 
-  const delegationsAvailable = mainAccount.spendableBalance;
+  const delegationsSelected = transaction.validators.length;
   const delegationsUsed = transaction.validators.reduce(
     (sum, v) => sum.plus(v.amount),
     BigNumber(0),
   );
-  const max = delegationsAvailable.minus(delegationsUsed);
+  const max = getMaxDelegationAvailable(mainAccount, delegationsSelected).minus(
+    delegationsUsed,
+  );
 
   const selectedValidators = transaction.validators;
   const delegations = cosmosResources.delegations;
@@ -167,19 +173,21 @@ function DelegationSelectValidator({ navigation, route }: Props) {
       const d = delegations.find(
         d => d.validatorAddress === item.validator.validatorAddress,
       );
-      const disabled = (!val || val.amount.lte(0)) && max.lte(0);
+      const disabled =
+        (!val || val.amount.lte(0)) &&
+        (max.lte(0) || delegationsSelected > COSMOS_MAX_DELEGATIONS);
       return (
         <Item
           disabled={disabled}
           value={val ? val.amount : null}
-          delegatedValue={d ? d.amount : 0}
+          delegatedValue={d ? d.amount : BigNumber(0)}
           unit={unit}
           item={item}
           onSelect={onSelect}
         />
       );
     },
-    [selectedValidators, unit, onSelect, max, delegations],
+    [selectedValidators, unit, onSelect, max, delegations, delegationsSelected],
   );
 
   const error = status && status.errors && Object.values(status.errors)[0];

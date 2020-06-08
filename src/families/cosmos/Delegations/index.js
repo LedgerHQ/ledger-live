@@ -23,7 +23,7 @@ import type {
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { mapUnbondings } from "@ledgerhq/live-common/lib/families/cosmos/utils";
+import { mapUnbondings } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../components/IlluRewards";
 import { urls } from "../../../config/urls";

@@ -24,7 +24,7 @@ type Props = {
   showVal?: boolean,
   onSelect: (validator: CosmosValidatorItem, value: ?BigNumber) => void,
   unit: Unit,
-  delegatedValue: ?BigNumber,
+  delegatedValue?: BigNumber,
 };
 
 function Item({
