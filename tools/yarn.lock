@@ -1371,10 +1371,10 @@
     "@ledgerhq/errors" "^5.15.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^12.28.0":
-  version "12.28.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.28.0.tgz#46238ab5fd4f6de6edab6d4f3d5e8ed476ee7b59"
-  integrity sha512-aMIvXdgH+PFlajUsvvJW162I7QN97zDAmlW3E5e7cKBUGWADRphKkQaYntvaoMPIXMxADoYNERMFJ3a43ZOMGw==
+"@ledgerhq/live-common@^12.29.0":
+  version "12.29.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.29.0.tgz#39f8961877f795603b8fe201f2803b0ccdd6d259"
+  integrity sha512-fbRUvqQ7BlVYfzDtQRUBfDf0vTuy8eOfLCAnWnTXb09K5iUuz0bKQsnydgkrSSprVJ5s0gNm6doG41BWjpDU1g==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.15.0"
@@ -11859,23 +11859,23 @@ victory-core@^34.3.8:
     prop-types "^15.5.8"
     react-fast-compare "^2.0.0"
 
-victory-create-container@^34.3.8:
-  version "34.3.8"
-  resolved "https://registry.yarnpkg.com/victory-create-container/-/victory-create-container-34.3.8.tgz#6c2120c90e57118158b6551995fb4fe6987e49ba"
-  integrity sha512-Qj4sNmYG0dbcwzsWBbV64mUwPg/RSCWfecpTYjl8pCCh3o52ImgrKVSQzOlO/AWFeZ78KIZknHImG0eDdUoJ1w==
+victory-create-container@^34.3.10:
+  version "34.3.10"
+  resolved "https://registry.yarnpkg.com/victory-create-container/-/victory-create-container-34.3.10.tgz#e024db9755224a14ccc7434ab703be7cfc99ef55"
+  integrity sha512-JUlUHfw3Lzw8as8kyYlj2sFkrU7ER+kC/bSGDUIyYZ9ChVdXc4xy/9DzgXA/lswp5JhE92p+TGaDXToUn8UygA==
   dependencies:
     lodash "^4.17.15"
     victory-brush-container "^34.3.8"
     victory-core "^34.3.8"
-    victory-cursor-container "^34.3.8"
+    victory-cursor-container "^34.3.10"
     victory-selection-container "^34.3.8"
     victory-voronoi-container "^34.3.8"
     victory-zoom-container "^34.3.8"
 
-victory-cursor-container@^34.3.8:
-  version "34.3.8"
-  resolved "https://registry.yarnpkg.com/victory-cursor-container/-/victory-cursor-container-34.3.8.tgz#e02db47ca6e91e939ecb15860ed1fdbc297f3590"
-  integrity sha512-QnOjkB9XCdq+X5pS6u/5rlydCzDncZ2oN6Z63EzxYePgSMxOtChgfGpWLwo7PM8pxhbz/vQgJwxOa+lTXllcLQ==
+victory-cursor-container@^34.3.10:
+  version "34.3.10"
+  resolved "https://registry.yarnpkg.com/victory-cursor-container/-/victory-cursor-container-34.3.10.tgz#708a7c15bf1e172d797103e8ebf8f273103529e7"
+  integrity sha512-Gve4i6fjhklCTW/k+RYZBf6UBAq4M/1HA32KEa/TtrQVaewLUu7O564ndcQDCqWiQEIBjKdSbEfgiq6fqT9zag==
   dependencies:
     lodash "^4.17.15"
     prop-types "^15.5.8"
@@ -11890,10 +11890,10 @@ victory-errorbar@^34.3.8:
     prop-types "^15.5.8"
     victory-core "^34.3.8"
 
-victory-group@^34.3.9:
-  version "34.3.9"
-  resolved "https://registry.yarnpkg.com/victory-group/-/victory-group-34.3.9.tgz#c884dd5431c8861eb6eaf81af44624258b224cae"
-  integrity sha512-IbZmPpfA6Mpd4bpwnDmZDJk3lkatj54IONcDiwRs8onXfCuLIc7VvNuqgMq8SQydFY8LOUxTOXuIOPsPL9Kakg==
+victory-group@^34.3.10:
+  version "34.3.10"
+  resolved "https://registry.yarnpkg.com/victory-group/-/victory-group-34.3.10.tgz#c25ac1e888f95f6284226bcf8b04744d604b7500"
+  integrity sha512-PAUjqs5O+lPc50ZB9/TK7dx/ICCB0/jscl9ZwjxcpogfQhXL/hDnOCoaF+TpH9KuvK4Tth1DQIVzw7TaUxeeWA==
   dependencies:
     lodash "^4.17.15"
     prop-types "^15.5.8"
@@ -12031,10 +12031,10 @@ victory-zoom-container@^34.3.8:
     prop-types "^15.5.8"
     victory-core "^34.3.8"
 
-victory@^34.3.9:
-  version "34.3.9"
-  resolved "https://registry.yarnpkg.com/victory/-/victory-34.3.9.tgz#8d8f2031fed4e85c1bcd774b82b184cd0dc9030b"
-  integrity sha512-pEARMAHOqzk2KMx+AHVJlzgnieLu2sJon2X+WsJhL8I6bUQ4CftcsxgiRlWfm/Av5a/ON85V1sTBic1THh4bKg==
+victory@^34.3.10:
+  version "34.3.10"
+  resolved "https://registry.yarnpkg.com/victory/-/victory-34.3.10.tgz#7691f5e907ebf5fb827caf386212151cc75ccb0e"
+  integrity sha512-Ki2+I5Pebw6IdUaaweK8vK+ChdrB1oiSNwY8R2jdsT5dpuqi4hlc1ApY56G0/2s/SDscmTFLixHJpfiuv2vy6w==
   dependencies:
     victory-area "^34.3.8"
     victory-axis "^34.3.8"
@@ -12045,10 +12045,10 @@ victory@^34.3.9:
     victory-candlestick "^34.3.8"
     victory-chart "^34.3.9"
     victory-core "^34.3.8"
-    victory-create-container "^34.3.8"
-    victory-cursor-container "^34.3.8"
+    victory-create-container "^34.3.10"
+    victory-cursor-container "^34.3.10"
     victory-errorbar "^34.3.8"
-    victory-group "^34.3.9"
+    victory-group "^34.3.10"
     victory-histogram "^34.3.8"
     victory-legend "^34.3.8"
     victory-line "^34.3.8"
