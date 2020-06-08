@@ -60,8 +60,7 @@ const reservedAmountForStorageLimit = (storageLimit) =>
 const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore"],
   currencies: {
-    //  FIXME: LIBCORE IS KINDA BROKEN STATE FOR TEZOS !!!
-    tezos: {} || {
+    tezos: {
       FIXME_ignoreOperationFields: ["blockHeight"],
       scanAccounts: [tezosScanAccounts1],
       accounts: [
@@ -249,6 +248,9 @@ const dataset: DatasetTest<Transaction> = {
 
         {
           raw: accountTZnotRevealed,
+          FIXME_tests: [
+            "balance is sum of ops", // https://ledgerhq.atlassian.net/browse/LLC-591
+          ],
           transactions: [
             {
               name: "send 10% to KT",

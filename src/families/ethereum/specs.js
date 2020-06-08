@@ -20,6 +20,11 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
       return t;
     },
     test: ({ account, accountBeforeTransaction, operation }) => {
+      // workaround for buggy explorer behavior (nodes desync)
+      invariant(
+        Date.now() - operation.date > 20000,
+        "operation time to be older than 20s"
+      );
       // can be generalized!
       expect(account.balance.toString()).toBe(
         accountBeforeTransaction.balance.minus(operation.value).toString()
@@ -53,7 +58,12 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
       }
       return t;
     },
-    test: ({ accountBeforeTransaction, account, transaction }) => {
+    test: ({ accountBeforeTransaction, account, transaction, operation }) => {
+      // workaround for buggy explorer behavior (nodes desync)
+      invariant(
+        Date.now() - operation.date > 20000,
+        "operation time to be older than 20s"
+      );
       invariant(accountBeforeTransaction.subAccounts, "sub accounts before");
       const erc20accountBefore = accountBeforeTransaction.subAccounts.find(
         (s) => s.id === transaction.subAccountId
