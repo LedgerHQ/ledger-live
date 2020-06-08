@@ -51,6 +51,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
 type RouteParams = {
   currency: CryptoCurrency,
   deviceId: string,
+  inline?: boolean,
 };
 
 type Props = {
@@ -205,7 +206,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       selectedIds,
       renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
     });
-    if (navigation.replace) {
+    if (route.params.inline) {
+      navigation.goBack();
+    } else if (navigation.replace) {
       navigation.replace(ScreenName.AddAccountsSuccess, { currency });
     }
   };

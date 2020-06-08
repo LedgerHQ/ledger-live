@@ -36,6 +36,7 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import RequireTerms from "../../components/RequireTerms";
 import { useScrollToTop } from "../../navigation/utils";
+import { BuyCryptoBanner } from "../../components/banners/BuyCryptoBanner";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -69,11 +70,14 @@ export default function PortfolioScreen({ navigation }: Props) {
 
   function ListHeaderComponent() {
     return (
-      <GraphCardContainer
-        counterValueCurrency={counterValueCurrency}
-        portfolio={portfolio}
-        showGreeting={!accounts.every(isAccountEmpty)}
-      />
+      <>
+        <BuyCryptoBanner />
+        <GraphCardContainer
+          counterValueCurrency={counterValueCurrency}
+          portfolio={portfolio}
+          showGreeting={!accounts.every(isAccountEmpty)}
+        />
+      </>
     );
   }
 

@@ -1,25 +1,19 @@
 // @flow
 
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import colors from "../../colors";
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
-import ComingSoon from "../../icons/ComingSoon";
+import CoinifyWidget from "./CoinifyWidget";
 
 const forceInset = { bottom: "always" };
 
 export default function ExchangeScreen() {
   return (
-    <SafeAreaView
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
-      forceInset={forceInset}
-    >
-      <TrackScreen category="Exchange" />
-      <View style={styles.body}>
-        <ComingSoon />
-      </View>
+    <SafeAreaView style={[styles.root]} forceInset={forceInset}>
+      <TrackScreen category="ExchangeHistory" />
+      <CoinifyWidget mode="trade-history" />
     </SafeAreaView>
   );
 }
@@ -34,7 +28,5 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 16,
-    paddingBottom: 64,
   },
 });

@@ -4,7 +4,6 @@ import Touchable from "../components/Touchable";
 import TabIcon from "../components/TabIcon";
 import CreateModal from "../modals/Create";
 import TransferIcon from "../icons/Transfer";
-import ExchangeScreen from "./Exchange";
 import { lockSubject } from "../components/RootNavigator/CustomBlockRouterNavigator";
 
 const hitSlop = {
@@ -19,7 +18,7 @@ type Props = {
   navigation: any,
 };
 
-export default ExchangeScreen;
+export default () => null;
 
 export function TransferTabIcon(props: Props) {
   const [isModalOpened, setIsModalOpened] = useState(false);
