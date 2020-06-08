@@ -8,17 +8,18 @@ import {
   FeeTooHigh,
   GasLessThanEstimate,
 } from "@ledgerhq/errors";
-import type { Account, AccountLike } from "../../../types";
+import type { AccountLike } from "../../../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import { scanAccounts } from "../../../libcore/scanAccounts";
 import { getMainAccount } from "../../../account";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
-import { withLibcore } from "../../../libcore/access";
-import { getGasLimit } from "../transaction";
-import { getCoreAccount } from "../../../libcore/getCoreAccount";
+import {
+  getGasLimit,
+  inferEthereumGasLimitRequest,
+  estimateGasLimit,
+} from "../transaction";
 import { sync } from "../../../libcore/syncAccount";
 import { getFeesForTransaction } from "../../../libcore/getFeesForTransaction";
-import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
 import { makeLRUCache } from "../../../cache";
 import { validateRecipient } from "../../../bridge/shared";
 import type { Transaction } from "../types";
@@ -144,18 +145,6 @@ const getTransactionStatus = async (a, t) => {
   });
 };
 
-const estimateGasLimitForERC20 = makeLRUCache(
-  (account: Account, addr: string) =>
-    withLibcore(async (core) => {
-      const { coreAccount } = await getCoreAccount(core, account);
-      const ethereumLikeAccount = await coreAccount.asEthereumLikeAccount();
-      const r = await ethereumLikeAccount.getEstimatedGasLimit(addr);
-      const bn = await libcoreBigIntToBigNumber(r);
-      return bn;
-    }),
-  (a, addr) => a.id + "|" + addr
-);
-
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   const tAccount = getTransactionAccount(a, t);
   let networkInfo = t.networkInfo;
@@ -165,34 +154,35 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
     networkInfo = ni;
   }
 
-  let estimatedGasLimit;
+  const gasPrice = t.gasPrice || networkInfo.gasPrice;
+
+  if (t.gasPrice !== gasPrice || t.networkInfo !== networkInfo) {
+    t = { ...t, networkInfo, gasPrice };
+  }
+
+  let estimatedGasLimit = BigNumber(21000); // fallback in case we can't calculate
   if (tAccount.type === "TokenAccount") {
-    estimatedGasLimit = await estimateGasLimitForERC20(
+    estimatedGasLimit = await estimateGasLimit(
       a,
-      tAccount.token.contractAddress
+      tAccount.token.contractAddress,
+      inferEthereumGasLimitRequest(a, t)
     );
   } else if (t.recipient) {
     const { recipientError } = await validateRecipient(a.currency, t.recipient);
     if (!recipientError) {
-      estimatedGasLimit = await estimateGasLimitForERC20(a, t.recipient);
+      estimatedGasLimit = await estimateGasLimit(
+        a,
+        t.recipient,
+        inferEthereumGasLimitRequest(a, t)
+      );
     }
   }
-  if (
-    estimatedGasLimit &&
-    t.estimatedGasLimit &&
-    t.estimatedGasLimit.eq(estimatedGasLimit)
-  ) {
-    estimatedGasLimit = t.estimatedGasLimit;
-  }
-
-  const gasPrice = t.gasPrice || networkInfo.gasPrice;
 
   if (
-    t.gasPrice !== gasPrice ||
-    t.estimatedGasLimit !== estimatedGasLimit ||
-    t.networkInfo !== networkInfo
+    !t.estimatedGasLimit ||
+    (estimatedGasLimit && !estimatedGasLimit.eq(t.estimatedGasLimit))
   ) {
-    return { ...t, networkInfo, estimatedGasLimit, gasPrice };
+    t.estimatedGasLimit = estimatedGasLimit;
   }
 
   return t;

@@ -1,17 +1,16 @@
 // @flow
 
+import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
-import { FeeNotLoaded, NotEnoughGas, NotEnoughBalance } from "@ledgerhq/errors";
+import { FeeNotLoaded, NotEnoughGas } from "@ledgerhq/errors";
 import type { Account } from "../../types";
-import { getGasLimit } from "./transaction";
+import { getGasLimit, serializeTransactionData } from "./transaction";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
 import type { CoreEthereumLikeTransaction, Transaction } from "./types";
-
-const ethereumTransferMethodID = Buffer.from("a9059cbb", "hex");
 
 const ZERO = BigNumber(0);
 
@@ -43,11 +42,16 @@ export async function ethereumBuildTransaction({
     recipient: transaction.recipient,
   });
 
-  const recipient = eip55.encode(transaction.recipient);
-
   const gasLimit = getGasLimit(transaction);
 
   if (!gasPrice || !gasLimit || !BigNumber(gasLimit).gt(ZERO)) {
+    log(
+      "ethereum-error",
+      "buildTransaction missingData: gasPrice=" +
+        String(gasPrice) +
+        " gasLimit=" +
+        String(gasLimit)
+    );
     throw new FeeNotLoaded();
   }
 
@@ -67,32 +71,10 @@ export async function ethereumBuildTransaction({
   if (isCancelled()) return;
 
   if (subAccount && subAccount.type === "TokenAccount") {
-    const { balance, token } = subAccount;
-    let amount;
-    if (transaction.useAllAmount) {
-      amount = balance;
-    } else {
-      if (!transaction.amount) throw new Error("amount is missing");
-      amount = BigNumber(transaction.amount);
-      if (amount.gt(subAccount.balance)) {
-        throw new NotEnoughBalance();
-      }
-    }
-    const to256 = Buffer.concat([
-      Buffer.alloc(12),
-      Buffer.from(recipient.replace("0x", ""), "hex"),
-    ]);
-    invariant(to256.length === 32, "recipient is invalid");
-    const amountHex = amount.toString(16);
-    const amountBuf = Buffer.from(
-      amountHex.length % 2 === 0 ? amountHex : "0" + amountHex,
-      "hex"
-    );
-    const amount256 = Buffer.concat([
-      Buffer.alloc(32 - amountBuf.length),
-      amountBuf,
-    ]);
-    const data = Buffer.concat([ethereumTransferMethodID, to256, amount256]);
+    const { token } = subAccount;
+
+    const data = serializeTransactionData(account, transaction);
+    invariant(data, "serializeTransactionData provided no data");
 
     await transactionBuilder.setInputData(data.toString("hex"));
 
@@ -103,6 +85,8 @@ export async function ethereumBuildTransaction({
     );
     await transactionBuilder.sendToAddress(zeroAmount, token.contractAddress);
   } else {
+    const recipient = eip55.encode(transaction.recipient);
+
     if (transaction.useAllAmount) {
       await transactionBuilder.wipeToAddress(recipient);
       if (isCancelled()) return;

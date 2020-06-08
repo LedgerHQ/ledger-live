@@ -562,7 +562,8 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   const networkInfo = t.networkInfo || (await getNetworkInfo(a.currency));
 
   const estimatedGasLimit = t.recipient
-    ? BigNumber(await api.estimateGasLimitForERC20(t.recipient))
+    ? // FIXME replace by estimateGasLimit from transaction.js
+      BigNumber(await api.roughlyEstimateGasLimit(t.recipient))
     : null;
 
   const gasPrice =

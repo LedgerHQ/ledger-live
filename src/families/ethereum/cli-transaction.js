@@ -60,11 +60,15 @@ function inferAccounts(account: Account, opts: Object): AccountLikeArray {
 }
 
 function inferTransactions(
-  transactions: Array<{ account: AccountLike, transaction: Transaction }>,
+  transactions: Array<{
+    account: AccountLike,
+    transaction: Transaction,
+    mainAccount: Account,
+  }>,
   opts: Object,
   { inferAmount }: *
 ): Transaction[] {
-  return flatMap(transactions, ({ transaction, account }) => {
+  return flatMap(transactions, ({ transaction, account, mainAccount }) => {
     invariant(transaction.family === "ethereum", "ethereum family");
     let subAccountId;
     if (account.type === "TokenAccount") {
@@ -74,7 +78,7 @@ function inferTransactions(
       ...transaction,
       family: "ethereum",
       subAccountId,
-      gasPrice: inferAmount(account, opts.gasPrice || "2gwei"),
+      gasPrice: inferAmount(mainAccount, opts.gasPrice || "2gwei"),
       userGasLimit: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       estimatedGasLimit: null,
     };
