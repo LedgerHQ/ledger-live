@@ -104,7 +104,7 @@ const cosmos: AppSpec<Transaction> = {
         const data = getCurrentCosmosPreloadData();
         const delegation = sample(
           data.validators.filter(
-            (v) => !sourceDelegation.validatorAddress === v.validatorAddress
+            (v) => sourceDelegation.validatorAddress !== v.validatorAddress
           )
         );
         let t = bridge.createTransaction(account);
