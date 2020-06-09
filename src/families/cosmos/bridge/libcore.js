@@ -129,7 +129,7 @@ const getSendTransactionStatus = async (a, t) => {
 
   let amount = t.amount;
 
-  if (amount.eq(0) && t.useAllAmount !== true) {
+  if (amount.lte(0) && t.useAllAmount !== true) {
     errors.amount = new AmountRequired();
   }
 
@@ -142,11 +142,9 @@ const getSendTransactionStatus = async (a, t) => {
   if (
     !errors.recipient &&
     !errors.amount &&
-    (amount.lt(0) || totalSpent.gt(a.spendableBalance))
+    totalSpent.gt(a.spendableBalance)
   ) {
     errors.amount = new NotEnoughBalance();
-    totalSpent = BigNumber(0);
-    amount = BigNumber(0);
   }
 
   return Promise.resolve({
