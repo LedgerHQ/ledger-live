@@ -18,6 +18,7 @@
 
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
+import { TransactionWasRejected } from "../../../errors";
 
 const CHUNK_SIZE = 250;
 const CLA = 0x55;
@@ -58,6 +59,7 @@ export default class Cosmos {
         test_mode: response[0] !== 0,
         version: "" + response[1] + "." + response[2] + "." + response[3],
         device_locked: response[4] === 1,
+        major: response[1],
       };
     });
   }
@@ -176,7 +178,7 @@ export default class Cosmos {
       }
 
       if (returnCode === 0x6986) {
-        throw new Error("Transaction was rejected");
+        throw new TransactionWasRejected();
       }
 
       return {
