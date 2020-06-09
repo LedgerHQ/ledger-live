@@ -207,6 +207,7 @@ export const createAction = (
       !device
         ? empty()
         : connectAppExec({
+            modelId: device.modelId,
             devicePath: device.deviceId,
             ...params,
           }).pipe(catchError((error: Error) => of({ type: "error", error })))

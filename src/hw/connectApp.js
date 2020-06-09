@@ -7,7 +7,9 @@ import {
   FirmwareOrAppUpdateRequired,
   UserRefusedOnDevice,
   BtcUnmatchedApp,
+  UpdateYourApp,
 } from "@ledgerhq/errors";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { getEnv } from "../env";
 import type { DerivationMode } from "../types";
 import { getCryptoCurrencyById } from "../currencies";
@@ -15,6 +17,7 @@ import { withDevice } from "./deviceAccess";
 import getAppAndVersion from "./getAppAndVersion";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
+import { mustUpgrade } from "../apps/versionRequirements";
 
 export type RequiresDerivation = {|
   currencyId: string,
@@ -23,6 +26,7 @@ export type RequiresDerivation = {|
 |};
 
 export type Input = {
+  modelId: DeviceModelId,
   devicePath: string,
   appName: string,
   requiresDerivation?: RequiresDerivation,
@@ -119,6 +123,7 @@ const derivationLogic = (
   );
 
 const cmd = ({
+  modelId,
   devicePath,
   appName,
   requiresDerivation,
@@ -141,6 +146,14 @@ const cmd = ({
 
             if (appAndVersion.name !== appName) {
               return of({ type: "ask-quit-app" });
+            }
+
+            if (
+              mustUpgrade(modelId, appAndVersion.name, appAndVersion.version)
+            ) {
+              return throwError(
+                new UpdateYourApp(null, { managerAppName: appAndVersion.name })
+              );
             }
 
             if (requiresDerivation) {
