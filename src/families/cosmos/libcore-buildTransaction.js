@@ -1,9 +1,5 @@
 // @flow
-import type {
-  Transaction,
-  CoreCosmosLikeTransaction,
-  CoreCosmosGasLimitRequest,
-} from "./types";
+import type { Transaction, CoreCosmosLikeTransaction } from "./types";
 import type { Account } from "../../types";
 import type { Core, CoreAccount, CoreCurrency } from "../../libcore/types";
 
@@ -61,11 +57,11 @@ export async function cosmosBuildTransaction({
   if (gasLimit && gasLimit !== "0") {
     gas = BigNumber(gasLimit);
   } else {
-    const gasRequest: CoreCosmosGasLimitRequest = {
-      memo: memoTransaction,
-      amplifier: getEnv("COSMOS_GAS_AMPLIFIER"),
+    const gasRequest = await core.CosmosGasLimitRequest.init(
+      memoTransaction,
       messages,
-    };
+      getEnv("COSMOS_GAS_AMPLIFIER")
+    );
     gas = await libcoreBigIntToBigNumber(
       await cosmosLikeAccount.estimateGas(gasRequest)
     );

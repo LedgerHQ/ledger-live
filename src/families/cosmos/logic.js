@@ -158,7 +158,15 @@ export const getMaxEstimatedBalance = (
     );
   }
 
-  return a.balance.minus(estimatedFees).minus(blockBalance);
+  const amount = a.balance.minus(estimatedFees).minus(blockBalance);
+
+  // If the fees are greater than the balance we will have a negative amount
+  // so we round it to 0
+  if (amount.lt(0)) {
+    return BigNumber(0);
+  }
+
+  return amount;
 };
 
 export const calculateFees: CacheRes<
