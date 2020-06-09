@@ -189,20 +189,28 @@ export type CosmosDelegationInfoRaw = {
 export type CosmosMessage = CoreCosmosLikeMessage;
 
 declare class CosmosMsgSend {
-  static init(fromAddress: string, toAddress: string, amount: CoreCosmosLikeAmount[]): Promise<CosmosMsgSend>;
-  fromAddress: string,
-  toAddress: string,
-  amount: Array<CoreCosmosLikeAmount>,
-};
+  static init(
+    fromAddress: string,
+    toAddress: string,
+    amount: CoreCosmosLikeAmount[]
+  ): Promise<CosmosMsgSend>;
+  fromAddress: string;
+  toAddress: string;
+  amount: Array<CoreCosmosLikeAmount>;
+}
 
 declare class CosmosMsgDelegate {
-  static init(delegatorAddress: string, validatorAddress: string, amount: CoreCosmosLikeAmount): Promise<CosmosMsgDelegate>;
-  getValidatorAddress(): Promise<string>,
-  getAmount(): Promise<CosmosAmount>,
-  delegatorAddress: string,
-  validatorAddress: string,
-  amount: CoreCosmosLikeAmount,
-};
+  static init(
+    delegatorAddress: string,
+    validatorAddress: string,
+    amount: CoreCosmosLikeAmount
+  ): Promise<CosmosMsgDelegate>;
+  getValidatorAddress(): Promise<string>;
+  getAmount(): Promise<CosmosAmount>;
+  delegatorAddress: string;
+  validatorAddress: string;
+  amount: CoreCosmosLikeAmount;
+}
 
 type CosmosMsgUndelegate = CosmosMsgDelegate;
 
@@ -213,33 +221,45 @@ type CosmosAmount = {
 };
 
 declare class CoreCosmosGasLimitRequest {
-  static init(memo: string, messages: CoreCosmosLikeMessage[], amplifier: string,): Promise<CoreCosmosGasLimitRequest>,
+  static init(
+    memo: string,
+    messages: CoreCosmosLikeMessage[],
+    amplifier: string
+  ): Promise<CoreCosmosGasLimitRequest>;
 }
 
 declare class CosmosMsgRedelegate {
-  static init(delegatorAddress: string, validatorSourceAddress: string, validatorDestinationAddress: string, amount: CoreCosmosLikeAmount): Promise<CosmosMsgRedelegate>,
-  getValidatorDestinationAddress(): Promise<string>,
-  getValidatorSourceAddress(): Promise<string>,
+  static init(
+    delegatorAddress: string,
+    validatorSourceAddress: string,
+    validatorDestinationAddress: string,
+    amount: CoreCosmosLikeAmount
+  ): Promise<CosmosMsgRedelegate>;
+  getValidatorDestinationAddress(): Promise<string>;
+  getValidatorSourceAddress(): Promise<string>;
   getAmount(): Promise<CosmosAmount>;
-  delegatorAddress: string,
-  validatorSourceAddress: string,
-  validatorDestinationAddress: string,
-  amount: CoreCosmosLikeAmount,
-};
+  delegatorAddress: string;
+  validatorSourceAddress: string;
+  validatorDestinationAddress: string;
+  amount: CoreCosmosLikeAmount;
+}
 
 declare class CoreCosmosLikeAmount {
   static init(amount: string, denom: string): Promise<CoreCosmosLikeAmount>;
   getAmount(): Promise<string>;
-  amount: string,
-  denom: string,
-};
+  amount: string;
+  denom: string;
+}
 
 declare class CosmosMsgWithdrawDelegationReward {
-  static init(delegatorAddress: string, validatorAddress: string): Promise<CosmosMsgWithdrawDelegationReward>;
+  static init(
+    delegatorAddress: string,
+    validatorAddress: string
+  ): Promise<CosmosMsgWithdrawDelegationReward>;
   getValidatorAddress(): Promise<string>;
   delegatorAddress: string;
   validatorAddress: string;
-};
+}
 
 type CosmosLikeEntry = {
   // Block height of the begin redelegate request
@@ -681,7 +701,7 @@ export const reflect = (declare: (string, Spec) => void) => {
         njsInstanciateClass: [
           {
             amount: 0,
-            denom: 1
+            denom: 1,
           },
         ],
       },
@@ -703,12 +723,12 @@ export const reflect = (declare: (string, Spec) => void) => {
           {
             fromAddress: 0,
             toAddress: 1,
-            amount: 2
+            amount: 2,
           },
         ],
       },
     },
-  })
+  });
 
   declare("CosmosLikeMsgDelegate", {
     njsUsesPlainObject: true,
@@ -720,7 +740,7 @@ export const reflect = (declare: (string, Spec) => void) => {
           {
             delegatorAddress: 0,
             validatorAddress: 1,
-            amount: 2
+            amount: 2,
           },
         ],
       },
@@ -747,7 +767,7 @@ export const reflect = (declare: (string, Spec) => void) => {
             delegatorAddress: 0,
             validatorSourceAddress: 1,
             validatorDestinationAddress: 2,
-            amount: 3
+            amount: 3,
           },
         ],
       },
@@ -776,7 +796,7 @@ export const reflect = (declare: (string, Spec) => void) => {
           {
             delegatorAddress: 0,
             validatorAddress: 1,
-            amount: 2
+            amount: 2,
           },
         ],
       },
@@ -801,7 +821,7 @@ export const reflect = (declare: (string, Spec) => void) => {
         njsInstanciateClass: [
           {
             delegatorAddress: 0,
-            validatorAddress: 1
+            validatorAddress: 1,
           },
         ],
       },

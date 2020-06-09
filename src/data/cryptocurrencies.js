@@ -640,6 +640,7 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     explorerViews: [
       {
         tx: "https://www.mintscan.io/txs/$hash",
+        address: "https://www.mintscan.io/validators/$address",
       },
     ],
   },
