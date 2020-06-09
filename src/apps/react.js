@@ -19,11 +19,12 @@ type UseAppsRunnerResult = [State, (Action) => void];
 // use for React apps. support dynamic change of the state.
 export const useAppsRunner = (
   listResult: ListAppsResult,
-  exec: Exec
+  exec: Exec,
+  appsToRestore?: string[]
 ): UseAppsRunnerResult => {
   // $FlowFixMe for ledger-live-mobile older react/flow version
   const [state, dispatch] = useReducer(reducer, null, () =>
-    initState(listResult)
+    initState(listResult, appsToRestore)
   );
 
   const nextAppOp = useMemo(() => getNextAppOp(state), [state]);

@@ -278,6 +278,20 @@ scenarios.forEach((scenario) => {
   });
 });
 
+test("appsToRestore", async () => {
+  let state = initState(
+    mockListAppsResult(
+      "Bitcoin, XRP, Ethereum, Ethereum Classic, Dogecoin, Zcash",
+      "Bitcoin, Zcash",
+      deviceInfo155
+    ),
+    ["Bitcoin", "XRP", "Dogecoin", "Zcash", "Ethereum Classic"]
+  );
+  expect(prettyActionPlan(getActionPlan(state))).toBe(
+    "+XRP, +Dogecoin, +Ethereum, +Ethereum Classic"
+  );
+});
+
 /*
 test("a lock error that occurs will not cancel the queue, another error will", () => {
   let state = initState(

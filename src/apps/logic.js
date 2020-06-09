@@ -17,24 +17,40 @@ import {
   isCurrencySupported,
 } from "../currencies";
 
-export const initState = ({
-  deviceModelId,
-  appsListNames,
-  ...listAppsResult
-}: ListAppsResult): State => ({
-  ...listAppsResult,
-  apps: appsListNames
-    .map((name) => listAppsResult.appByName[name])
-    .filter(Boolean),
-  deviceModel: getDeviceModel(deviceModelId),
-  recentlyInstalledApps: [],
-  installQueue: [],
-  uninstallQueue: [],
-  updateAllQueue: [],
-  currentProgressSubject: new Subject(),
-  currentError: null,
-  currentAppOp: null,
-});
+export const initState = (
+  {
+    deviceModelId,
+    appsListNames,
+    installed,
+    appByName,
+    ...listAppsResult
+  }: ListAppsResult,
+  appsToRestore?: string[]
+): State => {
+  let state: State = {
+    ...listAppsResult,
+    installed,
+    appByName,
+    apps: appsListNames.map((name) => appByName[name]).filter(Boolean),
+    deviceModel: getDeviceModel(deviceModelId),
+    recentlyInstalledApps: [],
+    installQueue: [],
+    uninstallQueue: [],
+    updateAllQueue: [],
+    currentProgressSubject: new Subject(),
+    currentError: null,
+    currentAppOp: null,
+  };
+  if (appsToRestore) {
+    state = appsToRestore
+      .filter(
+        (name) => appByName[name] && !installed.some((a) => a.name === name)
+      )
+      .map((name) => ({ type: "install", name }))
+      .reduce(reducer, state);
+  }
+  return state;
+};
 
 // ^TODO move this to legacyDependencies.js
 // we should have dependency as part of the data!
