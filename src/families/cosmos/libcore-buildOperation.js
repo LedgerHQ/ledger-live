@@ -9,7 +9,7 @@ const translateExtraInfo = async (core: Core, msg, type) => {
   switch (type) {
     case "DELEGATE": {
       unwrapped = await core.CosmosLikeMessage.unwrapMsgDelegate(msg);
-      const cosmosAmount = await unwrapped.getCosmosAmount();
+      const cosmosAmount = await unwrapped.getAmount();
       amount = await cosmosAmount.getAmount();
       address = await unwrapped.getValidatorAddress();
       break;
@@ -17,7 +17,7 @@ const translateExtraInfo = async (core: Core, msg, type) => {
 
     case "UNDELEGATE": {
       unwrapped = await core.CosmosLikeMessage.unwrapMsgUndelegate(msg);
-      const cosmosAmount = await unwrapped.getCosmosAmount();
+      const cosmosAmount = await unwrapped.getAmount();
       amount = await cosmosAmount.getAmount();
       address = await unwrapped.getValidatorAddress();
       break;
@@ -34,7 +34,7 @@ const translateExtraInfo = async (core: Core, msg, type) => {
 
     case "REDELEGATE": {
       unwrapped = await core.CosmosLikeMessage.unwrapMsgBeginRedelegate(msg);
-      const cosmosAmount = await unwrapped.getCosmosAmount();
+      const cosmosAmount = await unwrapped.getAmount();
       amount = await cosmosAmount.getAmount();
       address = await unwrapped.getValidatorDestinationAddress();
       cosmosSourceValidator = await unwrapped.getValidatorSourceAddress();
