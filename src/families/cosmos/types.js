@@ -516,9 +516,6 @@ export const reflect = (declare: (string, Spec) => void) => {
       getEstimatedGasLimit: {
         params: ["CosmosLikeTransaction"],
       },
-      estimateGas: {
-        params: ["CosmosGasLimitRequest"],
-      },
       getSequence: {},
       getAccountNumber: {},
       getPendingRewards: {
@@ -574,7 +571,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       setDERSignature: {
         params: ["hex"],
       },
-      getFee: {},
+      getFee: {
+        returns: "Amount"
+      },
       getGas: {},
       serializeForSignature: {},
       serializeForBroadcast: {},
