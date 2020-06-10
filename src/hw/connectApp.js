@@ -17,7 +17,7 @@ import { withDevice } from "./deviceAccess";
 import getAppAndVersion from "./getAppAndVersion";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
-import { mustUpgrade } from "../apps/versionRequirements";
+import { mustUpgrade } from "../apps";
 
 export type RequiresDerivation = {|
   currencyId: string,

@@ -5,7 +5,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 import { getDependencies } from "./polyfill";
 import { getEnv } from "../env";
 
-export function shouldRecommendUpgrade(
+export function shouldUpgrade(
   deviceModel: DeviceModelId,
   appName: string,
   appVersion: string
@@ -20,7 +20,7 @@ export function shouldRecommendUpgrade(
 }
 
 const appVersionsRequired = {
-  Cosmos: ">= 2",
+  Cosmos: ">= 2.14",
 };
 
 export function mustUpgrade(
