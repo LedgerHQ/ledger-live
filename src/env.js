@@ -187,6 +187,12 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger main explorer API (multi currencies)",
   },
+  DISABLE_APP_VERSION_REQUIREMENTS: {
+    def: false,
+    parser: boolParser,
+    desc:
+      "force an old application version to be accepted regardless of its version",
+  },
   FORCE_PROVIDER: {
     def: 1,
     parser: intParser,
