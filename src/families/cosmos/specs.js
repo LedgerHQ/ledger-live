@@ -64,14 +64,18 @@ const cosmos: AppSpec<Transaction> = {
             )
         );
 
-        const count = 1 + Math.floor(6 * Math.random());
-        const amount = getMaxDelegationAvailable(account, count);
-        const validators = sampleSize(all, count).map((delegation) => {
-          return {
-            address: delegation.validatorAddress,
-            amount: amount.div(10).integerValue(),
-          };
-        });
+        const count = 1 + Math.floor(7 * Math.random());
+        let remaining = getMaxDelegationAvailable(account, count);
+        const validators = sampleSize(all, count)
+          .map((delegation) => {
+            const amount = remaining.times(Math.random()).integerValue();
+            remaining = remaining.minus(amount);
+            return {
+              address: delegation.validatorAddress,
+              amount,
+            };
+          })
+          .filter((v) => v.amount.gt(0));
         invariant(validators.length > 0, "no possible delegation found");
         let t = bridge.createTransaction(account);
         t = bridge.updateTransaction(t, {
