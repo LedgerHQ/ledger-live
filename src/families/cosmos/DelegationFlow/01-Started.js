@@ -173,5 +173,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
   },
 });
