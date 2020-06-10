@@ -270,7 +270,7 @@ const getTransactionStatus = async (a, t) => {
 
   let totalSpent = estimatedFees;
 
-  if (t.mode === "claimReward") {
+  if (["claimReward", "claimRewardCompound"].includes(t.mode)) {
     const { cosmosResources } = a;
     invariant(cosmosResources, "cosmosResources should exist");
     const claimReward = cosmosResources.delegations.find(
