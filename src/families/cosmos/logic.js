@@ -20,8 +20,8 @@ import type { Transaction } from "./types";
 import { getFeesForTransaction } from "../../libcore/getFeesForTransaction";
 import { makeLRUCache } from "../../cache";
 
-export const COSMOS_MAX_REDELEGATIONS = 6;
-export const COSMOS_MAX_UNBONDINGS = 6;
+export const COSMOS_MAX_REDELEGATIONS = 7;
+export const COSMOS_MAX_UNBONDINGS = 7;
 export const COSMOS_MAX_DELEGATIONS = 5;
 export const COSMOS_MIN_SAFE = BigNumber(100000); // 100000 uAtom
 export const COSMOS_MIN_FEES = BigNumber(6000); // 6000 uAtom
@@ -60,21 +60,23 @@ export function mapUnbondings(
   validators: CosmosValidatorItem[],
   unit: Unit
 ): CosmosMappedUnbonding[] {
-  return unbondings.map((u) => {
-    const validator = validators.find(
-      (v) => v.validatorAddress === u.validatorAddress
-    );
+  return unbondings
+    .sort((a, b) => a.completionDate - b.completionDate)
+    .map((u) => {
+      const validator = validators.find(
+        (v) => v.validatorAddress === u.validatorAddress
+      );
 
-    return {
-      ...u,
-      formattedAmount: formatCurrencyUnit(unit, u.amount, {
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-      }),
-      validator,
-    };
-  });
+      return {
+        ...u,
+        formattedAmount: formatCurrencyUnit(unit, u.amount, {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+        }),
+        validator,
+      };
+    });
 }
 
 export function mapRedelegations(
@@ -251,4 +253,26 @@ export async function canClaimRewards(
     res.estimatedFees.lt(account.spendableBalance) &&
     res.estimatedFees.lt(delegation.pendingRewards)
   );
+}
+
+export function getRedelegation(
+  account: Account,
+  delegation: CosmosMappedDelegation
+): ?CosmosRedelegation {
+  const { cosmosResources } = account;
+  const redelegations = cosmosResources?.redelegations ?? [];
+
+  const currentRedelegation = redelegations.find(
+    (r) => r.validatorDstAddress === delegation.validatorAddress
+  );
+
+  return currentRedelegation;
+}
+
+export function getRedelegationCompletionDate(
+  account: Account,
+  delegation: CosmosMappedDelegation
+): ?Date {
+  const currentRedelegation = getRedelegation(account, delegation);
+  return currentRedelegation ? currentRedelegation.completionDate : null;
 }
