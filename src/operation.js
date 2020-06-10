@@ -68,8 +68,6 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REVEAL":
     case "CREATE":
     case "DELEGATE":
-    case "UNDELEGATE":
-    case "REDELEGATE":
       return op.value.negated();
     case "FREEZE":
     case "UNFREEZE":
