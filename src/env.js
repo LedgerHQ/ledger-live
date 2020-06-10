@@ -33,7 +33,7 @@ const stringParser = (v: mixed): ?string =>
 
 const envDefinitions = {
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmos.coin-proxy.dev.aws.ledger.fr",
+    def: "https://cosmos.coin.staging.aws.ledger.com/",
     parser: stringParser,
     desc: "node API for cosmos",
   },
@@ -82,7 +82,7 @@ const envDefinitions = {
       "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 2,
+    def: 4,
     parser: intParser,
     desc: "estimate gas multiplier",
   },
