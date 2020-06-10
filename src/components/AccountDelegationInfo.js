@@ -11,7 +11,7 @@ type Props = {
   description: string,
   image?: React$Node,
   infoUrl: string,
-  infoTitle: String,
+  infoTitle: string,
   disabled?: boolean,
   onPress: () => void,
   ctaTitle: string,

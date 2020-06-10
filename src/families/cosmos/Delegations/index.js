@@ -290,7 +290,6 @@ export default function Delegations({ account }: Props) {
             fontSize={24}
           />
         )}
-        // TODO Check CosmosMappedDelegation type
         amount={delegation?.amount ?? BigNumber(0)}
         data={data}
         actions={actions}
@@ -328,7 +327,7 @@ export default function Delegations({ account }: Props) {
           description={t("cosmos.delegation.delegationEarn", {
             name: account.currency.name,
           })}
-          infoUrl={urls.tronStaking}
+          infoUrl={urls.cosmosStaking}
           infoTitle={t("cosmos.delegation.info")}
           onPress={onDelegate}
           ctaTitle={t("account.delegation.info.cta")}
