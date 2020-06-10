@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import colors from "../../../colors";
 import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
@@ -27,7 +27,8 @@ type Props = {
   route: { params: RouteParams },
 };
 
-function DelegationStarted({ navigation, route }: Props) {
+export default function DelegationStarted({ navigation, route }: Props) {
+  const { t } = useTranslation();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.CosmosDelegationValidator, {
       ...route.params,
@@ -37,6 +38,14 @@ function DelegationStarted({ navigation, route }: Props) {
   const howDelegationWorks = useCallback(() => {
     Linking.openURL(urls.delegation);
   }, []);
+
+  const onLearnMore = useCallback(() => {
+    Linking.openURL(urls.cosmosStakingRewards);
+  }, []);
+
+  const onCancel = useCallback(() => {
+    navigation.dangerouslyGetParent().pop();
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
@@ -52,7 +61,7 @@ function DelegationStarted({ navigation, route }: Props) {
             i18nKey="cosmos.delegation.flow.steps.starter.title"
           />
         </LText>
-        <LText secondary style={styles.description}>
+        <LText semiBold style={styles.description}>
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.description" />
         </LText>
         <BulletList
@@ -62,7 +71,7 @@ function DelegationStarted({ navigation, route }: Props) {
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.1" />,
             <Trans i18nKey="cosmos.delegation.flow.steps.starter.steps.2" />,
           ].map(wording => (
-            <LText secondary semiBold style={styles.bulletItem}>
+            <LText semiBold style={styles.bulletItem}>
               {wording}
             </LText>
           ))}
@@ -83,6 +92,15 @@ function DelegationStarted({ navigation, route }: Props) {
               <Trans i18nKey="cosmos.delegation.flow.steps.starter.warning.description" />
             }
             verified
+            action={
+              <Button
+                event="DelegationStartedLearnMore"
+                type="lightSecondary"
+                onPress={onLearnMore}
+                containerStyle={styles.learnMoreBtn}
+                title={t("common.learnMore")}
+              />
+            }
           />
         </View>
       </NavigationScrollView>
@@ -92,6 +110,13 @@ function DelegationStarted({ navigation, route }: Props) {
           onPress={onNext}
           title={<Trans i18nKey="cosmos.delegation.flow.steps.starter.cta" />}
           type="primary"
+        />
+        <Button
+          event="DelegationStartedCancel"
+          onPress={onCancel}
+          title={<Trans i18nKey="common.cancel" />}
+          type="darkSecondary"
+          outline={false}
         />
       </View>
     </SafeAreaView>
@@ -118,7 +143,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   description: {
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 21,
     color: colors.darkBlue,
     textAlign: "center",
@@ -129,11 +154,8 @@ const styles = StyleSheet.create({
     color: colors.black,
   },
   howDelegationWorks: {
-    marginTop: 32,
-    borderRadius: 32,
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderWidth: 1,
     borderColor: colors.live,
     flexDirection: "row",
   },
@@ -145,9 +167,11 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 16,
   },
+  learnMoreBtn: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 0,
+  },
   footer: {
     padding: 16,
   },
 });
-
-export default DelegationStarted;

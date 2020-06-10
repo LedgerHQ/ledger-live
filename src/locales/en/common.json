@@ -1696,14 +1696,14 @@
       "flow": {
         "steps": {
           "starter": {
-            "description": "You may earn rewards by delegating your ATOM to a validator.",
+            "description": "Delegate your ATOM to earn rewards while keeping full security and control on your assets.",
             "steps": {
-              "0": "You keep ownership of delegated assets",
-              "1": "Delegate using your Ledger device",
-              "2": "The undelegation process takes 21 days to finalize"
+              "0": "Delegated assets stay yours",
+              "1": "You’ll have to wait for 21 days to complete an undelegation",
+              "2": "Delegate securely with your Ledger device"
             },
             "warning": {
-              "description": "Choose you validator wisely.  Part of your delegated assets may be destroyed if the validator does not behave appropriately."
+              "description": "Delegate ATOM asset can implies some losses if the chosen delegator doesn’t act rightfully on the network."
             },
             "cta": "Continue"
           },
