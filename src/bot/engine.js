@@ -262,13 +262,15 @@ export async function runOnAccount<T: Transaction>({
           "maximum mutation run reached (%s)",
           count
         );
-        const tx = mutation.transaction({
+        const arg = {
           appCandidate,
           account,
           bridge: accountBridge,
           siblings: accounts.filter((a) => a !== account),
           maxSpendable,
-        });
+        };
+        if (spec.transactionCheck) spec.transactionCheck(arg);
+        const tx = mutation.transaction(arg);
         if (tx) {
           candidates.push({ mutation, tx });
         }
@@ -402,14 +404,16 @@ export async function runOnAccount<T: Transaction>({
 
       if (operation && mutation.test) {
         try {
-          mutation.test({
+          const arg = {
             accountBeforeTransaction,
             transaction,
             status,
             optimisticOperation,
             operation,
             account,
-          });
+          };
+          if (spec.test) spec.test(arg);
+          mutation.test(arg);
           report.testDuration = now() - testBefore;
         } catch (e) {
           // We never reach the final test success

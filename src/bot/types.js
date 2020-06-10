@@ -77,6 +77,23 @@ export type AppSpec<T: Transaction> = {
     appVersion?: string,
   },
   mutations: MutationSpec<T>[],
+  // can implement generic invariants for a mutation transaction to be possible
+  transactionCheck?: ({
+    appCandidate: AppCandidate,
+    account: Account,
+    siblings: Account[],
+    bridge: AccountBridge<T>,
+    maxSpendable: BigNumber,
+  }) => void,
+  // Implement a test that also runs on each mutation after the operation is applied to the account
+  test?: ({
+    account: Account,
+    accountBeforeTransaction: Account,
+    transaction: T,
+    status: TransactionStatus,
+    optimisticOperation: Operation,
+    operation: Operation,
+  }) => void,
 };
 
 export type SpecReport<T: Transaction> = {
