@@ -41,13 +41,11 @@ export default function SelectValidatorSearchBox({
 
 const styles = StyleSheet.create({
   wrapper: {
-    paddingHorizontal: 16,
-    paddingBottom: 14,
-    alignItems: "stretch",
+    marginHorizontal: 16,
+    marginTop: 8,
+    marginBottom: 14,
   },
   searchBar: {
-    flexGrow: 1,
-    flexShrink: 1,
     flexDirection: "row",
     height: 44,
     alignItems: "center",

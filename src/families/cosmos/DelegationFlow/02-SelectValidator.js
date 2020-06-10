@@ -194,35 +194,30 @@ function DelegationSelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.main}>
-        <View style={styles.searchSection}>
-          <SelectValidatorSearchBox
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
+      <SelectValidatorSearchBox
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+      {sections.length <= 0 && (
+        <View style={styles.noResult}>
+          <LText>
+            <Trans
+              i18nKey="cosmos.delegation.flow.steps.validator.noResultsFound"
+              values={{ search: searchQuery }}
+            >
+              <LText bold>{""}</LText>
+            </Trans>
+          </LText>
         </View>
-        {sections.length <= 0 && (
-          <View style={styles.noResult}>
-            <LText>
-              <Trans
-                i18nKey="cosmos.delegation.flow.steps.validator.noResultsFound"
-                values={{ search: searchQuery }}
-              >
-                <LText bold>{""}</LText>
-              </Trans>
-            </LText>
-          </View>
+      )}
+      <SectionList
+        sections={sections}
+        keyExtractor={(item, index) => item + index}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title } }) => (
+          <LText style={styles.header}>{title}</LText>
         )}
-        <SectionList
-          style={styles.list}
-          sections={sections}
-          keyExtractor={(item, index) => item + index}
-          renderItem={renderItem}
-          renderSectionHeader={({ section: { title } }) => (
-            <LText style={styles.header}>{title}</LText>
-          )}
-        />
-      </View>
+      />
 
       <View style={styles.footer}>
         {max.isZero() && (
@@ -271,33 +266,26 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  main: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  searchSection: { height: 55, paddingHorizontal: 16 },
-  list: { width: "100%" },
   noResult: {
     flex: 1,
-    justifyContent: "flex-end",
+    alignItems: "center",
+    justifyContent: "center",
   },
   header: {
-    width: "100%",
     height: 32,
     paddingHorizontal: 16,
-    fontSize: 14,
     lineHeight: 32,
+    fontSize: 14,
     backgroundColor: colors.lightFog,
     color: colors.grey,
   },
   footer: {
-    alignSelf: "stretch",
+    borderTopWidth: 1,
+    borderTopColor: colors.lightFog,
     padding: 16,
     backgroundColor: colors.white,
   },
   labelContainer: {
-    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
