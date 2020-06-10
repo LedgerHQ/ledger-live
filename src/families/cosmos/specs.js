@@ -108,8 +108,9 @@ const cosmos: AppSpec<Transaction> = {
           cosmosResources.delegations.filter(
             (d) =>
               !cosmosResources.redelegations.some(
-                (r) => r.validatorSrcAddress === d.validatorAddress
-                // FIXME do we need to filter out Dst too?
+                (r) =>
+                  r.validatorSrcAddress === d.validatorAddress ||
+                  r.validatorDstAddress === d.validatorAddress
               ) &&
               !cosmosResources.unbondings.some(
                 (r) => r.validatorAddress === d.validatorAddress
