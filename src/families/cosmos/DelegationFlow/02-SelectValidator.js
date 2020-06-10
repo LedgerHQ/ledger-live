@@ -1,6 +1,6 @@
 // @flow
 import invariant from "invariant";
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, SectionList } from "react-native";
 import { BigNumber } from "bignumber.js";
 import SafeAreaView from "react-native-safe-area-view";
@@ -38,6 +38,7 @@ import Check from "../../../icons/Check";
 type RouteParams = {
   accountId: string,
   transaction: Transaction,
+  fromSelectAmount?: true,
 };
 
 type Props = {
@@ -57,25 +58,35 @@ function DelegationSelectValidator({ navigation, route }: Props) {
 
   invariant(cosmosResources, "cosmosResources required");
 
-  const { transaction, status } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, status, updateTransaction } = useBridgeTransaction(
+    () => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
 
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "delegate",
-          validators: [],
-          /** @TODO remove this once the bridge handles it */
-          recipient: mainAccount.freshAddress,
-        }),
-      };
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "delegate",
+            validators: [],
+            /** @TODO remove this once the bridge handles it */
+            recipient: mainAccount.freshAddress,
+          }),
+        };
+      }
+
+      return { account, transaction: tx };
+    },
+  );
+
+  useEffect(() => {
+    if (!route.params.fromSelectAmount) {
+      return;
     }
 
-    return { account, transaction: tx };
-  });
+    updateTransaction(_ => route.params.transaction);
+  }, [route.params, updateTransaction]);
 
   invariant(
     transaction && transaction.validators,
