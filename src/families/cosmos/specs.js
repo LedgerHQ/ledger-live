@@ -1,6 +1,7 @@
 // @flow
 import expect from "expect";
 import sample from "lodash/sample";
+import sampleSize from "lodash/sampleSize";
 import invariant from "invariant";
 import type { Transaction } from "../../families/cosmos/types";
 import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData";
@@ -12,6 +13,7 @@ import {
   canDelegate,
   canUndelegate,
   canRedelegate,
+  getMaxDelegationAvailable,
 } from "./logic";
 
 const cosmos: AppSpec<Transaction> = {
@@ -46,7 +48,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "delegate 10% to a NEW validator",
       maxRun: 3,
-      transaction: ({ account, bridge, maxSpendable }) => {
+      transaction: ({ account, bridge }) => {
         invariant(canDelegate(account), "can delegate");
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -55,24 +57,26 @@ const cosmos: AppSpec<Transaction> = {
           "already enough delegations"
         );
         const data = getCurrentCosmosPreloadData();
-        const delegation = sample(
-          data.validators.filter(
-            (v) =>
-              !cosmosResources.delegations.some(
-                (d) => d.validatorAddress === v.validatorAddress
-              )
-          )
+        const all = data.validators.filter(
+          (v) =>
+            !cosmosResources.delegations.some(
+              (d) => d.validatorAddress === v.validatorAddress
+            )
         );
-        invariant(delegation, "no possible delegation found");
+
+        const count = 1 + Math.floor(6 * Math.random());
+        const amount = getMaxDelegationAvailable(account, count);
+        const validators = sampleSize(all, count).map((delegation) => {
+          return {
+            address: delegation.validatorAddress,
+            amount: amount.div(10).integerValue(),
+          };
+        });
+        invariant(validators.length > 0, "no possible delegation found");
         let t = bridge.createTransaction(account);
         t = bridge.updateTransaction(t, {
           mode: "delegate",
-          validators: [
-            {
-              address: delegation.validatorAddress,
-              amount: maxSpendable.div(10).integerValue(),
-            },
-          ],
+          validators,
         });
         return t;
       },
@@ -96,24 +100,26 @@ const cosmos: AppSpec<Transaction> = {
           cosmosResources.delegations.length > 0,
           "already enough delegations"
         );
-        invariant(
-          cosmosResources.unbondings.length === 0,
-          "already ongoing unbonding"
-        );
-        const sourceDelegation = sample(cosmosResources.delegations);
-        const data = getCurrentCosmosPreloadData();
-        const delegation = sample(
-          data.validators.filter(
-            (v) => sourceDelegation.validatorAddress !== v.validatorAddress
+        const undelegateCandidate = sample(
+          cosmosResources.delegations.filter(
+            (d) =>
+              !cosmosResources.redelegations.some(
+                (r) => r.validatorSrcAddress === d.validatorAddress
+                // FIXME do we need to filter out Dst too?
+              ) &&
+              !cosmosResources.unbondings.some(
+                (r) => r.validatorAddress === d.validatorAddress
+              )
           )
         );
+        invariant(undelegateCandidate, "already pending");
         let t = bridge.createTransaction(account);
         t = bridge.updateTransaction(t, {
           mode: "undelegate",
           validators: [
             {
-              address: delegation.validatorAddress,
-              amount: sourceDelegation.amount
+              address: undelegateCandidate.validatorAddress,
+              amount: undelegateCandidate.amount
                 .times(Math.random())
                 .integerValue(),
             },
