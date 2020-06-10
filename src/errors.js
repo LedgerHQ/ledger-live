@@ -113,7 +113,3 @@ export const CosmosBroadcastError = {
   "16": createCustomErrorClass(" CosmosBroadcastCodeGasOverflow"),
   "17": createCustomErrorClass(" CosmosBroadcastCodeNoSignatures"),
 };
-
-export const TransactionWasRejected = createCustomErrorClass(
-  "TransactionWasRejected"
-);
