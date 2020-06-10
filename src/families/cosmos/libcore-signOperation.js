@@ -7,7 +7,7 @@ import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import CosmosApp from "./ledger-app/Cosmos";
 
 async function signTransaction({
-  account: { freshAddressPath, balance, id, freshAddress },
+  account: { freshAddressPath, spendableBalance, id, freshAddress },
   transport,
   transaction,
   coreTransaction,
@@ -65,7 +65,9 @@ async function signTransaction({
     id: `${id}--${type}`,
     hash: "",
     type,
-    value: transaction.useAllAmount ? balance : transaction.amount.plus(fee),
+    value: transaction.useAllAmount
+      ? spendableBalance
+      : transaction.amount.plus(fee),
     fee,
     blockHash: null,
     blockHeight: null,
