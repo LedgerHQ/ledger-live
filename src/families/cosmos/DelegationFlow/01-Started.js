@@ -36,7 +36,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const howDelegationWorks = useCallback(() => {
-    Linking.openURL(urls.delegation);
+    Linking.openURL(urls.cosmosStaking);
   }, []);
 
   const onLearnMore = useCallback(() => {
