@@ -17,7 +17,6 @@ import {
   DataRow,
   DataRowUnitValue,
 } from "../../components/ValidateOnDeviceDataRow";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import colors from "../../colors";
 import Info from "../../icons/Info";
 

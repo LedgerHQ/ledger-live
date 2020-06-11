@@ -122,7 +122,13 @@ function DelegationAmount({ navigation, route }: Props) {
     })),
   );
 
-  const error = useMemo(() => max.lt(0) || value.lt(min), [value, max, min]);
+  const error = useMemo(
+    () =>
+      max.lt(0) ||
+      value.lt(min) ||
+      (route.params.transaction.mode === "redelegate" && value.eq(0)),
+    [value, max, min, route.params.transaction],
+  );
 
   return (
     <TouchableWithoutFeedback onPress={onPressOutside}>
@@ -153,7 +159,7 @@ function DelegationAmount({ navigation, route }: Props) {
         </View>
 
         <View style={styles.footer}>
-          {error && (
+          {error && !value.eq(0) && (
             <View style={styles.labelContainer}>
               <Warning size={16} color={colors.alert} />
               <LText style={[styles.assetsRemaining, styles.error]}>
