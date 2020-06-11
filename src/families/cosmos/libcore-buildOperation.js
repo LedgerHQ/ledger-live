@@ -70,6 +70,7 @@ async function cosmosBuildOperation({
   const cosmosLikeOperation = await coreOperation.asCosmosLikeOperation();
   const cosmosLikeTransaction = await cosmosLikeOperation.getTransaction();
   const hash = await cosmosLikeTransaction.getHash();
+  const memo = await cosmosLikeTransaction.getMemo();
   const message = await cosmosLikeOperation.getMessage();
   const out: $Shape<Operation> = {
     hash,
@@ -102,6 +103,10 @@ async function cosmosBuildOperation({
   }
 
   out.extra = { ...out.extra, id: await message.getIndex() };
+
+  if (memo) {
+    out.extra = { ...out.extra, memo };
+  }
 
   return out;
 }
