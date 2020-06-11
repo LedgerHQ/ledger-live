@@ -179,35 +179,30 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.main}>
-        <View style={styles.searchSection}>
-          <SelectValidatorSearchBox
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-          />
+      <SelectValidatorSearchBox
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+      {sections.length <= 0 && (
+        <View style={styles.noResult}>
+          <LText>
+            <Trans
+              i18nKey="cosmos.redelegation.flow.steps.validator.noResultsFound"
+              values={{ search: searchQuery }}
+            >
+              <LText bold>{""}</LText>
+            </Trans>
+          </LText>
         </View>
-        {sections.length <= 0 && (
-          <View style={styles.noResult}>
-            <LText>
-              <Trans
-                i18nKey="cosmos.redelegation.flow.steps.validator.noResultsFound"
-                values={{ search: searchQuery }}
-              >
-                <LText bold>{""}</LText>
-              </Trans>
-            </LText>
-          </View>
+      )}
+      <SectionList
+        sections={sections}
+        keyExtractor={(item, index) => item + index}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title } }) => (
+          <LText style={styles.header}>{title}</LText>
         )}
-        <SectionList
-          style={styles.list}
-          sections={sections}
-          keyExtractor={(item, index) => item + index}
-          renderItem={renderItem}
-          renderSectionHeader={({ section: { title } }) => (
-            <LText style={styles.header}>{title}</LText>
-          )}
-        />
-      </View>
+      />
     </SafeAreaView>
   );
 }
@@ -217,19 +212,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  main: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  searchSection: { height: 55, paddingHorizontal: 16 },
-  list: { width: "100%" },
   noResult: {
     flex: 1,
-    justifyContent: "flex-end",
+    alignItems: "center",
+    justifyContent: "center",
   },
   header: {
-    width: "100%",
     height: 32,
     paddingHorizontal: 16,
     fontSize: 14,
