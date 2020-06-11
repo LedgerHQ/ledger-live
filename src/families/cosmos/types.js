@@ -348,6 +348,7 @@ declare class CoreCosmosLikeTransaction {
   toRawTransaction(): string;
   toSignatureBase(): Promise<string>;
   getHash(): Promise<string>;
+  getMemo(): Promise<string>;
   getFee(): Promise<CoreAmount>;
   getGas(): Promise<CoreAmount>;
   serializeForSignature(): Promise<string>;
@@ -568,6 +569,7 @@ export const reflect = (declare: (string, Spec) => void) => {
   declare("CosmosLikeTransaction", {
     methods: {
       getHash: {},
+      getMemo: {},
       setDERSignature: {
         params: ["hex"],
       },

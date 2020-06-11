@@ -300,6 +300,16 @@ const getTransactionStatus = async (a, t) => {
 };
 
 const prepareTransaction = async (a, t) => {
+  let memo = t.memo;
+
+  if (t.mode !== "send" && !memo) {
+    memo = "Ledger Live";
+  }
+
+  if (t.memo !== memo) {
+    return { ...t, memo };
+  }
+
   return t;
 };
 

@@ -180,9 +180,10 @@ const dataset: DatasetTest<Transaction> = {
                 memo: "test",
                 mode: "send",
               }),
-              expectedStatus: (account) => {
+              expectedStatus: (account, t) => {
                 const { cosmosResources } = account;
                 invariant(cosmosResources, "Should exist because it's cosmos");
+                invariant(t.memo === "test", "Should have a memo");
                 const totalSpent = account.balance.minus(
                   cosmosResources.unbondingBalance.plus(
                     cosmosResources.delegatedBalance
@@ -225,9 +226,12 @@ const dataset: DatasetTest<Transaction> = {
                   "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
                 mode: "redelegate",
               }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
+              expectedStatus: (a, t) => {
+                invariant(t.memo === "Ledger Live", "Should have a memo");
+                return {
+                  errors: {},
+                  warnings: {},
+                };
               },
             },
             {
@@ -285,9 +289,12 @@ const dataset: DatasetTest<Transaction> = {
                   },
                 ],
               }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
+              expectedStatus: (a, t) => {
+                invariant(t.memo === "Ledger Live", "Should have a memo");
+                return {
+                  errors: {},
+                  warnings: {},
+                };
               },
             },
             {
@@ -321,9 +328,12 @@ const dataset: DatasetTest<Transaction> = {
                   },
                 ],
               }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
+              expectedStatus: (a, t) => {
+                invariant(t.memo === "Ledger Live", "Should have a memo");
+                return {
+                  errors: {},
+                  warnings: {},
+                };
               },
             },
             {
@@ -356,9 +366,12 @@ const dataset: DatasetTest<Transaction> = {
                 ],
                 mode: "claimReward",
               }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
+              expectedStatus: (a, t) => {
+                invariant(t.memo === "Ledger Live", "Should have a memo");
+                return {
+                  errors: {},
+                  warnings: {},
+                };
               },
             },
             {
@@ -410,9 +423,31 @@ const dataset: DatasetTest<Transaction> = {
                 ],
                 mode: "claimRewardCompound",
               }),
+              expectedStatus: (a, t) => {
+                invariant(t.memo === "Ledger Live", "Should have a memo");
+                return {
+                  errors: {},
+                  warnings: {},
+                };
+              },
+            },
+            {
+              name: "ClaimRewardCompound - Warning",
+              transaction: (t) => ({
+                ...t,
+                validators: [
+                  {
+                    address:
+                      "cosmosvaloper1grgelyng2v6v3t8z87wu3sxgt9m5s03xfytvz7",
+                    amount: BigNumber(100),
+                  },
+                ],
+                fees: BigNumber(99999999999999999999),
+                mode: "claimRewardCompound",
+              }),
               expectedStatus: {
                 errors: {},
-                warnings: {},
+                warnings: { claimReward: new CosmosClaimRewardsFeesWarning() },
               },
             },
           ],
