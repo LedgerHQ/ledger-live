@@ -453,6 +453,7 @@ const dataset: DatasetTest<Transaction> = {
           ],
         },
         {
+          FIXME_tests: ["balance is sum of ops"],
           raw: {
             id:
               "libcore:1:cosmos:cosmospub1addwnpepqd3nvwwx39pqqvw88sg409675u6wyt4wtzqyt2t0e9y4629t50cdzftxnvz:",
