@@ -6,7 +6,7 @@ import type { DeviceTransactionField } from "../../transaction";
 import { getMainAccount } from "../../account";
 
 export type ExtraDeviceTransactionField =
-  | { type: "cosmos.memo", label: string}
+  | { type: "cosmos.memo", label: string }
   | { type: "cosmos.delegateValidators", label: string }
   | { type: "cosmos.validatorName", label: string }
   | { type: "cosmos.validatorAmount", label: string }
@@ -82,13 +82,11 @@ function getDeviceTransactionConfig({
       break;
   }
 
-  console.log(memo)
-
   if (memo) {
     fields.push({
       type: "cosmos.memo",
-      label: "Memo"
-    })
+      label: "Memo",
+    });
   }
 
   if (amount && !amount.isZero()) {
