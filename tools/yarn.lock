@@ -1371,10 +1371,10 @@
     "@ledgerhq/errors" "^5.15.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^12.29.0":
-  version "12.29.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.29.0.tgz#39f8961877f795603b8fe201f2803b0ccdd6d259"
-  integrity sha512-fbRUvqQ7BlVYfzDtQRUBfDf0vTuy8eOfLCAnWnTXb09K5iUuz0bKQsnydgkrSSprVJ5s0gNm6doG41BWjpDU1g==
+"@ledgerhq/live-common@^12.31.1":
+  version "12.31.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.31.1.tgz#3ade3bc0e340edb0f437a930b651d4b8e4224253"
+  integrity sha512-c2LGgGfuEHLFLgbyxibmfVkLGSfg0HfKTOSfLt4oIqPHpRLfOEQQ1fm7up8XH6IvPymNTpyqYPWAN8QDKZz1lg==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.15.0"
@@ -11832,10 +11832,10 @@ victory-candlestick@^34.3.8:
     prop-types "^15.5.8"
     victory-core "^34.3.8"
 
-victory-chart@^34.3.9:
-  version "34.3.9"
-  resolved "https://registry.yarnpkg.com/victory-chart/-/victory-chart-34.3.9.tgz#f549ee42a99465ad5ed2caeff5de8620360a11cc"
-  integrity sha512-okg17A21t1St7FqcKMgPDMNdHqQjx3l5EB7Xy+gxX1TvCWpG9AlWILYOWuEWFjO28X36Dd732TxEJRBs0eV0Lw==
+victory-chart@^34.3.11:
+  version "34.3.11"
+  resolved "https://registry.yarnpkg.com/victory-chart/-/victory-chart-34.3.11.tgz#308d62a836c252b7be0546ec4ef83c9608bed661"
+  integrity sha512-Fj9xWzS9649addJm9pd3pxVRoiDHoNx4p9yNLwiOgSSSPrJjJd7okGk+q5fxfVyVbztMXKsuJZ5C1OJ8qanDWQ==
   dependencies:
     lodash "^4.17.15"
     prop-types "^15.5.8"
@@ -12031,10 +12031,10 @@ victory-zoom-container@^34.3.8:
     prop-types "^15.5.8"
     victory-core "^34.3.8"
 
-victory@^34.3.10:
-  version "34.3.10"
-  resolved "https://registry.yarnpkg.com/victory/-/victory-34.3.10.tgz#7691f5e907ebf5fb827caf386212151cc75ccb0e"
-  integrity sha512-Ki2+I5Pebw6IdUaaweK8vK+ChdrB1oiSNwY8R2jdsT5dpuqi4hlc1ApY56G0/2s/SDscmTFLixHJpfiuv2vy6w==
+victory@^34.3.11:
+  version "34.3.11"
+  resolved "https://registry.yarnpkg.com/victory/-/victory-34.3.11.tgz#16fb757aed1f696f53a5e088d0e8fc0b24ce3acc"
+  integrity sha512-HDzXL4pioL8cMEkNNMBvhyW19jVE+p1pkWEACvYlGhdTXsf6b/8fN2+cCl2NiQG234KeAqPKpSkcHcdkhRQxRw==
   dependencies:
     victory-area "^34.3.8"
     victory-axis "^34.3.8"
@@ -12043,7 +12043,7 @@ victory@^34.3.10:
     victory-brush-container "^34.3.8"
     victory-brush-line "^34.3.8"
     victory-candlestick "^34.3.8"
-    victory-chart "^34.3.9"
+    victory-chart "^34.3.11"
     victory-core "^34.3.8"
     victory-create-container "^34.3.10"
     victory-cursor-container "^34.3.10"
