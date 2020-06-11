@@ -8,7 +8,9 @@ import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData
 import { getCryptoCurrencyById } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
+import { getOperationAmountNumber } from "../../operation";
 import {
+  COSMOS_MIN_SAFE,
   canClaimRewards,
   canDelegate,
   canUndelegate,
@@ -24,21 +26,54 @@ const cosmos: AppSpec<Transaction> = {
     appName: "Cosmos",
     appVersion: ">= 2.12.0",
   },
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(maxSpendable.gt(COSMOS_MIN_SAFE), "balance is too low");
+  },
+  test: ({ account, accountBeforeTransaction, status }) => {
+    const newOps = account.operations.slice(
+      0,
+      account.operations.length - accountBeforeTransaction.operations.length
+    );
+    invariant(newOps.length > 0, "new ops appeared");
+    const feesOp = newOps.find((op) => op.type === "FEES");
+    invariant(feesOp, "fees op exists");
+    invariant(getOperationAmountNumber(feesOp).lt(0), "fees op negative");
+    invariant(
+      !getOperationAmountNumber(feesOp).plus(status.estimatedFees).lt(0),
+      "estimated fees should never be gt than the fees"
+    );
+    invariant(
+      !getOperationAmountNumber(feesOp).plus(status.estimatedFees).lt(0),
+      "estimated fees should never be gt than the fees"
+    );
+  },
   mutations: [
     {
-      name: "split half to another account",
-      maxRun: 6,
+      name: "send some to another account",
+      maxRun: 5,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(5000), "balance is too low");
         let t = bridge.createTransaction(account);
         const sibling = pickSiblings(siblings, 30);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
         t = bridge.updateTransaction(t, { amount, recipient });
+        if (Math.random() < 0.5) {
+          t = bridge.updateTransaction(t, { memo: "LedgerLiveBot" });
+        }
         return t;
       },
-      test: ({ account, accountBeforeTransaction, status }) => {
-        // can be generalized!
+      test: ({ account, accountBeforeTransaction, status, transaction }) => {
+        expect(account.operations.length).toBe(
+          accountBeforeTransaction.operations.length + 2
+        );
+        const outOp = account.operations
+          .slice(0, 2)
+          .find((op) => op.type === "OUT");
+        invariant(outOp, "out op is missing");
+
+        expect(getOperationAmountNumber(outOp).toString()).toBe(
+          transaction.amount.negated().toString()
+        );
         expect(account.balance.toString()).toBe(
           accountBeforeTransaction.balance.minus(status.totalSpent).toString()
         );
@@ -46,7 +81,23 @@ const cosmos: AppSpec<Transaction> = {
     },
 
     {
-      name: "delegate 10% to a NEW validator",
+      name: "send max to another account",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        let t = bridge.createTransaction(account);
+        const sibling = pickSiblings(siblings, 30);
+        const recipient = sibling.freshAddress;
+        t = bridge.updateTransaction(t, { recipient, useAllAmount: true });
+        return t;
+      },
+      test: () => {
+        // FIXME what to do?
+        // expect(account.balance.toString()).toBe("0");
+      },
+    },
+
+    {
+      name: "delegate new validators",
       maxRun: 3,
       transaction: ({ account, bridge }) => {
         invariant(canDelegate(account), "can delegate");
@@ -57,18 +108,21 @@ const cosmos: AppSpec<Transaction> = {
           "already enough delegations"
         );
         const data = getCurrentCosmosPreloadData();
+        const count = 1 + Math.floor(5 * Math.random());
+        let remaining = getMaxDelegationAvailable(account, count);
         const all = data.validators.filter(
           (v) =>
             !cosmosResources.delegations.some(
+              // new delegations only
               (d) => d.validatorAddress === v.validatorAddress
             )
         );
-
-        const count = 1 + Math.floor(7 * Math.random());
-        let remaining = getMaxDelegationAvailable(account, count);
         const validators = sampleSize(all, count)
           .map((delegation) => {
-            const amount = remaining.times(Math.random()).integerValue();
+            // take a bit of remaining each time (less is preferred with the random() square)
+            const amount = remaining
+              .times(Math.random() * Math.random())
+              .integerValue();
             remaining = remaining.minus(amount);
             return {
               address: delegation.validatorAddress,
@@ -84,20 +138,27 @@ const cosmos: AppSpec<Transaction> = {
         });
         return t;
       },
-      test: () => {
-        // TODO check the delegations appears
+      test: ({ account, transaction }) => {
+        const { cosmosResources } = account;
+        invariant(cosmosResources, "cosmos");
+        transaction.validators.forEach((v) => {
+          const d = cosmosResources.delegations.find(
+            (d) => d.validatorAddress === v.address
+          );
+          invariant(d, "delegated %s must be found in account", v.address);
+          expect(v).toMatchObject({
+            address: d.validatorAddress,
+            amount: d.amount,
+          });
+        });
       },
     },
 
     {
-      name: "undelegate an existing delegation without existing unbondings",
+      name: "undelegate",
       maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
+      transaction: ({ account, bridge }) => {
         invariant(canUndelegate(account), "can undelegate");
-        invariant(
-          maxSpendable.gt(5000),
-          "account don't have remaining spendable"
-        );
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         invariant(
@@ -132,38 +193,37 @@ const cosmos: AppSpec<Transaction> = {
         });
         return t;
       },
-      test: () => {
-        // TODO check the unbonding appears
+      test: ({ account, transaction }) => {
+        const { cosmosResources } = account;
+        invariant(cosmosResources, "cosmos");
+        transaction.validators.forEach((v) => {
+          const d = cosmosResources.unbondings.find(
+            (d) => d.validatorAddress === v.address
+          );
+          invariant(d, "undelegated %s must be found in account", v.address);
+          expect(v).toMatchObject({
+            address: d.validatorAddress,
+            amount: d.amount,
+          });
+        });
       },
     },
 
     {
-      name: "redelegate a delegation without existing redelegation/unbonding",
+      name: "redelegate",
       maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(
-          maxSpendable.gt(5000),
-          "account don't have remaining spendable"
-        );
+      transaction: ({ account, bridge }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
-        invariant(
-          cosmosResources.delegations.length > 0,
-          "already enough delegations"
-        );
-        invariant(
-          cosmosResources.unbondings.length === 0,
-          "already ongoing unbonding"
-        );
-        invariant(
-          cosmosResources.redelegations.length === 0,
-          "already ongoing redelegation"
-        );
         const sourceDelegation = sample(
           cosmosResources.delegations.filter((d) => canRedelegate(account, d))
         );
         invariant(sourceDelegation, "none can redelegate");
-        const delegation = sample(cosmosResources.delegations);
+        const delegation = sample(
+          cosmosResources.delegations.filter(
+            (d) => d.validatorAddress !== sourceDelegation.validatorAddress
+          )
+        );
         let t = bridge.createTransaction(account);
         t = bridge.updateTransaction(t, {
           mode: "redelegate",
@@ -177,19 +237,26 @@ const cosmos: AppSpec<Transaction> = {
         });
         return t;
       },
-      test: () => {
-        // TODO check the redelegation appears
+      test: ({ account, transaction }) => {
+        const { cosmosResources } = account;
+        invariant(cosmosResources, "cosmos");
+        transaction.validators.forEach((v) => {
+          const d = cosmosResources.redelegations.find(
+            (d) => d.validatorSrcAddress === v.address
+          );
+          invariant(d, "redelegated %s must be found in account", v.address);
+          expect(v).toMatchObject({
+            address: d.validatorSrcAddress,
+            amount: d.amount,
+          });
+        });
       },
     },
 
     {
       name: "claim rewards",
       maxRun: 1,
-      transaction: ({ account, bridge, maxSpendable }) => {
-        invariant(
-          maxSpendable.gt(5000),
-          "account don't have remaining spendable"
-        );
+      transaction: ({ account, bridge }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         const delegation = sample(
@@ -208,8 +275,22 @@ const cosmos: AppSpec<Transaction> = {
         });
         return t;
       },
-      test: () => {
-        // TODO check funds were claimed
+      test: ({ account, transaction }) => {
+        const { cosmosResources } = account;
+        invariant(cosmosResources, "cosmos");
+        transaction.validators.forEach((v) => {
+          const d = cosmosResources.delegations.find(
+            (d) => d.validatorAddress === v.address
+          );
+          invariant(d, "delegation %s must be found in account", v.address);
+          // @henri-ly this does not work:
+          /*
+          invariant(
+            !canClaimRewards(account, d),
+            "reward no longer be claimable"
+          );
+          */
+        });
       },
     },
   ],
