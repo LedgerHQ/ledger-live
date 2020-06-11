@@ -92,8 +92,13 @@ function DelegationAmount({ navigation, route }: Props) {
       validators.push({ address: validatorAddress, amount: value });
     }
 
+    const filteredValidators =
+      tx.mode === "delegate"
+        ? validators.filter(v => !v.amount.eq(0))
+        : validators;
+
     const transaction = bridge.updateTransaction(tx, {
-      validators,
+      validators: filteredValidators,
     });
 
     navigation.navigate(route.params.nextScreen, {
