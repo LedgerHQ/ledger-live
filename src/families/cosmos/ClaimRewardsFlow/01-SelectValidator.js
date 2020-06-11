@@ -101,6 +101,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
       <View style={styles.main}>
         <FlatList
           style={styles.list}
+          keyExtractor={d => d.validatorAddress}
           data={delegations}
           renderItem={renderItem}
         />

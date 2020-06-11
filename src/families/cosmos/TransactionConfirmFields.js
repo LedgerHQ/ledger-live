@@ -104,19 +104,10 @@ function Pre({
               {mappedDelegations[0].formattedAmount}
             </LText>
           </DataRow>
-
-          <DataRow label={t("ValidateOnDevice.gas")}>
-            <LText semiBold style={styles.text}>
-              <CurrencyUnitValue
-                unit={unit}
-                value={transaction.fees}
-                disableRounding
-              />
-            </LText>
-          </DataRow>
         </>
       );
     case "claimReward":
+    case "claimRewardCompound":
       return (
         <>
           <DataRow label={t("ValidateOnDevice.account")}>

@@ -115,7 +115,10 @@ function DelegationAmount({ navigation, route }: Props) {
   const [ratioButtons] = useState(
     [0.25, 0.5, 0.75, 1].map(ratio => ({
       label: `${ratio * 100}%`,
-      value: initialMax.plus(initialValue).multipliedBy(ratio),
+      value: initialMax
+        .plus(initialValue)
+        .multipliedBy(ratio)
+        .integerValue(),
     })),
   );
 
@@ -135,6 +138,7 @@ function DelegationAmount({ navigation, route }: Props) {
           <View style={styles.ratioButtonContainer}>
             {ratioButtons.map(({ label, value: v }) => (
               <Button
+                key={label}
                 containerStyle={styles.ratioButton}
                 event=""
                 type={value.eq(v) ? "primary" : "secondary"}

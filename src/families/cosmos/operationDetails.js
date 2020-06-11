@@ -1,5 +1,4 @@
 // @flow
-import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -19,16 +18,16 @@ import type {
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
-
-/** @TODO cosmos update this url */
-const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
+import { urls } from "../../config/urls";
 
 function getURLFeesInfo(op: Operation): ?string {
-  return op.fee.gt(200000) ? helpURL : undefined;
+  return op.fee.gt(200000) ? urls.cosmosStakingRewards : undefined;
 }
 
 function getURLWhatIsThis(op: Operation): ?string {
-  return op.type !== "IN" && op.type !== "OUT" ? helpURL : undefined;
+  return op.type !== "IN" && op.type !== "OUT"
+    ? urls.cosmosStakingRewards
+    : undefined;
 }
 
 type Props = {
@@ -38,8 +37,6 @@ type Props = {
 };
 
 function OperationDetailsExtra({ extra, type, account }: Props) {
-  const { t } = useTranslation();
-
   const mappedExtra = useMappedExtraOperationDetails({
     extra,
     account,
@@ -47,30 +44,15 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
 
   switch (type) {
     case "DELEGATE":
-      invariant(
-        mappedExtra.validators,
-        "cosmos: mapped validators is required",
-      );
+    case "REDELEGATE":
+    case "UNDELEGATE":
+      if (!mappedExtra.validators) {
+        return null;
+      }
       return (
         <OperationDetailsValidators
           account={account}
           delegations={mappedExtra.validators}
-        />
-      );
-    case "REDELEGATE":
-      return (
-        <Section
-          title={t("operationDetails.extra.redelegatedTo")}
-          // $FlowFixMe
-          value={extra.validator.address}
-        />
-      );
-    case "UNDELEGATE":
-      return (
-        <Section
-          title={t("operationDetails.extra.validatorAddress")}
-          // $FlowFixMe
-          value={extra.validator.address}
         />
       );
     case "REWARD":
@@ -113,17 +95,15 @@ function OperationDetailsValidators({
         number: delegations.length,
       })}
     >
-      {delegations.map(
-        ({ validator: { validatorAddress, name }, formattedAmount }, i) => (
-          <DelegationInfo
-            key={validatorAddress + i}
-            address={validatorAddress}
-            name={name || validatorAddress}
-            formattedAmount={formattedAmount}
-            onPress={redirectAddressCreator(validatorAddress)}
-          />
-        ),
-      )}
+      {delegations.map(({ address, validator, formattedAmount }, i) => (
+        <DelegationInfo
+          key={address + i}
+          address={address}
+          name={validator?.name ?? address}
+          formattedAmount={formattedAmount}
+          onPress={redirectAddressCreator(address)}
+        />
+      ))}
     </Section>
   );
 }

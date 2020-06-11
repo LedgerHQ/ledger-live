@@ -339,7 +339,7 @@ export default function Delegations({ account }: Props) {
             RightComponent={<DelegationLabelRight onPress={onDelegate} />}
           />
           {delegations.map((d, i) => (
-            <View style={styles.delegationsWrapper}>
+            <View key={d.validatorAddress} style={styles.delegationsWrapper}>
               <DelegationRow
                 delegation={d}
                 currency={currency}
@@ -355,7 +355,7 @@ export default function Delegations({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel name={t("account.undelegation.sectionLabel")} />
           {undelegations.map((d, i) => (
-            <View style={styles.delegationsWrapper}>
+            <View key={d.validatorAddress} style={styles.delegationsWrapper}>
               <DelegationRow
                 delegation={d}
                 currency={currency}
