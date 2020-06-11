@@ -268,7 +268,7 @@ const hydrate = (data: mixed) => {
   if (!data || typeof data !== "object") return;
   const { bakers } = data;
   if (!bakers || typeof bakers !== "object" || !Array.isArray(bakers)) return;
-  hydrateBakers(bakers.map(asBaker).filter(Boolean));
+  hydrateBakers(bakers);
 };
 
 const currencyBridge: CurrencyBridge = {
