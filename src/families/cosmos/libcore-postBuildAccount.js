@@ -97,6 +97,10 @@ const getFlattenUnbonding = async (cosmosAccount) => {
   return toFlatten.reduce((old, current) => [...old, ...current], []);
 };
 
+const filterDelegation = (delegations) => {
+  return delegations.filter((delegation) => delegation.amount.gt(0));
+};
+
 const getCosmosResources = async (
   account: Account,
   coreAccount
@@ -106,7 +110,7 @@ const getCosmosResources = async (
   const flattenUnbonding = await getFlattenUnbonding(cosmosAccount);
   const flattenRedelegation = await getFlattenRedelegations(cosmosAccount);
   const res = {
-    delegations: flattenDelegation,
+    delegations: filterDelegation(flattenDelegation),
     redelegations: flattenRedelegation,
     unbondings: flattenUnbonding,
     delegatedBalance: flattenDelegation.reduce(
