@@ -30,7 +30,6 @@ import { getCoreAccount } from "../../../libcore/getCoreAccount";
 import {
   fetchAllBakers,
   hydrateBakers,
-  asBaker,
   isAccountDelegating,
 } from "../bakers";
 import { getEnv } from "../../../env";
