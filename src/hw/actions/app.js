@@ -39,11 +39,13 @@ type State = {|
   device: ?Device,
   error: ?Error,
   derivation: ?{ address: string },
+  displayUpgradeWarning: boolean,
 |};
 
 export type AppState = {|
   ...State,
   onRetry: () => void,
+  passWarning: () => void,
   inWrongDeviceForAccount: ?{ accountName: string },
 |};
 
@@ -64,7 +66,8 @@ type AppAction = Action<AppRequest, AppState, AppResult>;
 type Event =
   | { type: "error", error: Error }
   | { type: "deviceChange", device: ?Device }
-  | ConnectAppEvent;
+  | ConnectAppEvent
+  | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
 
 const mapResult = ({ opened, device, appAndVersion }: AppState): ?AppResult =>
   opened && device ? { device, appAndVersion } : null;
@@ -82,6 +85,7 @@ const getInitialState = (device?: ?Device): State => ({
   appAndVersion: null,
   error: null,
   derivation: null,
+  displayUpgradeWarning: false,
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -151,6 +155,12 @@ const reducer = (state: State, e: Event): State => {
         opened: true,
         appAndVersion: e.app,
         derivation: e.derivation,
+      };
+
+    case "display-upgrade-warning":
+      return {
+        ...state,
+        displayUpgradeWarning: e.displayUpgradeWarning,
       };
   }
   return state;
@@ -266,6 +276,13 @@ export const createAction = (
       setResetIndex((currIndex) => currIndex + 1);
     }, []);
 
+    const passWarning = useCallback(() => {
+      setState((currState) => ({
+        ...currState,
+        displayUpgradeWarning: false,
+      }));
+    }, []);
+
     return {
       ...state,
       inWrongDeviceForAccount:
@@ -275,6 +292,7 @@ export const createAction = (
             : null
           : null,
       onRetry,
+      passWarning,
     };
   };
 
