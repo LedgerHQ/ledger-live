@@ -783,9 +783,19 @@
       "unfreezeAmount": "Unfreeze amount",
       "address": "Address",
       "votes": "Votes ({{number}})",
-      "validators": "Validators ({{number}})",
-      "delegateTo": "<0>{{amount}}</0> to <0>{{name}}</0>",
-      "redelegatedTo": "Redelegated to"
+      "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
+      "validators": "Validators",
+      "delegated": "Delegated ({{amount}})",
+      "redelegated": "Redelegated ({{amount}})",
+      "redelegatedFrom": "Redelegated from",
+      "redelegatedTo": "Redelegated to",
+      "redelegatedAmount": "Redelegated amount",
+      "undelegated": "Undelegated ({{amount}})",
+      "undelegatedFrom": "Undelegated from",
+      "undelegatedAmount": "Undelegated amount",
+      "rewardFrom": "Reward from",
+      "rewardAmount": "Amount collected",
+      "memo": "Memo"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
