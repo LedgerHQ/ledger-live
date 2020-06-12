@@ -27,11 +27,7 @@ import { isAccountBalanceSignificant, getMainAccount } from "../../../account";
 import { withLibcore } from "../../../libcore/access";
 import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
-import {
-  fetchAllBakers,
-  hydrateBakers,
-  isAccountDelegating,
-} from "../bakers";
+import { fetchAllBakers, hydrateBakers, isAccountDelegating } from "../bakers";
 import { getEnv } from "../../../env";
 
 type EstimateGasLimitAndStorage = (

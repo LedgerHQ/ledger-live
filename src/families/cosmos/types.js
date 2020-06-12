@@ -574,7 +574,7 @@ export const reflect = (declare: (string, Spec) => void) => {
         params: ["hex"],
       },
       getFee: {
-        returns: "Amount"
+        returns: "Amount",
       },
       getGas: {},
       serializeForSignature: {},
