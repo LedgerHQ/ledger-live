@@ -14,7 +14,7 @@ type Props = {
 
 export type ModalInfo = {
   description: React$Node,
-  Icon: () => React$Element<React$ElementType>,
+  Icon?: () => React$Element<React$ElementType>,
   title: React$Node,
 };
 
@@ -29,9 +29,11 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
       {data.map(({ description, Icon, title }, i) => (
         <View style={styles.section} key={i}>
           <View style={styles.header}>
-            <View style={styles.iconWrapper}>
-              <Icon />
-            </View>
+            {Icon && (
+              <View style={styles.iconWrapper}>
+                <Icon />
+              </View>
+            )}
             <LText style={styles.title} semiBold secondary>
               {title}
             </LText>

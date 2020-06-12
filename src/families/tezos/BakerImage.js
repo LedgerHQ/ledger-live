@@ -7,7 +7,7 @@ import Circle from "../../components/Circle";
 
 type Props = {
   size?: number,
-  baker: ?Baker,
+  baker?: ?Baker,
 };
 
 const BakerImage = ({ baker, size = 64 }: Props) => (

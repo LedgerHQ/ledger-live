@@ -223,6 +223,7 @@ export default function DelegationDetailsModal({
   const height = Math.min(getWindowDimensions().height - 400, 280);
 
   return (
+    // TODO use DelegationDrawer component
     <BottomModal
       id="DelegationDetailsModal"
       isOpened={isOpened}

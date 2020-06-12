@@ -2,34 +2,33 @@
 
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
-import LText from "../../../components/LText";
+import { useTranslation } from "react-i18next";
 import colors from "../../../colors";
 import Button from "../../../components/Button";
+import AccountSectionLabel from "../../../components/AccountSectionLabel";
 
 type Props = {
   count: number,
   onPress: () => void,
 };
 
-const Header = ({ count, onPress }: Props) => {
+export default function Header({ count, onPress }: Props) {
+  const { t } = useTranslation();
   return (
     <>
       <View style={styles.root}>
-        <LText style={styles.title} semiBold>
-          <Trans i18nKey="tron.voting.header" values={{ total: count }} />
-        </LText>
+        <AccountSectionLabel name={t("tron.voting.header", { total: count })} />
         <Button
           containerStyle={styles.button}
           type="lightSecondary"
           event="TronManageVotes"
           onPress={onPress}
-          title={<Trans i18nKey="tron.voting.manageVotes" />}
+          title={t("tron.voting.manageVotes")}
         />
       </View>
     </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -47,5 +46,3 @@ const styles = StyleSheet.create({
   },
   button: { paddingRight: 0 },
 });
-
-export default Header;

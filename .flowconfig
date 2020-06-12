@@ -21,8 +21,6 @@ node_modules/warning/.*
 .*/TcpServer.js
 .*/core-js/.*
 
-.*/.yalc/.*
-
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
 
@@ -85,4 +83,4 @@ untyped-import
 untyped-type-import
 
 [version]
-^0.105.0
+^0.113.0

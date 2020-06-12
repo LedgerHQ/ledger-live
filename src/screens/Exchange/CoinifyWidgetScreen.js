@@ -2,9 +2,7 @@
 
 import React from "react";
 import { StyleSheet } from "react-native";
-// $FlowFixMe
-import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import type {
   Account,
   AccountLikeArray,
@@ -15,12 +13,13 @@ import { flattenAccountsSelector } from "../../reducers/accounts";
 
 import CoinifyWidget from "./CoinifyWidget";
 
-type Navigation = NavigationScreenProp<{ params: {} }>;
+// TODO: Add proper type
+type RouteParams = any;
 
 type Props = {
   accounts: Account[],
   allAccounts: AccountLikeArray,
-  navigation: Navigation,
+  navigation: any,
   route: { params: RouteParams },
 };
 

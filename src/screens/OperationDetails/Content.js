@@ -109,6 +109,8 @@ export default function Content({ account, parentAccount, operation }: Props) {
   const isConfirmed = confirmations >= currencySettings.confirmationsNb;
 
   const specific = byFamiliesOperationDetails[mainAccount.currency.family];
+  const urlFeesInfo =
+    specific && specific.getURLFeesInfo && specific.getURLFeesInfo(operation);
   const Extra =
     specific && specific.OperationDetailsExtra
       ? specific.OperationDetailsExtra
@@ -277,7 +279,22 @@ export default function Content({ account, parentAccount, operation }: Props) {
       />
 
       {isNegative ? (
-        <Section title={t("operationDetails.fees")}>
+        <Section
+          title={t("operationDetails.fees")}
+          headerRight={
+            urlFeesInfo ? (
+              <View>
+                <HelpLink
+                  event="MultipleAddressesSupport"
+                  onPress={() => Linking.openURL(urls.multipleAddresses)}
+                  title={t("common.learnMore")}
+                />
+              </View>
+            ) : (
+              undefined
+            )
+          }
+        >
           {operation.fee ? (
             <View style={styles.feeValueContainer}>
               <LText style={sectionStyles.value} semiBold>
@@ -439,4 +456,5 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     color: colors.smoke,
   },
+  infoLinkWrapper: {},
 });

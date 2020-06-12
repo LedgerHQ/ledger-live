@@ -44,6 +44,7 @@ setSupportedCurrencies([
   "stealthcoin",
   "bitcoin_testnet",
   "ethereum_ropsten",
+  "cosmos",
 ]);
 
 if (Config.VERBOSE) {
