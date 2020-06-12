@@ -252,7 +252,7 @@ const cosmos: AppSpec<Transaction> = {
         invariant(cosmosResources, "cosmos");
         transaction.validators.forEach((v) => {
           const d = cosmosResources.redelegations.find(
-            (d) => d.validatorSrcAddress === v.address
+            (d) => d.validatorDstAddress === v.address
           );
           invariant(d, "redelegated %s must be found in account", v.address);
           expect({

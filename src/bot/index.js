@@ -7,7 +7,7 @@ import flatMap from "lodash/flatMap";
 import { getEnv } from "../env";
 import allSpecs from "../generated/specs";
 import network from "../network";
-import type { MutationReport } from "./types";
+import type { MutationReport, SpecReport } from "./types";
 import { promiseAllBatched } from "../promise";
 import {
   findCryptoCurrencyByKeyword,
@@ -55,28 +55,67 @@ export async function bot({ currency, mutation }: Arg = {}) {
     }
   }
 
-  const results = await promiseAllBatched(4, specs, (spec) => {
-    const logs = [];
-    specsLogs.push(logs);
-    return runWithAppSpec(spec, (message) => {
-      log("bot", message);
-      console.log(message);
-      logs.push(message);
-    }).catch((fatalError) => ({
-      spec,
-      fatalError,
-      mutations: [],
-      accountsBefore: [],
-      accountsAfter: [],
-    }));
-  });
-  const mutationReports = flatMap(results, (r) => r.mutations || []);
+  const results: Array<SpecReport<any>> = await promiseAllBatched(
+    4,
+    specs,
+    (spec) => {
+      const logs = [];
+      specsLogs.push(logs);
+      return runWithAppSpec(spec, (message) => {
+        log("bot", message);
+        console.log(message);
+        logs.push(message);
+      }).catch((fatalError) => ({
+        spec,
+        fatalError,
+        mutations: [],
+        accountsBefore: [],
+        accountsAfter: [],
+      }));
+    }
+  );
+  const allMutationReports = flatMap(results, (r) => r.mutations || []);
 
-  const errorCases = mutationReports.filter((r) => r.error);
+  const mutationReports = allMutationReports.filter(
+    (r) => r.mutation || r.error
+  );
+  const errorCases = allMutationReports.filter((r) => r.error);
 
   const specFatals = results.filter((r) => r.fatalError);
 
   const botHaveFailed = specFatals.length > 0 || errorCases.length > 0;
+
+  const specsWithUncoveredMutations = results
+    .map((r) => ({
+      spec: r.spec,
+      unavailableMutations: r.spec.mutations
+        .map((mutation) => {
+          if (
+            r.mutations &&
+            r.mutations.some((mr) => mr.mutation === mutation)
+          ) {
+            return;
+          }
+          const errors = (r.mutations || [])
+            .map((mr) =>
+              !mr.mutation && mr.unavailableMutationReasons
+                ? mr.unavailableMutationReasons.find(
+                    (r) => r.mutation === mutation
+                  )
+                : null
+            )
+            .filter(Boolean)
+            .map(({ error }) => error);
+          return { mutation, errors };
+        })
+        .filter(Boolean),
+    }))
+    .filter((r) => r.unavailableMutations.length > 0);
+
+  const uncoveredMutations = flatMap(
+    specsWithUncoveredMutations,
+    (s) => s.unavailableMutations
+  );
 
   if (specFatals.length) {
     console.error(`================== SPEC ERRORS =====================\n`);
@@ -97,6 +136,14 @@ export async function bot({ currency, mutation }: Arg = {}) {
       `/!\\ ${errorCases.length} failures out of ${mutationReports.length} mutations. Check above!\n`
     );
   }
+  const withoutFunds = results
+    .filter(
+      (s) =>
+        !s.fatalError &&
+        ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
+          (s.mutations && s.mutations.every((r) => !r.mutation)))
+    )
+    .map((s) => s.spec.name);
 
   const {
     GITHUB_SHA,
@@ -113,14 +160,26 @@ export async function bot({ currency, mutation }: Arg = {}) {
     )}`;
 
     if (errorCases.length) {
-      title = `❌ ${errorCases.length} mutations failed (out of ${mutationReports.length})`;
+      title = `❌ ${errorCases.length} txs failed (total ${mutationReports.length})`;
     } else {
       title = `${specFatals.length ? "❌" : "👏"} ${
         mutationReports.length
-      } mutations succeed`;
+      } txs succeed`;
     }
     if (specFatals.length) {
       title += ` ⚠️ ${specFatals.length} specs failed`;
+    }
+
+    let subtitle = ">";
+
+    if (uncoveredMutations.length) {
+      subtitle += ` ⚠️ ${uncoveredMutations.length} mutations uncovered`;
+    }
+
+    if (withoutFunds.length) {
+      subtitle += ` ⚠️ ${
+        withoutFunds.length
+      } specs don't have enough funds! (${withoutFunds.join(", ")})`;
     }
 
     body += `## ${title}`;
@@ -130,14 +189,9 @@ export async function bot({ currency, mutation }: Arg = {}) {
     }
     body += "\n\n";
 
-    const withoutFunds = results
-      .filter(
-        (s) =>
-          !s.fatalError &&
-          ((s.accountsBefore && s.accountsBefore.every(isAccountEmpty)) ||
-            (s.mutations && s.mutations.every((r) => !r.mutation)))
-      )
-      .map((s) => s.spec.name);
+    body += subtitle;
+
+    body += "\n\n";
 
     if (specFatals.length) {
       body += "<details>\n";
@@ -183,13 +237,44 @@ export async function bot({ currency, mutation }: Arg = {}) {
     });
     body += "</details>\n\n";
 
-    body += "### Portfolio\n\n";
+    body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
+    results.forEach((r, i) => {
+      const spec = specs[i];
+      const logs = specsLogs[i];
+      body += `#### Spec ${spec.name} (${
+        r.mutations ? r.mutations.length : "failed"
+      } mutations)\n`;
+      body += "\n```\n";
+      body += logs.join("\n");
+      if (r.mutations) {
+        r.mutations.forEach((m) => {
+          if (m.error || m.mutation) {
+            body += formatReportForConsole(m) + "\n";
+          }
+        });
+      }
+      body += "\n```\n";
+    });
+    body += "</details>\n\n";
 
-    if (withoutFunds.length) {
-      body += `**⚠️ ${
-        withoutFunds.length
-      } specs don't have enough funds!** (${withoutFunds.join(", ")})\n\n`;
+    if (uncoveredMutations.length > 0) {
+      body += "<details>\n";
+      body += `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`;
+      specsWithUncoveredMutations.forEach(({ spec, unavailableMutations }) => {
+        body += `#### Spec ${spec.name} (${unavailableMutations.length} unmet mutations)\n`;
+        unavailableMutations.forEach((m) => {
+          body +=
+            "- **" +
+            m.mutation.name +
+            "**: " +
+            m.errors.map((e) => e.message).join(", ") +
+            "\n";
+        });
+      });
+      body += "</details>\n\n";
     }
+
+    body += "### Portfolio\n\n";
 
     body += "<details>\n";
     body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
@@ -197,7 +282,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     body += "|-----------------|------------|---------|--------|\n";
     results.forEach((r) => {
       function sumAccounts(all) {
-        if (!all || all.lengnth === 0) return;
+        if (!all || all.length === 0) return;
         return all.reduce(
           (sum, a) => sum.plus(a.spendableBalance),
           BigNumber(0)
@@ -265,9 +350,9 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
     const { SLACK_API_TOKEN } = process.env;
     if (SLACK_API_TOKEN && githubComment) {
-      const text = `${String(GITHUB_WORKFLOW)}: ${title} (<${
+      let text = `${String(GITHUB_WORKFLOW)}: ${title} (<${
         githubComment.html_url
-      }|details> – <${runURL}|logs>)`;
+      }|details> – <${runURL}|logs>)\n${subtitle}`;
       await network({
         url: "https://slack.com/api/chat.postMessage",
         method: "POST",

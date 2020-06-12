@@ -95,7 +95,9 @@ export function formatReportForConsole<T: Transaction>({
     const detail =
       account && isAccountEmpty(account)
         ? "account is empty"
-        : unavailableMutationReasons.join(", ");
+        : unavailableMutationReasons
+            .map(({ mutation, error }) => mutation.name + ": " + error.message)
+            .join(", ");
     str += `🤷‍♂️ couldn't find a mutation to do! (${detail})\n`;
   }
   if (mutation) {

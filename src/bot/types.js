@@ -111,7 +111,10 @@ export type MutationReport<T: Transaction> = {
   appCandidate: AppCandidate,
   account?: Account,
   maxSpendable?: BigNumber,
-  unavailableMutationReasons?: string[],
+  unavailableMutationReasons?: Array<{
+    error: Error,
+    mutation: MutationSpec<T>,
+  }>,
   mutation?: MutationSpec<T>,
   destination?: Account,
   transaction?: T,
