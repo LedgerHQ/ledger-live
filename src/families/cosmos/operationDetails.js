@@ -11,18 +11,12 @@ import type {
   OperationType,
   Operation,
 } from "@ledgerhq/live-common/lib/types";
-import {
-  useMappedExtraOperationDetails,
-  useCosmosPreloadData,
-} from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 
-import type {
-  CosmosExtraTxInfo,
-  CosmosMappedDelegationInfo,
-} from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type { CosmosExtraTxInfo } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
 import { urls } from "../../config/urls";
@@ -47,26 +41,54 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
   const { validators: cosmosValidators } = useCosmosPreloadData();
-  const mappedExtra = useMappedExtraOperationDetails({
-    extra,
-    account,
-  });
+
+  const redirectAddressCreator = useCallback(
+    address => () => {
+      const url = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
+      if (url) Linking.openURL(url);
+    },
+    [account],
+  );
 
   let ret = null;
 
   switch (type) {
-    case "DELEGATE":
-      ret = mappedExtra && (
-        <OperationDetailsValidators
-          account={account}
-          delegations={mappedExtra.validators}
+    case "DELEGATE": {
+      const { validators } = extra;
+      if (!validators || validators.length <= 0) break;
+
+      const validator = extra.validators[0];
+
+      const formattedValidator = cosmosValidators.find(
+        v => v.validatorAddress === validator.address,
+      );
+
+      const formattedAmount = formatCurrencyUnit(
+        unit,
+        BigNumber(validator.amount),
+        {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+        },
+      );
+
+      ret = (
+        <DelegationInfo
+          address={formattedValidator.validatorAddress}
+          name={formattedValidator?.name ?? formattedValidator.validatorAddress}
+          formattedAmount={formattedAmount}
+          onPress={redirectAddressCreator(formattedValidator.validatorAddress)}
         />
       );
       break;
-
+    }
     case "UNDELEGATE": {
       const { validators } = extra;
-      if (!validators || validators.length <= 0) return null;
+      if (!validators || validators.length <= 0) break;
 
       const validator = extra.validators[0];
 
@@ -91,6 +113,9 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
             value={
               formattedValidator?.name ?? formattedValidator.validatorAddress
             }
+            onPress={() =>
+              redirectAddressCreator(formattedValidator.validatorAddress)
+            }
           />
           <Section
             title={t("operationDetails.extra.undelegatedAmount")}
@@ -103,7 +128,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     case "REDELEGATE": {
       const { cosmosSourceValidator, validators } = extra;
       if (!validators || validators.length <= 0 || !cosmosSourceValidator)
-        return null;
+        break;
 
       const validator = extra.validators[0];
 
@@ -134,11 +159,15 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
                 ? formattedSourceValidator.name
                 : cosmosSourceValidator
             }
+            onPress={() => redirectAddressCreator(cosmosSourceValidator)}
           />
           <Section
             title={t("operationDetails.extra.redelegatedTo")}
             value={
               formattedValidator ? formattedValidator.name : validator.address
+            }
+            onPress={() =>
+              redirectAddressCreator(formattedValidator.validatorAddress)
             }
           />
           <Section
@@ -151,7 +180,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     }
     case "REWARD": {
       const { validators } = extra;
-      if (!validators || validators.length <= 0) return null;
+      if (!validators || validators.length <= 0) break;
 
       const validator = extra.validators[0];
 
@@ -175,6 +204,9 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
             title={t("operationDetails.extra.rewardFrom")}
             value={
               formattedValidator?.name ?? formattedValidator.validatorAddress
+            }
+            onPress={() =>
+              redirectAddressCreator(formattedValidator.validatorAddress)
             }
           />
           <Section
@@ -204,44 +236,3 @@ export default {
   getURLWhatIsThis,
   OperationDetailsExtra,
 };
-
-type OperationDetailsValidatorsProps = {
-  account: Account,
-  delegations: CosmosMappedDelegationInfo[],
-};
-
-function OperationDetailsValidators({
-  account,
-  delegations,
-}: OperationDetailsValidatorsProps) {
-  const { t } = useTranslation();
-
-  const redirectAddressCreator = useCallback(
-    address => () => {
-      const url = getAddressExplorer(
-        getDefaultExplorerView(account.currency),
-        address,
-      );
-      if (url) Linking.openURL(url);
-    },
-    [account],
-  );
-
-  return (
-    <Section
-      title={t("operationDetails.extra.validators", {
-        number: delegations.length,
-      })}
-    >
-      {delegations.map(({ address, validator, formattedAmount }, i) => (
-        <DelegationInfo
-          key={address + i}
-          address={address}
-          name={validator?.name ?? address}
-          formattedAmount={formattedAmount}
-          onPress={redirectAddressCreator(address)}
-        />
-      ))}
-    </Section>
-  );
-}
