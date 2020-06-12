@@ -12,6 +12,7 @@ import type {
   Operation,
 } from "@ledgerhq/live-common/lib/types";
 import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
@@ -81,12 +82,20 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
       );
 
       ret = (
-        <DelegationInfo
-          address={validator.address}
-          name={formattedValidator?.name ?? validator.address}
-          formattedAmount={formattedAmount}
-          onPress={redirectAddressCreator(validator.address)}
-        />
+        <>
+          <Section
+            title={t("operationDetails.extra.delegatedTo")}
+            value={
+              formattedValidator?.name ??
+              formattedValidator?.validatorAddress ??
+              ""
+            }
+          />
+          <Section
+            title={t("operationDetails.extra.delegatedAmount")}
+            value={formattedAmount}
+          />
+        </>
       );
       break;
     }
