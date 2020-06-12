@@ -2081,7 +2081,8 @@
     "gas": "Gas",
     "validatorAddress": "Validator address",
     "rewardAmount": "Reward amount",
-    "undelegatedAmount": "Undelegated amount"
+    "undelegatedAmount": "Undelegated amount",
+    "memo": "Memo"
   },
   "Terms": {
     "title": "Terms of Use",

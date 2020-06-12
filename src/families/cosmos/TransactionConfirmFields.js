@@ -175,7 +175,6 @@ function Fees({
   const { t } = useTranslation();
 
   switch (transaction.mode) {
-    case "send":
     case "delegate":
     case "redelegate":
       return null;
@@ -196,6 +195,14 @@ function Post({ transaction }: { transaction: Transaction }) {
   const { t } = useTranslation();
 
   switch (transaction.mode) {
+    case "send":
+      return transaction.memo ? (
+        <DataRow label={t("ValidateOnDevice.memo")}>
+          <LText semiBold style={styles.text}>
+            {transaction.memo}
+          </LText>
+        </DataRow>
+      ) : null;
     case "redelegate":
     case "claimReward":
     case "undelegate":
