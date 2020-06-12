@@ -13,6 +13,15 @@ import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
 import { getMaxEstimatedBalance } from "./logic";
 
+async function fetch(url: string) {
+  const { data } = await network({
+    method: "GET",
+    url,
+  });
+
+  return data.result;
+}
+
 export async function cosmosBuildTransaction({
   account,
   core,
@@ -103,7 +112,10 @@ export async function cosmosBuildTransaction({
   );
 
   // Signature information
-  const seq = await cosmosLikeAccount.getSequence();
+  const accountData = await fetch(
+    `${getBaseApiUrl()}/auth/accounts/${account.freshAddress}`
+  );
+  const seq = accountData.value.sequence;
   const accNum = await cosmosLikeAccount.getAccountNumber();
 
   await transactionBuilder.setAccountNumber(accNum);
