@@ -12,6 +12,19 @@ import { cosmosCreateMessage } from "./message";
 import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
 import { getMaxEstimatedBalance } from "./logic";
+import network from "../../network";
+
+const getBaseApiUrl = () =>
+  getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
+
+async function fetch(url: string) {
+  const { data } = await network({
+    method: "GET",
+    url,
+  });
+
+  return data.result;
+}
 
 export async function cosmosBuildTransaction({
   account,
@@ -103,7 +116,10 @@ export async function cosmosBuildTransaction({
   );
 
   // Signature information
-  const seq = await cosmosLikeAccount.getSequence();
+  const accountData = await fetch(
+    `${getBaseApiUrl()}/auth/accounts/${account.freshAddress}`
+  );
+  const seq = accountData.value.sequence;
   const accNum = await cosmosLikeAccount.getAccountNumber();
 
   await transactionBuilder.setAccountNumber(accNum);
