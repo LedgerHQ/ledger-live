@@ -3,7 +3,6 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 // $FlowFixMe
 import SafeAreaView from "react-native-safe-area-view";
-import type { NavigationScreenProp } from "react-navigation";
 import { Trans, useTranslation } from "react-i18next";
 import type {
   Account,
@@ -29,13 +28,12 @@ import { NavigatorName } from "../../const";
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 const forceInset = { bottom: "always" };
 
-type Navigation = NavigationScreenProp<{ params: {} }>;
-
 type Props = {
   accounts: Account[],
   allAccounts: AccountLikeArray,
-  navigation: Navigation,
-  route: { params: RouteParams },
+  navigation: any,
+  // TODO: add proper type
+  route: { params: any },
 };
 
 export default function SelectAccount({ navigation, route }: Props) {

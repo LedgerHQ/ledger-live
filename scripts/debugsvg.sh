@@ -5,7 +5,7 @@ cat <<EOF
 // @flow
 import React, { Component } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import LText from "../components/LText";
 import colors from "../colors";
 EOF

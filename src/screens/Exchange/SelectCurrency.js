@@ -3,9 +3,7 @@
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
-// $FlowFixMe
-import { SafeAreaView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -32,9 +30,7 @@ const forceInset = { bottom: "always" };
 
 type Props = {
   devMode: boolean,
-  navigation: NavigationScreenProp<{
-    params: {},
-  }>,
+  navigation: any,
 };
 
 const keyExtractor = currency => currency.id;
