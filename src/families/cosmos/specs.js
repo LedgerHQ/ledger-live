@@ -29,13 +29,13 @@ const cosmos: AppSpec<Transaction> = {
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(COSMOS_MIN_SAFE), "balance is too low");
   },
-  test: ({ account, accountBeforeTransaction }) => {
+  test: ({ account, accountBeforeTransaction, status }) => {
     const newOps = account.operations.slice(
       0,
       account.operations.length - accountBeforeTransaction.operations.length
     );
     invariant(newOps.length > 0, "new ops appeared");
-    /*
+
     const feesOp = newOps.find((op) => op.type === "FEES");
     invariant(feesOp, "fees op exists");
     invariant(!getOperationAmountNumber(feesOp).gt(0), "fees op negative");
@@ -47,7 +47,6 @@ const cosmos: AppSpec<Transaction> = {
       !getOperationAmountNumber(feesOp).plus(status.estimatedFees).lt(0),
       "estimated fees should never be gt than the fees"
     );
-    */
   },
   mutations: [
     {
@@ -72,6 +71,10 @@ const cosmos: AppSpec<Transaction> = {
           .slice(0, 2)
           .find((op) => op.type === "OUT");
         invariant(outOp, "out op is missing");
+
+        if (transaction.memo) {
+          expect(outOp.extra).toMatchObject({ memo: transaction.memo });
+        }
 
         expect(getOperationAmountNumber(outOp).toString()).toBe(
           transaction.amount.negated().toString()

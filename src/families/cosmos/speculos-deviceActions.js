@@ -1,41 +1,115 @@
 // @flow
 import type { DeviceAction } from "../../bot/types";
+import { deviceActionFlow } from "../../bot/specs";
+import { formatCurrencyUnit } from "../../currencies";
 import type { Transaction } from "./types";
 
-const acceptTransaction: DeviceAction<
-  Transaction,
-  { lastStepReached: boolean }
-> = ({
-  transport,
-  event,
-  state = {
-    lastStepReached: false,
-  },
-}) => {
-  if (
-    event.text.startsWith("Chain ID") ||
-    event.text.startsWith("Account") ||
-    event.text.startsWith("Sequence") ||
-    event.text.startsWith("Fee") ||
-    event.text.startsWith("Gas") ||
-    event.text.startsWith("Type") ||
-    event.text.startsWith("Amount") ||
-    event.text.startsWith("From") ||
-    event.text.startsWith("To") ||
-    event.text.startsWith("Memo") ||
-    event.text.startsWith("Delegator") ||
-    event.text.startsWith("Validator")
-  ) {
-    transport.button("Rr");
-    return state;
-  }
-
-  if (!state.lastStepReached && event.text.startsWith("Sign transaction")) {
-    transport.button("RrLRlr");
-    return { lastStepReached: true };
-  }
-
-  return state;
+const typeWording = {
+  send: "Send",
+  delegate: "Delegate",
+  redelegate: "Redelegate",
+  undelegate: "Undelegate",
+  claimReward: "Withdraw Reward",
+  claimRewardCompound: "(not tested)",
 };
+
+const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
+  steps: [
+    {
+      title: "Type",
+      button: "Rr",
+      expectedValue: ({ transaction }) => typeWording[transaction.mode],
+    },
+    {
+      title: "Validator Source",
+      button: "Rr",
+      expectedValue: ({ transaction }) =>
+        transaction.cosmosSourceValidator || "",
+    },
+    {
+      title: "Validator Dest",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.validators[0].address,
+    },
+    {
+      title: "Validator",
+      button: "Rr",
+      expectedValue: ({ transaction }, acc) =>
+        transaction.validators[
+          acc.filter((a) => a.title === "Validator").length
+        ].address,
+    },
+    {
+      title: "Memo",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.memo || "",
+    },
+    {
+      title: "Fee",
+      button: "Rr",
+      expectedValue: ({ account, status }) =>
+        formatCurrencyUnit(
+          {
+            ...account.unit,
+            code: account.currency.deviceTicker || account.unit.code,
+          },
+          status.estimatedFees,
+          {
+            disableRounding: true,
+            showAllDigits: true,
+          }
+        ) + " ATOM",
+    },
+    {
+      title: "Gas",
+      button: "Rr",
+      // FIXME can we get it?
+      // expectedValue: () => "",
+    },
+    {
+      title: "Amount",
+      button: "Rr",
+      expectedValue: ({ account, status, transaction }, acc) =>
+        formatCurrencyUnit(
+          {
+            ...account.unit,
+            code: account.currency.deviceTicker || account.unit.code,
+          },
+          transaction.mode === "send"
+            ? status.amount
+            : transaction.validators[
+                acc.filter((a) => a.title === "Amount").length
+              ].amount,
+          {
+            disableRounding: true,
+            showAllDigits: true,
+          }
+        ) + " ATOM",
+    },
+    {
+      title: "From",
+      button: "Rr",
+      expectedValue: ({ account }) => account.freshAddress,
+    },
+    {
+      title: "To",
+      button: "Rr",
+      expectedValue: ({ transaction }) => transaction.recipient,
+    },
+    {
+      title: "Delegator",
+      button: "Rr",
+      expectedValue: ({ account }) => account.freshAddress,
+    },
+    {
+      title: "View transaction",
+    },
+    {
+      title: "Sign transaction",
+      final: true,
+      button: "RrLRlr",
+    },
+  ],
+});
 
 export default { acceptTransaction };
