@@ -1192,6 +1192,7 @@
       "gasLimit": "Gas Limit",
       "validateGasLimit": "Validate Gas Limit",
       "memo": {
+        "title": "Memo",
         "type": "Memo type",
         "value": "Memo value"
       },

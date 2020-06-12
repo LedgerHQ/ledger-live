@@ -128,6 +128,7 @@ export const ScreenName = {
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
   /* eslint-disable sort-keys */
+  CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
   CosmosDelegationAmount: "CosmosDelegationAmount",
