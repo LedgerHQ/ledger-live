@@ -110,6 +110,7 @@ const ethereumClassic = {
     appName: "Ethereum Classic",
   },
   dependency: "Ethereum",
+  testTimeout: 5 * 60 * 1000,
   mutations: ethereumMutations({
     maxAccount: 4,
     minimalAmount: parseCurrencyUnit(
@@ -126,6 +127,7 @@ const ethereumRopsten = {
     model: "nanoS",
     appName: "Ethereum",
   },
+  testTimeout: 5 * 60 * 1000,
   mutations: ethereumMutations({
     maxAccount: 8,
     minimalAmount: parseCurrencyUnit(
