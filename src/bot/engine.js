@@ -183,8 +183,10 @@ export async function runWithAppSpec<T: Transaction>(
         mutationsCount,
         syncAllAccountsTime,
       });
-      reportLog(formatReportForConsole(report));
+      // eslint-disable-next-line no-console
+      console.log(formatReportForConsole(report));
       mutationReports.push(report);
+      appReport.mutations = mutationReports;
 
       if (
         report.error ||
@@ -274,8 +276,8 @@ export async function runOnAccount<T: Transaction>({
         if (tx) {
           candidates.push({ mutation, tx });
         }
-      } catch (e) {
-        unavailableMutationReasons.push(mutation.name + ": " + e.message);
+      } catch (error) {
+        unavailableMutationReasons.push({ mutation, error });
       }
     }
 
