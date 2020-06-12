@@ -73,6 +73,7 @@ export type SettingsState = {
   countervalueFirst: boolean,
   hideEmptyTokenAccounts: boolean,
   blacklistedTokenIds: string[],
+  dismissedBanners: string[],
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -92,6 +93,7 @@ export const INITIAL_STATE: SettingsState = {
   countervalueFirst: false,
   hideEmptyTokenAccounts: false,
   blacklistedTokenIds: [],
+  dismissedBanners: [],
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -238,6 +240,10 @@ const handlers: Object = {
       blacklistedTokenIds: [...ids, tokenId],
     };
   },
+  SETTINGS_DISMISS_BANNER: (state, { payload }) => ({
+    ...state,
+    dismissedBanners: [...state.dismissedBanners, payload],
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -364,5 +370,8 @@ export const exportSettingsSelector = createSelector(
 
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
+
+export const dismissedBannersSelector = (state: State) =>
+  state.settings.dismissedBanners;
 
 export default handleActions(handlers, INITIAL_STATE);

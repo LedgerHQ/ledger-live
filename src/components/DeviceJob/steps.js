@@ -39,6 +39,7 @@ import LText from "../LText";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";
+import DisplayAddress from "../DisplayAddress";
 
 const inferWordingValues = meta => {
   const deviceModel = getDeviceModel(meta.modelId);
@@ -401,6 +402,52 @@ export const receiveVerifyStep: Account => Step = account => ({
     onDoneO.pipe(
       map(() => meta),
       first(),
+    ),
+});
+
+export const verifyAddressOnDeviceStep: Account => Step = account => ({
+  Body: ({ meta }: *) => (
+    <RenderStep
+      icon={
+        <DeviceNanoAction
+          width={240}
+          screen="validation"
+          modelId={meta.modelId}
+          wired={meta.wired}
+        />
+      }
+      title={
+        <Trans
+          i18nKey="SelectDevice.steps.receiveVerify.title"
+          values={{
+            currencyName: account.currency.name,
+            accountName: account.name,
+          }}
+        />
+      }
+      description={
+        <Trans
+          i18nKey="SelectDevice.steps.receiveVerify.description"
+          values={{
+            currencyName: account.currency.name,
+          }}
+        />
+      }
+    >
+      <DisplayAddress address={account.freshAddress} verified={false} />
+    </RenderStep>
+  ),
+
+  run: meta =>
+    withDevice(meta.deviceId)(transport =>
+      from(
+        getAddress(transport, {
+          derivationMode: account.derivationMode,
+          currency: account.currency,
+          path: account.freshAddressPath,
+          verify: true,
+        }),
+      ),
     ),
 });
 

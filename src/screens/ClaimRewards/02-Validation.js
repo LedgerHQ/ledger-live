@@ -1,4 +1,5 @@
 /* @flow */
+import invariant from "invariant";
 import React from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,15 +37,14 @@ type RouteParams = {
 export default function Validation({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const { account } = useSelector(accountScreenSelector(route));
-
+  invariant(account, "account is required");
   const [signing, signed] = useSignWithDevice({
     context: "ClaimRewards",
     account,
     parentAccount: undefined,
     navigation,
-    updateAccountWithUpdater: dispatch((...args) =>
-      updateAccountWithUpdater(...args),
-    ),
+    updateAccountWithUpdater: (...args) =>
+      dispatch(updateAccountWithUpdater(...args)),
   });
 
   const { status, transaction, modelId, wired } = route.params;

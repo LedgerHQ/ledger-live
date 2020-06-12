@@ -3,17 +3,22 @@ import React, { useCallback } from "react";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/lib/account";
 import { useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import {
   ReceiveActionDefault,
   SendActionDefault,
+  BuyActionDefault,
 } from "./AccountActionsDefault";
 import perFamilyAccountActions from "../../generated/accountActions";
 
 import getWindowDimensions from "../../logic/getWindowDimensions";
+import { isCurrencySupported } from "../Exchange/coinifyConfig";
 
 const { width } = getWindowDimensions();
 
@@ -37,6 +42,7 @@ export default function AccountActions({ account, parentAccount }: Props) {
   const parentId = parentAccount && parentAccount.id;
 
   const SendAction = (decorators && decorators.SendAction) || SendActionDefault;
+  const BuyAction = (decorators && decorators.BuyAction) || BuyActionDefault;
 
   const ReceiveAction =
     (decorators && decorators.ReceiveAction) || ReceiveActionDefault;
@@ -78,10 +84,16 @@ export default function AccountActions({ account, parentAccount }: Props) {
     });
   }, [onNavigate]);
 
+  const onBuy = useCallback(() => {
+    onNavigate(NavigatorName.Exchange);
+  }, [onNavigate]);
+
   const Container =
     !readOnlyModeEnabled && manageAction ? ScrollViewContainer : View;
   const btnStyle =
     !readOnlyModeEnabled && manageAction ? styles.scrollBtn : styles.btn;
+
+  const canBeBought = isCurrencySupported(getAccountCurrency(account));
 
   return (
     <Container style={styles.root}>
@@ -99,6 +111,14 @@ export default function AccountActions({ account, parentAccount }: Props) {
         style={[btnStyle]}
         onPress={onReceive}
       />
+      {!readOnlyModeEnabled && canBeBought && (
+        <BuyAction
+          account={account}
+          parentAccount={parentAccount}
+          style={[btnStyle]}
+          onPress={onBuy}
+        />
+      )}
       {manageAction}
     </Container>
   );

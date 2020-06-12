@@ -22,16 +22,23 @@ type Props = {
 
 type RouteParams = {
   currency: CryptoCurrency,
+  inline?: boolean,
 };
 
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const onSelectDevice = useCallback(
     (meta: *) => {
-      const currency = route.params.currency;
-      navigation.navigate(ScreenName.AddAccountsAccounts, {
+      const { currency, inline } = route.params;
+      const arg = {
         currency,
+        inline,
         ...meta,
-      });
+      };
+      if (inline) {
+        navigation.replace(ScreenName.AddAccountsAccounts, arg);
+      } else {
+        navigation.navigate(ScreenName.AddAccountsAccounts, arg);
+      }
     },
     [navigation, route],
   );
