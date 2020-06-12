@@ -12,13 +12,11 @@ import type {
   Operation,
 } from "@ledgerhq/live-common/lib/types";
 import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
-import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 
 import type { CosmosDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/types";
-import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
 import { urls } from "../../config/urls";
 
