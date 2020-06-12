@@ -150,9 +150,12 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorAddress === v.address
           );
           invariant(d, "delegated %s must be found in account", v.address);
-          expect(v).toMatchObject({
+          expect({
+            address: v.address,
+            amount: v.amount.toString(),
+          }).toMatchObject({
             address: d.validatorAddress,
-            amount: d.amount,
+            amount: d.amount.toString(),
           });
         });
       },
@@ -205,9 +208,12 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorAddress === v.address
           );
           invariant(d, "undelegated %s must be found in account", v.address);
-          expect(v).toMatchObject({
+          expect({
+            address: v.address,
+            amount: v.amount.toString(),
+          }).toMatchObject({
             address: d.validatorAddress,
-            amount: d.amount,
+            amount: d.amount.toString(),
           });
         });
       },
@@ -249,9 +255,12 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorSrcAddress === v.address
           );
           invariant(d, "redelegated %s must be found in account", v.address);
-          expect(v).toMatchObject({
+          expect({
+            address: v.address,
+            amount: v.amount.toString(),
+          }).toMatchObject({
             address: d.validatorSrcAddress,
-            amount: d.amount,
+            amount: d.amount.toString(),
           });
         });
       },
