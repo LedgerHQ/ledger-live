@@ -130,7 +130,7 @@ const getSendTransactionStatus = async (a, t) => {
 
   let amount = t.amount;
 
-  if (amount.lte(0) && t.useAllAmount !== true) {
+  if (amount.lte(0)) {
     errors.amount = new AmountRequired();
   }
 
