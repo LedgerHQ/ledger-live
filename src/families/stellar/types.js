@@ -40,6 +40,10 @@ declare class CoreStellarLikeTransactionBuilder {
   build(): Promise<CoreStellarLikeTransaction>;
 }
 
+declare class CoreStellarLikeMemo {
+  memoValuetoString(): Promise<string>
+}
+
 declare class CoreStellarLikeTransaction {
   transactionHash: string;
   toRawTransaction(): string;
@@ -48,6 +52,7 @@ declare class CoreStellarLikeTransaction {
   getSourceAccount(): Promise<CoreAddress>;
   getSourceAccountSequence(): Promise<CoreBigInt>;
   getFee(): Promise<CoreAmount>;
+  getMemo(): Promise<CoreStellarLikeMemo>
 }
 
 declare class CoreStellarLikeOperation {
@@ -183,6 +188,12 @@ export const reflect = (declare: (string, Spec) => void) => {
     },
   });
 
+  declare("StellarLikeMemo", {
+    methods: {
+      memoValuetoString: {},
+    },
+  });
+
   declare("StellarLikeFeeStats", {
     njsUsesPlainObject: true,
     methods: {
@@ -247,6 +258,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       toSignatureBase: {
         returns: "hex",
       },
+      getMemo: {
+        returns: "StellarLikeMemo"
+      }
     },
   });
 

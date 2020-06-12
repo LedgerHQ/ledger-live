@@ -1,6 +1,7 @@
 // @flow
 
 import type { CoreOperation } from "../../libcore/types";
+import type { Operation } from "../../types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 
 async function stellarBuildOperation({
@@ -16,10 +17,19 @@ async function stellarBuildOperation({
   const transactionSequenceNumber = await libcoreBigIntToBigNumber(
     transactionSequenceNumberRaw
   );
-  return {
+  const memoObj = await stellarLikeTransaction.getMemo();
+  const memo = await memoObj.memoValuetoString();
+
+  const out: $Shape<Operation> = {
     hash,
     transactionSequenceNumber: transactionSequenceNumber.toNumber(),
   };
+
+  if (memo && memo !== "") {
+    out.extra = { memo };
+  }
+
+  return out;
 }
 
 export default stellarBuildOperation;
