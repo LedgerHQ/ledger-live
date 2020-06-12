@@ -12,6 +12,10 @@ import { cosmosCreateMessage } from "./message";
 import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
 import { getMaxEstimatedBalance } from "./logic";
+import network from "../../network";
+
+const getBaseApiUrl = () =>
+  getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
 
 async function fetch(url: string) {
   const { data } = await network({
