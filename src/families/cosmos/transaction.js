@@ -40,11 +40,14 @@ export const formatTransaction = (
         validators
           .map(
             (v) =>
-              formatCurrencyUnit(getAccountUnit(account), v.amount) +
-              "->" +
+              +"  " +
+              formatCurrencyUnit(getAccountUnit(account), v.amount, {
+                disableRounding: true,
+              }) +
+              " -> " +
               v.address
           )
-          .join(" ")
+          .join("\n")
   }${
     !cosmosSourceValidator
       ? ""

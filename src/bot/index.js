@@ -159,27 +159,27 @@ export async function bot({ currency, mutation }: Arg = {}) {
       GITHUB_RUN_ID
     )}`;
 
+    const success = mutationReports.length - errorCases.length;
+    if (success > 0) {
+      title += `✅ ${success} txs `;
+    }
     if (errorCases.length) {
-      title = `❌ ${errorCases.length} txs failed (total ${mutationReports.length})`;
-    } else {
-      title = `${specFatals.length ? "❌" : "👏"} ${
-        mutationReports.length
-      } txs succeed`;
+      title += `❌ ${errorCases.length} txs `;
     }
     if (specFatals.length) {
-      title += ` ⚠️ ${specFatals.length} specs failed`;
+      title += ` ⚠️ ${specFatals.length} specs`;
     }
 
-    let subtitle = ">";
+    let subtitle = "";
 
     if (uncoveredMutations.length) {
-      subtitle += ` ⚠️ ${uncoveredMutations.length} mutations uncovered`;
+      subtitle += `> ⚠️ ${uncoveredMutations.length} mutations uncovered\n`;
     }
 
     if (withoutFunds.length) {
-      subtitle += ` ⚠️ ${
+      subtitle += `> ⚠️ ${
         withoutFunds.length
-      } specs don't have enough funds! (${withoutFunds.join(", ")})`;
+      } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
     }
 
     body += `## ${title}`;
