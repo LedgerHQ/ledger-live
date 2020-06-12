@@ -14,6 +14,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   InvalidAddress,
   AmountRequired,
+  RecommendUndelegation,
 } from "@ledgerhq/errors";
 import {
   CosmosRedelegationInProgress,
@@ -145,6 +146,14 @@ const getSendTransactionStatus = async (a, t) => {
     totalSpent.gt(a.spendableBalance)
   ) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  if (
+    a.cosmosResources &&
+    a.cosmosResources.delegations.length > 0 &&
+    t.useAllAmount
+  ) {
+    warnings.amount = new RecommendUndelegation();
   }
 
   return Promise.resolve({
