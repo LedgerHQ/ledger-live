@@ -16,7 +16,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatC
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 
-import type { CosmosExtraTxInfo } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import type { CosmosDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
 import { urls } from "../../config/urls";
@@ -32,7 +32,11 @@ function getURLWhatIsThis(op: Operation): ?string {
 }
 
 type Props = {
-  extra: CosmosExtraTxInfo,
+  extra: {
+    validators: CosmosDelegationInfo[],
+    cosmosSourceValidator?: string,
+    memo?: string,
+  },
   type: OperationType,
   account: Account,
 };
@@ -78,10 +82,10 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
 
       ret = (
         <DelegationInfo
-          address={formattedValidator.validatorAddress}
-          name={formattedValidator?.name ?? formattedValidator.validatorAddress}
+          address={validator.address}
+          name={formattedValidator?.name ?? validator.address}
           formattedAmount={formattedAmount}
-          onPress={redirectAddressCreator(formattedValidator.validatorAddress)}
+          onPress={redirectAddressCreator(validator.address)}
         />
       );
       break;
@@ -110,12 +114,10 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
         <>
           <Section
             title={t("operationDetails.extra.undelegatedFrom")}
-            value={
-              formattedValidator?.name ?? formattedValidator.validatorAddress
-            }
-            onPress={() =>
-              redirectAddressCreator(formattedValidator.validatorAddress)
-            }
+            value={formattedValidator?.name ?? validator.address}
+            onPress={() => {
+              redirectAddressCreator(validator.address);
+            }}
           />
           <Section
             title={t("operationDetails.extra.undelegatedAmount")}
@@ -159,16 +161,18 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
                 ? formattedSourceValidator.name
                 : cosmosSourceValidator
             }
-            onPress={() => redirectAddressCreator(cosmosSourceValidator)}
+            onPress={() => {
+              redirectAddressCreator(cosmosSourceValidator);
+            }}
           />
           <Section
             title={t("operationDetails.extra.redelegatedTo")}
             value={
               formattedValidator ? formattedValidator.name : validator.address
             }
-            onPress={() =>
-              redirectAddressCreator(formattedValidator.validatorAddress)
-            }
+            onPress={() => {
+              redirectAddressCreator(validator.address);
+            }}
           />
           <Section
             title={t("operationDetails.extra.redelegatedAmount")}
@@ -202,12 +206,10 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
         <>
           <Section
             title={t("operationDetails.extra.rewardFrom")}
-            value={
-              formattedValidator?.name ?? formattedValidator.validatorAddress
-            }
-            onPress={() =>
-              redirectAddressCreator(formattedValidator.validatorAddress)
-            }
+            value={formattedValidator?.name ?? validator.address}
+            onPress={() => {
+              redirectAddressCreator(validator.address);
+            }}
           />
           <Section
             title={t("operationDetails.extra.rewardAmount")}
