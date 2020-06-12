@@ -786,6 +786,7 @@
       "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
       "validators": "Validators",
       "delegated": "Delegated ({{amount}})",
+      "delegatedTo": "<0>{{amount}}</0> to <0>{{name}}</0>",
       "redelegated": "Redelegated ({{amount}})",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",

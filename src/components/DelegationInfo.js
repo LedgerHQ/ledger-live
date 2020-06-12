@@ -22,7 +22,7 @@ export default function DelegationInfo({
     <View style={styles.wrapper}>
       <LText style={styles.greyText}>
         <Trans
-          i18nKey="operationDetails.extra.delegateTo"
+          i18nKey="operationDetails.extra.delegatedTo"
           values={{
             amount: formattedAmount,
             name,
