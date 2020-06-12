@@ -140,12 +140,16 @@ export default function SendSummary({ navigation, route }: Props) {
           transaction={transaction}
           navigation={navigation}
         />
-        <SectionSeparator lineColor={colors.lightFog} />
-        <SummaryTotalSection
-          account={account}
-          parentAccount={parentAccount}
-          amount={totalSpent}
-        />
+        {!amount.eq(totalSpent) ? (
+          <>
+            <SectionSeparator lineColor={colors.lightFog} />
+            <SummaryTotalSection
+              account={account}
+              parentAccount={parentAccount}
+              amount={totalSpent}
+            />
+          </>
+        ) : null}
       </NavigationScrollView>
       <View style={styles.footer}>
         <LText style={styles.error}>
