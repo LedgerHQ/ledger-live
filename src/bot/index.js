@@ -233,19 +233,6 @@ export async function bot({ currency, mutation }: Arg = {}) {
       } mutations)\n`;
       body += "\n```\n";
       body += logs.join("\n");
-      body += "\n```\n";
-    });
-    body += "</details>\n\n";
-
-    body += `<summary>Details of the ${mutationReports.length} mutations</summary>\n\n`;
-    results.forEach((r, i) => {
-      const spec = specs[i];
-      const logs = specsLogs[i];
-      body += `#### Spec ${spec.name} (${
-        r.mutations ? r.mutations.length : "failed"
-      } mutations)\n`;
-      body += "\n```\n";
-      body += logs.join("\n");
       if (r.mutations) {
         r.mutations.forEach((m) => {
           if (m.error || m.mutation) {
