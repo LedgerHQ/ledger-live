@@ -11,7 +11,14 @@ import type {
   OperationType,
   Operation,
 } from "@ledgerhq/live-common/lib/types";
-import { useMappedExtraOperationDetails } from "@ledgerhq/live-common/lib/families/cosmos/react";
+import {
+  useMappedExtraOperationDetails,
+  useCosmosPreloadData,
+} from "@ledgerhq/live-common/lib/families/cosmos/react";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatCurrencyUnit";
+import { BigNumber } from "bignumber.js";
+import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
+
 import type {
   CosmosExtraTxInfo,
   CosmosMappedDelegationInfo,
@@ -37,28 +44,159 @@ type Props = {
 };
 
 function OperationDetailsExtra({ extra, type, account }: Props) {
+  const { t } = useTranslation();
+  const unit = getAccountUnit(account);
+  const { validators: cosmosValidators } = useCosmosPreloadData();
   const mappedExtra = useMappedExtraOperationDetails({
     extra,
     account,
   });
 
+  let ret = null;
+
   switch (type) {
     case "DELEGATE":
-    case "REDELEGATE":
-    case "UNDELEGATE":
-      if (!mappedExtra.validators) {
-        return null;
-      }
-      return (
+      ret = mappedExtra && (
         <OperationDetailsValidators
           account={account}
           delegations={mappedExtra.validators}
         />
       );
-    case "REWARD":
+      break;
+
+    case "UNDELEGATE": {
+      const { validators } = extra;
+      if (!validators || validators.length <= 0) return null;
+
+      const validator = extra.validators[0];
+
+      const formattedValidator = cosmosValidators.find(
+        v => v.validatorAddress === validator.address,
+      );
+
+      const formattedAmount = formatCurrencyUnit(
+        unit,
+        BigNumber(validator.amount),
+        {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+        },
+      );
+
+      ret = (
+        <>
+          <Section
+            title={t("operationDetails.extra.undelegatedFrom")}
+            value={
+              formattedValidator?.name ?? formattedValidator.validatorAddress
+            }
+          />
+          <Section
+            title={t("operationDetails.extra.undelegatedAmount")}
+            value={formattedAmount}
+          />
+        </>
+      );
+      break;
+    }
+    case "REDELEGATE": {
+      const { cosmosSourceValidator, validators } = extra;
+      if (!validators || validators.length <= 0 || !cosmosSourceValidator)
+        return null;
+
+      const validator = extra.validators[0];
+
+      const formattedValidator = cosmosValidators.find(
+        v => v.validatorAddress === validator.address,
+      );
+
+      const formattedSourceValidator = cosmosValidators.find(
+        v => v.validatorAddress === cosmosSourceValidator,
+      );
+
+      const formattedAmount = formatCurrencyUnit(
+        unit,
+        BigNumber(validator.amount),
+        {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+        },
+      );
+
+      ret = (
+        <>
+          <Section
+            title={t("operationDetails.extra.redelegatedFrom")}
+            value={
+              formattedSourceValidator
+                ? formattedSourceValidator.name
+                : cosmosSourceValidator
+            }
+          />
+          <Section
+            title={t("operationDetails.extra.redelegatedTo")}
+            value={
+              formattedValidator ? formattedValidator.name : validator.address
+            }
+          />
+          <Section
+            title={t("operationDetails.extra.redelegatedAmount")}
+            value={formattedAmount}
+          />
+        </>
+      );
+      break;
+    }
+    case "REWARD": {
+      const { validators } = extra;
+      if (!validators || validators.length <= 0) return null;
+
+      const validator = extra.validators[0];
+
+      const formattedValidator = cosmosValidators.find(
+        v => v.validatorAddress === validator.address,
+      );
+
+      const formattedAmount = formatCurrencyUnit(
+        unit,
+        BigNumber(validator.amount),
+        {
+          disableRounding: true,
+          alwaysShowSign: false,
+          showCode: true,
+        },
+      );
+
+      ret = (
+        <>
+          <Section
+            title={t("operationDetails.extra.rewardFrom")}
+            value={
+              formattedValidator?.name ?? formattedValidator.validatorAddress
+            }
+          />
+          <Section
+            title={t("operationDetails.extra.rewardAmount")}
+            value={formattedAmount}
+          />
+        </>
+      );
+      break;
+    }
     default:
-      return null;
+      break;
   }
+
+  return (
+    <>
+      {ret}
+      {extra.memo && (
+        <Section title={t("operationDetails.extra.memo")} value={extra.memo} />
+      )}
+    </>
+  );
 }
 
 export default {
