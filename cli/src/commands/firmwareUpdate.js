@@ -21,8 +21,8 @@ export default {
           of(
             `firmware: ${firmware.final.name}\nOSU: ${firmware.osu.name} (hash: ${firmware.osu.hash})`
           ),
-          prepareFirmwareUpdate("", firmware),
-          mainFirmwareUpdate("", firmware)
+          prepareFirmwareUpdate(device || "", firmware),
+          mainFirmwareUpdate(device || "", firmware)
         );
       })
     ),
