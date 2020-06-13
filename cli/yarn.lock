@@ -1041,10 +1041,10 @@
     node-pre-gyp "^0.14.0"
     node-pre-gyp-github "^1.4.3"
 
-"@ledgerhq/live-common@^12.31.1":
-  version "12.31.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.31.1.tgz#3ade3bc0e340edb0f437a930b651d4b8e4224253"
-  integrity sha512-c2LGgGfuEHLFLgbyxibmfVkLGSfg0HfKTOSfLt4oIqPHpRLfOEQQ1fm7up8XH6IvPymNTpyqYPWAN8QDKZz1lg==
+"@ledgerhq/live-common@^12.32.2":
+  version "12.32.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.32.2.tgz#f4a52fef83271462a3d2275ed0ec7b4bcadf730c"
+  integrity sha512-12ZyivFiDAfwWDGF21UMLFSu4Wa8GthYhX4dmDLS7mLAh4I6UqT+EmJGi01IjpdJx9EMCQs+TLJSgqKeP7YBNQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.15.0"
@@ -2734,10 +2734,10 @@ find-up@^4.1.0:
     locate-path "^5.0.0"
     path-exists "^4.0.0"
 
-flow-bin@^0.126.1:
-  version "0.126.1"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.126.1.tgz#2726595e1891dc35b379b5994627432df4ead52c"
-  integrity sha512-RI05x7rVzruRVJQN3M4vLEjZMwUHJKhGz9FmL8HN7WiSo66/131EyJS6Vo8PkKyM2pgT9GRWfGP/tXlqS54XUg==
+flow-bin@^0.127.0:
+  version "0.127.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.127.0.tgz#0614cff4c1b783beef1feeb7108d536e09d77632"
+  integrity sha512-ywvCCdV4NJWzrqjFrMU5tAiVGyBiXjsJQ1+/kj8thXyX15V17x8BFvNwoAH97NrUU8T1HzmFBjLzWc0l2319qg==
 
 flow-typed@^3.1.0:
   version "3.1.0"
