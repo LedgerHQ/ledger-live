@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 // @flow
 import { BigNumber } from "bignumber.js";
+import groupBy from "lodash/groupBy";
 import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
@@ -250,11 +251,14 @@ export async function bot({ currency, mutation }: Arg = {}) {
       specsWithUncoveredMutations.forEach(({ spec, unavailableMutations }) => {
         body += `#### Spec ${spec.name} (${unavailableMutations.length} unmet mutations)\n`;
         unavailableMutations.forEach((m) => {
+          const msgs = groupBy(m.errors.map((e) => e.message));
           body +=
             "- **" +
             m.mutation.name +
             "**: " +
-            m.errors.map((e) => e.message).join(", ") +
+            Object.keys(msgs)
+              .map((msg) => `${msg} (${msgs[msg].length})`)
+              .join(", ") +
             "\n";
         });
       });

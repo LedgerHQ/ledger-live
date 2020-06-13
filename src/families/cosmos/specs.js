@@ -262,7 +262,7 @@ const cosmos: AppSpec<Transaction> = {
             address: v.address,
             amount: v.amount.toString(),
           }).toMatchObject({
-            address: d.validatorSrcAddress,
+            address: d.validatorDstAddress,
             amount: d.amount.toString(),
           });
         });
