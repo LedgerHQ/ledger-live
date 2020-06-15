@@ -24,7 +24,6 @@ const cosmos: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Cosmos",
-    appVersion: ">= 2.12.0",
   },
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(COSMOS_MIN_SAFE), "balance is too low");
