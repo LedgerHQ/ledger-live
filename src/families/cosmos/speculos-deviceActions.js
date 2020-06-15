@@ -102,12 +102,8 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
       expectedValue: ({ account }) => account.freshAddress,
     },
     {
-      title: "View transaction",
-    },
-    {
-      title: "Sign transaction",
-      final: true,
-      button: "RrLRlr",
+      title: "Accept",
+      button: "LRlr",
     },
   ],
 });
