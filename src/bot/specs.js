@@ -42,6 +42,7 @@ type FlowDesc<T: Transaction> = {
       DeviceActionArg<T, State>,
       acc: Array<{ title: string, value: string }>
     ) => string,
+    trimValue?: boolean,
     button?: string, // action to apply in term of button press
     final?: boolean, // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
   }>,
@@ -69,11 +70,11 @@ export function deviceActionFlow<T: Transaction>(
       const possibleKnownStep = description.steps.find((s) =>
         event.text.startsWith(s.title)
       );
+      const prev = description.steps.find((s) => s.title === stepTitle);
       if (possibleKnownStep) {
         const { final, title, button } = possibleKnownStep;
         if (stepValue && possibleKnownStep.title !== stepTitle) {
           // there were accumulated text and we are on new step, we need to release it and compare to expected
-          const prev = description.steps.find((s) => s.title === stepTitle);
           if (prev && prev.expectedValue) {
             const { expectedValue } = prev;
             expect({
@@ -98,8 +99,10 @@ export function deviceActionFlow<T: Transaction>(
         if (final) {
           finalState = true;
         }
-      } else {
-        stepValue += event.text;
+      } else if (prev) {
+        let { text } = event;
+        if (prev.trimValue) text = text.trim();
+        stepValue += text;
       }
     }
 
