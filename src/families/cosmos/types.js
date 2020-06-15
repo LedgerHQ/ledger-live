@@ -388,7 +388,6 @@ declare class CoreCosmosLikeAccount {
   estimateGas(request: CoreCosmosGasLimitRequest): Promise<CoreBigInt>;
   getBaseReserve(): Promise<CoreAmount>;
   isAddressActivated(address: string): Promise<boolean>;
-  getFees(): Promise<CoreBigInt[]>;
   getSequence(): Promise<string>;
 
   getAccountNumber(): Promise<string>;
@@ -413,7 +412,7 @@ export type Transaction = {|
   mode: CosmosOperationMode,
   networkInfo: ?NetworkInfo,
   fees: ?BigNumber,
-  gasLimit: ?BigNumber,
+  gas: ?BigNumber,
   memo: ?string,
   validators: CosmosDelegationInfo[],
   cosmosSourceValidator: ?string,
@@ -425,7 +424,7 @@ export type TransactionRaw = {|
   mode: CosmosOperationMode,
   networkInfo: ?NetworkInfoRaw,
   fees: ?string,
-  gasLimit: ?string,
+  gas: ?string,
   memo: ?string,
   validators: CosmosDelegationInfoRaw[],
   cosmosSourceValidator: ?string,
@@ -576,7 +575,9 @@ export const reflect = (declare: (string, Spec) => void) => {
       getFee: {
         returns: "Amount",
       },
-      getGas: {},
+      getGas: {
+        returns: "Amount",
+      },
       serializeForSignature: {},
       serializeForBroadcast: {},
     },

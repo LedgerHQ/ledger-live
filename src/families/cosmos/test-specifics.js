@@ -9,7 +9,7 @@ export default () => {
     const commonTransaction = {
       family: "cosmos",
       fees: null,
-      gasLimit: null,
+      gas: null,
       recipient: "",
       useAllAmount: false,
       networkInfo: null,

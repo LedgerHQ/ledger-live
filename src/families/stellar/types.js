@@ -41,7 +41,7 @@ declare class CoreStellarLikeTransactionBuilder {
 }
 
 declare class CoreStellarLikeMemo {
-  memoValuetoString(): Promise<string>
+  memoValuetoString(): Promise<string>;
 }
 
 declare class CoreStellarLikeTransaction {
@@ -52,7 +52,7 @@ declare class CoreStellarLikeTransaction {
   getSourceAccount(): Promise<CoreAddress>;
   getSourceAccountSequence(): Promise<CoreBigInt>;
   getFee(): Promise<CoreAmount>;
-  getMemo(): Promise<CoreStellarLikeMemo>
+  getMemo(): Promise<CoreStellarLikeMemo>;
 }
 
 declare class CoreStellarLikeOperation {
@@ -259,8 +259,8 @@ export const reflect = (declare: (string, Spec) => void) => {
         returns: "hex",
       },
       getMemo: {
-        returns: "StellarLikeMemo"
-      }
+        returns: "StellarLikeMemo",
+      },
     },
   });
 

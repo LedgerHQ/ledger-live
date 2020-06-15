@@ -18,7 +18,8 @@ async function cosmos(args: {
   const builded = await buildTransaction(args);
   if (!builded) return;
   const estimatedFees = await libcoreAmountToBigNumber(await builded.getFee());
-  return { estimatedFees };
+  const estimatedGas = await libcoreAmountToBigNumber(await builded.getGas());
+  return { estimatedFees, estimatedGas };
 }
 
 export default cosmos;

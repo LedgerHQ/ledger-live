@@ -23,7 +23,7 @@ import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
 
 const defaultGetFees = (a, t) =>
-  (t.fees || BigNumber(0)).times(t.gasLimit || BigNumber(0));
+  (t.fees || BigNumber(0)).times(t.gas || BigNumber(0));
 
 const createTransaction = (): Transaction => ({
   family: "cosmos",
@@ -31,7 +31,7 @@ const createTransaction = (): Transaction => ({
   amount: BigNumber(0),
   recipient: "",
   fees: null,
-  gasLimit: null,
+  gas: null,
   memo: null,
   validators: [],
   cosmosSourceValidator: null,
@@ -95,7 +95,7 @@ const prepareTransaction = async (a, t) => {
   if (!t.networkInfo) {
     return {
       ...t,
-      gasLimit: BigNumber(1),
+      gas: BigNumber(1),
       fees: BigNumber(500),
       networkInfo: {
         family: "cosmos",

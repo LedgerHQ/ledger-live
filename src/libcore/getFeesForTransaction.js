@@ -14,6 +14,7 @@ export type Input = {
 
 type F = (Input) => Promise<{
   estimatedFees: BigNumber,
+  estimatedGas: ?BigNumber, // Note: Use in Cosmos
   value: BigNumber,
 }>;
 

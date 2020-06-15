@@ -106,12 +106,12 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
-              name: "GasLimit",
+              name: "gas",
               transaction: (t) => ({
                 ...t,
                 amount: BigNumber(100),
                 recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-                gasLimit: BigNumber("10000"),
+                gas: BigNumber("10000"),
               }),
               expectedStatus: {
                 errors: {},
@@ -146,7 +146,7 @@ const dataset: DatasetTest<Transaction> = {
                 validators: [],
                 cosmosSourceValidator: null,
                 fees: null,
-                gasLimit: "0",
+                gas: "0",
                 memo: null,
                 mode: "send",
               }),
@@ -176,7 +176,7 @@ const dataset: DatasetTest<Transaction> = {
                 validators: [],
                 cosmosSourceValidator: null,
                 fees: null,
-                gasLimit: "0",
+                gas: "0",
                 memo: "test",
                 mode: "send",
               }),

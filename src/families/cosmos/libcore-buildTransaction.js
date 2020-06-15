@@ -42,7 +42,7 @@ export async function cosmosBuildTransaction({
   isPartial: boolean,
   isCancelled: () => boolean,
 }): Promise<?CoreCosmosLikeTransaction> {
-  const { fees, gasLimit, memo } = transaction;
+  const { fees, gas, memo } = transaction;
 
   const cosmosLikeAccount = await coreAccount.asCosmosLikeAccount();
   if (isCancelled()) return;
@@ -65,28 +65,32 @@ export async function cosmosBuildTransaction({
   await transactionBuilder.setMemo(memoTransaction);
 
   // Gas
-  let gas: BigNumber;
+  let estimatedGas: BigNumber;
 
-  if (gasLimit && gasLimit !== "0") {
-    gas = BigNumber(gasLimit);
+  if (gas && gas !== "0") {
+    estimatedGas = BigNumber(gas);
   } else {
     const gasRequest = await core.CosmosGasLimitRequest.init(
       memoTransaction,
       messages,
       getEnv("COSMOS_GAS_AMPLIFIER")
     );
-    gas = await libcoreBigIntToBigNumber(
+    estimatedGas = await libcoreBigIntToBigNumber(
       await cosmosLikeAccount.estimateGas(gasRequest)
     );
   }
-  const gasAmount = await bigNumberToLibcoreAmount(core, coreCurrency, gas);
+  const gasAmount = await bigNumberToLibcoreAmount(
+    core,
+    coreCurrency,
+    estimatedGas
+  );
   if (isCancelled()) return;
 
   await transactionBuilder.setGas(gasAmount);
 
   const gasPrice = getEnv("COSMOS_GAS_PRICE");
 
-  const feesBigNumber = gas
+  const feesBigNumber = estimatedGas
     .multipliedBy(gasPrice)
     .integerValue(BigNumber.ROUND_CEIL);
 

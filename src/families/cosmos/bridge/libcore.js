@@ -15,6 +15,7 @@ import {
   InvalidAddress,
   AmountRequired,
   RecommendUndelegation,
+  FeeNotLoaded,
 } from "@ledgerhq/errors";
 import {
   CosmosRedelegationInProgress,
@@ -41,7 +42,7 @@ const createTransaction = () => ({
   mode: "send",
   amount: BigNumber(0),
   fees: null,
-  gasLimit: null,
+  gas: null,
   recipient: "",
   useAllAmount: false,
   networkInfo: null,
@@ -94,19 +95,6 @@ const redelegationStatusError = (a, t) => {
   return isDelegable(a, t.cosmosSourceValidator, t.validators[0].amount);
 };
 
-const getEstimatedFees = async (a, t, errors) => {
-  let estimatedFees = BigNumber(0);
-
-  if (!errors.recipient && !errors.amount) {
-    if (t.useAllAmount) {
-      t.amount = getMaxEstimatedBalance(a, estimatedFees);
-    }
-    const res = await calculateFees({ a, t });
-    estimatedFees = res.estimatedFees;
-  }
-  return estimatedFees;
-};
-
 const getSendTransactionStatus = async (a, t) => {
   const errors = {};
   const warnings = {};
@@ -134,7 +122,11 @@ const getSendTransactionStatus = async (a, t) => {
     errors.amount = new AmountRequired();
   }
 
-  const estimatedFees = await getEstimatedFees(a, t, errors);
+  let estimatedFees = t.fees || BigNumber(0);
+
+  if (!t.fees) {
+    errors.fees = new FeeNotLoaded();
+  }
 
   amount = t.useAllAmount ? getMaxEstimatedBalance(a, estimatedFees) : amount;
 
@@ -191,7 +183,11 @@ const getDelegateTransactionStatus = async (a, t) => {
     errors.amount = new AmountRequired();
   }
 
-  const estimatedFees = await getEstimatedFees(a, t, errors);
+  let estimatedFees = t.fees || BigNumber(0);
+
+  if (!t.fees) {
+    errors.fees = new FeeNotLoaded();
+  }
 
   let totalSpent = amount.plus(estimatedFees);
 
@@ -274,7 +270,11 @@ const getTransactionStatus = async (a, t) => {
     errors.amount = new AmountRequired();
   }
 
-  const estimatedFees = await getEstimatedFees(a, t, errors);
+  let estimatedFees = t.fees || BigNumber(0);
+
+  if (!t.fees) {
+    errors.fees = new FeeNotLoaded();
+  }
 
   let totalSpent = estimatedFees;
 
@@ -307,15 +307,54 @@ const getTransactionStatus = async (a, t) => {
   });
 };
 
+const isTransactionValidForEstimatedFees = async (a, t) => {
+  let errors = null;
+  if (t.mode === "send") {
+    errors = (await validateRecipient(a.currency, t.recipient)).recipientError;
+  } else {
+    errors =
+      t.validators.some(
+        (v) => !v.address || !v.address.includes("cosmosvaloper")
+      ) ||
+      (t.mode !== "claimReward" &&
+        t.validators
+          .reduce((old, current) => old.plus(current.amount), BigNumber(0))
+          .eq(0));
+  }
+
+  return errors;
+};
+
+const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
+
 const prepareTransaction = async (a, t) => {
   let memo = t.memo;
+  let fees = t.fees;
+  let gas = t.gas;
+
+  if (!fees && ((t.mode === "send" && t.recipient) || t.mode !== "send")) {
+    const errors = await isTransactionValidForEstimatedFees(a, t);
+    if (!errors) {
+      let amount;
+      if (t.useAllAmount) {
+        amount = getMaxEstimatedBalance(a, BigNumber(0));
+      }
+      const res = await calculateFees({
+        a,
+        t: { ...t, amount: amount || t.amount },
+      });
+
+      fees = res.estimatedFees;
+      gas = res.estimatedGas;
+    }
+  }
 
   if (t.mode !== "send" && !memo) {
     memo = "Ledger Live";
   }
 
-  if (t.memo !== memo) {
-    return { ...t, memo };
+  if (t.memo !== memo || !sameFees(t.fees, fees)) {
+    return { ...t, memo, fees, gas };
   }
 
   return t;

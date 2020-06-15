@@ -173,9 +173,12 @@ export const getMaxEstimatedBalance = (
 
 export const calculateFees: CacheRes<
   Array<{ a: Account, t: Transaction }>,
-  { estimatedFees: BigNumber }
+  { estimatedFees: BigNumber, estimatedGas: ?BigNumber }
 > = makeLRUCache(
-  async ({ a, t }): Promise<{ estimatedFees: BigNumber }> => {
+  async ({
+    a,
+    t,
+  }): Promise<{ estimatedFees: BigNumber, estimatedGas: ?BigNumber }> => {
     return getFeesForTransaction({
       account: a,
       transaction: t,
@@ -183,7 +186,7 @@ export const calculateFees: CacheRes<
   },
   ({ a, t }) =>
     `${a.id}_${t.amount.toString()}_${t.recipient}_${
-      t.gasLimit ? t.gasLimit.toString() : ""
+      t.gas ? t.gas.toString() : ""
     }_${t.fees ? t.fees.toString() : ""}
     _${String(t.useAllAmount)}_${t.mode}_${
       t.validators ? t.validators.map((v) => v.address).join("-") : ""
@@ -237,7 +240,7 @@ export async function canClaimRewards(
       mode: "claimReward",
       amount: BigNumber(0),
       fees: null,
-      gasLimit: null,
+      gas: null,
       recipient: "",
       useAllAmount: false,
       networkInfo: null,

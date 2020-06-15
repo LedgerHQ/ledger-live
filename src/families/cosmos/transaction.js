@@ -70,7 +70,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       fees: BigNumber(networkInfo.fees),
     },
     fees: tr.fees ? BigNumber(tr.fees) : null,
-    gasLimit: tr.gasLimit ? BigNumber(tr.gasLimit) : null,
+    gas: tr.gas ? BigNumber(tr.gas) : null,
     memo: tr.memo,
     cosmosSourceValidator: tr.cosmosSourceValidator,
     validators: tr.validators
@@ -94,7 +94,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       fees: networkInfo.fees.toString(),
     },
     fees: t.fees ? t.fees.toString() : null,
-    gasLimit: t.gasLimit ? t.gasLimit.toString() : null,
+    gas: t.gas ? t.gas.toString() : null,
     memo: t.memo,
     cosmosSourceValidator: t.cosmosSourceValidator,
     validators: t.validators
