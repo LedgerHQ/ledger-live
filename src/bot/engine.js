@@ -606,7 +606,7 @@ function awaitAccountOperation({
 function transactionTest<T>({ operation, account }: TransactionTestInput<T>) {
   const timingThreshold = 30 * 60 * 1000;
   const dt = Date.now() - operation.date;
-  invariant(dt < 0, "operation.date must not be in in future");
+  invariant(dt > 0, "operation.date must not be in in future");
   expect(dt).toBeLowerThan(timingThreshold);
   invariant(!operation.hasFailed, "operation must be hasFailed");
   const { blockAvgTime } = account.currency;
