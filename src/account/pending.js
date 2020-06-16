@@ -25,7 +25,7 @@ const appendPendingOp = (ops: Operation[], op: Operation) => {
   const filtered: Operation[] = ops.filter(
     (o) => o.transactionSequenceNumber === op.transactionSequenceNumber
   );
-  filtered.push(op);
+  filtered.unshift(op);
   return filtered;
 };
 
