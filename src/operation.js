@@ -93,3 +93,11 @@ export const getOperationConfirmationNumber = (
   account: Account
 ): number =>
   operation.blockHeight ? account.blockHeight - operation.blockHeight : 0;
+
+export const getOperationConfirmationDisplayableNumber = (
+  operation: Operation,
+  account: Account
+): string =>
+  account.blockHeight && operation.blockHeight
+    ? String(account.blockHeight - operation.blockHeight)
+    : "";
