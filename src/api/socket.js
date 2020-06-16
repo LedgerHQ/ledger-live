@@ -103,7 +103,7 @@ export const createDeviceSocket = (
 
             // if allow manager was requested, we either throw if deny or emit accepted
             if (allowManagerAwaitingUser) {
-              if (status === 0x6985) {
+              if (status === 0x6985 || status === 0x5501) {
                 o.error(new UserRefusedAllowManager());
                 return;
               }

@@ -50,7 +50,7 @@ const cmd = ({ devicePath }: Input): Observable<ConnectManagerEvent> =>
             if (
               e &&
               e instanceof TransportStatusError &&
-              (e.statusCode === 0x6e00 || e.statusCode === 0x6d00)
+              [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode)
             ) {
               return of({ type: "appDetected" });
             }
