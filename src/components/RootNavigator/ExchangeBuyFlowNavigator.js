@@ -9,7 +9,6 @@ import ExchangeConnectDevice from "../../screens/Exchange/ConnectDevice";
 import ExchangeCoinifyWidget from "../../screens/Exchange/CoinifyWidgetScreen";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHeaderRightClose";
-import StepHeader from "../StepHeader";
 
 export default function ExchangeNavigator() {
   const { t } = useTranslation();
