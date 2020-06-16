@@ -34,7 +34,7 @@ async function signTransaction({
   //        "block"(return after tx commit), (https://docs.cosmos.network/master/basics/tx-lifecycle.html#commit)
   //        "sync"(return afer CheckTx), (https://docs.cosmos.network/master/basics/tx-lifecycle.html#types-of-checks) and
   //        "async"(return right away).
-  const hex = await coreTransaction.serializeForBroadcast("block");
+  const hex = await coreTransaction.serializeForBroadcast("sync");
 
   if (isCancelled()) return;
 
