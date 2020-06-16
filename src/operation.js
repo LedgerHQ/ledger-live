@@ -4,7 +4,7 @@
  */
 
 import { BigNumber } from "bignumber.js";
-import type { AccountLike, Operation } from "./types";
+import type { Account, AccountLike, Operation } from "./types";
 
 export function findOperationInAccount(
   { operations, pendingOperations }: AccountLike,
@@ -87,3 +87,9 @@ export function getOperationAmountNumberWithInternals(
     BigNumber(0)
   );
 }
+
+export const getOperationConfirmationNumber = (
+  operation: Operation,
+  account: Account
+): number =>
+  operation.blockHeight ? account.blockHeight - operation.blockHeight : 0;

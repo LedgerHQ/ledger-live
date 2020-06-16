@@ -6,6 +6,7 @@ import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
+import { getGasLimit } from "./transaction";
 
 const ethereumMutations = ({ maxAccount, minimalAmount }) => [
   {
@@ -19,15 +20,20 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
       t = bridge.updateTransaction(t, { amount, recipient });
       return t;
     },
-    test: ({ account, accountBeforeTransaction, operation }) => {
+    test: ({ account, accountBeforeTransaction, operation, transaction }) => {
       // workaround for buggy explorer behavior (nodes desync)
       invariant(
         Date.now() - operation.date > 60000,
         "operation time to be older than 60s"
       );
-      // can be generalized!
-      expect(account.balance.toString()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toString()
+      const estimatedGas = getGasLimit(transaction).times(
+        transaction.gasPrice || 0
+      );
+      expect(operation.fee.toNumber()).toBeLessThanOrEqual(
+        estimatedGas.toNumber()
+      );
+      expect(account.balance.toNumber()).toBe(
+        accountBeforeTransaction.balance.minus(operation.value).toNumber()
       );
     },
   },

@@ -63,8 +63,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Gas",
       button: "Rr",
-      // FIXME can we get it?
-      // expectedValue: () => "",
+      expectedValue: ({ transaction }) => transaction.gas?.toString() || "",
     },
     {
       title: "Amount",
@@ -104,6 +103,10 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Approve",
       button: "LRlr",
+      final: true,
+    },
+    {
+      title: "Reject",
     },
   ],
 });

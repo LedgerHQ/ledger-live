@@ -1,4 +1,5 @@
 // @flow
+import expect from "expect";
 import invariant from "invariant";
 import now from "performance-now";
 import sample from "lodash/sample";
@@ -24,6 +25,7 @@ import type {
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
 import { isAccountEmpty, formatAccount } from "../account";
+import { getOperationConfirmationNumber } from "../operation";
 import { getEnv } from "../env";
 import { delay } from "../promise";
 import {
@@ -44,6 +46,7 @@ import type {
   SpecReport,
   MutationReport,
   DeviceAction,
+  TransactionTestInput,
 } from "./types";
 
 let appCandidates;
@@ -404,7 +407,7 @@ export async function runOnAccount<T: Transaction>({
         );
       }
 
-      if (operation && mutation.test) {
+      if (operation) {
         try {
           const arg = {
             accountBeforeTransaction,
@@ -414,8 +417,9 @@ export async function runOnAccount<T: Transaction>({
             operation,
             account,
           };
+          transactionTest(arg);
           if (spec.test) spec.test(arg);
-          mutation.test(arg);
+          if (mutation.test) mutation.test(arg);
           report.testDuration = now() - testBefore;
         } catch (e) {
           // We never reach the final test success
@@ -596,4 +600,24 @@ function awaitAccountOperation({
   }
 
   return loop();
+}
+
+// generic transaction test: make sure you are sure all coins suit the tests here
+function transactionTest<T>({ operation, account }: TransactionTestInput<T>) {
+  const timingThreshold = 30 * 60 * 1000;
+  const dt = Date.now() - operation.date;
+  invariant(dt < 0, "operation.date must not be in in future");
+  expect(dt).toBeLowerThan(timingThreshold);
+  invariant(!operation.hasFailed, "operation must be hasFailed");
+  const { blockAvgTime } = account.currency;
+  if (blockAvgTime) {
+    const expected = getOperationConfirmationNumber(operation, account);
+    const expectedMax = Math.ceil(timingThreshold / blockAvgTime);
+    invariant(
+      expected <= expectedMax,
+      "There are way too much operation confirmation for a small amount of time. %s < %s",
+      expected,
+      expectedMax
+    );
+  }
 }

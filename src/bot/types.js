@@ -18,6 +18,15 @@ export type { AppCandidate };
 
 type DeviceActionEvent = { text: string, x: number, y: number };
 
+export type TransactionTestInput<T> = {
+  account: Account,
+  accountBeforeTransaction: Account,
+  transaction: T,
+  status: TransactionStatus,
+  optimisticOperation: Operation,
+  operation: Operation,
+};
+
 export type DeviceActionArg<T, S> = {
   appCandidate: AppCandidate,
   account: Account,
@@ -55,14 +64,7 @@ export type MutationSpec<T: Transaction> = {
   // how much time to wait in maximum to reach the final state
   testTimeout?: number,
   // Implement a test that runs after the operation is applied to the account
-  test?: ({
-    account: Account,
-    accountBeforeTransaction: Account,
-    transaction: T,
-    status: TransactionStatus,
-    optimisticOperation: Operation,
-    operation: Operation,
-  }) => void,
+  test?: (TransactionTestInput<T>) => void,
 };
 
 export type AppSpec<T: Transaction> = {
@@ -86,14 +88,7 @@ export type AppSpec<T: Transaction> = {
     maxSpendable: BigNumber,
   }) => void,
   // Implement a test that also runs on each mutation after the operation is applied to the account
-  test?: ({
-    account: Account,
-    accountBeforeTransaction: Account,
-    transaction: T,
-    status: TransactionStatus,
-    optimisticOperation: Operation,
-    operation: Operation,
-  }) => void,
+  test?: (TransactionTestInput<T>) => void,
 };
 
 export type SpecReport<T: Transaction> = {
