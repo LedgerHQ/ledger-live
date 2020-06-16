@@ -52,7 +52,7 @@ function getDeviceTransactionConfig({
   transaction: Transaction,
   status: TransactionStatus,
 }): Array<DeviceTransactionField> {
-  const { mode, memo, gas, validators } = transaction;
+  const { mode, memo, validators } = transaction;
   const { estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);
   const source = mainAccount.freshAddress;
@@ -175,14 +175,6 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "fees",
       label: "Fee",
-    });
-  }
-
-  if (gas) {
-    fields.push({
-      type: "text",
-      label: "Gas",
-      value: gas.toString(),
     });
   }
 
