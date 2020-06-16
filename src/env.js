@@ -33,7 +33,7 @@ const stringParser = (v: mixed): ?string =>
 
 const envDefinitions = {
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
-    def: "https://cosmos.coin.staging.aws.ledger.com/",
+    def: "https://cosmos.coin.ledger.com/",
     parser: stringParser,
     desc: "node API for cosmos",
   },
