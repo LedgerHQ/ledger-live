@@ -17,7 +17,7 @@ import { withDevice } from "./deviceAccess";
 import getAppAndVersion from "./getAppAndVersion";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
-import { mustUpgrade } from "../apps";
+import { mustUpgrade, shouldUpgrade } from "../apps";
 
 export type RequiresDerivation = {|
   currencyId: string,
@@ -45,7 +45,8 @@ export type ConnectAppEvent =
   | { type: "app-not-installed", appName: string }
   | { type: "ask-quit-app" }
   | { type: "ask-open-app", appName: string }
-  | { type: "opened", app?: AppAndVersion, derivation?: { address: string } };
+  | { type: "opened", app?: AppAndVersion, derivation?: { address: string } }
+  | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
 
 const dashboardNames = ["BOLOS", "OLOS\u0000"];
 
@@ -168,6 +169,18 @@ const cmd = ({
                 appAndVersion,
                 appName,
               });
+            }
+
+            if (
+              shouldUpgrade(modelId, appAndVersion.name, appAndVersion.version)
+            ) {
+              return concat(
+                of({
+                  type: "display-upgrade-warning",
+                  displayUpgradeWarning: true,
+                }),
+                of({ type: "opened", appAndVersion })
+              );
             } else {
               const e: ConnectAppEvent = { type: "opened", appAndVersion };
               return of(e);
