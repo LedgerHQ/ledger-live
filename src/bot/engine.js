@@ -47,6 +47,7 @@ import type {
   MutationReport,
   DeviceAction,
   TransactionTestInput,
+  TransactionArg,
 } from "./types";
 
 let appCandidates;
@@ -267,17 +268,25 @@ export async function runOnAccount<T: Transaction>({
           "maximum mutation run reached (%s)",
           count
         );
-        const arg = {
+        const steppedTransactions = [];
+        const arg: TransactionArg<T> = {
           appCandidate,
           account,
           bridge: accountBridge,
           siblings: accounts.filter((a) => a !== account),
           maxSpendable,
+          createTransaction: (account) =>
+            accountBridge.createTransaction(account),
+          updateTransaction: (tx, patch) => {
+            const t = patch ? accountBridge.updateTransaction(tx, patch) : tx;
+            steppedTransactions.push(t);
+            return t;
+          },
         };
         if (spec.transactionCheck) spec.transactionCheck(arg);
         const tx = mutation.transaction(arg);
         if (tx) {
-          candidates.push({ mutation, tx });
+          candidates.push({ mutation, tx, steppedTransactions });
         }
       } catch (error) {
         unavailableMutationReasons.push({ mutation, error });
@@ -293,7 +302,7 @@ export async function runOnAccount<T: Transaction>({
     }
 
     // a mutation was chosen
-    const { tx, mutation } = candidate;
+    const { tx, mutation, steppedTransactions } = candidate;
     report.mutation = mutation;
     report.transaction = tx;
     report.destination = accounts.find((a) => a.freshAddress === tx.recipient);
@@ -303,6 +312,10 @@ export async function runOnAccount<T: Transaction>({
     let transaction = tx;
     let status;
     let errors = [];
+
+    for (const tx of steppedTransactions) {
+      transaction = await accountBridge.prepareTransaction(account, tx);
+    }
 
     transaction = await accountBridge.prepareTransaction(account, transaction);
     report.transaction = transaction;
@@ -610,7 +623,7 @@ function transactionTest<T>({ operation, account }: TransactionTestInput<T>) {
   expect(dt).toBeLessThan(timingThreshold);
   invariant(!operation.hasFailed, "operation must be hasFailed");
   const { blockAvgTime } = account.currency;
-  if (blockAvgTime) {
+  if (blockAvgTime && account.blockHeight) {
     const expected = getOperationConfirmationNumber(operation, account);
     const expectedMax = Math.ceil(timingThreshold / blockAvgTime);
     invariant(

@@ -39,19 +39,24 @@ export type DeviceActionArg<T, S> = {
 
 export type DeviceAction<T, S> = (DeviceActionArg<T, S>) => ?S;
 
+export type TransactionArg<T> = {
+  appCandidate: AppCandidate,
+  account: Account,
+  siblings: Account[],
+  bridge: AccountBridge<T>,
+  maxSpendable: BigNumber,
+  createTransaction: (Account) => T,
+  // if called, it will "record" intermediary txs to simulate user filling up the form incrementally
+  updateTransaction: (tx: T, patch?: $Shape<T>) => T,
+};
+
 export type MutationSpec<T: Transaction> = {
   // Name what this mutation is doing
   name: string,
   // The maximum number of times to execute this mutation for a given test run
   maxRun?: number,
   // Express the transaction to be done
-  transaction: ({
-    appCandidate: AppCandidate,
-    account: Account,
-    siblings: Account[],
-    bridge: AccountBridge<T>,
-    maxSpendable: BigNumber,
-  }) => ?T,
+  transaction: (arg: TransactionArg<T>) => ?T,
   // if there is a status errors/warnings of the defined transaction, this function, if define, can try to recover from it
   recoverBadTransactionStatus?: ({
     transaction: T,
@@ -80,13 +85,7 @@ export type AppSpec<T: Transaction> = {
   },
   mutations: MutationSpec<T>[],
   // can implement generic invariants for a mutation transaction to be possible
-  transactionCheck?: ({
-    appCandidate: AppCandidate,
-    account: Account,
-    siblings: Account[],
-    bridge: AccountBridge<T>,
-    maxSpendable: BigNumber,
-  }) => void,
+  transactionCheck?: (arg: TransactionArg<T>) => void,
   // Implement a test that also runs on each mutation after the operation is applied to the account
   test?: (TransactionTestInput<T>) => void,
 };
