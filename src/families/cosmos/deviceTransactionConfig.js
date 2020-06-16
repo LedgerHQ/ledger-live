@@ -33,9 +33,9 @@ const getSendFields = (transaction, status, account, source) => {
   }
 
   fields.push({
-    type: "text",
+    type: "address",
     label: "From",
-    value: source,
+    address: source,
   });
 
   return fields;
