@@ -51,14 +51,21 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "send some to another account",
       maxRun: 5,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        let t = bridge.createTransaction(account);
+      transaction: ({
+        account,
+        siblings,
+        createTransaction,
+        maxSpendable,
+        updateTransaction,
+      }) => {
+        let t = createTransaction(account);
         const sibling = pickSiblings(siblings, 30);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
-        t = bridge.updateTransaction(t, { amount, recipient });
+        t = updateTransaction(t, { recipient });
+        t = updateTransaction(t, { amount });
         if (Math.random() < 0.5) {
-          t = bridge.updateTransaction(t, { memo: "LedgerLiveBot" });
+          t = updateTransaction(t, { memo: "LedgerLiveBot" });
         }
         return t;
       },
@@ -87,11 +94,21 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "send max to another account",
       maxRun: 1,
-      transaction: ({ account, siblings, bridge }) => {
-        let t = bridge.createTransaction(account);
+      transaction: ({
+        account,
+        siblings,
+        createTransaction,
+        updateTransaction,
+      }) => {
+        let t = createTransaction(account);
         const sibling = pickSiblings(siblings, 30);
         const recipient = sibling.freshAddress;
-        t = bridge.updateTransaction(t, { recipient, useAllAmount: true });
+        t = updateTransaction(t, {
+          recipient,
+        });
+        t = updateTransaction(t, {
+          useAllAmount: true,
+        });
         return t;
       },
       test: () => {
@@ -103,7 +120,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "delegate new validators",
       maxRun: 3,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, createTransaction, updateTransaction }) => {
         invariant(canDelegate(account), "can delegate");
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -137,10 +154,13 @@ const cosmos: AppSpec<Transaction> = {
           })
           .filter((v) => v.amount.gt(0));
         invariant(validators.length > 0, "no possible delegation found");
-        let t = bridge.createTransaction(account);
-        t = bridge.updateTransaction(t, {
+        let t = createTransaction(account);
+        t = updateTransaction(t, {
+          memo: "LedgerLiveBot",
           mode: "delegate",
-          validators,
+        });
+        validators.forEach((_, i) => {
+          t = updateTransaction(t, { validators: validators.slice(0, i + 1) });
         });
         return t;
       },
@@ -166,7 +186,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "undelegate",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, createTransaction, updateTransaction }) => {
         invariant(canUndelegate(account), "can undelegate");
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -188,9 +208,12 @@ const cosmos: AppSpec<Transaction> = {
           )
         );
         invariant(undelegateCandidate, "already pending");
-        let t = bridge.createTransaction(account);
-        t = bridge.updateTransaction(t, {
+        let t = createTransaction(account);
+        t = updateTransaction(t, {
           mode: "undelegate",
+          memo: "LedgerLiveBot",
+        });
+        t = updateTransaction(t, {
           validators: [
             {
               address: undelegateCandidate.validatorAddress,
@@ -224,7 +247,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "redelegate",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, createTransaction, updateTransaction }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         const sourceDelegation = sample(
@@ -236,10 +259,13 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorAddress !== sourceDelegation.validatorAddress
           )
         );
-        let t = bridge.createTransaction(account);
-        t = bridge.updateTransaction(t, {
+        let t = createTransaction(account);
+        t = updateTransaction(t, {
           mode: "redelegate",
+          memo: "LedgerLiveBot",
           cosmosSourceValidator: sourceDelegation.validatorAddress,
+        });
+        t = updateTransaction(t, {
           validators: [
             {
               address: delegation.validatorAddress,
@@ -271,16 +297,17 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "claim rewards",
       maxRun: 1,
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, createTransaction, updateTransaction }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         const delegation = sample(
           cosmosResources.delegations.filter((d) => canClaimRewards(account, d))
         );
         invariant(delegation, "no delegation to claim");
-        let t = bridge.createTransaction(account);
-        t = bridge.updateTransaction(t, {
+        let t = createTransaction(account);
+        t = updateTransaction(t, {
           mode: "claimReward",
+          memo: "LedgerLiveBot",
           validators: [
             {
               address: delegation.validatorAddress,

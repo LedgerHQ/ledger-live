@@ -39,26 +39,31 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
   },
   {
     name: "move some ERC20 token to another account",
-    transaction: ({ account, siblings, bridge }) => {
+    transaction: ({
+      account,
+      siblings,
+      createTransaction,
+      updateTransaction,
+    }) => {
       invariant(account.balance.gt(minimalAmount), "eth balance is too low");
       const erc20Account = sample(
         (account.subAccounts || []).filter((a) => a.balance.gt(0))
       );
       invariant(erc20Account, "no erc20 account");
-      let t = bridge.createTransaction(account);
+      let t = createTransaction(account);
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
 
-      t = bridge.updateTransaction(t, {
+      t = updateTransaction(t, {
         recipient,
         subAccountId: erc20Account.id,
       });
       if (Math.random() < 0.5) {
-        t = bridge.updateTransaction(t, {
+        t = updateTransaction(t, {
           useAllAmount: true,
         });
       } else {
-        t = bridge.updateTransaction(t, {
+        t = updateTransaction(t, {
           amount: erc20Account.balance.times(Math.random()).integerValue(),
         });
       }

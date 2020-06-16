@@ -28,7 +28,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
         ).replace(/\s/g, " "),
     },
     {
-      title: "Fees",
+      title: "Fee",
       button: "Rr",
       expectedValue: ({ account, status }) =>
         formatCurrencyUnit(
