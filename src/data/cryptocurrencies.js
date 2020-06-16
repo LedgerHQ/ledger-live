@@ -624,7 +624,8 @@ const cryptocurrenciesById: { [name: string]: CryptoCurrency } = {
     scheme: "cosmos",
     color: "#16192f",
     family: "cosmos",
-    blockAvgTime: 8,
+    // FIXME: enable it back when confirmation number is fixed
+    // blockAvgTime: 8,
     units: [
       {
         name: "Atom",

@@ -98,6 +98,6 @@ export const getOperationConfirmationDisplayableNumber = (
   operation: Operation,
   account: Account
 ): string =>
-  account.blockHeight && operation.blockHeight
+  account.blockHeight && operation.blockHeight && account.currency.blockAvgTime
     ? String(account.blockHeight - operation.blockHeight)
     : "";
