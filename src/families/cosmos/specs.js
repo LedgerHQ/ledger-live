@@ -59,11 +59,12 @@ const cosmos: AppSpec<Transaction> = {
         updateTransaction,
       }) => {
         let t = createTransaction(account);
-        const sibling = pickSiblings(siblings, 30);
-        const recipient = sibling.freshAddress;
-        const amount = maxSpendable.div(2).integerValue();
-        t = updateTransaction(t, { recipient });
-        t = updateTransaction(t, { amount });
+        t = updateTransaction(t, {
+          recipient: pickSiblings(siblings, 30).freshAddress,
+        });
+        t = updateTransaction(t, {
+          amount: maxSpendable.div(2).integerValue(),
+        });
         if (Math.random() < 0.5) {
           t = updateTransaction(t, { memo: "LedgerLiveBot" });
         }
@@ -101,19 +102,14 @@ const cosmos: AppSpec<Transaction> = {
         updateTransaction,
       }) => {
         let t = createTransaction(account);
-        const sibling = pickSiblings(siblings, 30);
-        const recipient = sibling.freshAddress;
         t = updateTransaction(t, {
-          recipient,
+          recipient: pickSiblings(siblings, 30).freshAddress,
         });
-        t = updateTransaction(t, {
-          useAllAmount: true,
-        });
+        t = updateTransaction(t, { useAllAmount: true });
         return t;
       },
-      test: () => {
-        // FIXME what to do?
-        // expect(account.balance.toString()).toBe("0");
+      test: ({ account }) => {
+        expect(account.balance.toString()).toBe("0");
       },
     },
 
@@ -125,7 +121,7 @@ const cosmos: AppSpec<Transaction> = {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         invariant(
-          cosmosResources.delegations.length < 3,
+          cosmosResources.delegations.length < 10,
           "already enough delegations"
         );
         const data = getCurrentCosmosPreloadData();
@@ -185,7 +181,7 @@ const cosmos: AppSpec<Transaction> = {
 
     {
       name: "undelegate",
-      maxRun: 1,
+      maxRun: 2,
       transaction: ({ account, createTransaction, updateTransaction }) => {
         invariant(canUndelegate(account), "can undelegate");
         const { cosmosResources } = account;
@@ -218,7 +214,8 @@ const cosmos: AppSpec<Transaction> = {
             {
               address: undelegateCandidate.validatorAddress,
               amount: undelegateCandidate.amount
-                .times(Math.random())
+                // most of the time, undelegate all
+                .times(Math.random() > 0.3 ? 1 : Math.random())
                 .integerValue(),
             },
           ],
@@ -269,7 +266,12 @@ const cosmos: AppSpec<Transaction> = {
           validators: [
             {
               address: delegation.validatorAddress,
-              amount: delegation.amount.times(Math.random()).integerValue(),
+              amount: sourceDelegation.amount
+                .times(
+                  // most of the time redelegate all
+                  Math.random() > 0.3 ? 1 : Math.random()
+                )
+                .integerValue(),
             },
           ],
         });
@@ -325,13 +327,10 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorAddress === v.address
           );
           invariant(d, "delegation %s must be found in account", v.address);
-          // @henri-ly this does not work:
-          /*
           invariant(
             !canClaimRewards(account, d),
             "reward no longer be claimable"
           );
-          */
         });
       },
     },

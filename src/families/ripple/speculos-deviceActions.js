@@ -44,7 +44,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
         ).replace(/\s/g, " "),
     },
     {
-      title: "Address",
+      title: "Destination",
       button: "Rr",
       trimValue: true,
       expectedValue: ({ transaction }) => transaction.recipient,
