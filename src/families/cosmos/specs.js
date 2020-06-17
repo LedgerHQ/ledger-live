@@ -262,8 +262,6 @@ const cosmos: AppSpec<Transaction> = {
               mode: "redelegate",
               memo: "LedgerLiveBot",
               cosmosSourceValidator: sourceDelegation.validatorAddress,
-            },
-            {
               validators: [
                 {
                   address: delegation.validatorAddress,

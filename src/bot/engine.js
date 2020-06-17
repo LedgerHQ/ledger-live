@@ -318,7 +318,9 @@ export async function runOnAccount<T: Transaction>({
     for (const patch of updates) {
       if (patch) {
         await accountBridge.getTransactionStatus(account, transaction); // result is unused but that would happen in normal flow
+        report.transaction = transaction;
         transaction = await accountBridge.updateTransaction(transaction, patch);
+        report.transaction = transaction;
         transaction = await accountBridge.prepareTransaction(
           account,
           transaction

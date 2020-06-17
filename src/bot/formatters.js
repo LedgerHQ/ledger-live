@@ -154,6 +154,7 @@ export function formatReportForConsole<T: Transaction>({
   }
   if (error) {
     str += `⚠️ ${String(error)}\n`;
+    if (error.stack) str += `${String(error.stack)}\n`;
   }
   return str;
 }
