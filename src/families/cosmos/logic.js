@@ -185,14 +185,11 @@ export const calculateFees: CacheRes<
     });
   },
   ({ a, t }) =>
-    `${a.id}_${t.amount.toString()}_${t.recipient}_${
-      t.gas ? t.gas.toString() : ""
-    }_${t.fees ? t.fees.toString() : ""}
-    _${String(t.useAllAmount)}_${t.mode}_${
-      t.validators ? t.validators.map((v) => v.address).join("-") : ""
-    }_${t.memo ? t.memo.toString() : ""}_${
-      t.cosmosSourceValidator ? t.cosmosSourceValidator : ""
-    }`
+    `${a.id}_${t.amount.toString()}_${t.recipient}_${String(t.useAllAmount)}_${
+      t.mode
+    }_${t.validators ? t.validators.map((v) => v.address).join("-") : ""}_${
+      t.memo ? t.memo.toString() : ""
+    }_${t.cosmosSourceValidator ? t.cosmosSourceValidator : ""}`
 );
 
 export function canUndelegate(account: Account): boolean {

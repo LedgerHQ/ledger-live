@@ -67,8 +67,8 @@ export async function cosmosBuildTransaction({
   // Gas
   let estimatedGas: BigNumber;
 
-  if (gas && gas !== "0") {
-    estimatedGas = BigNumber(gas);
+  if (gas && gas.gt(0)) {
+    estimatedGas = gas;
   } else {
     const gasRequest = await core.CosmosGasLimitRequest.init(
       memoTransaction,
@@ -79,6 +79,7 @@ export async function cosmosBuildTransaction({
       await cosmosLikeAccount.estimateGas(gasRequest)
     );
   }
+
   const gasAmount = await bigNumberToLibcoreAmount(
     core,
     coreCurrency,

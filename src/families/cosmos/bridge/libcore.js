@@ -135,7 +135,7 @@ const getSendTransactionStatus = async (a, t) => {
 
   let estimatedFees = t.fees || BigNumber(0);
 
-  if (!t.fees) {
+  if (!t.fees || !t.fees.gt(0)) {
     errors.fees = new FeeNotLoaded();
   }
 
@@ -343,7 +343,7 @@ const prepareTransaction = async (a, t) => {
   let fees = t.fees;
   let gas = t.gas;
 
-  if (!fees && ((t.mode === "send" && t.recipient) || t.mode !== "send")) {
+  if (t.recipient || t.mode !== "send") {
     const errors = await isTransactionValidForEstimatedFees(a, t);
     if (!errors) {
       let amount;
