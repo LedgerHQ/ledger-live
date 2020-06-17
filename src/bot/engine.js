@@ -308,15 +308,14 @@ export async function runOnAccount<T: Transaction>({
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
 
     // prepare the transaction and ensure it's valid
-    let transaction = tx;
     let status;
     let errors = [];
 
     for (const tx of steppedTransactions) {
-      transaction = await accountBridge.prepareTransaction(account, tx);
+      await accountBridge.prepareTransaction(account, tx);
     }
 
-    transaction = await accountBridge.prepareTransaction(account, transaction);
+    let transaction = await accountBridge.prepareTransaction(account, tx);
     report.transaction = transaction;
     report.transactionTime = now();
 
