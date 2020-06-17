@@ -50,21 +50,15 @@ const bitcoinLikeMutations = ({
   {
     name: "move ~50% to another account",
     maxRun: 2,
-    transaction: ({
-      account,
-      siblings,
-      createTransaction,
-      updateTransaction,
-      maxSpendable,
-    }) => {
+    transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-      let t = createTransaction(account);
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = sibling.freshAddress;
       const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
-      t = updateTransaction(t, { recipient });
-      t = updateTransaction(t, { amount });
-      return t;
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [{ recipient }, { amount }],
+      };
     },
     recoverBadTransactionStatus,
     test: ({ account, accountBeforeTransaction, operation }) => {
@@ -82,20 +76,14 @@ const bitcoinLikeMutations = ({
   {
     name: "send max to another account",
     maxRun: 1,
-    transaction: ({
-      account,
-      siblings,
-      createTransaction,
-      updateTransaction,
-      maxSpendable,
-    }) => {
+    transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-      let t = createTransaction(account);
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = sibling.freshAddress;
-      t = updateTransaction(t, { recipient });
-      t = updateTransaction(t, { useAllAmount: true });
-      return t;
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [{ recipient }, { useAllAmount: true }],
+      };
     },
     recoverBadTransactionStatus,
     test: ({ account, operation }) => {

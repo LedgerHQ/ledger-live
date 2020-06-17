@@ -13,12 +13,13 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
     name: "move 50% to another account",
     transaction: ({ account, siblings, bridge }) => {
       invariant(account.balance.gt(minimalAmount), "balance is too low");
-      let t = bridge.createTransaction(account);
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
       const amount = account.balance.div(2).integerValue();
-      t = bridge.updateTransaction(t, { amount, recipient });
-      return t;
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [{ recipient, amount }],
+      };
     },
     test: ({ account, accountBeforeTransaction, operation, transaction }) => {
       // workaround for buggy explorer behavior (nodes desync)
@@ -39,35 +40,27 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
   },
   {
     name: "move some ERC20 token to another account",
-    transaction: ({
-      account,
-      siblings,
-      createTransaction,
-      updateTransaction,
-    }) => {
+    transaction: ({ account, siblings, bridge }) => {
       invariant(account.balance.gt(minimalAmount), "eth balance is too low");
       const erc20Account = sample(
         (account.subAccounts || []).filter((a) => a.balance.gt(0))
       );
       invariant(erc20Account, "no erc20 account");
-      let t = createTransaction(account);
       const sibling = pickSiblings(siblings, maxAccount);
       const recipient = sibling.freshAddress;
-
-      t = updateTransaction(t, {
-        recipient,
-        subAccountId: erc20Account.id,
-      });
-      if (Math.random() < 0.5) {
-        t = updateTransaction(t, {
-          useAllAmount: true,
-        });
-      } else {
-        t = updateTransaction(t, {
-          amount: erc20Account.balance.times(Math.random()).integerValue(),
-        });
-      }
-      return t;
+      return {
+        transaction: bridge.createTransaction(account),
+        updates: [
+          { recipient, subAccountId: erc20Account.id },
+          Math.random() < 0.5
+            ? { useAllAmount: true }
+            : {
+                amount: erc20Account.balance
+                  .times(Math.random())
+                  .integerValue(),
+              },
+        ],
+      };
     },
     test: ({ accountBeforeTransaction, account, transaction, operation }) => {
       // workaround for buggy explorer behavior (nodes desync)
@@ -113,7 +106,7 @@ const ethereum: AppSpec<Transaction> = {
   }),
 };
 
-const ethereumClassic = {
+const ethereumClassic: AppSpec<Transaction> = {
   name: "Ethereum Classic",
   currency: getCryptoCurrencyById("ethereum_classic"),
   appQuery: {
@@ -131,7 +124,7 @@ const ethereumClassic = {
   }),
 };
 
-const ethereumRopsten = {
+const ethereumRopsten: AppSpec<Transaction> = {
   name: "Ethereum Ropsten",
   currency: getCryptoCurrencyById("ethereum_ropsten"),
   appQuery: {

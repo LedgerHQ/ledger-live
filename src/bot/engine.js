@@ -43,11 +43,13 @@ import {
 } from "./formatters";
 import type {
   AppSpec,
+  MutationSpec,
   SpecReport,
   MutationReport,
   DeviceAction,
   TransactionTestInput,
   TransactionArg,
+  TransactionRes,
 } from "./types";
 
 let appCandidates;
@@ -257,7 +259,11 @@ export async function runOnAccount<T: Transaction>({
       } maxSpendable=${maxSpendable.toString()}`
     );
 
-    const candidates = [];
+    const candidates: Array<{
+      mutation: MutationSpec<T>,
+      tx: T,
+      updates: Array<?$Shape<T>>,
+    }> = [];
     const unavailableMutationReasons = [];
 
     for (const mutation of mutations) {
@@ -268,25 +274,21 @@ export async function runOnAccount<T: Transaction>({
           "maximum mutation run reached (%s)",
           count
         );
-        const steppedTransactions = [];
         const arg: TransactionArg<T> = {
           appCandidate,
           account,
           bridge: accountBridge,
           siblings: accounts.filter((a) => a !== account),
           maxSpendable,
-          createTransaction: (account) =>
-            accountBridge.createTransaction(account),
-          updateTransaction: (tx, patch) => {
-            steppedTransactions.push(tx);
-            return patch ? accountBridge.updateTransaction(tx, patch) : tx;
-          },
         };
         if (spec.transactionCheck) spec.transactionCheck(arg);
-        const tx = mutation.transaction(arg);
-        if (tx) {
-          candidates.push({ mutation, tx, steppedTransactions });
-        }
+        const r: TransactionRes<T> = mutation.transaction(arg);
+        candidates.push({
+          mutation,
+          tx: r.transaction,
+          // $FlowFixMe what the hell
+          updates: r.updates,
+        });
       } catch (error) {
         unavailableMutationReasons.push({ mutation, error });
       }
@@ -301,7 +303,7 @@ export async function runOnAccount<T: Transaction>({
     }
 
     // a mutation was chosen
-    const { tx, mutation, steppedTransactions } = candidate;
+    const { tx, mutation, updates } = candidate;
     report.mutation = mutation;
     report.transaction = tx;
     report.destination = accounts.find((a) => a.freshAddress === tx.recipient);
@@ -311,11 +313,19 @@ export async function runOnAccount<T: Transaction>({
     let status;
     let errors = [];
 
-    for (const tx of steppedTransactions) {
-      await accountBridge.prepareTransaction(account, tx);
+    let transaction: T = await accountBridge.prepareTransaction(account, tx);
+
+    for (const patch of updates) {
+      if (patch) {
+        await accountBridge.getTransactionStatus(account, transaction); // result is unused but that would happen in normal flow
+        transaction = await accountBridge.updateTransaction(transaction, patch);
+        transaction = await accountBridge.prepareTransaction(
+          account,
+          transaction
+        );
+      }
     }
 
-    let transaction = await accountBridge.prepareTransaction(account, tx);
     report.transaction = transaction;
     report.transactionTime = now();
 

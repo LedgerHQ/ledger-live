@@ -51,24 +51,15 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "send some to another account",
       maxRun: 5,
-      transaction: ({
-        account,
-        siblings,
-        createTransaction,
-        maxSpendable,
-        updateTransaction,
-      }) => {
-        let t = createTransaction(account);
-        t = updateTransaction(t, {
-          recipient: pickSiblings(siblings, 30).freshAddress,
-        });
-        t = updateTransaction(t, {
-          amount: maxSpendable.div(2).integerValue(),
-        });
-        if (Math.random() < 0.5) {
-          t = updateTransaction(t, { memo: "LedgerLiveBot" });
-        }
-        return t;
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            { recipient: pickSiblings(siblings, 30).freshAddress },
+            { amount: maxSpendable.div(2).integerValue() },
+            Math.random() < 0.5 ? { memo: "LedgerLiveBot" } : null,
+          ],
+        };
       },
       test: ({ account, accountBeforeTransaction, status, transaction }) => {
         expect(account.operations.length).toBe(
@@ -95,18 +86,16 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "send max to another account",
       maxRun: 1,
-      transaction: ({
-        account,
-        siblings,
-        createTransaction,
-        updateTransaction,
-      }) => {
-        let t = createTransaction(account);
-        t = updateTransaction(t, {
-          recipient: pickSiblings(siblings, 30).freshAddress,
-        });
-        t = updateTransaction(t, { useAllAmount: true });
-        return t;
+      transaction: ({ account, siblings, bridge }) => {
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: pickSiblings(siblings, 30).freshAddress,
+            },
+            { useAllAmount: true },
+          ],
+        };
       },
       test: ({ account }) => {
         expect(account.spendableBalance.toString()).toBe("0");
@@ -116,7 +105,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "delegate new validators",
       maxRun: 3,
-      transaction: ({ account, createTransaction, updateTransaction }) => {
+      transaction: ({ account, bridge }) => {
         invariant(
           account.index % 10 > 0,
           "one out of 10 accounts is not going to delegate"
@@ -154,15 +143,18 @@ const cosmos: AppSpec<Transaction> = {
           })
           .filter((v) => v.amount.gt(0));
         invariant(validators.length > 0, "no possible delegation found");
-        let t = createTransaction(account);
-        t = updateTransaction(t, {
-          memo: "LedgerLiveBot",
-          mode: "delegate",
-        });
-        validators.forEach((_, i) => {
-          t = updateTransaction(t, { validators: validators.slice(0, i + 1) });
-        });
-        return t;
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              memo: "LedgerLiveBot",
+              mode: "delegate",
+            },
+            ...validators.map((_, i) => ({
+              validators: validators.slice(0, i + 1),
+            })),
+          ],
+        };
       },
       test: ({ account, transaction }) => {
         const { cosmosResources } = account;
@@ -186,7 +178,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "undelegate",
       maxRun: 2,
-      transaction: ({ account, createTransaction, updateTransaction }) => {
+      transaction: ({ account, bridge }) => {
         invariant(canUndelegate(account), "can undelegate");
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -208,23 +200,26 @@ const cosmos: AppSpec<Transaction> = {
           )
         );
         invariant(undelegateCandidate, "already pending");
-        let t = createTransaction(account);
-        t = updateTransaction(t, {
-          mode: "undelegate",
-          memo: "LedgerLiveBot",
-        });
-        t = updateTransaction(t, {
-          validators: [
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
             {
-              address: undelegateCandidate.validatorAddress,
-              amount: undelegateCandidate.amount
-                // most of the time, undelegate all
-                .times(Math.random() > 0.3 ? 1 : Math.random())
-                .integerValue(),
+              mode: "undelegate",
+              memo: "LedgerLiveBot",
+            },
+            {
+              validators: [
+                {
+                  address: undelegateCandidate.validatorAddress,
+                  amount: undelegateCandidate.amount
+                    // most of the time, undelegate all
+                    .times(Math.random() > 0.3 ? 1 : Math.random())
+                    .integerValue(),
+                },
+              ],
             },
           ],
-        });
-        return t;
+        };
       },
       test: ({ account, transaction }) => {
         const { cosmosResources } = account;
@@ -248,7 +243,7 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "redelegate",
       maxRun: 2,
-      transaction: ({ account, createTransaction, updateTransaction }) => {
+      transaction: ({ account, bridge }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         const sourceDelegation = sample(
@@ -260,26 +255,29 @@ const cosmos: AppSpec<Transaction> = {
             (d) => d.validatorAddress !== sourceDelegation.validatorAddress
           )
         );
-        let t = createTransaction(account);
-        t = updateTransaction(t, {
-          mode: "redelegate",
-          memo: "LedgerLiveBot",
-          cosmosSourceValidator: sourceDelegation.validatorAddress,
-        });
-        t = updateTransaction(t, {
-          validators: [
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
             {
-              address: delegation.validatorAddress,
-              amount: sourceDelegation.amount
-                .times(
-                  // most of the time redelegate all
-                  Math.random() > 0.3 ? 1 : Math.random()
-                )
-                .integerValue(),
+              mode: "redelegate",
+              memo: "LedgerLiveBot",
+              cosmosSourceValidator: sourceDelegation.validatorAddress,
+            },
+            {
+              validators: [
+                {
+                  address: delegation.validatorAddress,
+                  amount: sourceDelegation.amount
+                    .times(
+                      // most of the time redelegate all
+                      Math.random() > 0.3 ? 1 : Math.random()
+                    )
+                    .integerValue(),
+                },
+              ],
             },
           ],
-        });
-        return t;
+        };
       },
       test: ({ account, transaction }) => {
         const { cosmosResources } = account;
@@ -303,33 +301,34 @@ const cosmos: AppSpec<Transaction> = {
     {
       name: "claim rewards",
       maxRun: 2,
-      transaction: ({ account, createTransaction, updateTransaction }) => {
+      transaction: ({ account, bridge }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
         const delegation = sample(
-          cosmosResources.delegations.filter((d) => canClaimRewards(account, d))
+          cosmosResources.delegations.filter(
+            (d) => canClaimRewards(account, d) && d.pendingRewards.gt(2000)
+          )
         );
         invariant(delegation, "no delegation to claim");
-        let t = createTransaction(account);
-        t = updateTransaction(t, {
-          mode: "claimReward",
-          memo: "LedgerLiveBot",
-          validators: [
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
             {
-              address: delegation.validatorAddress,
-              amount: delegation.pendingRewards,
+              mode: "claimReward",
+              memo: "LedgerLiveBot",
+              validators: [
+                {
+                  address: delegation.validatorAddress,
+                  amount: delegation.pendingRewards,
+                },
+              ],
             },
           ],
-        });
-        return t;
+        };
       },
-      test: ({ account, transaction, operation }) => {
+      test: ({ account, transaction }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
-        invariant(
-          Date.now() - operation.date > 20000,
-          "enough time has passed to assert no longer claimable"
-        );
         transaction.validators.forEach((v) => {
           const d = cosmosResources.delegations.find(
             (d) => d.validatorAddress === v.address

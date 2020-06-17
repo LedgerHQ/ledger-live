@@ -23,15 +23,9 @@ const ripple: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move ~50% to another account",
-      transaction: ({
-        account,
-        siblings,
-        createTransaction,
-        updateTransaction,
-        maxSpendable,
-      }) => {
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
-        let t = createTransaction(account);
+        let transaction = bridge.createTransaction(account);
         const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
         let amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
@@ -42,11 +36,14 @@ const ripple: AppSpec<Transaction> = {
           );
           amount = reserve;
         }
-        t = updateTransaction(t, { amount, recipient });
-        if (Math.random() > 0.5) {
-          t = updateTransaction(t, { tag: 123 });
-        }
-        return t;
+        return {
+          transaction,
+          updates: [
+            { amount },
+            { recipient },
+            Math.random() > 0.5 ? { tag: 123 } : null,
+          ],
+        };
       },
       test: ({ account, transaction, accountBeforeTransaction, operation }) => {
         if (transaction.tag) {
@@ -61,15 +58,8 @@ const ripple: AppSpec<Transaction> = {
     {
       name: "send max to another account",
       maxRun: 1,
-      transaction: ({
-        account,
-        siblings,
-        createTransaction,
-        updateTransaction,
-        maxSpendable,
-      }) => {
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
-        let t = createTransaction(account);
         const sibling = pickSiblings(siblings, 3);
         invariant(
           !isAccountEmpty(sibling) ||
@@ -77,8 +67,10 @@ const ripple: AppSpec<Transaction> = {
           "not enough funds to send to new account"
         );
         const recipient = sibling.freshAddress;
-        t = updateTransaction(t, { useAllAmount: true, recipient });
-        return t;
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [{ useAllAmount: true, recipient }],
+        };
       },
       test: ({ account }) => {
         expect(account.balance.toString()).toBe("20");

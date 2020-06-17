@@ -45,9 +45,11 @@ export type TransactionArg<T> = {
   siblings: Account[],
   bridge: AccountBridge<T>,
   maxSpendable: BigNumber,
-  createTransaction: (Account) => T,
-  // if called, it will "record" intermediary txs to simulate user filling up the form incrementally
-  updateTransaction: (tx: T, patch?: $Shape<T>) => T,
+};
+
+export type TransactionRes<T> = {
+  transaction: T,
+  updates: Array<?$Shape<T>>,
 };
 
 export type MutationSpec<T: Transaction> = {
@@ -56,7 +58,8 @@ export type MutationSpec<T: Transaction> = {
   // The maximum number of times to execute this mutation for a given test run
   maxRun?: number,
   // Express the transaction to be done
-  transaction: (arg: TransactionArg<T>) => ?T,
+  // it returns either a transaction T, or an array with T and a list of patch to apply to it
+  transaction: (arg: TransactionArg<T>) => TransactionRes<T>,
   // if there is a status errors/warnings of the defined transaction, this function, if define, can try to recover from it
   recoverBadTransactionStatus?: ({
     transaction: T,
