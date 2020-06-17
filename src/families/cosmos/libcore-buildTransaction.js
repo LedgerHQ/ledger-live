@@ -1,4 +1,5 @@
 // @flow
+import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Transaction, CoreCosmosLikeTransaction } from "./types";
 import type { Account } from "../../types";
 import type { Core, CoreAccount, CoreCurrency } from "../../libcore/types";
@@ -13,7 +14,6 @@ import { getEnv } from "../../env";
 import { promiseAllBatched } from "../../promise";
 import { getMaxEstimatedBalance } from "./logic";
 import network from "../../network";
-import { FeesNotLoaded } from "@ledgerhq/errors";
 
 const getBaseApiUrl = () =>
   getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
@@ -83,7 +83,7 @@ export async function cosmosBuildTransaction({
   }
 
   if (!estimatedGas.gt(0)) {
-    throw new FeesNotLoaded();
+    throw new FeeNotLoaded();
   }
 
   const gasAmount = await bigNumberToLibcoreAmount(
