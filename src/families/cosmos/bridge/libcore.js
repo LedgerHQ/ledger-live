@@ -320,7 +320,7 @@ const getTransactionStatus = async (a, t) => {
 
 const isTransactionValidForEstimatedFees = async (a, t) => {
   let errors = null;
-  if (t.mode === "send") {
+  if (t.mode === "send" && (t.amount.gt(0) || t.useAllAmount)) {
     errors = (await validateRecipient(a.currency, t.recipient)).recipientError;
   } else {
     errors =

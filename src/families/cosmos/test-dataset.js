@@ -12,7 +12,6 @@ import { CosmosClaimRewardsFeesWarning } from "../../errors";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
-import { getEnv } from "../../env";
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore"],
@@ -103,36 +102,6 @@ const dataset: DatasetTest<Transaction> = {
                   recipient: new InvalidAddress(),
                 },
                 warnings: {},
-              },
-            },
-            {
-              name: "gas",
-              transaction: (t) => ({
-                ...t,
-                amount: BigNumber(100),
-                recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-                gas: BigNumber("10000"),
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
-                estimatedFees: BigNumber("10000").multipliedBy(
-                  getEnv("COSMOS_GAS_PRICE")
-                ),
-              },
-            },
-            {
-              name: "Fees",
-              transaction: (t) => ({
-                ...t,
-                amount: BigNumber(100),
-                recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
-                fees: BigNumber("10000"),
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: {},
-                estimatedFees: BigNumber("10000"),
               },
             },
             {
