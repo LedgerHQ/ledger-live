@@ -8,6 +8,7 @@ import { isAccountEmpty } from "../account";
 import type { DeviceAction, DeviceActionArg } from "./types";
 import type { Account, Transaction } from "../types";
 
+// TODO should weight the choice to favorize accounts with small amounts
 export function pickSiblings(
   siblings: Account[],
   maxAccount: number = 5

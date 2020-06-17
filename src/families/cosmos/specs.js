@@ -109,7 +109,7 @@ const cosmos: AppSpec<Transaction> = {
         return t;
       },
       test: ({ account }) => {
-        expect(account.balance.toString()).toBe("0");
+        expect(account.spendableBalance.toString()).toBe("0");
       },
     },
 
@@ -117,6 +117,10 @@ const cosmos: AppSpec<Transaction> = {
       name: "delegate new validators",
       maxRun: 3,
       transaction: ({ account, createTransaction, updateTransaction }) => {
+        invariant(
+          account.index % 10 > 0,
+          "one out of 10 accounts is not going to delegate"
+        );
         invariant(canDelegate(account), "can delegate");
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -243,7 +247,7 @@ const cosmos: AppSpec<Transaction> = {
 
     {
       name: "redelegate",
-      maxRun: 1,
+      maxRun: 2,
       transaction: ({ account, createTransaction, updateTransaction }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -298,7 +302,7 @@ const cosmos: AppSpec<Transaction> = {
 
     {
       name: "claim rewards",
-      maxRun: 1,
+      maxRun: 2,
       transaction: ({ account, createTransaction, updateTransaction }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -319,9 +323,13 @@ const cosmos: AppSpec<Transaction> = {
         });
         return t;
       },
-      test: ({ account, transaction }) => {
+      test: ({ account, transaction, operation }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
+        invariant(
+          Date.now() - operation.date > 20000,
+          "enough time has passed to assert no longer claimable"
+        );
         transaction.validators.forEach((v) => {
           const d = cosmosResources.delegations.find(
             (d) => d.validatorAddress === v.address
