@@ -28,6 +28,7 @@ const getSendFields = (transaction, status, account, source) => {
       label: "Amount",
       value: formatCurrencyUnit(getAccountUnit(account), amount, {
         showCode: true,
+        disableRounding: true,
       }),
     });
   }
@@ -91,6 +92,7 @@ function getDeviceTransactionConfig({
           validators[0].amount,
           {
             showCode: true,
+            disableRounding: true,
           }
         ),
       });
@@ -114,6 +116,7 @@ function getDeviceTransactionConfig({
           validators[0].amount,
           {
             showCode: true,
+            disableRounding: true,
           }
         ),
       });
