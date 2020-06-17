@@ -278,9 +278,8 @@ export async function runOnAccount<T: Transaction>({
           createTransaction: (account) =>
             accountBridge.createTransaction(account),
           updateTransaction: (tx, patch) => {
-            const t = patch ? accountBridge.updateTransaction(tx, patch) : tx;
-            steppedTransactions.push(t);
-            return t;
+            steppedTransactions.push(tx);
+            return patch ? accountBridge.updateTransaction(tx, patch) : tx;
           },
         };
         if (spec.transactionCheck) spec.transactionCheck(arg);
