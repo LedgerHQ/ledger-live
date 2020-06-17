@@ -1,7 +1,7 @@
 /* @flow */
 import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
 import Touchable from "./Touchable";
 import CloseIcon from "../icons/Close";
 import colors from "../colors";
@@ -9,7 +9,7 @@ import ConfirmationModal from "./ConfirmationModal";
 
 type Props = {
   preferDismiss: boolean,
-  color: string,
+  color?: string,
   withConfirmation?: boolean,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
@@ -65,7 +65,7 @@ export default function HeaderRightClose({
     <Touchable
       event="HeaderRightClose"
       onPress={onPress}
-      style={{ marginHorizontal: 16 }}
+      style={styles.wrapper}
     >
       <CloseIcon size={18} color={color} />
       {withConfirmation && (
@@ -81,3 +81,9 @@ export default function HeaderRightClose({
     </Touchable>
   );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    marginHorizontal: 16,
+  },
+});

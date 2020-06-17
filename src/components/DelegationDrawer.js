@@ -23,6 +23,9 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
+import { normalize } from "../helpers/normalizeSize";
+
+const { height } = getWindowDimensions();
 
 type Props = {
   isOpen: boolean,
@@ -50,7 +53,7 @@ export default function DelegationDrawer({
   const color = getCurrencyColor(currency);
   const unit = getAccountUnit(account);
 
-  const height = Math.min(getWindowDimensions().height - 400, 280);
+  const iconWidth = normalize(64);
 
   return (
     <BottomModal
@@ -65,18 +68,18 @@ export default function DelegationDrawer({
           onPress={onClose}
           style={styles.closeButton}
         >
-          <Circle size={32} bg={colors.lightFog}>
+          <Circle size={iconWidth / 2} bg={colors.lightFog}>
             <Close />
           </Circle>
         </Touchable>
 
         <DelegatingContainer
           left={
-            <Circle size={64} bg={rgba(color, 0.2)}>
-              <CurrencyIcon size={32} currency={currency} />
+            <Circle size={iconWidth} bg={rgba(color, 0.2)}>
+              <CurrencyIcon size={iconWidth / 2} currency={currency} />
             </Circle>
           }
-          right={<ValidatorImage size={64} />}
+          right={<ValidatorImage size={iconWidth} />}
         />
 
         <View style={styles.subHeader}>
@@ -96,7 +99,10 @@ export default function DelegationDrawer({
           </LText>
         </View>
 
-        <ScrollView style={{ height }}>
+        <ScrollView
+          style={styles.scrollSection}
+          showsVerticalScrollIndicator={true}
+        >
           {data.map((field, i) => (
             <DataField {...field} isLast={i === data.length - 1} />
           ))}
@@ -191,11 +197,13 @@ export const styles = StyleSheet.create({
     position: "relative",
   },
   root: {
-    padding: 16,
+    paddingTop: 8,
   },
   closeButton: {
     alignSelf: "flex-end",
+    marginRight: 16,
   },
+  scrollSection: { height: height - 400, paddingHorizontal: 16 },
   subHeader: {
     paddingBottom: 16,
     alignItems: "center",
@@ -240,6 +248,8 @@ export const styles = StyleSheet.create({
     color: colors.live,
   },
   actionsRow: {
+    paddingTop: 16,
+    paddingHorizontal: 16,
     alignItems: "flex-start",
     justifyContent: "space-between",
   },

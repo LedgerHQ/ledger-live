@@ -211,7 +211,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
       />
       {sections.length <= 0 && (
         <View style={styles.noResult}>
-          <LText>
+          <LText style={styles.textCenter}>
             <Trans
               i18nKey="cosmos.delegation.flow.steps.validator.noResultsFound"
               values={{ search: searchQuery }}
@@ -225,40 +225,38 @@ function DelegationSelectValidator({ navigation, route }: Props) {
         sections={sections}
         keyExtractor={(item, index) => item + index}
         renderItem={renderItem}
+        stickySectionHeadersEnabled
         renderSectionHeader={({ section: { title } }) => (
           <LText style={styles.header}>{title}</LText>
         )}
       />
 
       <View style={styles.footer}>
-        {max.isZero() && (
-          <View style={styles.labelContainer}>
-            <Check size={16} color={colors.success} />
-            <LText style={[styles.assetsRemaining, styles.success]}>
-              <Trans i18nKey="cosmos.delegation.flow.steps.validator.allAssetsUsed" />
-            </LText>
-          </View>
-        )}
-        {max.gt(0) && (
-          <View style={styles.labelContainer}>
-            <LText style={styles.assetsRemaining}>
-              <Trans
-                i18nKey="cosmos.delegation.flow.steps.validator.totalAvailable"
-                values={{
-                  amount: formatCurrencyUnit(unit, max, {
-                    showCode: true,
-                  }),
-                }}
-              >
-                <LText semiBold>{""}</LText>
-              </Trans>
-            </LText>
-          </View>
-        )}
-        <View style={[styles.labelContainer, styles.subLabelContainer]}>
-          <LText style={[styles.assetsRemaining, styles.small]}>
-            <Trans i18nKey="cosmos.delegation.flow.steps.validator.feesInfo" />
-          </LText>
+        <View style={styles.paddingBottom}>
+          {max.isZero() && (
+            <View style={styles.labelContainer}>
+              <Check size={16} color={colors.success} />
+              <LText style={[styles.assetsRemaining, styles.success]}>
+                <Trans i18nKey="cosmos.delegation.flow.steps.validator.allAssetsUsed" />
+              </LText>
+            </View>
+          )}
+          {max.gt(0) && (
+            <View style={styles.labelContainer}>
+              <LText style={styles.assetsRemaining}>
+                <Trans
+                  i18nKey="cosmos.delegation.flow.steps.validator.totalAvailable"
+                  values={{
+                    amount: formatCurrencyUnit(unit, max, {
+                      showCode: true,
+                    }),
+                  }}
+                >
+                  <LText semiBold>{""}</LText>
+                </Trans>
+              </LText>
+            </View>
+          )}
         </View>
         <Button
           disabled={!!error}
@@ -301,9 +299,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  subLabelContainer: {
-    paddingBottom: 8,
-  },
   assetsRemaining: {
     fontSize: 16,
     textAlign: "center",
@@ -313,11 +308,15 @@ const styles = StyleSheet.create({
   small: {
     fontSize: 12,
   },
+  textCenter: { textAlign: "center" },
   error: {
     color: colors.alert,
   },
   success: {
     color: colors.success,
+  },
+  paddingBottom: {
+    paddingBottom: 8,
   },
 });
 

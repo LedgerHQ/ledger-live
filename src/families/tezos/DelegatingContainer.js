@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "center",
     alignItems: "center",
-    paddingTop: 32,
+    paddingTop: 16,
   },
   delegationImage: {
     width: 96,

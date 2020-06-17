@@ -10,25 +10,33 @@ type Props = {
   transaction: Transaction,
 };
 
-function Post({ transaction }: Props) {
+const StellarMemoField = ({ transaction }: Props) => {
   return (
-    <>
-      <DataRow label={deviceMemoLabels[transaction.memoType || "NO_MEMO"]}>
-        <LText semiBold style={styles.text}>
-          {transaction.memoValue ? `${transaction.memoValue} ` : "[none]"}
-        </LText>
-      </DataRow>
-      <DataRow label="Network">
-        <LText semiBold style={styles.text}>
-          {"Public"}
-        </LText>
-      </DataRow>
-    </>
+    <DataRow label={deviceMemoLabels[transaction.memoType || "NO_MEMO"]}>
+      <LText semiBold style={styles.text}>
+        {transaction.memoValue ? `${transaction.memoValue} ` : "[none]"}
+      </LText>
+    </DataRow>
   );
-}
+};
+
+const StellarNetworkField = () => {
+  return (
+    <DataRow label="Network">
+      <LText semiBold style={styles.text}>
+        {"Public"}
+      </LText>
+    </DataRow>
+  );
+};
+
+const fieldComponents = {
+  "stellar.memo": StellarMemoField,
+  "stellar.network": StellarNetworkField,
+};
 
 export default {
-  post: Post,
+  fieldComponents,
 };
 
 const deviceMemoLabels = {

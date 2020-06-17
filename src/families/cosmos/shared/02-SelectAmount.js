@@ -1,12 +1,7 @@
 // @flow
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { View, StyleSheet, Keyboard, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -28,6 +23,7 @@ import CurrencyInput from "../../../components/CurrencyInput";
 import LText from "../../../components/LText";
 import Warning from "../../../icons/Warning";
 import Check from "../../../icons/Check";
+import KeyboardView from "../../../components/KeyboardView";
 
 type RouteParams = {
   accountId: string,
@@ -108,10 +104,6 @@ function DelegationAmount({ navigation, route }: Props) {
     });
   }, [navigation, route.params, bridge, value]);
 
-  const onPressOutside = useCallback(() => {
-    Keyboard.dismiss();
-  }, []);
-
   const [ratioButtons] = useState(
     [0.25, 0.5, 0.75, 1].map(ratio => ({
       label: `${ratio * 100}%`,
@@ -131,8 +123,8 @@ function DelegationAmount({ navigation, route }: Props) {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={onPressOutside}>
-      <SafeAreaView style={styles.root}>
+    <SafeAreaView style={styles.root}>
+      <KeyboardView>
         <View style={styles.main}>
           <CurrencyInput
             unit={unit}
@@ -140,20 +132,30 @@ function DelegationAmount({ navigation, route }: Props) {
             onChange={setValue}
             inputStyle={styles.inputStyle}
             hasError={error}
+            autoFocus
           />
           <View style={styles.ratioButtonContainer}>
             {ratioButtons.map(({ label, value: v }) => (
-              <Button
+              <TouchableOpacity
                 key={label}
-                containerStyle={styles.ratioButton}
-                event=""
-                type={value.eq(v) ? "primary" : "secondary"}
-                title={label}
+                style={[
+                  styles.ratioButton,
+                  value.eq(v) ? styles.ratioPrimaryButton : null,
+                ]}
                 onPress={() => {
                   Keyboard.dismiss();
                   setValue(v);
                 }}
-              />
+              >
+                <LText
+                  style={[
+                    styles.ratioLabel,
+                    value.eq(v) ? styles.ratioPrimaryLabel : null,
+                  ]}
+                >
+                  {label}
+                </LText>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -240,8 +242,8 @@ function DelegationAmount({ navigation, route }: Props) {
             type="primary"
           />
         </View>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+      </KeyboardView>
+    </SafeAreaView>
   );
 }
 
@@ -255,6 +257,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    minHeight: 150,
   },
   inputStyle: { textAlign: "center", fontSize: 40, fontWeight: "600" },
   ratioButtonContainer: {
@@ -264,10 +267,26 @@ const styles = StyleSheet.create({
     height: 36,
     marginTop: 16,
   },
-  ratioButton: { marginHorizontal: 5 },
+  ratioButton: {
+    marginHorizontal: 5,
+    width: 60,
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: colors.grey,
+    color: colors.grey,
+    backgroundColor: "rgba(0,0,0,0)",
+    paddingVertical: 8,
+  },
+  ratioPrimaryButton: {
+    borderColor: colors.live,
+    color: colors.white,
+    backgroundColor: colors.live,
+  },
+  ratioLabel: { color: colors.grey, textAlign: "center" },
+  ratioPrimaryLabel: { color: colors.white },
   footer: {
     alignSelf: "stretch",
-    padding: 16,
+    padding: 8,
     backgroundColor: colors.white,
   },
   labelContainer: {
@@ -281,7 +300,7 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   assetsRemaining: {
-    fontSize: 16,
+    fontSize: 14,
     textAlign: "center",
     lineHeight: 32,
     paddingHorizontal: 10,

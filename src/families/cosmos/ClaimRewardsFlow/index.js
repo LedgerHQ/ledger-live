@@ -95,14 +95,15 @@ function ClaimRewardsFlow() {
         name={ScreenName.CosmosClaimRewardsValidationError}
         component={ClaimRewardsValidationError}
         options={{
-          headerTitle: null,
+          headerShown: false,
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen
         name={ScreenName.CosmosClaimRewardsValidationSuccess}
         component={ClaimRewardsValidationSuccess}
         options={{
-          headerTitle: null,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />

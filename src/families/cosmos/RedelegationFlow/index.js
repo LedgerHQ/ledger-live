@@ -101,14 +101,15 @@ function RedelegationFlow() {
         name={ScreenName.CosmosRedelegationValidationError}
         component={RedelegationValidationError}
         options={{
-          headerTitle: null,
+          headerShown: false,
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen
         name={ScreenName.CosmosRedelegationValidationSuccess}
         component={RedelegationValidationSuccess}
         options={{
-          headerTitle: null,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />

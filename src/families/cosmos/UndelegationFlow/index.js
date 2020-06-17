@@ -72,6 +72,7 @@ function UndelegationFlow() {
         component={UndelegationValidationError}
         options={{
           headerTitle: null,
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen

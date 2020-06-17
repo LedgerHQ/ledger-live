@@ -12,6 +12,7 @@ type Props = {
   alwaysShowSign?: boolean,
   before?: string,
   after?: string,
+  disableRounding?: boolean,
 };
 
 export default function CurrencyUnitValue({
@@ -21,6 +22,7 @@ export default function CurrencyUnitValue({
   alwaysShowSign,
   before = "",
   after = "",
+  disableRounding = false,
 }: Props) {
   const { locale } = useLocale();
 
@@ -30,6 +32,7 @@ export default function CurrencyUnitValue({
       showCode,
       alwaysShowSign,
       locale,
+      disableRounding,
     }) +
     after
   );

@@ -199,16 +199,6 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
         v => v.validatorAddress === validator.address,
       );
 
-      const formattedAmount = formatCurrencyUnit(
-        unit,
-        BigNumber(validator.amount),
-        {
-          disableRounding: true,
-          alwaysShowSign: false,
-          showCode: true,
-        },
-      );
-
       ret = (
         <>
           <Section
@@ -217,10 +207,6 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
             onPress={() => {
               redirectAddressCreator(validator.address);
             }}
-          />
-          <Section
-            title={t("operationDetails.extra.rewardAmount")}
-            value={formattedAmount}
           />
         </>
       );

@@ -61,9 +61,13 @@ function DelegationFlow() {
         name={ScreenName.CosmosDelegationAmount}
         component={DelegationAmount}
         options={({ route }) => ({
+          headerRight: null,
           headerTitle: () => (
             <StepHeader
-              title={route.params?.validator?.name ?? ""}
+              title={
+                route.params.validator?.name ??
+                route.params.validator.validatorAddress
+              }
               subtitle={t("cosmos.delegation.stepperHeader.amountSubTitle")}
             />
           ),
@@ -106,14 +110,15 @@ function DelegationFlow() {
         name={ScreenName.CosmosDelegationValidationError}
         component={DelegationValidationError}
         options={{
-          headerTitle: null,
+          headerShown: false,
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen
         name={ScreenName.CosmosDelegationValidationSuccess}
         component={DelegationValidationSuccess}
         options={{
-          headerTitle: null,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />

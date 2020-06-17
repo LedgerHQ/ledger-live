@@ -39,7 +39,6 @@ import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import FirstLetterIcon from "../../../components/FirstLetterIcon";
-import DelegateIcon from "../../../icons/Delegate";
 import RedelegateIcon from "../../../icons/Redelegate";
 import UndelegateIcon from "../../../icons/Undelegate";
 import ClaimRewardIcon from "../../../icons/ClaimReward";
@@ -221,16 +220,6 @@ export default function Delegations({ account }: Props) {
     return delegation
       ? [
           {
-            label: t("delegation.actions.delegate"),
-            Icon: (props: IconProps) => (
-              <Circle {...props} bg={colors.fog}>
-                <DelegateIcon />
-              </Circle>
-            ),
-            onPress: onDelegate,
-            event: "DelegationActionDelegate",
-          },
-          {
             label: t("delegation.actions.redelegate"),
             Icon: (props: IconProps) => (
               <Circle {...props} bg={colors.fog}>
@@ -270,7 +259,7 @@ export default function Delegations({ account }: Props) {
           },
         ]
       : [];
-  }, [t, onDelegate, onRedelegate, onCollectRewards, onUndelegate, delegation]);
+  }, [t, onRedelegate, onCollectRewards, onUndelegate, delegation]);
 
   return (
     <View style={styles.root}>

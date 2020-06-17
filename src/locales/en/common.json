@@ -923,7 +923,7 @@
     },
     "claimReward": {
       "sectionLabel": "Rewards",
-      "cta": "Claim rewards"
+      "cta": "Claim"
     },
     "undelegation": {
       "sectionLabel": "Undelegation(s)"
@@ -1731,8 +1731,7 @@
             "totalAvailable": "Total available: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
             "noResultsFound": "No validators found for <0>{{search}}</0>",
-            "currentAmount": "(+ <0>{{amount}}</0>)",
-            "feesInfo": "Selected amounts are fees included"
+            "currentAmount": "(+ <0>{{amount}}</0>)"
           },
           "amount": {
             "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
@@ -1852,7 +1851,7 @@
           },
           "verification": {
             "success": {
-              "title": "You have successfully claimed your rewards, they automatically added to the available balance.",
+              "title": "You have successfully claimed your rewards, they were automatically added to your available balance.",
               "titleCompound": "Your rewards have been automaticaly delegated to the same validator.",
               "text": "Your account balance will update once the blockchain has confirmed the transaction.",
               "cta": "View details"
@@ -2046,7 +2045,6 @@
     "goToAccount": "Go to account",
     "howDelegationWorks": "How delegation works",
     "actions": {
-      "delegate": "Delegate",
       "redelegate": "Redelegate",
       "collectRewards": "Collect rewards",
       "undelegate": "Undelegate"

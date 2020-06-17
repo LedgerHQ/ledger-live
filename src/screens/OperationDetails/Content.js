@@ -10,7 +10,11 @@ import type {
   Operation,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
+import {
+  getOperationAmountNumber,
+  getOperationConfirmationNumber,
+  getOperationConfirmationDisplayableNumber,
+} from "@ledgerhq/live-common/lib/operation";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -94,9 +98,11 @@ export default function Content({ account, parentAccount, operation }: Props) {
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const valueColor = isNegative ? colors.smoke : colors.green;
-  const confirmations = operation.blockHeight
-    ? mainAccount.blockHeight - operation.blockHeight
-    : 0;
+  const confirmations = getOperationConfirmationNumber(operation, mainAccount);
+  const confirmationsString = getOperationConfirmationDisplayableNumber(
+    operation,
+    mainAccount,
+  );
   const uniqueSenders = uniq(operation.senders);
   const uniqueRecipients = uniq(operation.recipients);
   const { extra, type } = operation;
@@ -180,12 +186,12 @@ export default function Content({ account, parentAccount, operation }: Props) {
               style={[styles.confirmation, { color: colors.green }]}
             >
               <Trans i18nKey="operationDetails.confirmed" />{" "}
-              {`(${confirmations})`}
+              {confirmationsString && `(${confirmationsString})`}
             </LText>
           ) : (
             <LText style={[styles.confirmation, { color: colors.grey }]}>
               <Trans i18nKey="operationDetails.notConfirmed" />{" "}
-              {`(${confirmations})`}
+              {confirmationsString && `(${confirmationsString})`}
             </LText>
           )}
         </View>
