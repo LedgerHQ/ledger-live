@@ -25,6 +25,7 @@ import type { Account, CryptoCurrency, TokenCurrency } from "../../types";
 import { useReplaySubject } from "../../observable";
 import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
+import { shouldUpgrade } from "../../apps";
 
 type State = {|
   isLoading: boolean,
@@ -69,8 +70,13 @@ type Event =
   | ConnectAppEvent
   | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
 
-const mapResult = ({ opened, device, appAndVersion }: AppState): ?AppResult =>
-  opened && device ? { device, appAndVersion } : null;
+const mapResult = ({
+  opened,
+  device,
+  appAndVersion,
+  displayUpgradeWarning,
+}: AppState): ?AppResult =>
+  opened && device && !displayUpgradeWarning ? { device, appAndVersion } : null;
 
 const getInitialState = (device?: ?Device): State => ({
   isLoading: !!device,
@@ -155,12 +161,10 @@ const reducer = (state: State, e: Event): State => {
         opened: true,
         appAndVersion: e.app,
         derivation: e.derivation,
-      };
-
-    case "display-upgrade-warning":
-      return {
-        ...state,
-        displayUpgradeWarning: e.displayUpgradeWarning,
+        displayUpgradeWarning:
+          state.device && e.app
+            ? shouldUpgrade(state.device.modelId, e.app.name, e.app.version)
+            : false,
       };
   }
   return state;

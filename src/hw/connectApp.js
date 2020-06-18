@@ -17,7 +17,7 @@ import { withDevice } from "./deviceAccess";
 import getAppAndVersion from "./getAppAndVersion";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
-import { mustUpgrade, shouldUpgrade } from "../apps";
+import { mustUpgrade } from "../apps";
 
 export type RequiresDerivation = {|
   currencyId: string,
@@ -100,7 +100,7 @@ const derivationLogic = (
   ).pipe(
     map(({ address }) => ({
       type: "opened",
-      appAndVersion,
+      app: appAndVersion,
       derivation: { address },
     })),
     catchError((e) => {
@@ -169,20 +169,8 @@ const cmd = ({
                 appAndVersion,
                 appName,
               });
-            }
-
-            if (
-              shouldUpgrade(modelId, appAndVersion.name, appAndVersion.version)
-            ) {
-              return concat(
-                of({
-                  type: "display-upgrade-warning",
-                  displayUpgradeWarning: true,
-                }),
-                of({ type: "opened", appAndVersion })
-              );
             } else {
-              const e: ConnectAppEvent = { type: "opened", appAndVersion };
+              const e: ConnectAppEvent = { type: "opened", app: appAndVersion };
               return of(e);
             }
           }),
