@@ -2,7 +2,7 @@
 
 export const configureAsNewDevice = "Configure as new device";
 export const setUpAsNewDevice = "Set up as new device";
-export const restoreConfiguration = "Restore configuration";
+export const restoreConfiguration = "Restore from recovery phrase";
 
 export const seedWord1 = "Word #1";
 export const seedNext = "Next";
