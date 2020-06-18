@@ -262,11 +262,8 @@ const getTransactionStatus = async (a, t) => {
       errors.recipient = new InvalidAddress(null, {
         currencyName: a.currency.name,
       });
-    const unbondingError = isDelegable(
-      a,
-      t.validators[0].address,
-      t.validators[0].amount
-    );
+    const [first] = t.validators;
+    const unbondingError = first && isDelegable(a, first.address, first.amount);
     if (unbondingError) {
       errors.unbonding = unbondingError;
     }
@@ -292,9 +289,12 @@ const getTransactionStatus = async (a, t) => {
   if (["claimReward", "claimRewardCompound"].includes(t.mode)) {
     const { cosmosResources } = a;
     invariant(cosmosResources, "cosmosResources should exist");
-    const claimReward = cosmosResources.delegations.find(
-      (delegation) => delegation.validatorAddress === t.validators[0].address
-    );
+    const claimReward = t.validators.length
+      ? cosmosResources.delegations.find(
+          (delegation) =>
+            delegation.validatorAddress === t.validators[0].address
+        )
+      : null;
     if (claimReward && estimatedFees.gt(claimReward.pendingRewards)) {
       warnings.claimReward = new CosmosClaimRewardsFeesWarning();
     }

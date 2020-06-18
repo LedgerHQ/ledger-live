@@ -9,6 +9,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Amount",
       button: "Rr",
+      ignoreAssertionFailure: true, // https://ledgerhq.atlassian.net/browse/LLC-676
       expectedValue: ({ account, status }) =>
         formatCurrencyUnit(
           {
@@ -25,6 +26,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Fees",
       button: "Rr",
+      ignoreAssertionFailure: true, // https://ledgerhq.atlassian.net/browse/LLC-676
       expectedValue: ({ account, status }) =>
         formatCurrencyUnit(
           {

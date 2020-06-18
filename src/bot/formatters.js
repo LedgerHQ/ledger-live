@@ -63,7 +63,6 @@ export function formatReportForConsole<T: Transaction>({
   unavailableMutationReasons,
   mutation,
   mutationTime,
-  transactionTime,
   destination,
   transaction,
   statusTime,
