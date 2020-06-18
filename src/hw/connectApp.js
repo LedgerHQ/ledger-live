@@ -64,8 +64,10 @@ const openAppFromDashboard = (
             if (e && e instanceof TransportStatusError) {
               switch (e.statusCode) {
                 case 0x6984:
+                case 0x6807:
                   return of({ type: "app-not-installed", appName });
                 case 0x6985:
+                case 0x5501:
                   return throwError(new UserRefusedOnDevice());
               }
             }
@@ -107,11 +109,15 @@ const derivationLogic = (
       }
 
       if (e instanceof TransportStatusError) {
-        switch (e.statusCode) {
-          case 0x6982:
-          case 0x6700:
-            return of({ type: "ask-open-app", appName });
-
+        const { statusCode } = e;
+        if (
+          statusCode === 0x6982 ||
+          statusCode === 0x6700 ||
+          (0x6600 <= statusCode && statusCode <= 0x67ff)
+        ) {
+          return of({ type: "ask-open-app", appName });
+        }
+        switch (statusCode) {
           case 0x6f04: // FW-90. app was locked...
           case 0x6faa: // FW-90. app bricked, a reboot fixes it.
           case 0x6d00: // this is likely because it's the wrong app (LNS 1.3.1)
@@ -136,7 +142,7 @@ const cmd = ({
 
       const sub = defer(() => from(getAppAndVersion(transport)))
         .pipe(
-          concatMap((appAndVersion) => {
+          concatMap((appAndVersion): Observable<ConnectAppEvent> => {
             timeoutSub.unsubscribe();
 
             if (dashboardNames.includes(appAndVersion.name)) {
@@ -163,7 +169,8 @@ const cmd = ({
                 appName,
               });
             } else {
-              return of({ type: "opened", appAndVersion });
+              const e: ConnectAppEvent = { type: "opened", appAndVersion };
+              return of(e);
             }
           }),
           catchError((e: Error) => {

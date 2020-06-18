@@ -56,20 +56,26 @@ const remapSocketError = (context?: string) =>
     switch (status) {
       case "6a80":
       case "6a81":
+      case "6a8e":
+      case "6a8f":
         return throwError(new ManagerAppAlreadyInstalledError());
       case "6982":
+      case "5303":
         return throwError(new ManagerDeviceLockedError());
       case "6a84":
+      case "5103":
         if (context === "firmware" || context === "mcu") {
           return throwError(new ManagerFirmwareNotEnoughSpaceError());
         }
         return throwError(new ManagerNotEnoughSpaceError());
       case "6a85":
+      case "5102":
         if (context === "firmware" || context === "mcu") {
           return throwError(new UserRefusedFirmwareUpdate());
         }
         return throwError(new ManagerNotEnoughSpaceError());
       case "6985":
+      case "5501":
         if (context === "firmware" || context === "mcu") {
           return throwError(new UserRefusedFirmwareUpdate());
         }

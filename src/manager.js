@@ -2,6 +2,8 @@
 /* eslint-disable camelcase */
 // Higher level cache on top of Manager
 
+import semver from "semver";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { UnknownMCU } from "@ledgerhq/errors";
 import type {
   ApplicationVersion,
@@ -37,9 +39,45 @@ const CacheAPI = {
   getFirmwareVersion: (firmware: OsuFirmware): string =>
     firmware.name.replace("-osu", ""),
 
-  formatHashName: (input: string): string => {
+  // TO BE CONFIRMED – LL-2568
+  firmwareUpdateNeedsLegacyBlueResetInstructions: (
+    deviceInfo: DeviceInfo,
+    deviceModelId: DeviceModelId
+  ) => deviceModelId === "blue" && semver.lt(deviceInfo.version, "2.1.1"),
+
+  // TO BE CONFIRMED – LL-2564
+  firmwareUpdateWillResetSeed: (
+    deviceInfo: DeviceInfo,
+    deviceModelId: DeviceModelId,
+    _firmware: FirmwareUpdateContext
+  ) => deviceModelId === "blue" && semver.lt(deviceInfo.version, "2.1.1"),
+
+  firmwareUpdateWillUninstallApps: (
+    _deviceInfo: DeviceInfo,
+    _deviceModelId: DeviceModelId
+  ) => true, // true for all? TO BE CONFIRMED – LL-2710
+
+  firmwareUpdateRequiresUserToUninstallApps: (
+    deviceModel: DeviceModelId,
+    deviceInfo: DeviceInfo
+  ): boolean =>
+    deviceModel === "nanoS" && semver.lte(deviceInfo.version, "1.4.2"),
+
+  formatHashName: (
+    input: string,
+    // FIXME these will be made mandatory
+    deviceModel?: DeviceModelId,
+    deviceInfo?: DeviceInfo
+  ): string => {
+    const shouldEllipsis =
+      deviceModel && deviceInfo
+        ? deviceModel === "blue" ||
+          (deviceModel === "nanoS" && semver.lt(deviceInfo.version, "1.6.0"))
+        : true;
     const hash = (input || "").toUpperCase();
-    return hash.length > 8 ? `${hash.slice(0, 4)}...${hash.substr(-4)}` : hash;
+    return hash.length > 8 && shouldEllipsis
+      ? `${hash.slice(0, 4)}...${hash.substr(-4)}`
+      : hash;
   },
 
   canHandleInstall,

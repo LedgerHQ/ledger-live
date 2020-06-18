@@ -26,7 +26,7 @@ const dispatch: Resolver = (transport, opts) => {
         if (e.statusCode === 0x6b00 && verify) {
           throw new DeviceAppVerifyNotSupported();
         }
-        if (e.statusCode === 0x6985) {
+        if (e.statusCode === 0x6985 || e.statusCode === 0x5501) {
           throw new UserRefusedAddress();
         }
       }
