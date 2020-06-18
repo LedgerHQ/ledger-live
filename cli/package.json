@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "12.33.0",
+  "version": "12.34.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -29,15 +29,15 @@
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
   "dependencies": {
-    "@ledgerhq/errors": "5.15.0",
-    "@ledgerhq/hw-app-btc": "^5.16.0",
-    "@ledgerhq/hw-transport-http": "5.15.0",
-    "@ledgerhq/hw-transport-mocker": "5.15.0",
-    "@ledgerhq/hw-transport-node-hid": "5.16.0",
-    "@ledgerhq/hw-transport-node-speculos": "^5.16.1",
+    "@ledgerhq/errors": "5.17.0",
+    "@ledgerhq/hw-app-btc": "^5.17.0",
+    "@ledgerhq/hw-transport-http": "5.17.0",
+    "@ledgerhq/hw-transport-mocker": "5.17.0",
+    "@ledgerhq/hw-transport-node-hid": "5.17.0",
+    "@ledgerhq/hw-transport-node-speculos": "^5.17.0",
     "@ledgerhq/ledger-core": "^6.5.4",
-    "@ledgerhq/live-common": "^12.33.2",
-    "@ledgerhq/logs": "5.15.0",
+    "@ledgerhq/live-common": "^12.34.0",
+    "@ledgerhq/logs": "5.17.0",
     "asciichart": "^1.5.21",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
