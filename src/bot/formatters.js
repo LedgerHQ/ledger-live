@@ -62,6 +62,8 @@ export function formatReportForConsole<T: Transaction>({
   maxSpendable,
   unavailableMutationReasons,
   mutation,
+  mutationTime,
+  transactionTime,
   destination,
   transaction,
   statusTime,
@@ -110,7 +112,10 @@ export function formatReportForConsole<T: Transaction>({
     str += `✔️ doing transaction ${formatTransaction(transaction, account)}\n`;
   }
   if (status && transaction && account) {
-    str += `with transaction status: ${formatTransactionStatus(
+    str += `(${formatDt(
+      mutationTime,
+      statusTime
+    )}) with transaction status: ${formatTransactionStatus(
       transaction,
       status,
       account

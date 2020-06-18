@@ -113,6 +113,7 @@ export type MutationReport<T: Transaction> = {
     mutation: MutationSpec<T>,
   }>,
   mutation?: MutationSpec<T>,
+  mutationTime?: number,
   destination?: Account,
   transaction?: T,
   transactionTime?: number,

@@ -305,6 +305,7 @@ export async function runOnAccount<T: Transaction>({
     // a mutation was chosen
     const { tx, mutation, updates } = candidate;
     report.mutation = mutation;
+    report.mutationTime = now();
     report.transaction = tx;
     report.destination = accounts.find((a) => a.freshAddress === tx.recipient);
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
@@ -418,7 +419,7 @@ export async function runOnAccount<T: Transaction>({
     const step = (account) => {
       const timedOut =
         now() - testBefore >
-        (mutation.testTimeout || spec.testTimeout || 60 * 1000);
+        (mutation.testTimeout || spec.testTimeout || 30 * 1000);
 
       const operation = account.operations.find(
         (o) => o.id === optimisticOperation.id

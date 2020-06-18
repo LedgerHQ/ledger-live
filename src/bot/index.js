@@ -57,7 +57,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
   }
 
   const results: Array<SpecReport<any>> = await promiseAllBatched(
-    4,
+    6,
     specs,
     (spec) => {
       const logs = [];
