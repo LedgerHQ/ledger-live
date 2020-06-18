@@ -350,13 +350,16 @@ const prepareTransaction = async (a, t) => {
       if (t.useAllAmount) {
         amount = getMaxEstimatedBalance(a, BigNumber(0));
       }
-      const res = await calculateFees({
-        a,
-        t: { ...t, amount: amount || t.amount },
-      });
 
-      fees = res.estimatedFees;
-      gas = res.estimatedGas;
+      if ((amount && amount.gt(0)) || !amount) {
+        const res = await calculateFees({
+          a,
+          t: { ...t, amount: amount || t.amount },
+        });
+
+        fees = res.estimatedFees;
+        gas = res.estimatedGas;
+      }
     }
   }
 
