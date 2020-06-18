@@ -43,6 +43,7 @@ type FlowDesc<T: Transaction> = {
       DeviceActionArg<T, State>,
       acc: Array<{ title: string, value: string }>
     ) => string,
+    ignoreAssertionFailure?: boolean,
     trimValue?: boolean,
     button?: string, // action to apply in term of button press
     final?: boolean, // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
@@ -77,12 +78,14 @@ export function deviceActionFlow<T: Transaction>(
         if (stepValue && possibleKnownStep.title !== stepTitle) {
           // there were accumulated text and we are on new step, we need to release it and compare to expected
           if (prev && prev.expectedValue) {
-            const { expectedValue } = prev;
-            expect({
-              [stepTitle]: stepValue,
-            }).toMatchObject({
-              [stepTitle]: expectedValue(arg, acc),
-            });
+            const { expectedValue, ignoreAssertionFailure } = prev;
+            if (!ignoreAssertionFailure) {
+              expect({
+                [stepTitle]: stepValue,
+              }).toMatchObject({
+                [stepTitle]: expectedValue(arg, acc),
+              });
+            }
           }
           acc = acc.concat({
             title: stepTitle,
