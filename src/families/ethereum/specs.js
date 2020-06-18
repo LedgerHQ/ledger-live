@@ -33,8 +33,8 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
       expect(operation.fee.toNumber()).toBeLessThanOrEqual(
         estimatedGas.toNumber()
       );
-      expect(account.balance.toNumber()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toNumber()
+      expect(account.balance.toString()).toBe(
+        accountBeforeTransaction.balance.minus(operation.value).toString()
       );
     },
   },
@@ -96,7 +96,7 @@ const ethereum: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Ethereum",
   },
-  testTimeout: 5 * 60 * 1000,
+  testTimeout: 2 * 60 * 1000,
   mutations: ethereumMutations({
     maxAccount: 3,
     minimalAmount: parseCurrencyUnit(
@@ -114,7 +114,7 @@ const ethereumClassic: AppSpec<Transaction> = {
     appName: "Ethereum Classic",
   },
   dependency: "Ethereum",
-  testTimeout: 5 * 60 * 1000,
+  testTimeout: 2 * 60 * 1000,
   mutations: ethereumMutations({
     maxAccount: 4,
     minimalAmount: parseCurrencyUnit(
@@ -131,7 +131,7 @@ const ethereumRopsten: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Ethereum",
   },
-  testTimeout: 5 * 60 * 1000,
+  testTimeout: 2 * 60 * 1000,
   mutations: ethereumMutations({
     maxAccount: 8,
     minimalAmount: parseCurrencyUnit(

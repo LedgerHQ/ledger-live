@@ -64,6 +64,10 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
       title: "Accept",
       button: "LRlr",
     },
+    {
+      title: "Sign transaction",
+      button: "LRlr",
+    },
   ],
 });
 
