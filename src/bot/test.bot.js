@@ -5,7 +5,7 @@ import { bot } from ".";
 
 setup("bot");
 
-jest.setTimeout(50 * 60 * 1000);
+jest.setTimeout(110 * 60 * 1000);
 
 test("bot", async () => {
   await bot();
