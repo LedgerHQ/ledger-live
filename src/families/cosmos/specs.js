@@ -166,10 +166,11 @@ const cosmos: AppSpec<Transaction> = {
           invariant(d, "delegated %s must be found in account", v.address);
           expect({
             address: v.address,
-            amount: v.amount.toString(),
+            // we round last digit
+            amount: "~" + v.amount.div(10).integerValue().times(10).toString(),
           }).toMatchObject({
             address: d.validatorAddress,
-            amount: d.amount.toString(),
+            amount: "~" + d.amount.div(10).integerValue().times(10).toString(),
           });
         });
       },

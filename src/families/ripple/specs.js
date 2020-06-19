@@ -55,27 +55,6 @@ const ripple: AppSpec<Transaction> = {
         );
       },
     },
-    {
-      name: "send max to another account",
-      maxRun: 1,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
-        const sibling = pickSiblings(siblings, 3);
-        invariant(
-          !isAccountEmpty(sibling) ||
-            maxSpendable.gt(reserve.plus(minAmountCutoff)),
-          "not enough funds to send to new account"
-        );
-        const recipient = sibling.freshAddress;
-        return {
-          transaction: bridge.createTransaction(account),
-          updates: [{ useAllAmount: true, recipient }],
-        };
-      },
-      test: ({ account }) => {
-        expect(account.balance.toString()).toBe("20");
-      },
-    },
   ],
 };
 
