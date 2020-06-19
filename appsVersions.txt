@@ -1,20 +1,19 @@
-363: blue/2.1.1/akroma/app_1.1.5: KO: have BAD HASH. API have 6851451f6fc42564422b7476c63d6055583f9a5b0f95f31f186372a77d6cfbd1 but device have 8009d91f5d6d165e44acfd0d13d491b35ab21b37fd0897faa581e15073c65d25
-742: blue/2.1.1/decred_testnet/app_1.3.0: KO: list apps don't find installed app? Found these: [{"hash": "264d2140b20b25792bb9f5afef1b4c35015f78f1a063d05a9a38571cf9a81eb4","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-368: blue/2.1.1/ethereum_classic/app_1.1.5: KO: have BAD HASH. API have 9e4f90968cf4344e13c75b55179787bb5fe112294f338d51daf59f760cf9bf4e but device have 5da1ce725d0d70fe943491fa3ea4540df4cd54425827b55590b10c01b72007ba
-377: blue/2.1.1/expanse/app_1.1.5: KO: have BAD HASH. API have 99b20c54f12861e827de56039d0df0ce8ca694ae7743ff90345f4da7c5e1a651 but device have c7e10f1e132815e7c130c0b5878c91df7cc1efcca258bd7e3414a8cf1617a537
+363: blue/2.1.1/akroma/app_1.1.5: KO: have BAD HASH. API have 8009d91f5d6d165e44acfd0d13d491b35ab21b37fd0897faa581e15073c65d25 but device have 6851451f6fc42564422b7476c63d6055583f9a5b0f95f31f186372a77d6cfbd1
+742: blue/2.1.1/decred_testnet/app_1.3.0: KO: list apps don't find installed app? Found these: [{"hash": "23283b764a7642369932183e9d704750707d3367fbfdf0e7e2aaec801043a950","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+368: blue/2.1.1/ethereum_classic/app_1.1.5: KO: have BAD HASH. API have 5da1ce725d0d70fe943491fa3ea4540df4cd54425827b55590b10c01b72007ba but device have 9e4f90968cf4344e13c75b55179787bb5fe112294f338d51daf59f760cf9bf4e
+377: blue/2.1.1/expanse/app_1.1.5: KO: have BAD HASH. API have c7e10f1e132815e7c130c0b5878c91df7cc1efcca258bd7e3414a8cf1617a537 but device have 99b20c54f12861e827de56039d0df0ce8ca694ae7743ff90345f4da7c5e1a651
 299: blue/2.1.1/horizen/app_1.2.8: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1919: blue/2.1.1/hpb/app_1.2.4: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-370: blue/2.1.1/kusd/app_1.1.5: KO: have BAD HASH. API have 79c769a2b976475ed3cf50e69927f17e4990810994364527367b9e6912ba0703 but device have f3c6fe2e7c57a60cea74f65930be9ce3f58cd8841e036437bf7c1616790fe3ab
-278: blue/2.1.1/ontology/app_1.2: KO: list apps don't find installed app? Found these: [{"hash": "4aa6cec58b29d494371474b7efe1a35c51b7abbf5a69c2eadb01c5d16777b708","name": "ONT"}]
-296: blue/2.1.1/pirl/app_1.1.4: KO: have BAD HASH. API have 5d53c28e06bd0a68773053e3bc8d8b8c898fcf529b163282ad5266521efa0ed1 but device have dedd1bac27960758f6a8a4d85f5f8b7a69c45a51e481554098cc924f41141521
-366: blue/2.1.1/pirl/app_1.1.5: KO: list apps don't find installed app? Found these: [{"hash": "bca1affe698c5d0973d1c134f4f6a671468e9917e8b31c4f27133ce715be0a04","name": "Ethereum"}] – FAILED installing, got ManagerAppAlreadyInstalled
-382: blue/2.1.1/poa/app_1.1.5: KO: have BAD HASH. API have 6b7b3d9175a1daf08f189ea54b849ba8b568dedb3b70c831364d8f579b307974 but device have 207209e6ea0b027cc2b5377e5614daef6790065c8b040363029db8a1d03c8b56
-380: blue/2.1.1/rsk/app_1.1.5: KO: have BAD HASH. API have e06b1ab606119f3845a60cedfcc8a96edc7ce8ef6316e636e54c84d3cf4e2cc8 but device have 3d4efa8502a1f28cd8264f08d77023e4be62f481723220a3dedd83e66ec0edc6
-3767: blue/2.1.1/stellar/app_3.1.0: KO: have BAD HASH. API have a6fa554d36800015cb94b1d1eb38dc29a5d4c9decb90cadcdd7d070b60eb4fea but device have 738db1ccfcbe0819cb39dcb3cfb1971fe234f98e900a664ac9d81440e7cf2214
-3775: blue/2.1.1/stellar/app_3.1.1: KO: have BAD HASH. API have 1a0136e0a24de038b084a2d29153aff3698cdeddb698676216fbd4f22c29c8a6 but device have 07671c449a105e13738d0f0274b8de091ee9aa01d35a91fdc4f41a3a38a3756e
-3639: blue/2.1.1/tron/app_0.1.6: KO: have BAD HASH. API have 918cb3ce78ed72ef843839d8483773e0a58bdc90c0c5ee996299419d79ec6930 but device have 279ffe6c8d732bdc68c53b4738b0a047a275ee14b609486e6104f1b94dca5a73
-365: blue/2.1.1/ubiq/app_1.1.5: KO: have BAD HASH. API have bef90cc4ce8febf4d015c1c2167bb4a88f6a8e4a77cd8a7cea9df4326fbb2422 but device have a89fc6d05cc0cf689083351a2569d3d7319d393f3d3d4bd4804ce63a6aa2814c
-369: blue/2.1.1/wanchain/app_1.1.5: KO: have BAD HASH. API have 37163ba271f5bc683634e76cc331602f33636a726542faaea3bbf1ba4d54c521 but device have 789d152963b817f87042a809ae3bc863e111454fa11b3b30b48920cdc11f672b
+370: blue/2.1.1/kusd/app_1.1.5: KO: have BAD HASH. API have f3c6fe2e7c57a60cea74f65930be9ce3f58cd8841e036437bf7c1616790fe3ab but device have 79c769a2b976475ed3cf50e69927f17e4990810994364527367b9e6912ba0703
+296: blue/2.1.1/pirl/app_1.1.4: KO: have BAD HASH. API have dedd1bac27960758f6a8a4d85f5f8b7a69c45a51e481554098cc924f41141521 but device have 5d53c28e06bd0a68773053e3bc8d8b8c898fcf529b163282ad5266521efa0ed1
+366: blue/2.1.1/pirl/app_1.1.5: KO: list apps don't find installed app? Found these: [{"hash": "fd6178566800c231b89774c60a055e7023168405a224e2d08867c65828716eda","name": "Ethereum"}] – FAILED installing, got ManagerAppAlreadyInstalled
+382: blue/2.1.1/poa/app_1.1.5: KO: have BAD HASH. API have 207209e6ea0b027cc2b5377e5614daef6790065c8b040363029db8a1d03c8b56 but device have 6b7b3d9175a1daf08f189ea54b849ba8b568dedb3b70c831364d8f579b307974
+380: blue/2.1.1/rsk/app_1.1.5: KO: have BAD HASH. API have 3d4efa8502a1f28cd8264f08d77023e4be62f481723220a3dedd83e66ec0edc6 but device have e06b1ab606119f3845a60cedfcc8a96edc7ce8ef6316e636e54c84d3cf4e2cc8
+3767: blue/2.1.1/stellar/app_3.1.0: KO: have BAD HASH. API have 738db1ccfcbe0819cb39dcb3cfb1971fe234f98e900a664ac9d81440e7cf2214 but device have d573e621e8393eb5ee7873ce509497d5faabcd41ee5036c38809ec91518109f7
+3775: blue/2.1.1/stellar/app_3.1.1: KO: have BAD HASH. API have 07671c449a105e13738d0f0274b8de091ee9aa01d35a91fdc4f41a3a38a3756e but device have 21db5b3afaeda0cd910ddf9e8ea2db4488196b1552df00a7683a10568cd5d3a1
+3639: blue/2.1.1/tron/app_0.1.6: KO: have BAD HASH. API have 279ffe6c8d732bdc68c53b4738b0a047a275ee14b609486e6104f1b94dca5a73 but device have 053ef2e0f3dbcb3126664ab720815ea9653ee63a6c40b128cf72cb3b69db7e60
+365: blue/2.1.1/ubiq/app_1.1.5: KO: have BAD HASH. API have a89fc6d05cc0cf689083351a2569d3d7319d393f3d3d4bd4804ce63a6aa2814c but device have bef90cc4ce8febf4d015c1c2167bb4a88f6a8e4a77cd8a7cea9df4326fbb2422
+369: blue/2.1.1/wanchain/app_1.1.5: KO: have BAD HASH. API have 789d152963b817f87042a809ae3bc863e111454fa11b3b30b48920cdc11f672b but device have 37163ba271f5bc683634e76cc331602f33636a726542faaea3bbf1ba4d54c521
 117: nanos/1.3.1-das/dascoin/app_1.1.1: KO: DOES NOT have bytes defined!
 94: nanos/1.3.1/ark/app_0.1.1: KO: list apps don't find installed app? Found these: [{"hash": "5ac22115b3ae66c2ab6596596ce5c824d7db35331152605058b20ab370a23498","name": ""}]
 79: nanos/1.3.1/bitcoin_cash/app_1.1.8: KO: DOES NOT have bytes defined!
@@ -52,39 +51,61 @@
 508: nanos/1.4.2/hcash/app_1.2.10: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1038: nanos/1.5.5/decred_testnet/app_1.3.0: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1039: nanos/1.5.5/none/app_1.0.1: KO: list apps don't find installed app? Found these: [{"hash": "049d9ca6c77d181687c63035719bfc9b5acbe943a8e3ffc871a230ebf88308c4","name": "MISC"}]
-3413: nanox/1.2.4-1.6/dexon/app_1.2.13: KO: have BAD HASH. API have f557d5bfec7d596b432c3737ebf08139af636499cddd101453a9b1853b30f3d2 but device have 51fb3700af30e24ef38a203ec3f02e3d455ffa309e8a65f0ad276ea360aaa134
-3397: nanox/1.2.4-1.6/ewc/app_1.2.13: KO: have BAD HASH. API have 269ef354e4b886b3204b940c89e2c818487459199ae2f891b20b0cd7ef7ac053 but device have 1e2a7e8c365b48200d81e1c23d167fb8bc386aaf7258412fd6083b13f2ff7734
-3390: nanox/1.2.4-1.6/hpb/app_1.2.13: KO: have BAD HASH. API have 56052f113a061fef89ac3fb4e76a415906c513e8496a6674cd66946eb16e86e9 but device have 72515842328d1fdeefb1fef72ec9fbaf50fa81043895a9390528aed8c85eb2de
-3388: nanox/1.2.4-1.6/reosc/app_1.2.13: KO: have BAD HASH. API have c104344605923a8ee935b972eb82ee2991ada7d2c0ab78fd00765d23762a2b3d but device have 2f0d954349b01ca0565b68c2bacca5b1ac8b8f1c5a79d47ed8768b2447ff08e0
-3386: nanox/1.2.4-1.6/thundercore/app_1.2.13: KO: have BAD HASH. API have 16bfb277d16b195b21c7d21af3d57d982c4f27137206040e3fc2433ba6277777 but device have be6794771ece9eed13a21f3c4ea00d3b578a5cb8a3612d600ae6f4a1e35d9925
-3389: nanox/1.2.4-1.6/tomochain/app_1.2.13: KO: have BAD HASH. API have 98ee2ab164648d61992a2d2b701f13be2586cebda64a86055746991c188447a4 but device have 649a4dfdc2cfb8fb0d876b658e58dfc7fcfc5a80dbd4f612b441c88dff9b80ee
-1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+4546: nanos/1.6.0/atheios/app_1.3.7: KO: FAILED installing, got closed
+4328: nanos/1.6.0/gochain/app_1.3.4: KO: list apps don't find installed app? Found these: [{"hash": "c1be06544e6a7437346e037f5658e3b19c17c8aaf3771736dcb14dd60aab72f6","name": "Ethereum"}] – FAILED installing, got closed
+4533: nanos/1.6.0/pirl/app_1.3.7: KO: FAILED installing, got DisconnectedDevice
+1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 2619: blue/2.1.1.1/bitcoin_cash/app_1.3.13: OK: 
+4358: blue/2.1.1.1/bitcoin_cash/app_1.4.2: OK: 
 2623: blue/2.1.1.1/bitcoin_gold/app_1.3.13: OK: 
+4367: blue/2.1.1.1/bitcoin_gold/app_1.4.2: OK: 
 2632: blue/2.1.1.1/bitcoin_private/app_1.3.13: OK: 
+4360: blue/2.1.1.1/bitcoin_private/app_1.4.2: OK: 
 2624: blue/2.1.1.1/bitcoin_testnet/app_1.3.13: OK: 
+4378: blue/2.1.1.1/bitcoin_testnet/app_1.4.2: OK: 
 2612: blue/2.1.1.1/bitcoin/app_1.3.13: OK: 
+4354: blue/2.1.1.1/bitcoin/app_1.4.2: OK: 
 2629: blue/2.1.1.1/dash/app_1.3.13: OK: 
+4365: blue/2.1.1.1/dash/app_1.4.2: OK: 
 2633: blue/2.1.1.1/digibyte/app_1.3.13: OK: 
+4379: blue/2.1.1.1/digibyte/app_1.4.2: OK: 
 2615: blue/2.1.1.1/dogecoin/app_1.3.13: OK: 
+4370: blue/2.1.1.1/dogecoin/app_1.4.2: OK: 
 2631: blue/2.1.1.1/gamecredits/app_1.3.13: OK: 
+4366: blue/2.1.1.1/gamecredits/app_1.4.2: OK: 
 2616: blue/2.1.1.1/horizen/app_1.3.13: OK: 
+4356: blue/2.1.1.1/horizen/app_1.4.2: OK: 
 2622: blue/2.1.1.1/komodo/app_1.3.13: OK: 
+4373: blue/2.1.1.1/lbry/app_1.4.2: OK: 
 2625: blue/2.1.1.1/litecoin/app_1.3.13: OK: 
+4374: blue/2.1.1.1/litecoin/app_1.4.2: OK: 
 2618: blue/2.1.1.1/nix/app_1.3.13: OK: 
+4380: blue/2.1.1.1/nix/app_1.4.2: OK: 
 2613: blue/2.1.1.1/peercoin/app_1.3.13: OK: 
+4359: blue/2.1.1.1/peercoin/app_1.4.2: OK: 
 2626: blue/2.1.1.1/pivx/app_1.3.13: OK: 
+4355: blue/2.1.1.1/pivx/app_1.4.2: OK: 
 2620: blue/2.1.1.1/qtum/app_1.3.13: OK: 
+4369: blue/2.1.1.1/qtum/app_1.4.2: OK: 
+4362: blue/2.1.1.1/ravencoin/app_1.4.2: OK: 
+4368: blue/2.1.1.1/resistance/app_1.4.2: OK: 
 2621: blue/2.1.1.1/stealth/app_1.3.13: OK: 
+4361: blue/2.1.1.1/stealth/app_1.4.2: OK: 
 2628: blue/2.1.1.1/stratis/app_1.3.13: OK: 
+4372: blue/2.1.1.1/stratis/app_1.4.2: OK: 
 2486: blue/2.1.1.1/tron/app_0.1.2: OK: 
 2614: blue/2.1.1.1/vertcoin/app_1.3.13: OK: 
+4377: blue/2.1.1.1/vertcoin/app_1.4.2: OK: 
 2634: blue/2.1.1.1/viacoin/app_1.3.13: OK: 
+4375: blue/2.1.1.1/viacoin/app_1.4.2: OK: 
 2635: blue/2.1.1.1/xsn/app_1.3.13: OK: 
+4364: blue/2.1.1.1/xsn/app_1.4.2: OK: 
 2630: blue/2.1.1.1/zcash/app_1.3.13: OK: 
 2617: blue/2.1.1.1/zclassic/app_1.3.13: OK: 
+4371: blue/2.1.1.1/zclassic/app_1.4.2: OK: 
 2627: blue/2.1.1.1/zcoin/app_1.3.13: OK: 
+4357: blue/2.1.1.1/zcoin/app_1.4.2: OK: 
 298: blue/2.1.1/akroma/app_1.1.4: OK: 
 413: blue/2.1.1/akroma/app_1.1.6: OK: 
 440: blue/2.1.1/akroma/app_1.1.7: OK: 
@@ -203,6 +224,7 @@
 1313: blue/2.1.1/ethereum_classic/app_1.2.0: OK: 
 1705: blue/2.1.1/ethereum_classic/app_1.2.3: OK: 
 2020: blue/2.1.1/ethereum_classic/app_1.2.7: OK: 
+231: blue/2.1.1/ethereum/app_1.1.3: OK: 
 237: blue/2.1.1/ethereum/app_1.1.3: OK: 
 265: blue/2.1.1/ethereum/app_1.1.4: OK: 
 379: blue/2.1.1/ethereum/app_1.1.5: OK: 
@@ -278,6 +300,7 @@
 2145: blue/2.1.1/kin/app_0.0.3: OK: 
 2311: blue/2.1.1/komodo/app_1.3.11: OK: 
 1236: blue/2.1.1/komodo/app_1.3.7: OK: 
+232: blue/2.1.1/kusd/app_1.1.3: OK: 
 238: blue/2.1.1/kusd/app_1.1.3: OK: 
 267: blue/2.1.1/kusd/app_1.1.4: OK: 
 421: blue/2.1.1/kusd/app_1.1.6: OK: 
@@ -316,6 +339,7 @@
 1497: blue/2.1.1/nix/app_1.3.8: OK: 
 2030: blue/2.1.1/nix/app_1.3.9: OK: 
 926: blue/2.1.1/nos/app_1.1.1: OK: 
+278: blue/2.1.1/ontology/app_1.2: OK: 
 1683: blue/2.1.1/ontology/app_1.2.1: OK: 
 1974: blue/2.1.1/ontology/app_1.2.1: OK: 
 468: blue/2.1.1/peercoin/app_1.2.10: OK: 
@@ -343,6 +367,7 @@
 1219: blue/2.1.1/pivx/app_1.3.7: OK: 
 1487: blue/2.1.1/pivx/app_1.3.8: OK: 
 1989: blue/2.1.1/pivx/app_1.3.9: OK: 
+234: blue/2.1.1/poa/app_1.1.3: OK: 
 240: blue/2.1.1/poa/app_1.1.3: OK: 
 263: blue/2.1.1/poa/app_1.1.4: OK: 
 423: blue/2.1.1/poa/app_1.1.6: OK: 
@@ -383,6 +408,7 @@
 1318: blue/2.1.1/rsk_testnet/app_1.2.0: OK: 
 1687: blue/2.1.1/rsk_testnet/app_1.2.3: OK: 
 1986: blue/2.1.1/rsk_testnet/app_1.2.7: OK: 
+235: blue/2.1.1/rsk/app_1.1.3: OK: 
 241: blue/2.1.1/rsk/app_1.1.3: OK: 
 264: blue/2.1.1/rsk/app_1.1.4: OK: 
 424: blue/2.1.1/rsk/app_1.1.6: OK: 
@@ -446,6 +472,7 @@
 1234: blue/2.1.1/viacoin/app_1.3.7: OK: 
 1474: blue/2.1.1/viacoin/app_1.3.8: OK: 
 2000: blue/2.1.1/viacoin/app_1.3.9: OK: 
+236: blue/2.1.1/wanchain/app_1.1.3: OK: 
 242: blue/2.1.1/wanchain/app_1.1.3: OK: 
 268: blue/2.1.1/wanchain/app_1.1.4: OK: 
 427: blue/2.1.1/wanchain/app_1.1.6: OK: 
@@ -1263,78 +1290,129 @@
 3947: nanos/1.6.0.1/stellar/app_3.2.2: OK: 
 3933: nanos/1.6.0.1/tron/app_0.2.0: OK: 
 3781: nanos/1.6.0.1/xrp/app_1.1.1: OK: 
+4383: nanos/1.6.0.2/ark/app_2.1.0: OK: 
 4059: nanos/1.6.0.2/celo/app_1.0.3: OK: 
 4049: nanos/1.6.0.2/elastos/app_1.1.0: OK: 
+4420: nanos/1.6.0.2/monero/app_1.6.0: OK: 
 4048: nanos/1.6.0.2/solana/app_0.2.2: OK: 
+4385: nanos/1.6.0.2/waves/app_1.1.0: OK: 
+4491: nanos/1.6.0.2/xrp/app_2.0.1: OK: 
 3266: nanos/1.6.0/akroma/app_1.2.12: OK: 
 3361: nanos/1.6.0/akroma/app_1.2.13: OK: 
+4325: nanos/1.6.0/akroma/app_1.3.4: OK: 
+4428: nanos/1.6.0/akroma/app_1.3.6: OK: 
+4532: nanos/1.6.0/akroma/app_1.3.7: OK: 
 3769: nanos/1.6.0/algorand/app_1.0.5: OK: 
 3784: nanos/1.6.0/algorand/app_1.0.6: OK: 
 3636: nanos/1.6.0/ark/app_2.0.1: OK: 
 3268: nanos/1.6.0/atheios/app_1.2.12: OK: 
 3363: nanos/1.6.0/atheios/app_1.2.13: OK: 
+4339: nanos/1.6.0/atheios/app_1.3.4: OK: 
+4442: nanos/1.6.0/atheios/app_1.3.6: OK: 
 3305: nanos/1.6.0/bitcoin_cash/app_1.3.16: OK: 
 3437: nanos/1.6.0/bitcoin_cash/app_1.3.17: OK: 
 3744: nanos/1.6.0/bitcoin_cash/app_1.3.21: OK: 
+4212: nanos/1.6.0/bitcoin_cash/app_1.4.2: OK: 
 3319: nanos/1.6.0/bitcoin_gold/app_1.3.16: OK: 
 3446: nanos/1.6.0/bitcoin_gold/app_1.3.17: OK: 
 3742: nanos/1.6.0/bitcoin_gold/app_1.3.21: OK: 
+4221: nanos/1.6.0/bitcoin_gold/app_1.4.2: OK: 
 3325: nanos/1.6.0/bitcoin_private/app_1.3.16: OK: 
 3451: nanos/1.6.0/bitcoin_private/app_1.3.17: OK: 
 3747: nanos/1.6.0/bitcoin_private/app_1.3.21: OK: 
+4214: nanos/1.6.0/bitcoin_private/app_1.4.2: OK: 
 3306: nanos/1.6.0/bitcoin_testnet/app_1.3.16: OK: 
 3438: nanos/1.6.0/bitcoin_testnet/app_1.3.17: OK: 
 3734: nanos/1.6.0/bitcoin_testnet/app_1.3.21: OK: 
+4232: nanos/1.6.0/bitcoin_testnet/app_1.4.2: OK: 
 3295: nanos/1.6.0/bitcoin/app_1.3.16: OK: 
 3427: nanos/1.6.0/bitcoin/app_1.3.17: OK: 
 3727: nanos/1.6.0/bitcoin/app_1.3.21: OK: 
 3277: nanos/1.6.0/callisto/app_1.2.12: OK: 
 3372: nanos/1.6.0/callisto/app_1.2.13: OK: 
+4334: nanos/1.6.0/callisto/app_1.3.4: OK: 
+4437: nanos/1.6.0/callisto/app_1.3.6: OK: 
+4541: nanos/1.6.0/callisto/app_1.3.7: OK: 
 3304: nanos/1.6.0/dash/app_1.3.16: OK: 
 3436: nanos/1.6.0/dash/app_1.3.17: OK: 
 3751: nanos/1.6.0/dash/app_1.3.21: OK: 
+4219: nanos/1.6.0/dash/app_1.4.2: OK: 
 3287: nanos/1.6.0/dexon/app_1.2.12: OK: 
 3382: nanos/1.6.0/dexon/app_1.2.13: OK: 
 3302: nanos/1.6.0/digibyte/app_1.3.16: OK: 
 3434: nanos/1.6.0/digibyte/app_1.3.17: OK: 
 3750: nanos/1.6.0/digibyte/app_1.3.21: OK: 
+4233: nanos/1.6.0/digibyte/app_1.4.2: OK: 
 3296: nanos/1.6.0/dogecoin/app_1.3.16: OK: 
 3428: nanos/1.6.0/dogecoin/app_1.3.17: OK: 
 3749: nanos/1.6.0/dogecoin/app_1.3.21: OK: 
+4224: nanos/1.6.0/dogecoin/app_1.4.2: OK: 
 3487: nanos/1.6.0/elastos/app_1.0.0: OK: 
 3258: nanos/1.6.0/ellaism/app_1.2.12: OK: 
 3353: nanos/1.6.0/ellaism/app_1.2.13: OK: 
+4347: nanos/1.6.0/ellaism/app_1.3.4: OK: 
+4450: nanos/1.6.0/ellaism/app_1.3.6: OK: 
+4554: nanos/1.6.0/ellaism/app_1.3.7: OK: 
 3281: nanos/1.6.0/ether1/app_1.2.12: OK: 
 3376: nanos/1.6.0/ether1/app_1.2.13: OK: 
+4348: nanos/1.6.0/ether1/app_1.3.4: OK: 
+4451: nanos/1.6.0/ether1/app_1.3.6: OK: 
+4555: nanos/1.6.0/ether1/app_1.3.7: OK: 
 3267: nanos/1.6.0/ethereum_classic/app_1.2.12: OK: 
 3362: nanos/1.6.0/ethereum_classic/app_1.2.13: OK: 
+4335: nanos/1.6.0/ethereum_classic/app_1.3.4: OK: 
+4438: nanos/1.6.0/ethereum_classic/app_1.3.6: OK: 
+4542: nanos/1.6.0/ethereum_classic/app_1.3.7: OK: 
 3257: nanos/1.6.0/ethereum/app_1.2.12: OK: 
 3352: nanos/1.6.0/ethereum/app_1.2.13: OK: 
+4323: nanos/1.6.0/ethereum/app_1.3.4: OK: 
+4426: nanos/1.6.0/ethereum/app_1.3.6: OK: 
+4530: nanos/1.6.0/ethereum/app_1.3.7: OK: 
 3265: nanos/1.6.0/ethergem/app_1.2.12: OK: 
 3360: nanos/1.6.0/ethergem/app_1.2.13: OK: 
+4333: nanos/1.6.0/ethergem/app_1.3.4: OK: 
+4436: nanos/1.6.0/ethergem/app_1.3.6: OK: 
+4540: nanos/1.6.0/ethergem/app_1.3.7: OK: 
 3259: nanos/1.6.0/ethersocial/app_1.2.12: OK: 
 3354: nanos/1.6.0/ethersocial/app_1.2.13: OK: 
+4341: nanos/1.6.0/ethersocial/app_1.3.4: OK: 
+4444: nanos/1.6.0/ethersocial/app_1.3.6: OK: 
+4548: nanos/1.6.0/ethersocial/app_1.3.7: OK: 
 3366: nanos/1.6.0/ewc/app_1.2.13: OK: 
 3274: nanos/1.6.0/expanse/app_1.2.12: OK: 
 3369: nanos/1.6.0/expanse/app_1.2.13: OK: 
+4349: nanos/1.6.0/expanse/app_1.3.4: OK: 
+4452: nanos/1.6.0/expanse/app_1.3.6: OK: 
+4556: nanos/1.6.0/expanse/app_1.3.7: OK: 
 3315: nanos/1.6.0/gamecredits/app_1.3.16: OK: 
 3444: nanos/1.6.0/gamecredits/app_1.3.17: OK: 
 3743: nanos/1.6.0/gamecredits/app_1.3.21: OK: 
+4220: nanos/1.6.0/gamecredits/app_1.4.2: OK: 
 3283: nanos/1.6.0/gochain/app_1.2.12: OK: 
 3378: nanos/1.6.0/gochain/app_1.2.13: OK: 
+4431: nanos/1.6.0/gochain/app_1.3.6: OK: 
+4535: nanos/1.6.0/gochain/app_1.3.7: OK: 
 3589: nanos/1.6.0/harmony_one/app_1.0.2: OK: 
 3646: nanos/1.6.0/hedera/app_1.0.1: OK: 
 3759: nanos/1.6.0/hnt/app_1.0.0: OK: 
 3301: nanos/1.6.0/horizen/app_1.3.16: OK: 
 3433: nanos/1.6.0/horizen/app_1.3.17: OK: 
 3732: nanos/1.6.0/horizen/app_1.3.21: OK: 
+4210: nanos/1.6.0/horizen/app_1.4.2: OK: 
 3264: nanos/1.6.0/hpb/app_1.2.12: OK: 
 3359: nanos/1.6.0/hpb/app_1.2.13: OK: 
+4340: nanos/1.6.0/hpb/app_1.3.4: OK: 
+4443: nanos/1.6.0/hpb/app_1.3.6: OK: 
+4547: nanos/1.6.0/hpb/app_1.3.7: OK: 
 3312: nanos/1.6.0/komodo/app_1.3.16: OK: 
 3442: nanos/1.6.0/komodo/app_1.3.17: OK: 
 3740: nanos/1.6.0/komodo/app_1.3.21: OK: 
+4217: nanos/1.6.0/komodo/app_1.4.2: OK: 
 3286: nanos/1.6.0/kusd/app_1.2.12: OK: 
 3381: nanos/1.6.0/kusd/app_1.2.13: OK: 
+4331: nanos/1.6.0/kusd/app_1.3.4: OK: 
+4434: nanos/1.6.0/kusd/app_1.3.6: OK: 
+4538: nanos/1.6.0/kusd/app_1.3.7: OK: 
 3447: nanos/1.6.0/lbry/app_1.3.17: OK: 
 3738: nanos/1.6.0/lbry/app_1.3.21: OK: 
 3521: nanos/1.6.0/liquid/app_1.3.17: OK: 
@@ -1344,73 +1422,114 @@
 3308: nanos/1.6.0/litecoin/app_1.3.16: OK: 
 3440: nanos/1.6.0/litecoin/app_1.3.17: OK: 
 3730: nanos/1.6.0/litecoin/app_1.3.21: OK: 
+4228: nanos/1.6.0/litecoin/app_1.4.2: OK: 
 3275: nanos/1.6.0/mix/app_1.2.12: OK: 
 3370: nanos/1.6.0/mix/app_1.2.13: OK: 
+4343: nanos/1.6.0/mix/app_1.3.4: OK: 
+4446: nanos/1.6.0/mix/app_1.3.6: OK: 
+4550: nanos/1.6.0/mix/app_1.3.7: OK: 
 3282: nanos/1.6.0/musicoin/app_1.2.12: OK: 
 3377: nanos/1.6.0/musicoin/app_1.2.13: OK: 
+4353: nanos/1.6.0/musicoin/app_1.3.4: OK: 
+4456: nanos/1.6.0/musicoin/app_1.3.6: OK: 
+4560: nanos/1.6.0/musicoin/app_1.3.7: OK: 
 3326: nanos/1.6.0/nix/app_1.3.16: OK: 
 3452: nanos/1.6.0/nix/app_1.3.17: OK: 
 3731: nanos/1.6.0/nix/app_1.3.21: OK: 
+4234: nanos/1.6.0/nix/app_1.4.2: OK: 
 3309: nanos/1.6.0/peercoin/app_1.3.16: OK: 
 3441: nanos/1.6.0/peercoin/app_1.3.17: OK: 
 3746: nanos/1.6.0/peercoin/app_1.3.21: OK: 
+4213: nanos/1.6.0/peercoin/app_1.4.2: OK: 
 3285: nanos/1.6.0/pirl/app_1.2.12: OK: 
 3380: nanos/1.6.0/pirl/app_1.2.13: OK: 
+4326: nanos/1.6.0/pirl/app_1.3.4: OK: 
+4429: nanos/1.6.0/pirl/app_1.3.6: OK: 
 3298: nanos/1.6.0/pivx/app_1.3.16: OK: 
 3430: nanos/1.6.0/pivx/app_1.3.17: OK: 
 3748: nanos/1.6.0/pivx/app_1.3.21: OK: 
+4209: nanos/1.6.0/pivx/app_1.4.2: OK: 
 3279: nanos/1.6.0/poa/app_1.2.12: OK: 
 3374: nanos/1.6.0/poa/app_1.2.13: OK: 
+4327: nanos/1.6.0/poa/app_1.3.4: OK: 
+4430: nanos/1.6.0/poa/app_1.3.6: OK: 
+4534: nanos/1.6.0/poa/app_1.3.7: OK: 
 3324: nanos/1.6.0/qtum/app_1.3.16: OK: 
 3450: nanos/1.6.0/qtum/app_1.3.17: OK: 
 3729: nanos/1.6.0/qtum/app_1.3.21: OK: 
+4223: nanos/1.6.0/qtum/app_1.4.2: OK: 
 3733: nanos/1.6.0/ravencoin/app_1.3.21: OK: 
 3288: nanos/1.6.0/recovery_check/app_1.0.2: OK: 
 3262: nanos/1.6.0/reosc/app_1.2.12: OK: 
 3357: nanos/1.6.0/reosc/app_1.2.13: OK: 
+4344: nanos/1.6.0/reosc/app_1.3.4: OK: 
+4447: nanos/1.6.0/reosc/app_1.3.6: OK: 
+4551: nanos/1.6.0/reosc/app_1.3.7: OK: 
 3439: nanos/1.6.0/resistance/app_1.3.17: OK: 
 3276: nanos/1.6.0/rsk_testnet/app_1.2.12: OK: 
 3371: nanos/1.6.0/rsk_testnet/app_1.2.13: OK: 
+4324: nanos/1.6.0/rsk_testnet/app_1.3.4: OK: 
+4427: nanos/1.6.0/rsk_testnet/app_1.3.6: OK: 
+4531: nanos/1.6.0/rsk_testnet/app_1.3.7: OK: 
 3270: nanos/1.6.0/rsk/app_1.2.12: OK: 
 3365: nanos/1.6.0/rsk/app_1.2.13: OK: 
+4352: nanos/1.6.0/rsk/app_1.3.4: OK: 
+4455: nanos/1.6.0/rsk/app_1.3.6: OK: 
+4559: nanos/1.6.0/rsk/app_1.3.7: OK: 
 3136: nanos/1.6.0/ssh/app_0.0.5: OK: 
 3297: nanos/1.6.0/stealth/app_1.3.16: OK: 
 3429: nanos/1.6.0/stealth/app_1.3.17: OK: 
 3745: nanos/1.6.0/stealth/app_1.3.21: OK: 
+4215: nanos/1.6.0/stealth/app_1.4.2: OK: 
 3573: nanos/1.6.0/stellar/app_3.0.7: OK: 
 3630: nanos/1.6.0/stellar/app_3.0.7: OK: 
 3766: nanos/1.6.0/stellar/app_3.1.0: OK: 
 3299: nanos/1.6.0/stratis/app_1.3.16: OK: 
 3431: nanos/1.6.0/stratis/app_1.3.17: OK: 
 3741: nanos/1.6.0/stratis/app_1.3.21: OK: 
+4226: nanos/1.6.0/stratis/app_1.4.2: OK: 
 3260: nanos/1.6.0/thundercore/app_1.2.12: OK: 
 3355: nanos/1.6.0/thundercore/app_1.2.13: OK: 
 3263: nanos/1.6.0/tomochain/app_1.2.12: OK: 
 3358: nanos/1.6.0/tomochain/app_1.2.13: OK: 
+4342: nanos/1.6.0/tomochain/app_1.3.4: OK: 
+4445: nanos/1.6.0/tomochain/app_1.3.6: OK: 
 3640: nanos/1.6.0/tron/app_0.1.6: OK: 
 3261: nanos/1.6.0/ubiq/app_1.2.12: OK: 
 3356: nanos/1.6.0/ubiq/app_1.2.13: OK: 
+4346: nanos/1.6.0/ubiq/app_1.3.4: OK: 
+4449: nanos/1.6.0/ubiq/app_1.3.6: OK: 
+4553: nanos/1.6.0/ubiq/app_1.3.7: OK: 
 3773: nanos/1.6.0/vechain/app_1.0.7: OK: 
 3318: nanos/1.6.0/vertcoin/app_1.3.16: OK: 
 3445: nanos/1.6.0/vertcoin/app_1.3.17: OK: 
 3728: nanos/1.6.0/vertcoin/app_1.3.21: OK: 
+4231: nanos/1.6.0/vertcoin/app_1.4.2: OK: 
 3322: nanos/1.6.0/viacoin/app_1.3.16: OK: 
 3448: nanos/1.6.0/viacoin/app_1.3.17: OK: 
 3753: nanos/1.6.0/viacoin/app_1.3.21: OK: 
+4229: nanos/1.6.0/viacoin/app_1.4.2: OK: 
 3273: nanos/1.6.0/wanchain/app_1.2.12: OK: 
 3368: nanos/1.6.0/wanchain/app_1.2.13: OK: 
+4351: nanos/1.6.0/wanchain/app_1.3.4: OK: 
+4454: nanos/1.6.0/wanchain/app_1.3.6: OK: 
+4558: nanos/1.6.0/wanchain/app_1.3.7: OK: 
 3323: nanos/1.6.0/xsn/app_1.3.16: OK: 
 3449: nanos/1.6.0/xsn/app_1.3.17: OK: 
 3737: nanos/1.6.0/xsn/app_1.3.21: OK: 
+4218: nanos/1.6.0/xsn/app_1.4.2: OK: 
 3300: nanos/1.6.0/zcash/app_1.3.16: OK: 
 3432: nanos/1.6.0/zcash/app_1.3.17: OK: 
 3739: nanos/1.6.0/zcash/app_1.3.21: OK: 
+4230: nanos/1.6.0/zcash/app_1.4.2: OK: 
 3314: nanos/1.6.0/zclassic/app_1.3.16: OK: 
 3443: nanos/1.6.0/zclassic/app_1.3.17: OK: 
 3735: nanos/1.6.0/zclassic/app_1.3.21: OK: 
+4225: nanos/1.6.0/zclassic/app_1.4.2: OK: 
 3303: nanos/1.6.0/zcoin/app_1.3.16: OK: 
 3435: nanos/1.6.0/zcoin/app_1.3.17: OK: 
 3752: nanos/1.6.0/zcoin/app_1.3.21: OK: 
+4211: nanos/1.6.0/zcoin/app_1.4.2: OK: 
 2499: nanox/1.2.4-1.4/bitcoin_cash/app_1.3.13: OK: 
 2507: nanox/1.2.4-1.4/bitcoin_gold/app_1.3.13: OK: 
 2511: nanox/1.2.4-1.4/bitcoin_private/app_1.3.13: OK: 
@@ -1487,6 +1606,7 @@
 3462: nanox/1.2.4-1.6/dash/app_1.3.17: OK: 
 3724: nanox/1.2.4-1.6/dash/app_1.3.21: OK: 
 3019: nanox/1.2.4-1.6/dexon/app_1.2.11: OK: 
+3413: nanox/1.2.4-1.6/dexon/app_1.2.13: OK: 
 3460: nanox/1.2.4-1.6/digibyte/app_1.3.17: OK: 
 3723: nanox/1.2.4-1.6/digibyte/app_1.3.21: OK: 
 3454: nanox/1.2.4-1.6/dogecoin/app_1.3.17: OK: 
@@ -1503,6 +1623,7 @@
 3391: nanox/1.2.4-1.6/ethergem/app_1.2.13: OK: 
 2991: nanox/1.2.4-1.6/ethersocial/app_1.2.11: OK: 
 3385: nanox/1.2.4-1.6/ethersocial/app_1.2.13: OK: 
+3397: nanox/1.2.4-1.6/ewc/app_1.2.13: OK: 
 3006: nanox/1.2.4-1.6/expanse/app_1.2.11: OK: 
 3400: nanox/1.2.4-1.6/expanse/app_1.2.13: OK: 
 3469: nanox/1.2.4-1.6/gamecredits/app_1.3.17: OK: 
@@ -1514,6 +1635,7 @@
 3459: nanox/1.2.4-1.6/horizen/app_1.3.17: OK: 
 3706: nanox/1.2.4-1.6/horizen/app_1.3.21: OK: 
 2996: nanox/1.2.4-1.6/hpb/app_1.2.11: OK: 
+3390: nanox/1.2.4-1.6/hpb/app_1.2.13: OK: 
 3467: nanox/1.2.4-1.6/komodo/app_1.3.17: OK: 
 3713: nanox/1.2.4-1.6/komodo/app_1.3.21: OK: 
 3018: nanox/1.2.4-1.6/kusd/app_1.2.11: OK: 
@@ -1543,6 +1665,7 @@
 3703: nanox/1.2.4-1.6/qtum/app_1.3.21: OK: 
 3707: nanox/1.2.4-1.6/ravencoin/app_1.3.21: OK: 
 2994: nanox/1.2.4-1.6/reosc/app_1.2.11: OK: 
+3388: nanox/1.2.4-1.6/reosc/app_1.2.13: OK: 
 3008: nanox/1.2.4-1.6/rsk_testnet/app_1.2.11: OK: 
 3402: nanox/1.2.4-1.6/rsk_testnet/app_1.2.13: OK: 
 3002: nanox/1.2.4-1.6/rsk/app_1.2.11: OK: 
@@ -1555,7 +1678,9 @@
 3714: nanox/1.2.4-1.6/stratis/app_1.3.21: OK: 
 3422: nanox/1.2.4-1.6/tezos_wallet/app_2.2.5: OK: 
 2992: nanox/1.2.4-1.6/thundercore/app_1.2.11: OK: 
+3386: nanox/1.2.4-1.6/thundercore/app_1.2.13: OK: 
 2995: nanox/1.2.4-1.6/tomochain/app_1.2.11: OK: 
+3389: nanox/1.2.4-1.6/tomochain/app_1.2.13: OK: 
 3638: nanox/1.2.4-1.6/tron/app_0.1.6: OK: 
 2993: nanox/1.2.4-1.6/ubiq/app_1.2.11: OK: 
 3387: nanox/1.2.4-1.6/ubiq/app_1.2.13: OK: 
@@ -1577,8 +1702,49 @@
 3725: nanox/1.2.4-1.6/zcoin/app_1.3.21: OK: 
 3786: nanox/1.2.4-1.7/algorand/app_1.0.7: OK: 
 3865: nanox/1.2.4-1.7/celo/app_1.0.1: OK: 
+3936: nanox/1.2.4-1.7/cosmos/app_1.0.0: OK: 
+4041: nanox/1.2.4-1.7/cosmos/app_2.12.0: OK: 
+4043: nanox/1.2.4-1.7/IoTeX/app_0.1.4: OK: 
+3946: nanox/1.2.4-1.7/stellar/app_3.2.2: OK: 
 3934: nanox/1.2.4-1.7/tron/app_0.2.0: OK: 
 3782: nanox/1.2.4-1.7/xrp/app_1.1.1: OK: 
+4056: nanox/1.2.4-1.8/ardor/app_1.0.1: OK: 
+4423: nanox/1.2.4-1.8/ark/app_2.1.0: OK: 
+4270: nanox/1.2.4-1.8/bitcoin_cash/app_1.4.2: OK: 
+4279: nanox/1.2.4-1.8/bitcoin_gold/app_1.4.2: OK: 
+4272: nanox/1.2.4-1.8/bitcoin_private/app_1.4.2: OK: 
+4289: nanox/1.2.4-1.8/bitcoin_testnet/app_1.4.2: OK: 
+4266: nanox/1.2.4-1.8/bitcoin/app_1.4.2: OK: 
+4060: nanox/1.2.4-1.8/celo/app_1.0.3: OK: 
+4493: nanox/1.2.4-1.8/cosmos/app_2.14.0: OK: 
+4595: nanox/1.2.4-1.8/cosmos/app_2.15.0: OK: 
+4599: nanox/1.2.4-1.8/cosmos/app_2.16.1: OK: 
+4277: nanox/1.2.4-1.8/dash/app_1.4.2: OK: 
+4290: nanox/1.2.4-1.8/digibyte/app_1.4.2: OK: 
+4281: nanox/1.2.4-1.8/dogecoin/app_1.4.2: OK: 
+4050: nanox/1.2.4-1.8/elastos/app_1.1.0: OK: 
+4278: nanox/1.2.4-1.8/gamecredits/app_1.4.2: OK: 
+4268: nanox/1.2.4-1.8/horizen/app_1.4.2: OK: 
+4275: nanox/1.2.4-1.8/komodo/app_1.4.2: OK: 
+4284: nanox/1.2.4-1.8/lbry/app_1.4.2: OK: 
+4285: nanox/1.2.4-1.8/litecoin/app_1.4.2: OK: 
+4150: nanox/1.2.4-1.8/monero/app_1.6.0: OK: 
+4291: nanox/1.2.4-1.8/nix/app_1.4.2: OK: 
+4271: nanox/1.2.4-1.8/peercoin/app_1.4.2: OK: 
+4267: nanox/1.2.4-1.8/pivx/app_1.4.2: OK: 
+4280: nanox/1.2.4-1.8/qtum/app_1.4.2: OK: 
+4274: nanox/1.2.4-1.8/ravencoin/app_1.4.2: OK: 
+4273: nanox/1.2.4-1.8/stealth/app_1.4.2: OK: 
+4283: nanox/1.2.4-1.8/stratis/app_1.4.2: OK: 
+4457: nanox/1.2.4-1.8/terra/app_1.0.0: OK: 
+4288: nanox/1.2.4-1.8/vertcoin/app_1.4.2: OK: 
+4286: nanox/1.2.4-1.8/viacoin/app_1.4.2: OK: 
+4421: nanox/1.2.4-1.8/waves/app_1.1.0: OK: 
+4492: nanox/1.2.4-1.8/xrp/app_2.0.1: OK: 
+4276: nanox/1.2.4-1.8/xsn/app_1.4.2: OK: 
+4287: nanox/1.2.4-1.8/zcash/app_1.4.2: OK: 
+4282: nanox/1.2.4-1.8/zclassic/app_1.4.2: OK: 
+4269: nanox/1.2.4-1.8/zcoin/app_1.4.2: OK: 
 1781: nanox/1.2.4-1/aeternity/app_0.3.3: OK: 
 2084: nanox/1.2.4-1/aeternity/app_0.3.3: OK: 
 1801: nanox/1.2.4-1/aion/app_1.0.1: OK: 
