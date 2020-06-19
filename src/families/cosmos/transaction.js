@@ -36,11 +36,11 @@ export const formatTransaction = (
   }${
     !validators
       ? ""
-      : " " +
+      : (validators.length > 1 ? "\n" : "") +
         validators
           .map(
             (v) =>
-              +"  " +
+              "  " +
               formatCurrencyUnit(getAccountUnit(account), v.amount, {
                 disableRounding: true,
               }) +

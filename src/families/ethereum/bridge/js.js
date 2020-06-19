@@ -60,7 +60,6 @@ const txToOps = (account: Account) => (tx: Tx): Operation[] => {
   const sending = freshAddress === from;
   const receiving = freshAddress === to;
   const ops = [];
-  // FIXME problem with our api, precision lost here...
   const value = BigNumber(tx.value);
   const fee = BigNumber(tx.gas_price * tx.gas_used);
   if (sending) {
