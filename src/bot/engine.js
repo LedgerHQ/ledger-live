@@ -327,7 +327,9 @@ export async function runOnAccount<T: Transaction>({
     }
 
     report.transaction = transaction;
-    report.destination = accounts.find((a) => a.freshAddress === tx.recipient);
+    report.destination = accounts.find(
+      (a) => a.freshAddress === transaction.recipient
+    );
     status = await accountBridge.getTransactionStatus(account, transaction);
     report.status = status;
     report.statusTime = now();

@@ -99,7 +99,6 @@ const cliFormat = (account, level) => {
     account.balance,
     getAccountUnit(account)
   );
-  str += "\n";
 
   const family = byFamily[account.currency.family];
   if (family && family.formatAccountSpecifics) {

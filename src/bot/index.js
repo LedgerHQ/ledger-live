@@ -231,7 +231,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
       const logs = specsLogs[i];
       body += `#### Spec ${spec.name} (${
         r.mutations ? r.mutations.length : "failed"
-      } mutations)\n`;
+      })\n`;
       body += "\n```\n";
       body += logs.join("\n");
       if (r.mutations) {
@@ -249,7 +249,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
       body += "<details>\n";
       body += `<summary>Details of the ${uncoveredMutations.length} uncovered mutations</summary>\n\n`;
       specsWithUncoveredMutations.forEach(({ spec, unavailableMutations }) => {
-        body += `#### Spec ${spec.name} (${unavailableMutations.length} unmet mutations)\n`;
+        body += `#### Spec ${spec.name} (${unavailableMutations.length})\n`;
         unavailableMutations.forEach((m) => {
           const msgs = groupBy(m.errors.map((e) => e.message));
           body +=
