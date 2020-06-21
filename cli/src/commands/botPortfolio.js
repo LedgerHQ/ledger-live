@@ -25,7 +25,7 @@ export default {
       ),
       mergeAll(5),
       filter((e) => e.type === "discovered"),
-      map((e) => formatAccount(e.account, "summary"))
+      map((e) => formatAccount(e.account))
     );
   },
 };

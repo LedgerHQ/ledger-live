@@ -23,7 +23,7 @@ export const formatTransaction = (
   account: Account
 ): string =>
   `
-  ${mode.toUpperCase()} ${
+${mode.toUpperCase()} ${
     useAllAmount
       ? "MAX"
       : amount.isZero()
@@ -33,28 +33,28 @@ export const formatTransaction = (
           showCode: true,
           disableRounding: true,
         })
-  }${
-    !validators
-      ? ""
-      : (validators.length > 1 ? "\n" : "") +
-        validators
-          .map(
-            (v) =>
-              "  " +
-              formatCurrencyUnit(getAccountUnit(account), v.amount, {
-                disableRounding: true,
-              }) +
-              " -> " +
-              v.address
-          )
-          .join("\n")
-  }${
+  }
+TO ${recipient}
+${
+  !validators
+    ? ""
+    : validators
+        .map(
+          (v) =>
+            "  " +
+            formatCurrencyUnit(getAccountUnit(account), v.amount, {
+              disableRounding: true,
+            }) +
+            " -> " +
+            v.address
+        )
+        .join("\n")
+}${
     !cosmosSourceValidator
       ? ""
       : "\n  source validator=" + cosmosSourceValidator
   }
-  TO ${recipient}
-  with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}${
+with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}${
     !memo ? "" : `\n  memo=${memo}`
   }`;
 

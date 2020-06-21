@@ -56,7 +56,6 @@ export function formatAppCandidate(appCandidate: AppCandidate) {
 
 export function formatReportForConsole<T: Transaction>({
   syncAllAccountsTime,
-  spec,
   appCandidate,
   account,
   maxSpendable,
@@ -79,12 +78,10 @@ export function formatReportForConsole<T: Transaction>({
   error,
 }: MutationReport<T>) {
   let str = "";
-  str += `on ${spec.name}, all accounts sync in ${formatTime(
-    syncAllAccountsTime
-  )}\n`;
-  str += `▬ app ${formatAppCandidate(appCandidate)}\n`;
+  str += `all accounts sync in ${formatTime(syncAllAccountsTime)}\n`;
+  str += `▬ ${formatAppCandidate(appCandidate)}\n`;
   if (account) {
-    str += `→ FROM ${formatAccount(account, "summary")}\n`;
+    str += `→ FROM ${formatAccount(account, "basic")}\n`;
   }
   if (account && maxSpendable) {
     str += `max spendable ~ ${formatCurrencyUnit(
@@ -105,20 +102,16 @@ export function formatReportForConsole<T: Transaction>({
     str += `★ using mutation '${mutation.name}'\n`;
   }
   if (destination) {
-    str += `→ TO ${formatAccount(destination, "summary")}\n`;
+    str += `→ TO ${formatAccount(destination, "head")}\n`;
   }
   if (transaction && account) {
-    str += `✔️ doing transaction ${formatTransaction(transaction, account)}\n`;
+    str += `✔️ transaction ${formatTransaction(transaction, account)}\n`;
   }
   if (status && transaction && account) {
     str += `(${formatDt(
       mutationTime,
       statusTime
-    )}) with transaction status: ${formatTransactionStatus(
-      transaction,
-      status,
-      account
-    )}\n`;
+    )}) status:${formatTransactionStatus(transaction, status, account)}\n`;
   }
   if (recoveredFromTransactionStatus && account) {
     str += `\n⚠️ recovered from transaction ${formatTransaction(
@@ -151,7 +144,7 @@ export function formatReportForConsole<T: Transaction>({
     )}): ${formatOp(finalAccount || account)(operation)}\n`;
   }
   if (finalAccount) {
-    str += `account updated:\n ${formatAccount(finalAccount, "summary")}\n`;
+    str += `account updated:\n ${formatAccount(finalAccount, "basic")}\n`;
   }
   if (testDuration) {
     str += `(final state reached in ${formatTime(testDuration)})\n`;
