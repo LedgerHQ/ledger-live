@@ -16,3 +16,8 @@ export const followDeviceRepair = "Follow device repair instructions";
 export const followDeviceUpdate = "Follow device update instructions";
 
 export const processing = "Processing";
+
+export const powerOff = "Power off";
+export const powerOffDevice = "Power off device";
+export const bootOptions = "Boot options";
+export const recovery = "Recovery mode";
