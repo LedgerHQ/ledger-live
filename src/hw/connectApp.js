@@ -45,7 +45,8 @@ export type ConnectAppEvent =
   | { type: "app-not-installed", appName: string }
   | { type: "ask-quit-app" }
   | { type: "ask-open-app", appName: string }
-  | { type: "opened", app?: AppAndVersion, derivation?: { address: string } };
+  | { type: "opened", app?: AppAndVersion, derivation?: { address: string } }
+  | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
 
 const dashboardNames = ["BOLOS", "OLOS\u0000"];
 
@@ -99,7 +100,7 @@ const derivationLogic = (
   ).pipe(
     map(({ address }) => ({
       type: "opened",
-      appAndVersion,
+      app: appAndVersion,
       derivation: { address },
     })),
     catchError((e) => {
@@ -169,7 +170,7 @@ const cmd = ({
                 appName,
               });
             } else {
-              const e: ConnectAppEvent = { type: "opened", appAndVersion };
+              const e: ConnectAppEvent = { type: "opened", app: appAndVersion };
               return of(e);
             }
           }),

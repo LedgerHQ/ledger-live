@@ -12,7 +12,7 @@ export function shouldUpgrade(
 ) {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
   const deps = getDependencies(appName);
-  if (deps.includes("Bitcoin") && deviceModel !== "blue") {
+  if (deps.includes("Bitcoin") || appName === "Bitcoin") {
     // https://donjon.ledger.com/lsb/010/
     return !semver.satisfies(appVersion, ">= 1.4.0");
   }
