@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 // $FlowFixMe
 import SafeAreaView from "react-native-safe-area-view";
@@ -10,9 +10,10 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { useSelector } from "react-redux";
 import {
-  accountsSelector,
-  flattenAccountsSelector,
-} from "../../reducers/accounts";
+  accountWithMandatoryTokens,
+  flattenAccounts,
+} from "@ledgerhq/live-common/lib/account/helpers";
+import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -38,8 +39,26 @@ type Props = {
 
 export default function SelectAccount({ navigation, route }: Props) {
   const currency = route.params.currency;
-  const allAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSelector(accountsSelector);
+
+  const enhancedAccounts = useMemo(() => {
+    const filteredAccounts = accounts.filter(
+      acc =>
+        acc.currency.id ===
+        (currency.type === "TokenCurrency"
+          ? currency.parentCurrency.id
+          : currency.id),
+    );
+    if (currency.type === "TokenCurrency") {
+      return filteredAccounts.map(acc => {
+        return accountWithMandatoryTokens(acc, [currency]);
+      });
+    }
+    return filteredAccounts;
+  }, [accounts, currency]);
+
+  const allAccounts = flattenAccounts(enhancedAccounts);
+
   const { t } = useTranslation();
 
   const keyExtractor = item => item.account.id;
@@ -56,7 +75,7 @@ export default function SelectAccount({ navigation, route }: Props) {
             style={styles.card}
             onPress={() => {
               navigation.navigate("ExchangeConnectDevice", {
-                accountId: account.id,
+                account,
                 mode: "buy",
                 parentId:
                   account.type !== "Account" ? account.parentId : undefined,
@@ -78,7 +97,7 @@ export default function SelectAccount({ navigation, route }: Props) {
 
   const renderList = useCallback(
     items => {
-      const formatedList = formatSearchResults(items, accounts);
+      const formatedList = formatSearchResults(items, enhancedAccounts);
       return (
         <FlatList
           data={formatedList}

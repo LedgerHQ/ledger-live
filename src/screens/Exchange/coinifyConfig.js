@@ -10,6 +10,8 @@ export const supportedCurrenciesIds = [
   "ethereum",
   "bitcoin_cash",
   "dash",
+  "stellar",
+  "ethereum/erc20/usd_tether__erc20_",
 ];
 
 const config = {

@@ -7,6 +7,7 @@ import {
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/lib/account";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types/account";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { ScreenName } from "../../const";
@@ -28,11 +29,13 @@ type RouteParams = {
   accountId: string,
   parentId: string,
   title: string,
+  account: AccountLike,
 };
 
 export default function ConnectDevice({ navigation, route }: Props) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const { account } = route.params;
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -53,7 +56,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
     (meta: *) => {
       if (!account) return;
       navigation.navigate(ScreenName.ExchangeCoinifyWidget, {
-        accountId: account.id,
+        account,
         parentId: parentAccount && parentAccount.id,
         meta,
         mode: "buy",

@@ -6,7 +6,11 @@ import querystring from "querystring";
 import { ActivityIndicator, StyleSheet, View, Linking } from "react-native";
 // $FlowFixMe
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/lib/account/helpers";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types/account";
 import { getConfig } from "./coinifyConfig";
 import colors from "../../colors";
 import DeviceJob from "../../components/DeviceJob";
@@ -68,15 +72,23 @@ const injectedCode = `
 `;
 
 type Props = {
-  account?: Account,
+  account?: AccountLike,
+  parentAccount?: Account,
   mode: string,
   meta?: *,
 };
 
-export default function CoinifyWidget({ mode, account, meta }: Props) {
+export default function CoinifyWidget({
+  mode,
+  account,
+  parentAccount,
+  meta,
+}: Props) {
   const [isWaitingDeviceJob, setWaitingDeviceJob] = useState(false);
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const webView = useRef(null);
+
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
   const coinifyConfig = getConfig();
   const widgetConfig: CoinifyWidgetConfig = {
@@ -105,14 +117,14 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
 
   if (mode === "buy") {
     widgetConfig.transferOutMedia = "blockchain";
-    widgetConfig.cryptoCurrencies = account.currency.ticker;
-    widgetConfig.address = account.freshAddress;
+    widgetConfig.cryptoCurrencies = getAccountCurrency(account).ticker;
+    widgetConfig.address = mainAccount ? mainAccount.freshAddress : null;
   }
 
   if (mode === "sell") {
     widgetConfig.transferInMedia = "blockchain";
-    widgetConfig.cryptoCurrencies = account.currency.ticker;
-    widgetConfig.address = account.freshAddress;
+    widgetConfig.cryptoCurrencies = getAccountCurrency(account).ticker;
+    widgetConfig.address = mainAccount ? mainAccount.freshAddress : null;
   }
 
   if (mode === "trade-history") {
@@ -129,7 +141,7 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
       }
     }
     if (event === "trade.receive-account-changed") {
-      if (context.address === account.freshAddress) {
+      if (context.address === mainAccount.freshAddress) {
         track("Coinify Confirm Buy Start", {
           currencyName: getAccountCurrency(account).name,
         });
@@ -153,7 +165,7 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
             type: "event",
             event: "trade.receive-account-confirmed",
             context: {
-              address: account.freshAddress,
+              address: mainAccount.freshAddress,
               status,
             },
           }),
@@ -214,8 +226,8 @@ export default function CoinifyWidget({ mode, account, meta }: Props) {
           }}
           steps={[
             connectingStep,
-            accountApp(account),
-            verifyAddressOnDeviceStep(account),
+            accountApp(mainAccount),
+            verifyAddressOnDeviceStep(mainAccount),
           ]}
         />
       ) : null}
