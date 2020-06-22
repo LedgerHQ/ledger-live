@@ -12,11 +12,15 @@ import type { Account, Operation, Unit } from "../types";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
+import byFamily from "../generated/account";
 
 const isSignificantAccount = (acc) =>
   acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
 
-const formatOp = (unitByAccountId: (string) => ?Unit) => {
+const formatOp = (
+  unitByAccountId: (string) => ?Unit,
+  familySpecific: (Operation, ?Unit) => string
+) => {
   const format = (op: Operation, level = 0) => {
     const unit = unitByAccountId(op.accountId);
     const amountBN = getOperationAmountNumber(op);
@@ -29,7 +33,15 @@ const formatOp = (unitByAccountId: (string) => ?Unit) => {
     const spaces = Array((level + 1) * 2)
       .fill(" ")
       .join("");
-    const extra = level > 0 ? "" : `${op.hash}     ${op.date.toISOString()}`;
+    let extra =
+      level > 0
+        ? ""
+        : `${op.hash} ${op.date
+            .toISOString()
+            .split(":")
+            .slice(0, 2)
+            .join(":")}`;
+    extra += familySpecific(op, unit);
     const head = `${(spaces + amount).padEnd(20)} ${op.type.padEnd(
       11
     )}${extra}`;
@@ -49,7 +61,7 @@ function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
   );
   if (sumOfOps.eq(balance)) return "";
   return (
-    " (! sum of ops is different: " +
+    " (! sum of ops " +
     formatCurrencyUnit(unit, sumOfOps, {
       showCode: true,
       disableRounding: true,
@@ -58,7 +70,7 @@ function maybeDisplaySumOfOpsIssue(ops, balance, unit) {
   );
 }
 
-const cliFormat = (account, summaryOnly) => {
+const cliFormat = (account, level) => {
   const {
     name,
     freshAddress,
@@ -73,33 +85,32 @@ const cliFormat = (account, summaryOnly) => {
     showCode: true,
   });
 
-  const opsCount = `${operations.length} operations`;
+  const opsCount = `${operations.length}ops`;
   const freshInfo = `${freshAddress} on ${freshAddressPath}`;
   const derivationInfo = `${derivationMode}#${index}`;
-  const head = `${name}: ${balance} (${opsCount}) (${freshInfo}) (${derivationInfo} ${
+  let str = `${name}: ${balance} (${opsCount}) (${freshInfo}) ${derivationInfo} ${
     xpub || ""
-  })${maybeDisplaySumOfOpsIssue(
+  }`;
+
+  if (level === "head") return str;
+
+  str += maybeDisplaySumOfOpsIssue(
     operations,
     account.balance,
     getAccountUnit(account)
-  )}`;
+  );
+
+  const family = byFamily[account.currency.family];
+  if (family && family.formatAccountSpecifics) {
+    str += family.formatAccountSpecifics(account);
+  }
 
   const subAccounts = account.subAccounts || [];
-  const ops = operations
-    .map(
-      formatOp((id) => {
-        if (account.id === id) return account.unit;
-        const ta = subAccounts.find((a) => a.id === id);
-        if (ta) return getAccountUnit(ta);
-        throw new Error("unexpected missing token account");
-      })
-    )
-    .join("");
 
-  const tokens = subAccounts
+  str += subAccounts
     .map(
       (ta) =>
-        "\n  " +
+        "  " +
         ta.type +
         " " +
         getAccountName(ta) +
@@ -113,9 +124,31 @@ const cliFormat = (account, summaryOnly) => {
         " ops)" +
         maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountUnit(ta))
     )
+    .join("\n");
+
+  if (level === "basic") return str;
+
+  str += "\nOPERATIONS (" + operations.length + ")";
+  str += operations
+    .map(
+      formatOp(
+        (id) => {
+          if (account.id === id) return account.unit;
+          const ta = subAccounts.find((a) => a.id === id);
+          if (ta) return getAccountUnit(ta);
+          throw new Error("unexpected missing token account");
+        },
+        (operation, unit) => {
+          if (family && family.formatOperationSpecifics) {
+            return family.formatOperationSpecifics(operation, unit);
+          }
+          return "";
+        }
+      )
+    )
     .join("");
 
-  return head + tokens + (summaryOnly ? "" : ops);
+  return str;
 };
 
 const stats = (account) => {
@@ -144,8 +177,10 @@ const stats = (account) => {
 
 export const accountFormatters: { [_: string]: (Account) => any } = {
   json: (account) => JSON.stringify(toAccountRaw(account)),
-  default: (account) => cliFormat(account),
-  summary: (account) => cliFormat(account, true),
+  head: (account) => cliFormat(account, "head"),
+  default: (account) => cliFormat(account, "basic"),
+  basic: (account) => cliFormat(account, "basic"),
+  full: (account) => cliFormat(account, "full"),
   stats: (account) => stats(account),
   significantTokenTickers: (account) =>
     (account.subAccounts || [])
@@ -156,7 +191,7 @@ export const accountFormatters: { [_: string]: (Account) => any } = {
 
 export function formatAccount(
   account: Account,
-  format: string = "default"
+  format: string = "basic"
 ): string {
   const f = accountFormatters[format];
   invariant(f, "missing account formatter=" + format);
@@ -170,5 +205,13 @@ export function formatOperation(account: ?Account): (Operation) => string {
     const ta = (account.subAccounts || []).find((a) => a.id === id);
     if (ta) return getAccountUnit(ta);
   };
-  return formatOp(unitByAccountId);
+  const familyExtra = (operation, unit) => {
+    if (!account) return "";
+    const family = byFamily[account.currency.family];
+    if (family && family.formatOperationSpecifics) {
+      return family.formatOperationSpecifics(operation, unit);
+    }
+    return "";
+  };
+  return formatOp(unitByAccountId, familyExtra);
 }

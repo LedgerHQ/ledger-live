@@ -22,7 +22,8 @@ const ripple: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "move ~50% to another account",
+      name: "move ~50%",
+      maxRun: 2,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minAmountCutoff), "balance is too low");
         let transaction = bridge.createTransaction(account);

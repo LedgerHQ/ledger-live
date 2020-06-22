@@ -24,6 +24,7 @@ deviceTransactionConfig.js \
 test-dataset.js \
 test-specifics.js \
 mock.js \
+account.js \
 "
 
 cd ../src

@@ -220,7 +220,7 @@ const dogecoinSpec: AppSpec<*> = {
   },
   mutations: [
     {
-      name: "send max to another account",
+      name: "send max",
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.balance.gt(100000), "balance is too low");
         let t = bridge.createTransaction(account);

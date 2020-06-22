@@ -14,7 +14,7 @@ export const formatTransaction = (
   account: Account
 ): string =>
   `
-  SEND ${
+SEND ${
     useAllAmount
       ? "MAX"
       : formatCurrencyUnit(getAccountUnit(account), amount, {
@@ -22,8 +22,8 @@ export const formatTransaction = (
           disableRounding: true,
         })
   }
-  TO ${recipient}
-  with fee=${
+TO ${recipient}
+with fee=${
     !fee
       ? "?"
       : formatCurrencyUnit(getAccountUnit(account), fee, {

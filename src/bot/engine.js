@@ -152,7 +152,7 @@ export async function runWithAppSpec<T: Transaction>(
             "(" +
             formatTime(firstSyncDurations[a.id] || 0) +
             ") " +
-            formatAccount(a, "summary")
+            formatAccount(a, "head")
         )
         .join("\n")}\n`
     );
@@ -306,9 +306,6 @@ export async function runOnAccount<T: Transaction>({
     const { tx, mutation, updates } = candidate;
     report.mutation = mutation;
     report.mutationTime = now();
-    report.transaction = tx;
-    report.destination = accounts.find((a) => a.freshAddress === tx.recipient);
-    mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
 
     // prepare the transaction and ensure it's valid
     let status;
@@ -330,8 +327,9 @@ export async function runOnAccount<T: Transaction>({
     }
 
     report.transaction = transaction;
-    report.transactionTime = now();
-
+    report.destination = accounts.find(
+      (a) => a.freshAddress === transaction.recipient
+    );
     status = await accountBridge.getTransactionStatus(account, transaction);
     report.status = status;
     report.statusTime = now();
@@ -352,7 +350,6 @@ export async function runOnAccount<T: Transaction>({
         if (recovered) {
           report.recoveredFromTransactionStatus = { transaction, status };
           report.transaction = transaction = recovered;
-          report.transactionTime = now();
           status = await accountBridge.getTransactionStatus(
             account,
             transaction
@@ -367,6 +364,8 @@ export async function runOnAccount<T: Transaction>({
     if (errors.length) {
       throw errors[0];
     }
+
+    mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
 
     // sign the transaction with speculos
 

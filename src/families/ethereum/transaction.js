@@ -19,7 +19,7 @@ export const formatTransaction = (
       (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
     mainAccount;
   return `
-  SEND ${
+SEND ${
     t.useAllAmount
       ? "MAX"
       : formatCurrencyUnit(getAccountUnit(account), t.amount, {
@@ -27,12 +27,12 @@ export const formatTransaction = (
           disableRounding: true,
         })
   }
-  TO ${t.recipient}
-  with gasPrice=${formatCurrencyUnit(
+TO ${t.recipient}
+with gasPrice=${formatCurrencyUnit(
     mainAccount.currency.units[1],
     t.gasPrice || BigNumber(0)
   )}
-  with gasLimit=${gasLimit.toString()}`;
+with gasLimit=${gasLimit.toString()}`;
 };
 
 const defaultGasLimit = BigNumber(0x5208);

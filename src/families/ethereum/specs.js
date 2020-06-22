@@ -10,7 +10,8 @@ import { getGasLimit } from "./transaction";
 
 const ethereumMutations = ({ maxAccount, minimalAmount }) => [
   {
-    name: "move 50% to another account",
+    name: "move 50%",
+    maxRun: 2,
     transaction: ({ account, siblings, bridge }) => {
       invariant(account.balance.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, maxAccount);
@@ -39,7 +40,8 @@ const ethereumMutations = ({ maxAccount, minimalAmount }) => [
     },
   },
   {
-    name: "move some ERC20 token to another account",
+    name: "move some ERC20",
+    maxRun: 1,
     transaction: ({ account, siblings, bridge }) => {
       invariant(account.balance.gt(minimalAmount), "eth balance is too low");
       const erc20Account = sample(

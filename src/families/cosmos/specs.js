@@ -49,14 +49,18 @@ const cosmos: AppSpec<Transaction> = {
   },
   mutations: [
     {
-      name: "send some to another account",
-      maxRun: 5,
+      name: "send some",
+      maxRun: 2,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         return {
           transaction: bridge.createTransaction(account),
           updates: [
             { recipient: pickSiblings(siblings, 30).freshAddress },
-            { amount: maxSpendable.div(2).integerValue() },
+            {
+              amount: maxSpendable
+                .times(0.3 + 0.4 * Math.random())
+                .integerValue(),
+            },
             Math.random() < 0.5 ? { memo: "LedgerLiveBot" } : null,
           ],
         };
@@ -84,7 +88,7 @@ const cosmos: AppSpec<Transaction> = {
     },
 
     {
-      name: "send max to another account",
+      name: "send max",
       maxRun: 1,
       transaction: ({ account, siblings, bridge }) => {
         return {
@@ -104,7 +108,7 @@ const cosmos: AppSpec<Transaction> = {
 
     {
       name: "delegate new validators",
-      maxRun: 3,
+      maxRun: 2,
       transaction: ({ account, bridge }) => {
         invariant(
           account.index % 10 > 0,
@@ -243,7 +247,7 @@ const cosmos: AppSpec<Transaction> = {
 
     {
       name: "redelegate",
-      maxRun: 2,
+      maxRun: 1,
       transaction: ({ account, bridge }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");
@@ -306,7 +310,7 @@ const cosmos: AppSpec<Transaction> = {
 
     {
       name: "claim rewards",
-      maxRun: 2,
+      maxRun: 1,
       transaction: ({ account, bridge }) => {
         const { cosmosResources } = account;
         invariant(cosmosResources, "cosmos");

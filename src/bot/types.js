@@ -116,7 +116,6 @@ export type MutationReport<T: Transaction> = {
   mutationTime?: number,
   destination?: Account,
   transaction?: T,
-  transactionTime?: number,
   status?: TransactionStatus,
   statusTime?: number,
   recoveredFromTransactionStatus?: {

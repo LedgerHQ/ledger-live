@@ -62,7 +62,7 @@ export const formatTransaction = (
       (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
     mainAccount;
   return `
-  ${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
+${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
     t.useAllAmount
       ? "MAX"
       : t.amount.isZero()
@@ -77,7 +77,7 @@ export const formatTransaction = (
       ? ""
       : " " + t.votes.map((v) => v.voteCount + "->" + v.address).join(" ")
   }
-  TO ${t.recipient}`;
+TO ${t.recipient}`;
 };
 
 export default { formatTransaction, fromTransactionRaw, toTransactionRaw };
