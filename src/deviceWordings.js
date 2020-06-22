@@ -9,6 +9,7 @@ export const seedNext = "Next";
 export const seedConfirmation = "Confirmation";
 
 export const bootloader = "Bootloader";
+export const bootloaderMode = "Bootloader mode";
 export const mcuOutdated = "MCU outdated";
 export const mcuNotGenuine = "MCU not genuine";
 export const followDeviceRepair = "Follow device repair instructions";
