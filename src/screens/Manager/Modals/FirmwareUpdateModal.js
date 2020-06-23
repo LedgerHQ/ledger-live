@@ -22,7 +22,7 @@ const QuitManagerModal = ({ isOpened, onClose }: Props) => {
         </InfoIcon>
       </View>
       <View style={styles.storageRow}>
-        <LText style={[styles.text, styles.title]} bold>
+        <LText secondary style={[styles.text, styles.title]} semiBold>
           <Trans i18nKey={`manager.firmware.modalTitle`} />
         </LText>
         <LText style={styles.text}>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   title: {
     lineHeight: 24,
-    fontSize: 20,
+    fontSize: 16,
     color: colors.darkBlue,
   },
   text: {

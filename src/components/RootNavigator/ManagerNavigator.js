@@ -91,7 +91,7 @@ export function ManagerTabIcon(props: any) {
 const stylesLocal = StyleSheet.create({
   blueDot: {
     top: 0,
-    right: -16,
+    right: -10,
     position: "absolute",
     width: 6,
     height: 6,
