@@ -889,6 +889,15 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
+"@dabh/diagnostics@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@dabh/diagnostics/-/diagnostics-2.0.2.tgz#290d08f7b381b8f94607dc8f471a12c675f9db31"
+  integrity sha512-+A1YivoVDNNVCdfozHSR8v/jyuuLTMXwjWuxPFlFlUapXoGc+Gj9mDlTDDfrwl7rXCl2tNZ0kE8sIBO6YOn96Q==
+  dependencies:
+    colorspace "1.1.x"
+    enabled "2.0.x"
+    kuler "^2.0.0"
+
 "@jest/types@^26.0.1":
   version "26.0.1"
   resolved "https://registry.yarnpkg.com/@jest/types/-/types-26.0.1.tgz#b78333fbd113fa7aec8d39de24f88de8686dac67"
@@ -1031,10 +1040,10 @@
     "@ledgerhq/errors" "^5.17.0"
     events "^3.1.0"
 
-"@ledgerhq/ledger-core@^6.5.4":
-  version "6.5.4"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.5.4.tgz#66ba76c28ea25c267d61ba972353fa4a789dedc8"
-  integrity sha512-6UCHa9y5Yhrr09yy55jQWjshJiJ/k/gq9mvpbHbdg6SiqafZklujwJlhlb2IQ6UV8SuL7TWsmi2fQDhO4AlKig==
+"@ledgerhq/ledger-core@^6.6.0":
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.6.0.tgz#61a4446062c10160fcdc7629f74c5df24247aca8"
+  integrity sha512-tsqcsvl9jV5wobGl9njFqSAqP5BXlp+S5YSkT0nO61tMLDdZFnki4IjjrLLHWe1ndKoNu+4JxKG4t0kT4DkS8w==
   dependencies:
     bindings "1.5.0"
     nan "^2.14.1"
@@ -1042,10 +1051,10 @@
     node-pre-gyp "^0.14.0"
     node-pre-gyp-github "^1.4.3"
 
-"@ledgerhq/live-common@^12.35.0":
-  version "12.35.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.35.0.tgz#846391ced938dad974f3c35fa34258ed9b8e4bd6"
-  integrity sha512-O0ZVI9goQ6bc9vQz3P5AA0t/u9VR+cQFRJTfKk/81lDEWQ5MVZiiW+fsSDBso3pQ4Xwjvl7ExXrBtw80qoSs4Q==
+"@ledgerhq/live-common@^12.36.0":
+  version "12.36.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.36.0.tgz#3f8974e179aaac00cfde790474f10145ac90fc7d"
+  integrity sha512-JI1FIJMxxQPQJGzDTC6bx+pS8rzUujiXNxbK+u9l4Fx5VpaVrKFCZgYvqtM0pTguVvQVhji56wVVyaxD0xnR6g==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.17.0"
@@ -2311,14 +2320,6 @@ detect-libc@^1.0.2, detect-libc@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
   integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
-
-diagnostics@DABH/diagnostics#master:
-  version "2.0.2"
-  resolved "https://codeload.github.com/DABH/diagnostics/tar.gz/1533851826eac88679124d41f87e45e1b196be56"
-  dependencies:
-    colorspace "1.1.x"
-    enabled "2.0.x"
-    kuler "^2.0.0"
 
 diff-sequences@^26.0.0:
   version "26.0.0"
@@ -5597,13 +5598,13 @@ winston-transport@^4.4.0:
     readable-stream "^2.3.7"
     triple-beam "^1.2.0"
 
-winston@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/winston/-/winston-3.3.1.tgz#866764c2af1e4bba860091e2692545f55ea98003"
-  integrity sha512-ijjJtGl8tqQzftLysZn0jQBwa1VjyIrgysvk9tJJczk88oXmXZ5z6CvSFcQ69FfXONINxgIVfx3lqwjK57Hfsg==
+winston@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/winston/-/winston-3.3.2.tgz#943773ea8e1c2353e088acd64a952c7809ac076e"
+  integrity sha512-vTOrUZlyQPS8VpCcQ1JT8BumDAUe4awCHZ9nmGgO7LqkV4atj0dKa5suA7Trf7QKtBszE2yUs9d8744Kz9j4jQ==
   dependencies:
+    "@dabh/diagnostics" "^2.0.2"
     async "^3.1.0"
-    diagnostics DABH/diagnostics#master
     is-stream "^2.0.0"
     logform "^2.2.0"
     one-time "^1.0.0"

@@ -853,10 +853,10 @@
     "@ledgerhq/errors" "^5.17.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^12.35.0":
-  version "12.35.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.35.0.tgz#846391ced938dad974f3c35fa34258ed9b8e4bd6"
-  integrity sha512-O0ZVI9goQ6bc9vQz3P5AA0t/u9VR+cQFRJTfKk/81lDEWQ5MVZiiW+fsSDBso3pQ4Xwjvl7ExXrBtw80qoSs4Q==
+"@ledgerhq/live-common@^12.36.0":
+  version "12.36.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.36.0.tgz#3f8974e179aaac00cfde790474f10145ac90fc7d"
+  integrity sha512-JI1FIJMxxQPQJGzDTC6bx+pS8rzUujiXNxbK+u9l4Fx5VpaVrKFCZgYvqtM0pTguVvQVhji56wVVyaxD0xnR6g==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.17.0"
@@ -902,10 +902,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.17.0.tgz#a3e946d915abf9c1f168bfba357a4c18a5431bfe"
   integrity sha512-cY3aL9hLdQONFJihQDaO3szmyo53nLdMYisVLfjxJ2SBH5SOyoAtg6Utwz4u6Y3Cf464BJ0wZu3/SlVO0kboBQ==
 
-"@ledgerhq/react-native-ledger-core@^4.12.3":
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.12.3.tgz#f8bfa0772a42a9e49cdb42feb92a096809feeda2"
-  integrity sha512-gls4GIUm6skjHKYM6Y25G2XQd89/bSgoMjPowL/TgFkWeZSMV/Qbkm9T/4+jdG+L1dLFFSCrBivWmMHhXyutLQ==
+"@ledgerhq/react-native-ledger-core@^4.13.0":
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.13.0.tgz#a5f36d8a0b1ca5e05f01cde6abbf770830706995"
+  integrity sha512-JN9G78lw50GMo0x59avblpH/F9XImbanT8pncoGQ0dOwbyrQZPg7GSh/a9skZtKQEkPBJlPFAAvI8opZau4TJQ==
 
 "@react-native-community/cli-debugger-ui@^3.0.0":
   version "3.0.0"
