@@ -15,6 +15,7 @@ import { promiseAllBatched } from "../../promise";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
+import { parseBitcoinOutput, isChangeOutput } from "./transaction";
 
 async function signTransaction({
   account,
@@ -95,7 +96,8 @@ async function signTransaction({
 
     const outputIndex = await input.getPreviousOutputIndex();
 
-    const sequence = await input.getSequence();
+    // NB libcore's sequence is not used because int32 limit issue
+    const sequence = transaction.rbf ? 0 : 0xffffffff;
 
     log("libcore", "inputs[" + i + "]", {
       previousTransaction: JSON.stringify(previousTransaction),
@@ -106,7 +108,7 @@ async function signTransaction({
       previousTransaction,
       outputIndex,
       undefined, // we don't use that TODO: document
-      sequence, // 0xffffffff,
+      sequence,
     ];
   });
   if (isCancelled()) return;
@@ -130,21 +132,9 @@ async function signTransaction({
   let changePath;
 
   for (const o of outputs) {
-    const derivationPath = await o.getDerivationPath();
-    if (isCancelled()) return;
-
-    if (derivationPath) {
-      const isDerivationPathNull = await derivationPath.isNull();
-      if (!isDerivationPathNull) {
-        const strDerivationPath = await derivationPath.toString();
-        if (isCancelled()) return;
-
-        const derivationArr = strDerivationPath.split("/");
-        if (derivationArr[derivationArr.length - 2] === "1") {
-          changePath = strDerivationPath;
-          break;
-        }
-      }
+    const output = await parseBitcoinOutput(o);
+    if (isChangeOutput(output)) {
+      changePath = output.path || undefined;
     }
   }
 

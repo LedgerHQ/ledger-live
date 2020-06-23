@@ -32,6 +32,12 @@ const dataset: CurrenciesData<Transaction> = {
             amount: "999",
             feePerByte: "1",
             networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              pickUnconfirmedRBF: false,
+              excludeUTXOs: [],
+            },
           }),
           expectedStatus: {
             amount: BigNumber("999"),
@@ -52,6 +58,12 @@ const dataset: CurrenciesData<Transaction> = {
             amount: "998",
             feePerByte: "1",
             networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              pickUnconfirmedRBF: false,
+              excludeUTXOs: [],
+            },
           }),
           expectedStatus: {
             amount: BigNumber("998"),
@@ -72,6 +84,12 @@ const dataset: CurrenciesData<Transaction> = {
             amount: "997",
             feePerByte: "1",
             networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              pickUnconfirmedRBF: false,
+              excludeUTXOs: [],
+            },
           }),
           expectedStatus: {
             amount: BigNumber("997"),

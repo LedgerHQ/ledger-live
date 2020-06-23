@@ -92,6 +92,11 @@ const envDefinitions = {
     desc:
       "gasLimit * gasPrice to determine the fees price. A too low GAS_PRICE will get rejected before the transaction is broadcast",
   },
+  DEBUG_UTXO_DISPLAY: {
+    def: 4,
+    parser: intParser,
+    desc: "define maximum number of utxos to display in CLI",
+  },
   DEBUG_HTTP_RESPONSE: {
     def: false,
     parser: boolParser,

@@ -6,6 +6,7 @@ import { withLibcoreF } from "./access";
 import { remapLibcoreErrors } from "./errors";
 import { getCoreAccount } from "./getCoreAccount";
 import byFamily from "../generated/libcore-getFeesForTransaction";
+import type { BitcoinInput, BitcoinOutput } from "../families/bitcoin/types";
 
 export type Input = {
   account: Account,
@@ -16,6 +17,8 @@ type F = (Input) => Promise<{
   estimatedFees: BigNumber,
   estimatedGas: ?BigNumber, // Note: Use in Cosmos
   value: BigNumber,
+  txInputs?: BitcoinInput[],
+  txOutputs?: BitcoinOutput[],
 }>;
 
 export const getFeesForTransaction: F = withLibcoreF(

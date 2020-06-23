@@ -14,8 +14,11 @@ import type { ScanCommonOpts } from "../scan";
 const format = (account, value) => {
   const unit = getAccountUnit(account);
   const name = getAccountName(account);
-  const amount = formatCurrencyUnit(unit, value, { showCode: true });
-  return `${name} can spend ${amount}`;
+  const amount = formatCurrencyUnit(unit, value, {
+    showCode: true,
+    disableRounding: true,
+  });
+  return `${name}: ${amount}`;
 };
 
 export default {

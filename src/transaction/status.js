@@ -9,7 +9,15 @@ import type {
 } from "../types/transaction";
 import type { Account, Transaction } from "../types";
 import { getAccountUnit } from "../account";
+import {
+  fromBitcoinInputRaw,
+  fromBitcoinOutputRaw,
+  toBitcoinInputRaw,
+  toBitcoinOutputRaw,
+} from "../families/bitcoin/serialization";
 import { formatCurrencyUnit } from "../currencies";
+import { formatOutput, formatInput } from "../families/bitcoin/account";
+import { getEnv } from "../env";
 
 const fromErrorRaw = (raw: string): Error => {
   return deserializeError(JSON.parse(raw));
@@ -27,6 +35,8 @@ export const fromTransactionStatusRaw = (
   amount: BigNumber(ts.amount),
   totalSpent: BigNumber(ts.totalSpent),
   recipientIsReadOnly: ts.recipientIsReadOnly,
+  txInputs: ts.txInputs ? ts.txInputs.map(fromBitcoinInputRaw) : undefined,
+  txOutputs: ts.txOutputs ? ts.txOutputs.map(fromBitcoinOutputRaw) : undefined,
 });
 
 export const toTransactionStatusRaw = (
@@ -38,6 +48,8 @@ export const toTransactionStatusRaw = (
   amount: ts.amount.toString(),
   totalSpent: ts.totalSpent.toString(),
   recipientIsReadOnly: ts.recipientIsReadOnly,
+  txInputs: ts.txInputs ? ts.txInputs.map(toBitcoinInputRaw) : undefined,
+  txOutputs: ts.txOutputs ? ts.txOutputs.map(toBitcoinOutputRaw) : undefined,
 });
 
 const formatErrorSmall = (e: Error): string =>
@@ -45,7 +57,15 @@ const formatErrorSmall = (e: Error): string =>
 
 export const formatTransactionStatus = (
   t: Transaction,
-  { errors, warnings, estimatedFees, amount, totalSpent }: TransactionStatus,
+  {
+    errors,
+    warnings,
+    estimatedFees,
+    amount,
+    totalSpent,
+    txInputs,
+    txOutputs,
+  }: TransactionStatus,
   mainAccount: Account
 ): string => {
   let str = "";
@@ -53,6 +73,25 @@ export const formatTransactionStatus = (
     (t.subAccountId &&
       (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
     mainAccount;
+
+  if (txInputs) {
+    const n = getEnv("DEBUG_UTXO_DISPLAY");
+    const displayAll = txInputs.length <= n;
+    str +=
+      `\nTX INPUTS (${txInputs.length}):\n` +
+      txInputs
+        .slice(0, displayAll ? txInputs.length : n)
+        .map((o) => formatInput(mainAccount, o))
+        .join("\n");
+    if (!displayAll) {
+      str += "\n...";
+    }
+  }
+  if (txOutputs) {
+    str +=
+      `\nTX OUTPUTS (${txOutputs.length}):\n` +
+      txOutputs.map((o) => formatOutput(mainAccount, o)).join("\n");
+  }
 
   str +=
     "\n  amount: " +

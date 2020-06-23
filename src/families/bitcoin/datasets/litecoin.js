@@ -33,6 +33,12 @@ const dataset: CurrenciesData<Transaction> = {
             family: "bitcoin",
             feePerByte: "39",
             networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              pickUnconfirmedRBF: false,
+              excludeUTXOs: [],
+            },
           }),
           expectedStatus: {
             errors: {},
@@ -51,6 +57,12 @@ const dataset: CurrenciesData<Transaction> = {
             family: "bitcoin",
             feePerByte: "39",
             networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              pickUnconfirmedRBF: false,
+              excludeUTXOs: [],
+            },
           }),
           expectedStatus: {
             errors: {},
@@ -69,6 +81,12 @@ const dataset: CurrenciesData<Transaction> = {
             family: "bitcoin",
             feePerByte: "39",
             networkInfo,
+            rbf: false,
+            utxoStrategy: {
+              strategy: 0,
+              pickUnconfirmedRBF: false,
+              excludeUTXOs: [],
+            },
           }),
           expectedStatus: {
             errors: {},

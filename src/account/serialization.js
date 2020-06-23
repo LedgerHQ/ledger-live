@@ -20,6 +20,10 @@ import type {
 } from "../types";
 import type { TronResources, TronResourcesRaw } from "../families/tron/types";
 import {
+  toBitcoinResourcesRaw,
+  fromBitcoinResourcesRaw,
+} from "../families/bitcoin/serialization";
+import {
   toCosmosResourcesRaw,
   fromCosmosResourcesRaw,
 } from "../families/cosmos/serialization";
@@ -30,6 +34,7 @@ import {
 } from "../currencies";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
+export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -477,6 +482,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     subAccounts: subAccountsRaw,
     tronResources,
     cosmosResources,
+    bitcoinResources,
   } = rawAccount;
 
   const subAccounts =
@@ -548,6 +554,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.cosmosResources = fromCosmosResourcesRaw(cosmosResources);
   }
 
+  if (bitcoinResources) {
+    res.bitcoinResources = fromBitcoinResourcesRaw(bitcoinResources);
+  }
+
   return res;
 }
 
@@ -577,6 +587,7 @@ export function toAccountRaw({
   endpointConfig,
   tronResources,
   cosmosResources,
+  bitcoinResources,
 }: Account): AccountRaw {
   const res: $Exact<AccountRaw> = {
     id,
@@ -616,6 +627,9 @@ export function toAccountRaw({
   }
   if (cosmosResources) {
     res.cosmosResources = toCosmosResourcesRaw(cosmosResources);
+  }
+  if (bitcoinResources) {
+    res.bitcoinResources = toBitcoinResourcesRaw(bitcoinResources);
   }
   return res;
 }
