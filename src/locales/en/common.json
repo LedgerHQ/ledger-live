@@ -694,9 +694,9 @@
       "noAppsTitle": "Install an app on my device",
       "noAppsDesc": "You need to install apps on your device to add accounts in Ledger Live. Go to the manager and install apps on your device.",
       "noAccountsTitle": "You don’t have any accounts…",
-      "noAccountsDesc": "Click on “Add account” to start adding accounts in Ledger Live",
+      "noAccountsDesc": "Click on “Add accounts” to start adding accounts in Ledger Live",
       "buttons": {
-        "import": "Add account",
+        "import": "Add accounts",
         "manager": "Install apps",
         "managerSecondary": "Install apps on my device"
       }
