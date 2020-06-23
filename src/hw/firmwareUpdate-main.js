@@ -44,6 +44,15 @@ const main = (
     )
   );
 
+  const waitForOSU = (maxTry) =>
+    maxTry < 0
+      ? throwError(new DeviceInOSUExpected())
+      : withDeviceInfo.pipe(
+          concatMap((deviceInfo) =>
+            deviceInfo.isOSU ? empty() : concat(wait2s, waitForOSU(maxTry - 1))
+          )
+        );
+
   const bootloaderLoop = withDeviceInfo.pipe(
     concatMap((deviceInfo) =>
       !deviceInfo.isBootloader
@@ -62,7 +71,7 @@ const main = (
 
   const all = shouldFlashMCU
     ? concat(waitForBootloader, bootloaderLoop, finalStep)
-    : finalStep;
+    : concat(waitForOSU(10), finalStep);
 
   return all.pipe(
     scan(
