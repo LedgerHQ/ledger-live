@@ -74,6 +74,7 @@ export type SettingsState = {
   hideEmptyTokenAccounts: boolean,
   blacklistedTokenIds: string[],
   dismissedBanners: string[],
+  hasAvailableUpdate: boolean,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -94,6 +95,7 @@ export const INITIAL_STATE: SettingsState = {
   hideEmptyTokenAccounts: false,
   blacklistedTokenIds: [],
   dismissedBanners: [],
+  hasAvailableUpdate: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -243,6 +245,10 @@ const handlers: Object = {
   SETTINGS_DISMISS_BANNER: (state, { payload }) => ({
     ...state,
     dismissedBanners: [...state.dismissedBanners, payload],
+  }),
+  SETTINGS_SET_AVAILABLE_UPDATE: (state, action) => ({
+    ...state,
+    hasAvailableUpdate: action.enabled,
   }),
 };
 

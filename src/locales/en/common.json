@@ -1550,7 +1550,9 @@
       "later": "Do it later"
     },
     "firmware": {
-      "latest": "Firmware version {{version}} is available"
+      "latest": "Firmware version {{version}} is available",
+      "modalTitle": "Update firmware is available only on Ledger Live desktop",
+      "modalDesc": "Please download Ledger Live on your computer to update the device’s firmware"
     }
   },
   "ManagerDevice": {

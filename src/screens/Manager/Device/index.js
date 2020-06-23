@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState, useCallback } from "react";
 import manager from "@ledgerhq/live-common/lib/manager";
-
+import { useDispatch } from "react-redux";
 import { StyleSheet, View, Image } from "react-native";
 import { Trans } from "react-i18next";
 import type { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
@@ -18,6 +18,7 @@ import Card from "../../../components/Card";
 
 import colors from "../../../colors";
 import DeviceName from "./DeviceName";
+import { setAvailableUpdate } from "../../../actions/settings";
 
 const illustrations = {
   nanoS,
@@ -45,22 +46,26 @@ const DeviceCard = ({
   const { deviceModel } = state;
   const [firmware, setFirmware] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const dispatch = useDispatch();
 
   const open = useCallback(() => setOpenModal(true), [setOpenModal]);
   const close = useCallback(() => setOpenModal(false), [setOpenModal]);
 
   useEffect(() => {
     async function getLatestFirmwareForDevice() {
-      if (deviceInfo) {
-        const fw = await manager.getLatestFirmwareForDevice(deviceInfo);
-        setFirmware(fw || null);
+      const fw = await manager.getLatestFirmwareForDevice(deviceInfo);
+
+      if (fw) {
+        dispatch(setAvailableUpdate(true));
+        setFirmware(fw);
       } else {
+        dispatch(setAvailableUpdate(false));
         setFirmware(null);
       }
     }
 
     getLatestFirmwareForDevice();
-  }, [deviceInfo]);
+  }, [deviceInfo, dispatch]);
 
   return (
     <>

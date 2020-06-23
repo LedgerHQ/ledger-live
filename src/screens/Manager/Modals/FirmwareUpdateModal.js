@@ -3,9 +3,8 @@ import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
-import Button from "../../../components/Button";
 import InfoIcon from "../../../components/InfoIcon";
-import Quit from "../../../icons/Quit";
+import Info from "../../../icons/Info";
 
 import ActionModal from "./ActionModal";
 
@@ -19,39 +18,16 @@ const QuitManagerModal = ({ isOpened, onClose }: Props) => {
     <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
       <View style={styles.storageImage}>
         <InfoIcon bg={colors.lightLive}>
-          <Quit size={30} color={colors.live} />
+          <Info size={30} color={colors.live} />
         </InfoIcon>
       </View>
       <View style={styles.storageRow}>
-        {/* <LText style={[styles.warnText, styles.title]} bold>
-          <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.title`} />
+        <LText style={[styles.text, styles.title]} bold>
+          <Trans i18nKey={`manager.firmware.modalTitle`} />
         </LText>
-        <LText style={styles.warnText}>
-          <Trans
-            i18nKey={`errors.ManagerQuitPage.${actionRunning}.description`}
-          />
-        </LText> */}
-      </View>
-      <View style={styles.buttonRow}>
-        {/* <Button
-          containerStyle={[styles.button]}
-          title={<Trans i18nKey="errors.ManagerQuitPage.quit" />}
-          useTouchable
-          onPress={onConfirm}
-          type={"secondary"}
-          event="ManagerQuitApp"
-          eventProperties={{ action: actionRunning }}
-        />
-        <Button
-          containerStyle={[styles.button, styles.buttonMargin]}
-          title={
-            <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.stay`} />
-          }
-          useTouchable
-          onPress={onClose}
-          type={"primary"}
-          event="ManagerCancelQuitApp"
-        /> */}
+        <LText style={styles.text}>
+          <Trans i18nKey={`manager.firmware.modalDesc`} />
+        </LText>
       </View>
     </ActionModal>
   );
@@ -67,7 +43,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: colors.darkBlue,
   },
-  warnText: {
+  text: {
     textAlign: "center",
     fontSize: 14,
     color: colors.grey,
@@ -79,20 +55,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-  },
-  buttonRow: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 16,
-    marginTop: 24,
-  },
-  button: {
-    flex: 1,
-  },
-  buttonMargin: {
-    marginLeft: 16,
   },
 });
 
