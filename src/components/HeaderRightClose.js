@@ -8,7 +8,7 @@ import colors from "../colors";
 import ConfirmationModal from "./ConfirmationModal";
 
 type Props = {
-  preferDismiss: boolean,
+  preferDismiss?: boolean,
   color?: string,
   withConfirmation?: boolean,
   confirmationTitle?: React$Node,

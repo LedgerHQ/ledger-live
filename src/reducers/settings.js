@@ -380,4 +380,7 @@ export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
 export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
 
+export const hasAvailableUpdateSelector = (state: State) =>
+  state.settings.hasAvailableUpdate;
+
 export default handleActions(handlers, INITIAL_STATE);
