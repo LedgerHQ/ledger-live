@@ -147,6 +147,11 @@ export const shortAddressPreview = (addr: string, target: number = 20) => {
     : `${addr.slice(0, slice)}...${addr.slice(addr.length - slice)}`;
 };
 
+export const isAccountBalanceUnconfirmed = (account: AccountLike) =>
+  account.pendingOperations.some(
+    (op) => !account.operations.find((o) => o.hash === op.hash)
+  ) || account.operations.some((op) => !op.blockHeight);
+
 export const isUpToDateAccount = (account: ?Account) => {
   if (!account) return true;
   const { lastSyncDate, currency } = account;

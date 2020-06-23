@@ -24,6 +24,7 @@ import {
   decodeAccountId,
   encodeAccountId,
   flattenAccounts,
+  isAccountBalanceUnconfirmed,
 } from "../../account";
 import { getCryptoCurrencyById } from "../../currencies";
 import { getOperationAmountNumber } from "../../operation";
@@ -292,6 +293,19 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                   expect(estimation.gte(0)).toBe(true);
                   expect(estimation.lte(sub.balance)).toBe(true);
                 }
+              }
+            });
+
+            test("no unconfirmed account", async () => {
+              const accounts = await scanAccountsCached(sa.apdus);
+              for (const account of flattenAccounts(accounts)) {
+                expect({
+                  id: account.id,
+                  unconfirmed: isAccountBalanceUnconfirmed(account),
+                }).toEqual({
+                  id: account.id,
+                  unconfirmed: false,
+                });
               }
             });
 
