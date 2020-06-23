@@ -9,7 +9,6 @@ import {
   Linking,
   ActivityIndicator,
 } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import colors from "../colors";
 import { useTerms, useTermsAccept, url } from "../logic/terms";
 import getWindowDimensions from "../logic/getWindowDimensions";
@@ -22,8 +21,6 @@ import CheckBox from "./CheckBox";
 import Touchable from "./Touchable";
 import GenericErrorView from "./GenericErrorView";
 import RetryButton from "./RetryButton";
-
-const forceInset = { bottom: "always" };
 
 const styles = StyleSheet.create({
   modal: {},
@@ -82,7 +79,7 @@ const RequireTermsModal = () => {
       style={styles.modal}
       preventBackdropClick
     >
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <View style={styles.root}>
         <View style={styles.header}>
           <LText semiBold style={styles.title}>
             <Trans i18nKey="Terms.title" />
@@ -133,7 +130,7 @@ const RequireTermsModal = () => {
             title={<Trans i18nKey="common.confirm" />}
           />
         </View>
-      </SafeAreaView>
+      </View>
     </BottomModal>
   );
 };
@@ -161,7 +158,7 @@ export const TermModals = ({
       style={styles.modal}
       preventBackdropClick
     >
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <View style={styles.root}>
         <View style={styles.header}>
           <LText semiBold style={styles.title}>
             <Trans i18nKey="Terms.title" />
@@ -200,7 +197,7 @@ export const TermModals = ({
             title={<Trans i18nKey="common.close" />}
           />
         </View>
-      </SafeAreaView>
+      </View>
     </BottomModal>
   );
 };

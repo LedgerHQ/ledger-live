@@ -3,7 +3,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
 import { useNavigation } from "@react-navigation/native";
 import { differenceInCalendarDays } from "date-fns";
 import {
@@ -44,8 +43,6 @@ type Props = {
   parentAccount: ?Account,
   delegation: Delegation,
 };
-
-const forceInset = { bottom: "always" };
 
 const styles = StyleSheet.create({
   modal: {
@@ -230,7 +227,7 @@ export default function DelegationDetailsModal({
       onClose={onClose}
       style={styles.modal}
     >
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <View style={styles.root}>
         <Touchable
           event="DelegationDetailsModalClose"
           style={styles.close}
@@ -376,7 +373,7 @@ export default function DelegationDetailsModal({
             />
           </View>
         )}
-      </SafeAreaView>
+      </View>
     </BottomModal>
   );
 }
