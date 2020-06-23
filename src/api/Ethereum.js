@@ -9,28 +9,28 @@ import network from "../network";
 import { blockchainBaseURL, getCurrencyExplorer } from "./Ledger";
 import { FeeEstimationFailed } from "../errors";
 
-export type Block = { height: number }; // TODO more fields actually
+export type Block = { height: BigNumber }; // TODO more fields actually
 
 export type Tx = {
   hash: string,
   received_at: string,
   nonce: string,
-  value: number,
-  gas: number,
-  gas_price: number,
-  cumulative_gas_used: number,
-  gas_used: number,
+  value: BigNumber,
+  gas: BigNumber,
+  gas_price: BigNumber,
+  cumulative_gas_used: BigNumber,
+  gas_used: BigNumber,
   from: string,
   to: string,
   input: string,
-  index: number,
+  index: BigNumber,
   block?: {
     hash: string,
-    height: number,
+    height: BigNumber,
     time: string,
   },
-  confirmations: number,
-  status: number,
+  confirmations: BigNumber,
+  status: BigNumber,
 };
 
 export type API = {
@@ -64,6 +64,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       let { data } = await network({
         method: "GET",
         url: `${baseURL}/addresses/${address}/transactions`,
+        transformResponse: JSONBigNumber.parse,
         params:
           getCurrencyExplorer(currency).version === "v2"
             ? {
@@ -93,6 +94,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/blocks/current`,
+        transformResponse: JSONBigNumber.parse,
       });
       return data;
     },

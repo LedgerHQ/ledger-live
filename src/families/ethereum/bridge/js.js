@@ -61,15 +61,15 @@ const txToOps = (account: Account) => (tx: Tx): Operation[] => {
   const receiving = freshAddress === to;
   const ops = [];
   const value = BigNumber(tx.value);
-  const fee = BigNumber(tx.gas_price * tx.gas_used);
+  const fee = BigNumber(tx.gas_price).times(tx.gas_used);
   if (sending) {
     ops.push({
       id: `${account.id}-${tx.hash}-OUT`,
       hash: tx.hash,
       type: "OUT",
-      value: tx.status === 0 ? fee : value.plus(fee),
+      value: BigNumber(tx.status).eq(0) ? fee : value.plus(fee),
       fee,
-      blockHeight: tx.block && tx.block.height,
+      blockHeight: tx.block && tx.block.height.toNumber(),
       blockHash: tx.block && tx.block.hash,
       accountId: account.id,
       senders: [tx.from],
@@ -86,7 +86,7 @@ const txToOps = (account: Account) => (tx: Tx): Operation[] => {
       type: "IN",
       value,
       fee,
-      blockHeight: tx.block && tx.block.height,
+      blockHeight: tx.block && tx.block.height.toNumber(),
       blockHash: tx.block && tx.block.hash,
       accountId: account.id,
       senders: [tx.from],
@@ -274,7 +274,7 @@ const currencyBridge: CurrencyBridge = {
                 starred: false,
                 balance,
                 spendableBalance: balance,
-                blockHeight: currentBlock.height,
+                blockHeight: currentBlock.height.toNumber(),
                 index,
                 currency,
                 operationsCount: 0,
@@ -313,7 +313,7 @@ const currencyBridge: CurrencyBridge = {
           starred: false,
           balance,
           spendableBalance: balance,
-          blockHeight: currentBlock.height,
+          blockHeight: currentBlock.height.toNumber(),
           index,
           currency,
           operationsCount: 0,
@@ -423,9 +423,10 @@ const sync = ({ freshAddress, blockHeight, currency, operations }) =>
     const api = apiForCurrency(currency);
     async function main() {
       try {
-        const block = await fetchCurrentBlock(currency);
+        const currentBlock = await fetchCurrentBlock(currency);
+        const currentBlockHeight = currentBlock.height.toNumber();
         if (unsubscribed) return;
-        if (block.height === blockHeight) {
+        if (currentBlockHeight === blockHeight) {
           o.complete();
         } else {
           const filterConfirmedOperations = (op) =>
@@ -443,7 +444,7 @@ const sync = ({ freshAddress, blockHeight, currency, operations }) =>
             o.next((a) => ({
               ...a,
               balance,
-              blockHeight: block.height,
+              blockHeight: currentBlockHeight,
               lastSyncDate: new Date(),
             }));
             o.complete();
@@ -467,7 +468,7 @@ const sync = ({ freshAddress, blockHeight, currency, operations }) =>
               operations: ops,
               balance,
               spendableBalance: balance,
-              blockHeight: block.height,
+              blockHeight: currentBlockHeight,
               lastSyncDate: new Date(),
             };
           });
