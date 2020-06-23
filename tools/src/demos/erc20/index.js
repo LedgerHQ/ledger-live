@@ -34,7 +34,7 @@ const Footer = styled.div`
 
 // copy of ethereum with a custom API
 const ethereum = {
-  ...getCryptoCurrencyById("ethereum")
+  ...getCryptoCurrencyById("ethereum"),
 };
 const api = apiForCurrency(ethereum);
 
@@ -48,7 +48,7 @@ const SendToken = ({ token }: { token: CurrencyToken }) => {
   const [signed, setSigned] = useState(null);
 
   useEffect(() => {
-    api.estimateGasLimitForERC20(token.contractAddress).then(value => {
+    api.roughlyEstimateGasLimit(token.contractAddress).then((value) => {
       setGasLimit(BigNumber(value));
     });
   }, [token]);
@@ -73,7 +73,7 @@ const SendToken = ({ token }: { token: CurrencyToken }) => {
             title="Broadcast"
             onClick={() => {
               setError(null);
-              api.broadcastTransaction(signed).then(r => {
+              api.broadcastTransaction(signed).then((r) => {
                 console.log(r);
               }, setError);
             }}
@@ -96,7 +96,7 @@ const SendToken = ({ token }: { token: CurrencyToken }) => {
                     recipient: address,
                     gasPrice: "0x" + gasPrice.toString(16),
                     gasLimit: "0x" + gasLimit.toString(16),
-                    amount: "0x" + amount.toString(16)
+                    amount: "0x" + amount.toString(16),
                   })
                 )
                 .then(setSigned, setError);
@@ -132,7 +132,7 @@ const Demo = () => {
 Demo.demo = {
   title: "ERC20",
   url: "/erc20",
-  hidden: true
+  hidden: true,
 };
 
 export default Demo;

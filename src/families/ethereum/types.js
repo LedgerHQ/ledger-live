@@ -13,6 +13,16 @@ import type {
   Spec,
 } from "../../libcore/types";
 
+export type EthereumGasLimitRequest = {
+  from?: string,
+  to?: string,
+  value?: string,
+  data?: string,
+  gas?: string,
+  gasPrice?: string,
+  amplifier?: number,
+};
+
 declare class CoreEthereumLikeAddress {
   toEIP55(): Promise<string>;
 }
