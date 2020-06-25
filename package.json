@@ -94,7 +94,6 @@
     "reselect": "^4.0.0",
     "ripple-binary-codec": "^0.2.0",
     "ripple-bs58check": "^2.0.2",
-    "ripple-hashes": "^0.3.1",
     "ripple-lib": "1.1.2",
     "rxjs": "^6.5.5",
     "rxjs-compat": "^6.5.5",
