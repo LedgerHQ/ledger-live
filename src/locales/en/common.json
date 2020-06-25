@@ -69,7 +69,8 @@
       "days": "yesterday",
       "days_plural": "{{time}} days ago"
     },
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "moreInfo": "More info"
   },
   "errors": {
     "AccountAwaitingSendPendingOperations": {
@@ -1511,7 +1512,7 @@
       "buy": "Buy a Ledger Nano X"
     },
     "appList": {
-      "title": "App catalog",
+      "title": "Device Manager",
       "loading": "Loading apps...",
       "noApps": "No apps found",
       "searchAppsCatalog": "Search app in catalog...",
@@ -1547,6 +1548,11 @@
       "manageAccount": "Add accounts",
       "learnMore": "Learn more",
       "later": "Do it later"
+    },
+    "firmware": {
+      "latest": "Firmware version {{version}} is available",
+      "modalTitle": "Update firmware is available only on Ledger Live desktop",
+      "modalDesc": "Please download Ledger Live on your computer to update the device’s firmware"
     }
   },
   "ManagerDevice": {

@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect, memo } from "react";
-
 import { CommonActions } from "@react-navigation/native";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
