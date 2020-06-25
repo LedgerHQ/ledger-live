@@ -26,6 +26,7 @@ import Delta from "./Delta";
 import FormatDate from "./FormatDate";
 import Graph from "./Graph";
 import Pills from "./Pills";
+import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -96,6 +97,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
     return (
       <Card style={styles.root}>
         <GraphCardHeader
+          account={account}
           isLoading={!isAvailable}
           to={history[history.length - 1]}
           hoveredItem={hoveredItem}
@@ -135,6 +137,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
 }
 
 class GraphCardHeader extends PureComponent<{
+  account: AccountLike,
   isLoading: boolean,
   cryptoCurrencyUnit: Unit,
   counterValueUnit: Unit,
@@ -154,6 +157,7 @@ class GraphCardHeader extends PureComponent<{
       renderTitle,
       isLoading,
       valueChange,
+      account,
     } = this.props;
 
     const unit = useCounterValue ? counterValueUnit : cryptoCurrencyUnit;
@@ -170,9 +174,12 @@ class GraphCardHeader extends PureComponent<{
               item,
             })
           ) : (
-            <LText tertiary style={styles.balanceText}>
-              <CurrencyUnitValue unit={unit} value={item.value} />
-            </LText>
+            <View style={styles.warningWrapper}>
+              <LText tertiary style={styles.balanceText}>
+                <CurrencyUnitValue unit={unit} value={item.value} />
+              </LText>
+              <TransactionsPendingConfirmationWarning maybeAccount={account} />
+            </View>
           )}
         </View>
         <View style={styles.subtitleContainer}>
@@ -222,6 +229,14 @@ const styles = StyleSheet.create({
         },
       },
     }),
+  },
+  warningWrapper: {
+    borderWidth: 1,
+    borderColor: "red",
+    borderStyle: "solid",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
   },
   balanceTextContainer: {
     marginBottom: 5,
