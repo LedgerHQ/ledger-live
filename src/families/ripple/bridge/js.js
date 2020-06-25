@@ -6,7 +6,6 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { RippleAPI } from "ripple-lib";
 import bs58check from "ripple-bs58check";
-import { computeBinaryTransactionHash } from "ripple-hashes";
 import throttle from "lodash/throttle";
 import {
   AmountRequired,
@@ -29,6 +28,7 @@ import {
   derivationModeSupportsIndex,
 } from "../../../derivation";
 import { formatCurrencyUnit } from "../../../currencies";
+import { patchOperationWithHash } from "../../../operation";
 import { getMainAccount } from "../../../account";
 import {
   getAccountPlaceholderName,
@@ -94,7 +94,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
           close(transport, deviceId);
         }
 
-        const hash = computeBinaryTransactionHash(transaction);
+        const hash = "";
         const operation = {
           id: `${account.id}-${hash}-OUT`,
           hash,
@@ -153,7 +153,9 @@ const broadcast = async ({ signedOperation: { signature, operation } }) => {
       throw new Error(submittedPayment.resultMessage);
     }
 
-    return operation;
+    const { hash } = submittedPayment.tx_json;
+
+    return patchOperationWithHash(operation, hash);
   } finally {
     api.disconnect();
   }
