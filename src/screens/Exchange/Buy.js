@@ -29,7 +29,9 @@ export default function ExchangeScreen() {
         <View style={styles.iconContainer}>
           <ExchangeIcon size={22} color={colors.live} />
         </View>
-        <LText style={styles.title}>{t("exchange.buy.title")}</LText>
+        <LText style={styles.title} semiBold>
+          {t("exchange.buy.title")}
+        </LText>
         <LText style={styles.description}>
           {t("exchange.buy.description")}
         </LText>
