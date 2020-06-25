@@ -19,6 +19,7 @@ import {
   fromSubAccountRaw,
   fromTronResourcesRaw,
   fromCosmosResourcesRaw,
+  fromBitcoinResourcesRaw,
   fromBalanceHistoryRawMap,
 } from "./account";
 
@@ -175,6 +176,18 @@ const shouldRefreshBalanceHistory = (
   );
 };
 
+function shouldRefreshBitcoinResources(updatedRaw, account) {
+  if (!updatedRaw.bitcoinResources) return false;
+  if (account.bitcoinResources === updatedRaw.bitcoinResources) return false;
+  if (!account.bitcoinResources) return true;
+  if (updatedRaw.blockHeight !== account.blockHeight) return true;
+  if (updatedRaw.operations.length !== account.operations.length) return true;
+  return (
+    updatedRaw.bitcoinResources.utxos.length !==
+    account.bitcoinResources.utxos.length
+  );
+}
+
 export function patchAccount(
   account: Account,
   updatedRaw: AccountRaw
@@ -302,6 +315,16 @@ export function patchAccount(
     account.cosmosResources !== updatedRaw.cosmosResources
   ) {
     next.cosmosResources = fromCosmosResourcesRaw(updatedRaw.cosmosResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.bitcoinResources &&
+    shouldRefreshBitcoinResources(updatedRaw, account)
+  ) {
+    next.bitcoinResources = fromBitcoinResourcesRaw(
+      updatedRaw.bitcoinResources
+    );
     changed = true;
   }
 

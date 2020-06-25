@@ -23,6 +23,7 @@ import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
 import { abandonSeedLegacyPerCurrency } from "../publicAddresses";
 import { getMinRelayFee } from "../fees";
+import { isChangeOutput } from "../transaction";
 
 const calculateFees = makeLRUCache(
   async (a, t) => {
@@ -32,15 +33,27 @@ const calculateFees = makeLRUCache(
     });
   },
   (a, t) =>
-    `${a.id}_${a.blockHeight || 0}_${t.amount.toString()}_${t.recipient}_${
-      t.feePerByte ? t.feePerByte.toString() : ""
-    }`
+    `${a.id}_${a.blockHeight || 0}_${t.amount.toString()}_${String(
+      t.useAllAmount
+    )}_${t.recipient}_${t.feePerByte ? t.feePerByte.toString() : ""}_${
+      t.utxoStrategy.pickUnconfirmedRBF ? 1 : 0
+    }_${t.utxoStrategy.strategy}_${String(
+      t.rbf
+    )}_${t.utxoStrategy.excludeUTXOs
+      .map(({ hash, outputIndex }) => `${hash}@${outputIndex}`)
+      .join("+")}`
 );
 
 const createTransaction = () => ({
   family: "bitcoin",
   amount: BigNumber(0),
+  utxoStrategy: {
+    strategy: 0,
+    pickUnconfirmedRBF: false,
+    excludeUTXOs: [],
+  },
   recipient: "",
+  rbf: false,
   feePerByte: null,
   networkInfo: null,
   useAllAmount: false,
@@ -85,6 +98,8 @@ const getTransactionStatus = async (a, t) => {
     warnings.recipient = recipientWarning;
   }
 
+  let txInputs;
+  let txOutputs;
   let estimatedFees = BigNumber(0);
   if (!t.feePerByte) {
     errors.feePerByte = new FeeNotLoaded();
@@ -93,6 +108,8 @@ const getTransactionStatus = async (a, t) => {
   } else if (!errors.recipient) {
     await calculateFees(a, t).then(
       (res) => {
+        txInputs = res.txInputs;
+        txOutputs = res.txOutputs;
         estimatedFees = res.estimatedFees;
       },
       (error) => {
@@ -105,12 +122,21 @@ const getTransactionStatus = async (a, t) => {
     );
   }
 
-  const totalSpent = useAllAmount ? a.balance : t.amount.plus(estimatedFees);
-  const amount = useAllAmount ? a.balance.minus(estimatedFees) : t.amount;
+  const sumOfInputs = (txInputs || []).reduce(
+    (sum, input) => sum.plus(input.value),
+    BigNumber(0)
+  );
+  const sumOfChanges = (txOutputs || [])
+    .filter(isChangeOutput)
+    .reduce((sum, output) => sum.plus(output.value), BigNumber(0));
 
-  // FIXME libcore have a bug that don't detect some cases like when doing send max!
-  if (!errors.amount && useAllAmount && !amount.gt(0)) {
-    errors.amount = new NotEnoughBalance();
+  const totalSpent = sumOfInputs.minus(sumOfChanges);
+  const amount = useAllAmount ? totalSpent.minus(estimatedFees) : t.amount;
+
+  if (!errors.amount && !amount.gt(0)) {
+    errors.amount = useAllAmount
+      ? new NotEnoughBalance()
+      : new AmountRequired();
   }
 
   if (
@@ -123,16 +149,14 @@ const getTransactionStatus = async (a, t) => {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (!errors.amount && amount.eq(0)) {
-    errors.amount = new AmountRequired();
-  }
-
   return Promise.resolve({
     errors,
     warnings,
     estimatedFees,
     amount,
     totalSpent,
+    txInputs,
+    txOutputs,
   });
 };
 

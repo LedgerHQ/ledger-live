@@ -2,6 +2,12 @@
 
 import type { BigNumber } from "bignumber.js";
 import type { Operation, OperationRaw } from "./operation";
+import type {
+  BitcoinInput,
+  BitcoinOutput,
+  BitcoinInputRaw,
+  BitcoinOutputRaw,
+} from "../families/bitcoin/types";
 
 export type SignedOperation = {|
   // prepared version of Operation before it's even broadcasted
@@ -70,6 +76,8 @@ export type TransactionStatus = {|
   totalSpent: BigNumber,
   // should the recipient be non editable
   recipientIsReadOnly?: boolean,
+  txInputs?: BitcoinInput[],
+  txOutputs?: BitcoinOutput[],
 |};
 
 export type TransactionStatusRaw = {|
@@ -80,4 +88,6 @@ export type TransactionStatusRaw = {|
   totalSpent: string,
   useAllAmount?: boolean,
   recipientIsReadOnly?: boolean,
+  txInputs?: BitcoinInputRaw[],
+  txOutputs?: BitcoinOutputRaw[],
 |};

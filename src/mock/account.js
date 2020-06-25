@@ -371,6 +371,12 @@ export function genAccount(
     };
   }
 
+  if (currency.family === "bitcoin") {
+    account.bitcoinResources = {
+      utxos: [],
+    };
+  }
+
   if (["ethereum", "ethereum_ropsten", "tron"].includes(currency.id)) {
     const tokenCount =
       typeof opts.subAccountsCount === "number"

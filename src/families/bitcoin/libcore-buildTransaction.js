@@ -1,5 +1,5 @@
 // @flow
-
+import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import { FeeNotLoaded, InvalidAddress } from "@ledgerhq/errors";
 import type { Account } from "../../types";
@@ -7,6 +7,9 @@ import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
 import type { CoreBitcoinLikeTransaction, Transaction } from "./types";
+import { getUTXOStatus } from "./transaction";
+import { promiseAllBatched } from "../../promise";
+import { parseBitcoinOutput } from "./transaction";
 
 async function bitcoinBuildTransaction({
   account,
@@ -49,11 +52,29 @@ async function bitcoinBuildTransaction({
     isPartial
   );
   if (isCancelled()) return;
+  const { utxoStrategy } = transaction;
 
   if (transaction.useAllAmount) {
     await transactionBuilder.wipeToAddress(transaction.recipient);
     if (isCancelled()) return;
-  } else {
+  }
+
+  const count = await bitcoinLikeAccount.getUTXOCount();
+  const objects = await bitcoinLikeAccount.getUTXO(0, count);
+  const utxos = await promiseAllBatched(6, objects, parseBitcoinOutput);
+
+  for (const utxo of utxos) {
+    const s = getUTXOStatus(utxo, utxoStrategy);
+    if (s.excluded) {
+      log(
+        "bitcoin",
+        `excludeUTXO ${utxo.hash}@${utxo.outputIndex} (${s.reason})`
+      );
+      await transactionBuilder.excludeUtxo(utxo.hash, utxo.outputIndex);
+    }
+  }
+
+  if (!transaction.useAllAmount) {
     if (!transaction.amount) throw new Error("amount is missing");
     const amount = await bigNumberToLibcoreAmount(
       core,
@@ -65,7 +86,10 @@ async function bitcoinBuildTransaction({
     if (isCancelled()) return;
   }
 
-  await transactionBuilder.pickInputs(0, 0xffffff);
+  await transactionBuilder.pickInputs(
+    utxoStrategy.strategy,
+    0 /* not used, out of int32 range issue. patched in signature time. */
+  );
   if (isCancelled()) return;
 
   await transactionBuilder.setFeesPerByte(fees);
