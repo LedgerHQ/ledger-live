@@ -691,7 +691,7 @@
     },
     "transactionsPendingConfirmation" : {
       "title": "Unsynchronized balance",
-      "desc": "Some transactions are currently in the process of confirmation from the blockchain, your balance is not confirmed as of yet."
+      "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
     "summary": "Here's the summary of your account",
     "summary_plural": "Your {{count}} accounts are synchronized.",
