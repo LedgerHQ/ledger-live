@@ -35,7 +35,7 @@
     "@ledgerhq/hw-transport-mocker": "5.17.0",
     "@ledgerhq/hw-transport-node-hid": "5.17.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.17.0",
-    "@ledgerhq/ledger-core": "6.5.x",
+    "@ledgerhq/ledger-core": "6.6.1",
     "@ledgerhq/live-common": "^12.36.0",
     "@ledgerhq/logs": "5.17.0",
     "asciichart": "^1.5.21",

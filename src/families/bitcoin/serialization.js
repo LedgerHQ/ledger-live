@@ -54,7 +54,7 @@ export function toBitcoinOutputRaw({
     address,
     path,
     value.toString(),
-    Number(rbf),
+    rbf ? 1 : 0,
   ];
 }
 

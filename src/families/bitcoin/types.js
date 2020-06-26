@@ -66,6 +66,7 @@ declare class CoreBitcoinLikeOutput {
   getBlockHeight(): Promise<?number>;
   getDerivationPath(): Promise<?CoreDerivationPath>;
   getAddress(): Promise<?string>;
+  isReplaceable(): Promise<boolean>;
 }
 
 declare class CoreBitcoinLikeTransaction {
@@ -229,6 +230,7 @@ export const reflect = (declare: (string, Spec) => void) => {
         returns: "DerivationPath",
       },
       getAddress: {},
+      isReplaceable: {},
     },
   });
 
