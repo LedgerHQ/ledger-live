@@ -59,7 +59,7 @@ export async function parseBitcoinOutput(
     }
   }
   const value = await libcoreAmountToBigNumber(await output.getValue());
-  const rbf = false; // FIXME
+  const rbf = await output.isReplaceable();
   return { hash, outputIndex, blockHeight, address, path, value, rbf };
 }
 

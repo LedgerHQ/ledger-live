@@ -18,11 +18,20 @@ export function formatInput(account: Account, input: BitcoinInput) {
 }
 
 export function formatOutput(account: Account, o: BitcoinOutput) {
-  return `${formatCurrencyUnit(account.unit, o.value, {
-    showCode: false,
-  }).padEnd(12)} ${o.address || ""} ${o.path || ""} ${o.hash}@${
-    o.outputIndex
-  } (${o.blockHeight ? account.blockHeight - o.blockHeight : 0})`;
+  return [
+    formatCurrencyUnit(account.unit, o.value, {
+      showCode: false,
+    }).padEnd(12),
+    o.address,
+    o.path,
+    o.rbf ? "rbf" : "",
+    o.hash,
+    `@${o.outputIndex} (${
+      o.blockHeight ? account.blockHeight - o.blockHeight : 0
+    })`,
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 function formatAccountSpecifics(account: Account): string {
