@@ -1040,10 +1040,10 @@
     "@ledgerhq/errors" "^5.17.0"
     events "^3.1.0"
 
-"@ledgerhq/ledger-core@6.6.1":
-  version "6.6.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.6.1.tgz#a54b2e6f391a9fc1441cbca96dcd10b861d072f2"
-  integrity sha512-yYXWBT0YEXhwfIQoztWBwAvA5wztgj3yyxzIuem1UB0IJAfLY1pz5hs+tpEfc5wjk2PxswTizQStPecW30QHew==
+"@ledgerhq/ledger-core@6.6.2":
+  version "6.6.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.6.2.tgz#b234f2110825519f5b64ecea8c25a519e1b0b56e"
+  integrity sha512-fz0+lzGxtgayoE1T23GaNGxFi1Am8hT6NTY+ZygUzYD9BgClnGDuuJ0oVTpXQrtkWwPaIDZvIrRIJOTNNyiSFA==
   dependencies:
     bindings "1.5.0"
     nan "^2.14.1"
@@ -1051,10 +1051,10 @@
     node-pre-gyp "^0.14.0"
     node-pre-gyp-github "^1.4.3"
 
-"@ledgerhq/live-common@^12.36.0":
-  version "12.36.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.36.0.tgz#3f8974e179aaac00cfde790474f10145ac90fc7d"
-  integrity sha512-JI1FIJMxxQPQJGzDTC6bx+pS8rzUujiXNxbK+u9l4Fx5VpaVrKFCZgYvqtM0pTguVvQVhji56wVVyaxD0xnR6g==
+"@ledgerhq/live-common@^12.37.0-beta.0":
+  version "12.37.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.37.0-beta.0.tgz#99a6b55d148e353b775eb8622fd01069003a6738"
+  integrity sha512-XqYMuEfkb+w82vatPyuppjKt9bmYaKCaddWa40cNU/OxivTCqt0fAucwsDnw21YBO1KzPVmhtv8XNhouJV77cQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.17.0"
@@ -1077,7 +1077,7 @@
     crypto-js "^3.1.9-1"
     eip55 "^1.0.3"
     ethereumjs-tx "^1.3.7"
-    expect "^26.0.1"
+    expect "^26.1.0"
     invariant "^2.2.2"
     isomorphic-ws "^4.0.1"
     lodash "^4.17.15"
@@ -1088,7 +1088,6 @@
     reselect "^4.0.0"
     ripple-binary-codec "^0.2.0"
     ripple-bs58check "^2.0.2"
-    ripple-hashes "^0.3.1"
     ripple-lib "1.1.2"
     rxjs "^6.5.5"
     rxjs-compat "^6.5.5"
@@ -2547,7 +2546,7 @@ expand-template@^2.0.3:
   resolved "https://registry.yarnpkg.com/expand-template/-/expand-template-2.0.3.tgz#6e14b3fcee0f3a6340ecb57d2e8918692052a47c"
   integrity sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==
 
-expect@^26.0.1:
+expect@^26.1.0:
   version "26.1.0"
   resolved "https://registry.yarnpkg.com/expect/-/expect-26.1.0.tgz#8c62e31d0f8d5a8ebb186ee81473d15dd2fbf7c8"
   integrity sha512-QbH4LZXDsno9AACrN9eM0zfnby9G+OsdNgZUohjg/P0mLy1O+/bzTAJGT6VSIjVCe8yKM6SzEl/ckEOFBT7Vnw==

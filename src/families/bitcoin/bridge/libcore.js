@@ -1,4 +1,5 @@
 // @flow
+import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import {
@@ -130,8 +131,24 @@ const getTransactionStatus = async (a, t) => {
     .filter(isChangeOutput)
     .reduce((sum, output) => sum.plus(output.value), BigNumber(0));
 
+  if (txInputs) {
+    log("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
+  }
+
+  if (txOutputs) {
+    log(
+      "bitcoin",
+      `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`
+    );
+  }
+
   const totalSpent = sumOfInputs.minus(sumOfChanges);
   const amount = useAllAmount ? totalSpent.minus(estimatedFees) : t.amount;
+
+  log(
+    "bitcoin",
+    `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`
+  );
 
   if (!errors.amount && !amount.gt(0)) {
     errors.amount = useAllAmount
