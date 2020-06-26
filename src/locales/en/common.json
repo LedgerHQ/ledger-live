@@ -689,6 +689,10 @@
       "evening": "Good evening",
       "afternoon": "Good afternoon"
     },
+    "transactionsPendingConfirmation" : {
+      "title": "Unsynchronized balance",
+      "desc": "Some transactions are currently in the process of confirmation from the blockchain, your balance is not confirmed as of yet."
+    },
     "summary": "Here's the summary of your account",
     "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {

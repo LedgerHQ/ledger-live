@@ -21,6 +21,7 @@ import FormatDate from "./FormatDate";
 import type { Item } from "./Graph/types";
 import Graph from "./Graph";
 import Pills from "./Pills";
+import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -131,15 +132,18 @@ class GraphCardHeader extends PureComponent<{
     return (
       <>
         <View style={styles.balanceTextContainer}>
-          {isLoading ? (
-            <Placeholder width={228} containerHeight={27} />
-          ) : renderTitle ? (
-            renderTitle({ counterValueUnit: unit, item })
-          ) : (
-            <LText tertiary style={styles.balanceText}>
-              <CurrencyUnitValue unit={unit} value={item.value} />
-            </LText>
-          )}
+          <View style={styles.warningWrapper}>
+            {isLoading ? (
+              <Placeholder width={228} containerHeight={27} />
+            ) : renderTitle ? (
+              renderTitle({ counterValueUnit: unit, item })
+            ) : (
+              <LText tertiary style={styles.balanceText}>
+                <CurrencyUnitValue unit={unit} value={item.value} />
+              </LText>
+            )}
+            <TransactionsPendingConfirmationWarning />
+          </View>
         </View>
         <View style={styles.subtitleContainer}>
           {isLoading ? (
@@ -210,6 +214,11 @@ const styles = StyleSheet.create({
   },
   deltaPercent: {
     marginRight: 20,
+  },
+  warningWrapper: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 
