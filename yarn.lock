@@ -1048,10 +1048,10 @@
     "@ledgerhq/errors" "^5.17.0"
     events "^3.1.0"
 
-"@ledgerhq/live-common@^12.33.3":
-  version "12.36.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.36.0.tgz#3f8974e179aaac00cfde790474f10145ac90fc7d"
-  integrity sha512-JI1FIJMxxQPQJGzDTC6bx+pS8rzUujiXNxbK+u9l4Fx5VpaVrKFCZgYvqtM0pTguVvQVhji56wVVyaxD0xnR6g==
+"@ledgerhq/live-common@^12.37.0":
+  version "12.37.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.37.0.tgz#61ee4426d3f2ea1459833e63b2125086d26c5ec5"
+  integrity sha512-YgNPUTkoQKdM06nNC36/7mdYBJG0P3C3/VbypaPLFA3oM6ZTsGSGiJ9wCZQr/SKYRFR6obGcJxidRuaiBRPN2w==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.17.0"
@@ -1074,7 +1074,7 @@
     crypto-js "^3.1.9-1"
     eip55 "^1.0.3"
     ethereumjs-tx "^1.3.7"
-    expect "^26.0.1"
+    expect "^26.1.0"
     invariant "^2.2.2"
     isomorphic-ws "^4.0.1"
     lodash "^4.17.15"
@@ -1085,7 +1085,6 @@
     reselect "^4.0.0"
     ripple-binary-codec "^0.2.0"
     ripple-bs58check "^2.0.2"
-    ripple-hashes "^0.3.1"
     ripple-lib "1.1.2"
     rxjs "^6.5.5"
     rxjs-compat "^6.5.5"
@@ -1121,10 +1120,10 @@
     rxjs "^6.5.5"
     uuid "^3.4.0"
 
-"@ledgerhq/react-native-ledger-core@4.12.3":
-  version "4.12.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.12.3.tgz#f8bfa0772a42a9e49cdb42feb92a096809feeda2"
-  integrity sha512-gls4GIUm6skjHKYM6Y25G2XQd89/bSgoMjPowL/TgFkWeZSMV/Qbkm9T/4+jdG+L1dLFFSCrBivWmMHhXyutLQ==
+"@ledgerhq/react-native-ledger-core@4.13.3":
+  version "4.13.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.13.3.tgz#49f3898ba6edb8faaed370062509c36c26c7ed13"
+  integrity sha512-XP3Wx5C+sy+r3iB8toafjZ/4Yie/XzcNPiW+J/WvEUn3WxvXaXTHV2EC/5/E5CD41pGUSn6AAmJVHl9evlV/0Q==
 
 "@ledgerhq/react-native-passcode-auth@^2.1.0":
   version "2.1.0"
@@ -4093,7 +4092,7 @@ expect@^25.1.0:
     jest-message-util "^25.1.0"
     jest-regex-util "^25.1.0"
 
-expect@^26.0.1:
+expect@^26.1.0:
   version "26.1.0"
   resolved "https://registry.yarnpkg.com/expect/-/expect-26.1.0.tgz#8c62e31d0f8d5a8ebb186ee81473d15dd2fbf7c8"
   integrity sha512-QbH4LZXDsno9AACrN9eM0zfnby9G+OsdNgZUohjg/P0mLy1O+/bzTAJGT6VSIjVCe8yKM6SzEl/ckEOFBT7Vnw==
