@@ -12,6 +12,7 @@ import type {
   BitcoinInput,
 } from "./types";
 import type { Account } from "../../types";
+import { bitcoinPickingStrategy } from "./types";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
@@ -154,6 +155,17 @@ SEND ${
 TO ${t.recipient}
 with feePerByte=${
     t.feePerByte ? t.feePerByte.toString() : "?"
-  } (${formatNetworkInfo(t.networkInfo)})`;
+  } (${formatNetworkInfo(t.networkInfo)})
+${[
+  Object.keys(bitcoinPickingStrategy).find(
+    (k) => bitcoinPickingStrategy[k] === t.utxoStrategy.strategy
+  ),
+  t.utxoStrategy.pickUnconfirmedRBF && "pick-unconfirmed",
+  t.rbf && "RBF-enabled",
+]
+  .filter(Boolean)
+  .join(" ")}${t.utxoStrategy.excludeUTXOs
+    .map((utxo) => `\nexclude ${utxo.hash} @${utxo.outputIndex}`)
+    .join("")}`;
 
 export default { fromTransactionRaw, toTransactionRaw, formatTransaction };

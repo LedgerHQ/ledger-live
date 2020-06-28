@@ -347,7 +347,7 @@ export async function runOnAccount<T: Transaction>({
           bridge: accountBridge,
         });
 
-        if (recovered) {
+        if (recovered && recovered !== transaction) {
           report.recoveredFromTransactionStatus = { transaction, status };
           report.transaction = transaction = recovered;
           status = await accountBridge.getTransactionStatus(

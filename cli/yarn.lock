@@ -1040,10 +1040,10 @@
     "@ledgerhq/errors" "^5.17.0"
     events "^3.1.0"
 
-"@ledgerhq/ledger-core@6.6.2":
-  version "6.6.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.6.2.tgz#b234f2110825519f5b64ecea8c25a519e1b0b56e"
-  integrity sha512-fz0+lzGxtgayoE1T23GaNGxFi1Am8hT6NTY+ZygUzYD9BgClnGDuuJ0oVTpXQrtkWwPaIDZvIrRIJOTNNyiSFA==
+"@ledgerhq/ledger-core@6.6.4":
+  version "6.6.4"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.6.4.tgz#259ac074a4b56aeb723feb9715832562310a7032"
+  integrity sha512-OaKIgRnq0Gq0BvsVQESg73fsaqgX3dKBAgVXbhFtArd+IHk56RIIo5hy5/trqW4BubFVCibUOxCoBAhfKSQwig==
   dependencies:
     bindings "1.5.0"
     nan "^2.14.1"
@@ -1051,10 +1051,10 @@
     node-pre-gyp "^0.14.0"
     node-pre-gyp-github "^1.4.3"
 
-"@ledgerhq/live-common@^12.37.0-beta.0":
-  version "12.37.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.37.0-beta.0.tgz#99a6b55d148e353b775eb8622fd01069003a6738"
-  integrity sha512-XqYMuEfkb+w82vatPyuppjKt9bmYaKCaddWa40cNU/OxivTCqt0fAucwsDnw21YBO1KzPVmhtv8XNhouJV77cQ==
+"@ledgerhq/live-common@^12.37.0-beta.2":
+  version "12.37.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-12.37.0-beta.2.tgz#07418de7592d13d6163598591b8e9c0dc4100ee5"
+  integrity sha512-i0LESvdK9sPrw2xXSWND4cvHd2OgEGNo3ma21o4JbIOrJDd1CNRtNPSyRiB40zs6Vrtz19oKsHQzP2nd6skoOA==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.17.0"
@@ -2715,10 +2715,10 @@ find-up@^4.1.0:
     locate-path "^5.0.0"
     path-exists "^4.0.0"
 
-flow-bin@^0.127.0:
-  version "0.127.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.127.0.tgz#0614cff4c1b783beef1feeb7108d536e09d77632"
-  integrity sha512-ywvCCdV4NJWzrqjFrMU5tAiVGyBiXjsJQ1+/kj8thXyX15V17x8BFvNwoAH97NrUU8T1HzmFBjLzWc0l2319qg==
+flow-bin@^0.128.0:
+  version "0.128.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.128.0.tgz#fd1232a64dc46874d8d499f16a1934b964f4c2ae"
+  integrity sha512-EnmMSOCrkx8F0r1+T1d1HODQ+ddy5yRfkT3CvwmK05IWZyXQy27OVdNwdXUWRqc0iMW75T4QkoXaVBYrMqfk+A==
 
 flow-typed@^3.1.0:
   version "3.1.0"

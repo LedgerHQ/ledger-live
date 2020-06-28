@@ -1,4 +1,5 @@
 // @flow
+import groupBy from "lodash/groupBy";
 import type { Transaction } from "../types";
 import { isAccountEmpty, formatOperation, formatAccount } from "../account";
 import {
@@ -53,12 +54,20 @@ export function formatReportForConsole<T: Transaction>({
     str += `max spendable ~${formatCurrencyUnit(account.unit, maxSpendable)}\n`;
   }
   if (unavailableMutationReasons) {
-    const detail =
-      account && isAccountEmpty(account)
-        ? "account is empty"
-        : unavailableMutationReasons
-            .map(({ mutation, error }) => mutation.name + ": " + error.message)
-            .join(", ");
+    let detail;
+    if (account && isAccountEmpty(account)) {
+      detail = "account is empty";
+    } else {
+      const byErrorMessage = groupBy(unavailableMutationReasons, "message");
+      const keys = Object.keys(byErrorMessage);
+      if (keys.length === 1) {
+        detail = keys[0];
+      } else {
+        detail = unavailableMutationReasons
+          .map(({ mutation, error }) => mutation.name + ": " + error.message)
+          .join(", ");
+      }
+    }
     str += `🤷‍♂️ couldn't find a mutation to do! (${detail})\n`;
   }
   if (mutation) {

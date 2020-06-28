@@ -178,6 +178,7 @@ export const bitcoinPickingStrategy = {
 
 export type BitcoinPickingStrategy = $Values<typeof bitcoinPickingStrategy>;
 
+// FIXME the UtxoStrategy level should be flattened back in Transaction
 export type UtxoStrategy = {
   strategy: BitcoinPickingStrategy,
   pickUnconfirmedRBF: boolean,

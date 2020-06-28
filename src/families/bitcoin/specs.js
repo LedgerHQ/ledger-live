@@ -6,9 +6,11 @@ import { log } from "@ledgerhq/logs";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
+import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
 import { getMinRelayFee } from "./fees";
+import { isChangeOutput, getUTXOStatus } from "./transaction";
 
 type Arg = $Shape<{
   minimalAmount: BigNumber,
@@ -33,14 +35,53 @@ const recoverBadTransactionStatus = ({
       .div(status.estimatedFees)
       .integerValue(BigNumber.ROUND_CEIL);
     log("specs/bitcoin", "recovering with feePerByte=" + feePerByte.toString());
-    if (feePerByte.lt(1)) return;
+    if (feePerByte.lt(1) || feePerByte.eq(transaction.feePerByte || 0)) return;
     return bridge.updateTransaction(transaction, { feePerByte });
   }
+};
 
-  if (!hasErrors) {
-    // ignore other warning cases. recover if there is no errors
-    return transaction;
-  }
+const genericTest = ({
+  operation,
+  account,
+  transaction,
+  status,
+  accountBeforeTransaction,
+}) => {
+  // workaround for buggy explorer behavior (nodes desync)
+  invariant(
+    Date.now() - operation.date > 20000,
+    "operation time to be older than 20s"
+  );
+  // balance move
+  expect(account.balance.toString()).toBe(
+    accountBeforeTransaction.balance.minus(operation.value).toString()
+  );
+  // inputs outputs
+  const { txInputs, txOutputs } = status;
+  invariant(txInputs, "tx inputs defined");
+  invariant(txOutputs, "tx outputs defined");
+  expect(operation).toMatchObject({
+    senders: txInputs.map((t) => t.address),
+    recipients: txOutputs
+      .filter((o) => !isChangeOutput(o))
+      .map((t) => t.address),
+  });
+
+  const beforeUtxos = accountBeforeTransaction.bitcoinResources?.utxos || [];
+  const utxosPicked = (status.txInputs || [])
+    .map(({ previousTxHash, previousOutputIndex }) =>
+      beforeUtxos.find(
+        (u) =>
+          u.hash === previousTxHash && u.outputIndex === previousOutputIndex
+      )
+    )
+    .filter(Boolean);
+  // verify that no utxo that was supposed to be exploded were used
+  expect(
+    utxosPicked.filter(
+      (u) => getUTXOStatus(u, transaction.utxoStrategy).excluded
+    )
+  ).toEqual([]);
 };
 
 const bitcoinLikeMutations = ({
@@ -49,28 +90,79 @@ const bitcoinLikeMutations = ({
 }: Arg = {}): MutationSpec<Transaction>[] => [
   {
     name: "move ~50%",
-    maxRun: 2,
+    maxRun: 1,
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = sibling.freshAddress;
       const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
+      const transaction = bridge.createTransaction(account);
+      const updates = [{ recipient }, { amount }];
+      if (Math.random() < 0.5) {
+        updates.push({ rbf: true });
+      }
+      return { transaction, updates };
+    },
+    recoverBadTransactionStatus,
+  },
+  {
+    name: "optimize-size",
+    maxRun: 1,
+    transaction: ({ account, siblings, bridge, maxSpendable }) => {
+      invariant(maxSpendable.gt(minimalAmount), "balance is too low");
+      const sibling = pickSiblings(siblings, targetAccountSize);
+      const transaction = bridge.createTransaction(account);
+      const updates = [
+        { recipient: sibling.freshAddress },
+        {
+          amount: maxSpendable.times(0.1 + 0.9 * Math.random()).integerValue(),
+        },
+        {
+          utxoStrategy: {
+            ...transaction.utxoStrategy,
+            strategy: bitcoinPickingStrategy.OPTIMIZE_SIZE,
+          },
+        },
+      ];
+      return { transaction, updates };
+    },
+    recoverBadTransactionStatus,
+  },
+  {
+    name: "send 1 utxo",
+    maxRun: 1,
+    transaction: ({ account, bridge, siblings, maxSpendable }) => {
+      invariant(maxSpendable.gt(minimalAmount), "balance is too low");
+      const sibling = pickSiblings(siblings, targetAccountSize);
+      const { bitcoinResources } = account;
+      invariant(bitcoinResources, "bitcoin resources");
+      const transaction = bridge.createTransaction(account);
       return {
-        transaction: bridge.createTransaction(account),
-        updates: [{ recipient }, { amount }],
+        transaction,
+        updates: [
+          { recipient: sibling.freshAddress },
+          {
+            utxoStrategy: {
+              ...transaction.utxoStrategy,
+              excludeUTXOs: bitcoinResources.utxos
+                .slice(1)
+                .map(({ outputIndex, hash }) => ({ outputIndex, hash })),
+            },
+          },
+          { useAllAmount: true },
+        ],
       };
     },
     recoverBadTransactionStatus,
-    test: ({ account, accountBeforeTransaction, operation }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date > 20000,
-        "operation time to be older than 20s"
-      );
-      // can be generalized!
-      expect(account.balance.toString()).toBe(
-        accountBeforeTransaction.balance.minus(operation.value).toString()
-      );
+    test: ({ accountBeforeTransaction, account, operation }) => {
+      const utxo = accountBeforeTransaction.bitcoinResources?.utxos[0];
+      invariant(utxo, "utxo available");
+      expect(operation).toMatchObject({ senders: [utxo.address] });
+      expect(
+        account.bitcoinResources?.utxos.find(
+          (u) => u.hash === utxo.hash && u.outputIndex === utxo.outputIndex
+        )
+      ).toBe(undefined);
     },
   },
   {
@@ -80,18 +172,23 @@ const bitcoinLikeMutations = ({
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
       const recipient = sibling.freshAddress;
+      const transaction = bridge.createTransaction(account);
       return {
-        transaction: bridge.createTransaction(account),
-        updates: [{ recipient }, { useAllAmount: true }],
+        transaction,
+        updates: [
+          { recipient },
+          {
+            utxoStrategy: {
+              ...transaction.utxoStrategy,
+              pickUnconfirmedRBF: true,
+            },
+          },
+          { useAllAmount: true },
+        ],
       };
     },
     recoverBadTransactionStatus,
-    test: ({ account, operation }) => {
-      // workaround for buggy explorer behavior (nodes desync)
-      invariant(
-        Date.now() - operation.date > 20000,
-        "operation time to be older than 20s"
-      );
+    test: ({ account }) => {
       expect(account.balance.toString()).toBe("0");
     },
   },
@@ -104,6 +201,7 @@ const bitcoin: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Bitcoin",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -115,6 +213,7 @@ const bitcoinTestnet: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Bitcoin Test",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 8,
     minimalAmount: parseCurrencyUnit(
@@ -132,6 +231,7 @@ const bitcoinGold: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "BitcoinGold",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -143,6 +243,7 @@ const bitcoinCash: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "BitcoinCash",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -154,6 +255,7 @@ const peercoin: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Peercoin",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -165,6 +267,7 @@ const pivx: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "PivX",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -176,6 +279,7 @@ const qtum: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Qtum",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -187,6 +291,7 @@ const stakenet: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "XSN",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -198,6 +303,7 @@ const stratis: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Stratis",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -209,6 +315,7 @@ const vertcoin: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Vertcoin",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -220,6 +327,7 @@ const viacoin: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Viacoin",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations(),
 };
 
@@ -231,6 +339,7 @@ const dogecoin: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Dogecoin",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
     minimalAmount: parseCurrencyUnit(
@@ -248,6 +357,7 @@ const zcash: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Zcash",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("zcash").units[0],
@@ -264,6 +374,7 @@ const zencash: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Horizen",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("zencash").units[0],
@@ -280,6 +391,7 @@ const digibyte: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Digibyte",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
     minimalAmount: parseCurrencyUnit(
@@ -297,6 +409,7 @@ const komodo: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Komodo",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("komodo").units[0],
@@ -313,6 +426,7 @@ const litecoin: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Litecoin",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     targetAccountSize: 5,
     minimalAmount: parseCurrencyUnit(
@@ -330,6 +444,7 @@ const stealthcoin: AppSpec<Transaction> = {
     model: "nanoS",
     appName: "Stealth",
   },
+  test: genericTest,
   mutations: bitcoinLikeMutations({
     minimalAmount: parseCurrencyUnit(
       getCryptoCurrencyById("stealthcoin").units[0],

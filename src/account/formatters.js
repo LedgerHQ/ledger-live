@@ -28,6 +28,7 @@ const formatOp = (
       ? formatCurrencyUnit(unit, amountBN, {
           showCode: true,
           alwaysShowSign: true,
+          disableRounding: true,
         })
       : "? " + amountBN.toString();
     const spaces = Array((level + 1) * 2)
@@ -178,7 +179,7 @@ const stats = (account) => {
 export const accountFormatters: { [_: string]: (Account) => any } = {
   json: (account) => JSON.stringify(toAccountRaw(account)),
   head: (account) => cliFormat(account, "head"),
-  default: (account) => cliFormat(account, "basic"),
+  default: (account) => cliFormat(account),
   basic: (account) => cliFormat(account, "basic"),
   full: (account) => cliFormat(account, "full"),
   stats: (account) => stats(account),
@@ -191,7 +192,7 @@ export const accountFormatters: { [_: string]: (Account) => any } = {
 
 export function formatAccount(
   account: Account,
-  format: string = "basic"
+  format: string = "full"
 ): string {
   const f = accountFormatters[format];
   invariant(f, "missing account formatter=" + format);

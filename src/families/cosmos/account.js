@@ -33,7 +33,7 @@ function formatAccountSpecifics(account: Account): string {
     showCode: true,
   };
 
-  let str = "";
+  let str = " ";
 
   str +=
     formatCurrencyUnit(unit, account.spendableBalance, formatConfig) +

@@ -95,17 +95,24 @@ export const formatTransactionStatus = (
 
   str +=
     "\n  amount: " +
-    formatCurrencyUnit(getAccountUnit(account), amount, { showCode: true });
+    formatCurrencyUnit(getAccountUnit(account), amount, {
+      showCode: true,
+      disableRounding: true,
+    });
 
   str +=
     "\n  estimated fees: " +
     formatCurrencyUnit(getAccountUnit(mainAccount), estimatedFees, {
       showCode: true,
+      disableRounding: true,
     });
 
   str +=
     "\n  total spent: " +
-    formatCurrencyUnit(getAccountUnit(account), totalSpent, { showCode: true });
+    formatCurrencyUnit(getAccountUnit(account), totalSpent, {
+      showCode: true,
+      disableRounding: true,
+    });
 
   const errorKeys = Object.keys(errors);
   if (errorKeys.length) {
