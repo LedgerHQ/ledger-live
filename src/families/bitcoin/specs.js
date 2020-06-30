@@ -199,6 +199,7 @@ const bitcoin: AppSpec<Transaction> = {
   currency: getCryptoCurrencyById("bitcoin"),
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Bitcoin",
   },
   test: genericTest,
@@ -211,6 +212,7 @@ const bitcoinTestnet: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Bitcoin Test",
   },
   test: genericTest,
@@ -229,6 +231,7 @@ const bitcoinGold: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "BitcoinGold",
   },
   test: genericTest,
@@ -241,6 +244,7 @@ const bitcoinCash: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "BitcoinCash",
   },
   test: genericTest,
@@ -253,6 +257,7 @@ const peercoin: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Peercoin",
   },
   test: genericTest,
@@ -265,6 +270,7 @@ const pivx: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "PivX",
   },
   test: genericTest,
@@ -277,6 +283,7 @@ const qtum: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Qtum",
   },
   test: genericTest,
@@ -289,6 +296,7 @@ const stakenet: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "XSN",
   },
   test: genericTest,
@@ -301,6 +309,7 @@ const stratis: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Stratis",
   },
   test: genericTest,
@@ -313,6 +322,7 @@ const vertcoin: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Vertcoin",
   },
   test: genericTest,
@@ -325,6 +335,7 @@ const viacoin: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Viacoin",
   },
   test: genericTest,
@@ -337,6 +348,7 @@ const dogecoin: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Dogecoin",
   },
   test: genericTest,
@@ -355,6 +367,7 @@ const zcash: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Zcash",
   },
   test: genericTest,
@@ -372,6 +385,7 @@ const zencash: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Horizen",
   },
   test: genericTest,
@@ -389,6 +403,7 @@ const digibyte: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Digibyte",
   },
   test: genericTest,
@@ -407,6 +422,7 @@ const komodo: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Komodo",
   },
   test: genericTest,
@@ -424,6 +440,7 @@ const litecoin: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Litecoin",
   },
   test: genericTest,
@@ -442,6 +459,7 @@ const stealthcoin: AppSpec<Transaction> = {
   dependency: "Bitcoin",
   appQuery: {
     model: "nanoS",
+    firmware: "< 1.6.1",
     appName: "Stealth",
   },
   test: genericTest,
