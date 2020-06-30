@@ -74,40 +74,61 @@ Horizen legacy xpub6DBX...aeSTVwUT: ZEN 0.4005 (1 operations) (znaE1JH6YjjWiG23
 
 which is often enough to investigate the problem. We might want to have more verbosity or visiblity of the data. you can for instance use `--format json`.
 
-When you need to see more logs, you can run the command with `VERBOSE=1`:
+When you need to see more logs, you can run the command with more verbosity using `VERBOSE` environment variable.
+
+There are a few levels: `error, warn, info, http, verbose, debug, silly`
 
 ```
-VERBOSE=1 ledger-live sync -c zen --xpub xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT
+VERBOSE=debug ledger-live sync -c zen --xpub xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT
 
-...
-{"message":"network-success: 200 GET https://explorers.api.live.ledger.com/blockchain/v2/zen/addresses/znoirKSEbEYapbvxAhLmAmmTPQfNMXsaW5P,znhPoqUPFVj7FY3L5BzN8y5hH4U35rEBVDK,znV2w3TiWfB3b9Rbr27gWcP5aANWZnmBeWE,znWA26geaRnVqfwH6rccCjRuRMDHr5YxcMB,zncLoXWHhoh5kEhhFf8iQD8fnAQXo9KZwUW,znjDxRKWFy323B81mwYXYHzEfduA98NLeJj,znhZuDbfByz56yMxyM3TbaaK12UqLuNNdE9,znhgmPYVfKWe78fDPh2afp2UqDEAtunQqsv,zneUKoCHYBqiUnaenFkk22SaxsV92eTekQR,znTFbAeHF1siVYUZZR6g3yGLNKcMAzrmEVX,znbGNDuC2xoe6Tx3rPUG6aSSPcfReTkQ27k,znnr5eLJxmrCsCpRRh17f8ZgGv8Vj12ax1n,znaV9REozE68k4NyCiHKi2JHx7S5oZhbJcs,zndyrU2j96x7HDawMqrM3Zwd96eEEiA2pYA,znXgJthcQzGMUMQ8vJJfytebJNZ4kkzotDo,znd28TiFpEZaX5d574XD3syC4L51jdiMjiC,znSYmY8a5uv11TABQ9C5guNyKsX3PYdQXqv,znahUamPtMSjYtBvZSqiJgGwuEF9yu77vja,znm8M9UT2yp5YPZj8KkEqYix2UmVLtWN9Ce,zngVSMR3QBE7aqdrp7UGZfF9wY2U5ayEwCm,znZTipXeTu3AzFhcHNBMT23Aqpi6SoMKpQP,znmQarTaaruBUuqYbUmDG3mrkYagpFyr4FT,znfKsaeM7BVqNPt3nZkHUoWSVjvti4ahEcd,znW5879twE2C683CqVT4BLP7yy2Do6fwwB1,znkMRFizpRh9QufoAHdMJhd5Hn9T2b3YuNh,znT7pUQGahPiyECMtLMiF4o5vArQHWqUxvH,znmTbBCL4LPKBJDw7iquAdrLPm7mFQzGVEr,znXWJfettqZ1LuvC9fvFB6ZVLsL9TuqaUYv,zniuCd3RWyCTzebTVPmVkN88xdx6drHegbJ,zngbZoqkk8Do5Fucs8PFCpRRyZq3MpJsmqn,znnb37cxTm9TWaEaxTJq74ZZcMubwR7fkGW,znbWuk4qRkSqCS5uhhSdeio8cXJEKWHDUyW,zni5e7dQTnPaGNvxJZCLp8yHp7kz9GZEDf3,znWaqsZ6oo2TyhvNmjaAJBRiRpN4Se5i2nA,znmN5kdKC17xpwRRza2dJHgkfGxZt37uP8V,zngS8uVeSdyysZiKmaHfMr4WgHq35X6Tz5L,znXkiReYVaGHQhBLX7sXyUqLKoehk91xmTL,znRJnRC3Mz1hmA5ur5hqGMEioh7wezxc8JC,znVaZLydPkphAfFK3DfuWhQd4cnc1rPd7z7,znoea112BaUK3gzgm3EWPGZGLZzzYSDwpj9/transactions (334ms)","data":{},"level":"debug","timestamp":"2020-03-03T15:08:39.163Z"}
-{"message":"network: DELETE https://explorers.api.live.ledger.com/blockchain/v2/zen/syncToken","data":{},"level":"debug","timestamp":"2020-03-03T15:08:39.174Z"}
-{"message":"network-success: 200 DELETE https://explorers.api.live.ledger.com/blockchain/v2/zen/syncToken (124ms)","data":{},"level":"debug","timestamp":"2020-03-03T15:08:39.298Z"}
-{"message":"libcore: sync(1) DONE eventBus.subscribe","level":"debug","timestamp":"2020-03-03T15:08:39.299Z"}
-{"message":"libcore: sync(1) start buildAccount","level":"debug","timestamp":"2020-03-03T15:08:39.299Z"}
-{"message":"libcore: sync(1) DONE partial query ops","level":"debug","timestamp":"2020-03-03T15:08:39.300Z"}
-{"message":"libcore: sync(1) DONE balance","level":"debug","timestamp":"2020-03-03T15:08:39.301Z"}
-{"message":"libcore: sync(1) DONE coreAccount addresses","level":"debug","timestamp":"2020-03-03T15:08:39.307Z"}
-{"message":"libcore: sync(1) DONE operations","level":"debug","timestamp":"2020-03-03T15:08:39.309Z"}
-{"message":"getAccountBalanceHistory: calc for range=year with 365 datapoint","level":"debug","timestamp":"2020-03-03T15:08:39.310Z"}
-{"message":"getAccountBalanceHistory: calc for range=month with 30 datapoint","level":"debug","timestamp":"2020-03-03T15:08:39.310Z"}
-{"message":"getAccountBalanceHistory: calc for range=week with 7 datapoint","level":"debug","timestamp":"2020-03-03T15:08:39.310Z"}
-{"message":"getAccountBalanceHistory: DONE. calc for range=year. 365 datapoint. period=1 range: [2019-03-04T22:59:59.999Z, 2020-03-03T22:59:59.999Z]","level":"debug","timestamp":"2020-03-03T15:08:39.322Z"}
-{"message":"getAccountBalanceHistory: DONE. calc for range=month. 30 datapoint. period=1 range: [2020-02-02T22:59:59.999Z, 2020-03-03T22:59:59.999Z]","level":"debug","timestamp":"2020-03-03T15:08:39.323Z"}
-{"message":"getAccountBalanceHistory: DONE. calc for range=week. 7 datapoint. period=1 range: [2020-02-25T22:59:59.999Z, 2020-03-03T22:59:59.999Z]","level":"debug","timestamp":"2020-03-03T15:08:39.323Z"}
-{"message":"libcore: sync(1) DONE balanceHistory","level":"debug","timestamp":"2020-03-03T15:08:39.323Z"}
-Horizen legacy xpub6DBX...aeSTVwUT: ZEN 0.4005 (1 operations) (znaE1JH6YjjWiG23bqdCkBiC4KwZ9vo7hB6 on 44'/121'/0'/0/1) (#0 xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT)
-  + ZEN 0.4005       IN         9b327034b5dfe24527dfbe690588eee02b008f9d64a55522f0edeb70db122f98     2018-11-24T15:00:29.000Z
-{"message":"libcore/access: flush","level":"debug","timestamp":"2020-03-03T15:08:40.328Z"}
-{"message":"libcore/access: flush end","level":"debug","timestamp":"2020-03-03T15:08:40.328Z"}
+debug: load core impl
+debug: using array of bytes = false
+debug: sync(1) started. libcore:1:zencash:xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT:
+debug: getOrCreateWallet xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_
+debug: getOrCreateAccount {"data":{"xpub":"xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT","index":0}}
+debug: sync(1) syncCoreAccount
+http: GET https://explorers.api.live.ledger.com/blockchain/v2/zen/blocks/current {"data":{}}
+http: GET https://explorers.api.live.ledger.com/blockchain/v2/zen/blocks/current {"data":{}}
+debug: sync(1) DONE coreAccount.synchronize
+http: GET https://explorers.api.live.ledger.com/blockchain/v2/zen/addresses/zne9gvGboTqKcBEa6zbgsuf8Tv6UDM5LaBo,znZkyhWAkMUmJ1sW5k2thzqrHYYfN9q61B3,znaE1JH6YjjWiG23bqdCkBiC4KwZ9vo7hB6,znRPUNCKg4zJUWrrXZdjnE5SMAgQJdcixHC,zncRbz8xNZfBRpcFhJg8XmvmbCn8gb2ehwn,znp11KDrxXrU1dLYLjMCgMtPCAX6KE9Bp4d,znZS87ycoYZj72Prt23PLQe2y9ZqcAkHw7k,znkcuy8st2aABFaDsZZcGqE5isp1V8t37iM,znYDz81XKfT63Cyb1yautrEmEycXXuEUg22,znnk4ifk7gqcoh8qBsaDMktX1BhAD3aWmFq,zngALywszUxgbtmP8EnqWwyJYQGg6iqUAgf,zna1VCaQjJ6teN1aEySdSPWX2xWGSaoyfVX,znRV5XLA9jcwBqLvojSxjFEttTE8wC6LN5t,znjr8qqziUS5EVHYfnRXT9xPKyCvV3JthWF,znWqeWJoHziHeXpruqkMaDmg8w2AeZLUtYh,znRPqcNaZsuB7rBrKxPdnMVLVfN9fDyMx3Z,znfLELvXEzJExFTiYjVdg48XMz4EajS4Zuq,znVGRbA5UnL16D8hegYRNFQDhLKWRpTpURA,znaSCV4mNvQjs3xyvUU2nWewnWByp7fLUQ7,znkzUcrL32j7JxyowrsAoWCGot69YN2vpSF,znm93Cx4AFsA6wXET8K6d2mhCHsspTZAewd,znoeMwmxmXwnsEmd9stNWYBovvwZUkZ7ggg,zncdV8syMqeRgH1egjYV1nSU2kByZHrUu7H,znRyGibkg6nvU3p24Xc4MeTMaNSGkfDKHAw,znVZ9v5JPHRrxnS5tZhx3YvVaKtsJYvNsBB,znSzAgCAxARKn1pzgtRk6xJYBGXZrPguqe9,znhQko6PXcMKUeRNP8zGzsqupTA8usAm6qg,zniM8XCpq9MFuSAtB8GVGrzcfESZZwjeMR1,znXkjfWoYy5fNBRUa3SYeCebSGRw6UVVxNR,znbYHEfrmUiUe5GcWibf2VNCBRboByUxD6i,zna3nnbEVFrCnnPpxRuLfJ6yVok4XjJuE3t,znnjzdEYUtfkbtwcSXFPvhLoJ9SeBsxpn2H,znh6Bq9tVzinhVwPcVC1f6JjtYmszJqLewp,znZHcnGBMzSo6cTtVmLYM9w97Tg1bPrFRiS,znWJ7ktfN3oRPUx7zrLkHndUHJD9n8wwRVf,znZ1x9GhDKrmkJgBziUJqXr1Ljc5GMiWc4z,znSg28EodTpcty5pETBcwTe4ZCmxxbS1Xqm,znV5c5eQipunPX1HP5SBKgqP6yjQBGCZcAH,zniBADCsFqioXHMQzoABpY6FaDQfptgTdHw,znXXdgwop7W9vaGoUo6rhVxruNnWXpM8HfS/transactions?noToken=true&blockHash=00000000078f0683efb7eabf1f214f50cb6f0d4f73bd4155af056fa820c27095 {"data":{}}
+http: 200 GET https://explorers.api.live.ledger.com/blockchain/v2/zen/blocks/current (148ms)
+http: 200 GET https://explorers.api.live.ledger.com/blockchain/v2/zen/blocks/current (170ms)
+http: 200 GET https://explorers.api.live.ledger.com/blockchain/v2/zen/addresses/zne9gvGboTqKcBEa6zbgsuf8Tv6UDM5LaBo,znZkyhWAkMUmJ1sW5k2thzqrHYYfN9q61B3,znaE1JH6YjjWiG23bqdCkBiC4KwZ9vo7hB6,znRPUNCKg4zJUWrrXZdjnE5SMAgQJdcixHC,zncRbz8xNZfBRpcFhJg8XmvmbCn8gb2ehwn,znp11KDrxXrU1dLYLjMCgMtPCAX6KE9Bp4d,znZS87ycoYZj72Prt23PLQe2y9ZqcAkHw7k,znkcuy8st2aABFaDsZZcGqE5isp1V8t37iM,znYDz81XKfT63Cyb1yautrEmEycXXuEUg22,znnk4ifk7gqcoh8qBsaDMktX1BhAD3aWmFq,zngALywszUxgbtmP8EnqWwyJYQGg6iqUAgf,zna1VCaQjJ6teN1aEySdSPWX2xWGSaoyfVX,znRV5XLA9jcwBqLvojSxjFEttTE8wC6LN5t,znjr8qqziUS5EVHYfnRXT9xPKyCvV3JthWF,znWqeWJoHziHeXpruqkMaDmg8w2AeZLUtYh,znRPqcNaZsuB7rBrKxPdnMVLVfN9fDyMx3Z,znfLELvXEzJExFTiYjVdg48XMz4EajS4Zuq,znVGRbA5UnL16D8hegYRNFQDhLKWRpTpURA,znaSCV4mNvQjs3xyvUU2nWewnWByp7fLUQ7,znkzUcrL32j7JxyowrsAoWCGot69YN2vpSF,znm93Cx4AFsA6wXET8K6d2mhCHsspTZAewd,znoeMwmxmXwnsEmd9stNWYBovvwZUkZ7ggg,zncdV8syMqeRgH1egjYV1nSU2kByZHrUu7H,znRyGibkg6nvU3p24Xc4MeTMaNSGkfDKHAw,znVZ9v5JPHRrxnS5tZhx3YvVaKtsJYvNsBB,znSzAgCAxARKn1pzgtRk6xJYBGXZrPguqe9,znhQko6PXcMKUeRNP8zGzsqupTA8usAm6qg,zniM8XCpq9MFuSAtB8GVGrzcfESZZwjeMR1,znXkjfWoYy5fNBRUa3SYeCebSGRw6UVVxNR,znbYHEfrmUiUe5GcWibf2VNCBRboByUxD6i,zna3nnbEVFrCnnPpxRuLfJ6yVok4XjJuE3t,znnjzdEYUtfkbtwcSXFPvhLoJ9SeBsxpn2H,znh6Bq9tVzinhVwPcVC1f6JjtYmszJqLewp,znZHcnGBMzSo6cTtVmLYM9w97Tg1bPrFRiS,znWJ7ktfN3oRPUx7zrLkHndUHJD9n8wwRVf,znZ1x9GhDKrmkJgBziUJqXr1Ljc5GMiWc4z,znSg28EodTpcty5pETBcwTe4ZCmxxbS1Xqm,znV5c5eQipunPX1HP5SBKgqP6yjQBGCZcAH,zniBADCsFqioXHMQzoABpY6FaDQfptgTdHw,znXXdgwop7W9vaGoUo6rhVxruNnWXpM8HfS/transactions?noToken=true&blockHash=00000000078f0683efb7eabf1f214f50cb6f0d4f73bd4155af056fa820c27095 (304ms)
+http: GET https://explorers.api.live.ledger.com/blockchain/v2/zen/addresses/znoirKSEbEYapbvxAhLmAmmTPQfNMXsaW5P,znhPoqUPFVj7FY3L5BzN8y5hH4U35rEBVDK,znV2w3TiWfB3b9Rbr27gWcP5aANWZnmBeWE,znWA26geaRnVqfwH6rccCjRuRMDHr5YxcMB,zncLoXWHhoh5kEhhFf8iQD8fnAQXo9KZwUW,znjDxRKWFy323B81mwYXYHzEfduA98NLeJj,znhZuDbfByz56yMxyM3TbaaK12UqLuNNdE9,znhgmPYVfKWe78fDPh2afp2UqDEAtunQqsv,zneUKoCHYBqiUnaenFkk22SaxsV92eTekQR,znTFbAeHF1siVYUZZR6g3yGLNKcMAzrmEVX,znbGNDuC2xoe6Tx3rPUG6aSSPcfReTkQ27k,znnr5eLJxmrCsCpRRh17f8ZgGv8Vj12ax1n,znaV9REozE68k4NyCiHKi2JHx7S5oZhbJcs,zndyrU2j96x7HDawMqrM3Zwd96eEEiA2pYA,znXgJthcQzGMUMQ8vJJfytebJNZ4kkzotDo,znd28TiFpEZaX5d574XD3syC4L51jdiMjiC,znSYmY8a5uv11TABQ9C5guNyKsX3PYdQXqv,znahUamPtMSjYtBvZSqiJgGwuEF9yu77vja,znm8M9UT2yp5YPZj8KkEqYix2UmVLtWN9Ce,zngVSMR3QBE7aqdrp7UGZfF9wY2U5ayEwCm,znZTipXeTu3AzFhcHNBMT23Aqpi6SoMKpQP,znmQarTaaruBUuqYbUmDG3mrkYagpFyr4FT,znfKsaeM7BVqNPt3nZkHUoWSVjvti4ahEcd,znW5879twE2C683CqVT4BLP7yy2Do6fwwB1,znkMRFizpRh9QufoAHdMJhd5Hn9T2b3YuNh,znT7pUQGahPiyECMtLMiF4o5vArQHWqUxvH,znmTbBCL4LPKBJDw7iquAdrLPm7mFQzGVEr,znXWJfettqZ1LuvC9fvFB6ZVLsL9TuqaUYv,zniuCd3RWyCTzebTVPmVkN88xdx6drHegbJ,zngbZoqkk8Do5Fucs8PFCpRRyZq3MpJsmqn,znnb37cxTm9TWaEaxTJq74ZZcMubwR7fkGW,znbWuk4qRkSqCS5uhhSdeio8cXJEKWHDUyW,zni5e7dQTnPaGNvxJZCLp8yHp7kz9GZEDf3,znWaqsZ6oo2TyhvNmjaAJBRiRpN4Se5i2nA,znmN5kdKC17xpwRRza2dJHgkfGxZt37uP8V,zngS8uVeSdyysZiKmaHfMr4WgHq35X6Tz5L,znXkiReYVaGHQhBLX7sXyUqLKoehk91xmTL,znRJnRC3Mz1hmA5ur5hqGMEioh7wezxc8JC,znVaZLydPkphAfFK3DfuWhQd4cnc1rPd7z7,znoea112BaUK3gzgm3EWPGZGLZzzYSDwpj9/transactions?noToken=true {"data":{}}
+http: 200 GET https://explorers.api.live.ledger.com/blockchain/v2/zen/addresses/znoirKSEbEYapbvxAhLmAmmTPQfNMXsaW5P,znhPoqUPFVj7FY3L5BzN8y5hH4U35rEBVDK,znV2w3TiWfB3b9Rbr27gWcP5aANWZnmBeWE,znWA26geaRnVqfwH6rccCjRuRMDHr5YxcMB,zncLoXWHhoh5kEhhFf8iQD8fnAQXo9KZwUW,znjDxRKWFy323B81mwYXYHzEfduA98NLeJj,znhZuDbfByz56yMxyM3TbaaK12UqLuNNdE9,znhgmPYVfKWe78fDPh2afp2UqDEAtunQqsv,zneUKoCHYBqiUnaenFkk22SaxsV92eTekQR,znTFbAeHF1siVYUZZR6g3yGLNKcMAzrmEVX,znbGNDuC2xoe6Tx3rPUG6aSSPcfReTkQ27k,znnr5eLJxmrCsCpRRh17f8ZgGv8Vj12ax1n,znaV9REozE68k4NyCiHKi2JHx7S5oZhbJcs,zndyrU2j96x7HDawMqrM3Zwd96eEEiA2pYA,znXgJthcQzGMUMQ8vJJfytebJNZ4kkzotDo,znd28TiFpEZaX5d574XD3syC4L51jdiMjiC,znSYmY8a5uv11TABQ9C5guNyKsX3PYdQXqv,znahUamPtMSjYtBvZSqiJgGwuEF9yu77vja,znm8M9UT2yp5YPZj8KkEqYix2UmVLtWN9Ce,zngVSMR3QBE7aqdrp7UGZfF9wY2U5ayEwCm,znZTipXeTu3AzFhcHNBMT23Aqpi6SoMKpQP,znmQarTaaruBUuqYbUmDG3mrkYagpFyr4FT,znfKsaeM7BVqNPt3nZkHUoWSVjvti4ahEcd,znW5879twE2C683CqVT4BLP7yy2Do6fwwB1,znkMRFizpRh9QufoAHdMJhd5Hn9T2b3YuNh,znT7pUQGahPiyECMtLMiF4o5vArQHWqUxvH,znmTbBCL4LPKBJDw7iquAdrLPm7mFQzGVEr,znXWJfettqZ1LuvC9fvFB6ZVLsL9TuqaUYv,zniuCd3RWyCTzebTVPmVkN88xdx6drHegbJ,zngbZoqkk8Do5Fucs8PFCpRRyZq3MpJsmqn,znnb37cxTm9TWaEaxTJq74ZZcMubwR7fkGW,znbWuk4qRkSqCS5uhhSdeio8cXJEKWHDUyW,zni5e7dQTnPaGNvxJZCLp8yHp7kz9GZEDf3,znWaqsZ6oo2TyhvNmjaAJBRiRpN4Se5i2nA,znmN5kdKC17xpwRRza2dJHgkfGxZt37uP8V,zngS8uVeSdyysZiKmaHfMr4WgHq35X6Tz5L,znXkiReYVaGHQhBLX7sXyUqLKoehk91xmTL,znRJnRC3Mz1hmA5ur5hqGMEioh7wezxc8JC,znVaZLydPkphAfFK3DfuWhQd4cnc1rPd7z7,znoea112BaUK3gzgm3EWPGZGLZzzYSDwpj9/transactions?noToken=true (635ms)
+debug: sync(1) DONE eventBus.subscribe
+debug: sync(1) start buildAccount
+debug: sync(1) DONE partial query ops
+debug: sync(1) DONE balance
+debug: sync(1) DONE coreAccount addresses
+debug: sync(1) DONE operations
+info: calc for range=year with 365 datapoint
+info: calc for range=month with 30 datapoint
+info: calc for range=week with 7 datapoint
+info: DONE. calc for range=year. 365 datapoint. period=1 range: [2019-07-01T21:59:59.999Z, 2020-06-30T21:59:59.999Z]
+info: DONE. calc for range=month. 30 datapoint. period=1 range: [2020-05-31T21:59:59.999Z, 2020-06-30T21:59:59.999Z]
+info: DONE. calc for range=week. 7 datapoint. period=1 range: [2020-06-23T21:59:59.999Z, 2020-06-30T21:59:59.999Z]
+debug: sync(1) DONE balanceHistory
+info: bitcoinResources
+info: bitcoinResources DONE
+Horizen legacy xpub6DBX...aeSTVwUT: ZEN 0.20052 (4ops) (zncRbz8xNZfBRpcFhJg8XmvmbCn8gb2ehwn on 44'/121'/0'/0/2) #0 xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT
+1 UTXOs
+0.20052      znRPUNCKg4zJUWrrXZdjnE5SMAgQJdcixHC rbf cd5ebe0d564f30850c690062d800c7764fdacfd21090edbe1f6540d6705c5485 @1 (17959)
+OPERATIONS (4)
+  - ZEN 0.20000374   OUT        cd5ebe0d564f30850c690062d800c7764fdacfd21090edbe1f6540d6705c5485 2020-05-29T20:23
+  + ZEN 0.001        IN         ad110fe4724997ad56060d8a78e6bf2bc721a851b50dd318d067690481d21576 2020-05-29T18:47
+  - ZEN 0.00100226   OUT        ad110fe4724997ad56060d8a78e6bf2bc721a851b50dd318d067690481d21576 2020-05-29T18:47
+  + ZEN 0.4005244    IN         9b327034b5dfe24527dfbe690588eee02b008f9d64a55522f0edeb70db122f98 2018-11-24T15:00
+debug: flush
+debug: flush end
 ```
 
 We can see all the networking and live-common logs.
 
-To access an even deeper level, **especially how we are using the underlying Libcore**, you can enable `VERBOSE_LIBCORE_CALL=1`:
+To access an even deeper level, **especially how we are using the underlying Libcore**, you can enable `VERBOSE=silly`:
 
 ```
-VERBOSE_LIBCORE_CALL=1 VERBOSE=1 ledger-live sync -c zen --xpub xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT
+VERBOSE=silly ledger-live sync -c zen --xpub xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT
 ```
 
 > **When --xpub is provided, the CLI will no longer need and use a Ledger device but will use the xpub instead.**
@@ -115,26 +136,36 @@ VERBOSE_LIBCORE_CALL=1 VERBOSE=1 ledger-live sync -c zen --xpub xpub6DBXGC1faXnW
 It's very verbose but you will see things like
 
 ```
-{"message":"libcore-call: DynamicObject.newInstance","data":[],"level":"debug","timestamp":"2020-03-03T15:12:36.041Z"}
-{"message":"libcore-result: DynamicObject.newInstance","data":{"value":{}},"level":"debug","timestamp":"2020-03-03T15:12:36.041Z"}
-{"message":"libcore-call: DynamicObject#putString","data":["KEYCHAIN_DERIVATION_SCHEME","44'/121'/<account>'/<node>/<address>"],"level":"debug","timestamp":"2020-03-03T15:12:36.044Z"}
-{"message":"libcore-result: DynamicObject#putString","data":{"value":{}},"level":"debug","timestamp":"2020-03-03T15:12:36.045Z"}
-{"message":"libcore-call: DynamicObject#putString","data":["BLOCKCHAIN_EXPLORER_API_ENDPOINT","https://explorers.api.live.ledger.com"],"level":"debug","timestamp":"2020-03-03T15:12:36.045Z"}
-{"message":"libcore-result: DynamicObject#putString","data":{"value":{}},"level":"debug","timestamp":"2020-03-03T15:12:36.046Z"}
-{"message":"libcore-call: DynamicObject#putString","data":["BLOCKCHAIN_EXPLORER_VERSION","v2"],"level":"debug","timestamp":"2020-03-03T15:12:36.046Z"}
-{"message":"libcore-result: DynamicObject#putString","data":{"value":{}},"level":"debug","timestamp":"2020-03-03T15:12:36.046Z"}
-{"message":"libcore: getOrCreateWallet xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_","level":"debug","timestamp":"2020-03-03T15:12:36.046Z"}
-{"message":"libcore-call: WalletPool#getWallet","data":["xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_"],"level":"debug","timestamp":"2020-03-03T15:12:36.046Z"}
-{"message":"libcore-result: WalletPool#getWallet","data":{"value":{}},"level":"debug","timestamp":"2020-03-03T15:12:36.052Z"}
-{"message":"libcore-call: WalletPool#updateWalletConfig","data":["xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_",{}],"level":"debug","timestamp":"2020-03-03T15:12:36.052Z"}
-{"message":"libcore-result: WalletPool#updateWalletConfig","data":{"value":32},"level":"debug","timestamp":"2020-03-03T15:12:36.063Z"}
-{"message":"libcore-call: WalletPool#getWallet","data":["xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_"],"level":"debug","timestamp":"2020-03-03T15:12:36.063Z"}
-{"message":"libcore-result: WalletPool#getWallet","data":{"value":{}},"level":"debug","timestamp":"2020-03-03T15:12:36.064Z"}
-{"message":"libcore: getOrCreateAccount","data":{"xpub":"xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT","index":0},"level":"debug","timestamp":"2020-03-03T15:12:36.065Z"}
-{"message":"libcore-call: Wallet#getAccount","data":[0],"level":"debug","timestamp":"2020-03-03T15:12:36.065Z"}
-{"message":"libcore-result: Wallet#getAccount","data":{"value":{}},"level":"debug","timestamp":"2020-03-03T15:12:36.133Z"}
-{"message":"libcore: sync(1) syncCoreAccount","level":"debug","timestamp":"2020-03-03T15:12:36.133Z"}
-{"message":"libcore-call: Account#synchronize","data":[],"level":"debug","timestamp":"2020-03-03T15:12:36.134Z"}
+...
+silly: DynamicObject.newInstance {"data":[]}
+silly: DynamicObject.newInstance {"data":{"value":{}}}
+silly: DynamicObject#putString {"data":["KEYCHAIN_DERIVATION_SCHEME","44'/121'/<account>'/<node>/<address>"]}
+silly: DynamicObject#putString {"data":{"value":{}}}
+silly: DynamicObject#putBoolean {"data":["DEACTIVATE_SYNC_TOKEN",true]}
+silly: DynamicObject#putBoolean {"data":{"value":{}}}
+silly: DynamicObject#putString {"data":["BLOCKCHAIN_EXPLORER_API_ENDPOINT","https://explorers.api.live.ledger.com"]}
+silly: DynamicObject#putString {"data":{"value":{}}}
+silly: DynamicObject#putString {"data":["BLOCKCHAIN_EXPLORER_VERSION","v2"]}
+silly: DynamicObject#putString {"data":{"value":{}}}
+debug: getOrCreateWallet xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_
+silly: WalletPool#getWallet {"data":["xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_"]}
+silly: WalletPool#getWallet {"data":{"value":{}}}
+silly: WalletPool#updateWalletConfig {"data":["xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_",{}]}
+silly: WalletPool#updateWalletConfig {"data":{"value":32}}
+silly: WalletPool#getWallet {"data":["xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT_zencash_"]}
+silly: WalletPool#getWallet {"data":{"value":{}}}
+debug: getOrCreateAccount {"data":{"xpub":"xpub6DBXGC1faXnWSWofjAXjfxihNmYEcJj7KcWytuc7AZK39zS8KdgbosCjnPyHRbwKxcJxnWbzLwZYaPHFE3zoQZmGDbPzwRuoSfFaeSTVwUT","index":0}}
+silly: Wallet#getAccount {"data":[0]}
+silly: Wallet#getAccount {"data":{"value":{}}}
+debug: sync(1) syncCoreAccount
+silly: Account#synchronize {"data":[]}
+http: GET https://explorers.api.live.ledger.com/blockchain/v2/zen/blocks/current {"data":{}}
+http: GET https://explorers.api.live.ledger.com/blockchain/v2/zen/blocks/current {"data":{}}
+silly: Account#synchronize {"data":{"value":{}}}
+debug: sync(1) DONE coreAccount.synchronize
+silly: EventBus#subscribe {"data":[{},{}]}
+silly: EventBus#subscribe {"data":{}}
+...
 ```
 
 ### A problem during "Add Account"

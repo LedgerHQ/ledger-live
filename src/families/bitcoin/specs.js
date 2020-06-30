@@ -2,6 +2,7 @@
 import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import sample from "lodash/sample";
 import { log } from "@ledgerhq/logs";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
@@ -137,6 +138,8 @@ const bitcoinLikeMutations = ({
       const { bitcoinResources } = account;
       invariant(bitcoinResources, "bitcoin resources");
       const transaction = bridge.createTransaction(account);
+      const utxo = sample(bitcoinResources.utxos.filter((u) => u.blockHeight));
+      invariant(utxo, "no confirmed utxo");
       return {
         transaction,
         updates: [
@@ -145,7 +148,7 @@ const bitcoinLikeMutations = ({
             utxoStrategy: {
               ...transaction.utxoStrategy,
               excludeUTXOs: bitcoinResources.utxos
-                .slice(1)
+                .filter((u) => u !== utxo)
                 .map(({ outputIndex, hash }) => ({ outputIndex, hash })),
             },
           },
