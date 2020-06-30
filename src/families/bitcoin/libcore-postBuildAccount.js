@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "../../types";
 import type { CoreAccount } from "../../libcore/types";
 import { promiseAllBatched } from "../../promise";
-import { parseBitcoinOutput } from "./transaction";
+import { parseBitcoinUTXO } from "./transaction";
 
 const postBuildAccount = async ({
   account,
@@ -16,7 +16,7 @@ const postBuildAccount = async ({
   const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
   const count = await bitcoinLikeAccount.getUTXOCount();
   const objects = await bitcoinLikeAccount.getUTXO(0, count);
-  const utxos = await promiseAllBatched(6, objects, parseBitcoinOutput);
+  const utxos = await promiseAllBatched(6, objects, parseBitcoinUTXO);
   account.bitcoinResources = { utxos };
   log("bitcoin/post-buildAccount", "bitcoinResources DONE");
   return account;

@@ -60,8 +60,16 @@ export async function parseBitcoinOutput(
     }
   }
   const value = await libcoreAmountToBigNumber(await output.getValue());
-  const rbf = await output.isReplaceable();
+  const rbf = false; // this is unsafe to generically call this at the moment. libcore segfault.
   return { hash, outputIndex, blockHeight, address, path, value, rbf };
+}
+
+export async function parseBitcoinUTXO(
+  output: CoreBitcoinLikeOutput
+): Promise<BitcoinOutput> {
+  const utxo = await parseBitcoinOutput(output);
+  utxo.rbf = await output.isReplaceable();
+  return utxo;
 }
 
 export function getUTXOStatus(
