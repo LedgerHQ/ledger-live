@@ -157,8 +157,15 @@ const bitcoinLikeMutations = ({
       };
     },
     recoverBadTransactionStatus,
-    test: ({ accountBeforeTransaction, account, operation }) => {
-      const utxo = accountBeforeTransaction.bitcoinResources?.utxos[0];
+    test: ({ accountBeforeTransaction, account, operation, transaction }) => {
+      const utxo = (
+        accountBeforeTransaction.bitcoinResources?.utxos || []
+      ).find(
+        (utxo) =>
+          !transaction.utxoStrategy.excludeUTXOs.some(
+            (u) => u.hash === utxo.hash && u.outputIndex === utxo.outputIndex
+          )
+      );
       invariant(utxo, "utxo available");
       expect(operation).toMatchObject({ senders: [utxo.address] });
       expect(
