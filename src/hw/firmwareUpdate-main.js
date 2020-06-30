@@ -1,4 +1,5 @@
 // @flow
+import { log } from "@ledgerhq/logs";
 import { Observable, from, of, empty, concat, throwError } from "rxjs";
 import {
   concatMap,
@@ -7,10 +8,9 @@ import {
   distinctUntilChanged,
   throttleTime,
 } from "rxjs/operators";
-import { log } from "@ledgerhq/logs";
 import { CantOpenDevice, DeviceInOSUExpected } from "@ledgerhq/errors";
 import type { FirmwareUpdateContext } from "../types/manager";
-import { withDevicePolling } from "./deviceAccess";
+import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import flash from "./flash";
 import installFinalFirmware from "./installFinalFirmware";
@@ -44,14 +44,29 @@ const main = (
     )
   );
 
-  const waitForOSU = (maxTry) =>
-    maxTry < 0
-      ? throwError(new DeviceInOSUExpected())
-      : withDeviceInfo.pipe(
-          concatMap((deviceInfo) =>
-            deviceInfo.isOSU ? empty() : concat(wait2s, waitForOSU(maxTry - 1))
+  const potentialAutoFlash = withDeviceInfo.pipe(
+    concatMap((deviceInfo) =>
+      deviceInfo.isOSU
+        ? empty()
+        : withDevice(deviceId)((transport) =>
+            Observable.create((o) => {
+              const timeout = setTimeout(() => {
+                log("firmware", "potentialAutoFlash timeout");
+                o.complete();
+              }, 20000);
+              const disconnect = () => {
+                log("firmware", "potentialAutoFlash disconnect");
+                o.complete();
+              };
+              transport.on("disconnect", disconnect);
+              return () => {
+                clearTimeout(timeout);
+                transport.off("disconnect", disconnect);
+              };
+            })
           )
-        );
+    )
+  );
 
   const bootloaderLoop = withDeviceInfo.pipe(
     concatMap((deviceInfo) =>
@@ -71,7 +86,7 @@ const main = (
 
   const all = shouldFlashMCU
     ? concat(waitForBootloader, bootloaderLoop, finalStep)
-    : concat(waitForOSU(10), finalStep);
+    : concat(potentialAutoFlash, finalStep);
 
   return all.pipe(
     scan(
