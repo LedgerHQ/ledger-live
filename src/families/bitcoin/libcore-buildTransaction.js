@@ -9,7 +9,7 @@ import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
 import type { CoreBitcoinLikeTransaction, Transaction } from "./types";
 import { getUTXOStatus } from "./transaction";
 import { promiseAllBatched } from "../../promise";
-import { parseBitcoinOutput } from "./transaction";
+import { parseBitcoinUTXO } from "./transaction";
 
 async function bitcoinBuildTransaction({
   account,
@@ -61,7 +61,7 @@ async function bitcoinBuildTransaction({
 
   const count = await bitcoinLikeAccount.getUTXOCount();
   const objects = await bitcoinLikeAccount.getUTXO(0, count);
-  const utxos = await promiseAllBatched(6, objects, parseBitcoinOutput);
+  const utxos = await promiseAllBatched(6, objects, parseBitcoinUTXO);
 
   for (const utxo of utxos) {
     const s = getUTXOStatus(utxo, utxoStrategy);
