@@ -24,6 +24,8 @@ type CurrencyCommon = {
   // tells if countervalue need to be disabled (typically because colliding with other coins)
   disableCountervalue?: boolean,
   delisted?: boolean,
+  // some countervalue will have a ticker alias
+  countervalueTicker?: string,
 };
 
 export type TokenCurrency = CurrencyCommon & {
@@ -35,6 +37,8 @@ export type TokenCurrency = CurrencyCommon & {
   parentCurrency: CryptoCurrency,
   // the type of token in the blockchain it belongs. e.g. 'erc20'
   tokenType: string,
+  // indicates this is a compound token and it's "parent" erc20 have this id
+  compoundFor?: string,
 };
 
 export type FiatCurrency = CurrencyCommon & {

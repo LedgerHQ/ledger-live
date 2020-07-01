@@ -8,6 +8,7 @@ import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
   getCryptoCurrencyById,
+  findTokenById,
   getFiatCurrencyByTicker,
   hasFiatCurrencyTicker,
   formatCurrencyUnit,
@@ -17,7 +18,6 @@ import {
   decodeURIScheme,
   encodeURIScheme,
   sanitizeValueString,
-  findTokenByTicker,
 } from "../currencies";
 import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
 
@@ -134,17 +134,11 @@ test("tokens are correct", () => {
     expect(typeof unit.name).toBe("string");
     expect(unit.magnitude).toBeGreaterThan(-1);
     expect(typeof unit.magnitude).toBe("number");
+    if (token.compoundFor) {
+      const t = findTokenById(token.compoundFor);
+      expect(typeof t).toBe("object");
+    }
   }
-});
-
-test("disable token have less priority when ticker collision (SUB token case)", () => {
-  expect(listTokens().filter((t) => t.ticker === "SUB")).toMatchObject([
-    { id: "ethereum/erc20/substratum", disableCountervalue: true },
-    { id: "ethereum/erc20/substratum_", disableCountervalue: false },
-  ]);
-  expect(findTokenByTicker("SUB")).toMatchObject({
-    id: "ethereum/erc20/substratum_",
-  });
 });
 
 test("fiats list is sorted by ticker", () => {

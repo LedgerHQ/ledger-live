@@ -17,6 +17,8 @@ const convertERC20 = ([
   contractAddress,
   disableCountervalue,
   delisted,
+  countervalueTicker,
+  compoundFor,
 ]): TokenCurrency => ({
   type: "TokenCurrency",
   id: "ethereum/erc20/" + token,
@@ -29,6 +31,8 @@ const convertERC20 = ([
   delisted,
   disableCountervalue:
     !!disableCountervalue || !!findCryptoCurrencyByTicker(ticker), // if it collides, disable
+  countervalueTicker,
+  compoundFor: compoundFor ? "ethereum/erc20/" + compoundFor : undefined,
   units: [
     {
       name,
