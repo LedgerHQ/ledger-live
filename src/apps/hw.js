@@ -157,8 +157,11 @@ export const listApps = (
           if (!application) return;
           const isDevTools = application.category === 2;
 
-          const currencyId = application.currencyId;
+          let currencyId = application.currencyId;
           const crypto = currencyId && findCryptoCurrencyById(currencyId);
+          if (!crypto) {
+            currencyId = undefined;
+          }
           const indexOfMarketCap = crypto
             ? sortedCryptoCurrencies.indexOf(crypto)
             : -1;
