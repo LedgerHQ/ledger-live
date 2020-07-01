@@ -2,25 +2,46 @@ const invariant = require("invariant");
 const path = require("path");
 const { readFileJSON, JSONstringifyReadableArray } = require("../utils");
 
-const inferParentCurrency = common =>
+const inferParentCurrency = (common) =>
   common.blockchain_name === "foundation"
     ? "ethereum"
     : common.blockchain_name === "ropsten"
     ? "ethereum_ropsten"
     : null;
 
+const withoutExtraComma = (str) => {
+  const m = str.match(/,+$/);
+  if (!m) return str;
+  return str.slice(0, str.length - m[0].length);
+};
+
 module.exports = {
   path: "tokens/ethereum/erc20",
 
-  outputTemplate: data =>
+  outputTemplate: (data) =>
     'require("../../../families/ethereum/tokens").add("erc20", ' +
-    JSONstringifyReadableArray(data) +
+    "[\n" +
+    data
+      .map(
+        (item) =>
+          "[" +
+          withoutExtraComma(
+            item
+              .map((value) =>
+                value === undefined ? "" : JSON.stringify(value)
+              )
+              .join(",")
+          ) +
+          "]"
+      )
+      .join(",\n") +
+    "\n]" +
     ");",
 
   loader: ({ folder, id }) =>
     Promise.all([
       readFileJSON(path.join(folder, id, "common.json")),
-      readFileJSON(path.join(folder, id, "ledger_signature.json"))
+      readFileJSON(path.join(folder, id, "ledger_signature.json")),
     ]).then(([common, ledgerSignature]) => {
       const name = common.name;
       const ticker = common.ticker.toUpperCase();
@@ -29,6 +50,8 @@ module.exports = {
       const parentCurrency = inferParentCurrency(common);
       const disableCountervalue = !!common.disable_countervalue;
       const delisted = !!common.delisted;
+      const countervalueTicker = common.countervalue_ticker;
+      const compoundFor = common.compound_for;
       try {
         invariant(
           typeof parentCurrency === "string" && parentCurrency,
@@ -81,7 +104,9 @@ module.exports = {
         ledgerSignature,
         contractAddress,
         disableCountervalue,
-        delisted
+        delisted,
+        countervalueTicker,
+        compoundFor,
       ];
-    })
+    }),
 };
