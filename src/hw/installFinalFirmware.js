@@ -5,19 +5,20 @@ import { Observable, from, concat, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import getDeviceInfo from "./getDeviceInfo";
+import { getProviderId } from "../manager";
 
 export const fetchNextFirmware = (
   deviceInfo: DeviceInfo
 ): Observable<FinalFirmware> =>
   from(
-    ManagerAPI.getDeviceVersion(deviceInfo.targetId, deviceInfo.providerId)
+    ManagerAPI.getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo))
   ).pipe(
     mergeMap((device) =>
       from(
         ManagerAPI.getCurrentOSU({
           deviceId: device.id,
           version: deviceInfo.version,
-          provider: deviceInfo.providerId,
+          provider: getProviderId(deviceInfo),
         })
       )
     ),

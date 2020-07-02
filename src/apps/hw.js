@@ -6,6 +6,7 @@ import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError } from "rxjs";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import type { App, DeviceInfo } from "../types/manager";
+import { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
 import { log } from "@ledgerhq/logs";
@@ -91,16 +92,18 @@ export const listApps = (
         })
         .then((apps) => [apps, true]);
 
+      const provider = getProviderId(deviceInfo);
+
       const deviceVersionP = ManagerAPI.getDeviceVersion(
         deviceInfo.targetId,
-        deviceInfo.providerId
+        provider
       );
 
       const firmwareDataP = deviceVersionP.then((deviceVersion) =>
         ManagerAPI.getCurrentFirmware({
           deviceId: deviceVersion.id,
           version: deviceInfo.version,
-          provider: deviceInfo.providerId,
+          provider,
         })
       );
 
@@ -109,7 +112,7 @@ export const listApps = (
         firmwareDataP,
       ]).then(([deviceVersion, firmwareData]) =>
         ManagerAPI.applicationsByDevice({
-          provider: deviceInfo.providerId,
+          provider,
           current_se_firmware_final_version: firmwareData.id,
           device_version: deviceVersion.id,
         })

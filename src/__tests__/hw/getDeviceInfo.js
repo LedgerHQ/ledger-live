@@ -18,7 +18,7 @@ test("1.2.0", async () => {
     version: "1.2",
     mcuVersion: "1.0",
     majMin: "1.2",
-    providerId: 1,
+    providerName: null,
     targetId: 823132162,
     isOSU: false,
     isBootloader: false,
@@ -40,7 +40,7 @@ test("1.3.1", async () => {
     version: "1.3.1",
     mcuVersion: "1.1",
     majMin: "1.3",
-    providerId: 1,
+    providerName: null,
     targetId: 823132162,
     isOSU: false,
     isBootloader: false,
@@ -65,7 +65,7 @@ test("1.3.1 BL", async () => {
     managerAllowed: false,
     mcuVersion: "",
     pinValidated: false,
-    providerId: 1,
+    providerName: null,
     majMin: "0.0",
     targetId: 16777217,
   });
@@ -87,7 +87,7 @@ test("1.5.5", async () => {
     managerAllowed: false,
     mcuVersion: "1.7",
     pinValidated: false,
-    providerId: 1,
+    providerName: null,
     majMin: "1.5",
     targetId: 823132164,
   });
@@ -109,7 +109,7 @@ test("1.5.5 manager allowed", async () => {
     managerAllowed: true,
     mcuVersion: "1.7",
     pinValidated: false,
-    providerId: 1,
+    providerName: null,
     majMin: "1.5",
     targetId: 823132164,
   });
@@ -131,7 +131,7 @@ test("1.4.2", async () => {
     managerAllowed: false,
     mcuVersion: "1.6",
     pinValidated: true,
-    providerId: 1,
+    providerName: null,
     majMin: "1.4",
     targetId: 823132163,
   });
@@ -153,7 +153,7 @@ test("1.4.2 manager allowed", async () => {
     managerAllowed: true,
     mcuVersion: "1.6",
     pinValidated: true,
-    providerId: 1,
+    providerName: null,
     majMin: "1.4",
     targetId: 823132163,
   });
@@ -244,7 +244,7 @@ test("0.11 BL (2)", async () => {
     version: "0.11",
     mcuVersion: "",
     majMin: "0.11",
-    providerId: 1,
+    providerName: null,
     targetId: 16777217,
     isOSU: false,
     isBootloader: true,
@@ -393,7 +393,7 @@ test("nano x 1.1.6", async () => {
     isOSU: false,
     managerAllowed: false,
     pinValidated: true,
-    providerId: 1,
+    providerName: null,
     targetId: 855638020,
   });
 });
@@ -411,7 +411,7 @@ test("nano x 1.2.4-1", async () => {
     version: "1.2.4-1",
     mcuVersion: "2.8",
     majMin: "1.2",
-    providerId: 1,
+    providerName: null,
     targetId: 855638020,
     isOSU: false,
     isBootloader: false,
@@ -437,7 +437,7 @@ test("nanoS 1.4.2 BL", async () => {
     isOSU: false,
     managerAllowed: false,
     pinValidated: false,
-    providerId: 1,
+    providerName: null,
     targetId: 16777217,
   });
 });
@@ -458,7 +458,7 @@ test("nanoS das", async () => {
     managerAllowed: false,
     mcuVersion: "1.5",
     pinValidated: true,
-    providerId: 2,
+    providerName: "das",
     targetId: 823132163,
     version: "1.4.2-das",
   });

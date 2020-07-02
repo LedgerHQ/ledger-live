@@ -6,20 +6,21 @@ import { Observable, from } from "rxjs";
 import { switchMap } from "rxjs/operators";
 import type { DeviceInfo, SocketEvent } from "../types/manager";
 import ManagerAPI from "../api/Manager";
+import { getProviderId } from "../manager";
 
 export default (
   transport: Transport<*>,
   deviceInfo: DeviceInfo
 ): Observable<SocketEvent> =>
   from(
-    ManagerAPI.getDeviceVersion(deviceInfo.targetId, deviceInfo.providerId)
+    ManagerAPI.getDeviceVersion(deviceInfo.targetId, getProviderId(deviceInfo))
   ).pipe(
     switchMap((deviceVersion) =>
       from(
         ManagerAPI.getCurrentFirmware({
           deviceId: deviceVersion.id,
           version: deviceInfo.version,
-          provider: deviceInfo.providerId,
+          provider: getProviderId(deviceInfo),
         })
       )
     ),

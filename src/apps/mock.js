@@ -17,7 +17,7 @@ export const deviceInfo155 = {
   managerAllowed: false,
   mcuVersion: "1.7",
   pinValidated: false,
-  providerId: 1,
+  providerName: null,
   majMin: "1.5",
   targetId: 823132164,
 };

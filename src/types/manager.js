@@ -1,5 +1,6 @@
 // @flow
 import type { CryptoCurrency } from "./currencies";
+import type { DeviceModelId } from "@ledgerhq/devices";
 
 // FIXME we need to clearly differentiate what is API types and what is our inner own type
 
@@ -15,16 +16,22 @@ export type LedgerScriptParams = {
   perso: string,
 };
 
-export type DeviceInfo = {
+export type DeviceInfo = {|
   mcuVersion: string, // the raw mcu version
   version: string, // the version part, without the -osu
   majMin: string, // the x.y part of the x.y.z-v version
   targetId: string | number, // a technical id
   isBootloader: boolean,
   isOSU: boolean,
-  providerId: number,
+  providerName: ?string,
   managerAllowed: boolean,
   pinValidated: boolean,
+|};
+
+export type DeviceModelInfo = {
+  modelId: DeviceModelId,
+  deviceInfo: DeviceInfo,
+  apps: Array<{ name: string, version: string }>,
 };
 
 export type DeviceVersion = {
