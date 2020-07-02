@@ -8,6 +8,7 @@ import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import SettingsNavigator from "./SettingsNavigator";
 import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
+import colors from "../../colors";
 import AccountsIcon from "../../icons/Accounts";
 import SettingsIcon from "../../icons/Settings";
 
@@ -19,6 +20,7 @@ export default function MainNavigator() {
       tabBarOptions={{
         style: styles.bottomTabBar,
         showLabel: false,
+        activeTintColor: colors.live,
       }}
     >
       <Tab.Screen
