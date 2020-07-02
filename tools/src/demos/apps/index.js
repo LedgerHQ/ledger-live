@@ -4,6 +4,7 @@ import styled from "styled-components";
 import Select from "react-select";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
 import manager from "@ledgerhq/live-common/lib/manager";
 
@@ -21,7 +22,7 @@ const Section = styled.div`
 const SectionHead = styled.div`
   font-size: 18px;
   padding: 20px 0;
-  color: ${p => (p.error ? "#ea2e49" : "#6490f1")};
+  color: ${(p) => (p.error ? "#ea2e49" : "#6490f1")};
 `;
 
 const SectionBody = styled.div`
@@ -36,16 +37,16 @@ const CoinContainer = styled.div`
 `;
 
 const IconWrapper = styled.div`
-  color: ${p => p.color};
-  background-color: ${p => p.bg};
+  color: ${(p) => p.color};
+  background-color: ${(p) => p.bg};
   border-radius: 8px;
   display: flex;
   overflow: hidden;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: ${p => p.size}px;
-  height: ${p => p.size}px;
+  width: ${(p) => p.size}px;
+  height: ${(p) => p.size}px;
   margin-right: 10px;
 `;
 
@@ -92,13 +93,13 @@ const choices = [
       version: "1.6.0",
       mcuVersion: "1.12",
       majMin: "1.6",
-      providerId: 1,
+      providerName: null,
       targetId: 823132164,
       isOSU: false,
       isBootloader: false,
       managerAllowed: true,
-      pinValidated: true
-    }
+      pinValidated: true,
+    },
   },
   {
     label: "Nano S 1.5.5",
@@ -106,13 +107,13 @@ const choices = [
       version: "1.5.5",
       mcuVersion: "1.7",
       majMin: "1.5",
-      providerId: 1,
+      providerName: null,
       targetId: 823132164,
       isOSU: false,
       isBootloader: false,
       managerAllowed: false,
-      pinValidated: true
-    }
+      pinValidated: true,
+    },
   },
   {
     label: "Nano X 1.2.4-1",
@@ -120,19 +121,19 @@ const choices = [
       version: "1.2.4-1",
       mcuVersion: "2.8",
       majMin: "1.2",
-      providerId: 1,
+      providerName: null,
       targetId: 855638020,
       isOSU: false,
       isBootloader: false,
       managerAllowed: false,
-      pinValidated: true
-    }
-  }
+      pinValidated: true,
+    },
+  },
 ];
 
 const providers = [
   { label: "production (provider 1)", value: 1 },
-  { label: "beta (provider 4)", value: 4 }
+  { label: "beta (provider 4)", value: 4 },
 ];
 
 const Apps = () => {
@@ -142,20 +143,19 @@ const Apps = () => {
 
   useEffect(() => {
     setApps([]);
-    manager
-      .getAppsList({ ...choice.deviceInfo, providerId: provider.value })
-      .then(setApps);
+    setEnv("FORCE_PROVIDER", provider);
+    manager.getAppsList(choice.deviceInfo).then(setApps);
   }, [choice, provider]);
 
   const unknownApps = [];
   const knownAppsWithCoin = [];
   const deprecatedApps = [];
-  apps.forEach(app => {
-    const coin = coins.find(c => app.name === c.managerAppName);
+  apps.forEach((app) => {
+    const coin = coins.find((c) => app.name === c.managerAppName);
     if (coin) {
       knownAppsWithCoin.push({
         app,
-        coin
+        coin,
       });
     } else if (!manager.canHandleInstall(app)) {
       deprecatedApps.push(app);
@@ -167,8 +167,9 @@ const Apps = () => {
     apps.length === 0
       ? []
       : coins.filter(
-          c =>
-            c.managerAppName && !apps.find(app => app.name === c.managerAppName)
+          (c) =>
+            c.managerAppName &&
+            !apps.find((app) => app.name === c.managerAppName)
         );
 
   return (
@@ -179,8 +180,8 @@ const Apps = () => {
         value={choice}
         options={choices}
         onChange={setChoice}
-        getOptionLabel={c => c.label}
-        getOptionValue={c => c.label}
+        getOptionLabel={(c) => c.label}
+        getOptionValue={(c) => c.label}
       />
 
       <p />
@@ -189,8 +190,8 @@ const Apps = () => {
         value={provider}
         options={providers}
         onChange={setProvider}
-        getOptionLabel={c => c.label}
-        getOptionValue={c => c.label}
+        getOptionLabel={(c) => c.label}
+        getOptionValue={(c) => c.label}
       />
 
       {apps.length === 0 ? (
@@ -205,7 +206,7 @@ const Apps = () => {
             {"can't find a Manager app for these crypto-currencies"}
           </SectionHead>
           <SectionBody>
-            {notFoundCryptoCurrencies.map(coin => (
+            {notFoundCryptoCurrencies.map((coin) => (
               <CoinPreview key={coin.id} coin={coin} />
             ))}
           </SectionBody>
@@ -217,7 +218,7 @@ const Apps = () => {
             {"can't find crypto-currencies corresponding to these Manager apps"}
           </SectionHead>
           <SectionBody>
-            {unknownApps.map(app => (
+            {unknownApps.map((app) => (
               <AppPreview key={app.name} app={app} />
             ))}
           </SectionBody>
@@ -227,7 +228,7 @@ const Apps = () => {
         <Section>
           <SectionHead>Apps correctly recognized by Live</SectionHead>
           <SectionBody>
-            {knownAppsWithCoin.map(all => (
+            {knownAppsWithCoin.map((all) => (
               <AppWithCoinPreview key={all.app.name} {...all} />
             ))}
           </SectionBody>
@@ -241,7 +242,7 @@ const Apps = () => {
             {" by Live (no install available)"}
           </SectionHead>
           <SectionBody>
-            {deprecatedApps.map(app => (
+            {deprecatedApps.map((app) => (
               <AppPreview key={app.name} app={app} />
             ))}
           </SectionBody>
@@ -254,7 +255,7 @@ const Apps = () => {
 Apps.demo = {
   title: "Apps",
   url: "/apps",
-  hidden: true
+  hidden: true,
 };
 
 export default Apps;
