@@ -13,7 +13,7 @@ export const urls = {
     "https://support.ledgerwallet.com/hc/en-us/articles/360006535873",
   feesEthereum: "https://support.ledger.com/hc/en-us/articles/115005197845",
   verifyTransactionDetails:
-    "https://support.ledgerwallet.com/hc/en-us/articles/360006433934",
+    "https://support.ledger.com/hc/en-us/articles/360006444193",
   erc20:
     "https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens",
   errors: {
