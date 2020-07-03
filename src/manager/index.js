@@ -66,6 +66,12 @@ const CacheAPI = {
   ): boolean =>
     deviceModel === "nanoS" && semver.lte(deviceInfo.version, "1.4.2"),
 
+  firmwareUnsupported: (
+    deviceModel: DeviceModelId,
+    deviceInfo: DeviceInfo
+  ): boolean =>
+    deviceModel === "nanoS" && semver.lt(deviceInfo.version, "1.3.0"),
+
   formatHashName: (
     input: string,
     // FIXME these will be made mandatory
