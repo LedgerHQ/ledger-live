@@ -13,6 +13,7 @@ import type {
 } from "./types";
 import type { Account } from "../../types";
 import { bitcoinPickingStrategy } from "./types";
+import { getEnv } from "../../env";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
@@ -150,8 +151,11 @@ const formatNetworkInfo = (networkInfo: ?{ feeItems: FeeItems }) => {
     .join(", ")}`;
 };
 
-export const formatTransaction = (t: Transaction, account: Account): string =>
-  `
+export const formatTransaction = (t: Transaction, account: Account): string => {
+  const n = getEnv("DEBUG_UTXO_DISPLAY");
+  const { excludeUTXOs, strategy, pickUnconfirmedRBF } = t.utxoStrategy;
+  const displayAll = excludeUTXOs.length <= n;
+  return `
 SEND ${
     t.useAllAmount
       ? "MAX"
@@ -166,14 +170,16 @@ with feePerByte=${
   } (${formatNetworkInfo(t.networkInfo)})
 ${[
   Object.keys(bitcoinPickingStrategy).find(
-    (k) => bitcoinPickingStrategy[k] === t.utxoStrategy.strategy
+    (k) => bitcoinPickingStrategy[k] === strategy
   ),
-  t.utxoStrategy.pickUnconfirmedRBF && "pick-unconfirmed",
+  pickUnconfirmedRBF && "pick-unconfirmed",
   t.rbf && "RBF-enabled",
 ]
   .filter(Boolean)
-  .join(" ")}${t.utxoStrategy.excludeUTXOs
+  .join(" ")}${excludeUTXOs
+    .slice(0, displayAll ? excludeUTXOs.length : n)
     .map((utxo) => `\nexclude ${utxo.hash} @${utxo.outputIndex}`)
     .join("")}`;
+};
 
 export default { fromTransactionRaw, toTransactionRaw, formatTransaction };

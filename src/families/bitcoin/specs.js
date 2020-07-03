@@ -61,17 +61,25 @@ const genericTest = ({
   const { txInputs, txOutputs } = status;
   invariant(txInputs, "tx inputs defined");
   invariant(txOutputs, "tx outputs defined");
+
+  const { bitcoinResources } = accountBeforeTransaction;
+  invariant(bitcoinResources, "bitcoin resources");
+
+  const nonDeterministicPicking =
+    transaction.utxoStrategy.strategy === bitcoinPickingStrategy.OPTIMIZE_SIZE;
+
   expect(operation).toMatchObject({
-    senders: txInputs.map((t) => t.address),
+    senders: nonDeterministicPicking
+      ? operation.senders
+      : txInputs.map((t) => t.address),
     recipients: txOutputs
       .filter((o) => !isChangeOutput(o))
       .map((t) => t.address),
   });
 
-  const beforeUtxos = accountBeforeTransaction.bitcoinResources?.utxos || [];
   const utxosPicked = (status.txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>
-      beforeUtxos.find(
+      bitcoinResources.utxos.find(
         (u) =>
           u.hash === previousTxHash && u.outputIndex === previousOutputIndex
       )
