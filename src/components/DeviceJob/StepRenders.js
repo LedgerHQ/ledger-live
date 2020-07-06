@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingBottom: 16,
+    marginHorizontal: 16,
   },
   retryButton: {
     alignSelf: "stretch",
