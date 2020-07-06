@@ -376,11 +376,11 @@ export const getDerivationModesForCurrency = (
   if (!disableBIP44[currency.id]) {
     all.push("");
   }
-  if (currency.supportsSegwit) {
-    all.push("segwit");
-  }
   if (currency.supportsNativeSegwit) {
     all.push("native_segwit");
+  }
+  if (currency.supportsSegwit) {
+    all.push("segwit");
   }
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {
     return all.filter((a) => !isInvalidDerivationMode(a));
