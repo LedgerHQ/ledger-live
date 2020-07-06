@@ -4,6 +4,7 @@ import type Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of, concat, empty } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
+import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";
 import type { FinalFirmware, DeviceInfo, McuVersion } from "../types/manager";
 
@@ -11,22 +12,29 @@ const blVersionAliases = {
   "0.0": "0.6",
 };
 
+const filterMCUForDeviceInfo = (deviceInfo) => {
+  const provider = getProviderId(deviceInfo);
+  return (mcu) => mcu.providers.includes(provider);
+};
+
 export default (finalFirmware: FinalFirmware) => (
   transport: Transport<*>
 ): Observable<*> =>
   from(getDeviceInfo(transport)).pipe(
-    mergeMap(({ majMin: blVersion, targetId }: DeviceInfo) =>
-      (blVersion in blVersionAliases
-        ? of(blVersionAliases[blVersion])
+    mergeMap((deviceInfo: DeviceInfo) =>
+      (deviceInfo.majMin in blVersionAliases
+        ? of(blVersionAliases[deviceInfo.majMin])
         : from(
             // we pick the best MCU to install in the context of the firmware
-            ManagerAPI.getMcus().then((mcus) =>
-              ManagerAPI.findBestMCU(
-                finalFirmware.mcu_versions
-                  .map((id) => mcus.find((mcu) => mcu.id === id))
-                  .filter(Boolean)
+            ManagerAPI.getMcus()
+              .then((mcus) => mcus.filter(filterMCUForDeviceInfo(deviceInfo)))
+              .then((mcus) =>
+                ManagerAPI.findBestMCU(
+                  finalFirmware.mcu_versions
+                    .map((id) => mcus.find((mcu) => mcu.id === id))
+                    .filter(Boolean)
+                )
               )
-            )
           )
       ).pipe(
         mergeMap((mcuVersion: ?McuVersion | string) => {
@@ -42,10 +50,10 @@ export default (finalFirmware: FinalFirmware) => (
               .split(".")
               .slice(0, 2)
               .join(".");
-            isMCU = blVersion === mcuFromBootloader;
+            isMCU = deviceInfo.majMin === mcuFromBootloader;
             version = isMCU ? mcuVersion.name : mcuFromBootloader;
             log("firmware-update", `flash ${version} isMcu=${String(isMCU)}`, {
-              blVersion,
+              blVersion: deviceInfo.majMin,
               mcuFromBootloader,
               version,
               isMCU,
@@ -58,7 +66,7 @@ export default (finalFirmware: FinalFirmware) => (
               step: "flash-" + (isMCU ? "mcu" : "bootloader"),
             }),
             ManagerAPI.installMcu(transport, "mcu", {
-              targetId,
+              targetId: deviceInfo.targetId,
               version,
             })
           );

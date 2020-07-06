@@ -5,6 +5,7 @@ import { Observable, from, of, empty, concat, throwError } from "rxjs";
 import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import { withDevicePolling, withDevice } from "./deviceAccess";
+import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";
 import {
   mcuOutdated,
@@ -86,7 +87,11 @@ const repair = (
             return from(mcusPromise).pipe(
               concatMap((mcus) => {
                 const next = ManagerAPI.findBestMCU(
-                  ManagerAPI.compatibleMCUForDeviceInfo(mcus, deviceInfo)
+                  ManagerAPI.compatibleMCUForDeviceInfo(
+                    mcus,
+                    deviceInfo,
+                    getProviderId(deviceInfo)
+                  )
                 );
                 if (next) return installMcu(next.name);
                 return empty();
