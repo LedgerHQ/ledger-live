@@ -9,7 +9,7 @@ import CoinifyWidget from "./CoinifyWidget";
 
 const forceInset = { bottom: "always" };
 
-export default function ExchangeScreen() {
+export default function History() {
   return (
     <SafeAreaView style={[styles.root]} forceInset={forceInset}>
       <TrackScreen category="ExchangeHistory" />

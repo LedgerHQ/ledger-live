@@ -15,7 +15,7 @@ import Button from "../../components/Button";
 
 const forceInset = { bottom: "always" };
 
-export default function ExchangeScreen() {
+export default function Buy() {
   const { t } = useTranslation();
   const navigation = useNavigation();
 

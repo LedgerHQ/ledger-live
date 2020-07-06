@@ -9,7 +9,6 @@ import ExchangeConnectDevice from "../../screens/Exchange/ConnectDevice";
 import ExchangeCoinifyWidget from "../../screens/Exchange/CoinifyWidgetScreen";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHeaderRightClose";
-import StepHeader from "../StepHeader";
 
 export default function ExchangeNavigator() {
   const { t } = useTranslation();
@@ -24,29 +23,17 @@ export default function ExchangeNavigator() {
       <Stack.Screen
         name={ScreenName.ExchangeSelectCurrency}
         component={ExchangeSelectCurrency}
-        options={{
-          headerTitle: () => (
-            <StepHeader title={t("exchange.buy.selectCurrency")} />
-          ),
-        }}
+        options={{ title: t("exchange.buy.selectCurrency") }}
       />
       <Stack.Screen
         name={ScreenName.ExchangeSelectAccount}
         component={ExchangeSelectAccount}
-        options={{
-          headerTitle: () => (
-            <StepHeader title={t("exchange.buy.selectAccount")} />
-          ),
-        }}
+        options={{ title: t("exchange.buy.selectAccount") }}
       />
       <Stack.Screen
         name={ScreenName.ExchangeConnectDevice}
         component={ExchangeConnectDevice}
-        options={{
-          headerTitle: () => (
-            <StepHeader title={t("exchange.buy.connectDevice")} />
-          ),
-        }}
+        options={{ title: t("exchange.buy.connectDevice") }}
       />
       <Stack.Screen
         name={ScreenName.ExchangeCoinifyWidget}
