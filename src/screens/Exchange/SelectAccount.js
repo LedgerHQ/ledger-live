@@ -1,8 +1,6 @@
 /* @flow */
 import React, { useCallback } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
-// $FlowFixMe
-import SafeAreaView from "react-native-safe-area-view";
+import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import type {
   Account,
@@ -22,11 +20,11 @@ import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import InfoIcon from "../../icons/Info";
+import PlusIcon from "../../icons/Plus";
 import Button from "../../components/Button";
 import { NavigatorName } from "../../const";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
-const forceInset = { bottom: "always" };
 
 type Props = {
   accounts: Account[],
@@ -85,11 +83,26 @@ export default function SelectAccount({ navigation, route }: Props) {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           showsVerticalScrollIndicator={false}
+          ListFooterComponent={
+            <Button
+              containerStyle={styles.addButton}
+              event="ExchangeStartBuyFlow"
+              type="tertiary"
+              outline={false}
+              IconLeft={PlusIcon}
+              title={t("exchange.buy.emptyState.CTAButton")}
+              onPress={() =>
+                navigation.navigate(NavigatorName.AddAccounts, {
+                  currency,
+                })
+              }
+            />
+          }
           keyboardDismissMode="on-drag"
         />
       );
     },
-    [accounts, renderItem],
+    [accounts, renderItem, navigation, currency, t],
   );
 
   // empty state if no accounts available for this currency
@@ -125,7 +138,7 @@ export default function SelectAccount({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView style={styles.root}>
       <TrackScreen category="ReceiveFunds" name="SelectAccount" />
       <KeyboardView style={{ flex: 1 }}>
         <View style={styles.searchContainer}>
@@ -221,5 +234,10 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
+  },
+  addButton: {
+    marginTop: 16,
+    paddingLeft: 8,
+    alignItems: "flex-start",
   },
 });
