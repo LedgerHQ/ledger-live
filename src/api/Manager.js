@@ -149,12 +149,14 @@ const getMcus: () => Promise<*> = makeLRUCache(
 
 const compatibleMCUForDeviceInfo = (
   mcus: McuVersion[],
-  deviceInfo: DeviceInfo
+  deviceInfo: DeviceInfo,
+  provider: number
 ): McuVersion[] =>
   mcus.filter(
     (m) =>
-      deviceInfo.majMin === m.from_bootloader_version ||
-      deviceInfo.version === m.from_bootloader_version
+      (deviceInfo.majMin === m.from_bootloader_version ||
+        deviceInfo.version === m.from_bootloader_version) &&
+      m.providers.includes(provider)
   );
 
 const findBestMCU = (compatibleMCU: McuVersion[]) => {
