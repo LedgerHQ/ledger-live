@@ -101,6 +101,15 @@ from(cmd.job(options)).subscribe({
   },
 });
 
+let sigIntSent;
 process.on("SIGINT", () => {
-  closeAllDevices();
+  if (!sigIntSent) {
+    sigIntSent = Date.now();
+    closeAllDevices();
+  } else {
+    if (Date.now() - sigIntSent > 3000) {
+      console.error("was not able to terminate gracefully. exiting");
+      process.exit(1);
+    }
+  }
 });
