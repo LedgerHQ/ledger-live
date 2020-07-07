@@ -20,11 +20,14 @@ type Route = {
 export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { t } = useTranslation();
   const currency = route && route.params && route.params.currency;
+  const token = route && route.params && route.params.token;
   return (
     <Stack.Navigator
       headerMode="float"
       initialRouteName={
-        currency
+        token
+          ? ScreenName.AddAccountsTokenCurrencyDisclaimer
+          : currency
           ? ScreenName.AddAccountsSelectDevice
           : ScreenName.AddAccountsSelectCrypto
       }
@@ -98,6 +101,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
       <Stack.Screen
         name={ScreenName.AddAccountsTokenCurrencyDisclaimer}
         component={AddAccountsTokenCurrencyDisclaimer}
+        initialParams={token ? { token } : undefined}
         options={{
           title: t("addAccounts.tokens.title"),
         }}

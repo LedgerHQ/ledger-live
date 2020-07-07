@@ -133,9 +133,12 @@ export default function SelectAccount({ navigation, route }: Props) {
             type="primary"
             title={t("exchange.buy.emptyState.CTAButton")}
             onPress={() =>
-              navigation.navigate(NavigatorName.AddAccounts, {
-                currency,
-              })
+              navigation.navigate(
+                NavigatorName.AddAccounts,
+                currency.type === "TokenCurrency"
+                  ? { token: currency }
+                  : { currency },
+              )
             }
           />
         </View>
