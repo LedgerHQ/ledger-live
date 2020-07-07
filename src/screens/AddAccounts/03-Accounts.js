@@ -117,9 +117,16 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       },
       blacklistedTokenIds,
     };
+    // will be set to false if an existing account is found
+    let onlyNewAccounts = true;
+
     this.scanSubscription = concat(
       from(prepareCurrency(currency)).pipe(ignoreElements()),
-      bridge.scanAccounts({ currency, deviceId, syncConfig }),
+      bridge.scanAccounts({
+        currency,
+        deviceId,
+        syncConfig,
+      }),
     ).subscribe({
       next: ({ account }) =>
         this.setState(
@@ -131,13 +138,20 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
               a => account.id === a.id,
             );
             const isNewAccount = isAccountEmpty(account);
+            if (!isNewAccount && !hasAlreadyBeenImported) {
+              onlyNewAccounts = false;
+            }
+
             if (!hasAlreadyBeenScanned) {
               return {
                 scannedAccounts: [...scannedAccounts, account],
-                selectedIds:
-                  !hasAlreadyBeenImported && !isNewAccount
-                    ? uniq([...selectedIds, account.id])
-                    : selectedIds,
+                selectedIds: onlyNewAccounts
+                  ? hasAlreadyBeenImported || selectedIds.length > 0
+                    ? selectedIds
+                    : [account.id]
+                  : !hasAlreadyBeenImported && !isNewAccount
+                  ? uniq([...selectedIds, account.id])
+                  : selectedIds,
               };
             }
             return null;
