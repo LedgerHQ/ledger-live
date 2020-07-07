@@ -189,7 +189,7 @@ export const scanAccounts = ({
                     nativeSegwitAppsVersionsMap[currency.managerAppName]
                   )
                 ) {
-                  return;
+                  continue;
                 }
               }
             }
