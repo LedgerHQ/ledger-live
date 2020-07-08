@@ -46,14 +46,18 @@ const CacheAPI = {
   firmwareUpdateNeedsLegacyBlueResetInstructions: (
     deviceInfo: DeviceInfo,
     deviceModelId: DeviceModelId
-  ) => deviceModelId === "blue" && semver.lt(deviceInfo.version, "2.1.1"),
+  ) =>
+    deviceModelId === "blue" &&
+    semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "2.1.1"),
 
   // TO BE CONFIRMED – LL-2564
   firmwareUpdateWillResetSeed: (
     deviceInfo: DeviceInfo,
     deviceModelId: DeviceModelId,
     _firmware: FirmwareUpdateContext
-  ) => deviceModelId === "blue" && semver.lt(deviceInfo.version, "2.1.1"),
+  ) =>
+    deviceModelId === "blue" &&
+    semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "2.1.1"),
 
   firmwareUpdateWillUninstallApps: (
     _deviceInfo: DeviceInfo,
@@ -64,13 +68,15 @@ const CacheAPI = {
     deviceModel: DeviceModelId,
     deviceInfo: DeviceInfo
   ): boolean =>
-    deviceModel === "nanoS" && semver.lte(deviceInfo.version, "1.4.2"),
+    deviceModel === "nanoS" &&
+    semver.lte(semver.valid(semver.coerce(deviceInfo.version)), "1.4.2"),
 
   firmwareUnsupported: (
     deviceModel: DeviceModelId,
     deviceInfo: DeviceInfo
   ): boolean =>
-    deviceModel === "nanoS" && semver.lt(deviceInfo.version, "1.3.0"),
+    deviceModel === "nanoS" &&
+    semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "1.3.0"),
 
   formatHashName: (
     input: string,
@@ -81,7 +87,8 @@ const CacheAPI = {
     const shouldEllipsis =
       deviceModel && deviceInfo
         ? deviceModel === "blue" ||
-          (deviceModel === "nanoS" && semver.lt(deviceInfo.version, "1.6.0"))
+          (deviceModel === "nanoS" &&
+            semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "1.6.0"))
         : true;
     const hash = (input || "").toUpperCase();
     return hash.length > 8 && shouldEllipsis
