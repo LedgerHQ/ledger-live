@@ -1,6 +1,6 @@
 // @flow
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { DeviceInfo } from "../types/manager";
+import type { DeviceInfo } from "../../types/manager";
 
 const deviceInfos = {
   NanoS120: {

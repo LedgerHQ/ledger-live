@@ -1,6 +1,6 @@
 // @flow
 import manager from ".";
-import { lenseDevices } from "../__tests__/deviceInfos";
+import { lenseDevices } from "../__tests__/test-helpers/deviceInfos";
 
 test("firmwareUpdateNeedsLegacyBlueResetInstructions", () => {
   lenseDevices([
