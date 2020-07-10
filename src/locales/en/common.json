@@ -965,6 +965,32 @@
     "total": "Total balance:",
     "listAccount": "Account allocation ({{count}})"
   },
+  "help": {
+    "gettingStarted": {
+      "title": "Getting Started",
+      "desc": "Start here"
+    },
+    "helpCenter": {
+      "title": "Help center",
+      "desc": "Common problems"
+    },
+    "ledgerAcademy": {
+      "title": "Ledger Academy",
+      "desc": "Crypto 101"
+    },
+    "facebook": {
+      "title": "Facebook",
+      "desc": "Like our page"
+    },
+    "twitter": {
+      "title": "Twitter",
+      "desc": "Follow us"
+    },
+    "github": {
+      "title": "Github",
+      "desc": "Review our code"
+    }
+  },
   "settings": {
     "header": "Settings",
     "display": {
