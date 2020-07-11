@@ -8,17 +8,12 @@ import sampleSize from "lodash/sampleSize";
 import get from "lodash/get";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { getTronSuperRepresentatives } from "../../api/Tron";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 
 const currency = getCryptoCurrencyById("tron");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "5");
-
-let superRepresentatives;
-
-getTronSuperRepresentatives().then((r) => (superRepresentatives = r));
 
 const tron: AppSpec<Transaction> = {
   name: "Tron",
@@ -156,7 +151,7 @@ const tron: AppSpec<Transaction> = {
     },
     {
       name: "submit vote",
-      transaction: ({ account, bridge }) => {
+      transaction: ({ account, bridge, preloadedData }) => {
         const TP = BigNumber(get(account, "tronResources.tronPower", "0"));
         invariant(TP.gt(0), "no tron power to vote");
 
@@ -166,6 +161,7 @@ const tron: AppSpec<Transaction> = {
         );
 
         invariant(TP.gt(currentTPVoted), "you have no tron power left");
+        const { superRepresentatives } = preloadedData;
         invariant(
           superRepresentatives && superRepresentatives.length,
           "there are no super representatives to vote for, or the list has not been loaded yet"

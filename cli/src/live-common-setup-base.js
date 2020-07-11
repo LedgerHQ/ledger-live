@@ -2,6 +2,7 @@
 /* eslint-disable no-console */
 import winston from "winston";
 import { setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
+import simple from "@ledgerhq/live-common/lib/logs/simple";
 import { implementCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import { listen } from "@ledgerhq/logs";
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
@@ -64,7 +65,7 @@ const winstonFormatConsole = combine(
   // eslint-disable-next-line no-unused-vars
   format(({ type, id, date, ...rest }) => rest)(),
   format.colorize(),
-  format.simple()
+  simple()
 );
 
 const levels = {

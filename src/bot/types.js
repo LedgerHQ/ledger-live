@@ -45,6 +45,7 @@ export type TransactionArg<T> = {
   siblings: Account[],
   bridge: AccountBridge<T>,
   maxSpendable: BigNumber,
+  preloadedData: *,
 };
 
 export type TransactionRes<T> = {

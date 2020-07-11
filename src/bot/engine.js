@@ -103,7 +103,7 @@ export async function runWithAppSpec<T: Transaction>(
     const syncConfig = { paginationConfig: {} };
 
     let t = now();
-    await bridge.preload();
+    const preloadedData = await bridge.preload();
     const preloadTime = now() - t;
 
     // Scan all existing accounts
@@ -188,6 +188,7 @@ export async function runWithAppSpec<T: Transaction>(
         accounts,
         mutationsCount,
         syncAllAccountsTime,
+        preloadedData,
       });
       // eslint-disable-next-line no-console
       console.log(formatReportForConsole(report));
@@ -230,6 +231,7 @@ export async function runOnAccount<T: Transaction>({
   accounts,
   mutationsCount,
   syncAllAccountsTime,
+  preloadedData,
 }: {
   appCandidate: *,
   spec: AppSpec<T>,
@@ -238,6 +240,7 @@ export async function runOnAccount<T: Transaction>({
   accounts: *,
   mutationsCount: { [_: string]: number },
   syncAllAccountsTime: number,
+  preloadedData: *,
 }): Promise<MutationReport<T>> {
   const { mutations } = spec;
 
@@ -280,6 +283,7 @@ export async function runOnAccount<T: Transaction>({
           bridge: accountBridge,
           siblings: accounts.filter((a) => a !== account),
           maxSpendable,
+          preloadedData,
         };
         if (spec.transactionCheck) spec.transactionCheck(arg);
         const r: TransactionRes<T> = mutation.transaction(arg);
