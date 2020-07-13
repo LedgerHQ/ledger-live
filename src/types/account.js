@@ -18,6 +18,7 @@ import type {
   BalanceHistoryRaw,
   PortfolioRange,
 } from "./portfolio";
+import type { SwapOperation, SwapOperationRaw } from "../swap/types";
 
 export type BalanceHistoryMap = {
   [_: PortfolioRange]: BalanceHistory,
@@ -31,7 +32,7 @@ export type BalanceHistoryRawMap = {
 export type TokenAccount = {
   type: "TokenAccount",
   id: string,
-  // id of the parent account this token accuont belongs to
+  // id of the parent account this token account belongs to
   parentId: string,
   token: TokenCurrency,
   balance: BigNumber,
@@ -41,6 +42,8 @@ export type TokenAccount = {
   pendingOperations: Operation[],
   starred: boolean,
   balanceHistory?: BalanceHistoryMap,
+  // Swap operations linked to this account
+  swapHistory?: SwapOperation[],
 };
 
 // A child account belongs to an Account but has its own address
@@ -49,7 +52,7 @@ export type ChildAccount = {
   id: string,
   name: string,
   starred: boolean,
-  // id of the parent account this token accuont belongs to
+  // id of the parent account this token account belongs to
   parentId: string,
   currency: CryptoCurrency,
   address: string,
@@ -59,6 +62,8 @@ export type ChildAccount = {
   operations: Operation[],
   pendingOperations: Operation[],
   balanceHistory?: BalanceHistoryMap,
+  // Swap operations linked to this account
+  swapHistory?: SwapOperation[],
 };
 
 export type Address = {|
@@ -86,7 +91,7 @@ export type Account = {
   // the special value of '' means it's bip44 with purpose 44.
   derivationMode: DerivationMode,
 
-  // the iterated number to derivate the account in a given derivationMode config
+  // the iterated number to derive the account in a given derivationMode config
   // in context of bip44, it would be the account field of bip44 ( m/purpose'/cointype'/account' )
   index: number,
 
@@ -174,6 +179,9 @@ export type Account = {
   bitcoinResources?: BitcoinResources,
   tronResources?: TronResources,
   cosmosResources?: CosmosResources,
+
+  // Swap operations linked to this account
+  swapHistory?: SwapOperation[],
 };
 
 export type SubAccount = TokenAccount | ChildAccount;
@@ -196,6 +204,7 @@ export type TokenAccountRaw = {
   pendingOperations: OperationRaw[],
   balance: string,
   balanceHistory?: BalanceHistoryRawMap,
+  swapHistory?: SwapOperationRaw[],
 };
 
 export type ChildAccountRaw = {
@@ -242,6 +251,8 @@ export type AccountRaw = {
   bitcoinResources?: BitcoinResourcesRaw,
   tronResources?: TronResourcesRaw,
   cosmosResources?: CosmosResourcesRaw,
+  // Swap operations linked to this account
+  swapHistory?: SwapOperationRaw[],
 };
 
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;

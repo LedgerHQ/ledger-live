@@ -39,6 +39,7 @@ type TransactionRequest = {
   account: AccountLike,
   transaction: Transaction,
   status: TransactionStatus,
+  appName?: string,
 };
 
 type TransactionResult =
@@ -105,7 +106,7 @@ export const createAction = (
     reduxDevice: ?Device,
     txRequest: TransactionRequest
   ): TransactionState => {
-    const { transaction } = txRequest;
+    const { transaction, appName } = txRequest;
     const mainAccount = getMainAccount(
       txRequest.account,
       txRequest.parentAccount
@@ -113,6 +114,7 @@ export const createAction = (
 
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: mainAccount,
+      appName,
     });
 
     const { device, opened, inWrongDeviceForAccount, error } = appState;

@@ -48,7 +48,7 @@ export type ConnectAppEvent =
   | { type: "opened", app?: AppAndVersion, derivation?: { address: string } }
   | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
 
-const dashboardNames = ["BOLOS", "OLOS\u0000"];
+export const dashboardNames = ["BOLOS", "OLOS\u0000"];
 
 const openAppFromDashboard = (
   transport,

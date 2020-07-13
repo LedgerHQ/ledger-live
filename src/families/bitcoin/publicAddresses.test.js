@@ -1,18 +1,19 @@
 // @flow
 
-import { abandonSeedLegacyPerCurrency } from "./publicAddresses";
+import { getAbandonSeedAddress } from "../../data/abandonseed";
 import { listCryptoCurrencies } from "../../currencies";
 
 const ignore = ["bitcloud", "bitcore", "bitsend", "megacoin"];
 
 test("all bitcoin forks that have a manager app have a defined address in abandonSeedLegacyPerCurrency", () => {
-  const currencies = listCryptoCurrencies(true)
+  const currenciyIds = listCryptoCurrencies(true)
     .filter(
       (c) =>
         c.family === "bitcoin" && c.managerAppName && !ignore.includes(c.id)
     )
     .map((c) => c.id)
     .sort();
-  const keys = Object.keys(abandonSeedLegacyPerCurrency).sort();
-  expect(currencies).toEqual(keys);
+  expect(
+    currenciyIds.every((id) => getAbandonSeedAddress(id) !== undefined)
+  ).toEqual(true);
 });

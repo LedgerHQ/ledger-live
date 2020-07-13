@@ -1,13 +1,25 @@
 // @flow
 import type Transport from "@ledgerhq/hw-transport";
+import { BigNumber } from "bignumber.js";
+import { TransportStatusError } from "@ledgerhq/errors";
+import invariant from "invariant";
 
-const START_NEW_TRANSACTION_COMMAND: number = 0x01;
-const SET_PARTNER_KEY_COMMAND: number = 0x02;
-const CHECK_PARTNER_COMMAND: number = 0x03;
-const PROCESS_TRANSACTION_RESPONSE: number = 0x04;
-const CHECK_TRANSACTION_SIGNATURE: number = 0x05;
-const CHECK_PAYOUT_ADDRESS: number = 0x06;
-const CHECK_REFUND_ADDRESS: number = 0x07;
+const START_NEW_TRANSACTION_COMMAND: number = 0x03;
+const SET_PARTNER_KEY_COMMAND: number = 0x04;
+const CHECK_PARTNER_COMMAND: number = 0x05;
+const PROCESS_TRANSACTION_RESPONSE: number = 0x06;
+const CHECK_TRANSACTION_SIGNATURE: number = 0x07;
+const CHECK_PAYOUT_ADDRESS: number = 0x08;
+const CHECK_REFUND_ADDRESS: number = 0x09;
+const SIGN_COIN_TRANSACTION: number = 0x0a;
+
+const maybeThrowProtocolError = (result: Buffer): void => {
+  invariant(result.length >= 2, "SwapTransport: Unexpected result length");
+  const resultCode = result.readUInt16BE(result.length - 2);
+  if (resultCode !== 0x9000) {
+    throw new TransportStatusError(resultCode);
+  }
+};
 
 export default class Swap {
   transport: Transport<*>;
@@ -28,50 +40,6 @@ export default class Swap {
     this.transport = transport;
   }
 
-  isSuccess(result: Buffer): boolean {
-    return (
-      result.length >= 2 && result.readUInt16BE(result.length - 2) === 0x9000
-    );
-  }
-
-  mapProtocolError(result: Buffer): void {
-    if (result.length < 2) throw new Error("Response length is too small");
-    var errorMessage: string;
-    switch (result.readUInt16BE(result.length - 2)) {
-      case 0x6a80:
-        errorMessage = "INCORRECT_COMMAND_DATA";
-        break;
-      case 0x6a81:
-        errorMessage = "DESERIALIZATION_FAILED";
-        break;
-      case 0x6a82:
-        errorMessage = "WRONG_TRANSACTION_ID";
-        break;
-      case 0x6a83:
-        errorMessage = "INVALID_ADDRESS";
-        break;
-      case 0x6a84:
-        errorMessage = "USER_REFUSED";
-        break;
-      case 0x6a85:
-        errorMessage = "INTERNAL_ERROR";
-        break;
-      case 0x6e00:
-        errorMessage = "CLASS_NOT_SUPPORTED";
-        break;
-      case 0x6d00:
-        errorMessage = "INVALID_INSTRUCTION";
-        break;
-      case 0x9d1a:
-        errorMessage = "SIGN_VERIFICATION_FAIL";
-        break;
-      default:
-        errorMessage = "Unknown error";
-        break;
-    }
-    throw new Error("Swap application report error " + errorMessage);
-  }
-
   async startNewTransaction(): Promise<string> {
     let result: Buffer = await this.transport.send(
       0xe0,
@@ -81,9 +49,8 @@ export default class Swap {
       Buffer.alloc(0),
       this.allowedStatuses
     );
-    if (!this.isSuccess(result)) this.mapProtocolError(result);
-    if (result.length !== 12)
-      throw new Error("APDU response length should be 12");
+    maybeThrowProtocolError(result);
+
     return result.toString("ascii", 0, 10);
   }
 
@@ -96,7 +63,8 @@ export default class Swap {
       partnerNameAndPublicKey,
       this.allowedStatuses
     );
-    if (!this.isSuccess(result)) this.mapProtocolError(result);
+
+    maybeThrowProtocolError(result);
   }
 
   async checkPartner(signatureOfPartnerData: Buffer): Promise<void> {
@@ -108,19 +76,32 @@ export default class Swap {
       signatureOfPartnerData,
       this.allowedStatuses
     );
-    if (!this.isSuccess(result)) this.mapProtocolError(result);
+
+    maybeThrowProtocolError(result);
   }
 
-  async processTransaction(transaction: Buffer): Promise<void> {
+  async processTransaction(transaction: Buffer, fee: BigNumber): Promise<void> {
+    var hex: string = fee.toString(16);
+    hex = hex.padStart(hex.length + (hex.length % 2), "0");
+    var feeHex: Buffer = Buffer.from(hex, "hex");
+
+    const bufferToSend: Buffer = Buffer.concat([
+      Buffer.from([transaction.length]),
+      transaction,
+      Buffer.from([feeHex.length]),
+      feeHex,
+    ]);
+
     let result: Buffer = await this.transport.send(
       0xe0,
       PROCESS_TRANSACTION_RESPONSE,
       0x00,
       0x00,
-      transaction,
+      bufferToSend,
       this.allowedStatuses
     );
-    if (!this.isSuccess(result)) this.mapProtocolError(result);
+
+    maybeThrowProtocolError(result);
   }
 
   async checkTransactionSignature(transactionSignature: Buffer): Promise<void> {
@@ -132,7 +113,7 @@ export default class Swap {
       transactionSignature,
       this.allowedStatuses
     );
-    if (!this.isSuccess(result)) this.mapProtocolError(result);
+    maybeThrowProtocolError(result);
   }
 
   async checkPayoutAddress(
@@ -140,20 +121,14 @@ export default class Swap {
     currencyConfigSignature: Buffer,
     addressParameters: Buffer
   ): Promise<void> {
-    if (payoutCurrencyConfig.length > 255) {
-      throw new Error("Currency config is too big");
-    }
-    if (
-      currencyConfigSignature.length < 70 ||
-      currencyConfigSignature.length > 73
-    ) {
-      throw new Error(
-        "Signature should be DER serialized and have length in [70, 73] bytes"
-      );
-    }
-    if (addressParameters.length > 255) {
-      throw new Error("Address parameters is too big");
-    }
+    invariant(payoutCurrencyConfig.length <= 255, "Currency config is too big");
+    invariant(addressParameters.length <= 255, "Address parameter is too big.");
+    invariant(
+      currencyConfigSignature.length >= 70 &&
+        currencyConfigSignature.length <= 73,
+      "Signature should be DER serialized and have length in [70, 73] bytes."
+    );
+
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([payoutCurrencyConfig.length]),
       payoutCurrencyConfig,
@@ -161,6 +136,7 @@ export default class Swap {
       Buffer.from([addressParameters.length]),
       addressParameters,
     ]);
+
     let result: Buffer = await this.transport.send(
       0xe0,
       CHECK_PAYOUT_ADDRESS,
@@ -169,7 +145,7 @@ export default class Swap {
       bufferToSend,
       this.allowedStatuses
     );
-    if (!this.isSuccess(result)) this.mapProtocolError(result);
+    maybeThrowProtocolError(result);
   }
 
   async checkRefundAddress(
@@ -177,20 +153,14 @@ export default class Swap {
     currencyConfigSignature: Buffer,
     addressParameters: Buffer
   ): Promise<void> {
-    if (refundCurrencyConfig.length > 255) {
-      throw new Error("Currency config is too big");
-    }
-    if (
-      currencyConfigSignature.length < 70 ||
-      currencyConfigSignature.length > 73
-    ) {
-      throw new Error(
-        "Signature should be DER serialized and have length in [70, 73] bytes"
-      );
-    }
-    if (addressParameters.length > 255) {
-      throw new Error("Address parameters is too big");
-    }
+    invariant(refundCurrencyConfig.length <= 255, "Currency config is too big");
+    invariant(addressParameters.length <= 255, "Address parameter is too big.");
+    invariant(
+      currencyConfigSignature.length >= 70 &&
+        currencyConfigSignature.length <= 73,
+      "Signature should be DER serialized and have length in [70, 73] bytes."
+    );
+
     const bufferToSend: Buffer = Buffer.concat([
       Buffer.from([refundCurrencyConfig.length]),
       refundCurrencyConfig,
@@ -198,6 +168,7 @@ export default class Swap {
       Buffer.from([addressParameters.length]),
       addressParameters,
     ]);
+
     let result: Buffer = await this.transport.send(
       0xe0,
       CHECK_REFUND_ADDRESS,
@@ -206,6 +177,18 @@ export default class Swap {
       bufferToSend,
       this.allowedStatuses
     );
-    if (!this.isSuccess(result)) this.mapProtocolError(result);
+    maybeThrowProtocolError(result);
+  }
+
+  async signCoinTransaction(): Promise<void> {
+    let result: Buffer = await this.transport.send(
+      0xe0,
+      SIGN_COIN_TRANSACTION,
+      0x00,
+      0x00,
+      Buffer.alloc(0),
+      this.allowedStatuses
+    );
+    maybeThrowProtocolError(result);
   }
 }

@@ -9,6 +9,8 @@ import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
 import { validateRecipient } from "../../../bridge/shared";
+import { getAbandonSeedAddress } from "../../../data/abandonseed";
+
 import {
   NotEnoughBalance,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -403,7 +405,7 @@ const estimateMaxSpendable = async ({
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
-    recipient: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4", // abandon seed generate with ledger-live-bot
+    recipient: getAbandonSeedAddress(mainAccount.currency.id),
     ...transaction,
     useAllAmount: true,
   });

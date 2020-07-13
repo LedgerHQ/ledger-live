@@ -22,7 +22,7 @@ import { makeLRUCache } from "../../../cache";
 import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
-import { abandonSeedLegacyPerCurrency } from "../publicAddresses";
+import { getAbandonSeedAddress } from "../../../data/abandonseed";
 import { getMinRelayFee } from "../fees";
 import { isChangeOutput } from "../transaction";
 
@@ -62,8 +62,6 @@ const createTransaction = () => ({
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
-const worseCaseCostEstimationAddresses = abandonSeedLegacyPerCurrency;
-
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
@@ -75,7 +73,7 @@ const estimateMaxSpendable = async ({
     ...createTransaction(),
     ...transaction,
     useAllAmount: true,
-    recipient: worseCaseCostEstimationAddresses[mainAccount.currency.id],
+    recipient: getAbandonSeedAddress(mainAccount.currency.id),
   });
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;

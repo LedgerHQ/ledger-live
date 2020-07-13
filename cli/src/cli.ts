@@ -85,7 +85,7 @@ if (!cmd) {
   process.exit(1);
 }
 const argv = mainOptions._unknown || [];
-const options = commandLineArgs(cmd.args, { argv });
+const options = commandLineArgs(cmd.args, { argv, stopAtFirstUnknown: true });
 from(cmd.job(options)).subscribe({
   next: (log) => {
     if (log !== undefined) console.log(log);

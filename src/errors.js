@@ -117,3 +117,16 @@ export const CosmosBroadcastError = {
   "16": createCustomErrorClass(" CosmosBroadcastCodeGasOverflow"),
   "17": createCustomErrorClass(" CosmosBroadcastCodeNoSignatures"),
 };
+export const SwapNoAvailableProviders = createCustomErrorClass(
+  "SwapNoAvailableProviders"
+);
+
+export const SwapExchangeRateOutOfBounds = createCustomErrorClass(
+  "SwapExchangeRateOutOfBounds"
+);
+
+export const SwapUnknownSwapId = createCustomErrorClass("SwapUnknownSwapId");
+
+export const SwapGenericAPIError = createCustomErrorClass(
+  "SwapGenericAPIError"
+);
