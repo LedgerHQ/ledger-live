@@ -8,7 +8,9 @@ import {
   catchError,
   switchMap,
   tap,
+  distinctUntilChanged,
 } from "rxjs/operators";
+import isEqual from "lodash/isEqual";
 import { useEffect, useCallback, useState, useMemo } from "react";
 import { log } from "@ledgerhq/logs";
 import {
@@ -65,7 +67,7 @@ export type AppResult = {|
 type AppAction = Action<AppRequest, AppState, AppResult>;
 
 type Event =
-  | { type: "error", error: Error }
+  | { type: "error", error: Error, device?: ?Device }
   | { type: "deviceChange", device: ?Device }
   | ConnectAppEvent
   | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
@@ -110,35 +112,75 @@ const reducer = (state: State, e: Event): State => {
 
     case "error":
       return {
-        ...getInitialState(),
+        ...getInitialState(e.device),
+        device: e.device || null,
         error: e.error,
         isLoading: false,
       };
 
     case "ask-open-app":
       return {
-        ...state,
+        isLoading: false,
+        requestQuitApp: false,
+        requiresAppInstallation: null,
+        allowOpeningRequestedWording: null,
+        allowOpeningGranted: false,
+        device: state.device,
+        opened: false,
+        appAndVersion: null,
+        error: null,
+        derivation: null,
+        displayUpgradeWarning: false,
         unresponsive: false,
         requestOpenApp: e.appName,
       };
 
     case "ask-quit-app":
       return {
-        ...state,
+        isLoading: false,
+        requestOpenApp: null,
+        requiresAppInstallation: null,
+        allowOpeningRequestedWording: null,
+        allowOpeningGranted: false,
+        device: state.device,
+        opened: false,
+        appAndVersion: null,
+        error: null,
+        derivation: null,
+        displayUpgradeWarning: false,
         unresponsive: false,
         requestQuitApp: true,
       };
 
     case "device-permission-requested":
       return {
-        ...state,
+        isLoading: false,
+        requestQuitApp: false,
+        requestOpenApp: null,
+        requiresAppInstallation: null,
+        allowOpeningGranted: false,
+        device: state.device,
+        opened: false,
+        appAndVersion: null,
+        error: null,
+        derivation: null,
+        displayUpgradeWarning: false,
         unresponsive: false,
         allowOpeningRequestedWording: e.wording,
       };
 
     case "device-permission-granted":
       return {
-        ...state,
+        isLoading: false,
+        requestQuitApp: false,
+        requestOpenApp: null,
+        requiresAppInstallation: null,
+        device: state.device,
+        opened: false,
+        appAndVersion: null,
+        error: null,
+        derivation: null,
+        displayUpgradeWarning: false,
         unresponsive: false,
         allowOpeningRequestedWording: null,
         allowOpeningGranted: true,
@@ -146,7 +188,15 @@ const reducer = (state: State, e: Event): State => {
 
     case "app-not-installed":
       return {
-        ...state,
+        requestQuitApp: false,
+        requestOpenApp: null,
+        allowOpeningGranted: false,
+        device: state.device,
+        opened: false,
+        appAndVersion: null,
+        error: null,
+        derivation: null,
+        displayUpgradeWarning: false,
         isLoading: false,
         unresponsive: false,
         allowOpeningRequestedWording: null,
@@ -155,7 +205,13 @@ const reducer = (state: State, e: Event): State => {
 
     case "opened":
       return {
-        ...state,
+        requestQuitApp: false,
+        requestOpenApp: null,
+        requiresAppInstallation: null,
+        allowOpeningRequestedWording: null,
+        allowOpeningGranted: false,
+        device: state.device,
+        error: null,
         isLoading: false,
         unresponsive: false,
         opened: true,
@@ -212,25 +268,90 @@ function inferCommandParams(appRequest: AppRequest) {
   };
 }
 
+const POLLING = 1000;
+
+const implementations = {
+  // in this paradigm, we know that deviceSubject is reflecting the device events
+  // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
+  event: ({ deviceSubject, connectApp, params }) =>
+    deviceSubject.pipe(
+      // debounce a bit the connect/disconnect event that we don't need
+      debounceTime(1000),
+      // each time there is a device change, we pipe to the command
+      switchMap((device) =>
+        concat(of({ type: "deviceChange", device }), connectApp(device, params))
+      )
+    ),
+
+  // in this paradigm, we can't observe directly the device, so we have to poll it
+  polling: ({ deviceSubject, params, connectApp }) =>
+    Observable.create((o) => {
+      let device;
+      const sub = deviceSubject.subscribe((d) => {
+        device = d;
+        o.next({ type: "deviceChange", device });
+      });
+
+      let connectSub;
+      let finished;
+      let timeout;
+      function loop() {
+        if (finished) {
+          return;
+        }
+        if (!device) {
+          timeout = setTimeout(loop, POLLING);
+          return;
+        }
+        connectSub = connectApp(device, params).subscribe({
+          next: (event) => {
+            if (event.type === "error") {
+              o.next({ ...event, device });
+            } else {
+              o.next(event);
+            }
+          },
+          complete: () => {
+            timeout = setTimeout(loop, POLLING);
+          },
+          error: (e) => {
+            o.error(e);
+          },
+        });
+      }
+
+      timeout = setTimeout(loop, POLLING);
+
+      return () => {
+        if (connectSub) connectSub.unsubscribe();
+        sub.unsubscribe();
+        finished = true;
+        clearTimeout(timeout);
+      };
+    }).pipe(distinctUntilChanged(isEqual)),
+};
+
+let currentMode: $Keys<typeof implementations> = "event";
+
+export function setDeviceMode(mode: $Keys<typeof implementations>) {
+  currentMode = mode;
+}
+
 export const createAction = (
   connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>
 ): AppAction => {
   const connectApp = (device, params) =>
-    concat(
-      of({ type: "deviceChange", device }),
-      !device
-        ? empty()
-        : connectAppExec({
-            modelId: device.modelId,
-            devicePath: device.deviceId,
-            ...params,
-          }).pipe(catchError((error: Error) => of({ type: "error", error })))
-    );
+    !device
+      ? empty()
+      : connectAppExec({
+          modelId: device.modelId,
+          devicePath: device.deviceId,
+          ...params,
+        }).pipe(catchError((error: Error) => of({ type: "error", error })));
 
   const useHook = (device: ?Device, appRequest: AppRequest): AppState => {
     // repair modal will interrupt everything and be rendered instead of the background content
     const [state, setState] = useState(() => getInitialState(device));
-    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     const params = useMemo(
@@ -247,12 +368,10 @@ export const createAction = (
     );
 
     useEffect(() => {
-      const sub = deviceSubject
+      if (state.opened) return;
+      const impl = implementations[currentMode];
+      const sub = impl({ deviceSubject, connectApp, params })
         .pipe(
-          // debounce a bit the connect/disconnect event that we don't need
-          debounceTime(1000),
-          // each time there is a device change, we pipe to the command
-          switchMap((device) => connectApp(device, params)),
           tap((e) => log("actions-app-event", e.type, e)),
           // tap(e => console.log("connectApp event", e)),
           // we gather all events with a reducer into the UI state
@@ -274,11 +393,11 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [params, deviceSubject, resetIndex]);
+    }, [params, deviceSubject, state.opened]);
 
     const onRetry = useCallback(() => {
-      setResetIndex((currIndex) => currIndex + 1);
-    }, []);
+      setState(getInitialState(device));
+    }, [device]);
 
     const passWarning = useCallback(() => {
       setState((currState) => ({
