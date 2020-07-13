@@ -13,6 +13,7 @@ libcore-getFeesForTransaction.js \
 libcore-postSyncPatch.js \
 libcore-postBuildAccount.js \
 libcore-getAccountNetworkInfo.js \
+libcore-mergeOperations.js \
 transaction.js \
 bridge/js.js \
 bridge/libcore.js \

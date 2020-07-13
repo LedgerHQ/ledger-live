@@ -9,17 +9,19 @@ import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
 
 function formatOperationSpecifics(op: Operation, unit: ?Unit): string {
   const { validators } = op.extra;
-  return (validators || []).map(
-    (v) =>
-      `\n    to ${v.address} ${
-        unit
-          ? formatCurrencyUnit(unit, BigNumber(v.amount), {
-              showCode: true,
-              disableRounding: true,
-            }).padEnd(16)
-          : v.amount
-      }`
-  );
+  return (validators || [])
+    .map(
+      (v) =>
+        `\n    to ${v.address} ${
+          unit
+            ? formatCurrencyUnit(unit, BigNumber(v.amount), {
+                showCode: true,
+                disableRounding: true,
+              }).padEnd(16)
+            : v.amount
+        }`
+    )
+    .join("");
 }
 
 function formatAccountSpecifics(account: Account): string {
@@ -114,4 +116,35 @@ function formatAccountSpecifics(account: Account): string {
   return str;
 }
 
-export default { formatAccountSpecifics, formatOperationSpecifics };
+export function fromOperationExtraRaw(extra: ?Object) {
+  if (extra && extra.validators) {
+    return {
+      ...extra,
+      validators: extra.validators.map((o) => ({
+        ...o,
+        amount: BigNumber(o.amount),
+      })),
+    };
+  }
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: ?Object) {
+  if (extra && extra.validators) {
+    return {
+      ...extra,
+      validators: extra.validators.map((o) => ({
+        ...o,
+        amount: o.amount.toString(),
+      })),
+    };
+  }
+  return extra;
+}
+
+export default {
+  formatAccountSpecifics,
+  formatOperationSpecifics,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+};

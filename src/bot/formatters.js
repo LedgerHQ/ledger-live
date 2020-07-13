@@ -54,7 +54,7 @@ export function formatReportForConsole<T: Transaction>({
     str += `max spendable ~${formatCurrencyUnit(account.unit, maxSpendable)}\n`;
   }
   if (unavailableMutationReasons) {
-    let detail;
+    let detail = "?";
     if (account && isAccountEmpty(account)) {
       detail = "account is empty";
     } else {

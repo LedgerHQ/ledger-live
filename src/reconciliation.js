@@ -23,87 +23,64 @@ import {
   fromBalanceHistoryRawMap,
 } from "./account";
 
-const sameOp = (a: Operation, b: Operation) =>
-  a === b ||
-  (a.id === b.id && // hash, accountId, type are in id
-    a.date.getTime() === b.date.getTime() &&
-    (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
-    (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
-    isEqual(a.senders, b.senders) &&
-    isEqual(a.recipients, b.recipients));
-
-function findExistingOp(ops, op) {
-  return ops.find((o) => o.id === op.id);
-}
-
 // aim to build operations with the minimal diff & call to libcore possible
 export async function minimalOperationsBuilder<CO>(
   existingOperations: Operation[],
   coreOperations: CO[],
-  buildOp: (coreOperation: CO) => Promise<?Operation>
+  buildOp: (coreOperation: CO) => Promise<?Operation>,
+  // if defined, allows to merge some consecutive operation that have same hash
+  mergeSameHashOps?: (Operation[]) => Operation
 ): Promise<Operation[]> {
   if (existingOperations.length === 0 && coreOperations.length === 0) {
     return existingOperations;
   }
-  let operations = [];
-  let existingOps = existingOperations || [];
 
-  let immutableOpCmpDoneOnce = false;
+  const state: StepBuilderState = {
+    finished: false,
+    operations: [],
+    existingOps: existingOperations || [],
+    immutableOpCmpDoneOnce: false,
+  };
+
+  let operationWithSameHash = [];
   for (let i = coreOperations.length - 1; i >= 0; i--) {
     const coreOperation = coreOperations[i];
-    const newOp = await buildOp(coreOperation);
-    if (!newOp) continue;
-    const existingOp = findExistingOp(existingOps, newOp);
+    const op = await buildOp(coreOperation);
+    if (!op) continue; // some operation can be skipped by implementation
 
-    if (existingOp && !immutableOpCmpDoneOnce) {
-      // an Operation is supposedly immutable.
-      if (existingOp.blockHeight !== newOp.blockHeight) {
-        // except for blockHeight that can temporarily be null
-        operations.push(newOp);
-        continue; // eslint-disable-line no-continue
-      } else {
-        immutableOpCmpDoneOnce = true;
-        // we still check the first existing op we meet...
-        if (!sameOp(existingOp, newOp)) {
-          // this implement a failsafe in case an op changes (when we fix bugs)
-          // trade-off: in such case, we assume all existingOps are to trash
-          console.warn("op mismatch. doing a full clear cache.");
-          existingOps = [];
-          operations.push(newOp);
-          continue; // eslint-disable-line no-continue
-        }
+    let newOp;
+    if (mergeSameHashOps) {
+      if (
+        operationWithSameHash.length === 0 ||
+        operationWithSameHash[0].hash === op.hash
+      ) {
+        // we accumulate consecutive op of same hash in operationWithSameHash
+        operationWithSameHash.push(op);
+        continue;
       }
+      // when the new op no longer matches the one accumulated,
+      // we can "release" one operation resulting of merging the accumulation
+      newOp = mergeSameHashOps(operationWithSameHash);
+      operationWithSameHash = [op];
+    } else {
+      // mergeSameHashOps not used = normal iteration
+      newOp = op;
     }
 
-    if (existingOp) {
-      // as soon as we've found a first matching op in old op list,
-      const j = existingOps.indexOf(existingOp);
-      const rest = existingOps.slice(j);
-      if (rest.length > i + 1) {
-        // if libcore happen to have less ops that what we had,
-        // we actually need to continue because we don't know where hole will be,
-        // but we can keep existingOp
-        operations.push(existingOp);
-      } else {
-        // otherwise we stop the libcore iteration and continue with previous data
-        // and we're done on the iteration
-        if (operations.length === 0 && j === 0) {
-          // special case: we preserve the operations array as much as possible
-          operations = existingOps;
-        } else {
-          operations = operations.concat(rest);
-        }
-        break;
-      }
-    } else {
-      // otherwise it's a new op
-      operations.push(newOp);
+    stepBuilder(state, newOp, i);
+
+    if (state.finished) {
+      return state.operations;
     }
   }
-  return operations;
+
+  if (mergeSameHashOps && operationWithSameHash.length) {
+    stepBuilder(state, mergeSameHashOps(operationWithSameHash), 0);
+  }
+
+  return state.operations;
 }
 
-// SYNC version of the same code...
 export function minimalOperationsBuilderSync<CO>(
   existingOperations: Operation[],
   coreOperations: CO[],
@@ -112,46 +89,23 @@ export function minimalOperationsBuilderSync<CO>(
   if (existingOperations.length === 0 && coreOperations.length === 0) {
     return existingOperations;
   }
-  let operations = [];
-  let existingOps = existingOperations || [];
-  let immutableOpCmpDoneOnce = false;
+  const state: StepBuilderState = {
+    finished: false,
+    operations: [],
+    existingOps: existingOperations || [],
+    immutableOpCmpDoneOnce: false,
+  };
+
   for (let i = coreOperations.length - 1; i >= 0; i--) {
     const coreOperation = coreOperations[i];
     const newOp = buildOp(coreOperation);
     if (!newOp) continue;
-    const existingOp = findExistingOp(existingOps, newOp);
-    if (existingOp && !immutableOpCmpDoneOnce) {
-      if (existingOp.blockHeight !== newOp.blockHeight) {
-        operations.push(newOp);
-        continue; // eslint-disable-line no-continue
-      } else {
-        immutableOpCmpDoneOnce = true;
-        if (!sameOp(existingOp, newOp)) {
-          console.warn("op mismatch. doing a full clear cache.");
-          existingOps = [];
-          operations.push(newOp);
-          continue; // eslint-disable-line no-continue
-        }
-      }
-    }
-    if (existingOp) {
-      const j = existingOps.indexOf(existingOp);
-      const rest = existingOps.slice(j);
-      if (rest.length > i + 1) {
-        operations.push(existingOp);
-      } else {
-        if (operations.length === 0 && j === 0) {
-          operations = existingOps;
-        } else {
-          operations = operations.concat(rest);
-        }
-        break;
-      }
-    } else {
-      operations.push(newOp);
+    stepBuilder(state, newOp, i);
+    if (state.finished) {
+      return state.operations;
     }
   }
-  return operations;
+  return state.operations;
 }
 
 const shouldRefreshBalanceHistory = (
@@ -412,4 +366,77 @@ export function patchOperations(
     updated.slice(0).reverse(),
     (raw) => fromOperationRaw(raw, accountId, subAccounts)
   );
+}
+
+const sameOp = (a: Operation, b: Operation) =>
+  a === b ||
+  (a.id === b.id && // hash, accountId, type are in id
+    a.date.getTime() === b.date.getTime() &&
+    (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
+    (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
+    isEqual(a.senders, b.senders) &&
+    isEqual(a.recipients, b.recipients));
+
+function findExistingOp(ops, op) {
+  return ops.find((o) => o.id === op.id);
+}
+
+type StepBuilderState = {
+  operations: Operation[],
+  existingOps: Operation[],
+  immutableOpCmpDoneOnce: boolean,
+  finished: boolean,
+};
+
+// This is one step of the logic of minimalOperationsBuilder
+// it implements an heuristic to skip prematurely the operations loop
+// as soon as we find an existing operation that matches newOp
+function stepBuilder(state, newOp, i) {
+  const existingOp = findExistingOp(state.existingOps, newOp);
+
+  if (existingOp && !state.immutableOpCmpDoneOnce) {
+    // an Operation is supposedly immutable.
+    if (existingOp.blockHeight !== newOp.blockHeight) {
+      // except for blockHeight that can temporarily be null
+      state.operations.push(newOp);
+      return;
+    } else {
+      state.immutableOpCmpDoneOnce = true;
+      // we still check the first existing op we meet...
+      if (!sameOp(existingOp, newOp)) {
+        // this implement a failsafe in case an op changes (when we fix bugs)
+        // trade-off: in such case, we assume all existingOps are to trash
+        console.warn("op mismatch. doing a full clear cache.");
+        state.existingOps = [];
+        state.operations.push(newOp);
+        return;
+      }
+    }
+  }
+
+  if (existingOp) {
+    // as soon as we've found a first matching op in old op list,
+    const j = state.existingOps.indexOf(existingOp);
+    const rest = state.existingOps.slice(j);
+    if (rest.length > i + 1) {
+      // if libcore happen to have less ops that what we had,
+      // we actually need to continue because we don't know where hole will be,
+      // but we can keep existingOp
+      state.operations.push(existingOp);
+    } else {
+      // otherwise we stop the libcore iteration and continue with previous data
+      // and we're done on the iteration
+      if (state.operations.length === 0 && j === 0) {
+        // special case: we preserve the operations array as much as possible
+        state.operations = state.existingOps;
+      } else {
+        state.operations = state.operations.concat(rest);
+      }
+      state.finished = true;
+      return;
+    }
+  } else {
+    // otherwise it's a new op
+    state.operations.push(newOp);
+  }
 }

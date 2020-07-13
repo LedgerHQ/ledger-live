@@ -61,6 +61,14 @@ async function signTransaction({
       ? "REWARD"
       : "OUT";
 
+  const extra = {};
+  if (transaction.mode === "REDELEGATE") {
+    extra.cosmosSourceValidator = transaction.cosmosSourceValidator;
+  }
+  if (transaction.mode !== "send") {
+    extra.validators = transaction.validators;
+  }
+
   const op = {
     id: `${id}--${type}`,
     hash: "",
@@ -75,7 +83,7 @@ async function signTransaction({
     recipients,
     accountId: id,
     date: new Date(),
-    extra: {},
+    extra,
   };
 
   return {

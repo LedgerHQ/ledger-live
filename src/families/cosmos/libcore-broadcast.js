@@ -3,6 +3,7 @@ import type { Operation } from "../../types";
 import type { CosmosBroadcastResponse } from "./types";
 import { makeBroadcast } from "../../libcore/broadcast";
 import { CosmosBroadcastError } from "../../errors";
+import { patchOperationWithHash } from "../../operation";
 
 async function broadcast({
   coreAccount,
@@ -14,13 +15,7 @@ async function broadcast({
   if (parsed.code) {
     throw new CosmosBroadcastError[parsed.code]();
   }
-
-  // Note : 0 is the index of transaction because cosmos can contains 1 or more operations in a transaction
-  return {
-    ...operation,
-    hash: parsed.txhash,
-    id: `${operation.accountId}-${parsed.txhash}-${operation.type}-0`,
-  };
+  return patchOperationWithHash(operation, parsed.txhash);
 }
 
 export default makeBroadcast({ broadcast });

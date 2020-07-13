@@ -1,7 +1,9 @@
 // @flow
+import memoize from "lodash/memoize";
 import invariant from "invariant";
 import type { CryptoCurrency, DerivationMode } from "../types";
 import { asDerivationMode } from "../derivation";
+import { getCryptoCurrencyById } from "../currencies";
 
 export type AccountIdParams = {
   type: string,
@@ -63,3 +65,14 @@ export function getWalletName({
 }) {
   return `${seedIdentifier}_${currency.id}_${derivationMode}`;
 }
+
+export const inferFamilyFromAccountId: (accountId: string) => ?string = memoize(
+  (accountId) => {
+    try {
+      const { currencyId } = decodeAccountId(accountId);
+      return getCryptoCurrencyById(currencyId).family;
+    } catch (e) {
+      return null;
+    }
+  }
+);

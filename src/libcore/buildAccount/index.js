@@ -22,6 +22,7 @@ import { minimalOperationsBuilder } from "../../reconciliation";
 import { getOperationsPageSize } from "../../pagination";
 import getAccountBalanceHistory from "../getAccountBalanceHistory";
 import { getRanges } from "../../portfolio";
+import mergeOperationsByFamily from "../../generated/libcore-mergeOperations";
 import byFamily from "../../generated/libcore-postBuildAccount";
 
 // FIXME how to get that
@@ -159,7 +160,8 @@ export async function buildAccount({
         accountId,
         currency,
         contextualSubAccounts: subAccounts,
-      })
+      }),
+    mergeOperationsByFamily[currency.family]
   );
   let lastOperation;
 

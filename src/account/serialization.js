@@ -32,6 +32,8 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
+import { inferFamilyFromAccountId } from "./accountId";
+import accountByFamily from "../generated/account";
 import type { SwapOperation, SwapOperationRaw } from "../swap/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
@@ -69,11 +71,31 @@ export function fromBalanceHistoryRawMap(
 }
 
 export const toOperationRaw = (
-  { date, value, fee, subOperations, internalOperations, ...op }: Operation,
+  {
+    date,
+    value,
+    fee,
+    subOperations,
+    internalOperations,
+    extra,
+    ...op
+  }: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
+  let e = extra;
+  if (e) {
+    const family = inferFamilyFromAccountId(op.accountId);
+    if (family) {
+      const abf = accountByFamily[family];
+      if (abf && abf.toOperationExtraRaw) {
+        e = abf.toOperationExtraRaw(e);
+      }
+    }
+  }
+
   const copy: OperationRaw = {
     ...op,
+    extra: e,
     date: date.toISOString(),
     value: value.toString(),
     fee: fee.toString(),
@@ -123,13 +145,24 @@ export const fromOperationRaw = (
   accountId: string,
   subAccounts?: ?(SubAccount[])
 ): Operation => {
+  let e = extra;
+  if (e) {
+    const family = inferFamilyFromAccountId(accountId);
+    if (family) {
+      const abf = accountByFamily[family];
+      if (abf && abf.fromOperationExtraRaw) {
+        e = abf.fromOperationExtraRaw(e);
+      }
+    }
+  }
+
   const res: Operation = {
     ...op,
     accountId,
     date: new Date(date),
     value: BigNumber(value),
     fee: BigNumber(fee),
-    extra: extra || {},
+    extra: e || {},
   };
 
   if (subAccounts) {

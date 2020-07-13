@@ -8,7 +8,7 @@ import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData
 import { getCryptoCurrencyById } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
-import { getOperationAmountNumber } from "../../operation";
+import { toOperationRaw } from "../../account";
 import {
   COSMOS_MIN_SAFE,
   canClaimRewards,
@@ -28,24 +28,24 @@ const cosmos: AppSpec<Transaction> = {
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(COSMOS_MIN_SAFE), "balance is too low");
   },
-  test: ({ account, accountBeforeTransaction, status }) => {
-    const newOps = account.operations.slice(
-      0,
-      account.operations.length - accountBeforeTransaction.operations.length
-    );
-    invariant(newOps.length > 0, "new ops appeared");
+  test: ({ operation, optimisticOperation }) => {
+    const opExpected: Object = toOperationRaw({
+      ...optimisticOperation,
+    });
+    delete opExpected.value;
+    delete opExpected.fee;
+    delete opExpected.date;
+    delete opExpected.blockHash;
+    delete opExpected.blockHeight;
+    expect(toOperationRaw(operation)).toMatchObject(opExpected);
 
-    const feesOp = newOps.find((op) => op.type === "FEES");
-    invariant(feesOp, "fees op exists");
-    invariant(!getOperationAmountNumber(feesOp).gt(0), "fees op negative");
-    invariant(
-      !getOperationAmountNumber(feesOp).plus(status.estimatedFees).lt(0),
-      "estimated fees should never be gt than the fees"
+    // TODO check it is between operation.value-fees (excluded) and operation.value
+    /*
+    // balance move
+    expect(account.balance.toString()).toBe(
+      accountBeforeTransaction.balance.minus(operation.value).toString()
     );
-    invariant(
-      !getOperationAmountNumber(feesOp).plus(status.estimatedFees).lt(0),
-      "estimated fees should never be gt than the fees"
-    );
+    */
   },
   mutations: [
     {
@@ -64,26 +64,6 @@ const cosmos: AppSpec<Transaction> = {
             Math.random() < 0.5 ? { memo: "LedgerLiveBot" } : null,
           ],
         };
-      },
-      test: ({ account, accountBeforeTransaction, status, transaction }) => {
-        expect(account.operations.length).toBe(
-          accountBeforeTransaction.operations.length + 2
-        );
-        const outOp = account.operations
-          .slice(0, 2)
-          .find((op) => op.type === "OUT");
-        invariant(outOp, "out op is missing");
-
-        if (transaction.memo) {
-          expect(outOp.extra).toMatchObject({ memo: transaction.memo });
-        }
-
-        expect(getOperationAmountNumber(outOp).toString()).toBe(
-          transaction.amount.negated().toString()
-        );
-        expect(account.balance.toString()).toBe(
-          accountBeforeTransaction.balance.minus(status.totalSpent).toString()
-        );
       },
     },
 
