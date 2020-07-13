@@ -74,12 +74,7 @@ const createTransaction = () => ({
   memoTypeRecommended: null,
 });
 
-const updateTransaction = (t, patch) => {
-  if ("recipient" in patch && patch.recipient !== t.recipient) {
-    return { ...t, ...patch, memoType: null };
-  }
-  return { ...t, ...patch };
-};
+const updateTransaction = (t, patch) => ({ ...t, ...patch });
 
 const isMemoValid = (memoType: string, memoValue: string): boolean => {
   switch (memoType) {
