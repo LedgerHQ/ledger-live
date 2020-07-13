@@ -166,8 +166,8 @@ async function signTransaction({
     outputScriptHex,
     lockTime,
     sigHashType,
-    isSegwit: isSegwitDerivationMode(derivationMode),
-    timestamp: initialTimestamp || undefined,
+    segwit: isSegwitDerivationMode(derivationMode),
+    initialTimestamp: initialTimestamp || undefined,
     additionals,
     expiryHeight: expiryHeight && expiryHeight.toString("hex"),
   });
