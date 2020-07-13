@@ -14,6 +14,7 @@ import { getEnv } from "../env";
 import type { DerivationMode } from "../types";
 import { getCryptoCurrencyById } from "../currencies";
 import { withDevice } from "./deviceAccess";
+import { isDashboardName } from "./isDashboardName";
 import getAppAndVersion from "./getAppAndVersion";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
@@ -47,8 +48,6 @@ export type ConnectAppEvent =
   | { type: "ask-open-app", appName: string }
   | { type: "opened", app?: AppAndVersion, derivation?: { address: string } }
   | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
-
-export const dashboardNames = ["BOLOS", "OLOS\u0000"];
 
 const openAppFromDashboard = (
   transport,
@@ -146,7 +145,7 @@ const cmd = ({
           concatMap((appAndVersion): Observable<ConnectAppEvent> => {
             timeoutSub.unsubscribe();
 
-            if (dashboardNames.includes(appAndVersion.name)) {
+            if (isDashboardName(appAndVersion.name)) {
               // we're in dashboard
               return openAppFromDashboard(transport, appName);
             }

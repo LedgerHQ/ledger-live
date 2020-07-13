@@ -8,6 +8,8 @@ import getDeviceInfo from "../../hw/getDeviceInfo";
 test("1.2.0", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+      => b001000000
+      <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000203312e32040600000004312e30009000
     `)
@@ -30,6 +32,8 @@ test("1.2.0", async () => {
 test("1.3.1", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+      => b001000000
+      <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000205312e332e31048e00000004312e31009000
     `)
@@ -52,6 +56,8 @@ test("1.3.1", async () => {
 test("1.3.1 BL", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+      => b001000000
+      <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 010000019000
     `)
@@ -74,6 +80,8 @@ test("1.3.1 BL", async () => {
 test("1.5.5", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+      => b001000000
+      <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000405312e352e35042300000004312e37002013fe17e06cf2f710d33328aa46d1053f8fadd48dcaeca2c5512dd79e2158d5779000
     `)
@@ -96,6 +104,8 @@ test("1.5.5", async () => {
 test("1.5.5 manager allowed", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+        => b001000000
+        <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 3110000405312e352e35042b00000004312e37002013fe17e06cf2f710d33328aa46d1053f8fadd48dcaeca2c5512dd79e2158d5779000
       `)
@@ -118,6 +128,8 @@ test("1.5.5 manager allowed", async () => {
 test("1.4.2", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+        => b001000000
+        <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 3110000305312e342e3204a600000004312e36002034c8e1ed994a446ef70c9b256d8a6e01eb949aba4b18b9f9a39b7f38782531039000
       `)
@@ -140,6 +152,8 @@ test("1.4.2", async () => {
 test("1.4.2 manager allowed", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000305312e342e3204ae00000004312e36002034c8e1ed994a446ef70c9b256d8a6e01eb949aba4b18b9f9a39b7f38782531039000
     `)
@@ -162,6 +176,8 @@ test("1.4.2 manager allowed", async () => {
 test("1.6 bootloader", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000103302e36080030009000
     `)
@@ -180,6 +196,8 @@ test("1.6 bootloader", async () => {
 test("1.7 bootloader", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000103302e37080030009000
     `)
@@ -198,6 +216,8 @@ test("1.7 bootloader", async () => {
 test("0.9 bootloader", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000103302e39080030009000
     `)
@@ -216,6 +236,8 @@ test("0.9 bootloader", async () => {
 test("0.11 bootloader", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000104302e3131080030009000
     `)
@@ -234,6 +256,8 @@ test("0.11 bootloader", async () => {
 test("0.11 BL (2)", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000104302e313104f4d8aa439000
     `)
@@ -256,6 +280,8 @@ test("0.11 BL (2)", async () => {
 test("0.0 bootloader", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 010000019000
     `)
@@ -274,6 +300,8 @@ test("0.0 bootloader", async () => {
 test("OSU 1.4.2", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000309312e342e322d6f7375042000000004312e37002000000000000000000000000000000000000000000000000000000000000000009000
     `)
@@ -292,6 +320,8 @@ test("OSU 1.4.2", async () => {
 test("0SU 1.5.2", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000409312e352e322d6f7375042400000004312e35002000000000000000000000000000000000000000000000000000000000000000009000
     `)
@@ -310,6 +340,8 @@ test("0SU 1.5.2", async () => {
 test("OSU 1.5.5", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000409312e352e352d6f7375042400000004312e35002000000000000000000000000000000000000000000000000000000000000000009000
     `)
@@ -325,6 +357,8 @@ test("OSU 1.5.5", async () => {
 test("1.6.0-dev", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000409312e362e302d646576042300000004312e36002000000000000000000000000000000000000000000000000000000000000000009000
       `)
@@ -343,6 +377,8 @@ test("1.6.0-dev", async () => {
 test("1.6.0-dev-osu", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 311000040d312e362e302d6465762d6f7375042300000004312e36002000000000000000000000000000000000000000000000000000000000000000009000
         `)
@@ -361,9 +397,11 @@ test("1.6.0-dev-osu", async () => {
 test("1.6.0-rc1 osu", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
-          => e001000000
-          <= 311000040d312e362e302d7263312d6f7375042000000004312e37002000000000000000000000000000000000000000000000000000000000000000009000
-          `)
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
+    => e001000000
+    <= 311000040d312e362e302d7263312d6f7375042000000004312e37002000000000000000000000000000000000000000000000000000000000000000009000
+    `)
   );
   const t = await Transport.create();
   const res = await getDeviceInfo(t);
@@ -379,9 +417,11 @@ test("1.6.0-rc1 osu", async () => {
 test("nano x 1.1.6", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
-            => e001000000
-            <= 3300000405312e312e3604a600000003322e339000
-            `)
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
+    => e001000000
+    <= 3300000405312e312e3604a600000003322e339000
+    `)
   );
   const t = await Transport.create();
   const res = await getDeviceInfo(t);
@@ -401,9 +441,11 @@ test("nano x 1.1.6", async () => {
 test("nano x 1.2.4-1", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
-            => e001000000
-            <= 3300000407312e322e342d3104ae00000003322e389000
-            `)
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
+    => e001000000
+    <= 3300000407312e322e342d3104ae00000003322e389000
+    `)
   );
   const t = await Transport.create();
   const res = await getDeviceInfo(t);
@@ -423,6 +465,8 @@ test("nano x 1.2.4-1", async () => {
 test("nanoS 1.4.2 BL", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
+        => b001000000
+        <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 0100000103302e37080030009000
         `)
@@ -445,9 +489,11 @@ test("nanoS 1.4.2 BL", async () => {
 test("nanoS das", async () => {
   const Transport = createTransportReplayer(
     RecordStore.fromString(`
-        => e001000000
-        <= 3110000309312e342e322d64617304a600000004312e350020f52add41aaa8c065df5a412af1e8c57fe589b85469133cb9c7e0ccd5c81b57859000
-        `)
+    => b001000000
+    <= 0105424f4c4f5305312e362e3001029000
+    => e001000000
+    <= 3110000309312e342e322d64617304a600000004312e350020f52add41aaa8c065df5a412af1e8c57fe589b85469133cb9c7e0ccd5c81b57859000
+    `)
   );
   const t = await Transport.create();
   const res = await getDeviceInfo(t);
