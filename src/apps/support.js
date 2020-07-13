@@ -1,6 +1,7 @@
 // @flow
 
 import semver from "semver";
+import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/lib/shouldUseTrustedInputForSegwit";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { getDependencies } from "./polyfill";
 import { getEnv } from "../env";
@@ -12,7 +13,11 @@ export function shouldUpgrade(
 ) {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
   const deps = getDependencies(appName);
-  if (deps.includes("Bitcoin") || appName === "Bitcoin") {
+  if (
+    (deps.includes("Bitcoin") &&
+      shouldUseTrustedInputForSegwit({ name: appName, version: "1.4.0" })) ||
+    appName === "Bitcoin"
+  ) {
     // https://donjon.ledger.com/lsb/010/
     return !semver.satisfies(appVersion, ">= 1.4.0");
   }
