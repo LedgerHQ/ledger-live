@@ -88,12 +88,11 @@ export default function AccountActions({ account, parentAccount }: Props) {
     onNavigate(NavigatorName.Exchange);
   }, [onNavigate]);
 
-  const Container =
-    !readOnlyModeEnabled && manageAction ? ScrollViewContainer : View;
-  const btnStyle =
-    !readOnlyModeEnabled && manageAction ? styles.scrollBtn : styles.btn;
-
   const canBeBought = isCurrencySupported(getAccountCurrency(account));
+  const shouldScroll = !readOnlyModeEnabled && (manageAction || canBeBought);
+
+  const Container = shouldScroll ? ScrollViewContainer : View;
+  const btnStyle = shouldScroll ? styles.scrollBtn : styles.btn;
 
   return (
     <Container style={styles.root}>

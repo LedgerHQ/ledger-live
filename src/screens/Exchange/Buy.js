@@ -15,7 +15,7 @@ import Button from "../../components/Button";
 
 const forceInset = { bottom: "always" };
 
-export default function ExchangeScreen() {
+export default function Buy() {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -29,7 +29,9 @@ export default function ExchangeScreen() {
         <View style={styles.iconContainer}>
           <ExchangeIcon size={22} color={colors.live} />
         </View>
-        <LText style={styles.title}>{t("exchange.buy.title")}</LText>
+        <LText style={styles.title} semiBold>
+          {t("exchange.buy.title")}
+        </LText>
         <LText style={styles.description}>
           {t("exchange.buy.description")}
         </LText>

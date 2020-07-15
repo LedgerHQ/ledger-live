@@ -1,9 +1,11 @@
 // @flow
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { ScreenName, NavigatorName } from "../../const";
+import { hasAvailableUpdateSelector } from "../../reducers/settings";
 import Manager from "../../screens/Manager";
 import ManagerMain from "../../screens/Manager/Manager";
 import OnboardingNavigator from "./OnboardingNavigator";
@@ -13,6 +15,22 @@ import ReadOnlyTab from "../ReadOnlyTab";
 import ManagerIcon from "../../icons/Manager";
 import NanoXIcon from "../../icons/TabNanoX";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
+import colors from "../../colors";
+
+const ManagerIconWithUpate = ({
+  color,
+  size,
+}: {
+  color: string,
+  size: number,
+}) => {
+  return (
+    <View style={stylesLocal.iconWrapper}>
+      <ManagerIcon size={size} color={color} />
+      <View style={stylesLocal.blueDot} />
+    </View>
+  );
+};
 
 export default function ManagerNavigator() {
   const { t } = useTranslation();
@@ -51,12 +69,13 @@ const Stack = createStackNavigator();
 
 export function ManagerTabIcon(props: any) {
   const isNavLocked = useIsNavLocked();
+  const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
 
   const content = (
     <ReadOnlyTab
       OnIcon={NanoXIcon}
       oni18nKey="tabs.nanoX"
-      OffIcon={ManagerIcon}
+      OffIcon={hasAvailableUpdate ? ManagerIconWithUpate : ManagerIcon}
       offi18nKey="tabs.manager"
       {...props}
     />
@@ -68,3 +87,18 @@ export function ManagerTabIcon(props: any) {
 
   return content;
 }
+
+const stylesLocal = StyleSheet.create({
+  blueDot: {
+    top: 0,
+    right: -10,
+    position: "absolute",
+    width: 6,
+    height: 6,
+    backgroundColor: colors.live,
+    borderRadius: 4,
+  },
+  iconWrapper: {
+    position: "relative",
+  },
+});

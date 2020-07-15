@@ -124,3 +124,8 @@ export const dismissBanner = (bannerId: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
   payload: bannerId,
 });
+
+export const setAvailableUpdate = (enabled: boolean) => ({
+  type: "SETTINGS_SET_AVAILABLE_UPDATE",
+  enabled,
+});

@@ -74,6 +74,7 @@ export type SettingsState = {
   hideEmptyTokenAccounts: boolean,
   blacklistedTokenIds: string[],
   dismissedBanners: string[],
+  hasAvailableUpdate: boolean,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -94,6 +95,7 @@ export const INITIAL_STATE: SettingsState = {
   hideEmptyTokenAccounts: false,
   blacklistedTokenIds: [],
   dismissedBanners: [],
+  hasAvailableUpdate: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -244,6 +246,10 @@ const handlers: Object = {
     ...state,
     dismissedBanners: [...state.dismissedBanners, payload],
   }),
+  SETTINGS_SET_AVAILABLE_UPDATE: (state, action) => ({
+    ...state,
+    hasAvailableUpdate: action.enabled,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -373,5 +379,8 @@ export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
 
 export const dismissedBannersSelector = (state: State) =>
   state.settings.dismissedBanners;
+
+export const hasAvailableUpdateSelector = (state: State) =>
+  state.settings.hasAvailableUpdate;
 
 export default handleActions(handlers, INITIAL_STATE);

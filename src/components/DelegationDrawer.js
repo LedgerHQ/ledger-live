@@ -4,7 +4,6 @@ import React from "react";
 import type { ComponentType } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
-import SafeAreaView from "react-native-safe-area-view";
 import {
   getAccountCurrency,
   getAccountUnit,
@@ -62,7 +61,7 @@ export default function DelegationDrawer({
       isOpened={isOpen}
       onClose={onClose}
     >
-      <SafeAreaView style={styles.root} forceInset={{ bottom: "always" }}>
+      <View style={styles.root}>
         <Touchable
           event="DelegationDetailsModalClose"
           onPress={onClose}
@@ -113,7 +112,7 @@ export default function DelegationDrawer({
             <ActionButton {...props} />
           ))}
         </View>
-      </SafeAreaView>
+      </View>
     </BottomModal>
   );
 }

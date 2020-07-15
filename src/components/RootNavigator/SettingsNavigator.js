@@ -32,6 +32,7 @@ import RepairDevice from "../../screens/RepairDevice";
 import { stackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
 import OnboardingNavigator from "./OnboardingNavigator";
+import HelpButton from "../../screens/Settings/HelpButton";
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -43,6 +44,7 @@ export default function SettingsNavigator() {
         component={Settings}
         options={{
           title: t("settings.header"),
+          headerRight: () => <HelpButton />,
         }}
       />
       <Stack.Screen

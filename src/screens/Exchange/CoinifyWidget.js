@@ -194,7 +194,7 @@ export default function CoinifyWidget({
             </View>
           ) : null
         }
-        originWhitelist={["https://*.coinify.com"]}
+        originWhitelist={["https://*"]}
         allowsInlineMediaPlayback
         source={{
           uri: url,

@@ -19,6 +19,7 @@ import Header from "./Header";
 import AccountActions from "./AccountActions";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import Touchable from "../../components/Touchable";
+import TransactionsPendingConfirmationWarning from "../../components/TransactionsPendingConfirmationWarning";
 import type { Item } from "../../components/Graph/types";
 import SubAccountsList from "./SubAccountsList";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
@@ -43,6 +44,7 @@ type HeaderTitleProps = {
 };
 
 const renderListHeaderTitle = (
+  account,
   countervalueAvailable,
   onSwitchAccountCurrency,
 ) => ({
@@ -71,9 +73,12 @@ const renderListHeaderTitle = (
     >
       <View style={styles.balanceContainer}>
         {items[0] ? (
-          <LText style={styles.balanceText} tertiary>
-            <CurrencyUnitValue {...items[0]} disableRounding />
-          </LText>
+          <View style={styles.warningWrapper}>
+            <LText style={styles.balanceText} tertiary>
+              <CurrencyUnitValue {...items[0]} disableRounding />
+            </LText>
+            <TransactionsPendingConfirmationWarning maybeAccount={account} />
+          </View>
         ) : null}
         {items[1] ? (
           <LText style={styles.balanceSubText} tertiary>
@@ -143,6 +148,7 @@ function ListHeaderComponent({
           countervalueAvailable={countervalueAvailable}
           counterValueCurrency={counterValueCurrency}
           renderTitle={renderListHeaderTitle(
+            account,
             countervalueAvailable,
             onSwitchAccountCurrency,
           )}
@@ -185,6 +191,11 @@ const styles = StyleSheet.create({
   balanceSubText: {
     fontSize: 16,
     color: colors.smoke,
+  },
+  warningWrapper: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
 

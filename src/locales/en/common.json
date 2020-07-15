@@ -69,7 +69,8 @@
       "days": "yesterday",
       "days_plural": "{{time}} days ago"
     },
-    "seeMore": "See more"
+    "seeMore": "See more",
+    "moreInfo": "More info"
   },
   "errors": {
     "AccountAwaitingSendPendingOperations": {
@@ -327,6 +328,10 @@
     "NotEnoughBalance": {
       "title": "Oops, insufficient balance",
       "description": "Make sure the account to debit has sufficient balance"
+    },
+    "NotEnoughGas": {
+      "title": "Insufficient ETH for network fee",
+      "description": "Please send some ETH to your account to pay for ERC20 token transactions."
     },
     "NotEnoughBalanceToDelegate": {
       "title": "Insufficient balance to delegate"
@@ -688,15 +693,19 @@
       "evening": "Good evening",
       "afternoon": "Good afternoon"
     },
+    "transactionsPendingConfirmation" : {
+      "title": "Unsynchronized balance",
+      "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
+    },
     "summary": "Here's the summary of your account",
     "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {
       "noAppsTitle": "Install an app on my device",
       "noAppsDesc": "You need to install apps on your device to add accounts in Ledger Live. Go to the manager and install apps on your device.",
       "noAccountsTitle": "You don’t have any accounts…",
-      "noAccountsDesc": "Click on “Add account” to start adding accounts in Ledger Live",
+      "noAccountsDesc": "Click on “Add accounts” to start adding accounts in Ledger Live",
       "buttons": {
-        "import": "Add account",
+        "import": "Add accounts",
         "manager": "Install apps",
         "managerSecondary": "Install apps on my device"
       }
@@ -955,6 +964,32 @@
     "assets": "assets",
     "total": "Total balance:",
     "listAccount": "Account allocation ({{count}})"
+  },
+  "help": {
+    "gettingStarted": {
+      "title": "Getting Started",
+      "desc": "Start here"
+    },
+    "helpCenter": {
+      "title": "Help center",
+      "desc": "Common problems"
+    },
+    "ledgerAcademy": {
+      "title": "Ledger Academy",
+      "desc": "Crypto 101"
+    },
+    "facebook": {
+      "title": "Facebook",
+      "desc": "Like our page"
+    },
+    "twitter": {
+      "title": "Twitter",
+      "desc": "Follow us"
+    },
+    "github": {
+      "title": "Github",
+      "desc": "Review our code"
+    }
   },
   "settings": {
     "header": "Settings",
@@ -1511,7 +1546,7 @@
       "buy": "Buy a Ledger Nano X"
     },
     "appList": {
-      "title": "App catalog",
+      "title": "Device Manager",
       "loading": "Loading apps...",
       "noApps": "No apps found",
       "searchAppsCatalog": "Search app in catalog...",
@@ -1547,6 +1582,11 @@
       "manageAccount": "Add accounts",
       "learnMore": "Learn more",
       "later": "Do it later"
+    },
+    "firmware": {
+      "latest": "Firmware version {{version}} is available",
+      "modalTitle": "Update firmware is available only on Ledger Live desktop",
+      "modalDesc": "Please download Ledger Live on your computer to update the device’s firmware"
     }
   },
   "ManagerDevice": {

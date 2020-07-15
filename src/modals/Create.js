@@ -1,7 +1,6 @@
 /* @flow */
 
 import React, { useCallback } from "react";
-import SafeAreaView from "react-native-safe-area-view";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -15,8 +14,6 @@ import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
 import type { Props as ModalProps } from "../components/BottomModal";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
-
-const forceInset = { bottom: "always" };
 
 export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const navigation = useNavigation();
@@ -56,28 +53,24 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
 
   return (
     <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
-      <SafeAreaView forceInset={forceInset}>
-        <BottomModalChoice
-          event="TransferSend"
-          title={t("transfer.send.title")}
-          onPress={
-            accountsCount > 0 && !readOnlyModeEnabled ? onSendFunds : null
-          }
-          Icon={IconSend}
-        />
-        <BottomModalChoice
-          event="TransferReceive"
-          title={t("transfer.receive.title")}
-          onPress={accountsCount > 0 ? onReceiveFunds : null}
-          Icon={IconReceive}
-        />
-        <BottomModalChoice
-          event="TransferExchange"
-          title={t("transfer.exchange.title")}
-          Icon={IconExchange}
-          onPress={onExchange}
-        />
-      </SafeAreaView>
+      <BottomModalChoice
+        event="TransferSend"
+        title={t("transfer.send.title")}
+        onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSendFunds : null}
+        Icon={IconSend}
+      />
+      <BottomModalChoice
+        event="TransferReceive"
+        title={t("transfer.receive.title")}
+        onPress={accountsCount > 0 ? onReceiveFunds : null}
+        Icon={IconReceive}
+      />
+      <BottomModalChoice
+        event="TransferExchange"
+        title={t("transfer.exchange.title")}
+        Icon={IconExchange}
+        onPress={onExchange}
+      />
     </BottomModal>
   );
 }

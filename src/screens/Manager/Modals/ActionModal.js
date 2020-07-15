@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { StyleSheet, SafeAreaView, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import type { BaseButtonProps } from "../../../components/Button";
 import Button from "../../../components/Button";
 import BottomModal from "../../../components/BottomModal";
@@ -30,7 +30,7 @@ const ActionModal = ({
     containerStyle={{ paddingBottom: 116 }}
     coverScreen
   >
-    <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
       {children}
       {actions.length > 0 && (
         <View style={styles.modalFooter}>
@@ -47,7 +47,7 @@ const ActionModal = ({
           ))}
         </View>
       )}
-    </SafeAreaView>
+    </View>
   </BottomModal>
 );
 
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "center",
+    paddingBottom: 16,
   },
   modalFooter: {
     width: "100%",

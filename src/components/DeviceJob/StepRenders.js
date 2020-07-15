@@ -63,6 +63,7 @@ export const RenderStep = ({
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
+    paddingHorizontal: 16,
   },
   body: {
     flexDirection: "column",
@@ -70,6 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingBottom: 16,
+    marginHorizontal: 16,
   },
   retryButton: {
     alignSelf: "stretch",
