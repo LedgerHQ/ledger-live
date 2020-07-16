@@ -53,8 +53,6 @@ export const checkRecipientExist: CacheRes<
 
       const stellarLikeWallet = await coreWallet.asStellarLikeWallet();
       const recipientExist = await stellarLikeWallet.exists(recipient);
-
-      checkRecipientExist.hydrate(recipient, recipientExist);
       return recipientExist;
     }),
   (extract) => extract.recipient,
@@ -193,6 +191,7 @@ const getTransactionStatus = async (a: Account, t) => {
 
   // if amount < 1.0 you can't
   if (
+    t.recipient &&
     !errors.amount &&
     !(await checkRecipientExist({ account: a, recipient: t.recipient })) &&
     amount.lt(10000000)
