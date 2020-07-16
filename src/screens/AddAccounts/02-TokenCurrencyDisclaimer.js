@@ -14,6 +14,7 @@ import CurrencyIcon from "../../components/CurrencyIcon";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import { urls } from "../../config/urls";
+import { ScreenName } from "../../const";
 
 const forceInset = { bottom: "always" };
 
@@ -61,10 +62,6 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   const token = route.params.token;
   const tokenName = `${token.name} (${token.ticker})`;
 
-  function onBack(): void {
-    navigation.goBack();
-  }
-
   function onClose(): void {
     navigation.dangerouslyGetParent().pop();
   }
@@ -84,18 +81,23 @@ export default function AddAccountsTokenCurrencyDisclaimer({
       </View>
       <View style={styles.buttonWrapper}>
         <Button
-          event="AddAccountTokenDisclaimerBack"
-          title={t("addAccounts.tokens.changeAssets")}
-          type="secondary"
-          onPress={onBack}
-          containerStyle={[styles.button, styles.buttonSpace]}
-        />
-
-        <Button
           event="AddAccountTokenDisclaimerClose"
           title={t("common.close")}
-          type="primary"
+          type="secondary"
           onPress={onClose}
+          containerStyle={[styles.button, styles.buttonSpace]}
+        />
+        <Button
+          event="AddAccountTokenDisclaimerBack"
+          title={t("addAccounts.tokens.createParentCurrencyAccount", {
+            parrentCurrencyName: token.parentCurrency.ticker,
+          })}
+          type="primary"
+          onPress={() =>
+            navigation.navigate(ScreenName.AddAccountsSelectDevice, {
+              currency: token.parentCurrency,
+            })
+          }
           containerStyle={styles.button}
         />
       </View>

@@ -9,7 +9,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { useSelector } from "react-redux";
 import colors from "../../colors";
-import { flattenAccountsSelector } from "../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 
 import CoinifyWidget from "./CoinifyWidget";
 
@@ -24,17 +24,21 @@ type Props = {
 };
 
 export default function CoinifyWidgetScreen({ route }: Props) {
-  const allAccounts = useSelector(flattenAccountsSelector);
-  const accountId = route.params.accountId;
+  const { parentAccount } = useSelector(accountScreenSelector(route));
+  const { account } = route.params;
   const mode = route.params.mode;
   const meta = route.params.meta;
-  const account = allAccounts.find(a => a.id === accountId);
 
   const forceInset = { bottom: "always" };
 
   return (
     <SafeAreaView style={[styles.root]} forceInset={forceInset}>
-      <CoinifyWidget account={account} meta={meta} mode={mode} />
+      <CoinifyWidget
+        account={account}
+        parentAccount={parentAccount}
+        meta={meta}
+        mode={mode}
+      />
     </SafeAreaView>
   );
 }
