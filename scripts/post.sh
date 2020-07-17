@@ -4,6 +4,10 @@ cd $(dirname $0)/..
 
 ./scripts/sync-families-dispatch.sh
 
+# bug in bad generated bindings that we actually don't even need
+rm -f node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCorePreferencesBackend.java 
+rm -f node_modules/@ledgerhq/react-native-ledger-core/ios/Sources/react-native-ios/RCTCoreLGPreferencesBackend.m
+
 patch --forward -i scripts/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
 cp scripts/RNAnalyticsModule.kt node_modules/@segment/analytics-react-native/android/src/main/java/com/segment/analytics/reactnative/core/RNAnalyticsModule.kt 
 
