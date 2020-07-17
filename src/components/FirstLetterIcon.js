@@ -1,13 +1,13 @@
 // @flow
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import LText from "./LText";
 import colors from "../colors";
 
 type Props = {
   label: string,
-  style?: ViewStyleProp,
+  style?: *,
+  labelStyle?: *,
   size?: number,
   fontSize?: number,
   round?: boolean,
@@ -16,15 +16,16 @@ type Props = {
 const FirstLetterIcon = ({
   label,
   style,
+  labelStyle,
   size = 32,
   fontSize = 16,
   round = false,
 }: Props) => {
   const isEmoji = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(
-    label.substring(0, 2),
+    label.trim().substring(0, 2),
   );
 
-  const text = label && label.substring(0, isEmoji ? 2 : 1);
+  const text = label && label.trim().substring(0, isEmoji ? 2 : 1);
   return (
     <View
       style={[
@@ -36,7 +37,7 @@ const FirstLetterIcon = ({
     >
       <LText
         semiBold
-        style={[{ lineHeight: size }, styles.label, { fontSize }]}
+        style={[{ lineHeight: size }, styles.label, { fontSize }, labelStyle]}
       >
         {text}
       </LText>

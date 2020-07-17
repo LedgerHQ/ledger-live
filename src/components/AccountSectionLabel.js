@@ -44,6 +44,8 @@ const styles = StyleSheet.create({
   },
   label: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
   },
   labelText: {
     fontSize: 18,
