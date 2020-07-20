@@ -23,7 +23,11 @@ import type {
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { mapUnbondings } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import {
+  mapUnbondings,
+  canRedelegate,
+  getRedelegation,
+} from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../components/IlluRewards";
 import { urls } from "../../../config/urls";
@@ -46,6 +50,7 @@ import DelegationRow from "./Row";
 import DelegationLabelRight from "./LabelRight";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
+import DateFromNow from "../../../components/DateFromNow";
 
 type Props = {
   account: Account,
@@ -150,16 +155,22 @@ export default function Delegations({ account }: Props) {
     setUndelegation();
   }, []);
 
-  const onOpenExplorer = useCallback(() => {
-    const url = getAddressExplorer(
-      getDefaultExplorerView(account.currency),
-      delegation?.validatorAddress ?? "",
-    );
-    if (url) Linking.openURL(url);
-  }, [account.currency, delegation]);
+  const onOpenExplorer = useCallback(
+    (address: string) => {
+      const url = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
+      if (url) Linking.openURL(url);
+    },
+    [account.currency],
+  );
 
   const data = useMemo<$PropertyType<DelegationDrawerProps, "data">>(() => {
     const d = delegation || undelegation;
+
+    const redelegation = delegation && getRedelegation(account, delegation);
+
     return d
       ? [
           {
@@ -171,7 +182,7 @@ export default function Delegations({ account }: Props) {
             Component: () => {
               return (
                 <Touchable
-                  onPress={onOpenExplorer}
+                  onPress={() => onOpenExplorer(d.validatorAddress)}
                   event="DelegationOpenExplorer"
                 >
                   <LText
@@ -208,6 +219,45 @@ export default function Delegations({ account }: Props) {
                 },
               ]
             : []),
+          ...(redelegation
+            ? [
+                {
+                  label: t("cosmos.delegation.drawer.redelegatedFrom"),
+                  Component: () => {
+                    return (
+                      <Touchable
+                        onPress={() =>
+                          onOpenExplorer(redelegation.validatorSrcAddress)
+                        }
+                        event="DelegationOpenExplorer"
+                      >
+                        <LText
+                          numberOfLines={1}
+                          semiBold
+                          ellipsizeMode="middle"
+                          style={[
+                            drawerStyles.valueText,
+                            drawerStyles.valueTextTouchable,
+                          ]}
+                        >
+                          {redelegation.validatorSrcAddress}
+                        </LText>
+                      </Touchable>
+                    );
+                  },
+                },
+                {
+                  label: t("cosmos.delegation.drawer.completionDate"),
+                  Component: () => (
+                    <LText numberOfLines={1} semiBold>
+                      <DateFromNow
+                        date={+new Date(redelegation.completionDate)}
+                      />
+                    </LText>
+                  ),
+                },
+              ]
+            : []),
         ]
       : [];
   }, [delegation, t, account, onOpenExplorer, undelegation]);
@@ -217,15 +267,24 @@ export default function Delegations({ account }: Props) {
       !delegation ||
       !delegation.pendingRewards ||
       delegation.pendingRewards.isZero();
+
+    const redelegateEnabled = delegation && canRedelegate(account, delegation);
+
     return delegation
       ? [
           {
             label: t("delegation.actions.redelegate"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={colors.fog}>
-                <RedelegateIcon />
+              <Circle
+                {...props}
+                bg={!redelegateEnabled ? colors.lightFog : colors.fog}
+              >
+                <RedelegateIcon
+                  color={!redelegateEnabled ? colors.grey : undefined}
+                />
               </Circle>
             ),
+            disabled: !redelegateEnabled,
             onPress: onRedelegate,
             event: "DelegationActionRedelegate",
           },
@@ -259,7 +318,7 @@ export default function Delegations({ account }: Props) {
           },
         ]
       : [];
-  }, [t, onRedelegate, onCollectRewards, onUndelegate, delegation]);
+  }, [t, onRedelegate, onCollectRewards, onUndelegate, delegation, account]);
 
   return (
     <View style={styles.root}>

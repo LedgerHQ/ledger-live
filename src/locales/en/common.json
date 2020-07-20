@@ -1797,7 +1797,9 @@
         "status": "Status",
         "rewards": "Rewards",
         "active": "Active",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "completionDate": "Completion date",
+        "redelegatedFrom": "Redelegated from"
       }
     },
     "redelegation": {

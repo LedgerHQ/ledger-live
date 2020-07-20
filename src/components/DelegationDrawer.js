@@ -202,7 +202,10 @@ export const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginRight: 16,
   },
-  scrollSection: { height: height - 400, paddingHorizontal: 16 },
+  scrollSection: {
+    maxHeight: height - normalize(425),
+    paddingHorizontal: 16,
+  },
   subHeader: {
     paddingBottom: 16,
     alignItems: "center",
