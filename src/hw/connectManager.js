@@ -2,7 +2,10 @@
 
 import { Observable, concat, from, of, throwError } from "rxjs";
 import { concatMap, catchError, delay } from "rxjs/operators";
-import { TransportStatusError } from "@ledgerhq/errors";
+import {
+  TransportStatusError,
+  DeviceOnDashboardExpected,
+} from "@ledgerhq/errors";
 import type { DeviceInfo } from "../types/manager";
 import type { ListAppsEvent } from "../apps";
 import { listApps } from "../apps/hw";
@@ -48,9 +51,10 @@ const cmd = ({ devicePath }: Input): Observable<ConnectManagerEvent> =>
           }),
           catchError((e: Error) => {
             if (
-              e &&
-              e instanceof TransportStatusError &&
-              [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode)
+              e instanceof DeviceOnDashboardExpected ||
+              (e &&
+                e instanceof TransportStatusError &&
+                [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
             ) {
               return of({ type: "appDetected" });
             }
