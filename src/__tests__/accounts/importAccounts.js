@@ -22,6 +22,7 @@ test("importAccountsMakeItems", () => {
         currencyId: "ethereum",
         index: 0,
         balance: "51281813126095913",
+        swapHistory: [],
       },
       {
         id: "libcore:1:ethereum:xpub2:",
@@ -32,6 +33,7 @@ test("importAccountsMakeItems", () => {
         currencyId: "ethereum",
         index: 1,
         balance: "1081392000000000",
+        swapHistory: [],
       },
       {
         id: "libcore:1:ethereum:xpub4:",
@@ -42,6 +44,7 @@ test("importAccountsMakeItems", () => {
         currencyId: "ethereum",
         index: 3,
         balance: "1000000000000000",
+        swapHistory: [],
       },
       {
         id: "libcore:1:ethereum:xpub3:",
@@ -52,6 +55,7 @@ test("importAccountsMakeItems", () => {
         currencyId: "ethereum",
         index: 2,
         balance: "0",
+        swapHistory: [],
       },
       {
         id: "libcore:1:ethereum:xpub5:",
@@ -62,6 +66,7 @@ test("importAccountsMakeItems", () => {
         currencyId: "ethereum",
         index: 4,
         balance: "0",
+        swapHistory: [],
       },
     ],
     settings: {

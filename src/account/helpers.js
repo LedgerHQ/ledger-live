@@ -210,6 +210,7 @@ export const accountWithMandatoryTokens = (
       operations: [],
       pendingOperations: [],
       starred: false,
+      swapHistory: [],
     }));
 
   if (addition.length === 0) return account;

@@ -436,6 +436,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     operationsCount: operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
+    swapHistory: [],
   };
 }
 
@@ -591,6 +592,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     unit,
     currency,
     lastSyncDate: new Date(lastSyncDate || 0),
+    swapHistory: [],
   };
 
   if (xpub) {

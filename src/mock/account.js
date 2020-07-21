@@ -297,6 +297,7 @@ function genTokenAccount(
     pendingOperations: [],
     balance: BigNumber(0),
     creationDate: new Date(),
+    swapHistory: [],
   };
 
   const operationsSize = rng.nextInt(1, 200);
@@ -356,6 +357,7 @@ export function genAccount(
     pendingOperations: [],
     lastSyncDate: new Date(),
     creationDate: new Date(),
+    swapHistory: [],
   };
 
   if (currency.id === "cosmos") {

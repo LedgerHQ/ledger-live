@@ -432,6 +432,7 @@ const currencyBridge: CurrencyBridge = {
                       archived: false,
                       lastSyncDate: new Date(),
                       creationDate: new Date(),
+                      swapHistory: [],
                     },
                   });
                 }
@@ -482,6 +483,7 @@ const currencyBridge: CurrencyBridge = {
                 unit: currency.units[0],
                 lastSyncDate: new Date(),
                 creationDate: new Date(),
+                swapHistory: [],
               };
               account.operations = transactions
                 .map(txToOperation(account))

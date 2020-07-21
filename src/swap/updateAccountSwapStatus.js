@@ -10,6 +10,7 @@ const pendingStatusList = [
   "exchanging",
   "sending",
   "waiting",
+  "pending",
 ];
 
 const updateAccountSwapStatus: UpdateAccountSwapStatus = async (

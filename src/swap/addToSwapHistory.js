@@ -1,6 +1,7 @@
 // @flow
 import type { Account, Operation, Transaction } from "../types";
 import type { Exchange, ExchangeRate } from "./types";
+import { getAccountCurrency, getMainAccount } from "../account";
 
 export default (
   account: Account,
@@ -13,6 +14,10 @@ export default (
   swapId: string
 ) => {
   const { exchange, exchangeRate } = swap;
+  const toCurrency = getAccountCurrency(exchange.toAccount);
+  const tokenId =
+    toCurrency.type === "TokenCurrency" ? toCurrency.id : undefined;
+
   return {
     ...account,
     swapHistory: [
@@ -22,7 +27,11 @@ export default (
         provider: exchangeRate.provider,
         operationId: operation.id,
         swapId,
-        receiverAccountId: exchange.toAccount.id,
+        receiverAccountId: getMainAccount(
+          exchange.toAccount,
+          exchange.toParentAccount
+        ).id,
+        tokenId,
         fromAmount: transaction.amount,
         toAmount: transaction.amount.times(exchangeRate.magnitudeAwareRate),
       },

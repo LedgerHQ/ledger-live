@@ -52,6 +52,7 @@ async function buildERC20TokenAccount({
       operations.length > 0
         ? operations[operations.length - 1].date
         : new Date(),
+    swapHistory: [],
   };
 
   return tokenAccount;

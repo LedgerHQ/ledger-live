@@ -125,6 +125,7 @@ export type MappedSwapOperation = {
   toAccount: AccountLike,
   toParentAccount?: Account,
 
+  toExists: boolean,
   operation: Operation,
   provider: string,
   swapId: string,
@@ -139,7 +140,7 @@ export type SwapOperation = {
   status: string,
 
   receiverAccountId: string,
-  receiverParentAccountId?: string,
+  tokenId?: string,
   operationId: string,
 
   fromAmount: BigNumber,
@@ -152,7 +153,7 @@ export type SwapOperationRaw = {
   status: string,
 
   receiverAccountId: string,
-  receiverParentAccountId?: string,
+  tokenId?: string,
   operationId: string,
 
   fromAmount: string,

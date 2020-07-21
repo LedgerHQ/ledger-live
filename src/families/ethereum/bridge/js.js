@@ -283,6 +283,7 @@ const currencyBridge: CurrencyBridge = {
                 unit: currency.units[0],
                 lastSyncDate: new Date(),
                 creationDate: new Date(),
+                swapHistory: [],
               };
               return { account, complete: true };
             }
@@ -322,6 +323,7 @@ const currencyBridge: CurrencyBridge = {
           unit: currency.units[0],
           lastSyncDate: new Date(),
           creationDate: new Date(),
+          swapHistory: [],
         };
         for (let i = 0; i < 50; i++) {
           const last = txs[txs.length - 1];

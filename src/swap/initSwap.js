@@ -107,14 +107,6 @@ const initSwap: InitSwap = (
           swapResult.provider
         );
 
-        // FIXME because this would break for tokens
-        if (payoutCurrency.type !== "CryptoCurrency") {
-          throw new Error("How do I handle non CryptoCurrencies");
-        }
-        if (refundCurrency.type !== "CryptoCurrency") {
-          throw new Error("How do I handle non CryptoCurrencies");
-        }
-
         const accountBridge = getAccountBridge(refundAccount);
         transaction = accountBridge.updateTransaction(transaction, {
           recipient: swapResult.payinAddress,
@@ -164,8 +156,13 @@ const initSwap: InitSwap = (
         await swap.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
+        const mainPayoutCurrency = getAccountCurrency(payoutAccount);
+        invariant(
+          mainPayoutCurrency.type === "CryptoCurrency",
+          "This should be a cryptocurrency"
+        );
         const payoutAddressParameters = await perFamily[
-          payoutCurrency.family
+          mainPayoutCurrency.family
         ].getSerializedAddressParameters(
           payoutAccount.freshAddressPath,
           payoutAccount.derivationMode
@@ -184,8 +181,13 @@ const initSwap: InitSwap = (
         );
         if (unsubscribed) return;
 
+        const mainRefundCurrency = getAccountCurrency(refundAccount);
+        invariant(
+          mainRefundCurrency.type === "CryptoCurrency",
+          "This should be a cryptocurrency"
+        );
         const refundAddressParameters = await perFamily[
-          refundCurrency.family
+          mainRefundCurrency.family
         ].getSerializedAddressParameters(
           refundAccount.freshAddressPath,
           refundAccount.derivationMode

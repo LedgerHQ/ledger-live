@@ -242,6 +242,7 @@ export async function buildAccount({
     pendingOperations: [],
     lastSyncDate: new Date(),
     creationDate,
+    swapHistory: [],
   };
 
   if (subAccounts) {

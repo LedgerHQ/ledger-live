@@ -43,7 +43,7 @@ export type TokenAccount = {
   starred: boolean,
   balanceHistory?: BalanceHistoryMap,
   // Swap operations linked to this account
-  swapHistory?: SwapOperation[],
+  swapHistory: SwapOperation[],
 };
 
 // A child account belongs to an Account but has its own address
@@ -63,7 +63,7 @@ export type ChildAccount = {
   pendingOperations: Operation[],
   balanceHistory?: BalanceHistoryMap,
   // Swap operations linked to this account
-  swapHistory?: SwapOperation[],
+  swapHistory: SwapOperation[],
 };
 
 export type Address = {|
@@ -181,7 +181,7 @@ export type Account = {
   cosmosResources?: CosmosResources,
 
   // Swap operations linked to this account
-  swapHistory?: SwapOperation[],
+  swapHistory: SwapOperation[],
 };
 
 export type SubAccount = TokenAccount | ChildAccount;

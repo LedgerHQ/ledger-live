@@ -4,6 +4,8 @@ import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
 import { findAccountMigration, checkAccountSupported } from "./support";
+import joinSwapHistories from "../swap/joinSwapHistories";
+import isEqual from "lodash/isEqual";
 
 const itemModeDisplaySort = {
   create: 1,
@@ -59,7 +61,10 @@ export const importAccountsMakeItems = ({
         const existingAccount = accounts.find((a) => a.id === accInput.id);
         if (existingAccount) {
           // only the name is supposed to change. rest is never changing
-          if (existingAccount.name === accInput.name) {
+          if (
+            existingAccount.name === accInput.name &&
+            isEqual(existingAccount.swapHistory, account.swapHistory) // FIXME sorting? i'm lazy
+          ) {
             return {
               initialAccountId: existingAccount.id,
               account: existingAccount,
@@ -68,7 +73,14 @@ export const importAccountsMakeItems = ({
           }
           return {
             initialAccountId: existingAccount.id,
-            account: { ...existingAccount, name: accInput.name },
+            account: {
+              ...existingAccount,
+              name: accInput.name,
+              swapHistory: joinSwapHistories(
+                existingAccount.swapHistory,
+                account.swapHistory
+              ),
+            },
             mode: "update",
           };
         }

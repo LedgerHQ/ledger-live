@@ -1,6 +1,12 @@
 // @flow
 /* eslint-disable no-console */
 import { first, tap, filter, map, take } from "rxjs/operators";
+import {
+  accountWithMandatoryTokens,
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/lib/account";
+import { findTokenById } from "@ledgerhq/live-common/lib/data/tokens";
 import { from } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import commandLineArgs from "command-line-args";
@@ -21,20 +27,58 @@ type SwapJobOpts = ScanCommonOpts & {
   useAllAmount: boolean,
   _unknown: any,
   deviceId: string,
+  tokenId: string,
 };
 
 const exec = async (opts: SwapJobOpts) => {
-  const { amount, useAllAmount, deviceId = "" } = opts;
+  const { amount, useAllAmount, tokenId, deviceId = "" } = opts;
 
   invariant(amount, "amount in satoshis is needed");
   invariant(opts._unknown, "second account information is missing");
 
   //Remove suffix from arguments before passing them to sync.
-  const secondAccountOpts: ScanCommonOpts = commandLineArgs(scanCommonOpts, {
-    argv: opts._unknown.map((a, i) => (i % 2 ? a : a.replace("_2", ""))),
-  });
+  const secondAccountOpts: ScanCommonOpts & {
+    tokenId: string,
+  } = commandLineArgs(
+    [
+      ...scanCommonOpts,
+      {
+        name: "tokenId",
+        alias: "t",
+        type: String,
+        desc: "use a token account children of the account",
+      },
+    ],
+    {
+      argv: opts._unknown.map((a, i) => (i % 2 ? a : a.replace("_2", ""))),
+    }
+  );
 
-  const fromAccount = await scan(opts).pipe(take(1)).toPromise();
+  let fromParentAccount = null;
+  let fromAccount = await scan(opts).pipe(take(1)).toPromise();
+  invariant(fromAccount, "No account found");
+
+  //Are we asking for a token account?
+  if (tokenId) {
+    console.log("using token for fromAccount");
+    const token = findTokenById(tokenId);
+    invariant(token, `No token currency found with id ${tokenId}`);
+    const subAccounts =
+      accountWithMandatoryTokens(fromAccount, [token]).subAccounts || [];
+    const subAccount = subAccounts.find((t) => {
+      const currency = getAccountCurrency(t);
+      return tokenId === currency.id;
+    });
+    // We have a token account, keep track of both now;
+    fromParentAccount = fromAccount;
+    fromAccount = subAccount;
+    invariant(fromAccount, "No account found");
+  }
+  if (fromParentAccount) {
+    console.log("fromParentAccount:", fromParentAccount.id);
+  }
+  console.log("fromAccount:", fromAccount.id);
+
   const formattedAmount = formatCurrencyUnit(
     getAccountUnit(fromAccount),
     fromAccount.balance,
@@ -50,14 +94,44 @@ const exec = async (opts: SwapJobOpts) => {
     fromAccount.balance.toString(),
     ` [ ${formattedAmount} ]`
   );
+  invariant(fromAccount.balance.gte(BigNumber(amount)), "Not enough balance");
   console.log("OPEN RECIPIENT CURRENCY APP");
   await delay(10000);
 
-  const toAccount = await scan(secondAccountOpts).pipe(take(1)).toPromise();
-  console.log(toAccount.id);
+  let toParentAccount = null;
+  let toAccount = await scan(secondAccountOpts).pipe(take(1)).toPromise();
+  invariant(toAccount, "No account found");
 
-  const bridge = getAccountBridge(fromAccount);
-  let transaction = bridge.createTransaction(fromAccount);
+  const { tokenId: tokenId2 } = secondAccountOpts;
+  //Are we asking for a token account?
+  if (tokenId2) {
+    console.log("using token for toAccount");
+    const token = findTokenById(tokenId2);
+    console.log({ token });
+    invariant(token, `No token currency found with id ${tokenId2}`);
+    const subAccounts =
+      accountWithMandatoryTokens(toAccount, [token]).subAccounts || [];
+    const subAccount = subAccounts.find((t) => {
+      const currency = getAccountCurrency(t);
+      return tokenId2 === currency.id;
+    });
+    // We have a token account, keep track of both now;
+    toParentAccount = toAccount;
+    toAccount = subAccount;
+    invariant(fromAccount, "No account found");
+  }
+  invariant(fromAccount, "No account found");
+  invariant(toAccount, "No account found");
+
+  if (toParentAccount) {
+    console.log("toParentAccount:", toParentAccount.id);
+  }
+  console.log("toAccount:", toAccount.id);
+
+  const bridge = getAccountBridge(fromAccount, fromParentAccount);
+  let transaction = bridge.createTransaction(
+    getMainAccount(fromAccount, fromParentAccount)
+  );
 
   if (!useAllAmount) {
     transaction = bridge.updateTransaction(transaction, {
@@ -73,9 +147,9 @@ const exec = async (opts: SwapJobOpts) => {
 
   const exchange: Exchange = {
     fromAccount,
-    fromParentAccount: undefined,
+    fromParentAccount,
     toAccount,
-    toParentAccount: undefined,
+    toParentAccount,
   };
 
   const exchangeRates = await getExchangeRates(exchange, transaction);
@@ -88,8 +162,7 @@ const exec = async (opts: SwapJobOpts) => {
     exchange,
     exchangeRates[0],
     transaction,
-    deviceId,
-    true
+    deviceId
   )
     .pipe(
       tap((e) => console.log(e)),
@@ -103,9 +176,14 @@ const exec = async (opts: SwapJobOpts) => {
   console.log(
     "Giving the device some time to switch to the currency app for signing"
   );
-  await delay(20000);
+  await delay(10000);
+  const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const signedOperation = await bridge
-    .signOperation({ account: fromAccount, deviceId, transaction })
+    .signOperation({
+      account: mainFromAccount,
+      deviceId,
+      transaction,
+    })
     .pipe(
       tap((e) => console.log(e)),
       first((e) => e.type === "signed"),
@@ -114,7 +192,7 @@ const exec = async (opts: SwapJobOpts) => {
     .toPromise();
   console.log("broadcasting");
   const operation = await bridge.broadcast({
-    account: fromAccount,
+    account: mainFromAccount,
     signedOperation,
   });
 
@@ -142,6 +220,12 @@ export default {
       alias: "u",
       type: Boolean,
       desc: "Attempt to send all using the emulated max amount calculation",
+    },
+    {
+      name: "tokenId",
+      alias: "t",
+      type: String,
+      desc: "use a token account children of the account",
     },
     ...scanCommonOpts,
   ],

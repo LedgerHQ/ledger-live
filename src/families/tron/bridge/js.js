@@ -375,6 +375,9 @@ const getAccountShape = async (info, syncConfig) => {
           operations.length > 0
             ? operations[operations.length - 1].date
             : new Date(),
+        swapHistory: maybeExistingSubAccount
+          ? maybeExistingSubAccount.swapHistory
+          : [],
       };
       return sub;
     })
