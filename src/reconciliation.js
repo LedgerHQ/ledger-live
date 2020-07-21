@@ -2,6 +2,7 @@
 // libcore reconciliation by the React definition. https://reactjs.org/docs/reconciliation.html
 // TODO move to account/
 
+import expect from "expect";
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import type {
@@ -371,7 +372,6 @@ export function patchOperations(
 const sameOp = (a: Operation, b: Operation) =>
   a === b ||
   (a.id === b.id && // hash, accountId, type are in id
-    a.date.getTime() === b.date.getTime() &&
     (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
     (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
     isEqual(a.senders, b.senders) &&
@@ -406,7 +406,12 @@ function stepBuilder(state, newOp, i) {
       if (!sameOp(existingOp, newOp)) {
         // this implement a failsafe in case an op changes (when we fix bugs)
         // trade-off: in such case, we assume all existingOps are to trash
-        console.warn("op mismatch. doing a full clear cache.");
+        try {
+          // using expect for a nice diff log
+          expect(newOp).toEqual(existingOp);
+        } catch (e) {
+          console.warn("op mismatch. doing a full clear cache. " + e.message);
+        }
         state.existingOps = [];
         state.operations.push(newOp);
         return;

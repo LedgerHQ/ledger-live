@@ -4,6 +4,8 @@ import type { CryptoCurrency } from "../types";
 import { isValidRecipient } from "../libcore/isValidRecipient";
 import { makeLRUCache } from "../cache";
 
+// TODO drop this file. move back to families
+
 export const validateRecipient: (
   CryptoCurrency,
   ?string
