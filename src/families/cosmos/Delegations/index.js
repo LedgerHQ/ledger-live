@@ -27,6 +27,7 @@ import {
   mapUnbondings,
   canRedelegate,
   getRedelegation,
+  canUndelegate,
 } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../components/IlluRewards";
@@ -219,18 +220,20 @@ export default function Delegations({ account }: Props) {
                 },
               ]
             : []),
-          ...undelegation ? [
-            {
-              label: t("cosmos.delegation.drawer.completionDate"),
-              Component: () => (
-                <LText numberOfLines={1} semiBold>
-                  <DateFromNow
-                    date={+new Date(undelegation.completionDate)}
-                  />
-                </LText>
-              ),
-            },
-          ]: [],
+          ...(undelegation
+            ? [
+                {
+                  label: t("cosmos.delegation.drawer.completionDate"),
+                  Component: () => (
+                    <LText numberOfLines={1} semiBold>
+                      <DateFromNow
+                        date={+new Date(undelegation.completionDate)}
+                      />
+                    </LText>
+                  ),
+                },
+              ]
+            : []),
           ...(redelegation
             ? [
                 {
@@ -282,6 +285,8 @@ export default function Delegations({ account }: Props) {
 
     const redelegateEnabled = delegation && canRedelegate(account, delegation);
 
+    const undelegationEnabled = canUndelegate(account);
+
     return delegation
       ? [
           {
@@ -321,10 +326,20 @@ export default function Delegations({ account }: Props) {
           {
             label: t("delegation.actions.undelegate"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={rgba(colors.alert, 0.2)}>
-                <UndelegateIcon />
+              <Circle
+                {...props}
+                bg={
+                  !undelegationEnabled
+                    ? colors.lightFog
+                    : rgba(colors.alert, 0.2)
+                }
+              >
+                <UndelegateIcon
+                  color={!undelegationEnabled ? colors.grey : undefined}
+                />
               </Circle>
             ),
+            disabled: !undelegationEnabled,
             onPress: onUndelegate,
             event: "DelegationActionUndelegate",
           },
