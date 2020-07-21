@@ -219,6 +219,18 @@ export default function Delegations({ account }: Props) {
                 },
               ]
             : []),
+          ...undelegation ? [
+            {
+              label: t("cosmos.delegation.drawer.completionDate"),
+              Component: () => (
+                <LText numberOfLines={1} semiBold>
+                  <DateFromNow
+                    date={+new Date(undelegation.completionDate)}
+                  />
+                </LText>
+              ),
+            },
+          ]: [],
           ...(redelegation
             ? [
                 {
