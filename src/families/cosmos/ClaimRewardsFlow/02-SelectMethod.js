@@ -32,6 +32,7 @@ import Info from "../../../icons/Info";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import FirstLetterIcon from "../../../components/FirstLetterIcon";
+import TranslatedError from "../../../components/TranslatedError";
 
 const options = [
   {
@@ -155,6 +156,11 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
 
   const error = status.errors && Object.keys(status.errors).length > 0;
 
+  const warning =
+    status.warnings &&
+    Object.keys(status.warnings).length > 0 &&
+    Object.values(status.warnings)[0];
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.main}>
@@ -203,6 +209,19 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
         <View style={styles.spacer} />
       </View>
       <View style={styles.footer}>
+        <View style={styles.warningSection}>
+          {warning && warning instanceof Error ? (
+            <LText
+              selectable
+              secondary
+              semiBold
+              style={styles.warning}
+              numberOfLines={3}
+            >
+              <TranslatedError error={warning} />
+            </LText>
+          ) : null}
+        </View>
         <Button
           disabled={error}
           event="Cosmos ClaimRewardsAmountContinueBtn"
@@ -279,6 +298,11 @@ const styles = StyleSheet.create({
   desc: {
     textAlign: "center",
   },
+  warning: {
+    textAlign: "center",
+    color: colors.alert,
+  },
+  warningSection: { padding: 16, height: 60 },
 });
 
 export default ClaimRewardsAmount;
