@@ -31,6 +31,7 @@ const forceInset = { bottom: "always" };
 type Props = {
   devMode: boolean,
   navigation: any,
+  route: { params?: { currency?: string } },
 };
 
 const keyExtractor = currency => currency.id;
@@ -43,8 +44,10 @@ const renderEmptyList = () => (
   </View>
 );
 
-export default function ExchangeSelectCrypto({ navigation }: Props) {
+export default function ExchangeSelectCrypto({ navigation, route }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
+  const { params } = route;
+  const initialCurrencySelected = params?.currency;
 
   const cryptoCurrencies = useMemo(
     () => listCryptoCurrencies(devMode).concat(listTokens()),
@@ -100,6 +103,7 @@ export default function ExchangeSelectCrypto({ navigation }: Props) {
             list={supportedCryptoCurrencies}
             renderList={renderList}
             renderEmptySearch={renderEmptyList}
+            initialQuery={initialCurrencySelected}
           />
         </View>
       </KeyboardView>

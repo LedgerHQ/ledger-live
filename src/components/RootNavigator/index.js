@@ -10,7 +10,7 @@ import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 
 type Props = {
-  importDataString: string,
+  importDataString?: string,
 };
 
 export default function RootNavigator({ importDataString }: Props) {
@@ -39,7 +39,6 @@ export default function RootNavigator({ importDataString }: Props) {
           component={BaseOnboardingNavigator}
         />
       ) : null}
-
       <Stack.Screen name={NavigatorName.Base} component={BaseNavigator} />
     </Stack.Navigator>
   );

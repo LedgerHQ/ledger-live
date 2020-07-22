@@ -41,7 +41,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
-            <data android:scheme="ledgerhq"/>
+            <data android:scheme="ledgerlive"/>
         </intent-filter>
         <intent-filter>
             <!-- http://developer.android.com/guide/topics/connectivity/usb/accessory.html -->

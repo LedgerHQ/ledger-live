@@ -121,3 +121,20 @@ React Native integration seems pretty bleeding edge right now, so don't expect e
 - Launch it 🚀
 - Run Ledger Live Mobile in debug as usual
 - No need to enable remote debug!
+
+### Deep Linking 🔗
+
+Several URI schemes are available for deep linking from external sources
+They all are prefixed by **_ledgerlive://_**
+
+- **_portfolio_** 🠒 Portfolio page
+- **_account?curency_** 🠒 Account Page
+- **_send?currency_** 🠒 Send Flow
+- **_receive?currency_** 🠒 Receive Flow
+- **_buy/:currency_** 🠒 Buy Crypto Flow
+
+**_Testing on android_** in order to test in debug your link run using [**_adb_**](https://developer.android.com/training/app-links/deep-linking#testing-filters)
+
+```
+  adb shell am start -W -a android.intent.action.VIEW -d "ledgerlive://{{YOUR_URL}}" com.ledger.live.debug
+```
