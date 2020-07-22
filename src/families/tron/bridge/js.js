@@ -55,6 +55,7 @@ import {
   extractBandwidthInfo,
   fetchTronAccount,
   fetchTronAccountTxs,
+  fetchTronContract,
   getTronAccountNetwork,
   getTronResources,
   getTronSuperRepresentatives,
@@ -76,7 +77,14 @@ const signOperation = ({ account, transaction, deviceId }) =>
           ? account.subAccounts.find((sa) => sa.id === transaction.subAccountId)
           : null;
 
-      const fee = await getEstimatedFees(account, transaction);
+      const isContractAddressRecipient =
+        (await fetchTronContract(transaction.recipient)) !== undefined;
+
+      const fee = await getEstimatedFees(
+        account,
+        transaction,
+        isContractAddressRecipient
+      );
 
       const balance = subAccount
         ? subAccount.balance
@@ -93,7 +101,8 @@ const signOperation = ({ account, transaction, deviceId }) =>
         subAccount &&
         subAccount.type === "TokenAccount" &&
         subAccount.token.tokenType === "trc20" &&
-        (await fetchTronAccount(transaction.recipient)).length === 0
+        (!isContractAddressRecipient || // send trc20 to a smart contract is allowed
+          (await fetchTronAccount(transaction.recipient)).length === 0)
       ) {
         throw new TronSendTrc20ToNewAccountForbidden();
       }
@@ -510,9 +519,15 @@ const getFeesFromAccountActivation = async (
   return BigNumber(0); // no fee
 };
 
-const getEstimatedFees = async (a: Account, t: Transaction) => {
+const getEstimatedFees = async (
+  a: Account,
+  t: Transaction,
+  isContract: boolean
+) => {
   const feesFromAccountActivation =
-    t.mode === "send" ? await getFeesFromAccountActivation(a, t) : BigNumber(0);
+    t.mode === "send" && !isContract
+      ? await getFeesFromAccountActivation(a, t)
+      : BigNumber(0);
 
   if (feesFromAccountActivation.gt(0)) {
     return feesFromAccountActivation;
@@ -537,6 +552,9 @@ const getTransactionStatus = async (
 
   const account = tokenAccount || a;
 
+  const isContractAddressRecipient =
+    (await fetchTronContract(recipient)) !== undefined;
+
   if (mode === "send" && !recipient) {
     errors.recipient = new RecipientRequired();
   }
@@ -553,7 +571,8 @@ const getTransactionStatus = async (
       mode === "send" &&
       account.type === "TokenAccount" &&
       account.token.tokenType === "trc20" &&
-      (await fetchTronAccount(recipient)).length === 0
+      (!isContractAddressRecipient || // send trc20 to a smart contract is allowed
+        (await fetchTronAccount(recipient)).length === 0)
     ) {
       // send trc20 to a new account is forbidden by us (because it will not activate the account)
       errors.recipient = new TronSendTrc20ToNewAccountForbidden();
@@ -624,7 +643,7 @@ const getTransactionStatus = async (
   const estimatedFees =
     Object.entries(errors).length > 0
       ? BigNumber(0)
-      : await getEstimatedFees(a, t);
+      : await getEstimatedFees(a, t, isContractAddressRecipient);
 
   const balance =
     account.type === "Account"
@@ -700,13 +719,17 @@ const estimateMaxSpendable = async ({
   transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const fees = await getEstimatedFees(mainAccount, {
-    ...createTransaction(),
-    subAccountId: account.type === "Account" ? null : account.id,
-    recipient: "0x0000000000000000000000000000000000000000",
-    ...transaction,
-    amount: BigNumber(0),
-  });
+  const fees = await getEstimatedFees(
+    mainAccount,
+    {
+      ...createTransaction(),
+      subAccountId: account.type === "Account" ? null : account.id,
+      recipient: "0x0000000000000000000000000000000000000000",
+      ...transaction,
+      amount: BigNumber(0),
+    },
+    false
+  );
   return account.type === "Account"
     ? BigNumber.max(0, account.spendableBalance.minus(fees))
     : account.balance;
