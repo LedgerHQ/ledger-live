@@ -23,6 +23,7 @@ const dataset: DatasetTest<Transaction> = {
       scanAccounts: [
         {
           name: "ripple seed 1",
+          unstableAccounts: true, // our account is getting spammed...
           apdus: `
           => e002004015058000002c80000090800000000000000000000000
           <= 2103d1adcff3e0cf1232b1416a75cd6f23b49dd6a25c69bc291a1f6783ec6825ec062272616765584842365134566276765764547a4b414e776a65435434485846434b58379000
