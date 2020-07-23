@@ -4,6 +4,7 @@ import { log } from "@ledgerhq/logs";
 import { from } from "rxjs";
 import secp256k1 from "secp256k1";
 import invariant from "invariant";
+import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { delay } from "../promise";
 import { getAbandonSeedAddress } from "../data/abandonseed";
 import Swap from "./hw-app-swap/Swap";
@@ -174,11 +175,21 @@ const initSwap: InitSwap = (
           signature: payoutAddressConfigSignature,
         } = getCurrencySwapConfig(payoutCurrency);
 
-        await swap.checkPayoutAddress(
-          payoutAddressConfig,
-          payoutAddressConfigSignature,
-          payoutAddressParameters.addressParameters
-        );
+        try {
+          await swap.checkPayoutAddress(
+            payoutAddressConfig,
+            payoutAddressConfigSignature,
+            payoutAddressParameters.addressParameters
+          );
+        } catch (e) {
+          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+            throw new WrongDeviceForAccount(null, {
+              accountName: payoutAccount.name,
+            });
+          }
+          throw e;
+        }
+
         if (unsubscribed) return;
 
         const mainRefundCurrency = getAccountCurrency(refundAccount);
@@ -201,11 +212,21 @@ const initSwap: InitSwap = (
 
         if (unsubscribed) return;
         o.next({ type: "init-swap-requested" });
-        await swap.checkRefundAddress(
-          refundAddressConfig,
-          refundAddressConfigSignature,
-          refundAddressParameters.addressParameters
-        );
+
+        try {
+          await swap.checkRefundAddress(
+            refundAddressConfig,
+            refundAddressConfigSignature,
+            refundAddressParameters.addressParameters
+          );
+        } catch (e) {
+          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
+            throw new WrongDeviceForAccount(null, {
+              accountName: refundAccount.name,
+            });
+          }
+          throw e;
+        }
         if (unsubscribed) return;
         ignoreTransportError = true;
         await swap.signCoinTransaction();
