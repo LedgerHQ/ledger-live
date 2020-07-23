@@ -8,7 +8,7 @@ import BottomModal from "../../components/BottomModal";
 import BottomModalChoice from "../../components/BottomModalChoice";
 import IconHelp from "../../icons/Help";
 import IconDevice2 from "../../icons/Device2";
-import IconShield from "../../icons/Shield";
+import IconAcademy from "../../icons/Academy";
 import IconFacebook from "../../icons/Facebook";
 import IconTwitter from "../../icons/Twitter";
 import IconGithub from "../../icons/Github";
@@ -49,7 +49,7 @@ function CreateModal({ isOpened, onClose }: ModalProps) {
             "https://support.ledger.com/hc/en-us?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
           )
         }
-        Icon={IconShield}
+        Icon={IconAcademy}
       />
       <BottomModalChoice
         event="HelpFacebook"
