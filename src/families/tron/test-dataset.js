@@ -351,6 +351,28 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
+              name: "tronSendTrc20ToContractAddressSuccess",
+              transaction: fromTransactionRaw({
+                family: "tron",
+                recipient: "TYmGYpY3LuHHge9jmTtq2aQmSpUpqKcZtJ", // corresponds to a valid deposit contract address
+                subAccountId:
+                  "tronjs:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:+TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+                amount: "1000000",
+                networkInfo: null,
+                mode: "send",
+                duration: undefined,
+                resource: undefined,
+                votes: [],
+              }),
+              expectedStatus: {
+                amount: BigNumber("1000000"),
+                errors: {},
+                warnings: {},
+                totalSpent: BigNumber("1000000"),
+                estimatedFees: BigNumber("0"),
+              },
+            },
+            {
               name: "tronSendTrc20ToNewAccountForbidden",
               transaction: fromTransactionRaw({
                 family: "tron",
