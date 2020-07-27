@@ -138,3 +138,9 @@ They all are prefixed by **_ledgerlive://_**
 ```
   adb shell am start -W -a android.intent.action.VIEW -d "ledgerlive://{{YOUR_URL}}" com.ledger.live.debug
 ```
+
+**_Testing on ios_** in order to test your link run using xcrun
+
+```
+  xcrun simctl openurl booted ledgerlive://{{YOUR_URL}}
+```
