@@ -144,3 +144,14 @@ They all are prefixed by **_ledgerlive://_**
 ```
   xcrun simctl openurl booted ledgerlive://{{YOUR_URL}}
 ```
+
+**_Testing through browser_**
+
+run
+
+```
+yarn run test-deep-links
+```
+
+Then go to the provided link in order to see a test web page.
+For this either redirect the :8000 port on your chrome remote device settings or use the network link provided by the command.

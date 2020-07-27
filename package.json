@@ -41,7 +41,8 @@
     "sync-locales": "./scripts/sync-locales.sh",
     "debugSVG": "sh scripts/debugsvg.sh | node_modules/.bin/prettier --parser flow > src/screens/DebugSVG.js",
     "pod": "cd ios && bundle exec pod install --repo-update",
-    "hack-for-ios-simulator": "cd node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks && mv universal real_universal && cp -R x86 universal"
+    "hack-for-ios-simulator": "cd node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks && mv universal real_universal && cp -R x86 universal",
+    "test-deep-links": "ws --spa ./deep-links-test-page.html"
   },
   "jest": {
     "preset": "react-native",
@@ -182,6 +183,7 @@
     "flow-typed": "^2.6.2",
     "jest": "^25.1.0",
     "jetifier": "^1.6.5",
+    "local-web-server": "^4.2.1",
     "metro-react-native-babel-preset": "^0.57.0",
     "prettier": "^1.19.1",
     "react-native-debugger-open": "^0.3.24",
