@@ -120,6 +120,7 @@ export const reducer = (
       );
       newState = {
         ...state,
+        useAllAmount: false,
         swap: {
           ...state.swap,
           exchangeRate: null,
@@ -139,6 +140,7 @@ export const reducer = (
     case "setToCurrency": {
       newState = {
         ...state,
+        useAllAmount: false,
         swap: {
           ...state.swap,
           exchangeRate: null,
@@ -154,6 +156,23 @@ export const reducer = (
       break;
     }
     case "setFromAccount": {
+      newState = {
+        ...state,
+        useAllAmount: false,
+        swap: {
+          ...state.swap,
+          exchangeRate: null,
+          exchange: {
+            ...state.swap.exchange,
+            ...payload,
+          },
+        },
+        fromAmount: BigNumber(0),
+        error: null,
+      };
+      break;
+    }
+    case "setToAccount": {
       newState = {
         ...state,
         useAllAmount: false,

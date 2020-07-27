@@ -7,7 +7,8 @@ import type {
   AccountRaw,
   Operation,
   Transaction,
-  Currency,
+  CryptoCurrency,
+  TokenCurrency,
 } from "../types";
 import { Observable } from "rxjs";
 
@@ -168,9 +169,9 @@ export type SwapState = {
   error?: ?Error,
   ratesTimestamp?: number,
   ratesExpired?: boolean,
-  okCurrencies: Currency[],
-  fromCurrency: ?Currency,
-  toCurrency: ?Currency,
+  okCurrencies: (CryptoCurrency | TokenCurrency)[],
+  fromCurrency: ?CryptoCurrency | TokenCurrency,
+  toCurrency: ?CryptoCurrency | TokenCurrency,
   useAllAmount: boolean,
   fromAmount: BigNumber,
 };
