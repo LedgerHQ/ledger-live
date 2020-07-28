@@ -2,7 +2,6 @@
 // libcore reconciliation by the React definition. https://reactjs.org/docs/reconciliation.html
 // TODO move to account/
 
-import expect from "expect";
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import type {
@@ -23,6 +22,7 @@ import {
   fromBitcoinResourcesRaw,
   fromBalanceHistoryRawMap,
 } from "./account";
+import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 
 // aim to build operations with the minimal diff & call to libcore possible
 export async function minimalOperationsBuilder<CO>(
@@ -406,12 +406,11 @@ function stepBuilder(state, newOp, i) {
       if (!sameOp(existingOp, newOp)) {
         // this implement a failsafe in case an op changes (when we fix bugs)
         // trade-off: in such case, we assume all existingOps are to trash
-        try {
-          // using expect for a nice diff log
-          expect(newOp).toEqual(existingOp);
-        } catch (e) {
-          console.warn("op mismatch. doing a full clear cache. " + e.message);
-        }
+        consoleWarnExpectToEqual(
+          newOp,
+          existingOp,
+          "op mismatch. doing a full clear cache."
+        );
         state.existingOps = [];
         state.operations.push(newOp);
         return;

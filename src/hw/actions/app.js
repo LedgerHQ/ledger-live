@@ -104,6 +104,9 @@ const reducer = (state: State, e: Event): State => {
         unresponsive: true,
       };
 
+    case "disconnected":
+      return getInitialState();
+
     case "deviceChange":
       return {
         ...getInitialState(e.device),
@@ -268,8 +271,6 @@ function inferCommandParams(appRequest: AppRequest) {
   };
 }
 
-const POLLING = 1000;
-
 const implementations = {
   // in this paradigm, we know that deviceSubject is reflecting the device events
   // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
@@ -286,33 +287,68 @@ const implementations = {
   // in this paradigm, we can't observe directly the device, so we have to poll it
   polling: ({ deviceSubject, params, connectApp }) =>
     Observable.create((o) => {
-      let device;
+      const POLLING = 2000;
+      const INIT_DEBOUNCE = 5000;
+      const DISCONNECT_DEBOUNCE = 5000;
+
+      // this pattern allows to actually support events based (like if deviceSubject emits new device changes) but inside polling paradigm
+      let pollingOnDevice;
       const sub = deviceSubject.subscribe((d) => {
-        device = d;
-        o.next({ type: "deviceChange", device });
+        if (d) {
+          pollingOnDevice = d;
+        }
       });
+      let initT = setTimeout(() => {
+        // initial timeout to unset the device if it's still not connected
+        o.next({ type: "deviceChange", device: null });
+        log("app/polling", "device init timeout");
+      }, INIT_DEBOUNCE);
 
       let connectSub;
-      let finished;
-      let timeout;
+      let loopT;
+      let disconnectT;
+      let device = null; // used as internal state for polling
+
       function loop() {
-        if (finished) {
+        if (!pollingOnDevice) {
+          loopT = setTimeout(loop, POLLING);
           return;
         }
-        if (!device) {
-          timeout = setTimeout(loop, POLLING);
-          return;
-        }
-        connectSub = connectApp(device, params).subscribe({
+        log("app/polling", "polling loop");
+        connectSub = connectApp(pollingOnDevice, params).subscribe({
           next: (event) => {
-            if (event.type === "error") {
-              o.next({ ...event, device });
+            if (initT) {
+              initT = null;
+              clearTimeout(initT);
+            }
+            if (disconnectT) {
+              // any connect app event unschedule the disconnect debounced event
+              disconnectT = null;
+              clearTimeout(disconnectT);
+            }
+            if (event.type === "unresponsiveDevice") {
+              return; // ignore unresponsive case which happens for polling
+            } else if (event.type === "disconnected") {
+              // the disconnect event is delayed to debounce the reconnection that happens when switching apps
+              disconnectT = setTimeout(() => {
+                disconnectT = null;
+                // a disconnect will locally be remembered via locally setting device to null...
+                device = null;
+                o.next(event);
+                log("app/polling", "device disconnect timeout");
+              }, DISCONNECT_DEBOUNCE);
             } else {
+              if (device !== pollingOnDevice) {
+                // ...but any time an event comes back, it means our device was responding and need to be set back on in polling context
+                device = pollingOnDevice;
+                o.next({ type: "deviceChange", device });
+              }
               o.next(event);
             }
           },
           complete: () => {
-            timeout = setTimeout(loop, POLLING);
+            // poll again in some time
+            loopT = setTimeout(loop, POLLING);
           },
           error: (e) => {
             o.error(e);
@@ -320,13 +356,15 @@ const implementations = {
         });
       }
 
-      timeout = setTimeout(loop, POLLING);
+      // delay a bit the first loop run in order to be async and wait pollingOnDevice
+      loopT = setTimeout(loop, 0);
 
       return () => {
+        if (initT) clearTimeout(initT);
+        if (disconnectT) clearTimeout(disconnectT);
         if (connectSub) connectSub.unsubscribe();
         sub.unsubscribe();
-        finished = true;
-        clearTimeout(timeout);
+        clearTimeout(loopT);
       };
     }).pipe(distinctUntilChanged(isEqual)),
 };
@@ -376,7 +414,7 @@ export const createAction = (
           // tap(e => console.log("connectApp event", e)),
           // we gather all events with a reducer into the UI state
           scan(reducer, getInitialState()),
-          // tap(s => console.log("connectApp state", s)),
+          // tap((s) => console.log("connectApp state", s)),
           // we debounce the UI state to not blink on the UI
           debounce((s) => {
             if (s.allowOpeningRequestedWording || s.allowOpeningGranted) {

@@ -8,6 +8,8 @@ import {
   UserRefusedOnDevice,
   BtcUnmatchedApp,
   UpdateYourApp,
+  DisconnectedDeviceDuringOperation,
+  DisconnectedDevice,
 } from "@ledgerhq/errors";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { getEnv } from "../env";
@@ -41,6 +43,7 @@ export type AppAndVersion = {
 
 export type ConnectAppEvent =
   | { type: "unresponsiveDevice" }
+  | { type: "disconnected" }
   | { type: "device-permission-requested", wording: string }
   | { type: "device-permission-granted" }
   | { type: "app-not-installed", appName: string }
@@ -174,6 +177,12 @@ const cmd = ({
             }
           }),
           catchError((e: Error) => {
+            if (
+              e instanceof DisconnectedDeviceDuringOperation ||
+              e instanceof DisconnectedDevice
+            ) {
+              return of({ type: "disconnected" });
+            }
             if (
               e &&
               e instanceof TransportStatusError &&
