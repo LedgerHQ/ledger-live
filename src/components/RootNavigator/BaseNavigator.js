@@ -33,6 +33,7 @@ import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import colors from "../../colors";
 import HeaderRightClose from "../HeaderRightClose";
+import StepHeader from "../StepHeader";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -93,14 +94,32 @@ export default function BaseNavigator() {
         options={({ route, navigation }) => {
           if (route.params?.isSubOperation) {
             return {
-              title: t("operationDetails.title"),
+              headerTitle: () => (
+                <StepHeader
+                  subtitle={t("operationDetails.title")}
+                  title={
+                    route.params?.operation?.type
+                      ? t(`operations.types.${route.params.operation.type}`)
+                      : ""
+                  }
+                />
+              ),
               headerLeft: () => <BackButton navigation={navigation} />,
               headerRight: () => <CloseButton navigation={navigation} />,
             };
           }
 
           return {
-            title: t("operationDetails.title"),
+            headerTitle: () => (
+              <StepHeader
+                subtitle={t("operationDetails.title")}
+                title={
+                  route.params?.operation?.type
+                    ? t(`operations.types.${route.params.operation.type}`)
+                    : ""
+                }
+              />
+            ),
             headerLeft: () => <BackButton navigation={navigation} />,
             headerRight: null,
           };
