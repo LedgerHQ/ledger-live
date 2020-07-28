@@ -94,6 +94,8 @@ test("nano x 1.1.6", async () => {
   expect(res).toBe(null);
 });
 
+// TODO waiting it to be stable
+/*
 test("nano x 1.2.4-1", async () => {
   const deviceInfo = {
     version: "1.2.4-1",
@@ -109,6 +111,7 @@ test("nano x 1.2.4-1", async () => {
   const res = await manager.getLatestFirmwareForDevice(deviceInfo);
   expect(res).toBe(null);
 });
+*/
 
 test("nanoS das", async () => {
   const deviceInfo = {
