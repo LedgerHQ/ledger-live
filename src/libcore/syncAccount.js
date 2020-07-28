@@ -127,6 +127,7 @@ export function sync(
         lastSyncDate: new Date(),
         creationDate: syncedAccount.creationDate,
         operations: syncedAccount.operations,
+        operationsCount: syncedAccount.operations.length,
         subAccounts: syncedAccount.subAccounts,
         pendingOperations: initialAccount.pendingOperations.filter((op) =>
           shouldRetainPendingOperation(syncedAccount, op)
