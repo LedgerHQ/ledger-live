@@ -170,8 +170,8 @@ export type SwapState = {
   ratesTimestamp?: number,
   ratesExpired?: boolean,
   okCurrencies: (CryptoCurrency | TokenCurrency)[],
-  fromCurrency: ?CryptoCurrency | TokenCurrency,
-  toCurrency: ?CryptoCurrency | TokenCurrency,
+  fromCurrency: ?(CryptoCurrency | TokenCurrency),
+  toCurrency: ?(CryptoCurrency | TokenCurrency),
   useAllAmount: boolean,
   fromAmount: BigNumber,
 };
