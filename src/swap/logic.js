@@ -3,7 +3,7 @@
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import type { SwapState } from "./types";
-import type { AccountLike, Currency } from "../types";
+import type { AccountLike, TokenCurrency, CryptoCurrency } from "../types";
 import type { InstalledItem } from "../apps";
 import { flattenAccounts, getAccountCurrency } from "../account";
 
@@ -11,9 +11,9 @@ const validCurrencyStatus = { ok: 1, noApps: 1, noAccounts: 1 };
 export type CurrencyStatus = $Keys<typeof validCurrencyStatus>;
 export type CurrenciesStatus = { [string]: CurrencyStatus };
 
-export const initState: ({ okCurrencies: Currency[] }) => SwapState = ({
-  okCurrencies,
-}) => {
+export const initState: ({
+  okCurrencies: (TokenCurrency | CryptoCurrency)[],
+}) => SwapState = ({ okCurrencies }) => {
   const fromCurrency = okCurrencies[0];
   const toCurrency = okCurrencies.find((c) => c !== fromCurrency);
 
@@ -52,7 +52,7 @@ export const getCurrenciesWithStatus = ({
   installedApps,
 }: {
   accounts: AccountLike[],
-  selectableCurrencies: Currency[],
+  selectableCurrencies: (TokenCurrency | CryptoCurrency)[],
   installedApps: InstalledItem[],
 }): CurrenciesStatus => {
   const statuses = {};
@@ -120,6 +120,7 @@ export const reducer = (
       );
       newState = {
         ...state,
+        useAllAmount: false,
         swap: {
           ...state.swap,
           exchangeRate: null,
@@ -139,6 +140,7 @@ export const reducer = (
     case "setToCurrency": {
       newState = {
         ...state,
+        useAllAmount: false,
         swap: {
           ...state.swap,
           exchangeRate: null,
@@ -154,6 +156,23 @@ export const reducer = (
       break;
     }
     case "setFromAccount": {
+      newState = {
+        ...state,
+        useAllAmount: false,
+        swap: {
+          ...state.swap,
+          exchangeRate: null,
+          exchange: {
+            ...state.swap.exchange,
+            ...payload,
+          },
+        },
+        fromAmount: BigNumber(0),
+        error: null,
+      };
+      break;
+    }
+    case "setToAccount": {
       newState = {
         ...state,
         useAllAmount: false,

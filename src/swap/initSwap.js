@@ -14,7 +14,7 @@ import { getAccountCurrency, getMainAccount, getAccountUnit } from "../account";
 import network from "../network";
 import { getAccountBridge } from "../bridge";
 import { BigNumber } from "bignumber.js";
-import { SwapGenericAPIError } from "../errors";
+import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../errors";
 import type {
   Exchange,
   ExchangeRate,
@@ -232,6 +232,9 @@ const initSwap: InitSwap = (
         await swap.signCoinTransaction();
       }).catch((e) => {
         if (ignoreTransportError) return;
+        if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
+          throw new TransactionRefusedOnDevice();
+        }
         throw e;
       });
 
