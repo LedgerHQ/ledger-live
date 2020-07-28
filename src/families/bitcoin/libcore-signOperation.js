@@ -15,7 +15,11 @@ import { promiseAllBatched } from "../../promise";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
-import { parseBitcoinOutput, isChangeOutput } from "./transaction";
+import {
+  parseBitcoinOutput,
+  isChangeOutput,
+  perCoinLogic,
+} from "./transaction";
 
 async function signTransaction({
   account,
@@ -32,6 +36,8 @@ async function signTransaction({
 }) {
   log("hw", `signTransaction ${currency.id} for account ${account.id}`);
 
+  const perCoin = perCoinLogic[currency.id];
+
   const networkParams = await coreCurrency.getBitcoinLikeNetworkParameters();
   if (isCancelled()) return;
 
@@ -46,29 +52,22 @@ async function signTransaction({
   if (isCancelled()) return;
 
   const hwApp = new Btc(transport);
-  const additionals = [currency.id];
-
-  let expiryHeight;
-  if (currency.id === "bitcoin_cash" || currency.id === "bitcoin_gold") {
-    additionals.push("bip143");
-  } else if (currency.id === "zcash" || currency.id === "komodo") {
-    expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
-    additionals.push("sapling"); // FIXME drop in ledgerjs. we always use sapling now for zcash & kmd
-  } else if (currency.id === "decred") {
-    expiryHeight = Buffer.from([0x00, 0x00, 0x00, 0x00]);
-  }
-
+  let additionals = [currency.id];
   if (account.derivationMode === "native_segwit") {
     additionals.push("bech32");
   }
+  if (perCoin?.getAdditionals) {
+    additionals = additionals.concat(perCoin.getAdditionals({ transaction }));
+  }
+
+  const expiryHeight = perCoin?.hasExpiryHeight
+    ? Buffer.from([0x00, 0x00, 0x00, 0x00])
+    : undefined;
+
+  const hasExtraData = perCoin?.hasExtraData || false;
 
   const rawInputs: CoreBitcoinLikeInput[] = await coreTransaction.getInputs();
   if (isCancelled()) return;
-
-  const hasExtraData = // FIXME investigate why we need this here and drop
-    currency.id === "zcash" ||
-    currency.id === "komodo" ||
-    currency.id === "zencash";
 
   const inputs = await promiseAllBatched(5, rawInputs, async (input, i) => {
     const hexPreviousTransaction = await input.getPreviousTransaction();

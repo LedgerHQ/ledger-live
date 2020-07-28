@@ -3,6 +3,7 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
+import { perCoinLogic } from "./transaction";
 
 const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
   steps: [
@@ -43,7 +44,13 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Address",
       button: "Rr",
-      expectedValue: ({ transaction }) => transaction.recipient,
+      expectedValue: ({ transaction, account }) => {
+        const perCoin = perCoinLogic[account.currency.id];
+        if (perCoin?.onScreenTransactionRecipient) {
+          return perCoin.onScreenTransactionRecipient(transaction.recipient);
+        }
+        return transaction.recipient;
+      },
     },
     {
       title: "Review",

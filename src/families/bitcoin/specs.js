@@ -2,6 +2,7 @@
 import expect from "expect";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
+import bchaddrjs from "bchaddrjs";
 import sample from "lodash/sample";
 import { log } from "@ledgerhq/logs";
 import type { Transaction } from "./types";
@@ -16,6 +17,7 @@ import { isChangeOutput, getUTXOStatus } from "./transaction";
 type Arg = $Shape<{
   minimalAmount: BigNumber,
   targetAccountSize: number,
+  recipientVariation: (string) => string,
 }>;
 
 const recoverBadTransactionStatus = ({
@@ -96,6 +98,7 @@ const genericTest = ({
 const bitcoinLikeMutations = ({
   minimalAmount = BigNumber("10000"),
   targetAccountSize = 3,
+  recipientVariation = (recipient) => recipient,
 }: Arg = {}): MutationSpec<Transaction>[] => [
   {
     name: "move ~50%",
@@ -103,7 +106,7 @@ const bitcoinLikeMutations = ({
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
-      const recipient = sibling.freshAddress;
+      const recipient = recipientVariation(sibling.freshAddress);
       const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
       const transaction = bridge.createTransaction(account);
       const updates = [{ recipient }, { amount }];
@@ -122,7 +125,7 @@ const bitcoinLikeMutations = ({
       const sibling = pickSiblings(siblings, targetAccountSize);
       const transaction = bridge.createTransaction(account);
       const updates = [
-        { recipient: sibling.freshAddress },
+        { recipient: recipientVariation(sibling.freshAddress) },
         {
           amount: maxSpendable.times(0.1 + 0.9 * Math.random()).integerValue(),
         },
@@ -151,7 +154,7 @@ const bitcoinLikeMutations = ({
       return {
         transaction,
         updates: [
-          { recipient: sibling.freshAddress },
+          { recipient: recipientVariation(sibling.freshAddress) },
           {
             utxoStrategy: {
               ...transaction.utxoStrategy,
@@ -189,7 +192,7 @@ const bitcoinLikeMutations = ({
     transaction: ({ account, siblings, bridge, maxSpendable }) => {
       invariant(maxSpendable.gt(minimalAmount), "balance is too low");
       const sibling = pickSiblings(siblings, targetAccountSize);
-      const recipient = sibling.freshAddress;
+      const recipient = recipientVariation(sibling.freshAddress);
       const transaction = bridge.createTransaction(account);
       return {
         transaction,
@@ -256,6 +259,9 @@ const bitcoinGold: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
 };
 
+const bchToCashaddrAddressWithoutPrefix = (recipient) =>
+  bchaddrjs.toCashAddress(recipient).split(":")[1];
+
 const bitcoinCash: AppSpec<Transaction> = {
   name: "Bitcoin Cash",
   currency: getCryptoCurrencyById("bitcoin_cash"),
@@ -266,7 +272,19 @@ const bitcoinCash: AppSpec<Transaction> = {
     appName: "BitcoinCash",
   },
   test: genericTest,
-  mutations: bitcoinLikeMutations(),
+  mutations: bitcoinLikeMutations({
+    targetAccountSize: 5,
+    recipientVariation: (recipient) => {
+      const [mode, fn] = sample([
+        ["legacy address", bchaddrjs.toLegacyAddress],
+        ["cash address", bchaddrjs.toCashAddress],
+        ["cash address without prefix", bchToCashaddrAddressWithoutPrefix],
+      ]);
+      const addr = fn(recipient);
+      log("bch", `using ${mode}: ${recipient} => ${addr}`);
+      return addr;
+    },
+  }),
 };
 
 const peercoin: AppSpec<Transaction> = {

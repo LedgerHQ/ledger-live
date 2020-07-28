@@ -1,5 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+import cashaddr from "cashaddrjs";
 import type {
   Transaction,
   TransactionRaw,
@@ -20,7 +21,67 @@ import {
 } from "../../transaction/common";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
+import type { CryptoCurrencyIds } from "../../types";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
+
+function bchExplicit(str: string): string {
+  const explicit = str.includes(":") ? str : "bitcoincash:" + str;
+  try {
+    const { type } = cashaddr.decode(explicit);
+    if (type === "P2PKH") return explicit;
+  } catch (e) {
+    // ignore errors
+  }
+  return str;
+}
+
+export type CoinLogic = {
+  hasExtraData?: boolean,
+  hasExpiryHeight?: boolean,
+  getAdditionals?: ({ transaction: Transaction }) => string[],
+  asLibcoreTransactionRecipient?: (string) => string,
+  onScreenTransactionRecipient?: (string) => string,
+};
+
+export const perCoinLogic: { [_: CryptoCurrencyIds]: ?CoinLogic } = {
+  zencash: {
+    hasExtraData: true, // FIXME investigate why we need this here and drop
+  },
+  zcash: {
+    hasExtraData: true,
+    hasExpiryHeight: true,
+    getAdditionals: () => ["sapling"], // FIXME drop in ledgerjs. we always use sapling now for zcash & kmd
+  },
+  komodo: {
+    hasExtraData: true,
+    hasExpiryHeight: true,
+    getAdditionals: () => ["sapling"], // FIXME drop in ledgerjs. we always use sapling now for zcash & kmd
+  },
+  decred: {
+    hasExpiryHeight: true,
+  },
+  bitcoin_gold: {
+    getAdditionals: () => ["bip143"],
+  },
+  bitcoin_cash: {
+    getAdditionals: ({ transaction }) => {
+      const additionals = ["bip143"];
+      if (bchExplicit(transaction.recipient).startsWith("bitcoincash:")) {
+        additionals.push("cashaddr");
+      }
+      return additionals;
+    },
+
+    // due to libcore minimal support, we need to return the explicit format of bitcoincash:.. if it's a P2PKH
+    asLibcoreTransactionRecipient: bchExplicit,
+
+    // to represent what happens on the device, which do not display the bitcoincash: prefix
+    onScreenTransactionRecipient: (str: string): string => {
+      const prefix = "bitcoincash:";
+      return str.startsWith(prefix) ? str.slice(prefix.length) : str;
+    },
+  },
+};
 
 export type UTXOStatus =
   | {

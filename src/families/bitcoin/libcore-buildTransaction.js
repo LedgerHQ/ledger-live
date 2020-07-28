@@ -9,7 +9,7 @@ import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
 import type { CoreBitcoinLikeTransaction, Transaction } from "./types";
 import { getUTXOStatus } from "./transaction";
 import { promiseAllBatched } from "../../promise";
-import { parseBitcoinUTXO } from "./transaction";
+import { parseBitcoinUTXO, perCoinLogic } from "./transaction";
 
 async function bitcoinBuildTransaction({
   account,
@@ -28,15 +28,19 @@ async function bitcoinBuildTransaction({
   isPartial: boolean,
   isCancelled: () => boolean,
 }): Promise<?CoreBitcoinLikeTransaction> {
+  const { currency } = account;
+
+  const perCoin = perCoinLogic[currency.id];
+  const recipient = perCoin?.asLibcoreTransactionRecipient
+    ? perCoin.asLibcoreTransactionRecipient(transaction.recipient)
+    : transaction.recipient;
+
   const bitcoinLikeAccount = await coreAccount.asBitcoinLikeAccount();
 
-  const isValid = await isValidRecipient({
-    currency: account.currency,
-    recipient: transaction.recipient,
-  });
+  const isValid = await isValidRecipient({ currency, recipient });
 
   if (isValid !== null) {
-    throw new InvalidAddress("", { currencyName: account.currency.name });
+    throw new InvalidAddress("", { currencyName: currency.name });
   }
 
   const { feePerByte } = transaction;
@@ -55,7 +59,7 @@ async function bitcoinBuildTransaction({
   const { utxoStrategy } = transaction;
 
   if (transaction.useAllAmount) {
-    await transactionBuilder.wipeToAddress(transaction.recipient);
+    await transactionBuilder.wipeToAddress(recipient);
     if (isCancelled()) return;
   }
 
@@ -82,7 +86,7 @@ async function bitcoinBuildTransaction({
       BigNumber(transaction.amount)
     );
     if (isCancelled()) return;
-    await transactionBuilder.sendToAddress(amount, transaction.recipient);
+    await transactionBuilder.sendToAddress(amount, recipient);
     if (isCancelled()) return;
   }
 
