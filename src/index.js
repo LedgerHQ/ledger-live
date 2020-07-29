@@ -10,7 +10,11 @@ import { StyleSheet, View, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
-import { useLinking, NavigationContainer } from "@react-navigation/native";
+import {
+  useLinking,
+  NavigationContainer,
+  getStateFromPath,
+} from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -211,6 +215,12 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const { getInitialState } = useLinking(ref, {
     ...linking,
     enabled: hasCompletedOnboarding,
+    getStateFromPath(path, config) {
+      // Return a state object here
+      // You can also reuse the default logic by importing `getStateFromPath` from `@react-navigation/native`
+      const state = getStateFromPath(path, config);
+      return hasCompletedOnboarding ? state : null;
+    },
   });
 
   /** we consider the state is ready during onboarding no need to get it from deeplinking */
