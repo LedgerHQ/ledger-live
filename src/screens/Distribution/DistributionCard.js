@@ -45,7 +45,7 @@ export default function DistributionCard({
           <LText semiBold style={styles.darkBlue}>
             {currency.name}
           </LText>
-          <LText tertiary style={styles.darkBlue}>
+          <LText semiBold style={styles.darkBlue}>
             {<CurrencyUnitValue unit={currency.units[0]} value={amount} />}
           </LText>
         </View>
@@ -53,14 +53,14 @@ export default function DistributionCard({
           <>
             <View style={styles.rateRow}>
               <CurrencyRate currency={currency} />
-              <LText tertiary style={styles.counterValue}>
+              <LText semiBold style={styles.counterValue}>
                 <CounterValue currency={currency} value={amount} />
               </LText>
             </View>
             <View style={styles.distributionRow}>
               <ProgressBar progress={percentage} progressColor={color} />
               <LText
-                tertiary
+                semiBold
                 style={styles.percentage}
               >{`${percentage}%`}</LText>
             </View>

@@ -20,6 +20,7 @@
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Need help?",
     "edit": "Edit",
+    "editName": "Edit name",
     "close": "Close",
     "confirm": "Confirm",
     "poweredBy": "Powered by ",
@@ -693,7 +694,7 @@
       "evening": "Good evening",
       "afternoon": "Good afternoon"
     },
-    "transactionsPendingConfirmation" : {
+    "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },

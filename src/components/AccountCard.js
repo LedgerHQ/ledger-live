@@ -48,7 +48,7 @@ class AccountCard extends PureComponent<Props> {
           </LText>
         </View>
         <View style={styles.balanceContainer}>
-          <LText tertiary style={styles.balanceNumText}>
+          <LText semiBold style={styles.balanceNumText}>
             <CurrencyUnitValue showCode unit={unit} value={account.balance} />
           </LText>
         </View>

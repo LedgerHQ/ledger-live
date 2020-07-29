@@ -150,7 +150,7 @@ class SelectableAccount extends PureComponent<
         <Button
           event="EditAccountNameFromSlideAction"
           type="primary"
-          title="Edit Name"
+          title={<Trans i18nKey="common.editName" />}
           onPress={this.editAccountName}
           containerStyle={styles.buttonContainer}
         />
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   leftAction: {
-    width: 100,
+    width: "auto",
     flexDirection: "row",
     alignItems: "center",
   },
@@ -345,7 +345,8 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   buttonContainer: {
-    flex: 1,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   subAccountCountWrapper: {
     flexDirection: "row",

@@ -52,7 +52,7 @@ export default class Delta extends PureComponent<Props> {
             : arrowDown
           : null}
         <View style={styles.content}>
-          <LText tertiary style={styles.text}>
+          <LText semiBold style={styles.text}>
             {unit ? (
               <CurrencyUnitValue unit={unit} value={absDelta} />
             ) : percent ? (

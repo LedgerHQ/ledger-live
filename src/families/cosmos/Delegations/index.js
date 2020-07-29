@@ -291,7 +291,7 @@ export default function Delegations({ account }: Props) {
               <LText semiBold style={styles.label}>
                 <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
               </LText>
-              <LText tertiary style={styles.subLabel}>
+              <LText semiBold style={styles.subLabel}>
                 <CounterValue
                   currency={currency}
                   value={totalRewardsAvailable}

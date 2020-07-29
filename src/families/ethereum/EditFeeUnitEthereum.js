@@ -100,7 +100,7 @@ export default function EditFeeUnitEthereum({
           alignedTop
         >
           <LText
-            tertiary
+            semiBold
             style={[
               styles.currencyUnitText,
               { color: colors.live, marginLeft: 8 },
@@ -120,13 +120,13 @@ export default function EditFeeUnitEthereum({
           />
           <View style={styles.textContainer}>
             <LText
-              tertiary
+              semiBold
               style={[styles.currencyUnitText, { color: colors.grey }]}
             >
               {t("common.slow")}
             </LText>
             <LText
-              tertiary
+              semiBold
               style={[styles.currencyUnitText, { color: colors.grey }]}
             >
               {t("common.fast")}

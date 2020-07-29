@@ -155,7 +155,7 @@ export default function OperationRow({
           {amount.isZero() ? null : (
             <View style={styles.bodyRight}>
               <LText
-                tertiary
+                semiBold
                 numberOfLines={1}
                 style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
               >
@@ -185,7 +185,7 @@ export default function OperationRow({
 }
 
 const OpCounterValue = ({ children }: { children: React$Node }) => (
-  <LText tertiary numberOfLines={1} style={styles.bottomRow}>
+  <LText semiBold numberOfLines={1} style={styles.bottomRow}>
     {children}
   </LText>
 );

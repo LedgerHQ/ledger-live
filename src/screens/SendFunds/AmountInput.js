@@ -120,7 +120,7 @@ class AmountInput extends Component<Props, OwnState> {
             renderRight={
               <LText
                 style={[styles.currency, isCrypto ? styles.active : null]}
-                tertiary
+                semiBold
               >
                 {currency}
               </LText>
@@ -149,7 +149,7 @@ class AmountInput extends Component<Props, OwnState> {
             renderRight={
               <LText
                 style={[styles.currency, !isCrypto ? styles.active : null]}
-                tertiary
+                semiBold
               >
                 {rightUnit.code}
               </LText>

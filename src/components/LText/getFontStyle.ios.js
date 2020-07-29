@@ -6,16 +6,9 @@ const getFontStyle = ({
   bold,
   semiBold,
   secondary,
-  tertiary,
   monospace,
 }: Opts = {}): Res => {
-  const fontFamily = secondary
-    ? "Museo Sans"
-    : tertiary
-    ? "Rubik"
-    : monospace
-    ? "Menlo"
-    : "Open Sans";
+  const fontFamily = monospace ? "Menlo" : "Inter";
   let fontWeight;
   if (semiBold) {
     fontWeight = secondary ? "400" : "600"; // Fix for Museo weights being off by 200;

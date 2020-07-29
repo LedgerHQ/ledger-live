@@ -248,11 +248,11 @@ export default function DelegationDetailsModal({
         />
 
         <View style={styles.subHeader}>
-          <LText tertiary style={styles.currencyValue}>
+          <LText semiBold style={styles.currencyValue}>
             <CurrencyUnitValue showCode unit={unit} value={amount} />
           </LText>
 
-          <LText tertiary style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue}>
             <CounterValue
               showCode
               date={delegation.operation.date}
