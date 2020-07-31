@@ -6,6 +6,7 @@ import type { Feature } from "../../../experimental";
 import { isReadOnly } from "../../../experimental";
 import SettingsRow from "../../../components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
+import FeatureInteger from "./FeatureInteger";
 
 type Props = {
   feature: Feature,
@@ -13,6 +14,7 @@ type Props = {
 
 const experimentalTypesMap = {
   toggle: FeatureSwitch,
+  integer: FeatureInteger,
 };
 
 const FeatureRow = ({ feature }: Props) => {
@@ -21,7 +23,7 @@ const FeatureRow = ({ feature }: Props) => {
   return (
     <SettingsRow
       event={`${feature.name}Row`}
-      title={feature.title}
+      title={type === "integer" ? `${feature.title}` : feature.title}
       desc={feature.description}
       onPress={null}
       alignedTop
