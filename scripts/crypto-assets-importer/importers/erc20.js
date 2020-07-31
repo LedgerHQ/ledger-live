@@ -80,7 +80,7 @@ module.exports = {
         );
         invariant(typeof ticker === "string" && ticker, "ticker is required");
         invariant(
-          ticker.match(/^[0-9A-Z]+$/g),
+          ticker.match(/^[0-9A-Z+_\-*]+$/g),
           "ticker '%s' alphanum uppercase expected",
           ticker
         );
