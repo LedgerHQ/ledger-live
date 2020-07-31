@@ -3,16 +3,14 @@ import { Observable, of, concat } from "rxjs";
 import { scan, tap, catchError } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
+import type { InitSwapInput } from "../../swap/initSwap";
 import type { Action, Device } from "./types";
-import type { Transaction, TransactionRaw } from "../../types";
-import { toExchangeRaw } from "../../swap/serialization";
-import { toTransactionRaw } from "../../transaction";
+import type { Transaction } from "../../types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
 import type {
   Exchange,
-  ExchangeRaw,
   ExchangeRate,
   InitSwapResult,
   SwapRequestEvent,
@@ -34,7 +32,6 @@ type InitSwapState = {|
 type InitSwapRequest = {
   exchange: Exchange,
   exchangeRate: ExchangeRate,
-  deviceId: string,
   transaction: Transaction,
 };
 
@@ -97,12 +94,7 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 
 export const createAction = (
   connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>,
-  initSwapExec: ({
-    exchange: ExchangeRaw,
-    exchangeRate: ExchangeRate,
-    deviceId: string,
-    transaction: TransactionRaw,
-  }) => Observable<SwapRequestEvent>
+  initSwapExec: (InitSwapInput) => Observable<SwapRequestEvent>
 ): InitSwapAction => {
   const useHook = (
     reduxDevice: ?Device,
@@ -126,7 +118,7 @@ export const createAction = (
     const { exchange, exchangeRate, transaction } = initSwapRequest;
 
     useEffect(() => {
-      if (!opened || !device) {
+      if (!opened || !device || !device.deviceId) {
         setState(initialState);
         return;
       }
@@ -134,10 +126,10 @@ export const createAction = (
       const sub = concat(
         of({ type: "init-swap" }),
         initSwapExec({
-          exchange: toExchangeRaw(exchange),
+          exchange,
           exchangeRate,
-          deviceId: "",
-          transaction: toTransactionRaw(transaction),
+          deviceId: device.deviceId,
+          transaction,
         })
       )
         .pipe(
