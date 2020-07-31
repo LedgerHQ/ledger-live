@@ -10,7 +10,6 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "../types";
-import { Observable } from "rxjs";
 
 export type Exchange = {
   fromParentAccount: ?Account,
