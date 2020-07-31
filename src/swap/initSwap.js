@@ -15,12 +15,7 @@ import network from "../network";
 import { getAccountBridge } from "../bridge";
 import { BigNumber } from "bignumber.js";
 import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../errors";
-import type {
-  Exchange,
-  ExchangeRate,
-  InitSwap,
-  SwapRequestEvent,
-} from "./types";
+import type { Exchange, ExchangeRate, SwapRequestEvent } from "./types";
 import type { Transaction } from "../types";
 import { Observable } from "rxjs";
 import { withDevice } from "../hw/deviceAccess";
@@ -34,12 +29,18 @@ import { getEnv } from "../env";
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
 
-const initSwap: InitSwap = (
+export type InitSwapInput = {
   exchange: Exchange,
   exchangeRate: ExchangeRate,
   transaction: Transaction,
-  deviceId: string
-): Observable<SwapRequestEvent> => {
+  deviceId: string,
+};
+
+// init a swap with the Exchange app
+// throw if TransactionStatus have errors
+// you get at the end a final Transaction to be done (it's not yet signed, nor broadcasted!) and a swapId
+const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
+  let { exchange, exchangeRate, transaction, deviceId } = input;
   if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, deviceId);
   return Observable.create((o) => {
     let unsubscribed = false;
@@ -47,6 +48,7 @@ const initSwap: InitSwap = (
       let swapId;
       let ignoreTransportError;
 
+      log("swap", `attempt to connect to ${deviceId}`);
       await withDevicePromise(deviceId, async (transport) => {
         const swap = new Swap(transport);
         // NB this id is crucial to prevent replay attacks, if it changes
@@ -115,7 +117,12 @@ const initSwap: InitSwap = (
 
         // Triplecheck we're not working with an abandonseed recipient anymore
         invariant(
-          transaction.recipient !== getAbandonSeedAddress(refundCurrency.id),
+          transaction.recipient !==
+            getAbandonSeedAddress(
+              refundCurrency.type === "TokenCurrency"
+                ? refundCurrency.parentCurrency.id
+                : refundCurrency.id
+            ),
           "Recipient address should never be the abandonseed address"
         );
 

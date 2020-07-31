@@ -33,7 +33,10 @@ type SwapJobOpts = ScanCommonOpts & {
 const exec = async (opts: SwapJobOpts) => {
   const { amount, useAllAmount, tokenId, deviceId = "" } = opts;
 
-  invariant(amount, "amount in satoshis is needed");
+  invariant(
+    amount || useAllAmount,
+    "amount in satoshis is needed or --useAllAmount "
+  );
   invariant(opts._unknown, "second account information is missing");
 
   //Remove suffix from arguments before passing them to sync.
@@ -158,12 +161,12 @@ const exec = async (opts: SwapJobOpts) => {
   console.log("OPEN EXCHANGE APP");
   await delay(10000);
 
-  const initSwapResult = await initSwap(
+  const initSwapResult = await initSwap({
     exchange,
-    exchangeRates[0],
+    exchangeRate: exchangeRates[0],
     transaction,
-    deviceId
-  )
+    deviceId,
+  })
     .pipe(
       tap((e) => console.log(e)),
       filter((e) => e.type === "init-swap-result"),

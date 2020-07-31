@@ -10,7 +10,6 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "../types";
-import { Observable } from "rxjs";
 
 export type Exchange = {
   fromParentAccount: ?Account,
@@ -50,16 +49,6 @@ export type InitSwapResult = {
   transaction: Transaction,
   swapId: string,
 };
-
-// init a swap with the Exchange app
-// throw if TransactionStatus have errors
-// you get at the end a final Transaction to be done (it's not yet signed, nor broadcasted!) and a swapId
-export type InitSwap = (
-  exchange: Exchange,
-  exchangeRate: ExchangeRate,
-  transaction: Transaction,
-  deviceId: string
-) => Observable<SwapRequestEvent>;
 
 export type SwapCurrencyNameAndSignature = {
   config: Buffer,
