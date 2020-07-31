@@ -1,9 +1,12 @@
 import React, { memo, useEffect, useState, useCallback } from "react";
-import manager from "@ledgerhq/live-common/lib/manager";
 import { useDispatch } from "react-redux";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, Linking } from "react-native";
 import { Trans } from "react-i18next";
+
 import type { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
+
+import manager from "@ledgerhq/live-common/lib/manager";
+
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import Genuine from "../../../icons/Genuine";
@@ -14,6 +17,7 @@ import nanoS from "./images/nanoS.png";
 import nanoX from "./images/nanoX.png";
 import blue from "./images/blue.png";
 
+import { urls } from "../../../config/urls";
 import Card from "../../../components/Card";
 
 import colors from "../../../colors";
@@ -50,6 +54,7 @@ const DeviceCard = ({
 
   const open = useCallback(() => setOpenModal(true), [setOpenModal]);
   const close = useCallback(() => setOpenModal(false), [setOpenModal]);
+  const openSupport = useCallback(() => Linking.openURL(urls.contact), []);
 
   useEffect(() => {
     async function getLatestFirmwareForDevice() {
@@ -67,6 +72,8 @@ const DeviceCard = ({
     getLatestFirmwareForDevice();
   }, [deviceInfo, dispatch]);
 
+  const isDeprecated = manager.firmwareUnsupported(deviceModel.id, deviceInfo);
+
   return (
     <>
       <Card style={styles.card}>
@@ -83,6 +90,19 @@ const DeviceCard = ({
                 type="primary"
                 title={<Trans i18nKey="common.moreInfo" />}
                 onPress={open}
+              />
+            </View>
+          </View>
+        ) : isDeprecated ? (
+          <View style={styles.firmwareBanner}>
+            <LText primary semiBold style={styles.firmwareBannerText}>
+              <Trans i18nKey="manager.firmware.outdated" />
+            </LText>
+            <View style={styles.firmwareBannerCTA}>
+              <Button
+                type="primary"
+                title={<Trans i18nKey="common.contactUs" />}
+                onPress={openSupport}
               />
             </View>
           </View>
@@ -134,7 +154,7 @@ const DeviceCard = ({
 
 const styles = StyleSheet.create({
   card: {
-    height: 265,
+    minHeight: 265,
     flexDirection: "column",
     paddingHorizontal: 16,
     marginTop: 16,

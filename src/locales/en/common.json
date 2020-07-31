@@ -693,7 +693,7 @@
       "evening": "Good evening",
       "afternoon": "Good afternoon"
     },
-    "transactionsPendingConfirmation" : {
+    "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
@@ -1585,6 +1585,7 @@
     },
     "firmware": {
       "latest": "Firmware version {{version}} is available",
+      "outdated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "modalTitle": "Update firmware is available only on Ledger Live desktop",
       "modalDesc": "Please download Ledger Live on your computer to update the device’s firmware"
     }
