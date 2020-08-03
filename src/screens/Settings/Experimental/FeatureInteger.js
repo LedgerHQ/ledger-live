@@ -3,9 +3,10 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { Switch, TextInput, StyleSheet } from "react-native";
 import { getEnvDefault } from "@ledgerhq/live-common/lib/env";
-
 import { View } from "react-native-animatable";
+
 import Track from "../../../analytics/Track";
+import getFontStyle from "../../../components/LText/getFontStyle";
 import colors from "../../../colors";
 
 type Props = {
@@ -92,8 +93,8 @@ const FeatureInteger = ({
         />
         {enabled ? (
           <TextInput
-            style={styles.input}
             autoFocus
+            style={styles.input}
             keyboardType="numeric"
             value={enabled ? inputValue : ""}
             onChangeText={onInputChange}
@@ -112,9 +113,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   input: {
-    borderWidth: 1,
-    borderColor: colors.grey,
+    paddingVertical: 12,
     textAlign: "center",
+    fontSize: 20,
+    ...getFontStyle({ semiBold: true }),
+    borderWidth: 1,
+    borderColor: colors.lightFog,
   },
 });
 
