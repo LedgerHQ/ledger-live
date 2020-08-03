@@ -55,7 +55,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
       return {
         account,
         transaction: bridge.updateTransaction(t, {
-          mode: "claimRewards",
+          mode: "claimReward",
           /** @TODO remove this once the bridge handles it */
           recipient: mainAccount.freshAddress,
         }),
