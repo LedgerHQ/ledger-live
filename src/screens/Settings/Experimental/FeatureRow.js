@@ -23,7 +23,7 @@ const FeatureRow = ({ feature }: Props) => {
   return (
     <SettingsRow
       event={`${feature.name}Row`}
-      title={type === "integer" ? `${feature.title}` : feature.title}
+      title={feature.title}
       desc={feature.description}
       onPress={null}
       alignedTop
