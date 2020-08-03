@@ -15,6 +15,7 @@ import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge/impl";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import { extractTokenId } from "@ledgerhq/live-common/lib/families/algorand/tokens";
 
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 
@@ -40,24 +41,27 @@ const Row = ({
   onPress: () => void,
   onDisabledPress: () => void,
   disabled: boolean,
-}) => (
-  <TouchableOpacity
-    style={[styles.row]}
-    onPress={disabled ? onDisabledPress : onPress}
-  >
-    <FirstLetterIcon
-      label={item.name}
-      labelStyle={disabled ? { color: colors.grey } : {}}
-    />
-    <LText
-      semiBold
-      style={[styles.name, disabled ? { color: colors.grey } : {}]}
+}) => {
+  const tokenId = extractTokenId(item.id);
+  return (
+    <TouchableOpacity
+      style={[styles.row]}
+      onPress={disabled ? onDisabledPress : onPress}
     >
-      {item.name}
-    </LText>
-    <LText style={styles.ticker}>- {item.ticker}</LText>
-  </TouchableOpacity>
-);
+      <FirstLetterIcon
+        label={item.name}
+        labelStyle={disabled ? { color: colors.grey } : {}}
+      />
+      <LText
+        semiBold
+        style={[styles.name, disabled ? { color: colors.grey } : {}]}
+      >
+        {item.name}
+      </LText>
+      <LText style={styles.ticker}>- {tokenId}</LText>
+    </TouchableOpacity>
+  );
+};
 
 const keyExtractor = token => token.id;
 
