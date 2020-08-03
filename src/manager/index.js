@@ -36,7 +36,7 @@ const CacheAPI = {
   // When ready, the manager api will return an icon url instead of a name
   getIconUrl: (icon: string): string => {
     const icn = ICONS_FALLBACK[icon] || icon;
-    return `https://api.ledgerwallet.com/update/assets/icons/${icn}`;
+    return `https://cdn.live.ledger.com/icons/${icn}.png`;
   },
 
   getFirmwareVersion: (firmware: OsuFirmware): string =>
