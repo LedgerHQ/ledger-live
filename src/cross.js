@@ -26,7 +26,7 @@ export type AccountData = {
   name: string,
   index: number,
   balance: string,
-  swapHistory: SwapOperationRaw[],
+  swapHistory?: SwapOperationRaw[],
 };
 
 export type CryptoSettings = {
@@ -103,6 +103,51 @@ const asResultMeta = (unsafe: mixed): Meta => {
   };
 };
 
+const asMaybeSwapOperationRaw = (unsafe: mixed): ?SwapOperationRaw => {
+  if (!unsafe || typeof unsafe !== "object") return;
+  const {
+    provider,
+    swapId,
+    status,
+    receiverAccountId,
+    tokenId,
+    operationId,
+    fromAmount,
+    toAmount,
+  } = unsafe;
+  if (
+    typeof provider !== "string" ||
+    typeof swapId !== "string" ||
+    typeof status !== "string" ||
+    typeof receiverAccountId !== "string" ||
+    typeof operationId !== "string" ||
+    typeof fromAmount !== "string" ||
+    typeof toAmount !== "string"
+  ) {
+    return;
+  }
+  const safe = {};
+  if (tokenId && typeof tokenId === "string") {
+    safe.tokenId = tokenId;
+  }
+  return safe;
+};
+
+const asSwapHistory = (unsafe: mixed): Array<SwapOperationRaw> => {
+  if (unsafe && Array.isArray(unsafe)) {
+    const swapHistorySafe = [];
+    for (let s of unsafe) {
+      const swapOp = asMaybeSwapOperationRaw(s);
+      if (!swapOp) {
+        return []; // we consider the whole swap history invalid
+      }
+      swapHistorySafe.push(swapOp);
+    }
+    return swapHistorySafe;
+  }
+  return [];
+};
+
 const asResultAccount = (unsafe: mixed): AccountData => {
   if (typeof unsafe !== "object" || !unsafe) {
     throw new Error("invalid account data");
@@ -140,21 +185,6 @@ const asResultAccount = (unsafe: mixed): AccountData => {
     throw new Error("invalid account.balance");
   }
 
-  let invalidSwapHistory = false;
-  if (swapHistory && Array.isArray(swapHistory)) {
-    for (let s of swapHistory) {
-      if (invalidSwapHistory) break;
-      if (s && typeof s === "object") {
-        for (let k in s) {
-          const v = s[k];
-          if (v && typeof v !== "string") {
-            invalidSwapHistory = true;
-          }
-        }
-      }
-    }
-  }
-
   const o: AccountData = {
     id,
     currencyId,
@@ -163,8 +193,7 @@ const asResultAccount = (unsafe: mixed): AccountData => {
     name,
     index,
     balance,
-    // $FlowFixMe No idea how to make flow like this
-    swapHistory: invalidSwapHistory ? [] : swapHistory,
+    swapHistory: asSwapHistory(swapHistory),
   };
   if (typeof freshAddress === "string" && freshAddress) {
     o.freshAddress = freshAddress;
@@ -334,7 +363,7 @@ export const accountDataToAccount = ({
     index,
     freshAddress,
     freshAddressPath,
-    swapHistory: swapHistory.map(fromSwapOperationRaw),
+    swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
     // these fields will be completed as we will sync
     freshAddresses: [],
     blockHeight: 0,
