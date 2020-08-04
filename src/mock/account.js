@@ -274,6 +274,7 @@ type GenAccountOptions = {
   operationsSize?: number,
   currency?: CryptoCurrency,
   subAccountsCount?: number,
+  swapHistorySize?: number,
 };
 
 function genTokenAccount(
@@ -323,6 +324,7 @@ export function genAccount(
   const rng = new Prando(id);
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
+  const swapHistorySize = opts.swapHistorySize || 0;
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
     getDerivationScheme({ currency, derivationMode: "" }),
@@ -357,7 +359,18 @@ export function genAccount(
     pendingOperations: [],
     lastSyncDate: new Date(),
     creationDate: new Date(),
-    swapHistory: [],
+    swapHistory: Array(swapHistorySize)
+      .fill(null)
+      .map((_, i) => ({
+        provider: "changelly",
+        swapId: `swap-id-${i}`,
+        status: "finished",
+        receiverAccountId: "receiver-id",
+        operationId: "operation-id",
+        tokenId: "token-id",
+        fromAmount: BigNumber("1000"),
+        toAmount: BigNumber("2000"),
+      })),
   };
 
   if (currency.id === "cosmos") {
