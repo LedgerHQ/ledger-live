@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   warning: {
     width: "100%",
-    marginTop: 16,
+    marginVertical: 8,
   },
   footer: {
     padding: 16,

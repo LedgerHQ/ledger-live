@@ -1,9 +1,10 @@
 /* @flow */
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
+import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import colors from "../../../colors";
@@ -25,6 +26,7 @@ type RouteParams = {
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
+  const { transaction } = route.params;
 
   const onClose = useCallback(() => {
     navigation.dangerouslyGetParent().pop();
@@ -42,6 +44,12 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params, navigation]);
 
+  const options = listTokensForCryptoCurrency(account.currency);
+  const token = useMemo(
+    () => options.find(({ id }) => id === transaction.assetId),
+    [options, transaction],
+  );
+
   return (
     <View style={styles.root}>
       <TrackScreen category="AlgorandOptIn" name="ValidationSuccess" />
@@ -52,6 +60,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         title={
           <Trans
             i18nKey={`algorand.optIn.flow.steps.verification.success.title`}
+            values={{ token: token.name }}
           />
         }
         description={
