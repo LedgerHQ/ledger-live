@@ -96,7 +96,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     "algorand Account required",
   );
 
-  const { transaction, updateTransaction } = useBridgeTransaction(() => {
+  const { transaction } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
 
     return {
@@ -117,7 +117,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         transaction: bridge.updateTransaction(transaction, { assetId }),
       });
     },
-    [navigation, route.params, updateTransaction, bridge, transaction],
+    [navigation, route.params, bridge, transaction],
   );
 
   const subAccounts = mainAccount.subAccounts || [];
