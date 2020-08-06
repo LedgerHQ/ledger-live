@@ -962,7 +962,8 @@
   "distribution": {
     "header": "Asset allocation",
     "list": "Asset allocation ({{count}})",
-    "assets": "assets",
+    "assets": "asset",
+    "assets_plural": "assets",
     "total": "Total balance:",
     "listAccount": "Account allocation ({{count}})"
   },
@@ -1586,6 +1587,7 @@
     },
     "firmware": {
       "latest": "Firmware version {{version}} is available",
+      "outdated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "modalTitle": "Update firmware is available only on Ledger Live desktop",
       "modalDesc": "Please download Ledger Live on your computer to update the device’s firmware"
     }

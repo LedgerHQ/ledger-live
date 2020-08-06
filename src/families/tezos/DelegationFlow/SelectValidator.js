@@ -305,9 +305,9 @@ export default function SelectValidator({ navigation, route }: Props) {
             <Trans i18nKey="delegation.yieldInfos" />
           </LText>
           <ExternalLink
-            text={<LText bold>MyTezosBaker</LText>}
+            text={<LText bold>Baking Bad</LText>}
             event="SelectValidatorOpen"
-            onPress={() => Linking.openURL("https://mytezosbaker.com/")}
+            onPress={() => Linking.openURL("https://baking-bad.org/")}
           />
         </View>
       </InfoModal>

@@ -307,6 +307,6 @@ const styles = StyleSheet.create({
   },
   balanceContainer: {
     marginLeft: 16,
-    alignItems: "flex-end",
+    alignItems: "center",
   },
 });

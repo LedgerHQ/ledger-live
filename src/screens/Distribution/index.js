@@ -94,7 +94,10 @@ class Distribution extends PureComponent<DistributionProps, *> {
                 {distribution.list.length}
               </LText>
               <LText semiBold style={styles.assets}>
-                <Trans i18nKey="distribution.assets" />
+                <Trans
+                  i18nKey="distribution.assets"
+                  count={distribution.list.length}
+                />
               </LText>
             </View>
           </View>
