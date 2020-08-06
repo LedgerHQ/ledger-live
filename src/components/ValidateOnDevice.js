@@ -37,6 +37,19 @@ export type FieldComponentProps = {
 
 export type FieldComponent = React$ComponentType<FieldComponentProps>;
 
+function AmountField({
+  account,
+  parentAccount,
+  status,
+  field,
+}: FieldComponentProps) {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const unit = getAccountUnit(mainAccount);
+  return (
+    <DataRowUnitValue label={field.label} unit={unit} value={status.amount} />
+  );
+}
+
 function FeesField({
   account,
   parentAccount,
@@ -68,6 +81,7 @@ function TextField({ field }: FieldComponentProps) {
 }
 
 const commonFieldComponents: { [_: *]: FieldComponent } = {
+  amount: AmountField,
   fees: FeesField,
   address: AddressField,
   text: TextField,
