@@ -1,7 +1,7 @@
 // @flow
 
-import React, { useCallback, useState, useEffect } from "react";
-import { Switch, TextInput, StyleSheet } from "react-native";
+import React, { useCallback, useState, useEffect, useRef } from "react";
+import { Switch, TextInput, StyleSheet, Keyboard } from "react-native";
 import { getEnvDefault } from "@ledgerhq/live-common/lib/env";
 import { View } from "react-native-animatable";
 
@@ -11,12 +11,12 @@ import colors from "../../../colors";
 
 type Props = {
   name: *,
-  isDefault: boolean,
   readOnly: boolean,
   onChange: (name: string, val: mixed) => boolean,
   value: number,
   minValue: number,
   maxValue: number,
+  isDefault: boolean,
 };
 
 const FeatureInteger = ({
@@ -28,6 +28,7 @@ const FeatureInteger = ({
   minValue,
   maxValue,
 }: Props) => {
+  const inputRef = useRef(null);
   const constraintValue = useCallback(
     v => {
       let value = v;
@@ -51,10 +52,10 @@ const FeatureInteger = ({
   const [inputValue, setInputValue] = useState(String(constraintValue(value)));
 
   useEffect(() => {
-    if (isDefault && !enabled) {
+    if (!enabled) {
       setInputValue(String(constraintValue(value)));
     }
-  }, [isDefault, enabled, value, setInputValue, constraintValue]);
+  }, [enabled, value, setInputValue, constraintValue]);
 
   const onInputChange = useCallback(
     str => {
@@ -73,12 +74,16 @@ const FeatureInteger = ({
     e => {
       setEnabled(!!e);
       if (e) {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
         onChange(name, constraintValue(value));
       } else {
         onChange(name, getEnvDefault(name));
+        Keyboard.dismiss();
       }
     },
-    [setEnabled, name, onChange, value, constraintValue],
+    [setEnabled, name, onChange, value, constraintValue, inputRef],
   );
 
   return (
@@ -91,15 +96,13 @@ const FeatureInteger = ({
           onValueChange={readOnly ? null : onEnableChange}
           style={styles.switch}
         />
-        {enabled ? (
-          <TextInput
-            autoFocus
-            style={styles.input}
-            keyboardType="numeric"
-            value={enabled ? inputValue : ""}
-            onChangeText={onInputChange}
-          />
-        ) : null}
+        <TextInput
+          ref={inputRef}
+          style={enabled ? styles.input : styles.inputHidden}
+          keyboardType="numeric"
+          value={enabled ? inputValue : ""}
+          onChangeText={onInputChange}
+        />
       </View>
     </>
   );
@@ -114,11 +117,15 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingVertical: 12,
+    marginBottom: 12,
     textAlign: "center",
     fontSize: 20,
     ...getFontStyle({ semiBold: true }),
     borderWidth: 1,
     borderColor: colors.lightFog,
+  },
+  inputHidden: {
+    display: "none",
   },
 });
 

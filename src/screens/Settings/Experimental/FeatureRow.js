@@ -1,6 +1,10 @@
 /* @flow */
 import React from "react";
-import { setEnvUnsafe, isEnvDefault } from "@ledgerhq/live-common/lib/env";
+import {
+  setEnvUnsafe,
+  isEnvDefault,
+  getEnv,
+} from "@ledgerhq/live-common/lib/env";
 
 import type { Feature } from "../../../experimental";
 import { isReadOnly } from "../../../experimental";
@@ -32,6 +36,8 @@ const FeatureRow = ({ feature }: Props) => {
         checked={!isEnvDefault(feature.name)}
         readOnly={isReadOnly(feature.name)}
         onChange={setEnvUnsafe}
+        isDefault={isEnvDefault(feature.name)}
+        value={getEnv(feature.name)}
         {...rest}
       />
     </SettingsRow>
