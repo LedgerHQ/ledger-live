@@ -1,11 +1,11 @@
 // @flow
 
-import type { Account } from "../types";
+import type { AccountLike } from "../types";
 import type { SwapHistorySection, SwapOperation } from "./types";
 import { findTokenById } from "../data/tokens";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../account";
 
-const getSwapOperationMap = (account: Account, accounts: Account[]) => (
+const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
   swapOperation: SwapOperation
 ) => {
   const {
@@ -26,9 +26,8 @@ const getSwapOperationMap = (account: Account, accounts: Account[]) => (
     let toExists = true;
     if (toAccount && tokenId) {
       const token = findTokenById(tokenId);
-      if (token) {
+      if (token && toAccount.type === "Account") {
         toParentAccount = toAccount;
-
         // Enhance the account with the given token in case we don't have funds yet.
         toAccount = (
           accountWithMandatoryTokens(toAccount, [token]).subAccounts || []
@@ -59,7 +58,9 @@ function startOfDay(t) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate());
 }
 
-const getCompleteSwapHistory = (accounts: Account[]): SwapHistorySection[] => {
+const getCompleteSwapHistory = (
+  accounts: AccountLike[]
+): SwapHistorySection[] => {
   const swaps = [];
   for (const account of accounts) {
     const { swapHistory } = account;

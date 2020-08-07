@@ -218,6 +218,7 @@ export async function buildAccount({
       }
     });
   }
+  const swapHistory = existingAccount?.swapHistory || [];
 
   const account: $Exact<Account> = {
     type: "Account",
@@ -242,7 +243,7 @@ export async function buildAccount({
     pendingOperations: [],
     lastSyncDate: new Date(),
     creationDate,
-    swapHistory: [],
+    swapHistory,
   };
 
   if (subAccounts) {

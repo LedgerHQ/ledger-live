@@ -419,6 +419,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     balance,
     address,
     balanceHistory,
+    swapHistory,
   } = raw;
   const currency = getCryptoCurrencyById(currencyId);
   const convertOperation = (op) => fromOperationRaw(op, id);
@@ -436,7 +437,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     operationsCount: operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
-    swapHistory: [],
+    swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
   };
 }
 
@@ -454,6 +455,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     balanceHistory,
     address,
     creationDate,
+    swapHistory,
   } = ca;
   return {
     type: "ChildAccountRaw",
@@ -469,6 +471,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     creationDate: creationDate.toISOString(),
     operations: operations.map((o) => toOperationRaw(o)),
     pendingOperations: pendingOperations.map((o) => toOperationRaw(o)),
+    swapHistory: (swapHistory || []).map(toSwapOperationRaw),
   };
 }
 
