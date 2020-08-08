@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import config from "react-native-config";
 import { accountsSelector } from "../../../reducers/accounts";
@@ -16,9 +16,9 @@ import ConfigUSBDeviceSupport from "./ConfigUSBDeviceSupport";
 import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
-import OpenDebugSVG from "./OpenDebugSVG";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
 import OpenDebugStore from "./OpenDebugStore";
+import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenLottie from "./OpenDebugLottie";
 import SkipLock from "../../../components/behaviour/SkipLock";
 import NavigationScrollView from "../../../components/NavigationScrollView";
@@ -42,7 +42,7 @@ export function DebugMocks() {
       <OpenDebugStore />
       <OpenDebugIcons />
       <OpenLottie />
-      <OpenDebugSVG />
+      <OpenDebugPlayground />
       <ReadOnlyModeRow />
       <SkipLock />
     </NavigationScrollView>
@@ -60,7 +60,9 @@ export function DebugDevices() {
     <NavigationScrollView contentContainerStyle={styles.root}>
       <OpenDebugHttpTransport />
       <ConfigUSBDeviceSupport />
-      <SelectDevice onSelect={onSelect} />
+      <View style={styles.wrapper}>
+        <SelectDevice onSelect={onSelect} />
+      </View>
     </NavigationScrollView>
   );
 }
@@ -89,6 +91,9 @@ const styles = StyleSheet.create({
   root: {
     paddingTop: 16,
     paddingBottom: 64,
+  },
+  wrapper: {
+    padding: 16,
   },
   container: {
     marginTop: 16,

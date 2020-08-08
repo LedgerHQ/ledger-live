@@ -8,6 +8,7 @@ import {
   View,
   ToastAndroid,
   Switch,
+  ScrollView,
 } from "react-native";
 import { v4 as uuid } from "uuid";
 import { from, Observable } from "rxjs";
@@ -16,6 +17,7 @@ import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
+import Icon from "react-native-vector-icons/dist/MaterialCommunityIcons";
 import LText from "../components/LText";
 import Button from "../components/Button";
 import KeyboardView from "../components/KeyboardView";
@@ -257,7 +259,6 @@ class DebugBLE extends Component<
             onSubmitEditing={this.send}
           />
           <Button
-            containerStyle={{ width: 60 }}
             type="lightSecondary"
             event="DebugBLESend"
             title="Send"
@@ -265,52 +266,39 @@ class DebugBLE extends Component<
           />
           <Switch value={useBLEframe} onValueChange={this.onBleFrameChange} />
         </View>
-
-        <View
-          style={{
-            padding: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.lightFog,
-            flexDirection: "row",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "column",
-              flex: 1,
-              justifyContent: "space-around",
-            }}
-          >
-            <LText style={{ fontSize: 10 }}>{deviceId}</LText>
-          </View>
-          <Button
-            containerStyle={{ width: 56, marginRight: 8 }}
-            event="DebugBLEPRIO"
-            type="lightSecondary"
-            title="change prio"
-            onPress={this.toggleConnectionPriority}
-          />
-          <Button
-            containerStyle={{ width: 50, marginRight: 8 }}
-            event="DebugBLEMTU"
-            type="lightSecondary"
-            title="infer MTU"
-            onPress={this.inferMTU}
-          />
-          <Button
-            containerStyle={{ width: 38, marginRight: 8 }}
-            event="DebugBLECO"
-            type="primary"
-            title="CO"
-            onPress={this.connect}
-          />
-          <Button
-            event="DebugBLEDI"
-            containerStyle={{ width: 38 }}
-            type="primary"
-            title="DI"
-            onPress={this.disconnect}
-          />
+        <LText style={{ fontSize: 10, margin: 8 }}>{deviceId}</LText>
+        <View style={{ maxHeight: 80 }}>
+          <ScrollView horizontal style={{ padding: 16 }}>
+            <Button
+              containerStyle={{ marginRight: 8 }}
+              event="DebugBLEPRIO"
+              outline
+              type="primary"
+              title="Change Prio"
+              onPress={this.toggleConnectionPriority}
+            />
+            <Button
+              containerStyle={{ marginRight: 8 }}
+              event="DebugBLEMTU"
+              outline
+              type="primary"
+              title="Infer MTU"
+              onPress={this.inferMTU}
+            />
+            <Button
+              containerStyle={{ marginRight: 8 }}
+              event="DebugBLECO"
+              type="primary"
+              title="Connect"
+              onPress={this.connect}
+            />
+            <Button
+              event="DebugBLEDI"
+              type="primary"
+              title="Disconnect"
+              onPress={this.disconnect}
+            />
+          </ScrollView>
         </View>
       </KeyboardView>
     );
