@@ -23,12 +23,16 @@ const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any,
+  route: { params?: { currency?: string } },
 };
 
-export default function ReceiveFunds({ navigation }: Props) {
+export default function ReceiveFunds({ navigation, route }: Props) {
   const allAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSelector(accountsSelector);
   const keyExtractor = item => item.account.id;
+
+  const { params } = route;
+  const initialCurrencySelected = params?.currency;
 
   const renderItem = useCallback(
     ({ item: result }: { item: SearchResult }) => {
@@ -82,6 +86,7 @@ export default function ReceiveFunds({ navigation }: Props) {
             inputWrapperStyle={styles.card}
             list={allAccounts}
             renderList={renderList}
+            initialQuery={initialCurrencySelected}
             renderEmptySearch={() => (
               <View style={styles.emptyResults}>
                 <LText style={styles.emptyText}>

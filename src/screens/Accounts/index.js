@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
@@ -13,19 +13,43 @@ import AccountRow from "./AccountRow";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import { useScrollToTop } from "../../navigation/utils";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
+import { ScreenName } from "../../const";
 
 const List = globalSyncRefreshControl(FlatList);
 
 type Props = {
   navigation: any,
+  route: { params?: { currency?: string } },
 };
 
-export default function Accounts({ navigation }: Props) {
+export default function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
   const ref = useRef();
   useScrollToTop(ref);
 
+  const { params } = route;
+
   const [account, setAccount] = useState(undefined);
+
+  // Deep linking params redirect
+  useEffect(() => {
+    if (params) {
+      if (params.currency) {
+        const account = accounts.find(
+          ({ currency }) => currency.family === params.currency,
+        );
+
+        if (account) {
+          // reset params so when we come back the redirection doesn't loop
+          navigation.setParams({ ...params, currency: undefined });
+          navigation.navigate(ScreenName.Account, {
+            accountId: account.id,
+            isForwardedFromAccounts: true,
+          });
+        }
+      }
+    }
+  }, [params, accounts, navigation]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: Account, index: number }) => (
