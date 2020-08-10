@@ -23,7 +23,10 @@ import type {
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import { mapUnbondings } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import {
+  mapUnbondings,
+  canDelegate,
+} from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../components/IlluRewards";
 import { urls } from "../../../config/urls";
@@ -261,6 +264,8 @@ export default function Delegations({ account }: Props) {
       : [];
   }, [t, onRedelegate, onCollectRewards, onUndelegate, delegation]);
 
+  const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
+
   return (
     <View style={styles.root}>
       <DelegationDrawer
@@ -325,7 +330,12 @@ export default function Delegations({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel
             name={t("account.delegation.sectionLabel")}
-            RightComponent={<DelegationLabelRight onPress={onDelegate} />}
+            RightComponent={
+              <DelegationLabelRight
+                disabled={delegationDisabled}
+                onPress={onDelegate}
+              />
+            }
           />
           {delegations.map((d, i) => (
             <View key={d.validatorAddress} style={styles.delegationsWrapper}>
