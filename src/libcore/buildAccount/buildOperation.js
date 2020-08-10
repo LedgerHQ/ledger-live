@@ -48,8 +48,10 @@ export async function buildOperation(arg: {
 
   const blockHeight = await coreOperation.getBlockHeight();
 
-  let [recipients, senders] = await Promise.all([
-    coreOperation.getRecipients(),
+  const [recipients, senders] = await Promise.all([
+    type === "IN" && currency.family === "bitcoin"
+      ? coreOperation.getSelfRecipients()
+      : coreOperation.getRecipients(),
     coreOperation.getSenders(),
   ]);
 

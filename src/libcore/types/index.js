@@ -90,6 +90,7 @@ declare type CoreOperation = {
   getFees(): Promise<?CoreAmount>,
   getBlockHeight(): Promise<?number>,
   getRecipients(): Promise<string[]>,
+  getSelfRecipients(): Promise<string[]>,
   getSenders(): Promise<string[]>,
 } & CoreOperationSpecifics;
 
@@ -428,6 +429,7 @@ export const reflect = (declare: (string, Spec) => void) => {
       getFees: { returns: "Amount" },
       getBlockHeight: {},
       getRecipients: {},
+      getSelfRecipients: {},
       getSenders: {},
     },
   });
