@@ -29,6 +29,9 @@ import { libcoreBigIntToBigNumber } from "../../../libcore/buildBigNumber";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
 import { fetchAllBakers, hydrateBakers, isAccountDelegating } from "../bakers";
 import { getEnv } from "../../../env";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 type EstimateGasLimitAndStorage = (
   Account,
@@ -279,6 +282,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   estimateMaxSpendable,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

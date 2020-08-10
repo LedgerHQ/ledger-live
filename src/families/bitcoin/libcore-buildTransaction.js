@@ -65,7 +65,17 @@ async function bitcoinBuildTransaction({
 
   const count = await bitcoinLikeAccount.getUTXOCount();
   const objects = await bitcoinLikeAccount.getUTXO(0, count);
-  const utxos = await promiseAllBatched(6, objects, parseBitcoinUTXO);
+  let utxos = await promiseAllBatched(6, objects, parseBitcoinUTXO);
+
+  if (perCoin) {
+    const { syncReplaceAddress } = perCoin;
+    if (syncReplaceAddress) {
+      utxos = utxos.map((u) => ({
+        ...u,
+        address: u.address && syncReplaceAddress(account, u.address),
+      }));
+    }
+  }
 
   for (const utxo of utxos) {
     const s = getUTXOStatus(utxo, utxoStrategy);

@@ -25,6 +25,9 @@ import { libcoreAmountToBigNumber } from "../../../libcore/buildBigNumber";
 import { extractTokenId } from "../tokens";
 import { getAbandonSeedAddress } from "../../../data/abandonseed";
 import { ALGORAND_MAX_MEMO_SIZE } from "../logic";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 export const calculateFees: CacheRes<
   Array<{ a: Account, t: Transaction }>,
@@ -279,6 +282,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   getTransactionStatus,
   sync,
+  receive,
   signOperation,
   broadcast,
   estimateMaxSpendable,

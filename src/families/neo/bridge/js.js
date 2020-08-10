@@ -9,6 +9,9 @@ import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import { parseCurrencyUnit, getCryptoCurrencyById } from "../../../currencies";
 import network from "../../../network";
 import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const neoAsset =
   "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b";
@@ -164,6 +167,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   estimateMaxSpendable,
   sync,
+  receive,
   signOperation: () => {
     throw new Error("signOperation not implemented");
   },

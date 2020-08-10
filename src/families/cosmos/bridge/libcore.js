@@ -38,6 +38,9 @@ import {
   COSMOS_MAX_UNBONDINGS,
   COSMOS_MAX_DELEGATIONS,
 } from "../logic";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const createTransaction = () => ({
   family: "cosmos",
@@ -420,6 +423,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   estimateMaxSpendable,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

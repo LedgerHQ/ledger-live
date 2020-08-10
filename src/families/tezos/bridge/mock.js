@@ -29,6 +29,9 @@ import {
   // asBaker,
   isAccountDelegating,
 } from "../bakers";
+import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const estimateGasLimitAndStorage = () => {
   const storage = BigNumber(257);
@@ -205,6 +208,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   prepareTransaction,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

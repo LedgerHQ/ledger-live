@@ -1,9 +1,13 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import { Observable } from "rxjs";
+import { Observable, from } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
+import {
+  TransportStatusError,
+  UserRefusedAddress,
+  WrongDeviceForAccount,
+} from "@ledgerhq/errors";
 import {
   getSeedIdentifierDerivation,
   getDerivationModesForCurrency,
@@ -29,6 +33,7 @@ import type {
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
 import { open, close } from "../hw";
+import { withDevice } from "../hw/deviceAccess";
 
 type GetAccountShape = (
   { address: string, id: string, initialAccount?: Account },
@@ -312,3 +317,40 @@ export const makeScanAccounts = (
 
     return unsubscribe;
   });
+
+export function makeAccountBridgeReceive({
+  injectGetAddressParams,
+}: {
+  injectGetAddressParams?: (Account) => *,
+} = {}): (
+  account: Account,
+  { verify?: boolean, deviceId: string, subAccountId?: string }
+) => Observable<{
+  address: string,
+  path: string,
+}> {
+  return (account, { verify, deviceId }) => {
+    const arg = {
+      verify,
+      currency: account.currency,
+      derivationMode: account.derivationMode,
+      path: account.freshAddressPath,
+      ...(injectGetAddressParams && injectGetAddressParams(account)),
+    };
+    return withDevice(deviceId)((transport) =>
+      from(
+        getAddress(transport, arg).then((r) => {
+          if (r.address !== account.freshAddress) {
+            throw new WrongDeviceForAccount(
+              `WrongDeviceForAccount ${account.name}`,
+              {
+                accountName: account.name,
+              }
+            );
+          }
+          return r;
+        })
+      )
+    );
+  };
+}

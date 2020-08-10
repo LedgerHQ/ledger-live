@@ -25,6 +25,9 @@ import { validateRecipient } from "../../../bridge/shared";
 import type { Transaction } from "../types";
 import signOperation from "../libcore-signOperation";
 import broadcast from "../libcore-broadcast";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const getTransactionAccount = (a, t): AccountLike => {
   const { subAccountId } = t;
@@ -212,6 +215,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   estimateMaxSpendable,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

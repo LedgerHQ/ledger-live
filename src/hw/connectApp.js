@@ -24,8 +24,9 @@ import { mustUpgrade } from "../apps";
 
 export type RequiresDerivation = {|
   currencyId: string,
-  derivationPath: string,
+  path: string,
   derivationMode: DerivationMode,
+  forceFormat?: string,
 |};
 
 export type Input = {
@@ -82,7 +83,7 @@ const openAppFromDashboard = (
 const derivationLogic = (
   transport,
   {
-    requiresDerivation,
+    requiresDerivation: { currencyId, ...derivationRest },
     appAndVersion,
     appName,
   }: {
@@ -94,9 +95,8 @@ const derivationLogic = (
   defer(() =>
     from(
       getAddress(transport, {
-        currency: getCryptoCurrencyById(requiresDerivation.currencyId),
-        path: requiresDerivation.derivationPath,
-        derivationMode: requiresDerivation.derivationMode,
+        currency: getCryptoCurrencyById(currencyId),
+        ...derivationRest,
       })
     )
   ).pipe(

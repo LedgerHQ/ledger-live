@@ -16,6 +16,9 @@ import type { AccountBridge, CurrencyBridge } from "../../../types";
 import type { Transaction } from "../types";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";
+import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 import {
   scanAccounts,
@@ -258,6 +261,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   getTransactionStatus,
   sync,
+  receive,
   signOperation,
   broadcast,
   estimateMaxSpendable,

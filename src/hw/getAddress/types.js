@@ -19,5 +19,6 @@ export type Resolver = (
     verify?: boolean,
     skipAppFailSafeCheck?: boolean,
     askChainCode?: boolean,
+    forceFormat?: string,
   }
 ) => Promise<Result>;

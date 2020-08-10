@@ -1,5 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+import bchaddr from "bchaddrjs";
 import cashaddr from "cashaddrjs";
 import type {
   Transaction,
@@ -11,6 +12,7 @@ import type {
   CoreBitcoinLikeOutput,
   CoreBitcoinLikeInput,
   BitcoinInput,
+  BitcoinResources,
 } from "./types";
 import type { Account } from "../../types";
 import { bitcoinPickingStrategy } from "./types";
@@ -35,12 +37,18 @@ function bchExplicit(str: string): string {
   return str;
 }
 
+const bchToCashaddrAddressWithoutPrefix = (recipient) =>
+  bchaddr.toCashAddress(recipient).split(":")[1];
+
 export type CoinLogic = {
   hasExtraData?: boolean,
   hasExpiryHeight?: boolean,
   getAdditionals?: ({ transaction: Transaction }) => string[],
   asLibcoreTransactionRecipient?: (string) => string,
   onScreenTransactionRecipient?: (string) => string,
+  postBuildBitcoinResources?: (Account, BitcoinResources) => BitcoinResources,
+  syncReplaceAddress?: (existingAccount: ?Account, addr: string) => string,
+  injectGetAddressParams?: (Account) => any,
 };
 
 export const perCoinLogic: { [_: CryptoCurrencyIds]: ?CoinLogic } = {
@@ -80,6 +88,11 @@ export const perCoinLogic: { [_: CryptoCurrencyIds]: ?CoinLogic } = {
       const prefix = "bitcoincash:";
       return str.startsWith(prefix) ? str.slice(prefix.length) : str;
     },
+
+    syncReplaceAddress: (existingAccount, addr) =>
+      bchToCashaddrAddressWithoutPrefix(addr),
+
+    injectGetAddressParams: () => ({ forceFormat: "cashaddr" }),
   },
 };
 

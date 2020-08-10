@@ -28,6 +28,7 @@ import { useReplaySubject } from "../../observable";
 import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
+import perFamilyAccount from "../../generated/account";
 
 type State = {|
   isLoading: boolean,
@@ -249,9 +250,15 @@ function inferCommandParams(appRequest: AppRequest) {
     return { appName };
   }
 
+  let extra;
+
   if (account) {
     derivationMode = account.derivationMode;
     derivationPath = account.freshAddressPath;
+    const m = perFamilyAccount[account.currency.family];
+    if (m && m.injectGetAddressParams) {
+      extra = m.injectGetAddressParams(account);
+    }
   } else {
     const modes = getDerivationModesForCurrency(currency);
     derivationMode = modes[modes.length - 1];
@@ -265,8 +272,9 @@ function inferCommandParams(appRequest: AppRequest) {
     appName,
     requiresDerivation: {
       derivationMode,
-      derivationPath,
+      path: derivationPath,
       currencyId: currency.id,
+      ...extra,
     },
   };
 }

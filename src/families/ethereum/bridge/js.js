@@ -44,6 +44,9 @@ import { getEstimatedFees } from "../../../api/Fees";
 import type { Tx } from "../../../api/Ethereum";
 import signTransaction from "../../../hw/signTransaction";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const serializeTransaction = (t) => ({
   recipient: t.recipient,
@@ -618,6 +621,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   getTransactionStatus,
   sync,
+  receive,
   signOperation,
   broadcast,
 };
