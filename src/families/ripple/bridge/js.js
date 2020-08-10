@@ -110,7 +110,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
           // we probably can't get it so it's a predictive value
           transactionSequenceNumber:
             (account.operations.length > 0
-              ? account.operations[0].transactionSequenceNumber
+              ? account.operations[0].transactionSequenceNumber || 0
               : 0) + account.pendingOperations.length,
           extra: {},
         };
