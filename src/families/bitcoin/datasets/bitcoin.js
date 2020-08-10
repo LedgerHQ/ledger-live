@@ -98,7 +98,7 @@ const dataset: CurrenciesData<Transaction> = {
             // totalSpent: BigNumber("1247"),
             errors: {},
             warnings: {
-              feeTooHigh: new FeeTooHigh(),
+              // feeTooHigh: new FeeTooHigh(),
             },
           },
         },
