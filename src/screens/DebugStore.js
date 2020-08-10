@@ -1,9 +1,10 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { useCallback, PureComponent } from "react";
 import { Text, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import NavigationScrollView from "../components/NavigationScrollView";
+import Button from "../components/Button";
 
 import colors from "../colors";
 
@@ -61,10 +62,23 @@ class CollapsibleThingy extends PureComponent<
 
 export default function DebugStore() {
   const state = useSelector(s => s);
+  const onStoreDebug = useCallback(() => {
+    console.log({ state });
+    debugger;
+  }, [state]);
 
   return (
     <NavigationScrollView>
-      <CollapsibleThingy obj={state} depth={1} />
+      <View style={{ padding: 16, backgroundColor: "white", flex: 1 }}>
+        <Button
+          event="DebugState"
+          type="primary"
+          title={"See on browser (debug on)"}
+          containerStyle={{ marginBottom: 16 }}
+          onPress={onStoreDebug}
+        />
+        <CollapsibleThingy obj={state} depth={1} />
+      </View>
     </NavigationScrollView>
   );
 }
@@ -75,6 +89,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   wrapper: {
+    flex: 1,
     borderLeftWidth: 1,
     borderColor: colors.fog,
     paddingLeft: 8,
