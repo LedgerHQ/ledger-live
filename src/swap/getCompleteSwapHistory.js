@@ -19,11 +19,14 @@ const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
     tokenId,
   } = swapOperation;
   const operation = account.operations.find((o) => o.id === operationId);
+  const optimisticOperation = !operation
+    ? account.operations.find((o) => o.id === operationId)
+    : null;
 
-  if (operation) {
+  if (operation || optimisticOperation) {
     let toAccount = accounts.find((a) => a.id === receiverAccountId);
     let toParentAccount;
-    let toExists = true;
+    let toExists = !optimisticOperation;
     if (toAccount && tokenId) {
       const token = findTokenById(tokenId);
       if (token && toAccount.type === "Account") {
