@@ -3,7 +3,7 @@
 import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import semver from "semver";
 import {
   getDerivationModesForCurrency,
@@ -202,17 +202,12 @@ export const scanAccounts = ({
               });
             } catch (e) {
               // feature detection: some old app will specifically returns this code for segwit case and we ignore it
+              // we also feature detect any denying case that could happen
               if (
-                derivationMode === "segwit" &&
-                e instanceof TransportStatusError &&
-                e.statusCode === 0x6f04
+                e instanceof TransportStatusError ||
+                e instanceof UserRefusedAddress
               ) {
-                log(
-                  "libcore",
-                  "scanAccounts ignore segwit paths because app don't support"
-                );
-              } else {
-                throw e;
+                log("scanAccounts", "ignore derivationMode=" + derivationMode);
               }
             }
 

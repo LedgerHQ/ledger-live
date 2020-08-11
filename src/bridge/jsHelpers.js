@@ -2,6 +2,8 @@
 
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
+import { log } from "@ledgerhq/logs";
+import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import {
   getSeedIdentifierDerivation,
   getDerivationModesForCurrency,
@@ -235,11 +237,24 @@ export const makeScanAccounts = (
         for (const derivationMode of derivationModes) {
           const path = getSeedIdentifierDerivation(currency, derivationMode);
 
-          const result = await getAddress(transport, {
-            currency,
-            path,
-            derivationMode,
-          });
+          let result;
+          try {
+            result = await getAddress(transport, {
+              currency,
+              path,
+              derivationMode,
+            });
+          } catch (e) {
+            // feature detect any denying case that could happen
+            if (
+              e instanceof TransportStatusError ||
+              e instanceof UserRefusedAddress
+            ) {
+              log("scanAccounts", "ignore derivationMode=" + derivationMode);
+            }
+          }
+          if (!result) continue;
+
           const seedIdentifier = result.publicKey;
 
           let emptyCount = 0;
