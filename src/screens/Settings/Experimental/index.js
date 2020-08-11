@@ -15,21 +15,23 @@ import FeatureRow from "./FeatureRow";
 
 export default function ExperimentalSettings() {
   return (
-    <KeyboardView>
-      <NavigationScrollView contentContainerStyle={styles.root}>
-        <TrackScreen category="Settings" name="Experimental" />
-        <View style={styles.container}>
-          <View style={styles.disclaimerContainer}>
-            <Disclaimer />
+    <>
+      <KeyboardView>
+        <NavigationScrollView contentContainerStyle={styles.root}>
+          <TrackScreen category="Settings" name="Experimental" />
+          <View style={styles.container}>
+            <View style={styles.disclaimerContainer}>
+              <Disclaimer />
+            </View>
+            {experimentalFeatures.map(feat =>
+              !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
+                <FeatureRow key={feat.name} feature={feat} />
+              ) : null,
+            )}
           </View>
-          {experimentalFeatures.map(feat =>
-            !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
-              <FeatureRow key={feat.name} feature={feat} />
-            ) : null,
-          )}
-        </View>
-      </NavigationScrollView>
-    </KeyboardView>
+        </NavigationScrollView>
+      </KeyboardView>
+    </>
   );
 }
 

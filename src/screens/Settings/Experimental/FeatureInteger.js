@@ -1,9 +1,16 @@
 // @flow
 
 import React, { useCallback, useState, useEffect, useRef } from "react";
-import { Switch, TextInput, StyleSheet, Keyboard } from "react-native";
+import {
+  Switch,
+  TextInput,
+  StyleSheet,
+  Keyboard,
+  View,
+  Platform,
+} from "react-native";
 import { getEnvDefault } from "@ledgerhq/live-common/lib/env";
-import { View } from "react-native-animatable";
+import { useNavigation } from "@react-navigation/native";
 
 import Track from "../../../analytics/Track";
 import getFontStyle from "../../../components/LText/getFontStyle";
@@ -28,6 +35,7 @@ const FeatureInteger = ({
   minValue,
   maxValue,
 }: Props) => {
+  const navigation = useNavigation();
   const inputRef = useRef(null);
   const constraintValue = useCallback(
     v => {
@@ -50,6 +58,27 @@ const FeatureInteger = ({
 
   const [enabled, setEnabled] = useState(!isDefault);
   const [inputValue, setInputValue] = useState(String(constraintValue(value)));
+
+  const onKeyboardShow = useCallback(() => {
+    navigation.dangerouslyGetParent().setOptions({ tabBarVisible: false });
+  }, [navigation]);
+  const onKeyboardHide = useCallback(() => {
+    navigation.dangerouslyGetParent().setOptions({ tabBarVisible: true });
+  }, [navigation]);
+
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      Keyboard.addListener("keyboardDidShow", onKeyboardShow);
+      Keyboard.addListener("keyboardDidHide", onKeyboardHide);
+    }
+
+    return () => {
+      if (Platform.OS === "android") {
+        Keyboard.removeListener("keyboardDidShow", onKeyboardShow);
+        Keyboard.removeListener("keyboardDidHide", onKeyboardHide);
+      }
+    };
+  }, [onKeyboardShow, onKeyboardHide]);
 
   useEffect(() => {
     if (!enabled) {
@@ -74,9 +103,11 @@ const FeatureInteger = ({
     e => {
       setEnabled(!!e);
       if (e) {
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
+        setTimeout(() => {
+          if (inputRef.current) {
+            inputRef.current.focus();
+          }
+        }, 16);
         onChange(name, constraintValue(value));
       } else {
         onChange(name, getEnvDefault(name));
