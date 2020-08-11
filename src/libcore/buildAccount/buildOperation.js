@@ -90,7 +90,7 @@ export async function buildOperation(arg: {
   if (op.senders.length > OPERATION_ADDRESSES_LIMIT) {
     log(
       "warning",
-      `operation.senders too big (${op.recipients.length} > ${OPERATION_ADDRESSES_LIMIT}) – ${id}`
+      `operation.senders too big (${op.senders.length} > ${OPERATION_ADDRESSES_LIMIT}) – ${id}`
     );
     op.senders.splice(OPERATION_ADDRESSES_LIMIT);
   }
