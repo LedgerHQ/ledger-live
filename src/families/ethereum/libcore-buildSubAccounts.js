@@ -37,7 +37,7 @@ async function buildERC20TokenAccount({
         token,
       })
   );
-
+  const swapHistory = existingTokenAccount?.swapHistory || [];
   const tokenAccount: $Exact<TokenAccount> = {
     type: "TokenAccount",
     id,
@@ -52,7 +52,7 @@ async function buildERC20TokenAccount({
       operations.length > 0
         ? operations[operations.length - 1].date
         : new Date(),
-    swapHistory: [],
+    swapHistory,
   };
 
   return tokenAccount;

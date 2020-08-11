@@ -221,6 +221,7 @@ export type ChildAccountRaw = {
   pendingOperations: OperationRaw[],
   balance: string,
   balanceHistory?: BalanceHistoryRawMap,
+  swapHistory?: SwapOperationRaw[],
 };
 
 export type AccountRaw = {

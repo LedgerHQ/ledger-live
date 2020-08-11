@@ -50,7 +50,7 @@ async function buildOriginatedAccount({
         currency,
       })
   );
-
+  const swapHistory = existingOriginatedAccount?.swapHistory || [];
   const originatedAccount: $Exact<ChildAccount> = {
     type: "ChildAccount",
     id,
@@ -67,7 +67,7 @@ async function buildOriginatedAccount({
       operations.length > 0
         ? operations[operations.length - 1].date
         : new Date(),
-    swapHistory: [],
+    swapHistory,
   };
 
   return originatedAccount;
