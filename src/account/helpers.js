@@ -179,6 +179,23 @@ export const getVotesCount = (
   return 0;
 };
 
+export const makeEmptyTokenAccount = (
+  account: Account,
+  token: TokenCurrency
+): SubAccount => ({
+  type: "TokenAccount",
+  id: account.id + "+" + token.contractAddress,
+  parentId: account.id,
+  token,
+  balance: BigNumber(0),
+  operationsCount: 0,
+  creationDate: new Date(),
+  operations: [],
+  pendingOperations: [],
+  starred: false,
+  swapHistory: [],
+});
+
 /**
  * Enhance an account to force token accounts presence
  */
