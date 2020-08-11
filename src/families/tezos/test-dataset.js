@@ -59,7 +59,7 @@ const reservedAmountForStorageLimit = (storageLimit) =>
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore"],
-  currencies: {
+  currencies: {} || {
     tezos: {
       FIXME_ignoreOperationFields: ["blockHeight"],
       scanAccounts: [tezosScanAccounts1],
