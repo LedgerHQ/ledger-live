@@ -1,13 +1,17 @@
 // @flow
 
 import type { AccountLike } from "../types";
-import type { SwapHistorySection, SwapOperation } from "./types";
+import type {
+  SwapHistorySection,
+  SwapOperation,
+  MappedSwapOperation,
+} from "./types";
 import { findTokenById } from "../data/tokens";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../account";
 
 const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
   swapOperation: SwapOperation
-) => {
+): ?MappedSwapOperation => {
   const {
     provider,
     swapId,
@@ -23,7 +27,9 @@ const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
     ? account.operations.find((o) => o.id === operationId)
     : null;
 
-  if (operation || optimisticOperation) {
+  const op = operation || optimisticOperation;
+
+  if (op) {
     let toAccount = accounts.find((a) => a.id === receiverAccountId);
     let toParentAccount;
     let toExists = !optimisticOperation;
@@ -48,7 +54,7 @@ const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
         toAccount,
         toParentAccount,
         fromAccount: account,
-        operation,
+        operation: op,
         fromAmount,
         toAmount,
         toExists,
