@@ -81,6 +81,10 @@ const handlers: Object = {
     state: AccountsState,
     { payload: tokenId }: { payload: string },
   ) => ({ active: state.active.map(a => withoutToken(a, tokenId)) }),
+
+  DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
+    ...state,
+  }),
 };
 
 // Selectors

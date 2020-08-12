@@ -2,7 +2,7 @@
 
 import React, { useCallback, PureComponent } from "react";
 import { Text, StyleSheet, View } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Button from "../components/Button";
 
@@ -62,10 +62,27 @@ class CollapsibleThingy extends PureComponent<
 
 export default function DebugStore() {
   const state = useSelector(s => s);
+
+  const dispatch = useDispatch();
+
+  /**
+    With remote debugging enabled, trigger this callback
+    if you want to override the state, make your changes to the `appState` object
+    set the `override` flag to true, and resume execution.
+    The store will now have your changes
+  */
   const onStoreDebug = useCallback(() => {
+    // eslint-disable-next-line prefer-const
+    let override = false;
+    const appState = state;
+    // eslint-disable-next-line no-console
     console.log({ state });
+    // eslint-disable-next-line no-debugger
     debugger;
-  }, [state]);
+    if (__DEV__ && override) {
+      dispatch({ action: "DANGEROUSLY_OVERRIDE_STATE", payload: appState });
+    }
+  }, [dispatch, state]);
 
   return (
     <NavigationScrollView>

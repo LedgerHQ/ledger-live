@@ -19,12 +19,10 @@ class DebugBLE extends Component<
   };
 
   jsCrash = () => {
-    debugger;
     throw new Error("DEBUG jsCrash");
   };
 
   nativeCrash = () => {
-    debugger;
     Sentry.nativeCrash();
   };
 

@@ -17,7 +17,6 @@ import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
-import Icon from "react-native-vector-icons/dist/MaterialCommunityIcons";
 import LText from "../components/LText";
 import Button from "../components/Button";
 import KeyboardView from "../components/KeyboardView";
