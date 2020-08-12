@@ -104,6 +104,7 @@ function ClaimRewardsFlow() {
         component={ClaimRewardsValidationSuccess}
         options={{
           headerLeft: null,
+          headerRight: null,
           headerTitle: null,
           gestureEnabled: false,
         }}

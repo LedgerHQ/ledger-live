@@ -120,6 +120,7 @@ function VoteFlow() {
           headerTitle: null,
           gestureEnabled: false,
           headerLeft: null,
+          headerRight: null,
         }}
       />
     </Stack.Navigator>

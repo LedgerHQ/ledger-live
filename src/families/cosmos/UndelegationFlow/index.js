@@ -81,6 +81,7 @@ function UndelegationFlow() {
         options={{
           headerLeft: null,
           headerTitle: null,
+          headerRight: null,
           gestureEnabled: false,
         }}
       />

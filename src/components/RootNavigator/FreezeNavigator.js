@@ -83,6 +83,7 @@ export default function FreezeNavigator() {
           headerTitle: null,
           gestureEnabled: false,
           headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen
