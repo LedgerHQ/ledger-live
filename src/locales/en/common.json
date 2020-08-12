@@ -81,6 +81,9 @@
       "title": "An account name is required",
       "description": "Please provide an account name"
     },
+    "AlgorandASANotOptInInRecipient": {
+      "title": "Recipient account has not opted in the selected ASA."
+    },
     "BluetoothRequired": {
       "title": "Oops, Bluetooth disabled",
       "description": "Please enable Bluetooth in your phone Settings. ({{state}} state)"
@@ -1765,7 +1768,7 @@
           "verification": {
             "success": {
               "title": "Rewards successfully claimed!",
-              "text": "--! TEXT NEEDED HERE !--",
+              "text": "Your rewards were added to your available balance",
               "cta": "Go to my account"
             },
             "pending": {
@@ -1794,7 +1797,7 @@
           "verification": {
             "success": {
               "title": "{{token}} asset successfully added!",
-              "text": "--! TEXT NEEDED HERE !--",
+              "text": "You can now receive and send {{token}} assets on your Algorand account.",
               "cta": "View details"
             },
             "pending": {

@@ -64,7 +64,10 @@ export default function ValidationSuccess({ navigation, route }: Props) {
           />
         }
         description={
-          <Trans i18nKey="algorand.optIn.flow.steps.verification.success.text" />
+          <Trans
+            i18nKey="algorand.optIn.flow.steps.verification.success.text"
+            values={{ token: token.name }}
+          />
         }
       />
     </View>
