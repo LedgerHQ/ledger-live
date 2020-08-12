@@ -71,6 +71,7 @@ export default function UnfreezeNavigator() {
         options={{
           headerTitle: null,
           gestureEnabled: false,
+          headerLeft: null,
         }}
       />
       <Stack.Screen

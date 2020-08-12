@@ -82,6 +82,7 @@ export default function FreezeNavigator() {
         options={{
           headerTitle: null,
           gestureEnabled: false,
+          headerLeft: null,
         }}
       />
       <Stack.Screen
