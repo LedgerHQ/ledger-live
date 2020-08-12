@@ -118,6 +118,7 @@ function DelegationFlow() {
         name={ScreenName.CosmosDelegationValidationSuccess}
         component={DelegationValidationSuccess}
         options={{
+          headerLeft: null,
           headerShown: false,
           gestureEnabled: false,
         }}

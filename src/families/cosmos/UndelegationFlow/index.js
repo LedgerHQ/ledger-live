@@ -79,6 +79,7 @@ function UndelegationFlow() {
         name={ScreenName.CosmosUndelegationValidationSuccess}
         component={UndelegationValidationSuccess}
         options={{
+          headerLeft: null,
           headerTitle: null,
           gestureEnabled: false,
         }}
