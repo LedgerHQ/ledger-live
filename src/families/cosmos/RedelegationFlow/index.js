@@ -110,7 +110,7 @@ function RedelegationFlow() {
         component={RedelegationValidationSuccess}
         options={{
           headerLeft: null,
-          headerShown: false,
+          headerTitle: null,
           gestureEnabled: false,
         }}
       />

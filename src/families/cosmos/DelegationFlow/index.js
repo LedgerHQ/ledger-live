@@ -119,7 +119,7 @@ function DelegationFlow() {
         component={DelegationValidationSuccess}
         options={{
           headerLeft: null,
-          headerShown: false,
+          headerTitle: null,
           gestureEnabled: false,
         }}
       />
