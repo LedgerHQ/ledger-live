@@ -1069,10 +1069,10 @@
     "@ledgerhq/errors" "^5.22.0"
     events "^3.2.0"
 
-"@ledgerhq/ledger-core@6.8.1":
-  version "6.8.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.8.1.tgz#edd655d75074eab65d76714789dd8e46c5f9231e"
-  integrity sha512-GdwHB8CDgqEYgaCBTpnPZ92AMerU3Iwsg8Atkq0Wh88SXmItctmhIaHPViRiyGCVvsuwYlMMOS64VWTKoNid6w==
+"@ledgerhq/ledger-core@6.8.2":
+  version "6.8.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.8.2.tgz#6dba2a3c814ab957184581fbeb38dc194e58550a"
+  integrity sha512-iv+bxh8zUUrkR1shYA/akjM2YvRIAoucTDXwiASAMiNwS6I1Fk2elmdvdy067P+19r4v22tkrROJz4A7u6QLmA==
   dependencies:
     bindings "1.5.0"
     nan "^2.14.1"
@@ -1080,10 +1080,10 @@
     node-pre-gyp "^0.14.0"
     node-pre-gyp-github "^1.4.3"
 
-"@ledgerhq/live-common@^13.7.0":
-  version "13.7.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-13.7.0.tgz#d1427bc143915eb7118a44870edda7c9d7f714a5"
-  integrity sha512-xtzlB7rcvxMeRLaHIPNApu2qW/E244uul/A+HQ60+9RaMQuoIkBh3V8ScsQGHM5Pfj1kmUuviQdur8MB92bzTw==
+"@ledgerhq/live-common@^13.7.2":
+  version "13.7.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-13.7.2.tgz#30461569ee53342adbc7a9f819c0d07eaa051d60"
+  integrity sha512-4x1QRJ6T8L4u7KoaaFiZq9FN+9k0xzMkuvtZCuu2VYxPltosO3eruMSNciAStOmkgjHDAe+HeEUXJ+fDb6CjOQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.22.0"
