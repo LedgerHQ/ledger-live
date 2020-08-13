@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
 });
 
 const OpCounterValue = ({ children }: *) => (
-  <LText tertiary numberOfLines={1} style={styles.counterValue}>
+  <LText semiBold numberOfLines={1} style={styles.counterValue}>
     {children}
   </LText>
 );
@@ -135,7 +135,7 @@ export default function TezosAccountBodyHeader({
               <LText semiBold style={styles.delegatorName}>
                 {name}
               </LText>
-              <LText tertiary numberOfLines={1} style={styles.currencyValue}>
+              <LText semiBold numberOfLines={1} style={styles.currencyValue}>
                 <CurrencyUnitValue showCode unit={unit} value={amount} />
               </LText>
             </View>

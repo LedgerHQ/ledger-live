@@ -47,7 +47,7 @@ export default class BitcoinFeePerByteRow extends Component<Props> {
       >
         <View style={{ alignItems: "flex-end" }}>
           <View style={styles.accountContainer}>
-            <LText style={styles.valueText} tertiary>
+            <LText style={styles.valueText} semiBold>
               {`${(transaction.feePerByte || "").toString()} `}
               <Trans i18nKey="common.satPerByte" />
             </LText>

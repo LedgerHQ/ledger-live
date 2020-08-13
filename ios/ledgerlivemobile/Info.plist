@@ -82,6 +82,10 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>Inter-Bold.otf</string>
+		<string>Inter-Regular.otf</string>
+		<string>Inter-SemiBold.otf</string>
+		<string>Fontisto.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

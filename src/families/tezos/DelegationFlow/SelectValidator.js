@@ -99,7 +99,7 @@ const BakerRow = ({
           ) : null}
         </View>
         <LText
-          tertiary
+          semiBold
           numberOfLines={1}
           style={[
             styles.bakerYield,

@@ -175,7 +175,7 @@ class GraphCardHeader extends PureComponent<{
             })
           ) : (
             <View style={styles.warningWrapper}>
-              <LText tertiary style={styles.balanceText}>
+              <LText semiBold style={styles.balanceText}>
                 <CurrencyUnitValue unit={unit} value={item.value} />
               </LText>
               <TransactionsPendingConfirmationWarning maybeAccount={account} />

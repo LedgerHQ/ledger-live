@@ -159,7 +159,7 @@ class GraphCardHeader extends PureComponent<{
               item,
             })
           ) : (
-            <LText tertiary style={styles.balanceText}>
+            <LText semiBold style={styles.balanceText}>
               <CurrencyUnitValue unit={unit} value={item.value} />
             </LText>
           )}

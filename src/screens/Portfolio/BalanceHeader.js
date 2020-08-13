@@ -26,7 +26,7 @@ export default function BalanceHeader({
         <Trans i18nKey="portfolio.totalBalance" />
       </LText>
       <Space h={5} />
-      <LText tertiary style={styles.balanceText}>
+      <LText semiBold style={styles.balanceText}>
         <CurrencyUnitValue
           unit={counterValueCurrency.units[0]}
           value={

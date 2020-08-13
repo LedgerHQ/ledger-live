@@ -73,13 +73,13 @@ export default function Row({
           >
             {getAccountName(account)}
           </LText>
-          <LText tertiary style={[styles.darkBlue, styles.bodyRight]}>
+          <LText semiBold style={[styles.darkBlue, styles.bodyRight]}>
             <CurrencyUnitValue unit={currency.units[0]} value={amount} />
           </LText>
         </View>
         <View style={styles.row}>
           <View />
-          <LText tertiary style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue}>
             <CounterValue currency={currency} value={amount} />
           </LText>
         </View>
@@ -93,7 +93,7 @@ export default function Row({
             />
           </View>
           <LText
-            tertiary
+            semiBold
             style={styles.percentageText}
           >{`${percentage}%`}</LText>
         </View>

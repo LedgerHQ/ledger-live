@@ -55,7 +55,7 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   return (
     <View style={styles.accountBalanceTag}>
-      <LText tertiary numberOfLines={1} style={styles.accountBalanceTagText}>
+      <LText semiBold numberOfLines={1} style={styles.accountBalanceTagText}>
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </LText>
     </View>
