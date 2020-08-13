@@ -2,14 +2,14 @@
 // TODO makeMockBridge need to be exploded into families (bridge/mock) with utility code shared.
 
 import Prando from "prando";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import { SyncError } from "@ledgerhq/errors";
 import { genAccount, genOperation } from "../mock/account";
 import { getOperationAmountNumber } from "../operation";
 import { validateNameEdition } from "../account";
 import { delay } from "../promise";
-import type { Operation } from "../types";
+import type { Operation, Account } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import { getEnv } from "../env";
 
@@ -179,4 +179,16 @@ export const scanAccounts: $PropertyType<CurrencyBridge, "scanAccounts"> = ({
     return () => {
       unsubscribed = true;
     };
+  });
+
+export const makeAccountBridgeReceive: () => (
+  account: Account,
+  { verify?: boolean, deviceId: string, subAccountId?: string }
+) => Observable<{
+  address: string,
+  path: string,
+}> = () => (account) =>
+  of({
+    address: account.freshAddress,
+    path: account.freshAddressPath,
   });

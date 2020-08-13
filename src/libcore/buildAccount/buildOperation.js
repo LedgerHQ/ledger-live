@@ -1,7 +1,12 @@
 // @flow
 
 import { log } from "@ledgerhq/logs";
-import type { Operation, CryptoCurrency, SubAccount } from "../../types";
+import type {
+  Operation,
+  CryptoCurrency,
+  SubAccount,
+  AccountLike,
+} from "../../types";
 import { libcoreAmountToBigNumber } from "../buildBigNumber";
 import { inferSubOperations } from "../../account";
 import type { Core, CoreOperation } from "../types";
@@ -19,6 +24,7 @@ export async function buildOperation(arg: {
   accountId: string,
   currency: CryptoCurrency,
   contextualSubAccounts?: ?(SubAccount[]),
+  existingAccount: ?AccountLike,
 }) {
   const { coreOperation, accountId, currency, contextualSubAccounts } = arg;
   const buildOp = perFamily[currency.family];
@@ -42,7 +48,7 @@ export async function buildOperation(arg: {
 
   const blockHeight = await coreOperation.getBlockHeight();
 
-  const [recipients, senders] = await Promise.all([
+  let [recipients, senders] = await Promise.all([
     coreOperation.getRecipients(),
     coreOperation.getSenders(),
   ]);
@@ -64,6 +70,7 @@ export async function buildOperation(arg: {
 
   const rest = await buildOp(arg, partialOp);
   if (!rest) return null;
+
   const id = `${accountId}-${rest.hash}-${rest.type || type}${
     rest.extra && rest.extra.id ? "-" + rest.extra.id : ""
   }`;

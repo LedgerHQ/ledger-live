@@ -48,6 +48,7 @@ async function buildOriginatedAccount({
         coreOperation,
         accountId: id,
         currency,
+        existingAccount: existingOriginatedAccount,
       })
   );
   const swapHistory = existingOriginatedAccount?.swapHistory || [];

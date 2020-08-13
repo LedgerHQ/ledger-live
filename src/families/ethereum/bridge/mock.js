@@ -18,6 +18,9 @@ import {
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { getGasLimit } from "../transaction";
+import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t: *) =>
   (t.gasPrice || BigNumber(0)).times(getGasLimit(t));
@@ -135,6 +138,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   prepareTransaction,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

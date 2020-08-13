@@ -3,8 +3,16 @@ import type { Account } from "../../types";
 import type { BitcoinOutput, BitcoinInput } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
+import { perCoinLogic } from "./transaction";
 
 const sortUTXO = (a, b) => b.value.minus(a.value).toNumber();
+
+function injectGetAddressParams(account: Account) {
+  const perCoin = perCoinLogic[account.currency.id];
+  if (perCoin && perCoin.injectGetAddressParams) {
+    return perCoin.injectGetAddressParams(account);
+  }
+}
 
 export function formatInput(account: Account, input: BitcoinInput) {
   return `${(input.value
@@ -52,4 +60,4 @@ function formatAccountSpecifics(account: Account): string {
   return str;
 }
 
-export default { formatAccountSpecifics };
+export default { injectGetAddressParams, formatAccountSpecifics };

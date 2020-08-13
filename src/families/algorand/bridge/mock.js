@@ -15,8 +15,10 @@ import {
   sync,
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
-
 import { getMainAccount } from "../../../account";
+import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) => t.fees || BigNumber(0);
 
@@ -100,6 +102,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   prepareTransaction,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

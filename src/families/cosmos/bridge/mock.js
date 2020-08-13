@@ -21,6 +21,9 @@ import {
 } from "../preloadedData";
 import { getMainAccount } from "../../../account";
 import mockPreloadedData from "../preloadedData.mock";
+import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) =>
   (t.fees || BigNumber(0)).times(t.gas || BigNumber(0));
@@ -113,6 +116,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   prepareTransaction,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

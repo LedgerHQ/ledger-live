@@ -24,7 +24,17 @@ import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
 import { getAbandonSeedAddress } from "../../../data/abandonseed";
 import { getMinRelayFee } from "../fees";
-import { isChangeOutput } from "../transaction";
+import { isChangeOutput, perCoinLogic } from "../transaction";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive({
+  injectGetAddressParams: (account) => {
+    const perCoin = perCoinLogic[account.currency.id];
+    if (perCoin && perCoin.injectGetAddressParams) {
+      return perCoin.injectGetAddressParams(account);
+    }
+  },
+});
 
 const calculateFees = makeLRUCache(
   async (a, t) => {
@@ -211,6 +221,7 @@ const accountBridge: AccountBridge<Transaction> = {
   updateTransaction,
   prepareTransaction,
   getTransactionStatus,
+  receive,
   sync,
   signOperation,
   broadcast,

@@ -68,6 +68,9 @@ import {
   getContractUserEnergyRatioConsumption,
 } from "../../../api/Tron";
 import { activationFees, oneTrx } from "../constants";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const signOperation = ({ account, transaction, deviceId }) =>
   Observable.create((o) => {
@@ -749,6 +752,7 @@ const accountBridge: AccountBridge<Transaction> = {
   getTransactionStatus,
   estimateMaxSpendable,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

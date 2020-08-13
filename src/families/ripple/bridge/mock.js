@@ -20,6 +20,9 @@ import {
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
+import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 const notCreatedAddresses = [];
 
@@ -151,6 +154,7 @@ const accountBridge: AccountBridge<Transaction> = {
   estimateMaxSpendable,
   prepareTransaction,
   sync,
+  receive,
   signOperation,
   broadcast,
 };

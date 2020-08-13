@@ -33,6 +33,9 @@ import { getCoreAccount } from "../../../libcore/getCoreAccount";
 import { getMainAccount } from "../../../account";
 import { formatCurrencyUnit } from "../../../currencies";
 import { notCreatedStellarMockAddress } from "../test-dataset";
+import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+
+const receive = makeAccountBridgeReceive();
 
 export const checkRecipientExist: CacheRes<
   Array<{ account: Account, recipient: string }>,
@@ -297,6 +300,7 @@ const accountBridge: AccountBridge<Transaction> = {
   prepareTransaction,
   getTransactionStatus,
   sync,
+  receive,
   signOperation,
   broadcast,
   estimateMaxSpendable,

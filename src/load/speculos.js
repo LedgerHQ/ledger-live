@@ -419,6 +419,7 @@ async function openImplicitSpeculos(query: string) {
 registerTransportModule({
   id: "speculos",
   open: (id): ?Promise<any> => {
+    if (!id) return;
     if (id.startsWith("speculosID")) {
       const obj = data[id];
       if (!obj) {

@@ -138,10 +138,9 @@ function shouldRefreshBitcoinResources(updatedRaw, account) {
   if (!account.bitcoinResources) return true;
   if (updatedRaw.blockHeight !== account.blockHeight) return true;
   if (updatedRaw.operations.length !== account.operations.length) return true;
-  return (
-    updatedRaw.bitcoinResources.utxos.length !==
-    account.bitcoinResources.utxos.length
-  );
+  const { bitcoinResources: existing } = account;
+  const { bitcoinResources: raw } = updatedRaw;
+  return raw.utxos.length !== existing.utxos.length;
 }
 
 export function patchAccount(

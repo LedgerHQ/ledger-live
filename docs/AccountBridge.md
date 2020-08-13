@@ -13,6 +13,14 @@ It is designed for the end user frontend interface and is agnostic of the way it
 
 ```js
 export interface AccountBridge<T: Transaction> {
+  receive(
+    account: Account,
+    { verify?: boolean, deviceId: string, subAccountId?: string }
+  ): Observable<{
+    address: string,
+    path: string,
+  }>;
+
   sync(Account, SyncConfig): Observable<(Account) => Account>;
 
   createTransaction(Account): T;
@@ -26,18 +34,18 @@ export interface AccountBridge<T: Transaction> {
   estimateMaxSpendable({
     account: AccountLike,
     parentAccount?: ?Account,
-    transaction?: ?T
+    transaction?: ?T,
   }): Promise<BigNumber>;
 
   signOperation({
     account: Account,
     transaction: T,
-    deviceId: DeviceId
+    deviceId: DeviceId,
   }): Observable<SignOperationEvent>;
 
   broadcast({
     account: Account,
-    signedOperation: SignedOperation
+    signedOperation: SignedOperation,
   }): Promise<Operation>;
 }
 ```
@@ -51,6 +59,22 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 const bridge = getAccountBridge(account, parentAccount);
 ```
+
+## Receive on an account
+
+```js
+receive(
+  account: Account,
+  { verify?: boolean, deviceId: string, subAccountId?: string }
+): Observable<{
+  address: string,
+  path: string,
+}>;
+```
+
+The first thing that AccountBridge allows to do is to receive on it.
+
+the `receive` method allows to derivate address of an account with a Nano device but also display it on the device if verify is passed in.
 
 ## Synchronize an account with `sync`
 
@@ -104,7 +128,7 @@ type TransactionCommon = {|
   amount: BigNumber,
   recipient: string,
   useAllAmount?: boolean,
-  subAccountId?: ?string
+  subAccountId?: ?string,
 |};
 ```
 
@@ -116,7 +140,7 @@ type TezosTransaction = {|
   ...TransactionCommon,
   family: "bitcoin",
   feePerByte: ?BigNumber,
-  networkInfo: ?BitcoinNetworkInfo
+  networkInfo: ?BitcoinNetworkInfo,
 |};
 
 // tezos/types.js
@@ -128,7 +152,7 @@ type TezosTransaction = {|
   networkInfo: ?TezosNetworkInfo,
   fees: ?BigNumber,
   gasLimit: ?BigNumber,
-  storageLimit: ?BigNumber
+  storageLimit: ?BigNumber,
 |};
 ```
 
@@ -208,7 +232,7 @@ type TransactionStatus = {|
   // total amount that the sender will spend (in account currency)
   totalSpent: BigNumber,
   // should the recipient be non editable
-  recipientIsReadOnly?: boolean
+  recipientIsReadOnly?: boolean,
 |};
 ```
 
@@ -268,7 +292,7 @@ type SignedOperation = {|
   // sometimes a coin needs the raw object (it must be serializable)
   signatureRaw?: Object,
   // date calculated as expiring
-  expirationDate: ?Date
+  expirationDate: ?Date,
 |};
 ```
 
@@ -322,14 +346,14 @@ type TransactionCommonRaw = {|
   amount: string,
   recipient: string,
   useAllAmount?: boolean,
-  subAccountId?: ?string
+  subAccountId?: ?string,
 |};
 
 type SignedOperationRaw = {|
   operation: OperationRaw,
   signature: string,
   signatureRaw?: Object,
-  expirationDate: ?string
+  expirationDate: ?string,
 |};
 
 type TransactionStatusRaw = {|
@@ -339,7 +363,7 @@ type TransactionStatusRaw = {|
   amount: string,
   totalSpent: string,
   useAllAmount?: boolean,
-  recipientIsReadOnly?: boolean
+  recipientIsReadOnly?: boolean,
 |};
 ```
 

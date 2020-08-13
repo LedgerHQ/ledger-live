@@ -160,6 +160,7 @@ export async function buildAccount({
         accountId,
         currency,
         contextualSubAccounts: subAccounts,
+        existingAccount,
       }),
     mergeOperationsByFamily[currency.family]
   );
@@ -178,6 +179,7 @@ export async function buildAccount({
         accountId,
         currency,
         contextualSubAccounts: subAccounts,
+        existingAccount,
       });
     }
   }
