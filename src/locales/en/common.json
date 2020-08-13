@@ -1727,6 +1727,10 @@
       "undelegating": {
         "title": "Undelegating",
         "description": "Undelegated assets are in a timelock of 21 days, before being available."
+      },
+      "delegationUnavailable": {
+        "title": "Delegation unavailable",
+        "description": "Not enough available balance in your account to start a new delegation."
       }
     },
     "delegation": {
