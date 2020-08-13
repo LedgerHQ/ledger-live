@@ -16,6 +16,7 @@ type F = (Param) => Promise<CoreAccount>;
 const restoreWithAccountCreationInfo = {
   tezos: true,
   stellar: true,
+  algorand: true,
 };
 
 export const getOrCreateAccount: F = atomicQueue(

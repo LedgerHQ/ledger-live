@@ -1,4 +1,5 @@
 // @flow
+import algorand from "../families/algorand/test-dataset.js";
 import bitcoin from "../families/bitcoin/test-dataset.js";
 import cosmos from "../families/cosmos/test-dataset.js";
 import ethereum from "../families/ethereum/test-dataset.js";
@@ -8,6 +9,7 @@ import tezos from "../families/tezos/test-dataset.js";
 import tron from "../families/tron/test-dataset.js";
 
 export default {
+  algorand,
   bitcoin,
   cosmos,
   ethereum,

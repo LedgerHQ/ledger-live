@@ -1,4 +1,5 @@
 // @flow
+import algorand from "../families/algorand/deviceTransactionConfig.js";
 import bitcoin from "../families/bitcoin/deviceTransactionConfig.js";
 import cosmos from "../families/cosmos/deviceTransactionConfig.js";
 import ethereum from "../families/ethereum/deviceTransactionConfig.js";
@@ -8,6 +9,7 @@ import tezos from "../families/tezos/deviceTransactionConfig.js";
 import tron from "../families/tron/deviceTransactionConfig.js";
 
 export default {
+  algorand,
   bitcoin,
   cosmos,
   ethereum,

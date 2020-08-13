@@ -14,6 +14,10 @@ import type {
   CosmosResourcesRaw,
 } from "../families/cosmos/types";
 import type {
+  AlgorandResources,
+  AlgorandResourcesRaw,
+} from "../families/algorand/types";
+import type {
   BalanceHistory,
   BalanceHistoryRaw,
   PortfolioRange,
@@ -179,6 +183,7 @@ export type Account = {
   bitcoinResources?: BitcoinResources,
   tronResources?: TronResources,
   cosmosResources?: CosmosResources,
+  algorandResources?: AlgorandResources,
 
   // Swap operations linked to this account
   swapHistory: SwapOperation[],
@@ -252,6 +257,7 @@ export type AccountRaw = {
   bitcoinResources?: BitcoinResourcesRaw,
   tronResources?: TronResourcesRaw,
   cosmosResources?: CosmosResourcesRaw,
+  algorandResources?: AlgorandResourcesRaw,
   // Swap operations linked to this account
   swapHistory?: SwapOperationRaw[],
 };

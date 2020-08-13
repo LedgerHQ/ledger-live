@@ -28,6 +28,10 @@ import {
   fromCosmosResourcesRaw,
 } from "../families/cosmos/serialization";
 import {
+  toAlgorandResourcesRaw,
+  fromAlgorandResourcesRaw,
+} from "../families/algorand/serialization";
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -37,6 +41,7 @@ import accountByFamily from "../generated/account";
 import type { SwapOperation, SwapOperationRaw } from "../swap/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
+export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
@@ -546,6 +551,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     cosmosResources,
     bitcoinResources,
     swapHistory,
+    algorandResources,
   } = rawAccount;
 
   const subAccounts =
@@ -625,6 +631,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.swapHistory = swapHistory.map(fromSwapOperationRaw);
   }
 
+  if (algorandResources) {
+    res.algorandResources = fromAlgorandResourcesRaw(algorandResources);
+  }
+
   return res;
 }
 
@@ -656,6 +666,7 @@ export function toAccountRaw({
   cosmosResources,
   bitcoinResources,
   swapHistory,
+  algorandResources,
 }: Account): AccountRaw {
   const res: $Exact<AccountRaw> = {
     id,
@@ -701,6 +712,9 @@ export function toAccountRaw({
   }
   if (swapHistory) {
     res.swapHistory = swapHistory.map(toSwapOperationRaw);
+  }
+  if (algorandResources) {
+    res.algorandResources = toAlgorandResourcesRaw(algorandResources);
   }
   return res;
 }

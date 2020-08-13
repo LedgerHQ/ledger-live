@@ -631,7 +631,6 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                 account,
                 bridge.createTransaction(account)
               );
-              expect(t.networkInfo).toBeDefined();
               const s = await bridge.getTransactionStatus(account, t);
               expect(s).toBeDefined();
               // FIXME i'm not sure if we can establish more shared properties
@@ -688,7 +687,6 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                       )
                     : transaction;
                 t = await bridge.prepareTransaction(account, t);
-                expect(t.networkInfo).toBeDefined();
                 const s = await bridge.getTransactionStatus(account, t);
                 if (expectedStatus) {
                   const es =

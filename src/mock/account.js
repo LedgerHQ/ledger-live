@@ -157,6 +157,17 @@ const hardcodedMarketcap = [
   "tron/trc10/1002858",
   "tron/trc10/1002876",
   "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+  "algorand/asa/438840",
+  "algorand/asa/438839",
+  "algorand/asa/438838",
+  "algorand/asa/438837",
+  "algorand/asa/438836",
+  "algorand/asa/438833",
+  "algorand/asa/438832",
+  "algorand/asa/438831",
+  "algorand/asa/438828",
+  "algorand/asa/312769",
+  "algorand/asa/163650",
 ];
 
 // for the mock generation we need to adjust to the actual market price of things, we want to avoid having things < 0.01 EUR
@@ -392,7 +403,16 @@ export function genAccount(
     };
   }
 
-  if (["ethereum", "ethereum_ropsten", "tron"].includes(currency.id)) {
+  if (currency.family === "algorand") {
+    account.algorandResources = {
+      rewards: BigNumber(0),
+      rewardsAccumulated: BigNumber(0),
+    };
+  }
+
+  if (
+    ["ethereum", "ethereum_ropsten", "tron", "algorand"].includes(currency.id)
+  ) {
     const tokenCount =
       typeof opts.subAccountsCount === "number"
         ? opts.subAccountsCount

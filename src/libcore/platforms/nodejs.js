@@ -158,7 +158,6 @@ export default (arg: {
           // the default would parse the request, we want to preserve the string
           transformResponse: (data) => data,
         };
-
         if (isUsingArrayOfBytes) {
           if (Array.isArray(data)) {
             if (data.length === 0) {
@@ -168,6 +167,11 @@ export default (arg: {
               data = bytesArrayToString(data);
             }
           }
+        } else if (
+          headers["Content-Type"] &&
+          headers["Content-Type"] === "application/x-binary"
+        ) {
+          data = Buffer.from(unprefixHex0x(data), "hex");
         } else {
           if (typeof data === "string" && data) {
             data = Buffer.from(unprefixHex0x(data), "hex").toString();
@@ -381,11 +385,18 @@ export default (arg: {
               if (process.env.VERBOSE) {
                 log("libcore-call", id + "." + method, args);
               }
-              const constructorArgs =
-                typeof njsBuggyMethodIsNotStatic === "function"
-                  ? njsBuggyMethodIsNotStatic(args)
-                  : args;
-              const value = new m(...constructorArgs)[method](...args);
+              let value;
+              if (params) {
+                // it's seems statics method until now doesn't need to be unwrap
+                const hexArgs = unwrapArg(params, args);
+                value = new m(...hexArgs)[method](...hexArgs);
+              } else {
+                const constructorArgs =
+                  typeof njsBuggyMethodIsNotStatic === "function"
+                    ? njsBuggyMethodIsNotStatic(args)
+                    : args;
+                value = new m(...constructorArgs)[method](...args);
+              }
               if (process.env.VERBOSE) {
                 log("libcore-result", id + "." + method, { value });
               }

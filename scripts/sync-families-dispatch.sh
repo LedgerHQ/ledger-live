@@ -29,6 +29,8 @@ account.js \
 swap.js \
 "
 
+withoutNetworkInfo=("algorand")
+
 cd ../src
 
 rm -rf generated
@@ -109,8 +111,10 @@ genTypesFile () {
     echo 'import type { CoreCurrencySpecifics as CoreCurrencySpecifics_'$family' } from "../families/'$family'/types";'
     echo 'import type { Transaction as '$family'Transaction } from "../families/'$family'/types";'
     echo 'import type { TransactionRaw as '$family'TransactionRaw } from "../families/'$family'/types";'
-    echo 'import type { NetworkInfo as '$family'NetworkInfo } from "../families/'$family'/types";'
-    echo 'import type { NetworkInfoRaw as '$family'NetworkInfoRaw } from "../families/'$family'/types";'
+    if [[ ! " ${withoutNetworkInfo[@]} " =~ " ${family} " ]]; then
+      echo 'import type { NetworkInfo as '$family'NetworkInfo } from "../families/'$family'/types";'
+      echo 'import type { NetworkInfoRaw as '$family'NetworkInfoRaw } from "../families/'$family'/types";'
+    fi
   done
   echo
   echo 'export type SpecificStatics = {}'
@@ -139,11 +143,15 @@ genTypesFile () {
   done
   echo 'export type NetworkInfo ='
   for family in $families; do
-    echo '  | '$family'NetworkInfo'
+    if [[ ! " ${withoutNetworkInfo[@]} " =~ " ${family} " ]]; then
+      echo '  | '$family'NetworkInfo'
+    fi
   done
   echo 'export type NetworkInfoRaw ='
   for family in $families; do
+    if [[ ! " ${withoutNetworkInfo[@]} " =~ " ${family} " ]]; then
     echo '  | '$family'NetworkInfoRaw'
+    fi
   done
   echo 'export const reflectSpecifics = (declare: *) => ['
   for family in $families; do

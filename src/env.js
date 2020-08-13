@@ -32,10 +32,20 @@ const stringParser = (v: mixed): ?string =>
   typeof v === "string" ? v : undefined;
 
 const envDefinitions = {
+  API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
+    def: "https://algorand.coin.ledger.com",
+    parser: stringParser,
+    desc: "Node API endpoint for algorand",
+  },
+  API_ALGORAND_BLOCKCHAIN_EXPLORER_API_KEY: {
+    def: "",
+    parser: stringParser,
+    desc: "Node API key for algorand",
+  },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://cosmos.coin.ledger.com/",
     parser: stringParser,
-    desc: "node API for cosmos",
+    desc: "Node API for cosmos",
   },
   API_TEZOS_BAKER: {
     parser: stringParser,

@@ -7,6 +7,7 @@ import invariant from "invariant";
  */
 
 const abandonSeedAddresses: { [string]: string } = {
+  algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   cosmos: "cosmos19rl4cm2hmr8afy4kldpxz3fka4jguq0auqdal4",
   ripple: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3",
   stellar: "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E",

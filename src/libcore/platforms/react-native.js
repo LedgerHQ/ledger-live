@@ -64,6 +64,7 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
       "DynamicObject",
       "WalletPool",
       "SerialContext",
+      "",
     ];
 
     function declare(id, { methods, statics }) {

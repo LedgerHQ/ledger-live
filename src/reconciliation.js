@@ -21,6 +21,7 @@ import {
   fromCosmosResourcesRaw,
   fromBitcoinResourcesRaw,
   fromBalanceHistoryRawMap,
+  fromAlgorandResourcesRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 
@@ -270,6 +271,16 @@ export function patchAccount(
     account.cosmosResources !== updatedRaw.cosmosResources
   ) {
     next.cosmosResources = fromCosmosResourcesRaw(updatedRaw.cosmosResources);
+    changed = true;
+  }
+
+  if (
+    updatedRaw.algorandResources &&
+    account.algorandResources !== updatedRaw.algorandResources
+  ) {
+    next.algorandResources = fromAlgorandResourcesRaw(
+      updatedRaw.algorandResources
+    );
     changed = true;
   }
 

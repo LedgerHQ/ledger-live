@@ -9,6 +9,7 @@ import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
 import "@ledgerhq/live-common/lib/load/tokens/tron/trc10";
 import "@ledgerhq/live-common/lib/load/tokens/tron/trc20";
+import "@ledgerhq/live-common/lib/load/tokens/algorand/asa";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
 
 implementCountervalues({
@@ -47,6 +48,7 @@ setSupportedCurrencies([
   "tron",
   "stellar",
   "cosmos",
+  "algorand",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k, process.env[k]);

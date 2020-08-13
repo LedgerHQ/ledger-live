@@ -1,4 +1,11 @@
 // @flow
+import { reflect as algorandReflect } from "../families/algorand/types";
+import type { CoreStatics as CoreStatics_algorand } from "../families/algorand/types";
+import type { CoreAccountSpecifics as CoreAccountSpecifics_algorand } from "../families/algorand/types";
+import type { CoreOperationSpecifics as CoreOperationSpecifics_algorand } from "../families/algorand/types";
+import type { CoreCurrencySpecifics as CoreCurrencySpecifics_algorand } from "../families/algorand/types";
+import type { Transaction as algorandTransaction } from "../families/algorand/types";
+import type { TransactionRaw as algorandTransactionRaw } from "../families/algorand/types";
 import { reflect as bitcoinReflect } from "../families/bitcoin/types";
 import type { CoreStatics as CoreStatics_bitcoin } from "../families/bitcoin/types";
 import type { CoreAccountSpecifics as CoreAccountSpecifics_bitcoin } from "../families/bitcoin/types";
@@ -73,6 +80,7 @@ import type { NetworkInfo as tronNetworkInfo } from "../families/tron/types";
 import type { NetworkInfoRaw as tronNetworkInfoRaw } from "../families/tron/types";
 
 export type SpecificStatics = {}
+& CoreStatics_algorand
 & CoreStatics_bitcoin
 & CoreStatics_cosmos
 & CoreStatics_ethereum
@@ -82,6 +90,7 @@ export type SpecificStatics = {}
 & CoreStatics_tezos
 & CoreStatics_tron
 export type CoreAccountSpecifics = {}
+& CoreAccountSpecifics_algorand
 & CoreAccountSpecifics_bitcoin
 & CoreAccountSpecifics_cosmos
 & CoreAccountSpecifics_ethereum
@@ -91,6 +100,7 @@ export type CoreAccountSpecifics = {}
 & CoreAccountSpecifics_tezos
 & CoreAccountSpecifics_tron
 export type CoreOperationSpecifics = {}
+& CoreOperationSpecifics_algorand
 & CoreOperationSpecifics_bitcoin
 & CoreOperationSpecifics_cosmos
 & CoreOperationSpecifics_ethereum
@@ -100,6 +110,7 @@ export type CoreOperationSpecifics = {}
 & CoreOperationSpecifics_tezos
 & CoreOperationSpecifics_tron
 export type CoreCurrencySpecifics = {}
+& CoreCurrencySpecifics_algorand
 & CoreCurrencySpecifics_bitcoin
 & CoreCurrencySpecifics_cosmos
 & CoreCurrencySpecifics_ethereum
@@ -109,6 +120,7 @@ export type CoreCurrencySpecifics = {}
 & CoreCurrencySpecifics_tezos
 & CoreCurrencySpecifics_tron
 export type Transaction =
+  | algorandTransaction
   | bitcoinTransaction
   | cosmosTransaction
   | ethereumTransaction
@@ -118,6 +130,7 @@ export type Transaction =
   | tezosTransaction
   | tronTransaction
 export type TransactionRaw =
+  | algorandTransactionRaw
   | bitcoinTransactionRaw
   | cosmosTransactionRaw
   | ethereumTransactionRaw
@@ -145,6 +158,7 @@ export type NetworkInfoRaw =
   | tezosNetworkInfoRaw
   | tronNetworkInfoRaw
 export const reflectSpecifics = (declare: *) => [
+  algorandReflect(declare),
   bitcoinReflect(declare),
   cosmosReflect(declare),
   ethereumReflect(declare),

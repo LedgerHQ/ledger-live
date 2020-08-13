@@ -15,7 +15,10 @@ export type OperationType =
   | "UNFREEZE"
   | "VOTE"
   | "REWARD"
-  | "FEES";
+  | "FEES"
+  | "OPT_IN"
+  | "OPT_OUT"
+  | "CLOSE_ACCOUNT";
 
 export type Operation = {
   // unique identifier (usually hash)
