@@ -127,7 +127,9 @@ export const reducer = (
           exchange: {
             ...state.swap.exchange,
             fromAccount: undefined,
+            fromParentAccount: undefined,
             toAccount: undefined,
+            toParentAccount: undefined,
           },
         },
         fromAmount: BigNumber(0),
@@ -147,6 +149,7 @@ export const reducer = (
           exchange: {
             ...state.swap.exchange,
             toAccount: undefined,
+            toParentAccount: undefined,
           },
         },
         fromAmount: BigNumber(0),

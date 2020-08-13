@@ -19,6 +19,7 @@ import { getExchangeRates } from "@ledgerhq/live-common/lib/swap";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
+import { getAbandonSeedAddress } from "@ledgerhq/live-common/lib/data/abandonseed";
 
 import invariant from "invariant";
 
@@ -136,6 +137,13 @@ const exec = async (opts: SwapJobOpts) => {
     getMainAccount(fromAccount, fromParentAccount)
   );
 
+  transaction = bridge.updateTransaction(transaction, {
+    recipient: getAbandonSeedAddress(
+      getAccountCurrency(getMainAccount(fromAccount, fromParentAccount)).id
+    ),
+    subAccountId: fromParentAccount ? fromAccount.id : undefined,
+  });
+
   if (!useAllAmount) {
     transaction = bridge.updateTransaction(transaction, {
       amount: BigNumber(amount),
@@ -143,10 +151,17 @@ const exec = async (opts: SwapJobOpts) => {
   } else {
     const amount = await bridge.estimateMaxSpendable({
       account: fromAccount,
+      parentAccount: fromParentAccount,
       transaction,
     });
-    transaction = bridge.updateTransaction(transaction, { amount });
+    transaction = bridge.updateTransaction(transaction, {
+      amount,
+    });
   }
+  transaction = await bridge.prepareTransaction(
+    getMainAccount(fromAccount, fromParentAccount),
+    transaction
+  );
 
   const exchange: Exchange = {
     fromAccount,
@@ -161,6 +176,7 @@ const exec = async (opts: SwapJobOpts) => {
   console.log("OPEN EXCHANGE APP");
   await delay(10000);
 
+  console.log({ transaction, amount: transaction.amount.toString() });
   const initSwapResult = await initSwap({
     exchange,
     exchangeRate: exchangeRates[0],

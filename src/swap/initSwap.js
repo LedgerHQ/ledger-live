@@ -41,7 +41,7 @@ export type InitSwapInput = {
 // you get at the end a final Transaction to be done (it's not yet signed, nor broadcasted!) and a swapId
 const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
   let { exchange, exchangeRate, transaction, deviceId } = input;
-  if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, deviceId);
+  if (getEnv("MOCK")) return mockInitSwap(exchange, exchangeRate, transaction);
   return Observable.create((o) => {
     let unsubscribed = false;
     const confirmSwap = async () => {

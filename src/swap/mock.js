@@ -24,14 +24,14 @@ export const mockGetExchangeRates = async (
   const unitFrom = getAccountUnit(fromAccount);
   const amountFrom = amount.div(BigNumber(10).pow(unitFrom.magnitude));
 
-  if (amountFrom.gte(0.00001) && amountFrom.lte(10)) {
+  if (amountFrom.gte(0.00001) && amountFrom.lte(100000)) {
     //Fake delay to show loading UI
     await new Promise((r) => setTimeout(r, 800));
     //Mock OK, not really magnitude aware
     return [
       {
-        rate: BigNumber("0.0045684305261604"),
-        magnitudeAwareRate: BigNumber("0.0045684305261604"),
+        rate: BigNumber("4.2"),
+        magnitudeAwareRate: BigNumber("4.2"),
         rateId: "mockedRateId",
         provider: "changelly",
         expirationDate: new Date(),
@@ -49,26 +49,10 @@ export const mockGetExchangeRates = async (
 };
 
 export const mockInitSwap = (
-  exchange: Exchange, // eslint-disable-line no-unused-vars
-  exchangeRate: ExchangeRate, // eslint-disable-line no-unused-vars
-  deviceId: string // eslint-disable-line no-unused-vars
+  exchange: Exchange,
+  exchangeRate: ExchangeRate,
+  transaction: Transaction
 ): Observable<SwapRequestEvent> => {
-  // TODO Better mock with input data please
-  const transaction = {
-    family: "bitcoin",
-    amount: BigNumber(0),
-    recipient: "some_address",
-    feePerByte: BigNumber(10),
-    networkInfo: null,
-    useAllAmount: false,
-    rbf: false,
-    utxoStrategy: {
-      strategy: 0,
-      pickUnconfirmedRBF: false,
-      excludeUTXOs: [],
-    },
-  };
-
   return of({
     type: "init-swap-result",
     initSwapResult: {
@@ -85,7 +69,15 @@ export const mockGetProviders: GetProviders = async () => {
   return [
     {
       provider: "changelly",
-      supportedCurrencies: ["bitcoin", "litecoin", "ethereum", "tron"],
+      supportedCurrencies: [
+        "bitcoin",
+        "litecoin",
+        "ethereum",
+        "tron",
+        "ethereum/erc20/omg",
+        "ethereum/erc20/0x_project",
+        "ethereum/erc20/augur",
+      ],
     },
   ];
 };
