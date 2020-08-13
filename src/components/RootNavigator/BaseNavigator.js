@@ -82,6 +82,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Exchange}
         component={ExchangeNavigator}
+        options={{ headerLeft: null }}
       />
       <Stack.Screen
         name={NavigatorName.ExchangeBuyFlow}

@@ -111,9 +111,7 @@ function VoteFlow() {
       <Stack.Screen
         name={ScreenName.VoteValidationError}
         component={VoteValidationError}
-        options={{
-          headerTitle: null,
-        }}
+        options={{ headerTitle: null }}
       />
       <Stack.Screen
         name={ScreenName.VoteValidationSuccess}
@@ -121,6 +119,8 @@ function VoteFlow() {
         options={{
           headerTitle: null,
           gestureEnabled: false,
+          headerLeft: null,
+          headerRight: null,
         }}
       />
     </Stack.Navigator>

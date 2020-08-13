@@ -55,6 +55,8 @@ export default function ClaimRewardsNavigator() {
         options={{
           headerTitle: null,
           gestureEnabled: false,
+          headerLeft: null,
+          headerRight: null,
         }}
       />
       <Stack.Screen
