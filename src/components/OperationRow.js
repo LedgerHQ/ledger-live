@@ -80,13 +80,17 @@ export default function OperationRow({
       ? perFamilyOperationDetails[mainAccount.currency.family]
       : null;
 
-    const Element =
+    const SpecificAmountCell =
       specific && specific.amountCell
         ? specific.amountCell[operation.type]
         : null;
 
-    return Element ? (
-      <Element operation={operation} unit={unit} currency={currency} />
+    return SpecificAmountCell ? (
+      <SpecificAmountCell
+        operation={operation}
+        unit={unit}
+        currency={currency}
+      />
     ) : null;
   }, [account, parentAccount, operation]);
 

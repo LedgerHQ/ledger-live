@@ -28,7 +28,7 @@ import {
   canDelegate,
 } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
-import IlluRewards from "../../../components/IlluRewards";
+import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import DelegationDrawer, {

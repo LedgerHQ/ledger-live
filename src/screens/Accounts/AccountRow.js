@@ -25,6 +25,7 @@ import colors from "../../colors";
 import AccountSyncStatus from "./AccountSyncStatus";
 import Button from "../../components/Button";
 import SubAccountRow from "../../components/SubAccountRow";
+import perFamilySubAccountList from "../../generated/SubAccountList";
 
 type Props = {
   account: Account,
@@ -85,6 +86,11 @@ const AccountRow = ({
   const onSubAccountLongPress = useCallback(account => onSetAccount(account), [
     onSetAccount,
   ]);
+
+  const family = account.currency.family;
+  const specific = perFamilySubAccountList[family];
+
+  const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
 
   return (
     <View style={styles.root}>
@@ -166,10 +172,18 @@ const AccountRow = ({
                     i18nKey={
                       collapsed
                         ? `accounts.row.${
-                            isToken ? "showTokens" : "showSubAccounts"
+                            isToken
+                              ? hasSpecificTokenWording
+                                ? `${family}.showTokens`
+                                : "showTokens"
+                              : "showSubAccounts"
                           }`
                         : `accounts.row.${
-                            isToken ? "hideTokens" : "hideSubAccounts"
+                            isToken
+                              ? hasSpecificTokenWording
+                                ? `${family}.hideTokens`
+                                : "hideTokens"
+                              : "hideSubAccounts"
                           }`
                     }
                     values={{

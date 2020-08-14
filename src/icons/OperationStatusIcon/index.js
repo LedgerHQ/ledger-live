@@ -14,6 +14,8 @@ import OperationStatusIconVote from "./Vote";
 import OperationStatusIconClaimRewards from "./ClaimReward";
 import OperationStatusIconRedelegate from "./Redelegate";
 import OperationStatusIconFees from "./Fees";
+import OperationStatusIconOptIn from "./OptIn";
+import OperationStatusIconOptOut from "./OptOut";
 
 export default ({
   type,
@@ -40,6 +42,9 @@ export default ({
     VOTE: OperationStatusIconVote,
     REWARD: OperationStatusIconClaimRewards,
     FEES: OperationStatusIconFees,
+    OPT_IN: OperationStatusIconOptIn,
+    OPT_OUT: OperationStatusIconOptOut,
+    CLOSE_ACCOUNT: OperationStatusIconOptOut,
   };
 
   const Icon = IconsComponent[type] || OperationStatusIconSend;

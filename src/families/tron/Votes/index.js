@@ -29,7 +29,7 @@ import ArrowRight from "../../../icons/ArrowRight";
 import DateFromNow from "../../../components/DateFromNow";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
-import IlluRewards from "../../../components/IlluRewards";
+import IlluRewards from "../../../icons/images/Rewards";
 import ProgressCircle from "../../../components/ProgressCircle";
 import InfoModal from "../../../modals/Info";
 import ClaimRewards from "../../../icons/ClaimReward";

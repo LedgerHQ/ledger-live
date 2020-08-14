@@ -32,8 +32,10 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens",
     trc10: "https://support.ledger.com/hc/en-us/articles/360013062159",
     trc20: "https://support.ledger.com/hc/en-us/articles/360013062159",
+    asa: "https://support.ledger.com/hc/en-us/articles/360015896040",
   },
   cosmosStaking: "https://www.ledger.com/staking-cosmos",
   cosmosStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-staking-rewards",
+  algorandStaking: "https://support.ledger.com/hc/en-us/articles/360015897740",
 };

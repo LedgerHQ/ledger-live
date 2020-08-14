@@ -284,7 +284,7 @@ export default function Content({ account, parentAccount, operation }: Props) {
         })}
       />
 
-      {isNegative ? (
+      {isNegative || operation.fee ? (
         <Section
           title={t("operationDetails.fees")}
           headerRight={

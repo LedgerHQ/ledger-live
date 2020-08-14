@@ -160,6 +160,20 @@ export const ScreenName = {
   CosmosClaimRewardsValidation: "CosmosClaimRewardsValidation",
   CosmosClaimRewardsValidationError: "CosmosClaimRewardsValidationError",
   CosmosClaimRewardsValidationSuccess: "CosmosClaimRewardsValidationSuccess",
+
+  AlgorandEditMemo: "AlgorandEditMemo",
+  AlgorandClaimRewardsInfo: "AlgorandClaimRewardsInfo",
+  AlgorandClaimRewardsStarted: "AlgorandClaimRewardsStarted",
+  AlgorandClaimRewardsConnectDevice: "AlgorandClaimRewardsConnectDevice",
+  AlgorandClaimRewardsValidation: "AlgorandClaimRewardsValidation",
+  AlgorandClaimRewardsValidationError: "AlgorandClaimRewardsValidationError",
+  AlgorandClaimRewardsValidationSuccess:
+    "AlgorandClaimRewardsValidationSuccess",
+  AlgorandOptInSelectToken: "AlgorandOptInSelectToken",
+  AlgorandOptInConnectDevice: "AlgorandOptInConnectDevice",
+  AlgorandOptInValidation: "AlgorandOptInValidation",
+  AlgorandOptInValidationError: "AlgorandOptInValidationError",
+  AlgorandOptInValidationSuccess: "AlgorandOptInValidationSuccess",
 };
 
 export const NavigatorName = {
@@ -177,6 +191,8 @@ export const NavigatorName = {
   CosmosDelegationFlow: "CosmosDelegationFlow",
   CosmosRedelegationFlow: "CosmosRedelegationFlow",
   CosmosUndelegationFlow: "CosmosUndelegationFlow",
+  AlgorandClaimRewardsFlow: "AlgorandClaimRewardsFlow",
+  AlgorandOptInFlow: "AlgorandOptInFlow",
   ClaimRewards: "ClaimRewards",
   FirmwareUpdate: "FirmwareUpdate",
   Freeze: "Freeze",

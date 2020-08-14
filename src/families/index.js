@@ -5,3 +5,4 @@ export * from "./stellar";
 export * from "./tezos";
 export * from "./tron";
 export * from "./cosmos";
+export * from "./algorand";

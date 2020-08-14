@@ -10,7 +10,7 @@ import Button from "../../components/Button";
 import LText from "../../components/LText";
 import ExternalLink from "../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../components/BulletList";
-import IlluRewards from "../../components/IlluRewards";
+import IlluRewards from "../../icons/images/Rewards";
 import { urls } from "../../config/urls";
 
 const forceInset = { bottom: "always" };
