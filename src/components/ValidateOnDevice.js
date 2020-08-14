@@ -43,8 +43,13 @@ function AmountField({
   status,
   field,
 }: FieldComponentProps) {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const unit = getAccountUnit(mainAccount);
+  let unit;
+  if (account.type === "TokenAccount") {
+    unit = getAccountUnit(account);
+  } else {
+    const mainAccount = getMainAccount(account, parentAccount);
+    unit = getAccountUnit(mainAccount);
+  }
   return (
     <DataRowUnitValue label={field.label} unit={unit} value={status.amount} />
   );
