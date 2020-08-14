@@ -29,7 +29,9 @@ const setInfo = async (
 
     const asaTransferInfo = await core.AlgorandAssetTransferInfo.init(
       targetAssetId,
-      amount.toString(),
+      useAllAmount && subAccount
+        ? subAccount.balance.toString()
+        : amount.toString(),
       recipient,
       null,
       null,

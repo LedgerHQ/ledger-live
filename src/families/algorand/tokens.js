@@ -6,6 +6,8 @@ import { addTokens } from "../../data/tokens";
 
 type TokenType = "asa";
 
+export const addPrefixToken = (tokenId: string) => `algorand/asa/${tokenId}`;
+
 export const extractTokenId = (tokenId: string) => {
   return tokenId.split("/")[2];
 };
@@ -18,7 +20,7 @@ const convertTokens = (type: TokenType) => ([
   precision,
 ]): TokenCurrency => ({
   type: "TokenCurrency",
-  id: `algorand/${type}/${id}`,
+  id: addPrefixToken(id),
   contractAddress,
   parentCurrency: getCryptoCurrencyById("algorand"),
   tokenType: type,

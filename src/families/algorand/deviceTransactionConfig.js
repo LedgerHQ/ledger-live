@@ -1,17 +1,21 @@
 // @flow
 
-import type { AccountLike, TransactionStatus } from "../../types";
+import type {
+  AccountLike,
+  TransactionStatus,
+  TokenCurrency,
+} from "../../types";
 import type { Transaction } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit, findTokenById } from "../../currencies";
-import { extractTokenId } from "./tokens";
+import { extractTokenId, addPrefixToken } from "./tokens";
 
-const displayTokenValue = (token) => `${token.name} (#${extractTokenId(token.id)})`
+export const displayTokenValue = (token: TokenCurrency) =>
+  `${token.name} (#${extractTokenId(token.id)})`;
 
 const getSendFields = (transaction, status, account, addRecipient: boolean) => {
-  const { amount } = transaction;
-  const { estimatedFees } = status;
+  const { estimatedFees, amount } = status;
   const fields = [];
 
   fields.push({
@@ -94,11 +98,13 @@ function getDeviceTransactionConfig({
       }
 
       if (assetId) {
-        const token = findTokenById(assetId);
+        const token = findTokenById(addPrefixToken(assetId));
         fields.push({
           type: "text",
-          label: "Asset id",
-          value:  token ? displayTokenValue(token) : `#${extractTokenId(assetId)}`,
+          label: "Asset ID",
+          value: token
+            ? displayTokenValue(token)
+            : `#${extractTokenId(assetId)}`,
         });
       }
 
