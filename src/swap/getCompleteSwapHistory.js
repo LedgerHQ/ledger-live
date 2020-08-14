@@ -24,7 +24,7 @@ const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
   } = swapOperation;
   const operation = account.operations.find((o) => o.id === operationId);
   const optimisticOperation = !operation
-    ? account.operations.find((o) => o.id === operationId)
+    ? account.pendingOperations.find((o) => o.id === operationId)
     : null;
 
   const op = operation || optimisticOperation;
