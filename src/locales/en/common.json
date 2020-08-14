@@ -813,7 +813,8 @@
       "rewardFrom": "Reward from",
       "rewardAmount": "Amount collected",
       "memo": "Memo",
-      "assetId": "Asset ID"
+      "assetId": "Asset ID",
+      "rewards": "Earned rewards"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
