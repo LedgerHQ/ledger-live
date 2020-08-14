@@ -174,7 +174,10 @@ const getTransactionStatus = async (a: Account, t) => {
 
       totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
 
-      if (!(await getAmountValid(t.recipient, amount, a))) {
+      if (
+        !errors.recipient &&
+        !(await getAmountValid(t.recipient, amount, a))
+      ) {
         errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
           minimalAmount: "0.1 ALGO",
         });
