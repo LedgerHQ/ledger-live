@@ -12,7 +12,7 @@ import { buildASAOperation } from "./buildASAOperation";
 import { BigNumber } from "bignumber.js";
 import { findTokenById, listTokensForCryptoCurrency } from "../../currencies";
 import { promiseAllBatched } from "../../promise";
-import { extractTokenId } from "./tokens";
+import { extractTokenId, addPrefixToken } from "./tokens";
 
 const OperationOrderKey = {
   date: 0,
@@ -103,7 +103,7 @@ async function algorandBuildTokenAccounts({
 
   // filter by token existence
   await promiseAllBatched(3, accountASA, async (asa) => {
-    const token = findTokenById(`algorand/asa/${await asa.getAssetId()}`);
+    const token = findTokenById(addPrefixToken(await asa.getAssetId()));
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const existingTokenAccount = existingAccountByTicker[token.ticker];
       const tokenAccount = await buildAlgorandTokenAccount({
