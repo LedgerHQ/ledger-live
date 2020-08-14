@@ -4,8 +4,10 @@ import type { AccountLike, TransactionStatus } from "../../types";
 import type { Transaction } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getAccountUnit } from "../../account";
-import { formatCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit, findTokenById } from "../../currencies";
 import { extractTokenId } from "./tokens";
+
+const displayTokenValue = (token) => `${token.name} (#${extractTokenId(token.id)})`
 
 const getSendFields = (transaction, status, account, addRecipient: boolean) => {
   const { amount } = transaction;
@@ -37,7 +39,7 @@ const getSendFields = (transaction, status, account, addRecipient: boolean) => {
     fields.push({
       type: "text",
       label: "Asset ID",
-      value: extractTokenId(account.token.id),
+      value: displayTokenValue(account.token),
     });
   }
 
@@ -91,11 +93,14 @@ function getDeviceTransactionConfig({
         });
       }
 
-      fields.push({
-        type: "text",
-        label: "Asset id",
-        value: assetId ? extractTokenId(assetId) : "",
-      });
+      if (assetId) {
+        const token = findTokenById(assetId);
+        fields.push({
+          type: "text",
+          label: "Asset id",
+          value:  token ? displayTokenValue(token) : `#${extractTokenId(assetId)}`,
+        });
+      }
 
       fields.push({
         type: "text",
