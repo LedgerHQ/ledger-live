@@ -47,8 +47,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
     });
   }, [navigation, accountId]);
   const howAsaWorks = useCallback(() => {
-    /** @TODO replace this url */
-    Linking.openURL(urls.algorandStaking);
+    Linking.openURL(urls.supportLinkByTokenType.asa);
   }, []);
 
   const disabled = !account || account.balance.lte(0);

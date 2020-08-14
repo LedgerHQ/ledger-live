@@ -104,8 +104,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
       transaction: bridge.updateTransaction(t, {
         mode: "optIn",
         assetId: null,
-        /** @TODO remove this once the bridge handles it */
-        recipient: mainAccount.freshAddress,
       }),
     };
   });
