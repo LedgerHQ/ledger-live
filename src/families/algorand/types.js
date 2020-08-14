@@ -94,6 +94,7 @@ declare class CoreAlgorandAccount {
   broadcastRawTransaction(transaction: string): Promise<string>;
   getSpendableBalance(operationType: number): Promise<CoreAmount>;
   hasAsset(address: string, assetId: string): Promise<boolean>;
+  isAmountValid(address: string, amount: string): Promise<boolean>
 }
 
 declare class CoreAlgorandOperation {
@@ -182,6 +183,7 @@ export const reflect = (declare: (string, Spec) => void) => {
       getSpendableBalance: {
         returns: "Amount",
       },
+      isAmountValid: {},
       hasAsset: {},
     },
   });

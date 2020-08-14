@@ -5,6 +5,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   FeeNotLoaded,
+  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
@@ -87,6 +88,19 @@ const recipientHasAsset = async (assetId, recipient, account) =>
 
     return hasAsset;
   });
+
+const getAmountValid = async (recipient, amount, account) =>
+  await withLibcore(async (core) => {
+    const { coreAccount } = await getCoreAccount(core, account);
+
+    const algorandAccount = await coreAccount.asAlgorandAccount();
+    const isValid = await algorandAccount.isAmountValid(
+      recipient,
+      amount.toString()
+    );
+
+    return isValid;
+  });
 /*
  * Here are the list of the differents things we check
  * - Check if recipient is the same in case of send
@@ -159,6 +173,12 @@ const getTransactionStatus = async (a: Account, t) => {
       }
 
       totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
+
+      if (!(await getAmountValid(t.recipient, amount, a))) {
+        errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+          minimalAmount: "0.1 ALGO",
+        });
+      }
 
       if (
         (amount.lte(0) && t.useAllAmount) || // if use all Amount sets an amount at 0
