@@ -12,6 +12,7 @@ import colors from "../colors";
 import type { T } from "../types/common";
 
 type Props = {
+  initialQuery?: string,
   renderList: (list: Array<*>) => React$Node,
   renderEmptySearch: () => React$Node,
   keys?: string[],
@@ -36,6 +37,10 @@ class FilteredSearchBar extends PureComponent<Props, State> {
   };
 
   input = React.createRef();
+
+  componentDidMount() {
+    if (this.props.initialQuery) this.onChange(this.props.initialQuery);
+  }
 
   onFocus = () => this.setState({ focused: true });
 

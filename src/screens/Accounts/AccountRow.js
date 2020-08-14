@@ -118,7 +118,7 @@ const AccountRow = ({
                 >
                   {account.name}
                 </LText>
-                <LText tertiary style={styles.balanceNumText}>
+                <LText semiBold style={styles.balanceNumText}>
                   <CurrencyUnitValue
                     showCode
                     unit={account.unit}
@@ -216,7 +216,7 @@ const AccountRow = ({
 };
 
 const AccountCv = ({ children }: { children: * }) => (
-  <LText tertiary style={styles.balanceCounterText}>
+  <LText semiBold style={styles.balanceCounterText}>
     {children}
   </LText>
 );

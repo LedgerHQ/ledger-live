@@ -1,4 +1,5 @@
 // @flow
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -24,7 +25,9 @@ type Props = {
 };
 
 const RewardsSection = ({ account }: Props) => {
-  const { rewards } = account.algorandResources || {};
+  invariant(account && account.algorandResources);
+  const { rewards } = account.algorandResources;
+
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const { t } = useTranslation();

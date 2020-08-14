@@ -20,6 +20,7 @@
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Need help?",
     "edit": "Edit",
+    "editName": "Edit name",
     "close": "Close",
     "confirm": "Confirm",
     "poweredBy": "Powered by ",
@@ -985,7 +986,8 @@
   "distribution": {
     "header": "Asset allocation",
     "list": "Asset allocation ({{count}})",
-    "assets": "assets",
+    "assets": "asset",
+    "assets_plural": "assets",
     "total": "Total balance:",
     "listAccount": "Account allocation ({{count}})"
   },
@@ -1609,6 +1611,7 @@
     },
     "firmware": {
       "latest": "Firmware version {{version}} is available",
+      "outdated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "modalTitle": "Update firmware is available only on Ledger Live desktop",
       "modalDesc": "Please download Ledger Live on your computer to update the device’s firmware"
     }
@@ -1823,6 +1826,10 @@
       "undelegating": {
         "title": "Undelegating",
         "description": "Undelegated assets are in a timelock of 21 days, before being available."
+      },
+      "delegationUnavailable": {
+        "title": "Delegation unavailable",
+        "description": "Not enough available balance in your account to start a new delegation."
       }
     },
     "delegation": {
@@ -1850,14 +1857,14 @@
       "flow": {
         "steps": {
           "starter": {
-            "description": "Delegate your ATOM to earn rewards while keeping full security and control on your assets.",
+            "description": "You may earn rewards by delegating your ATOM assets to a validator.",
             "steps": {
-              "0": "Delegated assets stay yours",
-              "1": "You’ll have to wait for 21 days to complete an undelegation",
-              "2": "Delegate securely with your Ledger device"
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "Assets will be available 21 days after undelegation"
             },
             "warning": {
-              "description": "Delegate ATOM asset can implies some losses if the chosen delegator doesn’t act rightfully on the network."
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
             "cta": "Continue"
           },
@@ -2196,7 +2203,7 @@
       "claimReward": "Please confirm the operation on your device to claim your rewards",
       "vote": "Please confirm the operation on your device to cast your votes",
       "delegate": "Please confirm the operation on your device to cast your votes",
-      "redelegate": "You have successfully redelegated your assets. Please confirm the operation on your device to cast your votes",
+      "redelegate": "Please confirm the operation on your device to finalize the operation",
       "undelegate": "Please confirm the operation on your device to undelegate assets"
     },
     "warning": "Always verify that your device displays the address exactly as provided {{recipientWording}}",

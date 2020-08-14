@@ -143,7 +143,7 @@ const AmountCell = ({
 }: Props & { amount: BigNumber }) =>
   !amount.isZero() ? (
     <>
-      <LText tertiary numberOfLines={1} style={styles.topText}>
+      <LText semiBold numberOfLines={1} style={styles.topText}>
         <CurrencyUnitValue
           showCode
           unit={unit}
@@ -202,7 +202,7 @@ const VoteAmountCell = ({ operation }: Props) => {
       : 0;
 
   return amount > 0 ? (
-    <LText numberOfLines={1} tertiary style={[styles.topText, styles.voteText]}>
+    <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>
       <Trans
         i18nKey={"operationDetails.extra.votes"}
         values={{ number: amount }}

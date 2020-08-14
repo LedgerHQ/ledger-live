@@ -26,7 +26,6 @@ export default function AlgorandFeeRow({ account, transaction }: Props) {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  if (transaction.family !== "algorand") return null;
   const fees = transaction.fees;
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);

@@ -90,19 +90,22 @@ class Distribution extends PureComponent<DistributionProps, *> {
               data={distribution.list}
             />
             <View style={styles.assetWrapper} pointerEvents="none">
-              <LText tertiary style={styles.assetCount}>
+              <LText semiBold style={styles.assetCount}>
                 {distribution.list.length}
               </LText>
-              <LText tertiary style={styles.assets}>
-                <Trans i18nKey="distribution.assets" />
+              <LText semiBold style={styles.assets}>
+                <Trans
+                  i18nKey="distribution.assets"
+                  count={distribution.list.length}
+                />
               </LText>
             </View>
           </View>
           <View style={styles.total}>
-            <LText tertiary style={styles.label}>
+            <LText semiBold style={styles.label}>
               <Trans i18nKey="distribution.total" />
             </LText>
-            <LText tertiary style={styles.amount}>
+            <LText semiBold style={styles.amount}>
               <CurrencyUnitValue
                 unit={counterValueCurrency.units[0]}
                 value={distribution.sum}

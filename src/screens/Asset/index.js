@@ -113,12 +113,12 @@ class Asset extends PureComponent<AssetProps, any> {
       >
         <View style={styles.balanceContainer}>
           {items[0] ? (
-            <LText style={styles.balanceText} tertiary>
+            <LText style={styles.balanceText} semiBold>
               <CurrencyUnitValue {...items[0]} />
             </LText>
           ) : null}
           {items[1] ? (
-            <LText style={styles.balanceSubText} tertiary>
+            <LText style={styles.balanceSubText} semiBold>
               <CurrencyUnitValue {...items[1]} />
             </LText>
           ) : null}
@@ -307,6 +307,6 @@ const styles = StyleSheet.create({
   },
   balanceContainer: {
     marginLeft: 16,
-    alignItems: "flex-end",
+    alignItems: "center",
   },
 });

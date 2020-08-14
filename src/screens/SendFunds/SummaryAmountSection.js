@@ -26,10 +26,10 @@ export default class SummaryAmountSection extends PureComponent<Props> {
     return (
       <SummaryRow title={<Trans i18nKey="send.summary.amount" />}>
         <View style={styles.amountContainer}>
-          <LText style={styles.valueText} tertiary>
+          <LText style={styles.valueText} semiBold>
             <CurrencyUnitValue unit={unit} value={amount} disableRounding />
           </LText>
-          <LText style={styles.counterValueText} tertiary>
+          <LText style={styles.counterValueText} semiBold>
             <CounterValue
               before="≈ "
               value={amount}

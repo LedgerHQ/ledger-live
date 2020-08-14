@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Deep Link test page</title>
+    <style>
+      body,
+      html {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background-color: #4b84ff19;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        font-family: sans-serif;
+        padding: 16px;
+        box-sizing: border-box;
+        color: #6490f1;
+      }
+
+      header {
+        flex: 0 0 100px
+      }
+
+      .scrollContent {
+        width: 100%;
+        flex: 1 0 0%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .link {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-color: white;
+        padding-left: 16px;
+        border-radius: 50px;
+        box-sizing: border-box;
+        margin: 8px 0;
+        border: none;
+        color: #6490f1;
+        height: 50px;
+        border-radius: 50px;
+        line-height: 50px;
+        cursor: pointer;
+        flex: 0 0 50px;
+      }
+
+      button p {
+        margin: 0;
+        padding-right: 8px;
+      }
+
+      :focus {
+        outline: none
+      }
+
+      input {
+        min-height: 50px;
+        height: 50px;
+        border: none;
+        background-color: white;
+        border-radius: 50px;
+        padding: 0 0  0 16px;
+        margin: 8px 0;
+        color: #6490f1;
+      }
+
+      .separator {
+        display: block;
+        width: 100px;
+        height: 4px;
+        align-self: center;
+        background-color: #4b84ff19;
+        margin: 8px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+        <h2 class="title">LedgerLive - Deep Links</h1>
+          <p>
+            Edit the parameters if needed then press on each link to test them.
+          </p>
+    </header>
+    <div class="scrollContent">
+      <input type="text" value="" placeholder="Edit currency..." id="input">
+      <button class="link" onclick="onClick('ledgerlive:\/\/')">
+        <p>ledgerlive://</p> <p>🔗</p>
+      </button>
+
+      <div class="separator"></div>
+
+      <button class="link" onclick="onClick('ledgerlive:\/\/account')">
+        <p>ledgerlive://account</p> <p>🔗</p>
+      </button>
+
+      <button class="link" onclick="onClick('ledgerlive:\/\/account?currency=CURRENCY_PARAM')">
+        <p>ledgerlive://account?currency=<b class="currencyName">bitcoin</b></p> <p>🔗</p>
+      </button>
+
+      <div class="separator"></div>
+
+      <button class="link" onclick="onClick('ledgerlive:\/\/send')">
+        <p>ledgerlive://send</p>
+        <p>🔗</p>
+      </button>
+      
+      <button class="link" onclick="onClick('ledgerlive:\/\/send?currency=CURRENCY_PARAM')">
+        <p>ledgerlive://send?currency=<b class="currencyName">bitcoin</b></p>
+        <p>🔗</p>
+      </button>
+
+      <div class="separator"></div>
+
+      <button class="link" onclick="onClick('ledgerlive:\/\/receive')">
+        <p>ledgerlive://receive</p>
+        <p>🔗</p>
+      </button>
+      
+      <button class="link" onclick="onClick('ledgerlive:\/\/receive?currency=CURRENCY_PARAM')">
+        <p>ledgerlive://receive?currency=<b class="currencyName">bitcoin</b></p>
+        <p>🔗</p>
+      </button>
+
+      <div class="separator"></div>
+
+      <button class="link" onclick="onClick('ledgerlive:\/\/buy')">
+        <p>ledgerlive://buy</p>
+        <p>🔗</p>
+      </button>
+      
+      <button class="link" onclick="onClick('ledgerlive:\/\/buy/CURRENCY_PARAM')">
+        <p>ledgerlive://buy/<b class="currencyName">bitcoin</b></p>
+        <p>🔗</p>
+      </button>
+    </div>
+    <script>
+      let currency = "bitcoin";
+      function onClick(url) {
+        window.open(url.replace(/CURRENCY_PARAM/, currency), "_blank");
+      }
+
+      function onChangeCurrency(evt) {
+        currency = evt.target.value.toLowerCase();
+        Array.from(document.querySelectorAll("b.currencyName")).forEach(el => el.innerHTML = currency)
+      }
+
+      window.onload = () => {
+        document.getElementById("input").onchange = onChangeCurrency;
+      }
+    </script>
+  </body>
+</html>

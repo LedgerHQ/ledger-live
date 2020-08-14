@@ -9,7 +9,6 @@ export type Opts = {
   bold?: boolean,
   semiBold?: boolean,
   secondary?: boolean,
-  tertiary?: boolean,
   monospace?: boolean,
 };
 
@@ -36,7 +35,6 @@ export type Res = {
  * <LText bold>toto</LText>
  * <LText semiBold>foobar</LText>
  * <LText secondary>alternate font</LText>
- * <LText tertiary>tertiary font</LText>
  * <LText style={styles.text}>some specific styles</LText>
  */
 export default class LText extends Component<*> {
@@ -45,7 +43,6 @@ export default class LText extends Component<*> {
       bold,
       semiBold,
       secondary,
-      tertiary,
       monospace,
       style,
       ...newProps
@@ -54,10 +51,7 @@ export default class LText extends Component<*> {
       <Text
         allowFontScaling={false}
         {...newProps}
-        style={[
-          style,
-          getFontStyle({ bold, semiBold, secondary, tertiary, monospace }),
-        ]}
+        style={[style, getFontStyle({ bold, semiBold, secondary, monospace })]}
       />
     );
   }

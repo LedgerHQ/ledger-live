@@ -86,7 +86,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
               alignedTop
             >
               <LText
-                tertiary
+                semiBold
                 style={[
                   styles.confirmationNbValue,
                   { color: colors.live, marginLeft: 8 },
@@ -108,13 +108,13 @@ class EachCurrencySettings extends Component<Props, LocalState> {
               />
               <View style={styles.textContainer}>
                 <LText
-                  tertiary
+                  semiBold
                   style={[styles.confirmationNbValue, { color: colors.grey }]}
                 >
                   {defaults.confirmationsNb.min}
                 </LText>
                 <LText
-                  tertiary
+                  semiBold
                   style={[styles.confirmationNbValue, { color: colors.grey }]}
                 >
                   {defaults.confirmationsNb.max}

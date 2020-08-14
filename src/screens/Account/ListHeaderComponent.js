@@ -74,14 +74,14 @@ const renderListHeaderTitle = (
       <View style={styles.balanceContainer}>
         {items[0] ? (
           <View style={styles.warningWrapper}>
-            <LText style={styles.balanceText} tertiary>
+            <LText style={styles.balanceText} semiBold>
               <CurrencyUnitValue {...items[0]} disableRounding />
             </LText>
             <TransactionsPendingConfirmationWarning maybeAccount={account} />
           </View>
         ) : null}
         {items[1] ? (
-          <LText style={styles.balanceSubText} tertiary>
+          <LText style={styles.balanceSubText} semiBold>
             <CurrencyUnitValue {...items[1]} disableRounding />
           </LText>
         ) : null}

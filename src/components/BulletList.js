@@ -15,7 +15,7 @@ export class Bullet extends PureComponent<{ children: *, big?: boolean }> {
     const { children, big } = this.props;
     return (
       <View style={[styles.bulletContainer, big && styles.bulletContainerBig]}>
-        <LText style={[styles.number, big && styles.numberBig]} tertiary>
+        <LText style={[styles.number, big && styles.numberBig]}>
           {children}
         </LText>
       </View>
