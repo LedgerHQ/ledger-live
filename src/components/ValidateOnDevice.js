@@ -45,7 +45,7 @@ function AmountField({
 }: FieldComponentProps) {
   let unit;
   if (account.type === "TokenAccount") {
-    unit = account.token.units[0];
+    unit = getAccountUnit(account);
   } else {
     const mainAccount = getMainAccount(account, parentAccount);
     unit = getAccountUnit(mainAccount);
