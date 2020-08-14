@@ -46,7 +46,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "cosmos",
-  "algorand"
+  "algorand",
 ]);
 
 if (Config.VERBOSE) {
