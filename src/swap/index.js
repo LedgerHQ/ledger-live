@@ -16,23 +16,13 @@ const swapAPIBaseURL = "https://swap.staging.aws.ledger.fr";
 const swapProviders: {
   [string]: { nameAndPubkey: Buffer, signature: Buffer },
 } = {
-  new_changelly: {
-    nameAndPubkey: Buffer.from(
-      "09535741505f5445535404660a150309fb52f3d42c27ad04dc3199aa2337bd2a8a002c5337d1788ae347d3336e00ea33f4778cd91ff7d28a8942efd7735dc3ad1b7453f1b9bd1fb4fe65fd",
-      "hex"
-    ),
-    signature: Buffer.from(
-      "3044022069ab98dfb8277f3622096d12485c92d314b554ab915f4cb110b66b6010d00af202202b6cc7f97969ee3c9ce788f88279e4821bac7d5aa4e71048e116020033efa69b",
-      "hex"
-    ),
-  },
   changelly: {
     nameAndPubkey: Buffer.from(
       "094368616e67656c6c790480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
       "hex"
     ),
     signature: Buffer.from(
-      "304402206a57c9ed4030cb2170a3457473757e063fe727c143000251d9e97f278990298002207b1197da75fe909cb9e285775af9c96a62695c1874565bc67b18f9f7c611de82",
+      "30440220554dd6dc172ba5bd20a1bbf60845bbcac67aa0d8d115e55679e2838b772aef41022070f7a3cda142371518ebf16f9696cb27640832ef9401d88209a9e988aab4b3ff",
       "hex"
     ),
   },
