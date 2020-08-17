@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "14.0.0",
+  "version": "14.1.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -36,9 +36,9 @@
     "@ledgerhq/hw-transport-node-hid": "5.22.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.22.0",
     "@ledgerhq/ledger-core": "6.8.2",
-    "@ledgerhq/live-common": "14.0.0",
+    "@ledgerhq/live-common": "14.1.0",
     "@ledgerhq/logs": "5.22.0",
-    "asciichart": "^1.5.24",
+    "asciichart": "^1.5.25",
     "bignumber.js": "^9.0.0",
     "bip39": "^3.0.2",
     "body-parser": "^1.19.0",
