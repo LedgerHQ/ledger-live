@@ -45,8 +45,8 @@ describe("cosmos/react", () => {
       expect(result.current.length).toBe(delegations.length);
 
       const { code } = getAccountUnit(account);
-      expect(result.current[0].formattedAmount.split(" ")[0]).toBe(code);
-      expect(result.current[0].formattedPendingRewards.split(" ")[0]).toBe(
+      expect(result.current[0].formattedAmount.split(" ")[1]).toBe(code);
+      expect(result.current[0].formattedPendingRewards.split(" ")[1]).toBe(
         code
       );
       expect(typeof result.current[0].rank).toBe("number");

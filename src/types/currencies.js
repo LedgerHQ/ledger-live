@@ -9,6 +9,8 @@ export type Unit = {
   magnitude: number,
   // should it always print all digits even if they are 0 (usually: true for fiats, false for cryptos)
   showAllDigits?: boolean,
+  // true if the code should prefix amount when formatting
+  prefixCode?: boolean,
 };
 
 type CurrencyCommon = {

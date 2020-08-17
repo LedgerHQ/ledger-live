@@ -11,10 +11,11 @@ function fiat(name, ticker, defaultSymbol, defaultMagnitude): FiatCurrency {
     symbol: defaultSymbol,
     units: [
       {
-        code: ticker, // for now, code is the ticker (when formatting currencies)
+        code: defaultSymbol,
         name,
         magnitude: defaultMagnitude,
         showAllDigits: true,
+        prefixCode: true,
       },
     ],
   };

@@ -201,25 +201,25 @@ test("can format a currency unit", () => {
     formatCurrencyUnit(btc, BigNumber(1000000), {
       showCode: true,
     })
-  ).toBe("BTC 0.01");
+  ).toBe("0.01 BTC");
   expect(
     formatCurrencyUnit(btc, BigNumber(100000000), {
       showCode: true,
     })
-  ).toBe("BTC 1");
+  ).toBe("1 BTC");
   expect(
     formatCurrencyUnit(btc, BigNumber(100000000), {
       showCode: true,
       showAllDigits: true,
     })
-  ).toBe("BTC 1.00000000");
+  ).toBe("1.00000000 BTC");
   expect(
     formatCurrencyUnit(btc, BigNumber(100000000), {
       showCode: true,
       showAllDigits: true,
       alwaysShowSign: true,
     })
-  ).toBe("+ BTC 1.00000000");
+  ).toBe("+1.00000000 BTC");
 });
 
 test("can enable discreet mode", () => {
@@ -232,20 +232,20 @@ test("can enable discreet mode", () => {
       discreet: true,
       showCode: true,
     })
-  ).toBe("BTC ***");
+  ).toBe("*** BTC");
   expect(
     formatCurrencyUnit(btc, BigNumber(100000000), {
       discreet: true,
       showCode: true,
     })
-  ).toBe("BTC ***");
+  ).toBe("*** BTC");
   expect(
     formatCurrencyUnit(btc, BigNumber(100000000), {
       discreet: true,
       showCode: true,
       showAllDigits: true,
     })
-  ).toBe("BTC ***");
+  ).toBe("*** BTC");
   expect(
     formatCurrencyUnit(btc, BigNumber(100000000), {
       discreet: true,
@@ -253,7 +253,7 @@ test("can enable discreet mode", () => {
       showAllDigits: true,
       alwaysShowSign: true,
     })
-  ).toBe("+ BTC ***");
+  ).toBe("+*** BTC");
 });
 
 test("formatter will round values by default", () => {
@@ -317,7 +317,7 @@ test("sub magnitude", () => {
         showCode: true,
       }
     )
-  ).toBe("USD 0.0004");
+  ).toBe("$0.0004");
 
   expect(
     formatCurrencyUnit(
@@ -426,7 +426,7 @@ test("formatter works with fiats", () => {
         showCode: true,
       }
     )
-  ).toBe("EUR 123.45");
+  ).toBe("€123.45");
   // by default, fiats always show the digits
   expect(
     formatCurrencyUnit(
@@ -466,7 +466,7 @@ test("formatter can change locale", () => {
         showCode: true,
       }
     )
-  ).toBe("- USD 12,345.67");
+  ).toBe("-$12,345.67");
 });
 
 test("formatter does not show very small value in rounding mode", () => {

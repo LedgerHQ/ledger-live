@@ -1,7 +1,7 @@
 // @flow
 import { BigNumber } from "bignumber.js";
 import type { Unit } from "../types";
-import { getFragPositions } from "./localeUtility";
+import { prefixFormat, suffixFormat } from "./localeUtility";
 import { toLocaleString } from "./BigNumberToLocaleString";
 
 const nonBreakableSpace = " ";
@@ -104,10 +104,10 @@ export function formatCurrencyUnitFragment(
     separator: nonBreakableSpace,
   };
 
-  const frags = [];
+  const frags: FormatFragment[] = [];
   let nonSepIndex = -1;
   let sepConsumed = true;
-  getFragPositions(locale).forEach((kind) => {
+  (unit.prefixCode ? prefixFormat : suffixFormat).forEach((kind) => {
     const v = fragValueByKind[kind];
     if (!v) return;
     const isSep = kind === "separator";

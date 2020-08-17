@@ -16,46 +16,8 @@ const staticFallback: { [string]: [string, string] } = {
   zh: ["-US$1.00", "10,000.2"],
 };
 
-export const getFragPositions: (locale: string) => Array<*> = memoize(
-  (locale) => {
-    let oneChar;
-    let res;
-
-    if (localeNotAvailable) {
-      [oneChar, res] = ["1", ...getFallback(locale)];
-    } else {
-      oneChar = (1).toLocaleString(locale)[0];
-      res = (-1).toLocaleString(locale, options);
-    }
-
-    const frags = [];
-    let mandatoryFrags = 0;
-    let codeFound = false;
-    for (let i = 0; i < res.length; i++) {
-      const c = res[i];
-      if (c === "$" || c === "U") {
-        if (!codeFound) {
-          codeFound = true;
-          // force code to be surround by separators. we'll dedup later
-          frags.push("separator");
-          frags.push("code");
-          frags.push("separator");
-          mandatoryFrags++;
-        }
-      } else if (c === "-") {
-        frags.push("sign");
-        mandatoryFrags++;
-      } else if (c === oneChar) {
-        frags.push("value");
-        mandatoryFrags++;
-      } else if (/\s/.test(c)) {
-        frags.push("separator");
-      }
-      if (mandatoryFrags === 3) return frags;
-    }
-    return frags;
-  }
-);
+export const prefixFormat = ["sign", "code", "value"];
+export const suffixFormat = ["sign", "value", "separator", "code"];
 
 // returns decimal and thousands separator
 // FIXME: rename thousands to group
