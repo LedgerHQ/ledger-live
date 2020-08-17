@@ -1,5 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -27,6 +28,7 @@ import { extractTokenId } from "../tokens";
 import { getAbandonSeedAddress } from "../../../data/abandonseed";
 import { ALGORAND_MAX_MEMO_SIZE } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { ClaimRewardsFeesWarning } from "../../../errors";
 
 const receive = makeAccountBridgeReceive();
 
@@ -217,6 +219,12 @@ const getTransactionStatus = async (a: Account, t) => {
       if (a.spendableBalance.lt(totalSpent)) {
         errors.amount = new NotEnoughBalance();
       }
+
+      invariant(a.algorandResources, "Algorand family");
+      if (estimatedFees.gt(a.algorandResources.rewards)) {
+        warnings.claimReward = new ClaimRewardsFeesWarning();
+      }
+
       break;
     }
   }

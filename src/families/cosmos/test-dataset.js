@@ -8,7 +8,7 @@ import {
   NotEnoughBalance,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { CosmosClaimRewardsFeesWarning } from "../../errors";
+import { ClaimRewardsFeesWarning } from "../../errors";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
@@ -359,7 +359,7 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 errors: {},
-                warnings: { claimReward: new CosmosClaimRewardsFeesWarning() },
+                warnings: { claimReward: new ClaimRewardsFeesWarning() },
               },
             },
             {
@@ -416,7 +416,7 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 errors: {},
-                warnings: { claimReward: new CosmosClaimRewardsFeesWarning() },
+                warnings: { claimReward: new ClaimRewardsFeesWarning() },
               },
             },
           ],
