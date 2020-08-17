@@ -1,11 +1,20 @@
 // @flow
 import invariant from "invariant";
-import { concat, of, empty, interval, Observable } from "rxjs";
+import {
+  concat,
+  of,
+  empty,
+  interval,
+  Observable,
+  throwError,
+  TimeoutError,
+} from "rxjs";
 import {
   scan,
   debounce,
   debounceTime,
   catchError,
+  timeout,
   switchMap,
   tap,
   distinctUntilChanged,
@@ -28,6 +37,7 @@ import { useReplaySubject } from "../../observable";
 import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
+import { ConnectAppTimeout } from "../../errors";
 import perFamilyAccount from "../../generated/account";
 
 type State = {|
@@ -298,6 +308,7 @@ const implementations = {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
       const DISCONNECT_DEBOUNCE = 5000;
+      const DEVICE_POLLING_TIMEOUT = 20000;
 
       // this pattern allows to actually support events based (like if deviceSubject emits new device changes) but inside polling paradigm
       let pollingOnDevice;
@@ -309,6 +320,7 @@ const implementations = {
       let initT = setTimeout(() => {
         // initial timeout to unset the device if it's still not connected
         o.next({ type: "deviceChange", device: null });
+        device = null;
         log("app/polling", "device init timeout");
       }, INIT_DEBOUNCE);
 
@@ -323,45 +335,54 @@ const implementations = {
           return;
         }
         log("app/polling", "polling loop");
-        connectSub = connectApp(pollingOnDevice, params).subscribe({
-          next: (event) => {
-            if (initT) {
-              initT = null;
-              clearTimeout(initT);
-            }
-            if (disconnectT) {
-              // any connect app event unschedule the disconnect debounced event
-              disconnectT = null;
-              clearTimeout(disconnectT);
-            }
-            if (event.type === "unresponsiveDevice") {
-              return; // ignore unresponsive case which happens for polling
-            } else if (event.type === "disconnected") {
-              // the disconnect event is delayed to debounce the reconnection that happens when switching apps
-              disconnectT = setTimeout(() => {
-                disconnectT = null;
-                // a disconnect will locally be remembered via locally setting device to null...
-                device = null;
-                o.next(event);
-                log("app/polling", "device disconnect timeout");
-              }, DISCONNECT_DEBOUNCE);
-            } else {
-              if (device !== pollingOnDevice) {
-                // ...but any time an event comes back, it means our device was responding and need to be set back on in polling context
-                device = pollingOnDevice;
-                o.next({ type: "deviceChange", device });
+        connectSub = connectApp(pollingOnDevice, params)
+          .pipe(
+            timeout(DEVICE_POLLING_TIMEOUT),
+            catchError((err) =>
+              err instanceof TimeoutError
+                ? of({ type: "error", error: (new ConnectAppTimeout(): Error) })
+                : throwError(err)
+            )
+          )
+          .subscribe({
+            next: (event) => {
+              if (initT) {
+                initT = null;
+                clearTimeout(initT);
               }
-              o.next(event);
-            }
-          },
-          complete: () => {
-            // poll again in some time
-            loopT = setTimeout(loop, POLLING);
-          },
-          error: (e) => {
-            o.error(e);
-          },
-        });
+              if (disconnectT) {
+                // any connect app event unschedule the disconnect debounced event
+                disconnectT = null;
+                clearTimeout(disconnectT);
+              }
+              if (event.type === "unresponsiveDevice") {
+                return; // ignore unresponsive case which happens for polling
+              } else if (event.type === "disconnected") {
+                // the disconnect event is delayed to debounce the reconnection that happens when switching apps
+                disconnectT = setTimeout(() => {
+                  disconnectT = null;
+                  // a disconnect will locally be remembered via locally setting device to null...
+                  device = null;
+                  o.next(event);
+                  log("app/polling", "device disconnect timeout");
+                }, DISCONNECT_DEBOUNCE);
+              } else {
+                if (device !== pollingOnDevice) {
+                  // ...but any time an event comes back, it means our device was responding and need to be set back on in polling context
+                  device = pollingOnDevice;
+                  o.next({ type: "deviceChange", device });
+                }
+                o.next(event);
+              }
+            },
+            complete: () => {
+              // poll again in some time
+              loopT = setTimeout(loop, POLLING);
+            },
+            error: (e) => {
+              o.error(e);
+            },
+          });
       }
 
       // delay a bit the first loop run in order to be async and wait pollingOnDevice
@@ -398,6 +419,7 @@ export const createAction = (
   const useHook = (device: ?Device, appRequest: AppRequest): AppState => {
     // repair modal will interrupt everything and be rendered instead of the background content
     const [state, setState] = useState(() => getInitialState(device));
+    const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     const params = useMemo(
@@ -439,9 +461,10 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [params, deviceSubject, state.opened]);
+    }, [params, deviceSubject, state.opened, resetIndex]);
 
     const onRetry = useCallback(() => {
+      setResetIndex((i) => i + 1);
       setState(getInitialState(device));
     }, [device]);
 
