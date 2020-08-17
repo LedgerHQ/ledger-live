@@ -119,7 +119,7 @@ export default function DelegationDrawer({
 
 type FieldType = {
   label: string,
-  Component: string | ComponentType<{}>,
+  Component: React$Node,
 };
 
 type DataFieldProps = FieldType & {
@@ -137,19 +137,7 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
         </LText>
       </View>
 
-      <View style={styles.valueWrapper}>
-        {typeof Component === "string" ? (
-          <LText
-            numberOfLines={1}
-            semiBold
-            style={[styles.text, styles.valueText]}
-          >
-            {Component}
-          </LText>
-        ) : (
-          <Component />
-        )}
-      </View>
+      <View style={styles.valueWrapper}>{Component}</View>
     </View>
   );
 }
@@ -242,12 +230,6 @@ export const styles = StyleSheet.create({
   valueWrapper: {
     width: "50%",
     alignItems: "flex-end",
-  },
-  valueText: {
-    fontSize: 14,
-  },
-  valueTextTouchable: {
-    color: colors.live,
   },
   actionsRow: {
     paddingTop: 16,

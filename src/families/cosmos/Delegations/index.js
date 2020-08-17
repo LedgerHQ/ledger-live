@@ -33,9 +33,7 @@ import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../components/IlluRewards";
 import { urls } from "../../../config/urls";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
-import DelegationDrawer, {
-  styles as drawerStyles,
-} from "../../../components/DelegationDrawer";
+import DelegationDrawer from "../../../components/DelegationDrawer";
 import type { IconProps } from "../../../components/DelegationDrawer";
 import Touchable from "../../../components/Touchable";
 import colors, { rgba } from "../../../colors";
@@ -170,53 +168,86 @@ export default function Delegations({ account }: Props) {
   const data = useMemo<$PropertyType<DelegationDrawerProps, "data">>(() => {
     const d = delegation || undelegation;
 
-    const redelegation = delegation && getRedelegation(account, delegation);
+    const redelegation = (
+      <LText numberOfLines={1} semiBold style={[styles.text, styles.valueText]}>
+        {delegation && getRedelegation(account, delegation)}
+      </LText>
+    );
 
     return d
       ? [
           {
             label: t("delegation.validator"),
-            Component: d.validator?.name ?? d.validatorAddress ?? "",
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText, styles.valueTextTouchable]}
+              >
+                {d.validator?.name ?? d.validatorAddress ?? ""}
+              </LText>
+            ),
           },
           {
             label: t("delegation.validatorAddress"),
-            Component: () => {
-              return (
-                <Touchable
-                  onPress={() => onOpenExplorer(d.validatorAddress)}
-                  event="DelegationOpenExplorer"
+            Component: (
+              <Touchable
+                onPress={() => onOpenExplorer(d.validatorAddress)}
+                event="DelegationOpenExplorer"
+              >
+                <LText
+                  numberOfLines={1}
+                  semiBold
+                  ellipsizeMode="middle"
+                  style={[styles.valueText, styles.valueTextTouchable]}
                 >
-                  <LText
-                    numberOfLines={1}
-                    semiBold
-                    ellipsizeMode="middle"
-                    style={[
-                      drawerStyles.valueText,
-                      drawerStyles.valueTextTouchable,
-                    ]}
-                  >
-                    {d.validatorAddress}
-                  </LText>
-                </Touchable>
-              );
-            },
+                  {d.validatorAddress}
+                </LText>
+              </Touchable>
+            ),
           },
           {
             label: t("delegation.delegatedAccount"),
-            Component: account.name,
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText, styles.valueTextTouchable]}
+              >
+                {account.name}{" "}
+              </LText>
+            ),
           },
           {
             label: t("cosmos.delegation.drawer.status"),
-            Component:
-              d.status === "bonded"
-                ? t("cosmos.delegation.drawer.active")
-                : t("cosmos.delegation.drawer.inactive"),
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText, styles.valueTextTouchable]}
+              >
+                {d.status === "bonded"
+                  ? t("cosmos.delegation.drawer.active")
+                  : t("cosmos.delegation.drawer.inactive")}
+              </LText>
+            ),
           },
           ...(delegation
             ? [
                 {
                   label: t("cosmos.delegation.drawer.rewards"),
-                  Component: delegation.formattedPendingRewards ?? "",
+                  Component: (
+                    <LText
+                      numberOfLines={1}
+                      semiBold
+                      style={[styles.text, styles.valueText]}
+                    >
+                      {delegation.formattedPendingRewards ?? ""}
+                    </LText>
+                  ),
                 },
               ]
             : []),
@@ -224,10 +255,10 @@ export default function Delegations({ account }: Props) {
             ? [
                 {
                   label: t("cosmos.delegation.drawer.completionDate"),
-                  Component: () => (
+                  Component: (
                     <LText numberOfLines={1} semiBold>
                       <DateFromNow
-                        date={+new Date(undelegation.completionDate)}
+                        date={new Date(undelegation.completionDate).getTime()}
                       />
                     </LText>
                   ),
@@ -238,32 +269,27 @@ export default function Delegations({ account }: Props) {
             ? [
                 {
                   label: t("cosmos.delegation.drawer.redelegatedFrom"),
-                  Component: () => {
-                    return (
-                      <Touchable
-                        onPress={() =>
-                          onOpenExplorer(redelegation.validatorSrcAddress)
-                        }
-                        event="DelegationOpenExplorer"
+                  Component: (
+                    <Touchable
+                      onPress={() =>
+                        onOpenExplorer(redelegation.validatorSrcAddress)
+                      }
+                      event="DelegationOpenExplorer"
+                    >
+                      <LText
+                        numberOfLines={1}
+                        semiBold
+                        ellipsizeMode="middle"
+                        style={[styles.valueText, styles.valueTextTouchable]}
                       >
-                        <LText
-                          numberOfLines={1}
-                          semiBold
-                          ellipsizeMode="middle"
-                          style={[
-                            drawerStyles.valueText,
-                            drawerStyles.valueTextTouchable,
-                          ]}
-                        >
-                          {redelegation.validatorSrcAddress}
-                        </LText>
-                      </Touchable>
-                    );
-                  },
+                        {redelegation.validatorSrcAddress}
+                      </LText>
+                    </Touchable>
+                  ),
                 },
                 {
                   label: t("cosmos.delegation.drawer.completionDate"),
-                  Component: () => (
+                  Component: (
                     <LText numberOfLines={1} semiBold>
                       <DateFromNow
                         date={+new Date(redelegation.completionDate)}
@@ -480,5 +506,14 @@ const styles = StyleSheet.create({
   },
   actionColor: {
     color: colors.live,
+  },
+  valueText: {
+    fontSize: 14,
+  },
+  valueTextTouchable: {
+    color: colors.live,
+  },
+  text: {
+    color: colors.darkBlue,
   },
 });
