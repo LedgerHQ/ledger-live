@@ -6,6 +6,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   FeeNotLoaded,
+  FeeTooHigh,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "../../../errors";
@@ -183,6 +184,10 @@ const getTransactionStatus = async (a: Account, t) => {
         errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
           minimalAmount: "0.1 ALGO",
         });
+      }
+
+      if (!tokenAccount && amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+        warnings.feeTooHigh = new FeeTooHigh();
       }
 
       if (
