@@ -115,7 +115,9 @@ export default function SendFundsNavigator() {
         name={ScreenName.SendValidationSuccess}
         component={SendValidationSuccess}
         options={{
+          headerLeft: null,
           headerShown: false,
+          headerRight: null,
           gestureEnabled: false,
         }}
       />

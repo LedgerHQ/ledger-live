@@ -5,19 +5,26 @@ import "./live-common-setup";
 import "./implement-react-native-libcore";
 import "react-native-gesture-handler";
 import React, { Component, useCallback } from "react";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { StyleSheet, View, Text } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  useLinking,
+  NavigationContainer,
+  getStateFromPath,
+} from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
-import { exportSelector as settingsExportSelector } from "./reducers/settings";
+import {
+  exportSelector as settingsExportSelector,
+  hasCompletedOnboardingSelector,
+} from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
 import CounterValues from "./countervalues";
@@ -39,6 +46,8 @@ import HookSentry from "./components/HookSentry";
 import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import type { State } from "./reducers";
+
+import { ScreenName, NavigatorName } from "./const";
 
 checkLibs({
   NotEnoughBalance,
@@ -62,7 +71,7 @@ Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 
 type AppProps = {
-  importDataString: boolean,
+  importDataString?: string,
 };
 
 function App({ importDataString }: AppProps) {
@@ -132,6 +141,118 @@ function App({ importDataString }: AppProps) {
   );
 }
 
+// DeepLinking
+const linking = {
+  prefixes: ["ledgerlive://"],
+  config: {
+    [NavigatorName.Base]: {
+      path: "",
+      initialRouteName: NavigatorName.Main,
+      screens: {
+        [NavigatorName.Main]: {
+          path: "",
+          /**
+           * ie: "ledgerhq://portfolio" -> will redirect to the portfolio
+           */
+          initialRouteName: ScreenName.Portfolio,
+          screens: {
+            [ScreenName.Portfolio]: "portfolio",
+            [NavigatorName.Accounts]: {
+              path: "",
+              screens: {
+                /**
+                 * @params ?currency: string
+                 * ie: "ledgerhq://account?currency=bitcoin" will open the first bitcoin account
+                 */
+                [ScreenName.Accounts]: "account",
+              },
+            },
+          },
+        },
+        [NavigatorName.ReceiveFunds]: {
+          path: "",
+          screens: {
+            /**
+             * @params ?currency: string
+             * ie: "ledgerhq://receive?currency=bitcoin" will open the prefilled search account in the receive flow
+             */
+            [ScreenName.ReceiveSelectAccount]: "receive",
+          },
+        },
+        [NavigatorName.SendFunds]: {
+          path: "",
+          screens: {
+            /**
+             * @params ?currency: string
+             * ie: "ledgerhq://send?currency=bitcoin" will open the prefilled search account in the send flow
+             */
+            [ScreenName.SendFundsMain]: "send",
+          },
+        },
+        [NavigatorName.ExchangeBuyFlow]: {
+          path: "",
+          screens: {
+            /**
+             * @params currency: string
+             * ie: "ledgerhq://buy/bitcoin" -> will redirect to the prefilled search currency in the buy crypto flow
+             */
+            [ScreenName.ExchangeSelectCurrency]: "buy/:currency",
+          },
+        },
+        /**
+         * ie: "ledgerhq://buy" -> will redirect to the main exchange page
+         */
+        [NavigatorName.Exchange]: "buy",
+      },
+    },
+  },
+};
+
+const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
+  const ref = React.useRef();
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+
+  const { getInitialState } = useLinking(ref, {
+    ...linking,
+    enabled: hasCompletedOnboarding,
+    getStateFromPath(path, config) {
+      // Return a state object here
+      // You can also reuse the default logic by importing `getStateFromPath` from `@react-navigation/native`
+      const state = getStateFromPath(path, config);
+      return hasCompletedOnboarding ? state : null;
+    },
+  });
+
+  /** we consider the state is ready during onboarding no need to get it from deeplinking */
+  const [isReady, setIsReady] = React.useState(!hasCompletedOnboarding);
+  const [initialState, setInitialState] = React.useState();
+
+  React.useEffect(() => {
+    if (hasCompletedOnboarding)
+      getInitialState()
+        .catch(() => {
+          setIsReady(true);
+        })
+        .then(state => {
+          if (state !== undefined) {
+            setInitialState(state);
+          }
+
+          setIsReady(true);
+        });
+  }, [getInitialState, hasCompletedOnboarding]);
+
+  if (!isReady) {
+    return null;
+  }
+
+  return (
+    <NavigationContainer initialState={initialState} ref={ref}>
+      {children}
+    </NavigationContainer>
+  );
+};
+
 export default class Root extends Component<
   { importDataString?: string },
   { appState: * },
@@ -157,7 +278,7 @@ export default class Root extends Component<
   };
 
   render() {
-    const importDataString = __DEV__ && this.props.importDataString;
+    const importDataString = __DEV__ ? this.props.importDataString : "";
 
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
@@ -171,7 +292,7 @@ export default class Root extends Component<
                 <HookAnalytics store={store} />
                 <SafeAreaProvider>
                   <AuthPass>
-                    <NavigationContainer>
+                    <DeepLinkingNavigator>
                       <I18nextProvider i18n={i18n}>
                         <LocaleProvider>
                           <BridgeSyncProvider>
@@ -185,7 +306,7 @@ export default class Root extends Component<
                           </BridgeSyncProvider>
                         </LocaleProvider>
                       </I18nextProvider>
-                    </NavigationContainer>
+                    </DeepLinkingNavigator>
                   </AuthPass>
                 </SafeAreaProvider>
               </>

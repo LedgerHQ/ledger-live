@@ -136,7 +136,7 @@ export default function Content({ account, parentAccount, operation }: Props) {
 
         {hasFailed || amount.isZero() ? null : (
           <LText
-            tertiary
+            semiBold
             numberOfLines={1}
             style={[styles.currencyUnitValue, { color: valueColor }]}
           >
@@ -151,7 +151,7 @@ export default function Content({ account, parentAccount, operation }: Props) {
         )}
 
         {hasFailed || amount.isZero() ? null : (
-          <LText tertiary style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue}>
             <CounterValue
               showCode
               alwaysShowSign
@@ -284,7 +284,7 @@ export default function Content({ account, parentAccount, operation }: Props) {
         })}
       />
 
-      {isNegative ? (
+      {isNegative || operation.fee ? (
         <Section
           title={t("operationDetails.fees")}
           headerRight={

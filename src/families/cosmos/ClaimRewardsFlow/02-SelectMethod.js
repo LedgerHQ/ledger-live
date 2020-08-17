@@ -173,13 +173,13 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
         </TouchableOpacity>
         <View style={styles.spacer} />
         <View style={styles.sectionLabel}>
-          <LText tertiary style={styles.subLabel}>
+          <LText semiBold style={styles.subLabel}>
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.youEarned" />
           </LText>
           <LText semiBold style={[styles.label, styles.value]}>
             <CurrencyUnitValue unit={unit} value={value} showCode />
           </LText>
-          <LText tertiary style={styles.subLabel}>
+          <LText semiBold style={styles.subLabel}>
             <CounterValue
               currency={currency}
               showCode
@@ -189,7 +189,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
           </LText>
         </View>
         <View style={styles.sectionLabel}>
-          <LText tertiary style={styles.subLabel}>
+          <LText semiBold style={styles.subLabel}>
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.byDelegationAssetsTo" />
           </LText>
           <View style={styles.row}>

@@ -154,7 +154,7 @@ export class DataRowUnitValue extends PureComponent<{
     const { label, value, unit } = this.props;
     return (
       <DataRow label={label}>
-        <LText tertiary style={styles.dataRowValue}>
+        <LText semiBold style={styles.dataRowValue}>
           <CurrencyUnitValue unit={unit} value={value} disableRounding />
         </LText>
       </DataRow>

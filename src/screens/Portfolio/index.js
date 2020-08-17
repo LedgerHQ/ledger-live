@@ -134,13 +134,18 @@ export default function PortfolioScreen({ navigation }: Props) {
     withSubAccounts: true,
   });
 
+  const showingPlaceholder =
+    accounts.length === 0 || accounts.every(isAccountEmpty);
+
   return (
     <SafeAreaView style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
-      <StickyHeader
-        scrollY={scrollY}
-        portfolio={portfolio}
-        counterValueCurrency={counterValueCurrency}
-      />
+      {!showingPlaceholder ? (
+        <StickyHeader
+          scrollY={scrollY}
+          portfolio={portfolio}
+          counterValueCurrency={counterValueCurrency}
+        />
+      ) : null}
 
       <RequireTerms />
 

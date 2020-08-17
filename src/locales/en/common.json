@@ -20,6 +20,7 @@
     "noCryptoFound": "No crypto assets found",
     "needHelp": "Need help?",
     "edit": "Edit",
+    "editName": "Edit name",
     "close": "Close",
     "confirm": "Confirm",
     "poweredBy": "Powered by ",
@@ -80,6 +81,9 @@
     "AccountNameRequired": {
       "title": "An account name is required",
       "description": "Please provide an account name"
+    },
+    "AlgorandASANotOptInInRecipient": {
+      "title": "Recipient account has not opted in the selected ASA."
     },
     "BluetoothRequired": {
       "title": "Oops, Bluetooth disabled",
@@ -693,7 +697,7 @@
       "evening": "Good evening",
       "afternoon": "Good afternoon"
     },
-    "transactionsPendingConfirmation" : {
+    "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
@@ -757,7 +761,10 @@
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
       "REWARD": "Claimed reward",
-      "FEES": "Fees"
+      "FEES": "Fees",
+      "OPT_IN": "Opt in",
+      "OPT_OUT": "Opt out",
+      "CLOSE_ACCOUNT": "Close account"
     }
   },
   "operationDetails": {
@@ -806,7 +813,9 @@
       "undelegatedAmount": "Undelegated amount",
       "rewardFrom": "Reward from",
       "rewardAmount": "Amount collected",
-      "memo": "Memo"
+      "memo": "Memo",
+      "assetId": "Asset ID",
+      "rewards": "Earned rewards"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -829,7 +838,17 @@
       "seeMore": "See more Tokens",
       "seeLess": "See less Tokens",
       "addTokens": "Add token",
-      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>{{currency}} address</1>."
+      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>{{currency}} address</1>.",
+      "algorand": {
+        "contractAddress": "Contract address",
+        "viewInExplorer": "View in explorer",
+        "seeMore": "See more ASA",
+        "seeLess": "See less ASA",
+        "addTokens": "Add ASA",
+        "howTo": "You can add assets to your Algorand account.",
+        "addAsa": "Add ASA (Asset)",
+        "howAsaWorks": "How ASA (asset) works?"
+      }
     },
     "subaccounts": {
       "seeMore": "See more subaccounts",
@@ -955,13 +974,20 @@
       "hideTokens": "Hide token",
       "hideTokens_plural": "Hide tokens",
       "hideSubAccounts": "Hide subaccount",
-      "hideSubAccounts_plural": "Hide subaccounts"
+      "hideSubAccounts_plural": "Hide subaccounts",
+      "algorand": {
+        "showTokens": "Show {{length}} ASA",
+        "showTokens_plural": "Show {{length}} ASA",
+        "hideTokens": "Hide ASA",
+        "hideTokens_plural": "Hide ASA"
+      }
     }
   },
   "distribution": {
     "header": "Asset allocation",
     "list": "Asset allocation ({{count}})",
-    "assets": "assets",
+    "assets": "asset",
+    "assets_plural": "assets",
     "total": "Total balance:",
     "listAccount": "Account allocation ({{count}})"
   },
@@ -1585,6 +1611,7 @@
     },
     "firmware": {
       "latest": "Firmware version {{version}} is available",
+      "outdated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
       "modalTitle": "Update firmware is available only on Ledger Live desktop",
       "modalDesc": "Please download Ledger Live on your computer to update the device’s firmware"
     }
@@ -1712,6 +1739,80 @@
   "StepLegacyModal": {
     "description": "Imported accounts only synchronize with the blockchain. Ledger Live does not synchronize accounts between mobile and desktop."
   },
+  "algorand": {
+    "token": "ASA (Assets)",
+    "claimRewards": {
+      "title": "Rewards",
+      "button": "Claim",
+      "stepperHeader": {
+        "info": "Earn rewards",
+        "starter": "Rewards",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "info": {
+            "description": "Delegate your Algo to earn rewards while keeping full security and control on your assets.",
+            "steps": {
+              "0": "A minimum balance of 1 algo is required to receive rewards",
+              "1": "Increase the account’s balance to increase rewards",
+              "2": "Perform a transaction to or from the account to claim rewards"
+            },
+            "howItWorks": "How rewards work?",
+            "cta": "Receive Algo"
+          },
+          "starter": {
+            "title": "Congratulations! You earned {{amount}} Click on Continue to claim your rewards",
+            "howItWorks": "How rewards work?",
+            "warning": "You will be prompted to generate an empty transaction to your account. This will add your current rewards to your balance at the minimal cost of the transaction fees.",
+            "cta": "Continue"
+          },
+          "verification": {
+            "success": {
+              "title": "Rewards successfully claimed!",
+              "text": "Your rewards were added to your available balance",
+              "cta": "Go to my account"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
+    },
+    "optIn": {
+      "stepperHeader": {
+        "selectToken": "Add ASA (Asset)",
+        "connectDevice": "Connect device",
+        "verification": "Verification",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "flow": {
+        "steps": {
+          "selectToken": {
+            "warning": {
+              "title": "Asset already added",
+              "description": "You already have {{token}} asset in your Algorand account"
+            }
+          },
+          "verification": {
+            "success": {
+              "title": "{{token}} asset successfully added!",
+              "text": "You can now receive and send {{token}} assets on your Algorand account.",
+              "cta": "View details"
+            },
+            "pending": {
+              "title": "Broadcasting transaction..."
+            },
+            "broadcastError": "Your transaction may have failed. Please check back in a few minutes to make sure your transaction did not go through before trying again."
+          }
+        }
+      }
+    }
+  },
   "cosmos": {
     "info": {
       "available": {
@@ -1725,6 +1826,10 @@
       "undelegating": {
         "title": "Undelegating",
         "description": "Undelegated assets are in a timelock of 21 days, before being available."
+      },
+      "delegationUnavailable": {
+        "title": "Delegation unavailable",
+        "description": "Not enough available balance in your account to start a new delegation."
       }
     },
     "delegation": {
@@ -1752,14 +1857,14 @@
       "flow": {
         "steps": {
           "starter": {
-            "description": "Delegate your ATOM to earn rewards while keeping full security and control on your assets.",
+            "description": "You may earn rewards by delegating your ATOM assets to a validator.",
             "steps": {
-              "0": "Delegated assets stay yours",
-              "1": "You’ll have to wait for 21 days to complete an undelegation",
-              "2": "Delegate securely with your Ledger device"
+              "0": "You keep ownership of delegated assets",
+              "1": "Delegate using your Ledger device",
+              "2": "Assets will be available 21 days after undelegation"
             },
             "warning": {
-              "description": "Delegate ATOM asset can implies some losses if the chosen delegator doesn’t act rightfully on the network."
+              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
             "cta": "Continue"
           },
@@ -2100,7 +2205,7 @@
       "claimReward": "Please confirm the operation on your device to claim your rewards",
       "vote": "Please confirm the operation on your device to cast your votes",
       "delegate": "Please confirm the operation on your device to cast your votes",
-      "redelegate": "You have successfully redelegated your assets. Please confirm the operation on your device to cast your votes",
+      "redelegate": "Please confirm the operation on your device to finalize the operation",
       "undelegate": "Please confirm the operation on your device to undelegate assets"
     },
     "warning": "Always verify that your device displays the address exactly as provided {{recipientWording}}",

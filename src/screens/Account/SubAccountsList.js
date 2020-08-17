@@ -22,6 +22,7 @@ import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Touchable from "../../components/Touchable";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
+import perFamilySubAccountList from "../../generated/SubAccountList";
 
 const keyExtractor = o => o.id;
 
@@ -100,6 +101,13 @@ export default function SubAccountsList({
   const navigation = useNavigation();
   const [account, setAccount] = useState<TokenAccount | typeof undefined>();
   const subAccounts = listSubAccounts(parentAccount);
+  const family = parentAccount.currency.family;
+  const specific = perFamilySubAccountList[family];
+
+  const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
+  const ReceiveButton = specific && specific.ReceiveButton;
+
+  const Placeholder = specific && specific.Placeholder;
 
   const isToken = useMemo(
     () => listTokenTypesForCryptoCurrency(parentAccount.currency).length > 0,
@@ -120,33 +128,53 @@ export default function SubAccountsList({
       <View style={styles.header}>
         <LText semiBold style={{ color: colors.darkBlue, fontSize: 16 }}>
           <Trans
-            i18nKey={isToken ? "common.token" : "common.subaccount"}
+            i18nKey={
+              isToken
+                ? hasSpecificTokenWording
+                  ? `${family}.token`
+                  : "common.token"
+                : "common.subaccount"
+            }
             count={subAccounts.length}
           />
           {` (${subAccounts.length})`}
         </LText>
         {isToken && subAccounts.length > 0 ? (
-          <Button
-            containerStyle={{ width: 120 }}
-            type="lightSecondary"
-            event="AccountReceiveToken"
-            title={<Trans i18nKey="account.tokens.addTokens" />}
-            IconLeft={() => (
-              <MaterialIcon color={colors.live} name="add" size={20} />
-            )}
-            onPress={navigateToReceiveConnectDevice}
-            size={14}
-          />
+          ReceiveButton ? (
+            <ReceiveButton accountId={accountId} />
+          ) : (
+            <Button
+              containerStyle={{ width: 120 }}
+              type="lightSecondary"
+              event="AccountReceiveToken"
+              title={<Trans i18nKey="account.tokens.addTokens" />}
+              IconLeft={() => (
+                <MaterialIcon color={colors.live} name="add" size={20} />
+              )}
+              onPress={navigateToReceiveConnectDevice}
+              size={14}
+            />
+          )
         ) : null}
       </View>
     ),
-    [isToken, subAccounts, navigateToReceiveConnectDevice],
+    [
+      isToken,
+      subAccounts,
+      navigateToReceiveConnectDevice,
+      ReceiveButton,
+      accountId,
+      family,
+      hasSpecificTokenWording,
+    ],
   );
 
   const renderFooter = useCallback(() => {
     // If there are no sub accounts, we render the touchable rect
     if (subAccounts.length === 0) {
-      return (
+      return Placeholder ? (
+        <Placeholder accountId={accountId} />
+      ) : (
         <Touchable
           event="AccountReceiveSubAccount"
           onPress={navigateToReceiveConnectDevice}
@@ -156,7 +184,9 @@ export default function SubAccountsList({
             <View style={styles.footerText}>
               <LText style={{ fontSize: 16 }}>
                 <Trans
-                  i18nKey="account.tokens.howTo"
+                  i18nKey={`account.tokens${
+                    hasSpecificTokenWording ? `.${family}` : ""
+                  }.howTo`}
                   values={{ currency: parentAccount.currency.family }}
                 >
                   <LText semiBold>text</LText>
@@ -184,8 +214,20 @@ export default function SubAccountsList({
             <Trans
               i18nKey={
                 isCollapsed
-                  ? `account.${isToken ? "tokens" : "subaccounts"}.seeMore`
-                  : `account.${isToken ? "tokens" : "subaccounts"}.seeLess`
+                  ? `account.${
+                      isToken
+                        ? hasSpecificTokenWording
+                          ? `tokens.${family}`
+                          : "tokens"
+                        : "subaccounts"
+                    }.seeMore`
+                  : `account.${
+                      isToken
+                        ? hasSpecificTokenWording
+                          ? `tokens.${family}`
+                          : "tokens"
+                        : "subaccounts"
+                    }.seeLess`
               }
             />
           }
@@ -208,6 +250,8 @@ export default function SubAccountsList({
     navigateToReceiveConnectDevice,
     parentAccount.currency.family,
     onToggle,
+    family,
+    hasSpecificTokenWording,
   ]);
 
   const renderItem = useCallback(

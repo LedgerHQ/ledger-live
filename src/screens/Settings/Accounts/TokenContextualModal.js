@@ -140,7 +140,7 @@ const TokenContextualModal = ({
             <View style={{ marginRight: 8 }}>
               <BanIcon size={18} color={colors.smoke} />
             </View>
-            <LText tertiary>
+            <LText semiBold>
               <Trans i18nKey="settings.accounts.hideTokenCTA" />
             </LText>
           </Touchable>
@@ -154,7 +154,7 @@ const TokenContextualModal = ({
               <View style={{ marginRight: 8 }}>
                 <Icon name="file-text" size={18} color={colors.smoke} />
               </View>
-              <LText tertiary>
+              <LText semiBold>
                 <Trans i18nKey="settings.accounts.showContractCTA" />
               </LText>
             </Touchable>

@@ -157,7 +157,7 @@ export default function SendAmount({ navigation, route }: Props) {
                     <LText>
                       <Trans i18nKey="send.amount.available" />
                     </LText>
-                    <LText tertiary style={styles.availableAmount}>
+                    <LText semiBold style={styles.availableAmount}>
                       <CurrencyUnitValue
                         showCode
                         unit={unit}

@@ -74,7 +74,7 @@ class SubAccountRow extends PureComponent<Props> {
               </LText>
             </View>
             <View style={styles.balanceContainer}>
-              <LText tertiary style={styles.balanceNumText}>
+              <LText semiBold style={styles.balanceNumText}>
                 <CurrencyUnitValue
                   showCode
                   unit={unit}
@@ -100,7 +100,7 @@ class SubAccountRow extends PureComponent<Props> {
 }
 
 const AccountCv = ({ children }: { children: * }) => (
-  <LText tertiary style={styles.balanceCounterText}>
+  <LText semiBold style={styles.balanceCounterText}>
     {children}
   </LText>
 );

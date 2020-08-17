@@ -28,9 +28,10 @@ import {
   canRedelegate,
   getRedelegation,
   canUndelegate,
+  canDelegate,
 } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
-import IlluRewards from "../../../components/IlluRewards";
+import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import DelegationDrawer from "../../../components/DelegationDrawer";
@@ -168,11 +169,7 @@ export default function Delegations({ account }: Props) {
   const data = useMemo<$PropertyType<DelegationDrawerProps, "data">>(() => {
     const d = delegation || undelegation;
 
-    const redelegation = (
-      <LText numberOfLines={1} semiBold style={[styles.text, styles.valueText]}>
-        {delegation && getRedelegation(account, delegation)}
-      </LText>
-    );
+    const redelegation = delegation && getRedelegation(account, delegation);
 
     return d
       ? [
@@ -292,7 +289,7 @@ export default function Delegations({ account }: Props) {
                   Component: (
                     <LText numberOfLines={1} semiBold>
                       <DateFromNow
-                        date={+new Date(redelegation.completionDate)}
+                        date={new Date(redelegation.completionDate).getTime()}
                       />
                     </LText>
                   ),
@@ -373,6 +370,8 @@ export default function Delegations({ account }: Props) {
       : [];
   }, [t, onRedelegate, onCollectRewards, onUndelegate, delegation, account]);
 
+  const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
+
   return (
     <View style={styles.root}>
       <DelegationDrawer
@@ -403,7 +402,7 @@ export default function Delegations({ account }: Props) {
               <LText semiBold style={styles.label}>
                 <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
               </LText>
-              <LText tertiary style={styles.subLabel}>
+              <LText semiBold style={styles.subLabel}>
                 <CounterValue
                   currency={currency}
                   value={totalRewardsAvailable}
@@ -437,7 +436,12 @@ export default function Delegations({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel
             name={t("account.delegation.sectionLabel")}
-            RightComponent={<DelegationLabelRight onPress={onDelegate} />}
+            RightComponent={
+              <DelegationLabelRight
+                disabled={delegationDisabled}
+                onPress={onDelegate}
+              />
+            }
           />
           {delegations.map((d, i) => (
             <View key={d.validatorAddress} style={styles.delegationsWrapper}>

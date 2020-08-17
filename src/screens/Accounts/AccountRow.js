@@ -25,6 +25,7 @@ import colors from "../../colors";
 import AccountSyncStatus from "./AccountSyncStatus";
 import Button from "../../components/Button";
 import SubAccountRow from "../../components/SubAccountRow";
+import perFamilySubAccountList from "../../generated/SubAccountList";
 
 type Props = {
   account: Account,
@@ -86,6 +87,11 @@ const AccountRow = ({
     onSetAccount,
   ]);
 
+  const family = account.currency.family;
+  const specific = perFamilySubAccountList[family];
+
+  const hasSpecificTokenWording = specific && specific.hasSpecificTokenWording;
+
   return (
     <View style={styles.root}>
       <View
@@ -112,7 +118,7 @@ const AccountRow = ({
                 >
                   {account.name}
                 </LText>
-                <LText tertiary style={styles.balanceNumText}>
+                <LText semiBold style={styles.balanceNumText}>
                   <CurrencyUnitValue
                     showCode
                     unit={account.unit}
@@ -166,10 +172,18 @@ const AccountRow = ({
                     i18nKey={
                       collapsed
                         ? `accounts.row.${
-                            isToken ? "showTokens" : "showSubAccounts"
+                            isToken
+                              ? hasSpecificTokenWording
+                                ? `${family}.showTokens`
+                                : "showTokens"
+                              : "showSubAccounts"
                           }`
                         : `accounts.row.${
-                            isToken ? "hideTokens" : "hideSubAccounts"
+                            isToken
+                              ? hasSpecificTokenWording
+                                ? `${family}.hideTokens`
+                                : "hideTokens"
+                              : "hideSubAccounts"
                           }`
                     }
                     values={{
@@ -202,7 +216,7 @@ const AccountRow = ({
 };
 
 const AccountCv = ({ children }: { children: * }) => (
-  <LText tertiary style={styles.balanceCounterText}>
+  <LText semiBold style={styles.balanceCounterText}>
     {children}
   </LText>
 );

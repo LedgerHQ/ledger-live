@@ -82,11 +82,11 @@ export default function DelegationDrawer({
         />
 
         <View style={styles.subHeader}>
-          <LText tertiary style={[styles.text, styles.currencyValue]}>
+          <LText semiBold style={[styles.text, styles.currencyValue]}>
             <CurrencyUnitValue showCode unit={unit} value={amount} />
           </LText>
 
-          <LText tertiary style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue}>
             <CounterValue
               currency={currency}
               showCode

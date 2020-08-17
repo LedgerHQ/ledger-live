@@ -34,6 +34,7 @@ type Props = {
   accounts: Account[],
   allAccounts: AccountLikeArray,
   navigation: any,
+  route: { params?: { currency?: string } },
 };
 
 type State = {};
@@ -88,7 +89,9 @@ class SendFundsSelectAccount extends Component<Props, State> {
   keyExtractor = item => item.account.id;
 
   render() {
-    const { allAccounts } = this.props;
+    const { allAccounts, route } = this.props;
+    const { params } = route;
+    const initialCurrencySelected = params?.currency;
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <TrackScreen category="SendFunds" name="SelectAccount" />
@@ -100,6 +103,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
               renderList={this.renderList}
               renderEmptySearch={this.renderEmptySearch}
               keys={SEARCH_KEYS}
+              initialQuery={initialCurrencySelected}
             />
           </View>
         </KeyboardView>
