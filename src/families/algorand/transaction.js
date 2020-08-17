@@ -18,12 +18,18 @@ export const formatTransaction = (
       (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
     mainAccount;
   return `
-    ${mode === "claimReward" ? "CLAIM REWARD" : "SEND"} ${
+    ${
+      mode === "claimReward"
+        ? "CLAIM REWARD"
+        : mode === "optIn"
+        ? "OPT_IN"
+        : "SEND"
+    } ${
     useAllAmount
       ? "MAX"
       : formatCurrencyUnit(getAccountUnit(account), amount, {
           showCode: true,
-          disableRounding: true,
+          disableRounding: false,
         })
   }
     TO ${recipient}
@@ -32,7 +38,7 @@ export const formatTransaction = (
         ? "?"
         : formatCurrencyUnit(getAccountUnit(mainAccount), fees, {
             showCode: true,
-            disableRounding: true,
+            disableRounding: false,
           })
     }`;
 };

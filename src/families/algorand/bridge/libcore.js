@@ -1,10 +1,13 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+import invariant from "invariant";
 import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   FeeNotLoaded,
+  FeeTooHigh,
+  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
@@ -26,6 +29,7 @@ import { extractTokenId } from "../tokens";
 import { getAbandonSeedAddress } from "../../../data/abandonseed";
 import { ALGORAND_MAX_MEMO_SIZE } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { ClaimRewardsFeesWarning } from "../../../errors";
 
 const receive = makeAccountBridgeReceive();
 
@@ -86,6 +90,19 @@ const recipientHasAsset = async (assetId, recipient, account) =>
     const hasAsset = await algorandAccount.hasAsset(recipient, assetId);
 
     return hasAsset;
+  });
+
+const getAmountValid = async (recipient, amount, account) =>
+  await withLibcore(async (core) => {
+    const { coreAccount } = await getCoreAccount(core, account);
+
+    const algorandAccount = await coreAccount.asAlgorandAccount();
+    const isValid = await algorandAccount.isAmountValid(
+      recipient,
+      amount.toString()
+    );
+
+    return isValid;
   });
 /*
  * Here are the list of the differents things we check
@@ -161,6 +178,19 @@ const getTransactionStatus = async (a: Account, t) => {
       totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
 
       if (
+        !errors.recipient &&
+        !(await getAmountValid(t.recipient, amount, a))
+      ) {
+        errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
+          minimalAmount: "0.1 ALGO",
+        });
+      }
+
+      if (!tokenAccount && amount.gt(0) && estimatedFees.times(10).gt(amount)) {
+        warnings.feeTooHigh = new FeeTooHigh();
+      }
+
+      if (
         (amount.lte(0) && t.useAllAmount) || // if use all Amount sets an amount at 0
         (tokenAccount && a.spendableBalance.lt(estimatedFees)) || // if spendable balance lower than fees for token
         (!errors.recipient && !errors.amount && tokenAccount
@@ -194,6 +224,12 @@ const getTransactionStatus = async (a: Account, t) => {
       if (a.spendableBalance.lt(totalSpent)) {
         errors.amount = new NotEnoughBalance();
       }
+
+      invariant(a.algorandResources, "Algorand family");
+      if (estimatedFees.gt(a.algorandResources.rewards)) {
+        warnings.claimReward = new ClaimRewardsFeesWarning();
+      }
+
       break;
     }
   }

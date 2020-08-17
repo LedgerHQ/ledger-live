@@ -21,7 +21,7 @@ import {
 } from "@ledgerhq/errors";
 import {
   CosmosRedelegationInProgress,
-  CosmosClaimRewardsFeesWarning,
+  ClaimRewardsFeesWarning,
   CosmosDelegateAllFundsWarning,
   CosmosTooManyValidators,
   NotEnoughDelegationBalance,
@@ -301,7 +301,7 @@ const getTransactionStatus = async (a, t) => {
         )
       : null;
     if (claimReward && estimatedFees.gt(claimReward.pendingRewards)) {
-      warnings.claimReward = new CosmosClaimRewardsFeesWarning();
+      warnings.claimReward = new ClaimRewardsFeesWarning();
     }
   }
 
