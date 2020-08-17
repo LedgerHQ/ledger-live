@@ -118,7 +118,7 @@ export const createAction = (
     const { exchange, exchangeRate, transaction } = initSwapRequest;
 
     useEffect(() => {
-      if (!opened || !device || !device.deviceId) {
+      if (!opened || !device) {
         setState(initialState);
         return;
       }
