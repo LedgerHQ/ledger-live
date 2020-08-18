@@ -8,7 +8,7 @@ import {
   NotEnoughBalanceInParentAccount,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
-import { AlgorandASANotOptInInRecipient } from "../../../errors";
+import { AlgorandASANotOptInInRecipient } from "../../errors";
 import type { Transaction } from "./types";
 
 // const notCreatedAlgorandAddress =
@@ -265,12 +265,12 @@ const dataset: DatasetTest<Transaction> = {
                   "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
               }),
               expectedStatus: {
-                errors: { amount: new NotEnoughBalanceInParentAccount() },
+                errors: { amount: new NotEnoughBalance() },
                 warnings: {},
               },
             },
             {
-              name: "Can't send Token if Algo balance too low",
+              name: "Can't send ASA if Algo balance too low",
               transaction: (t) => ({
                 ...t,
                 subAccountId:
@@ -280,7 +280,7 @@ const dataset: DatasetTest<Transaction> = {
                   "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
               }),
               expectedStatus: {
-                errors: { amount: new NotEnoughBalanceInParentAccount() },
+                errors: { amount: new NotEnoughBalance() },
                 warnings: {},
               },
             },
