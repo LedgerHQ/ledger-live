@@ -5,7 +5,10 @@ import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
+  NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
+import { AlgorandASANotOptInInRecipient } from "../../../errors";
 import type { Transaction } from "./types";
 
 // const notCreatedAlgorandAddress =
@@ -26,13 +29,17 @@ const dataset: DatasetTest<Transaction> = {
           name: "algorand seed 1",
           apdus: `
           => 800300000400000000
-          <= fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af9000
+          <= c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c49000
           => 800300000480000000
-          <= fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af9000
+          <= c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c49000
           => 800300000480000001
-          <= c5b2f1897dbc1e279837507ea01bf82ea0611897dff13933bd13c8f3a9a4d6649000
+          <= 21b3068ca2b9a3b0b1fc68d9ecbd61663f6957c68a9c767aa14a8abb437180e69000
           => 800300000480000002
-          <= 997011869f890d99597a22a364e9f085a649eba1847580e405de81838683ce3f9000
+          <= cc2b54ea5cbda5de6957086a8435c43a06e26559b2bfaebec56b748ec5a2a0519000
+          => 800300000480000003
+          <= 6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc9000
+          => 800300000480000004
+          <= 6549e16ee1e242aba9d116dab058b6e33e4c6d801d3cbfe860195fc6e42940319000
           `,
         },
       ],
@@ -41,32 +48,32 @@ const dataset: DatasetTest<Transaction> = {
           FIXME_tests: ["balance is sum of ops"], // Rewards issues
           raw: {
             id:
-              "libcore:1:algorand:fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af:",
+              "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:",
             seedIdentifier:
-              "fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af",
+              "c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4",
             name: "Algorand 1",
             xpub:
-              "fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af",
+              "c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4",
             derivationMode: "",
             index: 0,
             freshAddress:
-              "73446MSSCIPQAAZE3WAZWLA5O2IQIE4SJLFPM543GDQ7UGDU26XZFA6O64",
+              "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
             freshAddressPath: "44'/283'/0'/0/0",
             freshAddresses: [
               {
                 address:
-                  "73446MSSCIPQAAZE3WAZWLA5O2IQIE4SJLFPM543GDQ7UGDU26XZFA6O64",
+                  "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
                 derivationPath: "44'/283'/0'/0/0",
               },
             ],
             unitMagnitude: 6,
-            blockHeight: 8019708,
+            blockHeight: 8518049,
             operations: [],
             pendingOperations: [],
             currencyId: "algorand",
             lastSyncDate: "",
-            balance: "59186008",
-            spendableBalance: "59186008",
+            balance: "1167089",
+            spendableBalance: "567089",
             subAccounts: [],
           },
           transactions: [
@@ -76,11 +83,26 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: BigNumber(100),
                 recipient:
-                  "73446MSSCIPQAAZE3WAZWLA5O2IQIE4SJLFPM543GDQ7UGDU26XZFA6O64",
+                  "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
               }),
               expectedStatus: {
                 errors: {
                   recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
+                },
+                warnings: {},
+              },
+            },
+            {
+              name: "Account creation minimum amount too low",
+              transaction: (t) => ({
+                ...t,
+                amount: BigNumber("100"),
+                recipient:
+                  "MVE6C3XB4JBKXKORC3NLAWFW4M7EY3MADU6L72DADFP4NZBJIAYXGSLN3Y",
+              }),
+              expectedStatus: {
+                errors: {
+                  amount: new NotEnoughBalanceBecauseDestinationNotCreated(),
                 },
                 warnings: {},
               },
@@ -91,7 +113,7 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: BigNumber("1000"),
                 recipient:
-                  "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
               }),
               expectedStatus: {
                 errors: {},
@@ -104,7 +126,7 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: account.balance,
                 recipient:
-                  "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
               }),
               expectedStatus: {
                 errors: { amount: new NotEnoughBalance() },
@@ -117,7 +139,7 @@ const dataset: DatasetTest<Transaction> = {
                 ...t,
                 amount: account.balance.minus("100"),
                 recipient:
-                  "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
               }),
               expectedStatus: {
                 errors: { amount: new NotEnoughBalance() },
@@ -132,7 +154,7 @@ const dataset: DatasetTest<Transaction> = {
                 assetId: "algorand/asa/31231",
                 amount: BigNumber("1000"),
                 recipient:
-                  "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
+                  "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
               }),
               expectedStatus: {
                 errors: {},
@@ -140,35 +162,125 @@ const dataset: DatasetTest<Transaction> = {
                 amount: BigNumber("0"),
               },
             },
-            // We got no token on this account, it's best if the live can provide a frozen seed for Algorand later
-            // {
-            //   name: "send Token",
-            //   transaction: (t) => ({
-            //     ...t,
-            //     subAccountId:
-            //       "libcore:1:algorand:fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af:+312769",
-            //     amount: BigNumber("1000"),
-            //     recipient:
-            //       "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
-            //   }),
-            //   expectedStatus: {
-            //     errors: {},
-            //     warnings: {},
-            //     amount: BigNumber("1000"),
-            //   },
-            // },
+            {
+              name: "Can't send ASA to an address that didn't Opt-in",
+              transaction: (t) => ({
+                ...t,
+                subAccountId:
+                  "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:+312769",
+                amount: BigNumber("1000"),
+                recipient:
+                  "ZQVVJ2S4XWS542KXBBVIINOEHIDOEZKZWK725PWFNN2I5RNCUBI53RT2EY",
+              }),
+              expectedStatus: {
+                errors: { recipient: new AlgorandASANotOptInInRecipient() },
+                warnings: {},
+              },
+            },
+            {
+              name: "send Token",
+              transaction: (t) => ({
+                ...t,
+                subAccountId:
+                  "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:+312769",
+                amount: BigNumber("1000"),
+                recipient:
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+              }),
+              expectedStatus: {
+                errors: {},
+                warnings: {},
+                amount: BigNumber("1000"),
+              },
+            },
             {
               name: "send Token - more than available",
               transaction: (t) => ({
                 ...t,
                 subAccountId:
-                  "libcore:1:algorand:fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af:+algorand/asa/342836",
+                  "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:+312769",
                 amount: BigNumber("100000000000"),
+                recipient:
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+              }),
+              expectedStatus: {
+                errors: { amount: new NotEnoughBalance() },
+                warnings: {},
+              },
+            },
+          ],
+        },
+        {
+          raw: {
+            id:
+              "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:",
+            seedIdentifier:
+              "c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4",
+            xpub:
+              "6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc",
+            name: "Algorand 4",
+            derivationMode: "",
+            index: 3,
+            freshAddress:
+              "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+            freshAddressPath: "44'/283'/3'/0/0",
+            freshAddresses: [
+              {
+                address:
+                  "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
+                derivationPath: "44'/283'/3'/0/0",
+              },
+            ],
+            unitMagnitude: 6,
+            blockHeight: 8518189,
+            balance: "0",
+            spendableBalance: "0",
+            currencyId: "algorand",
+            lastSyncDate: "",
+            operations: [],
+            pendingOperations: [],
+          },
+          transactions: [
+            {
+              name: "Can't send funds if balance too low",
+              transaction: (t) => ({
+                ...t,
+                amount: BigNumber("1000"),
                 recipient:
                   "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
               }),
               expectedStatus: {
-                errors: { amount: new NotEnoughBalance() },
+                errors: {},
+                warnings: {},
+              },
+            },
+            {
+              name: "Can't optIn if Algo balance too low",
+              transaction: (t) => ({
+                ...t,
+                mode: "optIn",
+                assetId: "algorand/asa/31231",
+                amount: BigNumber("1000"),
+                recipient:
+                  "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
+              }),
+              expectedStatus: {
+                errors: { amount: new NotEnoughBalanceInParentAccount() },
+                warnings: {},
+              },
+            },
+            {
+              name: "Can't send Token if Algo balance too low",
+              transaction: (t) => ({
+                ...t,
+                subAccountId:
+                  "libcore:1:algorand:fef9cf3252121f000324dd819b2c1d76910413924acaf6779b30e1fa1874d7af:+312769",
+                amount: BigNumber("1000"),
+                recipient:
+                  "YWZPDCL5XQPCPGBXKB7KAG7YF2QGCGEX37YTSM55CPEPHKNE2ZSKRAXNQ4",
+              }),
+              expectedStatus: {
+                errors: { amount: new NotEnoughBalanceInParentAccount() },
                 warnings: {},
               },
             },
