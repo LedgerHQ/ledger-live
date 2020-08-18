@@ -5,7 +5,6 @@ import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
 import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
-  NotEnoughBalanceInParentAccount,
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "../../errors";
