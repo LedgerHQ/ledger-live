@@ -7,6 +7,7 @@ import bot from "./commands/bot";
 import botPortfolio from "./commands/botPortfolio";
 import broadcast from "./commands/broadcast";
 import cleanSpeculos from "./commands/cleanSpeculos";
+import derivation from "./commands/derivation";
 import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
 import deviceAppVersion from "./commands/deviceAppVersion";
 import deviceInfo from "./commands/deviceInfo";
@@ -50,6 +51,7 @@ export default {
   botPortfolio,
   broadcast,
   cleanSpeculos,
+  derivation,
   devDeviceAppsScenario,
   deviceAppVersion,
   deviceInfo,

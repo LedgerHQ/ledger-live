@@ -222,6 +222,19 @@ test("can format a currency unit", () => {
   ).toBe("+1.00000000 BTC");
 });
 
+test("do not consider 'showAllDigits: undefined' as false", () => {
+  expect(
+    formatCurrencyUnit(
+      getFiatCurrencyByTicker("USD").units[0],
+      BigNumber(-1234500),
+      {
+        showCode: true,
+        showAllDigits: undefined,
+      }
+    )
+  ).toBe("-$12,345.00");
+});
+
 test("can enable discreet mode", () => {
   const btc = getCryptoCurrencyById("bitcoin").units[0];
   expect(
