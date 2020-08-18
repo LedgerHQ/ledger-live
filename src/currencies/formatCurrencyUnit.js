@@ -37,7 +37,7 @@ type FormatFragment =
 export function formatCurrencyUnitFragment(
   unit: Unit,
   value: BigNumber,
-  options?: $Shape<typeof defaultFormatOptions>
+  _options?: $Shape<typeof defaultFormatOptions>
 ): FormatFragment[] {
   if (!BigNumber.isBigNumber(value)) {
     console.warn("formatCurrencyUnit called with value=", value);
@@ -50,6 +50,13 @@ export function formatCurrencyUnitFragment(
   if (!value.isFinite()) {
     console.warn("formatCurrencyUnit called with infinite value=", value);
     return [];
+  }
+  const options = {};
+  for (let k in _options) {
+    // sanitize the undefined value
+    if (_options[k] !== undefined) {
+      options[k] = _options[k];
+    }
   }
   const {
     showCode,
