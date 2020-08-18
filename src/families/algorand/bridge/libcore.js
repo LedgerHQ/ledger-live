@@ -8,6 +8,7 @@ import {
   FeeNotLoaded,
   FeeTooHigh,
   NotEnoughBalanceBecauseDestinationNotCreated,
+  NotEnoughBalanceInParentAccount,
 } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
@@ -192,13 +193,22 @@ const getTransactionStatus = async (a: Account, t) => {
 
       if (
         (amount.lte(0) && t.useAllAmount) || // if use all Amount sets an amount at 0
-        (tokenAccount && a.spendableBalance.lt(estimatedFees)) || // if spendable balance lower than fees for token
         (!errors.recipient && !errors.amount && tokenAccount
           ? totalSpent.gt(tokenAccount.balance)
           : totalSpent.gt(a.spendableBalance)) // if spendable balance lower than total
       ) {
         errors.amount = new NotEnoughBalance();
       }
+
+      // if spendable balance lower than fees for token
+      if (
+        !errors.amount &&
+        tokenAccount &&
+        a.spendableBalance.lt(estimatedFees)
+      ) {
+        errors.amount = new NotEnoughBalanceInParentAccount();
+      }
+
       break;
     }
 

@@ -10,6 +10,7 @@ import { BigNumber } from "bignumber.js";
 import type { Account } from "../../types";
 import sample from "lodash/sample";
 import { listTokensForCryptoCurrency } from "../../currencies";
+import { extractTokenId } from "./tokens";
 
 const currency = getCryptoCurrencyById("algorand");
 
@@ -218,12 +219,13 @@ const algorand: AppSpec<Transaction> = {
       },
       // eslint-disable-next-line no-unused-vars
       test: ({ account, transaction }) => {
-        expect(
-          account.subAccounts &&
-            account.subAccounts.some((a) =>
-              a.id.endsWith(transaction.assetId || "fail")
-            )
-        ).toBe(true);
+        invariant(transaction.assetId, "should have an assetId");
+        const assetId = extractTokenId(transaction.assetId);
+        expect({
+          haveSubAccountWithAssetId:
+            account.subAccounts &&
+            account.subAccounts.some((a) => a.id.endsWith(assetId)),
+        }).toMatchObject({ haveSubAccountWithAssetId: true });
       },
     },
     {
