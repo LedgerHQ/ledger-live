@@ -25,15 +25,16 @@ import type {
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import {
   mapUnbondings,
+  canRedelegate,
+  getRedelegation,
+  canUndelegate,
   canDelegate,
 } from "@ledgerhq/live-common/lib/families/cosmos/logic";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
-import DelegationDrawer, {
-  styles as drawerStyles,
-} from "../../../components/DelegationDrawer";
+import DelegationDrawer from "../../../components/DelegationDrawer";
 import type { IconProps } from "../../../components/DelegationDrawer";
 import Touchable from "../../../components/Touchable";
 import colors, { rgba } from "../../../colors";
@@ -49,6 +50,7 @@ import DelegationRow from "./Row";
 import DelegationLabelRight from "./LabelRight";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
+import DateFromNow from "../../../components/DateFromNow";
 
 type Props = {
   account: Account,
@@ -153,61 +155,144 @@ export default function Delegations({ account }: Props) {
     setUndelegation();
   }, []);
 
-  const onOpenExplorer = useCallback(() => {
-    const url = getAddressExplorer(
-      getDefaultExplorerView(account.currency),
-      delegation?.validatorAddress ?? "",
-    );
-    if (url) Linking.openURL(url);
-  }, [account.currency, delegation]);
+  const onOpenExplorer = useCallback(
+    (address: string) => {
+      const url = getAddressExplorer(
+        getDefaultExplorerView(account.currency),
+        address,
+      );
+      if (url) Linking.openURL(url);
+    },
+    [account.currency],
+  );
 
   const data = useMemo<$PropertyType<DelegationDrawerProps, "data">>(() => {
     const d = delegation || undelegation;
+
+    const redelegation = delegation && getRedelegation(account, delegation);
+
     return d
       ? [
           {
             label: t("delegation.validator"),
-            Component: d.validator?.name ?? d.validatorAddress ?? "",
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText, styles.valueTextTouchable]}
+              >
+                {d.validator?.name ?? d.validatorAddress ?? ""}
+              </LText>
+            ),
           },
           {
             label: t("delegation.validatorAddress"),
-            Component: () => {
-              return (
-                <Touchable
-                  onPress={onOpenExplorer}
-                  event="DelegationOpenExplorer"
+            Component: (
+              <Touchable
+                onPress={() => onOpenExplorer(d.validatorAddress)}
+                event="DelegationOpenExplorer"
+              >
+                <LText
+                  numberOfLines={1}
+                  semiBold
+                  ellipsizeMode="middle"
+                  style={[styles.valueText, styles.valueTextTouchable]}
                 >
-                  <LText
-                    numberOfLines={1}
-                    semiBold
-                    ellipsizeMode="middle"
-                    style={[
-                      drawerStyles.valueText,
-                      drawerStyles.valueTextTouchable,
-                    ]}
-                  >
-                    {d.validatorAddress}
-                  </LText>
-                </Touchable>
-              );
-            },
+                  {d.validatorAddress}
+                </LText>
+              </Touchable>
+            ),
           },
           {
             label: t("delegation.delegatedAccount"),
-            Component: account.name,
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText, styles.valueTextTouchable]}
+              >
+                {account.name}{" "}
+              </LText>
+            ),
           },
           {
             label: t("cosmos.delegation.drawer.status"),
-            Component:
-              d.status === "bonded"
-                ? t("cosmos.delegation.drawer.active")
-                : t("cosmos.delegation.drawer.inactive"),
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText, styles.valueTextTouchable]}
+              >
+                {d.status === "bonded"
+                  ? t("cosmos.delegation.drawer.active")
+                  : t("cosmos.delegation.drawer.inactive")}
+              </LText>
+            ),
           },
           ...(delegation
             ? [
                 {
                   label: t("cosmos.delegation.drawer.rewards"),
-                  Component: delegation.formattedPendingRewards ?? "",
+                  Component: (
+                    <LText
+                      numberOfLines={1}
+                      semiBold
+                      style={[styles.text, styles.valueText]}
+                    >
+                      {delegation.formattedPendingRewards ?? ""}
+                    </LText>
+                  ),
+                },
+              ]
+            : []),
+          ...(undelegation
+            ? [
+                {
+                  label: t("cosmos.delegation.drawer.completionDate"),
+                  Component: (
+                    <LText numberOfLines={1} semiBold>
+                      <DateFromNow
+                        date={new Date(undelegation.completionDate).getTime()}
+                      />
+                    </LText>
+                  ),
+                },
+              ]
+            : []),
+          ...(redelegation
+            ? [
+                {
+                  label: t("cosmos.delegation.drawer.redelegatedFrom"),
+                  Component: (
+                    <Touchable
+                      onPress={() =>
+                        onOpenExplorer(redelegation.validatorSrcAddress)
+                      }
+                      event="DelegationOpenExplorer"
+                    >
+                      <LText
+                        numberOfLines={1}
+                        semiBold
+                        ellipsizeMode="middle"
+                        style={[styles.valueText, styles.valueTextTouchable]}
+                      >
+                        {redelegation.validatorSrcAddress}
+                      </LText>
+                    </Touchable>
+                  ),
+                },
+                {
+                  label: t("cosmos.delegation.drawer.completionDate"),
+                  Component: (
+                    <LText numberOfLines={1} semiBold>
+                      <DateFromNow
+                        date={new Date(redelegation.completionDate).getTime()}
+                      />
+                    </LText>
+                  ),
                 },
               ]
             : []),
@@ -220,15 +305,26 @@ export default function Delegations({ account }: Props) {
       !delegation ||
       !delegation.pendingRewards ||
       delegation.pendingRewards.isZero();
+
+    const redelegateEnabled = delegation && canRedelegate(account, delegation);
+
+    const undelegationEnabled = canUndelegate(account);
+
     return delegation
       ? [
           {
             label: t("delegation.actions.redelegate"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={colors.fog}>
-                <RedelegateIcon />
+              <Circle
+                {...props}
+                bg={!redelegateEnabled ? colors.lightFog : colors.fog}
+              >
+                <RedelegateIcon
+                  color={!redelegateEnabled ? colors.grey : undefined}
+                />
               </Circle>
             ),
+            disabled: !redelegateEnabled,
             onPress: onRedelegate,
             event: "DelegationActionRedelegate",
           },
@@ -253,16 +349,26 @@ export default function Delegations({ account }: Props) {
           {
             label: t("delegation.actions.undelegate"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={rgba(colors.alert, 0.2)}>
-                <UndelegateIcon />
+              <Circle
+                {...props}
+                bg={
+                  !undelegationEnabled
+                    ? colors.lightFog
+                    : rgba(colors.alert, 0.2)
+                }
+              >
+                <UndelegateIcon
+                  color={!undelegationEnabled ? colors.grey : undefined}
+                />
               </Circle>
             ),
+            disabled: !undelegationEnabled,
             onPress: onUndelegate,
             event: "DelegationActionUndelegate",
           },
         ]
       : [];
-  }, [t, onRedelegate, onCollectRewards, onUndelegate, delegation]);
+  }, [t, onRedelegate, onCollectRewards, onUndelegate, delegation, account]);
 
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
 
@@ -404,5 +510,14 @@ const styles = StyleSheet.create({
   },
   actionColor: {
     color: colors.live,
+  },
+  valueText: {
+    fontSize: 14,
+  },
+  valueTextTouchable: {
+    color: colors.live,
+  },
+  text: {
+    color: colors.darkBlue,
   },
 });
