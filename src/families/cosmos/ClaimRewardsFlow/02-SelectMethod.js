@@ -211,13 +211,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
       <View style={styles.footer}>
         <View style={styles.warningSection}>
           {warning && warning instanceof Error ? (
-            <LText
-              selectable
-              secondary
-              semiBold
-              style={styles.warning}
-              numberOfLines={3}
-            >
+            <LText selectable secondary semiBold style={styles.warning}>
               <TranslatedError error={warning} />
             </LText>
           ) : null}
@@ -302,7 +296,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: colors.alert,
   },
-  warningSection: { padding: 16, height: 60 },
+  warningSection: { padding: 16, height: 80 },
 });
 
 export default ClaimRewardsAmount;
