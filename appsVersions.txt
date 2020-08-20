@@ -1,19 +1,72 @@
-363: blue/2.1.1/akroma/app_1.1.5: KO: have BAD HASH. API have 8009d91f5d6d165e44acfd0d13d491b35ab21b37fd0897faa581e15073c65d25 but device have 6851451f6fc42564422b7476c63d6055583f9a5b0f95f31f186372a77d6cfbd1
-742: blue/2.1.1/decred_testnet/app_1.3.0: KO: list apps don't find installed app? Found these: [{"hash": "23283b764a7642369932183e9d704750707d3367fbfdf0e7e2aaec801043a950","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-368: blue/2.1.1/ethereum_classic/app_1.1.5: KO: have BAD HASH. API have 5da1ce725d0d70fe943491fa3ea4540df4cd54425827b55590b10c01b72007ba but device have 9e4f90968cf4344e13c75b55179787bb5fe112294f338d51daf59f760cf9bf4e
-377: blue/2.1.1/expanse/app_1.1.5: KO: have BAD HASH. API have c7e10f1e132815e7c130c0b5878c91df7cc1efcca258bd7e3414a8cf1617a537 but device have 99b20c54f12861e827de56039d0df0ce8ca694ae7743ff90345f4da7c5e1a651
+6225: blue/2.1.1.1/bitcoin_cash/app_1.4.6: KO:  have BAD HASH. API have 9aea97b1bb6313686426e22b635763b994f151ee9fd1aa89629f8b47023df7d8 but device have ccc6170dc681b1ab5d4704f9e188e0380f679174b7b92cd97ba5ed088c6f7788
+6448: blue/2.1.1.1/bitcoin_cash/app_1.4.7: KO:  have BAD HASH. API have c6a9f477e418967a1f6830af0fadf7522fc100c39822af31547b445e53388667 but device have 0076e2d71b5005844eebb90f086e70bc983a70e4290b1c473caba2b922803256
+6234: blue/2.1.1.1/bitcoin_gold/app_1.4.6: KO:  have BAD HASH. API have 4ea87a64da2c208677ca382d4feed6bc5ea9fdb96bb4c33a005855b4dc281e27 but device have d3ada0ce982191e603e74d408338cf371dcf665621f505ad3fa6a293b11d00cd
+6457: blue/2.1.1.1/bitcoin_gold/app_1.4.7: KO:  have BAD HASH. API have a772fb13d61e2ebc3e9b9cba2a96860ef66ca9e4b61ef484b68f4c1d9e04a5d9 but device have 61b600b4eeea63603992021a83add4795a732986041cc13540b44bff7d58d221
+6227: blue/2.1.1.1/bitcoin_private/app_1.4.6: KO:  have BAD HASH. API have 52b0b215cd213e42f4407baec11183fcaa73c4c0712828ad232ca1d1e0ffba05 but device have f00fea8075b20e223afac8305da04a31a00183777c92e05c68b366d8943401ad
+6450: blue/2.1.1.1/bitcoin_private/app_1.4.7: KO:  have BAD HASH. API have 0b56765224231965e7c91774973583d78f7005a117e1df9f4dbc859e90f770e6 but device have 1154b840bd6e8e0ec04ca99031e8f3c3a9e1faa77f499b6c30d74bd393188782
+6245: blue/2.1.1.1/bitcoin_testnet/app_1.4.6: KO:  have BAD HASH. API have cfcb8b6dcd50e2563d5dc476dfc94aa2a63899d38fc1273867396abd59ce8092 but device have 5232fe6b962ef76bf214b1d926f31a500c190999d033786b37a0adfe80c5dbf3
+6468: blue/2.1.1.1/bitcoin_testnet/app_1.4.7: KO:  have BAD HASH. API have bd225f7f43a65c3c6b883dfb19021cea3c92e1bebbe0230744840438b444c074 but device have 3c497fabc6f6cb42c70995ba6b2d767bfba1d068c6ee441484bf85312dcaaac7
+6221: blue/2.1.1.1/bitcoin/app_1.4.6: KO:  have BAD HASH. API have 768178543e105defdf9b4cbc937ab3ac7d022462ce3242fa2c1d95da3de7a09d but device have 89303b0299163fa2646818963ff995c849e1787e53e2e137b7b3c39b6ea82d98
+6444: blue/2.1.1.1/bitcoin/app_1.4.7: KO:  have BAD HASH. API have dfcc237206d08dffe00b82a80417f72bc50ae7216dbb026a17c0de1701d770bd but device have 7331e2c1f8b9b8f829398d1c181d48bd0aae12e91920c20822d27765b8840e41
+6232: blue/2.1.1.1/dash/app_1.4.6: KO:  have BAD HASH. API have 2da7cf4514727201c4a80992481a2856c7a2106b2eb3b63a1b7a34fca22a8b70 but device have dfc331620460322f4f7fc80ca2ce5dc7f0db221315537b0641a205786620360e
+6455: blue/2.1.1.1/dash/app_1.4.7: KO:  have BAD HASH. API have 2d213ce9a6c4be7fc93f97346625078411d89ca02d595e2f9de6455c35172b3f but device have 10e58e35b0265a6d816161c7b4056435e57d4a74462514573c1a82d51b1d392d
+6246: blue/2.1.1.1/digibyte/app_1.4.6: KO:  have BAD HASH. API have 6c137cab1c68d8f59f112a9aa397aa80cab40a5952d76857b9fbcd6c540b8f07 but device have 23a2cbf7ae72e667f77464099cb4db3d846bdd652224c1112c4559278bdfc891
+6469: blue/2.1.1.1/digibyte/app_1.4.7: KO:  have BAD HASH. API have e749bf8312542b27f67755cb73bdf29acac30164abea98b19b03d86ca1654f03 but device have 61b466188f9144b25725e6865b734b10764186081a4dccc07c2440192091e46f
+6237: blue/2.1.1.1/dogecoin/app_1.4.6: KO:  have BAD HASH. API have 66f14ce8ff22a534d3965eba4fb7d91ca6c9e61f5642ae50e8ccd780786d016b but device have 1a443bae2398c77c36528dc6c54f128e456817b0514acd2f9f4fbe8c7eb6ee0b
+6460: blue/2.1.1.1/dogecoin/app_1.4.7: KO:  have BAD HASH. API have 3d271223122632c4ebf797531bbfe3f8da96cb1433b9eb35080854ce0639e08f but device have 4f9a6cd74e45010033698afffa077e062c625e1cbf5e60acfb84be7712e8eff3
+6233: blue/2.1.1.1/gamecredits/app_1.4.6: KO:  have BAD HASH. API have a9f1afcbd5908583165b9cc0d5f8d64df9dc10b36097e55422bb5f7b07327bfa but device have 8bde112fd73331fb0593edfbff81ba3e19d46e2f5ff89b9410ea00c97d187cf3
+6456: blue/2.1.1.1/gamecredits/app_1.4.7: KO:  have BAD HASH. API have c179f8a40c77b53ea13d231b1537a0753f8b8b648498e8dca4a732ecc03a3d4c but device have 4088399cbb9ef7b067d8d8e4d61345daf29b3bd5ec8af4e1faaf7ed44639f099
+6223: blue/2.1.1.1/horizen/app_1.4.6: KO:  have BAD HASH. API have 201710ee2818b1a0cef5df937cf3de0a61d779b4583b0e31661c5d4ffbabc6ff but device have 7d6f5d845ae72c7a5c3ff10ce4ed508938f1cebd8953dbee8aafd8a0eb25e9ae
+6446: blue/2.1.1.1/horizen/app_1.4.7: KO:  have BAD HASH. API have ac0fd8b518b1ecb4e8d2fac88c286fbaa48def4be2be53ad0755efbc13f2c36d but device have 7e7ff872d1236b232c8c339f30c28cf8ef7fd2b7de64bda03130c36973c2cdd2
+6230: blue/2.1.1.1/komodo/app_1.4.6: KO:  have BAD HASH. API have c297af175f728308995fb487c1dd1fa9f0f236d13a17434877c10ba38c19134a but device have 1f4e12b1812cefde280e74e6b821f21366a031fa26f287d44faf41c32e36542c
+6453: blue/2.1.1.1/komodo/app_1.4.7: KO:  have BAD HASH. API have e43a2dcac89420be9e04bd429768b2864c7bf63e5b64d3a2958050c3c6436a55 but device have d529a5dd1fb5a7128433a5313c77f234a02939802f0762e9ccf32fb6cec90edb
+6240: blue/2.1.1.1/lbry/app_1.4.6: KO:  have BAD HASH. API have 1184ecd3905826eec17f0212c86bcffa02f3064f5f5224aabf79ec6eae542540 but device have 66e85382a81c70575f193c6b8b6d7a57916ffdb614ea76504b585dcaa5138931
+6463: blue/2.1.1.1/lbry/app_1.4.7: KO:  have BAD HASH. API have e2f108de5ec5a0322f20aea497afd09b4eab6c2bec610dc645608ce163962d00 but device have c83a5b63463eed35136651b6dbaeaf2a21d3fa9c29066cc242f6309c559a72f5
+6241: blue/2.1.1.1/litecoin/app_1.4.6: KO:  have BAD HASH. API have 22c4119755e1fc1e7dc6b6e5153519eb2ebe7dfd7dc6d79e2975ba677fdb3e60 but device have 8a325fb958007a049b3d012c88574cedc642c2fc910aef592136d2ea37fd0f40
+6464: blue/2.1.1.1/litecoin/app_1.4.7: KO:  have BAD HASH. API have 941ed8155a2623eb8d1b686f7c9b3540e22bbbc23e4b1cd28f9711cfec1d2dbc but device have ec8108724b9c7fa58597075b3b048783601be4c165cd1f7ea967f76f236e28b9
+6247: blue/2.1.1.1/nix/app_1.4.6: KO:  have BAD HASH. API have 0e10b25b323c137b6097503e493734f04ff70641e1b06f8c7e85d17b3a215e09 but device have 97aafb636bf93363784fb5a2c66d8117f632c8cf0ca86526a3e29a00c5ba0711
+6470: blue/2.1.1.1/nix/app_1.4.7: KO:  have BAD HASH. API have b780c3d266e36813ed90212116795d9e135d1dc100bac532988e20485d855fd0 but device have aea9b353bc39e0747a0f1a12c909c4be7941a74f8450189f13c4a6724b1662f6
+6226: blue/2.1.1.1/peercoin/app_1.4.6: KO:  have BAD HASH. API have baf01cd5b55e441c337308d1500af3ab58bc6d26bd83766d57191bcadd94f623 but device have 5e8e304119f9a080e6fc4348a0b1f636f46dabe2812b32f1ceef024b6538c32a
+6449: blue/2.1.1.1/peercoin/app_1.4.7: KO:  have BAD HASH. API have 256d82935123a64738f3c25aab9dc5c52309745dfb03508a80d11c38d6552454 but device have 284f52aaefd778cb9bc2b9839c1c5a4dbf5c04e2e905fbf3fcff5b143e20d528
+6222: blue/2.1.1.1/pivx/app_1.4.6: KO:  have BAD HASH. API have ad20fcded09e255b0a24c2e5242b32701e3b2729d827887436336c0ef511b898 but device have 4e86cd4eaa30b1b6eed734ca1dcfeef0ca6703e9dab5f5743fc21f65193ae4f8
+6445: blue/2.1.1.1/pivx/app_1.4.7: KO:  have BAD HASH. API have 6c7eff1f1792e1071b5b6b266b489b35099caf86cc33e188bf5ce057c32c6fed but device have 27e0526f2cc6977d57af03bf43bc2f61059b46816c6bc699496244ab53af0608
+6236: blue/2.1.1.1/qtum/app_1.4.6: KO:  have BAD HASH. API have 1313975cdd3a967297288c72a4765efe41dd5dc465b1222299913be188ede062 but device have 6e7942a72c5cfdcb6d037b9d7b0d6e2f48ac8613200514c441e7095758ab88ad
+6459: blue/2.1.1.1/qtum/app_1.4.7: KO:  have BAD HASH. API have 40352efba7e6c858b162fafae7a886b17425cad94af35fe4ff3fe5851f102fcb but device have a0826eba5b521ea2d636adbf48b6625df3c9e8fdb47f7f7238a807273786a579
+6229: blue/2.1.1.1/ravencoin/app_1.4.6: KO:  have BAD HASH. API have fa83e03d065200c9a14bf7ed3d7ed8f12f49c8a8582ad054fcbe1ba8e016cce6 but device have c1c0efba82d289656b532282803c6c5bd9a0a7b40cfb5a0070045eff69283b49
+6452: blue/2.1.1.1/ravencoin/app_1.4.7: KO:  have BAD HASH. API have 36193d5da7a27076696a319fe7f4342ab8518821fb0eeebad204a823a3e98380 but device have b8e24f7b8435f6031a353de1f8811c2667762b8fcf8fe79d0e4ac03027f034f2
+6458: blue/2.1.1.1/resistance/app_1.4.7: KO:  have BAD HASH. API have 3fc8a6cf4beff2579a479aaebd1bdf98da0ca342e73aa738247b2e4b7403589d but device have 77d724098467191a7bc98ea7b63653add100e5cb28db1af0c2ae49a3b882409c
+6228: blue/2.1.1.1/stealth/app_1.4.6: KO:  have BAD HASH. API have f297adab724c810d145230a74e5d762b497b04ba7982adae94437c085391a1bd but device have 349bb3262194db7c503ba53a0dd27a1a87019e52b17f5b337ce1b90670595fc8
+6451: blue/2.1.1.1/stealth/app_1.4.7: KO:  have BAD HASH. API have 2ff963bedb3a0b3227c29814f29d413b59a0473f8ffec152cf71c7266b8df64c but device have 9211adec35f66a03308c5cb744133ffc4dfa44d995c157fe983516658896581f
+6239: blue/2.1.1.1/stratis/app_1.4.6: KO:  have BAD HASH. API have 2753a77a12ff0229eb37347bda87708ab1b0411e1ee7898fc40169b835e7aaf1 but device have 23f8fed2c9f201f43f9ff6ca718eaeb6a3feae430f714249f53ab00b24439445
+6462: blue/2.1.1.1/stratis/app_1.4.7: KO:  have BAD HASH. API have 8fe9fe775237859289fc8435c854beba5ccd030445123f0520f967eb4456efff but device have fc59539b47ea70dcf3014986353cf382578e32b79edd52c9268c1564f0e98cdc
+6244: blue/2.1.1.1/vertcoin/app_1.4.6: KO:  have BAD HASH. API have 7311cfdbd1c2ac0d6ba4b82f2e95b6deb9002a82dcce4499721788b246ff359b but device have e18595c9662325d6776ba023bbcb3c0d4ba5c582d20a35d4d1215817c4e518e8
+6467: blue/2.1.1.1/vertcoin/app_1.4.7: KO:  have BAD HASH. API have b5627f942bbb69f78a45fa3e49c5de6ccd851c358b7728c1b14926f4c008d350 but device have 441b3a3d97d9261714346d088f821ed738f62db1c3d5fc6b7bd410b3272a83be
+6242: blue/2.1.1.1/viacoin/app_1.4.6: KO:  have BAD HASH. API have 9843139d38de438deb125460ae8d457c90f0bd191791de8ed8ac1c5355e5fd25 but device have 0a5023a761735c6eb306ff05f367d52deeabe6d8a7f0082d9530447c49015ba2
+6465: blue/2.1.1.1/viacoin/app_1.4.7: KO:  have BAD HASH. API have 1fa587bd25847e04e592c568014fdd469eb653317f1e621f4d931553885128b5 but device have 10af2b63fea100bd177a565e8622bb22d5ad5fb6bd2d6080e24d89c53982d089
+6231: blue/2.1.1.1/xsn/app_1.4.6: KO:  have BAD HASH. API have 6a256b6e4fa690328286e82ed47dc9bee13a94cbc3881b4c26f1674c82b6736f but device have df7da61a34f47551f61277e6f9fd5f2f1001b162450325d504aa7e08beec6826
+6454: blue/2.1.1.1/xsn/app_1.4.7: KO:  have BAD HASH. API have 1a47b0d50d9a87924879c894b4f09c5da9420021eee9ac64118d8dbc498fd5ee but device have 9109b9bfc87fe15aabd05999508bb4992e2f462dd5bd711ec3ccb5c659774dd6
+6243: blue/2.1.1.1/zcash/app_1.4.6: KO:  have BAD HASH. API have dfac577bb0606494481ce9f727c8107cb94be9a328e1abf6ba911bd3d676aac6 but device have b662177ab9f31efd9a2acd2a6ad9681a1d7f982a1bc51ca75cf1f659f859b8a5
+6466: blue/2.1.1.1/zcash/app_1.4.7: KO:  have BAD HASH. API have 062c03cf70456f9bb27e13c59677eea5b45af604a224232a8810b172537ce3a9 but device have 5a2d3126cee5f3e5cf37034e1e8eca9f453d63f6f077e48291d7128c34f88952
+6238: blue/2.1.1.1/zclassic/app_1.4.6: KO:  have BAD HASH. API have d23fa22deb3c8de12063648e7a1e3c55b5c8980cb49b3a87cc7e197afd31b64e but device have 19b9c0731b5c030a72ddb9bb222b569c272e4eea38a9327c77b6e526ace95702
+6461: blue/2.1.1.1/zclassic/app_1.4.7: KO:  have BAD HASH. API have 20118868b89eed4b3fac243c6ab56f9843aae79366ec7e80fbd4f1290d3be39d but device have 2e7dc3e01cbcdf8d32a23022776e2bbe6408bb07f815aec2a6dfbf735224af92
+6224: blue/2.1.1.1/zcoin/app_1.4.6: KO:  have BAD HASH. API have 57e96b842c3c04ac4b83069d8f5ec82236175cf2bba8c32c26fdfaf19ee884a7 but device have 19d32f564694d5f13055207003e2f3d3f4e61e8c66a825636ef30ee9a73ad6ba
+6447: blue/2.1.1.1/zcoin/app_1.4.7: KO:  have BAD HASH. API have cba297267dc7b726fe32e9b80192ebb2c97e48fdc3c681caa5ae3ba6b64ce150 but device have 998c36d1d7394c3b4444e4b814b757566d25c4a501c1765a4fb3466e4f3d8040
+363: blue/2.1.1/akroma/app_1.1.5: KO:  have BAD HASH. API have 8009d91f5d6d165e44acfd0d13d491b35ab21b37fd0897faa581e15073c65d25 but device have 6851451f6fc42564422b7476c63d6055583f9a5b0f95f31f186372a77d6cfbd1
+742: blue/2.1.1/decred_testnet/app_1.3.0: KO:  list apps don't find installed app? Found these: [{"hash":"23283b764a7642369932183e9d704750707d3367fbfdf0e7e2aaec801043a950","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+368: blue/2.1.1/ethereum_classic/app_1.1.5: KO:  have BAD HASH. API have 5da1ce725d0d70fe943491fa3ea4540df4cd54425827b55590b10c01b72007ba but device have 9e4f90968cf4344e13c75b55179787bb5fe112294f338d51daf59f760cf9bf4e
+377: blue/2.1.1/expanse/app_1.1.5: KO:  have BAD HASH. API have c7e10f1e132815e7c130c0b5878c91df7cc1efcca258bd7e3414a8cf1617a537 but device have 99b20c54f12861e827de56039d0df0ce8ca694ae7743ff90345f4da7c5e1a651
 299: blue/2.1.1/horizen/app_1.2.8: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 1919: blue/2.1.1/hpb/app_1.2.4: KO: FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-370: blue/2.1.1/kusd/app_1.1.5: KO: have BAD HASH. API have f3c6fe2e7c57a60cea74f65930be9ce3f58cd8841e036437bf7c1616790fe3ab but device have 79c769a2b976475ed3cf50e69927f17e4990810994364527367b9e6912ba0703
-296: blue/2.1.1/pirl/app_1.1.4: KO: have BAD HASH. API have dedd1bac27960758f6a8a4d85f5f8b7a69c45a51e481554098cc924f41141521 but device have 5d53c28e06bd0a68773053e3bc8d8b8c898fcf529b163282ad5266521efa0ed1
-366: blue/2.1.1/pirl/app_1.1.5: KO: list apps don't find installed app? Found these: [{"hash": "fd6178566800c231b89774c60a055e7023168405a224e2d08867c65828716eda","name": "Ethereum"}] – FAILED installing, got ManagerAppAlreadyInstalled
-382: blue/2.1.1/poa/app_1.1.5: KO: have BAD HASH. API have 207209e6ea0b027cc2b5377e5614daef6790065c8b040363029db8a1d03c8b56 but device have 6b7b3d9175a1daf08f189ea54b849ba8b568dedb3b70c831364d8f579b307974
-380: blue/2.1.1/rsk/app_1.1.5: KO: have BAD HASH. API have 3d4efa8502a1f28cd8264f08d77023e4be62f481723220a3dedd83e66ec0edc6 but device have e06b1ab606119f3845a60cedfcc8a96edc7ce8ef6316e636e54c84d3cf4e2cc8
-3767: blue/2.1.1/stellar/app_3.1.0: KO: have BAD HASH. API have 738db1ccfcbe0819cb39dcb3cfb1971fe234f98e900a664ac9d81440e7cf2214 but device have d573e621e8393eb5ee7873ce509497d5faabcd41ee5036c38809ec91518109f7
-3775: blue/2.1.1/stellar/app_3.1.1: KO: have BAD HASH. API have 07671c449a105e13738d0f0274b8de091ee9aa01d35a91fdc4f41a3a38a3756e but device have 21db5b3afaeda0cd910ddf9e8ea2db4488196b1552df00a7683a10568cd5d3a1
-3639: blue/2.1.1/tron/app_0.1.6: KO: have BAD HASH. API have 279ffe6c8d732bdc68c53b4738b0a047a275ee14b609486e6104f1b94dca5a73 but device have 053ef2e0f3dbcb3126664ab720815ea9653ee63a6c40b128cf72cb3b69db7e60
-365: blue/2.1.1/ubiq/app_1.1.5: KO: have BAD HASH. API have a89fc6d05cc0cf689083351a2569d3d7319d393f3d3d4bd4804ce63a6aa2814c but device have bef90cc4ce8febf4d015c1c2167bb4a88f6a8e4a77cd8a7cea9df4326fbb2422
-369: blue/2.1.1/wanchain/app_1.1.5: KO: have BAD HASH. API have 789d152963b817f87042a809ae3bc863e111454fa11b3b30b48920cdc11f672b but device have 37163ba271f5bc683634e76cc331602f33636a726542faaea3bbf1ba4d54c521
+370: blue/2.1.1/kusd/app_1.1.5: KO:  have BAD HASH. API have f3c6fe2e7c57a60cea74f65930be9ce3f58cd8841e036437bf7c1616790fe3ab but device have 79c769a2b976475ed3cf50e69927f17e4990810994364527367b9e6912ba0703
+296: blue/2.1.1/pirl/app_1.1.4: KO:  have BAD HASH. API have dedd1bac27960758f6a8a4d85f5f8b7a69c45a51e481554098cc924f41141521 but device have 5d53c28e06bd0a68773053e3bc8d8b8c898fcf529b163282ad5266521efa0ed1
+366: blue/2.1.1/pirl/app_1.1.5: KO:  list apps don't find installed app? Found these: [{"hash":"fd6178566800c231b89774c60a055e7023168405a224e2d08867c65828716eda","name":"Ethereum"}] – FAILED installing, got ManagerAppAlreadyInstalled
+382: blue/2.1.1/poa/app_1.1.5: KO:  have BAD HASH. API have 207209e6ea0b027cc2b5377e5614daef6790065c8b040363029db8a1d03c8b56 but device have 6b7b3d9175a1daf08f189ea54b849ba8b568dedb3b70c831364d8f579b307974
+380: blue/2.1.1/rsk/app_1.1.5: KO:  have BAD HASH. API have 3d4efa8502a1f28cd8264f08d77023e4be62f481723220a3dedd83e66ec0edc6 but device have e06b1ab606119f3845a60cedfcc8a96edc7ce8ef6316e636e54c84d3cf4e2cc8
+3767: blue/2.1.1/stellar/app_3.1.0: KO:  have BAD HASH. API have 738db1ccfcbe0819cb39dcb3cfb1971fe234f98e900a664ac9d81440e7cf2214 but device have d573e621e8393eb5ee7873ce509497d5faabcd41ee5036c38809ec91518109f7
+3775: blue/2.1.1/stellar/app_3.1.1: KO:  have BAD HASH. API have 07671c449a105e13738d0f0274b8de091ee9aa01d35a91fdc4f41a3a38a3756e but device have 21db5b3afaeda0cd910ddf9e8ea2db4488196b1552df00a7683a10568cd5d3a1
+3639: blue/2.1.1/tron/app_0.1.6: KO:  have BAD HASH. API have 279ffe6c8d732bdc68c53b4738b0a047a275ee14b609486e6104f1b94dca5a73 but device have 053ef2e0f3dbcb3126664ab720815ea9653ee63a6c40b128cf72cb3b69db7e60
+365: blue/2.1.1/ubiq/app_1.1.5: KO:  have BAD HASH. API have a89fc6d05cc0cf689083351a2569d3d7319d393f3d3d4bd4804ce63a6aa2814c but device have bef90cc4ce8febf4d015c1c2167bb4a88f6a8e4a77cd8a7cea9df4326fbb2422
+369: blue/2.1.1/wanchain/app_1.1.5: KO:  have BAD HASH. API have 789d152963b817f87042a809ae3bc863e111454fa11b3b30b48920cdc11f672b but device have 37163ba271f5bc683634e76cc331602f33636a726542faaea3bbf1ba4d54c521
 117: nanos/1.3.1-das/dascoin/app_1.1.1: KO: DOES NOT have bytes defined!
 94: nanos/1.3.1/ark/app_0.1.1: KO: list apps don't find installed app? Found these: [{"hash": "5ac22115b3ae66c2ab6596596ce5c824d7db35331152605058b20ab370a23498","name": ""}]
 79: nanos/1.3.1/bitcoin_cash/app_1.1.8: KO: DOES NOT have bytes defined!
@@ -54,8 +107,8 @@
 4546: nanos/1.6.0/atheios/app_1.3.7: KO: FAILED installing, got closed
 4328: nanos/1.6.0/gochain/app_1.3.4: KO: list apps don't find installed app? Found these: [{"hash": "c1be06544e6a7437346e037f5658e3b19c17c8aaf3771736dcb14dd60aab72f6","name": "Ethereum"}] – FAILED installing, got closed
 4533: nanos/1.6.0/pirl/app_1.3.7: KO: FAILED installing, got DisconnectedDevice
-1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
-2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO:  list apps don't find installed app? Found these: [{"hash":"4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name":"Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+1836: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
+2101: nanox/1.2.4-1/decred_testnet/app_1.3.8: KO: list apps don't find installed app? Found these: [{"hash": "4f53941837e19066417c44ae988979cfb6a88ba1683e0754cab6de0b4427b841","name": "Bitcoin"}] – FAILED installing, got Ledger device: UNKNOWN_ERROR (0x6a83)
 2619: blue/2.1.1.1/bitcoin_cash/app_1.3.13: OK: 
 4358: blue/2.1.1.1/bitcoin_cash/app_1.4.2: OK: 
 2623: blue/2.1.1.1/bitcoin_gold/app_1.3.13: OK: 
@@ -133,6 +186,7 @@
 1229: blue/2.1.1/bitcoin_cash/app_1.3.7: OK: 
 1483: blue/2.1.1/bitcoin_cash/app_1.3.8: OK: 
 2002: blue/2.1.1/bitcoin_cash/app_1.3.9: OK: 
+5205: blue/2.1.1/bitcoin_cash/app_1.4.3: OK: 
 457: blue/2.1.1/bitcoin_gold/app_1.2.10: OK: 
 331: blue/2.1.1/bitcoin_gold/app_1.2.9: OK: 
 647: blue/2.1.1/bitcoin_gold/app_1.3.0: OK: 
@@ -141,6 +195,7 @@
 908: blue/2.1.1/bitcoin_gold/app_1.3.2: OK: 
 1481: blue/2.1.1/bitcoin_gold/app_1.3.8: OK: 
 1984: blue/2.1.1/bitcoin_gold/app_1.3.9: OK: 
+5214: blue/2.1.1/bitcoin_gold/app_1.4.3: OK: 
 458: blue/2.1.1/bitcoin_private/app_1.2.10: OK: 
 332: blue/2.1.1/bitcoin_private/app_1.2.9: OK: 
 652: blue/2.1.1/bitcoin_private/app_1.3.0: OK: 
@@ -150,6 +205,7 @@
 1232: blue/2.1.1/bitcoin_private/app_1.3.7: OK: 
 1498: blue/2.1.1/bitcoin_private/app_1.3.8: OK: 
 2016: blue/2.1.1/bitcoin_private/app_1.3.9: OK: 
+5207: blue/2.1.1/bitcoin_private/app_1.4.3: OK: 
 662: blue/2.1.1/bitcoin_testnet/app_1.3.0: OK: 
 738: blue/2.1.1/bitcoin_testnet/app_1.3.1: OK: 
 2313: blue/2.1.1/bitcoin_testnet/app_1.3.11: OK: 
@@ -157,6 +213,7 @@
 1235: blue/2.1.1/bitcoin_testnet/app_1.3.7: OK: 
 1491: blue/2.1.1/bitcoin_testnet/app_1.3.8: OK: 
 1988: blue/2.1.1/bitcoin_testnet/app_1.3.9: OK: 
+5225: blue/2.1.1/bitcoin_testnet/app_1.4.3: OK: 
 455: blue/2.1.1/bitcoin/app_1.2.10: OK: 
 329: blue/2.1.1/bitcoin/app_1.2.9: OK: 
 641: blue/2.1.1/bitcoin/app_1.3.0: OK: 
@@ -166,6 +223,7 @@
 1215: blue/2.1.1/bitcoin/app_1.3.7: OK: 
 1472: blue/2.1.1/bitcoin/app_1.3.8: OK: 
 1981: blue/2.1.1/bitcoin/app_1.3.9: OK: 
+5201: blue/2.1.1/bitcoin/app_1.4.3: OK: 
 372: blue/2.1.1/callisto/app_1.1.5: OK: 
 415: blue/2.1.1/callisto/app_1.1.6: OK: 
 442: blue/2.1.1/callisto/app_1.1.7: OK: 
@@ -183,6 +241,7 @@
 1233: blue/2.1.1/dash/app_1.3.7: OK: 
 1496: blue/2.1.1/dash/app_1.3.8: OK: 
 2025: blue/2.1.1/dash/app_1.3.9: OK: 
+5212: blue/2.1.1/dash/app_1.4.3: OK: 
 741: blue/2.1.1/decred/app_1.3.0: OK: 
 2019: blue/2.1.1/dexon/app_1.2.7: OK: 
 461: blue/2.1.1/digibyte/app_1.2.10: OK: 
@@ -194,6 +253,7 @@
 1217: blue/2.1.1/digibyte/app_1.3.7: OK: 
 1480: blue/2.1.1/digibyte/app_1.3.8: OK: 
 2017: blue/2.1.1/digibyte/app_1.3.9: OK: 
+5226: blue/2.1.1/digibyte/app_1.4.3: OK: 
 462: blue/2.1.1/dogecoin/app_1.2.10: OK: 
 336: blue/2.1.1/dogecoin/app_1.2.9: OK: 
 648: blue/2.1.1/dogecoin/app_1.3.0: OK: 
@@ -203,6 +263,7 @@
 1226: blue/2.1.1/dogecoin/app_1.3.7: OK: 
 1479: blue/2.1.1/dogecoin/app_1.3.8: OK: 
 1999: blue/2.1.1/dogecoin/app_1.3.9: OK: 
+5217: blue/2.1.1/dogecoin/app_1.4.3: OK: 
 650: blue/2.1.1/ellaism/app_1.1.7: OK: 
 928: blue/2.1.1/ellaism/app_1.1.8: OK: 
 1175: blue/2.1.1/ellaism/app_1.1.9: OK: 
@@ -268,6 +329,7 @@
 1237: blue/2.1.1/gamecredits/app_1.3.7: OK: 
 1490: blue/2.1.1/gamecredits/app_1.3.8: OK: 
 2006: blue/2.1.1/gamecredits/app_1.3.9: OK: 
+5213: blue/2.1.1/gamecredits/app_1.4.3: OK: 
 367: blue/2.1.1/gochain/app_1.1.5: OK: 
 420: blue/2.1.1/gochain/app_1.1.6: OK: 
 447: blue/2.1.1/gochain/app_1.1.7: OK: 
@@ -294,12 +356,14 @@
 1239: blue/2.1.1/horizen/app_1.3.7: OK: 
 1489: blue/2.1.1/horizen/app_1.3.8: OK: 
 2028: blue/2.1.1/horizen/app_1.3.9: OK: 
+5203: blue/2.1.1/horizen/app_1.4.3: OK: 
 2003: blue/2.1.1/hpb/app_1.2.7: OK: 
 297: blue/2.1.1/hycon/app_0.2.0: OK: 
 1978: blue/2.1.1/iota/app_0.5.3: OK: 
 2145: blue/2.1.1/kin/app_0.0.3: OK: 
 2311: blue/2.1.1/komodo/app_1.3.11: OK: 
 1236: blue/2.1.1/komodo/app_1.3.7: OK: 
+5210: blue/2.1.1/komodo/app_1.4.3: OK: 
 232: blue/2.1.1/kusd/app_1.1.3: OK: 
 238: blue/2.1.1/kusd/app_1.1.3: OK: 
 267: blue/2.1.1/kusd/app_1.1.4: OK: 
@@ -310,6 +374,7 @@
 1309: blue/2.1.1/kusd/app_1.2.0: OK: 
 1706: blue/2.1.1/kusd/app_1.2.3: OK: 
 2022: blue/2.1.1/kusd/app_1.2.7: OK: 
+5220: blue/2.1.1/lbry/app_1.4.3: OK: 
 467: blue/2.1.1/litecoin/app_1.2.10: OK: 
 340: blue/2.1.1/litecoin/app_1.2.9: OK: 
 645: blue/2.1.1/litecoin/app_1.3.0: OK: 
@@ -319,6 +384,7 @@
 1221: blue/2.1.1/litecoin/app_1.3.7: OK: 
 1484: blue/2.1.1/litecoin/app_1.3.8: OK: 
 2026: blue/2.1.1/litecoin/app_1.3.9: OK: 
+5221: blue/2.1.1/litecoin/app_1.4.3: OK: 
 640: blue/2.1.1/mix/app_1.1.7: OK: 
 927: blue/2.1.1/mix/app_1.1.8: OK: 
 1158: blue/2.1.1/mix/app_1.1.9: OK: 
@@ -338,6 +404,7 @@
 1228: blue/2.1.1/nix/app_1.3.7: OK: 
 1497: blue/2.1.1/nix/app_1.3.8: OK: 
 2030: blue/2.1.1/nix/app_1.3.9: OK: 
+5227: blue/2.1.1/nix/app_1.4.3: OK: 
 926: blue/2.1.1/nos/app_1.1.1: OK: 
 278: blue/2.1.1/ontology/app_1.2: OK: 
 1683: blue/2.1.1/ontology/app_1.2.1: OK: 
@@ -351,6 +418,7 @@
 1231: blue/2.1.1/peercoin/app_1.3.7: OK: 
 1494: blue/2.1.1/peercoin/app_1.3.8: OK: 
 2024: blue/2.1.1/peercoin/app_1.3.9: OK: 
+5206: blue/2.1.1/peercoin/app_1.4.3: OK: 
 422: blue/2.1.1/pirl/app_1.1.6: OK: 
 449: blue/2.1.1/pirl/app_1.1.7: OK: 
 942: blue/2.1.1/pirl/app_1.1.8: OK: 
@@ -367,6 +435,7 @@
 1219: blue/2.1.1/pivx/app_1.3.7: OK: 
 1487: blue/2.1.1/pivx/app_1.3.8: OK: 
 1989: blue/2.1.1/pivx/app_1.3.9: OK: 
+5202: blue/2.1.1/pivx/app_1.4.3: OK: 
 234: blue/2.1.1/poa/app_1.1.3: OK: 
 240: blue/2.1.1/poa/app_1.1.3: OK: 
 263: blue/2.1.1/poa/app_1.1.4: OK: 
@@ -393,6 +462,8 @@
 1222: blue/2.1.1/qtum/app_1.3.7: OK: 
 1493: blue/2.1.1/qtum/app_1.3.8: OK: 
 2021: blue/2.1.1/qtum/app_1.3.9: OK: 
+5216: blue/2.1.1/qtum/app_1.4.3: OK: 
+5209: blue/2.1.1/ravencoin/app_1.4.3: OK: 
 940: blue/2.1.1/reosc/app_1.1.8: OK: 
 1168: blue/2.1.1/reosc/app_1.1.9: OK: 
 1316: blue/2.1.1/reosc/app_1.2.0: OK: 
@@ -428,6 +499,7 @@
 1224: blue/2.1.1/stealth/app_1.3.7: OK: 
 1478: blue/2.1.1/stealth/app_1.3.8: OK: 
 2005: blue/2.1.1/stealth/app_1.3.9: OK: 
+5208: blue/2.1.1/stealth/app_1.4.3: OK: 
 248: blue/2.1.1/stellar/app_3.0.1: OK: 
 1684: blue/2.1.1/stellar/app_3.0.4: OK: 
 473: blue/2.1.1/stratis/app_1.2.10: OK: 
@@ -439,6 +511,7 @@
 1230: blue/2.1.1/stratis/app_1.3.7: OK: 
 1485: blue/2.1.1/stratis/app_1.3.8: OK: 
 1987: blue/2.1.1/stratis/app_1.3.9: OK: 
+5219: blue/2.1.1/stratis/app_1.4.3: OK: 
 1307: blue/2.1.1/tomochain/app_1.2.0: OK: 
 1689: blue/2.1.1/tomochain/app_1.2.3: OK: 
 1992: blue/2.1.1/tomochain/app_1.2.7: OK: 
@@ -463,6 +536,7 @@
 1240: blue/2.1.1/vertcoin/app_1.3.7: OK: 
 1477: blue/2.1.1/vertcoin/app_1.3.8: OK: 
 2018: blue/2.1.1/vertcoin/app_1.3.9: OK: 
+5224: blue/2.1.1/vertcoin/app_1.4.3: OK: 
 475: blue/2.1.1/viacoin/app_1.2.10: OK: 
 348: blue/2.1.1/viacoin/app_1.2.9: OK: 
 654: blue/2.1.1/viacoin/app_1.3.0: OK: 
@@ -472,6 +546,7 @@
 1234: blue/2.1.1/viacoin/app_1.3.7: OK: 
 1474: blue/2.1.1/viacoin/app_1.3.8: OK: 
 2000: blue/2.1.1/viacoin/app_1.3.9: OK: 
+5222: blue/2.1.1/viacoin/app_1.4.3: OK: 
 236: blue/2.1.1/wanchain/app_1.1.3: OK: 
 242: blue/2.1.1/wanchain/app_1.1.3: OK: 
 268: blue/2.1.1/wanchain/app_1.1.4: OK: 
@@ -491,11 +566,13 @@
 1220: blue/2.1.1/xsn/app_1.3.7: OK: 
 1488: blue/2.1.1/xsn/app_1.3.8: OK: 
 1991: blue/2.1.1/xsn/app_1.3.9: OK: 
+5211: blue/2.1.1/xsn/app_1.4.3: OK: 
 431: blue/2.1.1/zcash_overwinter/app_1.2.8: OK: 
 433: blue/2.1.1/zcash_sapling/app_1.2.10-zc: OK: 
 850: blue/2.1.1/zcash/app_1.2.11-zc2: OK: 
 2319: blue/2.1.1/zcash/app_1.3.11: OK: 
 1218: blue/2.1.1/zcash/app_1.3.7: OK: 
+5223: blue/2.1.1/zcash/app_1.4.3: OK: 
 649: blue/2.1.1/zclassic/app_1.3.0: OK: 
 722: blue/2.1.1/zclassic/app_1.3.1: OK: 
 2306: blue/2.1.1/zclassic/app_1.3.11: OK: 
@@ -503,6 +580,7 @@
 1227: blue/2.1.1/zclassic/app_1.3.7: OK: 
 1495: blue/2.1.1/zclassic/app_1.3.8: OK: 
 2013: blue/2.1.1/zclassic/app_1.3.9: OK: 
+5218: blue/2.1.1/zclassic/app_1.4.3: OK: 
 476: blue/2.1.1/zcoin/app_1.2.10: OK: 
 351: blue/2.1.1/zcoin/app_1.2.9: OK: 
 646: blue/2.1.1/zcoin/app_1.3.0: OK: 
@@ -512,6 +590,7 @@
 1223: blue/2.1.1/zcoin/app_1.3.7: OK: 
 1486: blue/2.1.1/zcoin/app_1.3.8: OK: 
 1993: blue/2.1.1/zcoin/app_1.3.9: OK: 
+5204: blue/2.1.1/zcoin/app_1.4.3: OK: 
 947: nanos/1.4.2/aeternity/app_0.3.0: OK: 
 289: nanos/1.4.2/aion/app_1.0.0: OK: 
 294: nanos/1.4.2/akroma/app_1.1.4: OK: 
