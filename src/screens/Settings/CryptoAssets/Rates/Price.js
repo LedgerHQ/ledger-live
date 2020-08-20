@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 14,
-    fontFamily: "Rubik",
+    fontFamily: "Inter",
   },
 });
 

@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    fontFamily: "Rubik",
+    fontFamily: "Inter",
     textAlign: "center",
     color: colors.darkBlue,
     fontSize: 32,
