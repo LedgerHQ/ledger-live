@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: "Rubik",
+    fontFamily: "Inter",
     paddingRight: 8,
     color: colors.darkBlue,
   },
