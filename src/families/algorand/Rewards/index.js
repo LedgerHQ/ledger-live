@@ -25,7 +25,10 @@ type Props = {
 };
 
 const RewardsSection = ({ account }: Props) => {
-  invariant(account && account.algorandResources);
+  invariant(
+    account && account.algorandResources,
+    "algorand resources required",
+  );
   const { rewards } = account.algorandResources;
 
   const currency = getAccountCurrency(account);

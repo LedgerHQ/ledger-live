@@ -100,7 +100,7 @@
     "CantScanQRCode": {
       "title": "Couldn't scan this QR-code: auto-verification not supported by this address"
     },
-    "CosmosClaimRewardsFeesWarning": {
+    "ClaimRewardsFeesWarning": {
       "title": "The amount of rewards are lower than the estimated fees required to claim them",
       "description": ""
     },
