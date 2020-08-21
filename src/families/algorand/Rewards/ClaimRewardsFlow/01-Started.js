@@ -22,6 +22,7 @@ import NavigationScrollView from "../../../../components/NavigationScrollView";
 import IlluRewards from "../../../../icons/images/Rewards";
 import { TrackScreen } from "../../../../analytics";
 import VerifyAddressDisclaimer from "../../../../components/VerifyAddressDisclaimer";
+import TranslatedError from "../../../../components/TranslatedError";
 
 type RouteParams = {
   accountId: string,
@@ -48,18 +49,21 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   const unit = getAccountUnit(mainAccount);
 
-  const { transaction, bridgePending, bridgeError } = useBridgeTransaction(
-    () => {
-      const t = bridge.createTransaction(mainAccount);
+  const {
+    transaction,
+    bridgePending,
+    bridgeError,
+    status,
+  } = useBridgeTransaction(() => {
+    const t = bridge.createTransaction(mainAccount);
 
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "claimReward",
-        }),
-      };
-    },
-  );
+    return {
+      account,
+      transaction: bridge.updateTransaction(t, {
+        mode: "claimReward",
+      }),
+    };
+  });
 
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
@@ -76,6 +80,11 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const onCancel = useCallback(() => {
     navigation.dangerouslyGetParent().pop();
   }, [navigation]);
+
+  const warning =
+    status.warnings &&
+    Object.keys(status.warnings).length > 0 &&
+    Object.values(status.warnings)[0];
 
   return (
     <SafeAreaView style={styles.root}>
@@ -100,6 +109,13 @@ export default function DelegationStarted({ navigation, route }: Props) {
               <Trans i18nKey="algorand.claimRewards.flow.steps.starter.warning" />
             }
           />
+        </View>
+        <View style={styles.warningSection}>
+          {warning && warning instanceof Error ? (
+            <LText selectable secondary semiBold style={styles.warningText}>
+              <TranslatedError error={warning} />
+            </LText>
+          ) : null}
         </View>
         <Button
           event="DelegationStartedBtn"
@@ -156,6 +172,11 @@ const styles = StyleSheet.create({
     width: "100%",
     marginVertical: 8,
   },
+  warningText: {
+    textAlign: "center",
+    color: colors.alert,
+  },
+  warningSection: { padding: 16, height: 80 },
   footer: {
     padding: 16,
     borderTopWidth: 1,

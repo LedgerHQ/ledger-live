@@ -28,12 +28,14 @@ export default function CurrencyUnitValue({
 
   return (
     before +
-    formatCurrencyUnit(unit, value, {
-      showCode,
-      alwaysShowSign,
-      locale,
-      disableRounding,
-    }) +
+    (value
+      ? formatCurrencyUnit(unit, value, {
+          showCode,
+          alwaysShowSign,
+          locale,
+          disableRounding,
+        })
+      : "") +
     after
   );
 }
