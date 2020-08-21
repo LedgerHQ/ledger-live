@@ -29,56 +29,60 @@ export function pickSiblings(
   return sample(withoutEmpties.concat(empties));
 }
 
-type State = {
+type State<T: Transaction> = {
   finalState: boolean,
   stepTitle: string,
   stepValue: string,
   acc: Array<{ title: string, value: string }>,
+  currentStep: ?Step<T>,
+};
+
+type Step<T: Transaction> = {
+  title: string,
+  expectedValue?: (
+    DeviceActionArg<T, State<T>>,
+    acc: Array<{ title: string, value: string }>
+  ) => string,
+  ignoreAssertionFailure?: boolean,
+  trimValue?: boolean,
+  button?: string, // action to apply in term of button press
+  final?: boolean, // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
 };
 
 type FlowDesc<T: Transaction> = {
-  steps: Array<{
-    title: string,
-    expectedValue?: (
-      DeviceActionArg<T, State>,
-      acc: Array<{ title: string, value: string }>
-    ) => string,
-    ignoreAssertionFailure?: boolean,
-    trimValue?: boolean,
-    button?: string, // action to apply in term of button press
-    final?: boolean, // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
-  }>,
+  steps: Array<Step<T>>,
+  fallback: (DeviceActionArg<T, State<T>>) => ?Step<T>,
 };
 
 // generalized logic of device actions
 export function deviceActionFlow<T: Transaction>(
   description: FlowDesc<T>
-): DeviceAction<T, State> {
-  return (arg: DeviceActionArg<T, State>) => {
+): DeviceAction<T, State<T>> {
+  return (arg: DeviceActionArg<T, State<T>>) => {
     invariant(
       arg.appCandidate.model === "nanoS",
       "FIXME: stepper logic is only implemented for Nano S"
     );
 
     const { transport, event, state } = arg;
-    let { finalState, stepTitle, stepValue, acc } = state || {
+    let { finalState, stepTitle, stepValue, acc, currentStep } = state || {
       finalState: false,
       stepTitle: "",
       stepValue: "",
       acc: [],
+      currentStep: null,
     };
 
     if (!finalState) {
       const possibleKnownStep = description.steps.find((s) =>
         event.text.startsWith(s.title)
       );
-      const prev = description.steps.find((s) => s.title === stepTitle);
       if (possibleKnownStep) {
         const { final, title, button } = possibleKnownStep;
         if (stepValue && possibleKnownStep.title !== stepTitle) {
           // there were accumulated text and we are on new step, we need to release it and compare to expected
-          if (prev && prev.expectedValue) {
-            const { expectedValue, ignoreAssertionFailure } = prev;
+          if (currentStep && currentStep.expectedValue) {
+            const { expectedValue, ignoreAssertionFailure } = currentStep;
             if (!ignoreAssertionFailure) {
               expect({
                 [stepTitle]: stepValue,
@@ -100,17 +104,18 @@ export function deviceActionFlow<T: Transaction>(
         }
         // text is the title of the step. we assume screen event starts / ends.
         stepTitle = title;
+        currentStep = possibleKnownStep;
         if (final) {
           finalState = true;
         }
-      } else if (prev) {
+      } else if (currentStep) {
         let { text } = event;
-        if (prev.trimValue) text = text.trim();
+        if (currentStep.trimValue) text = text.trim();
         stepValue += text;
       }
     }
 
     log("bot/flow", `'${event.text}' ~> ${stepTitle}: ${stepValue}`);
-    return { finalState, stepTitle, stepValue, acc };
+    return { finalState, stepTitle, stepValue, acc, currentStep };
   };
 }

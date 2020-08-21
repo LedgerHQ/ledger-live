@@ -58,7 +58,7 @@ function getDeviceTransactionConfig({
   if (mode === "unfreeze") {
     fields.push({
       type: "address",
-      label: "Delegate To",
+      label: "Delegated To",
       address: mainAccount.freshAddress,
     });
   }

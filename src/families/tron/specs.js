@@ -13,7 +13,8 @@ import type { AppSpec } from "../../bot/types";
 import { getUnfreezeData, getNextRewardDate } from "./react";
 
 const currency = getCryptoCurrencyById("tron");
-const minimalAmount = parseCurrencyUnit(currency.units[0], "5");
+const minimalAmount = parseCurrencyUnit(currency.units[0], "1");
+const maxAccount = 10;
 
 const tron: AppSpec<Transaction> = {
   name: "Tron",
@@ -26,9 +27,10 @@ const tron: AppSpec<Transaction> = {
   mutations: [
     {
       name: "move 50% to another account",
+      maxRun: 2,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         const amount = maxSpendable.div(2).integerValue();
         return {
@@ -46,9 +48,10 @@ const tron: AppSpec<Transaction> = {
     },
     {
       name: "send max to another account",
+      maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         return {
           transaction: bridge.createTransaction(account),
@@ -61,6 +64,7 @@ const tron: AppSpec<Transaction> = {
     },
     {
       name: "freeze 25% to bandwidth | energy",
+      maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
         const amount = maxSpendable.div(4).integerValue();
@@ -110,6 +114,7 @@ const tron: AppSpec<Transaction> = {
     },
     {
       name: "unfreeze bandwith / energy",
+      maxRun: 1,
       transaction: ({ account, bridge }) => {
         const TP = BigNumber(get(account, "tronResources.tronPower", "0"));
         invariant(TP.gt(0), "no frozen assets");
@@ -151,6 +156,7 @@ const tron: AppSpec<Transaction> = {
     },
     {
       name: "submit vote",
+      maxRun: 1,
       transaction: ({ account, bridge, preloadedData }) => {
         const TP = BigNumber(get(account, "tronResources.tronPower", "0"));
         invariant(TP.gt(0), "no tron power to vote");
@@ -209,7 +215,7 @@ const tron: AppSpec<Transaction> = {
         );
         invariant(trc10Account, "no trc10 account");
         invariant(trc10Account.gt(0), "trc10 account has no balance");
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         return {
           transaction: bridge.createTransaction(account),
@@ -259,7 +265,7 @@ const tron: AppSpec<Transaction> = {
         );
         invariant(trc20Account, "no trc20 account");
         invariant(trc20Account.gt(0), "trc20 account has no balance");
-        const sibling = pickSiblings(siblings);
+        const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         return {
           transaction: bridge.createTransaction(account),
