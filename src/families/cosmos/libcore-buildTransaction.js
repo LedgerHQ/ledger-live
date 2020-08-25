@@ -73,7 +73,7 @@ export async function cosmosBuildTransaction({
     const gasRequest = await core.CosmosGasLimitRequest.init(
       memoTransaction,
       messages,
-      getEnv("COSMOS_GAS_AMPLIFIER")
+      String(getEnv("COSMOS_GAS_AMPLIFIER"))
     );
     estimatedGas = await libcoreBigIntToBigNumber(
       await cosmosLikeAccount.estimateGas(gasRequest)

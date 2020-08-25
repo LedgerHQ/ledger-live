@@ -20,7 +20,7 @@ export type EthereumGasLimitRequest = {
   data?: string,
   gas?: string,
   gasPrice?: string,
-  amplifier?: number,
+  amplifier: string,
 };
 
 declare class CoreEthereumLikeAddress {

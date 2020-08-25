@@ -135,7 +135,7 @@ export function inferEthereumGasLimitRequest(
 ): EthereumGasLimitRequest {
   const r: EthereumGasLimitRequest = {
     from: account.freshAddress,
-    amplifier: 2,
+    amplifier: "2",
   };
   if (transaction.gasPrice) {
     r.gasPrice = "0x" + transaction.gasPrice.toString();

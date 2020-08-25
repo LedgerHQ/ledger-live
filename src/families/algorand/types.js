@@ -94,14 +94,14 @@ declare class CoreAlgorandAccount {
   broadcastRawTransaction(transaction: string): Promise<string>;
   getSpendableBalance(operationType: number): Promise<CoreAmount>;
   hasAsset(address: string, assetId: string): Promise<boolean>;
-  isAmountValid(address: string, amount: string): Promise<boolean>
+  isAmountValid(address: string, amount: string): Promise<boolean>;
 }
 
 declare class CoreAlgorandOperation {
   getTransaction(): Promise<CoreAlgorandTransaction>;
   getAlgorandOperationType(): Promise<number>;
   getAssetAmount(): Promise<string>;
-  getRewards(): Promise<string>
+  getRewards(): Promise<string>;
 }
 
 export type CoreCurrencySpecifics = {};
