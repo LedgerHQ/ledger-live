@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   collectButton: {
     flexBasis: "auto",
-    flexGrow: 0.5,
+    flexGrow: 0.1,
   },
   labelSection: {
     flex: 1,

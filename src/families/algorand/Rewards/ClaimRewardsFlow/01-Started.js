@@ -49,12 +49,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   const unit = getAccountUnit(mainAccount);
 
-  const {
-    transaction,
-    bridgePending,
-    bridgeError,
-    status,
-  } = useBridgeTransaction(() => {
+  const { transaction, status } = useBridgeTransaction(() => {
     const t = bridge.createTransaction(mainAccount);
 
     return {
@@ -77,10 +72,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
     });
   }, [navigation, route.params, transaction]);
 
-  const onCancel = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
-  }, [navigation]);
-
   const warning =
     status.warnings &&
     Object.keys(status.warnings).length > 0 &&
@@ -101,8 +92,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
             values={{ amount: formattedRewards }}
           />
         </LText>
-      </NavigationScrollView>
-      <View style={styles.footer}>
         <View style={styles.warning}>
           <VerifyAddressDisclaimer
             text={
@@ -110,13 +99,15 @@ export default function DelegationStarted({ navigation, route }: Props) {
             }
           />
         </View>
-        <View style={styles.warningSection}>
-          {warning && warning instanceof Error ? (
+      </NavigationScrollView>
+      <View style={styles.footer}>
+        {warning && warning instanceof Error ? (
+          <View style={styles.warningSection}>
             <LText selectable secondary semiBold style={styles.warningText}>
               <TranslatedError error={warning} />
             </LText>
-          ) : null}
-        </View>
+          </View>
+        ) : null}
         <Button
           event="DelegationStartedBtn"
           onPress={onNext}
@@ -124,14 +115,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
             <Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />
           }
           type="primary"
-        />
-        <Button
-          event="DelegationStartedCancel"
-          disabled={bridgePending || !!bridgeError}
-          onPress={onCancel}
-          title={<Trans i18nKey="common.cancel" />}
-          type="darkSecondary"
-          outline={false}
         />
       </View>
     </SafeAreaView>
@@ -147,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContainer: {
-    paddingHorizontal: 32,
+    paddingHorizontal: 16,
     paddingVertical: 32,
     alignItems: "center",
   },
