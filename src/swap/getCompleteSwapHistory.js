@@ -47,6 +47,11 @@ const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
     }
 
     if (account && toAccount && status) {
+      let fromParentAccount;
+      if (account.type !== "Account") {
+        fromParentAccount = accounts.find((a) => a.id === account.parentId);
+      }
+
       return {
         provider,
         swapId,
@@ -54,6 +59,8 @@ const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
         toAccount,
         toParentAccount,
         fromAccount: account,
+        fromParentAccount:
+          fromParentAccount?.type === "Account" ? fromParentAccount : undefined,
         operation: op,
         fromAmount,
         toAmount,
