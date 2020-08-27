@@ -98,7 +98,7 @@ function getDeviceTransactionConfig({
       }
 
       if (assetId) {
-        const token = findTokenById(addPrefixToken(assetId));
+        const token = findTokenById(assetId);
         fields.push({
           type: "text",
           label: "Asset ID",
