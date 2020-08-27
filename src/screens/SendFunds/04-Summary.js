@@ -114,7 +114,8 @@ export default function SendSummary({ navigation, route }: Props) {
 
   if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
   const { amount, totalSpent, errors } = status;
-  const { transaction: transactionError, gasPrice } = errors;
+  const { transaction: transactionError } = errors;
+  const error = status.errors[Object.keys(status.errors)[0]];
   const mainAccount = getMainAccount(account, parentAccount);
 
   // console.log({ transaction, status, bridgePending });
@@ -148,13 +149,13 @@ export default function SendSummary({ navigation, route }: Props) {
           transaction={transaction}
           navigation={navigation}
         />
-        {gasPrice && gasPrice instanceof NotEnoughGas ? (
+        {error ? (
           <View style={styles.gasPriceError}>
             <View style={{ padding: 4 }}>
               <Info size={12} color={colors.alert} />
             </View>
             <LText style={[styles.error, styles.gasPriceErrorText]}>
-              <TranslatedError error={gasPrice} />
+              <TranslatedError error={error} />
             </LText>
           </View>
         ) : null}
@@ -173,7 +174,7 @@ export default function SendSummary({ navigation, route }: Props) {
         <LText style={styles.error}>
           <TranslatedError error={transactionError} />
         </LText>
-        {gasPrice && gasPrice instanceof NotEnoughGas ? (
+        {error && error instanceof NotEnoughGas ? (
           <Button
             event="SummaryBuyEth"
             type="primary"
