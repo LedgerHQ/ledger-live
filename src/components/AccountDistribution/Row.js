@@ -47,7 +47,7 @@ export default function Row({
         parentId: parentAccount ? parentAccount.id : undefined,
       });
     },
-    [account, navigation],
+    [account.id, navigation],
   );
 
   const parentAccount =
