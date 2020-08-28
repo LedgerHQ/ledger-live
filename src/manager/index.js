@@ -3,6 +3,7 @@
 // Higher level cache on top of Manager
 
 import semver from "semver";
+import chunk from "lodash/chunk";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import { UnknownMCU } from "@ledgerhq/errors";
 import type {
@@ -83,17 +84,32 @@ const CacheAPI = {
     // FIXME these will be made mandatory
     deviceModel?: DeviceModelId,
     deviceInfo?: DeviceInfo
-  ): string => {
+  ): string[] => {
     const shouldEllipsis =
       deviceModel && deviceInfo
         ? deviceModel === "blue" ||
           (deviceModel === "nanoS" &&
             semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "1.6.0"))
         : true;
+
+    const shouldSplitIntoFour =
+      deviceInfo && deviceModel
+        ? (deviceModel === "nanoS" &&
+            semver.gt(
+              semver.valid(semver.coerce(deviceInfo.version)),
+              "1.6.0"
+            )) ||
+          deviceModel === "nanoX"
+        : false;
     const hash = (input || "").toUpperCase();
-    return hash.length > 8 && shouldEllipsis
-      ? `${hash.slice(0, 4)}...${hash.substr(-4)}`
-      : hash;
+
+    const splitLength = Math.round(hash.length / 4);
+
+    return shouldSplitIntoFour
+      ? chunk(hash.split(""), splitLength).map((item) => item.join(""))
+      : hash.length > 8 && shouldEllipsis
+      ? [`${hash.slice(0, 4)}...${hash.substr(-4)}`]
+      : [hash];
   },
 
   canHandleInstall,
