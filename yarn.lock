@@ -1207,10 +1207,10 @@
     rxjs "^6.6.2"
     uuid "^3.4.0"
 
-"@ledgerhq/react-native-ledger-core@4.15.10":
-  version "4.15.10"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.15.10.tgz#7b7c89b394e9320d45ace9f8bcb4d854581d1a22"
-  integrity sha512-QVfkC4mtNFb5RSYYh6ra9l2azHg1Q+VLJ/Wiv0vugzX1f1eJIwkpfoUE49Z2sxiz38pZKlOWNF0IrDNOthrgZQ==
+"@ledgerhq/react-native-ledger-core@4.15.11":
+  version "4.15.11"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.15.11.tgz#84ed4c754d6ae1fdedbf08261daf692a8e929b84"
+  integrity sha512-FilLu7+Ws5CDI6k00+ZU3Cb1m8quanJ+sINqAVXbThSwKtGmHwvAvUolkpubdk/tKDXutqBQxt0PjqsqCNu1Pg==
 
 "@ledgerhq/react-native-passcode-auth@^2.1.0":
   version "2.1.0"
