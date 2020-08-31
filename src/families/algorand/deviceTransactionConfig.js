@@ -9,7 +9,7 @@ import type { Transaction } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit, findTokenById } from "../../currencies";
-import { extractTokenId, addPrefixToken } from "./tokens";
+import { extractTokenId } from "./tokens";
 
 export const displayTokenValue = (token: TokenCurrency) =>
   `${token.name} (#${extractTokenId(token.id)})`;
