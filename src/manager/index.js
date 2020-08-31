@@ -95,7 +95,7 @@ const CacheAPI = {
     const shouldSplitIntoFour =
       deviceInfo && deviceModel
         ? (deviceModel === "nanoS" &&
-            semver.gt(
+            semver.gte(
               semver.valid(semver.coerce(deviceInfo.version)),
               "1.6.0"
             )) ||
