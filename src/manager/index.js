@@ -92,7 +92,7 @@ const CacheAPI = {
             semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "1.6.0"))
         : true;
 
-    const shouldSplitIntoFour =
+    const shouldSplit =
       deviceInfo && deviceModel
         ? (deviceModel === "nanoS" &&
             semver.gte(
@@ -103,9 +103,9 @@ const CacheAPI = {
         : false;
     const hash = (input || "").toUpperCase();
 
-    const splitLength = Math.round(hash.length / 4);
+    const splitLength = deviceModel === "nanoS" ? 16 : 17;
 
-    return shouldSplitIntoFour
+    return shouldSplit
       ? chunk(hash.split(""), splitLength).map((item) => item.join(""))
       : hash.length > 8 && shouldEllipsis
       ? [`${hash.slice(0, 4)}...${hash.substr(-4)}`]
