@@ -96,12 +96,12 @@ export const getOperationConfirmationNumber = (
   operation: Operation,
   account: Account
 ): number =>
-  operation.blockHeight ? account.blockHeight - operation.blockHeight : 0;
+  operation.blockHeight ? account.blockHeight - operation.blockHeight + 1 : 0;
 
 export const getOperationConfirmationDisplayableNumber = (
   operation: Operation,
   account: Account
 ): string =>
   account.blockHeight && operation.blockHeight && account.currency.blockAvgTime
-    ? String(account.blockHeight - operation.blockHeight)
+    ? String(account.blockHeight - operation.blockHeight + 1)
     : "";
