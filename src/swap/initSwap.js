@@ -173,7 +173,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           mainPayoutCurrency.family
         ].getSerializedAddressParameters(
           payoutAccount.freshAddressPath,
-          payoutAccount.derivationMode
+          payoutAccount.derivationMode,
+          mainPayoutCurrency.id
         );
         if (unsubscribed) return;
 
@@ -208,7 +209,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           mainRefundCurrency.family
         ].getSerializedAddressParameters(
           refundAccount.freshAddressPath,
-          refundAccount.derivationMode
+          refundAccount.derivationMode,
+          mainRefundCurrency.id
         );
         if (unsubscribed) return;
 
