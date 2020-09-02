@@ -9,21 +9,19 @@ const addressFormatMap = {
   legacy: 0,
   p2sh: 1,
   bech32: 2,
+  bitcoin_cash: 3,
 };
 
-/**
- * Swap app is expecting we pass the output of this as a concat buffer.
- * To check if it will be different per family or not once more families
- * are supported.
- * https://github.com/teams2ua/ledgerjs/blob/hw-swap-app/packages/hw-app-swap/src/Swap.js#L85-L104
- */
 const getSerializedAddressParameters = (
   path: string,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
+  addressFormat?: string
 ): { addressParameters: Buffer } => {
-  const format = getAddressFormatDerivationMode(derivationMode);
+  const format =
+    addressFormat || getAddressFormatDerivationMode(derivationMode);
+
   invariant(
-    format === "legacy" || format === "p2sh" || format === "bech32",
+    Object.keys(addressFormatMap).includes(format),
     "unsupported format %s",
     format
   );
