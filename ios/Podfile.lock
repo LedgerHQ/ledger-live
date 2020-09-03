@@ -1,5 +1,5 @@
 PODS:
-  - Analytics (4.0.4)
+  - Analytics (4.0.5)
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.4)
   - CocoaLibEvent (1.0.0)
@@ -310,8 +310,8 @@ PODS:
     - ReactCommon/jscallinvoker (= 0.61.2)
   - ReactNativeART (1.1.2):
     - React
-  - RNAnalytics (0.1.0-beta.0):
-    - Analytics
+  - RNAnalytics (1.3.0):
+    - Analytics (~> 4.0.5)
     - React
   - RNCAsyncStorage (1.8.1):
     - React
@@ -544,7 +544,7 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  Analytics: 231b01fdaa9704105881dc82def7b7b1d6571edb
+  Analytics: 4bcf052c91e1f3339219e83d6a036fb2bd7c218d
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
@@ -599,7 +599,7 @@ SPEC CHECKSUMS:
   React-RCTVibration: fb54c732fd20405a76598e431aa2f8c2bf527de9
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
   ReactNativeART: c580fba2f7d188d8fa4418ce78db8130654ed10f
-  RNAnalytics: 5c242b7f8117f108f5df71e96b908185db3fb4ee
+  RNAnalytics: c1ec7376dc5ad64258868759022adc66843ea7ad
   RNCAsyncStorage: e0dd7c8a36543b4ef84969acd9f8aceba3a92dc2
   RNCMaskedView: 76c40a1d41c3e2535df09246a2b5487f04de0814
   RNGestureHandler: dde546180bf24af0b5f737c8ad04b6f3fa51609a
