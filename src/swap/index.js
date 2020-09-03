@@ -11,9 +11,9 @@ import getStatus from "./getStatus";
 import getProviders from "./getProviders";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
+import { getEnv } from "../env";
 
-const swapAPIBaseURL = "https://swap.staging.aws.ledger.fr";
-
+const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 const swapProviders: {
   [string]: { nameAndPubkey: Buffer, signature: Buffer },
 } = {
@@ -59,7 +59,7 @@ const isCurrencySwapSupported = (
 };
 
 export {
-  swapAPIBaseURL,
+  getSwapAPIBaseURL,
   getProviderNameAndSignature,
   getProviders,
   getStatus,

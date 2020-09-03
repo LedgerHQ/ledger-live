@@ -1,7 +1,7 @@
 // @flow
 
 import network from "../network";
-import { swapAPIBaseURL } from "./";
+import { getSwapAPIBaseURL } from "./";
 import type { GetMultipleStatus, GetStatus } from "./types";
 import { getEnv } from "../env";
 import { mockGetStatus } from "./mock";
@@ -21,7 +21,7 @@ export const getMultipleStatus: GetMultipleStatus = async (statusList) => {
 
   const res = await network({
     method: "POST",
-    url: `${swapAPIBaseURL}/swap/status`,
+    url: `${getSwapAPIBaseURL()}/swap/status`,
     data: statusList,
   });
 
