@@ -8,6 +8,7 @@ import {
   FeeTooHigh,
   GasLessThanEstimate,
   NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
 } from "@ledgerhq/errors";
 import type { AccountLike } from "../../../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
@@ -140,11 +141,15 @@ const getTransactionStatus = async (a, t) => {
     if (amount.eq(0)) {
       errors.amount = new AmountRequired();
     } else if (
-      !tokenAccount
-        ? amount.gt(account.balance.minus(estimatedFees))
-        : amount.gt(tokenAccount.balance) || estimatedFees.gt(a.balance)
+      amount.gt(
+        !tokenAccount
+          ? account.balance.minus(estimatedFees)
+          : tokenAccount.balance
+      )
     ) {
       errors.amount = new NotEnoughBalance();
+    } else if (tokenAccount && estimatedFees.gt(a.balance)) {
+      errors.amount = new NotEnoughBalanceInParentAccount();
     }
   }
 
