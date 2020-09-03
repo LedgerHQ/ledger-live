@@ -3,7 +3,12 @@
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import type { SwapState } from "./types";
-import type { AccountLike, TokenCurrency, CryptoCurrency } from "../types";
+import type {
+  Account,
+  AccountLike,
+  TokenCurrency,
+  CryptoCurrency,
+} from "../types";
 import type { InstalledItem } from "../apps";
 import { flattenAccounts, getAccountCurrency } from "../account";
 
@@ -13,16 +18,27 @@ export type CurrenciesStatus = { [string]: CurrencyStatus };
 
 export const initState: ({
   okCurrencies: (TokenCurrency | CryptoCurrency)[],
-}) => SwapState = ({ okCurrencies }) => ({
+  defaultCurrency?: TokenCurrency | CryptoCurrency,
+  defaultAccount?: AccountLike,
+  defaultParentAccount?: Account,
+}) => SwapState = ({
+  okCurrencies,
+  defaultCurrency,
+  defaultAccount,
+  defaultParentAccount,
+}) => ({
   swap: {
-    exchange: {},
+    exchange: {
+      fromAccount: defaultAccount,
+      fromParentAccount: defaultParentAccount,
+    },
     exchangeRate: undefined,
   },
   error: null,
   isLoading: false,
   useAllAmount: false,
   okCurrencies,
-  fromCurrency: null,
+  fromCurrency: defaultCurrency,
   toCurrency: null,
   fromAmount: BigNumber(0),
 });
