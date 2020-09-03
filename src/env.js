@@ -322,6 +322,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "dev flag to skip onboarding flow",
   },
+  SWAP_API_BASE: {
+    def: "https://swap.aws.prd.ldg-tech.com",
+    parser: stringParser,
+    desc: "Swap API base",
+  },
   SYNC_ALL_INTERVAL: {
     def: 2 * 60 * 1000,
     parser: intParser,

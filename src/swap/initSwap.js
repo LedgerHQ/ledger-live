@@ -22,7 +22,7 @@ import { withDevice } from "../hw/deviceAccess";
 import {
   getCurrencySwapConfig,
   getProviderNameAndSignature,
-  swapAPIBaseURL,
+  getSwapAPIBaseURL,
 } from "./";
 import { getEnv } from "../env";
 
@@ -80,7 +80,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         try {
           res = await network({
             method: "POST",
-            url: `${swapAPIBaseURL}/swap`,
+            url: `${getSwapAPIBaseURL()}/swap`,
             data: [
               {
                 provider,

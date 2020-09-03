@@ -5,7 +5,7 @@ import type { Transaction } from "../types";
 import { getAccountCurrency, getAccountUnit } from "../account";
 import { mockGetExchangeRates } from "./mock";
 import network from "../network";
-import { swapAPIBaseURL } from "./";
+import { getSwapAPIBaseURL } from "./";
 import { getEnv } from "../env";
 import { BigNumber } from "bignumber.js";
 import { SwapExchangeRateOutOfBounds } from "../errors";
@@ -27,7 +27,7 @@ const getExchangeRates: GetExchangeRates = async (
 
   const res = await network({
     method: "POST",
-    url: `${swapAPIBaseURL}/rate/fixed`,
+    url: `${getSwapAPIBaseURL()}/rate/fixed`,
     data: [
       {
         from,

@@ -2,7 +2,7 @@
 
 import type { GetProviders } from "./types";
 import network from "../network";
-import { swapAPIBaseURL } from "./";
+import { getSwapAPIBaseURL } from "./";
 import { getEnv } from "../env";
 import { mockGetProviders } from "./mock";
 import { SwapNoAvailableProviders } from "../errors";
@@ -12,7 +12,7 @@ const getProviders: GetProviders = async () => {
 
   const res = await network({
     method: "GET",
-    url: `${swapAPIBaseURL}/providers`,
+    url: `${getSwapAPIBaseURL()}/providers`,
   });
 
   if (!res.data.length) {

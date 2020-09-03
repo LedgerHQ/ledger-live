@@ -13,24 +13,19 @@ export type CurrenciesStatus = { [string]: CurrencyStatus };
 
 export const initState: ({
   okCurrencies: (TokenCurrency | CryptoCurrency)[],
-}) => SwapState = ({ okCurrencies }) => {
-  const fromCurrency = okCurrencies[0];
-  const toCurrency = okCurrencies.find((c) => c !== fromCurrency);
-
-  return {
-    swap: {
-      exchange: {},
-      exchangeRate: undefined,
-    },
-    error: null,
-    isLoading: false,
-    useAllAmount: false,
-    okCurrencies,
-    fromCurrency,
-    toCurrency,
-    fromAmount: BigNumber(0),
-  };
-};
+}) => SwapState = ({ okCurrencies }) => ({
+  swap: {
+    exchange: {},
+    exchangeRate: undefined,
+  },
+  error: null,
+  isLoading: false,
+  useAllAmount: false,
+  okCurrencies,
+  fromCurrency: null,
+  toCurrency: null,
+  fromAmount: BigNumber(0),
+});
 
 export const canRequestRates = (state: SwapState) => {
   const { swap, error, fromAmount } = state;
@@ -116,11 +111,8 @@ export const reducer = (
     }
     case "setFromCurrency": {
       let toCurrency = state.toCurrency;
-      if (
-        !state.toCurrency ||
-        state.toCurrency?.id === payload.fromCurrency?.id
-      ) {
-        toCurrency = state.okCurrencies.find((c) => c !== payload.fromCurrency);
+      if (state.toCurrency?.id === payload.fromCurrency?.id) {
+        toCurrency = null;
       }
       newState = {
         ...state,
