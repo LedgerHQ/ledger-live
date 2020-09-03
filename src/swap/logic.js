@@ -111,11 +111,8 @@ export const reducer = (
     }
     case "setFromCurrency": {
       let toCurrency = state.toCurrency;
-      if (
-        !state.toCurrency ||
-        state.toCurrency?.id === payload.fromCurrency?.id
-      ) {
-        toCurrency = state.okCurrencies.find((c) => c !== payload.fromCurrency);
+      if (state.toCurrency?.id === payload.fromCurrency?.id) {
+        toCurrency = null;
       }
       newState = {
         ...state,
