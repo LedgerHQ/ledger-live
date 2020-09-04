@@ -37,11 +37,12 @@ export default function AccountHeaderTitle() {
 const styles = StyleSheet.create({
   title: {
     fontSize: 16,
+    paddingRight: 32,
   },
   headerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginHorizontal: 24,
+    marginHorizontal: 32,
     paddingVertical: 5,
   },
   iconContainer: {
