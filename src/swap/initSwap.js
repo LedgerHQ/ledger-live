@@ -15,8 +15,7 @@ import network from "../network";
 import { getAccountBridge } from "../bridge";
 import { BigNumber } from "bignumber.js";
 import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../errors";
-import type { Exchange, ExchangeRate, SwapRequestEvent } from "./types";
-import type { Transaction } from "../types";
+import type { SwapRequestEvent, InitSwapInput } from "./types";
 import { Observable } from "rxjs";
 import { withDevice } from "../hw/deviceAccess";
 import {
@@ -28,13 +27,6 @@ import { getEnv } from "../env";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
-
-export type InitSwapInput = {
-  exchange: Exchange,
-  exchangeRate: ExchangeRate,
-  transaction: Transaction,
-  deviceId: string,
-};
 
 // init a swap with the Exchange app
 // throw if TransactionStatus have errors
