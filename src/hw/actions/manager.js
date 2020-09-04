@@ -1,5 +1,13 @@
 // @flow
-import { concat, of, empty, interval, Observable } from "rxjs";
+import {
+  concat,
+  of,
+  empty,
+  interval,
+  Observable,
+  TimeoutError,
+  throwError,
+} from "rxjs";
 import {
   scan,
   debounce,
@@ -7,6 +15,8 @@ import {
   catchError,
   switchMap,
   tap,
+  distinctUntilChanged,
+  timeout,
 } from "rxjs/operators";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
@@ -19,6 +29,9 @@ import type {
   Input as ConnectManagerInput,
 } from "../connectManager";
 import type { Action, Device } from "./types";
+import isEqual from "lodash/isEqual";
+import { ConnectManagerTimeout } from "../../errors";
+import { currentMode } from "./app";
 
 type State = {|
   isLoading: boolean,
@@ -144,6 +157,113 @@ const reducer = (state: State, e: Event): State => {
   return state;
 };
 
+const implementations = {
+  // in this paradigm, we know that deviceSubject is reflecting the device events
+  // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
+  event: ({ deviceSubject, connectManager }) =>
+    deviceSubject.pipe(debounceTime(1000), switchMap(connectManager)),
+
+  // in this paradigm, we can't observe directly the device, so we have to poll it
+  polling: ({ deviceSubject, connectManager }) =>
+    Observable.create((o) => {
+      const POLLING = 2000;
+      const INIT_DEBOUNCE = 5000;
+      const DISCONNECT_DEBOUNCE = 5000;
+      const DEVICE_POLLING_TIMEOUT = 20000;
+
+      // this pattern allows to actually support events based (like if deviceSubject emits new device changes) but inside polling paradigm
+      let pollingOnDevice;
+      const sub = deviceSubject.subscribe((d) => {
+        if (d) {
+          pollingOnDevice = d;
+        }
+      });
+      let initT = setTimeout(() => {
+        // initial timeout to unset the device if it's still not connected
+        o.next({ type: "deviceChange", device: null });
+        device = null;
+        log("app/polling", "device init timeout");
+      }, INIT_DEBOUNCE);
+
+      let connectSub;
+      let loopT;
+      let disconnectT;
+      let device = null; // used as internal state for polling
+
+      function loop() {
+        if (!pollingOnDevice) {
+          loopT = setTimeout(loop, POLLING);
+          return;
+        }
+        log("manager/polling", "polling loop");
+        connectSub = connectManager(pollingOnDevice)
+          .pipe(
+            timeout(DEVICE_POLLING_TIMEOUT),
+            catchError((err) =>
+              err instanceof TimeoutError
+                ? of({
+                    type: "error",
+                    error: (new ConnectManagerTimeout(null, {
+                      productName: pollingOnDevice?.deviceName,
+                    }): Error),
+                  })
+                : throwError(err)
+            )
+          )
+          .subscribe({
+            next: (event) => {
+              if (initT) {
+                initT = null;
+                clearTimeout(initT);
+              }
+              if (disconnectT) {
+                // any connect app event unschedule the disconnect debounced event
+                disconnectT = null;
+                clearTimeout(disconnectT);
+              }
+              if (event.type === "unresponsiveDevice") {
+                return; // ignore unresponsive case which happens for polling
+              } else if (event.type === "disconnected") {
+                // the disconnect event is delayed to debounce the reconnection that happens when switching apps
+                disconnectT = setTimeout(() => {
+                  disconnectT = null;
+                  // a disconnect will locally be remembered via locally setting device to null...
+                  device = null;
+                  o.next(event);
+                  log("app/polling", "device disconnect timeout");
+                }, DISCONNECT_DEBOUNCE);
+              } else {
+                if (device !== pollingOnDevice) {
+                  // ...but any time an event comes back, it means our device was responding and need to be set back on in polling context
+                  device = pollingOnDevice;
+                  o.next({ type: "deviceChange", device });
+                }
+                o.next(event);
+              }
+            },
+            complete: () => {
+              // poll again in some time
+              loopT = setTimeout(loop, POLLING);
+            },
+            error: (e) => {
+              o.error(e);
+            },
+          });
+      }
+
+      // delay a bit the first loop run in order to be async and wait pollingOnDevice
+      loopT = setTimeout(loop, 0);
+
+      return () => {
+        if (initT) clearTimeout(initT);
+        if (disconnectT) clearTimeout(disconnectT);
+        if (connectSub) connectSub.unsubscribe();
+        sub.unsubscribe();
+        clearTimeout(loopT);
+      };
+    }).pipe(distinctUntilChanged(isEqual)),
+};
+
 export const createAction = (
   connectManagerExec: (ConnectManagerInput) => Observable<ConnectManagerEvent>
 ): ManagerAction => {
@@ -164,15 +284,17 @@ export const createAction = (
     const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
+    const impl = implementations[currentMode]({
+      deviceSubject,
+      connectManager,
+    });
+
     useEffect(() => {
       if (repairModalOpened) return;
 
-      const sub = deviceSubject
+      const sub = impl
         .pipe(
           // debounce a bit the connect/disconnect event that we don't need
-          debounceTime(1000),
-          // each time there is a device change, we pipe to the command
-          switchMap(connectManager),
           tap((e) => log("actions-manager-event", e.type, e)),
           // tap(e => console.log("connectManager event", e)),
           // we gather all events with a reducer into the UI state

@@ -403,7 +403,7 @@ const implementations = {
     }).pipe(distinctUntilChanged(isEqual)),
 };
 
-let currentMode: $Keys<typeof implementations> = "event";
+export let currentMode: $Keys<typeof implementations> = "event";
 
 export function setDeviceMode(mode: $Keys<typeof implementations>) {
   currentMode = mode;
