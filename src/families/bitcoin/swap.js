@@ -18,7 +18,9 @@ const getSerializedAddressParameters = (
   addressFormat?: string
 ): { addressParameters: Buffer } => {
   const format =
-    addressFormat || getAddressFormatDerivationMode(derivationMode);
+    addressFormat && addressFormat in addressFormatMap
+      ? addressFormat
+      : getAddressFormatDerivationMode(derivationMode);
 
   invariant(
     Object.keys(addressFormatMap).includes(format),

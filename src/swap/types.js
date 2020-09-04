@@ -9,6 +9,7 @@ import type {
   Transaction,
   CryptoCurrency,
   TokenCurrency,
+  TransactionRaw,
 } from "../types";
 
 export type Exchange = {
@@ -31,7 +32,14 @@ export type ExchangeRate = {
   rateId: string,
   provider: string,
   providerURL?: ?string,
-  expirationDate?: ?Date, // FIXME not available? Asked channel where we get this from
+};
+
+export type ExchangeRateRaw = {
+  rate: string,
+  magnitudeAwareRate: string,
+  rateId: string,
+  provider: string,
+  providerURL?: ?string,
 };
 
 export type AvailableProvider = {
@@ -163,4 +171,18 @@ export type SwapState = {
   toCurrency: ?(CryptoCurrency | TokenCurrency),
   useAllAmount: boolean,
   fromAmount: BigNumber,
+};
+
+export type InitSwapInput = {
+  exchange: Exchange,
+  exchangeRate: ExchangeRate,
+  transaction: Transaction,
+  deviceId: string,
+};
+
+export type InitSwapInputRaw = {
+  exchange: ExchangeRaw,
+  exchangeRate: ExchangeRateRaw,
+  transaction: TransactionRaw,
+  deviceId: string,
 };
