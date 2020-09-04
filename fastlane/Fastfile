@@ -51,8 +51,6 @@ lane :beta do |options|
 
     system "yarn -s --frozen-lockfile"
 
-    system "yarn version --prerelease"
-
     Fastlane::LaneManager.cruise_lane('ios', 'beta', nil, 'production')
     Fastlane::LaneManager.cruise_lane('android', 'beta')
 
