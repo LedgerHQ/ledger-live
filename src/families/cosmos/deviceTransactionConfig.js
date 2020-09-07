@@ -71,7 +71,13 @@ function getDeviceTransactionConfig({
 
   switch (mode) {
     case "send":
-      fields = getSendFields({ transaction, status, account, source });
+      fields = getSendFields({
+        transaction,
+        status,
+        parentAccount,
+        account,
+        source,
+      });
       break;
 
     case "delegate":

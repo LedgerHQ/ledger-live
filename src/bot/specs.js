@@ -51,7 +51,7 @@ type Step<T: Transaction> = {
 
 type FlowDesc<T: Transaction> = {
   steps: Array<Step<T>>,
-  fallback: (DeviceActionArg<T, State<T>>) => ?Step<T>,
+  fallback?: (DeviceActionArg<T, State<T>>) => ?Step<T>,
 };
 
 // generalized logic of device actions

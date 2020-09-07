@@ -1383,10 +1383,10 @@
     "@ledgerhq/errors" "^5.22.0"
     events "^3.2.0"
 
-"@ledgerhq/live-common@^14.1.3":
-  version "14.1.3"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-14.1.3.tgz#cf8fa803fa39df15695595cb91cbcf5b76a7e6cc"
-  integrity sha512-OwNhiNA8cFuLdJTJQ89ecKAPu89KcdZqQ0p/6CFBLuln5vbhSB+lvKgHcHktjc5OJ7nR76zeOEfpAivsDCs9Hw==
+"@ledgerhq/live-common@^14.1.12":
+  version "14.1.12"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-14.1.12.tgz#f19f81ceb9f18f7fa43f63e3570cfacbce1e3772"
+  integrity sha512-C0C52YiOP87YIbsM2w5WZkHcwQpTA8/2loB0H8SknSNELPfSMAM61ob9ARU1jt0zPMCfm6Faa5HWwsCFRp8/PQ==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.22.0"
@@ -5279,10 +5279,10 @@ flatten@^1.0.2:
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.2.tgz#dae46a9d78fbe25292258cc1e780a41d95c03782"
   integrity sha1-2uRqnXj74lKSJYzB54CkHZXAN4I=
 
-flow-bin@^0.131.0:
-  version "0.131.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.131.0.tgz#d4228b6070afdf3b2a76acdee77a7f3f8e8f5133"
-  integrity sha512-fZmoIBcDrtLhy/NNMxwJysSYzMr1ksRcAOMi3AHSoYXfcuQqTvhGJx+wqjlIOqIwz8RRYm8J4V4JrSJbIKP+Xg==
+flow-bin@^0.133.0:
+  version "0.133.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.133.0.tgz#2ee44e3f5d0c0256cfe8e99d9a85e9801c281c50"
+  integrity sha512-01T5g8GdhtJEn+lhAwuv5zkrMStrmkuHrY3Nn9/aS9y6waNmNgimMKlzRpFH66S0F6Ez9EqU9psz5QaRveSJIA==
 
 flush-write-stream@^1.0.0:
   version "1.0.3"
@@ -10416,10 +10416,10 @@ rxjs-compat@^6.6.2:
   resolved "https://registry.yarnpkg.com/rxjs-compat/-/rxjs-compat-6.6.2.tgz#23592564243cf24641a5d2e2d2acfc8f6b127186"
   integrity sha512-C3V7axnAkPd91sbW1XreL8ydLM+phUcKViM76GBuT3hCzHMSQbszE/h6ajkgcrDn9j4JZ/OdzklvfAJ9MmXRcg==
 
-rxjs@^6.5.3, rxjs@^6.6.2:
-  version "6.6.2"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.2.tgz#8096a7ac03f2cc4fe5860ef6e572810d9e01c0d2"
-  integrity sha512-BHdBMVoWC2sL26w//BCu3YzKT4s2jip/WhwsGEDmeKYBhKDZeYezVUnHatYB7L85v5xs0BAQmg6BEYJEKxBabg==
+rxjs@^6.5.3, rxjs@^6.6.2, rxjs@^6.6.3:
+  version "6.6.3"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.3.tgz#8ca84635c4daa900c0d3967a6ee7ac60271ee552"
+  integrity sha512-trsQc+xYYXZ3urjOiJOuCOa5N3jAZ3eiSpQB5hIT8zGlL2QfnHLJ2r7GMkBGuIausdJN1OneaI6gQlsqNHHmZQ==
   dependencies:
     tslib "^1.9.0"
 
