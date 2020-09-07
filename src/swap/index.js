@@ -12,6 +12,7 @@ import getProviders from "./getProviders";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { getEnv } from "../env";
+import gte from "semver/functions/gte";
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 const swapProviders: {
@@ -27,6 +28,31 @@ const swapProviders: {
       "hex"
     ),
   },
+};
+
+// Minimum version of a currency app which has exchange capabilities, meaning it can be used
+// for sell/swap, and do silent signing.
+const exchangeSupportAppVersions = {
+  bitcoin_cash: "1.5.7",
+  bitcoin_gold: "1.5.7",
+  bitcoin: "1.5.7",
+  dash: "1.5.7",
+  digibyte: "1.5.7",
+  dogecoin: "1.5.7",
+  ethereum: "1.4.6",
+  litecoin: "1.5.7",
+  qtum: "1.5.7",
+  stratis: "1.5.7",
+  zcash: "1.5.7",
+  zencash: "1.5.7",
+};
+
+export const isExchangeSupportedByApp = (
+  appName: string,
+  appVersion: string
+): boolean => {
+  const minVersion = exchangeSupportAppVersions[appName];
+  return minVersion && gte(appVersion, minVersion);
 };
 
 const getCurrencySwapConfig = (
