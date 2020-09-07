@@ -101,9 +101,12 @@ export default class FirmwareUpdateCheckId extends Component<Props, State> {
             />
           </LText>
           <View style={[styles.idContainer, { maxWidth: windowWidth - 40 }]}>
-            <LText style={styles.id} bold>
-              {osu && manager.formatHashName(osu.hash)}
-            </LText>
+            {osu &&
+              manager.formatHashName(osu.hash).map(hash => (
+                <LText key={hash} style={styles.id} bold>
+                  {hash}
+                </LText>
+              ))}
           </View>
 
           <View style={styles.footer}>
