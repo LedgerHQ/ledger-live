@@ -5,17 +5,14 @@ import type { Transaction } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 
 function getDeviceTransactionConfig({
-  transaction,
-  status,
+  transaction: { tag },
+  status: { amount, estimatedFees },
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
   status: TransactionStatus,
 }): Array<DeviceTransactionField> {
-  const { amount, tag } = transaction;
-  const { estimatedFees } = status;
-
   const fields = [];
 
   if (!amount.isZero()) {

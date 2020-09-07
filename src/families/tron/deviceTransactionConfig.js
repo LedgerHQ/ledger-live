@@ -10,9 +10,10 @@ export type ExtraDeviceTransactionField =
   | { type: "tron.votes", label: string };
 
 function getDeviceTransactionConfig({
-  transaction,
+  transaction: { votes, resource, mode },
   account,
   parentAccount,
+  status: { amount },
 }: {
   account: AccountLike,
   parentAccount: ?Account,
@@ -20,7 +21,6 @@ function getDeviceTransactionConfig({
   status: TransactionStatus,
 }): Array<DeviceTransactionField> {
   const mainAccount = getMainAccount(account, parentAccount);
-  const { amount, votes, resource, mode } = transaction;
   const fields = [];
 
   if (resource) {
