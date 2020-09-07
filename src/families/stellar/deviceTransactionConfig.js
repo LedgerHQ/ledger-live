@@ -9,17 +9,13 @@ export type ExtraDeviceTransactionField =
   | { type: "stellar.network", label: string };
 
 function getDeviceTransactionConfig({
-  transaction,
-  status,
+  status: { amount, estimatedFees },
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
   status: TransactionStatus,
 }): Array<DeviceTransactionField> {
-  const { amount } = transaction;
-  const { estimatedFees } = status;
-
   const fields = [{ type: "stellar.network", label: "Network" }];
 
   if (!amount.isZero()) {

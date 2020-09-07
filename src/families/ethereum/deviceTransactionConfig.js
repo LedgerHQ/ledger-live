@@ -5,14 +5,13 @@ import type { Account, AccountLike, TransactionStatus } from "../../types";
 import type { Transaction } from "../bitcoin/types";
 
 function getDeviceTransactionConfig({
-  status,
+  status: { amount, estimatedFees },
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
   status: TransactionStatus,
 }): Array<DeviceTransactionField> {
-  const { amount, estimatedFees } = status;
   const fields = [];
 
   if (!amount.isZero()) {
