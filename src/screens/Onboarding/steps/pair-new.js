@@ -3,23 +3,32 @@
 import React, { Component } from "react";
 import { Linking } from "react-native";
 
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
+import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
+import { compose } from "redux";
+import { connect } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
-import SelectDevice from "../../../components/SelectDevice/legacy";
+import SelectDevice from "../../../components/SelectDevice";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import { urls } from "../../../config/urls";
 
-import {
-  connectingStep,
-  dashboard,
-  listApps,
-} from "../../../components/DeviceJob/steps";
+import { installAppFirstTime } from "../../../actions/settings";
+
+import DeviceActionModal from "../../../components/DeviceActionModal";
 
 import type { OnboardingStepProps } from "../types";
 
-class OnboardingStepPairNew extends Component<OnboardingStepProps> {
+const action = createAction(connectManager);
+
+class OnboardingStepPairNew extends Component<
+  OnboardingStepProps & { installAppFirstTime: (value: boolean) => void },
+  { device?: Device },
+> {
+  state = { device: undefined };
   Footer = () =>
     __DEV__ ? (
       <Button
@@ -34,9 +43,25 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
 
   pairNew = () => this.props.navigation.navigate(ScreenName.PairDevices);
 
+  onSelectDevice = (device: Device) => {
+    this.setState({ device });
+  };
+
+  onSelect = (info: any) => {
+    /** if list apps succeed we update settings with state of apps installed */
+    if (info) {
+      const hasAnyAppinstalled = info.installed && info.installed.length > 0;
+
+      this.props.installAppFirstTime(hasAnyAppinstalled);
+    }
+    this.setState({ device: undefined }, () => this.props.next(info));
+  };
+
   render() {
     const { deviceModelId, t } = this.props;
     const usbOnly = ["nanoS", "blue"].includes(deviceModelId);
+
+    const { device } = this.state;
 
     return (
       <OnboardingLayout
@@ -56,13 +81,24 @@ class OnboardingStepPairNew extends Component<OnboardingStepProps> {
           withArrows
           usbOnly={usbOnly}
           deviceModelId={deviceModelId}
-          onSelect={this.props.next}
-          steps={usbOnly ? [connectingStep, dashboard, listApps] : []}
+          onSelect={usbOnly ? this.onSelectDevice : this.props.next}
           autoSelectOnAdd
+        />
+        <DeviceActionModal
+          device={device}
+          onResult={this.onSelect}
+          action={action}
+          request={null}
         />
       </OnboardingLayout>
     );
   }
 }
 
-export default withOnboardingContext(OnboardingStepPairNew);
+const mapDispatchToProps = {
+  installAppFirstTime,
+};
+
+export default compose(connect(null, mapDispatchToProps))(
+  withOnboardingContext(OnboardingStepPairNew),
+);
