@@ -3,6 +3,7 @@
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import type { SwapState } from "./types";
+import { isExchangeSupportedByApp } from "./index";
 import type {
   Account,
   AccountLike,
@@ -11,8 +12,8 @@ import type {
 } from "../types";
 import type { InstalledItem } from "../apps";
 import { flattenAccounts, getAccountCurrency } from "../account";
-
-const validCurrencyStatus = { ok: 1, noApps: 1, noAccounts: 1 };
+// NB Why flow?
+const validCurrencyStatus = { ok: 1, noApps: 1, noAccounts: 1, outdatedApp: 1 };
 export type CurrencyStatus = $Keys<typeof validCurrencyStatus>;
 export type CurrenciesStatus = { [string]: CurrencyStatus };
 
@@ -67,13 +68,13 @@ export const getCurrenciesWithStatus = ({
   installedApps: InstalledItem[],
 }): CurrenciesStatus => {
   const statuses = {};
-  const installedAppsStatus = {};
+  const installedAppMap = {};
   const notEmptyCurrencies = flattenAccounts(accounts).map(
     (a) => getAccountCurrency(a).id
   );
 
-  for (const { name, updated } of installedApps)
-    installedAppsStatus[name] = updated;
+  for (const data of installedApps) installedAppMap[data.name] = data;
+
   for (const c of selectableCurrencies) {
     if (c.type !== "CryptoCurrency" && c.type !== "TokenCurrency") continue;
     const mainCurrency =
@@ -85,9 +86,14 @@ export const getCurrenciesWithStatus = ({
 
     if (!mainCurrency) continue;
     statuses[c.id] =
-      mainCurrency.managerAppName in installedAppsStatus
+      mainCurrency.managerAppName in installedAppMap
         ? notEmptyCurrencies.includes(mainCurrency.id)
-          ? "ok"
+          ? isExchangeSupportedByApp(
+              mainCurrency.id,
+              installedAppMap[mainCurrency.managerAppName].version
+            )
+            ? "ok"
+            : "outdatedApp"
           : "noAccounts"
         : "noApp";
   }
