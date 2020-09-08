@@ -50,8 +50,6 @@ const updateAccountSwapStatus: UpdateAccountSwapStatus = async (
       };
     }
   }
-
-  return account;
 };
 
 export default updateAccountSwapStatus;
