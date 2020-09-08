@@ -1447,14 +1447,10 @@
     color "^3.1.2"
     react-native-iphone-x-helper "^1.2.1"
 
-"@segment/analytics-ios@github:LedgerHQ/analytics-ios#efb4cd1771dab568422473fd680ffb748b102f07":
-  version "0.0.0"
-  resolved "https://codeload.github.com/LedgerHQ/analytics-ios/tar.gz/efb4cd1771dab568422473fd680ffb748b102f07"
-
-"@segment/analytics-react-native@^0.1.0-beta.0":
-  version "0.1.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@segment/analytics-react-native/-/analytics-react-native-0.1.0-beta.0.tgz#fb1c5ff9f72d6946b263777943af7d7abb157694"
-  integrity sha512-hIVs10hZn7i13BqKu/ikHhgOZUwXCFjjy61DFFsZbD7d/3Xi/X810TjQva+lBH1E27kbp+WIJ8nh+UzWlKTjPw==
+"@segment/analytics-react-native@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@segment/analytics-react-native/-/analytics-react-native-1.3.0.tgz#34fabea19733715505c7d63e85758d61c9c0f761"
+  integrity sha512-4P4mWp8myG55MoLL8HtCsEh3mOm0F0MN2A8GsCQijiP+NT83Q+S7nM0rCWyd7Q0e6FxCgDO9/y+w8iMzvt2BXg==
 
 "@sentry/cli@^1.43.0":
   version "1.51.0"
