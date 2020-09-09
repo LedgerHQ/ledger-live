@@ -727,8 +727,9 @@ const estimateMaxSpendable = async ({
     {
       ...createTransaction(),
       subAccountId: account.type === "Account" ? null : account.id,
-      recipient: "0x0000000000000000000000000000000000000000",
       ...transaction,
+      recipient:
+        transaction?.recipient || "0x0000000000000000000000000000000000000000",
       amount: BigNumber(0),
     },
     false

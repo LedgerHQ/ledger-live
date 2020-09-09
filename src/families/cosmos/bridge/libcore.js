@@ -408,8 +408,9 @@ const estimateMaxSpendable = async ({
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
-    recipient: getAbandonSeedAddress(mainAccount.currency.id),
     ...transaction,
+    recipient:
+      transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id),
     useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);
