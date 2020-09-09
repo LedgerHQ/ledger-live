@@ -13,19 +13,15 @@ import { StellarWrongMemoFormat } from "../../errors";
 import {
   addNotCreatedStellarMockAddresses,
   addMultisignStellarMockAddresses,
-  addMemotypeTextStellarMockAddresses,
 } from "./bridge/mock";
 
 export const notCreatedStellarMockAddress =
   "GDYPMQMYW2JTLPWAUAHIDY3E4VHP5SGTFC5SMA45L7ZPOTHWQ2PHEW3E";
 export const multisignStellarMockAddress =
   "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS";
-export const memoTypeSelectStellarMockAddress =
-  "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37";
 
 addNotCreatedStellarMockAddresses(notCreatedStellarMockAddress);
 addMultisignStellarMockAddresses(multisignStellarMockAddress);
-addMemotypeTextStellarMockAddresses(memoTypeSelectStellarMockAddress);
 
 const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore"],
@@ -117,7 +113,6 @@ const dataset: DatasetTest<Transaction> = {
                 fees: "100",
                 memoType: null,
                 memoValue: null,
-                memoTypeRecommended: false,
               }),
               expectedStatus: {
                 errors: {
@@ -169,7 +164,6 @@ const dataset: DatasetTest<Transaction> = {
                 fees: "100",
                 memoType: null,
                 memoValue: null,
-                memoTypeRecommended: false,
               }),
               expectedStatus: (account) => ({
                 errors: {},

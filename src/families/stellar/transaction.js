@@ -43,7 +43,6 @@ const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     baseReserve: tr.baseReserve ? BigNumber(tr.baseReserve) : null,
     memoValue: tr.memoValue ? tr.memoValue : null,
     memoType: tr.memoType ? tr.memoType : null,
-    memoTypeRecommended: tr.memoTypeRecommended ? tr.memoTypeRecommended : null,
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: BigNumber(networkInfo.fees),
@@ -62,7 +61,6 @@ const toTransactionRaw = (t: Transaction): TransactionRaw => {
     baseReserve: t.baseReserve ? t.baseReserve.toString() : null,
     memoValue: t.memoValue ? t.memoValue.toString() : null,
     memoType: t.memoType ? t.memoType.toString() : null,
-    memoTypeRecommended: t.memoTypeRecommended ? t.memoTypeRecommended : null,
     networkInfo: networkInfo && {
       family: networkInfo.family,
       fees: networkInfo.fees.toString(),
