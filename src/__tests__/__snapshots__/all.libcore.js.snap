@@ -16271,9 +16271,9 @@ Array [
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 Array [
   Object {
-    "balance": "2177109",
+    "balance": "2178034",
     "cosmosResources": Object {
-      "delegatedBalance": "2109238",
+      "delegatedBalance": "2139238",
       "withdrawAddress": "",
     },
     "currencyId": "cosmos",
@@ -16289,7 +16289,7 @@ Array [
     "id": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
     "index": 0,
     "name": "Cosmos 1",
-    "operationsCount": 96,
+    "operationsCount": 102,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -16431,6 +16431,30 @@ Array [
       ],
       "type": "DELEGATE",
       "value": "2233",
+    },
+    Object {
+      "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
+      "blockHash": null,
+      "blockHeight": 667957,
+      "extra": Object {
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper1sjllsnramtg3ewxqwwrwjxfgc4n4ef9u2lcnj0",
+            "amount": "50000",
+          },
+        ],
+      },
+      "fee": "818",
+      "hash": "232D51A31B6565DC311D761463117A8EBA3A1A7CF04C8E0F1EC434E6BADD71FA",
+      "id": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:-232D51A31B6565DC311D761463117A8EBA3A1A7CF04C8E0F1EC434E6BADD71FA-DELEGATE",
+      "recipients": Array [
+        "",
+      ],
+      "senders": Array [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "type": "DELEGATE",
+      "value": "818",
     },
     Object {
       "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
@@ -16796,6 +16820,31 @@ Array [
       ],
       "type": "OUT",
       "value": "1072",
+    },
+    Object {
+      "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
+      "blockHash": null,
+      "blockHeight": 667957,
+      "extra": Object {
+        "cosmosSourceValidator": "cosmosvaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpfdn6m9d",
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper156gqf9837u7d4c4678yt3rl4ls9c5vuursrrzf",
+            "amount": "2500",
+          },
+        ],
+      },
+      "fee": "1365",
+      "hash": "9515C7D01C11CA96C2DFD1B430A2C6853E94EE1E5BC2EA618EEBDFED4F016CC2",
+      "id": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:-9515C7D01C11CA96C2DFD1B430A2C6853E94EE1E5BC2EA618EEBDFED4F016CC2-REDELEGATE",
+      "recipients": Array [
+        "",
+      ],
+      "senders": Array [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "type": "REDELEGATE",
+      "value": "1365",
     },
     Object {
       "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
@@ -17178,6 +17227,30 @@ Array [
       ],
       "type": "OUT",
       "value": "363",
+    },
+    Object {
+      "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
+      "blockHash": null,
+      "blockHeight": 667957,
+      "extra": Object {
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper1hjct6q7npsspsg3dgvzk3sdf89spmlpfdn6m9d",
+            "amount": "20000",
+          },
+        ],
+      },
+      "fee": "0",
+      "hash": "CB6C6F813CD58887F3B036D4195D2FE3E82E76C82CE2C6A809BB8F92ED659493",
+      "id": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:-CB6C6F813CD58887F3B036D4195D2FE3E82E76C82CE2C6A809BB8F92ED659493-UNDELEGATE",
+      "recipients": Array [
+        "",
+      ],
+      "senders": Array [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "type": "UNDELEGATE",
+      "value": "0",
     },
     Object {
       "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
@@ -26341,7 +26414,7 @@ Array [
     "type": "TokenAccountRaw",
   },
   Object {
-    "balance": "35",
+    "balance": "32",
     "id": "libcore:1:ethereum:xpub6BemYiVNp19a1XgWqLcpWd1pBDZTgzPEcVvhR15cpXPVQjuEnrU7fa3TUatX2NbRWNkqx51jmyukisqGokHq5dyK5uYcbwQBF7nJyAdpYZy:+0xD46bA6D942050d489DBd938a2C909A5d5039A161",
     "operationsCount": 5,
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a1XgWqLcpWd1pBDZTgzPEcVvhR15cpXPVQjuEnrU7fa3TUatX2NbRWNkqx51jmyukisqGokHq5dyK5uYcbwQBF7nJyAdpYZy:",
@@ -26641,7 +26714,7 @@ Array [
     "type": "TokenAccountRaw",
   },
   Object {
-    "balance": "43",
+    "balance": "39",
     "id": "libcore:1:ethereum:xpub6BemYiVNp19a56t4FLHBhvys6iThqTAyC44jUX5b8fpPWSjrGaBMVdXo49wVVBVGVcRVPGo1eUUZPMFrKriqtL68pEeGCt37UzYXP4h3WX5:+0xD46bA6D942050d489DBd938a2C909A5d5039A161",
     "operationsCount": 2,
     "parentId": "libcore:1:ethereum:xpub6BemYiVNp19a56t4FLHBhvys6iThqTAyC44jUX5b8fpPWSjrGaBMVdXo49wVVBVGVcRVPGo1eUUZPMFrKriqtL68pEeGCt37UzYXP4h3WX5:",
