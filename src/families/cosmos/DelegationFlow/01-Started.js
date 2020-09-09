@@ -55,12 +55,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
       >
         <TrackScreen category="DelegationFlow" name="Started" />
         <IlluRewards />
-        <LText semiBold style={styles.title}>
-          <Trans
-            secondary
-            i18nKey="cosmos.delegation.flow.steps.starter.title"
-          />
-        </LText>
         <LText semiBold style={styles.description}>
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.description" />
         </LText>
