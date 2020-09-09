@@ -733,8 +733,8 @@ const estimateMaxSpendable = async ({
   const reserveBaseXRP = parseAPIValue(r.validatedLedger.reserveBaseXRP);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
-    recipient: "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // public testing seed abandonx11,about
     ...transaction,
+    recipient: transaction?.recipient || "rHsMGQEkVNJmpGWs8XUBoTBiAAbwxZN5v3", // public testing seed abandonx11,about
     amount: BigNumber(0),
   });
   const s = await getTransactionStatus(mainAccount, t);
