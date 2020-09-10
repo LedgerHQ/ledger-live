@@ -16,7 +16,7 @@ import gte from "semver/functions/gte";
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 const swapProviders: {
-  [string]: { nameAndPubkey: Buffer, signature: Buffer },
+  [string]: { nameAndPubkey: Buffer, signature: Buffer, curve: string },
 } = {
   changelly: {
     nameAndPubkey: Buffer.from(
@@ -24,9 +24,10 @@ const swapProviders: {
       "hex"
     ),
     signature: Buffer.from(
-      "30440220554dd6dc172ba5bd20a1bbf60845bbcac67aa0d8d115e55679e2838b772aef41022070f7a3cda142371518ebf16f9696cb27640832ef9401d88209a9e988aab4b3ff",
+      "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
       "hex"
     ),
+    curve: "secpk256k1",
   },
 };
 
@@ -71,7 +72,7 @@ const getCurrencySwapConfig = (
 const getProviderNameAndSignature = (
   providerName: string
 ): SwapProviderNameAndSignature => {
-  const res = swapProviders[providerName];
+  const res = swapProviders[providerName.toLowerCase()];
   if (!res) {
     throw new Error(`Unknown partner ${providerName}`);
   }

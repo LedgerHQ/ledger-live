@@ -323,7 +323,7 @@ const envDefinitions = {
     desc: "dev flag to skip onboarding flow",
   },
   SWAP_API_BASE: {
-    def: "https://swap.aws.prd.ldg-tech.com",
+    def: "https://swap.ledger.com",
     parser: stringParser,
     desc: "Swap API base",
   },
