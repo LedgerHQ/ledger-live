@@ -1,5 +1,4 @@
 const axios = require("axios");
-const invariant = require("invariant");
 const fs = require("fs");
 const path = require("path");
 const {
@@ -9,8 +8,8 @@ const {
 
 const importers = [
   require("./importers/erc20"),
-  // require("./importers/exchange"),
-  // require("./importers/exchange_erc20"),
+  require("./importers/exchange"),
+  require("./importers/exchange_erc20"),
 ];
 
 const outputFolder = path.join(__dirname, "../../src/load");
