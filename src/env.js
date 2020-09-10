@@ -133,6 +133,12 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable a problematic mechanism of our API",
   },
+  ETHEREUM_GAS_LIMIT_AMPLIFIER: {
+    def: 2,
+    parser: floatParser,
+    desc:
+      "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",
+  },
   EXPERIMENTAL_BLE: {
     def: false,
     parser: boolParser,
