@@ -34,18 +34,18 @@ const swapProviders: {
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
-  bitcoin_cash: "1.5.7",
-  bitcoin_gold: "1.5.7",
-  bitcoin: "1.5.7",
-  dash: "1.5.7",
-  digibyte: "1.5.7",
-  dogecoin: "1.5.7",
-  ethereum: "1.4.6",
-  litecoin: "1.5.7",
-  qtum: "1.5.7",
-  stratis: "1.5.7",
-  zcash: "1.5.7",
-  zencash: "1.5.7",
+  bitcoin_cash: "1.5.0",
+  bitcoin_gold: "1.5.0",
+  bitcoin: "1.5.0",
+  dash: "1.5.0",
+  digibyte: "1.5.0",
+  dogecoin: "1.5.0",
+  ethereum: "1.4.0",
+  litecoin: "1.5.0",
+  qtum: "1.5.0",
+  stratis: "1.5.0",
+  zcash: "1.5.0",
+  zencash: "1.5.0",
 };
 
 export const isExchangeSupportedByApp = (
