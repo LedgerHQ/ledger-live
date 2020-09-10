@@ -30,16 +30,12 @@ import {
 
 const notCreatedAddresses = [];
 const multiSignAddresses = [];
-const memotypeTextRecommendedAddresses = [];
 
 export function addNotCreatedStellarMockAddresses(addr: string) {
   notCreatedAddresses.push(addr);
 }
 export function addMultisignStellarMockAddresses(addr: string) {
   multiSignAddresses.push(addr);
-}
-export function addMemotypeTextStellarMockAddresses(addr: string) {
-  memotypeTextRecommendedAddresses.push(addr);
 }
 
 const createTransaction = () => ({
@@ -52,7 +48,6 @@ const createTransaction = () => ({
   memoValue: null,
   memoType: null,
   useAllAmount: false,
-  memoTypeRecommended: null,
 });
 
 const updateTransaction = (t, patch) => {
@@ -187,42 +182,16 @@ const prepareTransaction = async (a, t) => {
   const fees = t.fees || networkInfo.fees;
   const baseReserve = t.baseReserve || networkInfo.baseReserve;
 
-  const getMemoData = async () => {
-    if (t.memoType) {
-      return {
-        memoType: t.memoType,
-        memoTypeRecommended: t.memoTypeRecommended,
-      };
-    } else {
-      if (!isInvalidRecipient(t.recipient)) {
-        const memoType = memotypeTextRecommendedAddresses.includes(t.recipient)
-          ? "MEMO_TEXT"
-          : null;
-        const memoTypeRecommended = memoType !== null ? true : false;
-        return { memoType, memoTypeRecommended };
-      }
-      return {
-        memoType: undefined,
-        memoTypeRecommended: t.memoTypeRecommended,
-      };
-    }
-  };
-
-  const { memoType, memoTypeRecommended } = await getMemoData();
-
   if (
     t.networkInfo !== networkInfo ||
     t.fees !== fees ||
-    t.baseReserve !== baseReserve ||
-    t.memoType !== memoType
+    t.baseReserve !== baseReserve
   ) {
     return {
       ...t,
       networkInfo,
       fees,
       baseReserve,
-      memoType,
-      memoTypeRecommended,
     };
   }
 

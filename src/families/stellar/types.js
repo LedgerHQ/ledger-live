@@ -137,7 +137,6 @@ export type Transaction = {|
   baseReserve: ?BigNumber,
   memoType: ?string,
   memoValue: ?string,
-  memoTypeRecommended: ?boolean,
 |};
 
 export type TransactionRaw = {|
@@ -148,7 +147,6 @@ export type TransactionRaw = {|
   baseReserve: ?string,
   memoType: ?string,
   memoValue: ?string,
-  memoTypeRecommended: ?boolean,
 |};
 
 export const reflect = (declare: (string, Spec) => void) => {
