@@ -1,5 +1,5 @@
 // @flow
-import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
+import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 
 import bitcoin_cash from "./datasets/bitcoin_cash";

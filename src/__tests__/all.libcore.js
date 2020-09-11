@@ -11,7 +11,7 @@ import { delay } from "../promise";
 import { testBridge } from "./test-helpers/bridge";
 import dataset from "../generated/test-dataset";
 import specifics from "../generated/test-specifics";
-import type { DatasetTest } from "./test-helpers/bridge";
+import type { DatasetTest } from "../types";
 
 setup("libcore");
 

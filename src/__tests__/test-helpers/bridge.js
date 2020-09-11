@@ -8,15 +8,11 @@ import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import type {
-  CryptoCurrencyIds,
   Account,
-  AccountRaw,
   Transaction,
-  TransactionStatus,
   AccountBridge,
-  CurrencyBridge,
-  SignedOperation,
   SyncConfig,
+  DatasetTest,
 } from "../../types";
 import {
   fromAccountRaw,
@@ -36,54 +32,6 @@ import {
 import { getBalanceHistoryJS, getRanges } from "../../portfolio";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
-
-type ExpectFn = Function;
-
-export type CurrenciesData<T: Transaction> = {|
-  FIXME_ignoreAccountFields?: string[],
-  FIXME_ignoreOperationFields?: string[],
-  scanAccounts?: Array<{|
-    name: string,
-    apdus: string,
-    unstableAccounts?: boolean,
-    test?: (
-      expect: ExpectFn,
-      scanned: Account[],
-      bridge: CurrencyBridge
-    ) => any,
-  |}>,
-  accounts?: Array<{|
-    implementations?: string[],
-    raw: AccountRaw,
-    FIXME_tests?: Array<string | RegExp>,
-    transactions?: Array<{|
-      name: string,
-      transaction: T | ((T, Account, AccountBridge<T>) => T),
-      expectedStatus?:
-        | $Shape<TransactionStatus>
-        | ((Account, T, TransactionStatus) => $Shape<TransactionStatus>),
-      test?: (ExpectFn, T, TransactionStatus, AccountBridge<T>) => any,
-      apdus?: string,
-      testSignedOperation?: (
-        ExpectFn,
-        SignedOperation,
-        Account,
-        T,
-        TransactionStatus,
-        AccountBridge<T>
-      ) => any,
-    |}>,
-    test?: (ExpectFn, Account, AccountBridge<T>) => any,
-  |}>,
-  test?: (ExpectFn, CurrencyBridge) => any,
-|};
-
-export type DatasetTest<T> = {|
-  implementations: string[],
-  currencies: {
-    [_: CryptoCurrencyIds]: CurrenciesData<T>,
-  },
-|};
 
 // FIXME move out into DatasetTest to be defined in
 const blacklistOpsSumEq = {

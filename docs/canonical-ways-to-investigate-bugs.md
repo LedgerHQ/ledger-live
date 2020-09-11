@@ -170,7 +170,6 @@ silly: EventBus#subscribe {"data":{}}
 
 ### A problem during "Add Account"
 
-
 The _Add Account_ flow involves the [`currencyBridge.scanAccounts`](CurrencyBridge.md) logic which itself is mostly about performing synchronisation. The main problem is that you might not know the XPUB at this point in time and it might break before. What we can do easily however is to reuse the [APDUs](apdu.md) that appears in the log and replay them against the CLI.
 
 On top of the /logsviewer page, there is a handy button "Export APDUs" that we can use to retrieve ALL the apdus. Now, you need to locate the part that concerns the add accounts.
@@ -250,7 +249,7 @@ It will generate an actual test dataset that could be later added in live-common
 
 ```js
 // @flow
-import type { CurrenciesData } from "../../../__tests__/test-helpers/bridge";
+import type { CurrenciesData } from "../../../types";
 import type { Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {
@@ -268,9 +267,9 @@ const dataset: CurrenciesData<Transaction> = {
       <= 41046a05e02c73991c84f42444cfa4b3bc1046838fe609a220b1498d766e23264d57ea4c4acaae65398c13adad5d045324e03abdeec9b3fef1d88d4abb832a44af9a237a6e53467933565a58506a48366b5944736b78544e65677a67365675634258317738466e39f205deb0a0a9763b86fecc61046a453be8a6763c8bdbceb8b3d8abff46459000
       => e04000000d038000002c8000007980000001
       <= 4104392c448b6a725c7c8c32993d0483e38927830dfec299b74963d264b10e9db900215b1bf058a992604c86124f5d40c178b805da0f8af0889814cb7ffb011b4308237a6e62476d615656456d676d317a416e7a74724172617370506177574a73506a527a4af6c3ce6238696dc78ee8d57b161b25d79b89ace20515966789ac09f79c713cbd9000
-      `
-    }
-  ]
+      `,
+    },
+  ],
 };
 
 export default dataset;
@@ -309,7 +308,6 @@ But if all is good, I will have some data:
 ```
 
 Just using `getTransactionStatus` will show you if a problem occurs related to fetching fees or any other problem related to building a transaction. Now if the problem occurs at the device time, this will not be enough...
-
 
 ### A problem during send flow, _during the device step_
 

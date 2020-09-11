@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import { fromTransactionRaw } from "./transaction";
-import type { DatasetTest } from "../../__tests__/test-helpers/bridge";
+import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1.js";
 

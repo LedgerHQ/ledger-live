@@ -62,7 +62,7 @@ async function signTransaction({
       : "OUT";
 
   const extra = {};
-  if (transaction.mode === "REDELEGATE") {
+  if (transaction.mode === "redelegate") {
     extra.cosmosSourceValidator = transaction.cosmosSourceValidator;
   }
   if (transaction.mode !== "send") {
