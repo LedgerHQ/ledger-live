@@ -1,7 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import type { CurrenciesData } from "../../../__tests__/test-helpers/bridge";
+import type { CurrenciesData } from "../../../types";
 import type { NetworkInfoRaw, Transaction } from "../types";
 import { fromTransactionRaw } from "../transaction";
 import scanAccounts1 from "./digibyte.scanAccounts.1";

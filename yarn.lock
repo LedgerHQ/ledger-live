@@ -1255,10 +1255,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/errors/-/errors-5.23.0.tgz#30a0338dafba8264556011604abed08bf24979f3"
   integrity sha512-qtpX8aFrUUlYfOMu7BxTvxqUa8CniE+tEBpVEjYUhVbFdVJjM4ouwJD++RtQkMAU2c5jE7xb12WnUnf5BlAgLQ==
 
-"@ledgerhq/hw-app-btc@^5.23.0":
-  version "5.23.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.23.0.tgz#6c02c5a1330ca21cdba59d05e05709a18cf8d906"
-  integrity sha512-JPOCRcOOF7ZJHjuUOUPRPug+8L2ZMwNHP4G1Zc1rriHlilaHvpt/ISI9Yoe6mm5y3XS04eDpStOvTgObVBAiCw==
+"@ledgerhq/hw-app-btc@^5.23.1":
+  version "5.23.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-5.23.1.tgz#2bba87b2dea71f6aaf392df578a991064176608d"
+  integrity sha512-yHjYB25bYC+3wN1MFM4WjJmEMTSzfU2AeoHfxzLxvjocODrYrvfWVWQqXTa3B3Fx1T4czo1hkxajbvAc79QITw==
   dependencies:
     "@ledgerhq/hw-transport" "^5.23.0"
     "@ledgerhq/logs" "^5.23.0"
@@ -3124,10 +3124,10 @@ eslint-plugin-prettier@^3.1.4:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
-eslint-plugin-react-hooks@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.1.0.tgz#6323fbd5e650e84b2987ba76370523a60f4e7925"
-  integrity sha512-36zilUcDwDReiORXmcmTc6rRumu9JIM3WjSvV0nclHoUQ0CNrX866EwONvLR/UqaeqFutbAnVu8PEmctdo2SRQ==
+eslint-plugin-react-hooks@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.1.1.tgz#b37e1ff622b7800cd673901de32db1103d48411d"
+  integrity sha512-vFJNwsf4MLYS0lHYfz9LqxQ+GccYsGGeKPHDxgkIaKbAhNuTLnST+q44pt81MzJZyFU5K4XLF6WiCGv3Yb6tCg==
 
 eslint-plugin-react@^7.20.6:
   version "7.20.6"
@@ -3508,10 +3508,10 @@ flatted@^2.0.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.1.tgz#69e57caa8f0eacbc281d2e2cb458d46fdb449e08"
   integrity sha512-a1hQMktqW9Nmqr5aktAux3JMNqaucxGcjtjWnZLHX7yyPCmlSV3M54nGYbqT8K+0GhF3NBgmJCc3ma+WOgX8Jg==
 
-flow-bin@^0.131.0:
-  version "0.131.0"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.131.0.tgz#d4228b6070afdf3b2a76acdee77a7f3f8e8f5133"
-  integrity sha512-fZmoIBcDrtLhy/NNMxwJysSYzMr1ksRcAOMi3AHSoYXfcuQqTvhGJx+wqjlIOqIwz8RRYm8J4V4JrSJbIKP+Xg==
+flow-bin@^0.133.0:
+  version "0.133.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.133.0.tgz#2ee44e3f5d0c0256cfe8e99d9a85e9801c281c50"
+  integrity sha512-01T5g8GdhtJEn+lhAwuv5zkrMStrmkuHrY3Nn9/aS9y6waNmNgimMKlzRpFH66S0F6Ez9EqU9psz5QaRveSJIA==
 
 flow-copy-source@^2.0.9:
   version "2.0.9"
