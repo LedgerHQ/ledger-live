@@ -52,9 +52,15 @@ jobs:
       - name: Run coverage
         if: runner.os == 'macOS'
         run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
+      - name: upload snapshots
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: snapshots-${{ runner.os }}
+          path: src/__tests__/__snapshots__/
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: tests_output-${{ runner.os }}.txt
           path: tests_output.txt

@@ -18,6 +18,7 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { apiForCurrency } from "../../api/Ethereum";
 import { makeLRUCache } from "../../cache";
+import { getEnv } from "../../env";
 
 export const formatTransaction = (
   t: Transaction,
@@ -135,7 +136,7 @@ export function inferEthereumGasLimitRequest(
 ): EthereumGasLimitRequest {
   const r: EthereumGasLimitRequest = {
     from: account.freshAddress,
-    amplifier: "2",
+    amplifier: "1",
   };
   if (transaction.gasPrice) {
     r.gasPrice = "0x" + transaction.gasPrice.toString();
@@ -189,6 +190,11 @@ export const estimateGasLimit: (
     const api = apiForCurrency(account.currency);
     return api
       .getDryRunGasLimit(addr, request)
+      .then((value) =>
+        value.eq(21000) // regular ETH send should not be amplified
+          ? value
+          : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER"))
+      )
       .catch(() => api.roughlyEstimateGasLimit(addr));
   },
   (a, addr, r) =>

@@ -12,22 +12,20 @@ export type ExtraDeviceTransactionField =
 function getDeviceTransactionConfig({
   account,
   parentAccount,
-  transaction,
-  status,
+  transaction: { mode, recipient },
+  status: { amount, estimatedFees },
 }: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
   status: TransactionStatus,
 }): Array<DeviceTransactionField> {
-  const { amount } = transaction;
-  const { estimatedFees } = status;
   const mainAccount = getMainAccount(account, parentAccount);
   const source =
     account.type === "ChildAccount"
       ? account.address
       : mainAccount.freshAddress;
-  const isDelegateOperation = transaction.mode === "delegate";
+  const isDelegateOperation = mode === "delegate";
 
   const fields = [
     {
@@ -46,7 +44,7 @@ function getDeviceTransactionConfig({
       {
         type: "address",
         label: "Delegate",
-        address: transaction.recipient,
+        address: recipient,
       }
     );
   }

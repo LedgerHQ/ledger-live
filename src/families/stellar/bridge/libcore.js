@@ -12,7 +12,6 @@ import {
 import {
   StellarWrongMemoFormat,
   SourceHasMultiSign,
-  StellarMemoRecommended,
   AccountAwaitingSendPendingOperations,
 } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
@@ -24,7 +23,6 @@ import { sync } from "../../../libcore/syncAccount";
 import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { withLibcore } from "../../../libcore/access";
-import memoTypeCheck from "../memo-type-check";
 import type { CacheRes } from "../../../cache";
 import { makeLRUCache } from "../../../cache";
 import { getWalletName } from "../../../account";
@@ -72,7 +70,6 @@ const createTransaction = () => ({
   memoValue: null,
   memoType: null,
   useAllAmount: false,
-  memoTypeRecommended: null,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -135,10 +132,6 @@ const getTransactionStatus = async (a: Account, t) => {
     if (recipientWarning) {
       warnings.recipient = recipientWarning;
     }
-  }
-
-  if (!warnings.recipient && t.memoTypeRecommended && !t.memoValue) {
-    warnings.recipient = new StellarMemoRecommended();
   }
 
   if (await isAccountIsMultiSign(a)) {
@@ -224,44 +217,16 @@ const prepareTransaction = async (a, t) => {
   const fees = t.fees || networkInfo.fees;
   const baseReserve = t.baseReserve || networkInfo.baseReserve;
 
-  const getMemoData = async () => {
-    if (t.memoType) {
-      return {
-        memoType: t.memoType,
-        memoTypeRecommended: t.memoTypeRecommended,
-      };
-    } else {
-      const { recipientError } = await validateRecipient(
-        a.currency,
-        t.recipient
-      );
-      if (!recipientError) {
-        const memoType = await memoTypeCheck(t.recipient);
-        const memoTypeRecommended = memoType !== null ? true : false;
-        return { memoType, memoTypeRecommended };
-      }
-      return {
-        memoType: undefined,
-        memoTypeRecommended: false,
-      };
-    }
-  };
-
-  const { memoType, memoTypeRecommended } = await getMemoData();
-
   if (
     t.networkInfo !== networkInfo ||
     t.fees !== fees ||
-    t.baseReserve !== baseReserve ||
-    t.memoType !== memoType
+    t.baseReserve !== baseReserve
   ) {
     return {
       ...t,
       networkInfo,
       fees,
       baseReserve,
-      memoType,
-      memoTypeRecommended,
     };
   }
 
@@ -276,8 +241,8 @@ const estimateMaxSpendable = async ({
   const mainAccount = getMainAccount(account, parentAccount);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
-    recipient: notCreatedStellarMockAddress, // not used address,
     ...transaction,
+    recipient: transaction?.recipient || notCreatedStellarMockAddress, // not used address
     useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);

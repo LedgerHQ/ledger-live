@@ -82,8 +82,9 @@ const estimateMaxSpendable = async ({
     // worse case scenario using a legacy address
     ...createTransaction(),
     ...transaction,
+    recipient:
+      transaction?.recipient || getAbandonSeedAddress(mainAccount.currency.id),
     useAllAmount: true,
-    recipient: getAbandonSeedAddress(mainAccount.currency.id),
   });
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;

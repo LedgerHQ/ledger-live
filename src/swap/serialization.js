@@ -1,6 +1,12 @@
 // @flow
 
-import type { Exchange, ExchangeRaw } from "./types";
+import { BigNumber } from "bignumber.js";
+import type {
+  Exchange,
+  ExchangeRaw,
+  ExchangeRate,
+  ExchangeRateRaw,
+} from "./types";
 import {
   fromAccountLikeRaw,
   fromAccountRaw,
@@ -41,5 +47,45 @@ export const toExchangeRaw = (exchange: Exchange): ExchangeRaw => {
       : null,
     toAccount: toAccountLikeRaw(toAccount),
     toParentAccount: toParentAccount ? toAccountRaw(toParentAccount) : null,
+  };
+};
+
+export const toExchangeRateRaw = (
+  exchangeRate: ExchangeRate
+): ExchangeRateRaw => {
+  const {
+    rate,
+    magnitudeAwareRate,
+    rateId,
+    provider,
+    providerURL,
+  } = exchangeRate;
+
+  return {
+    rate: rate.toString(),
+    magnitudeAwareRate: magnitudeAwareRate.toString(),
+    rateId,
+    provider,
+    providerURL,
+  };
+};
+
+export const fromExchangeRateRaw = (
+  exchangeRateRaw: ExchangeRateRaw
+): ExchangeRate => {
+  const {
+    rate,
+    magnitudeAwareRate,
+    rateId,
+    provider,
+    providerURL,
+  } = exchangeRateRaw;
+
+  return {
+    rate: new BigNumber(rate),
+    magnitudeAwareRate: new BigNumber(magnitudeAwareRate),
+    rateId,
+    provider,
+    providerURL,
   };
 };

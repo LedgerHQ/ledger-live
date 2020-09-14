@@ -1,7 +1,7 @@
 // @flow
 
-import { Observable } from "rxjs/Observable";
 import { empty, merge } from "rxjs";
+import type { Observable } from "rxjs";
 import { catchError } from "rxjs/operators/catchError";
 
 import type Transport from "@ledgerhq/hw-transport";

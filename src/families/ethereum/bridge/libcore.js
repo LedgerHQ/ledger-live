@@ -7,6 +7,8 @@ import {
   FeeRequired,
   FeeTooHigh,
   GasLessThanEstimate,
+  NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
 } from "@ledgerhq/errors";
 import type { AccountLike } from "../../../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
@@ -135,8 +137,20 @@ const getTransactionStatus = async (a, t) => {
     warnings.feeTooHigh = new FeeTooHigh();
   }
 
-  if (!errors.amount && amount.eq(0)) {
-    errors.amount = new AmountRequired();
+  if (!errors.amount) {
+    if (amount.eq(0)) {
+      errors.amount = new AmountRequired();
+    } else if (
+      amount.gt(
+        !tokenAccount
+          ? account.balance.minus(estimatedFees)
+          : tokenAccount.balance
+      )
+    ) {
+      errors.amount = new NotEnoughBalance();
+    } else if (tokenAccount && estimatedFees.gt(a.balance)) {
+      errors.amount = new NotEnoughBalanceInParentAccount();
+    }
   }
 
   return Promise.resolve({
@@ -200,8 +214,9 @@ const estimateMaxSpendable = async ({
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(mainAccount),
     subAccountId: account.type === "Account" ? null : account.id,
-    recipient: "0x0000000000000000000000000000000000000000",
     ...transaction,
+    recipient:
+      transaction?.recipient || "0x0000000000000000000000000000000000000000",
     useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);

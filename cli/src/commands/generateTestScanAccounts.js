@@ -33,7 +33,7 @@ export default {
         const { currency } = accounts[0];
         return `
 // @flow
-import type { CurrenciesData } from "../../../__tests__/test-helpers/bridge";
+import type { CurrenciesData } from "../../../types";
 import type { Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {

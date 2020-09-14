@@ -12,8 +12,17 @@ export type ExtraDeviceTransactionField =
   | { type: "cosmos.validatorName", label: string }
   | { type: "cosmos.sourceValidatorName", label: string };
 
-const getSendFields = (transaction, status, account, source) => {
-  const { amount } = transaction;
+const getSendFields = ({
+  status: { amount },
+  account,
+  source,
+}: {
+  account: AccountLike,
+  parentAccount: ?Account,
+  transaction: Transaction,
+  status: TransactionStatus,
+  source: string,
+}) => {
   const fields = [];
 
   fields.push({
@@ -22,7 +31,7 @@ const getSendFields = (transaction, status, account, source) => {
     value: "Send",
   });
 
-  if (amount) {
+  if (!amount.isZero()) {
     fields.push({
       type: "text",
       label: "Amount",
@@ -62,7 +71,13 @@ function getDeviceTransactionConfig({
 
   switch (mode) {
     case "send":
-      fields = getSendFields(transaction, status, account, source);
+      fields = getSendFields({
+        transaction,
+        status,
+        parentAccount,
+        account,
+        source,
+      });
       break;
 
     case "delegate":

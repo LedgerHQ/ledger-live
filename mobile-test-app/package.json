@@ -12,9 +12,9 @@
     "android:build": "yarn start & bundle exec fastlane android build"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^5.22.0",
-    "@ledgerhq/live-common": "^14.1.3",
-    "@ledgerhq/react-native-ledger-core": "^4.15.8",
+    "@ledgerhq/errors": "^5.23.0",
+    "@ledgerhq/live-common": "^14.4.2",
+    "@ledgerhq/react-native-ledger-core": "^4.15.13",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
     "axios": "^0.19.2",
@@ -35,7 +35,7 @@
     "react-native-tcp": "gre/react-native-tcp",
     "react-redux": "^7.2.1",
     "rn-nodeify": "tradle/rn-nodeify",
-    "rxjs": "^6.6.2",
+    "rxjs": "^6.6.3",
     "stream-browserify": "^2.0.2",
     "timers-browserify": "^2.0.11",
     "tty-browserify": "^0.0.1",
@@ -43,7 +43,7 @@
     "vm-browserify": "^1.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.4",
+    "@babel/core": "^7.11.6",
     "@babel/runtime": "^7.11.2",
     "flow-bin": "^0.120.1",
     "metro-react-native-babel-preset": "^0.58.0",

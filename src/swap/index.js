@@ -12,10 +12,11 @@ import getProviders from "./getProviders";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { getEnv } from "../env";
+import gte from "semver/functions/gte";
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 const swapProviders: {
-  [string]: { nameAndPubkey: Buffer, signature: Buffer },
+  [string]: { nameAndPubkey: Buffer, signature: Buffer, curve: string },
 } = {
   changelly: {
     nameAndPubkey: Buffer.from(
@@ -23,10 +24,36 @@ const swapProviders: {
       "hex"
     ),
     signature: Buffer.from(
-      "30440220554dd6dc172ba5bd20a1bbf60845bbcac67aa0d8d115e55679e2838b772aef41022070f7a3cda142371518ebf16f9696cb27640832ef9401d88209a9e988aab4b3ff",
+      "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
       "hex"
     ),
+    curve: "secpk256k1",
   },
+};
+
+// Minimum version of a currency app which has exchange capabilities, meaning it can be used
+// for sell/swap, and do silent signing.
+const exchangeSupportAppVersions = {
+  bitcoin_cash: "1.5.0",
+  bitcoin_gold: "1.5.0",
+  bitcoin: "1.5.0",
+  dash: "1.5.0",
+  digibyte: "1.5.0",
+  dogecoin: "1.5.0",
+  ethereum: "1.4.0",
+  litecoin: "1.5.0",
+  qtum: "1.5.0",
+  stratis: "1.5.0",
+  zcash: "1.5.0",
+  zencash: "1.5.0",
+};
+
+export const isExchangeSupportedByApp = (
+  appName: string,
+  appVersion: string
+): boolean => {
+  const minVersion = exchangeSupportAppVersions[appName];
+  return minVersion && gte(appVersion, minVersion);
 };
 
 const getCurrencySwapConfig = (
@@ -45,7 +72,7 @@ const getCurrencySwapConfig = (
 const getProviderNameAndSignature = (
   providerName: string
 ): SwapProviderNameAndSignature => {
-  const res = swapProviders[providerName];
+  const res = swapProviders[providerName.toLowerCase()];
   if (!res) {
     throw new Error(`Unknown partner ${providerName}`);
   }

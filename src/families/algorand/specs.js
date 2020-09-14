@@ -110,7 +110,10 @@ const algorand: AppSpec<Transaction> = {
         };
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
-        expect(account.balance.toString()).toBe(
+        const rewards =
+          accountBeforeTransaction.algorandResources?.rewards || 0;
+
+        expect(account.balance.plus(rewards).toString()).toBe(
           accountBeforeTransaction.balance.minus(operation.value).toString()
         );
       },
