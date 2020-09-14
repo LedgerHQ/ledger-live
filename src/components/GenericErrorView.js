@@ -32,13 +32,7 @@ class GenericErrorView extends PureComponent<{
             <ErrorIcon error={error} />
           </View>
         ) : null}
-        <LText
-          selectable
-          secondary
-          semiBold
-          style={styles.title}
-          numberOfLines={3}
-        >
+        <LText selectable semiBold style={styles.title} numberOfLines={3}>
           <TranslatedError error={titleError} />
         </LText>
         {subtitleError ? (

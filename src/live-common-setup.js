@@ -10,12 +10,15 @@ import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
+import { setDeviceMode } from "@ledgerhq/live-common/lib/hw/actions/app";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "@ledgerhq/live-common/lib/load/tokens/ethereum/erc20";
 import "@ledgerhq/live-common/lib/load/tokens/tron/trc10";
 import "@ledgerhq/live-common/lib/load/tokens/tron/trc20";
 import "@ledgerhq/live-common/lib/load/tokens/algorand/asa";
 import "./experimental";
+
+setDeviceMode("polling");
 
 setSupportedCurrencies([
   "bitcoin",

@@ -10,7 +10,8 @@ import {
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import OptInSelectToken from "./01-SelectToken";
-import OptInConnectDevice from "./02-ConnectDevice";
+import OptInSelectDevice from "../../../screens/SelectDevice";
+import OptInConnectDevice from "../../../screens/ConnectDevice";
 import OptInValidation from "./03-Validation";
 import OptInValidationError from "./03-ValidationError";
 import OptInValidationSuccess from "./03-ValidationSuccess";
@@ -46,6 +47,21 @@ function OptInFlow() {
             borderBottomWidth: 0,
           },
           gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AlgorandOptInSelectDevice}
+        component={OptInSelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("algorand.optIn.stepperHeader.connectDevice")}
+              subtitle={t("algorand.optIn.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps: "3",
+              })}
+            />
+          ),
         }}
       />
       <Stack.Screen

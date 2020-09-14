@@ -110,7 +110,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
 
   const onNext = useCallback(
     (assetId: string) => {
-      navigation.navigate(ScreenName.AlgorandOptInConnectDevice, {
+      navigation.navigate(ScreenName.AlgorandOptInSelectDevice, {
         ...route.params,
         transaction: bridge.updateTransaction(transaction, { assetId }),
       });

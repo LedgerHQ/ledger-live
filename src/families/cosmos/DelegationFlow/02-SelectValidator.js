@@ -149,7 +149,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   );
 
   const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.CosmosDelegationConnectDevice, {
+    navigation.navigate(ScreenName.CosmosDelegationSelectDevice, {
       ...route.params,
       transaction,
       status,

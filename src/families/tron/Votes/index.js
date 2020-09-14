@@ -8,6 +8,8 @@ import {
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account/helpers";
+import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   useTronSuperRepresentatives,
   formatVotes,
@@ -91,15 +93,29 @@ const Delegation = ({ account, parentAccount }: Props) => {
     setRewardsInfoModal,
   ]);
 
+  const bridge = getAccountBridge(account, undefined);
+
+  const { transaction, status } = useBridgeTransaction(() => {
+    const t = bridge.createTransaction(account);
+
+    const transaction = bridge.updateTransaction(t, {
+      mode: "claimReward",
+    });
+
+    return { account, transaction };
+  });
+
   const claimRewards = useCallback(() => {
     navigation.navigate(NavigatorName.ClaimRewards, {
-      screen: ScreenName.ClaimRewardsConnectDevice,
+      screen: ScreenName.ClaimRewardsSelectDevice,
       params: {
         accountId,
         parentId,
+        transaction,
+        status,
       },
     });
-  }, [accountId, navigation, parentId]);
+  }, [accountId, navigation, parentId, transaction, status]);
 
   const onDelegateFreeze = useCallback(() => {
     navigation.navigate(NavigatorName.Freeze, {

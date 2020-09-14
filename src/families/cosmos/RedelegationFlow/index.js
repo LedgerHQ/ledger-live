@@ -11,10 +11,12 @@ import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import RedelegationSelectValidator from "./01-SelectValidator";
 import RedelegationAmount from "../shared/02-SelectAmount";
-import RedelegationConnectDevice from "./03-ConnectDevice";
-import RedelegationValidation from "./04-Validation";
+import SelectDevice from "../../../screens/SelectDevice";
+import ConnectDevice from "../../../screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
 import RedelegationValidationSuccess from "./04-ValidationSuccess";
+
+const totalSteps = "3";
 
 function RedelegationFlow() {
   const { t } = useTranslation();
@@ -35,7 +37,7 @@ function RedelegationFlow() {
               title={t("cosmos.redelegation.stepperHeader.validator")}
               subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
                 currentStep: "1",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
@@ -65,36 +67,33 @@ function RedelegationFlow() {
         })}
       />
       <Stack.Screen
-        name={ScreenName.CosmosRedelegationConnectDevice}
-        component={RedelegationConnectDevice}
+        name={ScreenName.CosmosRedelegationSelectDevice}
+        component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.redelegation.stepperHeader.connectDevice")}
+              title={t("cosmos.redelegation.stepperHeader.selectDevice")}
               subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
                 currentStep: "2",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
         }}
       />
       <Stack.Screen
-        name={ScreenName.CosmosRedelegationValidation}
-        component={RedelegationValidation}
+        name={ScreenName.CosmosRedelegationConnectDevice}
+        component={ConnectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.redelegation.stepperHeader.verification")}
+              title={t("cosmos.redelegation.stepperHeader.connectDevice")}
               subtitle={t("cosmos.redelegation.stepperHeader.stepRange", {
                 currentStep: "3",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
-          gestureEnabled: false,
         }}
       />
       <Stack.Screen

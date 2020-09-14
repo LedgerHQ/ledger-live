@@ -12,10 +12,12 @@ import { ScreenName } from "../../../const";
 import DelegationStarted from "./01-Started";
 import DelegationSelectValidator from "./02-SelectValidator";
 import DelegationAmount from "../shared/02-SelectAmount";
-import DelegationConnectDevice from "./03-ConnectDevice";
-import DelegationValidation from "./04-Validation";
+import SelectDevice from "../../../screens/SelectDevice";
+import ConnectDevice from "../../../screens/ConnectDevice";
 import DelegationValidationError from "./04-ValidationError";
 import DelegationValidationSuccess from "./04-ValidationSuccess";
+
+const totalSteps = "3";
 
 function DelegationFlow() {
   const { t } = useTranslation();
@@ -43,7 +45,7 @@ function DelegationFlow() {
               title={t("cosmos.delegation.stepperHeader.validator")}
               subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
                 currentStep: "1",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
@@ -74,36 +76,33 @@ function DelegationFlow() {
         })}
       />
       <Stack.Screen
-        name={ScreenName.CosmosDelegationConnectDevice}
-        component={DelegationConnectDevice}
+        name={ScreenName.CosmosDelegationSelectDevice}
+        component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.delegation.stepperHeader.connectDevice")}
+              title={t("cosmos.delegation.stepperHeader.selectDevice")}
               subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
                 currentStep: "2",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
         }}
       />
       <Stack.Screen
-        name={ScreenName.CosmosDelegationValidation}
-        component={DelegationValidation}
+        name={ScreenName.CosmosDelegationConnectDevice}
+        component={ConnectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.delegation.stepperHeader.verification")}
+              title={t("cosmos.delegation.stepperHeader.connectDevice")}
               subtitle={t("cosmos.delegation.stepperHeader.stepRange", {
                 currentStep: "3",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
-          gestureEnabled: false,
         }}
       />
       <Stack.Screen

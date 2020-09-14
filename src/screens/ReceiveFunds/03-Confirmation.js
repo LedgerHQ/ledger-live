@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
@@ -26,11 +27,9 @@ import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 import BottomModal from "../../components/BottomModal";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
 import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
-import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
@@ -42,6 +41,7 @@ import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 import { rejectionOp } from "../../components/DebugRejectSwitch";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import GenericErrorView from "../../components/GenericErrorView";
 
 const forceInset = { bottom: "always" };
 
@@ -55,9 +55,9 @@ type Props = {
 
 type RouteParams = {
   accountId: string,
-  deviceId: string,
   modelId: DeviceModelId,
   wired: boolean,
+  device?: Device,
 };
 
 export default function ReceiveConfirmation({ navigation, route }: Props) {
@@ -70,11 +70,10 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const [error, setError] = useState(null);
   const [zoom, setZoom] = useState(false);
   const [allowNavigation, setAllowNavigation] = useState(true);
-
   const sub = useRef();
 
   const verifyOnDevice = useCallback(
-    async (deviceId: string): Promise<void> => {
+    async (device: Device): Promise<void> => {
       if (!account) return;
       const mainAccount = getMainAccount(account, parentAccount);
 
@@ -82,7 +81,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         ? // $FlowFixMe
           of({}).pipe(delay(1000), rejectionOp())
         : getAccountBridge(mainAccount).receive(mainAccount, {
-            deviceId,
+            deviceId: device.deviceId,
             verify: true,
           })
       ).subscribe({
@@ -102,10 +101,6 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
     },
     [account, parentAccount],
   );
-
-  function contactUs(): void {
-    Linking.openURL(urls.contact);
-  }
 
   function onRetry(): void {
     if (isModalOpened) {
@@ -142,34 +137,28 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       return;
     }
 
-    const { headerLeft, headerRight } = closableStackNavigatorConfig;
+    const { headerRight } = closableStackNavigatorConfig;
     navigation.setOptions({
-      headerLeft,
+      headerLeft: null,
       headerRight,
       gestureEnabled: Platform.OS === "ios",
     });
   }, [allowNavigation, navigation]);
 
   useEffect(() => {
-    const deviceId = route.params?.deviceId;
+    const device = route.params.device;
 
-    if (deviceId) {
+    if (device) {
       setAllowNavigation(false);
-      verifyOnDevice(deviceId);
+      verifyOnDevice(device);
     } else {
       setAllowNavigation(true);
     }
-
-    return () => {
-      if (sub.current) {
-        sub.current.unsubscribe();
-      }
-    };
   }, [route.params, account, parentAccount, verifyOnDevice]);
 
   if (!account) return null;
   const { width } = getWindowDimensions();
-  const unsafe = !route.params?.deviceId;
+  const unsafe = !route.params.device?.deviceId;
   const QRSize = Math.round(width / 1.8 - 16);
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
@@ -319,29 +308,8 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       >
         {error ? (
           <View style={styles.modal}>
-            <View style={styles.modalBody}>
-              <View style={styles.modalIcon}>
-                <DeviceNanoAction
-                  modelId={route.params?.modelId}
-                  wired={route.params?.wired}
-                  error={error}
-                />
-              </View>
-              <LText secondary semiBold style={styles.modalTitle}>
-                <TranslatedError error={error} />
-              </LText>
-              <LText style={styles.modalDescription}>
-                <TranslatedError error={error} field="description" />
-              </LText>
-            </View>
+            <GenericErrorView error={error} />
             <View style={styles.buttonsContainer}>
-              <Button
-                event="ReceiveContactUs"
-                type="secondary"
-                title={<Trans i18nKey="common.contactUs" />}
-                containerStyle={styles.button}
-                onPress={contactUs}
-              />
               <Button
                 event="ReceiveRetry"
                 type="primary"

@@ -15,6 +15,7 @@ import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
@@ -50,7 +51,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
 
 type RouteParams = {
   currency: CryptoCurrency,
-  deviceId: string,
+  device: Device,
   inline?: boolean,
 };
 
@@ -109,7 +110,10 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
   startSubscription = () => {
     const { route, blacklistedTokenIds } = this.props;
-    const { currency, deviceId } = route.params || {};
+    const {
+      currency,
+      device: { deviceId },
+    } = route.params || {};
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {

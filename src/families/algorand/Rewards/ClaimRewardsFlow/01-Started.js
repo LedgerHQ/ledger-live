@@ -66,7 +66,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   });
 
   const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.AlgorandClaimRewardsConnectDevice, {
+    navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {
       ...route.params,
       transaction,
     });

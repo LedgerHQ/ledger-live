@@ -54,7 +54,7 @@ export default function Progress({ navigation, route }: Props) {
   const prevAccountCount = useRef(migratableAccounts.length);
   const prevCurrencyIds = useRef(currencyIds);
 
-  const { currency, deviceMeta } = route.params || {};
+  const { currency, device } = route.params || {};
 
   const noticeAwareStatus =
     status === "done" && prevAccountCount.current === migratableAccounts.length
@@ -85,7 +85,7 @@ export default function Progress({ navigation, route }: Props) {
         });
       } else {
         navigation.navigate(ScreenName.MigrateAccountsConnectDevice, {
-          deviceMeta,
+          device,
           currency: noticeAwareStatus === "error" ? currency : nextCurrency,
         });
       }
@@ -94,7 +94,7 @@ export default function Progress({ navigation, route }: Props) {
     }
   }, [
     navigation,
-    deviceMeta,
+    device,
     migratableAccounts,
     finishedWithDevice,
     nextCurrency,
@@ -102,7 +102,7 @@ export default function Progress({ navigation, route }: Props) {
     noticeAwareStatus,
   ]);
 
-  const { deviceId } = deviceMeta;
+  const { deviceId } = device;
   const startScanAccountsDevice = useCallback(() => {
     const syncConfig = {
       // TODO later we need to paginate only a few ops, not all (for add accounts)

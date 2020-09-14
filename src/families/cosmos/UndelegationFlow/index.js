@@ -7,10 +7,12 @@ import { closableStackNavigatorConfig } from "../../../navigation/navigatorConfi
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import UndelegationAmount from "./01-Amount";
-import UndelegationConnectDevice from "./02-ConnectDevice";
-import UndelegationValidation from "./03-Validation";
+import SelectDevice from "../../../screens/SelectDevice";
+import ConnectDevice from "../../../screens/ConnectDevice";
 import UndelegationValidationError from "./03-ValidationError";
 import UndelegationValidationSuccess from "./03-ValidationSuccess";
+
+const totalSteps = "3";
 
 function UndelegationFlow() {
   const { t } = useTranslation();
@@ -35,36 +37,33 @@ function UndelegationFlow() {
         })}
       />
       <Stack.Screen
-        name={ScreenName.CosmosUndelegationConnectDevice}
-        component={UndelegationConnectDevice}
+        name={ScreenName.CosmosUndelegationSelectDevice}
+        component={SelectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.undelegation.stepperHeader.connectDevice")}
+              title={t("cosmos.undelegation.stepperHeader.selectDevice")}
               subtitle={t("cosmos.undelegation.stepperHeader.stepRange", {
                 currentStep: "2",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
         }}
       />
       <Stack.Screen
-        name={ScreenName.CosmosUndelegationValidation}
-        component={UndelegationValidation}
+        name={ScreenName.CosmosUndelegationConnectDevice}
+        component={ConnectDevice}
         options={{
           headerTitle: () => (
             <StepHeader
-              title={t("cosmos.undelegation.stepperHeader.verification")}
+              title={t("cosmos.undelegation.stepperHeader.connectDevice")}
               subtitle={t("cosmos.undelegation.stepperHeader.stepRange", {
                 currentStep: "3",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
-          gestureEnabled: false,
         }}
       />
       <Stack.Screen

@@ -1,32 +1,49 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
+import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import { ScreenName } from "../../const";
-import { connectingStep, currencyApp } from "../../components/DeviceJob/steps";
 import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
+import DeviceActionModal from "../../components/DeviceActionModal";
 
 const forceInset = { bottom: "always" };
 
+const action = createAction(connectApp);
+
 type Props = {
   navigation: any,
-  route: any,
+  route: { params: RouteParams },
+};
+
+type RouteParams = {
+  currency: Currency,
 };
 
 export default function ConnectDevice({ navigation, route }: Props) {
-  const onSelectDevice = useCallback(
-    deviceMeta => {
+  const [device, setDevice] = useState<?Device>();
+
+  const onResult = useCallback(
+    result => {
+      setDevice();
       navigation.navigate(ScreenName.MigrateAccountsProgress, {
         currency: route.params?.currency,
-        deviceMeta,
+        ...result,
       });
     },
     [navigation, route.params],
   );
+
+  const onClose = useCallback(() => {
+    setDevice();
+  }, []);
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
@@ -35,13 +52,15 @@ export default function ConnectDevice({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <SelectDevice
-          deviceMeta={route.params?.deviceMeta}
-          onSelect={onSelectDevice}
-          autoSelectOnAdd
-          steps={[connectingStep, currencyApp(route.params?.currency)]}
-        />
+        <SelectDevice onSelect={setDevice} autoSelectOnAdd />
       </NavigationScrollView>
+      <DeviceActionModal
+        action={action}
+        device={device}
+        onResult={onResult}
+        onClose={onClose}
+        request={{ currency: route.params.currency }}
+      />
     </SafeAreaView>
   );
 }

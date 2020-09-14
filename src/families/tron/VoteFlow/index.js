@@ -14,10 +14,12 @@ import VoteSelectValidator, {
   SelectValidatorHeaderLeft,
 } from "./01-SelectValidator";
 import VoteCast from "./02-VoteCast";
-import VoteConnectDevice from "./03-ConnectDevice";
-import VoteValidation from "./04-Validation";
+import VoteSelectDevice from "../../../screens/SelectDevice";
+import VoteConnectDevice from "../../../screens/ConnectDevice";
 import VoteValidationError from "./04-ValidationError";
 import VoteValidationSuccess from "./04-ValidationSuccess";
+
+const totalSteps = "4";
 
 function VoteFlow() {
   const { t } = useTranslation();
@@ -45,7 +47,7 @@ function VoteFlow() {
               title={t("vote.stepperHeader.selectValidator")}
               subtitle={t("vote.stepperHeader.stepRange", {
                 currentStep: "1",
-                totalSteps: "4",
+                totalSteps,
               })}
             />
           ),
@@ -68,11 +70,26 @@ function VoteFlow() {
               title={t("vote.stepperHeader.castVote")}
               subtitle={t("vote.stepperHeader.stepRange", {
                 currentStep: "2",
-                totalSteps: "4",
+                totalSteps,
               })}
             />
           ),
           headerLeft: null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.VoteSelectDevice}
+        component={VoteSelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("vote.stepperHeader.selectDevice")}
+              subtitle={t("vote.stepperHeader.stepRange", {
+                currentStep: "3",
+                totalSteps,
+              })}
+            />
+          ),
         }}
       />
       <Stack.Screen
@@ -83,29 +100,11 @@ function VoteFlow() {
             <StepHeader
               title={t("vote.stepperHeader.connectDevice")}
               subtitle={t("vote.stepperHeader.stepRange", {
-                currentStep: "3",
-                totalSteps: "4",
-              })}
-            />
-          ),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.VoteValidation}
-        component={VoteValidation}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("vote.stepperHeader.verification")}
-              subtitle={t("vote.stepperHeader.stepRange", {
                 currentStep: "4",
-                totalSteps: "4",
+                totalSteps,
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
-          gestureEnabled: false,
         }}
       />
       <Stack.Screen

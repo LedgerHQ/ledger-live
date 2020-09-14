@@ -32,7 +32,7 @@ export default function ValidationError({ navigation, route }: Props) {
   }, []);
 
   const retry = useCallback(() => {
-    navigation.navigate(ScreenName.ClaimRewardsConnectDevice, route.params);
+    navigation.navigate(ScreenName.ClaimRewardsSelectDevice, route.params);
   }, [navigation, route.params]);
 
   return (

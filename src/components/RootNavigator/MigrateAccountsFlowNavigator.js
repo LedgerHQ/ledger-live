@@ -10,12 +10,13 @@ import MigrateAccountsProgress from "../../screens/MigrateAccounts/03-Progress";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
+const totalSteps = "3";
+
 export default function MigrateAccountsFlowNavigator() {
   return (
     <Stack.Navigator
       screenOptions={{
         ...closableStackNavigatorConfig,
-        headerShown: false,
         gestureEnabled: Platform.OS === "ios",
       }}
     >
@@ -31,7 +32,7 @@ export default function MigrateAccountsFlowNavigator() {
                   i18nKey="send.stepperHeader.stepRange"
                   values={{
                     currentStep: "1",
-                    totalSteps: "3",
+                    totalSteps,
                   }}
                 />
               }
@@ -53,7 +54,7 @@ export default function MigrateAccountsFlowNavigator() {
                   i18nKey="send.stepperHeader.stepRange"
                   values={{
                     currentStep: "2",
-                    totalSteps: "3",
+                    totalSteps,
                   }}
                 />
               }
@@ -73,7 +74,7 @@ export default function MigrateAccountsFlowNavigator() {
                   i18nKey="send.stepperHeader.stepRange"
                   values={{
                     currentStep: "3",
-                    totalSteps: "3",
+                    totalSteps,
                   }}
                 />
               }

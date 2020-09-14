@@ -6,7 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import colors from "../../colors";
-import { ScreenName } from "../../const";
+import { NavigatorName } from "../../const";
 import LText from "../../components/LText";
 import IconArrowRight from "../../icons/ArrowRight";
 import LiveLogo from "../../icons/LiveLogoIcon";
@@ -20,7 +20,7 @@ export default function Banner() {
   );
 
   const navigateToAccountMigration = useCallback(() => {
-    navigation.navigate(ScreenName.MigrateAccountsOverview);
+    navigation.navigate(NavigatorName.MigrateAccountsFlow);
   }, [navigation]);
 
   if (!someAccountsNeedMigration) return null;

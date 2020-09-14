@@ -10,6 +10,8 @@ import ReceiveSelectAccount from "../../screens/ReceiveFunds/01-SelectAccount";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
+const totalSteps = "3";
+
 export default function ReceiveFundsNavigator() {
   const { t } = useTranslation();
   return (
@@ -29,7 +31,7 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.headerTitle")}
               subtitle={t("send.stepperHeader.stepRange", {
                 currentStep: "1",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
@@ -45,7 +47,7 @@ export default function ReceiveFundsNavigator() {
                 title={t(route.params?.title ?? "transfer.receive.titleDevice")}
                 subtitle={t("send.stepperHeader.stepRange", {
                   currentStep: "2",
-                  totalSteps: "3",
+                  totalSteps,
                 })}
               />
             ),
@@ -61,7 +63,7 @@ export default function ReceiveFundsNavigator() {
               title={t("account.receive")}
               subtitle={t("send.stepperHeader.stepRange", {
                 currentStep: "3",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),

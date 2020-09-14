@@ -11,7 +11,8 @@ import StepHeader from "../../../../components/StepHeader";
 import { ScreenName } from "../../../../const";
 import ClaimRewardsInfo from "./01-Info";
 import ClaimRewardsStarted from "./01-Started";
-import ClaimRewardsConnectDevice from "./02-ConnectDevice";
+import ClaimRewardsSelectDevice from "../../../../screens/SelectDevice";
+import ClaimRewardsConnectDevice from "../../../../screens/ConnectDevice";
 import ClaimRewardsValidation from "./03-Validation";
 import ClaimRewardsValidationError from "./03-ValidationError";
 import ClaimRewardsValidationSuccess from "./03-ValidationSuccess";
@@ -47,6 +48,21 @@ function ClaimRewardsFlow() {
             borderBottomWidth: 0,
           },
           gestureEnabled: false,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.AlgorandClaimRewardsSelectDevice}
+        component={ClaimRewardsSelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("algorand.claimRewards.stepperHeader.connectDevice")}
+              subtitle={t("algorand.claimRewards.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps: "3",
+              })}
+            />
+          ),
         }}
       />
       <Stack.Screen

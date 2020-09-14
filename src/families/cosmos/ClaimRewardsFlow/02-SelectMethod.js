@@ -123,7 +123,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
   invariant(transaction, "transaction required");
 
   const onNext = useCallback(() => {
-    navigation.navigate(ScreenName.CosmosClaimRewardsConnectDevice, {
+    navigation.navigate(ScreenName.CosmosClaimRewardsSelectDevice, {
       ...route.params,
       transaction,
     });

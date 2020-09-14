@@ -3,31 +3,29 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import type {
-  Account,
-  AccountLikeArray,
-} from "@ledgerhq/live-common/lib/types";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { useSelector } from "react-redux";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import colors from "../../colors";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import CoinifyWidget from "./CoinifyWidget";
 
-// TODO: Add proper type
-type RouteParams = any;
+type RouteParams = {
+  account: AccountLike,
+  parentId: string,
+  device: Device,
+  mode: string,
+};
 
 type Props = {
-  accounts: Account[],
-  allAccounts: AccountLikeArray,
   navigation: any,
   route: { params: RouteParams },
 };
 
 export default function CoinifyWidgetScreen({ route }: Props) {
   const { parentAccount } = useSelector(accountScreenSelector(route));
-  const { account } = route.params;
-  const mode = route.params.mode;
-  const meta = route.params.meta;
+  const { account, mode, device } = route.params;
 
   const forceInset = { bottom: "always" };
 
@@ -36,8 +34,9 @@ export default function CoinifyWidgetScreen({ route }: Props) {
       <CoinifyWidget
         account={account}
         parentAccount={parentAccount}
-        meta={meta}
+        device={device}
         mode={mode}
+        verifyAddress
       />
     </SafeAreaView>
   );

@@ -141,7 +141,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     transaction && transaction.resource ? transaction.resource : "";
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.UnfreezeConnectDevice, {
+    navigation.navigate(ScreenName.UnfreezeSelectDevice, {
       accountId: account.id,
       transaction,
       status,

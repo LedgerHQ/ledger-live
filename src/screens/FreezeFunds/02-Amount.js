@@ -119,7 +119,7 @@ export default function FreezeAmount({ navigation, route }: Props) {
   );
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.FreezeConnectDevice, {
+    navigation.navigate(ScreenName.FreezeSelectDevice, {
       accountId: account.id,
       transaction,
       status,

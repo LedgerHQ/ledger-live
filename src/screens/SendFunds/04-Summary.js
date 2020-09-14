@@ -56,49 +56,32 @@ export default function SendSummary({ navigation, route }: Props) {
 
   const [highFeesOpen, setHighFeesOpen] = useState(false);
 
-  const onAcceptFees = useCallback(async () => {
-    navigation.navigate(ScreenName.SendConnectDevice, {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+  const navigateToNext = useCallback(() => {
+    navigation.navigate(ScreenName.SendSelectDevice, {
+      ...route.params,
       transaction,
       status,
     });
+  }, [navigation, route, transaction, status]);
+
+  const onAcceptFees = useCallback(() => {
+    navigateToNext();
 
     setHighFeesOpen(false);
-  }, [
-    setHighFeesOpen,
-    status,
-    account,
-    parentAccount,
-    navigation,
-    transaction,
-  ]);
+  }, [navigateToNext, setHighFeesOpen]);
 
   const onRejectFees = useCallback(() => {
     setHighFeesOpen(false);
   }, [setHighFeesOpen]);
 
-  const onContinue = useCallback(async () => {
+  const onContinue = useCallback(() => {
     const { warnings } = status;
     if (Object.keys(warnings).includes("feeTooHigh")) {
       setHighFeesOpen(true);
       return;
     }
-
-    navigation.navigate(ScreenName.SendConnectDevice, {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
-      transaction,
-      status,
-    });
-  }, [
-    setHighFeesOpen,
-    status,
-    account,
-    parentAccount,
-    navigation,
-    transaction,
-  ]);
+    navigateToNext();
+  }, [navigateToNext, setHighFeesOpen, status]);
 
   if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
 

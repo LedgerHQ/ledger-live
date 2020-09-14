@@ -11,10 +11,12 @@ import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import ClaimRewardsSelectValidator from "./01-SelectValidator";
 import ClaimRewardsMethod from "./02-SelectMethod.js";
-import ClaimRewardsConnectDevice from "./03-ConnectDevice";
-import ClaimRewardsValidation from "./04-Validation";
+import ClaimRewardsSelectDevice from "../../../screens/SelectDevice";
+import ClaimRewardsConnectDevice from "../../../screens/ConnectDevice";
 import ClaimRewardsValidationError from "./04-ValidationError";
 import ClaimRewardsValidationSuccess from "./04-ValidationSuccess";
+
+const totalSteps = "3";
 
 function ClaimRewardsFlow() {
   const { t } = useTranslation();
@@ -35,7 +37,7 @@ function ClaimRewardsFlow() {
               title={t("cosmos.claimRewards.stepperHeader.validator")}
               subtitle={t("cosmos.claimRewards.stepperHeader.stepRange", {
                 currentStep: "1",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
@@ -59,6 +61,21 @@ function ClaimRewardsFlow() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.CosmosClaimRewardsSelectDevice}
+        component={ClaimRewardsSelectDevice}
+        options={{
+          headerTitle: () => (
+            <StepHeader
+              title={t("cosmos.claimRewards.stepperHeader.selectDevice")}
+              subtitle={t("cosmos.claimRewards.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.CosmosClaimRewardsConnectDevice}
         component={ClaimRewardsConnectDevice}
         options={{
@@ -66,29 +83,11 @@ function ClaimRewardsFlow() {
             <StepHeader
               title={t("cosmos.claimRewards.stepperHeader.connectDevice")}
               subtitle={t("cosmos.claimRewards.stepperHeader.stepRange", {
-                currentStep: "2",
-                totalSteps: "3",
-              })}
-            />
-          ),
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.CosmosClaimRewardsValidation}
-        component={ClaimRewardsValidation}
-        options={{
-          headerTitle: () => (
-            <StepHeader
-              title={t("cosmos.claimRewards.stepperHeader.verification")}
-              subtitle={t("cosmos.claimRewards.stepperHeader.stepRange", {
                 currentStep: "3",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
-          headerLeft: null,
-          headerRight: null,
-          gestureEnabled: false,
         }}
       />
       <Stack.Screen

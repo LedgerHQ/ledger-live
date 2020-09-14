@@ -17,6 +17,8 @@ type Route = {
   params: ?{ currency: * },
 };
 
+const totalSteps = "3";
+
 export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { t } = useTranslation();
   const currency = route && route.params && route.params.currency;
@@ -45,7 +47,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
               title={t("common.cryptoAsset")}
               subtitle={t("send.stepperHeader.stepRange", {
                 currentStep: "1",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
@@ -61,7 +63,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
               title={t("common.device")}
               subtitle={t("send.stepperHeader.stepRange", {
                 currentStep: "2",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),
@@ -76,7 +78,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
               title={t("tabs.accounts")}
               subtitle={t("send.stepperHeader.stepRange", {
                 currentStep: "3",
-                totalSteps: "3",
+                totalSteps,
               })}
             />
           ),

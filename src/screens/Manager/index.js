@@ -15,7 +15,7 @@ import {
   listApps,
   getDeviceName,
 } from "../../components/DeviceJob/steps";
-import SelectDevice from "../../components/SelectDevice";
+import SelectDevice from "../../components/SelectDevice/legacy";
 import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";

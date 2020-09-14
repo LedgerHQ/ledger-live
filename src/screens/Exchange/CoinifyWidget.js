@@ -1,25 +1,26 @@
 // @flow
-
 import React, { useRef, useCallback, useState, useEffect } from "react";
 import { WebView } from "react-native-webview";
 import querystring from "querystring";
 import { ActivityIndicator, StyleSheet, View, Linking } from "react-native";
-// $FlowFixMe
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/lib/account/helpers";
-import type { AccountLike } from "@ledgerhq/live-common/lib/types/account";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
+import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { useTranslation } from "react-i18next";
+import DeviceAction from "../../components/DeviceAction";
+import BottomModal from "../../components/BottomModal";
+import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import { getConfig } from "./coinifyConfig";
 import colors from "../../colors";
-import DeviceJob from "../../components/DeviceJob";
-import {
-  accountApp,
-  connectingStep,
-  verifyAddressOnDeviceStep,
-} from "../../components/DeviceJob/steps";
 import { track } from "../../analytics";
+
+const action = createAction(connectApp);
 
 type CoinifyWidgetConfig = {
   primaryColor?: string,
@@ -73,19 +74,23 @@ const injectedCode = `
 
 type Props = {
   account?: AccountLike,
-  parentAccount?: Account,
+  parentAccount: ?Account,
   mode: string,
-  meta?: *,
+  device: Device,
+  verifyAddress?: boolean,
 };
 
 export default function CoinifyWidget({
   mode,
   account,
   parentAccount,
-  meta,
+  device,
 }: Props) {
-  const [isWaitingDeviceJob, setWaitingDeviceJob] = useState(false);
+  const [requestingAction, setRequestingAction] = useState<
+    "none" | "connect" | "verify",
+  >("none");
   const [firstLoadDone, setFirstLoadDone] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const webView = useRef(null);
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
@@ -145,7 +150,8 @@ export default function CoinifyWidget({
         track("Coinify Confirm Buy Start", {
           currencyName: getAccountCurrency(account).name,
         });
-        setWaitingDeviceJob(true);
+        setRequestingAction("connect");
+        setIsOpen(true);
       } else {
         // TODO this is a problem, it should not occur.
       }
@@ -180,6 +186,22 @@ export default function CoinifyWidget({
     [account],
   );
 
+  const onResult = useCallback(() => {
+    setRequestingAction("verify");
+  }, []);
+
+  const onVerify = useCallback(
+    confirmed => {
+      setIsOpen(false);
+      settleTrade(confirmed ? "accepted" : "rejected");
+      setRequestingAction("none");
+    },
+    [settleTrade],
+  );
+
+  const tokenCurrency =
+    account && account.type === "TokenAccount" ? account.token : null;
+
   const url = `${coinifyConfig.url}?${querystring.stringify(widgetConfig)}`;
 
   return (
@@ -206,33 +228,65 @@ export default function CoinifyWidget({
         scalesPageToFitmediaPlaybackRequiresUserAction
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
-        style={{
-          flex: 0,
-          width: "100%",
-          height: "100%",
-        }}
+        style={styles.webview}
       />
-      {isWaitingDeviceJob ? (
-        <DeviceJob
-          deviceModelId="nanoX" // NB: EditDeviceName feature is only available on NanoX over BLE.
-          meta={meta}
-          onCancel={() => {
-            settleTrade("rejected");
-            setWaitingDeviceJob(false);
-          }}
-          onDone={() => {
-            settleTrade("accepted");
-            setWaitingDeviceJob(false);
-          }}
-          steps={[
-            connectingStep,
-            accountApp(mainAccount),
-            verifyAddressOnDeviceStep(mainAccount),
-          ]}
-        />
-      ) : null}
+      <BottomModal id="DeviceActionModal" isOpened={isOpen}>
+        <View style={styles.modalContainer}>
+          {requestingAction === "connect" ? (
+            <DeviceAction
+              action={action}
+              device={device}
+              request={{ account: mainAccount, tokenCurrency }}
+              onResult={onResult}
+            />
+          ) : requestingAction === "verify" ? (
+            <VerifyAddress
+              account={mainAccount}
+              device={device}
+              onResult={onVerify}
+            />
+          ) : null}
+        </View>
+      </BottomModal>
     </View>
   );
+}
+
+function VerifyAddress({
+  account,
+  device,
+  onResult,
+}: {
+  account: Account,
+  device: Device,
+  onResult: (confirmed: boolean, error?: Error) => void,
+}) {
+  const { t } = useTranslation();
+
+  const onConfirmAddress = useCallback(async () => {
+    try {
+      await getAccountBridge(account)
+        .receive(account, {
+          deviceId: device.deviceId,
+          verify: true,
+        })
+        .toPromise();
+      onResult(true);
+    } catch (err) {
+      onResult(false, err);
+    }
+  }, [account, device, onResult]);
+
+  useEffect(() => {
+    onConfirmAddress();
+  }, [onConfirmAddress]);
+
+  return renderVerifyAddress({
+    t,
+    currencyName: getAccountCurrency(account).name,
+    device,
+    address: account.freshAddress,
+  });
 }
 
 const styles = StyleSheet.create({
@@ -250,5 +304,13 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     justifyContent: "center",
+  },
+  modalContainer: {
+    flexDirection: "row",
+  },
+  webview: {
+    flex: 0,
+    width: "100%",
+    height: "100%",
   },
 });

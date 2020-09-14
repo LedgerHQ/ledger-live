@@ -6,7 +6,7 @@ import { Linking } from "react-native";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
-import SelectDevice from "../../../components/SelectDevice";
+import SelectDevice from "../../../components/SelectDevice/legacy";
 import OnboardingLayout from "../OnboardingLayout";
 import { withOnboardingContext } from "../onboardingContext";
 import { urls } from "../../../config/urls";

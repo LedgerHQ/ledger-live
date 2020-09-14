@@ -100,6 +100,10 @@
     "CantScanQRCode": {
       "title": "Couldn't scan this QR-code: auto-verification not supported by this address"
     },
+    "ConnectAppTimeout": {
+      "title": "Oops, no device found",
+      "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
+    },
     "ClaimRewardsFeesWarning": {
       "title": "The amount of rewards are lower than the estimated fees required to claim them",
       "description": ""
@@ -377,6 +381,10 @@
       "title": "Oops, a time out occurred ({{tag}})",
       "description": "It took too long for the server to respond."
     },
+    "TransactionRefusedOnDevice": {
+      "title": "Transaction refused on device",
+      "description": "Please retry or contact Ledger Support in case of doubt."
+    },
     "TransportError": {
       "title": "Something went wrong. Please reconnect your device.",
       "description": "{{message}}"
@@ -441,7 +449,7 @@
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
-      "description": "Please try again or contact Ledger Support when in doubt"
+      "description": "Please try again"
     },
     "UserRefusedDeviceNameChange": {
       "title": "Rename canceled on device",
@@ -468,7 +476,7 @@
       "description": "The connected device is not associated with the account you selected. Please connect the right device."
     },
     "UnexpectedBootloader": {
-      "title": "Opps, your device should not be in Bootloader mode",
+      "title": "Oops, your device should not be in Bootloader mode",
       "description": "Please restart your device or contact us"
     },
     "UnavailableTezosOriginatedAccountReceive": {
@@ -1241,8 +1249,8 @@
       "recipientAddress": "Recipient Address",
       "selectAmount": "Amount",
       "summary": "Summary",
+      "selectDevice": "Select Device",
       "connectDevice": "Connect Device",
-      "verification": "Verification",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "recipient": {
@@ -1295,6 +1303,12 @@
         "title": "Choose Unit"
       },
       "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH"
+    },
+    "verification": {
+      "streaming": {
+        "accurate": "Loading... ({{percentage}})",
+        "inaccurate": "Loading..."
+      }
     }
   },
   "freeze": {
@@ -1302,8 +1316,8 @@
       "info": "Earn rewards",
       "selectAmount": "Freeze",
       "summary": "Summary",
+      "selectDevice": "Select Device",
       "connectDevice": "Connect Device",
-      "verification": "Verification",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "info": {
@@ -1340,8 +1354,8 @@
     "stepperHeader": {
       "selectAmount": "Unfreeze",
       "summary": "Summary",
+      "selectDevice": "Select Device",
       "connectDevice": "Connect Device",
-      "verification": "Verification",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "amount": {
@@ -1360,8 +1374,8 @@
   },
   "claimReward": {
     "stepperHeader": {
+      "selectDevice": "Select Device",
       "connectDevice": "Connect Device",
-      "verification": "Verification",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "validation": {
@@ -1376,8 +1390,8 @@
     "stepperHeader": {
       "selectValidator": "Cast votes",
       "castVote": "My votes",
+      "selectDevice": "Select Device",
       "connectDevice": "Connect Device",
-      "verification": "Verification",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "selectValidator": {},
@@ -1456,6 +1470,26 @@
         "disclaimer": "{{tokenName}} is an TRC20 Token.\nYou can receive tokens directly on an Tron account",
         "learnMore": "Learn more about TRC20"
       }
+    }
+  },
+  "DeviceAction": {
+    "allowAppPermission": "Open the {{wording}} app on your device",
+    "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
+    "allowManagerPermission": "{{wording}} on your device",
+    "loading": "Loading...",
+    "turnOnAndUnlockDevice": "Turn on and unlock your device",
+    "connectAndUnlockDevice": "Connect and unlock your device",
+    "unlockDevice": "Unlock your device",
+    "outdated": "App version outdated",
+    "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
+    "quitApp": "Quit the application on your device",
+    "appNotInstalled": "Please install the {{appName}} app",
+    "verifyAddress": {
+      "title": "Verify address on device",
+      "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device"
+    },
+    "button": {
+      "openManager": "Open Manager"
     }
   },
   "SelectDevice": {
@@ -1850,8 +1884,8 @@
         "validator": "Delegate more assets",
         "amountSubTitle": "Amount to delegate",
         "summary": "Summary",
+        "selectDevice": "Select device",
         "connectDevice": "Connect device",
-        "verification": "Verification",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
@@ -1914,8 +1948,8 @@
         "amountSubTitle": "Amount to redelegate",
         "amountTitle": "{{from}} → {{to}}",
         "summary": "Summary",
+        "selectDevice": "Select device",
         "connectDevice": "Connect device",
-        "verification": "Verification",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
@@ -1950,8 +1984,8 @@
       "stepperHeader": {
         "amountSubTitle": "Amount to undelegate",
         "summary": "Summary",
+        "selectDevice": "Select device",
         "connectDevice": "Connect device",
-        "verification": "Verification",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
@@ -1978,8 +2012,8 @@
         "validator": "Select reward to collect",
         "method": "Claim Rewards",
         "summary": "Summary",
+        "selectDevice": "Select device",
         "connectDevice": "Connect device",
-        "verification": "Verification",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {

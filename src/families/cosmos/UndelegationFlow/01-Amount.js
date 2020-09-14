@@ -63,7 +63,7 @@ function UndelegationAmount({ navigation, route }: Props) {
       max: amount,
       undelegatedBalance: amount,
       mode: "undelegation",
-      nextScreen: ScreenName.CosmosUndelegationConnectDevice,
+      nextScreen: ScreenName.CosmosUndelegationSelectDevice,
     },
   };
 

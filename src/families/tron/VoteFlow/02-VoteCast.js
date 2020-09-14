@@ -149,7 +149,7 @@ export default function VoteCast({ route, navigation }: Props) {
   }, [account, navigation, transaction, status]);
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.VoteConnectDevice, {
+    navigation.navigate(ScreenName.VoteSelectDevice, {
       accountId: account.id,
       transaction,
       status,

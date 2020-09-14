@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { useCallback } from "react";
 import invariant from "invariant";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
@@ -34,84 +34,81 @@ const iconByFamily = {
   usb: () => <USB color={colors.darkBlue} />,
 };
 
-export default class DeviceItem extends PureComponent<Props> {
-  onPress = () => {
-    const { deviceMeta, onSelect } = this.props;
+export default function DeviceItem({
+  deviceMeta,
+  onSelect,
+  disabled,
+  description,
+  withArrow,
+  onBluetoothDeviceAction,
+}: Props) {
+  const onPress = useCallback(() => {
     invariant(onSelect, "onSelect required");
     return onSelect(deviceMeta);
-  };
+  }, [deviceMeta, onSelect]);
 
-  render() {
-    const {
-      deviceMeta,
-      disabled,
-      description,
-      withArrow,
-      onBluetoothDeviceAction,
-    } = this.props;
+  const family = deviceMeta.deviceId.split("|")[0];
+  const CustomIcon = family && iconByFamily[family];
 
-    const family = deviceMeta.deviceId.split("|")[0];
-    const CustomIcon = family && iconByFamily[family];
-    return (
-      <View style={styles.outer}>
-        <View style={styles.inner}>
-          <Touchable
-            event="DeviceItemEnter"
-            onPress={disabled ? undefined : this.onPress}
-          >
-            <View style={[styles.root, disabled && styles.rootDisabled]}>
-              <View style={styles.iconWrapper}>
-                {CustomIcon ? (
-                  <CustomIcon />
-                ) : (
-                  <IconNanoX
-                    color={colors.darkBlue}
-                    height={36}
-                    width={8}
-                    style={disabled ? styles.deviceIconDisabled : undefined}
-                  />
-                )}
-              </View>
-              <View style={styles.content}>
+  return (
+    <View style={styles.outer}>
+      <View style={styles.inner}>
+        <Touchable
+          event="DeviceItemEnter"
+          onPress={disabled ? undefined : onPress}
+        >
+          <View style={[styles.root, disabled && styles.rootDisabled]}>
+            <View style={styles.iconWrapper}>
+              {CustomIcon ? (
+                <CustomIcon />
+              ) : (
+                <IconNanoX
+                  color={colors.darkBlue}
+                  height={36}
+                  width={8}
+                  style={disabled ? styles.deviceIconDisabled : undefined}
+                />
+              )}
+            </View>
+            <View style={styles.content}>
+              <LText
+                bold
+                numberOfLines={1}
+                style={[
+                  styles.deviceNameText,
+                  disabled && styles.deviceNameTextDisabled,
+                ]}
+              >
+                {deviceMeta.deviceName}
+              </LText>
+              {description ? (
                 <LText
-                  bold
                   numberOfLines={1}
                   style={[
-                    styles.deviceNameText,
-                    disabled && styles.deviceNameTextDisabled,
+                    styles.descriptionText,
+                    disabled && styles.descriptionTextDisabled,
                   ]}
                 >
-                  {deviceMeta.deviceName}
+                  {description}
                 </LText>
-                {description ? (
-                  <LText
-                    numberOfLines={1}
-                    style={[
-                      styles.descriptionText,
-                      disabled && styles.descriptionTextDisabled,
-                    ]}
-                  >
-                    {description}
-                  </LText>
-                ) : null}
-              </View>
-              {!withArrow && family !== "usb" && !!onBluetoothDeviceAction && (
-                <Touchable
-                  event="DeviceItemForget"
-                  onPress={() => onBluetoothDeviceAction(deviceMeta)}
-                >
-                  <Ellipsis />
-                </Touchable>
-              )}
-              {withArrow && !disabled ? (
-                <IconArrowRight size={16} color={colors.grey} />
               ) : null}
             </View>
-          </Touchable>
-        </View>
+            {!withArrow && family !== "usb" && !!onBluetoothDeviceAction && (
+              <Touchable
+                event="DeviceItemForget"
+                onPress={() => onBluetoothDeviceAction(deviceMeta)}
+              >
+                <Ellipsis />
+              </Touchable>
+            )}
+            {withArrow && !disabled ? (
+              <IconArrowRight size={16} color={colors.grey} />
+            ) : null}
+          </View>
+        </Touchable>
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

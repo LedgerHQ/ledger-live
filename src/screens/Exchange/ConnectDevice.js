@@ -1,5 +1,5 @@
 // @flow
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
@@ -8,15 +8,21 @@ import {
   getReceiveFlowError,
 } from "@ledgerhq/live-common/lib/account";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types/account";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
+import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import { connectingStep, accountApp } from "../../components/DeviceJob/steps";
+import DeviceActionModal from "../../components/DeviceActionModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import GenericErrorView from "../../components/GenericErrorView";
+
+const action = createAction(connectApp);
 
 const forceInset = { bottom: "always" };
 
@@ -35,6 +41,7 @@ type RouteParams = {
 export default function ConnectDevice({ navigation, route }: Props) {
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const [device, setDevice] = useState<?Device>();
   const { account } = route.params;
 
   useEffect(() => {
@@ -52,18 +59,23 @@ export default function ConnectDevice({ navigation, route }: Props) {
     [account, parentAccount],
   );
 
-  const onSelectDevice = useCallback(
-    (meta: *) => {
+  const onResult = useCallback(
+    payload => {
+      setDevice();
       if (!account) return;
       navigation.navigate(ScreenName.ExchangeCoinifyWidget, {
         account,
         parentId: parentAccount && parentAccount.id,
-        meta,
         mode: "buy",
+        ...payload,
       });
     },
     [account, navigation, parentAccount],
   );
+
+  const onClose = useCallback(() => {
+    setDevice();
+  }, []);
 
   if (!account) return null;
 
@@ -78,6 +90,8 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const tokenCurrency =
+    account && account.type === "TokenAccount" && account.token;
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
@@ -86,15 +100,15 @@ export default function ConnectDevice({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <SelectDevice
-          onSelect={onSelectDevice}
-          steps={[
-            connectingStep,
-            accountApp(mainAccount),
-            //            receiveVerifyStep(mainAccount),
-          ]}
-        />
+        <SelectDevice onSelect={setDevice} />
       </NavigationScrollView>
+      <DeviceActionModal
+        action={action}
+        device={device}
+        onResult={onResult}
+        onClose={onClose}
+        request={{ account: mainAccount, tokenCurrency }}
+      />
     </SafeAreaView>
   );
 }
