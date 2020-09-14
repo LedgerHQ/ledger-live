@@ -23,7 +23,7 @@ const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
 // Spendable balance for a non-ASA account
 const getSpendableBalance = (maxSpendable) => {
   maxSpendable = maxSpendable.minus(minFees);
-  invariant(maxSpendable.gt(minFees), "Spendable balance is too low");
+  invariant(maxSpendable.gt(0), "Spendable balance is too low");
   return maxSpendable;
 };
 
