@@ -1266,6 +1266,8 @@
       "infoTotalTitle": "Total to spend",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas Limit",
+      "gasPrice": "Gas Price",
+      "maxFees": "Max fees",
       "validateGasLimit": "Validate Gas Limit",
       "memo": {
         "title": "Memo",

@@ -13,7 +13,7 @@ import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 const forceInset = { bottom: "always" };
 
 const options = {
-  title: i18n.t("send.fees.title"),
+  title: i18n.t("send.summary.gasPrice"),
   headerLeft: null,
 };
 
