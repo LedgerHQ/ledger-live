@@ -170,7 +170,6 @@ export const reducer = (
             toParentAccount: undefined,
           },
         },
-        fromAmount: BigNumber(0),
         toCurrency: payload.toCurrency,
         error: null,
       };
@@ -205,7 +204,6 @@ export const reducer = (
             ...payload,
           },
         },
-        fromAmount: BigNumber(0),
         error: null,
       };
       break;
