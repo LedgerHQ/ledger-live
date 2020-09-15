@@ -17,7 +17,6 @@ import {
 } from "./AccountActionsDefault";
 import perFamilyAccountActions from "../../generated/accountActions";
 
-import getWindowDimensions from "../../logic/getWindowDimensions";
 import { isCurrencySupported } from "../Exchange/coinifyConfig";
 import BottomModal from "../../components/BottomModal";
 import LText from "../../components/LText";
@@ -26,8 +25,6 @@ import colors from "../../colors";
 import Button from "../../components/Button";
 import IconMore from "../../icons/MoreHorizontal";
 import Exchange from "../../icons/Exchange";
-
-const { width } = getWindowDimensions();
 
 type ChoiceButtonProps = {
   disabled: boolean,
