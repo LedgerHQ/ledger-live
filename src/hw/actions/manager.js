@@ -189,8 +189,10 @@ const implementations = {
       let loopT;
       let disconnectT;
       let device = null; // used as internal state for polling
+      let stopDevicePollingError = null;
 
       function loop() {
+        stopDevicePollingError = null;
         if (!pollingOnDevice) {
           loopT = setTimeout(loop, POLLING);
           return;
@@ -212,16 +214,43 @@ const implementations = {
           )
           .subscribe({
             next: (event) => {
-              if (initT) {
-                initT = null;
+              if (initT && device) {
                 clearTimeout(initT);
+                initT = null;
               }
               if (disconnectT) {
                 // any connect app event unschedule the disconnect debounced event
-                disconnectT = null;
                 clearTimeout(disconnectT);
+                disconnectT = null;
               }
-              if (event.type === "unresponsiveDevice") {
+              if (event.type === "error" || event.type === "disconnected") {
+                if (
+                  event.error &&
+                  ["UserRefusedAllowManager", "ConnectManagerTimeout"].includes(
+                    event.error.name
+                  )
+                ) {
+                  // These error events should stop polling
+                  stopDevicePollingError = event.error;
+                  // clear all potential polling loops
+                  if (loopT) {
+                    clearTimeout(loopT);
+                    loopT = null;
+                  }
+                  // send in the event for the UI immediately
+                  o.next(event);
+                } else {
+                  // disconnect on manager actions seems to trigger a type "error" instead of "disconnect"
+                  // the disconnect event is delayed to debounce the reconnection that happens when switching apps
+                  disconnectT = setTimeout(() => {
+                    disconnectT = null;
+                    // a disconnect will locally be remembered via locally setting device to null...
+                    device = null;
+                    o.next(event);
+                    log("app/polling", "device disconnect timeout");
+                  }, DISCONNECT_DEBOUNCE);
+                }
+              } else if (event.type === "unresponsiveDevice") {
                 return; // ignore unresponsive case which happens for polling
               } else if (event.type === "disconnected") {
                 // the disconnect event is delayed to debounce the reconnection that happens when switching apps
@@ -241,9 +270,9 @@ const implementations = {
                 o.next(event);
               }
             },
-            complete: () => {
-              // poll again in some time
-              loopT = setTimeout(loop, POLLING);
+            complete: (event) => {
+              // start a new polling if available
+              if (!stopDevicePollingError) loopT = setTimeout(loop, POLLING);
             },
             error: (e) => {
               o.error(e);
