@@ -93,10 +93,11 @@ class ChooseDevice extends Component<
     this.setState({ showMenu: false });
   };
 
-  onSelectDevice = (device: Device) => {
-    track("ManagerDeviceEntered", {
-      modelId: device.modelId,
-    });
+  onSelectDevice = (device?: Device) => {
+    if (device)
+      track("ManagerDeviceEntered", {
+        modelId: device.modelId,
+      });
     this.setState({ device });
   };
 
@@ -159,6 +160,7 @@ class ChooseDevice extends Component<
           onBluetoothDeviceAction={this.onShowMenu}
         />
         <DeviceActionModal
+          onClose={this.onSelectDevice}
           device={device}
           onResult={this.onSelect}
           action={action}

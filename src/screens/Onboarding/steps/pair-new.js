@@ -43,7 +43,7 @@ class OnboardingStepPairNew extends Component<
 
   pairNew = () => this.props.navigation.navigate(ScreenName.PairDevices);
 
-  onSelectDevice = (device: Device) => {
+  onSelectDevice = (device?: Device) => {
     this.setState({ device });
   };
 
@@ -85,6 +85,7 @@ class OnboardingStepPairNew extends Component<
           autoSelectOnAdd
         />
         <DeviceActionModal
+          onClose={this.onSelectDevice}
           device={device}
           onResult={this.onSelect}
           action={action}
