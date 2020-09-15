@@ -33,6 +33,7 @@
     ".flowconfig"
   ],
   "jest": {
+    "testEnvironment": "node",
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
@@ -75,7 +76,7 @@
     "@ledgerhq/hw-transport-node-speculos": "^5.23.0",
     "@ledgerhq/logs": "5.23.0",
     "async": "^3.2.0",
-    "axios": "0.19.0",
+    "axios": "0.20.0",
     "bchaddrjs": "^0.4.9",
     "bignumber.js": "^9.0.0",
     "bip32-path": "^0.4.2",
