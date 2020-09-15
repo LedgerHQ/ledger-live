@@ -30,10 +30,13 @@ import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import Account from "../../screens/Account";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import colors from "../../colors";
 import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
+import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
+import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
@@ -180,6 +183,17 @@ export default function BaseNavigator() {
           headerTitle: () => <HeaderTitle />,
           headerRight: null,
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.Account}
+        component={Account}
+        options={({ route, navigation }) => ({
+          headerLeft: () => (
+            <BackButton navigation={navigation} route={route} />
+          ),
+          headerTitle: () => <AccountHeaderTitle />,
+          headerRight: () => <AccountHeaderRight />,
+        })}
       />
       <Stack.Screen
         name={ScreenName.ScanRecipient}
