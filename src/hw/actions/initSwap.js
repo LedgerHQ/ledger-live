@@ -9,8 +9,6 @@ import type { Transaction } from "../../types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
-import { toExchangeRaw, toExchangeRateRaw } from "../../swap/serialization";
-import { toTransactionRaw } from "../../transaction";
 
 import type {
   Exchange,

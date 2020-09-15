@@ -1,6 +1,5 @@
 // @flow
 
-import { NotEnoughBalance } from "@ledgerhq/errors";
 import { BigNumber } from "bignumber.js";
 import type { SwapState } from "./types";
 import { isExchangeSupportedByApp } from "./index";
@@ -125,8 +124,7 @@ export const reducer = (
       newState = {
         ...state,
         swap: { ...state.swap, exchangeRate: payload.rate },
-        // ratesTimestamp: new Date(),
-        ratesExpired: false,
+        ratesTimestamp: new Date(),
         error: null,
       };
       break;
@@ -160,7 +158,6 @@ export const reducer = (
     case "setToCurrency": {
       newState = {
         ...state,
-        useAllAmount: false,
         swap: {
           ...state.swap,
           exchangeRate: null,
@@ -195,7 +192,6 @@ export const reducer = (
     case "setToAccount": {
       newState = {
         ...state,
-        useAllAmount: false,
         swap: {
           ...state.swap,
           exchangeRate: null,
@@ -211,12 +207,6 @@ export const reducer = (
     case "setFromAmount": {
       let error;
       const { fromAmount, useAllAmount = false } = payload;
-      if (
-        state.swap.exchange.fromAccount &&
-        state.swap.exchange.fromAccount.balance.lt(fromAmount)
-      ) {
-        error = new NotEnoughBalance();
-      }
 
       newState = {
         ...state,
@@ -225,7 +215,8 @@ export const reducer = (
           ...state.swap,
           exchangeRate: null,
         },
-        fromAmount: payload.fromAmount,
+        fromAmount: fromAmount,
+        ratesTimestamp: undefined,
         error,
       };
       break;
@@ -235,6 +226,8 @@ export const reducer = (
     case "expireRates":
       return {
         ...state,
+        ratesTimestamp: undefined,
+
         swap: {
           ...state.swap,
           exchangeRate: null,
