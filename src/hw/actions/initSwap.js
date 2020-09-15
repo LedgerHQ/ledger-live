@@ -3,14 +3,12 @@ import { Observable, of, concat } from "rxjs";
 import { scan, tap, catchError } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
-import type { InitSwapInputRaw } from "../../swap/types";
+import type { InitSwapInput } from "../../swap/types";
 import type { Action, Device } from "./types";
 import type { Transaction } from "../../types";
 import type { AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
-import { toExchangeRaw, toExchangeRateRaw } from "../../swap/serialization";
-import { toTransactionRaw } from "../../transaction";
 
 import type {
   Exchange,
@@ -97,7 +95,7 @@ function useFrozenValue<T>(value: T, frozen: boolean): T {
 
 export const createAction = (
   connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>,
-  initSwapExec: (InitSwapInputRaw) => Observable<SwapRequestEvent>
+  initSwapExec: (InitSwapInput) => Observable<SwapRequestEvent>
 ): InitSwapAction => {
   const useHook = (
     reduxDevice: ?Device,
@@ -129,9 +127,9 @@ export const createAction = (
       const sub = concat(
         of({ type: "init-swap" }),
         initSwapExec({
-          exchange: toExchangeRaw(exchange),
-          exchangeRate: toExchangeRateRaw(exchangeRate),
-          transaction: toTransactionRaw(transaction),
+          exchange,
+          exchangeRate,
+          transaction,
           deviceId: device.deviceId,
         })
       )

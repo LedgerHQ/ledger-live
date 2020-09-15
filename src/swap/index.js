@@ -12,7 +12,7 @@ import getProviders from "./getProviders";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import initSwap from "./initSwap";
 import { getEnv } from "../env";
-import gte from "semver/functions/gte";
+import { valid, gte } from "semver";
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 const swapProviders: {
@@ -53,7 +53,7 @@ export const isExchangeSupportedByApp = (
   appVersion: string
 ): boolean => {
   const minVersion = exchangeSupportAppVersions[appName];
-  return minVersion && gte(appVersion, minVersion);
+  return valid(minVersion) && valid(appVersion) && gte(appVersion, minVersion);
 };
 
 const getCurrencySwapConfig = (
