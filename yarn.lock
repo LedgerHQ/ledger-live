@@ -1268,10 +1268,10 @@
     semver "^7.3.2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.23.0":
-  version "5.23.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.23.0.tgz#e3c15d2fa5d23992942f95f59fc7cc4205112258"
-  integrity sha512-Oy7154MOTDGzWy501CmY8TDRS9Ahe/TDmhBvp38tGn/x/4gEm6FMXbms6arnI79244bBe033q6yqLmuWO/VSIw==
+"@ledgerhq/hw-app-eth@5.24.0":
+  version "5.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.24.0.tgz#03867338ca1e8721afd8a2b30c2b38a226e0a516"
+  integrity sha512-DWwvFIABiAI07u4gSHhdTsClUXNXRy19dXv8WcJ2mPAphkY1FFaQ7IFxW+Mq4OcRTWWoDQkZBWQzSI2HD6YLHg==
   dependencies:
     "@ledgerhq/errors" "^5.23.0"
     "@ledgerhq/hw-transport" "^5.23.0"
