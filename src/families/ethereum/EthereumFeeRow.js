@@ -81,7 +81,7 @@ export default function EthereumFeeRow({
             ? toggleNetworkFeeHelpModal
             : extraInfoFees
         }
-        title={<Trans i18nKey="send.fees.title" />}
+        title={<Trans i18nKey="send.summary.gasPrice" />}
         additionalInfo={
           <View>
             <InfoIcon size={12} color={colors.grey} />
@@ -103,6 +103,28 @@ export default function EthereumFeeRow({
               {t("common.edit")}
             </LText>
           </View>
+        </View>
+      </SummaryRow>
+      <EthereumGasLimit
+        account={account}
+        parentAccount={parentAccount}
+        transaction={transaction}
+      />
+      <SummaryRow title={<Trans i18nKey="send.summary.maxFees" />}>
+        <View style={{ alignItems: "flex-end" }}>
+          <View style={styles.accountContainer}>
+            {gasPrice ? (
+              <LText style={styles.valueText}>
+                <CurrencyUnitValue
+                  unit={mainAccount.unit}
+                  value={
+                    gasPrice &&
+                    gasPrice.times(gasLimit || estimatedGasLimit || 0)
+                  }
+                />
+              </LText>
+            ) : null}
+          </View>
           <LText style={styles.countervalue}>
             <CounterValue
               before="≈ "
@@ -114,11 +136,6 @@ export default function EthereumFeeRow({
           </LText>
         </View>
       </SummaryRow>
-      <EthereumGasLimit
-        account={account}
-        parentAccount={parentAccount}
-        transaction={transaction}
-      />
     </>
   );
 }
