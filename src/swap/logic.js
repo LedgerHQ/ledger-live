@@ -11,7 +11,6 @@ import type {
 } from "../types";
 import type { InstalledItem } from "../apps";
 import { flattenAccounts, getAccountCurrency } from "../account";
-// NB Why flow?
 const validCurrencyStatus = { ok: 1, noApps: 1, noAccounts: 1, outdatedApp: 1 };
 export type CurrencyStatus = $Keys<typeof validCurrencyStatus>;
 export type CurrenciesStatus = { [string]: CurrencyStatus };
@@ -68,9 +67,9 @@ export const getCurrenciesWithStatus = ({
 }): CurrenciesStatus => {
   const statuses = {};
   const installedAppMap = {};
-  const notEmptyCurrencies = flattenAccounts(accounts).map(
-    (a) => getAccountCurrency(a).id
-  );
+  const notEmptyCurrencies = flattenAccounts(accounts)
+    .filter((a) => a.balance.gt(0))
+    .map((a) => getAccountCurrency(a).id);
 
   for (const data of installedApps) installedAppMap[data.name] = data;
 
@@ -86,7 +85,7 @@ export const getCurrenciesWithStatus = ({
     if (!mainCurrency) continue;
     statuses[c.id] =
       mainCurrency.managerAppName in installedAppMap
-        ? notEmptyCurrencies.includes(mainCurrency.id)
+        ? notEmptyCurrencies.includes(c.id)
           ? isExchangeSupportedByApp(
               mainCurrency.id,
               installedAppMap[mainCurrency.managerAppName].version
