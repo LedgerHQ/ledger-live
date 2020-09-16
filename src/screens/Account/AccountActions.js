@@ -23,7 +23,7 @@ import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import colors from "../../colors";
 import Button from "../../components/Button";
-import IconMore from "../../icons/MoreHorizontal";
+import Transfer from "../../icons/Transfer";
 import Exchange from "../../icons/Exchange";
 
 type ChoiceButtonProps = {
@@ -185,7 +185,7 @@ export default function AccountActions({ account, parentAccount }: Props) {
           <Button
             event="AccountSend"
             type="primary"
-            IconLeft={IconMore}
+            IconLeft={Transfer}
             onPress={openModal}
             title={null}
             containerStyle={styles.actionBtn}
