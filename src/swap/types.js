@@ -93,7 +93,7 @@ export type SwapStatus = {
 };
 
 export type GetStatus = (SwapStatusRequest) => Promise<SwapStatus>;
-export type UpdateAccountSwapStatus = (AccountLike) => Promise<?AccountLike>;
+export type UpdateAccountSwapStatus = (Account) => Promise<?Account>;
 export type GetMultipleStatus = (SwapStatusRequest[]) => Promise<SwapStatus[]>;
 
 /*
