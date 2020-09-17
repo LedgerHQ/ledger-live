@@ -50,7 +50,10 @@ class OnboardingStepPairNew extends Component<
   onSelect = (info: any) => {
     /** if list apps succeed we update settings with state of apps installed */
     if (info) {
-      const hasAnyAppinstalled = info.installed && info.installed.length > 0;
+      const hasAnyAppinstalled =
+        info.result &&
+        info.result.installed &&
+        info.result.installed.length > 0;
 
       this.props.installAppFirstTime(hasAnyAppinstalled);
     }
