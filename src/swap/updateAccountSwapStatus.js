@@ -1,54 +1,77 @@
 // @flow
 
 import { getMultipleStatus } from "./getStatus";
-import type { AccountLike } from "../types";
+import type { SubAccount, Account } from "../types";
 import type { UpdateAccountSwapStatus, SwapOperation } from "./types";
+import { operationStatusList } from "./";
 
-const pendingStatusList = [
-  "new",
-  "confirming",
-  "exchanging",
-  "sending",
-  "waiting",
-  "pending",
-];
+const maybeGetUpdatedSwapHistory = async (
+  swapHistory: ?(SwapOperation[])
+): Promise<?(SwapOperation[])> => {
+  const pendingSwapIds = [];
+  let accountNeedsUpdating = false;
+  let consolidatedSwapHistory = [];
+
+  if (swapHistory) {
+    for (const { provider, swapId, status } of swapHistory) {
+      if (operationStatusList.pending.includes(status)) {
+        pendingSwapIds.push({ provider, swapId });
+      }
+    }
+    if (pendingSwapIds.length) {
+      const newStatusList = await getMultipleStatus(pendingSwapIds);
+      consolidatedSwapHistory = swapHistory.map<SwapOperation>(
+        (swap: SwapOperation) => {
+          const newStatus = newStatusList.find((s) => s.swapId === swap.swapId);
+          if (newStatus && newStatus.status !== swap.status) {
+            accountNeedsUpdating = true;
+            return { ...swap, status: newStatus.status };
+          }
+          return swap;
+        }
+      );
+
+      if (accountNeedsUpdating) {
+        return consolidatedSwapHistory;
+      }
+    }
+  }
+};
 
 const updateAccountSwapStatus: UpdateAccountSwapStatus = async (
-  account: AccountLike
+  account: Account
 ) => {
-  const pendingSwapIds = [];
-  const history: ?(SwapOperation[]) = account.swapHistory;
-  if (!history) {
-    return account;
-  }
+  let swapHistoryUpdated = await maybeGetUpdatedSwapHistory(
+    account.swapHistory
+  );
+  let subAccountSwapHistoryUpdated = false;
+  let subAccounts = [];
 
-  for (const { provider, swapId, status } of history) {
-    if (pendingStatusList.includes(status)) {
-      pendingSwapIds.push({ provider, swapId });
-    }
-  }
-  if (pendingSwapIds.length) {
-    // Fetch new swapIds
-    let accountNeedsUpdating = false;
-    const newStatusList = await getMultipleStatus(pendingSwapIds);
-    const consolidatedSwapHistory = history.map<SwapOperation>(
-      (swap: SwapOperation) => {
-        const newStatus = newStatusList.find((s) => s.swapId === swap.swapId);
-        if (newStatus && newStatus.status !== swap.status) {
-          accountNeedsUpdating = true;
-          return { ...swap, status: newStatus.status };
+  if (account.type === "Account" && account.subAccounts?.length) {
+    subAccounts = await Promise.all(
+      account.subAccounts.map(
+        async (subAccount: SubAccount): Promise<SubAccount> => {
+          const updatedSwapHistory = await maybeGetUpdatedSwapHistory(
+            subAccount.swapHistory
+          );
+
+          //As soon as we get one update, we will need to update the parent account
+          if (updatedSwapHistory) subAccountSwapHistoryUpdated = true;
+          return {
+            ...subAccount,
+            swapHistory: updatedSwapHistory || subAccount.swapHistory,
+          };
         }
-        return swap;
-      }
+      )
     );
+  }
 
-    // Update the swaphistory for account if needed
-    if (accountNeedsUpdating) {
-      return {
-        ...account,
-        swapHistory: consolidatedSwapHistory,
-      };
-    }
+  if (swapHistoryUpdated || subAccountSwapHistoryUpdated) {
+    return {
+      ...account,
+      swapHistory: swapHistoryUpdated || account.swapHistory,
+      subAccounts,
+    };
   }
 };
 

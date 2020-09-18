@@ -14,6 +14,12 @@ import initSwap from "./initSwap";
 import { getEnv } from "../env";
 import { valid, gte } from "semver";
 
+export const operationStatusList = {
+  finishedOK: ["finished", "refunded"],
+  finishedKO: ["expired", "failed"],
+  pending: ["confirming", "exchanging", "sending", "waiting", "new"],
+};
+
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 const swapProviders: {
   [string]: { nameAndPubkey: Buffer, signature: Buffer, curve: string },
