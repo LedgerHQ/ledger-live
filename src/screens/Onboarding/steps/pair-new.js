@@ -1,105 +1,87 @@
 // @flow
-
-import React, { Component } from "react";
-import { Linking } from "react-native";
-
+import React, { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
-import { compose } from "redux";
-import { connect } from "react-redux";
 import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SelectDevice from "../../../components/SelectDevice";
-import OnboardingLayout from "../OnboardingLayout";
-import { withOnboardingContext } from "../onboardingContext";
-import { urls } from "../../../config/urls";
-
-import { installAppFirstTime } from "../../../actions/settings";
-
 import DeviceActionModal from "../../../components/DeviceActionModal";
-
-import type { OnboardingStepProps } from "../types";
+import OnboardingLayout from "../OnboardingLayout";
+import { useNavigationInterceptor } from "../onboardingContext";
+import {
+  installAppFirstTime,
+  setReadOnlyMode,
+} from "../../../actions/settings";
 
 const action = createAction(connectManager);
 
-class OnboardingStepPairNew extends Component<
-  OnboardingStepProps & { installAppFirstTime: (value: boolean) => void },
-  { device?: Device },
-> {
-  state = { device: undefined };
-  Footer = () =>
+export default function OnboardingStepPairNew() {
+  const { deviceModelId, next } = useNavigationInterceptor();
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const [device, setDevice] = useState<?Device>();
+
+  const Footer = () =>
     __DEV__ ? (
       <Button
         event="OnboardingPairSkip"
         type="lightSecondary"
         title="(DEV) skip this step"
-        onPress={this.props.next}
+        onPress={next}
       />
     ) : null;
 
-  help = () => Linking.openURL(urls.faq);
+  const onResult = useCallback(
+    (info: any) => {
+      /** if list apps succeed we update settings with state of apps installed */
+      if (info) {
+        const hasAnyAppinstalled =
+          info.result &&
+          info.result.installed &&
+          info.result.installed.length > 0;
 
-  pairNew = () => this.props.navigation.navigate(ScreenName.PairDevices);
+        dispatch(installAppFirstTime(hasAnyAppinstalled));
+        setDevice();
+        dispatch(setReadOnlyMode(false));
+        next();
+      }
+    },
+    [dispatch, next],
+  );
 
-  onSelectDevice = (device?: Device) => {
-    this.setState({ device });
-  };
+  const usbOnly = ["nanoS", "blue"].includes(deviceModelId);
 
-  onSelect = (info: any) => {
-    /** if list apps succeed we update settings with state of apps installed */
-    if (info) {
-      const hasAnyAppinstalled = info.installed && info.installed.length > 0;
-
-      this.props.installAppFirstTime(hasAnyAppinstalled);
-    }
-    this.setState({ device: undefined }, () => this.props.next(info));
-  };
-
-  render() {
-    const { deviceModelId, t } = this.props;
-    const usbOnly = ["nanoS", "blue"].includes(deviceModelId);
-
-    const { device } = this.state;
-
-    return (
-      <OnboardingLayout
-        header="OnboardingStepPairNew"
-        Footer={this.Footer}
-        borderedFooter
-        noTopPadding
-        withNeedHelp
-        titleOverride={
-          usbOnly
-            ? t(`onboarding.stepsTitles.OnboardingStepConnectNew`)
-            : undefined
-        }
-      >
-        <TrackScreen category="Onboarding" name="PairNew" />
-        <SelectDevice
-          withArrows
-          usbOnly={usbOnly}
-          deviceModelId={deviceModelId}
-          onSelect={usbOnly ? this.onSelectDevice : this.props.next}
-          autoSelectOnAdd
-        />
-        <DeviceActionModal
-          onClose={this.onSelectDevice}
-          device={device}
-          onResult={this.onSelect}
-          action={action}
-          request={null}
-        />
-      </OnboardingLayout>
-    );
-  }
+  return (
+    <OnboardingLayout
+      header="OnboardingStepPairNew"
+      Footer={Footer}
+      borderedFooter
+      noTopPadding
+      withNeedHelp
+      titleOverride={
+        usbOnly
+          ? t(`onboarding.stepsTitles.OnboardingStepConnectNew`)
+          : undefined
+      }
+    >
+      <TrackScreen category="Onboarding" name="PairNew" />
+      <SelectDevice
+        withArrows
+        usbOnly={usbOnly}
+        deviceModelId={deviceModelId}
+        onSelect={setDevice}
+        autoSelectOnAdd
+      />
+      <DeviceActionModal
+        onClose={setDevice}
+        device={device}
+        onResult={onResult}
+        action={action}
+        request={null}
+      />
+    </OnboardingLayout>
+  );
 }
-
-const mapDispatchToProps = {
-  installAppFirstTime,
-};
-
-export default compose(connect(null, mapDispatchToProps))(
-  withOnboardingContext(OnboardingStepPairNew),
-);
