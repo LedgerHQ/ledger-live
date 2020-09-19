@@ -800,10 +800,10 @@
     semver "^7.3.2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.23.0":
-  version "5.23.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.23.0.tgz#e3c15d2fa5d23992942f95f59fc7cc4205112258"
-  integrity sha512-Oy7154MOTDGzWy501CmY8TDRS9Ahe/TDmhBvp38tGn/x/4gEm6FMXbms6arnI79244bBe033q6yqLmuWO/VSIw==
+"@ledgerhq/hw-app-eth@5.24.0":
+  version "5.24.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.24.0.tgz#03867338ca1e8721afd8a2b30c2b38a226e0a516"
+  integrity sha512-DWwvFIABiAI07u4gSHhdTsClUXNXRy19dXv8WcJ2mPAphkY1FFaQ7IFxW+Mq4OcRTWWoDQkZBWQzSI2HD6YLHg==
   dependencies:
     "@ledgerhq/errors" "^5.23.0"
     "@ledgerhq/hw-transport" "^5.23.0"
@@ -863,16 +863,16 @@
     "@ledgerhq/errors" "^5.23.0"
     events "^3.2.0"
 
-"@ledgerhq/live-common@^14.5.0":
-  version "14.5.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-14.5.0.tgz#05f489511114bcc989934d33fe398d552d7ed059"
-  integrity sha512-3QPVzCfeMcrMyZiyYn6EI8fE04KDLnIf4cUNUyn6rFQj0BKAa71kNWZ/shIECTSL05h/13/3VmcYtfVkj7n7GQ==
+"@ledgerhq/live-common@^14.6.1":
+  version "14.6.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-14.6.1.tgz#abf7a6646b32aa48cf81f5f5d3c30769d0cb546c"
+  integrity sha512-I+fGg6pKUb3k6c1+uvVE9lBQki5TIIU1XCnMa2p9IdoC7/y/728ls/ttDyM3xfJp2E0RnRPCpvcegApZd/6G+Q==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/devices" "5.23.0"
     "@ledgerhq/errors" "5.23.0"
     "@ledgerhq/hw-app-btc" "^5.23.1"
-    "@ledgerhq/hw-app-eth" "5.23.0"
+    "@ledgerhq/hw-app-eth" "5.24.0"
     "@ledgerhq/hw-app-str" "^5.23.0"
     "@ledgerhq/hw-app-trx" "5.23.0"
     "@ledgerhq/hw-app-xrp" "5.23.0"
@@ -916,10 +916,10 @@
   resolved "https://registry.yarnpkg.com/@ledgerhq/logs/-/logs-5.23.0.tgz#7a86b1e6479c8aa8e8b9affe00eb8e369efdbc3b"
   integrity sha512-88M8RkVHl44k6MAhfrYhx25opnJV24/2XpuTUVklID11f9rBdE+6RZ9OMs39dyX2sDv7TuzIPi5nTRoCqZMDYw==
 
-"@ledgerhq/react-native-ledger-core@^4.15.13":
-  version "4.15.13"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.15.13.tgz#1e5138286c700b73b091ed0d3b5cfd6664c66259"
-  integrity sha512-/B1l2PFqlO5KrkBDXHN/ssRSz8vi3+MjNV/oJ/tebNNkkmBW9nWQIu8E5u5TYEcPRQdUeNgJAcq1i2by7KCEww==
+"@ledgerhq/react-native-ledger-core@^4.16.3":
+  version "4.16.3"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/react-native-ledger-core/-/react-native-ledger-core-4.16.3.tgz#5199734029df9a25b77d15af2e21a98812a73b77"
+  integrity sha512-MqqkEHmYYNuElGZc0GTdKB0M0i80KHqE5fTrJivuuiVADUw9PEo9nrOXTNzGW8cA3MCP4YqhgRYyTWr4t6KD0w==
 
 "@react-native-community/cli-debugger-ui@^3.0.0":
   version "3.0.0"
