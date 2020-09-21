@@ -252,15 +252,6 @@ const implementations = {
                 }
               } else if (event.type === "unresponsiveDevice") {
                 return; // ignore unresponsive case which happens for polling
-              } else if (event.type === "disconnected") {
-                // the disconnect event is delayed to debounce the reconnection that happens when switching apps
-                disconnectT = setTimeout(() => {
-                  disconnectT = null;
-                  // a disconnect will locally be remembered via locally setting device to null...
-                  device = null;
-                  o.next(event);
-                  log("app/polling", "device disconnect timeout");
-                }, DISCONNECT_DEBOUNCE);
               } else {
                 if (device !== pollingOnDevice) {
                   // ...but any time an event comes back, it means our device was responding and need to be set back on in polling context
