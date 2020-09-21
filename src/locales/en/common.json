@@ -71,7 +71,8 @@
       "days_plural": "{{time}} days ago"
     },
     "seeMore": "See more",
-    "moreInfo": "More info"
+    "moreInfo": "More info",
+    "buyEth": "Buy Ethereum"
   },
   "errors": {
     "AccountAwaitingSendPendingOperations": {

@@ -7,9 +7,10 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { NotEnoughGas } from "@ledgerhq/errors";
 import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
-import { ScreenName } from "../../const";
+import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
 import Button from "../../components/Button";
@@ -25,6 +26,7 @@ import SectionSeparator from "../../components/SectionSeparator";
 import AlertTriangle from "../../icons/AlertTriangle";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
+import Info from "../../icons/Info";
 
 const forceInset = { bottom: "always" };
 
@@ -83,13 +85,20 @@ export default function SendSummary({ navigation, route }: Props) {
     navigateToNext();
   }, [navigateToNext, setHighFeesOpen, status]);
 
-  if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
+  const onBuyEth = useCallback(() => {
+    navigation.navigate(NavigatorName.Exchange, {
+      screen: ScreenName.Exchange,
+      params: {
+        accountId: account && account.id,
+        parentId: parentAccount && parentAccount.id,
+      },
+    });
+  }, [account, parentAccount, navigation]);
 
-  const {
-    amount,
-    totalSpent,
-    errors: { transaction: transactionError },
-  } = status;
+  if (!account || !transaction || !transaction.recipient) return null; // FIXME why is recipient sometimes empty?
+  const { amount, totalSpent, errors } = status;
+  const { transaction: transactionError } = errors;
+  const error = status.errors[Object.keys(status.errors)[0]];
   const mainAccount = getMainAccount(account, parentAccount);
 
   // console.log({ transaction, status, bridgePending });
@@ -123,6 +132,16 @@ export default function SendSummary({ navigation, route }: Props) {
           transaction={transaction}
           navigation={navigation}
         />
+        {error ? (
+          <View style={styles.gasPriceError}>
+            <View style={{ padding: 4 }}>
+              <Info size={12} color={colors.alert} />
+            </View>
+            <LText style={[styles.error, styles.gasPriceErrorText]}>
+              <TranslatedError error={error} />
+            </LText>
+          </View>
+        ) : null}
         {!amount.eq(totalSpent) ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
@@ -138,14 +157,24 @@ export default function SendSummary({ navigation, route }: Props) {
         <LText style={styles.error}>
           <TranslatedError error={transactionError} />
         </LText>
-        <Button
-          event="SummaryContinue"
-          type="primary"
-          title={<Trans i18nKey="common.continue" />}
-          containerStyle={styles.continueButton}
-          onPress={onContinue}
-          disabled={bridgePending || !!transactionError}
-        />
+        {error && error instanceof NotEnoughGas ? (
+          <Button
+            event="SummaryBuyEth"
+            type="primary"
+            title={<Trans i18nKey="common.buyEth" />}
+            containerStyle={styles.continueButton}
+            onPress={onBuyEth}
+          />
+        ) : (
+          <Button
+            event="SummaryContinue"
+            type="primary"
+            title={<Trans i18nKey="common.continue" />}
+            containerStyle={styles.continueButton}
+            onPress={onContinue}
+            disabled={bridgePending || !!transactionError}
+          />
+        )}
       </View>
       <ConfirmationModal
         isOpened={highFeesOpen}
@@ -203,6 +232,14 @@ const styles = StyleSheet.create({
     height: 20,
     top: 60,
     left: 16,
+  },
+  gasPriceError: {
+    marginTop: 16,
+    flexDirection: "row",
+  },
+  gasPriceErrorText: {
+    paddingLeft: 4,
+    fontSize: 14,
   },
 });
 
