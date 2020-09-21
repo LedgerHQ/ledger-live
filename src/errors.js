@@ -6,6 +6,10 @@ import { createCustomErrorClass } from "@ledgerhq/errors";
 
 export const ConnectAppTimeout = createCustomErrorClass("ConnectAppTimeout");
 
+export const ConnectManagerTimeout = createCustomErrorClass(
+  "ConnectManagerTimeout"
+);
+
 export const FeeEstimationFailed = createCustomErrorClass(
   "FeeEstimationFailed"
 );
