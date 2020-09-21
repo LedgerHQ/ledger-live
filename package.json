@@ -59,7 +59,7 @@
     "@ledgerhq/hw-app-xrp": "5.23.0",
     "@ledgerhq/hw-transport": "5.23.0",
     "@ledgerhq/hw-transport-http": "5.24.0",
-    "@ledgerhq/live-common": "^14.6.0",
+    "@ledgerhq/live-common": "^14.7.0",
     "@ledgerhq/logs": "5.23.0",
     "@ledgerhq/react-native-hid": "5.23.0",
     "@ledgerhq/react-native-hw-transport-ble": "5.23.0",
