@@ -11,8 +11,7 @@ import DebugHttpTransport from "../../screens/DebugHttpTransport";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie.js";
 import DebugStore from "../../screens/DebugStore";
-import DebugSVG from "../../screens/DebugSVG";
-import DebugWSImport from "../../screens/DebugWSImport";
+import DebugPlayground from "../../screens/DebugPlayground";
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
 import AboutSettings from "../../screens/Settings/About";
@@ -141,31 +140,29 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.DebugExport}
         component={DebugExport}
-        options={({ route, navigation }) => {
-          return {
-            title: "Export Accounts",
-            headerRight: () => (
-              <Button
-                event="DebugBLEBenchmark"
-                type="lightSecondary"
-                containerStyle={{ width: 100 }}
-                onPress={() =>
-                  navigation.navigate(ScreenName.DebugBLEBenchmark, {
-                    deviceId: route.params?.deviceId,
-                  })
-                }
-                title="Benchmark"
-              />
-            ),
-          };
+        options={{
+          title: "Export Accounts",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugBLE}
         component={DebugBLE}
-        options={{
+        options={({ route, navigation }) => ({
           title: "Debug BLE",
-        }}
+          headerRight: () => (
+            <Button
+              event="DebugBLEBenchmark"
+              type="lightSecondary"
+              containerStyle={{ width: 100 }}
+              onPress={() =>
+                navigation.navigate(ScreenName.DebugBLEBenchmark, {
+                  deviceId: route.params?.deviceId,
+                })
+              }
+              title="Benchmark"
+            />
+          ),
+        })}
       />
       <Stack.Screen
         name={ScreenName.DebugBLEBenchmark}
@@ -210,17 +207,10 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugSVG}
-        component={DebugSVG}
+        name={ScreenName.DebugPlayground}
+        component={DebugPlayground}
         options={{
-          title: "Debug Svg Icons",
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.DebugWSImport}
-        component={DebugWSImport}
-        options={{
-          title: "Experimental WS Import",
+          title: "Playground for testing",
         }}
       />
       <Stack.Screen

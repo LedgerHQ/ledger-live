@@ -22,10 +22,20 @@ export type State = {
 };
 
 // $FlowFixMe
-export default combineReducers({
+const appReducer = combineReducers({
   accounts,
   countervalues: CounterValues.reducer,
   settings,
   appstate,
   ble,
 });
+
+const rootReducer = (state: State, action: *) => {
+  if (__DEV__ && action.type === "DANGEROUSLY_OVERRIDE_STATE") {
+    appReducer({ ...action.payload }, action);
+  }
+
+  return appReducer(state, action);
+};
+
+export default rootReducer;

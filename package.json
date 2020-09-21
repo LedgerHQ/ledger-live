@@ -39,7 +39,6 @@
     "test": "yarn check --integrity && ./scripts/check-no-dups.sh && yarn lint --quiet",
     "sync-flowtyped": "NODE_OPTIONS=--max_old_space_size=10000 flow-typed install -s -o && rm flow-typed/npm/axios_*",
     "sync-locales": "./scripts/sync-locales.sh",
-    "debugSVG": "sh scripts/debugsvg.sh | node_modules/.bin/prettier --parser flow > src/screens/DebugSVG.js",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "hack-for-ios-simulator": "cd node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks && mv universal real_universal && cp -R x86 universal",
     "test-deep-links": "ws --spa ./deep-links-test-page.html"

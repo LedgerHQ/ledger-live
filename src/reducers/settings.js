@@ -250,6 +250,10 @@ const handlers: Object = {
     ...state,
     hasAvailableUpdate: action.enabled,
   }),
+
+  DANGEROUSLY_OVERRIDE_STATE: (state: SettingsState): SettingsState => ({
+    ...state,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
