@@ -261,7 +261,7 @@ const implementations = {
                 o.next(event);
               }
             },
-            complete: (event) => {
+            complete: () => {
               // start a new polling if available
               if (!stopDevicePollingError) loopT = setTimeout(loop, POLLING);
             },
@@ -304,12 +304,12 @@ export const createAction = (
     const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
-    const impl = implementations[currentMode]({
-      deviceSubject,
-      connectManager,
-    });
-
     useEffect(() => {
+      const impl = implementations[currentMode]({
+        deviceSubject,
+        connectManager,
+      });
+
       if (repairModalOpened) return;
 
       const sub = impl
