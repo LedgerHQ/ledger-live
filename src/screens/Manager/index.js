@@ -7,15 +7,12 @@ import { Trans } from "react-i18next";
 import manager from "@ledgerhq/live-common/lib/manager";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+
+import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
+import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
 import { removeKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
-import {
-  connectingStep,
-  dashboard,
-  listApps,
-  getDeviceName,
-} from "../../components/DeviceJob/steps";
-import SelectDevice from "../../components/SelectDevice/legacy";
+import SelectDevice from "../../components/SelectDevice";
 import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
@@ -28,6 +25,9 @@ import ModalBottomAction from "../../components/ModalBottomAction";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import ReadOnlyNanoX from "./Connect/ReadOnlyNanoX";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import DeviceActionModal from "../../components/DeviceActionModal";
+
+const action = createAction(connectManager);
 
 const RemoveDeviceModal = ({
   onHideMenu,
@@ -74,10 +74,12 @@ class ChooseDevice extends Component<
   ChooseDeviceProps,
   {
     showMenu: boolean,
+    device?: Device,
   },
 > {
   state = {
     showMenu: false,
+    device: undefined,
   };
 
   chosenDevice: Device;
@@ -91,15 +93,23 @@ class ChooseDevice extends Component<
     this.setState({ showMenu: false });
   };
 
-  onSelect = (meta: Object) => {
-    const { version, mcuVersion } = meta.deviceInfo;
-    track("ManagerDeviceEntered", {
-      version,
-      mcuVersion,
-    });
-    this.props.navigation.navigate(ScreenName.ManagerMain, {
-      meta,
-    });
+  onSelectDevice = (device?: Device) => {
+    if (device)
+      track("ManagerDeviceEntered", {
+        modelId: device.modelId,
+      });
+    this.setState({ device });
+  };
+
+  onSelect = (result: Object) => {
+    this.setState(
+      { device: undefined },
+      () =>
+        result.result &&
+        this.props.navigation.navigate(ScreenName.ManagerMain, {
+          ...result,
+        }),
+    );
   };
 
   onStepEntered = (i: number, meta: Object) => {
@@ -118,6 +128,7 @@ class ChooseDevice extends Component<
 
   componentDidMount() {
     const { readOnlyModeEnabled } = this.props;
+    this.state = { ...this.state, device: undefined };
 
     if (readOnlyModeEnabled) {
       this.props.navigation.setParams({
@@ -129,7 +140,7 @@ class ChooseDevice extends Component<
 
   render() {
     const { isFocused, readOnlyModeEnabled } = this.props;
-    const { showMenu } = this.state;
+    const { showMenu, device } = this.state;
 
     if (!isFocused) return null;
 
@@ -143,12 +154,17 @@ class ChooseDevice extends Component<
         <LText semiBold style={styles.title}>
           <Trans i18nKey="manager.connect" />
         </LText>
-
         <SelectDevice
-          onSelect={this.onSelect}
-          steps={[connectingStep, dashboard, listApps, getDeviceName]}
+          onSelect={this.onSelectDevice}
           onStepEntered={this.onStepEntered}
           onBluetoothDeviceAction={this.onShowMenu}
+        />
+        <DeviceActionModal
+          onClose={this.onSelectDevice}
+          device={device}
+          onResult={this.onSelect}
+          action={action}
+          request={null}
         />
 
         {this.chosenDevice && (
