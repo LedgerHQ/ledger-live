@@ -11,6 +11,7 @@ import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import DeviceItem from "../DeviceItem";
+// import { setReadOnlyMode, installAppFirstTime } from "../../actions/settings";
 import BluetoothEmpty from "./BluetoothEmpty";
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
