@@ -32,6 +32,10 @@ import type { Action, Device } from "./types";
 import isEqual from "lodash/isEqual";
 import { ConnectManagerTimeout } from "../../errors";
 import { currentMode } from "./app";
+import {
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+} from "@ledgerhq/errors";
 
 type State = {|
   isLoading: boolean,
@@ -223,23 +227,11 @@ const implementations = {
                 clearTimeout(disconnectT);
                 disconnectT = null;
               }
-              if (event.type === "error" || event.type === "disconnected") {
+              if (event.type === "error" && event.error) {
                 if (
-                  event.error &&
-                  ["UserRefusedAllowManager", "ConnectManagerTimeout"].includes(
-                    event.error.name
-                  )
+                  event.error instanceof DisconnectedDevice ||
+                  event.error instanceof DisconnectedDeviceDuringOperation
                 ) {
-                  // These error events should stop polling
-                  stopDevicePollingError = event.error;
-                  // clear all potential polling loops
-                  if (loopT) {
-                    clearTimeout(loopT);
-                    loopT = null;
-                  }
-                  // send in the event for the UI immediately
-                  o.next(event);
-                } else {
                   // disconnect on manager actions seems to trigger a type "error" instead of "disconnect"
                   // the disconnect event is delayed to debounce the reconnection that happens when switching apps
                   disconnectT = setTimeout(() => {
@@ -249,6 +241,16 @@ const implementations = {
                     o.next(event);
                     log("app/polling", "device disconnect timeout");
                   }, DISCONNECT_DEBOUNCE);
+                } else {
+                  // These error events should stop polling
+                  stopDevicePollingError = event.error;
+                  // clear all potential polling loops
+                  if (loopT) {
+                    clearTimeout(loopT);
+                    loopT = null;
+                  }
+                  // send in the event for the UI immediately
+                  o.next(event);
                 }
               } else if (event.type === "unresponsiveDevice") {
                 return; // ignore unresponsive case which happens for polling
