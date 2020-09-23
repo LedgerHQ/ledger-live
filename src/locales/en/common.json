@@ -105,10 +105,6 @@
       "title": "Oops, no device found",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
     },
-    "ConnectManagerTimeout": {
-      "title": "Oops, manager connection failed",
-      "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
-    },
     "ClaimRewardsFeesWarning": {
       "title": "The amount of rewards are lower than the estimated fees required to claim them",
       "description": ""

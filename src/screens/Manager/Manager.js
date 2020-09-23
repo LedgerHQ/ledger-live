@@ -1,9 +1,5 @@
 import React, { useState, useCallback, useEffect, memo } from "react";
 import { CommonActions } from "@react-navigation/native";
-
-import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
-
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
@@ -22,26 +18,12 @@ const MANAGER_TABS = {
 
 type Props = {
   navigation: any,
-  route: {
-    params: {
-      device: Device,
-      deviceInfo: DeviceInfo,
-      result: ListAppsResult,
-    },
-  },
+  route: any,
 };
 
-const Manager = ({
-  navigation,
-  route: {
-    params: {
-      device: { deviceId, deviceName },
-      deviceInfo,
-      result,
-    },
-  },
-}: Props) => {
-  const [state, dispatch] = useApps(result, deviceId);
+const Manager = ({ navigation, route }: Props) => {
+  const { appRes, deviceId, deviceInfo } = route.params.meta;
+  const [state, dispatch] = useApps(appRes, deviceId);
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
   const blockNavigation = installQueue.length + uninstallQueue.length > 0;
@@ -126,7 +108,7 @@ const Manager = ({
         setStorageWarning={setStorageWarning}
         managerTabs={MANAGER_TABS}
         deviceId={deviceId}
-        initialDeviceName={deviceName}
+        initialDeviceName={route.params?.deviceName}
         blockNavigation={blockNavigation}
         deviceInfo={deviceInfo}
       />
