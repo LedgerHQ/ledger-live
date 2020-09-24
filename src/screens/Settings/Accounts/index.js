@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
-import { findTokenById } from "@ledgerhq/live-common/lib/data/tokens";
+import { findTokenById } from "@ledgerhq/live-common/lib/currencies";
 import i18next from "i18next";
 import type {
   CryptoCurrency,
