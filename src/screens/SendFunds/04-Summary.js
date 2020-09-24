@@ -92,8 +92,6 @@ export default function SendSummary({ navigation, route }: Props) {
   } = status;
   const mainAccount = getMainAccount(account, parentAccount);
 
-  // console.log({ transaction, status, bridgePending });
-
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="SendFunds" name="Summary" />
