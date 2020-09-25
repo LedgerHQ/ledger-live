@@ -126,7 +126,29 @@ const asMaybeSwapOperationRaw = (unsafe: mixed): ?SwapOperationRaw => {
   ) {
     return;
   }
+
   const safe = {};
+  if (provider && typeof provider === "string") {
+    safe.provider = provider;
+  }
+  if (swapId && typeof swapId === "string") {
+    safe.swapId = swapId;
+  }
+  if (status && typeof status === "string") {
+    safe.status = status;
+  }
+  if (receiverAccountId && typeof receiverAccountId === "string") {
+    safe.receiverAccountId = receiverAccountId;
+  }
+  if (operationId && typeof operationId === "string") {
+    safe.operationId = operationId;
+  }
+  if (fromAmount && typeof fromAmount === "string") {
+    safe.fromAmount = fromAmount;
+  }
+  if (toAmount && typeof toAmount === "string") {
+    safe.toAmount = toAmount;
+  }
   if (tokenId && typeof tokenId === "string") {
     safe.tokenId = tokenId;
   }
