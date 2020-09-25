@@ -138,7 +138,6 @@ const dataset: DatasetTest<Transaction> = {
               const blacklistedTokenIds = [
                 "ethereum/erc20/weth",
                 "ethereum/erc20/amber_token",
-                "ethereum/erc20/ampleforth",
               ];
 
               const rawTokenIds = account.subAccounts

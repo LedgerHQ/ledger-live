@@ -2,7 +2,6 @@
 
 export * from "../derivation";
 export * from "./currencies";
-export * from "../data/cryptocurrencies";
 export * from "./account";
 export * from "./operation";
 export * from "./portfolio";

@@ -5,7 +5,7 @@ import { Observable } from "rxjs";
 import { map, concatMap } from "rxjs/operators";
 
 export const fromNodeStream = (stream: *): Observable<Buffer> =>
-  new Observable((o) => {
+  Observable.create((o) => {
     const endHandler = () => o.complete();
     const errorHandler = (e: Error) => o.error(e);
     const dataHandler = (data: Buffer) => o.next(data);

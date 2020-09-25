@@ -1,6 +1,6 @@
 // @flow
 
-import { getAbandonSeedAddress } from "../../data/abandonseed";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { listCryptoCurrencies } from "../../currencies";
 
 const ignore = ["bitcloud", "bitcore", "bitsend", "megacoin"];

@@ -1,12 +1,12 @@
 // @flow
 
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { from } from "rxjs";
 import secp256k1 from "secp256k1";
 import invariant from "invariant";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { delay } from "../promise";
-import { getAbandonSeedAddress } from "../data/abandonseed";
 import Swap from "./hw-app-swap/Swap";
 import { mockInitSwap } from "./mock";
 import perFamily from "../generated/swap";

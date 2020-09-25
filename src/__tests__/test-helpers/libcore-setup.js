@@ -4,7 +4,6 @@ import { listen } from "@ledgerhq/logs";
 import "./setup";
 import { setEnvUnsafe } from "../../env";
 import implementLibcore from "../../libcore/platforms/nodejs";
-import "../../load/tokens/ethereum/erc20";
 
 jest.setTimeout(180000);
 

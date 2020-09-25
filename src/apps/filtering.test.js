@@ -4,7 +4,7 @@ import { initState } from "./logic";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import type { FilterOptions, SortOptions } from "./filtering";
 import { sortFilterApps } from "./filtering";
-import { setSupportedCurrencies } from "../data/cryptocurrencies";
+import { setSupportedCurrencies } from "../currencies/support";
 
 type FilteringScenario = {
   name: string,

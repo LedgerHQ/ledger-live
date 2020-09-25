@@ -6,7 +6,7 @@ import type { App, Application } from "../types/manager";
 import {
   listCryptoCurrencies,
   findCryptoCurrencyById,
-} from "../data/cryptocurrencies";
+} from "@ledgerhq/cryptoassets";
 
 const directDep = {};
 const reverseDep = {};

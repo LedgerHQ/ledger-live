@@ -1,11 +1,11 @@
 // @flow
 
+import { findExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 import type {
   SwapCurrencyNameAndSignature,
   SwapProviderNameAndSignature,
 } from "./types";
 import type { CryptoCurrency, TokenCurrency } from "../types/currencies";
-import exchangeCurrencyConfigs from "../load/exchange";
 import getExchangeRates from "./getExchangeRates";
 import getStatus from "./getStatus";
 import getProviders from "./getProviders";
@@ -65,7 +65,7 @@ export const isExchangeSupportedByApp = (
 const getCurrencySwapConfig = (
   currency: CryptoCurrency | TokenCurrency
 ): SwapCurrencyNameAndSignature => {
-  const res = exchangeCurrencyConfigs[currency.id];
+  const res = findExchangeCurrencyConfig(currency.id);
   if (!res) {
     throw new Error(`Swap, missing configuration for ${currency.id}`);
   }
@@ -88,7 +88,7 @@ const getProviderNameAndSignature = (
 const isCurrencySwapSupported = (
   currency: CryptoCurrency | TokenCurrency
 ): boolean => {
-  return !!exchangeCurrencyConfigs[currency.id];
+  return !!findExchangeCurrencyConfig(currency.id);
 };
 
 export {

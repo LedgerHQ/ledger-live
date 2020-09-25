@@ -6,7 +6,7 @@ import {
   getAccountCurrency,
   getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
-import { findTokenById } from "@ledgerhq/live-common/lib/data/tokens";
+import { getAbandonSeedAddress, findTokenById } from "@ledgerhq/cryptoassets";
 import { from } from "rxjs";
 import { BigNumber } from "bignumber.js";
 import commandLineArgs from "command-line-args";
@@ -19,7 +19,6 @@ import { getExchangeRates } from "@ledgerhq/live-common/lib/swap";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
-import { getAbandonSeedAddress } from "@ledgerhq/live-common/lib/data/abandonseed";
 
 import invariant from "invariant";
 

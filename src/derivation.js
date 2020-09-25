@@ -324,9 +324,9 @@ export const runDerivationScheme = (
   derivationScheme: string,
   { coinType }: { coinType: number },
   opts: {
-    account?: number,
-    node?: number,
-    address?: number,
+    account?: number | string,
+    node?: number | string,
+    address?: number | string,
   } = {}
 ) =>
   derivationScheme

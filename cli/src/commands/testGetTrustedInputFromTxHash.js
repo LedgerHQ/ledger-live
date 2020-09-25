@@ -7,7 +7,7 @@ import invariant from "invariant";
 import Btc from "@ledgerhq/hw-app-btc";
 import network from "@ledgerhq/live-common/lib/network";
 import { findCurrencyExplorer } from "@ledgerhq/live-common/lib/api/Ledger";
-import { findCryptoCurrencyById } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const command = async (transport, currencyId, hash) => {
   const btc = new Btc(transport);

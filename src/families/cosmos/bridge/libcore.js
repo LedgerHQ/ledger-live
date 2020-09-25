@@ -1,4 +1,5 @@
 // @flow
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { scanAccounts } from "../../../libcore/scanAccounts";
 import { sync } from "../../../libcore/syncAccount";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
@@ -9,7 +10,6 @@ import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
 import { validateRecipient } from "../../../bridge/shared";
-import { getAbandonSeedAddress } from "../../../data/abandonseed";
 
 import {
   NotEnoughBalance,

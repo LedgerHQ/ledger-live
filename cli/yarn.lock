@@ -940,6 +940,13 @@
   dependencies:
     commander "^2.20.0"
 
+"@ledgerhq/cryptoassets@5.24.1-alpha.5", "@ledgerhq/cryptoassets@^5.24.1-alpha.5+a715279":
+  version "5.24.1-alpha.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-5.24.1-alpha.5.tgz#30ab42ceff08881bda9c84a06f96a25a4630e8c8"
+  integrity sha512-JhL1dQQhPUHCTqgeaWS+OHrA0S8BnufD10ceIvApU+XttUpIedvk8Xv9ZhcTLvFIJrVzhBXV65cMenES5UT7qQ==
+  dependencies:
+    invariant "2"
+
 "@ledgerhq/devices@5.23.0", "@ledgerhq/devices@^5.23.0":
   version "5.23.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/devices/-/devices-5.23.0.tgz#e5b800de858e45d247be56708c832c1e51727fe0"
@@ -967,11 +974,12 @@
     semver "^7.3.2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.24.0":
-  version "5.24.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.24.0.tgz#03867338ca1e8721afd8a2b30c2b38a226e0a516"
-  integrity sha512-DWwvFIABiAI07u4gSHhdTsClUXNXRy19dXv8WcJ2mPAphkY1FFaQ7IFxW+Mq4OcRTWWoDQkZBWQzSI2HD6YLHg==
+"@ledgerhq/hw-app-eth@5.24.1-alpha.5":
+  version "5.24.1-alpha.5"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.24.1-alpha.5.tgz#53b771484d22df4f431d26716078cef9473b8ee4"
+  integrity sha512-SPSmgcUDXsjW1typQL4Gh6j8VSSIWLCe0BYaCrduovWiSVgZ43k8KJtI/c1TdKuOuYhtAMNoTznhyWvNT6oG1w==
   dependencies:
+    "@ledgerhq/cryptoassets" "^5.24.1-alpha.5+a715279"
     "@ledgerhq/errors" "^5.23.0"
     "@ledgerhq/hw-transport" "^5.23.0"
     bignumber.js "^9.0.0"
@@ -1077,16 +1085,17 @@
     node-pre-gyp "^0.15.0"
     node-pre-gyp-github "^1.4.3"
 
-"@ledgerhq/live-common@14.6.1":
-  version "14.6.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-14.6.1.tgz#abf7a6646b32aa48cf81f5f5d3c30769d0cb546c"
-  integrity sha512-I+fGg6pKUb3k6c1+uvVE9lBQki5TIIU1XCnMa2p9IdoC7/y/728ls/ttDyM3xfJp2E0RnRPCpvcegApZd/6G+Q==
+"@ledgerhq/live-common@^15.0.0-cryptoassets.2":
+  version "15.0.0-cryptoassets.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-15.0.0-cryptoassets.2.tgz#157fac2e0f0b104308a3b6b9967425bf22ad2d28"
+  integrity sha512-uQV4DJsKSMw8mbkliyKk+4ygX+qo/wsvH0dktAqYls0wRxHu9W6oshFYzNIHb9bS3P+IROVmvvUplvabDA+Fvw==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
+    "@ledgerhq/cryptoassets" "5.24.1-alpha.5"
     "@ledgerhq/devices" "5.23.0"
     "@ledgerhq/errors" "5.23.0"
     "@ledgerhq/hw-app-btc" "^5.23.1"
-    "@ledgerhq/hw-app-eth" "5.24.0"
+    "@ledgerhq/hw-app-eth" "5.24.1-alpha.5"
     "@ledgerhq/hw-app-str" "^5.23.0"
     "@ledgerhq/hw-app-trx" "5.23.0"
     "@ledgerhq/hw-app-xrp" "5.23.0"
@@ -3324,7 +3333,7 @@ interpret@^1.0.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz#665ab8bc4da27a774a40584e812e3e0fa45b1a1e"
   integrity sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==
 
-invariant@^2.2.2, invariant@^2.2.4:
+invariant@2, invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==

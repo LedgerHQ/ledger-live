@@ -1,4 +1,5 @@
 // @flow
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import type { DatasetTest } from "../../types";
 import {
@@ -9,7 +10,6 @@ import {
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
 import { addNotCreatedRippleMockAddress } from "./bridge/mock";
-import { getCryptoCurrencyById } from "../../data/cryptocurrencies";
 import { formatCurrencyUnit } from "../../currencies";
 
 const newAddress1 = "rZvBc5e2YR1A9otS3r9DyGh3NDP8XLLp4";

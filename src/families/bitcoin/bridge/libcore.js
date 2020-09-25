@@ -1,4 +1,5 @@
 // @flow
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -22,7 +23,6 @@ import { makeLRUCache } from "../../../cache";
 import broadcast from "../libcore-broadcast";
 import signOperation from "../libcore-signOperation";
 import { getMainAccount } from "../../../account";
-import { getAbandonSeedAddress } from "../../../data/abandonseed";
 import { getMinRelayFee } from "../fees";
 import { isChangeOutput, perCoinLogic } from "../transaction";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";

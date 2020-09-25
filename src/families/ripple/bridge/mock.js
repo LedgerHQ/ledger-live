@@ -1,4 +1,5 @@
 // @flow
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import {
   NotEnoughSpendableBalance,
@@ -10,7 +11,6 @@ import {
 } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { Account, AccountBridge, CurrencyBridge } from "../../../types";
-import { getCryptoCurrencyById } from "../../../data/cryptocurrencies";
 import { getMainAccount } from "../../../account";
 import {
   scanAccounts,

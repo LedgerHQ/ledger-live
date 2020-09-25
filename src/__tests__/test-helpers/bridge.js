@@ -48,10 +48,15 @@ function expectBalanceIsOpsSum(a) {
   );
 }
 
+const defaultSyncConfig = {
+  paginationConfig: {},
+  blacklistedTokenIds: ["ethereum/erc20/ampleforth"],
+};
+
 export function syncAccount<T: Transaction>(
   bridge: AccountBridge<T>,
   account: Account,
-  syncConfig: SyncConfig = { paginationConfig: {} }
+  syncConfig: SyncConfig = defaultSyncConfig
 ): Promise<Account> {
   return bridge
     .sync(account, syncConfig)
@@ -116,9 +121,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
           .scanAccounts({
             currency,
             deviceId,
-            syncConfig: {
-              paginationConfig: {},
-            },
+            syncConfig: defaultSyncConfig,
           })
           .pipe(
             filter((e) => e.type === "discovered"),

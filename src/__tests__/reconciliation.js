@@ -1,9 +1,5 @@
 // @flow
 import "./test-helpers/staticTime";
-import "../load/tokens/ethereum/erc20";
-import "../load/tokens/tron/trc10";
-import "../load/tokens/tron/trc20";
-import "../load/tokens/algorand/asa";
 
 import { genAccount } from "../mock/account";
 import { patchAccount } from "../reconciliation";

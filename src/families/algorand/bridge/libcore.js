@@ -1,4 +1,5 @@
 // @flow
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import {
@@ -27,7 +28,6 @@ import { withLibcore } from "../../../libcore/access";
 import { getCoreAccount } from "../../../libcore/getCoreAccount";
 import { libcoreAmountToBigNumber } from "../../../libcore/buildBigNumber";
 import { extractTokenId } from "../tokens";
-import { getAbandonSeedAddress } from "../../../data/abandonseed";
 import { ALGORAND_MAX_MEMO_SIZE } from "../logic";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { ClaimRewardsFeesWarning } from "../../../errors";
