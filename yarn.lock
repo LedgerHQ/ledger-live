@@ -1163,10 +1163,10 @@
     "@ledgerhq/errors" "^5.25.0"
     events "^3.2.0"
 
-"@ledgerhq/live-common@^15.0.0":
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-15.0.0.tgz#66ba4303d6138f035003e2ad9dd8b3eaa24a50d7"
-  integrity sha512-XbOZfQibugua1KBzFe9v0A/YHQifnoS6hQDO+YuKy86N+xfdZP7fyJ5s8yvvgjVxOmtld+TzpQ1pSX87vv65Fg==
+"@ledgerhq/live-common@^15.0.1":
+  version "15.0.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-15.0.1.tgz#8778e02c08cfae0288f79bb5b791545a804abde5"
+  integrity sha512-8LDC9nJgGYdINdUCsxcB3d/yfZYPzNYPptsl2kZUjGsc3Kn+H17X4ZYtDzsdG/RFF/WDe7B+G9aW1PjqGYgK/g==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
     "@ledgerhq/cryptoassets" "5.25.1"
