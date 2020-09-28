@@ -352,8 +352,8 @@ const implementations = {
           .subscribe({
             next: (event) => {
               if (initT) {
-                initT = null;
                 clearTimeout(initT);
+                initT = null;
               }
               if (disconnectT) {
                 // any connect app event unschedule the disconnect debounced event
