@@ -23,9 +23,15 @@ async function bitcoin({ coreAccount }: Input): Output {
     bigInts,
     libcoreBigIntToBigNumber
   );
-  const normalized = bigNumbers.map((bn) =>
+  let normalized = bigNumbers.map((bn) =>
     bn.div(1000).integerValue(BigNumber.ROUND_CEIL)
   );
+
+  if (normalized[1].eq(normalized[2]) || normalized[1].eq(normalized[0])) {
+    // NB if two of the fees are the same, use the lowest as a base and increase the rest
+    normalized = [normalized[2].plus(2), normalized[2].plus(1), normalized[2]];
+  }
+
   const feeItems = {
     items: normalized.map((feePerByte, i) => ({
       key: String(i),
