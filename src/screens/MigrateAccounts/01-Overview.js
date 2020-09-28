@@ -1,6 +1,6 @@
 // @flow
 
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/data/cryptocurrencies";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, SectionList } from "react-native";
