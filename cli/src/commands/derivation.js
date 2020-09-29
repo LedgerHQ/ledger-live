@@ -7,10 +7,8 @@ import {
   runDerivationScheme,
   getDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
-import { setEnv } from "@ledgerhq/live-common/lib/env";
+import { setEnv, getEnv } from "@ledgerhq/live-common/lib/env";
 import { getAccountPlaceholderName } from "@ledgerhq/live-common/lib/account";
-
-setEnv("SCAN_FOR_INVALID_PATHS", true);
 
 export default {
   args: [],
@@ -18,7 +16,10 @@ export default {
     of(
       listSupportedCurrencies()
         .map((currency) => {
+          const value = getEnv("SCAN_FOR_INVALID_PATHS");
+          setEnv("SCAN_FOR_INVALID_PATHS", true);
           const modes = getDerivationModesForCurrency(currency);
+          setEnv("SCAN_FOR_INVALID_PATHS", value);
           return modes
             .map((derivationMode) => {
               const scheme = getDerivationScheme({
