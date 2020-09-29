@@ -39,14 +39,13 @@ type RouteParams = {
 
 export default function ConnectDevice({ route }: Props) {
   const { t } = useTranslation();
-  const { account: accountLike, parentAccount } = useSelector(
-    accountScreenSelector(route),
-  );
-  invariant(accountLike, "account is required");
-  const account = getMainAccount(accountLike, parentAccount);
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is required");
+
+  const mainAccount = getMainAccount(account, parentAccount);
 
   const { transaction, status } = useBridgeTransaction(() => ({
-    account,
+    account: mainAccount,
     transaction: route.params.transaction,
   }));
 
