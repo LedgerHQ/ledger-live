@@ -273,7 +273,7 @@ export function renderLoading({
   return (
     <View style={styles.wrapper}>
       <View style={styles.spinnerContainer}>
-        <Spinning>
+        <Spinning clockwise>
           <BigSpinner />
         </Spinning>
       </View>
