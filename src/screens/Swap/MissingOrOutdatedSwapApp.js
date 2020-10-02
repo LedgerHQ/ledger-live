@@ -9,6 +9,7 @@ import Button from "../../components/Button";
 import LText from "../../components/LText";
 import AppIcon from "../Manager/AppsList/AppIcon";
 import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 
 const MissingOrOutdatedSwapApp = ({
   outdated = false,
@@ -24,6 +25,7 @@ const MissingOrOutdatedSwapApp = ({
 
   return (
     <SafeAreaView style={styles.root}>
+      <TrackScreen category="Swap" name="MissingOrOutdatedExchangeApp" />
       <View style={styles.illustration}>
         <AppIcon size={60} icon="exchange" />
       </View>

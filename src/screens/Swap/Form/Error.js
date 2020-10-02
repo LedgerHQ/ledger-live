@@ -9,6 +9,7 @@ import colors from "../../../colors";
 import GenericErrorView from "../../../components/GenericErrorView";
 import Button from "../../../components/Button";
 import { ScreenName } from "../../../const";
+import { TrackScreen } from "../../../analytics";
 
 const forceInset = { bottom: "always" };
 
@@ -22,6 +23,7 @@ const Error = () => {
   const { error } = route.params;
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="Swap" name={`SwapModalError-${error.name}`} />
       <View style={styles.wrapper}>
         <GenericErrorView error={error} />
       </View>
