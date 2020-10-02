@@ -29,7 +29,7 @@
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
   "dependencies": {
-    "@ledgerhq/cryptoassets": "5.25.1",
+    "@ledgerhq/cryptoassets": "5.25.3",
     "@ledgerhq/errors": "5.25.0",
     "@ledgerhq/hw-app-btc": "^5.25.0",
     "@ledgerhq/hw-transport-http": "5.25.0",
@@ -37,10 +37,10 @@
     "@ledgerhq/hw-transport-node-hid": "5.25.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.25.0",
     "@ledgerhq/ledger-core": "6.9.1",
-    "@ledgerhq/live-common": "^15.0.0",
+    "@ledgerhq/live-common": "^15.1.0",
     "@ledgerhq/logs": "5.25.0",
     "asciichart": "^1.5.25",
-    "bignumber.js": "^9.0.0",
+    "bignumber.js": "^9.0.1",
     "bip39": "^3.0.2",
     "body-parser": "^1.19.0",
     "command-line-args": "^5.1.1",
