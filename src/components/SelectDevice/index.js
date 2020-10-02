@@ -138,11 +138,11 @@ const UsbPlaceholder = () => (
 );
 
 const ORBar = () => (
-  <SectionSeparator
-    thin
-    style={styles.or}
-    text={<Trans i18nKey="common.or" />}
-  />
+  <SectionSeparator thin style={styles.or}>
+    <LText semiBold style={{ color: colors.lightFog }}>
+      <Trans i18nKey="common.or" />
+    </LText>
+  </SectionSeparator>
 );
 
 function getAll({ knownDevices }, { devices }): Device[] {

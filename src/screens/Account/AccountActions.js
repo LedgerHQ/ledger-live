@@ -10,7 +10,10 @@ import {
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../const";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import {
+  readOnlyModeEnabledSelector,
+  swapSupportedCurrenciesSelector,
+} from "../../reducers/settings";
 import {
   ReceiveActionDefault,
   SendActionDefault,
@@ -24,6 +27,7 @@ import Touchable from "../../components/Touchable";
 import colors from "../../colors";
 import Button from "../../components/Button";
 import Transfer from "../../icons/Transfer";
+import Swap from "../../icons/Swap";
 import Exchange from "../../icons/Exchange";
 
 type ChoiceButtonProps = {
@@ -92,6 +96,9 @@ export default function AccountActions({ account, parentAccount }: Props) {
   const [modalOpen, setModalOpen] = useState();
   const navigation = useNavigation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const availableOnSwap = useSelector(state =>
+    swapSupportedCurrenciesSelector(state, { accountId: account.id }),
+  );
   const mainAccount = getMainAccount(account, parentAccount);
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
 
@@ -149,7 +156,32 @@ export default function AccountActions({ account, parentAccount }: Props) {
           },
         ]
       : []),
-    // Add in swap, sell and more feature flagging logic here
+    // Add in sell and more feature flagging logic here
+    ...(availableOnSwap.includes(currency)
+      ? [
+          {
+            navigationParams: [
+              NavigatorName.Swap,
+              {
+                screen: ScreenName.SwapFormOrHistory,
+                params: {
+                  defaultAccount: account,
+                  defaultParentAccount: parentAccount,
+                },
+              },
+            ],
+            label: (
+              <Trans
+                i18nKey="transfer.swap.main.header"
+                values={{ currency: currency.name }}
+              />
+            ),
+            Icon: Swap,
+            event: "Swap Crypto Account Button",
+            eventProperties: { currencyName: currency.name },
+          },
+        ]
+      : []),
   ];
 
   const onSend = useCallback(() => {

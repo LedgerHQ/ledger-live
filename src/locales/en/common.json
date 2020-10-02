@@ -510,6 +510,13 @@
     "StellarMemoRecommended": {
       "title": "When sending to this recipient, a memo may be required"
     },
+    "SwapExchangeRateOutOfBounds": {
+      "title": "Amount must be between {{unit}} {{minAmountFrom}} and {{unit}} {{maxAmountFrom}}"
+    },
+    "SwapGenericAPIError": {
+      "title": "Timeout",
+      "description": "The offer has expired, please retry operation"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
@@ -870,6 +877,7 @@
     "send": "Send",
     "receive": "Receive",
     "buy": "Buy",
+    "swap": "Swap",
     "manage": "Manage",
     "lastOperations": "Last operations",
     "emptyState": {
@@ -1228,6 +1236,109 @@
     },
     "exchange": {
       "title": "Buy crypto assets"
+    },
+    "swap": {
+      "title": "Swap",
+      "selectDevice": "Select your device",
+      "broadcasting": "Broadcasting swap",
+      "loadingFees": "Loading Network fees...",
+      "landing": {
+        "header": "Swap",
+        "title": "Welcome to Swap",
+        "disclaimer": "Exchange crypto assets directly from your Ledger device. This service is not available in the US and a few other countries."
+      },
+      "main": {
+        "header": "Swap"
+      },
+      "kyc": {
+        "disclaimer": "By continuing, you accept that your location data will be shared with third party service providers in order for them to comply with their AML/KYC procedures"
+      },
+      "notAvailable": {
+        "title": "Swap feature is not available in your country"
+      },
+      "form": {
+        "validate": "Confirm Swap transaction",
+        "tab": "Exchange",
+        "button": "Continue",
+        "from": "From",
+        "to": "To",
+        "balance": "Balance <0>123</0>",
+        "fromAccount": "Select Account",
+        "toAccount": "Select Account",
+        "amount": {
+          "useMax": "Use max",
+          "available": "Total available"
+        },
+        "noApp": {
+          "title": "App not installed on device",
+          "desc": "You need the app to be installed on your device to be able to swap it. Go to manager to install the app.",
+          "cta": "Go to Manager",
+          "close": "Close"
+        },
+        "noAccounts": {
+          "title": "No eligible {{ticker}} account",
+          "desc": "You don't have {{currencyName}} accounts that can be selected for this action.",
+          "addAccountCta": "Add Account",
+          "cta": "Close"
+        },
+        "outdatedApp": {
+          "title": "App update available",
+          "desc": "You need to update the {{currencyName}} app.",
+          "cta": "Go to Manager",
+          "close": "Close"
+        },
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "receive": "Receive",
+          "provider": "Provider",
+          "fees": "Max fees",
+          "title": "Pending operation",
+          "description": "Swap operation is being broadcasted to Changelly, that will treat it before sending you the requested funds. To see the status of your operation go to the history tab of the swap page",
+          "label": "Your Swap ID:",
+          "disclaimer": {
+            "title": "Terms and conditions",
+            "desc": "Exchange services provided by {{provider}}. By clicking “Accept”, I acknowledge and understand that my transaction may trigger AML/KYC verification according to {{provider}} AML/KYC.",
+            "tos": "Terms & conditions",
+            "accept": "Accept",
+            "reject": "Don't Accept"
+          }
+        }
+      },
+      "operationDetails": {
+        "swapId": "Swap ID",
+        "provider": "Provider",
+        "date": "Date",
+        "from": "From",
+        "fromAmount": "Initial amount",
+        "to": "To",
+        "toAmount": "Credited amount"
+      },
+      "missingApp": {
+        "title": "Please install the Exchange app on your device",
+        "description": "Go to manager and install Exchange app to swap assets",
+        "button": "Go to Manager"
+      },
+      "outdatedApp": {
+        "title": "Please update the Exchange app on your device",
+        "description": "Go to manager and update Exchange app to swap assets",
+        "button": "Go to Manager"
+      },
+      "emptyState": {
+        "title": "No {{currency}} account",
+        "description": "You need to add an account before swapping {{currency}}",
+        "CTAButton": "Add account"
+      },
+      "history": {
+        "tab": "History",
+        "exportButton": "Export operations",
+        "exportFilename": "Swap operations",
+        "empty": {
+          "title": "No history",
+          "desc": "You don’t have any history swap"
+        }
+      }
     }
   },
   "sync": {
@@ -1494,6 +1605,10 @@
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device"
+    },
+    "confirmSwap": {
+      "title": "Confirm swap operation on device",
+      "alert": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them"
     },
     "button": {
       "openManager": "Open Manager"

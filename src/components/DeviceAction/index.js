@@ -18,6 +18,7 @@ import {
   renderInWrongAppForAccount,
   renderError,
   renderBootloaderStep,
+  renderConfirmSwap,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
@@ -56,6 +57,9 @@ export default function DeviceAction<R, H, P>({
     deviceStreamingProgress,
     displayUpgradeWarning,
     passWarning,
+    initSwapRequested,
+    initSwapError,
+    initSwapResult,
     // TODO: fix flow type
   } = (status: any);
 
@@ -89,6 +93,10 @@ export default function DeviceAction<R, H, P>({
     return renderAllowManager({ t, device: selectedDevice, wording });
   }
 
+  // FIXME move out of here, this shouldn't be here.
+  if (initSwapRequested && !initSwapResult && !initSwapError) {
+    return renderConfirmSwap({ t, device: selectedDevice });
+  }
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
     const wording = allowOpeningRequestedWording || requestOpenApp;

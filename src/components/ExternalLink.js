@@ -22,7 +22,7 @@ const Link = ({ text, onPress, event, eventProperties, ltextProps }: Props) => (
     onPress={onPress}
     style={styles.root}
   >
-    <LText bold style={styles.text} {...ltextProps}>
+    <LText semiBold style={styles.text} {...ltextProps}>
       {text}
     </LText>
     <ExternalLink size={14} color={colors.live} />
@@ -36,7 +36,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 14,
+    fontSize: 12,
+    lineHeight: 18,
     color: colors.live,
     paddingRight: 8,
   },

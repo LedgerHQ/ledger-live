@@ -38,4 +38,14 @@ export const urls = {
   cosmosStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360014339340-Earn-Cosmos-staking-rewards",
   algorandStaking: "https://support.ledger.com/hc/en-us/articles/360015897740",
+  swap: {
+    info: "https://www.ledger.com/swap",
+    learnMore: "https://www.ledger.com/swap",
+    providers: {
+      changelly: {
+        main: "https://changelly.com/",
+        tos: "https://changelly.com/terms-of-use",
+      },
+    },
+  },
 };

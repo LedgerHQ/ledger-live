@@ -7,7 +7,11 @@ import { Trans, useTranslation } from "react-i18next";
 import { from, of } from "rxjs";
 import { map, first, retryWhen } from "rxjs/operators";
 import { useNavigation } from "@react-navigation/native";
-import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
+import type {
+  CryptoCurrency,
+  Account,
+  Transaction,
+} from "@ledgerhq/live-common/lib/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -28,6 +32,11 @@ import getDeviceNameTransport from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName";
 import checkDeviceForManager from "@ledgerhq/live-common/lib/hw/checkDeviceForManager";
 import { listApps as listAppsTransport } from "@ledgerhq/live-common/lib/apps/hw";
+import { initSwap } from "@ledgerhq/live-common/lib/swap";
+import type {
+  Exchange,
+  ExchangeRate,
+} from "@ledgerhq/live-common/lib/swap/types";
 import type { SocketEvent } from "@ledgerhq/live-common/lib/types/manager";
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
@@ -493,4 +502,29 @@ export const editDeviceName: string => Step = deviceName => ({
     withDevice(meta.deviceId)(transport =>
       from(editDeviceNameTransport(transport, deviceName).then(() => meta)),
     ),
+});
+
+export const initSwapStep: ({
+  exchange: Exchange,
+  exchangeRate: ExchangeRate,
+  transaction: Transaction,
+}) => Step = ({ exchange, exchangeRate, transaction }) => ({
+  Body: ({ meta }: *) => (
+    <RenderStep
+      icon={
+        <DeviceNanoAction
+          width={240}
+          action="accept"
+          screen="validation"
+          modelId={meta.modelId}
+          wired={meta.wired}
+        />
+      }
+      title={<Trans i18nKey="transfer.swap.form.validate" />}
+    />
+  ),
+
+  run: meta => {
+    return initSwap(exchange, exchangeRate, transaction, meta.deviceId);
+  },
 });

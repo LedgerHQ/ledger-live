@@ -1,18 +1,20 @@
 // @flow
 import React from "react";
 import { StyleSheet } from "react-native";
+import IconAD from "react-native-vector-icons/dist/AntDesign";
 import {
   CantOpenDevice,
   WrongDeviceForAccount,
   PairingFailed,
   UserRefusedAllowManager,
 } from "@ledgerhq/errors";
+import { SwapGenericAPIError } from "@ledgerhq/live-common/lib/errors";
 import Rounded from "./Rounded";
 import IconNanoX from "../icons/NanoX";
 import Close from "../icons/Close";
 import ErrorBadge from "./ErrorBadge";
 import Circle from "./Circle";
-import colors, { lighten } from "../colors";
+import colors, { lighten, rgba } from "../colors";
 import BluetoothScanning from "./BluetoothScanning";
 import ErrorCrossBadge from "./ErrorCrossBadge";
 
@@ -53,6 +55,17 @@ export default function ErrorIcon({ error }: Props) {
     );
   }
 
+  if (error instanceof SwapGenericAPIError) {
+    return (
+      <Circle size={80} bg={rgba(colors.darkBlue, 0.05)}>
+        <IconAD
+          size={40}
+          name="clockcircleo"
+          color={rgba(colors.darkBlue, 0.5)}
+        />
+      </Circle>
+    );
+  }
   return (
     <Circle size={80} bg={lighten(colors.alert, 0.75)}>
       <Close size={40} color={colors.alert} />

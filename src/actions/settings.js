@@ -1,6 +1,7 @@
 // @flow
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { AvailableProvider } from "@ledgerhq/live-common/lib/swap/types";
 
 export type CurrencySettings = {
   confirmationsNb: number,
@@ -62,6 +63,11 @@ export const setReportErrors = (reportErrorsEnabled: boolean) => ({
 export const setAnalytics = (analyticsEnabled: boolean) => ({
   type: "SETTINGS_SET_ANALYTICS",
   analyticsEnabled,
+});
+
+export const setHasAcceptedSwapKYC = (hasAcceptedSwapKYC: boolean) => ({
+  type: "SETTINGS_SET_HAS_ACCEPTED_SWAP_KYC",
+  hasAcceptedSwapKYC,
 });
 
 export const setReadOnlyMode = (enabled: boolean) => ({
@@ -128,4 +134,9 @@ export const dismissBanner = (bannerId: string) => ({
 export const setAvailableUpdate = (enabled: boolean) => ({
   type: "SETTINGS_SET_AVAILABLE_UPDATE",
   enabled,
+});
+
+export const setSwapProviders = (swapProviders?: AvailableProvider[]) => ({
+  type: "SETTINGS_SET_SWAP_PROVIDERS",
+  swapProviders,
 });

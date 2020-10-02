@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import IconSend from "../../icons/Send";
 import IconReceive from "../../icons/Receive";
 import Exchange from "../../icons/Exchange";
+import Swap from "../../icons/Swap";
 
 export const SendActionDefault = ({
   onPress,
@@ -61,5 +62,27 @@ export const BuyActionDefault = ({
     onPress={onPress}
     title={<Trans i18nKey="account.buy" />}
     containerStyle={style}
+  />
+);
+
+export const SwapActionDefault = ({
+  onPress,
+  style,
+  account,
+}: {
+  onPress: () => void,
+  style?: *,
+  account: Account,
+}) => (
+  <Button
+    event="Swap Account Button"
+    eventProperties={{
+      currencyName: getAccountCurrency(account).name,
+    }}
+    type="primary"
+    onPress={onPress}
+    title={<Trans i18nKey="account.swap" />}
+    containerStyle={style}
+    IconLeft={Swap}
   />
 );

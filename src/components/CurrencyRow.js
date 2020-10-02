@@ -9,11 +9,13 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 
 import LText from "./LText";
-import CurrencyIcon from "./CurrencyIcon";
+import CircleCurrencyIcon from "./CircleCurrencyIcon";
+import colors from "../colors";
 
 type Props = {
   currency: CryptoCurrency | TokenCurrency,
   onPress: (CryptoCurrency | TokenCurrency) => void,
+  isOK?: boolean,
   style?: *,
 };
 
@@ -23,12 +25,20 @@ class CurrencyRow extends PureComponent<Props> {
   };
 
   render() {
-    const { currency, style } = this.props;
+    const { currency, style, isOK = true } = this.props;
+
     return (
       <RectButton style={[styles.root, style]} onPress={this.onPress}>
-        <CurrencyIcon size={20} currency={currency} />
-        <LText semiBold style={styles.name}>
-          {currency.name}
+        <CircleCurrencyIcon
+          size={26}
+          currency={currency}
+          color={!isOK ? colors.lightFog : undefined}
+        />
+        <LText
+          semiBold
+          style={[styles.name, !isOK ? { color: colors.fog } : null]}
+        >
+          {`${currency.name} (${currency.ticker})`}
         </LText>
       </RectButton>
     );
@@ -44,6 +54,7 @@ const styles = StyleSheet.create({
   name: {
     marginLeft: 10,
     fontSize: 14,
+    color: "black",
   },
 });
 

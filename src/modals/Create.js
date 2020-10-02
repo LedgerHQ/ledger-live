@@ -10,6 +10,7 @@ import { accountsCountSelector } from "../reducers/accounts";
 import IconSend from "../icons/Send";
 import IconReceive from "../icons/Receive";
 import IconExchange from "../icons/Exchange";
+import IconSwap from "../icons/Swap";
 import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
 import type { Props as ModalProps } from "../components/BottomModal";
@@ -47,6 +48,13 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
       }),
     [onNavigate],
   );
+  const onSwap = useCallback(
+    () =>
+      onNavigate(NavigatorName.Swap, {
+        screen: ScreenName.Swap,
+      }),
+    [onNavigate],
+  );
   const onExchange = useCallback(() => onNavigate(ScreenName.Exchange), [
     onNavigate,
   ]);
@@ -70,6 +78,12 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
         title={t("transfer.exchange.title")}
         Icon={IconExchange}
         onPress={onExchange}
+      />
+      <BottomModalChoice
+        event="TransferSwap"
+        title={t("transfer.swap.title")}
+        Icon={IconSwap}
+        onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
       />
     </BottomModal>
   );

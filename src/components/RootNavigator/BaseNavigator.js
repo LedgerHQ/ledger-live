@@ -29,6 +29,7 @@ import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import MigrateAccountsFlowNavigator from "./MigrateAccountsFlowNavigator";
+import SwapNavigator from "./SwapNavigator";
 import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
@@ -55,6 +56,11 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.SendFunds}
         component={SendFundsNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.Swap}
+        component={SwapNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -215,7 +221,6 @@ export default function BaseNavigator() {
           headerLeft: null,
         }}
       />
-
       {Object.keys(families).map(name => {
         const { component, options } = families[name];
         return (
