@@ -8,7 +8,10 @@ import network from "../network";
 import { getSwapAPIBaseURL } from "./";
 import { getEnv } from "../env";
 import { BigNumber } from "bignumber.js";
-import { SwapExchangeRateOutOfBounds } from "../errors";
+import {
+  SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooHigh,
+} from "../errors";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
@@ -40,11 +43,17 @@ const getExchangeRates: GetExchangeRates = async (
   return res.data.map(
     ({ rate, rateId, provider, minAmountFrom, maxAmountFrom }) => {
       if (!rate || !rateId) {
-        throw new SwapExchangeRateOutOfBounds(null, {
-          unit: unitFrom.code,
-          minAmountFrom,
-          maxAmountFrom,
-        });
+        const isTooSmall = BigNumber(apiAmount).lt(minAmountFrom);
+
+        throw isTooSmall
+          ? new SwapExchangeRateAmountTooLow(null, {
+              unit: unitFrom.code,
+              minAmountFrom,
+            })
+          : new SwapExchangeRateAmountTooHigh(null, {
+              unit: unitFrom.code,
+              maxAmountFrom,
+            });
       }
 
       // NB Allows us to simply multiply satoshi values from/to

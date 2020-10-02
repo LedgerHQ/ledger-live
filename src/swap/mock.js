@@ -8,44 +8,55 @@ import type {
   GetProviders,
   SwapRequestEvent,
 } from "./types";
-import { getAccountCurrency, getAccountUnit } from "../account";
+import { getAccountUnit } from "../account";
 import type { Transaction } from "../types";
-import { SwapExchangeRateOutOfBounds } from "../errors";
+import {
+  SwapExchangeRateAmountTooLow,
+  SwapExchangeRateAmountTooHigh,
+} from "../errors";
 import { Observable, of } from "rxjs";
 
 export const mockGetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction
 ) => {
-  const { fromAccount, toAccount } = exchange;
+  const { fromAccount } = exchange;
   const amount = transaction.amount;
-  const from = getAccountCurrency(fromAccount).id;
-  const to = getAccountCurrency(toAccount).id;
   const unitFrom = getAccountUnit(fromAccount);
   const amountFrom = amount.div(BigNumber(10).pow(unitFrom.magnitude));
+  const minAmountFrom = BigNumber(0.0001);
+  const maxAmountFrom = BigNumber(1000);
+  const apiAmount = BigNumber(amountFrom).div(
+    BigNumber(10).pow(unitFrom.magnitude)
+  );
 
-  if (amountFrom.gte(0.00001) && amountFrom.lte(100000)) {
-    //Fake delay to show loading UI
-    await new Promise((r) => setTimeout(r, 800));
-    //Mock OK, not really magnitude aware
-    return [
-      {
-        rate: BigNumber("4.2"),
-        magnitudeAwareRate: BigNumber("4.2"),
-        rateId: "mockedRateId",
-        provider: "changelly",
-        expirationDate: new Date(),
-      },
-    ];
-  } else {
-    //Mock KO
-    throw new SwapExchangeRateOutOfBounds(null, {
-      from,
-      to,
-      minAmountFrom: 0.00001,
-      maxAmountFrom: 10,
+  if (apiAmount.lte(minAmountFrom)) {
+    throw new SwapExchangeRateAmountTooLow(null, {
+      unit: unitFrom.code,
+      minAmountFrom,
     });
   }
+
+  if (apiAmount.gte(maxAmountFrom)) {
+    throw new SwapExchangeRateAmountTooHigh(null, {
+      unit: unitFrom.code,
+      maxAmountFrom,
+    });
+  }
+
+  //Fake delay to show loading UI
+  await new Promise((r) => setTimeout(r, 800));
+
+  //Mock OK, not really magnitude aware
+  return [
+    {
+      rate: BigNumber("4.2"),
+      magnitudeAwareRate: BigNumber("4.2"),
+      rateId: "mockedRateId",
+      provider: "changelly",
+      expirationDate: new Date(),
+    },
+  ];
 };
 
 export const mockInitSwap = (
