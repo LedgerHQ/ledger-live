@@ -3,11 +3,6 @@
 
 import { BigNumber } from "bignumber.js";
 import compressjs from "@ledgerhq/compressjs";
-import type { SwapOperationRaw } from "./swap/types";
-import {
-  toSwapOperationRaw,
-  fromSwapOperationRaw,
-} from "./account/serialization";
 import type { Account, CryptoCurrencyIds } from "./types";
 import {
   runDerivationScheme,
@@ -26,7 +21,6 @@ export type AccountData = {
   name: string,
   index: number,
   balance: string,
-  swapHistory?: SwapOperationRaw[],
 };
 
 export type CryptoSettings = {
@@ -103,73 +97,6 @@ const asResultMeta = (unsafe: mixed): Meta => {
   };
 };
 
-const asMaybeSwapOperationRaw = (unsafe: mixed): ?SwapOperationRaw => {
-  if (!unsafe || typeof unsafe !== "object") return;
-  const {
-    provider,
-    swapId,
-    status,
-    receiverAccountId,
-    tokenId,
-    operationId,
-    fromAmount,
-    toAmount,
-  } = unsafe;
-  if (
-    typeof provider !== "string" ||
-    typeof swapId !== "string" ||
-    typeof status !== "string" ||
-    typeof receiverAccountId !== "string" ||
-    typeof operationId !== "string" ||
-    typeof fromAmount !== "string" ||
-    typeof toAmount !== "string"
-  ) {
-    return;
-  }
-
-  const safe = {};
-  if (provider && typeof provider === "string") {
-    safe.provider = provider;
-  }
-  if (swapId && typeof swapId === "string") {
-    safe.swapId = swapId;
-  }
-  if (status && typeof status === "string") {
-    safe.status = status;
-  }
-  if (receiverAccountId && typeof receiverAccountId === "string") {
-    safe.receiverAccountId = receiverAccountId;
-  }
-  if (operationId && typeof operationId === "string") {
-    safe.operationId = operationId;
-  }
-  if (fromAmount && typeof fromAmount === "string") {
-    safe.fromAmount = fromAmount;
-  }
-  if (toAmount && typeof toAmount === "string") {
-    safe.toAmount = toAmount;
-  }
-  if (tokenId && typeof tokenId === "string") {
-    safe.tokenId = tokenId;
-  }
-  return safe;
-};
-
-const asSwapHistory = (unsafe: mixed): Array<SwapOperationRaw> => {
-  if (unsafe && Array.isArray(unsafe)) {
-    const swapHistorySafe = [];
-    for (let s of unsafe) {
-      const swapOp = asMaybeSwapOperationRaw(s);
-      if (!swapOp) {
-        return []; // we consider the whole swap history invalid
-      }
-      swapHistorySafe.push(swapOp);
-    }
-    return swapHistorySafe;
-  }
-  return [];
-};
-
 const asResultAccount = (unsafe: mixed): AccountData => {
   if (typeof unsafe !== "object" || !unsafe) {
     throw new Error("invalid account data");
@@ -183,7 +110,6 @@ const asResultAccount = (unsafe: mixed): AccountData => {
     name,
     index,
     balance,
-    swapHistory,
   } = unsafe;
   if (typeof id !== "string") {
     throw new Error("invalid account.id");
@@ -215,7 +141,6 @@ const asResultAccount = (unsafe: mixed): AccountData => {
     name,
     index,
     balance,
-    swapHistory: asSwapHistory(swapHistory),
   };
   if (typeof freshAddress === "string" && freshAddress) {
     o.freshAddress = freshAddress;
@@ -321,7 +246,6 @@ export function accountToAccountData({
   currency,
   index,
   balance,
-  swapHistory,
 }: Account): AccountData {
   return {
     id,
@@ -332,7 +256,6 @@ export function accountToAccountData({
     currencyId: currency.id,
     index,
     balance: balance.toString(),
-    swapHistory: (swapHistory || []).map(toSwapOperationRaw),
   };
 }
 
@@ -348,7 +271,6 @@ export const accountDataToAccount = ({
   balance,
   derivationMode: derivationModeStr,
   seedIdentifier,
-  swapHistory,
 }: AccountData): Account => {
   const { type, xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
   const derivationMode = asDerivationMode(derivationModeStr);
@@ -385,7 +307,7 @@ export const accountDataToAccount = ({
     index,
     freshAddress,
     freshAddressPath,
-    swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
+    swapHistory: [],
     // these fields will be completed as we will sync
     freshAddresses: [],
     blockHeight: 0,
