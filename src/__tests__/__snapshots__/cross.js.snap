@@ -12,7 +12,6 @@ Object {
       "index": 1,
       "name": "qfLJHUiyMqUUN",
       "seedIdentifier": "mock",
-      "swapHistory": Array [],
     },
     Object {
       "balance": "53736258",
@@ -23,7 +22,6 @@ Object {
       "index": 1,
       "name": "Y4SYkWgSWIIZptphvAu",
       "seedIdentifier": "mock",
-      "swapHistory": Array [],
     },
     Object {
       "balance": "128088571428550",
@@ -34,7 +32,6 @@ Object {
       "index": 1,
       "name": "s9dZEiOrwfEPOXbKgNKq88aQZ",
       "seedIdentifier": "mock",
-      "swapHistory": Array [],
     },
   ],
   "meta": Object {

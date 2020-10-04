@@ -51,28 +51,6 @@ test("encode/decode", () => {
   expect(exp.accounts).toMatchObject(data.accounts.map(accountToAccountData));
 });
 
-test("encode/decode swapHistory", () => {
-  const accountWithHistory = genAccount("account_with_swapHistory", {
-    swapHistorySize: 2,
-  });
-  const data = accountToAccountData(accountWithHistory);
-  const res = accountToAccountData(accountDataToAccount(data));
-  expect(res).toMatchObject(data);
-  expect(res.swapHistory?.length).toBe(2);
-});
-
-test("encode/decode swapHistory resilience", () => {
-  // swapHistory should be added even if the source doesn't have it
-  const accountWithoutHistory = genAccount("account_without_swapHistory");
-  // $FlowFixMe
-  accountWithoutHistory.swapHistory = undefined;
-  const data = accountToAccountData(accountWithoutHistory);
-  const res = accountToAccountData(accountDataToAccount(data));
-
-  expect(res).toMatchObject(data);
-  expect(res.swapHistory?.length).toBe(0);
-});
-
 test("encode/decode", () => {
   const accounts = Array(3)
     .fill(null)
