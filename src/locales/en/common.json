@@ -510,8 +510,11 @@
     "StellarMemoRecommended": {
       "title": "When sending to this recipient, a memo may be required"
     },
-    "SwapExchangeRateOutOfBounds": {
-      "title": "Amount must be between {{unit}} {{minAmountFrom}} and {{unit}} {{maxAmountFrom}}"
+    "SwapExchangeRateAmountTooLow": {
+      "title": "Amount must be higher than {{unit}} {{minAmountFrom}}"
+    },
+    "SwapExchangeRateAmountTooHigh": {
+      "title": "Amount must be lower than {{unit}} {{maxAmountFrom}}"
     },
     "SwapGenericAPIError": {
       "title": "Timeout",
