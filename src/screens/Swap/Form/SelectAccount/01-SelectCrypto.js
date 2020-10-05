@@ -74,11 +74,18 @@ export default function SwapFormSelectCrypto({ route, navigation }: Props) {
 
       if (isCurrencyOK(status, target)) {
         if (target === "from") {
+          // NB Clear toAccount only if it will collide with the selected currency
+          const toAccount =
+            exchange.toAccount &&
+            getAccountCurrency(exchange.toAccount).id === currencyOrToken.id
+              ? undefined
+              : exchange.toAccount;
+
           navigation.navigate(ScreenName.SwapFormSelectAccount, {
             exchange: {
               ...exchange,
               fromAccount: null,
-              toAccount: null,
+              toAccount,
             },
             selectedCurrency: currencyOrToken,
             target,
