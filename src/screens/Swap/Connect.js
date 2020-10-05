@@ -9,6 +9,7 @@ import SelectDevice from "../../components/SelectDevice";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import LText from "../../components/LText";
 import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 
 const action = createAction(connectManager);
 
@@ -16,6 +17,7 @@ const Connect = ({ setResult }: { setResult: (result: any) => void }) => {
   const [device, setDevice] = useState(null);
   return (
     <View style={styles.root}>
+      <TrackScreen category="Swap" name="ConnectDeviceListApps" />
       <LText semiBold style={styles.selectDevice}>
         <Trans i18nKey={"transfer.swap.selectDevice"} />
       </LText>

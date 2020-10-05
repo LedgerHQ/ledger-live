@@ -16,6 +16,7 @@ import CheckBox from "../../components/CheckBox";
 import swapIllustration from "../../images/swap.png";
 import colors from "../../colors";
 import { setHasAcceptedSwapKYC } from "../../actions/settings";
+import { TrackScreen } from "../../analytics";
 
 const Landing = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -27,6 +28,7 @@ const Landing = () => {
 
   return (
     <SafeAreaView style={styles.root}>
+      <TrackScreen category="Swap" name="KYC Landing" />
       <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View style={styles.wrapper}>
           <Image source={swapIllustration} style={styles.illustration} />

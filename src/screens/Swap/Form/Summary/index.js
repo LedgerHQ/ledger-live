@@ -14,6 +14,7 @@ import SummaryBody from "./SummaryBody";
 import colors from "../../../../colors";
 import { ScreenName } from "../../../../const";
 import CountdownTimer from "../../../../components/CountdownTimer";
+import { Track, TrackScreen } from "../../../../analytics";
 
 const forceInset = { bottom: "always" };
 
@@ -50,6 +51,7 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
 
   return status && transaction ? (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="Swap" name="History" />
       <SummaryBody
         exchange={exchange}
         exchangeRate={exchangeRate}
@@ -58,18 +60,21 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
 
       {confirmed ? (
         acceptedDisclaimer ? (
-          <Confirmation
-            exchange={exchange}
-            exchangeRate={exchangeRate}
-            status={status}
-            transaction={transaction}
-            deviceMeta={deviceMeta}
-            onError={error => {
-              reset();
-              navigation.navigate(ScreenName.SwapError, { error });
-            }}
-            onCancel={reset}
-          />
+          <>
+            <Track onUpdate event={"SwapAcceptedSummaryDisclaimer"} />
+            <Confirmation
+              exchange={exchange}
+              exchangeRate={exchangeRate}
+              status={status}
+              transaction={transaction}
+              deviceMeta={deviceMeta}
+              onError={error => {
+                reset();
+                navigation.navigate(ScreenName.SwapError, { error });
+              }}
+              onCancel={reset}
+            />
+          </>
         ) : (
           <DisclaimerModal
             provider={exchangeRate.provider}

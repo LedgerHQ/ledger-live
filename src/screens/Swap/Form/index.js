@@ -46,6 +46,7 @@ import Button from "../../../components/Button";
 import { accountsSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import colors from "../../../colors";
+import { TrackScreen } from "../../../analytics";
 
 type SelectAccountFlowTarget = "from" | "to";
 export type SwapRouteParams = {
@@ -147,6 +148,7 @@ const Form = ({
 
   return (
     <View style={styles.root}>
+      <TrackScreen category="Swap" name="Form" />
       <View style={styles.top}>
         <TouchableOpacity
           style={styles.accountWrapper}

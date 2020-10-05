@@ -6,10 +6,12 @@ import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/dist/AntDesign";
 import LText from "../../components/LText";
 import colors from "../../colors";
+import { TrackScreen } from "../../analytics";
 
 const NotAvailable = () => {
   return (
     <SafeAreaView style={styles.root}>
+      <TrackScreen category="Swap" name="NotAvailable" />
       <View style={styles.wrapper}>
         <Icon name={"exclamationcircleo"} color={colors.grey} size={40} />
         <LText secondary style={styles.title}>

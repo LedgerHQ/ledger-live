@@ -21,6 +21,7 @@ import Button from "../../../components/Button";
 import colors from "../../../colors";
 import logger from "../../../logger";
 import DownloadFileIcon from "../../../icons/DownloadFile";
+import { TrackScreen } from "../../../analytics";
 
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 
@@ -89,6 +90,7 @@ const History = () => {
 
   return (
     <View style={styles.root}>
+      <TrackScreen category="Swap" name="History" />
       <AnimatedSectionList
         ref={ref}
         sections={sections}
