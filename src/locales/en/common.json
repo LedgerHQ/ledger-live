@@ -517,8 +517,8 @@
       "title": "Amount must be lower than {{unit}} {{maxAmountFrom}}"
     },
     "SwapGenericAPIError": {
-      "title": "Timeout",
-      "description": "The offer has expired, please retry operation"
+      "title": "Exchange rate expired",
+      "description": "You must confirm the swap before the timer runs out. The exchange rate remains valid for a fixed duration."
     },
     "generic": {
       "title": "{{message}}",
@@ -1244,17 +1244,18 @@
       "title": "Swap",
       "selectDevice": "Select your device",
       "broadcasting": "Broadcasting swap",
-      "loadingFees": "Loading Network fees...",
+      "loadingFees": "Loading network fees...",
       "landing": {
         "header": "Swap",
         "title": "Welcome to Swap",
-        "disclaimer": "Exchange crypto assets directly from your Ledger device. This service is not available in the US and a few other countries."
+        "whatIsSwap": "What is Swap?",
+        "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
       },
       "main": {
         "header": "Swap"
       },
       "kyc": {
-        "disclaimer": "By continuing, you accept that your location data will be shared with third party service providers in order for them to comply with their AML/KYC procedures"
+        "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes."
       },
       "notAvailable": {
         "title": "Swap feature is not available in your country"
@@ -1272,27 +1273,27 @@
         "from": "From",
         "to": "To",
         "balance": "Balance <0>123</0>",
-        "fromAccount": "Select Account",
-        "toAccount": "Select Account",
+        "fromAccount": "Select account",
+        "toAccount": "Select account",
         "amount": {
           "useMax": "Use max",
           "available": "Total available"
         },
         "noApp": {
-          "title": "App not installed on device",
-          "desc": "You need the app to be installed on your device to be able to swap it. Go to manager to install the app.",
+          "title": "{{appName}} app not installed",
+          "desc": "Please go to Manager to install the {{appName}} app.",
           "cta": "Go to Manager",
           "close": "Close"
         },
         "noAccounts": {
-          "title": "No eligible {{ticker}} account",
-          "desc": "You don't have {{currencyName}} accounts that can be selected for this action.",
+          "title": "No {{ticker}} to swap",
+          "desc": "Your {{currencyName}} accounts have no balance to swap.",
           "addAccountCta": "Add Account",
           "cta": "Close"
         },
         "outdatedApp": {
           "title": "App update available",
-          "desc": "You need to update the {{currencyName}} app.",
+          "desc": "You need to update the {{appName}} app.",
           "cta": "Go to Manager",
           "close": "Close"
         },
@@ -1305,10 +1306,10 @@
           "fees": "Max fees",
           "disclaimer": {
             "title": "Terms and conditions",
-            "desc": "Exchange services provided by {{provider}}. By clicking “Accept”, I acknowledge and understand that my transaction may trigger AML/KYC verification according to {{provider}} AML/KYC.",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by {{provider}}'s Terms & Conditions.",
             "tos": "Terms & conditions",
             "accept": "Accept",
-            "reject": "Don't Accept"
+            "reject": "Close"
           }
         }
       },
@@ -1317,9 +1318,9 @@
         "provider": "Provider",
         "date": "Date",
         "from": "From",
-        "fromAmount": "Initial amount",
+        "fromAmount": "Amount sent",
         "to": "To",
-        "toAmount": "Credited amount"
+        "toAmount": "Amount to receive"
       },
       "missingApp": {
         "title": "Please install the Exchange app on your device",
@@ -1341,8 +1342,8 @@
         "exportButton": "Export operations",
         "exportFilename": "Swap operations",
         "empty": {
-          "title": "No history",
-          "desc": "You don’t have any history swap"
+          "title": "Your previous swaps will appear here",
+          "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
         }
       }
     }
@@ -1383,7 +1384,7 @@
     "amount": {
       "available": "Total available",
       "useMax": "Use max",
-      "loadingNetwork": "Loading Network fees...",
+      "loadingNetwork": "Loading network fees...",
       "noRateProvider": "Not available"
     },
     "summary": {
@@ -1614,7 +1615,7 @@
     },
     "confirmSwap": {
       "title": "Confirm swap operation on device",
-      "alert": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them"
+      "alert": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
     },
     "button": {
       "openManager": "Open Manager"

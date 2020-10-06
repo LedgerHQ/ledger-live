@@ -8,6 +8,8 @@ import {
   StyleSheet,
   View,
   ScrollView,
+  TouchableOpacity,
+  Linking,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import Button from "../../components/Button";
@@ -17,6 +19,8 @@ import swapIllustration from "../../images/swap.png";
 import colors from "../../colors";
 import { setHasAcceptedSwapKYC } from "../../actions/settings";
 import { TrackScreen } from "../../analytics";
+import ExternalLink from "../../icons/ExternalLink";
+import { urls } from "../../config/urls";
 
 const Landing = () => {
   const [isChecked, setIsChecked] = useState(false);
@@ -38,6 +42,15 @@ const Landing = () => {
           <LText primary style={styles.disclaimer}>
             <Trans i18nKey="transfer.swap.landing.disclaimer" />
           </LText>
+          <TouchableOpacity
+            style={styles.infoLinkContainer}
+            onPress={() => Linking.openURL(urls.swap.info)}
+          >
+            <LText semiBold style={styles.infoLink}>
+              <Trans i18nKey="transfer.swap.landing.whatIsSwap" />
+            </LText>
+            <ExternalLink size={11} color={colors.live} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
       <View style={styles.footer}>
@@ -84,12 +97,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 20,
   },
+
   switchLabel: {
     marginLeft: 8,
     color: colors.darkBlue,
     fontSize: 13,
+    lineHeight: 18,
     flex: 1,
   },
+
   wrapper: {
     flexGrow: 1,
     flexShrink: 0,
@@ -116,6 +132,21 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     color: colors.smoke,
     textAlign: "center",
+  },
+
+  infoLinkContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  infoLink: {
+    fontSize: 13,
+    lineHeight: 22,
+    paddingVertical: 8,
+    textAlign: "center",
+    color: colors.live,
+    marginRight: 6,
   },
 });
 
