@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import type {
   Account,
   AccountLikeArray,
@@ -23,9 +23,7 @@ import AccountCard from "../../../../components/AccountCard";
 import KeyboardView from "../../../../components/KeyboardView";
 import { formatSearchResults } from "../../../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../../../helpers/formatAccountSearchResults";
-import PlusIcon from "../../../../icons/Plus";
-import Button from "../../../../components/Button";
-import { NavigatorName, ScreenName } from "../../../../const";
+import { ScreenName } from "../../../../const";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -57,8 +55,6 @@ export default function SelectAccount({ navigation, route }: Props) {
   }, [accounts, selectedCurrency]);
 
   const allAccounts = flattenAccounts(enhancedAccounts);
-
-  const { t } = useTranslation();
 
   const keyExtractor = item => item.account.id;
   const isFrom = target === "from";
@@ -121,29 +117,11 @@ export default function SelectAccount({ navigation, route }: Props) {
           renderItem={renderItem}
           keyExtractor={keyExtractor}
           showsVerticalScrollIndicator={false}
-          ListFooterComponent={
-            <Button
-              containerStyle={styles.addButton}
-              event="SwapSelectAccountNoToAccount"
-              type="tertiary"
-              outline={false}
-              IconLeft={PlusIcon}
-              title={t("transfer.swap.emptyState.CTAButton")}
-              onPress={() =>
-                navigation.navigate(NavigatorName.AddAccounts, {
-                  currency:
-                    selectedCurrency.type === "TokenCurrency"
-                      ? selectedCurrency.parentCurrency
-                      : selectedCurrency,
-                })
-              }
-            />
-          }
           keyboardDismissMode="on-drag"
         />
       );
     },
-    [enhancedAccounts, renderItem, t, navigation, selectedCurrency],
+    [enhancedAccounts, renderItem],
   );
 
   if (!elligibleAccountsForSelectedCurrency.length) {
