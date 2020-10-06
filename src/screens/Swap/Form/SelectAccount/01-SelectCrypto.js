@@ -132,7 +132,7 @@ export default function SwapFormSelectCrypto({ route, navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
-      <TrackScreen category="AddAccounts" name="SelectCrypto" />
+      <TrackScreen category="Swap" name="SelectCrypto" />
       <KeyboardView style={{ flex: 1 }}>
         <View style={styles.searchContainer}>
           <FilteredSearchBar
