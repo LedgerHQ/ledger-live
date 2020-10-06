@@ -1,10 +1,9 @@
 // @flow
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useCallback } from "react";
+import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import type { TransactionStatus } from "@ledgerhq/live-common/lib/types";
 import {
-  getMainAccount,
   getAccountName,
   getAccountUnit,
   getAccountCurrency,
@@ -20,6 +19,9 @@ import SectionSeparator, {
 } from "../../../../components/SectionSeparator";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 import colors from "../../../../colors";
+import ExternalLink from "../../../../icons/ExternalLink";
+
+import { urls } from "../../../../config/urls";
 
 const SummaryBody = ({
   status,
@@ -30,11 +32,16 @@ const SummaryBody = ({
   exchange: Exchange,
   exchangeRate: ExchangeRate,
 }) => {
-  const { fromAccount, fromParentAccount, toAccount } = exchange;
+  const { fromAccount, toAccount } = exchange;
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const { magnitudeAwareRate } = exchangeRate;
-  const { amount, estimatedFees } = status;
+  const { amount } = status;
+
+  const openProvider = useCallback(() => {
+    Linking.openURL(urls.swap.providers[exchangeRate.provider].main);
+  }, [exchangeRate.provider]);
+
   return (
     <>
       <View style={styles.row}>
@@ -101,28 +108,19 @@ const SummaryBody = ({
         </LText>
       </View>
       <View style={styles.rate}>
-        <View style={styles.row}>
+        <View style={[styles.row, { marginBottom: 0 }]}>
           <LText primary style={styles.label}>
             <Trans i18nKey="transfer.swap.form.summary.provider" />
           </LText>
-          <LText style={[styles.value3, styles.capitalize]}>
-            {exchangeRate.provider}
-          </LText>
-        </View>
-        <View style={styles.row}>
-          <LText primary style={styles.label}>
-            <Trans i18nKey="transfer.swap.form.summary.fees" />
-          </LText>
-          <LText tertiary style={styles.value3}>
-            <CurrencyUnitValue
-              disableRounding
-              showCode
-              unit={getAccountUnit(
-                getMainAccount(fromAccount, fromParentAccount),
-              )}
-              value={estimatedFees}
-            />
-          </LText>
+          <TouchableOpacity
+            style={styles.providerLinkContainer}
+            onPress={openProvider}
+          >
+            <LText semiBold style={styles.providerLink}>
+              {exchangeRate.provider}
+            </LText>
+            <ExternalLink size={11} color={colors.live} />
+          </TouchableOpacity>
         </View>
       </View>
     </>
@@ -174,6 +172,19 @@ const styles = StyleSheet.create({
   },
   capitalize: {
     textTransform: "capitalize",
+  },
+  providerLinkContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  providerLink: {
+    textTransform: "capitalize",
+    fontSize: 13,
+    lineHeight: 22,
+    textAlign: "center",
+    color: colors.live,
+    marginRight: 6,
   },
 });
 
