@@ -30,7 +30,7 @@ const BadSelectionModal = ({
     navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
       params: {
-        searchParams: currency
+        searchQuery: currency
           ? currency.type === "TokenCurrency"
             ? currency?.parentCurrency?.managerAppName
             : currency?.managerAppName
