@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { Trans } from "react-i18next";
 import type {
   Account,
   AccountLikeArray,
