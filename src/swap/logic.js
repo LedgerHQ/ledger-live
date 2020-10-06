@@ -11,7 +11,7 @@ import type {
 } from "../types";
 import type { InstalledItem } from "../apps";
 import { flattenAccounts, getAccountCurrency } from "../account";
-const validCurrencyStatus = { ok: 1, noApps: 1, noAccounts: 1, outdatedApp: 1 };
+const validCurrencyStatus = { ok: 1, noApp: 1, noAccounts: 1, outdatedApp: 1 };
 export type CurrencyStatus = $Keys<typeof validCurrencyStatus>;
 export type CurrenciesStatus = { [string]: CurrencyStatus };
 
@@ -85,14 +85,14 @@ export const getCurrenciesWithStatus = ({
     if (!mainCurrency) continue;
     statuses[c.id] =
       mainCurrency.managerAppName in installedAppMap
-        ? notEmptyCurrencies.includes(c.id)
-          ? isExchangeSupportedByApp(
-              mainCurrency.id,
-              installedAppMap[mainCurrency.managerAppName].version
-            )
+        ? isExchangeSupportedByApp(
+            mainCurrency.id,
+            installedAppMap[mainCurrency.managerAppName].version
+          )
+          ? notEmptyCurrencies.includes(c.id)
             ? "ok"
-            : "outdatedApp"
-          : "noAccounts"
+            : "noAccounts"
+          : "outdatedApp"
         : "noApp";
   }
   return statuses;
