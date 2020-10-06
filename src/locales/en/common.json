@@ -2428,6 +2428,10 @@
     "exchangeBuyCrypto": {
       "title": "BUY CRYPTO",
       "description": "Purchase crypto assets via Coinify and receive your coins directly in your Ledger account."
+    },
+    "swap": {
+      "title": "SWAP CRYPTO",
+      "description": "Swap crypto assets directly from your Ledger accounts through Changelly!"
     }
   }
 }
