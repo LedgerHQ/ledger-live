@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     color: colors.darkBlue,
     fontSize: 13,
-    paddingRight: 16,
+    flex: 1,
   },
   wrapper: {
     flexGrow: 1,
