@@ -29,9 +29,15 @@ const BadSelectionModal = ({
   const openManagerForApp = useCallback(() => {
     navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
-      params: { searchParams: "Exchange" },
+      params: {
+        searchParams: currency
+          ? currency.type === "TokenCurrency"
+            ? currency?.parentCurrency?.managerAppName
+            : currency?.managerAppName
+          : null,
+      },
     });
-  }, [navigate]);
+  }, [navigate, currency]);
   if (!currency) return null;
   return (
     <BottomModal
