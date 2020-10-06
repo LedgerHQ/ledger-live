@@ -87,7 +87,10 @@ const Confirmation = ({
           ),
         ),
       );
-      navigation.replace(ScreenName.SwapPendingOperation, { swapId });
+      navigation.replace(ScreenName.SwapPendingOperation, {
+        swapId,
+        provider: exchangeRate.provider,
+      });
     },
     [
       dispatch,

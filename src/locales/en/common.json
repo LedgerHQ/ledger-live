@@ -1259,6 +1259,12 @@
       "notAvailable": {
         "title": "Swap feature is not available in your country"
       },
+      "pendingOperation": {
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
+        "label": "Your Swap ID:",
+        "title": "Pending operation",
+        "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later."
+      },
       "form": {
         "validate": "Confirm Swap transaction",
         "tab": "Exchange",
@@ -1297,9 +1303,6 @@
           "receive": "Receive",
           "provider": "Provider",
           "fees": "Max fees",
-          "title": "Pending operation",
-          "description": "Swap operation is being broadcasted to Changelly, that will treat it before sending you the requested funds. To see the status of your operation go to the history tab of the swap page",
-          "label": "Your Swap ID:",
           "disclaimer": {
             "title": "Terms and conditions",
             "desc": "Exchange services provided by {{provider}}. By clicking “Accept”, I acknowledge and understand that my transaction may trigger AML/KYC verification according to {{provider}} AML/KYC.",

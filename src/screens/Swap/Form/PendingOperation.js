@@ -5,6 +5,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import LText from "../../../components/LText";
+import InfoBox from "../../../components/InfoBox";
 import Button from "../../../components/Button";
 import IconSwap from "../../../icons/Swap";
 import colors, { rgba } from "../../../colors";
@@ -19,7 +20,7 @@ const PendingOperation = () => {
     navigation.dangerouslyGetParent().pop();
   }, [navigation]);
 
-  const { swapId } = route.params;
+  const { swapId, provider } = route.params;
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
@@ -28,19 +29,26 @@ const PendingOperation = () => {
           <IconSwap color={colors.live} size={20} />
         </View>
         <LText secondary style={styles.title}>
-          <Trans i18nKey={"transfer.swap.form.summary.title"} />
+          <Trans i18nKey={"transfer.swap.pendingOperation.title"} />
         </LText>
         <View style={styles.swapIDWrapper}>
           <LText style={styles.swapLabel}>
-            <Trans i18nKey={"transfer.swap.form.summary.label"} />
+            <Trans i18nKey={"transfer.swap.pendingOperation.label"} />
           </LText>
           <LText selectable tertiary style={styles.swapID}>
             {swapId}
           </LText>
         </View>
         <LText style={styles.description}>
-          <Trans i18nKey={"transfer.swap.form.summary.description"} />
+          <Trans i18nKey={"transfer.swap.pendingOperation.description"} />
         </LText>
+
+        <InfoBox>
+          <Trans
+            i18nKey={"transfer.swap.pendingOperation.disclaimer"}
+            values={{ provider }}
+          />
+        </InfoBox>
       </View>
       <View style={styles.continueWrapper}>
         <Button
@@ -105,6 +113,7 @@ const styles = StyleSheet.create({
     color: colors.grey,
     textAlign: "center",
     marginHorizontal: 30,
+    marginBottom: 16,
   },
   continueWrapper: {},
 });
