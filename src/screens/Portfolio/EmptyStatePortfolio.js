@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
 import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 import colors from "../../colors";
-import { ScreenName } from "../../const";
+import { ScreenName, NavigatorName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
@@ -31,9 +31,10 @@ function EmptyStatePortfolio({ navigation, showHelp = true }: Props) {
     setAddModalOpened,
   ]);
 
-  const navigateToManager = useCallback(() => {
-    navigation.navigate(ScreenName.Manager);
-  }, [navigation]);
+  const navigateToManager = useCallback(
+    () => navigation.navigate(ScreenName.Manager),
+    [navigation],
+  );
 
   return (
     <>

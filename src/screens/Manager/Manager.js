@@ -27,6 +27,7 @@ type Props = {
       device: Device,
       deviceInfo: DeviceInfo,
       result: ListAppsResult,
+      searchQuery?: string,
     },
   },
 };
@@ -38,6 +39,7 @@ const Manager = ({
       device: { deviceId, deviceName },
       deviceInfo,
       result,
+      searchQuery,
     },
   },
 }: Props) => {
@@ -129,6 +131,7 @@ const Manager = ({
         initialDeviceName={deviceName}
         blockNavigation={blockNavigation}
         deviceInfo={deviceInfo}
+        searchQuery={searchQuery}
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal

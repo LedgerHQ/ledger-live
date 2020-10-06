@@ -50,6 +50,7 @@ type Props = {
   navigation: *,
   blockNavigation: boolean,
   deviceInfo: *,
+  searchQuery?: string,
 };
 
 const AppsScreen = ({
@@ -64,6 +65,7 @@ const AppsScreen = ({
   navigation,
   blockNavigation,
   deviceInfo,
+  searchQuery,
 }: Props) => {
   const distribution = distribute(state);
 
@@ -292,6 +294,7 @@ const AppsScreen = ({
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
             navigation={navigation}
+            searchQuery={searchQuery}
           />
           <View style={styles.filterButton}>
             <AppFilter

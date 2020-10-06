@@ -59,9 +59,17 @@ const RemoveDeviceModal = ({
   </BottomModal>
 );
 
+type RouteParams = {
+  searchQuery?: string,
+};
+
 type Props = {
   navigation: any,
   knownDevices: DeviceLike[],
+  route: {
+    params: RouteParams,
+    name: string,
+  },
 };
 
 type ChooseDeviceProps = Props & {
@@ -108,6 +116,7 @@ class ChooseDevice extends Component<
         result.result &&
         this.props.navigation.navigate(ScreenName.ManagerMain, {
           ...result,
+          ...this.props.route.params,
         }),
     );
   };
