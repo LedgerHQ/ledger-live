@@ -20,7 +20,7 @@ const MissingOrOutdatedSwapApp = ({
   const onPress = () => {
     navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
-      params: { searchParams: "Exchange" },
+      params: { searchQuery: "Exchange" },
     });
   };
 
