@@ -8,6 +8,8 @@ import {
 } from "@ledgerhq/live-common/lib/account/helpers";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
+import { accountsSelector } from "../../reducers/accounts";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
 import SectionSeparator from "../../components/SectionSeparator";
@@ -30,13 +32,17 @@ const OperationDetails = ({ route }: Props) => {
   const {
     swapId,
     provider,
-    fromAccount,
     toAccount,
     fromAmount,
     toAmount,
-    status,
     operation,
   } = swapOperation;
+
+  const accounts = useSelector(accountsSelector);
+  const fromAccount = accounts.find(a => a.id === swapOperation.fromAccount.id);
+  const swap = fromAccount.swapHistory.find(s => s.swapId === swapId);
+  const status = swap.status;
+
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const statusColor = getStatusColor(status);

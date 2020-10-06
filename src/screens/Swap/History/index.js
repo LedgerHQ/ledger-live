@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import {
   StyleSheet,
   View,
@@ -12,6 +18,8 @@ import Share from "react-native-share";
 import getCompleteSwapHistory from "@ledgerhq/live-common/lib/swap/getCompleteSwapHistory";
 import updateAccountSwapStatus from "@ledgerhq/live-common/lib/swap/updateAccountSwapStatus";
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/lib/swap/csvExport";
+import { operationStatusList } from "@ledgerhq/live-common/lib/swap";
+import useInterval from "../../../components/useInterval";
 import { updateAccountWithUpdater } from "../../../actions/accounts";
 import { flattenAccountsSelector } from "../../../reducers/accounts";
 import OperationRow from "./OperationRow";
@@ -38,12 +46,17 @@ const History = () => {
   }, [accounts, setSections]);
 
   useEffect(() => {
+    if (isRefreshing) {
+      updateSwapStatus();
+    }
+  }, [isRefreshing, updateSwapStatus]);
+
+  const updateSwapStatus = useCallback(() => {
     let cancelled = false;
-    async function asyncUpdateAccountSwapStatus() {
+    async function fetchUpdatedSwapStatus() {
       const updatedAccounts = await Promise.all(
         accounts.map(updateAccountSwapStatus),
       );
-
       if (!cancelled) {
         updatedAccounts.filter(Boolean).forEach(account => {
           dispatch(updateAccountWithUpdater(account.id, _ => account));
@@ -52,14 +65,28 @@ const History = () => {
       setIsRefreshing(false);
     }
 
-    if (isRefreshing) {
-      asyncUpdateAccountSwapStatus();
-    }
+    fetchUpdatedSwapStatus();
+    return () => (cancelled = true);
+  }, [accounts, dispatch]);
 
-    return () => {
-      cancelled = true;
-    };
-  }, [isRefreshing, dispatch, accounts]);
+  const hasPendingSwapOperations = useMemo(() => {
+    if (sections) {
+      for (const section of sections) {
+        for (const swapOperation of section.data) {
+          if (operationStatusList.pending.includes(swapOperation.status)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }, [sections]);
+
+  useInterval(() => {
+    if (hasPendingSwapOperations) {
+      updateSwapStatus();
+    }
+  }, 10000);
 
   const renderItem = ({ item }: { item: Operation }) => (
     <OperationRow item={item} />
