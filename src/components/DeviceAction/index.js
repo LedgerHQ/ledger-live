@@ -60,6 +60,7 @@ export default function DeviceAction<R, H, P>({
     initSwapRequested,
     initSwapError,
     initSwapResult,
+    allowOpeningGranted,
     // TODO: fix flow type
   } = (status: any);
 
@@ -135,7 +136,7 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
-  if (isLoading) {
+  if (isLoading || (allowOpeningGranted && !appAndVersion)) {
     return renderLoading({ t });
   }
 
