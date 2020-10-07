@@ -12,7 +12,6 @@ import {
   DisconnectedDevice,
 } from "@ledgerhq/errors";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import { getEnv } from "../env";
 import type { DerivationMode } from "../types";
 import { getCryptoCurrencyById } from "../currencies";
 import { withDevice } from "./deviceAccess";
@@ -57,28 +56,25 @@ const openAppFromDashboard = (
   transport,
   appName
 ): Observable<ConnectAppEvent> =>
-  !getEnv("EXPERIMENTAL_DEVICE_FLOW")
-    ? of({ type: "ask-open-app", appName })
-    : concat(
-        // TODO optim: the requested should happen a better in a deferred way because openApp might error straightaway instead
-        of({ type: "device-permission-requested", wording: appName }),
-        defer(() => from(openApp(transport, appName))).pipe(
-          concatMap(() => of({ type: "device-permission-granted" })),
-          catchError((e) => {
-            if (e && e instanceof TransportStatusError) {
-              switch (e.statusCode) {
-                case 0x6984:
-                case 0x6807:
-                  return of({ type: "app-not-installed", appName });
-                case 0x6985:
-                case 0x5501:
-                  return throwError(new UserRefusedOnDevice());
-              }
-            }
-            return throwError(e);
-          })
-        )
-      );
+  concat(
+    of({ type: "device-permission-requested", wording: appName }),
+    defer(() => from(openApp(transport, appName))).pipe(
+      concatMap(() => of({ type: "device-permission-granted" })),
+      catchError((e) => {
+        if (e && e instanceof TransportStatusError) {
+          switch (e.statusCode) {
+            case 0x6984:
+            case 0x6807:
+              return of({ type: "app-not-installed", appName });
+            case 0x6985:
+            case 0x5501:
+              return throwError(new UserRefusedOnDevice());
+          }
+        }
+        return throwError(e);
+      })
+    )
+  );
 
 const derivationLogic = (
   transport,
