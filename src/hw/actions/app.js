@@ -18,6 +18,7 @@ import {
   switchMap,
   tap,
   distinctUntilChanged,
+  takeWhile,
 } from "rxjs/operators";
 import isEqual from "lodash/isEqual";
 import { useEffect, useCallback, useState, useMemo } from "react";
@@ -458,7 +459,9 @@ export const createAction = (
             }
             // default debounce (to be tweak)
             return interval(2000);
-          })
+          }),
+          // $FlowFixMe
+          takeWhile((s) => !s.requiresAppInstallation && !s.error, true)
         )
         // the state simply goes into a React state
         .subscribe(setState); // FIXME shouldn't we handle errors?! (is an error possible?)
