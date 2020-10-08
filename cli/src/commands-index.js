@@ -32,6 +32,7 @@ import portfolio from "./commands/portfolio";
 import proxy from "./commands/proxy";
 import receive from "./commands/receive";
 import repl from "./commands/repl";
+import scanDescriptors from "./commands/scanDescriptors";
 import send from "./commands/send";
 import signMessage from "./commands/signMessage";
 import swap from "./commands/swap";
@@ -76,6 +77,7 @@ export default {
   proxy,
   receive,
   repl,
+  scanDescriptors,
   send,
   signMessage,
   swap,

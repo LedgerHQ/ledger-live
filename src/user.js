@@ -1,9 +1,11 @@
 // @flow
 import { getEnv } from "./env";
-import { sha256 } from "./crypto/sha256";
+import { sha256 } from "./crypto";
 
 const userHashesPerUserId = (userId: string) => {
-  const firmwareSalt = sha256(userId + "|firmwareSalt").slice(0, 6);
+  const firmwareSalt = sha256(userId + "|firmwareSalt")
+    .toString("hex")
+    .slice(0, 6);
   return { firmwareSalt };
 };
 

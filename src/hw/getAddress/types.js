@@ -10,6 +10,16 @@ export type Result = {
   chainCode?: string,
 };
 
+export type GetAddressOptions = {
+  currency: CryptoCurrency,
+  path: string,
+  derivationMode: DerivationMode,
+  verify?: boolean,
+  skipAppFailSafeCheck?: boolean,
+  askChainCode?: boolean,
+  forceFormat?: string,
+};
+
 export type Resolver = (
   Transport<*>,
   {

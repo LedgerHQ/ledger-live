@@ -1,8 +1,19 @@
 // @flow
 import invariant from "invariant";
+import { Observable, defer, of, range, empty } from "rxjs";
+import {
+  catchError,
+  switchMap,
+  concatMap,
+  takeWhile,
+  map,
+} from "rxjs/operators";
+import { log } from "@ledgerhq/logs";
+import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency, CryptoCurrencyConfig } from "./types";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "./env";
+import type { GetAddressOptions, Result } from "./hw/getAddress/types";
 
 type LibcoreConfig = {
   [_: string]: mixed,
@@ -319,7 +330,7 @@ export const getDerivationScheme = ({
   return `${purpose}'/${coinType}'/<account>'/<node>/<address>`;
 };
 
-// Execute a derivation scheme in JS side
+// Execute a derivation scheme
 export const runDerivationScheme = (
   derivationScheme: string,
   { coinType }: { coinType: number },
@@ -334,6 +345,20 @@ export const runDerivationScheme = (
     .replace("<account>", String(opts.account || 0))
     .replace("<node>", String(opts.node || 0))
     .replace("<address>", String(opts.address || 0));
+
+// execute the derivation on the account part of the scheme
+export const runAccountDerivationScheme = (
+  scheme: string,
+  currency: { coinType: number },
+  opts: {
+    account?: number | string,
+  } = {}
+) =>
+  runDerivationScheme(scheme, currency, {
+    ...opts,
+    address: "_",
+    node: "_",
+  }).replace(/[_/]+$/, "");
 
 const disableBIP44 = {
   aeternity: true,
@@ -393,3 +418,106 @@ export const getDerivationModesForCurrency = (
   }
   return all;
 };
+
+export type StepAddressInput = {
+  index: number,
+  parentDerivation: Result,
+  accountDerivation: Result,
+  derivationMode: DerivationMode,
+  shouldSkipEmpty: boolean,
+  seedIdentifier: string,
+};
+
+export type WalletDerivationInput<R> = {
+  currency: CryptoCurrency,
+  derivationMode: DerivationMode,
+  derivateAddress: (GetAddressOptions) => Observable<Result>,
+  stepAddress: (StepAddressInput) => Observable<{
+    result?: R,
+    complete?: boolean,
+  }>,
+  shouldDerivesOnAccount?: boolean,
+};
+
+export function walletDerivation<R>({
+  currency,
+  derivationMode,
+  derivateAddress,
+  stepAddress,
+  shouldDerivesOnAccount,
+}: WalletDerivationInput<R>): Observable<R> {
+  const path = getSeedIdentifierDerivation(currency, derivationMode);
+
+  return defer(() =>
+    derivateAddress({
+      currency,
+      path,
+      derivationMode,
+    }).pipe(
+      catchError((e) => {
+        if (
+          e instanceof TransportStatusError ||
+          e instanceof UserRefusedAddress
+        ) {
+          log("scanAccounts", "ignore derivationMode=" + derivationMode);
+        }
+        return empty();
+      })
+    )
+  ).pipe(
+    switchMap((parentDerivation) => {
+      const seedIdentifier = parentDerivation.publicKey;
+
+      let emptyCount = 0;
+      const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(
+        derivationMode
+      );
+      const derivationScheme = getDerivationScheme({
+        derivationMode,
+        currency,
+      });
+      const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
+      const startsAt = getDerivationModeStartsAt(derivationMode);
+      return range(startsAt, stopAt - startsAt).pipe(
+        // derivate addresses/xpubs
+        concatMap((index) => {
+          if (!derivationModeSupportsIndex(derivationMode, index)) {
+            return empty();
+          }
+
+          const path = shouldDerivesOnAccount
+            ? runAccountDerivationScheme(derivationScheme, currency, {
+                account: index,
+              })
+            : runDerivationScheme(derivationScheme, currency, {
+                account: index,
+              });
+
+          return derivateAddress({ currency, path, derivationMode }).pipe(
+            map((accountDerivation) => ({
+              parentDerivation,
+              accountDerivation,
+              index,
+            }))
+          );
+        }),
+        // do action with these derivations (e.g. synchronize)
+        concatMap(({ parentDerivation, accountDerivation, index }) =>
+          stepAddress({
+            index,
+            parentDerivation,
+            accountDerivation,
+            derivationMode,
+            shouldSkipEmpty: emptyCount < mandatoryEmptyAccountSkip,
+            seedIdentifier,
+          })
+        ),
+        // take until the list is complete (based on criteria defined by stepAddress)
+        // $FlowFixMe
+        takeWhile((r) => !r.complete, true),
+        // emit just the results
+        concatMap(({ result }) => (result ? of(result) : empty()))
+      );
+    })
+  );
+}
