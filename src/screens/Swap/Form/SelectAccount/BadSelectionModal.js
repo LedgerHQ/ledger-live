@@ -9,7 +9,7 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
 import type { CurrencyStatus } from "@ledgerhq/live-common/lib/swap/logic";
-import { ScreenName } from "../../../../const";
+import { ScreenName, NavigatorName } from "../../../../const";
 import Circle from "../../../../components/Circle";
 import BottomModal from "../../../../components/BottomModal";
 import LText from "../../../../components/LText";
@@ -27,8 +27,17 @@ const BadSelectionModal = ({
 }) => {
   const { navigate } = useNavigation();
   const openManagerForApp = useCallback(() => {
-    navigate(ScreenName.Manager, {});
-  }, [navigate]);
+    navigate(NavigatorName.Manager, {
+      screen: ScreenName.Manager,
+      params: {
+        searchQuery: currency
+          ? currency.type === "TokenCurrency"
+            ? currency?.parentCurrency?.managerAppName
+            : currency?.managerAppName
+          : null,
+      },
+    });
+  }, [navigate, currency]);
 
   if (!currency) return null;
   const appName =

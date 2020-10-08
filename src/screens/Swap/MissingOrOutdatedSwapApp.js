@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import { StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { ScreenName } from "../../const";
+import { ScreenName, NavigatorName } from "../../const";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import AppIcon from "../Manager/AppsList/AppIcon";
@@ -18,7 +18,10 @@ const MissingOrOutdatedSwapApp = ({
 }) => {
   const { navigate } = useNavigation();
   const onPress = () => {
-    navigate(ScreenName.Manager);
+    navigate(NavigatorName.Manager, {
+      screen: ScreenName.Manager,
+      params: { searchQuery: "Exchange" },
+    });
   };
 
   const key = outdated ? "outdatedApp" : "missingApp";

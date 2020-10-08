@@ -31,9 +31,10 @@ function EmptyStatePortfolio({ navigation, showHelp = true }: Props) {
     setAddModalOpened,
   ]);
 
-  const navigateToManager = useCallback(() => {
-    navigation.navigate(ScreenName.Manager);
-  }, [navigation]);
+  const navigateToManager = useCallback(
+    () => navigation.navigate(ScreenName.Manager),
+    [navigation],
+  );
 
   return (
     <>

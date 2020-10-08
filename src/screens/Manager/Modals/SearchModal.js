@@ -153,6 +153,7 @@ type Props = {
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   navigation: *,
+  searchQuery?: string,
 };
 
 export default ({
@@ -164,15 +165,18 @@ export default ({
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   navigation,
+  searchQuery,
 }: Props) => {
   const { t } = useTranslation();
   const textInput = useRef();
   const listRef = useRef();
   const reduxDispatch = useDispatch();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
-  const [isOpened, setIsOpen] = useState(false);
+  const [isOpened, setIsOpen] = useState(!!searchQuery);
   const [depInstall, setDepsInstall] = useState();
   const [depUninstall, setDepsUninstall] = useState();
+  const [query, setQuery] = useState(searchQuery || null);
+
   const openSearchModal = useCallback(() => {
     setQuery("");
     setIsOpen(true);
@@ -198,7 +202,6 @@ export default ({
     setAppUninstallWithDependencies,
   ]);
 
-  const [query, setQuery] = useState(null);
   const clear = useCallback(() => setQuery(""), [setQuery]);
 
   const filterOptions: FilterOptions = useMemo(
