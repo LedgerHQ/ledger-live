@@ -37,9 +37,15 @@ class CurrencyRow extends PureComponent<Props> {
         <LText
           semiBold
           style={[styles.name, !isOK ? { color: colors.fog } : null]}
+          numberOfLines={1}
         >
           {`${currency.name} (${currency.ticker})`}
         </LText>
+        {currency.type === "TokenCurrency" && currency.parentCurrency ? (
+          <LText semiBold style={styles.currencyLabel}>
+            {currency.parentCurrency.name}
+          </LText>
+        ) : null}
       </RectButton>
     );
   }
@@ -52,9 +58,26 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   name: {
+    flexGrow: 1,
+    flexShrink: 1,
     marginLeft: 10,
     fontSize: 14,
     color: "black",
+  },
+  currencyLabel: {
+    flexGrow: 0,
+    flexShrink: 0,
+    flexBasis: "auto",
+    textAlign: "right",
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: colors.grey,
+    paddingHorizontal: 6,
+    fontSize: 10,
+    height: 24,
+    lineHeight: 24,
+    color: colors.grey,
+    marginLeft: 12,
   },
 });
 
