@@ -1,5 +1,11 @@
 import React, { useCallback } from "react";
-import { ScrollView, StyleSheet, View, Linking } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Linking,
+  TouchableOpacity,
+} from "react-native";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/swap/types";
 import {
   getAccountName,
@@ -8,6 +14,8 @@ import {
 } from "@ledgerhq/live-common/lib/account/helpers";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
+import { accountsSelector } from "../../reducers/accounts";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
 import SectionSeparator from "../../components/SectionSeparator";
@@ -16,6 +24,7 @@ import SwapStatusIndicator, { getStatusColor } from "./SwapStatusIndicator";
 import colors from "../../colors";
 import { urls } from "../../config/urls";
 import { localeIds } from "../../languages";
+import ExternalLink from "../../icons/ExternalLink";
 
 type Props = {
   route: {
@@ -30,13 +39,17 @@ const OperationDetails = ({ route }: Props) => {
   const {
     swapId,
     provider,
-    fromAccount,
     toAccount,
     fromAmount,
     toAmount,
-    status,
     operation,
   } = swapOperation;
+
+  const accounts = useSelector(accountsSelector);
+  const fromAccount = accounts.find(a => a.id === swapOperation.fromAccount.id);
+  const swap = fromAccount.swapHistory.find(s => s.swapId === swapId);
+  const status = swap.status;
+
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const statusColor = getStatusColor(status);
@@ -87,12 +100,15 @@ const OperationDetails = ({ route }: Props) => {
           <LText style={styles.label}>
             <Trans i18nKey={"transfer.swap.operationDetails.provider"} />
           </LText>
-          <LText
+          <TouchableOpacity
+            style={styles.providerLinkContainer}
             onPress={openProvider}
-            style={[styles.value, { textTransform: "capitalize" }]}
           >
-            {provider}
-          </LText>
+            <LText semiBold style={styles.providerLink}>
+              {provider}
+            </LText>
+            <ExternalLink size={11} color={colors.live} />
+          </TouchableOpacity>
           <LText style={styles.label}>
             <Trans i18nKey={"transfer.swap.operationDetails.date"} />
           </LText>
@@ -177,6 +193,21 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     padding: 24,
     alignItems: "center",
+  },
+  providerLinkContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 32,
+  },
+
+  providerLink: {
+    textTransform: "capitalize",
+    fontSize: 13,
+    lineHeight: 22,
+    textAlign: "center",
+    color: colors.live,
+    marginRight: 6,
   },
   status: {
     height: 54,

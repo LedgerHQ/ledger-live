@@ -38,7 +38,13 @@ const BadSelectionModal = ({
       },
     });
   }, [navigate, currency]);
+
   if (!currency) return null;
+  const appName =
+    currency.type === "TokenCurrency"
+      ? currency.parentCurrency.managerAppName
+      : currency.managerAppName;
+
   return (
     <BottomModal
       id="ConfirmationModal"
@@ -52,13 +58,16 @@ const BadSelectionModal = ({
       <LText style={styles.title}>
         <Trans
           i18nKey={`transfer.swap.form.${status}.title`}
-          values={{ ticker: currency.ticker }}
+          values={{ ticker: currency.ticker, appName }}
         />
       </LText>
       <LText style={styles.desc}>
         <Trans
           i18nKey={`transfer.swap.form.${status}.desc`}
-          values={{ currencyName: currency.name }}
+          values={{
+            currencyName: currency.name,
+            appName,
+          }}
         />
       </LText>
       {["noApp", "outdatedApp"].includes(status) ? (

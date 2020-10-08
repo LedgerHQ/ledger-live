@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
     flexDirection: "column",
     justifyContent: "flex-start",
-    flexShrink: 1,
-    paddingLeft: 10,
+    flexShrink: 0,
+    paddingLeft: 6,
   },
   spinner: {
     height: 14,
