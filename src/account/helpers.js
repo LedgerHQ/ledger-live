@@ -253,3 +253,31 @@ export const withoutToken = (account: Account, tokenId: string): Account => {
     subAccounts: subAccounts.filter((sa) => sa.id !== tokenAccount.id),
   };
 };
+
+/**
+ * Find matching pair of subAccount/parentAccount for a given token curency
+ * if no subAccount found will return parentAccount or null if no matches found
+ */
+export const findTokenAccountByCurrency = (
+  tokenCurrency: TokenCurrency,
+  accounts: Account[]
+): ?{ account?: SubAccount, parentAccount: Account } => {
+  const parentCurrency = tokenCurrency.parentCurrency;
+  for (const parentAccount of accounts) {
+    if (parentAccount.subAccounts && parentAccount.subAccounts.length > 0) {
+      for (const account of parentAccount.subAccounts) {
+        const c = getAccountCurrency(account);
+        if (c.id === tokenCurrency.id) {
+          // if token currency matches subAccount return couple account/parentAccount
+          return { account, parentAccount };
+        }
+      }
+    }
+    const parentC = getAccountCurrency(parentAccount);
+    if (parentC.id === parentCurrency.id) {
+      // if no token currency matches but parent matches return parentAccount
+      return { parentAccount };
+    }
+  }
+  return null; // else return nothing
+};
