@@ -465,8 +465,8 @@
       "description": "Please retry or contact Ledger Support"
     },
     "UserRefusedOnDevice": {
-      "title": "Transaction refused on device",
-      "description": "Please retry or contact Ledger Support in case of doubt."
+      "title": "Action rejected",
+      "description": "User rejected the operation on the device"
     },
     "WebsocketConnectionError": {
       "title": "Sorry, connection failed",
