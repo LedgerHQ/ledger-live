@@ -111,12 +111,18 @@ export default function SendAmount({ navigation, route }: Props) {
     });
   }, [account, parentAccount, navigation, transaction]);
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
   const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
     if (parent) parent.goBack();
   }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
     if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
@@ -202,7 +208,7 @@ export default function SendAmount({ navigation, route }: Props) {
       </SafeAreaView>
 
       <GenericErrorBottomModal
-        error={bridgeError}
+        error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
