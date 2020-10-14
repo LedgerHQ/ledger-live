@@ -66,7 +66,11 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <TrackScreen category="AddAccounts" name="SelectDevice" />
+        <TrackScreen
+          category="AddAccounts"
+          name="SelectDevice"
+          currencyName={currency.name}
+        />
         <SelectDevice onSelect={setDevice} />
       </NavigationScrollView>
       <DeviceActionModal

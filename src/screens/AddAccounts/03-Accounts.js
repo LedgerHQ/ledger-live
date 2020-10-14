@@ -299,7 +299,11 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
 
     return (
       <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="AddAccounts" name="Accounts" />
+        <TrackScreen
+          category="AddAccounts"
+          name="Accounts"
+          currencyName={currency.name}
+        />
         <PreventNativeBack />
         <NavigationScrollView
           style={styles.inner}

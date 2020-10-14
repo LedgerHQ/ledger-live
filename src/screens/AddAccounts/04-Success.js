@@ -39,7 +39,11 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
 
   return (
     <View style={styles.root}>
-      <TrackScreen category="AddAccounts" name="Success" />
+      <TrackScreen
+        category="AddAccounts"
+        name="Success"
+        currencyName={currency.name}
+      />
       <CurrencySuccess currency={currency} />
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="addAccounts.imported" />
