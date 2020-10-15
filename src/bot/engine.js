@@ -103,7 +103,7 @@ export async function runWithAppSpec<T: Transaction>(
     const syncConfig = { paginationConfig: {} };
 
     let t = now();
-    const preloadedData = await bridge.preload();
+    const preloadedData = await bridge.preload(currency);
     const preloadTime = now() - t;
 
     // Scan all existing accounts

@@ -63,7 +63,7 @@ export const importAccountsMakeItems = ({
           // only the name is supposed to change. rest is never changing
           if (
             existingAccount.name === accInput.name &&
-            isEqual(existingAccount.swapHistory, account.swapHistory) // FIXME sorting? i'm lazy
+            isEqual(existingAccount.swapHistory, account.swapHistory)
           ) {
             return {
               initialAccountId: existingAccount.id,

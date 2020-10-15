@@ -40,6 +40,7 @@ const getTransactionAccount = (a, t): AccountLike => {
 
 const createTransaction = (a) => ({
   family: "ethereum",
+  mode: "send",
   amount: BigNumber(0),
   recipient: "",
   gasPrice: null,
@@ -170,6 +171,8 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
     invariant(ni.family === "ethereum", "ethereum networkInfo expected");
     networkInfo = ni;
   }
+
+  invariant(t.mode === "send", "libcore ethereum: only send is implemented");
 
   const gasPrice = t.gasPrice || networkInfo.gasPrice;
 

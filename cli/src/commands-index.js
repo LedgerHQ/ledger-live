@@ -27,6 +27,7 @@ import getTransactionStatus from "./commands/getTransactionStatus";
 import libcoreReset from "./commands/libcoreReset";
 import libcoreSetPassword from "./commands/libcoreSetPassword";
 import liveData from "./commands/liveData";
+import makeCompoundSummary from "./commands/makeCompoundSummary";
 import managerListApps from "./commands/managerListApps";
 import portfolio from "./commands/portfolio";
 import proxy from "./commands/proxy";
@@ -72,6 +73,7 @@ export default {
   libcoreReset,
   libcoreSetPassword,
   liveData,
+  makeCompoundSummary,
   managerListApps,
   portfolio,
   proxy,

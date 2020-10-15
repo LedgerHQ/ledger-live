@@ -14,10 +14,10 @@ export interface CurrencyBridge {
     currency: CryptoCurrency,
     deviceId: string,
     syncConfig: SyncConfig,
-    scheme?: ?DerivationMode
+    scheme?: ?DerivationMode,
   }): Observable<ScanAccountEvent>;
-  preload(): Promise<Object>;
-  hydrate(data: mixed): void;
+  preload(currency: CryptoCurrency): Promise<Object>;
+  hydrate(data: mixed, currency: CryptoCurrency): void;
 }
 ```
 
@@ -56,7 +56,7 @@ It emits an observable of `ScanAccountEvent`, which at the moment is only one ev
 ```js
 export type ScanAccountEvent = {
   type: "discovered",
-  account: Account
+  account: Account,
 };
 ```
 
@@ -67,13 +67,13 @@ The observable can be unsubscribed at any time.
 _Preload some currency data (e.g. tokens, delegators,...) required for live-common feature to correctly work._
 
 ```js
-preload(): Promise<Object>;
+preload(currency: CryptoCurrency): Promise<Object>;
 ```
 
 returns a promise of a serializable object (aka can be `JSON.stringify`ed). It can fail if data was not able to load.
 
 ```js
-hydrate(data: mixed): void;
+hydrate(data: mixed, currency: CryptoCurrency): void;
 ```
 
 takes in parameter the same data that is returned by `preload()` (serialized form) and allows to reinject that preloaded data (typically coming from a cached) in a way that a `preload()` would be a noop that instantly resolved if the data was not "invalidated". The data coming in parameter however must be treated as unsafe (that's why it's `mixed` typed). Implementations must validate all fields and be backward compatible.
@@ -91,6 +91,6 @@ TO BE DOCUMENTED. usage in Ledger Live Desktop in context of serialization.
 ```js
 type ScanAccountEventRaw = {
   type: "discovered",
-  account: AccountRaw
+  account: AccountRaw,
 };
 ```

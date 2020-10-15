@@ -103,7 +103,7 @@ export async function inferTransactions(
 
       transaction.amount = transaction.useAllAmount
         ? BigNumber(0)
-        : inferAmount(account, opts.amount || "0.001");
+        : inferAmount(account, opts.amount || "0");
 
       return { account, transaction, mainAccount };
     })

@@ -6,7 +6,6 @@ import SHA256 from "crypto-js/sha256";
 import RIPEMD160 from "crypto-js/ripemd160";
 
 import base58 from "bs58";
-import { Buffer } from "buffer";
 import { ab2hexstring, hexstring2ab, reverseHex } from "../../../convert";
 
 const ADDR_VERSION = "17";

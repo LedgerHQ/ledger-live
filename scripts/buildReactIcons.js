@@ -10,10 +10,12 @@ const reactNativeDir = `${rootDir}/reactNative`;
 
 if (!fs.existsSync(reactDir)) {
   fs.mkdirSync(reactDir);
+  fs.mkdirSync(`${reactDir}/tokens`);
 }
 
 if (!fs.existsSync(reactNativeDir)) {
   fs.mkdirSync(reactNativeDir);
+  fs.mkdirSync(`${reactNativeDir}/tokens`);
 }
 
 const reactTemplate = () => (code, state) => `
@@ -25,19 +27,17 @@ type Props = {
   color: string
 };
 
-export default function ${
-  state.componentName
-}({ size, color = "currentColor" }: Props) {
+export default function ${state.componentName}({ size, color = "currentColor" }: Props) {
   return (
     ${code}
   );
 }`;
 
 const reactNativeTemplate = () => {
-  const componentsToList = components =>
-    [...components].filter(component => component !== "Svg").join(", ");
+  const componentsToList = (components) =>
+    [...components].filter((component) => component !== "Svg").join(", ");
 
-  const logUnsupportedComponents = components => {
+  const logUnsupportedComponents = (components) => {
     if (!components.size) return "";
     return `
 // SVGR has dropped some elements not supported by react-native-svg: ${componentsToList(
@@ -49,7 +49,7 @@ const reactNativeTemplate = () => {
   return (code, state) => {
     const {
       reactNativeSvgReplacedComponents = new Set(),
-      unsupportedComponents = new Set()
+      unsupportedComponents = new Set(),
     } = state;
 
     return `
@@ -75,7 +75,7 @@ export default function ${state.componentName}({ size, color }: Props) {
 };
 
 const convert = (svg, options, outputFile) => {
-  svgr(svg, options).then(result => {
+  svgr(svg, options).then((result) => {
     const component = result
       .replace(/(width|height)=("1em")/g, "$1={size}")
       .replace(/fill=("(?!none)\S*")/g, "fill={color}")
@@ -89,7 +89,7 @@ glob(`${rootDir}/svg/*.svg`, (err, icons) => {
   fs.writeFileSync(`${reactDir}/index.js`, "", "utf-8");
   fs.writeFileSync(`${reactNativeDir}/index.js`, "", "utf-8");
 
-  icons.forEach(i => {
+  icons.forEach((i) => {
     const name = camelcase(path.basename(i, ".svg"));
     const exportString = `export { default as ${name} } from "./${name}";\n`;
 
@@ -100,7 +100,7 @@ glob(`${rootDir}/svg/*.svg`, (err, icons) => {
     const options = {
       icon: true,
       expandProps: false,
-      componentName: name
+      componentName: name,
     };
 
     convert(
@@ -114,9 +114,49 @@ glob(`${rootDir}/svg/*.svg`, (err, icons) => {
       {
         ...options,
         native: true,
-        template: reactNativeTemplate
+        template: reactNativeTemplate,
       },
       `${reactNativeDir}/${name}.js`
+    );
+  });
+});
+
+glob(`${rootDir}/tokens/*.svg`, (err, icons) => {
+  fs.writeFileSync(`${reactDir}/tokens/index.js`, "", "utf-8");
+  fs.writeFileSync(`${reactNativeDir}/tokens/index.js`, "", "utf-8");
+
+  icons.forEach((i) => {
+    const name = path.basename(i, ".svg");
+    const exportString = `export { default as ${name} } from "./${name}";\n`;
+
+    fs.appendFileSync(`${reactDir}/tokens/index.js`, exportString, "utf-8");
+    fs.appendFileSync(
+      `${reactNativeDir}/tokens/index.js`,
+      exportString,
+      "utf-8"
+    );
+
+    const svg = fs.readFileSync(i, "utf-8");
+    const options = {
+      icon: true,
+      expandProps: false,
+      componentName: name,
+    };
+
+    convert(
+      svg,
+      { ...options, template: reactTemplate },
+      `${reactDir}/tokens/${name}.js`
+    );
+
+    convert(
+      svg,
+      {
+        ...options,
+        native: true,
+        template: reactNativeTemplate,
+      },
+      `${reactNativeDir}/tokens/${name}.js`
     );
   });
 });

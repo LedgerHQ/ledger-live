@@ -10,6 +10,12 @@ import type {
   AccountLike,
   AccountLikeArray,
 } from "../../types";
+import { modes } from "./modules";
+
+function hexAsBuffer(hex) {
+  if (!hex) return;
+  return Buffer.from(hex.startsWith("0x") ? hex.slice(2) : hex, "hex");
+}
 
 const options = [
   {
@@ -26,9 +32,26 @@ const options = [
       "how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)",
   },
   {
+    name: "mode",
+    alias: "m",
+    type: String,
+    desc:
+      "action to do (possible modes: " + Object.keys(modes).join(" | ") + ")",
+  },
+  {
     name: "gasLimit",
     type: String,
     desc: "how much gasLimit. default is estimated with the recipient",
+  },
+  {
+    name: "nonce",
+    type: String,
+    desc: "set a nonce for this transaction",
+  },
+  {
+    name: "data",
+    type: String,
+    desc: "set the transaction data to use for signing the ETH transaction",
   },
 ];
 
@@ -78,9 +101,12 @@ function inferTransactions(
       ...transaction,
       family: "ethereum",
       subAccountId,
-      gasPrice: inferAmount(mainAccount, opts.gasPrice || "2gwei"),
+      gasPrice: opts.gasPrice ? inferAmount(mainAccount, opts.gasPrice) : null,
       userGasLimit: opts.gasLimit ? new BigNumber(opts.gasLimit) : null,
       estimatedGasLimit: null,
+      mode: opts.mode || "send",
+      nonce: opts.nonce ? parseInt(opts.nonce) : undefined,
+      data: opts.data ? hexAsBuffer(opts.data) : undefined,
     };
   });
 }

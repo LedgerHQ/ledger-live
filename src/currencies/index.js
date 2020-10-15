@@ -34,6 +34,7 @@ import {
   findTokenByAddress,
   hasTokenId,
   getTokenById,
+  findCompoundToken,
   getAbandonSeedAddress,
 } from "@ledgerhq/cryptoassets";
 
@@ -97,4 +98,5 @@ export {
   valueFromUnit,
   sanitizeValueString,
   getCurrencyColor,
+  findCompoundToken,
 };

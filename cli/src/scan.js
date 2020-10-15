@@ -1,7 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import { Observable, from, defer, of, throwError } from "rxjs";
+import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import {
   skip,
   take,
@@ -12,17 +12,25 @@ import {
   concatMap,
 } from "rxjs/operators";
 import type { Account, CryptoCurrency } from "@ledgerhq/live-common/lib/types";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
 import {
   fromAccountRaw,
   encodeAccountId,
+  decodeAccountId,
 } from "@ledgerhq/live-common/lib/account";
 import { asDerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import {
   getAccountBridge,
   getCurrencyBridge,
 } from "@ledgerhq/live-common/lib/bridge";
-import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
+import {
+  findCryptoCurrencyByKeyword,
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+} from "@ledgerhq/live-common/lib/currencies";
+import {
+  runDerivationScheme,
+  getDerivationScheme,
+} from "@ledgerhq/live-common/lib/derivation";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { delay } from "@ledgerhq/live-common/lib/promise";
@@ -48,6 +56,7 @@ export const currencyOpt = {
 
 export type ScanCommonOpts = $Shape<{
   device: string,
+  id: string[],
   xpub: string[],
   file: string,
   appjsonFile: string,
@@ -63,7 +72,15 @@ export const scanCommonOpts = [
   {
     name: "xpub",
     type: String,
-    desc: "use an xpub (alternatively to --device)",
+    desc:
+      "use an xpub (alternatively to --device) [DEPRECATED: prefer use of id]",
+    multiple: true,
+  },
+  {
+    name: "id",
+    type: String,
+    desc:
+      "restore an account id (or a partial version of an id) (alternatively to --device)",
     multiple: true,
   },
   {
@@ -107,17 +124,9 @@ export const scanCommonOpts = [
   },
 ];
 
-export const getCurrencyByKeyword = (keyword: string): CryptoCurrency => {
-  const r = findCryptoCurrencyByKeyword(keyword);
-  if (!r) {
-    throw new Error("currency '" + keyword + "' not found");
-  }
-  return r;
-};
-
 export const inferManagerApp = (keyword: string): string => {
   try {
-    const currency = getCurrencyByKeyword(keyword);
+    const currency = findCryptoCurrencyByKeyword(keyword);
     if (!currency || !currency.managerAppName) return keyword;
     return currency.managerAppName;
   } catch (e) {
@@ -127,6 +136,14 @@ export const inferManagerApp = (keyword: string): string => {
 
 const implTypePerFamily = {
   tron: "js",
+  ripple: "js",
+  ethereum: "js",
+};
+
+const possibleImpls = {
+  js: 1,
+  libcore: 1,
+  mock: 1,
 };
 
 export const inferCurrency = <
@@ -135,24 +152,26 @@ export const inferCurrency = <
     currency: string,
     file: string,
     xpub: string[],
+    id: string[],
   }
 >({
   device,
   currency,
   file,
   xpub,
+  id,
 }: $Shape<T>) => {
   if (currency) {
-    return defer(() => of(getCurrencyByKeyword(currency)));
+    return defer(() => of(findCryptoCurrencyByKeyword(currency)));
   }
-  if (file || xpub) {
+  if (file || xpub || id) {
     return of(undefined);
   }
   return withDevice(device || "")((t) =>
     from(
       getAppAndVersion(t)
         .then(
-          (r) => getCurrencyByKeyword(r.name),
+          (r) => findCryptoCurrencyByKeyword(r.name),
           () => undefined
         )
         .then((r) => delay(500).then(() => r))
@@ -160,9 +179,32 @@ export const inferCurrency = <
   );
 };
 
+function requiredCurrency(cur) {
+  if (!cur) throw new Error("--currency is required");
+  return cur;
+}
+
+const prepareCurrency = (fn) => (observable) =>
+  observable.pipe(
+    concatMap((item) => {
+      const maybeCurrency = fn(item);
+      if (maybeCurrency) {
+        const bridge = getCurrencyBridge(maybeCurrency);
+        return from(bridge.preload(maybeCurrency)).pipe(
+          mergeMap((preloaded) => {
+            bridge.hydrate(preloaded);
+            return of(item);
+          })
+        );
+      }
+      return of(item);
+    })
+  );
+
 export function scan(arg: ScanCommonOpts): Observable<Account> {
   const {
     device,
+    id: idArray,
     xpub: xpubArray,
     file,
     appjsonFile,
@@ -199,6 +241,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
   if (typeof file === "string") {
     return jsonFromFile(file).pipe(
       map(fromAccountRaw),
+      prepareCurrency((a) => a.currency),
       concatMap((account) =>
         getAccountBridge(account, null)
           .sync(account, syncConfig)
@@ -208,40 +251,116 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
   }
 
   return inferCurrency(arg).pipe(
-    mergeMap((cur) => {
-      if (!cur) throw new Error("--currency is required");
+    mergeMap((cur: ?CryptoCurrency) => {
+      let ids = idArray;
 
       if (xpubArray) {
-        const derivationMode = scheme || "";
+        console.warn("Usage of --xpub is deprecated. Prefer usage of `--id`");
+        ids = (ids || []).concat(xpubArray);
+      }
+
+      // TODO this should be a "inferAccountId" that needs to look at available impl and do same logic as in bridge.. + we should accept full id as param
+      // we kill the --xpub to something else too (--id)
+
+      // Restore from ids
+      if (ids) {
+        // Infer the full ids
+        const fullIds: string[] = ids.map((id) => {
+          try {
+            // preserve if decodeAccountId don't fail
+            decodeAccountId(id);
+            return id;
+          } catch (e) {
+            const splitted = id.split(":");
+            const findAndEat = (predicate) => {
+              const res = splitted.find(predicate);
+              if (typeof res === "string") {
+                splitted.splice(splitted.indexOf(res), 1);
+                return res;
+              }
+            };
+            let currencyId =
+              findAndEat((s) => findCryptoCurrencyById(s)) ||
+              requiredCurrency(cur).id;
+            const currency = getCryptoCurrencyById(currencyId);
+            let type =
+              findAndEat((s) => possibleImpls[s]) ||
+              implTypePerFamily[currency.family] ||
+              "libcore";
+            let version = findAndEat((s) => s.match(/^\d+$/)) || "1";
+            const derivationMode = asDerivationMode(
+              findAndEat((s) => {
+                try {
+                  return asDerivationMode(s);
+                } catch (e) {
+                  // this is therefore not a derivation mode
+                }
+              }) ??
+                scheme ??
+                ""
+            );
+            if (splitted.length === 0) {
+              throw new Error(
+                "invalid id='" + id + "': missing xpub or address part"
+              );
+            }
+            if (splitted.length > 1) {
+              throw new Error(
+                "invalid id='" +
+                  id +
+                  "': couldn't understand which of these are the xpub or address part: " +
+                  splitted.join(" | ")
+              );
+            }
+            let xpubOrAddress = splitted[0];
+
+            return encodeAccountId({
+              type,
+              version,
+              currencyId,
+              xpubOrAddress,
+              derivationMode,
+            });
+          }
+        });
+
         return from(
-          xpubArray.map((xpub) => {
+          fullIds.map((id) => {
+            const {
+              derivationMode,
+              xpubOrAddress,
+              currencyId,
+            } = decodeAccountId(id);
+            const currency = getCryptoCurrencyById(currencyId);
+            const scheme = getDerivationScheme({
+              derivationMode,
+              currency,
+            });
+            const index = 0;
+            const freshAddressPath = runDerivationScheme(scheme, currency, {
+              account: index,
+              node: 0,
+              address: 0,
+            });
             const account: $Exact<Account> = {
               type: "Account",
               name:
-                cur.name +
+                currency.name +
                 " " +
                 (derivationMode || "legacy") +
                 " " +
-                shortAddressPreview(xpub),
-              xpub,
-              seedIdentifier: xpub,
+                shortAddressPreview(xpubOrAddress),
+              xpub: xpubOrAddress,
+              seedIdentifier: xpubOrAddress,
               starred: true,
-              id: encodeAccountId({
-                type:
-                  getEnv("BRIDGE_FORCE_IMPLEMENTATION") ||
-                  implTypePerFamily[cur.family] ||
-                  "libcore",
-                version: "1",
-                currencyId: cur.id,
-                xpubOrAddress: xpub,
-                derivationMode: asDerivationMode(derivationMode || ""),
-              }),
-              derivationMode: asDerivationMode(derivationMode),
-              currency: cur,
-              unit: cur.units[0],
-              index: 0,
-              freshAddress: xpub, // HACK for JS impl force mode that would only support address version
-              freshAddressPath: "",
+              swapHistory: [],
+              id,
+              derivationMode,
+              currency,
+              unit: currency.units[0],
+              index,
+              freshAddress: xpubOrAddress,
+              freshAddressPath,
               freshAddresses: [],
               creationDate: new Date(),
               lastSyncDate: new Date(0),
@@ -251,11 +370,11 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               operationsCount: 0,
               operations: [],
               pendingOperations: [],
-              swapHistory: [],
             };
             return account;
           })
         ).pipe(
+          prepareCurrency((a) => a.currency),
           concatMap((account) =>
             getAccountBridge(account, null)
               .sync(account, syncConfig)
@@ -263,17 +382,21 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
           )
         );
       }
-      return getCurrencyBridge(cur)
-        .scanAccounts({
-          currency: cur,
+
+      const currency = requiredCurrency(cur);
+      // otherwise we just scan for accounts
+      return concat(
+        of(currency).pipe(prepareCurrency((a) => a)),
+        getCurrencyBridge(currency).scanAccounts({
+          currency,
           deviceId: device || "",
           scheme: scheme && asDerivationMode(scheme),
           syncConfig,
         })
-        .pipe(
-          filter((e) => e.type === "discovered"),
-          map((e) => e.account)
-        );
+      ).pipe(
+        filter((e) => e.type === "discovered"),
+        map((e) => e.account)
+      );
     }),
     skip(index || 0),
     take(length === undefined ? (index !== undefined ? 1 : Infinity) : length)

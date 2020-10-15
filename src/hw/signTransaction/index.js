@@ -3,9 +3,10 @@
 import type Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "../../types";
 
-import ethereum from "./ethereum";
 import ripple from "./ripple";
 import tron from "./tron";
+
+// TODO deprecate this approach
 
 type Resolver = (
   currency: CryptoCurrency,
@@ -15,10 +16,6 @@ type Resolver = (
 ) => Promise<string>;
 
 const all = {
-  ethereum,
-  ethereum_testnet: ethereum,
-  ethereum_classic: ethereum,
-  ethereum_classic_testnet: ethereum,
   ripple,
   tron,
 };

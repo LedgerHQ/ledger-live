@@ -70,7 +70,6 @@ const envDefinitions = {
   },
   API_TRONGRID_PROXY: {
     parser: stringParser,
-    //def: "https://api.trongrid.io",
     def: "https://tron.coin.ledger.com",
     desc: "proxy url for trongrid API",
   },
@@ -79,17 +78,16 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger script runner API",
   },
-  BRIDGE_FORCE_IMPLEMENTATION: {
-    def: "",
-    parser: stringParser,
-    desc:
-      "force implementation for ALL currency bridges (affects scanning accounts)",
-  },
   COINAPPS: {
     def: "",
     parser: stringParser,
     desc:
       "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
+  },
+  COMPOUND: {
+    def: false,
+    parser: boolParser,
+    desc: "enable compound features",
   },
   COSMOS_GAS_AMPLIFIER: {
     def: 4,
@@ -148,6 +146,11 @@ const envDefinitions = {
     def: "",
     parser: stringParser,
     desc: "enable experimental support of currencies (comma separated)",
+  },
+  EXPERIMENTAL_CURRENCIES_JS_BRIDGE: {
+    def: "",
+    parser: stringParser,
+    desc: "enable JS integration of currencies (comma separated)",
   },
   EXPERIMENTAL_EXPLORERS: {
     def: false,

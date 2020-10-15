@@ -4,7 +4,7 @@ exports[`encode/decode 1`] = `
 Object {
   "accounts": Array [
     Object {
-      "balance": "15710290533550751349",
+      "balance": "12121280662072834414",
       "currencyId": "ethereum",
       "derivationMode": "",
       "freshAddress": "0x8C5FE6AF52E79EC4361B7A12B53356EF5D37C765",

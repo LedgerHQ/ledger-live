@@ -10,6 +10,7 @@ import type {
   TokenCurrency,
 } from "../types";
 import { getEnv } from "../env";
+import { encodeTokenAccountId } from "./accountId";
 import { isAccountDelegating } from "../families/tezos/bakers";
 
 // by convention, a main account is the top level account
@@ -62,10 +63,28 @@ export const getAccountName = (account: AccountLike): string => {
 };
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
+  if (
+    a.type === "Account" &&
+    a.currency.id === "tron" &&
+    a.tronResources &&
+    a.tronResources.bandwidth.freeLimit === 0
+  ) {
+    return true;
+  }
   const hasSubAccounts =
     a.type === "Account" && a.subAccounts && a.subAccounts.length;
   return a.operationsCount === 0 && a.balance.isZero() && !hasSubAccounts;
 };
+
+export function areAllOperationsLoaded(account: AccountLike) {
+  if (account.operationsCount !== account.operations.length) {
+    return false;
+  }
+  if (account.type === "Account" && account.subAccounts) {
+    return account.subAccounts.every(areAllOperationsLoaded);
+  }
+  return true;
+}
 
 export const isAccountBalanceSignificant = (a: AccountLike): boolean =>
   a.balance.gt(100); // in future, could be a per currency thing
@@ -89,7 +108,7 @@ export function clearAccount<T: AccountLike>(account: T): T {
     };
   }
 
-  return {
+  const copy = {
     ...account,
     tronResources: account.tronResources && {
       ...account.tronResources,
@@ -99,8 +118,11 @@ export function clearAccount<T: AccountLike>(account: T): T {
     operations: [],
     pendingOperations: [],
     subAccounts: account.subAccounts && account.subAccounts.map(clearAccount),
-    balanceHistory: {},
   };
+
+  delete copy.balanceHistory;
+
+  return copy;
 }
 
 export function findSubAccountById(account: Account, id: string): ?SubAccount {
@@ -188,6 +210,7 @@ export const makeEmptyTokenAccount = (
   parentId: account.id,
   token,
   balance: BigNumber(0),
+  spendableBalance: BigNumber(0),
   operationsCount: 0,
   creationDate: new Date(),
   operations: [],
@@ -218,10 +241,11 @@ export const accountWithMandatoryTokens = (
     )
     .map((token) => ({
       type: "TokenAccount",
-      id: account.id + "+" + token.contractAddress,
+      id: encodeTokenAccountId(account.id, token),
       parentId: account.id,
       token,
       balance: BigNumber(0),
+      spendableBalance: BigNumber(0),
       operationsCount: 0,
       creationDate: new Date(),
       operations: [],

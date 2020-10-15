@@ -137,7 +137,7 @@ const cliFormat = (account, level) => {
           if (account.id === id) return account.unit;
           const ta = subAccounts.find((a) => a.id === id);
           if (ta) return getAccountUnit(ta);
-          throw new Error("unexpected missing token account");
+          console.error("unexpected missing token account " + id);
         },
         (operation, unit) => {
           if (family && family.formatOperationSpecifics) {

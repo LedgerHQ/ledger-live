@@ -1,8 +1,8 @@
 // @flow
-import uniqBy from "lodash/uniqBy";
+import uniqWith from "lodash/uniqWith";
 import type { Account } from "../types";
 import { validateNameEdition } from "./accountName";
-import { isAccountEmpty } from "./helpers";
+import { isAccountEmpty, clearAccount } from "./helpers";
 import { findAccountMigration } from "./support";
 
 // Reference all possible support link
@@ -25,6 +25,15 @@ export type AddAccountsSectionResult = {
   sections: AddAccountsSection[],
   alreadyEmptyAccount: ?Account,
 };
+
+function sameAccountIdentity(a: Account, b: Account) {
+  return (
+    a.id === b.id ||
+    (a.freshAddress
+      ? a.currency === b.currency && a.freshAddress === b.freshAddress
+      : false)
+  );
+}
 
 /**
  * logic that for the Add Accounts sectioned list
@@ -65,12 +74,8 @@ export function groupAddAccounts(
   });
 
   scannedAccountsWithoutMigrate.forEach((acc) => {
-    const existingAccount = existingAccounts.find(
-      (a) =>
-        a.id === acc.id ||
-        (a.freshAddress &&
-          a.currency === acc.currency &&
-          a.freshAddress === acc.freshAddress)
+    const existingAccount = existingAccounts.find((a) =>
+      sameAccountIdentity(a, acc)
     );
     const empty = isAccountEmpty(acc);
     if (existingAccount) {
@@ -202,10 +207,14 @@ export function addAccounts({
       }
     } else {
       // we'll try to find an updated version of the existing account as opportunity to refresh the operations
-      const update = selected.find((a) => a.id === existing.id);
+      const update = selected.find((a) => sameAccountIdentity(a, existing));
       if (update) {
         // preserve existing name
-        newAccounts.push(preserveUserData(update, existing));
+        let acc = preserveUserData(update, existing);
+        if (update.id !== existing.id) {
+          acc = clearAccount(acc);
+        }
+        newAccounts.push(acc);
       } else {
         newAccounts.push(existing);
       }
@@ -214,14 +223,14 @@ export function addAccounts({
 
   // append the new accounts
   selected.forEach((acc) => {
-    const alreadyThere = newAccounts.find((a) => a.id === acc.id);
+    const alreadyThere = newAccounts.find((a) => sameAccountIdentity(a, acc));
     if (!alreadyThere) {
       newAccounts.push(acc);
     }
   });
 
   // dedup and apply the renaming
-  return uniqBy(newAccounts, "id").map((a) => {
+  return uniqWith(newAccounts, sameAccountIdentity).map((a) => {
     const name = validateNameEdition(a, renamings[a.id]);
     if (name) return { ...a, name };
     return a;

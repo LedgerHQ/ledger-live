@@ -45,7 +45,7 @@ import {
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import signTransaction from "../../../hw/signTransaction";
 import type { Transaction, NetworkInfo } from "../types";
-import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { makeAccountBridgeReceive, mergeOps } from "../../../bridge/jsHelpers";
 
 const receive = makeAccountBridgeReceive();
 
@@ -171,12 +171,6 @@ function isRecipientValid(recipient) {
   } catch (e) {
     return false;
   }
-}
-
-function mergeOps(existing: Operation[], newFetched: Operation[]) {
-  const ids = existing.map((o) => o.id);
-  const all = existing.concat(newFetched.filter((o) => !ids.includes(o.id)));
-  return all.sort((a, b) => b.date - a.date);
 }
 
 type Tx = {

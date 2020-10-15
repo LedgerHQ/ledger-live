@@ -1,23 +1,23 @@
 module.exports = {
   settings: {
-    react: { version: "16" }
+    react: { version: "16" },
   },
   env: {
     browser: true,
     es6: true,
     node: true,
-    jest: true
+    jest: true,
   },
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:flowtype/recommended",
     "prettier",
-    "prettier/react"
+    "prettier/react",
   ],
   globals: {
     Atomics: "readonly",
-    SharedArrayBuffer: "readonly"
+    SharedArrayBuffer: "readonly",
   },
   parser: "babel-eslint",
   plugins: ["flowtype", "react-hooks", "prettier"],
@@ -46,6 +46,6 @@ module.exports = {
     "prefer-destructuring": 0,
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "prettier/prettier": "error"
-  }
+    "prettier/prettier": "error",
+  },
 };

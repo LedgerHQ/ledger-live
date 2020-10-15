@@ -16,9 +16,16 @@ export type OperationType =
   | "VOTE"
   | "REWARD"
   | "FEES"
+
+  // COMPOUND TYPE OPERATIONS
+  | "SUPPLY"
+  | "REDEEM"
+  | "APPROVE"
   | "OPT_IN"
   | "OPT_OUT"
-  | "CLOSE_ACCOUNT";
+  | "CLOSE_ACCOUNT"
+  | "SUPPLY"
+  | "REDEEM";
 
 export type Operation = {
   // unique identifier (usually hash)

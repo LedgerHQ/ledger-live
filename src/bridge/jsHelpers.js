@@ -1,5 +1,5 @@
 // @flow
-
+import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import { Observable, from } from "rxjs";
 import { log } from "@ledgerhq/logs";
@@ -22,60 +22,122 @@ import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
   shouldRetainPendingOperation,
+  isAccountEmpty,
+  shouldShowNewAccount,
+  clearAccount,
 } from "../account";
-import uniqBy from "lodash/uniqBy";
 import type {
   Operation,
   Account,
   ScanAccountEvent,
   SyncConfig,
+  CryptoCurrency,
 } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
 import { open, close } from "../hw";
 import { withDevice } from "../hw/deviceAccess";
 
-type GetAccountShape = (
-  { address: string, id: string, initialAccount?: Account },
+export type GetAccountShape = (
+  {
+    currency: CryptoCurrency,
+    address: string,
+    id: string,
+    initialAccount?: Account,
+  },
   SyncConfig
 ) => Promise<$Shape<Account>>;
 
 type AccountUpdater = (Account) => Account;
 
+// compare that two dates are roughly the same date in order to update the case it would have drastically changed
+const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
+
+// an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
+export const sameOp = (a: Operation, b: Operation) =>
+  a === b ||
+  (a.id === b.id && // hash, accountId, type are in id
+    (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
+    (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
+    sameDate(a.date, b.date) &&
+    a.blockHeight === b.blockHeight &&
+    isEqual(a.senders, b.senders) &&
+    isEqual(a.recipients, b.recipients));
+
+// efficiently prepend newFetched operations to existing operations
 export function mergeOps(
+  // existing operations. sorted (newer to older). deduped.
   existing: Operation[],
+  // new fetched operations. not sorted. not deduped. time is allowed to overlap inside existing.
   newFetched: Operation[]
-): Operation[] {
-  const ids = existing.map((o) => o.id);
-  const all = newFetched.filter((o) => !ids.includes(o.id)).concat(existing);
-  return uniqBy(
-    all.sort((a, b) => b.date - a.date),
-    "id"
-  );
+): // return a list of operations, deduped and sorted from newer to older
+Operation[] {
+  // there is new fetched
+  if (newFetched.length === 0) return existing;
+
+  // efficient lookup map of id.
+  const existingIds = {};
+  for (let o of existing) {
+    existingIds[o.id] = o;
+  }
+
+  // only keep the newFetched that are not in existing. this array will be mutated
+  const newOpsIds = {};
+  const newOps = newFetched
+    .filter((o) => !existingIds[o.id] || !sameOp(existingIds[o.id], o))
+    .sort((a, b) => b.date - a.date);
+  newOps.forEach((op) => {
+    newOpsIds[op.id] = op;
+  });
+
+  // return existins when there is no real new operations
+  if (newOps.length === 0) return existing;
+
+  // edge case, existing can be empty. return the sorted list.
+  if (existing.length === 0) return newOps;
+
+  // building up merging the ops
+  const all = [];
+  for (let o of existing) {
+    // prepend all the new ops that have higher date
+    while (newOps.length > 0 && newOps[0].date > o.date) {
+      all.push(newOps.shift());
+    }
+    if (!newOpsIds[o.id]) {
+      all.push(o);
+    }
+  }
+  return all;
 }
 
 export const makeSync = (
   getAccountShape: GetAccountShape,
-  postSync: (Account) => Account = (a) => a
+  postSync: (initial: Account, synced: Account) => Account = (_, a) => a
 ): $PropertyType<AccountBridge<any>, "sync"> => (
   initial,
   syncConfig
 ): Observable<AccountUpdater> =>
   Observable.create((o) => {
     async function main() {
+      const accountId = `js:2:${initial.currency.id}:${initial.freshAddress}:${initial.derivationMode}`;
+      const needClear = initial.id !== accountId;
       try {
         const shape = await getAccountShape(
           {
-            id: initial.id,
+            currency: initial.currency,
+            id: accountId,
             address: initial.freshAddress,
-            initialAccount: initial,
+            initialAccount: needClear ? clearAccount(initial) : initial,
           },
           syncConfig
         );
-        o.next((a) => {
+        o.next((acc) => {
+          const a = needClear ? clearAccount(acc) : acc;
+          // FIXME reconsider doing mergeOps here. work is redundant for impl like eth
           const operations = mergeOps(a.operations, shape.operations || []);
-          return postSync({
+          return postSync(a, {
             ...a,
+            id: accountId,
             spendableBalance: shape.balance || a.balance,
             operationsCount: shape.operationsCount || operations.length,
             lastSyncDate: new Date(),
@@ -111,27 +173,27 @@ export const makeScanAccounts = (
       finished = true;
     };
 
+    const derivationsCache = {};
+
     // in future ideally what we want is:
     // return mergeMap(addressesObservable, address => fetchAccount(address))
 
-    let newAccountCount = 0;
-
-    async function stepAddress(
+    async function stepAccount(
       index,
       { address, path: freshAddressPath },
       derivationMode,
-      shouldSkipEmpty,
       seedIdentifier
-    ): { account?: Account, complete?: boolean } {
+    ): Promise<?Account> {
       const accountId = `js:2:${currency.id}:${address}:${derivationMode}`;
       const accountShape: Account = await getAccountShape(
         {
+          currency,
           id: accountId,
           address,
         },
         syncConfig
       );
-      if (finished) return { complete: true };
+      if (finished) return;
 
       const freshAddress = address;
       const operations = accountShape.operations || [];
@@ -145,66 +207,10 @@ export const makeScanAccounts = (
 
       if (balance.isNaN()) throw new Error("invalid balance NaN");
 
-      const isAccountEmpty =
-        currency.id === "tron" && accountShape.tronResources
-          ? accountShape.tronResources.bandwidth.freeLimit === 0
-          : operationsCount === 0 && balance.isZero();
-
-      if (isAccountEmpty) {
-        // this is an empty account
-        if (derivationMode === "") {
-          // is standard derivation
-          if (newAccountCount === 0) {
-            // first zero account will emit one account as opportunity to create a new account..
-            const account: Account = {
-              type: "Account",
-              id: accountId,
-              seedIdentifier,
-              freshAddress,
-              freshAddressPath,
-              freshAddresses: [
-                {
-                  address: freshAddress,
-                  derivationPath: freshAddressPath,
-                },
-              ],
-              derivationMode,
-              name: getNewAccountPlaceholderName({
-                currency,
-                index,
-                derivationMode,
-              }),
-              starred: false,
-              index,
-              currency,
-              operationsCount: 0,
-              operations: [],
-              pendingOperations: [],
-              unit: currency.units[0],
-              lastSyncDate: new Date(),
-              creationDate,
-              // overrides
-              balance,
-              spendableBalance,
-              blockHeight: 0,
-              ...accountShape,
-            };
-            return { account, complete: true };
-          }
-          newAccountCount++;
-        }
-
-        if (shouldSkipEmpty) {
-          return {};
-        }
-        // NB for legacy addresses maybe we will continue at least for the first 10 addresses
-        return { complete: true };
-      }
-
       const account: Account = {
         type: "Account",
         id: accountId,
-        seedIdentifier: freshAddress,
+        seedIdentifier,
         freshAddress,
         freshAddressPath,
         freshAddresses: [
@@ -214,11 +220,11 @@ export const makeScanAccounts = (
           },
         ],
         derivationMode,
-        name: getAccountPlaceholderName({ currency, index, derivationMode }),
+        name: "",
         starred: false,
         index,
         currency,
-        operationsCount: 0,
+        operationsCount,
         operations: [],
         pendingOperations: [],
         unit: currency.units[0],
@@ -230,7 +236,8 @@ export const makeScanAccounts = (
         blockHeight: 0,
         ...accountShape,
       };
-      return { account };
+
+      return account;
     }
 
     async function main() {
@@ -241,14 +248,21 @@ export const makeScanAccounts = (
         const derivationModes = getDerivationModesForCurrency(currency);
         for (const derivationMode of derivationModes) {
           const path = getSeedIdentifierDerivation(currency, derivationMode);
+          log(
+            "scanAccounts",
+            `scanning ${currency.id} on derivationMode=${derivationMode}`
+          );
 
-          let result;
+          let result = derivationsCache[path];
           try {
-            result = await getAddress(transport, {
-              currency,
-              path,
-              derivationMode,
-            });
+            if (!result) {
+              result = await getAddress(transport, {
+                currency,
+                path,
+                derivationMode,
+              });
+              derivationsCache[path] = result;
+            }
           } catch (e) {
             // feature detect any denying case that could happen
             if (
@@ -270,6 +284,7 @@ export const makeScanAccounts = (
             derivationMode,
             currency,
           });
+          const showNewAccount = shouldShowNewAccount(currency, derivationMode);
           const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
           const startsAt = getDerivationModeStartsAt(derivationMode);
           for (let index = startsAt; index < stopAt; index++) {
@@ -281,25 +296,53 @@ export const makeScanAccounts = (
                 account: index,
               }
             );
-            const res = await getAddress(transport, {
-              currency,
-              path: freshAddressPath,
-              derivationMode,
-            });
-            const r = await stepAddress(
+
+            let res = derivationsCache[freshAddressPath];
+            if (!res) {
+              res = await getAddress(transport, {
+                currency,
+                path: freshAddressPath,
+                derivationMode,
+              });
+              derivationsCache[freshAddressPath] = res;
+            }
+
+            const account = await stepAccount(
               index,
               res,
               derivationMode,
-              emptyCount < mandatoryEmptyAccountSkip,
               seedIdentifier
             );
-            if (r.account) {
-              o.next({ type: "discovered", account: r.account });
-            } else {
-              emptyCount++;
+
+            log(
+              "scanAccounts",
+              `scanning ${currency.id} at ${freshAddressPath}: ${
+                res.address
+              } resulted of ${
+                account
+                  ? `Account with ${account.operations.length} txs`
+                  : "no account"
+              }`
+            );
+            if (!account) return;
+
+            const isEmpty = isAccountEmpty(account);
+
+            account.name = isEmpty
+              ? getNewAccountPlaceholderName({
+                  currency,
+                  index,
+                  derivationMode,
+                })
+              : getAccountPlaceholderName({ currency, index, derivationMode });
+
+            if (!isEmpty || showNewAccount) {
+              o.next({ type: "discovered", account });
             }
-            if (r.complete) {
-              break;
+
+            if (isEmpty) {
+              if (emptyCount >= mandatoryEmptyAccountSkip) break;
+              emptyCount++;
             }
           }
         }

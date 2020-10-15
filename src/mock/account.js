@@ -7,6 +7,7 @@ import { BigNumber } from "bignumber.js";
 import {
   listCryptoCurrencies,
   listTokensForCryptoCurrency,
+  findCompoundToken,
 } from "../currencies";
 import type {
   TokenAccount,
@@ -14,6 +15,7 @@ import type {
   AccountLike,
   Operation,
   CryptoCurrency,
+  TokenCurrency,
 } from "../types";
 import { getOperationAmountNumber } from "../operation";
 import { inferSubOperations } from "../account";
@@ -90,6 +92,7 @@ const hardcodedMarketcap = [
   "ethereum/erc20/quant",
   "ethereum/erc20/bytom",
   "ethereum/erc20/dai_stablecoin_v1_0",
+  "ethereum/erc20/dai_stablecoin_v2_0",
   "ethereum/erc20/egretia_token",
   "aeternity",
   "ethereum/erc20/golem",
@@ -290,15 +293,12 @@ type GenAccountOptions = {
 
 function genTokenAccount(
   index: number,
-  account: Account
+  account: Account,
+  token: TokenCurrency
 ): $Exact<TokenAccount> {
   const rng = new Prando(account.id + "|" + index);
-  const tokens = listTokensForCryptoCurrency(account.currency).filter((t) =>
-    hardcodedMarketcap.includes(t.id)
-  );
-  const token = rng.nextArrayItem(tokens);
 
-  const tokenAccount = {
+  const tokenAccount: $Exact<TokenAccount> = {
     type: "TokenAccount",
     starred: false,
     id: account.id + "|" + index,
@@ -308,6 +308,7 @@ function genTokenAccount(
     operations: [],
     pendingOperations: [],
     balance: BigNumber(0),
+    spendableBalance: BigNumber(0),
     creationDate: new Date(),
     swapHistory: [],
   };
@@ -320,7 +321,9 @@ function genTokenAccount(
       return ops.concat(op);
     }, []);
   tokenAccount.operationsCount = tokenAccount.operations.length;
-  tokenAccount.balance = ensureNoNegative(tokenAccount.operations);
+  tokenAccount.spendableBalance = tokenAccount.balance = ensureNoNegative(
+    tokenAccount.operations
+  );
   tokenAccount.creationDate =
     tokenAccount.operations.length > 0
       ? tokenAccount.operations[tokenAccount.operations.length - 1].date
@@ -417,9 +420,26 @@ export function genAccount(
       typeof opts.subAccountsCount === "number"
         ? opts.subAccountsCount
         : rng.nextInt(0, 8);
-    account.subAccounts = Array(tokenCount)
-      .fill(null)
-      .map((_, i) => genTokenAccount(i, account));
+
+    const all = listTokensForCryptoCurrency(account.currency).filter((t) =>
+      hardcodedMarketcap.includes(t.id)
+    );
+    const compoundReadyTokens = all.filter(findCompoundToken);
+    const notCompoundReadyTokens = all.filter((a) => !findCompoundToken(a));
+
+    // favorize the generation of compound tokens
+    const tokens = compoundReadyTokens
+      .concat(
+        // from random index
+        notCompoundReadyTokens.slice(
+          rng.nextInt(Math.floor(notCompoundReadyTokens.length / 2))
+        )
+      )
+      .slice(0, tokenCount);
+
+    account.subAccounts = tokens.map((token, i) =>
+      genTokenAccount(i, account, token)
+    );
   }
 
   account.operations = Array(operationsSize)

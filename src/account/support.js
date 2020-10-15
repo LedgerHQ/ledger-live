@@ -19,13 +19,19 @@ import {
 import { isCurrencySupported } from "../currencies";
 import { getMainAccount } from "../account";
 import { getAccountBridge } from "../bridge";
+import jsBridges from "../generated/bridge/js";
 
-export const libcoreNoGo = [
-  "ripple", // still WIP
-  "ethereum_classic", // LLC-308
-  "tron",
-  "neo",
-];
+const experimentalIntegrations = ["ethereum"];
+export function shouldUseJS(currency: CryptoCurrency) {
+  const jsBridge = jsBridges[currency.family];
+  if (!jsBridge) return false;
+  if (experimentalIntegrations.includes(currency.id)) {
+    return getEnv("EXPERIMENTAL_CURRENCIES_JS_BRIDGE")
+      .split(",")
+      .includes(currency.id);
+  }
+  return true;
+}
 
 export const libcoreNoGoBalanceHistory = () =>
   getEnv("LIBCORE_BALANCE_HISTORY_NOGO").split(",");
@@ -73,10 +79,11 @@ export function canSend(
 
 export function canBeMigrated(account: Account) {
   try {
-    const { type, version } = decodeAccountId(account.id);
-    const mock = getEnv("MOCK");
-    if (!mock && libcoreNoGo.includes(account.currency.id)) return false;
-    return type === "ethereumjs" || (mock && version === "0");
+    const { version } = decodeAccountId(account.id);
+    if (getEnv("MOCK")) {
+      return version === "0";
+    }
+    return false;
   } catch (e) {
     return false;
   }
@@ -88,8 +95,7 @@ export function findAccountMigration(
   scannedAccounts: Account[]
 ): ?Account {
   if (!canBeMigrated(account)) return;
-  const { type } = decodeAccountId(account.id);
-  if (type === "ethereumjs" || getEnv("MOCK")) {
+  if (getEnv("MOCK")) {
     return scannedAccounts.find(
       (a) =>
         a.id !== account.id && // a migration assume an id changes

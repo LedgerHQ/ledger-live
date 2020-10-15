@@ -8,6 +8,7 @@ import type {
 } from "../../types";
 import type { CoreAccount } from "../../libcore/types";
 import type { CoreERC20LikeAccount } from "./types";
+import { encodeTokenAccountId } from "../../account";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 import { minimalOperationsBuilder } from "../../reconciliation";
 import { buildERC20Operation } from "./buildERC20Operation";
@@ -25,7 +26,7 @@ async function buildERC20TokenAccount({
   balance,
 }) {
   const coreOperations = await coreTokenAccount.getOperations();
-  const id = parentAccountId + "+" + token.contractAddress;
+  const id = encodeTokenAccountId(parentAccountId, token);
 
   const operations = await minimalOperationsBuilder(
     (existingTokenAccount && existingTokenAccount.operations) || [],
@@ -48,6 +49,7 @@ async function buildERC20TokenAccount({
     operations,
     pendingOperations: [],
     balance,
+    spendableBalance: balance,
     creationDate:
       operations.length > 0
         ? operations[operations.length - 1].date

@@ -58,6 +58,7 @@ async function buildAlgorandTokenAccount({
     operations,
     pendingOperations: [],
     balance,
+    spendableBalance: balance,
     swapHistory: [],
     creationDate:
       operations.length > 0

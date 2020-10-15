@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
 import { FeeNotLoaded, NotEnoughGas } from "@ledgerhq/errors";
 import type { Account } from "../../types";
-import { getGasLimit, serializeTransactionData } from "./transaction";
+import { getGasLimit, buildEthereumTx } from "./transaction";
 import { isValidRecipient } from "../../libcore/isValidRecipient";
 import { bigNumberToLibcoreAmount } from "../../libcore/buildBigNumber";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
@@ -73,7 +73,8 @@ export async function ethereumBuildTransaction({
   if (subAccount && subAccount.type === "TokenAccount") {
     const { token } = subAccount;
 
-    const data = serializeTransactionData(account, transaction);
+    // NB we don't care about the nonce for the data
+    const { data } = buildEthereumTx(account, transaction, 1).tx;
     invariant(data, "serializeTransactionData provided no data");
 
     await transactionBuilder.setInputData(data.toString("hex"));

@@ -4,6 +4,7 @@
 
 import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
+import { sameOp } from "./bridge/jsHelpers";
 import type {
   Operation,
   OperationRaw,
@@ -214,10 +215,12 @@ export function patchAccount(
     changed = true;
   }
   const { balanceHistory } = updatedRaw;
-  if (balanceHistory && shouldRefreshBalanceHistory(balanceHistory, account)) {
-    next.balanceHistory = fromBalanceHistoryRawMap(balanceHistory);
-    changed = true;
-  } else if (account.balanceHistory) {
+  if (balanceHistory) {
+    if (shouldRefreshBalanceHistory(balanceHistory, account)) {
+      next.balanceHistory = fromBalanceHistoryRawMap(balanceHistory);
+      changed = true;
+    }
+  } else if (next.balanceHistory) {
     delete next.balanceHistory;
     changed = true;
   }
@@ -361,6 +364,34 @@ export function patchSubAccount(
     changed = true;
   }
 
+  if (
+    next.type === "TokenAccount" &&
+    account.type === "TokenAccount" &&
+    updatedRaw.type === "TokenAccountRaw"
+  ) {
+    if (updatedRaw.spendableBalance !== account.spendableBalance.toString()) {
+      next.spendableBalance = BigNumber(
+        updatedRaw.spendableBalance || updatedRaw.balance
+      );
+      changed = true;
+    }
+
+    if (updatedRaw.compoundBalance !== account.compoundBalance?.toString()) {
+      next.compoundBalance = updatedRaw.compoundBalance
+        ? BigNumber(updatedRaw.compoundBalance)
+        : undefined;
+      changed = true;
+    }
+
+    if (
+      updatedRaw.approvals &&
+      !isEqual(updatedRaw.approvals, account.approvals)
+    ) {
+      next.approvals = updatedRaw.approvals;
+      changed = true;
+    }
+  }
+
   if (!changed) return account; // nothing changed at all
 
   return next;
@@ -378,14 +409,6 @@ export function patchOperations(
     (raw) => fromOperationRaw(raw, accountId, subAccounts)
   );
 }
-
-const sameOp = (a: Operation, b: Operation) =>
-  a === b ||
-  (a.id === b.id && // hash, accountId, type are in id
-    (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
-    (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
-    isEqual(a.senders, b.senders) &&
-    isEqual(a.recipients, b.recipients));
 
 function findExistingOp(ops, op) {
   return ops.find((o) => o.id === op.id);

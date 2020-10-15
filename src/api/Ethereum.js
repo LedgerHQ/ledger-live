@@ -1,4 +1,5 @@
 // @flow
+import URL from "url";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
@@ -6,37 +7,66 @@ import JSONBigNumber from "../JSONBigNumber";
 import type { CryptoCurrency } from "../types";
 import type { EthereumGasLimitRequest } from "../families/ethereum/types";
 import network from "../network";
-import { blockchainBaseURL, getCurrencyExplorer } from "./Ledger";
+import { blockchainBaseURL } from "./Ledger";
 import { FeeEstimationFailed } from "../errors";
 
 export type Block = { height: BigNumber }; // TODO more fields actually
 
 export type Tx = {
   hash: string,
-  received_at: string,
+  status?: BigNumber, // 0: fail, 1: success
+  received_at?: string,
   nonce: string,
   value: BigNumber,
   gas: BigNumber,
   gas_price: BigNumber,
-  cumulative_gas_used: BigNumber,
-  gas_used: BigNumber,
   from: string,
   to: string,
-  input: string,
-  index: BigNumber,
+  input?: string,
+  cumulative_gas_used?: BigNumber,
+  gas_used?: BigNumber,
+  transfer_events?: {
+    list: Array<{
+      contract: string,
+      from: string,
+      to: string,
+      count: BigNumber,
+      decimal?: number,
+      symbol?: string,
+    }>,
+    truncated: boolean,
+  },
+  actions?: Array<{
+    from: string,
+    to: string,
+    value: BigNumber,
+    input?: string,
+    gas?: BigNumber,
+    gas_used?: BigNumber,
+  }>,
   block?: {
     hash: string,
     height: BigNumber,
     time: string,
   },
-  confirmations: BigNumber,
-  status: BigNumber,
 };
+
+export type ERC20BalancesInput = Array<{
+  address: string,
+  contract: string,
+}>;
+
+export type ERC20BalanceOutput = Array<{
+  address: string,
+  contract: string,
+  balance: BigNumber,
+}>;
 
 export type API = {
   getTransactions: (
     address: string,
-    blockHash: ?string
+    block_hash: ?string,
+    batch_size?: number
   ) => Promise<{
     truncated: boolean,
     txs: Tx[],
@@ -44,8 +74,13 @@ export type API = {
   getCurrentBlock: () => Promise<Block>,
   getAccountNonce: (address: string) => Promise<number>,
   broadcastTransaction: (signedTransaction: string) => Promise<string>,
+  getERC20Balances: (input: ERC20BalancesInput) => Promise<ERC20BalanceOutput>,
   getAccountBalance: (address: string) => Promise<BigNumber>,
   roughlyEstimateGasLimit: (address: string) => Promise<BigNumber>,
+  getERC20ApprovalsPerContract: (
+    owner: string,
+    contract: string
+  ) => Promise<Array<{ sender: string, value: string }>>,
   getDryRunGasLimit: (
     address: string,
     request: EthereumGasLimitRequest
@@ -60,30 +95,25 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     });
   }
   return {
-    async getTransactions(address, blockHash) {
+    async getTransactions(address, block_hash, batch_size = 2000) {
       let { data } = await network({
         method: "GET",
-        url: `${baseURL}/addresses/${address}/transactions`,
+        url: URL.format({
+          pathname: `${baseURL}/addresses/${address}/transactions`,
+          query: {
+            batch_size,
+            no_token: true,
+            block_hash,
+          },
+        }),
         transformResponse: JSONBigNumber.parse,
-        params:
-          getCurrencyExplorer(currency).version === "v2"
-            ? {
-                blockHash,
-                noToken: 1,
-              }
-            : {
-                batch_size: 2000,
-                no_token: true,
-                block_hash: blockHash,
-                partial: true,
-              },
       });
       // v3 have a bug that still includes the tx of the paginated block_hash, we're cleaning it up
-      if (blockHash && getCurrencyExplorer(currency).version === "v3") {
+      if (block_hash) {
         data = {
           ...data,
           txs: data.txs.filter(
-            (tx) => !tx.block || tx.block.hash !== blockHash
+            (tx) => !tx.block || tx.block.hash !== block_hash
           ),
         };
       }
@@ -125,10 +155,45 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       return BigNumber(data[0].balance);
     },
 
-    async roughlyEstimateGasLimit(address) {
-      if (getCurrencyExplorer(currency).version === "v2") {
-        return BigNumber(21000);
+    async getERC20Balances(input) {
+      const { data } = await network({
+        method: "POST",
+        url: `${baseURL}/erc20/balances`,
+        transformResponse: JSONBigNumber.parse,
+        data: input,
+      });
+      return data;
+    },
+
+    async getERC20ApprovalsPerContract(owner, contract) {
+      try {
+        const { data } = await network({
+          method: "GET",
+          url: URL.format({
+            pathname: `${baseURL}/erc20/approvals`,
+            query: {
+              owner,
+              contract,
+            },
+          }),
+        });
+        return data
+          .map((m: mixed) => {
+            if (!m || typeof m !== "object") return;
+            const { sender, value } = m;
+            if (typeof sender !== "string" || typeof value !== "string") return;
+            return { sender, value };
+          })
+          .filter(Boolean);
+      } catch (e) {
+        if (e.status === 404) {
+          return [];
+        }
+        throw e;
       }
+    },
+
+    async roughlyEstimateGasLimit(address) {
       const { data } = await network({
         method: "GET",
         url: `${baseURL}/addresses/${address}/estimate-gas-limit`,
@@ -138,9 +203,6 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     },
 
     async getDryRunGasLimit(address, request) {
-      if (getCurrencyExplorer(currency).version === "v2") {
-        return BigNumber(21000);
-      }
       const { data } = await network({
         method: "POST",
         url: `${baseURL}/addresses/${address}/estimate-gas-limit`,

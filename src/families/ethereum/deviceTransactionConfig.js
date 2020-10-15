@@ -2,23 +2,26 @@
 
 import type { DeviceTransactionField } from "../../transaction";
 import type { Account, AccountLike, TransactionStatus } from "../../types";
-import type { Transaction } from "../bitcoin/types";
+import type { Transaction } from "./types";
+import { modes } from "./modules";
 
-function getDeviceTransactionConfig({
-  status: { amount, estimatedFees },
-}: {
+function getDeviceTransactionConfig(input: {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
   status: TransactionStatus,
 }): Array<DeviceTransactionField> {
+  const {
+    transaction,
+    status: { estimatedFees },
+  } = input;
+
+  const m = modes[transaction.mode];
+
   const fields = [];
 
-  if (!amount.isZero()) {
-    fields.push({
-      type: "amount",
-      label: "Amount",
-    });
+  if (m && m.fillDeviceTransactionConfig) {
+    m.fillDeviceTransactionConfig(input, fields);
   }
 
   if (estimatedFees && !estimatedFees.isZero()) {
