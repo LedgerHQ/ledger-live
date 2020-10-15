@@ -3,6 +3,7 @@ import LogsViewer from "./logsviewer";
 import Derivations from "./derivations";
 import Currencies from "./Currencies";
 import bridgestream from "./bridgestream";
+import bridgetest from "./bridgetest";
 import qrstreambenchmark from "./qrstreambenchmark";
 import qrledger from "./qrledger";
 import explorers from "./explorers";
@@ -19,6 +20,7 @@ export default {
   Derivations,
   Currencies,
   bridgestream,
+  bridgetest,
   qrstreambenchmark,
   qrledger,
   explorers,
@@ -27,5 +29,5 @@ export default {
   assets,
   manager,
   lldSignature,
-  mcurepair
+  mcurepair,
 };

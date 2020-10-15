@@ -5,6 +5,7 @@
   "dependencies": {
     "@ledgerhq/cryptoassets": "5.26.0",
     "@ledgerhq/hw-transport": "^5.26.0",
+    "@ledgerhq/hw-transport-http": "^5.26.0",
     "@ledgerhq/hw-transport-u2f": "^5.26.0",
     "@ledgerhq/hw-transport-web-ble": "^5.26.0",
     "@ledgerhq/hw-transport-webhid": "^5.26.0",
