@@ -64,11 +64,11 @@
   },
   "dependencies": {
     "@ledgerhq/compressjs": "1.3.2",
-    "@ledgerhq/cryptoassets": "5.27.0",
+    "@ledgerhq/cryptoassets": "5.27.1",
     "@ledgerhq/devices": "5.26.0",
     "@ledgerhq/errors": "5.26.0",
     "@ledgerhq/hw-app-btc": "^5.26.0",
-    "@ledgerhq/hw-app-eth": "5.27.0",
+    "@ledgerhq/hw-app-eth": "5.27.1",
     "@ledgerhq/hw-app-str": "^5.26.0",
     "@ledgerhq/hw-app-trx": "5.26.0",
     "@ledgerhq/hw-app-xrp": "5.26.0",

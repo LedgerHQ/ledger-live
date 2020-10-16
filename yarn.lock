@@ -1244,10 +1244,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@5.27.0", "@ledgerhq/cryptoassets@^5.27.0":
-  version "5.27.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-5.27.0.tgz#6bc71a2bb4446f9a08c6733b74e19c8c39708424"
-  integrity sha512-d1yce05DV/eMIK6eAg5Y3qZ9B5LSjQyLjIsiq5R0Du5UjomcLoG0I5ivktLLAsYCSidQ1YQs6f2Ve/CCUNivbA==
+"@ledgerhq/cryptoassets@5.27.1", "@ledgerhq/cryptoassets@^5.27.1":
+  version "5.27.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-5.27.1.tgz#9bc2e822fb8ab954b81d6eb1fb2401fb0529c6f9"
+  integrity sha512-DGKTjJ/+rMBk+Hk+Pyr9PH5DVbPtpBoMsxxdLYvgdZ7HgEIOOxNFA4GK2QcWhadkaNApAzYqATIXGbR6NRjlyA==
   dependencies:
     invariant "2"
 
@@ -1278,12 +1278,12 @@
     semver "^7.3.2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.27.0":
-  version "5.27.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.27.0.tgz#d272fb0b75c47e790c4c2dcccbc61f3aa624ef85"
-  integrity sha512-H8FBHJ7wC5S7zhgo7keYhrVtKqRdEoGVmLQWPL/Jaz8Y1vRzdHH+zgYtQGHXmo3OELc7ZiIn8pzI2wepaOkQgQ==
+"@ledgerhq/hw-app-eth@5.27.1":
+  version "5.27.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.27.1.tgz#c442a643fd3032c02b8ca946b8bd185e155bc600"
+  integrity sha512-mR3NsHBQ5DKCutWZP00IrhRlYpOjgLbBVYM3NKr0P3q0LrcmYRpTp0JM3B3OSZF/6j4HwZDWVp2E/2GIksqZ8Q==
   dependencies:
-    "@ledgerhq/cryptoassets" "^5.27.0"
+    "@ledgerhq/cryptoassets" "^5.27.1"
     "@ledgerhq/errors" "^5.26.0"
     "@ledgerhq/hw-transport" "^5.26.0"
     bignumber.js "^9.0.1"
