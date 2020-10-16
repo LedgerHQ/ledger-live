@@ -24,7 +24,7 @@ export type Modes = "erc20.approve";
 const erc20approve: ModeModule = {
   fillTransactionStatus(a, t, result) {
     validateRecipient(a.currency, t.recipient, result);
-    if (!t.useAllAmount && result.amount.eq(0)) {
+    if (!t.useAllAmount && t.amount.eq(0)) {
       result.errors.amount = new AmountRequired();
     }
   },
