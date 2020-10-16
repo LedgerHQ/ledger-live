@@ -12,7 +12,7 @@ const ethereum = getCryptoCurrencyById("ethereum");
 
 async function main() {
   const api = apiForCurrency(ethereum);
-  const tokens = listTokensForCryptoCurrency(ethereum);
+  const tokens = listTokensForCryptoCurrency(ethereum, { withDelisted: true });
   const address = "0xabf06640f8ca8fc5e0ed471b10befcdf65a33e43";
   for (const c of chunk(tokens, 20)) {
     const balances = await api.getERC20Balances(
