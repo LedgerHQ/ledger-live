@@ -51,7 +51,7 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
 
   return status && transaction ? (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
-      <TrackScreen category="Swap" name="History" />
+      <TrackScreen category="Swap" name="Summary" />
       <SummaryBody
         exchange={exchange}
         exchangeRate={exchangeRate}
