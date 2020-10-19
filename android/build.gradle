@@ -6,6 +6,7 @@ buildscript {
         minSdkVersion = 24
         compileSdkVersion = 28
         targetSdkVersion = 28
+        kotlinVersion = "1.4.10"
     }
     repositories {
         jcenter()
