@@ -8,7 +8,6 @@ import qrstreambenchmark from "./qrstreambenchmark";
 import qrledger from "./qrledger";
 import explorers from "./explorers";
 import apps from "./apps";
-import erc20 from "./erc20";
 import assets from "./assets";
 import manager from "./manager";
 import lldSignature from "./lld-signature";
@@ -24,7 +23,6 @@ export default {
   qrstreambenchmark,
   qrledger,
   explorers,
-  erc20,
   apps,
   assets,
   manager,

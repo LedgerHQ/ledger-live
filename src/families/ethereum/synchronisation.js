@@ -79,6 +79,7 @@ export const getAccountShape: GetAccountShape = async (
   initialAccount?.subAccounts?.forEach((a) => {
     // in case of coming from libcore, we need to converge to new ids
     const { token } = decodeTokenAccountId(a.id);
+    if (!token) return;
     const id = encodeTokenAccountId(infoInput.id, token);
     subAccountsExisting[id] = a;
   });
@@ -99,7 +100,10 @@ export const getAccountShape: GetAccountShape = async (
       const existing = subAccountsExisting[id];
       const newOps = perTokenAccountIdOperations[id];
       const { accountId, token } = decodeTokenAccountId(id);
-      if (blacklistedTokenIds && blacklistedTokenIds.includes(token.id)) {
+      if (
+        !token ||
+        (blacklistedTokenIds && blacklistedTokenIds.includes(token.id))
+      ) {
         return null;
       }
       if (existing && !newOps) return existing;

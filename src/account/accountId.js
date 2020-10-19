@@ -3,7 +3,11 @@ import memoize from "lodash/memoize";
 import invariant from "invariant";
 import type { CryptoCurrency, DerivationMode, TokenCurrency } from "../types";
 import { asDerivationMode } from "../derivation";
-import { getCryptoCurrencyById, getTokenById } from "../currencies";
+import {
+  getCryptoCurrencyById,
+  findTokenById,
+  findTokenByAddress,
+} from "../currencies";
 
 export type AccountIdParams = {
   type: string,
@@ -44,9 +48,11 @@ export function encodeTokenAccountId(accountId: string, token: TokenCurrency) {
 
 export function decodeTokenAccountId(
   id: string
-): { accountId: string, token: TokenCurrency } {
+): { accountId: string, token: ?TokenCurrency } {
   const [accountId, tokenId] = id.split("+");
-  const token = getTokenById(decodeURIComponent(tokenId));
+  const decodedTokenId = decodeURIComponent(tokenId);
+  const token =
+    findTokenByAddress(decodedTokenId) || findTokenById(decodedTokenId);
   return { accountId, token };
 }
 

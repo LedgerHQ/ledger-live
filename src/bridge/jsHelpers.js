@@ -207,7 +207,7 @@ export const makeScanAccounts = (
 
       if (balance.isNaN()) throw new Error("invalid balance NaN");
 
-      const account: Account = {
+      const initialAccount: $Exact<Account> = {
         type: "Account",
         id: accountId,
         seedIdentifier,
@@ -226,6 +226,7 @@ export const makeScanAccounts = (
         currency,
         operationsCount,
         operations: [],
+        swapHistory: [],
         pendingOperations: [],
         unit: currency.units[0],
         lastSyncDate: new Date(),
@@ -234,6 +235,10 @@ export const makeScanAccounts = (
         balance,
         spendableBalance,
         blockHeight: 0,
+      };
+
+      const account = {
+        ...initialAccount,
         ...accountShape,
       };
 

@@ -49208,6 +49208,7 @@ Array [
     "spendableBalance": "0",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "unitMagnitude": 18,
   },
   Object {
@@ -49231,6 +49232,7 @@ Array [
     "spendableBalance": "185300007614899",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "unitMagnitude": 18,
   },
   Object {
@@ -49254,6 +49256,7 @@ Array [
     "spendableBalance": "21952336254527101",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "unitMagnitude": 18,
   },
   Object {
@@ -49277,6 +49280,7 @@ Array [
     "spendableBalance": "0",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "unitMagnitude": 18,
   },
 ]
@@ -70171,6 +70175,7 @@ Array [
     "spendableBalance": "0",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "tronResources": Object {
       "delegatedFrozen": Object {
         "bandwidth": undefined,
@@ -70444,6 +70449,7 @@ Array [
     "spendableBalance": "10006000",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "tronResources": Object {
       "delegatedFrozen": Object {
         "bandwidth": undefined,
@@ -70691,6 +70697,7 @@ Array [
     "spendableBalance": "0",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "tronResources": Object {
       "delegatedFrozen": Object {
         "bandwidth": undefined,
@@ -70756,6 +70763,7 @@ Array [
     "spendableBalance": "3000000",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "tronResources": Object {
       "delegatedFrozen": Object {
         "bandwidth": undefined,
@@ -70807,6 +70815,7 @@ Array [
     "spendableBalance": "2000000",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "tronResources": Object {
       "delegatedFrozen": Object {
         "bandwidth": undefined,
@@ -70872,6 +70881,7 @@ Array [
     "spendableBalance": "0",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "tronResources": Object {
       "delegatedFrozen": Object {
         "bandwidth": undefined,
@@ -70923,6 +70933,7 @@ Array [
     "spendableBalance": "40505000",
     "starred": false,
     "subAccounts": Array [],
+    "swapHistory": Array [],
     "tronResources": Object {
       "delegatedFrozen": Object {
         "bandwidth": undefined,
@@ -70987,6 +70998,7 @@ Array [
     "seedIdentifier": "04b335b4482e37137a335d302242fc5e450c16f9712665f25049646208779987fd6deaccb2444614ba4f5085ffe436b41314ace1bc553b7112b092fb6a2559935d",
     "spendableBalance": "0",
     "starred": false,
+    "swapHistory": Array [],
     "unitMagnitude": 6,
   },
 ]

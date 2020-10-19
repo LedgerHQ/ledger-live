@@ -3,6 +3,7 @@
 import type { Operation, TokenCurrency } from "../../types";
 import { libcoreBigIntToBigNumber } from "../../libcore/buildBigNumber";
 import type { CoreERC20LikeOperation } from "./types";
+import { encodeOperationId } from "../../operation";
 
 const OperationTypeMap = {
   "0": "OUT",
@@ -20,7 +21,7 @@ export async function buildERC20Operation(arg: {
 
   const operationType = await coreOperation.getOperationType();
   const type = OperationTypeMap[operationType];
-  const id = `${accountId}-${hash}-${type}`;
+  const id = encodeOperationId(accountId, hash, type);
 
   const coreValue = await coreOperation.getValue();
   const value = await libcoreBigIntToBigNumber(coreValue);

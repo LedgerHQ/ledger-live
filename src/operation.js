@@ -28,6 +28,21 @@ export function findOperationInAccount(
   return null;
 }
 
+export function encodeOperationId(
+  accountId: string,
+  hash: string,
+  type: string
+) {
+  return `${accountId}-${hash}-${type}`;
+}
+
+export function decodeOperationId(
+  id: string
+): { accountId: string, hash: string, type: string } {
+  const [accountId, hash, type] = id.split("-");
+  return { accountId, hash, type };
+}
+
 export function patchOperationWithHash(
   operation: Operation,
   hash: string
@@ -35,13 +50,13 @@ export function patchOperationWithHash(
   return {
     ...operation,
     hash,
-    id: `${operation.accountId}-${hash}-${operation.type}`,
+    id: encodeOperationId(operation.accountId, hash, operation.type),
     subOperations:
       operation.subOperations &&
       operation.subOperations.map((op) => ({
         ...op,
         hash,
-        id: `${op.accountId}-${hash}-${op.type}`,
+        id: encodeOperationId(op.accountId, hash, op.type),
       })),
   };
 }

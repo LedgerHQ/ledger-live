@@ -4,6 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { AlgorandOperationTypeEnum } from "./types";
 import type { Operation } from "../../types";
 import type { CoreOperation } from "../../libcore/types";
+import { encodeOperationId } from "../../operation";
 
 const OperationTypeMap = {
   "0": "OUT",
@@ -35,7 +36,7 @@ export async function buildASAOperation(arg: {
   }
   const operationType = await coreOperation.getOperationType();
   const type = OperationTypeMap[operationType];
-  const id = `${accountId}-${hash}-${type}`;
+  const id = encodeOperationId(accountId, hash, type);
 
   const blockHeight = parseInt(await transaction.getRound());
 
