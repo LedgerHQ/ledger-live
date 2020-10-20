@@ -1,10 +1,9 @@
 // @flow
 
-import React, { PureComponent, useCallback } from "react";
-import { View, StyleSheet, Linking } from "react-native";
+import React, { useCallback } from "react";
+import { StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
-import ExternalLink from "./ExternalLink";
 import { urls } from "../config/urls";
 import colors from "../colors";
 import Touchable from "./Touchable";
@@ -18,23 +17,28 @@ const HeaderErrorTitle = ({ error }: { error: Error }) => {
   }, [maybeLink]);
 
   return (
-    <Touchable style={styles.root} onPress={maybeLink ? onOpen : null}>
+    <Touchable
+      event="WarningBanner Press"
+      style={styles.root}
+      onPress={maybeLink ? onOpen : null}
+    >
       <LText style={styles.icon}>
         <Icon name="alert-octagon" size={16} color={colors.orange} />
       </LText>
-      <View style={styles.container}>
-        <LText secondary style={styles.description} numberOfLines={6}>
-          <TranslatedError error={error} field="description" />
-
-          {maybeLink ? (
-            <ExternalLink
-              event="BCH hardfork link"
-              text={<Trans i18nKey="common.learnMore" />}
-              color={colors.orange}
-            />
-          ) : null}
+      <LText style={styles.description}>
+        <LText secondary>
+          <TranslatedError error={error} field={"description"} />
         </LText>
-      </View>
+
+        {maybeLink ? (
+          <>
+            {" "}
+            <LText semiBold style={[styles.description, styles.learnMore]}>
+              <Trans i18nKey="common.learnMore" />
+            </LText>
+          </>
+        ) : null}
+      </LText>
     </Touchable>
   );
 };
@@ -51,7 +55,12 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 152, 79, 0.1);",
   },
 
-  container: {},
+  container: {
+    display: "flex",
+  },
+  learnMore: {
+    textDecorationLine: "underline",
+  },
   description: {
     fontSize: 14,
     lineHeight: 21,
