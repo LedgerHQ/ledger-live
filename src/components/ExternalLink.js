@@ -8,24 +8,32 @@ import colors from "../colors";
 
 type Props = {
   text: React$Node,
-  onPress: () => void | Promise<void>,
+  onPress?: () => void | Promise<void>,
   event: string,
   eventProperties?: Object,
   iconFirst?: boolean,
   ltextProps?: *,
+  color?: string,
 };
 
-const Link = ({ text, onPress, event, eventProperties, ltextProps }: Props) => (
+const Link = ({
+  text,
+  onPress,
+  event,
+  eventProperties,
+  ltextProps,
+  color = colors.live,
+}: Props) => (
   <Touchable
     event={event}
     eventProperties={eventProperties}
     onPress={onPress}
     style={styles.root}
   >
-    <LText semiBold style={styles.text} {...ltextProps}>
+    <LText semiBold style={[styles.text, { color }]} {...ltextProps}>
       {text}
     </LText>
-    <ExternalLink size={14} color={colors.live} />
+    <ExternalLink size={14} color={color} />
   </Touchable>
 );
 
@@ -38,7 +46,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 12,
     lineHeight: 18,
-    color: colors.live,
     paddingRight: 8,
   },
 });

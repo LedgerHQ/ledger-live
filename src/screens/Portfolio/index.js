@@ -11,9 +11,7 @@ import {
   groupAccountsOperationsByDay,
   isAccountEmpty,
 } from "@ledgerhq/live-common/lib/account";
-
 import colors from "../../colors";
-
 import {
   accountsSelector,
   flattenAccountsSelector,
