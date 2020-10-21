@@ -291,12 +291,6 @@ const getAccountShape = async (info, syncConfig) => {
   const acc = tronAcc[0];
   const spendableBalance = acc.balance ? BigNumber(acc.balance) : BigNumber(0);
 
-  const cacheTransactionInfoById = {
-    ...(info.initialAccount &&
-      info.initialAccount.tronResources &&
-      info.initialAccount.tronResources.cacheTransactionInfoById),
-  };
-
   const operationsPageSize = Math.min(
     1000,
     getOperationsPageSize(
@@ -309,15 +303,10 @@ const getAccountShape = async (info, syncConfig) => {
   // use minimalOperationsBuilderSync to reconciliate and KEEP REF
   const txs = await fetchTronAccountTxs(
     info.address,
-    (txs) => txs.length < operationsPageSize,
-    cacheTransactionInfoById
+    (txs) => txs.length < operationsPageSize
   );
 
-  const tronResources = await getTronResources(
-    acc,
-    txs,
-    cacheTransactionInfoById
-  );
+  const tronResources = await getTronResources(acc, txs);
 
   const balance = spendableBalance
     .plus(
