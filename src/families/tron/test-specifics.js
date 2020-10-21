@@ -56,8 +56,7 @@ export default () => {
     test("should not contain unsupported custom smart contract tx", async () => {
       const txs = await fetchTronAccountTxs(
         "TPvDn5oQ5uzhDnohWNhQeDu47GJYwxBpqj",
-        (txs) => txs.length < 1000,
-        {}
+        (txs) => txs.length < 1000
       );
 
       const unsupportedTxIds = [
