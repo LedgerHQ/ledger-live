@@ -1,7 +1,7 @@
 // @flow
 import { BigNumber } from "bignumber.js";
 import { findCompoundToken } from "../currencies";
-import type { TokenAccount, Account } from "../types";
+import type { TokenAccount, Account, Operation } from "../types";
 import type {
   CompoundAccountSummary,
   ClosedLoansHistory,
@@ -85,6 +85,9 @@ export function getAccountCapabilities(
     status,
   };
 }
+
+export const getEnablingOp = (account: TokenAccount): ?Operation =>
+  account.pendingOperations.find((op) => op.extra?.approving);
 
 const calcInterests = (
   value: BigNumber,
