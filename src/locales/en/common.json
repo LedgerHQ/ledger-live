@@ -1043,6 +1043,10 @@
     "github": {
       "title": "Github",
       "desc": "Review our code"
+    },
+    "status": {
+      "title": "Ledger Status",
+      "desc": "Check our system status"
     }
   },
   "settings": {

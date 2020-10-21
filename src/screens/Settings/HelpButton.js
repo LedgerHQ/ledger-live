@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TouchableOpacity, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
+import Icon from "react-native-vector-icons/dist/Feather";
 import IconQuestion from "../../icons/Question";
 import colors from "../../colors";
 import type { Props as ModalProps } from "../../components/BottomModal";
@@ -71,6 +72,15 @@ function CreateModal({ isOpened, onClose }: ModalProps) {
         description={t("help.github.desc")}
         onPress={() => Linking.openURL("https://github.com/LedgerHQ")}
         Icon={IconGithub}
+      />
+      <BottomModalChoice
+        event="HelpLedgerStatus"
+        title={t("help.status.title")}
+        description={t("help.status.desc")}
+        onPress={() => Linking.openURL("https://status.ledger.com")}
+        Icon={({ size, color }) => (
+          <Icon name="activity" color={color} size={size} />
+        )}
       />
     </BottomModal>
   );
