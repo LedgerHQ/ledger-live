@@ -167,9 +167,7 @@ export const broadcastTron = async (
 
 export async function fetchTronAccount(addr: string) {
   try {
-    const data = await fetch(
-      `${getBaseApiUrl()}/v1/accounts/${addr}?vote_tx=true`
-    );
+    const data = await fetch(`${getBaseApiUrl()}/v1/accounts/${addr}`);
     return data.data;
   } catch (e) {
     return [];
