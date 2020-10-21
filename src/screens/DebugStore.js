@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useCallback, PureComponent } from "react";
+import { BigNumber } from "bignumber.js";
 import { Text, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import NavigationScrollView from "../components/NavigationScrollView";
@@ -72,6 +73,7 @@ export default function DebugStore() {
     The store will now have your changes
   */
   const onStoreDebug = useCallback(() => {
+    window.BigNumber = BigNumber; //NB expose BigNumber to be able to modify the state easier
     // eslint-disable-next-line prefer-const
     let override = false;
     const appState = state;
