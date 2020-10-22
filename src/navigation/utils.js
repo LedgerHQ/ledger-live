@@ -49,7 +49,7 @@ function scrollSectionListToTop(compRef: React$Node): void {
   compRef.scrollToLocation({
     itemIndex: 0,
     sectionIndex: 0,
-    // Set big enough offset umber for unfixed header hight
+    // Set big enough offset number for unfixed header height
     viewOffset: 1000,
   });
 }

@@ -86,6 +86,7 @@ export type SettingsState = {
   hasAvailableUpdate: boolean,
   hasAcceptedSwapKYC: boolean,
   swapProviders?: AvailableProvider[],
+  carouselVisibility: number,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -109,6 +110,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   hasAcceptedSwapKYC: false,
   swapProviders: [],
+  carouselVisibility: 0,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -278,6 +280,10 @@ const handlers: Object = {
     ...state,
     swapProviders,
   }),
+  SETTINGS_SET_CAROUSEL_VISIBILITY: (state: AppState, { payload }) => ({
+    ...state,
+    carouselVisibility: payload,
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -416,6 +422,9 @@ export const hasAvailableUpdateSelector = (state: State) =>
 
 export const swapProvidersSelector = (state: State) =>
   state.settings.swapProviders;
+
+export const carouselVisibilitySelector = (state: State) =>
+  state.settings.carouselVisibility;
 
 export const swapSupportedCurrenciesSelector: OutputSelector<
   State,

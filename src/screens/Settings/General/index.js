@@ -6,6 +6,7 @@ import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
 import ReportErrorsRow from "./ReportErrorsRow";
 import AnalyticsRow from "./AnalyticsRow";
+import CarouselRow from "./CarouselRow";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 
 export default function GeneralSettings() {
@@ -16,6 +17,7 @@ export default function GeneralSettings() {
       <AuthSecurityToggle />
       <ReportErrorsRow />
       <AnalyticsRow />
+      <CarouselRow />
     </NavigationScrollView>
   );
 }

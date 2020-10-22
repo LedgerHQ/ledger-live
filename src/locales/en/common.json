@@ -602,6 +602,46 @@
     "month": "1M",
     "year": "1Y"
   },
+  "carousel": {
+    "title": "Close banner?",
+    "description": "We'll inform you of any new announcements.",
+    "confirm": "Confirm",
+    "undo": "Undo",
+    "banners": {
+      "academy": {
+        "title": "Ledger Academy",
+        "description": "Everything you need to know about blockchain"
+      },
+      "stakeCosmos": {
+        "title": "Stake COSMOS",
+        "description": "Delegate your ATOM earn rewards today."
+      },
+      "backupPack": {
+        "title": "Back-up pack",
+        "description": "Secure your assets with a Nano X and Nano S."
+      },
+      "buyCrypto": {
+        "title": "Buy Crypto",
+        "description": "Buy cryptocurrencies from Ledger Live."
+      },
+      "swap": {
+        "title": "Swap crypto",
+        "description": "Securely exchange one crypto for another."
+      },
+      "algorand": {
+        "title": "Algorand",
+        "description": "Earn ALGO rewards with each transaction."
+      },
+      "sell": {
+        "title": "Sell crypto",
+        "description": "Sell Bitcoin directly from Ledger Live."
+      },
+      "vote": {
+        "title": "Vote with your ledger",
+        "description": "Vote directly from your Ledger Wallet."
+      }
+    }
+  },
   "onboarding": {
     "stepCount": "{{current}} of {{total}}",
     "stepsTitles": {
@@ -1054,6 +1094,8 @@
     "display": {
       "title": "General",
       "desc": "Configure general Ledger Live settings.",
+      "carousel": "Carousel visibility",
+      "carouselDesc": "Enable visibility of the carousel on Portfolio",
       "language": "Display language",
       "languageDesc": "Set the language displayed in Ledger Live.",
       "password": "Password lock",
@@ -2436,6 +2478,7 @@
       "tabTitle": "History"
     }
   },
+  
   "banner": {
     "exchangeBuyCrypto": {
       "title": "BUY CRYPTO",
