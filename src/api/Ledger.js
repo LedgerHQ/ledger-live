@@ -3,6 +3,7 @@
 import invariant from "invariant";
 import type { CryptoCurrency } from "../types";
 import { getEnv } from "../env";
+import { explorerConfig } from "./explorerConfig";
 
 type LedgerExplorer = {
   version: string,
@@ -13,20 +14,15 @@ type LedgerExplorer = {
 export const findCurrencyExplorer = (
   currency: CryptoCurrency
 ): ?LedgerExplorer => {
-  const exp = getEnv("EXPERIMENTAL_EXPLORERS");
-  const idV2 = ledgerExplorersV2[currency.id];
-  const idV3 = ledgerExplorersV3[currency.id];
-  const explorer = getEnv("EXPLORER");
-  if (idV3 && (exp || !idV2)) {
-    return {
-      endpoint: explorer,
-      id: idV3,
-      version: "v3",
-    };
+  const config = explorerConfig[currency.id];
+  if (!config) return;
+  const { id } = config;
+  if (config.experimental && getEnv("EXPERIMENTAL_EXPLORERS")) {
+    const { base, version } = config.experimental;
+    return { endpoint: getEnv(base), id, version };
   }
-  if (idV2) {
-    return { endpoint: explorer, id: idV2, version: "v2" };
-  }
+  const { base, version } = config.stable;
+  return { endpoint: getEnv(base), id, version };
 };
 
 export const hasCurrencyExplorer = (currency: CryptoCurrency): boolean =>
@@ -38,42 +34,6 @@ export const getCurrencyExplorer = (
   const res = findCurrencyExplorer(currency);
   invariant(res, `no Ledger explorer for ${currency.id}`);
   return res;
-};
-
-const ledgerExplorersV2 = {
-  bitcoin: "btc",
-  bitcoin_cash: "abc",
-  bitcoin_gold: "btg",
-  clubcoin: "club",
-  dash: "dash",
-  decred: "dcr",
-  digibyte: "dgb",
-  dogecoin: "doge",
-  hcash: "hsr",
-  komodo: "kmd",
-  litecoin: "ltc",
-  peercoin: "ppc",
-  pivx: "pivx",
-  poswallet: "posw",
-  qtum: "qtum",
-  stakenet: "xsn",
-  stratis: "strat",
-  stealthcoin: "xst",
-  vertcoin: "vtc",
-  viacoin: "via",
-  zcash: "zec",
-  zencash: "zen",
-  bitcoin_testnet: "btc_testnet",
-};
-
-const ledgerExplorersV3 = {
-  bitcoin: "btc",
-  bitcoin_testnet: "btc_testnet",
-  ethereum: "eth",
-  ethereum_ropsten: "eth_ropsten",
-  ethereum_classic: "etc",
-  litecoin: "ltc",
-  // tezos: "xtz"
 };
 
 export const blockchainBaseURL = (currency: CryptoCurrency): string => {
