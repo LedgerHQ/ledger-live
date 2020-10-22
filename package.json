@@ -19,10 +19,10 @@
     "jest": "rimraf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
     "test": "yarn jest",
     "ci-lint": "yarn lint && yarn flow",
-    "ci-test-common": "EXPERIMENTAL_EXPLORERS=1 yarn test --ci --updateSnapshot && git diff --exit-code src",
+    "ci-test-common": "cross-env EXPERIMENTAL_EXPLORERS=1 yarn test --ci --updateSnapshot && git diff --exit-code src",
     "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
     "ci-test-cli": "cd cli && yarn test",
-    "ci-test-bot": "EXPERIMENTAL_EXPLORERS=1 yarn jest --testMatch '**/*.bot.js'"
+    "ci-test-bot": "cross-env EXPERIMENTAL_EXPLORERS=1 yarn jest --testMatch '**/*.bot.js'"
   },
   "files": [
     "lib",
