@@ -19,6 +19,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
           {
             ...account.unit,
             code: account.currency.deviceTicker || account.unit.code,
+            prefixCode: false,
           },
           status.amount,
           {
