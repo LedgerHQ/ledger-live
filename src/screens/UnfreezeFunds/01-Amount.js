@@ -1,7 +1,7 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
@@ -148,12 +148,18 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     });
   }, [account, navigation, transaction, status]);
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
   const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
     if (parent) parent.goBack();
   }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [bridge, setTransaction, transaction]);
@@ -288,7 +294,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
       </SafeAreaView>
 
       <GenericErrorBottomModal
-        error={bridgeError}
+        error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>

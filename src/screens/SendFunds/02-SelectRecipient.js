@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/lib/bridge/react";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
-import React, { useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Platform, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
@@ -88,12 +88,18 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
   const clear = useCallback(() => onChangeText(""), [onChangeText]);
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
   const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
     if (parent) parent.goBack();
   }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
     if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
@@ -186,7 +192,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       </SafeAreaView>
 
       <GenericErrorBottomModal
-        error={bridgeError}
+        error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>

@@ -1,7 +1,7 @@
 /* @flow */
 import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
@@ -156,12 +156,18 @@ export default function VoteCast({ route, navigation }: Props) {
     });
   }, [account, navigation, transaction, status]);
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
   const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
     if (parent) parent.goBack();
   }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, transaction, bridge]);
@@ -246,7 +252,7 @@ export default function VoteCast({ route, navigation }: Props) {
       ) : null}
 
       <GenericErrorBottomModal
-        error={bridgeError}
+        error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>

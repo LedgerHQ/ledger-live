@@ -1,7 +1,7 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -126,12 +126,18 @@ export default function FreezeAmount({ navigation, route }: Props) {
     });
   }, [account, navigation, transaction, status]);
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
   const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
     if (parent) parent.goBack();
   }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
     if (!transaction) return;
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, transaction, bridge]);
@@ -309,7 +315,7 @@ export default function FreezeAmount({ navigation, route }: Props) {
       />
 
       <GenericErrorBottomModal
-        error={bridgeError}
+        error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
