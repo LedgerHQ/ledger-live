@@ -1,13 +1,21 @@
 /* @flow */
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+
 import {
-  accountsSelector,
-  flattenAccountsSelector,
-} from "../../reducers/accounts";
+  accountWithMandatoryTokens,
+  flattenAccounts,
+} from "@ledgerhq/live-common/lib/account/helpers";
+import type {
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
+import type { SearchResult } from "../../helpers/formatAccountSearchResults";
+
+import { accountsSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -16,23 +24,54 @@ import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import KeyboardView from "../../components/KeyboardView";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
-import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any,
-  route: { params?: { currency?: string } },
+  route: {
+    params?: {
+      currency?: string,
+      selectedCurrency?: CryptoCurrency | TokenCurrency,
+    },
+  },
 };
 
 export default function ReceiveFunds({ navigation, route }: Props) {
-  const allAccounts = useSelector(flattenAccountsSelector);
-  const accounts = useSelector(accountsSelector);
-  const keyExtractor = item => item.account.id;
+  const { selectedCurrency, currency: initialCurrencySelected } =
+    route.params || {};
 
-  const { params } = route;
-  const initialCurrencySelected = params?.currency;
+  const accounts = useSelector(accountsSelector);
+  const enhancedAccounts = useMemo(() => {
+    if (selectedCurrency) {
+      const filteredAccounts = accounts.filter(
+        acc =>
+          acc.currency.id ===
+          (selectedCurrency.type === "TokenCurrency"
+            ? selectedCurrency.parentCurrency.id
+            : selectedCurrency.id),
+      );
+      if (selectedCurrency.type === "TokenCurrency") {
+        // add in the token subAccount if it does not exist
+        return flattenAccounts(
+          filteredAccounts.map(acc => {
+            return accountWithMandatoryTokens(acc, [selectedCurrency]);
+          }),
+        ).filter(
+          acc =>
+            acc.type === "Account" ||
+            (acc.type === "TokenAccount" &&
+              acc.token.id === selectedCurrency.id),
+        );
+      }
+      return flattenAccounts(filteredAccounts);
+    }
+    return flattenAccounts(accounts);
+  }, [accounts, selectedCurrency]);
+  const allAccounts = enhancedAccounts;
+
+  const keyExtractor = item => item.account.id;
 
   const renderItem = useCallback(
     ({ item: result }: { item: SearchResult }) => {
@@ -47,6 +86,7 @@ export default function ReceiveFunds({ navigation, route }: Props) {
             style={styles.card}
             onPress={() => {
               navigation.navigate(ScreenName.ReceiveConnectDevice, {
+                account,
                 accountId: account.id,
                 parentId:
                   account.type !== "Account" ? account.parentId : undefined,

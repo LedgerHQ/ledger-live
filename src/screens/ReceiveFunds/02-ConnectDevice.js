@@ -10,6 +10,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 
@@ -35,8 +36,9 @@ type Props = {
 };
 
 type RouteParams = {
+  account: AccountLike,
   accountId: string,
-  parentId: string,
+  parentId?: string,
   title: string,
 };
 
@@ -44,7 +46,8 @@ const action = createAction(connectApp);
 
 export default function ConnectDevice({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account } = route.params;
+  const { parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<?Device>();
 

@@ -9,7 +9,11 @@ import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
 import ReactNativeModal from "react-native-modal";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  TokenAccount,
+  AccountLike,
+} from "@ledgerhq/live-common/lib/types";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -54,6 +58,7 @@ type Props = {
 };
 
 type RouteParams = {
+  account: AccountLike,
   accountId: string,
   modelId: DeviceModelId,
   wired: boolean,
@@ -61,7 +66,8 @@ type RouteParams = {
 };
 
 export default function ReceiveConfirmation({ navigation, route }: Props) {
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const { account } = route.params;
+  const { parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const [verified, setVerified] = useState(false);
