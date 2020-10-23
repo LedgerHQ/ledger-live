@@ -26,6 +26,7 @@ const defaultFormatOptions = {
   subMagnitude: 0,
   // discrete mode will hide amounts
   discreet: false,
+  joinFragmentsSeparator: "",
 };
 
 type FormatFragment =
@@ -134,7 +135,10 @@ export function formatCurrencyUnit(
   value: BigNumber,
   options?: $Shape<typeof defaultFormatOptions>
 ): string {
+  const joinFragmentsSeparator =
+    (options && options.joinFragmentsSeparator) ||
+    defaultFormatOptions.joinFragmentsSeparator;
   return formatCurrencyUnitFragment(unit, value, options)
     .map((f) => f.value)
-    .join("");
+    .join(joinFragmentsSeparator);
 }
