@@ -12,8 +12,11 @@ import {
   NotEnoughBalanceInParentAccount,
   AmountRequired,
 } from "@ledgerhq/errors";
-import { validateRecipient } from "../customAddressValidation";
-import { inferTokenAccount, getGasLimit } from "../transaction";
+import {
+  inferTokenAccount,
+  getGasLimit,
+  validateRecipient,
+} from "../transaction";
 
 export type Modes = "send";
 
@@ -107,6 +110,7 @@ const send: ModeModule = {
     const subAccount = inferTokenAccount(a, t);
     if (subAccount) {
       // ERC20 transfer
+      op.type = "FEES";
       op.subOperations = [
         {
           id: `${subAccount.id}-${op.hash}-OUT`,

@@ -9,17 +9,75 @@ import type {
 } from "./types";
 import Common from "ethereumjs-common";
 import { Transaction as EthereumTx } from "ethereumjs-tx";
+import eip55 from "eip55";
+import {
+  InvalidAddress,
+  ETHAddressNonEIP,
+  RecipientRequired,
+} from "@ledgerhq/errors";
 import {
   fromTransactionCommonRaw,
   toTransactionCommonRaw,
 } from "../../transaction/common";
-import type { Account } from "../../types";
+import type { CryptoCurrency, TransactionStatus, Account } from "../../types";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { apiForCurrency } from "../../api/Ethereum";
 import { makeLRUCache } from "../../cache";
 import { getEnv } from "../../env";
 import { modes } from "./modules";
+import { fromRangeRaw, toRangeRaw } from "../../range";
+
+export function isRecipientValid(currency: CryptoCurrency, recipient: string) {
+  if (!recipient.match(/^0x[0-9a-fA-F]{40}$/)) return false;
+
+  // To handle non-eip55 addresses we stop validation here if we detect
+  // address is either full upper or full lower.
+  // see https://github.com/LedgerHQ/ledger-live-desktop/issues/1397
+  const slice = recipient.substr(2);
+  const isFullUpper = slice === slice.toUpperCase();
+  const isFullLower = slice === slice.toLowerCase();
+  if (isFullUpper || isFullLower) return true;
+
+  try {
+    return eip55.verify(recipient);
+  } catch (error) {
+    return false;
+  }
+}
+
+// Returns a warning if we detect a non-eip address
+export function getRecipientWarning(
+  currency: CryptoCurrency,
+  recipient: string
+) {
+  if (!recipient.match(/^0x[0-9a-fA-F]{40}$/)) return null;
+  const slice = recipient.substr(2);
+  const isFullUpper = slice === slice.toUpperCase();
+  const isFullLower = slice === slice.toLowerCase();
+  if (isFullUpper || isFullLower) {
+    return new ETHAddressNonEIP();
+  }
+  return null;
+}
+
+export function validateRecipient(
+  currency: CryptoCurrency,
+  recipient: string,
+  { errors, warnings }: TransactionStatus
+) {
+  let recipientWarning = getRecipientWarning(currency, recipient);
+  if (recipientWarning) {
+    warnings.recipient = recipientWarning;
+  }
+  if (!recipient) {
+    errors.recipient = new RecipientRequired("");
+  } else if (!isRecipientValid(currency, recipient)) {
+    errors.recipient = new InvalidAddress("", {
+      currencyName: currency.name,
+    });
+  }
+}
 
 export const formatTransaction = (
   t: Transaction,
@@ -69,7 +127,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     feeCustomUnit: tr.feeCustomUnit, // FIXME this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: BigNumber(networkInfo.gasPrice),
+      gasPrice: fromRangeRaw(networkInfo.gasPrice),
     },
   };
 };
@@ -91,7 +149,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     feeCustomUnit: t.feeCustomUnit, // FIXME drop?
     networkInfo: networkInfo && {
       family: networkInfo.family,
-      gasPrice: networkInfo.gasPrice.toString(),
+      gasPrice: toRangeRaw(networkInfo.gasPrice),
     },
   };
 };
@@ -222,7 +280,7 @@ export const estimateGasLimit: (
       .then((value) =>
         value.eq(21000) // regular ETH send should not be amplified
           ? value
-          : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER"))
+          : value.times(getEnv("ETHEREUM_GAS_LIMIT_AMPLIFIER")).integerValue()
       )
       .catch(() => api.roughlyEstimateGasLimit(addr));
   },

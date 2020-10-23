@@ -22,16 +22,12 @@ import type { ModeModule } from "../types";
 import {
   getTokenById,
   findCompoundToken,
-  findTokenByAddress,
-  findTokenById,
   formatCurrencyUnit,
 } from "../../../currencies";
 import network from "../../../network";
 import { promiseAllBatched } from "../../../promise";
-import { getEnv } from "../../../env";
 import { mergeOps } from "../../../bridge/jsHelpers";
 import { apiForCurrency } from "../../../api/Ethereum";
-import type { Transaction } from "../types";
 import { inferTokenAccount } from "../transaction";
 
 const compoundWhitelist = [
@@ -50,15 +46,11 @@ export function isCompoundTokenSupported(token: TokenCurrency): boolean {
 
 export type Modes = "compound.supply" | "compound.withdraw";
 
-export function contractField(transaction: Transaction) {
-  const recipientToken = findTokenByAddress(transaction.recipient);
-  const maybeCompoundToken = findTokenById(recipientToken?.compoundFor || "");
+function contractField(ctoken) {
   return {
     type: "text",
-    label: maybeCompoundToken ? "Contract" : "Address",
-    value: maybeCompoundToken
-      ? "Compound " + maybeCompoundToken.ticker
-      : transaction.recipient,
+    label: "Contract",
+    value: "Compound " + ctoken.ticker,
   };
 }
 
@@ -111,7 +103,7 @@ const compoundSupply: ModeModule = {
       }),
     });
 
-    fields.push(contractField(transaction));
+    fields.push(contractField(ctoken));
   },
   fillOptimisticOperation(a, t, op) {
     const subAccount = inferTokenAccount(a, t);
@@ -132,7 +124,7 @@ const compoundSupply: ModeModule = {
           blockHash: null,
           blockHeight: null,
           senders: op.senders,
-          recipients: [t.recipient],
+          recipients: op.recipients,
           accountId: subAccount.id,
           date: new Date(),
           extra: {
@@ -166,7 +158,7 @@ const compoundWithdraw: ModeModule = {
       compoundBalance.eq(0) ||
       (!t.useAllAmount && t.amount.gt(nonSpendableBalance))
     ) {
-      result.errors.amount = new NotEnoughBalance(); // FIXME new error? not enough to redeem?!
+      result.errors.amount = new NotEnoughBalance();
     }
   },
   fillTransactionData(a, t, tx) {
@@ -219,7 +211,7 @@ const compoundWithdraw: ModeModule = {
       value,
     });
 
-    fields.push(contractField(transaction));
+    fields.push(contractField(ctoken));
   },
   fillOptimisticOperation(a, t, op) {
     const subAccount = inferTokenAccount(a, t);
@@ -245,7 +237,7 @@ const compoundWithdraw: ModeModule = {
           blockHash: null,
           blockHeight: null,
           senders: op.senders,
-          recipients: [t.recipient],
+          recipients: op.recipients,
           accountId: subAccount.id,
           date: new Date(),
           extra: {
@@ -320,7 +312,7 @@ export function findCurrentRate(tokenOrCtoken: TokenCurrency): ?CurrentRate {
 export async function preload(
   currency: CryptoCurrency
 ): Promise<?CompoundPreloaded> {
-  if (currency.id !== "ethereum" || !getEnv("COMPOUND")) {
+  if (currency.id !== "ethereum") {
     return Promise.resolve();
   }
   const ctokens = listSupportedCompoundTokens();
@@ -340,7 +332,7 @@ export function prepareTokenAccounts(
   currency: CryptoCurrency,
   subAccounts: TokenAccount[]
 ): TokenAccount[] {
-  if (currency.id !== "ethereum" || !getEnv("COMPOUND")) return subAccounts;
+  if (currency.id !== "ethereum") return subAccounts;
 
   const compoundByTokenId = inferSubAccountsCompound(currency, subAccounts);
 
@@ -383,7 +375,7 @@ export async function digestTokenAccounts(
   subAccounts: TokenAccount[],
   address: string
 ): Promise<TokenAccount[]> {
-  if (currency.id !== "ethereum" || !getEnv("COMPOUND")) return subAccounts;
+  if (currency.id !== "ethereum") return subAccounts;
 
   const compoundByTokenId = inferSubAccountsCompound(currency, subAccounts);
   if (Object.keys(compoundByTokenId).length === 0) return subAccounts;

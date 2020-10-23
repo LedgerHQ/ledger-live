@@ -7,10 +7,21 @@ import eip55 from "eip55";
 import { BigNumber } from "bignumber.js";
 import type { ModeModule } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
-import { validateRecipient } from "../customAddressValidation";
-import { inferTokenAccount } from "../transaction";
+import { inferTokenAccount, validateRecipient } from "../transaction";
 import { getAccountCurrency } from "../../../account";
-import { contractField } from "./compound";
+import { findTokenByAddress, findTokenById } from "../../../currencies";
+
+function contractField(transaction) {
+  const recipientToken = findTokenByAddress(transaction.recipient);
+  const maybeCompoundToken = findTokenById(recipientToken?.compoundFor || "");
+  return {
+    type: "text",
+    label: maybeCompoundToken ? "Contract" : "Address",
+    value: maybeCompoundToken
+      ? "Compound " + maybeCompoundToken.ticker
+      : transaction.recipient,
+  };
+}
 
 export type Modes = "erc20.approve";
 
@@ -77,6 +88,7 @@ const erc20approve: ModeModule = {
   },
 
   fillOptimisticOperation(_account, _transaction, operation) {
+    operation.type = "FEES";
     operation.extra = {
       ...operation.extra,
       approving: true, // workaround to track the status ENABLING

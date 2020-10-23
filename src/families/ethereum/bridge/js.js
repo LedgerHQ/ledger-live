@@ -28,7 +28,8 @@ import { getAccountShape } from "../synchronisation";
 import { preload, hydrate } from "../modules";
 import { signOperation } from "../signOperation";
 import { modes } from "../modules";
-import postSyncPatch from "../libcore-postSyncPatch";
+import postSyncPatch from "../postSyncPatch";
+import { inferDynamicRange } from "../../../range";
 
 const receive = makeAccountBridgeReceive();
 
@@ -101,20 +102,41 @@ const getTransactionStatus = (a, t) => {
   return Promise.resolve(result);
 };
 
-const getNetworkInfo = async (c) => {
+const getNetworkInfoByOneGasPrice = async (c) => {
   const { gas_price } = await getEstimatedFees(c);
-  return { family: "ethereum", gasPrice: BigNumber(gas_price) };
+  const initial = BigNumber(gas_price);
+  const gasPrice = inferDynamicRange(initial);
+  return { family: "ethereum", gasPrice };
 };
+
+const getNetworkInfoByGasTrackerBarometer = async (c) => {
+  const api = apiForCurrency(c);
+  const { low, high } = await api.getGasTrackerBarometer();
+  const minValue = low;
+  const maxValue = high.lte(low) ? low.times(2) : high;
+  const initial = minValue.plus(maxValue.minus(minValue).times(0.2));
+  const gasPrice = inferDynamicRange(initial, { minValue, maxValue });
+  return { family: "ethereum", gasPrice };
+};
+
+const getNetworkInfo = (c) =>
+  getNetworkInfoByGasTrackerBarometer(c).catch((e) => {
+    // TODO: drop this fallback when the API is 100% in production
+    if (e.status === 404) {
+      return getNetworkInfoByOneGasPrice(c);
+    }
+    throw e;
+  });
 
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   const networkInfo = t.networkInfo || (await getNetworkInfo(a.currency));
-  const gasPrice = t.gasPrice || networkInfo.gasPrice;
+  const gasPrice = t.gasPrice || networkInfo.gasPrice.initial;
 
   if (t.gasPrice !== gasPrice || t.networkInfo !== networkInfo) {
     t = { ...t, networkInfo, gasPrice };
   }
 
-  let estimatedGasLimit = BigNumber(21000); // fallback in case we can't calculate
+  let estimatedGasLimit;
   const request = inferEthereumGasLimitRequest(a, t);
   if (request.to) {
     estimatedGasLimit = await estimateGasLimit(a, request.to, request);

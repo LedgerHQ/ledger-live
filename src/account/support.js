@@ -21,7 +21,7 @@ import { getMainAccount } from "../account";
 import { getAccountBridge } from "../bridge";
 import jsBridges from "../generated/bridge/js";
 
-const experimentalIntegrations = ["ethereum"];
+const experimentalIntegrations = [];
 export function shouldUseJS(currency: CryptoCurrency) {
   const jsBridge = jsBridges[currency.family];
   if (!jsBridge) return false;

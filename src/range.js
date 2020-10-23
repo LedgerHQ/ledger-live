@@ -10,13 +10,47 @@ export type Range = {
   steps: number,
 };
 
+export type RangeRaw = {
+  initial: string,
+  min: string,
+  max: string,
+  step: string,
+  steps: number,
+};
+
+export function fromRangeRaw(r: RangeRaw): Range {
+  return {
+    initial: BigNumber(r.initial),
+    min: BigNumber(r.min),
+    max: BigNumber(r.max),
+    step: BigNumber(r.step),
+    steps: r.steps,
+  };
+}
+
+export function toRangeRaw(r: Range): RangeRaw {
+  return {
+    initial: r.initial.toString(),
+    min: r.min.toString(),
+    max: r.max.toString(),
+    step: r.step.toString(),
+    steps: r.steps,
+  };
+}
+
 const defaultOpts: InferDynamicRangeOpts = {
   minMult: 0.3,
   maxMult: 2,
   targetSteps: 20,
 };
 
-export type InferDynamicRangeOpts = typeof defaultOpts;
+export type InferDynamicRangeOpts = {
+  minMult: number,
+  maxMult: number,
+  targetSteps: number,
+  minValue?: BigNumber,
+  maxValue?: BigNumber,
+};
 
 // infer a range from ONE estimated fees value.
 // e.g. we just have a "gasPrice" and we want a slider to move a gas value around it.
@@ -26,9 +60,12 @@ export function inferDynamicRange(
   amount: BigNumber,
   opts: $Shape<InferDynamicRangeOpts> = {}
 ): Range {
-  const { minMult, maxMult, targetSteps } = { ...defaultOpts, ...opts };
-  const targetMin = amount.times(minMult);
-  const targetMax = amount.times(maxMult);
+  const { minMult, maxMult, targetSteps, minValue, maxValue } = {
+    ...defaultOpts,
+    ...opts,
+  };
+  const targetMin = minValue || amount.times(minMult);
+  const targetMax = maxValue || amount.times(maxMult);
   const step = findBestRangeStep(targetMin, targetMax, targetSteps);
   if (Number.isNaN(step) || step.lte(0)) {
     throw new Error("inferDynamicRange: invalid parameters");

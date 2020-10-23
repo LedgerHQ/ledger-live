@@ -9,6 +9,7 @@ import type { EthereumGasLimitRequest } from "../families/ethereum/types";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
 import { FeeEstimationFailed } from "../errors";
+import { makeLRUCache } from "../cache";
 
 export type Block = { height: BigNumber }; // TODO more fields actually
 
@@ -22,7 +23,6 @@ export type Tx = {
   gas_price: BigNumber,
   from: string,
   to: string,
-  input?: string,
   cumulative_gas_used?: BigNumber,
   gas_used?: BigNumber,
   transfer_events?: {
@@ -40,7 +40,6 @@ export type Tx = {
     from: string,
     to: string,
     value: BigNumber,
-    input?: string,
     gas?: BigNumber,
     gas_used?: BigNumber,
   }>,
@@ -85,6 +84,11 @@ export type API = {
     address: string,
     request: EthereumGasLimitRequest
   ) => Promise<BigNumber>,
+  getGasTrackerBarometer: () => Promise<{
+    low: BigNumber,
+    medium: BigNumber,
+    high: BigNumber,
+  }>,
 };
 
 export const apiForCurrency = (currency: CryptoCurrency): API => {
@@ -102,6 +106,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           pathname: `${baseURL}/addresses/${address}/transactions`,
           query: {
             batch_size,
+            noinput: true,
             no_token: true,
             block_hash,
           },
@@ -216,5 +221,21 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       invariant(!value.isNaN(), "invalid server data");
       return value;
     },
+
+    getGasTrackerBarometer: makeLRUCache(
+      async () => {
+        const { data } = await network({
+          method: "GET",
+          url: `${baseURL}/gastracker/barometer`,
+        });
+        return {
+          low: BigNumber(data.low),
+          medium: BigNumber(data.medium),
+          high: BigNumber(data.high),
+        };
+      },
+      () => "",
+      { maxAge: 30 * 1000 }
+    ),
   };
 };

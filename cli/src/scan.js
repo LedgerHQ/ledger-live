@@ -192,7 +192,7 @@ const prepareCurrency = (fn) => (observable) =>
         const bridge = getCurrencyBridge(maybeCurrency);
         return from(bridge.preload(maybeCurrency)).pipe(
           mergeMap((preloaded) => {
-            bridge.hydrate(preloaded);
+            bridge.hydrate(preloaded, maybeCurrency);
             return of(item);
           })
         );

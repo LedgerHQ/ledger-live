@@ -38,7 +38,7 @@ const expectedTokenAccount = (a) => {
 };
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["libcore", "mock", "js"],
+  implementations: ["mock", "js"],
   currencies: {
     ethereum: {
       scanAccounts: [ethereumScanAccounts1],

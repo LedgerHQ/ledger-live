@@ -11,7 +11,7 @@ Array [
 ]
 `;
 
-exports[`groupAccountOperationsByDay 1`] = `
+exports[`groupAccountOperationsByDay basic 1`] = `
 Object {
   "completed": false,
   "sections": Array [
@@ -209,7 +209,7 @@ Object {
 }
 `;
 
-exports[`groupAccountsOperationsByDay 1`] = `
+exports[`groupAccountOperationsByDay basic 2 1`] = `
 Object {
   "completed": false,
   "sections": Array [

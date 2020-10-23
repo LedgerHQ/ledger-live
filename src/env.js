@@ -84,11 +84,6 @@ const envDefinitions = {
     desc:
       "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
   },
-  COMPOUND: {
-    def: false,
-    parser: boolParser,
-    desc: "enable compound features",
-  },
   COSMOS_GAS_AMPLIFIER: {
     def: 4,
     parser: intParser,
@@ -132,7 +127,7 @@ const envDefinitions = {
     desc: "disable a problematic mechanism of our API",
   },
   ETHEREUM_GAS_LIMIT_AMPLIFIER: {
-    def: 2,
+    def: 1.2,
     parser: floatParser,
     desc:
       "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",

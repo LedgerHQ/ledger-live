@@ -24,6 +24,7 @@ const emptyDailyOperations = { sections: [], completed: true };
 type GroupOpsByDayOpts = {
   count: number,
   withSubAccounts?: boolean,
+  filterOperation?: (Operation, AccountLike) => boolean,
 };
 
 const hasStableOperation = (account, hash) =>
@@ -34,7 +35,7 @@ const hasStableOperation = (account, hash) =>
  */
 export function groupAccountsOperationsByDay(
   inputAccounts: AccountLikeArray,
-  { count, withSubAccounts }: GroupOpsByDayOpts
+  { count, withSubAccounts, filterOperation }: GroupOpsByDayOpts
 ): DailyOperations {
   const accounts = withSubAccounts
     ? flattenAccounts(inputAccounts)
@@ -50,7 +51,14 @@ export function groupAccountsOperationsByDay(
     for (let i = 0; i < accounts.length; i++) {
       const account = accounts[i];
       // look in operations
-      const op = account.operations[indexes[i]];
+      let op = account.operations[indexes[i]];
+      if (filterOperation) {
+        // skip operation we want to filter out
+        while (op && !filterOperation(op, account)) {
+          op = account.operations[++indexes[i]];
+        }
+      }
+
       if (op && (!bestOp || op.date > bestOp.date)) {
         bestOp = op;
         bestOpInfo = { accountI: i, fromPending: false };
@@ -59,8 +67,13 @@ export function groupAccountsOperationsByDay(
       // look in pending operations
       let opP = account.pendingOperations[indexesPending[i]];
 
-      // skip all pending operations that are already in operations
-      while (opP && hasStableOperation(account, opP.hash)) {
+      while (
+        opP &&
+        // skip all pending operations that are already in operations
+        (hasStableOperation(account, opP.hash) ||
+          // but also if we want to filter it
+          (filterOperation && !filterOperation(opP, account)))
+      ) {
         opP = account.pendingOperations[++indexesPending[i]];
       }
 

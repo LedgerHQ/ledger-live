@@ -41,22 +41,24 @@ export const getAccountShape: GetAccountShape = async (
       ? mostRecentStableOperation.blockHash
       : undefined;
 
-  const [txs, currentBlock, balance] = await Promise.all([
-    fetchAllTransactions(api, address, pullFromBlockHash),
-    fetchCurrentBlock(currency),
-    api.getAccountBalance(address),
-  ]);
+  const txsP = fetchAllTransactions(api, address, pullFromBlockHash);
+  const currentBlockP = fetchCurrentBlock(currency);
+  const balanceP = api.getAccountBalance(address);
+
+  const [txs, currentBlock] = await Promise.all([txsP, currentBlockP]);
 
   const blockHeight = currentBlock.height.toNumber();
 
   if (!pullFromBlockHash && txs.length === 0) {
     log("ethereum", "no ops on " + address);
     return {
-      balance,
+      balance: BigNumber(0),
       subAccounts: [],
       blockHeight,
     };
   }
+
+  const balance = await balanceP;
 
   // transform transactions into operations
   let newOps = flatMap(txs, txToOps(info));
@@ -135,7 +137,7 @@ export const getAccountShape: GetAccountShape = async (
 
   tokenAccounts = await prepareTokenAccounts(currency, tokenAccounts, address);
 
-  await loadERC20Balances(tokenAccounts, address, api);
+  tokenAccounts = await loadERC20Balances(tokenAccounts, address, api);
 
   tokenAccounts = await digestTokenAccounts(currency, tokenAccounts, address);
 
@@ -288,7 +290,7 @@ const txToOps = ({ address, id }) => (tx: Tx): Operation[] => {
   const ops = [];
 
   if (sending) {
-    const type = value.eq(0) && subOperations.length ? "FEES" : "OUT";
+    const type = value.eq(0) ? "FEES" : "OUT";
     ops.push({
       id: `${id}-${hash}-${type}`,
       hash,
@@ -397,19 +399,28 @@ async function loadERC20Balances(tokenAccounts, address, api) {
       address,
     }))
   );
-  tokenAccounts.forEach((a) => {
-    const r = erc20balances.find(
-      (b) =>
-        b.contract &&
-        b.balance &&
-        b.contract.toLowerCase() === a.token.contractAddress.toLowerCase()
-    );
-    // TODO: in case balance is not even found, the TokenAccount should be dropped because it likely means the token no longer is valid.
-    if (r && !a.balance.eq(r.balance)) {
-      a.balance = r.balance;
-      a.spendableBalance = r.balance;
-    }
-  });
+  return tokenAccounts
+    .map((a) => {
+      const r = erc20balances.find(
+        (b) =>
+          b.contract &&
+          b.balance &&
+          b.contract.toLowerCase() === a.token.contractAddress.toLowerCase()
+      );
+      if (!r) {
+        // when backend have failed in the balance, the TokenAccount should be dropped because it likely means the token no longer is valid.
+        return null;
+      }
+      if (!a.balance.eq(r.balance)) {
+        return {
+          ...a,
+          balance: r.balance,
+          spendableBalance: r.balance,
+        };
+      }
+      return a;
+    })
+    .filter(Boolean);
 }
 
 const SAFE_REORG_THRESHOLD = 80;
