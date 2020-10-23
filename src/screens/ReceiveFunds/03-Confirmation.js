@@ -58,7 +58,7 @@ type Props = {
 };
 
 type RouteParams = {
-  account: AccountLike,
+  account?: AccountLike,
   accountId: string,
   modelId: DeviceModelId,
   wired: boolean,
@@ -66,8 +66,7 @@ type RouteParams = {
 };
 
 export default function ReceiveConfirmation({ navigation, route }: Props) {
-  const { account } = route.params;
-  const { parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
   const [verified, setVerified] = useState(false);
