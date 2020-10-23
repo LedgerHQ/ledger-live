@@ -19,12 +19,13 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
           {
             ...account.unit,
             code: account.currency.deviceTicker || account.unit.code,
-            prefixCode: false,
+            prefixCode: true,
           },
           status.amount,
           {
             showCode: true,
             disableRounding: true,
+            joinFragmentsSeparator: " ",
           }
         ).replace(/\s/g, " "),
     },
@@ -36,11 +37,13 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
           {
             ...account.unit,
             code: account.currency.deviceTicker || account.unit.code,
+            prefixCode: true,
           },
           status.estimatedFees,
           {
             showCode: true,
             disableRounding: true,
+            joinFragmentsSeparator: " ",
           }
         ).replace(/\s/g, " "),
     },
