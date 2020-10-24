@@ -24,6 +24,7 @@ type Props = {
   withArrows?: boolean,
   usbOnly?: boolean,
   filter?: (transportModule: TransportModule) => boolean,
+  autoSelectOnAdd: boolean,
 };
 
 export default function SelectDevice({
@@ -32,6 +33,7 @@ export default function SelectDevice({
   filter = () => true,
   onSelect,
   onBluetoothDeviceAction,
+  autoSelectOnAdd,
 }: Props) {
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
@@ -39,8 +41,10 @@ export default function SelectDevice({
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
-    navigation.navigate(ScreenName.PairDevices);
-  }, [navigation]);
+    navigation.navigate(ScreenName.PairDevices, {
+      onDone: autoSelectOnAdd ? onSelect : null,
+    });
+  }, [autoSelectOnAdd, navigation, onSelect]);
 
   const renderItem = useCallback(
     (item: Device) => (

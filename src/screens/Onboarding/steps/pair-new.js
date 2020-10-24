@@ -72,7 +72,7 @@ export default function OnboardingStepPairNew() {
         withArrows
         usbOnly={usbOnly}
         deviceModelId={deviceModelId}
-        onSelect={setDevice}
+        onSelect={usbOnly ? setDevice : next}
         autoSelectOnAdd
       />
       <DeviceActionModal
