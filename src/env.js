@@ -201,7 +201,7 @@ const envDefinitions = {
     desc: "Ledger generic explorer API",
   },
   EXPLORER_BETA: {
-    def: "https://explorers.api-01.live.ledger-stg.com",
+    def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
     desc: "Ledger generic explorer beta API",
   },
