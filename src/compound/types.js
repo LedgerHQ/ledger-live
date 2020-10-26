@@ -17,9 +17,9 @@ export type CompoundNetworkInfo = {
 export type CompoundAccountStatus =
   | null
   | "ENABLING"
-  | "TO_SUPPLY"
+  | "INACTIVE"
   | "SUPPLYING"
-  | "SUPPLIED"; // NOTE: Not sure we need this
+  | "EARNING"; // NOTE: Not sure we need this
 
 type LoanInternal = {
   amountSupplied: BigNumber, // in account.token unit
