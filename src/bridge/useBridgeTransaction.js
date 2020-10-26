@@ -76,6 +76,17 @@ const reducer = (s: State, a): State => {
         const bridge = getAccountBridge(account, parentAccount);
         const subAccountId = account.type !== "Account" && account.id;
         let t = bridge.createTransaction(mainAccount);
+
+        if (
+          s.transaction &&
+          s.transaction.mode &&
+          s.transaction.mode !== t.mode
+        ) {
+          t = bridge.updateTransaction(t, {
+            mode: s.transaction.mode,
+          });
+        }
+
         if (subAccountId) {
           t = { ...t, subAccountId };
         }
