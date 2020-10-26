@@ -154,14 +154,18 @@ export const accountScreenSelector = (route: any) => (state: any) => {
   const parentAccount: ?Account =
     parentId && accountSelector(state, { accountId: parentId });
   let account: ?AccountLike = route.params.account;
-  if (parentAccount) {
-    const { subAccounts } = parentAccount;
-    if (subAccounts) {
-      account = subAccounts.find(t => t.id === accountId);
+
+  if (!account) {
+    if (parentAccount) {
+      const { subAccounts } = parentAccount;
+      if (subAccounts) {
+        account = subAccounts.find(t => t.id === accountId);
+      }
+    } else {
+      account = accountSelector(state, { accountId });
     }
-  } else {
-    account = accountSelector(state, { accountId });
   }
+
   return { parentAccount, account };
 };
 
