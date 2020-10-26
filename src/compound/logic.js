@@ -60,7 +60,7 @@ export function getAccountCapabilities(
   let status;
 
   if (canWithdraw) {
-    status = "SUPPLIED";
+    status = "EARNING";
   } else if (notEnabled) {
     if (enabling) {
       status = "ENABLING";
@@ -70,7 +70,7 @@ export function getAccountCapabilities(
   } else if (supplying) {
     status = "SUPPLYING";
   } else {
-    status = "TO_SUPPLY";
+    status = "INACTIVE";
   }
 
   return {
