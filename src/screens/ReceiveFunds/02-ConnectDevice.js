@@ -36,7 +36,7 @@ type Props = {
 };
 
 type RouteParams = {
-  account: AccountLike,
+  account?: AccountLike,
   accountId: string,
   parentId?: string,
   title: string,
@@ -46,8 +46,7 @@ const action = createAction(connectApp);
 
 export default function ConnectDevice({ navigation, route }: Props) {
   const { t } = useTranslation();
-  const { account } = route.params;
-  const { parentAccount } = useSelector(accountScreenSelector(route));
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<?Device>();
 
