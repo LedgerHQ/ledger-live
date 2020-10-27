@@ -46,11 +46,12 @@ export function isCompoundTokenSupported(token: TokenCurrency): boolean {
 
 export type Modes = "compound.supply" | "compound.withdraw";
 
-function contractField(ctoken) {
+function contractField(ctoken: TokenCurrency) {
+  const token = getTokenById(ctoken.compoundFor || "");
   return {
     type: "text",
     label: "Contract",
-    value: "Compound " + ctoken.ticker,
+    value: "Compound " + token.ticker,
   };
 }
 
