@@ -62,10 +62,6 @@ type Props = {
 export default function Content({ account, parentAccount, operation }: Props) {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const currencySettings = useSelector(s =>
-    currencySettingsForAccountSelector(s, { account }),
-  );
-
   const [isModalOpened, setIsModalOpened] = useState(false);
 
   const onPress = useCallback(() => {
@@ -89,6 +85,9 @@ export default function Content({ account, parentAccount, operation }: Props) {
   }, []);
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const currencySettings = useSelector(s =>
+    currencySettingsForAccountSelector(s, { account: mainAccount }),
+  );
   const currency = getAccountCurrency(account);
   const isToken = currency.type === "TokenCurrency";
   const unit = getAccountUnit(account);

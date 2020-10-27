@@ -45,7 +45,7 @@ const AnimatedSectionList = createNativeWrapper(
     shouldCancelWhenOutside: false,
   },
 );
-const List = globalSyncRefreshControl(AnimatedSectionList);
+const List = globalSyncRefreshControl(FlatList);
 
 type Props = {
   navigation: any,
@@ -148,14 +148,14 @@ export default function PortfolioScreen({ navigation }: Props) {
 
       <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
-      <FlatList
+      <List
         ref={ref}
         data={[
           ...(accounts.length > 0 && !accounts.every(isAccountEmpty)
             ? [<Carousel />]
             : []),
           ListHeaderComponent(),
-          <List
+          <AnimatedSectionList
             sections={sections}
             style={styles.list}
             contentContainerStyle={styles.contentContainer}

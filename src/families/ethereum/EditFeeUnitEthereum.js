@@ -1,6 +1,7 @@
 // @flow
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import React, { useMemo, useState, useCallback } from "react";
+import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
@@ -21,8 +22,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import SettingsRow from "../../components/SettingsRow";
 import Button from "../../components/Button";
 
-const GasSlider = React.memo(({ defaultGas, value, onChange }: *) => {
-  const range = useMemo(() => inferDynamicRange(defaultGas), [defaultGas]);
+const GasSlider = React.memo(({ value, onChange, range }: *) => {
   const index = reverseRangeIndex(range, value);
   const setValueIndex = useCallback(
     i => onChange(projectRangeIndex(range, i)),
@@ -48,6 +48,9 @@ type Props = {
   transaction: Transaction,
 };
 
+const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
+let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
+
 export default function EditFeeUnitEthereum({
   account,
   parentAccount,
@@ -65,7 +68,15 @@ export default function EditFeeUnitEthereum({
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, parentAccount);
 
-  const [gasPrice, setGasPrice] = useState(transaction.gasPrice);
+  const networkGasPrice =
+    transaction.networkInfo && transaction.networkInfo.gasPrice;
+  if (!lastNetworkGasPrice && networkGasPrice) {
+    lastNetworkGasPrice = networkGasPrice;
+  }
+  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  const [gasPrice, setGasPrice] = useState(
+    transaction.gasPrice || range.initial,
+  );
   const feeCustomUnit = transaction.feeCustomUnit;
 
   const onChangeF = useCallback(
@@ -116,6 +127,7 @@ export default function EditFeeUnitEthereum({
           <GasSlider
             defaultGas={serverGas}
             value={gasPrice}
+            range={range}
             onChange={onChangeF}
           />
           <View style={styles.textContainer}>

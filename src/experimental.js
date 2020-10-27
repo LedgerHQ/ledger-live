@@ -49,12 +49,10 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
-    name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
-    valueOn: "ethereum",
-    valueOff: "",
-    title: "Experimental Ethereum implementation",
+    name: "EXPERIMENTAL_EXPLORERS",
+    title: "Experimental Explorers API",
     description:
-      "Switch to a new JavaScript implementation of Ethereum. This should improve performance and fix a few bugs, as well as display token operations as fee operations instead of send transactions.",
+      "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
   },
   /*
   {
