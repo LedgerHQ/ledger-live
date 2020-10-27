@@ -184,6 +184,8 @@ export const makeScanAccounts = (
       derivationMode,
       seedIdentifier
     ): Promise<?Account> {
+      if (finished) return;
+
       const accountId = `js:2:${currency.id}:${address}:${derivationMode}`;
       const accountShape: Account = await getAccountShape(
         {
@@ -252,6 +254,8 @@ export const makeScanAccounts = (
         transport = await open(deviceId);
         const derivationModes = getDerivationModesForCurrency(currency);
         for (const derivationMode of derivationModes) {
+          if (finished) break;
+
           const path = getSeedIdentifierDerivation(currency, derivationMode);
           log(
             "scanAccounts",
@@ -293,6 +297,8 @@ export const makeScanAccounts = (
           const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
           const startsAt = getDerivationModeStartsAt(derivationMode);
           for (let index = startsAt; index < stopAt; index++) {
+            if (finished) break;
+
             if (!derivationModeSupportsIndex(derivationMode, index)) continue;
             const freshAddressPath = runDerivationScheme(
               derivationScheme,
