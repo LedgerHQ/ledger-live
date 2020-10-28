@@ -111,10 +111,10 @@ const getNetworkInfoByOneGasPrice = async (c) => {
 
 const getNetworkInfoByGasTrackerBarometer = async (c) => {
   const api = apiForCurrency(c);
-  const { low, high } = await api.getGasTrackerBarometer();
+  const { low, medium, high } = await api.getGasTrackerBarometer();
   const minValue = low;
   const maxValue = high.lte(low) ? low.times(2) : high;
-  const initial = minValue.plus(maxValue.minus(minValue).times(0.2));
+  const initial = medium;
   const gasPrice = inferDynamicRange(initial, { minValue, maxValue });
   return { family: "ethereum", gasPrice };
 };
