@@ -176,6 +176,13 @@ const modes = Object.freeze({
     },
     isInvalid: true,
   },
+  legacy_on_native_segwit: {
+    purpose: 84,
+    libcoreConfig: {
+      KEYCHAIN_ENGINE: "BIP32_P2PKH",
+    },
+    isInvalid: true,
+  },
   segwit_unsplit: {
     isSegwit: true,
     purpose: 49,
@@ -403,6 +410,7 @@ export const getDerivationModesForCurrency = (
   if (currency.supportsSegwit) {
     all.push("segwit_on_legacy");
     all.push("legacy_on_segwit");
+    all.push("legacy_on_native_segwit");
   }
   if (!disableBIP44[currency.id]) {
     all.push("");
