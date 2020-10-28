@@ -11,6 +11,8 @@ import { inferTokenAccount, validateRecipient } from "../transaction";
 import { getAccountCurrency } from "../../../account";
 import { findTokenByAddress, findTokenById } from "../../../currencies";
 
+const infinite = BigNumber(2).pow(256).minus(1);
+
 function contractField(transaction) {
   const recipientToken = findTokenByAddress(transaction.recipient);
   const maybeCompoundToken = findTokenById(recipientToken?.compoundFor || "");
@@ -38,6 +40,7 @@ const erc20approve: ModeModule = {
     if (!t.useAllAmount && t.amount.eq(0)) {
       result.errors.amount = new AmountRequired();
     }
+    result.amount = t.amount;
   },
 
   fillTransactionData(a, t, tx) {
@@ -46,7 +49,7 @@ const erc20approve: ModeModule = {
     const recipient = eip55.encode(t.recipient);
     let amount;
     if (t.useAllAmount) {
-      amount = BigNumber(2).pow(256).minus(1);
+      amount = infinite;
     } else {
       invariant(t.amount, "amount missing");
       amount = BigNumber(t.amount);
