@@ -70,6 +70,7 @@ const compoundSupply: ModeModule = {
     } else if (t.amount.gt(subAccount.spendableBalance)) {
       result.errors.amount = new NotEnoughBalance();
     }
+    result.amount = t.useAllAmount ? a.balance : t.amount;
   },
   fillTransactionData(a, t, tx) {
     const subAccount = inferTokenAccount(a, t);
@@ -161,6 +162,7 @@ const compoundWithdraw: ModeModule = {
     ) {
       result.errors.amount = new NotEnoughBalance();
     }
+    result.amount = t.useAllAmount ? compoundBalance : t.amount;
   },
   fillTransactionData(a, t, tx) {
     const subAccount = inferTokenAccount(a, t);

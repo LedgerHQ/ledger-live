@@ -38,6 +38,7 @@ const erc20approve: ModeModule = {
     if (!t.useAllAmount && t.amount.eq(0)) {
       result.errors.amount = new AmountRequired();
     }
+    result.amount = t.useAllAmount ? BigNumber(2).pow(256).minus(1) : t.amount;
   },
 
   fillTransactionData(a, t, tx) {
