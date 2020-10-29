@@ -12,13 +12,16 @@ import {
   DisconnectedDevice,
 } from "@ledgerhq/errors";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { getEnv } from "../env";
 import type { DerivationMode } from "../types";
 import { getCryptoCurrencyById } from "../currencies";
+import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
 import { isDashboardName } from "./isDashboardName";
 import getAppAndVersion from "./getAppAndVersion";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
+import quitApp from "./quitApp";
 import { mustUpgrade } from "../apps";
 
 export type RequiresDerivation = {|
@@ -150,7 +153,13 @@ const cmd = ({
             }
 
             if (appAndVersion.name !== appName) {
-              return of({ type: "ask-quit-app" });
+              return getEnv("EXPERIMENTAL_QUIT_APP") &&
+                appSupportsQuitApp(appAndVersion)
+                ? from(quitApp(transport)).pipe(
+                    concatMap(() => of({ type: "disconnected" })),
+                    catchError((e) => throwError(e))
+                  )
+                : of({ type: "ask-quit-app" });
             }
 
             if (
