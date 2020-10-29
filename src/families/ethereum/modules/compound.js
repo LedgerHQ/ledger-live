@@ -161,7 +161,7 @@ const compoundWithdraw: ModeModule = {
     ) {
       result.errors.amount = new NotEnoughBalance();
     }
-    result.amount = t.amount;
+    result.amount = t.useAllAmount ? compoundBalance : t.amount;
   },
   fillTransactionData(a, t, tx) {
     const subAccount = inferTokenAccount(a, t);
