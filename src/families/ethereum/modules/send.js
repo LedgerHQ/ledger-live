@@ -30,16 +30,18 @@ const send: ModeModule = {
     if (!result.errors.recipient) {
       if (tokenAccount) {
         // SEND TOKEN
-        result.totalSpent = t.useAllAmount ? account.balance : t.amount;
-        result.amount = t.useAllAmount ? account.balance : t.amount;
+        result.totalSpent = t.useAllAmount
+          ? account.spendableBalance
+          : t.amount;
+        result.amount = t.useAllAmount ? account.spendableBalance : t.amount;
       } else {
         // SEND ETHEREUM
         result.totalSpent = t.useAllAmount
-          ? account.balance
+          ? account.spendableBalance
           : t.amount.plus(result.estimatedFees);
         result.amount = BigNumber.max(
           t.useAllAmount
-            ? account.balance.minus(result.estimatedFees)
+            ? account.spendableBalance.minus(result.estimatedFees)
             : t.amount,
           0
         );
@@ -51,7 +53,7 @@ const send: ModeModule = {
           result.warnings.feeTooHigh = new FeeTooHigh();
         }
 
-        if (result.estimatedFees.gt(a.balance)) {
+        if (result.estimatedFees.gt(a.spendableBalance)) {
           result.errors.amount = new NotEnoughBalanceInParentAccount();
         }
       }
@@ -61,7 +63,7 @@ const send: ModeModule = {
           result.errors.amount = new AmountRequired();
         } else if (
           !result.totalSpent.gt(0) ||
-          result.totalSpent.gt(account.balance)
+          result.totalSpent.gt(account.spendableBalance)
         ) {
           result.errors.amount = new NotEnoughBalance();
         }
@@ -84,7 +86,7 @@ const send: ModeModule = {
       let amount;
       if (t.useAllAmount) {
         const gasLimit = getGasLimit(t);
-        amount = a.balance.minus(gasLimit.times(t.gasPrice || 0));
+        amount = a.spendableBalance.minus(gasLimit.times(t.gasPrice || 0));
       } else {
         invariant(t.amount, "amount is missing");
         amount = t.amount;
@@ -117,7 +119,9 @@ const send: ModeModule = {
           hash: op.hash,
           transactionSequenceNumber: op.transactionSequenceNumber,
           type: "OUT",
-          value: t.useAllAmount ? subAccount.balance : BigNumber(t.amount || 0),
+          value: t.useAllAmount
+            ? subAccount.spendableBalance
+            : BigNumber(t.amount || 0),
           fee: op.fee,
           blockHash: null,
           blockHeight: null,
@@ -133,21 +137,17 @@ const send: ModeModule = {
 };
 
 function serializeTransactionData(account, transaction): ?Buffer {
-  const { subAccountId } = transaction;
-  const subAccount = subAccountId
-    ? account.subAccounts &&
-      account.subAccounts.find((t) => t.id === subAccountId)
-    : null;
-  if (!subAccount) return;
+  const tokenAccount = inferTokenAccount(account, transaction);
+  if (!tokenAccount) return;
   const recipient = eip55.encode(transaction.recipient);
-  const { balance } = subAccount;
+  const { spendableBalance } = tokenAccount;
   let amount;
   if (transaction.useAllAmount) {
-    amount = balance;
+    amount = spendableBalance;
   } else {
     if (!transaction.amount) return;
     amount = BigNumber(transaction.amount);
-    if (amount.gt(subAccount.balance)) {
+    if (amount.gt(tokenAccount.spendableBalance)) {
       throw new NotEnoughBalance();
     }
   }
