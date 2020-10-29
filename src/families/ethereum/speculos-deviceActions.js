@@ -64,7 +64,10 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
         }
 
         const unit = !a
-          ? account.unit
+          ? {
+              ...account.unit,
+              code: account.currency.deviceTicker || account.unit.code,
+            }
           : (transaction.mode === "compound.withdraw" &&
             transaction.useAllAmount
               ? expectedCompoundToken(findCompoundToken(a.token))
