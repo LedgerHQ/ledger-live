@@ -18,6 +18,20 @@ function expectedCompoundToken(t) {
   return t;
 }
 
+const maxFeesExpectedValue = ({ account, status }) =>
+  formatCurrencyUnit(
+    {
+      ...account.unit,
+      prefixCode: true,
+    },
+    status.estimatedFees,
+    {
+      showCode: true,
+      disableRounding: true,
+      joinFragmentsSeparator: " ",
+    }
+  ).replace(/\s/g, " ");
+
 const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
   steps: [
     {
@@ -86,19 +100,13 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Max fees",
       button: "Rr",
-      expectedValue: ({ account, status }) =>
-        formatCurrencyUnit(
-          {
-            ...account.unit,
-            prefixCode: true,
-          },
-          status.estimatedFees,
-          {
-            showCode: true,
-            disableRounding: true,
-            joinFragmentsSeparator: " ",
-          }
-        ).replace(/\s/g, " "),
+      expectedValue: maxFeesExpectedValue,
+    },
+    {
+      // Legacy (ETC..)
+      title: "Max Fees",
+      button: "Rr",
+      expectedValue: maxFeesExpectedValue,
     },
     {
       title: "Address",
