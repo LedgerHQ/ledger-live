@@ -22,16 +22,16 @@ const head = [
   "etherscan.SafeGasPrice",
   "etherscan.ProposeGasPrice",
   "etherscan.FastGasPrice",
-  "safeLow",
-  "average",
-  "fast",
-  "fastest",
+  "ethgasstation safeLow",
+  "ethgasstation average",
+  "ethgasstation fast",
+  "ethgasstation fastest",
 ];
 
 async function main() {
   const api = apiForCurrency(ethereum);
 
-  const date = new Date().toISOString();
+  const date = new Date();
   const [
     gasTracker,
     estimatedFees,
@@ -51,7 +51,7 @@ async function main() {
   const ethgasstation = ethgasstationR.data;
 
   const row = [
-    date,
+    date.toISOString().replace("T", " ").slice(0, 16),
     asRoundedGwei(estimatedFees.gas_price),
     asRoundedGwei(gasTracker.low),
     asRoundedGwei(gasTracker.medium),
@@ -59,15 +59,15 @@ async function main() {
     etherscan.SafeGasPrice,
     etherscan.ProposeGasPrice,
     etherscan.FastGasPrice,
-    ethgasstation.safeLow,
-    ethgasstation.average,
-    ethgasstation.fast,
-    ethgasstation.fastest,
+    ethgasstation.safeLow / 10,
+    ethgasstation.average / 10,
+    ethgasstation.fast / 10,
+    ethgasstation.fastest / 10,
   ];
 
-  console.log(row.join(" "));
+  console.log(row.join("\t"));
 }
 
-console.log(head.join(" "));
+console.log(head.join("\t"));
 main();
 setInterval(main, 60 * 1000);
