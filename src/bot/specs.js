@@ -85,9 +85,9 @@ export function deviceActionFlow<T: Transaction>(
             const { expectedValue, ignoreAssertionFailure } = currentStep;
             if (!ignoreAssertionFailure) {
               expect({
-                [stepTitle]: stepValue,
+                [stepTitle]: stepValue.trim(),
               }).toMatchObject({
-                [stepTitle]: expectedValue(arg, acc),
+                [stepTitle]: expectedValue(arg, acc).trim(),
               });
             }
           }

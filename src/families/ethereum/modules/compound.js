@@ -108,6 +108,7 @@ const compoundSupply: ModeModule = {
     fields.push(contractField(ctoken));
   },
   fillOptimisticOperation(a, t, op) {
+    op.type = "FEES";
     const subAccount = inferTokenAccount(a, t);
     if (subAccount) {
       const currentRate = findCurrentRate(subAccount.token);
@@ -154,9 +155,7 @@ const compoundWithdraw: ModeModule = {
     );
     const { compoundBalance } = subAccount;
     invariant(compoundBalance, "missing compoundBalance");
-    if (t.amount.eq(0) && !t.useAllAmount) {
-      result.errors.amount = new AmountRequired();
-    } else if (
+    if (
       compoundBalance.eq(0) ||
       (!t.useAllAmount && t.amount.gt(nonSpendableBalance))
     ) {
@@ -217,6 +216,7 @@ const compoundWithdraw: ModeModule = {
     fields.push(contractField(ctoken));
   },
   fillOptimisticOperation(a, t, op) {
+    op.type = "FEES";
     const subAccount = inferTokenAccount(a, t);
     if (subAccount) {
       const currentRate = findCurrentRate(subAccount.token);

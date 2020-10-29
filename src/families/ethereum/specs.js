@@ -107,12 +107,13 @@ const ethereum: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Ethereum",
+    appVersion: "1.5.0-rc3",
   },
-  testTimeout: 2 * 60 * 1000,
+  testTimeout: 4 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], "0.003")
+        parseCurrencyUnit(getCryptoCurrencyById("ethereum").units[0], "0.01")
       ),
       "balance is too low"
     );
@@ -245,7 +246,7 @@ const ethereum: AppSpec<Transaction> = {
         // ? IDEA: only do it if there is nothing to withdraw
         const a = findCompoundAccount(
           account,
-          (c) => c.enabledAmount.gt(0) || c.enabledAmountIsUnlimited
+          (c) => !c.enabledAmount.gt(0) && c.enabledAmountIsUnlimited
         );
         invariant(a, "no compound account to disallow");
         const ctoken = findCompoundToken(a.token);
@@ -348,6 +349,7 @@ const ethereumRopsten: AppSpec<Transaction> = {
   appQuery: {
     model: "nanoS",
     appName: "Ethereum",
+    appVersion: "1.5.0-rc3",
   },
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {

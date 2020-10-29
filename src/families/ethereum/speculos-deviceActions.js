@@ -1,7 +1,7 @@
 // @flow
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit, findCompoundToken } from "../../currencies";
 import { deviceActionFlow } from "../../bot/specs";
 
 function subAccount(subAccountId, account) {
@@ -9,6 +9,13 @@ function subAccount(subAccountId, account) {
   if (!sub || sub.type !== "TokenAccount")
     throw new Error("expected sub account id " + String(subAccountId));
   return sub;
+}
+
+function expectedCompoundToken(t) {
+  if (!t) {
+    throw new Error("compound token was expected");
+  }
+  return t;
 }
 
 const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
@@ -22,7 +29,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
       button: "Rr",
       expectedValue: ({ transaction }) => {
         if (transaction.mode === "erc20.approve") return "Approve";
-        if (transaction.mode === "compound.supply") return "Supply";
+        if (transaction.mode === "compound.supply") return "Lend Assets";
         if (transaction.mode === "compound.withdraw") return "Redeem Assets";
         return "";
       },
@@ -30,24 +37,47 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Amount",
       button: "Rr",
-      expectedValue: ({ account, status, transaction }) =>
-        transaction.mode === "erc20.approve" && transaction.useAllAmount
-          ? "Unlimited " +
-            subAccount(transaction.subAccountId, account).token.ticker
-          : formatCurrencyUnit(
-              {
-                ...(transaction.subAccountId
-                  ? subAccount(transaction.subAccountId, account).token.units[0]
-                  : account.unit),
-                prefixCode: true,
-              },
-              status.amount,
-              {
-                showCode: true,
-                disableRounding: true,
-                joinFragmentsSeparator: " ",
-              }
-            ).replace(/\s/g, " "),
+      expectedValue: ({ account, status, transaction }) => {
+        const a = transaction.subAccountId
+          ? subAccount(transaction.subAccountId, account)
+          : null;
+        if (
+          transaction.mode === "erc20.approve" &&
+          transaction.useAllAmount &&
+          a
+        ) {
+          return "Unlimited " + a.token.ticker;
+        }
+
+        const unit = !a
+          ? account.unit
+          : (transaction.mode === "compound.withdraw" &&
+            transaction.useAllAmount
+              ? expectedCompoundToken(findCompoundToken(a.token))
+              : a.token
+            ).units[0];
+
+        const amount =
+          a &&
+          a.compoundBalance &&
+          transaction.mode === "compound.withdraw" &&
+          transaction.useAllAmount
+            ? a.compoundBalance
+            : status.amount;
+
+        return formatCurrencyUnit(
+          {
+            ...unit,
+            prefixCode: true,
+          },
+          amount,
+          {
+            showCode: true,
+            disableRounding: true,
+            joinFragmentsSeparator: " ",
+          }
+        ).replace(/\s/g, " ");
+      },
     },
     {
       title: "Contract",
