@@ -34,6 +34,11 @@ export default function OnboardingStepPairNew() {
       />
     ) : null;
 
+  const directNext = useCallback(() => {
+    dispatch(setReadOnlyMode(false));
+    next();
+  }, [dispatch, next]);
+
   const onResult = useCallback(
     (info: any) => {
       /** if list apps succeed we update settings with state of apps installed */
@@ -72,7 +77,7 @@ export default function OnboardingStepPairNew() {
         withArrows
         usbOnly={usbOnly}
         deviceModelId={deviceModelId}
-        onSelect={usbOnly ? setDevice : next}
+        onSelect={usbOnly ? setDevice : directNext}
         autoSelectOnAdd
       />
       <DeviceActionModal

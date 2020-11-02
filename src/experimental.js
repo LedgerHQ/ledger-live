@@ -54,17 +54,13 @@ export const experimentalFeatures: Feature[] = [
     description:
       "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
   },
-  /*
   {
     type: "toggle",
-    name: "API_TEZOS_NODE",
-    valueOn: "https://xtz-node.explorers.prod.aws.ledger.fr/",
-    valueOff: "https://mainnet.tezrpc.me/",
-    title: "Experimental Tezos Send",
+    name: "EXPERIMENTAL_QUIT_APP",
+    title: "Quit apps automatically",
     description:
-      "Workaround for Sending Tezos. Switch to another experimental node.",
+      "Enabling this setting will automatically quit an application on your device when another one needs to be opened. This will make switching between apps more seamless.",
   },
-*/
 ];
 
 const storageKey = "experimentalFlags";
