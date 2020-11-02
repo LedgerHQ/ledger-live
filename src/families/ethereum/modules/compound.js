@@ -44,6 +44,20 @@ export function isCompoundTokenSupported(token: TokenCurrency): boolean {
   return compoundWhitelist.includes(token.id);
 }
 
+export function getEnabledAmount(account: TokenAccount): BigNumber {
+  const ctoken = findCompoundToken(account.token);
+  const approval =
+    ctoken &&
+    (account.approvals || []).find(
+      (a) => a.sender.toLowerCase() === ctoken.contractAddress.toLowerCase()
+    );
+  return approval ? BigNumber(approval.value) : BigNumber(0);
+}
+
+export function getSupplyMax(a: TokenAccount): BigNumber {
+  return BigNumber.min(a.spendableBalance, getEnabledAmount(a));
+}
+
 export type Modes = "compound.supply" | "compound.withdraw";
 
 function contractField(ctoken: TokenCurrency) {
@@ -67,7 +81,7 @@ const compoundSupply: ModeModule = {
     invariant(subAccount, "sub account missing");
     if (t.amount.eq(0)) {
       result.errors.amount = new AmountRequired();
-    } else if (t.amount.gt(subAccount.spendableBalance)) {
+    } else if (t.amount.gt(getSupplyMax(subAccount))) {
       result.errors.amount = new NotEnoughBalance();
     }
     result.amount = t.amount;
