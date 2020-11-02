@@ -13,6 +13,7 @@ import {
   makeCompoundSummaryForAccount,
   getAccountCapabilities,
 } from "../../compound/logic";
+import { getSupplyMax } from "./modules/compound";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { getGasLimit } from "./transaction";
@@ -154,7 +155,7 @@ const ethereum: AppSpec<Transaction> = {
         invariant(a, "no compound account to supply");
         const ctoken = findCompoundToken(a.token);
         invariant(ctoken, "ctoken found");
-        const amount = a.spendableBalance
+        const amount = getSupplyMax(a)
           .times(0.5 + 0.5 * Math.random())
           .integerValue();
         return {
