@@ -5,7 +5,8 @@ export const urls = {
   contact: "https://support.ledger.com/hc/en-us/requests/new",
   terms: "https://www.ledger.com/pages/terms-of-use-and-disclaimer",
   privacyPolicy: "https://www.ledgerwallet.com/privacy-policy",
-  buyNanoX: "https://www.ledger.com/products/ledger-nano-x",
+  buyNanoX:
+    "https://www.ledger.com/products/ledger-nano-x?utm_source=ledger_live&utm_medium=self_referral&utm_content=empty_manager_mobile",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   applestore:
     "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
