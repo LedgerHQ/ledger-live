@@ -9,7 +9,7 @@ import {
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 // TODO move to component
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
 import Close from "../icons/Close";
@@ -29,12 +29,14 @@ const { height } = getWindowDimensions();
 type Props = {
   isOpen: boolean,
   onClose: () => void,
-  account: Account,
+  account: AccountLike,
+  icon?: React$Node,
   ValidatorImage: ComponentType<{ size: number }>,
   counterValueDate?: Date,
   amount: BigNumber,
   data: FieldType[],
   actions: Action[],
+  undelegation?: boolean,
 };
 
 export default function DelegationDrawer({
@@ -47,6 +49,8 @@ export default function DelegationDrawer({
   amount,
   data,
   actions,
+  undelegation,
+  icon,
 }: Props) {
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
@@ -74,10 +78,17 @@ export default function DelegationDrawer({
 
         <DelegatingContainer
           left={
-            <Circle size={iconWidth} bg={rgba(color, 0.2)}>
-              <CurrencyIcon size={iconWidth / 2} currency={currency} />
-            </Circle>
+            icon || (
+              <Circle size={iconWidth} bg={rgba(color, 0.2)}>
+                <CurrencyIcon
+                  size={iconWidth / 2}
+                  currency={currency}
+                  bg={"rgba(0,0,0,0)"}
+                />
+              </Circle>
+            )
           }
+          undelegation={undelegation}
           right={<ValidatorImage size={iconWidth} />}
         />
 
@@ -118,7 +129,7 @@ export default function DelegationDrawer({
 }
 
 type FieldType = {
-  label: string,
+  label: React$Node,
   Component: React$Node,
 };
 
@@ -143,9 +154,10 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
 }
 
 type Action = {
-  label: string,
+  label: React$Node,
   Icon: string | ComponentType<IconProps>,
   event: string,
+  eventProperties?: *,
   disabled?: boolean,
   onPress: () => void,
 };
@@ -156,11 +168,19 @@ export type IconProps = {
   bg?: string,
 };
 
-function ActionButton({ label, Icon, event, onPress, disabled }: Action) {
+function ActionButton({
+  label,
+  Icon,
+  event,
+  eventProperties,
+  onPress,
+  disabled,
+}: Action) {
   return (
     <Touchable
       disabled={disabled}
       event={event}
+      eventProperties={eventProperties}
       style={styles.actionButtonWrapper}
       onPress={onPress}
     >

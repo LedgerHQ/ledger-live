@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
+import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import LText from "../../components/LText";
 import colors from "../../colors";
 import { ScreenName } from "../../const";
@@ -14,23 +15,26 @@ type Props = {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
+  route: { params: RouteParams },
 };
 
 export default function EthereumGasLimit({
   account,
   parentAccount,
   transaction,
+  route,
 }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation();
 
   const editGasLimit = useCallback(() => {
     navigation.navigate(ScreenName.EthereumEditGasLimit, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
     });
-  }, [navigation, account, parentAccount, transaction]);
+  }, [navigation, route.params, account.id, parentAccount, transaction]);
 
   const gasLimit = transaction.userGasLimit || transaction.estimatedGasLimit;
 

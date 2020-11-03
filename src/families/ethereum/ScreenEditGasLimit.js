@@ -1,15 +1,15 @@
 /* @flow */
+import invariant from "invariant";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { BigNumber } from "bignumber.js";
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Keyboard, StyleSheet, TextInput, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
+import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { i18n } from "../../context/Locale";
 import colors from "../../colors";
-import { ScreenName } from "../../const";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -22,36 +22,42 @@ const options = {
   headerLeft: null,
 };
 
-type Props = {
-  navigation: any,
-  route: { params: RouteParams },
-};
-
 type RouteParams = {
   accountId: string,
   transaction: Transaction,
+  currentNavigation: string,
+};
+
+type Props = {
+  navigation: any,
+  route: { params: RouteParams },
 };
 
 function EthereumEditGasLimit({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const transaction = route.params?.transaction;
+
+  invariant(account && transaction, "account and transaction required");
+
   const [gasLimit, setGasLimit] = useState(
     transaction.userGasLimit || transaction.estimatedGasLimit,
   );
 
-  function onValidateText() {
+  const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account, parentAccount);
 
     Keyboard.dismiss();
-    navigation.navigate(ScreenName.SendSummary, {
+    const { currentNavigation } = route.params;
+    navigation.navigate(currentNavigation, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction: bridge.updateTransaction(transaction, {
-        userGasLimit: BigNumber(gasLimit),
+        userGasLimit: BigNumber(gasLimit || 0),
       }),
     });
-  }
+  }, [account, gasLimit, navigation, parentAccount, route.params, transaction]);
 
   return (
     <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>

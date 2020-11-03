@@ -11,6 +11,7 @@ import IconSend from "../icons/Send";
 import IconReceive from "../icons/Receive";
 import IconExchange from "../icons/Exchange";
 import IconSwap from "../icons/Swap";
+import IconLending from "../icons/Lending";
 import BottomModal from "../components/BottomModal";
 import BottomModalChoice from "../components/BottomModalChoice";
 import type { Props as ModalProps } from "../components/BottomModal";
@@ -58,6 +59,13 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const onExchange = useCallback(() => onNavigate(ScreenName.Exchange), [
     onNavigate,
   ]);
+  const onLending = useCallback(
+    () =>
+      onNavigate(NavigatorName.Lending, {
+        screen: ScreenName.LendingDashboard,
+      }),
+    [onNavigate],
+  );
 
   return (
     <BottomModal id="CreateModal" isOpened={isOpened} onClose={onClose}>
@@ -84,6 +92,12 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
         title={t("transfer.swap.title")}
         Icon={IconSwap}
         onPress={accountsCount > 0 && !readOnlyModeEnabled ? onSwap : null}
+      />
+      <BottomModalChoice
+        event="TransferLending"
+        title={t("transfer.lending.title")}
+        Icon={IconLending}
+        onPress={accountsCount > 0 && !readOnlyModeEnabled ? onLending : null}
       />
     </BottomModal>
   );

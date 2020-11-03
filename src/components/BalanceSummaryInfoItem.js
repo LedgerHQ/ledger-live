@@ -19,7 +19,7 @@ export default function BalanceSummaryInfoItem({
     <TouchableOpacity onPress={onPress} style={styles.wrapper}>
       <View style={styles.balanceLabelContainer}>
         <LText style={styles.balanceLabel}>{title}</LText>
-        <Info size={12} color={colors.grey} />
+        {onPress && <Info size={12} color={colors.grey} />}
       </View>
       <LText semiBold style={styles.balance}>
         {value}

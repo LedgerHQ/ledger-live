@@ -17,12 +17,17 @@ import StakeCosmos from "./slides/StakeCosmos";
 import StakeAlgo from "./slides/StakeAlgo";
 // import Sell from "./slides/Sell";
 // import Vote from "./slides/Vote";
+import Lending from "./slides/Lending";
 import Swap from "./slides/Swap";
 import IconClose from "../../icons/Close";
 import colors from "../../colors";
 
 export const getDefaultSlides = () => {
   return [
+    {
+      id: "Lending",
+      Component: () => <Lending />,
+    },
     {
       id: "swap",
       Component: () => <Swap />,

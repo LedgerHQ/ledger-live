@@ -188,6 +188,41 @@ export const ScreenName = {
   AlgorandOptInValidation: "AlgorandOptInValidation",
   AlgorandOptInValidationError: "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess: "AlgorandOptInValidationSuccess",
+
+  LendingDashboard: "LendingDashboard",
+  LendingClosedLoans: "LendingClosedLoans",
+  LendingHistory: "LendingHistory",
+  LendingTerms: "LendingTerms",
+  LendingInfo1: "LendingInfo1",
+  LendingInfo2: "LendingInfo2",
+  LendingInfo3: "LendingInfo3",
+
+  LendingEnableSelectAccount: "Lend ApproveSelectAccount",
+  LendingEnableAmount: "Lend ApproveAmount",
+  LendingEnableAmountAdvanced: "Lend ApproveAmountAdvanced",
+  LendingEnableAmountInput: "Lend ApproveAmountInput",
+  LendingEnableSummary: "Lend ApproveSummary",
+  LendingEnableSelectDevice: "Lend ApproveSelectDevice",
+  LendingEnableConnectDevice: "Lend ApproveConnectDevice",
+  LendingEnableValidation: "Lend ApproveValidation",
+  LendingEnableValidationError: "Lend ApproveValidationError",
+  LendingEnableValidationSuccess: "Lend ApproveValidationSuccess",
+
+  LendingSupplyAmount: "Lend SupplyAmount",
+  LendingSupplySummary: "Lend SupplySummary",
+  LendingSupplySelectDevice: "Lend SupplySelectDevice",
+  LendingSupplyConnectDevice: "Lend SupplyConnectDevice",
+  LendingSupplyValidation: "Lend SupplyValidation",
+  LendingSupplyValidationError: "Lend SupplyValidationError",
+  LendingSupplyValidationSuccess: "Lend SupplyValidationSuccess",
+
+  LendingWithdrawAmount: "Lend WithdrawAmount",
+  LendingWithdrawSummary: "Lend WithdrawSummary",
+  LendingWithdrawSelectDevice: "Lend WithdrawSelectDevice",
+  LendingWithdrawConnectDevice: "Lend WithdrawConnectDevice",
+  LendingWithdrawValidation: "Lend WithdrawValidation",
+  LendingWithdrawValidationError: "Lend WithdrawValidationError",
+  LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 };
 
 export const NavigatorName = {
@@ -224,6 +259,11 @@ export const NavigatorName = {
   TezosDelegationFlow: "TezosDelegationFlow",
   TronVoteFlow: "TronVoteFlow",
   Unfreeze: "Unfreeze",
+  Lending: "Lending",
+  LendingInfo: "LendingInfo",
+  LendingEnableFlow: "LendingEnableFlow",
+  LendingSupplyFlow: "LendingSupplyFlow",
+  LendingWithdrawFlow: "LendingWithdrawFlow",
   /* eslint-disable sort-keys */
 
   // Tab

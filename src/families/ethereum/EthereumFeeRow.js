@@ -5,6 +5,7 @@ import { Trans, useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -23,6 +24,7 @@ type Props = {
   parentAccount: ?Account,
   transaction: Transaction,
   navigation: any,
+  route: { params: RouteParams },
 };
 
 export default function EthereumFeeRow({
@@ -30,6 +32,7 @@ export default function EthereumFeeRow({
   parentAccount,
   transaction,
   navigation,
+  route,
 }: Props) {
   const { t } = useTranslation();
   const [isNetworkFeeHelpOpened, setNetworkFeeHelpOpened] = useState(false);
@@ -46,11 +49,12 @@ export default function EthereumFeeRow({
 
   const openFees = useCallback(() => {
     navigation.navigate(ScreenName.EthereumEditFee, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
     });
-  }, [navigation, account, parentAccount, transaction]);
+  }, [navigation, route.params, account.id, parentAccount, transaction]);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const {
@@ -109,6 +113,7 @@ export default function EthereumFeeRow({
         account={account}
         parentAccount={parentAccount}
         transaction={transaction}
+        route={route}
       />
       <SummaryRow title={<Trans i18nKey="send.summary.maxFees" />}>
         <View style={{ alignItems: "flex-end" }}>

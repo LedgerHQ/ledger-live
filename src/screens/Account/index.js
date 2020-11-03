@@ -11,6 +11,10 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import type { TokenAccount, Operation } from "@ledgerhq/live-common/lib/types";
 import debounce from "lodash/debounce";
+import {
+  getAccountCapabilities,
+  makeCompoundSummaryForAccount,
+} from "@ledgerhq/live-common/lib/compound/logic";
 import { switchCountervalueFirst } from "../../actions/settings";
 import { balanceHistoryWithCountervalueSelectorCreator } from "../../actions/portfolio";
 import {
@@ -140,6 +144,16 @@ export default function AccountScreen({ navigation, route }: Props) {
     count: opCount,
   });
 
+  const compoundCapabilities =
+    account.type === "TokenAccount" &&
+    !!account.compoundBalance &&
+    getAccountCapabilities(account);
+
+  const compoundSummary =
+    compoundCapabilities?.status &&
+    account.type === "TokenAccount" &&
+    makeCompoundSummaryForAccount(account, parentAccount);
+
   return (
     <View style={styles.root}>
       {analytics}
@@ -172,6 +186,7 @@ export default function AccountScreen({ navigation, route }: Props) {
             counterValueCurrency={counterValueCurrency}
             onAccountPress={onAccountPress}
             onSwitchAccountCurrency={onSwitchAccountCurrency}
+            compoundSummary={compoundSummary}
           />
         }
         ListEmptyComponent={ListEmptyComponent}

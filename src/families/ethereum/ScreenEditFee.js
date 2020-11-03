@@ -24,13 +24,14 @@ type Props = {
 type RouteParams = {
   accountId: string,
   transaction: Transaction,
+  currentNavigation: string,
 };
 
 function EthereumEditFee({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const transaction = route.params?.transaction;
 
-  if (!transaction) return null;
+  if (!transaction || !account) return null;
 
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
@@ -39,6 +40,7 @@ function EthereumEditFee({ route }: Props) {
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
+          route={route}
         />
       </KeyboardView>
     </SafeAreaView>

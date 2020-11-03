@@ -19,6 +19,7 @@ type Props = {|
   Icon?: React$ComponentType<*>,
   confirmButtonText?: React$Node,
   rejectButtonText?: React$Node,
+  hideRejectButton?: boolean,
   alert: boolean,
 |};
 
@@ -38,6 +39,7 @@ class ConfirmationModal extends PureComponent<Props> {
       onConfirm,
       Icon,
       alert,
+      hideRejectButton,
       ...rest
     } = this.props;
     return (
@@ -62,13 +64,16 @@ class ConfirmationModal extends PureComponent<Props> {
           <LText style={styles.confirmationDesc}>{confirmationDesc}</LText>
         )}
         <View style={styles.confirmationFooter}>
-          <Button
-            event="ConfirmationModalCancel"
-            containerStyle={styles.confirmationButton}
-            type="secondary"
-            title={rejectButtonText || <Trans i18nKey="common.cancel" />}
-            onPress={onClose}
-          />
+          {!hideRejectButton && (
+            <Button
+              event="ConfirmationModalCancel"
+              containerStyle={styles.confirmationButton}
+              type="secondary"
+              title={rejectButtonText || <Trans i18nKey="common.cancel" />}
+              onPress={onClose}
+            />
+          )}
+
           <Button
             event="ConfirmationModalConfirm"
             containerStyle={[

@@ -2,7 +2,13 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { OutputSelector } from "reselect";
+import type {
+  Account,
+  AccountLike,
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import {
   addAccounts,
   canBeMigrated,
@@ -13,6 +19,7 @@ import {
   withoutToken,
   clearAccount,
 } from "@ledgerhq/live-common/lib/account";
+import type { State } from "./index.js";
 import accountModel from "../logic/accountModel";
 
 export type AccountsState = {
@@ -173,5 +180,48 @@ export const accountScreenSelector = (route: any) => (state: any) => {
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.every(isUpToDateAccount),
 );
+
+export const subAccountByCurrencyOrderedSelector: OutputSelector<
+  State,
+  { currency: CryptoCurrency | TokenCurrency },
+  Array<{ parentAccount: ?Account, account: AccountLike }>,
+> = createSelector(
+  accountsSelector,
+  (_, { currency }: { currency: CryptoCurrency | TokenCurrency }) => currency,
+  (accounts, currency) => {
+    const flatAccounts = flattenAccounts(accounts);
+    return flatAccounts
+      .filter(
+        (account: AccountLike) =>
+          (account.type === "TokenAccount"
+            ? account.token.id
+            : account.currency.id) === currency.id,
+      )
+      .map((account: AccountLike) => ({
+        account,
+        parentAccount:
+          account.type === "TokenAccount" && account.parentId
+            ? accounts.find(
+                fa => fa.type === "Account" && fa.id === account.parentId,
+              )
+            : {},
+      }))
+      .sort((a: { account: AccountLike }, b: { account: AccountLike }) =>
+        a.account.balance.gt(b.account.balance)
+          ? -1
+          : a.account.balance.eq(b.account.balance)
+          ? 0
+          : 1,
+      );
+  },
+);
+
+export const subAccountByCurrencyOrderedScreenSelector = (route: any) => (
+  state: any,
+) => {
+  const currency = route?.params?.currency || {};
+  if (!currency) return [];
+  return subAccountByCurrencyOrderedSelector(state, { currency });
+};
 
 export default handleActions(handlers, initialState);
