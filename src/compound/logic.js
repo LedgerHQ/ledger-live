@@ -253,6 +253,7 @@ export const makeClosedHistoryForAccounts = (
       if (!summary.closed.length) return closedLoans;
 
       return closedLoans.concat(
+        // $FlowFixMe issue on LLD side
         summary.closed.map((c) => ({
           ...c,
           account: summary.account,
