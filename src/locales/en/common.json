@@ -516,10 +516,10 @@
       "title": "When sending to this recipient, a memo may be required"
     },
     "SwapExchangeRateAmountTooLow": {
-      "title": "Amount must be higher than {{unit}} {{minAmountFrom}}"
+      "title": "Amount must be higher than {{minAmountFrom}} {{unit}}"
     },
     "SwapExchangeRateAmountTooHigh": {
-      "title": "Amount must be lower than {{unit}} {{maxAmountFrom}}"
+      "title": "Amount must be lower than {{maxAmountFrom}} {{unit}}"
     },
     "SwapGenericAPIError": {
       "title": "Exchange rate expired",
