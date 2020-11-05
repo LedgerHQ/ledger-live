@@ -61,7 +61,7 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
           hash: "hash_" + name,
           blocks: 1,
           version: "0.0.0",
-          availableVersion: "1.0.0",
+          availableVersion: "1.5.0",
         };
       }
 
@@ -73,8 +73,8 @@ export const parseInstalled = (installedDesc: string): InstalledItem[] =>
         updated: true,
         hash: "hash_" + _name,
         blocks: Number(b ? b[2] : 1),
-        version: "1.0.0",
-        availableVersion: "1.0.0",
+        version: "1.5.0",
+        availableVersion: "1.6.0",
       };
     });
 

@@ -20,24 +20,22 @@ export const mockGetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction
 ) => {
-  const { fromAccount } = exchange;
+  const { fromAccount, toAccount } = exchange;
   const amount = transaction.amount;
   const unitFrom = getAccountUnit(fromAccount);
+  const unitTo = getAccountUnit(toAccount);
   const amountFrom = amount.div(BigNumber(10).pow(unitFrom.magnitude));
   const minAmountFrom = BigNumber(0.0001);
   const maxAmountFrom = BigNumber(1000);
-  const apiAmount = BigNumber(amountFrom).div(
-    BigNumber(10).pow(unitFrom.magnitude)
-  );
 
-  if (apiAmount.lte(minAmountFrom)) {
+  if (amountFrom.lte(minAmountFrom)) {
     throw new SwapExchangeRateAmountTooLow(null, {
       unit: unitFrom.code,
       minAmountFrom,
     });
   }
 
-  if (apiAmount.gte(maxAmountFrom)) {
+  if (amountFrom.gte(maxAmountFrom)) {
     throw new SwapExchangeRateAmountTooHigh(null, {
       unit: unitFrom.code,
       maxAmountFrom,
@@ -50,8 +48,10 @@ export const mockGetExchangeRates = async (
   //Mock OK, not really magnitude aware
   return [
     {
-      rate: BigNumber("4.2"),
-      magnitudeAwareRate: BigNumber("4.2"),
+      rate: BigNumber("1"),
+      magnitudeAwareRate: BigNumber(1)
+        .div(BigNumber(10).pow(unitFrom.magnitude))
+        .times(BigNumber(10).pow(unitTo.magnitude)),
       rateId: "mockedRateId",
       provider: "changelly",
       expirationDate: new Date(),
@@ -96,5 +96,5 @@ export const mockGetProviders: GetProviders = async () => {
 export const mockGetStatus: GetMultipleStatus = async (statusList) => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
-  return statusList.map((s) => ({ ...s, status: "failed" }));
+  return statusList.map((s) => ({ ...s, status: "finished" }));
 };
