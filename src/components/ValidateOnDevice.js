@@ -2,7 +2,7 @@
 import React from "react";
 import invariant from "invariant";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import type {
   Account,
   AccountLike,
@@ -200,14 +200,7 @@ export default function ValidateOnDevice({
         </View>
       </ScrollView>
       <View style={styles.footerContainer}>
-        <VerifyAddressDisclaimer
-          text={
-            <Trans
-              i18nKey="ValidateOnDevice.warning"
-              values={{ recipientWording }}
-            />
-          }
-        />
+        <VerifyAddressDisclaimer text={recipientWording} />
       </View>
     </View>
   );
