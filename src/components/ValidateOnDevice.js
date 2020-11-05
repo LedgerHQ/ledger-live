@@ -2,7 +2,7 @@
 import React from "react";
 import invariant from "invariant";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import type {
   Account,
   AccountLike,
