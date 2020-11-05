@@ -388,6 +388,17 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
             expect(bridge).toBe(getAccountBridge(account, null));
           });
 
+          makeTest("account have no NaN values", async () => {
+            const account = await getSynced();
+            [account, ...(account.subAccounts || [])].forEach((a) => {
+              expect(a.balance.isNaN()).toBe(false);
+              expect(a.operations.find((op) => op.value.isNaN())).toBe(
+                undefined
+              );
+              expect(a.operations.find((op) => op.fee.isNaN())).toBe(undefined);
+            });
+          });
+
           if (
             !blacklistOpsSumEq.currencies.includes(
               initialAccount.currency.id
