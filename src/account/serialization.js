@@ -197,11 +197,22 @@ export const toTronResourcesRaw = ({
   unwithdrawnReward,
   lastWithdrawnRewardDate,
   lastVotedDate,
+  cacheTransactionInfoById: cacheTx,
 }: TronResources): TronResourcesRaw => {
   const frozenBandwidth = frozen.bandwidth;
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
+  const cacheTransactionInfoById = {};
+  for (let k in cacheTx) {
+    const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
+    cacheTransactionInfoById[k] = [
+      fee,
+      blockNumber,
+      withdraw_amount,
+      unfreeze_amount,
+    ];
+  }
 
   return {
     frozen: {
@@ -240,6 +251,7 @@ export const toTronResourcesRaw = ({
       ? lastWithdrawnRewardDate.toISOString()
       : undefined,
     lastVotedDate: lastVotedDate ? lastVotedDate.toISOString() : undefined,
+    cacheTransactionInfoById,
   };
 };
 
@@ -253,12 +265,29 @@ export const fromTronResourcesRaw = ({
   unwithdrawnReward,
   lastWithdrawnRewardDate,
   lastVotedDate,
+  cacheTransactionInfoById: cacheTransactionInfoByIdRaw,
 }: TronResourcesRaw): TronResources => {
   const frozenBandwidth = frozen.bandwidth;
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
-
+  const cacheTransactionInfoById = {};
+  if (cacheTransactionInfoByIdRaw) {
+    for (let k in cacheTransactionInfoByIdRaw) {
+      const [
+        fee,
+        blockNumber,
+        withdraw_amount,
+        unfreeze_amount,
+      ] = cacheTransactionInfoByIdRaw[k];
+      cacheTransactionInfoById[k] = {
+        fee,
+        blockNumber,
+        withdraw_amount,
+        unfreeze_amount,
+      };
+    }
+  }
   return {
     frozen: {
       bandwidth: frozenBandwidth
@@ -296,6 +325,7 @@ export const fromTronResourcesRaw = ({
       ? new Date(lastWithdrawnRewardDate)
       : undefined,
     lastVotedDate: lastVotedDate ? new Date(lastVotedDate) : undefined,
+    cacheTransactionInfoById,
   };
 };
 

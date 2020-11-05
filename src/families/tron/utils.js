@@ -130,7 +130,7 @@ export const formatTrongridTrc20TxResponse = (tx: Object): ?TrongridTxInfo => {
     const date = new Date(block_timestamp);
     const tokenId = get(token_info, "address", undefined);
     const formattedValue = value ? BigNumber(value) : BigNumber(0);
-    const fee = get(detail, "ret[0].fee", undefined);
+    const fee = detail && detail.fee ? BigNumber(detail.fee) : undefined;
     const blockHeight = detail ? detail.blockNumber : undefined;
 
     return {
@@ -142,7 +142,7 @@ export const formatTrongridTrc20TxResponse = (tx: Object): ?TrongridTxInfo => {
       to,
       blockHeight,
       value: formattedValue,
-      fee: fee ? BigNumber(fee) : undefined,
+      fee,
       hasFailed: false, // trc20 txs are succeeded if returned by trongrid,
     };
   } catch (e) {
@@ -153,13 +153,7 @@ export const formatTrongridTrc20TxResponse = (tx: Object): ?TrongridTxInfo => {
 
 export const formatTrongridTxResponse = (tx: Object): ?TrongridTxInfo => {
   try {
-    const {
-      txID,
-      block_timestamp,
-      blockNumber,
-      unfreeze_amount,
-      withdraw_amount,
-    } = tx;
+    const { txID, block_timestamp, detail } = tx;
 
     const date = new Date(block_timestamp);
 
@@ -170,7 +164,6 @@ export const formatTrongridTxResponse = (tx: Object): ?TrongridTxInfo => {
       asset_name,
       owner_address,
       to_address,
-      resource_type,
       contract_address,
       quant,
       frozen_balance,
@@ -190,14 +183,12 @@ export const formatTrongridTxResponse = (tx: Object): ?TrongridTxInfo => {
 
     const to = to_address ? encode58Check(to_address) : undefined;
 
-    const resource = resource_type;
-
     const getValue = (): BigNumber => {
       switch (type) {
         case "WithdrawBalanceContract":
-          return BigNumber(withdraw_amount);
+          return BigNumber(detail.withdraw_amount || 0);
         case "ExchangeTransactionContract":
-          return BigNumber(quant);
+          return BigNumber(quant || 0);
         default:
           return amount ? BigNumber(amount) : BigNumber(0);
       }
@@ -205,9 +196,9 @@ export const formatTrongridTxResponse = (tx: Object): ?TrongridTxInfo => {
 
     const value = getValue();
 
-    const fee = get(tx, "ret[0].fee", undefined);
+    const fee = detail && detail.fee ? BigNumber(detail.fee) : undefined;
 
-    const blockHeight = blockNumber;
+    const blockHeight = detail ? detail.blockNumber : undefined;
 
     const txInfo: TrongridTxInfo = {
       txID,
@@ -216,9 +207,8 @@ export const formatTrongridTxResponse = (tx: Object): ?TrongridTxInfo => {
       tokenId,
       from,
       to,
-      value,
-      fee: fee ? BigNumber(fee) : undefined,
-      resource,
+      value: !isNaN(value) ? value : BigNumber(0),
+      fee,
       blockHeight,
       hasFailed,
     };
@@ -228,12 +218,10 @@ export const formatTrongridTxResponse = (tx: Object): ?TrongridTxInfo => {
         case "FreezeBalanceContract":
           return {
             frozenAmount: BigNumber(frozen_balance),
-            resource,
           };
         case "UnfreezeBalanceContract":
           return {
-            unfreezeAmount: BigNumber(unfreeze_amount),
-            resource,
+            unfreezeAmount: BigNumber(detail.unfreeze_amount),
           };
         case "VoteWitnessContract":
           return {

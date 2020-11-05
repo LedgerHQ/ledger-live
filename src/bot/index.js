@@ -183,6 +183,8 @@ export async function bot({ currency, mutation }: Arg = {}) {
       } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
     }
 
+    let slackBody = "";
+
     body += `## ${title}`;
 
     if (GITHUB_RUN_ID && GITHUB_WORKFLOW) {
@@ -202,6 +204,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
       specFatals.forEach(({ spec, fatalError }) => {
         body += `**Spec ${spec.name} failed!**\n`;
         body += "```\n" + String(fatalError) + "\n```\n\n";
+        slackBody += `❌ *Spec ${spec.name}*: \`${String(fatalError)}\`\n`;
       });
 
       body += "</details>\n\n";
@@ -343,7 +346,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     if (SLACK_API_TOKEN && githubComment) {
       let text = `${String(GITHUB_WORKFLOW)}: ${title} (<${
         githubComment.html_url
-      }|details> – <${runURL}|logs>)\n${subtitle}`;
+      }|details> – <${runURL}|logs>)\n${subtitle}${slackBody}`;
       await network({
         url: "https://slack.com/api/chat.postMessage",
         method: "POST",
