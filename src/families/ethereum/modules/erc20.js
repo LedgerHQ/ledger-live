@@ -8,8 +8,14 @@ import { BigNumber } from "bignumber.js";
 import type { ModeModule } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
 import { inferTokenAccount, validateRecipient } from "../transaction";
-import { getAccountCurrency } from "../../../account";
-import { findTokenByAddress, findTokenById } from "../../../currencies";
+import { getAccountCurrency, getAccountUnit } from "../../../account";
+import {
+  findTokenByAddress,
+  findTokenById,
+  formatCurrencyUnit,
+} from "../../../currencies";
+import { getAccountCapabilities } from "../../../compound/logic";
+import { CompoundLowerAllowanceOfActiveAccountError } from "../../../errors";
 
 const infinite = BigNumber(2).pow(256).minus(1);
 
@@ -36,10 +42,35 @@ export type Modes = "erc20.approve";
  */
 const erc20approve: ModeModule = {
   fillTransactionStatus(a, t, result) {
+    const subAccount = inferTokenAccount(a, t);
+    const { status, enabledAmount } =
+      (subAccount && getAccountCapabilities(subAccount)) || {};
     validateRecipient(a.currency, t.recipient, result);
-    if (!t.useAllAmount && t.amount.eq(0)) {
-      result.errors.amount = new AmountRequired();
+    if (!t.useAllAmount) {
+      if (t.amount.eq(0)) {
+        result.errors.amount = new AmountRequired();
+      } else if (
+        subAccount &&
+        status &&
+        enabledAmount &&
+        ["EARNING", "SUPPLYING"].includes(status) &&
+        t.amount.lt(enabledAmount)
+      ) {
+        const unit = getAccountUnit(subAccount);
+        // if account curently supplied we can't lower the initial amount enabled just augment it
+        result.errors.amount = new CompoundLowerAllowanceOfActiveAccountError(
+          null,
+          {
+            minimumAmount: formatCurrencyUnit(unit, enabledAmount, {
+              disableRounding: true,
+              useGrouping: false,
+              showCode: true,
+            }),
+          }
+        );
+      }
     }
+
     result.amount = t.amount;
   },
 
