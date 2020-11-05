@@ -218,11 +218,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
-    padding: 16,
   },
   container: {
     flex: 1,
     alignItems: "stretch",
+    padding: 16,
   },
   row: {
     flexDirection: "row",
@@ -238,6 +238,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
+    padding: 16,
   },
   continueWrapper: {
     alignSelf: "stretch",

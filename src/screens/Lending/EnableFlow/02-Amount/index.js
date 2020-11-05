@@ -243,17 +243,17 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
-    padding: 16,
   },
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    padding: 16,
     alignItems: "stretch",
   },
   bottomWrapper: {
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
+    padding: 16,
   },
   continueWrapper: {
     alignSelf: "stretch",
