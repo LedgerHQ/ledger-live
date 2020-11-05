@@ -77,6 +77,7 @@ export type MutationSpec<T: Transaction> = {
 };
 
 export type AppSpec<T: Transaction> = {
+  disabled?: boolean,
   name: string,
   currency: CryptoCurrency,
   dependency?: string,

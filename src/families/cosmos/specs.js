@@ -19,6 +19,8 @@ import {
 } from "./logic";
 
 const cosmos: AppSpec<Transaction> = {
+  disabled: true, // FIXME https://ledgerhq.atlassian.net/browse/LL-3708
+
   name: "Cosmos",
   currency: getCryptoCurrencyById("cosmos"),
   appQuery: {
