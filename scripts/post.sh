@@ -5,12 +5,14 @@ cd $(dirname $0)/..
 ./scripts/sync-families-dispatch.sh
 
 patch --forward -i scripts/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
+cp scripts/RNAnalyticsModule.kt node_modules/@segment/analytics-react-native/android/src/main/java/com/segment/analytics/reactnative/core/RNAnalyticsModule.kt
 
 rm -f 'third-party/glog-0.3.5/test-driver'
 
 # Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
 # Why would anyone bundle an external lib available on CocoaPods anyway?
-rm -rf "node_modules/react-native-udp/ios/CocoaAsyncSocket" "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
+# It's been fixed in https://github.com/tradle/react-native-udp/pull/112 but as of today it's not part of any release
+rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
 
 rn-nodeify --hack
 

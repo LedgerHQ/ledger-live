@@ -23,12 +23,7 @@ const BackupPack = () => {
   return (
     <TouchableOpacity onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
-        <Image
-          style={styles.illustration}
-          source={backupPack}
-          width={146}
-          height={93}
-        />
+        <Image style={styles.illustration} source={backupPack} />
         <View>
           <LText semiBold secondary style={styles.label}>
             <Trans i18nKey={`carousel.banners.backupPack.title`} />
@@ -47,6 +42,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
+    width: 146,
+    height: 93,
   },
   wrapper: {
     width: "100%",

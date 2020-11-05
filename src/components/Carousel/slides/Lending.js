@@ -24,8 +24,6 @@ const Lending = () => {
         <Image
           style={styles.illustration}
           source={lending}
-          width={120}
-          height={100}
           resizeMode="contain"
         />
         <View>
@@ -46,6 +44,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -10,
     right: 0,
+    width: 120,
+    height: 100,
   },
   wrapper: {
     width: "100%",
