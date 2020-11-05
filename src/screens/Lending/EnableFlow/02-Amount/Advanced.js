@@ -65,7 +65,7 @@ export default function EnableAdvanced({ navigation, route }: Props) {
   invariant(transaction, "transaction required");
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.LendingEnableAmount, {
+    navigation.replace(ScreenName.LendingEnableAmount, {
       ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
@@ -96,7 +96,7 @@ export default function EnableAdvanced({ navigation, route }: Props) {
   );
 
   const onEditAmount = useCallback(() => {
-    navigation.push(ScreenName.LendingEnableAmountInput, {
+    navigation.navigate(ScreenName.LendingEnableAmountInput, {
       ...route.params,
       transaction,
     });
