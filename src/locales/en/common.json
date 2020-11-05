@@ -114,6 +114,9 @@
       "title": "Oops, manager connection failed",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
     },
+    "CompoundLowerAllowanceOfActiveAccountError": {
+      "title": "Minimum of {{minimumAmount}} required."
+    },
     "ClaimRewardsFeesWarning": {
       "title": "The amount of rewards are lower than the estimated fees required to claim them",
       "description": ""
