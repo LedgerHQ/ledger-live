@@ -20,12 +20,7 @@ const BuyCrypto = () => {
   return (
     <TouchableOpacity onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
-        <Image
-          style={styles.illustration}
-          source={buyCrypto}
-          width={146}
-          height={93}
-        />
+        <Image style={styles.illustration} source={buyCrypto} />
         <View>
           <LText semiBold secondary style={styles.label}>
             <Trans i18nKey={`carousel.banners.buyCrypto.title`} />
@@ -44,6 +39,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
+    width: 146,
+    height: 93,
   },
   wrapper: {
     width: "100%",
