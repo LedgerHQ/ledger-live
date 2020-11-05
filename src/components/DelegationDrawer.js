@@ -114,7 +114,11 @@ export default function DelegationDrawer({
           showsVerticalScrollIndicator={true}
         >
           {data.map((field, i) => (
-            <DataField {...field} isLast={i === data.length - 1} />
+            <DataField
+              {...field}
+              key={"data-" + i}
+              isLast={i === data.length - 1}
+            />
           ))}
         </ScrollView>
 

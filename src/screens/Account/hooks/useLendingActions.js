@@ -68,7 +68,7 @@ export default function AccountActions({ account }: Props) {
           Icon: Supply,
           event: "Lend Supply Manage Account",
           eventProperties: { currencyName: currency.name },
-          disabled: !compoundCapabilities || compoundCapabilities.canSupply,
+          disabled: !compoundCapabilities || !compoundCapabilities.canSupply,
         },
         {
           navigationParams: [

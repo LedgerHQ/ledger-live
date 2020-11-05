@@ -47,7 +47,7 @@ export default function ValidationError({ navigation, route }: Props) {
       <TrackScreen
         category="Lend Approve"
         name="Fail"
-        eventProperties={{ currencyName: currency.name }}
+        eventProperties={{ currencyName: currency?.name }}
       />
       <ValidateError
         error={error}

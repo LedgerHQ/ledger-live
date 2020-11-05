@@ -837,9 +837,9 @@
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
       "CLOSE_ACCOUNT": "Close account",
-      "REDEEM": "Withdraw",
-      "SUPPLY": "Supply",
-      "APPROVE": "Approve"
+      "SUPPLY": "Deposited",
+      "REDEEM": "Withdrawn",
+      "APPROVE": "Enabled"
     }
   },
   "operationDetails": {
@@ -1442,7 +1442,7 @@
       "dashboard": {
         "tabTitle": "Dashboard",
         "assetsTitle": "Assets to lend",
-        "accountsTitle": "Active accounts",
+        "accountsTitle": "Approved accounts",
         "emptySateDescription": "You can lend assets directly from your Ethereum accounts and earn interest.",
         "apy": "{{value}} APY",
         "activeAccount": {

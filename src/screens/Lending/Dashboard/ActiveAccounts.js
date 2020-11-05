@@ -29,6 +29,7 @@ const styles = StyleSheet.create({
   root: {
     backgroundColor: colors.white,
     borderRadius: 4,
+    marginBottom: 16,
   },
   separator: {
     width: "100%",

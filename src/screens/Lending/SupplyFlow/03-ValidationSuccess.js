@@ -54,7 +54,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <TrackScreen
         category="Lend Supply"
         name="Success"
-        eventProperties={{ currencyName: currency.name }}
+        eventProperties={{ currencyName: currency?.name }}
       />
       <PreventNativeBack />
       <ValidateSuccess
