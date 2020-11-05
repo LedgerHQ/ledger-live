@@ -200,14 +200,7 @@ export default function ValidateOnDevice({
         </View>
       </ScrollView>
       <View style={styles.footerContainer}>
-        <VerifyAddressDisclaimer
-          text={
-            <Trans
-              i18nKey="ValidateOnDevice.warning"
-              values={{ recipientWording }}
-            />
-          }
-        />
+        <VerifyAddressDisclaimer text={recipientWording} />
       </View>
     </View>
   );
