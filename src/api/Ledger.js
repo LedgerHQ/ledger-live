@@ -17,6 +17,9 @@ export const findCurrencyExplorer = (
   const config = explorerConfig[currency.id];
   if (!config) return;
   const { id } = config;
+  if (getEnv("SATSTACK") && currency.id === "bitcoin") {
+    return { endpoint: getEnv("EXPLORER_SATSTACK"), id: "btc", version: "v3" };
+  }
   if (config.experimental && getEnv("EXPERIMENTAL_EXPLORERS")) {
     const { base, version } = config.experimental;
     return { endpoint: getEnv(base), id, version };

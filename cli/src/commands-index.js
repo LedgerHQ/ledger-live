@@ -33,6 +33,8 @@ import portfolio from "./commands/portfolio";
 import proxy from "./commands/proxy";
 import receive from "./commands/receive";
 import repl from "./commands/repl";
+import satstack from "./commands/satstack";
+import satstackStatus from "./commands/satstackStatus";
 import scanDescriptors from "./commands/scanDescriptors";
 import send from "./commands/send";
 import signMessage from "./commands/signMessage";
@@ -80,6 +82,8 @@ export default {
   proxy,
   receive,
   repl,
+  satstack,
+  satstackStatus,
   scanDescriptors,
   send,
   signMessage,

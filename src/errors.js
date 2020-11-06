@@ -101,6 +101,8 @@ export const NotEnoughDelegationBalance = createCustomErrorClass(
   "NotEnoughDelegationBalance"
 );
 
+export const RPCFieldRequired = createCustomErrorClass("RPCFieldRequired");
+
 // Note : info of this code can be found here :
 // https://github.com/cosmos/cosmos-sdk/blob/v0.37.9/types/errors.go#L28
 export const CosmosBroadcastError = {
@@ -123,6 +125,9 @@ export const CosmosBroadcastError = {
   "16": createCustomErrorClass(" CosmosBroadcastCodeGasOverflow"),
   "17": createCustomErrorClass(" CosmosBroadcastCodeNoSignatures"),
 };
+
+export const SatStackNotReady = createCustomErrorClass("SatStackNotReady");
+
 export const SwapNoAvailableProviders = createCustomErrorClass(
   "SwapNoAvailableProviders"
 );

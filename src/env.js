@@ -210,6 +210,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer beta API",
   },
+  EXPLORER_SATSTACK: {
+    def: "http://localhost:20000",
+    parser: stringParser,
+    desc: "Ledger satstack Bitcoin explorer API",
+  },
   DISABLE_APP_VERSION_REQUIREMENTS: {
     def: false,
     parser: boolParser,
@@ -309,6 +314,11 @@ const envDefinitions = {
     def: 100,
     parser: intParser,
     desc: "defines the initial default operation length page to use",
+  },
+  SATSTACK: {
+    def: false,
+    parser: boolParser,
+    desc: "Switch to satstack mode",
   },
   SCAN_FOR_INVALID_PATHS: {
     def: false,
