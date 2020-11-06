@@ -134,7 +134,7 @@ export default function SendAmount({ navigation, route }: Props) {
   }, [setTransaction, account, parentAccount, transaction]);
 
   const navigateAdvanced = useCallback(() => {
-    navigation.push(NavigatorName.LendingEnableFlow, {
+    navigation.navigate(NavigatorName.LendingEnableFlow, {
       screen: ScreenName.LendingEnableAmountAdvanced,
       params: {
         ...route.params,
@@ -192,7 +192,7 @@ export default function SendAmount({ navigation, route }: Props) {
               }}
             >
               <LText semiBold style={styles.label} />
-              <LText semiBold style={styles.liveLabel} />
+              <LText numberOfLines={1} semiBold style={styles.liveLabel} />
             </Trans>
           </View>
         </View>
@@ -243,17 +243,17 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
-    padding: 16,
   },
   container: {
     flex: 1,
-    paddingHorizontal: 16,
+    padding: 16,
     alignItems: "stretch",
   },
   bottomWrapper: {
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
+    padding: 16,
   },
   continueWrapper: {
     alignSelf: "stretch",
