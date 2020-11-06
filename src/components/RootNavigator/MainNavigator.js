@@ -34,6 +34,7 @@ export default function MainNavigator() {
         name={NavigatorName.Accounts}
         component={AccountsNavigator}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: (props: any) => (
             <TabIcon Icon={AccountsIcon} i18nKey="tabs.accounts" {...props} />
           ),
@@ -58,6 +59,7 @@ export default function MainNavigator() {
         name={NavigatorName.Settings}
         component={SettingsNavigator}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: (props: any) => (
             <TabIcon Icon={SettingsIcon} i18nKey="tabs.settings" {...props} />
           ),
