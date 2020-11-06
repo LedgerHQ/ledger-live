@@ -121,6 +121,9 @@
       "title": "The amount of rewards are lower than the estimated fees required to claim them",
       "description": ""
     },
+    "CompoundLowerAllowanceOfActiveAccountError": {
+      "title": "You cannot reduce the amount approved while having an active deposit."
+    },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
       "description": "Please contact Ledger Support"
