@@ -630,7 +630,11 @@ function awaitAccountOperation({
 }
 
 // generic transaction test: make sure you are sure all coins suit the tests here
-function transactionTest<T>({ operation, account }: TransactionTestInput<T>) {
+function transactionTest<T>({
+  operation,
+  optimisticOperation,
+  account,
+}: TransactionTestInput<T>) {
   const timingThreshold = 30 * 60 * 1000;
   const dt = Date.now() - operation.date;
   invariant(dt > 0, "operation.date must not be in in future");
@@ -647,4 +651,14 @@ function transactionTest<T>({ operation, account }: TransactionTestInput<T>) {
       expectedMax
     );
   }
+  invariant(
+    !optimisticOperation.value.isNaN(),
+    "optimisticOperation.value must not be NaN"
+  );
+  invariant(
+    !optimisticOperation.fee.isNaN(),
+    "optimisticOperation.fee must not be NaN"
+  );
+  invariant(!operation.value.isNaN(), "operation.value must not be NaN");
+  invariant(!operation.fee.isNaN(), "operation.fee must not be NaN");
 }
