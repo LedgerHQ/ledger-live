@@ -2,12 +2,13 @@
 
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import swap from "../../../images/banners/swap.png";
 import LText from "../../LText";
+import Touchable from "../../Touchable";
 import colors from "../../../colors";
 
 const Swap = () => {
@@ -23,7 +24,7 @@ const Swap = () => {
   );
 
   return (
-    <TouchableOpacity onPress={onClick}>
+    <Touchable event="Swap Carousel" onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
         <Image style={styles.illustration} source={swap} />
         <View>
@@ -35,7 +36,7 @@ const Swap = () => {
           </LText>
         </View>
       </View>
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 

@@ -4,13 +4,14 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { useSelector } from "react-redux";
-import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../../const";
 import { accountsSelector } from "../../../reducers/accounts";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import stakeCosmos from "../../../images/banners/cosmosstaking.png";
 import LText from "../../LText";
+import Touchable from "../../Touchable";
 import colors from "../../../colors";
 
 const StakeCosmos = () => {
@@ -41,7 +42,7 @@ const StakeCosmos = () => {
   }, [accounts, navigation]);
 
   return (
-    <TouchableOpacity onPress={onClick}>
+    <Touchable event="StakeCosmos Carousel" onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
         <Image style={styles.illustration} source={stakeCosmos} />
         <View>
@@ -53,7 +54,7 @@ const StakeCosmos = () => {
           </LText>
         </View>
       </View>
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 

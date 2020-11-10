@@ -2,10 +2,11 @@
 
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Image, View, StyleSheet } from "react-native";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import sell from "../../../images/banners/sell.png";
 import LText from "../../LText";
+import Touchable from "../../Touchable";
 import colors from "../../../colors";
 
 const Sell = () => {
@@ -17,7 +18,7 @@ const Sell = () => {
   );
 
   return (
-    <TouchableOpacity onPress={onClick}>
+    <Touchable event="Sell Carousel" onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
         <Image style={styles.illustration} source={sell} />
         <View>
@@ -29,7 +30,7 @@ const Sell = () => {
           </LText>
         </View>
       </View>
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 
