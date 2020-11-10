@@ -145,3 +145,8 @@ export const setSwapProviders = (swapProviders?: AvailableProvider[]) => ({
   type: "SETTINGS_SET_SWAP_PROVIDERS",
   swapProviders,
 });
+
+export const setDiscreetMode = (payload: boolean) => ({
+  type: "SETTINGS_SET_DISCREET_MODE",
+  payload,
+});

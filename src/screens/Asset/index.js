@@ -300,6 +300,7 @@ const styles = StyleSheet.create({
   balanceText: {
     fontSize: 22,
     color: colors.darkBlue,
+    lineHeight: 24,
   },
   balanceSubText: {
     fontSize: 16,
@@ -307,6 +308,6 @@ const styles = StyleSheet.create({
   },
   balanceContainer: {
     marginLeft: 16,
-    alignItems: "center",
+    alignItems: "flex-start",
   },
 });

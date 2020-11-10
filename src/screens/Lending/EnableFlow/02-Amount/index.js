@@ -32,6 +32,7 @@ import Plus from "../../../../icons/Plus";
 import ArrowRight from "../../../../icons/ArrowRight";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import LendingWarnings from "../../shared/LendingWarnings";
+import { discreetModeSelector } from "../../../../reducers/settings";
 
 type Props = {
   navigation: any,
@@ -47,6 +48,7 @@ type RouteParams = {
 
 export default function SendAmount({ navigation, route }: Props) {
   const { t } = useTranslation();
+  const discreet = useSelector(discreetModeSelector);
   const { currency, transaction: tx } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(
@@ -94,6 +96,7 @@ export default function SendAmount({ navigation, route }: Props) {
       showAllDigits: false,
       disableRounding: false,
       showCode: true,
+      discreet,
     });
 
   const onContinue = useCallback(() => {

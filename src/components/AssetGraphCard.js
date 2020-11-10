@@ -26,6 +26,7 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
 import type { Item } from "./Graph/types";
+import DiscreetModeButton from "./DiscreetModeButton";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
@@ -149,47 +150,50 @@ class GraphCardHeader extends PureComponent<{
     const item = hoveredItem || to;
 
     return (
-      <>
-        <View style={styles.balanceTextContainer}>
-          {renderTitle ? (
-            renderTitle({
-              counterValueUnit,
-              useCounterValue,
-              cryptoCurrencyUnit,
-              item,
-            })
-          ) : (
-            <LText semiBold style={styles.balanceText}>
-              <CurrencyUnitValue unit={unit} value={item.value} />
-            </LText>
-          )}
+      <View style={styles.graphHeader}>
+        <View style={styles.graphHeaderBalance}>
+          <View style={styles.balanceTextContainer}>
+            {renderTitle ? (
+              renderTitle({
+                counterValueUnit,
+                useCounterValue,
+                cryptoCurrencyUnit,
+                item,
+              })
+            ) : (
+              <LText semiBold style={styles.balanceText}>
+                <CurrencyUnitValue unit={unit} value={item.value} />
+              </LText>
+            )}
+          </View>
+          <View style={styles.subtitleContainer}>
+            {isLoading ? (
+              <>
+                <Placeholder
+                  width={50}
+                  containerHeight={19}
+                  style={{ marginRight: 10 }}
+                />
+                <Placeholder width={50} containerHeight={19} />
+              </>
+            ) : hoveredItem ? (
+              <LText>
+                <FormatDate date={hoveredItem.date} />
+              </LText>
+            ) : valueChange ? (
+              <>
+                <Delta
+                  percent
+                  valueChange={valueChange}
+                  style={styles.deltaPercent}
+                />
+                <Delta valueChange={valueChange} unit={unit} />
+              </>
+            ) : null}
+          </View>
         </View>
-        <View style={styles.subtitleContainer}>
-          {isLoading ? (
-            <>
-              <Placeholder
-                width={50}
-                containerHeight={19}
-                style={{ marginRight: 10 }}
-              />
-              <Placeholder width={50} containerHeight={19} />
-            </>
-          ) : hoveredItem ? (
-            <LText>
-              <FormatDate date={hoveredItem.date} />
-            </LText>
-          ) : valueChange ? (
-            <>
-              <Delta
-                percent
-                valueChange={valueChange}
-                style={styles.deltaPercent}
-              />
-              <Delta valueChange={valueChange} unit={unit} />
-            </>
-          ) : null}
-        </View>
-      </>
+        <DiscreetModeButton />
+      </View>
     );
   }
 }
@@ -232,8 +236,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   deltaPercent: {
-    marginRight: 20,
+    marginRight: 8,
   },
+  graphHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingRight: 10,
+    flexWrap: "nowrap",
+  },
+  graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
 });
 
 export default compose(connect(null, mapDispatchToProps))(AssetGraphCard);

@@ -7,10 +7,12 @@ import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { Trans } from "react-i18next";
 import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
 
+import { useSelector } from "react-redux";
 import { useLocale } from "../../context/Locale";
 import LText from "../../components/LText";
 import InfoBox from "../../components/InfoBox";
 import WarningBox from "../../components/WarningBox";
+import { discreetModeSelector } from "../../reducers/settings";
 
 type Props = {
   account: AccountLike,
@@ -18,6 +20,7 @@ type Props = {
 
 export default function LendingBanners({ account }: Props) {
   const { locale } = useLocale();
+  const discreet = useSelector(discreetModeSelector);
   const unit = getAccountUnit(account);
 
   const availableOnCompound =
@@ -44,6 +47,7 @@ export default function LendingBanners({ account }: Props) {
             showAllDigits: false,
             disableRounding: true,
             showCode: true,
+            discreet,
           }),
         }}
       >
@@ -58,6 +62,7 @@ export default function LendingBanners({ account }: Props) {
             showAllDigits: false,
             disableRounding: true,
             showCode: true,
+            discreet,
           }),
         }}
       >

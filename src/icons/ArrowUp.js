@@ -10,10 +10,12 @@ type Props = {
 
 export default function ArrowUp({ size = 10, color }: Props) {
   return (
-    <Svg viewBox="0 0 9.9998 6.4997" width={size} height={size}>
+    <Svg width={size} height={size} viewBox="0 0 10 10" fill="none">
       <Path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M2.72728 0H8.5H10V1.5V7.27273H8.5V2.56066L1.21215 9.84851L0.151489 8.78785L7.43934 1.5H2.72728V0Z"
         fill={color}
-        d="m1.5019 6.4997h6.996c1.333 0 2.005-1.617 1.06-2.56l-3.497-3.5a1.5 1.5 0 0 0-2.122 0l-3.498 3.5c-0.942 0.941-0.275 2.56 1.059 2.56z"
       />
     </Svg>
   );

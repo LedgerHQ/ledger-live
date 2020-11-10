@@ -44,17 +44,24 @@ export default class Delta extends PureComponent<Props> {
 
     const absDelta = delta.absoluteValue();
 
+    const [color, arrow, sign] = !delta.isZero()
+      ? delta.isGreaterThan(0)
+        ? [colors.success, arrowUp, "+"]
+        : [colors.alert, arrowDown, "-"]
+      : [colors.darkBlue, null, ""];
+
     return (
       <View style={[styles.root, style]}>
-        {!delta.isZero()
-          ? delta.isGreaterThan(0)
-            ? arrowUp
-            : arrowDown
-          : null}
-        <View style={styles.content}>
-          <LText semiBold style={styles.text}>
+        {percent ? arrow : null}
+        <View style={percent ? styles.content : null}>
+          <LText semiBold style={[styles.text, { color }]}>
             {unit ? (
-              <CurrencyUnitValue unit={unit} value={absDelta} />
+              <CurrencyUnitValue
+                before={`(${sign} `}
+                after={")"}
+                unit={unit}
+                value={absDelta}
+              />
             ) : percent ? (
               `${absDelta.toFixed(0)}%`
             ) : null}
@@ -75,6 +82,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
 });
