@@ -166,6 +166,7 @@
     "vm-browserify": "1.1.2"
   },
   "devDependencies": {
+    "@actions/core": "^1.2.6",
     "@babel/core": "^7.12.3",
     "@babel/runtime": "^7.12.1",
     "@react-native-community/eslint-config": "^1.1.0",

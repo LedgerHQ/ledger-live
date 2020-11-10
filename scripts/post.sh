@@ -25,13 +25,13 @@ if [[ $DEBUG_RNDEBUGGER == "1" ]]; then
   rndebugger-open
 fi
 
-if [ "$(uname)" == "Darwin" ]; then
-  if ! [ -x "$(command -v bundle)" ]; then
-    echo 'Error: `bundle` command is missing. Please install Bundler. https://bundler.io' >&2
-    exit 1
-  fi
+if ! [ -x "$(command -v bundle)" ]; then
+  echo 'Error: `bundle` command is missing. Please install Bundler. https://bundler.io' >&2
+  exit 1
+fi
+bundle install
 
-  bundle install
+if [ "$(uname)" == "Darwin" ]; then
   cd ios && bundle exec pod install --deployment --repo-update
 
   if [ $? -ne 0 ]; then
