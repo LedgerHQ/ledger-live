@@ -23,6 +23,7 @@ import {
 import isEqual from "lodash/isEqual";
 import { useEffect, useCallback, useState, useMemo } from "react";
 import { log } from "@ledgerhq/logs";
+import { getDeviceModel } from "@ledgerhq/devices";
 import {
   getDerivationScheme,
   getDerivationModesForCurrency,
@@ -339,16 +340,19 @@ const implementations = {
         connectSub = connectApp(pollingOnDevice, params)
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
-            catchError((err) =>
-              err instanceof TimeoutError
+            catchError((err) => {
+              const productName = getDeviceModel(pollingOnDevice.modelId)
+                .productName;
+
+              return err instanceof TimeoutError
                 ? of({
                     type: "error",
                     error: (new ConnectAppTimeout(null, {
-                      productName: pollingOnDevice?.deviceName,
+                      productName,
                     }): Error),
                   })
-                : throwError(err)
-            )
+                : throwError(err);
+            })
           )
           .subscribe({
             next: (event) => {

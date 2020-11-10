@@ -36,6 +36,7 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 type State = {|
   isLoading: boolean,
@@ -205,16 +206,19 @@ const implementations = {
         connectSub = connectManager(pollingOnDevice)
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
-            catchError((err) =>
-              err instanceof TimeoutError
+            catchError((err) => {
+              const productName = getDeviceModel(pollingOnDevice.modelId)
+                .productName;
+
+              return err instanceof TimeoutError
                 ? of({
                     type: "error",
                     error: (new ConnectManagerTimeout(null, {
-                      productName: pollingOnDevice?.deviceName,
+                      productName,
                     }): Error),
                   })
-                : throwError(err)
-            )
+                : throwError(err);
+            })
           )
           .subscribe({
             next: (event) => {
