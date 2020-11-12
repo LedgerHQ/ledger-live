@@ -20,6 +20,8 @@ import type {
 } from "../../libcore/types";
 import type { TransactionMode, ModeModule } from "./modules";
 import type { Range, RangeRaw } from "../../range";
+import type { CryptoCurrency } from "../../types";
+import type { DerivationMode } from "../../derivation";
 
 export type EthereumGasLimitRequest = {
   from?: string,
@@ -68,6 +70,24 @@ export type TransactionRaw = {|
   feeCustomUnit: ?Unit,
   networkInfo: ?NetworkInfoRaw,
 |};
+
+export type TypedMessage = {
+  types: {
+    EIP712Domain: [{ type: string, name: string }],
+    [key: string]: [{ type: string, name: string }],
+  },
+  primaryType: string,
+  domain: any,
+  message: any,
+};
+
+export type TypedMessageData = {
+  currency: CryptoCurrency,
+  path: string,
+  verify?: boolean,
+  derivationMode: DerivationMode,
+  message: TypedMessage,
+};
 
 //
 

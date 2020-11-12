@@ -367,6 +367,11 @@ const envDefinitions = {
     desc:
       "unique identifier of app instance. used to derivate dissociated ids for difference purposes (e.g. the firmware update incremental deployment).",
   },
+  WALLETCONNECT: {
+    def: false,
+    parser: boolParser,
+    desc: "is walletconnect enabled",
+  },
   WITH_DEVICE_POLLING_DELAY: {
     def: 500,
     parser: floatParser,

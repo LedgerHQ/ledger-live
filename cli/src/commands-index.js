@@ -42,6 +42,7 @@ import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import validRecipient from "./commands/validRecipient";
 import version from "./commands/version";
+import walletconnect from "./commands/walletconnect";
 
 export default {
   app,
@@ -88,4 +89,5 @@ export default {
   testGetTrustedInputFromTxHash,
   validRecipient,
   version,
+  walletconnect,
 };
