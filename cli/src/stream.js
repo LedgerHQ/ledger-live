@@ -39,7 +39,10 @@ export const apdusFromFile = (file: string) =>
     map((line) => Buffer.from(line, "hex"))
   );
 
-export const jsonFromFile = (file: string): Observable<any> =>
+export const jsonFromFile = (
+  file: string,
+  rawValue: boolean = false
+): Observable<any> =>
   Observable.create((o) => {
     let acc = "";
     let count = 0;
@@ -63,7 +66,7 @@ export const jsonFromFile = (file: string): Observable<any> =>
                 acc += str.slice(lastIndex, i + 1);
                 lastIndex = i + 1;
                 try {
-                  o.next(JSON.parse(acc));
+                  o.next(rawValue ? acc : JSON.parse(acc));
                 } catch (e) {
                   o.error(e);
                 }

@@ -16,6 +16,7 @@ import { getCoreAccount } from "./getCoreAccount";
 import { remapLibcoreErrors } from "./errors";
 import { shouldRetainPendingOperation } from "../account";
 import postSyncPatchPerFamily from "../generated/libcore-postSyncPatch";
+import perFamilyPresync from "../generated/presync";
 
 let coreSyncCounter = 0;
 export const newSyncLogId = () => ++coreSyncCounter;
@@ -43,6 +44,10 @@ export async function syncCoreAccount({
   logId: number,
   syncConfig: SyncConfig,
 }): Promise<Account> {
+  const presync = perFamilyPresync[currency.family];
+  if (presync) {
+    await presync(currency);
+  }
   try {
     if (!syncConfig.withoutSynchronize) {
       log("libcore", `sync(${logId}) syncCoreAccount`);
