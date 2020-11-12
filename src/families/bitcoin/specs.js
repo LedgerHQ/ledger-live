@@ -263,6 +263,7 @@ const bchToCashaddrAddressWithoutPrefix = (recipient) =>
   bchaddrjs.toCashAddress(recipient).split(":")[1];
 
 const bitcoinCash: AppSpec<Transaction> = {
+  disabled: true,
   name: "Bitcoin Cash",
   currency: getCryptoCurrencyById("bitcoin_cash"),
   dependency: "Bitcoin",
