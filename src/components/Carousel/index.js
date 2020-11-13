@@ -78,7 +78,7 @@ const hitSlop = {
   bottom: 16,
 };
 
-export const CAROUSEL_NONCE: number = 1;
+export const CAROUSEL_NONCE: number = 2;
 
 const Carousel = () => {
   const dispatch = useDispatch();

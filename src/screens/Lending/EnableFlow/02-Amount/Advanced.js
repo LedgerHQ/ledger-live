@@ -65,7 +65,7 @@ export default function EnableAdvanced({ navigation, route }: Props) {
   invariant(transaction, "transaction required");
 
   const onContinue = useCallback(() => {
-    navigation.navigate(ScreenName.LendingEnableAmount, {
+    navigation.replace(ScreenName.LendingEnableAmount, {
       ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
@@ -96,7 +96,7 @@ export default function EnableAdvanced({ navigation, route }: Props) {
   );
 
   const onEditAmount = useCallback(() => {
-    navigation.push(ScreenName.LendingEnableAmountInput, {
+    navigation.navigate(ScreenName.LendingEnableAmountInput, {
       ...route.params,
       transaction,
     });
@@ -218,11 +218,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.white,
-    padding: 16,
   },
   container: {
     flex: 1,
     alignItems: "stretch",
+    padding: 16,
   },
   row: {
     flexDirection: "row",
@@ -238,6 +238,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "center",
     justifyContent: "flex-end",
+    padding: 16,
   },
   continueWrapper: {
     alignSelf: "stretch",

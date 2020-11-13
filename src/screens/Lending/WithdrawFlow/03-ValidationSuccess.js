@@ -27,7 +27,7 @@ type RouteParams = {
 export default function ValidationSuccess({ navigation, route }: Props) {
   const onClose = useCallback(() => {
     const n = navigation.dangerouslyGetParent() || navigation;
-    n.goBack();
+    n.pop();
   }, [navigation]);
 
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -53,7 +53,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       <TrackScreen
         category="Lend Withdraw"
         name="Success"
-        eventProperties={{ currencyName: currency.name }}
+        eventProperties={{ currencyName: currency?.name }}
       />
       <PreventNativeBack />
       <ValidateSuccess

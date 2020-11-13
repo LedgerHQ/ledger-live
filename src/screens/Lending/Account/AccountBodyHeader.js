@@ -20,7 +20,7 @@ export default function AccountBodyHeader({
   parentAccount,
   compoundSummary,
 }: Props) {
-  const { closed } = compoundSummary;
+  const { closed, opened } = compoundSummary;
 
   const renderClosedRow = useCallback(
     // $FlowFixMe
@@ -28,14 +28,30 @@ export default function AccountBodyHeader({
     [account, parentAccount],
   );
 
-  return (
+  return opened.length > 0 || closed.length > 0 ? (
     <View style={styles.root}>
-      <LText semiBold style={styles.title}>
-        <Trans i18nKey="transfer.lending.account.openLoans" />
-      </LText>
-      <View style={styles.container}>
-        <ActiveAccountRow item={compoundSummary} />
-      </View>
+      {opened && opened.length > 0 ? (
+        <>
+          <LText semiBold style={styles.title}>
+            <Trans i18nKey="transfer.lending.account.openLoans" />
+          </LText>
+          <View style={styles.container}>
+            {opened.map((item, index) => (
+              <ActiveAccountRow
+                // $FlowFixMe
+                item={{
+                  ...item,
+                  account,
+                  parentAccount,
+                  accruedInterests: item.interestsEarned,
+                  totalSupplied: item.amountSupplied,
+                }}
+                key={`OpenLoans-${account.id}-${index}`}
+              />
+            ))}
+          </View>
+        </>
+      ) : null}
 
       {closed.length > 0 && (
         <>
@@ -47,14 +63,14 @@ export default function AccountBodyHeader({
             data={closed}
             renderItem={renderClosedRow}
             keyExtractor={(item, index) =>
-              `${item.endDate.toDateString()}${index}`
+              `ClosedLoans-${item.endDate.toDateString()}${index}`
             }
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </>
       )}
     </View>
-  );
+  ) : null;
 }
 
 const styles = StyleSheet.create({

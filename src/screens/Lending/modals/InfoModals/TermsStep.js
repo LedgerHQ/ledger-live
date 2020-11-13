@@ -18,6 +18,7 @@ import termsImg from "../../../../images/lending-terms.png";
 import { ScreenName } from "../../../../const";
 import { acceptLendingTerms } from "../../../../logic/terms";
 import { urls } from "../../../../config/urls";
+import PreventNativeBack from "../../../../components/PreventNativeBack";
 
 type Props = {
   route: { params: { endCallback: () => void } },
@@ -56,6 +57,7 @@ export default function TermsStep({ route: { params } }: Props) {
       disabled={!hasAcceptedTerms}
       onNext={onNext}
     >
+      <PreventNativeBack />
       <View style={styles.footer}>
         <TouchableOpacity onPress={onTogleAcceptedTerms}>
           <CheckBox isChecked={hasAcceptedTerms} />

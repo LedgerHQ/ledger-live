@@ -1,6 +1,6 @@
 // $flow
 import React from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -33,7 +33,7 @@ export default function BaseInfoModal({
   event,
 }: Props) {
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root}>
       {event && <TrackScreen category="Lend" name={event} />}
       {header}
       <View style={styles.topSection}>{illustration}</View>
@@ -57,7 +57,7 @@ export default function BaseInfoModal({
           title={ctaLabel}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -19,12 +19,7 @@ const Sell = () => {
   return (
     <TouchableOpacity onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
-        <Image
-          style={styles.illustration}
-          source={sell}
-          width={120}
-          height={100}
-        />
+        <Image style={styles.illustration} source={sell} />
         <View>
           <LText semiBold secondary style={styles.label}>
             <Trans i18nKey={`carousel.banners.sell.title`} />
@@ -43,6 +38,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: -10,
     right: 0,
+    width: 120,
+    height: 100,
   },
   wrapper: {
     width: "100%",

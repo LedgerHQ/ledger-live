@@ -218,7 +218,7 @@ export function useSignedTxHandler({
         }
         navigation.replace(
           route.name.replace("ConnectDevice", "ValidationError"),
-          { error },
+          { ...route.params, error },
         );
       }
     },

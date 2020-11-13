@@ -9,10 +9,12 @@ type Props = {
 
 export default function TransferIcon({ size = 16, color }: Props) {
   return (
-    <Svg viewBox="0 0 7 2" width={size} height={size}>
+    <Svg width={size} height={size} viewBox="0 0 26 26" fill="none">
       <Path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M22.3507 13.75H3.64941V12.25H22.3507V13.75Z"
         fill={color}
-        d="M6.89844 0.109375H0.101562V1.75H6.89844V0.109375Z"
       />
     </Svg>
   );

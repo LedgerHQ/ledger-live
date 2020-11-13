@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { View, StyleSheet, SafeAreaView } from "react-native";
+import { ScrollView, StyleSheet, SafeAreaView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { listCurrentRates } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
@@ -24,7 +24,7 @@ export default function Dashboard() {
     <SafeAreaView style={[styles.root]}>
       <TrackScreen category="Lend" />
       <LendingWarnings />
-      <View style={styles.body}>
+      <ScrollView style={styles.body}>
         <LText style={styles.title} semiBold>
           {t("transfer.lending.dashboard.assetsTitle")}
         </LText>
@@ -33,7 +33,7 @@ export default function Dashboard() {
           {t("transfer.lending.dashboard.accountsTitle")}
         </LText>
         <ActiveAccounts summaries={summaries} />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     display: "flex",
-    justifyContent: "flex-start",
     padding: 16,
+    marginBottom: 16,
   },
   title: {
     paddingVertical: 16,

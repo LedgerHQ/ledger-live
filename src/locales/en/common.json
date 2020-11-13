@@ -114,9 +114,15 @@
       "title": "Oops, manager connection failed",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled"
     },
+    "CompoundLowerAllowanceOfActiveAccountError": {
+      "title": "Minimum of {{minimumAmount}} required."
+    },
     "ClaimRewardsFeesWarning": {
       "title": "The amount of rewards are lower than the estimated fees required to claim them",
       "description": ""
+    },
+    "CompoundLowerAllowanceOfActiveAccountError": {
+      "title": "You cannot reduce the amount approved while having an active deposit."
     },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
@@ -516,10 +522,10 @@
       "title": "When sending to this recipient, a memo may be required"
     },
     "SwapExchangeRateAmountTooLow": {
-      "title": "Amount must be higher than {{unit}} {{minAmountFrom}}"
+      "title": "Amount must be higher than {{minAmountFrom}} {{unit}}"
     },
     "SwapExchangeRateAmountTooHigh": {
-      "title": "Amount must be lower than {{unit}} {{maxAmountFrom}}"
+      "title": "Amount must be lower than {{maxAmountFrom}} {{unit}}"
     },
     "SwapGenericAPIError": {
       "title": "Exchange rate expired",
@@ -649,6 +655,11 @@
         "title": "BLACK FRIDAY",
         "description": "Enjoy 40% off with promo code BLACKFRIDAY20"
       }
+    }
+  },
+  "banners": {
+    "ongoingScams": {
+      "description": "There are ongoing phishing scams on our userbase, please be careful and never share your recovery phrase."
     }
   },
   "onboarding": {
@@ -841,9 +852,9 @@
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
       "CLOSE_ACCOUNT": "Close account",
-      "REDEEM": "Withdraw",
-      "SUPPLY": "Supply",
-      "APPROVE": "Approve"
+      "SUPPLY": "Deposited",
+      "REDEEM": "Withdrawn",
+      "APPROVE": "Enabled"
     }
   },
   "operationDetails": {
@@ -1446,7 +1457,7 @@
       "dashboard": {
         "tabTitle": "Dashboard",
         "assetsTitle": "Assets to lend",
-        "accountsTitle": "Active accounts",
+        "accountsTitle": "Approved accounts",
         "emptySateDescription": "You can lend assets directly from your Ethereum accounts and earn interest.",
         "apy": "{{value}} APY",
         "activeAccount": {
@@ -1477,33 +1488,33 @@
       },
       "terms": {
         "label": "Lend crypto",
-        "title": "Lend asset on the Compound Protocol",
-        "description": "Compound Protocol allows you to lend and borrow assets on the blockchain.  You can lend assets and earn interests directly from Ledger Live.",
+        "title": "Lend assets on the Compound Protocol",
+        "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger acccount.",
         "switchLabel": "I have read and agree with the <0>Terms of Use</0>."
       },
       "info": {
         "title": "Lend crypto",
         "1": {
           "label": "Step 1/3",
-          "title": "Approving an account allows the protocol to process future loans",
+          "title": "Approving an account allows the protocol to process future loans.",
           "description": "You need to authorize the Compound smart contract to transfer up to a certain amount of assets to the protocol. Enabling an account gives permission to the protocol to process future loans."
         },
         "2": {
           "label": "Step 2/3",
-          "title": "Supply assets to earn interests",
-          "description": "After an account is enabled, you can select the amount of assets you want to lend and issue a transaction to the protocol. Interests accrue immediately after the transaction is confirmed."
+          "title": "Deposit assets to earn interest.",
+          "description": "Once an account is approved, you can select the amount of assets you want to lend and issue a transaction to the protocol. Interest accrue immediately after the transaction is confirmed."
         },
         "3": {
           "label": "Step 3/3",
-          "title": "Withdraw your gains whenever you feel like it",
-          "description": "You can withdraw at any time your loan principal and interests, in its entirety or partially, directly from you Ledger wallet.",
+          "title": "Withdraw assets at any time.",
+          "description": "You can withdraw your assets and earned interest at any time, partially or entirely, directly from your Ledger account.",
           "cta": "Lend now"
         }
       },
       "enable": {
         "info": {
           "title": "This account is not approved",
-          "description": "You need to approved an account before being able to lend this asset.",
+          "description": "You need to approve an account before being able to lend this asset.",
           "cta": "Approve Account"
         },
         "stepperHeader": {
@@ -1522,11 +1533,11 @@
           "noEnabledAccounts": "You need to approve an account before you can lend."
         },
         "enable": {
-          "summary": "<0>I grant access to </0><1>{{contractName}}</1><0> smart contract on my account </0><1>{{accountName}}</1><0> for a </0><1>{{amount}}</1><0> amount</0>",
+          "summary": "<0>I grant the </0><1>{{contractName}}</1><0> smart contract access to my </0><1>{{accountName}}</1><0> account for a </0><1>{{amount}}</1><0> amount</0>",
           "limit": "limited {{amount}}",
           "noLimit": "no limit {{assetName}}",
           "contractName": "Compound {{currencyName}}",
-          "advanced": "Advanced mode"
+          "advanced": "Advanced"
         },
         "advanced": {
           "amountLabel": "Amount to approve",
@@ -1539,8 +1550,8 @@
           "totalAvailable": "Total available"
         },
         "validation": {
-          "success": "The transaction is being processed",
-          "info": "Please be patient, the transaction is being processed, once the transaction is confirmed you will be able to issue loans on the Compound protocol",
+          "success": "Operation sent successfully",
+          "info": "The approval was sent to the network for confirmation. You’ll be able to issue loans once it is confirmed.",
           "extraInfo": "Transactions can take some time to be displayed in an explorer and to be confirmed.",
           "button": {
             "done": "Close"
@@ -1561,7 +1572,7 @@
         },
         "validation": {
           "success": "Deposit sent successfully",
-          "info": "Once the transaction is confirmed you will be able to issue loans on the Compound protocol",
+          "info": "You will start earning interest once the network has confirmed the deposit.",
           "extraInfo": "Transactions can take some time to be displayed in an explorer and to be confirmed.",
           "button": {
             "done": "Done",
@@ -2613,13 +2624,18 @@
     },
     "warning": "Always verify that your device displays the address exactly as provided {{recipientWording}}",
     "recipientWording": {
-      "send": "by the recipient",
-      "delegate": "by the validator",
-      "undelegate": "by the validator",
-      "freeze": "",
-      "unfreeze": "",
-      "claimReward": "",
-      "vote": ""
+      "send": "Always verify that your device displays the address exactly as provided by the recipient",
+      "delegate": "Always verify that your device displays the address exactly as provided by the validator",
+      "undelegate": "Always verify that your device displays the address exactly as provided by the validator",
+      "freeze": "Always verify that your device displays the address exactly as provided ",
+      "unfreeze": "Always verify that your device displays the address exactly as provided ",
+      "claimReward": "Always verify that your device displays the address exactly as provided ",
+      "vote": "Always verify that your device displays the address exactly as provided ",
+      "erc20": {
+        "approve": "Verify the operation details on your device before sending it."
+      },
+      "compound.supply": "Verify the deposit details on your device before sending it.",
+      "compound.withdraw": "Verify the withdrawal details on your device before sending it."
     },
     "name": "Name",
     "votes": "Votes",
@@ -2631,7 +2647,8 @@
         "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
         "redelegate": "You will have to wait 21 days for undelegated assets to be added to your available balance.",
         "undelegate": "You will have to wait 21 days for undelegated assets to be added to your available balance."
-      }
+      },
+      "lending": "Verify the operation details on your device before sending it."
     },
     "amount": "Amount",
     "account": "Account",
@@ -2647,7 +2664,7 @@
   "Terms": {
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
-    "switchLabel": "I have read and agree with the Terms of Use and Privacy Policy"
+    "switchLabel": "I have read and accepted the Terms & Conditions."
   },
   "exchange": {
     "buy": {

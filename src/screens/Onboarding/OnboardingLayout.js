@@ -104,7 +104,9 @@ export default class OnboardingLayout extends PureComponent<Props> {
     }
 
     return (
-      <SafeAreaView style={[styles.root, isCentered && styles.centered, style]}>
+      <SafeAreaView
+        style={[styles.root, isCentered ? styles.centered : {}, style]}
+      >
         {inner}
       </SafeAreaView>
     );
@@ -134,7 +136,7 @@ export class OnboardingInner extends PureComponent<Container> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight ?? undefined,
     backgroundColor: "white",
   },
   centered: {

@@ -41,6 +41,7 @@ export default function LendingInfoNavigator() {
 
           headerLeft: null,
           headerRight: () => <CloseButton navigation={navigation} />,
+          gestureEnabled: false,
         };
       }}
     >

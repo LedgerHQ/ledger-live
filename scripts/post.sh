@@ -5,12 +5,14 @@ cd $(dirname $0)/..
 ./scripts/sync-families-dispatch.sh
 
 patch --forward -i scripts/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
+cp scripts/RNAnalyticsModule.kt node_modules/@segment/analytics-react-native/android/src/main/java/com/segment/analytics/reactnative/core/RNAnalyticsModule.kt
 
 rm -f 'third-party/glog-0.3.5/test-driver'
 
 # Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
 # Why would anyone bundle an external lib available on CocoaPods anyway?
-rm -rf "node_modules/react-native-udp/ios/CocoaAsyncSocket" "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
+# It's been fixed in https://github.com/tradle/react-native-udp/pull/112 but as of today it's not part of any release
+rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
 
 rn-nodeify --hack
 
@@ -23,13 +25,13 @@ if [[ $DEBUG_RNDEBUGGER == "1" ]]; then
   rndebugger-open
 fi
 
-if [ "$(uname)" == "Darwin" ]; then
-  if ! [ -x "$(command -v bundle)" ]; then
-    echo 'Error: `bundle` command is missing. Please install Bundler. https://bundler.io' >&2
-    exit 1
-  fi
+if ! [ -x "$(command -v bundle)" ]; then
+  echo 'Error: `bundle` command is missing. Please install Bundler. https://bundler.io' >&2
+  exit 1
+fi
+bundle install
 
-  bundle install
+if [ "$(uname)" == "Darwin" ]; then
   cd ios && bundle exec pod install --deployment --repo-update
 
   if [ $? -ne 0 ]; then

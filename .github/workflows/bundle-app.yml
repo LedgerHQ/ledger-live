@@ -1,0 +1,71 @@
+name: bundle app
+on: [push, pull_request]
+
+jobs:
+  bundle-apk:
+    runs-on: macos-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.4.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - name: install bundle
+        run: |
+          gem install bundler:2.1.4
+      - uses: ledgerhq/actions/check-member@v2.0.0
+        with:
+          username: ${{ github.actor }}
+          ban: ledgerlive
+        if: github.event_name == 'pull_request'
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@main
+        with:
+          node-version: 12.x
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: install dependencies
+        run: yarn --frozen-lockfile
+      - uses: ledgerhq/actions/get-package-infos@v1.0.0
+        id: version
+      - name: set beta name
+        uses: ./.github/actions/change-product-name
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha8::${GITHUB_SHA:0:7}"
+      - name: make local version
+        run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+      - name: build the app
+        run: |
+          export ANDROID_KEYSTORE_FILE=$(pwd)/android/app/staging.kstr
+          export ANDROID_KEYSTORE_PASS=staging
+          export ANDROID_KEY_ALIAS=staging
+          export ANDROID_KEY_PASS=staging
+          yarn android:apk
+      - uses: ledgerhq/actions/get-package-infos@v1.0.0
+        id: post-version
+      - name: upload Android app 1/4
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.post-version.outputs.version }}-arm64-v8a-android.apk
+          path: android/app/build/outputs/apk/release/app-arm64-v8a-release.apk
+      - name: upload Android app 2/4
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.post-version.outputs.version }}-armeabi-v7a-android.apk
+          path: android/app/build/outputs/apk/release/app-armeabi-v7a-release.apk
+      - name: upload Android app 3/4
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.post-version.outputs.version }}-x86_64-android.apk
+          path: android/app/build/outputs/apk/release/app-x86_64-release.apk
+      - name: upload Android app 4/4
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.post-version.outputs.version }}-x86-android.apk
+          path: android/app/build/outputs/apk/release/app-x86-release.apk

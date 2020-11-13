@@ -39,12 +39,7 @@ const StakeAlgo = () => {
   return (
     <TouchableOpacity onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
-        <Image
-          style={styles.illustration}
-          source={algorand}
-          width={126}
-          height={100}
-        />
+        <Image style={styles.illustration} source={algorand} />
         <View>
           <LText semiBold secondary style={styles.label}>
             <Trans i18nKey={`carousel.banners.algorand.title`} />
@@ -63,6 +58,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
+    width: 126,
+    height: 100,
   },
   wrapper: {
     width: "100%",

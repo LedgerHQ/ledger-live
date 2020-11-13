@@ -32,6 +32,7 @@ export default function ClosedLoansRow({ item }: RowProps) {
   } = item;
   const { token } = account;
   const name = getAccountName(parentAccount || account);
+  const accountName = getAccountName(account);
   const currency = getAccountCurrency(account);
   const totalRedeemed = amountSupplied.plus(interestsEarned);
 
@@ -97,11 +98,11 @@ export default function ClosedLoansRow({ item }: RowProps) {
       <TouchableOpacity style={styles.row} onPress={onOpenDrawer}>
         <CurrencyIcon radius={100} currency={token} size={32} />
         <View style={styles.currencySection}>
-          <LText semiBold style={styles.subTitle}>
-            {parentAccount?.name}
-          </LText>
-          <LText semiBold style={styles.title}>
+          <LText numberOfLines={1} semiBold style={styles.subTitle}>
             {name}
+          </LText>
+          <LText numberOfLines={1} semiBold style={styles.title}>
+            {accountName}
           </LText>
         </View>
         <View style={[styles.currencySection, styles.alignEnd]}>

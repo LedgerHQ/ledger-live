@@ -16,6 +16,9 @@ import OperationStatusIconRedelegate from "./Redelegate";
 import OperationStatusIconFees from "./Fees";
 import OperationStatusIconOptIn from "./OptIn";
 import OperationStatusIconOptOut from "./OptOut";
+import OperationStatusIconEnable from "./Enable";
+import OperationStatusIconSupply from "./Supply";
+import OperationStatusIconWithdraw from "./Withdraw";
 
 export default ({
   type,
@@ -45,6 +48,9 @@ export default ({
     OPT_IN: OperationStatusIconOptIn,
     OPT_OUT: OperationStatusIconOptOut,
     CLOSE_ACCOUNT: OperationStatusIconOptOut,
+    REDEEM: OperationStatusIconWithdraw,
+    SUPPLY: OperationStatusIconSupply,
+    APPROVE: OperationStatusIconEnable,
   };
 
   const Icon = IconsComponent[type] || OperationStatusIconSend;
