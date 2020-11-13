@@ -26,6 +26,12 @@ import colors from "../../colors";
 export const getDefaultSlides = () => {
   return [
     {
+      id: "blackfriday",
+      Component: () => <BlackFriday />,
+      start: new Date("1 Nov 2020 00:01:00 PST"),
+      end: new Date("30 Nov 2020 23:59:00 PST"),
+    },
+    {
       id: "Lending",
       Component: () => <Lending />,
     },
@@ -52,12 +58,6 @@ export const getDefaultSlides = () => {
     {
       id: "stakeAlgo",
       Component: () => <StakeAlgo />,
-    },
-    {
-      id: "blackfriday",
-      Component: () => <BlackFriday />,
-      start: new Date("1 Nov 2020 00:01:00 PST"),
-      end: new Date("30 Nov 2020 23:59:00 PST"),
     },
     // TODO enable when ready
     // {
