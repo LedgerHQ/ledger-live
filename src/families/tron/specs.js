@@ -16,6 +16,9 @@ const currency = getCryptoCurrencyById("tron");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "1");
 const maxAccount = 10;
 
+const getDecimalPart = (value: BigNumber, magnitude: number) =>
+  value.minus(value.modulo(10 ** magnitude));
+
 const tron: AppSpec<Transaction> = {
   name: "Tron",
   currency,
@@ -67,7 +70,13 @@ const tron: AppSpec<Transaction> = {
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(minimalAmount), "balance is too low");
-        const amount = maxSpendable.div(4).integerValue();
+        let amount = getDecimalPart(
+          maxSpendable.div(4),
+          currency.units[0].magnitude
+        ).integerValue();
+        if (amount.eq(0)) {
+          amount = BigNumber(1).times(currency.units[0].magnitude);
+        }
         const energy = get(account, `tronResources.energy`, BigNumber(0));
         return {
           transaction: bridge.createTransaction(account),
@@ -79,18 +88,17 @@ const tron: AppSpec<Transaction> = {
         };
       },
       test: ({ account, accountBeforeTransaction, transaction }) => {
-        const resourceType = transaction.resource || "";
+        const resourceType = (transaction.resource || "").toLocaleLowerCase();
 
-        // We need Lenses or Getter for this 😱
         const resourceBeforeTransaction = get(
           accountBeforeTransaction,
           `tronResources.frozen.${resourceType}.amount`,
           BigNumber(0)
         );
 
-        const expectedAmount = BigNumber(transaction.amount)
-          .times(10e6)
-          .plus(resourceBeforeTransaction);
+        const expectedAmount = BigNumber(transaction.amount).plus(
+          resourceBeforeTransaction
+        );
 
         const currentRessourceAmount = get(
           account,
@@ -101,15 +109,6 @@ const tron: AppSpec<Transaction> = {
         expect(expectedAmount.toString()).toBe(
           currentRessourceAmount.toString()
         );
-
-        const TPBefore = get(
-          accountBeforeTransaction,
-          "tronResources.tronPower",
-          BigNumber(0)
-        );
-        const currentTP = get(account, "tronResources.tronPower", "0");
-        const expectedTP = transaction.amount.plus(TPBefore);
-        expect(expectedTP.toString()).toBe(currentTP);
       },
     },
     {
@@ -135,12 +134,12 @@ const tron: AppSpec<Transaction> = {
         };
       },
       test: ({ account, accountBeforeTransaction, transaction }) => {
-        const TxResource = transaction.resource || "";
+        const TxResource = (transaction.resource || "").toLocaleLowerCase();
 
         const currentFrozen = get(
           account,
           `tronResources.frozen.${TxResource}`,
-          {}
+          undefined
         );
 
         expect(currentFrozen).toBeUndefined();
@@ -149,9 +148,8 @@ const tron: AppSpec<Transaction> = {
           get(accountBeforeTransaction, "tronResources.tronPower", 0)
         );
         const currentTP = BigNumber(get(account, "tronResources.tronPower", 0));
-
         const expectedTronPower = TPBeforeTx.minus(transaction.amount);
-        expect(currentTP).toEqual(expectedTronPower);
+        expect(currentTP.toString()).toBe(expectedTronPower.toString());
       },
     },
     {

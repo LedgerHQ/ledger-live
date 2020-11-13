@@ -73,42 +73,53 @@ export function deviceActionFlow<T: Transaction>(
       currentStep: null,
     };
 
+    function runStep(step) {
+      const { final, title, button } = step;
+      if (stepValue && step.title !== stepTitle) {
+        // there were accumulated text and we are on new step, we need to release it and compare to expected
+        if (currentStep && currentStep.expectedValue) {
+          const { expectedValue, ignoreAssertionFailure } = currentStep;
+          if (!ignoreAssertionFailure) {
+            expect({
+              [stepTitle]: stepValue.trim(),
+            }).toMatchObject({
+              [stepTitle]: expectedValue(arg, acc).trim(),
+            });
+          }
+        }
+        acc = acc.concat({
+          title: stepTitle,
+          value: stepValue,
+        });
+        // a new step reset back the value for the next
+        stepValue = "";
+      }
+      if (button) {
+        // some step trigger navigation action
+        transport.button(button);
+      }
+      // text is the title of the step. we assume screen event starts / ends.
+      stepTitle = title;
+      currentStep = step;
+      if (final) {
+        finalState = true;
+      }
+    }
+
     if (!finalState) {
-      const possibleKnownStep = description.steps.find((s) =>
+      let possibleKnownStep = description.steps.find((s) =>
         event.text.startsWith(s.title)
       );
+      // if there is a fallback provided, we will run it to try to detect another possible known step
+      if (!possibleKnownStep && description.fallback) {
+        possibleKnownStep = description.fallback(arg);
+      }
+
       if (possibleKnownStep) {
-        const { final, title, button } = possibleKnownStep;
-        if (stepValue && possibleKnownStep.title !== stepTitle) {
-          // there were accumulated text and we are on new step, we need to release it and compare to expected
-          if (currentStep && currentStep.expectedValue) {
-            const { expectedValue, ignoreAssertionFailure } = currentStep;
-            if (!ignoreAssertionFailure) {
-              expect({
-                [stepTitle]: stepValue.trim(),
-              }).toMatchObject({
-                [stepTitle]: expectedValue(arg, acc).trim(),
-              });
-            }
-          }
-          acc = acc.concat({
-            title: stepTitle,
-            value: stepValue,
-          });
-          // a new step reset back the value for the next
-          stepValue = "";
-        }
-        if (button) {
-          // some step trigger navigation action
-          transport.button(button);
-        }
-        // text is the title of the step. we assume screen event starts / ends.
-        stepTitle = title;
-        currentStep = possibleKnownStep;
-        if (final) {
-          finalState = true;
-        }
+        // a step title was recognized. run it as a new step
+        runStep(possibleKnownStep);
       } else if (currentStep) {
+        // there is a current ongoing step so we need to accumulate all text we see
         let { text } = event;
         if (currentStep.trimValue) text = text.trim();
         stepValue += text;

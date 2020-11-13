@@ -87,7 +87,6 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     },
   ],
   fallback: ({ event, transaction }) => {
-    // FIXME this is a hack, we'll soon make better pattern instead of deviceActionFlow
     if (transaction.mode === "vote") {
       for (const vote of transaction.votes) {
         const title = `${vote.address.slice(0, 5)}...${vote.address.slice(
@@ -105,7 +104,7 @@ function voteAction(vote, title): any {
   return {
     title,
     button: "Rr",
-    expectedValue: () => vote.voteCount,
+    expectedValue: () => String(vote.voteCount),
   };
 }
 
