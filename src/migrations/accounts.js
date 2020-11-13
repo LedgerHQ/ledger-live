@@ -1,6 +1,6 @@
 // @flow
 import type { Account, AccountLike, SubAccount } from "../types";
-import type { SwapOperation } from "../swap/types";
+import type { SwapOperation } from "../exchange/swap/types";
 import {
   encodeTokenAccountId,
   decodeTokenAccountId,

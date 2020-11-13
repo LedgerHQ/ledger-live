@@ -1,7 +1,7 @@
 // @flow
 
 import { BigNumber } from "bignumber.js";
-import type { Account, AccountLike } from "../types/account";
+import type { Account, AccountLike } from "../../types/account";
 import type {
   AccountRawLike,
   AccountRaw,
@@ -10,7 +10,7 @@ import type {
   CryptoCurrency,
   TokenCurrency,
   TransactionRaw,
-} from "../types";
+} from "../../types";
 
 export type Exchange = {
   fromParentAccount: ?Account,
@@ -58,16 +58,6 @@ export type InitSwapResult = {
   swapId: string,
 };
 
-export type SwapCurrencyNameAndSignature = {
-  config: Buffer,
-  signature: Buffer,
-};
-
-export type SwapProviderNameAndSignature = {
-  nameAndPubkey: Buffer,
-  signature: Buffer,
-};
-
 type ValidSwapStatus =
   | "confirming"
   | "finished"
@@ -95,17 +85,6 @@ export type SwapStatus = {
 export type GetStatus = (SwapStatusRequest) => Promise<SwapStatus>;
 export type UpdateAccountSwapStatus = (Account) => Promise<?Account>;
 export type GetMultipleStatus = (SwapStatusRequest[]) => Promise<SwapStatus[]>;
-
-/*
-// TO BE FIGURED OUT
-type FamilySwapSpecifics = {
-   getSerializedAddressParams: ?? => ??,
-   signatures: Buffer
-}
-*/
-
-// bridge.signOperation
-// bridge.broadcast => Operation
 
 export type SwapRequestEvent =
   | { type: "init-swap-requested" }

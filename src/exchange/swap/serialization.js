@@ -12,7 +12,7 @@ import {
   fromAccountRaw,
   toAccountLikeRaw,
   toAccountRaw,
-} from "../account";
+} from "../../account";
 
 export const fromExchangeRaw = (exchangeRaw: ExchangeRaw): Exchange => {
   const fromAccount = fromAccountLikeRaw(exchangeRaw.fromAccount);

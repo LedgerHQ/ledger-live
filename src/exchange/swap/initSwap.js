@@ -6,24 +6,25 @@ import { from } from "rxjs";
 import secp256k1 from "secp256k1";
 import invariant from "invariant";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
-import { delay } from "../promise";
-import Swap from "./hw-app-swap/Swap";
+import { delay } from "../../promise";
+import Exchange from "../hw-app-exchange/Exchange";
 import { mockInitSwap } from "./mock";
-import perFamily from "../generated/swap";
-import { getAccountCurrency, getMainAccount, getAccountUnit } from "../account";
-import network from "../network";
-import { getAccountBridge } from "../bridge";
+import perFamily from "../../generated/exchange";
+import {
+  getAccountCurrency,
+  getMainAccount,
+  getAccountUnit,
+} from "../../account";
+import network from "../../network";
+import { getAccountBridge } from "../../bridge";
 import { BigNumber } from "bignumber.js";
-import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../errors";
+import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
 import type { SwapRequestEvent, InitSwapInput } from "./types";
 import { Observable } from "rxjs";
-import { withDevice } from "../hw/deviceAccess";
-import {
-  getCurrencySwapConfig,
-  getProviderNameAndSignature,
-  getSwapAPIBaseURL,
-} from "./";
-import { getEnv } from "../env";
+import { withDevice } from "../../hw/deviceAccess";
+import { getProviderNameAndSignature, getSwapAPIBaseURL } from "./";
+import { getCurrencyExchangeConfig } from "../";
+import { getEnv } from "../../env";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
@@ -42,7 +43,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
       log("swap", `attempt to connect to ${deviceId}`);
       await withDevicePromise(deviceId, async (transport) => {
-        const swap = new Swap(transport);
+        const swap = new Exchange(transport, 0x00);
+
         // NB this id is crucial to prevent replay attacks, if it changes
         // we need to start the flow again.
         const deviceTransactionId = await swap.startNewTransaction();
@@ -173,7 +175,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const {
           config: payoutAddressConfig,
           signature: payoutAddressConfigSignature,
-        } = getCurrencySwapConfig(payoutCurrency);
+        } = getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           await swap.checkPayoutAddress(
@@ -209,7 +211,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const {
           config: refundAddressConfig,
           signature: refundAddressConfigSignature,
-        } = getCurrencySwapConfig(refundCurrency);
+        } = getCurrencyExchangeConfig(refundCurrency);
 
         if (unsubscribed) return;
         o.next({ type: "init-swap-requested" });

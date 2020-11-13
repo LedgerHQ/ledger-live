@@ -1,17 +1,17 @@
 // @flow
 
 import type { Exchange, GetExchangeRates } from "./types";
-import type { Transaction } from "../types";
-import { getAccountCurrency, getAccountUnit } from "../account";
+import type { Transaction } from "../../types";
+import { getAccountCurrency, getAccountUnit } from "../../account";
 import { mockGetExchangeRates } from "./mock";
-import network from "../network";
+import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
-import { getEnv } from "../env";
+import { getEnv } from "../../env";
 import { BigNumber } from "bignumber.js";
 import {
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooHigh,
-} from "../errors";
+} from "../../errors";
 
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,

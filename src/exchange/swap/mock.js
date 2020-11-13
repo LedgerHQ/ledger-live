@@ -8,12 +8,12 @@ import type {
   GetProviders,
   SwapRequestEvent,
 } from "./types";
-import { getAccountUnit } from "../account";
-import type { Transaction } from "../types";
+import { getAccountUnit } from "../../account";
+import type { Transaction } from "../../types";
 import {
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooHigh,
-} from "../errors";
+} from "../../errors";
 import { Observable, of } from "rxjs";
 
 export const mockGetExchangeRates = async (

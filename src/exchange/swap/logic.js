@@ -2,15 +2,15 @@
 
 import { BigNumber } from "bignumber.js";
 import type { SwapState } from "./types";
-import { isExchangeSupportedByApp } from "./index";
+import { isExchangeSupportedByApp } from "../";
 import type {
   Account,
   AccountLike,
   TokenCurrency,
   CryptoCurrency,
-} from "../types";
-import type { InstalledItem } from "../apps";
-import { flattenAccounts, getAccountCurrency } from "../account";
+} from "../../types";
+import type { InstalledItem } from "../../apps";
+import { flattenAccounts, getAccountCurrency } from "../../account";
 const validCurrencyStatus = { ok: 1, noApp: 1, noAccounts: 1, outdatedApp: 1 };
 export type CurrencyStatus = $Keys<typeof validCurrencyStatus>;
 export type CurrenciesStatus = { [string]: CurrencyStatus };

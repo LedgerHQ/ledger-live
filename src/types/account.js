@@ -22,7 +22,7 @@ import type {
   BalanceHistoryRaw,
   PortfolioRange,
 } from "./portfolio";
-import type { SwapOperation, SwapOperationRaw } from "../swap/types";
+import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 
 export type BalanceHistoryMap = {
   [_: PortfolioRange]: BalanceHistory,

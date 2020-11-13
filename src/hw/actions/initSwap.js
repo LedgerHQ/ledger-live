@@ -3,7 +3,7 @@ import { Observable, of, concat } from "rxjs";
 import { scan, tap, catchError } from "rxjs/operators";
 import { useEffect, useState } from "react";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
-import type { InitSwapInput } from "../../swap/types";
+import type { InitSwapInput } from "../../exchange/swap/types";
 import type { Action, Device } from "./types";
 import type { Transaction } from "../../types";
 import type { AppState } from "./app";
@@ -15,7 +15,7 @@ import type {
   ExchangeRate,
   InitSwapResult,
   SwapRequestEvent,
-} from "../../swap/types";
+} from "../../exchange/swap/types";
 
 type State = {|
   initSwapResult: ?InitSwapResult,

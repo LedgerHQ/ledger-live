@@ -1,7 +1,7 @@
 // @flow
 
 import { getMultipleStatus } from "./getStatus";
-import type { SubAccount, Account } from "../types";
+import type { SubAccount, Account } from "../../types";
 import type { UpdateAccountSwapStatus, SwapOperation } from "./types";
 import { operationStatusList } from "./";
 

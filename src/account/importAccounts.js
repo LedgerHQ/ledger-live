@@ -4,7 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { Result } from "../cross";
 import { accountDataToAccount } from "../cross";
 import { findAccountMigration, checkAccountSupported } from "./support";
-import joinSwapHistories from "../swap/joinSwapHistories";
+import joinSwapHistories from "../exchange/swap/joinSwapHistories";
 import isEqual from "lodash/isEqual";
 
 const itemModeDisplaySort = {

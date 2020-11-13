@@ -1,7 +1,7 @@
 // @flow
-import type { Account, SubAccount, Operation, Transaction } from "../types";
+import type { Account, SubAccount, Operation, Transaction } from "../../types";
 import type { Exchange, ExchangeRate } from "./types";
-import { getAccountCurrency, getMainAccount } from "../account";
+import { getAccountCurrency, getMainAccount } from "../../account";
 import type { SwapOperation } from "../swap/types";
 
 export default ({

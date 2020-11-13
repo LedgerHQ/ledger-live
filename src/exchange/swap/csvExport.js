@@ -1,7 +1,7 @@
 // @flow
 
-import { formatCurrencyUnit } from "../currencies";
-import { getAccountCurrency, getMainAccount } from "../account";
+import { formatCurrencyUnit } from "../../currencies";
+import { getAccountCurrency, getMainAccount } from "../../account";
 import type { SwapHistorySection, MappedSwapOperation } from "./types";
 type Field = {
   title: string,

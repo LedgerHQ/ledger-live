@@ -1,11 +1,11 @@
 // @flow
 
-import network from "../network";
+import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
 import type { GetMultipleStatus, GetStatus } from "./types";
-import { getEnv } from "../env";
+import { getEnv } from "../../env";
 import { mockGetStatus } from "./mock";
-import { SwapUnknownSwapId } from "../errors";
+import { SwapUnknownSwapId } from "../../errors";
 
 export const getStatus: GetStatus = async (status) => {
   const updatedStatus = await getMultipleStatus([status]);

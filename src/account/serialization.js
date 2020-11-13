@@ -38,7 +38,7 @@ import {
 } from "../currencies";
 import { inferFamilyFromAccountId } from "./accountId";
 import accountByFamily from "../generated/account";
-import type { SwapOperation, SwapOperationRaw } from "../swap/types";
+import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };

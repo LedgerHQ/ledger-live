@@ -1,13 +1,13 @@
 // @flow
 
 import { findTokenById } from "@ledgerhq/cryptoassets";
-import type { AccountLike } from "../types";
+import type { AccountLike } from "../../types";
 import type {
   SwapHistorySection,
   SwapOperation,
   MappedSwapOperation,
 } from "./types";
-import { accountWithMandatoryTokens, getAccountCurrency } from "../account";
+import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
 
 const getSwapOperationMap = (account: AccountLike, accounts: AccountLike[]) => (
   swapOperation: SwapOperation

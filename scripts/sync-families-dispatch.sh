@@ -26,7 +26,7 @@ test-dataset.js \
 test-specifics.js \
 mock.js \
 account.js \
-swap.js \
+exchange.js \
 presync.js \
 "
 
