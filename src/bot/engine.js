@@ -489,7 +489,7 @@ async function syncAccount(initialAccount: Account): Promise<Account> {
     .pipe(
       reduce((a, f: (Account) => Account) => f(a), initialAccount),
       timeoutWith(
-        5 * 60 * 1000,
+        10 * 60 * 1000,
         throwError(new Error("account sync timeout for " + initialAccount.name))
       )
     )
