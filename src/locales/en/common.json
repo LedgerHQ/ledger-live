@@ -649,7 +649,11 @@
       },
       "lending": {
         "title": "Lend crypto",
-        "description": "Lend assets on the Compound Protocol"
+        "description": "Lend asset on the Compound Protocol"
+      },
+      "blackfriday": {
+        "title": "BLACK FRIDAY",
+        "description": "Enjoy 40% off with promo code BLACKFRIDAY20"
       }
     }
   },
