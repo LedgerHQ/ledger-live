@@ -19,8 +19,6 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens",
   errors: {
     PairingFailed: "https://support.ledger.com/hc/en-us/articles/360025864773",
-    BitcoinCashHardforkOct2020Warning:
-      "https://www.ledger.com/bitcoin-cash-fork-15-november-2020-what-it-means-for-you",
   },
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154",
