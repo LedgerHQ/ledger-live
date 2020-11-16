@@ -92,10 +92,6 @@
       "title": "Oops, Bluetooth disabled",
       "description": "Please enable Bluetooth in your phone Settings. ({{state}} state)"
     },
-    "BitcoinCashHardforkOct2020Warning": {
-      "title": "",
-      "description": "Bitcoin Cash is currently undergoing a hard fork without replay protection. We will temporarily interrupt the Bitcoin Cash service until the network has stabilized."
-    },
     "BtcUnmatchedApp": {
       "title": "That's the wrong app",
       "description": "Open the ‘{{managerAppName}}’ app on your device"
