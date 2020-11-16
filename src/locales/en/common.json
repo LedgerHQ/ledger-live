@@ -4,6 +4,7 @@
     "apply": "Apply",
     "back": "Back",
     "delete": "Delete",
+    "paste": "Paste",
     "yes": "Yes",
     "no": "No",
     "gotit": "Got it",
@@ -1630,7 +1631,8 @@
     "recipient": {
       "scan": "Scan QR Code",
       "enterAddress": "Enter address",
-      "input": "Enter address"
+      "input": "Enter address",
+      "verifyAddress": "Kindly verify the address matches the one shared by the recipient"
     },
     "amount": {
       "available": "Total available",

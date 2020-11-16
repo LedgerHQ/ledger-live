@@ -9,10 +9,17 @@ import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTran
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { Platform, StyleSheet, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Clipboard,
+} from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
+import Paste from "../../icons/Paste";
 import { track, TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import colors from "../../colors";
@@ -21,6 +28,7 @@ import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText, { getFontStyle } from "../../components/LText";
 import TextInput from "../../components/TextInput";
+import InfoBox from "../../components/InfoBox";
 import TranslatedError from "../../components/TranslatedError";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
@@ -130,7 +138,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>
           <NavigationScrollView
-            style={styles.container}
+            style={[styles.container, { flex: 1 }]}
             keyboardShouldPersistTaps="handled"
           >
             <Button
@@ -147,6 +155,18 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               </LText>
               <View style={styles.separatorLine} />
             </View>
+            <TouchableOpacity
+              style={styles.pasteContainer}
+              onPress={async () => {
+                const text = await Clipboard.getString();
+                onChangeText(text);
+              }}
+            >
+              <Paste size={16} color={colors.live} />
+              <LText style={styles.pasteTitle} semiBold>
+                <Trans i18nKey="common.paste" />
+              </LText>
+            </TouchableOpacity>
             <View style={styles.inputWrapper}>
               {/* make this a recipient component */}
               <TextInput
@@ -179,7 +199,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               </LText>
             )}
           </NavigationScrollView>
-          <View style={[styles.container, styles.containerFlexEnd]}>
+          <View style={styles.container}>
+            {transaction.recipient && !(error || warning) ? (
+              <View style={styles.infoBox}>
+                <InfoBox>{t("send.recipient.verifyAddress")}</InfoBox>
+              </View>
+            ) : null}
             <Button
               event="SendRecipientContinue"
               type="primary"
@@ -225,6 +250,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
+  pasteContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginBottom: 8,
+    marginTop: 32,
+  },
+  pasteTitle: {
+    color: colors.live,
+    marginLeft: 8,
+  },
+  infoBox: {
+    marginBottom: 24,
+  },
   separatorContainer: {
     marginTop: 32,
     flexDirection: "row",
@@ -238,10 +276,6 @@ const styles = StyleSheet.create({
   },
   separatorText: {
     color: colors.grey,
-  },
-  containerFlexEnd: {
-    flex: 1,
-    justifyContent: "flex-end",
   },
   addressInput: {
     flex: 1,
