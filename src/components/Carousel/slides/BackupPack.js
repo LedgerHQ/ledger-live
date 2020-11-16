@@ -2,16 +2,11 @@
 
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import {
-  Linking,
-  Image,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { Linking, Image, View, StyleSheet } from "react-native";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import backupPack from "../../../images/banners/backuppack.png";
 import LText from "../../LText";
+import Touchable from "../../Touchable";
 import { urls } from "../../../config/urls";
 import colors from "../../../colors";
 
@@ -21,7 +16,7 @@ const BackupPack = () => {
     Linking.openURL(urls.banners.backupPack);
   }, []);
   return (
-    <TouchableOpacity onPress={onClick}>
+    <Touchable event="BackupPack Carousel" onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
         <Image style={styles.illustration} source={backupPack} />
         <View>
@@ -33,7 +28,7 @@ const BackupPack = () => {
           </LText>
         </View>
       </View>
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 

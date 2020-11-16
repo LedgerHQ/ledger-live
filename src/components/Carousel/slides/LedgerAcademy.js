@@ -2,16 +2,11 @@
 
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import {
-  Linking,
-  Image,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { Linking, Image, View, StyleSheet } from "react-native";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import academy from "../../../images/banners/academy.png";
 import LText from "../../LText";
+import Touchable from "../../Touchable";
 import { urls } from "../../../config/urls";
 import colors from "../../../colors";
 
@@ -21,7 +16,7 @@ const LedgerAcademy = () => {
     Linking.openURL(urls.banners.ledgerAcademy);
   }, []);
   return (
-    <TouchableOpacity onPress={onClick}>
+    <Touchable event="LedgerAcademy Carousel" onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
         <Image style={styles.illustration} source={academy} />
         <View>
@@ -33,7 +28,7 @@ const LedgerAcademy = () => {
           </LText>
         </View>
       </View>
-    </TouchableOpacity>
+    </Touchable>
   );
 };
 
