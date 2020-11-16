@@ -33,6 +33,7 @@
     "ios:internal": "bundle exec fastlane ios beta --env production",
     "preios:internal": "bundle install",
     "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Staging",
+    "ios:ci": "bundle exec fastlane ios ci --env adhoc",
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
