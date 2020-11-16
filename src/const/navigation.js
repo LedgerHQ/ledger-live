@@ -104,6 +104,7 @@ export const ScreenName = {
   ReceiveConnectDevice: "ReceiveConnectDevice",
   ReceiveSelectAccount: "ReceiveSelectAccount",
   RepairDevice: "RepairDevice",
+  Resources: "Resources",
   RippleEditFee: "RippleEditFee",
   RippleEditTag: "RippleEditTag",
   ScanAccounts: "ScanAccounts",

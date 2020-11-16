@@ -17,7 +17,7 @@ const hitSlop = {
 };
 
 export default class BottomModalChoice extends PureComponent<{
-  onPress: ?() => void,
+  onPress: ?() => any,
   Icon: React$ComponentType<*>,
   title: string,
   description?: string,

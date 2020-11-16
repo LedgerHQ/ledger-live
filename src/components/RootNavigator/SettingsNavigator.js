@@ -15,6 +15,7 @@ import DebugPlayground from "../../screens/DebugPlayground";
 import Settings from "../../screens/Settings";
 import AccountsSettings from "../../screens/Settings/Accounts";
 import AboutSettings from "../../screens/Settings/About";
+import Resources from "../../screens/Settings/Resources";
 import GeneralSettings from "../../screens/Settings/General";
 import CountervalueSettings from "../../screens/Settings/General/CountervalueSettings";
 import HelpSettings from "../../screens/Settings/Help";
@@ -80,6 +81,11 @@ export default function SettingsNavigator() {
         options={{
           title: t("settings.help.header"),
         }}
+      />
+      <Stack.Screen
+        name={ScreenName.Resources}
+        component={Resources}
+        options={{ title: t("settings.resources") }}
       />
       <Stack.Screen
         name={NavigatorName.CryptoAssetsSettings}
