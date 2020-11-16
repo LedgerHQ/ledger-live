@@ -3,7 +3,9 @@ import type { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
+import { useSelector } from "react-redux";
 import { useLocale } from "../context/Locale";
+import { discreetModeSelector } from "../reducers/settings";
 
 type Props = {
   unit: Unit,
@@ -25,6 +27,7 @@ export default function CurrencyUnitValue({
   disableRounding = false,
 }: Props) {
   const { locale } = useLocale();
+  const discreet = useSelector(discreetModeSelector);
 
   return (
     before +
@@ -34,6 +37,7 @@ export default function CurrencyUnitValue({
           alwaysShowSign,
           locale,
           disableRounding,
+          discreet,
         })
       : "") +
     after

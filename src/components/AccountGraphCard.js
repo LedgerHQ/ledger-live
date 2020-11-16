@@ -32,6 +32,7 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
 import type { Item } from "./Graph/types";
+import DiscreetModeButton from "./DiscreetModeButton";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
@@ -164,50 +165,55 @@ class GraphCardHeader extends PureComponent<{
     const item = hoveredItem || to;
 
     return (
-      <>
-        <View style={styles.balanceTextContainer}>
-          {renderTitle ? (
-            renderTitle({
-              counterValueUnit,
-              useCounterValue,
-              cryptoCurrencyUnit,
-              item,
-            })
-          ) : (
-            <View style={styles.warningWrapper}>
-              <LText semiBold style={styles.balanceText}>
-                <CurrencyUnitValue unit={unit} value={item.value} />
+      <View style={styles.graphHeader}>
+        <View style={styles.graphHeaderBalance}>
+          <View style={styles.balanceTextContainer}>
+            {renderTitle ? (
+              renderTitle({
+                counterValueUnit,
+                useCounterValue,
+                cryptoCurrencyUnit,
+                item,
+              })
+            ) : (
+              <View style={styles.warningWrapper}>
+                <LText semiBold style={styles.balanceText}>
+                  <CurrencyUnitValue unit={unit} value={item.value} />
+                </LText>
+                <TransactionsPendingConfirmationWarning
+                  maybeAccount={account}
+                />
+              </View>
+            )}
+          </View>
+          <View style={styles.subtitleContainer}>
+            {isLoading ? (
+              <>
+                <Placeholder
+                  width={50}
+                  containerHeight={19}
+                  style={{ marginRight: 10 }}
+                />
+                <Placeholder width={50} containerHeight={19} />
+              </>
+            ) : hoveredItem ? (
+              <LText>
+                <FormatDate date={hoveredItem.date} />
               </LText>
-              <TransactionsPendingConfirmationWarning maybeAccount={account} />
-            </View>
-          )}
+            ) : valueChange ? (
+              <>
+                <Delta
+                  percent
+                  valueChange={valueChange}
+                  style={styles.deltaPercent}
+                />
+                <Delta valueChange={valueChange} unit={unit} />
+              </>
+            ) : null}
+          </View>
         </View>
-        <View style={styles.subtitleContainer}>
-          {isLoading ? (
-            <>
-              <Placeholder
-                width={50}
-                containerHeight={19}
-                style={{ marginRight: 10 }}
-              />
-              <Placeholder width={50} containerHeight={19} />
-            </>
-          ) : hoveredItem ? (
-            <LText>
-              <FormatDate date={hoveredItem.date} />
-            </LText>
-          ) : valueChange ? (
-            <>
-              <Delta
-                percent
-                valueChange={valueChange}
-                style={styles.deltaPercent}
-              />
-              <Delta valueChange={valueChange} unit={unit} />
-            </>
-          ) : null}
-        </View>
-      </>
+        <DiscreetModeButton />
+      </View>
     );
   }
 }
@@ -265,8 +271,16 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   deltaPercent: {
-    marginRight: 20,
+    marginRight: 8,
   },
+  graphHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingHorizontal: 16,
+    flexWrap: "nowrap",
+  },
+  graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
 });
 
 export default compose(connect(null, mapDispatchToProps))(AccountGraphCard);

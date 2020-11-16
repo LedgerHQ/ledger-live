@@ -17,8 +17,10 @@ import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 
 import type { CosmosDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/types";
+import { useSelector } from "react-redux";
 import Section from "../../screens/OperationDetails/Section";
 import { urls } from "../../config/urls";
+import { discreetModeSelector } from "../../reducers/settings";
 
 function getURLFeesInfo(op: Operation): ?string {
   return op.fee.gt(200000) ? urls.cosmosStakingRewards : undefined;
@@ -42,6 +44,7 @@ type Props = {
 
 function OperationDetailsExtra({ extra, type, account }: Props) {
   const { t } = useTranslation();
+  const discreet = useSelector(discreetModeSelector);
   const unit = getAccountUnit(account);
   const { validators: cosmosValidators } = useCosmosPreloadData();
 
@@ -76,6 +79,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
           disableRounding: true,
           alwaysShowSign: false,
           showCode: true,
+          discreet,
         },
       );
 
@@ -114,6 +118,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
           disableRounding: true,
           alwaysShowSign: false,
           showCode: true,
+          discreet,
         },
       );
 
@@ -156,6 +161,7 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
           disableRounding: true,
           alwaysShowSign: false,
           showCode: true,
+          discreet,
         },
       );
 
