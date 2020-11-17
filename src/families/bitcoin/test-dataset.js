@@ -2,6 +2,7 @@
 import type { DatasetTest } from "../../types";
 import type { Transaction } from "./types";
 
+import bitcoin_cash from "./datasets/bitcoin_cash";
 import bitcoin_gold from "./datasets/bitcoin_gold";
 import bitcoin from "./datasets/bitcoin";
 import dash from "./datasets/dash";
@@ -23,6 +24,7 @@ import zcash from "./datasets/zcash";
 const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore", "mock"],
   currencies: {
+    bitcoin_cash,
     bitcoin_gold,
     bitcoin,
     dash,
