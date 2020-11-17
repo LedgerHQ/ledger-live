@@ -195,11 +195,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable an experimental implementation of USB support",
   },
-  EXPERIMENTAL_QUIT_APP: {
-    def: false,
-    parser: boolParser,
-    desc: "enable attempting to quit the device app if needed via apdu",
-  },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,

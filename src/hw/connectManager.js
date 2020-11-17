@@ -11,6 +11,11 @@ import type { ListAppsEvent } from "../apps";
 import { listApps } from "../apps/hw";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
+import getAppAndVersion from "./getAppAndVersion";
+import appSupportsQuitApp from "../appSupportsQuitApp";
+import { isDashboardName } from "./isDashboardName";
+import type { AppAndVersion } from "./connectApp";
+import quitApp from "./quitApp";
 
 export type Input = {
   devicePath: string,
@@ -23,6 +28,17 @@ export type ConnectManagerEvent =
   | { type: "bootloader", deviceInfo: DeviceInfo }
   | { type: "listingApps", deviceInfo: DeviceInfo }
   | ListAppsEvent;
+
+const attemptToQuitApp = (
+  transport,
+  appAndVersion?: AppAndVersion
+): Observable<ConnectManagerEvent> =>
+  appAndVersion && appSupportsQuitApp(appAndVersion)
+    ? from(quitApp(transport)).pipe(
+        concatMap(() => of({ type: "unresponsiveDevice" })),
+        catchError((e) => throwError(e))
+      )
+    : of({ type: "appDetected" });
 
 const cmd = ({ devicePath }: Input): Observable<ConnectManagerEvent> =>
   withDevice(devicePath)((transport) =>
@@ -56,7 +72,13 @@ const cmd = ({ devicePath }: Input): Observable<ConnectManagerEvent> =>
                 e instanceof TransportStatusError &&
                 [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
             ) {
-              return of({ type: "appDetected" });
+              return from(getAppAndVersion(transport)).pipe(
+                concatMap((appAndVersion) => {
+                  return !isDashboardName(appAndVersion.name)
+                    ? attemptToQuitApp(transport, appAndVersion)
+                    : of({ type: "appDetected" });
+                })
+              );
             }
             return throwError(e);
           })
