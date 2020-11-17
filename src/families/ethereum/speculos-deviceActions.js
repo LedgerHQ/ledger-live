@@ -22,6 +22,7 @@ const maxFeesExpectedValue = ({ account, status }) =>
   formatCurrencyUnit(
     {
       ...account.unit,
+      code: account.currency.deviceTicker || account.unit.code,
       prefixCode: true,
     },
     status.estimatedFees,
@@ -85,6 +86,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
         return formatCurrencyUnit(
           {
             ...unit,
+            code: account.currency.deviceTicker || account.unit.code,
             prefixCode: true,
           },
           amount,
