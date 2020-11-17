@@ -335,7 +335,7 @@ const ethereumClassic: AppSpec<Transaction> = {
       maxSpendable.gt(
         parseCurrencyUnit(
           getCryptoCurrencyById("ethereum_classic").units[0],
-          "0.01"
+          "0.05"
         )
       ),
       "balance is too low"
