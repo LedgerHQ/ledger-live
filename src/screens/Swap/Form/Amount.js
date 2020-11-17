@@ -13,7 +13,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/lib/currencies";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
-import { getExchangeRates } from "@ledgerhq/live-common/lib/swap";
+import { getExchangeRates } from "@ledgerhq/live-common/lib/exchange/swap";
 import type { SwapRouteParams } from ".";
 import KeyboardView from "../../../components/KeyboardView";
 import LText from "../../../components/LText";

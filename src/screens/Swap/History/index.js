@@ -15,10 +15,10 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import Share from "react-native-share";
-import getCompleteSwapHistory from "@ledgerhq/live-common/lib/swap/getCompleteSwapHistory";
-import updateAccountSwapStatus from "@ledgerhq/live-common/lib/swap/updateAccountSwapStatus";
-import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/lib/swap/csvExport";
-import { operationStatusList } from "@ledgerhq/live-common/lib/swap";
+import getCompleteSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/getCompleteSwapHistory";
+import updateAccountSwapStatus from "@ledgerhq/live-common/lib/exchange/swap/updateAccountSwapStatus";
+import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/lib/exchange/swap/csvExport";
+import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
 import useInterval from "../../../components/useInterval";
 import { updateAccountWithUpdater } from "../../../actions/accounts";
 import { flattenAccountsSelector } from "../../../reducers/accounts";

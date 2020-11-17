@@ -22,11 +22,11 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
-import type { AvailableProvider } from "@ledgerhq/live-common/lib/swap/types";
+import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import type { OutputSelector } from "reselect";
 import uniq from "lodash/uniq";
 
-import { isCurrencySwapSupported } from "@ledgerhq/live-common/lib/swap";
+import { isCurrencyExchangeSupported } from "@ledgerhq/live-common/lib/exchange";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
 
@@ -456,7 +456,7 @@ export const swapSupportedCurrenciesSelector: OutputSelector<
     .filter(isCurrencySupported);
 
   return [...cryptoCurrencies, ...tokenCurrencies].filter(
-    isCurrencySwapSupported,
+    isCurrencyExchangeSupported,
   );
 });
 

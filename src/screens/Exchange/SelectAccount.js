@@ -24,7 +24,7 @@ import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 import InfoIcon from "../../icons/Info";
 import PlusIcon from "../../icons/Plus";
 import Button from "../../components/Button";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -37,7 +37,8 @@ type Props = {
 };
 
 export default function SelectAccount({ navigation, route }: Props) {
-  const currency = route.params.currency;
+  const { mode, currency, device } = route.params;
+
   const accounts = useSelector(accountsSelector);
 
   const enhancedAccounts = useMemo(() => {
@@ -73,12 +74,20 @@ export default function SelectAccount({ navigation, route }: Props) {
             account={account}
             style={styles.card}
             onPress={() => {
-              navigation.navigate("ExchangeConnectDevice", {
-                account,
-                mode: "buy",
-                parentId:
-                  account.type !== "Account" ? account.parentId : undefined,
-              });
+              if (mode === "buy") {
+                navigation.navigate("ExchangeConnectDevice", {
+                  account,
+                  mode,
+                  parentId:
+                    account.type !== "Account" ? account.parentId : undefined,
+                });
+              } else {
+                navigation.navigate(ScreenName.ExchangeCoinifyWidget, {
+                  account,
+                  mode,
+                  device,
+                });
+              }
             }}
           />
         </View>

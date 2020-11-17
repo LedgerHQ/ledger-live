@@ -24,28 +24,24 @@ export default function Buy() {
       style={[styles.root, { paddingTop: extraStatusBarPadding }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="Buy Crypto" />
+      <TrackScreen category="Sell Crypto" />
       <View style={styles.body}>
         <View style={styles.iconContainer}>
           <ExchangeIcon size={22} color={colors.live} />
         </View>
         <LText style={styles.title} semiBold>
-          {t("exchange.buy.title")}
+          {t("exchange.sell.title")}
         </LText>
         <LText style={styles.description}>
-          {t("exchange.buy.description")}
+          {t("exchange.sell.description")}
         </LText>
         <View style={styles.buttonContainer}>
           <Button
             containerStyle={styles.button}
-            event="ExchangeStartBuyFlow"
+            event="ExchangeStartSellFlow"
             type="primary"
-            title={t("exchange.buy.CTAButton")}
-            onPress={() =>
-              navigation.navigate(NavigatorName.ExchangeBuyFlow, {
-                mode: "buy",
-              })
-            }
+            title={t("exchange.sell.CTAButton")}
+            onPress={() => navigation.navigate(NavigatorName.ExchangeSellFlow)}
           />
         </View>
       </View>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
-import { getProviders } from "@ledgerhq/live-common/lib/swap";
+import { getProviders } from "@ledgerhq/live-common/lib/exchange/swap";
 import { SwapNoAvailableProviders } from "@ledgerhq/live-common/lib/errors";
 import { useSelector, useDispatch } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";

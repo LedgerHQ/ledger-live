@@ -148,6 +148,34 @@ export function renderConfirmSwap({
   );
 }
 
+export function renderConfirmSell({
+  t,
+  device,
+}: {
+  ...RawProps,
+  device: Device,
+}) {
+  return (
+    <View style={styles.wrapper}>
+      <InfoBox onLearnMore={() => Linking.openURL(urls.swap.learnMore)}>
+        {t("DeviceAction.confirmSell.alert")}
+      </InfoBox>
+      <View
+        style={[
+          { marginTop: 16 },
+          styles.animationContainer,
+          device.modelId !== "blue" ? styles.verifyAddress : undefined,
+        ]}
+      >
+        <Animation source={getDeviceAnimation({ device, key: "validate" })} />
+      </View>
+      <LText style={[styles.text, styles.title]} semiBold>
+        {t("DeviceAction.confirmSell.title")}
+      </LText>
+    </View>
+  );
+}
+
 export function renderAllowManager({
   t,
   wording,

@@ -1,7 +1,7 @@
 // @flow
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
-import type { AvailableProvider } from "@ledgerhq/live-common/lib/swap/types";
+import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
 
 export type CurrencySettings = {
   confirmationsNb: number,

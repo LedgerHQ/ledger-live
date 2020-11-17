@@ -37,7 +37,8 @@ export default function useActions({ account, parentAccount }: Props) {
   const availableOnCompound =
     account.type === "TokenAccount" && !!account.compoundBalance;
 
-  const canBeBought = isCurrencySupported(currency);
+  const canBeBought = isCurrencySupported(currency, "buy");
+  const canBeSold = isCurrencySupported(currency, "sell");
 
   const baseActions =
     (decorators &&
@@ -53,7 +54,7 @@ export default function useActions({ account, parentAccount }: Props) {
     ...(!readOnlyModeEnabled && canBeBought
       ? [
           {
-            navigationParams: [NavigatorName.Exchange, { accountId }],
+            navigationParams: [NavigatorName.ExchangeBuyFlow, { accountId }],
             label: <Trans i18nKey="account.buy" />,
             Icon: Exchange,
             event: "Buy Crypto Account Button",
@@ -63,7 +64,19 @@ export default function useActions({ account, parentAccount }: Props) {
           },
         ]
       : []),
-    // Add in sell and more feature flagging logic here
+    ...(!readOnlyModeEnabled && canBeSold
+      ? [
+          {
+            navigationParams: [NavigatorName.ExchangeSellFlow, { accountId }],
+            label: <Trans i18nKey="account.sell" />,
+            Icon: Exchange,
+            event: "Sell Crypto Account Button",
+            eventProperties: {
+              currencyName: currency.name,
+            },
+          },
+        ]
+      : []),
     ...(availableOnSwap.includes(currency)
       ? [
           {

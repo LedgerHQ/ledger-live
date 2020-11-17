@@ -6,6 +6,7 @@ import { ScreenName } from "../../const";
 import colors from "../../colors";
 import styles from "../../navigation/styles";
 import Buy from "../../screens/Exchange/Buy";
+import Sell from "../../screens/Exchange/Sell";
 import History from "../../screens/Exchange/History";
 import LText from "../LText";
 
@@ -35,6 +36,19 @@ export default function CryptoAssetsSettingsNavigator() {
             /** width has to be a little bigger to accomodate the switch in size between semibold to regular */
             <LText style={{ width: "110%", color }} semiBold={focused}>
               {t("exchange.buy.tabTitle")}
+            </LText>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={ScreenName.ExchangeSell}
+        component={Sell}
+        options={{
+          title: t("exchange.sell.tabTitle"),
+          tabBarLabel: ({ focused, color }: TabLabelProps) => (
+            /** width has to be a little bigger to accomodate the switch in size between semibold to regular */
+            <LText style={{ width: "110%", color }} semiBold={focused}>
+              {t("exchange.sell.tabTitle")}
             </LText>
           ),
         }}

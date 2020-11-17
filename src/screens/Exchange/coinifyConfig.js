@@ -5,14 +5,21 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types/currencies";
 
-export const supportedCurrenciesIds = [
-  "bitcoin",
-  "ethereum",
-  "bitcoin_cash",
-  "dash",
-  "stellar",
-  "ethereum/erc20/usd_tether__erc20_",
-];
+const supportedCurrenciesIds = {
+  buy: [
+    "bitcoin",
+    "ethereum",
+    "bitcoin_cash",
+    "dash",
+    "stellar",
+    "ethereum/erc20/usd_tether__erc20_",
+  ],
+  sell: ["bitcoin"],
+};
+
+export const getSupportedCurrencies = (mode: "buy" | "sell" = "buy") => {
+  return supportedCurrenciesIds[mode];
+};
 
 const config = {
   sandbox: {
@@ -25,8 +32,10 @@ const config = {
   },
 };
 
-export const isCurrencySupported = (currency: TokenCurrency | CryptoCurrency) =>
-  supportedCurrenciesIds.includes(currency.id);
+export const isCurrencySupported = (
+  currency: TokenCurrency | CryptoCurrency,
+  mode: "buy" | "sell" = "buy",
+) => supportedCurrenciesIds[mode].includes(currency.id);
 
 export const getConfig = () =>
   Config.COINIFY_SANDBOX ? config.sandbox : config.production;

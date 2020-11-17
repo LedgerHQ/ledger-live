@@ -11,7 +11,7 @@ import {
 import type {
   Exchange,
   ExchangeRate,
-} from "@ledgerhq/live-common/lib/swap/types";
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import LText from "../../../../components/LText";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import SectionSeparator, {

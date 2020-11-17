@@ -49,7 +49,8 @@ class EmptyStateAccount extends PureComponent<{
     const hasSubAccounts = Array.isArray(mainAccount.subAccounts);
     const isToken =
       listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
-    const canBeBought = isCurrencySupported(getAccountCurrency(account));
+    const currency = getAccountCurrency(account);
+    const canBeBought = isCurrencySupported(currency, "buy");
 
     return (
       <View style={styles.root}>

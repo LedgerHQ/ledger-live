@@ -11,17 +11,17 @@ import type {
 import type {
   Exchange,
   ExchangeRate,
-} from "@ledgerhq/live-common/lib/swap/types";
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSwap";
-import initSwap from "@ledgerhq/live-common/lib/swap/initSwap";
+import initSwap from "@ledgerhq/live-common/lib/exchange/swap/initSwap";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 import { useDispatch } from "react-redux";
 import {
   addPendingOperation,
   getMainAccount,
 } from "@ledgerhq/live-common/lib/account";
-import addToSwapHistory from "@ledgerhq/live-common/lib/swap/addToSwapHistory";
+import addToSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/addToSwapHistory";
 import { useNavigation } from "@react-navigation/native";
 import { renderLoading } from "../../components/DeviceAction/rendering";
 import { ScreenName } from "../../const";

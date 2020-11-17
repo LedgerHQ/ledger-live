@@ -8,7 +8,7 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
-import type { CurrencyStatus } from "@ledgerhq/live-common/lib/swap/logic";
+import type { CurrencyStatus } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import { ScreenName, NavigatorName } from "../../../../const";
 import Circle from "../../../../components/Circle";
 import BottomModal from "../../../../components/BottomModal";

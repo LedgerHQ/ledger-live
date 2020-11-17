@@ -22,6 +22,7 @@ import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeBuyFlowNavigator from "./ExchangeBuyFlowNavigator";
+import ExchangeSellFlowNavigator from "./ExchangeSellFlowNavigator";
 import ExchangeNavigator from "./ExchangeNavigator";
 import FirmwareUpdateNavigator from "./FirmwareUpdateNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
@@ -131,6 +132,12 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.ExchangeBuyFlow}
         component={ExchangeBuyFlowNavigator}
+        initialParams={{ mode: "buy" }}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.ExchangeSellFlow}
+        component={ExchangeSellFlowNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen

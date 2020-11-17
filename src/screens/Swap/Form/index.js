@@ -5,12 +5,12 @@ import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import uniq from "lodash/uniq";
-import { getCurrenciesWithStatus } from "@ledgerhq/live-common/lib/swap/logic";
-import type { CurrenciesStatus } from "@ledgerhq/live-common/lib/swap/logic";
+import { getCurrenciesWithStatus } from "@ledgerhq/live-common/lib/exchange/swap/logic";
+import type { CurrenciesStatus } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import type {
   Exchange,
   ExchangeRate,
-} from "@ledgerhq/live-common/lib/swap/types";
+} from "@ledgerhq/live-common/lib/exchange/swap/types";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 import {
@@ -35,7 +35,7 @@ import {
 } from "@ledgerhq/live-common/lib/currencies";
 import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { isCurrencySwapSupported } from "@ledgerhq/live-common/lib/swap";
+import { isCurrencyExchangeSupported } from "@ledgerhq/live-common/lib/exchange";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import SectionSeparator, {
   ArrowDownCircle,
@@ -336,7 +336,7 @@ const selectableCurrenciesSelector = (state, props: { providers: any }) => {
     .filter(isCurrencySupported);
 
   return [...cryptoCurrencies, ...tokenCurrencies].filter(
-    isCurrencySwapSupported,
+    isCurrencyExchangeSupported,
   );
 };
 

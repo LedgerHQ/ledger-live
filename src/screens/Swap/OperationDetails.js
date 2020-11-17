@@ -6,7 +6,7 @@ import {
   Linking,
   TouchableOpacity,
 } from "react-native";
-import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/swap/types";
+import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import {
   getAccountName,
   getAccountUnit,

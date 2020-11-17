@@ -6,7 +6,7 @@ import {
   getAccountUnit,
   getAccountName,
 } from "@ledgerhq/live-common/lib/account/helpers";
-import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/swap/types";
+import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 
 import LText from "../../../components/LText";

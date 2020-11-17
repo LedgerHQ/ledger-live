@@ -1,54 +1,60 @@
 // @flow
 
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React, { useCallback, useState } from "react";
+import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import colors from "../../colors";
-import { NavigatorName } from "../../const";
+import { ScreenName } from "../../const";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
-import LText from "../../components/LText";
-import ExchangeIcon from "../../icons/Exchange";
-import Button from "../../components/Button";
+import Connect from "../Swap/Connect";
+import MissingOrOutdatedSwapApp from "../Swap/MissingOrOutdatedSwapApp";
 
 const forceInset = { bottom: "always" };
 
 export default function Buy() {
-  const { t } = useTranslation();
   const navigation = useNavigation();
+  const [state, setState] = useState({ deviceMeta: null, exchangeApp: null });
+
+  const onSetResult = useCallback(
+    deviceMeta => {
+      if (!deviceMeta) return;
+
+      const exchangeApp = deviceMeta?.result?.installed.find(
+        a => a.name === "Exchange",
+      );
+
+      setState({
+        deviceMeta,
+        exchangeApp,
+      });
+
+      if (exchangeApp && exchangeApp.updated) {
+        navigation.navigate(ScreenName.ExchangeSelectCurrency, {
+          mode: "sell",
+          device: deviceMeta.device,
+        });
+      }
+    },
+    [setState],
+  );
+
+  const { deviceMeta, exchangeApp } = state;
 
   return (
     <SafeAreaView
       style={[styles.root, { paddingTop: extraStatusBarPadding }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="Buy Crypto" />
-      <View style={styles.body}>
-        <View style={styles.iconContainer}>
-          <ExchangeIcon size={22} color={colors.live} />
-        </View>
-        <LText style={styles.title} semiBold>
-          {t("exchange.buy.title")}
-        </LText>
-        <LText style={styles.description}>
-          {t("exchange.buy.description")}
-        </LText>
-        <View style={styles.buttonContainer}>
-          <Button
-            containerStyle={styles.button}
-            event="ExchangeStartBuyFlow"
-            type="primary"
-            title={t("exchange.buy.CTAButton")}
-            onPress={() =>
-              navigation.navigate(NavigatorName.ExchangeBuyFlow, {
-                mode: "buy",
-              })
-            }
-          />
-        </View>
-      </View>
+      <TrackScreen category="Sell Crypto" />
+      {!deviceMeta?.result?.installed ? (
+        <Connect setResult={onSetResult} />
+      ) : !exchangeApp ? (
+        <MissingOrOutdatedSwapApp />
+      ) : !exchangeApp.updated ? (
+        <MissingOrOutdatedSwapApp outdated />
+      ) : null}
     </SafeAreaView>
   );
 }
