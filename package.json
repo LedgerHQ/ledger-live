@@ -106,7 +106,7 @@
     "ripemd160": "^2.0.2",
     "ripple-binary-codec": "^1.0.2",
     "ripple-bs58check": "^2.0.2",
-    "ripple-lib": "1.8.1",
+    "ripple-lib": "1.8.2",
     "rxjs": "^6.6.3",
     "rxjs-compat": "^6.6.3",
     "secp256k1": "^4.0.2",
