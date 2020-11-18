@@ -23,12 +23,7 @@ const Blackfriday = () => {
   return (
     <TouchableOpacity onPress={onClick}>
       <View style={[styles.wrapper, { width: slideWidth }]}>
-        <Image
-          style={styles.illustration}
-          source={blackfriday}
-          width={127}
-          height={88}
-        />
+        <Image style={styles.illustration} source={blackfriday} />
         <View>
           <LText semiBold secondary style={styles.label}>
             <Trans i18nKey={`carousel.banners.blackfriday.title`} />
@@ -47,6 +42,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     right: 0,
+    width: 127,
+    height: 88,
   },
   wrapper: {
     width: "100%",
