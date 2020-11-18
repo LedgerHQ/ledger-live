@@ -1,5 +1,4 @@
 // @flow
-
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
@@ -11,12 +10,11 @@ import type {
 import {
   listTokens,
   useCurrenciesByMarketcap,
+  listSupportedCurrencies,
 } from "@ledgerhq/live-common/lib/currencies";
 
-import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import type { Device } from "@ledgerhq/hw-transport/lib/Transport";
 import { track } from "../../analytics/segment";
-import { listCryptoCurrencies } from "../../cryptocurrencies";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import KeyboardView from "../../components/KeyboardView";
@@ -52,15 +50,14 @@ const renderEmptyList = () => (
 );
 
 export default function ExchangeSelectCrypto({ navigation, route }: Props) {
-  const devMode = useEnv("MANAGER_DEV_MODE");
   const { params } = route;
   const initialCurrencySelected = params?.currency;
   const device = params?.device;
   const mode = params?.mode || "buy";
 
   const cryptoCurrencies = useMemo(
-    () => listCryptoCurrencies(devMode).concat(listTokens()),
-    [devMode],
+    () => listSupportedCurrencies().concat(listTokens()),
+    [],
   );
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
@@ -110,7 +107,7 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="Exchange" name="SelectCrypto" />
-      <KeyboardView style={{ flex: 1 }}>
+      <KeyboardView style={styles.keybaordContainer}>
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}
@@ -146,5 +143,8 @@ const styles = StyleSheet.create({
   },
   emptySearchText: {
     textAlign: "center",
+  },
+  keybaordContainer: {
+    flex: 1,
   },
 });

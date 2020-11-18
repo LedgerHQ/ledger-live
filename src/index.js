@@ -19,6 +19,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
+import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
@@ -27,7 +28,6 @@ import {
 } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
-import CounterValues from "./countervalues";
 import LocaleProvider, { i18n } from "./context/Locale";
 import RebootProvider from "./context/Reboot";
 import ButtonUseTouchable from "./context/ButtonUseTouchable";
@@ -36,7 +36,7 @@ import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
-import DBSave from "./components/DBSave";
+import useDBSaveEffect from "./components/DBSave";
 import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
@@ -45,8 +45,9 @@ import HookAnalytics from "./analytics/HookAnalytics";
 import HookSentry from "./components/HookSentry";
 import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
+import CounterValuesProvider from "./components/CounterValuesProvider";
 import type { State } from "./reducers";
-
+import { useTrackingPairIds } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 
 checkLibs({
@@ -77,11 +78,6 @@ type AppProps = {
 function App({ importDataString }: AppProps) {
   useAppStateListener();
 
-  const getCountervaluesChanged = useCallback(
-    (a, b) => a.countervalues !== b.countervalues,
-    [],
-  );
-
   const getSettingsChanged = useCallback(
     (a, b) => a.settings !== b.settings,
     [],
@@ -103,35 +99,42 @@ function App({ importDataString }: AppProps) {
     return null;
   }, []);
 
-  const getBleChanged = (a, b) => a.ble !== b.ble;
+  const rawState = useCountervaluesExport();
+  const pairIds = useTrackingPairIds();
+
+  useDBSaveEffect({
+    save: saveCountervalues,
+    throttle: 2000,
+    getChangesStats: () => ({
+      changed: !!Object.keys(rawState.status).length,
+      pairIds,
+    }),
+    lense: () => rawState,
+  });
+
+  useDBSaveEffect({
+    save: saveSettings,
+    throttle: 400,
+    getChangesStats: getSettingsChanged,
+    lense: settingsExportSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveAccounts,
+    throttle: 500,
+    getChangesStats: getAccountsChanged,
+    lense: accountsExportSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveBle,
+    throttle: 500,
+    getChangesStats: (a, b) => a.ble !== b.ble,
+    lense: bleSelector,
+  });
 
   return (
     <View style={styles.root}>
-      <DBSave
-        save={saveCountervalues}
-        throttle={2000}
-        getChangesStats={getCountervaluesChanged}
-        lense={CounterValues.exportSelector}
-      />
-      <DBSave
-        save={saveSettings}
-        throttle={400}
-        getChangesStats={getSettingsChanged}
-        lense={settingsExportSelector}
-      />
-      <DBSave
-        save={saveAccounts}
-        throttle={500}
-        getChangesStats={getAccountsChanged}
-        lense={accountsExportSelector}
-      />
-      <DBSave
-        save={saveBle}
-        throttle={500}
-        getChangesStats={getBleChanged}
-        lense={bleSelector}
-      />
-
       <SyncNewAccounts priority={5} />
 
       <RootNavigator importDataString={importDataString} />
@@ -296,13 +299,13 @@ export default class Root extends Component<
                       <I18nextProvider i18n={i18n}>
                         <LocaleProvider>
                           <BridgeSyncProvider>
-                            <CounterValues.PollingProvider>
+                            <CounterValuesProvider>
                               <ButtonUseTouchable.Provider value={true}>
                                 <OnboardingContextProvider>
                                   <App importDataString={importDataString} />
                                 </OnboardingContextProvider>
                               </ButtonUseTouchable.Provider>
-                            </CounterValues.PollingProvider>
+                            </CounterValuesProvider>
                           </BridgeSyncProvider>
                         </LocaleProvider>
                       </I18nextProvider>

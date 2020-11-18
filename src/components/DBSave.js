@@ -12,12 +12,12 @@ type Props<Data, Stats> = {
   save: (data: Data, changedStats: Stats) => Promise<void>,
 };
 
-const DBSave = <D, S>({
+export default function useDBSaveEffect<D, S>({
   lense,
   throttle = 500,
   save,
   getChangesStats,
-}: Props<D, S>) => {
+}: Props<D, S>) {
   const state: State = useSelector(identity);
   const lastSavedState = useRef(state);
 
@@ -45,11 +45,7 @@ const DBSave = <D, S>({
     latestProps.current = { lense, save, state, getChangesStats };
     checkForSave();
   }, [lense, save, state, checkForSave, getChangesStats]);
-
-  return null;
-};
-
-export default DBSave;
+}
 
 const flushes = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));

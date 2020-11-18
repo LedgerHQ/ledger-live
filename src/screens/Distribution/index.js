@@ -1,7 +1,7 @@
-/* @flow */
-import React, { PureComponent } from "react";
+// @flow
+import React, { useState, useRef, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import {
   TouchableOpacity,
   View,
@@ -11,13 +11,9 @@ import {
   FlatList,
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { getAssetsDistribution } from "@ledgerhq/live-common/lib/portfolio";
-import { createSelector } from "reselect";
-import type { AssetsDistribution } from "@ledgerhq/live-common/lib/types/portfolio";
-import type { Currency } from "@ledgerhq/live-common/lib/types/currencies";
+import type { AssetsDistribution } from "@ledgerhq/live-common/lib/types";
 import { ScreenName } from "../../const";
 import TrackScreen from "../../analytics/TrackScreen";
-import { accountsSelector } from "../../reducers/accounts";
 import DistributionCard from "./DistributionCard";
 import LText from "../../components/LText";
 import type { DistributionItem } from "./DistributionCard";
@@ -25,7 +21,7 @@ import { counterValueCurrencySelector } from "../../reducers/settings";
 import colors from "../../colors";
 import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import { calculateCountervalueSelector } from "../../actions/general";
+import { useDistribution } from "../../actions/general";
 
 const forceInset = { bottom: "always" };
 
@@ -33,128 +29,103 @@ type Props = {
   navigation: any,
 };
 
-type DistributionProps = Props & {
-  distribution: AssetsDistribution,
-  counterValueCurrency: Currency,
-};
+export default function Distribution({ navigation }: Props) {
+  const distribution = useDistribution();
 
-const distributionSelector = createSelector(
-  accountsSelector,
-  calculateCountervalueSelector,
-  getAssetsDistribution,
-);
+  const [highlight, setHighlight] = useState(-1);
+  const flatListRef = useRef();
 
-class Distribution extends PureComponent<DistributionProps, *> {
-  state = {
-    highlight: -1,
-  };
-  flatListRef = React.createRef();
+  const onHighlightChange = useCallback(index => {
+    setHighlight(index);
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ index }, true);
+    }
+  }, []);
 
-  renderItem = ({ item, index }: { item: DistributionItem, index: number }) => (
-    <TouchableOpacity
-      onPress={() => this.onHighlightChange(index)}
-      onLongPress={() =>
-        this.props.navigation.navigate(ScreenName.Asset, {
-          currency: item.currency,
-        })
-      }
-    >
-      <DistributionCard
-        item={item}
-        highlighting={index === this.state.highlight}
-      />
-    </TouchableOpacity>
+  const renderItem = useCallback(
+    ({ item, index }: { item: DistributionItem, index: number }) => (
+      <TouchableOpacity
+        onPress={() => onHighlightChange(index)}
+        onLongPress={() =>
+          navigation.navigate(ScreenName.Asset, {
+            currency: item.currency,
+          })
+        }
+      >
+        <DistributionCard item={item} highlighting={index === highlight} />
+      </TouchableOpacity>
+    ),
+    [onHighlightChange, navigation, highlight],
   );
 
-  onHighlightChange = index => {
-    this.setState({ highlight: index });
-    if (this.flatListRef.current) {
-      this.flatListRef.current.scrollToIndex({ index }, true);
-    }
-  };
+  return (
+    <SafeAreaView style={styles.wrapper} forceInset={forceInset}>
+      <TrackScreen category="Distribution" />
+      <Header
+        distribution={distribution}
+        highlight={highlight}
+        onHighlightChange={onHighlightChange}
+      />
+      <FlatList
+        // $FlowFixMe
+        ref={flatListRef}
+        data={distribution.list}
+        renderItem={renderItem}
+        keyExtractor={item => item.currency.id}
+        contentContainerStyle={styles.root}
+      />
+    </SafeAreaView>
+  );
+}
 
-  keyExtractor = item => item.currency.id;
+export function Header({
+  distribution,
+  highlight,
+  onHighlightChange,
+}: {
+  distribution: AssetsDistribution,
+  highlight: number,
+  onHighlightChange: (index: number) => void,
+}) {
+  const { t } = useTranslation();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const size = Dimensions.get("window").width / 3;
 
-  ListHeaderComponent = () => {
-    const { counterValueCurrency, distribution } = this.props;
-    const { highlight } = this.state;
-    const size = Dimensions.get("window").width / 3;
-    return (
-      <View>
-        <View style={styles.header}>
-          <View style={[styles.chartWrapper, { height: size }]}>
-            <RingChart
-              size={size}
-              onHighlightChange={this.onHighlightChange}
-              highlight={highlight}
-              data={distribution.list}
-            />
-            <View style={styles.assetWrapper} pointerEvents="none">
-              <LText semiBold style={styles.assetCount}>
-                {distribution.list.length}
-              </LText>
-              <LText semiBold style={styles.assets}>
-                <Trans
-                  i18nKey="distribution.assets"
-                  count={distribution.list.length}
-                />
-              </LText>
-            </View>
-          </View>
-          <View style={styles.total}>
-            <LText semiBold style={styles.label}>
-              <Trans i18nKey="distribution.total" />
+  return (
+    <View>
+      <View style={styles.header}>
+        <View style={[styles.chartWrapper, { height: size }]}>
+          <RingChart
+            size={size}
+            onHighlightChange={onHighlightChange}
+            highlight={highlight}
+            data={distribution.list}
+          />
+          <View style={styles.assetWrapper} pointerEvents="none">
+            <LText semiBold style={styles.assetCount}>
+              {distribution.list.length}
             </LText>
-            <LText semiBold style={styles.amount}>
-              <CurrencyUnitValue
-                unit={counterValueCurrency.units[0]}
-                value={distribution.sum}
-              />
+            <LText semiBold style={styles.assets}>
+              {t("distribution.assets", { count: distribution.list.length })}
             </LText>
           </View>
         </View>
-        <LText bold secondary style={styles.distributionTitle}>
-          <Trans
-            i18nKey="distribution.list"
-            count={distribution.list.length}
-            values={{ count: distribution.list.length }}
-          />
-        </LText>
+        <View style={styles.total}>
+          <LText semiBold style={styles.label}>
+            {t("distribution.total")}
+          </LText>
+          <LText semiBold style={styles.amount}>
+            <CurrencyUnitValue
+              unit={counterValueCurrency.units[0]}
+              value={distribution.sum}
+            />
+          </LText>
+        </View>
       </View>
-    );
-  };
-
-  render() {
-    const { distribution } = this.props;
-
-    const Header = this.ListHeaderComponent;
-    return (
-      <SafeAreaView style={styles.wrapper} forceInset={forceInset}>
-        <TrackScreen category="Distribution" />
-        <Header />
-        <FlatList
-          // $FlowFixMe
-          ref={this.flatListRef}
-          data={distribution.list}
-          renderItem={this.renderItem}
-          keyExtractor={this.keyExtractor}
-          contentContainerStyle={styles.root}
-        />
-      </SafeAreaView>
-    );
-  }
-}
-
-export default function Screen({ navigation }: Props) {
-  const distribution = useSelector(distributionSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
-
-  return (
-    <Distribution
-      navigation={navigation}
-      distribution={distribution}
-      counterValueCurrency={counterValueCurrency}
-    />
+      <LText bold secondary style={styles.distributionTitle}>
+        {t("distribution.list", { count: distribution.list.length })}
+      </LText>
+    </View>
   );
 }
 

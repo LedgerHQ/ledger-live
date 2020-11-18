@@ -1,24 +1,20 @@
 // @flow
-
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { makeClosedHistoryForAccounts } from "@ledgerhq/live-common/lib/compound/logic";
 import colors from "../../../colors";
-
 import { useCompoundSummaries } from "../useCompoundSummaries";
-import { flattenSortAccountsSelector } from "../../../actions/general";
+import { useFlattenSortAccounts } from "../../../actions/general";
 import TrackScreen from "../../../analytics/TrackScreen";
-
 import EmptyState from "../shared/EmptyState";
 import { ScreenName } from "../../../const";
 import ClosedLoansRow from "./ClosedLoansRow";
 
 export default function ClosedLoans() {
   const { t } = useTranslation();
-  const accounts = useSelector(flattenSortAccountsSelector);
+  const accounts = useFlattenSortAccounts();
   const summaries = useCompoundSummaries(accounts);
   const closedLoans = makeClosedHistoryForAccounts(summaries);
   const navigation = useNavigation();

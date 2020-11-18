@@ -1188,14 +1188,6 @@
         "confirm": "Hide token"
       }
     },
-    "rates": {
-      "header": "Rates",
-      "desc": "Here are all the rates used by Ledger Live to calculate countervalues. Choose which rate providers are used for each rate.",
-      "pair": "{{from}} to {{to}}",
-      "cryptoToFiat": "Crypto to Fiat",
-      "cryptoToCrypto": "Crypto to Crypto",
-      "noRateProvider": "No rate provider available for this asset"
-    },
     "about": {
       "title": "About",
       "desc": "App information, terms and conditions, and privacy policy.",

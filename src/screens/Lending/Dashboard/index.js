@@ -1,12 +1,10 @@
 // @flow
-
 import React from "react";
 import { ScrollView, StyleSheet, SafeAreaView } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { listCurrentRates } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
 import { useCompoundSummaries } from "../useCompoundSummaries";
-import { flattenSortAccountsSelector } from "../../../actions/general";
+import { useFlattenSortAccounts } from "../../../actions/general";
 import colors from "../../../colors";
 import TrackScreen from "../../../analytics/TrackScreen";
 import LText from "../../../components/LText";
@@ -16,7 +14,7 @@ import LendingWarnings from "../shared/LendingWarnings";
 
 export default function Dashboard() {
   const { t } = useTranslation();
-  const accounts = useSelector(flattenSortAccountsSelector);
+  const accounts = useFlattenSortAccounts();
   const summaries = useCompoundSummaries(accounts);
   const rates = listCurrentRates();
 

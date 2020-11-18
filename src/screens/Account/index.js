@@ -4,19 +4,25 @@ import React, { useState, useRef, useCallback } from "react";
 import { StyleSheet, View, Animated, SectionList } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 import {
   isAccountEmpty,
   groupAccountOperationsByDay,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
-import type { TokenAccount, Operation } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  AccountLike,
+  TokenAccount,
+  Operation,
+} from "@ledgerhq/live-common/lib/types";
 import debounce from "lodash/debounce";
 import {
   getAccountCapabilities,
   makeCompoundSummaryForAccount,
 } from "@ledgerhq/live-common/lib/compound/logic";
 import { switchCountervalueFirst } from "../../actions/settings";
-import { balanceHistoryWithCountervalueSelectorCreator } from "../../actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "../../actions/portfolio";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
@@ -58,18 +64,28 @@ function keyExtractor(item: Operation) {
   return item.id;
 }
 
-export default function AccountScreen({ navigation, route }: Props) {
-  const dispatch = useDispatch();
+export default function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  if (!account) return null;
+  return <AccountScreenInner account={account} parentAccount={parentAccount} />;
+}
+
+function AccountScreenInner({
+  account,
+  parentAccount,
+}: {
+  account: AccountLike,
+  parentAccount: ?Account,
+}) {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const {
     countervalueAvailable,
     countervalueChange,
     cryptoChange,
     history,
-  } = useSelector(
-    balanceHistoryWithCountervalueSelectorCreator({ account, range }),
-  );
+  } = useBalanceHistoryWithCountervalue({ account, range });
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
@@ -129,7 +145,6 @@ export default function AccountScreen({ navigation, route }: Props) {
     [account, parentAccount],
   );
 
-  if (!account) return null;
   const currency = getAccountCurrency(account);
 
   const analytics = (
@@ -150,9 +165,9 @@ export default function AccountScreen({ navigation, route }: Props) {
     getAccountCapabilities(account);
 
   const compoundSummary =
-    compoundCapabilities?.status &&
-    account.type === "TokenAccount" &&
-    makeCompoundSummaryForAccount(account, parentAccount);
+    compoundCapabilities?.status && account.type === "TokenAccount"
+      ? makeCompoundSummaryForAccount(account, parentAccount)
+      : undefined;
 
   return (
     <View style={styles.root}>

@@ -1,77 +1,61 @@
 /* @flow */
-import React, { PureComponent } from "react";
-import { Trans } from "react-i18next";
-import { createStructuredSelector } from "reselect";
-import { connect } from "react-redux";
+import React, { useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
 import colors from "../../../colors";
 import { knownDevicesSelector } from "../../../reducers/ble";
-import type { DeviceLike } from "../../../reducers/ble";
-import { withReboot } from "../../../context/Reboot";
+import { useReboot } from "../../../context/Reboot";
 import SettingsRow from "../../../components/SettingsRow";
 import BottomModal from "../../../components/BottomModal";
 import Circle from "../../../components/Circle";
 import HardResetModal from "../../../components/HardResetModal";
 import Trash from "../../../icons/Trash";
 
-type Props = {
-  reboot: (?boolean) => *,
-  knownDevices: DeviceLike[],
-};
+export default function HardResetRow() {
+  const { t } = useTranslation();
+  const reboot = useReboot();
+  const knownDevices = useSelector(knownDevicesSelector);
 
-type State = {
-  isModalOpened: boolean,
-};
-class HardResetRow extends PureComponent<Props, State> {
-  state = {
-    isModalOpened: false,
-  };
+  const [isModalOpened, setIsModalOpened] = useState(false);
 
-  onRequestClose = () => this.setState({ isModalOpened: false });
+  const onRequestClose = useCallback(() => {
+    setIsModalOpened(false);
+  }, []);
 
-  onPress = () => this.setState({ isModalOpened: true });
+  const onPress = useCallback(() => {
+    setIsModalOpened(true);
+  }, []);
 
-  onHardReset = async () => {
-    await Promise.all(
-      this.props.knownDevices.map(d => disconnect(d.id).catch(() => {})),
-    );
-    return this.props.reboot(true);
-  };
+  const onHardReset = useCallback(async () => {
+    await Promise.all(knownDevices.map(d => disconnect(d.id).catch(() => {})));
+    return reboot(true);
+  }, [knownDevices, reboot]);
 
-  render() {
-    const { isModalOpened } = this.state;
-
-    return (
-      <>
-        <SettingsRow
-          event="HardResetRow"
-          title={<Trans i18nKey="settings.help.hardReset" />}
-          titleStyle={{ color: colors.alert }}
-          desc={<Trans i18nKey="settings.help.hardResetDesc" />}
-          iconLeft={
-            <Circle bg="rgba(234,46,73,0.1)" size={32}>
-              <Trash size={16} color={colors.alert} />
-            </Circle>
-          }
-          onPress={this.onPress}
+  return (
+    <>
+      <SettingsRow
+        event="HardResetRow"
+        title={t("settings.help.hardReset")}
+        titleStyle={{ color: colors.alert }}
+        desc={t("settings.help.hardResetDesc")}
+        iconLeft={
+          <Circle bg="rgba(234,46,73,0.1)" size={32}>
+            <Trash size={16} color={colors.alert} />
+          </Circle>
+        }
+        onPress={onPress}
+      />
+      <BottomModal
+        id="HardResetModal"
+        isOpened={isModalOpened}
+        onClose={onRequestClose}
+      >
+        <HardResetModal
+          onRequestClose={onRequestClose}
+          onHardReset={onHardReset}
         />
-        <BottomModal
-          id="HardResetModal"
-          isOpened={isModalOpened}
-          onClose={this.onRequestClose}
-        >
-          <HardResetModal
-            onRequestClose={this.onRequestClose}
-            onHardReset={this.onHardReset}
-          />
-        </BottomModal>
-      </>
-    );
-  }
+      </BottomModal>
+    </>
+  );
 }
-
-export default connect(
-  createStructuredSelector({
-    knownDevices: knownDevicesSelector,
-  }),
-)(withReboot(HardResetRow));

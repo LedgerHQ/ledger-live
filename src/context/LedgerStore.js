@@ -4,8 +4,7 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
-import { getAccounts, getCountervalues, getSettings, getBle } from "../db";
-import CounterValues from "../countervalues";
+import { getAccounts, getSettings, getBle } from "../db";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
@@ -69,9 +68,6 @@ export default class LedgerStoreProvider extends Component<
 
     const accountsData = await getAccounts();
     store.dispatch(importAccounts(accountsData));
-
-    const countervaluesData = await getCountervalues();
-    store.dispatch(CounterValues.importAction(countervaluesData));
 
     this.setState({ ready: true }, () => {
       this.props.onInitFinished();
