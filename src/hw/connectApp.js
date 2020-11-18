@@ -12,7 +12,6 @@ import {
   DisconnectedDevice,
 } from "@ledgerhq/errors";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import { getEnv } from "../env";
 import type { DerivationMode } from "../types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
@@ -79,6 +78,17 @@ const openAppFromDashboard = (
     )
   );
 
+const attemptToQuitApp = (
+  transport,
+  appAndVersion?: AppAndVersion
+): Observable<ConnectAppEvent> =>
+  appAndVersion && appSupportsQuitApp(appAndVersion)
+    ? from(quitApp(transport)).pipe(
+        concatMap(() => of({ type: "disconnected" })),
+        catchError((e) => throwError(e))
+      )
+    : of({ type: "ask-quit-app" });
+
 const derivationLogic = (
   transport,
   {
@@ -123,7 +133,7 @@ const derivationLogic = (
           case 0x6f04: // FW-90. app was locked...
           case 0x6faa: // FW-90. app bricked, a reboot fixes it.
           case 0x6d00: // this is likely because it's the wrong app (LNS 1.3.1)
-            return of({ type: "ask-quit-app" });
+            return attemptToQuitApp(transport, appAndVersion);
         }
       }
       return throwError(e);
@@ -153,13 +163,7 @@ const cmd = ({
             }
 
             if (appAndVersion.name !== appName) {
-              return getEnv("EXPERIMENTAL_QUIT_APP") &&
-                appSupportsQuitApp(appAndVersion)
-                ? from(quitApp(transport)).pipe(
-                    concatMap(() => of({ type: "disconnected" })),
-                    catchError((e) => throwError(e))
-                  )
-                : of({ type: "ask-quit-app" });
+              return attemptToQuitApp(transport, appAndVersion);
             }
 
             if (
