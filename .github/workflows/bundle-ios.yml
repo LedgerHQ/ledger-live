@@ -1,0 +1,76 @@
+name: bundle ios
+on: pull_request_target
+
+jobs:
+  bundle-ipa:
+    runs-on: macos-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.4.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: 2.6.x
+      - name: install bundle
+        run: |
+          gem install bundler:2.1.4
+      - uses: ledgerhq/actions/check-member@v2.0.0
+        with:
+          username: ${{ github.actor }}
+          ban: ledgerlive
+        if: github.event_name == 'pull_request'
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+      - uses: actions/setup-node@main
+        with:
+          node-version: 12.x
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - name: get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: install dependencies
+        run: yarn --frozen-lockfile
+      - uses: ledgerhq/actions/get-package-infos@v2.0.0
+        id: version
+      - name: set beta name
+        uses: ./.github/actions/change-product-name
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha8::${GITHUB_SHA:0:7}"
+      - name: make local version
+        run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+      - name: build the app
+        env:
+          APP_NAME: "Ledger Live (${{github.event.pull_request.head.ref}})"
+          APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          GIT_REPO_URL: ${{ secrets.GIT_REPO_URL }}
+          GIT_REPO_USER: ${{ secrets.GIT_REPO_USER }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          CI_KEYCHAIN_NAME: ${{ secrets.CI_KEYCHAIN_NAME }}
+          CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
+          DEVELOPER_TEAM_ID: ${{ secrets.DEVELOPER_TEAM_ID }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          TOKEN: ${{ secrets.TEAM_LIVE_ACCESS_TOKEN }}
+        run: |
+          yarn ios:ci
+      - uses: ledgerhq/actions/get-package-infos@v2.0.0
+        id: post-version
+      - name: upload iOS IPA
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.post-version.outputs.version }}.ipa
+          path: ios/ledgerlivemobile.ipa
