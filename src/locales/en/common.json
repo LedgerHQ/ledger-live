@@ -775,7 +775,7 @@
     "totalBalance": "Total balance",
     "syncError": "Sync error",
     "syncFailed": "Synchronization failed",
-    "syncPending": "Synchronizing...",
+    "syncPending": "Synching...",
     "greeting": {
       "morning": "Good morning",
       "evening": "Good evening",
@@ -1053,7 +1053,7 @@
       "message": "Your accounts have successfully been imported!"
     },
     "row": {
-      "syncPending": "Synchronizing...",
+      "syncPending": "Synching...",
       "upToDate": "Synchronized",
       "error": "Error",
       "queued": "Awaiting",
@@ -1292,7 +1292,7 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied!",
       "notSynced": {
-        "text": "Synchronizing",
+        "text": "Synching",
         "desc": "This may take a while if you have many transactions or a slow internet connection"
       },
       "readOnly": {
@@ -1816,7 +1816,7 @@
     "retry": "Retry",
     "done": "Done",
     "finalCta": "Continue",
-    "synchronizing": "Synchronizing",
+    "synchronizing": "Synching",
     "synchronizingDesc": "We are synchronizing your accounts, this can take a while...",
     "noAccountToCreate": "No <1><0>{{currencyName}}</></> account was found to create. Restart the flow and sync your accounts",
     "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one.",
