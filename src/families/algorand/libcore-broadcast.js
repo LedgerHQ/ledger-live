@@ -11,7 +11,8 @@ async function broadcast({
   let hash = "";
   hash = await algorandAccount.broadcastRawTransaction(signature);
 
-  return patchOperationWithHash(operation, hash);
+  const op = patchOperationWithHash(operation, hash);
+  return op;
 }
 
 export default makeBroadcast({ broadcast });

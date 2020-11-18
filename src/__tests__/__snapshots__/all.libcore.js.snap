@@ -198,14 +198,14 @@ Array [
       },
       "fee": "1000",
       "hash": "22J7XZ5IL7MDMYOZLA3BJ2475ZCIB5AWXPWKQRGASWZ7AANUPLWA",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-22J7XZ5IL7MDMYOZLA3BJ2475ZCIB5AWXPWKQRGASWZ7AANUPLWA-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-22J7XZ5IL7MDMYOZLA3BJ2475ZCIB5AWXPWKQRGASWZ7AANUPLWA-FEES",
       "recipients": Array [
         "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "407",
     },
     Object {
@@ -256,14 +256,14 @@ Array [
       },
       "fee": "0",
       "hash": "2YJC6NJCTRWNRKITN7TTC7EUEL5YU572FBWWQ7R3NPFH5DIID2EA",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-2YJC6NJCTRWNRKITN7TTC7EUEL5YU572FBWWQ7R3NPFH5DIID2EA-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-2YJC6NJCTRWNRKITN7TTC7EUEL5YU572FBWWQ7R3NPFH5DIID2EA-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -295,14 +295,14 @@ Array [
       },
       "fee": "0",
       "hash": "36U34TSEPCXRF6PGYKXODHQ7CT6GH6Y2TYZV2QYKXUDKB54IVZ4Q",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-36U34TSEPCXRF6PGYKXODHQ7CT6GH6Y2TYZV2QYKXUDKB54IVZ4Q-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-36U34TSEPCXRF6PGYKXODHQ7CT6GH6Y2TYZV2QYKXUDKB54IVZ4Q-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -354,14 +354,14 @@ Array [
       },
       "fee": "0",
       "hash": "4JPN5M7ZCG3UBXDSXOVQ5CFRSQW5EOKIL6VKI2P6TU5ZFEXTLZYQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-4JPN5M7ZCG3UBXDSXOVQ5CFRSQW5EOKIL6VKI2P6TU5ZFEXTLZYQ-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-4JPN5M7ZCG3UBXDSXOVQ5CFRSQW5EOKIL6VKI2P6TU5ZFEXTLZYQ-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -374,14 +374,14 @@ Array [
       },
       "fee": "1000",
       "hash": "4NN33L3QXSIXZGW6UGAEZ2M4BELVL55C3GLKXYMNIOCFLAUOM6OA",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-4NN33L3QXSIXZGW6UGAEZ2M4BELVL55C3GLKXYMNIOCFLAUOM6OA-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-4NN33L3QXSIXZGW6UGAEZ2M4BELVL55C3GLKXYMNIOCFLAUOM6OA-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -432,14 +432,14 @@ Array [
       },
       "fee": "1000",
       "hash": "633TRYOGQ3W7KKOXG4LZPQF7IUDXFFKDKANJTDHB3UPK3MFOCG4A",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-633TRYOGQ3W7KKOXG4LZPQF7IUDXFFKDKANJTDHB3UPK3MFOCG4A-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-633TRYOGQ3W7KKOXG4LZPQF7IUDXFFKDKANJTDHB3UPK3MFOCG4A-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -548,14 +548,14 @@ Array [
       },
       "fee": "1000",
       "hash": "BLDXYNFRLCAILLVJ4A3TKRKMR7O6YUOAJ6ZY36JHL5DTNPLWKWDQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-BLDXYNFRLCAILLVJ4A3TKRKMR7O6YUOAJ6ZY36JHL5DTNPLWKWDQ-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-BLDXYNFRLCAILLVJ4A3TKRKMR7O6YUOAJ6ZY36JHL5DTNPLWKWDQ-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -568,14 +568,14 @@ Array [
       },
       "fee": "1000",
       "hash": "BWU67FNCIS4VUHDUUXINPSFXG7K54QN3D7LVDZW3TCOZCLEZCGEQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-BWU67FNCIS4VUHDUUXINPSFXG7K54QN3D7LVDZW3TCOZCLEZCGEQ-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-BWU67FNCIS4VUHDUUXINPSFXG7K54QN3D7LVDZW3TCOZCLEZCGEQ-FEES",
       "recipients": Array [
         "RGX5XA7DWZOZ5SLG4WQSNIFKIG4CNX4VOH23YCEX56523DQEAL3QL56XZM",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -588,14 +588,14 @@ Array [
       },
       "fee": "0",
       "hash": "C5WENG5IMNO6I2SGL3SJZYRYJISW35RKB4WQL5MFE73EDP7RKALQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-C5WENG5IMNO6I2SGL3SJZYRYJISW35RKB4WQL5MFE73EDP7RKALQ-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-C5WENG5IMNO6I2SGL3SJZYRYJISW35RKB4WQL5MFE73EDP7RKALQ-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -684,14 +684,14 @@ Array [
       },
       "fee": "1000",
       "hash": "DIK4PZNIZFAMPXUXAFO55QDX3EX6RVRZ3JIAB55XFB4GMKFTFX5A",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-DIK4PZNIZFAMPXUXAFO55QDX3EX6RVRZ3JIAB55XFB4GMKFTFX5A-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-DIK4PZNIZFAMPXUXAFO55QDX3EX6RVRZ3JIAB55XFB4GMKFTFX5A-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "-134",
     },
     Object {
@@ -723,14 +723,14 @@ Array [
       },
       "fee": "0",
       "hash": "E3XDW2H4RPCSYKTFVO5PJLT5WCVO4UL5SPRTG67IKHDCTOSP6A2A",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-E3XDW2H4RPCSYKTFVO5PJLT5WCVO4UL5SPRTG67IKHDCTOSP6A2A-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-E3XDW2H4RPCSYKTFVO5PJLT5WCVO4UL5SPRTG67IKHDCTOSP6A2A-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -914,14 +914,14 @@ Array [
       },
       "fee": "1000",
       "hash": "I2XNWJ4IWA4SLVYJDTD7PVTOGZ34MGFVADWUXJCKL6HYGAWLEEOQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-I2XNWJ4IWA4SLVYJDTD7PVTOGZ34MGFVADWUXJCKL6HYGAWLEEOQ-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-I2XNWJ4IWA4SLVYJDTD7PVTOGZ34MGFVADWUXJCKL6HYGAWLEEOQ-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "973",
     },
     Object {
@@ -934,14 +934,14 @@ Array [
       },
       "fee": "0",
       "hash": "I5LWCLQHKMYFFS442WZ4A27OK4SJT3OGHP4QKZGW53EFFTJQP3GA",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-I5LWCLQHKMYFFS442WZ4A27OK4SJT3OGHP4QKZGW53EFFTJQP3GA-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-I5LWCLQHKMYFFS442WZ4A27OK4SJT3OGHP4QKZGW53EFFTJQP3GA-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -973,14 +973,14 @@ Array [
       },
       "fee": "0",
       "hash": "J6B7DFBBOCDNS43FPIPH4M2VJHD7BVZZEQW7M3EOGKZUZNGH7GSQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-J6B7DFBBOCDNS43FPIPH4M2VJHD7BVZZEQW7M3EOGKZUZNGH7GSQ-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-J6B7DFBBOCDNS43FPIPH4M2VJHD7BVZZEQW7M3EOGKZUZNGH7GSQ-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "IDPJONMNSNMZHQYNIQHDBUXNRWDN7GHQ3GVQD5SEXVLCWAPXURAVFTJE6E",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -993,14 +993,14 @@ Array [
       },
       "fee": "0",
       "hash": "JFTPJL4NYMG2ZU755D7PVCOLQ5MTT6ZWJSGJAYCE3IQRUEOXWLDQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-JFTPJL4NYMG2ZU755D7PVCOLQ5MTT6ZWJSGJAYCE3IQRUEOXWLDQ-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-JFTPJL4NYMG2ZU755D7PVCOLQ5MTT6ZWJSGJAYCE3IQRUEOXWLDQ-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -1013,14 +1013,14 @@ Array [
       },
       "fee": "1000",
       "hash": "JYB6YI6F75IL7O62R4BN6OLAHNK45PJBHGHRSKX5NLVVWOG3WO6Q",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-JYB6YI6F75IL7O62R4BN6OLAHNK45PJBHGHRSKX5NLVVWOG3WO6Q-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-JYB6YI6F75IL7O62R4BN6OLAHNK45PJBHGHRSKX5NLVVWOG3WO6Q-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "-9563",
     },
     Object {
@@ -1033,14 +1033,14 @@ Array [
       },
       "fee": "1000",
       "hash": "JZYL33M73S7VWPFGXTJQTUFUVRYDVNZCUI2352WDQLXPKI63J2MA",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-JZYL33M73S7VWPFGXTJQTUFUVRYDVNZCUI2352WDQLXPKI63J2MA-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-JZYL33M73S7VWPFGXTJQTUFUVRYDVNZCUI2352WDQLXPKI63J2MA-FEES",
       "recipients": Array [
         "IDPJONMNSNMZHQYNIQHDBUXNRWDN7GHQ3GVQD5SEXVLCWAPXURAVFTJE6E",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "992",
     },
     Object {
@@ -1053,14 +1053,14 @@ Array [
       },
       "fee": "0",
       "hash": "K6GYAZMVK5ZSTVC2EVJZNBNPKB5NKXEACB6WRRCUZSC2DGZWDQBQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-K6GYAZMVK5ZSTVC2EVJZNBNPKB5NKXEACB6WRRCUZSC2DGZWDQBQ-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-K6GYAZMVK5ZSTVC2EVJZNBNPKB5NKXEACB6WRRCUZSC2DGZWDQBQ-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -1170,14 +1170,14 @@ Array [
       },
       "fee": "0",
       "hash": "OUY7KDAIEOK25L7X55K7SKRYIGTLOL5FJUS5BGD3OVV55ON3S2XA",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-OUY7KDAIEOK25L7X55K7SKRYIGTLOL5FJUS5BGD3OVV55ON3S2XA-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-OUY7KDAIEOK25L7X55K7SKRYIGTLOL5FJUS5BGD3OVV55ON3S2XA-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -1247,14 +1247,14 @@ Array [
       },
       "fee": "1000",
       "hash": "QHNNHTK4S5PD5DWGZ32VKRFSS7QPZNTS3RIBD45INC52DSJ2PS5A",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-QHNNHTK4S5PD5DWGZ32VKRFSS7QPZNTS3RIBD45INC52DSJ2PS5A-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-QHNNHTK4S5PD5DWGZ32VKRFSS7QPZNTS3RIBD45INC52DSJ2PS5A-FEES",
       "recipients": Array [
         "IDPJONMNSNMZHQYNIQHDBUXNRWDN7GHQ3GVQD5SEXVLCWAPXURAVFTJE6E",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "487",
     },
     Object {
@@ -1286,14 +1286,14 @@ Array [
       },
       "fee": "1000",
       "hash": "QQ3BJUCSKFXKGVQH6I77JURXTK5NJOMBQF44FMVZGT75WZ5Q6FUQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-QQ3BJUCSKFXKGVQH6I77JURXTK5NJOMBQF44FMVZGT75WZ5Q6FUQ-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-QQ3BJUCSKFXKGVQH6I77JURXTK5NJOMBQF44FMVZGT75WZ5Q6FUQ-FEES",
       "recipients": Array [
         "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "995",
     },
     Object {
@@ -1382,14 +1382,14 @@ Array [
       },
       "fee": "0",
       "hash": "T3GGH47ZOXCHAJV3GN75FC2UV4SHOT42YPC6KOGLRQLYMHBPQGLQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-T3GGH47ZOXCHAJV3GN75FC2UV4SHOT42YPC6KOGLRQLYMHBPQGLQ-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-T3GGH47ZOXCHAJV3GN75FC2UV4SHOT42YPC6KOGLRQLYMHBPQGLQ-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -1479,14 +1479,14 @@ Array [
       },
       "fee": "1000",
       "hash": "V23F3WF2RBJAGHKZZ4HC3K5X425E74W46AAVYHCNSU3UQEKU76YA",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-V23F3WF2RBJAGHKZZ4HC3K5X425E74W46AAVYHCNSU3UQEKU76YA-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-V23F3WF2RBJAGHKZZ4HC3K5X425E74W46AAVYHCNSU3UQEKU76YA-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -1575,14 +1575,14 @@ Array [
       },
       "fee": "1000",
       "hash": "WT6KXITWT42MJDJ3OETUT6CHZGSKJ2QPOWSVPPYL7TQ5HTP2FOLQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-WT6KXITWT42MJDJ3OETUT6CHZGSKJ2QPOWSVPPYL7TQ5HTP2FOLQ-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-WT6KXITWT42MJDJ3OETUT6CHZGSKJ2QPOWSVPPYL7TQ5HTP2FOLQ-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "541",
     },
     Object {
@@ -1634,14 +1634,14 @@ Array [
       },
       "fee": "1000",
       "hash": "YATHBP5YOJ6HMZOU6VQROW26IFMCFE234XGTMMFAR3K2V7RLXK6Q",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-YATHBP5YOJ6HMZOU6VQROW26IFMCFE234XGTMMFAR3K2V7RLXK6Q-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-YATHBP5YOJ6HMZOU6VQROW26IFMCFE234XGTMMFAR3K2V7RLXK6Q-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -1654,14 +1654,14 @@ Array [
       },
       "fee": "1000",
       "hash": "YDKMCA57I5YRQLN7YH2MEVKV7FIKYSCOBBFA233WLWR3TZF2FBBQ",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-YDKMCA57I5YRQLN7YH2MEVKV7FIKYSCOBBFA233WLWR3TZF2FBBQ-OUT",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-YDKMCA57I5YRQLN7YH2MEVKV7FIKYSCOBBFA233WLWR3TZF2FBBQ-FEES",
       "recipients": Array [
         "NNBOHZ5JEYZNIOICV44KHM2RAQ7H6HAGQOMPPSCL77ERR7SFH5NJZJ3IJU",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "-20681",
     },
     Object {
@@ -1693,14 +1693,14 @@ Array [
       },
       "fee": "0",
       "hash": "ZPJWUJG4TP7EHNMO2OCIWWBQVCJWLYBAHV6KYDPPJZBIEN6G7D7A",
-      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-ZPJWUJG4TP7EHNMO2OCIWWBQVCJWLYBAHV6KYDPPJZBIEN6G7D7A-IN",
+      "id": "libcore:1:algorand:c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4:-ZPJWUJG4TP7EHNMO2OCIWWBQVCJWLYBAHV6KYDPPJZBIEN6G7D7A-FEES",
       "recipients": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
       "senders": Array [
         "RL6VDLXCN5G7N2GRTS7YLVDSFT4PVBBUOVTVS7T26OQ5MLXYQKRMI5ADXY",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
   ],
@@ -1927,14 +1927,14 @@ Array [
       },
       "fee": "0",
       "hash": "22J7XZ5IL7MDMYOZLA3BJ2475ZCIB5AWXPWKQRGASWZ7AANUPLWA",
-      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-22J7XZ5IL7MDMYOZLA3BJ2475ZCIB5AWXPWKQRGASWZ7AANUPLWA-IN",
+      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-22J7XZ5IL7MDMYOZLA3BJ2475ZCIB5AWXPWKQRGASWZ7AANUPLWA-FEES",
       "recipients": Array [
         "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {
@@ -1966,14 +1966,14 @@ Array [
       },
       "fee": "1000",
       "hash": "4ESKHFFYCO7TT2U247BMFZE54LS6YRWJXE65WBBU7P5ANUWG2YNA",
-      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-4ESKHFFYCO7TT2U247BMFZE54LS6YRWJXE65WBBU7P5ANUWG2YNA-OUT",
+      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-4ESKHFFYCO7TT2U247BMFZE54LS6YRWJXE65WBBU7P5ANUWG2YNA-FEES",
       "recipients": Array [
         "YNIOR5YAQNK724EINBQW3HLG3Y3QGN3AGTFRYHABQQ6T5QO6CNNCF7CKQY",
       ],
       "senders": Array [
         "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -2119,14 +2119,14 @@ Array [
       },
       "fee": "1000",
       "hash": "HKWAQHXC6KKRQ7MI6NED6GQRVHCWI3ATLNHJLENWAGZAI32J5ERA",
-      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-HKWAQHXC6KKRQ7MI6NED6GQRVHCWI3ATLNHJLENWAGZAI32J5ERA-OUT",
+      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-HKWAQHXC6KKRQ7MI6NED6GQRVHCWI3ATLNHJLENWAGZAI32J5ERA-FEES",
       "recipients": Array [
         "YNIOR5YAQNK724EINBQW3HLG3Y3QGN3AGTFRYHABQQ6T5QO6CNNCF7CKQY",
       ],
       "senders": Array [
         "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -2158,14 +2158,14 @@ Array [
       },
       "fee": "1000",
       "hash": "P5C3GUCJKBLOCSIUJWIMEQXEY5JUPKKMQZVEFC6T3622Q4FXUYCQ",
-      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-P5C3GUCJKBLOCSIUJWIMEQXEY5JUPKKMQZVEFC6T3622Q4FXUYCQ-OUT",
+      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-P5C3GUCJKBLOCSIUJWIMEQXEY5JUPKKMQZVEFC6T3622Q4FXUYCQ-FEES",
       "recipients": Array [
         "YNIOR5YAQNK724EINBQW3HLG3Y3QGN3AGTFRYHABQQ6T5QO6CNNCF7CKQY",
       ],
       "senders": Array [
         "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
       ],
-      "type": "OUT",
+      "type": "FEES",
       "value": "1000",
     },
     Object {
@@ -2217,14 +2217,14 @@ Array [
       },
       "fee": "0",
       "hash": "QQ3BJUCSKFXKGVQH6I77JURXTK5NJOMBQF44FMVZGT75WZ5Q6FUQ",
-      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-QQ3BJUCSKFXKGVQH6I77JURXTK5NJOMBQF44FMVZGT75WZ5Q6FUQ-IN",
+      "id": "libcore:1:algorand:6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc:-QQ3BJUCSKFXKGVQH6I77JURXTK5NJOMBQF44FMVZGT75WZ5Q6FUQ-FEES",
       "recipients": Array [
         "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
       ],
       "senders": Array [
         "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
       ],
-      "type": "IN",
+      "type": "FEES",
       "value": "0",
     },
     Object {

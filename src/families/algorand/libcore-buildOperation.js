@@ -13,9 +13,13 @@ const getAssetId = async (transaction) => {
   return null;
 };
 
-const getOperationType = async (algorandOperation) => {
+const getOperationType = async (algorandOperation, transaction) => {
   const operationType = await algorandOperation.getAlgorandOperationType();
   let type;
+
+  if ((await transaction.getType()) === "axfer") {
+    type = "FEES";
+  }
 
   if (operationType === AlgorandOperationTypeEnum.ASSET_OPT_IN) {
     type = "OPT_IN";
@@ -41,7 +45,10 @@ async function algorandBuildOperation({
     hash,
   };
 
-  const type = await getOperationType(algorandLikeOperation);
+  const type = await getOperationType(
+    algorandLikeOperation,
+    algorandLikeTransaction
+  );
   if (type) {
     out.type = type;
   }
