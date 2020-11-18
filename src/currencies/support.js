@@ -17,21 +17,32 @@ let userSupportedCurrencies: CryptoCurrency[] = [];
 
 let userSupportedFiats = [];
 // Current list was established with what our API really supports
+// to update the list,
+// 1. $ ledger-live countervalues --format supportedFiats --fiats
+// 2. copy & paste the output
 setSupportedFiats([
+  "AUD",
   "CAD",
   "CHF",
+  "CZK",
+  "DKK",
   "EUR",
   "GBP",
   "HKD",
+  "HUF",
   "ILS",
   "JPY",
-  "KRW",
   "MXN",
+  "NOK",
+  "NZD",
   "PLN",
+  "RON",
   "RUB",
+  "SEK",
   "SGD",
   "TRY",
   "USD",
+  "ZAR",
 ]);
 
 export function isFiatSupported(fiat: FiatCurrency) {

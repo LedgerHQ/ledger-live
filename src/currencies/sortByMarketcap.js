@@ -3,7 +3,7 @@ import type { Currency } from "../types";
 // $FlowFixMe to be figured out
 import { useState, useEffect } from "react";
 import { makeLRUCache } from "../cache";
-import { getCountervalues } from "../countervalues";
+import api from "../countervalues/api";
 
 export const sortByMarketcap = <C: Currency>(
   currencies: C[],
@@ -25,12 +25,10 @@ export const sortByMarketcap = <C: Currency>(
 
 let marketcapTickersCache;
 export const getMarketcapTickers: () => Promise<string[]> = makeLRUCache(() =>
-  getCountervalues()
-    .fetchTickersByMarketcap()
-    .then((tickers) => {
-      marketcapTickersCache = tickers;
-      return tickers;
-    })
+  api.fetchMarketcapTickers().then((tickers) => {
+    marketcapTickersCache = tickers;
+    return tickers;
+  })
 );
 
 // React style version of getMarketcapTickers

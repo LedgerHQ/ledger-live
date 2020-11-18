@@ -5,9 +5,9 @@ import { listCryptoCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
 import {
   blockchainBaseURL,
-  hasCurrencyExplorer
+  hasCurrencyExplorer,
 } from "@ledgerhq/live-common/lib/api/Ledger";
-import { getCountervalues } from "@ledgerhq/live-common/lib/countervalues";
+import api from "@ledgerhq/live-common/lib/countervalues/api";
 
 const Section = styled.div`
   padding: 20px 40px;
@@ -27,7 +27,7 @@ const CryptoList = styled.div`
 `;
 
 const CryptoCell = styled.div`
-  color: ${p => p.color};
+  color: ${(p) => p.color};
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -61,16 +61,16 @@ const AltIcon = styled.div`
 `;
 
 const IconWrapper = styled.div`
-  color: ${p => p.color};
-  background-color: ${p => p.bg};
+  color: ${(p) => p.color};
+  background-color: ${(p) => p.bg};
   border-radius: 8px;
   display: flex;
   overflow: hidden;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: ${p => p.size}px;
-  height: ${p => p.size}px;
+  width: ${(p) => p.size}px;
+  height: ${(p) => p.size}px;
   margin-right: 10px;
 `;
 
@@ -88,8 +88,8 @@ class Crypto extends Component<*> {
         : null,
       crypto.units.length === 0
         ? "at least one unit must be provided in units"
-        : null
-    ].filter(o => o);
+        : null,
+    ].filter((o) => o);
     return (
       <CryptoCell color={crypto.color}>
         {validationErrors.length ? (
@@ -126,13 +126,13 @@ class Crypto extends Component<*> {
               "ethereumLikeInfo=" + JSON.stringify(crypto.ethereumLikeInfo),
             "units are " +
               crypto.units
-                .map(u => u.code + "(^" + u.magnitude + ")")
+                .map((u) => u.code + "(^" + u.magnitude + ")")
                 .join(" "),
             hasCurrencyExplorer(crypto)
               ? "ledger explorer is " + blockchainBaseURL(crypto)
-              : "doesn't have ledger explorer"
+              : "doesn't have ledger explorer",
           ]
-            .filter(o => o)
+            .filter((o) => o)
             .join(", ")}
         </CryptoInfo>
       </CryptoCell>
@@ -143,15 +143,15 @@ class Crypto extends Component<*> {
 class Currencies extends Component<*, *> {
   static demo = {
     title: "Currencies",
-    url: "/currencies"
+    url: "/currencies",
   };
 
   state = {
-    tickers: []
+    tickers: [],
   };
 
   async componentDidMount() {
-    const tickers = await getCountervalues().fetchTickersByMarketcap();
+    const tickers = await api.fetchMarketcapTickers();
     this.setState({ tickers });
   }
 
@@ -159,9 +159,9 @@ class Currencies extends Component<*, *> {
     const { tickers } = this.state;
     const all = listCryptoCurrencies(true);
     const available = tickers
-      .map(ticker => all.find(a => a.ticker === ticker))
+      .map((ticker) => all.find((a) => a.ticker === ticker))
       .filter(Boolean);
-    const unavailable = all.filter(a => !available.includes(a));
+    const unavailable = all.filter((a) => !available.includes(a));
     return (
       <div>
         <Intro>
@@ -171,13 +171,13 @@ class Currencies extends Component<*, *> {
         <Section>
           <SectionHeader>Crypto assets</SectionHeader>
           <CryptoList>
-            {available.map(a => (
+            {available.map((a) => (
               <Crypto crypto={a} key={a.id} />
             ))}
           </CryptoList>
           <SectionHeader>no countervalues yet</SectionHeader>
           <CryptoList>
-            {unavailable.map(a => (
+            {unavailable.map((a) => (
               <Crypto crypto={a} key={a.id} />
             ))}
           </CryptoList>

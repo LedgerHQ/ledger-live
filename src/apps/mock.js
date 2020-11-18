@@ -8,7 +8,7 @@ import { getDependencies, getDependents } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
 import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
-import { tickersByMarketCap } from "../countervalues/mock";
+import { getBTCValues } from "../countervalues/mock";
 
 export const deviceInfo155 = {
   version: "1.5.5",
@@ -83,6 +83,8 @@ export function mockListAppsResult(
   installedDesc: string,
   deviceInfo: DeviceInfo
 ): ListAppsResult {
+  const tickersByMarketCap = Object.keys(getBTCValues());
+
   const apps = appDesc
     .split(",")
     .map((a) => a.trim())

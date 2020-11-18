@@ -1,11 +1,10 @@
 // @flow
 
 import type { PortfolioRange, PortfolioRangeConfig } from "../types";
-import { getEnv } from "../env";
 
-const hourIncrement = 60 * 60 * 1000;
-const dayIncrement = 24 * hourIncrement;
-const weekIncrement = 7 * dayIncrement;
+export const hourIncrement = 60 * 60 * 1000;
+export const dayIncrement = 24 * hourIncrement;
+export const weekIncrement = 7 * dayIncrement;
 
 export function startOfHour(t: Date) {
   return new Date(t.getFullYear(), t.getMonth(), t.getDate(), t.getHours());
@@ -27,12 +26,12 @@ export function startOfWeek(t: Date) {
 // TODO we need to rework this to allow "all" time range
 // this would require to introduce Account#olderOperationDate
 
-const stable: { [k: PortfolioRange]: PortfolioRangeConfig } = {
+const ranges: { [k: PortfolioRange]: PortfolioRangeConfig } = {
   year: {
-    count: 365,
-    increment: dayIncrement,
-    startOf: startOfDay,
-    granularityId: "DAY",
+    count: 52,
+    increment: weekIncrement,
+    startOf: startOfWeek,
+    granularityId: "WEEK",
   },
   month: {
     count: 30,
@@ -41,35 +40,17 @@ const stable: { [k: PortfolioRange]: PortfolioRangeConfig } = {
     granularityId: "DAY",
   },
   week: {
-    count: 7,
-    increment: dayIncrement,
-    startOf: startOfDay,
-    granularityId: "DAY",
-  },
-};
-
-const experimental: { [k: PortfolioRange]: PortfolioRangeConfig } = {
-  year: {
-    count: 52,
-    increment: weekIncrement,
-    startOf: startOfWeek,
-    granularityId: "WEEK",
-  },
-  /*
-  week: {
     count: 7 * 24,
     increment: hourIncrement,
     startOf: startOfHour,
-    granularityId: "HOUR"
-  }
-  */
+    granularityId: "HOUR",
+  },
 };
 
 const getPerPortfolioRanges = (): {
   [k: PortfolioRange]: PortfolioRangeConfig,
 } => {
-  if (!getEnv("EXPERIMENTAL_PORTFOLIO_RANGE")) return stable;
-  return { ...stable, ...experimental };
+  return ranges;
 };
 
 export function getPortfolioRangeConfig(

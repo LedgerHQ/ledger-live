@@ -1,13 +1,4 @@
-/* eslint-disable no-console */
-import { implementCountervalues } from "../../countervalues";
 import { setSupportedCurrencies } from "../../currencies";
-
-implementCountervalues({
-  getAPIBaseURL: () => window.LEDGER_CV_API,
-  storeSelector: (state) => state.countervalues,
-  pairsSelector: () => [],
-  setExchangePairsAction: () => {},
-});
 
 setSupportedCurrencies([
   "bitcoin",

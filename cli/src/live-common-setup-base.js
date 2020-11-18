@@ -3,17 +3,9 @@
 import winston from "winston";
 import { setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import simple from "@ledgerhq/live-common/lib/logs/simple";
-import { implementCountervalues } from "@ledgerhq/live-common/lib/countervalues";
 import { listen } from "@ledgerhq/logs";
 import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
-
-implementCountervalues({
-  getAPIBaseURL: () => window.LEDGER_CV_API,
-  storeSelector: (state) => state.countervalues,
-  pairsSelector: () => [],
-  setExchangePairsAction: () => {},
-});
 
 setSupportedCurrencies([
   "bitcoin",

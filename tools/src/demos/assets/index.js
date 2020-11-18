@@ -1,14 +1,7 @@
 // @flow
-import React, {
-  Component,
-  useEffect,
-  useState,
-  useMemo,
-  useCallback
-} from "react";
+import React, { Component, useCallback, useState, useMemo } from "react";
 import ReactTable from "react-table";
 import { BigNumber } from "bignumber.js";
-import uniqWith from "lodash/uniqWith";
 import {
   listTokens,
   listCryptoCurrencies,
@@ -17,26 +10,20 @@ import {
   getFiatCurrencyByTicker,
   useCurrenciesByMarketcap,
   useMarketcapTickers,
-  formatCurrencyUnit
+  formatCurrencyUnit,
 } from "@ledgerhq/live-common/lib/currencies";
-import {
-  getRatesBatched,
-  formatCounterValueDay
-} from "@ledgerhq/live-common/lib/countervalues";
 
 const usdFiat = getFiatCurrencyByTicker("USD");
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 
-const getRates = getRatesBatched(50);
-
 const DownloadData = ({ data }) => {
   const onClick = useCallback(() => {
     const csv = [
-      ["id", "name", "ticker", "type", "live", "url", "USD", "magnitude"]
+      ["id", "name", "ticker", "type", "live", "url", "USD", "magnitude"],
     ]
       .concat(
-        data.map(d => [
+        data.map((d) => [
           d.id,
           d.name,
           d.ticker,
@@ -46,11 +33,11 @@ const DownloadData = ({ data }) => {
             ? `https://etherscan.io/address/${d.contractAddress}`
             : "",
           d.usdValue,
-          d.units[0].magnitude
+          d.units[0].magnitude,
         ])
       )
-      .map(row =>
-        row.map(cell => String(cell).replace(/[,\n\r]/g, "")).join(",")
+      .map((row) =>
+        row.map((cell) => String(cell).replace(/[,\n\r]/g, "")).join(",")
       )
       .join("\n");
     const dataUrl = `data:text/csv,` + encodeURIComponent(csv);
@@ -64,42 +51,42 @@ const columns = [
   {
     Header: "Live?",
     width: 80,
-    accessor: "livesupport"
+    accessor: "livesupport",
   },
   {
     Header: "Delisted?",
     width: 80,
-    accessor: "delisted"
+    accessor: "delisted",
   },
   {
     Header: "type",
     width: 120,
-    accessor: "typeText"
+    accessor: "typeText",
   },
   {
     Header: "id",
     width: 120,
-    accessor: "id"
+    accessor: "id",
   },
   {
     Header: "Name",
-    accessor: "name"
+    accessor: "name",
   },
   {
     Header: "Ticker",
     accessor: "ticker",
-    width: 100
+    width: 100,
   },
   {
     Header: "Magnitude",
     id: "magnitude",
-    accessor: o => o.units[0].magnitude,
-    width: 100
+    accessor: (o) => o.units[0].magnitude,
+    width: 100,
   },
   {
     Header: "extra",
     id: "extra",
-    accessor: token =>
+    accessor: (token) =>
       token.type === "TokenCurrency" ? (
         <a
           target="_blank"
@@ -110,14 +97,14 @@ const columns = [
         </a>
       ) : (
         "coinType=" + token.coinType
-      )
+      ),
   },
   {
     id: "countervalue",
-    Header: p => {
-      const data = p.data.map(d => d._original);
-      const supported = data.filter(d => d.countervalueStatus === "yes");
-      const withExchange = data.filter(d => d.exchange);
+    Header: (p) => {
+      const data = p.data.map((d) => d._original);
+      const supported = data.filter((d) => d.countervalueStatus === "yes");
+      const withExchange = data.filter((d) => d.exchange);
       const percentageSupport = supported.length / data.length;
       const realPercentageSupport = withExchange.length / data.length;
       return (
@@ -135,16 +122,16 @@ const columns = [
         </div>
       );
     },
-    accessor: "countervalueText"
+    accessor: "countervalueText",
   },
   {
     Header: "USD",
     accessor: "usdValue",
-    width: 100
-  }
+    width: 100,
+  },
 ];
 
-const counterpartFor = c =>
+const counterpartFor = (c) =>
   c === bitcoin || c === ethereum
     ? usdFiat
     : c.type === "CryptoCurrency"
@@ -156,9 +143,9 @@ const Assets = () => {
   const currencies = listCryptoCurrencies();
   const all = useMemo(() => currencies.concat(tokens), [tokens, currencies]);
   const tickers = useMarketcapTickers() || [];
-  const [rates, setRates] = useState({});
+  const [rates] = useState({});
   const byMarketcap = useCurrenciesByMarketcap(all);
-  const data = byMarketcap.map(t => {
+  const data = byMarketcap.map((t) => {
     let countervalueStatus = "no";
     let loading = false;
     let exchange;
@@ -202,7 +189,7 @@ const Assets = () => {
             counter.units[0],
             BigNumber(latest).times(10 ** t.units[0].magnitude),
             {
-              showCode: true
+              showCode: true,
             }
           );
         }
@@ -232,35 +219,16 @@ const Assets = () => {
       loading,
       livesupport,
       delisted: t.delisted ? "yes" : "no",
-      usdValue
+      usdValue,
     };
   });
-
-  useEffect(() => {
-    if (!tickers) return;
-    const afterDay = formatCounterValueDay(new Date());
-    getRates(
-      () => window.LEDGER_CV_API,
-      uniqWith(
-        all
-          .filter(c => tickers.includes(c.ticker))
-          .map(from => ({
-            from: from.ticker,
-            to: counterpartFor(from).ticker,
-            afterDay
-          })),
-        (a, b) => a.from === b.from && a.to === b.to
-      ),
-      "daily"
-    ).then(setRates);
-  }, [tickers, all]);
 
   return (
     <div
       style={{
         boxSizing: "border-box",
         height: "100vh",
-        display: "flex"
+        display: "flex",
       }}
     >
       <ReactTable
@@ -279,7 +247,7 @@ const Assets = () => {
 export default class Demo extends Component<{}> {
   static demo = {
     title: "Assets",
-    url: "/assets"
+    url: "/assets",
   };
   render() {
     return <Assets />;

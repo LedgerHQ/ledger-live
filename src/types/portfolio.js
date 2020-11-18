@@ -4,7 +4,9 @@ import type { BigNumber } from "bignumber.js";
 import type { AccountLike, AccountLikeArray } from "./account";
 import type { CryptoCurrency, TokenCurrency } from "./currencies";
 
-export type BalanceHistory = Array<{ date: Date, value: BigNumber }>;
+export type BalanceHistoryData = { date: Date, value: BigNumber };
+
+export type BalanceHistory = BalanceHistoryData[];
 
 export type BalanceHistoryRaw = Array<[string, string]>;
 
@@ -52,7 +54,7 @@ export type Portfolio = {
 
 export type PortfolioRangeConfig = {
   count: number,
-  granularityId: "DAY" | "WEEK", // only supported here atm
+  granularityId: "HOUR" | "DAY" | "WEEK", // only supported here atm
   startOf: (Date) => Date,
   increment: number, // FIXME it should be a Date=>Date
 };

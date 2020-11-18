@@ -120,7 +120,7 @@ const meaningfulPercentage = (
   }
 };
 
-const getBHWCV: GetBalanceHistoryWithCountervalue = (
+export const getBalanceHistoryWithCountervalue: GetBalanceHistoryWithCountervalue = (
   account,
   r,
   calc,
@@ -195,8 +195,6 @@ const getBHWCV: GetBalanceHistoryWithCountervalue = (
   accountCVstableCache[stableHash] = copy;
   return copy;
 };
-
-export const getBalanceHistoryWithCountervalue = getBHWCV;
 
 const portfolioMemo: { [_: *]: Portfolio } = {};
 /**
@@ -276,7 +274,9 @@ export function getPortfolio(
     const history = histories[i];
     for (let j = 0; j < history.length; j++) {
       const res = balanceHistory[j];
-      res.value = res.value.plus(history[j].countervalue);
+      if (res) {
+        res.value = res.value.plus(history[j].countervalue);
+      }
     }
   }
 
