@@ -89,7 +89,7 @@
     "cashaddrjs": "^0.3.12",
     "crypto-js": "^4.0.0",
     "eip55": "^1.0.3",
-    "eth-sig-util": "^2.5.3",
+    "eth-sig-util": "3.0.0",
     "ethereumjs-abi": "^0.6.8",
     "ethereumjs-common": "^1.5.2",
     "ethereumjs-tx": "^2.1.2",
