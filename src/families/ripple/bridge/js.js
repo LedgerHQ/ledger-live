@@ -6,7 +6,6 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { RippleAPI } from "ripple-lib";
 import bs58check from "ripple-bs58check";
-import throttle from "lodash/throttle";
 import {
   AmountRequired,
   NotEnoughBalanceBecauseDestinationNotCreated,
@@ -42,12 +41,40 @@ import {
   parseAPICurrencyObject,
   formatAPICurrencyXRP,
 } from "../../../api/Ripple";
+import { makeLRUCache } from "../../../cache";
 import type { CurrencyBridge, AccountBridge } from "../../../types/bridge";
 import signTransaction from "../../../hw/signTransaction";
 import type { Transaction, NetworkInfo } from "../types";
 import { makeAccountBridgeReceive, mergeOps } from "../../../bridge/jsHelpers";
 
+const checkAccountNotFound = (e) => {
+  return e.message !== "actNotFound" && e.data.error !== "actNotFound";
+};
+
 const receive = makeAccountBridgeReceive();
+
+const getSequenceNumber = async (account, api) => {
+  const lastOp = account.operations.find((op) => op.type === "OUT");
+  if (lastOp && lastOp.transactionSequenceNumber) {
+    return (
+      lastOp.transactionSequenceNumber + account.pendingOperations.length + 1
+    );
+  }
+  const info = await api.getAccountInfo(account.freshAddress);
+
+  return info.sequence + account.pendingOperations.length;
+};
+
+const uint32maxPlus1 = BigNumber(2).pow(32);
+const validateTag = (tag) => {
+  return (
+    !tag.isNaN() &&
+    tag.isFinite() &&
+    tag.isInteger() &&
+    tag.isPositive() &&
+    tag.lt(uint32maxPlus1)
+  );
+};
 
 const signOperation = ({ account, transaction, deviceId }) =>
   Observable.create((o) => {
@@ -60,6 +87,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
       try {
         await api.connect();
         const amount = formatAPICurrencyXRP(transaction.amount);
+        const tag = transaction.tag ? transaction.tag : undefined;
         const payment = {
           source: {
             address: account.freshAddress,
@@ -68,13 +96,21 @@ const signOperation = ({ account, transaction, deviceId }) =>
           destination: {
             address: transaction.recipient,
             minAmount: amount,
-            tag: transaction.tag ? transaction.tag : undefined,
+            tag,
           },
         };
         const instruction = {
           fee: formatAPICurrencyXRP(fee).value,
           maxLedgerVersionOffset: 12,
         };
+
+        if (tag)
+          invariant(
+            validateTag(BigNumber(tag)),
+            `tag is set but is not in a valid format, should be between [0 - ${uint32maxPlus1
+              .minus(1)
+              .toString()}]`
+          );
 
         const prepared = await api.preparePayment(
           account.freshAddress,
@@ -111,10 +147,7 @@ const signOperation = ({ account, transaction, deviceId }) =>
           recipients: [transaction.recipient],
           date: new Date(),
           // we probably can't get it so it's a predictive value
-          transactionSequenceNumber:
-            (account.operations.length > 0
-              ? account.operations[0].transactionSequenceNumber || 0
-              : 0) + account.pendingOperations.length,
+          transactionSequenceNumber: await getSequenceNumber(account, api),
           extra: {},
         };
 
@@ -272,26 +305,6 @@ const txToOperation = (account: Account) => ({
   return op;
 };
 
-const getServerInfo = ((map) => (endpointConfig) => {
-  if (!endpointConfig) endpointConfig = "";
-  if (map[endpointConfig]) return map[endpointConfig]();
-  const f = throttle(async () => {
-    const api = apiForEndpointConfig(RippleAPI, endpointConfig);
-    try {
-      await api.connect();
-      const res = await api.getServerInfo();
-      return res;
-    } catch (e) {
-      f.cancel();
-      throw e;
-    } finally {
-      api.disconnect();
-    }
-  }, 60000);
-  map[endpointConfig] = f;
-  return f();
-})({});
-
 const recipientIsNew = async (endpointConfig, recipient) => {
   if (!isRecipientValid(recipient)) return false;
   const api = apiForEndpointConfig(RippleAPI, endpointConfig);
@@ -301,7 +314,7 @@ const recipientIsNew = async (endpointConfig, recipient) => {
       await api.getAccountInfo(recipient);
       return false;
     } catch (e) {
-      if (e.message !== "actNotFound") {
+      if (checkAccountNotFound(e)) {
         throw e;
       }
       return true;
@@ -332,6 +345,30 @@ const cachedRecipientIsNew = (endpointConfig, recipient) => {
   return cacheRecipientsNew[recipient];
 };
 
+const serverInfoCache = makeLRUCache(
+  async (endpointConfig: string): Promise<*> => getServerInfo(endpointConfig),
+  (endpointConfig: string) => endpointConfig,
+  {
+    max: 5,
+    maxAge: 10000, // 1min
+  }
+);
+
+export const getServerInfo = async (endpointConfig: string): Promise<*> => {
+  if (!endpointConfig) endpointConfig = "";
+  const api = apiForEndpointConfig(RippleAPI, endpointConfig);
+
+  try {
+    await api.connect();
+    const res = await api.getServerInfo();
+
+    serverInfoCache.hydrate(endpointConfig, res);
+    return res;
+  } finally {
+    api.disconnect();
+  }
+};
+
 const currencyBridge: CurrencyBridge = {
   preload: () => Promise.resolve(),
   hydrate: () => {},
@@ -348,7 +385,7 @@ const currencyBridge: CurrencyBridge = {
         try {
           transport = await open(deviceId);
           await api.connect();
-          const serverInfo = await getServerInfo();
+          const serverInfo = await getServerInfo("");
           const ledgers = serverInfo.completeLedgers.split("-");
           const minLedgerVersion = Number(ledgers[0]);
           const maxLedgerVersion = Number(ledgers[1]);
@@ -384,7 +421,7 @@ const currencyBridge: CurrencyBridge = {
               try {
                 info = await api.getAccountInfo(address);
               } catch (e) {
-                if (e.message !== "actNotFound") {
+                if (checkAccountNotFound(e)) {
                   throw e;
                 }
               }
@@ -527,7 +564,7 @@ const sync = ({
       try {
         await api.connect();
         if (finished) return;
-        const serverInfo = await getServerInfo(endpointConfig);
+        const serverInfo = await getServerInfo(endpointConfig || "");
         if (finished) return;
         const ledgers = serverInfo.completeLedgers.split("-");
         const minLedgerVersion = Number(ledgers[0]);
@@ -537,7 +574,7 @@ const sync = ({
         try {
           info = await api.getAccountInfo(freshAddress);
         } catch (e) {
-          if (e.message !== "actNotFound") {
+          if (checkAccountNotFound(e)) {
             throw e;
           }
         }
@@ -654,7 +691,7 @@ const prepareTransaction = async (a: Account, t: Transaction) => {
 const getTransactionStatus = async (a, t) => {
   const errors = {};
   const warnings = {};
-  const r = await getServerInfo(a.endpointConfig);
+  const r = await getServerInfo(a.endpointConfig || "");
   const reserveBaseXRP = parseAPIValue(r.validatedLedger.reserveBaseXRP);
 
   const estimatedFees = BigNumber(t.fee || 0);
@@ -723,7 +760,7 @@ const estimateMaxSpendable = async ({
   transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const r = await getServerInfo(mainAccount.endpointConfig);
+  const r = await getServerInfo(mainAccount.endpointConfig || "");
   const reserveBaseXRP = parseAPIValue(r.validatedLedger.reserveBaseXRP);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
