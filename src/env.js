@@ -32,6 +32,11 @@ const stringParser = (v: mixed): ?string =>
   typeof v === "string" ? v : undefined;
 
 const envDefinitions = {
+  ANALYTICS_CONSOLE: {
+    def: false,
+    parser: boolParser,
+    desc: "Show tracking overlays on the app UI",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
