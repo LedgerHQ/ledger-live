@@ -15,6 +15,7 @@ type Props = {
   before?: string,
   after?: string,
   disableRounding?: boolean,
+  joinFragmentsSeparator?: string,
 };
 
 export default function CurrencyUnitValue({
@@ -25,6 +26,7 @@ export default function CurrencyUnitValue({
   before = "",
   after = "",
   disableRounding = false,
+  joinFragmentsSeparator = "",
 }: Props) {
   const { locale } = useLocale();
   const discreet = useSelector(discreetModeSelector);
@@ -38,6 +40,7 @@ export default function CurrencyUnitValue({
           locale,
           disableRounding,
           discreet,
+          joinFragmentsSeparator,
         })
       : "") +
     after

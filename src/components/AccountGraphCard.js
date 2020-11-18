@@ -201,14 +201,14 @@ class GraphCardHeader extends PureComponent<{
                 <FormatDate date={hoveredItem.date} />
               </LText>
             ) : valueChange ? (
-              <>
+              <View style={styles.delta}>
                 <Delta
                   percent
                   valueChange={valueChange}
                   style={styles.deltaPercent}
                 />
                 <Delta valueChange={valueChange} unit={unit} />
-              </>
+              </View>
             ) : null}
           </View>
         </View>
@@ -281,6 +281,10 @@ const styles = StyleSheet.create({
     flexWrap: "nowrap",
   },
   graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
+  delta: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
 });
 
 export default compose(connect(null, mapDispatchToProps))(AccountGraphCard);
