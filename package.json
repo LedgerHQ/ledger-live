@@ -5,7 +5,7 @@
     "type": "git",
     "url": "git://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "16.0.0-countervalues.1",
+  "version": "17.0.0",
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "scripts": {
