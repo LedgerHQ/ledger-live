@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, memo } from "react";
 import { CommonActions } from "@react-navigation/native";
 
 import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
 
 import { useApps } from "./shared";
@@ -35,14 +36,10 @@ type Props = {
 const Manager = ({
   navigation,
   route: {
-    params: {
-      device: { deviceId, deviceName },
-      deviceInfo,
-      result,
-      searchQuery,
-    },
+    params: { device, deviceInfo, result, searchQuery },
   },
 }: Props) => {
+  const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId);
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
@@ -118,7 +115,13 @@ const Manager = ({
 
   return (
     <>
-      <TrackScreen category="Manager" name="AppsList" />
+      <TrackScreen
+        category="Manager"
+        name="AppsList"
+        deviceModelId={modelId}
+        deviceVersion={deviceInfo.version}
+        appLength={result ? result.installed.length : 0}
+      />
       <AppsScreen
         state={state}
         dispatch={dispatch}
