@@ -114,7 +114,7 @@ class Asset extends PureComponent<AssetProps, any> {
         <View style={styles.balanceContainer}>
           {items[0] ? (
             <LText style={styles.balanceText} semiBold>
-              <CurrencyUnitValue {...items[0]} />
+              <CurrencyUnitValue {...items[0]} joinFragmentsSeparator=" " />
             </LText>
           ) : null}
           {items[1] ? (
