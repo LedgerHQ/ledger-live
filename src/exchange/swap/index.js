@@ -11,7 +11,15 @@ import { getEnv } from "../../env";
 export const operationStatusList = {
   finishedOK: ["finished", "refunded"],
   finishedKO: ["expired", "failed"],
-  pending: ["confirming", "exchanging", "sending", "waiting", "new"],
+  pending: [
+    "confirming",
+    "exchanging",
+    "sending",
+    "waiting",
+    "new",
+    "hold",
+    "overdue",
+  ],
 };
 
 const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
