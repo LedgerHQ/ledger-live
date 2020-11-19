@@ -9,13 +9,14 @@ import {
 const rippleUnit = getCryptoCurrencyById("ripple").units[0];
 
 export const defaultEndpoint = "wss://xrpl.ws";
+export const connectionTimeout = 30 * 1000; // default connectionTimeout is 2s and make the specs bot failed
 
 export const apiForEndpointConfig = (
   RippleAPI: *, // you must provide {RippleAPI} from "ripple-lib"
   endpointConfig: ?string = null
 ) => {
   const server = endpointConfig || defaultEndpoint;
-  const api = new RippleAPI({ server });
+  const api = new RippleAPI({ server, connectionTimeout });
   api.on("error", (errorCode, errorMessage) => {
     console.warn(`Ripple API error: ${errorCode}: ${errorMessage}`);
   });
