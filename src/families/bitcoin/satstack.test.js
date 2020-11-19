@@ -2,13 +2,13 @@
 import {
   isValidHost,
   checkRPCNodeConfig,
-  editSatsStackConfig,
+  editSatStackConfig,
   isSatStackEnabled,
-  parseSatsStackConfig,
+  parseSatStackConfig,
   validateRPCNodeConfig,
-  stringifySatsStackConfig,
+  stringifySatStackConfig,
   setMockStatus,
-  fetchSatsStackStatus,
+  fetchSatStackStatus,
   statusObservable,
 } from "./satstack";
 import dataset from "./datasets/bitcoin";
@@ -115,10 +115,10 @@ describe("checkRPCNodeConfig", () => {
   });
 });
 
-describe("parseSatsStackConfig", () => {
+describe("parseSatStackConfig", () => {
   test("parse a config with descriptors", () => {
     expect(
-      parseSatsStackConfig(`{
+      parseSatStackConfig(`{
         "accounts": [
           {
             "external": "pkh([224b6226/44'/0'/0']xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn/0/*)",
@@ -174,29 +174,29 @@ describe("parseSatsStackConfig", () => {
   });
 
   test("invalid values", () => {
-    expect(() => parseSatsStackConfig("")).toThrow();
-    expect(parseSatsStackConfig("{}")).toBeUndefined();
-    expect(parseSatsStackConfig('{"accounts":[]}')).toBeUndefined();
+    expect(() => parseSatStackConfig("")).toThrow();
+    expect(parseSatStackConfig("{}")).toBeUndefined();
+    expect(parseSatStackConfig('{"accounts":[]}')).toBeUndefined();
     expect(
-      parseSatsStackConfig(
+      parseSatStackConfig(
         '{"accounts":[],"rpcurl":"localhost","rpcuser":"user"}'
       )
     ).toBeUndefined();
     expect(
-      parseSatsStackConfig(
+      parseSatStackConfig(
         '{"accounts":[],"rpcurl":"localhost","rpcpass":"pass"}'
       )
     ).toBeUndefined();
     expect(
-      parseSatsStackConfig('{"accounts":[],"rpcuser":"user","rpcpass": "pass"}')
+      parseSatStackConfig('{"accounts":[],"rpcuser":"user","rpcpass": "pass"}')
     ).toBeUndefined();
   });
 });
 
-describe("stringifySatsStackConfig", () => {
+describe("stringifySatStackConfig", () => {
   test("stringify config with accounts", () => {
     expect(
-      stringifySatsStackConfig({
+      stringifySatStackConfig({
         node: mockConfig,
         extra: { foo: "bar" },
         accounts: (dataset.accounts || [])
@@ -226,7 +226,7 @@ describe("stringifySatsStackConfig", () => {
   });
 });
 
-describe("editSatsStackConfig", () => {
+describe("editSatStackConfig", () => {
   const config = {
     node: { ...mockConfig, tls: false },
     extra: { foo: "bar" },
@@ -236,13 +236,13 @@ describe("editSatsStackConfig", () => {
       .map((descriptor, i) => ({ descriptor, extra: { i } })),
   };
   test("restore identity", () => {
-    expect(parseSatsStackConfig(stringifySatsStackConfig(config))).toEqual(
+    expect(parseSatStackConfig(stringifySatStackConfig(config))).toEqual(
       config
     );
   });
   test("update node config", () => {
     expect(
-      editSatsStackConfig(
+      editSatStackConfig(
         {
           ...config,
           node: { ...config.node, host: "ledger.com", password: "update" },
@@ -253,7 +253,7 @@ describe("editSatsStackConfig", () => {
   });
   test("append accounts", () => {
     expect(
-      editSatsStackConfig(
+      editSatStackConfig(
         { ...config, accounts: config.accounts.slice(0, 1) },
         { accounts: config.accounts.slice(1) }
       )
@@ -261,7 +261,7 @@ describe("editSatsStackConfig", () => {
   });
   test("dedup accounts", () => {
     expect(
-      editSatsStackConfig(
+      editSatStackConfig(
         { ...config, accounts: config.accounts.slice(0, 1) },
         { accounts: config.accounts }
       )
@@ -282,7 +282,7 @@ describe("isSatStackEnabled", () => {
   });
 });
 
-describe("fetchSatsStackStatus", () => {
+describe("fetchSatStackStatus", () => {
   beforeEach(() => {
     setEnv("MOCK", "1");
     setMockStatus({ type: "ready" });
@@ -293,21 +293,21 @@ describe("fetchSatsStackStatus", () => {
     setMockStatus({ type: "ready" });
   });
   test("disconnected", async () => {
-    await expect(fetchSatsStackStatus()).resolves.toEqual({
+    await expect(fetchSatStackStatus()).resolves.toEqual({
       type: "satstack-disconnected",
     });
   });
   test("scanning", async () => {
     setEnv("SATSTACK", true);
     setMockStatus({ type: "scanning", progress: 0.42 });
-    await expect(fetchSatsStackStatus()).resolves.toEqual({
+    await expect(fetchSatStackStatus()).resolves.toEqual({
       type: "scanning",
       progress: 0.42,
     });
   });
   test("ready", async () => {
     setEnv("SATSTACK", true);
-    await expect(fetchSatsStackStatus()).resolves.toEqual({
+    await expect(fetchSatStackStatus()).resolves.toEqual({
       type: "ready",
     });
   });

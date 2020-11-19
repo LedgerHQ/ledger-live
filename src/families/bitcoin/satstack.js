@@ -9,8 +9,8 @@ import type { AccountDescriptor } from "./descriptor";
 import { getEnv } from "../../env";
 import { getCurrencyExplorer } from "../../api/Ledger";
 
-let mockStatus: SatsStackStatus = { type: "ready" };
-export function setMockStatus(s: SatsStackStatus) {
+let mockStatus: SatStackStatus = { type: "ready" };
+export function setMockStatus(s: SatStackStatus) {
   mockStatus = s;
 }
 
@@ -81,7 +81,7 @@ export async function checkRPCNodeConfig(config: RPCNodeConfig): Promise<void> {
   });
 }
 
-export type SatsStackConfig = {
+export type SatStackConfig = {
   node: RPCNodeConfig,
   accounts: Array<{
     descriptor: AccountDescriptor,
@@ -91,14 +91,14 @@ export type SatsStackConfig = {
 };
 
 // we would need to call this any time we would "Edit" the flow
-export function parseSatsStackConfig(json: string): ?SatsStackConfig {
+export function parseSatStackConfig(json: string): ?SatStackConfig {
   const obj = JSON.parse(json);
   if (obj && typeof obj === "object") {
     const { accounts, rpcurl, rpcuser, rpcpass, notls, ...extra } = obj;
     if (!rpcurl || typeof rpcurl !== "string") return;
     if (!rpcuser || typeof rpcuser !== "string") return;
     if (!rpcpass || typeof rpcpass !== "string") return;
-    const result: SatsStackConfig = {
+    const result: SatStackConfig = {
       node: {
         host: rpcurl,
         username: rpcuser,
@@ -129,7 +129,7 @@ export function parseSatsStackConfig(json: string): ?SatsStackConfig {
 }
 
 // we would need this at the end of the setup flow, when we save to a jss.json configuration file
-export function stringifySatsStackConfig(config: SatsStackConfig): string {
+export function stringifySatStackConfig(config: SatStackConfig): string {
   return JSON.stringify(
     {
       accounts: config.accounts.map((a) => ({
@@ -149,10 +149,10 @@ export function stringifySatsStackConfig(config: SatsStackConfig): string {
 }
 
 // We would need it to apply an edition over an existing sats stack configuration (before saving it over)
-export function editSatsStackConfig(
-  existing: SatsStackConfig,
-  edit: $Shape<SatsStackConfig>
-): SatsStackConfig {
+export function editSatStackConfig(
+  existing: SatStackConfig,
+  edit: $Shape<SatStackConfig>
+): SatStackConfig {
   const accounts = existing.accounts.concat(
     // append accounts that would not already exist
     (edit.accounts || []).filter(
@@ -169,7 +169,7 @@ export function editSatsStackConfig(
   };
 }
 
-export type SatsStackStatus =
+export type SatStackStatus =
   | { type: "satstack-disconnected" }
   | { type: "node-disconnected" }
   | { type: "invalid-chain", found: string }
@@ -188,7 +188,7 @@ export function isSatStackEnabled(): boolean {
 // - before doing a sync
 // - before doing an add account
 // NB the promise is never rejected
-export async function fetchSatsStackStatus(): Promise<SatsStackStatus> {
+export async function fetchSatStackStatus(): Promise<SatStackStatus> {
   if (!isSatStackEnabled()) {
     return { type: "satstack-disconnected" };
   }
@@ -232,9 +232,7 @@ export async function fetchSatsStackStatus(): Promise<SatsStackStatus> {
   return { type: "ready" };
 }
 
-export const statusObservable: Observable<SatsStackStatus> = interval(
-  1000
-).pipe(
-  switchMap(() => from(fetchSatsStackStatus())),
+export const statusObservable: Observable<SatStackStatus> = interval(1000).pipe(
+  switchMap(() => from(fetchSatStackStatus())),
   share()
 );
