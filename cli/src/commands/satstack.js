@@ -8,9 +8,9 @@ import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { scanDescriptors } from "@ledgerhq/live-common/lib/families/bitcoin/descriptor";
 import {
-  parseSatsStackConfig,
-  stringifySatsStackConfig,
-  editSatsStackConfig,
+  parseSatStackConfig,
+  stringifySatStackConfig,
+  editSatStackConfig,
   checkRPCNodeConfig,
   validateRPCNodeConfig,
 } from "@ledgerhq/live-common/lib/families/bitcoin/satstack";
@@ -83,7 +83,7 @@ export default {
     const maybeExistingConfigO = !lss
       ? of(null)
       : jsonFromFile(lss, true).pipe(
-          map(parseSatsStackConfig),
+          map(parseSatStackConfig),
           first(),
           catchError(() => of(null))
         );
@@ -120,10 +120,10 @@ export default {
           accounts: descriptors.map((descriptor) => ({ descriptor })),
         };
         let config = initialConfig
-          ? editSatsStackConfig(initialConfig, patch)
+          ? editSatStackConfig(initialConfig, patch)
           : patch;
 
-        const str = stringifySatsStackConfig(config);
+        const str = stringifySatStackConfig(config);
         if (lss && !noSave) {
           fs.writeFileSync(lss, str);
           return lss + " saved!";
