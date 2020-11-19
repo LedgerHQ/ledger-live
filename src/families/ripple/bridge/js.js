@@ -346,15 +346,15 @@ const cachedRecipientIsNew = (endpointConfig, recipient) => {
 };
 
 const serverInfoCache = makeLRUCache(
-  async (endpointConfig: string): Promise<*> => getServerInfo(endpointConfig),
-  (endpointConfig: string) => endpointConfig,
+  async (endpointConfig: ?string): Promise<*> => getServerInfo(endpointConfig),
+  (endpointConfig: ?string) => endpointConfig || "",
   {
     max: 5,
     maxAge: 10000, // 1min
   }
 );
 
-export const getServerInfo = async (endpointConfig: string): Promise<*> => {
+export const getServerInfo = async (endpointConfig: ?string): Promise<*> => {
   if (!endpointConfig) endpointConfig = "";
   const api = apiForEndpointConfig(RippleAPI, endpointConfig);
 
@@ -385,7 +385,7 @@ const currencyBridge: CurrencyBridge = {
         try {
           transport = await open(deviceId);
           await api.connect();
-          const serverInfo = await getServerInfo("");
+          const serverInfo = await api.getServerInfo();
           const ledgers = serverInfo.completeLedgers.split("-");
           const minLedgerVersion = Number(ledgers[0]);
           const maxLedgerVersion = Number(ledgers[1]);
@@ -564,7 +564,7 @@ const sync = ({
       try {
         await api.connect();
         if (finished) return;
-        const serverInfo = await getServerInfo(endpointConfig || "");
+        const serverInfo = await api.getServerInfo();
         if (finished) return;
         const ledgers = serverInfo.completeLedgers.split("-");
         const minLedgerVersion = Number(ledgers[0]);
@@ -658,10 +658,8 @@ const updateTransaction = (t, patch) => ({ ...t, ...patch });
 const prepareTransaction = async (a: Account, t: Transaction) => {
   let networkInfo: ?NetworkInfo = t.networkInfo;
   if (!networkInfo) {
-    const api = apiForEndpointConfig(RippleAPI, a.endpointConfig);
     try {
-      await api.connect();
-      const info = await api.getServerInfo();
+      const info = await serverInfoCache(a.endpointConfig);
       const serverFee = parseAPIValue(info.validatedLedger.baseFeeXRP);
       networkInfo = {
         family: "ripple",
@@ -670,8 +668,6 @@ const prepareTransaction = async (a: Account, t: Transaction) => {
       };
     } catch (e) {
       throw remapError(e);
-    } finally {
-      api.disconnect();
     }
   }
 
@@ -691,7 +687,7 @@ const prepareTransaction = async (a: Account, t: Transaction) => {
 const getTransactionStatus = async (a, t) => {
   const errors = {};
   const warnings = {};
-  const r = await getServerInfo(a.endpointConfig || "");
+  const r = await serverInfoCache(a.endpointConfig);
   const reserveBaseXRP = parseAPIValue(r.validatedLedger.reserveBaseXRP);
 
   const estimatedFees = BigNumber(t.fee || 0);
@@ -760,7 +756,7 @@ const estimateMaxSpendable = async ({
   transaction,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const r = await getServerInfo(mainAccount.endpointConfig || "");
+  const r = await serverInfoCache(mainAccount.endpointConfig);
   const reserveBaseXRP = parseAPIValue(r.validatedLedger.reserveBaseXRP);
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
