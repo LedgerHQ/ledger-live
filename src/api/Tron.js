@@ -203,8 +203,16 @@ export async function fetchTronAccountTxs(
         3,
         resp.data || [],
         async (tx) => {
+          // It happened that Trongrid API had some rollback
+          // So they may not provide the fee on this api and we had to check detail.
+          // It just a backward compatibility in case of
+          const fee = get(
+            tx,
+            "ret[0].fee",
+            get(tx, "detail.ret[0].fee", undefined)
+          );
           const txID = tx.txID || tx.transaction_id;
-          if (!txID) {
+          if (!txID || fee !== undefined) {
             return tx;
           }
           const detail =
@@ -257,7 +265,7 @@ export async function fetchTronAccountTxs(
   // we need to fetch and filter trc20 transactions from another endpoint
   const entireTrc20Txs = (
     await getEntireTxs(
-      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20`
+      `${getBaseApiUrl()}/v1/accounts/${addr}/transactions/trc20?get_detail=true`
     )
   ).map((tx) => formatTrongridTrc20TxResponse(tx));
 
