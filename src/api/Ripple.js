@@ -16,7 +16,15 @@ export const apiForEndpointConfig = (
   endpointConfig: ?string = null
 ) => {
   const server = endpointConfig || defaultEndpoint;
-  const api = new RippleAPI({ server, connectionTimeout });
+  const api = new RippleAPI({ server });
+
+  // https://github.com/ripple/ripple-lib/issues/1196#issuecomment-583156895
+  // We can't add connectionTimeout to the constructor
+  // We need to add this config to allow the bot to not timeout on github action
+  // but it will throw a 'additionalProperty "connectionTimeout" exists'
+  // during the preparePayment
+  api.connection._config.connectionTimeout = connectionTimeout;
+
   api.on("error", (errorCode, errorMessage) => {
     console.warn(`Ripple API error: ${errorCode}: ${errorMessage}`);
   });
