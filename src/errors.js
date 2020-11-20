@@ -116,17 +116,20 @@ export const CosmosBroadcastError = {
   "7": createCustomErrorClass("CosmosBroadcastCodeInvalidAddress"),
   "8": createCustomErrorClass("CosmosBroadcastCodeInvalidPubKey"),
   "9": createCustomErrorClass("CosmosBroadcastCodeUnknownAddress"),
-  "10": createCustomErrorClass(" CosmosBroadcastCodeInsufficientCoins"),
-  "11": createCustomErrorClass(" CosmosBroadcastCodeInvalidCoins"),
-  "12": createCustomErrorClass(" CosmosBroadcastCodeOutOfGas"),
-  "13": createCustomErrorClass(" CosmosBroadcastCodeMemoTooLarge"),
-  "14": createCustomErrorClass(" CosmosBroadcastCodeInsufficientFee"),
-  "15": createCustomErrorClass(" CosmosBroadcastCodeTooManySignatures"),
-  "16": createCustomErrorClass(" CosmosBroadcastCodeGasOverflow"),
-  "17": createCustomErrorClass(" CosmosBroadcastCodeNoSignatures"),
+  "10": createCustomErrorClass("CosmosBroadcastCodeInsufficientCoins"),
+  "11": createCustomErrorClass("CosmosBroadcastCodeInvalidCoins"),
+  "12": createCustomErrorClass("CosmosBroadcastCodeOutOfGas"),
+  "13": createCustomErrorClass("CosmosBroadcastCodeMemoTooLarge"),
+  "14": createCustomErrorClass("CosmosBroadcastCodeInsufficientFee"),
+  "15": createCustomErrorClass("CosmosBroadcastCodeTooManySignatures"),
+  "16": createCustomErrorClass("CosmosBroadcastCodeGasOverflow"),
+  "17": createCustomErrorClass("CosmosBroadcastCodeNoSignatures"),
 };
 
-export const SatStackNotReady = createCustomErrorClass("SatStackNotReady");
+export const SatStackAccessDown = createCustomErrorClass("SatStackAccessDown");
+export const SatStackStillSyncing = createCustomErrorClass(
+  "SatStackStillSyncing"
+);
 
 export const SwapNoAvailableProviders = createCustomErrorClass(
   "SwapNoAvailableProviders"
