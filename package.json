@@ -6,10 +6,10 @@
     "postinstall": "./scripts/post.sh",
     "start": "react-native start",
     "ios": "react-native run-ios",
-    "internal": "FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=30 FASTLANE_XCODEBUILD_SETTINGS_RETRIES=5 bundle exec fastlane beta release:true --env production",
-    "preinternal": "bundle install",
-    "beta": "FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=30 FASTLANE_XCODEBUILD_SETTINGS_RETRIES=5 bundle exec fastlane beta --env production",
+
     "prebeta": "bundle install",
+    "beta": "FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=30 FASTLANE_XCODEBUILD_SETTINGS_RETRIES=5 bundle exec fastlane beta --env production",
+
     "android": "react-native run-android --appIdSuffix=debug",
     "android:apk": "bundle exec fastlane android apk",
     "android:beta": "bundle exec fastlane android clean_beta --env production",
@@ -25,15 +25,21 @@
     "android:install": "./scripts/install-and-run-apk.sh",
     "staging-android": "yarn android:staging && yarn android:install",
     "mock-android": "yarn android:mock && yarn android:install",
+
     "ios:ipa": "bundle exec fastlane ios build_ipa --env production",
-    "ios:ipadev": "bundle exec fastlane ios build_ipa development:true --env production",
-    "ios:beta": "bundle exec fastlane ios clean_beta --env production",
+    "ios:ipadev": "bundle exec fastlane ios build_ipa development:true --env adhoc",
+
     "preios:beta": "bundle install",
+    "ios:beta": "bundle exec fastlane ios clean_beta --env production",
     "ios:upload": "bundle exec fastlane ios upload",
-    "ios:internal": "bundle exec fastlane ios beta --env production",
-    "preios:internal": "bundle install",
-    "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Staging",
+
+    "preios:adhoc": "bundle install",
+    "ios:adhoc": "bundle exec fastlane ios build adhoc:true --env adhoc",
+    "preios:ci": "bundle install",
     "ios:ci": "bundle exec fastlane ios ci --env adhoc",
+
+    "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Staging",
+
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",

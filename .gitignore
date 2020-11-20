@@ -57,6 +57,10 @@ buck-out/
 **/fastlane/**.md
 **/fastlane/Appfile
 **/fastlane/Matchfile
+**/fastlane/certs
+**/fastlane/**,
+**/fastlane/**}
+
 
 # Bundle artifact
 *.jsbundle
