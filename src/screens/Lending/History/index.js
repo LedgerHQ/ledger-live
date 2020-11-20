@@ -18,7 +18,6 @@ import SectionHeader from "../../../components/SectionHeader";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import LoadingFooter from "../../../components/LoadingFooter";
 
-// $FlowFixMe
 const useCompoundHistory = (accounts: AccountLikeArray): AccountLikeArray => {
   const filterOps = (op: Operation): boolean =>
     ["REDEEM", "SUPPLY"].includes(op.type);
@@ -33,7 +32,7 @@ const useCompoundHistory = (accounts: AccountLikeArray): AccountLikeArray => {
       }),
     [accounts],
   );
-
+  // $FlowFixMe
   return history;
 };
 
