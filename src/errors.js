@@ -126,7 +126,10 @@ export const CosmosBroadcastError = {
   "17": createCustomErrorClass(" CosmosBroadcastCodeNoSignatures"),
 };
 
-export const SatStackNotReady = createCustomErrorClass("SatStackNotReady");
+export const SatStackAccessDown = createCustomErrorClass("SatStackAccessDown");
+export const SatStackStillSyncing = createCustomErrorClass(
+  "SatStackStillSyncing"
+);
 
 export const SwapNoAvailableProviders = createCustomErrorClass(
   "SwapNoAvailableProviders"
