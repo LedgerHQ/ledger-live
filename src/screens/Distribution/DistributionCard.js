@@ -46,7 +46,13 @@ export default function DistributionCard({
             {currency.name}
           </LText>
           <LText semiBold style={styles.darkBlue}>
-            {<CurrencyUnitValue unit={currency.units[0]} value={amount} />}
+            {
+              <CurrencyUnitValue
+                unit={currency.units[0]}
+                value={amount}
+                joinFragmentsSeparator=" "
+              />
+            }
           </LText>
         </View>
         {distribution ? (
@@ -54,7 +60,11 @@ export default function DistributionCard({
             <View style={styles.rateRow}>
               <CurrencyRate currency={currency} />
               <LText semiBold style={styles.counterValue}>
-                <CounterValue currency={currency} value={amount} />
+                <CounterValue
+                  currency={currency}
+                  value={amount}
+                  joinFragmentsSeparator=" "
+                />
               </LText>
             </View>
             <View style={styles.distributionRow}>
@@ -83,8 +93,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   rightContainer: {
-    flexDirection: "column",
     flexGrow: 1,
+    flexShrink: 1,
+    flexDirection: "column",
   },
   currencyLogo: {
     marginRight: 16,
@@ -94,6 +105,7 @@ const styles = StyleSheet.create({
   currencyRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    flexWrap: "wrap",
   },
   darkBlue: {
     color: colors.darkBlue,
@@ -103,6 +115,7 @@ const styles = StyleSheet.create({
   rateRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    flexWrap: "wrap",
   },
   distributionRow: {
     marginTop: 12,
