@@ -10,6 +10,7 @@ import {
   setMockStatus,
   fetchSatStackStatus,
   statusObservable,
+  requiresSatStackReady,
 } from "./satstack";
 import dataset from "./datasets/bitcoin";
 import { inferDescriptorFromAccount } from "./descriptor";
@@ -347,5 +348,28 @@ describe("statusObservable", () => {
       }
     });
     await p;
+  });
+});
+
+describe("requiresSatStackReady", () => {
+  beforeEach(() => {
+    setEnv("MOCK", "1");
+  });
+  afterEach(() => {
+    setMockStatus({ type: "ready" });
+    setEnv("SATSTACK", false);
+    setEnv("MOCK", "");
+  });
+  test("without satstack", async () => {
+    await expect(requiresSatStackReady()).resolves.toBe();
+  });
+  test("with satstack", async () => {
+    setEnv("SATSTACK", true);
+    await expect(requiresSatStackReady()).resolves.toBe();
+  });
+  test("with satstack not ready", async () => {
+    setEnv("SATSTACK", true);
+    setMockStatus({ type: "node-disconnected" });
+    await expect(requiresSatStackReady()).rejects.toThrow();
   });
 });

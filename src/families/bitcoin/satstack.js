@@ -2,6 +2,7 @@
 import { Observable, interval, from } from "rxjs";
 import url from "url";
 import { share, switchMap } from "rxjs/operators";
+import { SatStackNotReady } from "../../errors";
 import { getCryptoCurrencyById } from "../../currencies";
 import network from "../../network";
 import { RPCFieldRequired } from "../../errors";
@@ -230,6 +231,15 @@ export async function fetchSatStackStatus(): Promise<SatStackStatus> {
   }
 
   return { type: "ready" };
+}
+
+export async function requiresSatStackReady() {
+  if (isSatStackEnabled()) {
+    const status = await fetchSatStackStatus();
+    if (status.type !== "ready") {
+      throw new SatStackNotReady();
+    }
+  }
 }
 
 export const statusObservable: Observable<SatStackStatus> = interval(1000).pipe(

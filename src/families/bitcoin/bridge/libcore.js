@@ -26,6 +26,7 @@ import { getMainAccount } from "../../../account";
 import { getMinRelayFee } from "../fees";
 import { isChangeOutput, perCoinLogic } from "../transaction";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { requiresSatStackReady } from "../satstack";
 
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: (account) => {
@@ -190,6 +191,9 @@ const prepareTransaction = async (
   a: Account,
   t: Transaction
 ): Promise<Transaction> => {
+  if (a.currency.id === "bitcoin") {
+    await requiresSatStackReady();
+  }
   let networkInfo = t.networkInfo;
   if (!networkInfo) {
     networkInfo = await getAccountNetworkInfo(a);
