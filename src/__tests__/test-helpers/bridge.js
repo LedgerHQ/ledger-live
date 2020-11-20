@@ -291,14 +291,16 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
 
       test("preload and rehydrate", async () => {
         const data1 = await bridge.preload(currency);
-        const serialized = JSON.stringify(data1);
         if (data1) {
-          expect(serialized).toBeDefined();
+          const serialized1 = JSON.parse(JSON.stringify(data1));
+          bridge.hydrate(serialized1, currency);
+          expect(serialized1).toBeDefined();
+
           const data2 = await bridge.preload(currency);
           expect(data1).toMatchObject(data2);
-          const serialized2 = JSON.stringify(data2);
-          expect(JSON.parse(serialized)).toMatchObject(JSON.parse(serialized2));
-          bridge.hydrate(data1, currency);
+          const serialized2 = JSON.parse(JSON.stringify(data2));
+          expect(serialized1).toMatchObject(serialized2);
+          bridge.hydrate(serialized2, currency);
         }
       });
 
