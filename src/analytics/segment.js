@@ -70,7 +70,7 @@ export const start = async (store: *) => {
     if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
     if (token) {
       await analytics.reset();
-      await analytics.identify(user.id, extraProperties(store), context);
+      await analytics.identify(user.id, extraProperties(store), { context });
     }
   }
   track("Start", extraProperties(store), true);
@@ -107,7 +107,7 @@ export const track = (
       ...extraProperties(storeInstance),
       ...properties,
     },
-    context,
+    { context },
   );
 };
 
@@ -135,6 +135,6 @@ export const screen = (
       ...extraProperties(storeInstance),
       ...properties,
     },
-    context,
+    { context },
   );
 };
