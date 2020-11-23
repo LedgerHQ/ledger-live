@@ -214,7 +214,7 @@ export async function fetchSatStackStatus(): Promise<SatStackStatus> {
     return { type: "invalid-chain", found: chain };
   }
 
-  if (status === "initializing") {
+  if (status === "initializing" || status === "pending-scan") {
     return { type: "initializing" };
   }
 
