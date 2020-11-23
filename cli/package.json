@@ -34,7 +34,7 @@
     "@ledgerhq/hw-app-btc": "^5.30.0",
     "@ledgerhq/hw-transport-http": "5.30.0",
     "@ledgerhq/hw-transport-mocker": "5.30.0",
-    "@ledgerhq/hw-transport-node-hid": "5.30.0",
+    "@ledgerhq/hw-transport-node-hid": "5.31.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.30.0",
     "@ledgerhq/ledger-core": "6.9.1",
     "@ledgerhq/live-common": "^17.0.0",
@@ -59,18 +59,18 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.12.1",
-    "@babel/core": "^7.12.3",
+    "@babel/cli": "^7.12.7",
+    "@babel/core": "^7.12.7",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-export-default-from": "^7.12.1",
     "@babel/plugin-proposal-export-namespace-from": "^7.12.1",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/plugin-syntax-import-meta": "^7.10.4",
-    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
     "@babel/preset-flow": "^7.12.1",
-    "@babel/preset-typescript": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.7",
     "@types/command-line-args": "^5.0.0",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.1.2"
   }
 }
