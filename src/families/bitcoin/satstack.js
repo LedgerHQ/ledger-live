@@ -2,10 +2,16 @@
 import { Observable, interval, from } from "rxjs";
 import url from "url";
 import { share, switchMap } from "rxjs/operators";
-import { SatStackAccessDown, SatStackStillSyncing } from "../../errors";
+import {
+  SatStackAccessDown,
+  SatStackStillSyncing,
+  RPCHostRequired,
+  RPCUserRequired,
+  RPCPassRequired,
+  RPCHostInvalid,
+} from "../../errors";
 import { getCryptoCurrencyById } from "../../currencies";
 import network from "../../network";
-import { RPCFieldRequired } from "../../errors";
 import type { AccountDescriptor } from "./descriptor";
 import { getEnv } from "../../env";
 import { getCurrencyExplorer } from "../../api/Ledger";
@@ -34,22 +40,28 @@ export function validateRPCNodeConfig(
   config: RPCNodeConfig
 ): Array<{ field: string, error: Error }> {
   const errors = [];
-  if (!config.host || !isValidHost(config.host)) {
+  if (!config.host) {
     errors.push({
       field: "host",
-      error: new RPCFieldRequired("invalid host"),
+      error: new RPCHostRequired(),
+    });
+  } else if (!isValidHost(config.host)) {
+    errors.push({
+      field: "host",
+      error: new RPCHostInvalid(),
     });
   }
+
   if (!config.username) {
     errors.push({
       field: "username",
-      error: new RPCFieldRequired("invalid username"),
+      error: new RPCUserRequired(),
     });
   }
   if (!config.password) {
     errors.push({
       field: "password",
-      error: new RPCFieldRequired("invalid password"),
+      error: new RPCPassRequired(),
     });
   }
   return errors;

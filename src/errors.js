@@ -101,7 +101,10 @@ export const NotEnoughDelegationBalance = createCustomErrorClass(
   "NotEnoughDelegationBalance"
 );
 
-export const RPCFieldRequired = createCustomErrorClass("RPCFieldRequired");
+export const RPCHostRequired = createCustomErrorClass("RPCHostRequired");
+export const RPCHostInvalid = createCustomErrorClass("RPCHostInvalid");
+export const RPCUserRequired = createCustomErrorClass("RPCUserRequired");
+export const RPCPassRequired = createCustomErrorClass("RPCPassRequired");
 
 // Note : info of this code can be found here :
 // https://github.com/cosmos/cosmos-sdk/blob/v0.37.9/types/errors.go#L28
