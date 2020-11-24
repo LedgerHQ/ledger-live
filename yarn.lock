@@ -1267,10 +1267,10 @@
     semver "^7.3.2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.32.0":
-  version "5.32.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.32.0.tgz#0f89277604afd7c457791c8dc0df26eb6dd13b37"
-  integrity sha512-FhacIdSuzXX/7qPe4ISuoYIKr5rRb0fG/zMzo9uUY2x2mGHkbNpIdYp0us3Q0M0fdQfH+p8fn7BT6gxOr/UAAg==
+"@ledgerhq/hw-app-eth@5.32.1":
+  version "5.32.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.32.1.tgz#58d5c27d10b8fc852056f37cb3255bae29423149"
+  integrity sha512-+87UeajBaqRGKLnxKwcCLvaVOJn+ykW14tYsk/pxiyKMywd/HqIUa2Jvjp7Q/0GqkFBzX3BwuJlFy+27mSIikg==
   dependencies:
     "@ledgerhq/cryptoassets" "^5.32.0"
     "@ledgerhq/errors" "^5.30.0"

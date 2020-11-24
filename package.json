@@ -70,7 +70,7 @@
     "@ledgerhq/devices": "5.30.0",
     "@ledgerhq/errors": "5.30.0",
     "@ledgerhq/hw-app-btc": "^5.30.0",
-    "@ledgerhq/hw-app-eth": "5.32.0",
+    "@ledgerhq/hw-app-eth": "5.32.1",
     "@ledgerhq/hw-app-str": "^5.30.0",
     "@ledgerhq/hw-app-trx": "5.30.0",
     "@ledgerhq/hw-app-xrp": "5.30.0",
