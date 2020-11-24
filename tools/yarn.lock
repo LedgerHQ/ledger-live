@@ -1252,10 +1252,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@5.31.0", "@ledgerhq/cryptoassets@^5.31.0":
-  version "5.31.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-5.31.0.tgz#1b6aa0d1eee67c7030eb29adc3757dbc6d977599"
-  integrity sha512-yTfyTYGMpCOY6PHEad9rir86z+/CshZC7Kc9jW1wjHUb0XNy148MWLZNRG5+i2RbW8DlMevIs9ckE7IU2m9/IQ==
+"@ledgerhq/cryptoassets@5.32.0", "@ledgerhq/cryptoassets@^5.32.0":
+  version "5.32.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-5.32.0.tgz#043c320c19d5afc873a24b87264f64d9c16ac2e1"
+  integrity sha512-nAi7Y0parblPHUGprHA2hO4+nnPGOcjqEWLLEZj2ZczK+UAUcAIf9UnL0gEvkIPlUJ5SgzNFAZzW5gw3eIhI2A==
   dependencies:
     invariant "2"
 
@@ -1286,12 +1286,12 @@
     semver "^7.3.2"
     sha.js "2"
 
-"@ledgerhq/hw-app-eth@5.31.0":
-  version "5.31.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.31.0.tgz#59e0dea56216583a106dbe8f75fe9d7dad5fb127"
-  integrity sha512-ZF5fcguhJVzTX21VWSNkHSzw/TAk/yFaQoguiK+DpW1AExsPi4no0ycaCPkc4bHZmTLsZIKsMcZTBNAOySOhhg==
+"@ledgerhq/hw-app-eth@5.32.1":
+  version "5.32.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-5.32.1.tgz#58d5c27d10b8fc852056f37cb3255bae29423149"
+  integrity sha512-+87UeajBaqRGKLnxKwcCLvaVOJn+ykW14tYsk/pxiyKMywd/HqIUa2Jvjp7Q/0GqkFBzX3BwuJlFy+27mSIikg==
   dependencies:
-    "@ledgerhq/cryptoassets" "^5.31.0"
+    "@ledgerhq/cryptoassets" "^5.32.0"
     "@ledgerhq/errors" "^5.30.0"
     "@ledgerhq/hw-transport" "^5.30.0"
     bignumber.js "^9.0.1"
@@ -1402,17 +1402,17 @@
     "@ledgerhq/errors" "^5.30.0"
     events "^3.2.0"
 
-"@ledgerhq/live-common@^17.1.0":
-  version "17.1.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-17.1.0.tgz#8e15891c4ade6c5f0e0714ec832f328456c62837"
-  integrity sha512-ld3NjFGd0eMsvwv8RpyXXiOMGubBbIbW6aVy6SWF13+N5xPBKrOrdZ6VP4RTkh7/u1oaCisKVR0paD/FpSMjxg==
+"@ledgerhq/live-common@^17.1.1":
+  version "17.1.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-17.1.1.tgz#0253a3e3c5b7a6a512d7509317721f1ef44fbe29"
+  integrity sha512-q+vluDHiZI1bNiSSfOF++mrnhU+6EsEVDnwQTFFLHrHNyEula9/N5stAXnvts/MWCbtVHA+xf7CpbTs0ToCBvg==
   dependencies:
     "@ledgerhq/compressjs" "1.3.2"
-    "@ledgerhq/cryptoassets" "5.31.0"
+    "@ledgerhq/cryptoassets" "5.32.0"
     "@ledgerhq/devices" "5.30.0"
     "@ledgerhq/errors" "5.30.0"
     "@ledgerhq/hw-app-btc" "^5.30.0"
-    "@ledgerhq/hw-app-eth" "5.31.0"
+    "@ledgerhq/hw-app-eth" "5.32.1"
     "@ledgerhq/hw-app-str" "^5.30.0"
     "@ledgerhq/hw-app-trx" "5.30.0"
     "@ledgerhq/hw-app-xrp" "5.30.0"
@@ -9863,10 +9863,10 @@ react-scripts@3.4.3:
   optionalDependencies:
     fsevents "2.1.2"
 
-react-select@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/react-select/-/react-select-3.1.0.tgz#ab098720b2e9fe275047c993f0d0caf5ded17c27"
-  integrity sha512-wBFVblBH1iuCBprtpyGtd1dGMadsG36W5/t2Aj8OE6WbByDg5jIFyT7X5gT+l0qmT5TqWhxX+VsKJvCEl2uL9g==
+react-select@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/react-select/-/react-select-3.1.1.tgz#156a5b4a6c22b1e3d62a919cb1fd827adb4060bc"
+  integrity sha512-HjC6jT2BhUxbIbxMZWqVcDibrEpdUJCfGicN0MMV+BQyKtCaPTgFekKWiOizSCy4jdsLMGjLqcFGJMhVGWB0Dg==
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@emotion/cache" "^10.0.9"
