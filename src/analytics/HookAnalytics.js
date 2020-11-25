@@ -1,35 +1,21 @@
-import { Component } from "react";
-import { connect } from "react-redux";
+import { useEffect, useState, useCallback } from "react";
+import { useSelector } from "react-redux";
 import { hasCompletedOnboardingSelector } from "../reducers/settings";
 import { start } from "./segment";
 
-let isAnalyticsStarted = false;
+const HookAnalytics = ({ store }: { store: * }) => {
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const [analyticsStarted, setAnalyticsStarted] = useState(false);
 
-class HookAnalytics extends Component<{
-  store: *,
-}> {
-  componentDidMount() {
-    this.sync();
-  }
+  const sync = useCallback(() => {
+    if (analyticsStarted || !hasCompletedOnboarding) return;
+    setAnalyticsStarted(true);
+    start(store);
+  }, [analyticsStarted, hasCompletedOnboarding, store]);
 
-  componentDidUpdate() {
-    this.sync();
-  }
+  useEffect(sync, [hasCompletedOnboarding, sync]);
 
-  sync = () => {
-    if (isAnalyticsStarted) return;
-    const { store } = this.props;
-    const state = store.getState();
-    const hasCompletedOnboarding = hasCompletedOnboardingSelector(state);
-    if (hasCompletedOnboarding) {
-      isAnalyticsStarted = true;
-      start(store);
-    }
-  };
+  return null;
+};
 
-  render() {
-    return null;
-  }
-}
-
-export default connect()(HookAnalytics);
+export default HookAnalytics;

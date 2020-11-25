@@ -35,6 +35,7 @@ import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
 import StyledStatusBar from "./components/StyledStatusBar";
+import AnalyticsConsole from "./components/AnalyticsConsole";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import useDBSaveEffect from "./components/DBSave";
 import DebugRejectSwitch from "./components/DebugRejectSwitch";
@@ -140,6 +141,8 @@ function App({ importDataString }: AppProps) {
       <RootNavigator importDataString={importDataString} />
 
       <DebugRejectSwitch />
+
+      <AnalyticsConsole />
     </View>
   );
 }
