@@ -17,6 +17,7 @@ import Animated from "react-native-reanimated";
 
 import i18next from "i18next";
 import { Trans } from "react-i18next";
+import type { ManagerTab } from "./Manager";
 
 import colors from "../../colors";
 
@@ -44,13 +45,15 @@ type Props = {
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
-  managerTabs: *,
+  managerTabs: { [ManagerTab]: ManagerTab },
   deviceId: string,
   initialDeviceName: string,
   navigation: *,
   blockNavigation: boolean,
   deviceInfo: *,
   searchQuery?: string,
+  updateModalOpened?: boolean,
+  tab: ManagerTab,
 };
 
 const AppsScreen = ({
@@ -66,12 +69,14 @@ const AppsScreen = ({
   blockNavigation,
   deviceInfo,
   searchQuery,
+  updateModalOpened,
+  tab,
 }: Props) => {
   const distribution = distribute(state);
 
   const listRef = useRef();
 
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(tab === managerTabs.CATALOG ? 0 : 1);
   const [routes] = React.useState([
     {
       key: managerTabs.CATALOG,
@@ -189,6 +194,7 @@ const AppsScreen = ({
               state={state}
               appsToUpdate={update}
               dispatch={dispatch}
+              isModalOpened={updateModalOpened}
             />
             <View>
               {device && device.length > 0 && !state.updateAllQueue.length && (

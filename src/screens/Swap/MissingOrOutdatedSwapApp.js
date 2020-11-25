@@ -5,6 +5,7 @@ import SafeAreaView from "react-native-safe-area-view";
 import { StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../const";
+import { MANAGER_TABS } from "../Manager/Manager";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import AppIcon from "../Manager/AppsList/AppIcon";
@@ -20,7 +21,12 @@ const MissingOrOutdatedSwapApp = ({
   const onPress = () => {
     navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
-      params: { searchQuery: "Exchange" },
+      params: outdated
+        ? {
+            tab: MANAGER_TABS.INSTALLED_APPS,
+            updateModalOpened: true,
+          }
+        : { searchQuery: "Exchange" },
     });
   };
 

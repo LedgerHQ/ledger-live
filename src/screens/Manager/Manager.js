@@ -16,10 +16,12 @@ import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
 import { stackNavigatorConfig } from "../../navigation/navigatorConfig";
 
-const MANAGER_TABS = {
+export const MANAGER_TABS = {
   CATALOG: "CATALOG",
   INSTALLED_APPS: "INSTALLED_APPS",
 };
+
+export type ManagerTab = $Keys<typeof MANAGER_TABS>;
 
 type Props = {
   navigation: any,
@@ -29,6 +31,8 @@ type Props = {
       deviceInfo: DeviceInfo,
       result: ListAppsResult,
       searchQuery?: string,
+      updateModalOpened?: boolean,
+      tab: ManagerTab,
     },
   },
 };
@@ -36,7 +40,14 @@ type Props = {
 const Manager = ({
   navigation,
   route: {
-    params: { device, deviceInfo, result, searchQuery },
+    params: {
+      device,
+      deviceInfo,
+      result,
+      searchQuery,
+      updateModalOpened,
+      tab = MANAGER_TABS.CATALOG,
+    },
   },
 }: Props) => {
   const { deviceId, deviceName, modelId } = device;
@@ -135,6 +146,8 @@ const Manager = ({
         blockNavigation={blockNavigation}
         deviceInfo={deviceInfo}
         searchQuery={searchQuery}
+        updateModalOpened={updateModalOpened}
+        tab={tab}
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal
