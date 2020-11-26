@@ -62,6 +62,18 @@ export const getAccountName = (account: AccountLike): string => {
   }
 };
 
+export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
+  switch (account.type) {
+    case "Account":
+    case "TokenAccount":
+      return account.spendableBalance;
+    case "ChildAccount":
+      return account.balance;
+    default:
+      throw new Error("invalid account.type=" + account.type);
+  }
+};
+
 export const isAccountEmpty = (a: AccountLike): boolean => {
   if (
     a.type === "Account" &&
