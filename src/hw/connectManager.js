@@ -19,6 +19,9 @@ import quitApp from "./quitApp";
 
 export type Input = {
   devicePath: string,
+  managerRequest: ?{
+    autoQuitAppDisabled?: boolean,
+  },
 };
 
 export type ConnectManagerEvent =
@@ -40,7 +43,10 @@ const attemptToQuitApp = (
       )
     : of({ type: "appDetected" });
 
-const cmd = ({ devicePath }: Input): Observable<ConnectManagerEvent> =>
+const cmd = ({
+  devicePath,
+  managerRequest,
+}: Input): Observable<ConnectManagerEvent> =>
   withDevice(devicePath)((transport) =>
     Observable.create((o) => {
       const timeoutSub = of({ type: "unresponsiveDevice" })
@@ -74,7 +80,8 @@ const cmd = ({ devicePath }: Input): Observable<ConnectManagerEvent> =>
             ) {
               return from(getAppAndVersion(transport)).pipe(
                 concatMap((appAndVersion) => {
-                  return !isDashboardName(appAndVersion.name)
+                  return !managerRequest?.autoQuitAppDisabled &&
+                    !isDashboardName(appAndVersion.name)
                     ? attemptToQuitApp(transport, appAndVersion)
                     : of({ type: "appDetected" });
                 })
