@@ -5,8 +5,17 @@ import {
   UserRefusedAddress,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
+import { Observable } from "rxjs";
 import type { Resolver } from "./types";
 import perFamily from "../../generated/hw-signMessage";
+import { useState, useEffect, useCallback } from "react";
+import { from } from "rxjs";
+import { createAction as createAppAction } from "../actions/app";
+import type { AppRequest, AppState } from "../actions/app";
+import type { Device } from "../actions/types";
+import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
+import { withDevice } from "../deviceAccess";
+import type { MessageData } from "./types";
 
 const dispatch: Resolver = (transport, opts) => {
   const { currency, verify } = opts;
@@ -36,6 +45,97 @@ const dispatch: Resolver = (transport, opts) => {
       }
       throw e;
     });
+};
+
+const initialState = {
+  signMessageRequested: null,
+  signMessageError: null,
+  signMessageResult: null,
+};
+
+export type State = {
+  ...AppState,
+  signMessageRequested: ?MessageData,
+  signMessageError: ?Error,
+  signMessageResult: ?string,
+};
+
+export type Request = {
+  ...AppRequest,
+  message: MessageData,
+};
+
+export const createAction = (
+  connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>
+) => {
+  const useHook = (reduxDevice: ?Device, request: Request): State => {
+    const appState: AppState = createAppAction(connectAppExec).useHook(
+      reduxDevice,
+      {
+        account: request.account,
+      }
+    );
+
+    const { device, opened, inWrongDeviceForAccount, error } = appState;
+
+    const [state, setState] = useState(initialState);
+
+    const sign = useCallback(async () => {
+      let result;
+      if (!device) {
+        setState({
+          ...initialState,
+          signMessageError: new Error("no Device"),
+        });
+        return;
+      }
+      try {
+        result = await withDevice(device.deviceId)((t) =>
+          from(dispatch(t, request.message))
+        ).toPromise();
+      } catch (e) {
+        if (e.name === "UserRefusedAddress") {
+          e.name = "UserRefusedOnDevice";
+          e.message = "UserRefusedOnDevice";
+        }
+        setState({
+          ...initialState,
+          signMessageError: e,
+        });
+      }
+      setState({
+        ...initialState,
+        signMessageResult: result?.signature,
+      });
+    }, [request.message, device]);
+
+    useEffect(() => {
+      if (!device || !opened || inWrongDeviceForAccount || error) {
+        setState(initialState);
+        return;
+      }
+
+      setState({
+        ...initialState,
+        signMessageRequested: request.message,
+      });
+
+      sign();
+    }, [device, opened, inWrongDeviceForAccount, error, request.message, sign]);
+
+    return {
+      ...appState,
+      ...state,
+    };
+  };
+
+  return {
+    useHook,
+    mapResult: (r: State) => ({
+      signature: r.signMessageResult,
+      error: r.signMessageError,
+    }),
+  };
 };
 
 export default dispatch;
