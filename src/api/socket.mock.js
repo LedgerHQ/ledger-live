@@ -29,7 +29,7 @@ export const secureChannelMock = (
         pause(500),
         of({
           type: "device-permission-requested",
-          wording: "Allow Ledger manager",
+          wording: "Ledger manager",
         }),
         pause(500),
         of({
