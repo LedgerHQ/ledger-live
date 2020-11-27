@@ -10,31 +10,21 @@ import type {
 } from "../families/ethereum/types";
 import type { MessageData } from "../hw/signMessage/types";
 
-export type WCPayload =
-  | {
-      method: "eth_signTransaction" | "eth_sendTransaction",
-      params: [
-        {
-          from: string,
-          to?: string,
-          data: string,
-          gas?: string,
-          gasPrice?: string,
-          value?: string,
-          nonce?: string,
-        }
-      ],
-      id: string,
-    }
-  | {
-      method:
-        | "eth_sendRawTransaction"
-        | "eth_signTypedData"
-        | "eth_sign"
-        | "personal_sign",
-      params: [string],
-      id: string,
-    };
+export type WCPayloadTransaction = {
+  from: string,
+  to?: string,
+  data: string,
+  gas?: string,
+  gasPrice?: string,
+  value?: string,
+  nonce?: string,
+};
+
+export type WCPayload = {
+  method: string,
+  params: any[],
+  id: string,
+};
 
 export type WCCallRequest =
   | {
@@ -83,7 +73,7 @@ export const parseCallRequest: Parser = async (account, payload) => {
       };
     case "eth_signTransaction":
     case "eth_sendTransaction":
-      wcTransactionData = payload.params[0];
+      wcTransactionData = (payload.params[0]: WCPayloadTransaction);
       bridge = getAccountBridge(account);
       transaction = bridge.createTransaction(account);
 
@@ -125,6 +115,6 @@ export const parseCallRequest: Parser = async (account, payload) => {
         data: transaction,
       };
     default:
-      throw "wrong payload";
+      throw new Error("wrong payload");
   }
 };
