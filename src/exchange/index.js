@@ -15,6 +15,7 @@ const exchangeSupportAppVersions = {
   ethereum: "1.4.0",
   litecoin: "1.5.0",
   qtum: "1.5.0",
+  ripple: "2.1.0",
   stratis: "1.5.0",
   zcash: "1.5.0",
   zencash: "1.5.0",

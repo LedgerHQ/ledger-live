@@ -109,6 +109,16 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           recipient: swapResult.payinAddress,
         });
 
+        if (refundCurrency.id === "ripple") {
+          transaction = accountBridge.updateTransaction(transaction, {
+            tag: BigNumber(swapResult.payinExtraId).toNumber(),
+          });
+          invariant(
+            transaction.tag,
+            "Refusing to swap xrp without a destination tag"
+          );
+        }
+
         // Triplecheck we're not working with an abandonseed recipient anymore
         invariant(
           transaction.recipient !==
