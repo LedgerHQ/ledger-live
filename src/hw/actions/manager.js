@@ -59,6 +59,10 @@ type ManagerState = {|
   closeRepairModal: () => void,
 |};
 
+export type ManagerRequest = ?{
+  autoQuitAppDisabled?: boolean,
+};
+
 type Result = {|
   device: Device,
   deviceInfo: DeviceInfo,
@@ -165,11 +169,14 @@ const reducer = (state: State, e: Event): State => {
 const implementations = {
   // in this paradigm, we know that deviceSubject is reflecting the device events
   // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
-  event: ({ deviceSubject, connectManager }) =>
-    deviceSubject.pipe(debounceTime(1000), switchMap(connectManager)),
+  event: ({ deviceSubject, connectManager, managerRequest }) =>
+    deviceSubject.pipe(
+      debounceTime(1000),
+      switchMap((d) => connectManager(d, managerRequest))
+    ),
 
   // in this paradigm, we can't observe directly the device, so we have to poll it
-  polling: ({ deviceSubject, connectManager }) =>
+  polling: ({ deviceSubject, connectManager, managerRequest }) =>
     Observable.create((o) => {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
@@ -203,7 +210,7 @@ const implementations = {
           return;
         }
         log("manager/polling", "polling loop");
-        connectSub = connectManager(pollingOnDevice)
+        connectSub = connectManager(pollingOnDevice, managerRequest)
           .pipe(
             timeout(DEVICE_POLLING_TIMEOUT),
             catchError((err) => {
@@ -293,17 +300,21 @@ const implementations = {
 export const createAction = (
   connectManagerExec: (ConnectManagerInput) => Observable<ConnectManagerEvent>
 ): ManagerAction => {
-  const connectManager = (device) =>
+  const connectManager = (device, managerRequest) =>
     concat(
       of({ type: "deviceChange", device }),
       !device
         ? empty()
-        : connectManagerExec({ devicePath: device.deviceId }).pipe(
-            catchError((error: Error) => of({ type: "error", error }))
-          )
+        : connectManagerExec({
+            devicePath: device.deviceId,
+            managerRequest,
+          }).pipe(catchError((error: Error) => of({ type: "error", error })))
     );
 
-  const useHook = (device: ?Device): ManagerState => {
+  const useHook = (
+    device: ?Device,
+    managerRequest: ManagerRequest = {}
+  ): ManagerState => {
     // repair modal will interrupt everything and be rendered instead of the background content
     const [repairModalOpened, setRepairModalOpened] = useState(null);
     const [state, setState] = useState(() => getInitialState(device));
@@ -314,6 +325,7 @@ export const createAction = (
       const impl = implementations[currentMode]({
         deviceSubject,
         connectManager,
+        managerRequest,
       });
 
       if (repairModalOpened) return;
@@ -342,7 +354,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, resetIndex, repairModalOpened]);
+    }, [deviceSubject, resetIndex, repairModalOpened, managerRequest]);
 
     const { deviceInfo } = state;
     useEffect(() => {
