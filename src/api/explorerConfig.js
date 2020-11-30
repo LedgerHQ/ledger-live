@@ -97,7 +97,7 @@ export const explorerConfig: { [id: CryptoCurrencyIds]: ?Config } = {
     id: "ltc",
     stable: {
       base: "EXPLORER",
-      version: "v2",
+      version: "v3",
     },
   },
   peercoin: {
