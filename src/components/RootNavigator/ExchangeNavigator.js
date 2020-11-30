@@ -15,7 +15,7 @@ type TabLabelProps = {
   color: string,
 };
 
-export default function CryptoAssetsSettingsNavigator() {
+export default function ExchangeNavigator() {
   const { t } = useTranslation();
 
   return (

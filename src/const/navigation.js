@@ -24,6 +24,7 @@ export const ScreenName = {
   ClaimRewardsValidationSuccess: "ClaimRewardsValidationSuccess",
   ConfirmPassword: "ConfirmPassword",
   CountervalueSettings: "CountervalueSettings",
+  CryptoAssetsSettings: "CryptoAssetsSettings",
   CurrenciesList: "CurrenciesList",
   CurrencySettings: "CurrencySettings",
   DebugBLE: "DebugBLE",
@@ -270,7 +271,6 @@ export const NavigatorName = {
   /* eslint-disable sort-keys */
 
   // Tab
-  CryptoAssetsSettings: "CryptoAssetsSettings",
   Main: "Main",
 
   // Root
