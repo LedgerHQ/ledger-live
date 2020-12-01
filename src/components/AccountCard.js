@@ -1,5 +1,8 @@
 // @flow
-import { getAccountName } from "@ledgerhq/live-common/lib/account";
+import {
+  getAccountName,
+  getAccountSpendableBalance,
+} from "@ledgerhq/live-common/lib/account";
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -53,7 +56,7 @@ class AccountCard extends PureComponent<Props> {
             <CurrencyUnitValue
               showCode
               unit={unit}
-              value={account.spendableBalance}
+              value={getAccountSpendableBalance(account)}
             />
           </LText>
         </View>

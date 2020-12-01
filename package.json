@@ -6,10 +6,8 @@
     "postinstall": "./scripts/post.sh",
     "start": "react-native start",
     "ios": "react-native run-ios",
-
     "prebeta": "bundle install",
     "beta": "FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=30 FASTLANE_XCODEBUILD_SETTINGS_RETRIES=5 bundle exec fastlane beta --env production",
-
     "android": "react-native run-android --appIdSuffix=debug",
     "android:apk": "bundle exec fastlane android apk",
     "android:beta": "bundle exec fastlane android clean_beta --env production",
@@ -25,21 +23,16 @@
     "android:install": "./scripts/install-and-run-apk.sh",
     "staging-android": "yarn android:staging && yarn android:install",
     "mock-android": "yarn android:mock && yarn android:install",
-
     "ios:ipa": "bundle exec fastlane ios build_ipa --env production",
     "ios:ipadev": "bundle exec fastlane ios build_ipa development:true --env adhoc",
-
     "preios:beta": "bundle install",
     "ios:beta": "bundle exec fastlane ios clean_beta --env production",
     "ios:upload": "bundle exec fastlane ios upload",
-
     "preios:adhoc": "bundle install",
     "ios:adhoc": "bundle exec fastlane ios build adhoc:true --env adhoc",
     "preios:ci": "bundle install",
     "ios:ci": "bundle exec fastlane ios ci --env adhoc",
-
     "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Staging",
-
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
@@ -61,11 +54,11 @@
     "@ledgerhq/devices": "5.30.0",
     "@ledgerhq/errors": "5.30.0",
     "@ledgerhq/hw-app-btc": "5.30.0",
-    "@ledgerhq/hw-app-eth": "5.30.0",
+    "@ledgerhq/hw-app-eth": "5.33.0",
     "@ledgerhq/hw-app-xrp": "5.30.0",
     "@ledgerhq/hw-transport": "5.30.0",
     "@ledgerhq/hw-transport-http": "5.30.0",
-    "@ledgerhq/live-common": "17.0.3",
+    "@ledgerhq/live-common": "17.2.0",
     "@ledgerhq/logs": "5.30.0",
     "@ledgerhq/react-native-hid": "5.30.0",
     "@ledgerhq/react-native-hw-transport-ble": "5.30.0",
@@ -172,7 +165,7 @@
   },
   "devDependencies": {
     "@actions/core": "^1.2.6",
-    "@babel/core": "^7.12.3",
+    "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^1.1.0",
     "babel-jest": "^26.6.3",
