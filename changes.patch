@@ -1,0 +1,31 @@
+diff --git i/fastlane/Fastfile w/fastlane/Fastfile
+index 023fe2be..3e61da86 100644
+--- i/fastlane/Fastfile
++++ w/fastlane/Fastfile
+@@ -28,8 +28,9 @@ package = load_json(json_path: "./package.json")
+ lane :beta do |options|
+   ensure_git_status_clean
+   ensure_git_branch(
+-    branch: 'develop'
++    branch: 'master'
+   )
++  git_pull
+ 
+   release = options.fetch(:release, false)
+ 
+@@ -48,15 +49,6 @@ lane :beta do |options|
+     next
+   end
+ 
+-  commit = last_git_commit
+-  git_pull
+-  new_commit = last_git_commit
+-
+-
+-  if commit[:commit_hash] == new_commit[:commit_hash]
+-    next
+-  end
+-
+   system "yarn -s --frozen-lockfile"
+ 
+   Fastlane::LaneManager.cruise_lane('ios', 'beta', { :remote => "upstream"}, 'production')

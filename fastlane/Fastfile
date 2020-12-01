@@ -28,8 +28,9 @@ package = load_json(json_path: "./package.json")
 lane :beta do |options|
   ensure_git_status_clean
   ensure_git_branch(
-    branch: 'develop'
+    branch: 'master'
   )
+  git_pull
 
   release = options.fetch(:release, false)
 
@@ -45,15 +46,6 @@ lane :beta do |options|
   if (!File.file?('Appfile'))
     puts "You need to create an Appfile."
     puts "You can copy and update Appfile.template"
-    next
-  end
-
-  commit = last_git_commit
-  git_pull
-  new_commit = last_git_commit
-
-
-  if commit[:commit_hash] == new_commit[:commit_hash]
     next
   end
 
