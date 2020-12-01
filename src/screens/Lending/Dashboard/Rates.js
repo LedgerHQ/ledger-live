@@ -1,8 +1,9 @@
 // @flow
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Trans } from "react-i18next";
+import _ from "lodash";
 import type { AccountLikeArray } from "@ledgerhq/live-common/lib/types";
 import type { CurrentRate } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
 // import { formatShort } from "@ledgerhq/live-common/lib/currencies";
@@ -13,24 +14,20 @@ import CurrencyIcon from "../../../components/CurrencyIcon";
 import Touchable from "../../../components/Touchable";
 import colors from "../../../colors";
 import { NavigatorName, ScreenName } from "../../../const";
+import InfoModalBottom from "./InfoModalBottom";
+import { getSupportedCurrencies } from "../../Exchange/coinifyConfig";
 
 const Row = ({
   data,
   // $FlowFixMe
   accounts,
+  onPress,
 }: {
   data: CurrentRate,
   accounts: AccountLikeArray,
+  onPress: Function,
 }) => {
   const { token, supplyAPY } = data;
-  const navigation = useNavigation();
-
-  const navigateToEnableFlow = useCallback(() => {
-    navigation.navigate(NavigatorName.LendingEnableFlow, {
-      screen: ScreenName.LendingEnableSelectAccount,
-      params: { currency: token },
-    });
-  }, [navigation, token]);
 
   const totalBalance = useMemo(() => {
     return accounts.reduce((total, account) => {
@@ -44,7 +41,7 @@ const Row = ({
   return (
     <Touchable
       style={styles.row}
-      onPress={navigateToEnableFlow}
+      onPress={() => onPress(token)}
       event="Page Lend deposit"
       eventProperties={{ currency: token.id }}
     >
@@ -78,12 +75,114 @@ const Rates = ({
   rates: CurrentRate[],
   accounts: AccountLikeArray,
 }) => {
+  const navigation = useNavigation();
+  const [modalOpen, setModalOpen] = useState();
+
+  const navigateToEnableFlow = useCallback(
+    token => {
+      navigation.navigate(NavigatorName.LendingEnableFlow, {
+        screen: ScreenName.LendingEnableSelectAccount,
+        params: { currency: token },
+      });
+    },
+    [navigation],
+  );
+  const navigateToBuyFlow = useCallback(
+    token => {
+      navigation.navigate(NavigatorName.ExchangeBuyFlow, {
+        screen: ScreenName.ExchangeSelectAccount,
+        params: {
+          currency: token,
+          mode: "buy",
+        },
+      });
+    },
+    [navigation],
+  );
+
+  const CheckIfCanNavigate = useCallback(
+    token => {
+      if (
+        _.find(
+          accounts,
+          account => account.token && account.token.id === token.id,
+        )
+      ) {
+        return navigateToEnableFlow(token);
+      }
+      return setModalOpen(token);
+    },
+    [accounts, navigateToEnableFlow],
+  );
+
+  const selectedTokenCanBuy =
+    modalOpen && getSupportedCurrencies("buy").includes(modalOpen.id);
+
+  const buttons = [];
+  if (selectedTokenCanBuy) {
+    buttons.push({
+      title: (
+        <Trans
+          i18nKey="transfer.lending.noTokenAccount.buttons.buy"
+          values={{
+            name: modalOpen?.name,
+          }}
+        />
+      ),
+      onPress: () => {
+        setModalOpen();
+        navigateToBuyFlow(modalOpen);
+      },
+    });
+  }
+  buttons.push({
+    title: (
+      <Trans
+        i18nKey="transfer.lending.noTokenAccount.buttons.receive"
+        values={{
+          name: modalOpen?.name,
+        }}
+      />
+    ),
+    onPress: () => {
+      setModalOpen();
+      navigateToEnableFlow(modalOpen);
+    },
+  });
+
   return (
     <View>
       <FlatList
         data={rates}
-        renderItem={({ item }) => <Row data={item} accounts={accounts} />}
+        renderItem={({ item }) => (
+          <Row data={item} accounts={accounts} onPress={CheckIfCanNavigate} />
+        )}
         keyExtractor={item => item.ctoken.id}
+      />
+      <InfoModalBottom
+        isOpened={modalOpen}
+        onClose={() => setModalOpen()}
+        title={
+          <Trans
+            i18nKey="transfer.lending.noTokenAccount.info.title"
+            values={{
+              name: modalOpen?.name,
+            }}
+          />
+        }
+        description={
+          <Trans
+            i18nKey="transfer.lending.noTokenAccount.info.description"
+            values={{
+              name: modalOpen?.name,
+            }}
+          />
+        }
+        Icon={
+          modalOpen &&
+          (() => <CurrencyIcon radius={100} currency={modalOpen} size={54} />)
+        }
+        buttons={buttons}
       />
     </View>
   );

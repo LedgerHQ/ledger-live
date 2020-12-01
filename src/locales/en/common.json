@@ -1502,6 +1502,16 @@
           "cta": "Lend now"
         }
       },
+      "noTokenAccount": {
+        "info": {
+          "title": "You don’t have {{ name }} account.",
+          "description": "In order to deposit funds and lend crypto you need a {{ name }} account. Please Receive funds on your Ethereum address."
+        },
+        "buttons": {
+          "receive": "Receive {{ name }}",
+          "buy": "Buy {{ name }}"
+        }
+      },
       "enable": {
         "info": {
           "title": "This account is not approved",
