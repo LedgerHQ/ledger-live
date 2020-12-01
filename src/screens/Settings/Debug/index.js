@@ -17,6 +17,7 @@ import OpenDebugCrash from "./OpenDebugCrash";
 import OpenDebugHttpTransport from "./OpenDebugHttpTransport";
 import OpenDebugIcons from "./OpenDebugIcons";
 import ReadOnlyModeRow from "../General/ReadOnlyModeRow";
+import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenLottie from "./OpenDebugLottie";
@@ -44,6 +45,7 @@ export function DebugMocks() {
       <OpenLottie />
       <OpenDebugPlayground />
       <ReadOnlyModeRow />
+      <AnalyticsConsoleRow />
       <SkipLock />
     </NavigationScrollView>
   );

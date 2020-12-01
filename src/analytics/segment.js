@@ -8,6 +8,7 @@ import { Platform } from "react-native";
 import analytics from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import Locale from "react-native-locale";
+import { ReplaySubject } from "rxjs";
 import {
   getAndroidArchitecture,
   getAndroidVersionCode,
@@ -70,7 +71,7 @@ export const start = async (store: *) => {
     if (ANALYTICS_LOGS) console.log("analytics:identify", user.id);
     if (token) {
       await analytics.reset();
-      await analytics.identify(user.id, extraProperties(store), context);
+      await analytics.identify(user.id, extraProperties(store), { context });
     }
   }
   track("Start", extraProperties(store), true);
@@ -80,6 +81,11 @@ export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;
 };
+
+export const trackSubject = new ReplaySubject<{
+  event: string,
+  properties: ?Object,
+}>(10);
 
 export const track = (
   event: string,
@@ -100,6 +106,8 @@ export const track = (
     return;
   }
   if (ANALYTICS_LOGS) console.log("analytics:track", event, properties);
+  trackSubject.next({ event, properties });
+
   if (!token) return;
   analytics.track(
     event,
@@ -107,7 +115,7 @@ export const track = (
       ...extraProperties(storeInstance),
       ...properties,
     },
-    context,
+    { context },
   );
 };
 
@@ -128,6 +136,8 @@ export const screen = (
   }
   if (ANALYTICS_LOGS)
     console.log("analytics:screen", category, name, properties);
+  trackSubject.next({ event: title, properties });
+
   if (!token) return;
   analytics.track(
     title,
@@ -135,6 +145,6 @@ export const screen = (
       ...extraProperties(storeInstance),
       ...properties,
     },
-    context,
+    { context },
   );
 };

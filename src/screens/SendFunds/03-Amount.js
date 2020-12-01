@@ -147,7 +147,6 @@ export default function SendAmount({ navigation, route }: Props) {
                 editable={!useAllAmount}
                 account={account}
                 onChange={onChange}
-                currency={unit.code}
                 value={amount}
                 error={
                   amount.eq(0) && (bridgePending || !transaction.useAllAmount)

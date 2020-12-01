@@ -35,7 +35,7 @@ export default function LendingNavigator() {
         options={{
           title: t("transfer.lending.dashboard.tabTitle"),
           tabBarLabel: ({ focused, color }: TabLabelProps) => (
-            /** width has to be a little bigger to accomodate the switch in size between semibold to regular */
+            // width has to be a little bigger to accomodate the switch in size between semibold to regular
             <LText style={{ width: "110%", color }} semiBold={focused}>
               {t("transfer.lending.dashboard.tabTitle")}
             </LText>
@@ -48,7 +48,7 @@ export default function LendingNavigator() {
         options={{
           title: t("transfer.lending.closedLoans.tabTitle"),
           tabBarLabel: ({ focused, color }: TabLabelProps) => (
-            /** width has to be a little bigger to accomodate the switch in size between semibold to regular */
+            //  width has to be a little bigger to accomodate the switch in size between semibold to regular
             <LText style={{ width: "110%", color }} semiBold={focused}>
               {t("transfer.lending.closedLoans.tabTitle")}
             </LText>
@@ -61,7 +61,7 @@ export default function LendingNavigator() {
         options={{
           title: t("transfer.lending.history.tabTitle"),
           tabBarLabel: ({ focused, color }: TabLabelProps) => (
-            /** width has to be a little bigger to accomodate the switch in size between semibold to regular */
+            // width has to be a little bigger to accomodate the switch in size between semibold to regular
             <LText style={{ width: "110%", color }} semiBold={focused}>
               {t("transfer.lending.history.tabTitle")}
             </LText>

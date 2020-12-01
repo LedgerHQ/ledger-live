@@ -17,7 +17,7 @@ import {
   flattenAccountsSelector,
 } from "../../reducers/accounts";
 import { counterValueCurrencySelector } from "../../reducers/settings";
-import { portfolioSelector } from "../../actions/portfolio";
+import { usePortfolio } from "../../actions/portfolio";
 import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
@@ -56,7 +56,7 @@ export default function PortfolioScreen({ navigation }: Props) {
   const accounts = useSelector(accountsSelector);
   const allAccounts = useSelector(flattenAccountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const portfolio = useSelector(portfolioSelector);
+  const portfolio = usePortfolio();
 
   const [opCount, setOpCount] = useState(50);
   const scrollY = useRef(new Animated.Value(0)).current;

@@ -1,13 +1,12 @@
 // @flow
-
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import {
   useBridgeSync,
   useAccountSyncState,
 } from "@ledgerhq/live-common/lib/bridge/react";
 import type { Sync } from "@ledgerhq/live-common/lib/bridge/react/types";
-import CounterValues from "../countervalues";
+import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
 import { SYNC_DELAY } from "../constants";
 
 type Props = {
@@ -28,12 +27,12 @@ export default (ScrollListLike: any) => {
   }: Props) {
     const { pending: isPending } = useAccountSyncState({ accountId });
     const setSyncBehavior = useBridgeSync();
-    const { poll: cvPoll } = useContext(CounterValues.PollingContext);
+    const { poll } = useCountervaluesPolling();
     const [lastClickTime, setLastClickTime] = useState(0);
     const [refreshing, setRefreshing] = useState(false);
 
     function onPress() {
-      cvPoll();
+      poll();
       setSyncBehavior({
         type: "SYNC_ONE_ACCOUNT",
         accountId,

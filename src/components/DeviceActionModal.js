@@ -16,6 +16,7 @@ type Props = {
   // TODO: fix request type
   request?: any,
   onClose?: () => void,
+  onModalHide: () => void,
   onResult: $PropertyType<React$ElementProps<typeof DeviceAction>, "onResult">,
 };
 
@@ -25,6 +26,7 @@ export default function DeviceActionModal({
   request,
   onClose,
   onResult,
+  onModalHide,
 }: Props) {
   return (
     <BottomModal
@@ -32,6 +34,7 @@ export default function DeviceActionModal({
       isOpened={!!device}
       onClose={onClose}
       onResult={onResult}
+      onModalHide={onModalHide}
     >
       {device && (
         <ModalBottomAction

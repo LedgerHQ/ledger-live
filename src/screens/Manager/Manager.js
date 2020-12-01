@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, memo } from "react";
 import { CommonActions } from "@react-navigation/native";
 
 import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { ListAppsResult } from "@ledgerhq/live-common/lib/apps/types";
 
 import { useApps } from "./shared";
@@ -15,10 +16,12 @@ import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
 import { stackNavigatorConfig } from "../../navigation/navigatorConfig";
 
-const MANAGER_TABS = {
+export const MANAGER_TABS = {
   CATALOG: "CATALOG",
   INSTALLED_APPS: "INSTALLED_APPS",
 };
+
+export type ManagerTab = $Keys<typeof MANAGER_TABS>;
 
 type Props = {
   navigation: any,
@@ -28,6 +31,8 @@ type Props = {
       deviceInfo: DeviceInfo,
       result: ListAppsResult,
       searchQuery?: string,
+      updateModalOpened?: boolean,
+      tab: ManagerTab,
     },
   },
 };
@@ -36,13 +41,16 @@ const Manager = ({
   navigation,
   route: {
     params: {
-      device: { deviceId, deviceName },
+      device,
       deviceInfo,
       result,
       searchQuery,
+      updateModalOpened,
+      tab = MANAGER_TABS.CATALOG,
     },
   },
 }: Props) => {
+  const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId);
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
@@ -118,7 +126,13 @@ const Manager = ({
 
   return (
     <>
-      <TrackScreen category="Manager" name="AppsList" />
+      <TrackScreen
+        category="Manager"
+        name="AppsList"
+        deviceModelId={modelId}
+        deviceVersion={deviceInfo.version}
+        appLength={result ? result.installed.length : 0}
+      />
       <AppsScreen
         state={state}
         dispatch={dispatch}
@@ -132,6 +146,8 @@ const Manager = ({
         blockNavigation={blockNavigation}
         deviceInfo={deviceInfo}
         searchQuery={searchQuery}
+        updateModalOpened={updateModalOpened}
+        tab={tab}
       />
       <GenericErrorBottomModal error={error} onClose={closeErrorModal} />
       <QuitManagerModal

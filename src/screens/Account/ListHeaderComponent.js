@@ -10,6 +10,7 @@ import type {
   Unit,
   AccountLike,
   Account,
+  ValueChange,
 } from "@ledgerhq/live-common/lib/types";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
 
@@ -126,12 +127,12 @@ type Props = {
   useCounterValue: boolean,
   range: *,
   history: *,
-  countervalueChange: () => void,
-  cryptoChange: () => void,
+  countervalueChange: ValueChange,
+  cryptoChange: ValueChange,
   counterValueCurrency: Unit,
   onAccountPress: () => void,
   onSwitchAccountCurrency: () => void,
-  compoundSummary?: CompoundAccountSummary,
+  compoundSummary?: ?CompoundAccountSummary,
 };
 
 function ListHeaderComponent({

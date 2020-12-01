@@ -27,7 +27,7 @@ import type { Item } from "../../components/Graph/types";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import AssetGraphCard from "../../components/AssetGraphCard";
-import { currencyPortfolioSelectorCreator } from "../../actions/portfolio";
+import { useCurrencyPortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import LoadingFooter from "../../components/LoadingFooter";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
@@ -254,12 +254,10 @@ export default function Screen(props: Props) {
   );
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const useCounterValue = useSelector(countervalueFirstSelector);
-  const portfolio = useSelector(
-    currencyPortfolioSelectorCreator({
-      currency,
-      range,
-    }),
-  );
+  const portfolio = useCurrencyPortfolio({
+    currency,
+    range,
+  });
 
   return (
     <Asset

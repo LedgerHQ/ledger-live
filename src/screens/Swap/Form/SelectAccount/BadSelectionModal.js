@@ -12,6 +12,7 @@ import type { CurrencyStatus } from "@ledgerhq/live-common/lib/exchange/swap/log
 import { ScreenName, NavigatorName } from "../../../../const";
 import Circle from "../../../../components/Circle";
 import BottomModal from "../../../../components/BottomModal";
+import { MANAGER_TABS } from "../../../Manager/Manager";
 import LText from "../../../../components/LText";
 import Button from "../../../../components/Button";
 import colors from "../../../../colors";
@@ -27,17 +28,24 @@ const BadSelectionModal = ({
 }) => {
   const { navigate } = useNavigation();
   const openManagerForApp = useCallback(() => {
+    const outdated = status === "outdatedApp";
     navigate(NavigatorName.Manager, {
       screen: ScreenName.Manager,
-      params: {
-        searchQuery: currency
-          ? currency.type === "TokenCurrency"
-            ? currency?.parentCurrency?.managerAppName
-            : currency?.managerAppName
-          : null,
-      },
+      params: outdated
+        ? {
+            tab: MANAGER_TABS.INSTALLED_APPS,
+            updateModalOpened: true,
+          }
+        : {
+            tab: MANAGER_TABS.CATALOG,
+            searchQuery: currency
+              ? currency.type === "TokenCurrency"
+                ? currency?.parentCurrency?.managerAppName
+                : currency?.managerAppName
+              : null,
+          },
     });
-  }, [navigate, currency]);
+  }, [status, navigate, currency]);
 
   if (!currency) return null;
   const appName =

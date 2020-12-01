@@ -1,8 +1,8 @@
 // @flow
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/lib/bridge/react";
-import CounterValues from "../countervalues";
+import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
 import { SYNC_DELAY } from "../constants";
 
 type Props = {
@@ -16,10 +16,10 @@ export default (ScrollListLike: any) => {
   function Inner({ forwardedRef, ...scrollListLikeProps }: Props) {
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
-    const { poll: cvPoll } = useContext(CounterValues.PollingContext);
+    const { poll } = useCountervaluesPolling();
 
     function onRefresh() {
-      cvPoll();
+      poll();
       setSyncBehavior({
         type: "SYNC_ALL_ACCOUNTS",
         priority: 5,
