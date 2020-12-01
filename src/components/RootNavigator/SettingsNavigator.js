@@ -87,9 +87,9 @@ export default function SettingsNavigator() {
         options={{ title: t("settings.resources") }}
       />
       <Stack.Screen
-        name={NavigatorName.CryptoAssetsSettings}
+        name={ScreenName.CryptoAssetsSettings}
         component={CurrenciesList}
-        options={{ title: t("settings.cryptoAssets.header") }}
+        options={{ title: t("settings.accounts.cryptoAssets.header") }}
       />
       <Stack.Screen
         name={ScreenName.CurrencySettings}

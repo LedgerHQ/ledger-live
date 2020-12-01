@@ -1156,12 +1156,6 @@
       "hideEmptyTokenAccounts": "Hide empty token accounts",
       "hideEmptyTokenAccountsDesc": "Hide empty token accounts on the Accounts page."
     },
-    "cryptoAssets": {
-      "header": "Crypto assets",
-      "title": "Crypto assets",
-      "desc": "Set rate providers and number of confirmations per crypto.",
-      "rateProviderHeader": "Rate provider"
-    },
     "currencies": {
       "header": "Currencies",
       "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
@@ -1183,6 +1177,11 @@
         "title": "Hide token",
         "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can show them again using <3>Settings > Accounts</3>.",
         "confirm": "Hide token"
+      },
+      "cryptoAssets": {
+        "header": "Crypto assets",
+        "title": "Crypto assets",
+        "desc": "Select a crypto assets to edit its settings."
       }
     },
     "about": {
