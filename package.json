@@ -3,7 +3,7 @@
   "description": "Common ground for the Ledger Live apps",
   "repository": {
     "type": "git",
-    "url": "git://github.com/LedgerHQ/ledger-live-common"
+    "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
   "version": "17.3.0",
   "main": "lib/index.js",
