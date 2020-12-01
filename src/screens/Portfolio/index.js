@@ -39,15 +39,13 @@ import { useScrollToTop } from "../../navigation/utils";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
-const AnimatedFlatList = createNativeWrapper(
-  Animated.createAnimatedComponent(FlatList),
+const AnimatedFlatListWithRefreshControl = createNativeWrapper(
+  Animated.createAnimatedComponent(globalSyncRefreshControl(FlatList)),
   {
     disallowInterruption: true,
     shouldCancelWhenOutside: false,
   },
 );
-const SectionListWithRefreshControl = globalSyncRefreshControl(SectionList);
-
 type Props = {
   navigation: any,
 };
@@ -149,7 +147,7 @@ export default function PortfolioScreen({ navigation }: Props) {
 
       <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
-      <AnimatedFlatList
+      <AnimatedFlatListWithRefreshControl
         ref={ref}
         data={[
           <OngoingScams />,
@@ -157,7 +155,7 @@ export default function PortfolioScreen({ navigation }: Props) {
             ? [<Carousel />]
             : []),
           ListHeaderComponent(),
-          <SectionListWithRefreshControl
+          <SectionList
             sections={sections}
             style={styles.list}
             contentContainerStyle={styles.contentContainer}
