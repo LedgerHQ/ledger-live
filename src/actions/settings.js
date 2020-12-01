@@ -1,6 +1,7 @@
 // @flow
 
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
 
 export type CurrencySettings = {
   confirmationsNb: number,
@@ -64,6 +65,11 @@ export const setAnalytics = (analyticsEnabled: boolean) => ({
   analyticsEnabled,
 });
 
+export const setHasAcceptedSwapKYC = (hasAcceptedSwapKYC: boolean) => ({
+  type: "SETTINGS_SET_HAS_ACCEPTED_SWAP_KYC",
+  hasAcceptedSwapKYC,
+});
+
 export const setReadOnlyMode = (enabled: boolean) => ({
   type: "SETTINGS_SET_READONLY_MODE",
   enabled,
@@ -96,8 +102,9 @@ export const updateCurrencySettings = (
 export const completeOnboarding = () => ({
   type: "SETTINGS_COMPLETE_ONBOARDING",
 });
-export const installAppFirstTime = () => ({
+export const installAppFirstTime = (bool: boolean) => ({
   type: "SETTINGS_INSTALL_APP_FIRST_TIME",
+  hasInstalledAnyApp: bool,
 });
 
 export const switchCountervalueFirst = () => ({
@@ -107,4 +114,39 @@ export const switchCountervalueFirst = () => ({
 export const setHideEmptyTokenAccounts = (hideEmptyTokenAccounts: boolean) => ({
   type: "SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS",
   hideEmptyTokenAccounts,
+});
+
+export const blacklistToken = (tokenId: string) => ({
+  type: "BLACKLIST_TOKEN",
+  payload: tokenId,
+});
+
+export const showToken = (tokenId: string) => ({
+  type: "SHOW_TOKEN",
+  payload: tokenId,
+});
+
+export const dismissBanner = (bannerId: string) => ({
+  type: "SETTINGS_DISMISS_BANNER",
+  payload: bannerId,
+});
+
+export const setCarouselVisibility = (nonce: number) => ({
+  type: "SETTINGS_SET_CAROUSEL_VISIBILITY",
+  payload: nonce,
+});
+
+export const setAvailableUpdate = (enabled: boolean) => ({
+  type: "SETTINGS_SET_AVAILABLE_UPDATE",
+  enabled,
+});
+
+export const setSwapProviders = (swapProviders?: AvailableProvider[]) => ({
+  type: "SETTINGS_SET_SWAP_PROVIDERS",
+  swapProviders,
+});
+
+export const setDiscreetMode = (payload: boolean) => ({
+  type: "SETTINGS_SET_DISCREET_MODE",
+  payload,
 });

@@ -28,8 +28,9 @@
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
-        android:launchMode="singleTop"
-        android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+        android:launchMode="singleTask"
+        android:taskAffinity=""
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:windowSoftInputMode="adjustResize"
         android:screenOrientation="portrait"
         >
@@ -41,7 +42,7 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
-            <data android:scheme="ledgerhq"/>
+            <data android:scheme="ledgerlive"/>
         </intent-filter>
         <intent-filter>
             <!-- http://developer.android.com/guide/topics/connectivity/usb/accessory.html -->
@@ -49,8 +50,8 @@
         </intent-filter>
         <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
       </activity>
-      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-      <activity android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
+      <activity android:taskAffinity="" android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+      <activity android:taskAffinity="" android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
         android:exported="true"/>
     </application>
 

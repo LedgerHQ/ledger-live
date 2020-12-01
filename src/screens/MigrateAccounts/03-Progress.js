@@ -10,17 +10,15 @@ import type {
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-import { withNavigation, SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import SafeAreaView from "react-native-safe-area-view";
+import { useDispatch, useSelector } from "react-redux";
 import { reduce } from "rxjs/operators";
 import { setAccounts } from "../../actions/accounts";
 import colors, { rgba } from "../../colors";
+import { ScreenName } from "../../const";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import RoundedCurrencyIcon from "../../components/RoundedCurrencyIcon";
-import StepHeader from "../../components/StepHeader";
 import TranslatedError from "../../components/TranslatedError";
 import logger from "../../logger";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
@@ -28,48 +26,35 @@ import {
   accountsSelector,
   migratableAccountsSelector,
 } from "../../reducers/accounts";
+import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 
-const mapStateToProps = createStructuredSelector({
-  accounts: accountsSelector,
-  migratableAccounts: migratableAccountsSelector,
-  currencyIds: state =>
+const forceInset = { bottom: "always" };
+
+type Props = {
+  navigation: any,
+  route: any,
+};
+
+export default function Progress({ navigation, route }: Props) {
+  const accounts = useSelector(accountsSelector);
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const migratableAccounts = useSelector(migratableAccountsSelector);
+  const currencyIds = useSelector(state =>
     migratableAccountsSelector(state)
       .reduce(
         (c, a) => (c.includes(a.currency.id) ? c : [...c, a.currency.id]),
         [],
       )
       .sort(),
-});
-
-const mapDispatchToProps = {
-  setAccounts,
-};
-
-const forceInset = { bottom: "always" };
-
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  accounts: Account[],
-  setAccounts: (Account[]) => void,
-  currencyIds: string[],
-  migratableAccounts: Account[],
-};
-
-const Progress = ({
-  navigation,
-  accounts,
-  setAccounts,
-  currencyIds,
-  migratableAccounts,
-}: Props) => {
+  );
+  const dispatch = useDispatch();
   const [status, setStatus] = useState("pending");
   const [error, setError] = useState(null);
   const scanSubscription = useRef(null);
   const prevAccountCount = useRef(migratableAccounts.length);
   const prevCurrencyIds = useRef(currencyIds);
 
-  const currency = navigation.getParam("currency");
-  const deviceMeta = navigation.getParam("deviceMeta");
+  const { currency, device } = route.params || {};
 
   const noticeAwareStatus =
     status === "done" && prevAccountCount.current === migratableAccounts.length
@@ -95,22 +80,21 @@ const Progress = ({
   const navigateToNextStep = useCallback(() => {
     if (migratableAccounts.length) {
       if (finishedWithDevice) {
-        navigation.navigate("MigrateAccountsOverview", {
+        navigation.navigate(ScreenName.MigrateAccountsOverview, {
           showNotice: noticeAwareStatus !== "error",
         });
       } else {
-        navigation.navigate("MigrateAccountsConnectDevice", {
-          deviceMeta,
+        navigation.navigate(ScreenName.MigrateAccountsConnectDevice, {
+          device,
           currency: noticeAwareStatus === "error" ? currency : nextCurrency,
         });
       }
-    } else if (navigation.dismiss) {
-      const dismissed = navigation.dismiss();
-      if (!dismissed) navigation.goBack();
+    } else {
+      navigation.dangerouslyGetParent().pop();
     }
   }, [
     navigation,
-    deviceMeta,
+    device,
     migratableAccounts,
     finishedWithDevice,
     nextCurrency,
@@ -118,12 +102,12 @@ const Progress = ({
     noticeAwareStatus,
   ]);
 
-  const { deviceId } = deviceMeta;
+  const { deviceId } = device;
   const startScanAccountsDevice = useCallback(() => {
     const syncConfig = {
       // TODO later we need to paginate only a few ops, not all (for add accounts)
-      // paginationConfig will come from redux
       paginationConfig: {},
+      blacklistedTokenIds,
     };
     unsub();
     scanSubscription.current = getCurrencyBridge(currency)
@@ -137,8 +121,10 @@ const Progress = ({
       )
       .subscribe({
         next: scannedAccounts => {
-          setAccounts(
-            migrateAccounts({ scannedAccounts, existingAccounts: accounts }),
+          dispatch(
+            setAccounts(
+              migrateAccounts({ scannedAccounts, existingAccounts: accounts }),
+            ),
           );
           setStatus("done");
         },
@@ -148,7 +134,7 @@ const Progress = ({
           setError(err);
         },
       });
-  }, [currency, deviceId, setAccounts, unsub, accounts, setStatus, setError]);
+  }, [blacklistedTokenIds, unsub, currency, deviceId, dispatch, accounts]);
 
   useEffect(() => {
     startScanAccountsDevice();
@@ -213,24 +199,7 @@ const Progress = ({
       ) : null}
     </SafeAreaView>
   );
-};
-
-Progress.navigationOptions = () => ({
-  headerTitle: (
-    <StepHeader
-      title={<Trans i18nKey="migrateAccounts.progress.headerTitle" />}
-      subtitle={
-        <Trans
-          i18nKey="send.stepperHeader.stepRange"
-          values={{
-            currentStep: "3",
-            totalSteps: "3",
-          }}
-        />
-      }
-    />
-  ),
-});
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -278,8 +247,3 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withNavigation(Progress));

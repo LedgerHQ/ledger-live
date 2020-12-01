@@ -70,7 +70,8 @@ const styles = StyleSheet.create({
   },
   rootChecked: {
     backgroundColor: colors.live,
-    borderWidth: 0,
+    borderWidth: 2,
+    borderColor: "transparent",
   },
   invisible: {
     opacity: 0,

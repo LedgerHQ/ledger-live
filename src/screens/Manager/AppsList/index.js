@@ -13,7 +13,6 @@ type Props = {
   state: State,
   dispatch: *,
   renderNoResults?: (*) => Node,
-  currentProgress: number,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
@@ -31,7 +30,6 @@ const AppsList = ({
   renderNoResults,
   state,
   dispatch,
-  currentProgress,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   setStorageWarning,
@@ -48,11 +46,6 @@ const AppsList = ({
       key: `${data[index].id}_${isInstalledView ? "Installed" : "Catalog"}`,
       visible: active,
       isInstalledView,
-      currentProgress:
-        (currentProgress &&
-          currentProgress.appOp.name === data[index].name &&
-          currentProgress.progress) ||
-        0,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,
@@ -62,14 +55,13 @@ const AppsList = ({
       dispatch,
       isInstalledView,
       active,
-      currentProgress,
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,
     ],
   );
 
-  if (apps.length <= 0)
+  if (!apps || apps.length <= 0)
     return (
       <View style={styles.renderNoResult}>
         {renderNoResults && renderNoResults()}
@@ -78,7 +70,7 @@ const AppsList = ({
 
   return (
     <VirtualizedList
-      style={{ height: viewHeight }}
+      style={{ height: viewHeight || 0 }}
       listKey={isInstalledView ? "Installed" : "Catalog"}
       data={apps}
       renderItem={renderRow}

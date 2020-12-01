@@ -3,22 +3,30 @@ import { StyleSheet, View } from "react-native";
 
 import { Trans } from "react-i18next";
 
+import type { State } from "@ledgerhq/live-common/lib/apps";
+
+import { useAppInstallProgress } from "@ledgerhq/live-common/lib/apps/react";
+
 import colors from "../../../colors";
 import LText from "../../../components/LText";
 import ProgressBar from "../../../components/ProgressBar";
 import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
 
 type InstallProgressProps = {
-  currentProgress: *,
+  state: State,
+  name: string,
   installing: boolean,
   updating: boolean,
 };
 
 export const InstallProgress = ({
-  currentProgress,
+  state,
+  name,
   installing,
   updating,
 }: InstallProgressProps) => {
+  const progress = useAppInstallProgress(state, name);
+
   return (
     <View style={styles.progressContainer}>
       <View style={styles.progressLabel}>
@@ -36,25 +44,21 @@ export const InstallProgress = ({
           />
         </LText>
       </View>
-      {currentProgress !== 0 && installing ? (
-        <ProgressBar
-          progressColor={colors.live}
-          style={styles.progressBar}
-          height={6}
-          progress={currentProgress * 1e2}
-        />
-      ) : (
-        <InfiniteProgressBar
-          progressColor={colors.live}
-          style={styles.progressBar}
-          height={6}
-        />
-      )}
+      <ProgressBar
+        progressColor={colors.live}
+        style={styles.progressBar}
+        height={6}
+        progress={installing ? progress * 1e2 : 0}
+      />
     </View>
   );
 };
 
-export const UninstallProgress = () => {
+type UninstallProgressProps = {
+  uninstalling: boolean,
+};
+
+export const UninstallProgress = ({ uninstalling }: UninstallProgressProps) => {
   return (
     <View style={styles.progressContainer}>
       <View style={styles.progressLabel}>
@@ -66,11 +70,20 @@ export const UninstallProgress = () => {
           <Trans i18nKey="AppAction.uninstall.loading.button" />
         </LText>
       </View>
-      <InfiniteProgressBar
-        progressColor={colors.live}
-        style={styles.progressBar}
-        height={6}
-      />
+      {uninstalling ? (
+        <InfiniteProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+        />
+      ) : (
+        <ProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+          progress={0}
+        />
+      )}
     </View>
   );
 };

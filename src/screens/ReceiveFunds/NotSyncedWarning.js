@@ -2,11 +2,11 @@
 import React, { PureComponent } from "react";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/lib/bridge/react";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import PendingContainer from "../PairDevices/PendingContainer";
 import { deviceNames } from "../../wording";
-import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
 
 class NotSyncedWarning extends PureComponent<{
   continue: () => void,

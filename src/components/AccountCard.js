@@ -1,5 +1,8 @@
 // @flow
-import { getAccountName } from "@ledgerhq/live-common/lib/account";
+import {
+  getAccountName,
+  getAccountSpendableBalance,
+} from "@ledgerhq/live-common/lib/account";
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -25,6 +28,7 @@ class AccountCard extends PureComponent<Props> {
     const { onPress, account, style, disabled } = this.props;
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
+
     return (
       <Card
         onPress={!disabled ? onPress : undefined}
@@ -48,8 +52,12 @@ class AccountCard extends PureComponent<Props> {
           </LText>
         </View>
         <View style={styles.balanceContainer}>
-          <LText tertiary style={styles.balanceNumText}>
-            <CurrencyUnitValue showCode unit={unit} value={account.balance} />
+          <LText semiBold style={styles.balanceNumText}>
+            <CurrencyUnitValue
+              showCode
+              unit={unit}
+              value={getAccountSpendableBalance(account)}
+            />
           </LText>
         </View>
       </Card>

@@ -2,6 +2,7 @@
 
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
+import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import Animated, { Easing } from "react-native-reanimated";
 import colors from "../colors";
 
@@ -62,7 +63,7 @@ type Props = {
   height: number,
   progressColor: string,
   backgroundColor: string,
-  style?: *,
+  style?: ViewStyleProp,
 };
 
 const InfiniteProgressBar = ({
@@ -111,4 +112,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(InfiniteProgressBar);
+export default memo<Props>(InfiniteProgressBar);

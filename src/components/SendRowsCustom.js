@@ -1,7 +1,6 @@
 /* @flow */
 import React from "react";
 import type { Account } from "@ledgerhq/live-common/lib/types";
-import type { NavigationScreenProp } from "react-navigation";
 import perFamily from "../generated/SendRowsCustom";
 
 export default ({
@@ -9,9 +8,9 @@ export default ({
   account,
   navigation,
 }: {
-  transaction: *,
+  transaction: any,
   account: Account,
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
 }) => {
   const C = perFamily[account.currency.family];
   return C ? (

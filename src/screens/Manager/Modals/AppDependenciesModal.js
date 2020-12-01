@@ -1,10 +1,13 @@
 import React, { memo, useMemo, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 
 import type { Action } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 
+import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
+import { installAppFirstTime } from "../../../actions/settings";
 import AppIcon from "../AppsList/AppIcon";
 import colors from "../../../colors";
 import LText from "../../../components/LText";
@@ -15,22 +18,28 @@ import ActionModal from "./ActionModal";
 
 type Props = {
   appInstallWithDependencies: ?{ app: App, dependencies: App[] },
-  dispatch: Action => void,
+  dispatch: (action: Action) => void,
   onClose: () => void,
 };
 
-const AppDependenciesModal = ({
+function AppDependenciesModal({
   appInstallWithDependencies,
-  dispatch,
+  dispatch: dispatchProps,
   onClose,
-}: Props) => {
+}: Props) {
+  const dispatch = useDispatch();
+  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
+
   const { app, dependencies = [] } = appInstallWithDependencies || {};
   const { name } = app || {};
 
   const installAppDependencies = useCallback(() => {
-    dispatch({ type: "install", name });
+    if (!hasInstalledAnyApp) {
+      dispatch(installAppFirstTime(true));
+    }
+    dispatchProps({ type: "install", name });
     onClose();
-  }, [dispatch, onClose, name]);
+  }, [dispatch, dispatchProps, onClose, name, hasInstalledAnyApp]);
 
   const modalActions = useMemo(
     () => [
@@ -90,7 +99,7 @@ const AppDependenciesModal = ({
       )}
     </ActionModal>
   );
-};
+}
 
 const styles = StyleSheet.create({
   imageSection: {

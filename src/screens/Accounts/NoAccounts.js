@@ -9,7 +9,10 @@ class NoAccounts extends PureComponent<{ navigation: * }> {
   render() {
     return (
       <View style={styles.root}>
-        <EmptyStatePortfolio navigation={this.props.navigation} />
+        <EmptyStatePortfolio
+          showHelp={false}
+          navigation={this.props.navigation}
+        />
       </View>
     );
   }

@@ -1,10 +1,11 @@
 // @flow
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import React, { useMemo, useState, useCallback } from "react";
+import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
-import { translate } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
-import type { NavigationScreenProp } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import {
@@ -14,23 +15,13 @@ import {
 } from "@ledgerhq/live-common/lib/range";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import type { T } from "../../types/common";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import SettingsRow from "../../components/SettingsRow";
 import Button from "../../components/Button";
 
-type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  transaction: Transaction,
-  t: T,
-  navigation: NavigationScreenProp<*>,
-};
-
-const GasSlider = React.memo(({ defaultGas, value, onChange }: *) => {
-  const range = useMemo(() => inferDynamicRange(defaultGas), [defaultGas]);
+const GasSlider = React.memo(({ value, onChange, range }: *) => {
   const index = reverseRangeIndex(range, value);
   const setValueIndex = useCallback(
     i => onChange(projectRangeIndex(range, i)),
@@ -50,13 +41,29 @@ const GasSlider = React.memo(({ defaultGas, value, onChange }: *) => {
   );
 });
 
-const EditFeeUnitEthereum = ({
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+  currentNavigation: string,
+};
+type Props = {
+  account: AccountLike,
+  parentAccount: ?Account,
+  transaction: Transaction,
+  route: { params: RouteParams },
+};
+
+const fallbackGasPrice = inferDynamicRange(BigNumber(10e9));
+let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
+
+export default function EditFeeUnitEthereum({
   account,
   parentAccount,
   transaction,
-  t,
-  navigation,
-}: Props) => {
+  route,
+}: Props) {
+  const { navigate } = useNavigation();
+  const { t } = useTranslation();
   const { setAccount, setTransaction } = useBridgeTransaction();
 
   useMemo(() => {
@@ -67,7 +74,15 @@ const EditFeeUnitEthereum = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, parentAccount);
 
-  const [gasPrice, setGasPrice] = useState(() => transaction.gasPrice);
+  const networkGasPrice =
+    transaction.networkInfo && transaction.networkInfo.gasPrice;
+  if (!lastNetworkGasPrice && networkGasPrice) {
+    lastNetworkGasPrice = networkGasPrice;
+  }
+  const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
+  const [gasPrice, setGasPrice] = useState(
+    transaction.gasPrice || range.initial,
+  );
   const feeCustomUnit = transaction.feeCustomUnit;
 
   const onChangeF = useCallback(
@@ -81,12 +96,22 @@ const EditFeeUnitEthereum = ({
   );
 
   const onValidateFees = useCallback(() => {
-    navigation.navigate("SendSummary", {
+    const { currentNavigation } = route.params;
+    navigate(currentNavigation, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction: bridge.updateTransaction(transaction, { gasPrice }),
     });
-  }, [account, gasPrice, navigation, parentAccount, bridge, transaction]);
+  }, [
+    route.params,
+    navigate,
+    account.id,
+    parentAccount,
+    bridge,
+    transaction,
+    gasPrice,
+  ]);
 
   const { networkInfo } = transaction;
   if (!networkInfo) return null;
@@ -102,7 +127,7 @@ const EditFeeUnitEthereum = ({
           alignedTop
         >
           <LText
-            tertiary
+            semiBold
             style={[
               styles.currencyUnitText,
               { color: colors.live, marginLeft: 8 },
@@ -118,17 +143,18 @@ const EditFeeUnitEthereum = ({
           <GasSlider
             defaultGas={serverGas}
             value={gasPrice}
+            range={range}
             onChange={onChangeF}
           />
           <View style={styles.textContainer}>
             <LText
-              tertiary
+              semiBold
               style={[styles.currencyUnitText, { color: colors.grey }]}
             >
               {t("common.slow")}
             </LText>
             <LText
-              tertiary
+              semiBold
               style={[styles.currencyUnitText, { color: colors.grey }]}
             >
               {t("common.fast")}
@@ -148,9 +174,7 @@ const EditFeeUnitEthereum = ({
       </View>
     </View>
   );
-};
-
-export default translate()(EditFeeUnitEthereum);
+}
 
 const styles = StyleSheet.create({
   root: {

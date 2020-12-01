@@ -4,12 +4,12 @@ import React, { Component } from "react";
 import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose } from "redux";
-import db from "../db";
-import CounterValues from "../countervalues";
+import { getAccounts, getSettings, getBle } from "../db";
 import reducers from "../reducers";
 import { importSettings } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
+import { INITIAL_STATE, supportedCountervalues } from "../reducers/settings";
 
 const createLedgerStore = () =>
   createStore(
@@ -51,17 +51,23 @@ export default class LedgerStoreProvider extends Component<
   async init() {
     const { store } = this.state;
 
-    const bleData = await db.get("ble");
+    const bleData = await getBle();
     store.dispatch(importBle(bleData));
 
-    const settingsData = await db.get("settings");
+    const settingsData = await getSettings();
+    if (
+      settingsData &&
+      settingsData.counterValue &&
+      !supportedCountervalues.find(
+        ({ ticker }) => ticker === settingsData.counterValue,
+      )
+    ) {
+      settingsData.counterValue = INITIAL_STATE.counterValue;
+    }
     store.dispatch(importSettings(settingsData));
 
-    const accountsData = await db.get("accounts");
+    const accountsData = await getAccounts();
     store.dispatch(importAccounts(accountsData));
-
-    const countervaluesData = await db.get("countervalues");
-    store.dispatch(CounterValues.importAction(countervaluesData));
 
     this.setState({ ready: true }, () => {
       this.props.onInitFinished();

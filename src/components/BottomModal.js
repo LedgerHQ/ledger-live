@@ -3,7 +3,7 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
-
+import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import colors from "../colors";
@@ -13,12 +13,14 @@ import DebugRejectSwitch from "./DebugRejectSwitch";
 
 export type Props = {
   id?: string,
-  isOpened: boolean,
-  onClose: () => *,
+  isOpened?: boolean,
+  onClose?: () => void,
+  onModalHide?: () => void,
   children?: *,
-  style?: *,
+  style?: ViewStyleProp,
   preventBackdropClick?: boolean,
-  containerStyle?: *,
+  containerStyle?: ViewStyleProp,
+  styles?: ViewStyleProp,
 };
 
 // Add some extra padding at the bottom of the modal
@@ -38,6 +40,7 @@ const BottomModal = ({
   preventBackdropClick,
   id,
   containerStyle,
+  styles: propStyles,
   ...rest
 }: Props) => {
   const backDropProps = preventBackdropClick
@@ -50,14 +53,14 @@ const BottomModal = ({
   return (
     <ButtonUseTouchable.Provider value={true}>
       <ReactNativeModal
+        {...rest}
+        {...backDropProps}
         isVisible={isOpened}
         deviceWidth={width}
         deviceHeight={height}
         useNativeDriver
         hideModalContentWhileAnimating
-        style={styles.root}
-        {...backDropProps}
-        {...rest}
+        style={[styles.root, propStyles || {}]}
       >
         <View style={[styles.modal, containerStyle]}>
           <View style={style}>

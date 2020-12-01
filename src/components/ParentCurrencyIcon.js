@@ -34,7 +34,10 @@ export default class ParentCurrencyIcon extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   tokenIconWrapper: {
-    marginLeft: 3,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignContent: "center",
+    marginLeft: 0,
     marginTop: -6,
     borderWidth: 2,
     borderColor: colors.white,

@@ -56,6 +56,11 @@ buck-out/
 **/fastlane/metadata
 **/fastlane/**.md
 **/fastlane/Appfile
+**/fastlane/Matchfile
+**/fastlane/certs
+**/fastlane/**,
+**/fastlane/**}
+
 
 # Bundle artifact
 *.jsbundle
@@ -74,6 +79,8 @@ buck-out/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.yalc/*
+yalc.lock
 
 third-party/
 

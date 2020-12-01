@@ -2,14 +2,14 @@
 import React, { PureComponent } from "react";
 import { AppState } from "react-native";
 import { connect } from "react-redux";
-import { translate } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
 import type { Privacy } from "../../reducers/settings";
 import AuthScreen from "./AuthScreen";
-import RequestBiometricModal from "../../components/RequestBiometricModal";
+import RequestBiometricAuth from "../../components/RequestBiometricAuth";
 
 const mapStateToProps = createStructuredSelector({
   privacy: privacySelector,
@@ -103,10 +103,6 @@ class AuthPass extends PureComponent<Props, State> {
     });
   };
 
-  onCancel = () => {
-    this.setState({ authModalOpen: false });
-  };
-
   // lock the app
   lock = () => {
     if (!this.props.privacy || this.state.skipLockCount) return;
@@ -142,11 +138,10 @@ class AuthPass extends PureComponent<Props, State> {
             lock={this.lock}
             unlock={this.unlock}
           />
-          <RequestBiometricModal
-            isVisible={authModalOpen}
+          <RequestBiometricAuth
+            disabled={!authModalOpen}
             onSuccess={this.onSuccess}
             onError={this.onError}
-            onCancel={this.onCancel}
           />
         </>
       );
@@ -159,4 +154,4 @@ class AuthPass extends PureComponent<Props, State> {
   }
 }
 
-export default translate()(connect(mapStateToProps)(AuthPass));
+export default withTranslation()(connect(mapStateToProps)(AuthPass));

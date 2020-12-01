@@ -1,7 +1,7 @@
 // @flow
 
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
@@ -21,10 +21,12 @@ import FormatDate from "./FormatDate";
 import type { Item } from "./Graph/types";
 import Graph from "./Graph";
 import Pills from "./Pills";
+import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
+import DiscreetModeButton from "./DiscreetModeButton";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
@@ -129,44 +131,50 @@ class GraphCardHeader extends PureComponent<{
     const item = hoveredItem || to;
 
     return (
-      <Fragment>
-        <View style={styles.balanceTextContainer}>
-          {isLoading ? (
-            <Placeholder width={228} containerHeight={27} />
-          ) : renderTitle ? (
-            renderTitle({ counterValueUnit: unit, item })
-          ) : (
-            <LText tertiary style={styles.balanceText}>
-              <CurrencyUnitValue unit={unit} value={item.value} />
-            </LText>
-          )}
+      <View style={styles.graphHeader}>
+        <View style={styles.graphHeaderBalance}>
+          <View style={styles.balanceTextContainer}>
+            <View style={styles.warningWrapper}>
+              {isLoading ? (
+                <Placeholder width={228} containerHeight={27} />
+              ) : renderTitle ? (
+                renderTitle({ counterValueUnit: unit, item })
+              ) : (
+                <LText semiBold style={styles.balanceText}>
+                  <CurrencyUnitValue unit={unit} value={item.value} />
+                </LText>
+              )}
+              <TransactionsPendingConfirmationWarning />
+            </View>
+          </View>
+          <View style={styles.subtitleContainer}>
+            {isLoading ? (
+              <>
+                <Placeholder
+                  width={50}
+                  containerHeight={19}
+                  style={{ marginRight: 10 }}
+                />
+                <Placeholder width={50} containerHeight={19} />
+              </>
+            ) : hoveredItem ? (
+              <LText>
+                <FormatDate date={hoveredItem.date} />
+              </LText>
+            ) : (
+              <View style={styles.delta}>
+                <Delta
+                  percent
+                  valueChange={valueChange}
+                  style={styles.deltaPercent}
+                />
+                <Delta valueChange={valueChange} unit={unit} />
+              </View>
+            )}
+          </View>
         </View>
-        <View style={styles.subtitleContainer}>
-          {isLoading ? (
-            <Fragment>
-              <Placeholder
-                width={50}
-                containerHeight={19}
-                style={{ marginRight: 10 }}
-              />
-              <Placeholder width={50} containerHeight={19} />
-            </Fragment>
-          ) : hoveredItem ? (
-            <LText>
-              <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
-            </LText>
-          ) : (
-            <Fragment>
-              <Delta
-                percent
-                valueChange={valueChange}
-                style={styles.deltaPercent}
-              />
-              <Delta valueChange={valueChange} unit={unit} />
-            </Fragment>
-          )}
-        </View>
-      </Fragment>
+        <DiscreetModeButton />
+      </View>
     );
   }
 }
@@ -197,6 +205,7 @@ const styles = StyleSheet.create({
   balanceText: {
     fontSize: 22,
     color: colors.darkBlue,
+    lineHeight: 24,
   },
   subtitleContainer: {
     flexDirection: "row",
@@ -209,13 +218,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   deltaPercent: {
-    marginRight: 20,
+    marginRight: 8,
+  },
+  warningWrapper: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  graphHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingHorizontal: 16,
+    flexWrap: "nowrap",
+  },
+  graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
+  delta: {
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
 });
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-)(GraphCard);
+export default compose(connect(null, mapDispatchToProps))(GraphCard);

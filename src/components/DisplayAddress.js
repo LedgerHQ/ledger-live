@@ -20,7 +20,7 @@ class DisplayAddress extends PureComponent<Props> {
     const { address, verified } = this.props;
     return (
       <View style={[styles.container, verified ? styles.verified : undefined]}>
-        <LText numberOfLines={2} bold style={styles.text} selectable>
+        <LText bold style={styles.text} selectable>
           {address}
         </LText>
       </View>

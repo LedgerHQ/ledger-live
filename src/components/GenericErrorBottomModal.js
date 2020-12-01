@@ -6,21 +6,24 @@ import colors from "../colors";
 import Touchable from "./Touchable";
 import Close from "../icons/Close";
 import BottomModal from "./BottomModal";
+import type { Props as BottomModalProps } from "./BottomModal";
 import GenericErrorView from "./GenericErrorView";
 
-class GenericErrorBottomModal extends PureComponent<{
+type Props = BottomModalProps & {
   error: ?Error,
   onClose?: () => void,
   footerButtons?: React$Node,
-}> {
+};
+
+class GenericErrorBottomModal extends PureComponent<Props> {
   render() {
     const { error, onClose, footerButtons, ...otherProps } = this.props;
     return (
       <BottomModal
+        {...otherProps}
         id="ErrorModal"
         isOpened={!!error}
         onClose={onClose}
-        {...otherProps}
       >
         {error ? (
           <View style={styles.root}>

@@ -1,13 +1,16 @@
 // @flow
 import React from "react";
-import { withNavigation } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
+import { ScreenName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
 
-const OpenLottie = ({ navigation }: { navigation: * }) => (
-  <SettingsRow
-    title="Debug Lottie"
-    onPress={() => navigation.navigate("DebugLottie")}
-  />
-);
+export default function OpenLottie() {
+  const navigation = useNavigation();
 
-export default withNavigation(OpenLottie);
+  return (
+    <SettingsRow
+      title="Debug Lottie"
+      onPress={() => navigation.navigate(ScreenName.DebugLottie)}
+    />
+  );
+}

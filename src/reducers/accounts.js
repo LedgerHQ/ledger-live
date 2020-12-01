@@ -2,16 +2,25 @@
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import uniq from "lodash/uniq";
-import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
+import type { OutputSelector } from "reselect";
+import type {
+  Account,
+  AccountLike,
+  CryptoCurrency,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
 import {
   addAccounts,
   canBeMigrated,
   flattenAccounts,
   getAccountCurrency,
   importAccountsReduce,
+  isUpToDateAccount,
+  withoutToken,
+  clearAccount,
 } from "@ledgerhq/live-common/lib/account";
+import type { State } from "./index.js";
 import accountModel from "../logic/accountModel";
-import { UP_TO_DATE_THRESHOLD } from "../constants";
 
 export type AccountsState = {
   active: Account[],
@@ -68,12 +77,16 @@ const handlers: Object = {
   }),
 
   CLEAN_CACHE: (state: AccountsState): AccountsState => ({
-    active: state.active.map(account => ({
-      ...account,
-      lastSyncDate: new Date(0),
-      operations: [],
-      pendingOperations: [],
-    })),
+    active: state.active.map(clearAccount),
+  }),
+
+  BLACKLIST_TOKEN: (
+    state: AccountsState,
+    { payload: tokenId }: { payload: string },
+  ) => ({ active: state.active.map(a => withoutToken(a, tokenId)) }),
+
+  DANGEROUSLY_OVERRIDE_STATE: (state: AccountsState): AccountsState => ({
+    ...state,
   }),
 };
 
@@ -114,12 +127,10 @@ export const someAccountsNeedMigrationSelector = createSelector(
 );
 
 // $FlowFixMe
-export const currenciesSelector = createSelector(
-  accountsSelector,
-  accounts =>
-    uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort(
-      (a, b) => a.name.localeCompare(b.name),
-    ),
+export const currenciesSelector = createSelector(accountsSelector, accounts =>
+  uniq(flattenAccounts(accounts).map(a => getAccountCurrency(a))).sort((a, b) =>
+    a.name.localeCompare(b.name),
+  ),
 );
 
 // $FlowFixMe
@@ -139,49 +150,78 @@ export const accountSelector = createSelector(
 );
 
 // $FlowFixMe
-export const accountScreenSelector = createSelector(
-  // DEPRECATED
+export const parentAccountSelector = createSelector(
   accountsSelector,
-  (_, { navigation }) => navigation.state.params.accountId,
+  (_, { account }) => (account ? account.parentId : null),
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 
-// FIXME rename to accountScreenSeelctor
-export const accountAndParentScreenSelector = (state: *, { navigation }: *) => {
-  const { accountId, parentId } = navigation.state.params;
+export const accountScreenSelector = (route: any) => (state: any) => {
+  const { accountId, parentId } = route.params;
   const parentAccount: ?Account =
     parentId && accountSelector(state, { accountId: parentId });
-  let account: ?AccountLike;
-  if (parentAccount) {
-    const { subAccounts } = parentAccount;
-    if (subAccounts) {
-      account = subAccounts.find(t => t.id === accountId);
+  let account: ?AccountLike = route.params.account;
+
+  if (!account) {
+    if (parentAccount) {
+      const { subAccounts } = parentAccount;
+      if (subAccounts) {
+        account = subAccounts.find(t => t.id === accountId);
+      }
+    } else {
+      account = accountSelector(state, { accountId });
     }
-  } else {
-    account = accountSelector(state, { accountId });
   }
+
   return { parentAccount, account };
 };
 
-const isUpToDateAccount = a => {
-  const { lastSyncDate } = a;
-  const { blockAvgTime } = a.currency;
-  const outdated =
-    Date.now() - (lastSyncDate || 0) >
-    (blockAvgTime || 0) * 1000 + UP_TO_DATE_THRESHOLD;
-  return !outdated;
-};
-
 // $FlowFixMe
-export const isUpToDateAccountSelector = createSelector(
-  accountSelector,
-  isUpToDateAccount,
+export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
+  accounts.every(isUpToDateAccount),
 );
 
-// $FlowFixMe
-export const isUpToDateSelector = createSelector(
+export const subAccountByCurrencyOrderedSelector: OutputSelector<
+  State,
+  { currency: CryptoCurrency | TokenCurrency },
+  Array<{ parentAccount: ?Account, account: AccountLike }>,
+> = createSelector(
   accountsSelector,
-  accounts => accounts.every(isUpToDateAccount),
+  (_, { currency }: { currency: CryptoCurrency | TokenCurrency }) => currency,
+  (accounts, currency) => {
+    const flatAccounts = flattenAccounts(accounts);
+    return flatAccounts
+      .filter(
+        (account: AccountLike) =>
+          (account.type === "TokenAccount"
+            ? account.token.id
+            : account.currency.id) === currency.id,
+      )
+      .map((account: AccountLike) => ({
+        account,
+        parentAccount:
+          account.type === "TokenAccount" && account.parentId
+            ? accounts.find(
+                fa => fa.type === "Account" && fa.id === account.parentId,
+              )
+            : {},
+      }))
+      .sort((a: { account: AccountLike }, b: { account: AccountLike }) =>
+        a.account.balance.gt(b.account.balance)
+          ? -1
+          : a.account.balance.eq(b.account.balance)
+          ? 0
+          : 1,
+      );
+  },
 );
+
+export const subAccountByCurrencyOrderedScreenSelector = (route: any) => (
+  state: any,
+) => {
+  const currency = route?.params?.currency || {};
+  if (!currency) return [];
+  return subAccountByCurrencyOrderedSelector(state, { currency });
+};
 
 export default handleActions(handlers, initialState);

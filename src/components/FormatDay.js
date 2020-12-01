@@ -1,8 +1,7 @@
 // @flow
 import { Component } from "react";
 import i18next from "i18next";
-import format from "date-fns/format";
-import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
+import { format, differenceInCalendarDays } from "date-fns";
 import compareDate from "../logic/compareDate";
 
 type Props = {
@@ -25,7 +24,7 @@ class FormatDay extends Component<Props> {
         : dayDiff === 1
         ? ` - ${i18next.t("common.yesterday")}`
         : "";
-    return `${format(day, "MMMM DD, YYYY")}${suffix}`;
+    return `${format(day, "MMMM dd, yyyy")}${suffix}`;
   }
 }
 

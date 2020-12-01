@@ -2,42 +2,41 @@
 import React from "react";
 import sample from "lodash/sample";
 import { genAccount } from "@ledgerhq/live-common/lib/mock/account";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
 import SettingsRow from "../../../components/SettingsRow";
 import accountModel from "../../../logic/accountModel";
-import db from "../../../db";
-import { withReboot } from "../../../context/Reboot";
-import { listCryptoCurrencies } from "../../../cryptocurrencies";
+import { saveAccounts } from "../../../db";
+import { useReboot } from "../../../context/Reboot";
 
 async function injectMockAccountsInDB(count) {
-  await db.save("accounts", {
+  await saveAccounts({
     active: Array(count)
       .fill(null)
       .map(() =>
         accountModel.encode(
           genAccount(String(Math.random()), {
-            currency: sample(listCryptoCurrencies()),
+            currency: sample(listSupportedCurrencies()),
           }),
         ),
       ),
   });
 }
 
-const GenerateMockAccountsButton = ({
-  reboot,
+export default function GenerateMockAccountsButton({
   count,
   title,
 }: {
   title: string,
   count: number,
-  reboot: *,
-}) => (
-  <SettingsRow
-    title={title}
-    onPress={async () => {
-      await injectMockAccountsInDB(count);
-      reboot();
-    }}
-  />
-);
-
-export default withReboot(GenerateMockAccountsButton);
+}) {
+  const reboot = useReboot();
+  return (
+    <SettingsRow
+      title={title}
+      onPress={async () => {
+        await injectMockAccountsInDB(count);
+        reboot();
+      }}
+    />
+  );
+}

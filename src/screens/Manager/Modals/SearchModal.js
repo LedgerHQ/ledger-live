@@ -1,34 +1,26 @@
 import React, { useState, useMemo, useCallback, useRef } from "react";
-import {
-  View,
-  StyleSheet,
-  Platform,
-  VirtualizedList,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, Platform, VirtualizedList } from "react-native";
 import ReactNativeModal from "react-native-modal";
-
-import i18next from "i18next";
-import { Trans } from "react-i18next";
-
+import { Trans, useTranslation } from "react-i18next";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
-
 import { listTokens } from "@ledgerhq/live-common/lib/currencies";
+import { useDispatch, useSelector } from "react-redux";
+import { installAppFirstTime } from "../../../actions/settings";
+import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 
 import Button from "../../../components/Button";
-
 import SearchIcon from "../../../icons/Search";
 import NoResults from "../../../icons/NoResults";
 import colors from "../../../colors";
+import { NavigatorName } from "../../../const";
 import TextInput from "../../../components/TextInput";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
+import NavigationScrollView from "../../../components/NavigationScrollView";
 import Styles from "../../../navigation/styles";
-
 import AppRow from "../AppsList/AppRow";
-
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import AppIcon from "../AppsList/AppIcon";
 
@@ -81,22 +73,19 @@ const Placeholder = ({
   ]);
 
   return found && parent ? (
-    <ScrollView>
+    <NavigationScrollView>
       <View style={styles.noResult}>
         <View style={styles.placeholderIcon}>
           <AppIcon icon={parent.icon} size={60} />
         </View>
-        {!parentInstalled && (
-          <LText semiBold style={styles.noResultText}>
-            <Trans
-              i18nKey="manager.noAppNeededForToken"
-              values={{
-                appName: parent.name,
-                tokenName: `${found.name} (${found.ticker})`,
-              }}
-            />
-          </LText>
-        )}
+        <LText semiBold style={styles.noResultText}>
+          <Trans
+            i18nKey="manager.noAppNeededForToken"
+            values={{
+              tokenType: found.tokenType.toUpperCase(),
+            }}
+          />
+        </LText>
         <LText style={styles.noResultDesc}>
           <Trans
             i18nKey={
@@ -138,7 +127,7 @@ const Placeholder = ({
           />
         </View>
       </View>
-    </ScrollView>
+    </NavigationScrollView>
   ) : (
     <View style={styles.noResult}>
       <View style={styles.noResultIcon}>
@@ -163,8 +152,8 @@ type Props = {
   disabled: boolean,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
-  currentProgress: *,
   navigation: *,
+  searchQuery?: string,
 };
 
 export default ({
@@ -175,14 +164,19 @@ export default ({
   disabled,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
-  currentProgress,
   navigation,
+  searchQuery,
 }: Props) => {
+  const { t } = useTranslation();
   const textInput = useRef();
   const listRef = useRef();
-  const [isOpened, setIsOpen] = useState(false);
+  const reduxDispatch = useDispatch();
+  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
+  const [isOpened, setIsOpen] = useState(!!searchQuery);
   const [depInstall, setDepsInstall] = useState();
   const [depUninstall, setDepsUninstall] = useState();
+  const [query, setQuery] = useState(searchQuery || null);
+
   const openSearchModal = useCallback(() => {
     setQuery("");
     setIsOpen(true);
@@ -208,7 +202,6 @@ export default ({
     setAppUninstallWithDependencies,
   ]);
 
-  const [query, setQuery] = useState(null);
   const clear = useCallback(() => setQuery(""), [setQuery]);
 
   const filterOptions: FilterOptions = useMemo(
@@ -227,16 +220,19 @@ export default ({
   );
 
   const addAccount = useCallback(() => {
-    navigation.navigate("AddAccounts");
+    navigation.navigate(NavigatorName.AddAccounts);
     setIsOpen(false);
   }, [navigation]);
 
   const onInstall = useCallback(
     name => {
+      if (!hasInstalledAnyApp) {
+        reduxDispatch(installAppFirstTime(true));
+      }
       dispatch({ type: "install", name });
       setIsOpen(false);
     },
-    [dispatch],
+    [dispatch, reduxDispatch, hasInstalledAnyApp],
   );
 
   const NoResult = useMemo(
@@ -271,24 +267,18 @@ export default ({
         animation={false}
         setAppInstallWithDependencies={closeSearchModal}
         setAppUninstallWithDependencies={closeSearchModal}
-        currentProgress={
-          (currentProgress &&
-            currentProgress.appOp.name === item.name &&
-            currentProgress.progress) ||
-          0
-        }
       />
     ),
-    [state, dispatch, isInstalledView, closeSearchModal, currentProgress],
+    [state, dispatch, isInstalledView, closeSearchModal],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
 
   const placeholder = useMemo(
     () =>
       !isInstalledView
-        ? i18next.t("manager.appList.searchAppsCatalog")
-        : i18next.t("manager.appList.searchAppsInstalled"),
-    [isInstalledView],
+        ? t("manager.appList.searchAppsCatalog")
+        : t("manager.appList.searchAppsInstalled"),
+    [isInstalledView, t],
   );
 
   /** use this on modal show instead of textinput autofocus since we have to wait for the modal to be visible before focusing */

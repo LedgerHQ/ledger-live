@@ -1,50 +1,29 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
-import { connect } from "react-redux";
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { Switch } from "react-native";
-import { createStructuredSelector } from "reselect";
 import SettingsRow from "../../../components/SettingsRow";
 import { setExperimentalUSBSupport } from "../../../actions/settings";
 import { experimentalUSBEnabledSelector } from "../../../reducers/settings";
 
-type Props = {
-  experimentalUSBEnabled: boolean,
-  setExperimentalUSBSupport: boolean => void,
-};
+export default function ConfigUSBDeviceSupport() {
+  const dispatch = useDispatch();
+  const experimentalUSBEnabled = useSelector(experimentalUSBEnabledSelector);
 
-type State = {
-  isActive: boolean,
-};
-
-const mapStateToProps = createStructuredSelector({
-  experimentalUSBEnabled: experimentalUSBEnabledSelector,
-});
-
-const mapDispatchToProps = {
-  setExperimentalUSBSupport,
-};
-
-class ConfigUSBDeviceSupport extends PureComponent<Props, State> {
-  render() {
-    const { experimentalUSBEnabled, setExperimentalUSBSupport } = this.props;
-    return (
-      <Fragment>
-        <SettingsRow
-          title="Enable Experimental USB Support"
-          onPress={null}
-          alignedTop
-        >
-          <Switch
-            value={experimentalUSBEnabled}
-            onValueChange={setExperimentalUSBSupport}
-          />
-        </SettingsRow>
-      </Fragment>
-    );
-  }
+  return (
+    <>
+      <SettingsRow
+        title="Enable Experimental USB Support"
+        onPress={null}
+        alignedTop
+      >
+        <Switch
+          value={experimentalUSBEnabled}
+          onValueChange={(...args) =>
+            dispatch(setExperimentalUSBSupport(...args))
+          }
+        />
+      </SettingsRow>
+    </>
+  );
 }
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ConfigUSBDeviceSupport);

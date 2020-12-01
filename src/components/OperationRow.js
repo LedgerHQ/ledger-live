@@ -1,9 +1,11 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
+import { useNavigation } from "@react-navigation/native";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/lib/operation";
 import {
+  getMainAccount,
   getAccountCurrency,
   getAccountName,
   getAccountUnit,
@@ -22,15 +24,17 @@ import CounterValue from "./CounterValue";
 
 import OperationIcon from "./OperationIcon";
 import colors from "../colors";
+import { ScreenName } from "../const";
 import OperationRowDate from "./OperationRowDate";
 import LiveLogo from "../icons/LiveLogoIcon";
 import Spinning from "./Spinning";
+
+import perFamilyOperationDetails from "../generated/operationDetails";
 
 type Props = {
   operation: Operation,
   parentAccount: ?Account,
   account: AccountLike,
-  navigation: *,
   multipleAccounts?: boolean,
   isLast: boolean,
   isSubOperation?: boolean,
@@ -41,101 +45,95 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
-class OperationRow extends PureComponent<Props, *> {
-  static defaultProps = {
-    displayCurrencyLogo: false,
-  };
+export default function OperationRow({
+  account,
+  parentAccount,
+  operation,
+  isSubOperation,
+  multipleAccounts,
+  isLast,
+}: Props) {
+  const navigation = useNavigation();
 
-  goToOperationDetails = debounce(() => {
-    const {
-      navigation,
-      account,
-      parentAccount,
-      operation,
-      isSubOperation,
-    } = this.props;
-    const params = {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
-      operation, // FIXME we should pass a operationId instead because data can changes over time.
-      isSubOperation,
-      key: operation.id,
-    };
+  const goToOperationDetails = debounce(() => {
+    const params = [
+      ScreenName.OperationDetails,
+      {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+        operation, // FIXME we should pass a operationId instead because data can changes over time.
+        isSubOperation,
+        key: operation.id,
+      },
+    ];
 
-    navigation.push("OperationDetails", params);
+    /** if suboperation push to stack navigation else we simply navigate */
+    if (isSubOperation) navigation.push(...params);
+    else navigation.navigate(...params);
   }, 300);
 
-  render() {
-    const {
-      operation,
-      account,
-      parentAccount,
-      multipleAccounts,
-      isLast,
-    } = this.props;
-    const amount = getOperationAmountNumber(operation);
-    const valueColor = amount.isNegative() ? colors.darkBlue : colors.green;
+  const renderAmountCellExtra = useCallback(() => {
+    const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
+    const specific = mainAccount.currency.family
+      ? perFamilyOperationDetails[mainAccount.currency.family]
+      : null;
 
-    const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
+    const SpecificAmountCell =
+      specific && specific.amountCell
+        ? specific.amountCell[operation.type]
+        : null;
 
-    const isOptimistic = operation.blockHeight === null;
-    const spinner = (
-      <View
-        style={{
-          height: 14,
-          marginRight: 4,
-          justifyContent: "center",
-        }}
-      >
-        <Spinning>
-          <LiveLogo color={colors.grey} size={10} />
-        </Spinning>
-      </View>
-    );
+    return SpecificAmountCell ? (
+      <SpecificAmountCell
+        operation={operation}
+        unit={unit}
+        currency={currency}
+      />
+    ) : null;
+  }, [account, parentAccount, operation]);
 
-    return (
-      <View style={[styles.root, isLast ? styles.last : null]}>
-        <TouchableOpacity
-          onPress={this.goToOperationDetails}
-          style={styles.button}
-        >
-          <View style={isOptimistic ? styles.optimistic : null}>
-            <OperationIcon
-              size={40}
-              operation={operation}
-              account={account}
-              parentAccount={parentAccount}
-            />
-          </View>
-          <View
-            style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}
-          >
-            <View style={styles.body}>
-              <LText
-                numberOfLines={1}
-                semiBold
-                style={[styles.bodyLeft, styles.topRow]}
-              >
-                {multipleAccounts ? getAccountName(account) : text}
-              </LText>
-              <LText
-                tertiary
-                numberOfLines={1}
-                style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
-              >
-                <CurrencyUnitValue
-                  showCode
-                  unit={unit}
-                  value={amount}
-                  alwaysShowSign
-                />
-              </LText>
-            </View>
-            <View style={styles.body}>
-              {isOptimistic && spinner}
-              {isOptimistic ? (
+  const amount = getOperationAmountNumber(operation);
+  const valueColor = amount.isNegative() ? colors.darkBlue : colors.green;
+  const currency = getAccountCurrency(account);
+  const unit = getAccountUnit(account);
+
+  const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
+  const isOptimistic = operation.blockHeight === null;
+  const spinner = (
+    <View style={styles.spinner}>
+      <Spinning>
+        <LiveLogo color={colors.grey} size={10} />
+      </Spinning>
+    </View>
+  );
+
+  return (
+    <View style={[styles.root, isLast ? styles.last : null]}>
+      <TouchableOpacity onPress={goToOperationDetails} style={styles.button}>
+        <View style={isOptimistic ? styles.optimistic : null}>
+          <OperationIcon
+            size={40}
+            operation={operation}
+            account={account}
+            parentAccount={parentAccount}
+          />
+        </View>
+
+        <View style={[styles.wrapper, isOptimistic ? styles.optimistic : null]}>
+          <View style={styles.bodyLeft}>
+            <LText
+              numberOfLines={1}
+              semiBold
+              style={[styles.bodyLeft, styles.topRow]}
+            >
+              {multipleAccounts ? getAccountName(account) : text}
+            </LText>
+
+            {isOptimistic ? (
+              <View style={styles.optimisticRow}>
+                {spinner}
                 <LText
                   numberOfLines={1}
                   style={[styles.bodyLeft, styles.bottomRow]}
@@ -148,41 +146,53 @@ class OperationRow extends PureComponent<Props, *> {
                     }
                   />
                 </LText>
-              ) : (
-                <LText
-                  numberOfLines={1}
-                  style={[styles.bodyLeft, styles.bottomRow]}
-                >
-                  {text} <OperationRowDate date={operation.date} />
-                </LText>
-              )}
-              <View style={styles.bodyRight}>
-                <CounterValue
+              </View>
+            ) : (
+              <LText numberOfLines={1} style={[styles.bottomRow]}>
+                {text} <OperationRowDate date={operation.date} />
+              </LText>
+            )}
+          </View>
+
+          <View style={styles.bodyRight}>{renderAmountCellExtra()}</View>
+
+          {amount.isZero() ? null : (
+            <View style={styles.bodyRight}>
+              <LText
+                semiBold
+                numberOfLines={1}
+                style={[styles.bodyRight, styles.topRow, { color: valueColor }]}
+              >
+                <CurrencyUnitValue
                   showCode
-                  date={operation.date}
-                  currency={currency}
+                  unit={unit}
                   value={amount}
                   alwaysShowSign
-                  withPlaceholder
-                  placeholderProps={placeholderProps}
-                  Wrapper={OpCounterValue}
                 />
-              </View>
+              </LText>
+              <CounterValue
+                showCode
+                date={operation.date}
+                currency={currency}
+                value={amount}
+                alwaysShowSign
+                withPlaceholder
+                placeholderProps={placeholderProps}
+                Wrapper={OpCounterValue}
+              />
             </View>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+          )}
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
-const OpCounterValue = ({ children }: { children: * }) => (
-  <LText tertiary numberOfLines={1} style={styles.bottomRow}>
+const OpCounterValue = ({ children }: { children: React$Node }) => (
+  <LText semiBold numberOfLines={1} style={styles.bottomRow}>
     {children}
   </LText>
 );
-
-export default OperationRow;
 
 const styles = StyleSheet.create({
   root: {
@@ -203,34 +213,49 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginLeft: 16,
     marginRight: 10,
   },
   body: {
-    alignItems: "center",
-    flexDirection: "row",
+    alignItems: "flex-start",
+    flexDirection: "column",
+    justifyContent: "flex-start",
     flex: 1,
   },
   topRow: {
     color: colors.darkBlue,
     fontSize: 14,
-    marginBottom: 2,
+    flex: 1,
   },
   bottomRow: {
     color: colors.grey,
     fontSize: 14,
+    flex: 1,
   },
+  optimisticRow: { flexDirection: "row", alignItems: "center" },
   optimistic: {
     opacity: 0.5,
   },
   bodyLeft: {
+    alignItems: "flex-start",
+    flexDirection: "column",
+    justifyContent: "flex-start",
     flexGrow: 1,
     flexShrink: 1,
   },
   bodyRight: {
-    paddingLeft: 4,
-    height: 20,
     alignItems: "flex-end",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    flexShrink: 0,
+    paddingLeft: 6,
+  },
+  spinner: {
+    height: 14,
+    marginRight: 4,
+    justifyContent: "center",
   },
 });

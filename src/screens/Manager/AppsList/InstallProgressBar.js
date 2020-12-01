@@ -8,6 +8,7 @@ import { isLiveSupportedApp } from "@ledgerhq/live-common/lib/apps/logic";
 import { urls } from "../../../config/urls";
 
 import colors from "../../../colors";
+import { NavigatorName } from "../../../const";
 import Styles from "../../../navigation/styles";
 import ToastBar from "../../../components/ToastBar";
 
@@ -28,7 +29,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   } = state;
 
   const onAddAccount = useCallback(() => {
-    navigation.navigate("AddAccounts");
+    navigation.navigate(NavigatorName.AddAccounts);
     setHasBeenShown(true);
   }, [navigation]);
 

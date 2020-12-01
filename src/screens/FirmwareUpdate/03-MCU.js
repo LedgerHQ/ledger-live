@@ -1,32 +1,29 @@
 /* @flow */
-/* eslint-disable no-console */
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import type { NavigationStackProp } from "react-navigation-stack";
-import { translate, Trans } from "react-i18next";
+import SafeAreaView from "react-native-safe-area-view";
+import { Trans } from "react-i18next";
 import firmwareUpdateMain from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main";
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import logger from "../../logger";
 import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
-import StepHeader from "../../components/StepHeader";
 import { BulletItem } from "../../components/BulletList";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "../../components/Installing";
 
 const forceInset = { bottom: "always" };
 
-type Navigation = NavigationStackProp<{
-  params: {
-    deviceId: string,
-    firmware: FirmwareUpdateContext,
-  },
-}>;
-
 type Props = {
-  navigation: Navigation,
+  navigation: any,
+  route: { params: RouteParams },
+};
+
+type RouteParams = {
+  deviceId: string,
+  firmware: FirmwareUpdateContext,
 };
 
 type State = {
@@ -34,17 +31,7 @@ type State = {
   progress: number,
 };
 
-class FirmwareUpdateMCU extends Component<Props, State> {
-  static navigationOptions = {
-    headerLeft: null,
-    headerTitle: (
-      <StepHeader
-        subtitle={<Trans i18nKey="FirmwareUpdate.title" />}
-        title={<Trans i18nKey="FirmwareUpdateMCU.title" />}
-      />
-    ),
-  };
-
+export default class FirmwareUpdateMCU extends Component<Props, State> {
   state = {
     installing: null,
     progress: 0,
@@ -53,9 +40,8 @@ class FirmwareUpdateMCU extends Component<Props, State> {
   sub: *;
 
   async componentDidMount() {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
-    const firmware = navigation.getParam("firmware");
+    const { navigation, route } = this.props;
+    const { deviceId, firmware } = this.props.route.params || {};
 
     this.sub = firmwareUpdateMain(deviceId, firmware).subscribe({
       next: patch => {
@@ -63,16 +49,17 @@ class FirmwareUpdateMCU extends Component<Props, State> {
       },
       complete: () => {
         if (navigation.replace) {
-          navigation.replace("FirmwareUpdateConfirmation", {
-            ...navigation.state.params,
-          });
+          navigation.replace(
+            ScreenName.FirmwareUpdateConfirmation,
+            route.params,
+          );
         }
       },
       error: error => {
         logger.critical(error);
         if (navigation.replace) {
-          navigation.replace("FirmwareUpdateFailure", {
-            ...navigation.state.params,
+          navigation.replace(ScreenName.FirmwareUpdateFailure, {
+            ...route.params,
             error,
           });
         }
@@ -145,5 +132,3 @@ const styles = StyleSheet.create({
     marginVertical: 30,
   },
 });
-
-export default translate()(FirmwareUpdateMCU);

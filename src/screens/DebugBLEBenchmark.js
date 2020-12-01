@@ -9,19 +9,18 @@ import * as shape from "d3-shape";
 import * as scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import Svg, { Path } from "react-native-svg";
-import type { NavigationScreenProp } from "react-navigation";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import LText from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
 import colors from "../colors";
 
-type Props = {
+type GraphProps = {
   width: number,
   height: number,
   data: number[],
 };
 
-class Graph extends PureComponent<Props> {
+class Graph extends PureComponent<GraphProps> {
   render() {
     const { width, height, data } = this.props;
 
@@ -66,15 +65,18 @@ const benchmark = ({ inputAPDUSize, outputAPDUSize }) => {
 
 const speedStatusSize = 10;
 
+type Props = {
+  navigation: any,
+  route: { params: RouteParams },
+  device: any,
+};
+
+type RouteParams = {
+  deviceId: string,
+};
+
 class DebugBLEBenchmark extends Component<
-  {
-    navigation: NavigationScreenProp<{
-      params: {
-        deviceId: string,
-      },
-    }>,
-    device: *,
-  },
+  Props,
   {
     exchangeStats: [number, number][],
     speedStats: number[],
@@ -83,13 +85,8 @@ class DebugBLEBenchmark extends Component<
     error: ?Error,
   },
 > {
-  static navigationOptions = {
-    title: "Debug BLE Benchmark",
-  };
-
   state = {
     exchangeStats: [],
-    // $FlowFixMe
     speedStats: Array(speedStatusSize).fill(0),
     inputAPDUSize: 100,
     outputAPDUSize: 100,
@@ -116,8 +113,7 @@ class DebugBLEBenchmark extends Component<
     if (this.sub) {
       this.sub.unsubscribe();
     }
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
+    const deviceId = this.props.route.params?.deviceId;
     this.sub = withDevice(deviceId)(t => {
       const loop = () => {
         const input = benchmark(this.state);

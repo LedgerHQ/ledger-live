@@ -1,20 +1,28 @@
-import React, { memo } from "react";
-
-import { StyleSheet, View, Image } from "react-native";
+import React, { memo, useEffect, useState, useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { StyleSheet, View, Image, Linking } from "react-native";
 import { Trans } from "react-i18next";
+
 import type { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
+
+import manager from "@ledgerhq/live-common/lib/manager";
+
 import LText from "../../../components/LText";
+import Button from "../../../components/Button";
 import Genuine from "../../../icons/Genuine";
+import FirmwareUpdateModal from "../Modals/FirmwareUpdateModal";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import nanoS from "./images/nanoS.png";
 import nanoX from "./images/nanoX.png";
 import blue from "./images/blue.png";
 
+import { urls } from "../../../config/urls";
 import Card from "../../../components/Card";
 
 import colors from "../../../colors";
 import DeviceName from "./DeviceName";
+import { setAvailableUpdate } from "../../../actions/settings";
 
 const illustrations = {
   nanoS,
@@ -40,55 +48,113 @@ const DeviceCard = ({
   deviceInfo,
 }: Props) => {
   const { deviceModel } = state;
+  const [firmware, setFirmware] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const dispatch = useDispatch();
+
+  const open = useCallback(() => setOpenModal(true), [setOpenModal]);
+  const close = useCallback(() => setOpenModal(false), [setOpenModal]);
+  const openSupport = useCallback(() => Linking.openURL(urls.contact), []);
+
+  useEffect(() => {
+    async function getLatestFirmwareForDevice() {
+      const fw = await manager.getLatestFirmwareForDevice(deviceInfo);
+
+      if (fw) {
+        dispatch(setAvailableUpdate(true));
+        setFirmware(fw);
+      } else {
+        dispatch(setAvailableUpdate(false));
+        setFirmware(null);
+      }
+    }
+
+    getLatestFirmwareForDevice();
+  }, [deviceInfo, dispatch]);
+
+  const isDeprecated = manager.firmwareUnsupported(deviceModel.id, deviceInfo);
 
   return (
-    <Card style={styles.card}>
-      <View style={styles.deviceSection}>
-        <View style={styles.deviceImageContainer}>
-          <Image
-            style={styles.deviceImage}
-            source={illustrations[deviceModel.id]}
-            resizeMode="contain"
+    <>
+      <Card style={styles.card}>
+        {firmware ? (
+          <View style={styles.firmwareBanner}>
+            <LText primary semiBold style={styles.firmwareBannerText}>
+              <Trans
+                i18nKey="manager.firmware.latest"
+                values={{ version: firmware.final.name }}
+              />
+            </LText>
+            <View style={styles.firmwareBannerCTA}>
+              <Button
+                type="primary"
+                title={<Trans i18nKey="common.moreInfo" />}
+                onPress={open}
+              />
+            </View>
+          </View>
+        ) : isDeprecated ? (
+          <View style={styles.firmwareBanner}>
+            <LText primary semiBold style={styles.firmwareBannerText}>
+              <Trans i18nKey="manager.firmware.outdated" />
+            </LText>
+            <View style={styles.firmwareBannerCTA}>
+              <Button
+                type="primary"
+                title={<Trans i18nKey="common.contactUs" />}
+                onPress={openSupport}
+              />
+            </View>
+          </View>
+        ) : null}
+        <View style={styles.deviceSection}>
+          <View style={styles.deviceImageContainer}>
+            <Image
+              style={styles.deviceImage}
+              source={illustrations[deviceModel.id]}
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.deviceInfoContainer}>
+            <View style={styles.deviceNameContainer}>
+              <DeviceName
+                deviceId={deviceId}
+                deviceModel={deviceModel}
+                initialDeviceName={initialDeviceName}
+                disabled={blockNavigation}
+              />
+            </View>
+
+            <LText style={styles.deviceFirmware}>
+              <Trans
+                i18nKey="FirmwareVersionRow.subtitle"
+                values={{ version: deviceInfo.version }}
+              />
+            </LText>
+            <View style={styles.deviceCapacity}>
+              <LText style={styles.deviceFirmware}>
+                <Trans i18nKey="manager.storage.genuine" />
+              </LText>
+              <Genuine />
+            </View>
+          </View>
+        </View>
+        <View style={styles.separator} />
+        <View style={styles.storageSection}>
+          <DeviceAppStorage
+            distribution={distribution}
+            deviceModel={deviceModel}
           />
         </View>
-        <View style={styles.deviceInfoContainer}>
-          <View style={styles.deviceNameContainer}>
-            <DeviceName
-              deviceId={deviceId}
-              deviceModel={deviceModel}
-              initialDeviceName={initialDeviceName}
-              disabled={blockNavigation}
-            />
-          </View>
-
-          <LText style={styles.deviceFirmware}>
-            <Trans
-              i18nKey="FirmwareVersionRow.subtitle"
-              values={{ version: deviceInfo.version }}
-            />
-          </LText>
-          <View style={styles.deviceCapacity}>
-            <LText style={styles.deviceFirmware}>
-              <Trans i18nKey="manager.storage.genuine" />
-            </LText>
-            <Genuine />
-          </View>
-        </View>
-      </View>
-      <View style={styles.separator} />
-      <View style={styles.storageSection}>
-        <DeviceAppStorage
-          distribution={distribution}
-          deviceModel={deviceModel}
-        />
-      </View>
-    </Card>
+      </Card>
+      <FirmwareUpdateModal isOpened={openModal} onClose={close} />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
-    height: 265,
+    minHeight: 265,
     flexDirection: "column",
     paddingHorizontal: 16,
     marginTop: 16,
@@ -143,6 +209,22 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 1,
     backgroundColor: colors.lightFog,
+  },
+  firmwareBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.lightLive,
+    borderRadius: 4,
+    padding: 12,
+    marginTop: 16,
+  },
+  firmwareBannerText: {
+    flex: 1,
+    color: colors.live,
+    fontWeight: "600",
+  },
+  firmwareBannerCTA: {
+    paddingLeft: 48,
   },
 });
 

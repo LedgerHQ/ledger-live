@@ -1,23 +1,20 @@
 // @flow
-import { Component } from "react";
-import format from "date-fns/format";
+import React from "react";
+import { format } from "date-fns";
 
 import compareDate from "../logic/compareDate";
 
 type Props = {
   date: Date,
-  format: string,
+  format?: string,
 };
 
-export default class FormatDate extends Component<Props> {
-  shouldComponentUpdate({ date: nextDate }: Props) {
-    const { date } = this.props;
-    const isSameDate = compareDate(date, nextDate);
-    return !isSameDate;
-  }
-
-  render() {
-    const { date, format: propFormat } = this.props;
-    return format(date, propFormat);
-  }
+function FormatDate({ date, format: formatProp = "MMMM d, yyyy" }: Props) {
+  return format(date, formatProp);
 }
+
+function areEqual(prevProps: Props, nextProps: Props): boolean {
+  return compareDate(prevProps.date, nextProps.date);
+}
+
+export default React.memo<Props>(FormatDate, areEqual);

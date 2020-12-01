@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
@@ -26,11 +26,13 @@ import Delta from "./Delta";
 import FormatDate from "./FormatDate";
 import Graph from "./Graph";
 import Pills from "./Pills";
+import TransactionsPendingConfirmationWarning from "./TransactionsPendingConfirmationWarning";
 import Card from "./Card";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
 import type { Item } from "./Graph/types";
+import DiscreetModeButton from "./DiscreetModeButton";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
@@ -46,6 +48,7 @@ type Props = {
   setSelectedTimeRange: string => void,
   useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
+  renderAccountSummary: () => ?React$Node,
 };
 
 type State = {
@@ -81,6 +84,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
       renderTitle,
       useCounterValue,
       valueChange,
+      renderAccountSummary,
     } = this.props;
 
     const isAvailable = !useCounterValue || countervalueAvailable;
@@ -94,6 +98,7 @@ class AccountGraphCard extends PureComponent<Props, State> {
     return (
       <Card style={styles.root}>
         <GraphCardHeader
+          account={account}
           isLoading={!isAvailable}
           to={history[history.length - 1]}
           hoveredItem={hoveredItem}
@@ -124,12 +129,16 @@ class AccountGraphCard extends PureComponent<Props, State> {
             items={this.timeRangeItems}
           />
         </View>
+        {renderAccountSummary && (
+          <View style={styles.accountSummary}>{renderAccountSummary()}</View>
+        )}
       </Card>
     );
   }
 }
 
 class GraphCardHeader extends PureComponent<{
+  account: AccountLike,
   isLoading: boolean,
   cryptoCurrencyUnit: Unit,
   counterValueUnit: Unit,
@@ -149,53 +158,62 @@ class GraphCardHeader extends PureComponent<{
       renderTitle,
       isLoading,
       valueChange,
+      account,
     } = this.props;
 
     const unit = useCounterValue ? counterValueUnit : cryptoCurrencyUnit;
     const item = hoveredItem || to;
 
     return (
-      <Fragment>
-        <View style={styles.balanceTextContainer}>
-          {renderTitle ? (
-            renderTitle({
-              counterValueUnit,
-              useCounterValue,
-              cryptoCurrencyUnit,
-              item,
-            })
-          ) : (
-            <LText tertiary style={styles.balanceText}>
-              <CurrencyUnitValue unit={unit} value={item.value} />
-            </LText>
-          )}
+      <View style={styles.graphHeader}>
+        <View style={styles.graphHeaderBalance}>
+          <View style={styles.balanceTextContainer}>
+            {renderTitle ? (
+              renderTitle({
+                counterValueUnit,
+                useCounterValue,
+                cryptoCurrencyUnit,
+                item,
+              })
+            ) : (
+              <View style={styles.warningWrapper}>
+                <LText semiBold style={styles.balanceText}>
+                  <CurrencyUnitValue unit={unit} value={item.value} />
+                </LText>
+                <TransactionsPendingConfirmationWarning
+                  maybeAccount={account}
+                />
+              </View>
+            )}
+          </View>
+          <View style={styles.subtitleContainer}>
+            {isLoading ? (
+              <>
+                <Placeholder
+                  width={50}
+                  containerHeight={19}
+                  style={{ marginRight: 10 }}
+                />
+                <Placeholder width={50} containerHeight={19} />
+              </>
+            ) : hoveredItem ? (
+              <LText>
+                <FormatDate date={hoveredItem.date} />
+              </LText>
+            ) : valueChange ? (
+              <View style={styles.delta}>
+                <Delta
+                  percent
+                  valueChange={valueChange}
+                  style={styles.deltaPercent}
+                />
+                <Delta valueChange={valueChange} unit={unit} />
+              </View>
+            ) : null}
+          </View>
         </View>
-        <View style={styles.subtitleContainer}>
-          {isLoading ? (
-            <Fragment>
-              <Placeholder
-                width={50}
-                containerHeight={19}
-                style={{ marginRight: 10 }}
-              />
-              <Placeholder width={50} containerHeight={19} />
-            </Fragment>
-          ) : hoveredItem ? (
-            <LText>
-              <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
-            </LText>
-          ) : valueChange ? (
-            <Fragment>
-              <Delta
-                percent
-                valueChange={valueChange}
-                style={styles.deltaPercent}
-              />
-              <Delta valueChange={valueChange} unit={unit} />
-            </Fragment>
-          ) : null}
-        </View>
-      </Fragment>
+        <DiscreetModeButton />
+      </View>
     );
   }
 }
@@ -218,6 +236,14 @@ const styles = StyleSheet.create({
       },
     }),
   },
+  warningWrapper: {
+    borderWidth: 1,
+    borderColor: "red",
+    borderStyle: "solid",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
   balanceTextContainer: {
     marginBottom: 5,
     alignItems: "center",
@@ -237,14 +263,28 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignItems: "center",
   },
+  accountSummary: {
+    marginTop: 16,
+    alignItems: "center",
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    overflow: "hidden",
+  },
   deltaPercent: {
-    marginRight: 20,
+    marginRight: 8,
+  },
+  graphHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingHorizontal: 16,
+    flexWrap: "nowrap",
+  },
+  graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
+  delta: {
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
 });
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-)(AccountGraphCard);
+export default compose(connect(null, mapDispatchToProps))(AccountGraphCard);

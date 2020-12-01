@@ -1,12 +1,10 @@
 // @flow
-import React, { Component } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import i18next from "i18next";
-import hoistNonReactStatic from "hoist-non-react-statics";
-import { reactI18nextModule } from "react-i18next";
+import { initReactI18next } from "react-i18next";
+import type { TFunction } from "react-i18next";
 import Locale from "react-native-locale";
 import { locales } from "../languages";
-
-export type TranslateFunction = (string, ?Object) => string;
 
 const languageDetector = {
   type: "languageDetector",
@@ -23,9 +21,9 @@ const languageDetector = {
   cacheUserLanguage: () => {},
 };
 
-const i18n = i18next
+i18next
   .use(languageDetector)
-  .use(reactI18nextModule)
+  .use(initReactI18next)
   .init({
     fallbackLng: "en",
     resources: locales,
@@ -37,59 +35,49 @@ const i18n = i18next
     },
   });
 
-const getState = i18n => ({
-  i18n,
-  t: i18n.getFixedT(),
-  locale: i18n.languages[0],
-});
+export { i18next as i18n };
 
 // $FlowFixMe
-const LocaleContext = React.createContext(getState(i18n));
+const LocaleContext = React.createContext(getLocaleState(i18next));
 
-type State = {
-  i18n: *,
-  t: TranslateFunction,
+type Props = {
+  children: React$Node,
+};
+
+type LocaleState = {
+  i18n: any,
+  t: TFunction,
   locale: string,
 };
 
-export default class LocaleProvider extends React.Component<
-  {
-    children: *,
-  },
-  State,
-> {
-  state = getState(i18n);
-
-  componentDidMount() {
-    i18next.on("languageChanged", () => {
-      this.setState(getState(i18n));
-    });
-  }
-
-  render() {
-    return (
-      <LocaleContext.Provider value={this.state}>
-        {this.props.children}
-      </LocaleContext.Provider>
-    );
-  }
+function getLocaleState(i18n): LocaleState {
+  return {
+    i18n,
+    t: i18n.getFixedT(),
+    locale: i18n.languages[0],
+  };
 }
 
-export const withLocale = (
-  Cmp: React$ComponentType<*>,
-): React$ComponentType<*> => {
-  class WithLocale extends Component<*> {
-    render() {
-      return (
-        <LocaleContext.Consumer>
-          {(val: State) => <Cmp {...this.props} {...val} />}
-        </LocaleContext.Consumer>
-      );
-    }
+export default function LocaleProvider({ children }: Props) {
+  const [locale, setLocale] = useState<LocaleState>(getLocaleState(i18next));
+
+  function updateLocale() {
+    setLocale(getLocaleState(i18next));
   }
-  WithLocale.displayName = `withLocale(${Cmp.displayName ||
-    Cmp.name ||
-    "Component"})`;
-  hoistNonReactStatic(WithLocale, Cmp);
-  return WithLocale;
-};
+
+  useEffect(() => {
+    i18next.on("languageChanged", updateLocale);
+
+    return () => {
+      i18next.off("languageChanged", updateLocale);
+    };
+  }, []);
+
+  return (
+    <LocaleContext.Provider value={locale}>{children}</LocaleContext.Provider>
+  );
+}
+
+export function useLocale() {
+  return useContext(LocaleContext);
+}

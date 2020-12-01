@@ -1,6 +1,6 @@
 // @flow
 
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { View, StyleSheet, Platform } from "react-native";
@@ -26,6 +26,8 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
 import type { Item } from "./Graph/types";
+import DiscreetModeButton from "./DiscreetModeButton";
+import { normalize } from "../helpers/normalizeSize";
 
 const mapDispatchToProps = {
   setSelectedTimeRange,
@@ -149,47 +151,50 @@ class GraphCardHeader extends PureComponent<{
     const item = hoveredItem || to;
 
     return (
-      <Fragment>
-        <View style={styles.balanceTextContainer}>
-          {renderTitle ? (
-            renderTitle({
-              counterValueUnit,
-              useCounterValue,
-              cryptoCurrencyUnit,
-              item,
-            })
-          ) : (
-            <LText tertiary style={styles.balanceText}>
-              <CurrencyUnitValue unit={unit} value={item.value} />
-            </LText>
-          )}
+      <View style={styles.graphHeader}>
+        <View style={styles.graphHeaderBalance}>
+          <View style={styles.balanceTextContainer}>
+            {renderTitle ? (
+              renderTitle({
+                counterValueUnit,
+                useCounterValue,
+                cryptoCurrencyUnit,
+                item,
+              })
+            ) : (
+              <LText semiBold style={styles.balanceText}>
+                <CurrencyUnitValue unit={unit} value={item.value} />
+              </LText>
+            )}
+          </View>
+          <View style={styles.subtitleContainer}>
+            {isLoading ? (
+              <>
+                <Placeholder
+                  width={50}
+                  containerHeight={19}
+                  style={{ marginRight: 10 }}
+                />
+                <Placeholder width={50} containerHeight={19} />
+              </>
+            ) : hoveredItem ? (
+              <LText>
+                <FormatDate date={hoveredItem.date} />
+              </LText>
+            ) : valueChange ? (
+              <View style={styles.delta}>
+                <Delta
+                  percent
+                  valueChange={valueChange}
+                  style={styles.deltaPercent}
+                />
+                <Delta valueChange={valueChange} unit={unit} />
+              </View>
+            ) : null}
+          </View>
         </View>
-        <View style={styles.subtitleContainer}>
-          {isLoading ? (
-            <Fragment>
-              <Placeholder
-                width={50}
-                containerHeight={19}
-                style={{ marginRight: 10 }}
-              />
-              <Placeholder width={50} containerHeight={19} />
-            </Fragment>
-          ) : hoveredItem ? (
-            <LText>
-              <FormatDate date={hoveredItem.date} format="MMMM D, YYYY" />
-            </LText>
-          ) : valueChange ? (
-            <Fragment>
-              <Delta
-                percent
-                valueChange={valueChange}
-                style={styles.deltaPercent}
-              />
-              <Delta valueChange={valueChange} unit={unit} />
-            </Fragment>
-          ) : null}
-        </View>
-      </Fragment>
+        <DiscreetModeButton />
+      </View>
     );
   }
 }
@@ -216,9 +221,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     alignItems: "center",
     justifyContent: "center",
+    flexWrap: "wrap",
   },
   balanceText: {
-    fontSize: 22,
+    fontSize: normalize(22),
     color: colors.darkBlue,
   },
   subtitleContainer: {
@@ -232,13 +238,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   deltaPercent: {
-    marginRight: 20,
+    marginRight: 8,
+  },
+  graphHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    paddingRight: 10,
+    flexWrap: "nowrap",
+  },
+  graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
+  delta: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingLeft: 16,
   },
 });
 
-export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-)(AssetGraphCard);
+export default compose(connect(null, mapDispatchToProps))(AssetGraphCard);

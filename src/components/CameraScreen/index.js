@@ -1,8 +1,7 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React from "react";
 import liveCommonPkg from "@ledgerhq/live-common/package.json";
 import { StyleSheet, View } from "react-native";
-import { translate } from "react-i18next";
 
 import colors, { rgba } from "../../colors";
 import QRCodeTopLayer from "./QRCodeTopLayer";
@@ -17,35 +16,32 @@ type Props = {
   liveQrCode?: boolean,
 };
 
-class CameraScreen extends PureComponent<Props> {
-  render() {
-    const { width, height, progress, liveQrCode } = this.props;
+export default function CameraScreen({
+  width,
+  height,
+  progress,
+  liveQrCode,
+}: Props) {
+  // Make the viewfinder borders 2/3 of the screen shortest border
+  const viewFinderSize = (width > height ? height : width) * (2 / 3);
+  const wrapperStyle =
+    width > height ? { height, alignSelf: "stretch" } : { width, flexGrow: 1 };
 
-    // Make the viewfinder borders 2/3 of the screen shortest border
-    const viewFinderSize = (width > height ? height : width) * (2 / 3);
-    const wrapperStyle =
-      width > height
-        ? { height, alignSelf: "stretch" }
-        : { width, flexGrow: 1 };
-
-    return (
-      <View style={wrapperStyle}>
-        <View style={[styles.darken, styles.centered, styles.topCell]}>
-          {typeof progress === "number" ? <QRCodeTopLayer /> : null}
-        </View>
-        <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
-        <QRCodeBottomLayer
-          viewFinderSize={viewFinderSize}
-          progress={progress}
-          liveQrCode={liveQrCode}
-        />
-        <LText style={styles.version}>{liveCommonPkg.version}</LText>
+  return (
+    <View style={wrapperStyle}>
+      <View style={[styles.darken, styles.centered, styles.topCell]}>
+        {typeof progress === "number" ? <QRCodeTopLayer /> : null}
       </View>
-    );
-  }
+      <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
+      <QRCodeBottomLayer
+        viewFinderSize={viewFinderSize}
+        progress={progress}
+        liveQrCode={liveQrCode}
+      />
+      <LText style={styles.version}>{liveCommonPkg.version}</LText>
+    </View>
+  );
 }
-
-export default translate()(CameraScreen);
 
 const styles = StyleSheet.create({
   camera: {

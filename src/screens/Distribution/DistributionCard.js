@@ -1,5 +1,5 @@
 // @flow
-import React, { Fragment, PureComponent } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
 import type {
@@ -28,58 +28,58 @@ type Props = {
   highlighting: boolean,
 };
 
-class DistributionCard extends PureComponent<Props> {
-  static defaultProps = {
-    highlighting: false,
-  };
+export default function DistributionCard({
+  item: { currency, amount, distribution },
+  highlighting = false,
+}: Props) {
+  const color = getCurrencyColor(currency);
+  const percentage = Math.round(distribution * 1e4) / 1e2;
 
-  render() {
-    const {
-      item: { currency, amount, distribution },
-      highlighting,
-    } = this.props;
-
-    const color = getCurrencyColor(currency);
-    const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
-
-    return (
-      <View style={[styles.root, highlighting ? { borderColor: color } : {}]}>
-        <View style={styles.currencyLogo}>
-          <ParentCurrencyIcon currency={currency} size={18} />
-        </View>
-        <View style={styles.rightContainer}>
-          <View style={styles.currencyRow}>
-            <LText semiBold style={styles.darkBlue}>
-              {currency.name}
-            </LText>
-            <LText tertiary style={styles.darkBlue}>
-              {<CurrencyUnitValue unit={currency.units[0]} value={amount} />}
-            </LText>
-          </View>
-          {distribution ? (
-            <Fragment>
-              <View style={styles.rateRow}>
-                <CurrencyRate currency={currency} />
-                <LText tertiary style={styles.counterValue}>
-                  <CounterValue currency={currency} value={amount} />
-                </LText>
-              </View>
-              <View style={styles.distributionRow}>
-                <ProgressBar progress={percentage} progressColor={color} />
-                <LText
-                  tertiary
-                  style={styles.percentage}
-                >{`${percentage}%`}</LText>
-              </View>
-            </Fragment>
-          ) : null}
-        </View>
+  return (
+    <View style={[styles.root, highlighting ? { borderColor: color } : {}]}>
+      <View style={styles.currencyLogo}>
+        <ParentCurrencyIcon currency={currency} size={18} />
       </View>
-    );
-  }
+      <View style={styles.rightContainer}>
+        <View style={styles.currencyRow}>
+          <LText semiBold style={styles.darkBlue}>
+            {currency.name}
+          </LText>
+          <LText semiBold style={styles.darkBlue}>
+            {
+              <CurrencyUnitValue
+                unit={currency.units[0]}
+                value={amount}
+                joinFragmentsSeparator=" "
+              />
+            }
+          </LText>
+        </View>
+        {distribution ? (
+          <>
+            <View style={styles.rateRow}>
+              <CurrencyRate currency={currency} />
+              <LText semiBold style={styles.counterValue}>
+                <CounterValue
+                  currency={currency}
+                  value={amount}
+                  joinFragmentsSeparator=" "
+                />
+              </LText>
+            </View>
+            <View style={styles.distributionRow}>
+              <ProgressBar progress={percentage} progressColor={color} />
+              <LText
+                semiBold
+                style={styles.percentage}
+              >{`${percentage}%`}</LText>
+            </View>
+          </>
+        ) : null}
+      </View>
+    </View>
+  );
 }
-
-export default DistributionCard;
 
 const styles = StyleSheet.create({
   root: {
@@ -93,8 +93,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   rightContainer: {
-    flexDirection: "column",
     flexGrow: 1,
+    flexShrink: 1,
+    flexDirection: "column",
   },
   currencyLogo: {
     marginRight: 16,
@@ -104,6 +105,7 @@ const styles = StyleSheet.create({
   currencyRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    flexWrap: "wrap",
   },
   darkBlue: {
     color: colors.darkBlue,
@@ -113,6 +115,7 @@ const styles = StyleSheet.create({
   rateRow: {
     flexDirection: "row",
     justifyContent: "space-between",
+    flexWrap: "wrap",
   },
   distributionRow: {
     marginTop: 12,

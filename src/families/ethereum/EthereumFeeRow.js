@@ -1,10 +1,11 @@
 /* @flow */
-import React, { Fragment, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { Trans, translate } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -13,9 +14,8 @@ import EthereumGasLimit from "./SendRowGasLimit";
 import ExternalLink from "../../icons/ExternalLink";
 import Info from "../../icons/Info";
 import { urls } from "../../config/urls";
-
-import type { T } from "../../types/common";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import BottomModal from "../../components/BottomModal";
 import TokenNetworkFeeInfo from "./TokenNetworkFeeInfo";
 
@@ -23,17 +23,18 @@ type Props = {
   account: AccountLike,
   parentAccount: ?Account,
   transaction: Transaction,
-  navigation: *,
-  t: T,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const EthereumFeeRow = ({
+export default function EthereumFeeRow({
   account,
   parentAccount,
   transaction,
   navigation,
-  t,
-}: Props) => {
+  route,
+}: Props) {
+  const { t } = useTranslation();
   const [isNetworkFeeHelpOpened, setNetworkFeeHelpOpened] = useState(false);
   const toggleNetworkFeeHelpModal = useCallback(
     () => setNetworkFeeHelpOpened(!isNetworkFeeHelpOpened),
@@ -47,12 +48,13 @@ const EthereumFeeRow = ({
   }, []);
 
   const openFees = useCallback(() => {
-    navigation.navigate("EthereumEditFee", {
+    navigation.navigate(ScreenName.EthereumEditFee, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
     });
-  }, [navigation, account, parentAccount, transaction]);
+  }, [navigation, route.params, account.id, parentAccount, transaction]);
 
   const mainAccount = getMainAccount(account, parentAccount);
   const {
@@ -64,7 +66,7 @@ const EthereumFeeRow = ({
 
   const InfoIcon = account.type === "TokenAccount" ? Info : ExternalLink;
   return (
-    <Fragment>
+    <>
       <BottomModal
         id="TokenNetworkFee"
         isOpened={isNetworkFeeHelpOpened}
@@ -83,7 +85,7 @@ const EthereumFeeRow = ({
             ? toggleNetworkFeeHelpModal
             : extraInfoFees
         }
-        title={<Trans i18nKey="send.fees.title" />}
+        title={<Trans i18nKey="send.summary.gasPrice" />}
         additionalInfo={
           <View>
             <InfoIcon size={12} color={colors.grey} />
@@ -105,6 +107,29 @@ const EthereumFeeRow = ({
               {t("common.edit")}
             </LText>
           </View>
+        </View>
+      </SummaryRow>
+      <EthereumGasLimit
+        account={account}
+        parentAccount={parentAccount}
+        transaction={transaction}
+        route={route}
+      />
+      <SummaryRow title={<Trans i18nKey="send.summary.maxFees" />}>
+        <View style={{ alignItems: "flex-end" }}>
+          <View style={styles.accountContainer}>
+            {gasPrice ? (
+              <LText style={styles.valueText}>
+                <CurrencyUnitValue
+                  unit={mainAccount.unit}
+                  value={
+                    gasPrice &&
+                    gasPrice.times(gasLimit || estimatedGasLimit || 0)
+                  }
+                />
+              </LText>
+            ) : null}
+          </View>
           <LText style={styles.countervalue}>
             <CounterValue
               before="≈ "
@@ -116,17 +141,10 @@ const EthereumFeeRow = ({
           </LText>
         </View>
       </SummaryRow>
-      <EthereumGasLimit
-        account={account}
-        parentAccount={parentAccount}
-        navigation={navigation}
-        transaction={transaction}
-      />
-    </Fragment>
+    </>
   );
-};
+}
 
-export default translate()(EthereumFeeRow);
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,

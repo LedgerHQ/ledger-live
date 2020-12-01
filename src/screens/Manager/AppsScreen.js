@@ -8,7 +8,8 @@ import {
   SafeAreaView,
 } from "react-native";
 import { distribute } from "@ledgerhq/live-common/lib/apps";
-import type { Action, State, App } from "@ledgerhq/live-common/lib/apps";
+import type { Action, State } from "@ledgerhq/live-common/lib/apps";
+import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useAppsSections } from "@ledgerhq/live-common/lib/apps/react";
 
 import { TabView, TabBar } from "react-native-tab-view";
@@ -16,6 +17,7 @@ import Animated from "react-native-reanimated";
 
 import i18next from "i18next";
 import { Trans } from "react-i18next";
+import type { ManagerTab } from "./Manager";
 
 import colors from "../../colors";
 
@@ -40,22 +42,23 @@ const initialLayout = { width, height };
 type Props = {
   state: State,
   dispatch: Action => void,
-  currentProgress: *,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
-  managerTabs: *,
+  managerTabs: { [ManagerTab]: ManagerTab },
   deviceId: string,
   initialDeviceName: string,
   navigation: *,
   blockNavigation: boolean,
   deviceInfo: *,
+  searchQuery?: string,
+  updateModalOpened?: boolean,
+  tab: ManagerTab,
 };
 
 const AppsScreen = ({
   state,
   dispatch,
-  currentProgress,
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   setStorageWarning,
@@ -65,12 +68,15 @@ const AppsScreen = ({
   navigation,
   blockNavigation,
   deviceInfo,
+  searchQuery,
+  updateModalOpened,
+  tab,
 }: Props) => {
   const distribution = distribute(state);
 
   const listRef = useRef();
 
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(tab === managerTabs.CATALOG ? 0 : 1);
   const [routes] = React.useState([
     {
       key: managerTabs.CATALOG,
@@ -176,7 +182,6 @@ const AppsScreen = ({
             state={state}
             dispatch={dispatch}
             active={index === 0}
-            currentProgress={currentProgress}
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
             setStorageWarning={setStorageWarning}
@@ -189,6 +194,7 @@ const AppsScreen = ({
               state={state}
               appsToUpdate={update}
               dispatch={dispatch}
+              isModalOpened={updateModalOpened}
             />
             <View>
               {device && device.length > 0 && !state.updateAllQueue.length && (
@@ -216,7 +222,6 @@ const AppsScreen = ({
               dispatch={dispatch}
               active={index === 1}
               renderNoResults={renderNoResults}
-              currentProgress={currentProgress}
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               setStorageWarning={setStorageWarning}
@@ -294,8 +299,8 @@ const AppsScreen = ({
             disabled={index !== 0}
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-            currentProgress={currentProgress}
             navigation={navigation}
+            searchQuery={searchQuery}
           />
           <View style={styles.filterButton}>
             <AppFilter
@@ -324,7 +329,6 @@ const AppsScreen = ({
               apps={device}
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-              currentProgress={currentProgress}
               navigation={navigation}
             />
           </Animated.View>

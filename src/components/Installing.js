@@ -1,8 +1,8 @@
 // @flow
 
 import { View, StyleSheet } from "react-native";
-import React, { PureComponent } from "react";
-import { Trans, translate } from "react-i18next";
+import React from "react";
+import { Trans, useTranslation } from "react-i18next";
 
 import colors from "../colors";
 import LiveLogo from "../icons/LiveLogoIcon";
@@ -11,39 +11,38 @@ import LText from "./LText";
 import FirmwareProgress from "./FirmwareProgress";
 import SkipLock from "./behaviour/SkipLock";
 
-class Installing extends PureComponent<{
+type Props = {
   progress: number,
   installing: string,
-  t: *,
-}> {
-  render() {
-    const { progress, installing, t } = this.props;
-    return (
-      <View style={styles.root}>
-        <SkipLock />
-        {progress === 0 ? (
-          <View style={{ padding: 10 }}>
-            <Spinning>
-              <LiveLogo color={colors.fog} size={40} />
-            </Spinning>
-          </View>
-        ) : (
-          <FirmwareProgress progress={progress} size={60} />
-        )}
-        <LText semiBold style={styles.title}>
-          <Trans
-            i18nKey="FirmwareUpdate.Installing.title"
-            values={{
-              stepName: t(`FirmwareUpdate.steps.${installing}`),
-            }}
-          />
-        </LText>
-        <LText style={styles.subtitle}>
-          <Trans i18nKey="FirmwareUpdate.Installing.subtitle" />
-        </LText>
-      </View>
-    );
-  }
+};
+
+export default function Installing({ progress, installing }: Props) {
+  const { t } = useTranslation();
+  return (
+    <View style={styles.root}>
+      <SkipLock />
+      {progress === 0 ? (
+        <View style={{ padding: 10 }}>
+          <Spinning>
+            <LiveLogo color={colors.fog} size={40} />
+          </Spinning>
+        </View>
+      ) : (
+        <FirmwareProgress progress={progress} size={60} />
+      )}
+      <LText semiBold style={styles.title}>
+        <Trans
+          i18nKey="FirmwareUpdate.Installing.title"
+          values={{
+            stepName: t(`FirmwareUpdate.steps.${installing}`),
+          }}
+        />
+      </LText>
+      <LText style={styles.subtitle}>
+        <Trans i18nKey="FirmwareUpdate.Installing.subtitle" />
+      </LText>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -67,5 +66,3 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
 });
-
-export default translate()(Installing);

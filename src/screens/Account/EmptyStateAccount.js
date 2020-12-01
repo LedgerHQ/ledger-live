@@ -2,25 +2,44 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, Image, StyleSheet } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import {
+  getAccountCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
+import { ScreenName, NavigatorName } from "../../const";
 import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Receive from "../../icons/Receive";
+import Exchange from "../../icons/Exchange";
+import { isCurrencySupported } from "../Exchange/coinifyConfig";
 
 class EmptyStateAccount extends PureComponent<{
   account: AccountLike,
   parentAccount: ?Account,
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
 }> {
   goToReceiveFunds = () => {
     const { navigation, account, parentAccount } = this.props;
-    navigation.navigate("ReceiveConnectDevice", {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+    navigation.navigate(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveConnectDevice,
+      params: {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+      },
+    });
+  };
+
+  goToBuyCrypto = () => {
+    const { navigation, account, parentAccount } = this.props;
+    navigation.navigate(NavigatorName.Exchange, {
+      screen: ScreenName.Exchange,
+      params: {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+      },
     });
   };
 
@@ -30,6 +49,8 @@ class EmptyStateAccount extends PureComponent<{
     const hasSubAccounts = Array.isArray(mainAccount.subAccounts);
     const isToken =
       listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
+    const currency = getAccountCurrency(account);
+    const canBeBought = isCurrencySupported(currency, "buy");
 
     return (
       <View style={styles.root}>
@@ -59,6 +80,17 @@ class EmptyStateAccount extends PureComponent<{
                   {"tokens"}
                 </LText>
               </Trans>
+            ) : canBeBought ? (
+              <Trans i18nKey="account.emptyState.descWithBuy">
+                {"Make sure the"}
+                <LText semiBold style={styles.managerAppName}>
+                  {mainAccount.currency.managerAppName}
+                </LText>
+                {"app is installed so you can buy or receive"}
+                <LText semiBold style={styles.managerAppName}>
+                  {getAccountCurrency(account).ticker}
+                </LText>
+              </Trans>
             ) : (
               <Trans i18nKey="account.emptyState.desc">
                 {"Make sure the"}
@@ -69,14 +101,30 @@ class EmptyStateAccount extends PureComponent<{
               </Trans>
             )}
           </LText>
-          <Button
-            event="AccountEmptyStateReceive"
-            type="primary"
-            title={<Trans i18nKey="account.emptyState.buttons.receiveFunds" />}
-            onPress={this.goToReceiveFunds}
-            containerStyle={styles.receiveButton}
-            IconLeft={Receive}
-          />
+          <View style={styles.buttonContainer}>
+            <Button
+              event="AccountEmptyStateReceive"
+              type="primary"
+              title={
+                <Trans i18nKey="account.emptyState.buttons.receiveFunds" />
+              }
+              onPress={this.goToReceiveFunds}
+              IconLeft={Receive}
+            />
+            {canBeBought ? (
+              <Button
+                event="Buy Crypto Empty Account Button"
+                eventProperties={{
+                  currencyName: getAccountCurrency(account).name,
+                }}
+                type="primary"
+                title={<Trans i18nKey="account.emptyState.buttons.buyCrypto" />}
+                onPress={this.goToBuyCrypto}
+                containerStyle={styles.buyButton}
+                IconLeft={Exchange}
+              />
+            ) : null}
+          </View>
         </View>
       </View>
     );
@@ -96,8 +144,8 @@ const styles = StyleSheet.create({
   body: {
     alignItems: "center",
   },
-  receiveButton: {
-    width: 290,
+  buyButton: {
+    marginLeft: 4,
   },
   title: {
     marginTop: 32,
@@ -112,5 +160,8 @@ const styles = StyleSheet.create({
   },
   managerAppName: {
     color: colors.black,
+  },
+  buttonContainer: {
+    flexDirection: "row",
   },
 });

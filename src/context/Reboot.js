@@ -1,49 +1,44 @@
 // @flow
-import React, { Fragment } from "react";
+import React, { Fragment, useContext, useCallback, useState } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
-import db from "../db";
+import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
+import { clearDb } from "../db";
 import clearLibcore from "../helpers/clearLibcore";
 
-// $FlowFixMe
-export const RebootContext = React.createContext(() => {});
+type RebootFunc = (resetData: boolean) => Promise<void>;
 
-export default class RebootProvider extends React.Component<
-  {
-    onRebootStart?: () => void,
-    onRebootEnd?: () => void,
-    children: *,
-  },
-  {
-    rebootId: number,
-  },
-> {
-  state = {
-    rebootId: 0,
-  };
+export const RebootContext = React.createContext<RebootFunc>(async () => {});
 
-  reboot = async (resetData: boolean = false) => {
-    const { onRebootStart, onRebootEnd } = this.props;
-    if (onRebootStart) onRebootStart();
-    this.setState(state => ({
-      rebootId: state.rebootId + 1,
-    }));
-    if (resetData) {
-      await clearLibcore(() =>
-        db.delete(["settings", "accounts", "countervalues", "ble"]),
-      );
-    }
-    if (onRebootEnd) onRebootEnd();
-  };
+export default function RebootProvider({
+  children,
+  onRebootStart,
+  onRebootEnd,
+}: {
+  onRebootStart?: () => void,
+  onRebootEnd?: () => void,
+  children: React$Node,
+}) {
+  const [rebootId, setRebootId] = useState(0);
+  const { wipe } = useCountervaluesPolling();
 
-  render() {
-    const { children } = this.props;
-    const { rebootId } = this.state;
-    return (
-      <RebootContext.Provider value={this.reboot}>
-        <Fragment key={rebootId}>{children}</Fragment>
-      </RebootContext.Provider>
-    );
-  }
+  const reboot: RebootFunc = useCallback(
+    async (resetData = false) => {
+      if (onRebootStart) onRebootStart();
+      setRebootId(id => id + 1);
+      if (resetData) {
+        wipe();
+        await clearLibcore(clearDb);
+      }
+      if (onRebootEnd) onRebootEnd();
+    },
+    [wipe, onRebootStart, onRebootEnd],
+  );
+
+  return (
+    <RebootContext.Provider value={reboot}>
+      <Fragment key={rebootId}>{children}</Fragment>
+    </RebootContext.Provider>
+  );
 }
 
 // TODO improve flow types
@@ -60,3 +55,7 @@ export const withReboot = (Cmp: *) => {
   hoistNonReactStatic(WithReboot, Cmp);
   return WithReboot;
 };
+
+export function useReboot() {
+  return useContext(RebootContext);
+}

@@ -1,5 +1,5 @@
 /* @flow */
-import React, { PureComponent, Fragment } from "react";
+import React, { PureComponent } from "react";
 import FeatherIcon from "react-native-vector-icons/dist/Feather";
 import { connect } from "react-redux";
 import { Switch } from "react-native";
@@ -45,7 +45,7 @@ class AnalyticsRow extends PureComponent<Props, State> {
     const { analyticsEnabled, setAnalytics } = this.props;
     const { isOpened } = this.state;
     return (
-      <Fragment>
+      <>
         <Track
           event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"}
           mandatory
@@ -111,12 +111,9 @@ class AnalyticsRow extends PureComponent<Props, State> {
             },
           ]}
         />
-      </Fragment>
+      </>
     );
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AnalyticsRow);
+export default connect(mapStateToProps, mapDispatchToProps)(AnalyticsRow);

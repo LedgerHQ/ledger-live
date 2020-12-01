@@ -1,13 +1,14 @@
 // @flow
 import React from "react";
 import Svg, { Path } from "react-native-svg";
+import colors from "../colors";
 
 type Props = {
-  size: number,
-  color: string,
+  size?: number,
+  color?: string,
 };
 
-export default function Close({ size = 16, color }: Props) {
+export default function Close({ size = 16, color = colors.darkBlue }: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
       <Path

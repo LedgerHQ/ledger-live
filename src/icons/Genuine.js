@@ -7,7 +7,7 @@ import colors from "../colors";
 type Props = {
   size: number,
   color: string,
-  strokeColor: String,
+  strokeColor: string,
 };
 
 export default function Genuine({

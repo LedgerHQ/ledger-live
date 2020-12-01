@@ -23,10 +23,7 @@ class FirmwareProgress extends PureComponent<Props> {
         thickness={progress ? 4 : 0}
         size={size}
         strokeCap="round"
-        textStyle={[
-          styles.progressText,
-          getFontStyle({ tertiary: true, semiBold: true }),
-        ]}
+        textStyle={[styles.progressText, getFontStyle({ semiBold: true })]}
       />
     );
   }

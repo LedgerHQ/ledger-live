@@ -2,17 +2,13 @@
 import React, { useCallback } from "react";
 import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/dist/Feather";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-import {
-  getDefaultExplorerView,
-  getAccountContractExplorer,
-} from "@ledgerhq/live-common/lib/explorers";
-import {
-  getMainAccount,
-  shortAddressPreview,
-} from "@ledgerhq/live-common/lib/account/helpers";
+import type {
+  TokenAccount,
+  TokenCurrency,
+} from "@ledgerhq/live-common/lib/types";
+import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
 
 import colors from "../../colors";
 import LText from "../../components/LText";
@@ -20,28 +16,26 @@ import Button from "../../components/Button";
 
 type Props = {
   onClose: () => void,
-  account: TokenAccount,
-  parentAccount: Account,
+  account?: TokenAccount,
+  token?: TokenCurrency,
+  url: string,
 };
 
 const forceInset = { bottom: "always" };
 
-const TokenContractAddress = ({ account, parentAccount, onClose }: Props) => {
-  const mainAccount = getMainAccount(account, parentAccount);
-  const explorerView = getDefaultExplorerView(mainAccount.currency);
-
+const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
   const viewInExplorer = useCallback(() => {
-    const url = getAccountContractExplorer(
-      explorerView,
-      account,
-      parentAccount,
-    );
-
     if (url) {
       Linking.openURL(url);
       onClose();
     }
-  }, [explorerView, account, parentAccount, onClose]);
+  }, [onClose, url]);
+
+  const contractAddress = account
+    ? account.token.contractAddress
+    : token
+    ? token.contractAddress
+    : "";
 
   return (
     <SafeAreaView forceInset={forceInset} style={styles.root}>
@@ -53,7 +47,7 @@ const TokenContractAddress = ({ account, parentAccount, onClose }: Props) => {
           <Trans i18nKey="account.tokens.contractAddress" />
         </LText>
         <LText style={styles.textContract}>
-          {shortAddressPreview(account.token.contractAddress, 30)}
+          {shortAddressPreview(contractAddress, 30)}
         </LText>
       </View>
       <View style={styles.footerContainer}>

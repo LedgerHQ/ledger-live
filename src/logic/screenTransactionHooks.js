@@ -1,27 +1,33 @@
 /* @flow */
-
+import invariant from "invariant";
 import { concat, of, from } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
+import { Platform } from "react-native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import type {
   Account,
   AccountLike,
   Transaction,
+  SignedOperation,
+  Operation,
 } from "@ledgerhq/live-common/lib/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { execAndWaitAtLeast } from "@ledgerhq/live-common/lib/promise";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
+import { useDispatch } from "react-redux";
+import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/lib/errors";
+import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
 
-export const useTransactionChangeFromNavigation = ({
-  navigation,
-  setTransaction,
-}: {
-  navigation: *,
+export const useTransactionChangeFromNavigation = (
   setTransaction: Transaction => void,
-}) => {
-  const navigationTransaction = navigation.getParam("transaction");
+) => {
+  const route = useRoute();
+  const navigationTransaction = route.params?.transaction;
   const navigationTxRef = useRef(navigationTransaction);
   useEffect(() => {
     if (navigationTxRef.current !== navigationTransaction) {
@@ -34,28 +40,29 @@ export const useTransactionChangeFromNavigation = ({
 export const useSignWithDevice = ({
   account,
   parentAccount,
-  navigation,
   updateAccountWithUpdater,
   context,
 }: {
   context: string,
   account: AccountLike,
   parentAccount: ?Account,
-  navigation: *,
   updateAccountWithUpdater: (string, (Account) => Account) => void,
 }) => {
+  const route = useRoute();
+  const navigation = useNavigation();
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
   const subscription = useRef(null);
 
   const signWithDevice = useCallback(() => {
-    const deviceId = navigation.getParam("deviceId");
-    const transaction = navigation.getParam("transaction");
+    const { deviceId, transaction } = route.params || {};
     const bridge = getAccountBridge(account, parentAccount);
     const mainAccount = getMainAccount(account, parentAccount);
 
-    const n = navigation.dangerouslyGetParent();
-    if (n) n.setParams({ allowNavigation: false });
+    navigation.setOptions({
+      gestureEnabled: false,
+    });
+
     setSigning(true);
 
     subscription.current = bridge
@@ -87,7 +94,7 @@ export const useSignWithDevice = ({
 
             case "broadcasted":
               navigation.replace(context + "ValidationSuccess", {
-                ...navigation.state.params,
+                ...route.params,
                 result: e.operation,
               });
               updateAccountWithUpdater(mainAccount.id, account =>
@@ -105,20 +112,27 @@ export const useSignWithDevice = ({
           } else {
             logger.critical(error);
           }
-          // $FlowFixMe
           navigation.replace(context + "ValidationError", {
-            ...navigation.state.params,
+            ...route.params,
             error,
           });
         },
       });
-  }, [context, account, navigation, parentAccount, updateAccountWithUpdater]);
+  }, [
+    context,
+    account,
+    navigation,
+    parentAccount,
+    updateAccountWithUpdater,
+    route.params,
+  ]);
 
   useEffect(() => {
     signWithDevice();
     return () => {
-      const n = navigation.dangerouslyGetParent();
-      if (n) n.setParams({ allowNavigation: true });
+      navigation.setOptions({
+        gestureEnabled: Platform.OS === "ios",
+      });
       if (subscription.current) {
         subscription.current.unsubscribe();
       }
@@ -129,3 +143,85 @@ export const useSignWithDevice = ({
 
   return [signing, signed];
 };
+
+type SignTransactionArgs = {
+  account: AccountLike,
+  parentAccount: ?Account,
+};
+
+// TODO move to live-common
+function useBroadcast({ account, parentAccount }: SignTransactionArgs) {
+  return useCallback(
+    async (signedOperation: SignedOperation): Promise<Operation> => {
+      invariant(account, "account not present");
+      const mainAccount = getMainAccount(account, parentAccount);
+      const bridge = getAccountBridge(account, parentAccount);
+
+      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        return Promise.resolve(signedOperation.operation);
+      }
+
+      return execAndWaitAtLeast(3000, () =>
+        bridge.broadcast({
+          account: mainAccount,
+          signedOperation,
+        }),
+      );
+    },
+    [account, parentAccount],
+  );
+}
+
+export function useSignedTxHandler({
+  account,
+  parentAccount,
+}: SignTransactionArgs & {
+  account: AccountLike,
+  parentAccount: ?Account,
+}) {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const broadcast = useBroadcast({ account, parentAccount });
+  const dispatch = useDispatch();
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  return useCallback(
+    // TODO: fix type error
+    // $FlowFixMe
+    async ({ signedOperation, transactionSignError }) => {
+      try {
+        if (transactionSignError) {
+          throw transactionSignError;
+        }
+
+        const operation = await broadcast(signedOperation);
+        navigation.replace(
+          route.name.replace("ConnectDevice", "ValidationSuccess"),
+          {
+            ...route.params,
+            result: operation,
+          },
+        );
+        dispatch(
+          updateAccountWithUpdater(mainAccount.id, account =>
+            addPendingOperation(account, operation),
+          ),
+        );
+      } catch (error) {
+        if (
+          !(
+            error instanceof UserRefusedOnDevice ||
+            error instanceof TransactionRefusedOnDevice
+          )
+        ) {
+          logger.critical(error);
+        }
+        navigation.replace(
+          route.name.replace("ConnectDevice", "ValidationError"),
+          { ...route.params, error },
+        );
+      }
+    },
+    [navigation, route, broadcast, mainAccount, dispatch],
+  );
+}

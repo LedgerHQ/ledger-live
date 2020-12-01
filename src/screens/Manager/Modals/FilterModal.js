@@ -76,7 +76,7 @@ const SectionHeader = ({ section: { title } }: *) => (
   </View>
 );
 
-const Separator = ({ section: { footerSeparator } }) =>
+const Separator = ({ section: { footerSeparator } }: *) =>
   Boolean(footerSeparator) && (
     <View style={styles.paddingLine}>
       <View style={styles.separator} />

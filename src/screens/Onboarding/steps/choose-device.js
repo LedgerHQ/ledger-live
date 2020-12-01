@@ -2,10 +2,10 @@
 
 import React, { Component, PureComponent } from "react";
 import { BackHandler, StyleSheet } from "react-native";
-
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
@@ -23,19 +23,24 @@ import Circle from "../../../components/Circle";
 import Close from "../../../icons/Close";
 import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 
-const CloseOnboarding = ({ navigation }: *) => (
-  <Touchable
-    event="OnboardingClose"
-    style={styles.close}
-    onPress={() => {
-      navigation.navigate(navigation.getParam("goingBackToScreen"));
-    }}
-  >
-    <Circle size={28} bg={colors.lightFog}>
-      <Close size={14} color={colors.grey} />
-    </Circle>
-  </Touchable>
-);
+function CloseOnboarding() {
+  const { navigate } = useNavigation();
+  const route = useRoute();
+
+  return (
+    <Touchable
+      event="OnboardingClose"
+      style={styles.close}
+      onPress={() => {
+        navigate(route.params?.goingBackToScreen);
+      }}
+    >
+      <Circle size={28} bg={colors.lightFog}>
+        <Close size={14} color={colors.grey} />
+      </Circle>
+    </Touchable>
+  );
+}
 
 class OnboardingStepChooseDevice extends Component<
   OnboardingStepProps & {
@@ -43,8 +48,7 @@ class OnboardingStepChooseDevice extends Component<
   },
 > {
   componentDidMount() {
-    const autoJumpToNanoX = this.props.navigation.getParam("autoJumpToNanoX");
-    if (autoJumpToNanoX) this.chooseNanoX();
+    if (this.props.route.params?.autoJumpToNanoX) this.chooseNanoX();
 
     BackHandler.addEventListener("hardwareBackPress", this.handleBackButton);
   }
@@ -56,7 +60,8 @@ class OnboardingStepChooseDevice extends Component<
   handleBackButton = () => {
     const { navigation, hasCompletedOnboarding } = this.props;
     if (hasCompletedOnboarding) {
-      navigation.navigate(navigation.getParam("goingBackToScreen"));
+      const { goingBackToScreen } = this.props.route.params || {};
+      navigation.navigate(goingBackToScreen);
       return true;
     }
     return false;
@@ -77,7 +82,7 @@ class OnboardingStepChooseDevice extends Component<
   };
 
   render() {
-    const { hasCompletedOnboarding, navigation, showWelcome } = this.props;
+    const { hasCompletedOnboarding, showWelcome } = this.props;
 
     if (showWelcome) {
       return (
@@ -88,9 +93,7 @@ class OnboardingStepChooseDevice extends Component<
     return (
       <OnboardingLayout isFull>
         <TrackScreen category="Onboarding" name="Device" />
-        {hasCompletedOnboarding ? (
-          <CloseOnboarding navigation={navigation} />
-        ) : null}
+        {hasCompletedOnboarding ? <CloseOnboarding /> : null}
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="onboarding.stepsTitles.OnboardingStepChooseDevice" />
         </LText>

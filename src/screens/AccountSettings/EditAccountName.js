@@ -2,20 +2,17 @@
 import React, { PureComponent } from "react";
 import i18next from "i18next";
 import { View, StyleSheet } from "react-native";
-// $FlowFixMe
-import { SafeAreaView, ScrollView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { connect } from "react-redux";
-import { compose } from "redux";
-import { Trans, translate } from "react-i18next";
-import { createStructuredSelector } from "reselect";
+import { Trans } from "react-i18next";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { updateAccount } from "../../actions/accounts";
 import Button from "../../components/Button";
 import TextInput from "../../components/TextInput";
 import KeyboardView from "../../components/KeyboardView";
 import { getFontStyle } from "../../components/LText";
+import NavigationScrollView from "../../components/NavigationScrollView";
 
 import colors from "../../colors";
 
@@ -24,24 +21,26 @@ export const MAX_ACCOUNT_NAME_LENGHT = 50;
 const forceInset = { bottom: "always" };
 
 type Props = {
-  navigation: NavigationScreenProp<{
-    params: {
-      account: *,
-      accountId?: string,
-      accountName?: string,
-      onAccountNameChange: (string, *) => void,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
   updateAccount: Function,
   account: Account,
+};
+
+type RouteParams = {
+  account: any,
+  accountId?: string,
+  accountName?: string,
+  onAccountNameChange: (name: string, changedAccount: Account) => void,
 };
 
 type State = {
   accountName: string,
 };
-const mapStateToProps = createStructuredSelector({
-  account: accountScreenSelector,
-});
+
+const mapStateToProps = (state, { route }) =>
+  accountScreenSelector(route)(state);
+
 const mapDispatchToProps = {
   updateAccount,
 };
@@ -49,11 +48,6 @@ const mapDispatchToProps = {
 class EditAccountName extends PureComponent<Props, State> {
   state = {
     accountName: "",
-  };
-
-  static navigationOptions = {
-    title: i18next.t("account.settings.accountName.title"),
-    headerRight: null,
   };
 
   onChangeText = (accountName: string) => {
@@ -66,7 +60,7 @@ class EditAccountName extends PureComponent<Props, State> {
     const {
       onAccountNameChange,
       account: accountFromAdd,
-    } = this.props.navigation.state.params;
+    } = this.props.route.params;
 
     const isImportingAccounts = !!accountFromAdd;
     const cleanAccountName = accountName.trim();
@@ -87,14 +81,14 @@ class EditAccountName extends PureComponent<Props, State> {
   render() {
     const { account } = this.props;
     const { accountName } = this.state;
-    const { account: accountFromAdd } = this.props.navigation.state.params;
+    const { account: accountFromAdd } = this.props.route.params;
 
     const initialAccountName = account ? account.name : accountFromAdd.name;
 
     return (
       <SafeAreaView style={styles.safeArea} forceInset={forceInset}>
         <KeyboardView style={styles.body}>
-          <ScrollView
+          <NavigationScrollView
             contentContainerStyle={styles.root}
             keyboardShouldPersistTaps="handled"
           >
@@ -121,20 +115,15 @@ class EditAccountName extends PureComponent<Props, State> {
                 containerStyle={styles.buttonContainer}
               />
             </View>
-          </ScrollView>
+          </NavigationScrollView>
         </KeyboardView>
       </SafeAreaView>
     );
   }
 }
 
-export default compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  translate(),
-)(EditAccountName);
+// $FlowFixMe
+export default connect(mapStateToProps, mapDispatchToProps)(EditAccountName);
 
 const styles = StyleSheet.create({
   root: {

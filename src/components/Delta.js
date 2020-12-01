@@ -11,6 +11,7 @@ import IconArrowUp from "../icons/ArrowUp";
 import IconArrowDown from "../icons/ArrowDown";
 
 import colors from "../colors";
+import { normalize } from "../helpers/normalizeSize";
 
 type Props = {
   valueChange: ValueChange,
@@ -44,17 +45,24 @@ export default class Delta extends PureComponent<Props> {
 
     const absDelta = delta.absoluteValue();
 
+    const [color, arrow, sign] = !delta.isZero()
+      ? delta.isGreaterThan(0)
+        ? [colors.success, arrowUp, "+"]
+        : [colors.alert, arrowDown, "-"]
+      : [colors.darkBlue, null, ""];
+
     return (
       <View style={[styles.root, style]}>
-        {!delta.isZero()
-          ? delta.isGreaterThan(0)
-            ? arrowUp
-            : arrowDown
-          : null}
-        <View style={styles.content}>
-          <LText tertiary style={styles.text}>
-            {unit ? (
-              <CurrencyUnitValue unit={unit} value={absDelta} />
+        {percent ? arrow : null}
+        <View style={percent ? styles.content : null}>
+          <LText semiBold style={[styles.text, { color }]}>
+            {unit && !absDelta.isZero() ? (
+              <CurrencyUnitValue
+                before={`(${sign}`}
+                after={")"}
+                unit={unit}
+                value={absDelta}
+              />
             ) : percent ? (
               `${absDelta.toFixed(0)}%`
             ) : null}
@@ -74,7 +82,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   text: {
-    fontSize: 16,
-    color: colors.darkBlue,
+    fontSize: normalize(16),
   },
 });

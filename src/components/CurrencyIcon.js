@@ -2,7 +2,10 @@
 
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+import {
+  getCryptoCurrencyIcon,
+  getTokenCurrencyIcon,
+} from "@ledgerhq/live-common/lib/reactNative";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 
 import LText from "./LText";
@@ -13,20 +16,23 @@ type Props = {
   size: number,
   color?: string,
   radius?: number,
+  bg?: string,
 };
 
 export default class CurrencyIcon extends PureComponent<Props> {
   render() {
-    const { size, currency, color, radius } = this.props;
+    const { size, currency, color, radius, bg } = this.props;
 
     const currencyColor = color || getCurrencyColor(currency);
 
     if (currency.type === "TokenCurrency") {
       const dynamicStyle = {
-        backgroundColor: rgba(currencyColor, 0.1),
+        backgroundColor: bg || rgba(currencyColor, 0.1),
         width: size,
         height: size,
       };
+      const TokenIconCurrency =
+        getTokenCurrencyIcon && getTokenCurrencyIcon(currency);
 
       return (
         <View
@@ -36,9 +42,19 @@ export default class CurrencyIcon extends PureComponent<Props> {
             radius ? { borderRadius: radius } : null,
           ]}
         >
-          <LText semiBold style={{ color: currencyColor, fontSize: size / 2 }}>
-            {currency.ticker[0]}
-          </LText>
+          {TokenIconCurrency ? (
+            <TokenIconCurrency
+              size={size * 0.55}
+              color={currencyColor || currency.color}
+            />
+          ) : (
+            <LText
+              semiBold
+              style={{ color: currencyColor, fontSize: size / 2 }}
+            >
+              {currency.ticker[0]}
+            </LText>
+          )}
         </View>
       );
     }

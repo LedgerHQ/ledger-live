@@ -1,92 +1,98 @@
 // @flow
 
-import React, { Component, Fragment } from "react";
-import { StyleSheet } from "react-native";
-// $FlowFixMe
-import { FlatList } from "react-navigation";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
-import { translate } from "react-i18next";
-import i18next from "i18next";
-import { compose } from "redux";
+import React, { useCallback, useRef, useState, useEffect } from "react";
+import { StyleSheet, FlatList } from "react-native";
+import { useSelector } from "react-redux";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { accountsSelector } from "../../reducers/accounts";
-import AccountsIcon from "../../icons/Accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import TrackScreen from "../../analytics/TrackScreen";
 
 import NoAccounts from "./NoAccounts";
 import AccountRow from "./AccountRow";
-import AccountOrder from "./AccountOrder";
-import AddAccount from "./AddAccount";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
+import { useScrollToTop } from "../../navigation/utils";
+import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
+import { ScreenName } from "../../const";
 
 const List = globalSyncRefreshControl(FlatList);
 
-const navigationOptions = {
-  title: i18next.t("accounts.title"),
-  headerLeft: <AccountOrder />,
-  headerRight: <AddAccount />,
-  tabBarIcon: ({ tintColor }: { tintColor: string }) => (
-    <AccountsIcon size={18} color={tintColor} />
-  ),
-};
-
-const mapStateToProps = createStructuredSelector({
-  accounts: accountsSelector,
-});
-
 type Props = {
-  navigation: *,
-  accounts: Account[],
+  navigation: any,
+  route: { params?: { currency?: string } },
 };
 
-class Accounts extends Component<Props> {
-  static navigationOptions = navigationOptions;
+export default function Accounts({ navigation, route }: Props) {
+  const accounts = useSelector(accountsSelector);
+  const ref = useRef();
+  useScrollToTop(ref);
 
-  renderItem = ({ item, index }: { item: Account, index: number }) => (
-    <AccountRow
-      navigation={this.props.navigation}
-      account={item}
-      accountId={item.id}
-      isLast={index === this.props.accounts.length - 1}
-    />
+  const { params } = route;
+
+  const [account, setAccount] = useState(undefined);
+
+  // Deep linking params redirect
+  useEffect(() => {
+    if (params) {
+      if (params.currency) {
+        const account = accounts.find(
+          ({ currency }) => currency.family === params.currency,
+        );
+
+        if (account) {
+          // reset params so when we come back the redirection doesn't loop
+          navigation.setParams({ ...params, currency: undefined });
+          navigation.navigate(ScreenName.Account, {
+            accountId: account.id,
+            isForwardedFromAccounts: true,
+          });
+        }
+      }
+    }
+  }, [params, accounts, navigation]);
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: Account, index: number }) => (
+      <AccountRow
+        navigation={navigation}
+        account={item}
+        accountId={item.id}
+        onSetAccount={setAccount}
+        isLast={index === accounts.length - 1}
+      />
+    ),
+    [navigation, accounts.length],
   );
 
-  keyExtractor = item => item.id;
-
-  render() {
-    const { accounts, navigation } = this.props;
-
-    if (accounts.length === 0) {
-      return (
-        <Fragment>
-          <TrackScreen category="Accounts" accountsLength={0} />
-          <NoAccounts navigation={navigation} />
-        </Fragment>
-      );
-    }
-
+  if (accounts.length === 0) {
     return (
-      <Fragment>
-        <TrackScreen category="Accounts" accountsLength={accounts.length} />
-        <List
-          data={accounts}
-          renderItem={this.renderItem}
-          keyExtractor={this.keyExtractor}
-          style={styles.list}
-          contentContainerStyle={styles.contentContainer}
-        />
-        <MigrateAccountsBanner />
-      </Fragment>
+      <>
+        <TrackScreen category="Accounts" accountsLength={0} />
+        <NoAccounts navigation={navigation} />
+      </>
     );
   }
-}
 
-export default compose(
-  connect(mapStateToProps),
-  translate(),
-)(Accounts);
+  return (
+    <>
+      <TrackScreen category="Accounts" accountsLength={accounts.length} />
+      <List
+        ref={ref}
+        data={accounts}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        style={styles.list}
+        contentContainerStyle={styles.contentContainer}
+      />
+      <MigrateAccountsBanner />
+      <TokenContextualModal
+        onClose={() => setAccount(undefined)}
+        isOpened={!!account}
+        account={account}
+      />
+    </>
+  );
+}
 
 const styles = StyleSheet.create({
   list: {

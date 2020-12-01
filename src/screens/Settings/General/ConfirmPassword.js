@@ -1,13 +1,12 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import type { NavigationScreenProp } from "react-navigation";
+import { Platform, Vibration } from "react-native";
 import * as Keychain from "react-native-keychain";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { translate } from "react-i18next";
-import i18next from "i18next";
+import { withTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
-import { Vibration } from "react-native";
+
 import { setPrivacy } from "../../../actions/settings";
 import type { Privacy } from "../../../reducers/settings";
 import type { T } from "../../../types/common";
@@ -16,9 +15,11 @@ import { VIBRATION_PATTERN_ERROR } from "../../../constants";
 
 type Props = {
   t: T,
-  setPrivacy: Privacy => *,
-  navigation: NavigationScreenProp<{}>,
+  setPrivacy: (privacy: Privacy) => void,
+  navigation: any,
+  route: any,
 };
+
 type State = {
   password: string,
   confirmPassword: string,
@@ -31,19 +32,15 @@ const mapDispatchToProps = {
 };
 
 class ConfirmPassword extends PureComponent<Props, State> {
-  static navigationOptions = {
-    title: i18next.t("auth.confirmPassword.title"),
-  };
-
   componentDidMount() {
     Keychain.getSupportedBiometryType().then(biometricsType => {
       if (biometricsType) this.setState({ biometricsType });
     });
   }
 
-  constructor({ navigation }) {
+  constructor({ route }) {
     super();
-    const password = navigation.getParam("password");
+    const password = route.params?.password;
     this.state = {
       password,
       confirmPassword: "",
@@ -58,8 +55,15 @@ class ConfirmPassword extends PureComponent<Props, State> {
   async save() {
     const { password, biometricsType } = this.state;
     const { setPrivacy, navigation } = this.props;
+    const options =
+      Platform.OS === "ios"
+        ? {}
+        : {
+            accessControl: Keychain.ACCESS_CONTROL.APPLICATION_PASSWORD,
+            rules: Keychain.SECURITY_RULES.NONE,
+          };
     try {
-      await Keychain.setGenericPassword("ledger", password);
+      await Keychain.setGenericPassword("ledger", password, options);
       setPrivacy({
         biometricsType,
         biometricsEnabled: false,
@@ -67,7 +71,8 @@ class ConfirmPassword extends PureComponent<Props, State> {
       const n = navigation.dangerouslyGetParent();
       if (n) n.goBack();
     } catch (err) {
-      console.log("could not save credentials"); // eslint-disable-line
+      // eslint-disable-next-line no-console
+      console.log("could not save credentials");
     }
   }
 
@@ -100,9 +105,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
 }
 
 export default compose(
-  connect(
-    null,
-    mapDispatchToProps,
-  ),
-  translate(),
+  // $FlowFixMe
+  connect(null, mapDispatchToProps),
+  withTranslation(),
 )(ConfirmPassword);

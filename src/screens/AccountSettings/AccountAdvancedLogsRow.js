@@ -1,12 +1,12 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: *,
   account: Account,
 };
 
@@ -20,7 +20,7 @@ class AccountAdvancedLogsRow extends PureComponent<Props> {
         title={<Trans i18nKey="account.settings.advanced.title" />}
         arrowRight
         onPress={() =>
-          navigation.navigate("AdvancedLogs", {
+          navigation.navigate(ScreenName.AdvancedLogs, {
             accountId: account.id,
           })
         }

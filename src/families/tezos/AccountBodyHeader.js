@@ -1,8 +1,7 @@
 // @flow
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
-import { withNavigation } from "react-navigation";
-import differenceInCalendarDays from "date-fns/difference_in_calendar_days";
+import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
@@ -81,7 +80,7 @@ const styles = StyleSheet.create({
 });
 
 const OpCounterValue = ({ children }: *) => (
-  <LText tertiary numberOfLines={1} style={styles.counterValue}>
+  <LText semiBold numberOfLines={1} style={styles.counterValue}>
     {children}
   </LText>
 );
@@ -91,13 +90,13 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
-const TezosAccountBodyHeader = ({
+export default function TezosAccountBodyHeader({
   account,
   parentAccount,
 }: {
   account: AccountLike,
   parentAccount: ?Account,
-}) => {
+}) {
   const [openedModal, setOpenedModal] = useState(false);
 
   const onModalClose = useCallback(() => {
@@ -136,7 +135,7 @@ const TezosAccountBodyHeader = ({
               <LText semiBold style={styles.delegatorName}>
                 {name}
               </LText>
-              <LText tertiary numberOfLines={1} style={styles.currencyValue}>
+              <LText semiBold numberOfLines={1} style={styles.currencyValue}>
                 <CurrencyUnitValue showCode unit={unit} value={amount} />
               </LText>
             </View>
@@ -183,6 +182,4 @@ const TezosAccountBodyHeader = ({
       />
     </View>
   );
-};
-
-export default withNavigation(TezosAccountBodyHeader);
+}

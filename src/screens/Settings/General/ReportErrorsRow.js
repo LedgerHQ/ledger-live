@@ -42,7 +42,4 @@ class ReportErrorsRow extends PureComponent<Props> {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ReportErrorsRow);
+export default connect(mapStateToProps, mapDispatchToProps)(ReportErrorsRow);

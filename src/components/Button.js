@@ -9,6 +9,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
+import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import LText from "./LText";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import { track } from "../analytics";
@@ -19,6 +20,9 @@ const WAIT_TIME_BEFORE_SPINNER = 150;
 const BUTTON_HEIGHT = 48;
 const ANIM_OFFSET = 20;
 const ANIM_DURATION = 300;
+
+type LTextProps = React$ElementProps<typeof LText>;
+type LTextStyleProp = $PropertyType<LTextProps, "style">;
 
 type ButtonType =
   | "primary"
@@ -38,25 +42,26 @@ export type BaseButtonProps = {
   // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
   onPress?: () => ?Promise<any> | any,
   // text of the button
-  title?: React$Node,
-  containerStyle?: *,
-  titleStyle?: *,
-  IconLeft?: *,
-  IconRight?: *,
+  title?: React$Node | string,
+  containerStyle?: ViewStyleProp,
+  titleStyle?: LTextStyleProp,
+  IconLeft?: React$ComponentType<{ size: number, color: string }>,
+  IconRight?: React$ComponentType<{ size: number, color: string }>,
   disabled?: boolean,
-  outline?: Boolean,
+  outline?: boolean,
   // for analytics
   event: string,
   eventProperties?: Object,
+  size?: number,
 };
 
-type Props = BaseProps & {
+type Props = BaseButtonProps & {
   useTouchable: boolean,
 };
 
 const ButtonWrapped = (props: BaseButtonProps) => (
   <ButtonUseTouchable.Consumer>
-    {useTouchable => <Button useTouchable={useTouchable} {...props} />}
+    {useTouchable => <Button {...props} useTouchable={useTouchable} />}
   </ButtonUseTouchable.Consumer>
 );
 
@@ -207,7 +212,7 @@ class Button extends PureComponent<
     ];
 
     const spinnerSliderStyle = [
-      styles.slider,
+      styles.spinnerSlider,
       {
         opacity: anim,
         transform: [{ translateY: spinnerSliderOffset }],
@@ -233,7 +238,7 @@ class Button extends PureComponent<
 
         <Animated.View style={titleSliderStyle}>
           {IconLeft ? (
-            <View style={title ? { paddingRight: 10 } : {}}>
+            <View style={{ paddingRight: title ? 10 : null }}>
               <IconLeft size={16} color={iconColor} />
             </View>
           ) : null}
@@ -245,7 +250,7 @@ class Button extends PureComponent<
           ) : null}
 
           {IconRight ? (
-            <View style={title ? { paddingLeft: 10 } : {}}>
+            <View style={{ paddingLeft: title ? 10 : null }}>
               <IconRight size={16} color={iconColor} />
             </View>
           ) : null}
@@ -269,11 +274,17 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   slider: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+  },
+  spinnerSlider: {
     position: "absolute",
     top: 0,
     left: 0,
-    bottom: 0,
     right: 0,
+    bottom: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -282,7 +293,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
   },
-
   outlineBorder: {
     position: "absolute",
     top: 0,

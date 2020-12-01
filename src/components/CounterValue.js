@@ -1,27 +1,19 @@
 // @flow
-import React, { Component } from "react";
-import type { BigNumber } from "bignumber.js";
-import { connect } from "react-redux";
-import type { CryptoCurrency, Currency } from "@ledgerhq/live-common/lib/types";
-import type { State } from "../reducers";
-import {
-  counterValueCurrencySelector,
-  intermediaryCurrency,
-  exchangeSettingsForPairSelector,
-} from "../reducers/settings";
-import CounterValues from "../countervalues";
+import React from "react";
+import { BigNumber } from "bignumber.js";
+import { useSelector } from "react-redux";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
+import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react";
+import { counterValueCurrencySelector } from "../reducers/settings";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import LText from "./LText";
 
-type OwnProps = {
+type Props = {
   // wich market to query
-  currency: CryptoCurrency,
-
+  currency: Currency,
   // when? if not given: take latest
   date?: Date,
-
   value: BigNumber,
-
   // display grey placeholder if no value
   withPlaceholder?: boolean,
   placeholderProps?: mixed,
@@ -31,71 +23,39 @@ type OwnProps = {
   subMagnitude?: number,
 };
 
-type Props = OwnProps & {
-  // from reducers
-  counterValueCurrency: Currency,
-  value: ?number,
-};
-
-const mapStateToProps = (state: State, props: OwnProps) => {
-  const { currency, value, date, subMagnitude } = props;
-  const counterValueCurrency = counterValueCurrencySelector(state);
-  const intermediary = intermediaryCurrency(currency, counterValueCurrency);
-  const fromExchange = exchangeSettingsForPairSelector(state, {
+export default function CounterValue({
+  value,
+  date,
+  withPlaceholder,
+  placeholderProps,
+  Wrapper,
+  currency,
+  ...props
+}: Props) {
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const countervalue = useCalculate({
     from: currency,
-    to: intermediary,
-  });
-  const toExchange = exchangeSettingsForPairSelector(state, {
-    from: intermediary,
     to: counterValueCurrency,
-  });
-  const counterValue = CounterValues.calculateWithIntermediarySelector(state, {
-    from: currency,
-    fromExchange,
-    intermediary,
-    toExchange,
-    to: counterValueCurrency,
-    value,
-    date,
-    disableRounding: !!subMagnitude,
+    value: value.toNumber(),
+    disableRounding: true,
   });
 
-  return {
-    counterValueCurrency,
-    value: counterValue,
-  };
-};
-
-class CounterValue extends Component<Props> {
-  render() {
-    const {
-      value,
-      counterValueCurrency,
-      date,
-      withPlaceholder,
-      placeholderProps,
-      Wrapper,
-      ...props
-    } = this.props;
-
-    const inner = (
-      <CurrencyUnitValue
-        {...props}
-        unit={counterValueCurrency.units[0]}
-        value={value}
-      />
-    );
-
-    if (!value) {
-      return withPlaceholder ? <LText style={{ fontSize: 16 }}>-</LText> : null;
-    }
-
-    if (Wrapper) {
-      return <Wrapper>{inner}</Wrapper>;
-    }
-
-    return inner;
+  if (typeof countervalue !== "number") {
+    return withPlaceholder ? <LText style={{ fontSize: 16 }}>-</LText> : null;
   }
-}
 
-export default connect(mapStateToProps)(CounterValue);
+  const inner = (
+    <CurrencyUnitValue
+      {...props}
+      currency={currency}
+      unit={counterValueCurrency.units[0]}
+      value={BigNumber(countervalue)}
+    />
+  );
+
+  if (Wrapper) {
+    return <Wrapper>{inner}</Wrapper>;
+  }
+
+  return inner;
+}

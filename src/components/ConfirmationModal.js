@@ -9,17 +9,19 @@ import BottomModal from "./BottomModal";
 import LText from "./LText";
 import Button from "./Button";
 
-type Props = {
+type Props = {|
   isOpened: boolean,
   onClose: () => void,
   onConfirm: () => *,
+  onModalHide?: () => *,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
   Icon?: React$ComponentType<*>,
   confirmButtonText?: React$Node,
   rejectButtonText?: React$Node,
+  hideRejectButton?: boolean,
   alert: boolean,
-};
+|};
 
 class ConfirmationModal extends PureComponent<Props> {
   static defaultProps = {
@@ -37,6 +39,7 @@ class ConfirmationModal extends PureComponent<Props> {
       onConfirm,
       Icon,
       alert,
+      hideRejectButton,
       ...rest
     } = this.props;
     return (
@@ -53,7 +56,7 @@ class ConfirmationModal extends PureComponent<Props> {
           </View>
         )}
         {confirmationTitle && (
-          <LText semiBold style={styles.confirmationTitle}>
+          <LText secondary semiBold style={styles.confirmationTitle}>
             {confirmationTitle}
           </LText>
         )}
@@ -61,13 +64,16 @@ class ConfirmationModal extends PureComponent<Props> {
           <LText style={styles.confirmationDesc}>{confirmationDesc}</LText>
         )}
         <View style={styles.confirmationFooter}>
-          <Button
-            event="ConfirmationModalCancel"
-            containerStyle={styles.confirmationButton}
-            type="secondary"
-            title={rejectButtonText || <Trans i18nKey="common.cancel" />}
-            onPress={onClose}
-          />
+          {!hideRejectButton && (
+            <Button
+              event="ConfirmationModalCancel"
+              containerStyle={styles.confirmationButton}
+              type="secondary"
+              title={rejectButtonText || <Trans i18nKey="common.cancel" />}
+              onPress={onClose}
+            />
+          )}
+
           <Button
             event="ConfirmationModalConfirm"
             containerStyle={[
@@ -92,11 +98,12 @@ const styles = StyleSheet.create({
   },
   confirmationTitle: {
     textAlign: "center",
-    fontSize: 14,
+    fontSize: 18,
     color: colors.darkBlue,
   },
   confirmationDesc: {
     marginVertical: 24,
+    paddingHorizontal: 32,
     textAlign: "center",
     fontSize: 14,
     color: colors.smoke,
@@ -112,7 +119,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignSelf: "center",
-    backgroundColor: rgba(colors.alert, 0.08),
+    backgroundColor: rgba(colors.yellow, 0.08),
     width: 56,
     borderRadius: 28,
     height: 56,

@@ -1,103 +1,59 @@
 // @flow
-
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from "react";
 import { RefreshControl } from "react-native";
-import { createStructuredSelector } from "reselect";
-import type { AsyncState } from "../reducers/bridgeSync";
-import { globalSyncStateSelector } from "../reducers/bridgeSync";
-import { BridgeSyncConsumer } from "../bridge/BridgeSyncContext";
-import CounterValues from "../countervalues";
+import { useBridgeSync } from "@ledgerhq/live-common/lib/bridge/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
 import { SYNC_DELAY } from "../constants";
 
-const mapStateToProps = createStructuredSelector({
-  globalSyncState: globalSyncStateSelector,
-});
-
-const Connector = (Decorated: React$ComponentType<any>) => {
-  const SyncIndicator = ({
-    globalSyncState,
-    ...rest
-  }: {
-    globalSyncState: AsyncState,
-  }) => (
-    <BridgeSyncConsumer>
-      {setSyncBehavior => (
-        <CounterValues.PollingConsumer>
-          {cvPolling => (
-            <Decorated
-              cvPoll={cvPolling.poll}
-              setSyncBehavior={setSyncBehavior}
-              {...rest}
-            />
-          )}
-        </CounterValues.PollingConsumer>
-      )}
-    </BridgeSyncConsumer>
-  );
-
-  return connect(mapStateToProps)(SyncIndicator);
-};
-
 type Props = {
-  error: ?Error,
-  isPending: boolean,
+  error?: Error,
   isError: boolean,
-  cvPoll: *,
-  setSyncBehavior: *,
-  forwardedRef?: *,
+  forwardedRef?: any,
+  setSyncBehavior: any,
 };
 
 export default (ScrollListLike: any) => {
-  class Inner extends PureComponent<Props, { refreshing: boolean }> {
-    state = {
-      refreshing: false,
-    };
+  function Inner({ forwardedRef, ...scrollListLikeProps }: Props) {
+    const [refreshing, setRefreshing] = useState(false);
+    const setSyncBehavior = useBridgeSync();
+    const { poll } = useCountervaluesPolling();
 
-    timeout: *;
-
-    componentWillUnmount() {
-      clearTimeout(this.timeout);
-    }
-
-    onRefresh = () => {
-      this.props.cvPoll();
-      this.props.setSyncBehavior({
+    function onRefresh() {
+      poll();
+      setSyncBehavior({
         type: "SYNC_ALL_ACCOUNTS",
         priority: 5,
       });
-      this.setState({ refreshing: true }, () => {
-        this.timeout = setTimeout(() => {
-          this.setState({ refreshing: false });
-        }, SYNC_DELAY);
-      });
-    };
-
-    render() {
-      const {
-        isPending,
-        error,
-        isError,
-        cvPoll,
-        setSyncBehavior,
-        forwardedRef,
-        ...props
-      } = this.props;
-      const { refreshing } = this.state;
-      return (
-        <ScrollListLike
-          {...props}
-          ref={forwardedRef}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={this.onRefresh}
-            />
-          }
-        />
-      );
+      setRefreshing(true);
     }
+
+    useEffect(() => {
+      if (!refreshing) {
+        return () => {};
+      }
+
+      const timer = setTimeout(() => {
+        setRefreshing(false);
+      }, SYNC_DELAY);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }, [refreshing]);
+
+    return (
+      <ScrollListLike
+        {...scrollListLikeProps}
+        ref={forwardedRef}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
+    );
   }
 
-  return Connector(Inner);
+  // $FlowFixMe
+  return React.forwardRef((props, ref) => (
+    <Inner {...props} forwardedRef={ref} />
+  ));
 };

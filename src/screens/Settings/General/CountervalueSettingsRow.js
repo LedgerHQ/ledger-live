@@ -1,40 +1,33 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
-import { connect } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { createStructuredSelector } from "reselect";
-import type { NavigationScreenProp } from "react-navigation";
 import { counterValueCurrencySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
 import colors from "../../../colors";
+import { ScreenName } from "../../../const";
 
-const mapStateToProps = createStructuredSelector({
-  counterValueCurrency: counterValueCurrencySelector,
-});
+export default function CountervalueSettingsRow() {
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const { navigate } = useNavigation();
 
-class CountervalueSettingsRow extends PureComponent<{
-  navigation: NavigationScreenProp<*>,
-  counterValueCurrency: *,
-}> {
-  render() {
-    const { navigation, counterValueCurrency } = this.props;
-    return (
-      <SettingsRow
-        event="CountervalueSettingsRow"
-        title={<Trans i18nKey="settings.display.counterValue" />}
-        desc={<Trans i18nKey="settings.display.counterValueDesc" />}
-        arrowRight
-        onPress={() => navigation.navigate("CountervalueSettings")}
-        alignedTop
-      >
-        <LText semiBold style={styles.tickerText}>
-          {counterValueCurrency.ticker}
-        </LText>
-      </SettingsRow>
-    );
-  }
+  return (
+    <SettingsRow
+      event="CountervalueSettingsRow"
+      title={<Trans i18nKey="settings.display.counterValue" />}
+      desc={<Trans i18nKey="settings.display.counterValueDesc" />}
+      arrowRight
+      onPress={() => navigate(ScreenName.CountervalueSettings)}
+      alignedTop
+    >
+      <LText semiBold style={styles.tickerText}>
+        {counterValueCurrency.ticker}
+      </LText>
+    </SettingsRow>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -42,5 +35,3 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
 });
-
-export default connect(mapStateToProps)(CountervalueSettingsRow);

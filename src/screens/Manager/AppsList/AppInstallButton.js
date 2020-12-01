@@ -1,30 +1,34 @@
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
-
+import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-
-import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/lib/apps/react";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
+import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/lib/apps/react";
+import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
+import { installAppFirstTime } from "../../../actions/settings";
 
 import Button from "../../../components/Button";
 
 type Props = {
   app: App,
   state: State,
-  dispatch: Action => void,
+  dispatch: (action: Action) => void,
   notEnoughMemoryToInstall: boolean,
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
 };
 
-const AppInstallButton = ({
+export default function AppInstallButton({
   app,
   state,
-  dispatch,
+  dispatch: dispatchProps,
   notEnoughMemoryToInstall,
   setAppInstallWithDependencies,
-}: Props) => {
+}: Props) {
+  const dispatch = useDispatch();
+  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
+
   const { name } = app;
   const { installed, updateAllQueue } = state;
 
@@ -36,10 +40,22 @@ const AppInstallButton = ({
   const needsDependencies = useAppInstallNeedsDeps(state, app);
 
   const installApp = useCallback(() => {
-    if (needsDependencies && setAppInstallWithDependencies)
+    if (needsDependencies && setAppInstallWithDependencies) {
       setAppInstallWithDependencies(needsDependencies);
-    else dispatch({ type: "install", name });
-  }, [dispatch, name, needsDependencies, setAppInstallWithDependencies]);
+    } else {
+      dispatchProps({ type: "install", name });
+    }
+    if (!hasInstalledAnyApp) {
+      dispatch(installAppFirstTime(true));
+    }
+  }, [
+    dispatch,
+    dispatchProps,
+    name,
+    needsDependencies,
+    setAppInstallWithDependencies,
+    hasInstalledAnyApp,
+  ]);
 
   return (
     <Button
@@ -55,7 +71,7 @@ const AppInstallButton = ({
       eventProperties={{ appName: name }}
     />
   );
-};
+}
 
 const styles = StyleSheet.create({
   appStateText: {
@@ -64,11 +80,8 @@ const styles = StyleSheet.create({
   appButton: {
     flexGrow: 1,
     flexBasis: "auto",
-    alignItems: "flex-start",
     height: 38,
     paddingHorizontal: 10,
     paddingVertical: 12,
   },
 });
-
-export default AppInstallButton;

@@ -1,47 +1,45 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans, translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import NoLocationImage from "../../icons/NoLocationImage";
 import LocationServicesButton from "./LocationServicesButton";
 import AppPermissionsButton from "./AppPermissionsButton";
 import LText from "../../components/LText";
 import colors from "../../colors";
 
-class LocationRequired extends PureComponent<{
+type Props = {
   onRetry: Function,
   errorType: "disabled" | "unauthorized",
-}> {
-  render() {
-    const { errorType, onRetry } = this.props;
+};
 
-    return (
-      <View style={styles.container}>
-        <NoLocationImage />
-        <View>
-          <LText bold secondary style={styles.title}>
-            <Trans i18nKey="location.required" />
-          </LText>
-        </View>
-        <View>
-          <LText style={styles.desc}>
-            <Trans i18nKey="location.disabled" />
-          </LText>
-          <LText semiBold style={[styles.desc, styles.descPadding]}>
-            <Trans i18nKey="location.noInfos" />
-          </LText>
-        </View>
-        <View style={styles.buttonWrapper}>
-          {errorType === "disabled" ? (
-            <LocationServicesButton onRetry={onRetry} />
-          ) : (
-            <AppPermissionsButton onRetry={onRetry} />
-          )}
-        </View>
+export default function LocationRequired({ errorType, onRetry }: Props) {
+  return (
+    <View style={styles.container}>
+      <NoLocationImage />
+      <View>
+        <LText bold secondary style={styles.title}>
+          <Trans i18nKey="location.required" />
+        </LText>
       </View>
-    );
-  }
+      <View>
+        <LText style={styles.desc}>
+          <Trans i18nKey="location.disabled" />
+        </LText>
+        <LText semiBold style={[styles.desc, styles.descPadding]}>
+          <Trans i18nKey="location.noInfos" />
+        </LText>
+      </View>
+      <View style={styles.buttonWrapper}>
+        {errorType === "disabled" ? (
+          <LocationServicesButton onRetry={onRetry} />
+        ) : (
+          <AppPermissionsButton onRetry={onRetry} />
+        )}
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -71,5 +69,3 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
 });
-
-export default translate()(LocationRequired);

@@ -1,36 +1,48 @@
 // @flow
-import { Component } from "react";
 import type { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
-import { withLocale } from "../context/Locale";
+import { useSelector } from "react-redux";
+import { useLocale } from "../context/Locale";
+import { discreetModeSelector } from "../reducers/settings";
 
-class CurrencyUnitValue extends Component<{
+type Props = {
   unit: Unit,
-  value: BigNumber,
-  locale: string,
-  showCode: boolean,
+  value: ?BigNumber,
+  showCode?: boolean,
   alwaysShowSign?: boolean,
-  before: string,
-  after: string,
-}> {
-  static defaultProps = {
-    showCode: true,
-    before: "",
-    after: "",
-  };
+  before?: string,
+  after?: string,
+  disableRounding?: boolean,
+  joinFragmentsSeparator?: string,
+};
 
-  render() {
-    const { unit, value, before, after, ...rest } = this.props;
-    return (
-      before +
-      formatCurrencyUnit(unit, value, {
-        ...rest,
-      }) +
-      after
-    );
-  }
+export default function CurrencyUnitValue({
+  unit,
+  value,
+  showCode = true,
+  alwaysShowSign,
+  before = "",
+  after = "",
+  disableRounding = false,
+  joinFragmentsSeparator = "",
+}: Props) {
+  const { locale } = useLocale();
+  const discreet = useSelector(discreetModeSelector);
+
+  return (
+    before +
+    (value
+      ? formatCurrencyUnit(unit, value, {
+          showCode,
+          alwaysShowSign,
+          locale,
+          disableRounding,
+          discreet,
+          joinFragmentsSeparator,
+        })
+      : "") +
+    after
+  );
 }
-
-export default withLocale(CurrencyUnitValue);

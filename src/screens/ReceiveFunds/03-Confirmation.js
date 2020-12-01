@@ -1,415 +1,340 @@
 // @flow
 
-import React, { Component } from "react";
-import i18next from "i18next";
-import { from, of } from "rxjs";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { of } from "rxjs";
 import { delay } from "rxjs/operators";
-import { View, StyleSheet, Linking, ScrollView } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
+import { View, StyleSheet, Linking, Platform } from "react-native";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
-import { translate, Trans } from "react-i18next";
-import type { NavigationScreenProp } from "react-navigation";
+import { Trans } from "react-i18next";
 import ReactNativeModal from "react-native-modal";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
+import type {
+  Account,
+  TokenAccount,
+  AccountLike,
+} from "@ledgerhq/live-common/lib/types";
 import {
   getMainAccount,
   getAccountCurrency,
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
-import getAddress from "@ledgerhq/live-common/lib/hw/getAddress";
-import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import getWindowDimensions from "../../logic/getWindowDimensions";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
-import StepHeader from "../../components/StepHeader";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
 import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 import BottomModal from "../../components/BottomModal";
-import DeviceNanoAction from "../../components/DeviceNanoAction";
 import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
 import Touchable from "../../components/Touchable";
-import TranslatedError from "../../components/TranslatedError";
 import Button from "../../components/Button";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import CopyLink from "../../components/CopyLink";
 import ShareLink from "../../components/ShareLink";
+import NavigationScrollView from "../../components/NavigationScrollView";
 import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
 import { rejectionOp } from "../../components/DebugRejectSwitch";
+import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import GenericErrorView from "../../components/GenericErrorView";
 
 const forceInset = { bottom: "always" };
-
-type Navigation = NavigationScreenProp<{
-  params: {
-    accountId: string,
-    deviceId: string,
-    modelId: DeviceModelId,
-    wired: boolean,
-    allowNavigation?: boolean,
-  },
-}>;
 
 type Props = {
   account: ?(TokenAccount | Account),
   parentAccount: ?Account,
-  navigation: Navigation,
+  navigation: any,
+  route: { params: RouteParams },
   readOnlyModeEnabled: boolean,
 };
 
-type State = {
-  verified: boolean,
-  isModalOpened: boolean,
-  onModalHide: Function,
-  error: ?Error,
-  zoom: boolean,
+type RouteParams = {
+  account?: AccountLike,
+  accountId: string,
+  modelId: DeviceModelId,
+  wired: boolean,
+  device?: Device,
 };
 
-const mapStateToProps = (s, p) => ({
-  ...accountAndParentScreenSelector(s, p),
-  readOnlyModeEnabled: readOnlyModeEnabledSelector(s),
-});
+export default function ReceiveConfirmation({ navigation, route }: Props) {
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
-class ReceiveConfirmation extends Component<Props, State> {
-  static navigationOptions = ({ navigation }: { navigation: Navigation }) => {
-    const options: any = {
-      headerTitle: (
-        <StepHeader
-          title={i18next.t("account.receive")}
-          subtitle={i18next.t("send.stepperHeader.stepRange", {
-            currentStep: "3",
-            totalSteps: "3",
-          })}
-        />
-      ),
-    };
+  const [verified, setVerified] = useState(false);
+  const [isModalOpened, setIsModalOpened] = useState(false);
+  const [onModalHide, setOnModalHide] = useState(() => {});
+  const [error, setError] = useState(null);
+  const [zoom, setZoom] = useState(false);
+  const [allowNavigation, setAllowNavigation] = useState(true);
+  const sub = useRef();
 
-    if (!navigation.getParam("allowNavigation")) {
-      options.headerLeft = null;
-      options.headerRight = null;
-      options.gesturesEnabled = false;
-    }
+  const verifyOnDevice = useCallback(
+    async (device: Device): Promise<void> => {
+      if (!account) return;
+      const mainAccount = getMainAccount(account, parentAccount);
 
-    return options;
-  };
-
-  state = {
-    verified: false,
-    isModalOpened: false,
-    onModalHide: () => {},
-    error: null,
-    zoom: false,
-  };
-
-  sub: *;
-
-  componentDidMount() {
-    const { navigation } = this.props;
-    const deviceId = navigation.getParam("deviceId");
-
-    if (deviceId) {
-      const n = navigation.dangerouslyGetParent();
-      if (n) n.setParams({ allowNavigation: false });
-      this.verifyOnDevice(deviceId);
-    } else {
-      navigation.setParams({ allowNavigation: true });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.sub) this.sub.unsubscribe();
-  }
-
-  contactUs = () => {
-    Linking.openURL(urls.contact);
-  };
-
-  verifyOnDevice = async (deviceId: string) => {
-    const { account, parentAccount, navigation } = this.props;
-    if (!account) return;
-    const mainAccount = getMainAccount(account, parentAccount);
-
-    this.sub = withDevice(deviceId)(transport =>
-      mainAccount.id.startsWith("mock")
+      sub.current = (mainAccount.id.startsWith("mock")
         ? // $FlowFixMe
-          of({}).pipe(
-            delay(1000),
-            rejectionOp(),
-          )
-        : from(
-            getAddress(transport, {
-              derivationMode: mainAccount.derivationMode,
-              currency: mainAccount.currency,
-              path: mainAccount.freshAddressPath,
-              verify: true,
-            }),
-          ),
-    ).subscribe({
-      complete: () => {
-        this.setState({ verified: true });
-        navigation.setParams({ allowNavigation: true });
-        const n = navigation.dangerouslyGetParent();
-        if (n) n.setParams({ allowNavigation: true });
-      },
-      error: error => {
-        if (error && error.name !== "UserRefusedAddress") {
-          logger.critical(error);
-        }
-        this.setState({ error, isModalOpened: true });
-        navigation.setParams({ allowNavigation: true });
-        const n = navigation.dangerouslyGetParent();
-        if (n) n.setParams({ allowNavigation: true });
-      },
-    });
-  };
-
-  onRetry = () => {
-    if (this.state.isModalOpened) {
-      this.setState({
-        isModalOpened: false,
-        onModalHide: this.props.navigation.goBack,
+          of({}).pipe(delay(1000), rejectionOp())
+        : getAccountBridge(mainAccount).receive(mainAccount, {
+            deviceId: device.deviceId,
+            verify: true,
+          })
+      ).subscribe({
+        complete: () => {
+          setVerified(true);
+          setAllowNavigation(true);
+        },
+        error: error => {
+          if (error && error.name !== "UserRefusedAddress") {
+            logger.critical(error);
+          }
+          setError(error);
+          setIsModalOpened(true);
+          setAllowNavigation(true);
+        },
       });
+    },
+    [account, parentAccount],
+  );
+
+  function onRetry(): void {
+    if (isModalOpened) {
+      setIsModalOpened(false);
+      setOnModalHide(navigation.goBack);
     } else {
-      this.props.navigation.goBack();
+      navigation.goBack();
     }
-  };
+  }
 
-  onModalClose = () => {
-    this.setState({
-      isModalOpened: false,
-      onModalHide: this.onDone,
-    });
-  };
+  function onModalClose(): void {
+    setIsModalOpened(false);
+    setOnModalHide(onDone);
+  }
 
-  onZoom = () => {
-    const { zoom } = this.state;
+  function onZoom(): void {
+    setZoom(!zoom);
+  }
 
-    this.setState({
-      zoom: !zoom,
-    });
-  };
-
-  onDone = () => {
-    if (this.props.navigation.dismiss) {
-      this.props.navigation.dismiss();
+  function onDone(): void {
+    const n = navigation.dangerouslyGetParent();
+    if (n) {
+      n.pop();
     }
-  };
+  }
 
-  render() {
-    const {
-      account,
-      parentAccount,
-      navigation,
-      readOnlyModeEnabled,
-    } = this.props;
-    if (!account) return null;
-    const { verified, error, isModalOpened, onModalHide, zoom } = this.state;
-    const { width } = getWindowDimensions();
-    const unsafe = !navigation.getParam("deviceId");
-    const allowNavigation = navigation.getParam("allowNavigation");
-    const QRSize = Math.round(width / 1.8 - 16);
-    const mainAccount = getMainAccount(account, parentAccount);
-    const currency = getAccountCurrency(account);
+  useEffect(() => {
+    if (!allowNavigation) {
+      navigation.setOptions({
+        headerLeft: null,
+        headerRight: () => null,
+        gestureEnabled: false,
+      });
+      return;
+    }
 
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen
-          category="ReceiveFunds"
-          name="Confirmation"
-          unsafe={unsafe}
-          verified={verified}
-        />
-        {allowNavigation ? null : (
-          <>
-            <PreventNativeBack />
-            <SkipLock />
-          </>
-        )}
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.root}>
-          <View style={styles.container}>
-            <Touchable event="QRZoom" onPress={this.onZoom}>
-              {width < 350 ? (
-                <View style={[styles.qrWrapper, styles.qrWrapperSmall]}>
-                  <QRcodeZoom size={72} />
-                </View>
+    const { headerRight } = closableStackNavigatorConfig;
+    navigation.setOptions({
+      headerLeft: null,
+      headerRight,
+      gestureEnabled: Platform.OS === "ios",
+    });
+  }, [allowNavigation, navigation]);
+
+  useEffect(() => {
+    const device = route.params.device;
+
+    if (device) {
+      setAllowNavigation(false);
+      verifyOnDevice(device);
+    } else {
+      setAllowNavigation(true);
+    }
+  }, [route.params, account, parentAccount, verifyOnDevice]);
+
+  if (!account) return null;
+  const { width } = getWindowDimensions();
+  const unsafe = !route.params.device?.deviceId;
+  const QRSize = Math.round(width / 1.8 - 16);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currency = getAccountCurrency(account);
+
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen
+        category="ReceiveFunds"
+        name="Confirmation"
+        unsafe={unsafe}
+        verified={verified}
+      />
+      {allowNavigation ? null : (
+        <>
+          <PreventNativeBack />
+          <SkipLock />
+        </>
+      )}
+      <NavigationScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={styles.root}
+      >
+        <View style={styles.container}>
+          <Touchable event="QRZoom" onPress={onZoom}>
+            {width < 350 ? (
+              <View style={[styles.qrWrapper, styles.qrWrapperSmall]}>
+                <QRcodeZoom size={72} />
+              </View>
+            ) : (
+              <View style={styles.qrWrapper}>
+                <QRCode
+                  size={QRSize}
+                  value={mainAccount.freshAddress}
+                  ecl="H"
+                />
+              </View>
+            )}
+          </Touchable>
+          <View>
+            <LText style={styles.addressTitle}>
+              <Trans i18nKey="transfer.receive.address" />
+            </LText>
+          </View>
+          <View style={styles.addressWrapper}>
+            <CurrencyIcon currency={currency} size={20} />
+            <LText semiBold style={styles.addressTitleBold}>
+              {getAccountName(account)}
+            </LText>
+          </View>
+          <View style={styles.address}>
+            <DisplayAddress
+              address={mainAccount.freshAddress}
+              verified={verified}
+            />
+          </View>
+          <View style={styles.copyLink}>
+            <CopyLink
+              style={styles.copyShare}
+              string={mainAccount.freshAddress}
+              replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
+            >
+              <Trans i18nKey="transfer.receive.copyAddress" />
+            </CopyLink>
+            <View style={styles.copyShare}>
+              <ShareLink value={mainAccount.freshAddress}>
+                <Trans i18nKey="transfer.receive.shareAddress" />
+              </ShareLink>
+            </View>
+          </View>
+        </View>
+        <View style={styles.bottomContainer}>
+          <VerifyAddressDisclaimer
+            unsafe={unsafe}
+            verified={verified}
+            action={
+              verified ? (
+                <Touchable
+                  event="ReceiveVerifyTransactionHelp"
+                  onPress={() => Linking.openURL(urls.verifyTransactionDetails)}
+                >
+                  <LText semiBold style={styles.learnmore}>
+                    <Trans i18nKey="common.learnMore" />
+                  </LText>
+                </Touchable>
+              ) : null
+            }
+            text={
+              unsafe ? (
+                <Trans
+                  i18nKey={
+                    readOnlyModeEnabled
+                      ? "transfer.receive.readOnly.verify"
+                      : "transfer.receive.verifySkipped"
+                  }
+                  values={{
+                    accountType: mainAccount.currency.managerAppName,
+                  }}
+                />
+              ) : verified ? (
+                <Trans i18nKey="transfer.receive.verified" />
               ) : (
-                <View style={styles.qrWrapper}>
-                  <QRCode
-                    size={QRSize}
-                    value={mainAccount.freshAddress}
-                    ecl="H"
-                  />
-                </View>
-              )}
-            </Touchable>
-            <View>
-              <LText style={styles.addressTitle}>
-                <Trans i18nKey="transfer.receive.address" />
-              </LText>
-            </View>
-            <View style={styles.addressWrapper}>
-              <CurrencyIcon currency={currency} size={20} />
-              <LText semiBold style={styles.addressTitleBold}>
-                {getAccountName(account)}
-              </LText>
-            </View>
-            <View style={styles.address}>
-              <DisplayAddress
-                address={mainAccount.freshAddress}
-                verified={verified}
+                <Trans
+                  i18nKey="transfer.receive.verifyPending"
+                  values={{
+                    currencyName: mainAccount.currency.managerAppName,
+                  }}
+                />
+              )
+            }
+          />
+        </View>
+      </NavigationScrollView>
+      {verified && (
+        <View style={styles.footer}>
+          <Button
+            event="ReceiveDone"
+            containerStyle={styles.button}
+            onPress={onDone}
+            type="secondary"
+            title={<Trans i18nKey="common.close" />}
+          />
+          <Button
+            event="ReceiveVerifyAgain"
+            containerStyle={styles.bigButton}
+            type="primary"
+            title={<Trans i18nKey="transfer.receive.verifyAgain" />}
+            onPress={onRetry}
+          />
+        </View>
+      )}
+      <ReactNativeModal
+        isVisible={zoom}
+        onBackdropPress={onZoom}
+        onBackButtonPress={onZoom}
+        useNativeDriver
+        hideModalContentWhileAnimating
+      >
+        <View style={styles.qrZoomWrapper}>
+          <QRCode size={width - 66} value={mainAccount.freshAddress} ecl="H" />
+        </View>
+      </ReactNativeModal>
+      <BottomModal
+        id="ReceiveConfirmationModal"
+        isOpened={isModalOpened}
+        onClose={onModalClose}
+        onModalHide={onModalHide}
+      >
+        {error ? (
+          <View style={styles.modal}>
+            <GenericErrorView error={error} />
+            <View style={styles.buttonsContainer}>
+              <Button
+                event="ReceiveRetry"
+                type="primary"
+                title={<Trans i18nKey="common.retry" />}
+                containerStyle={styles.bigButton}
+                onPress={onRetry}
               />
             </View>
-            <View style={styles.copyLink}>
-              <CopyLink
-                style={styles.copyShare}
-                string={mainAccount.freshAddress}
-                replacement={<Trans i18nKey="transfer.receive.addressCopied" />}
-              >
-                <Trans i18nKey="transfer.receive.copyAddress" />
-              </CopyLink>
-              <View style={styles.copyShare}>
-                <ShareLink value={mainAccount.freshAddress}>
-                  <Trans i18nKey="transfer.receive.shareAddress" />
-                </ShareLink>
-              </View>
-            </View>
           </View>
-          <View style={styles.bottomContainer}>
-            <VerifyAddressDisclaimer
-              unsafe={unsafe}
-              verified={verified}
-              action={
-                verified ? (
-                  <Touchable
-                    event="ReceiveVerifyTransactionHelp"
-                    onPress={() =>
-                      Linking.openURL(urls.verifyTransactionDetails)
-                    }
-                  >
-                    <LText semiBold style={styles.learnmore}>
-                      <Trans i18nKey="common.learnMore" />
-                    </LText>
-                  </Touchable>
-                ) : null
-              }
-              text={
-                unsafe ? (
-                  <Trans
-                    i18nKey={
-                      readOnlyModeEnabled
-                        ? "transfer.receive.readOnly.verify"
-                        : "transfer.receive.verifySkipped"
-                    }
-                    values={{
-                      accountType: mainAccount.currency.managerAppName,
-                    }}
-                  />
-                ) : verified ? (
-                  <Trans i18nKey="transfer.receive.verified" />
-                ) : (
-                  <Trans
-                    i18nKey="transfer.receive.verifyPending"
-                    values={{
-                      currencyName: mainAccount.currency.managerAppName,
-                    }}
-                  />
-                )
-              }
-            />
-          </View>
-        </ScrollView>
-        {verified && (
-          <View style={styles.footer}>
-            <Button
-              event="ReceiveDone"
-              containerStyle={styles.button}
-              onPress={this.onDone}
-              type="secondary"
-              title={<Trans i18nKey="common.close" />}
-            />
-            <Button
-              event="ReceiveVerifyAgain"
-              containerStyle={styles.bigButton}
-              type="primary"
-              title={<Trans i18nKey="transfer.receive.verifyAgain" />}
-              onPress={this.onRetry}
-            />
-          </View>
-        )}
-        <ReactNativeModal
-          isVisible={zoom}
-          onBackdropPress={this.onZoom}
-          onBackButtonPress={this.onZoom}
-          useNativeDriver
-          hideModalContentWhileAnimating
+        ) : null}
+        <Touchable
+          event="ReceiveClose"
+          style={styles.close}
+          onPress={onModalClose}
         >
-          <View style={styles.qrZoomWrapper}>
-            <QRCode
-              size={width - 66}
-              value={mainAccount.freshAddress}
-              ecl="H"
-            />
-          </View>
-        </ReactNativeModal>
-        <BottomModal
-          id="ReceiveConfirmationModal"
-          isOpened={isModalOpened}
-          onClose={this.onModalClose}
-          onModalHide={onModalHide}
-        >
-          {error ? (
-            <View style={styles.modal}>
-              <View style={styles.modalBody}>
-                <View style={styles.modalIcon}>
-                  <DeviceNanoAction
-                    modelId={navigation.getParam("modelId")}
-                    wired={navigation.getParam("wired")}
-                    error={error}
-                  />
-                </View>
-                <LText secondary semiBold style={styles.modalTitle}>
-                  <TranslatedError error={error} />
-                </LText>
-                <LText style={styles.modalDescription}>
-                  <TranslatedError error={error} field="description" />
-                </LText>
-              </View>
-              <View style={styles.buttonsContainer}>
-                <Button
-                  event="ReceiveContactUs"
-                  type="secondary"
-                  title={<Trans i18nKey="common.contactUs" />}
-                  containerStyle={styles.button}
-                  onPress={this.contactUs}
-                />
-                <Button
-                  event="ReceiveRetry"
-                  type="primary"
-                  title={<Trans i18nKey="common.retry" />}
-                  containerStyle={styles.bigButton}
-                  onPress={this.onRetry}
-                />
-              </View>
-            </View>
-          ) : null}
-          <Touchable
-            event="ReceiveClose"
-            style={styles.close}
-            onPress={this.onModalClose}
-          >
-            <Close color={colors.fog} size={20} />
-          </Touchable>
-        </BottomModal>
-      </SafeAreaView>
-    );
-  }
+          <Close color={colors.fog} size={20} />
+        </Touchable>
+      </BottomModal>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -532,5 +457,3 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
 });
-
-export default connect(mapStateToProps)(translate()(ReceiveConfirmation));

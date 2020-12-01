@@ -10,7 +10,7 @@ type Props = {
 
 export default function AlertTriangle({
   size = 16,
-  color = colors.alert,
+  color = colors.yellow,
 }: Props) {
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>

@@ -1,8 +1,9 @@
 /* @flow */
 import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
-import type { NavigationScreenProp } from "react-navigation";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import type { RouteParams } from "../screens/SendFunds/04-Summary";
+
 import perFamily from "../generated/SendRowsFee";
 
 export default ({
@@ -10,11 +11,13 @@ export default ({
   account,
   parentAccount,
   navigation,
+  route,
 }: {
-  transaction: *,
+  transaction: any,
   account: AccountLike,
   parentAccount: ?Account,
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
+  route: { params: RouteParams },
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const C = perFamily[mainAccount.currency.family];
@@ -24,6 +27,7 @@ export default ({
       account={account}
       parentAccount={parentAccount}
       navigation={navigation}
+      route={route}
     />
   ) : null;
 };

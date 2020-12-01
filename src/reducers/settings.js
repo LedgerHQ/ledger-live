@@ -7,23 +7,36 @@ import {
   findCurrencyByTicker,
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
+  listSupportedFiats,
+  isCurrencySupported,
+  findCryptoCurrencyById,
+  findTokenById,
 } from "@ledgerhq/live-common/lib/currencies";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/lib/env";
 import { createSelector } from "reselect";
 import type {
   CryptoCurrency,
   Currency,
-  Account,
-  TokenAccount,
+  AccountLike,
+  TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
-import type { State } from ".";
+import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { OutputSelector } from "reselect";
+import uniq from "lodash/uniq";
+
+import { isCurrencyExchangeSupported } from "@ledgerhq/live-common/lib/exchange";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
+import type { State } from ".";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
+export const supportedCountervalues = [
+  ...listSupportedFiats(),
+  ...possibleIntermediaries,
+];
 export const intermediaryCurrency = (from: Currency, _to: Currency) => {
   if (from === ethereum || from.type === "TokenCurrency") return ethereum;
   return bitcoin;
@@ -68,9 +81,16 @@ export type SettingsState = {
   experimentalUSBEnabled: boolean,
   countervalueFirst: boolean,
   hideEmptyTokenAccounts: boolean,
+  blacklistedTokenIds: string[],
+  dismissedBanners: string[],
+  hasAvailableUpdate: boolean,
+  hasAcceptedSwapKYC: boolean,
+  swapProviders?: AvailableProvider[],
+  carouselVisibility: number,
+  discreetMode: boolean,
 };
 
-const INITIAL_STATE: SettingsState = {
+export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
   counterValueExchange: null,
   privacy: null,
@@ -81,11 +101,18 @@ const INITIAL_STATE: SettingsState = {
   selectedTimeRange: "month",
   orderAccounts: "balance|desc",
   hasCompletedOnboarding: false,
-  hasInstalledAnyApp: false,
+  hasInstalledAnyApp: true,
   readOnlyModeEnabled: !Config.DISABLE_READ_ONLY,
   experimentalUSBEnabled: false,
   countervalueFirst: false,
   hideEmptyTokenAccounts: false,
+  blacklistedTokenIds: [],
+  dismissedBanners: [],
+  hasAvailableUpdate: false,
+  hasAcceptedSwapKYC: false,
+  swapProviders: [],
+  carouselVisibility: 0,
+  discreetMode: false,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -150,6 +177,14 @@ const handlers: Object = {
     analyticsEnabled,
   }),
 
+  SETTINGS_SET_HAS_ACCEPTED_SWAP_KYC: (
+    state: SettingsState,
+    { hasAcceptedSwapKYC },
+  ) => ({
+    ...state,
+    hasAcceptedSwapKYC,
+  }),
+
   SETTINGS_SET_COUNTERVALUE: (state: SettingsState, { counterValue }) => ({
     ...state,
     counterValue,
@@ -194,9 +229,9 @@ const handlers: Object = {
     hasCompletedOnboarding: true,
   }),
 
-  SETTINGS_INSTALL_APP_FIRST_TIME: state => ({
+  SETTINGS_INSTALL_APP_FIRST_TIME: (state, action) => ({
     ...state,
-    hasInstalledAnyApp: true,
+    hasInstalledAnyApp: action.hasInstalledAnyApp,
   }),
 
   SETTINGS_SET_READONLY_MODE: (state, action) => ({
@@ -217,6 +252,43 @@ const handlers: Object = {
   SETTINGS_HIDE_EMPTY_TOKEN_ACCOUNTS: (state, { hideEmptyTokenAccounts }) => ({
     ...state,
     hideEmptyTokenAccounts,
+  }),
+  SHOW_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+    const ids = state.blacklistedTokenIds;
+    return {
+      ...state,
+      blacklistedTokenIds: ids.filter(id => id !== tokenId),
+    };
+  },
+  BLACKLIST_TOKEN: (state: SettingsState, { payload: tokenId }) => {
+    const ids = state.blacklistedTokenIds;
+    return {
+      ...state,
+      blacklistedTokenIds: [...ids, tokenId],
+    };
+  },
+  SETTINGS_DISMISS_BANNER: (state, { payload }) => ({
+    ...state,
+    dismissedBanners: [...state.dismissedBanners, payload],
+  }),
+  SETTINGS_SET_AVAILABLE_UPDATE: (state, action) => ({
+    ...state,
+    hasAvailableUpdate: action.enabled,
+  }),
+  DANGEROUSLY_OVERRIDE_STATE: (state: SettingsState): SettingsState => ({
+    ...state,
+  }),
+  SETTINGS_SET_SWAP_PROVIDERS: (state, { swapProviders }) => ({
+    ...state,
+    swapProviders,
+  }),
+  SETTINGS_SET_CAROUSEL_VISIBILITY: (state: AppState, { payload }) => ({
+    ...state,
+    carouselVisibility: payload,
+  }),
+  SETTINGS_SET_DISCREET_MODE: (state: AppState, { payload }) => ({
+    ...state,
+    discreetMode: payload,
   }),
 };
 
@@ -262,10 +334,7 @@ export const currencySettingsSelector = (
 });
 
 // $FlowFixMe
-export const privacySelector = createSelector(
-  storeSelector,
-  s => s.privacy,
-);
+export const privacySelector = createSelector(storeSelector, s => s.privacy);
 
 // $FlowFixMe
 export const reportErrorsEnabledSelector = createSelector(
@@ -287,7 +356,7 @@ export const experimentalUSBEnabledSelector = createSelector(
 
 export const currencySettingsForAccountSelector = (
   s: *,
-  { account }: { account: TokenAccount | Account },
+  { account }: { account: AccountLike },
 ) => currencySettingsSelector(s, { currency: getAccountCurrency(account) });
 
 export const exchangeSettingsForPairSelector = (
@@ -314,6 +383,9 @@ export const orderAccountsSelector = (state: State) =>
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding;
 
+export const hasAcceptedSwapKYCSelector = (state: State) =>
+  state.settings.hasAcceptedSwapKYC;
+
 export const hasInstalledAnyAppSelector = (state: State) =>
   state.settings.hasInstalledAnyApp;
 
@@ -322,6 +394,9 @@ export const countervalueFirstSelector = (state: State) =>
 
 export const readOnlyModeEnabledSelector = (state: State) =>
   Platform.OS !== "android" && state.settings.readOnlyModeEnabled;
+
+export const blacklistedTokenIdsSelector = (state: State) =>
+  state.settings.blacklistedTokenIds;
 
 // $FlowFixMe
 export const exportSettingsSelector = createSelector(
@@ -344,5 +419,48 @@ export const exportSettingsSelector = createSelector(
 
 export const hideEmptyTokenAccountsEnabledSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
+
+export const dismissedBannersSelector = (state: State) =>
+  state.settings.dismissedBanners;
+
+export const hasAvailableUpdateSelector = (state: State) =>
+  state.settings.hasAvailableUpdate;
+
+export const swapProvidersSelector = (state: State) =>
+  state.settings.swapProviders;
+
+export const carouselVisibilitySelector = (state: State) =>
+  state.settings.carouselVisibility;
+
+export const swapSupportedCurrenciesSelector: OutputSelector<
+  State,
+  { accountId: string },
+  (TokenCurrency | CryptoCurrency)[],
+> = createSelector(swapProvidersSelector, swapProviders => {
+  if (!swapProviders) return [];
+
+  const allIds = uniq(
+    swapProviders.reduce(
+      (ac, { supportedCurrencies }) => [...ac, ...supportedCurrencies],
+      [],
+    ),
+  );
+
+  const tokenCurrencies = allIds
+    .map(findTokenById)
+    .filter(Boolean)
+    .filter(t => !t.delisted);
+  const cryptoCurrencies = allIds
+    .map(findCryptoCurrencyById)
+    .filter(Boolean)
+    .filter(isCurrencySupported);
+
+  return [...cryptoCurrencies, ...tokenCurrencies].filter(
+    isCurrencyExchangeSupported,
+  );
+});
+
+export const discreetModeSelector = (state: State): boolean =>
+  state.settings.discreetMode === true;
 
 export default handleActions(handlers, INITIAL_STATE);

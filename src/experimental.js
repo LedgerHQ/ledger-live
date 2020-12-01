@@ -24,7 +24,13 @@ export type FeatureToggle = {
   valueOff?: any,
 };
 
-export type Feature = FeatureCommon & FeatureToggle;
+export type FeatureInteger = {
+  type: "integer",
+  minValue?: number,
+  maxValue?: number,
+};
+
+export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 
 export const experimentalFeatures: Feature[] = [
   {
@@ -33,17 +39,21 @@ export const experimentalFeatures: Feature[] = [
     title: "Developer mode",
     description: "Show developer and testnet apps in the Manager.",
   },
-  /*
+  {
+    type: "integer",
+    name: "FORCE_PROVIDER",
+    title: "Manager provider",
+    description:
+      "Changing the app provider in the Manager may make it impossible to install or uninstall apps on your Ledger device.",
+    minValue: 1,
+  },
   {
     type: "toggle",
-    name: "API_TEZOS_NODE",
-    valueOn: "https://xtz-node.explorers.prod.aws.ledger.fr/",
-    valueOff: "https://mainnet.tezrpc.me/",
-    title: "Experimental Tezos Send",
+    name: "EXPERIMENTAL_EXPLORERS",
+    title: "Experimental Explorers API",
     description:
-      "Workaround for Sending Tezos. Switch to another experimental node.",
+      "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
   },
-*/
 ];
 
 const storageKey = "experimentalFlags";

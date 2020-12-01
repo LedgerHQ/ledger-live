@@ -1,36 +1,39 @@
 /* @flow */
 import { RecipientRequired } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import {
+  SyncOneAccountOnMount,
+  SyncSkipUnderPriority,
+} from "@ledgerhq/live-common/lib/bridge/react";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import type {
-  Account,
-  AccountLike,
-  Transaction,
-} from "@ledgerhq/live-common/lib/types";
-import i18next from "i18next";
-import React, { useCallback, useRef, useEffect } from "react";
-import { Trans, translate } from "react-i18next";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import React, { useCallback, useRef, useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import {
+  Platform,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Clipboard,
+} from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
-import type { NavigationScreenProp } from "react-navigation";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import Paste from "../../icons/Paste";
 import { track, TrackScreen } from "../../analytics";
-import SyncOneAccountOnMount from "../../bridge/SyncOneAccountOnMount";
-import SyncSkipUnderPriority from "../../bridge/SyncSkipUnderPriority";
+import { ScreenName } from "../../const";
 import colors from "../../colors";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
-import type { T } from "../../types/common";
+import { accountScreenSelector } from "../../reducers/accounts";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText, { getFontStyle } from "../../components/LText";
-import StepHeader from "../../components/StepHeader";
 import TextInput from "../../components/TextInput";
+import InfoBox from "../../components/InfoBox";
 import TranslatedError from "../../components/TranslatedError";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import NavigationScrollView from "../../components/NavigationScrollView";
 
 const withoutHiddenError = error =>
   error instanceof RecipientRequired ? null : error;
@@ -38,25 +41,20 @@ const withoutHiddenError = error =>
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      parentId: string,
-      transaction: Transaction,
-      justScanned?: boolean,
-    },
-  }>,
-  t: T,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const SendSelectRecipient = ({
-  account,
-  parentAccount,
-  navigation,
-  t,
-}: Props) => {
+type RouteParams = {
+  accountId: string,
+  parentId: string,
+  transaction: Transaction,
+  justScanned?: boolean,
+};
+
+export default function SendSelectRecipient({ navigation, route }: Props) {
+  const { t } = useTranslation();
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const {
     transaction,
     setTransaction,
@@ -67,7 +65,7 @@ const SendSelectRecipient = ({
 
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
-  const navigationTransaction = navigation.getParam("transaction");
+  const navigationTransaction = route.params?.transaction;
   useEffect(() => {
     if (
       initialTransaction.current !== navigationTransaction &&
@@ -82,12 +80,12 @@ const SendSelectRecipient = ({
   }, []);
 
   const onPressScan = useCallback(() => {
-    navigation.navigate("ScanRecipient", {
-      accountId: navigation.getParam("accountId"),
-      parentId: navigation.getParam("parentId"),
+    navigation.navigate(ScreenName.ScanRecipient, {
+      accountId: route.params?.accountId,
+      parentId: route.params?.parentId,
       transaction,
     });
-  }, [navigation, transaction]);
+  }, [navigation, transaction, route.params]);
 
   const onChangeText = useCallback(
     recipient => {
@@ -98,12 +96,18 @@ const SendSelectRecipient = ({
   );
   const clear = useCallback(() => onChangeText(""), [onChangeText]);
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
   const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
     if (parent) parent.goBack();
   }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
     if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
@@ -112,7 +116,7 @@ const SendSelectRecipient = ({
   const onPressContinue = useCallback(async () => {
     if (!account) return;
 
-    navigation.navigate("SendAmount", {
+    navigation.navigate(ScreenName.SendAmount, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
@@ -133,8 +137,8 @@ const SendSelectRecipient = ({
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>
-          <ScrollView
-            style={styles.container}
+          <NavigationScrollView
+            style={[styles.container, { flex: 1 }]}
             keyboardShouldPersistTaps="handled"
           >
             <Button
@@ -151,6 +155,18 @@ const SendSelectRecipient = ({
               </LText>
               <View style={styles.separatorLine} />
             </View>
+            <TouchableOpacity
+              style={styles.pasteContainer}
+              onPress={async () => {
+                const text = await Clipboard.getString();
+                onChangeText(text);
+              }}
+            >
+              <Paste size={16} color={colors.live} />
+              <LText style={styles.pasteTitle} semiBold>
+                <Trans i18nKey="common.paste" />
+              </LText>
+            </TouchableOpacity>
             <View style={styles.inputWrapper}>
               {/* make this a recipient component */}
               <TextInput
@@ -182,14 +198,18 @@ const SendSelectRecipient = ({
                 <TranslatedError error={error || warning} />
               </LText>
             )}
-          </ScrollView>
-          <View style={[styles.container, styles.containerFlexEnd]}>
+          </NavigationScrollView>
+          <View style={styles.container}>
+            {transaction.recipient && !(error || warning) ? (
+              <View style={styles.infoBox}>
+                <InfoBox>{t("send.recipient.verifyAddress")}</InfoBox>
+              </View>
+            ) : null}
             <Button
               event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
               disabled={bridgePending || !!status.errors.recipient}
-              pending={bridgePending}
               onPress={onPressContinue}
             />
           </View>
@@ -197,7 +217,7 @@ const SendSelectRecipient = ({
       </SafeAreaView>
 
       <GenericErrorBottomModal
-        error={bridgeError}
+        error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
@@ -214,19 +234,7 @@ const SendSelectRecipient = ({
       />
     </>
   );
-};
-
-SendSelectRecipient.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("send.stepperHeader.recipientAddress")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "2",
-        totalSteps: "6",
-      })}
-    />
-  ),
-};
+}
 
 const IconQRCode = ({ size, color }: { size: number, color: string }) => (
   <Icon name="qrcode" size={size} color={color} />
@@ -242,6 +250,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
+  pasteContainer: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginBottom: 8,
+    marginTop: 32,
+  },
+  pasteTitle: {
+    color: colors.live,
+    marginLeft: 8,
+  },
+  infoBox: {
+    marginBottom: 24,
+  },
   separatorContainer: {
     marginTop: 32,
     flexDirection: "row",
@@ -255,10 +276,6 @@ const styles = StyleSheet.create({
   },
   separatorText: {
     color: colors.grey,
-  },
-  containerFlexEnd: {
-    flex: 1,
-    justifyContent: "flex-end",
   },
   addressInput: {
     flex: 1,
@@ -297,8 +314,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
-export default compose(
-  translate(),
-  connect(accountAndParentScreenSelector),
-)(SendSelectRecipient);

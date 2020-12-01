@@ -1,27 +1,8 @@
 /* @flow */
-import invariant from "invariant";
-import type { Opts, Res } from "."; // eslint-disable-line
+import type { Opts, Res } from ".";
 
-export default ({
-  bold,
-  semiBold,
-  secondary,
-  tertiary,
-  monospace,
-}: Opts = {}): Res => {
-  if (__DEV__) {
-    invariant(
-      !((semiBold || bold) && tertiary),
-      "There is no case where Rubik is semibold/bold in this design",
-    );
-  }
-  const family = secondary
-    ? "MuseoSans"
-    : tertiary
-    ? "Rubik"
-    : monospace
-    ? "monospace"
-    : "OpenSans";
+export default ({ bold, semiBold, monospace }: Opts = {}): Res => {
+  const family = monospace ? "monospace" : "Inter";
   let weight;
   if (semiBold) {
     weight = "SemiBold";

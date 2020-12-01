@@ -1,45 +1,33 @@
 // @flow
 
-import React, { PureComponent } from "react";
-import { withNavigationFocus } from "react-navigation";
+import React, { useState } from "react";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "../../components/Touchable";
 import colors from "../../colors";
 import AccountOrderModal from "./AccountOrderModal";
-import RefreshAccountsOrdering from "../../components/RefreshAccountOrdering";
+import { useRefreshAccountsOrderingEffect } from "../../actions/general";
 
-// update at boot and each time focus or open state changes
-const RefreshAccounts = withNavigationFocus(({ isFocused, isOpened }) => (
-  <RefreshAccountsOrdering
-    onMount
-    onUpdate
-    nonce={`${isFocused}_${isOpened}`}
-  />
-));
+export default function AccountOrder() {
+  const [isOpened, setIsOpened] = useState(false);
 
-class AccountOrder extends PureComponent<{}, { isOpened: boolean }> {
-  state = {
-    isOpened: false,
-  };
-
-  onPress = () => this.setState({ isOpened: true });
-
-  onClose = () => this.setState({ isOpened: false });
-
-  render() {
-    const { isOpened } = this.state;
-    return (
-      <Touchable
-        event="AccountOrderOpen"
-        style={{ marginHorizontal: 16 }}
-        onPress={this.onPress}
-      >
-        <Icon name="sliders" color={colors.grey} size={20} />
-        <RefreshAccounts isOpened={isOpened} />
-        <AccountOrderModal isOpened={isOpened} onClose={this.onClose} />
-      </Touchable>
-    );
+  function onPress(): void {
+    setIsOpened(true);
   }
-}
 
-export default AccountOrder;
+  function onClose(): void {
+    setIsOpened(false);
+  }
+
+  useRefreshAccountsOrderingEffect({ onUpdate: true });
+
+  return (
+    <Touchable
+      event="AccountOrderOpen"
+      style={{ marginHorizontal: 16 }}
+      onPress={onPress}
+    >
+      <Icon name="sliders" color={colors.grey} size={20} />
+      <AccountOrderModal isOpened={isOpened} onClose={onClose} />
+    </Touchable>
+  );
+}

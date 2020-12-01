@@ -1,9 +1,6 @@
 /* @flow */
 import React, { Component } from "react";
-import { StyleSheet } from "react-native";
-// $FlowFixMe
-import { FlatList } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
+import { FlatList, StyleSheet } from "react-native";
 import { track } from "../analytics";
 import SettingsRow from "../components/SettingsRow";
 
@@ -17,11 +14,11 @@ type EntryComponent<Item> = React$ComponentType<EntryProps<Item>>;
 type Opts<Item> = {
   id: string,
   itemEventProperties: Item => ?Object,
-  title: React$Node,
   keyExtractor: Item => string,
   formatItem?: Item => string,
   Entry?: EntryComponent<Item>,
   navigationOptions?: Object,
+  ListHeaderComponent?: any,
   // TODO in future: searchable: boolean
 };
 
@@ -56,27 +53,22 @@ const styles = StyleSheet.create({
 });
 
 export default <Item>(opts: Opts<Item>) => {
-  const {
-    id,
-    itemEventProperties,
-    title,
-    keyExtractor,
-    navigationOptions = {},
-  } = opts;
+  const { id, itemEventProperties, keyExtractor } = opts;
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<{
     selectedKey: string,
     items: Item[],
     onValueChange: (Item, *) => void,
-    navigation: NavigationScreenProp<*>,
+    navigation: any,
+    cancelNavigateBack: ?boolean,
   }> {
-    static navigationOptions = { title, ...navigationOptions };
-
     onPress = (item: Item) => {
-      const { navigation, onValueChange } = this.props;
+      const { navigation, onValueChange, cancelNavigateBack } = this.props;
       onValueChange(item, this.props);
-      navigation.goBack();
+      if (!cancelNavigateBack) {
+        navigation.goBack();
+      }
       track(id, itemEventProperties(item));
     };
 
@@ -91,6 +83,7 @@ export default <Item>(opts: Opts<Item>) => {
     render() {
       return (
         <FlatList
+          ListHeaderComponent={opts.ListHeaderComponent}
           data={this.props.items}
           renderItem={this.renderItem}
           keyExtractor={keyExtractor}

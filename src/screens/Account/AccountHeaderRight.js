@@ -1,29 +1,33 @@
 /* @flow */
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import Icon from "react-native-vector-icons/dist/Feather";
-import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
-
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { useSelector } from "react-redux";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
+import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
-import BottomModal from "../../components/BottomModal";
 import Wrench from "../../icons/Wrench";
 import colors from "../../colors";
-import TokenContractAddress from "./TokenContractAddress";
+import { accountScreenSelector } from "../../reducers/accounts";
+import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  account: ?(Account | TokenAccount),
-  parentAccount: ?Account,
-};
+export default function AccountHeaderRight() {
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
-const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
   const [isOpened, setOpened] = useState(false);
 
   const toggleModal = useCallback(() => setOpened(!isOpened), [isOpened]);
-  const closeModal = () => setOpened(false);
+  const closeModal = () => {
+    setOpened(false);
+  };
+
+  useEffect(() => {
+    if (!account) {
+      navigation.navigate(ScreenName.Accounts);
+    }
+  }, [account, navigation]);
 
   if (!account) return null;
 
@@ -32,21 +36,14 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
       <>
         <Touchable event="ShowContractAddress" onPress={toggleModal}>
           <View style={{ marginRight: 16 }}>
-            <Icon name="file-text" size={20} color={colors.grey} />
+            <Icon name="ellipsis-h" size={20} color={colors.grey} />
           </View>
         </Touchable>
-        <BottomModal
-          id="ContractAddress"
+        <TokenContextualModal
+          account={account}
           isOpened={isOpened}
-          preventBackdropClick={false}
           onClose={closeModal}
-        >
-          <TokenContractAddress
-            account={account}
-            parentAccount={parentAccount}
-            onClose={closeModal}
-          />
-        </BottomModal>
+        />
       </>
     );
   }
@@ -56,8 +53,11 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
       <Touchable
         event="AccountGoSettings"
         onPress={() => {
-          navigation.navigate("AccountSettings", {
-            accountId: account.id,
+          navigation.navigate(NavigatorName.AccountSettings, {
+            screen: ScreenName.AccountSettingsMain,
+            params: {
+              accountId: account.id,
+            },
           });
         }}
       >
@@ -69,6 +69,4 @@ const AccountHeaderRight = ({ navigation, account, parentAccount }: Props) => {
   }
 
   return null;
-};
-
-export default connect(accountAndParentScreenSelector)(AccountHeaderRight);
+}

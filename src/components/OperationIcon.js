@@ -12,6 +12,8 @@ import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import OperationStatusIcon from "../icons/OperationStatusIcon";
 import { currencySettingsForAccountSelector } from "../reducers/settings";
 
+import perFamilyOperationDetails from "../generated/operationDetails";
+
 type Props = {
   type: OperationType,
   size: number,
@@ -32,9 +34,31 @@ class OperationIcon extends PureComponent<Props> {
       size,
       confirmed,
       operation: { hasFailed },
+      operation,
+      account,
+      parentAccount,
     } = this.props;
 
-    return (
+    const mainAccount = getMainAccount(account, parentAccount);
+
+    const specific = mainAccount.currency.family
+      ? perFamilyOperationDetails[mainAccount.currency.family]
+      : null;
+
+    const SpecificOperationStatusIcon =
+      specific && specific.operationStatusIcon
+        ? specific.operationStatusIcon[type]
+        : null;
+
+    return SpecificOperationStatusIcon ? (
+      <SpecificOperationStatusIcon
+        operation={operation}
+        confirmed={confirmed}
+        type={type}
+        failed={hasFailed}
+        size={size}
+      />
+    ) : (
       <OperationStatusIcon
         confirmed={confirmed}
         type={type}

@@ -1,8 +1,8 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
-import { Trans, translate } from "react-i18next";
+import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
 import {
   getAccountUnit,
@@ -17,51 +17,45 @@ import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
 import colors from "../../colors";
-import type { T } from "../../types/common";
 
 type Props = {
   account: AccountLike,
   transaction: Transaction,
-  navigation: *,
-  t: T,
 };
 
-class TezosFeeRow extends Component<Props> {
-  extraInfoFees = () => {
+export default function TezosFeeRow({ account, transaction }: Props) {
+  const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
-  };
+  }, []);
 
-  render() {
-    const { account, transaction } = this.props;
-    if (transaction.family !== "tezos") return null;
-    const fees = transaction.fees;
-    const unit = getAccountUnit(account);
-    const currency = getAccountCurrency(account);
-    return (
-      <SummaryRow
-        onPress={this.extraInfoFees}
-        title={<Trans i18nKey="send.fees.title" />}
-        additionalInfo={
-          <View>
-            <ExternalLink size={12} color={colors.grey} />
-          </View>
-        }
-      >
-        <View style={{ alignItems: "flex-end" }}>
-          <View style={styles.accountContainer}>
-            {fees ? (
-              <LText style={styles.valueText}>
-                <CurrencyUnitValue unit={unit} value={fees} />
-              </LText>
-            ) : null}
-          </View>
-          <LText style={styles.countervalue}>
-            <CounterValue before="≈ " value={fees} currency={currency} />
-          </LText>
+  if (transaction.family !== "tezos") return null;
+  const fees = transaction.fees;
+  const unit = getAccountUnit(account);
+  const currency = getAccountCurrency(account);
+  return (
+    <SummaryRow
+      onPress={extraInfoFees}
+      title={<Trans i18nKey="send.fees.title" />}
+      additionalInfo={
+        <View>
+          <ExternalLink size={12} color={colors.grey} />
         </View>
-      </SummaryRow>
-    );
-  }
+      }
+    >
+      <View style={{ alignItems: "flex-end" }}>
+        <View style={styles.accountContainer}>
+          {fees ? (
+            <LText style={styles.valueText}>
+              <CurrencyUnitValue unit={unit} value={fees} />
+            </LText>
+          ) : null}
+        </View>
+        <LText style={styles.countervalue}>
+          <CounterValue before="≈ " value={fees} currency={currency} />
+        </LText>
+      </View>
+    </SummaryRow>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -89,5 +83,3 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
 });
-
-export default translate()(TezosFeeRow);

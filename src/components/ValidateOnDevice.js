@@ -1,7 +1,8 @@
 // @flow
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { Trans, translate } from "react-i18next";
+import invariant from "invariant";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { useTranslation } from "react-i18next";
 import type {
   Account,
   AccountLike,
@@ -12,122 +13,202 @@ import {
   getMainAccount,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
-import type { DeviceModelId } from "@ledgerhq/devices";
+
+import { getDeviceTransactionConfig } from "@ledgerhq/live-common/lib/transaction";
+import type { DeviceTransactionField } from "@ledgerhq/live-common/lib/transaction";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import colors from "../colors";
 import LText from "./LText";
-import DeviceNanoAction from "./DeviceNanoAction";
 import VerifyAddressDisclaimer from "./VerifyAddressDisclaimer";
-import getWindowDimensions from "../logic/getWindowDimensions";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
-import { DataRowUnitValue } from "./ValidateOnDeviceDataRow";
+import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
+import Animation from "./Animation";
+import getDeviceAnimation from "./DeviceAction/getDeviceAnimation";
+
+export type FieldComponentProps = {
+  account: AccountLike,
+  parentAccount: ?Account,
+  transaction: Transaction,
+  status: TransactionStatus,
+  field: DeviceTransactionField,
+};
+
+export type FieldComponent = React$ComponentType<FieldComponentProps>;
+
+function AmountField({
+  account,
+  parentAccount,
+  status,
+  field,
+}: FieldComponentProps) {
+  let unit;
+  if (account.type === "TokenAccount") {
+    unit = getAccountUnit(account);
+  } else {
+    const mainAccount = getMainAccount(account, parentAccount);
+    unit = getAccountUnit(mainAccount);
+  }
+  return (
+    <DataRowUnitValue label={field.label} unit={unit} value={status.amount} />
+  );
+}
+
+function FeesField({
+  account,
+  parentAccount,
+  status,
+  field,
+}: FieldComponentProps) {
+  const mainAccount = getMainAccount(account, parentAccount);
+  const { estimatedFees } = status;
+  const feesUnit = getAccountUnit(mainAccount);
+  return (
+    <DataRowUnitValue
+      label={field.label}
+      unit={feesUnit}
+      value={estimatedFees}
+    />
+  );
+}
+
+function AddressField({ field }: FieldComponentProps) {
+  invariant(field.type === "address", "AddressField invalid");
+  return <TextValueField label={field.label} value={field.address} />;
+}
+
+// NB Leaving AddressField although I think it's redundant at this point
+// in case we want specific styles for addresses.
+function TextField({ field }: FieldComponentProps) {
+  invariant(field.type === "text", "TextField invalid");
+  return <TextValueField label={field.label} value={field.value} />;
+}
+
+const commonFieldComponents: { [_: *]: FieldComponent } = {
+  amount: AmountField,
+  fees: FeesField,
+  address: AddressField,
+  text: TextField,
+};
 
 type Props = {
-  modelId: DeviceModelId,
-  wired: boolean,
+  device: Device,
   status: TransactionStatus,
   transaction: Transaction,
   account: AccountLike,
   parentAccount: ?Account,
-  t: *,
 };
 
-const { width } = getWindowDimensions();
-
-const ValidateOnDevice = ({
-  modelId,
-  wired,
+export default function ValidateOnDevice({
+  device,
   account,
   parentAccount,
   status,
   transaction,
-  t,
-}: Props) => {
-  const { amount, estimatedFees } = status;
+}: Props) {
+  const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const mainAccountUnit = getAccountUnit(mainAccount);
-  const unit = getAccountUnit(account);
   const r = perFamilyTransactionConfirmFields[mainAccount.currency.family];
-  const Pre = r && r.pre;
-  const Post = r && r.post;
-  const recipientWording = t(
+
+  const fieldComponents = {
+    ...commonFieldComponents,
+    ...(r && r.fieldComponents),
+  };
+  const Warning = r && r.warning;
+  const Title = r && r.title;
+
+  const fields = getDeviceTransactionConfig({
+    account,
+    parentAccount,
+    transaction,
+    status,
+  });
+
+  const transRecipientWording = t(
     `ValidateOnDevice.recipientWording.${transaction.mode || "send"}`,
   );
+  const recipientWording =
+    transRecipientWording !==
+    `ValidateOnDevice.recipientWording.${transaction.mode || "send"}`
+      ? transRecipientWording
+      : t("ValidateOnDevice.recipientWording.send");
+
+  const transTitleWording = t(
+    `ValidateOnDevice.title.${transaction.mode || "send"}`,
+    getDeviceModel(device.modelId),
+  );
+  const titleWording =
+    transTitleWording !== `ValidateOnDevice.title.${transaction.mode || "send"}`
+      ? transTitleWording
+      : t("ValidateOnDevice.title.send", getDeviceModel(device.modelId));
 
   return (
     <View style={styles.root}>
-      <View style={styles.innerContainer}>
-        <View style={styles.picture}>
-          <DeviceNanoAction
-            modelId={modelId}
-            wired={wired}
-            action="accept"
-            width={width * 0.8}
-            screen="validation"
-          />
-        </View>
-        <View style={styles.titleContainer}>
-          <LText secondary semiBold style={styles.title}>
-            <Trans
-              i18nKey="ValidateOnDevice.title"
-              values={getDeviceModel(modelId)}
+      <ScrollView style={styles.scrollContainer}>
+        <View style={styles.innerContainer}>
+          <View style={styles.picture}>
+            <Animation
+              source={getDeviceAnimation({ device, key: "validate" })}
             />
-          </LText>
-        </View>
-
-        <View style={styles.dataRows}>
-          {Pre ? (
-            <Pre
+          </View>
+          {Title ? (
+            <Title
               account={account}
               parentAccount={parentAccount}
               transaction={transaction}
               status={status}
             />
-          ) : null}
+          ) : (
+            <View style={styles.titleContainer}>
+              <LText secondary semiBold style={styles.title}>
+                {titleWording}
+              </LText>
+            </View>
+          )}
 
-          {!amount.isZero() ? (
-            <DataRowUnitValue
-              label={<Trans i18nKey="send.validation.amount" />}
-              unit={unit}
-              value={amount}
-            />
-          ) : null}
-          {!estimatedFees.isZero() ? (
-            <DataRowUnitValue
-              label={<Trans i18nKey="send.validation.fees" />}
-              unit={mainAccountUnit}
-              value={estimatedFees}
-            />
-          ) : null}
+          <View style={styles.dataRows}>
+            {fields.map((field, i) => {
+              const MaybeComponent = fieldComponents[field.type];
+              if (!MaybeComponent) {
+                console.warn(
+                  `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+                );
+                return null;
+              }
+              return (
+                <MaybeComponent
+                  key={i}
+                  field={field}
+                  account={account}
+                  parentAccount={parentAccount}
+                  transaction={transaction}
+                  status={status}
+                />
+              );
+            })}
 
-          {Post ? (
-            <Post
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-              status={status}
-            />
-          ) : null}
+            {Warning ? (
+              <Warning
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                recipientWording={recipientWording}
+                status={status}
+              />
+            ) : null}
+          </View>
         </View>
+      </ScrollView>
+      <View style={styles.footerContainer}>
+        <VerifyAddressDisclaimer text={recipientWording} />
       </View>
-
-      <VerifyAddressDisclaimer
-        text={
-          <Trans
-            i18nKey="ValidateOnDevice.warning"
-            values={{ recipientWording }}
-          />
-        }
-      />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 16,
   },
   dataRows: {
     marginVertical: 24,
@@ -135,6 +216,13 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  scrollContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  footerContainer: {
+    padding: 16,
   },
   innerContainer: {
     flexDirection: "column",
@@ -155,5 +243,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-export default translate()(ValidateOnDevice);

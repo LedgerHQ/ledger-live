@@ -34,7 +34,7 @@ class CurrencyRate extends PureComponent<Props> {
     return (
       <View style={styles.wrapper}>
         <Icon name="activity" color={color} size={iconSize} />
-        <LText numberOfLines={1} tertiary style={[styles.text, fontStyle]}>
+        <LText numberOfLines={1} semiBold style={[styles.text, fontStyle]}>
           <CurrencyUnitValue unit={currency.units[0]} value={one} />
           {" = "}
           <CounterValue currency={currency} value={one} />

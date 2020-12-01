@@ -1,8 +1,15 @@
 // @flow
 import React from "react";
 import Svg, { Path } from "react-native-svg";
+import colors from "../colors";
 
-export default ({ size, color }: { size: number, color?: string }) => (
+export default ({
+  size = 24,
+  color = colors.alert,
+}: {
+  size?: number,
+  color?: string,
+}) => (
   <Svg viewBox="0 0 16 16" width={size} height={size}>
     <Path
       fill={color}

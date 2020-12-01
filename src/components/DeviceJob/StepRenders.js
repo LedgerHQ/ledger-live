@@ -2,7 +2,7 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-navigation";
+import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import GenericSuccessView from "../GenericSuccessView";
 import GenericErrorView from "../GenericErrorView";
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingBottom: 16,
+    marginHorizontal: 16,
   },
   retryButton: {
     alignSelf: "stretch",

@@ -33,7 +33,7 @@ type Props = OnboardingStepProps & {
 class OnboardingStepWelcome extends Component<Props> {
   buy = () => Linking.openURL(urls.buyNanoX);
 
-  Footer = () => <PoweredByLedger />;
+  Footer = () => <PoweredByLedger hideTabNavigation />;
 
   render() {
     const { onWelcomed } = this.props;

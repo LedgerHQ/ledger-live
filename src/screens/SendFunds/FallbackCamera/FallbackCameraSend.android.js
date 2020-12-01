@@ -1,29 +1,25 @@
 /* @flow */
 import React, { PureComponent } from "react";
-import { translate } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { AppState, Linking } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-import i18next from "i18next";
 import type { T } from "../../../types/common";
 import FallbackCameraBody from "../../../components/FallbackCameraBody";
+import { ScreenName } from "../../../const";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
+  navigation: any,
   t: T,
 };
+
 type State = {
   appSTate: string,
   openSettingsPressed: boolean,
 };
+
 class FallBackCameraScreen extends PureComponent<Props, State> {
   state = {
     appState: AppState.currentState,
     openSettingsPressed: false,
-  };
-
-  static navigationOptions = {
-    title: i18next.t("send.scan.fallback.header"),
-    headerLeft: null,
   };
 
   componentDidMount() {
@@ -42,7 +38,7 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
       nextAppState === "active" &&
       openSettingsPressed
     ) {
-      navigation.replace("SendFunds");
+      navigation.replace(ScreenName.SendFunds);
     }
     this.setState({ appState: nextAppState });
   };
@@ -65,4 +61,4 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
   }
 }
 
-export default translate()(FallBackCameraScreen);
+export default withTranslation()(FallBackCameraScreen);

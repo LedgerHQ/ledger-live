@@ -1,88 +1,80 @@
 /* @flow */
-import React, { Component } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-// $FlowFixMe
-import { SafeAreaView, ScrollView } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import { translate, Trans } from "react-i18next";
-import i18next from "i18next";
+import SafeAreaView from "react-native-safe-area-view";
+import { Trans } from "react-i18next";
 
 import manager from "@ledgerhq/live-common/lib/manager";
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import { TrackScreen } from "../../analytics";
+import { ScreenName } from "../../const";
 import Button from "../../components/Button";
 import SafeMarkdown from "../../components/SafeMarkdown";
 import LText from "../../components/LText";
+import NavigationScrollView from "../../components/NavigationScrollView";
 import colors from "../../colors";
 
 const forceInset = { bottom: "always" };
 
-type Navigation = NavigationScreenProp<{
-  params: {
-    deviceId: string,
-    firmware: FirmwareUpdateContext,
-  },
-}>;
-
 type Props = {
-  navigation: Navigation,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-type State = {};
+type RouteParams = {
+  deviceId: string,
+  firmware: FirmwareUpdateContext,
+};
 
-class FirmwareUpdateReleaseNotes extends Component<Props, State> {
-  static navigationOptions = {
-    headerTitle: i18next.t("FirmwareUpdate.title"),
-  };
+export default function FirmwareUpdateReleaseNotes({
+  navigation,
+  route,
+}: Props) {
+  const onNext = useCallback(() => {
+    navigation.navigate(ScreenName.FirmwareUpdateCheckId, route.params);
+  }, [navigation, route.params]);
 
-  onNext = () => {
-    const { navigation } = this.props;
-    navigation.navigate("FirmwareUpdateCheckId", {
-      ...navigation.state.params,
-    });
-  };
-
-  render() {
-    const { navigation } = this.props;
-    const firmware = navigation.getParam("firmware");
-    if (!firmware) return null;
-    const { osu } = firmware;
-    const version = manager.getFirmwareVersion(osu);
-    return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
-        <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
-        <ScrollView style={styles.body} contentContainerStyle={styles.content}>
-          <LText style={styles.intro}>
-            <Trans
-              i18nKey="FirmwareUpdateReleaseNotes.introTitle"
-              values={{ version }}
-            >
-              {"You are about to install "}
-              <LText semiBold>firmware version {version}.</LText>
-            </Trans>
-            {"\n\n"}
-            <Trans i18nKey="FirmwareUpdateReleaseNotes.introDescription1" />{" "}
-            <LText semiBold>
-              <Trans i18nKey="FirmwareUpdateReleaseNotes.introDescription2" />
-            </LText>
+  const firmware = route.params.firmware;
+  if (!firmware) return null;
+  const { osu } = firmware;
+  const version = manager.getFirmwareVersion(osu);
+  return (
+    <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
+      <NavigationScrollView
+        style={styles.body}
+        contentContainerStyle={styles.content}
+      >
+        <LText style={styles.intro}>
+          <Trans
+            i18nKey="FirmwareUpdateReleaseNotes.introTitle"
+            values={{ version }}
+          >
+            {"You are about to install "}
+            <LText semiBold>firmware version {version}.</LText>
+          </Trans>
+          {"\n\n"}
+          <Trans i18nKey="FirmwareUpdateReleaseNotes.introDescription1" />{" "}
+          <LText semiBold>
+            <Trans i18nKey="FirmwareUpdateReleaseNotes.introDescription2" />
           </LText>
-          {osu.notes ? (
-            <View style={styles.markdownSection}>
-              <SafeMarkdown markdown={osu.notes} />
-            </View>
-          ) : null}
-        </ScrollView>
-        <View style={styles.footer}>
-          <Button
-            event="FirmwareUpdateReleaseNotesContinue"
-            type="primary"
-            onPress={this.onNext}
-            title={<Trans i18nKey="FirmwareUpdateReleaseNotes.action" />}
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
+        </LText>
+        {osu.notes ? (
+          <View style={styles.markdownSection}>
+            <SafeMarkdown markdown={osu.notes} />
+          </View>
+        ) : null}
+      </NavigationScrollView>
+      <View style={styles.footer}>
+        <Button
+          event="FirmwareUpdateReleaseNotesContinue"
+          type="primary"
+          onPress={onNext}
+          title={<Trans i18nKey="FirmwareUpdateReleaseNotes.action" />}
+        />
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -111,5 +103,3 @@ const styles = StyleSheet.create({
     padding: 16,
   },
 });
-
-export default translate()(FirmwareUpdateReleaseNotes);

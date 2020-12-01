@@ -45,13 +45,30 @@
     "subaccount": "Subaccount",
     "subaccount_plural": "Subaccounts",
     "forgetDevice": "Remove device",
+    "help": "Help",
     "sync": {
       "ago": "Synchronized {{time}}"
     },
     "update": "Update available",
     "install": "Install",
     "installed": "Installed",
-    "uninstall": "Uninstall"
+    "uninstall": "Uninstall",
+    "fromNow": {
+      "minutes": "in one minute",
+      "minutes_plural": "in {{time}} minutes",
+      "hours": "in one hour",
+      "hours_plural": "in {{time}} hours",
+      "days": "in one day",
+      "days_plural": "in {{time}} days"
+    },
+    "timeAgo": {
+      "minutes": "one minute ago",
+      "minutes_plural": "{{time}} minutes ago",
+      "hours": "one hour ago",
+      "hours_plural": "{{time}} hours ago",
+      "days": "yesterday",
+      "days_plural": "{{time}} days ago"
+    }
   },
   "errors": {
     "AccountNameRequired": {
@@ -241,7 +258,7 @@
       "title": "Insufficient balance in parent account"
     },
     "NotEnoughSpendableBalance": {
-      "title": "Insufficient balance for this operation"
+      "title": "Balance cannot get below {{minimumAmount}}"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
       "title": "Minimum of {{minimalAmount}} required to activate recipient address"
@@ -281,6 +298,52 @@
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device.",
       "description": "{{message}}"
+    },
+    "TronNoFrozenForBandwidth": {
+      "title": "No assets to unfreeze",
+      "description": "You do not have assets to unfreeze associated to Bandwidth"
+    },
+    "TronNoFrozenForEnergy": {
+      "title": "No assets to unfreeze",
+      "description": "You do not have assets to unfreeze associated to Energy"
+    },
+    "TronUnfreezeNotExpired": {
+      "title": "Unfreeze is not available yet",
+      "description": "You need to wait 3 days before your last Freeze operation"
+    },
+    "TronVoteRequired": {
+      "title": "At least 1 vote is needed"
+    },
+    "TronInvalidVoteCount": {
+      "title": "Vote format is incorrect",
+      "description": "You can only vote using round numbers"
+    },
+    "TronRewardNotAvailable": {
+      "title": "Reward is not claimable yet",
+      "description": "You need to wait 24 hours between claims"
+    },
+    "TronNoReward": {
+      "title": "There is no reward to claim"
+    },
+    "TronInvalidFreezeAmount": {
+      "title": "Amount to freeze cannot be lower than 1"
+    },
+    "TronSendTrc20ToNewAccountForbidden": {
+      "title": "Sending TRC20 to a new account won't activate it",
+      "description": "The recipient account must be activated prior to sending TRC20 to it. Send either TRX or TRC10 to an account to activate it."
+    },
+    "TronUnexpectedFees": {
+      "title": "Additional fees may be applied"
+    },
+    "TronNotEnoughTronPower": {
+      "title": "Not enough votes available"
+    },
+    "TronTransactionExpired": {
+      "title": "Transaction has expired",
+      "description": "Signature must be applied within 30 seconds. Please try again."
+    },
+    "TronNotEnoughEnergy": {
+      "title": "Not enough Energy to send this token"
     },
     "UpdateYourApp": {
       "title": "App update required",
@@ -339,6 +402,15 @@
     "NotSupportedLegacyAddress": {
       "title": "This legacy address format is no longer supported"
     },
+    "StellarWrongMemoFormat": {
+      "title": "Memo format is wrong"
+    },
+    "SourceHasMultiSign": {
+      "title": "Please disable multisign to send {{currencyName}}"
+    },
+    "StellarMemoRecommended": {
+      "title": "When sending to this recipient, a memo may be required"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact us."
@@ -367,30 +439,6 @@
       "custom": "Custom",
       "blockCount": "{{blockCount}} blocks"
     }
-  },
-  "partners": {
-    "title": "Trade & Exchange",
-    "subtitle": "Try a few services we've selected",
-    "visit": "Visit website",
-    "btcdirect": "Buy and sell with the greatest of ease at Europe's leading cryptocurrency broker. Sign up for free and receive your coins within minutes! Our users rate us with an 8,7 on Trustpilot.",
-    "changelly": "Changelly is a popular instant crypto asset exchange with 100+ coins and tokens listed.",
-    "changenow": "ChangeNOW is one of the leading custody-free instant exchange services.",
-    "coinberry": "Coinberry is the most trusted crypto platform in Canada with better-than-bank security, best-in-class user interface and No Fee funding & withdraw. Pre-register to get early access to our platform if you are not a Canadian citizen.",
-    "coinhouse": "Coinhouse is a trusted platform for individuals and institutional investors looking to analyze, acquire, sell and securely store crypto assets.",
-    "coinmama": "Coinmama is a financial service that makes it fast, safe and fun to buy digital assets, anywhere in the world.",
-    "crypto": "Crypto.com is the best place to buy, sell, track and pay with crypto.",
-    "genesis": "Genesis is an institutional trading firm offering liquidity and borrow for digital currencies, including bitcoin, bitcoin cash, ethereum, ethereum classic, litecoin, and XRP.",
-    "kyberswap": "Fast, simple and secure token swap platform. Powered by Kyber Network's on-chain liquidity protocol.",
-    "luno": "Luno makes it safe and easy to buy, store and learn about cryptocurrencies like Bitcoin and Ethereum.",
-    "paybis": "Paybis.com is one of the most trusted cryptocurrency brokers worldwide since 2014, customer satisfaction - 4.7/5 via Trustpilot. Visa/Master cards, Bank Transfers, Skrill/Neteller accepted. 24/7 online customer support.",
-    "shapeshift": "ShapeShift is an online marketplace where users can buy and sell digital assets. It is a fast and secure way for the world to buy and sell digital assets, with no lengthy signup process, no counterparty risk, and no friction.",
-    "simplex": "Simplex is a EU licensed financial institution, providing a fraudless credit card payment solution.",
-    "swft": "SWFT Blockchain is a worldwide cross-blockchain transfer protocol and payment network, enabling simpler, faster and safer swaps between over 200 cryptocurrencies and free crypto payments to anyone, anywhere.",
-    "taxtoken": "Automated cryptocurrency tax and cost basis software for US citizens.",
-    "thorswap": "ThorSwap is an instant, safe and fair crypto asset market powered by decentralized atomic swap technologies. It is the most convenient way to start trading, no registration or KYC for small amount transactions.",
-    "exmo": "Founded in 2013 and based in London, Kiev, Barcelona, and Moscow, EXMO is #1 exchange in Eastern Europe, and one of the world's largest global exchanges in volume and liquidity.",
-    "ndax": "Canada’s leading cryptocurrency exchange, NDAX provides a regulated, secure and intuitive platform to buy and sell Bitcoin, Litecoin, Ethereum, XRP and other digital assets. Other key features include advanced trading, free deposits, and an institutional-grade custody solution via Ledger Vault.",
-    "voyager": "Love your Crypto Journey with Voyager. A licensed crypto broker with commission-free trading of 20+ cryptocurrencies."
   },
   "signout": {
     "confirm": "Are you sure you want to sign out?",
@@ -566,12 +614,14 @@
     "summary": "Here's the summary of your account",
     "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {
-      "title": "Ajouter des comptes à votre portefeuille",
-      "desc": "Ouvrez le Manager pour installer des apps sur votre appareil Ledger avant de commencer à ajouter des comptes à votre portefeuille",
-      "descWithApp": "Add accounts once you've installed apps on your device in Manager",
+      "noAppsTitle": "Install an app on my device",
+      "noAppsDesc": "You need to install apps on your device to add accounts in Ledger Live. Go to the manager and install apps on your device.",
+      "noAccountsTitle": "You don’t have any accounts…",
+      "noAccountsDesc": "Click on “Add account” to start adding accounts in Ledger Live",
       "buttons": {
-        "import": "Ajouter des comptes",
-        "manager": "Ouvrir le Manager"
+        "import": "Add account",
+        "manager": "Install apps",
+        "managerSecondary": "Install apps on my device"
       }
     },
     "noOpState": {
@@ -615,7 +665,11 @@
       "CREATE": "Created",
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
-      "UNDELEGATE": "Undelegated"
+      "UNDELEGATE": "Undelegated",
+      "VOTE": "Voted",
+      "FREEZE": "Frozen",
+      "UNFREEZE": "Unfrozen",
+      "REWARD": "Claimed reward"
     }
   },
   "operationDetails": {
@@ -645,7 +699,12 @@
     },
     "details": "{{ currency }} details",
     "extra": {
-      "tag": "Tag"
+      "resource": "Resource",
+      "frozenAmount": "Frozen amount",
+      "unfreezeAmount": "Unfreeze amount",
+      "address": "Address",
+      "votes": "Votes ({{number}})",
+      "votesAddress": "<0>{{votes}}</0> to <0>{{name}}</0>"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -668,7 +727,7 @@
       "seeMore": "See more Tokens",
       "seeLess": "See less Tokens",
       "addTokens": "Add token",
-      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>Ethereum address</1>."
+      "howTo": "To add token accounts, you need to <0>receive funds</0> through your <1>{{currency}} address</1>."
     },
     "subaccounts": {
       "seeMore": "See more subaccounts",
@@ -676,6 +735,7 @@
     },
     "send": "Send",
     "receive": "Receive",
+    "manage": "Manage",
     "lastOperations": "Last operations",
     "emptyState": {
       "title": "No crypto assets yet?",
@@ -750,7 +810,11 @@
         "desc": "Please enable Camera in Settings to scan QR codes",
         "buttonTitle": "Go to Settings"
       }
-    }
+    },
+    "availableBalance": "TRX available",
+    "tronFrozen": "Frozen",
+    "bandwidth": "Bandwidth",
+    "energy": "Energy"
   },
   "accounts": {
     "title": "Accounts",
@@ -837,6 +901,20 @@
       "confirmationNbDesc": "Number of network confirmations to mark a transaction as confirmed.",
       "currencySettingsTitle": "{{currencyName}} Settings",
       "placeholder": "No settings for this asset"
+    },
+    "accounts": {
+      "header": "Accounts",
+      "title": "Accounts",
+      "desc": "Manage assets display in the app.",
+      "hideTokenCTA": "Hide token",
+      "showContractCTA": "Show contract",
+      "blacklistedTokens": "Hidden token list",
+      "blacklistedTokensDesc": "You can hide a token by long-pressing on it in accounts list and selecting \"Hide token\"",
+      "blacklistedTokensModal": {
+        "title": "Hide token",
+        "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can restore their visibility at any time from <3>Settings > Accounts</3>",
+        "confirm": "Hide token"
+      }
     },
     "rates": {
       "header": "Rates",
@@ -1013,7 +1091,12 @@
       "infoTotalTitle": "Total to spend",
       "infoTotalDesc": "Includes transaction amount and the selected network fees",
       "gasLimit": "Gas Limit",
-      "validateGasLimit": "Validate Gas Limit"
+      "validateGasLimit": "Validate Gas Limit",
+      "memo": {
+        "type": "Memo type",
+        "value": "Memo value"
+      },
+      "validateMemo": "Validate memo"
     },
     "validation": {
       "message": "Confirm the transaction on your device to securely sign it",
@@ -1036,6 +1119,110 @@
         "title": "Choose Unit"
       },
       "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH"
+    }
+  },
+  "freeze": {
+    "stepperHeader": {
+      "info": "Earn rewards",
+      "selectAmount": "Freeze",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "info": {
+      "description": "Freeze your TRX to earn rewards while keeping full security and control of your assets.",
+      "steps": {
+        "0": "Delegated assets stay yours.",
+        "1": "You can unfreeze your assets after 3 days.",
+        "2": "Freeze and vote securely with your Ledger device."
+      },
+      "howVotingWorks": "How voting works",
+      "cta": "Continue"
+    },
+    "amount": {
+      "available": "Total available",
+      "noRateProvider": "Not available",
+      "infoLabel": "Bandwidth or energy"
+    },
+    "validation": {
+      "message": "Always verify that your device displays the address exactly as provided",
+      "success": "Assets frozen",
+      "amount": "Amount",
+      "info": "You will start earning {{resource}} once the network has confirmed the freeze. You can shortly vote for Super Representatives to also earn rewards.",
+      "button": {
+        "pending": "Transaction under validation",
+        "pendingDesc": "You have to wait 1 minute before being able to vote",
+        "vote": "Vote",
+        "voteTimer": "0:{{time}}",
+        "later": "I'll vote later",
+        "retry": "Retry"
+      }
+    }
+  },
+  "unfreeze": {
+    "stepperHeader": {
+      "selectAmount": "Unfreeze",
+      "summary": "Summary",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "amount": {
+      "title": "Select the kind of asset to unfreeze",
+      "info": "Unfreezing will decrease your {{resource}} and will cancel all your votes.",
+      "cta": "Continue"
+    },
+    "validation": {
+      "success": "Your assets have been unfrozen successfully.",
+      "info": "Your {{resource}} points will be decreased and all your votes will be canceled.",
+      "button": {
+        "done": "Done",
+        "cta": "See details"
+      }
+    }
+  },
+  "claimReward": {
+    "stepperHeader": {
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "validation": {
+      "success": "Your rewards have been added to your balance.",
+      "button": {
+        "done": "Done",
+        "cta": "See details"
+      }
+    }
+  },
+  "vote": {
+    "stepperHeader": {
+      "selectValidator": "Cast votes",
+      "castVote": "My votes",
+      "connectDevice": "Connect Device",
+      "verification": "Verification",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "selectValidator": {},
+    "castVotes": {
+      "ranking": "Ranking: <0>{{rank}}</0>",
+      "nbOfVotes": "Nb of votes {{amount}}",
+      "percentage": "Percentage",
+      "estYield": "Est. yield",
+      "addMoreVotes": "Add more votes",
+      "votesRemaining": "Votes remaining: <0>{{total}}</0>",
+      "maxVotesAvailable": "Max votes available: <0>{{total}}</0>",
+      "voteFor": "Vote for",
+      "validateVotes": "Validate votes",
+      "votesRequired": "Votes required ",
+      "allVotesUsed": "All votes used"
+    },
+    "validation": {
+      "message": "Always verify that your device displays the address exactly as provided",
+      "success": "Your votes were cast successfully",
+      "info": "",
+      "button": {}
     }
   },
   "addAccounts": {
@@ -1074,8 +1261,22 @@
     "cantCreateAccount": "There are no transactions on your last created <1><0>{{accountName}}</></> account. You must first receive crypto assets on that account before you can add a new one.",
     "tokens": {
       "title": "Add Token",
-      "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly on an Ethereum account",
-      "learnMore": "Learn more about ERC20"
+      "changeAssets": "Change assets",
+      "erc20": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an ERC20 Token.\nYou can receive tokens directly on an Ethereum account",
+        "learnMore": "Learn more about ERC20"
+      },
+      "trc10": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an TRC10 Token.\nYou can receive tokens directly on an Tron account",
+        "learnMore": "Learn more about TRC10"
+      },
+      "trc20": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an TRC20 Token.\nYou can receive tokens directly on an Tron account",
+        "learnMore": "Learn more about TRC20"
+      }
     }
   },
   "SelectDevice": {
@@ -1355,6 +1556,127 @@
       "btn": "Earn rewards"
     }
   },
+  "tron": {
+    "voting": {
+      "earnRewars": "Earn rewards",
+      "delegationEarn": "You can now earn rewards by freezing and voting.",
+      "howItWorks": "How voting works",
+      "startEarning": "Earn rewards",
+      "title": "Claim rewards",
+      "header": "Votes ({{total}})",
+      "Amount": "Amount",
+      "noRewards": "No rewards available",
+      "votes": {
+        "title": "Votes",
+        "description": "Cast your votes for one or more representatives to start earning staking rewards.",
+        "cta": "Vote"
+      },
+      "rewards": {
+        "title": "Voting rewards",
+        "button": "Claim"
+      },
+      "manageVotes": "Manage votes",
+      "remainingVotes": {
+        "title": "You still have votes remaining",
+        "description": "Cast your remaining votes to earn more rewards"
+      },
+      "flow": {
+        "started": {
+          "title": "Vote",
+          "srOrCandidate": "SR or Candidate?",
+          "description": "Vote for one or more Super Representatives to start earning rewards.",
+          "button": {
+            "continue": "Cast Votes"
+          }
+        },
+        "selectValidator": {
+          "sections": {
+            "title": {
+              "selected": "Selected",
+              "superRepresentatives": "Super representatives",
+              "candidates": "Candidates"
+            }
+          }
+        }
+      }
+    },
+    "freeze": {
+      "flow": {
+        "steps": {
+          "starter": {
+            "title": "Earn staking rewards",
+            "description": "Delegate TRX to a third party candidate to earn staking rewards. Click on continue to freeze assets and vote.",
+            "bullet": {
+              "delegate": "Delegated assets stay yours.",
+              "access": "You can access your assets 3 days after you froze them.",
+              "ledger": "Delegate securely with your Ledger device."
+            },
+            "button": {
+              "cta": "Continue"
+            }
+          }
+        }
+      }
+    },
+    "manage": {
+      "title": "Manage Tron Power",
+      "freeze": {
+        "title": "Freeze",
+        "description": "Freeze TRX to earn Bandwidth or Energy. You'll also be able to vote for Super Representatives."
+      },
+      "unfreeze": {
+        "title": "Unfreeze",
+        "description": "Unfreeze TRX if you want to spend them. You will no longer earn rewards."
+      },
+      "vote": {
+        "title": "Vote",
+        "description": "Cast votes for Super Representatives to earn rewards."
+      }
+    },
+    "info": {
+      "available": {
+        "title": "TRX available",
+        "description": "This amount can be sent anytime."
+      },
+      "frozen": {
+        "title": "Frozen",
+        "description": "Frozen assets are used in the Tron voting process. This represents your total number of votes."
+      },
+      "bandwidth": {
+        "title": "Bandwidth",
+        "description": "Bandwidth points are used to make transactions without paying TRX for network fees. Choose Bandwidth to increase your daily free transactions."
+      },
+      "energy": {
+        "title": "Energy",
+        "description": "Energy points are required to execute smart contracts. If you don't run any smart contracts, there is no need to choose rewards in Energy."
+      },
+      "claimRewards": {
+        "title": "Voting rewards",
+        "description": "TRX generated during block production and available as rewards can be claimed once every 24 hours."
+      },
+      "superRepresentative": {
+        "title": "Super Representatives (SR)",
+        "description": "Super Representatives play a key role in governing the TRON community by ensuring basic functions, e.g. block generation and bookkeeping."
+      },
+      "candidates": {
+        "title": "Candidates",
+        "description": "127 individuals elected through voting by the entire token holder community. Votes are updated once every 6 hours."
+      }
+    }
+  },
+  "stellar": {
+    "memo": {
+      "title": "Memo",
+      "warning": "When using a Memo, carefully verify the type used with the recipient"
+    },
+    "memoType": {
+      "MEMO_TEXT": "Memo Text",
+      "NO_MEMO": "No Memo",
+      "MEMO_ID": "Memo ID",
+      "MEMO_HASH": "Memo Hash",
+      "MEMO_RETURN": "Memo Return"
+    }
+  },
   "delegation": {
     "overdelegated": "Overdelegated",
     "delegationSendWarnDesc": "The amount to be sent will be deducted from the balance of your delegated account.",
@@ -1409,12 +1731,29 @@
     "howDelegationWorks": "How delegation works"
   },
   "ValidateOnDevice": {
-    "title": "Please confirm the operation on your {{productName}} to send it",
-    "warning": "Always verify that your device displays the address exactly as provided by the {{recipientWording}}",
+    "title": {
+      "send": "Please confirm the operation on your {{productName}} to send it",
+      "freeze": "Please confirm the operation on your device to freeze assets",
+      "unfreeze": "Please confirm the operation on your device to unfreeze assets",
+      "claimReward": "Please confirm the operation on your device to claim your rewards",
+      "vote": "Please confirm the operation on your device to cast your votes"
+    },
+    "warning": "Always verify that your device displays the address exactly as provided {{recipientWording}}",
     "recipientWording": {
-      "send": "recipient",
-      "delegate": "validator",
-      "undelegate": "validator"
+      "send": "by the recipient",
+      "delegate": "by the validator",
+      "undelegate": "by the validator",
+      "freeze": "",
+      "unfreeze": "",
+      "claimReward": "",
+      "vote": ""
+    },
+    "name": "Name",
+    "votes": "Votes",
+    "infoWording": {
+      "freeze": "Frozen tokens are \"locked\" for a period of 3 days",
+      "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be canceled",
+      "claimReward": "Rewards can be claimed once every 24 hours."
     }
   },
   "Terms": {

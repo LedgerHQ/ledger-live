@@ -12,10 +12,9 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import { withNavigation } from "react-navigation";
-import type { NavigationScreenProp } from "react-navigation";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { ScreenName } from "../../const";
 import CounterValue from "../CounterValue";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import colors from "../../colors";
@@ -28,32 +27,26 @@ export type AccountDistributionItem = {
   distribution: number, // % of the total (normalized in 0-1)
   amount: BigNumber,
   currency: CryptoCurrency | TokenCurrency,
-  countervalue: BigNumber, // countervalue of the amount that was calculated based of the rate provided
 };
 
 type Props = {
   item: AccountDistributionItem,
-  accounts: Account[],
-  navigation: NavigationScreenProp<*>,
 };
 
-const mapStateToProps = createStructuredSelector({
-  accounts: accountsSelector,
-});
-
-const Row = ({
+export default function Row({
   item: { currency, distribution, account, amount },
-  accounts,
-  navigation,
-}: Props) => {
+}: Props) {
+  const accounts = useSelector(accountsSelector);
+  const navigation = useNavigation();
+
   const onAccountPress = useCallback(
     (parentAccount?: ?Account) => {
-      navigation.navigate("Account", {
+      navigation.navigate(ScreenName.Account, {
         accountId: account.id,
         parentId: parentAccount ? parentAccount.id : undefined,
       });
     },
-    [account, navigation],
+    [account.id, navigation],
   );
 
   const parentAccount =
@@ -61,7 +54,7 @@ const Row = ({
       ? accounts.find(a => a.id === account.parentId)
       : null;
   const color = getCurrencyColor(currency);
-  const percentage = (Math.floor(distribution * 10000) / 100).toFixed(2);
+  const percentage = Math.round(distribution * 1e4) / 1e2;
   const icon = <ParentCurrencyIcon currency={currency} size={18} />;
 
   return (
@@ -79,13 +72,13 @@ const Row = ({
           >
             {getAccountName(account)}
           </LText>
-          <LText tertiary style={[styles.darkBlue, styles.bodyRight]}>
+          <LText semiBold style={[styles.darkBlue, styles.bodyRight]}>
             <CurrencyUnitValue unit={currency.units[0]} value={amount} />
           </LText>
         </View>
         <View style={styles.row}>
           <View />
-          <LText tertiary style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue}>
             <CounterValue currency={currency} value={amount} />
           </LText>
         </View>
@@ -99,14 +92,14 @@ const Row = ({
             />
           </View>
           <LText
-            tertiary
+            semiBold
             style={styles.percentageText}
           >{`${percentage}%`}</LText>
         </View>
       </View>
     </RectButton>
   );
-};
+}
 
 const styles = StyleSheet.create({
   row: {
@@ -169,5 +162,3 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
 });
-
-export default connect(mapStateToProps)(withNavigation(Row));

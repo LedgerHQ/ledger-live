@@ -3,10 +3,11 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
-import colors from "../colors";
+import colors, { rgba } from "../colors";
 import CheckCircle from "../icons/CheckCircle";
 import LText from "./LText";
 import Button from "./Button";
+import InfoBox from "./InfoBox";
 
 type Props = {
   onClose?: () => void,
@@ -15,9 +16,17 @@ type Props = {
   description?: React$Node,
   primaryButton?: React$Node,
   secondaryButton?: React$Node,
+  icon?: React$Node,
+  iconColor: string,
+  info?: React$Node,
+  onLearnMore?: () => void,
 };
 
 class ValidateSuccess extends PureComponent<Props> {
+  static defaultProps = {
+    iconColor: colors.success,
+  };
+
   render() {
     const {
       onClose,
@@ -26,12 +35,18 @@ class ValidateSuccess extends PureComponent<Props> {
       description,
       primaryButton,
       secondaryButton,
+      icon,
+      iconColor,
+      info,
+      onLearnMore,
     } = this.props;
     return (
       <View style={styles.root}>
         <View style={styles.container}>
-          <View style={styles.icon}>
-            <CheckCircle size={40} color={colors.success} />
+          <View
+            style={[styles.icon, { backgroundColor: rgba(iconColor, 0.2) }]}
+          >
+            {icon || <CheckCircle size={40} color={colors.success} />}
           </View>
           <LText secondary semiBold style={styles.title}>
             {title || <Trans i18nKey="send.validation.sent" />}
@@ -39,24 +54,27 @@ class ValidateSuccess extends PureComponent<Props> {
           <LText style={styles.message}>
             {description || <Trans i18nKey="send.validation.confirm" />}
           </LText>
-          {primaryButton || (
-            <Button
-              event="SendSuccessViewDetails"
-              title={<Trans i18nKey="send.validation.button.details" />}
-              type="primary"
-              containerStyle={styles.button}
-              onPress={onViewDetails}
-            />
-          )}
-          {secondaryButton || (
-            <Button
-              event="SendSuccessClose"
-              title={<Trans i18nKey="common.close" />}
-              type="lightSecondary"
-              containerStyle={styles.button}
-              onPress={onClose}
-            />
-          )}
+          {info && <InfoBox onLearnMore={onLearnMore}>{info}</InfoBox>}
+          {primaryButton ||
+            (onViewDetails && (
+              <Button
+                event="SendSuccessViewDetails"
+                title={<Trans i18nKey="send.validation.button.details" />}
+                type="primary"
+                containerStyle={styles.button}
+                onPress={onViewDetails}
+              />
+            ))}
+          {secondaryButton ||
+            (onClose && (
+              <Button
+                event="SendSuccessClose"
+                title={<Trans i18nKey="common.close" />}
+                type="lightSecondary"
+                containerStyle={styles.button}
+                onPress={onClose}
+              />
+            ))}
         </View>
       </View>
     );
@@ -78,7 +96,6 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 32,
     borderRadius: 46,
-    backgroundColor: colors.translucentGreen,
   },
   title: {
     fontSize: 18,

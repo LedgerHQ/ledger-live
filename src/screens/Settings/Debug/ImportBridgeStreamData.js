@@ -1,27 +1,30 @@
 // @flow
 import React from "react";
-// $FlowFixMe
 import { Buffer } from "buffer";
-import { withNavigation } from "react-navigation";
+import { useNavigation } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "../../../const";
 import SettingsRow from "../../../components/SettingsRow";
 
-const ImportBridgeStreamData = ({
-  title,
-  navigation,
-  dataStr,
-}: {
+type Props = {
   title: string,
-  navigation: *,
-  reboot: *,
-  dataStr: *,
-}) => (
-  <SettingsRow
-    title={title}
-    onPress={() => {
-      const data = JSON.parse(Buffer.from(dataStr, "base64").toString("utf8"));
-      navigation.navigate("ImportAccounts", { data });
-    }}
-  />
-);
+  dataStr: any,
+};
 
-export default withNavigation(ImportBridgeStreamData);
+export default function ImportBridgeStreamData({ title, dataStr }: Props) {
+  const navigation = useNavigation();
+
+  return (
+    <SettingsRow
+      title={title}
+      onPress={() => {
+        const data = JSON.parse(
+          Buffer.from(dataStr, "base64").toString("utf8"),
+        );
+        navigation.navigate(NavigatorName.ImportAccounts, {
+          screen: ScreenName.ScanAccounts,
+          params: { data },
+        });
+      }}
+    />
+  );
+}

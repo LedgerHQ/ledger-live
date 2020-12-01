@@ -1,7 +1,7 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -9,26 +9,20 @@ import {
   Switch,
   Keyboard,
 } from "react-native";
-import { SafeAreaView } from "react-navigation";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { translate, Trans } from "react-i18next";
-import i18next from "i18next";
-import type { NavigationScreenProp } from "react-navigation";
-import type {
-  AccountLike,
-  Account,
-  Transaction,
-} from "@ledgerhq/live-common/lib/types";
+import SafeAreaView from "react-native-safe-area-view";
+import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
+import type { Transaction } from "@ledgerhq/live-common/lib/types";
+import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { accountAndParentScreenSelector } from "../../reducers/accounts";
+import { accountScreenSelector } from "../../reducers/accounts";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Button from "../../components/Button";
-import StepHeader from "../../components/StepHeader";
 import KeyboardView from "../../components/KeyboardView";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
@@ -38,17 +32,19 @@ import AmountInput from "./AmountInput";
 const forceInset = { bottom: "always" };
 
 type Props = {
-  account: AccountLike,
-  parentAccount: ?Account,
-  navigation: NavigationScreenProp<{
-    params: {
-      accountId: string,
-      transaction: Transaction,
-    },
-  }>,
+  navigation: any,
+  route: { params: RouteParams },
 };
 
-const SendAmount = ({ account, parentAccount, navigation }: Props) => {
+type RouteParams = {
+  accountId: string,
+  transaction: Transaction,
+};
+
+export default function SendAmount({ navigation, route }: Props) {
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
+  const [maxSpendable, setMaxSpendable] = useState(null);
+
   const {
     transaction,
     setTransaction,
@@ -56,10 +52,34 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
     bridgePending,
     bridgeError,
   } = useBridgeTransaction(() => ({
-    transaction: navigation.getParam("transaction"),
+    transaction: route.params.transaction,
     account,
     parentAccount,
   }));
+
+  const debouncedTransaction = useDebounce(transaction, 500);
+
+  useEffect(() => {
+    if (!account) return;
+
+    let cancelled = false;
+    getAccountBridge(account, parentAccount)
+      .estimateMaxSpendable({
+        account,
+        parentAccount,
+        transaction: debouncedTransaction,
+      })
+      .then(estimate => {
+        if (cancelled) return;
+
+        setMaxSpendable(estimate);
+      });
+
+    // eslint-disable-next-line consistent-return
+    return () => {
+      cancelled = true;
+    };
+  }, [account, parentAccount, debouncedTransaction]);
 
   const onChange = useCallback(
     amount => {
@@ -84,19 +104,25 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
   }, [setTransaction, account, parentAccount, transaction]);
 
   const onContinue = useCallback(() => {
-    navigation.navigate("SendSummary", {
+    navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
     });
   }, [account, parentAccount, navigation, transaction]);
 
+  const [bridgeErr, setBridgeErr] = useState(bridgeError);
+
+  useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
   const onBridgeErrorCancel = useCallback(() => {
+    setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
     if (parent) parent.goBack();
   }, [navigation]);
 
   const onBridgeErrorRetry = useCallback(() => {
+    setBridgeErr(null);
     if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
@@ -116,12 +142,11 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
       <SafeAreaView style={styles.root} forceInset={forceInset}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
-            <View style={{ flex: 1 }}>
+            <View style={styles.amountWrapper}>
               <AmountInput
                 editable={!useAllAmount}
                 account={account}
                 onChange={onChange}
-                currency={unit.code}
                 value={amount}
                 error={
                   amount.eq(0) && (bridgePending || !transaction.useAllAmount)
@@ -137,11 +162,11 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                     <LText>
                       <Trans i18nKey="send.amount.available" />
                     </LText>
-                    <LText tertiary style={styles.availableAmount}>
+                    <LText semiBold style={styles.availableAmount}>
                       <CurrencyUnitValue
                         showCode
                         unit={unit}
-                        value={account.balance}
+                        value={maxSpendable}
                       />
                     </LText>
                   </View>
@@ -151,7 +176,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                         <Trans i18nKey="send.amount.useMax" />
                       </LText>
                       <Switch
-                        style={{ opacity: 0.99 }}
+                        style={styles.switch}
                         value={useAllAmount}
                         onValueChange={toggleUseAllAmount}
                       />
@@ -173,7 +198,6 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
                     }
                     onPress={onContinue}
                     disabled={!!status.errors.amount || bridgePending}
-                    pending={bridgePending}
                   />
                 </View>
               </View>
@@ -183,7 +207,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
       </SafeAreaView>
 
       <GenericErrorBottomModal
-        error={bridgeError}
+        error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
@@ -200,19 +224,7 @@ const SendAmount = ({ account, parentAccount, navigation }: Props) => {
       />
     </>
   );
-};
-
-SendAmount.navigationOptions = {
-  headerTitle: (
-    <StepHeader
-      title={i18next.t("send.stepperHeader.selectAmount")}
-      subtitle={i18next.t("send.stepperHeader.stepRange", {
-        currentStep: "3",
-        totalSteps: "6",
-      })}
-    />
-  ),
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -265,9 +277,10 @@ const styles = StyleSheet.create({
   buttonRight: {
     marginLeft: 8,
   },
+  amountWrapper: {
+    flex: 1,
+  },
+  switch: {
+    opacity: 0.99,
+  },
 });
-
-export default compose(
-  translate(),
-  connect(accountAndParentScreenSelector),
-)(SendAmount);

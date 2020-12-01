@@ -2,27 +2,15 @@
 import { StyleSheet } from "react-native";
 import type { Opts, Res } from ".";
 
-const getFontStyle = ({
-  bold,
-  semiBold,
-  secondary,
-  tertiary,
-  monospace,
-}: Opts = {}): Res => {
-  const fontFamily = secondary
-    ? "Museo Sans"
-    : tertiary
-    ? "Rubik"
-    : monospace
-    ? "Menlo"
-    : "Open Sans";
+const getFontStyle = ({ bold, semiBold, monospace }: Opts = {}): Res => {
+  const fontFamily = monospace ? "Menlo" : "Inter";
   let fontWeight;
   if (semiBold) {
-    fontWeight = secondary ? "400" : "600"; // Fix for Museo weights being off by 200;
+    fontWeight = "600";
   } else if (bold) {
-    fontWeight = secondary ? "500" : "700";
+    fontWeight = "700";
   } else {
-    fontWeight = secondary ? "200" : "400";
+    fontWeight = "400";
   }
   return { fontFamily, fontWeight };
 };

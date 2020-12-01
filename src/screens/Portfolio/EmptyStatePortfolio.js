@@ -1,102 +1,111 @@
 /* @flow */
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
+import React, { memo, useState, useCallback } from "react";
+import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { View, StyleSheet } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-import Icon from "react-native-vector-icons/dist/Feather";
-import { createStructuredSelector } from "reselect";
+import { View, StyleSheet, Image } from "react-native";
+import { hasInstalledAnyAppSelector } from "../../reducers/settings";
 import colors from "../../colors";
+import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import EmptyAccountsIllustration from "../../icons/EmptyAccountsIllustration";
-import { hasInstalledAnyAppSelector } from "../../reducers/settings";
+import noAccountsImg from "../../images/noAccounts.png";
+import noAppsImg from "../../images/noApps.png";
+import HelpLink from "../../components/HelpLink";
+import { urls } from "../../config/urls";
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
-  hasInstalledAnyApp: boolean,
+  navigation: any,
+  showHelp?: boolean,
 };
 
-type State = {
-  isAddModalOpened: boolean,
-};
+function EmptyStatePortfolio({ navigation, showHelp = true }: Props) {
+  const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
+  const [isAddModalOpened, setAddModalOpened] = useState(false);
 
-const IconPlus = p => <Icon name="plus" {...p} size={18} />;
-const mapStateToProps = createStructuredSelector({
-  hasInstalledAnyApp: hasInstalledAnyAppSelector,
-});
+  const openAddModal = useCallback(() => setAddModalOpened(true), [
+    setAddModalOpened,
+  ]);
 
-class EmptyStatePortfolio extends PureComponent<Props, State> {
-  state = {
-    isAddModalOpened: false,
-  };
+  const closeAddModal = useCallback(() => setAddModalOpened(false), [
+    setAddModalOpened,
+  ]);
 
-  navigateToManager = () => this.props.navigation.navigate("Manager");
+  const navigateToManager = useCallback(
+    () => navigation.navigate(ScreenName.Manager),
+    [navigation],
+  );
 
-  openAddModal = () => this.setState({ isAddModalOpened: true });
-
-  closeAddModal = () => this.setState({ isAddModalOpened: false });
-
-  render() {
-    const { navigation, hasInstalledAnyApp } = this.props;
-    const { isAddModalOpened } = this.state;
-    return (
+  return (
+    <>
+      {showHelp ? (
+        <View style={styles.help}>
+          <HelpLink
+            url={hasInstalledAnyApp ? urls.addAccount : urls.goToManager}
+            color={colors.grey}
+          />
+        </View>
+      ) : null}
       <View style={styles.root}>
         <View style={styles.body}>
-          <EmptyAccountsIllustration />
-          <LText secondary semiBold style={styles.title}>
-            {<Trans i18nKey="portfolio.emptyState.title" />}
+          <Image source={hasInstalledAnyApp ? noAccountsImg : noAppsImg} />
+          <LText secondary bold style={styles.title}>
+            <Trans
+              i18nKey={`portfolio.emptyState.${
+                hasInstalledAnyApp ? "noAccountsTitle" : "noAppsTitle"
+              }`}
+            />
           </LText>
-          <LText style={styles.desc}>
-            {
-              <Trans
-                i18nKey={
-                  hasInstalledAnyApp
-                    ? "portfolio.emptyState.descWithApp"
-                    : "portfolio.emptyState.desc"
-                }
+          <LText secondary style={styles.desc}>
+            <Trans
+              i18nKey={`portfolio.emptyState.${
+                hasInstalledAnyApp ? "noAccountsDesc" : "noAppsDesc"
+              }`}
+            />
+          </LText>
+
+          <View style={styles.containerCTA}>
+            {hasInstalledAnyApp ? (
+              <>
+                <Button
+                  event="PortfolioEmptyToImport"
+                  type={"primary"}
+                  title={
+                    <Trans i18nKey="portfolio.emptyState.buttons.import" />
+                  }
+                  onPress={openAddModal}
+                  containerStyle={[styles.primaryCTA]}
+                />
+                <Button
+                  event="PortfolioEmptyToManager"
+                  type={"lightSecondary"}
+                  title={
+                    <Trans i18nKey="portfolio.emptyState.buttons.managerSecondary" />
+                  }
+                  onPress={navigateToManager}
+                />
+              </>
+            ) : (
+              <Button
+                event="PortfolioEmptyToManager"
+                type={"primary"}
+                title={<Trans i18nKey="portfolio.emptyState.buttons.manager" />}
+                onPress={navigateToManager}
               />
-            }
-          </LText>
-          <View style={hasInstalledAnyApp ? styles.forward : styles.backward}>
-            <Button
-              event="PortfolioEmptyToImport"
-              type={hasInstalledAnyApp ? "primary" : "lightSecondary"}
-              title={<Trans i18nKey="portfolio.emptyState.buttons.import" />}
-              onPress={this.openAddModal}
-              containerStyle={[
-                styles.buttonFull,
-                hasInstalledAnyApp && styles.primaryCTA,
-              ]}
-              IconLeft={IconPlus}
-            />
-            <Button
-              event="PortfolioEmptyToManager"
-              type={!hasInstalledAnyApp ? "primary" : "lightSecondary"}
-              title={<Trans i18nKey="portfolio.emptyState.buttons.manager" />}
-              onPress={this.navigateToManager}
-              containerStyle={[
-                styles.buttonFull,
-                !hasInstalledAnyApp && styles.primaryCTA,
-              ]}
-            />
+            )}
           </View>
           <AddAccountsModal
             navigation={navigation}
             isOpened={isAddModalOpened}
-            onClose={this.closeAddModal}
+            onClose={closeAddModal}
           />
         </View>
       </View>
-    );
-  }
+    </>
+  );
 }
 
-export default connect(
-  mapStateToProps,
-  null,
-)(EmptyStatePortfolio);
+export default memo<Props>(EmptyStatePortfolio);
 
 const styles = StyleSheet.create({
   root: {
@@ -105,33 +114,34 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
   },
-  forward: {
-    alignSelf: "stretch",
-    flexDirection: "column",
+
+  help: {
+    margin: 16,
+    marginBottom: 0,
+    alignSelf: "flex-end",
   },
-  backward: {
-    alignSelf: "stretch",
-    flexDirection: "column-reverse",
-  },
+
   body: {
     alignItems: "center",
-  },
-  buttonFull: {
-    alignSelf: "stretch",
   },
   primaryCTA: {
     marginBottom: 16,
   },
+
   title: {
-    marginTop: 32,
-    marginBottom: 16,
-    fontSize: 16,
+    marginTop: 40,
+    marginBottom: 12,
+    fontSize: 18,
   },
   desc: {
     fontSize: 14,
     lineHeight: 21,
     color: colors.grey,
     textAlign: "center",
-    marginBottom: 32,
+    marginBottom: 40,
+  },
+  containerCTA: {
+    alignSelf: "stretch",
+    flexDirection: "column",
   },
 });

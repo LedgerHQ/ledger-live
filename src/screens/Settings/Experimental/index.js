@@ -1,44 +1,38 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
-import type { NavigationScreenProp } from "react-navigation";
-// $FlowFixMe
-import { ScrollView } from "react-navigation";
-import i18next from "i18next";
-import { translate } from "react-i18next";
 import { isEnvDefault } from "@ledgerhq/live-common/lib/env";
 
 import { TrackScreen } from "../../../analytics";
 import colors from "../../../colors";
 
-import Disclaimer from "./Disclaimer";
 import { experimentalFeatures } from "../../../experimental";
+import NavigationScrollView from "../../../components/NavigationScrollView";
+import KeyboardView from "../../../components/KeyboardView";
+
+import Disclaimer from "./Disclaimer";
 import FeatureRow from "./FeatureRow";
 
-class ExperimentalSettings extends PureComponent<{
-  navigation: NavigationScreenProp<*>,
-}> {
-  static navigationOptions = {
-    title: i18next.t("settings.experimental.title"),
-  };
-
-  render() {
-    return (
-      <ScrollView contentContainerStyle={styles.root}>
-        <TrackScreen category="Settings" name="Experimental" />
-        <View style={styles.container}>
-          <View style={styles.disclaimerContainer}>
-            <Disclaimer />
+export default function ExperimentalSettings() {
+  return (
+    <>
+      <KeyboardView>
+        <NavigationScrollView contentContainerStyle={styles.root}>
+          <TrackScreen category="Settings" name="Experimental" />
+          <View style={styles.container}>
+            <View style={styles.disclaimerContainer}>
+              <Disclaimer />
+            </View>
+            {experimentalFeatures.map(feat =>
+              !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
+                <FeatureRow key={feat.name} feature={feat} />
+              ) : null,
+            )}
           </View>
-          {experimentalFeatures.map(feat =>
-            !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
-              <FeatureRow key={feat.name} feature={feat} />
-            ) : null,
-          )}
-        </View>
-      </ScrollView>
-    );
-  }
+        </NavigationScrollView>
+      </KeyboardView>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -51,5 +45,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 });
-
-export default translate()(ExperimentalSettings);

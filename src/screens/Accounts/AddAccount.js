@@ -1,46 +1,37 @@
 // @flow
 
-import React, { PureComponent } from "react";
-import { withNavigation } from "react-navigation";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "../../components/Touchable";
 import colors from "../../colors";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 
-class AddAccount extends PureComponent<
-  { navigation: * },
-  { isAddModalOpened: boolean },
-> {
-  state = {
-    isAddModalOpened: false,
-  };
+export default function AddAccount() {
+  const navigation = useNavigation();
 
-  onPress = () => {
-    this.props.navigation.navigate("ImportAccounts");
-  };
+  const [isAddModalOpened, setIsAddModalOpened] = useState(false);
 
-  openAddModal = () => this.setState({ isAddModalOpened: true });
-
-  closeAddModal = () => this.setState({ isAddModalOpened: false });
-
-  render() {
-    const { navigation } = this.props;
-    const { isAddModalOpened } = this.state;
-    return (
-      <Touchable
-        event="OpenAddAccountModal"
-        style={{ marginHorizontal: 16 }}
-        onPress={this.openAddModal}
-      >
-        <Icon name="plus" color={colors.grey} size={20} />
-        <AddAccountsModal
-          navigation={navigation}
-          isOpened={isAddModalOpened}
-          onClose={this.closeAddModal}
-        />
-      </Touchable>
-    );
+  function openAddModal() {
+    setIsAddModalOpened(true);
   }
-}
 
-export default withNavigation(AddAccount);
+  function closeAddModal() {
+    setIsAddModalOpened(false);
+  }
+
+  return (
+    <Touchable
+      event="OpenAddAccountModal"
+      style={{ marginHorizontal: 16 }}
+      onPress={openAddModal}
+    >
+      <Icon name="plus" color={colors.grey} size={20} />
+      <AddAccountsModal
+        navigation={navigation}
+        isOpened={isAddModalOpened}
+        onClose={closeAddModal}
+      />
+    </Touchable>
+  );
+}
