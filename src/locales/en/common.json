@@ -1478,7 +1478,7 @@
         "label": "Lend crypto",
         "title": "Lend assets on the Compound Protocol",
         "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger acccount.",
-        "switchLabel": "I have read and agree with the <0>Terms of Use</0>."
+        "switchLabel": "I have read and agree with the <0><0>Terms of Use</0></0>."
       },
       "info": {
         "title": "Lend crypto",
