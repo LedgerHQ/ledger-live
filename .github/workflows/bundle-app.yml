@@ -49,7 +49,7 @@ jobs:
           export ANDROID_KEYSTORE_PASS=staging
           export ANDROID_KEY_ALIAS=staging
           export ANDROID_KEY_PASS=staging
-          yarn android:apk
+          bundle exec fastlane android apk --env production
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: post-version
       - name: upload Android app 1/4

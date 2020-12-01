@@ -45,6 +45,12 @@
             <data android:scheme="ledgerlive"/>
         </intent-filter>
         <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="wc"/>
+        </intent-filter>
+        <intent-filter>
             <!-- http://developer.android.com/guide/topics/connectivity/usb/accessory.html -->
             <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
         </intent-filter>

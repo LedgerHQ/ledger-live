@@ -2,13 +2,17 @@
 import React, { PureComponent } from "react";
 import { withTranslation } from "react-i18next";
 import { AppState, Linking } from "react-native";
-import type { T } from "../../../types/common";
-import FallbackCameraBody from "../../../components/FallbackCameraBody";
-import { ScreenName } from "../../../const";
+import type { T } from "../../types/common";
+import FallbackCameraBody from "../FallbackCameraBody";
 
 type Props = {
   navigation: any,
   t: T,
+  route: { params: RouteParams },
+};
+
+type RouteParams = {
+  screenName: string,
 };
 
 type State = {
@@ -32,13 +36,14 @@ class FallBackCameraScreen extends PureComponent<Props, State> {
 
   handleAppStateChange = nextAppState => {
     const { appState, openSettingsPressed } = this.state;
-    const { navigation } = this.props;
+    const { navigation, route } = this.props;
     if (
       appState.match(/inactive|background/) &&
       nextAppState === "active" &&
-      openSettingsPressed
+      openSettingsPressed &&
+      route.params.screenName
     ) {
-      navigation.replace(ScreenName.SendFunds);
+      navigation.replace(route.params.screenName);
     }
     this.setState({ appState: nextAppState });
   };

@@ -120,6 +120,11 @@ export const ScreenName = {
   SendValidationError: "SendValidationError",
   SendValidationSuccess: "SendValidationSuccess",
   Settings: "Settings",
+  SignConnectDevice: "SignConnectDevice",
+  SignSelectDevice: "SignSelectDevice",
+  SignSummary: "SignSummary",
+  SignValidationError: "SignValidationError",
+  SignValidationSuccess: "SignValidationSuccess",
   StellarEditMemoType: "StellarEditMemoType",
   StellarEditMemoValue: "StellarEditMemoValue",
   Swap: "Swap",
@@ -226,6 +231,11 @@ export const ScreenName = {
   LendingWithdrawValidation: "Lend WithdrawValidation",
   LendingWithdrawValidationError: "Lend WithdrawValidationError",
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
+
+  WalletConnectScan: "WalletConnectScan",
+  WalletConnectConnect: "WalletConnectConnect",
+  WalletConnectDeeplinkingSelectAccount:
+    "WalletConnectDeeplinkingSelectAccount",
 };
 
 export const NavigatorName = {
@@ -259,6 +269,7 @@ export const NavigatorName = {
   ReceiveFunds: "ReceiveFunds",
   SendFunds: "SendFunds",
   Settings: "Settings",
+  SignMessage: "SignMessage",
   Swap: "Swap",
   TezosDelegationFlow: "TezosDelegationFlow",
   TronVoteFlow: "TronVoteFlow",

@@ -941,6 +941,7 @@
     "send": "Send",
     "receive": "Receive",
     "buy": "Buy",
+    "walletconnect": "WalletConnect",
     "sell": "Sell",
     "swap": "Swap",
     "manage": "Manage",
@@ -2711,5 +2712,34 @@
       "title": "SWAP CRYPTO",
       "description": "Swap crypto assets directly from your Ledger accounts with our partner."
     }
+  },
+
+  "walletconnect": {
+    "disclaimer": "Wants to connect to the following Ethereum account through your wallet :",
+    "reject": "Reject",
+    "connect": "Connect",
+    "connected": "Connected",
+    "info": "You can now access the {{name}} dApp on your desktop.",
+    "warning": "Sharing receive addresses from dApp is not secure. Always use Ledger Live when sharing your address to receive funds.",
+    "isconnecting": "is connecting, please wait...",
+    "disconnect": "Disconnect",
+    "retry": "Retry",
+    "close": "Close",
+    "message": "Message",
+    "from": "From",
+    "successTitle": "Message signed",
+    "successDescription": "You have signed the message received from a third party application",
+    "stepperHeader": {
+      "summary": "Summary",
+      "selectDevice": "Select Device",
+      "connectDevice": "Connect Device",
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+    },
+    "stepVerification": {
+      "action": "Please confirm the operation on your device",
+      "accountName": "Account name",
+    },
+    "deeplinkingTitle": "Select an Ethereum account",
+    "addAccount": "Add new account"
   }
 }

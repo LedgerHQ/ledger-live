@@ -114,20 +114,24 @@ export default function AccountActions({ account, parentAccount }: Props) {
               <LendingBanners account={account} />
             )}
             {!!displayedActions &&
-              actions[displayedActions].map((a, i) => (
-                <ChoiceButton
-                  key={i}
-                  onSelect={({ navigationParams, enableActions }) => {
-                    if (navigationParams) {
-                      onNavigate(...navigationParams);
-                    }
-                    if (enableActions) {
-                      setDisplayedActions(enableActions);
-                    }
-                  }}
-                  {...a}
-                />
-              ))}
+              actions[displayedActions].map((a, i) =>
+                a.Component ? (
+                  <a.Component key={i} />
+                ) : (
+                  <ChoiceButton
+                    key={i}
+                    onSelect={({ navigationParams, enableActions }) => {
+                      if (navigationParams) {
+                        onNavigate(...navigationParams);
+                      }
+                      if (enableActions) {
+                        setDisplayedActions(enableActions);
+                      }
+                    }}
+                    {...a}
+                  />
+                ),
+              )}
           </BottomModal>
         </>
       )}

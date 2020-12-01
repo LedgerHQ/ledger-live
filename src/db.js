@@ -33,6 +33,15 @@ export async function saveSettings(obj: *): Promise<void> {
   await store.save("settings", obj);
 }
 
+export async function getWCSession(): Promise<*> {
+  const wcsession = await store.get("wcsession");
+  return wcsession;
+}
+
+export async function saveWCSession(obj: *): Promise<void> {
+  await store.save("wcsession", obj);
+}
+
 export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(
   unsafeGetCountervalues,
 );

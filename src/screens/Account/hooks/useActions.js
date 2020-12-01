@@ -1,5 +1,6 @@
 /* @flow */
 import React from "react";
+import { View, StyleSheet } from "react-native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import {
   getAccountCurrency,
@@ -7,6 +8,7 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { NavigatorName, ScreenName } from "../../../const";
 import {
   readOnlyModeEnabledSelector,
@@ -16,7 +18,9 @@ import perFamilyAccountActions from "../../../generated/accountActions";
 import { isCurrencySupported } from "../../Exchange/coinifyConfig";
 import Swap from "../../../icons/Swap";
 import Lending from "../../../icons/Lending";
+import WalletConnect from "../../../icons/WalletConnect";
 import Exchange from "../../../icons/Exchange";
+import colors from "../../../colors";
 
 type Props = {
   account: AccountLike,
@@ -31,6 +35,9 @@ export default function useActions({ account, parentAccount }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
   const currency = getAccountCurrency(account);
+
+  const walletConnectAvailable =
+    currency.id === "ethereum" && getEnv("WALLETCONNECT");
 
   const accountId = account.id;
 
@@ -118,7 +125,38 @@ export default function useActions({ account, parentAccount }: Props) {
           },
         ]
       : []),
+    ...(walletConnectAvailable
+      ? [
+          {
+            Component: () => <View style={styles.separator} />,
+          },
+          {
+            navigationParams: [
+              NavigatorName.Base,
+              {
+                screen: ScreenName.WalletConnectScan,
+                params: {
+                  accountId: account.id,
+                },
+              },
+            ],
+            label: <Trans i18nKey="account.walletconnect" />,
+            Icon: WalletConnect,
+            event: "WalletConnect Account Button",
+            eventProperties: { currencyName: currency.name },
+          },
+        ]
+      : []),
   ];
 
   return actions;
 }
+
+const styles = StyleSheet.create({
+  separator: {
+    height: 1,
+    backgroundColor: colors.separator,
+    marginVertical: 8,
+    marginHorizontal: 8,
+  },
+});

@@ -32,6 +32,7 @@ export default {
   black: "#000000",
   orange: "#ff7701",
   yellow: "#ffd24a",
+  separator: "#ebebeb",
 
   /* DERIVATIVES */
   lightLive: "#4b84ff19",

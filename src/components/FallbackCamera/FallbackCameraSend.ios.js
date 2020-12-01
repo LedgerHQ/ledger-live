@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
-import FallbackCameraBody from "../../../components/FallbackCameraBody";
+import FallbackCameraBody from "../FallbackCameraBody";
 
 export default function FallBackCameraScreen() {
   const { t } = useTranslation();

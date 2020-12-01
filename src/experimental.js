@@ -40,6 +40,13 @@ export const experimentalFeatures: Feature[] = [
     description: "Show developer and testnet apps in the Manager.",
   },
   {
+    type: "toggle",
+    name: "WALLETCONNECT",
+    title: "Wallet connect",
+    description:
+      "Link your Ledger Live Mobile decentralized applications compatible with WalletConnect",
+  },
+  {
     type: "integer",
     name: "FORCE_PROVIDER",
     title: "Manager provider",

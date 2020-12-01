@@ -13,10 +13,14 @@ import EditDeviceName from "../../screens/EditDeviceName";
 import Distribution from "../../screens/Distribution";
 import Asset, { HeaderTitle } from "../../screens/Asset";
 import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
-import FallbackCameraSend from "../../screens/SendFunds/FallbackCamera/FallbackCameraSend";
+import WalletConnectScan from "../../screens/WalletConnect/Scan";
+import WalletConnectConnect from "../../screens/WalletConnect/Connect";
+import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
+import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
+import SignMessageNavigator from "./SignMessageNavigator";
 import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
@@ -48,6 +52,7 @@ import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
+
   return (
     <Stack.Navigator mode="modal" screenOptions={closableStackNavigatorConfig}>
       <Stack.Screen
@@ -63,6 +68,11 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.SendFunds}
         component={SendFundsNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name={NavigatorName.SignMessage}
+        component={SignMessageNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -253,6 +263,36 @@ export default function BaseNavigator() {
             <HeaderRightClose color={colors.white} preferDismiss={false} />
           ),
           headerLeft: null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.WalletConnectScan}
+        component={WalletConnectScan}
+        options={{
+          ...TransparentHeaderNavigationOptions,
+          title: "Wallet Connect",
+          headerRight: () => (
+            <HeaderRightClose color={colors.white} preferDismiss={false} />
+          ),
+          headerLeft: null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.WalletConnectDeeplinkingSelectAccount}
+        component={WalletConnectDeeplinkingSelectAccount}
+        options={{
+          title: t("walletconnect.deeplinkingTitle"),
+          headerRight: () => <HeaderRightClose preferDismiss={false} />,
+          headerLeft: null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.WalletConnectConnect}
+        component={WalletConnectConnect}
+        options={{
+          title: "Wallet Connect",
+          headerLeft: null,
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen

@@ -7,6 +7,7 @@ import type {
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import ValidateOnDevice from "../ValidateOnDevice";
+import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import {
   renderWarningOutdated,
   renderConnectYourDevice,
@@ -61,6 +62,7 @@ export default function DeviceAction<R, H, P>({
     initSwapRequested,
     initSwapError,
     initSwapResult,
+    signMessageRequested,
     allowOpeningGranted,
     initSellRequested,
     initSellResult,
@@ -177,6 +179,21 @@ export default function DeviceAction<R, H, P>({
         </>
       );
     }
+  }
+
+  if (request && device && signMessageRequested) {
+    const { account } = request;
+    return (
+      <>
+        <PreventNativeBack />
+        <SkipLock />
+        <ValidateMessageOnDevice
+          device={device}
+          account={account}
+          message={signMessageRequested}
+        />
+      </>
+    );
   }
 
   if (typeof deviceStreamingProgress === "number") {
