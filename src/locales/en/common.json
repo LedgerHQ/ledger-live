@@ -1605,6 +1605,11 @@
     "loading": "Searching devices..."
   },
   "send": {
+    "tooMuchUTXOBottomModal": {
+      "cta": "Continue",
+      "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
+      "title": "UTXO message"
+    },
     "highFeeModal": "Be careful, network fees are greater than <1>10%</1> of the amount. Do you want to continue?",
     "scan": {
       "title": "Scan QR code",
