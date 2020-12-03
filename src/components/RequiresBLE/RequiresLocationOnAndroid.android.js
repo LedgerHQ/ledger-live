@@ -6,7 +6,7 @@ import React, { Component } from "react";
 import { PermissionsAndroid } from "react-native";
 import LocationRequired from "../../screens/LocationRequired";
 
-const permission = PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
+const permission = PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION;
 
 class RequiresBLE extends Component<
   {
