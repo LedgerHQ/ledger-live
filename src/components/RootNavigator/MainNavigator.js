@@ -14,22 +14,11 @@ import SettingsIcon from "../../icons/Settings";
 
 import Tab from "./CustomBlockRouterNavigator";
 
-type RouteParams = {
-  hideTabNavigation?: boolean,
-};
-export default function MainNavigator({
-  route: { params },
-}: {
-  route: { params: RouteParams },
-}) {
-  const { hideTabNavigation } = params || {};
+export default function MainNavigator() {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        style: [
-          styles.bottomTabBar,
-          hideTabNavigation ? { display: "none" } : {},
-        ],
+        style: styles.bottomTabBar,
         showLabel: false,
         activeTintColor: colors.live,
       }}
