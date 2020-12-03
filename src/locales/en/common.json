@@ -1320,7 +1320,7 @@
         "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes."
       },
       "notAvailable": {
-        "title": "Sorry. Swap feature is not available in your country."
+        "title": "Service temporarily unavailable, or not available in your country"
       },
       "pendingOperation": {
         "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
