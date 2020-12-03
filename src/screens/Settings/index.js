@@ -1,8 +1,8 @@
 /* @flow */
-import React, { useCallback, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Config from "react-native-config";
 import { ScreenName } from "../../const";
@@ -16,6 +16,7 @@ import Help from "../../icons/Help";
 import Display from "../../icons/Display";
 import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
+import timer from "../../timer";
 import NavigationScrollView from "../../components/NavigationScrollView";
 
 type Props = {
@@ -29,10 +30,25 @@ export default function Settings({ navigation }: Props) {
   const [debugVisible, setDebugVisible] = useState(
     Config.FORCE_DEBUG_VISIBLE || false,
   );
+  const count = useRef(0);
+  const debugTimeout = useRef(onTimeout);
 
-  const onSetDebugVisible = useCallback(() => {
-    setDebugVisible(true);
-  }, []);
+  function onTimeout(): void {
+    timer.timeout(() => {
+      count.current = 0;
+    }, 1000);
+  }
+
+  function onDebugHiddenPress(): void {
+    if (debugTimeout) debugTimeout.current();
+    count.current++;
+    if (count.current > 6) {
+      count.current = 0;
+      setDebugVisible(!debugVisible);
+    } else {
+      onTimeout();
+    }
+  }
 
   return (
     <NavigationScrollView>
@@ -78,7 +94,11 @@ export default function Settings({ navigation }: Props) {
             onClick={() => navigation.navigate(ScreenName.DebugSettings)}
           />
         ) : null}
-        <PoweredByLedger onTriggerDebug={onSetDebugVisible} />
+        <TouchableWithoutFeedback onPress={onDebugHiddenPress}>
+          <View>
+            <PoweredByLedger />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     </NavigationScrollView>
   );
