@@ -36,6 +36,11 @@ export function useScrollToTop(
       ) {
         // this handles SectionList with Animated wrapper
         scrollSectionListToTop(ref.current.getNode());
+      } else if (
+        typeof ref.current.getNode === "function" &&
+        typeof ref.current.getNode().scrollToOffset === "function"
+      ) {
+        ref.current.getNode().scrollToOffset({ animated: true, offset: 0 });
       }
     });
 
