@@ -51,8 +51,20 @@ import type {
   TransactionArg,
   TransactionRes,
 } from "./types";
+import { makeBridgeCacheSystem } from "../bridge/cache";
 
 let appCandidates;
+
+let localCache = {};
+const cache = makeBridgeCacheSystem({
+  saveData(c, d) {
+    localCache[c.id] = d;
+    return Promise.resolve();
+  },
+  getData(c) {
+    return Promise.resolve(localCache[c.id]);
+  },
+});
 
 export async function runWithAppSpec<T: Transaction>(
   spec: AppSpec<T>,
@@ -103,7 +115,8 @@ export async function runWithAppSpec<T: Transaction>(
     const syncConfig = { paginationConfig: {} };
 
     let t = now();
-    const preloadedData = await bridge.preload(currency);
+
+    const preloadedData = await cache.prepareCurrency(currency);
     const preloadTime = now() - t;
 
     // Scan all existing accounts

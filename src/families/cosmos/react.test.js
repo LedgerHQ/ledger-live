@@ -5,6 +5,7 @@ import { getAccountUnit } from "../../account";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "../../env";
+import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import type { Account, CurrencyBridge } from "../../types";
 import type { Transaction } from "./types";
@@ -12,18 +13,27 @@ import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
 
+let localCache = {};
+const cache = makeBridgeCacheSystem({
+  saveData(c, d) {
+    localCache[c.id] = d;
+    return Promise.resolve();
+  },
+  getData(c) {
+    return Promise.resolve(localCache[c.id]);
+  },
+});
+
 describe("cosmos/react", () => {
   describe("useCosmosPreloadData", () => {
     it("should return Cosmos preload data and updates", async () => {
-      const { currencyBridge } = setup();
+      const { prepare } = setup();
       const { result } = renderHook(() => hooks.useCosmosPreloadData());
 
       const data = getCurrentCosmosPreloadData();
       expect(result.current).toStrictEqual(data);
 
-      act(() => {
-        currencyBridge.preload(getCryptoCurrencyById("cosmos"));
-      });
+      await act(() => prepare());
 
       expect(result.current).toStrictEqual(preloadedMockData);
     });
@@ -31,8 +41,8 @@ describe("cosmos/react", () => {
 
   describe("useCosmosFormattedDelegations", () => {
     it("should return formatted delegations", async () => {
-      const { account, currencyBridge } = setup();
-      await currencyBridge.preload(account.currency);
+      const { account, prepare } = setup();
+      await prepare();
 
       const { result } = renderHook(() =>
         hooks.useCosmosMappedDelegations(account)
@@ -57,8 +67,8 @@ describe("cosmos/react", () => {
 
     describe("mode: claimReward", () => {
       it("should only return delegations which have some pending rewards", async () => {
-        const { account, currencyBridge } = setup();
-        await currencyBridge.preload(account.currency);
+        const { account, prepare } = setup();
+        await prepare();
 
         const { result } = renderHook(() =>
           hooks.useCosmosMappedDelegations(account, "claimReward")
@@ -71,8 +81,8 @@ describe("cosmos/react", () => {
 
   describe("useCosmosDelegationsQuerySelector", () => {
     it("should return delegations filtered by query as options", async () => {
-      const { account, transaction, currencyBridge } = setup();
-      await currencyBridge.preload(account.currency);
+      const { account, transaction, prepare } = setup();
+      await prepare();
 
       invariant(
         account.cosmosResources,
@@ -101,8 +111,8 @@ describe("cosmos/react", () => {
     });
 
     it("should return the first delegation as value", async () => {
-      const { account, transaction, currencyBridge } = setup();
-      await currencyBridge.preload(account.currency);
+      const { account, transaction, prepare } = setup();
+      await prepare();
 
       invariant(
         account.cosmosResources,
@@ -127,8 +137,8 @@ describe("cosmos/react", () => {
     });
 
     it("should find delegation by cosmosSourceValidator field and return as value for redelegate", async () => {
-      const { account, transaction, currencyBridge } = setup();
-      await currencyBridge.preload(account.currency);
+      const { account, transaction, prepare } = setup();
+      await prepare();
 
       invariant(
         account.cosmosResources,
@@ -158,8 +168,8 @@ describe("cosmos/react", () => {
 
   describe("useSortedValidators", () => {
     it("should reutrn sorted validators", async () => {
-      const { account, currencyBridge } = setup();
-      await currencyBridge.preload(account.currency);
+      const { account, prepare } = setup();
+      await prepare();
 
       const { result: preloadDataResult } = renderHook(() =>
         hooks.useCosmosPreloadData()
@@ -190,6 +200,7 @@ function setup(): {
   account: Account,
   currencyBridge: CurrencyBridge,
   transaction: Transaction,
+  prepare: () => Promise<*>,
 } {
   setEnv("MOCK", 1);
   setEnv("EXPERIMENTAL_CURRENCIES", "cosmos");
@@ -197,12 +208,14 @@ function setup(): {
   const currency = getCryptoCurrencyById("cosmos");
   const a = genAccount(seed, { currency });
   const account = genAddingOperationsInAccount(a, 3, seed);
+  const currencyBridge = getCurrencyBridge(currency);
   const bridge = getAccountBridge(account);
   const transaction = bridge.createTransaction(account);
 
   return {
     account,
-    currencyBridge: getCurrencyBridge(currency),
+    currencyBridge,
     transaction,
+    prepare: async () => cache.prepareCurrency(currency),
   };
 }
