@@ -137,6 +137,10 @@ export const SatStackStillSyncing = createCustomErrorClass(
   "SatStackStillSyncing"
 );
 
+export const SatStackDescriptorNotImported = createCustomErrorClass(
+  "SatStackDescriptorNotImported"
+);
+
 export const SwapNoAvailableProviders = createCustomErrorClass(
   "SwapNoAvailableProviders"
 );

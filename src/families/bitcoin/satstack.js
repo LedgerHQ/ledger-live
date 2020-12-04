@@ -18,7 +18,7 @@ import type { AccountDescriptor } from "./descriptor";
 import { getEnv } from "../../env";
 import { getCurrencyExplorer } from "../../api/Ledger";
 
-const minVersionMatch = ">=0.10.0";
+const minVersionMatch = ">=0.11.1";
 
 function isAcceptedVersion(version: ?string) {
   return !!version && semver.satisfies(semver.coerce(version), minVersionMatch);
@@ -201,7 +201,7 @@ export type SatStackStatus =
   | { type: "ready" };
 
 export function isSatStackEnabled(): boolean {
-  return getEnv("SATSTACK");
+  return Boolean(getEnv("SATSTACK"));
 }
 
 // We would need it any time we want to check if the Sats Stack is up and what status is it at currently
@@ -254,6 +254,22 @@ export async function fetchSatStackStatus(): Promise<SatStackStatus> {
   }
 
   return { type: "ready" };
+}
+
+export async function checkDescriptorExists(
+  descriptor: string
+): Promise<boolean> {
+  if (getEnv("MOCK")) {
+    return true;
+  }
+
+  const r = await network({
+    method: "POST",
+    url: `${getEnv("EXPLORER_SATSTACK")}/control/descriptors/has`,
+    data: { descriptor },
+  });
+
+  return Boolean(r.data.exists);
 }
 
 export async function requiresSatStackReady() {
