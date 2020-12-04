@@ -9,7 +9,7 @@ export type BridgeCacheSystem = {
 };
 
 const defaultCacheStrategy = {
-  localCacheMaxAge: 5 * 60 * 1000,
+  preloadMaxAge: 5 * 60 * 1000,
 };
 
 export function makeBridgeCacheSystem({
@@ -30,7 +30,7 @@ export function makeBridgeCacheSystem({
 
   const prepareCurrency = async (currency: CryptoCurrency) => {
     const bridge = getCurrencyBridge(currency);
-    const { localCacheMaxAge } = {
+    const { preloadMaxAge } = {
       ...defaultCacheStrategy,
       ...(bridge.getPreloadStrategy && bridge.getPreloadStrategy(currency)),
     };
@@ -46,7 +46,7 @@ export function makeBridgeCacheSystem({
           return preloaded;
         },
         () => "",
-        { maxAge: localCacheMaxAge }
+        { maxAge: preloadMaxAge }
       );
       lruCaches[currency.id] = cache;
     }
