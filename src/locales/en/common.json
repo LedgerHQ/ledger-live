@@ -1526,8 +1526,10 @@
           "stepRange": "Step {{currentStep}} of {{totalSteps}}"
         },
         "selectAccount": {
-          "enabledAccountsAmount": "You have {{number}} accounts that approved {{amount}}",
-          "enabledAccountsNoLimit": "You have {{number}} accounts that approved an unlimited amount of DAI",
+          "enabledAccountsAmount": "You have {{number}} account that approved {{amount}}",
+          "enabledAccountsAmount_plural": "You have {{number}} accounts that approved {{amount}}",
+          "enabledAccountsNoLimit": "You have {{number}} account that approved an unlimited amount of {{ currency }}",
+          "enabledAccountsNoLimit_plural": "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
           "noEnabledAccounts": "You need to approve an account before you can lend."
         },
         "enable": {
