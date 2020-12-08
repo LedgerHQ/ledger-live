@@ -67,10 +67,17 @@ export function inferTrackingPairForAccounts(
   accounts: Account[],
   countervalue: Currency
 ): TrackingPair[] {
+  const yearAgo = new Date();
+  yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+
   return resolveTrackingPairs(
     flattenAccounts(accounts).map((a) => {
       const currency = getAccountCurrency(a);
-      return { from: currency, to: countervalue, startDate: a.creationDate };
+      return {
+        from: currency,
+        to: countervalue,
+        startDate: a.creationDate < yearAgo ? a.creationDate : yearAgo,
+      };
     })
   );
 }
