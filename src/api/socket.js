@@ -85,7 +85,7 @@ export const createDeviceSocket = (
                 allowManagerAwaitingUser = true;
                 o.next({
                   type: "device-permission-requested",
-                  wording: "Allow Ledger Manager",
+                  wording: "Ledger Manager",
                 });
               }, ALLOW_MANAGER_DELAY);
             }

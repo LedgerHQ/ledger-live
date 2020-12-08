@@ -1,23 +1,8 @@
 /* @flow */
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useReducer } from "react";
 import WalletConnect from "@walletconnect/client";
 import { parseCallRequest } from "./index";
-import type { Account } from "../types";
-
-export const context = React.createContext<{
-  connect: Function,
-  disconnect: Function,
-  status: number,
-  error?: any,
-  currentCallRequestId?: string,
-  setCurrentCallRequestResult?: Function,
-  setCurrentCallRequestError?: Function,
-  dappInfo?: any,
-  approveSession?: Function,
-  initDone: boolean,
-  hasSession: boolean,
-  socketReady: boolean,
-}>({});
+import type { AccountLike } from "../types";
 
 export const STATUS = {
   DISCONNECTED: 0x00,
@@ -26,11 +11,68 @@ export const STATUS = {
   CONNECTED: 0x03,
 };
 
+const clientMeta = {
+  description: "LedgerLive",
+  url: "https://ledger.fr",
+  icons: ["https://cdn.live.ledger.com/live/icon-512.png"],
+  name: "LedgerLive",
+};
+
+type State = {
+  status: number,
+  initDone: boolean,
+  session: { accountId?: string, session?: { peerMeta: any } },
+  socketReady: boolean,
+  connector: any,
+
+  error: any | null,
+  currentCallRequestId: string | null,
+  dappInfo: any | null,
+};
+
+// actions
+// it makes them available and current from connector events handlers
+export let connect: (uri?: string) => void = () => {};
+export let disconnect: Function = () => {};
+export let approveSession: (account: AccountLike) => void = () => {};
+export let setCurrentCallRequestResult: Function = () => {};
+export let setCurrentCallRequestError: Function = () => {};
+export let handleCallRequest: (payload: any) => Promise<any> = () =>
+  Promise.resolve();
+
+// reducer
+const reducer = (state: State, update) => {
+  return {
+    ...state,
+    ...update,
+    session:
+      update.session === null
+        ? {}
+        : {
+            ...state.session,
+            ...(update.session || {}),
+          },
+  };
+};
+const initialState = {
+  session: {},
+  socketReady: false,
+  connector: null,
+  status: STATUS.DISCONNECTED,
+  error: null,
+  initDone: false,
+  currentCallRequestId: null,
+  dappInfo: null,
+};
+
+export const context = React.createContext<State>(initialState);
+
 const ProviderCommon = ({
   children,
   useAccount,
   onMessage,
   onSessionRestarted,
+  onRemoteDisconnected,
   isReady,
   saveWCSession,
   getWCSession,
@@ -39,84 +81,55 @@ const ProviderCommon = ({
   useAccount: Function,
   onMessage: Function,
   onSessionRestarted: Function,
-  isReady: Boolean,
+  onRemoteDisconnected: Function,
+  isReady: boolean,
   saveWCSession: Function,
   getWCSession: Function,
 }) => {
-  const [session, setSession] = useState({});
-  const [socketReady, setSocketReady] = useState(false);
-  const [connector, setConnector] = useState();
-  const [status, setStatus] = useState(STATUS.DISCONNECTED);
-  const [error, setError] = useState();
-  const [initDone, setInitDone] = useState(false);
-  const [currentCallRequestId, setCurrentCallRequestId] = useState();
-  const [currentCallRequestError, setCurrentCallRequestError] = useState();
-  const [currentCallRequestResult, setCurrentCallRequestResult] = useState();
-  const [dappInfo, setDappInfo] = useState();
-  const [approveSession, setApproveSession] = useState();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const account = useAccount(state.session.accountId);
 
-  const connect = ({ uri, account }: { uri?: string, account: Account }) => {
-    setStatus(STATUS.CONNECTING);
-    setError();
+  // actions
 
+  connect = (uri) => {
     let connector;
 
     try {
       connector = new WalletConnect(
-        session.session
-          ? {
-              session: session.session,
-            }
-          : {
-              // Required
-              uri,
-              // Required
-              clientMeta: {
-                description: "LedgerLive",
-                url: "https://ledger.fr",
-                icons: [
-                  "https://play-lh.googleusercontent.com/RVKjd96rcTjiAnr45Gy6Nj2kCJ4_opdU2mrop7KftfyRhPWJf5ukvUR_Gi9AtOA920I",
-                ],
-                name: "LedgerLive",
-              },
-            }
+        state.session.session
+          ? { session: state.session.session }
+          : { uri, clientMeta }
       );
     } catch (e) {
-      setError(e);
-      setStatus(STATUS.ERROR);
+      dispatch({
+        status: STATUS.ERROR,
+        error: e,
+      });
       return;
     }
 
+    // handlers
+    // THEY DO NOT HAVE ACCESS TO THE STATE
     connector.on("session_request", (error, payload) => {
       if (error) {
-        setError(error);
-        setStatus(STATUS.ERROR);
+        dispatch({
+          status: STATUS.ERROR,
+          error,
+        });
         return;
       }
 
-      setDappInfo(payload.params[0].peerMeta);
-      setApproveSession({
-        fn: () => {
-          connector.approveSession({
-            accounts: [account.freshAddress],
-            chainId: account.currency.ethereumLikeInfo?.chainId,
-          });
-          setApproveSession();
-        },
+      dispatch({
+        dappInfo: payload.params[0].peerMeta,
       });
     });
 
     connector.on("connect", () => {
-      if (error) {
-        setError(error);
-        setStatus(STATUS.ERROR);
-        return;
-      }
-
-      setStatus(STATUS.CONNECTED);
-      setSession({
-        session: connector.session,
-        accountId: account.id,
+      dispatch({
+        session: {
+          session: connector.session,
+        },
+        status: STATUS.CONNECTED,
       });
     });
 
@@ -124,173 +137,191 @@ const ProviderCommon = ({
       disconnect();
     });
 
-    connector.on("error", () => {
-      setError(error);
-      setStatus(STATUS.ERROR);
+    connector.on("error", (error) => {
+      dispatch({
+        status: STATUS.ERROR,
+        error,
+      });
     });
 
-    connector.on("call_request", async (error, payload) => {
+    connector.on("call_request", (error, payload) => {
       if (error) {
-        // ?
-        setError(error);
-        setStatus(STATUS.ERROR);
-        return;
-      }
-
-      if (currentCallRequestId) {
-        connector.rejectRequest({
-          id: payload.id,
-          error: {
-            message: "An other request is ongoing",
-          },
+        dispatch({
+          status: STATUS.ERROR,
+          error,
         });
         return;
       }
 
-      let wcCallRequest;
-
-      try {
-        wcCallRequest = await parseCallRequest(account, payload);
-      } catch (e) {
-        connector.rejectRequest({
-          id: payload.id,
-          error: {
-            message: e.message || e,
-          },
-        });
-      }
-
-      const handler = onMessage(wcCallRequest, account);
-      if (handler) {
-        setCurrentCallRequestId(payload.id);
-        handler();
-      } else {
-        connector.rejectRequest({
-          id: payload.id,
-          error: {
-            message: "Request not supported",
-          },
-        });
-      }
+      handleCallRequest(payload);
     });
 
-    setConnector(connector);
-    if (connector.connected) {
-      setDappInfo(session.session.peerMeta);
-      setStatus(STATUS.CONNECTED);
+    dispatch({
+      error: null,
+      connector,
+      status: state.session.session ? STATUS.CONNECTED : STATUS.CONNECTING,
+      dappInfo: state.session.session ? state.session.session.peerMeta : null,
+    });
+  };
+
+  disconnect = () => {
+    if (state.connector) {
+      state.connector.killSession();
+    }
+
+    if (state.status !== STATUS.DISCONNECTED) {
+      dispatch({
+        session: null,
+        dappInfo: null,
+        error: null,
+        connector: null,
+        status: STATUS.DISCONNECTED,
+      });
+
+      onRemoteDisconnected();
     }
   };
 
-  const disconnect = () => {
-    if (connector) {
-      connector.killSession();
-    }
-
-    setDappInfo();
-    setApproveSession();
-    setSession({});
-    setError();
-    setStatus(STATUS.DISCONNECTED);
-    setConnector();
-  };
-
-  useEffect(() => {
-    if (!(currentCallRequestResult || currentCallRequestError) || !connector) {
+  handleCallRequest = async (payload) => {
+    if (state.currentCallRequestId) {
+      state.connector.rejectRequest({
+        id: payload.id,
+        error: {
+          message: "An other request is ongoing",
+        },
+      });
       return;
     }
-    if (currentCallRequestResult) {
-      connector.approveRequest({
-        id: currentCallRequestId,
-        result: currentCallRequestResult,
+
+    let wcCallRequest;
+
+    try {
+      wcCallRequest = await parseCallRequest(account, payload);
+    } catch (e) {
+      state.connector.rejectRequest({
+        id: payload.id,
+        error: {
+          message: e.message || e,
+        },
       });
     }
-    if (currentCallRequestError) {
-      connector.rejectRequest({
-        id: currentCallRequestId,
-        error: { message: currentCallRequestError.message },
+
+    const handler = onMessage(wcCallRequest, account);
+    if (handler) {
+      dispatch({
+        currentCallRequestId: payload.id,
+      });
+      handler();
+    } else {
+      state.connector.rejectRequest({
+        id: payload.id,
+        error: {
+          message: "Request not supported",
+        },
       });
     }
-    setCurrentCallRequestId();
-    setCurrentCallRequestResult();
-    setCurrentCallRequestError();
-  }, [
-    currentCallRequestId,
-    currentCallRequestError,
-    currentCallRequestResult,
-    connector,
-  ]);
+  };
+
+  approveSession = (account) => {
+    if (!state.connector || account.type !== "Account") {
+      return;
+    }
+    state.connector.approveSession({
+      accounts: [account.freshAddress],
+      chainId: account.currency.ethereumLikeInfo?.chainId,
+    });
+    dispatch({
+      session: {
+        accountId: account.id,
+      },
+    });
+  };
+
+  setCurrentCallRequestResult = (result) => {
+    if (!state.currentCallRequestId || !state.connector) {
+      return;
+    }
+
+    state.connector.approveRequest({
+      id: state.currentCallRequestId,
+      result,
+    });
+    dispatch({
+      currentCallRequestId: null,
+    });
+  };
+  setCurrentCallRequestError = (error) => {
+    if (!state.currentCallRequestId || !state.connector) {
+      return;
+    }
+
+    state.connector.rejectRequest({
+      id: state.currentCallRequestId,
+      error: { message: error.message },
+    });
+    dispatch({
+      currentCallRequestId: null,
+    });
+  };
+
+  // effects
 
   useEffect(() => {
-    if (initDone) {
+    if (state.initDone) {
       return;
     }
 
     const init = async () => {
-      setSession((await getWCSession()) || {});
-      setInitDone(true);
+      dispatch({
+        session: (await getWCSession()) || {},
+        initDone: true,
+      });
     };
 
     init();
-  }, [initDone, getWCSession]);
+  }, [getWCSession, state.initDone]);
+  useEffect(() => {
+    if (!state.initDone) {
+      return;
+    }
+    saveWCSession(state.session);
+  }, [saveWCSession, state.initDone, state.session]);
 
-  const account = useAccount(session.accountId);
   useEffect(() => {
     if (
       account &&
-      session.session &&
-      status === STATUS.DISCONNECTED &&
+      state.session.session &&
+      state.status === STATUS.DISCONNECTED &&
       isReady
     ) {
-      connect({ account });
+      connect();
 
       onSessionRestarted(account);
     }
   });
 
   useEffect(() => {
-    if (!initDone) {
-      return;
-    }
-    saveWCSession(session);
-  }, [session, initDone, saveWCSession]);
-
-  useEffect(() => {
-    if (!session.session) {
-      setSocketReady(false);
+    if (!state.session.session) {
+      dispatch({
+        socketReady: false,
+      });
       return;
     }
 
     const interval = setInterval(() => {
-      // eslint-disable-next-line no-underscore-dangle
-      setSocketReady(connector?._transport?._socket?.readyState === 1);
+      dispatch({
+        // eslint-disable-next-line no-underscore-dangle
+        socketReady: state.connector?._transport?._socket?.readyState === 1,
+      });
     }, 1000);
 
     // eslint-disable-next-line consistent-return
     return () => {
       clearInterval(interval);
     };
-  }, [session, connector]);
+  }, [state.session.session, state.connector]);
 
-  return (
-    <context.Provider
-      value={{
-        connect,
-        disconnect,
-        status,
-        error,
-        currentCallRequestId,
-        setCurrentCallRequestResult,
-        setCurrentCallRequestError,
-        dappInfo,
-        approveSession: approveSession && approveSession.fn,
-        initDone,
-        hasSession: Object.keys(session).length > 0,
-        socketReady,
-      }}
-    >
-      {children}
-    </context.Provider>
-  );
+  return <context.Provider value={state}>{children}</context.Provider>;
 };
 
 export default ProviderCommon;
