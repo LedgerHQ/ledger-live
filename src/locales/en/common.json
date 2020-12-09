@@ -651,11 +651,6 @@
       }
     }
   },
-  "banners": {
-    "ongoingScams": {
-      "description": "There are ongoing phishing scams on our userbase, please be careful and never share your recovery phrase."
-    }
-  },
   "onboarding": {
     "stepCount": "{{current}} of {{total}}",
     "stepsTitles": {
