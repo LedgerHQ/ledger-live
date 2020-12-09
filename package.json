@@ -12,7 +12,6 @@
     "flow-typed": "flow-typed install -s",
     "build": "./scripts/build.sh",
     "prepare": "yarn build",
-    "prepublish": "yarn build",
     "watch": "node scripts/buildReactIcons.js && BABEL_ENV=cjs babel -wsd lib src & flow-copy-source -wv src lib",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
