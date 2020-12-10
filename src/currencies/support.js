@@ -66,7 +66,7 @@ setSupportedFiats([
   "UAH",
   "UGX",
   "USD",
-  "VEF",
+  "VES",
   "VND",
   "VUV",
   "ZAR",
