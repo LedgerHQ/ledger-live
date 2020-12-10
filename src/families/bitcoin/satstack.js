@@ -1,8 +1,10 @@
 // @flow
 import { Observable, interval, from } from "rxjs";
+import semver from "semver";
 import url from "url";
 import { share, switchMap } from "rxjs/operators";
 import {
+  SatStackVersionTooOld,
   SatStackAccessDown,
   SatStackStillSyncing,
   RPCHostRequired,
@@ -15,6 +17,12 @@ import network from "../../network";
 import type { AccountDescriptor } from "./descriptor";
 import { getEnv } from "../../env";
 import { getCurrencyExplorer } from "../../api/Ledger";
+
+const minVersionMatch = ">=0.11.1";
+
+function isAcceptedVersion(version: ?string) {
+  return !!version && semver.satisfies(semver.coerce(version), minVersionMatch);
+}
 
 let mockStatus: SatStackStatus = { type: "ready" };
 export function setMockStatus(s: SatStackStatus) {
@@ -183,6 +191,7 @@ export function editSatStackConfig(
 }
 
 export type SatStackStatus =
+  | { type: "satstack-outdated" }
   | { type: "satstack-disconnected" }
   | { type: "node-disconnected" }
   | { type: "invalid-chain", found: string }
@@ -192,7 +201,7 @@ export type SatStackStatus =
   | { type: "ready" };
 
 export function isSatStackEnabled(): boolean {
-  return getEnv("SATSTACK");
+  return Boolean(getEnv("SATSTACK"));
 }
 
 // We would need it any time we want to check if the Sats Stack is up and what status is it at currently
@@ -210,18 +219,20 @@ export async function fetchSatStackStatus(): Promise<SatStackStatus> {
     return mockStatus;
   }
 
-  const { endpoint, version } = getCurrencyExplorer(
-    getCryptoCurrencyById("bitcoin")
-  );
+  const ce = getCurrencyExplorer(getCryptoCurrencyById("bitcoin"));
 
   const r = await network({
     type: "GET",
-    url: `${endpoint}/blockchain/${version}/explorer/status`,
+    url: `${ce.endpoint}/blockchain/${ce.version}/explorer/status`,
   }).catch(() => null);
   if (!r || !r.data) {
     return { type: "satstack-disconnected" };
   }
-  const { chain, status, sync_progress, scan_progress } = r.data;
+  const { chain, status, sync_progress, scan_progress, version } = r.data;
+  if (!isAcceptedVersion(version)) {
+    return { type: "satstack-outdated" };
+  }
+
   if (chain !== "main") {
     return { type: "invalid-chain", found: chain };
   }
@@ -245,6 +256,22 @@ export async function fetchSatStackStatus(): Promise<SatStackStatus> {
   return { type: "ready" };
 }
 
+export async function checkDescriptorExists(
+  descriptor: string
+): Promise<boolean> {
+  if (getEnv("MOCK")) {
+    return true;
+  }
+
+  const r = await network({
+    method: "POST",
+    url: `${getEnv("EXPLORER_SATSTACK")}/control/descriptors/has`,
+    data: { descriptor },
+  });
+
+  return Boolean(r.data.exists);
+}
+
 export async function requiresSatStackReady() {
   if (isSatStackEnabled()) {
     const status = await fetchSatStackStatus();
@@ -254,6 +281,8 @@ export async function requiresSatStackReady() {
       case "syncing":
       case "scanning":
         throw new SatStackStillSyncing();
+      case "satstack-outdated":
+        throw new SatStackVersionTooOld();
       default:
         throw new SatStackAccessDown();
     }

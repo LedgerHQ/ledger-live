@@ -129,9 +129,16 @@ export const CosmosBroadcastError = {
   "17": createCustomErrorClass("CosmosBroadcastCodeNoSignatures"),
 };
 
+export const SatStackVersionTooOld = createCustomErrorClass(
+  "SatStackVersionTooOld"
+);
 export const SatStackAccessDown = createCustomErrorClass("SatStackAccessDown");
 export const SatStackStillSyncing = createCustomErrorClass(
   "SatStackStillSyncing"
+);
+
+export const SatStackDescriptorNotImported = createCustomErrorClass(
+  "SatStackDescriptorNotImported"
 );
 
 export const SwapNoAvailableProviders = createCustomErrorClass(
