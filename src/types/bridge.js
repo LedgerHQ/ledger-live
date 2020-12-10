@@ -37,6 +37,10 @@ export type ScanAccountEventRaw = {
 // unique identifier of a device. it will depends on the underlying implementation.
 export type DeviceId = string;
 
+export type PreloadStrategy = $Shape<{
+  preloadMaxAge: number,
+}>;
+
 // Abstraction related to a currency
 export interface CurrencyBridge {
   // Preload data required for the bridges to work. (e.g. tokens, delegators,...)
@@ -56,6 +60,8 @@ export interface CurrencyBridge {
     scheme?: ?DerivationMode,
     syncConfig: SyncConfig,
   }): Observable<ScanAccountEvent>;
+
+  getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
 }
 
 // Abstraction related to an account

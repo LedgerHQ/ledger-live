@@ -171,7 +171,12 @@ const estimateMaxSpendable = async ({
   return s.amount;
 };
 
+const getPreloadStrategy = (_currency) => ({
+  preloadMaxAge: 30 * 1000,
+});
+
 const currencyBridge: CurrencyBridge = {
+  getPreloadStrategy,
   preload,
   hydrate,
   scanAccounts,

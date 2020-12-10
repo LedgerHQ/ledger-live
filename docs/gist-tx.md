@@ -75,7 +75,10 @@ async function main() {
   const currencyBridge = getCurrencyBridge(currency);
 
   // some currency requires some data to be loaded (today it's not highly used but will be more and more)
-  await currencyBridge.preload(currency);
+  const data = await currencyBridge.preload(currency);
+  if (data) {
+    currencyBridge.hydrate(currency, data);
+  }
 
   // in our case, we don't need to paginate
   const syncConfig = { paginationConfig: {} };

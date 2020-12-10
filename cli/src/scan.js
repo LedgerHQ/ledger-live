@@ -31,6 +31,7 @@ import {
   runDerivationScheme,
   getDerivationScheme,
 } from "@ledgerhq/live-common/lib/derivation";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
 import getAppAndVersion from "@ledgerhq/live-common/lib/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { delay } from "@ledgerhq/live-common/lib/promise";
@@ -53,6 +54,17 @@ export const currencyOpt = {
   desc:
     "Currency name or ticker. If not provided, it will be inferred from the device.",
 };
+
+let localCache = {};
+const cache = makeBridgeCacheSystem({
+  saveData(c, d) {
+    localCache[c.id] = d;
+    return Promise.resolve();
+  },
+  getData(c) {
+    return Promise.resolve(localCache[c.id]);
+  },
+});
 
 export type ScanCommonOpts = $Shape<{
   device: string,
@@ -188,16 +200,9 @@ const prepareCurrency = (fn) => (observable) =>
   observable.pipe(
     concatMap((item) => {
       const maybeCurrency = fn(item);
-      if (maybeCurrency) {
-        const bridge = getCurrencyBridge(maybeCurrency);
-        return from(bridge.preload(maybeCurrency)).pipe(
-          mergeMap((preloaded) => {
-            bridge.hydrate(preloaded, maybeCurrency);
-            return of(item);
-          })
-        );
-      }
-      return of(item);
+      return maybeCurrency
+        ? from(cache.prepareCurrency(maybeCurrency).then(() => item))
+        : of(item);
     })
   );
 

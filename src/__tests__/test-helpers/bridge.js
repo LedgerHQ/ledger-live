@@ -148,6 +148,32 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
         FIXME_ignoreAccountFields,
         FIXME_ignoreOperationFields,
       } = currencyData;
+
+      test("functions are defined", () => {
+        expect(typeof bridge.scanAccounts).toBe("function");
+        expect(typeof bridge.preload).toBe("function");
+        expect(typeof bridge.hydrate).toBe("function");
+      });
+
+      test("preload and rehydrate", async () => {
+        const data1 = await bridge.preload(currency);
+        bridge.hydrate(data1, currency);
+        if (data1) {
+          const serialized1 = JSON.parse(JSON.stringify(data1));
+          bridge.hydrate(serialized1, currency);
+          expect(serialized1).toBeDefined();
+
+          const data2 = await bridge.preload(currency);
+          if (data2) {
+            bridge.hydrate(data2, currency);
+            expect(data1).toMatchObject(data2);
+            const serialized2 = JSON.parse(JSON.stringify(data2));
+            expect(serialized1).toMatchObject(serialized2);
+            bridge.hydrate(serialized2, currency);
+          }
+        }
+      });
+
       if (scanAccounts) {
         if (FIXME_ignoreOperationFields) {
           console.warn(
@@ -282,27 +308,6 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
           });
         });
       }
-
-      test("functions are defined", () => {
-        expect(typeof bridge.scanAccounts).toBe("function");
-        expect(typeof bridge.preload).toBe("function");
-        expect(typeof bridge.hydrate).toBe("function");
-      });
-
-      test("preload and rehydrate", async () => {
-        const data1 = await bridge.preload(currency);
-        if (data1) {
-          const serialized1 = JSON.parse(JSON.stringify(data1));
-          bridge.hydrate(serialized1, currency);
-          expect(serialized1).toBeDefined();
-
-          const data2 = await bridge.preload(currency);
-          expect(data1).toMatchObject(data2);
-          const serialized2 = JSON.parse(JSON.stringify(data2));
-          expect(serialized1).toMatchObject(serialized2);
-          bridge.hydrate(serialized2, currency);
-        }
-      });
 
       const currencyDataTest = currencyData.test;
       if (currencyDataTest) {
