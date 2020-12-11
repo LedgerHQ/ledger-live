@@ -148,7 +148,7 @@ export const getBalanceHistoryWithCountervalue: GetBalanceHistoryWithCountervalu
   const calcChanges = (h: BalanceHistoryWithCountervalue) => {
     // previous existing implementation here
     const from = h[0];
-    const to = h[history.length - 1];
+    const to = h[h.length - 1];
     const fromEffective = useEffectiveFrom
       ? find(h, (record) => record.value.isGreaterThan(0)) || from
       : from;
