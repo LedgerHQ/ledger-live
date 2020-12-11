@@ -264,12 +264,16 @@ export async function checkDescriptorExists(
     return true;
   }
 
-  log("satstack", "check " + descriptor);
   const r = await network({
     method: "POST",
     url: `${getEnv("EXPLORER_SATSTACK")}/control/descriptors/has`,
     data: { descriptor },
   });
+
+  log(
+    "satstack",
+    "checkDescriptorExists " + descriptor + " is " + r.data.exists
+  );
 
   return Boolean(r.data.exists);
 }
