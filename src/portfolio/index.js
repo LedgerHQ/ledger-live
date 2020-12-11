@@ -237,37 +237,6 @@ export function getPortfolio(
   const balanceAvailable =
     accounts.length === 0 || availableAccounts.length > 0;
 
-  const memo = portfolioMemo[range];
-  if (memo && memo.histories.length === histories.length) {
-    let sameHisto = true;
-    for (let i = 0; i < histories.length; i++) {
-      if (histories[i] !== memo.histories[i]) {
-        sameHisto = false;
-        break;
-      }
-    }
-    if (sameHisto) {
-      if (
-        accounts.length === memo.accounts.length &&
-        availableAccounts.length === memo.availableAccounts.length
-      ) {
-        return memo;
-      }
-      return {
-        balanceHistory: memo.balanceHistory,
-        balanceAvailable,
-        availableAccounts,
-        unavailableCurrencies,
-        accounts,
-        range,
-        histories,
-        countervalueChange: memo.countervalueChange,
-        countervalueReceiveSum: memo.countervalueReceiveSum,
-        countervalueSendSum: memo.countervalueSendSum,
-      };
-    }
-  }
-
   const balanceHistory = getDates(range).map((date) => ({ date, value: ZERO }));
 
   for (let i = 0; i < histories.length; i++) {
