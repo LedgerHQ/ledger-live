@@ -1,7 +1,7 @@
 /* @flow */
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import React, { useState, useCallback, Component, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
@@ -142,7 +142,6 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
   }, []);
 
   const onRejectFees = useCallback(() => {
-    console.log("close");
     setHighFeesOpen(false);
     setContinuing(false);
   }, [setHighFeesOpen]);
