@@ -36,9 +36,9 @@ export type Props = {
   // track sync lifecycle for analytics
   trackAnalytics: (string, ?Object) => void,
   // load all data needed for a currency (it's calling currencyBridge prepare mechanism)
-  prepareCurrency: (currency: CryptoCurrency) => Promise<void>,
+  prepareCurrency: (currency: CryptoCurrency) => Promise<*>,
   // provide an implementation of hydrate (it preload from a local storage impl the data cached from a previous prepare)
-  hydrateCurrency: (currency: CryptoCurrency) => Promise<void>,
+  hydrateCurrency: (currency: CryptoCurrency) => Promise<*>,
   // an array of token ids to blacklist from the account sync
   blacklistedTokenIds?: string[],
 };
