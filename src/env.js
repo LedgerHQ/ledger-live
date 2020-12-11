@@ -52,6 +52,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API for cosmos",
   },
+  API_RIPPLE_WS: {
+    parser: stringParser,
+    def: "wss://xrpl.ws",
+    desc: "websockets api for ripple",
+  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",

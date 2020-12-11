@@ -12,6 +12,11 @@ import { testBridge } from "./test-helpers/bridge";
 import dataset from "../generated/test-dataset";
 import specifics from "../generated/test-specifics";
 import type { DatasetTest } from "../types";
+import { disconnectAll } from "../api";
+
+afterAll(async () => {
+  await disconnectAll();
+});
 
 setup("libcore");
 

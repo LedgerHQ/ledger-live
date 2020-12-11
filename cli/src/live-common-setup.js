@@ -18,6 +18,7 @@ import {
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/lib/load/speculos";
+import { disconnectAll } from "@ledgerhq/live-common/lib/api";
 
 checkLibs({
   NotEnoughBalance,
@@ -148,4 +149,5 @@ if (!process.env.CI) {
 export function closeAllDevices() {
   Object.keys(cacheBle).forEach(disconnect);
   closeAllSpeculosDevices();
+  disconnectAll();
 }
