@@ -1,4 +1,5 @@
 // @flow
+import { log } from "@ledgerhq/logs";
 import { Observable, interval, from } from "rxjs";
 import semver from "semver";
 import url from "url";
@@ -263,6 +264,7 @@ export async function checkDescriptorExists(
     return true;
   }
 
+  log("satstack", "check " + descriptor);
   const r = await network({
     method: "POST",
     url: `${getEnv("EXPLORER_SATSTACK")}/control/descriptors/has`,
