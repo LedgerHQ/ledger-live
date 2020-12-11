@@ -20,7 +20,6 @@ const baseMockBTCRates = getBTCValues();
 const accounts = Array(100)
   .fill(null)
   .map((_, j) => genAccount("portfolio_" + j));
-
 test("getBalanceHistory(*,month) returns an array of 30 items", () => {
   const history = getBalanceHistory(genAccount("seed_1"), "month");
   expect(history).toBeInstanceOf(Array);
@@ -293,4 +292,34 @@ test("getAssetsDistribution mult", () => {
       expect(assetsDistribution.list.length).toBe(0);
     }
   }
+});
+
+test("getPortfolio do not crash if range history have different size", () => {
+  const account1 = genAccount("seed_8", {
+    currency: getCryptoCurrencyById("bitcoin"),
+  });
+  const account2 = genAccount("seed_9", {
+    currency: getCryptoCurrencyById("bitcoin"),
+  });
+  const account3 = genAccount("seed_10", {
+    currency: getCryptoCurrencyById("bitcoin"),
+  });
+  const history1 = getBalanceHistory(account1, "month");
+  const history2 = getBalanceHistory(account2, "month");
+  account1.balanceHistory = {
+    month: history1.concat(history1),
+  };
+  account2.balanceHistory = {
+    month: history2.slice(5),
+  };
+  account3.balanceHistory = {
+    month: [],
+  };
+  const portfolio = getPortfolio(
+    [account1, account2, account3],
+    "month",
+    (c, value) => value
+  );
+  expect(portfolio.balanceAvailable).toBe(true);
+  expect(portfolio.unavailableCurrencies.length).toBe(0);
 });
