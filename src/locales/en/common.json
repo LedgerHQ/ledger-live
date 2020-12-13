@@ -1944,7 +1944,7 @@
     },
     "GenuineCheck": {
       "title": "Device authentication check",
-      "accept": "Please don't turn off your Nano X. Make sure you enable <1>Ledger Manager</1>."
+      "accept": "Please don't turn off your Nano X. Make sure you allow <1>Ledger Manager</1>."
     },
     "ScanningHeader": {
       "title": "Looking for devices",
@@ -1958,7 +1958,7 @@
     "alreadyPaired": "Already paired"
   },
   "DeviceItemSummary": {
-    "genuine": "Authentication",
+    "genuine": "Your device is genuine",
     "genuineFailed": "Device authentication <1><0>failed</0></1>"
   },
   "DeviceNameRow": {
