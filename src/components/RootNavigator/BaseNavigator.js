@@ -18,6 +18,7 @@ import WalletConnectConnect from "../../screens/WalletConnect/Connect";
 import WalletConnectDeeplinkingSelectAccount from "../../screens/WalletConnect/DeeplinkingSelectAccount";
 import FallbackCameraSend from "../FallbackCamera/FallbackCameraSend";
 import Main from "./MainNavigator";
+import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import SendFundsNavigator from "./SendFundsNavigator";
 import SignMessageNavigator from "./SignMessageNavigator";
@@ -200,7 +201,16 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.PairDevices}
         component={PairDevices}
-        options={{ title: t("SelectDevice.title"), headerLeft: null }}
+        options={({ navigation, route }) => {
+          return {
+            title: null,
+            headerRight: () => (
+              <ErrorHeaderInfo route={route} navigation={navigation} />
+            ),
+            headerShown: true,
+            headerStyle: styles.headerNoShadow,
+          };
+        }}
       />
       <Stack.Screen
         name={ScreenName.EditDeviceName}

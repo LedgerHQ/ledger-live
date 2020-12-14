@@ -79,11 +79,15 @@ class PairDevices extends Component<PairDevicesProps, State> {
   };
 
   onRetry = () => {
+    const { navigation } = this.props;
+    navigation.setParams({ hasError: false });
     this.setState({ status: "scanning", error: null, device: null });
   };
 
   onError = (error: Error) => {
     logger.critical(error);
+    const { navigation } = this.props;
+    navigation.setParams({ hasError: true });
     this.setState({ error });
   };
 
@@ -153,6 +157,8 @@ class PairDevices extends Component<PairDevicesProps, State> {
 
   onBypassGenuine = () => {
     const { device, name } = this.state;
+    const { navigation } = this.props;
+    navigation.setParams({ hasError: false });
     if (device) {
       this.props.addKnownDevice({ id: device.id, name: name || device.name });
       this.setState({ status: "paired", error: null, skipCheck: true });

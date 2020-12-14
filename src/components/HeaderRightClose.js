@@ -14,7 +14,7 @@ type Props = {
   withConfirmation?: boolean,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
-  onClose: Function,
+  onClose?: Function,
 };
 
 export default function HeaderRightClose({

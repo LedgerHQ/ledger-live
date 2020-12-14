@@ -511,6 +511,10 @@
       "noDevice": "No device?",
       "buy": "Buy a {{fullDeviceName}}"
     },
+    "stepLanguage": {
+      "title": "Selectionnez votre langue",
+      "cta": "Continuer"
+    },
     "stepGetStarted": {
       "title": "Get started",
       "import": "Import desktop accounts",

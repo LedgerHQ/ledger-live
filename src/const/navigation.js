@@ -85,17 +85,7 @@ export const ScreenName = {
   MigrateAccountsConnectDevice: "MigrateAccountsConnectDevice",
   MigrateAccountsOverview: "MigrateAccountsOverview",
   MigrateAccountsProgress: "MigrateAccountsProgress",
-  OnboardingOrNavigator: "OnboardingOrNavigator",
-  OnboardingStepChooseDevice: "OnboardingStepChooseDevice",
-  OnboardingStepFinish: "OnboardingStepFinish",
-  OnboardingStepGetStarted: "OnboardingStepGetStarted",
-  OnboardingStepPairNew: "OnboardingStepPairNew",
-  OnboardingStepPassword: "OnboardingStepPassword",
-  OnboardingStepScanQR: "OnboardingStepScanQR",
-  OnboardingStepSecurityChecklist: "OnboardingStepSecurityChecklist",
-  OnboardingStepSetupPin: "OnboardingStepSetupPin",
-  OnboardingStepShareData: "OnboardingStepShareData",
-  OnboardingStepWriteRecovery: "OnboardingStepWriteRecovery",
+
   OperationDetails: "OperationDetails",
   PairDevices: "PairDevices",
   PasswordAdd: "PasswordAdd",
@@ -232,6 +222,27 @@ export const ScreenName = {
   LendingWithdrawValidationError: "Lend WithdrawValidationError",
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
 
+  OnboardingWelcome: "OnboardingWelcome",
+  OnboardingLanguage: "OnboardingLanguage",
+  OnboardingTermsOfUse: "OnboardingTermsOfUse",
+  OnboardingDeviceSelection: "OnboardingDeviceSelection",
+  OnboardingUseCase: "OnboardingUseCase",
+
+  OnboardingSetNewDeviceInfo: "OnboardingSetNewDeviceInfo",
+  OnboardingSetNewDevice: "OnboardingSetNewDevice",
+  OnboardingInfoModal: "OnboardingInfoModal",
+  OnboardingRecoveryPhrase: "OnboardingRecoveryPhrase",
+
+  OnboardingPairNew: "OnboardingPairNew",
+  OnboardingImportAccounts: "OnboardingImportAccounts",
+
+  OnboardingImportScan: "OnboardingImportScan",
+  OnboardingImportSelectAccount: "OnboardingImportSelectAccount",
+
+  OnboardingQuiz: "OnboardingQuiz",
+  OnboardingQuizFinal: "OnboardingQuizFinal",
+
+  OnboardingFinish: "OnboardingFinish",
   WalletConnectScan: "WalletConnectScan",
   WalletConnectConnect: "WalletConnectConnect",
   WalletConnectDeeplinkingSelectAccount:

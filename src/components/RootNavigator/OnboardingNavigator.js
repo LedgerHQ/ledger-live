@@ -1,65 +1,112 @@
 // @flow
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
 import { ScreenName, NavigatorName } from "../../const";
-import OnboardingStepChooseDevice from "../../screens/Onboarding/steps/choose-device";
-import OnboardingStepGetStarted from "../../screens/Onboarding/steps/get-started";
-import OnboardingStepSetupPin from "../../screens/Onboarding/steps/setup-pin";
-import OnboardingStepWriteRecovery from "../../screens/Onboarding/steps/write-recovery";
-import OnboardingStepSecurityChecklist from "../../screens/Onboarding/steps/security-checklist";
-import OnboardingStepPairNew from "../../screens/Onboarding/steps/pair-new";
-import OnboardingStepPassword from "../../screens/Onboarding/steps/password";
-import OnboardingStepShareData from "../../screens/Onboarding/steps/share-data";
-import OnboardingStepScanQR from "../../screens/Onboarding/steps/scan-qr";
-import OnboardingStepFinish from "../../screens/Onboarding/steps/finish";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
+
+import OnboardingWelcome from "../../screens/Onboarding/steps/welcome";
+import OnboardingLanguage from "../../screens/Onboarding/steps/language";
+import OnboardingTerms from "../../screens/Onboarding/steps/terms";
+import OnboardingDeviceSelection from "../../screens/Onboarding/steps/deviceSelection";
+import OnboardingUseCase from "../../screens/Onboarding/steps/useCaseSelection";
+import OnboardingNewDeviceInfo from "../../screens/Onboarding/steps/newDeviceInfo";
+import OnboardingNewDevice from "../../screens/Onboarding/steps/setupDevice";
+import OnboardingRecoveryPhrase from "../../screens/Onboarding/steps/recoveryPhrase";
+import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
+
+import OnboardingPairNew from "../../screens/Onboarding/steps/pairNew";
+import OnboardingImportAccounts from "../../screens/Onboarding/steps/importAccounts";
+import OnboardingFinish from "../../screens/Onboarding/steps/finish";
+import OnboardingQuiz from "../../screens/Onboarding/OnboardingQuiz";
+import OnboardingQuizFinal from "../../screens/Onboarding/OnboardingQuizFinal";
+
+import { closableNavigationOptions } from "../../navigation/navigatorConfig";
+import styles from "../../navigation/styles";
 
 export default function OnboardingNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
-        name={ScreenName.OnboardingStepChooseDevice}
-        component={OnboardingStepChooseDevice}
+        name={ScreenName.OnboardingWelcome}
+        component={OnboardingWelcome}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingStepGetStarted}
-        component={OnboardingStepGetStarted}
+        name={ScreenName.OnboardingLanguage}
+        component={OnboardingLanguage}
+        options={{
+          headerShown: true,
+          ...closableNavigationOptions,
+          title: null,
+          headerRight: null,
+          headerStyle: styles.headerNoShadow,
+        }}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingStepSetupPin}
-        component={OnboardingStepSetupPin}
+        name={ScreenName.OnboardingTermsOfUse}
+        component={OnboardingTerms}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingStepWriteRecovery}
-        component={OnboardingStepWriteRecovery}
+        name={ScreenName.OnboardingDeviceSelection}
+        component={OnboardingDeviceSelection}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingStepSecurityChecklist}
-        component={OnboardingStepSecurityChecklist}
+        name={ScreenName.OnboardingUseCase}
+        component={OnboardingUseCase}
       />
       <Stack.Screen
-        name={ScreenName.OnboardingStepPairNew}
-        component={OnboardingStepPairNew}
+        name={ScreenName.OnboardingSetNewDeviceInfo}
+        component={OnboardingNewDeviceInfo}
       />
+
       <Stack.Screen
-        name={ScreenName.OnboardingStepScanQR}
-        component={OnboardingStepScanQR}
+        name={ScreenName.OnboardingSetNewDevice}
+        component={OnboardingNewDevice}
       />
+
       <Stack.Screen
-        name={ScreenName.OnboardingStepPassword}
-        component={OnboardingStepPassword}
+        name={ScreenName.OnboardingRecoveryPhrase}
+        component={OnboardingRecoveryPhrase}
       />
+
       <Stack.Screen
-        name={ScreenName.OnboardingStepShareData}
-        component={OnboardingStepShareData}
+        name={ScreenName.OnboardingInfoModal}
+        component={OnboardingInfoModal}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
       />
+
       <Stack.Screen
-        name={ScreenName.OnboardingStepFinish}
-        component={OnboardingStepFinish}
+        name={ScreenName.OnboardingPairNew}
+        component={OnboardingPairNew}
       />
+
+      <Stack.Screen
+        name={ScreenName.OnboardingImportAccounts}
+        component={OnboardingImportAccounts}
+      />
+
+      <Stack.Screen
+        name={ScreenName.OnboardingFinish}
+        component={OnboardingFinish}
+      />
+
       <Stack.Screen
         name={NavigatorName.PasswordAddFlow}
         component={PasswordAddFlowNavigator}
+      />
+
+      <Stack.Screen
+        name={ScreenName.OnboardingQuiz}
+        component={OnboardingQuiz}
+      />
+
+      <Stack.Screen
+        name={ScreenName.OnboardingQuizFinal}
+        component={OnboardingQuizFinal}
       />
     </Stack.Navigator>
   );

@@ -1,21 +1,28 @@
 // @flow
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Image, View, StyleSheet } from "react-native";
+import {
+  Image,
+  View,
+  StyleSheet,
+  SafeAreaView,
+  Animated,
+  Easing,
+} from "react-native";
 
 import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import OnboardingLayout from "../OnboardingLayout";
-import ConfettiParty from "../../../components/ConfettiParty";
+import Animation from "../../../components/Animation";
 import { useNavigationInterceptor } from "../onboardingContext";
 import colors from "../../../colors";
 import { NavigatorName } from "../../../const";
 
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import confetti from "../assets/confetti.json";
 
 const logo = <Image source={require("../../../images/logo.png")} />;
 
@@ -27,6 +34,20 @@ export default function OnboardingStepFinish({ navigation }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
+
+  const [progress] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(progress, {
+        toValue: 1.0,
+        duration: 8000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+        delay: 100,
+      }),
+    ).start();
+  }, []);
 
   function onFinish(): void {
     dispatch(completeOnboarding());
@@ -43,12 +64,31 @@ export default function OnboardingStepFinish({ navigation }: Props) {
   }
 
   return (
-    <View style={styles.wrapper}>
-      <TrackScreen category="Onboarding" name="Finish" />
-      <View style={styles.confettiContainer} pointerEvents="none">
-        <ConfettiParty />
+    <>
+      <View
+        style={[styles.confettiContainer, { backgroundColor: colors.live }]}
+        pointerEvents="none"
+      >
+        <Animation
+          progress={progress}
+          style={{ width: "100%", height: "100%" }}
+          source={confetti}
+          autoplay={false}
+          loop={false}
+        />
       </View>
-      <OnboardingLayout isCentered style={styles.onboardingLayout}>
+      <View
+        style={[styles.confettiContainer, { zIndex: 2 }]}
+        pointerEvents="none"
+      >
+        <Animation
+          style={{ width: "130%", height: "130%" }}
+          source={confetti}
+        />
+      </View>
+      <SafeAreaView style={styles.wrapper}>
+        <TrackScreen category="Onboarding" name="Finish" />
+
         <View style={styles.hero}>{logo}</View>
         <LText style={styles.title} secondary semiBold>
           <Trans
@@ -67,14 +107,14 @@ export default function OnboardingStepFinish({ navigation }: Props) {
         <View style={styles.buttonWrapper}>
           <Button
             event="OnboardingFinish"
-            type="primary"
+            type="negativePrimary"
             containerStyle={styles.buttonContainer}
             title={<Trans i18nKey="onboarding.stepFinish.cta" />}
             onPress={onFinish}
           />
         </View>
-      </OnboardingLayout>
-    </View>
+      </SafeAreaView>
+    </>
   );
 }
 
@@ -90,7 +130,13 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  wrapper: { flex: 1, backgroundColor: "white" },
+  wrapper: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 24,
+    zIndex: 1,
+  },
   buttonContainer: {
     flexGrow: 1,
   },
@@ -102,12 +148,12 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 16,
     textAlign: "center",
-    color: colors.darkBlue,
+    color: colors.white,
     fontSize: 16,
   },
   desc: {
     textAlign: "center",
-    color: colors.grey,
+    color: colors.white,
     fontSize: 14,
     marginBottom: 32,
   },

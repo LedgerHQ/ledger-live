@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, Platform, Image } from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
@@ -14,9 +14,11 @@ import DeviceItem from "../DeviceItem";
 import BluetoothEmpty from "./BluetoothEmpty";
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
+import Animation from "../Animation";
 import colors from "../../colors";
-import SectionSeparator from "../SectionSeparator";
 import PairNewDeviceButton from "./PairNewDeviceButton";
+
+import lottieUsb from "../../screens/Onboarding/assets/nanoS/plugDevice/data.json";
 
 type Props = {
   onBluetoothDeviceAction?: (device: Device) => void,
@@ -100,7 +102,7 @@ export default function SelectDevice({
   }, [knownDevices, filter]);
 
   return (
-    <View>
+    <>
       {usbOnly && withArrows ? (
         <UsbPlaceholder />
       ) : ble.length === 0 ? (
@@ -114,9 +116,17 @@ export default function SelectDevice({
       )}
       {hasUSBSection &&
         !usbOnly &&
-        (ble.length === 0 ? <ORBar /> : <USBHeader />)}
-      {other.length === 0 ? <USBEmpty /> : other.map(renderItem)}
-    </View>
+        (ble.length === 0 ? (
+          <View style={[styles.separator, { backgroundColor: colors.live }]} />
+        ) : (
+          <USBHeader />
+        ))}
+      {other.length === 0 ? (
+        <USBEmpty usbOnly={usbOnly} />
+      ) : (
+        other.map(renderItem)
+      )}
+    </>
   );
 }
 
@@ -136,17 +146,9 @@ const USBHeader = () => (
 
 // Fixme Use the illustration instead of the png
 const UsbPlaceholder = () => (
-  <View style={styles.usbContainer}>
-    <Image source={require("../../images/connect-nanos-mobile.png")} />
+  <View style={styles.imageContainer}>
+    <Animation style={styles.image} source={lottieUsb} />
   </View>
-);
-
-const ORBar = () => (
-  <SectionSeparator thin style={styles.or}>
-    <LText semiBold style={{ color: colors.lightFog }}>
-      <Trans i18nKey="common.or" />
-    </LText>
-  </SectionSeparator>
 );
 
 function getAll({ knownDevices }, { devices }): Device[] {
@@ -168,6 +170,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: colors.grey,
   },
+  separator: {
+    width: "100%",
+    height: 1,
+    marginVertical: 24,
+  },
   addContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -184,8 +191,16 @@ const styles = StyleSheet.create({
   or: {
     marginVertical: 30,
   },
-  usbContainer: {
-    alignItems: "center",
-    marginVertical: 30,
+  imageContainer: {
+    minHeight: 200,
+    position: "relative",
+    overflow: "visible",
+  },
+  image: {
+    position: "absolute",
+    right: "-5%",
+    top: 0,
+    width: "110%",
+    height: "100%",
   },
 });
