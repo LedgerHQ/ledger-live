@@ -687,7 +687,7 @@
         "title": "Already have a recovery phrase?",
         "label": "Device pairing",
         "subTitle": "Connect your Nano",
-        "desc": "Your device is already setup? Connect it to the app!"
+        "desc": "Your device is already set up? Connect it to the app!"
       },
       "desktopSync": {
         "title": "Already have a recovery phrase?",
@@ -823,7 +823,7 @@
         "title": "Recovery phrase",
         "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
         "cta": "Recovery phrase",
-        "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my coins in case I lose access to my Nano."
+        "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
       },
       "recoveryPhraseSetup": {
         "infoModal": {
@@ -907,7 +907,7 @@
     "stepRecoveryPhrase": {
       "importRecoveryPhrase": {
         "title": "Restore from recovery phrase",
-        "desc": "Restore your Nano from your recovery phrase to restore, replace or back up your Ledger wallet.",
+        "desc": "Restore your Nano from your recovery phrase to restore, replace or back up your Ledger hardware wallet.",
         "desc_1": "Your Nano will restore your private keys and you will be able to access and manage your crypto.",
         "cta": "OK, I’m ready!",
         "warning": {
@@ -947,7 +947,7 @@
         "title": "Enter your recovery phrase",
         "paragraph1": "Your recovery phrase is the secret list of words that you backed up when you first set up your wallet.",
         "paragraph2": "Ledger does not keep a copy of your recovery phrase.",
-        "checkboxDesc": "I understand that if I lose my recovery phrase, I will not be able to access my coins in case I lose access to my Nano.",
+        "checkboxDesc": "I understand that if I lose my recovery phrase, I will not be able to access my crypto in case I lose access to my Nano.",
         "bullets": {
           "0": {
             "title": "Grab your recovery phrase"
@@ -3065,7 +3065,7 @@
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
     "switchLabel": "I have read and accepted the Terms & Conditions.",
-    "switchLabelRecoveryPhrase": "I understand that if I lose this recovery phrase, I will not be able to access my coins in case I lose of break my Nano.",
+    "switchLabelRecoveryPhrase": "I understand that if I lose my recovery phrase, I will not be able to access my coins in case I lose access to my Nano.",
     "cta": "Enter Ledger App"
   },
   "exchange": {
