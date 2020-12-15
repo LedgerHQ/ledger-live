@@ -38,7 +38,14 @@ export type ClosedLoanHistory = ClosedLoan & {
   account: TokenAccount,
   parentAccount: ?Account,
 };
+
+export type OpenedLoanHistory = OpenedLoan & {
+  account: TokenAccount,
+  parentAccount: ?Account,
+};
+
 export type ClosedLoansHistory = ClosedLoanHistory[];
+export type OpenedLoansHistory = OpenedLoanHistory[];
 
 export type Loan = OpenedLoan | ClosedLoan;
 export type LoansLikeArray = OpenedLoan[] | ClosedLoan[];

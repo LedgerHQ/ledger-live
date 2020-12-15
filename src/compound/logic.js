@@ -5,6 +5,7 @@ import type { TokenAccount, Account, Operation } from "../types";
 import type {
   CompoundAccountSummary,
   ClosedLoansHistory,
+  OpenedLoansHistory,
   OpenedLoan,
   ClosedLoan,
   CompoundAccountStatus,
@@ -249,10 +250,10 @@ export const makeClosedHistoryForAccounts = (
   summaries: CompoundAccountSummary[]
 ): ClosedLoansHistory =>
   summaries
-    .reduce((closedLoans, summary) => {
-      if (!summary.closed.length) return closedLoans;
+    .reduce((loans, summary) => {
+      if (!summary.closed.length) return loans;
 
-      return closedLoans.concat(
+      return loans.concat(
         // $FlowFixMe issue on LLD side
         summary.closed.map((c) => ({
           ...c,
@@ -262,5 +263,25 @@ export const makeClosedHistoryForAccounts = (
       );
     }, [])
     .sort((a, b) => {
-      return a.endDate.getTime() - b.endDate.getTime();
+      return b.endDate.getTime() - a.endDate.getTime();
+    });
+
+export const makeOpenedHistoryForAccounts = (
+  summaries: CompoundAccountSummary[]
+): OpenedLoansHistory =>
+  summaries
+    .reduce((loans, summary) => {
+      if (!summary.opened.length) return loans;
+
+      return loans.concat(
+        // $FlowFixMe issue on LLD side
+        summary.opened.map((c) => ({
+          ...c,
+          account: summary.account,
+          parentAccount: summary.parentAccount,
+        }))
+      );
+    }, [])
+    .sort((a, b) => {
+      return b.startingDate.getTime() - a.startingDate.getTime();
     });
