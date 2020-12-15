@@ -179,7 +179,7 @@ function OnboardingStepWelcome({ navigation }: *) {
           <LText bold style={styles.title}>
             <Trans i18nKey="onboarding.stepWelcome.title" />
           </LText>
-          <LText style={[styles.subTitle, styles.subTitlePadding]}>
+          <LText style={[styles.subTitle]}>
             <Trans i18nKey="onboarding.stepWelcome.subtitle" />
           </LText>
         </View>
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   languageLabel: { fontSize: 10, marginRight: 8, textTransform: "uppercase" },
-  bottomSection: { flex: 1, padding: 24, justifyContent: "flex-end" },
+  bottomSection: { flex: 1, padding: 24, justifyContent: "flex-start" },
   titleSection: { flex: 1, justifyContent: "center" },
   title: {
     color: colors.darkBlue,

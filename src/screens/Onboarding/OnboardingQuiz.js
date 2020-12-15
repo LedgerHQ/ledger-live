@@ -66,9 +66,7 @@ const InfoView = ({
       </View>
     </View>
 
-    <View style={styles.imageContainer}>
-      <Image style={styles.image} source={image} resizeMode="cover" />
-    </View>
+    <Image style={styles.image} source={image} resizeMode="cover" />
   </View>
 );
 
@@ -150,7 +148,12 @@ function OnboardingQuizz({ navigation, route }: *) {
           initialLayout={initialLayout}
           swipeEnabled={false}
         />
-        <Svg style={styles.svg} viewBox="0 0 320 196" fill="none">
+        <Svg
+          pointerEvents="none"
+          style={styles.svg}
+          viewBox="0 0 320 196"
+          fill="none"
+        >
           <Ellipse cx="165" cy="208.22" rx="507" ry="208.032" fill="#495D7F" />
         </Svg>
         <View style={styles.dotContainer}>
@@ -198,6 +201,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
+    zIndex: 10,
   },
   label: {
     paddingHorizontal: 24,
@@ -211,17 +215,13 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginVertical: 4,
   },
-  imageContainer: {
-    flex: 1,
-    position: "relative",
-    overflow: "visible",
-  },
   image: {
     position: "absolute",
-    bottom: -24,
-    left: "-10%",
-    height: "100%",
-    width: "120%",
+    bottom: 0,
+    left: 0,
+    height: "40%",
+    width: "100%",
+    zIndex: -1,
   },
   dotContainer: {
     position: "absolute",
@@ -230,11 +230,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    zIndex: 0,
   },
   dot: { width: 8, height: 8, margin: 4, borderRadius: 8 },
   answerContainer: {
     padding: 24,
     marginBottom: 24,
+    zIndex: 12,
   },
   answer: {
     borderRadius: 4,

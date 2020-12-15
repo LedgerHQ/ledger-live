@@ -107,7 +107,6 @@ export default function OnboardingStepperView({
             {...sceneProps}
             onNext={onNext}
             sceneColors={sceneColors}
-            openInfoModal={openInfoModal}
           />
         ),
       }),

@@ -1,7 +1,13 @@
 // @flow
 
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View, SafeAreaView, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import { Trans } from "react-i18next";
 import i18next from "i18next";
 import { TrackScreen } from "../../../analytics";
@@ -53,7 +59,7 @@ function OnboardingStepLanguage({ navigation }: *) {
         <LText semiBold style={styles.title}>
           <Trans i18nKey="onboarding.stepLanguage.title" />
         </LText>
-        <View style={styles.localeContainer}>
+        <ScrollView style={styles.localeContainer}>
           {localeIds.map((l, index) => (
             <TouchableOpacity
               key={index + l}
@@ -71,7 +77,7 @@ function OnboardingStepLanguage({ navigation }: *) {
               </LText>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
         <Button
           event="Onboarding - Language confirm"
           type="primary"

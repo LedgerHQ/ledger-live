@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
   content: {
     justifyContent: "center",
     paddingBottom: "45%",
+    zIndex: 10,
   },
   label: {
     marginTop: 24,
@@ -183,6 +184,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    zIndex: 2,
   },
   dot: { width: 8, height: 8, margin: 4, borderRadius: 8 },
   image: {
@@ -191,6 +193,7 @@ const styles = StyleSheet.create({
     left: 0,
     height: "50%",
     width: "100%",
+    zIndex: 0,
   },
   svg: {
     position: "absolute",
