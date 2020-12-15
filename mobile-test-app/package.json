@@ -12,8 +12,8 @@
     "android:build": "yarn start & bundle exec fastlane android build"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^5.34.0",
-    "@ledgerhq/live-common": "^17.4.0",
+    "@ledgerhq/errors": "^5.36.0",
+    "@ledgerhq/live-common": "^17.5.0",
     "@ledgerhq/react-native-ledger-core": "^4.16.3",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
@@ -31,7 +31,7 @@
     "react": "16.14.0",
     "react-native": "0.61.5",
     "react-native-crypto": "^2.2.0",
-    "react-native-randombytes": "^3.5.3",
+    "react-native-randombytes": "^3.6.0",
     "react-native-tcp": "gre/react-native-tcp",
     "react-redux": "^7.2.2",
     "rn-nodeify": "tradle/rn-nodeify",
