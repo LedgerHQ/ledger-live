@@ -146,7 +146,7 @@
     "react-native-udp": "^3.1.0",
     "react-native-vector-icons": "^6.6.0",
     "react-native-version-number": "^0.3.6",
-    "react-native-webview": "^9.4.0",
+    "react-native-webview": "^11.0.0",
     "react-redux": "7.2.2",
     "readable-stream": "3.6.0",
     "redux": "4.0.5",
