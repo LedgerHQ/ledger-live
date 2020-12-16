@@ -197,7 +197,6 @@ const linking = {
   prefixes: ["ledgerlive://"],
   config: {
     [NavigatorName.Base]: {
-      path: "",
       initialRouteName: NavigatorName.Main,
       screens: {
         /**
@@ -206,7 +205,6 @@ const linking = {
          */
         [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
         [NavigatorName.Main]: {
-          path: "",
           /**
            * ie: "ledgerhq://portfolio" -> will redirect to the portfolio
            */
@@ -214,7 +212,6 @@ const linking = {
           screens: {
             [ScreenName.Portfolio]: "portfolio",
             [NavigatorName.Accounts]: {
-              path: "",
               screens: {
                 /**
                  * @params ?currency: string
@@ -226,7 +223,6 @@ const linking = {
           },
         },
         [NavigatorName.ReceiveFunds]: {
-          path: "",
           screens: {
             /**
              * @params ?currency: string
@@ -236,7 +232,6 @@ const linking = {
           },
         },
         [NavigatorName.SendFunds]: {
-          path: "",
           screens: {
             /**
              * @params ?currency: string
@@ -246,7 +241,6 @@ const linking = {
           },
         },
         [NavigatorName.ExchangeBuyFlow]: {
-          path: "",
           screens: {
             /**
              * @params currency: string

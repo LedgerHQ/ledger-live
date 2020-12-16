@@ -1,7 +1,7 @@
 /* @flow */
 import React, { useEffect, useContext } from "react";
 import Config from "react-native-config";
-import { Clipboard } from "react-native";
+import Clipboard from "@react-native-community/clipboard";
 import Scanner from "../../components/Scanner";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";

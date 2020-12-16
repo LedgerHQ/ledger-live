@@ -1,13 +1,7 @@
 // @flow
 
 import React, { useCallback, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Linking,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Linking, Image } from "react-native";
 import { Trans } from "react-i18next";
 
 import { useClock, loop } from "react-native-redash/lib/module/v1";
@@ -22,7 +16,6 @@ import Animated, {
 import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import ArrowDown from "../../../icons/Chevron";
 import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 import { deviceNames } from "../../../wording";
@@ -34,7 +27,6 @@ import welcomeLogoLayer1 from "../assets/welcomeIllu/2.png";
 import welcomeLogoLayer2 from "../assets/welcomeIllu/3.png";
 import welcomeLogoLayer3 from "../assets/welcomeIllu/4.png";
 
-import { useLocale } from "../../../context/Locale";
 import { ScreenName } from "../../../const";
 
 const AnimatedImg = Animated.createAnimatedComponent(Image);
@@ -51,11 +43,6 @@ function OnboardingStepWelcome({ navigation }: *) {
 
   const next = useCallback(
     () => navigation.navigate(ScreenName.OnboardingTermsOfUse),
-    [navigation],
-  );
-
-  const onLanguageSelect = useCallback(
-    () => navigation.navigate(ScreenName.OnboardingLanguage),
     [navigation],
   );
 
@@ -125,21 +112,9 @@ function OnboardingStepWelcome({ navigation }: *) {
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const { locale } = useLocale();
-
   return (
     <View style={[styles.root, { backgroundColor: colors.white }]}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={[styles.languageButton, { borderColor: colors.fog }]}
-          onPress={onLanguageSelect}
-        >
-          <LText semiBold style={styles.languageLabel}>
-            {locale}
-          </LText>
-          <ArrowDown size={10} color={colors.darkBlue} />
-        </TouchableOpacity>
-      </View>
+      <View style={styles.header} />
       <View style={styles.logo}>
         <Image style={[styles.bgImage]} resizeMode="cover" source={welcomeBg} />
         <AnimatedImg

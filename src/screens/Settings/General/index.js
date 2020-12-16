@@ -8,14 +8,12 @@ import ReportErrorsRow from "./ReportErrorsRow";
 import AnalyticsRow from "./AnalyticsRow";
 import CarouselRow from "./CarouselRow";
 import NavigationScrollView from "../../../components/NavigationScrollView";
-import LanguageSettingsRow from "./LanguageRow";
 
 export default function GeneralSettings() {
   return (
     <NavigationScrollView contentContainerStyle={styles.root}>
       <TrackScreen category="Settings" name="General" />
       <CountervalueSettingsRow />
-      <LanguageSettingsRow />
       <AuthSecurityToggle />
       <ReportErrorsRow />
       <AnalyticsRow />

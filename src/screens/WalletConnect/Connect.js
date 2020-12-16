@@ -20,6 +20,7 @@ import Spinning from "../../components/Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 import Disconnect from "../../icons/Disconnect";
 import Check from "../../icons/Check";
+import Exclamation from "../../icons/Exclamation";
 import CrossRound from "../../icons/CrossRound";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import InfoBox from "../../components/InfoBox";
@@ -162,7 +163,11 @@ export default function Connect({ route, navigation }: Props) {
                     bg={wcContext.socketReady ? colors.green : colors.orange}
                     size={24}
                   >
-                    <Check color="white" size={12} />
+                    {wcContext.socketReady ? (
+                      <Check color="white" size={12} />
+                    ) : (
+                      <Exclamation color="white" size={20} />
+                    )}
                   </Circle>
                 </View>
               </View>
