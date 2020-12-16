@@ -82,7 +82,8 @@ const Placeholder = ({
           <Trans
             i18nKey="manager.noAppNeededForToken"
             values={{
-              tokenType: found.tokenType.toUpperCase(),
+              appName: parent.name,
+              tokenName: found.name,
             }}
           />
         </LText>

@@ -17,7 +17,7 @@ type Props = {
 export default function PairNewDeviceButton({ onPress }: Props) {
   return (
     <Touchable event="AddDevice" onPress={onPress}>
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: colors.white }]}>
         <Circle bg={colors.pillActiveBackground} size={30}>
           <Icon name="plus" size={20} color={colors.pillActiveForeground} />
         </Circle>

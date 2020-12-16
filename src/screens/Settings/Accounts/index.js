@@ -1,12 +1,9 @@
 /* @flow */
 import React, { useCallback, useMemo } from "react";
-import { Trans } from "react-i18next";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import { useTranslation } from "react-i18next";
+import { useSelector, useDispatch } from "react-redux";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { findTokenById } from "@ledgerhq/live-common/lib/currencies";
-import i18next from "i18next";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -14,35 +11,21 @@ import type {
 import SettingsRow from "../../../components/SettingsRow";
 import { showToken } from "../../../actions/settings";
 import { blacklistedTokenIdsSelector } from "../../../reducers/settings";
+import { cryptoCurrenciesSelector } from "../../../reducers/accounts";
 import LText from "../../../components/LText";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import colors from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 import Close from "../../../icons/Close";
+import { ScreenName } from "../../../const";
 
-type Props = {
-  blacklistedTokenIds: string[],
-  showToken: string => void,
-  navigation: any,
-};
+export default function AccountsSettings({ navigation }: { navigation: any }) {
+  const { t } = useTranslation();
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const currencies = useSelector(cryptoCurrenciesSelector);
+  const dispatch = useDispatch();
 
-const mapDispatchToProps = {
-  showToken,
-};
-
-const mapStateToProps = createStructuredSelector({
-  blacklistedTokenIds: blacklistedTokenIdsSelector,
-});
-
-const hitSlop = {
-  top: 16,
-  left: 16,
-  right: 16,
-  bottom: 16,
-};
-
-const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
   const renderSectionHeader = useCallback(
     ({
       section: { parentCurrency },
@@ -61,12 +44,12 @@ const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
   const renderItem = useCallback(
     ({ item: token }: { item: TokenCurrency }) => (
       <View style={styles.row}>
-        <View style={{ marginRight: 12 }}>
+        <View style={styles.rowIconContainer}>
           <CurrencyIcon currency={token} size={20} />
         </View>
-        <LText style={{ flex: 1 }}>{token.name}</LText>
+        <LText style={styles.rowTitle}>{token.name}</LText>
         <TouchableOpacity
-          onPress={() => showToken(token.id)}
+          onPress={() => showToken(dispatch(token.id))}
           style={styles.cta}
           hitSlop={hitSlop}
         >
@@ -74,7 +57,7 @@ const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
         </TouchableOpacity>
       </View>
     ),
-    [showToken],
+    [dispatch],
   );
 
   const keyExtractor = useCallback(token => token.id, []);
@@ -83,11 +66,19 @@ const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
     () => (
       <>
         <TrackScreen category="Settings" name="Accounts" />
+        {currencies.length > 0 && (
+          <SettingsRow
+            title={t("settings.accounts.cryptoAssets.title")}
+            desc={t("settings.accounts.cryptoAssets.desc")}
+            arrowRight
+            onPress={() => navigation.navigate(ScreenName.CryptoAssetsSettings)}
+          />
+        )}
         <HideEmptyTokenAccountsRow />
         <SettingsRow
           event="HideEmptyTokenAccountsRow"
-          title={<Trans i18nKey="settings.accounts.blacklistedTokens" />}
-          desc={<Trans i18nKey="settings.accounts.blacklistedTokensDesc" />}
+          title={t("settings.accounts.blacklistedTokens")}
+          desc={t("settings.accounts.blacklistedTokensDesc")}
           onPress={null}
           alignedTop
         >
@@ -95,7 +86,7 @@ const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
         </SettingsRow>
       </>
     ),
-    [],
+    [navigation, t, currencies.length],
   );
 
   const sections = useMemo(() => {
@@ -131,11 +122,7 @@ const AccountsSettings = ({ blacklistedTokenIds, showToken }: Props) => {
       sections={sections}
     />
   );
-};
-
-AccountsSettings.navigationOptions = {
-  title: i18next.t("settings.accounts.title"),
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -164,12 +151,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flex: 1,
   },
+  rowIconContainer: { marginRight: 12 },
   cta: {
     alignSelf: "flex-end",
     alignItems: "flex-end",
   },
+  rowTitle: { flex: 1 },
 });
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(
-  AccountsSettings,
-);
+const hitSlop = {
+  top: 16,
+  left: 16,
+  right: 16,
+  bottom: 16,
+};

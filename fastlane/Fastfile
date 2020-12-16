@@ -28,7 +28,7 @@ package = load_json(json_path: "./package.json")
 lane :beta do |options|
   ensure_git_status_clean
   ensure_git_branch(
-    branch: 'master'
+    branch: 'master|develop'
   )
   git_pull
 

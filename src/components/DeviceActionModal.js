@@ -16,7 +16,7 @@ type Props = {
   // TODO: fix request type
   request?: any,
   onClose?: () => void,
-  onModalHide: () => void,
+  onModalHide?: () => void,
   onResult: $PropertyType<React$ElementProps<typeof DeviceAction>, "onResult">,
 };
 

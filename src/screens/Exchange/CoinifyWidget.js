@@ -94,7 +94,7 @@ export default function CoinifyWidget({
   >("none");
   const [firstLoadDone, setFirstLoadDone] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const webView = useRef(null);
+  const webView = useRef();
 
   const currency = account ? getAccountCurrency(account) : null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
@@ -298,6 +298,7 @@ export default function CoinifyWidget({
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
+        androidHardwareAccelerationDisabled
       />
       <BottomModal id="DeviceActionModal" isOpened={isOpen}>
         <View style={styles.modalContainer}>

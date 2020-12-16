@@ -57,7 +57,13 @@ export default function DeviceItem({
           event="DeviceItemEnter"
           onPress={disabled ? undefined : onPress}
         >
-          <View style={[styles.root, disabled && styles.rootDisabled]}>
+          <View
+            style={[
+              styles.root,
+              { backgroundColor: colors.white },
+              disabled && styles.rootDisabled,
+            ]}
+          >
             <View style={styles.iconWrapper}>
               {CustomIcon ? (
                 <CustomIcon />

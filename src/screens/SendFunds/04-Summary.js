@@ -1,6 +1,6 @@
 /* @flow */
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import React, { useState, useCallback, Component } from "react";
+import React, { useState, useCallback, Component, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
@@ -27,6 +27,7 @@ import AlertTriangle from "../../icons/AlertTriangle";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import Info from "../../icons/Info";
+import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
 
 const forceInset = { bottom: "always" };
 
@@ -34,6 +35,8 @@ type Props = {
   navigation: any,
   route: { params: RouteParams },
 };
+
+const WARN_FROM_UTXO_COUNT = 50;
 
 export type RouteParams = {
   accountId: string,
@@ -70,7 +73,11 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
 
+  const [continuing, setContinuing] = useState(false);
   const [highFeesOpen, setHighFeesOpen] = useState(false);
+  const [highFeesWarningPassed, setHighFeesWarningPassed] = useState(false);
+  const [utxoWarningOpen, setUtxoWarningOpen] = useState(false);
+  const [utxoWarningPassed, setUtxoWarningPassed] = useState(false);
 
   const navigateToNext = useCallback(() => {
     navigation.navigate(nextNavigation, {
@@ -80,24 +87,64 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     });
   }, [navigation, nextNavigation, route.params, transaction, status]);
 
-  const onAcceptFees = useCallback(() => {
-    navigateToNext();
-
-    setHighFeesOpen(false);
-  }, [navigateToNext, setHighFeesOpen]);
-
-  const onRejectFees = useCallback(() => {
-    setHighFeesOpen(false);
-  }, [setHighFeesOpen]);
-
-  const onContinue = useCallback(() => {
-    const { warnings } = status;
-    if (Object.keys(warnings).includes("feeTooHigh")) {
+  useEffect(() => {
+    if (!continuing) {
+      return;
+    }
+    const { warnings, txInputs } = status;
+    if (
+      Object.keys(warnings).includes("feeTooHigh") &&
+      !highFeesWarningPassed
+    ) {
       setHighFeesOpen(true);
       return;
     }
+    if (
+      txInputs &&
+      txInputs.length >= WARN_FROM_UTXO_COUNT &&
+      !utxoWarningPassed
+    ) {
+      const to = setTimeout(
+        () => setUtxoWarningOpen(true),
+        // looks like you can not open close a bottom modal
+        // and open another one very fast
+        highFeesWarningPassed ? 1000 : 0,
+      );
+      // eslint-disable-next-line consistent-return
+      return () => clearTimeout(to);
+    }
+    setContinuing(false);
+    setUtxoWarningPassed(false);
+    setHighFeesWarningPassed(false);
     navigateToNext();
-  }, [navigateToNext, setHighFeesOpen, status]);
+  }, [
+    status,
+    continuing,
+    highFeesWarningPassed,
+    account,
+    utxoWarningPassed,
+    navigateToNext,
+  ]);
+
+  const onPassUtxoWarning = useCallback(() => {
+    setUtxoWarningOpen(false);
+    setUtxoWarningPassed(true);
+  }, []);
+
+  const onRejectUtxoWarning = useCallback(() => {
+    setUtxoWarningOpen(false);
+    setContinuing(false);
+  }, []);
+
+  const onAcceptFees = useCallback(() => {
+    setHighFeesOpen(false);
+    setHighFeesWarningPassed(true);
+  }, []);
+
+  const onRejectFees = useCallback(() => {
+    setHighFeesOpen(false);
+    setContinuing(false);
+  }, [setHighFeesOpen]);
 
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
@@ -185,7 +232,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
             type="primary"
             title={<Trans i18nKey="common.continue" />}
             containerStyle={styles.continueButton}
-            onPress={onContinue}
+            onPress={() => setContinuing(true)}
             disabled={bridgePending || !!transactionError}
           />
         )}
@@ -203,6 +250,11 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
           </Trans>
         }
         confirmButtonText={<Trans i18nKey="common.continue" />}
+      />
+      <TooMuchUTXOBottomModal
+        isOpened={utxoWarningOpen}
+        onPress={onPassUtxoWarning}
+        onClose={() => onRejectUtxoWarning()}
       />
     </SafeAreaView>
   );

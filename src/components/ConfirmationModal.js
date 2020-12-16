@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 
 import colors, { rgba } from "../colors";
 import BottomModal from "./BottomModal";
@@ -11,16 +11,18 @@ import Button from "./Button";
 
 type Props = {|
   isOpened: boolean,
-  onClose: () => void,
+  onClose?: () => void,
   onConfirm: () => *,
   onModalHide?: () => *,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
   Icon?: React$ComponentType<*>,
+  image?: number,
   confirmButtonText?: React$Node,
   rejectButtonText?: React$Node,
   hideRejectButton?: boolean,
   alert: boolean,
+  preventBackdropClick?: boolean,
 |};
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -38,6 +40,7 @@ class ConfirmationModal extends PureComponent<Props> {
       rejectButtonText,
       onConfirm,
       Icon,
+      image,
       alert,
       hideRejectButton,
       ...rest
@@ -52,7 +55,12 @@ class ConfirmationModal extends PureComponent<Props> {
       >
         {Icon && (
           <View style={styles.icon}>
-            <Icon size={24} />
+            <Icon size={24} color={colors.live} />
+          </View>
+        )}
+        {image && (
+          <View style={styles.imageContainer}>
+            <Image style={styles.image} source={image} resizeMode="contain" />
           </View>
         )}
         {confirmationTitle && (
@@ -92,7 +100,6 @@ class ConfirmationModal extends PureComponent<Props> {
 
 const styles = StyleSheet.create({
   confirmationModal: {
-    paddingVertical: 24,
     paddingTop: 24,
     paddingHorizontal: 16,
   },
@@ -119,12 +126,22 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignSelf: "center",
-    backgroundColor: rgba(colors.yellow, 0.08),
+    backgroundColor: rgba(colors.live, 0.08),
     width: 56,
     borderRadius: 28,
     height: 56,
     alignItems: "center",
     justifyContent: "center",
+  },
+  imageContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 120,
+    marginBottom: 16,
+  },
+  image: {
+    height: "100%",
+    width: "100%",
   },
 });
 

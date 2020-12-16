@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useCallback } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -7,6 +7,10 @@ import { TrackScreen } from "../../analytics";
 import colors from "../../colors";
 import ValidateError from "../../components/ValidateError";
 import { urls } from "../../config/urls";
+import {
+  context as _wcContext,
+  setCurrentCallRequestError,
+} from "../WalletConnect/Provider";
 
 const forceInset = { bottom: "always" };
 
@@ -26,6 +30,17 @@ type RouteParams = {
 };
 
 export default function ValidationError({ navigation, route }: Props) {
+  const error = route.params.error;
+  const wcContext = useContext(_wcContext);
+  const [disableRetry, setDisableRetry] = useState(false);
+
+  useEffect(() => {
+    if (wcContext.currentCallRequestId) {
+      setDisableRetry(true);
+      setCurrentCallRequestError(error);
+    }
+  }, []);
+
   const onClose = useCallback(() => {
     navigation.dangerouslyGetParent().pop();
   }, [navigation]);
@@ -38,14 +53,12 @@ export default function ValidationError({ navigation, route }: Props) {
     navigation.goBack();
   }, [navigation]);
 
-  const error = route.params.error;
-
   return (
     <SafeAreaView style={styles.root} forceInset={forceInset}>
       <TrackScreen category="SendFunds" name="ValidationError" />
       <ValidateError
         error={error}
-        onRetry={retry}
+        onRetry={!disableRetry ? retry : null}
         onClose={onClose}
         onContactUs={contactUs}
       />

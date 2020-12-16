@@ -24,6 +24,7 @@ export const ScreenName = {
   ClaimRewardsValidationSuccess: "ClaimRewardsValidationSuccess",
   ConfirmPassword: "ConfirmPassword",
   CountervalueSettings: "CountervalueSettings",
+  CryptoAssetsSettings: "CryptoAssetsSettings",
   CurrenciesList: "CurrenciesList",
   CurrencySettings: "CurrencySettings",
   DebugBLE: "DebugBLE",
@@ -84,17 +85,7 @@ export const ScreenName = {
   MigrateAccountsConnectDevice: "MigrateAccountsConnectDevice",
   MigrateAccountsOverview: "MigrateAccountsOverview",
   MigrateAccountsProgress: "MigrateAccountsProgress",
-  OnboardingOrNavigator: "OnboardingOrNavigator",
-  OnboardingStepChooseDevice: "OnboardingStepChooseDevice",
-  OnboardingStepFinish: "OnboardingStepFinish",
-  OnboardingStepGetStarted: "OnboardingStepGetStarted",
-  OnboardingStepPairNew: "OnboardingStepPairNew",
-  OnboardingStepPassword: "OnboardingStepPassword",
-  OnboardingStepScanQR: "OnboardingStepScanQR",
-  OnboardingStepSecurityChecklist: "OnboardingStepSecurityChecklist",
-  OnboardingStepSetupPin: "OnboardingStepSetupPin",
-  OnboardingStepShareData: "OnboardingStepShareData",
-  OnboardingStepWriteRecovery: "OnboardingStepWriteRecovery",
+
   OperationDetails: "OperationDetails",
   PairDevices: "PairDevices",
   PasswordAdd: "PasswordAdd",
@@ -119,6 +110,11 @@ export const ScreenName = {
   SendValidationError: "SendValidationError",
   SendValidationSuccess: "SendValidationSuccess",
   Settings: "Settings",
+  SignConnectDevice: "SignConnectDevice",
+  SignSelectDevice: "SignSelectDevice",
+  SignSummary: "SignSummary",
+  SignValidationError: "SignValidationError",
+  SignValidationSuccess: "SignValidationSuccess",
   StellarEditMemoType: "StellarEditMemoType",
   StellarEditMemoValue: "StellarEditMemoValue",
   Swap: "Swap",
@@ -225,6 +221,32 @@ export const ScreenName = {
   LendingWithdrawValidation: "Lend WithdrawValidation",
   LendingWithdrawValidationError: "Lend WithdrawValidationError",
   LendingWithdrawValidationSuccess: "Lend WithdrawValidationSuccess",
+
+  OnboardingWelcome: "OnboardingWelcome",
+  OnboardingLanguage: "OnboardingLanguage",
+  OnboardingTermsOfUse: "OnboardingTermsOfUse",
+  OnboardingDeviceSelection: "OnboardingDeviceSelection",
+  OnboardingUseCase: "OnboardingUseCase",
+
+  OnboardingSetNewDeviceInfo: "OnboardingSetNewDeviceInfo",
+  OnboardingSetNewDevice: "OnboardingSetNewDevice",
+  OnboardingInfoModal: "OnboardingInfoModal",
+  OnboardingRecoveryPhrase: "OnboardingRecoveryPhrase",
+
+  OnboardingPairNew: "OnboardingPairNew",
+  OnboardingImportAccounts: "OnboardingImportAccounts",
+
+  OnboardingImportScan: "OnboardingImportScan",
+  OnboardingImportSelectAccount: "OnboardingImportSelectAccount",
+
+  OnboardingQuiz: "OnboardingQuiz",
+  OnboardingQuizFinal: "OnboardingQuizFinal",
+
+  OnboardingFinish: "OnboardingFinish",
+  WalletConnectScan: "WalletConnectScan",
+  WalletConnectConnect: "WalletConnectConnect",
+  WalletConnectDeeplinkingSelectAccount:
+    "WalletConnectDeeplinkingSelectAccount",
 };
 
 export const NavigatorName = {
@@ -258,6 +280,7 @@ export const NavigatorName = {
   ReceiveFunds: "ReceiveFunds",
   SendFunds: "SendFunds",
   Settings: "Settings",
+  SignMessage: "SignMessage",
   Swap: "Swap",
   TezosDelegationFlow: "TezosDelegationFlow",
   TronVoteFlow: "TronVoteFlow",
@@ -270,7 +293,6 @@ export const NavigatorName = {
   /* eslint-disable sort-keys */
 
   // Tab
-  CryptoAssetsSettings: "CryptoAssetsSettings",
   Main: "Main",
 
   // Root

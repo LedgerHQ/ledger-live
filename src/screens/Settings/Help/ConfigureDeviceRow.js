@@ -14,10 +14,7 @@ export default function ConfigureDeviceRow() {
     setShowWelcome(false);
     setFirstTimeOnboarding(false);
     navigate(NavigatorName.Onboarding, {
-      screen: ScreenName.OnboardingStepChooseDevice,
-      params: {
-        goingBackToScreen: ScreenName.HelpSettings,
-      },
+      screen: ScreenName.OnboardingDeviceSelection,
     });
   }
 

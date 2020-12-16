@@ -5,14 +5,10 @@ import { useTranslation } from "react-i18next";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Config from "react-native-config";
-import { NavigatorName, ScreenName } from "../../const";
-import {
-  accountsSelector,
-  cryptoCurrenciesSelector,
-} from "../../reducers/accounts";
+import { ScreenName } from "../../const";
+import { accountsSelector } from "../../reducers/accounts";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
-import Assets from "../../icons/Assets";
 import Accounts from "../../icons/Accounts";
 import LiveLogoIcon from "../../icons/LiveLogoIcon";
 import Atom from "../../icons/Atom";
@@ -29,7 +25,6 @@ type Props = {
 
 export default function Settings({ navigation }: Props) {
   const { t } = useTranslation();
-  const currencies = useSelector(cryptoCurrenciesSelector);
   const accounts = useSelector(accountsSelector);
 
   const [debugVisible, setDebugVisible] = useState(
@@ -65,16 +60,6 @@ export default function Settings({ navigation }: Props) {
           icon={<Display size={16} color={colors.live} />}
           onClick={() => navigation.navigate(ScreenName.GeneralSettings)}
         />
-        {currencies.length > 0 && (
-          <SettingsCard
-            title={t("settings.cryptoAssets.title")}
-            desc={t("settings.cryptoAssets.desc")}
-            icon={<Assets size={16} color={colors.live} />}
-            onClick={() =>
-              navigation.navigate(NavigatorName.CryptoAssetsSettings)
-            }
-          />
-        )}
         {accounts.length > 0 && (
           <SettingsCard
             title={t("settings.accounts.title")}

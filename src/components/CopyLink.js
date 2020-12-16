@@ -1,7 +1,8 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { StyleSheet, Clipboard } from "react-native";
+import { StyleSheet } from "react-native";
+import Clipboard from "@react-native-community/clipboard";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "./Touchable";
 import LText from "./LText";

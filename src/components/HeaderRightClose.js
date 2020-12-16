@@ -9,18 +9,22 @@ import ConfirmationModal from "./ConfirmationModal";
 
 type Props = {
   preferDismiss?: boolean,
+  skipNavigation?: boolean,
   color?: string,
   withConfirmation?: boolean,
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
+  onClose?: Function,
 };
 
 export default function HeaderRightClose({
   color = colors.grey,
   preferDismiss = true,
+  skipNavigation,
   withConfirmation,
   confirmationTitle,
   confirmationDesc,
+  onClose,
 }: Props) {
   const navigation = useNavigation();
 
@@ -30,6 +34,14 @@ export default function HeaderRightClose({
   const [onModalHide, setOnModalHide] = useState();
 
   function close(): void {
+    if (onClose) {
+      onClose();
+    }
+
+    if (skipNavigation) {
+      return;
+    }
+
     if (navigation.dangerouslyGetParent().pop && preferDismiss) {
       navigation.dangerouslyGetParent().pop();
       return;

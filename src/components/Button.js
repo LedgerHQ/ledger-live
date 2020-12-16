@@ -31,6 +31,7 @@ type ButtonType =
   | "secondary"
   | "lightSecondary"
   | "darkSecondary"
+  | "greySecondary"
   | "tertiary"
   | "alert";
 
@@ -320,6 +321,9 @@ const styles = StyleSheet.create({
 
   lightSecondaryContainer: { backgroundColor: "transparent" },
   lightSecondaryTitle: { color: colors.live },
+
+  greySecondaryContainer: { backgroundColor: "transparent" },
+  greySecondaryTitle: { color: colors.grey },
 
   darkSecondaryContainer: { backgroundColor: "transparent" },
   darkSecondaryTitle: { color: colors.smoke },

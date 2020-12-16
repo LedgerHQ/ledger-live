@@ -1,8 +1,7 @@
 // @flow
 
 import AsyncStorage from "@react-native-community/async-storage";
-import { makeLRUCache } from "@ledgerhq/live-common/lib/cache";
-import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
+import { makeBridgeCacheSystem } from "@ledgerhq/live-common/lib/bridge/cache";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
@@ -36,21 +35,10 @@ export async function getCurrencyCache(currency: CryptoCurrency): mixed {
   return undefined;
 }
 
-export async function hydrateCurrency(currency: CryptoCurrency) {
-  const value = await getCurrencyCache(currency);
-  const bridge = getCurrencyBridge(currency);
-  bridge.hydrate(value, currency);
-}
+const cache = makeBridgeCacheSystem({
+  saveData: setCurrencyCache,
+  getData: getCurrencyCache,
+});
 
-export const prepareCurrency: (
-  currency: CryptoCurrency,
-) => Promise<void> = makeLRUCache(
-  async currency => {
-    log("bridge/cache", "prepareCurrency " + currency.id + "...");
-    const bridge = getCurrencyBridge(currency);
-    const preloaded = await bridge.preload(currency);
-    await setCurrencyCache(currency, preloaded);
-    log("bridge/cache", "prepareCurrency " + currency.id + " DONE.");
-  },
-  currency => currency.id,
-);
+export const hydrateCurrency = cache.hydrateCurrency;
+export const prepareCurrency = cache.prepareCurrency;
