@@ -18,18 +18,20 @@ import GenericErrorView from "../../../components/GenericErrorView";
 import RetryButton from "../../../components/RetryButton";
 import AnimatedHeaderView from "../../../components/AnimatedHeader";
 
+import { urls } from "../../../config/urls";
+
 function OnboardingStepTerms({ navigation }: *) {
   const [markdown, error, retry] = useTerms();
   const [, accept] = useTermsAccept();
   const [toggle, setToggle] = useState(false);
-  const [toggleRecoveryPhrase, setToggleRecoveryPhrase] = useState(false);
+  const [togglePrivacy, setTogglePrivacy] = useState(false);
   const onSwitch = useCallback(() => {
     setToggle(!toggle);
   }, [toggle]);
 
-  const onSwitchRecoveryPhrase = useCallback(() => {
-    setToggleRecoveryPhrase(!toggleRecoveryPhrase);
-  }, [toggleRecoveryPhrase]);
+  const onSwitchPrivacy = useCallback(() => {
+    setTogglePrivacy(!togglePrivacy);
+  }, [togglePrivacy]);
 
   const next = useCallback(() => {
     accept();
@@ -45,33 +47,45 @@ function OnboardingStepTerms({ navigation }: *) {
       footer={
         <View style={styles.footer}>
           <Touchable
-            event="TermsAcceptSwitchRecoveryPhrase"
-            onPress={onSwitchRecoveryPhrase}
-            style={styles.switchRow}
-          >
-            <CheckBox
-              style={styles.checkbox}
-              isChecked={toggleRecoveryPhrase}
-            />
-            <LText semiBold style={styles.switchLabel}>
-              <Trans i18nKey="Terms.switchLabelRecoveryPhrase" />
-            </LText>
-          </Touchable>
-          <Touchable
             event="TermsAcceptSwitch"
             onPress={onSwitch}
-            style={[styles.switchRow, styles.marginBottom]}
+            style={[styles.switchRow]}
           >
             <CheckBox style={styles.checkbox} isChecked={toggle} />
             <LText semiBold style={styles.switchLabel}>
-              <Trans i18nKey="Terms.switchLabel" />
+              <Trans i18nKey="Terms.switchLabel">
+                {""}
+                <LText
+                  semiBold
+                  style={{ color: colors.live }}
+                  onPress={() => Linking.openURL(urls.terms)}
+                />
+                {""}
+              </Trans>
             </LText>
           </Touchable>
-
+          <Touchable
+            event="TermsAcceptSwitchPrivacy"
+            onPress={onSwitchPrivacy}
+            style={styles.switchRow}
+          >
+            <CheckBox style={styles.checkbox} isChecked={togglePrivacy} />
+            <LText semiBold style={styles.switchLabel}>
+              <Trans i18nKey="Terms.switchLabelPrivacy">
+                {""}
+                <LText
+                  semiBold
+                  style={{ color: colors.live }}
+                  onPress={() => Linking.openURL(urls.privacyPolicy)}
+                />
+                {""}
+              </Trans>
+            </LText>
+          </Touchable>
           <Button
             event="Onboarding - ToU accepted"
             type="primary"
-            disabled={!toggle || !toggleRecoveryPhrase}
+            disabled={!toggle || !togglePrivacy}
             onPress={next}
             title={<Trans i18nKey="Terms.cta" />}
           />
@@ -110,9 +124,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginTop: 12,
     marginBottom: 12,
-  },
-  marginBottom: {
-    marginBottom: 20,
   },
   switchLabel: {
     marginLeft: 8,
