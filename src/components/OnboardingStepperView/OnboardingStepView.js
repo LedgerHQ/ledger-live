@@ -72,142 +72,147 @@ export function InfoStepView({
   );
 
   return (
-    <ScrollView
-      style={styles.spacer}
-      contentContainerStyle={styles.infoStepView}
-    >
+    <>
       {trackPage && <TrackScreen category="Onboarding" name={trackPage} />}
-
-      {children || (
-        <>
-          {image ? (
-            <View style={styles.imageContainer}>
-              <Image style={styles.image} source={image} resizeMode="contain" />
-            </View>
-          ) : null}
-          {lottie ? (
-            <View style={styles.lottieContainer}>
-              <Animation source={lottie} style={[styles.image, lottieStyle]} />
-            </View>
-          ) : null}
-          {title && (
-            <LText bold style={[styles.title, { color: textColor }]}>
-              {title}
-            </LText>
-          )}
-          {descs &&
-            descs.map((d, i) => (
-              <LText
-                key={"desc" + i}
-                semiBold
-                style={[styles.desc, { color: textColor }]}
-              >
-                {d}
-              </LText>
-            ))}
-          {bullets && (
-            <View style={styles.bulletContainer}>
-              {bullets.map(({ Icon, title, label, index, color }, i) => (
-                <View style={styles.bulletLine} key={i}>
-                  <View
-                    style={[
-                      styles.bulletIcon,
-                      { backgroundColor: bulletColor },
-                    ]}
-                  >
-                    {Icon ? (
-                      <Icon size={10} color={color || colors.live} />
-                    ) : (
-                      <LText
-                        semiBold
-                        style={[styles.label, { color: colors.live }]}
-                      >
-                        {index || i + 1}
-                      </LText>
-                    )}
-                  </View>
-                  <View style={styles.bulletTextContainer}>
-                    {title && (
-                      <LText
-                        semiBold
-                        style={[styles.bulletTitle, { color: textColor }]}
-                      >
-                        {title}
-                      </LText>
-                    )}
-                    <LText style={[styles.label, { color: textColor }]}>
-                      {label}
-                    </LText>
-                  </View>
+      <ScrollView style={styles.spacer}>
+        <View style={styles.infoStepView}>
+          {children || (
+            <>
+              {image ? (
+                <View style={styles.imageContainer}>
+                  <Image
+                    style={styles.image}
+                    source={image}
+                    resizeMode="contain"
+                  />
                 </View>
-              ))}
-            </View>
+              ) : null}
+              {lottie ? (
+                <View style={styles.lottieContainer}>
+                  <Animation
+                    source={lottie}
+                    style={[styles.image, lottieStyle]}
+                  />
+                </View>
+              ) : null}
+              {title && (
+                <LText bold style={[styles.title, { color: textColor }]}>
+                  {title}
+                </LText>
+              )}
+              {descs &&
+                descs.map((d, i) => (
+                  <LText
+                    key={"desc" + i}
+                    semiBold
+                    style={[styles.desc, { color: textColor }]}
+                  >
+                    {d}
+                  </LText>
+                ))}
+              {bullets && (
+                <View style={styles.bulletContainer}>
+                  {bullets.map(({ Icon, title, label, index, color }, i) => (
+                    <View style={styles.bulletLine} key={i}>
+                      <View
+                        style={[
+                          styles.bulletIcon,
+                          { backgroundColor: bulletColor },
+                        ]}
+                      >
+                        {Icon ? (
+                          <Icon size={10} color={color || colors.live} />
+                        ) : (
+                          <LText
+                            semiBold
+                            style={[styles.label, { color: colors.live }]}
+                          >
+                            {index || i + 1}
+                          </LText>
+                        )}
+                      </View>
+                      <View style={styles.bulletTextContainer}>
+                        {title && (
+                          <LText
+                            semiBold
+                            style={[styles.bulletTitle, { color: textColor }]}
+                          >
+                            {title}
+                          </LText>
+                        )}
+                        <LText style={[styles.label, { color: textColor }]}>
+                          {label}
+                        </LText>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </>
           )}
-          <View style={[styles.spacer]} />
-          {ctaWarningCheckbox && (
-            <View style={styles.warningCheckboxContainer}>
-              <CheckBox
-                style={styles.checkbox}
-                onChange={setHasValidatedCheckbox}
-                isChecked={hasValidatedCheckbox}
-              />
-              <LText
-                onPress={() => setHasValidatedCheckbox(!hasValidatedCheckbox)}
-                style={[styles.checkboxLabel, { color: textColor }]}
-              >
-                {ctaWarningCheckbox.desc}
-              </LText>
-            </View>
-          )}
-
-          {ctaText && (
-            <Pressable
-              style={[
-                styles.ctaButton,
-                {
-                  backgroundColor: isDisabled ? "rgba(0,0,0,0.1)" : accentColor,
-                },
-              ]}
-              disabled={isDisabled}
-              onPress={ctaWarningModal ? onOpenInfoModal : onNext}
+        </View>
+      </ScrollView>
+      <View style={styles.ctaContainer}>
+        {ctaWarningCheckbox && (
+          <View style={styles.warningCheckboxContainer}>
+            <CheckBox
+              style={styles.checkbox}
+              onChange={setHasValidatedCheckbox}
+              isChecked={hasValidatedCheckbox}
+            />
+            <LText
+              onPress={() => setHasValidatedCheckbox(!hasValidatedCheckbox)}
+              style={[styles.checkboxLabel, { color: textColor }]}
             >
-              <LText
-                semiBold
-                style={[
-                  styles.ctaLabel,
-                  { color: isDisabled ? "rgba(0,0,0,0.3)" : primaryColor },
-                ]}
-              >
-                {ctaText}
-              </LText>
-            </Pressable>
-          )}
-        </>
-      )}
-
-      {ctaWarningModal && (
-        <ConfirmationModal
-          isOpened={isInfoModalOpen}
-          onClose={onCloseInfoModal}
-          onConfirm={onConfirmInfo}
-          confirmationTitle={ctaWarningModal.title}
-          confirmationDesc={ctaWarningModal.desc}
-          image={ctaWarningModal.image}
-          Icon={ctaWarningModal.Icon}
-          confirmButtonText={ctaWarningModal.ctaText}
-          hideRejectButton
-        />
-      )}
-    </ScrollView>
+              {ctaWarningCheckbox.desc}
+            </LText>
+          </View>
+        )}
+        {ctaText && (
+          <Pressable
+            style={[
+              styles.ctaButton,
+              {
+                backgroundColor: isDisabled ? "rgba(0,0,0,0.1)" : accentColor,
+              },
+            ]}
+            disabled={isDisabled}
+            onPress={ctaWarningModal ? onOpenInfoModal : onNext}
+          >
+            <LText
+              semiBold
+              style={[
+                styles.ctaLabel,
+                { color: isDisabled ? "rgba(0,0,0,0.3)" : primaryColor },
+              ]}
+            >
+              {ctaText}
+            </LText>
+          </Pressable>
+        )}
+        {ctaWarningModal && (
+          <ConfirmationModal
+            isOpened={isInfoModalOpen}
+            onClose={onCloseInfoModal}
+            onConfirm={onConfirmInfo}
+            confirmationTitle={ctaWarningModal.title}
+            confirmationDesc={ctaWarningModal.desc}
+            image={ctaWarningModal.image}
+            Icon={ctaWarningModal.Icon}
+            confirmButtonText={ctaWarningModal.ctaText}
+            hideRejectButton
+          />
+        )}
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
   spacer: { flex: 1 },
   infoStepView: {
-    minHeight: "100%",
+    flex: 1,
     paddingHorizontal: 24,
-    paddingBottom: 24,
   },
   title: {
     fontSize: normalize(32),
@@ -252,8 +257,8 @@ const styles = StyleSheet.create({
   checkbox: { borderRadius: 4, width: 24, height: 24 },
   checkboxLabel: { flex: 1, fontSize: 13, marginLeft: 11 },
   imageContainer: {
-    flex: 1,
-    minHeight: 200,
+    flex: 0.5,
+    minHeight: 150,
     position: "relative",
   },
   lottieContainer: {
@@ -272,4 +277,5 @@ const styles = StyleSheet.create({
   ctaLabel: {
     fontSize: 15,
   },
+  ctaContainer: { paddingHorizontal: 24, paddingTop: 8, paddingBottom: 16 },
 });
