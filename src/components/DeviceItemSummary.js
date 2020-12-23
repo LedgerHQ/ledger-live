@@ -15,7 +15,6 @@ import Alert from "../icons/Alert";
 
 type Props = {
   deviceId: string,
-  name: string,
   genuine: boolean,
   onEdit: () => void,
 };

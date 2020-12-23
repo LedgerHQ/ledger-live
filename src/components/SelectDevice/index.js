@@ -98,7 +98,7 @@ export default function SelectDevice({
         return devices;
       });
     });
-    return () => subscription.unsubscribe;
+    return () => subscription.unsubscribe();
   }, [knownDevices, filter]);
 
   return (

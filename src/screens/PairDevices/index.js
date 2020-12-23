@@ -9,6 +9,7 @@ import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import { listApps } from "@ledgerhq/live-common/lib/apps/hw";
 import { delay } from "@ledgerhq/live-common/lib/promise";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import logger from "../../logger";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
@@ -42,7 +43,7 @@ type RouteParams = {
   onDone?: (deviceId: string) => void,
 };
 
-type Device = {
+type BleDevice = {
   id: string,
   name: string,
 };
@@ -91,11 +92,18 @@ class PairDevices extends Component<PairDevicesProps, State> {
     this.setState({ error });
   };
 
-  onSelect = async (device: Device) => {
+  onSelect = async (bleDevice: BleDevice) => {
     const { hasCompletedOnboarding, installAppFirstTime } = this.props;
+    const device = {
+      deviceName: bleDevice.name,
+      deviceId: bleDevice.id,
+      modelId: "nanoX",
+      wired: false,
+    };
+
     this.setState({ device, status: "pairing", genuineAskedOnDevice: false });
     try {
-      const transport = await TransportBLE.open(device);
+      const transport = await TransportBLE.open(bleDevice);
       if (this.unmounted) return;
       try {
         const deviceInfo = await getDeviceInfo(transport);
@@ -137,15 +145,16 @@ class PairDevices extends Component<PairDevicesProps, State> {
         await genuineCheckPromise;
         if (this.unmounted) return;
 
-        const name = (await getDeviceName(transport)) || device.name;
+        const name =
+          (await getDeviceName(transport)) || device.deviceName || "";
         if (this.unmounted) return;
 
-        this.props.addKnownDevice({ id: device.id, name });
+        this.props.addKnownDevice({ id: device.deviceId, name });
         if (this.unmounted) return;
         this.setState({ status: "paired" });
       } finally {
         transport.close();
-        await TransportBLE.disconnect(device.id).catch(() => {});
+        await TransportBLE.disconnect(device.deviceId).catch(() => {});
         await delay(500);
       }
     } catch (error) {
@@ -160,19 +169,22 @@ class PairDevices extends Component<PairDevicesProps, State> {
     const { navigation } = this.props;
     navigation.setParams({ hasError: false });
     if (device) {
-      this.props.addKnownDevice({ id: device.id, name: name || device.name });
+      this.props.addKnownDevice({
+        id: device.deviceId,
+        name: name || device.deviceName || "",
+      });
       this.setState({ status: "paired", error: null, skipCheck: true });
     } else {
       this.setState({ status: "scanning", error: null, device: null });
     }
   };
 
-  onDone = (deviceId: string) => {
+  onDone = (device: Device) => {
     const { navigation, route } = this.props;
     const onDone = route.params?.onDone;
     navigation.goBack();
     if (onDone) {
-      onDone(deviceId);
+      onDone(device);
     }
   };
 
@@ -220,8 +232,7 @@ class PairDevices extends Component<PairDevicesProps, State> {
       case "paired":
         return device ? (
           <Paired
-            deviceName={device.name}
-            deviceId={device.id}
+            device={device}
             genuine={!skipCheck}
             onContinue={this.onDone}
           />
