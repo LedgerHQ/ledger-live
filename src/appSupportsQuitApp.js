@@ -94,6 +94,7 @@ export const minAppVersion = {
   NIX: "1.5.0",
   NOS: "1.2.2",
   Nano: "1.2.2",
+  Nervos: "0.5.0",
   Nimiq: "1.4.4",
   ONT: "1.2.2",
   Oasis: "1.8.1",

@@ -13,7 +13,7 @@ export function shouldRetainPendingOperation(
     last &&
     last.transactionSequenceNumber &&
     op.transactionSequenceNumber &&
-    op.transactionSequenceNumber >= last.transactionSequenceNumber
+    op.transactionSequenceNumber <= last.transactionSequenceNumber
   ) {
     return false;
   }
@@ -23,7 +23,7 @@ export function shouldRetainPendingOperation(
 
 const appendPendingOp = (ops: Operation[], op: Operation) => {
   const filtered: Operation[] = ops.filter(
-    (o) => o.transactionSequenceNumber === op.transactionSequenceNumber
+    (o) => o.transactionSequenceNumber !== op.transactionSequenceNumber
   );
   filtered.unshift(op);
   return filtered;
