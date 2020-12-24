@@ -52,7 +52,7 @@ lane :beta do |options|
   system "yarn -s --frozen-lockfile"
 
   Fastlane::LaneManager.cruise_lane('ios', 'beta', { :remote => "upstream"}, 'production')
-  Fastlane::LaneManager.cruise_lane('android', 'beta')
+  Fastlane::LaneManager.cruise_lane('android', 'beta', { :remote => "upstream"})
 
 end
 
