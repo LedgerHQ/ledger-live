@@ -434,6 +434,31 @@ test("decodeURIScheme", () => {
     address: "1gre1noAY9HiK2qxoW8FzSdjdFBcoZ5fV",
     amount: BigNumber("1234567000000"),
   });
+
+  expect(
+    decodeURIScheme(
+      "ethereum:0x931d387731bbbc988b312206c74f77d004d6b84b?gas=100&gasPrice=200&value=" +
+        10 ** 18
+    )
+  ).toMatchObject({
+    currency: getCryptoCurrencyById("ethereum"),
+    address: "0x931d387731bbbc988b312206c74f77d004d6b84b",
+    amount: BigNumber(10 ** 18),
+    userGasLimit: BigNumber(100),
+    gasPrice: BigNumber(200),
+  });
+
+  expect(
+    decodeURIScheme(
+      "ethereum:0x931d387731bbbc988b312206c74f77d004d6b84b?gas=-1&gasPrice=-1&value=-1"
+    )
+  ).toMatchObject({
+    currency: getCryptoCurrencyById("ethereum"),
+    address: "0x931d387731bbbc988b312206c74f77d004d6b84b",
+    amount: BigNumber(0),
+    userGasLimit: BigNumber(0),
+    gasPrice: BigNumber(0),
+  });
 });
 
 test("sanitizeValueString", () => {
