@@ -235,7 +235,7 @@ const modelMapPriority: { [_: string]: number } = {
   blue: 1,
 };
 const defaultFirmware: { [_: string]: string } = {
-  nanos: "1.x",
+  nanoS: "1.x",
 };
 
 function hackBadSemver(str) {
