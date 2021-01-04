@@ -530,8 +530,10 @@ async function fetchCurrentRates(tokens): Promise<CurrentRate[]> {
       );
       const rate = BigNumber(rawRate).times(magnitudeRatio);
       const supplyAPY =
-        BigNumber(cToken.comp_supply_apy.value).decimalPlaces(2).toString() +
-        "%";
+        BigNumber(cToken.supply_rate.value)
+          .times(100)
+          .decimalPlaces(2)
+          .toString() + "%";
       const totalSupply = BigNumber(cToken.total_supply.value)
         .times(rawRate)
         .times(BigNumber(10).pow(otoken.units[0].magnitude));
