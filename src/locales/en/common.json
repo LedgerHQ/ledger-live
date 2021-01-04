@@ -2030,6 +2030,7 @@
       "noRateProvider": "Not available"
     },
     "summary": {
+      "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
       "tag": "Tag (Optional)",
       "validateTag": "Validate tag",
       "total": "Total",
