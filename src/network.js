@@ -17,11 +17,18 @@ const makeError = (msg, status, url, method) => {
     : new LedgerAPI5xx(msg, obj);
 };
 
+const getErrorMessage = (data: Object): ?string => {
+  return (
+    data.cause || data.error || data.message || data.error_message || data.msg
+  );
+};
+
 const extractErrorMessage = (raw: string): ?string => {
   try {
     let data = JSON.parse(raw);
     if (data && Array.isArray(data)) data = data[0];
-    let msg = data.error || data.message || data.error_message || data.msg;
+    let msg = getErrorMessage(data);
+
     if (typeof msg === "string") {
       const m = msg.match(/^JsDefined\((.*)\)$/);
       const innerPart = m ? m[1] : msg;
@@ -56,6 +63,8 @@ const userFriendlyError = <A>(p: Promise<A>, meta): Promise<A> =>
       let msg;
       if (data && typeof data === "string") {
         msg = extractErrorMessage(data);
+      } else if (data && typeof data === "object") {
+        msg = getErrorMessage(data);
       }
       if (msg) {
         errorToThrow = makeError(msg, status, url, method);
