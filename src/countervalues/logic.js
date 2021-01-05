@@ -20,7 +20,7 @@ import {
   magFromTo,
   formatPerGranularity,
   formatCounterValueDay,
-  formatCounterValueHour,
+  formatCounterValueHashes,
   parseFormattedDate,
   incrementPerGranularity,
   datapointLimits,
@@ -283,11 +283,10 @@ export function lenseRate(
 ): ?number {
   const { date } = query;
   if (!date) return map.latest;
-  const hourFormat = formatCounterValueHour(date);
-  if (hourFormat in map) return map[hourFormat];
-  const dayFormat = formatCounterValueDay(date);
-  if (dayFormat in map) return map[dayFormat];
-  if (stats.earliest && dayFormat > stats.earliest) return map.latest;
+  const { iso, hour, day } = formatCounterValueHashes(date);
+  if (stats.earliest && iso > stats.earliest) return map.latest;
+  if (hour in map) return map[hour];
+  if (day in map) return map[day];
   return fallback;
 }
 

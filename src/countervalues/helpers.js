@@ -26,6 +26,18 @@ export const formatCounterValueDay = (d: Date) => d.toISOString().slice(0, 10);
  */
 export const formatCounterValueHour = (d: Date) => d.toISOString().slice(0, 13);
 
+/**
+ * full version of formatCounterValue*
+ */
+export const formatCounterValueHashes = (d: Date) => {
+  const iso = d.toISOString();
+  return {
+    iso,
+    day: iso.slice(0, 10),
+    hour: iso.slice(0, 13),
+  };
+};
+
 export const parseFormattedDate = (str: string) => {
   let full = str;
   switch (str.length) {

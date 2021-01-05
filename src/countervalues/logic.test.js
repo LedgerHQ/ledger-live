@@ -110,6 +110,33 @@ test("DAI EUR latest price", async () => {
   ).toBeUndefined();
 });
 
+test("calculate(now()) is calculate(null)", async () => {
+  const state = await loadCountervalues(initialState, {
+    trackingPairs: [
+      {
+        from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+        to: getFiatCurrencyByTicker("EUR"),
+      },
+    ],
+    autofillGaps: false,
+  });
+  expect(state).toBeDefined();
+  expect(
+    calculate(state, {
+      value: 100000000,
+      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      to: getFiatCurrencyByTicker("EUR"),
+    })
+  ).toEqual(
+    calculate(state, {
+      value: 100000000,
+      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      to: getFiatCurrencyByTicker("EUR"),
+      date: new Date(),
+    })
+  );
+});
+
 test("missing rate in mock", async () => {
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
