@@ -102,7 +102,7 @@ export function mockListAppsResult(
         name,
         version: "0.0.0",
         description: null,
-        icon: "",
+        icon: "bitcoin", // we use bitcoin icon for all for convenience
         perso: "",
         authorName: "",
         supportURL: "",
