@@ -6,7 +6,6 @@ tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
 tz1Z3KCf8CLGAYfvVWPEr562jDDyWkwNF7sT
 tz1Scdr2HsZiQjc7bHMeBbmDRXYVvdhjJbBh
 tz1VmiY38m3y95HqQLjMwqnMS7sdMfGomzKi
-tz1bHzftcTKZMTZgLLtnrXydCm6UEqf4ivca
 tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
 tz1PWCDnz783NNGGQjEFFsHtrcK5yBW4E2rm
 tz1d6Fx42mYgVFnHUW8T8A7WBfJ6nD9pVok8
@@ -35,7 +34,6 @@ tz1P2Po7YM526ughEsRbY4oR9zaUPDZjxFrb
 tz1KzSC1J9aBxKp7u8TUnpN8L7S65PBRkgdF
 tz1STeamwbp68THcny9zk3LsbG3H36DMvbRK
 tz1bLwpPfr3xqy1gWBF4sGvv8bLJyPHR11kx
-tz1TaLYBeGZD3yKVHQGBM857CcNnFFNceLYh
 tz1fJHFn6sWEd3NnBPngACuw2dggTv6nQZ7g
 tz1NEKxGEHsFufk87CVZcrqWu8o22qh46GK6
 tz1V3yg82mcrPJbegqVCPn6bC8w1CSTRp3f8
@@ -44,7 +42,8 @@ tz1WpeqFaBG9Jm73Dmgqamy8eF8NWLz9JCoY
 tz1MQJPGNMijnXnVoBENFz9rUhaPt3S7rWoz
 tz1dRKU4FQ9QRRQPdaH4zCR6gmCmXfcvcgtB
 tz1hTFcQk2KJRPzZyHkCwbj7E1zY1xBkiHsk
-tz1ZcTRk5uxD86EFEn1vvNffWWqJy7q5eVhc`.split("\n");
+tz1ZcTRk5uxD86EFEn1vvNffWWqJy7q5eVhc
+tz1aDiEJf9ztRrAJEXZfcG3CKimoKsGhwVAi`.split("\n");
 
 // we give no ordering preference. it's settled at module load time
 whitelist.sort(() => Math.random() - 0.5);

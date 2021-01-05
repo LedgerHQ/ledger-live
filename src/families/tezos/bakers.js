@@ -48,12 +48,14 @@ const cache = makeLRUCache(
     const bakers = [];
     if (data && typeof data === "object" && Array.isArray(data)) {
       log("tezos/bakers", "found " + data.length + " bakers");
-      data.forEach((raw) => {
-        const baker: ?Baker = asBaker(raw);
-        if (baker) {
-          bakers.push(baker);
-        }
-      });
+      data
+        .filter((raw) => raw.serviceHealth === "active")
+        .forEach((raw) => {
+          const baker: ?Baker = asBaker(raw);
+          if (baker) {
+            bakers.push(baker);
+          }
+        });
     }
 
     log("tezos/bakers", "loaded " + bakers.length + " bakers");
