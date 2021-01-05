@@ -15946,9 +15946,9 @@ Array [
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 Array [
   Object {
-    "balance": "2178034",
+    "balance": "2178033",
     "cosmosResources": Object {
-      "delegatedBalance": "2139238",
+      "delegatedBalance": "2139237",
       "withdrawAddress": "",
     },
     "currencyId": "cosmos",
