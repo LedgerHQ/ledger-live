@@ -122,3 +122,12 @@ export const getOperationConfirmationDisplayableNumber = (
   account.blockHeight && operation.blockHeight && account.currency.blockAvgTime
     ? String(account.blockHeight - operation.blockHeight + 1)
     : "";
+
+export const isConfirmedOperation = (
+  operation: Operation,
+  account: Account,
+  confirmationsNb: number
+): boolean =>
+  operation.blockHeight
+    ? account.blockHeight - operation.blockHeight > confirmationsNb
+    : false;
