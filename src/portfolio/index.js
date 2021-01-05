@@ -196,7 +196,6 @@ export const getBalanceHistoryWithCountervalue: GetBalanceHistoryWithCountervalu
   return copy;
 };
 
-const portfolioMemo: { [_: *]: Portfolio } = {};
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
@@ -301,12 +300,9 @@ export function getPortfolio(
     },
   };
 
-  portfolioMemo[range] = ret;
-
   return ret;
 }
 
-const currencyPortfolioMemo: { [_: *]: CurrencyPortfolio } = {};
 /**
  * calculate the total balance history for all accounts in a reference fiat unit
  * and using a CalculateCounterValue function (see countervalue helper)
@@ -327,30 +323,6 @@ export function getCurrencyPortfolio(
     const r = getBalanceHistoryWithCountervalue(account, range, calc);
     histories.push(r.history);
     countervalueAvailable = r.countervalueAvailable;
-  }
-
-  const memo = currencyPortfolioMemo[range];
-  if (memo && memo.histories.length === histories.length) {
-    let sameHisto = true;
-    for (let i = 0; i < histories.length; i++) {
-      if (histories[i] !== memo.histories[i]) {
-        sameHisto = false;
-        break;
-      }
-    }
-    if (sameHisto) {
-      if (accounts.length === memo.accounts.length) {
-        return memo;
-      }
-      return {
-        history: memo.history,
-        accounts,
-        countervalueAvailable,
-        histories,
-        countervalueChange: memo.countervalueChange,
-        cryptoChange: memo.cryptoChange,
-      };
-    }
   }
 
   const history = getDates(range).map((date) => ({
@@ -394,8 +366,6 @@ export function getCurrencyPortfolio(
     cryptoChange,
     countervalueChange,
   };
-
-  currencyPortfolioMemo[range] = ret;
 
   return ret;
 }
