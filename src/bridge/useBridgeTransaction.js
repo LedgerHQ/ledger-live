@@ -143,7 +143,7 @@ const reducer = (s: State, a): State => {
 
 const INITIAL_ERROR_RETRY_DELAY = 1000;
 const ERROR_RETRY_DELAY_MULTIPLIER = 1.5;
-const DEBOUNCED_STATUS = 300;
+const DEBOUNCE_STATUS_DELAY = 300;
 
 const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
   const [
@@ -179,16 +179,32 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
   const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
+  const statusIsPending = useRef(false); // Stores if status already being processed
+
+  const bridgePending = transaction !== statusOnTransaction;
 
   // when transaction changes, prepare the transaction
   useEffect(() => {
     let ignore = false;
     let errorTimeout;
+
+    // If bridge is not pending, transaction change is due to
+    // the last onStatus dispatch (prepareTransaction changed original transaction) and must be ignored
+    if (!bridgePending) return;
+
     if (mainAccount && transaction) {
-      Promise.resolve()
+      // We don't debounce first status refresh, but any subsequent to avoid multiple calls
+      // First call is immediate
+      const debounce = statusIsPending.current
+        ? delay(DEBOUNCE_STATUS_DELAY)
+        : null;
+
+      statusIsPending.current = true; // consider pending until status is resolved (error or success)
+
+      Promise.resolve(debounce)
         .then(() => getAccountBridge(mainAccount, null))
         .then(async (bridge) => {
-          const start = Date.now();
+          if (ignore) return;
           const preparedTransaction = await bridge.prepareTransaction(
             mainAccount,
             transaction
@@ -199,10 +215,6 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
             preparedTransaction
           );
           if (ignore) return;
-          const delta = Date.now() - start;
-          if (delta < DEBOUNCED_STATUS) {
-            await delay(DEBOUNCED_STATUS - delta);
-          }
 
           return {
             preparedTransaction,
@@ -214,6 +226,8 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
             if (ignore || !result) return;
             const { preparedTransaction, status } = result;
             errorDelay.current = INITIAL_ERROR_RETRY_DELAY; // reset delay
+            statusIsPending.current = false; // status is now synced with transaction
+
             dispatch({
               type: "onStatus",
               status,
@@ -222,6 +236,8 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
           },
           (e) => {
             if (ignore) return;
+            statusIsPending.current = false;
+
             dispatch({ type: "onStatusError", error: e });
             log(
               "useBridgeTransaction",
@@ -250,7 +266,7 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
         errorTimeout = null;
       }
     };
-  }, [transaction, mainAccount, dispatch]);
+  }, [transaction, mainAccount, bridgePending, dispatch]);
 
   return {
     transaction,
@@ -261,7 +277,7 @@ const useBridgeTransaction = (optionalInit?: ?() => $Shape<State>): Result => {
     parentAccount,
     setAccount,
     bridgeError: errorAccount || errorStatus,
-    bridgePending: transaction !== statusOnTransaction,
+    bridgePending,
   };
 };
 
