@@ -76,6 +76,7 @@ export const minAppVersion = {
   Insolar: "1.0.0",
   IoTeX: "0.1.6",
   Kin: "0.0.4",
+  "Kin (SPL)": "0.0.0",
   Komodo: "1.5.0",
   Kusama: "3.23.0",
   LBRY: "1.5.0",
