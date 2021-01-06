@@ -2,6 +2,7 @@
 import { BigNumber } from "bignumber.js";
 import React, {
   createContext,
+  useRef,
   useMemo,
   useContext,
   useEffect,
@@ -35,13 +36,15 @@ import {
   loadCountervalues,
   exportCountervalues,
   importCountervalues,
+  inferTrackingPairForAccounts,
 } from "./logic";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
   CountervaluesSettings,
+  TrackingPair,
 } from "./types";
-import { pairId } from "./helpers";
+import { useDebounce } from "../hooks/useDebounce";
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
@@ -68,6 +71,8 @@ export type Props = {
   pollInitDelay?: number,
   // the minimum time to wait before two automatic polls (then one that happen whatever network/appstate events)
   autopollInterval?: number,
+  // debounce time before actually fetching
+  debounceDelay?: number,
   savedState?: CounterValuesStateRaw,
 };
 
@@ -82,23 +87,61 @@ const CountervaluesPollingContext = createContext<Polling>({
 
 const CountervaluesContext = createContext<CounterValuesState>(initialState);
 
+function trackingPairsHash(a: TrackingPair[]) {
+  return a
+    .map(
+      (p) =>
+        `${p.from.ticker}:${p.to.ticker}:${
+          p.startDate?.toISOString().slice(0, 10) || ""
+        }`
+    )
+    .sort()
+    .join("|");
+}
+
+export function useTrackingPairForAccounts(
+  accounts: Account[],
+  countervalue: Currency
+): TrackingPair[] {
+  const memo = useMemo(
+    () => inferTrackingPairForAccounts(accounts, countervalue),
+    [accounts, countervalue]
+  );
+  const ref = useRef(memo);
+  if (trackingPairsHash(ref.current) === trackingPairsHash(memo)) {
+    return ref.current;
+  }
+  ref.current = memo;
+  return memo;
+}
+
 export function Countervalues({
   children,
   userSettings,
   pollInitDelay = 1 * 1000,
   autopollInterval = 120 * 1000,
+  debounceDelay = 1000,
   savedState,
 }: Props) {
+  const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
+
   const [{ state, pending, error }, dispatch] = useReducer<FetchState, Action>(
     fetchReducer,
     initialFetchState
   );
 
-  // trigger poll but not every time poll callback is changed
-  const [triggerPoll, setTriggerPoll] = useState(false);
+  // flag used to trigger a loadCountervalues
+  const [triggerLoad, setTriggerLoad] = useState(false);
+
+  // trigger poll only when userSettings changes. in a debounced way.
   useEffect(() => {
-    if (pending || !triggerPoll) return;
-    setTriggerPoll(false);
+    setTriggerLoad(true);
+  }, [debouncedUserSettings]);
+
+  // loadCountervalues logic
+  useEffect(() => {
+    if (pending || !triggerLoad) return;
+    setTriggerLoad(false);
     dispatch({ type: "pending" });
     loadCountervalues(state, userSettings).then(
       (state) => {
@@ -108,8 +151,9 @@ export function Countervalues({
         dispatch({ type: "error", payload: error });
       }
     );
-  }, [pending, state, userSettings, triggerPoll]);
+  }, [pending, state, userSettings, triggerLoad]);
 
+  // save the state when it changes
   useEffect(() => {
     if (!savedState?.status || !Object.keys(savedState.status).length) return;
     dispatch({
@@ -119,22 +163,13 @@ export function Countervalues({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedState]);
 
-  // trigger poll only when trackingParis is not exactly the same
-  const pairs = useMemo(() => userSettings.trackingPairs.map(pairId).join(), [
-    userSettings.trackingPairs,
-  ]);
-  useEffect(() => {
-    setTriggerPoll(true);
-  }, [pairs]);
-
+  // manage the auto polling loop and the interface for user land to trigger a reload
   const [isPolling, setIsPolling] = useState(true);
   useEffect(() => {
     if (!isPolling) return;
-
     let pollingTimeout;
-
     function pollingLoop() {
-      setTriggerPoll(true);
+      setTriggerLoad(true);
       pollingTimeout = setTimeout(pollingLoop, autopollInterval);
     }
     pollingTimeout = setTimeout(pollingLoop, pollInitDelay);
@@ -146,7 +181,7 @@ export function Countervalues({
       wipe: () => {
         dispatch({ type: "wipe" });
       },
-      poll: () => setTriggerPoll(true),
+      poll: () => setTriggerLoad(true),
       start: () => setIsPolling(true),
       stop: () => setIsPolling(false),
       pending,
