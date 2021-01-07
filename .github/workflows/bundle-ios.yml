@@ -9,7 +9,7 @@ on:
       branch:
         description: 'Branch?'
         required: true
-        default: 'LedgerHQ'
+        default: 'develop'
 
 jobs:
   bundle-ipa:
