@@ -29,7 +29,7 @@ type CoinifyWidgetConfig = {
   cryptoCurrencies?: string | null,
   address?: string | null,
   targetPage: string,
-  addressConfirmation?: boolean,
+  confirmMessages?: boolean,
   transferOutMedia?: string,
   transferInMedia?: string,
 };
@@ -81,7 +81,6 @@ type Props = {
   verifyAddress?: boolean,
 };
 
-let tradeId = null;
 let resolvePromise = null;
 export default function CoinifyWidget({
   mode,
@@ -89,6 +88,7 @@ export default function CoinifyWidget({
   parentAccount,
   device,
 }: Props) {
+  const tradeId = useRef(null);
   const [requestingAction, setRequestingAction] = useState<
     "none" | "connect" | "verify",
   >("none");
@@ -127,7 +127,7 @@ export default function CoinifyWidget({
 
   if (mode === "buy") {
     widgetConfig.transferOutMedia = "blockchain";
-    widgetConfig.addressConfirmation = true;
+    widgetConfig.confirmMessages = true;
   }
 
   if (mode === "sell") {
@@ -175,13 +175,24 @@ export default function CoinifyWidget({
         }
         break;
       case "trade.trade-created":
+        tradeId.current = context.id;
         if (mode === "sell") {
-          //            setTradeId(context.id);
-          tradeId = context.id;
           if (resolvePromise) {
             resolvePromise(context);
             resolvePromise = null;
           }
+        }
+        if (mode === "buy") {
+          webView.current.postMessage(
+            JSON.stringify({
+              type: "event",
+              event: "trade.confirm-trade-created",
+              context: {
+                confirmed: true,
+                tradeId: tradeId.current,
+              },
+            }),
+          );
         }
         break;
       default:
@@ -229,10 +240,10 @@ export default function CoinifyWidget({
           webView.current.postMessage(
             JSON.stringify({
               type: "event",
-              event: "trade.receive-account-confirmed",
+              event: "trade.confirm-trade-prepared",
               context: {
                 address: mainAccount.freshAddress,
-                status: confirmed ? "accepted" : "rejected",
+                confirmed,
               },
             }),
           );
@@ -249,7 +260,7 @@ export default function CoinifyWidget({
               context: {
                 confirmed,
                 transferInitiated: true,
-                tradeId,
+                tradeId: tradeId.current,
               },
             }),
           );
