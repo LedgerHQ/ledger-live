@@ -78,7 +78,7 @@ jobs:
           CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
           DEVELOPER_TEAM_ID: ${{ secrets.DEVELOPER_TEAM_ID }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          TOKEN: ${{ secrets.TEAM_LIVE_ACCESS_TOKEN }}
+          TOKEN: ${{ secrets.GIT_REPO_TOKEN }}
         run: |
           yarn ios:ci
       - uses: ledgerhq/actions/get-package-infos@v2.0.0
