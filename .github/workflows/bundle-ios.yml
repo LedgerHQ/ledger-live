@@ -1,5 +1,4 @@
 name: bundle ios
-on: pull_request
 
 jobs:
   bundle-ipa:
