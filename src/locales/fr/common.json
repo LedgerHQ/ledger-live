@@ -8,7 +8,7 @@
     "yes": "Oui",
     "no": "No",
     "gotit": "Got it",
-    "continue": "Continue",
+    "continue": "Continuer",
     "retry": "Retry",
     "done": "Done",
     "sortBy": "Sort by",
@@ -396,11 +396,11 @@
       "description": "Please retry or contact Ledger Support in case of doubt."
     },
     "TransportError": {
-      "title": "Something went wrong. Please reconnect your device.",
+      "title": "Une erreur est survenue, veuillez reconnecter l’appareil.",
       "description": "{{message}}"
     },
     "TransportStatusError": {
-      "title": "Something went wrong. Please reconnect your device.",
+      "title": "Une erreur est survenue, veuillez reconnecter l’appareil.",
       "description": "{{message}}"
     },
     "TronNoFrozenForBandwidth": {
@@ -653,85 +653,85 @@
   },
   "onboarding": {
     "stepWelcome": {
-      "title": "Welcome to Ledger Live",
-      "subtitle": "Safely manage your cryptos from your smartphone.",
-      "start": "Get started",
-      "noDevice": "No device?",
-      "buy": "Buy a {{fullDeviceName}}"
+      "title": "Bienvenue chez Ledger",
+      "subtitle": "Gérez en toute sécurité vos cryptomonnaies depuis votre smartphone.",
+      "start": "Commencer",
+      "noDevice": "Pas encore d'appareil ?",
+      "buy": "Achetez un {{fullDeviceName}}"
     },
     "stepLanguage": {
       "title": "Selectionnez votre langue",
       "cta": "Continuer",
       "warning": {
-        "title": "Get started in English",
-        "cta": "Got it!",
-        "desc": "We are introducing additional languages in order to help your onboarding with Ledger. Please be aware that the rest of the Ledger experience is currently only available in English."
+        "title": "Commencez en français",
+        "cta": "J'ai compris !",
+        "desc": "Nous ajoutons des langues supplémentaires afin de faciliter vos premiers pas avec Ledger. Veuillez noter que le reste de l'expérience Ledger est actuellement uniquement disponible en anglais."
       }
     },
     "stepSelectDevice": {
-      "title": "What’s your device?",
+      "title": "Quel est votre appareil ?",
       "nanoS": "Nano S",
       "nanoX": "Nano X",
       "blue": "Blue"
     },
     "stepUseCase": {
-      "title": "Hello!",
-      "or": "Or",
+      "title": "Bonjour !",
+      "or": "Ou",
       "firstUse": {
         "title": "First time using this Nano?",
-        "label": "First use",
-        "subTitle": "Set up a new Nano",
-        "desc": "Let’s start and set up your device!"
+        "label": "Mise en service",
+        "subTitle": "Initialiser un nouveau Nano",
+        "desc": "Commençons par configurer votre appareil !"
       },
       "devicePairing": {
-        "title": "Already have a recovery phrase?",
-        "label": "Device pairing",
-        "subTitle": "Connect your Nano",
-        "desc": "Your device is already set up? Connect it to the app!"
+        "title": "Vous avez déjà une phrase de récupération ?",
+        "label": "Couplage de l'appareil",
+        "subTitle": "Connectez votre Nano",
+        "desc": "Votre appareil est déjà configuré ? Connectez-le à votre application !"
       },
       "desktopSync": {
-        "title": "Already have a recovery phrase?",
-        "label": "Desktop sync",
-        "subTitle": "Sync crypto from your desktop app",
-        "desc": "Already got the desktop app? Sync it to manage your crypto from your smartphone!"
+        "title": "Vous avez déjà une phrase de récupération ?",
+        "label": "Synchronisation avec un ordinateur",
+        "subTitle": "Synchronisez des cryptos à partir de Ledger pour l'ordinateur",
+        "desc": "Vous utilisez déjà l'application Ledger pour l'ordinateur ? Synchronisez-la pour gérer vos cryptomonnaies depuis votre smartphone !"
       },
       "restoreDevice": {
-        "label": "Restore device",
+        "label": "Restauration de l'appareil",
         "subTitle": "Restore your recovery phrase on a new device",
         "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
       }
     },
     "stepNewDevice": {
-      "cta": "Let’s do this!",
+      "cta": "C'est parti !",
       "0": {
-        "label": "Basics",
+        "label": "Les bases",
         "title": "Access your crypto",
         "desc": "Your crypto assets are stored on the blockchain. You need a private key to access and manage them."
       },
       "1": {
-        "label": "Basics",
-        "title": "Own your private key",
+        "label": "Les bases",
+        "title": "Détenez votre clé privée",
         "desc": "Your private key is stored within your Nano and you must be the only one to own it to be in control of your money."
       },
       "2": {
-        "label": "Basics",
-        "title": "Stay offline",
+        "label": "Les bases",
+        "title": "Restez déconnecté",
         "desc": "Your Nano works as a \"cold storage\" wallet. This means that it never exposes your private key online, even when using the app."
       },
       "3": {
-        "label": "Basics",
-        "title": "Validate transactions",
+        "label": "Les bases",
+        "title": "Validez les transactions",
         "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected. You will validate every crypto transaction with your Nano."
       },
       "4": {
-        "label": "Basics",
+        "label": "Les bases",
         "title": "Let’s set up your Nano!",
         "desc": "We'll start by setting up your Nano security."
       }
     },
     "stepSetupDevice": {
       "start": {
-        "title": "The best way to get you started:",
+        "title": "La solution idéale pour commencer:",
         "bullets": {
           "0": {
             "label": "Plan 30 minutes and take your time."
@@ -740,14 +740,14 @@
             "label": "Grab a pen to write with."
           },
           "2": {
-            "label": "Stay alone, and choose a safe and quiet environment."
+            "label": "Restez seul(e) et choisissez un environnement sûr et calme."
           }
         },
         "cta": "OK, I’m ready!",
         "warning": {
-          "title": "Please be careful",
-          "desc": "Make sure you follow the instructions on this app at every step of the process.",
-          "ctaText": "Got it!"
+          "title": "Soyez prudent",
+          "desc": "Assurez-vous de suivre les instructions de cette application à toutes les étapes du processus.",
+          "ctaText": "J'ai compris !"
         }
       },
       "setup": {
@@ -755,7 +755,7 @@
           "0": {
             "title": "Turn on Nano",
             "nanoX": {
-              "label": "Turn on your device by pressing the black button for 1 second."
+              "label": "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
             "nanoS": {
               "label": "Turn on your device by connecting it to the USB port of your phone."
@@ -765,7 +765,7 @@
             }
           },
           "1": {
-            "title": "Browse ",
+            "title": "Parcourir ",
             "label": "Learn how to interact with your device by reading the on-screen instructions."
           },
           "2": {
@@ -773,17 +773,17 @@
             "label": "Press both buttons simultaneously to validate the selection."
           },
           "3": {
-            "title": "Follow instructions",
+            "title": "Suivez les instructions",
             "label": "Come back here to follow instructions on your PIN code."
           }
         },
-        "cta": "Next step"
+        "cta": "Étape suivante"
       },
       "pinCode": {
-        "title": "PIN code",
-        "desc": "Your PIN code is the first layer of security. It physically secures access to your Nano and your private keys. Your PIN code must be 4 to 8 digits long.",
-        "checkboxDesc": "I understand that I must choose my PIN code by myself and keep it private.",
-        "cta": "Set up PIN code"
+        "title": "Code PIN",
+        "desc": "Votre code PIN est la première couche de sécurité. Il sécurise l'accès physique à votre Nano et à vos clés privées. Votre code PIN doit comporter 4 à 8 chiffres.",
+        "checkboxDesc": "Je comprends que je dois choisir mon code PIN moi-même et le garder secret.",
+        "cta": "Configurer le code PIN"
       },
       "pinCodeSetup": {
         "bullets": {
@@ -797,48 +797,48 @@
           }
         },
         "infoModal": {
-          "title": "Secure your PIN code",
+          "title": "Sécuriser votre code PIN",
           "bullets": {
             "0": {
-              "label": "Always choose a PIN code by yourself."
+              "label": "Choisissez toujours votre code PIN par vous-même."
             },
             "1": {
-              "label": "Always enter your PIN code out of sight."
+              "label": "Assurez vous de ne pas être observé quand vous entrez votre code PIN."
             },
             "2": {
-              "label": "You can change your PIN code if needed."
+              "label": "Vous pouvez modifier votre code PIN ultérieurement si nécessaire."
             },
             "3": {
               "label": "Three wrong PIN code entries in a row will reset the device."
             },
             "4": {
-              "label": "Never use an easy PIN code like 0000, 123456, or 55555555."
+              "label": "N'utilisez jamais un code PIN facile comme 0000, 123456, 55555555."
             },
             "5": {
               "label": "Never share your PIN code with someone else. Not even with Ledger."
             },
             "6": {
-              "label": "Never use a PIN code you did not choose yourself."
+              "label": "N'utilisez jamais un code PIN que vous n'avez pas choisi par vous-même."
             },
             "7": {
-              "label": "Never store your PIN code on a computer or phone."
+              "label": "Ne stockez jamais votre code PIN sur un ordinateur ou un smartphone."
             }
           }
         },
-        "cta": "Next step"
+        "cta": "Étape suivante"
       },
       "recoveryPhrase": {
-        "title": "Recovery phrase",
+        "title": "Phrase de récupération",
         "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
-        "cta": "Recovery phrase",
+        "cta": "Phrase de récupération",
         "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
       },
       "recoveryPhraseSetup": {
         "infoModal": {
-          "title": "How does a recovery phrase work?",
+          "title": "Comment fonctionne une phrase de récupération ?",
           "desc": "Your recovery phrase works like a unique master key. Your Ledger device uses it to calculate private keys for every crypto asset you own.",
           "desc_1": "To restore access to your crypto, any wallet can calculate the same private keys from your recovery phrase.",
-          "link": "More about the recovery phrase",
+          "link": "Plus de détails sur la phrase de récupération",
           "title_1": "What if I lose access to my Nano?",
           "bullets": {
             "0": {
@@ -854,7 +854,7 @@
         },
         "bullets": {
           "0": {
-            "title": "Take your Recovery sheet",
+            "title": "Prenez votre feuille de récupération",
             "label": "Grab a blank Recovery sheet, included with your Nano. Please reach out to Ledger Support if the Recovery sheet did not come blank."
           },
           "1": {
@@ -869,11 +869,11 @@
             "title": "Repeat for all words!"
           }
         },
-        "cta": "Confirm recovery phrase",
-        "nextStep": "Next step"
+        "cta": "Confirmer la phrase de récupération",
+        "nextStep": "Étape suivante"
       },
       "hideRecoveryPhrase": {
-        "title": "Hide your recovery phrase",
+        "title": "Cachez votre phrase de récupération",
         "desc": "Your recovery phrase is your last chance to access your crypto if you cannot use your Nano. You must keep it in a safe place.",
         "bullets": {
           "0": {
@@ -883,10 +883,10 @@
             "label": "Never share your 24 words with anyone, not even with Ledger."
           }
         },
-        "cta": "OK, I’m done!",
+        "cta": "C'est bon, j'ai fini !",
         "infoModal": {
-          "label": "Learn how to hide it",
-          "title": "Where should I keep my recovery phrase?",
+          "label": "Apprendre à la cacher",
+          "title": "Où dois-je garder ma phrase de récupération ?",
           "bullets": {
             "0": {
               "label": "<1>NEVER</1> enter it on a computer, phone or any other device. Don't take a picture of it."
@@ -898,7 +898,7 @@
               "label": "<1>ALWAYS</1> store it in a secure place, out of sight."
             },
             "3": {
-              "label": "Ledger will never ask for your recovery phrase."
+              "label": "Ledger ne vous demandera jamais votre phrase de récupération."
             },
             "4": {
               "label": "If any person or application asks for it, assume it is a scam!"
@@ -906,9 +906,9 @@
           }
         },
         "warning": {
-          "title": "Now game on!",
-          "desc": "Answer 3 simple questions to avoid common misconceptions about your hardware wallet.",
-          "cta": "Let’s take the quiz"
+          "title": "Testons nos connaissances !",
+          "desc": "Répondez à 3 questions simples pour éviter les idées fausses sur votre wallet physique.",
+          "cta": "Faisons le quiz"
         }
       }
     },
@@ -921,14 +921,14 @@
         "warning": {
           "title": "We recommend Ledger recovery phrases only",
           "desc": "Ledger cannot guarantee the security of external recovery phrases. We recommend setting up your Nano as a new device if your recovery phrase was not generated by a Ledger.",
-          "cta": "Got it!"
+          "cta": "J'ai compris !"
         },
-        "nextStep": "Next step",
+        "nextStep": "Étape suivante",
         "bullets": {
           "0": {
             "title": "Turn on Nano",
             "nanoX": {
-              "label": "Turn on your device by pressing the black button for 1 second."
+              "label": "Allumez votre appareil en appuyant sur le bouton noir pendant 1 seconde."
             },
             "nanoS": {
               "label": "Turn on your device by connecting it to the USB port of your phone."
@@ -938,7 +938,7 @@
             }
           },
           "1": {
-            "title": "Browse",
+            "title": "Parcourir",
             "label": "Learn how to interact with your device by reading the on-screen instructions."
           },
           "2": {
@@ -946,7 +946,7 @@
             "label": "Press both buttons simultaneously to validate the selection."
           },
           "3": {
-            "title": "Follow instructions",
+            "title": "Suivre les instructions",
             "label": "Come back here to follow instructions on your PIN code."
           }
         }
@@ -961,32 +961,32 @@
             "title": "Grab your recovery phrase"
           },
           "1": {
-            "title": "Select recovery phrase length",
+            "title": "Sélectionnez la longueur de votre phrase de récupération",
             "label": "Your Recovery phrases can have 12, 18 or 24 words. You must enter all words to access your crypto."
           },
           "2": {
-            "title": "Enter Word #1...",
-            "label": "Enter the first letters of Word #1 by selecting them with the right or left button. Press both buttons to validate each letter."
+            "title": "Saisir le mot n°1...",
+            "label": "Saisissez les premières lettres du mot n°1 en les sélectionnant avec le bouton droit ou gauche. Appuyez sur les deux boutons pour valider chaque lettre."
           },
           "3": {
-            "title": "Validate Word #1...",
+            "title": "Valider le mot n°1...",
             "label": "Choose Word #1 from the suggestions. Press both buttons to validate."
           },
           "4": {
             "title": "Repeat for all words!"
           }
         },
-        "nextStep": "Next step"
+        "nextStep": "Étape suivante"
       }
     },
     "stepPairNew": {
       "nanoX": {
-        "title": "Pair your Nano",
+        "title": "Coupler votre Nano",
         "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
-        "cta": "Let’s pair my Nano"
+        "cta": "Couplons mon Nano"
       },
       "nanoS": {
-        "title": "Connect your Nano",
+        "title": "Connectez votre Nano",
         "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
         "cta": "Let’s connect my Nano"
       },
@@ -996,48 +996,48 @@
         "cta": "Let’s connect my Blue"
       },
       "infoModal": {
-        "title": "Where can I find my device name?",
-        "desc": "On your device, select Settings > General > Device name.",
-        "title_1": "How to set up Bluetooth connection?",
-        "title_2": "How do I use my Nano X without Bluetooth?",
-        "desc_1": "Use an <1>OTG-cable</1> to connect your Ledger Nano X to your Android smartphone (iOS not supported). Manage your crypto with Ledger Live mobile or any other compatible (web) app.",
+        "title": "Où puis-je trouver le nom de mon appareil ?",
+        "desc": "Sur votre appareil, sélectionnez Settings > General > Device name.",
+        "title_1": "Comment configurer la connexion Bluetooth ?",
+        "title_2": "Comment puis-je utiliser mon Nano X sans Bluetooth ?",
+        "desc_1": "Utilisez un câble <1>OTG</1> pour connecter votre Ledger Nano X à votre smartphone Android (iOS non pris en charge). Gérez vos cryptomonnaies avec l’application mobile Ledger Live ou toute autre application (Web) compatible.",
         "bullets": {
           "0": {
-            "label": "Make sure Bluetooth is enabled on your smartphone and on your Ledger Nano X. Your Ledger Nano X should be on the Dashboard, its main home screen."
+            "label": "Assurez-vous que le Bluetooth est activé sur votre smartphone et sur votre Ledger Nano X. Votre Ledger Nano X doit être sur le tableau de bord, son écran d'accueil principal."
           },
           "1": {
-            "label": "<1>{{Os}}</1>: Make sure location services are enabled in your phone's settings for Ledger Live. Ledger Live never uses your location information, this is a requirement for Bluetooth on {{Os}}."
+            "label": "<1>{{Os}}</1>: assurez-vous que les services de localisation soient bien activés pour Ledger Live dans les paramètres de votre téléphone. Bien que Ledger Live n’utilise jamais vos informations de localisation, cette procédure est une exigence pour accéder au Bluetooth sur {{Os}}."
           },
           "2": {
-            "label": "If you have a Bluetooth pairing issue, please refer to the following article",
-            "link": "Fix connection issues."
+            "label": "Si vous avez un problème de couplage Bluetooth, veuillez vous référer à l'article suivant",
+            "link": "Résoudre les problèmes de connexion."
           }
         }
       },
       "errorInfoModal": {
-        "title": "Something went wrong?",
-        "title_1": "I have an Android",
-        "title_2": "Update Android version",
-        "desc": "If you're experiencing Bluetooth issues with your Nano X, please remove the pairing and forget Nano X on your phone. Then try the pairing again.",
-        "desc_1": "It may take a while before the Bluetooth pairing request is displayed. Make sure you verify and confirm the pairing code both on your Nano X and on your phone.",
-        "desc_2": "Check in your phone's Bluetooth settings whether the Ledger Nano X is detected. If it not detected, make sure you turn on the Bluetooth on your Ledger Nano X.",
-        "desc_3": "Location services",
-        "desc_4": "If the Ledger Nano X is not detected in your mobile app when trying to pair it, please try the following solution:",
-        "desc_5": "Ledger mobile app asks you to allow location services when it's not enabled yet, but on a few phone models, this is not always properly detected. Please note that Ledger mobile app never uses your location information, this permission is simply required for Bluetooth on Android.",
-        "desc_6": "Some users have reported having fixed their connection issues by updating the Android version running on their phone to a newer one. Please check with your phone manufacturer whether an update is available.",
-        "link": "Learn more",
+        "title": "Un problème est survenu ?",
+        "title_1": "J’ai un Android",
+        "title_2": "Mettez à jour la version d'Android",
+        "desc": "Si vous rencontrez des problèmes de Bluetooth avec votre Nano X, veuillez supprimer le couplage et oublier Nano X sur votre téléphone. Puis essayez le couplage à nouveau.",
+        "desc_1": "Cela peut prendre un certain temps avant que la demande de couplage Bluetooth ne s’affiche. Assurez-vous de vérifier et de confirmer le code de couplage à la fois sur votre Nano X et sur votre téléphone.",
+        "desc_2": "Vérifiez dans les paramètres Bluetooth de votre téléphone si le Ledger Nano X est détecté. S’il n’est pas détecté, assurez-vous d'avoir bien activé le Bluetooth sur votre Ledger Nano X.",
+        "desc_3": "Services de localisation",
+        "desc_4": "Si le Ledger Nano X n’est pas détecté dans votre application mobile lorsque vous tentez de le coupler, veuillez essayer la solution suivante :",
+        "desc_5": "L’application mobile Ledger vous demande d'autoriser les services de localisation lorsqu’ils ne sont pas encore activés, mais sur quelques modèles de téléphone, cela n’est pas toujours correctement détecté. Veuillez noter que l’application mobile Ledger n’utilise jamais vos informations de localisation, cette autorisation est simplement nécessaire pour le Bluetooth sur Android.",
+        "desc_6": "Certains utilisateurs ont signalé avoir réglé leurs problèmes de connexion en mettant à jour la version Android de leur téléphone vers une plus récente. Veuillez vérifier avec le fabricant de votre téléphone si une mise à jour est disponible.",
+        "link": "En savoir plus",
         "bullets": {
           "0": {
-            "label": "Navigate to the system options for the Ledger Live app on your Android phone."
+            "label": "Accédez aux options du système pour l’application Ledger Live sur votre téléphone Android."
           },
           "1": {
-            "label": "Allow the location to be used."
+            "label": "Autorisez l’utilisation des services de localisation."
           },
           "2": {
-            "label": "Return to the mobile app."
+            "label": "Retournez à l'application mobile."
           },
           "3": {
-            "label": "Check whether your Nano X is detected."
+            "label": "Vérifiez si votre Nano X est détecté."
           }
         }
       }
@@ -1045,22 +1045,22 @@
     "stepImportAccounts": {
       "title": "Sync crypto from desktop",
       "desc": "If you already have your crypto set up in the Ledger desktop app, you can sync them to manage them from your phone.",
-      "cta": "I’m ready to scan",
+      "cta": "Je suis prêt à scanner",
       "bullets": {
         "0": {
-          "label": "On the Desktop app, select <1>Settings > Accounts > Account export</1>."
+          "label": "Sur Ledger pour l'ordinateur, sélectionnez <1>Settings > Accounts > Account export</1>."
         },
         "1": {
           "label": "Scan the LiveQR code with your phone."
         },
         "2": {
-          "label": "Select the crypto accounts to import."
+          "label": "Sélectionnez les comptes de cryptomonnaies à importer."
         }
       },
       "warning": {
-        "title": "Your desktop and mobile apps must be synced manually.",
+        "title": "Vos applications de bureau et mobiles doivent être synchronisées manuellement.",
         "desc": "Ledger Live respects your privacy and stores your data locally. If you change accounts and settings on your phone, you will need to do the same on your computer, and vice versa. Your transactions stay synchronized with the blockchain.",
-        "cta": "Got it!"
+        "cta": "J'ai compris !"
       }
     },
     "stepSetupPin": {
@@ -1069,7 +1069,7 @@
       "step2": "Press both buttons to choose <1><1>Setup as new device.</1></1>",
       "step2-restore": "Press both buttons to choose <1><1>Restore from recovery phrase.</1></1>",
       "step3": "Press left or right button to select a digit. Press both to validate.",
-      "step4prefix": "Select ",
+      "step4prefix": "Sélectionner ",
       "step4suffix1": " to confirm your PIN code.",
       "step4suffix2": " to erase a digit.",
       "modal": {
@@ -1108,8 +1108,8 @@
     "quizz": {
       "label": "Quiz",
       "modal": {
-        "success": "Congrats!",
-        "fail": "Incorrect!"
+        "success": "Félicitations !",
+        "fail": "Incorrect !"
       },
       "coins": {
         "title": "As a Ledger user, my crypto is stored:",
@@ -1147,9 +1147,9 @@
       "final": {
         "successTitle": "Already a pro!",
         "successText": "You are ready to safely manage your crypto. Only one quick step left!",
-        "failTitle": "You will soon become a pro...",
+        "failTitle": "Vous allez bientôt devenir un(e) pro...",
         "failText": "Don’t worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety. Only one quick step left!",
-        "cta": "Next step"
+        "cta": "Étape suivante"
       }
     }
   },
@@ -1406,7 +1406,7 @@
         "noAccounts": "Nothing to import",
         "unsupported": "Unsupported",
         "settings": "App settings",
-        "includeGeneralSettings": "Import desktop settings"
+        "includeGeneralSettings": "Importer les paramètres de Ledger pour l'ordinateur"
       },
       "fallback": {
         "header": "Import account",
@@ -1997,7 +1997,7 @@
     "loading": "Sync"
   },
   "scanning": {
-    "loading": "Searching devices..."
+    "loading": "Recherche d’appareil..."
   },
   "send": {
     "tooMuchUTXOBottomModal": {
@@ -2278,12 +2278,12 @@
   "SelectDevice": {
     "title": "Pair new device",
     "bluetooth": {
-      "title": "Connect via Bluetooth...",
-      "label": "Detect your Nano automatically"
+      "title": "Se connecter en Bluetooth",
+      "label": "Détecter automatiquement votre Nano"
     },
-    "deviceNotFoundPairNewDevice": "Add new Ledger Nano X",
+    "deviceNotFoundPairNewDevice": "Coupler avec le Bluetooth",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
-    "usb": "To use USB, just plug and enter your PIN Code on your device",
+    "usb": "ou brancher le câble USB",
     "usbLabel": "Connect USB cable and enter your PIN Code on your device",
     "steps": {
       "connecting": {
@@ -2347,7 +2347,7 @@
     },
     "GenuineCheck": {
       "title": "Contrôle d'authenticité",
-      "accept": "Please don’t turn off your Nano X and allow <1>Ledger Manager</1>"
+      "accept": "Please don't turn off your Nano X. Make sure you allow <1>Ledger Manager</1>."
     },
     "ScanningHeader": {
       "title": "Looking for devices",
@@ -2361,7 +2361,7 @@
     "alreadyPaired": "Already paired"
   },
   "DeviceItemSummary": {
-    "genuine": "Genuine",
+    "genuine": "Your device is genuine",
     "genuineFailed": "Genuine check <1><0>failed</0></1>"
   },
   "DeviceNameRow": {
@@ -3070,11 +3070,11 @@
     "memo": "Memo"
   },
   "Terms": {
-    "title": "Terms of Use",
+    "title": "Conditions d'utilisation",
     "read": "Read the Terms of Use",
     "switchLabelPrivacy": "I have read and agree with the <1>Privacy Policy</1>",
     "switchLabel": "I have read and agree with the <1>Terms of Service</1>",
-    "cta": "Enter Ledger App"
+    "cta": "Entrer dans l'application Ledger"
   },
   "exchange": {
     "buy": {
