@@ -3,7 +3,7 @@ import { log } from "@ledgerhq/logs";
 import { Observable, interval, from } from "rxjs";
 import semver from "semver";
 import url from "url";
-import { share, switchMap } from "rxjs/operators";
+import { share, switchMap, filter } from "rxjs/operators";
 import {
   SatStackVersionTooOld,
   SatStackAccessDown,
@@ -297,5 +297,6 @@ export async function requiresSatStackReady() {
 
 export const statusObservable: Observable<SatStackStatus> = interval(1000).pipe(
   switchMap(() => from(fetchSatStackStatus())),
+  filter((e, i) => i > 4 || e.type !== "satstack-disconnected"),
   share()
 );
