@@ -1711,7 +1711,8 @@
         "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
         "label": "Your Swap ID:",
         "title": "Pending operation",
-        "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later."
+        "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later.",
+        "cta": "See details"
       },
       "form": {
         "validate": "Confirm Swap transaction",
