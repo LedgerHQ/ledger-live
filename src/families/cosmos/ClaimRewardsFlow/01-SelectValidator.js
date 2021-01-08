@@ -82,17 +82,15 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item }) => {
-      return (
-        <Item
-          disabled={false}
-          value={item.pendingRewards}
-          unit={unit}
-          item={item}
-          onSelect={onSelect}
-        />
-      );
-    },
+    ({ item }) => (
+      <Item
+        disabled={false}
+        value={item.pendingRewards}
+        unit={unit}
+        item={item}
+        onSelect={onSelect}
+      />
+    ),
     [unit, onSelect],
   );
 

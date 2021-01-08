@@ -23,53 +23,51 @@ import Swap from "./slides/Swap";
 import IconClose from "../../icons/Close";
 import colors from "../../colors";
 
-export const getDefaultSlides = () => {
-  return [
-    {
-      id: "blackfriday",
-      Component: () => <BlackFriday />,
-      start: new Date("1 Nov 2020 00:01:00 PST"),
-      end: new Date("30 Nov 2020 23:59:00 PST"),
-    },
-    {
-      id: "Lending",
-      Component: () => <Lending />,
-    },
-    {
-      id: "swap",
-      Component: () => <Swap />,
-    },
-    {
-      id: "backupPack",
-      Component: () => <BackupPack />,
-    },
-    {
-      id: "academy",
-      Component: () => <LedgerAcademy />,
-    },
-    {
-      id: "buyCrypto",
-      Component: () => <BuyCrypto />,
-    },
-    {
-      id: "stakeCosmos",
-      Component: () => <StakeCosmos />,
-    },
-    {
-      id: "stakeAlgo",
-      Component: () => <StakeAlgo />,
-    },
-    // TODO enable when ready
-    // {
-    //   id: "sell",
-    //   Component: () => <Sell />,
-    // },
-    // {
-    //   id: "vote",
-    //   Component: () => <Vote />,
-    // },
-  ];
-};
+export const getDefaultSlides = () => [
+  {
+    id: "blackfriday",
+    Component: () => <BlackFriday />,
+    start: new Date("1 Nov 2020 00:01:00 PST"),
+    end: new Date("30 Nov 2020 23:59:00 PST"),
+  },
+  {
+    id: "Lending",
+    Component: () => <Lending />,
+  },
+  {
+    id: "swap",
+    Component: () => <Swap />,
+  },
+  {
+    id: "backupPack",
+    Component: () => <BackupPack />,
+  },
+  {
+    id: "academy",
+    Component: () => <LedgerAcademy />,
+  },
+  {
+    id: "buyCrypto",
+    Component: () => <BuyCrypto />,
+  },
+  {
+    id: "stakeCosmos",
+    Component: () => <StakeCosmos />,
+  },
+  {
+    id: "stakeAlgo",
+    Component: () => <StakeAlgo />,
+  },
+  // TODO enable when ready
+  // {
+  //   id: "sell",
+  //   Component: () => <Sell />,
+  // },
+  // {
+  //   id: "vote",
+  //   Component: () => <Vote />,
+  // },
+];
 
 const hitSlop = {
   top: 16,

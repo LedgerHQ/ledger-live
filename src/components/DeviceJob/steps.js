@@ -353,12 +353,10 @@ export const accountApp: Account => Step = account => ({
             deviceId: meta.deviceId,
           })
           .pipe(
-            map(addressInfo => {
-              return {
-                ...meta,
-                addressInfo,
-              };
-            }),
+            map(addressInfo => ({
+              ...meta,
+              addressInfo,
+            })),
             // $FlowFixMe
             retryWhen(retryWhileErrors(genericCanRetryOnError)),
           ),
@@ -524,7 +522,5 @@ export const initSwapStep: ({
     />
   ),
 
-  run: meta => {
-    return initSwap(exchange, exchangeRate, transaction, meta.deviceId);
-  },
+  run: meta => initSwap(exchange, exchangeRate, transaction, meta.deviceId),
 });

@@ -11,19 +11,17 @@ type Props = {
   summaries: CompoundAccountSummary[],
 };
 
-const ActiveAccounts = ({ summaries }: Props) => {
-  return (
-    <View style={styles.root}>
-      <FlatList
-        data={summaries}
-        renderItem={({ item }) => <Row item={item} />}
-        keyExtractor={(item, index) => item.account.id + index}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListEmptyComponent={() => <EmptyState />}
-      />
-    </View>
-  );
-};
+const ActiveAccounts = ({ summaries }: Props) => (
+  <View style={styles.root}>
+    <FlatList
+      data={summaries}
+      renderItem={({ item }) => <Row item={item} />}
+      keyExtractor={(item, index) => item.account.id + index}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      ListEmptyComponent={() => <EmptyState />}
+    />
+  </View>
+);
 
 const styles = StyleSheet.create({
   root: {

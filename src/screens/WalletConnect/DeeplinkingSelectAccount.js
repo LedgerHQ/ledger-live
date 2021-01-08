@@ -59,24 +59,22 @@ class SendFundsSelectAccount extends Component<Props, State> {
     );
   };
 
-  renderFooter = () => {
-    return (
-      <View style={styles.footerContainer}>
-        <PlusIcon size={16} color={colors.live} />
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.navigate(NavigatorName.AddAccounts, {
-              currency: getCryptoCurrencyById("ethereum"),
-            });
-          }}
-        >
-          <LText semiBold style={styles.addAccount}>
-            <Trans i18nKey={"walletconnect.addAccount"} />
-          </LText>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  renderFooter = () => (
+    <View style={styles.footerContainer}>
+      <PlusIcon size={16} color={colors.live} />
+      <TouchableOpacity
+        onPress={() => {
+          this.props.navigation.navigate(NavigatorName.AddAccounts, {
+            currency: getCryptoCurrencyById("ethereum"),
+          });
+        }}
+      >
+        <LText semiBold style={styles.addAccount}>
+          <Trans i18nKey={"walletconnect.addAccount"} />
+        </LText>
+      </TouchableOpacity>
+    </View>
+  );
 
   renderItem = ({ item: result }: { item: SearchResult }) => {
     const { account, match } = result;

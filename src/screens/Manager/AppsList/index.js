@@ -20,9 +20,7 @@ type Props = {
 
 const { height } = getWindowDimensions();
 
-const renderRow = ({ item }: { item: * }) => {
-  return <AppRow {...item} />;
-};
+const renderRow = ({ item }: { item: * }) => <AppRow {...item} />;
 
 const AppsList = ({
   apps,

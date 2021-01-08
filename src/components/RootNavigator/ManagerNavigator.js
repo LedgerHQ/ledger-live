@@ -23,14 +23,12 @@ const ManagerIconWithUpate = ({
 }: {
   color: string,
   size: number,
-}) => {
-  return (
-    <View style={stylesLocal.iconWrapper}>
-      <ManagerIcon size={size} color={color} />
-      <View style={stylesLocal.blueDot} />
-    </View>
-  );
-};
+}) => (
+  <View style={stylesLocal.iconWrapper}>
+    <ManagerIcon size={size} color={color} />
+    <View style={stylesLocal.blueDot} />
+  </View>
+);
 
 export default function ManagerNavigator() {
   const { t } = useTranslation();

@@ -4,7 +4,7 @@ import "./polyfill";
 import "./live-common-setup";
 import "./implement-react-native-libcore";
 import "react-native-gesture-handler";
-import React, { Component, useCallback, useContext } from "react";
+import React, { Component, useCallback, useContext, useMemo } from "react";
 import { connect, useSelector } from "react-redux";
 import { StyleSheet, View, Text, Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
@@ -21,6 +21,7 @@ import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import _ from "lodash";
 import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
+import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
@@ -53,7 +54,7 @@ import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import CounterValuesProvider from "./components/CounterValuesProvider";
 import type { State } from "./reducers";
 import { navigationRef } from "./rootnavigation";
-import { useTrackingPairIds } from "./actions/general";
+import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 
 checkLibs({
@@ -106,7 +107,10 @@ function App({ importDataString }: AppProps) {
   }, []);
 
   const rawState = useCountervaluesExport();
-  const pairIds = useTrackingPairIds();
+  const trackingPairs = useTrackingPairs();
+  const pairIds = useMemo(() => trackingPairs.map(p => pairId(p)), [
+    trackingPairs,
+  ]);
 
   useDBSaveEffect({
     save: saveCountervalues,
@@ -337,7 +341,7 @@ export default class Root extends Component<
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
-          {(ready, store) =>
+          {(ready, store, initialCountervalues) =>
             ready ? (
               <>
                 <StyledStatusBar />
@@ -351,7 +355,9 @@ export default class Root extends Component<
                         <I18nextProvider i18n={i18n}>
                           <LocaleProvider>
                             <BridgeSyncProvider>
-                              <CounterValuesProvider>
+                              <CounterValuesProvider
+                                initialState={initialCountervalues}
+                              >
                                 <ButtonUseTouchable.Provider value={true}>
                                   <OnboardingContextProvider>
                                     <App importDataString={importDataString} />

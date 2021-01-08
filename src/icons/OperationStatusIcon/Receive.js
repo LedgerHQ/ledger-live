@@ -14,14 +14,12 @@ export default ({
   failed?: boolean,
   size?: number,
   type: OperationType,
-}) => {
-  return (
-    <OperationStatusWrapper
-      size={size}
-      Icon={IconReceive}
-      confirmed={confirmed}
-      failed={failed}
-      type={type}
-    />
-  );
-};
+}) => (
+  <OperationStatusWrapper
+    size={size}
+    Icon={IconReceive}
+    confirmed={confirmed}
+    failed={failed}
+    type={type}
+  />
+);

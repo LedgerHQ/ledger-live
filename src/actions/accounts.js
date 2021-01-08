@@ -13,6 +13,11 @@ export const importStore = (state: *) => ({
         : [],
   },
 });
+export const reorderAccounts = (comparator: *) => (dispatch: *) =>
+  dispatch({
+    type: "REORDER_ACCOUNTS",
+    payload: { comparator },
+  });
 
 export const importAccounts = ({
   items,

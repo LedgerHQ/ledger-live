@@ -13,25 +13,23 @@ type Props = {
   onClose: () => void,
 };
 
-const QuitManagerModal = ({ isOpened, onClose }: Props) => {
-  return (
-    <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
-      <View style={styles.storageImage}>
-        <InfoIcon bg={colors.lightLive}>
-          <Info size={30} color={colors.live} />
-        </InfoIcon>
-      </View>
-      <View style={styles.storageRow}>
-        <LText secondary style={[styles.text, styles.title]} semiBold>
-          <Trans i18nKey={`manager.firmware.modalTitle`} />
-        </LText>
-        <LText style={styles.text}>
-          <Trans i18nKey={`manager.firmware.modalDesc`} />
-        </LText>
-      </View>
-    </ActionModal>
-  );
-};
+const QuitManagerModal = ({ isOpened, onClose }: Props) => (
+  <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
+    <View style={styles.storageImage}>
+      <InfoIcon bg={colors.lightLive}>
+        <Info size={30} color={colors.live} />
+      </InfoIcon>
+    </View>
+    <View style={styles.storageRow}>
+      <LText secondary style={[styles.text, styles.title]} semiBold>
+        <Trans i18nKey={`manager.firmware.modalTitle`} />
+      </LText>
+      <LText style={styles.text}>
+        <Trans i18nKey={`manager.firmware.modalDesc`} />
+      </LText>
+    </View>
+  </ActionModal>
+);
 
 const styles = StyleSheet.create({
   storageImage: {

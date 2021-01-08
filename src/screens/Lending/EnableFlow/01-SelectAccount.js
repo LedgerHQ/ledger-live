@@ -207,18 +207,16 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
     [redirectToSupplyFlow],
   );
   const renderList = useCallback(
-    items => {
-      return (
-        <FlatList
-          data={items}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          showsVerticalScrollIndicator={false}
-          keyboardDismissMode="on-drag"
-          contentContainerStyle={styles.list}
-        />
-      );
-    },
+    items => (
+      <FlatList
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={styles.list}
+      />
+    ),
     [renderItem],
   );
 

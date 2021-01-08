@@ -47,9 +47,9 @@ export default function SelectAccount({ navigation, route }: Props) {
           : selectedCurrency.id),
     );
     if (selectedCurrency.type === "TokenCurrency") {
-      return filteredAccounts.map(acc => {
-        return accountWithMandatoryTokens(acc, [selectedCurrency]);
-      });
+      return filteredAccounts.map(acc =>
+        accountWithMandatoryTokens(acc, [selectedCurrency]),
+      );
     }
     return filteredAccounts;
   }, [accounts, selectedCurrency]);

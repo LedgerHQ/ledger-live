@@ -21,9 +21,8 @@ import DeviceAction from "../../components/DeviceAction";
 import { useBroadcast } from "../../components/useBroadcast";
 import { renderError } from "../../components/DeviceAction/rendering";
 
-const initSellExec = ({ deviceId }: Input): Observable<SellRequestEvent> => {
-  return withDevice(deviceId)(transport => from(getTransactionId(transport)));
-};
+const initSellExec = ({ deviceId }: Input): Observable<SellRequestEvent> =>
+  withDevice(deviceId)(transport => from(getTransactionId(transport)));
 
 const action = createAction(connectApp);
 
@@ -35,8 +34,8 @@ const checkSignatureAndPrepareCmd = ({
   account,
   parentAccount,
   status,
-}: Input): Observable<SellRequestEvent> => {
-  return withDevice(deviceId)(transport =>
+}: Input): Observable<SellRequestEvent> =>
+  withDevice(deviceId)(transport =>
     from(
       checkSignatureAndPrepare(transport, {
         binaryPayload,
@@ -48,7 +47,6 @@ const checkSignatureAndPrepareCmd = ({
       }),
     ),
   );
-};
 
 type Props = {
   account: AccountLike,

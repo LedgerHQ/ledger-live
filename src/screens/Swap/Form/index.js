@@ -98,16 +98,16 @@ const Form = ({
     [accounts, installedApps, selectableCurrencies],
   );
 
-  const exchange = useMemo(() => {
-    return (
+  const exchange = useMemo(
+    () =>
       route.params?.exchange || {
         fromAccount: defaultAccount?.balance.gt(0) ? defaultAccount : undefined,
         fromParentAccount: defaultAccount?.balance.gt(0)
           ? defaultParentAccount
           : undefined,
-      }
-    );
-  }, [defaultAccount, defaultParentAccount, route.params]);
+      },
+    [defaultAccount, defaultParentAccount, route.params],
+  );
   const { fromAccount, toAccount } = exchange;
   const fromCurrency = fromAccount ? getAccountCurrency(fromAccount) : null;
   const toCurrency = toAccount ? getAccountCurrency(toAccount) : null;

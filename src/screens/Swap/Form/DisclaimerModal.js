@@ -19,53 +19,47 @@ const DisclaimerModal = ({
   onClose: () => void,
   onContinue: () => void,
   provider: string,
-}) => {
-  return (
-    <BottomModal
-      id="SwapDisclaimerModal"
-      isOpened={true}
-      onClose={undefined}
-      style={styles.root}
-    >
-      <Circle bg={colors.pillActiveBackground} size={40}>
-        <Icon name="exclamationcircleo" color={colors.live} size={22} />
-      </Circle>
-      <LText style={styles.title}>
-        <Trans i18nKey={"transfer.swap.form.summary.disclaimer.title"} />
-      </LText>
-      <LText style={styles.desc}>
-        <Trans
-          i18nKey={"transfer.swap.form.summary.disclaimer.desc"}
-          values={{ provider }}
-        />
-      </LText>
-      <ExternalLink
-        text={<Trans i18nKey="transfer.swap.form.summary.disclaimer.tos" />}
-        onPress={() => Linking.openURL(urls.swap.providers[provider].tos)}
-        event="OpenTerms"
+}) => (
+  <BottomModal
+    id="SwapDisclaimerModal"
+    isOpened={true}
+    onClose={undefined}
+    style={styles.root}
+  >
+    <Circle bg={colors.pillActiveBackground} size={40}>
+      <Icon name="exclamationcircleo" color={colors.live} size={22} />
+    </Circle>
+    <LText style={styles.title}>
+      <Trans i18nKey={"transfer.swap.form.summary.disclaimer.title"} />
+    </LText>
+    <LText style={styles.desc}>
+      <Trans
+        i18nKey={"transfer.swap.form.summary.disclaimer.desc"}
+        values={{ provider }}
       />
-      <Button
-        containerStyle={[styles.button, styles.firstButton]}
-        onPress={onContinue}
-        type={"primary"}
-        event={"SwapAcceptSummaryDisclaimer"}
-        title={
-          <Trans i18nKey={`transfer.swap.form.summary.disclaimer.accept`} />
-        }
-      />
-      <Button
-        containerStyle={styles.button}
-        outline={false}
-        onPress={onClose}
-        type={"secondary"}
-        event={"SwaprejectSummaryDisclaimer"}
-        title={
-          <Trans i18nKey={`transfer.swap.form.summary.disclaimer.reject`} />
-        }
-      />
-    </BottomModal>
-  );
-};
+    </LText>
+    <ExternalLink
+      text={<Trans i18nKey="transfer.swap.form.summary.disclaimer.tos" />}
+      onPress={() => Linking.openURL(urls.swap.providers[provider].tos)}
+      event="OpenTerms"
+    />
+    <Button
+      containerStyle={[styles.button, styles.firstButton]}
+      onPress={onContinue}
+      type={"primary"}
+      event={"SwapAcceptSummaryDisclaimer"}
+      title={<Trans i18nKey={`transfer.swap.form.summary.disclaimer.accept`} />}
+    />
+    <Button
+      containerStyle={styles.button}
+      outline={false}
+      onPress={onClose}
+      type={"secondary"}
+      event={"SwaprejectSummaryDisclaimer"}
+      title={<Trans i18nKey={`transfer.swap.form.summary.disclaimer.reject`} />}
+    />
+  </BottomModal>
+);
 
 const styles = StyleSheet.create({
   root: {

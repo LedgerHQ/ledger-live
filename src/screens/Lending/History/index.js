@@ -66,9 +66,9 @@ export default function History() {
         {/** $FlowFixMe */}
         <SectionList
           sections={sections}
-          renderSectionHeader={({ section }: { section: * }) => {
-            return <SectionHeader section={section} />;
-          }}
+          renderSectionHeader={({ section }: { section: * }) => (
+            <SectionHeader section={section} />
+          )}
           renderItem={({
             item,
             index,

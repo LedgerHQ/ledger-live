@@ -29,14 +29,16 @@ const Row = ({
 }) => {
   const { token, supplyAPY } = data;
 
-  const totalBalance = useMemo(() => {
-    return accounts.reduce((total, account) => {
-      if (account.type !== "TokenAccount") return total;
-      if (account.token.id !== token.id) return total;
+  const totalBalance = useMemo(
+    () =>
+      accounts.reduce((total, account) => {
+        if (account.type !== "TokenAccount") return total;
+        if (account.token.id !== token.id) return total;
 
-      return total.plus(account.spendableBalance);
-    }, BigNumber(0));
-  }, [token.id, accounts]);
+        return total.plus(account.spendableBalance);
+      }, BigNumber(0)),
+    [token.id, accounts],
+  );
 
   return (
     <Touchable

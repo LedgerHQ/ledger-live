@@ -55,9 +55,9 @@ export default function ReceiveFunds({ navigation, route }: Props) {
       if (selectedCurrency.type === "TokenCurrency") {
         // add in the token subAccount if it does not exist
         return flattenAccounts(
-          filteredAccounts.map(acc => {
-            return accountWithMandatoryTokens(acc, [selectedCurrency]);
-          }),
+          filteredAccounts.map(acc =>
+            accountWithMandatoryTokens(acc, [selectedCurrency]),
+          ),
         ).filter(
           acc =>
             acc.type === "Account" ||

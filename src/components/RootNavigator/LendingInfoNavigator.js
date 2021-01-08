@@ -34,16 +34,14 @@ export default function LendingInfoNavigator() {
   return (
     <Stack.Navigator
       headerMode="float"
-      screenOptions={({ navigation }) => {
-        return {
-          ...closableStackNavigatorConfig,
-          title: t("transfer.lending.info.title"),
+      screenOptions={({ navigation }) => ({
+        ...closableStackNavigatorConfig,
+        title: t("transfer.lending.info.title"),
 
-          headerLeft: null,
-          headerRight: () => <CloseButton navigation={navigation} />,
-          gestureEnabled: false,
-        };
-      }}
+        headerLeft: null,
+        headerRight: () => <CloseButton navigation={navigation} />,
+        gestureEnabled: false,
+      })}
     >
       <Stack.Screen
         name={ScreenName.LendingInfo1}

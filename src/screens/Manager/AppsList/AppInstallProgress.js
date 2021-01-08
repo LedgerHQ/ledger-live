@@ -58,35 +58,33 @@ type UninstallProgressProps = {
   uninstalling: boolean,
 };
 
-export const UninstallProgress = ({ uninstalling }: UninstallProgressProps) => {
-  return (
-    <View style={styles.progressContainer}>
-      <View style={styles.progressLabel}>
-        <LText
-          semiBold
-          numberOfLines={1}
-          style={[styles.appStateText, { color: colors.live }]}
-        >
-          <Trans i18nKey="AppAction.uninstall.loading.button" />
-        </LText>
-      </View>
-      {uninstalling ? (
-        <InfiniteProgressBar
-          progressColor={colors.live}
-          style={styles.progressBar}
-          height={6}
-        />
-      ) : (
-        <ProgressBar
-          progressColor={colors.live}
-          style={styles.progressBar}
-          height={6}
-          progress={0}
-        />
-      )}
+export const UninstallProgress = ({ uninstalling }: UninstallProgressProps) => (
+  <View style={styles.progressContainer}>
+    <View style={styles.progressLabel}>
+      <LText
+        semiBold
+        numberOfLines={1}
+        style={[styles.appStateText, { color: colors.live }]}
+      >
+        <Trans i18nKey="AppAction.uninstall.loading.button" />
+      </LText>
     </View>
-  );
-};
+    {uninstalling ? (
+      <InfiniteProgressBar
+        progressColor={colors.live}
+        style={styles.progressBar}
+        height={6}
+      />
+    ) : (
+      <ProgressBar
+        progressColor={colors.live}
+        style={styles.progressBar}
+        height={6}
+        progress={0}
+      />
+    )}
+  </View>
+);
 
 const styles = StyleSheet.create({
   appStateText: {

@@ -40,19 +40,17 @@ export default function ReceiveFundsNavigator() {
       <Stack.Screen
         name={ScreenName.ReceiveConnectDevice}
         component={ReceiveConnectDevice}
-        options={({ route }) => {
-          return {
-            headerTitle: () => (
-              <StepHeader
-                title={t(route.params?.title ?? "transfer.receive.titleDevice")}
-                subtitle={t("send.stepperHeader.stepRange", {
-                  currentStep: "2",
-                  totalSteps,
-                })}
-              />
-            ),
-          };
-        }}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <StepHeader
+              title={t(route.params?.title ?? "transfer.receive.titleDevice")}
+              subtitle={t("send.stepperHeader.stepRange", {
+                currentStep: "2",
+                totalSteps,
+              })}
+            />
+          ),
+        })}
       />
       <Stack.Screen
         name={ScreenName.ReceiveConfirmation}
