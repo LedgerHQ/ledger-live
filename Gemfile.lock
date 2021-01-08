@@ -231,6 +231,7 @@ GEM
 
 PLATFORMS
   ruby
+  universal-darwin-20
 
 DEPENDENCIES
   cocoapods (= 1.8.4)
@@ -240,4 +241,4 @@ DEPENDENCIES
   fastlane-plugin-versioning_android
 
 BUNDLED WITH
-   2.1.4
+   2.2.0
