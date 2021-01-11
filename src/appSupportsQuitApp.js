@@ -43,6 +43,7 @@ export const minAppVersion = {
   Elrond: "1.0.6",
   EnergyWebChain: "1.4.0",
   Eos: "1.3.1",
+  "Eth Recovery": "0.0.0",
   "Eth Ropsten": "1.6.0",
   "Ether-1": "1.4.0",
   EtherGem: "1.4.0",
