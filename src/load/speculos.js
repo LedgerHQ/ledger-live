@@ -235,7 +235,7 @@ const modelMapPriority: { [_: string]: number } = {
   blue: 1,
 };
 const defaultFirmware: { [_: string]: string } = {
-  nanoS: "1.x",
+  nanoS: "<2",
 };
 
 function hackBadSemver(str) {
@@ -318,9 +318,15 @@ export function appCandidatesMatches(
         appCandidate.appName.replace(/ /s, "").toLowerCase()) &&
     (!searchFirmware ||
       appCandidate.firmware === searchFirmware ||
-      semver.satisfies(hackBadSemver(appCandidate.firmware), searchFirmware)) &&
+      semver.satisfies(
+        semver.coerce(hackBadSemver(appCandidate.firmware)),
+        searchFirmware
+      )) &&
     (!search.appVersion ||
-      semver.satisfies(appCandidate.appVersion, search.appVersion))
+      semver.satisfies(
+        semver.coerce(appCandidate.appVersion),
+        search.appVersion
+      ))
   );
 }
 
