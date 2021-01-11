@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable no-console */
 
+const { log, listen } = require("@ledgerhq/logs");
 const zip = require("lodash/zip");
 const chunk = require("lodash/chunk");
 const {
@@ -28,10 +29,14 @@ async function fetchPriceFromEtherscan(token) {
   const j = str.indexOf("<");
   str = str.slice(0, j);
   if (str[0] !== "$") return;
-  str = str.slice(1);
+  str = str.slice(1).replace(",", "");
   const value = parseFloat(str);
   if (isNaN(value)) return;
   return value;
+}
+
+if (process.env.VERBOSE) {
+  listen((l) => console.log(JSON.stringify(l)));
 }
 
 async function main() {
@@ -40,6 +45,7 @@ async function main() {
     const latest = await api.fetchLatest(c.map((from) => ({ from, to: usd })));
     const etherscan = await Promise.all(c.map(fetchPriceFromEtherscan));
     zip(latest, etherscan, c).forEach(([ours, theirs, token]) => {
+      log("check", `${c.id} ${latest || 0} ${etherscan || 0}`);
       if (!ours && !theirs) return;
       const id = `${token.id} (${token.contractAddress})`;
       if (ours && !theirs) {
@@ -51,7 +57,7 @@ async function main() {
       } else if (!ours && theirs) {
         if (!token.disableCountervalue) {
           console.log(
-            `${id} in etherscan, not ours. should contact the countervalues provider about this OR decide to DISABLE.`
+            `${id} in etherscan, not ours. should contact the countervalues provider (it could be an alias) about this OR decide to DISABLE.`
           );
         }
       } else {
