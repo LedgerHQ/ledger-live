@@ -42,16 +42,24 @@ async function main() {
       if (!ours && !theirs) return;
       const id = `${token.id} (${token.contractAddress})`;
       if (ours && !theirs) {
-        console.log(`${id} in countervalues, but not in etherscan`);
+        if (!token.disableCountervalue) {
+          console.log(
+            `${id} in countervalues, but not in etherscan. should probably DISABLE the token (crypto-assets repo).`
+          );
+        }
       } else if (!ours && theirs) {
-        console.log(`${id} in etherscan, not ours`);
+        if (!token.disableCountervalue) {
+          console.log(
+            `${id} in etherscan, not ours. should contact the countervalues provider about this OR decide to DISABLE.`
+          );
+        }
       } else {
         const ratio = ours > theirs ? ours / theirs : theirs / ours;
         if (ratio > 5) {
           console.log(`${id}: PRICE MISMATCH! $${ours} vs $${theirs}`);
         } else if (token.disableCountervalue) {
           console.log(
-            `${id}: token is disabled! but it looks alright. we could enable it back. ${ours} looks close enough to ${theirs}`
+            `${id} should be ENABLED (crypto-assets repo). (${ours} looks close enough to ${theirs})`
           );
         }
       }
