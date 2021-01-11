@@ -5,6 +5,7 @@ import { parseCallRequest } from "./index";
 import type { WCPayloadTransaction } from "./index";
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
 import type { Account } from "../types/account";
+import { setEnv } from "../env";
 
 describe("walletconnect", () => {
   const account: Account = {
@@ -32,7 +33,11 @@ describe("walletconnect", () => {
   };
 
   beforeAll(() => {
+    setEnv("MOCK", true);
     setSupportedCurrencies(["ethereum"]);
+  });
+  afterAll(() => {
+    setEnv("MOCK", false);
   });
 
   test("should fail on wrong payload", async () => {
@@ -118,6 +123,7 @@ describe("walletconnect", () => {
     });
 
     transaction = await bridge.prepareTransaction(account, transaction);
+    delete transaction.networkInfo;
 
     expect(
       await parseCallRequest(account, {
