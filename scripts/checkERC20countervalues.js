@@ -10,6 +10,7 @@ const {
 } = require("../lib/currencies");
 const api = require("../lib/countervalues/api").default;
 const network = require("../lib/network").default;
+const { delay } = require("../lib/promise");
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usd = getFiatCurrencyByTicker("USD");
@@ -35,7 +36,7 @@ async function fetchPriceFromEtherscan(token) {
 
 async function main() {
   const tokens = listTokensForCryptoCurrency(ethereum);
-  for (const c of chunk(tokens, 10)) {
+  for (const c of chunk(tokens, 5)) {
     const latest = await api.fetchLatest(c.map((from) => ({ from, to: usd })));
     const etherscan = await Promise.all(c.map(fetchPriceFromEtherscan));
     zip(latest, etherscan, c).forEach(([ours, theirs, token]) => {
@@ -56,7 +57,9 @@ async function main() {
       } else {
         const ratio = ours > theirs ? ours / theirs : theirs / ours;
         if (ratio > 5) {
-          console.log(`${id}: PRICE MISMATCH! $${ours} vs $${theirs}`);
+          if (!token.disableCountervalue) {
+            console.log(`${id}: PRICE MISMATCH! $${ours} vs $${theirs}`);
+          }
         } else if (token.disableCountervalue) {
           console.log(
             `${id} should be ENABLED (crypto-assets repo). (${ours} looks close enough to ${theirs})`
@@ -64,6 +67,7 @@ async function main() {
         }
       }
     });
+    await delay(3000);
   }
   console.log("finished to run on " + tokens.length + " tokens");
 }
