@@ -29,6 +29,10 @@ import { promiseAllBatched } from "../../../promise";
 import { mergeOps } from "../../../bridge/jsHelpers";
 import { apiForCurrency } from "../../../api/Ethereum";
 import { inferTokenAccount } from "../transaction";
+import { getEnv } from "../../../env";
+
+// global state that exists when compound is loaded
+let compoundPreloadedValue: ?(CurrentRate[]);
 
 const compoundWhitelist = [
   "ethereum/erc20/compound_dai",
@@ -309,13 +313,16 @@ function fromCurrentRateRaw(raw: CurrentRateRaw): CurrentRate {
 
 type CompoundPreloaded = CurrentRateRaw[];
 
-let compoundPreloadedValue: CurrentRate[] = [];
+export function isCompoundDisabled(): boolean {
+  return Boolean(compoundPreloadedValue);
+}
 
 export function listCurrentRates(): CurrentRate[] {
-  return compoundPreloadedValue;
+  return compoundPreloadedValue || [];
 }
 
 export function findCurrentRate(tokenOrCtoken: TokenCurrency): ?CurrentRate {
+  if (!compoundPreloadedValue) return;
   return compoundPreloadedValue.find(
     (c) => c.ctoken === tokenOrCtoken || c.token === tokenOrCtoken
   );
@@ -335,14 +342,14 @@ export async function preload(
   const ctokens = listSupportedCompoundTokens();
   const currentRates = await fetchCurrentRates(ctokens);
   compoundPreloadedValue = currentRates;
-  const preloaded = currentRates.map(toCurrentRateRaw);
+  const preloaded = currentRates ? currentRates.map(toCurrentRateRaw) : null;
   log("compound", "preloaded data", { preloaded });
   return preloaded;
 }
 
 export function hydrate(value: ?CompoundPreloaded, currency: CryptoCurrency) {
-  if (!value || currency.id !== "ethereum") return;
-  compoundPreloadedValue = value.map(fromCurrentRateRaw);
+  if (currency.id !== "ethereum") return;
+  compoundPreloadedValue = value ? value.map(fromCurrentRateRaw) : null;
 }
 
 export function prepareTokenAccounts(
@@ -350,6 +357,7 @@ export function prepareTokenAccounts(
   subAccounts: TokenAccount[]
 ): TokenAccount[] {
   if (currency.id !== "ethereum") return subAccounts;
+  if (!compoundPreloadedValue) return subAccounts; // noop if compoundPreloadedValue failed to load
 
   const compoundByTokenId = inferSubAccountsCompound(currency, subAccounts);
 
@@ -393,6 +401,7 @@ export async function digestTokenAccounts(
   address: string
 ): Promise<TokenAccount[]> {
   if (currency.id !== "ethereum") return subAccounts;
+  if (!compoundPreloadedValue) return subAccounts; // noop if compoundPreloadedValue failed to load
 
   const compoundByTokenId = inferSubAccountsCompound(currency, subAccounts);
   if (Object.keys(compoundByTokenId).length === 0) return subAccounts;
@@ -499,23 +508,34 @@ export async function digestTokenAccounts(
   return all.filter(Boolean);
 }
 
-const API_BASE = `https://api.compound.finance/api/v2`;
-
 const fetch = (path, query = {}) =>
   network({
     type: "get",
     url: URL.format({
-      pathname: `${API_BASE}${path}`,
+      pathname: `${getEnv("COMPOUND_API")}/api/v2${path}`,
       query,
     }),
   });
 
-async function fetchCurrentRates(tokens): Promise<CurrentRate[]> {
+async function fetchCurrentRates(tokens): Promise<?(CurrentRate[])> {
   if (tokens.length === 0) return [];
-  const { data } = await fetch("/ctoken", {
+  const r = await fetch("/ctoken", {
     block_timestamp: 0,
     addresses: tokens.map((c) => c.contractAddress).join(","),
+  }).catch((e) => {
+    if ("status" in e) {
+      // if it's an HTTP error, there might be issue with compound API.
+      // we need to be resilent so we turns into degraded mode of our app.
+      return null;
+    }
+    throw e;
   });
+
+  if (!r) {
+    return null;
+  }
+
+  const { data } = r;
   return tokens
     .map((token) => {
       const cToken = data.cToken.find(

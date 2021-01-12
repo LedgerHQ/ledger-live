@@ -94,6 +94,11 @@ const envDefinitions = {
     desc:
       "(dev feature) defines the folder for speculos mode that contains Nano apps binaries (.elf) in a specific structure: <device>/<firmware>/<appName>/app_<appVersion>.elf",
   },
+  COMPOUND_API: {
+    def: "https://api.compound.finance",
+    parser: stringParser,
+    desc: "location of the compound API",
+  },
   COSMOS_GAS_AMPLIFIER: {
     def: 4,
     parser: intParser,
