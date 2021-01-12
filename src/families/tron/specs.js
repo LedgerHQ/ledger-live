@@ -74,8 +74,8 @@ const tron: AppSpec<Transaction> = {
           maxSpendable.div(4),
           currency.units[0].magnitude
         ).integerValue();
-        if (amount.eq(0)) {
-          amount = BigNumber(1).times(currency.units[0].magnitude);
+        if (amount.lt(minimalAmount)) {
+          amount = minimalAmount;
         }
         const energy = get(account, `tronResources.energy`, BigNumber(0));
         return {
