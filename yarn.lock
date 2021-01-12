@@ -1596,53 +1596,53 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@walletconnect/client@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@walletconnect/client/-/client-1.3.3.tgz#0e1fa9cd85445b94a2061c58f4357d3b78313677"
-  integrity sha512-aHwsX2lvdEhb2OutHr0cKKRNMOAhaE/Xejbk6stbUozeh0MKAWwhVW5g16xd+wX07Mictq4JFQrg3dSsabRJlg==
+"@walletconnect/client@1.3.4-rc.0":
+  version "1.3.4-rc.0"
+  resolved "https://registry.yarnpkg.com/@walletconnect/client/-/client-1.3.4-rc.0.tgz#25805d4fdf784c864933808d2f177d99c8cdb85b"
+  integrity sha512-CPwF+vQADuH6HIElqbhX6d+GkjctywDAbcC8Xxd86wnheRYl3n4/bhq07sg7IaIVX/KaB8ZZymeQ2bKfLZnzlw==
   dependencies:
-    "@walletconnect/core" "^1.3.3"
-    "@walletconnect/iso-crypto" "^1.3.3"
-    "@walletconnect/types" "^1.3.3"
-    "@walletconnect/utils" "^1.3.3"
+    "@walletconnect/core" "^1.3.4-rc.0"
+    "@walletconnect/iso-crypto" "^1.3.4-rc.0"
+    "@walletconnect/types" "^1.3.4-rc.0"
+    "@walletconnect/utils" "^1.3.4-rc.0"
 
-"@walletconnect/core@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.3.3.tgz#989b335b89cd6b1ab4a91490bd36d2681b5ee0e1"
-  integrity sha512-4w+2n23f3q8joOqucbjVxaHTxzQH++TeT3gkTxVYYnd47k8AYwR8yBdPapsu11lU+xEy6c5YQ+IR2KXdDfF/Ng==
+"@walletconnect/core@^1.3.4-rc.0":
+  version "1.3.4-rc.0"
+  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.3.4-rc.0.tgz#17f28e9509e5c6456447c4c4656d291624d39a70"
+  integrity sha512-Th2d6ZMdbGuKMpDdn/Vy3ZJ2DY616OO7gvlHcypivSeSiDSfKrUFo3tobJ9XJfFzTpNf382XTFdRkDF+VuWf+g==
   dependencies:
-    "@walletconnect/socket-transport" "^1.3.3"
-    "@walletconnect/types" "^1.3.3"
-    "@walletconnect/utils" "^1.3.3"
+    "@walletconnect/socket-transport" "^1.3.4-rc.0"
+    "@walletconnect/types" "^1.3.4-rc.0"
+    "@walletconnect/utils" "^1.3.4-rc.0"
 
-"@walletconnect/iso-crypto@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@walletconnect/iso-crypto/-/iso-crypto-1.3.3.tgz#37e912daea116cd72ec0a8a0b58702bcfb2c6f79"
-  integrity sha512-aJOP9L5DeihEWYCteD/jCN0cMNeJoikhuvQqiysmlj/++gQoNyusimzMcreVfOsEDSjfFbEamzIgzFKvwkIzOA==
+"@walletconnect/iso-crypto@^1.3.4-rc.0":
+  version "1.3.4-rc.0"
+  resolved "https://registry.yarnpkg.com/@walletconnect/iso-crypto/-/iso-crypto-1.3.4-rc.0.tgz#a8ffc9d62c73cd71d29b700dbaa2ec3a0a845321"
+  integrity sha512-NkSNXwd38C3gmJZA1BICTTshErpsjt1qs88iJhRzMA33V60yIavysI0lMJ7wrQaisYfqTq/nMVR5zaYzQy9wMw==
   dependencies:
     "@pedrouid/iso-crypto" "^1.0.0"
-    "@walletconnect/types" "^1.3.3"
-    "@walletconnect/utils" "^1.3.3"
+    "@walletconnect/types" "^1.3.4-rc.0"
+    "@walletconnect/utils" "^1.3.4-rc.0"
 
-"@walletconnect/socket-transport@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@walletconnect/socket-transport/-/socket-transport-1.3.3.tgz#38980da540b508e537f4550fe20bbef7c586a2b6"
-  integrity sha512-MOWMktb5Bxx+aPaNL1N1pbtxRgZTpA3ybtkiwRtmcA3wu8nZN5Eq6/NI9JO5iqXhF6ZbaVjQPGDfoBcAnIgZTA==
+"@walletconnect/socket-transport@^1.3.4-rc.0":
+  version "1.3.4-rc.0"
+  resolved "https://registry.yarnpkg.com/@walletconnect/socket-transport/-/socket-transport-1.3.4-rc.0.tgz#35dd5f7c2a3c0903eb0949ab75f46a7844ad2ed0"
+  integrity sha512-3FBwQkGdWOu3scCx1OcpPgzme2OhvLa0bLoe6G1BiZT9qmJWwCDOENyy5PrYhObaBbYU+3n9OygftfliDYjyGQ==
   dependencies:
-    "@walletconnect/types" "^1.3.3"
+    "@walletconnect/types" "^1.3.4-rc.0"
     ws "7.3.0"
 
-"@walletconnect/types@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.3.3.tgz#54d298265a4433ac09ccf7ae94a21f05219834ce"
-  integrity sha512-Un0b13G2IUI8nAA03a1berWwUgjRAOCrhHSbt27x9gCTsV88yh/kvhDfeanMF4QuAQwl+a5DuM0F+DnEuhtJ3w==
+"@walletconnect/types@^1.3.4-rc.0":
+  version "1.3.4-rc.0"
+  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.3.4-rc.0.tgz#8226e1c66bf752ba82ba23b19d57ff53ae95e50e"
+  integrity sha512-8nQctD/oqyV3a5aoUiKFDo3qvDq5sJvUFK3yUJJTXGi8Vvjm0QT/oMJHzWKz9pizriCL02RhSlVbMHWolhMiig==
 
-"@walletconnect/utils@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.3.3.tgz#9f818ae92df151e220188339b266cc990ab605a3"
-  integrity sha512-cZBZBcjkfIAoaw+aDLmlBi2CR54NKTq+8+FiQGtgEJXeKi5UkXXCZsDUhtGqUrjrvJKfuyEq6QYCQ4m8hIPzaA==
+"@walletconnect/utils@^1.3.4-rc.0":
+  version "1.3.4-rc.0"
+  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.3.4-rc.0.tgz#e0801e88300ec949071310e53c8e0575c63df65c"
+  integrity sha512-jMfhi0GrK0ZF3BCRBtOcnvJzGRQl9VuoUqooOv8nLBPPGTMb6f48Eng4kR7HKIJigQHUk1SZsAQn1Xa7VsjJ5Q==
   dependencies:
-    "@walletconnect/types" "^1.3.3"
+    "@walletconnect/types" "^1.3.4-rc.0"
     bn.js "4.11.8"
     detect-browser "5.1.0"
     enc-utils "3.0.0"

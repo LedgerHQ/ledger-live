@@ -1,5 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
+import eip55 from "eip55";
 import { getAccountBridge } from "../bridge";
 import { parseCallRequest } from "./index";
 import type { WCPayloadTransaction } from "./index";
@@ -113,6 +114,51 @@ describe("walletconnect", () => {
       // $FlowFixMe
       amount: BigNumber(raw.value, 16),
       recipient: raw.to,
+      // $FlowFixMe
+      gasPrice: BigNumber(raw.gasPrice, 16),
+      nonce: raw.nonce,
+    });
+    transaction = bridge.updateTransaction(transaction, {
+      // $FlowFixMe
+      userGasLimit: BigNumber(raw.gas, 16),
+    });
+
+    transaction = await bridge.prepareTransaction(account, transaction);
+    delete transaction.networkInfo;
+
+    expect(
+      await parseCallRequest(account, {
+        id: "1606135657415541",
+        jsonrpc: "2.0",
+        method: "eth_sendTransaction",
+        params: [raw],
+      })
+    ).toMatchObject({
+      data: transaction,
+      method: "send",
+      type: "transaction",
+    });
+  });
+
+  test("should parse eth_sendTransaction payloads and eip55 encode lowercase addresses", async () => {
+    const raw: WCPayloadTransaction = {
+      data: "0x",
+      from: "0xCA220B75b7aF206bFCc67E2EcE06E2e144FA294a",
+      gas: "0x5208",
+      gasPrice: "0xb2d05e000",
+      nonce: "0x15",
+      to: "0xca220b75b7af206bfcc67e2ece06e2e144fa294a",
+      value: "0x0",
+    };
+
+    const bridge = getAccountBridge(account);
+    let transaction = bridge.createTransaction(account);
+
+    transaction = bridge.updateTransaction(transaction, {
+      data: Buffer.from(raw.data.slice(2), "hex"),
+      // $FlowFixMe
+      amount: BigNumber(raw.value, 16),
+      recipient: eip55.encode(raw.to),
       // $FlowFixMe
       gasPrice: BigNumber(raw.gasPrice, 16),
       nonce: raw.nonce,

@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable no-fallthrough */
 import { BigNumber } from "bignumber.js";
+import eip55 from "eip55";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
 import type { Account, Transaction } from "../types";
@@ -8,6 +9,11 @@ import type {
   TypedMessageData,
   TypedMessage,
 } from "../families/ethereum/types";
+import {
+  stringHash,
+  domainHash,
+  messageHash,
+} from "../families/ethereum/hw-signMessage";
 import type { MessageData } from "../hw/signMessage/types";
 
 export type WCPayloadTransaction = {
@@ -44,7 +50,7 @@ export type WCCallRequest =
 type Parser = (Account, WCPayload) => Promise<WCCallRequest>;
 
 export const parseCallRequest: Parser = async (account, payload) => {
-  let wcTransactionData, bridge, transaction, message;
+  let wcTransactionData, bridge, transaction, message, hashes;
 
   switch (payload.method) {
     case "eth_sendRawTransaction":
@@ -61,6 +67,18 @@ export const parseCallRequest: Parser = async (account, payload) => {
         payload.method === "eth_signTypedData"
           ? (JSON.parse(payload.params[0]): TypedMessage)
           : Buffer.from(payload.params[0].slice(2), "hex").toString();
+      hashes =
+        payload.method === "eth_signTypedData"
+          ? {
+              // $FlowFixMe
+              domainHash: domainHash(message),
+              // $FlowFixMe
+              messageHash: messageHash(message),
+            }
+          : {
+              // $FlowFixMe
+              stringHash: stringHash(message),
+            };
       return {
         type: "message",
         data: {
@@ -69,6 +87,7 @@ export const parseCallRequest: Parser = async (account, payload) => {
           message,
           currency: getCryptoCurrencyById("ethereum"),
           derivationMode: account.derivationMode,
+          hashes,
         },
       };
     case "eth_signTransaction":
@@ -87,8 +106,12 @@ export const parseCallRequest: Parser = async (account, payload) => {
         });
       }
       if (wcTransactionData.to) {
+        let to = wcTransactionData.to;
+        if (to.toLowerCase() === to) {
+          to = eip55.encode(to);
+        }
         transaction = bridge.updateTransaction(transaction, {
-          recipient: wcTransactionData.to,
+          recipient: to,
         });
       }
       if (wcTransactionData.gas) {
