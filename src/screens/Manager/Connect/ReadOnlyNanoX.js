@@ -2,8 +2,9 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
+import { compose } from "redux";
 import TrackScreen from "../../../analytics/TrackScreen";
-import colors from "../../../colors";
+import { withTheme } from "../../../colors";
 import { ScreenName, NavigatorName } from "../../../const";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
@@ -24,7 +25,7 @@ const hitSlop = {
 
 const { width } = getWindowDimensions();
 
-class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
+class ReadOnlyNanoX extends PureComponent<OnboardingStepProps & { colors: * }> {
   buy = () => Linking.openURL(urls.buyNanoX);
   onboarding = async () => {
     this.props.setShowWelcome(false);
@@ -38,8 +39,9 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
   };
 
   render() {
+    const { colors } = this.props;
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: colors.card }]}>
         <TrackScreen category="Manager" name="ReadOnlyNanoX" />
         <View style={styles.image}>
           <DeviceNanoAction screen="empty" width={width * 0.8} />
@@ -48,7 +50,7 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="manager.readOnly.question" />
         </LText>
-        <LText style={styles.desc}>
+        <LText style={styles.desc} color="grey">
           <Trans i18nKey="manager.readOnly.description" />
         </LText>
         <Button
@@ -60,7 +62,7 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
         />
 
         <View style={styles.sub}>
-          <LText style={styles.subText}>
+          <LText style={styles.subText} color="grey">
             <Trans i18nKey="manager.readOnly.noDevice" />
           </LText>
           <Touchable
@@ -69,7 +71,7 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
             style={styles.buyTouch}
             hitSlop={hitSlop}
           >
-            <LText semiBold style={[styles.subText, styles.buy]}>
+            <LText semiBold style={[styles.subText, styles.buy]} color="live">
               <Trans i18nKey="manager.readOnly.buy" />
             </LText>
             <IconArrowRight size={16} color={colors.live} />
@@ -80,7 +82,7 @@ class ReadOnlyNanoX extends PureComponent<OnboardingStepProps> {
   }
 }
 
-export default withOnboardingContext(ReadOnlyNanoX);
+export default compose(withOnboardingContext, withTheme)(ReadOnlyNanoX);
 
 const styles = StyleSheet.create({
   root: {
@@ -89,7 +91,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.lightGrey,
   },
   body: {
     alignItems: "center",
@@ -102,13 +103,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   desc: {
-    color: colors.grey,
     textAlign: "center",
     marginBottom: 32,
   },
   buy: {
     marginLeft: 5,
-    color: colors.live,
   },
   button: {
     width: "100%",
@@ -123,7 +122,6 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 14,
-    color: colors.grey,
   },
   sub: {
     flexDirection: "row",

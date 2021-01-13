@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { TabView, SceneMap } from "react-native-tab-view";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "../../const";
 import ArrowLeft from "../../icons/ArrowLeft";
 import Question from "../../icons/Question";
@@ -52,6 +52,7 @@ export default function OnboardingStepperView({
   hideStepper,
   hideBackButton,
 }: Props) {
+  const { colors } = useTheme();
   const [index, setIndex] = useState(0);
   const [routes] = useState(scenes.map(({ id }) => ({ key: id })));
 
@@ -88,14 +89,16 @@ export default function OnboardingStepperView({
           "#fff",
           "rgba(255,255,255,0.3)",
           "#587ED4",
+          colors.live,
         ]
       : [
-          "#fff",
+          colors.card,
           colors.live,
           colors.darkBlue,
           colors.lightLive,
           "rgba(100, 144, 241, 0.3)",
           "rgba(67, 133, 240, 0.08)",
+          "#fff",
         ];
 
   const renderScenes = SceneMap(

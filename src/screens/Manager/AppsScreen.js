@@ -17,9 +17,8 @@ import Animated from "react-native-reanimated";
 
 import i18next from "i18next";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import type { ManagerTab } from "./Manager";
-
-import colors from "../../colors";
 
 import SearchModal from "./Modals/SearchModal";
 import AppFilter from "./AppsList/AppFilter";
@@ -73,8 +72,8 @@ const AppsScreen = ({
   tab,
 }: Props) => {
   const distribution = distribute(state);
-
   const listRef = useRef();
+  const { colors } = useTheme();
 
   const [index, setIndex] = useState(tab === managerTabs.CATALOG ? 0 : 1);
   const [routes] = React.useState([
@@ -165,7 +164,7 @@ const AppsScreen = ({
         <LText bold style={styles.noAppInstalledText}>
           <Trans i18nKey="manager.appList.noAppsInstalled" />
         </LText>
-        <LText style={styles.noAppInstalledDescription}>
+        <LText style={styles.noAppInstalledDescription} color="grey">
           <Trans i18nKey="manager.appList.noAppsDescription" />
         </LText>
       </Touchable>
@@ -198,14 +197,22 @@ const AppsScreen = ({
             />
             <View>
               {device && device.length > 0 && !state.updateAllQueue.length && (
-                <View style={[styles.searchBarContainer]}>
-                  <LText style={styles.installedAppsText}>
+                <View
+                  style={[
+                    styles.searchBarContainer,
+                    {
+                      backgroundColor: colors.card,
+                      borderColor: colors.lightFog,
+                    },
+                  ]}
+                >
+                  <LText style={styles.installedAppsText} color="grey">
                     <Trans
                       count={device.length}
                       values={{ number: device.length }}
                       i18nKey="manager.storage.appsInstalled"
                     >
-                      <LText style={styles.installedAppsText} bold>
+                      <LText style={styles.installedAppsText} bold color="grey">
                         {"placeholder"}
                       </LText>
                       {"placeholder"}
@@ -252,7 +259,7 @@ const AppsScreen = ({
           {route.title}
         </LText>
         {route.key === managerTabs.INSTALLED_APPS && update.length > 0 && (
-          <View style={styles.updateBadge}>
+          <View style={[styles.updateBadge, { backgroundColor: colors.live }]}>
             <LText bold style={styles.updateBadgeText}>
               {update.length}
             </LText>
@@ -260,7 +267,7 @@ const AppsScreen = ({
         )}
       </View>
     ),
-    [update, managerTabs],
+    [update, managerTabs, colors.live],
   );
 
   const elements = [
@@ -277,8 +284,11 @@ const AppsScreen = ({
         position={position}
         navigationState={{ index, routes }}
         jumpTo={jumpTo}
-        style={styles.tabBarStyle}
-        indicatorStyle={styles.indicatorStyle}
+        style={[styles.tabBarStyle, { backgroundColor: colors.background }]}
+        indicatorStyle={[
+          styles.indicatorStyle,
+          { backgroundColor: colors.live },
+        ]}
         tabStyle={styles.tabStyle}
         activeColor={colors.darkBlue}
         inactiveColor={colors.grey}
@@ -286,11 +296,16 @@ const AppsScreen = ({
         contentContainerStyle={styles.contentContainerStyle}
         renderLabel={renderLabel}
       />
-      <View style={styles.searchBar}>
+      <View style={[styles.searchBar, { backgroundColor: colors.card }]}>
         <Animated.View
           style={[
             styles.searchBarContainer,
-            { opacity: searchOpacity, zIndex: index === 0 ? 2 : -1 },
+            {
+              opacity: searchOpacity,
+              zIndex: index === 0 ? 2 : -1,
+              backgroundColor: colors.card,
+              borderColor: colors.lightFog,
+            },
           ]}
         >
           <SearchModal
@@ -302,7 +317,15 @@ const AppsScreen = ({
             navigation={navigation}
             searchQuery={searchQuery}
           />
-          <View style={styles.filterButton}>
+          <View
+            style={[
+              styles.filterButton,
+              {
+                backgroundColor: colors.card,
+                borderColor: colors.lightFog,
+              },
+            ]}
+          >
             <AppFilter
               filter={appFilter}
               setFilter={setFilter}
@@ -319,7 +342,12 @@ const AppsScreen = ({
             style={[
               styles.searchBarContainer,
               styles.searchBarInstalled,
-              { opacity: position, zIndex: index === 0 ? -1 : 2 },
+              {
+                opacity: position,
+                zIndex: index === 0 ? -1 : 2,
+                backgroundColor: colors.card,
+                borderColor: colors.lightFog,
+              },
             ]}
           >
             <SearchModal
@@ -347,7 +375,7 @@ const AppsScreen = ({
   ];
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <FlatList
         ref={listRef}
         onScroll={onScroll}
@@ -373,7 +401,7 @@ const styles = StyleSheet.create({
   },
   searchBar: {
     width,
-    backgroundColor: colors.white,
+
     height: 64,
   },
   searchBarContainer: {
@@ -383,10 +411,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: colors.white,
     height: 64,
     borderBottomWidth: 1,
-    borderColor: colors.lightFog,
     zIndex: 0,
   },
   searchBarInstalled: {
@@ -406,17 +432,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.white,
     borderBottomWidth: 1,
-    borderColor: colors.lightFog,
     zIndex: 1,
   },
   indicatorStyle: {
     height: 3,
-    backgroundColor: colors.live,
   },
   tabBarStyle: {
-    backgroundColor: colors.lightGrey,
     elevation: 0,
   },
   tabStyle: {
@@ -442,16 +464,16 @@ const styles = StyleSheet.create({
   updateBadge: {
     marginTop: 2,
     marginLeft: 8,
-    backgroundColor: colors.live,
+
     minWidth: 15,
     height: 15,
     borderRadius: 20,
     paddingHorizontal: 4,
   },
   updateBadgeText: {
-    color: colors.white,
     fontSize: 10,
     textAlign: "center",
+    color: "#fff",
   },
   contentContainerStyle: {
     marginTop: 16,
@@ -459,7 +481,6 @@ const styles = StyleSheet.create({
   },
   installedAppsText: {
     fontSize: 14,
-    color: colors.grey,
   },
   noAppInstalledContainer: {
     flexDirection: "column",
@@ -471,13 +492,13 @@ const styles = StyleSheet.create({
   noAppInstalledText: {
     fontSize: 17,
     lineHeight: 21,
-    color: colors.darkBlue,
+
     marginVertical: 8,
   },
   noAppInstalledDescription: {
     fontSize: 14,
     lineHeight: 17,
-    color: colors.grey,
+
     marginVertical: 8,
     textAlign: "center",
   },

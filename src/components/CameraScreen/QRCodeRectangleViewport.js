@@ -1,44 +1,40 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-import colors, { rgba } from "../../colors";
+import { rgba } from "../../colors";
 
 type Props = {
   viewFinderSize: number,
 };
 
-class QRCodeReactangleViewport extends PureComponent<Props> {
-  render() {
-    const { viewFinderSize } = this.props;
-    return (
-      <View style={styles.row}>
-        <View style={styles.darken} />
-        <View style={{ width: viewFinderSize, height: viewFinderSize }}>
-          <View style={styles.innerRow}>
-            <View
-              style={[styles.border, styles.borderLeft, styles.borderTop]}
-            />
-            <View style={styles.border} />
-            <View
-              style={[styles.border, styles.borderRight, styles.borderTop]}
-            />
-          </View>
-          <View style={styles.innerRow} />
-          <View style={styles.innerRow}>
-            <View
-              style={[styles.border, styles.borderLeft, styles.borderBottom]}
-            />
-            <View style={styles.border} />
-            <View
-              style={[styles.border, styles.borderRight, styles.borderBottom]}
-            />
-          </View>
+function QRCodeReactangleViewport({ viewFinderSize }: Props) {
+  const borderStyle = { ...styles.border, borderColor: "white" };
+  return (
+    <View style={styles.row}>
+      <View
+        style={[styles.darken, { backgroundColor: rgba("#142533", 0.4) }]}
+      />
+      <View style={{ width: viewFinderSize, height: viewFinderSize }}>
+        <View style={styles.innerRow}>
+          <View style={[borderStyle, styles.borderLeft, styles.borderTop]} />
+          <View style={borderStyle} />
+          <View style={[borderStyle, styles.borderRight, styles.borderTop]} />
         </View>
-        <View style={styles.darken} />
+        <View style={styles.innerRow} />
+        <View style={styles.innerRow}>
+          <View style={[borderStyle, styles.borderLeft, styles.borderBottom]} />
+          <View style={borderStyle} />
+          <View
+            style={[borderStyle, styles.borderRight, styles.borderBottom]}
+          />
+        </View>
       </View>
-    );
-  }
+      <View
+        style={[styles.darken, { backgroundColor: rgba("#142533", 0.4) }]}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -52,11 +48,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   darken: {
-    backgroundColor: rgba(colors.darkBlue, 0.4),
     flexGrow: 1,
   },
   border: {
-    borderColor: "white",
     flexGrow: 1,
   },
   borderTop: {
@@ -73,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default QRCodeReactangleViewport;
+export default memo<Props>(QRCodeReactangleViewport);

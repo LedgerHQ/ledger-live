@@ -1,7 +1,7 @@
 // @flow
 import React, { useCallback, useState, useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import {
@@ -24,7 +24,6 @@ import Row from "./Row";
 import Header from "./Header";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import { NavigatorName, ScreenName } from "../../../const";
 import Info from "../../../icons/Info";
 import ArrowRight from "../../../icons/ArrowRight";
@@ -38,26 +37,30 @@ import ClaimRewards from "../../../icons/ClaimReward";
 import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 
-const infoRewardsModalData = [
-  {
-    Icon: () => <ClaimRewards size={18} color={colors.darkBlue} />,
-    title: <Trans i18nKey="tron.info.claimRewards.title" />,
-    description: <Trans i18nKey="tron.info.claimRewards.description" />,
-  },
-];
-
 type Props = {
   account: Account,
   parentAccount: ?Account,
 };
 
 const Delegation = ({ account, parentAccount }: Props) => {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [infoRewardsModal, setRewardsInfoModal] = useState();
 
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
+
+  const infoRewardsModalData = useMemo(
+    () => [
+      {
+        Icon: () => <ClaimRewards size={18} color={colors.darkBlue} />,
+        title: <Trans i18nKey="tron.info.claimRewards.title" />,
+        description: <Trans i18nKey="tron.info.claimRewards.description" />,
+      },
+    ],
+    [colors.darkBlue],
+  );
 
   const lastDate = lastVotedDate ? (
     <DateFromNow date={lastVotedDate.valueOf()} />
@@ -166,7 +169,9 @@ const Delegation = ({ account, parentAccount }: Props) => {
             icon={<Info size={16} color={colors.darkBlue} />}
             onPress={openRewardsInfoModal}
           />
-          <View style={styles.rewardSection}>
+          <View
+            style={[styles.rewardSection, { backgroundColor: colors.white }]}
+          >
             <View style={styles.labelSection}>
               <LText semiBold style={styles.title}>
                 <CurrencyUnitValue
@@ -174,7 +179,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                   value={formattedUnwidthDrawnReward}
                 />
               </LText>
-              <LText semiBold style={styles.subtitle}>
+              <LText semiBold style={styles.subtitle} color="grey">
                 {currency && (
                   <CounterValue
                     currency={currency}
@@ -198,7 +203,13 @@ const Delegation = ({ account, parentAccount }: Props) => {
         formattedVotes.length > 0 ? (
           <>
             <Header count={formattedVotes.length} onPress={onManageVotes} />
-            <View style={[styles.container, styles.noPadding]}>
+            <View
+              style={[
+                styles.container,
+                styles.noPadding,
+                { backgroundColor: colors.white },
+              ]}
+            >
               {formattedVotes.map(
                 ({ validator, address, voteCount, isSR }, index) => (
                   <Row
@@ -214,7 +225,10 @@ const Delegation = ({ account, parentAccount }: Props) => {
               )}
               {percentVotesUsed < 1 && (
                 <View style={[styles.container]}>
-                  <TouchableOpacity onPress={onDelegate} style={styles.warn}>
+                  <TouchableOpacity
+                    onPress={onDelegate}
+                    style={[styles.warn, { backgroundColor: colors.lightLive }]}
+                  >
                     <ProgressCircle
                       size={60}
                       progress={percentVotesUsed}
@@ -227,7 +241,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
                       >
                         <Trans i18nKey="tron.voting.remainingVotes.title" />
                       </LText>
-                      <LText style={styles.warnText}>
+                      <LText style={styles.warnText} color="live">
                         <Trans i18nKey="tron.voting.remainingVotes.description" />
                       </LText>
                     </View>
@@ -282,7 +296,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   container: {
-    backgroundColor: colors.white,
     padding: 16,
     borderRadius: 4,
     flexDirection: "column",
@@ -292,7 +305,6 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   rewardSection: {
-    backgroundColor: colors.white,
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderRadius: 4,
@@ -314,7 +326,7 @@ const styles = StyleSheet.create({
   warn: {
     flexDirection: "row",
     padding: 8,
-    backgroundColor: colors.lightLive,
+
     borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
@@ -330,7 +342,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   warnText: {
-    color: colors.live,
     marginLeft: 0,
     fontSize: 13,
   },
@@ -343,33 +354,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: "center",
     paddingVertical: 4,
-    color: colors.darkBlue,
   },
   subtitle: {
     fontSize: 16,
     lineHeight: 18,
     textAlign: "left",
-    color: colors.grey,
-  },
-  description: {
-    fontSize: 14,
-    lineHeight: 17,
-    paddingVertical: 8,
-    textAlign: "center",
-    color: colors.grey,
-  },
-  infoLinkContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  infoLink: {
-    fontSize: 13,
-    lineHeight: 22,
-    paddingVertical: 8,
-    textAlign: "center",
-    color: colors.live,
-    marginRight: 6,
   },
 });
 

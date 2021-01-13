@@ -3,7 +3,6 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import colors from "../../colors";
 import { NavigatorName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -24,7 +23,7 @@ export default function NoOpStatePortfolio() {
         <LText secondary semiBold style={styles.title}>
           {<Trans i18nKey="portfolio.noOpState.title" />}
         </LText>
-        <LText style={styles.desc}>
+        <LText style={styles.desc} color="grey">
           {<Trans i18nKey="portfolio.noOpState.desc" />}
         </LText>
         <Button
@@ -64,7 +63,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     marginHorizontal: 18,
-    color: colors.grey,
     textAlign: "center",
     marginBottom: 32,
   },

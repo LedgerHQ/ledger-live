@@ -11,7 +11,7 @@ import InfoBox from "../InfoBox";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Spinning from "../Spinning";
 import BigSpinner from "../../icons/BigSpinner";
-import colors, { lighten } from "../../colors";
+import { lighten } from "../../colors";
 import Button from "../Button";
 import { NavigatorName } from "../../const";
 import Animation from "../Animation";
@@ -21,11 +21,14 @@ import Circle from "../Circle";
 
 type RawProps = {
   t: (key: string, options?: { [key: string]: string }) => string,
+  colors?: *,
+  theme?: "light" | "dark",
 };
 
 export function renderRequestQuitApp({
   t,
   device,
+  theme,
 }: {
   ...RawProps,
   device: Device,
@@ -33,7 +36,9 @@ export function renderRequestQuitApp({
   return (
     <View style={styles.wrapper}>
       <View style={styles.animationContainer}>
-        <Animation source={getDeviceAnimation({ device, key: "quitApp" })} />
+        <Animation
+          source={getDeviceAnimation({ device, key: "quitApp", theme })}
+        />
       </View>
       <LText style={styles.text} semiBold>
         {t("DeviceAction.quitApp")}
@@ -75,6 +80,7 @@ export function renderVerifyAddress({
   currencyName,
   onPress,
   address,
+  theme,
 }: {
   ...RawProps,
   device: Device,
@@ -90,12 +96,14 @@ export function renderVerifyAddress({
           device.modelId !== "blue" ? styles.verifyAddress : undefined,
         ]}
       >
-        <Animation source={getDeviceAnimation({ device, key: "validate" })} />
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
       </View>
       <LText style={[styles.text, styles.title]} semiBold>
         {t("DeviceAction.verifyAddress.title")}
       </LText>
-      <LText style={[styles.text, styles.description]}>
+      <LText style={[styles.text, styles.description]} color="grey">
         {t("DeviceAction.verifyAddress.description", { currencyName })}
       </LText>
       <View style={styles.actionContainer}>
@@ -123,6 +131,7 @@ export function renderVerifyAddress({
 export function renderConfirmSwap({
   t,
   device,
+  theme,
 }: {
   ...RawProps,
   device: Device,
@@ -139,7 +148,9 @@ export function renderConfirmSwap({
           device.modelId !== "blue" ? styles.verifyAddress : undefined,
         ]}
       >
-        <Animation source={getDeviceAnimation({ device, key: "validate" })} />
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
       </View>
       <LText style={[styles.text, styles.title]} semiBold>
         {t("DeviceAction.confirmSwap.title")}
@@ -180,6 +191,7 @@ export function renderAllowManager({
   t,
   wording,
   device,
+  theme,
 }: {
   ...RawProps,
   wording: string,
@@ -190,7 +202,7 @@ export function renderAllowManager({
     <View style={styles.wrapper}>
       <View style={styles.animationContainer}>
         <Animation
-          source={getDeviceAnimation({ device, key: "allowManager" })}
+          source={getDeviceAnimation({ device, key: "allowManager", theme })}
         />
       </View>
       <LText style={styles.text} semiBold>
@@ -207,6 +219,7 @@ export function renderAllowOpeningApp({
   tokenContext,
   isDeviceBlocker,
   device,
+  theme,
 }: {
   ...RawProps,
   navigation: any,
@@ -225,7 +238,9 @@ export function renderAllowOpeningApp({
   return (
     <View style={styles.wrapper}>
       <View style={styles.animationContainer}>
-        <Animation source={getDeviceAnimation({ device, key: "openApp" })} />
+        <Animation
+          source={getDeviceAnimation({ device, key: "openApp", theme })}
+        />
       </View>
       <LText style={styles.text} semiBold>
         {t("DeviceAction.allowAppPermission", { wording })}
@@ -245,6 +260,8 @@ export function renderInWrongAppForAccount({
   t,
   onRetry,
   accountName,
+  colors,
+  theme,
 }: {
   ...RawProps,
   accountName: string,
@@ -254,6 +271,8 @@ export function renderInWrongAppForAccount({
     t,
     error: new WrongDeviceForAccount(null, { accountName }),
     onRetry,
+    colors,
+    theme,
   });
 }
 
@@ -288,6 +307,7 @@ export function renderConnectYourDevice({
   t,
   unresponsive,
   device,
+  theme,
 }: {
   ...RawProps,
   unresponsive: boolean,
@@ -305,6 +325,7 @@ export function renderConnectYourDevice({
           source={getDeviceAnimation({
             device,
             key: unresponsive ? "enterPinCode" : "plugAndPinCode",
+            theme,
           })}
         />
       </View>
@@ -354,6 +375,7 @@ export function renderWarningOutdated({
   navigation,
   appName,
   passWarning,
+  colors,
 }: WarningOutdatedProps) {
   function onOpenManager() {
     navigation.navigate(NavigatorName.Manager);
@@ -370,7 +392,7 @@ export function renderWarningOutdated({
       <LText style={[styles.text, styles.title]} bold>
         {t("DeviceAction.outdated")}
       </LText>
-      <LText style={[styles.text, styles.description]} semiBold>
+      <LText style={[styles.text, styles.description]} semiBold color="grey">
         {t("DeviceAction.outdatedDesc", { appName })}
       </LText>
       <View style={styles.actionContainer}>
@@ -394,10 +416,12 @@ export function renderWarningOutdated({
   );
 }
 
-export function renderBootloaderStep({ t }: RawProps) {
+export function renderBootloaderStep({ t, colors, theme }: RawProps) {
   return renderError({
     t,
     error: new UnexpectedBootloader(),
+    colors,
+    theme,
   });
 }
 
@@ -412,7 +436,6 @@ const styles = StyleSheet.create({
     width: getWindowDimensions().width - 2 * 16,
   },
   text: {
-    color: colors.darkBlue,
     textAlign: "center",
   },
   iconContainer: {
@@ -423,7 +446,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   description: {
-    color: colors.grey,
     padding: 8,
   },
   spinnerContainer: {

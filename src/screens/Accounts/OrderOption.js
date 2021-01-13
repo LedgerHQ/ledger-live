@@ -3,13 +3,13 @@ import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { setOrderAccounts } from "../../actions/settings";
 import { orderAccountsSelector } from "../../reducers/settings";
 import Check from "../../icons/Check";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
-import colors from "../../colors";
 
 type Props = {
   id: string,
@@ -17,6 +17,7 @@ type Props = {
 
 export default function OrderOption({ id }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   const dispatch = useDispatch();
   const orderAccounts = useSelector(orderAccountsSelector);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
@@ -53,16 +54,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  rootSelected: {
-    backgroundColor: "#f9f9f9",
-  },
   label: {
     fontSize: 14,
     flex: 1,
-  },
-  order: {
-    fontSize: 14,
-    color: colors.grey,
-    marginRight: 8,
   },
 });

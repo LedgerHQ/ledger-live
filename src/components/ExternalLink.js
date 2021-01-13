@@ -4,7 +4,6 @@ import { StyleSheet } from "react-native";
 import LText from "./LText";
 import Touchable from "./Touchable";
 import ExternalLink from "../icons/ExternalLink";
-import colors from "../colors";
 
 type Props = {
   text: React$Node,
@@ -22,7 +21,7 @@ const Link = ({
   event,
   eventProperties,
   ltextProps,
-  color = colors.live,
+  color = "live",
 }: Props) => (
   <Touchable
     event={event}
@@ -30,7 +29,7 @@ const Link = ({
     onPress={onPress}
     style={styles.root}
   >
-    <LText semiBold style={[styles.text, { color }]} {...ltextProps}>
+    <LText semiBold style={[styles.text]} color={color} {...ltextProps}>
       {text}
     </LText>
     <ExternalLink size={14} color={color} />

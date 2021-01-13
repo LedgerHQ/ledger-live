@@ -2,6 +2,7 @@
 
 import { TextInput as ReactNativeTextInput } from "react-native";
 import React, { PureComponent } from "react";
+import { useTheme } from "@react-navigation/native";
 
 class TextInput extends PureComponent<*> {
   render() {
@@ -9,6 +10,8 @@ class TextInput extends PureComponent<*> {
       containerStyle, // Needed to pass flow, since we call the native TextInput
       withSuggestions,
       innerRef,
+      style,
+      colors,
       ...otherProps
     } = this.props;
 
@@ -24,12 +27,14 @@ class TextInput extends PureComponent<*> {
         allowFontScaling={false}
         {...otherProps}
         {...flags}
+        style={[style, { color: colors.darkBlue }]}
       />
     );
   }
 }
 
 // $FlowFixMe https://github.com/facebook/flow/pull/5920
-export default React.forwardRef((props, ref) => (
-  <TextInput innerRef={ref} {...props} />
-));
+export default React.forwardRef((props, ref) => {
+  const { colors } = useTheme();
+  return <TextInput innerRef={ref} colors={colors} {...props} />;
+});

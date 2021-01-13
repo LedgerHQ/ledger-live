@@ -8,13 +8,13 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account/helpers";
 import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import CounterValue from "../../../components/CounterValue";
-import colors, { rgba } from "../../../colors";
+import { rgba } from "../../../colors";
 import DelegationDrawer from "../../../components/DelegationDrawer";
 import Circle from "../../../components/Circle";
 import Plus from "../../../icons/Plus";
@@ -28,6 +28,7 @@ type RowProps = {
 };
 
 export default function ActiveAccountRow({ item }: RowProps) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const {
     account,
@@ -46,6 +47,28 @@ export default function ActiveAccountRow({ item }: RowProps) {
 
   const onOpenDrawer = useCallback(() => setIsOpened(true), []);
   const onCloseDrawer = useCallback(() => setIsOpened(false), []);
+
+  const statusStyles = useMemo(
+    () => ({
+      EARNING: {
+        backgroundColor: colors.live,
+        color: colors.white,
+      },
+      ENABLING: {
+        backgroundColor: colors.grey,
+        color: colors.darkBlue,
+      },
+      INACTIVE: {
+        backgroundColor: colors.lightLive,
+        color: colors.live,
+      },
+      SUPPLYING: {
+        backgroundColor: colors.live,
+        color: colors.white,
+      },
+    }),
+    [colors],
+  );
 
   const data = useMemo(
     () => [
@@ -90,7 +113,14 @@ export default function ActiveAccountRow({ item }: RowProps) {
                 <Trans i18nKey="transfer.lending.dashboard.activeAccount.status" />
               ),
               Component: (
-                <LText semiBold style={[styles.statusPill, styles[status]]}>
+                <LText
+                  semiBold
+                  style={[
+                    styles.statusPill,
+                    { backgroundColor: colors.grey, color: colors.darkBlue },
+                    statusStyles[status],
+                  ]}
+                >
                   <Trans
                     i18nKey={`transfer.lending.dashboard.activeAccount.${status}`}
                   />
@@ -100,7 +130,16 @@ export default function ActiveAccountRow({ item }: RowProps) {
           ]
         : []),
     ],
-    [name, token.units, totalSupplied, accruedInterests, status],
+    [
+      name,
+      token.units,
+      totalSupplied,
+      accruedInterests,
+      status,
+      colors.grey,
+      colors.darkBlue,
+      statusStyles,
+    ],
   );
 
   const actions = useMemo(
@@ -192,6 +231,10 @@ export default function ActiveAccountRow({ item }: RowProps) {
       account.parentId,
       canSupply,
       canWithdraw,
+      colors.grey,
+      colors.lightFog,
+      colors.lightLive,
+      colors.live,
       currency,
       navigation,
       onCloseDrawer,
@@ -200,10 +243,18 @@ export default function ActiveAccountRow({ item }: RowProps) {
 
   return (
     <>
-      <TouchableOpacity style={styles.row} onPress={onOpenDrawer}>
+      <TouchableOpacity
+        style={[styles.row, { backgroundColor: colors.card }]}
+        onPress={onOpenDrawer}
+      >
         <CurrencyIcon radius={100} currency={token} size={32} />
         <View style={styles.currencySection}>
-          <LText numberOfLines={1} semiBold style={styles.subTitle}>
+          <LText
+            numberOfLines={1}
+            semiBold
+            style={styles.subTitle}
+            color="grey"
+          >
             {name}
           </LText>
           <LText numberOfLines={1} semiBold style={styles.title}>
@@ -218,7 +269,7 @@ export default function ActiveAccountRow({ item }: RowProps) {
               showCode
             />
           </LText>
-          <LText style={styles.subTitle}>
+          <LText style={styles.subTitle} color="grey">
             <CounterValue
               currency={token}
               value={totalSupplied}
@@ -264,12 +315,10 @@ const styles = StyleSheet.create({
   title: {
     lineHeight: 17,
     fontSize: 14,
-    color: colors.darkBlue,
   },
   subTitle: {
     lineHeight: 15,
     fontSize: 12,
-    color: colors.grey,
   },
   currencyIconContainer: {
     flexDirection: "row",
@@ -283,24 +332,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     paddingHorizontal: 8,
     textAlign: "center",
-    backgroundColor: colors.grey,
-    color: colors.darkBlue,
     textTransform: "uppercase",
-  },
-  EARNING: {
-    backgroundColor: colors.live,
-    color: colors.white,
-  },
-  ENABLING: {
-    backgroundColor: colors.grey,
-    color: colors.darkBlue,
-  },
-  INACTIVE: {
-    backgroundColor: colors.lightLive,
-    color: colors.live,
-  },
-  SUPPLYING: {
-    backgroundColor: colors.live,
-    color: colors.white,
   },
 });

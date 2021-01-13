@@ -9,9 +9,9 @@ import { useSelector } from "react-redux";
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/lib/account";
+import { useTheme } from "@react-navigation/native";
 import { accountsSelector } from "../../reducers/accounts";
 
-import colors from "../../colors";
 import Info from "../../icons/Info";
 import ExternalLink from "../../components/ExternalLink";
 import CurrencyIcon from "../../components/CurrencyIcon";
@@ -29,30 +29,39 @@ const Disclaimer = ({
 }: {
   tokenName: string,
   tokenType: string,
-}) => (
-  <View style={styles.disclaimer}>
-    <TrackScreen
-      category="AddAccounts"
-      name="TokenCurrencyDisclaimer"
-      currencyName={tokenName}
-    />
-    <Info size={18} color={colors.live} />
-    <View style={styles.disclaimerTextWrapper}>
-      <LText style={styles.disclaimerText}>
-        <Trans
-          i18nKey={`addAccounts.tokens.${tokenType}.disclaimer`}
-          values={{ tokenName }}
-        />
-      </LText>
-      <ExternalLink
-        event="AddAccountsTokenDisclaimerLearnMore"
-        color={colors.live}
-        text={<Trans i18nKey={`addAccounts.tokens.${tokenType}.learnMore`} />}
-        onPress={() => Linking.openURL(urls.supportLinkByTokenType[tokenType])}
+}) => {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        styles.disclaimer,
+        { backgroundColor: colors.pillActiveBackground },
+      ]}
+    >
+      <TrackScreen
+        category="AddAccounts"
+        name="TokenCurrencyDisclaimer"
+        currencyName={tokenName}
       />
+      <Info size={18} color={colors.live} />
+      <View style={styles.disclaimerTextWrapper}>
+        <LText style={styles.disclaimerText} color="live">
+          <Trans
+            i18nKey={`addAccounts.tokens.${tokenType}.disclaimer`}
+            values={{ tokenName }}
+          />
+        </LText>
+        <ExternalLink
+          event="AddAccountsTokenDisclaimerLearnMore"
+          text={<Trans i18nKey={`addAccounts.tokens.${tokenType}.learnMore`} />}
+          onPress={() =>
+            Linking.openURL(urls.supportLinkByTokenType[tokenType])
+          }
+        />
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 type RouteParams = {
   token: TokenCurrency,
@@ -67,6 +76,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   navigation,
   route,
 }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
 
@@ -103,7 +113,10 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   }, [parentTokenAccount, onClose, navigation, token, parentCurrency]);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <View style={styles.wrapper}>
         <CurrencyIcon size={56} radius={16} currency={token} />
       </View>
@@ -144,7 +157,6 @@ export default function AddAccountsTokenCurrencyDisclaimer({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
     padding: 16,
     paddingTop: 32,
   },
@@ -156,7 +168,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   tokenName: {
-    color: colors.darkBlue,
     fontSize: 18,
   },
   buttonWrapper: {
@@ -178,7 +189,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 16,
     borderRadius: 4,
-    backgroundColor: colors.pillActiveBackground,
   },
   disclaimerTextWrapper: {
     flex: 1,
@@ -187,7 +197,6 @@ const styles = StyleSheet.create({
   },
   disclaimerText: {
     fontSize: 14,
-    color: colors.live,
     marginBottom: 16,
   },
 });

@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
 import { hasInstalledAnyAppSelector } from "../../reducers/settings";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -42,7 +41,7 @@ function EmptyStatePortfolio({ navigation, showHelp = true }: Props) {
         <View style={styles.help}>
           <HelpLink
             url={hasInstalledAnyApp ? urls.addAccount : urls.goToManager}
-            color={colors.grey}
+            color="grey"
           />
         </View>
       ) : null}
@@ -56,7 +55,7 @@ function EmptyStatePortfolio({ navigation, showHelp = true }: Props) {
               }`}
             />
           </LText>
-          <LText secondary style={styles.desc}>
+          <LText secondary style={styles.desc} color="grey">
             <Trans
               i18nKey={`portfolio.emptyState.${
                 hasInstalledAnyApp ? "noAccountsDesc" : "noAppsDesc"
@@ -136,7 +135,6 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 14,
     lineHeight: 21,
-    color: colors.grey,
     textAlign: "center",
     marginBottom: 40,
   },

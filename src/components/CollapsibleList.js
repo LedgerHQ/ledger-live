@@ -6,9 +6,9 @@ import {
   FlatList,
 } from "react-native";
 import Animated, { Easing } from "react-native-reanimated";
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Chevron from "../icons/Chevron";
-import colors from "../colors";
 
 const {
   cond,
@@ -88,6 +88,7 @@ const CollapsibleList = ({
   renderItem,
   ...props
 }: Props) => {
+  const { colors } = useTheme();
   const [isOpen, setOpen] = useState(CLOSE);
   const onPress = useCallback(() => {
     setOpen(isOpen !== OPEN ? OPEN : CLOSE);
@@ -127,7 +128,13 @@ const CollapsibleList = ({
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
   return (
-    <Animated.View style={[styles.root, { height }, containerStyle]}>
+    <Animated.View
+      style={[
+        styles.root,
+        { height, backgroundColor: colors.card },
+        containerStyle,
+      ]}
+    >
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.toggleButton}>
           <Animated.View
@@ -135,7 +142,9 @@ const CollapsibleList = ({
           >
             <Chevron size={10} color={colors.live} />
           </Animated.View>
-          <LText style={styles.toggleButtonText}>{title}</LText>
+          <LText style={styles.toggleButtonText} color="live">
+            {title}
+          </LText>
         </View>
       </TouchableWithoutFeedback>
       <AnimatedFlatList
@@ -157,7 +166,6 @@ CollapsibleList.defaultProps = {
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: colors.lightGrey,
     borderRadius: 3,
     paddingHorizontal: 15,
   },
@@ -175,7 +183,6 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   toggleButtonText: {
-    color: colors.live,
     fontSize: 13,
   },
 });

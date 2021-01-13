@@ -6,14 +6,16 @@ import type { PressEvent } from "react-native/Libraries/Types/CoreEventTypes";
 import * as d3shape from "d3-shape";
 import Svg, { Path, G, Circle } from "react-native-svg";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import colors from "../../colors";
 import type { DistributionItem } from "./DistributionCard";
+import { ensureContrast, withTheme } from "../../colors";
 
 type Props = {
   data: Array<DistributionItem>,
   size: number,
   onHighlightChange: number => void,
   highlight: number,
+  bg: string,
+  colors: *,
 };
 
 class RingChart extends PureComponent<Props> {
@@ -102,7 +104,10 @@ class RingChart extends PureComponent<Props> {
 
     const parsedItem = {
       // $FlowFixMe
-      color: getCurrencyColor(item.currency),
+      color: ensureContrast(
+        getCurrencyColor(item.currency),
+        this.props.colors.background,
+      ),
       pathData,
       endAngle: data.angle + increment,
       id: item.currency.id,
@@ -119,7 +124,7 @@ class RingChart extends PureComponent<Props> {
   };
 
   render() {
-    const { highlight, size } = this.props;
+    const { highlight, size, bg, colors } = this.props;
     return (
       <View {...this.panResponder.panHandlers}>
         <Svg width={size} height={size} viewBox="0 0 76 76">
@@ -127,7 +132,7 @@ class RingChart extends PureComponent<Props> {
             {this.paths.items.map(({ pathData, color, id }, i) => (
               <Path
                 key={id}
-                stroke={colors.white}
+                stroke={colors.card}
                 strokeWidth={0.5}
                 fill={color}
                 d={
@@ -137,7 +142,7 @@ class RingChart extends PureComponent<Props> {
                 }
               />
             ))}
-            <Circle cx={0} cy={0} r="26" fill="#fff" />
+            <Circle cx={0} cy={0} r="26" fill={bg} />
           </G>
         </Svg>
       </View>
@@ -145,4 +150,4 @@ class RingChart extends PureComponent<Props> {
   }
 }
 
-export default RingChart;
+export default withTheme(RingChart);

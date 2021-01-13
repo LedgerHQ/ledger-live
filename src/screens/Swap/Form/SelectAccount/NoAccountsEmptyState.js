@@ -2,10 +2,9 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import InfoIcon from "../../../../icons/Info";
-import colors from "../../../../colors";
 import LText from "../../../../components/LText";
 import Button from "../../../../components/Button";
 import { NavigatorName } from "../../../../const";
@@ -15,6 +14,7 @@ const NoAccountsEmptyState = ({
 }: {
   selectedCurrency: Currency,
 }) => {
+  const { colors } = useTheme();
   const { navigate } = useNavigation();
   const onAddAccount = useCallback(
     () =>
@@ -29,7 +29,9 @@ const NoAccountsEmptyState = ({
 
   return (
     <View style={styles.emptyStateBody}>
-      <View style={styles.iconContainer}>
+      <View
+        style={[styles.iconContainer, { backgroundColor: colors.lightLive }]}
+      >
         <InfoIcon size={22} color={colors.live} />
       </View>
       <LText semiBold style={styles.title}>
@@ -40,7 +42,7 @@ const NoAccountsEmptyState = ({
           }}
         />
       </LText>
-      <LText style={styles.description}>
+      <LText style={styles.description} color="smoke">
         <Trans
           i18nKey={"transfer.swap.emptyState.description"}
           values={{
@@ -62,43 +64,6 @@ const NoAccountsEmptyState = ({
 };
 
 const styles = StyleSheet.create({
-  addAccountButton: {
-    flex: 1,
-    flexDirection: "row",
-    paddingVertical: 16,
-    alignItems: "center",
-  },
-  root: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  tokenCardStyle: {
-    marginLeft: 26,
-    paddingLeft: 7,
-    borderLeftWidth: 1,
-    borderLeftColor: colors.fog,
-  },
-  card: {
-    paddingHorizontal: 16,
-    backgroundColor: "transparent",
-  },
-  searchContainer: {
-    paddingTop: 18,
-    flex: 1,
-  },
-  list: {
-    paddingTop: 8,
-  },
-  emptyResults: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  emptyText: {
-    fontSize: 16,
-    color: colors.fog,
-  },
   emptyStateBody: {
     flex: 1,
     display: "flex",
@@ -109,7 +74,6 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 50,
-    backgroundColor: colors.lightLive,
     marginBottom: 24,
     display: "flex",
     justifyContent: "center",
@@ -117,14 +81,12 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    color: colors.darkBlue,
     fontSize: 16,
     marginBottom: 16,
   },
   description: {
     textAlign: "center",
     paddingHorizontal: 16,
-    color: colors.smoke,
     fontSize: 14,
   },
   buttonContainer: {

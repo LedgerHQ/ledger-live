@@ -3,9 +3,9 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet, View, Dimensions, Image, Pressable } from "react-native";
 import { TabView, SceneMap } from "react-native-tab-view";
 import Svg, { Ellipse } from "react-native-svg";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
-import colors from "../../colors";
 import LText from "../../components/LText";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import AnimatedHeaderView from "../../components/AnimatedHeader";
@@ -38,43 +38,50 @@ const InfoView = ({
   }[],
   onPress: boolean => void,
   index: number,
-}) => (
-  <View style={[styles.root]}>
-    <TrackScreen category="Onboarding" name={`Quizz step ${index}`} />
-    <View style={styles.container}>
-      <LText style={[styles.label, { color: colors.live }]} bold>
-        {label}
-      </LText>
-      <LText bold style={styles.title}>
-        {title}
-      </LText>
-      <View style={[styles.answerContainer]}>
-        {answers.map(({ title, correct }, i) => (
-          <Touchable
-            key={i}
-            event={`Onboarding - Quizz step ${index} ${
-              correct ? "correct" : "false"
-            }`}
-            style={[styles.answer, { backgroundColor: colors.white }]}
-            onPress={() => onPress(correct)}
-          >
-            <LText semiBold style={[styles.answerText, { color: colors.live }]}>
-              {title}
-            </LText>
-          </Touchable>
-        ))}
+}) => {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.root]}>
+      <TrackScreen category="Onboarding" name={`Quizz step ${index}`} />
+      <View style={styles.container}>
+        <LText style={[styles.label, { color: colors.live }]} bold>
+          {label}
+        </LText>
+        <LText bold style={styles.title}>
+          {title}
+        </LText>
+        <View style={[styles.answerContainer]}>
+          {answers.map(({ title, correct }, i) => (
+            <Touchable
+              key={i}
+              event={`Onboarding - Quizz step ${index} ${
+                correct ? "correct" : "false"
+              }`}
+              style={[styles.answer, { backgroundColor: colors.lightLive }]}
+              onPress={() => onPress(correct)}
+            >
+              <LText
+                semiBold
+                style={[styles.answerText, { color: colors.live }]}
+              >
+                {title}
+              </LText>
+            </Touchable>
+          ))}
+        </View>
       </View>
-    </View>
 
-    <Image style={styles.image} source={image} resizeMode="cover" />
-  </View>
-);
+      <Image style={styles.image} source={image} resizeMode="cover" />
+    </View>
+  );
+};
 
 const routeKeys = quizScenes.map((k, i) => ({ key: `${i}` }));
 
 const initialLayout = { width: Dimensions.get("window").width };
 
 function OnboardingQuizz({ navigation, route }: *) {
+  const { colors } = useTheme();
   const [index, setIndex] = useState(0);
   const [routes] = useState(routeKeys);
 
@@ -163,7 +170,7 @@ function OnboardingQuizz({ navigation, route }: *) {
               style={[
                 styles.dot,
                 index >= i
-                  ? { backgroundColor: colors.white }
+                  ? { backgroundColor: "#FFF" }
                   : { backgroundColor: colors.translucentGrey },
               ]}
             >

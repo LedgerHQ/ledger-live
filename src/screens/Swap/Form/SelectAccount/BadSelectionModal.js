@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/AntDesign";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -15,7 +15,6 @@ import BottomModal from "../../../../components/BottomModal";
 import { MANAGER_TABS } from "../../../Manager/Manager";
 import LText from "../../../../components/LText";
 import Button from "../../../../components/Button";
-import colors from "../../../../colors";
 
 const BadSelectionModal = ({
   currency,
@@ -26,6 +25,7 @@ const BadSelectionModal = ({
   status: CurrencyStatus,
   onClose: () => void,
 }) => {
+  const { colors } = useTheme();
   const { navigate } = useNavigation();
   const openManagerForApp = useCallback(() => {
     const outdated = status === "outdatedApp";
@@ -69,7 +69,7 @@ const BadSelectionModal = ({
           values={{ ticker: currency.ticker, appName }}
         />
       </LText>
-      <LText style={styles.desc}>
+      <LText style={styles.desc} color="smoke">
         <Trans
           i18nKey={`transfer.swap.form.${status}.desc`}
           values={{
@@ -120,14 +120,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 18,
     lineHeight: 22,
-    color: colors.black,
   },
   desc: {
     marginBottom: 29,
     textAlign: "center",
     fontSize: 13,
     lineHeight: 18,
-    color: colors.smoke,
   },
   closeButton: {
     marginTop: 8,

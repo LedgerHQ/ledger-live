@@ -14,6 +14,7 @@ import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../reducers/accounts";
 import DeviceAction from "../components/DeviceAction";
 import { renderLoading } from "../components/DeviceAction/rendering";
@@ -38,6 +39,7 @@ type RouteParams = {
 };
 
 export default function ConnectDevice({ route }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -68,7 +70,9 @@ export default function ConnectDevice({ route }: Props) {
   return useMemo(
     () =>
       transaction ? (
-        <SafeAreaView style={styles.root}>
+        <SafeAreaView
+          style={[styles.root, { backgroundColor: colors.background }]}
+        >
           <TrackScreen
             category={route.name.replace("ConnectDevice", "")}
             name="ConnectDevice"

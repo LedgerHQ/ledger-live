@@ -6,8 +6,8 @@ import type {
   AccountLike,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import colors from "../../../colors";
 import ValidateError from "../../../components/ValidateError";
 import { urls } from "../../../config/urls";
 
@@ -28,6 +28,7 @@ type RouteParams = {
 };
 
 export default function ValidationError({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const onClose = useCallback(() => {
     navigation.dangerouslyGetParent().pop();
   }, [navigation]);
@@ -43,7 +44,14 @@ export default function ValidationError({ navigation, route }: Props) {
   const { currency, error } = route.params;
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       <TrackScreen
         category="Lend Supply"
         name="Error"
@@ -62,6 +70,5 @@ export default function ValidationError({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
 });

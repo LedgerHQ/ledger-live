@@ -4,7 +4,7 @@ import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { discoverDevices } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
@@ -15,7 +15,6 @@ import BluetoothEmpty from "./BluetoothEmpty";
 import USBEmpty from "./USBEmpty";
 import LText from "../LText";
 import Animation from "../Animation";
-import colors from "../../colors";
 import PairNewDeviceButton from "./PairNewDeviceButton";
 
 import lottieUsb from "../../screens/Onboarding/assets/nanoS/plugDevice/data.json";
@@ -26,7 +25,7 @@ type Props = {
   withArrows?: boolean,
   usbOnly?: boolean,
   filter?: (transportModule: TransportModule) => boolean,
-  autoSelectOnAdd: boolean,
+  autoSelectOnAdd?: boolean,
 };
 
 export default function SelectDevice({
@@ -37,6 +36,7 @@ export default function SelectDevice({
   onBluetoothDeviceAction,
   autoSelectOnAdd,
 }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const knownDevices = useSelector(knownDevicesSelector);
 
@@ -132,14 +132,14 @@ export default function SelectDevice({
 
 const BluetoothHeader = () => (
   <View style={styles.bluetoothHeader}>
-    <LText semiBold style={styles.section}>
+    <LText semiBold style={styles.section} color="grey">
       <Trans i18nKey="common.bluetooth" />
     </LText>
   </View>
 );
 
 const USBHeader = () => (
-  <LText semiBold style={styles.section}>
+  <LText semiBold style={styles.section} color="grey">
     <Trans i18nKey="common.usb" />
   </LText>
 );
@@ -168,7 +168,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 21,
     marginBottom: 12,
-    color: colors.grey,
   },
   separator: {
     width: "100%",
@@ -178,10 +177,6 @@ const styles = StyleSheet.create({
   addContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  add: {
-    marginRight: 8,
-    color: colors.live,
   },
   bluetoothHeader: {
     flexDirection: "row",

@@ -17,8 +17,8 @@ import {
 import LText from "../../../components/LText/index";
 
 import Check from "../../../icons/Check";
-import colors from "../../../colors";
 import { CUSTOM_FEES_CAP } from "../../../constants";
+import { withTheme } from "../../../colors";
 
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 const satoshiUnit = bitcoinCurrency.units[bitcoinCurrency.units.length - 1];
@@ -30,6 +30,7 @@ type Props = {
   onPress: BigNumber => void,
   isSelected: boolean,
   isValid?: boolean,
+  colors: *,
 };
 
 type State = {
@@ -84,15 +85,30 @@ class FeesRow extends Component<Props, State> {
   };
 
   render() {
-    const { title, last, isSelected, isValid } = this.props;
+    const { title, last, isSelected, isValid, colors } = this.props;
 
     return (
       <TouchableOpacity onPress={this.onPress}>
-        <View style={[styles.root, last ? styles.last : null]}>
+        <View
+          style={[
+            styles.root,
+            { borderBottomColor: colors.lightFog },
+            last ? styles.last : null,
+          ]}
+        >
           <View
             style={[
               styles.iconContainer,
-              isSelected ? styles.iconContainerSelected : null,
+
+              isSelected
+                ? {
+                    ...styles.iconContainerSelected,
+                    borderColor: colors.live,
+                    backgroundColor: colors.live,
+                  }
+                : {
+                    borderColor: colors.fog,
+                  },
             ]}
           >
             {isSelected ? <Check size={14} color={colors.white} /> : null}
@@ -100,11 +116,12 @@ class FeesRow extends Component<Props, State> {
           <View style={styles.titleContainer}>
             <LText
               semiBold={isSelected}
-              style={[styles.title, isSelected ? styles.titleSelected : null]}
+              style={[styles.title]}
+              color={isSelected ? "darkBlue" : "grey"}
             >
               {title}
             </LText>
-            <LText secondary style={isValid ? styles.warning : styles.error}>
+            <LText secondary color={isValid ? "grey" : "alert"}>
               <Trans i18nKey="send.fees.required" />
             </LText>
           </View>
@@ -114,6 +131,7 @@ class FeesRow extends Component<Props, State> {
               style={[
                 styles.textInput,
                 isSelected ? styles.textInputSelected : null,
+                { color: colors.darkBlue },
               ]}
               onFocus={this.onPress}
               onChangeText={this.onChangeText}
@@ -142,7 +160,7 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
       },
     }),
-    borderBottomColor: colors.lightFog,
+
     borderBottomWidth: 1,
   },
   last: {
@@ -154,39 +172,24 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     marginRight: 24,
   },
-  error: {
-    color: colors.alert,
-  },
-  warning: {
-    color: colors.grey,
-  },
   title: {
     fontSize: 14,
-    color: colors.grey,
-  },
-  titleSelected: {
-    color: colors.darkBlue,
   },
   iconContainer: {
     width: 24,
     height: 24,
     borderWidth: 1,
-    borderColor: colors.fog,
     borderRadius: 50,
     marginRight: 16,
   },
   iconContainerSelected: {
     justifyContent: "center",
     alignItems: "center",
-    borderColor: colors.live,
-    backgroundColor: colors.live,
   },
-  text: {
-    color: colors.darkBlue,
-  },
+  text: {},
   textInput: {
     fontSize: 14,
-    color: colors.darkBlue,
+
     textAlign: "right",
     ...Platform.select({
       ios: {
@@ -203,4 +206,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FeesRow;
+export default withTheme(FeesRow);

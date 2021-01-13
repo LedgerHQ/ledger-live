@@ -1,40 +1,41 @@
 /* @flow */
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import TrackScreen from "../../analytics/TrackScreen";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import AlertTriangle from "../../icons/AlertTriangle";
 
-class ReadOnlyWarning extends PureComponent<{ continue: () => void }> {
-  render() {
-    return (
-      <View style={styles.root}>
-        <TrackScreen category="Manager" name="ReadOnlyNanoX" />
-        <View style={styles.alert}>
-          <AlertTriangle size={32} color={colors.live} />
-        </View>
-        <LText secondary semiBold style={styles.title}>
-          <Trans i18nKey="transfer.receive.readOnly.text" />
-        </LText>
-        <LText style={styles.desc}>
-          <Trans i18nKey="transfer.receive.readOnly.desc" />
-        </LText>
-        <Button
-          event="ReadOnlyOnboarding"
-          type="primary"
-          containerStyle={styles.button}
-          title={<Trans i18nKey="common.continue" />}
-          onPress={this.props.continue}
-        />
+type Props = { continue: () => void };
+
+function ReadOnlyWarning({ continue: onContinue }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.root, { backgroundColor: colors.card }]}>
+      <TrackScreen category="Manager" name="ReadOnlyNanoX" />
+      <View style={styles.alert}>
+        <AlertTriangle size={32} color={colors.live} />
       </View>
-    );
-  }
+      <LText secondary semiBold style={styles.title}>
+        <Trans i18nKey="transfer.receive.readOnly.text" />
+      </LText>
+      <LText style={styles.desc} color="grey">
+        <Trans i18nKey="transfer.receive.readOnly.desc" />
+      </LText>
+      <Button
+        event="ReadOnlyOnboarding"
+        type="primary"
+        containerStyle={styles.button}
+        title={<Trans i18nKey="common.continue" />}
+        onPress={onContinue}
+      />
+    </View>
+  );
 }
 
-export default ReadOnlyWarning;
+export default memo<Props>(ReadOnlyWarning);
 
 const styles = StyleSheet.create({
   root: {
@@ -43,7 +44,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.lightGrey,
   },
   alert: {
     marginBottom: 32,
@@ -65,7 +65,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   desc: {
-    color: colors.grey,
     textAlign: "center",
     marginBottom: 32,
   },

@@ -4,7 +4,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
 import LText from "../../components/LText";
-import colors from "../../colors";
 
 type Props = FieldWrapperProps & {
   title: string,
@@ -27,7 +26,9 @@ export default function Section({
   return (
     <SectionWrapper onPress={onPress} style={style}>
       <View style={styles.titleWrapper}>
-        <LText style={styles.title}>{title}</LText>
+        <LText style={styles.title} color="grey">
+          {title}
+        </LText>
         {headerRight}
       </View>
 
@@ -57,7 +58,6 @@ function SectionWrapper({ onPress, children, style }: FieldWrapperProps) {
 export const styles = StyleSheet.create({
   wrapper: {
     padding: 16,
-    color: colors.darkBlue,
   },
   titleWrapper: {
     flexDirection: "row",
@@ -66,10 +66,8 @@ export const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    color: colors.grey,
+
     marginRight: 8,
   },
-  value: {
-    color: colors.darkBlue,
-  },
+  value: {},
 });

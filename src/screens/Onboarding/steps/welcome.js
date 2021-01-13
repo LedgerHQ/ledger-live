@@ -13,10 +13,10 @@ import Animated, {
   Easing,
   multiply,
 } from "react-native-reanimated";
+import { useTheme } from "@react-navigation/native";
 import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 import { deviceNames } from "../../../wording";
 
@@ -39,6 +39,7 @@ const hitSlop = {
 };
 
 function OnboardingStepWelcome({ navigation }: *) {
+  const { colors } = useTheme();
   const buy = useCallback(() => Linking.openURL(urls.buyNanoX), []);
 
   const next = useCallback(
@@ -154,7 +155,7 @@ function OnboardingStepWelcome({ navigation }: *) {
           <LText bold style={styles.title}>
             <Trans i18nKey="onboarding.stepWelcome.title" />
           </LText>
-          <LText style={[styles.subTitle]}>
+          <LText style={[styles.subTitle]} color="grey">
             <Trans i18nKey="onboarding.stepWelcome.subtitle" />
           </LText>
         </View>
@@ -166,7 +167,7 @@ function OnboardingStepWelcome({ navigation }: *) {
           title={<Trans i18nKey="onboarding.stepWelcome.start" />}
         />
         <View style={commonStyles.footer}>
-          <LText style={styles.subTitle}>
+          <LText style={styles.subTitle} color="grey">
             <Trans i18nKey="onboarding.stepWelcome.noDevice" />
           </LText>
           <Touchable
@@ -175,10 +176,7 @@ function OnboardingStepWelcome({ navigation }: *) {
             style={styles.buyTouch}
             hitSlop={hitSlop}
           >
-            <LText
-              semiBold
-              style={[styles.subTitle, styles.buy, { color: colors.live }]}
-            >
+            <LText semiBold style={[styles.subTitle, styles.buy]} color="live">
               <Trans
                 i18nKey="onboarding.stepWelcome.buy"
                 values={deviceNames.nanoX}
@@ -243,14 +241,12 @@ const styles = StyleSheet.create({
   bottomSection: { flex: 1, padding: 24, justifyContent: "flex-start" },
   titleSection: { flex: 1, justifyContent: "center" },
   title: {
-    color: colors.darkBlue,
     fontSize: 28,
     textAlign: "center",
     marginBottom: 4,
   },
   subTitle: {
     fontSize: 13,
-    color: colors.grey,
     lineHeight: 22,
     textAlign: "center",
   },

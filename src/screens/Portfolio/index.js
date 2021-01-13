@@ -7,13 +7,13 @@ import Animated from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import {
   groupAccountsOperationsByDay,
   isAccountEmpty,
 } from "@ledgerhq/live-common/lib/account";
+
 import { useRefreshAccountsOrdering } from "../../actions/general";
-import colors from "../../colors";
 import {
   accountsSelector,
   flattenAccountsSelector,
@@ -64,6 +64,7 @@ export default function PortfolioScreen({ navigation }: Props) {
   const scrollY = useRef(new Animated.Value(0)).current;
   const ref = useRef();
   useScrollToTop(ref);
+  const { colors } = useTheme();
 
   function keyExtractor(item: Operation) {
     return item.id;
@@ -139,7 +140,15 @@ export default function PortfolioScreen({ navigation }: Props) {
     accounts.length === 0 || accounts.every(isAccountEmpty);
 
   return (
-    <SafeAreaView style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          paddingTop: extraStatusBarPadding,
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       {!showingPlaceholder ? (
         <StickyHeader
           scrollY={scrollY}
@@ -196,7 +205,6 @@ export default function PortfolioScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   inner: {
     position: "relative",

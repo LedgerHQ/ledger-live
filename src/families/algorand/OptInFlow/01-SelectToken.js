@@ -19,7 +19,7 @@ import { extractTokenId } from "@ledgerhq/live-common/lib/families/algorand/toke
 
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -42,6 +42,7 @@ const Row = ({
   onDisabledPress: () => void,
   disabled: boolean,
 }) => {
+  const { colors } = useTheme();
   const tokenId = extractTokenId(item.id);
   return (
     <TouchableOpacity
@@ -58,7 +59,9 @@ const Row = ({
       >
         {item.name}
       </LText>
-      <LText style={styles.ticker}>- {tokenId}</LText>
+      <LText style={styles.ticker} color="grey">
+        - {tokenId}
+      </LText>
     </TouchableOpacity>
   );
 };
@@ -83,6 +86,7 @@ type Props = {
 };
 
 export default function DelegationStarted({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
 
@@ -151,7 +155,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="DelegationFlow" name="Started" />
       <KeyboardView style={styles.keyboardView}>
         <View style={styles.searchContainer}>
@@ -178,7 +182,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
                 i18nKey={`algorand.optIn.flow.steps.selectToken.warning.title`}
               />
             </LText>
-            <LText style={styles.warnText}>
+            <LText style={styles.warnText} color="grey">
               <Trans
                 i18nKey={`algorand.optIn.flow.steps.selectToken.warning.description`}
                 values={{ token: infoModalOpen }}
@@ -194,7 +198,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   keyboardView: { flex: 1 },
   searchContainer: {
@@ -216,7 +219,6 @@ const styles = StyleSheet.create({
   ticker: {
     marginLeft: 5,
     fontSize: 12,
-    color: colors.grey,
   },
   emptySearch: {
     paddingHorizontal: 16,
@@ -231,12 +233,10 @@ const styles = StyleSheet.create({
   title: {
     lineHeight: 24,
     fontSize: 16,
-    color: colors.darkBlue,
   },
   warnText: {
     textAlign: "center",
     fontSize: 14,
-    color: colors.grey,
     lineHeight: 16,
     marginVertical: 8,
   },

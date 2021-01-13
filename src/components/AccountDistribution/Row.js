@@ -12,15 +12,15 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { ScreenName } from "../../const";
 import CounterValue from "../CounterValue";
 import CurrencyUnitValue from "../CurrencyUnitValue";
-import colors from "../../colors";
 import { accountsSelector } from "../../reducers/accounts";
 import LText from "../LText";
 import ParentCurrencyIcon from "../ParentCurrencyIcon";
+import { ensureContrast } from "../../colors";
 
 export type AccountDistributionItem = {
   account: AccountLike,
@@ -38,6 +38,7 @@ export default function Row({
 }: Props) {
   const accounts = useSelector(accountsSelector);
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   const onAccountPress = useCallback(
     (parentAccount?: ?Account) => {
@@ -53,13 +54,24 @@ export default function Row({
     account.type !== "Account"
       ? accounts.find(a => a.id === account.parentId)
       : null;
-  const color = getCurrencyColor(currency);
+  const color = ensureContrast(getCurrencyColor(currency), colors.background);
   const percentage = Math.round(distribution * 1e4) / 1e2;
   const icon = <ParentCurrencyIcon currency={currency} size={18} />;
 
   return (
     <RectButton
-      style={styles.card}
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card,
+          ...Platform.select({
+            android: {},
+            ios: {
+              shadowColor: colors.black,
+            },
+          }),
+        },
+      ]}
       onPress={() => onAccountPress(parentAccount)}
     >
       {icon}
@@ -78,16 +90,20 @@ export default function Row({
         </View>
         <View style={styles.row}>
           <View />
-          <LText semiBold style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue} color="grey">
             <CounterValue currency={currency} value={amount} />
           </LText>
         </View>
         <View style={[styles.row, { marginTop: 16 }]}>
-          <View style={styles.progress}>
+          <View style={[styles.progress, { backgroundColor: colors.lightFog }]}>
             <View
               style={[
                 styles.progress,
-                { flex: 0, backgroundColor: color, width: `${percentage}%` },
+                {
+                  flex: 0,
+                  backgroundColor: color,
+                  width: `${percentage}%`,
+                },
               ]}
             />
           </View>
@@ -113,14 +129,13 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     marginBottom: 8,
-    backgroundColor: colors.white,
+
     borderRadius: 4,
     ...Platform.select({
       android: {
         elevation: 1,
       },
       ios: {
-        shadowColor: colors.black,
         shadowOpacity: 0.03,
         shadowRadius: 8,
         shadowOffset: {
@@ -138,10 +153,8 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 3,
     flex: 1,
-    backgroundColor: colors.lightFog,
   },
   darkBlue: {
-    color: colors.darkBlue,
     fontSize: 14,
     lineHeight: 21,
   },
@@ -151,7 +164,6 @@ const styles = StyleSheet.create({
   counterValue: {
     fontSize: 12,
     lineHeight: 18,
-    color: colors.grey,
   },
   bodyLeft: {
     flexGrow: 1,

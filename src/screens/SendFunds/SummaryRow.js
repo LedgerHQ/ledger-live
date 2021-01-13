@@ -3,8 +3,6 @@ import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 
 import LText from "../../components/LText/index";
-
-import colors from "../../colors";
 import Touchable from "../../components/Touchable";
 
 type Props = {
@@ -30,7 +28,7 @@ class SummaryRow extends Component<Props, State> {
     } = this.props;
     const titleContainer = (
       <View style={styles.titleContainer}>
-        <LText style={[styles.title]} {...titleProps}>
+        <LText style={[styles.title]} color="grey" {...titleProps}>
           {title}
         </LText>
         <View style={styles.iconContainer}>
@@ -68,7 +66,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    color: colors.grey,
   },
   iconContainer: {
     paddingLeft: 6,

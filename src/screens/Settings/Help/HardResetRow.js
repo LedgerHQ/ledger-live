@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import { knownDevicesSelector } from "../../../reducers/ble";
 import { useReboot } from "../../../context/Reboot";
 import SettingsRow from "../../../components/SettingsRow";
@@ -13,6 +13,7 @@ import HardResetModal from "../../../components/HardResetModal";
 import Trash from "../../../icons/Trash";
 
 export default function HardResetRow() {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const reboot = useReboot();
   const knownDevices = useSelector(knownDevicesSelector);

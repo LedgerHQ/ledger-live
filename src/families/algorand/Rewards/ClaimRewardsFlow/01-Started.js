@@ -13,7 +13,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/formatC
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
-import colors from "../../../../colors";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../../const";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
@@ -34,6 +34,7 @@ type Props = {
 };
 
 export default function DelegationStarted({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(account, "Account required");
@@ -78,7 +79,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     Object.values(status.warnings)[0];
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -100,10 +101,16 @@ export default function DelegationStarted({ navigation, route }: Props) {
           />
         </View>
       </NavigationScrollView>
-      <View style={styles.footer}>
+      <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
         {warning && warning instanceof Error ? (
           <View style={styles.warningSection}>
-            <LText selectable secondary semiBold style={styles.warningText}>
+            <LText
+              selectable
+              secondary
+              semiBold
+              style={styles.warningText}
+              color="alert"
+            >
               <TranslatedError error={warning} />
             </LText>
           </View>
@@ -124,7 +131,6 @@ export default function DelegationStarted({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scroll: {
     flex: 1,
@@ -137,19 +143,8 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 21,
-    color: colors.darkBlue,
     textAlign: "center",
     marginTop: 16,
-  },
-  howDelegationWorks: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderColor: colors.live,
-    flexDirection: "row",
-  },
-  howDelegationWorksText: {
-    color: colors.live,
-    fontSize: 14,
   },
   warning: {
     width: "100%",
@@ -157,12 +152,10 @@ const styles = StyleSheet.create({
   },
   warningText: {
     textAlign: "center",
-    color: colors.alert,
   },
   warningSection: { padding: 16, height: 80 },
   footer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
   },
 });

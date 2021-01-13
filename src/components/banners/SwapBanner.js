@@ -2,16 +2,16 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { RectButton } from "react-native-gesture-handler";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { NavigatorName } from "../../const";
 
 import LText from "../LText";
-import colors from "../../colors";
 import { useBanner } from "./hooks";
 import SwapIcon from "../../icons/Swap";
 import CloseIcon from "../../icons/Close";
 
 export function SwapBanner() {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -22,7 +22,7 @@ export function SwapBanner() {
   }
 
   return (
-    <View style={styles.banner}>
+    <View style={[styles.banner, { backgroundColor: colors.darkBlue }]}>
       <RectButton style={styles.closeButton} onPress={dismiss}>
         <CloseIcon size={18} color={colors.grey} />
       </RectButton>
@@ -30,14 +30,14 @@ export function SwapBanner() {
         style={styles.innerContainer}
         onPress={() => navigation.navigate(NavigatorName.Swap)}
       >
-        <View style={styles.iconContainer}>
+        <View style={[styles.iconContainer, { backgroundColor: colors.white }]}>
           <SwapIcon size={22} color={colors.live} />
         </View>
         <View style={styles.contentContainer}>
-          <LText style={styles.title} bold>
+          <LText style={styles.title} bold color="grey">
             {t("banner.swap.title")}
           </LText>
-          <LText semiBold style={styles.description}>
+          <LText semiBold style={styles.description} color="white">
             {t("banner.swap.description")}
           </LText>
         </View>
@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     position: "relative",
     borderRadius: 4,
     overflow: "hidden",
-    backgroundColor: colors.darkBlue,
     marginBottom: 8,
   },
   innerContainer: {
@@ -61,7 +60,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   title: {
-    color: colors.grey,
     fontSize: 10,
     lineHeight: 15,
     marginRight: 90,
@@ -72,14 +70,12 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 50,
-    backgroundColor: colors.white,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 10,
   },
   description: {
-    color: colors.white,
     fontSize: 13,
     lineHeight: 19,
     marginRight: 90,

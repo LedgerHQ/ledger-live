@@ -1,11 +1,20 @@
 <resources>
-
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:layoutDirection">ltr</item>
         <!-- Customize your theme here. -->
         <item name="android:textColor">#000000</item>
         <item name="colorAccent">#6490F1</item>
+        <item name="backgroundColor">@color/background_light</item>
     </style>
 
+    <style name="LightTheme" parent="AppTheme">
+        <item name="colorAccent">#6490F1</item>
+        <item name="backgroundColor">@color/background_light</item>
+    </style>
+
+    <style name="DarkTheme" parent="AppTheme">
+        <item name="colorAccent">#6490F1</item>
+        <item name="backgroundColor">@color/background_dark</item>
+    </style>
 </resources>

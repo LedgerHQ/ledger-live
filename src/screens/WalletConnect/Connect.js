@@ -2,7 +2,7 @@
 import React, { useContext, useEffect } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import _ from "lodash";
 import { useSelector } from "react-redux";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -27,7 +27,6 @@ import InfoBox from "../../components/InfoBox";
 import Circle from "../../components/Circle";
 import WarningBox from "../../components/WarningBox";
 import HeaderRightClose from "../../components/HeaderRightClose";
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import AccountHeaderTitle from "../Account/AccountHeaderTitle";
 
@@ -50,6 +49,7 @@ type RouteParams = {
 };
 
 export default function Connect({ route, navigation }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   const wcContext = useContext(context);

@@ -4,7 +4,6 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import LText from "../../components/LText";
-import colors from "../../colors";
 
 const getCurrentGreetings = () => {
   const localTimeHour = new Date().getHours();
@@ -29,10 +28,15 @@ class Greetings extends PureComponent<{
     const { nbAccounts } = this.props;
     return (
       <View style={styles.root}>
-        <LText secondary style={styles.title} bold>
+        <LText secondary color="darkBlue" style={styles.title} bold>
           {<Trans i18nKey={getCurrentGreetings()} />}
         </LText>
-        <LText secondary style={styles.description} numberOfLines={2}>
+        <LText
+          secondary
+          color="grey"
+          style={styles.description}
+          numberOfLines={2}
+        >
           {
             <Trans
               i18nKey="portfolio.summary"
@@ -52,13 +56,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: colors.darkBlue,
     justifyContent: "center",
   },
   description: {
     marginTop: 5,
     fontSize: 14,
-    color: colors.grey,
   },
 });
 

@@ -1,6 +1,7 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
 import ScanAccounts from "../../screens/ImportAccounts/Scan";
@@ -8,15 +9,19 @@ import DisplayResult, {
   BackButton,
 } from "../../screens/ImportAccounts/DisplayResult";
 import FallBackCameraScreen from "../../screens/ImportAccounts/FallBackCameraScreen";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
 import HeaderRightClose from "../HeaderRightClose";
-import colors from "../../colors";
 
 export default function ImportAccountsNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.ScanAccounts}
         component={ScanAccounts}
@@ -24,9 +29,7 @@ export default function ImportAccountsNavigator() {
           ...TransparentHeaderNavigationOptions,
           headerShown: true,
           title: t("account.import.scan.title"),
-          headerRight: props => (
-            <HeaderRightClose {...props} color={colors.white} />
-          ),
+          headerRight: props => <HeaderRightClose {...props} color={"#fff"} />,
           headerLeft: null,
         }}
       />

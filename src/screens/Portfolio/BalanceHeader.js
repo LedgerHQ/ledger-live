@@ -4,7 +4,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import type { Portfolio, Currency } from "@ledgerhq/live-common/lib/types";
-import colors from "../../colors";
 import LText from "../../components/LText";
 import Space from "../../components/Space";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -22,7 +21,7 @@ export default function BalanceHeader({
 }: Props) {
   return (
     <View style={[styles.content, style]}>
-      <LText secondary semiBold style={styles.labelText}>
+      <LText secondary color="grey" semiBold style={styles.labelText}>
         <Trans i18nKey="portfolio.totalBalance" />
       </LText>
       <Space h={5} />
@@ -47,10 +46,8 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontSize: 14,
-    color: colors.grey,
   },
   balanceText: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
 });

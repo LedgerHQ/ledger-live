@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
 
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 
@@ -24,6 +24,7 @@ type Props = {
 const forceInset = { bottom: "always" };
 
 const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
+  const { colors } = useTheme();
   const viewInExplorer = useCallback(() => {
     if (url) {
       Linking.openURL(url);
@@ -39,14 +40,14 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
 
   return (
     <SafeAreaView forceInset={forceInset} style={styles.root}>
-      <View style={styles.iconWrapper}>
+      <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
         <Icon name="file-text" size={24} color={colors.live} />
       </View>
       <View style={styles.textWrapper}>
         <LText secondary bold style={styles.textTitle}>
           <Trans i18nKey="account.tokens.contractAddress" />
         </LText>
-        <LText style={styles.textContract}>
+        <LText style={styles.textContract} color="smoke">
           {shortAddressPreview(contractAddress, 30)}
         </LText>
       </View>
@@ -83,19 +84,16 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 56,
-    backgroundColor: colors.lightLive,
   },
   textWrapper: {
     marginTop: 16,
     alignItems: "center",
   },
   textTitle: {
-    color: colors.darkBlue,
     fontSize: 16,
   },
   textContract: {
     marginTop: 8,
-    color: colors.smoke,
     fontSize: 14,
   },
   footerContainer: {

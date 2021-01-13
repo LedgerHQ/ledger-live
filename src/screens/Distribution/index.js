@@ -12,13 +12,13 @@ import {
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import type { AssetsDistribution } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import TrackScreen from "../../analytics/TrackScreen";
 import DistributionCard from "./DistributionCard";
 import LText from "../../components/LText";
 import type { DistributionItem } from "./DistributionCard";
 import { counterValueCurrencySelector } from "../../reducers/settings";
-import colors from "../../colors";
 import RingChart from "./RingChart";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import { useDistribution } from "../../actions/general";
@@ -30,6 +30,7 @@ type Props = {
 };
 
 export default function Distribution({ navigation }: Props) {
+  const { colors } = useTheme();
   const distribution = useDistribution();
 
   const [highlight, setHighlight] = useState(-1);
@@ -59,7 +60,10 @@ export default function Distribution({ navigation }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.wrapper} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.wrapper, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="Distribution" />
       <Header
         distribution={distribution}
@@ -87,22 +91,24 @@ export function Header({
   highlight: number,
   onHighlightChange: (index: number) => void,
 }) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const size = Dimensions.get("window").width / 3;
 
   return (
     <View>
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: colors.card }]}>
         <View style={[styles.chartWrapper, { height: size }]}>
           <RingChart
             size={size}
             onHighlightChange={onHighlightChange}
             highlight={highlight}
             data={distribution.list}
+            bg={colors.card}
           />
           <View style={styles.assetWrapper} pointerEvents="none">
-            <LText semiBold style={styles.assetCount}>
+            <LText semiBold style={[styles.assetCount, styles.assets]}>
               {distribution.list.length}
             </LText>
             <LText semiBold style={styles.assets}>
@@ -136,19 +142,17 @@ const styles = StyleSheet.create({
   root: {
     padding: 16,
     paddingTop: 0,
-    backgroundColor: colors.lightGrey,
     paddingBottom: 16,
   },
   distributionTitle: {
     fontSize: 16,
     lineHeight: 24,
-    color: colors.darkBlue,
+
     marginLeft: 16,
     marginTop: 8,
     marginBottom: 8,
   },
   header: {
-    backgroundColor: colors.white,
     borderRadius: 4,
     padding: 16,
     flexDirection: "row",
@@ -184,21 +188,14 @@ const styles = StyleSheet.create({
   },
   assetCount: {
     fontSize: 27,
-    color: colors.darkBlue,
-  },
-
-  assets: {
-    color: colors.darkBlue,
   },
 
   label: {
     fontSize: 14,
-    color: colors.smoke,
   },
 
   amount: {
     fontSize: 22,
-    color: colors.darkBlue,
   },
 
   total: {

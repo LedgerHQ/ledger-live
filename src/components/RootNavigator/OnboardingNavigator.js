@@ -1,9 +1,10 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import {
   createStackNavigator,
   CardStyleInterpolators,
 } from "@react-navigation/stack";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../const";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 
@@ -23,10 +24,15 @@ import OnboardingFinish from "../../screens/Onboarding/steps/finish";
 import OnboardingQuiz from "../../screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "../../screens/Onboarding/OnboardingQuizFinal";
 
-import { closableNavigationOptions } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 
 export default function OnboardingNavigator() {
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -38,7 +44,7 @@ export default function OnboardingNavigator() {
         component={OnboardingLanguage}
         options={{
           headerShown: true,
-          ...closableNavigationOptions,
+          ...stackNavigationConfig,
           title: null,
           headerRight: null,
           headerStyle: styles.headerNoShadow,

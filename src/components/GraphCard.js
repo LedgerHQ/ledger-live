@@ -13,7 +13,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies/color";
-import colors from "../colors";
+import { withTheme, ensureContrast } from "../colors";
 import { setSelectedTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Delta from "./Delta";
@@ -38,6 +38,7 @@ type Props = {
   counterValueCurrency: Currency,
   useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
+  colors: *,
 };
 
 type State = {
@@ -62,7 +63,7 @@ class GraphCard extends PureComponent<Props, State> {
   mapGraphValue = d => d.value.toNumber();
 
   render() {
-    const { portfolio, renderTitle, counterValueCurrency } = this.props;
+    const { portfolio, renderTitle, counterValueCurrency, colors } = this.props;
 
     const { countervalueChange } = portfolio;
     const { hoveredItem } = this.state;
@@ -74,11 +75,14 @@ class GraphCard extends PureComponent<Props, State> {
 
     const graphColor =
       accounts.length === 1
-        ? getCurrencyColor(getAccountCurrency(accounts[0]))
+        ? ensureContrast(
+            getCurrencyColor(getAccountCurrency(accounts[0])),
+            colors.background,
+          )
         : undefined;
 
     return (
-      <Card style={styles.root}>
+      <Card bg="card" style={styles.root}>
         <GraphCardHeader
           valueChange={countervalueChange}
           isLoading={!isAvailable}
@@ -181,7 +185,6 @@ class GraphCardHeader extends PureComponent<{
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: colors.white,
     paddingVertical: 16,
     margin: 16,
     ...Platform.select({
@@ -204,7 +207,6 @@ const styles = StyleSheet.create({
   },
   balanceText: {
     fontSize: 22,
-    color: colors.darkBlue,
     lineHeight: 24,
   },
   subtitleContainer: {
@@ -239,4 +241,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(connect(null, mapDispatchToProps))(GraphCard);
+export default compose(withTheme, connect(null, mapDispatchToProps))(GraphCard);

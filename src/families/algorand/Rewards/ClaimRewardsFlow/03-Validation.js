@@ -9,11 +9,11 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
+import { useTheme } from "@react-navigation/native";
 import { useSignWithDevice } from "../../../../logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import { accountScreenSelector } from "../../../../reducers/accounts";
 import { TrackScreen } from "../../../../analytics";
-import colors from "../../../../colors";
 import PreventNativeBack from "../../../../components/PreventNativeBack";
 import ValidateOnDevice from "../../../../components/ValidateOnDevice";
 import SkipLock from "../../../../components/behaviour/SkipLock";
@@ -35,6 +35,7 @@ type Props = {
 };
 
 export default function Validation({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
   const dispatch = useDispatch();
@@ -51,7 +52,10 @@ export default function Validation({ navigation, route }: Props) {
   const { status, transaction, modelId, wired } = route.params;
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen
         category="AlgorandClaimRewards"
         name="Validation"
@@ -85,7 +89,6 @@ export default function Validation({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   center: {
     flex: 1,

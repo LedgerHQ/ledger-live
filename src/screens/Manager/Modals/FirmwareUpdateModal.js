@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import InfoIcon from "../../../components/InfoIcon";
 import Info from "../../../icons/Info";
@@ -13,23 +13,26 @@ type Props = {
   onClose: () => void,
 };
 
-const QuitManagerModal = ({ isOpened, onClose }: Props) => (
-  <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
-    <View style={styles.storageImage}>
-      <InfoIcon bg={colors.lightLive}>
-        <Info size={30} color={colors.live} />
-      </InfoIcon>
-    </View>
-    <View style={styles.storageRow}>
-      <LText secondary style={[styles.text, styles.title]} semiBold>
-        <Trans i18nKey={`manager.firmware.modalTitle`} />
-      </LText>
-      <LText style={styles.text}>
-        <Trans i18nKey={`manager.firmware.modalDesc`} />
-      </LText>
-    </View>
-  </ActionModal>
-);
+const QuitManagerModal = ({ isOpened, onClose }: Props) => {
+  const { colors } = useTheme();
+  return (
+    <ActionModal isOpened={!!isOpened} onClose={onClose} actions={[]}>
+      <View style={styles.storageImage}>
+        <InfoIcon bg={colors.lightLive}>
+          <Info size={30} color={colors.live} />
+        </InfoIcon>
+      </View>
+      <View style={styles.storageRow}>
+        <LText secondary style={[styles.text, styles.title]} semiBold>
+          <Trans i18nKey={`manager.firmware.modalTitle`} />
+        </LText>
+        <LText style={styles.text} color="grey">
+          <Trans i18nKey={`manager.firmware.modalDesc`} />
+        </LText>
+      </View>
+    </ActionModal>
+  );
+};
 
 const styles = StyleSheet.create({
   storageImage: {
@@ -39,12 +42,10 @@ const styles = StyleSheet.create({
   title: {
     lineHeight: 24,
     fontSize: 16,
-    color: colors.darkBlue,
   },
   text: {
     textAlign: "center",
     fontSize: 14,
-    color: colors.grey,
     lineHeight: 16,
     marginVertical: 8,
   },

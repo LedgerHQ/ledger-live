@@ -2,12 +2,11 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import LText from "../../components/LText";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 
@@ -24,6 +23,7 @@ export default function EthereumGasLimit({
   transaction,
   route,
 }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
@@ -45,7 +45,13 @@ export default function EthereumGasLimit({
           {gasLimit && (
             <LText style={styles.gasLimitText}>{gasLimit.toString()}</LText>
           )}
-          <LText style={styles.link} onPress={editGasLimit}>
+          <LText
+            style={[
+              styles.link,
+              { color: colors.live, textDecorationColor: colors.live },
+            ]}
+            onPress={editGasLimit}
+          >
             {t("common.edit")}
           </LText>
         </View>
@@ -56,10 +62,8 @@ export default function EthereumGasLimit({
 
 const styles = StyleSheet.create({
   link: {
-    color: colors.live,
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
-    textDecorationColor: colors.live,
     marginLeft: 8,
   },
   gasLimitContainer: {
@@ -67,6 +71,5 @@ const styles = StyleSheet.create({
   },
   gasLimitText: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
 });

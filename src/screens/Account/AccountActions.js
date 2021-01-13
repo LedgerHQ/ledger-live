@@ -1,7 +1,7 @@
 /* @flow */
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { useSelector } from "react-redux";
@@ -14,7 +14,6 @@ import {
 import perFamilyAccountActions from "../../generated/accountActions";
 
 import BottomModal from "../../components/BottomModal";
-import colors from "../../colors";
 import Button from "../../components/Button";
 import ChoiceButton from "../../components/ChoiceButton";
 import Transfer from "../../icons/Transfer";
@@ -33,6 +32,7 @@ type NavOptions = {
 };
 
 export default function AccountActions({ account, parentAccount }: Props) {
+  const { colors } = useTheme();
   const [displayedActions, setDisplayedActions] = useState();
   const navigation = useNavigation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -63,7 +63,7 @@ export default function AccountActions({ account, parentAccount }: Props) {
   );
 
   const actions = {
-    default: useActions({ account, parentAccount }),
+    default: useActions({ account, parentAccount, colors }),
     lending: useLendingActions({ account }),
   };
 
@@ -160,22 +160,5 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 4,
     paddingHorizontal: 6,
-  },
-  timeWarn: {
-    flexDirection: "row",
-    alignContent: "center",
-    justifyContent: "flex-end",
-    borderRadius: 4,
-    backgroundColor: colors.lightFog,
-    padding: 8,
-  },
-  timeLabel: {
-    marginLeft: 8,
-    fontSize: 12,
-    lineHeight: 16,
-    color: colors.grey,
-  },
-  disabledButton: {
-    color: colors.grey,
   },
 });

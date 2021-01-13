@@ -1,9 +1,9 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import BottomModal from "../../components/BottomModal";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -16,40 +16,39 @@ type Props = {
   onPress: Function,
 };
 
-class ConfirmationModal extends PureComponent<Props> {
-  render() {
-    const { isOpened, onClose, onPress, ...rest } = this.props;
-    return (
-      <BottomModal
-        id="ConfirmationModal"
-        isOpened={isOpened}
-        onClose={onClose}
-        style={styles.confirmationModal}
-        {...rest}
-      >
-        {isOpened ? (
-          <TrackScreen category="LendingNoTokenAccountInfoModal" />
-        ) : null}
-        <View style={styles.icon}>
-          <Info size={24} color={colors.orange} />
-        </View>
-        <LText secondary semiBold style={styles.title}>
-          <Trans i18nKey="send.tooMuchUTXOBottomModal.title" />
-        </LText>
-        <LText style={styles.description}>
-          <Trans i18nKey="send.tooMuchUTXOBottomModal.description" />
-        </LText>
-        <View style={styles.confirmationFooter}>
-          <Button
-            containerStyle={styles.confirmationButton}
-            type="primary"
-            title={<Trans i18nKey="send.tooMuchUTXOBottomModal.cta" />}
-            onPress={onPress}
-          />
-        </View>
-      </BottomModal>
-    );
-  }
+function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
+  const { colors } = useTheme();
+  return (
+    <BottomModal
+      {...rest}
+      id="ConfirmationModal"
+      isOpened={isOpened}
+      onClose={onClose}
+      style={styles.confirmationModal}
+    >
+      {isOpened ? (
+        <TrackScreen category="LendingNoTokenAccountInfoModal" />
+      ) : null}
+      <View style={[styles.icon, { backgroundColor: colors.lightOrange }]}>
+        <Info size={24} color={colors.orange} />
+      </View>
+      <LText secondary semiBold style={styles.title}>
+        <Trans i18nKey="send.tooMuchUTXOBottomModal.title" />
+      </LText>
+      <LText style={styles.description} color="smoke">
+        <Trans i18nKey="send.tooMuchUTXOBottomModal.description" />
+      </LText>
+      <View style={styles.confirmationFooter}>
+        <Button
+          event="Send - Too much UTXO CTA"
+          containerStyle={styles.confirmationButton}
+          type="primary"
+          title={<Trans i18nKey="send.tooMuchUTXOBottomModal.cta" />}
+          onPress={onPress}
+        />
+      </View>
+    </BottomModal>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -61,13 +60,11 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     fontSize: 18,
-    color: colors.darkBlue,
   },
   description: {
     marginVertical: 32,
     textAlign: "center",
     fontSize: 14,
-    color: colors.smoke,
   },
   confirmationFooter: {
     justifyContent: "flex-end",
@@ -80,7 +77,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignSelf: "center",
-    backgroundColor: colors.lightOrange,
     width: 56,
     borderRadius: 28,
     height: 56,
@@ -90,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmationModal;
+export default memo<Props>(ConfirmationModal);

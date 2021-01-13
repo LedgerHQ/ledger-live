@@ -2,12 +2,12 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { useTheme } from "@react-navigation/native";
 import DeviceAction from "./DeviceAction";
 import BottomModal from "./BottomModal";
 import ModalBottomAction from "./ModalBottomAction";
 import Close from "../icons/Close";
 import Touchable from "./Touchable";
-import colors from "../colors";
 
 type Props = {
   // TODO: fix action type
@@ -28,6 +28,7 @@ export default function DeviceActionModal({
   onResult,
   onModalHide,
 }: Props) {
+  const { colors } = useTheme();
   return (
     <BottomModal
       id="DeviceActionModal"

@@ -3,10 +3,10 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { useTheme } from "@react-navigation/native";
 import BottomModal from "../BottomModal";
 import Close from "../../icons/Close";
 import Touchable from "../Touchable";
-import colors from "../../colors";
 import type { Step } from "./types";
 import type { DeviceNames } from "../../screens/Onboarding/types";
 import { ErrorFooterGeneric, RenderError } from "./StepRenders";
@@ -29,6 +29,7 @@ export default function SelectDeviceConnectModal({
   error,
   step,
 }: Props) {
+  const { colors } = useTheme();
   return (
     <BottomModal
       id="DeviceJobModal"
@@ -48,6 +49,7 @@ export default function SelectDeviceConnectModal({
           step={step}
           onDone={onStepDone}
           onClose={onClose}
+          colors={colors}
         />
       ) : null}
       <Touchable event="DeviceJobClose" style={styles.close} onPress={onClose}>

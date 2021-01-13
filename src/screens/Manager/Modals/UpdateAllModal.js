@@ -4,7 +4,7 @@ import type { State, App } from "@ledgerhq/live-common/lib/types/manager";
 import type { InstalledItem } from "@ledgerhq/live-common/lib/apps";
 
 import { Trans } from "react-i18next";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import AppIcon from "../AppsList/AppIcon";
 import ActionModal from "./ActionModal";
@@ -29,6 +29,8 @@ const UpdateAllModal = ({
   onConfirm,
   state,
 }: Props) => {
+  const { colors } = useTheme();
+
   const modalActions = useMemo(
     () => [
       {
@@ -65,12 +67,15 @@ const UpdateAllModal = ({
         (installed && installed.availableVersion) || appVersion;
 
       return (
-        <View style={styles.appLine}>
+        <View style={[styles.appLine, { borderBottomColor: colors.lightFog }]}>
           <AppIcon icon={icon} />
           <LText semiBold style={styles.appName}>
             {name}
           </LText>
-          <LText style={[styles.appLineText, styles.appLineVersion]}>
+          <LText
+            style={[styles.appLineText, styles.appLineVersion]}
+            color="grey"
+          >
             {version}{" "}
             <Trans
               i18nKey="manager.appList.versionNew"
@@ -80,13 +85,13 @@ const UpdateAllModal = ({
               }}
             />
           </LText>
-          <LText style={styles.appLineText}>
+          <LText style={styles.appLineText} color="grey">
             <ByteSize value={bytes} deviceModel={state.deviceModel} />
           </LText>
         </View>
       );
     },
-    [state.deviceModel],
+    [colors.lightFog, state.deviceModel],
   );
 
   return (
@@ -97,7 +102,7 @@ const UpdateAllModal = ({
         </LText>
       </View>
       <FlatList
-        style={styles.list}
+        style={[styles.list, { borderColor: colors.lightFog }]}
         data={data}
         renderItem={renderAppLine}
         keyExtractor={keyExtractor}
@@ -111,13 +116,11 @@ const UpdateAllModal = ({
 const styles = StyleSheet.create({
   title: {
     fontSize: 16,
-    color: colors.darkBlue,
     marginVertical: 24,
   },
   warnText: {
     textAlign: "center",
     fontSize: 13,
-    color: colors.grey,
     lineHeight: 16,
     marginVertical: 8,
   },
@@ -132,7 +135,6 @@ const styles = StyleSheet.create({
     maxHeight: 300,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: colors.lightFog,
   },
   appLine: {
     paddingHorizontal: 16,
@@ -141,7 +143,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexWrap: "nowrap",
     height: 66,
-    borderBottomColor: colors.lightFog,
     borderBottomWidth: 1,
   },
   appName: {
@@ -149,13 +150,11 @@ const styles = StyleSheet.create({
     flexBasis: "30%",
     marginHorizontal: 12,
     fontSize: 14,
-    color: colors.darkBlue,
   },
   appLineText: {
     textAlign: "right",
     flexBasis: 55,
     fontSize: 12,
-    color: colors.grey,
   },
   appLineVersion: {
     textAlign: "center",

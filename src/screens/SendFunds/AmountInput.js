@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 import { track } from "../../analytics";
 import { counterValueCurrencySelector } from "../../reducers/settings";
 import LText from "../../components/LText/index";
-import colors from "../../colors";
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "../../components/CurrencyInput";
 import TranslatedError from "../../components/TranslatedError";
@@ -131,17 +130,14 @@ const styles = StyleSheet.create({
   },
   currency: {
     fontSize: 24,
-    color: colors.grey,
   },
   active: {
     fontSize: 32,
   },
   error: {
-    color: colors.alert,
     fontSize: 14,
   },
   warning: {
-    color: colors.orange,
     fontSize: 14,
   },
 });

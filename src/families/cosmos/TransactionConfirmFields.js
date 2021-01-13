@@ -8,6 +8,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import { useCosmosPreloadData } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { mapDelegationInfo } from "@ledgerhq/live-common/lib/families/cosmos/logic";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import {
   DataRow,
@@ -15,7 +16,6 @@ import {
   HeaderRow,
   ValidatorField,
 } from "../../components/ValidateOnDeviceDataRow";
-import colors from "../../colors";
 import Info from "../../icons/Info";
 
 type FieldProps = {
@@ -91,6 +91,7 @@ function CosmosSourceValidatorNameField({
 
 function Warning({ transaction }: FieldProps) {
   invariant(transaction.family === "cosmos", "cosmos transaction");
+  const { colors } = useTheme();
 
   const { t } = useTranslation();
 
@@ -104,6 +105,7 @@ function Warning({ transaction }: FieldProps) {
           <LText
             semiBold
             style={[styles.text, styles.infoText]}
+            color="live"
             numberOfLines={3}
           >
             {t(`ValidateOnDevice.infoWording.cosmos.${transaction.mode}`)}
@@ -128,12 +130,10 @@ export default {
 
 const styles = StyleSheet.create({
   text: {
-    color: colors.darkBlue,
     textAlign: "right",
     flex: 1,
   },
   infoText: {
-    color: colors.live,
     textAlign: "left",
     marginLeft: 8,
   },

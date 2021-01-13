@@ -14,7 +14,6 @@ import { removeKnownDevice } from "../../actions/ble";
 import { ScreenName } from "../../const";
 import type { ManagerTab } from "./Manager";
 import SelectDevice from "../../components/SelectDevice";
-import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
 import { track } from "../../analytics";
 import LText from "../../components/LText";
@@ -164,7 +163,7 @@ class ChooseDevice extends Component<
 
     return (
       <NavigationScrollView
-        style={styles.root}
+        style={[styles.root]}
         contentContainerStyle={styles.scrollContainer}
       >
         <TrackScreen category="Manager" name="ChooseDevice" />
@@ -202,47 +201,20 @@ class ChooseDevice extends Component<
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scrollContainer: {
     paddingHorizontal: 16,
-  },
-  or: {
-    marginVertical: 30,
   },
   title: {
     lineHeight: 27,
     fontSize: 18,
     marginVertical: 24,
-    color: colors.darkBlue,
-  },
-  section: {
-    fontSize: 14,
-    lineHeight: 21,
-    marginBottom: 12,
-    color: colors.grey,
-  },
-  addContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  add: {
-    marginRight: 8,
-    color: colors.live,
-  },
-  bluetoothHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
   },
   footerContainer: {
     flexDirection: "row",
   },
   buttonContainer: {
     flex: 1,
-  },
-  buttonMarginLeft: {
-    marginLeft: 16,
   },
 });
 

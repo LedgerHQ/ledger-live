@@ -1,13 +1,12 @@
 /* @flow */
 import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { deviceNameByDeviceIdSelectorCreator } from "../../../reducers/ble";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
-import colors from "../../../colors";
 import Edit from "../../../icons/Edit";
 
 import { ScreenName } from "../../../const";
@@ -25,6 +24,7 @@ export default function DeviceNameRow({
   deviceModel: { id, productName },
   disabled,
 }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const savedName = useSelector(deviceNameByDeviceIdSelectorCreator(deviceId));
@@ -57,7 +57,7 @@ export default function DeviceNameRow({
           disabled={disabled}
         >
           <Edit size={13} color={colors.grey} />
-          <LText style={styles.editButtonText}>
+          <LText style={styles.editButtonText} color="grey">
             <Trans i18nKey="common.edit" />
           </LText>
         </Touchable>
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
   },
   editButtonText: {
     paddingLeft: 6,
-    color: colors.grey,
     fontSize: 12,
   },
 });

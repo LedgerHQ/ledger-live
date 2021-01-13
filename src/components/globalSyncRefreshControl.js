@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/lib/bridge/react";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react";
+import { useTheme } from "@react-navigation/native";
 import { SYNC_DELAY } from "../constants";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 
 export default (ScrollListLike: any) => {
   function Inner({ forwardedRef, ...scrollListLikeProps }: Props) {
+    const { colors, dark } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
     const { poll } = useCountervaluesPolling();
@@ -46,7 +48,13 @@ export default (ScrollListLike: any) => {
         {...scrollListLikeProps}
         ref={forwardedRef}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            progressBackgroundColor={dark ? colors.background : colors.card}
+            colors={[colors.live]}
+            tintColor={colors.live}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
         }
       />
     );

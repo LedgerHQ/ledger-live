@@ -8,7 +8,7 @@ import {
   PixelRatio,
 } from "react-native";
 import Icon from "react-native-vector-icons/dist/Ionicons";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import Touchable from "./Touchable";
 
 type State = {
@@ -76,6 +76,7 @@ class TextInput extends PureComponent<*, State> {
       style,
       defaultValue,
       clearButtonMode, // Don't pass this down to use our own impl
+      colors,
       ...otherProps
     } = this.props;
 
@@ -110,7 +111,12 @@ class TextInput extends PureComponent<*, State> {
       <View style={[styles.container, containerStyle]}>
         <ReactNativeTextInput
           ref={innerRef}
-          style={[{ flex: 1 }, style, overrideFontScaling, dynamicHeight]}
+          style={[
+            { flex: 1, color: colors.darkBlue },
+            style,
+            overrideFontScaling,
+            dynamicHeight,
+          ]}
           {...otherProps}
           onBlur={this.onBlur}
           onFocus={this.onFocus}
@@ -149,6 +155,7 @@ const styles = StyleSheet.create({
 });
 
 // $FlowFixMe https://github.com/facebook/flow/pull/5920
-export default React.forwardRef((props, ref) => (
-  <TextInput innerRef={ref} {...props} />
-));
+export default React.forwardRef((props, ref) => {
+  const { colors } = useTheme();
+  return <TextInput innerRef={ref} colors={colors} {...props} />;
+});

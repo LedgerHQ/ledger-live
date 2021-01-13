@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { shortAddressPreview } from "@ledgerhq/live-common/lib/account";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 4,
     marginVertical: 1,
-    backgroundColor: colors.lightGrey,
+
     alignItems: "center",
     flexDirection: "row",
     flexWrap: "wrap",
@@ -22,53 +22,52 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 4,
     marginVertical: 1,
-    backgroundColor: colors.lightGrey,
     alignItems: "flex-start",
     flexDirection: "column",
   },
   dataRowLabel: {
-    color: colors.grey,
     textAlign: "left",
     fontSize: 14,
     paddingRight: 8,
   },
   dataRowValue: {
-    color: colors.darkBlue,
     fontSize: 14,
     flexGrow: 1,
     textAlign: "right",
   },
   text: {
-    color: colors.darkBlue,
     fontSize: 14,
     flex: 1,
     textAlign: "right",
   },
-  greyText: {
-    color: colors.grey,
-  },
   lineLabel: { justifyContent: "flex-start" },
-  validatorLabel: { fontSize: 12, color: colors.grey },
+  validatorLabel: { fontSize: 12 },
 });
 
-export class DataRow extends PureComponent<{
+export function DataRow({
+  label,
+  children,
+  numberOfLines,
+}: {
   label?: React$Node,
   children: React$Node,
   numberOfLines?: number,
-}> {
-  render() {
-    const { label, children, numberOfLines } = this.props;
-    return (
-      <View style={styles.dataRow}>
-        {label ? (
-          <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel}>
-            {label}
-          </LText>
-        ) : null}
-        {children}
-      </View>
-    );
-  }
+}) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.dataRow, { backgroundColor: colors.background }]}>
+      {label ? (
+        <LText
+          numberOfLines={numberOfLines ?? 1}
+          style={styles.dataRowLabel}
+          color="grey"
+        >
+          {label}
+        </LText>
+      ) : null}
+      {children}
+    </View>
+  );
 }
 
 export function TextValueField({
@@ -80,9 +79,14 @@ export function TextValueField({
   numberOfLines?: number,
   value: string,
 }) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.dataRow}>
-      <LText numberOfLines={numberOfLines} style={styles.dataRowLabel}>
+    <View style={[styles.dataRow, { backgroundColor: colors.background }]}>
+      <LText
+        numberOfLines={numberOfLines}
+        style={styles.dataRowLabel}
+        color="grey"
+      >
         {label}
       </LText>
       <LText numberOfLines={numberOfLines} style={styles.dataRowValue}>
@@ -95,10 +99,12 @@ export function TextValueField({
 export function HeaderRow({ label, value }: { label: string, value: string }) {
   return (
     <DataRow>
-      <LText style={[styles.text, styles.greyText, { textAlign: "left" }]}>
+      <LText style={[styles.text, { textAlign: "left" }]} color="grey">
         {label}
       </LText>
-      <LText style={[styles.text, styles.greyText]}>{value}</LText>
+      <LText style={[styles.text]} color="grey">
+        {value}
+      </LText>
     </DataRow>
   );
 }
@@ -116,7 +122,9 @@ export function ValidatorField({
     <DataRow key={address}>
       <View style={styles.lineLabel}>
         <LText semiBold>{shortAddressPreview(address)}</LText>
-        <LText style={styles.validatorLabel}>{name}</LText>
+        <LText style={styles.validatorLabel} color="grey">
+          {name}
+        </LText>
       </View>
       <LText semiBold style={styles.text}>
         {amount}
@@ -125,24 +133,30 @@ export function ValidatorField({
   );
 }
 
-export class DataColumn extends PureComponent<{
+export function DataColumn({
+  label,
+  children,
+  numberOfLines,
+}: {
   label?: React$Node,
   children: React$Node,
   numberOfLines?: number,
-}> {
-  render() {
-    const { label, children, numberOfLines } = this.props;
-    return (
-      <View style={styles.dataColumn}>
-        {label ? (
-          <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel}>
-            {label}
-          </LText>
-        ) : null}
-        {children}
-      </View>
-    );
-  }
+}) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.dataColumn, { backgroundColor: colors.background }]}>
+      {label ? (
+        <LText
+          numberOfLines={numberOfLines ?? 1}
+          style={styles.dataRowLabel}
+          color="grey"
+        >
+          {label}
+        </LText>
+      ) : null}
+      {children}
+    </View>
+  );
 }
 
 export class DataRowUnitValue extends PureComponent<{

@@ -7,18 +7,19 @@ import firmwareUpdateMain from "@ledgerhq/live-common/lib/hw/firmwareUpdate-main
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import logger from "../../logger";
 import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
 import { BulletItem } from "../../components/BulletList";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Installing from "../../components/Installing";
+import { withTheme } from "../../colors";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any,
   route: { params: RouteParams },
+  colors: *,
 };
 
 type RouteParams = {
@@ -31,7 +32,7 @@ type State = {
   progress: number,
 };
 
-export default class FirmwareUpdateMCU extends Component<Props, State> {
+class FirmwareUpdateMCU extends Component<Props, State> {
   state = {
     installing: null,
     progress: 0,
@@ -72,11 +73,15 @@ export default class FirmwareUpdateMCU extends Component<Props, State> {
   }
 
   render() {
+    const { colors } = this.props;
     const { installing, progress } = this.state;
     const { width } = getWindowDimensions();
 
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
         <TrackScreen category="FirmwareUpdate" name="MCU" />
         {installing ? (
           <Installing progress={progress} installing={installing} />
@@ -111,7 +116,6 @@ export default class FirmwareUpdateMCU extends Component<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   body: {
     padding: 20,
@@ -126,9 +130,6 @@ const styles = StyleSheet.create({
     left: "10%",
     position: "relative",
   },
-  description: {
-    color: colors.smoke,
-    fontSize: 14,
-    marginVertical: 30,
-  },
 });
+
+export default withTheme(FirmwareUpdateMCU);

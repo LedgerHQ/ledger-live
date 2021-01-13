@@ -2,9 +2,9 @@
 import React from "react";
 import { View, ScrollView, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 
 type Props = {
@@ -32,21 +32,35 @@ export default function BaseInfoModal({
   header,
   event,
 }: Props) {
+  const { colors } = useTheme();
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       {event && <TrackScreen category="Lend" name={event} />}
       {header}
-      <View style={styles.topSection}>{illustration}</View>
+      <View style={[styles.topSection, { backgroundColor: colors.lightFog }]}>
+        {illustration}
+      </View>
       <ScrollView style={styles.bottomSection}>
         <View style={styles.row}>
-          <LText bold style={styles.badge}>
+          <LText
+            bold
+            style={[
+              styles.badge,
+              {
+                backgroundColor: colors.lightLive,
+              },
+            ]}
+            color="live"
+          >
             {badgeLabel}
           </LText>
         </View>
         <LText bold style={styles.title}>
           {title}
         </LText>
-        <LText style={styles.description}>{description}</LText>
+        <LText style={styles.description} color="grey">
+          {description}
+        </LText>
       </ScrollView>
       <View style={styles.ctaSection}>
         {children && <View style={styles.childrenContainer}>{children}</View>}
@@ -62,15 +76,13 @@ export default function BaseInfoModal({
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.white },
-  topSection: { flex: 0.6, backgroundColor: colors.lightFog },
+  root: { flex: 1 },
+  topSection: { flex: 0.6 },
   bottomSection: { flex: 1, paddingHorizontal: 16, paddingVertical: 24 },
   ctaSection: { padding: 16 },
   childrenContainer: { paddingBottom: 16 },
   row: { flexDirection: "row", justifyContent: "center" },
   badge: {
-    color: colors.live,
-    backgroundColor: colors.lightLive,
     paddingHorizontal: 8,
     borderRadius: 4,
     textTransform: "uppercase",
@@ -90,7 +102,6 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     textAlign: "center",
     paddingVertical: 16,
-    color: colors.grey,
     paddingHorizontal: 16,
   },
 });

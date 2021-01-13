@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component, PureComponent } from "react";
+import React, { Component, memo } from "react";
 import { View } from "react-native";
 import Slider from "react-native-slider";
 import { from } from "rxjs";
@@ -10,9 +10,9 @@ import * as scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import Svg, { Path } from "react-native-svg";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
+import { useTheme } from "@react-navigation/native";
 import LText from "../components/LText";
 import TranslatedError from "../components/TranslatedError";
-import colors from "../colors";
 
 type GraphProps = {
   width: number,
@@ -20,36 +20,35 @@ type GraphProps = {
   data: number[],
 };
 
-class Graph extends PureComponent<GraphProps> {
-  render() {
-    const { width, height, data } = this.props;
+function GraphComponent({ width, height, data }: GraphProps) {
+  const { colors } = useTheme();
+  const points = data.map((value, index) => ({ value, index }));
+  const maxY = maxBy(data, v => v);
 
-    const points = data.map((value, index) => ({ value, index }));
-    const maxY = maxBy(data, v => v);
+  const x = scale
+    .scaleLinear()
+    .range([0, width])
+    .domain([0, data.length - 1]);
 
-    const x = scale
-      .scaleLinear()
-      .range([0, width])
-      .domain([0, data.length - 1]);
+  const y = scale
+    .scaleLinear()
+    .range([height - 10, 10])
+    .domain([0, maxY]);
 
-    const y = scale
-      .scaleLinear()
-      .range([height - 10, 10])
-      .domain([0, maxY]);
+  const line = shape
+    .line()
+    .x(d => x(d.index))
+    .y(d => y(d.value))
+    .curve(shape.curveLinear)(points);
 
-    const line = shape
-      .line()
-      .x(d => x(d.index))
-      .y(d => y(d.value))
-      .curve(shape.curveLinear)(points);
-
-    return (
-      <Svg height={height} width={width}>
-        <Path d={line} stroke={colors.live} strokeWidth={4} fill="none" />
-      </Svg>
-    );
-  }
+  return (
+    <Svg height={height} width={width}>
+      <Path d={line} stroke={colors.live} strokeWidth={4} fill="none" />
+    </Svg>
+  );
 }
+
+const Graph = memo<GraphProps>(GraphComponent);
 
 const benchmark = ({ inputAPDUSize, outputAPDUSize }) => {
   const inSize = inputAPDUSize - 5;

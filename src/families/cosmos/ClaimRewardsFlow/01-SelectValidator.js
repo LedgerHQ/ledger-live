@@ -16,8 +16,8 @@ import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTran
 
 import { useCosmosMappedDelegations } from "@ledgerhq/live-common/lib/families/cosmos/react";
 
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import colors from "../../../colors";
 import { ScreenName } from "../../../const";
 import Item from "../shared/Item";
 
@@ -32,6 +32,7 @@ type Props = {
 };
 
 function ClaimRewardsSelectValidator({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(account, "account required");
@@ -95,7 +96,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.main}>
         <FlatList
           style={styles.list}
@@ -111,52 +112,13 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   main: {
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  searchSection: { height: 55, paddingHorizontal: 16 },
   list: { width: "100%" },
-  noResult: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  header: {
-    width: "100%",
-    height: 32,
-    paddingHorizontal: 16,
-    fontSize: 14,
-    lineHeight: 32,
-    backgroundColor: colors.lightFog,
-    color: colors.grey,
-  },
-  footer: {
-    alignSelf: "stretch",
-    padding: 16,
-    backgroundColor: colors.white,
-  },
-  labelContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingBottom: 16,
-  },
-  assetsRemaining: {
-    fontSize: 16,
-    textAlign: "center",
-    lineHeight: 32,
-    paddingHorizontal: 10,
-  },
-  error: {
-    color: colors.alert,
-  },
-  success: {
-    color: colors.success,
-  },
 });
 
 export default ClaimRewardsSelectValidator;

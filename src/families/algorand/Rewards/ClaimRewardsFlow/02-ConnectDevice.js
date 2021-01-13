@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../../reducers/accounts";
-import colors from "../../../../colors";
 import { ScreenName } from "../../../../const";
 import { TrackScreen } from "../../../../analytics";
 import SelectDevice from "../../../../components/SelectDevice";
@@ -30,6 +30,7 @@ type Props = {
 };
 
 export default function ConnectDevice({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(
@@ -60,7 +61,10 @@ export default function ConnectDevice({ navigation, route }: Props) {
   if (!account) return null;
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -78,7 +82,6 @@ export default function ConnectDevice({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scroll: {
     flex: 1,

@@ -1,7 +1,6 @@
 // @flow
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import colors from "../colors";
 import LText from "./LText";
 
 type Props = {
@@ -49,7 +48,6 @@ const styles = StyleSheet.create({
   },
   labelText: {
     fontSize: 18,
-    color: colors.darkBlue,
     marginRight: 6,
   },
   rightWrapper: {

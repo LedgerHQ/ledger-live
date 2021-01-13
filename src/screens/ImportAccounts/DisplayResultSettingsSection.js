@@ -1,38 +1,37 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
-import colors from "../../colors";
 import ResultSection from "./ResultSection";
 import CheckBox from "../../components/CheckBox";
 
-class DisplayResultSettingsSection extends PureComponent<{
+type Props = {
   checked: boolean,
   onSwitch: boolean => void,
-}> {
-  render() {
-    const { checked, onSwitch } = this.props;
-    return (
-      <View style={styles.root}>
-        <ResultSection mode="settings" />
-        <View style={styles.row}>
-          <Icon name="settings" size={20} color={colors.grey} />
-          <LText style={styles.label} semiBold>
-            <Trans i18nKey="account.import.result.includeGeneralSettings" />
-          </LText>
-          <CheckBox onChange={onSwitch} isChecked={checked} />
-        </View>
+};
+
+function DisplayResultSettingsSection({ checked, onSwitch }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.root}>
+      <ResultSection mode="settings" />
+      <View style={[styles.row, { backgroundColor: colors.card }]}>
+        <Icon name="settings" size={20} color={colors.grey} />
+        <LText style={styles.label} semiBold>
+          <Trans i18nKey="account.import.result.includeGeneralSettings" />
+        </LText>
+        <CheckBox onChange={onSwitch} isChecked={checked} />
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   root: {},
   row: {
-    backgroundColor: colors.lightGrey,
     borderRadius: 4,
     paddingHorizontal: 8,
 
@@ -46,4 +45,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DisplayResultSettingsSection;
+export default memo<Props>(DisplayResultSettingsSection);

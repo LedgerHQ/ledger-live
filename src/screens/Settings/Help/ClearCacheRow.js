@@ -2,8 +2,8 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import { useCleanCache } from "../../../actions/general";
-import colors from "../../../colors";
 import SettingsRow from "../../../components/SettingsRow";
 import Warning from "../../../icons/Warning";
 import { useReboot } from "../../../context/Reboot";
@@ -14,6 +14,7 @@ import Circle from "../../../components/Circle";
 import BottomModal from "../../../components/BottomModal";
 
 export default function ClearCacheRow() {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const cleanCache = useCleanCache();
   const reboot = useReboot();

@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { TrackScreen } from "../../../analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
+import ThemeSettingsRow from "./ThemeSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";
 import ReportErrorsRow from "./ReportErrorsRow";
 import AnalyticsRow from "./AnalyticsRow";
@@ -14,6 +15,7 @@ export default function GeneralSettings() {
     <NavigationScrollView contentContainerStyle={styles.root}>
       <TrackScreen category="Settings" name="General" />
       <CountervalueSettingsRow />
+      <ThemeSettingsRow />
       <AuthSecurityToggle />
       <ReportErrorsRow />
       <AnalyticsRow />

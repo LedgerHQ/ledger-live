@@ -1,40 +1,39 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-
+import { useTheme } from "@react-navigation/native";
 import Circle from "./Circle";
-import colors from "../colors";
 
 type Props = {
   children: React$Node,
   bg: string,
   floatingIcon?: React$Node,
   floatingBg?: string,
-  size: number,
+  size?: number,
 };
 
-class BluetoothDisabledIcon extends PureComponent<Props> {
-  static defaultProps = {
-    size: 80,
-  };
-  render() {
-    const { children, bg, floatingIcon, floatingBg, size } = this.props;
-
-    return (
-      <View style={styles.root}>
-        <Circle bg={bg} size={size}>
-          {children}
-        </Circle>
-        {!!floatingIcon && floatingBg ? (
-          <View style={styles.floating}>
-            <Circle bg={floatingBg} size={30}>
-              {floatingIcon}
-            </Circle>
-          </View>
-        ) : null}
-      </View>
-    );
-  }
+function BluetoothDisabledIcon({
+  children,
+  bg,
+  floatingIcon,
+  floatingBg,
+  size = 80,
+}: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.root}>
+      <Circle bg={bg} size={size}>
+        {children}
+      </Circle>
+      {!!floatingIcon && floatingBg ? (
+        <View style={[styles.floating, { borderColor: colors.white }]}>
+          <Circle bg={floatingBg} size={30}>
+            {floatingIcon}
+          </Circle>
+        </View>
+      ) : null}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -43,7 +42,6 @@ const styles = StyleSheet.create({
   },
   floating: {
     borderWidth: 4,
-    borderColor: colors.white,
     borderRadius: 50,
     position: "absolute",
     right: -10,
@@ -51,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BluetoothDisabledIcon;
+export default memo<Props>(BluetoothDisabledIcon);

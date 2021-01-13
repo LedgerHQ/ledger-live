@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import useInterval from "./useInterval";
 import LText from "./LText";
-import colors from "../colors";
 
 const CountdownTimer = ({
   end,
@@ -32,7 +31,7 @@ const CountdownTimer = ({
 
   const formattedTime = `00:${timeLeft.toString().padStart(2, "0")}`;
   return (
-    <LText semiBold style={{ fontSize: 12, color: colors.darkBlue }}>
+    <LText semiBold style={{ fontSize: 12 }}>
       {formattedTime}
     </LText>
   );

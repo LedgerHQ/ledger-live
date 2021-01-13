@@ -13,11 +13,11 @@ import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import DeviceAction from "../../components/DeviceAction";
 import BottomModal from "../../components/BottomModal";
 import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import { getConfig } from "./coinifyConfig";
-import colors from "../../colors";
 import { track } from "../../analytics";
 import { DevicePart } from "./DevicePart";
 
@@ -32,6 +32,7 @@ type CoinifyWidgetConfig = {
   addressConfirmation?: boolean,
   transferOutMedia?: string,
   transferInMedia?: string,
+  confirmMessages?: *,
 };
 
 const injectedCode = `
@@ -89,6 +90,7 @@ export default function CoinifyWidget({
   parentAccount,
   device,
 }: Props) {
+  const { colors } = useTheme();
   const [requestingAction, setRequestingAction] = useState<
     "none" | "connect" | "verify",
   >("none");
@@ -102,7 +104,8 @@ export default function CoinifyWidget({
   const coinifyConfig = getConfig();
 
   const widgetConfig: CoinifyWidgetConfig = {
-    primaryColor: colors.wallet,
+    fontColor: "#142533",
+    primaryColor: colors.live,
     partnerId: coinifyConfig.partnerId,
     cryptoCurrencies: currency ? currency.ticker : null,
     address: mainAccount ? mainAccount.freshAddress : null,
@@ -153,9 +156,9 @@ export default function CoinifyWidget({
         }
         break;
       case "trade.receive-account-changed":
-        if (context.address === mainAccount.freshAddress) {
+        if (context.address === mainAccount?.freshAddress) {
           track("Coinify Confirm Buy Start", {
-            currencyName: getAccountCurrency(account).name,
+            currencyName: account && getAccountCurrency(account).name,
           });
           setRequestingAction("connect");
           setIsOpen(true);
@@ -165,7 +168,7 @@ export default function CoinifyWidget({
         break;
       case "trade.trade-placed":
         track("Coinify Widget Event Trade Placed", {
-          currencyName: getAccountCurrency(account).name,
+          currencyName: account && getAccountCurrency(account).name,
         });
         break;
       case "trade.trade-prepared":
@@ -230,7 +233,7 @@ export default function CoinifyWidget({
               type: "event",
               event: "trade.receive-account-confirmed",
               context: {
-                address: mainAccount.freshAddress,
+                address: mainAccount?.freshAddress,
                 status: confirmed ? "accepted" : "rejected",
               },
             }),
@@ -340,6 +343,7 @@ function VerifyAddress({
   device: Device,
   onResult: (confirmed: boolean, error?: Error) => void,
 }) {
+  const { dark } = useTheme();
   const { t } = useTranslation();
 
   const onConfirmAddress = useCallback(async () => {
@@ -365,13 +369,13 @@ function VerifyAddress({
     currencyName: getAccountCurrency(account).name,
     device,
     address: account.freshAddress,
+    theme: dark ? "dark" : "light",
   });
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   center: {
     flex: 1,

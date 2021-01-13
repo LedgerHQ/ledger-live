@@ -11,6 +11,7 @@ import Animated from "react-native-reanimated";
 import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 import { useSafeArea } from "react-native-safe-area-context";
 import type { Portfolio, Currency } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import BalanceHeader from "./BalanceHeader";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
@@ -34,6 +35,7 @@ export default function AnimatedTopBar({
   pending,
   error,
 }: Props) {
+  const { colors } = useTheme();
   const { top } = useSafeArea();
   const [isShown, setIsShown] = useState(false);
 
@@ -64,7 +66,7 @@ export default function AnimatedTopBar({
 
   return (
     <Animated.View
-      style={[styles.root, { opacity }]}
+      style={[styles.root, { opacity, backgroundColor: colors.card }]}
       pointerEvents={isShown ? "auto" : "none"}
     >
       <TouchableWithoutFeedback onPress={scrollToTop}>
@@ -94,7 +96,6 @@ export default function AnimatedTopBar({
 
 const styles = StyleSheet.create({
   root: {
-    backgroundColor: "white",
     zIndex: 2,
     position: "absolute",
     top: 0,

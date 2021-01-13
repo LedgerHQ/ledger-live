@@ -1,10 +1,10 @@
 /* @flow */
 import React from "react";
-import { Text } from "react-native";
 import { Trans } from "react-i18next";
+import LText from "./LText";
 
 const el = () => (
-  <Text
+  <LText
     allowFontScaling={false}
     style={{
       padding: 60,
@@ -13,7 +13,7 @@ const el = () => (
     }}
   >
     <Trans i18nKey="common:operationList.noMoreOperations" />
-  </Text>
+  </LText>
 );
 
 export default el;

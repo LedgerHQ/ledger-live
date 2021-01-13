@@ -1,10 +1,10 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import { urls } from "../../config/urls";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
@@ -18,49 +18,47 @@ type Props = {
   onRetry: () => void,
 };
 
-class ScanningTimeout extends Component<Props> {
-  render() {
-    const { onRetry } = this.props;
-    return (
-      <View style={styles.root}>
-        <TrackScreen category="PairDevices" name="ScanningTimeout" />
-        <View style={styles.body}>
-          <Circle bg={colors.lightAlert} size={80}>
-            <NanoX color={colors.alert} width={11} height={48} />
-          </Circle>
-          <LText secondary semiBold style={styles.titleText}>
-            <Trans i18nKey="PairDevices.ScanningTimeout.title" />
-          </LText>
-          <LText style={styles.SubtitleText}>
-            <Trans
-              i18nKey="PairDevices.ScanningTimeout.desc"
-              values={getDeviceModel("nanoX")}
-            />
-          </LText>
+function ScanningTimeout({ onRetry }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.root}>
+      <TrackScreen category="PairDevices" name="ScanningTimeout" />
+      <View style={styles.body}>
+        <Circle bg={colors.lightAlert} size={80}>
+          <NanoX color={colors.alert} width={11} height={48} />
+        </Circle>
+        <LText secondary semiBold style={styles.titleText}>
+          <Trans i18nKey="PairDevices.ScanningTimeout.title" />
+        </LText>
+        <LText style={styles.SubtitleText} color="smoke">
+          <Trans
+            i18nKey="PairDevices.ScanningTimeout.desc"
+            values={getDeviceModel("nanoX")}
+          />
+        </LText>
 
-          <View style={styles.buttonContainer}>
-            <Button
-              event="PairDevicesTimeoutRetry"
-              type="primary"
-              title={<Trans i18nKey="common.retry" />}
-              onPress={onRetry}
-              containerStyle={[styles.button]}
-            />
-          </View>
-          <Touchable
-            event="NeedHelp"
-            style={styles.helpContainer}
-            onPress={() => Linking.openURL(urls.faq)}
-          >
-            <Help size={16} color={colors.live} />
-            <LText style={styles.helpText} semiBold>
-              <Trans i18nKey="common.needHelp" />
-            </LText>
-          </Touchable>
+        <View style={styles.buttonContainer}>
+          <Button
+            event="PairDevicesTimeoutRetry"
+            type="primary"
+            title={<Trans i18nKey="common.retry" />}
+            onPress={onRetry}
+            containerStyle={[styles.button]}
+          />
         </View>
+        <Touchable
+          event="NeedHelp"
+          style={styles.helpContainer}
+          onPress={() => Linking.openURL(urls.faq)}
+        >
+          <Help size={16} color={colors.live} />
+          <LText style={styles.helpText} color="live" semiBold>
+            <Trans i18nKey="common.needHelp" />
+          </LText>
+        </Touchable>
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 export default ScanningTimeout;
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
   titleText: {
     marginTop: 32,
     textAlign: "center",
-    color: colors.darkBlue,
+
     fontSize: 18,
   },
   SubtitleText: {
@@ -88,7 +86,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     lineHeight: 21,
-    color: colors.smoke,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -104,7 +101,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   helpText: {
-    color: colors.live,
     marginLeft: 6,
   },
 });

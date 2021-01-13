@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -23,6 +23,7 @@ type Props = {
 type RouteParams = {};
 
 export default function FreezeInfo({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.FreezeAmount, route.params);
   }, [navigation, route.params]);
@@ -36,7 +37,10 @@ export default function FreezeInfo({ navigation, route }: Props) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -55,12 +59,12 @@ export default function FreezeInfo({ navigation, route }: Props) {
             <Trans i18nKey="freeze.info.steps.1" />,
             <Trans i18nKey="freeze.info.steps.2" />,
           ].map(wording => (
-            <LText secondary semiBold style={styles.bulletItem}>
+            <LText secondary semiBold style={[styles.bulletItem]}>
               {wording}
             </LText>
           ))}
         />
-        <View style={styles.howVotingWorks}>
+        <View style={[styles.howVotingWorks, { borderColor: colors.live }]}>
           <ExternalLink
             event="FreezeInfoHowVotingWorks"
             onPress={howVotingWorks}
@@ -95,7 +99,6 @@ export default function FreezeInfo({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scroll: {
     flex: 1,
@@ -108,20 +111,17 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     lineHeight: 33,
-    color: colors.darkBlue,
     paddingVertical: 16,
   },
   description: {
     fontSize: 14,
     lineHeight: 21,
-    color: colors.darkBlue,
     textAlign: "center",
     marginVertical: 16,
     paddingHorizontal: 32,
   },
   bulletItem: {
     fontSize: 14,
-    color: colors.black,
   },
   howVotingWorks: {
     marginTop: 32,
@@ -129,12 +129,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: colors.live,
     flexDirection: "row",
-  },
-  howVotingWorksText: {
-    color: colors.live,
-    fontSize: 14,
   },
   footer: {
     padding: 16,

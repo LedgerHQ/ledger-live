@@ -1,6 +1,6 @@
 import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import Info from "../icons/Info";
 import LText from "./LText";
 
@@ -15,13 +15,17 @@ export default function BalanceSummaryInfoItem({
   title,
   value,
 }: Props) {
+  const { colors } = useTheme();
   return (
-    <TouchableOpacity onPress={onPress} style={styles.wrapper}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.wrapper, { backgroundColor: colors.card }]}
+    >
       <View style={styles.balanceLabelContainer}>
         <LText style={styles.balanceLabel}>{title}</LText>
         {onPress && <Info size={12} color={colors.grey} />}
       </View>
-      <LText semiBold style={styles.balance}>
+      <LText semiBold style={styles.balance} color="grey">
         {value}
       </LText>
     </TouchableOpacity>
@@ -36,7 +40,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 4,
-    backgroundColor: colors.lightGrey,
   },
   balanceLabelContainer: {
     flexDirection: "row",
@@ -46,12 +49,10 @@ const styles = StyleSheet.create({
   balanceLabel: {
     fontSize: 13,
     lineHeight: 16,
-    color: colors.grey,
     marginRight: 6,
   },
   balance: {
     fontSize: 18,
     lineHeight: 22,
-    color: colors.darkBlue,
   },
 });

@@ -2,7 +2,7 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import colors from "../../../../colors";
+import { useTheme } from "@react-navigation/native";
 import TextInput from "../../../../components/TextInput";
 import SearchIcon from "../../../../icons/Search";
 
@@ -13,11 +13,12 @@ export default function SelectValidatorSearchBox({
   searchQuery: string,
   setSearchQuery: (query: string) => void,
 }) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.searchBar}>
+      <View style={[styles.searchBar, { backgroundColor: colors.lightFog }]}>
         <View style={styles.searchBarIcon}>
           <SearchIcon size={16} color={colors.smoke} />
         </View>
@@ -27,7 +28,11 @@ export default function SelectValidatorSearchBox({
           maxLength={50}
           onChangeText={setSearchQuery}
           clearButtonMode="always"
-          style={[styles.searchBarText, styles.searchBarInput]}
+          style={[
+            styles.searchBarText,
+            styles.searchBarInput,
+            { color: colors.smoke },
+          ]}
           placeholder={t("common.search")}
           placeholderTextColor={colors.smoke}
           onInputCleared={() => setSearchQuery("")}
@@ -50,7 +55,7 @@ const styles = StyleSheet.create({
     height: 44,
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: colors.lightFog,
+
     borderRadius: 3,
     paddingRight: Platform.OS === "ios" ? 0 : 44,
   },
@@ -74,6 +79,5 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     lineHeight: 17,
-    color: colors.smoke,
   },
 });

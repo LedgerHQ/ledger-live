@@ -13,7 +13,7 @@ import { confirmationsNbForCurrencySelector } from "../../../../reducers/setting
 import type { State } from "../../../../reducers";
 import type { T } from "../../../../types/common";
 import { updateCurrencySettings } from "../../../../actions/settings";
-import colors from "../../../../colors";
+import { withTheme } from "../../../../colors";
 import { TrackScreen } from "../../../../analytics";
 import { currencySettingsDefaults } from "../../../../helpers/CurrencySettingsDefaults";
 import CurrencyIcon from "../../../../components/CurrencyIcon";
@@ -25,6 +25,7 @@ type Props = {
   t: T,
   defaults: *,
   currency: CryptoCurrency,
+  colors: *,
 };
 type LocalState = {
   value: number,
@@ -67,10 +68,10 @@ class EachCurrencySettings extends Component<Props, LocalState> {
   };
 
   render() {
-    const { defaults, t, currency } = this.props;
+    const { defaults, t, currency, colors } = this.props;
     const { value } = this.state;
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: colors.background }]}>
         <TrackScreen
           category="Settings"
           name="Currency"
@@ -137,6 +138,7 @@ class EachCurrencySettings extends Component<Props, LocalState> {
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
+  withTheme,
 )(EachCurrencySettings);
 
 const styles = StyleSheet.create({
@@ -144,10 +146,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 16,
     paddingBottom: 64,
-  },
-  currencyExchange: {
-    fontSize: 14,
-    color: colors.grey,
+    backgroundColor: "transparent",
   },
   container: {
     flex: 1,
@@ -161,21 +160,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  rangeText: {
-    color: colors.grey,
-  },
   sliderContainer: {
-    backgroundColor: colors.white,
     minHeight: 200,
   },
   placeholer: {
-    backgroundColor: colors.white,
     padding: 16,
     paddingVertical: 24,
   },
   placeholderText: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
   confirmationNbValue: {
     fontSize: 16,

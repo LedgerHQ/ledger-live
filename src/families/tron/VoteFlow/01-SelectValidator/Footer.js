@@ -2,8 +2,8 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import Button from "../../../../components/Button";
-import colors from "../../../../colors";
 import { useKeyboardVisible } from "../../../../logic/keyboardVisible";
 
 export default function SelectValidatorFooter({
@@ -13,6 +13,7 @@ export default function SelectValidatorFooter({
   disabled: boolean,
   onContinue: () => void,
 }) {
+  const { colors } = useTheme();
   const isKeyBoardVisible = useKeyboardVisible();
 
   if (isKeyBoardVisible) {
@@ -20,7 +21,7 @@ export default function SelectValidatorFooter({
   }
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { borderTopColor: colors.lightGrey }]}>
       <View style={styles.continueWrapper}>
         <Button
           event="SelectValidatorContinue"
@@ -41,21 +42,11 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: colors.lightGrey,
   },
   continueWrapper: {
     alignSelf: "stretch",
     alignItems: "stretch",
     justifyContent: "flex-end",
     paddingBottom: 16,
-  },
-  remainingWrapper: {
-    marginBottom: 16,
-  },
-  remainingText: {
-    color: colors.grey,
-  },
-  remainingCount: {
-    color: colors.darkBlue,
   },
 });

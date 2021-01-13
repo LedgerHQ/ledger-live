@@ -8,8 +8,8 @@ import { Keyboard, StyleSheet, TextInput, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
+import { useTheme } from "@react-navigation/native";
 import { i18n } from "../../context/Locale";
-import colors from "../../colors";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -34,6 +34,7 @@ type Props = {
 };
 
 function EthereumEditGasLimit({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const transaction = route.params?.transaction;
@@ -61,11 +62,13 @@ function EthereumEditGasLimit({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
-      <KeyboardView style={styles.body}>
+      <KeyboardView
+        style={[styles.body, { backgroundColor: colors.background }]}
+      >
         <NavigationScrollView contentContainerStyle={styles.root}>
           <TextInput
             autoFocus
-            style={styles.textInputAS}
+            style={[styles.textInputAS, { color: colors.darkBlue }]}
             defaultValue={gasLimit ? gasLimit.toString() : ""}
             keyboardType="numeric"
             returnKeyType="done"
@@ -98,12 +101,10 @@ const styles = StyleSheet.create({
   body: {
     flexDirection: "column",
     flex: 1,
-    backgroundColor: colors.white,
   },
   textInputAS: {
     padding: 16,
     fontSize: 30,
-    color: colors.darkBlue,
   },
   buttonContainer: {
     marginHorizontal: 16,

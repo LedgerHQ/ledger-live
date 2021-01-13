@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useEffect, useReducer } from "react";
 import { StyleSheet, SectionList, View } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import Check from "../../../icons/Check";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 
@@ -70,18 +70,18 @@ const keyExtractor = (item, index) => item + index;
 
 const SectionHeader = ({ section: { title } }: *) => (
   <View style={[styles.sectionLine, styles.paddingLine]}>
-    <LText style={styles.sectionHeader}>
+    <LText style={styles.sectionHeader} color="grey">
       <Trans i18nKey={title} />
     </LText>
   </View>
 );
 
 const Separator = ({ section: { footerSeparator } }: *) =>
-  Boolean(footerSeparator) && (
+  footerSeparator ? (
     <View style={styles.paddingLine}>
-      <View style={styles.separator} />
+      <View style={[styles.separator, { backgroundColor: "#EEEEEE" }]} />
     </View>
-  );
+  ) : null;
 
 const initialFilterState = {
   filters: null,
@@ -126,6 +126,7 @@ const FilterModalComponent = ({
   onClose,
 }: Props) => {
   const [state, dispatch] = useReducer(filterReducer, initialFilterState);
+  const { colors } = useTheme();
 
   useEffect(() => {
     dispatch({
@@ -224,11 +225,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 41,
     paddingVertical: 12,
-    backgroundColor: colors.white,
   },
   sectionHeader: {
     fontSize: 12,
-    color: colors.grey,
     textTransform: "uppercase",
   },
   filterName: {
@@ -246,7 +245,6 @@ const styles = StyleSheet.create({
   separator: {
     width: "100%",
     height: 1,
-    backgroundColor: colors.lightFog,
     marginVertical: 16,
   },
 });

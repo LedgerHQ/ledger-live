@@ -1,8 +1,8 @@
 import React, { memo, useState, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import Trash from "../../../icons/Trash";
-import colors from "../../../colors";
 
 import UninstallAllModal from "../Modals/UninstallAllModal";
 import LText from "../../../components/LText";
@@ -13,6 +13,7 @@ type Props = {
 };
 
 const UninstallAllButton = ({ onUninstallAll }: Props) => {
+  const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState(false);
   const openModal = useCallback(() => setIsOpened(true), [setIsOpened]);
   const closeModal = useCallback(() => setIsOpened(false), [setIsOpened]);
@@ -32,7 +33,7 @@ const UninstallAllButton = ({ onUninstallAll }: Props) => {
         <View style={styles.uninstallIcon}>
           <Trash size={16} color={colors.live} />
         </View>
-        <LText style={styles.uninstallText}>
+        <LText style={styles.uninstallText} color="live">
           <Trans i18nKey="manager.uninstall.title" />
         </LText>
       </Touchable>
@@ -61,7 +62,6 @@ const styles = StyleSheet.create({
   },
   uninstallText: {
     fontSize: 14,
-    color: colors.live,
   },
 });
 

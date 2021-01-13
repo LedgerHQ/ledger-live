@@ -1,15 +1,21 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import PasswordRemove from "../../screens/Settings/General/PasswordRemove";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
 export default function PasswordModifyFlowNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.PasswordRemove}
         component={PasswordRemove}

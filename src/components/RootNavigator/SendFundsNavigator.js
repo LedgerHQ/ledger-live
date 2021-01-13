@@ -1,7 +1,8 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import SendFundsMain from "../../screens/SendFunds/01-SelectAccount";
 import SendSelectRecipient from "../../screens/SendFunds/02-SelectRecipient";
@@ -11,15 +12,20 @@ import SelectDevice from "../../screens/SelectDevice";
 import SendConnectDevice from "../../screens/ConnectDevice";
 import SendValidationSuccess from "../../screens/SendFunds/07-ValidationSuccess";
 import SendValidationError from "../../screens/SendFunds/07-ValidationError";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "6";
 
 export default function SendFundsNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.SendFundsMain}
         component={SendFundsMain}

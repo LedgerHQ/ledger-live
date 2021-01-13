@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   PanResponder,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import Swipeable from "react-native-gesture-handler/Swipeable";
@@ -19,7 +19,6 @@ import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
 import LText from "./LText";
 import swipedAccountSubject from "../screens/AddAccounts/swipedAccountSubject";
-import colors from "../colors";
 import Button from "./Button";
 import TouchHintCircle from "./TouchHintCircle";
 
@@ -61,6 +60,7 @@ export default function SelectableAccountsList({
   onAccountNameChange,
   style,
 }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const onSelectAll = useCallback(() => {
@@ -96,6 +96,7 @@ export default function SelectableAccountsList({
           isSelected={forceSelected || selectedIds.indexOf(account.id) > -1}
           isDisabled={isDisabled}
           onPress={onPressAccount}
+          colors={colors}
         />
       ))}
       {accounts.length === 0 && emptyState ? emptyState : null}
@@ -114,6 +115,7 @@ class SelectableAccount extends PureComponent<
     listIndex: number,
     navigation: *,
     onAccountNameChange?: (name: string, changedAccount: Account) => void,
+    colors: *,
   },
   { stopAnimation: boolean },
 > {
@@ -203,7 +205,7 @@ class SelectableAccount extends PureComponent<
   }
 
   render() {
-    const { showHint, isDisabled, isSelected, account } = this.props;
+    const { showHint, isDisabled, isSelected, account, colors } = this.props;
     const { stopAnimation } = this.state;
     const subAccountCount = account.subAccounts && account.subAccounts.length;
     const isToken =
@@ -235,13 +237,21 @@ class SelectableAccount extends PureComponent<
           friction={2}
           leftThreshold={50}
           renderLeftActions={this.renderLeftActions}
-          style={{ backgroundColor: "#ffffff" }}
         >
           {inner}
           {subAccountCount ? (
             <View style={styles.subAccountCountWrapper}>
-              <View style={styles.subAccountCount}>
-                <LText semiBold style={styles.subAccountCountText}>
+              <View
+                style={[
+                  styles.subAccountCount,
+                  { backgroundColor: colors.pillActiveBackground },
+                ]}
+              >
+                <LText
+                  semiBold
+                  style={styles.subAccountCountText}
+                  color="pillActiveForeground"
+                >
                   <Trans
                     i18nKey={`selectableAccountsList.${
                       isToken ? "tokenCount" : "subaccountCount"
@@ -277,7 +287,7 @@ class Header extends PureComponent<{
     const shouldDisplaySelectAll = !!onSelectAll && !!onUnselectAll;
     return (
       <View style={styles.listHeader}>
-        <LText semiBold style={styles.headerText}>
+        <LText semiBold style={styles.headerText} color="grey">
           {text}
         </LText>
         {shouldDisplaySelectAll && (
@@ -286,7 +296,7 @@ class Header extends PureComponent<{
             onPress={areAllSelected ? onUnselectAll : onSelectAll}
             hitSlop={selectAllHitSlop}
           >
-            <LText style={styles.headerSelectAllText}>
+            <LText style={styles.headerSelectAllText} color="live">
               {areAllSelected ? (
                 <Trans i18nKey="selectableAccountsList.deselectAll" />
               ) : (
@@ -326,12 +336,10 @@ const styles = StyleSheet.create({
   },
   headerSelectAllText: {
     fontSize: 14,
-    color: colors.live,
   },
   headerText: {
     flexGrow: 1,
     fontSize: 14,
-    color: colors.grey,
   },
   leftAction: {
     width: "auto",
@@ -356,10 +364,8 @@ const styles = StyleSheet.create({
   subAccountCount: {
     padding: 4,
     borderRadius: 4,
-    backgroundColor: colors.pillActiveBackground,
   },
   subAccountCountText: {
     fontSize: 10,
-    color: colors.pillActiveForeground,
   },
 });

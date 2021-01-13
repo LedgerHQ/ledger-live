@@ -2,16 +2,19 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
-
-import colors, { lighten } from "../colors";
+import { useTheme } from "@react-navigation/native";
+import { lighten } from "../colors";
 import LText from "./LText";
 import Circle from "./Circle";
 
-export const DefaultIcon = () => (
-  <Circle size={80} bg={lighten(colors.green, 0.75)}>
-    <Icon size={40} color={colors.green} name="check-circle" />
-  </Circle>
-);
+export const DefaultIcon = () => {
+  const { colors } = useTheme();
+  return (
+    <Circle size={80} bg={lighten(colors.green, 0.75)}>
+      <Icon size={40} color={colors.green} name="check-circle" />
+    </Circle>
+  );
+};
 
 class GenericSuccessView extends PureComponent<{
   icon: React$Node,
@@ -31,7 +34,9 @@ class GenericSuccessView extends PureComponent<{
           {title}
         </LText>
         {description ? (
-          <LText style={styles.description}>{description}</LText>
+          <LText style={styles.description} color="smoke">
+            {description}
+          </LText>
         ) : null}
       </View>
     );
@@ -52,12 +57,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     lineHeight: 26,
     fontSize: 16,
-    color: colors.darkBlue,
     textAlign: "center",
   },
   description: {
     fontSize: 14,
-    color: colors.smoke,
     paddingHorizontal: 16,
     textAlign: "center",
   },

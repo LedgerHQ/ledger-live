@@ -6,12 +6,12 @@ import { StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import IconAD from "react-native-vector-icons/dist/AntDesign";
 import { SwapGenericAPIError } from "@ledgerhq/live-common/lib/errors";
+import { useTheme } from "@react-navigation/native";
 import type { SwapRouteParams } from "..";
 import DisclaimerModal from "../DisclaimerModal";
 import Button from "../../../../components/Button";
 import Confirmation from "../../Confirmation";
 import SummaryBody from "./SummaryBody";
-import colors from "../../../../colors";
 import { ScreenName } from "../../../../const";
 import CountdownTimer from "../../../../components/CountdownTimer";
 import { Track, TrackScreen } from "../../../../analytics";
@@ -35,6 +35,8 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
     rateExpiration,
   } = route.params;
 
+  const { colors } = useTheme();
+
   const [confirmed, setConfirmed] = useState(false);
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
   const reset = useCallback(() => {
@@ -50,7 +52,10 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
   }, [navigation, reset]);
 
   return status && transaction ? (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="Swap" name="Summary" />
       <SummaryBody
         exchange={exchange}
@@ -84,7 +89,7 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
         )
       ) : (
         <View style={styles.buttonWrapper}>
-          <View style={styles.countdownTimer}>
+          <View style={[styles.countdownTimer, { borderColor: colors.smoke }]}>
             <IconAD size={14} name="clockcircleo" color={colors.smoke} />
             <View style={{ marginLeft: 9 }}>
               <CountdownTimer end={rateExpiration} callback={onRatesExpired} />
@@ -109,7 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     paddingTop: 32,
-    backgroundColor: colors.white,
   },
   buttonWrapper: {
     flex: 1,
@@ -124,7 +128,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderStyle: "solid",
-    borderColor: colors.smoke,
     paddingVertical: 2,
     paddingHorizontal: 12,
     minWidth: 90,

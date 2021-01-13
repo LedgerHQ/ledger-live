@@ -13,6 +13,7 @@ import {
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/lib/currencies";
 
+import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/hw-transport/lib/Transport";
 import { track } from "../../analytics/segment";
 import { TrackScreen } from "../../analytics";
@@ -21,8 +22,6 @@ import KeyboardView from "../../components/KeyboardView";
 import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 import { getSupportedCurrencies } from "./coinifyConfig";
-
-import colors from "../../colors";
 
 const SEARCH_KEYS = ["name", "ticker"];
 const forceInset = { bottom: "always" };
@@ -50,6 +49,7 @@ const renderEmptyList = () => (
 );
 
 export default function ExchangeSelectCrypto({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { params } = route;
   const initialCurrencySelected = params?.currency;
   const device = params?.device;
@@ -105,7 +105,10 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="Exchange" name="SelectCrypto" />
       <KeyboardView style={styles.keybaordContainer}>
         <View style={styles.searchContainer}>
@@ -126,7 +129,6 @@ export default function ExchangeSelectCrypto({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   searchContainer: {
     paddingTop: 16,

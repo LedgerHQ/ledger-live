@@ -1,24 +1,22 @@
 // @flow
 import React from "react";
 import Svg, { Path, Mask } from "react-native-svg";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 
 type Props = {
   color?: string,
   size?: number,
 };
 
-export default function EnergyIcon({
-  color = colors.darkBlue,
-  size = 16,
-}: Props) {
+export default function EnergyIcon({ color, size = 16 }: Props) {
+  const { colors } = useTheme();
   return (
     <Svg viewBox={`0 0 ${size} ${size}`} width={size} height={size}>
       <Mask id="path-2-inside-1" fill="white">
         <Path d="M1.63647 11.4545L12.2728 0L10.6365 6.54545H16.3637L5.72738 18L7.36375 11.4545H1.63647Z" />
       </Mask>
       <Path
-        fill={color}
+        fill={color || colors.darkBlue}
         mask="url(#path-2-inside-1)"
         d="M12.2728 0L13.7281 0.363804L11.1736 -1.02068L12.2728 0ZM1.63647 11.4545L0.537284 10.4339L-1.80334 12.9545H1.63647V11.4545ZM7.36375 11.4545L8.81896 11.8183L9.28491 9.95455H7.36375V11.4545ZM5.72738 18L4.27217 17.6362L6.82657 19.0207L5.72738 18ZM16.3637 6.54545L17.4629 7.56613L19.8036 5.04545H16.3637V6.54545ZM10.6365 6.54545L9.18126 6.18165L8.71531 8.04545H10.6365V6.54545ZM11.1736 -1.02068L0.537284 10.4339L2.73566 12.4752L13.372 1.02068L11.1736 -1.02068ZM1.63647 12.9545H7.36375V9.95455H1.63647V12.9545ZM5.90853 11.0907L4.27217 17.6362L7.1826 18.3638L8.81896 11.8183L5.90853 11.0907ZM6.82657 19.0207L17.4629 7.56613L15.2646 5.52478L4.62819 16.9793L6.82657 19.0207ZM16.3637 5.04545H10.6365V8.04545H16.3637V5.04545ZM12.0917 6.90926L13.7281 0.363804L10.8176 -0.363804L9.18126 6.18165L12.0917 6.90926Z"
       />

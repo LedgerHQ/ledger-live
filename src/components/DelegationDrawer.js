@@ -11,9 +11,10 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 // TODO move to component
+import { useTheme } from "@react-navigation/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
 import Close from "../icons/Close";
-import colors, { rgba } from "../colors";
+import { rgba } from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import BottomModal from "./BottomModal";
 import Circle from "./Circle";
@@ -52,6 +53,7 @@ export default function DelegationDrawer({
   undelegation,
   icon,
 }: Props) {
+  const { colors } = useTheme();
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
   const unit = getAccountUnit(account);
@@ -93,11 +95,11 @@ export default function DelegationDrawer({
         />
 
         <View style={styles.subHeader}>
-          <LText semiBold style={[styles.text, styles.currencyValue]}>
+          <LText semiBold style={[styles.currencyValue]}>
             <CurrencyUnitValue showCode unit={unit} value={amount} />
           </LText>
 
-          <LText semiBold style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue} color="grey">
             <CounterValue
               currency={currency}
               showCode
@@ -142,12 +144,23 @@ type DataFieldProps = FieldType & {
 };
 
 function DataField({ label, Component, isLast }: DataFieldProps) {
+  const { colors } = useTheme();
   return (
     <View
-      style={[styles.row, styles.fieldRow, isLast ? styles.lastRow : undefined]}
+      style={[
+        styles.row,
+        styles.fieldRow,
+        { borderBottomColor: colors.lightFog },
+        isLast ? styles.lastRow : undefined,
+      ]}
     >
       <View>
-        <LText numberOfLines={1} semiBold style={styles.labelText}>
+        <LText
+          numberOfLines={1}
+          semiBold
+          style={styles.labelText}
+          color="smoke"
+        >
           {label}
         </LText>
       </View>
@@ -191,11 +204,8 @@ function ActionButton({
       <Icon size={48} style={styles.actionIcon} />
       <LText
         semiBold
-        style={[
-          styles.text,
-          styles.actionText,
-          disabled ? styles.disabledText : {},
-        ]}
+        style={[styles.actionText]}
+        color={disabled ? "grey" : "darkBlue"}
       >
         {label}
       </LText>
@@ -223,14 +233,10 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
   },
-  text: {
-    color: colors.darkBlue,
-  },
   currencyValue: {
     fontSize: 22,
   },
   counterValue: {
-    color: colors.grey,
     fontSize: 16,
   },
   row: {
@@ -239,7 +245,7 @@ export const styles = StyleSheet.create({
   },
   fieldRow: {
     justifyContent: "space-between",
-    borderBottomColor: colors.lightFog,
+
     borderBottomWidth: 1,
     paddingVertical: 16,
   },
@@ -249,7 +255,6 @@ export const styles = StyleSheet.create({
   labelText: {
     paddingRight: 8,
     fontSize: 14,
-    color: colors.smoke,
   },
   valueWrapper: {
     width: "50%",
@@ -275,8 +280,5 @@ export const styles = StyleSheet.create({
   actionButtonWrapper: {
     width: 80,
     alignItems: "center",
-  },
-  disabledText: {
-    color: colors.grey,
   },
 });

@@ -1,22 +1,28 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import ExchangeSelectCurrency from "../../screens/Exchange/SelectCurrency";
 import ExchangeSelectAccount from "../../screens/Exchange/SelectAccount";
 import ExchangeConnectDevice from "../../screens/Exchange/ConnectDevice";
 import ExchangeCoinifyWidget from "../../screens/Exchange/CoinifyWidgetScreen";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHeaderRightClose";
 
 export default function ExchangeNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
     <Stack.Navigator
       headerMode="float"
       screenOptions={{
-        ...closableStackNavigatorConfig,
+        ...stackNavigationConfig,
         headerRight: () => <AddAccountsHeaderRightClose />,
       }}
     >

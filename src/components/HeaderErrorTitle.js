@@ -1,36 +1,47 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import TranslatedError from "./TranslatedError";
 import LText from "./LText";
 
-class HeaderErrorTitle extends PureComponent<{
+type Props = {
   error: Error,
   withDescription?: boolean,
-}> {
-  render() {
-    const { error, withDescription } = this.props;
-    return (
-      <View style={styles.root}>
-        <View style={styles.titleContainer}>
-          <LText style={styles.icon}>
-            <Icon name="x-circle" size={16} color={colors.alert} />
-          </LText>
-          <LText numberOfLines={2} secondary style={styles.title} semiBold>
-            <TranslatedError error={error} />
-          </LText>
-        </View>
-        {withDescription ? (
-          <LText secondary style={styles.description} numberOfLines={2}>
-            <TranslatedError error={error} field="description" />
-          </LText>
-        ) : null}
+};
+
+function HeaderErrorTitle({ error, withDescription }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.root}>
+      <View style={styles.titleContainer}>
+        <LText style={styles.icon}>
+          <Icon name="x-circle" size={16} color={colors.alert} />
+        </LText>
+        <LText
+          numberOfLines={2}
+          secondary
+          style={styles.title}
+          semiBold
+          color="alert"
+        >
+          <TranslatedError error={error} />
+        </LText>
       </View>
-    );
-  }
+      {withDescription ? (
+        <LText
+          secondary
+          style={styles.description}
+          color="alert"
+          numberOfLines={2}
+        >
+          <TranslatedError error={error} field="description" />
+        </LText>
+      ) : null}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -42,12 +53,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     justifyContent: "center",
-    color: colors.alert,
   },
   description: {
     marginTop: 5,
     fontSize: 14,
-    color: colors.alert,
   },
   icon: {
     marginRight: 8,
@@ -58,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeaderErrorTitle;
+export default memo<Props>(HeaderErrorTitle);

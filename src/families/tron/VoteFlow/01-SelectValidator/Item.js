@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 
 import type { SuperRepresentative } from "@ledgerhq/live-common/lib/families/tron/types";
 
-import colors from "../../../../colors";
+import { useTheme } from "@react-navigation/native";
 import CheckBox from "../../../../components/CheckBox";
 import LText from "../../../../components/LText";
 import Trophy from "../../../../icons/Trophy";
@@ -32,6 +32,7 @@ function Item({
   disabled,
   onSelectSuperRepresentative,
 }: Props) {
+  const { colors } = useTheme();
   const { sr, isSR, rank, address } = item;
 
   const onSelect = useCallback(
@@ -45,10 +46,18 @@ function Item({
     <TouchableOpacity
       onPress={onSelect}
       disabled={isDisabled}
-      style={[styles.wrapper, isDisabled ? styles.disabledWrapper : {}]}
+      style={[
+        styles.wrapper,
+        isDisabled ? { backgroundColor: colors.card } : {},
+      ]}
     >
       <View
-        style={[styles.iconWrapper, !isSR ? styles.iconWrapperCandidate : {}]}
+        style={[
+          styles.iconWrapper,
+          !isSR
+            ? { backgroundColor: colors.lightFog }
+            : { backgroundColor: colors.lightLive },
+        ]}
       >
         {isSR ? (
           <Trophy size={16} color={colors.live} />
@@ -60,28 +69,20 @@ function Item({
       <View style={styles.nameWrapper}>
         <LText
           semiBold
-          style={[styles.nameText, isDisabled ? styles.disabledText : {}]}
+          style={[styles.nameText]}
           numberOfLines={1}
+          color={isDisabled ? "grey" : "darkBlue"}
         >
           {rank}. {(sr && sr.name) || address}
         </LText>
 
-        <LText style={styles.subText} numberOfLines={1}>
+        <LText style={styles.subText} color="grey" numberOfLines={1}>
           <Trans
             i18nKey="vote.castVotes.nbOfVotes"
             values={{ amount: Number(sr.voteCount).toLocaleString() }}
           />
         </LText>
       </View>
-
-      {/** <View style={styles.yieldWrapper}>
-        <LText semiBold style={styles.yieldText}>
-          {"6,8"} %
-        </LText>
-
-        <LText style={styles.subText}>Est. yield</LText>
-      </View> */}
-
       <View>
         <CheckBox isChecked={selected} disabled={disabled} />
       </View>
@@ -101,11 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
-    backgroundColor: colors.lightLive,
     marginRight: 12,
-  },
-  iconWrapperCandidate: {
-    backgroundColor: colors.lightFog,
   },
   nameWrapper: {
     flex: 1,
@@ -116,21 +113,7 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 13,
-    color: colors.grey,
   },
-  disabledWrapper: {
-    backgroundColor: colors.lightGrey,
-  },
-  disabledText: {
-    color: colors.grey,
-  },
-  // yieldWrapper: {
-  //   alignItems: "center",
-  //   marginRight: 12,
-  // },
-  // yieldText: {
-  //   fontSize: 17,
-  // },
 });
 
 export default memo<Props>(Item);

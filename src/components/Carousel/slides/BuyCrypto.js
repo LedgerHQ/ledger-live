@@ -9,7 +9,6 @@ import buyCrypto from "../../../images/banners/buycrypto.png";
 import LText from "../../LText";
 import Touchable from "../../Touchable";
 import { NavigatorName } from "../../../const";
-import colors from "../../../colors";
 
 const BuyCrypto = () => {
   const slideWidth = getWindowDimensions().width - 32;
@@ -61,13 +60,11 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1,
     opacity: 0.5,
-    color: colors.darkBlue,
     fontSize: 10,
     lineHeight: 15,
     marginRight: 100,
   },
   description: {
-    color: colors.darkBlue,
     fontSize: 13,
     lineHeight: 19,
     marginTop: 8,

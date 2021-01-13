@@ -7,6 +7,7 @@ import type { State, AppsDistribution } from "@ledgerhq/live-common/lib/apps";
 
 import manager from "@ledgerhq/live-common/lib/manager";
 
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import Genuine from "../../../icons/Genuine";
@@ -20,7 +21,6 @@ import blue from "./images/blue.png";
 import { urls } from "../../../config/urls";
 import Card from "../../../components/Card";
 
-import colors from "../../../colors";
 import DeviceName from "./DeviceName";
 import { setAvailableUpdate } from "../../../actions/settings";
 
@@ -47,6 +47,7 @@ const DeviceCard = ({
   blockNavigation,
   deviceInfo,
 }: Props) => {
+  const { colors } = useTheme();
   const { deviceModel } = state;
   const [firmware, setFirmware] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -94,8 +95,18 @@ const DeviceCard = ({
             </View>
           </View>
         ) : isDeprecated ? (
-          <View style={styles.firmwareBanner}>
-            <LText primary semiBold style={styles.firmwareBannerText}>
+          <View
+            style={[
+              styles.firmwareBanner,
+              { backgroundColor: colors.lightLive },
+            ]}
+          >
+            <LText
+              primary
+              semiBold
+              style={styles.firmwareBannerText}
+              color="live"
+            >
               <Trans i18nKey="manager.firmware.outdated" />
             </LText>
             <View style={styles.firmwareBannerCTA}>
@@ -125,21 +136,23 @@ const DeviceCard = ({
               />
             </View>
 
-            <LText style={styles.deviceFirmware}>
+            <LText style={styles.deviceFirmware} color="grey">
               <Trans
                 i18nKey="FirmwareVersionRow.subtitle"
                 values={{ version: deviceInfo.version }}
               />
             </LText>
             <View style={styles.deviceCapacity}>
-              <LText style={styles.deviceFirmware}>
+              <LText style={styles.deviceFirmware} color="grey">
                 <Trans i18nKey="manager.storage.genuine" />
               </LText>
               <Genuine />
             </View>
           </View>
         </View>
-        <View style={styles.separator} />
+        <View
+          style={[styles.separator, { backgroundColor: colors.lightFog }]}
+        />
         <View style={styles.storageSection}>
           <DeviceAppStorage
             distribution={distribution}
@@ -193,7 +206,6 @@ const styles = StyleSheet.create({
   },
   deviceFirmware: {
     fontSize: 13,
-    color: colors.grey,
     paddingRight: 8,
   },
   deviceCapacity: {
@@ -208,19 +220,16 @@ const styles = StyleSheet.create({
   separator: {
     width: "100%",
     height: 1,
-    backgroundColor: colors.lightFog,
   },
   firmwareBanner: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: colors.lightLive,
     borderRadius: 4,
     padding: 12,
     marginTop: 16,
   },
   firmwareBannerText: {
     flex: 1,
-    color: colors.live,
     fontWeight: "600",
   },
   firmwareBannerCTA: {

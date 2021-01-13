@@ -11,7 +11,6 @@ import SummaryRow from "./SummaryRow";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import LText from "../../components/LText";
-import colors from "../../colors";
 
 type Props = {
   account: AccountLike,
@@ -36,7 +35,7 @@ export default class SummaryAmountSection extends PureComponent<Props> {
               <LText style={styles.valueText} semiBold>
                 <CurrencyUnitValue unit={unit} value={amount} disableRounding />
               </LText>
-              <LText style={styles.counterValueText} semiBold>
+              <LText style={styles.counterValueText} color="grey" semiBold>
                 <CounterValue
                   before="≈ "
                   value={amount}
@@ -61,6 +60,5 @@ const styles = StyleSheet.create({
   },
   counterValueText: {
     fontSize: 12,
-    color: colors.grey,
   },
 });

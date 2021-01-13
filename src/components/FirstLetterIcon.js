@@ -1,8 +1,8 @@
 // @flow
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
-import colors from "../colors";
 
 type Props = {
   label: string,
@@ -21,6 +21,7 @@ const FirstLetterIcon = ({
   fontSize = 16,
   round = false,
 }: Props) => {
+  const { colors } = useTheme();
   const isEmoji = /(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(
     label.trim().substring(0, 2),
   );
@@ -30,6 +31,7 @@ const FirstLetterIcon = ({
     <View
       style={[
         styles.root,
+        { backgroundColor: colors.lightLive },
         style,
         { width: size, height: size, lineHeight: size },
         round ? { borderRadius: size / 2 } : undefined,
@@ -48,7 +50,6 @@ const FirstLetterIcon = ({
 const styles = StyleSheet.create({
   root: {
     borderRadius: 4,
-    backgroundColor: colors.lightLive,
     paddingHorizontal: 5,
     alignContent: "center",
     justifyContent: "center",

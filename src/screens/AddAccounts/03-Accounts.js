@@ -16,10 +16,11 @@ import SafeAreaView from "react-native-safe-area-view";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { compose } from "redux";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
-import colors from "../../colors";
+import { withTheme } from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -36,8 +37,6 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
-
-const forceInset = { bottom: "always" };
 
 const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
   useEffect(() => {
@@ -65,6 +64,7 @@ type Props = {
   }) => void,
   existingAccounts: Account[],
   blacklistedTokenIds?: string[],
+  colors: *,
 };
 
 type State = {
@@ -258,7 +258,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
   scrollView = createRef();
 
   render() {
-    const { existingAccounts, route } = this.props;
+    const { existingAccounts, route, colors } = this.props;
     const currency = route.params?.currency;
     const { selectedIds, scanning, scannedAccounts, error } = this.state;
 
@@ -298,7 +298,9 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
     const supportLink = sections.map(s => s.supportLink).find(Boolean);
 
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+      >
         <TrackScreen
           category="AddAccounts"
           name="Accounts"
@@ -339,12 +341,11 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
           ))}
 
           {sections.length === 0 && scanning ? (
-            <LText style={styles.descText}>
+            <LText style={styles.descText} color="smoke">
               <Trans i18nKey="addAccounts.synchronizingDesc" />
             </LText>
           ) : null}
-
-          {scanning ? <ScanLoading /> : null}
+          {scanning ? <ScanLoading colors={colors} /> : null}
         </NavigationScrollView>
         {!!scannedAccounts.length && (
           <Footer
@@ -357,6 +358,7 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
             onDone={this.quitFlow}
             onContinue={this.import}
             isDisabled={selectedIds.length === 0}
+            colors={colors}
           />
         )}
         <GenericErrorBottomModal
@@ -390,6 +392,7 @@ class Footer extends PureComponent<{
   onDone: () => void,
   isDisabled: boolean,
   supportLink?: { url: string, id: string },
+  colors: *,
 }> {
   render() {
     const {
@@ -402,10 +405,11 @@ class Footer extends PureComponent<{
       onRetry,
       onDone,
       supportLink,
+      colors,
     } = this.props;
 
     return (
-      <View style={styles.footer}>
+      <View style={[styles.footer, { borderColor: colors.lightFog }]}>
         {supportLink ? (
           <Button
             event={"AddAccountsSupportLink_" + supportLink.id}
@@ -453,14 +457,15 @@ class Footer extends PureComponent<{
   }
 }
 
-class ScanLoading extends PureComponent<{}> {
+class ScanLoading extends PureComponent<{ colors: * }> {
   render() {
+    const { colors } = this.props;
     return (
-      <View style={styles.scanLoadingRoot}>
+      <View style={[styles.scanLoadingRoot, { borderColor: colors.fog }]}>
         <Spinning>
           <LiveLogo color={colors.grey} size={16} />
         </Spinning>
-        <LText semiBold style={styles.scanLoadingText}>
+        <LText semiBold style={styles.scanLoadingText} color="grey">
           <Trans i18nKey="addAccounts.synchronizing" />
         </LText>
       </View>
@@ -471,7 +476,6 @@ class ScanLoading extends PureComponent<{}> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   paddingHorizontal: {
     paddingHorizontal: 16,
@@ -486,7 +490,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
     textAlign: "center",
-    color: colors.smoke,
   },
   scanLoadingRoot: {
     flexDirection: "row",
@@ -496,18 +499,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     height: 40,
     borderWidth: 1,
-    borderColor: colors.fog,
     borderStyle: "dashed",
     borderRadius: 4,
   },
   scanLoadingText: {
     fontSize: 14,
-    color: colors.grey,
     marginLeft: 8,
   },
   footer: {
     borderTopWidth: 1,
-    borderColor: colors.lightFog,
     padding: 16,
   },
   addAccountsError: {
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
 });
 
 // $FlowFixMe
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  withTheme,
 )(AddAccountsAccounts);

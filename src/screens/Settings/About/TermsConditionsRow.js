@@ -2,12 +2,13 @@
 import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import SettingsRow from "../../../components/SettingsRow";
 import { TermModals } from "../../../components/RequireTerms";
-import colors from "../../../colors";
 import ExternalLink from "../../../icons/ExternalLink";
 
 const TermsConditionsRow = () => {
+  const { colors } = useTheme();
   const [isOpened, open] = useState(false);
 
   const onOpen = useCallback(() => open(true), [open]);

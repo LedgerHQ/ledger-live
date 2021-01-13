@@ -1,26 +1,23 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import Alert from "../icons/Alert";
 
 type Props = {
   style?: *,
 };
 
-class ErrorBadge extends PureComponent<Props> {
-  render() {
-    const { style } = this.props;
-    return (
-      <View style={[styles.outer, style]}>
-        <View style={styles.inner}>
-          <Alert size={16} color={colors.white} />
-        </View>
+function ErrorBadge({ style }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.outer, { backgroundColor: colors.card }, style]}>
+      <View style={[styles.inner, { backgroundColor: colors.alert }]}>
+        <Alert size={16} color={"white"} />
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -29,7 +26,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     top: -12,
     right: -12,
-    backgroundColor: colors.white,
+
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -38,14 +35,11 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.alert,
+
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
-  txt: {
-    color: colors.white,
-  },
 });
 
-export default ErrorBadge;
+export default memo<Props>(ErrorBadge);

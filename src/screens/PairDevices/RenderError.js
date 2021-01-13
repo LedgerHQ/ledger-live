@@ -1,10 +1,11 @@
 // @flow
 
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { BleErrorCode } from "react-native-ble-plx";
 import { Trans } from "react-i18next";
 import { PairingFailed, GenuineCheckFailed } from "@ledgerhq/errors";
+import { useTheme } from "@react-navigation/native";
 import LocationRequired from "../LocationRequired";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
@@ -13,7 +14,6 @@ import Button from "../../components/Button";
 import GenericErrorView from "../../components/GenericErrorView";
 import HelpLink from "../../components/HelpLink";
 import IconArrowRight from "../../icons/ArrowRight";
-import colors from "../../colors";
 import { urls } from "../../config/urls";
 
 type Props = {
@@ -30,73 +30,71 @@ const hitSlop = {
   bottom: 16,
 };
 
-class RenderError extends Component<Props> {
-  render() {
-    const { error, status, onBypassGenuine, onRetry } = this.props;
+function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
+  const { colors } = useTheme();
 
-    // $FlowFixMe
-    if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
-      return <LocationRequired onRetry={onRetry} errorType="disabled" />;
-    }
+  // $FlowFixMe
+  if (error.errorCode === BleErrorCode.LocationServicesDisabled) {
+    return <LocationRequired onRetry={onRetry} errorType="disabled" />;
+  }
 
-    // $FlowFixMe
-    if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
-      return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
-    }
+  // $FlowFixMe
+  if (error.errorCode === BleErrorCode.BluetoothUnauthorized) {
+    return <LocationRequired onRetry={onRetry} errorType="unauthorized" />;
+  }
 
-    const isPairingStatus = status === "pairing";
-    const isGenuineCheckStatus = status === "genuinecheck";
-    const url = (isPairingStatus && urls.errors.PairingFailed) || undefined;
+  const isPairingStatus = status === "pairing";
+  const isGenuineCheckStatus = status === "genuinecheck";
+  const url = (isPairingStatus && urls.errors.PairingFailed) || undefined;
 
-    const outerError = isPairingStatus
-      ? new PairingFailed()
-      : isGenuineCheckStatus
-      ? new GenuineCheckFailed()
-      : null;
+  const outerError = isPairingStatus
+    ? new PairingFailed()
+    : isGenuineCheckStatus
+    ? new GenuineCheckFailed()
+    : null;
 
-    return (
-      <View style={styles.root}>
-        <TrackScreen category="PairDevices" name="Error" />
-        <View style={styles.body}>
-          <GenericErrorView
-            error={error}
-            outerError={outerError}
-            withDescription
-            withIcon
+  return (
+    <View style={styles.root}>
+      <TrackScreen category="PairDevices" name="Error" />
+      <View style={styles.body}>
+        <GenericErrorView
+          error={error}
+          outerError={outerError}
+          withDescription
+          withIcon
+        />
+        <View style={styles.buttonContainer}>
+          <Button
+            event="PairDevicesRetry"
+            type="primary"
+            title={<Trans i18nKey="common.retry" />}
+            onPress={onRetry}
+            containerStyle={styles.button}
           />
-          <View style={styles.buttonContainer}>
-            <Button
-              event="PairDevicesRetry"
-              type="primary"
-              title={<Trans i18nKey="common.retry" />}
-              onPress={onRetry}
-              containerStyle={styles.button}
-            />
-          </View>
-          {isGenuineCheckStatus ? (
-            <Touchable
-              event="PairDevicesBypassGenuine"
-              onPress={onBypassGenuine}
-              hitSlop={hitSlop}
-              style={styles.linkContainer}
-            >
-              <LText style={styles.linkText} semiBold>
-                <Trans i18nKey="common.skip" />{" "}
-              </LText>
-              <IconArrowRight size={16} color={colors.live} />
-            </Touchable>
-          ) : (
-            <HelpLink url={url} style={styles.linkContainer} />
-          )}
         </View>
         {isGenuineCheckStatus ? (
-          <View style={styles.footer}>
-            <HelpLink style={styles.linkContainerGenuine} />
-          </View>
-        ) : null}
+          <Touchable
+            event="PairDevicesBypassGenuine"
+            onPress={onBypassGenuine}
+            hitSlop={hitSlop}
+            style={styles.linkContainer}
+          >
+            <LText style={styles.linkText} color="live" semiBold>
+              <Trans i18nKey="common.skip" />{" "}
+            </LText>
+            <IconArrowRight size={16} color={colors.live} />
+          </Touchable>
+        ) : (
+          <HelpLink url={url} style={styles.linkContainer} />
+        )}
       </View>
-    );
-  }
+      {isGenuineCheckStatus ? (
+        <View style={[styles.footer, { borderColor: colors.lightFog }]}>
+          <HelpLink style={styles.linkContainerGenuine} />
+        </View>
+      ) : null}
+    </View>
+  );
 }
 
 export default RenderError;
@@ -116,16 +114,8 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 32,
     textAlign: "center",
-    color: colors.darkBlue,
+
     fontSize: 18,
-  },
-  description: {
-    marginTop: 16,
-    paddingHorizontal: 24,
-    textAlign: "center",
-    fontSize: 14,
-    lineHeight: 21,
-    color: colors.smoke,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -146,7 +136,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   linkText: {
-    color: colors.live,
     marginLeft: 6,
   },
   footer: {
@@ -154,6 +143,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderTopWidth: 1,
-    borderColor: colors.lightFog,
   },
 });

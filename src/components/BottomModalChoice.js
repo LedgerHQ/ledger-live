@@ -1,13 +1,12 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import Touchable from "./Touchable";
 
-import colors, { rgba } from "../colors";
+import { rgba } from "../colors";
 import LText from "./LText";
-
-const iconWrapperBg = rgba(colors.live, 0.1);
 
 const hitSlop = {
   top: 0,
@@ -16,56 +15,65 @@ const hitSlop = {
   bottom: 0,
 };
 
-export default class BottomModalChoice extends PureComponent<{
+type Props = {
   onPress: ?() => any,
   Icon: React$ComponentType<*>,
   title: string,
   description?: string,
   event: string,
   eventProperties?: Object,
-}> {
-  render() {
-    const {
-      Icon,
-      title,
-      description,
-      onPress,
-      event,
-      eventProperties,
-    } = this.props;
-    return (
-      <Touchable
-        onPress={onPress}
-        style={[styles.root, !onPress && styles.disabled]}
-        hitSlop={hitSlop}
-        event={event}
-        eventProperties={eventProperties}
-      >
-        <View style={styles.left}>
-          {Icon ? <IconWrapper Icon={Icon} /> : null}
-        </View>
-        <View style={styles.body}>
-          <LText style={styles.title} semiBold>
-            {title}
+};
+
+function BottomModalChoice({
+  Icon,
+  title,
+  description,
+  onPress,
+  event,
+  eventProperties,
+}: Props) {
+  const { colors } = useTheme();
+
+  return (
+    <Touchable
+      onPress={onPress}
+      style={[styles.root, !onPress && styles.disabled]}
+      hitSlop={hitSlop}
+      event={event}
+      eventProperties={eventProperties}
+    >
+      <View style={styles.left}>
+        {Icon ? <IconWrapper Icon={Icon} color={colors.live} /> : null}
+      </View>
+      <View style={styles.body}>
+        <LText style={styles.title} semiBold color="smoke">
+          {title}
+        </LText>
+        {!!description && (
+          <LText style={styles.description} color="grey">
+            {description}
           </LText>
-          {!!description && (
-            <LText style={styles.description}>{description}</LText>
-          )}
-        </View>
-      </Touchable>
-    );
-  }
+        )}
+      </View>
+    </Touchable>
+  );
 }
 
-class IconWrapper extends PureComponent<{ Icon: React$ComponentType<*> }> {
-  render() {
-    const { Icon } = this.props;
-    return (
-      <View style={styles.iconWrapper}>
-        <Icon size={16} color={colors.live} />
-      </View>
-    );
-  }
+export default memo<Props>(BottomModalChoice);
+
+function IconWrapper({
+  Icon,
+  color,
+}: {
+  Icon: React$ComponentType<*>,
+  color: string,
+}) {
+  const iconWrapperBg = rgba(color, 0.1);
+  return (
+    <View style={[styles.iconWrapper, { backgroundColor: iconWrapperBg }]}>
+      <Icon size={16} color={color} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -87,17 +95,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   title: {
-    color: colors.smoke,
     fontSize: 16,
   },
   description: {
     fontSize: 14,
-    color: colors.grey,
   },
   iconWrapper: {
     width: 32,
     height: 32,
-    backgroundColor: iconWrapperBg,
     borderRadius: 32,
     alignItems: "center",
     justifyContent: "center",

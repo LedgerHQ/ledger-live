@@ -3,8 +3,8 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { isEnvDefault } from "@ledgerhq/live-common/lib/env";
 
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import colors from "../../../colors";
 
 import { experimentalFeatures } from "../../../experimental";
 import NavigationScrollView from "../../../components/NavigationScrollView";
@@ -14,12 +14,13 @@ import Disclaimer from "./Disclaimer";
 import FeatureRow from "./FeatureRow";
 
 export default function ExperimentalSettings() {
+  const { colors } = useTheme();
   return (
     <>
       <KeyboardView>
         <NavigationScrollView contentContainerStyle={styles.root}>
           <TrackScreen category="Settings" name="Experimental" />
-          <View style={styles.container}>
+          <View style={[styles.container, { backgroundColor: colors.card }]}>
             <View style={styles.disclaimerContainer}>
               <Disclaimer />
             </View>
@@ -39,7 +40,6 @@ const styles = StyleSheet.create({
   root: { paddingTop: 16, paddingBottom: 64 },
   container: {
     paddingVertical: 16,
-    backgroundColor: colors.white,
   },
   disclaimerContainer: {
     paddingHorizontal: 12,

@@ -4,10 +4,11 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import IconAD from "react-native-vector-icons/dist/AntDesign";
 import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
+import { useTheme } from "@react-navigation/native";
 import IconSwap from "../../icons/Swap";
-import colors, { rgba } from "../../colors";
+import { rgba } from "../../colors";
 
-export const getStatusColor = (status: string) => {
+export const getStatusColor = (status: string, colors: *) => {
   if (operationStatusList.pending.includes(status)) {
     return colors.grey;
   }
@@ -27,7 +28,8 @@ const SwapStatusIndicator = ({
   status: string,
   small?: boolean,
 }) => {
-  const statusColor = getStatusColor(status);
+  const { colors } = useTheme();
+  const statusColor = getStatusColor(status, colors);
   const sizeDependantStyles = {
     backgroundColor: rgba(statusColor, 0.1),
     width: small ? 38 : 54,

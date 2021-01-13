@@ -4,7 +4,7 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import Animated, { Easing } from "react-native-reanimated";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 
 const {
   cond,
@@ -72,6 +72,8 @@ const InfiniteProgressBar = ({
   progressColor,
   backgroundColor,
 }: Props) => {
+  const { colors } = useTheme();
+
   const scaleX = interpolate(progress, {
     inputRange: [0, 0.4, 1],
     outputRange: [0, 0.9, 0],
@@ -82,7 +84,13 @@ const InfiniteProgressBar = ({
   });
 
   return (
-    <View style={[styles.wrapper, { height, backgroundColor }, style]}>
+    <View
+      style={[
+        styles.wrapper,
+        { height, backgroundColor: backgroundColor || colors.lightFog },
+        style,
+      ]}
+    >
       <Animated.View
         style={[
           styles.bar,
@@ -98,7 +106,6 @@ const InfiniteProgressBar = ({
 
 InfiniteProgressBar.defaultProps = {
   height: 6,
-  backgroundColor: colors.lightFog,
 };
 
 const styles = StyleSheet.create({

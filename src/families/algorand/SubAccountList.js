@@ -2,12 +2,11 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 import IconPlus from "../../icons/Plus";
 import Button from "../../components/Button";
-import colors from "../../colors";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import { urls } from "../../config/urls";
@@ -15,6 +14,7 @@ import ExternalLink from "../../components/ExternalLink";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 const ReceiveButton = ({ accountId }: { accountId: string }) => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const onReceiveClick = useCallback(() => {
     navigation.navigate(NavigatorName.AlgorandOptInFlow, {
@@ -36,6 +36,7 @@ const ReceiveButton = ({ accountId }: { accountId: string }) => {
 };
 
 const Placeholder = ({ accountId }: { accountId: string }) => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const { account } = useSelector(
     accountScreenSelector({ params: { accountId } }),
@@ -53,7 +54,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
   const disabled = !account || account.balance.lte(0);
 
   return (
-    <View style={styles.placeholder}>
+    <View style={[styles.placeholder, { borderColor: colors.fog }]}>
       <View style={styles.placeholderText}>
         <LText style={styles.description}>
           <Trans
@@ -62,7 +63,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
           />
         </LText>
       </View>
-      <View style={styles.howAsaWorks}>
+      <View style={[styles.howAsaWorks, { borderColor: colors.live }]}>
         <ExternalLink
           event="AlgorandHowAsaWork"
           onPress={howAsaWorks}
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderStyle: "dashed",
     borderWidth: 1,
-    borderColor: colors.fog,
+
     flexDirection: "column",
     alignItems: "center",
     overflow: "hidden",
@@ -110,11 +111,10 @@ const styles = StyleSheet.create({
   howAsaWorks: {
     width: "100%",
     paddingVertical: 16,
-    borderColor: colors.live,
+
     flexDirection: "row",
   },
   howAsaWorksText: {
-    color: colors.live,
     fontSize: 16,
     marginRight: 8,
   },

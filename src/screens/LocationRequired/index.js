@@ -7,7 +7,6 @@ import NoLocationImage from "../../icons/NoLocationImage";
 import LocationServicesButton from "./LocationServicesButton";
 import AppPermissionsButton from "./AppPermissionsButton";
 import LText from "../../components/LText";
-import colors from "../../colors";
 
 type Props = {
   onRetry: Function,
@@ -24,7 +23,7 @@ export default function LocationRequired({ errorType, onRetry }: Props) {
         </LText>
       </View>
       <View>
-        <LText style={styles.desc}>
+        <LText style={styles.desc} color="grey">
           <Trans i18nKey="location.disabled" />
         </LText>
         <LText semiBold style={[styles.desc, styles.descPadding]}>
@@ -49,12 +48,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    color: colors.darkBlue,
     fontSize: 18,
     marginTop: 24,
   },
   desc: {
-    color: colors.grey,
     fontSize: 14,
     textAlign: "center",
     marginTop: 8,

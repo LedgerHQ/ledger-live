@@ -20,8 +20,8 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import colors from "../../../colors";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import { ScreenName } from "../../../const";
@@ -81,6 +81,7 @@ type Props = {
 };
 
 function ClaimRewardsAmount({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(
@@ -162,24 +163,24 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     Object.values(status.warnings)[0];
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.main}>
         <ToggleButton value={mode} options={options} onChange={onChangeMode} />
         <TouchableOpacity onPress={openInfoModal} style={styles.info}>
-          <LText semiBold style={styles.infoLabel}>
+          <LText semiBold style={styles.infoLabel} color="grey">
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.compoundOrCashIn" />
           </LText>
           <Info size={16} color={colors.grey} />
         </TouchableOpacity>
         <View style={styles.spacer} />
         <View style={styles.sectionLabel}>
-          <LText semiBold style={styles.subLabel}>
+          <LText semiBold style={styles.subLabel} color="grey">
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.youEarned" />
           </LText>
           <LText semiBold style={[styles.label, styles.value]}>
             <CurrencyUnitValue unit={unit} value={value} showCode />
           </LText>
-          <LText semiBold style={styles.subLabel}>
+          <LText semiBold style={styles.subLabel} color="grey">
             <CounterValue
               currency={currency}
               showCode
@@ -189,7 +190,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
           </LText>
         </View>
         <View style={styles.sectionLabel}>
-          <LText semiBold style={styles.subLabel}>
+          <LText semiBold style={styles.subLabel} color="grey">
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.byDelegationAssetsTo" />
           </LText>
           <View style={styles.row}>
@@ -208,10 +209,16 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
         </View>
         <View style={styles.spacer} />
       </View>
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.white }]}>
         <View style={styles.warningSection}>
           {warning && warning instanceof Error ? (
-            <LText selectable secondary semiBold style={styles.warning}>
+            <LText
+              selectable
+              secondary
+              semiBold
+              style={styles.warning}
+              color="alert"
+            >
               <TranslatedError error={warning} />
             </LText>
           ) : null}
@@ -236,7 +243,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
+
     padding: 16,
   },
   main: {
@@ -248,16 +255,9 @@ const styles = StyleSheet.create({
   footer: {
     alignSelf: "stretch",
     padding: 16,
-    backgroundColor: colors.white,
   },
   spacer: {
     flex: 1,
-  },
-  error: {
-    color: colors.alert,
-  },
-  success: {
-    color: colors.success,
   },
   info: {
     flexShrink: 1,
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  infoLabel: { color: colors.grey, marginRight: 10 },
+  infoLabel: { marginRight: 10 },
   sectionLabel: { paddingVertical: 12 },
   label: {
     fontSize: 18,
@@ -280,7 +280,6 @@ const styles = StyleSheet.create({
   },
   subLabel: {
     fontSize: 14,
-    color: colors.grey,
     textAlign: "center",
     paddingBottom: 8,
   },
@@ -294,7 +293,6 @@ const styles = StyleSheet.create({
   },
   warning: {
     textAlign: "center",
-    color: colors.alert,
   },
   warningSection: { padding: 16, height: 80 },
 });

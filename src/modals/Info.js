@@ -4,7 +4,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import BottomModal from "../components/BottomModal";
 import LText from "../components/LText";
-import colors from "../colors";
 
 type Props = {
   data: ModalInfo[],
@@ -38,7 +37,7 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
               {title}
             </LText>
           </View>
-          <LText style={styles.description}>{description}</LText>
+          <LText color="grey">{description}</LText>
         </View>
       ))}
     </BottomModal>
@@ -62,9 +61,5 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    color: colors.darkBlue,
-  },
-  description: {
-    color: colors.grey,
   },
 });

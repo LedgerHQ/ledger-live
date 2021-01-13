@@ -1,9 +1,9 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import Animated from "react-native-reanimated";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 
 type Props = {
   style?: *,
@@ -13,35 +13,38 @@ type Props = {
   backgroundColor: string,
 };
 
-class ProgressBar extends PureComponent<Props> {
-  static defaultProps = {
-    height: 6,
-    backgroundColor: colors.lightFog,
-  };
-
-  render() {
-    const {
-      style,
-      height,
-      backgroundColor,
-      progressColor,
-      progress,
-    } = this.props;
-    return (
-      <View style={[styles.wrapper, { height, backgroundColor }, style]}>
-        <Animated.View
-          style={[
-            styles.bar,
-            {
-              backgroundColor: progressColor,
-              width: `${progress}%`,
-            },
-          ]}
-        />
-      </View>
-    );
-  }
+function ProgressBar({
+  style,
+  height,
+  backgroundColor,
+  progressColor,
+  progress,
+}: Props) {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        styles.wrapper,
+        { height, backgroundColor: backgroundColor || colors.lightFog },
+        style,
+      ]}
+    >
+      <Animated.View
+        style={[
+          styles.bar,
+          {
+            backgroundColor: progressColor,
+            width: `${progress}%`,
+          },
+        ]}
+      />
+    </View>
+  );
 }
+
+ProgressBar.defaultProps = {
+  height: 6,
+};
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -55,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProgressBar;
+export default memo<Props>(ProgressBar);

@@ -3,8 +3,6 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
-import colors from "../../colors";
-
 import LText from "../LText";
 
 const QRCodeTopLayer = () => (
@@ -23,7 +21,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 32,
     textAlign: "center",
-    color: colors.white,
+    color: "#fff",
   },
 });
 

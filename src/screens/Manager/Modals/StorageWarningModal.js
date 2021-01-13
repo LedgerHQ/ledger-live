@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import InfoIcon from "../../../components/InfoIcon";
 import Exclamation from "../../../icons/Exclamation";
@@ -15,6 +15,8 @@ type Props = {
 };
 
 const StorageWarningModal = ({ warning, onClose }: Props) => {
+  const { colors } = useTheme();
+
   const modalActions = useMemo(
     () => [
       {
@@ -42,7 +44,7 @@ const StorageWarningModal = ({ warning, onClose }: Props) => {
         <LText style={[styles.warnText, styles.title]} bold>
           <Trans i18nKey="errors.ManagerNotEnoughSpace.title" />
         </LText>
-        <LText style={styles.warnText}>
+        <LText style={styles.warnText} color="grey">
           <Trans
             i18nKey="errors.ManagerNotEnoughSpace.info"
             values={{ app: warning }}
@@ -61,12 +63,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
   warnText: {
     textAlign: "center",
     fontSize: 13,
-    color: colors.grey,
     lineHeight: 16,
     marginVertical: 8,
   },

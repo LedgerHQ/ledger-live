@@ -7,7 +7,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   TouchableOpacity,
-  Switch,
   SafeAreaView,
 } from "react-native";
 import { useSelector } from "react-redux";
@@ -20,8 +19,8 @@ import type {
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { useSupplyMaxChoiceButtons } from "@ledgerhq/live-common/lib/compound/react";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import colors from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -32,6 +31,7 @@ import CancelButton from "../../../components/CancelButton";
 import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
 import CurrencyInput from "../../../components/CurrencyInput";
 import TranslatedError from "../../../components/TranslatedError";
+import Switch from "../../../components/Switch";
 
 type Props = {
   navigation: any,
@@ -66,6 +66,7 @@ export default function AmountScreen({
   onChangeSendMax,
   category,
 }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { currency } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -136,7 +137,9 @@ export default function AmountScreen({
         name="step 1 (Amount)"
         eventProperties={{ currencyName: currency.name }}
       />
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+      >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.root}>
@@ -159,7 +162,8 @@ export default function AmountScreen({
                   }
                 />
                 <LText
-                  style={[error ? styles.error : styles.warning]}
+                  style={[styles.error]}
+                  color={error ? "alert" : "orange"}
                   numberOfLines={2}
                 >
                   <TranslatedError error={error || warning} />
@@ -172,19 +176,18 @@ export default function AmountScreen({
                       style={[
                         styles.amountRatioButton,
                         selectedRatio === value
-                          ? styles.amountRatioButtonActive
-                          : {},
+                          ? {
+                              backgroundColor: colors.live,
+                              borderColor: colors.live,
+                            }
+                          : { borderColor: colors.grey },
                       ]}
                       key={key}
                       onPress={() => onRatioPress(value)}
                     >
                       <LText
-                        style={[
-                          styles.amountRatioLabel,
-                          selectedRatio === value
-                            ? styles.amountRatioLabelActive
-                            : {},
-                        ]}
+                        style={[styles.amountRatioLabel]}
+                        color={selectedRatio === value ? "white" : "grey"}
                       >
                         {label}
                       </LText>
@@ -193,14 +196,18 @@ export default function AmountScreen({
                 </View>
               )}
               <View style={styles.bottomWrapper}>
-                <View style={styles.available}>
+                <View style={[styles.available]}>
                   {onChangeSendMax ? (
                     <>
                       <View style={styles.availableLeft}>
-                        <LText semiBold style={styles.availableAmount}>
+                        <LText
+                          semiBold
+                          style={styles.availableAmount}
+                          color="grey"
+                        >
                           <Trans i18nKey="transfer.lending.supply.amount.totalAvailable" />
                         </LText>
-                        <LText semiBold>
+                        <LText semiBold color="grey">
                           <CurrencyUnitValue showCode unit={unit} value={max} />
                         </LText>
                       </View>
@@ -217,10 +224,14 @@ export default function AmountScreen({
                     </>
                   ) : (
                     <>
-                      <LText semiBold style={styles.availableAmount}>
+                      <LText
+                        semiBold
+                        style={styles.availableAmount}
+                        color="grey"
+                      >
                         <Trans i18nKey="transfer.lending.supply.amount.totalAvailable" />
                       </LText>
-                      <LText semiBold>
+                      <LText semiBold color="grey">
                         <CurrencyUnitValue showCode unit={unit} value={max} />
                       </LText>
                     </>
@@ -264,7 +275,6 @@ export default function AmountScreen({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
@@ -282,7 +292,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontSize: 16,
     paddingVertical: 8,
-    color: colors.grey,
     marginBottom: 8,
   },
   availableRight: {
@@ -295,7 +304,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   availableAmount: {
-    color: colors.grey,
     marginRight: 6,
   },
   bottomWrapper: {
@@ -328,22 +336,13 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: colors.grey,
     paddingHorizontal: 10,
     marginHorizontal: 5,
-  },
-  amountRatioButtonActive: {
-    backgroundColor: colors.live,
-    borderColor: colors.live,
   },
   amountRatioLabel: {
     fontSize: 12,
     lineHeight: 20,
-    color: colors.grey,
     textAlign: "center",
-  },
-  amountRatioLabelActive: {
-    color: colors.white,
   },
   wrapper: {
     flexGrow: 1,
@@ -355,12 +354,6 @@ const styles = StyleSheet.create({
   inputContainer: { flexBasis: 75 },
   inputStyle: { flex: 1, flexShrink: 1, textAlign: "center" },
   error: {
-    color: colors.alert,
-    fontSize: 14,
-    textAlign: "center",
-  },
-  warning: {
-    color: colors.orange,
     fontSize: 14,
     textAlign: "center",
   },

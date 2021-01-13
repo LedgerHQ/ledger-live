@@ -5,8 +5,8 @@ import { Trans } from "react-i18next";
 import type { Action } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 
+import { useTheme } from "@react-navigation/native";
 import AppIcon from "../AppsList/AppIcon";
-import colors from "../../../colors";
 import CollapsibleList from "../../../components/CollapsibleList";
 import LText from "../../../components/LText";
 import AppTree from "../../../icons/AppTree";
@@ -21,18 +21,6 @@ const { height } = getWindowDimensions();
 const LIST_HEIGHT = height - 420;
 const LINE_HEIGHT = 46;
 
-const renderDepLine = ({ item }: *) => (
-  <View style={styles.depLine}>
-    <View style={styles.depLineTree}>
-      <ListTreeLine color={colors.grey} />
-    </View>
-    <AppIcon icon={item.icon} size={22} />
-    <LText semiBold style={styles.depLineText}>
-      {item.name}
-    </LText>
-  </View>
-);
-
 type Props = {
   appUninstallWithDependencies: ?{ app: App, dependents: App[] },
   dispatch: Action => void,
@@ -44,6 +32,7 @@ const UninstallDependenciesModal = ({
   dispatch,
   onClose,
 }: Props) => {
+  const { colors } = useTheme();
   const { app, dependents = [] } = appUninstallWithDependencies || {};
   const { name } = app || {};
 
@@ -51,6 +40,21 @@ const UninstallDependenciesModal = ({
     dispatch({ type: "uninstall", name });
     onClose();
   }, [dispatch, onClose, name]);
+
+  const renderDepLine = useCallback(
+    ({ item }: *) => (
+      <View style={styles.depLine}>
+        <View style={styles.depLineTree}>
+          <ListTreeLine color={colors.grey} />
+        </View>
+        <AppIcon icon={item.icon} size={22} />
+        <LText semiBold style={styles.depLineText}>
+          {item.name}
+        </LText>
+      </View>
+    ),
+    [colors.grey],
+  );
 
   const modalActions = useMemo(
     () => [
@@ -92,13 +96,13 @@ const UninstallDependenciesModal = ({
                 values={{ app: name }}
               />
             </LText>
-            <LText style={styles.warnText}>
+            <LText style={styles.warnText} color="grey">
               <Trans
                 i18nKey="AppAction.uninstall.dependency.description"
                 values={{ app: name }}
               />
             </LText>
-            <LText style={styles.warnText}>
+            <LText style={styles.warnText} color="grey">
               <Trans i18nKey="manager.uninstall.description" />
             </LText>
           </View>
@@ -133,23 +137,12 @@ const styles = StyleSheet.create({
   appIcons: {
     flexBasis: 50,
   },
-  separator: {
-    flexBasis: 23,
-    height: 1,
-    borderColor: colors.lightLive,
-    borderWidth: 1,
-    borderStyle: "dashed",
-    borderRadius: 1,
-    marginHorizontal: 6,
-  },
   title: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
   warnText: {
     textAlign: "center",
     fontSize: 13,
-    color: colors.grey,
     lineHeight: 16,
     marginVertical: 6,
   },
@@ -176,7 +169,6 @@ const styles = StyleSheet.create({
   },
   depLineText: {
     fontSize: 12,
-    color: colors.darkBlue,
     paddingLeft: 12,
     flex: 1,
     textAlign: "left",

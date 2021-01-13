@@ -6,8 +6,8 @@ import { useAppUninstallNeedsDeps } from "@ledgerhq/live-common/lib/apps/react";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
+import { useTheme } from "@react-navigation/native";
 import Trash from "../../../icons/Trash";
-import colors from "../../../colors";
 import Touchable from "../../../components/Touchable";
 
 type Props = {
@@ -23,6 +23,7 @@ const AppUninstallButton = ({
   dispatch,
   setAppUninstallWithDependencies,
 }: Props) => {
+  const { colors } = useTheme();
   const { name } = app;
 
   const needsDependencies = useAppUninstallNeedsDeps(state, app);

@@ -15,12 +15,11 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import React, { PureComponent, useMemo } from "react";
 import { StyleSheet, View, SectionList } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useTheme } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import SafeAreaView from "react-native-safe-area-view";
 import CurrencyIcon from "../../components/CurrencyIcon";
-import colors from "../../colors";
 import { switchCountervalueFirst } from "../../actions/settings";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import type { Item } from "../../components/Graph/types";
@@ -60,6 +59,7 @@ type AssetProps = Props & {
   useCounterValue: boolean,
   portfolio: any,
   switchCountervalueFirst: () => void,
+  colors: *,
 };
 
 export function HeaderTitle() {
@@ -118,7 +118,7 @@ class Asset extends PureComponent<AssetProps, any> {
             </LText>
           ) : null}
           {items[1] ? (
-            <LText style={styles.balanceSubText} semiBold>
+            <LText style={styles.balanceSubText} semiBold color="smoke">
               <CurrencyUnitValue {...items[1]} />
             </LText>
           ) : null}
@@ -200,7 +200,7 @@ class Asset extends PureComponent<AssetProps, any> {
 
   render() {
     const { opCount } = this.state;
-    const { accounts, currency } = this.props;
+    const { accounts, currency, colors } = this.props;
 
     const { sections, completed } = groupAccountsOperationsByDay(accounts, {
       count: opCount,
@@ -208,7 +208,7 @@ class Asset extends PureComponent<AssetProps, any> {
     });
 
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: colors.background }]}>
         <SafeAreaView style={styles.root}>
           <List
             forwardedRef={this.ref}
@@ -259,6 +259,8 @@ export default function Screen(props: Props) {
     range,
   });
 
+  const { colors } = useTheme();
+
   return (
     <Asset
       {...props}
@@ -273,6 +275,7 @@ export default function Screen(props: Props) {
       switchCountervalueFirst={(...args) =>
         dispatch(switchCountervalueFirst(...args))
       }
+      colors={colors}
     />
   );
 }
@@ -297,12 +300,10 @@ const styles = StyleSheet.create({
   },
   balanceText: {
     fontSize: 22,
-    color: colors.darkBlue,
     lineHeight: 24,
   },
   balanceSubText: {
     fontSize: 16,
-    color: colors.smoke,
   },
   balanceContainer: {
     marginLeft: 16,

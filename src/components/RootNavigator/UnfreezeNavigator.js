@@ -1,10 +1,11 @@
 // @flow
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Amount from "../../screens/UnfreezeFunds/01-Amount";
 import SelectDevice from "../../screens/SelectDevice";
 import ConnectDevice from "../../screens/ConnectDevice";
@@ -16,9 +17,13 @@ const totalSteps = "3";
 
 export default function UnfreezeNavigator() {
   const { t } = useTranslation();
-
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.UnfreezeAmount}
         component={Amount}

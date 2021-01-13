@@ -1507,6 +1507,13 @@
       "password": "Password lock",
       "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
       "counterValue": "Countervalue",
+      "theme": "Theme",
+      "themeDesc": "Set the app UI theme",
+      "themes": {
+        "dark": "Dark",
+        "dusk": "Dusk",
+        "light": "Light"
+      },
       "counterValueDesc": "Choose the currency for balances and operations.",
       "exchange": "Rate provider",
       "exchangeDesc": "Set provider of exchange rate from Bitcoin to {{fiat}}",

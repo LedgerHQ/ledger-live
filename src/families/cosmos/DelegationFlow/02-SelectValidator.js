@@ -26,8 +26,8 @@ import {
 } from "@ledgerhq/live-common/lib/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import colors from "../../../colors";
 import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
@@ -47,6 +47,7 @@ type Props = {
 };
 
 function DelegationSelectValidator({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(account, "account required");
@@ -204,7 +205,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   const error = status && status.errors && Object.values(status.errors)[0];
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <SelectValidatorSearchBox
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -227,16 +228,26 @@ function DelegationSelectValidator({ navigation, route }: Props) {
         renderItem={renderItem}
         stickySectionHeadersEnabled
         renderSectionHeader={({ section: { title } }) => (
-          <LText style={styles.header}>{title}</LText>
+          <LText
+            style={[styles.header, { backgroundColor: colors.lightFog }]}
+            color="grey"
+          >
+            {title}
+          </LText>
         )}
       />
 
-      <View style={styles.footer}>
+      <View
+        style={[
+          styles.footer,
+          { borderTopColor: colors.lightFog, backgroundColor: colors.white },
+        ]}
+      >
         <View style={styles.paddingBottom}>
           {max.isZero() && (
             <View style={styles.labelContainer}>
               <Check size={16} color={colors.success} />
-              <LText style={[styles.assetsRemaining, styles.success]}>
+              <LText style={[styles.assetsRemaining]} color="success">
                 <Trans i18nKey="cosmos.delegation.flow.steps.validator.allAssetsUsed" />
               </LText>
             </View>
@@ -273,7 +284,6 @@ function DelegationSelectValidator({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   noResult: {
     flex: 1,
@@ -285,14 +295,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     lineHeight: 32,
     fontSize: 14,
-    backgroundColor: colors.lightFog,
-    color: colors.grey,
   },
   footer: {
     borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
     padding: 16,
-    backgroundColor: colors.white,
   },
   labelContainer: {
     flexDirection: "row",
@@ -309,12 +315,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   textCenter: { textAlign: "center" },
-  error: {
-    color: colors.alert,
-  },
-  success: {
-    color: colors.success,
-  },
   paddingBottom: {
     paddingBottom: 8,
   },

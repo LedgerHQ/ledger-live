@@ -4,13 +4,14 @@ import React, { useCallback } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { useTheme } from "@react-navigation/native";
 import { urls } from "../config/urls";
-import colors from "../colors";
 import Touchable from "./Touchable";
 import TranslatedError from "./TranslatedError";
 import LText from "./LText";
 
 const HeaderErrorTitle = ({ error }: { error: Error }) => {
+  const { colors } = useTheme();
   const maybeLink = error ? urls.errors[error.name] : null;
   const onOpen = useCallback(() => {
     maybeLink && Linking.openURL(maybeLink);
@@ -33,7 +34,11 @@ const HeaderErrorTitle = ({ error }: { error: Error }) => {
         {maybeLink ? (
           <>
             {" "}
-            <LText semiBold style={[styles.description, styles.learnMore]}>
+            <LText
+              semiBold
+              style={[styles.description, styles.learnMore]}
+              color="orange"
+            >
               <Trans i18nKey="common.learnMore" />
             </LText>
           </>
@@ -54,7 +59,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(255, 152, 79, 0.1);",
   },
-
   container: {
     display: "flex",
   },
@@ -64,7 +68,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     lineHeight: 21,
-    color: colors.orange,
   },
   icon: {
     marginRight: 8,

@@ -2,9 +2,9 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Touchable from "./Touchable";
-import colors from "../colors";
 
 type ChoiceButtonProps = {
   disabled: boolean,
@@ -30,35 +30,44 @@ const ChoiceButton = ({
   onSelect,
   navigationParams,
   enableActions,
-}: ChoiceButtonProps) => (
-  <Touchable
-    event={event}
-    eventProperties={eventProperties}
-    style={styles.button}
-    disabled={disabled}
-    onPress={() => onSelect({ navigationParams, enableActions })}
-  >
-    <View
-      style={[
-        styles.buttonIcon,
-        disabled ? { backgroundColor: colors.lightFog } : {},
-      ]}
+}: ChoiceButtonProps) => {
+  const { colors } = useTheme();
+  return (
+    <Touchable
+      event={event}
+      eventProperties={eventProperties}
+      style={styles.button}
+      disabled={disabled}
+      onPress={() => onSelect({ navigationParams, enableActions })}
     >
-      <Icon color={disabled ? colors.grey : colors.live} size={18} />
-    </View>
-
-    <View style={styles.buttonLabelContainer}>
-      <LText
-        style={[styles.buttonLabel, disabled ? styles.disabledButton : {}]}
-        semiBold
+      <View
+        style={[
+          styles.buttonIcon,
+          { backgroundColor: colors.lightLive },
+          disabled ? { backgroundColor: colors.lightFog } : {},
+        ]}
       >
-        {label}
-      </LText>
-      {description && <LText style={[styles.buttonDesc]}>{description}</LText>}
-    </View>
-    {extra && <View style={styles.extraButton}>{extra}</View>}
-  </Touchable>
-);
+        <Icon color={disabled ? colors.grey : colors.live} size={18} />
+      </View>
+
+      <View style={styles.buttonLabelContainer}>
+        <LText
+          style={[styles.buttonLabel]}
+          color={disabled ? "grey" : "darkBlue"}
+          semiBold
+        >
+          {label}
+        </LText>
+        {description && (
+          <LText style={[styles.buttonDesc]} color="grey">
+            {description}
+          </LText>
+        )}
+      </View>
+      {extra && <View style={styles.extraButton}>{extra}</View>}
+    </Touchable>
+  );
+};
 
 export default ChoiceButton;
 
@@ -78,7 +87,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    backgroundColor: colors.lightLive,
+
     justifyContent: "center",
     alignItems: "center",
   },
@@ -90,12 +99,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   buttonLabel: {
-    color: colors.darkBlue,
     fontSize: 18,
     lineHeight: 22,
   },
   buttonDesc: {
-    color: colors.grey,
     fontSize: 13,
     lineHeight: 16,
   },
@@ -104,8 +111,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "center",
     justifyContent: "flex-end",
-  },
-  disabledButton: {
-    color: colors.grey,
   },
 });

@@ -3,11 +3,11 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import GenericSuccessView from "../../components/GenericSuccessView";
 import Button from "../../components/Button";
-import colors from "../../colors";
 
 const forceInset = { bottom: "always" };
 
@@ -21,12 +21,16 @@ type RouteParams = {
 };
 
 export default function FirmwareUpdateConfirmation({ navigation }: Props) {
+  const { colors } = useTheme();
   const onClose = useCallback(() => {
     navigation.navigate(ScreenName.Manager);
   }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="FirmwareUpdate" name="Confirmation" />
       <View style={styles.body}>
         <GenericSuccessView
@@ -50,7 +54,6 @@ export default function FirmwareUpdateConfirmation({ navigation }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   body: {
     padding: 20,
@@ -65,16 +68,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    color: colors.darkBlue,
     paddingHorizontal: 16,
     paddingBottom: 16,
-    textAlign: "center",
-  },
-  message: {
-    fontSize: 14,
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-    color: colors.smoke,
     textAlign: "center",
   },
   button: {

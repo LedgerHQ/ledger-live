@@ -14,7 +14,7 @@ import StorageWarningModal from "./Modals/StorageWarningModal";
 import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
-import { stackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { defaultNavigationOptions } from "../../navigation/navigatorConfig";
 
 export const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -86,7 +86,7 @@ const Manager = ({
     navigation.setOptions({
       headerBackImage: blockNavigation
         ? () => null
-        : stackNavigatorConfig.headerBackImage,
+        : defaultNavigationOptions.headerBackImage,
       gestureEnabled: !blockNavigation,
     });
   }, [navigation, blockNavigation]);

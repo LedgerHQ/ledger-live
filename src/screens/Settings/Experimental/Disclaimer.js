@@ -3,21 +3,29 @@ import React, { memo } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { Trans } from "react-i18next";
 
+import { useTheme } from "@react-navigation/native";
 import shieldWarning from "../../../images/shield-warning.png";
-import colors from "../../../colors";
 
 import LText from "../../../components/LText";
 
-const Disclaimer = () => (
-  <View style={[styles.wrapper]}>
-    <Image style={styles.image} source={shieldWarning} />
-    <View style={styles.textWrapper}>
-      <LText style={[styles.text]}>
-        <Trans i18nKey="settings.experimental.disclaimer" />
-      </LText>
+const Disclaimer = () => {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        styles.wrapper,
+        { backgroundColor: colors.card, borderColor: colors.fog },
+      ]}
+    >
+      <Image style={styles.image} source={shieldWarning} />
+      <View style={styles.textWrapper}>
+        <LText style={[styles.text]} color="grey">
+          <Trans i18nKey="settings.experimental.disclaimer" />
+        </LText>
+      </View>
     </View>
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -26,9 +34,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: colors.lightGrey,
     borderWidth: 1,
-    borderColor: colors.fog,
     borderStyle: "dashed",
   },
   textWrapper: {
@@ -36,7 +42,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
-    color: colors.grey,
     lineHeight: 21,
     paddingLeft: 8,
   },

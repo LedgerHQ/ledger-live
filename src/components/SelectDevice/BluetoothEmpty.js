@@ -1,13 +1,13 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import Button from "../Button";
 
 import lottie from "../../screens/Onboarding/assets/nanoX/pairDevice/data.json";
 
-import colors from "../../colors";
 import LText from "../LText";
 import Animation from "../Animation";
 import Bluetooth from "../../icons/Bluetooth";
@@ -16,40 +16,39 @@ type Props = {
   onPairNewDevice: () => void,
 };
 
-class BluetoothEmpty extends PureComponent<Props> {
-  render() {
-    return (
-      <>
-        <View style={styles.imageContainer}>
-          <Animation source={lottie} style={styles.image} />
+function BluetoothEmpty({ onPairNewDevice }: Props) {
+  const { colors } = useTheme();
+  return (
+    <>
+      <View style={styles.imageContainer}>
+        <Animation source={lottie} style={styles.image} />
+      </View>
+      <View style={styles.bulletLine}>
+        <View
+          style={[styles.bulletIcon, { backgroundColor: colors.lightLive }]}
+        >
+          <Bluetooth size={10} color={colors.live} />
         </View>
-        <View style={styles.bulletLine}>
-          <View
-            style={[styles.bulletIcon, { backgroundColor: colors.lightLive }]}
+        <View style={styles.bulletTextContainer}>
+          <LText
+            semiBold
+            style={[styles.bulletTitle, { color: colors.darkBlue }]}
           >
-            <Bluetooth size={10} color={colors.live} />
-          </View>
-          <View style={styles.bulletTextContainer}>
-            <LText
-              semiBold
-              style={[styles.bulletTitle, { color: colors.darkBlue }]}
-            >
-              <Trans i18nKey="SelectDevice.bluetooth.title" />
-            </LText>
-            <LText style={[styles.label, { color: colors.darkBlue }]}>
-              <Trans i18nKey="SelectDevice.bluetooth.label" />
-            </LText>
-          </View>
+            <Trans i18nKey="SelectDevice.bluetooth.title" />
+          </LText>
+          <LText style={[styles.label, { color: colors.darkBlue }]}>
+            <Trans i18nKey="SelectDevice.bluetooth.label" />
+          </LText>
         </View>
-        <Button
-          event="PairDevice"
-          type="primary"
-          title={<Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />}
-          onPress={this.props.onPairNewDevice}
-        />
-      </>
-    );
-  }
+      </View>
+      <Button
+        event="PairDevice"
+        type="primary"
+        title={<Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />}
+        onPress={onPairNewDevice}
+      />
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -92,4 +91,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BluetoothEmpty;
+export default memo<Props>(BluetoothEmpty);

@@ -2,9 +2,13 @@
 
 import React, { Component } from "react";
 import { Animated, View, StyleSheet, Easing } from "react-native";
-import colors from "../colors";
+import { withTheme } from "../colors";
 
-class TouchHintCircle extends Component<{ stopAnimation: boolean, style: * }> {
+class TouchHintCircle extends Component<{
+  stopAnimation: boolean,
+  style: *,
+  colors: *,
+}> {
   leftAnimated = new Animated.Value(0);
   opacityAnimated = new Animated.Value(0);
   growAnimated = new Animated.Value(0);
@@ -46,6 +50,7 @@ class TouchHintCircle extends Component<{ stopAnimation: boolean, style: * }> {
   };
 
   render() {
+    const { colors } = this.props;
     const translateX = this.leftAnimated.interpolate({
       inputRange: [0, 1],
       outputRange: [0, 80],
@@ -72,8 +77,8 @@ class TouchHintCircle extends Component<{ stopAnimation: boolean, style: * }> {
           },
         ]}
       >
-        <View style={styles.root}>
-          <View style={styles.ball} />
+        <View style={[styles.root, { backgroundColor: colors.lightLive }]}>
+          <View style={[styles.ball, { backgroundColor: colors.live }]} />
         </View>
       </Animated.View>
     );
@@ -92,14 +97,12 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.lightLive,
   },
   ball: {
     height: 20,
     width: 20,
     borderRadius: 20,
-    backgroundColor: colors.live,
   },
 });
 
-export default TouchHintCircle;
+export default withTheme(TouchHintCircle);

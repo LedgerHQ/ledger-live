@@ -4,8 +4,8 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { TypedMessageData } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 import {
@@ -25,6 +25,7 @@ type RouteParams = {
 };
 
 export default function ValidationSuccess({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const wcContext = useContext(_wcContext);
 
@@ -39,7 +40,14 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [navigation]);
 
   return (
-    <View style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.white,
+        },
+      ]}
+    >
       <TrackScreen category="SignMessage" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess
@@ -54,6 +62,5 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
 });

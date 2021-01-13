@@ -59,7 +59,7 @@ export default class DebugRejectSwitch extends PureComponent<{}> {
       <SafeAreaView forceInset={forceInset}>
         <TouchableOpacity onPress={this.onPress}>
           <View style={styles.root}>
-            <LText bold style={styles.text}>
+            <LText bold style={styles.text} color="white">
               {[..."STOP"].join("\n")}
             </LText>
           </View>
@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   text: {
-    color: "white",
     textAlign: "center",
     paddingVertical: 10,
   },

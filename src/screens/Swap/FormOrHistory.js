@@ -6,6 +6,7 @@ import type {
   Account,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types/account";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import Swap from "./Swap";
 import History from "./History";
@@ -24,10 +25,14 @@ type TabLabelProps = {
 
 export default ({ route }: { route: { params: RouteParams } }) => {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   return (
     <Tab.Navigator
       tabBarOptions={{
         headerStyle: styles.headerNoShadow,
+        indicatorStyle: {
+          backgroundColor: colors.live,
+        },
       }}
     >
       <Tab.Screen

@@ -7,7 +7,7 @@ import type { State } from "@ledgerhq/live-common/lib/apps";
 
 import { useAppInstallProgress } from "@ledgerhq/live-common/lib/apps/react";
 
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import ProgressBar from "../../../components/ProgressBar";
 import InfiniteProgressBar from "../../../components/InfiniteProgressBar";
@@ -25,6 +25,7 @@ export const InstallProgress = ({
   installing,
   updating,
 }: InstallProgressProps) => {
+  const { colors } = useTheme();
   const progress = useAppInstallProgress(state, name);
 
   return (
@@ -58,33 +59,36 @@ type UninstallProgressProps = {
   uninstalling: boolean,
 };
 
-export const UninstallProgress = ({ uninstalling }: UninstallProgressProps) => (
-  <View style={styles.progressContainer}>
-    <View style={styles.progressLabel}>
-      <LText
-        semiBold
-        numberOfLines={1}
-        style={[styles.appStateText, { color: colors.live }]}
-      >
-        <Trans i18nKey="AppAction.uninstall.loading.button" />
-      </LText>
+export const UninstallProgress = ({ uninstalling }: UninstallProgressProps) => {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.progressContainer}>
+      <View style={styles.progressLabel}>
+        <LText
+          semiBold
+          numberOfLines={1}
+          style={[styles.appStateText, { color: colors.live }]}
+        >
+          <Trans i18nKey="AppAction.uninstall.loading.button" />
+        </LText>
+      </View>
+      {uninstalling ? (
+        <InfiniteProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+        />
+      ) : (
+        <ProgressBar
+          progressColor={colors.live}
+          style={styles.progressBar}
+          height={6}
+          progress={0}
+        />
+      )}
     </View>
-    {uninstalling ? (
-      <InfiniteProgressBar
-        progressColor={colors.live}
-        style={styles.progressBar}
-        height={6}
-      />
-    ) : (
-      <ProgressBar
-        progressColor={colors.live}
-        style={styles.progressBar}
-        height={6}
-        progress={0}
-      />
-    )}
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   appStateText: {
@@ -98,7 +102,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     width: "100%",
     height: 38,
-    backgroundColor: colors.white,
   },
   progressLabel: {
     flex: 1,
@@ -106,7 +109,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     flexWrap: "nowrap",
     alignItems: "center",
-    backgroundColor: colors.white,
   },
   progressBar: { flexShrink: 0, flexGrow: 0, flexBasis: 6 },
 });

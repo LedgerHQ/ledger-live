@@ -4,8 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/dist/Feather";
-
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 
@@ -16,37 +15,40 @@ type Props = {
 
 const forceInset = { bottom: "always" };
 
-const TokenNetworkFeeInfo = ({ gotoExtraInfo, onClose }: Props) => (
-  <SafeAreaView forceInset={forceInset} style={styles.root}>
-    <View style={styles.iconWrapper}>
-      <Icon name="info" size={24} color={colors.live} />
-    </View>
-    <View style={styles.textWrapper}>
-      <LText secondary bold style={styles.textTitle}>
-        <Trans i18nKey="send.fees.title" />
-      </LText>
-      <LText style={styles.textContent}>
-        <Trans i18nKey="send.fees.ethTokenNetworkFees" />
-      </LText>
-    </View>
-    <View style={styles.footerContainer}>
-      <Button
-        type="secondary"
-        title={<Trans i18nKey="common.cancel" />}
-        containerStyle={styles.buttonContainer}
-        event="CloseViewTokenNetworkInfo"
-        onPress={onClose}
-      />
-      <Button
-        type="primary"
-        title={<Trans i18nKey="common.learnMore" />}
-        containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
-        event="GoToViewTokenNetworkInfo"
-        onPress={gotoExtraInfo}
-      />
-    </View>
-  </SafeAreaView>
-);
+const TokenNetworkFeeInfo = ({ gotoExtraInfo, onClose }: Props) => {
+  const { colors } = useTheme();
+  return (
+    <SafeAreaView forceInset={forceInset} style={styles.root}>
+      <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
+        <Icon name="info" size={24} color={colors.live} />
+      </View>
+      <View style={styles.textWrapper}>
+        <LText secondary bold style={styles.textTitle}>
+          <Trans i18nKey="send.fees.title" />
+        </LText>
+        <LText style={styles.textContent} color="smoke">
+          <Trans i18nKey="send.fees.ethTokenNetworkFees" />
+        </LText>
+      </View>
+      <View style={styles.footerContainer}>
+        <Button
+          type="secondary"
+          title={<Trans i18nKey="common.cancel" />}
+          containerStyle={styles.buttonContainer}
+          event="CloseViewTokenNetworkInfo"
+          onPress={onClose}
+        />
+        <Button
+          type="primary"
+          title={<Trans i18nKey="common.learnMore" />}
+          containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
+          event="GoToViewTokenNetworkInfo"
+          onPress={gotoExtraInfo}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   root: {
@@ -61,19 +63,16 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 56,
-    backgroundColor: colors.lightLive,
   },
   textWrapper: {
     marginTop: 16,
     alignItems: "center",
   },
   textTitle: {
-    color: colors.darkBlue,
     fontSize: 16,
   },
   textContent: {
     marginTop: 8,
-    color: colors.smoke,
     fontSize: 14,
     textAlign: "center",
   },

@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import colors from "../../../../colors";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../../../const";
 import Button from "../../../../components/Button";
 import LText from "../../../../components/LText";
@@ -29,6 +29,7 @@ type Props = {
 };
 
 export default function ClaimRewardsStarted({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const onNext = useCallback(() => {
     navigation.pop();
     navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -42,7 +43,10 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -59,12 +63,14 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
             <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.1" />,
             <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.2" />,
           ].map(wording => (
-            <LText semiBold style={styles.bulletItem}>
+            <LText semiBold style={styles.bulletItem} color="black">
               {wording}
             </LText>
           ))}
         />
-        <View style={styles.howClaimRewardsWorks}>
+        <View
+          style={[styles.howClaimRewardsWorks, { borderColor: colors.live }]}
+        >
           <ExternalLink
             event="AlgorandHowRewardsWork"
             onPress={howClaimRewardsWorks}
@@ -77,7 +83,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           />
         </View>
       </NavigationScrollView>
-      <View style={styles.footer}>
+      <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
         <Button
           event="ClaimRewardsStartedBtn"
           onPress={onNext}
@@ -94,7 +100,6 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scroll: {
     flex: 1,
@@ -107,29 +112,22 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     lineHeight: 33,
-    color: colors.darkBlue,
     paddingVertical: 16,
   },
   description: {
     fontSize: 16,
     lineHeight: 21,
-    color: colors.darkBlue,
     textAlign: "center",
     marginVertical: 16,
   },
   bulletItem: {
     fontSize: 14,
-    color: colors.black,
   },
   howClaimRewardsWorks: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderColor: colors.live,
+
     flexDirection: "row",
-  },
-  howClaimRewardsWorksText: {
-    color: colors.live,
-    fontSize: 14,
   },
   warning: {
     width: "100%",
@@ -142,6 +140,5 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
   },
 });

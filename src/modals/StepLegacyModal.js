@@ -3,9 +3,10 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import BottomModal from "../components/BottomModal";
 import Button from "../components/Button";
-import colors, { rgba } from "../colors";
+import { rgba } from "../colors";
 import IconInfo from "../icons/Info";
 import LText from "../components/LText";
 import Circle from "../components/Circle";
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export default function StepLegacyModal({ isOpened, onClose }: Props) {
+  const { colors } = useTheme();
   return (
     <BottomModal
       id="StepLegacyModal"
@@ -26,7 +28,7 @@ export default function StepLegacyModal({ isOpened, onClose }: Props) {
       <Circle bg={rgba(colors.live, 0.1)} size={56}>
         <IconInfo size={24} color={colors.live} />
       </Circle>
-      <LText style={styles.description}>
+      <LText style={styles.description} color="smoke">
         <Trans i18nKey="StepLegacyModal.description" />
       </LText>
       <View style={styles.buttonWrapper}>
@@ -50,7 +52,6 @@ const styles = StyleSheet.create({
   },
   description: {
     paddingVertical: 16,
-    color: colors.smoke,
     fontSize: 14,
     lineHeight: 21,
     textAlign: "center",

@@ -21,6 +21,8 @@ type SetExchangePairs = (
   }>,
 ) => *;
 
+export type Theme = "light" | "dark" | "dusk";
+
 export const setExchangePairsAction: SetExchangePairs = pairs => ({
   type: "SETTINGS_SET_PAIRS",
   pairs,
@@ -144,6 +146,11 @@ export const setAvailableUpdate = (enabled: boolean) => ({
 export const setSwapProviders = (swapProviders?: AvailableProvider[]) => ({
   type: "SETTINGS_SET_SWAP_PROVIDERS",
   swapProviders,
+});
+
+export const setTheme = (payload: Theme) => ({
+  type: "SETTINGS_SET_THEME",
+  payload,
 });
 
 export const setDiscreetMode = (payload: boolean) => ({

@@ -5,8 +5,8 @@ import { Trans } from "react-i18next";
 
 import type { DeviceModel } from "@ledgerhq/devices";
 import type { AppsDistribution } from "@ledgerhq/live-common/lib/apps";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
-import colors from "../../../colors";
 
 import Warning from "../../../icons/Warning";
 import Touchable from "../../../components/Touchable";
@@ -27,6 +27,7 @@ const DeviceAppStorage = ({
     apps,
   },
 }: Props) => {
+  const { colors } = useTheme();
   const appSizes = useMemo(
     () =>
       apps.filter(Boolean).map(({ bytes, currency, name }) => ({
@@ -61,7 +62,11 @@ const DeviceAppStorage = ({
       </View>
       <Touchable
         activeOpacity={1}
-        style={[styles.row, styles.graphRow]}
+        style={[
+          styles.row,
+          styles.graphRow,
+          { backgroundColor: colors.lightFog },
+        ]}
         onPress={() => {}}
         event="ManagerAppDeviceGraphClick"
       >
@@ -73,6 +78,7 @@ const DeviceAppStorage = ({
               {
                 flexBasis: `${ratio}%`,
                 backgroundColor: color,
+                borderRightColor: colors.white,
               },
             ]}
           />
@@ -130,10 +136,6 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 13,
   },
-  infoSubTitle: {
-    fontSize: 13,
-    color: colors.grey,
-  },
   graphRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
     flexBasis: 23,
     height: 23,
     marginVertical: 16,
-    backgroundColor: colors.lightFog,
+
     borderRadius: 3,
     overflow: "hidden",
   },
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     flexGrow: 0.005,
     flexShrink: 1,
     height: "100%",
-    borderRightColor: colors.white,
+
     borderRightWidth: StyleSheet.hairlineWidth,
   },
 });

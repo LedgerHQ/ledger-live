@@ -1,13 +1,31 @@
-import React, { Component } from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import Touchable from "./Touchable";
 import LText from "./LText";
-import colors from "../colors";
 import ArrowRight from "../icons/ArrowRight";
 import Check from "../icons/Check";
 import IconHelp from "../icons/Info";
 
-export default class SettingsRow extends Component<{
+export default function SettingsRow({
+  onPress,
+  onHelpPress,
+  title,
+  titleStyle,
+  titleContainerStyle,
+  desc,
+  selected,
+  arrowRight,
+  iconLeft,
+  centeredIcon,
+  alignedTop,
+  compact,
+  children,
+  borderTop,
+  noTextDesc,
+  event,
+  eventProperties,
+}: {
   onPress: () => void,
   onHelpPress?: () => void,
   title: React$Node,
@@ -25,89 +43,73 @@ export default class SettingsRow extends Component<{
   noTextDesc?: boolean,
   event?: string,
   eventProperties?: Object,
-}> {
-  render() {
-    const {
-      onPress,
-      onHelpPress,
-      children,
-      title,
-      titleStyle,
-      titleContainerStyle,
-      desc,
-      arrowRight,
-      iconLeft,
-      centeredIcon,
-      alignedTop,
-      compact,
-      selected,
-      borderTop,
-      noTextDesc,
-      event,
-      eventProperties,
-    } = this.props;
-
-    let title$ = (
-      <View style={[styles.titleContainer, titleContainerStyle]}>
-        <LText
-          semiBold={selected !== false}
-          style={[styles.titleStyle, titleStyle]}
-        >
-          {title}
-        </LText>
-        {!!onHelpPress && (
-          <View style={styles.helpIcon}>
-            <IconHelp size={16} color={colors.grey} />
-          </View>
-        )}
-      </View>
-    );
-
-    if (onHelpPress) {
-      title$ = <Touchable onPress={onHelpPress}>{title$}</Touchable>;
-    }
-
-    return (
-      <Touchable
-        onPress={onPress}
-        style={[
-          styles.root,
-          alignedTop && styles.rootAlignedTop,
-          compact && styles.rootCompact,
-          borderTop && styles.borderTop,
-        ]}
-        event={event}
-        eventProperties={eventProperties}
+}) {
+  const { colors } = useTheme();
+  let title$ = (
+    <View style={[styles.titleContainer, titleContainerStyle]}>
+      <LText
+        semiBold={selected !== false}
+        style={[styles.titleStyle, { color: colors.darkBlue }, titleStyle]}
       >
-        {iconLeft && (
-          <View style={[styles.iconLeft, centeredIcon && styles.centeredIcon]}>
-            {iconLeft}
-          </View>
-        )}
-        <View style={[styles.textBlock, { marginLeft: iconLeft ? 0 : 16 }]}>
-          {title$}
-          {desc && !noTextDesc && (
-            <LText style={styles.description}>{desc}</LText>
-          )}
-          {desc && noTextDesc && desc}
+        {title}
+      </LText>
+      {!!onHelpPress && (
+        <View style={styles.helpIcon}>
+          <IconHelp size={16} color={colors.grey} />
         </View>
-        <View
-          style={[styles.rightBlock, alignedTop && styles.rightBlockTopPadded]}
-        >
-          {children}
-          {arrowRight ? (
-            <View style={styles.iconRightContainer}>
-              <ArrowRight size={16} color={colors.grey} />
-            </View>
-          ) : selected ? (
-            <View style={styles.iconLeftContainer}>
-              <Check size={16} color={colors.live} />
-            </View>
-          ) : null}
-        </View>
-      </Touchable>
-    );
+      )}
+    </View>
+  );
+
+  if (onHelpPress) {
+    title$ = <Touchable onPress={onHelpPress}>{title$}</Touchable>;
   }
+
+  return (
+    <Touchable
+      onPress={onPress}
+      style={[
+        styles.root,
+        alignedTop && styles.rootAlignedTop,
+        compact && styles.rootCompact,
+        borderTop && { ...styles.borderTop, borderTopColor: colors.lightGrey },
+        {
+          backgroundColor: colors.card,
+        },
+      ]}
+      event={event}
+      eventProperties={eventProperties}
+    >
+      {iconLeft && (
+        <View style={[styles.iconLeft, centeredIcon && styles.centeredIcon]}>
+          {iconLeft}
+        </View>
+      )}
+      <View style={[styles.textBlock, { marginLeft: iconLeft ? 0 : 16 }]}>
+        {title$}
+        {desc && !noTextDesc && (
+          <LText style={[styles.description, { color: colors.grey }]}>
+            {desc}
+          </LText>
+        )}
+        {desc && noTextDesc && desc}
+      </View>
+      <View
+        style={[styles.rightBlock, alignedTop && styles.rightBlockTopPadded]}
+      >
+        {children}
+        {arrowRight ? (
+          <View style={styles.iconRightContainer}>
+            <ArrowRight size={16} color={colors.grey} />
+          </View>
+        ) : selected ? (
+          <View style={styles.iconLeftContainer}>
+            <Check size={16} color={colors.live} />
+          </View>
+        ) : null}
+      </View>
+    </Touchable>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
     minHeight: 50,
     flexDirection: "row",
     paddingVertical: 24,
-    backgroundColor: "white",
+
     marginBottom: 2,
     justifyContent: "space-between",
   },
@@ -150,10 +152,8 @@ const styles = StyleSheet.create({
   },
   titleStyle: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
   description: {
-    color: colors.grey,
     paddingTop: 5,
     fontSize: 14,
     lineHeight: 21,
@@ -173,6 +173,5 @@ const styles = StyleSheet.create({
   },
   borderTop: {
     borderTopWidth: 1,
-    borderTopColor: colors.lightGrey,
   },
 });

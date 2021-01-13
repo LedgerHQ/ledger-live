@@ -1,7 +1,7 @@
 /* @flow */
 import React, { useState } from "react";
 import { FlatList, View, StyleSheet, Keyboard } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
@@ -15,7 +15,6 @@ import CurrencyInput from "./CurrencyInput";
 import Touchable from "./Touchable";
 import BottomModal from "./BottomModal";
 import Button from "./Button";
-import colors from "../colors";
 import CloseIcon from "../icons/Close";
 
 type Props = {
@@ -24,6 +23,7 @@ type Props = {
 };
 
 export default function EditFreeUnit({ account, field }: Props) {
+  const { colors } = useTheme();
   const { navigate } = useNavigation();
   const route = useRoute();
   const { t } = useTranslation();

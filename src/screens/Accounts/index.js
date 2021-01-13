@@ -3,7 +3,7 @@
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import { StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
@@ -28,6 +28,7 @@ export default function Accounts({ navigation, route }: Props) {
   const accounts = useSelector(accountsSelector);
   const ref = useRef();
   useScrollToTop(ref);
+  const { colors } = useTheme();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
@@ -86,7 +87,7 @@ export default function Accounts({ navigation, route }: Props) {
         data={accounts}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        style={styles.list}
+        style={[styles.list, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.contentContainer}
       />
       <MigrateAccountsBanner />

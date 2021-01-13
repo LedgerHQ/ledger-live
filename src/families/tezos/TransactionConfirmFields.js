@@ -18,11 +18,9 @@ import {
 } from "@ledgerhq/live-common/lib/explorers";
 import { DataRow } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
-import colors from "../../colors";
 
 const styles = StyleSheet.create({
   text: {
-    color: colors.darkBlue,
     fontSize: 14,
     flex: 1,
     textAlign: "right",

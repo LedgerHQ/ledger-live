@@ -4,13 +4,12 @@ import React, { useCallback, PureComponent } from "react";
 import { BigNumber } from "bignumber.js";
 import { Text, StyleSheet, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { useTheme } from "@react-navigation/native";
 import NavigationScrollView from "../components/NavigationScrollView";
 import Button from "../components/Button";
 
-import colors from "../colors";
-
 class CollapsibleThingy extends PureComponent<
-  { obj: Object, depth: number },
+  { obj: Object, depth: number, colors: * },
   { shown: {} },
 > {
   state = {
@@ -23,7 +22,7 @@ class CollapsibleThingy extends PureComponent<
     }));
 
   render() {
-    const { obj, depth = 0 } = this.props;
+    const { obj, depth = 0, colors } = this.props;
     const { shown } = this.state;
 
     return (
@@ -36,9 +35,15 @@ class CollapsibleThingy extends PureComponent<
           const bullet = isObject ? (isOpen ? "-" : "+") : "";
 
           return (
-            <View key={rowKey} style={styles.wrapper}>
+            <View
+              key={rowKey}
+              style={[
+                styles.wrapper,
+                { backgroundColor: colors.white, borderColor: colors.fog },
+              ]}
+            >
               <Text
-                style={styles.header}
+                style={[styles.header, { backgroundColor: colors.white }]}
                 onPress={
                   isObject ? () => this.toggleCollapse(rowKey) : undefined
                 }
@@ -50,7 +55,10 @@ class CollapsibleThingy extends PureComponent<
               ) : (
                 <Text
                   selectable
-                  style={styles.value}
+                  style={[
+                    styles.value,
+                    { color: colors.smoke, backgroundColor: colors.white },
+                  ]}
                 >{`(${typeof value}) ${value}`}</Text>
               )}
             </View>
@@ -63,6 +71,7 @@ class CollapsibleThingy extends PureComponent<
 
 export default function DebugStore() {
   const state = useSelector(s => s);
+  const { colors } = useTheme();
 
   const dispatch = useDispatch();
 
@@ -96,23 +105,17 @@ export default function DebugStore() {
           containerStyle={{ marginBottom: 16 }}
           onPress={onStoreDebug}
         />
-        <CollapsibleThingy obj={state} depth={1} />
+        <CollapsibleThingy obj={state} depth={1} colors={colors} />
       </View>
     </NavigationScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  root: {
-    padding: 16,
-    backgroundColor: colors.white,
-  },
   wrapper: {
     flex: 1,
     borderLeftWidth: 1,
-    borderColor: colors.fog,
     paddingLeft: 8,
-    backgroundColor: colors.white,
   },
   buttonStyle: {
     marginBottom: 16,
@@ -123,13 +126,9 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     paddingHorizontal: 4,
     paddingVertical: 2,
-    color: colors.darkBlue,
-    backgroundColor: colors.white,
     flex: 1,
   },
   value: {
-    color: colors.smoke,
-    backgroundColor: colors.white,
     paddingHorizontal: 4,
     paddingVertical: 2,
     paddingLeft: 8,

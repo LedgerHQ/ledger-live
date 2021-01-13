@@ -17,13 +17,15 @@ import FallBackCamera from "./FallBackCamera";
 import CameraScreen from "../../components/CameraScreen";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import getWindowDimensions from "../../logic/getWindowDimensions";
+import { withTheme } from "../../colors";
 
 type Props = {
   navigation: any,
   route: any,
+  colors: *,
 };
 
-export default class Scan extends PureComponent<
+class Scan extends PureComponent<
   Props,
   {
     progress: number,
@@ -98,7 +100,7 @@ export default class Scan extends PureComponent<
 
   render() {
     const { progress, width, height, error } = this.state;
-    const { navigation } = this.props;
+    const { navigation, colors } = this.props;
     const cameraRatio = 16 / 9;
     const cameraDimensions =
       width > height
@@ -106,7 +108,10 @@ export default class Scan extends PureComponent<
         : { width: height / cameraRatio, height };
 
     return (
-      <View style={styles.root} onLayout={this.setDimensions}>
+      <View
+        style={[styles.root, { backgroundColor: colors.darkBlue }]}
+        onLayout={this.setDimensions}
+      >
         <TrackScreen category="ImportAccounts" name="Scan" />
         <StyledStatusBar barStyle="light-content" />
         <RNCamera
@@ -137,7 +142,7 @@ export default class Scan extends PureComponent<
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "black",
+
     alignItems: "center",
     justifyContent: "center",
   },
@@ -146,3 +151,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default withTheme(Scan);

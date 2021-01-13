@@ -7,8 +7,8 @@ import { getAddressExplorer } from "@ledgerhq/live-common/lib/explorers";
 
 import type { ExplorerView } from "@ledgerhq/live-common/lib/types";
 
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
-import colors from "../../../colors";
 import Clock from "../../../icons/Clock";
 import Trophy from "../../../icons/Trophy";
 import Medal from "../../../icons/Medal";
@@ -30,6 +30,7 @@ const Row = ({
   explorerView,
   isSR,
 }: Props) => {
+  const { colors } = useTheme();
   const srURL = explorerView && getAddressExplorer(explorerView, address);
 
   const openSR = useCallback(() => {
@@ -39,7 +40,14 @@ const Row = ({
   return (
     <View style={styles.root}>
       <View style={styles.row}>
-        <View style={[styles.icon, !isSR ? styles.iconCandidate : {}]}>
+        <View
+          style={[
+            styles.icon,
+            !isSR
+              ? { backgroundColor: colors.lightFog }
+              : { backgroundColor: colors.lightLive },
+          ]}
+        >
           {isSR ? (
             <Trophy size={16} color={colors.live} />
           ) : (
@@ -54,7 +62,9 @@ const Row = ({
           </TouchableOpacity>
           <View style={styles.durationContainer}>
             <Clock size={12} color={colors.grey} />
-            <LText style={styles.label}>{duration}</LText>
+            <LText style={styles.label} color="grey">
+              {duration}
+            </LText>
           </View>
         </View>
         <View style={[styles.labelContainer, styles.labelContainerRight]}>
@@ -63,7 +73,7 @@ const Row = ({
           </LText>
         </View>
       </View>
-      <View style={styles.separator} />
+      <View style={[styles.separator, { backgroundColor: colors.lightFog }]} />
     </View>
   );
 };
@@ -78,7 +88,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     width: "100%",
-    backgroundColor: colors.lightFog,
     marginTop: 12,
   },
   row: {
@@ -91,16 +100,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 5,
-    backgroundColor: colors.lightLive,
     marginRight: 12,
-  },
-  iconCandidate: {
-    backgroundColor: colors.lightFog,
   },
   title: {
     fontSize: 14,
     lineHeight: 16,
-    color: colors.darkBlue,
     paddingBottom: 4,
   },
   labelContainer: {
@@ -117,7 +121,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 13,
-    color: colors.grey,
     marginLeft: 6,
   },
   durationContainer: {

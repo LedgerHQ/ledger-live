@@ -4,7 +4,7 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet, Image } from "react-native";
 
-import colors, { rgba } from "../colors";
+import { rgba, withTheme } from "../colors";
 import BottomModal from "./BottomModal";
 import LText from "./LText";
 import Button from "./Button";
@@ -22,6 +22,7 @@ type Props = {|
   rejectButtonText?: React$Node,
   hideRejectButton?: boolean,
   alert: boolean,
+  colors: *,
   preventBackdropClick?: boolean,
 |};
 
@@ -43,6 +44,7 @@ class ConfirmationModal extends PureComponent<Props> {
       image,
       alert,
       hideRejectButton,
+      colors,
       ...rest
     } = this.props;
     return (
@@ -54,7 +56,9 @@ class ConfirmationModal extends PureComponent<Props> {
         {...rest}
       >
         {Icon && (
-          <View style={styles.icon}>
+          <View
+            style={[styles.icon, { backgroundColor: rgba(colors.live, 0.08) }]}
+          >
             <Icon size={24} color={colors.live} />
           </View>
         )}
@@ -69,7 +73,9 @@ class ConfirmationModal extends PureComponent<Props> {
           </LText>
         )}
         {confirmationDesc && (
-          <LText style={styles.confirmationDesc}>{confirmationDesc}</LText>
+          <LText style={styles.confirmationDesc} color="smoke">
+            {confirmationDesc}
+          </LText>
         )}
         <View style={styles.confirmationFooter}>
           {!hideRejectButton && (
@@ -106,14 +112,12 @@ const styles = StyleSheet.create({
   confirmationTitle: {
     textAlign: "center",
     fontSize: 18,
-    color: colors.darkBlue,
   },
   confirmationDesc: {
     marginVertical: 24,
     paddingHorizontal: 32,
     textAlign: "center",
     fontSize: 14,
-    color: colors.smoke,
   },
   confirmationFooter: {
     flexDirection: "row",
@@ -126,7 +130,6 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignSelf: "center",
-    backgroundColor: rgba(colors.live, 0.08),
     width: 56,
     borderRadius: 28,
     height: 56,
@@ -145,4 +148,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmationModal;
+export default withTheme(ConfirmationModal);

@@ -15,8 +15,9 @@ import {
   findCompoundToken,
   formatCurrencyUnit,
 } from "@ledgerhq/live-common/lib/currencies";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../../reducers/accounts";
-import colors, { rgba } from "../../../../colors";
+import { rgba } from "../../../../colors";
 import { ScreenName, NavigatorName } from "../../../../const";
 import { TrackScreen } from "../../../../analytics";
 import LText from "../../../../components/LText";
@@ -47,6 +48,7 @@ type RouteParams = {
 };
 
 export default function SendAmount({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
   const { currency, transaction: tx } = route.params;
@@ -154,13 +156,25 @@ export default function SendAmount({ navigation, route }: Props) {
         eventProperties={{ currencyName: currency.name }}
       />
       <LendingWarnings />
-      <SafeAreaView style={styles.root}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+      >
         <View style={styles.container}>
           <LinkedIcons
             left={
               <View style={styles.currencyIconContainer}>
                 <CurrencyIcon size={62} radius={62} currency={currency} />
-                <LText style={styles.balanceLabel} semiBold numberOfLines={1}>
+                <LText
+                  style={[
+                    styles.balanceLabel,
+                    {
+                      backgroundColor: colors.lightFog,
+                    },
+                  ]}
+                  color="grey"
+                  semiBold
+                  numberOfLines={1}
+                >
                   <CurrencyUnitValue
                     showCode
                     unit={unit}
@@ -195,16 +209,24 @@ export default function SendAmount({ navigation, route }: Props) {
               }}
             >
               <LText semiBold style={styles.label} />
-              <LText numberOfLines={1} semiBold style={styles.liveLabel} />
+              <LText
+                numberOfLines={1}
+                semiBold
+                style={[
+                  styles.liveLabel,
+                  { backgroundColor: colors.lightLive },
+                ]}
+                color="live"
+              />
             </Trans>
           </View>
         </View>
         <View style={styles.bottomWrapper}>
           <TouchableOpacity
             onPress={navigateAdvanced}
-            style={styles.advancedButton}
+            style={[styles.advancedButton, { borderColor: colors.lightFog }]}
           >
-            <LText semiBold style={styles.advancedLabel}>
+            <LText semiBold style={styles.advancedLabel} color="live">
               <Trans i18nKey="transfer.lending.enable.enable.advanced" />
             </LText>
             <ArrowRight color={colors.live} size={16} />
@@ -245,7 +267,6 @@ export default function SendAmount({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
@@ -276,8 +297,6 @@ const styles = StyleSheet.create({
     height: 20,
     lineHeight: 20,
     borderRadius: 4,
-    color: colors.grey,
-    backgroundColor: colors.lightFog,
     width: "auto",
     flexGrow: 1,
     fontSize: 11,
@@ -293,13 +312,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     lineHeight: 19,
-    color: colors.darkBlue,
     marginVertical: 8,
   },
   liveLabel: {
     fontSize: 16,
-    color: colors.live,
-    backgroundColor: colors.lightLive,
     borderRadius: 4,
     paddingHorizontal: 4,
     height: 24,
@@ -315,7 +331,6 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: colors.lightFog,
     padding: 12,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -324,6 +339,5 @@ const styles = StyleSheet.create({
   },
   advancedLabel: {
     fontSize: 13,
-    color: colors.live,
   },
 });

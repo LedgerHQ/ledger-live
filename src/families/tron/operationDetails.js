@@ -26,7 +26,6 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
-import colors from "../../colors";
 import { discreetModeSelector } from "../../reducers/settings";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
@@ -155,7 +154,7 @@ const AmountCell = ({
         />
       </LText>
 
-      <LText numberOfLines={1} style={styles.amountText}>
+      <LText numberOfLines={1} style={styles.amountText} color="grey">
         <CounterValue
           showCode
           date={operation.date}
@@ -216,12 +215,10 @@ const VoteAmountCell = ({ operation }: Props) => {
 
 const styles = StyleSheet.create({
   amountText: {
-    color: colors.grey,
     fontSize: 14,
     flex: 1,
   },
   topText: {
-    color: colors.darkBlue,
     fontSize: 14,
     flex: 1,
   },

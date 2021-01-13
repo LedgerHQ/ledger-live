@@ -1,7 +1,7 @@
 // @flow
 import React, { useCallback } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import {
   getAccountUnit,
   getAccountName,
@@ -11,11 +11,11 @@ import Icon from "react-native-vector-icons/dist/Ionicons";
 
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import colors from "../../../colors";
 import { ScreenName } from "../../../const";
 import SwapStatusIndicator from "../SwapStatusIndicator";
 
 const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
+  const { colors } = useTheme();
   const { swapId, fromAccount, toAccount, fromAmount, toAmount, status } = item;
   const navigation = useNavigation();
 
@@ -27,7 +27,12 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
 
   return (
     <TouchableOpacity key={swapId} onPress={onOpenOperationDetails}>
-      <View style={styles.root}>
+      <View
+        style={[
+          styles.root,
+          { backgroundColor: colors.card, borderBottomColor: colors.lightFog },
+        ]}
+      >
         <SwapStatusIndicator small status={status} />
         <View style={[styles.accountWrapper, { marginLeft: 18 }]}>
           <LText numberOfLines={1} semiBold style={styles.name}>
@@ -48,7 +53,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(toAccount)}
           </LText>
-          <LText tertiary style={styles.amount}>
+          <LText tertiary style={styles.amount} color="grey">
             <CurrencyUnitValue
               showCode
               unit={getAccountUnit(toAccount)}
@@ -66,8 +71,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     flexDirection: "row",
-    backgroundColor: colors.white,
-    borderBottomColor: colors.lightFog,
     borderBottomWidth: 1,
   },
   arrow: {
@@ -80,13 +83,11 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontSize: 14,
     lineHeight: 19,
-    color: colors.black,
     marginBottom: 2,
   },
   amount: {
     fontSize: 13,
     lineHeight: 15,
-    color: colors.grey,
   },
   accountWrapper: {
     width: "35%",

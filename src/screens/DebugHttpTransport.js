@@ -9,13 +9,14 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
+import { compose } from "redux";
 import { ScreenName } from "../const";
 import { addKnownDevice } from "../actions/ble";
-import colors from "../colors";
 import { getFontStyle } from "../components/LText";
 import TextInput from "../components/TextInput";
 import KeyboardView from "../components/KeyboardView";
 import Button from "../components/Button";
+import { withTheme } from "../colors";
 
 const forceInset = { bottom: "always" };
 
@@ -23,6 +24,7 @@ class DebugHttpTransport extends Component<
   {
     navigation: *,
     addKnownDevice: (*) => void,
+    colors: *,
   },
   {
     text: string,
@@ -52,8 +54,17 @@ class DebugHttpTransport extends Component<
 
   render() {
     const { text } = this.state;
+    const { colors } = this.props;
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.white,
+          },
+        ]}
+        forceInset={forceInset}
+      >
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ flex: 1 }}>
@@ -88,7 +99,6 @@ class DebugHttpTransport extends Component<
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   buttonContainer: {
     flex: 1,
@@ -106,6 +116,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(null, {
-  addKnownDevice,
-})(DebugHttpTransport);
+export default compose(
+  connect(null, {
+    addKnownDevice,
+  }),
+  withTheme,
+)(DebugHttpTransport);

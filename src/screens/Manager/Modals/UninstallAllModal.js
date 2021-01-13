@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import InfoIcon from "../../../components/InfoIcon";
 import Trash from "../../../icons/Trash";
@@ -15,6 +15,8 @@ type Props = {
 };
 
 const UninstallAllModal = ({ isOpened, onClose, onConfirm }: Props) => {
+  const { colors } = useTheme();
+
   const modalActions = useMemo(
     () => [
       {
@@ -45,7 +47,7 @@ const UninstallAllModal = ({ isOpened, onClose, onConfirm }: Props) => {
         <LText style={[styles.warnText, styles.title]} bold>
           <Trans i18nKey="manager.uninstall.subtitle" />
         </LText>
-        <LText style={styles.warnText}>
+        <LText style={styles.warnText} color="grey">
           <Trans i18nKey="manager.uninstall.description" />
         </LText>
       </View>
@@ -60,12 +62,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
   warnText: {
     textAlign: "center",
     fontSize: 13,
-    color: colors.grey,
     lineHeight: 16,
     marginVertical: 8,
   },
