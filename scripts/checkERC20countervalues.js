@@ -60,7 +60,7 @@ async function main() {
         token.name.toLowerCase().replace(/\s/g, "")
     );
     if (m && token.ticker.toLowerCase() !== m.code) {
-      return { type: "suggest-ticker", id };
+      return { type: "suggest-ticker", id, code: m.code };
     }
   }
   for (const c of chunk(tokens, 5)) {
@@ -98,7 +98,7 @@ async function main() {
         }
       })
       .map((log) => {
-        if (log) console.log(log);
+        if (log) console.log(JSON.stringify(log));
       });
     await delay(3000);
   }
