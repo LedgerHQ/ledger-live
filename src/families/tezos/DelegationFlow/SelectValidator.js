@@ -26,9 +26,9 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Baker } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import { useBakers } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/lib/families/tezos/bakers.whitelist-default";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
-import colors from "../../../colors";
 import { ScreenName } from "../../../const";
 import InfoModal from "../../../components/InfoModal";
 import LText, { getFontStyle } from "../../../components/LText";
@@ -44,26 +44,38 @@ const forceInset = { bottom: "always" };
 
 const keyExtractor = baker => baker.address;
 
-const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => (
-  <View style={styles.bakerHead}>
-    <LText style={styles.bakerHeadText} numberOfLines={1} semiBold>
-      Validator
-    </LText>
-    <View style={styles.bakerHeadContainer}>
-      <LText style={styles.bakerHeadText} numberOfLines={1} semiBold>
-        Est. Yield
-      </LText>
-      <Touchable
-        style={styles.bakerHeadInfo}
-        event="StepValidatorShowProvidedBy"
-        onPress={onPressHelp}
+const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.bakerHead}>
+      <LText
+        style={styles.bakerHeadText}
+        color="smoke"
+        numberOfLines={1}
+        semiBold
       >
-        <Info color={colors.smoke} size={14} />
-      </Touchable>
+        Validator
+      </LText>
+      <View style={styles.bakerHeadContainer}>
+        <LText
+          style={styles.bakerHeadText}
+          color="smoke"
+          numberOfLines={1}
+          semiBold
+        >
+          Est. Yield
+        </LText>
+        <Touchable
+          style={styles.bakerHeadInfo}
+          event="StepValidatorShowProvidedBy"
+          onPress={onPressHelp}
+        >
+          <Info color={colors.smoke} size={14} />
+        </Touchable>
+      </View>
     </View>
-  </View>
-);
-
+  );
+};
 const BakerRow = ({
   onPress,
   baker,
@@ -71,6 +83,7 @@ const BakerRow = ({
   onPress: Baker => void,
   baker: Baker,
 }) => {
+  const { colors } = useTheme();
   const onPressT = useCallback(() => {
     onPress(baker);
   }, [baker, onPress]);
@@ -86,14 +99,24 @@ const BakerRow = ({
       <View style={styles.baker}>
         <BakerImage size={32} baker={baker} />
         {baker.capacityStatus === "full" ? (
-          <View style={styles.overdelegatedIndicator} />
+          <View
+            style={[
+              styles.overdelegatedIndicator,
+              { backgroundColor: colors.orange, borderColor: colors.white },
+            ]}
+          />
         ) : null}
         <View style={styles.bakerBody}>
           <LText numberOfLines={1} semiBold style={styles.bakerName}>
             {baker.name}
           </LText>
           {baker.capacityStatus === "full" ? (
-            <LText semiBold numberOfLines={1} style={styles.overdelegated}>
+            <LText
+              semiBold
+              numberOfLines={1}
+              style={styles.overdelegated}
+              color="orange"
+            >
               <Trans i18nKey="delegation.overdelegated" />
             </LText>
           ) : null}
@@ -105,6 +128,7 @@ const BakerRow = ({
             styles.bakerYield,
             baker.capacityStatus === "full" ? styles.bakerYieldFull : null,
           ]}
+          color="smoke"
         >
           {baker.nominalYield}
         </LText>
@@ -113,7 +137,10 @@ const BakerRow = ({
   );
 };
 
-const ModalIcon = () => <Icon name="user-plus" size={24} color={colors.live} />;
+const ModalIcon = () => {
+  const { colors } = useTheme();
+  return <Icon name="user-plus" size={24} color={colors.live} />;
+};
 
 type Props = {
   account: AccountLike,
@@ -129,6 +156,7 @@ type RouteParams = {
 };
 
 export default function SelectValidator({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const bakers = useBakers(whitelist);
@@ -245,7 +273,10 @@ export default function SelectValidator({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <View style={styles.header}>
         {/* TODO SEARCH */}
@@ -278,7 +309,10 @@ export default function SelectValidator({ navigation, route }: Props) {
         <TextInput
           placeholder="Enter validator address"
           placeholderTextColor={colors.fog}
-          style={[styles.addressInput, error && styles.invalidAddressInput]}
+          style={[
+            styles.addressInput,
+            error ? { color: colors.alert } : { color: colors.darkBlue },
+          ]}
           onChangeText={onChangeText}
           onInputCleared={clear}
           value={transaction.recipient}
@@ -288,7 +322,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         />
 
         {error && (
-          <LText style={[styles.warningBox, styles.error]}>
+          <LText style={[styles.warningBox]} color="alert">
             <TranslatedError error={error} />
           </LText>
         )}
@@ -301,7 +335,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         confirmLabel={t("common.close")}
       >
         <View style={styles.providedByContainer}>
-          <LText semiBold style={styles.providedByText}>
+          <LText semiBold style={styles.providedByText} color="grey">
             <Trans i18nKey="delegation.yieldInfos" />
           </LText>
           <ExternalLink
@@ -327,7 +361,6 @@ export default function SelectValidator({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   header: {
     padding: 16,
@@ -350,7 +383,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   bakerHeadText: {
-    color: colors.smoke,
     fontSize: 14,
   },
   bakerHeadContainer: {
@@ -372,45 +404,33 @@ const styles = StyleSheet.create({
   },
   bakerName: {
     fontSize: 14,
-    color: colors.darkBlue,
   },
   overdelegatedIndicator: {
     position: "absolute",
-    backgroundColor: colors.orange,
     width: 10,
     height: 10,
     borderRadius: 10,
     top: 34,
     left: 24,
-    borderColor: colors.white,
     borderWidth: 1,
   },
   overdelegated: {
     fontSize: 12,
-    color: colors.orange,
   },
   bakerYield: {
     fontSize: 14,
-    color: colors.smoke,
   },
   bakerYieldFull: {
     opacity: 0.5,
   },
   addressInput: {
-    color: colors.darkBlue,
     ...getFontStyle({ semiBold: true }),
     fontSize: 20,
     paddingVertical: 16,
   },
-  invalidAddressInput: {
-    color: colors.alert,
-  },
   warningBox: {
     alignSelf: "stretch",
     marginTop: 8,
-  },
-  error: {
-    color: colors.alert,
   },
   providedByContainer: {
     display: "flex",
@@ -419,7 +439,6 @@ const styles = StyleSheet.create({
   providedByText: {
     fontSize: 14,
     marginRight: 5,
-    color: colors.grey,
   },
   infoModalContainerStyle: {
     alignSelf: "stretch",

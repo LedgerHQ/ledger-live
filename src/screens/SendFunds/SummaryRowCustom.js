@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import LText from "../../components/LText/index";
-import colors from "../../colors";
 
 export default class SummaryRowCustom extends PureComponent<{
   onPress: () => void,
@@ -15,7 +14,9 @@ export default class SummaryRowCustom extends PureComponent<{
       <View style={styles.root}>
         <View style={styles.iconLeft}>{iconLeft}</View>
         <View style={styles.right}>
-          <LText style={styles.labelStyle}>{label}</LText>
+          <LText style={styles.labelStyle} color="grey">
+            {label}
+          </LText>
           {data}
         </View>
       </View>
@@ -30,7 +31,6 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     fontSize: 16,
-    color: colors.grey,
   },
   iconLeft: {
     paddingRight: 16,

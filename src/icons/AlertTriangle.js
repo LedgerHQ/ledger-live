@@ -1,17 +1,15 @@
 // @flow
 import React from "react";
 import Svg, { Path, G } from "react-native-svg";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 
 type Props = {
   size?: number,
   color?: string,
 };
 
-export default function AlertTriangle({
-  size = 16,
-  color = colors.yellow,
-}: Props) {
+export default function AlertTriangle({ size = 16, color }: Props) {
+  const { colors } = useTheme();
   return (
     <Svg viewBox="0 0 16 16" width={size} height={size}>
       <G
@@ -40,7 +38,7 @@ export default function AlertTriangle({
           <Path
             d="M8.75,10 C8.75,10.4142136 8.41421356,10.75 8,10.75 C7.58578644,10.75 7.25,10.4142136 7.25,10 L7.25,9.99 C7.25,9.57578644 7.58578644,9.24 8,9.24 C8.41421356,9.24 8.75,9.57578644 8.75,9.99 L8.75,10 Z"
             id="path-1-path"
-            fill={color}
+            fill={color || colors.yellow}
           />
         </G>
       </G>

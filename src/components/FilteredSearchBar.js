@@ -2,14 +2,14 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { withTranslation } from "react-i18next";
-
+import { compose } from "redux";
 import SearchIcon from "../icons/Search";
 import Search from "./Search";
 import TextInput from "./TextInput";
 import getFontStyle from "./LText/getFontStyle";
 
-import colors from "../colors";
 import type { T } from "../types/common";
+import { withTheme } from "../colors";
 
 type Props = {
   initialQuery?: string,
@@ -19,6 +19,7 @@ type Props = {
   list: Array<*>,
   inputWrapperStyle?: *,
   t: T,
+  colors: *,
 };
 
 type State = {
@@ -64,6 +65,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
       renderEmptySearch,
       inputWrapperStyle,
       t,
+      colors,
     } = this.props;
     const { query, focused } = this.state;
 
@@ -86,7 +88,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
             onInputCleared={this.clear}
             placeholder={t("common.search")}
             placeholderTextColor={colors.grey}
-            style={styles.input}
+            style={[styles.input, { color: colors.darkBlue }]}
             containerStyle={styles.inputContainer}
             value={query}
             ref={this.input}
@@ -121,7 +123,6 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: colors.darkBlue,
     paddingVertical: 0,
     ...getFontStyle({ secondary: true, semiBold: true }),
   },
@@ -130,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation()(FilteredSearchBar);
+export default compose(withTranslation(), withTheme)(FilteredSearchBar);

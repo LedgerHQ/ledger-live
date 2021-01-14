@@ -6,7 +6,7 @@ import SafeAreaView from "react-native-safe-area-view";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { useSelector } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 
 import CoinifyWidget from "./CoinifyWidget";
@@ -24,13 +24,17 @@ type Props = {
 };
 
 export default function CoinifyWidgetScreen({ route }: Props) {
+  const { colors } = useTheme();
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const { account, mode, device } = route.params;
 
   const forceInset = { bottom: "always" };
 
   return (
-    <SafeAreaView style={[styles.root]} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.card }]}
+      forceInset={forceInset}
+    >
       <CoinifyWidget
         account={account}
         parentAccount={parentAccount}
@@ -45,7 +49,6 @@ export default function CoinifyWidgetScreen({ route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   center: {
     flex: 1,

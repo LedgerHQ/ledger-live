@@ -2,11 +2,11 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
-import { Switch } from "react-native";
 import SettingsRow from "../../../components/SettingsRow";
 import { carouselVisibilitySelector } from "../../../reducers/settings";
 import { setCarouselVisibility } from "../../../actions/settings";
 import { CAROUSEL_NONCE } from "../../../components/Carousel";
+import Switch from "../../../components/Switch";
 
 const CarouselRow = () => {
   const dispatch = useDispatch();

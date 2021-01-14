@@ -9,15 +9,16 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types/currencies";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
-import colors from "../colors";
 import LText from "./LText";
 import CounterValue from "./CounterValue";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import { ensureContrast, withTheme } from "../colors";
 
 type Props = {
   currency: CryptoCurrency | TokenCurrency,
   fontStyle?: *,
   iconSize?: number,
+  colors: *,
 };
 
 class CurrencyRate extends PureComponent<Props> {
@@ -26,15 +27,20 @@ class CurrencyRate extends PureComponent<Props> {
   };
 
   render() {
-    const { currency, fontStyle, iconSize } = this.props;
+    const { currency, fontStyle, iconSize, colors } = this.props;
     const one = new BigNumber(10 ** currency.units[0].magnitude);
     // $FlowFixMe
-    const color = getCurrencyColor(currency);
+    const color = ensureContrast(getCurrencyColor(currency), colors.background);
 
     return (
       <View style={styles.wrapper}>
         <Icon name="activity" color={color} size={iconSize} />
-        <LText numberOfLines={1} semiBold style={[styles.text, fontStyle]}>
+        <LText
+          numberOfLines={1}
+          semiBold
+          style={[styles.text, fontStyle]}
+          color="grey"
+        >
           <CurrencyUnitValue unit={currency.units[0]} value={one} />
           {" = "}
           <CounterValue currency={currency} value={one} />
@@ -51,10 +57,9 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 4,
-    color: colors.grey,
     fontSize: 12,
     lineHeight: 18,
   },
 });
 
-export default CurrencyRate;
+export default withTheme(CurrencyRate);

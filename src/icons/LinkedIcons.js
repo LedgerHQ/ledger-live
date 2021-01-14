@@ -2,7 +2,8 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import colors, { rgba } from "../colors";
+import { useTheme } from "@react-navigation/native";
+import { rgba } from "../colors";
 
 type Props = {
   left: React$Node,
@@ -36,20 +37,23 @@ const styles = StyleSheet.create({
   },
 });
 
-const LinkedIcons = ({ left, right, center, color = colors.live }: Props) => (
-  <View style={styles.header}>
-    {left}
-    <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.1) }]} />
-    <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.2) }]} />
-    <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.3) }]} />
-    <View style={[styles.dot, { backgroundColor: rgba(color, 0.3) }]}>
-      {center}
+const LinkedIcons = ({ left, right, center, color: c }: Props) => {
+  const { colors } = useTheme();
+  const color = c || colors.live;
+  return (
+    <View style={styles.header}>
+      {left}
+      <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.1) }]} />
+      <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.2) }]} />
+      <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.3) }]} />
+      <View style={[styles.dot, { backgroundColor: rgba(color, 0.3) }]}>
+        {center}
+      </View>
+      <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.8) }]} />
+      <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.9) }]} />
+      <View style={[styles.smallDot, { backgroundColor: color }]} />
+      {right}
     </View>
-    <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.8) }]} />
-    <View style={[styles.smallDot, { backgroundColor: rgba(color, 0.9) }]} />
-    <View style={[styles.smallDot, { backgroundColor: color }]} />
-    {right}
-  </View>
-);
-
+  );
+};
 export default LinkedIcons;

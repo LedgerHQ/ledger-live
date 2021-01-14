@@ -3,13 +3,12 @@ import React from "react";
 import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import { StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../const";
 import { MANAGER_TABS } from "../Manager/Manager";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
 import AppIcon from "../Manager/AppsList/AppIcon";
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 
 const MissingOrOutdatedSwapApp = ({
@@ -17,6 +16,7 @@ const MissingOrOutdatedSwapApp = ({
 }: {
   outdated?: boolean,
 }) => {
+  const { colors } = useTheme();
   const { navigate } = useNavigation();
   const onPress = () => {
     navigate(NavigatorName.Manager, {
@@ -33,7 +33,7 @@ const MissingOrOutdatedSwapApp = ({
   const key = outdated ? "outdatedApp" : "missingApp";
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="Swap" name="MissingOrOutdatedExchangeApp" />
       <View style={styles.illustration}>
         <AppIcon size={60} icon="exchange" />
@@ -41,7 +41,7 @@ const MissingOrOutdatedSwapApp = ({
       <LText secondary style={styles.title}>
         <Trans i18nKey={`transfer.swap.${key}.title`} />
       </LText>
-      <LText primary style={styles.description}>
+      <LText primary style={styles.description} color="smoke">
         <Trans i18nKey={`transfer.swap.${key}.description`} />
       </LText>
       <Button
@@ -60,35 +60,28 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: colors.white,
     alignItems: "center",
     justifyContent: "center",
   },
-
   wrapper: {
     flexGrow: 1,
     flexShrink: 0,
     alignItems: "center",
     justifyContent: "center",
   },
-
   illustration: {
     marginBottom: 24,
   },
-
   title: {
     fontSize: 18,
     lineHeight: 22,
     textAlign: "center",
-    color: colors.darkBlue,
     marginBottom: 11,
     marginHorizontal: 40,
   },
-
   description: {
     fontSize: 13,
     lineHeight: 18,
-    color: colors.smoke,
     textAlign: "center",
     marginBottom: 20,
   },

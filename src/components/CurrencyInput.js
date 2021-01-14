@@ -12,7 +12,7 @@ import clamp from "lodash/clamp";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
-import colors from "../colors";
+import { withTheme } from "../colors";
 
 function format(
   unit: Unit,
@@ -45,6 +45,7 @@ type Props = {
   placeholder?: string,
   style?: *,
   inputStyle?: *,
+  colors: *,
 };
 
 type State = {
@@ -146,6 +147,7 @@ class CurrencyInput extends PureComponent<Props, State> {
       autoFocus,
       editable,
       placeholder,
+      colors,
     } = this.props;
     const { displayValue } = this.state;
 
@@ -167,8 +169,13 @@ class CurrencyInput extends PureComponent<Props, State> {
           hitSlop={{ top: 20, bottom: 20 }}
           style={[
             styles.input,
-            hasError ? styles.error : hasWarning ? styles.warning : null,
-            editable ? {} : styles.readOnly,
+            { color: colors.darkBlue },
+            hasError
+              ? { color: colors.alert }
+              : hasWarning
+              ? { color: colors.orange }
+              : null,
+            editable ? {} : { color: colors.grey },
             { fontSize: dynamicFontSize },
             inputStyle,
           ]}
@@ -187,6 +194,7 @@ class CurrencyInput extends PureComponent<Props, State> {
               subMagnitude,
             })
           }
+          placeholderTextColor={colors.darkBlue}
           keyboardType="numeric"
           blurOnSubmit
         />
@@ -206,17 +214,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: "Inter",
     paddingRight: 8,
-    color: colors.darkBlue,
-  },
-  readOnly: {
-    color: colors.grey,
-  },
-  error: {
-    color: colors.alert,
-  },
-  warning: {
-    color: colors.orange,
   },
 });
 
-export default CurrencyInput;
+export default withTheme(CurrencyInput);

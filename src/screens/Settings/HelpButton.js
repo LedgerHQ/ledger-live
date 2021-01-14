@@ -1,12 +1,12 @@
 import React from "react";
 import { TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import IconQuestion from "../../icons/Question";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 
 const HelpButton = () => {
   const { navigate } = useNavigation();
+  const { colors } = useTheme();
   return (
     <>
       <TouchableOpacity

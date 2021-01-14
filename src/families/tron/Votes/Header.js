@@ -3,7 +3,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import colors from "../../../colors";
 import Button from "../../../components/Button";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 
@@ -42,7 +41,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: "left",
     paddingVertical: 4,
-    color: colors.darkBlue,
   },
   button: { paddingRight: 0 },
 });

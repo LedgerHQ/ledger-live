@@ -1,27 +1,27 @@
 /* @flow */
-import React, { Component } from "react";
+import React from "react";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 
-export default class ScreenGeneric<T> extends Component<{
+type Props = {
   Header: React$ComponentType<$Shape<T>>,
   children: *,
   onPressHeader?: () => void,
   extraData?: T,
-}> {
-  render() {
-    const { children, Header, onPressHeader, extraData } = this.props;
-    return (
-      <View style={styles.container}>
-        <TouchableWithoutFeedback onPress={onPressHeader}>
-          <View style={styles.header}>
-            <Header {...extraData} />
-          </View>
-        </TouchableWithoutFeedback>
-        <View style={styles.body}>{children}</View>
-      </View>
-    );
-  }
+};
+
+function ScreenGeneric({ children, Header, onPressHeader, extraData }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={onPressHeader}>
+        <View style={[styles.header, { backgroundColor: colors.live }]}>
+          <Header {...extraData} />
+        </View>
+      </TouchableWithoutFeedback>
+      <View style={styles.body}>{children}</View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -31,10 +31,11 @@ const styles = StyleSheet.create({
   header: {
     height: 70,
     paddingTop: 20,
-    backgroundColor: colors.live,
   },
   body: {
     flex: 1,
     position: "relative",
   },
 });
+
+export default ScreenGeneric;

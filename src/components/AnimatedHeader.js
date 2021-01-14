@@ -7,9 +7,8 @@ import {
   SafeAreaView,
   Pressable,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
-import colors from "../colors";
 
 import Styles from "../navigation/styles";
 import LText from "./LText";
@@ -19,7 +18,7 @@ import Close from "../icons/Close";
 
 const { interpolate, Extrapolate } = Animated;
 
-const AnimatedLText = Animated.createAnimatedComponent(LText);
+const AnimatedLText = Animated.createAnimatedComponent(View);
 
 const hitSlop = {
   bottom: 10,
@@ -29,9 +28,11 @@ const hitSlop = {
 };
 
 const BackButton = ({
+  colors,
   navigation,
   action,
 }: {
+  colors: *,
   navigation: *,
   action?: () => void,
 }) => (
@@ -45,9 +46,11 @@ const BackButton = ({
 );
 
 const CloseButton = ({
+  colors,
   navigation,
   action,
 }: {
+  colors: *,
   navigation: *,
   action?: () => void,
 }) => (
@@ -81,6 +84,7 @@ export default function AnimatedHeaderView({
   footer,
   style,
 }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const [scrollY] = useState(new Animated.Value(0));
@@ -111,27 +115,37 @@ export default function AnimatedHeaderView({
 
   return (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.white }, style]}
+      style={[styles.root, { backgroundColor: colors.background }, style]}
     >
       <Animated.View style={[styles.header]}>
         <View style={styles.topHeader}>
           {hasBackButton && (
-            <BackButton navigation={navigation} action={backAction} />
+            <BackButton
+              colors={colors}
+              navigation={navigation}
+              action={backAction}
+            />
           )}
           <View style={styles.spacer} />
           {hasCloseButton && (
-            <CloseButton navigation={navigation} action={closeAction} />
+            <CloseButton
+              colors={colors}
+              navigation={navigation}
+              action={closeAction}
+            />
           )}
         </View>
 
         <AnimatedLText
           bold
           style={[
-            styles.title,
+            styles.titleContainer,
             { transform: [{ translateY, translateX }, { scale }] },
           ]}
         >
-          {title}
+          <LText bold style={[styles.title]}>
+            {title}
+          </LText>
         </AnimatedLText>
       </Animated.View>
       {children && (
@@ -165,11 +179,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     marginBottom: 16,
   },
+  titleContainer: {
+    width: width - 40,
+    zIndex: 2,
+  },
   title: {
     fontSize: normalize(32),
-    width: width - 40,
     lineHeight: 45,
-    zIndex: 2,
   },
   buttons: {
     paddingVertical: 16,

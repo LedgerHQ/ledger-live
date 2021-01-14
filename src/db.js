@@ -75,11 +75,10 @@ async function unsafeSaveCountervalues(
 ): Promise<void> {
   if (!changed) return;
 
-  const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(k => {
-    return ![...pairIds, "status"].includes(
-      k.replace(COUNTERVALUES_DB_PREFIX, ""),
-    );
-  });
+  const deletedKeys = (await getKeys(COUNTERVALUES_DB_PREFIX)).filter(
+    k =>
+      ![...pairIds, "status"].includes(k.replace(COUNTERVALUES_DB_PREFIX, "")),
+  );
 
   const data = Object.entries(state).map(([key, val]) => [
     `${COUNTERVALUES_DB_PREFIX}${key}`,

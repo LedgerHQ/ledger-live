@@ -1,7 +1,8 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { ScreenName, NavigatorName } from "../../const";
 import PairDevices from "../../screens/PairDevices";
@@ -10,10 +11,9 @@ import OnboardingNavigator from "./OnboardingNavigator";
 import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import Question from "../../icons/Question";
-import colors from "../../colors";
 
 const hitSlop = {
   bottom: 10,
@@ -22,7 +22,7 @@ const hitSlop = {
   top: 10,
 };
 
-export const ErrorHeaderInfo = ({ route, navigation }: *) => {
+export const ErrorHeaderInfo = ({ route, navigation, colors }: *) => {
   const openInfoModal = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingInfoModal, {
       sceneInfoKey: "pairNewErrorInfoModalProps",
@@ -42,11 +42,16 @@ export const ErrorHeaderInfo = ({ route, navigation }: *) => {
 
 export default function BaseOnboardingNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
     <Stack.Navigator
       mode="modal"
       screenOptions={{
-        ...closableStackNavigatorConfig,
+        ...stackNavigationConfig,
         headerShown: false,
       }}
     >
@@ -61,16 +66,18 @@ export default function BaseOnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.PairDevices}
         component={PairDevices}
-        options={({ navigation, route }) => {
-          return {
-            title: null,
-            headerRight: () => (
-              <ErrorHeaderInfo route={route} navigation={navigation} />
-            ),
-            headerShown: true,
-            headerStyle: styles.headerNoShadow,
-          };
-        }}
+        options={({ navigation, route }) => ({
+          title: null,
+          headerRight: () => (
+            <ErrorHeaderInfo
+              route={route}
+              navigation={navigation}
+              colors={colors}
+            />
+          ),
+          headerShown: true,
+          headerStyle: styles.headerNoShadow,
+        })}
       />
       <Stack.Screen
         name={ScreenName.EditDeviceName}

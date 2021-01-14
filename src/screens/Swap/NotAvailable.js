@@ -4,13 +4,14 @@ import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/dist/AntDesign";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 
 const NotAvailable = () => {
+  const { colors } = useTheme();
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="Swap" name="NotAvailable" />
       <View style={styles.wrapper}>
         <Icon name={"exclamationcircleo"} color={colors.grey} size={40} />
@@ -27,19 +28,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: colors.white,
   },
-
   wrapper: {
     flexGrow: 1,
     flexShrink: 0,
     alignItems: "center",
     justifyContent: "center",
   },
-
   title: {
     fontSize: 18,
-    color: colors.darkBlue,
     textAlign: "center",
     marginTop: 24,
     marginBottom: 8,

@@ -1,10 +1,10 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { PureComponent, memo } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 
+import { useTheme } from "@react-navigation/native";
 import IconClose from "../icons/Close";
-import colors from "../colors";
 import DeviceNanoMedium from "./DeviceNanoMedium";
 import PhoneBle from "./PhoneBle";
 
@@ -18,7 +18,7 @@ const pauseValue = 0.8;
 class LeftRightDots extends PureComponent<
   {
     isAnimated?: boolean,
-    isError?: boolean,
+    color: string,
   },
   { progress: Animated.Value },
 > {
@@ -61,7 +61,7 @@ class LeftRightDots extends PureComponent<
 
   render() {
     const { progress } = this.state;
-    const { isError } = this.props;
+    const { color } = this.props;
 
     const opacities = Array(5)
       .fill(null)
@@ -78,11 +78,7 @@ class LeftRightDots extends PureComponent<
         {opacities.map((opacity, i) => (
           <Animated.View
             key={i}
-            style={[
-              styles.dot,
-              isError ? styles.errorDot : undefined,
-              { opacity },
-            ]}
+            style={[styles.dot, { backgroundColor: color, opacity }]}
           />
         ))}
       </View>
@@ -90,25 +86,28 @@ class LeftRightDots extends PureComponent<
   }
 }
 
-export default class BluetoothScanning extends PureComponent<Props> {
-  render() {
-    const { isAnimated, isError } = this.props;
-    return (
-      <View style={styles.root}>
-        <View style={styles.body}>
-          <PhoneBle />
-          <LeftRightDots isAnimated={isAnimated} isError={isError} />
-          <DeviceNanoMedium />
-          {isError && (
-            <View style={styles.errorContainer}>
-              <IconClose size={24} color={colors.alert} />
-            </View>
-          )}
-        </View>
+function BluetoothScanning({ isAnimated, isError }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.root}>
+      <View style={styles.body}>
+        <PhoneBle />
+        <LeftRightDots
+          isAnimated={isAnimated}
+          color={isError ? colors.alert : colors.live}
+        />
+        <DeviceNanoMedium />
+        {isError && (
+          <View style={styles.errorContainer}>
+            <IconClose size={24} color={colors.alert} />
+          </View>
+        )}
       </View>
-    );
-  }
+    </View>
+  );
 }
+
+export default memo<Props>(BluetoothScanning);
 
 const styles = StyleSheet.create({
   root: {
@@ -127,10 +126,6 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 3,
     marginRight: 7,
-    backgroundColor: colors.live,
-  },
-  errorDot: {
-    backgroundColor: colors.alert,
   },
   errorContainer: {
     position: "absolute",

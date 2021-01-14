@@ -1,13 +1,14 @@
 // @flow
 
 import React, { useState } from "react";
+import { useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "../../components/Touchable";
-import colors from "../../colors";
 import AccountOrderModal from "./AccountOrderModal";
 import { useRefreshAccountsOrderingEffect } from "../../actions/general";
 
 export default function AccountOrder() {
+  const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState(false);
 
   function onPress(): void {
@@ -18,7 +19,7 @@ export default function AccountOrder() {
     setIsOpened(false);
   }
 
-  useRefreshAccountsOrderingEffect({ onUpdate: true });
+  useRefreshAccountsOrderingEffect({ onUnmount: true });
 
   return (
     <Touchable

@@ -12,10 +12,10 @@ import {
 import { Trans } from "react-i18next";
 import type { Vote } from "@ledgerhq/live-common/lib/families/tron/types";
 
-import { Switch } from "react-native-gesture-handler";
+import { useTheme } from "@react-navigation/native";
+import Switch from "../../../components/Switch";
 import BottomModal from "../../../components/BottomModal";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import Close from "../../../icons/Close";
 import Trash from "../../../icons/Trash";
@@ -44,6 +44,7 @@ const VoteModal = ({
   onRemove,
   votes,
 }: Props) => {
+  const { colors } = useTheme();
   const { address, voteCount } = vote || {};
 
   const [value, setValue] = useState(voteCount);
@@ -110,7 +111,7 @@ const VoteModal = ({
             </TouchableOpacity>
 
             <View style={styles.topLabel}>
-              <LText style={styles.topSubTitle}>
+              <LText style={styles.topSubTitle} color="grey">
                 <Trans i18nKey="vote.castVotes.voteFor" />
               </LText>
               <LText semiBold style={styles.topTitle}>
@@ -128,7 +129,10 @@ const VoteModal = ({
               allowFontScaling={false}
               hitSlop={{ top: 20, bottom: 20 }}
               onChangeText={handleChange}
-              style={[styles.inputStyle, error ? styles.error : {}]}
+              style={[
+                styles.inputStyle,
+                error ? { color: colors.alert } : { color: colors.darkBlue },
+              ]}
               autoCorrect={false}
               value={`${value || ""}`}
               keyboardType="numeric"
@@ -136,11 +140,15 @@ const VoteModal = ({
               placeholder="0"
             />
           </View>
-          <View style={styles.bottomWrapper}>
+          <View
+            style={[styles.bottomWrapper, { borderTopColor: colors.lightGrey }]}
+          >
             <View style={[styles.availableRow, styles.row]}>
               <View style={styles.available}>
                 {error && value <= 0 ? (
-                  <LText style={[styles.availableAmount, styles.error]}>
+                  <LText
+                    style={[styles.availableAmount, { color: colors.alert }]}
+                  >
                     <Trans i18nKey="vote.castVotes.votesRequired" />
                   </LText>
                 ) : null}
@@ -149,9 +157,9 @@ const VoteModal = ({
                     style={[
                       styles.availableAmount,
                       error
-                        ? styles.error
+                        ? { color: colors.alert }
                         : votesRemaining === 0
-                        ? styles.availableSuccess
+                        ? { ...styles.availableSuccess, color: colors.success }
                         : {},
                     ]}
                   >
@@ -161,7 +169,10 @@ const VoteModal = ({
                     >
                       <LText
                         semiBold
-                        style={[styles.availableAmount, styles.error]}
+                        style={[
+                          styles.availableAmount,
+                          { color: colors.alert },
+                        ]}
                       >
                         text
                       </LText>
@@ -172,6 +183,7 @@ const VoteModal = ({
                     <Check size={16} color={colors.success} />
                     <LText
                       style={[styles.availableAmount, styles.availableSuccess]}
+                      color="success"
                     >
                       <Trans i18nKey="vote.castVotes.allVotesUsed" />
                     </LText>
@@ -182,10 +194,7 @@ const VoteModal = ({
                       i18nKey="vote.castVotes.votesRemaining"
                       values={{ total: votesRemaining }}
                     >
-                      <LText
-                        semiBold
-                        style={[styles.availableAmount, styles.regularText]}
-                      >
+                      <LText semiBold style={[styles.availableAmount]}>
                         text
                       </LText>
                     </Trans>
@@ -193,7 +202,7 @@ const VoteModal = ({
                 )}
               </View>
               <View style={styles.availableRight}>
-                <LText style={styles.maxLabel}>
+                <LText style={styles.maxLabel} color="grey">
                   <Trans i18nKey="send.amount.useMax" />
                 </LText>
                 <Switch
@@ -251,11 +260,9 @@ const styles = StyleSheet.create({
   },
   topSubTitle: {
     fontSize: 13,
-    color: colors.grey,
   },
   topTitle: {
     fontSize: 15,
-    color: colors.darkBlue,
   },
   bottomWrapper: {
     alignSelf: "stretch",
@@ -263,7 +270,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingHorizontal: 16,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.lightGrey,
   },
   button: {
     flex: 1,
@@ -320,39 +326,16 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: "Inter",
     textAlign: "center",
-    color: colors.darkBlue,
+
     fontSize: 32,
   },
-  error: { color: colors.alert },
-  regularText: { color: colors.darkBlue },
-  continueButton: {
-    alignContent: "center",
-    justifyContent: "center",
-    backgroundColor: colors.live,
-    height: 48,
-    paddingHorizontal: 10,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  disabledButton: {
-    backgroundColor: colors.lightFog,
-  },
-  buttonText: {
-    fontSize: 16,
-    color: colors.white,
-    textAlign: "center",
-  },
-  disabledButtonText: {
-    color: colors.grey,
-  },
   maxLabel: {
-    color: colors.grey,
     marginRight: 4,
   },
   switch: {
     opacity: 0.99,
   },
-  availableSuccess: { color: colors.success, marginLeft: 10 },
+  availableSuccess: { marginLeft: 10 },
 });
 
 export default memo<Props>(VoteModal);

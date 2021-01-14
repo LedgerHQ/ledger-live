@@ -9,6 +9,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 
+import { useTheme } from "@react-navigation/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -16,14 +17,13 @@ import CounterValue from "../../components/CounterValue";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
 
-import colors from "../../colors";
-
 type Props = {
   account: AccountLike,
   transaction: Transaction,
 };
 
 export default function TezosFeeRow({ account, transaction }: Props) {
+  const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
@@ -50,7 +50,7 @@ export default function TezosFeeRow({ account, transaction }: Props) {
             </LText>
           ) : null}
         </View>
-        <LText style={styles.countervalue}>
+        <LText style={styles.countervalue} color="grey">
           <CounterValue before="≈ " value={fees} currency={currency} />
         </LText>
       </View>
@@ -63,23 +63,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
   },
-  summaryRowText: {
-    fontSize: 16,
-    textAlign: "right",
-    color: colors.darkBlue,
-  },
   countervalue: {
     fontSize: 12,
-    color: colors.grey,
   },
   valueText: {
     fontSize: 16,
-  },
-  link: {
-    color: colors.live,
-    textDecorationStyle: "solid",
-    textDecorationLine: "underline",
-    textDecorationColor: colors.live,
-    marginLeft: 8,
   },
 });

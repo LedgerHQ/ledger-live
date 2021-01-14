@@ -4,9 +4,7 @@ import React from "react";
 import HeaderRightClose from "../components/HeaderRightClose";
 import HeaderTitle from "../components/HeaderTitle";
 import HeaderBackImage from "../components/HeaderBackImage";
-import { getFontStyle } from "../components/LText";
 import styles from "./styles";
-import colors from "../colors";
 
 export const defaultNavigationOptions = {
   headerStyle: styles.header,
@@ -16,40 +14,12 @@ export const defaultNavigationOptions = {
   headerTitleAllowFontScaling: false,
 };
 
-export const stackNavigatorConfig = {
+export const getStackNavigatorConfig = (c: *, closable: boolean = false) => ({
   ...defaultNavigationOptions,
-  cardStyle: styles.card,
+  cardStyle: { backgroundColor: c.white },
   headerTitleAlign: "center",
-};
-
-export const closableNavigationOptions = {
-  ...defaultNavigationOptions,
-  headerRight: () => <HeaderRightClose />,
-};
-
-export const closableStackNavigatorConfig = {
-  ...stackNavigatorConfig,
-  ...closableNavigationOptions,
-};
-
-export const topTabNavigatorConfig = {
-  tabBarOptions: {
-    allowFontScaling: false,
-    activeTintColor: colors.live,
-    inactiveTintColor: colors.grey,
-    upperCaseLabel: false,
-    labelStyle: {
-      fontSize: 14,
-      ...getFontStyle({
-        semiBold: true,
-      }),
-    },
-    style: {
-      backgroundColor: colors.white,
-      height: 48,
-    },
-    indicatorStyle: {
-      backgroundColor: colors.live,
-    },
+  headerTitleStyle: {
+    color: c.darkBlue,
   },
-};
+  ...(closable ? { headerRight: () => <HeaderRightClose /> } : {}),
+});

@@ -6,12 +6,12 @@ import { Trans } from "react-i18next";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 
+import { useTheme } from "@react-navigation/native";
 import AppInstallButton from "./AppInstallButton";
 import AppUninstallButton from "./AppUninstallButton";
 
 import { InstallProgress, UninstallProgress } from "./AppInstallProgress";
 
-import colors from "../../../colors";
 import Check from "../../../icons/Check";
 import LText from "../../../components/LText";
 
@@ -36,6 +36,7 @@ const AppStateButton = ({
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
 }: Props) => {
+  const { colors } = useTheme();
   const { installed, installQueue, uninstallQueue, updateAllQueue } = state;
   const { name } = app;
 
@@ -87,6 +88,7 @@ const AppStateButton = ({
             <LText
               semiBold
               style={[styles.appStateText, styles.updateText]}
+              color="grey"
               multiline
             >
               <Trans i18nKey="AppAction.update.buttonAction" />
@@ -100,6 +102,7 @@ const AppStateButton = ({
             <LText
               semiBold
               style={[styles.installedText, styles.appStateText]}
+              color="green"
               multiline
             >
               {<Trans i18nKey="common.installed" />}
@@ -153,12 +156,10 @@ const styles = StyleSheet.create({
   },
   updateText: {
     width: "100%",
-    color: colors.grey,
     textAlign: "right",
   },
   installedText: {
     paddingLeft: 8,
-    color: colors.green,
   },
 });
 

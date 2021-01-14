@@ -7,7 +7,7 @@ import {
   Platform,
 } from "react-native";
 import { useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { isUpToDateSelector } from "../../reducers/accounts";
 import { networkErrorSelector } from "../../reducers/appstate";
@@ -16,7 +16,6 @@ import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import Touchable from "../../components/Touchable";
 import Greetings from "./Greetings";
 import IconPie from "../../icons/Pie";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";
 
@@ -31,6 +30,7 @@ export default function PortfolioHeader({
   showGreeting,
   showDistribution,
 }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const onDistributionButtonPress = useCallback(() => {
@@ -64,7 +64,9 @@ export default function PortfolioHeader({
         <View style={styles.content}>{content}</View>
       </TouchableWithoutFeedback>
       {showDistribution && (
-        <View style={styles.distributionButton}>
+        <View
+          style={[styles.distributionButton, { backgroundColor: colors.card }]}
+        >
           <Touchable
             event="DistributionCTA"
             onPress={onDistributionButtonPress}
@@ -92,7 +94,6 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 32,
-    backgroundColor: colors.white,
     alignSelf: "center",
     ...Platform.select({
       android: {

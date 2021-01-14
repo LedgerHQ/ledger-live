@@ -2,9 +2,8 @@
 import React, { useCallback, useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import Animated, { Easing } from "react-native-reanimated";
-
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
-import colors from "../colors";
 
 const {
   cond,
@@ -73,6 +72,7 @@ type Props = {
 };
 
 const ToggleButton = ({ value, options, onChange }: Props) => {
+  const { colors } = useTheme();
   const [width, setWidth] = useState(0);
   // animation translate state
   const [animIndex] = useState(new Value(0));
@@ -106,8 +106,17 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
   };
 
   return (
-    <View style={styles.mainContainer} onLayout={onLayout}>
-      <Animated.View style={[styles.indicator, indicatorStyle]} />
+    <View
+      style={[styles.mainContainer, { borderColor: colors.live }]}
+      onLayout={onLayout}
+    >
+      <Animated.View
+        style={[
+          styles.indicator,
+          { backgroundColor: colors.live },
+          indicatorStyle,
+        ]}
+      />
       <View style={styles.container}>
         {options.map(({ value, label, disabled }, index) => (
           <TouchableOpacity
@@ -119,10 +128,8 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
           >
             <LText
               semiBold
-              style={[
-                styles.label,
-                activeIndex === index ? styles.labelActive : {},
-              ]}
+              style={[styles.label]}
+              color={activeIndex === index ? "white" : "live"}
               active={activeIndex === index}
             >
               {label}
@@ -141,10 +148,8 @@ const styles = StyleSheet.create({
     position: "relative",
     borderRadius: 38,
     borderWidth: 1,
-    borderColor: colors.live,
     overflow: "hidden",
   },
-
   container: {
     flexDirection: "row",
     alignItems: "center",
@@ -161,19 +166,12 @@ const styles = StyleSheet.create({
     height: 38,
     top: 0,
     left: 0,
-    backgroundColor: colors.live,
   },
-
   label: {
     fontSize: 14,
     lineHeight: 36,
-    color: colors.live,
     textAlign: "center",
   },
-  labelActive: {
-    color: colors.white,
-  },
-
   optionButton: {
     flex: 1,
     height: 38,

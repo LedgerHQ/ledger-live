@@ -12,13 +12,13 @@ import {
   Easing,
 } from "react-native";
 
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import { completeOnboarding } from "../../../actions/settings";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import Animation from "../../../components/Animation";
 import { useNavigationInterceptor } from "../onboardingContext";
-import colors from "../../../colors";
 import { NavigatorName } from "../../../const";
 
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
@@ -31,6 +31,7 @@ type Props = {
 };
 
 export default function OnboardingStepFinish({ navigation }: Props) {
+  const { colors } = useTheme();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
@@ -148,12 +149,12 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 16,
     textAlign: "center",
-    color: colors.white,
+    color: "#fff",
     fontSize: 16,
   },
   desc: {
     textAlign: "center",
-    color: colors.white,
+    color: "#fff",
     fontSize: 14,
     marginBottom: 32,
   },

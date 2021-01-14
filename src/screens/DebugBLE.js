@@ -1,13 +1,12 @@
 // @flow
 
-import React, { Component, PureComponent } from "react";
+import React, { Component, memo } from "react";
 import {
   FlatList,
   StyleSheet,
   TextInput,
   View,
   ToastAndroid,
-  Switch,
   ScrollView,
 } from "react-native";
 import { v4 as uuid } from "uuid";
@@ -17,10 +16,11 @@ import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/lib/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/lib/hw";
+import { useTheme } from "@react-navigation/native";
 import LText from "../components/LText";
 import Button from "../components/Button";
 import KeyboardView from "../components/KeyboardView";
-import colors from "../colors";
+import Switch from "../components/Switch";
 
 const logsObservable = Observable.create(o => listen(log => o.next(log))).pipe(
   shareReplay(1000),
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapLogToColor = (log: Log) => {
+const mapLogToColor = (colors: *, log: Log) => {
   if (log.type.includes("error")) return colors.alert;
   if (log.type === "verbose") return colors.grey;
   if (log.type.includes("frame")) return colors.live;
@@ -45,33 +45,33 @@ const mapLogToColor = (log: Log) => {
 
 const mapLogToText = (log: Log) => log.message;
 
-class LogItem extends PureComponent<{ log: Log }> {
-  render() {
-    const { log } = this.props;
-    const text = mapLogToText(log);
-    const color = mapLogToColor(log);
-    return (
-      <View
-        style={{
-          padding: 5,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.lightFog,
-          flexDirection: "row",
-        }}
-      >
-        <LText selectable style={{ fontSize: 10, flex: 1, color }}>
-          {text}
-        </LText>
-        <LText style={{ marginRight: 5, fontSize: 8 }}>
-          {log.date
-            .toISOString()
-            .split("T")[1]
-            .replace("Z", "")}
-        </LText>
-      </View>
-    );
-  }
+function LogItemComponent({ log }: { log: Log }) {
+  const text = mapLogToText(log);
+  const { colors } = useTheme();
+  const color = mapLogToColor(colors, log);
+  return (
+    <View
+      style={{
+        padding: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.lightFog,
+        flexDirection: "row",
+      }}
+    >
+      <LText selectable style={{ fontSize: 10, flex: 1, color }}>
+        {text}
+      </LText>
+      <LText style={{ marginRight: 5, fontSize: 8 }}>
+        {log.date
+          .toISOString()
+          .split("T")[1]
+          .replace("Z", "")}
+      </LText>
+    </View>
+  );
 }
+
+const LogItem = memo<{ log: Log }>(LogItemComponent);
 
 type Props = {
   navigation: any,

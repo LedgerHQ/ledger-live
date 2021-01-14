@@ -26,8 +26,9 @@ import {
   getAccountCurrency,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account/helpers";
+import { useTheme } from "@react-navigation/native";
 import { subAccountByCurrencyOrderedScreenSelector } from "../../../reducers/accounts";
-import colors, { rgba } from "../../../colors";
+import { rgba } from "../../../colors";
 import { ScreenName, NavigatorName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
@@ -60,6 +61,7 @@ type Props = {
 const keyExtractor = item => item.account.id;
 
 function LendingEnableSelectAccount({ route, navigation }: Props) {
+  const { colors } = useTheme();
   const currency = route?.params?.currency;
   invariant(currency, "currency required");
   const discreet = useSelector(discreetModeSelector);
@@ -156,7 +158,11 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
 
       return (
         <View
-          style={account.type === "Account" ? undefined : styles.tokenCardStyle}
+          style={
+            account.type === "Account"
+              ? undefined
+              : [styles.tokenCardStyle, { borderLeftColor: colors.fog }]
+          }
         >
           <Card
             onPress={() => {
@@ -191,7 +197,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
               </LText>
             </View>
             <View style={styles.balanceContainer}>
-              <LText semiBold style={styles.balanceNumText}>
+              <LText semiBold style={styles.balanceNumText} color="grey">
                 <CurrencyUnitValue
                   showCode
                   unit={unit}
@@ -204,28 +210,26 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
         </View>
       );
     },
-    [redirectToSupplyFlow],
+    [colors.darkBlue, colors.fog, colors.success, redirectToSupplyFlow],
   );
   const renderList = useCallback(
-    items => {
-      return (
-        <FlatList
-          data={items}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          showsVerticalScrollIndicator={false}
-          keyboardDismissMode="on-drag"
-          contentContainerStyle={styles.list}
-        />
-      );
-    },
+    items => (
+      <FlatList
+        data={items}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        showsVerticalScrollIndicator={false}
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={styles.list}
+      />
+    ),
     [renderItem],
   );
 
   const renderEmptySearch = useCallback(
     () => (
       <View style={styles.emptyResults}>
-        <LText style={styles.emptyText}>
+        <LText style={styles.emptyText} color="fog">
           <Trans i18nKey="transfer.receive.noAccount" />
         </LText>
       </View>
@@ -233,7 +237,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
     [],
   );
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="Lend Approve"
         name="Select Account"
@@ -312,13 +316,11 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   tokenCardStyle: {
     marginLeft: 26,
     paddingLeft: 7,
     borderLeftWidth: 1,
-    borderLeftColor: colors.fog,
   },
   searchContainer: {
     paddingTop: 16,
@@ -335,7 +337,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: colors.fog,
   },
   padding: {
     paddingHorizontal: 16,
@@ -366,7 +367,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   balanceNumText: {
-    color: colors.grey,
     marginRight: 6,
   },
 });

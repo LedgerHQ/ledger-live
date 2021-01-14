@@ -1,26 +1,23 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import Close from "../icons/Close";
 
 type Props = {
   style?: *,
 };
 
-class ErrorCrossBadge extends PureComponent<Props> {
-  render() {
-    const { style } = this.props;
-    return (
-      <View style={[styles.outer, style]}>
-        <View style={styles.inner}>
-          <Close size={14} color={colors.white} />
-        </View>
+function ErrorCrossBadge({ style }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.outer, { backgroundColor: colors.card }, style]}>
+      <View style={[styles.inner, { backgroundColor: colors.alert }]}>
+        <Close size={14} color="white" />
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -29,7 +26,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     top: -12,
     right: -12,
-    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -38,14 +34,10 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.alert,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
-  txt: {
-    color: colors.white,
-  },
 });
 
-export default ErrorCrossBadge;
+export default memo<Props>(ErrorCrossBadge);

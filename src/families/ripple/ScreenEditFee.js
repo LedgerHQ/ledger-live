@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import { i18n } from "../../context/Locale";
 import { accountScreenSelector } from "../../reducers/accounts";
 import KeyboardView from "../../components/KeyboardView";
@@ -28,6 +28,7 @@ type RouteParams = {
 };
 
 function RippleEditFee({ route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   if (!account) return null;
@@ -38,7 +39,15 @@ function RippleEditFee({ route }: Props) {
   if (!transaction) return null;
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+      forceInset={forceInset}
+    >
       <KeyboardView style={styles.container}>
         <EditFeeUnit account={account} field="fee" />
       </KeyboardView>
@@ -51,7 +60,6 @@ export { options, RippleEditFee as component };
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   container: {
     flex: 1,

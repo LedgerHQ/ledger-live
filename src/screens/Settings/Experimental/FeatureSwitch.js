@@ -1,9 +1,9 @@
 // @flow
 
 import React, { PureComponent } from "react";
-import { Switch } from "react-native";
 
 import Track from "../../../analytics/Track";
+import Switch from "../../../components/Switch";
 
 type Props = {
   name: string,

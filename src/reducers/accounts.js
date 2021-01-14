@@ -18,6 +18,7 @@ import {
   isUpToDateAccount,
   withoutToken,
   clearAccount,
+  nestedSortAccounts,
 } from "@ledgerhq/live-common/lib/account";
 import type { State } from "./index.js";
 import accountModel from "../logic/accountModel";
@@ -35,6 +36,13 @@ const handlers: Object = {
 
   ACCOUNTS_USER_IMPORT: (s, { items, selectedAccounts }) => ({
     active: importAccountsReduce(s.active, { items, selectedAccounts }),
+  }),
+
+  REORDER_ACCOUNTS: (
+    state: AccountsState,
+    { payload: { comparator } }: { payload: { comparator: * } },
+  ): AccountsState => ({
+    active: nestedSortAccounts(state.active, comparator),
   }),
 
   ACCOUNTS_ADD: (s, { scannedAccounts, selectedIds, renamings }) => ({

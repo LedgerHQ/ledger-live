@@ -4,8 +4,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
-import colors from "../../colors";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { NavigatorName } from "../../const";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -16,23 +15,32 @@ import Button from "../../components/Button";
 const forceInset = { bottom: "always" };
 
 export default function Buy() {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
 
   return (
     <SafeAreaView
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.card,
+          paddingTop: extraStatusBarPadding,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="Sell Crypto" />
       <View style={styles.body}>
-        <View style={styles.iconContainer}>
+        <View
+          style={[styles.iconContainer, { backgroundColor: colors.lightLive }]}
+        >
           <ExchangeIcon size={22} color={colors.live} />
         </View>
         <LText style={styles.title} semiBold>
           {t("exchange.sell.title")}
         </LText>
-        <LText style={styles.description}>
+        <LText style={styles.description} color="smoke">
           {t("exchange.sell.description")}
         </LText>
         <View style={styles.buttonContainer}>
@@ -52,7 +60,6 @@ export default function Buy() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   body: {
     flex: 1,
@@ -65,7 +72,6 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 50,
-    backgroundColor: colors.lightLive,
     marginBottom: 24,
     display: "flex",
     justifyContent: "center",
@@ -73,13 +79,11 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    color: colors.darkBlue,
     fontSize: 16,
     marginBottom: 16,
   },
   description: {
     textAlign: "center",
-    color: colors.smoke,
     fontSize: 14,
   },
   buttonContainer: {

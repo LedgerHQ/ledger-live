@@ -2,15 +2,16 @@
 
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import NavigationScrollView from "../components/NavigationScrollView";
-import colors from "../colors";
 import LText from "../components/LText";
 import Button from "../components/Button";
 
 export default function DebugPlayground() {
+  const { colors } = useTheme();
   return (
     <NavigationScrollView>
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: colors.background }]}>
         <LText tertiary>
           {
             "Convenience screen for testing purposes, please leave empty when commiting."
@@ -31,6 +32,5 @@ export default function DebugPlayground() {
 const styles = StyleSheet.create({
   root: {
     padding: 16,
-    backgroundColor: colors.white,
   },
 });

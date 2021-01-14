@@ -4,7 +4,6 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import DeviceNanoAction from "../../components/DeviceNanoAction";
@@ -36,7 +35,7 @@ class PendingGenuineCheck extends PureComponent<{
         <LText secondary semiBold style={styles.title}>
           <Trans i18nKey="PairDevices.GenuineCheck.title" />
         </LText>
-        <LText style={styles.subtitle}>
+        <LText style={styles.subtitle} color="smoke">
           <Trans i18nKey="PairDevices.GenuineCheck.accept">
             {"text"}
             <LText bold>bold text</LText>
@@ -57,7 +56,6 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 32,
     fontSize: 18,
-    color: colors.darkBlue,
   },
   subtitle: {
     fontSize: 14,
@@ -65,7 +63,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 24,
     lineHeight: 21,
-    color: colors.smoke,
   },
   nano: {
     paddingLeft: "33%",

@@ -21,7 +21,6 @@ import LText from "../../../components/LText";
 
 import pairYourNano from "../assets/pairYourNano.png";
 import plugYourNano from "../assets/plugNanoS.png";
-import colors from "../../../colors";
 import { urls } from "../../../config/urls";
 
 const pairNewInfoModalProps = [
@@ -77,7 +76,7 @@ const pairNewInfoModalProps = [
         <LText
           onPress={() => Linking.openURL(urls.otgCable)}
           semiBold
-          style={{ color: colors.live }}
+          color="live"
         />{" "}
       </Trans>
     ),

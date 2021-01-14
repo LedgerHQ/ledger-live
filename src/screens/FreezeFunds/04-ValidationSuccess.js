@@ -10,9 +10,9 @@ import {
 } from "@ledgerhq/live-common/lib/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/lib/hooks/useTimer";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
 import { NavigatorName, ScreenName } from "../../const";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
@@ -32,8 +32,9 @@ type RouteParams = {
 };
 
 export default function ValidationSuccess({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  invariant(account, "account is required");
+  invariant(account && account.type === "Account", "account is required");
 
   const time = useTimer(60);
   const isLoading = useTronPowerLoading(account);
@@ -64,7 +65,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [lastVotedDate, accountId, navigation, onClose]);
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="FreezeFunds" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess
@@ -84,7 +85,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
                 <LText style={styles.label} semiBold>
                   <Trans i18nKey="freeze.validation.button.pending" />
                 </LText>
-                <LText style={[styles.label, styles.subLabel]}>
+                <LText style={[styles.label]} color="grey">
                   <Trans i18nKey="freeze.validation.button.pendingDesc" />
                 </LText>
               </View>
@@ -126,7 +127,6 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   button: {
     alignSelf: "stretch",
@@ -140,5 +140,4 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   label: { fontSize: 12 },
-  subLabel: { color: colors.grey },
 });

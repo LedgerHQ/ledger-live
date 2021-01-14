@@ -8,6 +8,7 @@ import {
   formatVotes,
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/lib/families/tron/react";
+import { useTheme } from "@react-navigation/native";
 import {
   DataRow,
   HeaderRow,
@@ -15,16 +16,13 @@ import {
 } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
-import colors from "../../colors";
 
 const styles = StyleSheet.create({
   infoText: {
-    color: colors.live,
     textAlign: "left",
     marginLeft: 8,
   },
   text: {
-    color: colors.darkBlue,
     fontSize: 14,
     flex: 1,
     textAlign: "right",
@@ -32,6 +30,7 @@ const styles = StyleSheet.create({
 });
 
 const Warning = ({ transaction }: { transaction: Transaction }) => {
+  const { colors } = useTheme();
   invariant(transaction.family === "tron", "tron transaction");
 
   switch (transaction.mode) {
@@ -44,6 +43,7 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
           <LText
             semiBold
             style={[styles.text, styles.infoText]}
+            color="live"
             numberOfLines={2}
           >
             <Trans

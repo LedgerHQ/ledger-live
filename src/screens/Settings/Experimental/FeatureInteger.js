@@ -1,20 +1,13 @@
 // @flow
 
 import React, { useCallback, useState, useEffect, useRef } from "react";
-import {
-  Switch,
-  TextInput,
-  StyleSheet,
-  Keyboard,
-  View,
-  Platform,
-} from "react-native";
+import { TextInput, StyleSheet, Keyboard, View, Platform } from "react-native";
 import { getEnvDefault } from "@ledgerhq/live-common/lib/env";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 
 import Track from "../../../analytics/Track";
 import getFontStyle from "../../../components/LText/getFontStyle";
-import colors from "../../../colors";
+import Switch from "../../../components/Switch";
 
 type Props = {
   name: *,
@@ -35,6 +28,7 @@ const FeatureInteger = ({
   minValue,
   maxValue,
 }: Props) => {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const inputRef = useRef(null);
   const constraintValue = useCallback(
@@ -129,7 +123,12 @@ const FeatureInteger = ({
         />
         <TextInput
           ref={inputRef}
-          style={enabled ? styles.input : styles.inputHidden}
+          style={[
+            { color: colors.darkBlue },
+            enabled
+              ? { ...styles.input, borderColor: colors.lightFog }
+              : styles.inputHidden,
+          ]}
           keyboardType="numeric"
           value={enabled ? inputValue : ""}
           onChangeText={onInputChange}
@@ -153,7 +152,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     ...getFontStyle({ semiBold: true }),
     borderWidth: 1,
-    borderColor: colors.lightFog,
   },
   inputHidden: {
     display: "none",

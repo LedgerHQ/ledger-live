@@ -1507,6 +1507,13 @@
       "password": "Password lock",
       "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
       "counterValue": "Countervalue",
+      "theme": "Theme",
+      "themeDesc": "Set the app UI theme",
+      "themes": {
+        "dark": "Dark",
+        "dusk": "Dusk",
+        "light": "Light"
+      },
       "counterValueDesc": "Choose the currency for balances and operations.",
       "exchange": "Rate provider",
       "exchangeDesc": "Set provider of exchange rate from Bitcoin to {{fiat}}",
@@ -1711,7 +1718,8 @@
         "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
         "label": "Your Swap ID:",
         "title": "Pending operation",
-        "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later."
+        "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later.",
+        "cta": "See details"
       },
       "form": {
         "validate": "Confirm Swap transaction",

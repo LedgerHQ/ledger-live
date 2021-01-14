@@ -1,10 +1,10 @@
 /* @flow */
 import React, { useCallback } from "react";
-import { Switch } from "react-native";
 import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import SettingsRow from "../../../components/SettingsRow";
 import Track from "../../../analytics/Track";
+import Switch from "../../../components/Switch";
 
 const AnalyticsConsoleRow = () => {
   const analyticsConsoleVisibility = useEnv("ANALYTICS_CONSOLE");

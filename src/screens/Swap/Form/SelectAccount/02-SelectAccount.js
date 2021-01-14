@@ -12,10 +12,10 @@ import {
   accountWithMandatoryTokens,
   flattenAccounts,
 } from "@ledgerhq/live-common/lib/account/helpers";
+import { useTheme } from "@react-navigation/native";
 import type { SwapRouteParams } from "..";
 import { accountsSelector } from "../../../../reducers/accounts";
 import NoAccountsEmptyState from "./NoAccountsEmptyState";
-import colors from "../../../../colors";
 import { TrackScreen } from "../../../../analytics";
 import LText from "../../../../components/LText";
 import FilteredSearchBar from "../../../../components/FilteredSearchBar";
@@ -35,6 +35,7 @@ type Props = {
 };
 
 export default function SelectAccount({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { exchange, target, selectedCurrency } = route.params;
   const accounts = useSelector(accountsSelector);
 
@@ -47,9 +48,9 @@ export default function SelectAccount({ navigation, route }: Props) {
           : selectedCurrency.id),
     );
     if (selectedCurrency.type === "TokenCurrency") {
-      return filteredAccounts.map(acc => {
-        return accountWithMandatoryTokens(acc, [selectedCurrency]);
-      });
+      return filteredAccounts.map(acc =>
+        accountWithMandatoryTokens(acc, [selectedCurrency]),
+      );
     }
     return filteredAccounts;
   }, [accounts, selectedCurrency]);
@@ -78,7 +79,11 @@ export default function SelectAccount({ navigation, route }: Props) {
 
       return (
         <View
-          style={account.type === "Account" ? undefined : styles.tokenCardStyle}
+          style={
+            account.type === "Account"
+              ? undefined
+              : { ...styles.tokenCardStyle, borderLeftColor: colors.fog }
+          }
         >
           <AccountCard
             disabled={!result.match}
@@ -97,7 +102,7 @@ export default function SelectAccount({ navigation, route }: Props) {
         </View>
       );
     },
-    [accounts, isFrom, navigation, route.params, exchange],
+    [accounts, isFrom, colors.fog, navigation, route.params, exchange],
   );
 
   const elligibleAccountsForSelectedCurrency = allAccounts.filter(
@@ -129,7 +134,7 @@ export default function SelectAccount({ navigation, route }: Props) {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="ReceiveFunds" name="SelectAccount" />
       <KeyboardView style={{ flex: 1 }}>
         <View style={styles.searchContainer}>
@@ -140,7 +145,7 @@ export default function SelectAccount({ navigation, route }: Props) {
             renderList={renderList}
             renderEmptySearch={() => (
               <View style={styles.emptyResults}>
-                <LText style={styles.emptyText}>
+                <LText style={styles.emptyText} color="fog">
                   <Trans i18nKey="transfer.receive.noAccount" />
                 </LText>
               </View>
@@ -161,13 +166,11 @@ const styles = StyleSheet.create({
   },
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   tokenCardStyle: {
     marginLeft: 26,
     paddingLeft: 7,
     borderLeftWidth: 1,
-    borderLeftColor: colors.fog,
   },
   card: {
     paddingHorizontal: 16,
@@ -188,48 +191,8 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: colors.fog,
-  },
-  emptyStateBody: {
-    flex: 1,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 50,
-    backgroundColor: colors.lightLive,
-    marginBottom: 24,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: {
-    textAlign: "center",
-    color: colors.darkBlue,
-    fontSize: 16,
-    marginBottom: 16,
-  },
-  description: {
-    textAlign: "center",
-    paddingHorizontal: 16,
-    color: colors.smoke,
-    fontSize: 14,
-  },
-  buttonContainer: {
-    paddingTop: 24,
-    paddingLeft: 16,
-    paddingRight: 16,
-    flexDirection: "row",
   },
   button: {
     flex: 1,
-  },
-  addButton: {
-    marginTop: 16,
-    paddingLeft: 8,
-    alignItems: "flex-start",
   },
 });

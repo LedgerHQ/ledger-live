@@ -4,7 +4,7 @@ import React, { useState, useRef, useCallback } from "react";
 import { StyleSheet, View, Animated, SectionList } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import {
   isAccountEmpty,
   groupAccountOperationsByDay,
@@ -36,7 +36,6 @@ import SectionHeader from "../../components/SectionHeader";
 import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
 import LoadingFooter from "../../components/LoadingFooter";
 import { ScreenName } from "../../const";
-import colors from "../../colors";
 import EmptyStateAccount from "./EmptyStateAccount";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import { useScrollToTop } from "../../navigation/utils";
@@ -93,6 +92,8 @@ function AccountScreenInner({
   const ref = useRef();
 
   useScrollToTop(ref);
+
+  const { colors } = useTheme();
 
   const onEndReached = useCallback(() => {
     setOpCount(opCount + 50);
@@ -170,12 +171,12 @@ function AccountScreenInner({
       : undefined;
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root]}>
       {analytics}
       <List
         ref={ref}
         sections={sections}
-        style={styles.sectionList}
+        style={[styles.sectionList, { backgroundColor: colors.background }]}
         contentContainerStyle={styles.contentContainer}
         ListFooterComponent={
           !completed ? (
@@ -226,7 +227,6 @@ const styles = StyleSheet.create({
   },
   sectionList: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   balanceContainer: {
     alignItems: "center",
@@ -235,11 +235,6 @@ const styles = StyleSheet.create({
   balanceText: {
     fontSize: 22,
     paddingBottom: 4,
-    color: colors.darkBlue,
-  },
-  balanceSubText: {
-    fontSize: 16,
-    color: colors.smoke,
   },
   contentContainer: {
     paddingBottom: 64,

@@ -1,9 +1,10 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
-import { closableStackNavigatorConfig } from "../../../navigation/navigatorConfig";
+import { useTheme } from "@react-navigation/native";
+import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
 import StepHeader from "../../../components/StepHeader";
 import { ScreenName } from "../../../const";
 import UndelegationAmount from "./01-Amount";
@@ -16,11 +17,15 @@ const totalSteps = "3";
 
 function UndelegationFlow() {
   const { t } = useTranslation();
-
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
     <Stack.Navigator
       screenOptions={{
-        ...closableStackNavigatorConfig,
+        ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
     >

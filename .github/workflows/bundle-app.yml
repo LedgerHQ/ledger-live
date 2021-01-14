@@ -1,5 +1,13 @@
 name: bundle app
-on: [pull_request]
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+  push:
+    branches:
+      - develop
+      - master
 
 jobs:
   bundle-apk:
@@ -40,7 +48,7 @@ jobs:
         uses: ./.github/actions/change-product-name
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::${GITHUB_SHA:0:7}"
+        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
       - name: make local version
         run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
       - name: build the app

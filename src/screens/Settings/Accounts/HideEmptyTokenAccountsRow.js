@@ -3,7 +3,7 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { Switch } from "react-native";
+import Switch from "../../../components/Switch";
 import SettingsRow from "../../../components/SettingsRow";
 import { setHideEmptyTokenAccounts } from "../../../actions/settings";
 import withEnv from "../../../logic/withEnv";

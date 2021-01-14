@@ -3,6 +3,7 @@ import React from "react";
 import { StyleSheet, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
+import { useTheme } from "@react-navigation/native";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import BottomModalChoice from "../../components/BottomModalChoice";
 import IconHelp from "../../icons/Help";
@@ -13,10 +14,13 @@ import IconTwitter from "../../icons/Twitter";
 import IconGithub from "../../icons/Github";
 
 const Resources = () => {
+  const { colors } = useTheme();
   const { t } = useTranslation();
 
   return (
-    <NavigationScrollView contentContainerStyle={styles.root}>
+    <NavigationScrollView
+      contentContainerStyle={[styles.root, { backgroundColor: colors.white }]}
+    >
       <BottomModalChoice
         event="GettingStarted"
         title={t("help.gettingStarted.title")}
@@ -85,7 +89,7 @@ const Resources = () => {
 };
 
 const styles = StyleSheet.create({
-  root: { paddingTop: 16, backgroundColor: "#fff" },
+  root: { paddingTop: 16 },
 });
 
 export default Resources;

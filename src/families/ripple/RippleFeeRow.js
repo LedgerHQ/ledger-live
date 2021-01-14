@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -11,7 +11,6 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 
 type Props = {
@@ -20,6 +19,7 @@ type Props = {
 };
 
 export default function RippleFeeRow({ account, transaction }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const openFees = useCallback(() => {
@@ -58,11 +58,20 @@ export default function RippleFeeRow({ account, transaction }: Props) {
             </LText>
           ) : null}
 
-          <LText style={styles.link} onPress={openFees}>
+          <LText
+            style={[
+              styles.link,
+              {
+                textDecorationColor: colors.live,
+              },
+            ]}
+            color="live"
+            onPress={openFees}
+          >
             <Trans i18nKey="common.edit" />
           </LText>
         </View>
-        <LText style={styles.countervalue}>
+        <LText style={styles.countervalue} color="grey">
           <CounterValue before="≈ " value={fee} currency={account.currency} />
         </LText>
       </View>
@@ -78,20 +87,16 @@ const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
     textAlign: "right",
-    color: colors.darkBlue,
   },
   countervalue: {
     fontSize: 12,
-    color: colors.grey,
   },
   valueText: {
     fontSize: 16,
   },
   link: {
-    color: colors.live,
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
-    textDecorationColor: colors.live,
     marginLeft: 8,
   },
 });

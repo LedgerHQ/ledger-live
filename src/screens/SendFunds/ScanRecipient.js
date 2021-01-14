@@ -18,6 +18,7 @@ type Props = {
   route: { params: RouteParams },
   account: AccountLike,
   parentAccount: ?Account,
+  colors: *,
 };
 
 type RouteParams = {

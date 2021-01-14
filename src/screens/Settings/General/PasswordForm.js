@@ -9,7 +9,6 @@ import LText from "../../../components/LText";
 import KeyboardView from "../../../components/KeyboardView";
 import TranslatedError from "../../../components/TranslatedError";
 import PasswordInput from "../../../components/PasswordInput";
-import colors from "../../../colors";
 
 type Props = {
   t: T,
@@ -56,7 +55,7 @@ class PasswordForm extends PureComponent<Props, State> {
             />
           </View>
           {error && (
-            <LText style={styles.errorStyle}>
+            <LText style={styles.errorStyle} color="alert">
               <TranslatedError error={error} />
             </LText>
           )}
@@ -99,7 +98,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   errorStyle: {
-    color: colors.alert,
     marginHorizontal: 16,
     fontSize: 12,
   },

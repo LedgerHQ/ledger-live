@@ -5,7 +5,7 @@ import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import Slider from "react-native-slider";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import {
@@ -15,13 +15,13 @@ import {
 } from "@ledgerhq/live-common/lib/range";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
-import colors from "../../colors";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import SettingsRow from "../../components/SettingsRow";
 import Button from "../../components/Button";
 
 const GasSlider = React.memo(({ value, onChange, range }: *) => {
+  const { colors } = useTheme();
   const index = reverseRangeIndex(range, value);
   const setValueIndex = useCallback(
     i => onChange(projectRangeIndex(range, i)),
@@ -62,6 +62,7 @@ export default function EditFeeUnitEthereum({
   transaction,
   route,
 }: Props) {
+  const { colors } = useTheme();
   const { navigate } = useNavigation();
   const { t } = useTranslation();
   const { setAccount, setTransaction } = useBridgeTransaction();
@@ -119,7 +120,7 @@ export default function EditFeeUnitEthereum({
 
   return (
     <View style={styles.root}>
-      <View style={styles.sliderContainer}>
+      <View style={[styles.sliderContainer, { backgroundColor: colors.card }]}>
         <SettingsRow
           title={t("send.fees.chooseGas")}
           desc={t("send.fees.higherFaster")}
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
   },
   sliderContainer: {
     flex: 1,
-    backgroundColor: "white",
+
     minHeight: 200,
   },
   container: {

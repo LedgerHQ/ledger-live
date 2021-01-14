@@ -6,7 +6,7 @@ import take from "lodash/take";
 import { Platform, StyleSheet, View, FlatList } from "react-native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import MaterialIcon from "react-native-vector-icons/dist/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type {
   Account,
   SubAccount,
@@ -17,7 +17,6 @@ import { listSubAccounts } from "@ledgerhq/live-common/lib/account";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
 import { NavigatorName, ScreenName } from "../../const";
 import SubAccountRow from "../../components/SubAccountRow";
-import colors from "../../colors";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import Touchable from "../../components/Touchable";
@@ -33,7 +32,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderStyle: "dashed",
     borderWidth: 1,
-    borderColor: colors.fog,
     flexDirection: "row",
     alignItems: "center",
     overflow: "hidden",
@@ -59,14 +57,12 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 8,
-    backgroundColor: colors.white,
     borderRadius: 4,
     ...Platform.select({
       android: {
         elevation: 1,
       },
       ios: {
-        shadowColor: colors.black,
         shadowOpacity: 0.03,
         shadowRadius: 8,
         shadowOffset: {
@@ -77,8 +73,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const Card = ({ children }: { children: any }) => (
-  <View style={styles.card}>{children}</View>
+const Card = ({ children, style }: { children: any, style: * }) => (
+  <View style={style}>{children}</View>
 );
 
 type Props = {
@@ -98,6 +94,7 @@ export default function SubAccountsList({
 }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const [account, setAccount] = useState<TokenAccount | typeof undefined>();
   const subAccounts = listSubAccounts(parentAccount);
@@ -126,7 +123,7 @@ export default function SubAccountsList({
   const renderHeader = useCallback(
     () => (
       <View style={styles.header}>
-        <LText semiBold style={{ color: colors.darkBlue, fontSize: 16 }}>
+        <LText semiBold style={{ fontSize: 16 }}>
           <Trans
             i18nKey={
               isToken
@@ -160,12 +157,13 @@ export default function SubAccountsList({
     ),
     [
       isToken,
-      subAccounts,
-      navigateToReceiveConnectDevice,
+      hasSpecificTokenWording,
+      family,
+      subAccounts.length,
       ReceiveButton,
       accountId,
-      family,
-      hasSpecificTokenWording,
+      navigateToReceiveConnectDevice,
+      colors.live,
     ],
   );
 
@@ -179,7 +177,14 @@ export default function SubAccountsList({
           event="AccountReceiveSubAccount"
           onPress={navigateToReceiveConnectDevice}
         >
-          <View style={styles.footer}>
+          <View
+            style={[
+              styles.footer,
+              {
+                borderColor: colors.fog,
+              },
+            ]}
+          >
             <Icon color={colors.live} size={26} name="plus" />
             <View style={styles.footerText}>
               <LText style={{ fontSize: 16 }}>
@@ -206,7 +211,20 @@ export default function SubAccountsList({
 
     // else, we render the collapse button
     return (
-      <Card>
+      <Card
+        style={[
+          styles.card,
+          {
+            backgroundColor: colors.card,
+            ...Platform.select({
+              android: {},
+              ios: {
+                shadowColor: colors.black,
+              },
+            }),
+          },
+        ]}
+      >
         <Button
           type="lightSecondary"
           event="accountExpandTokenList"
@@ -252,11 +270,27 @@ export default function SubAccountsList({
     onToggle,
     family,
     hasSpecificTokenWording,
+    colors,
+    Placeholder,
+    accountId,
   ]);
 
   const renderItem = useCallback(
     ({ item }) => (
-      <Card>
+      <Card
+        style={[
+          styles.card,
+          {
+            backgroundColor: colors.card,
+            ...Platform.select({
+              android: {},
+              ios: {
+                shadowColor: colors.black,
+              },
+            }),
+          },
+        ]}
+      >
         <SubAccountRow
           account={item}
           onSubAccountLongPress={account => setAccount(account)}
@@ -264,7 +298,7 @@ export default function SubAccountsList({
         />
       </Card>
     ),
-    [onAccountPress],
+    [onAccountPress, colors],
   );
 
   if (

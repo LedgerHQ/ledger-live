@@ -1,11 +1,9 @@
 /* @flow */
 import React from "react";
-import { StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
-import colors from "../../../colors";
 import { NavigatorName, ScreenName } from "../../../const";
 import { useLocale } from "../../../context/Locale";
 
@@ -26,15 +24,9 @@ export default function LanguageSettingsRow() {
       }
       alignedTop
     >
-      <LText semiBold style={styles.tickerText}>
+      <LText semiBold color="grey">
         {locale}
       </LText>
     </SettingsRow>
   );
 }
-
-const styles = StyleSheet.create({
-  tickerText: {
-    color: colors.grey,
-  },
-});

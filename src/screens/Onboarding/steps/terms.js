@@ -3,9 +3,9 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, View, Linking, ActivityIndicator } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import CheckBox from "../../../components/CheckBox";
 import { NavigatorName, ScreenName } from "../../../const";
@@ -21,6 +21,7 @@ import AnimatedHeaderView from "../../../components/AnimatedHeader";
 import { urls } from "../../../config/urls";
 
 function OnboardingStepTerms({ navigation }: *) {
+  const { colors } = useTheme();
   const [markdown, error, retry] = useTerms();
   const [, accept] = useTermsAccept();
   const [toggle, setToggle] = useState(false);
@@ -45,7 +46,7 @@ function OnboardingStepTerms({ navigation }: *) {
       hasBackButton
       title={<Trans i18nKey="Terms.title" />}
       footer={
-        <View style={styles.footer}>
+        <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
           <Touchable
             event="TermsAcceptSwitch"
             onPress={onSwitch}
@@ -57,8 +58,8 @@ function OnboardingStepTerms({ navigation }: *) {
                 {""}
                 <LText
                   semiBold
-                  style={{ color: colors.live }}
                   onPress={() => Linking.openURL(urls.terms)}
+                  color="live"
                 />
                 {""}
               </Trans>
@@ -75,8 +76,8 @@ function OnboardingStepTerms({ navigation }: *) {
                 {""}
                 <LText
                   semiBold
-                  style={{ color: colors.live }}
                   onPress={() => Linking.openURL(urls.privacyPolicy)}
+                  color="live"
                 />
                 {""}
               </Trans>
@@ -127,7 +128,6 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     marginLeft: 8,
-    color: colors.darkBlue,
     fontSize: 13,
     paddingRight: 16,
   },
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
+
     paddingHorizontal: 24,
     paddingBottom: 24,
   },

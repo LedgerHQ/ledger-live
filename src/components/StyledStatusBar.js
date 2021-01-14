@@ -1,8 +1,8 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { StatusBar, Platform } from "react-native";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 
 type Props = {
   hidden?: boolean,
@@ -16,23 +16,26 @@ type Props = {
 
 const oldAndroid = Platform.OS === "android" && Platform.Version < 23;
 
-class StyledStatusBar extends PureComponent<Props> {
-  static defaultProps = {
-    animated: true,
-    translucent: true,
-    backgroundColor: "transparent",
-    barStyle: "dark-content",
-  };
+function StyledStatusBar({
+  animated = true,
+  translucent = true,
+  backgroundColor = "transparent",
+  barStyle = "dark-content",
+}: Props) {
+  const { colors, dark } = useTheme();
+  const newColor =
+    oldAndroid && barStyle === "dark-content" ? colors.live : backgroundColor;
 
-  render() {
-    const { backgroundColor, ...props } = this.props;
-    const newColor =
-      oldAndroid && props.barStyle === "dark-content"
-        ? colors.live
-        : backgroundColor;
+  const statusBarStyle = dark ? "light-content" : barStyle;
 
-    return <StatusBar backgroundColor={newColor} {...props} />;
-  }
+  return (
+    <StatusBar
+      backgroundColor={newColor}
+      animated={animated}
+      translucent={translucent}
+      barStyle={statusBarStyle}
+    />
+  );
 }
 
-export default StyledStatusBar;
+export default memo<Props>(StyledStatusBar);

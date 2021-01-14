@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Switch } from "react-native";
+import Switch from "../../../components/Switch";
 import SettingsRow from "../../../components/SettingsRow";
 import { setExperimentalUSBSupport } from "../../../actions/settings";
 import { experimentalUSBEnabledSelector } from "../../../reducers/settings";

@@ -3,7 +3,7 @@ import React from "react";
 import liveCommonPkg from "@ledgerhq/live-common/package.json";
 import { StyleSheet, View } from "react-native";
 
-import colors, { rgba } from "../../colors";
+import { rgba } from "../../colors";
 import QRCodeTopLayer from "./QRCodeTopLayer";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
 import QRCodeRectangleViewport from "./QRCodeRectangleViewport";
@@ -29,7 +29,14 @@ export default function CameraScreen({
 
   return (
     <View style={wrapperStyle}>
-      <View style={[styles.darken, styles.centered, styles.topCell]}>
+      <View
+        style={[
+          styles.darken,
+          { backgroundColor: rgba("#142533", 0.4) },
+          styles.centered,
+          styles.topCell,
+        ]}
+      >
         {typeof progress === "number" ? <QRCodeTopLayer /> : null}
       </View>
       <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
@@ -44,44 +51,12 @@ export default function CameraScreen({
 }
 
 const styles = StyleSheet.create({
-  camera: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "stretch",
-  },
-  innerRow: {
-    flexDirection: "row",
-    alignItems: "stretch",
-    flexGrow: 1,
-  },
   darken: {
-    backgroundColor: rgba(colors.darkBlue, 0.4),
     flexGrow: 1,
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 32,
-    textAlign: "center",
-    color: colors.white,
   },
   border: {
     borderColor: "white",
     flexGrow: 1,
-  },
-  borderTop: {
-    borderTopWidth: 6,
-  },
-  borderBottom: {
-    borderBottomWidth: 6,
-  },
-  borderLeft: {
-    borderLeftWidth: 6,
-  },
-  borderRight: {
-    borderRightWidth: 6,
   },
   centered: {
     flex: 1,
@@ -93,16 +68,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 8,
   },
-  progressText: {
-    color: colors.white,
-    fontSize: 16,
-  },
   version: {
     fontSize: 10,
-    color: colors.white,
     position: "absolute",
     bottom: 10,
     right: 10,
     opacity: 0.4,
+    color: "#fff",
   },
 });

@@ -1,9 +1,7 @@
 // @flow
-
 import React from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import colors from "../../colors";
 import TrackScreen from "../../analytics/TrackScreen";
 import CoinifyWidget from "./CoinifyWidget";
 
@@ -21,7 +19,6 @@ export default function History() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   body: {
     flex: 1,

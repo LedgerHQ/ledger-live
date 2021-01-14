@@ -9,7 +9,8 @@ import {
   ScrollView,
   Linking,
 } from "react-native";
-import colors, { rgba } from "../../colors";
+import { useTheme } from "@react-navigation/native";
+import { rgba } from "../../colors";
 import Styles from "../../navigation/styles";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 
@@ -47,12 +48,13 @@ const hitSlop = {
 const { height } = getWindowDimensions();
 
 export default function OnboardingInfoModal({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { sceneInfoKey } = route.params;
   const sceneInfoProps = infoModalScenes[sceneInfoKey];
   const close = useCallback(() => navigation.goBack(), [navigation]);
 
   const [primaryColor, textColor, bulletColor] = [
-    "#fff",
+    colors.card,
     colors.darkBlue,
     colors.lightLive,
   ];
@@ -82,9 +84,9 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
             {link && (
               <Pressable
                 style={styles.desc}
-                onPress={() =>
-                  Linking.canOpenURL(link.url) && Linking.openURL(link.url)
-                }
+                onPress={() => {
+                  Linking.canOpenURL(link.url) && Linking.openURL(link.url);
+                }}
               >
                 <LText semiBold style={[styles.link, { color: colors.live }]}>
                   {link.label}
@@ -101,20 +103,21 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                           styles.bulletIcon,
                           {
                             backgroundColor: color
-                              ? rgba(color, 0.1)
+                              ? rgba(colors[color], 0.1)
                               : bulletColor,
                           },
                         ]}
                       >
                         {Icon ? (
-                          <Icon size={10} color={color || colors.live} />
+                          <Icon
+                            size={10}
+                            color={color ? colors[color] : colors.live}
+                          />
                         ) : (
                           <LText
                             semiBold
-                            style={[
-                              styles.label,
-                              { color: color || colors.live },
-                            ]}
+                            style={[styles.label]}
+                            color={color || "live"}
                           >
                             {i + 1}
                           </LText>
@@ -134,10 +137,10 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                         </LText>
                         {bulletLink && (
                           <Pressable
-                            onPress={() =>
+                            onPress={() => {
                               Linking.canOpenURL(bulletLink.url) &&
-                              Linking.openURL(bulletLink.url)
-                            }
+                                Linking.openURL(bulletLink.url);
+                            }}
                           >
                             <LText
                               semiBold

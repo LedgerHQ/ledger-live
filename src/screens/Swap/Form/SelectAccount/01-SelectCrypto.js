@@ -10,6 +10,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/lib/currencies";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import { useTheme } from "@react-navigation/native";
 import type { SwapRouteParams } from "..";
 import BadSelectionModal from "./BadSelectionModal";
 import { ScreenName } from "../../../../const";
@@ -18,8 +19,6 @@ import FilteredSearchBar from "../../../../components/FilteredSearchBar";
 import KeyboardView from "../../../../components/KeyboardView";
 import CurrencyRow from "../../../../components/CurrencyRow";
 import LText from "../../../../components/LText";
-
-import colors from "../../../../colors";
 
 const SEARCH_KEYS = ["name", "ticker"];
 const forceInset = { bottom: "always" };
@@ -49,6 +48,8 @@ export default function SwapFormSelectCrypto({ route, navigation }: Props) {
     currenciesStatus,
     target,
   } = route.params;
+
+  const { colors } = useTheme();
 
   const isFrom = target === "from";
 
@@ -131,7 +132,10 @@ export default function SwapFormSelectCrypto({ route, navigation }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="Swap" name="SelectCrypto" />
       <KeyboardView style={{ flex: 1 }}>
         <View style={styles.searchContainer}>
@@ -159,9 +163,7 @@ export default function SwapFormSelectCrypto({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
-
   searchContainer: {
     paddingTop: 16,
     flex: 1,

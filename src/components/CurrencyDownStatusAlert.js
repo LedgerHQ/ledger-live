@@ -8,8 +8,6 @@ type Props = {
   currencies: Array<CryptoCurrency | TokenCurrency>,
 };
 
-const CurrencyDownStatusAlert = (_: Props) => {
-  return null;
-};
+const CurrencyDownStatusAlert = (_: Props) => null;
 
 export default CurrencyDownStatusAlert;

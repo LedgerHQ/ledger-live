@@ -13,8 +13,8 @@ import { StyleSheet, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useDispatch, useSelector } from "react-redux";
 import { reduce } from "rxjs/operators";
+import { useTheme } from "@react-navigation/native";
 import { setAccounts } from "../../actions/accounts";
-import colors, { rgba } from "../../colors";
 import { ScreenName } from "../../const";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
@@ -36,6 +36,8 @@ type Props = {
 };
 
 export default function Progress({ navigation, route }: Props) {
+  const { colors } = useTheme();
+
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const migratableAccounts = useSelector(migratableAccountsSelector);
@@ -144,7 +146,10 @@ export default function Progress({ navigation, route }: Props) {
   return (
     <SafeAreaView
       forceInset={forceInset}
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      style={[
+        styles.root,
+        { backgroundColor: colors.white, paddingTop: extraStatusBarPadding },
+      ]}
     >
       <View style={styles.content}>
         <RoundedCurrencyIcon
@@ -162,7 +167,7 @@ export default function Progress({ navigation, route }: Props) {
             />
           )}
         </LText>
-        <LText style={styles.subtitle}>
+        <LText style={styles.subtitle} color="smoke">
           {noticeAwareStatus === "error" ? (
             <TranslatedError error={error} field="description" />
           ) : (
@@ -204,33 +209,15 @@ export default function Progress({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   content: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  noAccountsMigrated: {
-    backgroundColor: rgba(colors.live, 0.1),
-    marginHorizontal: 8,
-    borderRadius: 4,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    alignItems: "center",
-    display: "flex",
-    flexDirection: "row",
-  },
-  noAccountsMigratedText: {
-    color: colors.live,
-    alignSelf: "center",
-    fontSize: 14,
-    marginLeft: 12,
-  },
   title: {
     marginHorizontal: 20,
     marginTop: 16,
-    color: colors.darkBlue,
     fontSize: 16,
     marginBottom: 8,
     textAlign: "center",
@@ -238,7 +225,6 @@ const styles = StyleSheet.create({
   subtitle: {
     marginHorizontal: 20,
     marginBottom: 24,
-    color: colors.smoke,
     fontSize: 14,
     textAlign: "center",
   },

@@ -11,13 +11,13 @@ import {
   getDefaultExplorerView,
 } from "@ledgerhq/live-common/lib/explorers";
 import { createStructuredSelector } from "reselect";
+import { useTheme } from "@react-navigation/native";
 import BottomModal from "../../../components/BottomModal";
 import LText from "../../../components/LText";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import BanIcon from "../../../icons/Ban";
 import Touchable from "../../../components/Touchable";
 import { blacklistToken } from "../../../actions/settings";
-import colors from "../../../colors";
 import TokenContractAddress from "../../Account/TokenContractAddress";
 import Button from "../../../components/Button";
 import { parentAccountSelector } from "../../../reducers/accounts";
@@ -46,6 +46,7 @@ const TokenContextualModal = ({
   parentAccount: Account,
   blacklistToken: string => void,
 }) => {
+  const { colors } = useTheme();
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const explorerView = mainAccount
     ? getDefaultExplorerView(mainAccount.currency)
@@ -79,7 +80,7 @@ const TokenContextualModal = ({
       onClose={onCloseModal}
     >
       {showingContextMenu ? (
-        <View style={styles.header}>
+        <View style={[styles.header, { borderColor: colors.fog }]}>
           <View style={{ marginRight: 12 }}>
             <CurrencyIcon currency={account.token} size={24} />
           </View>
@@ -99,7 +100,7 @@ const TokenContextualModal = ({
         />
       ) : showConfirmation ? (
         <View style={styles.body}>
-          <LText style={styles.confirmationDesc}>
+          <LText style={styles.confirmationDesc} color="smoke">
             <Trans i18nKey="settings.accounts.blacklistedTokensModal.desc">
               {"This action will hide all "}
               <LText bold>{account.token && account.token.name}</LText>
@@ -181,7 +182,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     borderBottomWidth: 1,
-    borderColor: colors.fog,
     paddingVertical: 16,
     width: "100%",
   },
@@ -194,11 +194,6 @@ const styles = StyleSheet.create({
   },
   modal: {
     width: "100%",
-  },
-  modalDesc: {
-    textAlign: "center",
-    color: colors.smoke,
-    marginVertical: 24,
   },
   modalBtn: {
     flexGrow: 1,
@@ -216,7 +211,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     textAlign: "center",
     fontSize: 14,
-    color: colors.smoke,
   },
   confirmationButton: {
     flexGrow: 1,

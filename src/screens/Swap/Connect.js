@@ -5,18 +5,19 @@ import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
+import { useTheme } from "@react-navigation/native";
 import SelectDevice from "../../components/SelectDevice";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import LText from "../../components/LText";
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 
 const action = createAction(connectManager);
 
 const Connect = ({ setResult }: { setResult: (result: any) => void }) => {
   const [device, setDevice] = useState(null);
+  const { colors } = useTheme();
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="Swap" name="ConnectDeviceListApps" />
       <LText semiBold style={styles.selectDevice}>
         <Trans i18nKey={"transfer.swap.selectDevice"} />
@@ -38,7 +39,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
-    backgroundColor: colors.white,
   },
   selectDevice: {
     fontSize: 15,

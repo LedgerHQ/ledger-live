@@ -2,7 +2,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 
 type Props = {
@@ -18,8 +18,9 @@ export default function DelegationInfo({
   formattedAmount,
   onPress,
 }: Props) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { borderLeftColor: colors.fog }]}>
       <LText style={styles.greyText}>
         <Trans
           i18nKey="operationDetails.extra.delegatedTo"
@@ -28,14 +29,14 @@ export default function DelegationInfo({
             name,
           }}
         >
-          <LText semiBold style={styles.text}>
-            text
-          </LText>
+          <LText semiBold>text</LText>
         </Trans>
       </LText>
 
       <TouchableOpacity onPress={() => onPress(address)}>
-        <LText style={styles.greyText}>{address}</LText>
+        <LText style={styles.greyText} color="grey">
+          {address}
+        </LText>
       </TouchableOpacity>
     </View>
   );
@@ -44,12 +45,7 @@ export default function DelegationInfo({
 const styles = StyleSheet.create({
   wrapper: {
     borderLeftWidth: 3,
-    borderLeftColor: colors.fog,
     paddingLeft: 16,
     marginBottom: 24,
   },
-  text: {
-    color: colors.darkBlue,
-  },
-  greyText: { color: colors.grey },
 });

@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import { View, StyleSheet, SectionList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { HeaderBackButton } from "@react-navigation/stack";
 import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
@@ -14,11 +14,11 @@ import type { ImportItem } from "@ledgerhq/live-common/lib/account";
 import { importAccountsMakeItems } from "@ledgerhq/live-common/lib/account";
 import { Trans } from "react-i18next";
 
+import { compose } from "redux";
 import { importDesktopSettings } from "../../actions/settings";
 import { importAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
 import { NavigatorName, ScreenName } from "../../const";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -27,6 +27,7 @@ import DisplayResultItem from "./DisplayResultItem";
 import DisplayResultSettingsSection from "./DisplayResultSettingsSection";
 import ResultSection from "./ResultSection";
 import HeaderBackImage from "../../components/HeaderBackImage";
+import { withTheme } from "../../colors";
 
 const forceInset = { bottom: "always" };
 
@@ -36,6 +37,7 @@ type Props = {
   accounts: Account[],
   importAccounts: ({ items: ImportItem[], selectedAccounts: string[] }) => void,
   importDesktopSettings: (settings: any) => void,
+  colors: *,
 };
 
 type RouteParams = {
@@ -51,6 +53,7 @@ type State = {
 };
 
 export function BackButton() {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   return (
     <HeaderBackButton
@@ -170,11 +173,15 @@ class DisplayResult extends Component<Props, State> {
   keyExtractor = item => item.account.id;
 
   render() {
+    const { colors } = this.props;
     const { items } = this.state;
     const itemsGroupedByMode = groupBy(items, "mode");
 
     return (
-      <SafeAreaView forceInset={forceInset} style={styles.root}>
+      <SafeAreaView
+        forceInset={forceInset}
+        style={[styles.root, { backgroundColor: colors.white }]}
+      >
         <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />
         <>
@@ -214,12 +221,12 @@ class DisplayResult extends Component<Props, State> {
 }
 
 // $FlowFixMe
-export default connect(
-  createStructuredSelector({ accounts: accountsSelector }),
-  {
+export default compose(
+  withTheme,
+  connect(createStructuredSelector({ accounts: accountsSelector }), {
     importAccounts,
     importDesktopSettings,
-  },
+  }),
 )(DisplayResult);
 
 const styles = StyleSheet.create({
@@ -229,7 +236,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignSelf: "stretch",
     justifyContent: "space-between",
-    backgroundColor: colors.white,
   },
   body: {
     paddingHorizontal: 12,
@@ -248,18 +254,7 @@ const styles = StyleSheet.create({
   list: {
     paddingBottom: 40,
   },
-  sectionHeaderText: {
-    backgroundColor: colors.white,
-    color: colors.grey,
-    fontSize: 14,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
   emptyNotice: {
     marginLeft: 8,
-  },
-  noAccountText: {
-    flex: 1,
-    fontSize: 16,
   },
 });

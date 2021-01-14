@@ -1,28 +1,24 @@
 // @flow
-
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import EmptyStatePortfolio from "../Portfolio/EmptyStatePortfolio";
-import colors from "../../colors";
 
-class NoAccounts extends PureComponent<{ navigation: * }> {
-  render() {
-    return (
-      <View style={styles.root}>
-        <EmptyStatePortfolio
-          showHelp={false}
-          navigation={this.props.navigation}
-        />
-      </View>
-    );
-  }
+type Props = { navigation: * };
+
+function NoAccounts({ navigation }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.root, { backgroundColor: colors.card }]}>
+      <EmptyStatePortfolio showHelp={false} navigation={navigation} />
+    </View>
+  );
 }
 
-export default NoAccounts;
+export default memo<Props>(NoAccounts);
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
 });

@@ -17,13 +17,13 @@ import Button from "../../components/Button";
 import Circle from "../../components/Circle";
 import Touchable from "../../components/Touchable";
 import Info from "../../icons/Info";
-
-import colors from "../../colors";
+import { withTheme } from "../../colors";
 
 type Props = {
   account: AccountLike,
   parentAccount: ?Account,
   amount: *,
+  colors: *,
 };
 
 type State = {
@@ -44,7 +44,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
   };
 
   render() {
-    const { account, amount } = this.props;
+    const { account, amount, colors } = this.props;
     const { isModalOpened } = this.state;
     const unit = getAccountUnit(account);
     const currency = getAccountCurrency(account);
@@ -63,7 +63,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             <LText semiBold style={styles.summaryValueText}>
               <CurrencyUnitValue unit={unit} value={amount} disableRounding />
             </LText>
-            <LText style={styles.summaryCounterValueText}>
+            <LText style={styles.summaryCounterValueText} color="grey">
               <CounterValue
                 value={amount}
                 currency={currency}
@@ -108,16 +108,13 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "flex-end",
   },
-  title: {
-    color: colors.darkBlue,
-  },
+  title: {},
   summaryValueText: {
     fontSize: 18,
   },
   summaryCounterValueText: {
     fontSize: 14,
-    color: colors.grey,
   },
 });
 
-export default SummaryTotalSection;
+export default withTheme(SummaryTotalSection);

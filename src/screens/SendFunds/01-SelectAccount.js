@@ -17,7 +17,7 @@ import {
   accountsSelector,
 } from "../../reducers/accounts";
 import withEnv from "../../logic/withEnv";
-import colors from "../../colors";
+import { withTheme } from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -35,6 +35,7 @@ type Props = {
   allAccounts: AccountLikeArray,
   navigation: any,
   route: { params?: { currency?: string } },
+  colors: *,
 };
 
 type State = {};
@@ -60,7 +61,14 @@ class SendFundsSelectAccount extends Component<Props, State> {
     const { account, match } = result;
     return (
       <View
-        style={account.type === "Account" ? undefined : styles.tokenCardStyle}
+        style={
+          account.type === "Account"
+            ? undefined
+            : [
+                styles.tokenCardStyle,
+                { borderLeftColor: this.props.colors.fog },
+              ]
+        }
       >
         <AccountCard
           disabled={!match}
@@ -80,7 +88,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
 
   renderEmptySearch = () => (
     <View style={styles.emptyResults}>
-      <LText style={styles.emptyText}>
+      <LText style={styles.emptyText} color="fog">
         <Trans i18nKey="transfer.receive.noAccount" />
       </LText>
     </View>
@@ -89,11 +97,14 @@ class SendFundsSelectAccount extends Component<Props, State> {
   keyExtractor = item => item.account.id;
 
   render() {
-    const { allAccounts, route } = this.props;
+    const { allAccounts, route, colors } = this.props;
     const { params } = route;
     const initialCurrencySelected = params?.currency;
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
         <TrackScreen category="SendFunds" name="SelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
@@ -120,13 +131,11 @@ const mapStateToProps = createStructuredSelector({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   tokenCardStyle: {
     marginLeft: 26,
     paddingLeft: 7,
     borderLeftWidth: 1,
-    borderLeftColor: colors.fog,
   },
   searchContainer: {
     paddingTop: 16,
@@ -143,7 +152,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: colors.fog,
   },
   padding: {
     paddingHorizontal: 16,
@@ -157,4 +165,5 @@ const styles = StyleSheet.create({
 export default compose(
   connect(mapStateToProps),
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
+  withTheme,
 )(SendFundsSelectAccount);

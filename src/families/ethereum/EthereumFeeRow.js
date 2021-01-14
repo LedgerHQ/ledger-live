@@ -5,6 +5,7 @@ import { Trans, useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { useTheme } from "@react-navigation/native";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -14,7 +15,6 @@ import EthereumGasLimit from "./SendRowGasLimit";
 import ExternalLink from "../../icons/ExternalLink";
 import Info from "../../icons/Info";
 import { urls } from "../../config/urls";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import BottomModal from "../../components/BottomModal";
 import TokenNetworkFeeInfo from "./TokenNetworkFeeInfo";
@@ -34,6 +34,7 @@ export default function EthereumFeeRow({
   navigation,
   route,
 }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const [isNetworkFeeHelpOpened, setNetworkFeeHelpOpened] = useState(false);
   const toggleNetworkFeeHelpModal = useCallback(
@@ -103,7 +104,16 @@ export default function EthereumFeeRow({
               </LText>
             ) : null}
 
-            <LText style={styles.link} onPress={openFees}>
+            <LText
+              style={[
+                styles.link,
+                {
+                  textDecorationColor: colors.live,
+                },
+              ]}
+              color="live"
+              onPress={openFees}
+            >
               {t("common.edit")}
             </LText>
           </View>
@@ -130,7 +140,7 @@ export default function EthereumFeeRow({
               </LText>
             ) : null}
           </View>
-          <LText style={styles.countervalue}>
+          <LText style={styles.countervalue} color="grey">
             <CounterValue
               before="≈ "
               value={
@@ -153,20 +163,16 @@ const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
     textAlign: "right",
-    color: colors.darkBlue,
   },
   countervalue: {
     fontSize: 12,
-    color: colors.grey,
   },
   valueText: {
     fontSize: 16,
   },
   link: {
-    color: colors.live,
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
-    textDecorationColor: colors.live,
     marginLeft: 8,
   },
 });

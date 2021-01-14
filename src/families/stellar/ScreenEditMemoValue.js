@@ -8,12 +8,11 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
-
-import colors from "../../colors";
 
 const forceInset = { bottom: "always" };
 
@@ -29,6 +28,7 @@ type RouteParams = {
 };
 
 function StellarEditMemoValue({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -55,7 +55,9 @@ function StellarEditMemoValue({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
-      <KeyboardView style={styles.body}>
+      <KeyboardView
+        style={[styles.body, { backgroundColor: colors.background }]}
+      >
         <ScrollView
           contentContainerStyle={styles.root}
           keyboardShouldPersistTaps="always"
@@ -63,7 +65,7 @@ function StellarEditMemoValue({ navigation, route }: Props) {
           <TextInput
             allowFontScaling={false}
             autoFocus
-            style={styles.textInputAS}
+            style={[styles.textInputAS, { color: colors.darkBlue }]}
             defaultValue={memoValue ? memoValue.toString() : ""}
             keyboardType="default"
             returnKeyType="done"
@@ -100,12 +102,10 @@ const styles = StyleSheet.create({
   body: {
     flexDirection: "column",
     flex: 1,
-    backgroundColor: colors.white,
   },
   textInputAS: {
     padding: 16,
     fontSize: 30,
-    color: colors.darkBlue,
   },
   buttonContainer: {
     marginHorizontal: 16,

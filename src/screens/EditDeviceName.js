@@ -8,7 +8,7 @@ import Icon from "react-native-vector-icons/dist/Feather";
 import { connect } from "react-redux";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import colors from "../colors";
+import { compose } from "redux";
 import { TrackScreen } from "../analytics";
 import Button from "../components/Button";
 import TextInput from "../components/TextInput";
@@ -18,21 +18,19 @@ import KeyboardView from "../components/KeyboardView";
 import { editDeviceName, connectingStep } from "../components/DeviceJob/steps";
 import DeviceJob from "../components/DeviceJob";
 import { saveBleDeviceName } from "../actions/ble";
+import { withTheme } from "../colors";
 
 const MAX_DEVICE_NAME = 32;
 
 const forceInset = { bottom: "always" };
 
-class FooterError extends PureComponent<{ error: Error }> {
-  render() {
-    const { error } = this.props;
-    return (
-      <LText style={styles.error} numberOfLines={2}>
-        <Icon color={colors.alert} size={16} name="alert-triangle" />{" "}
-        <TranslatedError error={error} />
-      </LText>
-    );
-  }
+function FooterError({ error, colors }: { error: Error, colors: * }) {
+  return (
+    <LText style={styles.error} color="alert" numberOfLines={2}>
+      <Icon color={colors.alert} size={16} name="alert-triangle" />{" "}
+      <TranslatedError error={error} />
+    </LText>
+  );
 }
 const mapDispatchToProps = {
   saveBleDeviceName,
@@ -43,6 +41,7 @@ type Props = {
   route: { params: RouteParams },
   deviceName: string,
   saveBleDeviceName: (string, string) => void,
+  colors: *,
 };
 
 type RouteParams = {
@@ -118,11 +117,15 @@ class EditDeviceName extends PureComponent<
   };
 
   render() {
+    const { colors } = this.props;
     const { name, error, connecting } = this.state;
     const remainingCount = MAX_DEVICE_NAME - name.length;
 
     return (
-      <SafeAreaView style={styles.safearea} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.safearea, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
         <TrackScreen category="EditDeviceName" />
         <KeyboardView style={styles.root}>
           <View style={styles.body}>
@@ -136,9 +139,13 @@ class EditDeviceName extends PureComponent<
               blurOnSubmit={false}
               clearButtonMode="always"
               placeholder="Satoshi Nakamoto"
-              style={[getFontStyle({ semiBold: true }), styles.input]}
+              style={[
+                getFontStyle({ semiBold: true }),
+                styles.input,
+                { color: colors.darkBlue },
+              ]}
             />
-            <LText style={styles.remainingText}>
+            <LText style={styles.remainingText} color="grey">
               <Trans
                 i18nKey="EditDeviceName.charactersRemaining"
                 values={{ remainingCount }}
@@ -146,7 +153,7 @@ class EditDeviceName extends PureComponent<
             </LText>
           </View>
           <View style={styles.footer}>
-            {error ? <FooterError error={error} /> : null}
+            {error ? <FooterError error={error} colors={colors} /> : null}
             <Button
               event="EditDeviceNameSubmit"
               type="primary"
@@ -170,11 +177,13 @@ class EditDeviceName extends PureComponent<
 }
 
 // $FlowFixMe
-export default connect(null, mapDispatchToProps)(EditDeviceName);
+export default compose(
+  connect(null, mapDispatchToProps),
+  withTheme,
+)(EditDeviceName);
 
 const styles = StyleSheet.create({
   safearea: {
-    backgroundColor: colors.white,
     flex: 1,
   },
   root: {
@@ -189,13 +198,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   remainingText: {
-    color: colors.grey,
     fontSize: 14,
     marginTop: 10,
   },
   error: {
     alignSelf: "center",
-    color: colors.alert,
     fontSize: 14,
     marginBottom: 10,
   },

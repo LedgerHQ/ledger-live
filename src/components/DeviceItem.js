@@ -1,13 +1,13 @@
 // @flow
 
-import React, { useCallback } from "react";
+import React, { memo, useCallback } from "react";
 import invariant from "invariant";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { useTheme } from "@react-navigation/native";
 import Touchable from "./Touchable";
 import LText from "./LText";
-import colors from "../colors";
 import IconNanoX from "../icons/NanoX";
 import IconArrowRight from "../icons/ArrowRight";
 import USB from "../icons/USB";
@@ -23,18 +23,13 @@ type Props = {
 };
 
 const iconByFamily = {
-  httpdebug: () => (
-    <Icon
-      style={styles.specialIcon}
-      name="terminal"
-      size={16}
-      color={colors.darkBlue}
-    />
+  httpdebug: ({ color }: { color: string }) => (
+    <Icon style={styles.specialIcon} color={color} name="terminal" size={16} />
   ),
-  usb: () => <USB color={colors.darkBlue} />,
+  usb: ({ color }: { color: string }) => <USB color={color} />,
 };
 
-export default function DeviceItem({
+function DeviceItem({
   deviceMeta,
   onSelect,
   disabled,
@@ -42,6 +37,7 @@ export default function DeviceItem({
   withArrow,
   onBluetoothDeviceAction,
 }: Props) {
+  const { colors } = useTheme();
   const onPress = useCallback(() => {
     invariant(onSelect, "onSelect required");
     return onSelect(deviceMeta);
@@ -60,13 +56,17 @@ export default function DeviceItem({
           <View
             style={[
               styles.root,
-              { backgroundColor: colors.white },
-              disabled && styles.rootDisabled,
+              disabled
+                ? {
+                    backgroundColor: colors.card,
+                    borderColor: "transparent",
+                  }
+                : { borderColor: colors.fog },
             ]}
           >
             <View style={styles.iconWrapper}>
               {CustomIcon ? (
-                <CustomIcon />
+                <CustomIcon color={colors.darkBlue} />
               ) : (
                 <IconNanoX
                   color={colors.darkBlue}
@@ -80,20 +80,16 @@ export default function DeviceItem({
               <LText
                 bold
                 numberOfLines={1}
-                style={[
-                  styles.deviceNameText,
-                  disabled && styles.deviceNameTextDisabled,
-                ]}
+                color={disabled ? "grey" : "darkBlue"}
+                style={[styles.deviceNameText]}
               >
                 {deviceMeta.deviceName}
               </LText>
               {description ? (
                 <LText
                   numberOfLines={1}
-                  style={[
-                    styles.descriptionText,
-                    disabled && styles.descriptionTextDisabled,
-                  ]}
+                  color={disabled ? "grey" : "darkBlue"}
+                  style={[styles.descriptionText]}
                 >
                   {description}
                 </LText>
@@ -104,7 +100,7 @@ export default function DeviceItem({
                 event="DeviceItemForget"
                 onPress={() => onBluetoothDeviceAction(deviceMeta)}
               >
-                <Ellipsis />
+                <Ellipsis color={colors.darkBlue} />
               </Touchable>
             )}
             {withArrow && !disabled ? (
@@ -116,6 +112,8 @@ export default function DeviceItem({
     </View>
   );
 }
+
+export default memo<Props>(DeviceItem);
 
 const styles = StyleSheet.create({
   outer: {
@@ -137,16 +135,11 @@ const styles = StyleSheet.create({
   root: {
     height: 64,
     padding: 16,
-    borderColor: colors.fog,
     borderWidth: 1,
     borderRadius: 4,
     flexDirection: "row",
     alignItems: "center",
     overflow: "hidden",
-  },
-  rootDisabled: {
-    borderWidth: 0,
-    backgroundColor: colors.lightGrey,
   },
   specialIcon: {
     position: "absolute",
@@ -165,31 +158,8 @@ const styles = StyleSheet.create({
   },
   deviceNameText: {
     fontSize: 16,
-    color: colors.darkBlue,
-  },
-  deviceNameTextDisabled: {
-    color: colors.grey,
   },
   descriptionText: {
     fontSize: 14,
-    color: colors.darkBlue,
-  },
-  descriptionTextDisabled: {
-    color: colors.grey,
-  },
-  selectedIconWrapper: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: 24,
-    height: 24,
-    borderRadius: 50,
-    backgroundColor: colors.live,
-  },
-  selectIconPlaceHolder: {
-    width: 24,
-    height: 24,
-    borderRadius: 50,
-    borderWidth: 1,
-    borderColor: colors.fog,
   },
 });

@@ -7,11 +7,13 @@ import Animated from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import {
   groupAccountsOperationsByDay,
   isAccountEmpty,
 } from "@ledgerhq/live-common/lib/account";
-import colors from "../../colors";
+
+import { useRefreshAccountsOrdering } from "../../actions/general";
 import {
   accountsSelector,
   flattenAccountsSelector,
@@ -55,17 +57,21 @@ export default function PortfolioScreen({ navigation }: Props) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const portfolio = usePortfolio();
 
+  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+  useFocusEffect(refreshAccountsOrdering);
+
   const [opCount, setOpCount] = useState(50);
   const scrollY = useRef(new Animated.Value(0)).current;
   const ref = useRef();
   useScrollToTop(ref);
+  const { colors } = useTheme();
 
   function keyExtractor(item: Operation) {
     return item.id;
   }
 
-  const ListHeaderComponent = useCallback(() => {
-    return (
+  const ListHeaderComponent = useCallback(
+    () => (
       <>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
@@ -73,8 +79,9 @@ export default function PortfolioScreen({ navigation }: Props) {
           showGreeting={!accounts.every(isAccountEmpty)}
         />
       </>
-    );
-  }, [accounts, counterValueCurrency, portfolio]);
+    ),
+    [accounts, counterValueCurrency, portfolio],
+  );
 
   function ListEmptyComponent() {
     if (accounts.length === 0) {
@@ -133,7 +140,15 @@ export default function PortfolioScreen({ navigation }: Props) {
     accounts.length === 0 || accounts.every(isAccountEmpty);
 
   return (
-    <SafeAreaView style={[styles.root, { paddingTop: extraStatusBarPadding }]}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          paddingTop: extraStatusBarPadding,
+          backgroundColor: colors.background,
+        },
+      ]}
+    >
       {!showingPlaceholder ? (
         <StickyHeader
           scrollY={scrollY}
@@ -190,7 +205,6 @@ export default function PortfolioScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   inner: {
     position: "relative",

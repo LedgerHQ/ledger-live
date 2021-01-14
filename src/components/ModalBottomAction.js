@@ -2,7 +2,6 @@
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import LText from "./LText";
-import colors from "../colors";
 
 export default class ModalBottomAction extends Component<{
   icon?: *,
@@ -22,7 +21,9 @@ export default class ModalBottomAction extends Component<{
         ) : null}
         <View style={styles.body}>
           {description && (
-            <LText style={styles.description}>{description}</LText>
+            <LText style={styles.description} color="grey">
+              {description}
+            </LText>
           )}
           <View style={styles.footer}>{footer}</View>
         </View>
@@ -53,7 +54,6 @@ const styles = StyleSheet.create({
     lineHeight: 21,
     textAlign: "center",
     marginBottom: 24,
-    color: colors.grey,
   },
   footer: {},
 });

@@ -5,6 +5,7 @@ import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import Swiper from "react-native-swiper";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { setCarouselVisibility } from "../../actions/settings";
 import { carouselVisibilitySelector } from "../../reducers/settings";
 import LedgerAcademy from "./slides/LedgerAcademy";
@@ -21,55 +22,52 @@ import BlackFriday from "./slides/BlackFriday";
 import Lending from "./slides/Lending";
 import Swap from "./slides/Swap";
 import IconClose from "../../icons/Close";
-import colors from "../../colors";
 
-export const getDefaultSlides = () => {
-  return [
-    {
-      id: "blackfriday",
-      Component: () => <BlackFriday />,
-      start: new Date("1 Nov 2020 00:01:00 PST"),
-      end: new Date("30 Nov 2020 23:59:00 PST"),
-    },
-    {
-      id: "Lending",
-      Component: () => <Lending />,
-    },
-    {
-      id: "swap",
-      Component: () => <Swap />,
-    },
-    {
-      id: "backupPack",
-      Component: () => <BackupPack />,
-    },
-    {
-      id: "academy",
-      Component: () => <LedgerAcademy />,
-    },
-    {
-      id: "buyCrypto",
-      Component: () => <BuyCrypto />,
-    },
-    {
-      id: "stakeCosmos",
-      Component: () => <StakeCosmos />,
-    },
-    {
-      id: "stakeAlgo",
-      Component: () => <StakeAlgo />,
-    },
-    // TODO enable when ready
-    // {
-    //   id: "sell",
-    //   Component: () => <Sell />,
-    // },
-    // {
-    //   id: "vote",
-    //   Component: () => <Vote />,
-    // },
-  ];
-};
+export const getDefaultSlides = () => [
+  {
+    id: "blackfriday",
+    Component: () => <BlackFriday />,
+    start: new Date("1 Nov 2020 00:01:00 PST"),
+    end: new Date("30 Nov 2020 23:59:00 PST"),
+  },
+  {
+    id: "Lending",
+    Component: () => <Lending />,
+  },
+  {
+    id: "swap",
+    Component: () => <Swap />,
+  },
+  {
+    id: "backupPack",
+    Component: () => <BackupPack />,
+  },
+  {
+    id: "academy",
+    Component: () => <LedgerAcademy />,
+  },
+  {
+    id: "buyCrypto",
+    Component: () => <BuyCrypto />,
+  },
+  {
+    id: "stakeCosmos",
+    Component: () => <StakeCosmos />,
+  },
+  {
+    id: "stakeAlgo",
+    Component: () => <StakeAlgo />,
+  },
+  // TODO enable when ready
+  // {
+  //   id: "sell",
+  //   Component: () => <Sell />,
+  // },
+  // {
+  //   id: "vote",
+  //   Component: () => <Vote />,
+  // },
+];
 
 const hitSlop = {
   top: 16,
@@ -81,6 +79,7 @@ const hitSlop = {
 export const CAROUSEL_NONCE: number = 2;
 
 const Carousel = () => {
+  const { colors } = useTheme();
   const dispatch = useDispatch();
   const hidden = useSelector(carouselVisibilitySelector);
   const [showDismissConfirmation, setShowDismissConfirmation] = useState(false);
@@ -146,8 +145,11 @@ const Carousel = () => {
             autoplay
             autoplayTimeout={5}
             showsButtons={false}
-            dotStyle={styles.bullet}
-            activeDotStyle={[styles.bullet, { opacity: 1 }]}
+            dotStyle={[styles.bullet, { backgroundColor: colors.fog }]}
+            activeDotStyle={[
+              styles.bullet,
+              { backgroundColor: colors.fog, opacity: 1 },
+            ]}
           >
             {slides.map(({ id, Component }) => (
               <Component key={id} />
@@ -176,7 +178,6 @@ const styles = StyleSheet.create({
     height: 5,
     width: 5,
     borderRadius: 5,
-    backgroundColor: colors.fog,
     opacity: 0.5,
     margin: 4,
     marginBottom: -20,

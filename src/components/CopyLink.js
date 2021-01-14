@@ -6,13 +6,14 @@ import Clipboard from "@react-native-community/clipboard";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "./Touchable";
 import LText from "./LText";
-import colors from "../colors";
+import { withTheme } from "../colors";
 
 type Props = {
   style?: *,
   children: string | React$Element<*>,
   string: string, // String to be copied
   replacement?: string | React$Element<*>, // String to display in place of children on copy
+  colors: *,
 };
 
 type State = {
@@ -39,7 +40,7 @@ class CopyLink extends PureComponent<Props, State> {
   };
 
   render() {
-    const { style, children, replacement } = this.props;
+    const { style, children, replacement, colors } = this.props;
     const { copied } = this.state;
     return (
       <Touchable
@@ -53,7 +54,8 @@ class CopyLink extends PureComponent<Props, State> {
           color={copied ? colors.grey : colors.live}
         />
         <LText
-          style={[styles.linkText, copied ? styles.copied : undefined]}
+          style={[styles.linkText]}
+          color={copied ? "grey" : "live"}
           semiBold
         >
           {copied && replacement ? replacement : children}
@@ -69,7 +71,7 @@ class CopyLink extends PureComponent<Props, State> {
   }
 }
 
-export default CopyLink;
+export default withTheme(CopyLink);
 
 const styles = StyleSheet.create({
   linkContainer: {
@@ -78,10 +80,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   linkText: {
-    color: colors.live,
     marginLeft: 6,
-  },
-  copied: {
-    color: colors.grey,
   },
 });

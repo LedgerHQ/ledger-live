@@ -4,7 +4,7 @@ import { View, StyleSheet, TextInput } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "./Touchable";
 import { getFontStyle } from "./LText";
-import colors from "../colors";
+import { withTheme } from "../colors";
 
 type Props = {
   secureTextEntry: boolean,
@@ -18,6 +18,7 @@ type Props = {
   onBlur?: *,
   error?: ?Error,
   password?: string,
+  colors: *,
 };
 
 class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
@@ -45,6 +46,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
       placeholder,
       inline,
       password,
+      colors,
     } = this.props;
 
     let borderColorOverride = {};
@@ -60,7 +62,11 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
       <View
         style={[
           styles.container,
-          !inline && styles.nonInlineContainer,
+          !inline && {
+            ...styles.nonInlineContainer,
+            backgroundColor: colors.white,
+            borderColor: colors.lightFog,
+          },
           borderColorOverride,
         ]}
       >
@@ -71,9 +77,10 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
             styles.input,
             getFontStyle({ semiBold: true }),
             inline && styles.inlineTextInput,
+            { color: colors.darkBlue },
           ]}
           placeholder={placeholder}
-          placeholderTextColor={error ? colors.alert : colors.fog}
+          placeholderTextColor={error ? colors.alert : colors.grey}
           returnKeyType="done"
           blurOnSubmit={false}
           onChangeText={onChange}
@@ -115,7 +122,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
   }
 }
 
-export default PasswordInput;
+export default withTheme(PasswordInput);
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
@@ -123,15 +130,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   nonInlineContainer: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.lightFog,
   },
   inlineTextInput: {
     fontSize: 20,
   },
   input: {
-    color: colors.darkBlue,
     fontSize: 16,
     paddingHorizontal: 16,
     height: 48,

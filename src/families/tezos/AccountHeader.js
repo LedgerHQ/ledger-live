@@ -7,7 +7,6 @@ import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 import { isAccountDelegating } from "@ledgerhq/live-common/lib/families/tezos/bakers";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import IlluStaking from "./IlluStaking";
 import Button from "../../components/Button";
@@ -29,7 +28,6 @@ const styles = StyleSheet.create({
     bottom: -38,
   },
   title: {
-    color: colors.white,
     fontSize: 14,
     lineHeight: 21,
     marginRight: 90,
@@ -64,7 +62,7 @@ export default function TezosAccountHeader({ account, parentAccount }: Props) {
   if (isAccountDelegating(account) || account.type !== "Account") return null;
   return (
     <View style={[styles.banner, { backgroundColor }]}>
-      <LText semiBold style={styles.title}>
+      <LText semiBold style={styles.title} color="white">
         <Trans i18nKey="tezos.AccountHeader.title" />
       </LText>
       <Button

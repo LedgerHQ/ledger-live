@@ -1,9 +1,9 @@
 // @flow
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
-import colors from "../../../colors";
 // import { NavigatorName } from "../../../const";
 
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 
@@ -22,13 +22,16 @@ export default function EmptyState({
   buttonLabel,
   onClick,
 }: EmptyStateProps) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.emptyStateRoot}>
+    <View style={[styles.emptyStateRoot, { backgroundColor: colors.card }]}>
       <Image resizeMode="contain" style={styles.image} source={compoundImg} />
       <LText semiBold style={styles.title}>
         {title}
       </LText>
-      <LText style={styles.description}>{description}</LText>
+      <LText style={styles.description} color="grey">
+        {description}
+      </LText>
       {onClick && (
         <Button
           type="primary"
@@ -43,10 +46,6 @@ export default function EmptyState({
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.lightGrey,
-  },
   body: {
     flex: 1,
     display: "flex",
@@ -65,19 +64,16 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 24,
     marginVertical: 4,
-    backgroundColor: colors.white,
     borderRadius: 4,
   },
   title: {
     lineHeight: 19,
     fontSize: 14,
-    color: colors.darkBlue,
     textAlign: "center",
   },
   description: {
     lineHeight: 19,
     fontSize: 13,
-    color: colors.grey,
     textAlign: "center",
     padding: 16,
   },

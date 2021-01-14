@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/bitcoin/types";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import Button from "../../../components/Button";
@@ -40,6 +40,7 @@ type RouteParams = {
 };
 
 function BitcoinEditFeePerByte({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   const transaction = route.params?.transaction;
@@ -84,7 +85,10 @@ function BitcoinEditFeePerByte({ navigation, route }: Props) {
   const isCustom = focusedItemKey === "custom";
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <KeyboardView style={styles.container}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={{ flex: 1 }}>
@@ -127,7 +131,6 @@ export { options, BitcoinEditFeePerByte as component };
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   buttonContainer: {
     flexDirection: "column",
@@ -140,11 +143,5 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-  },
-  error: {
-    alignSelf: "center",
-    color: colors.alert,
-    fontSize: 14,
-    marginBottom: 8,
   },
 });

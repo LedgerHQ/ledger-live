@@ -4,17 +4,18 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
-import colors from "../../colors";
+import { withTheme } from "../../colors";
 
 type Props = {
   data: string[],
   title?: React$Node,
   rightComp?: React$Node,
+  colors: *,
 };
 type State = {
   showAll: boolean,
 };
-export default class DataList extends PureComponent<Props, State> {
+class DataList extends PureComponent<Props, State> {
   state = {
     showAll: false,
   };
@@ -25,14 +26,18 @@ export default class DataList extends PureComponent<Props, State> {
 
   // TODO make it more generic with title definition in parent
   render() {
-    const { data, title, rightComp } = this.props;
+    const { data, title, rightComp, colors } = this.props;
     const { showAll } = this.state;
     const numToShow = 2;
     const shouldShowMore = data.length > numToShow;
     return (
       <View>
         <View style={{ flexDirection: "row" }}>
-          {title ? <LText style={styles.sectionTitle}>{title}</LText> : null}
+          {title ? (
+            <LText style={styles.sectionTitle} color="grey">
+              {title}
+            </LText>
+          ) : null}
           {rightComp || null}
           {shouldShowMore && (
             <Touchable
@@ -72,11 +77,10 @@ export default class DataList extends PureComponent<Props, State> {
 const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
-    color: colors.grey,
     marginBottom: 8,
     marginRight: 8,
   },
-  value: {
-    color: colors.darkBlue,
-  },
+  value: {},
 });
+
+export default withTheme(DataList);

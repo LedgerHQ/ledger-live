@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo } from "react";
 import type { ElementProps } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
@@ -37,7 +37,7 @@ import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import DelegationDrawer from "../../../components/DelegationDrawer";
 import type { IconProps } from "../../../components/DelegationDrawer";
 import Touchable from "../../../components/Touchable";
-import colors, { rgba } from "../../../colors";
+import { rgba } from "../../../colors";
 import { ScreenName, NavigatorName } from "../../../const";
 import Circle from "../../../components/Circle";
 import LText from "../../../components/LText";
@@ -59,7 +59,8 @@ type Props = {
 type DelegationDrawerProps = ElementProps<typeof DelegationDrawer>;
 type DelegationDrawerActions = $PropertyType<DelegationDrawerProps, "actions">;
 
-export default function Delegations({ account }: Props) {
+function Delegations({ account }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account);
   const delegations: CosmosMappedDelegation[] = useCosmosMappedDelegations(
@@ -180,7 +181,8 @@ export default function Delegations({ account }: Props) {
                 numberOfLines={1}
                 semiBold
                 ellipsizeMode="middle"
-                style={[styles.valueText, styles.valueTextTouchable]}
+                style={[styles.valueText]}
+                color="live"
               >
                 {d.validator?.name ?? d.validatorAddress ?? ""}
               </LText>
@@ -197,7 +199,8 @@ export default function Delegations({ account }: Props) {
                   numberOfLines={1}
                   semiBold
                   ellipsizeMode="middle"
-                  style={[styles.valueText, styles.valueTextTouchable]}
+                  style={[styles.valueText]}
+                  color="live"
                 >
                   {d.validatorAddress}
                 </LText>
@@ -211,7 +214,8 @@ export default function Delegations({ account }: Props) {
                 numberOfLines={1}
                 semiBold
                 ellipsizeMode="middle"
-                style={[styles.valueText, styles.valueTextTouchable]}
+                style={[styles.valueText]}
+                color="live"
               >
                 {account.name}{" "}
               </LText>
@@ -224,7 +228,8 @@ export default function Delegations({ account }: Props) {
                 numberOfLines={1}
                 semiBold
                 ellipsizeMode="middle"
-                style={[styles.valueText, styles.valueTextTouchable]}
+                style={[styles.valueText]}
+                color="live"
               >
                 {d.status === "bonded"
                   ? t("cosmos.delegation.drawer.active")
@@ -240,7 +245,7 @@ export default function Delegations({ account }: Props) {
                     <LText
                       numberOfLines={1}
                       semiBold
-                      style={[styles.text, styles.valueText]}
+                      style={[styles.valueText]}
                     >
                       {delegation.formattedPendingRewards ?? ""}
                     </LText>
@@ -277,7 +282,8 @@ export default function Delegations({ account }: Props) {
                         numberOfLines={1}
                         semiBold
                         ellipsizeMode="middle"
-                        style={[styles.valueText, styles.valueTextTouchable]}
+                        style={[styles.valueText]}
+                        color="live"
                       >
                         {redelegation.validatorSrcAddress}
                       </LText>
@@ -397,12 +403,14 @@ export default function Delegations({ account }: Props) {
       {totalRewardsAvailable.gt(0) && (
         <>
           <AccountSectionLabel name={t("account.claimReward.sectionLabel")} />
-          <View style={styles.rewardsWrapper}>
+          <View
+            style={[styles.rewardsWrapper, { backgroundColor: colors.white }]}
+          >
             <View style={styles.column}>
               <LText semiBold style={styles.label}>
                 <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
               </LText>
-              <LText semiBold style={styles.subLabel}>
+              <LText semiBold style={styles.subLabel} color="grey">
                 <CounterValue
                   currency={currency}
                   value={totalRewardsAvailable}
@@ -444,7 +452,13 @@ export default function Delegations({ account }: Props) {
             }
           />
           {delegations.map((d, i) => (
-            <View key={d.validatorAddress} style={styles.delegationsWrapper}>
+            <View
+              key={d.validatorAddress}
+              style={[
+                styles.delegationsWrapper,
+                { backgroundColor: colors.white },
+              ]}
+            >
               <DelegationRow
                 delegation={d}
                 currency={currency}
@@ -460,7 +474,13 @@ export default function Delegations({ account }: Props) {
         <View style={styles.wrapper}>
           <AccountSectionLabel name={t("account.undelegation.sectionLabel")} />
           {undelegations.map((d, i) => (
-            <View key={d.validatorAddress} style={styles.delegationsWrapper}>
+            <View
+              key={d.validatorAddress}
+              style={[
+                styles.delegationsWrapper,
+                { backgroundColor: colors.white },
+              ]}
+            >
               <DelegationRow
                 delegation={d}
                 currency={currency}
@@ -475,6 +495,11 @@ export default function Delegations({ account }: Props) {
   );
 }
 
+export default function CosmosDelegations({ account }: Props) {
+  if (!account.cosmosResources) return null;
+  return <Delegations account={account} />;
+}
+
 const styles = StyleSheet.create({
   root: {
     margin: 16,
@@ -486,7 +511,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     padding: 16,
     marginBottom: 16,
-    backgroundColor: colors.white,
+
     borderRadius: 4,
   },
   label: {
@@ -495,7 +520,7 @@ const styles = StyleSheet.create({
   },
   subLabel: {
     fontSize: 14,
-    color: colors.grey,
+
     flex: 1,
   },
   column: {
@@ -506,18 +531,8 @@ const styles = StyleSheet.create({
   },
   delegationsWrapper: {
     borderRadius: 4,
-    backgroundColor: colors.white,
-  },
-  actionColor: {
-    color: colors.live,
   },
   valueText: {
     fontSize: 14,
-  },
-  valueTextTouchable: {
-    color: colors.live,
-  },
-  text: {
-    color: colors.darkBlue,
   },
 });

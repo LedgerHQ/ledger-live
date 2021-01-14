@@ -1,7 +1,8 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import AddAccountsSelectCrypto from "../../screens/AddAccounts/01-SelectCrypto";
 import AddAccountsSelectDevice from "../../screens/AddAccounts/02-SelectDevice";
@@ -10,19 +11,23 @@ import AddAccountsAccounts from "../../screens/AddAccounts/03-Accounts";
 import AddAccountsSuccess from "../../screens/AddAccounts/04-Success";
 import AddAccountsHeaderRightClose from "../../screens/AddAccounts/AddAccountsHeaderRightClose";
 import EditAccountName from "../../screens/AccountSettings/EditAccountName";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 type Route = {
-  params: ?{ currency: * },
+  params: ?{ currency: *, token?: * },
 };
 
 const totalSteps = "3";
 
 export default function AddAccountsNavigator({ route }: { route: Route }) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const currency = route && route.params && route.params.currency;
   const token = route && route.params && route.params.token;
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
+    colors,
+  ]);
   return (
     <Stack.Navigator
       headerMode="float"
@@ -34,7 +39,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
           : ScreenName.AddAccountsSelectCrypto
       }
       screenOptions={{
-        ...closableStackNavigatorConfig,
+        ...stackNavConfig,
         headerRight: () => <AddAccountsHeaderRightClose />,
       }}
     >

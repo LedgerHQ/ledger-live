@@ -7,9 +7,9 @@ import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import { useTheme } from "@react-navigation/native";
 import { prepareCurrency } from "../../bridge/cache";
 import { ScreenName } from "../../const";
-import colors from "../../colors";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -30,6 +30,7 @@ type RouteParams = {
 const action = createAction(connectApp);
 
 export default function AddAccountsSelectDevice({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const [device, setDevice] = useState<?Device>();
 
   const onClose = useCallback(() => {
@@ -61,7 +62,15 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
 
   const currency = route.params.currency;
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+        },
+      ]}
+      forceInset={forceInset}
+    >
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -92,10 +101,10 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scroll: {
     flex: 1,
+    backgroundColor: "transparent",
   },
   scrollContainer: {
     padding: 16,

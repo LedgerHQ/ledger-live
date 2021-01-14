@@ -1,31 +1,36 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-import colors from "../colors";
-
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText/index";
+import { rgba } from "../colors";
 
 type Props = {
   address: string,
   verified?: boolean,
 };
 
-class DisplayAddress extends PureComponent<Props> {
-  static defaultProps = {
-    verified: false,
-  };
-
-  render(): React$Node {
-    const { address, verified } = this.props;
-    return (
-      <View style={[styles.container, verified ? styles.verified : undefined]}>
-        <LText bold style={styles.text} selectable>
-          {address}
-        </LText>
-      </View>
-    );
-  }
+function DisplayAddress({ address, verified = false }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        styles.container,
+        { borderColor: colors.fog },
+        verified
+          ? {
+              borderColor: colors.success,
+              backgroundColor: rgba(colors.success, 0.03),
+            }
+          : undefined,
+      ]}
+    >
+      <LText bold style={styles.text} selectable>
+        {address}
+      </LText>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -33,18 +38,12 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderRadius: 4,
-    borderColor: colors.fog,
     borderStyle: "dashed",
   },
   text: {
     fontSize: 14,
-    color: colors.darkBlue,
     textAlign: "center",
-  },
-  verified: {
-    borderColor: colors.success,
-    backgroundColor: "rgba(102, 190, 84, 0.03)",
   },
 });
 
-export default DisplayAddress;
+export default memo<Props>(DisplayAddress);

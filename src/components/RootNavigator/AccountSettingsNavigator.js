@@ -1,27 +1,34 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import AccountSettingsMain from "../../screens/AccountSettings";
 import EditAccountUnits from "../../screens/AccountSettings/EditAccountUnits";
 import EditAccountName from "../../screens/AccountSettings/EditAccountName";
 import AdvancedLogs from "../../screens/AccountSettings/AdvancedLogs";
 import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
 export default function AccountSettingsNavigator() {
+  const { colors } = useTheme();
   const { t } = useTranslation();
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
+    colors,
+  ]);
+  const closableNavconfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator
-      screenOptions={{ ...closableStackNavigatorConfig, headerRight: null }}
-    >
+    <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.AccountSettingsMain}
         component={AccountSettingsMain}
         options={{
           title: t("account.settings.header"),
-          headerRight: closableStackNavigatorConfig.headerRight,
+          headerRight: closableNavconfig.headerRight,
         }}
       />
       <Stack.Screen

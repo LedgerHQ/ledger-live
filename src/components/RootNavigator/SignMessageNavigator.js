@@ -1,22 +1,27 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import SignSummary from "../../screens/SignMessage/01-Summary";
 import SelectDevice from "../../screens/SelectDevice";
 import SignConnectDevice from "../../screens/SignMessage/03-ConnectDevice";
 import SignValidationSuccess from "../../screens/SignMessage/04-ValidationSuccess";
 import SignValidationError from "../../screens/SignMessage/04-ValidationError";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "3";
 
 export default function SignMessageNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [
+    colors,
+  ]);
   return (
-    <Stack.Navigator screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.SignSummary}
         component={SignSummary}

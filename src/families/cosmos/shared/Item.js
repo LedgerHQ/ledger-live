@@ -11,7 +11,7 @@ import type {
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import ArrowRight from "../../../icons/ArrowRight";
@@ -36,6 +36,7 @@ function Item({
   showVal = true,
   delegatedValue,
 }: Props) {
+  const { colors } = useTheme();
   const { rank, validator } = item;
 
   const { validatorAddress, estimatedYearlyRewardsRate, name } =
@@ -55,9 +56,9 @@ function Item({
       disabled={isDisabled}
       style={[styles.wrapper]}
     >
-      <View style={[styles.iconWrapper]}>
+      <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
         <FirstLetterIcon
-          style={isDisabled ? styles.disabledWrapper : {}}
+          style={isDisabled ? { backgroundColor: colors.lightFog } : {}}
           label={name || validatorAddress}
         />
       </View>
@@ -71,7 +72,7 @@ function Item({
           {rank}. {name || validatorAddress}
         </LText>
 
-        <LText style={styles.subText} numberOfLines={1}>
+        <LText style={styles.subText} color="grey" numberOfLines={1}>
           <Trans
             i18nKey="cosmos.delegation.flow.steps.validator.estYield"
             values={{
@@ -87,7 +88,8 @@ function Item({
           <View style={styles.valueContainer}>
             <LText
               semiBold
-              style={[styles.valueLabel, isDisabled ? styles.disabledText : {}]}
+              style={[styles.valueLabel]}
+              color={isDisabled ? "grey" : "darkBlue"}
             >
               {value ? (
                 <CurrencyUnitValue value={value} unit={unit} showCode={false} />
@@ -99,6 +101,7 @@ function Item({
             {delegatedValue && delegatedValue.gt(0) ? (
               <LText
                 style={[styles.valueLabel, styles.subText]}
+                color="grey"
                 numberOfLines={1}
               >
                 <Trans i18nKey="cosmos.delegation.flow.steps.validator.currentAmount">
@@ -130,11 +133,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 5,
-    backgroundColor: colors.lightLive,
+
     marginRight: 12,
-  },
-  iconWrapperCandidate: {
-    backgroundColor: colors.lightFog,
   },
   nameWrapper: {
     flex: 1,
@@ -145,13 +145,6 @@ const styles = StyleSheet.create({
   },
   subText: {
     fontSize: 13,
-    color: colors.grey,
-  },
-  disabledWrapper: {
-    backgroundColor: colors.lightFog,
-  },
-  disabledText: {
-    color: colors.grey,
   },
   valueContainer: { alignItems: "flex-end" },
   value: { flexDirection: "row", alignItems: "center" },

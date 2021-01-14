@@ -5,11 +5,12 @@ import { StyleSheet, Share } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "./Touchable";
 import LText from "./LText";
-import colors from "../colors";
+import { withTheme } from "../colors";
 
 type Props = {
   children: React$Node,
   value: string, // String to be shared
+  colors: *,
 };
 
 class ShareLink extends PureComponent<Props> {
@@ -21,7 +22,7 @@ class ShareLink extends PureComponent<Props> {
   };
 
   render() {
-    const { children } = this.props;
+    const { children, colors } = this.props;
 
     return (
       <Touchable
@@ -30,7 +31,7 @@ class ShareLink extends PureComponent<Props> {
         onPress={this.onPress}
       >
         <Icon name="share" size={16} color={colors.live} />
-        <LText style={[styles.linkText]} semiBold>
+        <LText style={[styles.linkText]} color="live" semiBold>
           {children}
         </LText>
       </Touchable>
@@ -38,7 +39,7 @@ class ShareLink extends PureComponent<Props> {
   }
 }
 
-export default ShareLink;
+export default withTheme(ShareLink);
 
 const styles = StyleSheet.create({
   linkContainer: {
@@ -47,7 +48,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   linkText: {
-    color: colors.live,
     marginLeft: 6,
   },
 });

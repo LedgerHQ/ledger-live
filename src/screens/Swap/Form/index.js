@@ -11,7 +11,7 @@ import type {
   Exchange,
   ExchangeRate,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 import {
   getAccountUnit,
@@ -45,7 +45,6 @@ import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import { accountsSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
-import colors from "../../../colors";
 import { TrackScreen } from "../../../analytics";
 
 type SelectAccountFlowTarget = "from" | "to";
@@ -80,6 +79,7 @@ const Form = ({
   defaultAccount: ?AccountLike,
   defaultParentAccount: ?Account,
 }) => {
+  const { colors } = useTheme();
   const { navigate } = useNavigation();
   const { result } = deviceMeta;
   const { installed: installedApps } = result;
@@ -98,16 +98,16 @@ const Form = ({
     [accounts, installedApps, selectableCurrencies],
   );
 
-  const exchange = useMemo(() => {
-    return (
+  const exchange = useMemo(
+    () =>
       route.params?.exchange || {
         fromAccount: defaultAccount?.balance.gt(0) ? defaultAccount : undefined,
         fromParentAccount: defaultAccount?.balance.gt(0)
           ? defaultParentAccount
           : undefined,
-      }
-    );
-  }, [defaultAccount, defaultParentAccount, route.params]);
+      },
+    [defaultAccount, defaultParentAccount, route.params],
+  );
   const { fromAccount, toAccount } = exchange;
   const fromCurrency = fromAccount ? getAccountCurrency(fromAccount) : null;
   const toCurrency = toAccount ? getAccountCurrency(toAccount) : null;
@@ -154,7 +154,7 @@ const Form = ({
           style={styles.accountWrapper}
           onPress={() => startSelectAccountFlow("from")}
         >
-          <LText semiBold secondary style={styles.accountTitle}>
+          <LText semiBold secondary style={styles.accountTitle} color="smoke">
             <Trans i18nKey={"transfer.swap.form.from"} />
           </LText>
 
@@ -192,7 +192,7 @@ const Form = ({
           </View>
 
           {fromAccount ? (
-            <LText style={styles.accountBalance}>
+            <LText style={styles.accountBalance} color="grey">
               <Trans i18nKey={"transfer.swap.form.balance"}>
                 <CurrencyUnitValue
                   showCode
@@ -210,7 +210,7 @@ const Form = ({
           style={styles.accountWrapper}
           onPress={() => startSelectAccountFlow("to")}
         >
-          <LText semiBold secondary style={styles.accountTitle}>
+          <LText semiBold secondary style={styles.accountTitle} color="smoke">
             <Trans i18nKey={"transfer.swap.form.to"} />
           </LText>
 
@@ -243,7 +243,7 @@ const Form = ({
           </View>
 
           {toAccount ? (
-            <LText style={styles.accountBalance}>
+            <LText style={styles.accountBalance} color="grey">
               <Trans i18nKey={"transfer.swap.form.balance"}>
                 <CurrencyUnitValue
                   showCode
@@ -292,7 +292,6 @@ const styles = StyleSheet.create({
     lineHeight: 14,
     letterSpacing: 1,
     textTransform: "uppercase",
-    color: colors.smoke,
   },
   accountNameWrapper: {
     display: "flex",
@@ -311,7 +310,6 @@ const styles = StyleSheet.create({
   accountBalance: {
     fontSize: 14,
     lineHeight: 19,
-    color: colors.grey,
   },
 });
 

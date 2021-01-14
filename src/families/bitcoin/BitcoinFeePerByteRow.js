@@ -6,18 +6,19 @@ import type { AccountLike, Transaction } from "@ledgerhq/live-common/lib/types";
 import { Trans } from "react-i18next";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import ExternalLink from "../../icons/ExternalLink";
 import { urls } from "../../config/urls";
+import { withTheme } from "../../colors";
 
 type Props = {
   account: AccountLike,
   transaction: Transaction,
   navigation: any,
+  colors: *,
 };
 
-export default class BitcoinFeePerByteRow extends Component<Props> {
+class BitcoinFeePerByteRow extends Component<Props> {
   openFees = () => {
     const { account, navigation, transaction } = this.props;
     navigation.navigate(ScreenName.BitcoinEditFeePerByte, {
@@ -31,7 +32,7 @@ export default class BitcoinFeePerByteRow extends Component<Props> {
   };
 
   render() {
-    const { account, transaction } = this.props;
+    const { account, transaction, colors } = this.props;
     invariant(account.type === "Account", "No SubAccounts should be here.");
 
     return (
@@ -52,7 +53,11 @@ export default class BitcoinFeePerByteRow extends Component<Props> {
               <Trans i18nKey="common.satPerByte" />
             </LText>
 
-            <LText style={styles.link} onPress={this.openFees}>
+            <LText
+              style={[styles.link, { textDecorationColor: colors.live }]}
+              color="live"
+              onPress={this.openFees}
+            >
               <Trans i18nKey="common.edit" />
             </LText>
           </View>
@@ -70,16 +75,16 @@ const styles = StyleSheet.create({
   summaryRowText: {
     fontSize: 16,
     textAlign: "right",
-    color: colors.darkBlue,
   },
   valueText: {
     fontSize: 16,
   },
   link: {
-    color: colors.live,
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
-    textDecorationColor: colors.live,
+
     marginLeft: 8,
   },
 });
+
+export default withTheme(BitcoinFeePerByteRow);

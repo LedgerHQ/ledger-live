@@ -10,7 +10,7 @@ import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import invariant from "invariant";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -23,6 +23,7 @@ type Props = {
 type InfoName = "available" | "delegated" | "undelegating";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const info = useInfo();
@@ -46,7 +47,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={styles.root}
+        style={[styles.root, { borderTopColor: colors.lightFog }]}
       >
         <InfoModal
           isOpened={!!infoName}
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
+
     paddingTop: 16,
     overflow: "visible",
   },

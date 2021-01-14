@@ -6,8 +6,9 @@ import { StyleSheet, View } from "react-native";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 
 import Icon from "react-native-vector-icons/dist/Feather";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../const";
-import colors, { rgba } from "../../colors";
+import { rgba } from "../../colors";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -24,9 +25,13 @@ type RouteParams = {
   deviceId: string,
 };
 
-const IconPlus = () => <Icon name="plus" color={colors.live} size={16} />;
+const IconPlus = () => {
+  const { colors } = useTheme();
+  return <Icon name="plus" color={colors.live} size={16} />;
+};
 
 export default function AddAccountsSuccess({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const primaryCTA = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts);
   }, [navigation]);
@@ -38,7 +43,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
   const currency = route.params.currency;
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="AddAccounts"
         name="Success"
@@ -48,7 +53,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="addAccounts.imported" />
       </LText>
-      <LText style={styles.desc}>
+      <LText style={styles.desc} color="grey">
         <Trans i18nKey="addAccounts.success.desc" />
       </LText>
       <View style={styles.buttonsContainer}>
@@ -76,6 +81,7 @@ type CurrencySuccessProps = {
 };
 
 function CurrencySuccess({ currency }: CurrencySuccessProps) {
+  const { colors } = useTheme();
   return (
     <View
       style={[
@@ -85,8 +91,24 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
         },
       ]}
     >
-      <View style={styles.successBadge}>
-        <IconCheck size={16} color={colors.white} />
+      <View
+        style={[
+          styles.outer,
+          {
+            backgroundColor: colors.card,
+          },
+        ]}
+      >
+        <View
+          style={[
+            styles.inner,
+            {
+              backgroundColor: colors.green,
+            },
+          ]}
+        >
+          <IconCheck size={16} color="white" />
+        </View>
       </View>
       <CurrencyIcon currency={currency} size={32} />
     </View>
@@ -97,35 +119,39 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: colors.white,
+
     alignItems: "center",
     justifyContent: "center",
   },
   currencySuccess: {
     width: 80,
     height: 80,
-    backgroundColor: "red",
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
   },
-  successBadge: {
+  outer: {
     position: "absolute",
     top: -5,
     right: -5,
-    width: 24 + 10,
-    height: 24 + 10,
-    borderRadius: (24 + 10) / 2,
-    backgroundColor: colors.green,
-    borderWidth: 3,
-    borderColor: colors.white,
+    width: 34,
+    height: 34,
+    borderRadius: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inner: {
+    width: 26,
+    height: 26,
+    borderRadius: 100,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
   title: {
     marginTop: 32,
     fontSize: 18,
-    color: colors.darkBlue,
   },
   desc: {
     marginTop: 16,
@@ -133,7 +159,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 32,
     textAlign: "center",
     fontSize: 14,
-    color: colors.grey,
   },
   buttonsContainer: {
     alignSelf: "stretch",

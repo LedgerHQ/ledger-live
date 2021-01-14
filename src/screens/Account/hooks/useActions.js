@@ -20,14 +20,14 @@ import Swap from "../../../icons/Swap";
 import Lending from "../../../icons/Lending";
 import WalletConnect from "../../../icons/WalletConnect";
 import Exchange from "../../../icons/Exchange";
-import colors from "../../../colors";
 
 type Props = {
   account: AccountLike,
   parentAccount: ?Account,
+  colors: *,
 };
 
-export default function useActions({ account, parentAccount }: Props) {
+export default function useActions({ account, parentAccount, colors }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const availableOnSwap = useSelector(state =>
     swapSupportedCurrenciesSelector(state, { accountId: account.id }),
@@ -53,6 +53,7 @@ export default function useActions({ account, parentAccount }: Props) {
       decorators.getActions({
         account,
         parentAccount,
+        colors,
       })) ||
     [];
 
@@ -128,7 +129,14 @@ export default function useActions({ account, parentAccount }: Props) {
     ...(walletConnectAvailable
       ? [
           {
-            Component: () => <View style={styles.separator} />,
+            Component: () => (
+              <View
+                style={[
+                  styles.separator,
+                  { backgroundColor: colors.separator },
+                ]}
+              />
+            ),
           },
           {
             navigationParams: [
@@ -155,7 +163,6 @@ export default function useActions({ account, parentAccount }: Props) {
 const styles = StyleSheet.create({
   separator: {
     height: 1,
-    backgroundColor: colors.separator,
     marginVertical: 8,
     marginHorizontal: 8,
   },

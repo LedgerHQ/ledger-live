@@ -1,19 +1,19 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import LendingTerms from "../../screens/Lending/modals/InfoModals/TermsStep";
 import LendingInfo1 from "../../screens/Lending/modals/InfoModals/Step-1";
 import LendingInfo2 from "../../screens/Lending/modals/InfoModals/Step-2";
 import LendingInfo3 from "../../screens/Lending/modals/InfoModals/Step-3";
 import { CloseButton } from "../../screens/OperationDetails";
-import colors from "../../colors";
 import Close from "../../icons/Close";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 
-const goBackOptions = ({ route: { params }, navigation }) => ({
+const goBackOptions = colors => ({ route: { params }, navigation }) => ({
   headerRight: () => (
     <TouchableOpacity
       // $FlowFixMe
@@ -31,34 +31,36 @@ const goBackOptions = ({ route: { params }, navigation }) => ({
 
 export default function LendingInfoNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
     <Stack.Navigator
       headerMode="float"
-      screenOptions={({ navigation }) => {
-        return {
-          ...closableStackNavigatorConfig,
-          title: t("transfer.lending.info.title"),
-
-          headerLeft: null,
-          headerRight: () => <CloseButton navigation={navigation} />,
-          gestureEnabled: false,
-        };
-      }}
+      screenOptions={({ navigation }) => ({
+        ...stackNavigationConfig,
+        title: t("transfer.lending.info.title"),
+        headerLeft: null,
+        headerRight: () => <CloseButton navigation={navigation} />,
+        gestureEnabled: false,
+      })}
     >
       <Stack.Screen
         name={ScreenName.LendingInfo1}
         component={LendingInfo1}
-        options={goBackOptions}
+        options={goBackOptions(colors)}
       />
       <Stack.Screen
         name={ScreenName.LendingInfo2}
         component={LendingInfo2}
-        options={goBackOptions}
+        options={goBackOptions(colors)}
       />
       <Stack.Screen
         name={ScreenName.LendingInfo3}
         component={LendingInfo3}
-        options={goBackOptions}
+        options={goBackOptions(colors)}
       />
       <Stack.Screen name={ScreenName.LendingTerms} component={LendingTerms} />
     </Stack.Navigator>

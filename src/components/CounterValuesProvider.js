@@ -6,27 +6,19 @@ import {
   Countervalues,
   useCountervaluesPolling,
 } from "@ledgerhq/live-common/lib/countervalues/react";
-import { getCountervalues } from "../db";
 import { useUserSettings } from "../actions/general";
 
 export default function CountervaluesProvider({
   children,
+  initialState,
 }: {
   children: React$Node,
+  initialState: *,
 }) {
   const userSettings = useUserSettings();
-  const [savedState, setSavedState] = useState();
-
-  useEffect(() => {
-    async function getSavedState() {
-      const values = await getCountervalues();
-      setSavedState(values);
-    }
-    getSavedState();
-  }, []);
 
   return (
-    <Countervalues userSettings={userSettings} savedState={savedState}>
+    <Countervalues userSettings={userSettings} savedState={initialState}>
       <CountervaluesManager>{children}</CountervaluesManager>
     </Countervalues>
   );

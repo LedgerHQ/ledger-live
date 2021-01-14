@@ -1,7 +1,7 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
-import { Platform } from "react-native";
+import { Platform, Appearance } from "react-native";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
@@ -61,6 +61,10 @@ export type Privacy = {
   biometricsEnabled: boolean,
 };
 
+const colorScheme = Appearance.getColorScheme();
+
+export type Theme = "light" | "dark" | "dusk";
+
 export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
@@ -86,6 +90,7 @@ export type SettingsState = {
   hasAvailableUpdate: boolean,
   hasAcceptedSwapKYC: boolean,
   swapProviders?: AvailableProvider[],
+  theme: Theme,
   carouselVisibility: number,
   discreetMode: boolean,
 };
@@ -111,6 +116,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   hasAcceptedSwapKYC: false,
   swapProviders: [],
+  theme: colorScheme === "dark" ? "dusk" : "light",
   carouselVisibility: 0,
   discreetMode: false,
 };
@@ -281,6 +287,10 @@ const handlers: Object = {
   SETTINGS_SET_SWAP_PROVIDERS: (state, { swapProviders }) => ({
     ...state,
     swapProviders,
+  }),
+  SETTINGS_SET_THEME: (state, { payload: theme }) => ({
+    ...state,
+    theme,
   }),
   SETTINGS_SET_CAROUSEL_VISIBILITY: (state: AppState, { payload }) => ({
     ...state,
@@ -464,3 +474,5 @@ export const discreetModeSelector = (state: State): boolean =>
   state.settings.discreetMode === true;
 
 export default handleActions(handlers, INITIAL_STATE);
+
+export const themeSelector = (state: State) => state.settings.theme;

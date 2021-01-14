@@ -2,11 +2,10 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
 import LText from "../../components/LText";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 
@@ -16,6 +15,7 @@ type Props = {
 };
 
 export default function StellarMemoValueRow({ account, transaction }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const editMemo = useCallback(() => {
@@ -34,7 +34,16 @@ export default function StellarMemoValueRow({ account, transaction }: Props) {
           title={<Trans i18nKey="stellar.memo.title" />}
           onPress={editMemo}
         >
-          <LText style={styles.link} onPress={editMemo}>
+          <LText
+            style={[
+              styles.link,
+              {
+                textDecorationColor: colors.live,
+              },
+            ]}
+            color="live"
+            onPress={editMemo}
+          >
             <Trans i18nKey="common.edit" />
           </LText>
         </SummaryRow>
@@ -60,13 +69,10 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: 14,
-    color: colors.darkBlue,
   },
   link: {
-    color: colors.live,
     textDecorationStyle: "solid",
     textDecorationLine: "underline",
-    textDecorationColor: colors.live,
     marginLeft: 8,
   },
   memo: {

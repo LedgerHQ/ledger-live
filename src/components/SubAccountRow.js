@@ -4,7 +4,7 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account";
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   RectButton,
@@ -18,11 +18,11 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
-import colors from "../colors";
 import { accountSelector } from "../reducers/accounts";
 
 type Props = {
@@ -37,70 +37,63 @@ const placeholderProps = {
   containerHeight: 20,
 };
 
-class SubAccountRow extends PureComponent<Props> {
-  render() {
-    const {
-      account,
-      parentAccount,
-      onSubAccountPress,
-      onSubAccountLongPress,
-    } = this.props;
+function SubAccountRow({
+  account,
+  parentAccount,
+  onSubAccountPress,
+  onSubAccountLongPress,
+}: Props) {
+  const { colors } = useTheme();
+  const currency = getAccountCurrency(account);
+  const name = getAccountName(account);
+  const unit = getAccountUnit(account);
 
-    const currency = getAccountCurrency(account);
-    const name = getAccountName(account);
-    const unit = getAccountUnit(account);
-
-    return (
-      <LongPressGestureHandler
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.state === State.ACTIVE) {
-            if (account.type === "TokenAccount") {
-              onSubAccountLongPress(account, parentAccount);
-            }
+  return (
+    <LongPressGestureHandler
+      onHandlerStateChange={({ nativeEvent }) => {
+        if (nativeEvent.state === State.ACTIVE) {
+          if (account.type === "TokenAccount") {
+            onSubAccountLongPress(account, parentAccount);
           }
-        }}
-        minDurationMs={600}
+        }
+      }}
+      minDurationMs={600}
+    >
+      <RectButton
+        style={styles.container}
+        underlayColor={colors.grey}
+        onPress={() => onSubAccountPress(account)}
       >
-        <RectButton
-          style={styles.container}
-          underlayColor={colors.grey}
-          onPress={() => onSubAccountPress(account)}
-        >
-          <View accessible style={styles.innerContainer}>
-            <CurrencyIcon size={24} currency={currency} />
-            <View style={styles.inner}>
-              <LText semiBold numberOfLines={1} style={styles.accountNameText}>
-                {name}
-              </LText>
-            </View>
-            <View style={styles.balanceContainer}>
-              <LText semiBold style={styles.balanceNumText}>
-                <CurrencyUnitValue
-                  showCode
-                  unit={unit}
-                  value={account.balance}
-                />
-              </LText>
-              <View style={styles.balanceCounterContainer}>
-                <CounterValue
-                  showCode
-                  currency={currency}
-                  value={account.balance}
-                  withPlaceholder
-                  placeholderProps={placeholderProps}
-                  Wrapper={AccountCv}
-                />
-              </View>
+        <View accessible style={styles.innerContainer}>
+          <CurrencyIcon size={24} currency={currency} />
+          <View style={styles.inner}>
+            <LText semiBold numberOfLines={1} style={styles.accountNameText}>
+              {name}
+            </LText>
+          </View>
+          <View style={styles.balanceContainer}>
+            <LText semiBold style={styles.balanceNumText}>
+              <CurrencyUnitValue showCode unit={unit} value={account.balance} />
+            </LText>
+            <View style={styles.balanceCounterContainer}>
+              <CounterValue
+                showCode
+                currency={currency}
+                value={account.balance}
+                withPlaceholder
+                placeholderProps={placeholderProps}
+                Wrapper={AccountCv}
+              />
             </View>
           </View>
-        </RectButton>
-      </LongPressGestureHandler>
-    );
-  }
+        </View>
+      </RectButton>
+    </LongPressGestureHandler>
+  );
 }
 
 const AccountCv = ({ children }: { children: * }) => (
-  <LText semiBold style={styles.balanceCounterText}>
+  <LText semiBold style={styles.balanceCounterText} color="grey">
     {children}
   </LText>
 );
@@ -109,7 +102,9 @@ const mapStateToProps = createStructuredSelector({
   parentAccount: accountSelector,
 });
 
-export default connect(mapStateToProps)(SubAccountRow);
+const SubAccountRowComponent = connect(mapStateToProps)(SubAccountRow);
+
+export default memo<Props>(SubAccountRowComponent);
 
 const styles = StyleSheet.create({
   container: {
@@ -129,7 +124,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   accountNameText: {
-    color: colors.darkBlue,
     fontSize: 16,
     marginBottom: 4,
   },
@@ -139,7 +133,6 @@ const styles = StyleSheet.create({
   },
   balanceNumText: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
   balanceCounterContainer: {
     marginTop: 5,
@@ -147,6 +140,5 @@ const styles = StyleSheet.create({
   },
   balanceCounterText: {
     fontSize: 14,
-    color: colors.grey,
   },
 });

@@ -10,6 +10,7 @@ import type {
   Account,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types/account";
+import { useTheme } from "@react-navigation/native";
 import {
   hasAcceptedSwapKYCSelector,
   swapProvidersSelector,
@@ -20,7 +21,6 @@ import Landing from "./Landing";
 import NotAvailable from "./NotAvailable";
 import Form from "./Form";
 import Connect from "./Connect";
-import colors from "../../colors";
 
 const Swap = ({
   defaultAccount,
@@ -29,6 +29,7 @@ const Swap = ({
   defaultAccount?: AccountLike,
   defaultParentAccount?: Account,
 }) => {
+  const { colors } = useTheme();
   const dispatch = useDispatch();
   const providers = useSelector(swapProvidersSelector);
   const hasAcceptedSwapKYC = useSelector(hasAcceptedSwapKYCSelector);
@@ -62,7 +63,7 @@ const Swap = ({
     a => a.name === "Exchange",
   );
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       {!hasAcceptedSwapKYC ? (
         <Landing />
       ) : !hasUpToDateProviders ? (
@@ -91,7 +92,6 @@ const Swap = ({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   loading: {
     flex: 1,

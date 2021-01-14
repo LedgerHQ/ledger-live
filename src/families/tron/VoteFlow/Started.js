@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
@@ -15,6 +15,7 @@ type Props = {
 };
 
 function VoteStarted({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const onNext = useCallback(() => {
     navigation.replace(ScreenName.VoteSelectValidator, route.params);
   }, [navigation, route.params]);
@@ -24,11 +25,11 @@ function VoteStarted({ navigation, route }: Props) {
   }, [navigation]);
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.main}>
         <IlluVotes />
 
-        <LText style={styles.description}>
+        <LText style={styles.description} color="grey">
           <Trans i18nKey="tron.voting.flow.started.description" />
         </LText>
       </View>
@@ -56,7 +57,7 @@ function VoteStarted({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
+
     padding: 16,
   },
   main: {
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 22,
-    color: colors.grey,
+
     textAlign: "center",
     marginVertical: 16,
   },
@@ -76,15 +77,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 4,
-  },
-  howVotingWorks: {
-    marginTop: 32,
-    borderRadius: 32,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: colors.live,
-    flexDirection: "row",
   },
 });
 

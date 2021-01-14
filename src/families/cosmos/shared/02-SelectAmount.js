@@ -16,8 +16,8 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import colors from "../../../colors";
 import Button from "../../../components/Button";
 import CurrencyInput from "../../../components/CurrencyInput";
 import LText from "../../../components/LText";
@@ -44,6 +44,7 @@ type Props = {
 };
 
 function DelegationAmount({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   invariant(
@@ -123,7 +124,7 @@ function DelegationAmount({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.root}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <KeyboardView>
         <View style={styles.main}>
           <CurrencyInput
@@ -140,7 +141,13 @@ function DelegationAmount({ navigation, route }: Props) {
                 key={label}
                 style={[
                   styles.ratioButton,
-                  value.eq(v) ? styles.ratioPrimaryButton : null,
+                  value.eq(v)
+                    ? {
+                        borderColor: colors.live,
+                        color: colors.white,
+                        backgroundColor: colors.live,
+                      }
+                    : { borderColor: colors.grey, color: colors.grey },
                 ]}
                 onPress={() => {
                   Keyboard.dismiss();
@@ -148,10 +155,8 @@ function DelegationAmount({ navigation, route }: Props) {
                 }}
               >
                 <LText
-                  style={[
-                    styles.ratioLabel,
-                    value.eq(v) ? styles.ratioPrimaryLabel : null,
-                  ]}
+                  style={[styles.ratioLabel]}
+                  color={value.eq(v) ? "white" : "grey"}
                 >
                   {label}
                 </LText>
@@ -160,11 +165,11 @@ function DelegationAmount({ navigation, route }: Props) {
           </View>
         </View>
 
-        <View style={styles.footer}>
+        <View style={[styles.footer, { backgroundColor: colors.white }]}>
           {error && !value.eq(0) && (
             <View style={styles.labelContainer}>
               <Warning size={16} color={colors.alert} />
-              <LText style={[styles.assetsRemaining, styles.error]}>
+              <LText style={[styles.assetsRemaining]} color="alert">
                 <Trans
                   i18nKey={
                     value.lt(min)
@@ -190,7 +195,7 @@ function DelegationAmount({ navigation, route }: Props) {
           {max.isZero() && (
             <View style={styles.labelContainer}>
               <Check size={16} color={colors.success} />
-              <LText style={[styles.assetsRemaining, styles.success]}>
+              <LText style={[styles.assetsRemaining]} color="success">
                 <Trans
                   i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}
                 />
@@ -250,7 +255,7 @@ function DelegationAmount({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
+
     padding: 16,
   },
   main: {
@@ -272,22 +277,15 @@ const styles = StyleSheet.create({
     width: 60,
     borderWidth: 1,
     borderRadius: 4,
-    borderColor: colors.grey,
-    color: colors.grey,
+
     backgroundColor: "rgba(0,0,0,0)",
     paddingVertical: 8,
   },
-  ratioPrimaryButton: {
-    borderColor: colors.live,
-    color: colors.white,
-    backgroundColor: colors.live,
-  },
-  ratioLabel: { color: colors.grey, textAlign: "center" },
-  ratioPrimaryLabel: { color: colors.white },
+  ratioPrimaryButton: {},
+  ratioLabel: { textAlign: "center" },
   footer: {
     alignSelf: "stretch",
     padding: 8,
-    backgroundColor: colors.white,
   },
   labelContainer: {
     width: "100%",
@@ -308,12 +306,6 @@ const styles = StyleSheet.create({
   small: {
     fontSize: 11,
     lineHeight: 16,
-  },
-  error: {
-    color: colors.alert,
-  },
-  success: {
-    color: colors.success,
   },
 });
 

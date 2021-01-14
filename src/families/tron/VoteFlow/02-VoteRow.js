@@ -11,9 +11,9 @@ import type {
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import * as Animatable from "react-native-animatable";
 
+import { useTheme } from "@react-navigation/native";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 
 import Trash from "../../../icons/Trash";
@@ -30,6 +30,7 @@ const RightAction = ({
   dragX: *,
   onRemove: () => void,
 }) => {
+  const { colors } = useTheme();
   const scale = dragX.interpolate({
     inputRange: [-57, -56, -16, 0],
     outputRange: [1, 1, 0.5, 0],
@@ -44,7 +45,10 @@ const RightAction = ({
         },
       ]}
     >
-      <TouchableOpacity onPress={onRemove} style={styles.removeButton}>
+      <TouchableOpacity
+        onPress={onRemove}
+        style={[styles.removeButton, { backgroundColor: colors.alert }]}
+      >
         <Trash size={16} color={colors.white} />
       </TouchableOpacity>
     </Animated.View>
@@ -73,6 +77,7 @@ const VoteRow = ({
   onOpen,
   openIndex,
 }: VoteRowProps) => {
+  const { colors } = useTheme();
   const rowRef = useRef();
   const swipeRef = useRef();
   const { address, voteCount, isSR, rank, validator } = vote;
@@ -131,12 +136,20 @@ const VoteRow = ({
       >
         <TouchableOpacity
           activeOpacity={0.8}
-          style={styles.srRow}
+          style={[
+            styles.srRow,
+            { backgroundColor: colors.white, borderColor: colors.lightFog },
+          ]}
           onPress={() => onEdit({ address, voteCount }, name || address)}
         >
           <View style={styles.row}>
             <View
-              style={[styles.rowIcon, !isSR ? styles.rowIconCandidate : {}]}
+              style={[
+                styles.rowIcon,
+                !isSR
+                  ? { backgroundColor: colors.lightFog }
+                  : { backgroundColor: colors.lightLive },
+              ]}
             >
               {isSR ? (
                 <Trophy size={16} color={colors.live} />
@@ -148,7 +161,7 @@ const VoteRow = ({
               <LText semiBold style={styles.rowTitle} numberOfLines={1}>
                 {name || address}
               </LText>
-              <LText style={styles.rowLabel}>
+              <LText style={styles.rowLabel} color="grey">
                 <Trans i18nKey="vote.castVotes.ranking" values={{ rank }}>
                   <LText semiBold style={styles.rowTitle}>
                     text
@@ -158,7 +171,7 @@ const VoteRow = ({
             </View>
             <View style={styles.editButton}>
               <Edit size={14} color={colors.live} />
-              <LText semiBold style={styles.editVoteCount}>
+              <LText semiBold style={styles.editVoteCount} color="live">
                 {voteCount}
               </LText>
             </View>
@@ -182,10 +195,8 @@ const styles = StyleSheet.create({
     left: 16,
     borderRadius: 4,
     flexDirection: "column",
-    backgroundColor: colors.white,
     zIndex: 10,
     paddingHorizontal: 16,
-    borderColor: colors.lightFog,
     borderWidth: StyleSheet.hairlineWidth,
   },
   row: {
@@ -201,16 +212,13 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 5,
-    backgroundColor: colors.lightLive,
+
     marginRight: 12,
-  },
-  rowIconCandidate: {
-    backgroundColor: colors.lightFog,
   },
   rowTitle: {
     fontSize: 14,
     lineHeight: 16,
-    color: colors.darkBlue,
+
     paddingBottom: 4,
   },
   rowLabelContainer: {
@@ -226,18 +234,12 @@ const styles = StyleSheet.create({
   },
   editVoteCount: {
     fontSize: 17,
-    color: colors.live,
+
     marginLeft: 6,
     marginBottom: 2,
   },
   rowLabel: {
     fontSize: 13,
-    color: colors.grey,
-  },
-  separator: {
-    width: "100%",
-    flexBasis: 1,
-    backgroundColor: colors.lightFog,
   },
   rightDrawer: {
     width: 56,
@@ -252,7 +254,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 4,
-    backgroundColor: colors.alert,
   },
 });
 

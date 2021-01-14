@@ -17,12 +17,13 @@ import NavigationScrollView from "../components/NavigationScrollView";
 
 import { connectingStep } from "../components/DeviceJob/steps";
 import { TrackScreen } from "../analytics";
-import colors from "../colors";
+import { withTheme } from "../colors";
 
 const forceInset = { bottom: "always" };
 
 type Props = {
   navigation: any,
+  colors: *,
 };
 
 type State = {
@@ -32,7 +33,7 @@ type State = {
   selected: boolean,
 };
 
-export default class RepairDevice extends Component<Props, State> {
+class RepairDevice extends Component<Props, State> {
   state = {
     error: null,
     progress: 0,
@@ -68,6 +69,7 @@ export default class RepairDevice extends Component<Props, State> {
   sub: any;
 
   render() {
+    const { colors } = this.props;
     const { ready, progress, error, selected } = this.state;
     const width = Dimensions.get("window").width;
 
@@ -118,7 +120,10 @@ export default class RepairDevice extends Component<Props, State> {
     }
 
     return (
-      <SafeAreaView forceInset={forceInset} style={styles.root}>
+      <SafeAreaView
+        forceInset={forceInset}
+        style={[styles.root, { backgroundColor: colors.white }]}
+      >
         <TrackScreen category="Settings" name="RepairDevice" />
         {body}
       </SafeAreaView>
@@ -129,7 +134,6 @@ export default class RepairDevice extends Component<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
     justifyContent: "center",
   },
   body: {
@@ -148,9 +152,6 @@ const styles = StyleSheet.create({
     left: "10%",
     position: "relative",
   },
-  description: {
-    color: colors.smoke,
-    fontSize: 14,
-    marginVertical: 30,
-  },
 });
+
+export default withTheme(RepairDevice);

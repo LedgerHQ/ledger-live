@@ -4,7 +4,7 @@ import { View, StyleSheet } from "react-native";
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import LiveLogo from "../icons/LiveLogoIcon";
 import Spinning from "./Spinning";
 import LText from "./LText";
@@ -18,13 +18,14 @@ type Props = {
 
 export default function Installing({ progress, installing }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
   return (
     <View style={styles.root}>
       <SkipLock />
       {progress === 0 ? (
         <View style={{ padding: 10 }}>
           <Spinning>
-            <LiveLogo color={colors.fog} size={40} />
+            <LiveLogo color={colors.grey} size={40} />
           </Spinning>
         </View>
       ) : (
@@ -38,7 +39,7 @@ export default function Installing({ progress, installing }: Props) {
           }}
         />
       </LText>
-      <LText style={styles.subtitle}>
+      <LText style={styles.subtitle} color="grey">
         <Trans i18nKey="FirmwareUpdate.Installing.subtitle" />
       </LText>
     </View>
@@ -54,13 +55,11 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   title: {
-    color: colors.darkBlue,
     marginTop: 30,
     marginBottom: 20,
     fontSize: 18,
   },
   subtitle: {
-    color: colors.grey,
     fontSize: 14,
     textAlign: "center",
     lineHeight: 21,

@@ -3,8 +3,8 @@
 import React, { Fragment, useCallback, useMemo } from "react";
 import { StyleSheet, View, Image, Platform } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 
 import firstUse from "../assets/firstUse.png";
@@ -22,6 +22,7 @@ type Props = {
 };
 
 function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { deviceModelId } = route.params;
   const next = useCallback(
     ({ route: r, next }: { route: string, next?: string }) => {
@@ -85,7 +86,7 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
             onPress={() => next(useCases[c])}
             style={[styles.button, { backgroundColor: colors.lightLive }]}
           >
-            <LText semiBold style={[styles.label, { color: colors.live }]}>
+            <LText semiBold style={[styles.label]} color="live">
               <Trans i18nKey={`onboarding.stepUseCase.${c}.label`} />
             </LText>
             <LText semiBold style={styles.subTitle}>
@@ -107,10 +108,7 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
           {index === 0 && arr.length > 1 && (
             <View style={styles.separator}>
               <View style={[styles.line, { backgroundColor: colors.live }]} />
-              <LText
-                semiBold
-                style={[styles.label, styles.or, { color: colors.live }]}
-              >
+              <LText semiBold style={[styles.label, styles.or]} color="live">
                 <Trans i18nKey="onboarding.stepUseCase.or" />
               </LText>
               <View style={[styles.line, { backgroundColor: colors.live }]} />

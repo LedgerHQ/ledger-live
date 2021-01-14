@@ -6,7 +6,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/lib/types";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../analytics";
 import SelectDeviceComp from "../components/SelectDevice";
 import NavigationScrollView from "../components/NavigationScrollView";
@@ -25,6 +25,7 @@ type RouteParams = {
 };
 
 export default function SelectDevice({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const onSelect = useCallback(
     device => {
       navigation.navigate(route.name.replace("SelectDevice", "ConnectDevice"), {
@@ -36,7 +37,10 @@ export default function SelectDevice({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
@@ -54,7 +58,6 @@ export default function SelectDevice({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scroll: {
     flex: 1,

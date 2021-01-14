@@ -1,10 +1,10 @@
 /* @flow */
 
-import React, { Component } from "react";
+import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import Card from "./Card";
 import LText from "./LText";
-import colors from "../colors";
 import Circle from "./Circle";
 
 type Props = {
@@ -13,28 +13,31 @@ type Props = {
   icon: any,
   onClick: Function,
 };
-export default class SettingsCard extends Component<Props> {
-  render() {
-    const { title, desc, icon, onClick } = this.props;
-    return (
-      <Card onPress={onClick} style={styles.cardStyle}>
-        <Circle bg={colors.lightLive} size={32}>
-          {icon}
-        </Circle>
-        <View style={styles.cardTextBlock}>
-          <LText secondary semiBold style={styles.title}>
-            {title}
-          </LText>
-          <LText style={styles.desc}>{desc}</LText>
-        </View>
-      </Card>
-    );
-  }
+export default function SettingsCard({ title, desc, icon, onClick }: Props) {
+  const { colors } = useTheme();
+
+  return (
+    <Card
+      onPress={onClick}
+      style={[styles.cardStyle, { backgroundColor: colors.card }]}
+    >
+      <Circle bg={colors.lightLive} size={32}>
+        {icon}
+      </Circle>
+      <View style={styles.cardTextBlock}>
+        <LText secondary semiBold style={styles.title} color="darkBlue">
+          {title}
+        </LText>
+        <LText style={styles.desc} color="grey">
+          {desc}
+        </LText>
+      </View>
+    </Card>
+  );
 }
 
 const styles = StyleSheet.create({
   cardStyle: {
-    backgroundColor: colors.white,
     overflow: "visible",
     flexDirection: "row",
     alignItems: "center",
@@ -60,13 +63,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: colors.darkBlue,
     fontSize: 16,
     lineHeight: 17,
     marginBottom: 4,
   },
   desc: {
-    color: colors.grey,
     fontSize: 14,
     lineHeight: 21,
   },

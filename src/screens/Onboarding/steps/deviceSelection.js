@@ -3,8 +3,8 @@
 import React, { useCallback } from "react";
 import { StyleSheet, Image, View } from "react-native";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import nanoS from "../assets/nanoS.png";
 import nanoX from "../assets/nanoX.png";
@@ -17,6 +17,7 @@ import AnimatedHeaderView from "../../../components/AnimatedHeader";
 const deviceIds = { nanoS, nanoX, blue };
 
 function OnboardingStepDeviceSelection({ navigation }: *) {
+  const { colors } = useTheme();
   const next = useCallback(
     (deviceModelId: string) => {
       navigation.navigate(ScreenName.OnboardingUseCase, { deviceModelId });

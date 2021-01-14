@@ -1,7 +1,8 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import LendingWithdrawAmount from "../../screens/Lending/WithdrawFlow/01-Amount";
 import LendingWithdrawSummary from "../../screens/SendFunds/04-Summary";
@@ -9,15 +10,20 @@ import SelectDevice from "../../screens/SelectDevice";
 import LendingWithdrawConnectDevice from "../../screens/ConnectDevice";
 import LendingWithdrawValidationSuccess from "../../screens/Lending/WithdrawFlow/03-ValidationSuccess";
 import LendingWithdrawValidationError from "../../screens/Lending/WithdrawFlow/03-ValidationError";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "4";
 
 export default function LendingWithdrawFlowNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.LendingWithdrawAmount}
         component={LendingWithdrawAmount}

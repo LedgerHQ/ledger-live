@@ -2,11 +2,11 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
-import { Switch } from "react-native";
 import { createStructuredSelector } from "reselect";
 import SettingsRow from "../../../components/SettingsRow";
 import { setReportErrors } from "../../../actions/settings";
 import { reportErrorsEnabledSelector } from "../../../reducers/settings";
+import Switch from "../../../components/Switch";
 
 type Props = {
   reportErrorsEnabled: boolean,

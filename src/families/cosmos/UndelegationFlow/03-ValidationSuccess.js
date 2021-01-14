@@ -4,9 +4,9 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
-import colors from "../../../colors";
 import { ScreenName } from "../../../const";
 import PreventNativeBack from "../../../components/PreventNativeBack";
 import ValidateSuccess from "../../../components/ValidateSuccess";
@@ -24,6 +24,7 @@ type RouteParams = {
 };
 
 export default function ValidationSuccess({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
 
   const onClose = useCallback(() => {
@@ -43,7 +44,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [account, route.params, navigation]);
 
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="CosmosUndelegation" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess
@@ -63,17 +64,5 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
-  button: {
-    alignSelf: "stretch",
-    marginTop: 24,
-  },
-  labelContainer: {
-    alignItems: "center",
-    justifyContent: "flex-end",
-    padding: 16,
-  },
-  label: { fontSize: 12 },
-  subLabel: { color: colors.grey },
 });

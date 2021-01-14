@@ -1,28 +1,33 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 
-import colors from "../colors";
-
-class Placeholder extends PureComponent<{
+type Props = {
   width?: number,
   containerHeight?: number,
   style?: *,
-}> {
-  render() {
-    const { width, containerHeight, style } = this.props;
-    return (
+};
+
+function Placeholder({ width, containerHeight, style }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        styles.root,
+        containerHeight ? { height: containerHeight } : null,
+      ]}
+    >
       <View
         style={[
-          styles.root,
-          containerHeight ? { height: containerHeight } : null,
+          styles.inner,
+          { width: width || 100, backgroundColor: colors.fog },
+          style,
         ]}
-      >
-        <View style={[styles.inner, { width: width || 100 }, style]} />
-      </View>
-    );
-  }
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -31,9 +36,8 @@ const styles = StyleSheet.create({
   },
   inner: {
     height: 8,
-    backgroundColor: colors.fog,
     borderRadius: 4,
   },
 });
 
-export default Placeholder;
+export default memo<Props>(Placeholder);

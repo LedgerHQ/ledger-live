@@ -1,22 +1,28 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import MigrateAccountsOverview from "../../screens/MigrateAccounts/01-Overview";
 import MigrateAccountsConnectDevice from "../../screens/MigrateAccounts/02-ConnectDevice";
 import MigrateAccountsProgress from "../../screens/MigrateAccounts/03-Progress";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "3";
 
 export default function MigrateAccountsFlowNavigator() {
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
     <Stack.Navigator
       screenOptions={{
-        ...closableStackNavigatorConfig,
+        ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
       }}
     >

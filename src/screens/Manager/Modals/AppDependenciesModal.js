@@ -6,10 +6,10 @@ import { Trans } from "react-i18next";
 import type { Action } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 
+import { useTheme } from "@react-navigation/native";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 import AppIcon from "../AppsList/AppIcon";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import InfoIcon from "../../../components/InfoIcon";
 import LinkIcon from "../../../icons/LinkIcon";
@@ -27,6 +27,7 @@ function AppDependenciesModal({
   dispatch: dispatchProps,
   onClose,
 }: Props) {
+  const { colors } = useTheme();
   const dispatch = useDispatch();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
 
@@ -68,11 +69,15 @@ function AppDependenciesModal({
         <>
           <View style={styles.imageSection}>
             <AppIcon style={styles.appIcons} icon={app.icon} />
-            <View style={styles.separator} />
+            <View
+              style={[styles.separator, { borderColor: colors.lightLive }]}
+            />
             <InfoIcon bg={colors.lightLive} size={30}>
               <LinkIcon color={colors.live} />
             </InfoIcon>
-            <View style={styles.separator} />
+            <View
+              style={[styles.separator, { borderColor: colors.lightLive }]}
+            />
             <AppIcon style={styles.appIcons} icon={dependencies[0].icon} />
           </View>
           <View style={styles.infoRow}>
@@ -82,13 +87,13 @@ function AppDependenciesModal({
                 values={{ dependency: dependencies[0].name }}
               />
             </LText>
-            <LText style={[styles.warnText, styles.marginTop]}>
+            <LText style={[styles.warnText, styles.marginTop]} color="grey">
               <Trans
                 i18nKey="AppAction.install.dependency.description_one"
                 values={{ dependency: dependencies[0].name, app: name }}
               />
             </LText>
-            <LText style={[styles.warnText, styles.marginTop]}>
+            <LText style={[styles.warnText, styles.marginTop]} color="grey">
               <Trans
                 i18nKey="AppAction.install.dependency.description_two"
                 values={{ dependency: dependencies[0].name, app: name }}
@@ -116,7 +121,6 @@ const styles = StyleSheet.create({
   separator: {
     flexBasis: 23,
     height: 1,
-    borderColor: colors.lightLive,
     borderWidth: 1,
     borderStyle: "dashed",
     borderRadius: 1,
@@ -124,12 +128,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: colors.darkBlue,
   },
   warnText: {
     textAlign: "center",
     fontSize: 13,
-    color: colors.grey,
     lineHeight: 16,
   },
   marginTop: {

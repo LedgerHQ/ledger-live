@@ -16,8 +16,8 @@ import invariant from "invariant";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -75,8 +75,9 @@ type RouteParams = {
 };
 
 export default function FreezeAmount({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  invariant(account, "account is required");
+  invariant(account && account.type === "Account", "account is required");
 
   const bridge = getAccountBridge(account, undefined);
 
@@ -212,7 +213,10 @@ export default function FreezeAmount({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="FreezeFunds" name="Amount" />
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
         <KeyboardView style={styles.container}>
           <View style={styles.topContainer}>
             <ToggleButton
@@ -224,7 +228,7 @@ export default function FreezeAmount({ navigation, route }: Props) {
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.root}>
               <TouchableOpacity onPress={openInfoModal} style={styles.info}>
-                <LText semiBold style={styles.infoLabel}>
+                <LText semiBold style={styles.infoLabel} color="grey">
                   <Trans i18nKey="freeze.amount.infoLabel" />
                 </LText>
                 <Info size={16} color={colors.grey} />
@@ -243,7 +247,8 @@ export default function FreezeAmount({ navigation, route }: Props) {
                   hasWarning={!!warning}
                 />
                 <LText
-                  style={[error ? styles.error : styles.warning]}
+                  style={[styles.error]}
+                  color={error ? "alert" : "orange"}
                   numberOfLines={2}
                 >
                   <TranslatedError error={error || warning} />
@@ -256,19 +261,18 @@ export default function FreezeAmount({ navigation, route }: Props) {
                       style={[
                         styles.amountRatioButton,
                         selectedRatio === value
-                          ? styles.amountRatioButtonActive
-                          : {},
+                          ? {
+                              backgroundColor: colors.live,
+                              borderColor: colors.live,
+                            }
+                          : { borderColor: colors.grey },
                       ]}
                       key={key}
                       onPress={() => onRatioPress(value)}
                     >
                       <LText
-                        style={[
-                          styles.amountRatioLabel,
-                          selectedRatio === value
-                            ? styles.amountRatioLabelActive
-                            : {},
-                        ]}
+                        style={[styles.amountRatioLabel]}
+                        color={selectedRatio === value ? "white" : "grey"}
                       >
                         {label}
                       </LText>
@@ -278,10 +282,10 @@ export default function FreezeAmount({ navigation, route }: Props) {
               )}
               <View style={styles.bottomWrapper}>
                 <View style={styles.available}>
-                  <LText semiBold style={styles.availableAmount}>
+                  <LText semiBold style={styles.availableAmount} color="grey">
                     <Trans i18nKey="freeze.amount.available" />
                   </LText>
-                  <LText semiBold style={styles.availableAmount}>
+                  <LText semiBold style={styles.availableAmount} color="grey">
                     <CurrencyUnitValue
                       showCode
                       unit={unit}
@@ -337,7 +341,6 @@ export default function FreezeAmount({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   topContainer: { paddingHorizontal: 32, flexShrink: 1 },
   container: {
@@ -356,11 +359,9 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     fontSize: 16,
     paddingVertical: 8,
-    color: colors.grey,
     marginBottom: 8,
   },
   availableAmount: {
-    color: colors.grey,
     marginHorizontal: 3,
   },
   availableRight: {
@@ -405,22 +406,14 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: colors.grey,
+
     paddingHorizontal: 10,
     marginHorizontal: 5,
-  },
-  amountRatioButtonActive: {
-    backgroundColor: colors.live,
-    borderColor: colors.live,
   },
   amountRatioLabel: {
     fontSize: 12,
     lineHeight: 20,
-    color: colors.grey,
     textAlign: "center",
-  },
-  amountRatioLabelActive: {
-    color: colors.white,
   },
   wrapper: {
     flexGrow: 1,
@@ -431,18 +424,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: { flexBasis: 75 },
   inputStyle: { flex: 1, flexShrink: 1, textAlign: "center" },
-  currency: {
-    color: colors.grey,
-    fontSize: 32,
-    paddingTop: 3,
-  },
   error: {
-    color: colors.alert,
-    fontSize: 14,
-    textAlign: "center",
-  },
-  warning: {
-    color: colors.orange,
     fontSize: 14,
     textAlign: "center",
   },
@@ -454,5 +436,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  infoLabel: { color: colors.grey, marginRight: 10 },
+  infoLabel: { marginRight: 10 },
 });

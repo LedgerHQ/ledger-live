@@ -7,7 +7,7 @@ import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { State, Action } from "@ledgerhq/live-common/lib/apps";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/lib/apps/react";
 import { Trans } from "react-i18next";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
 import Warning from "../../../icons/Warning";
@@ -55,15 +55,25 @@ const AppRow = ({
     name,
   ]);
 
+  const { colors } = useTheme();
+
   return (
     <View style={styles.root}>
-      <View style={styles.item}>
+      <View
+        style={[
+          styles.item,
+          {
+            backgroundColor: colors.card,
+            borderBottomColor: colors.lightFog,
+          },
+        ]}
+      >
         <AppIcon icon={icon} />
         <View style={styles.labelContainer}>
           <LText numberOfLines={1} bold>
             {name}
           </LText>
-          <LText numberOfLines={1} style={styles.versionText}>
+          <LText numberOfLines={1} style={styles.versionText} color="grey">
             {version}{" "}
             {isInstalled && !isInstalled.updated && (
               <Trans
@@ -88,6 +98,7 @@ const AppRow = ({
             <LText
               semiBold
               style={[styles.versionText, styles.sizeText, styles.warnText]}
+              color="grey"
             >
               <ByteSize value={bytes} deviceModel={state.deviceModel} />
             </LText>
@@ -99,6 +110,7 @@ const AppRow = ({
               styles.sizeText,
               notEnoughMemoryToInstall ? styles.warnText : {},
             ]}
+            color={notEnoughMemoryToInstall ? "lightOrange" : "grey"}
           >
             <ByteSize value={bytes} deviceModel={state.deviceModel} />
           </LText>
@@ -128,10 +140,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: colors.white,
     borderRadius: 0,
     height: 64,
-    borderBottomColor: colors.lightFog,
     borderBottomWidth: 1,
   },
   labelContainer: {
@@ -146,7 +156,6 @@ const styles = StyleSheet.create({
   versionText: {
     fontSize: 12,
     fontWeight: "bold",
-    color: colors.grey,
   },
   sizeText: {
     fontSize: 12,
@@ -154,7 +163,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   warnText: {
-    color: colors.lightOrange,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -169,10 +177,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: "hidden",
     paddingHorizontal: 10,
-  },
-  installedText: {
-    paddingLeft: 10,
-    color: colors.green,
   },
   appButton: {
     flexGrow: 1,

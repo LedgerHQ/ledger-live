@@ -1,7 +1,8 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import LendingSupplyAmount from "../../screens/Lending/SupplyFlow/01-Amount";
 import LendingSupplySummary from "../../screens/SendFunds/04-Summary";
@@ -9,15 +10,20 @@ import SelectDevice from "../../screens/SelectDevice";
 import LendingSupplyConnectDevice from "../../screens/ConnectDevice";
 import LendingSupplyValidationSuccess from "../../screens/Lending/SupplyFlow/03-ValidationSuccess";
 import LendingSupplyValidationError from "../../screens/Lending/SupplyFlow/03-ValidationError";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 const totalSteps = "4";
 
 export default function LendingSupplyFlowNavigator() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.LendingSupplyAmount}
         component={LendingSupplyAmount}

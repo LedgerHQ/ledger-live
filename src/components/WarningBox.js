@@ -2,8 +2,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, Text } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
-import colors, { rgba } from "../colors";
+import { rgba } from "../colors";
 import IconHelp from "../icons/Info";
 
 type Props = {
@@ -17,10 +18,19 @@ export default function WarningBox({
   onLearnMore,
   learnMoreKey,
 }: Props) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.root}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: rgba(colors.lightOrange, 0.1),
+          color: colors.lightOrange,
+        },
+      ]}
+    >
       <IconHelp color={colors.lightOrange} size={16} />
-      <Text style={styles.content}>
+      <Text style={[styles.content, { color: colors.lightOrange }]}>
         <LText fontSize={3}>{description}</LText>{" "}
         {onLearnMore && (
           <LText
@@ -42,13 +52,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: rgba(colors.lightOrange, 0.1),
-    color: colors.lightOrange,
     borderRadius: 4,
     alignItems: "center",
   },
   content: {
-    color: colors.lightOrange,
     flex: 1,
     margin: 10,
     marginLeft: 16,

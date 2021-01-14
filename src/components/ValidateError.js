@@ -1,12 +1,12 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 
+import { useTheme } from "@react-navigation/native";
 import GenericErrorView from "./GenericErrorView";
 import Button from "./Button";
 import NeedHelp from "./NeedHelp";
-import colors from "../colors";
 
 type Props = {
   error: Error,
@@ -14,42 +14,37 @@ type Props = {
   onRetry: null | (() => void),
 };
 
-class ValidateError extends PureComponent<Props> {
-  render() {
-    const { error, onClose, onRetry } = this.props;
-    return (
-      <View style={styles.root}>
-        <View style={styles.container}>
-          <GenericErrorView error={error} />
-          {onRetry ? (
-            <Button
-              event="SendErrorRetry"
-              title={<Trans i18nKey="send.validation.button.retry" />}
-              type="primary"
-              containerStyle={styles.button}
-              onPress={onRetry}
-            />
-          ) : null}
-          <Button
-            event="SendErrorClose"
-            title={<Trans i18nKey="common.close" />}
-            type="lightSecondary"
-            containerStyle={styles.button}
-            onPress={onClose}
-          />
-        </View>
-        <View style={styles.footer}>
-          <NeedHelp />
-        </View>
+function ValidateError({ error, onClose, onRetry }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <View style={styles.container}>
+        <GenericErrorView error={error} />
+        <Button
+          event="SendErrorRetry"
+          title={<Trans i18nKey="send.validation.button.retry" />}
+          type="primary"
+          containerStyle={styles.button}
+          onPress={onRetry}
+        />
+        <Button
+          event="SendErrorClose"
+          title={<Trans i18nKey="common.close" />}
+          type="lightSecondary"
+          containerStyle={styles.button}
+          onPress={onClose}
+        />
       </View>
-    );
-  }
+      <View style={[styles.footer, { borderColor: colors.lightFog }]}>
+        <NeedHelp />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   container: {
     flex: 1,
@@ -65,8 +60,7 @@ const styles = StyleSheet.create({
   footer: {
     padding: 20,
     borderTopWidth: 1,
-    borderColor: colors.lightFog,
   },
 });
 
-export default ValidateError;
+export default memo<Props>(ValidateError);

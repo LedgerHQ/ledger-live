@@ -3,10 +3,10 @@ import { StyleSheet, View } from "react-native";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import { Trans } from "react-i18next";
 
+import { useTheme } from "@react-navigation/native";
 import UpdateAllModal from "../Modals/UpdateAllModal";
 import LText from "../../../components/LText";
 import Touchable from "../../../components/Touchable";
-import colors from "../../../colors";
 import Info from "../../../icons/Info";
 import AppUpdateStepper from "./AppUpdateStepper";
 
@@ -23,6 +23,7 @@ const AppUpdateAll = ({
   dispatch,
   isModalOpened,
 }: Props) => {
+  const { colors } = useTheme();
   const { updateAllQueue } = state;
   const [modalOpen, setModalOpen] = useState(isModalOpened);
 
@@ -38,14 +39,22 @@ const AppUpdateAll = ({
     <View>
       <AppUpdateStepper state={state} />
       {appsToUpdate.length > 0 && updateAllQueue.length <= 0 && (
-        <View style={[styles.root]}>
+        <View
+          style={[
+            styles.root,
+            {
+              backgroundColor: colors.card,
+              borderBottomColor: colors.lightFog,
+            },
+          ]}
+        >
           <Touchable
             style={styles.infoLabel}
             activeOpacity={0.5}
             onPress={openModal}
             event="ManagerAppUpdateModalOpen"
           >
-            <LText semiBold style={styles.infoText}>
+            <LText semiBold style={styles.infoText} color="live">
               <Trans
                 i18nKey="AppAction.update.title"
                 count={appsToUpdate.length}
@@ -55,12 +64,12 @@ const AppUpdateAll = ({
             <Info size={17} color={colors.live} />
           </Touchable>
           <Touchable
-            style={styles.button}
+            style={[styles.button, { backgroundColor: colors.live }]}
             onPress={updateAll}
             event="ManagerAppUpdateAll"
             eventProperties={{ appsList }}
           >
-            <LText semiBold style={styles.buttonText}>
+            <LText semiBold style={[styles.buttonText, { color: "#FFF" }]}>
               <Trans i18nKey="AppAction.update.button" />
             </LText>
           </Touchable>
@@ -82,14 +91,12 @@ const styles = StyleSheet.create({
   root: {
     height: 60,
     width: "100%",
-    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 11,
     borderBottomWidth: 1,
-    borderBottomColor: colors.lightFog,
   },
   infoLabel: {
     flex: 1,
@@ -101,7 +108,6 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     lineHeight: 17,
-    color: colors.live,
     marginRight: 6,
   },
   button: {
@@ -111,11 +117,9 @@ const styles = StyleSheet.create({
     height: 38,
     paddingHorizontal: 20,
     borderRadius: 4,
-    backgroundColor: colors.live,
   },
   buttonText: {
     fontSize: 14,
-    color: colors.white,
   },
 });
 

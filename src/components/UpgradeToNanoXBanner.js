@@ -1,11 +1,11 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import { Trans } from "react-i18next";
-import colors from "../colors";
 
+import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import IconArrowRight from "../icons/ArrowRight";
 import Touchable from "./Touchable";
@@ -22,39 +22,36 @@ const hitSlop = {
   bottom: 16,
 };
 
-class UpgradeToNanoXBanner extends PureComponent<Props> {
-  render() {
-    const { action } = this.props;
+function UpgradeToNanoXBanner({ action }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.wrapper, { backgroundColor: colors.background }]}>
+      <NanoXVertical style={styles.icon} size={56} />
+      <View style={styles.textWrapper}>
+        <LText style={styles.text} color="grey">
+          <Trans
+            i18nKey="onboarding.stepLegacy.bannerDescription"
+            values={getDeviceModel("nanoX")}
+          />
+        </LText>
 
-    return (
-      <View style={styles.wrapper}>
-        <NanoXVertical style={styles.icon} size={56} />
-        <View style={styles.textWrapper}>
-          <LText style={styles.text}>
+        <Touchable
+          event="OnboardingLegacyBuy"
+          onPress={action || null}
+          style={styles.buyTouch}
+          hitSlop={hitSlop}
+        >
+          <LText semiBold style={[styles.subText]} color="live">
             <Trans
-              i18nKey="onboarding.stepLegacy.bannerDescription"
+              i18nKey="onboarding.stepLegacy.buy"
               values={getDeviceModel("nanoX")}
             />
           </LText>
-
-          <Touchable
-            event="OnboardingLegacyBuy"
-            onPress={action || null}
-            style={styles.buyTouch}
-            hitSlop={hitSlop}
-          >
-            <LText semiBold style={[styles.subText, styles.buy]}>
-              <Trans
-                i18nKey="onboarding.stepLegacy.buy"
-                values={getDeviceModel("nanoX")}
-              />
-            </LText>
-            <IconArrowRight size={16} color={colors.live} />
-          </Touchable>
-        </View>
+          <IconArrowRight size={16} color={colors.live} />
+        </Touchable>
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -62,7 +59,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingLeft: 0,
     borderRadius: 4,
-    backgroundColor: colors.lightGrey,
+
     flexDirection: "row",
     alignItems: "center",
   },
@@ -73,23 +70,18 @@ const styles = StyleSheet.create({
   textWrapper: {
     flex: 1,
   },
-  buy: {
-    color: colors.live,
-  },
   buyTouch: {
     flexDirection: "row",
     alignItems: "center",
   },
   subText: {
     fontSize: 14,
-    color: colors.grey,
   },
   text: {
     fontSize: 14,
-    color: colors.grey,
     lineHeight: 21,
     marginBottom: 4,
   },
 });
 
-export default UpgradeToNanoXBanner;
+export default memo<Props>(UpgradeToNanoXBanner);

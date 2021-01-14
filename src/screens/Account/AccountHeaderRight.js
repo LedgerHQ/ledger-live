@@ -2,16 +2,16 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { NavigatorName, ScreenName } from "../../const";
 import Touchable from "../../components/Touchable";
 import Wrench from "../../icons/Wrench";
-import colors from "../../colors";
 import { accountScreenSelector } from "../../reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 
 export default function AccountHeaderRight() {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));

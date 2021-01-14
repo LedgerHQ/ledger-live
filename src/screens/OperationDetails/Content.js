@@ -4,7 +4,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type {
   Account,
   Operation,
@@ -33,7 +33,6 @@ import { urls } from "../../config/urls";
 import Info from "../../icons/Info";
 import ExternalLink from "../../icons/ExternalLink";
 import { currencySettingsForAccountSelector } from "../../reducers/settings";
-import colors from "../../colors";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
@@ -46,13 +45,17 @@ type HelpLinkProps = {
   onPress: () => ?Promise<any>,
 };
 
-const HelpLink = ({ title, event, onPress }: HelpLinkProps) => (
-  <Touchable onPress={onPress} event={event} style={styles.helpLinkRoot}>
-    <ExternalLink size={12} color={colors.smoke} />
-    <LText style={styles.helpLinkText}>{title}</LText>
-  </Touchable>
-);
-
+const HelpLink = ({ title, event, onPress }: HelpLinkProps) => {
+  const { colors } = useTheme();
+  return (
+    <Touchable onPress={onPress} event={event} style={styles.helpLinkRoot}>
+      <ExternalLink size={12} color={colors.smoke} />
+      <LText style={styles.helpLinkText} color="smoke">
+        {title}
+      </LText>
+    </Touchable>
+  );
+};
 type Props = {
   account: AccountLike,
   parentAccount: ?Account,
@@ -60,6 +63,7 @@ type Props = {
 };
 
 export default function Content({ account, parentAccount, operation }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
@@ -150,7 +154,7 @@ export default function Content({ account, parentAccount, operation }: Props) {
         )}
 
         {hasFailed || amount.isZero() ? null : (
-          <LText semiBold style={styles.counterValue}>
+          <LText semiBold style={styles.counterValue} color="smoke">
             <CounterValue
               showCode
               alwaysShowSign
@@ -199,7 +203,7 @@ export default function Content({ account, parentAccount, operation }: Props) {
       {subOperations.length > 0 && account.type === "Account" && (
         <>
           <View style={[sectionStyles.wrapper, styles.infoContainer]}>
-            <LText style={styles.sectionSeparator} semiBold>
+            <LText color="grey" semiBold>
               <Trans
                 i18nKey={
                   isToken
@@ -309,10 +313,10 @@ export default function Content({ account, parentAccount, operation }: Props) {
                   value={operation.fee}
                 />
               </LText>
-              <LText style={styles.feeCounterValue} semiBold>
+              <LText style={styles.feeCounterValue} color="smoke" semiBold>
                 ≈
               </LText>
-              <LText style={styles.feeCounterValue} semiBold>
+              <LText style={styles.feeCounterValue} color="smoke" semiBold>
                 <CounterValue
                   showCode
                   disableRounding={true}
@@ -405,24 +409,16 @@ const styles = StyleSheet.create({
   feeValueContainer: {
     flexDirection: "row",
   },
-  feeSeparator: {
-    marginHorizontal: 16,
-    color: colors.smoke,
-  },
   feeCounterValue: {
     marginLeft: 16,
-    color: colors.smoke,
   },
-
   currencyUnitValue: {
     paddingHorizontal: 8,
     fontSize: 20,
     marginBottom: 8,
-    color: colors.smoke,
   },
   counterValue: {
     fontSize: 14,
-    color: colors.smoke,
     marginBottom: 16,
   },
   confirmationContainer: {
@@ -440,9 +436,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  sectionSeparator: {
-    color: colors.grey,
-  },
   bulletPoint: {
     borderRadius: 50,
     height: 6,
@@ -459,7 +452,5 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 12,
     textDecorationLine: "underline",
-    color: colors.smoke,
   },
-  infoLinkWrapper: {},
 });

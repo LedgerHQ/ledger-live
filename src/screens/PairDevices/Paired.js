@@ -5,11 +5,10 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useSelector } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
 import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import InfoIcon from "../../components/InfoIcon";
@@ -30,6 +29,7 @@ export default function Paired({
   onContinue: onContinuewProps,
   genuine,
 }: Props) {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const { deviceId, deviceName } = device;
   const name = useSelector(deviceNameByDeviceIdSelectorCreator(deviceId));
@@ -62,7 +62,7 @@ export default function Paired({
             values={getDeviceModel("nanoX")}
           />
         </LText>
-        <LText style={styles.description}>
+        <LText style={styles.description} color="smoke">
           <Trans
             i18nKey="PairDevices.Paired.desc"
             values={getDeviceModel("nanoX")}
@@ -104,13 +104,11 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 32,
     fontSize: 18,
-    color: colors.darkBlue,
   },
   description: {
     marginTop: 16,
     marginBottom: 40,
     textAlign: "center",
     paddingHorizontal: 40,
-    color: colors.smoke,
   },
 });

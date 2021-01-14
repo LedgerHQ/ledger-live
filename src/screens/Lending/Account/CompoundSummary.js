@@ -10,7 +10,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 import { listCurrentRates } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
 
 import { findCompoundToken } from "@ledgerhq/live-common/lib/currencies";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import InfoItem from "../../../components/BalanceSummaryInfoItem";
 import InfoModal from "../../../modals/Info";
@@ -31,6 +31,7 @@ export default function AccountBalanceSummaryFooter({
   compoundSummary,
 }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const unit = getAccountUnit(account);
   const { accruedInterests, totalSupplied, allTimeEarned } = compoundSummary;
@@ -82,7 +83,7 @@ export default function AccountBalanceSummaryFooter({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={styles.root}
+      style={[styles.root, { borderTopColor: colors.lightFog }]}
     >
       <InfoModal
         isOpened={!!infoName}
@@ -136,7 +137,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
     paddingTop: 16,
     overflow: "visible",
   },

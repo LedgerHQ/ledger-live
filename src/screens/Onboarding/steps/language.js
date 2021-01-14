@@ -10,9 +10,9 @@ import {
 } from "react-native";
 import { Trans } from "react-i18next";
 import i18next from "i18next";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import CheckBox from "../../../components/CheckBox";
 import { useLocale } from "../../../context/Locale";
@@ -29,6 +29,7 @@ const languages = {
 };
 
 function OnboardingStepLanguage({ navigation }: *) {
+  const { colors } = useTheme();
   const next = useCallback(() => {
     navigation.goBack();
   }, [navigation]);

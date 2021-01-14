@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary_dark">#ffffff</color>
+    <color name="background_light">#fafafa</color>
+    <color name="background_dark">#131E28</color>
 </resources>

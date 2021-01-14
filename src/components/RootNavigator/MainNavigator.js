@@ -1,24 +1,38 @@
 // @flow
 import React from "react";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../const";
 import Portfolio, { PortfolioTabIcon } from "../../screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../../screens/Transfer";
 import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import SettingsNavigator from "./SettingsNavigator";
-import styles from "../../navigation/styles";
 import TabIcon from "../TabIcon";
-import colors from "../../colors";
 import AccountsIcon from "../../icons/Accounts";
 import SettingsIcon from "../../icons/Settings";
 
 import Tab from "./CustomBlockRouterNavigator";
 
-export default function MainNavigator() {
+type RouteParams = {
+  hideTabNavigation?: boolean,
+};
+export default function MainNavigator({
+  route: { params },
+}: {
+  route: { params: RouteParams },
+}) {
+  const { colors } = useTheme();
+  const { hideTabNavigation } = params || {};
   return (
     <Tab.Navigator
       tabBarOptions={{
-        style: styles.bottomTabBar,
+        style: [
+          {
+            borderTopColor: colors.lightFog,
+            backgroundColor: colors.card,
+          },
+          hideTabNavigation ? { display: "none" } : {},
+        ],
         showLabel: false,
         activeTintColor: colors.live,
       }}

@@ -5,7 +5,6 @@ import { Trans } from "react-i18next";
 import { Image, View, StyleSheet } from "react-native";
 import BottomModal from "../components/BottomModal";
 import Button from "../components/Button";
-import colors from "../colors";
 import BulletList, {
   BulletChevron,
   BulletItemText,
@@ -39,13 +38,13 @@ export default function PasslockDisclaimerModal({
           Bullet={BulletChevron}
           itemStyle={styles.item}
           list={[
-            <BulletItemText style={styles.text}>
+            <BulletItemText style={styles.text} color="grey">
               <Trans i18nKey="onboarding.stepPassword.modal.step1" />
             </BulletItemText>,
-            <BulletItemText style={styles.text}>
+            <BulletItemText style={styles.text} color="grey">
               <Trans i18nKey="onboarding.stepPassword.modal.step2" />
             </BulletItemText>,
-            <BulletItemText style={styles.text}>
+            <BulletItemText style={styles.text} color="grey">
               <Trans i18nKey="onboarding.stepPassword.modal.step3" />
             </BulletItemText>,
           ]}
@@ -87,7 +86,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     lineHeight: 21,
-    color: colors.grey,
   },
-  textBlue: { color: colors.darkBlue },
 });

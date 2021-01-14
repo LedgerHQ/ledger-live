@@ -8,8 +8,8 @@ import * as Animatable from "react-native-animatable";
 
 import { updateAllProgress } from "@ledgerhq/live-common/lib/apps/logic";
 
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
-import colors from "../../../colors";
 import ProgressBar from "../../../components/ProgressBar";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
@@ -21,6 +21,7 @@ type Props = {
 };
 
 const AppUpdateStepper = ({ state }: Props) => {
+  const { colors } = useTheme();
   const { updateAllQueue } = state;
   const updateProgress = updateAllProgress(state);
 
@@ -33,10 +34,13 @@ const AppUpdateStepper = ({ state }: Props) => {
       animation="fadeIn"
       useNativeDriver
       duration={400}
-      style={styles.root}
+      style={[
+        styles.root,
+        { backgroundColor: colors.card, borderBottomColor: colors.lightFog },
+      ]}
     >
       <View>
-        <LText bold style={styles.stepperText}>
+        <LText bold style={styles.stepperText} color="live">
           <Trans
             i18nKey="AppAction.update.title"
             count={count}
@@ -45,13 +49,13 @@ const AppUpdateStepper = ({ state }: Props) => {
             }}
           />
         </LText>
-        <LText style={styles.infoText}>
+        <LText style={styles.infoText} color="grey">
           <Trans semiBold i18nKey="AppAction.update.updateWarn" />
         </LText>
       </View>
       <View style={styles.progressSection}>
         <View style={styles.progress}>
-          <LText semiBold style={styles.progressText}>
+          <LText semiBold style={styles.progressText} color="live">
             <Trans i18nKey="AppAction.update.progress" />
           </LText>
           <View style={styles.progressBar}>
@@ -71,23 +75,19 @@ const styles = StyleSheet.create({
   root: {
     height: 64,
     width,
-    backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: colors.lightFog,
   },
   infoText: {
     flex: 1,
     fontSize: 12,
-    color: colors.grey,
     marginRight: 6,
   },
   stepperText: {
-    color: colors.live,
     fontSize: 14,
   },
   progress: {
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     flexBasis: "auto",
     fontSize: 13,
     lineHeight: 20,
-    color: colors.live,
     paddingVertical: 4,
     textAlign: "right",
     width: "100%",

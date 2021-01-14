@@ -6,7 +6,7 @@ import IconFa from "react-native-vector-icons/dist/FontAwesome";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import { NavigatorName } from "../../const";
 import BottomModal from "../../components/BottomModal";
 import BottomModalChoice from "../../components/BottomModalChoice";
@@ -20,14 +20,12 @@ type Props = {
 
 const forceInset = { bottom: "always" };
 
-const IconPlus = () => <Icon name="plus" color={colors.live} size={18} />;
-const IconQr = () => <IconFa name="qrcode" color={colors.live} size={18} />;
-
 export default function AddAccountsModal({
   navigation,
   onClose,
   isOpened,
 }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -40,6 +38,9 @@ export default function AddAccountsModal({
     navigation.navigate(NavigatorName.ImportAccounts);
     onClose();
   }, [navigation, onClose]);
+
+  const IconPlus = () => <Icon name="plus" color={colors.live} size={18} />;
+  const IconQr = () => <IconFa name="qrcode" color={colors.live} size={18} />;
 
   return (
     <BottomModal id="AddAccountsModal" isOpened={isOpened} onClose={onClose}>

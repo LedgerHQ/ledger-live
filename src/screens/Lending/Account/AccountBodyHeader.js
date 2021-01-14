@@ -4,10 +4,10 @@ import { View, StyleSheet, FlatList } from "react-native";
 import type { TokenAccount, Account } from "@ledgerhq/live-common/lib/types";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
 import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import ActiveAccountRow from "../Dashboard/ActiveAccountRow";
 import ClosedLoansRow from "../ClosedLoans/ClosedLoansRow";
-import colors from "../../../colors";
 
 type Props = {
   account: TokenAccount,
@@ -20,6 +20,7 @@ export default function AccountBodyHeader({
   parentAccount,
   compoundSummary,
 }: Props) {
+  const { colors } = useTheme();
   const { closed, opened } = compoundSummary;
 
   const renderClosedRow = useCallback(
@@ -35,7 +36,7 @@ export default function AccountBodyHeader({
           <LText semiBold style={styles.title}>
             <Trans i18nKey="transfer.lending.account.openLoans" />
           </LText>
-          <View style={styles.container}>
+          <View style={[styles.container, { backgroundColor: colors.white }]}>
             {opened.map((item, index) => (
               <ActiveAccountRow
                 // $FlowFixMe
@@ -59,13 +60,20 @@ export default function AccountBodyHeader({
             <Trans i18nKey="transfer.lending.account.closedLoans" />
           </LText>
           <FlatList
-            style={styles.container}
+            style={[styles.container, { backgroundColor: colors.white }]}
             data={closed}
             renderItem={renderClosedRow}
             keyExtractor={(item, index) =>
               `ClosedLoans-${item.endDate.toDateString()}${index}`
             }
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ItemSeparatorComponent={() => (
+              <View
+                style={[
+                  styles.separator,
+                  { backgroundColor: colors.background },
+                ]}
+              />
+            )}
           />
         </>
       )}
@@ -80,13 +88,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   container: {
-    backgroundColor: colors.white,
     borderRadius: 4,
   },
   separator: {
     width: "100%",
     height: 1,
-    backgroundColor: colors.lightGrey,
   },
   title: {
     paddingVertical: 16,

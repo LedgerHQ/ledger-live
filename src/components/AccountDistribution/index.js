@@ -7,7 +7,6 @@ import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import LText from "../LText";
 import Row from "./Row";
-import colors from "../../colors";
 
 export default function AccountDistribution({
   accounts,
@@ -51,7 +50,6 @@ const styles = StyleSheet.create({
   distributionTitle: {
     fontSize: 16,
     lineHeight: 24,
-    color: colors.darkBlue,
     marginLeft: 16,
     marginTop: 8,
     marginBottom: 8,

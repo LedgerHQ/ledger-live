@@ -1,12 +1,12 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { getDeviceModel } from "@ledgerhq/devices";
 
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import Rounded from "../Rounded";
 import LText from "../LText";
 
@@ -14,22 +14,21 @@ type Props = {
   navigation: *,
 };
 
-class ScanningFooter extends PureComponent<Props> {
-  render() {
-    return (
-      <View style={styles.root}>
-        <Rounded bg={colors.pillActiveBackground}>
-          <Icon name="bluetooth" color={colors.live} size={28} />
-        </Rounded>
-        <LText style={styles.text}>
-          <Trans
-            i18nKey="SelectDevice.headerDescription"
-            values={getDeviceModel("nanoX")}
-          />
-        </LText>
-      </View>
-    );
-  }
+function ScanningFooter() {
+  const { colors } = useTheme();
+  return (
+    <View style={styles.root}>
+      <Rounded bg={colors.pillActiveBackground}>
+        <Icon name="bluetooth" color={colors.live} size={28} />
+      </Rounded>
+      <LText style={styles.text} color="smoke">
+        <Trans
+          i18nKey="SelectDevice.headerDescription"
+          values={getDeviceModel("nanoX")}
+        />
+      </LText>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -41,11 +40,10 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 24,
-    color: colors.smoke,
     fontSize: 14,
     lineHeight: 21,
     textAlign: "center",
   },
 });
 
-export default ScanningFooter;
+export default memo<Props>(ScanningFooter);

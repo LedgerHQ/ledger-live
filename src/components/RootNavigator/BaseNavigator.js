@@ -1,7 +1,8 @@
 // @flow
-import React from "react";
+import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../const";
 import * as families from "../../families";
 import OperationDetails, {
@@ -41,10 +42,9 @@ import LendingInfoNavigator from "./LendingInfoNavigator";
 import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
 import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
 import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
-import { closableStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
-import colors from "../../colors";
 import styles from "../../navigation/styles";
 import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
@@ -53,9 +53,13 @@ import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 
 export default function BaseNavigator() {
   const { t } = useTranslation();
-
+  const { colors } = useTheme();
+  const stackNavigationConfig = useMemo(
+    () => getStackNavigatorConfig(colors, true),
+    [colors],
+  );
   return (
-    <Stack.Navigator mode="modal" screenOptions={closableStackNavigatorConfig}>
+    <Stack.Navigator mode="modal" screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={NavigatorName.Main}
         component={Main}
@@ -138,7 +142,7 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Exchange}
         component={ExchangeNavigator}
-        options={{ headerLeft: null }}
+        options={{ headerStyle: styles.headerNoShadow, headerLeft: null }}
       />
       <Stack.Screen
         name={NavigatorName.ExchangeBuyFlow}
@@ -201,16 +205,14 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={ScreenName.PairDevices}
         component={PairDevices}
-        options={({ navigation, route }) => {
-          return {
-            title: null,
-            headerRight: () => (
-              <ErrorHeaderInfo route={route} navigation={navigation} />
-            ),
-            headerShown: true,
-            headerStyle: styles.headerNoShadow,
-          };
-        }}
+        options={({ navigation, route }) => ({
+          title: null,
+          headerRight: () => (
+            <ErrorHeaderInfo route={route} navigation={navigation} />
+          ),
+          headerShown: true,
+          headerStyle: styles.headerNoShadow,
+        })}
       />
       <Stack.Screen
         name={ScreenName.EditDeviceName}
@@ -239,7 +241,7 @@ export default function BaseNavigator() {
         name={ScreenName.Distribution}
         component={Distribution}
         options={{
-          ...closableStackNavigatorConfig,
+          ...stackNavigationConfig,
           title: t("distribution.header"),
           headerLeft: null,
         }}

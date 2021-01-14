@@ -4,13 +4,14 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 
 import { Trans } from "react-i18next";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../LText";
 import USBIcon from "../../icons/USB";
 
 export default function USBEmpty({ usbOnly }: { usbOnly: boolean }) {
+  const { colors } = useTheme();
   return (
-    <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.lightLive }]}>
       <View style={[styles.iconContainer, { backgroundColor: colors.white }]}>
         <USBIcon width={6} height={16} />
       </View>
@@ -33,10 +34,7 @@ const styles = StyleSheet.create({
     padding: 16,
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: colors.lightLive,
     borderRadius: 4,
-    borderWidth: 1,
-    borderColor: colors.lightLive,
   },
   text: {
     fontSize: 13,

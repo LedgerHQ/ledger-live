@@ -3,15 +3,18 @@
 import { View, StyleSheet } from "react-native";
 import React, { PureComponent } from "react";
 
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import Spinning from "../../components/Spinning";
 
-export const PendingSpinner = () => (
-  <Spinning>
-    <LiveLogo color={colors.fog} size={32} />
-  </Spinning>
-);
+export const PendingSpinner = () => {
+  const { colors } = useTheme();
+  return (
+    <Spinning>
+      <LiveLogo color={colors.grey} size={32} />
+    </Spinning>
+  );
+};
 
 class PendingContainer extends PureComponent<*> {
   render() {

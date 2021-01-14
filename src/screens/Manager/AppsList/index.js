@@ -2,8 +2,8 @@ import React, { useCallback, memo } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { State } from "@ledgerhq/live-common/lib/apps";
+import { useTheme } from "@react-navigation/native";
 import AppRow from "./AppRow";
-import colors from "../../../colors";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 
 type Props = {
@@ -20,9 +20,7 @@ type Props = {
 
 const { height } = getWindowDimensions();
 
-const renderRow = ({ item }: { item: * }) => {
-  return <AppRow {...item} />;
-};
+const renderRow = ({ item }: { item: * }) => <AppRow {...item} />;
 
 const AppsList = ({
   apps,
@@ -36,6 +34,7 @@ const AppsList = ({
   isInstalledView,
 }: Props) => {
   const viewHeight = active ? "auto" : height - 267;
+  const { colors } = useTheme();
 
   const getItem = useCallback(
     (data, index) => ({
@@ -63,7 +62,7 @@ const AppsList = ({
 
   if (!apps || apps.length <= 0)
     return (
-      <View style={styles.renderNoResult}>
+      <View style={[styles.renderNoResult, { backgroundColor: colors.card }]}>
         {renderNoResults && renderNoResults()}
       </View>
     );
@@ -94,7 +93,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: colors.white,
   },
 });
 

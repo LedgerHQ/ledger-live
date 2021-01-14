@@ -1,12 +1,13 @@
 /* @flow */
 import React, { useCallback, useState } from "react";
-import { Switch, Alert } from "react-native";
+import { Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { setPrivacyBiometrics } from "../../../actions/settings";
 import { privacySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import { useBiometricAuth } from "../../../components/RequestBiometricAuth";
+import Switch from "../../../components/Switch";
 
 type Props = {
   iconLeft?: any,

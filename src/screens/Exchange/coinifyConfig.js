@@ -17,9 +17,8 @@ const supportedCurrenciesIds = {
   sell: ["bitcoin"],
 };
 
-export const getSupportedCurrencies = (mode: "buy" | "sell" = "buy") => {
-  return supportedCurrenciesIds[mode];
-};
+export const getSupportedCurrencies = (mode: "buy" | "sell" = "buy") =>
+  supportedCurrenciesIds[mode];
 
 const config = {
   sandbox: {

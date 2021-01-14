@@ -16,8 +16,8 @@ import {
   SR_MAX_VOTES,
   formatVotes,
 } from "@ledgerhq/live-common/lib/families/tron/react";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import colors from "../../../colors";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
@@ -43,6 +43,7 @@ type Props = {
 };
 
 export default function VoteCast({ route, navigation }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const bridge = getAccountBridge(account, undefined);
 
@@ -177,7 +178,10 @@ export default function VoteCast({ route, navigation }: Props) {
   return (
     <>
       <TrackScreen category="Vote" name="VoteCast" />
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
         <ScrollView style={[styles.root]}>
           {formattedVotes.map((vote, i) => (
             <VoteRow
@@ -192,8 +196,11 @@ export default function VoteCast({ route, navigation }: Props) {
           ))}
           {votes.length < SR_MAX_VOTES ? (
             <View style={styles.addMoreVotesContainer}>
-              <TouchableOpacity onPress={onBack} style={styles.addMoreVotes}>
-                <LText semiBold style={styles.addMoreVotesLabel}>
+              <TouchableOpacity
+                onPress={onBack}
+                style={[styles.addMoreVotes, { backgroundColor: colors.white }]}
+              >
+                <LText semiBold style={styles.addMoreVotesLabel} color="live">
                   <Trans i18nKey="vote.castVotes.addMoreVotes" />
                 </LText>
                 <ArrowRight size={16} color={colors.live} />
@@ -201,20 +208,26 @@ export default function VoteCast({ route, navigation }: Props) {
             </View>
           ) : null}
         </ScrollView>
-        <View style={styles.bottomWrapper}>
-          <View style={styles.available}>
+        <View
+          style={[
+            styles.bottomWrapper,
+            { backgroundColor: colors.white, borderTopColor: colors.lightGrey },
+          ]}
+        >
+          <View style={[styles.available]}>
             {votesRemaining <= 0 ? (
               <>
                 <Check size={16} color={colors.success} />
                 <LText
                   semiBold
                   style={[styles.availableAmount, styles.votesSuccess]}
+                  color="success"
                 >
                   <Trans i18nKey="vote.castVotes.allVotesUsed" />
                 </LText>
               </>
             ) : (
-              <LText style={styles.availableAmount}>
+              <LText style={styles.availableAmount} color="grey">
                 <Trans
                   i18nKey="vote.castVotes.votesRemaining"
                   values={{ total: votesRemaining }}
@@ -274,7 +287,6 @@ export default function VoteCast({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   topContainer: { paddingHorizontal: 32 },
   bottomWrapper: {
@@ -282,9 +294,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-end",
     padding: 16,
-    backgroundColor: colors.white,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.lightGrey,
   },
   button: {
     flex: 1,
@@ -306,11 +316,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     fontSize: 16,
     paddingVertical: 8,
-    color: colors.grey,
+
     marginBottom: 8,
   },
   availableAmount: {
-    color: colors.darkBlue,
     marginHorizontal: 3,
   },
   addMoreVotesContainer: { paddingHorizontal: 16 },
@@ -318,12 +327,12 @@ const styles = StyleSheet.create({
     width: "100%",
     padding: 16,
     borderRadius: 4,
-    backgroundColor: colors.white,
+
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 5,
   },
-  addMoreVotesLabel: { color: colors.live, fontSize: 16 },
-  votesSuccess: { color: colors.success, marginLeft: 10 },
+  addMoreVotesLabel: { fontSize: 16 },
+  votesSuccess: { marginLeft: 10 },
 });

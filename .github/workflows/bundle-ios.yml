@@ -1,5 +1,15 @@
 name: bundle ios
-on: pull_request
+on:
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: 'Owner?'
+        required: true
+        default: 'LedgerHQ'
+      branch:
+        description: 'Branch?'
+        required: true
+        default: 'develop'
 
 jobs:
   bundle-ipa:
@@ -24,8 +34,8 @@ jobs:
         if: github.event_name == 'pull_request'
       - uses: actions/checkout@v2
         with:
-          ref: ${{github.event.pull_request.head.ref}}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
+          ref: ${{github.event.inputs.branch}}
+          repository: ${{github.event.inputs.owner}}/ledger-live-mobile
       - uses: actions/setup-node@main
         with:
           node-version: 12.x
@@ -50,7 +60,7 @@ jobs:
         uses: ./.github/actions/change-product-name
       - name: Get short SHA
         id: slug
-        run: echo "::set-output name=sha8::${GITHUB_SHA:0:7}"
+        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
       - name: make local version
         run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
       - name: push APP_NAME to .env.adhoc
@@ -68,7 +78,7 @@ jobs:
           CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
           DEVELOPER_TEAM_ID: ${{ secrets.DEVELOPER_TEAM_ID }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          TOKEN: ${{ secrets.TEAM_LIVE_ACCESS_TOKEN }}
+          TOKEN: ${{ secrets.GIT_REPO_TOKEN }}
         run: |
           yarn ios:ci
       - uses: ledgerhq/actions/get-package-infos@v2.0.0

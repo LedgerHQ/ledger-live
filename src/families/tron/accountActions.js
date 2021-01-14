@@ -17,10 +17,9 @@ import VoteIcon from "../../icons/Vote";
 import ClockIcon from "../../icons/Clock";
 import LText from "../../components/LText";
 import DateFromNow from "../../components/DateFromNow";
-import colors from "../../colors";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({ account }: { account: Account }) => {
+const getActions = ({ account, colors }: { account: Account }) => {
   if (!account.tronResources) return null;
 
   const {
@@ -86,9 +85,9 @@ const getActions = ({ account }: { account: Account }) => {
       description: <Trans i18nKey="tron.manage.unfreeze.description" />,
       Icon: UnfreezeIcon,
       extra: !canUnfreeze && effectiveTimeToUnfreeze < Infinity && (
-        <View style={styles.timeWarn}>
+        <View style={[styles.timeWarn, { backgroundColor: colors.lightFog }]}>
           <ClockIcon color={colors.grey} size={16} />
-          <LText style={styles.timeLabel} semiBold>
+          <LText style={styles.timeLabel} semiBold color="grey">
             <DateFromNow date={effectiveTimeToUnfreeze} />
           </LText>
         </View>
@@ -116,14 +115,12 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "flex-end",
     borderRadius: 4,
-    backgroundColor: colors.lightFog,
     padding: 8,
   },
   timeLabel: {
     marginLeft: 8,
     fontSize: 12,
     lineHeight: 16,
-    color: colors.grey,
   },
 });
 

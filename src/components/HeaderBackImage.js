@@ -1,10 +1,11 @@
 /* @flow */
 import React from "react";
 import { View, Platform, StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import ArrowLeft from "../icons/ArrowLeft";
-import colors from "../colors";
 
 export default function HeaderBackImage() {
+  const { colors } = useTheme();
   return (
     <View style={styles.root}>
       <ArrowLeft size={16} color={colors.grey} />

@@ -6,13 +6,16 @@ import { Text, StyleSheet } from "react-native";
 export default class HeaderRightText extends Component<{ children: * }> {
   render() {
     const { children } = this.props;
-    return <Text style={styles.text}>{children}</Text>;
+    return (
+      <Text style={styles.text} color="white">
+        {children}
+      </Text>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   text: {
-    color: "white",
     paddingHorizontal: 10,
   },
 });

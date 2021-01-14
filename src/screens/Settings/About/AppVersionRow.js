@@ -6,7 +6,6 @@ import { View, StyleSheet } from "react-native";
 import cleanBuildVersion from "../../../logic/cleanBuildVersion";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
-import colors from "../../../colors";
 
 class AppVersionRow extends PureComponent<*> {
   render() {
@@ -19,7 +18,7 @@ class AppVersionRow extends PureComponent<*> {
         title={<Trans i18nKey="settings.about.appVersion" />}
       >
         <View style={styles.inner}>
-          <LText semiBold style={styles.versionText}>
+          <LText semiBold style={styles.versionText} color="grey">
             {version}
           </LText>
         </View>
@@ -33,7 +32,6 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   versionText: {
-    color: colors.grey,
     fontSize: 14,
   },
 });

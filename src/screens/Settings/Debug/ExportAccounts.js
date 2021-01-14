@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { StyleSheet, Dimensions } from "react-native";
+import { StyleSheet, Dimensions, View } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import VersionNumber from "react-native-version-number";
 import { createStructuredSelector } from "reselect";
@@ -74,7 +74,9 @@ class ExportAccounts extends PureComponent<Props, State> {
 
     return (
       <NavigationScrollView contentContainerStyle={styles.root}>
-        <QRCode size={size} value={this.chunks[frame]} />
+        <View style={styles.qrContainer}>
+          <QRCode size={size} value={this.chunks[frame]} />
+        </View>
         <LText style={styles.subText}>
           {frame + 1}
           {" / "}
@@ -96,6 +98,10 @@ const styles = StyleSheet.create({
   root: {
     padding: 16,
     alignItems: "center",
+  },
+  qrContainer: {
+    backgroundColor: "#FFF",
+    padding: 5,
   },
   subText: {
     paddingTop: 32,

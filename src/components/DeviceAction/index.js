@@ -5,7 +5,7 @@ import type {
   Device,
 } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import {
@@ -38,6 +38,8 @@ export default function DeviceAction<R, H, P>({
   device: selectedDevice,
   onResult,
 }: Props<R, H, P>) {
+  const { colors, dark } = useTheme();
+  const theme = dark ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation();
   const status = action.useHook(selectedDevice, request);
@@ -77,6 +79,8 @@ export default function DeviceAction<R, H, P>({
       appName: appAndVersion.name,
       passWarning,
       navigation,
+      colors,
+      theme,
     });
   }
 
@@ -84,6 +88,8 @@ export default function DeviceAction<R, H, P>({
     return renderRequestQuitApp({
       t,
       device: selectedDevice,
+      colors,
+      theme,
     });
   }
 
@@ -93,17 +99,25 @@ export default function DeviceAction<R, H, P>({
       t,
       navigation,
       appName,
+      colors,
+      theme,
     });
   }
 
   if (allowManagerRequestedWording) {
     const wording = allowManagerRequestedWording;
-    return renderAllowManager({ t, device: selectedDevice, wording });
+    return renderAllowManager({
+      t,
+      device: selectedDevice,
+      wording,
+      colors,
+      theme,
+    });
   }
 
   // FIXME move out of here, this shouldn't be here.
   if (initSwapRequested && !initSwapResult && !initSwapError) {
-    return renderConfirmSwap({ t, device: selectedDevice });
+    return renderConfirmSwap({ t, device: selectedDevice, colors, theme });
   }
 
   if (initSellRequested && !initSellResult && !initSellError) {
@@ -121,6 +135,8 @@ export default function DeviceAction<R, H, P>({
       // $FlowFixMe
       tokenContext: request?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
+      colors,
+      theme,
     });
   }
 
@@ -129,6 +145,8 @@ export default function DeviceAction<R, H, P>({
       t,
       onRetry,
       accountName: inWrongDeviceForAccount.accountName,
+      colors,
+      theme,
     });
   }
 
@@ -137,6 +155,8 @@ export default function DeviceAction<R, H, P>({
       t,
       error,
       onRetry,
+      colors,
+      theme,
     });
   }
 
@@ -145,15 +165,17 @@ export default function DeviceAction<R, H, P>({
       t,
       device: selectedDevice,
       unresponsive,
+      colors,
+      theme,
     });
   }
 
   if (isLoading || (allowOpeningGranted && !appAndVersion)) {
-    return renderLoading({ t });
+    return renderLoading({ t, colors, theme });
   }
 
   if (deviceInfo && deviceInfo.isBootloader) {
-    return renderBootloaderStep({ t });
+    return renderBootloaderStep({ t, colors, theme });
   }
 
   if (request && device && deviceSignatureRequested) {
@@ -205,6 +227,8 @@ export default function DeviceAction<R, H, P>({
               percentage: (deviceStreamingProgress * 100).toFixed(0) + "%",
             })
           : t("send.verification.streaming.inaccurate"),
+      colors,
+      theme,
     });
   }
 

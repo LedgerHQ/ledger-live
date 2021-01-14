@@ -10,8 +10,8 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
 import { useSelector } from "react-redux";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../reducers/accounts";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -39,6 +39,7 @@ const defaultParams = {
 };
 
 function SignSummary({ navigation, route: initialRoute }: Props) {
+  const { colors } = useTheme();
   const route = {
     ...initialRoute,
     params: { ...defaultParams, ...initialRoute.params },
@@ -57,11 +58,19 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
   }, [navigateToNext]);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="SignMessage" name="Summary" />
       <View style={styles.body}>
         <View style={styles.fromContainer}>
-          <View style={styles.iconContainer}>
+          <View
+            style={[
+              styles.iconContainer,
+              { backgroundColor: colors.lightLive },
+            ]}
+          >
             <WalletIcon color={colors.live} size={16} />
           </View>
           <View style={styles.fromInnerContainer}>
@@ -81,7 +90,9 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
             </View>
           </View>
         </View>
-        <View style={styles.separator} />
+        <View
+          style={[styles.separator, { backgroundColor: colors.separator }]}
+        />
         <ScrollView style={styles.scrollContainer}>
           <LText style={styles.message}>
             <Trans i18nKey="walletconnect.message" />
@@ -109,7 +120,7 @@ function SignSummary({ navigation, route: initialRoute }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
+
     flexDirection: "column",
   },
   body: {
@@ -137,7 +148,6 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 34,
-    backgroundColor: colors.lightLive,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -155,7 +165,6 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: colors.separator,
   },
   footer: {
     flexDirection: "column",

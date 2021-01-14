@@ -15,7 +15,6 @@ import type {
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
 
 import LText from "../../components/LText";
-import colors from "../../colors";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Header from "./Header";
 import AccountActions from "./AccountActions";
@@ -111,7 +110,7 @@ const renderListHeaderTitle = (
           </View>
         ) : null}
         {items[1] ? (
-          <LText style={styles.balanceSubText} semiBold>
+          <LText style={styles.balanceSubText} color="smoke" semiBold>
             <CurrencyUnitValue {...items[1]} disableRounding />
           </LText>
         ) : null}
@@ -229,13 +228,11 @@ const styles = StyleSheet.create({
   balanceText: {
     fontSize: normalize(21),
     paddingBottom: 4,
-    color: colors.darkBlue,
     lineHeight: 24,
     flexWrap: "wrap",
   },
   balanceSubText: {
     fontSize: normalize(16),
-    color: colors.smoke,
   },
   warningWrapper: {
     display: "flex",

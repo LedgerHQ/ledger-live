@@ -1,6 +1,5 @@
 /* @flow */
 import React from "react";
-import { Switch } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
@@ -8,6 +7,7 @@ import { NavigatorName } from "../../../const";
 import { privacySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import BiometricsRow from "./BiometricsRow";
+import Switch from "../../../components/Switch";
 
 export default function AuthSecurityToggle() {
   const privacy = useSelector(privacySelector);

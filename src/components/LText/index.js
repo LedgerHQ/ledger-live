@@ -1,6 +1,7 @@
 /* @flow */
-import React, { Component } from "react";
+import React from "react";
 import { Text } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import getFontStyle from "./getFontStyle";
 
 export { getFontStyle };
@@ -10,6 +11,8 @@ export type Opts = {
   semiBold?: boolean,
   secondary?: boolean,
   monospace?: boolean,
+  color?: string,
+  bg?: string,
 };
 
 export type Res = {
@@ -37,22 +40,38 @@ export type Res = {
  * <LText secondary>alternate font</LText>
  * <LText style={styles.text}>some specific styles</LText>
  */
-export default class LText extends Component<*> {
-  render() {
-    const {
-      bold,
-      semiBold,
-      secondary,
-      monospace,
-      style,
-      ...newProps
-    } = this.props;
-    return (
-      <Text
-        allowFontScaling={false}
-        {...newProps}
-        style={[style, getFontStyle({ bold, semiBold, secondary, monospace })]}
-      />
-    );
-  }
+export default function LText({
+  bold,
+  semiBold,
+  secondary,
+  monospace,
+  color,
+  bg,
+  style,
+  ...newProps
+}: {
+  ...Opts,
+  style?: *,
+  ...
+}) {
+  const { colors } = useTheme();
+  return (
+    <Text
+      {...newProps}
+      allowFontScaling={false}
+      style={[
+        {
+          color: colors[color] || colors.darkBlue,
+          backgroundColor: colors[bg] || "transparent",
+        },
+        style,
+        getFontStyle({
+          bold,
+          semiBold,
+          secondary,
+          monospace,
+        }),
+      ]}
+    />
+  );
 }

@@ -45,7 +45,6 @@ import LiveLogo from "../../icons/LiveLogoIcon";
 import Button from "../Button";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
 import { rejectionOp } from "../DebugRejectSwitch";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import LText from "../LText";
 
@@ -129,7 +128,7 @@ export const dashboard: Step = {
 };
 
 export const genuineCheck: Step = {
-  Body: ({ meta }: *) =>
+  Body: ({ meta, colors }: *) =>
     meta.genuineAskedOnDevice ? (
       <RenderStep
         icon={
@@ -177,7 +176,7 @@ export const genuineCheck: Step = {
 };
 
 export const listApps: Step = {
-  Body: ({ meta }: *) =>
+  Body: ({ meta, colors }: *) =>
     meta.allowManagerRequested ? (
       <RenderStep
         icon={
@@ -218,7 +217,7 @@ export const listApps: Step = {
 };
 
 export const currencyApp: CryptoCurrency => Step = currency => ({
-  Body: ({ meta, onClose }: *) => {
+  Body: ({ meta, onClose, colors }: *) => {
     const { t } = useTranslation();
     const navigation = useNavigation();
 
@@ -252,7 +251,7 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
           />
         }
       >
-        <View style={styles.footer}>
+        <View style={[styles.footer, { borderColor: colors.lightFog }]}>
           <LText secondary semiBold style={styles.appInstalled}>
             {t("SelectDevice.steps.currencyApp.footer.appInstalled")}
           </LText>
@@ -300,12 +299,10 @@ export const currencyApp: CryptoCurrency => Step = currency => ({
 const styles = StyleSheet.create({
   footer: {
     borderTopWidth: 1,
-    borderColor: colors.lightFog,
     alignItems: "stretch",
     padding: 16,
   },
   appInstalled: {
-    color: colors.darkBlue,
     fontSize: 16,
     paddingVertical: 16,
     textAlign: "center",
@@ -353,12 +350,10 @@ export const accountApp: Account => Step = account => ({
             deviceId: meta.deviceId,
           })
           .pipe(
-            map(addressInfo => {
-              return {
-                ...meta,
-                addressInfo,
-              };
-            }),
+            map(addressInfo => ({
+              ...meta,
+              addressInfo,
+            })),
             // $FlowFixMe
             retryWhen(retryWhileErrors(genericCanRetryOnError)),
           ),
@@ -524,7 +519,5 @@ export const initSwapStep: ({
     />
   ),
 
-  run: meta => {
-    return initSwap(exchange, exchangeRate, transaction, meta.deviceId);
-  },
+  run: meta => initSwap(exchange, exchangeRate, transaction, meta.deviceId),
 });

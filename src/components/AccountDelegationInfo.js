@@ -1,7 +1,7 @@
 // @flow
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
-import colors from "../colors";
+import { useTheme } from "@react-navigation/native";
 import ExternalLink from "../icons/ExternalLink";
 import Button from "./Button";
 import LText from "./LText";
@@ -27,9 +27,17 @@ export default function AccountDelegationInfo({
   onPress,
   ctaTitle,
 }: Props) {
+  const { colors } = useTheme();
   return (
     <View>
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.white,
+          },
+        ]}
+      >
         <View style={styles.container}>
           {image}
           {title && (
@@ -37,12 +45,14 @@ export default function AccountDelegationInfo({
               {title}
             </LText>
           )}
-          <LText style={styles.description}>{description}</LText>
+          <LText style={styles.description} color="grey">
+            {description}
+          </LText>
           <TouchableOpacity
             style={styles.infoLinkContainer}
             onPress={() => Linking.openURL(infoUrl)}
           >
-            <LText bold style={styles.infoLink}>
+            <LText bold style={styles.infoLink} color="live">
               {infoTitle}
             </LText>
             <ExternalLink size={11} color={colors.live} />
@@ -62,7 +72,6 @@ export default function AccountDelegationInfo({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.white,
     padding: 16,
     borderRadius: 4,
     flexDirection: "column",
@@ -73,14 +82,12 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: "center",
     paddingVertical: 4,
-    color: colors.darkBlue,
   },
   description: {
     fontSize: 14,
     lineHeight: 17,
     paddingVertical: 8,
     textAlign: "center",
-    color: colors.grey,
   },
   infoLinkContainer: {
     flexDirection: "row",
@@ -92,7 +99,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     paddingVertical: 8,
     textAlign: "center",
-    color: colors.live,
     marginRight: 6,
   },
 });

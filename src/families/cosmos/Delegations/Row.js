@@ -7,8 +7,8 @@ import type {
   CosmosMappedUnbonding,
 } from "@ledgerhq/live-common/lib/families/cosmos/types";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import CounterValue from "../../../components/CounterValue";
-import colors from "../../../colors";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import FirstLetterIcon from "../../../components/FirstLetterIcon";
@@ -26,6 +26,7 @@ export default function DelegationRow({
   onPress,
   isLast = false,
 }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { validator, validatorAddress, formattedAmount, amount } = delegation;
 
@@ -34,11 +35,13 @@ export default function DelegationRow({
       style={[
         styles.row,
         styles.wrapper,
-        !isLast ? styles.borderBottom : undefined,
+        !isLast
+          ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey }
+          : undefined,
       ]}
       onPress={() => onPress(delegation)}
     >
-      <View style={styles.icon}>
+      <View style={[styles.icon, { backgroundColor: colors.lightLive }]}>
         <FirstLetterIcon label={validator?.name ?? validatorAddress ?? ""} />
       </View>
 
@@ -48,7 +51,9 @@ export default function DelegationRow({
         </LText>
 
         <View style={styles.row}>
-          <LText style={styles.seeMore}>{t("common.seeMore")}</LText>
+          <LText style={styles.seeMore} color="live">
+            {t("common.seeMore")}
+          </LText>
           <ArrowRight color={colors.live} size={14} />
         </View>
       </View>
@@ -56,7 +61,7 @@ export default function DelegationRow({
       <View style={styles.rightWrapper}>
         <LText semiBold>{formattedAmount}</LText>
 
-        <LText style={styles.counterValue}>
+        <LText color="grey">
           <CounterValue
             currency={currency}
             showCode
@@ -76,19 +81,13 @@ const styles = StyleSheet.create({
   },
   borderBottom: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.lightGrey,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
   },
-  rowWrapper: {
-    backgroundColor: colors.white,
-    padding: 16,
-  },
   seeMore: {
     fontSize: 14,
-    color: colors.live,
   },
   icon: {
     alignItems: "center",
@@ -96,14 +95,13 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 5,
-    backgroundColor: colors.lightLive,
+
     marginRight: 12,
   },
   nameWrapper: {
     flex: 1,
     marginRight: 8,
   },
-  counterValue: { color: colors.grey },
   rightWrapper: {
     alignItems: "flex-end",
   },

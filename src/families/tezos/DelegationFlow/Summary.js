@@ -23,8 +23,9 @@ import {
 } from "@ledgerhq/live-common/lib/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/lib/families/tezos/bakers.whitelist-default";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
-import colors, { rgba } from "../../../colors";
+import { rgba } from "../../../colors";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
 import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
@@ -53,20 +54,31 @@ type RouteParams = {
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
+  const { colors } = useTheme();
   return (
-    <View style={styles.accountBalanceTag}>
-      <LText semiBold numberOfLines={1} style={styles.accountBalanceTagText}>
+    <View
+      style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}
+    >
+      <LText
+        semiBold
+        numberOfLines={1}
+        style={styles.accountBalanceTagText}
+        color="smoke"
+      >
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </LText>
     </View>
   );
 };
 
-const ChangeDelegator = () => (
-  <Circle style={styles.changeDelegator} bg={colors.live} size={26}>
-    <Icon size={13} name="edit-2" color={colors.white} />
-  </Circle>
-);
+const ChangeDelegator = () => {
+  const { colors } = useTheme();
+  return (
+    <Circle style={styles.changeDelegator} bg={colors.live} size={26}>
+      <Icon size={13} name="edit-2" color={colors.white} />
+    </Circle>
+  );
+};
 
 const Line = ({ children }: { children: React$Node }) => (
   <View style={styles.summaryLine}>{children}</View>
@@ -85,11 +97,8 @@ const Words = ({
     numberOfLines={1}
     semiBold={!highlighted}
     bold={highlighted}
-    style={[
-      styles.summaryWords,
-      highlighted ? styles.summaryWordsHighlighted : null,
-      style,
-    ]}
+    style={[styles.summaryWords, style]}
+    color={highlighted ? "live" : "smoke"}
   >
     {children}
   </LText>
@@ -101,20 +110,36 @@ const BakerSelection = ({
 }: {
   name: string,
   readOnly?: boolean,
-}) => (
-  <View style={styles.bakerSelection}>
-    <LText bold numberOfLines={1} style={styles.bakerSelectionText}>
-      {name}
-    </LText>
-    {readOnly ? null : (
-      <View style={styles.bakerSelectionIcon}>
-        <Icon size={16} name="edit-2" color={colors.white} />
-      </View>
-    )}
-  </View>
-);
+}) => {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        styles.bakerSelection,
+        { backgroundColor: rgba(colors.live, 0.2) },
+      ]}
+    >
+      <LText
+        bold
+        numberOfLines={1}
+        style={styles.bakerSelectionText}
+        color="live"
+      >
+        {name}
+      </LText>
+      {readOnly ? null : (
+        <View
+          style={[styles.bakerSelectionIcon, { backgroundColor: colors.live }]}
+        >
+          <Icon size={16} name="edit-2" color={colors.white} />
+        </View>
+      )}
+    </View>
+  );
+};
 
 export default function DelegationSummary({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const bakers = useBakers(whitelist);
   const randomBaker = useRandomBaker(bakers);
@@ -231,7 +256,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [status, account, parentAccount, navigation, transaction]);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>
@@ -251,7 +279,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
                 event="DelegationFlowSummaryChangeCircleBtn"
                 onPress={onChangeDelegator}
               >
-                <Circle size={70} style={styles.bakerCircle}>
+                <Circle
+                  size={70}
+                  style={[styles.bakerCircle, { borderColor: colors.grey }]}
+                >
                   <Animated.View
                     style={{
                       transform: [
@@ -359,7 +390,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
     flexDirection: "column",
   },
   body: {
@@ -369,7 +399,6 @@ const styles = StyleSheet.create({
   },
   bakerCircle: {
     borderWidth: 1,
-    borderColor: colors.grey,
     borderStyle: "dashed",
   },
   changeDelegator: {
@@ -382,14 +411,12 @@ const styles = StyleSheet.create({
   },
   accountBalanceTag: {
     marginTop: 8,
-    backgroundColor: colors.lightFog,
     borderRadius: 4,
     padding: 4,
     alignItems: "center",
   },
   accountBalanceTagText: {
     fontSize: 11,
-    color: colors.smoke,
   },
   accountName: {
     maxWidth: 180,
@@ -407,26 +434,19 @@ const styles = StyleSheet.create({
   summaryWords: {
     marginRight: 6,
     fontSize: 18,
-    color: colors.smoke,
-  },
-  summaryWordsHighlighted: {
-    color: colors.live,
   },
   bakerSelection: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 4,
-    backgroundColor: rgba(colors.live, 0.2),
     height: 40,
   },
   bakerSelectionText: {
     paddingHorizontal: 8,
     fontSize: 18,
-    color: colors.live,
     maxWidth: 240,
   },
   bakerSelectionIcon: {
-    backgroundColor: colors.live,
     borderTopRightRadius: 4,
     borderBottomRightRadius: 4,
     alignItems: "center",
@@ -444,23 +464,5 @@ const styles = StyleSheet.create({
   continueButton: {
     alignSelf: "stretch",
     marginTop: 12,
-  },
-  termsAndPrivacy: {
-    textAlign: "center",
-    fontSize: 14,
-    lineHeight: 22,
-  },
-  error: {
-    color: colors.alert,
-    fontSize: 12,
-    marginBottom: 5,
-  },
-  verticalConnector: {
-    position: "absolute",
-    borderLeftWidth: 2,
-    borderColor: colors.lightFog,
-    height: 20,
-    top: 60,
-    left: 16,
   },
 });

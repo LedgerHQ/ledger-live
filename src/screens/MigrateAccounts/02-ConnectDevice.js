@@ -7,8 +7,8 @@ import { createAction } from "@ledgerhq/live-common/lib/hw/actions/app";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
-import colors from "../../colors";
 import { ScreenName } from "../../const";
 import SelectDevice from "../../components/SelectDevice";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -28,6 +28,7 @@ type RouteParams = {
 };
 
 export default function ConnectDevice({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const [device, setDevice] = useState<?Device>();
 
   const onResult = useCallback(
@@ -46,7 +47,10 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="MigrateAccount" name="ConnectDevice" />
       <NavigationScrollView
         style={styles.scroll}
@@ -68,17 +72,11 @@ export default function ConnectDevice({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   scroll: {
     flex: 1,
   },
   scrollContainer: {
     padding: 16,
-  },
-  footer: {
-    padding: 4,
-    borderTopWidth: 1,
-    borderTopColor: colors.lightFog,
   },
 });

@@ -17,7 +17,7 @@ import {
   accountsSelector,
 } from "../../reducers/accounts";
 import withEnv from "../../logic/withEnv";
-import colors from "../../colors";
+import { withTheme } from "../../colors";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import LText from "../../components/LText";
@@ -37,6 +37,7 @@ type Props = {
   allAccounts: AccountLikeArray,
   navigation: any,
   route: { params: { uri: string } },
+  colors: *,
 };
 
 type State = {};
@@ -60,6 +61,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
   };
 
   renderFooter = () => {
+    const { colors } = this.props;
     return (
       <View style={styles.footerContainer}>
         <PlusIcon size={16} color={colors.live} />
@@ -70,7 +72,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
             });
           }}
         >
-          <LText semiBold style={styles.addAccount}>
+          <LText semiBold style={styles.addAccount} color="live">
             <Trans i18nKey={"walletconnect.addAccount"} />
           </LText>
         </TouchableOpacity>
@@ -98,7 +100,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
 
   renderEmptySearch = () => (
     <View style={styles.emptyResults}>
-      <LText style={styles.emptyText}>
+      <LText style={styles.emptyText} color="fog">
         <Trans i18nKey="transfer.receive.noAccount" />
       </LText>
     </View>
@@ -107,9 +109,12 @@ class SendFundsSelectAccount extends Component<Props, State> {
   keyExtractor = item => item.account.id;
 
   render() {
-    const { allAccounts } = this.props;
+    const { allAccounts, colors } = this.props;
     return (
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.white }]}
+        forceInset={forceInset}
+      >
         <TrackScreen category="WalletConnect" name="DeeplinkingSelectAccount" />
         <KeyboardView style={{ flex: 1 }}>
           <View style={styles.searchContainer}>
@@ -139,7 +144,6 @@ const mapStateToProps = createStructuredSelector({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   searchContainer: {
     paddingTop: 16,
@@ -152,7 +156,6 @@ const styles = StyleSheet.create({
   },
   addAccount: {
     marginLeft: 8,
-    color: colors.live,
   },
   list: {
     paddingBottom: 32,
@@ -165,7 +168,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: colors.fog,
   },
   padding: {
     paddingHorizontal: 16,
@@ -180,4 +182,5 @@ export default compose(
   // $FlowFixMe
   connect(mapStateToProps),
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
+  withTheme,
 )(SendFundsSelectAccount);

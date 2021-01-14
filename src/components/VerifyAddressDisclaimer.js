@@ -1,12 +1,11 @@
 // @flow
-import React, { PureComponent } from "react";
+import React, { memo } from "react";
 import { View, StyleSheet, Image } from "react-native";
 
+import { useTheme } from "@react-navigation/native";
 import shield from "../images/shield.png";
 import shieldWarning from "../images/shield-warning.png";
 import shieldCheckmark from "../images/shield-checkmark.png";
-
-import colors from "../colors";
 
 import LText from "./LText";
 
@@ -19,57 +18,50 @@ type Props = {
 
 // FIXME this component should be renamed to something more generic!
 // on desktop, we call it warnbox
-class VerifyAddressDisclaimer extends PureComponent<Props> {
-  static defaultProps = {
-    unsafe: false,
-    verified: false,
-  };
-
-  render() {
-    const { unsafe, verified, text, action } = this.props;
-
-    return (
-      <View
-        style={[styles.wrapper, unsafe ? styles.wrapperWarning : undefined]}
-      >
-        <Image
-          source={unsafe ? shieldWarning : verified ? shieldCheckmark : shield}
-        />
-        <View style={styles.textWrapper}>
-          <LText style={[styles.text, unsafe ? styles.textWarning : undefined]}>
-            {text}
-          </LText>
-          {action || null}
-        </View>
+function VerifyAddressDisclaimer({ unsafe, verified, text, action }: Props) {
+  const { colors } = useTheme();
+  return (
+    <View
+      style={[
+        styles.wrapper,
+        unsafe
+          ? { borderColor: colors.alert, backgroundColor: colors.lightAlert }
+          : { backgroundColor: colors.card },
+      ]}
+    >
+      <Image
+        source={unsafe ? shieldWarning : verified ? shieldCheckmark : shield}
+      />
+      <View style={styles.textWrapper}>
+        <LText style={[styles.text]} color={unsafe ? "alert" : "grey"}>
+          {text}
+        </LText>
+        {action || null}
       </View>
-    );
-  }
+    </View>
+  );
 }
+
+VerifyAddressDisclaimer.defaultProps = {
+  unsafe: false,
+  verified: false,
+};
 
 const styles = StyleSheet.create({
   wrapper: {
     padding: 10,
     borderRadius: 4,
-    backgroundColor: colors.lightGrey,
     flexDirection: "row",
     alignItems: "center",
-  },
-  wrapperWarning: {
-    borderColor: colors.alert,
-    backgroundColor: colors.lightAlert,
   },
   textWrapper: {
     flex: 1,
   },
   text: {
     fontSize: 14,
-    color: colors.grey,
     lineHeight: 21,
     paddingLeft: 8,
   },
-  textWarning: {
-    color: colors.alert,
-  },
 });
 
-export default VerifyAddressDisclaimer;
+export default memo<Props>(VerifyAddressDisclaimer);

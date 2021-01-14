@@ -6,13 +6,13 @@ import { Trans } from "react-i18next";
 
 import manager from "@ledgerhq/live-common/lib/manager";
 import type { FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
 import Button from "../../components/Button";
 import SafeMarkdown from "../../components/SafeMarkdown";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import colors from "../../colors";
 
 const forceInset = { bottom: "always" };
 
@@ -30,6 +30,7 @@ export default function FirmwareUpdateReleaseNotes({
   navigation,
   route,
 }: Props) {
+  const { colors } = useTheme();
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.FirmwareUpdateCheckId, route.params);
   }, [navigation, route.params]);
@@ -39,7 +40,10 @@ export default function FirmwareUpdateReleaseNotes({
   const { osu } = firmware;
   const version = manager.getFirmwareVersion(osu);
   return (
-    <SafeAreaView style={styles.root} forceInset={forceInset}>
+    <SafeAreaView
+      style={[styles.root, { backgroundColor: colors.background }]}
+      forceInset={forceInset}
+    >
       <TrackScreen category="FirmwareUpdate" name="ReleaseNotes" />
       <NavigationScrollView
         style={styles.body}
@@ -60,12 +64,14 @@ export default function FirmwareUpdateReleaseNotes({
           </LText>
         </LText>
         {osu.notes ? (
-          <View style={styles.markdownSection}>
+          <View
+            style={[styles.markdownSection, { borderColor: colors.lightFog }]}
+          >
             <SafeMarkdown markdown={osu.notes} />
           </View>
         ) : null}
       </NavigationScrollView>
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.white }]}>
         <Button
           event="FirmwareUpdateReleaseNotesContinue"
           type="primary"
@@ -80,7 +86,6 @@ export default function FirmwareUpdateReleaseNotes({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   body: {
     flex: 1,
@@ -90,16 +95,13 @@ const styles = StyleSheet.create({
   },
   intro: {
     fontSize: 14,
-    color: colors.darkBlue,
   },
   markdownSection: {
     marginTop: 20,
     paddingTop: 20,
     borderTopWidth: 1,
-    borderColor: colors.lightFog,
   },
   footer: {
-    backgroundColor: colors.white,
     padding: 16,
   },
 });

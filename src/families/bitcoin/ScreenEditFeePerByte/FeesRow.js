@@ -6,8 +6,7 @@ import { BigNumber } from "bignumber.js";
 
 import LText from "../../../components/LText/index";
 import Check from "../../../icons/Check";
-
-import colors from "../../../colors";
+import { withTheme } from "../../../colors";
 
 type Props = {
   title: React$Node,
@@ -16,6 +15,7 @@ type Props = {
   isSelected: boolean,
   itemKey: string,
   onPress: (BigNumber, string) => void,
+  colors: *,
 };
 
 type State = {
@@ -34,14 +34,26 @@ class FeesRow extends Component<Props, State> {
   };
 
   render() {
-    const { title, last, isSelected, value } = this.props;
+    const { title, last, isSelected, value, colors } = this.props;
     return (
       <TouchableOpacity onPress={this.onPress}>
-        <View style={[styles.root, last ? styles.last : null]}>
+        <View
+          style={[
+            styles.root,
+            { borderBottomColor: colors.lightFog },
+            last ? styles.last : null,
+          ]}
+        >
           <View
             style={[
               styles.iconContainer,
-              isSelected ? styles.iconContainerSelected : null,
+              isSelected
+                ? {
+                    ...styles.iconContainerSelected,
+                    borderColor: colors.live,
+                    backgroundColor: colors.live,
+                  }
+                : { borderColor: colors.fog },
             ]}
           >
             {isSelected ? <Check size={14} color={colors.white} /> : null}
@@ -49,7 +61,8 @@ class FeesRow extends Component<Props, State> {
           <View style={styles.titleContainer}>
             <LText
               semiBold={isSelected}
-              style={[styles.title, isSelected ? styles.titleSelected : null]}
+              style={[styles.title]}
+              color={isSelected ? "darkBlue" : "grey"}
             >
               {title}
             </LText>
@@ -73,7 +86,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     paddingRight: 16,
     paddingVertical: 16,
-    borderBottomColor: colors.lightFog,
+
     borderBottomWidth: 1,
   },
   last: {
@@ -87,28 +100,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    color: colors.grey,
-  },
-  titleSelected: {
-    color: colors.darkBlue,
   },
   iconContainer: {
     width: 24,
     height: 24,
     borderWidth: 1,
-    borderColor: colors.fog,
+
     borderRadius: 50,
     marginRight: 16,
   },
   iconContainerSelected: {
     justifyContent: "center",
     alignItems: "center",
-    borderColor: colors.live,
-    backgroundColor: colors.live,
   },
-  text: {
-    color: colors.darkBlue,
-  },
+  text: {},
 });
 
-export default FeesRow;
+export default withTheme(FeesRow);

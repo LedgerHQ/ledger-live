@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import colors from "../../../colors";
+import { useTheme } from "@react-navigation/native";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import InfoIcon from "../../../components/InfoIcon";
@@ -24,6 +24,8 @@ const QuitManagerModal = ({
   installQueue,
   uninstallQueue,
 }: Props) => {
+  const { colors } = useTheme();
+
   const actionRunning = useMemo(
     () =>
       installQueue.length > 0
@@ -45,7 +47,7 @@ const QuitManagerModal = ({
         <LText style={[styles.warnText, styles.title]} bold>
           <Trans i18nKey={`errors.ManagerQuitPage.${actionRunning}.title`} />
         </LText>
-        <LText style={styles.warnText}>
+        <LText style={styles.warnText} color="grey">
           <Trans
             i18nKey={`errors.ManagerQuitPage.${actionRunning}.description`}
           />
@@ -84,12 +86,10 @@ const styles = StyleSheet.create({
   title: {
     lineHeight: 24,
     fontSize: 20,
-    color: colors.darkBlue,
   },
   warnText: {
     textAlign: "center",
     fontSize: 14,
-    color: colors.grey,
     lineHeight: 16,
     marginVertical: 8,
   },

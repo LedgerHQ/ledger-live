@@ -1,13 +1,13 @@
 // @flow
 
 import React, { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import Touchable from "../../components/Touchable";
-import colors from "../../colors";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 
 export default function AddAccount() {
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const [isAddModalOpened, setIsAddModalOpened] = useState(false);

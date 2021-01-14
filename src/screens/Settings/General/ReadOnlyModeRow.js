@@ -1,13 +1,13 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { connect } from "react-redux";
-import { Switch } from "react-native";
 import { createStructuredSelector } from "reselect";
 import SettingsRow from "../../../components/SettingsRow";
 import { setReadOnlyMode } from "../../../actions/settings";
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import Track from "../../../analytics/Track";
 import { withReboot } from "../../../context/Reboot";
+import Switch from "../../../components/Switch";
 
 type Props = {
   readOnlyModeEnabled: boolean,

@@ -3,7 +3,7 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 
 import type { Account } from "@ledgerhq/live-common/lib/types";
 
@@ -13,7 +13,6 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
 import Info from "../../../icons/Info";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -25,6 +24,7 @@ type Props = {
 };
 
 const RewardsSection = ({ account }: Props) => {
+  const { colors } = useTheme();
   invariant(
     account && account.algorandResources,
     "algorand resources required",
@@ -59,12 +59,12 @@ const RewardsSection = ({ account }: Props) => {
         icon={<Info size={16} color={colors.darkBlue} />}
         onPress={onRewardsInfoClick}
       />
-      <View style={styles.rewardSection}>
+      <View style={[styles.rewardSection, { backgroundColor: colors.card }]}>
         <View style={styles.labelSection}>
           <LText semiBold style={styles.title}>
             <CurrencyUnitValue unit={unit} value={rewards} />
           </LText>
-          <LText semiBold style={styles.subtitle}>
+          <LText semiBold style={styles.subtitle} color="grey">
             {currency && <CounterValue currency={currency} value={rewards} />}
           </LText>
         </View>
@@ -86,7 +86,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   rewardSection: {
-    backgroundColor: colors.white,
     paddingHorizontal: 16,
     paddingVertical: 16,
     borderRadius: 4,
@@ -109,13 +108,11 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: "center",
     paddingVertical: 4,
-    color: colors.darkBlue,
   },
   subtitle: {
     fontSize: 16,
     lineHeight: 18,
     textAlign: "left",
-    color: colors.grey,
   },
 });
 

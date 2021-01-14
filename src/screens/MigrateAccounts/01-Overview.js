@@ -6,7 +6,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View, SectionList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import colors from "../../colors";
+import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import AccountCard from "../../components/AccountCard";
 import Button from "../../components/Button";
@@ -25,6 +25,7 @@ type Props = {
 const forceInset = { bottom: "always" };
 
 export default function Overview({ route, navigation }: Props) {
+  const { colors } = useTheme();
   const migratableAccounts = useSelector(migratableAccountsSelector);
   const currencyIds = useMemo(
     () =>
@@ -45,7 +46,11 @@ export default function Overview({ route, navigation }: Props) {
   }, [navigation, currencyIds]);
 
   const renderSectionHeader = ({ section }: { section: * }) => (
-    <LText style={styles.currencyTitle} semiBold>
+    <LText
+      style={[styles.currencyTitle, { backgroundColor: colors.white }]}
+      color="smoke"
+      semiBold
+    >
       <Trans
         i18nKey="migrateAccounts.overview.currency"
         count={section.data.length}
@@ -59,14 +64,21 @@ export default function Overview({ route, navigation }: Props) {
 
   const renderItem = ({ item }: { item: * }) => (
     <View style={styles.cardWrapper}>
-      <AccountCard account={item} parentAccount={null} style={styles.card} />
+      <AccountCard
+        account={item}
+        parentAccount={null}
+        style={[styles.card, { backgroundColor: colors.card }]}
+      />
     </View>
   );
 
   return (
     <SafeAreaView
       forceInset={forceInset}
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      style={[
+        styles.root,
+        { backgroundColor: colors.white, paddingTop: extraStatusBarPadding },
+      ]}
     >
       <Circle bg={colors.pillActiveBackground} size={56}>
         {showNotice ? (
@@ -78,7 +90,7 @@ export default function Overview({ route, navigation }: Props) {
       <LText style={styles.title} semiBold>
         <Trans i18nKey="migrateAccounts.overview.title" />
       </LText>
-      <LText style={styles.subtitle}>
+      <LText style={styles.subtitle} color="smoke">
         <Trans
           i18nKey={`migrateAccounts.overview.${
             showNotice ? "notice" : "subtitle"
@@ -119,7 +131,6 @@ export default function Overview({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
     alignItems: "center",
   },
   currencyList: {
@@ -129,21 +140,17 @@ const styles = StyleSheet.create({
   title: {
     marginHorizontal: 20,
     marginTop: 16,
-    color: colors.darkBlue,
+
     fontSize: 16,
     marginBottom: 8,
   },
-  start: {},
   subtitle: {
     marginHorizontal: 20,
     marginBottom: 24,
-    color: colors.smoke,
     fontSize: 14,
     textAlign: "center",
   },
   currencyTitle: {
-    backgroundColor: colors.white,
-    color: colors.smoke,
     paddingTop: 24,
     paddingBottom: 16,
   },
@@ -158,7 +165,6 @@ const styles = StyleSheet.create({
   },
   card: {
     paddingHorizontal: 8,
-    backgroundColor: colors.lightGrey,
   },
   body: {
     paddingHorizontal: 12,

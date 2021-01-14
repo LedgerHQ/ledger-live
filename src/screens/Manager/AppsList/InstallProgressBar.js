@@ -1,15 +1,14 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { StyleSheet, Linking, Platform } from "react-native";
+import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 
 import type { State } from "@ledgerhq/live-common/lib/apps";
 import { isLiveSupportedApp } from "@ledgerhq/live-common/lib/apps/logic";
 
+import { useTheme } from "@react-navigation/native";
 import { urls } from "../../../config/urls";
 
-import colors from "../../../colors";
 import { NavigatorName } from "../../../const";
-import Styles from "../../../navigation/styles";
 import ToastBar from "../../../components/ToastBar";
 
 type Props = {
@@ -19,6 +18,7 @@ type Props = {
 };
 
 const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
+  const { colors } = useTheme();
   const [hasBeenShown, setHasBeenShown] = useState(disable);
   const {
     installQueue,
@@ -66,7 +66,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
     <ToastBar
       isOpened={successInstalls.length >= 1}
       onClose={onClose}
-      containerStyle={styles.containerStyle}
+      containerStyle={{ backgroundColor: colors.live }}
       type={"primary"}
       title={
         <>
@@ -104,50 +104,5 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    ...Styles.headerNoShadow,
-    width: "100%",
-    bottom: -20,
-    left: -20,
-    position: "absolute",
-    zIndex: 10,
-    overflow: "hidden",
-    paddingTop: Platform.OS === "ios" ? 24 : 0,
-    height: 100,
-    flexDirection: "row",
-  },
-  containerStyle: {
-    backgroundColor: colors.live,
-  },
-  warnText: {
-    textAlign: "center",
-    fontSize: 14,
-    color: colors.white,
-    lineHeight: 16,
-  },
-  storageRow: {
-    paddingHorizontal: 16,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonRow: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 16,
-    marginTop: 24,
-  },
-  button: {
-    flex: 1,
-    color: colors.white,
-  },
-  buttonMargin: {
-    marginLeft: 16,
-  },
-});
 
 export default InstallSuccessBar;

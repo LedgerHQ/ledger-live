@@ -3,7 +3,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 
-import colors, { rgba } from "../../../colors";
+import { rgba, withTheme } from "../../../colors";
 import BottomModal from "../../../components/BottomModal";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
@@ -24,6 +24,7 @@ type Props = {
   Icon?: React$ComponentType<*>,
   buttons: button[],
   alert: boolean,
+  colors: *,
 };
 
 class ConfirmationModal extends PureComponent<Props> {
@@ -41,21 +42,27 @@ class ConfirmationModal extends PureComponent<Props> {
       Icon,
       alert,
       buttons,
+      colors,
       ...rest
     } = this.props;
     return (
       <BottomModal
+        {...rest}
         id="ConfirmationModal"
         isOpened={isOpened}
         onClose={onClose}
         style={styles.confirmationModal}
-        {...rest}
       >
         {isOpened ? (
           <TrackScreen category="LendingNoTokenAccountInfoModal" />
         ) : null}
         {Icon && (
-          <View style={styles.icon}>
+          <View
+            style={[
+              styles.icon,
+              { backgroundColor: rgba(colors.yellow, 0.08) },
+            ]}
+          >
             <Icon size={24} />
           </View>
         )}
@@ -64,7 +71,11 @@ class ConfirmationModal extends PureComponent<Props> {
             {title}
           </LText>
         )}
-        {description && <LText style={styles.description}>{description}</LText>}
+        {description && (
+          <LText style={styles.description} color="smoke">
+            {description}
+          </LText>
+        )}
         <View style={styles.confirmationFooter}>
           <Button
             containerStyle={styles.confirmationButton}
@@ -99,13 +110,11 @@ const styles = StyleSheet.create({
   title: {
     textAlign: "center",
     fontSize: 18,
-    color: colors.darkBlue,
   },
   description: {
     marginVertical: 32,
     textAlign: "center",
     fontSize: 14,
-    color: colors.smoke,
   },
   confirmationFooter: {
     justifyContent: "flex-end",
@@ -118,7 +127,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     alignSelf: "center",
-    backgroundColor: rgba(colors.yellow, 0.08),
+
     width: 56,
     borderRadius: 28,
     height: 56,
@@ -128,4 +137,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ConfirmationModal;
+export default withTheme(ConfirmationModal);

@@ -3,8 +3,7 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { useNavigation } from "@react-navigation/native";
-import colors from "../../colors";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -14,6 +13,7 @@ import MissingOrOutdatedSwapApp from "../Swap/MissingOrOutdatedSwapApp";
 const forceInset = { bottom: "always" };
 
 export default function Buy() {
+  const { colors } = useTheme();
   const navigation = useNavigation();
   const [state, setState] = useState({ deviceMeta: null, exchangeApp: null });
 
@@ -44,7 +44,13 @@ export default function Buy() {
 
   return (
     <SafeAreaView
-      style={[styles.root, { paddingTop: extraStatusBarPadding }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.card,
+          paddingTop: extraStatusBarPadding,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="Sell Crypto" />
@@ -62,7 +68,6 @@ export default function Buy() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.lightGrey,
   },
   body: {
     flex: 1,
@@ -71,26 +76,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     margin: 16,
   },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 50,
-    backgroundColor: colors.lightLive,
-    marginBottom: 24,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   title: {
     textAlign: "center",
-    color: colors.darkBlue,
     fontSize: 16,
     marginBottom: 16,
-  },
-  description: {
-    textAlign: "center",
-    color: colors.smoke,
-    fontSize: 14,
   },
   buttonContainer: {
     paddingTop: 24,

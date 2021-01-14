@@ -5,9 +5,9 @@ import { StyleSheet, View, Dimensions, Pressable, Image } from "react-native";
 import { Trans } from "react-i18next";
 import { TabView, SceneMap } from "react-native-tab-view";
 import Svg, { Ellipse } from "react-native-svg";
+import { useTheme } from "@react-navigation/native";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
-import colors from "../../../colors";
 import LText from "../../../components/LText";
 import { ScreenName } from "../../../const";
 import AnimatedHeaderView from "../../../components/AnimatedHeader";
@@ -34,31 +34,34 @@ const InfoView = ({
   onCtaPress?: () => void,
   image: number,
   index: number,
-}) => (
-  <>
-    <View style={[styles.root, styles.content]}>
-      <TrackScreen category="Onboarding" name={`Edu step ${index}`} />
-      <LText style={[styles.label, { color: colors.live }]} bold>
-        {label}
-      </LText>
-      <LText bold style={styles.title}>
-        {title}
-      </LText>
-      <LText style={styles.desc}>{desc}</LText>
-      {onCtaPress && (
-        <View style={styles.button}>
-          <Button
-            event="Onboarding - Edu completed"
-            type="primary"
-            title={<Trans i18nKey="onboarding.stepNewDevice.cta" />}
-            onPress={onCtaPress}
-          />
-        </View>
-      )}
-    </View>
-    <Image style={styles.image} source={image} resizeMode="cover" />
-  </>
-);
+}) => {
+  const { colors } = useTheme();
+  return (
+    <>
+      <View style={[styles.root, styles.content]}>
+        <TrackScreen category="Onboarding" name={`Edu step ${index}`} />
+        <LText style={[styles.label, { color: colors.live }]} bold>
+          {label}
+        </LText>
+        <LText bold style={styles.title}>
+          {title}
+        </LText>
+        <LText style={styles.desc}>{desc}</LText>
+        {onCtaPress && (
+          <View style={styles.button}>
+            <Button
+              event="Onboarding - Edu completed"
+              type="primary"
+              title={<Trans i18nKey="onboarding.stepNewDevice.cta" />}
+              onPress={onCtaPress}
+            />
+          </View>
+        )}
+      </View>
+      <Image style={styles.image} source={image} resizeMode="cover" />
+    </>
+  );
+};
 
 const scenes = [0, 1, 2, 3].reduce(
   (sum, k) => ({
@@ -81,6 +84,7 @@ const routeKeys = [0, 1, 2, 3, 4].map(k => ({ key: `${k}` }));
 const initialLayout = { width: Dimensions.get("window").width };
 
 function OnboardingStepNewDevice({ navigation, route }: *) {
+  const { colors } = useTheme();
   const next = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingSetNewDevice, { ...route.params });
   }, [navigation, route.params]);
@@ -133,7 +137,7 @@ function OnboardingStepNewDevice({ navigation, route }: *) {
               style={[
                 styles.dot,
                 index >= k
-                  ? { backgroundColor: colors.white }
+                  ? { backgroundColor: "#FFF" }
                   : { backgroundColor: colors.translucentGrey },
               ]}
               onPress={() => setIndex(k)}

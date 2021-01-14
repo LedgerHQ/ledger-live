@@ -14,8 +14,8 @@ import {
   SR_MAX_VOTES,
   SR_THRESHOLD,
 } from "@ledgerhq/live-common/lib/families/tron/react";
+import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../../../../reducers/accounts";
-import colors from "../../../../colors";
 import { ScreenName } from "../../../../const";
 import { TrackScreen } from "../../../../analytics";
 import SelectValidatorFooter from "./Footer";
@@ -25,19 +25,6 @@ import Medal from "../../../../icons/Medal";
 import Info from "../../../../icons/Info";
 import SelectValidatorSearchBox from "./SearchBox";
 import Item from "./Item";
-
-const infoModalData = [
-  {
-    Icon: () => <Trophy size={18} color={colors.live} />,
-    title: <Trans i18nKey="tron.info.superRepresentative.title" />,
-    description: <Trans i18nKey="tron.info.superRepresentative.description" />,
-  },
-  {
-    Icon: () => <Medal size={18} color={colors.grey} />,
-    title: <Trans i18nKey="tron.info.candidates.title" />,
-    description: <Trans i18nKey="tron.info.candidates.description" />,
-  },
-];
 
 const forceInset = { bottom: "always" };
 
@@ -53,6 +40,7 @@ type Props = {
 };
 
 export default function SelectValidator({ navigation, route }: Props) {
+  const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account and tron resources required");
 
@@ -156,7 +144,10 @@ export default function SelectValidator({ navigation, route }: Props) {
   return (
     <>
       <TrackScreen category="Vote" name="SelectValidator" />
-      <SafeAreaView style={styles.root} forceInset={forceInset}>
+      <SafeAreaView
+        style={[styles.root, { backgroundColor: colors.background }]}
+        forceInset={forceInset}
+      >
         <SelectValidatorSearchBox
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -174,6 +165,7 @@ export default function SelectValidator({ navigation, route }: Props) {
 }
 
 export function SelectValidatorHeaderLeft() {
+  const { colors } = useTheme();
   const [infoModalOpen, setInfoModalOpen] = useState();
 
   const openInfoModal = useCallback(() => {
@@ -183,6 +175,21 @@ export function SelectValidatorHeaderLeft() {
   const closeInfoModal = useCallback(() => {
     setInfoModalOpen(false);
   }, [setInfoModalOpen]);
+
+  const infoModalData = [
+    {
+      Icon: () => <Trophy size={18} color={colors.live} />,
+      title: <Trans i18nKey="tron.info.superRepresentative.title" />,
+      description: (
+        <Trans i18nKey="tron.info.superRepresentative.description" />
+      ),
+    },
+    {
+      Icon: () => <Medal size={18} color={colors.grey} />,
+      title: <Trans i18nKey="tron.info.candidates.title" />,
+      description: <Trans i18nKey="tron.info.candidates.description" />,
+    },
+  ];
 
   return (
     <>
@@ -201,7 +208,6 @@ export function SelectValidatorHeaderLeft() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   headerButton: {
     width: 50,
