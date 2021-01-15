@@ -4,6 +4,7 @@ import bitcoin from "../families/bitcoin/hw-getAddress.js";
 import cosmos from "../families/cosmos/hw-getAddress.js";
 import ethereum from "../families/ethereum/hw-getAddress.js";
 import neo from "../families/neo/hw-getAddress.js";
+import polkadot from "../families/polkadot/hw-getAddress.js";
 import ripple from "../families/ripple/hw-getAddress.js";
 import stellar from "../families/stellar/hw-getAddress.js";
 import tezos from "../families/tezos/hw-getAddress.js";
@@ -15,6 +16,7 @@ export default {
   cosmos,
   ethereum,
   neo,
+  polkadot,
   ripple,
   stellar,
   tezos,

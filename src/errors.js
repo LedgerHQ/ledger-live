@@ -166,3 +166,5 @@ export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
 export const CompoundLowerAllowanceOfActiveAccountError = createCustomErrorClass(
   "CompoundLowerAllowanceOfActiveAccountError"
 );
+
+export * from "./families/polkadot/errors";

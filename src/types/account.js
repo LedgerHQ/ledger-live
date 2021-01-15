@@ -18,6 +18,10 @@ import type {
   AlgorandResourcesRaw,
 } from "../families/algorand/types";
 import type {
+  PolkadotResources,
+  PolkadotResourcesRaw,
+} from "../families/polkadot/types";
+import type {
   BalanceHistory,
   BalanceHistoryRaw,
   PortfolioRange,
@@ -191,6 +195,7 @@ export type Account = {
   tronResources?: TronResources,
   cosmosResources?: CosmosResources,
   algorandResources?: AlgorandResources,
+  polkadotResources?: PolkadotResources,
 
   // Swap operations linked to this account
   swapHistory: SwapOperation[],
@@ -271,6 +276,7 @@ export type AccountRaw = {
   tronResources?: TronResourcesRaw,
   cosmosResources?: CosmosResourcesRaw,
   algorandResources?: AlgorandResourcesRaw,
+  polkadotResources?: PolkadotResourcesRaw,
   // Swap operations linked to this account
   swapHistory?: SwapOperationRaw[],
 };

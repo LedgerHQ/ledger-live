@@ -14,6 +14,7 @@ import specifics from "../generated/test-specifics";
 import type { DatasetTest } from "../types";
 import { disconnectAll } from "../api";
 
+// Disconnect all api clients that could be open.
 afterAll(async () => {
   await disconnectAll();
 });

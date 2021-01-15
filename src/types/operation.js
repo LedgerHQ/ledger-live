@@ -11,11 +11,22 @@ export type OperationType =
   | "DELEGATE"
   | "UNDELEGATE"
   | "REDELEGATE"
+  | "REWARD"
+  | "FEES"
+
+  // TRON
   | "FREEZE"
   | "UNFREEZE"
   | "VOTE"
-  | "REWARD"
-  | "FEES"
+
+  // POLKADOT
+  | "REWARD_PAYOUT"
+  | "BOND"
+  | "UNBOND"
+  | "WITHDRAW_UNBONDED"
+  | "SLASH"
+  | "NOMINATE"
+  | "CHILL"
 
   // COMPOUND TYPE OPERATIONS
   | "SUPPLY"
@@ -23,9 +34,7 @@ export type OperationType =
   | "APPROVE"
   | "OPT_IN"
   | "OPT_OUT"
-  | "CLOSE_ACCOUNT"
-  | "SUPPLY"
-  | "REDEEM";
+  | "CLOSE_ACCOUNT";
 
 export type Operation = {
   // unique identifier (usually hash)

@@ -150,6 +150,7 @@ const implTypePerFamily = {
   tron: "js",
   ripple: "js",
   ethereum: "js",
+  polkadot: "js",
 };
 
 const possibleImpls = {
@@ -375,6 +376,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               operationsCount: 0,
               operations: [],
               pendingOperations: [],
+              swapHistory: []
             };
             return account;
           })

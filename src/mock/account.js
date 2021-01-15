@@ -413,6 +413,20 @@ export function genAccount(
     };
   }
 
+  if (currency.family === "polkadot") {
+    account.polkadotResources = {
+      stash: null,
+      controller: null,
+      nonce: 0,
+      lockedBalance: BigNumber(0),
+      unlockingBalance: BigNumber(0),
+      unlockedBalance: BigNumber(0),
+      unlockings: [],
+      nominations: [],
+      numSlashingSpans: 0,
+    };
+  }
+
   if (
     ["ethereum", "ethereum_ropsten", "tron", "algorand"].includes(currency.id)
   ) {

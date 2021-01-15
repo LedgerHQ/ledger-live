@@ -30,4 +30,5 @@ setSupportedCurrencies([
   "stellar",
   "cosmos",
   "algorand",
+  "polkadot",
 ]);

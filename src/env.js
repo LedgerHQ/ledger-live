@@ -57,6 +57,16 @@ const envDefinitions = {
     def: "wss://xrpl.ws",
     desc: "websockets api for ripple",
   },
+  API_POLKADOT_INDEXER: {
+    parser: stringParser,
+    def: "https://polkadot.coin.ledger.com",
+    desc: "Explorer API for polkadot",
+  },
+  API_POLKADOT_SIDECAR: {
+    parser: stringParser,
+    def: "https://polkadot-sidecar.coin.ledger.com",
+    desc: "Polkadot Sidecar API url",
+  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
@@ -71,12 +81,6 @@ const envDefinitions = {
     def: "https://xtz-node.api.live.ledger.com",
     parser: stringParser,
     desc: "node API for tezos (for broadcast only)",
-  },
-  API_STELLAR_MEMO: {
-    def: "https://api.stellar.expert/",
-    parser: stringParser,
-    desc:
-      "Stellar Foundation recommended us to use this api to know if the recipient have a Memo type",
   },
   API_TRONGRID_PROXY: {
     parser: stringParser,
