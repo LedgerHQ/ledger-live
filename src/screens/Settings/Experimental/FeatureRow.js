@@ -36,7 +36,9 @@ const FeatureRow = ({ feature }: Props) => {
         checked={!isEnvDefault(feature.name)}
         readOnly={isReadOnly(feature.name)}
         onChange={setEnvUnsafe}
-        isDefault={isEnvDefault(feature.name)}
+        isDefault={
+          isEnvDefault(feature.name) || getEnv(feature.name) === undefined
+        }
         value={getEnv(feature.name)}
         {...rest}
       />
