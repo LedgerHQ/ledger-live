@@ -58,6 +58,7 @@ import type { State } from "./reducers";
 import { navigationRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
+import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
 import { lightTheme, duskTheme, darkTheme } from "./colors";
 
 const themes = {
@@ -155,6 +156,7 @@ function App({ importDataString }: AppProps) {
   return (
     <View style={styles.root}>
       <SyncNewAccounts priority={5} />
+      <ExperimentalHeader />
 
       <RootNavigator importDataString={importDataString} />
 

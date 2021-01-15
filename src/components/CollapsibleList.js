@@ -29,7 +29,7 @@ const {
  * @param {Animated.Value} dest position to interpolate to
  * @returns {Animated.Node<number>}
  */
-const runCollapse = (clock, value, dest) => {
+export const runCollapse = (clock, value, dest) => {
   const state = {
     finished: new Value(0),
     position: new Value(0),
