@@ -20,6 +20,7 @@ export type InfoStepViewProps = {
   bullets?: {
     Icon?: *,
     label?: React$Node,
+    labels?: React$Node[],
     title?: React$Node,
     index?: number,
     color?: string,
@@ -113,43 +114,54 @@ export function InfoStepView({
                 ))}
               {bullets && (
                 <View style={styles.bulletContainer}>
-                  {bullets.map(({ Icon, title, label, index, color }, i) => (
-                    <View style={styles.bulletLine} key={i}>
-                      <View
-                        style={[
-                          styles.bulletIcon,
-                          { backgroundColor: bulletColor },
-                        ]}
-                      >
-                        {Icon ? (
-                          <Icon
-                            size={10}
-                            color={color ? colors[color] : colors.live}
-                          />
-                        ) : (
-                          <LText
-                            semiBold
-                            style={[styles.label, { color: colors.live }]}
-                          >
-                            {index || i + 1}
-                          </LText>
-                        )}
+                  {bullets.map(
+                    ({ Icon, title, label, labels, index, color }, i) => (
+                      <View style={styles.bulletLine} key={i}>
+                        <View
+                          style={[
+                            styles.bulletIcon,
+                            { backgroundColor: bulletColor },
+                          ]}
+                        >
+                          {Icon ? (
+                            <Icon size={10} color={color || colors.live} />
+                          ) : (
+                            <LText
+                              semiBold
+                              style={[styles.label, { color: colors.live }]}
+                            >
+                              {index || i + 1}
+                            </LText>
+                          )}
+                        </View>
+                        <View style={styles.bulletTextContainer}>
+                          {title ? (
+                            <LText
+                              semiBold
+                              style={[styles.bulletTitle, { color: textColor }]}
+                            >
+                              {title}
+                            </LText>
+                          ) : null}
+                          {label ? (
+                            <LText style={[styles.label, { color: textColor }]}>
+                              {label}
+                            </LText>
+                          ) : null}
+                          {labels && labels.length > 0
+                            ? labels.map((l, j) => (
+                                <LText
+                                  key={i + j}
+                                  style={[styles.label, { color: textColor }]}
+                                >
+                                  {l}
+                                </LText>
+                              ))
+                            : null}
+                        </View>
                       </View>
-                      <View style={styles.bulletTextContainer}>
-                        {title && (
-                          <LText
-                            semiBold
-                            style={[styles.bulletTitle, { color: textColor }]}
-                          >
-                            {title}
-                          </LText>
-                        )}
-                        <LText style={[styles.label, { color: textColor }]}>
-                          {label}
-                        </LText>
-                      </View>
-                    </View>
-                  ))}
+                    ),
+                  )}
                 </View>
               )}
             </>
@@ -181,7 +193,9 @@ export function InfoStepView({
               },
             ]}
             disabled={isDisabled}
-            onPress={ctaWarningModal ? onOpenInfoModal : onNext}
+            onPress={
+              isDisabled ? () => {} : ctaWarningModal ? onOpenInfoModal : onNext
+            }
           >
             <LText
               semiBold

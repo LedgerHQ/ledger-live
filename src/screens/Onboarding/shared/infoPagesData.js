@@ -482,6 +482,7 @@ const getSetupDeviceScenes: (
       ),
       descs: [
         <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhrase.desc" />,
+        <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhrase.desc_1" />,
       ],
       ctaText: (
         <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhrase.cta" />
@@ -513,9 +514,10 @@ const getSetupDeviceScenes: (
           title: (
             <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.1.title" />
           ),
-          label: (
-            <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.1.label" />
-          ),
+          labels: [
+            <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.1.label" />,
+            <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.1.label_1" />,
+          ],
         },
       ],
       ctaText: (
