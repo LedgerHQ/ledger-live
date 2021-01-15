@@ -34,10 +34,16 @@ export const getAccountShape: GetAccountShape = async (
 
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
+
+  const newBlacklistedTokensCache = JSON.stringify(blacklistedTokenIds || []);
+  const outdatedBlacklist =
+    initialAccount?.blacklistedTokensCache !== newBlacklistedTokensCache;
+
   let pullFromBlockHash =
     initialAccount &&
     areAllOperationsLoaded(initialAccount) &&
-    mostRecentStableOperation
+    mostRecentStableOperation &&
+    !outdatedBlacklist
       ? mostRecentStableOperation.blockHash
       : undefined;
 
@@ -159,6 +165,7 @@ export const getAccountShape: GetAccountShape = async (
     blockHeight,
     lastSyncDate: new Date(),
     balanceHistory: undefined,
+    blacklistedTokensCache: newBlacklistedTokensCache,
   };
 
   return accountShape;

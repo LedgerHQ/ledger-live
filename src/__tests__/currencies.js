@@ -58,8 +58,8 @@ test("sort by marketcap", () => {
     "bitcoin",
     "ethereum",
     "ethereum/erc20/0x_project",
-    "stealthcoin",
     "ethereum/erc20/holotoken",
+    "stealthcoin",
     "ethereum/erc20/hydro_protocol",
     "ethereum/erc20/xensor",
   ]);

@@ -261,6 +261,11 @@ export function patchAccount(
     changed = true;
   }
 
+  if (account.blacklistedTokensCache !== updatedRaw.blacklistedTokensCache) {
+    next.blacklistedTokensCache = updatedRaw.blacklistedTokensCache;
+    changed = true;
+  }
+
   if (
     updatedRaw.tronResources &&
     account.tronResources !== updatedRaw.tronResources

@@ -579,6 +579,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     bitcoinResources,
     swapHistory,
     algorandResources,
+    blacklistedTokensCache,
     polkadotResources,
   } = rawAccount;
 
@@ -632,6 +633,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     currency,
     lastSyncDate: new Date(lastSyncDate || 0),
     swapHistory: [],
+    blacklistedTokensCache,
   };
 
   if (xpub) {
@@ -701,6 +703,7 @@ export function toAccountRaw({
   bitcoinResources,
   swapHistory,
   algorandResources,
+  blacklistedTokensCache,
   polkadotResources,
 }: Account): AccountRaw {
   const res: $Exact<AccountRaw> = {
@@ -714,6 +717,7 @@ export function toAccountRaw({
     freshAddressPath,
     freshAddresses,
     blockHeight,
+    blacklistedTokensCache,
     creationDate: creationDate.toISOString(),
     operationsCount,
     operations: (operations || []).map((o) => toOperationRaw(o)),

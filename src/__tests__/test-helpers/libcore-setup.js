@@ -5,8 +5,6 @@ import "./setup";
 import { setEnvUnsafe } from "../../env";
 import implementLibcore from "../../libcore/platforms/nodejs";
 
-jest.setTimeout(180000);
-
 let setupCalled = null;
 export const setup = (testId) => {
   if (setupCalled) {
