@@ -128,7 +128,7 @@ export const reducer = (state: State, action: Action): State => {
                 hash: app ? app.hash : "",
                 blocks:
                   app && app.bytes
-                    ? Math.ceil(app.bytes / state.deviceModel.blockSize)
+                    ? Math.ceil(app.bytes / getBlockSize(state))
                     : 0,
                 version: app ? app.version : "",
                 availableVersion: app ? app.version : "",
@@ -367,7 +367,7 @@ export const distribute = (
   config?: $Shape<typeof defaultConfig>
 ): AppsDistribution => {
   const { warnMemoryRatio, sortApps } = { ...defaultConfig, ...config };
-  const blockSize = state.deviceModel.blockSize;
+  const blockSize = getBlockSize(state);
   const totalBytes = state.deviceModel.memorySize;
   const totalBlocks = Math.floor(totalBytes / blockSize);
   const osBytes = (state.firmware && state.firmware.bytes) || 0;
@@ -404,6 +404,10 @@ export const distribute = (
   };
 };
 
+export function getBlockSize(state: State): number {
+  return state.deviceModel.getBlockSize(state.deviceInfo.version);
+}
+
 // tells if the state is "incomplete" to implement the Manager v2 feature
 // this happens when some apps are unrecognized
 export const isIncompleteState = (state: State): boolean =>
@@ -411,7 +415,7 @@ export const isIncompleteState = (state: State): boolean =>
 
 // calculate if a given state (typically a predicted one) is out of memory (meaning impossible to reach with a device)
 export const isOutOfMemoryState = (state: State): boolean => {
-  const blockSize = state.deviceModel.blockSize;
+  const blockSize = getBlockSize(state);
   const totalBytes = state.deviceModel.memorySize;
   const totalBlocks = Math.floor(totalBytes / blockSize);
   const osBytes = (state.firmware && state.firmware.bytes) || 0;

@@ -246,7 +246,7 @@ export const listApps = (
           blocks ||
           Math.ceil(
             ((installedAppVersion || availableAppVersion || { bytes: 0 })
-              .bytes || 0) / deviceModel.blockSize
+              .bytes || 0) / deviceModel.getBlockSize(deviceInfo.version)
           );
         const updated =
           appsThatKeepChangingHashes.includes(name) ||
