@@ -40,6 +40,16 @@ const getAccountOperationUrl = (
     startAt,
   })}`;
 
+const getWithdrawUnbondedAmount = (extrinsic) => {
+  return (
+    extrinsic?.staking?.eventStaking.reduce((acc, curr) => {
+      return curr.method === "Withdrawn"
+        ? BigNumber(acc).plus(curr.value)
+        : BigNumber(0);
+    }, BigNumber(0)) || BigNumber(0)
+  );
+};
+
 /**
  * add Extra info for operation details
  *
@@ -74,6 +84,13 @@ const getExtra = (type: OperationType, extrinsic: *): Object => {
           unbondedAmount: BigNumber(extrinsic.amount),
         };
       }
+      break;
+
+    case "WITHDRAW_UNBONDED":
+      extra = {
+        ...extra,
+        withdrawUnbondedAmount: getWithdrawUnbondedAmount(extrinsic),
+      };
       break;
 
     case "REWARD_PAYOUT":

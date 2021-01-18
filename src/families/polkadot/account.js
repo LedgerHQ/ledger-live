@@ -10,6 +10,7 @@ function formatOperationSpecifics(op: Operation, unit: ?Unit): string {
     validators,
     bondedAmount,
     unbondedAmount,
+    withdrawUnbondedAmount,
     validatorStash,
     amount,
   } = op.extra;
@@ -33,6 +34,12 @@ function formatOperationSpecifics(op: Operation, unit: ?Unit): string {
           unit
             ? formatCurrencyUnit(unit, unbondedAmount, formatConfig)
             : unbondedAmount
+        }`
+      : withdrawUnbondedAmount && !withdrawUnbondedAmount.isNaN()
+      ? `\n    withdrawUnbondedAmount: ${
+          unit
+            ? formatCurrencyUnit(unit, withdrawUnbondedAmount, formatConfig)
+            : withdrawUnbondedAmount
         }`
       : "";
 
@@ -110,6 +117,12 @@ export function fromOperationExtraRaw(extra: ?Object) {
       unbondedAmount: BigNumber(extra.unbondedAmount),
     };
   }
+  if (extra && extra.withdrawUnbondedAmount) {
+    return {
+      ...extra,
+      withdrawUnbondedAmount: BigNumber(extra.withdrawUnbondedAmount),
+    };
+  }
   // for subscan reward & slash
   if (extra && extra.amount) {
     return {
@@ -137,6 +150,12 @@ export function toOperationExtraRaw(extra: ?Object) {
     return {
       ...extra,
       unbondedAmount: extra.unbondedAmount.toString(),
+    };
+  }
+  if (extra && extra.withdrawUnbondedAmount) {
+    return {
+      ...extra,
+      withdrawUnbondedAmount: extra.withdrawUnbondedAmount.toString(),
     };
   }
   // for subscan reward & slash
