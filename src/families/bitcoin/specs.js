@@ -367,6 +367,24 @@ const viacoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
 };
 
+const dash: AppSpec<Transaction> = {
+  name: "Dash",
+  currency: getCryptoCurrencyById("dash"),
+  dependency: "Bitcoin",
+  appQuery: {
+    model: "nanoS",
+    appName: "Dash",
+  },
+  test: genericTest,
+  mutations: bitcoinLikeMutations({
+    targetAccountSize: 5,
+    minimalAmount: parseCurrencyUnit(
+      getCryptoCurrencyById("dash").units[0],
+      "0.001"
+    ),
+  }),
+};
+
 const dogecoin: AppSpec<Transaction> = {
   name: "DogeCoin",
   currency: getCryptoCurrencyById("dogecoin"),
@@ -494,6 +512,7 @@ export default {
   bitcoinTestnet,
   bitcoinCash,
   bitcoinGold,
+  dash,
   digibyte,
   dogecoin,
   komodo,
