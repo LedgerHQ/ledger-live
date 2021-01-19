@@ -9,8 +9,8 @@ import initSwap from "./initSwap";
 import { getEnv } from "../../env";
 
 export const operationStatusList = {
-  finishedOK: ["finished", "refunded"],
-  finishedKO: ["expired", "failed"],
+  finishedOK: ["finished"],
+  finishedKO: ["expired", "failed", "refunded"],
   pending: [
     "confirming",
     "exchanging",
