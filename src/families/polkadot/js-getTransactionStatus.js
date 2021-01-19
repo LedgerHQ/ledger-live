@@ -71,7 +71,12 @@ const getSendTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
-  if (a.spendableBalance.lt(totalSpent.plus(getExistentialDeposit(a)))) {
+  const existentialDeposit = getExistentialDeposit(a);
+
+  if (
+    existentialDeposit.gt(0) &&
+    totalSpent.plus(existentialDeposit).gt(a.spendableBalance)
+  ) {
     errors.amount = new NotEnoughSpendableBalance(null, {
       minimumAmount: formatCurrencyUnit(
         a.currency.units[0],
@@ -83,6 +88,8 @@ const getSendTransactionStatus = async (
         }
       ),
     });
+  } else if (totalSpent.gt(a.spendableBalance)) {
+    errors.amount = new NotEnoughBalance();
   }
 
   if (
