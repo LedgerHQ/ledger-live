@@ -58,6 +58,11 @@ const getExtra = (type: string, account: Account, transaction: Transaction) => {
       return { ...extra, bondedAmount: BigNumber(transaction.amount) };
     case "UNBOND":
       return { ...extra, unbondedAmount: BigNumber(transaction.amount) };
+    case "WITHDRAW_UNBONDED":
+      return {
+        ...extra,
+        withdrawUnbondedAmount: BigNumber(transaction.amount),
+      };
     case "NOMINATE":
       return { ...extra, validators: transaction.validators };
   }
