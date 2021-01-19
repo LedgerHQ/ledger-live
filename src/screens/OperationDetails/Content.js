@@ -60,9 +60,15 @@ type Props = {
   account: AccountLike,
   parentAccount: ?Account,
   operation: Operation,
+  disableAllLinks?: Boolean,
 };
 
-export default function Content({ account, parentAccount, operation }: Props) {
+export default function Content({
+  account,
+  parentAccount,
+  operation,
+  disableAllLinks,
+}: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -270,11 +276,13 @@ export default function Content({ account, parentAccount, operation }: Props) {
         />
       ) : null}
 
-      <Section
-        title={t("operationDetails.account")}
-        value={getAccountName(account)}
-        onPress={onPress}
-      />
+      {!disableAllLinks ? (
+        <Section
+          title={t("operationDetails.account")}
+          value={getAccountName(account)}
+          onPress={onPress}
+        />
+      ) : null}
 
       <Section
         title={t("operationDetails.date")}

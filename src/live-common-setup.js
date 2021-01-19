@@ -60,7 +60,7 @@ if (Config.VERBOSE) {
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
 
-setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
+if (Config.FORCE_PROVIDER) setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
 
 // Add support of HID (experimental until we stabilize it)
 

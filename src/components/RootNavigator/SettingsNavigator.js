@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { ScreenName, NavigatorName } from "../../const";
+import { ScreenName } from "../../const";
 import BenchmarkQRStream from "../../screens/BenchmarkQRStream";
 import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
@@ -11,6 +11,7 @@ import DebugCrash from "../../screens/DebugCrash";
 import DebugHttpTransport from "../../screens/DebugHttpTransport";
 import DebugIcons from "../../screens/DebugIcons";
 import DebugLottie from "../../screens/DebugLottie.js";
+import DebugLogs from "../../screens/DebugLogs.js";
 import DebugStore from "../../screens/DebugStore";
 import DebugPlayground from "../../screens/DebugPlayground";
 import Settings from "../../screens/Settings";
@@ -31,7 +32,6 @@ import ExperimentalSettings from "../../screens/Settings/Experimental";
 import RepairDevice from "../../screens/RepairDevice";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
-import OnboardingNavigator from "./OnboardingNavigator";
 import HelpButton from "../../screens/Settings/HelpButton";
 
 export default function SettingsNavigator() {
@@ -194,6 +194,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugLogs}
+        component={DebugLogs}
+        options={{
+          title: "Debug Logs",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugIcons}
         component={DebugIcons}
         options={{
@@ -220,11 +227,6 @@ export default function SettingsNavigator() {
         options={{
           title: "Benchmark QRStream",
         }}
-      />
-      <Stack.Screen
-        name={NavigatorName.Onboarding}
-        component={OnboardingNavigator}
-        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

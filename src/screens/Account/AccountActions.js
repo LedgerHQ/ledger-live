@@ -3,7 +3,10 @@ import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import {
+  getMainAccount,
+  getAccountSpendableBalance,
+} from "@ledgerhq/live-common/lib/account";
 import { useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "../../const";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
@@ -38,6 +41,8 @@ export default function AccountActions({ account, parentAccount }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const mainAccount = getMainAccount(account, parentAccount);
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
+
+  const balance = getAccountSpendableBalance(account);
 
   const accountId = account.id;
   const parentId = parentAccount && parentAccount.id;
@@ -87,6 +92,7 @@ export default function AccountActions({ account, parentAccount }: Props) {
           parentAccount={parentAccount}
           style={[styles.btn]}
           onPress={onSend}
+          disabled={balance.lte(0)}
         />
       )}
       <ReceiveAction

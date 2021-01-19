@@ -5,11 +5,10 @@ import { useTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { ScreenName, NavigatorName } from "../../const";
+import { ScreenName } from "../../const";
 import { hasAvailableUpdateSelector } from "../../reducers/settings";
 import Manager from "../../screens/Manager";
 import ManagerMain from "../../screens/Manager/Manager";
-import OnboardingNavigator from "./OnboardingNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import styles from "../../navigation/styles";
 import ReadOnlyTab from "../ReadOnlyTab";
@@ -63,11 +62,6 @@ export default function ManagerNavigator() {
         name={ScreenName.ManagerMain}
         component={ManagerMain}
         options={{ title: t("manager.appList.title") }}
-      />
-      <Stack.Screen
-        name={NavigatorName.Onboarding}
-        component={OnboardingNavigator}
-        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

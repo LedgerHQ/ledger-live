@@ -76,6 +76,7 @@ export const lightTheme = {
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
     translucentGrey: "rgba(153, 153, 153, 0.2)",
+    lightLiveBg: "#eef0ff",
 
     errorBg: "#ff0042",
 
@@ -122,6 +123,7 @@ export const duskTheme = {
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
     translucentGrey: "rgba(153, 153, 153, 0.2)",
+    lightLiveBg: "#1d2e46",
 
     errorBg: "#ff0042",
 
@@ -168,6 +170,7 @@ export const darkTheme = {
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
     translucentGrey: "rgba(153, 153, 153, 0.2)",
+    lightLiveBg: "#222635",
 
     errorBg: "#ff0042",
 

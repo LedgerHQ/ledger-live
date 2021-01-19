@@ -8,6 +8,7 @@ import { timeout } from "rxjs/operators";
 import getDeviceInfo from "@ledgerhq/live-common/lib/hw/getDeviceInfo";
 import getDeviceName from "@ledgerhq/live-common/lib/hw/getDeviceName";
 import { listApps } from "@ledgerhq/live-common/lib/apps/hw";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import { delay } from "@ledgerhq/live-common/lib/promise";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
@@ -46,6 +47,7 @@ type RouteParams = {
 type BleDevice = {
   id: string,
   name: string,
+  modelId: DeviceModelId,
 };
 
 type Status = "scanning" | "pairing" | "genuinecheck" | "paired" | "timedout";
@@ -92,7 +94,7 @@ class PairDevices extends Component<PairDevicesProps, State> {
     this.setState({ error });
   };
 
-  onSelect = async (bleDevice: BleDevice) => {
+  onSelect = async (bleDevice: BleDevice, deviceMeta: *) => {
     const { hasCompletedOnboarding, installAppFirstTime } = this.props;
     const device = {
       deviceName: bleDevice.name,
@@ -118,11 +120,13 @@ class PairDevices extends Component<PairDevicesProps, State> {
           reject = error;
         });
 
+        let appsInstalled;
         listApps(transport, deviceInfo)
           .pipe(timeout(GENUINE_CHECK_TIMEOUT))
           .subscribe({
             next: e => {
               if (e.type === "result") {
+                appsInstalled = e.result && e.result.installed.length;
                 if (!hasCompletedOnboarding) {
                   const hasAnyAppInstalled =
                     e.result && e.result.installed.length > 0;
@@ -149,7 +153,13 @@ class PairDevices extends Component<PairDevicesProps, State> {
           (await getDeviceName(transport)) || device.deviceName || "";
         if (this.unmounted) return;
 
-        this.props.addKnownDevice({ id: device.deviceId, name });
+        this.props.addKnownDevice({
+          id: device.deviceId,
+          name,
+          deviceInfo,
+          appsInstalled,
+          modelId: deviceMeta.modelId,
+        });
         if (this.unmounted) return;
         this.setState({ status: "paired" });
       } finally {

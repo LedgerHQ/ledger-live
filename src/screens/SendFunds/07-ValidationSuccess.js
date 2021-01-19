@@ -12,6 +12,7 @@ import ValidateSuccess from "../../components/ValidateSuccess";
 import {
   context as _wcContext,
   setCurrentCallRequestResult,
+  STATUS,
 } from "../WalletConnect/Provider";
 
 type Props = {
@@ -54,6 +55,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     const result = route.params?.result;
     if (!result) return;
     navigation.navigate(ScreenName.OperationDetails, {
+      disableAllLinks: wcContext.status === STATUS.CONNECTED,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       operation:
@@ -61,7 +63,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
           ? result.subOperations[0]
           : result,
     });
-  }, [navigation, route.params, account, parentAccount]);
+  }, [
+    account,
+    route.params?.result,
+    navigation,
+    wcContext.status,
+    parentAccount,
+  ]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>

@@ -12,9 +12,11 @@ import Swap from "../../icons/Swap";
 export const SendActionDefault = ({
   onPress,
   style,
+  disabled,
 }: {
   onPress: () => void,
   style?: *,
+  disabled?: Boolean,
 }) => (
   <Button
     event="AccountSend"
@@ -23,6 +25,7 @@ export const SendActionDefault = ({
     onPress={onPress}
     title={<Trans i18nKey="account.send" />}
     containerStyle={style}
+    disabled={!!disabled}
   />
 );
 

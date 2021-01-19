@@ -6,12 +6,16 @@ import { createStructuredSelector } from "reselect";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { Trans } from "react-i18next";
+import { NotEnoughBalance } from "@ledgerhq/errors";
 import type {
   Account,
   AccountLikeArray,
 } from "@ledgerhq/live-common/lib/types";
 
-import { isAccountEmpty } from "@ledgerhq/live-common/lib/account";
+import {
+  isAccountEmpty,
+  getAccountSpendableBalance,
+} from "@ledgerhq/live-common/lib/account";
 import {
   flattenAccountsEnforceHideEmptyTokenSelector,
   accountsSelector,
@@ -24,6 +28,7 @@ import LText from "../../components/LText";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
 import AccountCard from "../../components/AccountCard";
 import KeyboardView from "../../components/KeyboardView";
+import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import { formatSearchResults } from "../../helpers/formatAccountSearchResults";
 import type { SearchResult } from "../../helpers/formatAccountSearchResults";
 
@@ -38,9 +43,15 @@ type Props = {
   colors: *,
 };
 
-type State = {};
+type State = {
+  error: *,
+};
 
 class SendFundsSelectAccount extends Component<Props, State> {
+  state = {
+    error: null,
+  };
+
   renderList = items => {
     const { accounts } = this.props;
     const formatedList = formatSearchResults(items, accounts);
@@ -59,6 +70,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
 
   renderItem = ({ item: result }: { item: SearchResult }) => {
     const { account, match } = result;
+    const balance = getAccountSpendableBalance(account);
     return (
       <View
         style={
@@ -75,11 +87,17 @@ class SendFundsSelectAccount extends Component<Props, State> {
           account={account}
           style={styles.cardStyle}
           onPress={() => {
-            this.props.navigation.navigate(ScreenName.SendSelectRecipient, {
-              accountId: account.id,
-              parentId:
-                account.type !== "Account" ? account.parentId : undefined,
-            });
+            if (balance.lte(0)) {
+              this.setState({
+                error: new NotEnoughBalance(),
+              });
+            } else {
+              this.props.navigation.navigate(ScreenName.SendSelectRecipient, {
+                accountId: account.id,
+                parentId:
+                  account.type !== "Account" ? account.parentId : undefined,
+              });
+            }
           }}
         />
       </View>
@@ -118,6 +136,12 @@ class SendFundsSelectAccount extends Component<Props, State> {
             />
           </View>
         </KeyboardView>
+        {this.state.error ? (
+          <GenericErrorBottomModal
+            error={this.state.error}
+            onClose={() => this.setState({ error: null })}
+          />
+        ) : null}
       </SafeAreaView>
     );
   }

@@ -17,7 +17,7 @@ import ScanningHeader from "./ScanningHeader";
 
 type Props = {
   knownDevices: DeviceLike[],
-  onSelect: Device => *,
+  onSelect: (Device, *) => *,
   onError: Error => *,
   onTimeout: () => *,
 };
@@ -82,16 +82,17 @@ class Scanning extends Component<Props, State> {
 
   renderItem = ({ item }: { item: * }) => {
     const knownDevice = this.props.knownDevices.find(d => d.id === item.id);
+    const deviceMeta = {
+      deviceId: item.id,
+      deviceName: item.name,
+      wired: false,
+      modelId: "nanoX",
+    };
     return (
       <DeviceItem
         device={item}
-        deviceMeta={{
-          deviceId: item.id,
-          deviceName: item.name,
-          wired: false,
-          modelId: "nanoX",
-        }}
-        onSelect={() => this.props.onSelect(item)}
+        deviceMeta={deviceMeta}
+        onSelect={() => this.props.onSelect(item, deviceMeta)}
         disabled={!!knownDevice}
         description={
           knownDevice ? <Trans i18nKey="PairDevices.alreadyPaired" /> : ""

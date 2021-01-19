@@ -13,8 +13,11 @@ export default function ConfigureDeviceRow() {
   function onPress() {
     setShowWelcome(false);
     setFirstTimeOnboarding(false);
-    navigate(NavigatorName.Onboarding, {
-      screen: ScreenName.OnboardingDeviceSelection,
+    navigate(NavigatorName.BaseOnboarding, {
+      screen: NavigatorName.Onboarding,
+      params: {
+        screen: ScreenName.OnboardingDeviceSelection,
+      },
     });
   }
 

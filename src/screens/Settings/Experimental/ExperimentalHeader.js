@@ -42,12 +42,12 @@ export default function ExperimentalHeader() {
 
   return (
     <Animated.View
-      style={[styles.root, { height, backgroundColor: colors.lightLive }]}
+      style={[styles.root, { height, backgroundColor: colors.lightLiveBg }]}
     >
       <Animated.View
         style={[
           styles.container,
-          { opacity: openingAnim, backgroundColor: colors.lightLive },
+          { opacity: openingAnim, backgroundColor: colors.lightLiveBg },
         ]}
       >
         <ExperimentalIcon size={16} color={colors.live} />

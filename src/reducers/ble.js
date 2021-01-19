@@ -1,11 +1,16 @@
 // @flow
 /* eslint import/no-cycle: 0 */
 import { handleActions } from "redux-actions";
+import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import type { State } from ".";
 
 export type DeviceLike = {
   id: string,
   name: string,
+  deviceInfo?: DeviceInfo,
+  appsInstalled?: number,
+  modelId?: DeviceModelId,
 };
 
 export type BleState = {
@@ -20,7 +25,7 @@ const handlers: Object = {
   BLE_ADD_DEVICE: (state: BleState, { device }: { device: DeviceLike }) => ({
     knownDevices: state.knownDevices
       .filter(d => d.id !== device.id)
-      .concat({ id: device.id, name: device.name }),
+      .concat({ ...device }),
   }),
 
   BLE_REMOVE_DEVICE: (state: BleState, { deviceId }: { deviceId: string }) => ({

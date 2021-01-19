@@ -21,6 +21,7 @@ import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import OpenDebugStore from "./OpenDebugStore";
 import OpenDebugPlayground from "./OpenDebugPlayground";
 import OpenLottie from "./OpenDebugLottie";
+import OpenDebugLogs from "./OpenDebugLogs";
 import SkipLock from "../../../components/behaviour/SkipLock";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 
@@ -39,6 +40,7 @@ export function DebugMocks() {
       {accounts.length === 0 ? (
         <GenerateMockAccounts title="Generate 10 mock Accounts" count={10} />
       ) : null}
+      <OpenDebugLogs />
       <OpenDebugCrash />
       <OpenDebugStore />
       <OpenDebugIcons />

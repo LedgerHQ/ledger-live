@@ -2676,6 +2676,7 @@
         "amountSubTitle": "Amount to delegate",
         "summary": "Summary",
         "verification": "Verification",
+        "selectDevice": "Select device",
         "connectDevice": "Connect device",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
