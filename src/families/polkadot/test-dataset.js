@@ -8,6 +8,7 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   NotEnoughBalanceBecauseDestinationNotCreated,
+  NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
 
 import {
@@ -138,7 +139,7 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
-              name: "Not enough balance",
+              name: "Not enough spendable balance",
               transaction: fromTransactionRaw({
                 family: "polkadot",
                 recipient: ACCOUNT_CONTROLLER,
@@ -152,7 +153,7 @@ const dataset: DatasetTest<Transaction> = {
               }),
               expectedStatus: {
                 errors: {
-                  amount: new NotEnoughBalance(),
+                  amount: new NotEnoughSpendableBalance(),
                 },
                 warnings: {},
               },
