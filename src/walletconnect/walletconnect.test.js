@@ -1,4 +1,5 @@
 // @flow
+import "../__tests__/test-helpers/setup";
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
 import { getAccountBridge } from "../bridge";

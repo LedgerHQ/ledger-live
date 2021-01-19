@@ -3,6 +3,7 @@
 exports[`if API is down, an account still sync fine 1`] = `
 Object {
   "balance": "2092658623260253",
+  "blacklistedTokensCache": "[]",
   "blockHeight": 0,
   "creationDate": "",
   "currencyId": "ethereum",
@@ -12732,7 +12733,7 @@ Object {
     },
     Object {
       "approvals": undefined,
-      "balance": "27",
+      "balance": "25",
       "balanceHistory": undefined,
       "compoundBalance": undefined,
       "creationDate": "2019-08-02T13:42:34.000Z",
@@ -12837,7 +12838,7 @@ Object {
       "operationsCount": 5,
       "parentId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
       "pendingOperations": Array [],
-      "spendableBalance": "27",
+      "spendableBalance": "25",
       "starred": false,
       "swapHistory": Array [],
       "tokenId": "ethereum/erc20/ampleforth",
