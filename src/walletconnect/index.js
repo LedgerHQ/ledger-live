@@ -2,6 +2,8 @@
 /* eslint-disable no-fallthrough */
 import { BigNumber } from "bignumber.js";
 import eip55 from "eip55";
+import sha from "sha.js";
+import { bufferToHex } from "ethereumjs-util";
 import { getAccountBridge } from "../bridge";
 import { getCryptoCurrencyById } from "../currencies";
 import type { Account, Transaction } from "../types";
@@ -9,11 +11,7 @@ import type {
   TypedMessageData,
   TypedMessage,
 } from "../families/ethereum/types";
-import {
-  stringHash,
-  domainHash,
-  messageHash,
-} from "../families/ethereum/hw-signMessage";
+import { domainHash, messageHash } from "../families/ethereum/hw-signMessage";
 import type { MessageData } from "../hw/signMessage/types";
 
 export type WCPayloadTransaction = {
@@ -71,19 +69,23 @@ export const parseCallRequest: Parser = async (account, payload) => {
         payload.method === "eth_signTypedData"
           ? {
               // $FlowFixMe
-              domainHash: domainHash(message),
+              domainHash: bufferToHex(domainHash(message)),
               // $FlowFixMe
-              messageHash: messageHash(message),
+              messageHash: bufferToHex(messageHash(message)),
             }
           : {
-              // $FlowFixMe
-              stringHash: stringHash(message),
+              stringHash:
+                "0x" +
+                sha("sha256")
+                  // $FlowFixMe
+                  .update(message)
+                  .digest("hex"),
             };
       return {
         type: "message",
+        // $FlowFixMe (can't figure out MessageData | TypedMessageData)
         data: {
           path: account.freshAddressPath,
-          // $FlowFixMe (can't figure out MessageData | TypedMessageData)
           message,
           currency: getCryptoCurrencyById("ethereum"),
           derivationMode: account.derivationMode,

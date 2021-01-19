@@ -68,6 +68,10 @@ describe("walletconnect", () => {
         derivationMode: "",
         message: "My email is john@doe.com - 1537836206101",
         path: "44'/60'/0'/0/0",
+        hashes: {
+          stringHash:
+            "0x4a15deb26c7084592efc4a5e5dbadfa43ea596391461421145705a1f86494ddd",
+        },
       },
       type: "message",
     });
@@ -90,6 +94,12 @@ describe("walletconnect", () => {
         derivationMode: "",
         message: JSON.parse(raw),
         path: "44'/60'/0'/0/0",
+        hashes: {
+          domainHash:
+            "0x4ffaf9cb7df9fe0016d5ea8358cb61ec61875d98a856982d216015abbf371227",
+          messageHash:
+            "0x401419776f57f5162dd05a3072f5941868ac4decfa789e501598997c48a43488",
+        },
       },
       type: "message",
     });
