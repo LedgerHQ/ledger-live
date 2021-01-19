@@ -122,6 +122,7 @@ export const minAppVersion = {
   "SSH/PGP Agent": "0.0.7",
   Sia: "0.4.2",
   Solana: "1.0.1",
+  Stacks: "0.0.0",
   Stealth: "1.5.0",
   Stellar: "3.2.2",
   Stratis: "1.5.0",
