@@ -197,7 +197,7 @@ const calculateMaxRebond = (a: Account): BigNumber => {
  */
 const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
   const amount = a.spendableBalance
-    .minus(getExistentialDeposit(a))
+    .minus(getMinimumBalance(a))
     .minus(t.fees || 0);
   return amount.lt(0) ? BigNumber(0) : amount;
 };
@@ -240,7 +240,7 @@ export const calculateAmount = ({
   return amount.lt(0) ? BigNumber(0) : amount;
 };
 
-export const getExistentialDeposit = (a: Account): BigNumber => {
+export const getMinimumBalance = (a: Account): BigNumber => {
   const lockedBalance = a.balance.minus(a.spendableBalance);
 
   return lockedBalance.lte(EXISTENTIAL_DEPOSIT)

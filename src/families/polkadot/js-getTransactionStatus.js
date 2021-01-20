@@ -38,7 +38,7 @@ import {
   hasMaxUnlockings,
   calculateAmount,
   getMinimalLockedBalance,
-  getExistentialDeposit,
+  getMinimumBalance,
 } from "./logic";
 import { getCurrentPolkadotPreloadData } from "./preload";
 import { isControllerAddress, isNewAccount, isElectionClosed } from "./cache";
@@ -71,22 +71,18 @@ const getSendTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
-  const existentialDeposit = getExistentialDeposit(a);
+  const minimumBalance = getMinimumBalance(a);
 
   if (
-    existentialDeposit.gt(0) &&
-    totalSpent.plus(existentialDeposit).gt(a.spendableBalance)
+    minimumBalance.gt(0) &&
+    totalSpent.plus(minimumBalance).gt(a.spendableBalance)
   ) {
     errors.amount = new NotEnoughSpendableBalance(null, {
-      minimumAmount: formatCurrencyUnit(
-        a.currency.units[0],
-        getExistentialDeposit(a),
-        {
-          disableRounding: true,
-          useGrouping: false,
-          showCode: true,
-        }
-      ),
+      minimumAmount: formatCurrencyUnit(a.currency.units[0], minimumBalance, {
+        disableRounding: true,
+        useGrouping: false,
+        showCode: true,
+      }),
     });
   } else if (totalSpent.gt(a.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
