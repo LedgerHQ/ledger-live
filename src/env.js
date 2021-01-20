@@ -92,6 +92,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger script runner API",
   },
+  BOT_TIMEOUT_SCAN_ACCOUNTS: {
+    def: 30 * 60 * 1000,
+    parser: intParser,
+    desc: "bot's default timeout for scanAccounts",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,

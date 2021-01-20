@@ -136,7 +136,7 @@ export async function runWithAppSpec<T: Transaction>(
         }),
         reduce<Account>((all, a) => all.concat(a), []),
         timeoutWith(
-          30 * 60 * 1000,
+          getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
           throwError(
             new Error("scan accounts timeout for currency " + currency.name)
           )

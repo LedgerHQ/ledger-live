@@ -1,10 +1,8 @@
-name: Bot 'Mère Denis'
+name: Bot 'Carbone'
 on:
-  schedule:
-    - cron: "0 9 * * 1"
   push:
     branches:
-      - bot-mere-denis
+      - bots-staging
 
 jobs:
   run-bot:
@@ -40,8 +38,9 @@ jobs:
           yarn ci-setup-cli
       - name: BOT
         env:
-          BOT_TIMEOUT_SCAN_ACCOUNTS: 3600000
-          SEED: ${{ secrets.SEED1 }}
+          EXPLORER_BETA: https://explorers.api-01.live.ledger-stg.com
+          EXPERIMENTAL_EXPLORERS: true
+          SEED: ${{ secrets.SEED2 }}
           VERBOSE_FILE: bot-tests.txt
           GITHUB_SHA: ${GITHUB_SHA}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +48,7 @@ jobs:
           GITHUB_WORKFLOW: ${{ github.workflow }}
           SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
         run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
-        timeout-minutes: 180
+        timeout-minutes: 120
       - name: Run coverage
         if: failure() || success()
         run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
