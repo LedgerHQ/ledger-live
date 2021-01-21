@@ -829,7 +829,8 @@
       },
       "recoveryPhrase": {
         "title": "Recovery phrase",
-        "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
+        "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys.",
+        "desc_1": "Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
         "cta": "Recovery phrase",
         "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
       },
@@ -859,7 +860,8 @@
           },
           "1": {
             "title": "Write down all words",
-            "label": "Write Word #1 displayed on your Nano in position 1 of your Recovery sheet. Then press right on your Nano to display Word #2 and write it down in position 2. Repeat the process for all words while carefully respecting the order and spelling. Press left on your Nano to check for any mistakes."
+            "label": "Write Word #1 displayed on your Nano in position 1 of your Recovery sheet. Then press right on your Nano to display Word #2 and write it down in position 2.",
+            "label_1": "Repeat the process for all words while carefully respecting the order and spelling. Press left on your Nano to check for any mistakes."
           },
           "2": {
             "title": "Confirm your recovery phrase",
@@ -1515,6 +1517,13 @@
       "password": "Password lock",
       "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
       "counterValue": "Countervalue",
+      "theme": "Theme",
+      "themeDesc": "Set the app UI theme",
+      "themes": {
+        "dark": "Dark",
+        "dusk": "Dusk",
+        "light": "Light"
+      },
       "counterValueDesc": "Choose the currency for balances and operations.",
       "exchange": "Rate provider",
       "exchangeDesc": "Set provider of exchange rate from Bitcoin to {{fiat}}",
@@ -2675,6 +2684,7 @@
         "amountSubTitle": "Amount to delegate",
         "summary": "Summary",
         "verification": "Verification",
+        "selectDevice": "Select device",
         "connectDevice": "Connect device",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
