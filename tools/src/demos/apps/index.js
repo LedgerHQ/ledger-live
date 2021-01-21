@@ -143,7 +143,7 @@ const Apps = () => {
 
   useEffect(() => {
     setApps([]);
-    setEnv("FORCE_PROVIDER", provider);
+    setEnv("FORCE_PROVIDER", provider.value);
     manager.getAppsList(choice.deviceInfo).then(setApps);
   }, [choice, provider]);
 
