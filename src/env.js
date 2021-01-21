@@ -55,7 +55,7 @@ const envDefinitions = {
   API_RIPPLE_WS: {
     parser: stringParser,
     def: "wss://xrpl.ws",
-    desc: "websockets api for ripple",
+    desc: "XRP Ledger full history open WebSocket endpoint",
   },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
