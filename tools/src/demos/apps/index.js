@@ -88,16 +88,16 @@ const AppWithCoinPreview = ({ app }: *) => {
 
 const choices = [
   {
-    label: "Nano S 1.6.0",
+    label: "Nano S 1.6.1",
     deviceInfo: {
-      version: "1.6.0",
+      version: "1.6.1",
       mcuVersion: "1.12",
       majMin: "1.6",
       providerName: null,
       targetId: 823132164,
       isOSU: false,
       isBootloader: false,
-      managerAllowed: true,
+      managerAllowed: false,
       pinValidated: true,
     },
   },
@@ -116,10 +116,10 @@ const choices = [
     },
   },
   {
-    label: "Nano X 1.2.4-1",
+    label: "Nano X 1.2.4-5",
     deviceInfo: {
-      version: "1.2.4-1",
-      mcuVersion: "2.8",
+      version: "1.2.4-5",
+      mcuVersion: "2.10",
       majMin: "1.2",
       providerName: null,
       targetId: 855638020,
