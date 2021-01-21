@@ -23,7 +23,7 @@ const postSyncPatchGen = <T: AccountLike>(
         // a child pending parent need to disappear if parent eth op disappear
         parentPendingOperation.some((o) => o.hash === op.hash)) &&
       op.transactionSequenceNumber &&
-      op.transactionSequenceNumber >= latestNonce &&
+      op.transactionSequenceNumber > latestNonce &&
       // retain logic
       (shouldRetainPendingOperation(mainAccount, op) ||
         // after retain logic, we need operation to appear
