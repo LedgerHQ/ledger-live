@@ -1,16 +1,12 @@
 // @flow
 
+import "../../__tests__/test-helpers/setup";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { listCryptoCurrencies } from "../../currencies";
-
-const ignore = ["bitcloud", "bitcore", "bitsend", "megacoin"];
+import { listSupportedCurrencies } from "../../currencies";
 
 test("all bitcoin forks that have a manager app have a defined address in abandonSeedLegacyPerCurrency", () => {
-  const currenciyIds = listCryptoCurrencies(true)
-    .filter(
-      (c) =>
-        c.family === "bitcoin" && c.managerAppName && !ignore.includes(c.id)
-    )
+  const currenciyIds = listSupportedCurrencies()
+    .filter((c) => c.family === "bitcoin" && c.managerAppName)
     .map((c) => c.id)
     .sort();
   expect(
