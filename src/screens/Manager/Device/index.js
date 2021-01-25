@@ -157,6 +157,7 @@ const DeviceCard = ({
           <DeviceAppStorage
             distribution={distribution}
             deviceModel={deviceModel}
+            deviceInfo={deviceInfo}
           />
         </View>
       </Card>

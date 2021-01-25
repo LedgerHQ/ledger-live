@@ -37,6 +37,30 @@ export default function ValidateOnDevice({ device, message, account }: Props) {
           </LText>
           <LText semiBold>{account.name}</LText>
         </View>
+        {message?.hashes?.domainHash ? (
+          <View style={styles.messageContainer}>
+            <LText style={styles.property}>
+              {t("walletconnect.domainHash")}
+            </LText>
+            <LText semiBold>{message?.hashes?.domainHash}</LText>
+          </View>
+        ) : null}
+        {message?.hashes?.messageHash ? (
+          <View style={styles.messageContainer}>
+            <LText style={styles.property}>
+              {t("walletconnect.messageHash")}
+            </LText>
+            <LText semiBold>{message?.hashes?.messageHash}</LText>
+          </View>
+        ) : null}
+        {message?.hashes?.stringHash ? (
+          <View style={styles.messageContainer}>
+            <LText style={styles.property}>
+              {t("walletconnect.stringHash")}
+            </LText>
+            <LText semiBold>{message?.hashes?.stringHash}</LText>
+          </View>
+        ) : null}
         <View style={styles.messageContainer}>
           <LText style={styles.property}>{t("walletconnect.message")}</LText>
           <LText semiBold>

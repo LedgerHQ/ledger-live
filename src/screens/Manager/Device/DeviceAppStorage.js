@@ -14,11 +14,13 @@ import ByteSize from "../../../components/ByteSize";
 
 type Props = {
   deviceModel: DeviceModel,
+  deviceInfo: DeviceInfo,
   distribution: AppsDistribution,
 };
 
 const DeviceAppStorage = ({
   deviceModel,
+  deviceInfo,
   distribution: {
     freeSpaceBytes,
     appsSpaceBytes,
@@ -52,7 +54,11 @@ const DeviceAppStorage = ({
           {shouldWarnMemory && <Warning color={colors.lightOrange} size={15} />}
           <LText bold style={[styles.storageText, storageWarnStyle]}>
             {" "}
-            <ByteSize value={freeSpaceBytes} deviceModel={deviceModel} />
+            <ByteSize
+              value={freeSpaceBytes}
+              deviceModel={deviceModel}
+              firmwareVersion={deviceInfo.version}
+            />
           </LText>
           <LText style={[styles.storageText, storageWarnStyle]}>
             {" "}
@@ -88,7 +94,11 @@ const DeviceAppStorage = ({
         {totalAppsBytes > 0 && (
           <>
             <LText style={styles.storageText} bold>
-              <ByteSize value={totalAppsBytes} deviceModel={deviceModel} />
+              <ByteSize
+                value={totalAppsBytes}
+                deviceModel={deviceModel}
+                firmwareVersion={deviceInfo.version}
+              />
             </LText>
             <LText style={styles.storageText}>
               {" "}

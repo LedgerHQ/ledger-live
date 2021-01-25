@@ -30,6 +30,7 @@ const UpdateAllModal = ({
   state,
 }: Props) => {
   const { colors } = useTheme();
+  const { deviceInfo } = state;
 
   const modalActions = useMemo(
     () => [
@@ -86,12 +87,16 @@ const UpdateAllModal = ({
             />
           </LText>
           <LText style={styles.appLineText} color="grey">
-            <ByteSize value={bytes} deviceModel={state.deviceModel} />
+            <ByteSize
+              value={bytes}
+              deviceModel={state.deviceModel}
+              firmwareVersion={deviceInfo.version}
+            />
           </LText>
         </View>
       );
     },
-    [colors.lightFog, state.deviceModel],
+    [colors.lightFog, state.deviceModel, deviceInfo],
   );
 
   return (

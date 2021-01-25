@@ -37,7 +37,7 @@ const AppRow = ({
   setStorageWarning,
 }: Props) => {
   const { name, bytes, icon, version: appVersion } = app;
-  const { installed } = state;
+  const { installed, deviceInfo } = state;
 
   const isInstalled = useMemo(() => installed.find(i => i.name === name), [
     installed,
@@ -100,7 +100,11 @@ const AppRow = ({
               style={[styles.versionText, styles.sizeText, styles.warnText]}
               color="grey"
             >
-              <ByteSize value={bytes} deviceModel={state.deviceModel} />
+              <ByteSize
+                value={bytes}
+                deviceModel={state.deviceModel}
+                firmwareVersion={deviceInfo.version}
+              />
             </LText>
           </Touchable>
         ) : (
@@ -112,7 +116,11 @@ const AppRow = ({
             ]}
             color={notEnoughMemoryToInstall ? "lightOrange" : "grey"}
           >
-            <ByteSize value={bytes} deviceModel={state.deviceModel} />
+            <ByteSize
+              value={bytes}
+              deviceModel={state.deviceModel}
+              firmwareVersion={deviceInfo.version}
+            />
           </LText>
         )}
         <AppStateButton

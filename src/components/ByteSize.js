@@ -11,15 +11,17 @@ const ByteSize = ({
   value,
   deviceModel,
   decimals = 2,
+  firmwareVersion,
 }: {
   value: number,
   deviceModel: DeviceModel,
   decimals?: number,
+  firmwareVersion: string,
 }) => {
   if (!value) return "–";
 
-  const bytes =
-    Math.ceil(value / deviceModel.blockSize) * deviceModel.blockSize;
+  const blockSize = deviceModel.getBlockSize(firmwareVersion);
+  const bytes = Math.ceil(value / blockSize) * blockSize;
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 

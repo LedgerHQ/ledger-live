@@ -42,7 +42,7 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
         </LText>
       </View>
     ),
-    [],
+    [colors],
   );
 
   const renderItem = useCallback(
@@ -53,7 +53,7 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
         </View>
         <LText style={styles.rowTitle}>{token.name}</LText>
         <TouchableOpacity
-          onPress={() => showToken(dispatch(token.id))}
+          onPress={() => dispatch(showToken(token.id))}
           style={styles.cta}
           hitSlop={hitSlop}
         >
@@ -61,7 +61,7 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
         </TouchableOpacity>
       </View>
     ),
-    [dispatch],
+    [colors, dispatch],
   );
 
   const keyExtractor = useCallback(token => token.id, []);
