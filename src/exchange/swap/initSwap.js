@@ -117,6 +117,15 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
             transaction.tag,
             "Refusing to swap xrp without a destination tag"
           );
+        } else if (refundCurrency.id === "stellar") {
+          transaction = accountBridge.updateTransaction(transaction, {
+            memoValue: swapResult.payinExtraId,
+            memoType: "MEMO_TEXT",
+          });
+          invariant(
+            transaction.memoValue,
+            "Refusing to swap xlm without a destination memo"
+          );
         }
 
         // Triplecheck we're not working with an abandonseed recipient anymore
