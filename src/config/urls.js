@@ -77,6 +77,8 @@ export const urls = {
       "https://shop.ledger.com/products/ledger-backup-pack?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
     ledgerAcademy:
       "https://www.ledger.com/academy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
+    valentine:
+      "https://shop.ledger.com/pages/valentines-day-special-offers?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
   },
   compound:
     "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compound",

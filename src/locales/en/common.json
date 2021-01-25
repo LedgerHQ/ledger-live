@@ -609,6 +609,10 @@
     "confirm": "Confirm",
     "undo": "Undo",
     "banners": {
+      "valentine": {
+        "title": "Valentine’s day",
+        "description": "Reduced fees on Buy and Sell"
+      },
       "academy": {
         "title": "Ledger Academy",
         "description": "Everything you need to know about crypto"
