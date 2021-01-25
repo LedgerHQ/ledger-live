@@ -61,7 +61,9 @@ const getExtra = (type: string, account: Account, transaction: Transaction) => {
     case "WITHDRAW_UNBONDED":
       return {
         ...extra,
-        withdrawUnbondedAmount: BigNumber(transaction.amount),
+        withdrawUnbondedAmount: BigNumber(
+          account.polkadotResources?.unlockedBalance || 0
+        ),
       };
     case "NOMINATE":
       return { ...extra, validators: transaction.validators };
