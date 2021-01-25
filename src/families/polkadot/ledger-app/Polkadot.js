@@ -18,7 +18,7 @@
 
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/errors";
 
 const CHUNK_SIZE = 250;
 
@@ -79,7 +79,7 @@ export class Polkadot {
         const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
 
         if (returnCode === SW_CANCEL) {
-          throw new UserRefusedOnDevice();
+          throw new UserRefusedAddress();
         }
 
         return {
