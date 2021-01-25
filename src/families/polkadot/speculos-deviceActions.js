@@ -22,11 +22,20 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Value",
       button: "Rr",
-      expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.amount, {
-          disableRounding: true,
-          showAllDigits: true, // Should be removed once we got a new app
-        }),
+      expectedValue: ({ account, transaction }) => {
+        const formattedValue = formatCurrencyUnit(
+          account.unit,
+          transaction.amount,
+          {
+            disableRounding: true,
+          }
+        );
+        if (!formattedValue.includes(".")) {
+          // if the value is pure integer, in the app it will automatically add an .0
+          return formattedValue + ".0";
+        }
+        return formattedValue;
+      },
     },
     {
       title: "Chain",
@@ -72,7 +81,7 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
       button: "Rr",
     },
     {
-      title: "Approve",
+      title: "APPROVE",
       button: "LRlr",
     },
   ],
