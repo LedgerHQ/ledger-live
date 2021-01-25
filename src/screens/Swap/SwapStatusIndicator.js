@@ -8,17 +8,23 @@ import { useTheme } from "@react-navigation/native";
 import IconSwap from "../../icons/Swap";
 import { rgba } from "../../colors";
 
-export const getStatusColor = (status: string, colors: *) => {
+export const getStatusColor = (
+  status: string,
+  colors: *,
+  colorKey?: boolean = false,
+) => {
+  let key = "grey";
+
   if (operationStatusList.pending.includes(status)) {
-    return colors.grey;
+    key = status === "hold" ? "orange" : "wallet";
   }
   if (operationStatusList.finishedOK.includes(status)) {
-    return colors.green;
+    key = "green";
   }
   if (operationStatusList.finishedKO.includes(status)) {
-    return colors.alert;
+    key = "alert";
   }
-  return colors.grey;
+  return colorKey ? key : colors[key];
 };
 
 const SwapStatusIndicator = ({
