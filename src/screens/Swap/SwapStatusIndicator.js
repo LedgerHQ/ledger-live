@@ -46,11 +46,19 @@ const SwapStatusIndicator = ({
     <View style={[styles.status, sizeDependantStyles]}>
       <IconSwap color={statusColor} size={small ? 16 : 26} />
       {operationStatusList.pending.includes(status) ? (
-        <View style={styles.pending}>
+        <View
+          style={[
+            styles.pending,
+            {
+              backgroundColor: colors.white,
+              borderColor: colors.white,
+            },
+          ]}
+        >
           <IconAD
             size={small ? 10 : 14}
             name="clockcircleo"
-            color={rgba(colors.darkBlue, 0.5)}
+            color={rgba(colors.darkBlue, 0.6)}
           />
         </View>
       ) : null}
@@ -70,8 +78,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     borderWidth: 2,
-    backgroundColor: "#ffffff",
-    borderColor: "#ffffff",
     borderRadius: 12,
   },
 });
