@@ -34,8 +34,12 @@ function CheckBox({ isChecked, disabled, onChange, style }: Props) {
   const commonProps = {
     style: [
       styles.root,
-      isChecked && { ...styles.rootChecked, backgroundColor: colors.live },
       { borderColor: colors.fog },
+      isChecked && {
+        ...styles.rootChecked,
+        backgroundColor: colors.live,
+        borderColor: "transparent",
+      },
       style,
     ],
   };

@@ -44,7 +44,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.white,
+          backgroundColor: colors.background,
         },
       ]}
     >

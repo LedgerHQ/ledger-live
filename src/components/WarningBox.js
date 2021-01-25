@@ -18,24 +18,29 @@ export default function WarningBox({
   onLearnMore,
   learnMoreKey,
 }: Props) {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
+  const [backgroundColor, color] = dark
+    ? [colors.orange, "#FFF"]
+    : [rgba(colors.lightOrange, 0.1), colors.orange];
+
   return (
     <View
       style={[
         styles.root,
         {
-          backgroundColor: rgba(colors.lightOrange, 0.1),
-          color: colors.lightOrange,
+          backgroundColor,
         },
       ]}
     >
-      <IconHelp color={colors.lightOrange} size={16} />
-      <Text style={[styles.content, { color: colors.lightOrange }]}>
-        <LText fontSize={3}>{description}</LText>{" "}
+      <IconHelp color={color} size={16} />
+      <Text style={[styles.content, { color }]}>
+        <LText style={[{ color }]} fontSize={3}>
+          {description}
+        </LText>{" "}
         {onLearnMore && (
           <LText
             semiBold
-            style={styles.learnMore}
+            style={[styles.learnMore, { color }]}
             fontSize={3}
             onPress={onLearnMore}
           >

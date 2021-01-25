@@ -2,13 +2,11 @@
 import React, { memo } from "react";
 import { StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
 import LText from "../../components/LText";
 
 type Props = { mode: string };
 
 function ResultSection({ mode }: Props) {
-  const { colors } = useTheme();
   let text;
   switch (mode) {
     case "create":
@@ -33,11 +31,7 @@ function ResultSection({ mode }: Props) {
       text = "";
   }
   return (
-    <LText
-      semiBold
-      style={[styles.sectionHeaderText, { backgroundColor: colors.white }]}
-      color="grey"
-    >
+    <LText semiBold style={[styles.sectionHeaderText]} color="grey">
       {text}
     </LText>
   );

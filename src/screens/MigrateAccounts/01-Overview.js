@@ -47,7 +47,7 @@ export default function Overview({ route, navigation }: Props) {
 
   const renderSectionHeader = ({ section }: { section: * }) => (
     <LText
-      style={[styles.currencyTitle, { backgroundColor: colors.white }]}
+      style={[styles.currencyTitle, { backgroundColor: colors.background }]}
       color="smoke"
       semiBold
     >
@@ -77,7 +77,10 @@ export default function Overview({ route, navigation }: Props) {
       forceInset={forceInset}
       style={[
         styles.root,
-        { backgroundColor: colors.white, paddingTop: extraStatusBarPadding },
+        {
+          backgroundColor: colors.background,
+          paddingTop: extraStatusBarPadding,
+        },
       ]}
     >
       <Circle bg={colors.pillActiveBackground} size={56}>

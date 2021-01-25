@@ -74,7 +74,6 @@ While developping we try to keep the app theme coherent by setting the same colo
 
 - use `colors.background` for background of the pages
 - use `colors.card` for foreground containers
-- use `colors.white` for high elements that need high background contrast
 - use `colors.lightLive` for live background overlay
 
 ```javascript
@@ -87,12 +86,6 @@ export default function App() {
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={[styles.container, { backgroundColor: colors.card }]}>
-        <View
-          style={[
-            styles.subElementContainer,
-            { backgroundColor: colors.white },
-          ]}
-        />
         ...
       </View>
     </SafeAreaView>
@@ -113,9 +106,9 @@ most of the other themed colors don't change between themes and are usually safe
 
 ### **Migration from previous versions**
 
-in order to migrate previous colors you need to flow these steps:
+in order to migrate from previous colors you need to follow these steps:
 
-- remove all references of
+- remove all import references of
 
 ```JS
 import colors from "./colors";

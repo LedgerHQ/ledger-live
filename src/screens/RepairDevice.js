@@ -122,7 +122,7 @@ class RepairDevice extends Component<Props, State> {
     return (
       <SafeAreaView
         forceInset={forceInset}
-        style={[styles.root, { backgroundColor: colors.white }]}
+        style={[styles.root, { backgroundColor: colors.background }]}
       >
         <TrackScreen category="Settings" name="RepairDevice" />
         {body}

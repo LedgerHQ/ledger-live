@@ -209,7 +209,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
         </View>
         <View style={styles.spacer} />
       </View>
-      <View style={[styles.footer, { backgroundColor: colors.white }]}>
+      <View style={[styles.footer, { backgroundColor: colors.background }]}>
         <View style={styles.warningSection}>
           {warning && warning instanceof Error ? (
             <LText

@@ -36,7 +36,9 @@ export default function AccountBodyHeader({
           <LText semiBold style={styles.title}>
             <Trans i18nKey="transfer.lending.account.openLoans" />
           </LText>
-          <View style={[styles.container, { backgroundColor: colors.white }]}>
+          <View
+            style={[styles.container, { backgroundColor: colors.background }]}
+          >
             {opened.map((item, index) => (
               <ActiveAccountRow
                 // $FlowFixMe
@@ -60,7 +62,7 @@ export default function AccountBodyHeader({
             <Trans i18nKey="transfer.lending.account.closedLoans" />
           </LText>
           <FlatList
-            style={[styles.container, { backgroundColor: colors.white }]}
+            style={[styles.container, { backgroundColor: colors.background }]}
             data={closed}
             renderItem={renderClosedRow}
             keyExtractor={(item, index) =>

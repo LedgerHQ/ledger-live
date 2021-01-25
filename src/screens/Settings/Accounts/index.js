@@ -119,7 +119,7 @@ export default function AccountsSettings({ navigation }: { navigation: any }) {
     <SectionList
       ListHeaderComponent={renderHeader}
       stickySectionHeadersEnabled
-      style={[styles.root, { backgroundColor: colors.white }]}
+      style={[styles.root, { backgroundColor: colors.background }]}
       renderItem={renderItem}
       renderSectionHeader={renderSectionHeader}
       keyExtractor={keyExtractor}

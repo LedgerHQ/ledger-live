@@ -39,11 +39,11 @@ class CollapsibleThingy extends PureComponent<
               key={rowKey}
               style={[
                 styles.wrapper,
-                { backgroundColor: colors.white, borderColor: colors.fog },
+                { backgroundColor: colors.background, borderColor: colors.fog },
               ]}
             >
               <Text
-                style={[styles.header, { backgroundColor: colors.white }]}
+                style={[styles.header, { backgroundColor: colors.background }]}
                 onPress={
                   isObject ? () => this.toggleCollapse(rowKey) : undefined
                 }
@@ -51,13 +51,19 @@ class CollapsibleThingy extends PureComponent<
                 {bullet} {key}
               </Text>
               {isObject ? (
-                isOpen && <CollapsibleThingy obj={value} depth={depth + 1} />
+                isOpen && (
+                  <CollapsibleThingy
+                    colors={colors}
+                    obj={value}
+                    depth={depth + 1}
+                  />
+                )
               ) : (
                 <Text
                   selectable
                   style={[
                     styles.value,
-                    { color: colors.smoke, backgroundColor: colors.white },
+                    { color: colors.smoke, backgroundColor: colors.background },
                   ]}
                 >{`(${typeof value}) ${value}`}</Text>
               )}

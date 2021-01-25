@@ -165,7 +165,7 @@ function DelegationAmount({ navigation, route }: Props) {
           </View>
         </View>
 
-        <View style={[styles.footer, { backgroundColor: colors.white }]}>
+        <View style={[styles.footer, { backgroundColor: colors.background }]}>
           {error && !value.eq(0) && (
             <View style={styles.labelContainer}>
               <Warning size={16} color={colors.alert} />

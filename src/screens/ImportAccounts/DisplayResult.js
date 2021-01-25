@@ -180,7 +180,7 @@ class DisplayResult extends Component<Props, State> {
     return (
       <SafeAreaView
         forceInset={forceInset}
-        style={[styles.root, { backgroundColor: colors.white }]}
+        style={[styles.root, { backgroundColor: colors.background }]}
       >
         <TrackScreen category="ImportAccounts" name="DisplayResult" />
         <StyledStatusBar />

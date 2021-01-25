@@ -9,9 +9,13 @@ import { urls } from "../config/urls";
 import Touchable from "./Touchable";
 import TranslatedError from "./TranslatedError";
 import LText from "./LText";
+import { rgba } from "../colors";
 
 const HeaderErrorTitle = ({ error }: { error: Error }) => {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
+  const [backgroundColor, color] = dark
+    ? [colors.orange, "#FFF"]
+    : [rgba(colors.lightOrange, 0.1), colors.orange];
   const maybeLink = error ? urls.errors[error.name] : null;
   const onOpen = useCallback(() => {
     maybeLink && Linking.openURL(maybeLink);
@@ -20,14 +24,14 @@ const HeaderErrorTitle = ({ error }: { error: Error }) => {
   return (
     <Touchable
       event="WarningBanner Press"
-      style={styles.root}
+      style={[styles.root, { backgroundColor }]}
       onPress={maybeLink ? onOpen : null}
     >
       <LText style={styles.icon}>
-        <Icon name="alert-octagon" size={16} color={colors.orange} />
+        <Icon name="alert-octagon" size={16} color={color} />
       </LText>
-      <LText style={styles.description}>
-        <LText secondary>
+      <LText style={[styles.description, { color }]}>
+        <LText style={[{ color }]} secondary>
           <TranslatedError error={error} field={"description"} />
         </LText>
 
@@ -36,8 +40,7 @@ const HeaderErrorTitle = ({ error }: { error: Error }) => {
             {" "}
             <LText
               semiBold
-              style={[styles.description, styles.learnMore]}
-              color="orange"
+              style={[styles.description, styles.learnMore, { color }]}
             >
               <Trans i18nKey="common.learnMore" />
             </LText>
@@ -57,7 +60,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(255, 152, 79, 0.1);",
   },
   container: {
     display: "flex",

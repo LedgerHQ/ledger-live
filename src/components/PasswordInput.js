@@ -64,7 +64,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
           styles.container,
           !inline && {
             ...styles.nonInlineContainer,
-            backgroundColor: colors.white,
+            backgroundColor: colors.background,
             borderColor: colors.lightFog,
           },
           borderColorOverride,

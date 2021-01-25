@@ -27,7 +27,7 @@ function RoundedCurrencyIcon({ currency, size, extra }: Props) {
         <View
           style={[
             styles.statusWrapper,
-            { borderColor: colors.white, backgroundColor: colors.white },
+            { borderColor: colors.background, backgroundColor: colors.card },
           ]}
         >
           {extra === "pending" ? (
@@ -36,15 +36,15 @@ function RoundedCurrencyIcon({ currency, size, extra }: Props) {
             </Spinning>
           ) : extra === "done" ? (
             <Circle bg={colors.green} size={24}>
-              <Icon name="check" size={16} color={colors.white} />
+              <Icon name="check" size={16} color={"#FFF"} />
             </Circle>
           ) : extra === "notice" ? (
             <Circle bg={colors.live} size={24}>
-              <Alert size={16} color={colors.white} />
+              <Alert size={16} color={"#FFF"} />
             </Circle>
           ) : (
             <Circle bg={colors.alert} size={24}>
-              <Alert size={16} color={colors.white} />
+              <Alert size={16} color={"#FFF"} />
             </Circle>
           )}
         </View>

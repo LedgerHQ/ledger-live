@@ -40,7 +40,7 @@ class DebugLottie extends Component<{ colors: * }, State> {
     return (
       <SafeAreaView
         forceInset={forceInset}
-        style={[styles.root, { backgroundColor: colors.white }]}
+        style={[styles.root, { backgroundColor: colors.background }]}
       >
         <LText secondary semiBold style={styles.title}>
           Select Animation

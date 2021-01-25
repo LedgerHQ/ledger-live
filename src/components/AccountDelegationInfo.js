@@ -34,7 +34,7 @@ export default function AccountDelegationInfo({
         style={[
           styles.container,
           {
-            backgroundColor: colors.white,
+            backgroundColor: colors.card,
           },
         ]}
       >

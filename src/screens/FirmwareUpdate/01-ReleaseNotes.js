@@ -71,7 +71,7 @@ export default function FirmwareUpdateReleaseNotes({
           </View>
         ) : null}
       </NavigationScrollView>
-      <View style={[styles.footer, { backgroundColor: colors.white }]}>
+      <View style={[styles.footer, { backgroundColor: colors.background }]}>
         <Button
           event="FirmwareUpdateReleaseNotesContinue"
           type="primary"

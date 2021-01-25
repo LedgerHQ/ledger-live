@@ -198,7 +198,7 @@ export default function VoteCast({ route, navigation }: Props) {
             <View style={styles.addMoreVotesContainer}>
               <TouchableOpacity
                 onPress={onBack}
-                style={[styles.addMoreVotes, { backgroundColor: colors.white }]}
+                style={[styles.addMoreVotes, { backgroundColor: colors.card }]}
               >
                 <LText semiBold style={styles.addMoreVotesLabel} color="live">
                   <Trans i18nKey="vote.castVotes.addMoreVotes" />
@@ -211,7 +211,10 @@ export default function VoteCast({ route, navigation }: Props) {
         <View
           style={[
             styles.bottomWrapper,
-            { backgroundColor: colors.white, borderTopColor: colors.lightGrey },
+            {
+              backgroundColor: colors.background,
+              borderTopColor: colors.lightGrey,
+            },
           ]}
         >
           <View style={[styles.available]}>

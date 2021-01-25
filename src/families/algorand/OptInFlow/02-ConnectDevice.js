@@ -57,7 +57,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   if (!account) return null;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.white }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}

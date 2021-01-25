@@ -118,7 +118,7 @@ export const duskTheme = {
     /* DERIVATIVES */
     lightLive: "#4b84ff19",
     lightAlert: "#ea2e490c",
-    lightFog: "rgba(100,144,241, 0.1)",
+    lightFog: "#1c293c",
     lightGrey: "rgba(255,255,255, 0.05)",
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
@@ -165,7 +165,7 @@ export const darkTheme = {
     /* DERIVATIVES */
     lightLive: "#4b84ff19",
     lightAlert: "#ea2e490c",
-    lightFog: "rgba(100,144,241, 0.1)",
+    lightFog: "#1c202b",
     lightGrey: "rgba(255,255,255, 0.05)",
     lightOrange: "#FF984F",
     translucentGreen: "rgba(102, 190, 84, 0.2)",
