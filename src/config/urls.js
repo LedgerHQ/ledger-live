@@ -28,6 +28,8 @@ export const urls = {
       "https://support.ledger.com/hc/en-us/articles/360012109220?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_syncerror",
     LedgerAPIErrorWithMessage:
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
+    CosmosStargateFeb2021Warning:
+      "https://support.ledger.com/hc/en-us/articles/360013713840-Cosmos-ATOM-",
   },
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=ops_details_change",
