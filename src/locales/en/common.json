@@ -518,6 +518,9 @@
     "StellarMemoRecommended": {
       "title": "A memo may be needed when sending to this recipient"
     },
+    "StratisDown2021Warning": {
+      "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
+    },
     "SwapExchangeRateAmountTooLow": {
       "title": "Amount must be higher than {{minAmountFrom}} {{unit}}"
     },

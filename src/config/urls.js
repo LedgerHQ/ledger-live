@@ -30,6 +30,8 @@ export const urls = {
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     CosmosStargateFeb2021Warning:
       "https://support.ledger.com/hc/en-us/articles/360013713840-Cosmos-ATOM-",
+    StratisDown2021Warning:
+      "https://support.ledger.com/hc/en-us/articles/115005175329",
   },
   multipleAddresses:
     "https://support.ledger.com/hc/en-us/articles/360033802154?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=ops_details_change",
