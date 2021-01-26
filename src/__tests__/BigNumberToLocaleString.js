@@ -24,9 +24,9 @@ test("toLocaleString to default maximumFractionDigits to 3", () => {
   expect(toLocaleString(BigNumber(4.44444))).toBe("4.444");
   expect(toLocaleString(BigNumber(444444.444444444))).toBe("444,444.444");
   expect(toLocaleString(BigNumber(0.444444444))).toBe("0.444");
-  expect(toLocaleString(BigNumber(9.99999))).toBe("10");
+  expect(toLocaleString(BigNumber(9.99999))).toBe("9.999");
   expect(toLocaleString(BigNumber(111111.111111111))).toBe("111,111.111");
-  expect(toLocaleString(BigNumber(0.999999999))).toBe("1");
+  expect(toLocaleString(BigNumber(0.999999999))).toBe("0.999");
   expect(toLocaleString(BigNumber(9.5))).toBe("9.5");
   expect(toLocaleString(BigNumber(9.9))).toBe("9.9");
   expect(toLocaleString(BigNumber(99.6))).toBe("99.6");
