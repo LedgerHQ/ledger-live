@@ -140,7 +140,7 @@ test("can enable discreet mode", () => {
   ).toBe("+*** BTC");
 });
 
-test("formatter will round values by default", () => {
+test("formatter will floor values by default", () => {
   expect(
     formatCurrencyUnit(
       getCryptoCurrencyById("bitcoin").units[0],
@@ -165,7 +165,7 @@ test("formatter will round values by default", () => {
       getCryptoCurrencyById("bitcoin").units[0],
       BigNumber("999999999999")
     )
-  ).toBe("10,000");
+  ).toBe("9,999");
 });
 
 test("formatter rounding can be disabled", () => {
@@ -201,7 +201,7 @@ test("sub magnitude", () => {
         showCode: true,
       }
     )
-  ).toBe("$0.0004");
+  ).toBe("$0.0003");
 
   expect(
     formatCurrencyUnit(
@@ -212,7 +212,7 @@ test("sub magnitude", () => {
         disableRounding: true,
       }
     )
-  ).toBe("0.0004");
+  ).toBe("0.0003");
 
   expect(
     formatCurrencyUnit(
@@ -223,7 +223,7 @@ test("sub magnitude", () => {
         disableRounding: true,
       }
     )
-  ).toBe("0.0003988");
+  ).toBe("0.0003987");
 
   // even tho the USD unit showAllDigits, it does not force the sub magnitude digits to show
   expect(
@@ -265,7 +265,7 @@ test("sub magnitude", () => {
         subMagnitude: 2,
       }
     )
-  ).toBe("10,000");
+  ).toBe("9,999");
 });
 
 test("parseCurrencyUnit", () => {

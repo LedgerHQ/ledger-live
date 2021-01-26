@@ -51,9 +51,12 @@ export const toLocaleString = (
     FORMAT: format,
   });
   const bn = BN(n);
-  const maxDecimals = bn.toFormat(maximumFractionDigits);
+  const maxDecimals = bn.toFormat(maximumFractionDigits, BigNumber.ROUND_FLOOR);
   if (maximumFractionDigits !== minimumFractionDigits) {
-    const minDecimals = bn.toFormat(minimumFractionDigits);
+    const minDecimals = bn.toFormat(
+      minimumFractionDigits,
+      BigNumber.ROUND_FLOOR
+    );
     let i = maxDecimals.length;
     // cleanup useless '0's from the right until the minimumFractionDigits
     while (i > minDecimals.length) {
