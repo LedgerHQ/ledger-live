@@ -59,7 +59,7 @@ export type PortfolioRangeConfig = {
   increment: number, // FIXME it should be a Date=>Date
 };
 
-export type PortfolioRange = "year" | "month" | "week";
+export type PortfolioRange = "year" | "month" | "week" | "day";
 
 export type AssetsDistribution = {
   // false if no distribution can be done (sum is zero)

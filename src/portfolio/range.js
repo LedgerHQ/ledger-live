@@ -45,6 +45,12 @@ const ranges: { [k: PortfolioRange]: PortfolioRangeConfig } = {
     startOf: startOfHour,
     granularityId: "HOUR",
   },
+  day: {
+    count: 24,
+    increment: hourIncrement,
+    startOf: startOfHour,
+    granularityId: "HOUR",
+  },
 };
 
 const getPerPortfolioRanges = (): {
