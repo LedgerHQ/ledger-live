@@ -166,7 +166,7 @@ const extrinsicToOperation = (
     type = "IN";
   }
 
-  if (type === "BOND" && extrinsic.signer !== addr) {
+  if (type !== "IN" && extrinsic.signer !== addr) {
     return null;
   }
 
