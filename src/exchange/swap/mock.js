@@ -10,6 +10,7 @@ import type {
 } from "./types";
 import { getAccountUnit } from "../../account";
 import type { Transaction } from "../../types";
+import { formatCurrencyUnit } from "../../currencies";
 import {
   SwapExchangeRateAmountTooLow,
   SwapExchangeRateAmountTooHigh,
@@ -30,15 +31,29 @@ export const mockGetExchangeRates = async (
 
   if (amountFrom.lte(minAmountFrom)) {
     throw new SwapExchangeRateAmountTooLow(null, {
-      unit: unitFrom.code,
-      minAmountFrom,
+      minAmountFromFormatted: formatCurrencyUnit(
+        unitFrom,
+        BigNumber(minAmountFrom),
+        {
+          alwaysShowSign: false,
+          disableRounding: true,
+          showCode: true,
+        }
+      ),
     });
   }
 
   if (amountFrom.gte(maxAmountFrom)) {
     throw new SwapExchangeRateAmountTooHigh(null, {
-      unit: unitFrom.code,
-      maxAmountFrom,
+      maxAmountFromFormatted: formatCurrencyUnit(
+        unitFrom,
+        BigNumber(maxAmountFrom),
+        {
+          alwaysShowSign: false,
+          disableRounding: true,
+          showCode: true,
+        }
+      ),
     });
   }
 
