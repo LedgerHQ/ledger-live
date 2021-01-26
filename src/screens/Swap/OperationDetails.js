@@ -103,7 +103,9 @@ const OperationDetails = ({ route }: Props) => {
                 />
               }
             />
-          ) : null}
+          ) : (
+            <LText style={[styles.statusText, textColorStyles]}>{status}</LText>
+          )}
         </View>
         <View style={styles.fieldsWrapper}>
           <LText style={styles.label} color="grey">
