@@ -33,11 +33,10 @@ const postSyncPatchGen = <T: AccountLike>(
 };
 
 const postSyncPatch = (initial: Account, synced: Account): Account => {
-  const sendingOps = (synced.operations || []).filter(
-    (op) => op.type === "OUT"
+  const last = synced.operations.find((op) =>
+    ["OUT", "FEES"].includes(op.type)
   );
-  const latestNonce =
-    (sendingOps.length > 0 && sendingOps[0].transactionSequenceNumber) || 0;
+  const latestNonce = last?.transactionSequenceNumber || 0;
   const acc = postSyncPatchGen(initial, synced, latestNonce, synced);
   const { subAccounts, pendingOperations } = acc;
   const initialSubAccounts = initial.subAccounts;
