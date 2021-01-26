@@ -5,7 +5,7 @@ import styled from "styled-components";
 import {
   getAllEnvs,
   setEnvUnsafe,
-  setEnv
+  setEnv,
 } from "@ledgerhq/live-common/lib/env";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { open } from "@ledgerhq/live-common/lib/hw";
@@ -19,7 +19,7 @@ import {
   formatSize,
   reducer,
   predictOptimisticState,
-  isOutOfMemoryState
+  isOutOfMemoryState,
 } from "@ledgerhq/live-common/lib/apps";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/lib/apps/hw";
 import ReactTooltip from "react-tooltip";
@@ -37,8 +37,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  text-align: ${p => (p.center ? "center" : "left")};
-  align-items: ${p => (p.center ? "center" : "initial")};
+  text-align: ${(p) => (p.center ? "center" : "left")};
+  align-items: ${(p) => (p.center ? "center" : "initial")};
   background-color: #f8f8f8;
   width: 100vw;
   min-height: 100vh;
@@ -152,7 +152,7 @@ const FreeInfo = styled.div`
   padding: 10px 0;
   font-size: 13px;
   line-height: 16px;
-  color: ${p => (p.danger ? "#EB5757" : "#000")};
+  color: ${(p) => (p.danger ? "#EB5757" : "#000")};
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -166,7 +166,7 @@ const Progress = ({ value }) => (
       height: 5,
       background: "#E6E6E6",
       position: "relative",
-      borderRadius: 5
+      borderRadius: 5,
     }}
   >
     <div
@@ -175,7 +175,7 @@ const Progress = ({ value }) => (
         background: "#6490F1",
         height: "100%",
         borderRadius: 5,
-        width: (value * 100).toFixed(2) + "%"
+        width: (value * 100).toFixed(2) + "%",
       }}
     />
   </div>
@@ -184,17 +184,17 @@ const Progress = ({ value }) => (
 const Button = styled.button`
   padding: 12px 16px;
   border: none;
-  background: ${p =>
+  background: ${(p) =>
     p.danger
       ? "#FF483820"
       : p.primary
       ? "#6490F1"
       : "rgba(100, 144, 241, 0.1)"};
-  color: ${p => (p.danger ? "#FF4838" : p.primary ? "#fff" : "#6490F1")};
+  color: ${(p) => (p.danger ? "#FF4838" : p.primary ? "#fff" : "#6490F1")};
   border-radius: 4px;
-  opacity: ${p => (p.disabled ? 0.3 : 1)};
+  opacity: ${(p) => (p.disabled ? 0.3 : 1)};
   &:hover {
-    opacity: ${p => (p.disabled ? 0.3 : 0.8)};
+    opacity: ${(p) => (p.disabled ? 0.3 : 0.8)};
   }
   display: flex;
   flex-direction: row;
@@ -312,16 +312,16 @@ const AppItem = ({
   progress,
   error,
   appStoreView,
-  deviceModel
+  deviceModel,
 }) => {
   const { name } = app;
   const onInstall = useCallback(() => dispatch({ type: "install", name }), [
     dispatch,
-    name
+    name,
   ]);
   const onUninstall = useCallback(() => dispatch({ type: "uninstall", name }), [
     dispatch,
-    name
+    name,
   ]);
   const notEnoughMemoryToInstall = useMemo(
     () =>
@@ -347,7 +347,8 @@ const AppItem = ({
         {formatSize(
           ((installed && installed.blocks) || 0) * deviceModel.deviceSize ||
             app.bytes ||
-            0
+            0,
+          4096
         )}
       </AppSize>
       {error ? (
@@ -368,7 +369,7 @@ const AppItem = ({
                 display: "inline-block",
                 marginBottom: 5,
                 opacity: 0.5,
-                cursor: "pointer"
+                cursor: "pointer",
               }}
               onClick={
                 (progress ? progress.appOp : scheduled).type === "install"
@@ -464,10 +465,10 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
   const [state, dispatch] = useAppsRunner(listAppsRes, exec);
   const { currentProgress, currentError } = state;
   const onUpdateAll = useCallback(() => dispatch({ type: "updateAll" }), [
-    dispatch
+    dispatch,
   ]);
   const [search, setSearch] = useState("");
-  const onChangeSearch = useCallback(e => {
+  const onChangeSearch = useCallback((e) => {
     setSearch(e.target.value);
   }, []);
 
@@ -484,7 +485,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
     <AppItem
       state={state}
       key={app.name}
-      scheduled={plan.find(a => a.name === app.name)}
+      scheduled={plan.find((a) => a.name === app.name)}
       app={app}
       progress={
         currentProgress && currentProgress.appOp.name === app.name
@@ -496,7 +497,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
           ? currentError.error
           : null
       }
-      installed={state.installed.find(ins => ins.name === app.name)}
+      installed={state.installed.find((ins) => ins.name === app.name)}
       dispatch={dispatch}
       installedAvailable={state.installedAvailable}
       appStoreView={appStoreView}
@@ -505,7 +506,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
   );
 
   const installedApps = state.installed
-    .map(i => state.apps.find(a => a.name === i.name))
+    .map((i) => state.apps.find((a) => a.name === i.name))
     .filter(Boolean);
 
   const appsList = state.apps.filter(({ name, currency }) => {
@@ -523,7 +524,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
         <ReactTooltip
           id="tooltip"
           effect="solid"
-          getContent={dataTip => {
+          getContent={(dataTip) => {
             if (!dataTip) return null;
             const { name, bytes } = JSON.parse(dataTip);
             return (
@@ -531,13 +532,13 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
                 <div
                   style={{
                     textAlign: "center",
-                    color: "rgba(255, 255, 255, 0.7)"
+                    color: "rgba(255, 255, 255, 0.7)",
                   }}
                 >
                   {name}
                 </div>
                 <div style={{ textAlign: "center", color: "white" }}>
-                  {formatSize(bytes)}
+                  {formatSize(bytes, 4096)}
                 </div>
               </>
             );
@@ -552,7 +553,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
               value={search}
               onChange={onChangeSearch}
             />
-            {appsList.map(app => mapApp(app, true))}
+            {appsList.map((app) => mapApp(app, true))}
           </Card>
         </Section>
         <Section>
@@ -561,7 +562,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
             style={{
               display: "flex",
               flexDirection: "row",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <DeviceIllustration
@@ -574,7 +575,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
                   marginBottom: 4,
                   fontSize: "16px",
                   lineHeight: "19px",
-                  fontFamily: "Inter"
+                  fontFamily: "Inter",
                 }}
               >
                 <strong>{state.deviceModel.productName}</strong>
@@ -584,7 +585,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
                   fontFamily: "Inter",
                   fontSize: "13px",
                   lineHeight: "16px",
-                  color: "#999999"
+                  color: "#999999",
                 }}
               >
                 Firmware {deviceInfo.version}
@@ -593,11 +594,11 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
               <Info>
                 <div>
                   <span>Used</span>
-                  <span>{formatSize(distribution.totalAppsBytes)}</span>
+                  <span>{formatSize(distribution.totalAppsBytes, 4096)}</span>
                 </div>
                 <div>
                   <span>Capacity</span>
-                  <span>{formatSize(distribution.appsSpaceBytes)}</span>
+                  <span>{formatSize(distribution.appsSpaceBytes, 4096)}</span>
                 </div>
                 <div>
                   <span>Apps installed</span>
@@ -607,7 +608,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
               <StorageBar distribution={distribution} />
               <FreeInfo danger={distribution.shouldWarnMemory}>
                 {distribution.shouldWarnMemory ? dangerIcon : ""}{" "}
-                {formatSize(distribution.freeSpaceBytes)} Free
+                {formatSize(distribution.freeSpaceBytes, 4096)} Free
               </FreeInfo>
             </div>
           </Card>
@@ -616,7 +617,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
           >
             {"On Device "}
             <span style={{ flex: 1 }} />
-            {state.installed.some(i => !i.updated) ? (
+            {state.installed.some((i) => !i.updated) ? (
               <Button onClick={onUpdateAll}>Update all</Button>
             ) : null}
           </h2>
@@ -627,7 +628,7 @@ const Main = ({ transport, deviceInfo, listAppsRes }) => {
 
           <Card>
             {installedApps.length
-              ? installedApps.map(app => mapApp(app))
+              ? installedApps.map((app) => mapApp(app))
               : "No apps installed."}
           </Card>
 
@@ -644,15 +645,15 @@ const ConnectDevice = ({
   onConnect,
   loading,
   devicePermissionRequested,
-  error
+  error,
 }: {
   onConnect: (*) => *,
   error: ?Error,
   devicePermissionRequested?: ?{ wording: string },
-  loading?: boolean
+  loading?: boolean,
 }) => {
   const onClick = useCallback(
-    async e => {
+    async (e) => {
       const transport = await open(e.target.name);
       await onConnect(transport);
     },
@@ -719,7 +720,7 @@ const Manager = ({ location }: *) => {
       ? location.search
           .slice(1)
           .split("&")
-          .map(o => o.split("="))
+          .map((o) => o.split("="))
       : [];
     if (entries.length === 0) return;
     const beforeState = getAllEnvs();
@@ -736,7 +737,7 @@ const Manager = ({ location }: *) => {
     };
   }, [location]);
 
-  const onConnect = useCallback(async transport => {
+  const onConnect = useCallback(async (transport) => {
     try {
       setTransport(transport);
       let disconnected = false;
@@ -752,7 +753,7 @@ const Manager = ({ location }: *) => {
       const listAppsRes = await new Promise((resolve, reject) => {
         listApps(transport, deviceInfo).subscribe({
           error: reject,
-          next: e => {
+          next: (e) => {
             if (e.type === "result") {
               resolve(e.result);
             } else if (e.type === "device-permission-requested") {
@@ -760,7 +761,7 @@ const Manager = ({ location }: *) => {
             } else if (e.type === "device-permission-granted") {
               setDevicePermissionRequested(null);
             }
-          }
+          },
         });
       });
       if (disconnected) return;
@@ -799,7 +800,7 @@ const Manager = ({ location }: *) => {
 Manager.demo = {
   title: "Manager",
   url: "/manager",
-  hidden: true
+  hidden: true,
 };
 
 export default Manager;
