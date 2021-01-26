@@ -3,6 +3,7 @@
 import type { Exchange, GetExchangeRates } from "./types";
 import type { Transaction } from "../../types";
 import { getAccountCurrency, getAccountUnit } from "../../account";
+import { formatCurrencyUnit } from "../../currencies";
 import { mockGetExchangeRates } from "./mock";
 import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
@@ -47,12 +48,26 @@ const getExchangeRates: GetExchangeRates = async (
 
         throw isTooSmall
           ? new SwapExchangeRateAmountTooLow(null, {
-              unit: unitFrom.code,
-              minAmountFrom,
+              minAmountFromFormatted: formatCurrencyUnit(
+                unitFrom,
+                BigNumber(minAmountFrom),
+                {
+                  alwaysShowSign: false,
+                  disableRounding: true,
+                  showCode: true,
+                }
+              ),
             })
           : new SwapExchangeRateAmountTooHigh(null, {
-              unit: unitFrom.code,
-              maxAmountFrom,
+              maxAmountFromFormatted: formatCurrencyUnit(
+                unitFrom,
+                BigNumber(maxAmountFrom),
+                {
+                  alwaysShowSign: false,
+                  disableRounding: true,
+                  showCode: true,
+                }
+              ),
             });
       }
 
