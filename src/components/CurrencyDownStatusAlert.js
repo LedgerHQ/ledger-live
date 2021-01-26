@@ -17,13 +17,20 @@ const CosmosStargateFeb2021Warning = createCustomErrorClass(
 );
 
 const CurrencyDownStatusAlert = ({ currencies }: Props) => {
-  if (currencies.some(c => c.id === "cosmos")) {
-    return <WarningBanner error={new CosmosStargateFeb2021Warning()} />;
-  }
-  if (currencies.some(c => c.id === "stratis")) {
-    return <WarningBanner error={new StratisDown2021Warning()} />;
-  }
-  return null;
+  const errors = [];
+
+  if (currencies.some(c => c.id === "cosmos"))
+    errors.push(new CosmosStargateFeb2021Warning());
+  if (currencies.some(c => c.id === "stratis"))
+    errors.push(new StratisDown2021Warning());
+
+  return errors.length > 0 ? (
+    <>
+      {errors.map((e, i) => (
+        <WarningBanner key={i} error={e} />
+      ))}
+    </>
+  ) : null;
 };
 
 export default CurrencyDownStatusAlert;
