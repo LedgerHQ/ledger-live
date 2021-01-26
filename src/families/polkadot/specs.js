@@ -22,7 +22,6 @@ const currency = getCryptoCurrencyById("polkadot");
 
 const POLKADOT_MIN_SAFE = parseCurrencyUnit(currency.units[0], "0.05");
 const EXISTENTIAL_DEPOSIT = parseCurrencyUnit(currency.units[0], "1.0");
-const MIN_LOCKED_BALANCE_REQ = parseCurrencyUnit(currency.units[0], "1.0");
 
 const polkadot: AppSpec<Transaction> = {
   name: "Polkadot",
@@ -137,22 +136,14 @@ const polkadot: AppSpec<Transaction> = {
       name: "rebond",
       maxRun: 1,
       transaction: ({ account, bridge }) => {
-        invariant(
-          account.polkadotResources?.unlockingBalance.gt(
-            MIN_LOCKED_BALANCE_REQ
-          ),
-          "can't rebond"
-        );
+        invariant(account.polkadotResources?.unlockingBalance, "can't rebond");
         const { polkadotResources } = account;
         invariant(polkadotResources, "polkadot");
         invariant(
           account.spendableBalance.gt(POLKADOT_MIN_SAFE),
           "cant cover fee"
         );
-        const amount = BigNumber.maximum(
-          polkadotResources.unlockingBalance.times(0.2),
-          MIN_LOCKED_BALANCE_REQ
-        );
+        const amount = polkadotResources.unlockingBalance.times(0.2);
 
         return {
           transaction: bridge.createTransaction(account),

@@ -5,7 +5,7 @@ import querystring from "querystring";
 import { TypeRegistry, ModulesWithCalls } from "@polkadot/types";
 import { getSpecTypes } from "@polkadot/types-known";
 import { Metadata } from "@polkadot/metadata";
-import { expandMetadata } from "@polkadot/metadata/decorate";
+import { extrinsicsFromMeta } from "@polkadot/metadata/decorate";
 
 import { getEnv } from "../../../env";
 import network from "../../../network";
@@ -639,7 +639,7 @@ export const getRegistry = async (): Promise<{
 
   registry.setMetadata(metadata);
 
-  const extrinsics = expandMetadata(registry, metadata).tx;
+  const extrinsics = extrinsicsFromMeta(registry, metadata);
 
   return { registry, extrinsics };
 };
