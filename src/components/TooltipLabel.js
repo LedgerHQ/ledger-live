@@ -2,17 +2,18 @@
 import React, { useCallback, useState } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
 import LText from "./LText";
 import BottomModal from "./BottomModal";
-import Info from "../icons/Info";
 
 type Props = {
   label: React$Node,
   tooltip: React$Node,
+  color: string,
   style?: *,
 };
 
-const TooltipLabel = ({ label, tooltip, style }: Props) => {
+const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
   const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState();
   const open = useCallback(() => setIsOpened(true), []);
@@ -24,7 +25,7 @@ const TooltipLabel = ({ label, tooltip, style }: Props) => {
         <LText style={{ ...styles.label, ...style }} color="grey">
           {label}
         </LText>
-        <Info size={13} color={colors.grey} />
+        <Icon size={13} color={colors[color]} name={"info-circle"} />
       </TouchableOpacity>
       <BottomModal isOpened={isOpened} onClose={close} style={styles.modal}>
         <LText semiBold style={styles.tooltip}>

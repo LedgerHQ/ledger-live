@@ -112,7 +112,7 @@ class SendFundsSelectAccount extends Component<Props, State> {
     const { allAccounts, colors } = this.props;
     return (
       <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.white }]}
+        style={[styles.root, { backgroundColor: colors.background }]}
         forceInset={forceInset}
       >
         <TrackScreen category="WalletConnect" name="DeeplinkingSelectAccount" />

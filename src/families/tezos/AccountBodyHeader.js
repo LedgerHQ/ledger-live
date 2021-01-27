@@ -123,7 +123,7 @@ export default function TezosAccountBodyHeader({
         style={[
           styles.card,
           {
-            backgroundColor: colors.white,
+            backgroundColor: colors.card,
             ...Platform.select({
               android: {},
               ios: {

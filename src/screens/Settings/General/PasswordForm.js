@@ -9,6 +9,7 @@ import LText from "../../../components/LText";
 import KeyboardView from "../../../components/KeyboardView";
 import TranslatedError from "../../../components/TranslatedError";
 import PasswordInput from "../../../components/PasswordInput";
+import { withTheme } from "../../../colors";
 
 type Props = {
   t: T,
@@ -17,6 +18,7 @@ type Props = {
   error?: ?Error,
   placeholder: string,
   value: string,
+  colors: *,
 };
 
 type State = {
@@ -36,10 +38,21 @@ class PasswordForm extends PureComponent<Props, State> {
   };
 
   render() {
-    const { t, onChange, onSubmit, error, placeholder, value } = this.props;
+    const {
+      t,
+      onChange,
+      onSubmit,
+      error,
+      placeholder,
+      value,
+      colors,
+    } = this.props;
     const { secureTextEntry } = this.state;
     return (
-      <SafeAreaView forceInset={forceInset} style={styles.root}>
+      <SafeAreaView
+        forceInset={forceInset}
+        style={[styles.root, { backgroundColor: colors.background }]}
+      >
         <KeyboardView>
           <View style={styles.body}>
             <PasswordInput
@@ -76,7 +89,7 @@ class PasswordForm extends PureComponent<Props, State> {
   }
 }
 
-export default withTranslation()(PasswordForm);
+export default withTheme(withTranslation()(PasswordForm));
 
 const styles = StyleSheet.create({
   root: {

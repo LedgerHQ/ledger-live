@@ -266,7 +266,7 @@ export default function Screen(props: Props) {
     <RequiresBLE>
       <SafeAreaView
         forceInset={forceInset}
-        style={[styles.root, { backgroundColor: colors.white }]}
+        style={[styles.root, { backgroundColor: colors.background }]}
       >
         <PairDevices
           {...props}

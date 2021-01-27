@@ -66,7 +66,7 @@ function ToastBar({
       deviceHeight={height}
       useNativeDriver
       hideModalContentWhileAnimating
-      style={[styles.root, { backgroundColor: colors.white }]}
+      style={[styles.root, { backgroundColor: colors.background }]}
     >
       <View
         style={[

@@ -170,7 +170,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
             onPress={openRewardsInfoModal}
           />
           <View
-            style={[styles.rewardSection, { backgroundColor: colors.white }]}
+            style={[styles.rewardSection, { backgroundColor: colors.card }]}
           >
             <View style={styles.labelSection}>
               <LText semiBold style={styles.title}>
@@ -207,7 +207,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
               style={[
                 styles.container,
                 styles.noPadding,
-                { backgroundColor: colors.white },
+                { backgroundColor: colors.card },
               ]}
             >
               {formattedVotes.map(

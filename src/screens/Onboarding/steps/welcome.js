@@ -114,7 +114,7 @@ function OnboardingStepWelcome({ navigation }: *) {
   });
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.white }]}>
+    <View style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.header} />
       <View style={styles.logo}>
         <Image style={[styles.bgImage]} resizeMode="cover" source={welcomeBg} />

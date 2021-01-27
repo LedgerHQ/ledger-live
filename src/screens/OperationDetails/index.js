@@ -77,7 +77,7 @@ export default function OperationDetails({ route }: Props) {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: colors.white }]}
+      style={[styles.container, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
       <TrackScreen category="OperationDetails" />

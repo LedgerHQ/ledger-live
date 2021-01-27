@@ -404,7 +404,7 @@ function Delegations({ account }: Props) {
         <>
           <AccountSectionLabel name={t("account.claimReward.sectionLabel")} />
           <View
-            style={[styles.rewardsWrapper, { backgroundColor: colors.white }]}
+            style={[styles.rewardsWrapper, { backgroundColor: colors.card }]}
           >
             <View style={styles.column}>
               <LText semiBold style={styles.label}>
@@ -456,7 +456,7 @@ function Delegations({ account }: Props) {
               key={d.validatorAddress}
               style={[
                 styles.delegationsWrapper,
-                { backgroundColor: colors.white },
+                { backgroundColor: colors.card },
               ]}
             >
               <DelegationRow
@@ -478,7 +478,7 @@ function Delegations({ account }: Props) {
               key={d.validatorAddress}
               style={[
                 styles.delegationsWrapper,
-                { backgroundColor: colors.white },
+                { backgroundColor: colors.card },
               ]}
             >
               <DelegationRow

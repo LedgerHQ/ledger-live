@@ -8,7 +8,6 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { NavigatorName, ScreenName } from "../../../const";
 import {
   readOnlyModeEnabledSelector,
@@ -36,8 +35,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
   const currency = getAccountCurrency(account);
 
-  const walletConnectAvailable =
-    currency.id === "ethereum" && getEnv("WALLETCONNECT");
+  const walletConnectAvailable = currency.id === "ethereum";
 
   const accountId = account.id;
 

@@ -315,7 +315,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         useNativeDriver
         hideModalContentWhileAnimating
       >
-        <View style={[styles.qrZoomWrapper, { backgroundColor: colors.white }]}>
+        <View style={[styles.qrZoomWrapper, { backgroundColor: "#FFF" }]}>
           <QRCode size={width - 66} value={mainAccount.freshAddress} ecl="H" />
         </View>
       </ReactNativeModal>

@@ -14,7 +14,7 @@ import { deviceNames } from "../../wording";
 function BluetoothDisabled() {
   const { colors } = useTheme();
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.white }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.card }]}>
       <InfoIcon
         bg={colors.pillActiveBackground}
         floatingIcon={<Alert size={20} color={colors.white} />}

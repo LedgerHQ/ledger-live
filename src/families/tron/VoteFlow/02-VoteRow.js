@@ -138,7 +138,7 @@ const VoteRow = ({
           activeOpacity={0.8}
           style={[
             styles.srRow,
-            { backgroundColor: colors.white, borderColor: colors.lightFog },
+            { backgroundColor: colors.card, borderColor: colors.lightFog },
           ]}
           onPress={() => onEdit({ address, voteCount }, name || address)}
         >

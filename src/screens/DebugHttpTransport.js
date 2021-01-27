@@ -60,7 +60,7 @@ class DebugHttpTransport extends Component<
         style={[
           styles.root,
           {
-            backgroundColor: colors.white,
+            backgroundColor: colors.background,
           },
         ]}
         forceInset={forceInset}

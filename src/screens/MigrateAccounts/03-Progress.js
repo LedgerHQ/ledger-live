@@ -148,7 +148,10 @@ export default function Progress({ navigation, route }: Props) {
       forceInset={forceInset}
       style={[
         styles.root,
-        { backgroundColor: colors.white, paddingTop: extraStatusBarPadding },
+        {
+          backgroundColor: colors.background,
+          paddingTop: extraStatusBarPadding,
+        },
       ]}
     >
       <View style={styles.content}>

@@ -9,6 +9,7 @@ import { useTheme } from "@react-navigation/native";
 import { setCarouselVisibility } from "../../actions/settings";
 import { carouselVisibilitySelector } from "../../reducers/settings";
 import LedgerAcademy from "./slides/LedgerAcademy";
+import Valentine from "./slides/Valentine";
 import Card from "../Card";
 import LText from "../LText";
 import Button from "../Button";
@@ -17,7 +18,7 @@ import BackupPack from "./slides/BackupPack";
 // import BlackFriday from "./slides/BlackFriday";
 // import Sell from "./slides/Sell";
 // import Vote from "./slides/Vote";
-import Lending from "./slides/Lending";
+// import Lending from "./slides/Lending";
 import Swap from "./slides/Swap";
 import IconClose from "../../icons/Close";
 
@@ -29,16 +30,14 @@ export const getDefaultSlides = () => [
   //   end: new Date("30 Nov 2020 23:59:00 PST"),
   // },
   {
+    id: "valentine",
+    Component: () => <Valentine />,
+    start: new Date("2 Feb 2021 00:01:00 PST"),
+    end: new Date("15 Feb 2021 23:59:00 PST"),
+  },
+  {
     id: "swap",
     Component: () => <Swap />,
-  },
-  {
-    id: "Lending",
-    Component: () => <Lending />,
-  },
-  {
-    id: "backupPack",
-    Component: () => <BackupPack />,
   },
   {
     id: "academy",
@@ -48,6 +47,16 @@ export const getDefaultSlides = () => [
     id: "buyCrypto",
     Component: () => <BuyCrypto />,
   },
+  {
+    id: "backupPack",
+    Component: () => <BackupPack />,
+  },
+  /*
+  {
+    id: "Lending",
+    Component: () => <Lending />,
+  },
+  */
   // TODO enable when ready
   // {
   //   id: "sell",
@@ -66,7 +75,7 @@ const hitSlop = {
   bottom: 16,
 };
 
-export const CAROUSEL_NONCE: number = 2;
+export const CAROUSEL_NONCE: number = 3;
 
 const Carousel = () => {
   const { colors } = useTheme();

@@ -19,7 +19,10 @@ const Resources = () => {
 
   return (
     <NavigationScrollView
-      contentContainerStyle={[styles.root, { backgroundColor: colors.white }]}
+      contentContainerStyle={[
+        styles.root,
+        { backgroundColor: colors.background },
+      ]}
     >
       <BottomModalChoice
         event="GettingStarted"

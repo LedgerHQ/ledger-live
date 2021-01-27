@@ -16,10 +16,12 @@ import Icon from "react-native-vector-icons/dist/Ionicons";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
+import Config from "react-native-config";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
 import SectionSeparator from "../../components/SectionSeparator";
+import TooltipLabel from "../../components/TooltipLabel";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import SwapStatusIndicator, { getStatusColor } from "./SwapStatusIndicator";
 import { urls } from "../../config/urls";
@@ -49,13 +51,14 @@ const OperationDetails = ({ route }: Props) => {
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = accounts.find(a => a.id === swapOperation.fromAccount.id);
   const swap = fromAccount.swapHistory.find(s => s.swapId === swapId);
-  const status = swap.status;
+  const status = Config.DEBUG_SWAP_STATUS || swap.status;
 
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
-  const statusColor = getStatusColor(status);
-  const dotStyles = { backgroundColor: statusColor };
-  const textColorStyles = { color: statusColor };
+  const statusColorKey = getStatusColor(status, colors, true);
+  const dotStyles = { backgroundColor: colors[statusColorKey] };
+  const textColorStyles = { color: colors[statusColorKey] };
+  const statusHasTooltip = ["refunded", "hold", "failed"].includes(status);
 
   const openProvider = useCallback(() => {
     Linking.openURL(urls.swap.providers[provider].main);
@@ -79,7 +82,7 @@ const OperationDetails = ({ route }: Props) => {
         <View style={styles.arrow}>
           <Icon name={"ios-arrow-round-forward"} size={30} color={colors.fog} />
         </View>
-        <LText tertiary style={styles.toAmount} color="green">
+        <LText tertiary style={styles.toAmount} color={statusColorKey}>
           <CurrencyUnitValue
             alwaysShowSign
             showCode
@@ -89,7 +92,20 @@ const OperationDetails = ({ route }: Props) => {
         </LText>
         <View style={styles.statusTextWrapper}>
           <View style={[styles.statusDot, dotStyles]} />
-          <LText style={[styles.statusText, textColorStyles]}>{status}</LText>
+          {statusHasTooltip ? (
+            <TooltipLabel
+              label={status}
+              style={{ ...styles.statusText, ...textColorStyles }}
+              color={statusColorKey}
+              tooltip={
+                <Trans
+                  i18nKey={`transfer.swap.operationDetails.statusTooltips.${status}`}
+                />
+              }
+            />
+          ) : (
+            <LText style={[styles.statusText, textColorStyles]}>{status}</LText>
+          )}
         </View>
         <View style={styles.fieldsWrapper}>
           <LText style={styles.label} color="grey">

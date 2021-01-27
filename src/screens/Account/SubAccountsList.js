@@ -219,7 +219,7 @@ export default function SubAccountsList({
             ...Platform.select({
               android: {},
               ios: {
-                shadowColor: colors.black,
+                shadowColor: colors.grey,
               },
             }),
           },

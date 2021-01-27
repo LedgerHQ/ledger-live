@@ -12,7 +12,9 @@ export default function USBEmpty({ usbOnly }: { usbOnly: boolean }) {
   const { colors } = useTheme();
   return (
     <View style={[styles.root, { backgroundColor: colors.lightLive }]}>
-      <View style={[styles.iconContainer, { backgroundColor: colors.white }]}>
+      <View
+        style={[styles.iconContainer, { backgroundColor: colors.background }]}
+      >
         <USBIcon width={6} height={16} />
       </View>
       <View style={styles.textContainer}>
