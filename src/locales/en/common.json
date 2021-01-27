@@ -187,7 +187,7 @@
       "description": "Please contact Ledger Support."
     },
     "CosmosStargateFeb2021Warning": {
-      "description": "Cosmos support is temporarily disabled on Ledger Live. Read our article to manage ATOM with your device."
+      "description": "The Cosmos blockchain is planning for an on-chain update on Feb 18th. Coming Ledger Live 2.22.0 will continue supporting ATOM."
     },
     "DeviceAppVerifyNotSupported": {
       "title": "Open Manager to update this app",
