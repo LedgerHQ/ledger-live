@@ -1,7 +1,7 @@
 // @flow
 
 import React, { useCallback } from "react";
-import { StyleSheet, Linking } from "react-native";
+import { StyleSheet, Linking, View } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
@@ -22,11 +22,7 @@ const HeaderErrorTitle = ({ error }: { error: Error }) => {
   }, [maybeLink]);
 
   return (
-    <Touchable
-      event="WarningBanner Press"
-      style={[styles.root, { backgroundColor }]}
-      onPress={maybeLink ? onOpen : null}
-    >
+    <View style={[styles.root, { backgroundColor }]}>
       <LText style={styles.icon}>
         <Icon name="alert-octagon" size={16} color={color} />
       </LText>
@@ -41,13 +37,14 @@ const HeaderErrorTitle = ({ error }: { error: Error }) => {
             <LText
               semiBold
               style={[styles.description, styles.learnMore, { color }]}
+              onPress={onOpen}
             >
               <Trans i18nKey="common.learnMore" />
             </LText>
           </>
         ) : null}
       </LText>
-    </Touchable>
+    </View>
   );
 };
 
