@@ -6,7 +6,6 @@ import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
 import { urls } from "../config/urls";
-import Touchable from "./Touchable";
 import TranslatedError from "./TranslatedError";
 import LText from "./LText";
 import { rgba } from "../colors";
