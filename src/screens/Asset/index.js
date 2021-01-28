@@ -13,6 +13,7 @@ import type {
   PortfolioRange,
   Unit,
 } from "@ledgerhq/live-common/lib/types";
+import { isCountervalueEnabled } from "@ledgerhq/live-common/lib/countervalues/modules";
 import React, { PureComponent, useMemo } from "react";
 import { StyleSheet, View, SectionList } from "react-native";
 import { useRoute, useTheme } from "@react-navigation/native";
@@ -92,8 +93,8 @@ class Asset extends PureComponent<AssetProps, any> {
     counterValueUnit: Unit,
     item: Item,
   }) => {
-    const { switchCountervalueFirst } = this.props;
-    const countervalueAvailable = true;
+    const { switchCountervalueFirst, currency } = this.props;
+    const countervalueAvailable = isCountervalueEnabled(currency);
     const items = [
       { unit: cryptoCurrencyUnit, value: item.value },
       countervalueAvailable && item.countervalue
@@ -300,7 +301,6 @@ const styles = StyleSheet.create({
   },
   balanceText: {
     fontSize: 22,
-    lineHeight: 24,
   },
   balanceSubText: {
     fontSize: 16,
