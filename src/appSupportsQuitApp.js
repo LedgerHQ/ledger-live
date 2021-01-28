@@ -32,6 +32,7 @@ export const minAppVersion = {
   "Cardano ADA": "2.0.4",
   Celo: "1.0.3",
   Cosmos: "2.16.3",
+  "Crypto.com Chain": "0.0.0",
   DEXON: "1.4.0",
   Dash: "1.5.0",
   Decred: "1.3.9",

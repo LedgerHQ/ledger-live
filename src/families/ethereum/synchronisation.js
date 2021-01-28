@@ -13,7 +13,10 @@ import {
   areAllOperationsLoaded,
   inferSubOperations,
 } from "../../account";
-import { findTokenByAddress } from "../../currencies";
+import {
+  findTokenByAddress,
+  listTokensForCryptoCurrency,
+} from "../../currencies";
 import type { Operation, TokenAccount, Account } from "../../types";
 import { apiForCurrency } from "../../api/Ethereum";
 import type { Tx } from "../../api/Ethereum";
@@ -35,9 +38,12 @@ export const getAccountShape: GetAccountShape = async (
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
 
-  const newBlacklistedTokensCache = JSON.stringify(blacklistedTokenIds || []);
-  const outdatedBlacklist =
-    initialAccount?.blacklistedTokensCache !== newBlacklistedTokensCache;
+  // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
+  const syncHash =
+    JSON.stringify(blacklistedTokenIds || []) +
+    "_" +
+    listTokensForCryptoCurrency(currency, { withDelisted: true }).length;
+  const outdatedBlacklist = initialAccount?.syncHash !== syncHash;
 
   let pullFromBlockHash =
     initialAccount &&
@@ -165,7 +171,7 @@ export const getAccountShape: GetAccountShape = async (
     blockHeight,
     lastSyncDate: new Date(),
     balanceHistory: undefined,
-    blacklistedTokensCache: newBlacklistedTokensCache,
+    syncHash,
   };
 
   return accountShape;

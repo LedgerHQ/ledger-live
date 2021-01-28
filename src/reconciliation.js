@@ -261,8 +261,8 @@ export function patchAccount(
     changed = true;
   }
 
-  if (account.blacklistedTokensCache !== updatedRaw.blacklistedTokensCache) {
-    next.blacklistedTokensCache = updatedRaw.blacklistedTokensCache;
+  if (account.syncHash !== updatedRaw.syncHash) {
+    next.syncHash = updatedRaw.syncHash;
     changed = true;
   }
 

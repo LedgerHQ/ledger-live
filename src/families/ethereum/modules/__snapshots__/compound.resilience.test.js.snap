@@ -3,7 +3,6 @@
 exports[`if API is down, an account still sync fine 1`] = `
 Object {
   "balance": "2092658623260253",
-  "blacklistedTokensCache": "[]",
   "blockHeight": 0,
   "creationDate": "",
   "currencyId": "ethereum",
@@ -13182,6 +13181,7 @@ Object {
     },
   ],
   "swapHistory": Array [],
+  "syncHash": "[]_1770",
   "unitMagnitude": 18,
 }
 `;

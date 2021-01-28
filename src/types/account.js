@@ -200,8 +200,8 @@ export type Account = {
   // Swap operations linked to this account
   swapHistory: SwapOperation[],
 
-  // Hash used to discard tx history on sync if blacklisted token ids change
-  blacklistedTokensCache?: string,
+  // Hash used to discard tx history on sync
+  syncHash?: string,
 };
 
 export type SubAccount = TokenAccount | ChildAccount;
@@ -280,9 +280,8 @@ export type AccountRaw = {
   cosmosResources?: CosmosResourcesRaw,
   algorandResources?: AlgorandResourcesRaw,
   polkadotResources?: PolkadotResourcesRaw,
-  // Swap operations linked to this account
   swapHistory?: SwapOperationRaw[],
-  blacklistedTokensCache?: string,
+  syncHash?: string,
 };
 
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
