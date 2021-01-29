@@ -61,10 +61,7 @@ const hashTransactionParams = (a: Account, t: Transaction) => {
  *
  * @returns {Promise<Object>} txInfo
  */
-export const getTransactionParams: CacheRes<
-  Array<Account>,
-  Object
-> = makeLRUCache(
+export const getTransactionParams: CacheRes<Array<void>, Object> = makeLRUCache(
   async (): Promise<Object> => apiGetTransactionParams(),
   () => "polkadot",
   {
