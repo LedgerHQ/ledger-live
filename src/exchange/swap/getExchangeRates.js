@@ -25,9 +25,8 @@ const getExchangeRates: GetExchangeRates = async (
   const unitTo = getAccountUnit(exchange.toAccount);
   const to = getAccountCurrency(exchange.toAccount).id;
   const amountFrom = transaction.amount;
-  const apiAmount = BigNumber(amountFrom).div(
-    BigNumber(10).pow(unitFrom.magnitude)
-  );
+  const tenPowMagnitude = BigNumber(10).pow(unitFrom.magnitude);
+  const apiAmount = BigNumber(amountFrom).div(tenPowMagnitude);
 
   const res = await network({
     method: "POST",
@@ -50,7 +49,7 @@ const getExchangeRates: GetExchangeRates = async (
           ? new SwapExchangeRateAmountTooLow(null, {
               minAmountFromFormatted: formatCurrencyUnit(
                 unitFrom,
-                BigNumber(minAmountFrom),
+                BigNumber(minAmountFrom).times(tenPowMagnitude),
                 {
                   alwaysShowSign: false,
                   disableRounding: true,
@@ -61,7 +60,7 @@ const getExchangeRates: GetExchangeRates = async (
           : new SwapExchangeRateAmountTooHigh(null, {
               maxAmountFromFormatted: formatCurrencyUnit(
                 unitFrom,
-                BigNumber(maxAmountFrom),
+                BigNumber(maxAmountFrom).times(tenPowMagnitude),
                 {
                   alwaysShowSign: false,
                   disableRounding: true,

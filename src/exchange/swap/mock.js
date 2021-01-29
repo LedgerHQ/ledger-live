@@ -25,7 +25,8 @@ export const mockGetExchangeRates = async (
   const amount = transaction.amount;
   const unitFrom = getAccountUnit(fromAccount);
   const unitTo = getAccountUnit(toAccount);
-  const amountFrom = amount.div(BigNumber(10).pow(unitFrom.magnitude));
+  const tenPowMagnitude = BigNumber(10).pow(unitFrom.magnitude);
+  const amountFrom = amount.div(tenPowMagnitude);
   const minAmountFrom = BigNumber(0.0001);
   const maxAmountFrom = BigNumber(1000);
 
@@ -33,7 +34,7 @@ export const mockGetExchangeRates = async (
     throw new SwapExchangeRateAmountTooLow(null, {
       minAmountFromFormatted: formatCurrencyUnit(
         unitFrom,
-        BigNumber(minAmountFrom),
+        BigNumber(minAmountFrom).times(tenPowMagnitude),
         {
           alwaysShowSign: false,
           disableRounding: true,
@@ -47,7 +48,7 @@ export const mockGetExchangeRates = async (
     throw new SwapExchangeRateAmountTooHigh(null, {
       maxAmountFromFormatted: formatCurrencyUnit(
         unitFrom,
-        BigNumber(maxAmountFrom),
+        BigNumber(maxAmountFrom).times(tenPowMagnitude),
         {
           alwaysShowSign: false,
           disableRounding: true,
