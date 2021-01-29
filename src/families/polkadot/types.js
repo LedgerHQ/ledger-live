@@ -5,7 +5,11 @@ import type {
   TransactionCommonRaw,
 } from "../../types/transaction";
 
-export type RewardDestinationType = "Staked" | "Stash" | "Account" | "Controller"
+export type RewardDestinationType =
+  | "Staked"
+  | "Stash"
+  | "Account"
+  | "Controller";
 
 export type CoreStatics = {};
 
@@ -15,7 +19,7 @@ export type CoreOperationSpecifics = {};
 
 export type CoreCurrencySpecifics = {};
 
-export type PolkadotNominationStatus = "active" | "inactive" | "waiting" | null;
+export type PolkadotNominationStatus = "active" | "inactive" | "waiting" | null;
 
 export type PolkadotNomination = {|
   address: string,
@@ -46,8 +50,8 @@ export type PolkadotResources = {|
   lockedBalance: BigNumber,
   unlockedBalance: BigNumber,
   unlockingBalance: BigNumber,
-  unlockings: ?PolkadotUnlocking[],
-  nominations: ?PolkadotNomination[],
+  unlockings: ?(PolkadotUnlocking[]),
+  nominations: ?(PolkadotNomination[]),
   numSlashingSpans: number,
 |};
 
@@ -58,8 +62,8 @@ export type PolkadotResourcesRaw = {|
   lockedBalance: string,
   unlockedBalance: string,
   unlockingBalance: string,
-  unlockings: ?PolkadotUnlockingRaw[],
-  nominations: ?PolkadotNominationRaw[],
+  unlockings: ?(PolkadotUnlockingRaw[]),
+  nominations: ?(PolkadotNominationRaw[]),
   numSlashingSpans: number,
 |};
 
@@ -68,7 +72,7 @@ export type Transaction = {|
   mode: string,
   family: "polkadot",
   fees: ?BigNumber,
-  validators: ?string[],
+  validators: ?(string[]),
   era: ?string,
   rewardDestination: ?string,
   numSlashingSpans: ?number,
@@ -79,7 +83,7 @@ export type TransactionRaw = {|
   family: "polkadot",
   mode: string,
   fees: ?string,
-  validators: ?string[],
+  validators: ?(string[]),
   era: ?string,
   rewardDestination: ?string,
   numSlashingSpans: ?number,

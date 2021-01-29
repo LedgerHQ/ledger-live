@@ -82,7 +82,7 @@ export type TypedMessage = {
   hashes: {
     domainHash: string,
     messageHash: string,
-  }
+  },
 };
 
 export type TypedMessageData = {
@@ -93,7 +93,7 @@ export type TypedMessageData = {
   message: TypedMessage,
   hashes: {
     stringHash: string,
-  }
+  },
 };
 
 //
