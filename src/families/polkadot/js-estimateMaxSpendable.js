@@ -6,7 +6,7 @@ import { getMainAccount } from "../../account";
 
 import type { Transaction } from "./types";
 import { calculateAmount } from "./logic";
-import { getFees } from "./cache";
+import getEstimatedFees from "./js-getFeesForTransaction";
 
 import createTransaction from "./js-createTransaction";
 
@@ -31,7 +31,7 @@ const estimateMaxSpendable = async ({
     useAllAmount: true,
   };
 
-  const fees = await getFees({ a, t });
+  const fees = await getEstimatedFees({ a, t });
 
   return calculateAmount({ a, t: { ...t, fees } });
 };
