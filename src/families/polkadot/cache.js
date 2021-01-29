@@ -1,5 +1,4 @@
 // @flow
-import { BigNumber } from "bignumber.js";
 import { TypeRegistry, ModulesWithCalls } from "@polkadot/types";
 
 import { makeLRUCache } from "../../cache";
@@ -13,8 +12,8 @@ import {
   isElectionClosed as apiIsElectionClosed,
   getRegistry as apiGetRegistry,
   getTransactionParams as apiGetTransactionParams,
+  paymentInfo as apiPaymentInfo,
 } from "./api";
-import getEstimatedFees from "./js-getFeesForTransaction";
 
 /**
  * Create a hash for a transaction that is params-specific and stay unchanged if no influcing fees
@@ -24,22 +23,27 @@ import getEstimatedFees from "./js-getFeesForTransaction";
  *
  * @returns {string} hash
  */
-const hashTransactionParams = (a: Account, t: Transaction) => {
-  // Note this is highly linked to getEstimatedFees, which recalculate automatically the amount when useAllAmount
+const hashTransactionParams = (
+  a: Account,
+  t: Transaction,
+  signedTx: string
+) => {
   // Nonce is added to discard previous estimation when account is synced.
   const prefix = `${a.id}_${a.polkadotResources?.nonce || 0}_${t.mode}`;
-  const amount = t.useAllAmount ? "MAX" : t.amount.toString();
+  // Fees depends on extrinsic bytesize
+  const byteSize = signedTx.length;
 
+  // And on extrinsic weight (which varies with the method called)
   switch (t.mode) {
     case "send":
-      return `${prefix}_${amount}`;
+      return `${prefix}_${byteSize}`;
     case "bond":
       return t.rewardDestination
-        ? `${prefix}_${amount}_${t.rewardDestination}`
-        : `${prefix}_${amount}`;
+        ? `${prefix}_${byteSize}_${t.rewardDestination}`
+        : `${prefix}_${byteSize}`;
     case "unbond":
     case "rebond":
-      return `${prefix}_${amount}`;
+      return `${prefix}_${byteSize}`;
     case "nominate":
       return `${prefix}_${t.validators?.length ?? "0"}`;
     case "withdrawUnbonded":
@@ -73,21 +77,21 @@ export const getTransactionParams: CacheRes<
 );
 
 /**
- * Cache the fees estimation, with a hash deending on fees-changing transaction params only.
+ * Cache the payment info (fee estimate), with a hash deending on fees-changing transaction params and tx size.
  *
  * @param {Account} arg1.a
  * @param {Transaction} arg1.t
  *
  * @returns {Promise<BigBumber>}
  */
-export const getFees: CacheRes<
-  Array<{ a: Account, t: Transaction }>,
-  BigNumber
+export const getPaymentInfo: CacheRes<
+  Array<{ a: Account, t: Transaction, signedTx: string }>,
+  { partialFee: string }
 > = makeLRUCache(
-  async ({ a, t }): Promise<BigNumber> => {
-    return await getEstimatedFees(a, t);
+  async ({ signedTx }): Promise<{ partialFee: string }> => {
+    return await apiPaymentInfo(signedTx);
   },
-  ({ a, t }) => hashTransactionParams(a, t),
+  ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
   {
     maxAge: 5 * 60 * 1000, // 5 minutes
   }

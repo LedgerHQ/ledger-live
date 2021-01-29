@@ -2,7 +2,7 @@
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
 
-import { getFees } from "./cache";
+import getEstimatedFees from "./js-getFeesForTransaction";
 
 const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
 
@@ -14,7 +14,7 @@ const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
 const prepareTransaction = async (a: Account, t: Transaction) => {
   let fees = t.fees;
 
-  fees = await getFees({ a, t });
+  fees = await getEstimatedFees({ a, t });
 
   if (!sameFees(t.fees, fees)) {
     return { ...t, fees };

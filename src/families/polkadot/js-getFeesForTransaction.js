@@ -5,7 +5,7 @@ import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
 
-import { paymentInfo } from "./api";
+import { getPaymentInfo } from "./cache";
 import { calculateAmount } from "./logic";
 import { buildTransaction } from "./js-buildTransaction";
 import { fakeSignExtrinsic } from "./js-signOperation";
@@ -15,12 +15,14 @@ import { fakeSignExtrinsic } from "./js-signOperation";
  *
  * @param {Account} a
  * @param {Transaction} t
- * @param {*} txInfo
  */
-const getEstimatedFees = async (
+const getEstimatedFees = async ({
+  a,
+  t,
+}: {
   a: Account,
-  t: Transaction
-): Promise<BigNumber> => {
+  t: Transaction,
+}): Promise<BigNumber> => {
   const transaction = {
     ...t,
     recipient: getAbandonSeedAddress(a.currency.id), // Always use a fake recipient to estimate fees
@@ -29,7 +31,11 @@ const getEstimatedFees = async (
 
   const { unsigned, registry } = await buildTransaction(a, transaction);
   const fakeSignedTx = await fakeSignExtrinsic(unsigned, registry);
-  const payment = await paymentInfo(fakeSignedTx);
+  const payment = await getPaymentInfo({
+    a,
+    t: transaction,
+    signedTx: fakeSignedTx,
+  });
 
   return BigNumber(payment.partialFee);
 };
