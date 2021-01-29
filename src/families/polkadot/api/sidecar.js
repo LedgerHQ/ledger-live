@@ -7,6 +7,8 @@ import { getSpecTypes } from "@polkadot/types-known";
 import { Metadata } from "@polkadot/metadata";
 import { expandMetadata } from "@polkadot/metadata/decorate";
 
+import { makeLRUCache } from "../../../cache";
+import type { CacheRes } from "../../../cache";
 import { getEnv } from "../../../env";
 import network from "../../../network";
 
@@ -395,7 +397,7 @@ export const getStakingInfo = async (addr: string) => {
   const [stakingInfo, activeEra, consts] = await Promise.all([
     fetchStakingInfo(addr),
     fetchActiveEra(),
-    fetchConstants(),
+    getConstants(),
   ]);
 
   const activeEraIndex = Number(activeEra.value?.index || 0);
@@ -572,7 +574,7 @@ export const getValidators = async (
 export const getStakingProgress = async (): Promise<PolkadotStakingProgress> => {
   const [progress, consts] = await Promise.all([
     fetchStakingProgress(),
-    fetchConstants(),
+    getConstants(),
   ]);
 
   const activeEra = Number(progress.activeEra);
@@ -643,3 +645,24 @@ export const getRegistry = async (): Promise<{
 
   return { registry, extrinsics };
 };
+
+/*
+ * CACHED REQUESTS
+ * NOTE: we don't use the cache from family's `cache.js` to avoid cyclic imports.
+ */
+
+/**
+ * Cache the fetchConstants to avoid too many calls
+ *
+ * @async
+ *
+ * @returns {Promise<Object>} consts
+ */
+export const getConstants: CacheRes<Array<void>, Object> = makeLRUCache(
+  async (): Promise<Object> => fetchConstants(),
+  () => "polkadot",
+  {
+    max: 1, // Store only one constnats object since we only have polkadot.
+    maxAge: 60 * 60 * 1000, // 1 hour
+  }
+);
