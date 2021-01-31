@@ -14,15 +14,25 @@ import {
   findCryptoCurrencyByKeyword,
   isCurrencySupported,
   formatCurrencyUnit,
+  getFiatCurrencyByTicker,
 } from "../currencies";
 import { isAccountEmpty } from "../account";
 import { runWithAppSpec } from "./engine";
 import { formatReportForConsole } from "./formatters";
+import {
+  initialState,
+  calculate,
+  loadCountervalues,
+  inferTrackingPairForAccounts,
+} from "../countervalues/logic";
+import { getPortfolio } from "../portfolio";
 
 type Arg = $Shape<{
   currency: string,
   mutation: string,
 }>;
+
+const usd = getFiatCurrencyByTicker("USD");
 
 export async function bot({ currency, mutation }: Arg = {}) {
   const SEED = getEnv("SEED");
@@ -75,6 +85,41 @@ export async function bot({ currency, mutation }: Arg = {}) {
       }));
     }
   );
+
+  const allAccountsAfter = flatMap(results, (r) => r.accountsAfter);
+
+  let countervaluesError;
+  const countervaluesState = await loadCountervalues(initialState, {
+    trackingPairs: inferTrackingPairForAccounts(allAccountsAfter, usd),
+    autofillGaps: true,
+  }).catch((e) => {
+    console.error(e);
+    countervaluesError = e;
+    return null;
+  });
+
+  const period = "month";
+  const calc = (c, v, date) =>
+    countervaluesState
+      ? BigNumber(
+          calculate(countervaluesState, {
+            date,
+            value: v.toNumber(),
+            from: c,
+            to: usd,
+          }) || 0
+        )
+      : BigNumber(0);
+  const portfolio = getPortfolio(allAccountsAfter, period, calc);
+
+  const totalUSD = countervaluesState
+    ? formatCurrencyUnit(
+        usd.units[0],
+        portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value,
+        { showCode: true }
+      )
+    : "";
+
   const allMutationReports = flatMap(results, (r) => r.mutations || []);
 
   const mutationReports = allMutationReports.filter(
@@ -170,6 +215,11 @@ export async function bot({ currency, mutation }: Arg = {}) {
     if (specFatals.length) {
       title += ` ⚠️ ${specFatals.length} specs`;
     }
+    if (countervaluesError) {
+      title += `❌ countervalues`;
+    } else {
+      title += ` (${totalUSD})`;
+    }
 
     let subtitle = "";
 
@@ -181,6 +231,10 @@ export async function bot({ currency, mutation }: Arg = {}) {
       subtitle += `> ⚠️ ${
         withoutFunds.length
       } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
+    }
+
+    if (countervaluesError) {
+      subtitle += `> ${String(countervaluesError)}`;
     }
 
     let slackBody = "";
@@ -268,7 +322,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
       body += "</details>\n\n";
     }
 
-    body += "### Portfolio\n\n";
+    body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
 
     body += "<details>\n";
     body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
@@ -308,6 +362,17 @@ export async function bot({ currency, mutation }: Arg = {}) {
           " (- " + formatCurrencyUnit(r.spec.currency.units[0], d) + ")";
         const eta = accountsAfterBalance.div(d.div(txCount)).integerValue();
         etaTxs = eta.lt(50) ? "⚠️" : eta.lt(500) ? "👍" : "💪";
+      }
+
+      if (countervaluesState && r.accountsAfter) {
+        const portfolio = getPortfolio(r.accountsAfter, period, calc);
+
+        const totalUSD = formatCurrencyUnit(
+          usd.units[0],
+          portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value,
+          { showCode: true }
+        );
+        balance += " (" + totalUSD + ")";
       }
 
       function countOps(all) {
