@@ -13,7 +13,6 @@ import type {
   RateMap,
   RateGranularity,
   PairRateMapCache,
-  RateMapStats,
 } from "./types";
 import {
   pairId,
@@ -112,8 +111,8 @@ export async function loadCountervalues(
     const limit = datapointLimits[granularity];
     settings.trackingPairs.forEach(({ from, to, startDate }) => {
       const key = pairId({ from, to });
-      const value: ?RateMap = data[key];
-      const stats = value && rateMapStats(value);
+      const c: ?PairRateMapCache = cache[key];
+      const stats = c && c.stats;
       const s = status[key];
 
       // when there are too much http failures, slow down the rate to be actually re-fetched
@@ -153,8 +152,12 @@ export async function loadCountervalues(
       }
       if (!needOlderReload) {
         // we do not miss datapoints in the past so we can ask the only remaining part
-        if (stats && stats.earliestDate && stats.earliestDate > start) {
-          start = stats.earliestDate;
+        if (
+          stats &&
+          stats.earliestStableDate &&
+          stats.earliestStableDate > start
+        ) {
+          start = stats.earliestStableDate;
         }
       }
 
@@ -354,7 +357,13 @@ export function calculateMany(
   });
 }
 
-function rateMapStats(map: RateMap): RateMapStats {
+function generateCache(
+  pair: string,
+  rateMap: RateMap,
+  settings: CountervaluesSettings
+): PairRateMapCache {
+  const map = { ...rateMap };
+
   const sorted = Object.keys(map)
     .sort()
     .filter((k) => k !== "latest");
@@ -362,42 +371,53 @@ function rateMapStats(map: RateMap): RateMapStats {
   const earliest = sorted[sorted.length - 1];
   const oldestDate = oldest ? parseFormattedDate(oldest) : null;
   const earliestDate = earliest ? parseFormattedDate(earliest) : null;
-  return { oldest, earliest, oldestDate, earliestDate };
-}
+  let earliestStableDate = earliestDate;
 
-function generateCache(
-  pair: string,
-  rateMap: RateMap,
-  settings: CountervaluesSettings
-): PairRateMapCache {
-  const map = { ...rateMap };
-  const stats = rateMapStats(map);
   let fallback;
+  let hasHole = false;
 
-  const { oldest, oldestDate } = stats;
-  if (settings.autofillGaps) {
-    if (oldestDate && oldest) {
-      // shifting daily gaps (hourly don't need to be shifted as it automatically fallback on a day rate)
-      const now = Date.now();
-      const oldestTime = oldestDate.getTime();
-      let shiftingValue = map[oldest];
+  if (oldestDate && oldest) {
+    // we find the most recent stable day and we set it in earliestStableDate
+    // if autofillGaps is on, shifting daily gaps (hourly don't need to be shifted as it automatically fallback on a day rate)
+    const now = Date.now();
+    const oldestTime = oldestDate.getTime();
+    let shiftingValue = map[oldest];
+    if (settings.autofillGaps) {
       fallback = shiftingValue;
-      for (let t = oldestTime; t < now; t += incrementPerGranularity.daily) {
-        const k = formatCounterValueDay(new Date(t));
-        if (!(k in map)) {
+    }
+    for (let t = oldestTime; t < now; t += incrementPerGranularity.daily) {
+      const d = new Date(t);
+      const k = formatCounterValueDay(d);
+      if (!(k in map)) {
+        if (!hasHole) {
+          hasHole = true;
+          earliestStableDate = d;
+        }
+        if (settings.autofillGaps) {
           map[k] = shiftingValue;
-        } else {
+        }
+      } else {
+        if (settings.autofillGaps) {
           shiftingValue = map[k];
         }
       }
-      if (!map.latest) {
-        map.latest = shiftingValue;
-      }
-    } else {
+    }
+    if (!map.latest && settings.autofillGaps) {
+      map.latest = shiftingValue;
+    }
+  } else {
+    if (settings.autofillGaps) {
       fallback = map.latest || 0;
     }
   }
 
+  const stats = {
+    oldest,
+    earliest,
+    oldestDate,
+    earliestDate,
+    earliestStableDate,
+  };
   return { map, stats, fallback };
 }
 

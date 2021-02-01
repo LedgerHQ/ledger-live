@@ -69,8 +69,12 @@ export type CounterValuesStatus = {
 export type RateMapStats = {
   oldest: ?string,
   earliest: ?string,
+  // oldest datapoint
   oldestDate: ?Date,
+  // most recent datapoint
   earliestDate: ?Date,
+  // most recent datapoint before the first "hole"
+  earliestStableDate: ?Date,
 };
 
 export type PairRateMapCache = {
