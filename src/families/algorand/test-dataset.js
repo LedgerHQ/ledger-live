@@ -14,7 +14,7 @@ import type { Transaction } from "./types";
 //   "ZBILW5BPM7AQU54YQZICSGS4J7KJ2XV6OC3DFUQ7BB4DVLYKKUEVWDDBGM";
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["libcore"],
+  implementations: [], // ["libcore"], FIXME: ongoing infra issue #ci-algo-ll, re-enable when it's stable again
   currencies: {
     algorand: {
       FIXME_ignoreAccountFields: [
