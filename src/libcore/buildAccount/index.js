@@ -95,14 +95,8 @@ export async function buildAccount({
   const derivations = await coreAccountCreationInfo.getDerivations();
   const accountPath = last(derivations);
 
-  let blockHeight = 0;
-  try {
-    const coreBlock = await coreAccount.getLastBlock();
-    blockHeight = await coreBlock.getHeight();
-  } catch (e) {
-    // Workaround libcore to randomly fail with "bitcoin may not exist"
-    log("libcore", "failure to get the last block height " + e);
-  }
+  const coreBlock = await coreAccount.getLastBlock();
+  const blockHeight = await coreBlock.getHeight();
 
   const coreFreshAddresses = await coreAccount.getFreshPublicAddresses();
   if (coreFreshAddresses.length === 0)
