@@ -194,7 +194,9 @@ class AuthScreen extends PureComponent<Props, State> {
     } = this.state;
     return (
       <KeyboardBackgroundDismiss>
-        <SafeAreaView style={[styles.root, { backgroundColor: colors.card }]}>
+        <SafeAreaView
+          style={[styles.root, { backgroundColor: colors.background }]}
+        >
           <KeyboardView>
             <View style={{ flex: 1 }} />
 

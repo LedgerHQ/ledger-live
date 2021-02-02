@@ -12,7 +12,7 @@ export default function PoweredByLedger() {
 
   return (
     <View style={styles.container}>
-      <LText secondary semiBold style={styles.textStyle}>
+      <LText secondary semiBold style={styles.textStyle} color="grey">
         {t("common.poweredBy")}
       </LText>
       <View style={styles.iconStyle}>

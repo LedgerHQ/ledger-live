@@ -64,7 +64,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
           styles.container,
           !inline && {
             ...styles.nonInlineContainer,
-            backgroundColor: colors.background,
+            backgroundColor: colors.card,
             borderColor: colors.lightFog,
           },
           borderColorOverride,
@@ -80,7 +80,7 @@ class PasswordInput extends PureComponent<Props, { isFocused: boolean }> {
             { color: colors.darkBlue },
           ]}
           placeholder={placeholder}
-          placeholderTextColor={error ? colors.alert : colors.grey}
+          placeholderTextColor={error ? colors.alert : colors.fog}
           returnKeyType="done"
           blurOnSubmit={false}
           onChangeText={onChange}

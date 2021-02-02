@@ -175,7 +175,7 @@ to play correctly with react navigation.
 
 const fixURL = url => {
   let NEWurl = url;
-  if (url.substr(0, 3) === "wc:") {
+  if (url && url.substr(0, 3) === "wc:") {
     NEWurl = `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
   return NEWurl;
@@ -368,8 +368,8 @@ export default class Root extends Component<
                 <WalletConnectProvider>
                   <DeepLinkingNavigator>
                     <SafeAreaProvider>
+                      <StyledStatusBar />
                       <AuthPass>
-                        <StyledStatusBar />
                         <I18nextProvider i18n={i18n}>
                           <LocaleProvider>
                             <BridgeSyncProvider>

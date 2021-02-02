@@ -271,7 +271,9 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
         confirmationDesc={
           <Trans i18nKey="send.highFeeModal">
             {"Be careful, your fees represent more than "}
-            <LText bold>10%</LText>
+            <LText color="smoke" bold>
+              10%
+            </LText>
             {" of the amount. Do you want to continue?"}
           </Trans>
         }

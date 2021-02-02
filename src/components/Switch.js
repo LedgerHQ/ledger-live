@@ -1,7 +1,7 @@
 // @flow
 import { useTheme } from "@react-navigation/native";
 import React from "react";
-import { Switch as RNSwitch } from "react-native";
+import { Switch as RNSwitch, Platform } from "react-native";
 
 export default function Switch(props: *) {
   const { colors } = useTheme();
@@ -9,7 +9,9 @@ export default function Switch(props: *) {
   return (
     <RNSwitch
       {...props}
-      trackColor={{ true: colors.lightLive, false: colors.fog }}
+      {...(Platform.OS === "android"
+        ? { trackColor: { true: colors.lightLive, false: colors.fog } }
+        : {})}
     />
   );
 }

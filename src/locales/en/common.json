@@ -522,10 +522,10 @@
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
     },
     "SwapExchangeRateAmountTooLow": {
-      "title": "Amount must be higher than {{minAmountFrom}} {{unit}}"
+      "title": "Amount must be higher than {{minAmountFromFormatted}}"
     },
     "SwapExchangeRateAmountTooHigh": {
-      "title": "Amount must be lower than {{maxAmountFrom}} {{unit}}"
+      "title": "Amount must be lower than {{maxAmountFromFormatted}}"
     },
     "SwapGenericAPIError": {
       "title": "Exchange rate expired",

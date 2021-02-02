@@ -794,7 +794,7 @@ const importAccountsScenes = [
           label: (
             <Trans i18nKey="onboarding.stepImportAccounts.bullets.0.label">
               {""}
-              <LText semiBold />
+              <LText semiBold style={{ color: "#FFF" }} />
               {""}
             </Trans>
           ),

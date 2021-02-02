@@ -77,6 +77,7 @@ export default function AmountInput({
             <LText
               style={[styles.currency, isCrypto ? styles.active : null]}
               semiBold
+              color="grey"
             >
               {cryptoUnit.code}
             </LText>
@@ -86,6 +87,7 @@ export default function AmountInput({
         />
         <LText
           style={[error ? styles.error : styles.warning]}
+          color={error ? "alert" : "orange"}
           numberOfLines={2}
         >
           <TranslatedError error={error || warning} />
@@ -108,6 +110,7 @@ export default function AmountInput({
             <LText
               style={[styles.currency, !isCrypto ? styles.active : null]}
               semiBold
+              color="grey"
             >
               {fiatUnit.code}
             </LText>
