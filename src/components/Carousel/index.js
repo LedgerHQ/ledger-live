@@ -14,7 +14,7 @@ import Card from "../Card";
 import LText from "../LText";
 import Button from "../Button";
 import BuyCrypto from "./slides/BuyCrypto";
-import BackupPack from "./slides/BackupPack";
+// import BackupPack from "./slides/BackupPack";
 // import BlackFriday from "./slides/BlackFriday";
 // import Sell from "./slides/Sell";
 // import Vote from "./slides/Vote";
@@ -47,10 +47,10 @@ export const getDefaultSlides = () => [
     id: "buyCrypto",
     Component: () => <BuyCrypto />,
   },
-  {
-    id: "backupPack",
-    Component: () => <BackupPack />,
-  },
+  // {
+  //   id: "backupPack",
+  //   Component: () => <BackupPack />,
+  // },
   /*
   {
     id: "Lending",
