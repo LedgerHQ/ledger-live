@@ -55,6 +55,7 @@ export const minAppVersion = {
   Expanse: "1.4.0",
   FIC: "3.0.4",
   Factom: "1.2.3",
+  "Fantom FTM": "0.0.0",
   "Fido U2F": "1.2.7",
   Filecoin: "0.18.2",
   Flow: "0.9.1",
