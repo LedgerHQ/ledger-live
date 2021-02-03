@@ -186,6 +186,9 @@
       "title": "Something went wrong (Error #17)",
       "description": "Please contact Ledger Support."
     },
+    "CosmosStargateFeb2021Warning": {
+      "description": "The Cosmos blockchain is planning for an on-chain update on Feb 18th. Coming Ledger Live 2.22.0 will continue supporting ATOM."
+    },
     "DeviceAppVerifyNotSupported": {
       "title": "Open Manager to update this app",
       "description": "The app verification is not supported."
@@ -515,11 +518,14 @@
     "StellarMemoRecommended": {
       "title": "A memo may be needed when sending to this recipient"
     },
+    "StratisDown2021Warning": {
+      "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
+    },
     "SwapExchangeRateAmountTooLow": {
-      "title": "Amount must be higher than {{minAmountFrom}} {{unit}}"
+      "title": "Amount must be higher than {{minAmountFromFormatted}}"
     },
     "SwapExchangeRateAmountTooHigh": {
-      "title": "Amount must be lower than {{maxAmountFrom}} {{unit}}"
+      "title": "Amount must be lower than {{maxAmountFromFormatted}}"
     },
     "SwapGenericAPIError": {
       "title": "Exchange rate expired",
@@ -609,6 +615,10 @@
     "confirm": "Confirm",
     "undo": "Undo",
     "banners": {
+      "valentine": {
+        "title": "Valentine’s day",
+        "description": "Reduced fees on Buy and Sell"
+      },
       "academy": {
         "title": "Ledger Academy",
         "description": "Everything you need to know about crypto"
@@ -1785,7 +1795,12 @@
         "from": "From",
         "fromAmount": "Amount sent",
         "to": "To",
-        "toAmount": "Amount to receive"
+        "toAmount": "Amount to receive",
+        "statusTooltips": {
+          "refunded": "Please contact the Swap provider with you swap ID for more details",
+          "failed": "Please contact the Swap provider with you swap ID for more details",
+          "hold": "Please contact the Swap provider with you swap ID to solve the situation"
+        }
       },
       "missingApp": {
         "title": "Please install the Exchange app on your device",
@@ -1829,7 +1844,7 @@
         "amountSuppliedTooltip": "Amount lent to the network",
         "currencyAPY": "Currency APY",
         "currencyAPYTooltip": "Yearly return rate of a deposit that’s continuously compounded",
-        "accruedInterests": "Accrued interest",
+        "accruedInterests": "Interest balance",
         "accruedInterestsTooltip": "Interest generated on your lent assets",
         "interestEarned": "Interest earned",
         "interestEarnedTooltip": "Interest you have earned after withdrawal",
@@ -1855,7 +1870,7 @@
           "account": "Account",
           "amountSupplied": "Amount deposited",
           "interestEarned": "Interest earned",
-          "status": "Status",
+          "status": "Account status",
           "EARNING": "Earning",
           "ENABLING": "Approving",
           "INACTIVE": "Inactive",
@@ -3136,6 +3151,8 @@
     "reject": "Reject",
     "connect": "Connect",
     "connected": "Connected",
+    "disconnected": "Disconnected",
+    "warningdisconnected": "There is a connection problem between the dApp, WalletConnect and Ledger Live. Wait a few moments or relaunch the connection",
     "info": "You can now access the {{name}} dApp on your desktop.",
     "warning": "Sharing receive addresses from dApp is not secure. Always use Ledger Live when sharing your address to receive funds.",
     "isconnecting": "is connecting, please wait...",
@@ -3143,6 +3160,9 @@
     "retry": "Retry",
     "close": "Close",
     "message": "Message",
+    "messageHash": "Message Hash",
+    "domainHash": "Domain Hash",
+    "stringHash": "Hash",
     "from": "From",
     "successTitle": "Message signed",
     "successDescription": "You have signed the message received from a third party application",
