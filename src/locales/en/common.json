@@ -531,6 +531,33 @@
       "title": "Exchange rate expired",
       "description": "You must confirm the swap before the timer runs out. The exchange rate remains valid for a fixed duration."
     },
+    "PolkadotElectionClosed": {
+      "title": "Validators election must be closed"
+    },
+    "PolkadotNotValidator": {
+      "title": "Some selected addresses are not validators"
+    },
+    "PolkadotLowBondedBalance": {
+      "title": "All bonded assets will be unbonded if < 1 DOT"
+    },
+    "PolkadotNoUnlockedBalance": {
+      "title": "You have no unbonded assets"
+    },
+    "PolkadotNoNominations": {
+      "title": "You have no nominations"
+    },
+    "PolkadotBondAllFundsWarning": {
+      "title": "You will not have available balance for future transactions"
+    },
+    "PolkadotBondMinimumAmount": {
+      "title": "You must bond at least 1 DOT"
+    },
+    "PolkadotMaxUnbonding": {
+      "title": "You have exceeded the unbond limit"
+    },
+    "PolkadotValidatorsRequired": {
+      "title": "You must select at least one validator"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please retry or contact Ledger Support if the problem persists."
@@ -1245,7 +1272,14 @@
       "CLOSE_ACCOUNT": "Close account",
       "SUPPLY": "Deposited",
       "REDEEM": "Withdrawn",
-      "APPROVE": "Enabled"
+      "APPROVE": "Enabled",
+      "BOND": "Bond",
+      "UNBOND": "Unbond",
+      "REWARD_PAYOUT": "Reward",
+      "SLASH": "Slash",
+      "WITHDRAW_UNBONDED": "Unbonded Withdrawal",
+      "NOMINATE": "Nomination",
+      "CHILL": "Clear nominations"
     }
   },
   "operationDetails": {
@@ -1296,7 +1330,13 @@
       "rewardAmount": "Amount collected",
       "memo": "Memo",
       "assetId": "Asset ID",
-      "rewards": "Earned rewards"
+      "rewards": "Earned rewards",
+      "bondedAmount": "Bonded Amount",
+      "unbondedAmount": "Unbonded Amount",
+      "withdrawUnbondedAmount": "Withdraw Unbonded Amount",
+      "palletMethod": "Method",
+      "transferAmount": "Transfer Amount",
+      "validatorsCount": "Validators ({{number}})"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -2980,6 +3020,246 @@
       "MEMO_RETURN": "Memo Return"
     }
   },
+  "polkadot": {
+    "lockedBalance": "Bonded balance",
+    "unlockingBalance": "Unbonding balance",
+    "unlockedBalance": "Unbonded balance",
+    "info": {
+      "available": {
+        "title": "DOT available",
+        "description": "This amount can be sent anytime."
+      },
+      "locked": {
+        "title": "Bonded assets",
+        "description": "Assets must be bonded to nominated validators before earning rewards."
+      },
+      "unlocking": {
+        "title": "Unbonding assets",
+        "description": "Unbonding assets stay locked for 28 days before they can be withdrawn."
+      },
+      "unlocked": {
+        "title": "Unbonded assets",
+        "description": "Unbonded assets can now be moved using the withdraw operation."
+      },
+      "electionOpen": {
+        "title": "Validators election ongoing",
+        "description": "The election of new validators is currently ongoing. As such, staking operations are not available for 15 minutes at most."
+      }
+    },
+    "nomination": {
+      "emptyState": {
+        "title": "Earn rewards",
+        "description": "You can earn rewards by bonding assets and then nominating your validator(s).",
+        "info": "How nominations work",
+        "cta": "Earn rewards"
+      },
+      "header": "Nominations",
+      "nominate": "Nominate",
+      "chill": "Clear nominations",
+      "status": "Status",
+      "totalStake": "Total Stake",
+      "amount": "Bonded Amount",
+      "commission": "Commission",
+      "active": "Active",
+      "activeInfo": "This validator is elected and is collecting rewards on your bonded assets.",
+      "inactive": "Inactive",
+      "inactiveInfo": "This validator is elected but is not collecting rewards on your bonded assets.",
+      "waiting": "Unelected",
+      "waitingInfo": "This validator is not elected, therefore is not collecting rewards.",
+      "notValidator": "Not a validator",
+      "notValidatorInfo": "This address is no longer a validator",
+      "elected": "Elected",
+      "electedInfo": "This validator is elected and is collecting rewards for its nominators.",
+      "nominators": "Nominators",
+      "nominatorsCount": "{{nominatorsCount}} nominators",
+      "nominatorsInfo": "This validator is currently elected by {{count}} nominators.",
+      "oversubscribed": "Oversubscribed ({{nominatorsCount}})",
+      "oversubscribedInfo": "Only the top {{maxNominatorRewardedPerValidator}} nominators with the highest bonded amount earn rewards",
+      "hasPendingBondOperation": "A bond operation is still pending confirmation",
+      "externalControllerUnsupported": "<0>This stash account is controlled by another account with the address <0><0>{{address}}</0></0></0><1>Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js</1>",
+      "externalStashUnsupported": "<0>This account controls a stash account whose address is <0><0>{{address}}</0></0></0><1>Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js</1>",
+      "showInactiveNominations": "Show all nominations ({{count}})",
+      "hideInactiveNominations": "Show active nominations only",
+      "noActiveNominations": "There are no active nominations.",
+      "showAllUnlockings": "Show all unbonding amounts ({{count}})",
+      "hideAllUnlockings": "Hide unbonding amounts"
+    },
+    "unlockings": {
+      "header": "Unbonding",
+      "withdrawUnbonded": "Withdraw Unbonded",
+      "rebond": "Rebond"
+    },
+    "manage": {
+      "title": "Manage assets",
+      "bond": {
+        "title": "Bond",
+        "description": "To earn rewards, first bond an amount. Then you must nominate your validator(s)."
+      },
+      "unbond": {
+        "title": "Unbond",
+        "description": "To make a bonded amount available again, first you need to unbond it. You can withdraw it after the 28-day unbonding period."
+      },
+      "withdrawUnbonded": {
+        "title": "Withdraw Unbonded",
+        "description": "To retrieve an unbonded amount back to the available balance, you need to withdraw it manually."
+      },
+      "nominate": {
+        "title": "Nominate",
+        "description": "Choose up to 16 validators. Ensure nominations are Active to earn rewards."
+      },
+      "chill": {
+        "title": "Clear nominations",
+        "description": "Remove all nominations. You will stop earning rewards. Your bonded amount remains bonded."
+      }
+    },
+    "nominate": {
+      "stepperHeader": {
+        "validators": "Validators to nominate",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "validators": {
+          "myNominations": "My nominations",
+          "electedValidators": "Elected validators",
+          "waitingValidators": "Unelected validators",
+          "noResultsFound": "No validators found for <0>{{search}}</0>",
+          "selected": "{{selected}} out of {{total}} selected",
+          "notValidatorsRemoved": "You have nominated {{count}} addresses who are no longer validators. They will automatically be removed from your nominate transaction.",
+          "maybeChill": "Clear nominations instead"
+        },
+        "validation": {
+          "success": {
+            "title": "You have successfully nominated validators",
+            "description": "You will start earning rewards when your assets are bonded to your elected validator(s)."
+          }
+        }
+      }
+    },
+    "bond": {
+      "rewardDestination": {
+        "label": "Reward Destination",
+        "stash": "Available balance",
+        "stashDescription": "Rewards are credited to your available balance.",
+        "staked": "Bonded balance",
+        "stakedDescription": "Rewards are credited to your bonded balance for compound earning."
+      },
+      "stepperHeader": {
+        "starter": "Earn rewards",
+        "amount": "Amount to bond",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "starter": {
+          "description": "You may earn rewards by bonding your assets and then nominate your validators.",
+          "bullet": [
+            "You keep ownership of bonded assets",
+            "Nominate using your Ledger device",
+            "Assets will be available again, 28 days after unbonding"
+          ],
+          "help": "How nominations work",
+          "warning": "Choose your validators wisely: part of your bonded assets may be irrevocably lost if a validator does not behave appropriately."
+        },
+        "amount": {
+          "availableLabel": "Available",
+          "maxLabel": "Max"
+        },
+        "confirm": {
+          "info": "Bonded assets can be unbonded at any time, but unbonding takes 28 days."
+        },
+        "validation": {
+          "success": {
+            "title": "Assets successfully bonded",
+            "description": "You can nominate validators once the network has confirmed the transaction.",
+            "descriptionNominate": "You will be able to nominate validators once the network has confirmed your transaction.",
+            "nominate": "Nominate",
+            "later": "Nominate later"
+          },
+          "pending": {
+            "title": "Transaction awaiting confirmation",
+            "description": "You have to wait a moment before nominating"
+          }
+        }
+      }
+    },
+    "rebond": {
+      "stepperHeader": {
+        "amount": "Amount to rebond",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "amount": {
+          "availableLabel": "Unbonding",
+          "maxLabel": "Max"
+        },
+        "confirm": {
+          "info": "Rebonded assets are immediately added to the bonded amount."
+        },
+        "validation": {
+          "success": {
+            "title": "Assets successfully rebonded",
+            "description": "Your account balance will update once the network has confirmed the transaction."
+          }
+        }
+      }
+    },
+    "unbond": {
+      "stepperHeader": {
+        "amount": "Amount to unbond",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "amount": {
+          "availableLabel": "Bonded",
+          "maxLabel": "Max"
+        },
+        "confirm": {
+          "info": "Unbonded assets can be withdrawn after the 28-day unbonding period."
+        },
+        "validation": {
+          "success": {
+            "title": "Unbond transaction sent successfully",
+            "description": "Unbonded assets can be withdrawn after 28 days."
+          }
+        }
+      }
+    },
+    "simpleOperation": {
+      "modes": {
+        "withdrawUnbonded": {
+          "title": "Withdraw unbonded",
+          "description": "After the 28-day unbonding period you can withdraw unbonded assets.",
+          "info": "You can then withdraw unbonded assets to your available balance."
+        },
+        "chill": {
+          "title": "Clear nominations",
+          "description": "Clears all nominations and stops earning rewards.",
+          "info": "Bonded assets will remain bonded. If you unbond them, they will be available after 28 days."
+        }
+      },
+      "stepperHeader": {
+        "info": "Info",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      },
+      "steps": {
+        "validation": {
+          "success": {
+            "title": "Transaction sent successfully",
+            "description": "You will see your operation in history once the network has confirmed the transaction."
+          }
+        }
+      }
+    }
+  },
   "delegation": {
     "overdelegated": "Overdelegated",
     "delegationSendWarnDesc": "The amount to be sent will be deducted from your delegated account.",
@@ -3128,7 +3408,6 @@
       "tabTitle": "History"
     }
   },
-
   "banner": {
     "exchangeBuyCrypto": {
       "title": "BUY CRYPTO",
