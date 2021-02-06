@@ -187,6 +187,11 @@ function getDeviceTransactionConfig({
       break;
   }
 
+  fields.push({
+    type: "fees",
+    label: "Fees",
+  });
+
   return fields;
 }
 
