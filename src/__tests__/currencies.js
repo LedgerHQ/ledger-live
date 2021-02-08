@@ -459,6 +459,17 @@ test("decodeURIScheme", () => {
     userGasLimit: BigNumber(0),
     gasPrice: BigNumber(0),
   });
+
+  expect(
+    decodeURIScheme(
+      "ethereum:0x072b04a9b047C3c7a2A455FFF5264D785e6E55C9?amount=0.0647&gasPrice=77000000000"
+    )
+  ).toMatchObject({
+    currency: getCryptoCurrencyById("ethereum"),
+    address: "0x072b04a9b047C3c7a2A455FFF5264D785e6E55C9",
+    amount: BigNumber(0.0647).times(10 ** 18),
+    gasPrice: BigNumber(77000000000),
+  });
 });
 
 test("sanitizeValueString", () => {
