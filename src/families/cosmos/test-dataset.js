@@ -14,9 +14,8 @@ import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: [], //["libcore"], // disable until situation is fixed with explorers
-  // TODO re-enable when libcore is fixed
-  currencies: {
+  implementations: ["libcore"],
+  currencies: {} || { // disable until situation is fixed with explorers
     cosmos: {
       FIXME_ignoreAccountFields: [
         "cosmosResources.unbondingBalance", // They move once all unbonding are done
