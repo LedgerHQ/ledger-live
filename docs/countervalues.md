@@ -1,19 +1,127 @@
-# Countervalues (NEW API)
+# Countervalues v2
 
-> NB: This documents the incoming countervalues-new new implementation.
+## Paradigm shift from previous Countervalues API (redux)
 
-_...TODO document live-common api..._
+There are couple of changes we made from V1.
 
-## Environement variables
+### BigNumber -> number
+There is a peformance issue we faced when converting BigNumber to js and viceversa. Plus precision isn't necessary in the countervalue usecase. Therefore pure JS number is used entierly.
 
-If you want a lot of more verbosity, you can run with
+### Redux -> React context
+Countervalues v2 souce code is decoupled from Redux for flexibility. Now it is easier to integrate with CLI or any other clients.
 
+### No "intermediary" currencies
+The v1 implementation has option for user to decide which currency to use as a intermediary when calculating a pair such as DAI and EUR. Now everything is handled by Kaiko, our data provider. Overall, client API gets much simpler and performant.
+
+### New Backend API
+Backend API also involved and the old API is no longer maintained. The new backend no longer has knowledge of magnitude which ease support of colliding tickers.
+(e.g: USDT can have different magnitude on different chains. We were doing conversion on both side)
+
+## Quick Examples
+
+### Example 1: Calculate coutervalue
+
+First of all, wrap your app component with `Countervalues` provider and provide trackingPairs as a prop.
+
+```jsx
+import {
+  Countervalues,
+  useTrackingPairForAccounts
+} from "@ledgerhq/live-common/lib/countervalues/react"
+
+
+function App() {
+  // get these in the client side
+  const account = ...
+  const trackingPairs = ...
+
+  const trackingPairs = useTrackingPairForAccounts(accounts, countervalueCurrency)
+  return (
+    <Countervalues
+      userSettings={{
+        autoFillGaps: true,
+        trackingPairs
+      }}
+      // use this prop to restore local countervalues cache
+      savedState={CounterValuesStateRaw}
+    >
+      <MainApp />
+    </Countervalues>
+  )
+}
 ```
-VERBOSE=1
-DEBUG_HTTP_RESPONSE=1
+
+*Currently in Ledger Live, `accounts` and `countervalueCurrency` are managed by two different implementation on desktop and mobile side. Therefore, `useTrackingPairForAccounts` still has to accept these as arguments. In the future we may want to move all the logic inside live-common to provide even simpler API.
+
+useCalculate hook inside a React component or a custom hook.
+
+```js
+import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react"
+
+// inside component or custom hook
+const countervalue = useCalculate({
+  from: Currency,
+  to: Currency,
+  value: number,
+  disableRounding: boolean,
+  date: Date,
+});
 ```
 
-## Testing countervalues
+### Example 2: Store raw coutnervalues state locally
+```jsx
+import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react"
+
+// inside component or custom hook
+const rawState = useCountervaluesExport()
+
+function save() {...}
+
+useCallback(() => {
+  save(rawState)
+  // it's probably overkill to list rawState object as a dependency since its reference would change all the time, but you get the idea.
+}, [rawState])
+```
+
+### Example 3: Controll polling mechanism
+
+For example, when the app window goes to background it may be ideal to stop polling to save some network traffics. Or you may want to wipe all the current state and re-poll all the state. For those situations, `useCountervaluesPolling` hook comes in handy. You can also utilize `pending` flag to see if polling is in progress.
+
+```jsx
+import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues/react"
+
+// inside component or custom hook
+const { wipe, poll, start, stop, pending, error } = useCountervaluesPolling();
+```
+
+### List of other custom hooks used in Ledger Live
+- useSendAmount
+  - to calculate countervalue based on the amount user inputs
+- useCalculateCountervalueCallback
+  - it returns callback calculate function based on currency provided as its argument
+- useBalanceHistoryWithCountervalue
+  - used to show chart in Account page inside Ledger Live
+- usePortfolio
+  - used to dispaly portfolio chart
+- useCurrencyPortfolio
+  - used to dispaly portfolio chart for specific currency
+- useDistribution
+  - used in Asset distribution screen
+
+## Core and helper API
+
+In most of cases, it's enough to use hooks which are exported from `@ledgerhq/live-common/lib/countervalues/react`.
+
+But core (`@ledgerhq/live-common/lib/countervalues/logic`) module comes in handy when you want to use these logic outside React component or inside some callback functions.
+
+`@ledgerhq/live-common/lib/countervalues/helper` also export some useful util funcitons although it is mostly consumed internaly by core module.
+
+## Internal: modules system
+
+Although you might not need to use, it is worth mentioning that there is a module system takes place internaly in order to modify specific logic for certain pairs such as fetching mechanism, custom mapRate and so on. For example in Ledger Live, we have custom module for caclulating BTC <-> ETH pair which is not originally provided by Kaiko.
+Check out `@ledgerhq/live-common/lib/countervalues/modules` for more details.
+
+## Testing countervalues with CLI
 
 The CLI implements tools to test the countervalues.
 
@@ -111,3 +219,12 @@ Total availability: 96%
 ```
 
 We'll try to add more metrics in future. (like request times)
+
+### Environement variables
+
+If you want a lot of more verbosity, you can run with
+
+```
+VERBOSE=1
+DEBUG_HTTP_RESPONSE=1
+```
