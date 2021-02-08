@@ -35,6 +35,13 @@ class TextInput extends PureComponent<*> {
 
 // $FlowFixMe https://github.com/facebook/flow/pull/5920
 export default React.forwardRef((props, ref) => {
-  const { colors } = useTheme();
-  return <TextInput innerRef={ref} colors={colors} {...props} />;
+  const { colors, dark } = useTheme();
+  return (
+    <TextInput
+      innerRef={ref}
+      colors={colors}
+      keyboardAppearance={dark ? "dark" : "light"}
+      {...props}
+    />
+  );
 });

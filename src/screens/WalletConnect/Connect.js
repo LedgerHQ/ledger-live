@@ -29,11 +29,15 @@ import WarningBox from "../../components/WarningBox";
 import HeaderRightClose from "../../components/HeaderRightClose";
 import { TrackScreen } from "../../analytics";
 import AccountHeaderTitle from "../Account/AccountHeaderTitle";
+import { rgba } from "../../colors";
 
-const DottedLine = () => (
+const DottedLine = ({ colors }: { colors: * }) => (
   <View style={styles.dottedLineContainer}>
     {_.map(_.range(0, 6), i => (
-      <View style={styles.dot} key={i} />
+      <View
+        style={[styles.dot, { backgroundColor: rgba(colors.darkBlue, 0.2) }]}
+        key={i}
+      />
     ))}
   </View>
 );
@@ -94,7 +98,14 @@ export default function Connect({ route, navigation }: Props) {
   return (
     <>
       <TrackScreen category="WalletConnect" screen="Connect" />
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
         {!account ||
         account.type !== "Account" ||
         wcContext.status === STATUS.ERROR ? (
@@ -116,7 +127,7 @@ export default function Connect({ route, navigation }: Props) {
                   }
                   style={styles.logo}
                 />
-                <DottedLine />
+                <DottedLine colors={colors} />
                 <Image
                   source={require("../../images/logo_small.png")}
                   style={styles.logo}
@@ -132,7 +143,12 @@ export default function Connect({ route, navigation }: Props) {
             <LText primary style={[styles.details, styles.infos]}>
               {t("walletconnect.disclaimer")}
             </LText>
-            <View style={styles.accountContainer}>
+            <View
+              style={[
+                styles.accountContainer,
+                { borderColor: rgba(colors.darkBlue, 0.1) },
+              ]}
+            >
               <View style={styles.accountTitleContainer}>
                 <CurrencyIcon size={24} currency={account.currency} />
                 <LText semiBold primary style={styles.accountName}>
@@ -241,7 +257,12 @@ export default function Connect({ route, navigation }: Props) {
           />
         </View>
       ) : wcContext.status === STATUS.CONNECTED ? (
-        <View style={styles.buttonsContainer}>
+        <View
+          style={[
+            styles.buttonsContainer,
+            { backgroundColor: colors.background },
+          ]}
+        >
           <Button
             containerStyle={styles.buttonContainer}
             event="wc connected disconnect"
@@ -283,7 +304,6 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
     justifyContent: "center",
-    backgroundColor: "white",
     flex: 1,
   },
   centerContainer: {
@@ -308,7 +328,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    backgroundColor: "white",
+
     paddingHorizontal: 8,
     paddingVertical: 16,
   },
@@ -321,7 +341,6 @@ const styles = StyleSheet.create({
   accountContainer: {
     padding: 16,
     borderWidth: 1,
-    borderColor: "rgba(20, 37, 51, 0.1)",
     borderRadius: 4,
     marginHorizontal: 16,
   },
@@ -343,14 +362,10 @@ const styles = StyleSheet.create({
     height: 3,
     width: 3,
     borderRadius: 3,
-    backgroundColor: "rgba(20, 37, 51, 0.2)",
   },
   buttonContainer: {
     flex: 1,
     margin: 8,
-  },
-  textStyle: {
-    color: "black",
   },
   logo: {
     width: 64,
