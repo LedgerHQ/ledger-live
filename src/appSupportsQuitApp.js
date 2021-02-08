@@ -128,6 +128,7 @@ export const minAppVersion = {
   Stealth: "1.5.0",
   Stellar: "3.2.2",
   Stratis: "1.5.0",
+  Symbol: "0.0.0",
   Terra: "1.1.0",
   "Tezos Baking": "2.2.9",
   "Tezos Wallet": "2.2.9",
