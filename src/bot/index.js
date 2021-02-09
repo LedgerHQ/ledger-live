@@ -86,7 +86,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
     }
   );
 
-  const allAccountsAfter = flatMap(results, (r) => r.accountsAfter);
+  const allAccountsAfter = flatMap(results, (r) => r.accountsAfter || []);
 
   let countervaluesError;
   const countervaluesState = await loadCountervalues(initialState, {
