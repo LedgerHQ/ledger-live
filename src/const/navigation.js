@@ -188,6 +188,36 @@ export const ScreenName = {
   AlgorandOptInValidationError: "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess: "AlgorandOptInValidationSuccess",
 
+  // Polkadot
+  PolkadotBondStarted: "PolkadotBondStarted",
+  PolkadotBondAmount: "PolkadotBondAmount",
+  PolkadotBondSelectDevice: "PolkadotBondSelectDevice",
+  PolkadotBondConnectDevice: "PolkadotBondConnectDevice",
+  PolkadotBondValidationError: "PolkadotBondValidationError",
+  PolkadotBondValidationSuccess: "PolkadotBondValidationSuccess",
+  PolkadotUnbondAmount: "PolkadotUnbondAmount",
+  PolkadotUnbondSelectDevice: "PolkadotUnbondSelectDevice",
+  PolkadotUnbondConnectDevice: "PolkadotUnbondConnectDevice",
+  PolkadotUnbondValidationError: "PolkadotUnbondValidationError",
+  PolkadotUnbondValidationSuccess: "PolkadotUnbondValidationSuccess",
+  PolkadotRebondAmount: "PolkadotRebondAmount",
+  PolkadotRebondSelectDevice: "PolkadotRebondSelectDevice",
+  PolkadotRebondConnectDevice: "PolkadotRebondConnectDevice",
+  PolkadotRebondValidationError: "PolkadotRebondValidationError",
+  PolkadotRebondValidationSuccess: "PolkadotRebondValidationSuccess",
+  PolkadotNominateSelectValidators: "PolkadotNominateSelectValidators",
+  PolkadotNominateSelectDevice: "PolkadotNominateSelectDevice",
+  PolkadotNominateConnectDevice: "PolkadotNominateConnectDevice",
+  PolkadotNominateValidationError: "PolkadotNominateValidationError",
+  PolkadotNominateValidationSuccess: "PolkadotNominateValidationSuccess",
+  PolkadotSimpleOperationStarted: "PolkadotSimpleOperationStarted",
+  PolkadotSimpleOperationSelectDevice: "PolkadotSimpleOperationSelectDevice",
+  PolkadotSimpleOperationConnectDevice: "PolkadotSimpleOperationConnectDevice",
+  PolkadotSimpleOperationValidationError:
+    "PolkadotSimpleOperationValidationError",
+  PolkadotSimpleOperationValidationSuccess:
+    "PolkadotSimpleOperationValidationSuccess",
+
   LendingDashboard: "LendingDashboard",
   LendingClosedLoans: "LendingClosedLoans",
   LendingHistory: "LendingHistory",
@@ -292,6 +322,13 @@ export const NavigatorName = {
   LendingSupplyFlow: "LendingSupplyFlow",
   LendingWithdrawFlow: "LendingWithdrawFlow",
   /* eslint-disable sort-keys */
+
+  // Polkadot
+  PolkadotBondFlow: "PolkadotBondFlow",
+  PolkadotUnbondFlow: "PolkadotUnbondFlow",
+  PolkadotRebondFlow: "PolkadotRebondFlow",
+  PolkadotNominateFlow: "PolkadotNominateFlow",
+  PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
 
   // Tab
   Main: "Main",

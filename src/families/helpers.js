@@ -25,3 +25,30 @@ export function useEditTxFeeByFamily() {
     return bridge.updateTransaction(transaction, { [field]: fee });
   };
 }
+
+/**
+ * Returns the first error (no matter which field) from transaction status
+ *
+ * @param {Object} status - The transaction status
+ * @param {*} type - the key to fetch first error from (errors or warnings)
+ */
+export function getFirstStatusError(
+  status,
+  type: "errors" | "warnings" = "errors",
+): ?Error {
+  if (!status || !status[type]) return null;
+  const firstKey = Object.keys(status[type])[0];
+
+  return firstKey ? status[type][firstKey] : null;
+}
+
+/**
+ *  Returns true if transaction status contains errors
+ *
+ * @param {Object} status - The transaction status
+ */
+export function hasStatusError(status): ?Error {
+  if (!status || !status.errors) return false;
+
+  return !!Object.keys(status.errors).length;
+}
