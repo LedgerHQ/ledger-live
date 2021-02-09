@@ -36,6 +36,7 @@
   "jest": {
     "testEnvironment": "node",
     "coverageDirectory": "./coverage/",
+    "coverageReporters": ["json", "lcov", "clover"],
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
       "src/__tests__"

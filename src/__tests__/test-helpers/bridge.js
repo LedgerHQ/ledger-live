@@ -34,6 +34,8 @@ import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 import { implicitMigration } from "../../migrations/accounts";
 
+const warnDev = process.env.CI ? () => {} : (...msg) => console.warn(...msg);
+
 // FIXME move out into DatasetTest to be defined in
 const blacklistOpsSumEq = {
   currencies: ["ripple", "ethereum"],
@@ -176,14 +178,14 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
 
       if (scanAccounts) {
         if (FIXME_ignoreOperationFields) {
-          console.warn(
+          warnDev(
             currency.id +
               " is ignoring operation fields: " +
               FIXME_ignoreOperationFields.join(", ")
           );
         }
         if (FIXME_ignoreAccountFields) {
-          console.warn(
+          warnDev(
             currency.id +
               " is ignoring account fields: " +
               FIXME_ignoreAccountFields.join(", ")
@@ -293,7 +295,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                 if (account.operations.length) {
                   const op = account.operations[account.operations.length - 1];
                   if (account.creationDate.getTime() > op.date.getTime()) {
-                    console.warn(
+                    warnDev(
                       `OP ${
                         op.id
                       } have date=${op.date.toISOString()} older than account.creationDate=${account.creationDate.toISOString()}`
@@ -329,12 +331,12 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
         }
       });
       if (accountsInScan.length === 0) {
-        console.warn(
+        warnDev(
           `/!\\ CURRENCY '${currency.id}' define accounts that are NOT in scanAccounts. please add at least one account that is from scanAccounts. This helps testing scanned accounts are fine and it also help performance.`
         );
       }
       if (accountsNotInScan.length === 0) {
-        console.warn(
+        warnDev(
           `/!\\ CURRENCY '${currency.id}' define accounts that are ONLY in scanAccounts. please add one account that is NOT from scanAccounts. This helps covering the "recovering from xpub" mecanism.`
         );
       }
@@ -360,7 +362,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
           accountData.FIXME_tests &&
           accountData.FIXME_tests.some((r) => name.match(r))
         ) {
-          console.warn(
+          warnDev(
             "FIXME test was skipped. " + name + " for " + initialAccount.name
           );
           return;
