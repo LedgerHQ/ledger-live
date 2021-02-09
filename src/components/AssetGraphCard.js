@@ -183,7 +183,7 @@ class GraphCardHeader extends PureComponent<{
                 <Placeholder width={50} containerHeight={19} />
               </>
             ) : hoveredItem ? (
-              <LText>
+              <LText style={styles.delta}>
                 <FormatDate date={hoveredItem.date} />
               </LText>
             ) : valueChange ? (
@@ -195,7 +195,9 @@ class GraphCardHeader extends PureComponent<{
                 />
                 <Delta valueChange={valueChange} unit={unit} />
               </View>
-            ) : null}
+            ) : (
+              <View style={styles.delta} />
+            )}
           </View>
         </View>
         <DiscreetModeButton />
@@ -253,6 +255,7 @@ const styles = StyleSheet.create({
   },
   graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
   delta: {
+    height: 24,
     flexDirection: "row",
     flexWrap: "wrap",
     paddingLeft: 16,

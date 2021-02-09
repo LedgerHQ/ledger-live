@@ -7,6 +7,7 @@ import React, { memo } from "react";
 import * as d3shape from "d3-shape";
 import * as d3scale from "d3-scale";
 import maxBy from "lodash/maxBy";
+import minBy from "lodash/minBy";
 import Svg, { Path, Defs } from "react-native-svg";
 import { useTheme } from "@react-navigation/native";
 import DefGraph from "./DefGrad";
@@ -42,11 +43,12 @@ function Graph({
   const color = initialColor || colors.live;
 
   const maxY = mapValue(maxBy(data, mapValue));
+  const minY = mapValue(minBy(data, mapValue));
+  const paddedMinY = minY - (maxY - minY) / 2;
 
   const yExtractor = d => y(mapValue(d));
 
   const curve = d3shape[shape];
-
   const x = d3scale
     .scaleTime()
     .range([0, width])
@@ -54,14 +56,14 @@ function Graph({
 
   const y = d3scale
     .scaleLinear()
-    .range([height - STROKE_WIDTH, STROKE_WIDTH + FOCUS_RADIUS])
-    .domain([0, maxY]);
+    .domain([paddedMinY, maxY])
+    .range([height - STROKE_WIDTH, STROKE_WIDTH + FOCUS_RADIUS]);
 
   const area = d3shape
     .area()
     .x(d => x(d.date))
-    .y0(y(0))
-    .y1(yExtractor)
+    .y0(d => yExtractor(d))
+    .y1(d => yExtractor(d) + Math.max((maxY - minY) / 2, 200))
     .curve(curve)(data);
 
   const line = d3shape

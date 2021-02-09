@@ -202,7 +202,7 @@ class GraphCardHeader extends PureComponent<{
                 <Placeholder width={50} containerHeight={19} />
               </>
             ) : hoveredItem ? (
-              <LText>
+              <LText style={styles.delta}>
                 <FormatDate date={hoveredItem.date} />
               </LText>
             ) : valueChange ? (
@@ -286,6 +286,7 @@ const styles = StyleSheet.create({
   },
   graphHeaderBalance: { alignItems: "flex-start", flex: 1 },
   delta: {
+    height: 24,
     flexDirection: "row",
     flexWrap: "wrap",
   },
