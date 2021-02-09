@@ -34,7 +34,9 @@ import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
 import { implicitMigration } from "../../migrations/accounts";
 
-const warnDev = process.env.CI ? () => {} : (...msg) => console.warn(...msg);
+const warnDev = process.env.CI
+  ? (..._args) => {}
+  : (...msg) => console.warn(...msg);
 
 // FIXME move out into DatasetTest to be defined in
 const blacklistOpsSumEq = {
