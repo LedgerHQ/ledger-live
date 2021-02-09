@@ -22,11 +22,19 @@ type Props = {
   style?: any,
   disabled?: boolean,
   colors: *,
+  useFullBalance?: Boolean,
 };
 
 class AccountCard extends PureComponent<Props> {
   render() {
-    const { onPress, account, style, disabled, colors } = this.props;
+    const {
+      onPress,
+      account,
+      style,
+      disabled,
+      colors,
+      useFullBalance,
+    } = this.props;
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
 
@@ -55,7 +63,11 @@ class AccountCard extends PureComponent<Props> {
             <CurrencyUnitValue
               showCode
               unit={unit}
-              value={getAccountSpendableBalance(account)}
+              value={
+                useFullBalance
+                  ? account.balance
+                  : getAccountSpendableBalance(account)
+              }
             />
           </LText>
         </View>

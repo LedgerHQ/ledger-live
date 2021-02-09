@@ -43,6 +43,7 @@ type Props = {
   index: number,
   showHint: boolean,
   onAccountNameChange?: (name: string, changedAccount: Account) => void,
+  useFullBalance?: Boolean,
 };
 
 export default function SelectableAccountsList({
@@ -59,6 +60,7 @@ export default function SelectableAccountsList({
   index = -1,
   onAccountNameChange,
   style,
+  useFullBalance,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -97,6 +99,7 @@ export default function SelectableAccountsList({
           isDisabled={isDisabled}
           onPress={onPressAccount}
           colors={colors}
+          useFullBalance={useFullBalance}
         />
       ))}
       {accounts.length === 0 && emptyState ? emptyState : null}
@@ -116,6 +119,7 @@ class SelectableAccount extends PureComponent<
     navigation: *,
     onAccountNameChange?: (name: string, changedAccount: Account) => void,
     colors: *,
+    useFullBalance?: Boolean,
   },
   { stopAnimation: boolean },
 > {
@@ -218,7 +222,11 @@ class SelectableAccount extends PureComponent<
           isDisabled && styles.selectableAccountRootDisabled,
         ]}
       >
-        <AccountCard account={account} parentAccount={null} />
+        <AccountCard
+          useFullBalance={this.props.useFullBalance}
+          account={account}
+          parentAccount={null}
+        />
         {!isDisabled && (
           <CheckBox
             onChange={this.onPress ? this.onPress : undefined}
