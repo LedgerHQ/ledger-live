@@ -21,7 +21,7 @@ import type {
   CryptoCurrency,
 } from "../types";
 import { getOperationAmountNumberWithInternals } from "../operation";
-import { flattenAccounts, getAccountCurrency } from "../account";
+import { flattenAccounts, getAccountCurrency } from "../account/helpers";
 import { getEnv } from "../env";
 import { getPortfolioRangeConfig, getDates } from "./range";
 
