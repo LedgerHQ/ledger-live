@@ -10,8 +10,8 @@ export const seedConfirmation = "Confirmation";
 
 export const bootloader = "Bootloader";
 export const bootloaderMode = "Bootloader mode";
-export const mcuOutdated = "MCU outdated";
-export const mcuNotGenuine = "MCU not genuine";
+export const mcuOutdated = "MCU firmware is outdated";
+export const mcuNotGenuine = "MCU firmware is not genuine";
 export const followDeviceRepair = "Follow device repair instructions";
 export const followDeviceUpdate = "Follow device update instructions";
 
