@@ -28,7 +28,7 @@ import {
   getAccountCurrency,
   flattenAccounts,
   getAccountUnit,
-} from "../account";
+} from "../account/helpers";
 import {
   initialState,
   calculate,

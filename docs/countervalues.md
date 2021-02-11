@@ -32,14 +32,14 @@ import {
 
 function App() {
   // get these in the client side
-  const account = ...
-  const trackingPairs = ...
+  const accounts = ...
 
   const trackingPairs = useTrackingPairForAccounts(accounts, countervalueCurrency)
+
   return (
     <Countervalues
       userSettings={{
-        autoFillGaps: true,
+        autofillGaps: true,
         trackingPairs
       }}
       // use this prop to restore local countervalues cache

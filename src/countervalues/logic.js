@@ -2,8 +2,7 @@
 
 import { log } from "@ledgerhq/logs";
 import type { Currency, Account } from "../types";
-import { flattenAccounts } from "../account";
-import { getAccountCurrency } from "../account";
+import { flattenAccounts, getAccountCurrency } from "../account/helpers";
 import { promiseAllBatched } from "../promise";
 import type {
   CounterValuesState,
