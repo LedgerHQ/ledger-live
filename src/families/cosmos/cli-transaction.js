@@ -8,6 +8,7 @@ import { BigNumber } from "bignumber.js";
 import { getValidators } from "./validators";
 import type { Transaction, AccountLike } from "../../types";
 import type { CosmosDelegationInfo } from "./types";
+import { getCryptoCurrencyById } from "../../currencies";
 
 const options = [
   {
@@ -106,7 +107,7 @@ const cosmosValidators = {
     },
   ],
   job: ({ format }: $Shape<{ format: string }>): Observable<string> =>
-    from(getValidators()).pipe(
+    from(getValidators(getCryptoCurrencyById("cosmos"))).pipe(
       map((validators) => {
         const f =
           cosmosValidatorsFormatters[format] ||

@@ -363,12 +363,9 @@ declare class CosmosLikeReward {
   getRewardAmount(): CoreAmount;
 }
 
-// It will be probably updated
-// the API for our current version goes by 0 to 2
-// and it will be go to 1 to 3 when the explorer version will update
 export type CosmosLikeValidator = {
-  activeStatus: 0 | 1 | 2,
-  getActiveStatus(): Promise<0 | 1 | 2>,
+  activeStatus: string,
+  getActiveStatus(): Promise<string>,
 };
 
 export type CosmosBroadcastResponse = {

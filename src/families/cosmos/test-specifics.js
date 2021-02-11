@@ -3,6 +3,7 @@
 import { BigNumber } from "bignumber.js";
 import { cosmosCreateMessage } from "./message";
 import { withLibcore } from "../../libcore/access";
+import { getCryptoCurrencyById } from "../../currencies";
 
 export default () => {
   describe("cosmosCreateMessage", () => {
@@ -19,6 +20,7 @@ export default () => {
     };
 
     const sourceAddresss = "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl";
+    const currency = getCryptoCurrencyById("cosmos");
 
     test("create a message send", async () => {
       const messages = await withLibcore(async (core) => {
@@ -29,7 +31,8 @@ export default () => {
             amount: BigNumber(3000),
             mode: "send",
           },
-          core
+          core,
+          currency
         );
       });
 
@@ -47,7 +50,8 @@ export default () => {
               amount: BigNumber(3000),
               mode: "delegate",
             },
-            core
+            core,
+            currency
           );
         } catch (e) {
           expect(e.message).toBe("no validators");
@@ -69,7 +73,8 @@ export default () => {
               { amount: BigNumber(3000), address: "" },
             ],
           },
-          core
+          core,
+          currency
         );
       });
 
@@ -89,7 +94,8 @@ export default () => {
             mode: "delegate",
             validators: [{ amount: BigNumber(3000), address: "" }],
           },
-          core
+          core,
+          currency
         );
       });
 
@@ -107,7 +113,8 @@ export default () => {
             mode: "undelegate",
             validators: [{ amount: BigNumber(3000), address: "" }],
           },
-          core
+          core,
+          currency
         );
       });
 
@@ -127,7 +134,8 @@ export default () => {
               cosmosSourceValidator: null,
               validators: [{ amount: BigNumber(3000), address: "" }],
             },
-            core
+            core,
+            currency
           );
         } catch (e) {
           expect(e.message).toBe("source validator is empty");
@@ -146,7 +154,8 @@ export default () => {
             cosmosSourceValidator: "source",
             validators: [{ amount: BigNumber(3000), address: "" }],
           },
-          core
+          core,
+          currency
         );
       });
 
@@ -164,7 +173,8 @@ export default () => {
             mode: "claimReward",
             validators: [{ amount: BigNumber(0), address: "" }],
           },
-          core
+          core,
+          currency
         );
       });
 
@@ -182,7 +192,8 @@ export default () => {
             mode: "claimRewardCompound",
             validators: [{ amount: BigNumber(0), address: "" }],
           },
-          core
+          core,
+          currency
         );
       });
 

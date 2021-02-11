@@ -3,15 +3,24 @@
 import type { Transaction, CosmosMessage } from "./types";
 import type { Core } from "../../libcore/types";
 import { promiseAllBatched } from "../../promise";
+import type { CryptoCurrency } from "../../types";
 
-const getAmount = async (core: Core, amount: string) => {
-  return await core.CosmosLikeAmount.init(amount, "uatom");
+const getAmount = async (
+  core: Core,
+  currency: CryptoCurrency,
+  amount: string
+) => {
+  return await core.CosmosLikeAmount.init(
+    amount,
+    currency.id === "cosmos_testnet" ? "umuon" : "uatom"
+  );
 };
 
 export const cosmosCreateMessage = async (
   freshAddress: string,
   transaction: Transaction,
-  core: Core
+  core: Core,
+  currency: CryptoCurrency
 ): Promise<CosmosMessage[]> => {
   const { recipient } = transaction;
 
@@ -20,7 +29,7 @@ export const cosmosCreateMessage = async (
       return [
         await core.CosmosLikeMessage.wrapMsgSend(
           await core.CosmosLikeMsgSend.init(freshAddress, recipient, [
-            await getAmount(core, transaction.amount.toString()),
+            await getAmount(core, currency, transaction.amount.toString()),
           ])
         ),
       ];
@@ -38,7 +47,7 @@ export const cosmosCreateMessage = async (
             await core.CosmosLikeMsgDelegate.init(
               freshAddress,
               validator.address,
-              await getAmount(core, validator.amount.toString())
+              await getAmount(core, currency, validator.amount.toString())
             )
           )
       );
@@ -57,7 +66,7 @@ export const cosmosCreateMessage = async (
             await core.CosmosLikeMsgUndelegate.init(
               freshAddress,
               validator.address,
-              await getAmount(core, validator.amount.toString())
+              await getAmount(core, currency, validator.amount.toString())
             )
           )
       );
@@ -81,7 +90,7 @@ export const cosmosCreateMessage = async (
               freshAddress,
               cosmosSourceValidator,
               validator.address,
-              await getAmount(core, validator.amount.toString())
+              await getAmount(core, currency, validator.amount.toString())
             )
           )
       );
@@ -124,7 +133,7 @@ export const cosmosCreateMessage = async (
             await core.CosmosLikeMsgDelegate.init(
               freshAddress,
               validator.address,
-              await getAmount(core, validator.amount.toString())
+              await getAmount(core, currency, validator.amount.toString())
             )
           );
         })),

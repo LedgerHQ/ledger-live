@@ -107,9 +107,8 @@ export const RPCUserRequired = createCustomErrorClass("RPCUserRequired");
 export const RPCPassRequired = createCustomErrorClass("RPCPassRequired");
 
 // Note : info of this code can be found here :
-// https://github.com/cosmos/cosmos-sdk/blob/v0.37.9/types/errors.go#L28
+// https://github.com/cosmos/cosmos-sdk/blob/v0.40.0-rc3/types/errors/errors.go#L16
 export const CosmosBroadcastError = {
-  "0": createCustomErrorClass("CosmosBroadcastCodeOK"),
   "1": createCustomErrorClass("CosmosBroadcastCodeInternal"),
   "2": createCustomErrorClass("CosmosBroadcastCodeTxDecode"),
   "3": createCustomErrorClass("CosmosBroadcastCodeInvalidSequence"),
@@ -119,14 +118,33 @@ export const CosmosBroadcastError = {
   "7": createCustomErrorClass("CosmosBroadcastCodeInvalidAddress"),
   "8": createCustomErrorClass("CosmosBroadcastCodeInvalidPubKey"),
   "9": createCustomErrorClass("CosmosBroadcastCodeUnknownAddress"),
-  "10": createCustomErrorClass("CosmosBroadcastCodeInsufficientCoins"),
-  "11": createCustomErrorClass("CosmosBroadcastCodeInvalidCoins"),
-  "12": createCustomErrorClass("CosmosBroadcastCodeOutOfGas"),
-  "13": createCustomErrorClass("CosmosBroadcastCodeMemoTooLarge"),
-  "14": createCustomErrorClass("CosmosBroadcastCodeInsufficientFee"),
-  "15": createCustomErrorClass("CosmosBroadcastCodeTooManySignatures"),
-  "16": createCustomErrorClass("CosmosBroadcastCodeGasOverflow"),
-  "17": createCustomErrorClass("CosmosBroadcastCodeNoSignatures"),
+  "10": createCustomErrorClass("CosmosBroadcastCodeInvalidCoins"),
+  "11": createCustomErrorClass("CosmosBroadcastCodeOutOfGas"),
+  "12": createCustomErrorClass("CosmosBroadcastCodeMemoTooLarge"),
+  "13": createCustomErrorClass("CosmosBroadcastCodeInsufficientFee"),
+  "14": createCustomErrorClass("CosmosBroadcastCodeTooManySignatures"),
+  "15": createCustomErrorClass("CosmosBroadcastCodeNoSignatures"),
+  "16": createCustomErrorClass("CosmosBroadcastCodeJSONMarshal"),
+  "17": createCustomErrorClass("CosmosBroadcastCodeJSONUnmarshal"),
+  "18": createCustomErrorClass("CosmosBroadcastCodeInvalidRequest"),
+  "19": createCustomErrorClass("CosmosBroadcastCodeTxInMempoolCache"),
+  "20": createCustomErrorClass("CosmosBroadcastCodeMempoolIsFull"),
+  "21": createCustomErrorClass("CosmosBroadcastTxTooLarge"),
+  "22": createCustomErrorClass("CosmosBroadcastKeyNotFound"),
+  "23": createCustomErrorClass("CosmosBroadcastWrongPassword"),
+  "24": createCustomErrorClass("CosmosBroadcastInvalidSigner"),
+  "25": createCustomErrorClass("CosmosBroadcastInvalidGasAdjustment"),
+  "26": createCustomErrorClass("CosmosBroadcastInvalidHeight"),
+  "27": createCustomErrorClass("CosmosBroadcastInvalidVersion"),
+  "28": createCustomErrorClass("CosmosBroadcastInvalidChainID"),
+  "29": createCustomErrorClass("CosmosBroadcastInvalidType"),
+  "30": createCustomErrorClass("CosmosBroadcastTimeoutHeight"),
+  "31": createCustomErrorClass("CosmosBroadcastUnknownExtensionOptions"),
+  "32": createCustomErrorClass("CosmosBroadcastWrongSequence"),
+  "33": createCustomErrorClass("CosmosBroadcastPackAny"),
+  "34": createCustomErrorClass("CosmosBroadcastUnpackAny"),
+  "35": createCustomErrorClass("CosmosBroadcastLogic"),
+  "36": createCustomErrorClass("CosmosBroadcastConflict"),
 };
 
 export const SatStackVersionTooOld = createCustomErrorClass(

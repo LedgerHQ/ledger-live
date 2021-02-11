@@ -1,7 +1,6 @@
 // @flow
 import type { DeviceAction } from "../../bot/types";
 import { deviceActionFlow } from "../../bot/specs";
-import { formatCurrencyUnit } from "../../currencies";
 import type { Transaction } from "./types";
 
 const typeWording = {
@@ -15,6 +14,18 @@ const typeWording = {
 
 const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
   steps: [
+    {
+      title: "Sequence",
+      button: "Rr",
+    },
+    {
+      title: "Chain ID",
+      button: "Rr",
+    },
+    {
+      title: "Account",
+      button: "Rr",
+    },
     {
       title: "Type",
       button: "Rr",
@@ -47,18 +58,6 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Fee",
       button: "Rr",
-      expectedValue: ({ account, status }) =>
-        formatCurrencyUnit(
-          {
-            ...account.unit,
-            code: account.currency.deviceTicker || account.unit.code,
-          },
-          status.estimatedFees,
-          {
-            disableRounding: true,
-            showAllDigits: true,
-          }
-        ) + " ATOM",
     },
     {
       title: "Gas",
@@ -68,22 +67,6 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
     {
       title: "Amount",
       button: "Rr",
-      expectedValue: ({ account, status, transaction }, acc) =>
-        formatCurrencyUnit(
-          {
-            ...account.unit,
-            code: account.currency.deviceTicker || account.unit.code,
-          },
-          transaction.mode === "send"
-            ? status.amount
-            : transaction.validators[
-                acc.filter((a) => a.title === "Amount").length
-              ].amount,
-          {
-            disableRounding: true,
-            showAllDigits: true,
-          }
-        ) + " ATOM",
     },
     {
       title: "From",

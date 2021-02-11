@@ -38,6 +38,7 @@ setSupportedCurrencies([
   "cosmos",
   "algorand",
   "polkadot",
+  "cosmos_testnet",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k, process.env[k]);

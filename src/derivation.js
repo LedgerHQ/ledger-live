@@ -46,8 +46,16 @@ const extraConfigPerCurrency: { [_: string]: LibcoreConfig } = {
     TEZOS_NODE: () => getEnv("API_TEZOS_NODE"),
   },
   cosmos: {
+    BLOCKCHAIN_EXPLORER_ENGINE: () => getEnv("API_COSMOS_NODE"),
+    BLOCKCHAIN_OBSERVER_ENGINE: () => getEnv("API_COSMOS_NODE"),
     BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
       getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
+  },
+  cosmos_testnet: {
+    BLOCKCHAIN_EXPLORER_ENGINE: () => getEnv("API_COSMOS_TESTNET_NODE"),
+    BLOCKCHAIN_OBSERVER_ENGINE: () => getEnv("API_COSMOS_TESTNET_NODE"),
+    BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
+      getEnv("API_COSMOS_TESTNET_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
   },
   algorand: {
     BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>

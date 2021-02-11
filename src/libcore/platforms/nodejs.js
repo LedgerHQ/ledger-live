@@ -154,7 +154,17 @@ export default (arg: {
           validateStatus: (status) =>
             // FIXME in future, everything should passthrough libcore
             // for now as we need to have the server error we will only pass-in 2xx and 404
-            (status >= 200 && status < 300) || status === 404,
+            // FIXME for the FIXME: Stargate nodes return 500 when an account has no delegations
+            // or no unbondings or no redelegations. So for cosmos, status 500 need to go to libcore for proper handling
+            {
+              const isCosmosRequest =
+                url.includes("/cosmos/") || url.includes("cosmos.coin");
+              return (
+                (status >= 200 && status < 300) ||
+                status === 404 ||
+                (isCosmosRequest && status === 500)
+              );
+            },
           // the default would parse the request, we want to preserve the string
           transformResponse: (data) => data,
         };

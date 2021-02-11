@@ -5,40 +5,93 @@ import { getEnv } from "../../env";
 import { makeLRUCache } from "../../cache";
 
 import type { CosmosValidatorItem, CosmosRewardsState } from "./types";
+import type { CryptoCurrency } from "../../types";
 
-const getBaseApiUrl = () =>
-  getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
+const getBaseApiUrl = (currency: CryptoCurrency) => {
+  if (currency.id === "cosmos_testnet") {
+    return getEnv("API_COSMOS_TESTNET_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
+  } else {
+    return getEnv("API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
+  }
+};
+
+const isStargate = (currency: CryptoCurrency) => {
+  if (currency.id === "cosmos_testnet") {
+    return getEnv("API_COSMOS_TESTNET_NODE") == "STARGATE_NODE";
+  } else {
+    return getEnv("API_COSMOS_NODE") == "STARGATE_NODE";
+  }
+};
+
+const namespace = "cosmos";
+const version = "v1beta1";
 
 const cacheValidators = makeLRUCache(
-  async (rewardState: CosmosRewardsState) => {
-    const url = `${getBaseApiUrl()}/staking/validators`;
-    const { data } = await network({ url, method: "GET" });
+  async (rewardState: CosmosRewardsState, currency: CryptoCurrency) => {
+    if (isStargate(currency)) {
+      const url = `${getBaseApiUrl(
+        currency
+      )}/${namespace}/staking/${version}/validators`;
+      const { data } = await network({ url, method: "GET" });
 
-    const validators = data.result.map((validator) => {
-      const commission = parseFloat(validator.commission.commission_rates.rate);
-      return {
-        validatorAddress: validator.operator_address,
-        name: validator.description.moniker,
-        votingPower:
-          parseFloat(validator.tokens) /
-          (rewardState.actualBondedRatio * rewardState.totalSupply * 1000000),
-        commission,
-        estimatedYearlyRewardsRate: validatorEstimatedRate(
+      const validators = data.validators.map((validator) => {
+        const commission = parseFloat(
+          validator.commission.commission_rates.rate
+        );
+        return {
+          validatorAddress: validator.operator_address,
+          name: validator.description.moniker,
+          votingPower:
+            parseFloat(validator.tokens) /
+            (rewardState.actualBondedRatio * rewardState.totalSupply * 1000000),
           commission,
-          rewardState
-        ),
-      };
-    });
+          estimatedYearlyRewardsRate: validatorEstimatedRate(
+            commission,
+            rewardState
+          ),
+        };
+      });
+      return validators;
+    } else {
+      const url = `${getBaseApiUrl(currency)}/staking/validators`;
+      const { data } = await network({ url, method: "GET" });
 
-    return validators;
+      const validators = data.result.map((validator) => {
+        const commission = parseFloat(
+          validator.commission.commission_rates.rate
+        );
+        return {
+          validatorAddress: validator.operator_address,
+          name: validator.description.moniker,
+          votingPower:
+            parseFloat(validator.tokens) /
+            (rewardState.actualBondedRatio * rewardState.totalSupply * 1000000),
+          commission,
+          estimatedYearlyRewardsRate: validatorEstimatedRate(
+            commission,
+            rewardState
+          ),
+        };
+      });
+
+      return validators;
+    }
   },
   () => ""
 );
 
-export const getValidators = async () => {
-  const rewardsState = await getRewardsState();
-  // validators need the rewardsState ONLY to compute voting power as percentage instead of raw uatoms amounts
-  return await cacheValidators(rewardsState);
+export const getValidators = async (currency: CryptoCurrency) => {
+  if (isStargate(currency)) {
+    const rewardsState = await getStargateRewardsState(currency);
+    // validators need the rewardsState ONLY to compute voting power as
+    // percentage instead of raw uatoms amounts
+    return await cacheValidators(rewardsState, currency);
+  } else {
+    const rewardsState = await getRewardsState(currency);
+    // validators need the rewardsState ONLY to compute voting power as
+    // percentage instead of raw uatoms amounts
+    return await cacheValidators(rewardsState, currency);
+  }
 };
 
 const parseUatomStrAsAtomNumber = (uatoms: string) => {
@@ -46,16 +99,18 @@ const parseUatomStrAsAtomNumber = (uatoms: string) => {
 };
 
 const getRewardsState = makeLRUCache(
-  async () => {
+  async (currency: CryptoCurrency) => {
     // All obtained values are strings ; so sometimes we will need to parse them as numbers
-    const inflationUrl = `${getBaseApiUrl()}/minting/inflation`;
+    const inflationUrl = `${getBaseApiUrl(currency)}/minting/inflation`;
     const { data: inflationData } = await network({
       url: inflationUrl,
       method: "GET",
     });
     const currentValueInflation = parseFloat(inflationData.result);
 
-    const inflationParametersUrl = `${getBaseApiUrl()}/minting/parameters`;
+    const inflationParametersUrl = `${getBaseApiUrl(
+      currency
+    )}/minting/parameters`;
     const { data: inflationParametersData } = await network({
       url: inflationParametersUrl,
       method: "GET",
@@ -77,7 +132,9 @@ const getRewardsState = makeLRUCache(
     const assumedTimePerBlock =
       31556736.0 / parseFloat(inflationParametersData.result.blocks_per_year);
 
-    const communityTaxUrl = `${getBaseApiUrl()}/distribution/parameters`;
+    const communityTaxUrl = `${getBaseApiUrl(
+      currency
+    )}/distribution/parameters`;
     const { data: communityTax } = await network({
       url: communityTaxUrl,
       method: "GET",
@@ -86,7 +143,7 @@ const getRewardsState = makeLRUCache(
       communityTax.result.community_tax
     );
 
-    const supplyUrl = `${getBaseApiUrl()}/supply/total`;
+    const supplyUrl = `${getBaseApiUrl(currency)}/supply/total`;
     const { data: totalSupplyData } = await network({
       url: supplyUrl,
       method: "GET",
@@ -95,10 +152,112 @@ const getRewardsState = makeLRUCache(
       totalSupplyData.result[0].amount
     );
 
-    const ratioUrl = `${getBaseApiUrl()}/staking/pool`;
+    const ratioUrl = `${getBaseApiUrl(currency)}/staking/pool`;
     const { data: ratioData } = await network({ url: ratioUrl, method: "GET" });
     const actualBondedRatio =
       parseUatomStrAsAtomNumber(ratioData.result.bonded_tokens) / totalSupply;
+
+    // Arbitrary value in ATOM.
+    const averageDailyFees = 20;
+
+    // Arbitrary value in seconds
+    const averageTimePerBlock = 7.5;
+
+    return {
+      targetBondedRatio,
+      communityPoolCommission,
+      assumedTimePerBlock,
+      inflationRateChange,
+      inflationMaxRate,
+      inflationMinRate,
+      actualBondedRatio,
+      averageTimePerBlock,
+      totalSupply,
+      averageDailyFees,
+      currentValueInflation,
+    };
+  },
+  () => ""
+);
+
+const getStargateRewardsState = makeLRUCache(
+  async (currency) => {
+    if (currency.id === "cosmos_testnet") {
+      // Fake numbers for testnet as the values are too big and trigger 5xx server side when queried
+      return {
+        targetBondedRatio: 0.5,
+        communityPoolCommission: 0.05,
+        assumedTimePerBlock: 7,
+        inflationRateChange: 0.0,
+        inflationMaxRate: 0.5,
+        inflationMinRate: 0.0,
+        actualBondedRatio: 0.5,
+        averageTimePerBlock: 7,
+        totalSupply: 1200000000,
+        averageDailyFees: 1234,
+        currentValueInflation: 0.5,
+      };
+    }
+    // All obtained values are strings ; so sometimes we will need to parse them as numbers
+    const inflationUrl = `${getBaseApiUrl(
+      currency
+    )}/cosmos/mint/v1beta1/inflation`;
+    const { data: inflationData } = await network({
+      url: inflationUrl,
+      method: "GET",
+    });
+    const currentValueInflation = parseFloat(inflationData.inflation);
+
+    const inflationParametersUrl = `${getBaseApiUrl(
+      currency
+    )}/cosmos/mint/v1beta1/params`;
+    const { data: inflationParametersData } = await network({
+      url: inflationParametersUrl,
+      method: "GET",
+    });
+    const inflationRateChange = parseFloat(
+      inflationParametersData.params.inflation_rate_change
+    );
+    const inflationMaxRate = parseFloat(
+      inflationParametersData.params.inflation_max
+    );
+    const inflationMinRate = parseFloat(
+      inflationParametersData.params.inflation_min
+    );
+    const targetBondedRatio = parseFloat(
+      inflationParametersData.params.goal_bonded
+    );
+    // Source for seconds per year : https://github.com/gavinly/CosmosParametersWiki/blob/master/Mint.md#notes-3
+    //  365.24 (days) * 24 (hours) * 60 (minutes) * 60 (seconds) = 31556736 seconds
+    const assumedTimePerBlock =
+      31556736.0 / parseFloat(inflationParametersData.params.blocks_per_year);
+
+    const communityTaxUrl = `${getBaseApiUrl(
+      currency
+    )}/cosmos/distribution/v1beta1/params`;
+    const { data: communityTax } = await network({
+      url: communityTaxUrl,
+      method: "GET",
+    });
+    const communityPoolCommission = parseFloat(
+      communityTax.params.community_tax
+    );
+
+    const supplyUrl = `${getBaseApiUrl(currency)}/cosmos/bank/v1beta1/supply/${
+      currency.id == "cosmos_testnet" ? "umuon" : "uatom"
+    }`;
+    const { data: totalSupplyData } = await network({
+      url: supplyUrl,
+      method: "GET",
+    });
+    const totalSupply = parseUatomStrAsAtomNumber(
+      totalSupplyData.amount.amount
+    );
+
+    const ratioUrl = `${getBaseApiUrl(currency)}/cosmos/staking/v1beta1/pool`;
+    const { data: ratioData } = await network({ url: ratioUrl, method: "GET" });
+    const actualBondedRatio =
+      parseUatomStrAsAtomNumber(ratioData.pool.bonded_tokens) / totalSupply;
 
     // Arbitrary value in ATOM.
     const averageDailyFees = 20;

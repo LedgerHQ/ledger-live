@@ -2,7 +2,11 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { scanAccounts } from "../../../libcore/scanAccounts";
 import { sync } from "../../../libcore/syncAccount";
-import type { AccountBridge, CurrencyBridge } from "../../../types";
+import type {
+  AccountBridge,
+  CurrencyBridge,
+  CryptoCurrency,
+} from "../../../types";
 import type { Transaction } from "../types";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
@@ -380,8 +384,8 @@ const prepareTransaction = async (a, t) => {
 };
 
 const currencyBridge: CurrencyBridge = {
-  preload: async () => {
-    const validators = await getValidators();
+  preload: async (currency: CryptoCurrency) => {
+    const validators = await getValidators(currency);
     setCosmosPreloadData({ validators });
     return Promise.resolve({ validators });
   },

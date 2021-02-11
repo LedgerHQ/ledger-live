@@ -5,7 +5,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "18.4.0",
+  "version": "18.5.0-stargate.0",
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "scripts": {
@@ -36,7 +36,11 @@
   "jest": {
     "testEnvironment": "node",
     "coverageDirectory": "./coverage/",
-    "coverageReporters": ["json", "lcov", "clover"],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "clover"
+    ],
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
       "src/__tests__"
