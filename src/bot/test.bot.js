@@ -7,6 +7,12 @@ setup("bot");
 
 jest.setTimeout(110 * 60 * 1000);
 
+const { BOT_FILTER_CURRENCY } = process.env;
+
 test("bot", async () => {
-  await bot();
+  const arg = {};
+  if (BOT_FILTER_CURRENCY) {
+    arg.currency = BOT_FILTER_CURRENCY;
+  }
+  await bot(arg);
 });
