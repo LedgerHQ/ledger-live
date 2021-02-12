@@ -82,6 +82,7 @@ export const minAppVersion = {
   "Kin (SPL)": "0.0.0",
   Komodo: "1.5.0",
   Kusama: "3.23.0",
+  Kusama_sec: "0.0.0",
   LBRY: "1.5.0",
   Liquid: "1.4.8",
   "Liquid Hless": "1.4.8",
