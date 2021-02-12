@@ -77,7 +77,7 @@ const cacheValidators = makeLRUCache(
       return validators;
     }
   },
-  () => ""
+  (_: CosmosRewardsState, currency: CryptoCurrency) => currency.id
 );
 
 export const getValidators = async (currency: CryptoCurrency) => {
@@ -177,11 +177,11 @@ const getRewardsState = makeLRUCache(
       currentValueInflation,
     };
   },
-  () => ""
+  (currency: CryptoCurrency) => currency.id
 );
 
 const getStargateRewardsState = makeLRUCache(
-  async (currency) => {
+  async (currency: CryptoCurrency) => {
     if (currency.id === "cosmos_testnet") {
       // Fake numbers for testnet as the values are too big and trigger 5xx server side when queried
       return {
@@ -279,7 +279,7 @@ const getStargateRewardsState = makeLRUCache(
       currentValueInflation,
     };
   },
-  () => ""
+  (currency: CryptoCurrency) => currency.id
 );
 
 const computeAvgYearlyInflation = (rewardsState: CosmosRewardsState) => {
