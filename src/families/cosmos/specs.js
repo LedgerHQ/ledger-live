@@ -375,7 +375,7 @@ const cosmos_testnet: AppSpec<Transaction> = {
         return {
           transaction: bridge.createTransaction(account),
           updates: [
-            { recipient: pickSiblings(siblings, 7).freshAddress },
+            { recipient: pickSiblings(siblings, 10).freshAddress },
             {
               amount: maxSpendable
                 .times(0.3 + 0.4 * Math.random())
@@ -395,7 +395,7 @@ const cosmos_testnet: AppSpec<Transaction> = {
           transaction: bridge.createTransaction(account),
           updates: [
             {
-              recipient: pickSiblings(siblings, 7).freshAddress,
+              recipient: pickSiblings(siblings, 10).freshAddress,
             },
             { useAllAmount: true },
           ],
