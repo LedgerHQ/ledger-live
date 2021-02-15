@@ -131,7 +131,8 @@ const handlers: Object = {
   SETTINGS_IMPORT_DESKTOP: (state: SettingsState, { settings }) => {
     const { developerModeEnabled, ...rest } = settings;
 
-    setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
+    if (developerModeEnabled !== undefined)
+      setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
 
     return {
       ...state,
