@@ -10,6 +10,10 @@ import ethbtc from "./ethbtc";
 
 const modules: Module[] = [weth, ethbtc];
 
+export const installModule = (module: Module): void => {
+  modules.push(module);
+};
+
 export const fetchHistorical = (
   granularity: RateGranularity,
   pair: TrackingPair
