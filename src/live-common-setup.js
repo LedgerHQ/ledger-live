@@ -42,10 +42,11 @@ setSupportedCurrencies([
   "viacoin",
   "stakenet",
   "stealthcoin",
-  "bitcoin_testnet",
-  "ethereum_ropsten",
   "cosmos",
   "algorand",
+  "bitcoin_testnet",
+  "ethereum_ropsten",
+  "cosmos_testnet",
 ]);
 
 if (Config.VERBOSE) {
