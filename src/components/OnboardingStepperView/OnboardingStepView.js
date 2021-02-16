@@ -124,7 +124,10 @@ export function InfoStepView({
                           ]}
                         >
                           {Icon ? (
-                            <Icon size={10} color={color || colors.live} />
+                            <Icon
+                              size={10}
+                              color={color ? colors[color] : colors.live}
+                            />
                           ) : (
                             <LText
                               semiBold
@@ -144,7 +147,9 @@ export function InfoStepView({
                             </LText>
                           ) : null}
                           {label ? (
-                            <LText style={[styles.label, { color: textColor }]}>
+                            <LText
+                              style={[styles.bulletLabel, { color: textColor }]}
+                            >
                               {label}
                             </LText>
                           ) : null}
@@ -152,7 +157,10 @@ export function InfoStepView({
                             ? labels.map((l, j) => (
                                 <LText
                                   key={i + j}
-                                  style={[styles.label, { color: textColor }]}
+                                  style={[
+                                    styles.bulletLabel,
+                                    { color: textColor },
+                                  ]}
                                 >
                                   {l}
                                 </LText>
@@ -266,6 +274,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  bulletLabel: { fontSize: 13, lineHeight: 16 },
   warningCheckboxContainer: {
     flexDirection: "row",
     alignItems: "center",

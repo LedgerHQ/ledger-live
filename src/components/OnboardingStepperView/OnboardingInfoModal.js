@@ -132,7 +132,9 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                             {title}
                           </LText>
                         )}
-                        <LText style={[styles.label, { color: textColor }]}>
+                        <LText
+                          style={[styles.bulletLabel, { color: textColor }]}
+                        >
                           {label}
                         </LText>
                         {bulletLink && (
@@ -229,6 +231,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  bulletLabel: { fontSize: 13, lineHeight: 16 },
   link: {
     fontSize: 13,
     marginTop: 16,
