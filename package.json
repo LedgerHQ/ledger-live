@@ -1,6 +1,6 @@
 {
   "name": "ledgerlivemobile",
-  "version": "2.21.2",
+  "version": "2.22.0",
   "private": true,
   "scripts": {
     "postinstall": "./scripts/post.sh",
