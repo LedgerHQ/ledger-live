@@ -186,9 +186,6 @@
       "title": "Something went wrong (Error #17)",
       "description": "Please contact Ledger Support."
     },
-    "CosmosStargateFeb2021Warning": {
-      "description": "The Cosmos blockchain is planning for an on-chain update on Feb 18th. Coming Ledger Live 2.22.0 will continue supporting ATOM."
-    },
     "DeviceAppVerifyNotSupported": {
       "title": "Open Manager to update this app",
       "description": "The app verification is not supported."
@@ -530,6 +527,33 @@
     "SwapGenericAPIError": {
       "title": "Exchange rate expired",
       "description": "You must confirm the swap before the timer runs out. The exchange rate remains valid for a fixed duration."
+    },
+    "PolkadotElectionClosed": {
+      "title": "L'élection des validateurs doit être clôturée"
+    },
+    "PolkadotNotValidator": {
+      "title": "Certaines adresses selectionnées ne sont pas des validateurs"
+    },
+    "PolkadotLowBondedBalance": {
+      "title": "Tous les actifs liés seront déliés si < 1 DOT"
+    },
+    "PolkadotNoUnlockedBalance": {
+      "title": "Vous n'avez aucun actif délié"
+    },
+    "PolkadotNoNominations": {
+      "title": "Vous n'avez nominé aucun validateur"
+    },
+    "PolkadotBondAllFundsWarning": {
+      "title": "Vous n'aurez plus de fonds disponibles pour de futures transactions"
+    },
+    "PolkadotBondMinimumAmount": {
+      "title": "Vous devez lier au moins 1 DOT"
+    },
+    "PolkadotMaxUnbonding": {
+      "title": "Vous avez dépassé la limite pour délier"
+    },
+    "PolkadotValidatorsRequired": {
+      "title": "Vous devez selectionner au moins 1 validateur"
     },
     "generic": {
       "title": "{{message}}",
@@ -1253,7 +1277,14 @@
       "CLOSE_ACCOUNT": "Close account",
       "SUPPLY": "Deposited",
       "REDEEM": "Withdrawn",
-      "APPROVE": "Enabled"
+      "APPROVE": "Enabled",
+      "BOND": "Lié",
+      "UNBOND": "Délié",
+      "REWARD_PAYOUT": "Récompense",
+      "SLASH": "Sabrage",
+      "WITHDRAW_UNBONDED": "Retrait",
+      "NOMINATE": "Nomination",
+      "CHILL": "Fin de nomination"
     }
   },
   "operationDetails": {
@@ -1288,8 +1319,8 @@
       "unfreezeAmount": "Unfreeze amount",
       "address": "Address",
       "votes": "Votes ({{number}})",
-      "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
-      "validators": "Validators",
+      "votesAddress": "<0>{{votes}}</0> to <0>{{name}}</0>",
+      "validators": "Validateurs",
       "delegated": "Delegated ({{amount}})",
       "delegatedTo": "Delegated to",
       "delegatedAmount": "Delegated amount",
@@ -1304,7 +1335,13 @@
       "rewardAmount": "Amount collected",
       "memo": "Memo",
       "assetId": "Asset ID",
-      "rewards": "Earned rewards"
+      "rewards": "Earned rewards",
+      "bondedAmount": "Montant lié",
+      "unbondedAmount": "Montant délié",
+      "withdrawUnbondedAmount": "Montant délié récupéré",
+      "palletMethod": "Méthode",
+      "transferAmount": "Montant transféré",
+      "validatorsCount": "Validateurs ({{number}})"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -2986,6 +3023,248 @@
       "MEMO_ID": "Memo ID",
       "MEMO_HASH": "Memo Hash",
       "MEMO_RETURN": "Memo Return"
+    }
+  },
+  "polkadot": {
+    "lockedBalance": "Actifs liés au staking",
+    "unlockingBalance": "Actifs en cours de débloquage",
+    "unlockedBalance": "Actifs déliés",
+    "info": {
+      "available": {
+        "title": "DOT disponibles",
+        "description": "Ce montant est disponible."
+      },
+      "locked": {
+        "title": "Actifs liés",
+        "description": "Les actifs liés peuvent être utilisés pour obtenir des récompenses en nominant des validateurs."
+      },
+      "unlocking": {
+        "title": "Actifs en cours de débloquage",
+        "description": "Les actifs déliés restent verrouillés pendant 28 jours avant d'être disponibles."
+      },
+      "unlocked": {
+        "title": "Actifs déliés",
+        "description": "Des actifs déliés peuvent maintenant être récupérés via une transaction."
+      },
+      "electionOpen": {
+        "title": "Élection des validateurs en cours",
+        "description": "De nouveaux validateurs sont en cours d'élection. Pendant cette phase toutes les opérations de Staking sont indisponibles pendant 15 minutes au plus."
+      }
+    },
+    "nomination": {
+      "emptyState": {
+        "title": "Obtenez des récompenses",
+        "description": "Vous pouvez gagner des récompenses DOT en liant vos actifs et en nommant des validateurs.",
+        "info": "Comment fonctionne la nomination",
+        "cta": "Obtenez des récompenses"
+      },
+      "header": "Nominations",
+      "nominate": "Nominer",
+      "chill": "Ne plus nominer",
+      "status": "Statut",
+      "totalStake": "Participation totale",
+      "amount": "Montant lié",
+      "commission": "Commission",
+      "active": "Actif",
+      "activeInfo": "Ce validateur a été élu et collecte des récompenses grâce à une partie de vos actifs liés.",
+      "inactive": "Inactif",
+      "inactiveInfo": "Ce validateur a été élu mais ne collecte aucune récompense grâce à vos actifs liés.",
+      "waiting": "Non élu",
+      "waitingInfo": "Ce validateur n'a pas été élu et ne collecte donc aucune récompense.",
+      "notValidator": "Non validateur",
+      "notValidatorInfo": "Cette addresse a cessé d'être validateur",
+      "elected": "Élu",
+      "electedInfo": "Ce validateur a été élu et collecte des récompenses pour ses nomminateurs.",
+      "nominators": "Nominateurs",
+      "nominatorsCount": "{{nominatorsCount}} nominateurs",
+      "nominatorsInfo": "Ce validateur a {{count}} nominateurs récompensés pour cette ère",
+      "oversubscribed": "Sursouscrit ({{nominatorsCount}})",
+      "oversubscribedInfo": "Seuls les {{maxNominatorRewardedPerValidator}} nominateurs avec les montants les plus élevés seront récompensés",
+      "hasPendingBondOperation": "Une liaison d'actifs est en attente de confirmation",
+      "externalControllerUnsupported": "<0>Ce compte est contrôlé par un autre compte ayant l'adresse <0><0>{{address}}</0></0></0><1>Les opérations de Staking sur un compte de réserve externe n'est pas supporté par Ledger Live. Merci d'utiliser un porte-feuille alternatif tel que Polkadot.js.</1>",
+      "externalStashUnsupported": "<0>Ce compte contrôle un autre compte de réserve ayant l'adresse <0><0>{{address}}</0></0></0><1>Les opérations de Staking sur un compte de réserve externe n'est pas supporté par Ledger Live. Merci d'utiliser un porte-feuille alternatif tel que Polkadot.js.</1>",
+      "showInactiveNominations": "Afficher les nominations inactives ({{count}})",
+      "hideInactiveNominations": "Masquer les nominations inactives",
+      "noActiveNominations": "Il n'y a aucune nomination active",
+      "showAllUnlockings": "Tout afficher ({{count}})",
+      "hideAllUnlockings": "Masquer"
+    },
+    "unlockings": {
+      "header": "Actifs en débloquage",
+      "withdrawUnbonded": "Récupérer",
+      "rebond": "Lier à nouveau"
+    },
+    "manage": {
+      "title": "Gérer les actifs",
+      "bond": {
+        "title": "Lier",
+        "description": "Verrouillez les actifs pour participer à la nomination de validateurs et gagner des récompenses."
+      },
+      "unbond": {
+        "title": "Délier",
+        "description": "Déverrouillez vos DOT pour les retrouver dans votre solde disponible. Vous ne gagnerez plus de récompenses grâce à ces actifs."
+      },
+      "withdrawUnbonded": {
+        "title": "Récupérer actifs déliés",
+        "description": "Transferez vos actifs déliés vers votre solde disponible après une période de vérrouillage de 28 jours."
+      },
+      "nominate": {
+        "title": "Nominer",
+        "description": "Choississez jusqu'à 16 validateurs à élire et générer des récompenses."
+      },
+      "chill": {
+        "title": "Ne plus nominer",
+        "description": "Arrêtez de nominer des validateurs et cessez d'en recevoir des récompenses."
+      }
+    },
+    "nominate": {
+      "stepperHeader": {
+        "validators": "Validateurs à nominer",
+        "selectDevice": "Selectionnez votre appareil",
+        "connectDevice": "Connectez votre appareil",
+        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}",
+        "notValidatorsRemoved": "Vous avez {{count}} adresses nominées qui ne sont plus des validateurs. Elles seront automatiquement supprimées de votre transaction de nomination."
+      },
+      "steps": {
+        "validators": {
+          "myNominations": "Mes nominations",
+          "electedValidators": "Validateurs élus",
+          "waitingValidators": "Validateurs non élus",
+          "noResultsFound": "Aucun validateur trouvé correspondant à <0>{{search}}</0>",
+          "selected": "{{selected}} sur {{total}} selectionnés",
+          "notValidatorsRemoved": "Vous avez {{count}} adresses nominées qui ne sont plus des validateurs. Elles seront automatiquement supprimées de votre transaction de nomination.",
+          "maybeChill": "Ne plus nominer plutôt"
+        },
+        "validation": {
+          "success": {
+            "title": "Validateurs nominés",
+            "description": "Vous toucherez des récompenses quand vos validateurs seront élus et qu'une partie de vos actifs liés leur sera affectée."
+          }
+        }
+      }
+    },
+    "bond": {
+      "rewardDestination": {
+        "label": "Destination des récompenses",
+        "stash": "Balance disponible",
+        "stashDescription": "Les récompenses seront versées sur le compte actuel en tant que balance disponible.",
+        "staked": "Balance liée",
+        "stakedDescription": "Les récompenses seront versées sur le compte actuel en tant que balance liée au staking."
+      },
+      "stepperHeader": {
+        "starter": "Obtenez des récompenses",
+        "amount": "Montant à lier",
+        "selectDevice": "Selectionnez votre appareil",
+        "connectDevice": "Connectez votre appareil",
+        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "steps": {
+        "starter": {
+          "description": "Vous pouvez obtenir des récompenses en liant vos DOT puis en nommant des validateurs.",
+          "bullet": [
+            "Vous gardez la propriété des actifs liés",
+            "Nominez avec votre appareil Ledger",
+            "Les actifs seront disponibles 28 jours après avoir délié vos actifs."
+          ],
+          "help": "Comment fonctionne la nomination",
+          "warning": "Choisissez vos validateurs judicieusement: Une partie de vos actifs liés peut être perdue si un validateur ne se comporte pas correctement."
+        },
+        "amount": {
+          "availableLabel": "Disponible",
+          "maxLabel": "Lier Max"
+        },
+        "confirm": {
+          "info": "Une fois les actifs liés ils peuvent être déliés à n'importe quel moment, mais seront bloqués pendant une période de 28 jours."
+        },
+        "validation": {
+          "success": {
+            "title": "Actifs liés",
+            "description": "Le solde de votre compte sera actualisé dès que le réseau aura confirmé la transaction.",
+            "descriptionNominate": "Vous pourrez nominer des validateurs une fois que le réseau aura confirmé votre transaction.",
+            "nominate": "Nominer",
+            "later": "Nominer plus tard"
+          },
+          "pending": {
+            "title": "Transaction en cours de confirmation",
+            "description": "Vous devez attendre un petit moment avant de pouvoir nominer."
+          }
+        }
+      }
+    },
+    "rebond": {
+      "stepperHeader": {
+        "amount": "Montant à relier",
+        "selectDevice": "Selectionnez votre appareil",
+        "connectDevice": "Connectez votre appareil",
+        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "steps": {
+        "amount": {
+          "availableLabel": "En débloquage",
+          "maxLabel": "Relier Max"
+        },
+        "confirm": {
+          "info": "Les actifs reliés seront immédiatement ajoutés à la balance liée au staking."
+        },
+        "validation": {
+          "success": {
+            "title": "Actifs reliés",
+            "description": "Le solde de votre compte sera actualisé dès que le réseau aura confirmé la transaction."
+          }
+        }
+      }
+    },
+    "unbond": {
+      "stepperHeader": {
+        "amount": "Montant à délier",
+        "selectDevice": "Selectionnez votre appareil",
+        "connectDevice": "Connectez votre appareil",
+        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "steps": {
+        "amount": {
+          "availableLabel": "Débloquable",
+          "maxLabel": "Délier Max"
+        },
+        "confirm": {
+          "info": "Les actifs déliés pourront être récupérés après une période de 28 jours."
+        },
+        "validation": {
+          "success": {
+            "title": "Actifs déliés",
+            "description": "Ces actifs pourront être récupérés dans 28 jours."
+          }
+        }
+      }
+    },
+    "simpleOperation": {
+      "modes": {
+        "withdrawUnbonded": {
+          "title": "Récupérer actifs",
+          "description": "Après une période de 28 jours vous pouvez récupérer vos actifs déliés.",
+          "info": "Vous récupérerez l'intégralité des actifs déliés dans votre solde disponible."
+
+        },
+        "chill": {
+          "title": "Ne plus nominer",
+          "description": "Vous pouvez stopper la nomination de tous vos validateurs et arrêter de toucher des récompenses.",
+          "info": "Cependant, vos actifs liés resteront intacts et seront verrouillés pendant 28 jours si vous les déliez."
+        }
+      },
+      "stepperHeader": {
+        "info": "Info",
+        "selectDevice": "Selectionnez votre appareil",
+        "connectDevice": "Connectez votre appareil",
+        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+      },
+      "steps": {
+        "validation": {
+          "success": {
+            "title": "Transaction diffusée",
+            "description": "Vous pourrez retrouver cette opération dans votre historique dès que le réseau aura confirmé la transaction."
+          }
+        }
+      }
     }
   },
   "delegation": {

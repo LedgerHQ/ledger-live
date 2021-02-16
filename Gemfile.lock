@@ -253,6 +253,7 @@ GEM
 PLATFORMS
   ruby
   universal-darwin-20
+  x86_64-darwin-19
 
 DEPENDENCIES
   cocoapods (= 1.8.4)

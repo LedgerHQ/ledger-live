@@ -1,8 +1,7 @@
 // @flow
 import React, { useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, SectionList, FlatList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { StyleSheet, SectionList, FlatList, SafeAreaView } from "react-native";
 import Animated from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";

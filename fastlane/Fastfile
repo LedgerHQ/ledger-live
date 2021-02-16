@@ -325,7 +325,9 @@ platform :android do
 
   desc "build and upload beta to Google Play Store"
   lane :beta do
-    prepare_android_internal
+    prepare_android_internal(
+      remote: options.fetch(:remote, "origin")
+    )
     clean_beta
   end
 end

@@ -223,12 +223,10 @@ const styles = StyleSheet.create({
   },
   balanceContainer: {
     alignItems: "flex-start",
-    marginBottom: 10,
   },
   balanceText: {
     fontSize: normalize(21),
     paddingBottom: 4,
-    lineHeight: 24,
     flexWrap: "wrap",
   },
   balanceSubText: {

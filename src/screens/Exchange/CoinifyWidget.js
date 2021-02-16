@@ -20,6 +20,7 @@ import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
 import { getConfig } from "./coinifyConfig";
 import { track } from "../../analytics";
 import { DevicePart } from "./DevicePart";
+import SkipDeviceVerification from "./SkipDeviceVerification";
 
 const action = createAction(connectApp);
 
@@ -29,7 +30,7 @@ type CoinifyWidgetConfig = {
   cryptoCurrencies?: string | null,
   address?: string | null,
   targetPage: string,
-  addressConfirmation?: boolean,
+  confirmMessages?: boolean,
   transferOutMedia?: string,
   transferInMedia?: string,
   confirmMessages?: *,
@@ -80,16 +81,18 @@ type Props = {
   mode: string,
   device: Device,
   verifyAddress?: boolean,
+  skipDevice?: Boolean,
 };
 
-let tradeId = null;
 let resolvePromise = null;
 export default function CoinifyWidget({
   mode,
   account,
   parentAccount,
   device,
+  skipDevice,
 }: Props) {
+  const tradeId = useRef(null);
   const { colors } = useTheme();
   const [requestingAction, setRequestingAction] = useState<
     "none" | "connect" | "verify",
@@ -130,7 +133,7 @@ export default function CoinifyWidget({
 
   if (mode === "buy") {
     widgetConfig.transferOutMedia = "blockchain";
-    widgetConfig.addressConfirmation = true;
+    widgetConfig.confirmMessages = true;
   }
 
   if (mode === "sell") {
@@ -178,13 +181,24 @@ export default function CoinifyWidget({
         }
         break;
       case "trade.trade-created":
+        tradeId.current = context.id;
         if (mode === "sell") {
-          //            setTradeId(context.id);
-          tradeId = context.id;
           if (resolvePromise) {
             resolvePromise(context);
             resolvePromise = null;
           }
+        }
+        if (mode === "buy") {
+          webView.current.postMessage(
+            JSON.stringify({
+              type: "event",
+              event: "trade.confirm-trade-created",
+              context: {
+                confirmed: true,
+                tradeId: tradeId.current,
+              },
+            }),
+          );
         }
         break;
       default:
@@ -231,10 +245,10 @@ export default function CoinifyWidget({
           webView.current.postMessage(
             JSON.stringify({
               type: "event",
-              event: "trade.receive-account-confirmed",
+              event: "trade.confirm-trade-prepared",
               context: {
-                address: mainAccount?.freshAddress,
-                status: confirmed ? "accepted" : "rejected",
+                address: mainAccount.freshAddress,
+                confirmed,
               },
             }),
           );
@@ -251,7 +265,7 @@ export default function CoinifyWidget({
               context: {
                 confirmed,
                 transferInitiated: true,
-                tradeId,
+                tradeId: tradeId.current,
               },
             }),
           );
@@ -304,13 +318,18 @@ export default function CoinifyWidget({
       />
       <BottomModal id="DeviceActionModal" isOpened={isOpen}>
         <View style={styles.modalContainer}>
-          {requestingAction === "connect" ? (
-            mode === "buy" ? (
+          {requestingAction === "connect" && mainAccount ? (
+            mode === "buy" && !skipDevice ? (
               <DeviceAction
                 action={action}
                 device={device}
                 request={{ account: mainAccount, tokenCurrency }}
                 onResult={onResult}
+              />
+            ) : mode === "buy" ? (
+              <SkipDeviceVerification
+                account={mainAccount}
+                settleTrade={settleTrade}
               />
             ) : (
               <DevicePart
@@ -321,7 +340,7 @@ export default function CoinifyWidget({
                 getCoinifyContext={setTransactionId}
               />
             )
-          ) : requestingAction === "verify" ? (
+          ) : requestingAction === "verify" && mainAccount ? (
             <VerifyAddress
               account={mainAccount}
               device={device}

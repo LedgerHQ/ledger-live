@@ -45,7 +45,7 @@ const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return <SelectableAccountsList {...rest} />;
+  return <SelectableAccountsList useFullBalance {...rest} />;
 };
 
 type RouteParams = {
