@@ -12732,7 +12732,7 @@ Object {
     },
     Object {
       "approvals": undefined,
-      "balance": "34",
+      "balance": "40",
       "balanceHistory": undefined,
       "compoundBalance": undefined,
       "creationDate": "2019-08-02T13:42:34.000Z",
@@ -12837,7 +12837,7 @@ Object {
       "operationsCount": 5,
       "parentId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
       "pendingOperations": Array [],
-      "spendableBalance": "34",
+      "spendableBalance": "40",
       "starred": false,
       "swapHistory": Array [],
       "tokenId": "ethereum/erc20/ampleforth",
@@ -13181,7 +13181,7 @@ Object {
     },
   ],
   "swapHistory": Array [],
-  "syncHash": "[]_1770",
+  "syncHash": "[]_1790",
   "unitMagnitude": 18,
 }
 `;
