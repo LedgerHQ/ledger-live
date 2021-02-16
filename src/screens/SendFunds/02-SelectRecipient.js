@@ -216,6 +216,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               type="primary"
               title={<Trans i18nKey="common.continue" />}
               disabled={bridgePending || !!status.errors.recipient}
+              pending={bridgePending}
               onPress={onPressContinue}
             />
           </View>
