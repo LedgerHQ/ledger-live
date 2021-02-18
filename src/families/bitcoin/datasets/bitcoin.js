@@ -80,7 +80,7 @@ const dataset: CurrenciesData<Transaction> = {
           name: "on native segwit recipient",
           transaction: fromTransactionRaw({
             family: "bitcoin",
-            recipient: "bc1qqmxqdrkxgx6swrvjl9l2e6szvvkg45all5u4fl",
+            recipient: "BC1QQMXQDRKXGX6SWRVJL9L2E6SZVVKG45ALL5U4FL",
             amount: "997",
             feePerByte: "1",
             networkInfo,

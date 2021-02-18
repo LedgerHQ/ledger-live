@@ -75,12 +75,6 @@ export function decodeURIScheme(str: string): Data {
     }
   }
   Object.assign(data, specificFields);
-  if (
-    currency.id === "bitcoin" &&
-    data.address.toLowerCase().indexOf("bc1") === 0
-  ) {
-    data.address = data.address.toLowerCase();
-  }
   if (amount) {
     const cValue = convertedValue(amount, currency);
     if (cValue) {

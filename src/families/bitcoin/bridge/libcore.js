@@ -71,7 +71,13 @@ const createTransaction = () => ({
   useAllAmount: false,
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
+const updateTransaction = (t, patch) => {
+  const updatedT = { ...t, ...patch };
+  if (updatedT.recipient.toLowerCase().indexOf("bc1") === 0) {
+    updatedT.recipient = updatedT.recipient.toLowerCase();
+  }
+  return updatedT;
+};
 
 const estimateMaxSpendable = async ({
   account,
