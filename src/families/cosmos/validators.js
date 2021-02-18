@@ -181,23 +181,22 @@ const getRewardsState = makeLRUCache(
 );
 
 const getStargateRewardsState = makeLRUCache(
-  async (currency: CryptoCurrency) => {
-    if (currency.id === "cosmos_testnet") {
-      // Fake numbers for testnet as the values are too big and trigger 5xx server side when queried
-      return {
-        targetBondedRatio: 0.5,
-        communityPoolCommission: 0.05,
-        assumedTimePerBlock: 7,
-        inflationRateChange: 0.0,
-        inflationMaxRate: 0.5,
-        inflationMinRate: 0.0,
-        actualBondedRatio: 0.5,
-        averageTimePerBlock: 7,
-        totalSupply: 1200000000,
-        averageDailyFees: 1234,
-        currentValueInflation: 0.5,
-      };
-    }
+  async (_currency: CryptoCurrency) => {
+    // Fake numbers until Gaia fixes its endpoints
+    return {
+      targetBondedRatio: 0.01,
+      communityPoolCommission: 0.0,
+      assumedTimePerBlock: 7,
+      inflationRateChange: 0.01,
+      inflationMaxRate: 0.01,
+      inflationMinRate: 0.01,
+      actualBondedRatio: 0.01,
+      averageTimePerBlock: 7,
+      totalSupply: 0,
+      averageDailyFees: 0,
+      currentValueInflation: 0.01,
+    };
+    /*
     // All obtained values are strings ; so sometimes we will need to parse them as numbers
     const inflationUrl = `${getBaseApiUrl(
       currency
@@ -278,6 +277,7 @@ const getStargateRewardsState = makeLRUCache(
       averageDailyFees,
       currentValueInflation,
     };
+    */
   },
   (currency: CryptoCurrency) => currency.id
 );
