@@ -30,7 +30,7 @@ const getSendFields = ({
 
   fields.push({
     type: "text",
-    label: "Value",
+    label: "Amount",
     value: formatCurrencyUnit(currency.units[0], amount, {
       showCode: true,
       disableRounding: true,
@@ -94,7 +94,7 @@ function getDeviceTransactionConfig({
 
         fields.push({
           type: "text",
-          label: "Value",
+          label: "Amount",
           value: formatCurrencyUnit(currency.units[0], amount, {
             showCode: true,
             disableRounding: true,
@@ -115,7 +115,7 @@ function getDeviceTransactionConfig({
 
         fields.push({
           type: "text",
-          label: "Max additional",
+          label: "Amount",
           value: formatCurrencyUnit(currency.units[0], amount, {
             showCode: true,
             disableRounding: true,
@@ -134,7 +134,7 @@ function getDeviceTransactionConfig({
 
       fields.push({
         type: "text",
-        label: "Value",
+        label: "Amount",
         value: formatCurrencyUnit(currency.units[0], amount, {
           showCode: true,
           disableRounding: true,
@@ -151,7 +151,7 @@ function getDeviceTransactionConfig({
 
       fields.push({
         type: "text",
-        label: "Value",
+        label: "Amount",
         value: formatCurrencyUnit(currency.units[0], amount, {
           showCode: true,
           disableRounding: true,
