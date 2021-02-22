@@ -990,7 +990,7 @@
           },
           "1": {
             "title": "Select recovery phrase length",
-            "label": "Your Recovery phrases can have 12, 18 or 24 words. You must enter all words to access your crypto."
+            "label": "Your recovery phrase can have 12, 18 or 24 words. You must enter all words to access your crypto."
           },
           "2": {
             "title": "Enter Word #1...",
