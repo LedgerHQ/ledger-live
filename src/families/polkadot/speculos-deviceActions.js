@@ -20,16 +20,14 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Value",
+      title: "Amount",
       button: "Rr",
       expectedValue: ({ account, transaction }) => {
-        const formattedValue = formatCurrencyUnit(
-          account.unit,
-          transaction.amount,
-          {
+        const formattedValue =
+          "DOT " +
+          formatCurrencyUnit(account.unit, transaction.amount, {
             disableRounding: true,
-          }
-        );
+          });
         if (!formattedValue.includes(".")) {
           // if the value is pure integer, in the app it will automatically add an .0
           return formattedValue + ".0";
