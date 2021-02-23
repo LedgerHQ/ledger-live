@@ -18,7 +18,11 @@
 
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
-import { UserRefusedOnDevice, UserRefusedAddress } from "@ledgerhq/errors";
+import {
+  UserRefusedOnDevice,
+  UserRefusedAddress,
+  TransportError,
+} from "@ledgerhq/errors";
 
 const CHUNK_SIZE = 250;
 
@@ -36,6 +40,8 @@ const PAYLOAD_TYPE_LAST = 0x02;
 
 const SW_OK = 0x9000;
 const SW_CANCEL = 0x6986;
+const SW_ERROR_DATA_INVALID = 0x6984;
+const SW_ERROR_BAD_KEY_HANDLE = 0x6a80;
 
 export class Polkadot {
   transport: Transport<*>;
@@ -139,20 +145,30 @@ export class Polkadot {
             : PAYLOAD_TYPE_ADD,
           0,
           data,
-          [SW_OK, SW_CANCEL, 0x6984, 0x6a80]
+          [SW_OK, SW_CANCEL, SW_ERROR_DATA_INVALID, SW_ERROR_BAD_KEY_HANDLE]
         )
         .then((apduResponse) => (response = apduResponse))
     ).then(() => {
       const errorCodeData = response.slice(-2);
       const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
+
+      if (returnCode === SW_CANCEL) {
+        throw new UserRefusedOnDevice();
+      }
+      if (
+        returnCode === SW_ERROR_DATA_INVALID ||
+        returnCode === SW_ERROR_BAD_KEY_HANDLE
+      ) {
+        const errorMessage = response
+          .slice(0, response.length - 2)
+          .toString("ascii");
+        throw new TransportError(errorMessage);
+      }
+
       let signature = null;
 
       if (response.length > 2) {
         signature = response.slice(0, response.length - 2);
-      }
-
-      if (returnCode === SW_CANCEL) {
-        throw new UserRefusedOnDevice();
       }
 
       return {
