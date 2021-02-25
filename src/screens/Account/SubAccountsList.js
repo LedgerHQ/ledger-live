@@ -301,11 +301,7 @@ export default function SubAccountsList({
     [onAccountPress, colors],
   );
 
-  if (
-    !isToken &&
-    subAccounts.length === 0 &&
-    parentAccount.currency.family === "tezos" // Scoped for Tezos now, might need to change with future coins integration
-  ) {
+  if (!isToken && subAccounts.length === 0) {
     return null;
   }
 

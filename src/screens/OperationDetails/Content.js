@@ -12,7 +12,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import {
   getOperationAmountNumber,
-  getOperationConfirmationNumber,
+  isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
 } from "@ledgerhq/live-common/lib/operation";
 import {
@@ -107,7 +107,6 @@ export default function Content({
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const valueColor = isNegative ? colors.smoke : colors.green;
-  const confirmations = getOperationConfirmationNumber(operation, mainAccount);
   const confirmationsString = getOperationConfirmationDisplayableNumber(
     operation,
     mainAccount,
@@ -121,7 +120,11 @@ export default function Content({
 
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
 
-  const isConfirmed = confirmations >= currencySettings.confirmationsNb;
+  const isConfirmed = isConfirmedOperation(
+    operation,
+    mainAccount,
+    currencySettings.confirmationsNb,
+  );
 
   const specific = byFamiliesOperationDetails[mainAccount.currency.family];
   const urlFeesInfo =

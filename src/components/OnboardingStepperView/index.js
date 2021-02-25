@@ -5,7 +5,7 @@ import {
   View,
   StyleSheet,
   Dimensions,
-  Pressable,
+  TouchableOpacity,
   Platform,
 } from "react-native";
 import { TabView, SceneMap } from "react-native-tab-view";
@@ -18,6 +18,7 @@ import Styles from "../../navigation/styles";
 import { InfoStepView } from "./OnboardingStepView";
 import type { InfoStepViewProps } from "./OnboardingStepView";
 import AnimatedSvgBackground from "../AnimatedSvgBackground";
+import Touchable from "../Touchable";
 
 export type OnboardingScene = {
   id: string,
@@ -110,6 +111,7 @@ export default function OnboardingStepperView({
             {...sceneProps}
             onNext={onNext}
             sceneColors={sceneColors}
+            isActive={id === currentScene.id}
           />
         ),
       }),
@@ -122,22 +124,24 @@ export default function OnboardingStepperView({
       <View style={[styles.header]}>
         <View style={styles.topHeader}>
           {hideBackButton ? null : (
-            <Pressable
+            <TouchableOpacity
               hitSlop={hitSlop}
               style={styles.buttons}
               onPress={onBack}
             >
               <ArrowLeft size={18} color={sceneColors[1]} />
-            </Pressable>
+            </TouchableOpacity>
           )}
           {currentScene?.sceneInfoKey && (
-            <Pressable
+            <Touchable
+              event={`Onboarding - ${currentScene?.sceneProps.trackPage ||
+                ""} need help`}
               hitSlop={hitSlop}
               style={styles.buttons}
               onPress={openInfoModal}
             >
               <Question size={20} color={sceneColors[1]} />
-            </Pressable>
+            </Touchable>
           )}
         </View>
         <View style={styles.indicatorContainer}>

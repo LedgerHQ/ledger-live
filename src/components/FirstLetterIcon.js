@@ -14,7 +14,7 @@ type Props = {
 };
 
 const FirstLetterIcon = ({
-  label,
+  label = "",
   style,
   labelStyle,
   size = 32,

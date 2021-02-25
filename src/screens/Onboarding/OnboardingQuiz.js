@@ -1,6 +1,12 @@
 // @flow
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View, Dimensions, Image, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { TabView, SceneMap } from "react-native-tab-view";
 import Svg, { Ellipse } from "react-native-svg";
 import { useTheme } from "@react-navigation/native";
@@ -165,7 +171,7 @@ function OnboardingQuizz({ navigation, route }: *) {
         </Svg>
         <View style={styles.dotContainer}>
           {quizScenes.map((k, i) => (
-            <Pressable
+            <TouchableOpacity
               key={i}
               style={[
                 styles.dot,
@@ -175,7 +181,7 @@ function OnboardingQuizz({ navigation, route }: *) {
               ]}
             >
               <View />
-            </Pressable>
+            </TouchableOpacity>
           ))}
         </View>
       </View>

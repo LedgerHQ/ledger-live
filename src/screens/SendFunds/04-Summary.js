@@ -260,6 +260,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
             containerStyle={styles.continueButton}
             onPress={() => setContinuing(true)}
             disabled={bridgePending || !!transactionError}
+            pending={bridgePending}
           />
         )}
       </View>

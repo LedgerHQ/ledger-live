@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { PureComponent } from "react";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -53,6 +53,7 @@ export type BaseButtonProps = {
   event: string,
   eventProperties?: Object,
   size?: number,
+  pending?: boolean,
 };
 
 type Props = BaseButtonProps & {
@@ -71,35 +72,50 @@ const ButtonWrapped = (props: BaseButtonProps) => {
   );
 };
 
-class Button extends PureComponent<
-  Props,
-  {
-    pending: boolean,
-    spinnerOn: boolean,
-    anim: Animated.Value,
-  },
-> {
-  static defaultProps = {
-    outline: true,
-  };
+function Button({
+  // required props
+  title,
+  onPress,
+  titleStyle,
+  IconLeft,
+  IconRight,
+  disabled,
+  type,
+  useTouchable,
+  outline = true,
+  // everything else
+  containerStyle,
+  colors,
+  event,
+  eventProperties,
+  pending,
+  ...otherProps
+}: Props) {
+  const [spinnerOn, setSpinnerOn] = useState();
+  const [anim] = useState(new Animated.Value(0));
 
-  state = {
-    pending: false,
-    spinnerOn: false,
-    anim: new Animated.Value(0),
-  };
+  useEffect(() => {
+    setSpinnerOn(pending);
+  }, [pending]);
 
-  timeout: *;
+  useEffect(() => {
+    if (spinnerOn) {
+      Animated.spring(anim, {
+        toValue: 1,
+        duration: ANIM_DURATION,
+        useNativeDriver: true,
+        delay: WAIT_TIME_BEFORE_SPINNER,
+      }).start();
+    } else {
+      Animated.spring(anim, {
+        toValue: 0,
+        duration: ANIM_DURATION,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [spinnerOn, anim]);
 
-  unmounted = false;
-
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
-    this.unmounted = true;
-  }
-
-  onPress = async () => {
-    const { onPress, event, eventProperties } = this.props;
+  const onPressHandler = useCallback(async () => {
     if (!onPress) return;
     if (event) {
       track(event, eventProperties);
@@ -109,201 +125,156 @@ class Button extends PureComponent<
       const res = onPress();
       isPromise = !!res && !!res.then;
       if (isPromise) {
-        // it's a promise, we will use pending/spinnerOn state
-        this.setState({ pending: true });
-        this.timeout = setTimeout(() => {
-          this.setState(({ pending, spinnerOn }) => {
-            if (spinnerOn || !pending) return null;
-            return { spinnerOn: true };
-          });
-
-          Animated.spring(this.state.anim, {
-            toValue: 1,
-            duration: ANIM_DURATION,
-            useNativeDriver: true,
-          }).start();
-        }, WAIT_TIME_BEFORE_SPINNER);
+        // it's a promise, we will use pending state
+        setSpinnerOn(true);
         await res;
       }
     } finally {
       if (isPromise) {
-        clearTimeout(this.timeout);
-        if (!this.unmounted) {
-          this.setState(({ pending }) =>
-            pending ? { pending: false, spinnerOn: false } : null,
-          );
-
-          Animated.spring(this.state.anim, {
-            toValue: 0,
-            duration: ANIM_DURATION,
-            useNativeDriver: true,
-          }).start();
-        }
+        setSpinnerOn(false);
       }
     }
-  };
+  }, [event, eventProperties, onPress]);
 
-  render() {
-    const {
-      // required props
-      title,
-      onPress,
-      titleStyle,
-      IconLeft,
-      IconRight,
-      disabled,
-      type,
-      useTouchable,
-      outline,
-      // everything else
-      containerStyle,
-      colors,
-      ...otherProps
-    } = this.props;
-
-    if (__DEV__ && "style" in otherProps) {
-      console.warn(
-        "Button props 'style' must not be used. Use 'containerStyle' instead.",
-      );
-    }
-
-    const theme = {
-      primaryContainer: { backgroundColor: colors.live },
-      primaryTitle: { color: "white" },
-
-      lightPrimaryContainer: { backgroundColor: colors.lightLive },
-      lightPrimaryTitle: { color: colors.live },
-
-      negativePrimaryContainer: { backgroundColor: "white" },
-      negativePrimaryTitle: { color: colors.live },
-
-      secondaryContainer: { backgroundColor: "transparent" },
-      secondaryTitle: { color: colors.grey },
-      secondaryOutlineBorder: { borderColor: colors.fog },
-
-      lightSecondaryContainer: { backgroundColor: "transparent" },
-      lightSecondaryTitle: { color: colors.live },
-
-      greySecondaryContainer: { backgroundColor: "transparent" },
-      greySecondaryTitle: { color: colors.grey },
-
-      darkSecondaryContainer: { backgroundColor: "transparent" },
-      darkSecondaryTitle: { color: colors.smoke },
-      darkSecondaryOutlineBorder: { borderColor: colors.smoke },
-
-      tertiaryContainer: { backgroundColor: "transparent" },
-      tertiaryTitle: { color: colors.live },
-      tertiaryOutlineBorder: { borderColor: colors.live },
-
-      alertContainer: { backgroundColor: colors.alert },
-      alertTitle: { color: "white" },
-
-      disabledContainer: { backgroundColor: colors.lightFog },
-      disabledTitle: { color: colors.grey },
-    };
-
-    const { pending, anim } = this.state;
-    const isDisabled = disabled || !onPress || pending;
-
-    const needsBorder =
-      (type === "secondary" ||
-        type === "tertiary" ||
-        type === "darkSecondary") &&
-      !isDisabled &&
-      outline;
-
-    const mainContainerStyle = [
-      styles.container,
-      isDisabled ? theme.disabledContainer : theme[`${type}Container`],
-      containerStyle,
-    ];
-
-    const borderStyle = [styles.outlineBorder, theme[`${type}OutlineBorder`]];
-
-    const textStyle = [
-      styles.title,
-      titleStyle,
-      isDisabled ? theme.disabledTitle : theme[`${type}Title`],
-    ];
-
-    const iconColor = isDisabled
-      ? theme.disabledTitle.color
-      : (theme[`${type}Title`] || {}).color;
-
-    const titleSliderOffset = anim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, -ANIM_OFFSET],
-    });
-
-    const titleOpacity = anim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [1, 0],
-    });
-
-    const spinnerSliderOffset = anim.interpolate({
-      inputRange: [0, 1],
-      outputRange: [ANIM_OFFSET, 0],
-    });
-
-    const titleSliderStyle = [
-      styles.slider,
-      {
-        opacity: titleOpacity,
-        transform: [{ translateY: titleSliderOffset }],
-      },
-    ];
-
-    const spinnerSliderStyle = [
-      styles.spinnerSlider,
-      {
-        opacity: anim,
-        transform: [{ translateY: spinnerSliderOffset }],
-      },
-    ];
-
-    const Container = useTouchable
-      ? disabled
-        ? View
-        : TouchableOpacity
-      : RectButton;
-    const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
-
-    return (
-      // $FlowFixMe
-      <Container
-        onPress={isDisabled ? undefined : this.onPress}
-        style={mainContainerStyle}
-        {...containerSpecificProps}
-        {...otherProps}
-      >
-        {needsBorder ? <View style={borderStyle} /> : null}
-
-        <Animated.View style={titleSliderStyle}>
-          {IconLeft ? (
-            <View style={{ paddingRight: title ? 10 : null }}>
-              <IconLeft size={16} color={iconColor} />
-            </View>
-          ) : null}
-
-          {title ? (
-            <LText secondary numberOfLines={1} semiBold style={textStyle}>
-              {title}
-            </LText>
-          ) : null}
-
-          {IconRight ? (
-            <View style={{ paddingLeft: title ? 10 : null }}>
-              <IconRight size={16} color={iconColor} />
-            </View>
-          ) : null}
-        </Animated.View>
-
-        <Animated.View style={spinnerSliderStyle}>
-          <ActivityIndicator color={theme.disabledTitle.color} />
-        </Animated.View>
-      </Container>
+  if (__DEV__ && "style" in otherProps) {
+    console.warn(
+      "Button props 'style' must not be used. Use 'containerStyle' instead.",
     );
   }
+
+  const theme = {
+    primaryContainer: { backgroundColor: colors.live },
+    primaryTitle: { color: "white" },
+
+    lightPrimaryContainer: { backgroundColor: colors.lightLive },
+    lightPrimaryTitle: { color: colors.live },
+
+    negativePrimaryContainer: { backgroundColor: "white" },
+    negativePrimaryTitle: { color: colors.live },
+
+    secondaryContainer: { backgroundColor: "transparent" },
+    secondaryTitle: { color: colors.grey },
+    secondaryOutlineBorder: { borderColor: colors.fog },
+
+    lightSecondaryContainer: { backgroundColor: "transparent" },
+    lightSecondaryTitle: { color: colors.live },
+
+    greySecondaryContainer: { backgroundColor: "transparent" },
+    greySecondaryTitle: { color: colors.grey },
+
+    darkSecondaryContainer: { backgroundColor: "transparent" },
+    darkSecondaryTitle: { color: colors.smoke },
+    darkSecondaryOutlineBorder: { borderColor: colors.smoke },
+
+    tertiaryContainer: { backgroundColor: "transparent" },
+    tertiaryTitle: { color: colors.live },
+    tertiaryOutlineBorder: { borderColor: colors.live },
+
+    alertContainer: { backgroundColor: colors.alert },
+    alertTitle: { color: "white" },
+
+    disabledContainer: { backgroundColor: colors.lightFog },
+    disabledTitle: { color: colors.grey },
+  };
+
+  const isDisabled = disabled || !onPress || spinnerOn;
+
+  const needsBorder =
+    (type === "secondary" || type === "tertiary" || type === "darkSecondary") &&
+    !isDisabled &&
+    outline;
+
+  const mainContainerStyle = [
+    styles.container,
+    isDisabled ? theme.disabledContainer : theme[`${type}Container`],
+    containerStyle,
+  ];
+
+  const borderStyle = [styles.outlineBorder, theme[`${type}OutlineBorder`]];
+
+  const textStyle = [
+    styles.title,
+    titleStyle,
+    isDisabled ? theme.disabledTitle : theme[`${type}Title`],
+  ];
+
+  const iconColor = isDisabled
+    ? theme.disabledTitle.color
+    : (theme[`${type}Title`] || {}).color;
+
+  const titleSliderOffset = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -ANIM_OFFSET],
+  });
+
+  const titleOpacity = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0],
+  });
+
+  const spinnerSliderOffset = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [ANIM_OFFSET, 0],
+  });
+
+  const titleSliderStyle = [
+    styles.slider,
+    {
+      opacity: titleOpacity,
+      transform: [{ translateY: titleSliderOffset }],
+    },
+  ];
+
+  const spinnerSliderStyle = [
+    styles.spinnerSlider,
+    {
+      opacity: anim,
+      transform: [{ translateY: spinnerSliderOffset }],
+    },
+  ];
+
+  const Container = useTouchable
+    ? disabled
+      ? View
+      : TouchableOpacity
+    : RectButton;
+  const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
+
+  return (
+    // $FlowFixMe
+    <Container
+      onPress={isDisabled ? undefined : onPressHandler}
+      style={mainContainerStyle}
+      {...containerSpecificProps}
+      {...otherProps}
+    >
+      {needsBorder ? <View style={borderStyle} /> : null}
+
+      <Animated.View style={titleSliderStyle}>
+        {IconLeft ? (
+          <View style={{ paddingRight: title ? 10 : null }}>
+            <IconLeft size={16} color={iconColor} />
+          </View>
+        ) : null}
+
+        {title ? (
+          <LText secondary numberOfLines={1} semiBold style={textStyle}>
+            {title}
+          </LText>
+        ) : null}
+
+        {IconRight ? (
+          <View style={{ paddingLeft: title ? 10 : null }}>
+            <IconRight size={16} color={iconColor} />
+          </View>
+        ) : null}
+      </Animated.View>
+
+      <Animated.View style={spinnerSliderStyle}>
+        <ActivityIndicator color={theme.disabledTitle.color} />
+      </Animated.View>
+    </Container>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -346,4 +317,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ButtonWrapped;
+export default memo<Props>(ButtonWrapped);

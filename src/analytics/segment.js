@@ -23,6 +23,8 @@ const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion ||
   ""} (${VersionNumber.buildVersion || ""})`;
 
+const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
+
 const extraProperties = store => {
   const state: State = store.getState();
   const { localeIdentifier, preferredLanguages } = Locale.constants();
@@ -56,8 +58,6 @@ const context = {
 };
 
 let storeInstance; // is the redux store. it's also used as a flag to know if analytics is on or off.
-
-const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
 const token = __DEV__ ? null : ANALYTICS_TOKEN;
 

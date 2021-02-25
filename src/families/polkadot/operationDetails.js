@@ -310,21 +310,6 @@ const AmountCell = ({
     </>
   ) : null;
 
-const TransferAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(
-    operation.extra ? operation.extra.transferAmount : 0,
-  );
-
-  return (
-    <AmountCell
-      amount={amount}
-      operation={operation}
-      currency={currency}
-      unit={unit}
-    />
-  );
-};
-
 const BondAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = new BigNumber(
     operation.extra ? operation.extra.bondedAmount : 0,
@@ -420,7 +405,6 @@ const styles = StyleSheet.create({
 });
 
 const amountCell = {
-  OUT: TransferAmountCell,
   BOND: BondAmountCell,
   UNBOND: UnbondAmountCell,
   NOMINATE: NominateAmountCell,

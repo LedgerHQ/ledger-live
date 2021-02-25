@@ -1,6 +1,6 @@
 /* @flow */
 import React, { useCallback, useState } from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -8,6 +8,7 @@ import { themeSelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
 import BottomModal from "../../../components/BottomModal";
+import Touchable from "../../../components/Touchable";
 import { setTheme } from "../../../actions/settings";
 import Check from "../../../icons/Check";
 
@@ -25,7 +26,6 @@ export default function ThemeSettingsRow() {
   return (
     <>
       <SettingsRow
-        event="ThemeSettingsRow"
         title={<Trans i18nKey="settings.display.theme" />}
         desc={<Trans i18nKey="settings.display.themeDesc" />}
         arrowRight
@@ -39,7 +39,9 @@ export default function ThemeSettingsRow() {
       <BottomModal isOpened={isOpen} onClose={onClose}>
         <View style={styles.modal}>
           {["light", "dusk", "dark"].map((t, i) => (
-            <TouchableOpacity
+            <Touchable
+              event="ThemeSettingsRow"
+              eventProperties={{ theme: t }}
               key={t + i}
               onPress={selectTheme(t)}
               style={[styles.button]}
@@ -51,7 +53,7 @@ export default function ThemeSettingsRow() {
                 {t}
               </LText>
               {theme === t && <Check size={16} color={colors.live} />}
-            </TouchableOpacity>
+            </Touchable>
           ))}
         </View>
       </BottomModal>

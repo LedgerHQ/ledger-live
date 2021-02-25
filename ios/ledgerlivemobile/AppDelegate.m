@@ -47,6 +47,49 @@ static void InitializeFlipper(UIApplication *application) {
   return YES;
 }
 
+- (void) showOverlay{
+  UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
+  UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+  UIImageView *logoView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Blurry"]];
+  logoView.contentMode = UIViewContentModeScaleAspectFit;
+  blurEffectView.frame = [self.window bounds];
+  blurEffectView.tag = 12345;
+  logoView.tag = 12346;
+
+  blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  [self.window addSubview:blurEffectView];
+  [self.window addSubview:logoView];
+  [self.window bringSubviewToFront:logoView];
+
+  [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisHorizontal];
+  [logoView setContentHuggingPriority:251 forAxis:UILayoutConstraintAxisVertical];
+  logoView.frame = CGRectMake(0, 0, 128, 128);
+
+  logoView.center = CGPointMake(self.window.frame.size.width  / 2,self.window.frame.size.height / 2);
+}
+
+- (void) hideOverlay{
+  UIView *blurEffectView = [self.window viewWithTag:12345];
+  UIView *logoView = [self.window viewWithTag:12346];
+
+  [UIView animateWithDuration:0.5 animations:^{
+    blurEffectView.alpha = 0;
+    logoView.alpha = 0;
+  } completion:^(BOOL finished) {
+    // remove when finished fading
+    [blurEffectView removeFromSuperview];
+    [logoView removeFromSuperview];
+  }];
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+  [self hideOverlay];
+}
+
+- (void)applicationDidEnterBackground:(UIApplication *)application {
+  [self showOverlay];
+}
+
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG

@@ -2,10 +2,21 @@
 import { useEffect, useState, useCallback } from "react";
 import AsyncStorage from "@react-native-community/async-storage";
 
-const rawURL =
-  "https://raw.githubusercontent.com/LedgerHQ/ledger-live-mobile/master/TERMS.md";
 export const url =
   "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.md";
+
+const termsUrlLocalized = {
+  en:
+    "https://raw.githubusercontent.com/LedgerHQ/ledger-live-mobile/master/TERMS.md",
+  fr:
+    "https://raw.githubusercontent.com/LedgerHQ/ledger-live-mobile/master/TERMS.fr.md",
+  es:
+    "https://raw.githubusercontent.com/LedgerHQ/ledger-live-mobile/master/TERMS.es.md",
+  zh:
+    "https://raw.githubusercontent.com/LedgerHQ/ledger-live-mobile/master/TERMS.zh.md",
+  ru:
+    "https://raw.githubusercontent.com/LedgerHQ/ledger-live-mobile/master/TERMS.ru.md",
+};
 
 const currentTermsRequired = "2019-12-04";
 const currentLendingTermsRequired = "2020-11-10";
@@ -35,17 +46,21 @@ export async function acceptLendingTerms() {
   );
 }
 
-export async function load() {
-  const r = await fetch(rawURL);
+export async function load(locale: string) {
+  const url = termsUrlLocalized[locale] || termsUrlLocalized.en;
+  const r = await fetch(url);
+  if (r.status >= 400 && r.status < 600) {
+    throw new Error("");
+  }
   const markdown = await r.text();
   return markdown;
 }
 
-export const useTerms = () => {
+export const useTerms = (locale: string) => {
   const [terms, setTerms] = useState(null);
   const [error, setError] = useState(null);
 
-  const loadTerms = () => load().then(setTerms, setError);
+  const loadTerms = () => load(locale).then(setTerms, setError);
 
   useEffect(() => {
     loadTerms();

@@ -4,7 +4,7 @@ import {
   SafeAreaView,
   View,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Platform,
   ScrollView,
   Linking,
@@ -63,9 +63,13 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
     <SafeAreaView style={[styles.root, { backgroundColor: primaryColor }]}>
       <View style={[styles.header]}>
         <View style={styles.topHeader}>
-          <Pressable hitSlop={hitSlop} style={styles.buttons} onPress={close}>
+          <TouchableOpacity
+            hitSlop={hitSlop}
+            style={styles.buttons}
+            onPress={close}
+          >
             <Close size={18} color={textColor} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
       <ScrollView style={styles.root}>
@@ -82,7 +86,7 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
               </LText>
             )}
             {link && (
-              <Pressable
+              <TouchableOpacity
                 style={styles.desc}
                 onPress={() => {
                   Linking.canOpenURL(link.url) && Linking.openURL(link.url);
@@ -91,7 +95,7 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                 <LText semiBold style={[styles.link, { color: colors.live }]}>
                   {link.label}
                 </LText>
-              </Pressable>
+              </TouchableOpacity>
             )}
             {bullets && (
               <View style={styles.bulletContainer}>
@@ -132,11 +136,13 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                             {title}
                           </LText>
                         )}
-                        <LText style={[styles.label, { color: textColor }]}>
+                        <LText
+                          style={[styles.bulletLabel, { color: textColor }]}
+                        >
                           {label}
                         </LText>
                         {bulletLink && (
-                          <Pressable
+                          <TouchableOpacity
                             onPress={() => {
                               Linking.canOpenURL(bulletLink.url) &&
                                 Linking.openURL(bulletLink.url);
@@ -148,7 +154,7 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
                             >
                               {bulletLink.label}
                             </LText>
-                          </Pressable>
+                          </TouchableOpacity>
                         )}
                       </View>
                     </View>
@@ -229,6 +235,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  bulletLabel: { fontSize: 13, lineHeight: 16 },
   link: {
     fontSize: 13,
     marginTop: 16,

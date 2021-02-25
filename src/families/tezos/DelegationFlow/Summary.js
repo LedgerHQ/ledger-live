@@ -381,6 +381,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           containerStyle={styles.continueButton}
           onPress={onContinue}
           disabled={bridgePending || !!bridgeError}
+          pending={bridgePending}
         />
       </View>
     </SafeAreaView>

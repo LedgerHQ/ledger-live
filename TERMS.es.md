@@ -2,11 +2,11 @@
 
 _10 de diciembre de 2019_
 
-Estás a punto de utilizar la plataforma Ledger Live. ¡Nos alegramos por ti! Antes de empezar, es necesario que leas atentamente, entiendas y aceptes nuestras condiciones de uso (las o estas &quot;Condiciones de uso&quot;).
+Estás a punto de utilizar la plataforma Ledger Live. ¡Nos alegramos por ti! Antes de empezar, es necesario que leas atentamente, entiendas y aceptes nuestras condiciones de uso (las o estas "Condiciones de uso").
 
 Preámbulo
 
-Este acuerdo se celebra entre el usuario (el &quot;Usuario&quot; o &quot;tú&quot;) y Ledger SAS (&quot;Ledger&quot;, &quot;nosotros&quot; o la &quot;Sociedad&quot;). Al usar cualquiera de los servicios prestados por Ledger o sus filiales en relación con el software Ledger Live (los &quot;Servicios de Ledger&quot;) o hacer clic en &quot;Acepto&quot; para cualquiera de dichos servicios, el Usuario reconoce haber leído atentamente y aceptar en su totalidad las condiciones de uso que se exponen a continuación.
+Este acuerdo se celebra entre el usuario (el "Usuario" o "tú") y Ledger SAS ("Ledger", "nosotros" o la "Sociedad"). Al usar cualquiera de los servicios prestados por Ledger o sus filiales en relación con el software Ledger Live (los "Servicios de Ledger") o hacer clic en "Acepto" para cualquiera de dichos servicios, el Usuario reconoce haber leído atentamente y aceptar en su totalidad las condiciones de uso que se exponen a continuación.
 
 El uso de los Servicios de Ledger también está sujeto a su Política de privacidad, disponible en [**https://shop.ledger.com/pages/privacy-policy**](https://shop.ledger.com/pages/privacy-policy).
 
@@ -16,43 +16,43 @@ Definiciones
 
 Los términos siguientes tienen en este acuerdo el significado que se indica a continuación, quedando entendido, para evitar cualquier confusión, que en dichas definiciones el singular incluye el plural y viceversa, excepto si es manifiestamente impropio.
 
-&quot; **Criptoa\*\*** ctivos\*\*
+" **Criptoa\*\*** ctivos\*\*
 significa cualquier tipo de activo digital que puede transmitirse mediante tecnologías blockchain, como Bitcoin, Ethereum, Ripple, entre otros.
 
-&quot; **Aplicación de dispositivo&quot;**
+" **Aplicación de dispositivo"**
 hace referencia a una aplicación de software desarrollada por Ledger o por un tercero que incorpora una clave de firma criptográfica específica en el sistema operativo BOLOS, de Ledger, para crear una transacción en Ledger Live o en una aplicación de terceros, y permite firmar diferentes operaciones con un Dispositivo Ledger, en particular: transmisión de transacciones con criptoactivos, autenticación, gestión de contraseñas.
 
-&quot; **Bifurcación**&quot;
+" **Bifurcación**"
 hace referencia a un cambio del protocolo subyacente de una red blockchain que lleva a varias versiones de un Criptoactivo, lo que puede dar lugar a una o varias versiones que ya no son compatibles con los Servicios de Ledger.
 
-&quot; **Dispositivo Ledger&quot;**
-es un dispositivo electrónico desarrollado y distribuido por Ledger, generalmente conocido como &quot;cartera hardware&quot; y utilizado para gestionar y aportar seguridad a las Claves privadas de los Usuarios y demás secretos criptográficos, compatible con Ledger Live o con Carteras compatibles.
+" **Dispositivo Ledger"**
+es un dispositivo electrónico desarrollado y distribuido por Ledger, generalmente conocido como "cartera hardware" y utilizado para gestionar y aportar seguridad a las Claves privadas de los Usuarios y demás secretos criptográficos, compatible con Ledger Live o con Carteras compatibles.
 
-&quot; **Gestor Ledger Live&quot;**
+" **Gestor Ledger Live"**
 es un catálogo de Aplicaciones de dispositivo que se pueden descargar y permiten a los Usuarios actualizar el microprograma de su Dispositivo Ledger, instalar Aplicaciones de dispositivo y gestionar Criptoactivos compatibles.
 
-&quot; **Contenidos&quot;**
+" **Contenidos"**
 hace referencia a los contenidos, a la documentación del Servicio de Ledger, así como a los códigos fuente y códigos objeto de todos los programas integrados en Ledger Live y los Dispositivos Ledger.
 
-&quot; **PIN&quot;**
+" **PIN"**
 es el número de identificación personal escogido por el Usuario para abrir un Dispositivo Ledger.
 
-&quot; **Clave privada&quot;**
+" **Clave privada"**
 hace referencia a un conjunto crítico de datos que sirve para autorizar las transacciones salientes en las redes blockchain.
 
-&quot; **Servicios&quot; **
+" **Servicios" **
 hace referencia a uno o varios Servicios de Ledger o Servicios de terceros.
 
-&quot; **Servicios de terceros&quot;**
+" **Servicios de terceros"**
 hace referencia a aplicaciones, programas u otros Contenidos albergados, desarrollados o explotados por un tercero, como por ejemplo intercambios de criptomoneda o proveedores de servicios de staking.
 
-&quot; **Cartera&quot;**
+" **Cartera"**
 hace referencia a un programa que interactúa con varias redes blockchain para generar y gestionar conjuntos de claves privadas y públicas, configurar transacciones y controlar su saldo.
 
-&quot; **Sitio web&quot; **
+" **Sitio web" **
 hace referencia a los sitios web que son propiedad de Ledger o que Ledger explota, incluido el sitio web de comercio electrónico y corporativo hospedado en ledger.com.
 
-&quot; **Frase de recuperación de 24 palabras&quot;**
+" **Frase de recuperación de 24 palabras"**
 significa una combinación confidencial de palabras directamente legibles por una persona, generada por Dispositivos Ledger, de la cual derivan las Claves privadas de los Usuarios. Sirven para archivar y recuperar el acceso a los Criptoactivos en otros Dispositivos Ledger o en Carteras compatibles.
 
 Admisibilidad
@@ -184,11 +184,11 @@ Ledger respeta la propiedad intelectual de los terceros y pedimos lo mismo a nue
 
 Puedes ver, imprimir y descargar una copia de los Contenidos con derechos de propiedad de los Servicios de Ledger en un ordenador individual para tu uso personal, informacional o no comercial, siempre que respetes todos los derechos de autor y demás avisos de derechos de propiedad.
 
-Las marcas, marcas de servicio y logotipos de Ledger y otros utilizados en los Servicios (las &quot;Marcas&quot;) son propiedad de Ledger y de sus propietarios respectivos. Queda terminantemente prohibido utilizar las Marcas sin nuestro permiso expreso por escrito o el permiso expreso por escrito de terceros.
+Las marcas, marcas de servicio y logotipos de Ledger y otros utilizados en los Servicios (las "Marcas") son propiedad de Ledger y de sus propietarios respectivos. Queda terminantemente prohibido utilizar las Marcas sin nuestro permiso expreso por escrito o el permiso expreso por escrito de terceros.
 
 Observaciones
 
-Agradecemos las observaciones, comentarios, ideas y sugerencias para mejorar los Servicios (las &quot;Observaciones&quot;). Nos concedes una licencia no exclusiva, mundial, perpetua, irrevocable, pagada, sin regalías, con posibilidad de sublicencia, y transferible sobre cualquier derecho de propiedad intelectual que poseas o controles, para usar, copiar, modificar, crear obras derivadas y explotar de cualquier modo las Observaciones.
+Agradecemos las observaciones, comentarios, ideas y sugerencias para mejorar los Servicios (las "Observaciones"). Nos concedes una licencia no exclusiva, mundial, perpetua, irrevocable, pagada, sin regalías, con posibilidad de sublicencia, y transferible sobre cualquier derecho de propiedad intelectual que poseas o controles, para usar, copiar, modificar, crear obras derivadas y explotar de cualquier modo las Observaciones.
 
 Conformidad y control de exportaciones
 
@@ -212,7 +212,7 @@ Cumplimiento y cesión de estas Condiciones de uso
 
 Estas Condiciones de uso constituyen la totalidad y exclusividad del entendimiento y del acuerdo entre Ledger y el Usuario en relación con los Servicios de Ledger, y sustituyen cualquier entendimiento o acuerdo anterior, ya sea oral o por escrito, entre dichas partes relativo a los Servicios de Ledger. Para usar o seguir usando los Servicios de Ledger tienes que leer y aceptar en su totalidad estas Condiciones de uso.
 
-Nos reservamos el derecho de modificar, enmendar o cambiar estas Condiciones de uso en cualquier momento, a nuestra exclusiva discreción. Te avisaremos de dichos cambios mediante la publicación de las Condiciones de uso modificadas a través de Ledger Live y actualizando la fecha de la &quot;Última actualización&quot; en el encabezamiento de estas Condiciones de uso. Las Condiciones de uso modificadas serán efectivas en cuanto se publiquen en Ledger Live.
+Nos reservamos el derecho de modificar, enmendar o cambiar estas Condiciones de uso en cualquier momento, a nuestra exclusiva discreción. Te avisaremos de dichos cambios mediante la publicación de las Condiciones de uso modificadas a través de Ledger Live y actualizando la fecha de la "Última actualización" en el encabezamiento de estas Condiciones de uso. Las Condiciones de uso modificadas serán efectivas en cuanto se publiquen en Ledger Live.
 
 No puedes ceder tus derechos y obligaciones en virtud de estas Condiciones de uso, en su totalidad o en parte, a un tercero.
 

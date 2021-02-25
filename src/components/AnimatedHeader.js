@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Platform,
   SafeAreaView,
-  Pressable,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
@@ -36,13 +36,13 @@ const BackButton = ({
   navigation: *,
   action?: () => void,
 }) => (
-  <Pressable
+  <TouchableOpacity
     hitSlop={hitSlop}
     style={styles.buttons}
     onPress={() => (action ? action() : navigation.goBack())}
   >
     <ArrowLeft size={18} color={colors.darkBlue} />
-  </Pressable>
+  </TouchableOpacity>
 );
 
 const CloseButton = ({
@@ -54,13 +54,13 @@ const CloseButton = ({
   navigation: *,
   action?: () => void,
 }) => (
-  <Pressable
+  <TouchableOpacity
     hitSlop={hitSlop}
     onPress={() => (action ? action() : navigation.popToTop())}
     style={styles.buttons}
   >
     <Close size={18} color={colors.darkBlue} />
-  </Pressable>
+  </TouchableOpacity>
 );
 
 type Props = {

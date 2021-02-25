@@ -69,7 +69,8 @@ function Item({
           style={[styles.nameText, isDisabled ? styles.disabledText : {}]}
           numberOfLines={1}
         >
-          {rank}. {name || validatorAddress}
+          {rank < 0 ? "" : `${rank} .`}
+          {name || validatorAddress}
         </LText>
 
         <LText style={styles.subText} color="grey" numberOfLines={1}>

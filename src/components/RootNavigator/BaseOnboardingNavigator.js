@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { Pressable } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { ScreenName, NavigatorName } from "../../const";
 import PairDevices from "../../screens/PairDevices";
 import EditDeviceName from "../../screens/EditDeviceName";
@@ -22,7 +22,8 @@ const hitSlop = {
   top: 10,
 };
 
-export const ErrorHeaderInfo = ({ route, navigation, colors }: *) => {
+export const ErrorHeaderInfo = ({ route, navigation }: *) => {
+  const { colors } = useTheme();
   const openInfoModal = useCallback(() => {
     navigation.navigate(ScreenName.OnboardingInfoModal, {
       sceneInfoKey: "pairNewErrorInfoModalProps",
@@ -30,13 +31,13 @@ export const ErrorHeaderInfo = ({ route, navigation, colors }: *) => {
   }, [navigation]);
 
   return route.params.hasError ? (
-    <Pressable
+    <TouchableOpacity
       style={{ marginRight: 24 }}
       hitSlop={hitSlop}
       onPress={openInfoModal}
     >
       <Question size={20} color={colors.grey} />
-    </Pressable>
+    </TouchableOpacity>
   ) : null;
 };
 
@@ -69,11 +70,7 @@ export default function BaseOnboardingNavigator() {
         options={({ navigation, route }) => ({
           title: null,
           headerRight: () => (
-            <ErrorHeaderInfo
-              route={route}
-              navigation={navigation}
-              colors={colors}
-            />
+            <ErrorHeaderInfo route={route} navigation={navigation} />
           ),
           headerShown: true,
           headerStyle: styles.headerNoShadow,
