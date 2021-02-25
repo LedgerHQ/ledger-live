@@ -381,7 +381,7 @@
     },
     "SyncError": {
       "title": "Synchronization error",
-      "description": "Some accounts could not be synchronized. Please consult our article on synchronization errors."
+      "description": "Some accounts could not be synchronized."
     },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
@@ -529,31 +529,31 @@
       "description": "You must confirm the swap before the timer runs out. The exchange rate remains valid for a fixed duration."
     },
     "PolkadotElectionClosed": {
-      "title": "L'élection des validateurs doit être clôturée"
+      "title": "Validators election must be closed"
     },
     "PolkadotNotValidator": {
-      "title": "Certaines adresses selectionnées ne sont pas des validateurs"
+      "title": "Some selected addresses are not validators"
     },
     "PolkadotLowBondedBalance": {
-      "title": "Tous les actifs liés seront déliés si < 1 DOT"
+      "title": "All bonded assets will be unbonded if < 1 DOT"
     },
     "PolkadotNoUnlockedBalance": {
-      "title": "Vous n'avez aucun actif délié"
+      "title": "You have no unbonded assets"
     },
     "PolkadotNoNominations": {
-      "title": "Vous n'avez nominé aucun validateur"
+      "title": "You have no nominations"
     },
     "PolkadotBondAllFundsWarning": {
-      "title": "Vous n'aurez plus de fonds disponibles pour de futures transactions"
+      "title": "You will not have available balance for future transactions"
     },
     "PolkadotBondMinimumAmount": {
-      "title": "Vous devez lier au moins 1 DOT"
+      "title": "You must bond at least 1 DOT"
     },
     "PolkadotMaxUnbonding": {
-      "title": "Vous avez dépassé la limite pour délier"
+      "title": "You have exceeded the unbond limit"
     },
     "PolkadotValidatorsRequired": {
-      "title": "Vous devez selectionner au moins 1 validateur"
+      "title": "You must select at least one validator"
     },
     "generic": {
       "title": "{{message}}",
@@ -998,7 +998,7 @@
           },
           "1": {
             "title": "Sélectionnez la longueur de votre phrase de récupération",
-            "label": "Votre phrase de récupération peut comporter 12, 18 ou 24 mots. Vous devez entrer tous les mots pour accéder à vos cryptomonnaies."
+            "label": "Your recovery phrase can have 12, 18 or 24 words. You must enter all words to access your crypto."
           },
           "2": {
             "title": "Saisir le mot n°1...",
@@ -1278,13 +1278,13 @@
       "SUPPLY": "Deposited",
       "REDEEM": "Withdrawn",
       "APPROVE": "Enabled",
-      "BOND": "Lié",
-      "UNBOND": "Délié",
-      "REWARD_PAYOUT": "Récompense",
-      "SLASH": "Sabrage",
-      "WITHDRAW_UNBONDED": "Retrait",
+      "BOND": "Bond",
+      "UNBOND": "Unbond",
+      "REWARD_PAYOUT": "Reward",
+      "SLASH": "Slash",
+      "WITHDRAW_UNBONDED": "Unbonded Withdrawal",
       "NOMINATE": "Nomination",
-      "CHILL": "Fin de nomination"
+      "CHILL": "Clear nominations"
     }
   },
   "operationDetails": {
@@ -1319,8 +1319,8 @@
       "unfreezeAmount": "Unfreeze amount",
       "address": "Address",
       "votes": "Votes ({{number}})",
-      "votesAddress": "<0>{{votes}}</0> to <0>{{name}}</0>",
-      "validators": "Validateurs",
+      "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
+      "validators": "Validators",
       "delegated": "Delegated ({{amount}})",
       "delegatedTo": "Delegated to",
       "delegatedAmount": "Delegated amount",
@@ -1336,12 +1336,12 @@
       "memo": "Memo",
       "assetId": "Asset ID",
       "rewards": "Earned rewards",
-      "bondedAmount": "Montant lié",
-      "unbondedAmount": "Montant délié",
-      "withdrawUnbondedAmount": "Montant délié récupéré",
-      "palletMethod": "Méthode",
-      "transferAmount": "Montant transféré",
-      "validatorsCount": "Validateurs ({{number}})"
+      "bondedAmount": "Bonded Amount",
+      "unbondedAmount": "Unbonded Amount",
+      "withdrawUnbondedAmount": "Withdraw Unbonded Amount",
+      "palletMethod": "Method",
+      "transferAmount": "Transfer Amount",
+      "validatorsCount": "Validators ({{number}})"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -3026,214 +3026,216 @@
     }
   },
   "polkadot": {
-    "lockedBalance": "Actifs liés au staking",
-    "unlockingBalance": "Actifs en cours de débloquage",
-    "unlockedBalance": "Actifs déliés",
+    "lockedBalance": "Bonded balance",
+    "unlockingBalance": "Unbonding balance",
+    "unlockedBalance": "Unbonded balance",
     "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
     "info": {
       "available": {
-        "title": "DOT disponibles",
-        "description": "Ce montant est disponible."
+        "title": "DOT available",
+        "description": "This amount can be sent anytime."
       },
       "locked": {
-        "title": "Actifs liés",
-        "description": "Les actifs liés peuvent être utilisés pour obtenir des récompenses en nominant des validateurs."
+        "title": "Bonded assets",
+        "description": "Assets must be bonded to nominated validators before earning rewards."
       },
       "unlocking": {
-        "title": "Actifs en cours de débloquage",
-        "description": "Les actifs déliés restent verrouillés pendant 28 jours avant d'être disponibles."
+        "title": "Unbonding assets",
+        "description": "Unbonding assets stay locked for 28 days before they can be withdrawn."
       },
       "unlocked": {
-        "title": "Actifs déliés",
-        "description": "Des actifs déliés peuvent maintenant être récupérés via une transaction."
+        "title": "Unbonded assets",
+        "description": "Unbonded assets can now be moved using the withdraw operation."
       },
       "electionOpen": {
-        "title": "Élection des validateurs en cours",
-        "description": "De nouveaux validateurs sont en cours d'élection. Pendant cette phase toutes les opérations de Staking sont indisponibles pendant 15 minutes au plus."
+        "title": "Validators election ongoing",
+        "description": "The election of new validators is currently ongoing. As such, staking operations are not available for 15 minutes at most."
       }
     },
     "nomination": {
       "emptyState": {
-        "title": "Obtenez des récompenses",
-        "description": "Vous pouvez gagner des récompenses DOT en liant vos actifs et en nommant des validateurs.",
-        "info": "Comment fonctionne la nomination",
-        "cta": "Obtenez des récompenses"
+        "title": "Earn rewards",
+        "description": "You can earn rewards by bonding assets and then nominating your validator(s).",
+        "info": "How nominations work",
+        "cta": "Earn rewards"
       },
       "header": "Nominations",
-      "nominate": "Nominer",
-      "chill": "Ne plus nominer",
-      "status": "Statut",
-      "totalStake": "Participation totale",
-      "amount": "Montant lié",
+      "nominate": "Nominate",
+      "chill": "Clear nominations",
+      "status": "Status",
+      "totalStake": "Total Stake",
+      "amount": "Bonded Amount",
       "commission": "Commission",
-      "active": "Actif",
-      "activeInfo": "Ce validateur a été élu et collecte des récompenses grâce à une partie de vos actifs liés.",
-      "inactive": "Inactif",
-      "inactiveInfo": "Ce validateur a été élu mais ne collecte aucune récompense grâce à vos actifs liés.",
-      "waiting": "Non élu",
-      "waitingInfo": "Ce validateur n'a pas été élu et ne collecte donc aucune récompense.",
-      "notValidator": "Non validateur",
-      "notValidatorInfo": "Cette addresse a cessé d'être validateur",
-      "elected": "Élu",
-      "electedInfo": "Ce validateur a été élu et collecte des récompenses pour ses nomminateurs.",
-      "nominators": "Nominateurs",
-      "nominatorsCount": "{{nominatorsCount}} nominateurs",
-      "nominatorsInfo": "Ce validateur a {{count}} nominateurs récompensés pour cette ère",
-      "oversubscribed": "Sursouscrit ({{nominatorsCount}})",
-      "oversubscribedInfo": "Seuls les {{maxNominatorRewardedPerValidator}} nominateurs avec les montants les plus élevés seront récompensés",
-      "hasPendingBondOperation": "Une liaison d'actifs est en attente de confirmation",
-      "externalControllerUnsupported": "<0>Ce compte est contrôlé par un autre compte ayant l'adresse <0><0>{{address}}</0></0></0><1>Les opérations de Staking sur un compte de réserve externe n'est pas supporté par Ledger Live. Merci d'utiliser un porte-feuille alternatif tel que Polkadot.js.</1>",
-      "externalStashUnsupported": "<0>Ce compte contrôle un autre compte de réserve ayant l'adresse <0><0>{{address}}</0></0></0><1>Les opérations de Staking sur un compte de réserve externe n'est pas supporté par Ledger Live. Merci d'utiliser un porte-feuille alternatif tel que Polkadot.js.</1>",
-      "showInactiveNominations": "Afficher les nominations inactives ({{count}})",
-      "hideInactiveNominations": "Masquer les nominations inactives",
-      "noActiveNominations": "Il n'y a aucune nomination active",
-      "showAllUnlockings": "Tout afficher ({{count}})",
-      "hideAllUnlockings": "Masquer"
+      "active": "Active",
+      "activeInfo": "This validator is elected and is collecting rewards on your bonded assets.",
+      "inactive": "Inactive",
+      "inactiveInfo": "This validator is elected but is not collecting rewards on your bonded assets.",
+      "waiting": "Unelected",
+      "waitingInfo": "This validator is not elected, therefore is not collecting rewards.",
+      "notValidator": "Not a validator",
+      "notValidatorInfo": "This address is no longer a validator",
+      "elected": "Elected",
+      "electedInfo": "This validator is elected and is collecting rewards for its nominators.",
+      "nominators": "Nominators",
+      "nominatorsCount": "{{nominatorsCount}} nominators",
+      "nominatorsInfo": "This validator is currently elected by {{count}} nominators.",
+      "oversubscribed": "Oversubscribed ({{nominatorsCount}})",
+      "oversubscribedInfo": "Only the top {{maxNominatorRewardedPerValidator}} nominators with the highest bonded amount earn rewards",
+      "hasPendingBondOperation": "A bond operation is still pending confirmation",
+      "externalControllerUnsupported": "<0>This stash account is controlled by another account with the address <0><0>{{address}}</0></0></0><1>Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js</1>",
+      "externalStashUnsupported": "<0>This account controls a stash account whose address is <0><0>{{address}}</0></0></0><1>Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js</1>",
+      "showInactiveNominations": "Show all nominations ({{count}})",
+      "hideInactiveNominations": "Show active nominations only",
+      "noActiveNominations": "There are no active nominations.",
+      "showAllUnlockings": "Show all unbonding amounts ({{count}})",
+      "hideAllUnlockings": "Hide unbonding amounts"
     },
     "unlockings": {
-      "header": "Actifs en débloquage",
-      "withdrawUnbonded": "Récupérer",
-      "rebond": "Lier à nouveau"
+      "header": "Unbonding",
+      "withdrawUnbonded": "Withdraw Unbonded",
+      "rebond": "Rebond"
     },
     "manage": {
-      "title": "Gérer les actifs",
+      "title": "Manage assets",
       "bond": {
-        "title": "Lier",
-        "description": "Verrouillez les actifs pour participer à la nomination de validateurs et gagner des récompenses."
+        "title": "Bond",
+        "description": "To earn rewards, first bond an amount. Then you must nominate your validator(s)."
       },
       "unbond": {
-        "title": "Délier",
-        "description": "Déverrouillez vos DOT pour les retrouver dans votre solde disponible. Vous ne gagnerez plus de récompenses grâce à ces actifs."
+        "title": "Unbond",
+        "description": "To make a bonded amount available again, first you need to unbond it. You can withdraw it after the 28-day unbonding period."
       },
       "withdrawUnbonded": {
-        "title": "Récupérer actifs déliés",
-        "description": "Transferez vos actifs déliés vers votre solde disponible après une période de vérrouillage de 28 jours."
+        "title": "Withdraw Unbonded",
+        "description": "To retrieve an unbonded amount back to the available balance, you need to withdraw it manually."
       },
       "nominate": {
-        "title": "Nominer",
-        "description": "Choississez jusqu'à 16 validateurs à élire et générer des récompenses."
+        "title": "Nominate",
+        "description": "Choose up to 16 validators. Ensure nominations are Active to earn rewards."
       },
       "chill": {
-        "title": "Ne plus nominer",
-        "description": "Arrêtez de nominer des validateurs et cessez d'en recevoir des récompenses."
+        "title": "Clear nominations",
+        "description": "Remove all nominations. You will stop earning rewards. Your bonded amount remains bonded."
       }
     },
     "nominate": {
       "stepperHeader": {
-        "validators": "Validateurs à nominer",
-        "selectDevice": "Selectionnez votre appareil",
-        "connectDevice": "Connectez votre appareil",
-        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}",
-        "notValidatorsRemoved": "Vous avez {{count}} adresses nominées qui ne sont plus des validateurs. Elles seront automatiquement supprimées de votre transaction de nomination."
+        "validators": "Validators to nominate",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
         "validators": {
-          "myNominations": "Mes nominations",
-          "electedValidators": "Validateurs élus",
-          "waitingValidators": "Validateurs non élus",
-          "noResultsFound": "Aucun validateur trouvé correspondant à <0>{{search}}</0>",
-          "selected": "{{selected}} sur {{total}} selectionnés",
-          "notValidatorsRemoved": "Vous avez {{count}} adresses nominées qui ne sont plus des validateurs. Elles seront automatiquement supprimées de votre transaction de nomination.",
-          "maybeChill": "Ne plus nominer plutôt"
+          "myNominations": "My nominations",
+          "electedValidators": "Elected validators",
+          "waitingValidators": "Unelected validators",
+          "noResultsFound": "No validators found for <0>{{search}}</0>",
+          "selected": "{{selected}} out of {{total}} selected",
+          "notValidatorsRemoved": "You have nominated {{count}} addresses who are no longer validators. They will automatically be removed from your nominate transaction.",
+          "maybeChill": "Clear nominations instead"
         },
         "validation": {
           "success": {
-            "title": "Validateurs nominés",
-            "description": "Vous toucherez des récompenses quand vos validateurs seront élus et qu'une partie de vos actifs liés leur sera affectée."
+            "title": "You have successfully nominated validators",
+            "description": "You will start earning rewards when your assets are bonded to your elected validator(s)."
           }
         }
       }
     },
     "bond": {
       "rewardDestination": {
-        "label": "Destination des récompenses",
-        "stash": "Balance disponible",
-        "stashDescription": "Les récompenses seront versées sur le compte actuel en tant que balance disponible.",
-        "staked": "Balance liée",
-        "stakedDescription": "Les récompenses seront versées sur le compte actuel en tant que balance liée au staking."
+        "label": "Reward Destination",
+        "stash": "Available balance",
+        "stashDescription": "Rewards are credited to your available balance.",
+        "staked": "Bonded balance",
+        "stakedDescription": "Rewards are credited to your bonded balance for compound earning.",
+        "optionTitle": "Note",
+        "optionDescription": "Once set, the option is fixed for the lifetime of this bond. If you change your mind, please read ",
+        "clickableLink": "here."
       },
       "stepperHeader": {
-        "starter": "Obtenez des récompenses",
-        "amount": "Montant à lier",
-        "selectDevice": "Selectionnez votre appareil",
-        "connectDevice": "Connectez votre appareil",
-        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+        "starter": "Earn rewards",
+        "amount": "Amount to bond",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
         "starter": {
-          "description": "Vous pouvez obtenir des récompenses en liant vos DOT puis en nommant des validateurs.",
+          "description": "You may earn rewards by bonding your assets and then nominate your validators.",
           "bullet": [
-            "Vous gardez la propriété des actifs liés",
-            "Nominez avec votre appareil Ledger",
-            "Les actifs seront disponibles 28 jours après avoir délié vos actifs."
+            "You keep ownership of bonded assets",
+            "Nominate using your Ledger device",
+            "Assets will be available again, 28 days after unbonding"
           ],
-          "help": "Comment fonctionne la nomination",
-          "warning": "Choisissez vos validateurs judicieusement: Une partie de vos actifs liés peut être perdue si un validateur ne se comporte pas correctement."
+          "help": "How nominations work",
+          "warning": "Choose your validators wisely: part of your bonded assets may be irrevocably lost if a validator does not behave appropriately."
         },
         "amount": {
-          "availableLabel": "Disponible",
-          "maxLabel": "Lier Max"
+          "availableLabel": "Available",
+          "maxLabel": "Max"
         },
         "confirm": {
-          "info": "Une fois les actifs liés ils peuvent être déliés à n'importe quel moment, mais seront bloqués pendant une période de 28 jours."
+          "info": "Bonded assets can be unbonded at any time, but unbonding takes 28 days."
         },
         "validation": {
           "success": {
-            "title": "Actifs liés",
-            "description": "Le solde de votre compte sera actualisé dès que le réseau aura confirmé la transaction.",
-            "descriptionNominate": "Vous pourrez nominer des validateurs une fois que le réseau aura confirmé votre transaction.",
-            "nominate": "Nominer",
-            "later": "Nominer plus tard"
+            "title": "Assets successfully bonded",
+            "description": "You can nominate validators once the network has confirmed the transaction.",
+            "descriptionNominate": "You will be able to nominate validators once the network has confirmed your transaction.",
+            "nominate": "Nominate",
+            "later": "Nominate later"
           },
           "pending": {
-            "title": "Transaction en cours de confirmation",
-            "description": "Vous devez attendre un petit moment avant de pouvoir nominer."
+            "title": "Transaction awaiting confirmation",
+            "description": "You have to wait a moment before nominating"
           }
         }
       }
     },
     "rebond": {
       "stepperHeader": {
-        "amount": "Montant à relier",
-        "selectDevice": "Selectionnez votre appareil",
-        "connectDevice": "Connectez votre appareil",
-        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+        "amount": "Amount to rebond",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
         "amount": {
-          "availableLabel": "En débloquage",
-          "maxLabel": "Relier Max"
+          "availableLabel": "Unbonding",
+          "maxLabel": "Max"
         },
         "confirm": {
-          "info": "Les actifs reliés seront immédiatement ajoutés à la balance liée au staking."
+          "info": "Rebonded assets are immediately added to the bonded amount."
         },
         "validation": {
           "success": {
-            "title": "Actifs reliés",
-            "description": "Le solde de votre compte sera actualisé dès que le réseau aura confirmé la transaction."
+            "title": "Assets successfully rebonded",
+            "description": "Your account balance will update once the network has confirmed the transaction."
           }
         }
       }
     },
     "unbond": {
       "stepperHeader": {
-        "amount": "Montant à délier",
-        "selectDevice": "Selectionnez votre appareil",
-        "connectDevice": "Connectez votre appareil",
-        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+        "amount": "Amount to unbond",
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
         "amount": {
-          "availableLabel": "Débloquable",
-          "maxLabel": "Délier Max"
+          "availableLabel": "Bonded",
+          "maxLabel": "Max"
         },
         "confirm": {
-          "info": "Les actifs déliés pourront être récupérés après une période de 28 jours."
+          "info": "Unbonded assets can be withdrawn after the 28-day unbonding period."
         },
         "validation": {
           "success": {
-            "title": "Actifs déliés",
-            "description": "Ces actifs pourront être récupérés dans 28 jours."
+            "title": "Unbond transaction sent successfully",
+            "description": "Unbonded assets can be withdrawn after 28 days."
           }
         }
       }
@@ -3241,28 +3243,27 @@
     "simpleOperation": {
       "modes": {
         "withdrawUnbonded": {
-          "title": "Récupérer actifs",
-          "description": "Après une période de 28 jours vous pouvez récupérer vos actifs déliés.",
-          "info": "Vous récupérerez l'intégralité des actifs déliés dans votre solde disponible."
-
+          "title": "Withdraw unbonded",
+          "description": "After the 28-day unbonding period you can withdraw unbonded assets.",
+          "info": "You can then withdraw unbonded assets to your available balance."
         },
         "chill": {
-          "title": "Ne plus nominer",
-          "description": "Vous pouvez stopper la nomination de tous vos validateurs et arrêter de toucher des récompenses.",
-          "info": "Cependant, vos actifs liés resteront intacts et seront verrouillés pendant 28 jours si vous les déliez."
+          "title": "Clear nominations",
+          "description": "Clears all nominations and stops earning rewards.",
+          "info": "Bonded assets will remain bonded. If you unbond them, they will be available after 28 days."
         }
       },
       "stepperHeader": {
         "info": "Info",
-        "selectDevice": "Selectionnez votre appareil",
-        "connectDevice": "Connectez votre appareil",
-        "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+        "selectDevice": "Select device",
+        "connectDevice": "Connect device",
+        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
         "validation": {
           "success": {
-            "title": "Transaction diffusée",
-            "description": "Vous pourrez retrouver cette opération dans votre historique dès que le réseau aura confirmé la transaction."
+            "title": "Transaction sent successfully",
+            "description": "You will see your operation in history once the network has confirmed the transaction."
           }
         }
       }
@@ -3396,6 +3397,12 @@
         "title": "No {{currency}} account",
         "description": "Please add an account before buying {{currency}}.",
         "CTAButton": "Add account"
+      },
+      "skipDeviceVerification": {
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "address": "Address for {{currency}} account",
+        "warning": "Your address was not confirmed on your Ledger device. Please verify it for security"
       }
     },
     "sell": {
