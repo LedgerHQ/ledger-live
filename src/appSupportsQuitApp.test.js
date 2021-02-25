@@ -1,22 +1,24 @@
 // @flow
-import network from "./network";
-import { minAppVersion, req } from "./appSupportsQuitApp";
+import appSupportsQuitApp from "./appSupportsQuitApp";
 
-test("appSupportsQuitApp - Check if we have all apps from provider 1 listed", () => {
-  return network(req).then(({ data }) => {
-    // Extract the names and versions from the latest snapshot
-    if (data && "application_versions" in data) {
-      const latestAppsAndVersions = data.application_versions.reduce(
-        (acc, app) => {
-          acc[app.name] = app.version;
-          return acc;
-        },
-        {}
-      );
+test("appSupportsQuitApp - Apps that are listed fail if version is lt", () => {
+  expect(
+    appSupportsQuitApp({ name: "Wanchain", version: "1.0.0", flags: 0 })
+  ).toBeFalsy();
+});
 
-      expect(Object.keys(latestAppsAndVersions).sort()).toMatchObject(
-        Object.keys(minAppVersion)
-      );
-    }
-  });
+test("appSupportsQuitApp - Apps that are listed pass if version is gte", () => {
+  expect(
+    appSupportsQuitApp({ name: "Wanchain", version: "1.4.0", flags: 0 })
+  ).toBeTruthy();
+});
+
+test("appSupportsQuitApp - Apps that are not listed pass the test", () => {
+  expect(
+    appSupportsQuitApp({
+      name: "FakeAppName",
+      version: "1.2.3",
+      flags: 0,
+    })
+  ).toBeTruthy();
 });
