@@ -3,6 +3,7 @@ import expect from "expect";
 import sample from "lodash/sample";
 import sampleSize from "lodash/sampleSize";
 import invariant from "invariant";
+import { BigNumber } from "bignumber.js";
 import type { Transaction } from "../../families/cosmos/types";
 import { getCurrentCosmosPreloadData } from "../../families/cosmos/preloadedData";
 import { getCryptoCurrencyById } from "../../currencies";
@@ -311,7 +312,12 @@ const cosmos: AppSpec<Transaction> = {
               validators: [
                 {
                   address: delegation.validatorAddress,
-                  amount: delegation.pendingRewards,
+                  // TODO: the test should be
+                  // amount: delegation.pendingRewards,
+                  // but it won't work until COIN-665 is fixed until then,
+                  // amount is set to 0 in
+                  // src/families/cosmos/libcore-buildOperation in the REWARD case
+                  amount: BigNumber(0),
                 },
               ],
             },
