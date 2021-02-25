@@ -344,6 +344,12 @@ const envDefinitions = {
     parser: intParser,
     desc: "defines the initial default operation length page to use",
   },
+  POLKADOT_ELECTION_STATUS_THRESHOLD: {
+    def: 25,
+    parser: intParser,
+    desc:
+      "in blocks - number of blocks before Polkadot election effectively opens to consider it as open and disable all staking features",
+  },
   SATSTACK: {
     def: false,
     parser: boolParser,

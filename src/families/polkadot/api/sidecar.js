@@ -51,7 +51,8 @@ const getBaseSidecarUrl = (): string => getEnv("API_POLKADOT_SIDECAR");
 const getSidecarUrl = (route): string => `${getBaseSidecarUrl()}${route || ""}`;
 
 const VALIDATOR_COMISSION_RATIO = 1000000000;
-const ELECTION_STATUS_OPTIMISTIC_THRESHOLD = 25; // blocks = 2 minutes 30
+const ELECTION_STATUS_OPTIMISTIC_THRESHOLD =
+  getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD") || 25; // blocks = 2 minutes 30
 
 /**
  * Fetch Balance from the api.
@@ -578,6 +579,7 @@ export const getStakingProgress = async (): Promise<PolkadotStakingProgress> => 
   ]);
 
   const activeEra = Number(progress.activeEra);
+  const currentBlock = Number(progress.at.height);
   const toggleEstimate = Number(progress.electionStatus?.toggleEstimate);
   const electionClosed = !progress.electionStatus?.status?.Open;
 
@@ -587,8 +589,9 @@ export const getStakingProgress = async (): Promise<PolkadotStakingProgress> => 
   const optimisticElectionClosed =
     electionClosed &&
     activeEra &&
+    currentBlock &&
     toggleEstimate &&
-    activeEra >= toggleEstimate - ELECTION_STATUS_OPTIMISTIC_THRESHOLD
+    currentBlock >= toggleEstimate - ELECTION_STATUS_OPTIMISTIC_THRESHOLD
       ? false
       : electionClosed;
 
