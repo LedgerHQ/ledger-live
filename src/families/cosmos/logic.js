@@ -35,7 +35,7 @@ export function mapDelegations(
     const rank = validators.findIndex(
       (v) => v.validatorAddress === d.validatorAddress
     );
-    const validator = validators[rank];
+    const validator = validators[rank] ?? d;
 
     return {
       ...d,
