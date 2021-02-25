@@ -20,7 +20,7 @@ export const POLKADOT_SS58_PREFIX = 0;
  */
 export const isValidAddress = (
   address: string,
-  ss58Format = POLKADOT_SS58_PREFIX
+  ss58Format: number = POLKADOT_SS58_PREFIX
 ): boolean => {
   if (!address) return false;
   try {
