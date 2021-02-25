@@ -1,7 +1,13 @@
 // @flow
 
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View, Dimensions, Pressable, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { Trans } from "react-i18next";
 import { TabView, SceneMap } from "react-native-tab-view";
 import Svg, { Ellipse } from "react-native-svg";
@@ -132,7 +138,7 @@ function OnboardingStepNewDevice({ navigation, route }: *) {
         </Svg>
         <View style={styles.dotContainer}>
           {[0, 1, 2, 3, 4].map(k => (
-            <Pressable
+            <TouchableOpacity
               key={k}
               style={[
                 styles.dot,
@@ -143,7 +149,7 @@ function OnboardingStepNewDevice({ navigation, route }: *) {
               onPress={() => setIndex(k)}
             >
               <View />
-            </Pressable>
+            </TouchableOpacity>
           ))}
         </View>
       </View>

@@ -10,6 +10,7 @@ import {
   Keyboard,
   TouchableOpacity,
   SafeAreaView,
+  Linking,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
@@ -25,6 +26,7 @@ import {
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { isFirstBond } from "@ledgerhq/live-common/lib/families/polkadot/logic";
 
+import { urls } from "../../../config/urls";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -64,6 +66,17 @@ const infoModalData = [
     title: <Trans i18nKey="polkadot.bond.rewardDestination.staked" />,
     description: (
       <Trans i18nKey="polkadot.bond.rewardDestination.stakedDescription" />
+    ),
+  },
+  {
+    title: <Trans i18nKey="polkadot.bond.rewardDestination.optionTitle" />,
+    description: (
+      <>
+        <Trans i18nKey="polkadot.bond.rewardDestination.optionDescription" />
+        <LText onPress={() => Linking.openURL(urls.polkadotStaking)}>
+          <Trans i18nKey={"polkadot.bond.rewardDestination.clickableLink"} />
+        </LText>
+      </>
     ),
   },
 ];

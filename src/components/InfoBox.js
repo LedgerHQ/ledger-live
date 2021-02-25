@@ -9,10 +9,24 @@ import IconHelp from "../icons/Info";
 type Props = {
   children: React$Node,
   onLearnMore?: () => any,
+  forceColor: { background: string, text: string, icon: string },
 };
 
-export default function InfoBox({ children: description, onLearnMore }: Props) {
+export default function InfoBox({
+  children: description,
+  onLearnMore,
+  forceColor = {},
+}: Props) {
   const { colors } = useTheme();
+
+  const { background, text, icon } = forceColor;
+
+  const setColor = {
+    background: background || colors.pillActiveBackground,
+    text: text || colors.darkBlue,
+    icon: icon || colors.live,
+  };
+
   return (
     <View
       style={[
@@ -22,9 +36,9 @@ export default function InfoBox({ children: description, onLearnMore }: Props) {
         },
       ]}
     >
-      <IconHelp color={colors.live} size={16} />
+      <IconHelp color={setColor.icon} size={16} />
       <LText style={styles.content} color="live">
-        <LText fontSize={3} color="live">
+        <LText fontSize={3} style={{ color: setColor.text }}>
           {description}
         </LText>{" "}
         {onLearnMore && (

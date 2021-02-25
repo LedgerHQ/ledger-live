@@ -19,6 +19,8 @@ import InfoIcon from "../../icons/Info";
 
 import NominationInfo from "./components/NominationInfo";
 import PolkadotFeeRow from "./SendRowsFee";
+import InfoBox from "../../components/InfoBox";
+import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
 
 type FieldProps = {
   account: Account,
@@ -118,6 +120,38 @@ const Warning = (props: FieldProps) => (
   </>
 );
 
+const Footer = ({
+  transaction,
+  recipientWording,
+}: {
+  transaction: Transaction,
+  recipientWording: string,
+}) => {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <View style={styles.container}>
+        <InfoBox
+          forceColor={{
+            background: colors.translucentGrey,
+            text: colors.grey,
+            icon: colors.grey,
+          }}
+        >
+          {t("polkadot.networkFees")}
+        </InfoBox>
+      </View>
+      {["send", "nominate"].includes(transaction.mode) ? (
+        <View style={styles.container}>
+          <VerifyAddressDisclaimer text={recipientWording} />
+        </View>
+      ) : null}
+    </>
+  );
+};
+
 const fieldComponents = {
   "polkadot.validators": PolkadotValidatorsField,
 };
@@ -138,9 +172,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderStyle: "solid",
   },
+  container: {
+    padding: 16,
+  },
 });
 
 export default {
   fieldComponents,
   warning: Warning,
+  footer: Footer,
 };

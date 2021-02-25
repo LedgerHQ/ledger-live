@@ -119,6 +119,7 @@ export default function ValidateOnDevice({
   };
   const Warning = r && r.warning;
   const Title = r && r.title;
+  const Footer = r && r.footer;
 
   const fields = getDeviceTransactionConfig({
     account,
@@ -202,9 +203,13 @@ export default function ValidateOnDevice({
           </View>
         </View>
       </ScrollView>
-      <View style={styles.footerContainer}>
-        <VerifyAddressDisclaimer text={recipientWording} />
-      </View>
+      {Footer ? (
+        <Footer transaction={transaction} recipientWording={recipientWording} />
+      ) : (
+        <View style={styles.footerContainer}>
+          <VerifyAddressDisclaimer text={recipientWording} />
+        </View>
+      )}
     </View>
   );
 }

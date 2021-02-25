@@ -3029,6 +3029,7 @@
     "lockedBalance": "Actifs liés au staking",
     "unlockingBalance": "Actifs en cours de débloquage",
     "unlockedBalance": "Actifs déliés",
+    "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
     "info": {
       "available": {
         "title": "DOT disponibles",

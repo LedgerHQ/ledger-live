@@ -5,6 +5,7 @@ import { View, StyleSheet } from "react-native";
 import LText from "./LText";
 import ErrorIcon from "./ErrorIcon";
 import TranslatedError from "./TranslatedError";
+import SupportLinkError from "./SupportLinkError";
 
 class GenericErrorView extends PureComponent<{
   error: Error,
@@ -47,14 +48,17 @@ class GenericErrorView extends PureComponent<{
           </LText>
         ) : null}
         {withDescription ? (
-          <LText
-            selectable
-            style={styles.description}
-            color="smoke"
-            numberOfLines={6}
-          >
-            <TranslatedError error={error} field="description" />
-          </LText>
+          <>
+            <LText
+              selectable
+              style={styles.description}
+              color="smoke"
+              numberOfLines={6}
+            >
+              <TranslatedError error={error} field="description" />
+            </LText>
+            <SupportLinkError error={error} />
+          </>
         ) : null}
       </View>
     );

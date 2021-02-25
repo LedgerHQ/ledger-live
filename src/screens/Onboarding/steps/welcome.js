@@ -1,7 +1,13 @@
 // @flow
 
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View, Linking, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Linking,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import { Trans } from "react-i18next";
 
 import { useClock, loop } from "react-native-redash/lib/module/v1";
@@ -19,6 +25,9 @@ import LText from "../../../components/LText";
 import Button from "../../../components/Button";
 import { urls } from "../../../config/urls";
 import { deviceNames } from "../../../wording";
+import ArrowDown from "../../../icons/Chevron";
+
+import { useLocale } from "../../../context/Locale";
 
 import commonStyles from "../styles";
 
@@ -44,6 +53,11 @@ function OnboardingStepWelcome({ navigation }: *) {
 
   const next = useCallback(
     () => navigation.navigate(ScreenName.OnboardingTermsOfUse),
+    [navigation],
+  );
+
+  const onLanguageSelect = useCallback(
+    () => navigation.navigate(ScreenName.OnboardingLanguage),
     [navigation],
   );
 
@@ -113,9 +127,21 @@ function OnboardingStepWelcome({ navigation }: *) {
     extrapolate: Extrapolate.CLAMP,
   });
 
+  const { locale } = useLocale();
+
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <View style={styles.header} />
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={[styles.languageButton, { borderColor: colors.fog }]}
+          onPress={onLanguageSelect}
+        >
+          <LText semiBold style={styles.languageLabel}>
+            {locale}
+          </LText>
+          <ArrowDown size={10} color={colors.darkBlue} />
+        </TouchableOpacity>
+      </View>
       <View style={styles.logo}>
         <Image style={[styles.bgImage]} resizeMode="cover" source={welcomeBg} />
         <AnimatedImg
