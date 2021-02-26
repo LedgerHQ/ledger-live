@@ -3,7 +3,7 @@ PODS:
   - boost-for-react-native (1.63.0)
   - CocoaAsyncSocket (7.6.4)
   - CocoaLibEvent (1.0.0)
-  - djinni_objc (4.17.2)
+  - djinni_objc (4.17.3)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.63.4)
   - FBReactNativeSpec (0.63.4):
@@ -69,7 +69,7 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - ledger-core-objc (4.17.2):
+  - ledger-core-objc (4.17.3):
     - djinni_objc
   - lottie-ios (3.1.9)
   - lottie-react-native (3.3.2):
@@ -354,7 +354,7 @@ PODS:
     - React
   - RNKeychain (5.0.0):
     - React
-  - RNLibLedgerCore (4.17.2):
+  - RNLibLedgerCore (4.17.3):
     - ledger-core-objc
     - React
   - RNOS (1.2.6):
@@ -604,7 +604,7 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
-  djinni_objc: 754ea030d66f9836322e86cd63c7ad30b3f487e6
+  djinni_objc: 2bec86a6c77d8ae6f30383b7d135da2b83d1256c
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
   FBReactNativeSpec: f2c97f2529dd79c083355182cc158c9f98f4bd6e
@@ -617,7 +617,7 @@ SPEC CHECKSUMS:
   FlipperKit: ab353d41aea8aae2ea6daaf813e67496642f3d7d
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
-  ledger-core-objc: d0e9d31a74e30cc3e82c97647d66437b123c9fe7
+  ledger-core-objc: 09c7f97091dc543dcf9bdb47be019e6a746cd001
   lottie-ios: 3a3758ef5a008e762faec9c9d50a39842f26d124
   lottie-react-native: 2a1a82bb326ae51331a5520de0cf706733c6db69
   MultiplatformBleAdapter: 652f47ecd7f5036756517cf66833210709a72eab
@@ -662,7 +662,7 @@ SPEC CHECKSUMS:
   RNCMaskedView: 76c40a1d41c3e2535df09246a2b5487f04de0814
   RNGestureHandler: dde546180bf24af0b5f737c8ad04b6f3fa51609a
   RNKeychain: 589a5504ba18b854fb8c2ba6402387b9529da959
-  RNLibLedgerCore: bdd13ccfe892abd1cad7a0f176cce58bc1d6098e
+  RNLibLedgerCore: 86732b130661e21c4114bf8a830fd3dda59d28d6
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: c2bb7438b57a3d987bb2e4e6e4bca94787e30b02
   RNScreens: 2ad555d4d9fa10b91bb765ca07fe9b29d59573f0
