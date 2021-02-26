@@ -113,6 +113,7 @@ export const minAppVersion = {
   Pirl: "1.4.0",
   PivX: "1.5.0",
   Polkadot: "5.23.0",
+  Polkadot_sec: "0.0.0",
   QRL: "1.1.3",
   Qtum: "1.5.0",
   REOSC: "1.4.0",

@@ -13623,10 +13623,136 @@ Array [
 ]
 `;
 
+exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
+Array [
+  Object {
+    "balance": "2178033",
+    "cosmosResources": Object {
+      "delegatedBalance": "2139237",
+      "withdrawAddress": "",
+    },
+    "currencyId": "cosmos",
+    "derivationMode": "",
+    "freshAddress": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
+    "index": 0,
+    "name": "Cosmos 1",
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "xpub": "cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4",
+  },
+  Object {
+    "balance": "50",
+    "cosmosResources": Object {
+      "delegatedBalance": "0",
+      "withdrawAddress": "",
+    },
+    "currencyId": "cosmos",
+    "derivationMode": "",
+    "freshAddress": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "libcore:1:cosmos:cosmospub1addwnpepqf3y4jpkjr277cneyugywe7k0xh0w0fa8j25f2lyyp436rzx8j207wd7ygy:",
+    "index": 1,
+    "name": "Cosmos 2",
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "xpub": "cosmospub1addwnpepqf3y4jpkjr277cneyugywe7k0xh0w0fa8j25f2lyyp436rzx8j207wd7ygy",
+  },
+  Object {
+    "balance": "828932",
+    "cosmosResources": Object {
+      "delegatedBalance": "326000",
+      "withdrawAddress": "",
+    },
+    "currencyId": "cosmos",
+    "derivationMode": "",
+    "freshAddress": "cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw",
+    "freshAddressPath": "44'/118'/2'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw",
+        "derivationPath": "44'/118'/2'/0/0",
+      },
+    ],
+    "id": "libcore:1:cosmos:cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv:",
+    "index": 2,
+    "name": "Cosmos 3",
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "xpub": "cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv",
+  },
+  Object {
+    "balance": "0",
+    "cosmosResources": Object {
+      "delegatedBalance": "0",
+      "withdrawAddress": "",
+    },
+    "currencyId": "cosmos",
+    "derivationMode": "",
+    "freshAddress": "cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku",
+    "freshAddressPath": "44'/118'/3'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "cosmos14tg4vsd0q745fxhzn329pkx0krqtszcxyzl5ku",
+        "derivationPath": "44'/118'/3'/0/0",
+      },
+    ],
+    "id": "libcore:1:cosmos:cosmospub1addwnpepqtkv525vv3a4p0829j6xv7acktzltv4cgww4rjzzhj0ayrzpsk54cugr7f3:",
+    "index": 3,
+    "name": "Cosmos 4",
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "xpub": "cosmospub1addwnpepqtkv525vv3a4p0829j6xv7acktzltv4cgww4rjzzhj0ayrzpsk54cugr7f3",
+  },
+]
+`;
+
+exports[`cosmos currency bridge scanAccounts cosmos seed 1 2`] = `
+Array [
+  Array [],
+  Array [],
+  Array [],
+  Array [],
+]
+`;
+
 exports[`cosmos_testnet currency bridge scanAccounts cosmos seed 1 1`] = `
 Array [
   Object {
-    "balance": "4545828661638",
+    "balance": "25306911690264",
     "cosmosResources": Object {
       "delegatedBalance": "125300000000",
       "withdrawAddress": "",
@@ -13644,7 +13770,7 @@ Array [
     "id": "libcore:1:cosmos_testnet:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
     "index": 0,
     "name": "Cosmos (Testnet) 1",
-    "operationsCount": 28,
+    "operationsCount": 30,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -13894,6 +14020,31 @@ Array [
       ],
       "type": "IN",
       "value": "5000000",
+    },
+    Object {
+      "accountId": "libcore:1:cosmos_testnet:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
+      "blockHash": null,
+      "blockHeight": 512799,
+      "extra": Object {
+        "memo": "Ledger Live",
+        "validators": Array [
+          Object {
+            "address": "cosmosvaloper1zkupr83hrzkn3up5elktzcq3tuft8nxsmwdqgp",
+            "amount": "0",
+          },
+        ],
+      },
+      "fee": "9598",
+      "hash": "94BDDC346DD85A1F7AC34B4B97698B805110CF5E6A2CB9B7D49376AC08EDBD03",
+      "id": "libcore:1:cosmos_testnet:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:-94BDDC346DD85A1F7AC34B4B97698B805110CF5E6A2CB9B7D49376AC08EDBD03-REWARD",
+      "recipients": Array [
+        "",
+      ],
+      "senders": Array [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "type": "REWARD",
+      "value": "9598",
     },
     Object {
       "accountId": "libcore:1:cosmos_testnet:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
@@ -57717,7 +57868,7 @@ Array [
       "blockHash": null,
       "blockHeight": 426862,
       "extra": Object {},
-      "fee": "17250000",
+      "fee": "172500",
       "hash": "75a4c933444ee6efde4fb6ea709da441f63e1b0171fa10b2b700afa4036022f1",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:-75a4c933444ee6efde4fb6ea709da441f63e1b0171fa10b2b700afa4036022f1-OUT",
       "recipients": Array [
@@ -57727,14 +57878,14 @@ Array [
         "PD3w1eqRUJGd8K678WSDVqU9qcfijmU7JS",
       ],
       "type": "OUT",
-      "value": "217271300",
+      "value": "2172713",
     },
     Object {
       "accountId": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:",
       "blockHash": null,
       "blockHeight": 463068,
       "extra": Object {},
-      "fee": "17640000",
+      "fee": "176400",
       "hash": "af145604f588f4d9486599d0dd4d57f56f7e1da4d5d05f5120eede2db2d04ae1",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:-af145604f588f4d9486599d0dd4d57f56f7e1da4d5d05f5120eede2db2d04ae1-OUT",
       "recipients": Array [
@@ -57744,26 +57895,26 @@ Array [
         "PVqK3EQ7gxcsLnACtYYMSkY3wuaTEPcxxN",
       ],
       "type": "OUT",
-      "value": "172827700",
+      "value": "1728277",
     },
     Object {
       "accountId": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:",
       "blockHash": null,
       "blockHeight": 423995,
       "extra": Object {},
-      "fee": "36900800",
+      "fee": "369008",
       "hash": "e7e785e3f607be2401bb5dc3b6e0533df5cbb58acec1008914429747ce4bb2ae",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:-e7e785e3f607be2401bb5dc3b6e0533df5cbb58acec1008914429747ce4bb2ae-IN",
       "recipients": Array [
         "PD3w1eqRUJGd8K678WSDVqU9qcfijmU7JS",
       ],
       "senders": Array [
-        "PMCfyVj6MbhEw2E2SV7Fc6jsGZY2hZhZyw",
-        "PBbQEHkkXmbtQCnWmkd4HSjvXEc6Mp83Gz",
         "PSQWMGRYPZ88KfhWQ9oMqoJErrYNkG7dJq",
+        "PBbQEHkkXmbtQCnWmkd4HSjvXEc6Mp83Gz",
+        "PMCfyVj6MbhEw2E2SV7Fc6jsGZY2hZhZyw",
       ],
       "type": "IN",
-      "value": "390099000",
+      "value": "3900990",
     },
   ],
   Array [
@@ -57772,7 +57923,7 @@ Array [
       "blockHash": null,
       "blockHeight": 461831,
       "extra": Object {},
-      "fee": "23000000",
+      "fee": "230000",
       "hash": "07d311b252beb7857882c6adc64accaa4e7b3df006ce90e7396362b8d5b0d849",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:-07d311b252beb7857882c6adc64accaa4e7b3df006ce90e7396362b8d5b0d849-IN",
       "recipients": Array [
@@ -57782,14 +57933,14 @@ Array [
         "PAnoNsM6qhjaKdvM82eoFnzGKSGVFrhvzH",
       ],
       "type": "IN",
-      "value": "1000000",
+      "value": "10000",
     },
     Object {
       "accountId": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:",
       "blockHash": null,
       "blockHeight": 461831,
       "extra": Object {},
-      "fee": "23000000",
+      "fee": "230000",
       "hash": "07d311b252beb7857882c6adc64accaa4e7b3df006ce90e7396362b8d5b0d849",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:-07d311b252beb7857882c6adc64accaa4e7b3df006ce90e7396362b8d5b0d849-OUT",
       "recipients": Array [
@@ -57799,14 +57950,14 @@ Array [
         "PAnoNsM6qhjaKdvM82eoFnzGKSGVFrhvzH",
       ],
       "type": "OUT",
-      "value": "24000000",
+      "value": "240000",
     },
     Object {
       "accountId": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:",
       "blockHash": null,
       "blockHeight": 468498,
       "extra": Object {},
-      "fee": "41820000",
+      "fee": "418200",
       "hash": "22fa79b3b7009dbc8d45d77660a9177dbdebfc8f88d44b6858520ccde5c0df89",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:-22fa79b3b7009dbc8d45d77660a9177dbdebfc8f88d44b6858520ccde5c0df89-OUT",
       "recipients": Array [
@@ -57818,14 +57969,14 @@ Array [
         "PBejrvdtSrn8xSbP16LJXpwYXRoDJpxPqd",
       ],
       "type": "OUT",
-      "value": "332209000",
+      "value": "3322090",
     },
     Object {
       "accountId": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:",
       "blockHash": null,
       "blockHeight": 426862,
       "extra": Object {},
-      "fee": "17250000",
+      "fee": "172500",
       "hash": "75a4c933444ee6efde4fb6ea709da441f63e1b0171fa10b2b700afa4036022f1",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:-75a4c933444ee6efde4fb6ea709da441f63e1b0171fa10b2b700afa4036022f1-IN",
       "recipients": Array [
@@ -57835,14 +57986,14 @@ Array [
         "PD3w1eqRUJGd8K678WSDVqU9qcfijmU7JS",
       ],
       "type": "IN",
-      "value": "200021300",
+      "value": "2000213",
     },
     Object {
       "accountId": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:",
       "blockHash": null,
       "blockHeight": 463068,
       "extra": Object {},
-      "fee": "17640000",
+      "fee": "176400",
       "hash": "af145604f588f4d9486599d0dd4d57f56f7e1da4d5d05f5120eede2db2d04ae1",
       "id": "libcore:1:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:-af145604f588f4d9486599d0dd4d57f56f7e1da4d5d05f5120eede2db2d04ae1-IN",
       "recipients": Array [
@@ -57852,7 +58003,7 @@ Array [
         "PVqK3EQ7gxcsLnACtYYMSkY3wuaTEPcxxN",
       ],
       "type": "IN",
-      "value": "155187700",
+      "value": "1551877",
     },
   ],
   Array [],
