@@ -62,7 +62,7 @@
     "@ledgerhq/logs": "5.43.0",
     "@ledgerhq/react-native-hid": "5.43.0",
     "@ledgerhq/react-native-hw-transport-ble": "5.43.0",
-    "@ledgerhq/react-native-ledger-core": "4.17.2",
+    "@ledgerhq/react-native-ledger-core": "4.17.3",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
     "@polkadot/reactnative-identicon": "0.52.1",
     "@react-native-community/art": "^1.1.2",
