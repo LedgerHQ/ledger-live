@@ -35,7 +35,6 @@ export type Settings = {
   pairExchanges: {
     [_: string]: string,
   },
-  developerModeEnabled?: boolean,
   blacklistedTokenIds?: string[],
   hideEmptyTokenAccounts?: boolean,
 };
@@ -175,7 +174,6 @@ const asResultSettings = (unsafe: mixed): Settings => {
     counterValue,
     currenciesSettings,
     pairExchanges,
-    developerModeEnabled,
     blacklistedTokenIds,
     hideEmptyTokenAccounts,
   } = unsafe;
@@ -206,9 +204,6 @@ const asResultSettings = (unsafe: mixed): Settings => {
   };
   if (counterValue && typeof counterValue === "string") {
     res.counterValue = counterValue;
-  }
-  if (developerModeEnabled && typeof developerModeEnabled === "boolean") {
-    res.developerModeEnabled = developerModeEnabled;
   }
   if (hideEmptyTokenAccounts && typeof hideEmptyTokenAccounts === "boolean") {
     res.hideEmptyTokenAccounts = hideEmptyTokenAccounts;
