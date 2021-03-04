@@ -25,7 +25,10 @@ test("if API is down, an account still sync fine", async () => {
   await cache.prepareCurrency(account.currency);
   const bridge = getAccountBridge(account);
   const synced = await bridge
-    .sync(account, { paginationConfig: {} })
+    .sync(account, {
+      paginationConfig: {},
+      blacklistedTokenIds: ["ethereum/erc20/ampleforth"],
+    })
     .pipe(reduce((a, f: (Account) => Account) => f(a), account))
     .toPromise();
   const raw = toAccountRaw(synced);
@@ -33,6 +36,7 @@ test("if API is down, an account still sync fine", async () => {
   raw.blockHeight = 0;
   raw.lastSyncDate = "";
   raw.creationDate = "";
+  delete raw.syncHash;
   raw.operations = raw.operations.map((op) => {
     op.blockHeight = 0;
     op.date = "";
