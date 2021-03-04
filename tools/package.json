@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ledgerhq/cryptoassets": "5.40.0",
-    "@ledgerhq/hw-transport": "^5.40.0",
-    "@ledgerhq/hw-transport-http": "^5.40.0",
+    "@ledgerhq/cryptoassets": "5.45.0",
+    "@ledgerhq/hw-transport": "^5.45.0",
+    "@ledgerhq/hw-transport-http": "^5.45.0",
     "@ledgerhq/hw-transport-u2f": "^5.36.0-deprecated",
-    "@ledgerhq/hw-transport-web-ble": "^5.40.0",
-    "@ledgerhq/hw-transport-webhid": "^5.40.0",
-    "@ledgerhq/hw-transport-webusb": "^5.40.0",
-    "@ledgerhq/live-common": "^18.2.0",
-    "@material-ui/core": "^4.11.2",
+    "@ledgerhq/hw-transport-web-ble": "^5.45.0",
+    "@ledgerhq/hw-transport-webhid": "^5.45.0",
+    "@ledgerhq/hw-transport-webusb": "^5.45.0",
+    "@ledgerhq/live-common": "^18.6.0",
+    "@material-ui/core": "^4.11.3",
     "babel-polyfill": "^6.26.0",
     "bignumber.js": "^9.0.1",
-    "flow-bin": "^0.143.0",
+    "flow-bin": "^0.145.0",
     "qrcode": "^1.4.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -30,22 +30,24 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.2.0",
     "reselect": "^4.0.0",
-    "rxjs": "^6.6.3",
+    "rxjs": "^6.6.6",
     "styled-components": "^4.4.0",
     "timeago.js": "^4.0.2",
     "victory": "^34.3.12"
   },
   "scripts": {
-    "start": "HTTS=true react-scripts start",
-    "build": "react-scripts build && cp build/index.html build/200.html && cp build/index.html build/404.html",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "deploy": "surge -p build -d ledger-countervalues-demo.surge.sh"
+    "start": "HTTS=true react-app-rewired start",
+    "build": "react-app-rewired build && cp build/index.html build/200.html && cp build/index.html build/404.html",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-app-rewired eject"
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "react-app-rewired": "^2.1.8"
+  }
 }
