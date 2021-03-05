@@ -13069,5 +13069,6 @@ Object {
   ],
   "swapHistory": Array [],
   "unitMagnitude": 18,
+  "used": true,
 }
 `;

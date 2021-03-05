@@ -359,6 +359,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               xpub: xpubOrAddress,
               seedIdentifier: xpubOrAddress,
               starred: true,
+              used: true,
               swapHistory: [],
               id,
               derivationMode,

@@ -156,6 +156,11 @@ const postBuildAccount = async ({
   if (account.spendableBalance.lt(0)) {
     account.spendableBalance = BigNumber(0);
   }
+  if (!account.used) {
+    const cosmosAccount = await coreAccount.asCosmosLikeAccount();
+    const seq = await cosmosAccount.getSequence();
+    account.used = seq != "";
+  }
   return account;
 };
 

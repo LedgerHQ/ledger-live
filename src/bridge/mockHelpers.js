@@ -157,6 +157,7 @@ export const scanAccounts: $PropertyType<CurrencyBridge, "scanAccounts"> = ({
               ...operation,
               date: subtractOneYear(operation.date),
             }));
+        account.used = isLast ? false : account.used;
         account.name = "";
         account.name = validateNameEdition(account);
         if (isLast) {

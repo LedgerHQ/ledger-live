@@ -2,7 +2,7 @@
 import uniqWith from "lodash/uniqWith";
 import type { Account } from "../types";
 import { validateNameEdition } from "./accountName";
-import { isAccountEmpty, clearAccount } from "./helpers";
+import { clearAccount } from "./helpers";
 import { findAccountMigration } from "./support";
 
 // Reference all possible support link
@@ -77,13 +77,12 @@ export function groupAddAccounts(
     const existingAccount = existingAccounts.find((a) =>
       sameAccountIdentity(a, acc)
     );
-    const empty = isAccountEmpty(acc);
     if (existingAccount) {
-      if (empty) {
+      if (!acc.used) {
         alreadyEmptyAccount = existingAccount;
       }
       importedAccounts.push(existingAccount);
-    } else if (empty) {
+    } else if (!acc.used) {
       creatableAccounts.push(acc);
     } else {
       importableAccounts.push(acc);

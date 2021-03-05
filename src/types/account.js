@@ -129,6 +129,9 @@ export type Account = {
   // starred
   starred: boolean,
 
+  // says if the account essentially "exists". an account has been used in the past, but for some reason the blockchain finds it empty (no ops, no balance,..)
+  used: boolean,
+
   // account balance in satoshi
   balance: BigNumber,
 
@@ -261,6 +264,7 @@ export type AccountRaw = {
   freshAddresses: Address[],
   name: string,
   starred?: boolean,
+  used?: boolean,
   balance: string,
   spendableBalance?: string,
   blockHeight: number,

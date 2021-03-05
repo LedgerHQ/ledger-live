@@ -410,6 +410,7 @@ const currencyBridge: CurrencyBridge = {
                         derivationMode,
                       }),
                       starred: false,
+                      used: false,
                       freshAddress,
                       freshAddressPath,
                       freshAddresses: [
@@ -462,6 +463,7 @@ const currencyBridge: CurrencyBridge = {
                   derivationMode,
                 }),
                 starred: false,
+                used: true,
                 freshAddress,
                 freshAddressPath,
                 freshAddresses: [

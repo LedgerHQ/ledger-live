@@ -1,7 +1,7 @@
 // @flow
 import groupBy from "lodash/groupBy";
 import type { Transaction } from "../types";
-import { isAccountEmpty, formatOperation, formatAccount } from "../account";
+import { formatOperation, formatAccount } from "../account";
 import {
   toSignedOperationRaw,
   formatTransaction,
@@ -55,7 +55,7 @@ export function formatReportForConsole<T: Transaction>({
   }
   if (unavailableMutationReasons) {
     let detail = "?";
-    if (account && isAccountEmpty(account)) {
+    if (account && !account.used) {
       detail = "account is empty";
     } else {
       const byErrorMessage = groupBy(unavailableMutationReasons, "message");

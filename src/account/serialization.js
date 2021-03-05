@@ -42,6 +42,7 @@ import {
 } from "../currencies";
 import { inferFamilyFromAccountId } from "./accountId";
 import accountByFamily from "../generated/account";
+import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
@@ -557,6 +558,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     index,
     xpub,
     starred,
+    used,
     freshAddress,
     freshAddressPath,
     freshAddresses,
@@ -609,6 +611,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     type: "Account",
     id,
     starred: starred || false,
+    used: false, // filled again below
     seedIdentifier,
     derivationMode,
     index,
@@ -635,6 +638,13 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     swapHistory: [],
     syncHash,
   };
+
+  if (typeof used === "undefined") {
+    // old account data that didn't had the field yet
+    res.used = !isAccountEmpty(res);
+  } else {
+    res.used = used;
+  }
 
   if (xpub) {
     res.xpub = xpub;
@@ -680,6 +690,7 @@ export function toAccountRaw({
   xpub,
   name,
   starred,
+  used,
   derivationMode,
   index,
   freshAddress,
@@ -711,6 +722,7 @@ export function toAccountRaw({
     seedIdentifier,
     name,
     starred,
+    used,
     derivationMode,
     index,
     freshAddress,

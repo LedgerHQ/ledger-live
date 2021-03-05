@@ -13,7 +13,7 @@ export function pickSiblings(
   siblings: Account[],
   maxAccount: number = 5
 ): Account {
-  const withoutEmpties = siblings.filter((a) => !isAccountEmpty(a));
+  const withoutEmpties = siblings.filter((a) => a.used);
   if (siblings.length > maxAccount) {
     // we are no longer creating accounts
     return sample(withoutEmpties);

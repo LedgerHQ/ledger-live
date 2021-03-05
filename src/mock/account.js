@@ -18,7 +18,7 @@ import type {
   TokenCurrency,
 } from "../types";
 import { getOperationAmountNumber } from "../operation";
-import { inferSubOperations } from "../account";
+import { inferSubOperations, isAccountEmpty } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 
 import { genHex, genAddress } from "./helpers";
@@ -363,6 +363,7 @@ export function genAccount(
     freshAddresses: [freshAddress],
     name: rng.nextString(rng.nextInt(4, 34)),
     starred: false,
+    used: false,
     balance: BigNumber(0),
     spendableBalance: BigNumber(0),
     blockHeight: rng.nextInt(100000, 200000),
@@ -473,6 +474,7 @@ export function genAccount(
   account.spendableBalance = account.balance = ensureNoNegative(
     account.operations
   );
+  account.used = !isAccountEmpty(account);
 
   const perFamilyOperation = perFamilyMock[currency.id];
   const genAccountEnhanceOperations =

@@ -13,11 +13,7 @@ import {
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
 } from "../derivation";
-import {
-  getWalletName,
-  shouldShowNewAccount,
-  isAccountEmpty,
-} from "../account";
+import { getWalletName, shouldShowNewAccount } from "../account";
 import type {
   Account,
   CryptoCurrency,
@@ -112,10 +108,9 @@ async function scanNextAccount(props: {
 
   if (isUnsubscribed()) return;
 
-  const isEmpty = isAccountEmpty(account);
   const shouldSkip =
     accountIndex < getDerivationModeStartsAt(derivationMode) ||
-    (isEmpty && !showNewAccount) ||
+    (!account.used && !showNewAccount) ||
     !derivationModeSupportsIndex(derivationMode, accountIndex);
 
   log(
@@ -128,7 +123,7 @@ async function scanNextAccount(props: {
             account.xpub
           )}, fresh ${account.freshAddressPath} ${account.freshAddress})`
         : "no account"
-    }. ${isEmpty ? "ALL SCANNED" : ""}`
+    }. ${!account.used ? "ALL SCANNED" : ""}`
   );
 
   if (!shouldSkip) {
@@ -136,7 +131,7 @@ async function scanNextAccount(props: {
   }
 
   const emptyCount = props.emptyCount || 0;
-  const shouldIter = isEmpty
+  const shouldIter = !account.used
     ? emptyCount < getMandatoryEmptyAccountSkip(derivationMode)
     : isIterableDerivationMode(derivationMode);
 
@@ -144,7 +139,7 @@ async function scanNextAccount(props: {
     await scanNextAccount({
       ...props,
       accountIndex: accountIndex + 1,
-      emptyCount: isEmpty ? emptyCount + 1 : 0,
+      emptyCount: !account.used ? emptyCount + 1 : 0,
     });
   }
 }

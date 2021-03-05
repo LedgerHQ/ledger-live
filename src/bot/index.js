@@ -384,7 +384,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
       const firstAccount = (r.accountsAfter || r.accountsBefore || [])[0];
 
       body += `| ${r.spec.name} (${
-        (r.accountsBefore || []).filter((a) => !isAccountEmpty(a)).length
+        (r.accountsBefore || []).filter((a) => a.used).length
       }) `;
       body += `| ${afterOps || beforeOps}${
         afterOps > beforeOps ? ` (+${afterOps - beforeOps})` : ""

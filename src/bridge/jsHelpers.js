@@ -224,6 +224,7 @@ export const makeScanAccounts = (
         derivationMode,
         name: "",
         starred: false,
+        used: false,
         index,
         currency,
         operationsCount,
@@ -243,6 +244,10 @@ export const makeScanAccounts = (
         ...initialAccount,
         ...accountShape,
       };
+
+      if (!account.used) {
+        account.used = !isAccountEmpty(account);
+      }
 
       return account;
     }
@@ -337,9 +342,7 @@ export const makeScanAccounts = (
             );
             if (!account) return;
 
-            const isEmpty = isAccountEmpty(account);
-
-            account.name = isEmpty
+            account.name = !account.used
               ? getNewAccountPlaceholderName({
                   currency,
                   index,
@@ -347,11 +350,11 @@ export const makeScanAccounts = (
                 })
               : getAccountPlaceholderName({ currency, index, derivationMode });
 
-            if (!isEmpty || showNewAccount) {
+            if (account.used || showNewAccount) {
               o.next({ type: "discovered", account });
             }
 
-            if (isEmpty) {
+            if (!account.used) {
               if (emptyCount >= mandatoryEmptyAccountSkip) break;
               emptyCount++;
             }

@@ -25,6 +25,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "c8b672d16c497bb097a48f09a9cccf0c4c7d6391acb7a4e7cd3f236fadbef9c4",
   },
   Object {
@@ -98,6 +99,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "21b3068ca2b9a3b0b1fc68d9ecbd61663f6957c68a9c767aa14a8abb437180e6",
   },
   Object {
@@ -123,6 +125,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "cc2b54ea5cbda5de6957086a8435c43a06e26559b2bfaebec56b748ec5a2a051",
   },
   Object {
@@ -148,6 +151,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "6104eb314f51f4db5733976bd8c066297019ebaa6adcf39b4aa318d553c571cc",
   },
   Object {
@@ -185,6 +189,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": false,
     "xpub": "6549e16ee1e242aba9d116dab058b6e33e4c6d801d3cbfe860195fc6e4294031",
   },
 ]
@@ -2476,6 +2481,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn",
   },
   Object {
@@ -2580,6 +2586,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy",
   },
   Object {
@@ -2694,6 +2701,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2",
   },
   Object {
@@ -2798,6 +2806,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc",
   },
   Object {
@@ -2902,6 +2911,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE",
   },
   Object {
@@ -3006,6 +3016,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6",
   },
   Object {
@@ -3110,6 +3121,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ",
   },
 ]
@@ -11704,6 +11716,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn",
   },
   Object {
@@ -11818,6 +11831,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6D7pqJa4V3SFSigcsRaFL2mpfG7469osrMkk4ieR2uk8y1v3nuQUD8W8v36PLWQtVRSggSQM7jLpGNKH7sqCaoPSJEp9wZCVkRnMWoiUUXa",
   },
   Object {
@@ -11922,6 +11936,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6D7pqJa4V3SFVc2TjqQaz1N6gCs5vTjznBSAyEE9es1j5nTb2uKXbihXQuaUURKJ59hEVQZctuCSC8t1MURbeiSmZFDTBsJ9QJCS5crNrBG",
   },
 ]
@@ -13972,6 +13987,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6Bm5P7Xyx2UYrVBAgb54gEswXhbZaryZSWsPjeJ1jpb9K9S5UTD5z5cXW4EREkTqkNjSHQHxwHKZJVE7TFvftySnKabMAXAQCMSVJBdJxMC",
   },
   Object {
@@ -14076,6 +14092,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6BuPGsUw1Aaz92W5AjsuwjHYbjUKG8Xw4HEuQ2XzYSZWa8CZ4Hkhh6pBeZx2iSVuK7LZk4VKFytXuNNEPHbiuyYyXyDCiusnQ56Aoghhrcs",
   },
   Object {
@@ -14180,6 +14197,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6BwncCmHHLPjHyuVh2t2cHA4KVdjdsS6wwLrMDkDMubXAWV7xSyVM5ik1Ap18YBHMMGDnukVyyXMtJjFRKLpLvcG4SKYeTaeSxftZ9Z4ATB",
   },
   Object {
@@ -14284,6 +14302,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CtcF5dSBGhEnyCKy9zYugjX9JxjVWW78eTBXSBGA4fYaVVXAt6hfo55JKRDjxef1bcP3keBvg6BXtzjPG8Cd1afv3k4qnFezHAF2J8nKDe",
   },
   Object {
@@ -14388,6 +14407,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CtcF5dSBGhEqXsLaw3iEQPTee4kG7oYyEWmdZTzRPQrYcJ9YFDknXXzT4oHznaoMSnTxTfdLiA3WBgUK3uDr8BjrpptKGd8ivNHMnaPPcE",
   },
   Object {
@@ -14492,6 +14512,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6CtcF5dSBGhEsWq1HjMtfSjJSkrUr7UZLVzBAXKHkDcuXNPTDRhxU71FTm1KreVMyuFSKmrHyr3TiGPa212q9U3Q8vxKvWvg96RR2XM8WAn",
   },
 ]
@@ -15988,9 +16009,9 @@ Array [
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 Array [
   Object {
-    "balance": "2184130",
+    "balance": "2184020",
     "cosmosResources": Object {
-      "delegatedBalance": "2139237",
+      "delegatedBalance": "2139127",
       "withdrawAddress": "",
     },
     "currencyId": "cosmos",
@@ -16013,6 +16034,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4",
   },
   Object {
@@ -16041,6 +16063,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "cosmospub1addwnpepqf3y4jpkjr277cneyugywe7k0xh0w0fa8j25f2lyyp436rzx8j207wd7ygy",
   },
   Object {
@@ -16069,6 +16092,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv",
   },
   Object {
@@ -16097,6 +16121,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": false,
     "xpub": "cosmospub1addwnpepqtkv525vv3a4p0829j6xv7acktzltv4cgww4rjzzhj0ayrzpsk54cugr7f3",
   },
 ]
@@ -16165,6 +16190,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4",
   },
   Object {
@@ -16193,6 +16219,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "cosmospub1addwnpepqf3y4jpkjr277cneyugywe7k0xh0w0fa8j25f2lyyp436rzx8j207wd7ygy",
   },
   Object {
@@ -16221,6 +16248,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv",
   },
   Object {
@@ -16249,6 +16277,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": false,
     "xpub": "cosmospub1addwnpepqtkv525vv3a4p0829j6xv7acktzltv4cgww4rjzzhj0ayrzpsk54cugr7f3",
   },
 ]
@@ -16776,6 +16805,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "drkvjRicQKXd21b4fiTjSfm4SMoVE5q6DhCopUQ4pBYU9WT1dTVSUHoF91sfFkfgR9MdXqiPGgpNV45VrGFrVfVGn8vH7jroquD34qyYuHbj6Dk",
   },
   Object {
@@ -16890,6 +16920,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "drkvjRicQKXd21b4iYXbeKjiBPLHQyqeriXcjUL6HxiLnMbLkC6w2teZTgxpjSv4tZ4gq5KrNan9c9aPtrkUhRF3aBQa4vr3WGy6z1WwQh5GB7W",
   },
   Object {
@@ -16994,6 +17025,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "drkvjRicQKXd21b4iybA3Ujpe4BxxrvMPEBs5W1vrHeGK4tFU6uZixaCzJ8Jq4C3yXdKmMnW45JvZ6nnuzSBevrtvh9GdRU6soFJhgGHBKtwboC",
   },
 ]
@@ -17844,6 +17876,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "dpubZF3VHvPkY4B7qQKU7cAaQjkN61PuJU87AE3EXHGLpn3ajQHNZHyiFp94aiH2en2xfo38zYuQKLdC46DiEwkp2t7UBDuEMxg8EzNd3dtgW8E",
   },
   Object {
@@ -17958,6 +17991,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "dpubZF3VHvPkY4B7sdkfyEF3V576DCn9Wb9Jh43HKCDFio3B4zLCKcXP1H6VqnKusFToCxErE1j1JoAgDQBVR4wvMVucS3SW6GVaYsknndcLwqA",
   },
   Object {
@@ -18062,6 +18096,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "dpubZF3VHvPkY4B7wJRJeCTPMd6jxh3dHX728rd2L4n1hwaroYpEKSkJyXU3xaEbnYAJyNiu9JCX65GTHeeTPqGAEefQoiBWtHw5QBdeW2D1bEW",
   },
   Object {
@@ -18166,6 +18201,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "dpubZF3VHvPkY4B7wqUvNVWf45pQtbbHtS1vhagdY4mp1Tp69kWeqRMPTs2esoTXyCeEZFiZJv7wHVAp4nq6KYzJ6TKMoexp5o26UeuynoxuzgY",
   },
 ]
@@ -21879,6 +21915,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DUeEdRmKaQSJnJBJURNcg4ss2fsjQvPFLkgQdmDsJ6aH9FJjurpgt3jxMbs2n3ctHsDYztMWiZ7H27wLRevnkFggwK8HVyKZf5Kij3PjuG",
   },
   Object {
@@ -22002,6 +22039,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98",
   },
   Object {
@@ -22106,6 +22144,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6CV98T6ompjUo2YMbNNwkK6t2xQ9ZMihM54xFopW9896ztmAA6haNfNFuFQY3JLrCmKUAdRbYn1sqUUN7aVSVBPRqCdYX9uoroNUWTLFUU1",
   },
   Object {
@@ -22220,6 +22259,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CU9cUEYPkHVCSCuHWM9g7TxhmXByzPJGU3k9W588wNearJ1xjPjS5PW3fkYUaYRHgkaFx352YQTyWwZD7qbR8yMaac6K8UeV9XjydgBnkv",
   },
   Object {
@@ -22324,6 +22364,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CU9cUEYPkHVFw3jvQ3epUkHpqpN7NS9eFFbS57WynDvmzqcBtdAY5uvaLCS7QakFN7uJiQLWLZz56tPAwqQq8LFXqorVMgK9r4Ev2Sg2Eu",
   },
   Object {
@@ -22428,6 +22469,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6CU9cUEYPkHVHnMTPxCWhA59f6GbHCrop6j1RXbZKFZg8ES9eCamW26rWEji2zmXhRBLc2xxTVcD7qxKHKe99XyWwn4udqDBeTzRysURXRR",
   },
 ]
@@ -23859,6 +23901,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "dgub8rBqrhN2grbuDNuFBCu9u9KQKgQmkKaa15Yvnf4YznmvqFZByDPJypigogDKanefhrjj129Ek1W13zvtyQSD6HDpzxyskJvU6xmhD29S9eF",
   },
   Object {
@@ -23963,6 +24006,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "dgub8rBqrhN2grbuFeMR47KiFwZWqV6A6kmKQ5F73eKwpLqT8Wmj7P4gmuAUbEHJxVr5qkfaUN2kmYsD4pPTQbkUtTqk7dtpGcWWTLC7F1ACS1u",
   },
   Object {
@@ -24067,6 +24111,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "dgub8rBqrhN2grbuGtVSoWKrKi97gHrA1eV6XQtR9AKFgG2BP3pQ12ncpkTBPmKGSU7xTd28RpYZFkUryG9PBFStcdCuHVCtAfLmi8NhTF8PRGY",
   },
 ]
@@ -24557,6 +24602,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_1809",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -24596,6 +24642,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_1809",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -25074,6 +25121,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_1809",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -25393,6 +25441,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_1809",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -25488,6 +25537,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_1809",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -25611,6 +25661,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_1809",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -25706,6 +25757,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_1809",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -25857,6 +25909,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 18,
+    "used": false,
   },
 ]
 `;
@@ -51309,6 +51362,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_0",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "balance": "185300007614899",
@@ -51334,6 +51388,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_0",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "balance": "21952336254527101",
@@ -51359,6 +51414,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": "[\\"ethereum/erc20/ampleforth\\"]_0",
     "unitMagnitude": 18,
+    "used": true,
   },
   Object {
     "balance": "0",
@@ -51384,6 +51440,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 18,
+    "used": false,
   },
 ]
 `;
@@ -54001,6 +54058,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp",
   },
   Object {
@@ -54105,6 +54163,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1",
   },
   Object {
@@ -54219,6 +54278,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8",
   },
   Object {
@@ -54323,6 +54383,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "v4PKUB9JUMaUJ1t6VjrgjSUejxmgBN91qtbUydSaCQ8XN6nf1Hg7QcickMoN6Fn3pYnZUu6XgCWooxuiLCLiQaEb4gaZjDocHBZysviWupegVYRm",
   },
 ]
@@ -57721,6 +57782,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "Ltub2YRPRjnvZVoBBbfDrEV3jJdGQCTMHgKg1V1mnAZuQbbSY6XPhufcRTpoGB4595dUuW1GSDy6CApUYmCfwA4YjG5JWrAFd4GBR1WRJ8Jm6cM",
   },
   Object {
@@ -57853,6 +57915,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF",
   },
   Object {
@@ -57957,6 +58020,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "Ltub2ZDyeYFtDj5kL5kYEcBGiDwhXQtZNefG3k4XvAtoMfD5cHxa93WMr6zLGnLb11LCgUXpxWTZRVPv2Roh2vdxesTpgFYayeNNVJb7wmCfD3x",
   },
   Object {
@@ -58080,6 +58144,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "Ltub2ZoEDG8AmPfD8oGoFEvfsKWjeyiXh6TiKYjgLnoVxfeECfQteY6sDF1AuH1iW6ekue2PSwdbbvG2NpFPzLqcgNgteHZPNo6zGthjcAmwxT3",
   },
   Object {
@@ -58184,6 +58249,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "Ltub2ZoEDG8AmPfDAyu3yK2WfA9zE8VgL3E3nNjnS5VRYAo7LfrrEmaCUYqWP8tgo6vNWc7dsr3kDykaX7yDpkAN93RWorZG6tekiyNpBNtFJhc",
   },
   Object {
@@ -58288,6 +58354,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "Ltub2ZoEDG8AmPfDCKLYi3GHWexWa26tL5G4QvPkYgdRNKFKLsDe1i3rzjSZiBYDpYnkgQn9T8GRRJTXF8rdG6NXyWR9wTzATChRQbixYxnjKBg",
   },
 ]
@@ -60035,6 +60102,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt",
   },
   Object {
@@ -60139,6 +60207,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv",
   },
   Object {
@@ -60243,6 +60312,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": false,
     "xpub": "r29uBq4dqT4ZLPtkuRYpvqYJ7Uri474wVJSGfCBycWK88JbhoE31jzYQrxa4re5gRRjdK52fYte1wR6Gjo3KsnMGk1JNqELQoema8GaWRcX4Tp3c",
   },
 ]
@@ -60502,6 +60572,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "ToEA6kbZp37Q14yj3MBi989NwAtYpRezRAveGjoQtrBNenh5w5D8AAU3pQFHk3bd7YRXgQ86JoXBZHm8voQeCNJX4ETH7WdGGcfD35CsCEgQjih",
   },
   Object {
@@ -60616,6 +60687,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "ToEA6kbZp37Q14yj58Etmammo9PZzJApeRsUnjSqri7fugNHm29Z8XHyhs1qePUKDUkrBD51sAwqD6HjFx3Z81S4djrYPrxKJssLrekhh2j2rpT",
   },
   Object {
@@ -60720,6 +60792,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "ToEA6kbZp37Q14yj8uQJcgxNYNLfh77mCkRc5WYNKnFXz9F7ioREkssDvZtYm6haAQc3xEgMhTLT6TMHKzEVX4HLudaACbipsLTvnthw2KUUhTf",
   },
 ]
@@ -61046,6 +61119,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 10,
+    "used": true,
   },
   Object {
     "balance": "15845000000",
@@ -61078,6 +61152,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 10,
+    "used": true,
   },
   Object {
     "balance": "10692000000",
@@ -61110,6 +61185,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 10,
+    "used": true,
   },
   Object {
     "balance": "0",
@@ -61142,6 +61218,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 10,
+    "used": false,
   },
 ]
 `;
@@ -61512,6 +61589,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DJLR2MpQNBsVL8Pn3HuqwGAtQWZM7v4o1W4dnYCLJrLsB5MsQbfZJQjGyHS892pUcHPS2R3AXyY1VE1RPka2Tazu5jNTnpKJLuv2xqtrt4",
   },
   Object {
@@ -61616,6 +61694,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DJLR2MpQNBsY3iKkoWXY3THJ5Ychw6qgCtmBSoYE3nssqGMcMuaL2JZXsQHzZYTsT4gdfyZTYhScYbuhJ3H17foa7TqD2gQANTyu8KCuGc",
   },
   Object {
@@ -61720,6 +61799,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6D97ABLAcapXNWjS2pNwYpmUjYYt5f2Tyj4PDSp7pvY2gySb2iAvejKNPm18raeU8WxtXVCpQfZjMN7eEdgtor8T5141ZLH7o2WkL1nyNQb",
   },
   Object {
@@ -61834,6 +61914,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6D97ABLAcapXR82f6ny6pUTy58YXDY4xVSoxoK8jSYcuG1eQZDrZjGrnhotEU8YtZWn5s4cA1zRBuYSt8CG9YoG3fQJKUhQYmm8NewWQEUY",
   },
   Object {
@@ -61938,6 +62019,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6D97ABLAcapXTtgbMfjJQr1j4t84bkSuteUcPTrHeANhTd3QkJLgJktJ7YUxPg2pGt4hoPFHgoKivdiXhVP3TJbJqxtyrkscb6FYuGqUT1D",
   },
 ]
@@ -64118,6 +64200,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CfGdR6zv4rLW9BWJdwF7gDrzAgVQpKJt1E2pTXgS6bNpxiHEBZC1ppB7ddyBWBeraLiWjAra9gsNCEeQYVLMVnjMwNTURrtqN2MfgSX3jZ",
   },
   Object {
@@ -64222,6 +64305,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CfGdR6zv4rLZDFahsyJe6S4Uybr2JiD5URtrT56qfF8CQczGidJX6UvfgY5mLFvAZ2VNqrhgqMrtefajmGzFyxv7Eh3CPr5YmwDdqZPYu5",
   },
   Object {
@@ -64326,6 +64410,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CfGdR6zv4rLd1bkLhcnbG4W5DkrqZPnpxgMamhnksGHgreo41LcgAqznyBvfiWmjhWH9o8PvcEsd8u7WnYEuheALtMV9rm2XA4jT3FvC32",
   },
   Object {
@@ -64430,6 +64515,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6CfGdR6zv4rLdxjgfwEcEQogha4DvA4VdCsZtX9BQfikYwKoXzL6e1m861KZDVNvv7BrrZ9SN6VpKhmMgW7BU7QopzrdaEdfQcYhsEPv578",
   },
 ]
@@ -67088,6 +67174,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "XSTpb6FgrrsVfP6rrzK9V4Y82S793m4QVSXXQgmDepAJtZMmoMi4ByiKMPFpwuhvBL1DD6BYYtJzDyqfDgA5uqkPN2eQ1iXitnGSte4kYHCFdRKB",
   },
   Object {
@@ -67192,6 +67279,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "XSTpb6FgrrsVfP6rs52tc1kL7uLcTGZ7pgtHqE9adSEH2JEzhUvAc8HdJxk4sHgKme31pWacQLregzkLUwYB1WjoPiukgLrnuwu3cgGyQcdVAc8w",
   },
   Object {
@@ -67296,6 +67384,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": true,
     "xpub": "XSTpb6FgrrsVfP6rs5zfUrwdBVGqkauw5yw4aKDFXhZ3BeAGbAFx5FzfL18GMczscvKVPwAWzWw2veBPzyMNCDtnDtxk8Y1M9XNqdoLcb9HeNbBK",
   },
   Object {
@@ -67400,6 +67489,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": false,
     "xpub": "XSTpb6FgrrsVfP6rs8uzG379SZJTPc8NAYWTNmeV7kQUAFEAAu3QafPPLKSmthvP43ecUXyYfUU36VWBz9Qy6gsFtNqahKtQHo9eg5rrGruncYJg",
   },
 ]
@@ -70746,6 +70836,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 7,
+    "used": true,
     "xpub": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
   },
   Object {
@@ -70771,6 +70862,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 7,
+    "used": true,
     "xpub": "1174242cc3e722e843ac37db3a745897941396d486456e303001b06b417db1f8",
   },
   Object {
@@ -70796,6 +70888,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 7,
+    "used": true,
     "xpub": "8636fa7a5a5bb9fe4fb2615f04425f54dc74c16fefc1325958c9719ee03ef537",
   },
   Object {
@@ -70821,6 +70914,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 7,
+    "used": true,
     "xpub": "0f052ff4b74726a6f668380927c3d23e9c16d538cb6c272add871e069336bead",
   },
   Object {
@@ -70846,6 +70940,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 7,
+    "used": true,
     "xpub": "60c75356c268ff0158eeca556526830761327693a93cf4754020fadbe04d0f2b",
   },
   Object {
@@ -70871,6 +70966,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 7,
+    "used": false,
     "xpub": "124516f8ffb161c9492486e54b4432a2c11e4817414dea54fb8bde13b5ac4943",
   },
 ]
@@ -72724,6 +72820,7 @@ Array [
       ],
     },
     "unitMagnitude": 6,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -72987,6 +73084,7 @@ Array [
       "votes": Array [],
     },
     "unitMagnitude": 6,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -73236,6 +73334,7 @@ Array [
       "votes": Array [],
     },
     "unitMagnitude": 6,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -73303,6 +73402,7 @@ Array [
       "votes": Array [],
     },
     "unitMagnitude": 6,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -73356,6 +73456,7 @@ Array [
       "votes": Array [],
     },
     "unitMagnitude": 6,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -73423,6 +73524,7 @@ Array [
       "votes": Array [],
     },
     "unitMagnitude": 6,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -73476,6 +73578,7 @@ Array [
       "votes": Array [],
     },
     "unitMagnitude": 6,
+    "used": true,
   },
   Object {
     "approvals": undefined,
@@ -73528,6 +73631,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 6,
+    "used": false,
   },
 ]
 `;
@@ -79271,6 +79375,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6Cu9oADJyjy4iEEjzDmHq7AUbZhGZy5MNhu15cQwRkyeRAiWahnGYDYkEvqVF9vQYUoT5ekHtoGdXWSzzb1a9bKdtRfovXJjaLv6Y7HQV6V",
   },
   Object {
@@ -79375,6 +79480,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CMZ3ME7YvX7Tj8TyAfCMP6DgQRY7jSHmQqQLDMCGwsqDgManXGN7SY6gXqKwi6y5LBtngqcZXKKcUhW9HyNkBZ9sKBDcKJKLEPpsbbhsNe",
   },
   Object {
@@ -79479,6 +79585,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CMZ3ME7YvX7XAcBxXnAC1GwH7oXSWbwE7HUY844Ugf7wkyojm3yVHeX5YGZ8AZB2BxziHbVQQJgMira5eMCV5XTfvAc75fvxR3gMiLrZwB",
   },
   Object {
@@ -79583,6 +79690,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6CGgWHfagZxkF7KnrUZSLyzsQDfC1tKrz4vL9963iy3aaMmYt8uxcoErfmfJMNy56W9CBwBCLZUJaY3si64D4brGDoGEf4iz5BuVB7mx8rP",
   },
 ]
@@ -80950,6 +81058,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6CTqVWnk4ks9facXnchkLy8ymHxw7fDsXj7gjDJ8qnDHVfptW9EaSrhbCGehX73vuvqE5BkRemftSRt5n7HMCWE2a4eBqXWLn9irue6tWyS",
   },
   Object {
@@ -81054,6 +81163,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6C5ZNqggXi2mKNxXwCSv8vMqDzA2sxcUjVEQWc8CqsHwcsmUSjada4aB7pfVt7hgsEsTVg6XBBK7T59Y8fMTV5xVFAz41b59uS5Y7CC3mnF",
   },
   Object {
@@ -81158,6 +81268,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6C5ZNqggXi2mM5xcV9FaKKN7CNqSV9k9PjMwPCE4hLYWZ9D9zF2PyV2WCJFfewJCkmcuZMw3KZQugeSpL27cmd6DkiQk3EKLnNUvVGJqZck",
   },
   Object {
@@ -81262,6 +81373,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6C5ZNqggXi2mS7mYXEEDDhJQQDeqgHmKeRogiAKzW3hQDNfshPrxuXtC1zE9qjDUS3uEnQU35sXds3U8G1m7NEW3rs1FRk73CN6cGnKpRiU",
   },
 ]
@@ -82609,6 +82721,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DXuLL97nvCs14Ashf3u8N2X9BLBpxN3HKCQWnLzn61o6CqME3Jm1hZ6oBeXcMhkqGDaziTGmw19w5iRstuXJrKLX6khbDt1rEatozTkf97",
   },
   Object {
@@ -82723,6 +82836,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DXuLL97nvCs4QQNEeUwxH6Y5tSVhSEPcdnQ3K2pa8CfnbZuHcpeZovTSMu6jdj6JV9piQyVsHoNSYuP8MijXdYKHGFYvPoLLy3Ddrv5MPi",
   },
   Object {
@@ -82827,6 +82941,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6DXuLL97nvCs4gn5uhL5hngT77sZRgrPKE1wDzxtN73mcmTQKFnHb2yAahvnoT3QCeSzxakpFMGxxY9d4ozgAKWzGtK31VP3v2vciXyVtEP",
   },
   Object {
@@ -82931,6 +83046,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6DXuLL97nvCs84Bu7dzut6oWXsSADKfHtoBvHQqpejzzfEy8TMu5WNuzz6bdhcjY3u8B4noZTkDho8wue49P6HogYitm64dyQpLJti8aEDb",
   },
 ]
@@ -85968,6 +86084,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6D5t3ggLE75WLn8cMhJ6V5tdZsT5ixJDjoYrERnYgkjXe5f2qqBBsjCLJ4ktGeorZBrSwQZ6tRqmmu9CM5fpi6S7n1T6VMxitE4LnXBStue",
   },
   Object {
@@ -86082,6 +86199,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": true,
     "xpub": "xpub6D5t3ggLE75WMZywf9sHZtBZcgdQTvVorb4U6YiYBSZrWiPZsB7JjjyMfyM7KiSQMwc87BLZSi8wXgoRvMZHVACMF7CBE3B77NN314ZKWuA",
   },
   Object {
@@ -86186,6 +86304,7 @@ Array [
     "swapHistory": Array [],
     "syncHash": undefined,
     "unitMagnitude": 8,
+    "used": false,
     "xpub": "xpub6D5t3ggLE75WQGWU8XaFEiYXbgQFJD3u6eyN1Yb7gcRu4Gan7uKEwqaCBoRhFs73nN1Kf51D5W7kx6TRLpDmwWgeDEk6mghh4gPA3BZbNvg",
   },
 ]

@@ -22,6 +22,7 @@ describe("walletconnect", () => {
     freshAddresses: [],
     name: "test",
     starred: false,
+    used: true,
     balance: BigNumber(0),
     spendableBalance: BigNumber(0),
     creationDate: new Date(),

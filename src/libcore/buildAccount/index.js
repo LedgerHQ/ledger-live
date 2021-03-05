@@ -4,6 +4,7 @@ import { log } from "@ledgerhq/logs";
 import last from "lodash/last";
 import {
   encodeAccountId,
+  isAccountEmpty,
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
   libcoreNoGoBalanceHistory,
@@ -234,6 +235,7 @@ export async function buildAccount({
     freshAddresses,
     name,
     starred: false,
+    used: false,
     balance,
     balanceHistory,
     spendableBalance: balance, // FIXME need libcore concept
@@ -251,6 +253,8 @@ export async function buildAccount({
   if (subAccounts) {
     account.subAccounts = subAccounts;
   }
+
+  account.used = !isAccountEmpty(account);
 
   const f: F = byFamily[currency.family];
   if (f) {

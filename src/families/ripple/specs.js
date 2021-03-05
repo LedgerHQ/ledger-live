@@ -3,7 +3,6 @@ import expect from "expect";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { isAccountEmpty } from "../../account";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 
@@ -30,7 +29,7 @@ const ripple: AppSpec<Transaction> = {
         const sibling = pickSiblings(siblings, 3);
         const recipient = sibling.freshAddress;
         let amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
-        if (isAccountEmpty(sibling) && amount.lt(reserve)) {
+        if (!sibling.used && amount.lt(reserve)) {
           invariant(
             maxSpendable.gt(reserve.plus(minAmountCutoff)),
             "not enough funds to send to new account"
