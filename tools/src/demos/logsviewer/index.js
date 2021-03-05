@@ -135,7 +135,7 @@ const Header = ({ logs, logsMeta, onFiles }: *) => {
               JSON.stringify({
                 data: {
                   settings: { hasCompletedOnboarding: true },
-                  user: { id: "" },
+                  user: { id: "_" },
                   accounts: accounts.map((a) => ({ data: toAccountRaw(a) })),
                 },
               })
