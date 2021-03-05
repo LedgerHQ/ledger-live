@@ -1087,10 +1087,10 @@
     "@ledgerhq/errors" "^5.43.0"
     events "^3.3.0"
 
-"@ledgerhq/ledger-core@6.11.1":
-  version "6.11.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.11.1.tgz#c82dac28744fedac9223158bf6be654542da2eec"
-  integrity sha512-kQc+xov29+ogbCoUFcd/QTI1quTBRNJGfX1W8sK4lOK0JUOpJ2vRPZ8V94SEM+anfpdpgRJkVlFcDSMp3sKFqQ==
+"@ledgerhq/ledger-core@6.11.2":
+  version "6.11.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ledger-core/-/ledger-core-6.11.2.tgz#96d327e5eb6c65a6dac57e6779d517cfc144f394"
+  integrity sha512-OR3HOBuXNpRkrKg4ZXd05T0SNZrjsDDSo9lNaGRn+yYiu52m7dcMszXJpWm28eZDE3+dZRKC5qGB41AU2kq/oA==
   dependencies:
     bindings "1.5.0"
     nan "^2.14.2"
@@ -6123,10 +6123,10 @@ typescript@^3.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.7.tgz#98d600a5ebdc38f40cb277522f12dc800e9e25fa"
   integrity sha512-BLbiRkiBzAwsjut4x/dsibSTB6yWpwT5qWmC2OfuCg3GgVQCSgMs4vEctYPhsaGtd0AeuuHMkjZ2h2WG8MSzRw==
 
-typescript@^4.2.2:
-  version "4.2.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.2.tgz#1450f020618f872db0ea17317d16d8da8ddb8c4c"
-  integrity sha512-tbb+NVrLfnsJy3M59lsDgrzWIflR4d4TIUjz+heUnHZwdF7YsrMTKoRERiIvI2lvBG95dfpLxB21WZhys1bgaQ==
+typescript@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.3.tgz#39062d8019912d43726298f09493d598048c1ce3"
+  integrity sha512-qOcYwxaByStAWrBf4x0fibwZvMRG+r4cQoTjbPtUlrWjBHbmCAww1i448U0GJ+3cNNEtebDteo/cHOR3xJ4wEw==
 
 typical@^4.0.0:
   version "4.0.0"
