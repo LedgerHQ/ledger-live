@@ -1,5 +1,5 @@
 // @flow
-import invariant from "invariant";
+import { GetAppAndVersionUnsupportedFormat } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 
 export default async (
@@ -8,7 +8,11 @@ export default async (
   const r = await transport.send(0xb0, 0x01, 0x00, 0x00);
   let i = 0;
   const format = r[i++];
-  invariant(format === 1, "getAppAndVersion: format not supported");
+  if (format !== 1) {
+    throw new GetAppAndVersionUnsupportedFormat(
+      "getAppAndVersion: format not supported"
+    );
+  }
   const nameLength = r[i++];
   const name = r.slice(i, (i += nameLength)).toString("ascii");
   const versionLength = r[i++];

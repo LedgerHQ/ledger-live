@@ -10,6 +10,10 @@ export const ConnectManagerTimeout = createCustomErrorClass(
   "ConnectManagerTimeout"
 );
 
+export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
+  "GetAppAndVersionUnsupportedFormat"
+);
+
 export const FeeEstimationFailed = createCustomErrorClass(
   "FeeEstimationFailed"
 );

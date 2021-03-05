@@ -32,6 +32,7 @@ import {
   createAccountFromDevice,
 } from "./createAccountFromDevice";
 import { remapLibcoreErrors, isNonExistingAccountError } from "./errors";
+import { GetAppAndVersionUnsupportedFormat } from "../errors";
 import nativeSegwitAppsVersionsMap from "./nativeSegwitAppsVersionsMap";
 import type { Core, CoreWallet } from "./types";
 
@@ -177,14 +178,27 @@ export const scanAccounts = ({
 
             if (derivationMode === "native_segwit") {
               if (nativeSegwitAppsVersionsMap[currency.managerAppName]) {
-                const { version } = await getAppAndVersion(transport);
-                if (
-                  !semver.gte(
-                    version,
-                    nativeSegwitAppsVersionsMap[currency.managerAppName]
-                  )
-                ) {
-                  continue;
+                try {
+                  const { version } = await getAppAndVersion(transport);
+                  if (
+                    !semver.gte(
+                      version,
+                      nativeSegwitAppsVersionsMap[currency.managerAppName]
+                    )
+                  ) {
+                    continue;
+                  }
+                } catch (e) {
+                  // in case the apdu is not even supported, we assume to not do native_segwit
+
+                  if (
+                    (e instanceof TransportStatusError &&
+                      e.statusCode === 0x6d00) ||
+                    e instanceof GetAppAndVersionUnsupportedFormat
+                  ) {
+                    continue;
+                  }
+                  throw e;
                 }
               }
             }
