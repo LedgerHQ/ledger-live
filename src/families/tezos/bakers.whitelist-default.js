@@ -3,7 +3,6 @@
 // unfinished list...
 const whitelist = `\
 tz1WCd2jm4uSt4vntk4vSuUWoZQGhLcDuR9q
-tz1Z3KCf8CLGAYfvVWPEr562jDDyWkwNF7sT
 tz1Scdr2HsZiQjc7bHMeBbmDRXYVvdhjJbBh
 tz1VmiY38m3y95HqQLjMwqnMS7sdMfGomzKi
 tz1g8vkmcde6sWKaG2NN9WKzCkDM6Rziq194
@@ -39,7 +38,6 @@ tz1aRoaRhSpRYvFdyvgWLL6TGyRoGF51wDjM
 tz1WpeqFaBG9Jm73Dmgqamy8eF8NWLz9JCoY
 tz1MQJPGNMijnXnVoBENFz9rUhaPt3S7rWoz
 tz1dRKU4FQ9QRRQPdaH4zCR6gmCmXfcvcgtB
-tz1hTFcQk2KJRPzZyHkCwbj7E1zY1xBkiHsk
 tz1ZcTRk5uxD86EFEn1vvNffWWqJy7q5eVhc
 tz1aDiEJf9ztRrAJEXZfcG3CKimoKsGhwVAi`.split("\n");
 
