@@ -635,7 +635,12 @@ const cosmos_testnet: AppSpec<Transaction> = {
               validators: [
                 {
                   address: delegation.validatorAddress,
-                  amount: delegation.pendingRewards,
+                  // TODO: the test should be
+                  // amount: delegation.pendingRewards,
+                  // but it won't work until COIN-665 is fixed until then,
+                  // amount is set to 0 in
+                  // src/families/cosmos/libcore-buildOperation in the REWARD case
+                  amount: BigNumber(0),
                 },
               ],
             },

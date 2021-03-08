@@ -70,14 +70,23 @@ const genericTest = ({
   const nonDeterministicPicking =
     transaction.utxoStrategy.strategy === bitcoinPickingStrategy.OPTIMIZE_SIZE;
 
-  expect(operation).toMatchObject({
-    senders: nonDeterministicPicking
-      ? operation.senders
-      : txInputs.map((t) => t.address),
-    recipients: txOutputs
-      .filter((o) => !isChangeOutput(o))
-      .map((t) => t.address),
+  // FIXME: we do this in unsorted way. there are changes of outputs ordering...
+  const asSorted = (opShape: { senders: string[], recipients: string[] }) => ({
+    senders: opShape.senders.slice(0).sort(),
+    recipients: opShape.recipients.slice(0).sort(),
   });
+
+  expect(asSorted(operation)).toMatchObject(
+    asSorted({
+      senders: nonDeterministicPicking
+        ? operation.senders
+        : txInputs.map((t) => t.address).filter(Boolean),
+      recipients: txOutputs
+        .filter((o) => !isChangeOutput(o))
+        .map((t) => t.address)
+        .filter(Boolean),
+    })
+  );
 
   const utxosPicked = (status.txInputs || [])
     .map(({ previousTxHash, previousOutputIndex }) =>

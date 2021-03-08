@@ -223,16 +223,6 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
     let subtitle = "";
 
-    if (uncoveredMutations.length) {
-      subtitle += `> ⚠️ ${uncoveredMutations.length} mutations uncovered\n`;
-    }
-
-    if (withoutFunds.length) {
-      subtitle += `> ⚠️ ${
-        withoutFunds.length
-      } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
-    }
-
     if (countervaluesError) {
       subtitle += `> ${String(countervaluesError)}`;
     }
@@ -248,6 +238,10 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
     body += subtitle;
 
+    if (uncoveredMutations.length) {
+      body += `> ⚠️ ${uncoveredMutations.length} mutations uncovered\n`;
+    }
+
     body += "\n\n";
 
     if (specFatals.length) {
@@ -260,6 +254,22 @@ export async function bot({ currency, mutation }: Arg = {}) {
         body += "```\n" + String(fatalError) + "\n```\n\n";
         slackBody += `❌ *Spec ${spec.name}*: \`${String(fatalError)}\`\n`;
       });
+
+      const failureSpecNames = allMutationReports
+        .filter((r) => (r.mutations || []).some((m) => m.error))
+        .map(({ spec }) => spec.name);
+
+      if (failureSpecNames) {
+        slackBody += `:nogo: *${failureSpecNames.join(", ")}*\n`;
+      }
+
+      const successSpecNames = allMutationReports
+        .filter((r) => (r.mutations || []).every((m) => !m.error))
+        .forEach(({ spec }) => spec.name);
+
+      if (successSpecNames) {
+        slackBody += `:go: *${successSpecNames.join(", ")}*\n`;
+      }
 
       body += "</details>\n\n";
     }
@@ -323,6 +333,12 @@ export async function bot({ currency, mutation }: Arg = {}) {
     }
 
     body += "### Portfolio" + (totalUSD ? " (" + totalUSD + ")" : "") + "\n\n";
+
+    if (withoutFunds.length) {
+      body += `> ⚠️ ${
+        withoutFunds.length
+      } specs don't have enough funds! (${withoutFunds.join(", ")})\n`;
+    }
 
     body += "<details>\n";
     body += `<summary>Details of the ${results.length} currencies</summary>\n\n`;
