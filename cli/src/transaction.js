@@ -114,9 +114,15 @@ export async function inferTransactions(
   }
 
   const transactions = await Promise.all(
-    inferTransactions(all, opts, { inferAmount }).map((transaction) =>
-      bridge.prepareTransaction(mainAccount, transaction)
-    )
+    inferTransactions(all, opts, { inferAmount }).map(async (transaction) => {
+      const tx = await bridge.prepareTransaction(mainAccount, transaction);
+      const status = await bridge.getTransactionStatus(mainAccount, tx);
+      const errorKeys = Object.keys(status.errors);
+      if (errorKeys.length) {
+        throw status.errors[errorKeys[0]];
+      }
+      return tx;
+    })
   );
 
   return transactions;
