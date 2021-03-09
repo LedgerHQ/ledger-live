@@ -85,7 +85,7 @@ async function canEstimateGas(account: Account, transaction: Transaction) {
 
     return await retriable
       .then((_response) => {
-        return !!status.errors && Object.entries(status.errors).length === 0;
+        return !status.errors || Object.entries(status.errors).length === 0;
       })
       .catch(() => {
         return false;

@@ -187,9 +187,9 @@ const getDelegateTransactionStatus = async (a, t, isPreValidation = false) => {
 const getTransactionStatus = async (a, t, isPreValidation = false) => {
   if (t.mode === "send") {
     // We isolate the send transaction that it's a little bit different from the rest
-    return await getSendTransactionStatus(a, t);
+    return await getSendTransactionStatus(a, t, isPreValidation);
   } else if (t.mode === "delegate") {
-    return await getDelegateTransactionStatus(a, t);
+    return await getDelegateTransactionStatus(a, t, isPreValidation);
   }
 
   const errors = {};
