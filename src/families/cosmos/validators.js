@@ -31,7 +31,7 @@ const cacheValidators = makeLRUCache(
     if (isStargate(currency)) {
       const url = `${getBaseApiUrl(
         currency
-      )}/${namespace}/staking/${version}/validators`;
+      )}/${namespace}/staking/${version}/validators?status=BOND_STATUS_BONDED&pagination.limit=130`;
       const { data } = await network({ url, method: "GET" });
 
       const validators = data.validators.map((validator) => {
