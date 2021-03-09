@@ -31,7 +31,7 @@ export default function LendingBanners({ account }: Props) {
 
   let lendingInfoBanner = null;
 
-  if (availableOnCompound) {
+  if (availableOnCompound && compoundCapabilities) {
     const lendingInfoBannerContent = !compoundCapabilities.status ? (
       <Trans i18nKey="transfer.lending.banners.needApproval" />
     ) : compoundCapabilities.enabledAmountIsUnlimited ? (
@@ -81,7 +81,7 @@ export default function LendingBanners({ account }: Props) {
 
   let lendingWarningBanner = null;
 
-  if (availableOnCompound) {
+  if (availableOnCompound && compoundCapabilities) {
     const lendingWarningBannerContent =
       compoundCapabilities.status === "ENABLING" ? (
         <Trans i18nKey="transfer.lending.banners.approving" />
