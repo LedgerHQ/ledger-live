@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet, View, Linking, ActivityIndicator } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import { TrackScreen } from "../../../analytics";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
@@ -22,7 +23,6 @@ import AnimatedHeaderView from "../../../components/AnimatedHeader";
 import { useLocale } from "../../../context/Locale";
 
 import { urls } from "../../../config/urls";
-import { useDispatch } from "react-redux";
 
 function OnboardingStepTerms({ navigation }: *) {
   const { colors } = useTheme();
