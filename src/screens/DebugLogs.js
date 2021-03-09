@@ -1,9 +1,11 @@
 // @flow
 import React, { useEffect, useCallback, useState } from "react";
 import { listen } from "@ledgerhq/logs";
-import { ScrollView, View, Text, StyleSheet } from "react-native";
+import { ScrollView, View, StyleSheet } from "react-native";
 import Share from "react-native-share";
+import logger from "../logger";
 import Button from "../components/Button";
+import LText from "../components/LText";
 
 export default function DebugLogs() {
   const [logs, setLogs] = useState([]);
@@ -16,17 +18,23 @@ export default function DebugLogs() {
 
   const onExport = async () => {
     const message = JSON.stringify(logs);
+    const base64 = Buffer.from(message).toString("base64");
+
     const options = {
       failOnCancel: false,
       saveToFiles: true,
-      type: "text/plain",
-      message,
+      type: "application/json",
+      filename: "logs",
+      url: `data:application/json;base64,${base64}`,
     };
 
     try {
       await Share.open(options);
     } catch (err) {
-      // Copied this from the swap history export
+      // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
+      if (err.error.code !== "ECANCELLED500") {
+        logger.critical(err);
+      }
     }
   };
 
@@ -42,7 +50,7 @@ export default function DebugLogs() {
       <ScrollView>
         <View>
           {logs.map(log => (
-            <Text>{JSON.stringify(log)}</Text>
+            <LText color="text">{JSON.stringify(log)}</LText>
           ))}
         </View>
       </ScrollView>

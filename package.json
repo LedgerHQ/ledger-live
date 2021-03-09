@@ -137,7 +137,7 @@
     "react-native-safe-area-view": "^1.1.1",
     "react-native-screens": "^2.15.0",
     "react-native-sentry": "0.43.2",
-    "react-native-share": "^3.7.0",
+    "react-native-share": "^5.0.0",
     "react-native-simple-store": "^2.0.2",
     "react-native-slider": "^0.11.0",
     "react-native-splash-screen": "3.2.0",
