@@ -154,6 +154,7 @@ const Footer = ({
 
 const fieldComponents = {
   "polkadot.validators": PolkadotValidatorsField,
+  fees: null,
 };
 
 const styles = StyleSheet.create({
