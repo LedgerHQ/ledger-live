@@ -1,6 +1,7 @@
 // @flow
 import React, { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import {
   useBridgeSync,
   useAccountSyncState,
@@ -26,6 +27,7 @@ export default (ScrollListLike: any) => {
     ...scrollListLikeProps
   }: Props) {
     const { pending: isPending } = useAccountSyncState({ accountId });
+    const { colors, dark } = useTheme();
     const setSyncBehavior = useBridgeSync();
     const { poll } = useCountervaluesPolling();
     const [lastClickTime, setLastClickTime] = useState(0);
@@ -66,7 +68,13 @@ export default (ScrollListLike: any) => {
         {...scrollListLikeProps}
         ref={forwardedRef}
         refreshControl={
-          <RefreshControl refreshing={isLoading} onRefresh={onPress} />
+          <RefreshControl
+            refreshing={isLoading}
+            onRefresh={onPress}
+            progressBackgroundColor={dark ? colors.background : colors.card}
+            colors={[colors.live]}
+            tintColor={colors.live}
+          />
         }
       />
     );
