@@ -5,7 +5,7 @@ import ProviderCommon from "@ledgerhq/live-common/lib/walletconnect/Provider";
 import { saveWCSession, getWCSession } from "../../db";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { NavigatorName, ScreenName } from "../../const";
-import { navigate, navigationRef } from "../../rootnavigation";
+import { navigate, isReadyRef } from "../../rootnavigation";
 
 const useAccount = accountId => {
   const { account } = useSelector(
@@ -24,7 +24,7 @@ const Provider = ({ children }: { children: React$Node }) => {
     }
 
     const interval = setInterval(() => {
-      setIsReady(!!navigationRef.current);
+      setIsReady(!!isReadyRef.current);
     }, 500);
 
     // eslint-disable-next-line consistent-return

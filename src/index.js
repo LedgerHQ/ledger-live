@@ -55,7 +55,7 @@ import RootNavigator from "./components/RootNavigator";
 import SetEnvsFromSettings from "./components/SetEnvsFromSettings";
 import CounterValuesProvider from "./components/CounterValuesProvider";
 import type { State } from "./reducers";
-import { navigationRef } from "./rootnavigation";
+import { navigationRef, isReadyRef } from "./rootnavigation";
 import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
@@ -313,6 +313,13 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
       });
   }, [getInitialState, wcContext.initDone]);
 
+  React.useEffect(
+    () => () => {
+      isReadyRef.current = false;
+    },
+    [],
+  );
+
   const theme = useSelector(themeSelector);
 
   if (!isReady) {
@@ -324,6 +331,9 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
       theme={themes[theme]}
       initialState={initialState}
       ref={navigationRef}
+      onReady={() => {
+        isReadyRef.current = true;
+      }}
     >
       {children}
     </NavigationContainer>
