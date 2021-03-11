@@ -99,6 +99,7 @@ class FilteredSearchBar extends PureComponent<Props, State> {
           fuseOptions={{
             threshold: 0.1,
             keys,
+            shouldSort: false,
           }}
           value={query}
           items={list}
