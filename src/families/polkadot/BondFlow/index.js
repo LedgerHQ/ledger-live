@@ -97,7 +97,7 @@ function BondFlow() {
       <Stack.Screen
         name={ScreenName.PolkadotBondValidationError}
         component={ValidationError}
-        options={{ headerTitle: null }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

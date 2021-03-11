@@ -86,7 +86,7 @@ function UnbondFlow() {
       <Stack.Screen
         name={ScreenName.PolkadotUnbondValidationError}
         component={ValidationError}
-        options={{ headerTitle: null }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
