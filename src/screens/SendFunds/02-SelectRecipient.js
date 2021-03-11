@@ -190,6 +190,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 onInputCleared={clear}
                 value={transaction.recipient}
                 ref={input}
+                scrollEnabled={false}
                 multiline
                 blurOnSubmit
                 autoCapitalize="none"
