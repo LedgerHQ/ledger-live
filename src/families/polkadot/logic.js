@@ -12,6 +12,7 @@ export const MAX_UNLOCKINGS = 32;
 export const PRELOAD_MAX_AGE = 60 * 1000;
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
 export const POLKADOT_SS58_PREFIX = 0;
+export const WARNING_FEW_DOT_LEFTOVER = BigNumber(1000000000);
 
 /**
  * Returns true if address is valid, false if it's invalid (can't parse or wrong checksum)

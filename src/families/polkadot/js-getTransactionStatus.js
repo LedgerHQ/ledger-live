@@ -31,6 +31,7 @@ import { verifyValidatorAddresses } from "./api";
 import {
   EXISTENTIAL_DEPOSIT,
   MINIMUM_BOND_AMOUNT,
+  WARNING_FEW_DOT_LEFTOVER,
   isValidAddress,
   isFirstBond,
   isController,
@@ -280,6 +281,13 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
     if (amount.lte(0)) {
       errors.amount = new AmountRequired();
     }
+  }
+
+  if (
+    t.mode === "bond" &&
+    a.spendableBalance.minus(totalSpent).lt(WARNING_FEW_DOT_LEFTOVER)
+  ) {
+    warnings.amount = new PolkadotBondAllFundsWarning();
   }
 
   if (totalSpent.gt(a.spendableBalance)) {
