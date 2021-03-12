@@ -81,9 +81,7 @@ export default function OnboardingInfoModal({ navigation, route }: Props) {
               </LText>
             )}
             {desc && (
-              <LText semiBold style={[styles.desc, { color: textColor }]}>
-                {desc}
-              </LText>
+              <LText style={[styles.desc, { color: textColor }]}>{desc}</LText>
             )}
             {link && (
               <TouchableOpacity
