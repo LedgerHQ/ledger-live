@@ -1,6 +1,6 @@
 // @flow
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import ReactNativeModal from "react-native-modal";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
@@ -10,6 +10,8 @@ import StyledStatusBar from "./StyledStatusBar";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import DebugRejectSwitch from "./DebugRejectSwitch";
+
+let isModalOpenedref = false;
 
 export type Props = {
   id?: string,
@@ -44,6 +46,7 @@ const BottomModal = ({
   ...rest
 }: Props) => {
   const { colors } = useTheme();
+  const [open, setIsOpen] = useState(false);
   const backDropProps = preventBackdropClick
     ? {}
     : {
@@ -51,12 +54,29 @@ const BottomModal = ({
         onBackButtonPress: onClose,
       };
 
+  // workarround to make sure no double modal can be opened at same time
+  useEffect(
+    () => () => {
+      isModalOpenedref = false;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!!isModalOpenedref && isOpened) {
+      onClose();
+    } else {
+      setIsOpen(isOpened);
+    }
+    isModalOpenedref = isOpened;
+  }, [isOpened, onClose]);
+
   return (
     <ButtonUseTouchable.Provider value={true}>
       <ReactNativeModal
         {...rest}
         {...backDropProps}
-        isVisible={isOpened}
+        isVisible={open}
         deviceWidth={width}
         deviceHeight={height}
         useNativeDriver
@@ -71,7 +91,7 @@ const BottomModal = ({
           ]}
         >
           <View style={style}>
-            {isOpened && id ? <TrackScreen category={id} /> : null}
+            {open && id ? <TrackScreen category={id} /> : null}
             <StyledStatusBar
               backgroundColor={
                 Platform.OS === "android" ? "rgba(0,0,0,0.7)" : "transparent"
