@@ -37,6 +37,7 @@ type NavOptions = {
 export default function AccountActions({ account, parentAccount }: Props) {
   const { colors } = useTheme();
   const [displayedActions, setDisplayedActions] = useState();
+  const [next, setNext] = useState();
   const navigation = useNavigation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const mainAccount = getMainAccount(account, parentAccount);
@@ -54,7 +55,7 @@ export default function AccountActions({ account, parentAccount }: Props) {
 
   const onNavigate = useCallback(
     (name: string, options?: NavOptions) => {
-      setDisplayedActions();
+      setNext();
       navigation.navigate(name, {
         ...options,
         params: {
@@ -83,6 +84,13 @@ export default function AccountActions({ account, parentAccount }: Props) {
       screen: ScreenName.ReceiveConnectDevice,
     });
   }, [onNavigate]);
+
+  const goToNext = useCallback(() => {
+    if (next) {
+      // workaround for bottom modal + text input autoFocus issue
+      setTimeout(() => onNavigate(...next), 0);
+    }
+  }, [onNavigate, next]);
 
   return (
     <View style={styles.root}>
@@ -114,6 +122,7 @@ export default function AccountActions({ account, parentAccount }: Props) {
           <BottomModal
             isOpened={!!displayedActions}
             onClose={() => setDisplayedActions()}
+            onModalHide={() => goToNext()}
             containerStyle={styles.modal}
           >
             {displayedActions === "lending" && (
@@ -128,7 +137,8 @@ export default function AccountActions({ account, parentAccount }: Props) {
                     key={i}
                     onSelect={({ navigationParams, enableActions }) => {
                       if (navigationParams) {
-                        onNavigate(...navigationParams);
+                        setNext(navigationParams);
+                        setDisplayedActions();
                       }
                       if (enableActions) {
                         setDisplayedActions(enableActions);
