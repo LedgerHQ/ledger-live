@@ -255,19 +255,19 @@ export async function bot({ currency, mutation }: Arg = {}) {
         slackBody += `❌ *Spec ${spec.name}*: \`${String(fatalError)}\`\n`;
       });
 
-      const failureSpecNames = allMutationReports
+      const failureSpecNames = results
         .filter((r) => (r.mutations || []).some((m) => m.error))
         .map(({ spec }) => spec.name);
 
-      if (failureSpecNames) {
+      if (failureSpecNames && failureSpecNames.length) {
         slackBody += `:nogo: *${failureSpecNames.join(", ")}*\n`;
       }
 
-      const successSpecNames = allMutationReports
+      const successSpecNames = results
         .filter((r) => (r.mutations || []).every((m) => !m.error))
-        .forEach(({ spec }) => spec.name);
+        .map(({ spec }) => spec.name);
 
-      if (successSpecNames) {
+      if (successSpecNames && successSpecNames.length) {
         slackBody += `:go: *${successSpecNames.join(", ")}*\n`;
       }
 
