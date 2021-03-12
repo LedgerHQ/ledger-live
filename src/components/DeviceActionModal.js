@@ -17,7 +17,8 @@ type Props = {
   request?: any,
   onClose?: () => void,
   onModalHide?: () => void,
-  onResult: $PropertyType<React$ElementProps<typeof DeviceAction>, "onResult">,
+  onResult?: $PropertyType<React$ElementProps<typeof DeviceAction>, "onResult">,
+  renderOnResult?: (p: any) => React$Node,
 };
 
 export default function DeviceActionModal({
@@ -26,6 +27,7 @@ export default function DeviceActionModal({
   request,
   onClose,
   onResult,
+  renderOnResult,
   onModalHide,
 }: Props) {
   const { colors } = useTheme();
@@ -34,7 +36,6 @@ export default function DeviceActionModal({
       id="DeviceActionModal"
       isOpened={!!device}
       onClose={onClose}
-      onResult={onResult}
       onModalHide={onModalHide}
     >
       {device && (
@@ -47,6 +48,7 @@ export default function DeviceActionModal({
                 request={request}
                 onClose={onClose}
                 onResult={onResult}
+                renderOnResult={renderOnResult}
               />
             </View>
           }

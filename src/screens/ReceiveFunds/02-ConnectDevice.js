@@ -163,7 +163,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
       <DeviceActionModal
         action={action}
         device={device}
-        onResult={onResult}
+        renderOnResult={onResult}
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
       />

@@ -72,7 +72,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   const [verified, setVerified] = useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
-  const [onModalHide, setOnModalHide] = useState(() => {});
+  const onModalHide = useRef(() => {});
   const [error, setError] = useState(null);
   const [zoom, setZoom] = useState(false);
   const [allowNavigation, setAllowNavigation] = useState(true);
@@ -111,7 +111,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   function onRetry(): void {
     if (isModalOpened) {
       setIsModalOpened(false);
-      setOnModalHide(navigation.goBack);
+      onModalHide.current = navigation.goBack;
     } else {
       navigation.goBack();
     }
@@ -119,7 +119,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
 
   function onModalClose(): void {
     setIsModalOpened(false);
-    setOnModalHide(onDone);
+    onModalHide.current = onDone;
   }
 
   function onZoom(): void {
@@ -323,7 +323,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         id="ReceiveConfirmationModal"
         isOpened={isModalOpened}
         onClose={onModalClose}
-        onModalHide={onModalHide}
+        onModalHide={onModalHide.current}
       >
         {error ? (
           <View style={styles.modal}>
