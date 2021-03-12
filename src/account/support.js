@@ -44,7 +44,11 @@ export const shouldShowNewAccount = (
   // last mode is always creatable by convention
   if (modes[modes.length - 1] === derivationMode) return true;
   // legacy is only available with flag SHOW_LEGACY_NEW_ACCOUNT
-  if (derivationMode === "" && !!getEnv("SHOW_LEGACY_NEW_ACCOUNT")) return true;
+  if (
+    derivationMode === "" &&
+    (!!getEnv("SHOW_LEGACY_NEW_ACCOUNT") || currency.family === "bitcoin")
+  )
+    return true;
   // native segwit being not yet supported everywhere, segwit is always available for creation
   if (
     derivationMode === "segwit" ||

@@ -59,6 +59,7 @@ export interface CurrencyBridge {
     deviceId: DeviceId,
     scheme?: ?DerivationMode,
     syncConfig: SyncConfig,
+    preferredNewAccountScheme?: DerivationMode,
   }): Observable<ScanAccountEvent>;
 
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;

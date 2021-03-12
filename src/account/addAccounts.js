@@ -1,6 +1,6 @@
 // @flow
 import uniqWith from "lodash/uniqWith";
-import type { Account } from "../types";
+import type { Account, DerivationMode } from "../types";
 import { validateNameEdition } from "./accountName";
 import { clearAccount } from "./helpers";
 import { findAccountMigration } from "./support";
@@ -43,6 +43,7 @@ export function groupAddAccounts(
   scannedAccounts: Account[],
   context: {
     scanning: boolean,
+    preferredNewAccountSchemes?: DerivationMode[],
   }
 ): AddAccountsSectionResult {
   const importedAccounts = [];
@@ -108,26 +109,20 @@ export function groupAddAccounts(
     });
   }
   if (!context.scanning || creatableAccounts.length) {
-    let supportLink = undefined;
-    if (
-      creatableAccounts.length > 1 &&
-      creatableAccounts.some((a) => a.derivationMode === "segwit") &&
-      creatableAccounts.some((a) => a.derivationMode === "native_segwit")
-    ) {
-      supportLink = {
-        id: "segwit_or_native_segwit",
-        url:
-          "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
-      };
-    }
-
     // NB if data is empty, need to do custom placeholder that depends on alreadyEmptyAccount
     sections.push({
       id: "creatable",
       selectable: true,
       defaultSelected: false,
-      data: creatableAccounts,
-      supportLink,
+      data:
+        context.preferredNewAccountSchemes &&
+        context.preferredNewAccountSchemes.length > 0
+          ? creatableAccounts.filter(
+              (a) =>
+                context.preferredNewAccountSchemes &&
+                context.preferredNewAccountSchemes.includes(a.derivationMode)
+            )
+          : creatableAccounts,
     });
   }
 

@@ -426,19 +426,41 @@ export const getDerivationModesForCurrency = (
     all.push("legacy_on_segwit");
     all.push("legacy_on_native_segwit");
   }
-  if (!disableBIP44[currency.id]) {
-    all.push("");
-  }
   if (currency.supportsNativeSegwit) {
     all.push("native_segwit");
   }
   if (currency.supportsSegwit) {
     all.push("segwit");
   }
+  if (!disableBIP44[currency.id]) {
+    all.push("");
+  }
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {
     return all.filter((a) => !isInvalidDerivationMode(a));
   }
   return all;
+};
+
+const preferredList = ["native_segwit", "segwit", ""];
+// null => no settings
+// [ .. ]
+export const getPreferredNewAccountScheme = (
+  currency: CryptoCurrency
+): ?(DerivationMode[]) => {
+  if (currency.family !== "bitcoin") return null;
+
+  const derivationsModes = getDerivationModesForCurrency(currency);
+  const list = preferredList.filter((p) => derivationsModes.includes(p));
+
+  if (list.length === 1) return null;
+  return list;
+};
+
+export const getDefaultPreferredNewAccountScheme = (
+  currency: CryptoCurrency
+): ?DerivationMode => {
+  const list = getPreferredNewAccountScheme(currency);
+  return list && list[0];
 };
 
 export type StepAddressInput = {
