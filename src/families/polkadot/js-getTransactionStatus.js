@@ -301,7 +301,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
     t.mode === "bond" &&
     a.spendableBalance.minus(totalSpent).lt(WARNING_FEW_DOT_LEFTOVER)
   ) {
-    warnings.amount = new PolkadotBondAllFundsWarning();
+    warnings.amount = new PolkadotAllFundsWarning();
   }
 
   if (totalSpent.gt(a.spendableBalance)) {
