@@ -96,7 +96,7 @@ const getTransactionStatus = (a, t) => {
   }
 
   if (t.estimatedGasLimit && gasLimit.lt(t.estimatedGasLimit)) {
-    warnings.gasLimit = new GasLessThanEstimate();
+    errors.gasLimit = new GasLessThanEstimate();
   }
 
   return Promise.resolve(result);

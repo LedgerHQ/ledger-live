@@ -110,10 +110,10 @@ const dataset: DatasetTest<Transaction> = {
                 amount: BigNumber("800000000000000"),
                 estimatedFees: BigNumber("2100000"),
                 totalSpent: BigNumber("800000000000000"),
-                errors: {},
-                warnings: {
+                errors: {
                   gasLimit: new GasLessThanEstimate(),
                 },
+                warnings: {},
               },
             },
             {
