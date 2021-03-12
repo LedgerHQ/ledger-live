@@ -51,7 +51,6 @@ class GraphCard extends PureComponent<Props, State> {
   };
 
   timeRangeItems = [
-    { key: "day", label: <Trans i18nKey="common:time.day" /> },
     { key: "week", label: <Trans i18nKey="common:time.week" /> },
     { key: "month", label: <Trans i18nKey="common:time.month" /> },
     { key: "year", label: <Trans i18nKey="common:time.year" /> },
