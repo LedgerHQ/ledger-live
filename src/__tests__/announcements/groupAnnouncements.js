@@ -1,6 +1,6 @@
 // @flow
 import timemachine from "timemachine";
-import { groupAnnouncements } from "../../providers/AnnouncementProvider/helpers";
+import { groupAnnouncements } from "../../announcements/AnnouncementProvider/helpers";
 
 timemachine.config({
   dateString: "February 22, 2021 13:12:59",

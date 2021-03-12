@@ -3,8 +3,8 @@ import timemachine from "timemachine";
 import {
   filterAnnouncements,
   localizeAnnouncements,
-} from "../../providers/AnnouncementProvider/logic";
-import api from "../../providers/AnnouncementProvider/api/api.mock";
+} from "../../announcements/AnnouncementProvider/logic";
+import api from "../../announcements/AnnouncementProvider/api/api.mock";
 
 timemachine.config({
   dateString: "February 22, 2021 13:12:59",
