@@ -201,9 +201,7 @@ const calculateMaxRebond = (a: Account): BigNumber => {
  * @param {*} a
  */
 const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
-  const amount = a.spendableBalance
-    .minus(getMinimumBalance(a))
-    .minus(t.fees || 0);
+  const amount = a.spendableBalance.minus(t.fees || 0);
   return amount.lt(0) ? BigNumber(0) : amount;
 };
 

@@ -27,7 +27,7 @@ const getExtrinsicParams = (a: Account, t: Transaction) => {
           dest: t.recipient,
           value: t.amount.toString(),
         },
-        name: "transferKeepAlive",
+        name: t.useAllAmount ? "transfer" : "transferKeepAlive",
         pallet: "balances",
       };
     case "bond":
