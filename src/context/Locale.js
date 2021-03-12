@@ -4,7 +4,10 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import Locale from "react-native-locale";
+import { useDispatch, useSelector } from "react-redux";
 import { locales } from "../languages";
+import { languageSelector } from "../reducers/settings";
+import { setLanguage } from "../actions/settings";
 
 const languageDetector = {
   type: "languageDetector",
@@ -59,14 +62,19 @@ function getLocaleState(i18n): LocaleState {
 }
 
 export default function LocaleProvider({ children }: Props) {
+  const settingsLocale = useSelector(languageSelector);
+  const dispatch = useDispatch();
   const [locale, setLocale] = useState<LocaleState>(getLocaleState(i18next));
 
   function updateLocale() {
-    setLocale(getLocaleState(i18next));
+    const language = getLocaleState(i18next);
+    dispatch(setLanguage(language.locale));
+    setLocale(language);
   }
 
   useEffect(() => {
     i18next.on("languageChanged", updateLocale);
+    if (settingsLocale) i18next.changeLanguage(settingsLocale);
 
     return () => {
       i18next.off("languageChanged", updateLocale);

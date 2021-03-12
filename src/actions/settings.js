@@ -157,3 +157,8 @@ export const setDiscreetMode = (payload: boolean) => ({
   type: "SETTINGS_SET_DISCREET_MODE",
   payload,
 });
+
+export const setLanguage = (payload: string) => ({
+  type: "SETTINGS_SET_LANGUAGE",
+  payload,
+});
