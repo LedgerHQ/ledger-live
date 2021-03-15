@@ -1,10 +1,10 @@
 // @flow
 
+import CosmosApp from "@ledgerhq/hw-app-cosmos";
 import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
 import type { Transaction, CoreCosmosLikeTransaction } from "./types";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
-import CosmosApp from "./ledger-app/Cosmos";
 
 async function signTransaction({
   account: { freshAddressPath, spendableBalance, id, freshAddress },

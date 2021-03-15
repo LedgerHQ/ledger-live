@@ -1,7 +1,7 @@
 // @flow
 
+import Algorand from "@ledgerhq/hw-app-algorand";
 import type { Resolver } from "../../hw/getAddress/types";
-import Algorand from "./ledger-app/Algorand";
 import { withLibcore } from "../../libcore/access";
 
 const convertPubkeyToAddress = async (pubkey) => {

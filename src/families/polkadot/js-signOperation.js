@@ -4,13 +4,13 @@ import { Observable } from "rxjs";
 import { TypeRegistry } from "@polkadot/types";
 import { u8aConcat } from "@polkadot/util";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import Polkadot from "@ledgerhq/hw-app-polkadot";
 
 import type { Transaction } from "./types";
 import type { Account, Operation, SignOperationEvent } from "../../types";
 
 import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
-import { Polkadot } from "./ledger-app/Polkadot";
 
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./logic";

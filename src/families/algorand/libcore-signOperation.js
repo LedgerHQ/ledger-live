@@ -1,10 +1,10 @@
 // @flow
 
+import Algorand from "@ledgerhq/hw-app-algorand";
 import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
 import type { Transaction, CoreAlgorandTransaction } from "./types";
 import type { Operation } from "../../types";
-import Algorand from "./ledger-app/Algorand";
 import { BigNumber } from "bignumber.js";
 
 async function signTransaction({
@@ -27,8 +27,6 @@ async function signTransaction({
 
   onDeviceSignatureRequested();
   // Call the hw-app signature
-  // Note: That wont work until we dont change the code with the right call for Algorand
-  // the code = ./ledger-app/Algorand
   const { signature } = await hwApp.sign(freshAddressPath, serialized);
   onDeviceSignatureGranted();
 

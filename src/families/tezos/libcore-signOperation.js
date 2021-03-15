@@ -1,7 +1,7 @@
 // @flow
 
 import invariant from "invariant";
-import Xtz from "./hw-app-xtz";
+import Xtz from "@ledgerhq/hw-app-tezos";
 import type { CoreTezosLikeTransaction, Transaction } from "./types";
 import { makeSignOperation } from "../../libcore/signOperation";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
