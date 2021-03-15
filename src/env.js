@@ -85,7 +85,7 @@ const envDefinitions = {
   },
   API_STELLAR_HORIZON: {
     parser: stringParser,
-    def: "https://horizon.stellar.org",
+    def: "https://stellar.coin.ledger.com",
     desc: "Stellar Horizon API url",
   },
   API_STELLAR_HORIZON_FETCH_LIMIT: {
