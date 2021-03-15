@@ -24,7 +24,7 @@ addNotCreatedStellarMockAddresses(notCreatedStellarMockAddress);
 addMultisignStellarMockAddresses(multisignStellarMockAddress);
 
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["libcore"],
+  implementations: ["js"],
   currencies: {
     stellar: {
       scanAccounts: [
