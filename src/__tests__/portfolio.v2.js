@@ -1,4 +1,5 @@
 // @flow
+import "./test-helpers/staticTime";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
