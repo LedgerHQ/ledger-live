@@ -23,9 +23,6 @@ export function startOfWeek(t: Date) {
   return new Date(d.getTime() - d.getDay() * dayIncrement);
 }
 
-// TODO we need to rework this to allow "all" time range
-// this would require to introduce Account#olderOperationDate
-
 const ranges: { [k: PortfolioRange]: PortfolioRangeConfig } = {
   year: {
     count: 52,
