@@ -13,13 +13,11 @@ import {
 } from "../portfolio/v2";
 import { getPortfolioRangeConfig, getDates } from "../portfolio/v2/range";
 import type { AccountLike } from "../types";
+import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";
-import { referenceSnapshotDate } from "../countervalues/mock";
 
-jest
-  .spyOn(Date, "now")
-  .mockImplementation(() => new Date(referenceSnapshotDate).getTime());
+setEnv("MOCK", "1");
 
 describe("Portfolio", () => {
   describe("getPortfolioCount", () => {
@@ -46,7 +44,7 @@ describe("Portfolio", () => {
           },
         ];
         const res = getPortfolioCount(accounts, range);
-        expect(res).toBe(601);
+        expect(res).toBe(489);
       });
 
       it("should return at least a year", () => {
