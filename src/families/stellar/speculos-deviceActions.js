@@ -7,6 +7,7 @@ import { deviceActionFlow } from "../../bot/specs";
 const expectedAmount = ({ account, status }) =>
   formatCurrencyUnit(account.unit, status.amount, {
     disableRounding: true,
+    useGrouping: false,
   }) + " XLM";
 
 const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
@@ -48,6 +49,10 @@ const acceptTransaction: DeviceAction<Transaction, *> = deviceActionFlow({
       title: "Network",
       button: "Rr",
       expectedValue: () => "Public",
+    },
+    {
+      title: "Time Bounds",
+      button: "Rr",
     },
     {
       title: "Tx Source",

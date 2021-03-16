@@ -15,6 +15,7 @@ import {
   canUnbond,
   canNominate,
   isFirstBond,
+  getMinimalLockedBalance,
 } from "../../families/polkadot/logic";
 
 const currency = getCryptoCurrencyById("polkadot");
@@ -78,9 +79,13 @@ const polkadot: AppSpec<Transaction> = {
     },
     {
       name: "bond - bondExtra",
-      maxRun: 1,
+      maxRun: 2,
       transaction: ({ account, bridge }) => {
         invariant(canBond(account), "can't bond");
+        invariant(
+          BigNumber(100000).gt(getMinimalLockedBalance(account)),
+          "can't bond because too much unbond"
+        );
         const { polkadotResources } = account;
         invariant(polkadotResources, "polkadot");
 
