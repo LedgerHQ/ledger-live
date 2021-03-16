@@ -12,9 +12,9 @@
     "android:build": "yarn start & bundle exec fastlane android build"
   },
   "dependencies": {
-    "@ledgerhq/errors": "^5.43.0",
-    "@ledgerhq/live-common": "^18.7.1",
-    "@ledgerhq/react-native-ledger-core": "^4.17.4",
+    "@ledgerhq/errors": "^5.46.0",
+    "@ledgerhq/live-common": "^18.8.0",
+    "@ledgerhq/react-native-ledger-core": "^4.18.6",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
     "axios": "^0.21.1",
@@ -26,7 +26,7 @@
     "expect": "^24.9.0",
     "https-browserify": "^1.0.0",
     "invariant": "^2.2.4",
-    "querystring": "^0.2.0",
+    "querystring": "^0.2.1",
     "querystring-es3": "^0.2.1",
     "react": "16.14.0",
     "react-native": "0.61.5",

@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "18.7.1",
+  "version": "18.8.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -29,7 +29,7 @@
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
   "dependencies": {
-    "@ledgerhq/cryptoassets": "5.46.0",
+    "@ledgerhq/cryptoassets": "5.47.2",
     "@ledgerhq/errors": "5.46.0",
     "@ledgerhq/hw-app-btc": "^5.46.0",
     "@ledgerhq/hw-transport-http": "5.46.0",

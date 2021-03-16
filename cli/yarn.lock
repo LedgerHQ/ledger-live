@@ -952,10 +952,17 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@5.46.0", "@ledgerhq/cryptoassets@^5.46.0":
+"@ledgerhq/cryptoassets@5.46.0":
   version "5.46.0"
   resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-5.46.0.tgz#a363bdc476a62c38d5ad4925e3281bd5a35d42b7"
   integrity sha512-uvdNC2uMmC5l3Fbqz6Kn+Z/PU0LHu6KZBHWR3HKOqDr45CzvYejeMA+dE6nYYUc+rD6zXzfGMLtf7UkJSc+cFQ==
+  dependencies:
+    invariant "2"
+
+"@ledgerhq/cryptoassets@5.47.2", "@ledgerhq/cryptoassets@^5.46.0":
+  version "5.47.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-5.47.2.tgz#8d56d8e5033ba3dae29c938f8875ffd701ae2cd7"
+  integrity sha512-waJv+FgS0/eDf2hWBzcbGhyJbh1sZcRJyfI9CGir7mGfkyx0xzXMfwZES2GVTRdSsWPAKKRU3+zoF6+h/klEVA==
   dependencies:
     invariant "2"
 
