@@ -41,10 +41,6 @@ export const PolkadotValidatorsRequired = createCustomErrorClass(
   "PolkadotValidatorsRequired"
 );
 
-export const PolkadotReapingAccountWarning = createCustomErrorClass(
-  "PolkadotReapingAccountWarning"
-);
-
 export const PolkadotDoMaxSendInstead = createCustomErrorClass(
   "PolkadotDoMaxSendInstead"
 );

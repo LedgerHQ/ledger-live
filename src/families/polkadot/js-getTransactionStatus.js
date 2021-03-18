@@ -9,7 +9,6 @@ import {
   AmountRequired,
   NotEnoughBalanceBecauseDestinationNotCreated,
   FeeNotLoaded,
-  NotEnoughSpendableBalance,
 } from "@ledgerhq/errors";
 import type { Account, TransactionStatus } from "../../types";
 import { formatCurrencyUnit } from "../../currencies";
@@ -26,7 +25,6 @@ import {
   PolkadotBondMinimumAmount,
   PolkadotMaxUnbonding,
   PolkadotValidatorsRequired,
-  PolkadotReapingAccountWarning,
   PolkadotDoMaxSendInstead,
 } from "./errors";
 import { verifyValidatorAddresses } from "./api";
@@ -74,33 +72,26 @@ const getSendTransactionStatus = async (
     errors.amount = new AmountRequired();
   }
 
-  const minimumBalance = getMinimumBalance(a);
+  const minimumBalanceExistential = getMinimumBalance(a);
+  const leftover = a.spendableBalance.minus(totalSpent);
 
-  if (t.useAllAmount && a.polkadotResources?.lockedBalance.gt(0)) {
-    warnings.amount = new PolkadotAllFundsWarning();
-  } else if (t.useAllAmount && a.polkadotResources?.lockedBalance.eq(0)) {
-    warnings.amount = new PolkadotReapingAccountWarning();
-  } else if (
-    minimumBalance.gt(0) &&
-    totalSpent.plus(minimumBalance).gt(a.spendableBalance)
+  if (
+    minimumBalanceExistential.gt(0) &&
+    leftover.lt(minimumBalanceExistential) &&
+    leftover.gt(0)
   ) {
-    const leftover = a.spendableBalance.minus(totalSpent);
-    errors.amount =
-      leftover.lt(minimumBalance) && leftover.gt(0)
-        ? new PolkadotDoMaxSendInstead()
-        : new NotEnoughSpendableBalance(null, {
-            minimumAmount: formatCurrencyUnit(
-              a.currency.units[0],
-              minimumBalance,
-              {
-                disableRounding: true,
-                useGrouping: false,
-                showCode: true,
-              }
-            ),
-          });
+    errors.amount = new PolkadotDoMaxSendInstead();
   } else if (totalSpent.gt(a.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  if (
+    !errors.amount &&
+    a.polkadotResources?.lockedBalance.gt(0) &&
+    (t.useAllAmount ||
+      a.spendableBalance.minus(totalSpent).lt(WARNING_FEW_DOT_LEFTOVER))
+  ) {
+    warnings.amount = new PolkadotAllFundsWarning();
   }
 
   if (
