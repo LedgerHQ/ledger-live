@@ -83,16 +83,6 @@ const envDefinitions = {
     def: "https://polkadot-sidecar.coin.ledger.com",
     desc: "Polkadot Sidecar API url",
   },
-  API_STELLAR_HORIZON: {
-    parser: stringParser,
-    def: "https://stellar.coin.ledger.com",
-    desc: "Stellar Horizon API url",
-  },
-  API_STELLAR_HORIZON_FETCH_LIMIT: {
-    parser: intParser,
-    def: 200,
-    desc: "Limit of operation that Horizon will fetch per page",
-  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
