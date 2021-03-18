@@ -1,20 +1,17 @@
 // @flow
 import type { Account, CryptoCurrency, DerivationMode } from "../types";
-import { getTagDerivationMode } from "../derivation";
 
 const MAX_ACCOUNT_NAME_SIZE = 50;
 
 export const getAccountPlaceholderName = ({
   currency,
   index,
-  derivationMode,
 }: {
   currency: CryptoCurrency,
   index: number,
   derivationMode: DerivationMode,
 }) => {
-  const tag = getTagDerivationMode(currency, derivationMode);
-  return `${currency.name} ${index + 1}${tag ? ` (${tag})` : ""}`;
+  return `${currency.name} ${index + 1}`;
 };
 
 export const getNewAccountPlaceholderName = getAccountPlaceholderName; // same naming
