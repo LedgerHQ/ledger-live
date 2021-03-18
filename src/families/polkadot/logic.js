@@ -14,6 +14,8 @@ export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
 export const POLKADOT_SS58_PREFIX = 0;
 export const WARNING_FEW_DOT_LEFTOVER = BigNumber(1000000000);
 
+const BOND_MAX_SAFETY_RATIO = 4; // Fees for the current tx + safety buffer for 3 future transactions
+
 /**
  * Returns true if address is valid, false if it's invalid (can't parse or wrong checksum)
  *
@@ -174,6 +176,20 @@ export const getNonce = (a: Account): number => {
 };
 
 /**
+ * Calculate max bond which is the actual spendable minus a safety buffer of 3 times the fees,
+ * so the user still has funds to pay the fees for next transactions
+ *
+ * @param {*} a
+ * @param {*} t
+ */
+const calculateMaxBond = (a: Account, t: Transaction): BigNumber => {
+  const fees = t.fees;
+  const safetyRatio = BigNumber(BOND_MAX_SAFETY_RATIO);
+  const amount = a.spendableBalance.minus(fees ? fees.times(safetyRatio) : 0);
+  return amount.lt(0) ? BigNumber(0) : amount;
+};
+
+/**
  * Calculates max unbond amount which is the remaining active locked balance (not unlocking)
  *
  * @param {*} account
@@ -199,6 +215,7 @@ const calculateMaxRebond = (a: Account): BigNumber => {
  * Calculate the real spendable
  *
  * @param {*} a
+ * @param {*} t
  */
 const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
   const amount = a.spendableBalance.minus(t.fees || 0);
@@ -222,6 +239,10 @@ export const calculateAmount = ({
     switch (t.mode) {
       case "send":
         amount = calculateMaxSend(a, t);
+        break;
+
+      case "bond":
+        amount = calculateMaxBond(a, t);
         break;
 
       case "unbond":

@@ -311,19 +311,6 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
-              name: "[bond] use all amount should warn",
-              transaction: (t) => ({
-                ...t,
-                useAllAmount: true,
-                mode: "bond",
-              }),
-              expectedStatus: (account) => ({
-                errors: {},
-                warnings: { amount: new PolkadotAllFundsWarning() },
-                totalSpent: account.spendableBalance,
-              }),
-            },
-            {
               name: "[unbond] no amount",
               transaction: fromTransactionRaw({
                 family: "polkadot",
