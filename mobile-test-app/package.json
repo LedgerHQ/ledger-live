@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@ledgerhq/errors": "^5.46.0",
-    "@ledgerhq/live-common": "^18.8.0",
-    "@ledgerhq/react-native-ledger-core": "^4.18.6",
+    "@ledgerhq/live-common": "^18.8.1",
+    "@ledgerhq/react-native-ledger-core": "^4.18.8",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^2.0.0",
     "axios": "^0.21.1",
