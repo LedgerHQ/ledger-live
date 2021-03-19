@@ -255,23 +255,23 @@ export async function bot({ currency, mutation }: Arg = {}) {
         slackBody += `❌ *Spec ${spec.name}*: \`${String(fatalError)}\`\n`;
       });
 
-      const failureSpecNames = results
-        .filter((r) => (r.mutations || []).some((m) => m.error))
-        .map(({ spec }) => spec.name);
-
-      if (failureSpecNames && failureSpecNames.length) {
-        slackBody += `:nogo: *${failureSpecNames.join(", ")}*\n`;
-      }
-
-      const successSpecNames = results
-        .filter((r) => (r.mutations || []).every((m) => !m.error))
-        .map(({ spec }) => spec.name);
-
-      if (successSpecNames && successSpecNames.length) {
-        slackBody += `:go: *${successSpecNames.join(", ")}*\n`;
-      }
-
       body += "</details>\n\n";
+    }
+    
+    const failureSpecNames = results
+      .filter((r) => (r.mutations || []).some((m) => m.error))
+      .map(({ spec }) => spec.name);
+
+    if (failureSpecNames && failureSpecNames.length) {
+      slackBody += `:nogo: _${failureSpecNames.join(", ")}_\n`;
+    }
+
+    const successSpecNames = results
+      .filter((r) => (r.mutations || []).every((m) => !m.error))
+      .map(({ spec }) => spec.name);
+
+    if (successSpecNames && successSpecNames.length) {
+      slackBody += `:go: _${successSpecNames.join(", ")}_\n`;
     }
 
     if (errorCases.length) {
