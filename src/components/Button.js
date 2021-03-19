@@ -58,19 +58,13 @@ export type BaseButtonProps = {
 
 type Props = BaseButtonProps & {
   useTouchable: boolean,
-  colors: *,
 };
 
-const ButtonWrapped = (props: BaseButtonProps) => {
-  const { colors } = useTheme();
-  return (
-    <ButtonUseTouchable.Consumer>
-      {useTouchable => (
-        <Button {...props} useTouchable={useTouchable} colors={colors} />
-      )}
-    </ButtonUseTouchable.Consumer>
-  );
-};
+const ButtonWrapped = (props: BaseButtonProps) => (
+  <ButtonUseTouchable.Consumer>
+    {useTouchable => <Button {...props} useTouchable={useTouchable} />}
+  </ButtonUseTouchable.Consumer>
+);
 
 function Button({
   // required props
@@ -85,12 +79,12 @@ function Button({
   outline = true,
   // everything else
   containerStyle,
-  colors,
   event,
   eventProperties,
   pending,
   ...otherProps
 }: Props) {
+  const { colors } = useTheme();
   const [spinnerOn, setSpinnerOn] = useState();
   const [anim] = useState(new Animated.Value(0));
 
@@ -317,4 +311,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo<Props>(ButtonWrapped);
+export default memo<BaseButtonProps>(ButtonWrapped);

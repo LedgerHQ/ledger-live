@@ -3,7 +3,7 @@
 import React, { useCallback } from "react";
 import Icon from "react-native-vector-icons/dist/Feather";
 import IconFa from "react-native-vector-icons/dist/FontAwesome";
-import SafeAreaView from "react-native-safe-area-view";
+import { SafeAreaView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
@@ -17,8 +17,6 @@ type Props = {
   isOpened: boolean,
   onClose: () => void,
 };
-
-const forceInset = { bottom: "always" };
 
 export default function AddAccountsModal({
   navigation,
@@ -44,7 +42,7 @@ export default function AddAccountsModal({
 
   return (
     <BottomModal id="AddAccountsModal" isOpened={isOpened} onClose={onClose}>
-      <SafeAreaView forceInset={forceInset}>
+      <SafeAreaView>
         {!readOnlyModeEnabled && (
           <BottomModalChoice
             event="AddAccountWithDevice"

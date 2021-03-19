@@ -10,6 +10,7 @@ import {
   getAccountCurrency,
   getAccountUnit,
 } from "@ledgerhq/live-common/lib/account/helpers";
+import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import Card from "./Card";
 import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
@@ -37,6 +38,10 @@ class AccountCard extends PureComponent<Props> {
     } = this.props;
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
+    const tag =
+      account.derivationMode !== undefined &&
+      account.derivationMode !== null &&
+      getTagDerivationMode(currency, account.derivationMode);
 
     return (
       <Card
@@ -57,6 +62,13 @@ class AccountCard extends PureComponent<Props> {
           >
             {getAccountName(account)}
           </LText>
+          {tag ? (
+            <View style={[styles.badgeContainer, { borderColor: colors.grey }]}>
+              <LText semiBold style={styles.badgeLabel} color="grey">
+                {tag}
+              </LText>
+            </View>
+          ) : null}
         </View>
         <View style={styles.balanceContainer}>
           <LText semiBold color="grey">
@@ -88,9 +100,23 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     flexShrink: 1,
     marginLeft: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
+  badgeContainer: {
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    borderWidth: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginLeft: 16,
+  },
+  badgeLabel: { fontSize: 7, textTransform: "uppercase" },
   accountNameText: {
     fontSize: 14,
+    flexShrink: 1,
   },
   balanceContainer: {
     marginLeft: 16,

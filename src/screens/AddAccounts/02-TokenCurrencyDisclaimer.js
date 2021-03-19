@@ -2,8 +2,7 @@
 
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { StyleSheet, View, Linking } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
@@ -20,8 +19,6 @@ import LText from "../../components/LText";
 import { urls } from "../../config/urls";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
-
-const forceInset = { bottom: "always" };
 
 const Disclaimer = ({
   tokenName,
@@ -113,10 +110,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   }, [parentTokenAccount, onClose, navigation, token, parentCurrency]);
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <View style={styles.wrapper}>
         <CurrencyIcon size={56} radius={16} currency={token} />
       </View>

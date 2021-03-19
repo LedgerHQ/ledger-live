@@ -75,6 +75,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textTransform: "capitalize",
   },
-  selectedLabel: {},
   modal: { padding: 8 },
 });

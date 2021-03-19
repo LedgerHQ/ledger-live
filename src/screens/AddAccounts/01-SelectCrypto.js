@@ -1,8 +1,7 @@
 // @flow
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, FlatList } from "react-native";
-import SafeAreaView from "react-native-safe-area-view";
+import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -22,7 +21,6 @@ import CurrencyRow from "../../components/CurrencyRow";
 import LText from "../../components/LText";
 
 const SEARCH_KEYS = ["name", "ticker"];
-const forceInset = { bottom: "always" };
 
 type Props = {
   devMode: boolean,
@@ -80,10 +78,7 @@ export default function AddAccountsSelectCrypto({ navigation }: Props) {
   );
 
   return (
-    <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
-      forceInset={forceInset}
-    >
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="AddAccounts" name="SelectCrypto" />
       <KeyboardView style={{ flex: 1 }}>
         <View style={styles.searchContainer}>
