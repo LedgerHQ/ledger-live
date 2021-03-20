@@ -257,7 +257,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
 
       body += "</details>\n\n";
     }
-    
+
     const failureSpecNames = results
       .filter((r) => (r.mutations || []).some((m) => m.error))
       .map(({ spec }) => spec.name);
