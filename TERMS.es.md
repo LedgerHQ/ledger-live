@@ -70,8 +70,7 @@ Los Servicios de Ledger permiten al Usuario:
 - Actualizar el microprograma de su Dispositivo Ledger.
 - Instalar y desinstalar Aplicaciones de dispositivo con el Gestor Ledger Live.
 - Ver su cartera de Criptoactivos.
-- Acceder a los sistemas para llevar a cabo operaciones en varias redes blockchain conforme a sus protocolos respectivos, como por ejemplo:
-  - Enviar a Usuarios de una red blockchain específica y recibir de ellos Criptoactivos.
+- Acceder a los sistemas para llevar a cabo operaciones en varias redes blockchain conforme a sus protocolos respectivos, como por ejemplo: enviar a Usuarios de una red blockchain específica y recibir de ellos Criptoactivos.
 - Conectar con Servicios de terceros para acceder a servicios como la delegación de derechos de staking en blockchains con prueba de participación compatibles o comprar Criptoactivos.
 
 Ledger no presta servicios de custodia, lo cual significa que no conservamos en depósito ni tenemos acceso a tus Criptoactivos o Claves privadas. No recibimos ni mandamos Criptoactivos. Las transferencias de Criptoactivos se llevan a cabo en redes blockchain y no en una red propiedad de Ledger o controlada por Ledger.
