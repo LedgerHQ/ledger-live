@@ -104,11 +104,11 @@
       "title": "Could not scan this QR code: auto-verification not supported by this address."
     },
     "ConnectAppTimeout": {
-      "title": "Oops, no device found",
+      "title": "Sorry, no device found",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
     },
     "ConnectManagerTimeout": {
-      "title": "Oops, manager connection failed",
+      "title": "Sorry, Manager connection failed",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
     },
     "ClaimRewardsFeesWarning": {
