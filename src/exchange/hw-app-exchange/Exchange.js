@@ -4,10 +4,15 @@ import { BigNumber } from "bignumber.js";
 import { TransportStatusError } from "@ledgerhq/errors";
 import invariant from "invariant";
 
-const TRANSACTION_TYPES = {
+export const TRANSACTION_RATES = {
+  FIXED: 0x00,
+  FLOATING: 0x01,
+};
+export const TRANSACTION_TYPES = {
   SWAP: 0x00,
   SELL: 0x01,
 };
+type TransactionRate = $Values<typeof TRANSACTION_RATES>;
 type TransactionType = $Values<typeof TRANSACTION_TYPES>;
 
 const START_NEW_TRANSACTION_COMMAND: number = 0x03;
@@ -31,6 +36,7 @@ const maybeThrowProtocolError = (result: Buffer): void => {
 export default class Exchange {
   transport: Transport<*>;
   transactionType: TransactionType;
+  transactionRate: TransactionRate;
   allowedStatuses: Array<number> = [
     0x9000,
     0x6a80,
@@ -44,8 +50,13 @@ export default class Exchange {
     0x9d1a,
   ];
 
-  constructor(transport: Transport<*>, transactionType: TransactionType) {
+  constructor(
+    transport: Transport<*>,
+    transactionType: TransactionType,
+    transactionRate?: TransactionRate
+  ) {
     this.transactionType = transactionType;
+    this.transactionRate = transactionRate || TRANSACTION_RATES.FIXED;
     this.transport = transport;
   }
 
@@ -53,7 +64,7 @@ export default class Exchange {
     let result: Buffer = await this.transport.send(
       0xe0,
       START_NEW_TRANSACTION_COMMAND,
-      0x00,
+      this.transactionRate,
       this.transactionType,
       Buffer.alloc(0),
       this.allowedStatuses
@@ -71,7 +82,7 @@ export default class Exchange {
     let result: Buffer = await this.transport.send(
       0xe0,
       SET_PARTNER_KEY_COMMAND,
-      0x00,
+      this.transactionRate,
       this.transactionType,
       partnerNameAndPublicKey,
       this.allowedStatuses
@@ -84,7 +95,7 @@ export default class Exchange {
     let result: Buffer = await this.transport.send(
       0xe0,
       CHECK_PARTNER_COMMAND,
-      0x00,
+      this.transactionRate,
       this.transactionType,
       signatureOfPartnerData,
       this.allowedStatuses
@@ -108,7 +119,7 @@ export default class Exchange {
     let result: Buffer = await this.transport.send(
       0xe0,
       PROCESS_TRANSACTION_RESPONSE,
-      0x00,
+      this.transactionRate,
       this.transactionType,
       bufferToSend,
       this.allowedStatuses
@@ -121,7 +132,7 @@ export default class Exchange {
     let result: Buffer = await this.transport.send(
       0xe0,
       CHECK_TRANSACTION_SIGNATURE,
-      0x00,
+      this.transactionRate,
       this.transactionType,
       transactionSignature,
       this.allowedStatuses
@@ -155,7 +166,7 @@ export default class Exchange {
       this.transactionType === TRANSACTION_TYPES.SWAP
         ? CHECK_PAYOUT_ADDRESS
         : CHECK_ASSET_IN,
-      0x00,
+      this.transactionRate,
       this.transactionType,
       bufferToSend,
       this.allowedStatuses
@@ -187,8 +198,8 @@ export default class Exchange {
     let result: Buffer = await this.transport.send(
       0xe0,
       CHECK_REFUND_ADDRESS,
-      0x00,
-      0x00,
+      this.transactionRate,
+      this.transactionType,
       bufferToSend,
       this.allowedStatuses
     );
@@ -199,7 +210,7 @@ export default class Exchange {
     let result: Buffer = await this.transport.send(
       0xe0,
       SIGN_COIN_TRANSACTION,
-      0x00,
+      this.transactionRate,
       this.transactionType,
       Buffer.alloc(0),
       this.allowedStatuses

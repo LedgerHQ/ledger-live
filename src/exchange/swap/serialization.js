@@ -13,6 +13,7 @@ import {
   toAccountLikeRaw,
   toAccountRaw,
 } from "../../account";
+import { deserializeError, serializeError } from "@ledgerhq/errors";
 
 export const fromExchangeRaw = (exchangeRaw: ExchangeRaw): Exchange => {
   const fromAccount = fromAccountLikeRaw(exchangeRaw.fromAccount);
@@ -56,17 +57,25 @@ export const toExchangeRateRaw = (
   const {
     rate,
     magnitudeAwareRate,
+    payoutNetworkFees,
+    toAmount,
     rateId,
     provider,
     providerURL,
+    tradeMethod,
+    error,
   } = exchangeRate;
 
   return {
     rate: rate.toString(),
     magnitudeAwareRate: magnitudeAwareRate.toString(),
+    payoutNetworkFees: payoutNetworkFees ? payoutNetworkFees.toString() : "",
+    toAmount: toAmount.toString(),
     rateId,
     provider,
     providerURL,
+    tradeMethod,
+    error: JSON.stringify(serializeError(error)) || "{}",
   };
 };
 
@@ -76,16 +85,26 @@ export const fromExchangeRateRaw = (
   const {
     rate,
     magnitudeAwareRate,
+    payoutNetworkFees,
+    toAmount,
     rateId,
     provider,
     providerURL,
+    tradeMethod,
+    error,
   } = exchangeRateRaw;
 
   return {
     rate: new BigNumber(rate),
     magnitudeAwareRate: new BigNumber(magnitudeAwareRate),
+    payoutNetworkFees: payoutNetworkFees
+      ? new BigNumber(payoutNetworkFees)
+      : undefined,
+    toAmount: new BigNumber(toAmount),
     rateId,
     provider,
     providerURL,
+    tradeMethod,
+    error: error ? deserializeError(JSON.parse(error)) : undefined,
   };
 };

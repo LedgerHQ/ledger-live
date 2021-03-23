@@ -25,7 +25,10 @@ import { withDevice } from "../../hw/deviceAccess";
 import { getProviderNameAndSignature, getSwapAPIBaseURL } from "./";
 import { getCurrencyExchangeConfig } from "../";
 import { getEnv } from "../../env";
-
+import {
+  TRANSACTION_RATES,
+  TRANSACTION_TYPES,
+} from "../hw-app-exchange/Exchange";
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
 
@@ -43,7 +46,11 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
       log("swap", `attempt to connect to ${deviceId}`);
       await withDevicePromise(deviceId, async (transport) => {
-        const swap = new Exchange(transport, 0x00);
+        const ratesFlag =
+          exchangeRate.tradeMethod === "fixed"
+            ? TRANSACTION_RATES.FIXED
+            : TRANSACTION_RATES.FLOATING;
+        const swap = new Exchange(transport, TRANSACTION_TYPES.SWAP, ratesFlag);
 
         // NB this id is crucial to prevent replay attacks, if it changes
         // we need to start the flow again.
@@ -60,6 +67,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const { amount } = transaction;
         const refundCurrency = getAccountCurrency(fromAccount);
         const unitFrom = getAccountUnit(exchange.fromAccount);
+        const unitTo = getAccountUnit(exchange.toAccount);
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
@@ -67,26 +75,26 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           BigNumber(10).pow(unitFrom.magnitude)
         );
 
-        // Request a lock on the specified rate for 20 minutes,
-        // user is expected to send funds after this.
+        // Request a swap, this locks the rates for fixed trade method only.
         // NB Added the try/catch because of the API stability issues.
         let res;
         try {
           res = await network({
             method: "POST",
             url: `${getSwapAPIBaseURL()}/swap`,
-            data: [
-              {
-                provider,
-                amountFrom: apiAmount,
-                from: refundCurrency.id,
-                to: payoutCurrency.id,
-                rateId,
-                address: payoutAccount.freshAddress,
-                refundAddress: refundAccount.freshAddress,
-                deviceTransactionId,
-              },
-            ],
+            headers: {
+              EquipmentId: getEnv("USER_ID"),
+            },
+            data: {
+              provider,
+              amountFrom: apiAmount,
+              from: refundCurrency.id,
+              to: payoutCurrency.id,
+              address: payoutAccount.freshAddress,
+              refundAddress: refundAccount.freshAddress,
+              deviceTransactionId,
+              ...(rateId ? { rateId } : {}), // NB float rates dont need rate ids.
+            },
           });
           if (unsubscribed || !res || !res.data) return;
         } catch (e) {
@@ -98,7 +106,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           return;
         }
 
-        const swapResult = res.data[0];
+        const swapResult = res.data;
         swapId = swapResult.swapId;
         const providerNameAndSignature = getProviderNameAndSignature(
           swapResult.provider
@@ -233,7 +241,17 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         } = getCurrencyExchangeConfig(refundCurrency);
 
         if (unsubscribed) return;
-        o.next({ type: "init-swap-requested" });
+
+        // NB Floating rates may change the original amountTo so we can pass an override
+        // to properly render the amount on the device confirmation steps.
+        let amountExpectedTo;
+        if (swapResult?.amountExpectedTo) {
+          amountExpectedTo = BigNumber(swapResult.amountExpectedTo)
+            .times(BigNumber(10).pow(unitTo.magnitude))
+            .toString();
+        }
+
+        o.next({ type: "init-swap-requested", amountExpectedTo });
 
         try {
           await swap.checkRefundAddress(
@@ -290,7 +308,6 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
       unsubscribed = true;
     };
   });
-  // );
 };
 
 export default initSwap;

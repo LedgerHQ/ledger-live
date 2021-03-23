@@ -29,16 +29,25 @@ export type ExchangeRaw = {
 export type ExchangeRate = {
   rate: BigNumber, // NB Raw rate, for display
   magnitudeAwareRate: BigNumber, // NB rate between satoshi units
-  rateId: string,
+  payoutNetworkFees?: BigNumber, // Only for float
+  toAmount: BigNumber, // There's a delta somewhere between from times rate and the api.
+  rateId?: string,
   provider: string,
+  tradeMethod: "fixed" | "float",
+  error?: Error,
   providerURL?: ?string,
 };
 
+export type TradeMethod = "fixed" | "float";
 export type ExchangeRateRaw = {
   rate: string,
   magnitudeAwareRate: string,
-  rateId: string,
+  payoutNetworkFees?: string,
+  toAmount: string,
+  rateId?: string,
   provider: string,
+  tradeMethod: TradeMethod,
+  error?: string,
   providerURL?: ?string,
 };
 
@@ -59,17 +68,11 @@ export type InitSwapResult = {
 };
 
 type ValidSwapStatus =
-  | "confirming"
-  | "finished"
-  | "exchanging"
-  | "hold"
-  | "sending"
-  | "waiting"
-  | "overdue"
-  | "refunded"
-  | "new"
+  | "pending"
+  | "onhold"
   | "expired"
-  | "failed";
+  | "finished"
+  | "refunded";
 
 export type SwapStatusRequest = {
   provider: string,
@@ -87,7 +90,7 @@ export type UpdateAccountSwapStatus = (Account) => Promise<?Account>;
 export type GetMultipleStatus = (SwapStatusRequest[]) => Promise<SwapStatus[]>;
 
 export type SwapRequestEvent =
-  | { type: "init-swap-requested" }
+  | { type: "init-swap-requested", amountExpectedTo?: string }
   | { type: "init-swap-error", error: Error }
   | { type: "init-swap-result", initSwapResult: InitSwapResult };
 
@@ -138,17 +141,19 @@ export type SwapOperationRaw = {
 };
 
 export type SwapState = {
-  swap: {
-    exchange: $Shape<Exchange>,
-    exchangeRate?: ?ExchangeRate,
-  },
+  // NB fromAccount and fromParentAccount and amount come from `useBridgeTransaction`
+  useAllAmount?: boolean,
+  loadingRates?: boolean,
+  isTimerVisible?: boolean,
   error?: ?Error,
-  ratesTimestamp?: Date,
-  okCurrencies: (CryptoCurrency | TokenCurrency)[],
-  fromCurrency: ?(CryptoCurrency | TokenCurrency),
-  toCurrency: ?(CryptoCurrency | TokenCurrency),
-  useAllAmount: boolean,
-  fromAmount: BigNumber,
+
+  fromCurrency?: ?(CryptoCurrency | TokenCurrency),
+  toCurrency?: ?(CryptoCurrency | TokenCurrency),
+  toAccount?: ?AccountLike,
+  toParentAccount?: ?Account,
+  ratesExpiration?: ?Date,
+  exchangeRate?: ?ExchangeRate,
+  withExpiration?: boolean,
 };
 
 export type InitSwapInput = {

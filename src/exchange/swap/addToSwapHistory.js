@@ -36,7 +36,7 @@ export default ({
       : operation.id;
 
   const swapOperation: SwapOperation = {
-    status: "new",
+    status: "pending",
     provider: exchangeRate.provider,
     operationId,
     swapId,
@@ -44,7 +44,7 @@ export default ({
     receiverAccountId: mainToAccount.id,
     tokenId,
     fromAmount: transaction.amount,
-    toAmount: transaction.amount.times(exchangeRate.magnitudeAwareRate),
+    toAmount: exchangeRate.toAmount,
   };
 
   return isFromToken && subAccounts

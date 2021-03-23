@@ -30,7 +30,7 @@ const getExchangeRates: GetExchangeRates = async (
 
   const res = await network({
     method: "POST",
-    url: `${getSwapAPIBaseURL()}/rate/fixed`,
+    url: `${getSwapAPIBaseURL()}/rate`,
     data: [
       {
         from,
@@ -41,11 +41,24 @@ const getExchangeRates: GetExchangeRates = async (
   });
 
   return res.data.map(
-    ({ rate, rateId, provider, minAmountFrom, maxAmountFrom }) => {
-      if (!rate || !rateId) {
+    ({
+      rate,
+      rateId,
+      provider,
+      amountFrom,
+      amountTo,
+      minAmountFrom,
+      maxAmountFrom,
+      tradeMethod,
+      payoutNetworkFees,
+    }) => {
+      let error;
+      let magnitudeAwareRate;
+
+      if (!amountFrom) {
         const isTooSmall = BigNumber(apiAmount).lt(minAmountFrom);
 
-        throw isTooSmall
+        error = isTooSmall
           ? new SwapExchangeRateAmountTooLow(null, {
               minAmountFromFormatted: formatCurrencyUnit(
                 unitFrom,
@@ -68,19 +81,30 @@ const getExchangeRates: GetExchangeRates = async (
                 }
               ),
             });
+      } else {
+        // NB Allows us to simply multiply satoshi values from/to
+        magnitudeAwareRate = (tradeMethod === "fixed"
+          ? BigNumber(rate)
+          : BigNumber(amountTo).div(amountFrom)
+        ).div(BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude));
       }
-
-      // NB Allows us to simply multiply satoshi values from/to
-      const magnitudeAwareRate = BigNumber(rate).div(
-        BigNumber(10).pow(unitFrom.magnitude - unitTo.magnitude)
-      );
 
       return {
         magnitudeAwareRate,
-        rate,
-        rateId,
         provider,
-        expirationDate: new Date(),
+        tradeMethod,
+        toAmount: BigNumber(amountTo).times(
+          BigNumber(10).pow(unitTo.magnitude)
+        ),
+        ...(tradeMethod === "fixed"
+          ? { rate, rateId }
+          : {
+              rate: BigNumber(amountTo).div(amountFrom),
+              payoutNetworkFees: BigNumber(payoutNetworkFees).times(
+                BigNumber(10).pow(unitTo.magnitude)
+              ),
+            }),
+        error,
       };
     }
   );

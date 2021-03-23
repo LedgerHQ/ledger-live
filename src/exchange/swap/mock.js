@@ -60,17 +60,20 @@ export const mockGetExchangeRates = async (
 
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
+  const magnitudeAwareRate = BigNumber(1)
+    .div(BigNumber(10).pow(unitFrom.magnitude))
+    .times(BigNumber(10).pow(unitTo.magnitude));
 
   //Mock OK, not really magnitude aware
   return [
     {
       rate: BigNumber("1"),
-      magnitudeAwareRate: BigNumber(1)
-        .div(BigNumber(10).pow(unitFrom.magnitude))
-        .times(BigNumber(10).pow(unitTo.magnitude)),
+      toAmount: amountFrom.times(magnitudeAwareRate),
+      magnitudeAwareRate,
       rateId: "mockedRateId",
       provider: "changelly",
       expirationDate: new Date(),
+      tradeMethod: "fixed", // TODO add float mocks when we have a UI
     },
   ];
 };
