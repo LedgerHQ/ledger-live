@@ -253,25 +253,6 @@ const dataset: DatasetTest<Transaction> = {
               },
             },
             {
-              name: "bond extra - success but warn all funds",
-              transaction: fromTransactionRaw({
-                family: "polkadot",
-                recipient: ACCOUNT_SAME_STASHCONTROLLER,
-                amount: "200000000",
-                mode: "bond",
-                era: null,
-                validators: null,
-                fees: null,
-                rewardDestination: null,
-                numSlashingSpans: 0,
-              }),
-              expectedStatus: {
-                errors: {},
-                warnings: { amount: new PolkadotAllFundsWarning() },
-                amount: BigNumber("200000000"),
-              },
-            },
-            {
               name: "bond extra - not enough spendable",
               transaction: fromTransactionRaw({
                 family: "polkadot",

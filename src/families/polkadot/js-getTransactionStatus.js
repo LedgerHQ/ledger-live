@@ -31,7 +31,7 @@ import { verifyValidatorAddresses } from "./api";
 import {
   EXISTENTIAL_DEPOSIT,
   MINIMUM_BOND_AMOUNT,
-  WARNING_FEW_DOT_LEFTOVER,
+  FEES_SAFETY_BUFFER,
   isValidAddress,
   isFirstBond,
   isController,
@@ -89,7 +89,7 @@ const getSendTransactionStatus = async (
     !errors.amount &&
     a.polkadotResources?.lockedBalance.gt(0) &&
     (t.useAllAmount ||
-      a.spendableBalance.minus(totalSpent).lt(WARNING_FEW_DOT_LEFTOVER))
+      a.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER))
   ) {
     warnings.amount = new PolkadotAllFundsWarning();
   }
@@ -175,10 +175,6 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
             { showCode: true }
           ),
         });
-      }
-
-      if (t.useAllAmount) {
-        warnings.amount = new PolkadotAllFundsWarning();
       }
 
       break;
@@ -290,9 +286,9 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
 
   if (
     t.mode === "bond" &&
-    a.spendableBalance.minus(totalSpent).lt(WARNING_FEW_DOT_LEFTOVER)
+    a.spendableBalance.minus(totalSpent).lt(FEES_SAFETY_BUFFER)
   ) {
-    warnings.amount = new PolkadotAllFundsWarning();
+    errors.amount = new NotEnoughBalance();
   }
 
   if (totalSpent.gt(a.spendableBalance)) {
