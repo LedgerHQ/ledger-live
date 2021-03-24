@@ -278,6 +278,9 @@ export const ScreenName = {
   WalletConnectConnect: "WalletConnectConnect",
   WalletConnectDeeplinkingSelectAccount:
     "WalletConnectDeeplinkingSelectAccount",
+
+  NotificationCenterNews: "NotificationCenterNews",
+  NotificationCenterStatus: "NotificationCenterStatus",
 };
 
 export const NavigatorName = {
@@ -329,6 +332,8 @@ export const NavigatorName = {
   PolkadotRebondFlow: "PolkadotRebondFlow",
   PolkadotNominateFlow: "PolkadotNominateFlow",
   PolkadotSimpleOperationFlow: "PolkadotSimpleOperationFlow",
+
+  NotificationCenter: "NotificationCenter",
 
   // Tab
   Main: "Main",

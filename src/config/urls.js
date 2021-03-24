@@ -106,6 +106,8 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360025864773",
   otgCable:
     "https://support.ledger.com/hc/en-us/articles/115005463729-OTG-Kit-adapters-for-your-Ledger-devices",
+  ledgerStatus:
+    "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral",
   bitcoinAddressType:
     "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
 };

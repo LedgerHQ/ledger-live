@@ -20,7 +20,7 @@ export default class Touchable extends Component<
     // it also displays a spinner if it takes more than WAIT_TIME_BEFORE_SPINNER
     onPress: ?() => ?Promise<any>,
     children: *,
-    event: string,
+    event?: string,
     eventProperties?: Object,
   },
   {

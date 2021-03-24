@@ -3478,5 +3478,28 @@
     },
     "deeplinkingTitle": "Select an Ethereum account",
     "addAccount": "Add new account"
+  },
+  "notificationCenter": {
+    "title": "Notification center",
+    "announcement": "Announcement",
+    "liveStatus": "Ledger live status",
+    "news": {
+      "title": "News",
+      "titleCount": "News ({{count}})",
+      "emptyState": {
+        "title": "No news for the moment",
+        "desc": "You will find here all the news related to Ledger and Ledger live"
+      }
+    },
+    "status": {
+      "title": "Status",
+      "ok": {
+        "title": "Ledger Live is up and running",
+        "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
+      },
+      "error": {
+        "title": "Ledger Live is experiencing issues"
+      }
+    }
   }
 }

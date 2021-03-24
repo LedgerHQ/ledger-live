@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
@@ -40,7 +40,7 @@ export default function Settings({ navigation }: Props) {
     }, 1000);
   }
 
-  function onDebugHiddenPress(): void {
+  const onDebugHiddenPress = useCallback(() => {
     if (debugTimeout) debugTimeout.current();
     count.current++;
     if (count.current > 6) {
@@ -49,7 +49,7 @@ export default function Settings({ navigation }: Props) {
     } else {
       onTimeout();
     }
-  }
+  }, [debugVisible]);
 
   return (
     <NavigationScrollView>
