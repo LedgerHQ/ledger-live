@@ -69,7 +69,7 @@ const BottomModal = ({
       setIsOpen(isOpened);
     }
     isModalOpenedref = isOpened;
-  }, [isOpened, onClose]);
+  }, [isOpened]); // do not add onClose it might cause some issues on modals ie: filter manager modal
 
   return (
     <ButtonUseTouchable.Provider value={true}>
