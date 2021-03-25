@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   PanResponder,
+  FlatList,
 } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/lib/currencies";
@@ -57,7 +58,7 @@ export default function SelectableAccountsList({
   emptyState,
   header,
   showHint = false,
-  index = -1,
+  index: listIndex = -1,
   onAccountNameChange,
   style,
   useFullBalance,
@@ -76,6 +77,7 @@ export default function SelectableAccountsList({
   }, [accounts, onUnselectAllProp]);
 
   const areAllSelected = accounts.every(a => selectedIds.indexOf(a.id) > -1);
+
   return (
     <View style={[styles.root, style]}>
       {header ? (
@@ -86,23 +88,26 @@ export default function SelectableAccountsList({
           onUnselectAll={onUnselectAllProp ? onUnselectAll : undefined}
         />
       ) : null}
-      {accounts.map((account, rowIndex) => (
-        <SelectableAccount
-          navigation={navigation}
-          showHint={!rowIndex && showHint}
-          rowIndex={rowIndex}
-          listIndex={index}
-          key={account.id}
-          account={account}
-          onAccountNameChange={onAccountNameChange}
-          isSelected={forceSelected || selectedIds.indexOf(account.id) > -1}
-          isDisabled={isDisabled}
-          onPress={onPressAccount}
-          colors={colors}
-          useFullBalance={useFullBalance}
-        />
-      ))}
-      {accounts.length === 0 && emptyState ? emptyState : null}
+      <FlatList
+        data={accounts}
+        keyExtractor={(item, index) => item.id + index}
+        renderItem={({ item, index }) => (
+          <SelectableAccount
+            navigation={navigation}
+            showHint={!index && showHint}
+            rowIndex={index}
+            listIndex={listIndex}
+            account={item}
+            onAccountNameChange={onAccountNameChange}
+            isSelected={forceSelected || selectedIds.indexOf(item.id) > -1}
+            isDisabled={isDisabled}
+            onPress={onPressAccount}
+            colors={colors}
+            useFullBalance={useFullBalance}
+          />
+        )}
+        ListEmptyComponent={() => emptyState || null}
+      />
     </View>
   );
 }
@@ -220,20 +225,42 @@ class SelectableAccount extends PureComponent<
         style={[
           styles.selectableAccountRoot,
           isDisabled && styles.selectableAccountRootDisabled,
+          { backgroundColor: colors.lightFog },
         ]}
       >
-        <AccountCard
-          useFullBalance={this.props.useFullBalance}
-          account={account}
-          parentAccount={null}
-        />
-        {!isDisabled && (
-          <CheckBox
-            onChange={this.onPress ? this.onPress : undefined}
-            isChecked={!!isSelected}
-            style={styles.selectableAccountCheckbox}
+        <View style={styles.accountRow}>
+          <AccountCard
+            useFullBalance={this.props.useFullBalance}
+            account={account}
+            parentAccount={null}
+            AccountSubTitle={
+              subAccountCount && !isDisabled ? (
+                <View style={[styles.subAccountCount]}>
+                  <LText
+                    semiBold
+                    style={styles.subAccountCountText}
+                    color="pillActiveForeground"
+                  >
+                    <Trans
+                      i18nKey={`selectableAccountsList.${
+                        isToken ? "tokenCount" : "subaccountCount"
+                      }`}
+                      count={subAccountCount}
+                      values={{ count: subAccountCount }}
+                    />
+                  </LText>
+                </View>
+              ) : null
+            }
           />
-        )}
+          {!isDisabled ? (
+            <CheckBox
+              onChange={this.onPress ? this.onPress : undefined}
+              isChecked={!!isSelected}
+              style={styles.selectableAccountCheckbox}
+            />
+          ) : null}
+        </View>
       </View>
     );
     if (isDisabled) return inner;
@@ -247,30 +274,6 @@ class SelectableAccount extends PureComponent<
           renderLeftActions={this.renderLeftActions}
         >
           {inner}
-          {subAccountCount ? (
-            <View style={styles.subAccountCountWrapper}>
-              <View
-                style={[
-                  styles.subAccountCount,
-                  { backgroundColor: colors.pillActiveBackground },
-                ]}
-              >
-                <LText
-                  semiBold
-                  style={styles.subAccountCountText}
-                  color="pillActiveForeground"
-                >
-                  <Trans
-                    i18nKey={`selectableAccountsList.${
-                      isToken ? "tokenCount" : "subaccountCount"
-                    }`}
-                    count={subAccountCount}
-                    values={{ count: subAccountCount }}
-                  />
-                </LText>
-              </View>
-            </View>
-          ) : null}
           {showHint && (
             <TouchHintCircle
               stopAnimation={stopAnimation}
@@ -323,9 +326,17 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   selectableAccountRoot: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+    flexDirection: "column",
+    alignItems: "flex-start",
     paddingHorizontal: 16,
+    borderRadius: 4,
+  },
+  accountRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   selectableAccountRootDisabled: {
     opacity: 0.4,
@@ -337,7 +348,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
-    paddingBottom: 16,
+    paddingBottom: 8,
   },
   headerSelectAll: {
     flexShrink: 1,
@@ -347,7 +358,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     flexGrow: 1,
-    fontSize: 14,
+    fontSize: 10,
+    textTransform: "uppercase",
   },
   leftAction: {
     width: "auto",
@@ -364,14 +376,8 @@ const styles = StyleSheet.create({
     paddingLeft: 0,
     paddingRight: 0,
   },
-  subAccountCountWrapper: {
-    flexDirection: "row",
-    marginLeft: 45,
-    marginTop: -11,
-  },
   subAccountCount: {
-    padding: 4,
-    borderRadius: 4,
+    marginTop: 3,
   },
   subAccountCountText: {
     fontSize: 10,

@@ -9,10 +9,18 @@ const supportedCurrenciesIds = {
   buy: [
     "bitcoin",
     "ethereum",
+    "polkadot",
+    "litecoin",
+    "dogecoin",
     "bitcoin_cash",
     "dash",
     "stellar",
     "ethereum/erc20/usd_tether__erc20_",
+    "ethereum/erc20/celsius",
+    "ethereum/erc20/compound",
+    "ethereum/erc20/makerdao",
+    "ethereum/erc20/uniswap",
+    "ethereum/erc20/link_chainlink",
   ],
   sell: ["bitcoin"],
 };

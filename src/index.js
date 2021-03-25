@@ -22,6 +22,8 @@ import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
 import _ from "lodash";
 import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
+
+import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
@@ -60,6 +62,8 @@ import { useTrackingPairs } from "./actions/general";
 import { ScreenName, NavigatorName } from "./const";
 import ExperimentalHeader from "./screens/Settings/Experimental/ExperimentalHeader";
 import { lightTheme, duskTheme, darkTheme } from "./colors";
+import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
+import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
 
 const themes = {
@@ -390,7 +394,14 @@ export default class Root extends Component<
                               >
                                 <ButtonUseTouchable.Provider value={true}>
                                   <OnboardingContextProvider>
-                                    <App importDataString={importDataString} />
+                                    <ToastProvider>
+                                      <NotificationsProvider>
+                                        <SnackbarContainer />
+                                        <App
+                                          importDataString={importDataString}
+                                        />
+                                      </NotificationsProvider>
+                                    </ToastProvider>
                                   </OnboardingContextProvider>
                                 </ButtonUseTouchable.Provider>
                               </CounterValuesProvider>

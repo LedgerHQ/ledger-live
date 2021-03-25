@@ -6,8 +6,16 @@ export const urls = {
   contact:
     "https://support.ledger.com/hc/en-us/requests/new?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=contact",
   terms: "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.md",
-  privacyPolicy:
-    "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+  privacyPolicy: {
+    en:
+      "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+    fr:
+      "https://shop.ledger.com/pages/politique-de-confidentialite?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+    es:
+      "https://shop.ledger.com/pages/politica-de-privacidad?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+    ru:
+      "https://shop.ledger.com/pages/nasha-politika-konfidentsialnosti?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",
+  },
   buyNanoX:
     "https://www.ledger.com/products/ledger-nano-x?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=manager_emptystate",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
@@ -98,4 +106,8 @@ export const urls = {
     "https://support.ledger.com/hc/en-us/articles/360025864773",
   otgCable:
     "https://support.ledger.com/hc/en-us/articles/115005463729-OTG-Kit-adapters-for-your-Ledger-devices",
+  ledgerStatus:
+    "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral",
+  bitcoinAddressType:
+    "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
 };

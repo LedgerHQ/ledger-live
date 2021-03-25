@@ -1,10 +1,19 @@
 // @flow
 
-import React, { PureComponent, createRef, useEffect } from "react";
-import { StyleSheet, View, Linking } from "react-native";
+import React, {
+  PureComponent,
+  useEffect,
+  useCallback,
+  useState,
+  useRef,
+  memo,
+  useMemo,
+} from "react";
+import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
 import { concat, from } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { connect } from "react-redux";
+import { compose } from "redux";
 import {
   isAccountEmpty,
   groupAddAccounts,
@@ -12,11 +21,17 @@ import {
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
-import SafeAreaView from "react-native-safe-area-view";
 import type { CryptoCurrency, Account } from "@ledgerhq/live-common/lib/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
-import { compose } from "redux";
+import {
+  getDefaultPreferredNewAccountScheme,
+  getPreferredNewAccountScheme,
+} from "@ledgerhq/live-common/lib/derivation";
+
+import type { DerivationMode } from "@ledgerhq/live-common/lib/derivation";
+
+import { useTheme } from "@react-navigation/native";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
@@ -29,6 +44,8 @@ import SelectableAccountsList from "../../components/SelectableAccountsList";
 import LiveLogo from "../../icons/LiveLogoIcon";
 import IconPause from "../../icons/Pause";
 import ExternalLink from "../../icons/ExternalLink";
+import Chevron from "../../icons/Chevron";
+import Info from "../../icons/Info";
 import Spinning from "../../components/Spinning";
 import LText from "../../components/LText";
 import RetryButton from "../../components/RetryButton";
@@ -37,6 +54,8 @@ import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
+import BottomModal from "../../components/BottomModal";
+import { urls } from "../../config/urls";
 
 const SectionAccounts = ({ defaultSelected, ...rest }: any) => {
   useEffect(() => {
@@ -67,14 +86,6 @@ type Props = {
   colors: *,
 };
 
-type State = {
-  scanning: boolean,
-  error: ?Error,
-  scannedAccounts: Account[],
-  selectedIds: string[],
-  cancelled: boolean,
-};
-
 const mapStateToProps = createStructuredSelector({
   existingAccounts: accountsSelector,
   blacklistedTokenIds: blacklistedTokenIdsSelector,
@@ -84,36 +95,85 @@ const mapDispatchToProps = {
   replaceAccounts,
 };
 
-class AddAccountsAccounts extends PureComponent<Props, State> {
-  state = {
-    // we assume status is scanning at beginning because we start sync at mount
-    scanning: true,
-    error: null,
-    scannedAccounts: [],
-    selectedIds: [],
-    cancelled: false,
-  };
+function AddAccountsAccounts({
+  navigation,
+  route,
+  replaceAccounts,
+  existingAccounts,
+  blacklistedTokenIds,
+}: Props) {
+  const { colors } = useTheme();
 
-  componentDidMount() {
-    this.startSubscription();
-  }
+  const [scanning, setScanning] = useState(true);
+  const [error, setError] = useState(null);
+  const [latestScannedAccount, setLatestScannedAccount] = useState(null);
+  const [scannedAccounts, setScannedAccounts] = useState([]);
+  const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
+  const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
 
-  componentWillUnmount() {
-    this.stopSubscription(false);
-  }
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [cancelled, setCancelled] = useState(false);
 
-  handleContentSizeChange = () => {
-    if (this.scrollView.current) {
-      this.scrollView.current.scrollToEnd({ animated: true });
+  const scanSubscription = useRef();
+  const scrollView = useRef();
+
+  const {
+    currency,
+    device: { deviceId },
+    inline,
+  } = route.params || {};
+
+  const newAccountSchemes = getPreferredNewAccountScheme(currency);
+
+  const preferedNewAccountScheme = getDefaultPreferredNewAccountScheme(
+    currency,
+  );
+
+  const preferredNewAccountSchemes = useMemo(
+    () => (preferedNewAccountScheme ? [preferedNewAccountScheme] : undefined),
+    [preferedNewAccountScheme],
+  );
+
+  useEffect(() => {
+    startSubscription();
+    return () => stopSubscription(false);
+  }, []);
+
+  useEffect(() => {
+    if (latestScannedAccount) {
+      const hasAlreadyBeenScanned = scannedAccounts.some(
+        a => latestScannedAccount.id === a.id,
+      );
+      const hasAlreadyBeenImported = existingAccounts.some(
+        a => latestScannedAccount.id === a.id,
+      );
+      const isNewAccount = isAccountEmpty(latestScannedAccount);
+      if (!isNewAccount && !hasAlreadyBeenImported) {
+        setOnlyNewAccounts(false);
+      }
+
+      if (!hasAlreadyBeenScanned) {
+        setScannedAccounts([...scannedAccounts, latestScannedAccount]);
+        setSelectedIds(
+          onlyNewAccounts
+            ? hasAlreadyBeenImported || selectedIds.length > 0
+              ? selectedIds
+              : [latestScannedAccount.id]
+            : !hasAlreadyBeenImported && !isNewAccount
+            ? uniq([...selectedIds, latestScannedAccount.id])
+            : selectedIds,
+        );
+      }
     }
-  };
+  }, [latestScannedAccount]); // workarround to apply changes of subscription with current react state -> only react to this variable
 
-  startSubscription = () => {
-    const { route, blacklistedTokenIds } = this.props;
-    const {
-      currency,
-      device: { deviceId },
-    } = route.params || {};
+  const handleContentSizeChange = useCallback(() => {
+    if (scrollView.current) {
+      scrollView.current.scrollToEnd({ animated: true });
+    }
+  }, []);
+
+  const startSubscription = useCallback(() => {
     const bridge = getCurrencyBridge(currency);
     const syncConfig = {
       paginationConfig: {
@@ -122,9 +182,8 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
       blacklistedTokenIds,
     };
     // will be set to false if an existing account is found
-    let onlyNewAccounts = true;
 
-    this.scanSubscription = concat(
+    scanSubscription.current = concat(
       from(prepareCurrency(currency)).pipe(ignoreElements()),
       bridge.scanAccounts({
         currency,
@@ -132,255 +191,329 @@ class AddAccountsAccounts extends PureComponent<Props, State> {
         syncConfig,
       }),
     ).subscribe({
-      next: ({ account }) =>
-        this.setState(
-          ({ scannedAccounts, selectedIds }, { existingAccounts }) => {
-            const hasAlreadyBeenScanned = !!scannedAccounts.find(
-              a => account.id === a.id,
-            );
-            const hasAlreadyBeenImported = !!existingAccounts.find(
-              a => account.id === a.id,
-            );
-            const isNewAccount = isAccountEmpty(account);
-            if (!isNewAccount && !hasAlreadyBeenImported) {
-              onlyNewAccounts = false;
-            }
-
-            if (!hasAlreadyBeenScanned) {
-              return {
-                scannedAccounts: [...scannedAccounts, account],
-                selectedIds: onlyNewAccounts
-                  ? hasAlreadyBeenImported || selectedIds.length > 0
-                    ? selectedIds
-                    : [account.id]
-                  : !hasAlreadyBeenImported && !isNewAccount
-                  ? uniq([...selectedIds, account.id])
-                  : selectedIds,
-              };
-            }
-            return null;
-          },
-        ),
-      complete: () => this.setState({ scanning: false }),
+      next: ({ account }) => {
+        setLatestScannedAccount(account);
+      },
+      complete: () => setScanning(false),
       error: error => {
         logger.critical(error);
-        this.setState({ error });
+        setError(error);
       },
     });
-  };
+  }, [blacklistedTokenIds, currency, deviceId]);
 
-  restartSubscription = () => {
-    this.setState({
-      scanning: true,
-      scannedAccounts: [],
-      selectedIds: [],
-      error: null,
-      cancelled: false,
-    });
-    this.startSubscription();
-  };
+  const restartSubscription = useCallback(() => {
+    setScanning(true);
+    setScannedAccounts([]);
+    setSelectedIds([]);
+    setError(null);
+    setCancelled(false);
+    startSubscription();
+  }, []);
 
-  stopSubscription = (syncUI?: boolean = true) => {
-    if (this.scanSubscription) {
-      this.scanSubscription.unsubscribe();
-      this.scanSubscription = null;
+  const stopSubscription = useCallback((syncUI?: boolean = true) => {
+    if (scanSubscription.current) {
+      scanSubscription.current.unsubscribe();
+      scanSubscription.current = null;
       if (syncUI) {
-        this.setState({ scanning: false });
+        setScanning(false);
       }
     }
-  };
+  }, []);
 
-  quitFlow = () => {
-    this.props.navigation.navigate(ScreenName.Accounts);
-  };
+  const quitFlow = useCallback(() => {
+    navigation.navigate(ScreenName.Accounts);
+  }, [navigation]);
 
-  scanSubscription: any;
+  const onPressAccount = useCallback(
+    (account: Account) => {
+      const isChecked = selectedIds.indexOf(account.id) > -1;
+      const newSelectedIds = isChecked
+        ? selectedIds.filter(id => id !== account.id)
+        : [...selectedIds, account.id];
+      setSelectedIds(newSelectedIds);
+    },
+    [selectedIds],
+  );
 
-  onPressAccount = (account: Account) => {
-    const { selectedIds } = this.state;
-    const isChecked = selectedIds.indexOf(account.id) > -1;
-    const newSelectedIds = isChecked
-      ? selectedIds.filter(id => id !== account.id)
-      : [...selectedIds, account.id];
-    this.setState({ selectedIds: newSelectedIds });
-  };
+  const selectAll = useCallback(
+    (accounts: Account[]) => {
+      setSelectedIds(uniq([...selectedIds, ...accounts.map(a => a.id)]));
+    },
+    [selectedIds],
+  );
 
-  selectAll = (accounts: Account[]) =>
-    this.setState(({ selectedIds }) => ({
-      selectedIds: uniq([...selectedIds, ...accounts.map(a => a.id)]),
-    }));
+  const unselectAll = useCallback(
+    (accounts: Account[]) => {
+      setSelectedIds(
+        selectedIds.filter(id => !accounts.find(a => a.id === id)),
+      );
+    },
+    [selectedIds],
+  );
 
-  unselectAll = (accounts: Account[]) =>
-    this.setState(({ selectedIds }) => ({
-      selectedIds: selectedIds.filter(id => !accounts.find(a => a.id === id)),
-    }));
-
-  import = () => {
-    const { replaceAccounts, navigation, route } = this.props;
-    const { scannedAccounts, selectedIds } = this.state;
-    const currency = route.params?.currency;
+  const importAccount = useCallback(() => {
     replaceAccounts({
       scannedAccounts,
       selectedIds,
       renamings: {}, // renaming was done in scannedAccounts directly.. (see if we want later to change this paradigm)
     });
-    if (route.params.inline) {
+    if (inline) {
       navigation.goBack();
     } else if (navigation.replace) {
       navigation.replace(ScreenName.AddAccountsSuccess, { currency });
     }
-  };
+  }, [
+    currency,
+    inline,
+    navigation,
+    replaceAccounts,
+    scannedAccounts,
+    selectedIds,
+  ]);
 
-  onCancel = () => {
-    this.setState({
-      error: null,
-      cancelled: true,
-    });
-  };
+  const onCancel = useCallback(() => {
+    setError(null);
+    setCancelled(true);
+  }, []);
 
-  onModalHide = () => {
-    const { cancelled } = this.state;
-    const { navigation } = this.props;
-
+  const onModalHide = useCallback(() => {
     if (cancelled) {
       navigation.dangerouslyGetParent().pop();
     }
-  };
+  }, [cancelled, navigation]);
 
-  onAccountNameChange = (name: string, changedAccount: Account) => {
-    this.setState(prevState => ({
-      scannedAccounts: prevState.scannedAccounts.map(account =>
-        account.id === changedAccount.id ? { ...account, name } : account,
-      ),
-    }));
-  };
+  const viewAllCreatedAccounts = useCallback(
+    () => setShowAllCreatedAccounts(true),
+    [],
+  );
 
-  scrollView = createRef();
+  const onAccountNameChange = useCallback(
+    (name: string, changedAccount: Account) => {
+      setScannedAccounts(
+        scannedAccounts.map(account =>
+          account.id === changedAccount.id ? { ...account, name } : account,
+        ),
+      );
+    },
+    [scannedAccounts],
+  );
 
-  render() {
-    const { existingAccounts, route, colors } = this.props;
-    const currency = route.params?.currency;
-    const { selectedIds, scanning, scannedAccounts, error } = this.state;
-
-    const { sections, alreadyEmptyAccount } = groupAddAccounts(
+  const { sections, alreadyEmptyAccount } = useMemo(
+    () =>
+      groupAddAccounts(existingAccounts, scannedAccounts, {
+        scanning,
+        preferredNewAccountSchemes: showAllCreatedAccounts
+          ? undefined
+          : preferredNewAccountSchemes,
+      }),
+    [
       existingAccounts,
       scannedAccounts,
-      {
-        scanning,
-      },
-    );
+      scanning,
+      showAllCreatedAccounts,
+      preferredNewAccountSchemes,
+    ],
+  );
 
-    const cantCreateAccount = !sections.some(s => s.id === "creatable");
-    const noImportableAccounts = !sections.some(
-      s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
-    );
+  const cantCreateAccount = !sections.some(s => s.id === "creatable");
+  const noImportableAccounts = !sections.some(
+    s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
+  );
 
-    const emptyTexts = {
-      creatable: alreadyEmptyAccount ? (
-        <LText style={styles.paddingHorizontal}>
-          <Trans i18nKey="addAccounts.cantCreateAccount">
-            {"PLACEHOLDER-1"}
-            <LText semiBold>{alreadyEmptyAccount.name}</LText>
-            {"PLACEHOLDER-2"}
-          </Trans>
-        </LText>
-      ) : (
-        <LText style={styles.paddingHorizontal}>
-          <Trans i18nKey="addAccounts.noAccountToCreate">
-            {"PLACEHOLDER-1"}
-            <LText semiBold>{currency.name}</LText>
-            {"PLACEHOLDER-2"}
-          </Trans>
-        </LText>
-      ),
-    };
+  const emptyTexts = {
+    creatable: alreadyEmptyAccount ? (
+      <LText style={styles.paddingHorizontal}>
+        <Trans i18nKey="addAccounts.cantCreateAccount">
+          {"PLACEHOLDER-1"}
+          <LText semiBold>{alreadyEmptyAccount.name}</LText>
+          {"PLACEHOLDER-2"}
+        </Trans>
+      </LText>
+    ) : (
+      <LText style={styles.paddingHorizontal}>
+        <Trans i18nKey="addAccounts.noAccountToCreate">
+          {"PLACEHOLDER-1"}
+          <LText semiBold>{currency.name}</LText>
+          {"PLACEHOLDER-2"}
+        </Trans>
+      </LText>
+    ),
+  };
 
-    const supportLink = sections.map(s => s.supportLink).find(Boolean);
-
-    return (
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
+  return (
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <TrackScreen
+        category="AddAccounts"
+        name="Accounts"
+        currencyName={currency.name}
+      />
+      <PreventNativeBack />
+      <NavigationScrollView
+        style={styles.inner}
+        contentContainerStyle={styles.innerContent}
+        // $FlowFixMe
+        ref={scrollView}
+        onContentSizeChange={handleContentSizeChange}
       >
-        <TrackScreen
-          category="AddAccounts"
-          name="Accounts"
-          currencyName={currency.name}
-        />
-        <PreventNativeBack />
-        <NavigationScrollView
-          style={styles.inner}
-          contentContainerStyle={styles.innerContent}
-          // $FlowFixMe
-          ref={this.scrollView}
-          onContentSizeChange={this.handleContentSizeChange}
-        >
-          {sections.map(({ id, selectable, defaultSelected, data }, i) => (
-            <SectionAccounts
-              defaultSelected={defaultSelected}
-              key={id}
-              showHint={selectable && i === 0}
-              header={
-                <Trans
-                  values={{ length: data.length }}
-                  i18nKey={`addAccounts.sections.${id}.title`}
-                />
-              }
-              index={i}
-              accounts={data}
-              onAccountNameChange={
-                !selectable ? undefined : this.onAccountNameChange
-              }
-              onPressAccount={!selectable ? undefined : this.onPressAccount}
-              onSelectAll={!selectable ? undefined : this.selectAll}
-              onUnselectAll={!selectable ? undefined : this.unselectAll}
-              selectedIds={selectedIds}
-              emptyState={emptyTexts[id]}
-              isDisabled={!selectable}
-              forceSelected={id === "existing"}
-            />
-          ))}
+        {sections.map(({ id, selectable, defaultSelected, data }, i) => {
+          const hasMultipleSchemes =
+            id === "creatable" &&
+            newAccountSchemes &&
+            newAccountSchemes.length > 1 &&
+            data.length > 0 &&
+            !scanning;
+          return (
+            <View key={id}>
+              <SectionAccounts
+                defaultSelected={defaultSelected}
+                key={id}
+                showHint={selectable && i === 0}
+                header={
+                  <Trans
+                    values={{ length: data.length }}
+                    i18nKey={`addAccounts.sections.${id}.title`}
+                  />
+                }
+                index={i}
+                accounts={data}
+                onAccountNameChange={
+                  !selectable ? undefined : onAccountNameChange
+                }
+                onPressAccount={!selectable ? undefined : onPressAccount}
+                onSelectAll={
+                  !selectable || id === "creatable" ? undefined : selectAll
+                }
+                onUnselectAll={!selectable ? undefined : unselectAll}
+                selectedIds={selectedIds}
+                emptyState={emptyTexts[id]}
+                isDisabled={!selectable}
+                forceSelected={id === "existing"}
+                style={hasMultipleSchemes ? styles.smallMarginBottom : {}}
+              />
+              {hasMultipleSchemes ? (
+                <View style={styles.moreAddressTypesContainer}>
+                  {showAllCreatedAccounts ? (
+                    <AddressTypeTooltip
+                      accountSchemes={newAccountSchemes}
+                      currency={currency}
+                    />
+                  ) : (
+                    <Button
+                      event={"AddAccountsMoreAddressType"}
+                      type="secondary"
+                      title={<Trans i18nKey="addAccounts.showMoreChainType" />}
+                      titleStyle={styles.subtitle}
+                      onPress={viewAllCreatedAccounts}
+                      IconRight={Chevron}
+                    />
+                  )}
+                </View>
+              ) : null}
+            </View>
+          );
+        })}
 
-          {sections.length === 0 && scanning ? (
-            <LText style={styles.descText} color="smoke">
-              <Trans i18nKey="addAccounts.synchronizingDesc" />
-            </LText>
-          ) : null}
-          {scanning ? <ScanLoading colors={colors} /> : null}
-        </NavigationScrollView>
-        {!!scannedAccounts.length && (
-          <Footer
-            supportLink={supportLink}
-            isScanning={scanning}
-            canRetry={!scanning && noImportableAccounts && !cantCreateAccount}
-            canDone={!scanning && cantCreateAccount && noImportableAccounts}
-            onRetry={this.restartSubscription}
-            onStop={this.stopSubscription}
-            onDone={this.quitFlow}
-            onContinue={this.import}
-            isDisabled={selectedIds.length === 0}
-            colors={colors}
-          />
-        )}
-        <GenericErrorBottomModal
-          error={error}
-          onModalHide={this.onModalHide}
-          footerButtons={
-            <>
-              <CancelButton
-                containerStyle={styles.button}
-                onPress={this.onCancel}
-              />
-              <RetryButton
-                containerStyle={[styles.button, styles.buttonRight]}
-                onPress={this.restartSubscription}
-              />
-            </>
-          }
+        {sections.length === 0 && scanning ? (
+          <LText style={styles.descText} color="smoke">
+            <Trans i18nKey="addAccounts.synchronizingDesc" />
+          </LText>
+        ) : null}
+        {scanning ? <ScanLoading colors={colors} /> : null}
+      </NavigationScrollView>
+      {!!scannedAccounts.length && (
+        <Footer
+          isScanning={scanning}
+          canRetry={!scanning && noImportableAccounts && !cantCreateAccount}
+          canDone={!scanning && cantCreateAccount && noImportableAccounts}
+          onRetry={restartSubscription}
+          onStop={stopSubscription}
+          onDone={quitFlow}
+          onContinue={importAccount}
+          isDisabled={selectedIds.length === 0}
+          colors={colors}
         />
-      </SafeAreaView>
-    );
-  }
+      )}
+      <GenericErrorBottomModal
+        error={error}
+        onModalHide={onModalHide}
+        footerButtons={
+          <>
+            <CancelButton containerStyle={styles.button} onPress={onCancel} />
+            <RetryButton
+              containerStyle={[styles.button, styles.buttonRight]}
+              onPress={restartSubscription}
+            />
+          </>
+        }
+      />
+    </SafeAreaView>
+  );
 }
+
+const AddressTypeTooltip = ({
+  accountSchemes,
+  currency,
+}: {
+  accountSchemes: ?Array<DerivationMode>,
+  currency: CryptoCurrency,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const onOpen = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
+
+  const formattedAccountSchemes = accountSchemes
+    ? accountSchemes.map(a => (a === "" ? "legacy" : a))
+    : [];
+
+  return (
+    <>
+      <Button
+        event={"AddAccountsAddressTypeTooltip"}
+        type="lightSecondary"
+        title={<Trans i18nKey="addAccounts.addressTypeInfo.title" />}
+        titleStyle={styles.subtitle}
+        onPress={onOpen}
+        IconRight={Info}
+      />
+      <BottomModal isOpened={isOpen} onClose={onClose} style={styles.modal}>
+        <View style={styles.modalContainer}>
+          <LText style={styles.subtitle} color="grey">
+            <Trans i18nKey="addAccounts.addressTypeInfo.subtitle" />
+          </LText>
+          <LText bold style={styles.modalTitle}>
+            <Trans i18nKey="addAccounts.addressTypeInfo.title" />
+          </LText>
+        </View>
+
+        {formattedAccountSchemes.map((scheme, i) => (
+          <View key={i + scheme} style={styles.modalRow}>
+            <LText bold style={styles.title}>
+              <Trans i18nKey={`addAccounts.addressTypeInfo.${scheme}.title`} />
+            </LText>
+            <LText style={styles.subtitle} color="grey">
+              <Trans i18nKey={`addAccounts.addressTypeInfo.${scheme}.desc`} />
+            </LText>
+          </View>
+        ))}
+        {currency && currency.family === "bitcoin" ? (
+          <Button
+            event={"AddAccountsSupportLink_AddressType"}
+            type="lightSecondary"
+            title={<Trans i18nKey={`common.learnMore`} />}
+            IconLeft={ExternalLink}
+            onPress={() => Linking.openURL(urls.bitcoinAddressType)}
+          />
+        ) : null}
+      </BottomModal>
+    </>
+  );
+};
 
 class Footer extends PureComponent<{
   isScanning: boolean,
@@ -391,7 +524,6 @@ class Footer extends PureComponent<{
   onRetry: () => void,
   onDone: () => void,
   isDisabled: boolean,
-  supportLink?: { url: string, id: string },
   colors: *,
 }> {
   render() {
@@ -404,24 +536,11 @@ class Footer extends PureComponent<{
       canDone,
       onRetry,
       onDone,
-      supportLink,
       colors,
     } = this.props;
 
     return (
       <View style={[styles.footer, { borderColor: colors.lightFog }]}>
-        {supportLink ? (
-          <Button
-            event={"AddAccountsSupportLink_" + supportLink.id}
-            type="lightSecondary"
-            title={
-              <Trans i18nKey={`addAccounts.supportLinks.${supportLink.id}`} />
-            }
-            IconLeft={ExternalLink}
-            onPress={() => Linking.openURL(supportLink.url)}
-          />
-        ) : null}
-
         {isScanning ? (
           <Button
             event="AddAccountsStopScan"
@@ -521,10 +640,23 @@ const styles = StyleSheet.create({
   buttonRight: {
     marginLeft: 8,
   },
+  smallMarginBottom: { marginBottom: 8 },
+  moreAddressTypesContainer: { paddingHorizontal: 16, marginBottom: 32 },
+  subtitle: { fontSize: 14 },
+  title: { fontSize: 16 },
+  modalTitle: { fontSize: 20 },
+  modal: { paddingHorizontal: 24 },
+  modalContainer: {
+    marginTop: 24,
+    marginBottom: 16,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modalRow: { marginVertical: 16 },
 });
 
 // $FlowFixMe
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTheme,
-)(AddAccountsAccounts);
+)(memo<Props>(AddAccountsAccounts));

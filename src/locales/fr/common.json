@@ -104,11 +104,11 @@
       "title": "Could not scan this QR code: auto-verification not supported by this address."
     },
     "ConnectAppTimeout": {
-      "title": "Oops, no device found",
+      "title": "Sorry, no device found",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
     },
     "ConnectManagerTimeout": {
-      "title": "Oops, manager connection failed",
+      "title": "Sorry, Manager connection failed",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
     },
     "ClaimRewardsFeesWarning": {
@@ -543,8 +543,11 @@
     "PolkadotNoNominations": {
       "title": "You have no nominations"
     },
-    "PolkadotBondAllFundsWarning": {
-      "title": "You will not have available balance for future transactions"
+    "PolkadotAllFundsWarning": {
+      "title": "Ensure you have enough balance left for future transaction fees"
+    },
+    "PolkadotDoMaxSendInstead": {
+      "title": "Balance cannot be below 1 DOT. Send max to empty account"
     },
     "PolkadotBondMinimumAmount": {
       "title": "You must bond at least 1 DOT"
@@ -2308,6 +2311,23 @@
         "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "Learn more about TRC20"
       }
+    },
+    "showMoreChainType": "More address types",
+    "addressTypeInfo": {
+      "title": "Which address type to choose?",
+      "subtitle": "Add new account",
+      "native_segwit": {
+        "title": "Native Segwit (starting with bc1...)",
+        "desc": "Best overall. Low fees per transaction, error detection and Lightning Network support. Some wallets/exchanges may need to add support."
+      },
+      "segwit": {
+        "title": "Segwit (starting with 3...)",
+        "desc": "Higher fees per transaction than Native Segwit. Lightning support. Supported by most wallets."
+      },
+      "legacy": {
+        "title": "Legacy (starting with 1...)",
+        "desc": "Bitcoin’s original address format. Highest fees per transaction. Some wallets/exchanges still only support this type."
+      }
     }
   },
   "DeviceAction": {
@@ -3465,5 +3485,28 @@
     },
     "deeplinkingTitle": "Select an Ethereum account",
     "addAccount": "Add new account"
+  },
+  "notificationCenter": {
+    "title": "Notification center",
+    "announcement": "Announcement",
+    "liveStatus": "Ledger live status",
+    "news": {
+      "title": "News",
+      "titleCount": "News ({{count}})",
+      "emptyState": {
+        "title": "No news for the moment",
+        "desc": "You will find here all the news related to Ledger and Ledger live"
+      }
+    },
+    "status": {
+      "title": "Status",
+      "ok": {
+        "title": "Ledger Live is up and running",
+        "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
+      },
+      "error": {
+        "title": "Ledger Live is experiencing issues"
+      }
+    }
   }
 }

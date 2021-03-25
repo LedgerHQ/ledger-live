@@ -83,7 +83,9 @@ function OnboardingStepTerms({ navigation }: *) {
                 {""}
                 <LText
                   semiBold
-                  onPress={() => Linking.openURL(urls.privacyPolicy)}
+                  onPress={() =>
+                    Linking.openURL(urls.privacyPolicy[locale || "en"])
+                  }
                   color="live"
                 />
                 {""}

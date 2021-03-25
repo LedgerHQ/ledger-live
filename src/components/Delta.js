@@ -48,7 +48,7 @@ function Delta({ valueChange, percent, unit, style }: Props) {
 
   return (
     <View style={[styles.root, style]}>
-      {percent ? ArrowIcon : null}
+      {percent && ArrowIcon ? <ArrowIcon size={10} color={color} /> : null}
       <View style={percent ? styles.content : null}>
         <LText semiBold style={[styles.text, { color }]}>
           {unit && !absDelta.isZero() ? (

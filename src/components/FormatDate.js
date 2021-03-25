@@ -10,7 +10,7 @@ type Props = {
 };
 
 function FormatDate({ date, format: formatProp = "MMMM d, yyyy" }: Props) {
-  return format(date, formatProp);
+  return date.getTime() ? format(date, formatProp) : null;
 }
 
 function areEqual(prevProps: Props, nextProps: Props): boolean {

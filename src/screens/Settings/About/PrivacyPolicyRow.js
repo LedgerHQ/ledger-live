@@ -6,15 +6,17 @@ import { View, Linking, StyleSheet } from "react-native";
 import SettingsRow from "../../../components/SettingsRow";
 import { urls } from "../../../config/urls";
 import ExternalLink from "../../../icons/ExternalLink";
+import { useLocale } from "../../../context/Locale";
 
 function PrivacyPolicyRow() {
   const { colors } = useTheme();
+  const { locale } = useLocale();
   return (
     <SettingsRow
       event="PrivacyPolicyRow"
       title={<Trans i18nKey="settings.about.privacyPolicy" />}
       desc={<Trans i18nKey="settings.about.privacyPolicyDesc" />}
-      onPress={() => Linking.openURL(urls.privacyPolicy)}
+      onPress={() => Linking.openURL(urls.privacyPolicy[locale || "en"])}
       alignedTop
     >
       <View style={styles.externalLinkContainer}>

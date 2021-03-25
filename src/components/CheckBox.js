@@ -28,13 +28,13 @@ function CheckBox({ isChecked, disabled, onChange, style }: Props) {
   }, [isChecked, onChange]);
 
   const body = (
-    <IconCheck size={20} color={!isChecked ? "transparent" : "white"} />
+    <IconCheck size={16} color={!isChecked ? "transparent" : "white"} />
   );
 
   const commonProps = {
     style: [
       styles.root,
-      { borderColor: colors.fog },
+      { borderColor: colors.fog, backgroundColor: colors.background },
       isChecked && {
         ...styles.rootChecked,
         backgroundColor: colors.live,
@@ -61,15 +61,15 @@ function CheckBox({ isChecked, disabled, onChange, style }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 24,
   },
   rootChecked: {
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: "transparent",
   },
 });
