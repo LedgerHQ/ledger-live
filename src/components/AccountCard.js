@@ -24,6 +24,7 @@ type Props = {
   disabled?: boolean,
   colors: *,
   useFullBalance?: Boolean,
+  AccountSubTitle?: React$Node,
 };
 
 class AccountCard extends PureComponent<Props> {
@@ -35,6 +36,7 @@ class AccountCard extends PureComponent<Props> {
       disabled,
       colors,
       useFullBalance,
+      AccountSubTitle,
     } = this.props;
     const currency = getAccountCurrency(account);
     const unit = getAccountUnit(account);
@@ -54,14 +56,18 @@ class AccountCard extends PureComponent<Props> {
           currency={currency}
         />
         <View style={styles.accountName}>
-          <LText
-            semiBold
-            numberOfLines={1}
-            color={disabled ? "grey" : "darkBlue"}
-            style={[styles.accountNameText]}
-          >
-            {getAccountName(account)}
-          </LText>
+          <View>
+            <LText
+              semiBold
+              numberOfLines={1}
+              color={disabled ? "grey" : "darkBlue"}
+              style={[styles.accountNameText]}
+            >
+              {getAccountName(account)}
+            </LText>
+            {AccountSubTitle}
+          </View>
+
           {tag ? (
             <View style={[styles.badgeContainer, { borderColor: colors.grey }]}>
               <LText semiBold style={styles.badgeLabel} color="grey">
