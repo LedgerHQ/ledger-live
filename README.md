@@ -1,3 +1,5 @@
+**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
+
 # ledger-live-mobile
 
 - Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live-desktop)
