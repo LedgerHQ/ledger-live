@@ -56,7 +56,7 @@ const getExchangeRates: GetExchangeRates = async (
       let magnitudeAwareRate;
 
       if (!amountFrom) {
-        const isTooSmall = BigNumber(apiAmount).lt(minAmountFrom);
+        const isTooSmall = BigNumber(apiAmount).lte(minAmountFrom);
 
         error = isTooSmall
           ? new SwapExchangeRateAmountTooLow(null, {

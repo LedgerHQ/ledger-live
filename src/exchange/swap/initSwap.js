@@ -251,7 +251,11 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
             .toString();
         }
 
-        o.next({ type: "init-swap-requested", amountExpectedTo });
+        o.next({
+          type: "init-swap-requested",
+          amountExpectedTo,
+          estimatedFees,
+        });
 
         try {
           await swap.checkRefundAddress(
