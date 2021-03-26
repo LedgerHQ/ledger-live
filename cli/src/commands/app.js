@@ -42,6 +42,11 @@ export default {
       desc: "open an application by its display name",
     },
     {
+      name: "debug",
+      type: String,
+      desc: "get information of an application by its name",
+    },
+    {
       name: "quit",
       alias: "q",
       type: Boolean,
@@ -55,6 +60,8 @@ export default {
     uninstall,
     open,
     quit,
+    debug,
+    le,
   }: $Shape<{
     device: string,
     verbose: boolean,
@@ -62,10 +69,29 @@ export default {
     uninstall: string[],
     open: string,
     quit: string,
+    debug: string,
   }>) =>
     withDevice(device || "")((t) => {
       if (quit) return from(quitApp(t));
       if (open) return from(openApp(t, inferManagerApp(open)));
+      if (debug)
+        return from(getDeviceInfo(t)).pipe(
+          mergeMap((deviceInfo) =>
+            from(manager.getAppsList(deviceInfo, true)).pipe(
+              mergeMap((list) => {
+                const app = list.find(
+                  (item) =>
+                    item.name.toLowerCase() ===
+                    inferManagerApp(debug).toLowerCase()
+                );
+                if (!app) {
+                  throw new Error("application '" + debug + "' not found");
+                }
+                return [app];
+              })
+            )
+          )
+        );
 
       return from(getDeviceInfo(t)).pipe(
         mergeMap((deviceInfo) =>
