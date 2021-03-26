@@ -81,6 +81,8 @@ const announcements: RawAnnouncement[] = [].concat(announcementsPool);
 const rng = new Prando(getEnv("MOCK"));
 
 export const addMockAnnouncement = () => {
+  const now = new Date();
+  const expiryDate = new Date(now.getTime() + 2 * 60 * 1000);
   const newAnnouncement = {
     ...rng.nextArrayItem(announcementsPool),
     uuid: rng.nextString(32),
@@ -88,6 +90,8 @@ export const addMockAnnouncement = () => {
     icon: rng.nextArrayItem(["info", "warning"]),
     currencies: undefined,
     contextual: undefined,
+    published_at: now.toISOString(),
+    expired_at: expiryDate.toISOString(),
   };
 
   announcements.push(newAnnouncement);
