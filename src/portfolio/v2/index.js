@@ -88,8 +88,9 @@ export function getBalanceHistoryWithCountervalue(
     to: cvCurrency,
     disableRounding: true,
   });
-  const history = balanceHistory.map((h, i) => ({
-    ...h,
+  const history = balanceHistory.map(({ date, value }, i) => ({
+    date,
+    value,
     countervalue: counterValues[i],
   }));
 

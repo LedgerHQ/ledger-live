@@ -49,15 +49,14 @@ const ranges: { [k: PortfolioRange]: PortfolioRangeConfig } = {
 };
 
 export function getDates(r: PortfolioRange, count: number): Date[] {
-  const conf = getPortfolioRangeConfig(r);
   const now = new Date(Date.now());
   if (count === 1) return [now];
 
+  const conf = getPortfolioRangeConfig(r);
   const last = new Date(conf.startOf(now) - 1);
-  const datesExceptNow = Array.from(
-    { length: count - 1 },
-    (_, i) => new Date(last - conf.increment * i)
-  ).reverse();
-
-  return [...datesExceptNow, now];
+  const dates = [now];
+  for (let i = 0; i < count - 1; i++) {
+    dates.unshift(new Date(last - conf.increment * i));
+  }
+  return dates;
 }
