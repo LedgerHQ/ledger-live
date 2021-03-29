@@ -162,8 +162,9 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         );
         if (unsubscribed) return;
 
-        if (errors.recipient || errors.amount) {
-          throw errors.recipient || errors.amount;
+        const errorsKeys = Object.keys(errors);
+        if (errorsKeys.length > 0) {
+          throw errors[errorsKeys[0]]; // throw the first error
         }
 
         // Prepare swap app to receive the tx to forward.
