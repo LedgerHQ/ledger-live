@@ -1936,7 +1936,7 @@
         "label": "Lend crypto",
         "title": "Lend assets on the Compound Protocol",
         "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger acccount.",
-        "switchLabel": "I have read and agree with the <0><0>Terms of Use</0></0>."
+        "switchLabel": "Я прочитал и согласен с <0><0>Условиями использования</0></0>."
       },
       "info": {
         "title": "Lend crypto",
@@ -3400,9 +3400,9 @@
   "Terms": {
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
-    "switchLabelPrivacy": "I have read and agree with the <1>Privacy Policy</1>",
+    "switchLabelPrivacy": "Подтверждаю, что прочитал(а) и принимаю <1>Политику конфиденциальности</1>",
     "switchLabel": "I have read and agree with the <1>Terms of Service</1>",
-    "cta": "Enter Ledger App"
+    "cta": "Войти в приложение Ledger"
   },
   "exchange": {
     "buy": {
