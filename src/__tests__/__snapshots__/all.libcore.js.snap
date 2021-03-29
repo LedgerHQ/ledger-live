@@ -15220,7 +15220,7 @@ Array [
 exports[`cosmos currency bridge scanAccounts cosmos seed 1 1`] = `
 Array [
   Object {
-    "balance": "2176846",
+    "balance": "2655614",
     "cosmosResources": Object {
       "delegatedBalance": "2139127",
       "withdrawAddress": "",
@@ -15238,7 +15238,7 @@ Array [
     "id": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
     "index": 0,
     "name": "Cosmos 1",
-    "operationsCount": 7,
+    "operationsCount": 8,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -15278,7 +15278,7 @@ Array [
     "xpub": "cosmospub1addwnpepqf3y4jpkjr277cneyugywe7k0xh0w0fa8j25f2lyyp436rzx8j207wd7ygy",
   },
   Object {
-    "balance": "809961",
+    "balance": "326000",
     "cosmosResources": Object {
       "delegatedBalance": "326000",
       "withdrawAddress": "",
@@ -15296,7 +15296,7 @@ Array [
     "id": "libcore:1:cosmos:cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv:",
     "index": 2,
     "name": "Cosmos 3",
-    "operationsCount": 6,
+    "operationsCount": 8,
     "pendingOperations": Array [],
     "seedIdentifier": "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
     "starred": false,
@@ -15374,6 +15374,23 @@ Array [
       ],
       "type": "IN",
       "value": "1000",
+    },
+    Object {
+      "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
+      "blockHash": null,
+      "blockHeight": 5610846,
+      "extra": Object {},
+      "fee": "0",
+      "hash": "689F1D9FB0064A27A0B94C14F8106BF12292889103EAA8B425E04D6E54893710",
+      "id": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:-689F1D9FB0064A27A0B94C14F8106BF12292889103EAA8B425E04D6E54893710-IN",
+      "recipients": Array [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "senders": Array [
+        "cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw",
+      ],
+      "type": "IN",
+      "value": "478768",
     },
     Object {
       "accountId": "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
@@ -15488,6 +15505,23 @@ Array [
       ],
       "type": "OUT",
       "value": "6203",
+    },
+    Object {
+      "accountId": "libcore:1:cosmos:cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv:",
+      "blockHash": null,
+      "blockHeight": 5610846,
+      "extra": Object {},
+      "fee": "5193",
+      "hash": "689F1D9FB0064A27A0B94C14F8106BF12292889103EAA8B425E04D6E54893710",
+      "id": "libcore:1:cosmos:cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv:-689F1D9FB0064A27A0B94C14F8106BF12292889103EAA8B425E04D6E54893710-OUT",
+      "recipients": Array [
+        "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+      ],
+      "senders": Array [
+        "cosmos1cgc696ay2pg6d4gcejek2y8la66j7e5y3c7kyw",
+      ],
+      "type": "OUT",
+      "value": "483961",
     },
     Object {
       "accountId": "libcore:1:cosmos:cosmospub1addwnpepqw8lnqncgq428ervelgzq4sae9ey4d3aw9uu55rus92t2ftu04fqqx7dfgv:",
@@ -68328,7 +68362,7 @@ Array [
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 Array [
   Object {
-    "balance": "341063463",
+    "balance": "341063464",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
@@ -68342,10 +68376,10 @@ Array [
     "id": "libcore:1:stellar:27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3:sep5",
     "index": 0,
     "name": "Stellar 1",
-    "operationsCount": 56,
+    "operationsCount": 57,
     "pendingOperations": Array [],
     "seedIdentifier": "3544cee0d67187d277cd9c7e26a2bf70425b1bee8e92003f45d150c5513d531a",
-    "spendableBalance": "341063463",
+    "spendableBalance": "341063464",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
@@ -68890,6 +68924,26 @@ Array [
       "transactionSequenceNumber": 116917835954913300,
       "type": "OUT",
       "value": "10000100",
+    },
+    Object {
+      "accountId": "libcore:1:stellar:27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3:sep5",
+      "blockHash": null,
+      "blockHeight": 34526066,
+      "extra": Object {
+        "memo": "Establish trustline to $RUM",
+      },
+      "fee": "10000",
+      "hash": "5da822764dba9d8537f96132c9e3239c97ed08adc52aa7dc43b43a79f70b6ade",
+      "id": "libcore:1:stellar:27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3:sep5-5da822764dba9d8537f96132c9e3239c97ed08adc52aa7dc43b43a79f70b6ade-IN",
+      "recipients": Array [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": Array [
+        "GDAXCWDQAYP2VC2UR2KRLVD7JQYIYMQ7BGFY647BCG4CFANT7JYNSO4S",
+      ],
+      "transactionSequenceNumber": 148284372959625700,
+      "type": "IN",
+      "value": "1",
     },
     Object {
       "accountId": "libcore:1:stellar:27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3:sep5",
