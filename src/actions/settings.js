@@ -1,5 +1,4 @@
 // @flow
-
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
 
@@ -150,6 +149,11 @@ export const setSwapProviders = (swapProviders?: AvailableProvider[]) => ({
 
 export const setTheme = (payload: Theme) => ({
   type: "SETTINGS_SET_THEME",
+  payload,
+});
+
+export const setOsTheme = (payload: string) => ({
+  type: "SETTINGS_SET_OS_THEME",
   payload,
 });
 
