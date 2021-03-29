@@ -4,9 +4,22 @@ import "./polyfill";
 import "./live-common-setup";
 import "./implement-react-native-libcore";
 import "react-native-gesture-handler";
-import React, { Component, useCallback, useContext, useMemo } from "react";
-import { connect, useSelector } from "react-redux";
-import { StyleSheet, View, Text, Linking } from "react-native";
+import React, {
+  Component,
+  useCallback,
+  useContext,
+  useMemo,
+  useEffect,
+} from "react";
+import { connect, useDispatch, useSelector } from "react-redux";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Linking,
+  Appearance,
+  AppState,
+} from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
@@ -29,6 +42,7 @@ import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
   exportSelector as settingsExportSelector,
   hasCompletedOnboardingSelector,
+  osThemeSelector,
   themeSelector,
 } from "./reducers/settings";
 import { exportSelector as accountsExportSelector } from "./reducers/accounts";
@@ -65,6 +79,7 @@ import { lightTheme, duskTheme, darkTheme } from "./colors";
 import NotificationsProvider from "./screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
+import { setOsTheme, setTheme } from "./actions/settings";
 
 const themes = {
   light: lightTheme,
@@ -280,6 +295,7 @@ const linking = {
 };
 
 const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
+  const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
 
@@ -300,7 +316,7 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const [isReady, setIsReady] = React.useState(false);
   const [initialState, setInitialState] = React.useState();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!wcContext.initDone) {
       return;
     }
@@ -325,6 +341,26 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   );
 
   const theme = useSelector(themeSelector);
+  const osTheme = useSelector(osThemeSelector);
+
+  const compareOsTheme = useCallback(() => {
+    const currentOsTheme = Appearance.getColorScheme();
+    if (currentOsTheme && osTheme !== currentOsTheme) {
+      const isDark = themes[theme].dark;
+      const newTheme =
+        currentOsTheme === "dark" ? (isDark ? theme : "dusk") : "light";
+      dispatch(setTheme(newTheme));
+      dispatch(setOsTheme(currentOsTheme));
+    }
+  }, [dispatch, osTheme, theme]);
+
+  useEffect(() => {
+    compareOsTheme();
+    const osThemeChangeHandler = nextAppState =>
+      nextAppState === "active" && compareOsTheme();
+    AppState.addEventListener("change", osThemeChangeHandler);
+    return () => AppState.removeEventListener("change", osThemeChangeHandler);
+  }, [compareOsTheme]);
 
   if (!isReady) {
     return null;

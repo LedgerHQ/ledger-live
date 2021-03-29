@@ -1,4 +1,5 @@
 {
   "name": "ledgerlivemobile",
-  "displayName": "Ledger Live"
+  "displayName": "Ledger Live",
+  "userInterfaceStyle": "automatic"
 }

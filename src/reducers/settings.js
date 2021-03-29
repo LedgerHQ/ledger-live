@@ -91,6 +91,7 @@ export type SettingsState = {
   hasAcceptedSwapKYC: boolean,
   swapProviders?: AvailableProvider[],
   theme: Theme,
+  osTheme: ?string,
   carouselVisibility: number,
   discreetMode: boolean,
   language: string,
@@ -118,6 +119,7 @@ export const INITIAL_STATE: SettingsState = {
   hasAcceptedSwapKYC: false,
   swapProviders: [],
   theme: colorScheme === "dark" ? "dusk" : "light",
+  osTheme: undefined,
   carouselVisibility: 0,
   discreetMode: false,
   language: "en",
@@ -294,6 +296,10 @@ const handlers: Object = {
   SETTINGS_SET_THEME: (state, { payload: theme }) => ({
     ...state,
     theme,
+  }),
+  SETTINGS_SET_OS_THEME: (state, { payload: osTheme }) => ({
+    ...state,
+    osTheme,
   }),
   SETTINGS_SET_CAROUSEL_VISIBILITY: (state: SettingsState, { payload }) => ({
     ...state,
@@ -483,5 +489,7 @@ export const discreetModeSelector = (state: State): boolean =>
 export default handleActions(handlers, INITIAL_STATE);
 
 export const themeSelector = (state: State) => state.settings.theme;
+
+export const osThemeSelector = (state: State) => state.settings.osTheme;
 
 export const languageSelector = (state: State) => state.settings.language;
