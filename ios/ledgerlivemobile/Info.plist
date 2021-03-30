@@ -86,6 +86,10 @@
 		<string>Inter-Regular.otf</string>
 		<string>Inter-SemiBold.otf</string>
 		<string>Fontisto.ttf</string>
+		<string>FontAwesome5_Pro_Brands.ttf</string>
+		<string>FontAwesome5_Pro_Light.ttf</string>
+		<string>FontAwesome5_Pro_Regular.ttf</string>
+		<string>FontAwesome5_Pro_Solid.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

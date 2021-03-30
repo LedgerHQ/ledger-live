@@ -1766,12 +1766,27 @@
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
       },
+      "payoutModal": {
+        "title": "Payout fees",
+        "description":"Payout fees are not shown on the device and substracted from the amount.",
+        "cta": "Close"
+      },
       "pendingOperation": {
         "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
         "label": "Your Swap ID:",
         "title": "Pending operation",
         "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later.",
         "cta": "See details"
+      },
+      "tradeMethod": {
+        "float": "Floating rate",
+        "floatUnavailable": "Floating rate not supported for this pair",
+        "fixed": "Fixed rate",
+        "fixedUnavailable": "Fixed rate not supported for this pair",
+        "floatDesc": "Your amount could change depending on the market conditions.",
+        "fixedDesc": "Your amount will remain the same irrespective of the changes on the market. Fixed rate updates every 30 seconds",
+        "by": "By",
+        "modalTitle": "Floating or fixed rate?"
       },
       "form": {
         "validate": "Confirm Swap transaction",
@@ -1808,8 +1823,12 @@
           "from": "From",
           "to": "To",
           "send": "Send",
-          "receive": "Receive",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
           "provider": "Provider",
+          "method": "Rate",
           "fees": "Max fees",
           "disclaimer": {
             "title": "Terms and conditions",
@@ -1829,9 +1848,11 @@
         "to": "To",
         "toAmount": "Amount to receive",
         "statusTooltips": {
-          "refunded": "Please contact the Swap provider with you swap ID for more details",
-          "failed": "Please contact the Swap provider with you swap ID for more details",
-          "hold": "Please contact the Swap provider with you swap ID to solve the situation"
+          "expired": "Please contact the swap provider with your swap ID for more information.",
+          "refunded": "Please contact the swap provider with your swap ID for more information.",
+          "pending": "Please wait while the swap provider is processing the transaction.",
+          "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
+          "finished": "Your swap was completed successfully."
         }
       },
       "missingApp": {

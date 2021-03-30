@@ -121,14 +121,20 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
         {options.map(({ value, label, disabled }, index) => (
           <TouchableOpacity
             activeOpacity={1}
-            style={styles.optionButton}
+            style={[
+              styles.optionButton,
+              disabled ? { backgroundColor: colors.lightFog } : undefined,
+            ]}
             key={`ToggleButton_${value}_${index}`}
             disabled={disabled}
             onPress={() => onChange(value)}
           >
             <LText
               semiBold
-              style={[styles.label]}
+              style={[
+                styles.label,
+                disabled ? { color: colors.fog } : undefined,
+              ]}
               color={activeIndex === index ? "white" : "live"}
               active={activeIndex === index}
             >
@@ -144,9 +150,9 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
 const styles = StyleSheet.create({
   mainContainer: {
     width: "auto",
-    height: 38,
+    height: 32,
     position: "relative",
-    borderRadius: 38,
+    borderRadius: 32,
     borderWidth: 1,
     overflow: "hidden",
   },
@@ -156,26 +162,26 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     flexWrap: "nowrap",
     width: "100%",
-    height: 38,
+    height: 32,
     position: "relative",
-    backgroundColor: "rgba(0,0,0,0)",
+    backgroundColor: "transparent",
   },
   indicator: {
     position: "absolute",
     zIndex: 0,
-    height: 38,
+    height: 32,
     top: 0,
     left: 0,
   },
   label: {
     fontSize: 14,
-    lineHeight: 36,
+    lineHeight: 30,
     textAlign: "center",
   },
   optionButton: {
     flex: 1,
-    height: 38,
-    backgroundColor: "rgba(0,0,0,0)",
+    height: 32,
+    backgroundColor: "transparent",
     zIndex: 1,
   },
 });

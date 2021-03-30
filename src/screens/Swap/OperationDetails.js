@@ -58,7 +58,6 @@ const OperationDetails = ({ route }: Props) => {
   const statusColorKey = getStatusColor(status, colors, true);
   const dotStyles = { backgroundColor: colors[statusColorKey] };
   const textColorStyles = { color: colors[statusColorKey] };
-  const statusHasTooltip = ["refunded", "hold", "failed"].includes(status);
 
   const openProvider = useCallback(() => {
     Linking.openURL(urls.swap.providers[provider].main);
@@ -92,20 +91,16 @@ const OperationDetails = ({ route }: Props) => {
         </LText>
         <View style={styles.statusTextWrapper}>
           <View style={[styles.statusDot, dotStyles]} />
-          {statusHasTooltip ? (
-            <TooltipLabel
-              label={status}
-              style={{ ...styles.statusText, ...textColorStyles }}
-              color={statusColorKey}
-              tooltip={
-                <Trans
-                  i18nKey={`transfer.swap.operationDetails.statusTooltips.${status}`}
-                />
-              }
-            />
-          ) : (
-            <LText style={[styles.statusText, textColorStyles]}>{status}</LText>
-          )}
+          <TooltipLabel
+            label={status}
+            style={{ ...styles.statusText, ...textColorStyles }}
+            color={statusColorKey}
+            tooltip={
+              <Trans
+                i18nKey={`transfer.swap.operationDetails.statusTooltips.${status}`}
+              />
+            }
+          />
         </View>
         <View style={styles.fieldsWrapper}>
           <LText style={styles.label} color="grey">

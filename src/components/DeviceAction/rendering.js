@@ -137,7 +137,7 @@ export function renderConfirmSwap({
   device: Device,
 }) {
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { width: "100%" }]}>
       <InfoBox onLearnMore={() => Linking.openURL(urls.swap.learnMore)}>
         {t("DeviceAction.confirmSwap.alert")}
       </InfoBox>

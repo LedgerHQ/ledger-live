@@ -1837,9 +1837,11 @@
         "to": "To",
         "toAmount": "Amount to receive",
         "statusTooltips": {
-          "refunded": "Please contact the Swap provider with you swap ID for more details",
-          "failed": "Please contact the Swap provider with you swap ID for more details",
-          "hold": "Please contact the Swap provider with you swap ID to solve the situation"
+          "expired": "Please contact the swap provider with your swap ID for more information.",
+          "refunded": "Please contact the swap provider with your swap ID for more information.",
+          "pending": "Please wait while the swap provider is processing the transaction.",
+          "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
+          "finished": "Your swap was completed successfully."
         }
       },
       "missingApp": {

@@ -6,7 +6,9 @@ import LText from "./LText";
 const CountdownTimer = ({
   end,
   callback,
+  color,
 }: {
+  color: string,
   end: Date,
   callback: Function,
 }) => {
@@ -19,19 +21,18 @@ const CountdownTimer = ({
     if (!end || finished) {
       return;
     }
-
     const seconds = Math.round((end - new Date()) / 1000);
     if (seconds < 0 && callback) {
       setFinished(true);
-      callback();
+      callback(null);
     } else {
       setTimeLeft(Math.min(59, Math.max(seconds, 0)));
     }
-  }, 1000);
+  }, 600);
 
   const formattedTime = `00:${timeLeft.toString().padStart(2, "0")}`;
   return (
-    <LText semiBold style={{ fontSize: 12 }}>
+    <LText color={color} semiBold style={{ fontSize: 12 }}>
       {formattedTime}
     </LText>
   );
