@@ -22,7 +22,12 @@ const ICONS_FALLBACK = {
   bitcoin_testnet: "bitcoin",
 };
 
-const oldAppsInstallDisabled = ["ZenCash", "Ripple", "Ontology"];
+const oldAppsInstallDisabled = [
+  "Crypto.com Chain",
+  "ZenCash",
+  "Ripple",
+  "Ontology",
+];
 const canHandleInstall = (app: ApplicationVersion) =>
   !oldAppsInstallDisabled.includes(app.name) &&
   !listCryptoCurrencies(true, true).some(
