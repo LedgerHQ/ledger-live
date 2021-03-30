@@ -11,7 +11,7 @@ import { Trans } from "react-i18next";
 import { NavigatorName, ScreenName } from "../../../const";
 import {
   readOnlyModeEnabledSelector,
-  swapSupportedCurrenciesSelector,
+  flattenedSwapSupportedCurrenciesSelector,
 } from "../../../reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 import { isCurrencySupported } from "../../Exchange/coinifyConfig";
@@ -28,12 +28,12 @@ type Props = {
 
 export default function useActions({ account, parentAccount, colors }: Props) {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+  const currency = getAccountCurrency(account);
   const availableOnSwap = useSelector(state =>
-    swapSupportedCurrenciesSelector(state, { accountId: account.id }),
+    flattenedSwapSupportedCurrenciesSelector(state),
   );
   const mainAccount = getMainAccount(account, parentAccount);
   const decorators = perFamilyAccountActions[mainAccount.currency.family];
-  const currency = getAccountCurrency(account);
 
   const walletConnectAvailable = currency.id === "ethereum";
 

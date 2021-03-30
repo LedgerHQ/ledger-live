@@ -1,9 +1,10 @@
 // @flow
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useMemo, useCallback, useEffect, useState } from "react";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import { useSelector } from "react-redux";
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -13,15 +14,20 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/lib/currencies";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
+import { getEnabledTradeMethods } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import { getExchangeRates } from "@ledgerhq/live-common/lib/exchange/swap";
+import { swapSupportedCurrenciesSelector } from "../../../reducers/settings";
 import type { SwapRouteParams } from ".";
 import KeyboardView from "../../../components/KeyboardView";
 import LText from "../../../components/LText";
+import getFontStyle from "../../../components/LText/getFontStyle";
 import SectionSeparator from "../../../components/SectionSeparator";
 import CurrencyInput from "../../../components/CurrencyInput";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import TranslatedError from "../../../components/TranslatedError";
 import Button from "../../../components/Button";
+import ToggleButton from "../../../components/ToggleButton";
+import Rate from "./Rate";
 import Switch from "../../../components/Switch";
 import { ScreenName } from "../../../const";
 
@@ -35,6 +41,8 @@ type Props = {
 const SwapFormAmount = ({ navigation, route }: Props) => {
   const { exchange } = route.params;
   const { fromAccount, fromParentAccount, toAccount } = exchange;
+  const fromCurrency = getAccountCurrency(fromAccount);
+  const toCurrency = getAccountCurrency(toAccount);
   const fromUnit = getAccountUnit(fromAccount);
   const toUnit = getAccountUnit(toAccount);
   const [error, setError] = useState(null);
@@ -42,6 +50,19 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
   const [rateExpiration, setRateExpiration] = useState(null);
   const [useAllAmount, setUseAllAmount] = useState(false);
   const [maxSpendable, setMaxSpendable] = useState(BigNumber(0));
+  const selectableCurrencies = useSelector(swapSupportedCurrenciesSelector);
+  const enabledTradeMethods = useMemo(
+    () =>
+      getEnabledTradeMethods({
+        selectableCurrencies,
+        fromCurrency,
+        toCurrency,
+      }),
+    [fromCurrency, selectableCurrencies, toCurrency],
+  );
+  const [tradeMethod, setTradeMethod] = useState(
+    enabledTradeMethods[0] || "fixed",
+  );
 
   const {
     status,
@@ -54,7 +75,11 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
   }));
 
   invariant(transaction, "transaction must be defined");
-
+  const onTradeMethodChange = useCallback(method => {
+    setTradeMethod(method);
+    setRate(null);
+    setRateExpiration(null);
+  }, []);
   const onAmountChange = useCallback(
     amount => {
       if (!amount.eq(transaction.amount)) {
@@ -107,22 +132,27 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
       try {
         const rates = await getExchangeRates(exchange, transaction);
         if (ignore) return;
-
-        setRate(rates[0]); // FIXME when we have more rates, what?
-        setRateExpiration(new Date(Date.now() + 60000));
+        let rate = rates.find(rate => rate.tradeMethod === tradeMethod);
+        rate = rate || rates.find(rate => !rate.tradeMethod); // Fixme, we need the trademethod even on error
+        if (rate?.error) {
+          setError(rate.error);
+        } else {
+          setRate(rate); // FIXME when we have multiple providers this will not be enough
+          setRateExpiration(new Date(Date.now() + 60000));
+        }
       } catch (error) {
         if (ignore) return;
         setError(error);
       }
     }
-    if (!ignore && !error && transaction.amount.gt(0)) {
+    if (!ignore && !error && transaction.amount.gt(0) && !rate) {
       getRates();
     }
 
     return () => {
       ignore = true;
     };
-  }, [exchange, fromAccount, toAccount, error, transaction]);
+  }, [exchange, fromAccount, toAccount, error, transaction, tradeMethod, rate]);
 
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.SwapSummary, {
@@ -159,20 +189,59 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
     bridgePending ||
     (useAllAmount && amountError && amountError instanceof AmountRequired);
 
+  const options = [
+    {
+      value: "float",
+      label: <Trans i18nKey="transfer.swap.tradeMethod.float" />,
+      disabled: !enabledTradeMethods.includes("float"),
+    },
+    {
+      value: "fixed",
+      label: <Trans i18nKey="transfer.swap.tradeMethod.fixed" />,
+      disabled: !enabledTradeMethods.includes("fixed"),
+    },
+  ];
+
+  const toValue = rate
+    ? transaction.amount
+        .times(rate.magnitudeAwareRate)
+        .minus(rate.payoutNetworkFees || 0)
+    : null;
+
+  const actualRate = toValue ? toValue.dividedBy(transaction.amount) : null;
+
   return (
     <KeyboardView style={styles.container}>
+      <View style={styles.toggleWrapper}>
+        <ToggleButton
+          value={tradeMethod}
+          options={options}
+          onChange={onTradeMethodChange}
+        />
+      </View>
+      <View style={styles.rateWrapper}>
+        {actualRate && rateExpiration ? (
+          <Rate
+            rateExpiration={rateExpiration}
+            tradeMethod={tradeMethod}
+            magnitudeAwareRate={actualRate}
+            fromCurrency={fromCurrency}
+            toCurrency={toCurrency}
+            onRatesExpired={setRate}
+          />
+        ) : (
+          <View style={styles.ratePlaceholder} />
+        )}
+      </View>
       <View style={styles.wrapper}>
         <CurrencyInput
           editable={!useAllAmount}
           onChange={onAmountChange}
           unit={fromUnit}
           value={transaction.amount}
+          isActive
           renderRight={
-            <LText
-              style={[styles.currency, styles.active]}
-              color="grey"
-              tertiary
-            >
+            <LText style={[styles.currency, styles.active]} color={"grey"}>
               {fromUnit.code}
             </LText>
           }
@@ -189,16 +258,13 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
       <SectionSeparator />
       <View style={styles.wrapper}>
         <CurrencyInput
-          isActive={false}
           unit={toUnit}
-          value={
-            rate ? transaction.amount.times(rate.magnitudeAwareRate) : null
-          }
+          value={toValue}
           placeholder={"0"}
           editable={false}
-          showAllDigits
+          inputStyle={styles.currency}
           renderRight={
-            <LText style={styles.currency} color="grey" tertiary>
+            <LText style={styles.currency} color="grey">
               {toUnit.code}
             </LText>
           }
@@ -260,13 +326,28 @@ const styles = StyleSheet.create({
   wrapper: {
     flexBasis: 80,
     flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: 18,
+  },
+  toggleWrapper: {
+    alignItems: "center",
+    display: "flex",
+    width: 230,
+    alignSelf: "center",
+    marginTop: 10,
+  },
+  rateWrapper: {
+    padding: 25,
+  },
+  ratePlaceholder: {
+    height: 16,
   },
   currency: {
-    fontSize: 24,
+    fontSize: 20,
   },
   active: {
-    fontSize: 32,
+    fontSize: 30,
+    ...getFontStyle({ semiBold: true }),
   },
   error: {
     fontSize: 14,

@@ -16,7 +16,7 @@ export const getStatusColor = (
   let key = "grey";
 
   if (operationStatusList.pending.includes(status)) {
-    key = status === "hold" ? "orange" : "wallet";
+    key = status === "onhold" ? "orange" : "live";
   }
   if (operationStatusList.finishedOK.includes(status)) {
     key = "green";

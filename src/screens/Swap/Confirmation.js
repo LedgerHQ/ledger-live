@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-
+import SafeAreaView from "react-native-safe-area-view";
 import type {
   Transaction,
   TransactionStatus,
@@ -118,6 +118,7 @@ const Confirmation = ({
   }, [broadcast, onComplete, onError, signedOperation, swapData]);
 
   const { t } = useTranslation();
+  const forceInset = { bottom: "always" };
 
   return (
     <BottomModal
@@ -127,48 +128,50 @@ const Confirmation = ({
       onClose={onCancel}
       style={styles.root}
     >
-      {signedOperation ? (
-        renderLoading({ t, description: t("transfer.swap.broadcasting") })
-      ) : !swapData ? (
-        <DeviceAction
-          onClose={() => undefined}
-          key={"initSwap"}
-          action={swapAction}
-          device={deviceMeta.device}
-          request={{
-            exchange,
-            exchangeRate,
-            transaction,
-          }}
-          onResult={({ initSwapResult, initSwapError }) => {
-            if (initSwapError) {
-              onError(initSwapError);
-            } else {
-              setSwapData(initSwapResult);
-            }
-          }}
-        />
-      ) : (
-        <DeviceAction
-          action={silentSigningAction}
-          device={deviceMeta.device}
-          request={{
-            status,
-            tokenCurrency,
-            parentAccount: fromParentAccount,
-            account: fromAccount,
-            transaction: swapData.transaction,
-            appName: "Exchange",
-          }}
-          onResult={({ transactionSignError, signedOperation }) => {
-            if (transactionSignError) {
-              onError(transactionSignError);
-            } else {
-              setSignedOperation(signedOperation);
-            }
-          }}
-        />
-      )}
+      <SafeAreaView forceInset={forceInset} style={{ flex: 1 }}>
+        {signedOperation ? (
+          renderLoading({ t, description: t("transfer.swap.broadcasting") })
+        ) : !swapData ? (
+          <DeviceAction
+            onClose={() => undefined}
+            key={"initSwap"}
+            action={swapAction}
+            device={deviceMeta.device}
+            request={{
+              exchange,
+              exchangeRate,
+              transaction,
+            }}
+            onResult={({ initSwapResult, initSwapError }) => {
+              if (initSwapError) {
+                onError(initSwapError);
+              } else {
+                setSwapData(initSwapResult);
+              }
+            }}
+          />
+        ) : (
+          <DeviceAction
+            action={silentSigningAction}
+            device={deviceMeta.device}
+            request={{
+              status,
+              tokenCurrency,
+              parentAccount: fromParentAccount,
+              account: fromAccount,
+              transaction: swapData.transaction,
+              appName: "Exchange",
+            }}
+            onResult={({ transactionSignError, signedOperation }) => {
+              if (transactionSignError) {
+                onError(transactionSignError);
+              } else {
+                setSignedOperation(signedOperation);
+              }
+            }}
+          />
+        )}
+      </SafeAreaView>
     </BottomModal>
   );
 };

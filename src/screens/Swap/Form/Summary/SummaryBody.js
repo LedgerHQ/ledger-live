@@ -1,8 +1,10 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
+import { BigNumber } from "bignumber.js";
 import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import type { TransactionStatus } from "@ledgerhq/live-common/lib/types";
+import Icon from "react-native-vector-icons/dist/FontAwesome";
 import {
   getAccountName,
   getAccountUnit,
@@ -15,6 +17,7 @@ import type {
 import { useTheme } from "@react-navigation/native";
 import LText from "../../../../components/LText";
 import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
+import InfoModal from "../../../../components/InfoModal";
 import SectionSeparator, {
   ArrowDownCircle,
 } from "../../../../components/SectionSeparator";
@@ -36,9 +39,11 @@ const SummaryBody = ({
   const { fromAccount, toAccount } = exchange;
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
-  const { magnitudeAwareRate } = exchangeRate;
+  const { magnitudeAwareRate, payoutNetworkFees } = exchangeRate;
   const { amount } = status;
-
+  const [payoutFeesDrawerVisibility, setPayoutFeesDrawerVisibility] = useState(
+    false,
+  );
   const openProvider = useCallback(() => {
     Linking.openURL(urls.swap.providers[exchangeRate.provider].main);
   }, [exchangeRate.provider]);
@@ -97,7 +102,13 @@ const SummaryBody = ({
       </View>
       <View style={styles.row}>
         <LText primary style={styles.label} color="smoke">
-          <Trans i18nKey="transfer.swap.form.summary.receive" />
+          <Trans
+            i18nKey={
+              exchangeRate.tradeMethod === "fixed"
+                ? "transfer.swap.form.summary.receive"
+                : "transfer.swap.form.summary.receiveFloat"
+            }
+          />
         </LText>
         <LText tertiary style={styles.value2}>
           <CurrencyUnitValue
@@ -108,6 +119,30 @@ const SummaryBody = ({
           />
         </LText>
       </View>
+      {exchangeRate.tradeMethod === "float" ? (
+        <View style={styles.row}>
+          <TouchableOpacity
+            onPress={() => setPayoutFeesDrawerVisibility(true)}
+            style={{ flexDirection: "row", alignItems: "center" }}
+          >
+            <LText
+              style={{ ...styles.label, flex: 0, marginRight: 4 }}
+              color="smoke"
+            >
+              <Trans i18nKey="transfer.swap.form.summary.payoutNetworkFees" />
+            </LText>
+            <Icon size={13} color={colors.smoke} name={"info-circle"} />
+          </TouchableOpacity>
+          <LText tertiary style={styles.value2}>
+            <CurrencyUnitValue
+              disableRounding
+              showCode
+              unit={getAccountUnit(toAccount)}
+              value={BigNumber(payoutNetworkFees || 0)}
+            />
+          </LText>
+        </View>
+      ) : null}
       <View style={[styles.rate, { backgroundColor: colors.lightFog }]}>
         <View style={[styles.row, { marginBottom: 0 }]}>
           <LText primary style={styles.label} color="smoke">
@@ -123,7 +158,24 @@ const SummaryBody = ({
             <ExternalLink size={11} color={colors.live} />
           </TouchableOpacity>
         </View>
+        <View style={[styles.row, { marginBottom: 0 }]}>
+          <LText primary style={styles.label} color="smoke">
+            <Trans i18nKey="transfer.swap.form.summary.method" />
+          </LText>
+          <LText semiBold style={styles.providerLink}>
+            <Trans
+              i18nKey={`transfer.swap.tradeMethod.${exchangeRate.tradeMethod}`}
+            />
+          </LText>
+        </View>
       </View>
+      <InfoModal
+        isOpened={payoutFeesDrawerVisibility}
+        title={<Trans i18nKey={"transfer.swap.payoutModal.title"} />}
+        desc={<Trans i18nKey={"transfer.swap.payoutModal.description"} />}
+        confirmLabel={<Trans i18nKey={"transfer.swap.payoutModal.cta"} />}
+        onClose={() => setPayoutFeesDrawerVisibility(false)}
+      />
     </>
   );
 };
@@ -139,6 +191,10 @@ const styles = StyleSheet.create({
   },
   label: {
     flex: 1,
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  labelTooltip: {
     fontSize: 12,
     lineHeight: 18,
   },

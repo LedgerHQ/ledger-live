@@ -28,7 +28,7 @@ type InfoModalProps = ModalProps & {
   withCancel?: boolean,
   onContinue?: () => void,
   children?: React$Node,
-  confirmLabel?: string,
+  confirmLabel?: string | React$Element<*>,
   confirmProps?: *,
 };
 

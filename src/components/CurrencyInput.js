@@ -12,6 +12,7 @@ import clamp from "lodash/clamp";
 
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
+import getFontStyle from "./LText/getFontStyle";
 import { withTheme } from "../colors";
 
 function format(
@@ -194,7 +195,7 @@ class CurrencyInput extends PureComponent<Props, State> {
               subMagnitude,
             })
           }
-          placeholderTextColor={colors.darkBlue}
+          placeholderTextColor={editable ? colors.darkBlue : colors.grey}
           keyboardType="numeric"
           blurOnSubmit
         />
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    fontFamily: "Inter",
+    ...getFontStyle(),
     paddingRight: 8,
   },
 });

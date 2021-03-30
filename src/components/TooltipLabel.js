@@ -22,7 +22,7 @@ const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
   return (
     <>
       <TouchableOpacity style={styles.root} onPress={open}>
-        <LText style={{ ...styles.label, ...style }} color="grey">
+        <LText style={{ ...styles.label, ...style }} color={color}>
           {label}
         </LText>
         <Icon size={13} color={colors[color]} name={"info-circle"} />
