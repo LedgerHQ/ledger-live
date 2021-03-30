@@ -1,15 +1,20 @@
 // @flow
 import * as icons from "./data/icons/reactNative";
-import * as tokenIcons from "./data/icons/reactNative/tokens";
 import type { CryptoCurrency, TokenCurrency } from "./types";
-import iconNameById from "./iconNameById";
 
 type Icon = React$ComponentType<{ size: number, color: string }>;
 
+function getIconId({ ticker }: CryptoCurrency | TokenCurrency) {
+  let id = ticker.toLowerCase();
+  if (!isNaN(id.charAt(0))) id = `_${id}`; // fix variable name leading with a numerical value
+
+  return id;
+}
+
 export function getCryptoCurrencyIcon(currency: CryptoCurrency): ?Icon {
-  return icons[iconNameById(currency.id)];
+  return icons[getIconId(currency)];
 }
 
 export function getTokenCurrencyIcon(token: TokenCurrency): ?Icon {
-  return tokenIcons[token.id.replace(/\//g, "_")];
+  return icons[getIconId(token)];
 }

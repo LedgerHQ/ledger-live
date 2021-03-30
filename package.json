@@ -163,7 +163,7 @@
     "react-redux": "7.2.3",
     "react-test-renderer": "^17.0.2",
     "rimraf": "^3.0.2",
-    "svgr": "^1.10.0",
+    "@svgr/core": "^5.5.0",
     "timemachine": "^0.3.2"
   }
 }

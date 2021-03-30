@@ -66,7 +66,7 @@ const CoinPreview = ({ coin }: { coin: CryptoCurrency }) => {
   return (
     <CoinContainer>
       <IconWrapper size={60} bg={coin.color} color="white">
-        {Icon ? <Icon size={30} /> : <AltIcon>{coin.ticker}</AltIcon>}
+        {Icon ? <Icon size={50} /> : <AltIcon>{coin.ticker}</AltIcon>}
       </IconWrapper>
       <CryptoName>{text}</CryptoName>
     </CoinContainer>

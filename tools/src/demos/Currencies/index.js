@@ -98,10 +98,10 @@ class Crypto extends Component<*> {
           <NoProblem>OK</NoProblem>
         )}
         <IconWrapper size={60} bg={crypto.color} color="white">
-          {Icon ? <Icon size={30} /> : <AltIcon>{crypto.ticker}</AltIcon>}
+          {Icon ? <Icon size={50} /> : <AltIcon>{crypto.ticker}</AltIcon>}
         </IconWrapper>
         <IconWrapper size={60} color={crypto.color} bg="white">
-          {Icon ? <Icon size={30} /> : <AltIcon>{crypto.ticker}</AltIcon>}
+          {Icon ? <Icon size={50} /> : <AltIcon>{crypto.ticker}</AltIcon>}
         </IconWrapper>
         <CryptoName>
           {crypto.name} ({crypto.ticker})

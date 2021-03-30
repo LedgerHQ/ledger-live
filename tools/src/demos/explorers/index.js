@@ -7,7 +7,7 @@ import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/react";
 import {
   blockchainBaseURL,
   getCurrencyExplorer,
-  hasCurrencyExplorer
+  hasCurrencyExplorer,
 } from "@ledgerhq/live-common/lib/api/Ledger";
 
 const Main = styled.div`
@@ -28,16 +28,16 @@ const AltIcon = styled.div`
 `;
 
 const IconWrapper = styled.div`
-  color: ${p => p.color};
-  background-color: ${p => p.bg};
+  color: ${(p) => p.color};
+  background-color: ${(p) => p.bg};
   border-radius: 8px;
   display: flex;
   overflow: hidden;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: ${p => p.size}px;
-  height: ${p => p.size}px;
+  width: ${(p) => p.size}px;
+  height: ${(p) => p.size}px;
   margin-right: 10px;
 `;
 
@@ -50,7 +50,7 @@ const CryptoName = styled.div`
 const TimeContainer = styled.div`
   width: 50px;
   height: 50px;
-  background-color: ${p =>
+  background-color: ${(p) =>
     p.loading ? "#999" : !p.hasError ? "#0F0" : "#F00"};
   display: flex;
   flex-direction: row;
@@ -67,7 +67,7 @@ const Checks = styled.div`
   justify-content: flex-end;
 `;
 
-const checkCoinExplorer = async currency => {
+const checkCoinExplorer = async (currency) => {
   const url = `${blockchainBaseURL(currency)}/blocks/current`;
   const r = await fetch(url);
   if (r.status !== 200) {
@@ -95,7 +95,7 @@ class TimeState extends PureComponent<*, *> {
 
 class ExplorerRow extends PureComponent<*, *> {
   state = {
-    times: Array(5).fill({ error: null, loading: true })
+    times: Array(5).fill({ error: null, loading: true }),
   };
 
   async componentDidMount() {
@@ -110,7 +110,7 @@ class ExplorerRow extends PureComponent<*, *> {
       this.setState(({ times }) => ({
         times: times.map((v, index) =>
           i === index ? { loading: false, error } : v
-        )
+        ),
       }));
     }
   }
@@ -122,7 +122,7 @@ class ExplorerRow extends PureComponent<*, *> {
     return (
       <Row>
         <IconWrapper size={60} bg={currency.color} color="white">
-          {Icon ? <Icon size={30} /> : <AltIcon>{currency.ticker}</AltIcon>}
+          {Icon ? <Icon size={50} /> : <AltIcon>{currency.ticker}</AltIcon>}
         </IconWrapper>
         <CryptoName>
           {info.version} {info.id}
@@ -142,10 +142,15 @@ class Explorers extends Component<*> {
     const coins = listCryptoCurrencies(true);
     return (
       <Main>
-        <h1 style={{ color: "red" }}>Are you still using this page? Please contact @gre. We are about to disrupt it. We no longer support this, https://github.com/LedgerHQ/ledger-live-common and INFRA team have enough tests to cover this.</h1>
+        <h1 style={{ color: "red" }}>
+          Are you still using this page? Please contact @gre. We are about to
+          disrupt it. We no longer support this,
+          https://github.com/LedgerHQ/ledger-live-common and INFRA team have
+          enough tests to cover this.
+        </h1>
         {coins
-          .filter(c => hasCurrencyExplorer(c))
-          .map(c => (
+          .filter((c) => hasCurrencyExplorer(c))
+          .map((c) => (
             <ExplorerRow currency={c} key={c.id} />
           ))}
       </Main>
@@ -157,7 +162,7 @@ class Explorers extends Component<*> {
 Explorers.demo = {
   title: "Explorers",
   url: "/explorers",
-  hidden: true
+  hidden: true,
 };
 
 export default Explorers;
