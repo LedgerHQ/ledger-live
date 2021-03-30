@@ -59,8 +59,7 @@ Les Services Ledger permettent aux Utilisateurs :
 - d'actualiser le firmware de leur Appareil Ledger
 - d'installer et désinstaller des Applications sur l'appareil avec Ledger Live Manager
 - de consulter leur portefeuille de Crypto-actifs
-- d'accéder aux moyens de réaliser des opérations sur divers réseaux de blockchain conformément aux règles de protocole applicables, telles que, notamment :
-  - envoyer et recevoir des Crypto-actifs à destination et en provenance des Utilisateurs d'un réseau de blockchain dédié ;
+- d'accéder aux moyens de réaliser des opérations sur divers réseaux de blockchain conformément aux règles de protocole applicables, telles que, notamment: envoyer et recevoir des Crypto-actifs à destination et en provenance des Utilisateurs d'un réseau de blockchain dédié ;
 - de se connecter à des Services tiers, pour accéder à des services tels que la délégation de droits de staking sur des blockchains supportant la proof-of-stake ou l'achat de crypto.
 
 Ledger propose des Services sans dépôt. En conséquence, nous ne stockons pas et n'avons pas accès à vos Crypto-actifs et Clés privées. Nous n'envoyons pas et ne recevons pas de Crypto-actifs. Les transferts de Crypto-actifs interviennent sur des réseaux de blockchain et non sur un réseau détenu ou contrôlé par Ledger.

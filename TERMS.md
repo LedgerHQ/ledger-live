@@ -81,8 +81,8 @@ The Ledger Services allow Users to:
 - Update the firmware of their Ledger Device
 - Install and uninstall Device Applications with the Ledger Live Manager
 - View their portfolio of Crypto Assets
-- Access the means to perform operations on various blockchain networks in accordance with their respective protocol rules, such as but not limited to:
-  - Send and receive Crypto Assets to and from Users of a dedicated blockchain network;
+- Access the means to perform operations on various blockchain networks in accordance with their respective protocol rules, such as but not limited to: send and receive Crypto Assets to and from Users of a dedicated blockchain network;
+
 - Connect with Third Party Services, to access services such as the delegation of staking rights on supported proof-of-stake blockchains or buying crypto.
 
 Ledger operates non-custodial services, which means that we do not store, nor do we have access to your Crypto Assets nor your Private Keys. We do not send or receive Crypto Assets. Any Crypto Asset transfer occurs on blockchain networks and not on a network owned or controlled by Ledger.
