@@ -1,13 +1,21 @@
 // @flow
-
-import type { Account, AccountLike, Operation } from "./types";
+import { BigNumber } from "bignumber.js";
+import type { Currency, Account, AccountLike, Operation } from "./types";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternals } from "./operation";
+import { calculate } from "./countervalues/logic";
+import type { CounterValuesState } from "./countervalues/types";
 
 type Field = {
   title: string,
-  cell: (AccountLike, ?Account, Operation) => string,
+  cell: (
+    AccountLike,
+    ?Account,
+    Operation,
+    ?Currency,
+    ?CounterValuesState
+  ) => string,
 };
 
 const newLine = "\r\n";
@@ -59,30 +67,114 @@ const fields: Field[] = [
       return main.xpub || main.freshAddress;
     },
   },
+  {
+    title: "Countervalue Ticker",
+    cell: (account, parentAccount, op, countervalueCurrency) => {
+      return countervalueCurrency?.ticker ?? "";
+    },
+  },
+  {
+    title: "Countervalue at Operation Date",
+    cell: (
+      account,
+      parentAccount,
+      op,
+      counterValueCurrency,
+      countervalueState
+    ) => {
+      const value =
+        counterValueCurrency && countervalueState
+          ? calculate(countervalueState, {
+              from: getAccountCurrency(account),
+              to: counterValueCurrency,
+              value: op.value.toNumber(),
+              disableRounding: true,
+              date: op.date,
+            })
+          : null;
+      return value && counterValueCurrency
+        ? formatCurrencyUnit(counterValueCurrency.units[0], BigNumber(value), {
+            disableRounding: true,
+            useGrouping: false,
+          })
+        : "";
+    },
+  },
+  {
+    title: "Countervalue at CSV Export",
+    cell: (
+      account,
+      parentAccount,
+      op,
+      counterValueCurrency,
+      countervalueState
+    ) => {
+      const value =
+        counterValueCurrency && countervalueState
+          ? calculate(countervalueState, {
+              from: getAccountCurrency(account),
+              to: counterValueCurrency,
+              value: op.value.toNumber(),
+              disableRounding: true,
+            })
+          : null;
+      return value && counterValueCurrency
+        ? formatCurrencyUnit(counterValueCurrency.units[0], BigNumber(value), {
+            disableRounding: true,
+            useGrouping: false,
+          })
+        : "";
+    },
+  },
 ];
 
 const accountRows = (
   account: AccountLike,
-  parentAccount: ?Account
+  parentAccount: ?Account,
+  counterValueCurrency?: Currency,
+  countervalueState?: CounterValuesState
 ): Array<string[]> =>
   account.operations
     .reduce((ops, op) => ops.concat(flattenOperationWithInternals(op)), [])
     .map((operation) =>
-      fields.map((field) => field.cell(account, parentAccount, operation))
+      fields.map((field) =>
+        field.cell(
+          account,
+          parentAccount,
+          operation,
+          counterValueCurrency,
+          countervalueState
+        )
+      )
     );
 
-const accountsRows = (accounts: Account[]) =>
+const accountsRows = (
+  accounts: Account[],
+  counterValueCurrency?: Currency,
+  countervalueState?: CounterValuesState
+) =>
   flattenAccounts(accounts).reduce((all, account) => {
     const parentAccount =
       account.type !== "Account"
         ? accounts.find((a) => a.id === account.parentId)
         : null;
-    return all.concat(accountRows(account, parentAccount));
+    return all.concat(
+      accountRows(
+        account,
+        parentAccount,
+        counterValueCurrency,
+        countervalueState
+      )
+    );
   }, []);
 
-export const accountsOpToCSV = (accounts: Account[]) =>
+export const accountsOpToCSV = (
+  accounts: Account[],
+  counterValueCurrency?: Currency, // required for countervalues export
+  countervalueState?: CounterValuesState // cvs state required for countervalues export
+) =>
   fields.map((field) => field.title).join(",") +
   newLine +
-  accountsRows(accounts)
+  accountsRows(accounts, counterValueCurrency, countervalueState)
     .map((row) => row.map((value) => value.replace(/[,\n\r]/g, "")).join(","))
     .join(newLine);
