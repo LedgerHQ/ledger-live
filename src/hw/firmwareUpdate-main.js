@@ -14,6 +14,7 @@ import { withDevicePolling, withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import flash from "./flash";
 import installFinalFirmware from "./installFinalFirmware";
+import { hasFinalFirmware } from "./hasFinalFirmware";
 
 const wait2s = of({ type: "wait" }).pipe(delay(2000));
 
@@ -27,6 +28,7 @@ const main = (
   { final, shouldFlashMCU }: FirmwareUpdateContext
 ): Observable<Res> => {
   log("hw", "firmwareUpdate-main started");
+  const withFinal = hasFinalFirmware(final);
   const withDeviceInfo = withDevicePolling(deviceId)(
     (transport) => from(getDeviceInfo(transport)),
     () => true // accept all errors. we're waiting forever condition that make getDeviceInfo work
@@ -76,13 +78,15 @@ const main = (
     )
   );
 
-  const finalStep = withDeviceInfo.pipe(
-    concatMap((deviceInfo) =>
-      !deviceInfo.isOSU
-        ? throwError(new DeviceInOSUExpected())
-        : withDeviceInstall(installFinalFirmware)
-    )
-  );
+  const finalStep = !withFinal
+    ? empty()
+    : withDeviceInfo.pipe(
+        concatMap((deviceInfo) =>
+          !deviceInfo.isOSU
+            ? throwError(new DeviceInOSUExpected())
+            : withDeviceInstall(installFinalFirmware)
+        )
+      );
 
   const all = shouldFlashMCU
     ? concat(waitForBootloader, bootloaderLoop, finalStep)
