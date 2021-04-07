@@ -17,7 +17,7 @@ export default function DebugIcons() {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
-      <NavigationScrollView contentContainerStyle={styles.scrollView}>
+      <NavigationScrollView>
         <DeviceNanoAction width={250} />
         <DeviceNanoAction width={250} action="accept" screen="validation" />
         <DeviceNanoAction width={250} screen="home" />

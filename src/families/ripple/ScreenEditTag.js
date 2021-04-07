@@ -1,5 +1,5 @@
 /* @flow */
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
@@ -41,13 +41,17 @@ function RippleEditTag({ route, navigation }: Props) {
   const { t } = useTranslation();
   const transaction = route.params?.transaction;
 
-  const [tag, setTag] = useState<BigNumber | typeof undefined | null>(
-    transaction.tag,
-  );
+  const [tag, setTag] = useState<?BigNumber>(() => {
+    if (transaction.tag) {
+      return BigNumber(transaction.tag);
+    }
 
-  function onTagFieldFocus(): void {
+    return undefined;
+  });
+
+  const onTagFieldFocus = useCallback(() => {
     track("SendTagFieldFocusedXRP");
-  }
+  }, []);
 
   function onChangeTag(str: string): void {
     const tagNumeric = BigNumber(str.replace(/[^0-9]/g, ""));
@@ -60,7 +64,8 @@ function RippleEditTag({ route, navigation }: Props) {
     setTag(newTag);
   }
 
-  function onValidateText(): void {
+  const onValidateText = useCallback(() => {
+    if (!account) return;
     const bridge = getAccountBridge(account);
     navigation.navigate(ScreenName.SendSummary, {
       accountId: account.id,
@@ -68,7 +73,7 @@ function RippleEditTag({ route, navigation }: Props) {
         tag: tag && tag.toNumber(),
       }),
     });
-  }
+  }, [navigation, account, tag, transaction]);
 
   return (
     <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>

@@ -126,11 +126,12 @@ class EditAccountName extends PureComponent<Props, State> {
   }
 }
 
-// $FlowFixMe
-export default compose(
+const m: React$ComponentType<{}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTheme,
 )(EditAccountName);
+
+export default m;
 
 const styles = StyleSheet.create({
   root: {

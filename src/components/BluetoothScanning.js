@@ -68,6 +68,7 @@ class LeftRightDots extends PureComponent<
       .map((_, i) =>
         progress.interpolate({
           inputRange: [0, i / 7, (i + 1) / 7, (i + 2) / 7, 1],
+          // $FlowFixMe
           outputRange: [0, 0.5, 1, 0.5, 0],
           extrapolate: "clamp",
         }),

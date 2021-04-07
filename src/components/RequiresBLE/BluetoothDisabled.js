@@ -56,4 +56,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(BluetoothDisabled);
+export default memo<{}>(BluetoothDisabled);

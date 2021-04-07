@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(NeedHelp);
+export default memo<{}>(NeedHelp);

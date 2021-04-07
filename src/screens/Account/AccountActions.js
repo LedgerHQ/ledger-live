@@ -59,9 +59,9 @@ export default function AccountActions({ account, parentAccount }: Props) {
       navigation.navigate(name, {
         ...options,
         params: {
+          ...(options ? options.params : {}),
           accountId,
           parentId,
-          ...(options ? options.params : {}),
         },
       });
     },

@@ -93,6 +93,7 @@ function DelegationSelectValidator({ navigation, route }: Props) {
     transaction && transaction.validators,
     "transaction and validators required",
   );
+  invariant(transaction.family === "cosmos", "must be a cosmos transaction");
 
   const unit = getAccountUnit(account);
 
@@ -101,8 +102,8 @@ function DelegationSelectValidator({ navigation, route }: Props) {
   const { validators } = useCosmosPreloadData();
   const SR = useSortedValidators(searchQuery, validators, []);
 
-  const delegationsSelected = transaction.validators.length;
-  const delegationsUsed = transaction.validators.reduce(
+  const delegationsSelected = transaction.validators?.length;
+  const delegationsUsed = transaction.validators?.reduce(
     (sum, v) => sum.plus(v.amount),
     BigNumber(0),
   );

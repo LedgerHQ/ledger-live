@@ -458,7 +458,7 @@ export const carouselVisibilitySelector = (state: State) =>
 export const swapSupportedCurrenciesSelector: OutputSelector<
   State,
   void,
-  { [string]: (TokenCurrency | CryptoCurrency)[] },
+  { ["float" | "fixed"]: (TokenCurrency | CryptoCurrency)[] },
 > = createSelector(swapProvidersSelector, swapProviders => {
   if (!swapProviders) return {};
 
@@ -468,6 +468,7 @@ export const swapSupportedCurrenciesSelector: OutputSelector<
   // different providers and a swap will not be available. A more deeply nested
   // structure with provider -> method -> currencies will be needed or a different
   // data structure. Until then, this is provider agnostic.
+  // $FlowFixMe tradeMethod missing in types, remove when added.
   swapProviders.forEach(({ supportedCurrencies, tradeMethod }) => {
     const tokenCurrencies = supportedCurrencies
       .map(findTokenById)

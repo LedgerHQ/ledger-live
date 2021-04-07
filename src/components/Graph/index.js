@@ -17,12 +17,12 @@ import type { Item, ItemArray } from "./types";
 type Props = {
   width: number,
   height: number,
-  data: ItemArray,
+  data?: ItemArray,
   color: string,
   isInteractive: boolean,
   onItemHover?: (?Item) => void,
   mapValue: Item => number,
-  shape: string,
+  shape?: string,
 };
 
 const STROKE_WIDTH = 2;

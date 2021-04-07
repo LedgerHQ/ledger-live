@@ -42,7 +42,8 @@ const INITIAL_CONTEXT: $Shape<OnboardingContextType> = {
 // $FlowFixMe
 const OnboardingContext = createContext(INITIAL_CONTEXT);
 
-const getStepForState = state => getStep(state.mode, state.firstTimeOnboarding);
+const getStepForState = state =>
+  getStep(state.mode, !!state.firstTimeOnboarding);
 
 // Provide each step screen a set of props used
 // in various ways: display the total number of steps,
@@ -70,14 +71,14 @@ export class OnboardingContextProvider extends PureComponent<
 
   // Navigate to next step
   // we may want to handle onboarding finish here (e.g update settings)
-  next = (navigation: *, currentStep) => {
+  next = (navigation: *, currentStep: any) => {
     const steps = getStepForState(this.state);
     const i = steps.findIndex(s => s.id === currentStep) + 1;
     this.navigate(navigation, i);
   };
 
   // Navigate to previous step
-  prev = (navigation: *, currentStep) => {
+  prev = (navigation: *, currentStep: any) => {
     const steps = getStepForState(this.state);
     const i = steps.findIndex(s => s.id === currentStep) - 1;
     this.navigate(navigation, i);

@@ -108,10 +108,10 @@ export function Header({
             bg={colors.card}
           />
           <View style={styles.assetWrapper} pointerEvents="none">
-            <LText semiBold style={[styles.assetCount, styles.assets]}>
+            <LText semiBold style={[styles.assetCount]}>
               {distribution.list.length}
             </LText>
-            <LText semiBold style={styles.assets}>
+            <LText semiBold>
               {t("distribution.assets", { count: distribution.list.length })}
             </LText>
           </View>

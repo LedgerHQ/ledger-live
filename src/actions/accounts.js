@@ -31,11 +31,11 @@ export const importAccounts = ({
   selectedAccounts,
 });
 
-export const replaceAccounts = (payload: {
+export const replaceAccounts = (payload: {|
   scannedAccounts: Account[],
   selectedIds: string[],
   renamings: { [id: string]: string },
-}) => ({
+|}) => ({
   type: "ACCOUNTS_ADD",
   ...payload,
 });

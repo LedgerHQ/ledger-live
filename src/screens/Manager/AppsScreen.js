@@ -245,14 +245,14 @@ const AppsScreen = ({
       route,
       color,
     }: {
-      route: { title: String, key: string },
+      route: { title: string, key: string },
       color: string,
     }) => (
       <View style={styles.labelStyle}>
         <LText
           bold
           style={{
-            ...styles.labelStyle,
+            ...styles.labelStyleText,
             color,
           }}
         >
@@ -453,12 +453,14 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     backgroundColor: "transparent",
-    textTransform: "capitalize",
-    fontWeight: "bold",
-    fontSize: 16,
-    lineHeight: 19,
     margin: 0,
     paddingHorizontal: 0,
+  },
+  labelStyleText: {
+    fontWeight: "bold",
+    textTransform: "capitalize",
+    lineHeight: 19,
+    fontSize: 16,
     textAlign: "left",
   },
   updateBadge: {

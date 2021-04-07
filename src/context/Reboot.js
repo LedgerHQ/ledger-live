@@ -5,7 +5,7 @@ import { useCountervaluesPolling } from "@ledgerhq/live-common/lib/countervalues
 import { clearDb } from "../db";
 import clearLibcore from "../helpers/clearLibcore";
 
-type RebootFunc = (resetData: boolean) => Promise<void>;
+type RebootFunc = (resetData?: boolean) => Promise<void>;
 
 export const RebootContext = React.createContext<RebootFunc>(async () => {});
 

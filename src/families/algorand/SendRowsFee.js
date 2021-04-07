@@ -58,7 +58,9 @@ export default function AlgorandFeeRow({
           ) : null}
         </View>
         <LText style={styles.countervalue} color="grey">
-          <CounterValue before="≈ " value={fees} currency={currency} />
+          {fees ? (
+            <CounterValue before="≈ " value={fees} currency={currency} />
+          ) : null}
         </LText>
       </View>
     </SummaryRow>

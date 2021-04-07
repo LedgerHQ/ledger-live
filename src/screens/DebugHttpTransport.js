@@ -20,12 +20,17 @@ import { withTheme } from "../colors";
 
 const forceInset = { bottom: "always" };
 
+type OwnProps = {};
+
+type Props = {
+  ...OwnProps,
+  navigation: *,
+  addKnownDevice: (*) => void,
+  colors: *,
+};
+
 class DebugHttpTransport extends Component<
-  {
-    navigation: *,
-    addKnownDevice: (*) => void,
-    colors: *,
-  },
+  Props,
   {
     text: string,
   },
@@ -116,9 +121,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
+const m: React$ComponentType<OwnProps> = compose(
   connect(null, {
     addKnownDevice,
   }),
   withTheme,
 )(DebugHttpTransport);
+
+export default m;

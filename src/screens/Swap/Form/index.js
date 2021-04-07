@@ -87,6 +87,7 @@ const Form = ({
   const currenciesStatus = useMemo(
     () =>
       getCurrenciesWithStatus({
+        // $FlowFixMe
         accounts,
         installedApps,
         selectableCurrencies: flattenedCurrencies,

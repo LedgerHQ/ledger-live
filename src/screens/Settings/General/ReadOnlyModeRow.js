@@ -33,12 +33,12 @@ class DeveloperModeRow extends PureComponent<Props> {
     const { readOnlyModeEnabled, ...props } = this.props;
     return (
       <SettingsRow
+        {...props}
         event="ReadOnlyModeRow"
         title="ReadOnly mode"
         desc="Toggle readonly mode for testing, relaunch to refresh topbar"
         onPress={null}
         alignedTop
-        {...props}
       >
         <Track
           event={
@@ -55,7 +55,9 @@ class DeveloperModeRow extends PureComponent<Props> {
   }
 }
 
-export default connect(
+const m: React$ComponentType<{}> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(withReboot(DeveloperModeRow));
+
+export default m;

@@ -72,6 +72,8 @@ function DelegationFlow() {
         name={ScreenName.DelegationConnectDevice}
         component={DelegationConnectDevice}
         options={{
+          headerLeft: null,
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
               title={t("send.stepperHeader.connectDevice")}
@@ -102,9 +104,7 @@ function DelegationFlow() {
         name={ScreenName.DelegationValidationSuccess}
         component={DelegationValidationSuccess}
         options={{
-          headerLeft: null,
-          headerRight: null,
-          headerTitle: null,
+          headerShown: false,
           gestureEnabled: false,
         }}
       />

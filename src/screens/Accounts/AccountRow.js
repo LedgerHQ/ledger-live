@@ -173,6 +173,7 @@ const AccountRow = ({
                   nested
                   key={i}
                   account={tkn}
+                  parentAccount={account}
                   onSubAccountPress={onSubAccountPress}
                   onSubAccountLongPress={onSubAccountLongPress}
                 />

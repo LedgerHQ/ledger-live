@@ -9,7 +9,7 @@ import IconHelp from "../icons/Info";
 type Props = {
   children: React$Node,
   onLearnMore?: () => any,
-  forceColor: { background: string, text: string, icon: string },
+  forceColor?: { background: string, text: string, icon: string },
 };
 
 export default function InfoBox({

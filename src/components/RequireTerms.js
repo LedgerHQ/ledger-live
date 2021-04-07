@@ -12,6 +12,7 @@ import {
 import { useTheme } from "@react-navigation/native";
 import { useTerms, useTermsAccept, url } from "../logic/terms";
 import getWindowDimensions from "../logic/getWindowDimensions";
+import { useLocale } from "../context/Locale";
 import LText from "./LText";
 import SafeMarkdown from "./SafeMarkdown";
 import Button from "./Button";
@@ -63,7 +64,8 @@ const styles = StyleSheet.create({
 
 const RequireTermsModal = () => {
   const { colors } = useTheme();
-  const [markdown, error, retry] = useTerms();
+  const { locale } = useLocale();
+  const [markdown, error, retry] = useTerms(locale);
   const [accepted, accept] = useTermsAccept();
   const [toggle, setToggle] = useState(false);
   const onSwitch = useCallback(() => {
@@ -145,7 +147,8 @@ export const TermModals = ({
   close: () => void,
 }) => {
   const { colors } = useTheme();
-  const [markdown, error, retry] = useTerms();
+  const { locale } = useLocale();
+  const [markdown, error, retry] = useTerms(locale);
   const height = getWindowDimensions().height - 320;
 
   const onClose = useCallback(() => {

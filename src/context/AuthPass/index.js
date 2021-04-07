@@ -4,6 +4,7 @@ import { AppState } from "react-native";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
+import { compose } from "redux";
 import { privacySelector } from "../../reducers/settings";
 import { SkipLockContext } from "../../components/behaviour/SkipLock";
 import { AUTOLOCK_TIMEOUT } from "../../constants";
@@ -24,10 +25,14 @@ type State = {
   authModalOpen: boolean,
 };
 
+type OwnProps = {
+  children: *,
+};
+
 type Props = {
+  ...OwnProps,
   t: *,
   privacy: ?Privacy,
-  children: *,
 };
 
 // as we needs to be resilient to reboots (not showing unlock again after a reboot)
@@ -154,4 +159,10 @@ class AuthPass extends PureComponent<Props, State> {
   }
 }
 
-export default withTranslation()(connect(mapStateToProps)(AuthPass));
+// $FlowFixMe
+const m: React$AbstractComponent<OwnProps> = compose(
+  withTranslation(),
+  connect(mapStateToProps),
+)(AuthPass);
+
+export default m;

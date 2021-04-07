@@ -8,7 +8,7 @@ import FallBackCamera from "./FallbackCamera/Fallback";
 import getWindowDimensions from "../logic/getWindowDimensions";
 
 type Props = {
-  screenName?: String,
+  screenName?: string,
   navigation: any,
   onResult: Function,
 };

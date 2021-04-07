@@ -5,6 +5,11 @@ import {
   getMainAccount,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
+import type {
+  AccountLike,
+  Account,
+  Transaction,
+} from "@ledgerhq/live-common/lib/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/index";
 import { createAction as initSellCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSell";
@@ -21,7 +26,11 @@ import DeviceAction from "../../components/DeviceAction";
 import { useBroadcast } from "../../components/useBroadcast";
 import { renderError } from "../../components/DeviceAction/rendering";
 
-const initSellExec = ({ deviceId }: Input): Observable<SellRequestEvent> =>
+const initSellExec = ({
+  deviceId,
+}: {
+  deviceId: string,
+}): Observable<SellRequestEvent> =>
   withDevice(deviceId)(transport => from(getTransactionId(transport)));
 
 const action = createAction(connectApp);
@@ -34,7 +43,15 @@ const checkSignatureAndPrepareCmd = ({
   account,
   parentAccount,
   status,
-}: Input): Observable<SellRequestEvent> =>
+}: {
+  deviceId: string,
+  transaction: Transaction,
+  binaryPayload: *,
+  payloadSignature: *,
+  account: AccountLike,
+  parentAccount: ?Account,
+  status: *,
+}): Observable<SellRequestEvent> =>
   withDevice(deviceId)(transport =>
     from(
       checkSignatureAndPrepare(transport, {
@@ -53,7 +70,7 @@ type Props = {
   parentAccount: ?Account,
   getCoinifyContext: string => Promise<any>,
   device: Device,
-  onResult: () => void,
+  onResult: (bool?: boolean) => void,
 };
 
 export function DevicePart({
@@ -66,7 +83,7 @@ export function DevicePart({
   const { t } = useTranslation();
 
   const tokenCurrency =
-    account && account.type === "TokenAccount" && account.token;
+    account && account.type === "TokenAccount" ? account.token : null;
   const [sellData, setSellData] = useState(null);
   const [error, setError] = useState(null);
   const broadcast = useBroadcast({ account, parentAccount });
@@ -171,6 +188,7 @@ export function DevicePart({
       key={"send"}
       action={action}
       device={device}
+      // $FlowFixMe
       request={{
         tokenCurrency,
         parentAccount,

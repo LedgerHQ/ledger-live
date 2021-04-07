@@ -26,12 +26,12 @@ class HideEmptyTokenAccountsRow extends PureComponent<Props> {
     } = this.props;
     return (
       <SettingsRow
+        {...props}
         event="HideEmptyTokenAccountsRow"
         title={<Trans i18nKey="settings.display.hideEmptyTokenAccounts" />}
         desc={<Trans i18nKey="settings.display.hideEmptyTokenAccountsDesc" />}
         onPress={null}
         alignedTop
-        {...props}
       >
         <Switch
           style={{ opacity: 0.99 }}

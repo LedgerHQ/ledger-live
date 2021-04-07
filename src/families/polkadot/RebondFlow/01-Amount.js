@@ -239,7 +239,7 @@ export default function PolkadotRebondAmount({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
-                    disabled={hasErrors || bridgePending}
+                    disabled={!!hasErrors || bridgePending}
                   />
                 </View>
               </View>

@@ -109,7 +109,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
       >
         <SelectDevice onSelect={setDevice} />
       </NavigationScrollView>
-      <View style={styles.footer}>
+      <View>
         <Button
           event="ReceiveWithoutDevice"
           type="lightSecondary"

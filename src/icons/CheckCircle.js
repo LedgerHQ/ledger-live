@@ -9,7 +9,7 @@ type Props = {
 
 export default function CheckCircle({ size = 37, color, ...props }: Props) {
   return (
-    <Svg viewBox="0 0 37.084 37.084" width={size} height={size} {...props}>
+    <Svg {...props} viewBox="0 0 37.084 37.084" width={size} height={size}>
       <G transform="translate(-1.458 -1.4491)" fillRule="evenodd">
         <Path
           fill={color}

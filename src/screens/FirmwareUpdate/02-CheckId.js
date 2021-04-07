@@ -82,7 +82,7 @@ class FirmwareUpdateCheckId extends Component<Props, State> {
   render() {
     const { colors } = this.props;
     const { progress } = this.state;
-    const { osu } = this.props.route.params?.firmware.osu;
+    const { osu } = this.props.route.params?.firmware;
     const windowWidth = getWindowDimensions().width;
 
     return (

@@ -1,4 +1,5 @@
 /* @flow */
+import invariant from "invariant";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -23,8 +24,9 @@ export default function LendingBanners({ account }: Props) {
   const discreet = useSelector(discreetModeSelector);
   const unit = getAccountUnit(account);
 
-  const availableOnCompound =
-    account.type === "TokenAccount" && !!account.compoundBalance;
+  invariant(account.type === "TokenAccount", "account must be a TokenAccount");
+
+  const availableOnCompound = !!account.compoundBalance;
   const compoundCapabilities = availableOnCompound
     ? getAccountCapabilities(account)
     : {};

@@ -50,7 +50,7 @@ export type BaseButtonProps = {
   disabled?: boolean,
   outline?: boolean,
   // for analytics
-  event: string,
+  event?: string,
   eventProperties?: Object,
   size?: number,
   pending?: boolean,
@@ -82,6 +82,7 @@ function Button({
   event,
   eventProperties,
   pending,
+  // $FlowFixMe
   ...otherProps
 }: Props) {
   const { colors } = useTheme();
@@ -198,16 +199,19 @@ function Button({
 
   const titleSliderOffset = anim.interpolate({
     inputRange: [0, 1],
+    // $FlowFixMe
     outputRange: [0, -ANIM_OFFSET],
   });
 
   const titleOpacity = anim.interpolate({
     inputRange: [0, 1],
+    // $FlowFixMe
     outputRange: [1, 0],
   });
 
   const spinnerSliderOffset = anim.interpolate({
     inputRange: [0, 1],
+    // $FlowFixMe
     outputRange: [ANIM_OFFSET, 0],
   });
 

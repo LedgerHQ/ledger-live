@@ -205,6 +205,7 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (request && device && signMessageRequested) {
+    // $FlowFixMe
     const { account } = request;
     return (
       <>
@@ -250,7 +251,7 @@ export default function DeviceAction<R, H, P>({
   return null;
 }
 
-// workarround for not updating state inside scope of main function with a callback
+// work around for not updating state inside scope of main function with a callback
 const RenderOnResultCallback = ({
   onResult,
   payload,
@@ -258,6 +259,7 @@ const RenderOnResultCallback = ({
   onResult: (payload: *) => Promise<void> | void,
   payload: *,
 }) => {
+  // onDidMount
   useEffect(() => {
     onResult(payload);
   }, []);

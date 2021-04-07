@@ -91,10 +91,7 @@ function ToastBar({
           <View style={styles.buttonRow}>
             {secondaryAction ? (
               <Button
-                containerStyle={[
-                  styles.button,
-                  { color: colors.white, borderColor: color },
-                ]}
+                containerStyle={[styles.button, { borderColor: color }]}
                 titleStyle={{ color, fontSize: 12 }}
                 {...secondaryAction}
               />
@@ -107,7 +104,6 @@ function ToastBar({
                   styles.button,
                   styles.buttonMargin,
                   {
-                    color: colors.white,
                     backgroundColor: color,
                     borderColor: color,
                   },

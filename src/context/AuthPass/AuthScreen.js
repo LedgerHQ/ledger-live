@@ -38,11 +38,15 @@ type State = {
   secureTextEntry: boolean,
 };
 
-type Props = {
+type OwnProps = {
   privacy: Privacy,
   unlock: () => void,
   lock: () => void,
   biometricsError: ?Error,
+};
+
+type Props = {
+  ...OwnProps,
   reboot: (?boolean) => *,
   t: T,
   colors: *,
@@ -257,7 +261,14 @@ class AuthScreen extends PureComponent<Props, State> {
   }
 }
 
-export default compose(withTranslation(), withReboot, withTheme)(AuthScreen);
+// $FlowFixMe
+const m: React$ComponentType<OwnProps> = compose(
+  withTranslation(),
+  withReboot,
+  withTheme,
+)(AuthScreen);
+
+export default m;
 
 const styles = StyleSheet.create({
   root: {

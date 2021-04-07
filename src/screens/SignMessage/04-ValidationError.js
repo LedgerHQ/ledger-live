@@ -59,7 +59,7 @@ export default function ValidationError({ navigation, route }: Props) {
       <TrackScreen category="SignMessage" name="ValidationError" />
       <ValidateError
         error={error}
-        onRetry={!disableRetry ? retry : null}
+        onRetry={!disableRetry ? retry : undefined}
         onClose={onClose}
         onContactUs={contactUs}
       />

@@ -42,6 +42,7 @@ class Spinning extends Component<Props> {
     const { children, clockwise } = this.props;
     const rotate = this.spinValue.interpolate({
       inputRange: [0, 1],
+      // $FlowFixMe
       outputRange: clockwise ? ["0deg", "360deg"] : ["360deg", "0deg"],
     });
 

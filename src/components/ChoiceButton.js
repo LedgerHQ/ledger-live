@@ -7,15 +7,15 @@ import LText from "./LText";
 import Touchable from "./Touchable";
 
 type ChoiceButtonProps = {
-  disabled: boolean,
+  disabled?: boolean,
   onSelect: Function,
   label: React$Node,
-  description: React$Node,
+  description?: React$Node,
   Icon: any,
   extra?: React$Node,
-  event?: string,
+  event: string,
   eventProperties: *,
-  navigationParams?: [*],
+  navigationParams?: any[],
   enableActions?: string,
 };
 

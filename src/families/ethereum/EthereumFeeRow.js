@@ -6,6 +6,7 @@ import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import { useTheme } from "@react-navigation/native";
+import { BigNumber } from "bignumber.js";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
@@ -144,7 +145,9 @@ export default function EthereumFeeRow({
             <CounterValue
               before="≈ "
               value={
-                gasPrice && gasPrice.times(gasLimit || estimatedGasLimit || 0)
+                gasPrice
+                  ? gasPrice.times(gasLimit || estimatedGasLimit || 0)
+                  : BigNumber(0)
               }
               currency={mainAccount.currency}
             />

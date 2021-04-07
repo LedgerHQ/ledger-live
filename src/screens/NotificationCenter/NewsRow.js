@@ -30,6 +30,7 @@ export default function NewsRow({
   isLastElement,
 }: Props) {
   const { colors } = useTheme();
+  // $FlowFixMe until live-common is bumped
   const { content, uuid, level, icon, utm_campaign: utmCampaign } = item;
   const { title, text, link } = content;
   const [hasBeenRead] = useState(!isUnread);

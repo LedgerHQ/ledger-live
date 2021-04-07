@@ -186,8 +186,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(
+const m: React$ComponentType<{}> = compose(
   connect(mapStateToProps),
   withEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   withTheme,
 )(SendFundsSelectAccount);
+
+export default m;

@@ -11,15 +11,23 @@ import getFontStyle from "./LText/getFontStyle";
 import type { T } from "../types/common";
 import { withTheme } from "../colors";
 
-type Props = {
+type OwnProps = {
   initialQuery?: string,
   renderList: (list: Array<*>) => React$Node,
   renderEmptySearch: () => React$Node,
   keys?: string[],
   list: Array<*>,
   inputWrapperStyle?: *,
+};
+
+type ConnectedProps = {|
   t: T,
   colors: *,
+|};
+
+type Props = {
+  ...OwnProps,
+  ...ConnectedProps,
 };
 
 type State = {
@@ -132,4 +140,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default compose(withTranslation(), withTheme)(FilteredSearchBar);
+// $FlowFixMe
+const m: React$ComponentType<OwnProps> = compose(
+  withTranslation(),
+  withTheme,
+)(FilteredSearchBar);
+
+export default m;

@@ -45,18 +45,22 @@ class Confetti extends PureComponent<
     const { progress } = this.state;
     const rotate = progress.interpolate({
       inputRange: [0, 1],
+      // $FlowFixMe
       outputRange: ["0deg", `${rotations * 360}deg`],
     });
     const translateX = progress.interpolate({
       inputRange: [0, 1],
+      // $FlowFixMe
       outputRange: [0, delta[0]],
     });
     const translateY = progress.interpolate({
       inputRange: [0, 1],
+      // $FlowFixMe
       outputRange: [0, delta[1]],
     });
     const opacity = progress.interpolate({
       inputRange: [0.6, 1],
+      // $FlowFixMe
       outputRange: [1, 0],
     });
 

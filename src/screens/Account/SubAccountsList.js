@@ -293,12 +293,13 @@ export default function SubAccountsList({
       >
         <SubAccountRow
           account={item}
+          parentAccount={parentAccount}
           onSubAccountLongPress={account => setAccount(account)}
           onSubAccountPress={onAccountPress}
         />
       </Card>
     ),
-    [onAccountPress, colors],
+    [onAccountPress, parentAccount, colors],
   );
 
   if (!isToken && subAccounts.length === 0) {

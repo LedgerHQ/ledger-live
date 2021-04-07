@@ -32,7 +32,7 @@ type LocalState = {
 };
 const mapStateToProps = (
   state: State,
-  props: { navigation: *, currencyId: string },
+  props: { navigation: *, currencyId: string, route: * },
 ) => {
   const currency = getCryptoCurrencyById(props.route.params.currencyId);
   return {
@@ -135,11 +135,13 @@ class EachCurrencySettings extends Component<Props, LocalState> {
   }
 }
 
-export default compose(
+const m: React$ComponentType<{}> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
   withTheme,
 )(EachCurrencySettings);
+
+export default m;
 
 const styles = StyleSheet.create({
   root: {
@@ -186,11 +188,7 @@ export function CustomCurrencyHeader({
 }) {
   const { t } = useTranslation();
   return (
-    <View
-      style={{
-        flexDirection: "row",
-      }}
-    >
+    <View style={{ flexDirection: "row" }}>
       <View style={{ marginRight: 5, justifyContent: "center" }}>
         <CurrencyIcon size={16} currency={currency} />
       </View>

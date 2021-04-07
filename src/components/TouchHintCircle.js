@@ -53,16 +53,19 @@ class TouchHintCircle extends Component<{
     const { colors } = this.props;
     const translateX = this.leftAnimated.interpolate({
       inputRange: [0, 1],
+      // $FlowFixMe
       outputRange: [0, 80],
     });
 
     const opacity = this.opacityAnimated.interpolate({
       inputRange: [0, 1],
+      // $FlowFixMe
       outputRange: [0, 1],
     });
 
     const scale = this.growAnimated.interpolate({
       inputRange: [0, 1],
+      // $FlowFixMe
       outputRange: [1.2, 0.8],
     });
 

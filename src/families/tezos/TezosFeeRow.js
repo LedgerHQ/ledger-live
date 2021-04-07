@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
 import { Trans } from "react-i18next";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/ripple/types";
+import type { Transaction } from "@ledgerhq/live-common/lib/families/tezos/types";
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -51,7 +51,9 @@ export default function TezosFeeRow({ account, transaction }: Props) {
           ) : null}
         </View>
         <LText style={styles.countervalue} color="grey">
-          <CounterValue before="≈ " value={fees} currency={currency} />
+          {fees ? (
+            <CounterValue before="≈ " value={fees} currency={currency} />
+          ) : null}
         </LText>
       </View>
     </SummaryRow>

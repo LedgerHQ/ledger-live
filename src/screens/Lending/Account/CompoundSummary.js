@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
-import type { Account } from "@ledgerhq/live-common/lib/types";
+import type { TokenAccount } from "@ledgerhq/live-common/lib/types";
 import { listCurrentRates } from "@ledgerhq/live-common/lib/families/ethereum/modules/compound";
 
 import { findCompoundToken } from "@ledgerhq/live-common/lib/currencies";
@@ -16,7 +16,7 @@ import InfoItem from "../../../components/BalanceSummaryInfoItem";
 import InfoModal from "../../../modals/Info";
 
 type Props = {
-  account: Account,
+  account: TokenAccount,
   compoundSummary: CompoundAccountSummary,
 };
 
@@ -47,7 +47,7 @@ export default function AccountBalanceSummaryFooter({
   const rates = listCurrentRates();
   const ctoken = findCompoundToken(account.token);
 
-  const rate = rates.find(r => r.ctoken.id === ctoken.id);
+  const rate = rates.find(r => r.ctoken.id === ctoken?.id);
 
   const infoCandidates = useMemo(
     () => ({

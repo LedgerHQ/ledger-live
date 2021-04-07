@@ -12,6 +12,7 @@ type Props = {
   tintColor: string,
   focused: boolean,
   readOnlyModeEnabled: boolean,
+  color: string,
 };
 
 export default function ReadOnlyTab({
@@ -29,11 +30,11 @@ export default function ReadOnlyTab({
 
   return (
     <TabIcon
+      {...extraProps}
       focused={focused}
       tintColor={tintColor}
       Icon={icon}
       i18nKey={i18nKey}
-      {...extraProps}
     />
   );
 }

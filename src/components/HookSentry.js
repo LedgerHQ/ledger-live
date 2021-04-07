@@ -22,8 +22,10 @@ class HookSentry extends PureComponent<{ enabled: boolean }> {
   }
 }
 
-export default connect(
+const m: React$ComponentType<{}> = connect(
   createStructuredSelector({
     enabled: reportErrorsEnabledSelector,
   }),
 )(HookSentry);
+
+export default m;

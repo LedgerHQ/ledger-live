@@ -1,6 +1,7 @@
 // @flow
 import React, { PureComponent } from "react";
 import { StyleSheet, Animated } from "react-native";
+import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
 import SafeAreaView from "react-native-safe-area-view";
 import { useNavigation } from "@react-navigation/native";
 import { Trans } from "react-i18next";
@@ -11,7 +12,13 @@ import { removeKnownDevices } from "../../actions/ble";
 import Trash from "../../icons/Trash";
 import Button from "../Button";
 
-const AnimatedSafeView = Animated.createAnimatedComponent(SafeAreaView);
+const AnimatedSafeView = Animated.createAnimatedComponent<
+  {
+    forceInset: boolean,
+    style: ViewStyleProp,
+  },
+  {},
+>(SafeAreaView);
 
 const forceInset = { bottom: "always" };
 
@@ -51,7 +58,7 @@ class RemoveDeviceButton extends PureComponent<RemoveDeviceButtonProps> {
     }).start(this.toggleEditMode);
   };
 
-  componentDidUpdate({ show: prevShow }: RemoveDeviceButton) {
+  componentDidUpdate({ show: prevShow }: Props) {
     const { show } = this.props;
     if (show && !prevShow) {
       this.showbutton();

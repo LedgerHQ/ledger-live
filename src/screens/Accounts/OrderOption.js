@@ -32,7 +32,7 @@ export default function OrderOption({ id }: Props) {
     <Touchable
       event="AccountOrderOption"
       eventProperties={{ accountOrderId: id }}
-      style={[styles.root, selected && styles.rootSelected]}
+      style={[styles.root]}
       onPress={onPress}
     >
       <LText semiBold style={styles.label}>

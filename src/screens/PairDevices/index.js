@@ -33,7 +33,8 @@ type Props = {
   route: { params: RouteParams },
 };
 
-type PairDevicesProps = Props & {
+type PairDevicesProps = {
+  ...Props,
   knownDevices: DeviceLike[],
   hasCompletedOnboarding: boolean,
   addKnownDevice: DeviceLike => void,
@@ -194,7 +195,7 @@ class PairDevices extends Component<PairDevicesProps, State> {
     const onDone = route.params?.onDone;
     navigation.goBack();
     if (onDone) {
-      onDone(device);
+      onDone(device.deviceId);
     }
   };
 
@@ -222,6 +223,7 @@ class PairDevices extends Component<PairDevicesProps, State> {
       case "scanning":
         return (
           <Scanning
+            // $FlowFixMe
             onSelect={this.onSelect}
             onError={this.onError}
             onTimeout={this.onTimeout}

@@ -5,7 +5,7 @@ declare module "react-i18next" {
 
   declare function withTranslation(): (
     React$ComponentType<T>,
-  ) => React$CompoentType<T & { t: TFunction }>;
+  ) => React$ComponentType<T & { t: TFunction }>;
 
   declare type TransProps = {
     count?: number,
@@ -15,4 +15,6 @@ declare module "react-i18next" {
     t?: TFunction,
   };
   declare var Trans: React$ComponentType<TransProps>;
+  declare var initReactI18next: any;
+  declare var I18nextProvider: any;
 }

@@ -19,11 +19,15 @@ function currencyCacheId(currency) {
 export async function setCurrencyCache(currency: CryptoCurrency, data: mixed) {
   if (data) {
     const serialized = JSON.stringify(data);
-    await AsyncStorage.setItem(currencyCacheId(currency), serialized);
+    if (serialized) {
+      await AsyncStorage.setItem(currencyCacheId(currency), serialized);
+    }
   }
 }
 
-export async function getCurrencyCache(currency: CryptoCurrency): mixed {
+export async function getCurrencyCache(
+  currency: CryptoCurrency,
+): Promise<mixed> {
   const res = await AsyncStorage.getItem(currencyCacheId(currency));
   if (res) {
     try {

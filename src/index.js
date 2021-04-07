@@ -202,12 +202,14 @@ const fixURL = url => {
 };
 
 const OGgetInitialURL = Linking.getInitialURL.bind(Linking);
+// $FlowFixMe
 Linking.getInitialURL = () => OGgetInitialURL().then(fixURL);
 
 const NEWcallbacks = [];
 const OGcallbacks = [];
 const OGaddEventListener = Linking.addEventListener.bind(Linking);
 const OGremoveEventListener = Linking.removeEventListener.bind(Linking);
+// $FlowFixMe
 Linking.addEventListener = (evt, OGcallback) => {
   let NEWcallback = OGcallback;
   if (evt === "url") {
@@ -217,6 +219,7 @@ Linking.addEventListener = (evt, OGcallback) => {
   }
   return OGaddEventListener(evt, NEWcallback);
 };
+// $FlowFixMe
 Linking.removeEventListener = (evt, OGcallback) => {
   let NEWcallback = OGcallback;
   if (evt === "url") {

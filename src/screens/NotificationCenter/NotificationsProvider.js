@@ -18,6 +18,7 @@ export default function NotificationsProvider({ children }: Props) {
   const { locale } = useLocale();
   const c = useSelector(cryptoCurrenciesSelector);
   const currencies = c.map(({ family }) => family);
+  // $FlowFixMe until live-common is bumped
   const { pushToast } = useToasts();
   const initDateRef = useRef();
 

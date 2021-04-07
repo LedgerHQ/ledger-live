@@ -60,6 +60,8 @@ function UndelegationFlow() {
         name={ScreenName.CosmosUndelegationConnectDevice}
         component={ConnectDevice}
         options={{
+          headerLeft: null,
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
               title={t("cosmos.undelegation.stepperHeader.connectDevice")}

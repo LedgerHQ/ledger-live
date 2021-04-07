@@ -86,7 +86,7 @@ export default function Connect({ route, navigation }: Props) {
       navigation.setOptions({
         ...opts,
         title: "Wallet Connect",
-        headerTitle: undefined,
+        headerTitle: null,
       });
     }
   }, [wcContext, navigation]);

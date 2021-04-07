@@ -120,6 +120,7 @@ class Asset extends PureComponent<AssetProps, any> {
           ) : null}
           {items[1] ? (
             <LText style={styles.balanceSubText} semiBold color="smoke">
+              {/* $FlowFixMe */}
               <CurrencyUnitValue {...items[1]} />
             </LText>
           ) : null}
@@ -197,7 +198,7 @@ class Asset extends PureComponent<AssetProps, any> {
   };
 
   keyExtractor = (item: Operation) => item.id;
-  ref = React.createRef();
+  ref = React.createRef<React$Node>();
 
   render() {
     const { opCount } = this.state;

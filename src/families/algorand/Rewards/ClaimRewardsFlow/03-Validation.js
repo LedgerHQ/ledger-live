@@ -1,5 +1,5 @@
 /* @flow */
-import React from "react";
+import React, { useMemo } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
@@ -49,7 +49,16 @@ export default function Validation({ navigation, route }: Props) {
       dispatch(updateAccountWithUpdater(...args)),
   });
 
-  const { status, transaction, modelId, wired } = route.params;
+  const { status, transaction, modelId, wired, deviceId } = route.params;
+
+  const device = useMemo(
+    () => ({
+      modelId,
+      wired,
+      deviceId,
+    }),
+    [modelId, wired, deviceId],
+  );
 
   return (
     <SafeAreaView
@@ -74,8 +83,7 @@ export default function Validation({ navigation, route }: Props) {
         </View>
       ) : (
         <ValidateOnDevice
-          wired={wired}
-          modelId={modelId}
+          device={device}
           account={account}
           parentAccount={undefined}
           status={status}

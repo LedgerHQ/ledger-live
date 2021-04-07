@@ -396,6 +396,7 @@ export function renderLoading({
 
 type WarningOutdatedProps = {
   ...RawProps,
+  colors: *,
   navigation: any,
   appName: string,
   passWarning: () => void,

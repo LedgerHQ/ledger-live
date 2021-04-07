@@ -18,7 +18,6 @@ type Props = {
   route: { params: RouteParams },
   account: AccountLike,
   parentAccount: ?Account,
-  colors: *,
 };
 
 type RouteParams = {
@@ -66,7 +65,7 @@ class ScanRecipient extends PureComponent<Props, State> {
     return (
       <Scanner
         navigation={navigation}
-        screenName={ScreenName.SendFunds}
+        screenName={ScreenName.SendFundsMain}
         onResult={this.onResult}
       />
     );
@@ -76,4 +75,6 @@ class ScanRecipient extends PureComponent<Props, State> {
 const mapStateToProps = (state, { route }) =>
   accountScreenSelector(route)(state);
 
-export default connect(mapStateToProps)(ScanRecipient);
+const m: React$ComponentType<{}> = connect(mapStateToProps)(ScanRecipient);
+
+export default m;

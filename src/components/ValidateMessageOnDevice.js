@@ -2,6 +2,7 @@
 import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import type { TypedMessageData } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -35,30 +36,42 @@ export default function ValidateOnDevice({ device, message, account }: Props) {
           <LText style={styles.property}>
             {t("walletconnect.stepVerification.accountName")}
           </LText>
-          <LText semiBold>{account.name}</LText>
+          <LText semiBold>{account && account.name ? account.name : ""}</LText>
         </View>
-        {message?.hashes?.domainHash ? (
+        {message && message.hashes && message.hashes.domainHash ? (
           <View style={styles.messageContainer}>
             <LText style={styles.property}>
               {t("walletconnect.domainHash")}
             </LText>
-            <LText semiBold>{message?.hashes?.domainHash}</LText>
+            <LText semiBold>
+              {message && message.hashes && message.hashes.domainHash
+                ? message.hashes.domainHash
+                : ""}
+            </LText>
           </View>
         ) : null}
-        {message?.hashes?.messageHash ? (
+        {message && message.hashes && message.hashes.messageHash ? (
           <View style={styles.messageContainer}>
             <LText style={styles.property}>
               {t("walletconnect.messageHash")}
             </LText>
-            <LText semiBold>{message?.hashes?.messageHash}</LText>
+            <LText semiBold>
+              {message && message.hashes && message.hashes.messageHash
+                ? message.hashes.messageHash
+                : ""}
+            </LText>
           </View>
         ) : null}
-        {message?.hashes?.stringHash ? (
+        {message && message.hashes && message.hashes.stringHash ? (
           <View style={styles.messageContainer}>
             <LText style={styles.property}>
               {t("walletconnect.stringHash")}
             </LText>
-            <LText semiBold>{message?.hashes?.stringHash}</LText>
+            <LText semiBold>
+              {message && message.hashes && message.hashes.stringHash
+                ? message.hashes.stringHash
+                : ""}
+            </LText>
           </View>
         ) : null}
         <View style={styles.messageContainer}>

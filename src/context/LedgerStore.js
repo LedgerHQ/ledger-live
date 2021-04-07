@@ -12,10 +12,10 @@ import { importBle } from "../actions/ble";
 import { INITIAL_STATE, supportedCountervalues } from "../reducers/settings";
 
 const createLedgerStore = () =>
+  // $FlowFixMe
   createStore(
     reducers,
     undefined,
-    // $FlowFixMe
     compose(
       applyMiddleware(thunk),
       typeof __REDUX_DEVTOOLS_EXTENSION__ === "function"

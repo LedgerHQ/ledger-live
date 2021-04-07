@@ -36,7 +36,9 @@ const mapDispatchToProps = {
   saveBleDeviceName,
 };
 
-type Props = {
+type OwnProps = {};
+
+type Props = OwnProps & {
   navigation: any,
   route: { params: RouteParams },
   deviceName: string,
@@ -176,11 +178,12 @@ class EditDeviceName extends PureComponent<
   }
 }
 
-// $FlowFixMe
-export default compose(
+const m: React$ComponentType<OwnProps> = compose(
   connect(null, mapDispatchToProps),
   withTheme,
 )(EditDeviceName);
+
+export default m;
 
 const styles = StyleSheet.create({
   safearea: {

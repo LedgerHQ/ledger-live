@@ -305,7 +305,6 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "flex-end",
-    fontSize: 16,
     paddingVertical: 8,
     marginBottom: 8,
     height: 50,

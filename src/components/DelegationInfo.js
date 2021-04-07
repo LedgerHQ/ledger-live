@@ -21,7 +21,7 @@ export default function DelegationInfo({
   const { colors } = useTheme();
   return (
     <View style={[styles.wrapper, { borderLeftColor: colors.fog }]}>
-      <LText style={styles.greyText}>
+      <LText color="grey">
         <Trans
           i18nKey="operationDetails.extra.delegatedTo"
           values={{
@@ -34,9 +34,7 @@ export default function DelegationInfo({
       </LText>
 
       <TouchableOpacity onPress={() => onPress(address)}>
-        <LText style={styles.greyText} color="grey">
-          {address}
-        </LText>
+        <LText color="grey">{address}</LText>
       </TouchableOpacity>
     </View>
   );

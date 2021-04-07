@@ -90,6 +90,8 @@ function RedelegationFlow() {
         name={ScreenName.CosmosRedelegationConnectDevice}
         component={ConnectDevice}
         options={{
+          headerLeft: null,
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
               title={t("cosmos.redelegation.stepperHeader.connectDevice")}

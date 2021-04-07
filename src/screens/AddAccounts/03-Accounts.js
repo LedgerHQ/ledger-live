@@ -18,6 +18,7 @@ import {
   isAccountEmpty,
   groupAddAccounts,
 } from "@ledgerhq/live-common/lib/account";
+import type { AddAccountSupportLink } from "@ledgerhq/live-common/lib/account/addAccounts";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
 import { Trans } from "react-i18next";
@@ -72,6 +73,8 @@ type RouteParams = {
   device: Device,
   inline?: boolean,
 };
+
+type OwnProps = {};
 
 type Props = {
   navigation: any,
@@ -524,6 +527,7 @@ class Footer extends PureComponent<{
   onRetry: () => void,
   onDone: () => void,
   isDisabled: boolean,
+  supportLink?: AddAccountSupportLink,
   colors: *,
 }> {
   render() {
@@ -655,8 +659,9 @@ const styles = StyleSheet.create({
   modalRow: { marginVertical: 16 },
 });
 
-// $FlowFixMe
-export default compose(
+const m: React$ComponentType<OwnProps> = compose(
   connect(mapStateToProps, mapDispatchToProps),
   withTheme,
 )(memo<Props>(AddAccountsAccounts));
+
+export default m;

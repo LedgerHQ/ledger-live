@@ -144,10 +144,9 @@ function DelegationAmount({ navigation, route }: Props) {
                   value.eq(v)
                     ? {
                         borderColor: colors.live,
-                        color: colors.white,
                         backgroundColor: colors.live,
                       }
-                    : { borderColor: colors.grey, color: colors.grey },
+                    : { borderColor: colors.grey },
                 ]}
                 onPress={() => {
                   Keyboard.dismiss();

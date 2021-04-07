@@ -13,7 +13,7 @@ type Props = {
 };
 
 type RouteParams = {
-  accountId: String,
+  accountId: string,
 };
 
 const ScanWalletConnect = ({ navigation, route }: Props) => {

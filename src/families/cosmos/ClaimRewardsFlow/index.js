@@ -84,6 +84,8 @@ function ClaimRewardsFlow() {
         name={ScreenName.CosmosClaimRewardsConnectDevice}
         component={ClaimRewardsConnectDevice}
         options={{
+          headerLeft: false,
+          gestureEnabled: false,
           headerTitle: () => (
             <StepHeader
               title={t("cosmos.claimRewards.stepperHeader.connectDevice")}

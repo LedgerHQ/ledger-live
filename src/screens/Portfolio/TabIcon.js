@@ -8,7 +8,7 @@ import PortfolioIcon from "../../icons/Portfolio";
 import { scrollToTop } from "../../navigation/utils";
 import { accountsSelector } from "../../reducers/accounts";
 
-export default function PortfolioTabIcon(props: Props) {
+export default function PortfolioTabIcon(props: any) {
   const accounts = useSelector(accountsSelector);
   const isFocused = useIsFocused();
 

@@ -156,7 +156,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     route.params.validator?.name ??
     route.params.validator?.validatorAddress ??
     "";
-  const mode = transaction.mode;
+  const mode = transaction.mode ? transaction.mode : "";
 
   const error = status.errors && Object.keys(status.errors).length > 0;
 

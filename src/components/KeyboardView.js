@@ -17,7 +17,7 @@ class KeyboardView extends PureComponent<Props> {
   };
 
   render(): React$Node {
-    const { style, children, ...rest } = this.props;
+    const { style, children } = this.props;
     let behavior;
     let keyboardVerticalOffset = 0;
     if (Platform.OS === "ios") {
@@ -31,7 +31,6 @@ class KeyboardView extends PureComponent<Props> {
         keyboardVerticalOffset={keyboardVerticalOffset}
         behavior={behavior}
         enabled
-        {...rest}
       >
         {children}
       </KeyboardAvoidingView>

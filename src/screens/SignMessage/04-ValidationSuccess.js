@@ -21,7 +21,7 @@ type Props = {
 type RouteParams = {
   accountId: string,
   message: TypedMessageData | MessageData,
-  signature: String,
+  signature: string,
 };
 
 export default function ValidationSuccess({ navigation, route }: Props) {
