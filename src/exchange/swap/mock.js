@@ -68,7 +68,7 @@ export const mockGetExchangeRates = async (
   return [
     {
       rate: BigNumber("1"),
-      toAmount: amountFrom.times(magnitudeAwareRate),
+      toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
       rateId: "mockedRateId",
       provider: "changelly",
@@ -108,6 +108,20 @@ export const mockGetProviders: GetProviders = async () => {
         "ethereum/erc20/0x_project",
         "ethereum/erc20/augur",
       ],
+      tradeMethod: "fixed",
+    },
+    {
+      provider: "changelly",
+      supportedCurrencies: [
+        "bitcoin",
+        "litecoin",
+        "ethereum",
+        "tron",
+        "ethereum/erc20/omg",
+        "ethereum/erc20/0x_project",
+        "ethereum/erc20/augur",
+      ],
+      tradeMethod: "float",
     },
   ];
 };
