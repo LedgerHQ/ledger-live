@@ -4,6 +4,11 @@
 // https://github.com/kmagiera/react-native-gesture-handler/issues/320#issuecomment-443815828
 import "react-native-gesture-handler";
 
+/** URL polyfill */
+// URL object `intentionally` lightweight, does not support URLSearchParams features
+// https://github.com/facebook/react-native/issues/23922
+import "react-native-url-polyfill/auto";
+
 import { AppRegistry } from "react-native";
 import { Sentry } from "react-native-sentry";
 import Config from "react-native-config";
