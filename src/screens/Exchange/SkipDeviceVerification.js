@@ -36,7 +36,12 @@ const SkipDeviceVerification = ({ settleTrade, account }: Props) => {
           {account.name}
         </LText>
       </View>
-      <View style={styles.addressContainer}>
+      <View
+        style={[
+          styles.addressContainer,
+          { backgroundColor: colors.background, borderColor: colors.fog },
+        ]}
+      >
         <LText style={styles.address} semiBold>
           {account.freshAddress}
         </LText>

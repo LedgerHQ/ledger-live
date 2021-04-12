@@ -12,7 +12,7 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "../../analytics";
-import DeviceItem from "../../components/DeviceItem";
+import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 
 type OwnProps = {

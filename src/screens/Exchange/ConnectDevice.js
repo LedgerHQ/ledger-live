@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import { useTranslation } from "react-i18next";
 import {
   getMainAccount,
   getReceiveFlowError,
@@ -18,7 +17,6 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import SelectDevice from "../../components/SelectDevice";
-import Button from "../../components/Button";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
@@ -41,7 +39,6 @@ type RouteParams = {
 };
 
 export default function ConnectDevice({ navigation, route }: Props) {
-  const { t } = useTranslation();
   const { colors } = useTheme();
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -77,6 +74,12 @@ export default function ConnectDevice({ navigation, route }: Props) {
     [account, navigation, parentAccount],
   );
 
+  const onSkipDevice = useCallback(() => {
+    onResult({
+      skipDevice: true,
+    });
+  }, [onResult]);
+
   const onClose = useCallback(() => {
     setDevice();
   }, []);
@@ -107,20 +110,12 @@ export default function ConnectDevice({ navigation, route }: Props) {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}
       >
-        <SelectDevice onSelect={setDevice} />
-      </NavigationScrollView>
-      <View>
-        <Button
-          event="ReceiveWithoutDevice"
-          type="lightSecondary"
-          title={t("transfer.receive.withoutDevice")}
-          onPress={() => {
-            onResult({
-              skipDevice: true,
-            });
-          }}
+        <SelectDevice
+          onSelect={setDevice}
+          onWithoutDevice={onSkipDevice}
+          withoutDevice
         />
-      </View>
+      </NavigationScrollView>
       <DeviceActionModal
         action={action}
         device={device}
