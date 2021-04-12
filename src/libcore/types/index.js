@@ -11,11 +11,6 @@ import type {
   CoreCurrencySpecifics,
 } from "../../generated/types";
 
-// This is an exception because Stellar is the only one who need a specific methods
-// Need to talk about this in a PR with @gre
-
-import type { CoreStellarLikeWallet } from "../../families/stellar/types";
-
 declare class CoreWalletPool {
   static newInstance(
     name: string,
@@ -59,7 +54,6 @@ declare class CoreWallet {
   newAccountWithExtendedKeyInfo(
     keys?: CoreExtendedKeyAccountCreationInfo
   ): Promise<CoreAccount>;
-  asStellarLikeWallet(): Promise<CoreStellarLikeWallet>;
 }
 
 export const TimePeriod = {
@@ -308,9 +302,7 @@ export type Spec = {
 // We do this at runtime but ideally in the future, it will be at build time (generated code).
 
 export const reflect = (declare: (string, Spec) => void) => {
-  const { AccountMethods, OperationMethods, WalletMethods } = reflectSpecifics(
-    declare
-  ).reduce(
+  const { AccountMethods, OperationMethods } = reflectSpecifics(declare).reduce(
     (all, extra) => ({
       AccountMethods: {
         ...all.AccountMethods,
@@ -319,10 +311,6 @@ export const reflect = (declare: (string, Spec) => void) => {
       OperationMethods: {
         ...all.OperationMethods,
         ...(extra && extra.OperationMethods),
-      },
-      WalletMethods: {
-        ...all.WalletMethods,
-        ...(extra && extra.WalletMethods && extra.WalletMethods),
       },
     }),
     {}
@@ -368,7 +356,6 @@ export const reflect = (declare: (string, Spec) => void) => {
 
   declare("Wallet", {
     methods: {
-      ...WalletMethods,
       getAccountCreationInfo: {
         returns: "AccountCreationInfo",
       },

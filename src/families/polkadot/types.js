@@ -5,12 +5,6 @@ import type {
   TransactionCommonRaw,
 } from "../../types/transaction";
 
-export type RewardDestinationType =
-  | "Staked"
-  | "Stash"
-  | "Account"
-  | "Controller";
-
 export type CoreStatics = {};
 
 export type CoreAccountSpecifics = {};
@@ -18,6 +12,12 @@ export type CoreAccountSpecifics = {};
 export type CoreOperationSpecifics = {};
 
 export type CoreCurrencySpecifics = {};
+
+export type RewardDestinationType =
+  | "Staked"
+  | "Stash"
+  | "Account"
+  | "Controller";
 
 export type PolkadotNominationStatus = "active" | "inactive" | "waiting" | null;
 
