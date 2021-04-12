@@ -232,6 +232,7 @@ const compoundWithdraw: ModeModule = {
       tooltipI18nKey: transaction.useAllAmount
         ? "lend.withdraw.steps.confirmation.tooltip.amountWithdrawn"
         : undefined,
+      tooltipI18nArgs: { tokenName: ctoken.units[0].code },
     });
 
     fields.push(contractField(ctoken));

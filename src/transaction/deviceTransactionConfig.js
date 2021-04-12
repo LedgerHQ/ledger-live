@@ -9,11 +9,29 @@ import type {
 } from "../types";
 import { getMainAccount } from "../account";
 
+type tooltipArgs = { [key: string]: string };
+
 export type CommonDeviceTransactionField =
-  | { type: "amount", label: string, tooltipI18nKey?: string }
-  | { type: "address", label: string, address: string, tooltipI18nKey?: string }
-  | { type: "fees", label: string, tooltipI18nKey?: string }
-  | { type: "text", label: string, value: string, tooltipI18nKey?: string };
+  | {
+      type: "amount",
+      label: string,
+    }
+  | {
+      type: "address",
+      label: string,
+      address: string,
+    }
+  | {
+      type: "fees",
+      label: string,
+    }
+  | {
+      type: "text",
+      label: string,
+      value: string,
+      tooltipI18nKey?: string,
+      tooltipI18nArgs?: tooltipArgs,
+    };
 
 export type DeviceTransactionField =
   | CommonDeviceTransactionField
