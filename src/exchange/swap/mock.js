@@ -73,7 +73,16 @@ export const mockGetExchangeRates = async (
       rateId: "mockedRateId",
       provider: "changelly",
       expirationDate: new Date(),
-      tradeMethod: "fixed", // TODO add float mocks when we have a UI
+      tradeMethod: "fixed",
+    },
+    {
+      rate: BigNumber("1"),
+      toAmount: amount.times(magnitudeAwareRate),
+      magnitudeAwareRate,
+      rateId: "mockedRateId",
+      provider: "changelly",
+      expirationDate: new Date(),
+      tradeMethod: "float",
     },
   ];
 };
