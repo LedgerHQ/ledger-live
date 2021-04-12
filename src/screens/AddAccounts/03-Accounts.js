@@ -500,7 +500,10 @@ const AddressTypeTooltip = ({
               <Trans i18nKey={`addAccounts.addressTypeInfo.${scheme}.title`} />
             </LText>
             <LText style={styles.subtitle} color="grey">
-              <Trans i18nKey={`addAccounts.addressTypeInfo.${scheme}.desc`} />
+              <Trans
+                i18nKey={`addAccounts.addressTypeInfo.${scheme}.desc`}
+                values={{ currency: currency.name }}
+              />
             </LText>
           </View>
         ))}
