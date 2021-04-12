@@ -34,6 +34,7 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "upToDate": "Up to date",
+    "transactionDate": "Transaction date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
     "notAvailable": "Not available",
