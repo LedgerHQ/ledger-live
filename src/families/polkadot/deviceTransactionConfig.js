@@ -15,6 +15,7 @@ export type ExtraDeviceTransactionField = {
 };
 
 const getSendFields = ({
+  transaction,
   status: { amount },
 }: {
   transaction: Transaction,
@@ -25,7 +26,10 @@ const getSendFields = ({
   fields.push({
     type: "text",
     label: "Balances",
-    value: "Transfer keep alive",
+    value:
+      transaction && transaction.useAllAmount
+        ? "Transfer"
+        : "Transfer keep alive",
   });
 
   fields.push({
