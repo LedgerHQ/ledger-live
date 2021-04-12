@@ -72,6 +72,7 @@ type RouteParams = {
   currency: CryptoCurrency,
   device: Device,
   inline?: boolean,
+  returnToSwap?: boolean,
 };
 
 type OwnProps = {};
@@ -124,6 +125,7 @@ function AddAccountsAccounts({
     currency,
     device: { deviceId },
     inline,
+    returnToSwap,
   } = route.params || {};
 
   const newAccountSchemes = getPreferredNewAccountScheme(currency);
@@ -435,6 +437,7 @@ function AddAccountsAccounts({
           onContinue={importAccount}
           isDisabled={selectedIds.length === 0}
           colors={colors}
+          returnToSwap={returnToSwap}
         />
       )}
       <GenericErrorBottomModal
@@ -532,6 +535,7 @@ class Footer extends PureComponent<{
   isDisabled: boolean,
   supportLink?: AddAccountSupportLink,
   colors: *,
+  returnToSwap?: boolean,
 }> {
   render() {
     const {
@@ -544,6 +548,7 @@ class Footer extends PureComponent<{
       onRetry,
       onDone,
       colors,
+      returnToSwap,
     } = this.props;
 
     return (
@@ -574,7 +579,13 @@ class Footer extends PureComponent<{
           <Button
             event="AddAccountsSelected"
             type="primary"
-            title={<Trans i18nKey="addAccounts.finalCta" />}
+            title={
+              returnToSwap ? (
+                <Trans i18nKey="addAccounts.finalCtaForSwap" />
+              ) : (
+                <Trans i18nKey="addAccounts.finalCta" />
+              )
+            }
             onPress={isDisabled ? undefined : onContinue}
           />
         )}
