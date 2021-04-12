@@ -19,7 +19,7 @@ const makeError = (msg, status, url, method) => {
 
 const getErrorMessage = (data: Object): ?string => {
   return (
-    data.cause || data.error || data.message || data.error_message || data.msg
+    data.cause || data.error_message || data.error || data.message || data.msg
   );
 };
 
