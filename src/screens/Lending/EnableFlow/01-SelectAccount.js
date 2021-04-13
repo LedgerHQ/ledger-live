@@ -2,13 +2,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  SafeAreaView,
-  Linking,
-} from "react-native";
+import { View, StyleSheet, FlatList, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type {
@@ -34,7 +28,7 @@ import { TrackScreen } from "../../../analytics";
 import LText from "../../../components/LText";
 import FilteredSearchBar from "../../../components/FilteredSearchBar";
 import KeyboardView from "../../../components/KeyboardView";
-import InfoBox from "../../../components/InfoBox";
+import Alert from "../../../components/Alert";
 import LendingWarnings from "../shared/LendingWarnings";
 import Card from "../../../components/Card";
 import CurrencyIcon from "../../../components/CurrencyIcon";
@@ -273,14 +267,9 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
           />
         </View>
         <View style={styles.infoSection}>
-          <InfoBox
-            onLearnMore={
-              !enabledTotalAmount
-                ? () => {
-                    Linking.openURL(urls.compound);
-                  }
-                : undefined
-            }
+          <Alert
+            type="primary"
+            learnMoreUrl={!enabledTotalAmount ? urls.compound : undefined}
           >
             {enabledTotalAmount ? (
               <Trans
@@ -306,7 +295,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
             ) : (
               <Trans i18nKey="transfer.lending.enable.selectAccount.noEnabledAccounts" />
             )}
-          </InfoBox>
+          </Alert>
         </View>
       </KeyboardView>
     </SafeAreaView>

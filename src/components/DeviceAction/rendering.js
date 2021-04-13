@@ -1,13 +1,13 @@
 // @flow
 import React, { useEffect } from "react";
-import { View, StyleSheet, Linking } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { urls } from "../../config/urls";
 import LText from "../LText";
-import InfoBox from "../InfoBox";
+import Alert from "../Alert";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import Spinning from "../Spinning";
 import BigSpinner from "../../icons/BigSpinner";
@@ -138,9 +138,9 @@ export function renderConfirmSwap({
 }) {
   return (
     <View style={[styles.wrapper, { width: "100%" }]}>
-      <InfoBox onLearnMore={() => Linking.openURL(urls.swap.learnMore)}>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
         {t("DeviceAction.confirmSwap.alert")}
-      </InfoBox>
+      </Alert>
       <View
         style={[
           { marginTop: 16 },
@@ -168,9 +168,9 @@ export function renderConfirmSell({
 }) {
   return (
     <View style={styles.wrapper}>
-      <InfoBox onLearnMore={() => Linking.openURL(urls.swap.learnMore)}>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
         {t("DeviceAction.confirmSell.alert")}
-      </InfoBox>
+      </Alert>
       <View
         style={[
           { marginTop: 16 },

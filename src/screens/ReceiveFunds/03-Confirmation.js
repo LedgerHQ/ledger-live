@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { of } from "rxjs";
 import { delay } from "rxjs/operators";
-import { View, StyleSheet, Linking, Platform } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
@@ -29,7 +29,7 @@ import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import LText from "../../components/LText/index";
 import DisplayAddress from "../../components/DisplayAddress";
-import VerifyAddressDisclaimer from "../../components/VerifyAddressDisclaimer";
+import Alert from "../../components/Alert";
 import BottomModal from "../../components/BottomModal";
 import Close from "../../icons/Close";
 import QRcodeZoom from "../../icons/QRcodeZoom";
@@ -241,45 +241,33 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           </View>
         </View>
         <View style={styles.bottomContainer}>
-          <VerifyAddressDisclaimer
-            unsafe={unsafe}
-            verified={verified}
-            action={
-              verified ? (
-                <Touchable
-                  event="ReceiveVerifyTransactionHelp"
-                  onPress={() => Linking.openURL(urls.verifyTransactionDetails)}
-                >
-                  <LText semiBold style={styles.learnmore} color="live">
-                    <Trans i18nKey="common.learnMore" />
-                  </LText>
-                </Touchable>
-              ) : null
-            }
-            text={
-              unsafe ? (
-                <Trans
-                  i18nKey={
-                    readOnlyModeEnabled
-                      ? "transfer.receive.readOnly.verify"
-                      : "transfer.receive.verifySkipped"
-                  }
-                  values={{
-                    accountType: mainAccount.currency.managerAppName,
-                  }}
-                />
-              ) : verified ? (
-                <Trans i18nKey="transfer.receive.verified" />
-              ) : (
-                <Trans
-                  i18nKey="transfer.receive.verifyPending"
-                  values={{
-                    currencyName: mainAccount.currency.managerAppName,
-                  }}
-                />
-              )
-            }
-          />
+          {unsafe ? (
+            <Alert type="danger">
+              <Trans
+                i18nKey={
+                  readOnlyModeEnabled
+                    ? "transfer.receive.readOnly.verify"
+                    : "transfer.receive.verifySkipped"
+                }
+                values={{
+                  accountType: mainAccount.currency.managerAppName,
+                }}
+              />
+            </Alert>
+          ) : verified ? (
+            <Alert type="help" learnMoreUrl={urls.verifyTransactionDetails}>
+              <Trans i18nKey="transfer.receive.verified" />
+            </Alert>
+          ) : (
+            <Alert type="help">
+              <Trans
+                i18nKey="transfer.receive.verifyPending"
+                values={{
+                  currencyName: mainAccount.currency.managerAppName,
+                }}
+              />
+            </Alert>
+          )}
         </View>
       </NavigationScrollView>
       {verified && (

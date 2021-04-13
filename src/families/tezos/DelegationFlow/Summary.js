@@ -35,7 +35,7 @@ import Circle from "../../../components/Circle";
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import Touchable from "../../../components/Touchable";
-import VerifyAddressDisclaimer from "../../../components/VerifyAddressDisclaimer";
+import Alert from "../../../components/Alert";
 import DelegatingContainer from "../DelegatingContainer";
 import BakerImage from "../BakerImage";
 
@@ -366,13 +366,13 @@ export default function DelegationSummary({ navigation, route }: Props) {
           ) : null}
         </View>
         {transaction.mode === "undelegate" ? (
-          <VerifyAddressDisclaimer
-            text={<Trans i18nKey="delegation.warnUndelegation" />}
-          />
+          <Alert type="help">
+            <Trans i18nKey="delegation.warnUndelegation" />
+          </Alert>
         ) : (
-          <VerifyAddressDisclaimer
-            text={<Trans i18nKey="delegation.warnDelegation" />}
-          />
+          <Alert type="help">
+            <Trans i18nKey="delegation.warnDelegation" />
+          </Alert>
         )}
       </View>
       <View style={styles.footer}>

@@ -21,7 +21,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
-import VerifyAddressDisclaimer from "./VerifyAddressDisclaimer";
+import Alert from "./Alert";
 import perFamilyTransactionConfirmFields from "../generated/TransactionConfirmFields";
 import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
@@ -207,7 +207,7 @@ export default function ValidateOnDevice({
         <Footer transaction={transaction} recipientWording={recipientWording} />
       ) : (
         <View style={styles.footerContainer}>
-          <VerifyAddressDisclaimer text={recipientWording} />
+          <Alert type="help">{recipientWording}</Alert>
         </View>
       )}
     </View>

@@ -24,7 +24,7 @@ import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText, { getFontStyle } from "../../components/LText";
 import TextInput from "../../components/TextInput";
-import InfoBox from "../../components/InfoBox";
+import Alert from "../../components/Alert";
 import TranslatedError from "../../components/TranslatedError";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
@@ -212,7 +212,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           <View style={styles.container}>
             {transaction.recipient && !(error || warning) ? (
               <View style={styles.infoBox}>
-                <InfoBox>{t("send.recipient.verifyAddress")}</InfoBox>
+                <Alert type="primary">
+                  {t("send.recipient.verifyAddress")}
+                </Alert>
               </View>
             ) : null}
             <Button

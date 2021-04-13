@@ -28,7 +28,7 @@ import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
 import AccountSectionLabel from "../../../components/AccountSectionLabel";
-import WarningBox from "../../../components/WarningBox";
+import Alert from "../../../components/Alert";
 
 import CollapsibleList from "../components/CollapsibleList";
 import NominationDrawer from "../components/NominationDrawer";
@@ -181,10 +181,6 @@ export default function Nominations({ account }: Props) {
     [account.currency],
   );
 
-  const onLearnMore = useCallback(() => {
-    Linking.openURL(urls.polkadotStaking);
-  }, []);
-
   const drawerInfo = useMemo(
     () =>
       mappedNomination
@@ -272,20 +268,22 @@ export default function Nominations({ account }: Props) {
 
   if (hasExternalController(account)) {
     return (
-      <ExternalControllerUnsupportedWarning
-        address={polkadotResources?.controller}
-        onOpenExplorer={onOpenExplorer}
-        onLearnMore={onLearnMore}
-      />
+      <View style={styles.root}>
+        <ExternalControllerUnsupportedWarning
+          address={polkadotResources?.controller}
+          onOpenExplorer={onOpenExplorer}
+        />
+      </View>
     );
   }
   if (hasExternalStash(account)) {
     return (
-      <ExternalStashUnsupportedWarning
-        address={polkadotResources?.stash}
-        onOpenExplorer={onOpenExplorer}
-        onLearnMore={onLearnMore}
-      />
+      <View style={styles.root}>
+        <ExternalStashUnsupportedWarning
+          address={polkadotResources?.stash}
+          onOpenExplorer={onOpenExplorer}
+        />
+      </View>
     );
   }
 
@@ -307,12 +305,14 @@ export default function Nominations({ account }: Props) {
         isNominated
       />
       {electionOpen && (
-        <WarningBox>{t("polkadot.info.electionOpen.description")}</WarningBox>
+        <Alert type="warning">
+          {t("polkadot.info.electionOpen.description")}
+        </Alert>
       )}
       {!hasBondedBalance && hasPendingBondOperation && (
-        <WarningBox>
+        <Alert type="warning">
           {t("polkadot.nomination.hasPendingBondOperation")}
-        </WarningBox>
+        </Alert>
       )}
       {!hasNominations ? (
         <AccountDelegationInfo
@@ -350,9 +350,9 @@ export default function Nominations({ account }: Props) {
             renderShowMore={renderShowInactiveNominations}
           >
             {!mappedNominations.uncollapsed.length && (
-              <WarningBox onLearnMore={onLearnMore}>
+              <Alert type="warning" learnMoreUrl={urls.polkadotStaking}>
                 {t("polkadot.nomination.noActiveNominations")}
-              </WarningBox>
+              </Alert>
             )}
           </CollapsibleList>
         </View>

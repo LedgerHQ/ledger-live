@@ -8,7 +8,7 @@ import { rgba } from "../colors";
 import CheckCircle from "../icons/CheckCircle";
 import LText from "./LText";
 import Button from "./Button";
-import InfoBox from "./InfoBox";
+import Alert from "./Alert";
 
 type Props = {
   onClose?: () => void,
@@ -50,7 +50,11 @@ function ValidateSuccess({
         <LText style={styles.message} color="smoke">
           {description || <Trans i18nKey="send.validation.confirm" />}
         </LText>
-        {info && <InfoBox onLearnMore={onLearnMore}>{info}</InfoBox>}
+        {info && (
+          <Alert type="primary" onLearnMore={onLearnMore}>
+            {info}
+          </Alert>
+        )}
         {primaryButton ||
           (onViewDetails && (
             <Button
