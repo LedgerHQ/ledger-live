@@ -3474,10 +3474,10 @@ eslint-module-utils@^2.6.0:
     debug "^2.6.9"
     pkg-dir "^2.0.0"
 
-eslint-plugin-flowtype@^5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-5.6.0.tgz#9ddba1ce31990c53e144b3a545b7c74b1d164fd9"
-  integrity sha512-XbeDejiL+SecDInj9On/9D4EM31kUp6B3uWYsBH6Vsb2CfaFWiUHvosAZx1TafVjp6izLC7D3kpix1DIpDF4Qw==
+eslint-plugin-flowtype@^5.7.0:
+  version "5.7.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-5.7.0.tgz#1fe68f9cd16e35bf30e09d4ebacf9cfbfe7a41a4"
+  integrity sha512-6Oa0D6kq3PGwJvivrLNSgeiPN/ftPkRvhbeHWoXUEGQ+ZugerSJvoMDSCc9dZa4R691b/eLXpx8dyMSZM1Tc4w==
   dependencies:
     lodash "^4.17.15"
     string-natural-compare "^3.0.1"
@@ -7406,10 +7406,10 @@ stealthy-require@^1.1.1:
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
 
-stellar-base@^4.0.3:
-  version "4.0.3"
-  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-4.0.3.tgz#03a55fd8ebbd32804d94e87f41bdc56af2a6747b"
-  integrity sha512-Tf1Ko86j4CgUtaiTC6H6qPZ97EziXN6SVokH4FGv5+XvBhFg4V+u9ySMlgPjFbHQumplkHiw8JQx1IZRHnrT3A==
+stellar-base@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-5.1.0.tgz#7c2d2c9fe7ec8781df41514bc351e8c749888278"
+  integrity sha512-J0hdF2UGKlRmwaQCpL5IedetJMDBvxTmoFEnvwHMxZBeSNfGt3+pjLi+dghURiWyuBOF9ZeyS8lUBeOhy/tOpA==
   dependencies:
     base32.js "^0.1.0"
     bignumber.js "^4.0.0"
@@ -7421,10 +7421,10 @@ stellar-base@^4.0.3:
   optionalDependencies:
     sodium-native "^2.3.0"
 
-stellar-sdk@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/stellar-sdk/-/stellar-sdk-8.0.0.tgz#5cba01b3a7bd874573d61effc618f9d9e697dde8"
-  integrity sha512-dguVMpBrd/tt2xr3JdOvSde5dYGTeL/FwfC9oOf45DIOC2uHse/kuUjyfknG2dWOXE1NqhHohZOvxAX2b+/BGg==
+stellar-sdk@^8.1.1:
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/stellar-sdk/-/stellar-sdk-8.1.1.tgz#3a1de4f5aa211dc41504275d4c12c85ef66ba742"
+  integrity sha512-crZSONO1lDEg2TP2wsslB7kcBopP6r2jzA5fC7JNvFZMMf0yq14fGDOwQerWI9XaxzpXOJxuQ1ZP3yB93Ds0+Q==
   dependencies:
     "@types/eventsource" "^1.1.2"
     "@types/node" ">= 8"
@@ -7437,7 +7437,7 @@ stellar-sdk@^8.0.0:
     eventsource "^1.0.7"
     lodash "^4.17.11"
     randombytes "^2.1.0"
-    stellar-base "^4.0.3"
+    stellar-base "^5.1.0"
     toml "^2.3.0"
     tslib "^1.10.0"
     urijs "^1.19.1"
