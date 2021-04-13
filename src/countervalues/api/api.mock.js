@@ -33,12 +33,13 @@ function temporalFactor(from, to, maybeDate) {
   if (maybeDate && Math.cos(7 * r + date * 0.1) > 0.9 + 0.1 * r) {
     return 0; // intentionally set a GAP into the data
   }
-  return (
+  const res =
     (0.2 - 0.2 * r * r) * wave1 +
     (0.1 + 0.05 * Math.sin(r)) * wave2 +
     0.05 * wave3 +
-    btcTrend(date) / btcTrend(referenceSnapshotDate)
-  );
+    btcTrend(date) / btcTrend(referenceSnapshotDate);
+
+  return Math.max(0, res);
 }
 
 function rate(from: string, to: string, date?: Date) {

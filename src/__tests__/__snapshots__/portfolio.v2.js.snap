@@ -1,6 +1,499 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Portfolio getBalanceHistory should return history of 30 items with month range 1`] = `
+exports[`Portfolio getAssetsDistribution snapshot 1`] = `
+Object {
+  "isAvailable": true,
+  "list": Array [
+    Object {
+      "amount": 6076315,
+      "countervalue": 15917,
+      "currency": Object {
+        "bitcoinLikeInfo": Object {
+          "P2PKH": 0,
+          "P2SH": 5,
+          "XPUBVersion": 76067358,
+        },
+        "blockAvgTime": 900,
+        "coinType": 0,
+        "color": "#ffae35",
+        "explorerViews": Array [
+          Object {
+            "address": "https://blockstream.info/address/$address",
+            "tx": "https://blockstream.info/tx/$hash",
+          },
+          Object {
+            "address": "https://www.blockchain.com/btc/address/$address",
+            "tx": "https://blockchain.info/btc/tx/$hash",
+          },
+        ],
+        "family": "bitcoin",
+        "id": "bitcoin",
+        "managerAppName": "Bitcoin",
+        "name": "Bitcoin",
+        "scheme": "bitcoin",
+        "supportsNativeSegwit": true,
+        "supportsSegwit": true,
+        "symbol": "Ƀ",
+        "ticker": "BTC",
+        "type": "CryptoCurrency",
+        "units": Array [
+          Object {
+            "code": "BTC",
+            "magnitude": 8,
+            "name": "bitcoin",
+          },
+          Object {
+            "code": "mBTC",
+            "magnitude": 5,
+            "name": "mBTC",
+          },
+          Object {
+            "code": "bit",
+            "magnitude": 2,
+            "name": "bit",
+          },
+          Object {
+            "code": "sat",
+            "magnitude": 0,
+            "name": "satoshi",
+          },
+        ],
+      },
+      "distribution": 1,
+    },
+  ],
+  "showFirst": 1,
+  "sum": 15917,
+}
+`;
+
+exports[`Portfolio getBalanceHistory snapshots should match its prev snapshot 1`] = `
+Array [
+  Object {
+    "date": 2017-03-26T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-02T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-09T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-16T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-23T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-30T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-07T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-14T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-21T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-28T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-04T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-11T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-18T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-25T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-02T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-09T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-16T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-23T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-30T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-06T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-13T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-20T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-27T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-03T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-10T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-17T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-24T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-01T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-08T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-15T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-22T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-29T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-05T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-12T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-19T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-26T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-03T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-10T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-17T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-24T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-31T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-07T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-14T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-21T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-28T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-04T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-11T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-18T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-25T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-04T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-11T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-14T17:34:42.000Z,
+    "value": 1123402240807953300,
+  },
+]
+`;
+
+exports[`Portfolio getBalanceHistory snapshots should match its prev snapshot 2`] = `
+Array [
+  Object {
+    "date": 2017-03-26T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-02T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-09T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-16T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-23T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-04-30T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-07T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-14T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-21T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-05-28T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-04T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-11T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-18T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-06-25T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-02T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-09T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-16T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-23T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-07-30T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-06T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-13T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-20T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-08-27T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-03T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-10T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-17T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-09-24T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-01T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-08T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-15T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-22T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-10-29T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-05T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-12T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-19T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-11-26T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-03T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-10T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-17T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-24T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2017-12-31T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-07T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-14T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-21T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-01-28T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-04T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-11T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-18T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-02-25T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-04T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-11T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-14T17:34:42.000Z,
+    "value": 1123402240807953300,
+  },
+]
+`;
+
+exports[`Portfolio getBalanceHistory snapshots should match its prev snapshot 3`] = `
 Array [
   Object {
     "date": 2018-02-14T03:59:59.999Z,
@@ -125,206 +618,330 @@ Array [
 ]
 `;
 
-exports[`Portfolio getBalanceHistory should return history of 52 items with all time range 1`] = `
+exports[`Portfolio getBalanceHistory snapshots should match its prev snapshot 4`] = `
 Array [
   Object {
-    "date": 2017-03-26T03:59:59.999Z,
+    "date": 2018-03-07T18:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-02T03:59:59.999Z,
+    "date": 2018-03-07T19:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-09T03:59:59.999Z,
+    "date": 2018-03-07T20:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-16T03:59:59.999Z,
+    "date": 2018-03-07T21:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-23T03:59:59.999Z,
+    "date": 2018-03-07T22:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-30T03:59:59.999Z,
+    "date": 2018-03-07T23:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-07T03:59:59.999Z,
+    "date": 2018-03-08T00:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-14T03:59:59.999Z,
+    "date": 2018-03-08T01:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-21T03:59:59.999Z,
+    "date": 2018-03-08T02:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-28T03:59:59.999Z,
+    "date": 2018-03-08T03:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-04T03:59:59.999Z,
+    "date": 2018-03-08T04:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-11T03:59:59.999Z,
+    "date": 2018-03-08T05:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-18T03:59:59.999Z,
+    "date": 2018-03-08T06:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-25T03:59:59.999Z,
+    "date": 2018-03-08T07:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-02T03:59:59.999Z,
+    "date": 2018-03-08T08:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-09T03:59:59.999Z,
+    "date": 2018-03-08T09:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-16T03:59:59.999Z,
+    "date": 2018-03-08T10:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-23T03:59:59.999Z,
+    "date": 2018-03-08T11:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-30T03:59:59.999Z,
+    "date": 2018-03-08T12:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-06T03:59:59.999Z,
+    "date": 2018-03-08T13:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-13T03:59:59.999Z,
+    "date": 2018-03-08T14:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-20T03:59:59.999Z,
+    "date": 2018-03-08T15:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-27T03:59:59.999Z,
+    "date": 2018-03-08T16:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-03T03:59:59.999Z,
+    "date": 2018-03-08T17:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-10T03:59:59.999Z,
+    "date": 2018-03-08T18:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-17T03:59:59.999Z,
+    "date": 2018-03-08T19:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-24T03:59:59.999Z,
+    "date": 2018-03-08T20:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-01T03:59:59.999Z,
+    "date": 2018-03-08T21:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-08T03:59:59.999Z,
+    "date": 2018-03-08T22:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-15T03:59:59.999Z,
+    "date": 2018-03-08T23:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-22T03:59:59.999Z,
+    "date": 2018-03-09T00:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-29T03:59:59.999Z,
+    "date": 2018-03-09T01:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-11-05T03:59:59.999Z,
+    "date": 2018-03-09T02:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-11-12T03:59:59.999Z,
+    "date": 2018-03-09T03:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-11-19T03:59:59.999Z,
+    "date": 2018-03-09T04:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-11-26T03:59:59.999Z,
+    "date": 2018-03-09T05:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-12-03T03:59:59.999Z,
+    "date": 2018-03-09T06:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-12-10T03:59:59.999Z,
+    "date": 2018-03-09T07:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-12-17T03:59:59.999Z,
+    "date": 2018-03-09T08:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-12-24T03:59:59.999Z,
+    "date": 2018-03-09T09:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-12-31T03:59:59.999Z,
+    "date": 2018-03-09T10:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-01-07T03:59:59.999Z,
+    "date": 2018-03-09T11:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-01-14T03:59:59.999Z,
+    "date": 2018-03-09T12:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-01-21T03:59:59.999Z,
+    "date": 2018-03-09T13:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-01-28T03:59:59.999Z,
+    "date": 2018-03-09T14:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-02-04T03:59:59.999Z,
+    "date": 2018-03-09T15:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-02-11T03:59:59.999Z,
+    "date": 2018-03-09T16:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-02-18T03:59:59.999Z,
+    "date": 2018-03-09T17:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-02-25T03:59:59.999Z,
+    "date": 2018-03-09T18:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2018-03-04T03:59:59.999Z,
+    "date": 2018-03-09T19:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-09T20:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-09T21:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-09T22:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-09T23:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T00:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T01:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T02:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T03:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T04:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T05:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T06:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T07:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T08:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T09:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T10:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T11:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T12:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T13:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T14:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T15:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T16:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T17:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T18:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T19:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T20:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T21:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T22:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-10T23:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-11T00:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-11T01:59:59.999Z,
+    "value": 0,
+  },
+  Object {
+    "date": 2018-03-11T02:59:59.999Z,
     "value": 0,
   },
   Object {
@@ -332,328 +949,141 @@ Array [
     "value": 0,
   },
   Object {
-    "date": 2018-03-14T17:34:42.000Z,
-    "value": 1123402240807953300,
-  },
-]
-`;
-
-exports[`Portfolio getBalanceHistory should return history of 52 items with year range 1`] = `
-Array [
-  Object {
-    "date": 2017-03-26T03:59:59.999Z,
+    "date": 2018-03-11T04:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-02T03:59:59.999Z,
+    "date": 2018-03-11T05:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-09T03:59:59.999Z,
+    "date": 2018-03-11T06:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-16T03:59:59.999Z,
+    "date": 2018-03-11T07:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-23T03:59:59.999Z,
+    "date": 2018-03-11T08:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-04-30T03:59:59.999Z,
+    "date": 2018-03-11T09:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-07T03:59:59.999Z,
+    "date": 2018-03-11T10:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-14T03:59:59.999Z,
+    "date": 2018-03-11T11:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-21T03:59:59.999Z,
+    "date": 2018-03-11T12:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-05-28T03:59:59.999Z,
+    "date": 2018-03-11T13:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-04T03:59:59.999Z,
+    "date": 2018-03-11T14:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-11T03:59:59.999Z,
+    "date": 2018-03-11T15:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-18T03:59:59.999Z,
+    "date": 2018-03-11T16:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-06-25T03:59:59.999Z,
+    "date": 2018-03-11T17:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-02T03:59:59.999Z,
+    "date": 2018-03-11T18:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-09T03:59:59.999Z,
+    "date": 2018-03-11T19:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-16T03:59:59.999Z,
+    "date": 2018-03-11T20:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-23T03:59:59.999Z,
+    "date": 2018-03-11T21:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-07-30T03:59:59.999Z,
+    "date": 2018-03-11T22:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-06T03:59:59.999Z,
+    "date": 2018-03-11T23:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-13T03:59:59.999Z,
+    "date": 2018-03-12T00:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-20T03:59:59.999Z,
+    "date": 2018-03-12T01:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-08-27T03:59:59.999Z,
+    "date": 2018-03-12T02:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-03T03:59:59.999Z,
+    "date": 2018-03-12T03:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-10T03:59:59.999Z,
+    "date": 2018-03-12T04:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-17T03:59:59.999Z,
+    "date": 2018-03-12T05:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-09-24T03:59:59.999Z,
+    "date": 2018-03-12T06:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-01T03:59:59.999Z,
+    "date": 2018-03-12T07:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-08T03:59:59.999Z,
+    "date": 2018-03-12T08:59:59.999Z,
     "value": 0,
   },
   Object {
-    "date": 2017-10-15T03:59:59.999Z,
-    "value": 0,
+    "date": 2018-03-12T09:59:59.999Z,
+    "value": 444304174776006850,
   },
   Object {
-    "date": 2017-10-22T03:59:59.999Z,
-    "value": 0,
+    "date": 2018-03-12T10:59:59.999Z,
+    "value": 444304174776006850,
   },
   Object {
-    "date": 2017-10-29T03:59:59.999Z,
-    "value": 0,
+    "date": 2018-03-12T11:59:59.999Z,
+    "value": 444304174776006850,
   },
   Object {
-    "date": 2017-11-05T03:59:59.999Z,
-    "value": 0,
+    "date": 2018-03-12T12:59:59.999Z,
+    "value": 444304174776006850,
   },
   Object {
-    "date": 2017-11-12T03:59:59.999Z,
-    "value": 0,
+    "date": 2018-03-12T13:59:59.999Z,
+    "value": 444304174776006850,
   },
-  Object {
-    "date": 2017-11-19T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2017-11-26T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2017-12-03T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2017-12-10T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2017-12-17T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2017-12-24T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2017-12-31T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-01-07T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-01-14T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-01-21T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-01-28T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-02-04T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-02-11T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-02-18T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-02-25T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-04T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-11T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-14T17:34:42.000Z,
-    "value": 1123402240807953300,
-  },
-]
-`;
-
-exports[`Portfolio getBalanceHistory should return history of 168 items with day range 1`] = `
-Array [
-  Object {
-    "date": 2018-03-13T18:59:59.999Z,
-    "value": 1033892658636228100,
-  },
-  Object {
-    "date": 2018-03-13T19:59:59.999Z,
-    "value": 1033892658636228100,
-  },
-  Object {
-    "date": 2018-03-13T20:59:59.999Z,
-    "value": 1033892658636228100,
-  },
-  Object {
-    "date": 2018-03-13T21:59:59.999Z,
-    "value": 1033892658636228100,
-  },
-  Object {
-    "date": 2018-03-13T22:59:59.999Z,
-    "value": 1033892658636228100,
-  },
-  Object {
-    "date": 2018-03-13T23:59:59.999Z,
-    "value": 1033892658636228100,
-  },
-  Object {
-    "date": 2018-03-14T00:59:59.999Z,
-    "value": 1150053477811091800,
-  },
-  Object {
-    "date": 2018-03-14T01:59:59.999Z,
-    "value": 1150053477811091800,
-  },
-  Object {
-    "date": 2018-03-14T02:59:59.999Z,
-    "value": 1150053477811091800,
-  },
-  Object {
-    "date": 2018-03-14T03:59:59.999Z,
-    "value": 45990917538968680,
-  },
-  Object {
-    "date": 2018-03-14T04:59:59.999Z,
-    "value": 45990917538968680,
-  },
-  Object {
-    "date": 2018-03-14T05:59:59.999Z,
-    "value": 45990917538968680,
-  },
-  Object {
-    "date": 2018-03-14T06:59:59.999Z,
-    "value": 45990917538968680,
-  },
-  Object {
-    "date": 2018-03-14T07:59:59.999Z,
-    "value": 45990917538968680,
-  },
-  Object {
-    "date": 2018-03-14T08:59:59.999Z,
-    "value": 45990917538968680,
-  },
-  Object {
-    "date": 2018-03-14T09:59:59.999Z,
-    "value": 703838128802623100,
-  },
-  Object {
-    "date": 2018-03-14T10:59:59.999Z,
-    "value": 703838128802623100,
-  },
-  Object {
-    "date": 2018-03-14T11:59:59.999Z,
-    "value": 772184524748829700,
-  },
-  Object {
-    "date": 2018-03-14T12:59:59.999Z,
-    "value": 772184524748829700,
-  },
-  Object {
-    "date": 2018-03-14T13:59:59.999Z,
-    "value": 772184524748829700,
-  },
-  Object {
-    "date": 2018-03-14T14:59:59.999Z,
-    "value": 772184524748829700,
-  },
-  Object {
-    "date": 2018-03-14T15:59:59.999Z,
-    "value": 772184524748829700,
-  },
-  Object {
-    "date": 2018-03-14T16:59:59.999Z,
-    "value": 1123402240807953300,
-  },
-  Object {
-    "date": 2018-03-14T17:34:42.000Z,
-    "value": 1123402240807953300,
-  },
-]
-`;
-
-exports[`Portfolio getBalanceHistory should return history of 168(7 * 24) items with week range 1`] = `
-Array [
   Object {
     "date": 2018-03-12T14:59:59.999Z,
     "value": 635035856433994400,
@@ -865,47 +1295,2529 @@ Array [
 ]
 `;
 
-exports[`Portfolio getBalanceHistoryWithCountervalue should return same value as history 1`] = `
+exports[`Portfolio getBalanceHistory snapshots should match its prev snapshot 5`] = `
+Array [
+  Object {
+    "date": 2018-03-13T18:59:59.999Z,
+    "value": 1033892658636228100,
+  },
+  Object {
+    "date": 2018-03-13T19:59:59.999Z,
+    "value": 1033892658636228100,
+  },
+  Object {
+    "date": 2018-03-13T20:59:59.999Z,
+    "value": 1033892658636228100,
+  },
+  Object {
+    "date": 2018-03-13T21:59:59.999Z,
+    "value": 1033892658636228100,
+  },
+  Object {
+    "date": 2018-03-13T22:59:59.999Z,
+    "value": 1033892658636228100,
+  },
+  Object {
+    "date": 2018-03-13T23:59:59.999Z,
+    "value": 1033892658636228100,
+  },
+  Object {
+    "date": 2018-03-14T00:59:59.999Z,
+    "value": 1150053477811091800,
+  },
+  Object {
+    "date": 2018-03-14T01:59:59.999Z,
+    "value": 1150053477811091800,
+  },
+  Object {
+    "date": 2018-03-14T02:59:59.999Z,
+    "value": 1150053477811091800,
+  },
+  Object {
+    "date": 2018-03-14T03:59:59.999Z,
+    "value": 45990917538968680,
+  },
+  Object {
+    "date": 2018-03-14T04:59:59.999Z,
+    "value": 45990917538968680,
+  },
+  Object {
+    "date": 2018-03-14T05:59:59.999Z,
+    "value": 45990917538968680,
+  },
+  Object {
+    "date": 2018-03-14T06:59:59.999Z,
+    "value": 45990917538968680,
+  },
+  Object {
+    "date": 2018-03-14T07:59:59.999Z,
+    "value": 45990917538968680,
+  },
+  Object {
+    "date": 2018-03-14T08:59:59.999Z,
+    "value": 45990917538968680,
+  },
+  Object {
+    "date": 2018-03-14T09:59:59.999Z,
+    "value": 703838128802623100,
+  },
+  Object {
+    "date": 2018-03-14T10:59:59.999Z,
+    "value": 703838128802623100,
+  },
+  Object {
+    "date": 2018-03-14T11:59:59.999Z,
+    "value": 772184524748829700,
+  },
+  Object {
+    "date": 2018-03-14T12:59:59.999Z,
+    "value": 772184524748829700,
+  },
+  Object {
+    "date": 2018-03-14T13:59:59.999Z,
+    "value": 772184524748829700,
+  },
+  Object {
+    "date": 2018-03-14T14:59:59.999Z,
+    "value": 772184524748829700,
+  },
+  Object {
+    "date": 2018-03-14T15:59:59.999Z,
+    "value": 772184524748829700,
+  },
+  Object {
+    "date": 2018-03-14T16:59:59.999Z,
+    "value": 1123402240807953300,
+  },
+  Object {
+    "date": 2018-03-14T17:34:42.000Z,
+    "value": 1123402240807953300,
+  },
+]
+`;
+
+exports[`Portfolio getBalanceHistoryWithCountervalue snapshot 1`] = `
 Object {
   "countervalueAvailable": true,
   "countervalueChange": Object {
-    "percentage": -0.6474790167773536,
-    "value": -29234.115113258835,
+    "percentage": undefined,
+    "value": 15916.560593211923,
   },
   "countervalueReceiveSum": 0,
   "countervalueSendSum": 0,
   "cryptoChange": Object {
     "percentage": null,
-    "value": -11160432,
+    "value": 6076315,
   },
   "history": Array [
     Object {
-      "countervalue": 45150.675706470756,
+      "countervalue": 0,
+      "date": 2017-03-26T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-04-02T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-04-09T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-04-16T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-04-23T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-04-30T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-05-07T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-05-14T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-05-21T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-05-28T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-06-04T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-06-11T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-06-18T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-06-25T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-07-02T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-07-09T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-07-16T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-07-23T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-07-30T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-08-06T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-08-13T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-08-20T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-08-27T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-09-03T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-09-10T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-09-17T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-09-24T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-10-01T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-10-08T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-10-15T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-10-22T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-10-29T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-11-05T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-11-12T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-11-19T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-11-26T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-12-03T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-12-10T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-12-17T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-12-24T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2017-12-31T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-01-07T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-01-14T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-01-21T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-01-28T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-02-04T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-02-11T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-02-18T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-02-25T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-04T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 12675.491501113764,
+      "date": 2018-03-11T03:59:59.999Z,
+      "value": 4692779,
+    },
+    Object {
+      "countervalue": 15916.560593211923,
+      "date": 2018-03-14T17:34:42.000Z,
+      "value": 6076315,
+    },
+  ],
+}
+`;
+
+exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
+Object {
+  "accounts": Array [
+    Object {
+      "balance": "6076315",
+      "bitcoinResources": Object {
+        "utxos": Array [],
+      },
+      "blockHeight": 177467,
+      "creationDate": 2018-03-09T16:38:17.536Z,
+      "currency": Object {
+        "bitcoinLikeInfo": Object {
+          "P2PKH": 0,
+          "P2SH": 5,
+          "XPUBVersion": 76067358,
+        },
+        "blockAvgTime": 900,
+        "coinType": 0,
+        "color": "#ffae35",
+        "explorerViews": Array [
+          Object {
+            "address": "https://blockstream.info/address/$address",
+            "tx": "https://blockstream.info/tx/$hash",
+          },
+          Object {
+            "address": "https://www.blockchain.com/btc/address/$address",
+            "tx": "https://blockchain.info/btc/tx/$hash",
+          },
+        ],
+        "family": "bitcoin",
+        "id": "bitcoin",
+        "managerAppName": "Bitcoin",
+        "name": "Bitcoin",
+        "scheme": "bitcoin",
+        "supportsNativeSegwit": true,
+        "supportsSegwit": true,
+        "symbol": "Ƀ",
+        "ticker": "BTC",
+        "type": "CryptoCurrency",
+        "units": Array [
+          Object {
+            "code": "BTC",
+            "magnitude": 8,
+            "name": "bitcoin",
+          },
+          Object {
+            "code": "mBTC",
+            "magnitude": 5,
+            "name": "mBTC",
+          },
+          Object {
+            "code": "bit",
+            "magnitude": 2,
+            "name": "bit",
+          },
+          Object {
+            "code": "sat",
+            "magnitude": 0,
+            "name": "satoshi",
+          },
+        ],
+      },
+      "derivationMode": "",
+      "freshAddress": "1cBCSa9YcE6XfhmYEP7NntiTyrbiTw",
+      "freshAddressPath": "44'/0'/0'/0/0",
+      "freshAddresses": Array [
+        Object {
+          "address": "1cBCSa9YcE6XfhmYEP7NntiTyrbiTw",
+          "derivationPath": "44'/0'/0'/0/0",
+        },
+      ],
+      "id": "mock:1:bitcoin:bitcoin_1:",
+      "index": 1,
+      "lastSyncDate": 2018-03-14T17:34:42.000Z,
+      "name": "TrZDNXRWV3aQmWDi7",
+      "operations": Array [
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "17F65B761230E14BF47D5B04D42A8378D132CAF8354873EDFCE1EC0BD41AABD6",
+          "blockHeight": 177414,
+          "date": 2018-03-14T04:06:36.779Z,
+          "extra": Object {},
+          "fee": "39687",
+          "hash": "B41CD0AAD8DD71148740704C20EFA7C9992314DC2FFABB2F3D5C2348FC8E8B21",
+          "id": "mock_op_0_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1hCqneqmmFRr5Ww8c4Vx9rAa59Wg62",
+          ],
+          "senders": Array [
+            "1xGDWz7grjKnaVApfpQpYJJa1RDXWJ1JW",
+          ],
+          "type": "OUT",
+          "value": "3968710",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "A002C336CE711A4AD6BE40C15390D2FFBCCFEFCABF734140639E56A80D287AB2",
+          "blockHeight": 177392,
+          "date": 2018-03-13T22:45:44.966Z,
+          "extra": Object {},
+          "fee": "72010",
+          "hash": "15138B4F66097DF7101194E25B5A8FAEAEBBF2C03F7614E9D5B693501D621F3C",
+          "id": "mock_op_1_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "15x3KP1kN7PQgNjtGuCtL2yhAxL",
+          ],
+          "senders": Array [
+            "1eD4EofeGi6DMWkyqRdqLxWEeAUS",
+          ],
+          "type": "OUT",
+          "value": "7201029",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "115F2FFC9CBD40B5A32254182395EC3F114526A3CACE646DB5C002F94D2CA025",
+          "blockHeight": 177383,
+          "date": 2018-03-13T20:32:06.750Z,
+          "extra": Object {},
+          "fee": "93",
+          "hash": "71DB81B185B4B792C2B476D5E803624CB9DD4CD476283DEB3FAF4936DC9A16F1",
+          "id": "mock_op_2_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1uLPXUvPM4K1rdPRcnwN1KQnTG",
+          ],
+          "senders": Array [
+            "1BF5ACuf7xzZ9YhX4DmRXtjUPvF693",
+          ],
+          "type": "IN",
+          "value": "9307",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "B30ADF70081BD05FD8DBC0A375520633E1C08D41D93DDD70813AED3198B4843A",
+          "blockHeight": 177362,
+          "date": 2018-03-13T15:14:09.504Z,
+          "extra": Object {},
+          "fee": "4257",
+          "hash": "3302917B89433E254A15A08F22C804C6F6FD77230660668F9065D4CEE636C3B0",
+          "id": "mock_op_3_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1WtDecB7L8ZsbM4pj7UBxjwziJ2aVTA",
+          ],
+          "senders": Array [
+            "1uhiYzBvyBhimzaz83xLREWuPkZ1GY",
+          ],
+          "type": "IN",
+          "value": "425683",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "EBB270D5BFACDF2807C539F68BCB09DD0608C7C7DA633D72C5DF713728502226",
+          "blockHeight": 177357,
+          "date": 2018-03-13T13:51:22.677Z,
+          "extra": Object {},
+          "fee": "4547",
+          "hash": "9A0DFE6109F08A1D69EFD02B7B2799547445186F8B02BE108D0E988A350AB464",
+          "id": "mock_op_4_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1qBaxVFTBNVgiDR5V9uHK92dK9Fa7TB9",
+          ],
+          "senders": Array [
+            "1X3mhJwjHxYGkY6FGPFLuzThjA",
+          ],
+          "type": "IN",
+          "value": "454700",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "3AC1F80A70187771F19CCB575A47BC0955A8C022AABEEB991F7E9525E57FDDB2",
+          "blockHeight": 177327,
+          "date": 2018-03-13T06:29:34.733Z,
+          "extra": Object {},
+          "fee": "49223",
+          "hash": "1CE25F2A490FBB1EFA5C7511E6645B8D6DE3F5570037A33DC32C111DCD74ADE9",
+          "id": "mock_op_5_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1u2snDSmBmQb217RvzpJJYnamd",
+          ],
+          "senders": Array [
+            "19xKxbmF6H7FiW3XXb5tvEKsg7rSh5y",
+          ],
+          "type": "IN",
+          "value": "4922323",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "57C2CA19F30A821C12692476A1DFB447BC82F96109AB3C362233C74CA8AE3438",
+          "blockHeight": 177302,
+          "date": 2018-03-13T00:05:08.986Z,
+          "extra": Object {},
+          "fee": "7710",
+          "hash": "343D1076CA74A6C450686959500D30945309EBE129FA7E05B79CB2DF70F0731B",
+          "id": "mock_op_6_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1mBuVU2XmfNLcQz2SY5hfFBKgwEEnV6u8v",
+          ],
+          "senders": Array [
+            "1SPknT8C4DaywRhJwsSXQSSDGX296kMFJAy",
+          ],
+          "type": "IN",
+          "value": "771020",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "7FB25C3C8F280EC7F562B8676A46ECB784A73BC774805312AF62F033EC39E00B",
+          "blockHeight": 177287,
+          "date": 2018-03-12T20:34:07.391Z,
+          "extra": Object {},
+          "fee": "13191",
+          "hash": "E46E4D308C259FD86311076A4DECA7E015F2D3F871E12A098C995880E2D3F00C",
+          "id": "mock_op_7_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "12ce35PKdXCCKHy4mtzhPsMeCd16L3RM15",
+          ],
+          "senders": Array [
+            "1mXGHc6GtoFfTrTSQJsxQuqnZZNEPA",
+          ],
+          "type": "OUT",
+          "value": "1319070",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5B2EA9C8817D2DA719442BA53CDE3D52C8D62522B74A13978BFCB4B8C21520C9",
+          "blockHeight": 177265,
+          "date": 2018-03-12T15:02:12.546Z,
+          "extra": Object {},
+          "fee": "8145",
+          "hash": "0AE9C123F9D0AC80BBE534067B30F419C5B6BAA0D2181FA4902A672868F4B2FA",
+          "id": "mock_op_8_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1YMz86MGJR2WSiduokQZUi6RwmZnnLMS",
+          ],
+          "senders": Array [
+            "1dMo8Us5qYyCWkWJCrwY8xfmJvwejLre",
+          ],
+          "type": "IN",
+          "value": "814547",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "7D2ADC4D0A326F10BEC471038F562676439B69D6A1546EE95F2AF39CB95B52DB",
+          "blockHeight": 177255,
+          "date": 2018-03-12T12:26:06.942Z,
+          "extra": Object {},
+          "fee": "4785",
+          "hash": "A9A7F14C15D1A304E0D9464238C1C8B533B2472574912F9C629821A4B24BD755",
+          "id": "mock_op_9_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1D3bsfY4gJs27Qz8VC7bD2A6Dc7zL8qhY",
+          ],
+          "senders": Array [
+            "1z3ka19kTskcb4KJx1ky9Ctg7L9Afwu",
+          ],
+          "type": "IN",
+          "value": "478517",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BD4AA8EF647FF22776027F08F11008B047EA6279F6B47DAEA835EF570CC5EA98",
+          "blockHeight": 177222,
+          "date": 2018-03-12T04:09:30.189Z,
+          "extra": Object {},
+          "fee": "3181",
+          "hash": "6E8AEA8B73376E8C48044F644F578BE8A24DC94A11400156D0F111C5DE1A4819",
+          "id": "mock_op_10_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1YGHGZm1EPmHw5uR6FFhMWmJ2wh1",
+          ],
+          "senders": Array [
+            "121PsFaZoDewU9h5k1VVEMnLNK5",
+          ],
+          "type": "IN",
+          "value": "318099",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "4A2BEF155CC506176D73470FB95AB66BBFA5FDE1C1478EFB2666708B467A0D52",
+          "blockHeight": 177210,
+          "date": 2018-03-12T01:09:16.411Z,
+          "extra": Object {},
+          "fee": "51571",
+          "hash": "AA488841FB6541A1A63E4B7AEF4A2AA665D047A8E7A4CC320A4E71A999AB24ED",
+          "id": "mock_op_11_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1TW58JrKpLLRpSTE4tyK3Vsem3ehphH",
+          ],
+          "senders": Array [
+            "1kzWFNwMoSNwSdrWTEZBgpveE56",
+          ],
+          "type": "OUT",
+          "value": "5157064",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "6BF31AEFF2AD402728ECFA1AE9016EF418FAA11C03E09DAF4153F07EBB0C4413",
+          "blockHeight": 177200,
+          "date": 2018-03-11T22:36:45.105Z,
+          "extra": Object {},
+          "fee": "73315",
+          "hash": "0DFD1148799BD54738BC692A544498A9E5059CCCB390D80FA57177C2D2DEC4BE",
+          "id": "mock_op_12_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "12gqTQhiCabnbjTVtzJvhALdf6N",
+          ],
+          "senders": Array [
+            "1TmRqUg5nx2QRsMqJ4L9YpHzhL",
+          ],
+          "type": "IN",
+          "value": "7331471",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "65DBC386774116A33BB6D306096167CEA563F129438A9E37ABD5E5EDFFD71D60",
+          "blockHeight": 177176,
+          "date": 2018-03-11T16:44:37.666Z,
+          "extra": Object {},
+          "fee": "4444",
+          "hash": "D9F3EE086D080D5199DD64639B7D09E07455548F4ECE192D6729D3F9C6D00E69",
+          "id": "mock_op_13_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1uFhd4ujcaVz27Nsg9wPTSvmi2v",
+          ],
+          "senders": Array [
+            "1swkjEo6pXYpkB1cTwTcWrpPa8dZ",
+          ],
+          "type": "IN",
+          "value": "444435",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "AABF5EA2D4AC2F74072DDB10E64EF692A50843F115CEC76627DA5D9E3DE7D990",
+          "blockHeight": 177142,
+          "date": 2018-03-11T08:07:36.512Z,
+          "extra": Object {},
+          "fee": "27583",
+          "hash": "68D737B252DE8631E36CD0A297C9693497AD464FD98A57B6B8D046F5A5302D73",
+          "id": "mock_op_14_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1gD36WWeRaQNyMDgMbwK2FVHXz6Yg",
+          ],
+          "senders": Array [
+            "1nLCJA1jeNXocqoXPWGAZmavabZvMfd",
+          ],
+          "type": "IN",
+          "value": "2758318",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5222F059B6AEA612A1801A01C4871D0EA6BABCB51C78976706FCE82CCA626076",
+          "blockHeight": 177126,
+          "date": 2018-03-11T04:19:06.057Z,
+          "extra": Object {},
+          "fee": "3010",
+          "hash": "ABB9140EE15CE12DFED9DA56C27EEEA0E9A224F4AB0264DE9B5AE5AC0926CD91",
+          "id": "mock_op_15_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1Lxg52z6PqEJBY9f9R3XPbeijmU7QYa",
+          ],
+          "senders": Array [
+            "18TohmCNG25584KrPNTVQ43XBFpb2V8sEA",
+          ],
+          "type": "IN",
+          "value": "300989",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BB5A5706386BF43C4C5319F78542BC46A69F4D4DAB016C8EBD0240BFDE794D9D",
+          "blockHeight": 177123,
+          "date": 2018-03-11T03:32:08.183Z,
+          "extra": Object {},
+          "fee": "1059",
+          "hash": "454A3EE94C00068335DC1D7F03F1046FAB84940214AC3194EA666A2E35EE61E8",
+          "id": "mock_op_16_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1QXtAnvxV1KYcSHsdUR25yhafsJwryP5Q",
+          ],
+          "senders": Array [
+            "1PgV3MPYPUvrzXQ8yxRhPYw1azGmbfwp",
+          ],
+          "type": "IN",
+          "value": "105941",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "1C2F8FD1B22B64F295A126A74125F08A1DAEE2CBF214BD43CFB3A1F9871EF818",
+          "blockHeight": 177121,
+          "date": 2018-03-11T02:54:21.807Z,
+          "extra": Object {},
+          "fee": "4150",
+          "hash": "F6B20BDFF782EE539584C0480F07317893D1AEC959F2C23B0C08E20EEAC06E5F",
+          "id": "mock_op_17_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "11xh19kDKT7YGYPrTiqNb7Ac6e4",
+          ],
+          "senders": Array [
+            "1FmgQ7Yae3EJSa8BdEjvwvSTf1JhV9Gkup",
+          ],
+          "type": "OUT",
+          "value": "415007",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5C918033586B87657120AB49AC80B0BB154799443358EDB77D3D9F7BD4D6EC1D",
+          "blockHeight": 177119,
+          "date": 2018-03-11T02:22:25.719Z,
+          "extra": Object {},
+          "fee": "11914",
+          "hash": "24A0D405882FFA0371DDB0F49F2EAA0F4C13DE845DBD6D529BEEDD22983DD58E",
+          "id": "mock_op_18_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1Bk41iSAgMmkPhHkktuKUv62oQJtnJ4",
+          ],
+          "senders": Array [
+            "1DHp2SbLowZRRzg25J2dbDwn3h2eMp6FvY",
+          ],
+          "type": "IN",
+          "value": "1191365",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "548D8041D3348FB0D938244EEE13854C858C4B3A2E5C1061D9EA48BA4BA8E282",
+          "blockHeight": 177113,
+          "date": 2018-03-11T00:50:37.388Z,
+          "extra": Object {},
+          "fee": "12929",
+          "hash": "4DE4E06CE66EE13C47D3D7E5AFE7192E7531D3CDBC9B8F424165382BC25F0F62",
+          "id": "mock_op_19_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1GCqPuRBrZrWKR3AhRhf63DnZuzQLmKUj",
+          ],
+          "senders": Array [
+            "1bj1YmAH9wuh8bcqQXsfeA7DFzo",
+          ],
+          "type": "OUT",
+          "value": "1292927",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BD0537B3DC641C71FB69595CBEEF9B16F5300EE6FE9B5071624FA8C48B061551",
+          "blockHeight": 177079,
+          "date": 2018-03-10T16:34:02.750Z,
+          "extra": Object {},
+          "fee": "3885",
+          "hash": "C9B4D5D184802310274191CE09C9A43C6D6B7E9236B5093A5CABF2C57D3779BD",
+          "id": "mock_op_20_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1b4kCL3YAYtufBz3cPTFsRrQhAGmGgRe6k",
+          ],
+          "senders": Array [
+            "1bxZHczrAxp16nH7pgVk4G93u3Pfmv2e",
+          ],
+          "type": "OUT",
+          "value": "388453",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "D6F062724A12C3F102261C1A82676CE7664F9895B8B5AE32882B659AC7C951AA",
+          "blockHeight": 177036,
+          "date": 2018-03-10T05:39:50.355Z,
+          "extra": Object {},
+          "fee": "465",
+          "hash": "0A0EFA5BB633D5284B4F9808243378395BACC26939F96D9F517D251D5E545F82",
+          "id": "mock_op_21_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1iwTcAR1r4cHtnNipnp7C172ewVKCbeg",
+          ],
+          "senders": Array [
+            "1QdKaU9zTNrfkbW6fT11UL6WXw",
+          ],
+          "type": "IN",
+          "value": "46537",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "94A653344FCF016F13895695534453CFA3DA88DD1A0BFBC85D413061BDDC5288",
+          "blockHeight": 177011,
+          "date": 2018-03-09T23:20:21.502Z,
+          "extra": Object {},
+          "fee": "1670",
+          "hash": "8B492D3F80BF6D19586158C73E87250AA928AC79B323976E1DB22BE9B88A72B7",
+          "id": "mock_op_22_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1gtfk8wRxjnYGapXX5bcBfr2cr3HeYSZ",
+          ],
+          "senders": Array [
+            "1t1wVXHjgnHdRKQGute8ZPyqu8",
+          ],
+          "type": "IN",
+          "value": "166988",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "E829FC817D6462EE8AB9B50145DB42F6F2907C7694FA9798B372E7AEF84374A7",
+          "blockHeight": 177003,
+          "date": 2018-03-09T21:23:37.378Z,
+          "extra": Object {},
+          "fee": "26182",
+          "hash": "48ACD52E400F741190D2ABD05B64E1F11C2F4C93810F06A402338BA332A8B561",
+          "id": "mock_op_23_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1SKwf8L3X23zupQpNzVsdDAwPGRfthwbX4",
+          ],
+          "senders": Array [
+            "1V9GWexPz66aEt4D5iKNMUd3N6LQFBWsYtC",
+          ],
+          "type": "IN",
+          "value": "2618157",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "4D7AAB72F3B1FE94246BBB37BCBF693C52D5098EE71DFACC0F19CC9BA9D99058",
+          "blockHeight": 176984,
+          "date": 2018-03-09T16:38:17.536Z,
+          "extra": Object {},
+          "fee": "26602",
+          "hash": "12BA108093852A4C2AC3DCFCF023E5C7AA2F91E343D682FE763A6B36D269416D",
+          "id": "mock_op_24_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1VNAMnY3hmkSBzfTKtbL9Y7VoFFZ9",
+          ],
+          "senders": Array [
+            "1y2uTVeLwCorLj63SbWGgnZG9FDJ44GnzT8",
+          ],
+          "type": "IN",
+          "value": "2660178",
+        },
+      ],
+      "operationsCount": 25,
+      "pendingOperations": Array [],
+      "seedIdentifier": "mock",
+      "spendableBalance": "6076315",
+      "starred": false,
+      "swapHistory": Array [],
+      "type": "Account",
+      "unit": Object {
+        "code": "mBTC",
+        "magnitude": 5,
+        "name": "mBTC",
+      },
+      "used": true,
+      "xpub": "7B7A75F46C6737BEFD83E712DF394F589800621B09C3A49D713C810CA2FCC0AA",
+    },
+  ],
+  "countervalueAvailable": true,
+  "countervalueChange": Object {
+    "percentage": undefined,
+    "value": 15916.560593211923,
+  },
+  "cryptoChange": Object {
+    "percentage": null,
+    "value": 6076315,
+  },
+  "histories": Array [
+    Array [
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T18:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T19:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T20:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T21:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T22:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T23:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T00:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T01:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T02:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T03:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T04:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T05:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T06:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T07:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T08:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T09:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T10:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T11:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T12:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T13:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T14:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T15:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T16:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T17:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T18:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T19:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T20:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T21:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T22:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T23:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T00:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T01:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T02:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T03:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T04:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T05:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T06:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T07:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T08:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T09:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T10:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T11:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T12:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T13:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T14:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T15:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T16:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T17:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T18:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T19:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T20:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 14961.173199305143,
+        "date": 2018-03-09T21:59:59.999Z,
+        "value": 5278335,
+      },
+      Object {
+        "countervalue": 14961.173199305143,
+        "date": 2018-03-09T22:59:59.999Z,
+        "value": 5278335,
+      },
+      Object {
+        "countervalue": 15434.492227029901,
+        "date": 2018-03-09T23:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T00:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T01:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T02:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T03:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T04:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T05:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T06:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T07:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T08:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T09:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T10:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T11:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T12:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T13:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T14:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T15:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T16:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T17:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T18:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T19:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T20:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T21:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T22:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T23:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 10292.34635919654,
+        "date": 2018-03-11T00:59:59.999Z,
+        "value": 3810480,
+      },
+      Object {
+        "countervalue": 10292.34635919654,
+        "date": 2018-03-11T01:59:59.999Z,
+        "value": 3810480,
+      },
+      Object {
+        "countervalue": 12389.338190864231,
+        "date": 2018-03-11T02:59:59.999Z,
+        "value": 4586838,
+      },
+      Object {
+        "countervalue": 12675.491501113764,
+        "date": 2018-03-11T03:59:59.999Z,
+        "value": 4692779,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T04:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T05:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T06:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T07:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T08:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T09:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T10:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T11:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T12:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T13:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T14:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T15:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T16:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T17:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T18:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T19:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T20:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T21:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 41942.083917730306,
+        "date": 2018-03-11T22:59:59.999Z,
+        "value": 15527992,
+      },
+      Object {
+        "countervalue": 41942.083917730306,
+        "date": 2018-03-11T23:59:59.999Z,
+        "value": 15527992,
+      },
+      Object {
+        "countervalue": 41278.703837955276,
+        "date": 2018-03-12T00:59:59.999Z,
+        "value": 15527992,
+      },
+      Object {
+        "countervalue": 27569.467155621784,
+        "date": 2018-03-12T01:59:59.999Z,
+        "value": 10370928,
+      },
+      Object {
+        "countervalue": 27569.467155621784,
+        "date": 2018-03-12T02:59:59.999Z,
+        "value": 10370928,
+      },
+      Object {
+        "countervalue": 27569.467155621784,
+        "date": 2018-03-12T03:59:59.999Z,
+        "value": 10370928,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T04:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T05:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T06:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T07:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T08:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T09:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T10:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T11:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 29687.14444039734,
+        "date": 2018-03-12T12:59:59.999Z,
+        "value": 11167544,
+      },
+      Object {
+        "countervalue": 29687.14444039734,
+        "date": 2018-03-12T13:59:59.999Z,
+        "value": 11167544,
+      },
+      Object {
+        "countervalue": 29687.14444039734,
+        "date": 2018-03-12T14:59:59.999Z,
+        "value": 11167544,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T15:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T16:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T17:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T18:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T19:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T20:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T21:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T22:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T23:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T00:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T01:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T02:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T03:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T04:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T05:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T06:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T07:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T08:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T09:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T10:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T11:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T12:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 44249.40629298922,
+        "date": 2018-03-13T13:59:59.999Z,
+        "value": 16811064,
+      },
+      Object {
+        "countervalue": 44249.40629298922,
+        "date": 2018-03-13T14:59:59.999Z,
+        "value": 16811064,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T15:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T16:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T17:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T18:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T19:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45394.369469822486,
+        "date": 2018-03-13T20:59:59.999Z,
+        "value": 17246054,
+      },
+      Object {
+        "countervalue": 45394.369469822486,
+        "date": 2018-03-13T21:59:59.999Z,
+        "value": 17246054,
+      },
+      Object {
+        "countervalue": 26440.110658565933,
+        "date": 2018-03-13T22:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26440.110658565933,
+        "date": 2018-03-13T23:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T00:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T01:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T02:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T03:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T04:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T05:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T06:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T07:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T08:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T09:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T10:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T11:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T12:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T13:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T14:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T15:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T16:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T17:34:42.000Z,
+        "value": 6076315,
+      },
+    ],
+  ],
+  "history": Array [
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-07T18:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-07T19:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-07T20:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-07T21:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-07T22:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-07T23:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T00:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T01:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T02:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T04:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T05:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T06:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T07:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T08:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T09:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T10:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T11:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T12:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T13:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T14:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T15:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T16:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T17:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T18:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T19:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T20:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T21:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T22:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-08T23:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T00:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T01:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T02:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T04:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T05:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T06:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T07:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T08:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T09:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T10:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T11:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T12:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T13:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T14:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 0,
+      "date": 2018-03-09T15:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "countervalue": 7540.139797678843,
+      "date": 2018-03-09T16:59:59.999Z,
+      "value": 2660178,
+    },
+    Object {
+      "countervalue": 7540.139797678843,
+      "date": 2018-03-09T17:59:59.999Z,
+      "value": 2660178,
+    },
+    Object {
+      "countervalue": 7540.139797678843,
+      "date": 2018-03-09T18:59:59.999Z,
+      "value": 2660178,
+    },
+    Object {
+      "countervalue": 7540.139797678843,
+      "date": 2018-03-09T19:59:59.999Z,
+      "value": 2660178,
+    },
+    Object {
+      "countervalue": 7540.139797678843,
+      "date": 2018-03-09T20:59:59.999Z,
+      "value": 2660178,
+    },
+    Object {
+      "countervalue": 14961.173199305143,
+      "date": 2018-03-09T21:59:59.999Z,
+      "value": 5278335,
+    },
+    Object {
+      "countervalue": 14961.173199305143,
+      "date": 2018-03-09T22:59:59.999Z,
+      "value": 5278335,
+    },
+    Object {
+      "countervalue": 15434.492227029901,
+      "date": 2018-03-09T23:59:59.999Z,
+      "value": 5445323,
+    },
+    Object {
+      "countervalue": 15031.295961534566,
+      "date": 2018-03-10T00:59:59.999Z,
+      "value": 5445323,
+    },
+    Object {
+      "countervalue": 15031.295961534566,
+      "date": 2018-03-10T01:59:59.999Z,
+      "value": 5445323,
+    },
+    Object {
+      "countervalue": 15031.295961534566,
+      "date": 2018-03-10T02:59:59.999Z,
+      "value": 5445323,
+    },
+    Object {
+      "countervalue": 15031.295961534566,
+      "date": 2018-03-10T03:59:59.999Z,
+      "value": 5445323,
+    },
+    Object {
+      "countervalue": 15031.295961534566,
+      "date": 2018-03-10T04:59:59.999Z,
+      "value": 5445323,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T05:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T06:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T07:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T08:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T09:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T10:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T11:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T12:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T13:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T14:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 15159.756921547762,
+      "date": 2018-03-10T15:59:59.999Z,
+      "value": 5491860,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T16:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T17:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T18:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T19:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T20:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T21:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T22:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 14087.469380451304,
+      "date": 2018-03-10T23:59:59.999Z,
+      "value": 5103407,
+    },
+    Object {
+      "countervalue": 10292.34635919654,
+      "date": 2018-03-11T00:59:59.999Z,
+      "value": 3810480,
+    },
+    Object {
+      "countervalue": 10292.34635919654,
+      "date": 2018-03-11T01:59:59.999Z,
+      "value": 3810480,
+    },
+    Object {
+      "countervalue": 12389.338190864231,
+      "date": 2018-03-11T02:59:59.999Z,
+      "value": 4586838,
+    },
+    Object {
+      "countervalue": 12675.491501113764,
+      "date": 2018-03-11T03:59:59.999Z,
+      "value": 4692779,
+    },
+    Object {
+      "countervalue": 13488.481738120177,
+      "date": 2018-03-11T04:59:59.999Z,
+      "value": 4993768,
+    },
+    Object {
+      "countervalue": 13488.481738120177,
+      "date": 2018-03-11T05:59:59.999Z,
+      "value": 4993768,
+    },
+    Object {
+      "countervalue": 13488.481738120177,
+      "date": 2018-03-11T06:59:59.999Z,
+      "value": 4993768,
+    },
+    Object {
+      "countervalue": 13488.481738120177,
+      "date": 2018-03-11T07:59:59.999Z,
+      "value": 4993768,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T08:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T09:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T10:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T11:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T12:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T13:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T14:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 20938.872299101018,
+      "date": 2018-03-11T15:59:59.999Z,
+      "value": 7752086,
+    },
+    Object {
+      "countervalue": 22139.319212390033,
+      "date": 2018-03-11T16:59:59.999Z,
+      "value": 8196521,
+    },
+    Object {
+      "countervalue": 22139.319212390033,
+      "date": 2018-03-11T17:59:59.999Z,
+      "value": 8196521,
+    },
+    Object {
+      "countervalue": 22139.319212390033,
+      "date": 2018-03-11T18:59:59.999Z,
+      "value": 8196521,
+    },
+    Object {
+      "countervalue": 22139.319212390033,
+      "date": 2018-03-11T19:59:59.999Z,
+      "value": 8196521,
+    },
+    Object {
+      "countervalue": 22139.319212390033,
+      "date": 2018-03-11T20:59:59.999Z,
+      "value": 8196521,
+    },
+    Object {
+      "countervalue": 22139.319212390033,
+      "date": 2018-03-11T21:59:59.999Z,
+      "value": 8196521,
+    },
+    Object {
+      "countervalue": 41942.083917730306,
+      "date": 2018-03-11T22:59:59.999Z,
+      "value": 15527992,
+    },
+    Object {
+      "countervalue": 41942.083917730306,
+      "date": 2018-03-11T23:59:59.999Z,
+      "value": 15527992,
+    },
+    Object {
+      "countervalue": 41278.703837955276,
+      "date": 2018-03-12T00:59:59.999Z,
+      "value": 15527992,
+    },
+    Object {
+      "countervalue": 27569.467155621784,
+      "date": 2018-03-12T01:59:59.999Z,
+      "value": 10370928,
+    },
+    Object {
+      "countervalue": 27569.467155621784,
+      "date": 2018-03-12T02:59:59.999Z,
+      "value": 10370928,
+    },
+    Object {
+      "countervalue": 27569.467155621784,
+      "date": 2018-03-12T03:59:59.999Z,
+      "value": 10370928,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T04:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T05:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T06:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T07:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T08:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T09:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T10:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 28415.082893455092,
+      "date": 2018-03-12T11:59:59.999Z,
+      "value": 10689027,
+    },
+    Object {
+      "countervalue": 29687.14444039734,
+      "date": 2018-03-12T12:59:59.999Z,
+      "value": 11167544,
+    },
+    Object {
+      "countervalue": 29687.14444039734,
+      "date": 2018-03-12T13:59:59.999Z,
+      "value": 11167544,
+    },
+    Object {
+      "countervalue": 29687.14444039734,
+      "date": 2018-03-12T14:59:59.999Z,
+      "value": 11167544,
+    },
+    Object {
+      "countervalue": 31852.488444637875,
+      "date": 2018-03-12T15:59:59.999Z,
+      "value": 11982091,
+    },
+    Object {
+      "countervalue": 31852.488444637875,
+      "date": 2018-03-12T16:59:59.999Z,
+      "value": 11982091,
+    },
+    Object {
+      "countervalue": 31852.488444637875,
+      "date": 2018-03-12T17:59:59.999Z,
+      "value": 11982091,
+    },
+    Object {
+      "countervalue": 31852.488444637875,
+      "date": 2018-03-12T18:59:59.999Z,
+      "value": 11982091,
+    },
+    Object {
+      "countervalue": 31852.488444637875,
+      "date": 2018-03-12T19:59:59.999Z,
+      "value": 11982091,
+    },
+    Object {
+      "countervalue": 28345.95006726547,
+      "date": 2018-03-12T20:59:59.999Z,
+      "value": 10663021,
+    },
+    Object {
+      "countervalue": 28345.95006726547,
+      "date": 2018-03-12T21:59:59.999Z,
+      "value": 10663021,
+    },
+    Object {
+      "countervalue": 28345.95006726547,
+      "date": 2018-03-12T22:59:59.999Z,
+      "value": 10663021,
+    },
+    Object {
+      "countervalue": 28345.95006726547,
+      "date": 2018-03-12T23:59:59.999Z,
+      "value": 10663021,
+    },
+    Object {
+      "countervalue": 30096.222688801656,
+      "date": 2018-03-13T00:59:59.999Z,
+      "value": 11434041,
+    },
+    Object {
+      "countervalue": 30096.222688801656,
+      "date": 2018-03-13T01:59:59.999Z,
+      "value": 11434041,
+    },
+    Object {
+      "countervalue": 30096.222688801656,
+      "date": 2018-03-13T02:59:59.999Z,
+      "value": 11434041,
+    },
+    Object {
+      "countervalue": 30096.222688801656,
+      "date": 2018-03-13T03:59:59.999Z,
+      "value": 11434041,
+    },
+    Object {
+      "countervalue": 30096.222688801656,
+      "date": 2018-03-13T04:59:59.999Z,
+      "value": 11434041,
+    },
+    Object {
+      "countervalue": 30096.222688801656,
+      "date": 2018-03-13T05:59:59.999Z,
+      "value": 11434041,
+    },
+    Object {
+      "countervalue": 43052.563247158076,
+      "date": 2018-03-13T06:59:59.999Z,
+      "value": 16356364,
+    },
+    Object {
+      "countervalue": 43052.563247158076,
+      "date": 2018-03-13T07:59:59.999Z,
+      "value": 16356364,
+    },
+    Object {
+      "countervalue": 43052.563247158076,
+      "date": 2018-03-13T08:59:59.999Z,
+      "value": 16356364,
+    },
+    Object {
+      "countervalue": 43052.563247158076,
+      "date": 2018-03-13T09:59:59.999Z,
+      "value": 16356364,
+    },
+    Object {
+      "countervalue": 43052.563247158076,
+      "date": 2018-03-13T10:59:59.999Z,
+      "value": 16356364,
+    },
+    Object {
+      "countervalue": 43052.563247158076,
+      "date": 2018-03-13T11:59:59.999Z,
+      "value": 16356364,
+    },
+    Object {
+      "countervalue": 43052.563247158076,
+      "date": 2018-03-13T12:59:59.999Z,
+      "value": 16356364,
+    },
+    Object {
+      "countervalue": 44249.40629298922,
+      "date": 2018-03-13T13:59:59.999Z,
+      "value": 16811064,
+    },
+    Object {
+      "countervalue": 44249.40629298922,
+      "date": 2018-03-13T14:59:59.999Z,
+      "value": 16811064,
+    },
+    Object {
+      "countervalue": 45369.8719588756,
+      "date": 2018-03-13T15:59:59.999Z,
+      "value": 17236747,
+    },
+    Object {
+      "countervalue": 45369.8719588756,
+      "date": 2018-03-13T16:59:59.999Z,
+      "value": 17236747,
+    },
+    Object {
+      "countervalue": 45369.8719588756,
+      "date": 2018-03-13T17:59:59.999Z,
+      "value": 17236747,
+    },
+    Object {
+      "countervalue": 45369.8719588756,
       "date": 2018-03-13T18:59:59.999Z,
       "value": 17236747,
     },
     Object {
-      "countervalue": 45150.675706470756,
+      "countervalue": 45369.8719588756,
       "date": 2018-03-13T19:59:59.999Z,
       "value": 17236747,
     },
     Object {
-      "countervalue": 45175.05486216644,
+      "countervalue": 45394.369469822486,
       "date": 2018-03-13T20:59:59.999Z,
       "value": 17246054,
     },
     Object {
-      "countervalue": 45175.05486216644,
+      "countervalue": 45394.369469822486,
       "date": 2018-03-13T21:59:59.999Z,
       "value": 17246054,
     },
     Object {
-      "countervalue": 26312.370091548677,
+      "countervalue": 26440.110658565933,
       "date": 2018-03-13T22:59:59.999Z,
       "value": 10045025,
     },
     Object {
-      "countervalue": 26312.370091548677,
+      "countervalue": 26440.110658565933,
       "date": 2018-03-13T23:59:59.999Z,
       "value": 10045025,
     },
@@ -1000,682 +3912,2620 @@ Object {
       "value": 6076315,
     },
   ],
+  "range": "week",
 }
 `;
 
-exports[`Portfolio getPortfolio should work with one account and is identically to that account history 1`] = `
-Array [
-  Object {
-    "date": 2018-03-07T18:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-07T19:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-07T20:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-07T21:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-07T22:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-07T23:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T00:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T01:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T02:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T04:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T05:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T06:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T07:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T08:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T09:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T10:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T11:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T12:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T13:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T14:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T15:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T16:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T17:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T18:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T19:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T20:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T21:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T22:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-08T23:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T00:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T01:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T02:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T03:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T04:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T05:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T06:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T07:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T08:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T09:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T10:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T11:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T12:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T13:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T14:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T15:59:59.999Z,
-    "value": 0,
-  },
-  Object {
-    "date": 2018-03-09T16:59:59.999Z,
-    "value": 6968.184553587052,
-  },
-  Object {
-    "date": 2018-03-09T17:59:59.999Z,
-    "value": 6968.184553587052,
-  },
-  Object {
-    "date": 2018-03-09T18:59:59.999Z,
-    "value": 6968.184553587052,
-  },
-  Object {
-    "date": 2018-03-09T19:59:59.999Z,
-    "value": 6968.184553587052,
-  },
-  Object {
-    "date": 2018-03-09T20:59:59.999Z,
-    "value": 6968.184553587052,
-  },
-  Object {
-    "date": 2018-03-09T21:59:59.999Z,
-    "value": 13826.2974942496,
-  },
-  Object {
-    "date": 2018-03-09T22:59:59.999Z,
-    "value": 13826.2974942496,
-  },
-  Object {
-    "date": 2018-03-09T23:59:59.999Z,
-    "value": 14263.713036455569,
-  },
-  Object {
-    "date": 2018-03-10T00:59:59.999Z,
-    "value": 14263.713036455569,
-  },
-  Object {
-    "date": 2018-03-10T01:59:59.999Z,
-    "value": 14263.713036455569,
-  },
-  Object {
-    "date": 2018-03-10T02:59:59.999Z,
-    "value": 14263.713036455569,
-  },
-  Object {
-    "date": 2018-03-10T03:59:59.999Z,
-    "value": 14263.713036455569,
-  },
-  Object {
-    "date": 2018-03-10T04:59:59.999Z,
-    "value": 14263.713036455569,
-  },
-  Object {
-    "date": 2018-03-10T05:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T06:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T07:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T08:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T09:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T10:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T11:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T12:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T13:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T14:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T15:59:59.999Z,
-    "value": 14385.614053819929,
-  },
-  Object {
-    "date": 2018-03-10T16:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-10T17:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-10T18:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-10T19:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-10T20:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-10T21:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-10T22:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-10T23:59:59.999Z,
-    "value": 13368.0835748841,
-  },
-  Object {
-    "date": 2018-03-11T00:59:59.999Z,
-    "value": 9981.335037637478,
-  },
-  Object {
-    "date": 2018-03-11T01:59:59.999Z,
-    "value": 9981.335037637478,
-  },
-  Object {
-    "date": 2018-03-11T02:59:59.999Z,
-    "value": 12014.960540763108,
-  },
-  Object {
-    "date": 2018-03-11T03:59:59.999Z,
-    "value": 12292.466948150723,
-  },
-  Object {
-    "date": 2018-03-11T04:59:59.999Z,
-    "value": 13080.8904674038,
-  },
-  Object {
-    "date": 2018-03-11T05:59:59.999Z,
-    "value": 13080.8904674038,
-  },
-  Object {
-    "date": 2018-03-11T06:59:59.999Z,
-    "value": 13080.8904674038,
-  },
-  Object {
-    "date": 2018-03-11T07:59:59.999Z,
-    "value": 13080.8904674038,
-  },
-  Object {
-    "date": 2018-03-11T08:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T09:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T10:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T11:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T12:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T13:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T14:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T15:59:59.999Z,
-    "value": 20306.14715379138,
-  },
-  Object {
-    "date": 2018-03-11T16:59:59.999Z,
-    "value": 21470.319288916715,
-  },
-  Object {
-    "date": 2018-03-11T17:59:59.999Z,
-    "value": 21470.319288916715,
-  },
-  Object {
-    "date": 2018-03-11T18:59:59.999Z,
-    "value": 21470.319288916715,
-  },
-  Object {
-    "date": 2018-03-11T19:59:59.999Z,
-    "value": 21470.319288916715,
-  },
-  Object {
-    "date": 2018-03-11T20:59:59.999Z,
-    "value": 21470.319288916715,
-  },
-  Object {
-    "date": 2018-03-11T21:59:59.999Z,
-    "value": 21470.319288916715,
-  },
-  Object {
-    "date": 2018-03-11T22:59:59.999Z,
-    "value": 40674.68943906134,
-  },
-  Object {
-    "date": 2018-03-11T23:59:59.999Z,
-    "value": 40674.68943906134,
-  },
-  Object {
-    "date": 2018-03-12T00:59:59.999Z,
-    "value": 40674.68943906134,
-  },
-  Object {
-    "date": 2018-03-12T01:59:59.999Z,
-    "value": 27166.054412886453,
-  },
-  Object {
-    "date": 2018-03-12T02:59:59.999Z,
-    "value": 27166.054412886453,
-  },
-  Object {
-    "date": 2018-03-12T03:59:59.999Z,
-    "value": 27166.054412886453,
-  },
-  Object {
-    "date": 2018-03-12T04:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T05:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T06:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T07:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T08:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T09:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T10:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T11:59:59.999Z,
-    "value": 27999.296601308237,
-  },
-  Object {
-    "date": 2018-03-12T12:59:59.999Z,
-    "value": 29252.74459164152,
-  },
-  Object {
-    "date": 2018-03-12T13:59:59.999Z,
-    "value": 29252.74459164152,
-  },
-  Object {
-    "date": 2018-03-12T14:59:59.999Z,
-    "value": 29252.74459164152,
-  },
-  Object {
-    "date": 2018-03-12T15:59:59.999Z,
-    "value": 31386.404002241365,
-  },
-  Object {
-    "date": 2018-03-12T16:59:59.999Z,
-    "value": 31386.404002241365,
-  },
-  Object {
-    "date": 2018-03-12T17:59:59.999Z,
-    "value": 31386.404002241365,
-  },
-  Object {
-    "date": 2018-03-12T18:59:59.999Z,
-    "value": 31386.404002241365,
-  },
-  Object {
-    "date": 2018-03-12T19:59:59.999Z,
-    "value": 31386.404002241365,
-  },
-  Object {
-    "date": 2018-03-12T20:59:59.999Z,
-    "value": 27931.17536750336,
-  },
-  Object {
-    "date": 2018-03-12T21:59:59.999Z,
-    "value": 27931.17536750336,
-  },
-  Object {
-    "date": 2018-03-12T22:59:59.999Z,
-    "value": 27931.17536750336,
-  },
-  Object {
-    "date": 2018-03-12T23:59:59.999Z,
-    "value": 27931.17536750336,
-  },
-  Object {
-    "date": 2018-03-13T00:59:59.999Z,
-    "value": 29950.81828407011,
-  },
-  Object {
-    "date": 2018-03-13T01:59:59.999Z,
-    "value": 29950.81828407011,
-  },
-  Object {
-    "date": 2018-03-13T02:59:59.999Z,
-    "value": 29950.81828407011,
-  },
-  Object {
-    "date": 2018-03-13T03:59:59.999Z,
-    "value": 29950.81828407011,
-  },
-  Object {
-    "date": 2018-03-13T04:59:59.999Z,
-    "value": 29950.81828407011,
-  },
-  Object {
-    "date": 2018-03-13T05:59:59.999Z,
-    "value": 29950.81828407011,
-  },
-  Object {
-    "date": 2018-03-13T06:59:59.999Z,
-    "value": 42844.56264868265,
-  },
-  Object {
-    "date": 2018-03-13T07:59:59.999Z,
-    "value": 42844.56264868265,
-  },
-  Object {
-    "date": 2018-03-13T08:59:59.999Z,
-    "value": 42844.56264868265,
-  },
-  Object {
-    "date": 2018-03-13T09:59:59.999Z,
-    "value": 42844.56264868265,
-  },
-  Object {
-    "date": 2018-03-13T10:59:59.999Z,
-    "value": 42844.56264868265,
-  },
-  Object {
-    "date": 2018-03-13T11:59:59.999Z,
-    "value": 42844.56264868265,
-  },
-  Object {
-    "date": 2018-03-13T12:59:59.999Z,
-    "value": 42844.56264868265,
-  },
-  Object {
-    "date": 2018-03-13T13:59:59.999Z,
-    "value": 44035.62336586625,
-  },
-  Object {
-    "date": 2018-03-13T14:59:59.999Z,
-    "value": 44035.62336586625,
-  },
-  Object {
-    "date": 2018-03-13T15:59:59.999Z,
-    "value": 45150.675706470756,
-  },
-  Object {
-    "date": 2018-03-13T16:59:59.999Z,
-    "value": 45150.675706470756,
-  },
-  Object {
-    "date": 2018-03-13T17:59:59.999Z,
-    "value": 45150.675706470756,
-  },
-  Object {
-    "date": 2018-03-13T18:59:59.999Z,
-    "value": 45150.675706470756,
-  },
-  Object {
-    "date": 2018-03-13T19:59:59.999Z,
-    "value": 45150.675706470756,
-  },
-  Object {
-    "date": 2018-03-13T20:59:59.999Z,
-    "value": 45175.05486216644,
-  },
-  Object {
-    "date": 2018-03-13T21:59:59.999Z,
-    "value": 45175.05486216644,
-  },
-  Object {
-    "date": 2018-03-13T22:59:59.999Z,
-    "value": 26312.370091548677,
-  },
-  Object {
-    "date": 2018-03-13T23:59:59.999Z,
-    "value": 26312.370091548677,
-  },
-  Object {
-    "date": 2018-03-14T00:59:59.999Z,
-    "value": 26312.370091548677,
-  },
-  Object {
-    "date": 2018-03-14T01:59:59.999Z,
-    "value": 26312.370091548677,
-  },
-  Object {
-    "date": 2018-03-14T02:59:59.999Z,
-    "value": 26312.370091548677,
-  },
-  Object {
-    "date": 2018-03-14T03:59:59.999Z,
-    "value": 26312.370091548677,
-  },
-  Object {
-    "date": 2018-03-14T04:59:59.999Z,
+exports[`Portfolio getPortfolio snapshot 1`] = `
+Object {
+  "accounts": Array [
+    Object {
+      "balance": "6076315",
+      "bitcoinResources": Object {
+        "utxos": Array [],
+      },
+      "blockHeight": 177467,
+      "creationDate": 2018-03-09T16:38:17.536Z,
+      "currency": Object {
+        "bitcoinLikeInfo": Object {
+          "P2PKH": 0,
+          "P2SH": 5,
+          "XPUBVersion": 76067358,
+        },
+        "blockAvgTime": 900,
+        "coinType": 0,
+        "color": "#ffae35",
+        "explorerViews": Array [
+          Object {
+            "address": "https://blockstream.info/address/$address",
+            "tx": "https://blockstream.info/tx/$hash",
+          },
+          Object {
+            "address": "https://www.blockchain.com/btc/address/$address",
+            "tx": "https://blockchain.info/btc/tx/$hash",
+          },
+        ],
+        "family": "bitcoin",
+        "id": "bitcoin",
+        "managerAppName": "Bitcoin",
+        "name": "Bitcoin",
+        "scheme": "bitcoin",
+        "supportsNativeSegwit": true,
+        "supportsSegwit": true,
+        "symbol": "Ƀ",
+        "ticker": "BTC",
+        "type": "CryptoCurrency",
+        "units": Array [
+          Object {
+            "code": "BTC",
+            "magnitude": 8,
+            "name": "bitcoin",
+          },
+          Object {
+            "code": "mBTC",
+            "magnitude": 5,
+            "name": "mBTC",
+          },
+          Object {
+            "code": "bit",
+            "magnitude": 2,
+            "name": "bit",
+          },
+          Object {
+            "code": "sat",
+            "magnitude": 0,
+            "name": "satoshi",
+          },
+        ],
+      },
+      "derivationMode": "",
+      "freshAddress": "1cBCSa9YcE6XfhmYEP7NntiTyrbiTw",
+      "freshAddressPath": "44'/0'/0'/0/0",
+      "freshAddresses": Array [
+        Object {
+          "address": "1cBCSa9YcE6XfhmYEP7NntiTyrbiTw",
+          "derivationPath": "44'/0'/0'/0/0",
+        },
+      ],
+      "id": "mock:1:bitcoin:bitcoin_1:",
+      "index": 1,
+      "lastSyncDate": 2018-03-14T17:34:42.000Z,
+      "name": "TrZDNXRWV3aQmWDi7",
+      "operations": Array [
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "17F65B761230E14BF47D5B04D42A8378D132CAF8354873EDFCE1EC0BD41AABD6",
+          "blockHeight": 177414,
+          "date": 2018-03-14T04:06:36.779Z,
+          "extra": Object {},
+          "fee": "39687",
+          "hash": "B41CD0AAD8DD71148740704C20EFA7C9992314DC2FFABB2F3D5C2348FC8E8B21",
+          "id": "mock_op_0_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1hCqneqmmFRr5Ww8c4Vx9rAa59Wg62",
+          ],
+          "senders": Array [
+            "1xGDWz7grjKnaVApfpQpYJJa1RDXWJ1JW",
+          ],
+          "type": "OUT",
+          "value": "3968710",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "A002C336CE711A4AD6BE40C15390D2FFBCCFEFCABF734140639E56A80D287AB2",
+          "blockHeight": 177392,
+          "date": 2018-03-13T22:45:44.966Z,
+          "extra": Object {},
+          "fee": "72010",
+          "hash": "15138B4F66097DF7101194E25B5A8FAEAEBBF2C03F7614E9D5B693501D621F3C",
+          "id": "mock_op_1_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "15x3KP1kN7PQgNjtGuCtL2yhAxL",
+          ],
+          "senders": Array [
+            "1eD4EofeGi6DMWkyqRdqLxWEeAUS",
+          ],
+          "type": "OUT",
+          "value": "7201029",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "115F2FFC9CBD40B5A32254182395EC3F114526A3CACE646DB5C002F94D2CA025",
+          "blockHeight": 177383,
+          "date": 2018-03-13T20:32:06.750Z,
+          "extra": Object {},
+          "fee": "93",
+          "hash": "71DB81B185B4B792C2B476D5E803624CB9DD4CD476283DEB3FAF4936DC9A16F1",
+          "id": "mock_op_2_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1uLPXUvPM4K1rdPRcnwN1KQnTG",
+          ],
+          "senders": Array [
+            "1BF5ACuf7xzZ9YhX4DmRXtjUPvF693",
+          ],
+          "type": "IN",
+          "value": "9307",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "B30ADF70081BD05FD8DBC0A375520633E1C08D41D93DDD70813AED3198B4843A",
+          "blockHeight": 177362,
+          "date": 2018-03-13T15:14:09.504Z,
+          "extra": Object {},
+          "fee": "4257",
+          "hash": "3302917B89433E254A15A08F22C804C6F6FD77230660668F9065D4CEE636C3B0",
+          "id": "mock_op_3_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1WtDecB7L8ZsbM4pj7UBxjwziJ2aVTA",
+          ],
+          "senders": Array [
+            "1uhiYzBvyBhimzaz83xLREWuPkZ1GY",
+          ],
+          "type": "IN",
+          "value": "425683",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "EBB270D5BFACDF2807C539F68BCB09DD0608C7C7DA633D72C5DF713728502226",
+          "blockHeight": 177357,
+          "date": 2018-03-13T13:51:22.677Z,
+          "extra": Object {},
+          "fee": "4547",
+          "hash": "9A0DFE6109F08A1D69EFD02B7B2799547445186F8B02BE108D0E988A350AB464",
+          "id": "mock_op_4_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1qBaxVFTBNVgiDR5V9uHK92dK9Fa7TB9",
+          ],
+          "senders": Array [
+            "1X3mhJwjHxYGkY6FGPFLuzThjA",
+          ],
+          "type": "IN",
+          "value": "454700",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "3AC1F80A70187771F19CCB575A47BC0955A8C022AABEEB991F7E9525E57FDDB2",
+          "blockHeight": 177327,
+          "date": 2018-03-13T06:29:34.733Z,
+          "extra": Object {},
+          "fee": "49223",
+          "hash": "1CE25F2A490FBB1EFA5C7511E6645B8D6DE3F5570037A33DC32C111DCD74ADE9",
+          "id": "mock_op_5_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1u2snDSmBmQb217RvzpJJYnamd",
+          ],
+          "senders": Array [
+            "19xKxbmF6H7FiW3XXb5tvEKsg7rSh5y",
+          ],
+          "type": "IN",
+          "value": "4922323",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "57C2CA19F30A821C12692476A1DFB447BC82F96109AB3C362233C74CA8AE3438",
+          "blockHeight": 177302,
+          "date": 2018-03-13T00:05:08.986Z,
+          "extra": Object {},
+          "fee": "7710",
+          "hash": "343D1076CA74A6C450686959500D30945309EBE129FA7E05B79CB2DF70F0731B",
+          "id": "mock_op_6_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1mBuVU2XmfNLcQz2SY5hfFBKgwEEnV6u8v",
+          ],
+          "senders": Array [
+            "1SPknT8C4DaywRhJwsSXQSSDGX296kMFJAy",
+          ],
+          "type": "IN",
+          "value": "771020",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "7FB25C3C8F280EC7F562B8676A46ECB784A73BC774805312AF62F033EC39E00B",
+          "blockHeight": 177287,
+          "date": 2018-03-12T20:34:07.391Z,
+          "extra": Object {},
+          "fee": "13191",
+          "hash": "E46E4D308C259FD86311076A4DECA7E015F2D3F871E12A098C995880E2D3F00C",
+          "id": "mock_op_7_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "12ce35PKdXCCKHy4mtzhPsMeCd16L3RM15",
+          ],
+          "senders": Array [
+            "1mXGHc6GtoFfTrTSQJsxQuqnZZNEPA",
+          ],
+          "type": "OUT",
+          "value": "1319070",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5B2EA9C8817D2DA719442BA53CDE3D52C8D62522B74A13978BFCB4B8C21520C9",
+          "blockHeight": 177265,
+          "date": 2018-03-12T15:02:12.546Z,
+          "extra": Object {},
+          "fee": "8145",
+          "hash": "0AE9C123F9D0AC80BBE534067B30F419C5B6BAA0D2181FA4902A672868F4B2FA",
+          "id": "mock_op_8_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1YMz86MGJR2WSiduokQZUi6RwmZnnLMS",
+          ],
+          "senders": Array [
+            "1dMo8Us5qYyCWkWJCrwY8xfmJvwejLre",
+          ],
+          "type": "IN",
+          "value": "814547",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "7D2ADC4D0A326F10BEC471038F562676439B69D6A1546EE95F2AF39CB95B52DB",
+          "blockHeight": 177255,
+          "date": 2018-03-12T12:26:06.942Z,
+          "extra": Object {},
+          "fee": "4785",
+          "hash": "A9A7F14C15D1A304E0D9464238C1C8B533B2472574912F9C629821A4B24BD755",
+          "id": "mock_op_9_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1D3bsfY4gJs27Qz8VC7bD2A6Dc7zL8qhY",
+          ],
+          "senders": Array [
+            "1z3ka19kTskcb4KJx1ky9Ctg7L9Afwu",
+          ],
+          "type": "IN",
+          "value": "478517",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BD4AA8EF647FF22776027F08F11008B047EA6279F6B47DAEA835EF570CC5EA98",
+          "blockHeight": 177222,
+          "date": 2018-03-12T04:09:30.189Z,
+          "extra": Object {},
+          "fee": "3181",
+          "hash": "6E8AEA8B73376E8C48044F644F578BE8A24DC94A11400156D0F111C5DE1A4819",
+          "id": "mock_op_10_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1YGHGZm1EPmHw5uR6FFhMWmJ2wh1",
+          ],
+          "senders": Array [
+            "121PsFaZoDewU9h5k1VVEMnLNK5",
+          ],
+          "type": "IN",
+          "value": "318099",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "4A2BEF155CC506176D73470FB95AB66BBFA5FDE1C1478EFB2666708B467A0D52",
+          "blockHeight": 177210,
+          "date": 2018-03-12T01:09:16.411Z,
+          "extra": Object {},
+          "fee": "51571",
+          "hash": "AA488841FB6541A1A63E4B7AEF4A2AA665D047A8E7A4CC320A4E71A999AB24ED",
+          "id": "mock_op_11_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1TW58JrKpLLRpSTE4tyK3Vsem3ehphH",
+          ],
+          "senders": Array [
+            "1kzWFNwMoSNwSdrWTEZBgpveE56",
+          ],
+          "type": "OUT",
+          "value": "5157064",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "6BF31AEFF2AD402728ECFA1AE9016EF418FAA11C03E09DAF4153F07EBB0C4413",
+          "blockHeight": 177200,
+          "date": 2018-03-11T22:36:45.105Z,
+          "extra": Object {},
+          "fee": "73315",
+          "hash": "0DFD1148799BD54738BC692A544498A9E5059CCCB390D80FA57177C2D2DEC4BE",
+          "id": "mock_op_12_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "12gqTQhiCabnbjTVtzJvhALdf6N",
+          ],
+          "senders": Array [
+            "1TmRqUg5nx2QRsMqJ4L9YpHzhL",
+          ],
+          "type": "IN",
+          "value": "7331471",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "65DBC386774116A33BB6D306096167CEA563F129438A9E37ABD5E5EDFFD71D60",
+          "blockHeight": 177176,
+          "date": 2018-03-11T16:44:37.666Z,
+          "extra": Object {},
+          "fee": "4444",
+          "hash": "D9F3EE086D080D5199DD64639B7D09E07455548F4ECE192D6729D3F9C6D00E69",
+          "id": "mock_op_13_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1uFhd4ujcaVz27Nsg9wPTSvmi2v",
+          ],
+          "senders": Array [
+            "1swkjEo6pXYpkB1cTwTcWrpPa8dZ",
+          ],
+          "type": "IN",
+          "value": "444435",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "AABF5EA2D4AC2F74072DDB10E64EF692A50843F115CEC76627DA5D9E3DE7D990",
+          "blockHeight": 177142,
+          "date": 2018-03-11T08:07:36.512Z,
+          "extra": Object {},
+          "fee": "27583",
+          "hash": "68D737B252DE8631E36CD0A297C9693497AD464FD98A57B6B8D046F5A5302D73",
+          "id": "mock_op_14_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1gD36WWeRaQNyMDgMbwK2FVHXz6Yg",
+          ],
+          "senders": Array [
+            "1nLCJA1jeNXocqoXPWGAZmavabZvMfd",
+          ],
+          "type": "IN",
+          "value": "2758318",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5222F059B6AEA612A1801A01C4871D0EA6BABCB51C78976706FCE82CCA626076",
+          "blockHeight": 177126,
+          "date": 2018-03-11T04:19:06.057Z,
+          "extra": Object {},
+          "fee": "3010",
+          "hash": "ABB9140EE15CE12DFED9DA56C27EEEA0E9A224F4AB0264DE9B5AE5AC0926CD91",
+          "id": "mock_op_15_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1Lxg52z6PqEJBY9f9R3XPbeijmU7QYa",
+          ],
+          "senders": Array [
+            "18TohmCNG25584KrPNTVQ43XBFpb2V8sEA",
+          ],
+          "type": "IN",
+          "value": "300989",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BB5A5706386BF43C4C5319F78542BC46A69F4D4DAB016C8EBD0240BFDE794D9D",
+          "blockHeight": 177123,
+          "date": 2018-03-11T03:32:08.183Z,
+          "extra": Object {},
+          "fee": "1059",
+          "hash": "454A3EE94C00068335DC1D7F03F1046FAB84940214AC3194EA666A2E35EE61E8",
+          "id": "mock_op_16_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1QXtAnvxV1KYcSHsdUR25yhafsJwryP5Q",
+          ],
+          "senders": Array [
+            "1PgV3MPYPUvrzXQ8yxRhPYw1azGmbfwp",
+          ],
+          "type": "IN",
+          "value": "105941",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "1C2F8FD1B22B64F295A126A74125F08A1DAEE2CBF214BD43CFB3A1F9871EF818",
+          "blockHeight": 177121,
+          "date": 2018-03-11T02:54:21.807Z,
+          "extra": Object {},
+          "fee": "4150",
+          "hash": "F6B20BDFF782EE539584C0480F07317893D1AEC959F2C23B0C08E20EEAC06E5F",
+          "id": "mock_op_17_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "11xh19kDKT7YGYPrTiqNb7Ac6e4",
+          ],
+          "senders": Array [
+            "1FmgQ7Yae3EJSa8BdEjvwvSTf1JhV9Gkup",
+          ],
+          "type": "OUT",
+          "value": "415007",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5C918033586B87657120AB49AC80B0BB154799443358EDB77D3D9F7BD4D6EC1D",
+          "blockHeight": 177119,
+          "date": 2018-03-11T02:22:25.719Z,
+          "extra": Object {},
+          "fee": "11914",
+          "hash": "24A0D405882FFA0371DDB0F49F2EAA0F4C13DE845DBD6D529BEEDD22983DD58E",
+          "id": "mock_op_18_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1Bk41iSAgMmkPhHkktuKUv62oQJtnJ4",
+          ],
+          "senders": Array [
+            "1DHp2SbLowZRRzg25J2dbDwn3h2eMp6FvY",
+          ],
+          "type": "IN",
+          "value": "1191365",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "548D8041D3348FB0D938244EEE13854C858C4B3A2E5C1061D9EA48BA4BA8E282",
+          "blockHeight": 177113,
+          "date": 2018-03-11T00:50:37.388Z,
+          "extra": Object {},
+          "fee": "12929",
+          "hash": "4DE4E06CE66EE13C47D3D7E5AFE7192E7531D3CDBC9B8F424165382BC25F0F62",
+          "id": "mock_op_19_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1GCqPuRBrZrWKR3AhRhf63DnZuzQLmKUj",
+          ],
+          "senders": Array [
+            "1bj1YmAH9wuh8bcqQXsfeA7DFzo",
+          ],
+          "type": "OUT",
+          "value": "1292927",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BD0537B3DC641C71FB69595CBEEF9B16F5300EE6FE9B5071624FA8C48B061551",
+          "blockHeight": 177079,
+          "date": 2018-03-10T16:34:02.750Z,
+          "extra": Object {},
+          "fee": "3885",
+          "hash": "C9B4D5D184802310274191CE09C9A43C6D6B7E9236B5093A5CABF2C57D3779BD",
+          "id": "mock_op_20_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1b4kCL3YAYtufBz3cPTFsRrQhAGmGgRe6k",
+          ],
+          "senders": Array [
+            "1bxZHczrAxp16nH7pgVk4G93u3Pfmv2e",
+          ],
+          "type": "OUT",
+          "value": "388453",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "D6F062724A12C3F102261C1A82676CE7664F9895B8B5AE32882B659AC7C951AA",
+          "blockHeight": 177036,
+          "date": 2018-03-10T05:39:50.355Z,
+          "extra": Object {},
+          "fee": "465",
+          "hash": "0A0EFA5BB633D5284B4F9808243378395BACC26939F96D9F517D251D5E545F82",
+          "id": "mock_op_21_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1iwTcAR1r4cHtnNipnp7C172ewVKCbeg",
+          ],
+          "senders": Array [
+            "1QdKaU9zTNrfkbW6fT11UL6WXw",
+          ],
+          "type": "IN",
+          "value": "46537",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "94A653344FCF016F13895695534453CFA3DA88DD1A0BFBC85D413061BDDC5288",
+          "blockHeight": 177011,
+          "date": 2018-03-09T23:20:21.502Z,
+          "extra": Object {},
+          "fee": "1670",
+          "hash": "8B492D3F80BF6D19586158C73E87250AA928AC79B323976E1DB22BE9B88A72B7",
+          "id": "mock_op_22_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1gtfk8wRxjnYGapXX5bcBfr2cr3HeYSZ",
+          ],
+          "senders": Array [
+            "1t1wVXHjgnHdRKQGute8ZPyqu8",
+          ],
+          "type": "IN",
+          "value": "166988",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "E829FC817D6462EE8AB9B50145DB42F6F2907C7694FA9798B372E7AEF84374A7",
+          "blockHeight": 177003,
+          "date": 2018-03-09T21:23:37.378Z,
+          "extra": Object {},
+          "fee": "26182",
+          "hash": "48ACD52E400F741190D2ABD05B64E1F11C2F4C93810F06A402338BA332A8B561",
+          "id": "mock_op_23_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1SKwf8L3X23zupQpNzVsdDAwPGRfthwbX4",
+          ],
+          "senders": Array [
+            "1V9GWexPz66aEt4D5iKNMUd3N6LQFBWsYtC",
+          ],
+          "type": "IN",
+          "value": "2618157",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "4D7AAB72F3B1FE94246BBB37BCBF693C52D5098EE71DFACC0F19CC9BA9D99058",
+          "blockHeight": 176984,
+          "date": 2018-03-09T16:38:17.536Z,
+          "extra": Object {},
+          "fee": "26602",
+          "hash": "12BA108093852A4C2AC3DCFCF023E5C7AA2F91E343D682FE763A6B36D269416D",
+          "id": "mock_op_24_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1VNAMnY3hmkSBzfTKtbL9Y7VoFFZ9",
+          ],
+          "senders": Array [
+            "1y2uTVeLwCorLj63SbWGgnZG9FDJ44GnzT8",
+          ],
+          "type": "IN",
+          "value": "2660178",
+        },
+      ],
+      "operationsCount": 25,
+      "pendingOperations": Array [],
+      "seedIdentifier": "mock",
+      "spendableBalance": "6076315",
+      "starred": false,
+      "swapHistory": Array [],
+      "type": "Account",
+      "unit": Object {
+        "code": "mBTC",
+        "magnitude": 5,
+        "name": "mBTC",
+      },
+      "used": true,
+      "xpub": "7B7A75F46C6737BEFD83E712DF394F589800621B09C3A49D713C810CA2FCC0AA",
+    },
+  ],
+  "availableAccounts": Array [
+    Object {
+      "balance": "6076315",
+      "bitcoinResources": Object {
+        "utxos": Array [],
+      },
+      "blockHeight": 177467,
+      "creationDate": 2018-03-09T16:38:17.536Z,
+      "currency": Object {
+        "bitcoinLikeInfo": Object {
+          "P2PKH": 0,
+          "P2SH": 5,
+          "XPUBVersion": 76067358,
+        },
+        "blockAvgTime": 900,
+        "coinType": 0,
+        "color": "#ffae35",
+        "explorerViews": Array [
+          Object {
+            "address": "https://blockstream.info/address/$address",
+            "tx": "https://blockstream.info/tx/$hash",
+          },
+          Object {
+            "address": "https://www.blockchain.com/btc/address/$address",
+            "tx": "https://blockchain.info/btc/tx/$hash",
+          },
+        ],
+        "family": "bitcoin",
+        "id": "bitcoin",
+        "managerAppName": "Bitcoin",
+        "name": "Bitcoin",
+        "scheme": "bitcoin",
+        "supportsNativeSegwit": true,
+        "supportsSegwit": true,
+        "symbol": "Ƀ",
+        "ticker": "BTC",
+        "type": "CryptoCurrency",
+        "units": Array [
+          Object {
+            "code": "BTC",
+            "magnitude": 8,
+            "name": "bitcoin",
+          },
+          Object {
+            "code": "mBTC",
+            "magnitude": 5,
+            "name": "mBTC",
+          },
+          Object {
+            "code": "bit",
+            "magnitude": 2,
+            "name": "bit",
+          },
+          Object {
+            "code": "sat",
+            "magnitude": 0,
+            "name": "satoshi",
+          },
+        ],
+      },
+      "derivationMode": "",
+      "freshAddress": "1cBCSa9YcE6XfhmYEP7NntiTyrbiTw",
+      "freshAddressPath": "44'/0'/0'/0/0",
+      "freshAddresses": Array [
+        Object {
+          "address": "1cBCSa9YcE6XfhmYEP7NntiTyrbiTw",
+          "derivationPath": "44'/0'/0'/0/0",
+        },
+      ],
+      "id": "mock:1:bitcoin:bitcoin_1:",
+      "index": 1,
+      "lastSyncDate": 2018-03-14T17:34:42.000Z,
+      "name": "TrZDNXRWV3aQmWDi7",
+      "operations": Array [
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "17F65B761230E14BF47D5B04D42A8378D132CAF8354873EDFCE1EC0BD41AABD6",
+          "blockHeight": 177414,
+          "date": 2018-03-14T04:06:36.779Z,
+          "extra": Object {},
+          "fee": "39687",
+          "hash": "B41CD0AAD8DD71148740704C20EFA7C9992314DC2FFABB2F3D5C2348FC8E8B21",
+          "id": "mock_op_0_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1hCqneqmmFRr5Ww8c4Vx9rAa59Wg62",
+          ],
+          "senders": Array [
+            "1xGDWz7grjKnaVApfpQpYJJa1RDXWJ1JW",
+          ],
+          "type": "OUT",
+          "value": "3968710",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "A002C336CE711A4AD6BE40C15390D2FFBCCFEFCABF734140639E56A80D287AB2",
+          "blockHeight": 177392,
+          "date": 2018-03-13T22:45:44.966Z,
+          "extra": Object {},
+          "fee": "72010",
+          "hash": "15138B4F66097DF7101194E25B5A8FAEAEBBF2C03F7614E9D5B693501D621F3C",
+          "id": "mock_op_1_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "15x3KP1kN7PQgNjtGuCtL2yhAxL",
+          ],
+          "senders": Array [
+            "1eD4EofeGi6DMWkyqRdqLxWEeAUS",
+          ],
+          "type": "OUT",
+          "value": "7201029",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "115F2FFC9CBD40B5A32254182395EC3F114526A3CACE646DB5C002F94D2CA025",
+          "blockHeight": 177383,
+          "date": 2018-03-13T20:32:06.750Z,
+          "extra": Object {},
+          "fee": "93",
+          "hash": "71DB81B185B4B792C2B476D5E803624CB9DD4CD476283DEB3FAF4936DC9A16F1",
+          "id": "mock_op_2_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1uLPXUvPM4K1rdPRcnwN1KQnTG",
+          ],
+          "senders": Array [
+            "1BF5ACuf7xzZ9YhX4DmRXtjUPvF693",
+          ],
+          "type": "IN",
+          "value": "9307",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "B30ADF70081BD05FD8DBC0A375520633E1C08D41D93DDD70813AED3198B4843A",
+          "blockHeight": 177362,
+          "date": 2018-03-13T15:14:09.504Z,
+          "extra": Object {},
+          "fee": "4257",
+          "hash": "3302917B89433E254A15A08F22C804C6F6FD77230660668F9065D4CEE636C3B0",
+          "id": "mock_op_3_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1WtDecB7L8ZsbM4pj7UBxjwziJ2aVTA",
+          ],
+          "senders": Array [
+            "1uhiYzBvyBhimzaz83xLREWuPkZ1GY",
+          ],
+          "type": "IN",
+          "value": "425683",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "EBB270D5BFACDF2807C539F68BCB09DD0608C7C7DA633D72C5DF713728502226",
+          "blockHeight": 177357,
+          "date": 2018-03-13T13:51:22.677Z,
+          "extra": Object {},
+          "fee": "4547",
+          "hash": "9A0DFE6109F08A1D69EFD02B7B2799547445186F8B02BE108D0E988A350AB464",
+          "id": "mock_op_4_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1qBaxVFTBNVgiDR5V9uHK92dK9Fa7TB9",
+          ],
+          "senders": Array [
+            "1X3mhJwjHxYGkY6FGPFLuzThjA",
+          ],
+          "type": "IN",
+          "value": "454700",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "3AC1F80A70187771F19CCB575A47BC0955A8C022AABEEB991F7E9525E57FDDB2",
+          "blockHeight": 177327,
+          "date": 2018-03-13T06:29:34.733Z,
+          "extra": Object {},
+          "fee": "49223",
+          "hash": "1CE25F2A490FBB1EFA5C7511E6645B8D6DE3F5570037A33DC32C111DCD74ADE9",
+          "id": "mock_op_5_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1u2snDSmBmQb217RvzpJJYnamd",
+          ],
+          "senders": Array [
+            "19xKxbmF6H7FiW3XXb5tvEKsg7rSh5y",
+          ],
+          "type": "IN",
+          "value": "4922323",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "57C2CA19F30A821C12692476A1DFB447BC82F96109AB3C362233C74CA8AE3438",
+          "blockHeight": 177302,
+          "date": 2018-03-13T00:05:08.986Z,
+          "extra": Object {},
+          "fee": "7710",
+          "hash": "343D1076CA74A6C450686959500D30945309EBE129FA7E05B79CB2DF70F0731B",
+          "id": "mock_op_6_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1mBuVU2XmfNLcQz2SY5hfFBKgwEEnV6u8v",
+          ],
+          "senders": Array [
+            "1SPknT8C4DaywRhJwsSXQSSDGX296kMFJAy",
+          ],
+          "type": "IN",
+          "value": "771020",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "7FB25C3C8F280EC7F562B8676A46ECB784A73BC774805312AF62F033EC39E00B",
+          "blockHeight": 177287,
+          "date": 2018-03-12T20:34:07.391Z,
+          "extra": Object {},
+          "fee": "13191",
+          "hash": "E46E4D308C259FD86311076A4DECA7E015F2D3F871E12A098C995880E2D3F00C",
+          "id": "mock_op_7_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "12ce35PKdXCCKHy4mtzhPsMeCd16L3RM15",
+          ],
+          "senders": Array [
+            "1mXGHc6GtoFfTrTSQJsxQuqnZZNEPA",
+          ],
+          "type": "OUT",
+          "value": "1319070",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5B2EA9C8817D2DA719442BA53CDE3D52C8D62522B74A13978BFCB4B8C21520C9",
+          "blockHeight": 177265,
+          "date": 2018-03-12T15:02:12.546Z,
+          "extra": Object {},
+          "fee": "8145",
+          "hash": "0AE9C123F9D0AC80BBE534067B30F419C5B6BAA0D2181FA4902A672868F4B2FA",
+          "id": "mock_op_8_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1YMz86MGJR2WSiduokQZUi6RwmZnnLMS",
+          ],
+          "senders": Array [
+            "1dMo8Us5qYyCWkWJCrwY8xfmJvwejLre",
+          ],
+          "type": "IN",
+          "value": "814547",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "7D2ADC4D0A326F10BEC471038F562676439B69D6A1546EE95F2AF39CB95B52DB",
+          "blockHeight": 177255,
+          "date": 2018-03-12T12:26:06.942Z,
+          "extra": Object {},
+          "fee": "4785",
+          "hash": "A9A7F14C15D1A304E0D9464238C1C8B533B2472574912F9C629821A4B24BD755",
+          "id": "mock_op_9_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1D3bsfY4gJs27Qz8VC7bD2A6Dc7zL8qhY",
+          ],
+          "senders": Array [
+            "1z3ka19kTskcb4KJx1ky9Ctg7L9Afwu",
+          ],
+          "type": "IN",
+          "value": "478517",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BD4AA8EF647FF22776027F08F11008B047EA6279F6B47DAEA835EF570CC5EA98",
+          "blockHeight": 177222,
+          "date": 2018-03-12T04:09:30.189Z,
+          "extra": Object {},
+          "fee": "3181",
+          "hash": "6E8AEA8B73376E8C48044F644F578BE8A24DC94A11400156D0F111C5DE1A4819",
+          "id": "mock_op_10_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1YGHGZm1EPmHw5uR6FFhMWmJ2wh1",
+          ],
+          "senders": Array [
+            "121PsFaZoDewU9h5k1VVEMnLNK5",
+          ],
+          "type": "IN",
+          "value": "318099",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "4A2BEF155CC506176D73470FB95AB66BBFA5FDE1C1478EFB2666708B467A0D52",
+          "blockHeight": 177210,
+          "date": 2018-03-12T01:09:16.411Z,
+          "extra": Object {},
+          "fee": "51571",
+          "hash": "AA488841FB6541A1A63E4B7AEF4A2AA665D047A8E7A4CC320A4E71A999AB24ED",
+          "id": "mock_op_11_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1TW58JrKpLLRpSTE4tyK3Vsem3ehphH",
+          ],
+          "senders": Array [
+            "1kzWFNwMoSNwSdrWTEZBgpveE56",
+          ],
+          "type": "OUT",
+          "value": "5157064",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "6BF31AEFF2AD402728ECFA1AE9016EF418FAA11C03E09DAF4153F07EBB0C4413",
+          "blockHeight": 177200,
+          "date": 2018-03-11T22:36:45.105Z,
+          "extra": Object {},
+          "fee": "73315",
+          "hash": "0DFD1148799BD54738BC692A544498A9E5059CCCB390D80FA57177C2D2DEC4BE",
+          "id": "mock_op_12_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "12gqTQhiCabnbjTVtzJvhALdf6N",
+          ],
+          "senders": Array [
+            "1TmRqUg5nx2QRsMqJ4L9YpHzhL",
+          ],
+          "type": "IN",
+          "value": "7331471",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "65DBC386774116A33BB6D306096167CEA563F129438A9E37ABD5E5EDFFD71D60",
+          "blockHeight": 177176,
+          "date": 2018-03-11T16:44:37.666Z,
+          "extra": Object {},
+          "fee": "4444",
+          "hash": "D9F3EE086D080D5199DD64639B7D09E07455548F4ECE192D6729D3F9C6D00E69",
+          "id": "mock_op_13_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1uFhd4ujcaVz27Nsg9wPTSvmi2v",
+          ],
+          "senders": Array [
+            "1swkjEo6pXYpkB1cTwTcWrpPa8dZ",
+          ],
+          "type": "IN",
+          "value": "444435",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "AABF5EA2D4AC2F74072DDB10E64EF692A50843F115CEC76627DA5D9E3DE7D990",
+          "blockHeight": 177142,
+          "date": 2018-03-11T08:07:36.512Z,
+          "extra": Object {},
+          "fee": "27583",
+          "hash": "68D737B252DE8631E36CD0A297C9693497AD464FD98A57B6B8D046F5A5302D73",
+          "id": "mock_op_14_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1gD36WWeRaQNyMDgMbwK2FVHXz6Yg",
+          ],
+          "senders": Array [
+            "1nLCJA1jeNXocqoXPWGAZmavabZvMfd",
+          ],
+          "type": "IN",
+          "value": "2758318",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5222F059B6AEA612A1801A01C4871D0EA6BABCB51C78976706FCE82CCA626076",
+          "blockHeight": 177126,
+          "date": 2018-03-11T04:19:06.057Z,
+          "extra": Object {},
+          "fee": "3010",
+          "hash": "ABB9140EE15CE12DFED9DA56C27EEEA0E9A224F4AB0264DE9B5AE5AC0926CD91",
+          "id": "mock_op_15_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1Lxg52z6PqEJBY9f9R3XPbeijmU7QYa",
+          ],
+          "senders": Array [
+            "18TohmCNG25584KrPNTVQ43XBFpb2V8sEA",
+          ],
+          "type": "IN",
+          "value": "300989",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BB5A5706386BF43C4C5319F78542BC46A69F4D4DAB016C8EBD0240BFDE794D9D",
+          "blockHeight": 177123,
+          "date": 2018-03-11T03:32:08.183Z,
+          "extra": Object {},
+          "fee": "1059",
+          "hash": "454A3EE94C00068335DC1D7F03F1046FAB84940214AC3194EA666A2E35EE61E8",
+          "id": "mock_op_16_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1QXtAnvxV1KYcSHsdUR25yhafsJwryP5Q",
+          ],
+          "senders": Array [
+            "1PgV3MPYPUvrzXQ8yxRhPYw1azGmbfwp",
+          ],
+          "type": "IN",
+          "value": "105941",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "1C2F8FD1B22B64F295A126A74125F08A1DAEE2CBF214BD43CFB3A1F9871EF818",
+          "blockHeight": 177121,
+          "date": 2018-03-11T02:54:21.807Z,
+          "extra": Object {},
+          "fee": "4150",
+          "hash": "F6B20BDFF782EE539584C0480F07317893D1AEC959F2C23B0C08E20EEAC06E5F",
+          "id": "mock_op_17_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "11xh19kDKT7YGYPrTiqNb7Ac6e4",
+          ],
+          "senders": Array [
+            "1FmgQ7Yae3EJSa8BdEjvwvSTf1JhV9Gkup",
+          ],
+          "type": "OUT",
+          "value": "415007",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "5C918033586B87657120AB49AC80B0BB154799443358EDB77D3D9F7BD4D6EC1D",
+          "blockHeight": 177119,
+          "date": 2018-03-11T02:22:25.719Z,
+          "extra": Object {},
+          "fee": "11914",
+          "hash": "24A0D405882FFA0371DDB0F49F2EAA0F4C13DE845DBD6D529BEEDD22983DD58E",
+          "id": "mock_op_18_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1Bk41iSAgMmkPhHkktuKUv62oQJtnJ4",
+          ],
+          "senders": Array [
+            "1DHp2SbLowZRRzg25J2dbDwn3h2eMp6FvY",
+          ],
+          "type": "IN",
+          "value": "1191365",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "548D8041D3348FB0D938244EEE13854C858C4B3A2E5C1061D9EA48BA4BA8E282",
+          "blockHeight": 177113,
+          "date": 2018-03-11T00:50:37.388Z,
+          "extra": Object {},
+          "fee": "12929",
+          "hash": "4DE4E06CE66EE13C47D3D7E5AFE7192E7531D3CDBC9B8F424165382BC25F0F62",
+          "id": "mock_op_19_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1GCqPuRBrZrWKR3AhRhf63DnZuzQLmKUj",
+          ],
+          "senders": Array [
+            "1bj1YmAH9wuh8bcqQXsfeA7DFzo",
+          ],
+          "type": "OUT",
+          "value": "1292927",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "BD0537B3DC641C71FB69595CBEEF9B16F5300EE6FE9B5071624FA8C48B061551",
+          "blockHeight": 177079,
+          "date": 2018-03-10T16:34:02.750Z,
+          "extra": Object {},
+          "fee": "3885",
+          "hash": "C9B4D5D184802310274191CE09C9A43C6D6B7E9236B5093A5CABF2C57D3779BD",
+          "id": "mock_op_20_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1b4kCL3YAYtufBz3cPTFsRrQhAGmGgRe6k",
+          ],
+          "senders": Array [
+            "1bxZHczrAxp16nH7pgVk4G93u3Pfmv2e",
+          ],
+          "type": "OUT",
+          "value": "388453",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "D6F062724A12C3F102261C1A82676CE7664F9895B8B5AE32882B659AC7C951AA",
+          "blockHeight": 177036,
+          "date": 2018-03-10T05:39:50.355Z,
+          "extra": Object {},
+          "fee": "465",
+          "hash": "0A0EFA5BB633D5284B4F9808243378395BACC26939F96D9F517D251D5E545F82",
+          "id": "mock_op_21_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1iwTcAR1r4cHtnNipnp7C172ewVKCbeg",
+          ],
+          "senders": Array [
+            "1QdKaU9zTNrfkbW6fT11UL6WXw",
+          ],
+          "type": "IN",
+          "value": "46537",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "94A653344FCF016F13895695534453CFA3DA88DD1A0BFBC85D413061BDDC5288",
+          "blockHeight": 177011,
+          "date": 2018-03-09T23:20:21.502Z,
+          "extra": Object {},
+          "fee": "1670",
+          "hash": "8B492D3F80BF6D19586158C73E87250AA928AC79B323976E1DB22BE9B88A72B7",
+          "id": "mock_op_22_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1gtfk8wRxjnYGapXX5bcBfr2cr3HeYSZ",
+          ],
+          "senders": Array [
+            "1t1wVXHjgnHdRKQGute8ZPyqu8",
+          ],
+          "type": "IN",
+          "value": "166988",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "E829FC817D6462EE8AB9B50145DB42F6F2907C7694FA9798B372E7AEF84374A7",
+          "blockHeight": 177003,
+          "date": 2018-03-09T21:23:37.378Z,
+          "extra": Object {},
+          "fee": "26182",
+          "hash": "48ACD52E400F741190D2ABD05B64E1F11C2F4C93810F06A402338BA332A8B561",
+          "id": "mock_op_23_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1SKwf8L3X23zupQpNzVsdDAwPGRfthwbX4",
+          ],
+          "senders": Array [
+            "1V9GWexPz66aEt4D5iKNMUd3N6LQFBWsYtC",
+          ],
+          "type": "IN",
+          "value": "2618157",
+        },
+        Object {
+          "accountId": "mock:1:bitcoin:bitcoin_1:",
+          "blockHash": "4D7AAB72F3B1FE94246BBB37BCBF693C52D5098EE71DFACC0F19CC9BA9D99058",
+          "blockHeight": 176984,
+          "date": 2018-03-09T16:38:17.536Z,
+          "extra": Object {},
+          "fee": "26602",
+          "hash": "12BA108093852A4C2AC3DCFCF023E5C7AA2F91E343D682FE763A6B36D269416D",
+          "id": "mock_op_24_mock:1:bitcoin:bitcoin_1:",
+          "recipients": Array [
+            "1VNAMnY3hmkSBzfTKtbL9Y7VoFFZ9",
+          ],
+          "senders": Array [
+            "1y2uTVeLwCorLj63SbWGgnZG9FDJ44GnzT8",
+          ],
+          "type": "IN",
+          "value": "2660178",
+        },
+      ],
+      "operationsCount": 25,
+      "pendingOperations": Array [],
+      "seedIdentifier": "mock",
+      "spendableBalance": "6076315",
+      "starred": false,
+      "swapHistory": Array [],
+      "type": "Account",
+      "unit": Object {
+        "code": "mBTC",
+        "magnitude": 5,
+        "name": "mBTC",
+      },
+      "used": true,
+      "xpub": "7B7A75F46C6737BEFD83E712DF394F589800621B09C3A49D713C810CA2FCC0AA",
+    },
+  ],
+  "balanceAvailable": true,
+  "balanceHistory": Array [
+    Object {
+      "date": 2018-03-07T18:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-07T19:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-07T20:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-07T21:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-07T22:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-07T23:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T00:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T01:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T02:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T04:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T05:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T06:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T07:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T08:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T09:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T10:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T11:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T12:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T13:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T14:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T15:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T16:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T17:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T18:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T19:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T20:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T21:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T22:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-08T23:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T00:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T01:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T02:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T03:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T04:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T05:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T06:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T07:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T08:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T09:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T10:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T11:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T12:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T13:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T14:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T15:59:59.999Z,
+      "value": 0,
+    },
+    Object {
+      "date": 2018-03-09T16:59:59.999Z,
+      "value": 7540.139797678843,
+    },
+    Object {
+      "date": 2018-03-09T17:59:59.999Z,
+      "value": 7540.139797678843,
+    },
+    Object {
+      "date": 2018-03-09T18:59:59.999Z,
+      "value": 7540.139797678843,
+    },
+    Object {
+      "date": 2018-03-09T19:59:59.999Z,
+      "value": 7540.139797678843,
+    },
+    Object {
+      "date": 2018-03-09T20:59:59.999Z,
+      "value": 7540.139797678843,
+    },
+    Object {
+      "date": 2018-03-09T21:59:59.999Z,
+      "value": 14961.173199305143,
+    },
+    Object {
+      "date": 2018-03-09T22:59:59.999Z,
+      "value": 14961.173199305143,
+    },
+    Object {
+      "date": 2018-03-09T23:59:59.999Z,
+      "value": 15434.492227029901,
+    },
+    Object {
+      "date": 2018-03-10T00:59:59.999Z,
+      "value": 15031.295961534566,
+    },
+    Object {
+      "date": 2018-03-10T01:59:59.999Z,
+      "value": 15031.295961534566,
+    },
+    Object {
+      "date": 2018-03-10T02:59:59.999Z,
+      "value": 15031.295961534566,
+    },
+    Object {
+      "date": 2018-03-10T03:59:59.999Z,
+      "value": 15031.295961534566,
+    },
+    Object {
+      "date": 2018-03-10T04:59:59.999Z,
+      "value": 15031.295961534566,
+    },
+    Object {
+      "date": 2018-03-10T05:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T06:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T07:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T08:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T09:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T10:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T11:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T12:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T13:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T14:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T15:59:59.999Z,
+      "value": 15159.756921547762,
+    },
+    Object {
+      "date": 2018-03-10T16:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-10T17:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-10T18:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-10T19:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-10T20:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-10T21:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-10T22:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-10T23:59:59.999Z,
+      "value": 14087.469380451304,
+    },
+    Object {
+      "date": 2018-03-11T00:59:59.999Z,
+      "value": 10292.34635919654,
+    },
+    Object {
+      "date": 2018-03-11T01:59:59.999Z,
+      "value": 10292.34635919654,
+    },
+    Object {
+      "date": 2018-03-11T02:59:59.999Z,
+      "value": 12389.338190864231,
+    },
+    Object {
+      "date": 2018-03-11T03:59:59.999Z,
+      "value": 12675.491501113764,
+    },
+    Object {
+      "date": 2018-03-11T04:59:59.999Z,
+      "value": 13488.481738120177,
+    },
+    Object {
+      "date": 2018-03-11T05:59:59.999Z,
+      "value": 13488.481738120177,
+    },
+    Object {
+      "date": 2018-03-11T06:59:59.999Z,
+      "value": 13488.481738120177,
+    },
+    Object {
+      "date": 2018-03-11T07:59:59.999Z,
+      "value": 13488.481738120177,
+    },
+    Object {
+      "date": 2018-03-11T08:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T09:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T10:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T11:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T12:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T13:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T14:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T15:59:59.999Z,
+      "value": 20938.872299101018,
+    },
+    Object {
+      "date": 2018-03-11T16:59:59.999Z,
+      "value": 22139.319212390033,
+    },
+    Object {
+      "date": 2018-03-11T17:59:59.999Z,
+      "value": 22139.319212390033,
+    },
+    Object {
+      "date": 2018-03-11T18:59:59.999Z,
+      "value": 22139.319212390033,
+    },
+    Object {
+      "date": 2018-03-11T19:59:59.999Z,
+      "value": 22139.319212390033,
+    },
+    Object {
+      "date": 2018-03-11T20:59:59.999Z,
+      "value": 22139.319212390033,
+    },
+    Object {
+      "date": 2018-03-11T21:59:59.999Z,
+      "value": 22139.319212390033,
+    },
+    Object {
+      "date": 2018-03-11T22:59:59.999Z,
+      "value": 41942.083917730306,
+    },
+    Object {
+      "date": 2018-03-11T23:59:59.999Z,
+      "value": 41942.083917730306,
+    },
+    Object {
+      "date": 2018-03-12T00:59:59.999Z,
+      "value": 41278.703837955276,
+    },
+    Object {
+      "date": 2018-03-12T01:59:59.999Z,
+      "value": 27569.467155621784,
+    },
+    Object {
+      "date": 2018-03-12T02:59:59.999Z,
+      "value": 27569.467155621784,
+    },
+    Object {
+      "date": 2018-03-12T03:59:59.999Z,
+      "value": 27569.467155621784,
+    },
+    Object {
+      "date": 2018-03-12T04:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T05:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T06:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T07:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T08:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T09:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T10:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T11:59:59.999Z,
+      "value": 28415.082893455092,
+    },
+    Object {
+      "date": 2018-03-12T12:59:59.999Z,
+      "value": 29687.14444039734,
+    },
+    Object {
+      "date": 2018-03-12T13:59:59.999Z,
+      "value": 29687.14444039734,
+    },
+    Object {
+      "date": 2018-03-12T14:59:59.999Z,
+      "value": 29687.14444039734,
+    },
+    Object {
+      "date": 2018-03-12T15:59:59.999Z,
+      "value": 31852.488444637875,
+    },
+    Object {
+      "date": 2018-03-12T16:59:59.999Z,
+      "value": 31852.488444637875,
+    },
+    Object {
+      "date": 2018-03-12T17:59:59.999Z,
+      "value": 31852.488444637875,
+    },
+    Object {
+      "date": 2018-03-12T18:59:59.999Z,
+      "value": 31852.488444637875,
+    },
+    Object {
+      "date": 2018-03-12T19:59:59.999Z,
+      "value": 31852.488444637875,
+    },
+    Object {
+      "date": 2018-03-12T20:59:59.999Z,
+      "value": 28345.95006726547,
+    },
+    Object {
+      "date": 2018-03-12T21:59:59.999Z,
+      "value": 28345.95006726547,
+    },
+    Object {
+      "date": 2018-03-12T22:59:59.999Z,
+      "value": 28345.95006726547,
+    },
+    Object {
+      "date": 2018-03-12T23:59:59.999Z,
+      "value": 28345.95006726547,
+    },
+    Object {
+      "date": 2018-03-13T00:59:59.999Z,
+      "value": 30096.222688801656,
+    },
+    Object {
+      "date": 2018-03-13T01:59:59.999Z,
+      "value": 30096.222688801656,
+    },
+    Object {
+      "date": 2018-03-13T02:59:59.999Z,
+      "value": 30096.222688801656,
+    },
+    Object {
+      "date": 2018-03-13T03:59:59.999Z,
+      "value": 30096.222688801656,
+    },
+    Object {
+      "date": 2018-03-13T04:59:59.999Z,
+      "value": 30096.222688801656,
+    },
+    Object {
+      "date": 2018-03-13T05:59:59.999Z,
+      "value": 30096.222688801656,
+    },
+    Object {
+      "date": 2018-03-13T06:59:59.999Z,
+      "value": 43052.563247158076,
+    },
+    Object {
+      "date": 2018-03-13T07:59:59.999Z,
+      "value": 43052.563247158076,
+    },
+    Object {
+      "date": 2018-03-13T08:59:59.999Z,
+      "value": 43052.563247158076,
+    },
+    Object {
+      "date": 2018-03-13T09:59:59.999Z,
+      "value": 43052.563247158076,
+    },
+    Object {
+      "date": 2018-03-13T10:59:59.999Z,
+      "value": 43052.563247158076,
+    },
+    Object {
+      "date": 2018-03-13T11:59:59.999Z,
+      "value": 43052.563247158076,
+    },
+    Object {
+      "date": 2018-03-13T12:59:59.999Z,
+      "value": 43052.563247158076,
+    },
+    Object {
+      "date": 2018-03-13T13:59:59.999Z,
+      "value": 44249.40629298922,
+    },
+    Object {
+      "date": 2018-03-13T14:59:59.999Z,
+      "value": 44249.40629298922,
+    },
+    Object {
+      "date": 2018-03-13T15:59:59.999Z,
+      "value": 45369.8719588756,
+    },
+    Object {
+      "date": 2018-03-13T16:59:59.999Z,
+      "value": 45369.8719588756,
+    },
+    Object {
+      "date": 2018-03-13T17:59:59.999Z,
+      "value": 45369.8719588756,
+    },
+    Object {
+      "date": 2018-03-13T18:59:59.999Z,
+      "value": 45369.8719588756,
+    },
+    Object {
+      "date": 2018-03-13T19:59:59.999Z,
+      "value": 45369.8719588756,
+    },
+    Object {
+      "date": 2018-03-13T20:59:59.999Z,
+      "value": 45394.369469822486,
+    },
+    Object {
+      "date": 2018-03-13T21:59:59.999Z,
+      "value": 45394.369469822486,
+    },
+    Object {
+      "date": 2018-03-13T22:59:59.999Z,
+      "value": 26440.110658565933,
+    },
+    Object {
+      "date": 2018-03-13T23:59:59.999Z,
+      "value": 26440.110658565933,
+    },
+    Object {
+      "date": 2018-03-14T00:59:59.999Z,
+      "value": 26312.370091548677,
+    },
+    Object {
+      "date": 2018-03-14T01:59:59.999Z,
+      "value": 26312.370091548677,
+    },
+    Object {
+      "date": 2018-03-14T02:59:59.999Z,
+      "value": 26312.370091548677,
+    },
+    Object {
+      "date": 2018-03-14T03:59:59.999Z,
+      "value": 26312.370091548677,
+    },
+    Object {
+      "date": 2018-03-14T04:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T05:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T06:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T07:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T08:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T09:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T10:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T11:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T12:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T13:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T14:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T15:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T16:59:59.999Z,
+      "value": 15916.560593211923,
+    },
+    Object {
+      "date": 2018-03-14T17:34:42.000Z,
+      "value": 15916.560593211923,
+    },
+  ],
+  "countervalueChange": Object {
+    "percentage": undefined,
     "value": 15916.560593211923,
   },
-  Object {
-    "date": 2018-03-14T05:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T06:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T07:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T08:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T09:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T10:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T11:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T12:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T13:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T14:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T15:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T16:59:59.999Z,
-    "value": 15916.560593211923,
-  },
-  Object {
-    "date": 2018-03-14T17:34:42.000Z,
-    "value": 15916.560593211923,
-  },
-]
+  "countervalueReceiveSum": 0,
+  "countervalueSendSum": 0,
+  "histories": Array [
+    Array [
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T18:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T19:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T20:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T21:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T22:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-07T23:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T00:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T01:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T02:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T03:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T04:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T05:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T06:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T07:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T08:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T09:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T10:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T11:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T12:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T13:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T14:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T15:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T16:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T17:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T18:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T19:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T20:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T21:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T22:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-08T23:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T00:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T01:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T02:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T03:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T04:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T05:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T06:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T07:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T08:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T09:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T10:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T11:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T12:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T13:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T14:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 0,
+        "date": 2018-03-09T15:59:59.999Z,
+        "value": 0,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T16:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T17:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T18:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T19:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 7540.139797678843,
+        "date": 2018-03-09T20:59:59.999Z,
+        "value": 2660178,
+      },
+      Object {
+        "countervalue": 14961.173199305143,
+        "date": 2018-03-09T21:59:59.999Z,
+        "value": 5278335,
+      },
+      Object {
+        "countervalue": 14961.173199305143,
+        "date": 2018-03-09T22:59:59.999Z,
+        "value": 5278335,
+      },
+      Object {
+        "countervalue": 15434.492227029901,
+        "date": 2018-03-09T23:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T00:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T01:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T02:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T03:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15031.295961534566,
+        "date": 2018-03-10T04:59:59.999Z,
+        "value": 5445323,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T05:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T06:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T07:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T08:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T09:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T10:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T11:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T12:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T13:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T14:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 15159.756921547762,
+        "date": 2018-03-10T15:59:59.999Z,
+        "value": 5491860,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T16:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T17:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T18:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T19:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T20:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T21:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T22:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 14087.469380451304,
+        "date": 2018-03-10T23:59:59.999Z,
+        "value": 5103407,
+      },
+      Object {
+        "countervalue": 10292.34635919654,
+        "date": 2018-03-11T00:59:59.999Z,
+        "value": 3810480,
+      },
+      Object {
+        "countervalue": 10292.34635919654,
+        "date": 2018-03-11T01:59:59.999Z,
+        "value": 3810480,
+      },
+      Object {
+        "countervalue": 12389.338190864231,
+        "date": 2018-03-11T02:59:59.999Z,
+        "value": 4586838,
+      },
+      Object {
+        "countervalue": 12675.491501113764,
+        "date": 2018-03-11T03:59:59.999Z,
+        "value": 4692779,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T04:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T05:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T06:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 13488.481738120177,
+        "date": 2018-03-11T07:59:59.999Z,
+        "value": 4993768,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T08:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T09:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T10:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T11:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T12:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T13:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T14:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 20938.872299101018,
+        "date": 2018-03-11T15:59:59.999Z,
+        "value": 7752086,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T16:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T17:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T18:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T19:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T20:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 22139.319212390033,
+        "date": 2018-03-11T21:59:59.999Z,
+        "value": 8196521,
+      },
+      Object {
+        "countervalue": 41942.083917730306,
+        "date": 2018-03-11T22:59:59.999Z,
+        "value": 15527992,
+      },
+      Object {
+        "countervalue": 41942.083917730306,
+        "date": 2018-03-11T23:59:59.999Z,
+        "value": 15527992,
+      },
+      Object {
+        "countervalue": 41278.703837955276,
+        "date": 2018-03-12T00:59:59.999Z,
+        "value": 15527992,
+      },
+      Object {
+        "countervalue": 27569.467155621784,
+        "date": 2018-03-12T01:59:59.999Z,
+        "value": 10370928,
+      },
+      Object {
+        "countervalue": 27569.467155621784,
+        "date": 2018-03-12T02:59:59.999Z,
+        "value": 10370928,
+      },
+      Object {
+        "countervalue": 27569.467155621784,
+        "date": 2018-03-12T03:59:59.999Z,
+        "value": 10370928,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T04:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T05:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T06:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T07:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T08:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T09:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T10:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 28415.082893455092,
+        "date": 2018-03-12T11:59:59.999Z,
+        "value": 10689027,
+      },
+      Object {
+        "countervalue": 29687.14444039734,
+        "date": 2018-03-12T12:59:59.999Z,
+        "value": 11167544,
+      },
+      Object {
+        "countervalue": 29687.14444039734,
+        "date": 2018-03-12T13:59:59.999Z,
+        "value": 11167544,
+      },
+      Object {
+        "countervalue": 29687.14444039734,
+        "date": 2018-03-12T14:59:59.999Z,
+        "value": 11167544,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T15:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T16:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T17:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T18:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 31852.488444637875,
+        "date": 2018-03-12T19:59:59.999Z,
+        "value": 11982091,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T20:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T21:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T22:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 28345.95006726547,
+        "date": 2018-03-12T23:59:59.999Z,
+        "value": 10663021,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T00:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T01:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T02:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T03:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T04:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 30096.222688801656,
+        "date": 2018-03-13T05:59:59.999Z,
+        "value": 11434041,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T06:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T07:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T08:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T09:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T10:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T11:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 43052.563247158076,
+        "date": 2018-03-13T12:59:59.999Z,
+        "value": 16356364,
+      },
+      Object {
+        "countervalue": 44249.40629298922,
+        "date": 2018-03-13T13:59:59.999Z,
+        "value": 16811064,
+      },
+      Object {
+        "countervalue": 44249.40629298922,
+        "date": 2018-03-13T14:59:59.999Z,
+        "value": 16811064,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T15:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T16:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T17:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T18:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45369.8719588756,
+        "date": 2018-03-13T19:59:59.999Z,
+        "value": 17236747,
+      },
+      Object {
+        "countervalue": 45394.369469822486,
+        "date": 2018-03-13T20:59:59.999Z,
+        "value": 17246054,
+      },
+      Object {
+        "countervalue": 45394.369469822486,
+        "date": 2018-03-13T21:59:59.999Z,
+        "value": 17246054,
+      },
+      Object {
+        "countervalue": 26440.110658565933,
+        "date": 2018-03-13T22:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26440.110658565933,
+        "date": 2018-03-13T23:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T00:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T01:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T02:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 26312.370091548677,
+        "date": 2018-03-14T03:59:59.999Z,
+        "value": 10045025,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T04:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T05:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T06:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T07:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T08:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T09:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T10:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T11:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T12:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T13:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T14:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T15:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T16:59:59.999Z,
+        "value": 6076315,
+      },
+      Object {
+        "countervalue": 15916.560593211923,
+        "date": 2018-03-14T17:34:42.000Z,
+        "value": 6076315,
+      },
+    ],
+  ],
+  "range": "week",
+  "unavailableCurrencies": Array [],
+}
 `;
