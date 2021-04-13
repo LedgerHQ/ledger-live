@@ -60,3 +60,7 @@ export function getDates(r: PortfolioRange, count: number): Date[] {
   }
   return dates;
 }
+
+export function getRanges(): PortfolioRange[] {
+  return Object.keys(ranges);
+}

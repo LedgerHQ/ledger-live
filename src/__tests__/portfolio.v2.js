@@ -11,7 +11,11 @@ import {
   getBalanceHistoryWithCountervalue,
   getPortfolio,
 } from "../portfolio/v2";
-import { getPortfolioRangeConfig, getDates } from "../portfolio/v2/range";
+import {
+  getPortfolioRangeConfig,
+  getDates,
+  getRanges,
+} from "../portfolio/v2/range";
 import type { AccountLike } from "../types";
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
@@ -140,6 +144,17 @@ describe("Portfolio", () => {
   describe("getCurrencyPortfolio", () => {});
 
   describe("getAssetsDistribution", () => {});
+
+  describe("range module", () => {
+    test("getRanges", () => {
+      const ranges = ["all", "year", "month", "week", "day"];
+      const res = getRanges();
+      res.forEach((r) => {
+        const match = ranges.includes(r);
+        expect(match).toBe(true);
+      });
+    });
+  });
 });
 
 function genAccountBitcoin(id: string = "bitcoin_1") {

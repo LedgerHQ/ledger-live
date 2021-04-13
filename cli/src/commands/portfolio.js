@@ -10,7 +10,8 @@ import {
   flattenAccounts,
   getAccountName,
 } from "@ledgerhq/live-common/lib/account";
-import { getPortfolio, getRanges } from "@ledgerhq/live-common/lib/portfolio";
+import { getPortfolio } from "@ledgerhq/live-common/lib/portfolio/v2";
+import { getRanges } from "@ledgerhq/live-common/lib/portfolio/v2/range";
 import {
   formatCurrencyUnit,
   findCurrencyByTicker,
@@ -19,7 +20,6 @@ import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import {
   initialState,
-  calculate,
   loadCountervalues,
   inferTrackingPairForAccounts,
 } from "@ledgerhq/live-common/lib/countervalues/logic";
@@ -82,22 +82,18 @@ export default {
             autofillGaps: !opts.disableAutofillGaps,
           })
         ).pipe(
-          map((countervalues) => {
+          map((state) => {
             const all = flattenAccounts(accounts);
             const period = asPortfolioRange(opts.period || "month");
             const unit = countervalue.units[0];
-            const calc = (c, v, date) =>
-              BigNumber(
-                calculate(countervalues, {
-                  date,
-                  value: v.toNumber(),
-                  from: c,
-                  to: countervalue,
-                }) || 0
-              );
 
             function render(title, accounts) {
-              const portfolio = getPortfolio(accounts, period, calc);
+              const portfolio = getPortfolio(
+                accounts,
+                period,
+                state,
+                countervalue
+              );
               const balance =
                 portfolio.balanceHistory[portfolio.balanceHistory.length - 1]
                   .value;
@@ -105,7 +101,7 @@ export default {
               return (
                 title +
                 " " +
-                formatCurrencyUnit(unit, balance, {
+                formatCurrencyUnit(unit, BigNumber(balance), {
                   showCode: true,
                   disableRounding: true,
                 }) +
@@ -114,14 +110,13 @@ export default {
                     "on a " +
                     period +
                     " period: " +
-                    portfolio.countervalueChange.percentage
-                      .times(100)
-                      .integerValue()
-                      .toString() +
+                    Math.round(
+                      portfolio.countervalueChange.percentage * 100
+                    ).toString() +
                     "% (" +
                     formatCurrencyUnit(
                       unit,
-                      portfolio.countervalueChange.value,
+                      BigNumber(portfolio.countervalueChange.value),
                       {
                         showCode: true,
                       }
@@ -131,7 +126,9 @@ export default {
                 "\n" +
                 asciichart.plot(
                   portfolio.balanceHistory.map((h) =>
-                    h.value.div(BigNumber(10).pow(unit.magnitude)).toNumber()
+                    BigNumber(h.value)
+                      .div(BigNumber(10).pow(unit.magnitude))
+                      .toNumber()
                   ),
                   {
                     height: 10,

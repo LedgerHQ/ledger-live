@@ -35,8 +35,19 @@ export function getPortfolioCount(
   if (typeof conf.count === "number") return conf.count;
   if (!accounts.length) return 0;
 
+  const startDate = new Date(
+    Math.min(...accounts.map((a) => a.creationDate.getTime()))
+  );
+
+  return getPortfolioCountByDate(startDate, range);
+}
+
+export function getPortfolioCountByDate(
+  start: Date,
+  range: PortfolioRange
+): number {
+  const conf = getPortfolioRangeConfig(range);
   const now = Date.now();
-  const start = Math.min(...accounts.map((a) => a.creationDate.getTime()));
   const count = Math.floor((now - start) / conf.increment) + 1;
   const defaultYearCount = getPortfolioRangeConfig("year").count ?? 0; // just for type casting
   return count < defaultYearCount ? defaultYearCount : count;

@@ -9,7 +9,11 @@ import invariant from "invariant";
 import { Observable } from "rxjs";
 import { toBalanceHistoryRaw } from "@ledgerhq/live-common/lib/account";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/types";
-import { getRanges, getDates } from "@ledgerhq/live-common/lib/portfolio";
+import { getPortfolioCountByDate } from "@ledgerhq/live-common/lib/portfolio/v2";
+import {
+  getRanges,
+  getDates,
+} from "@ledgerhq/live-common/lib/portfolio/v2/range";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import {
   formatCurrencyUnit,
@@ -96,6 +100,7 @@ type Opts = $Shape<{
   marketcap: number,
   disableAutofillGaps: boolean,
   latest: boolean,
+  startDate: string,
 }>;
 
 export default {
@@ -158,6 +163,12 @@ export default {
       type: Boolean,
       desc: "only fetch latest",
     },
+    {
+      name: "startDate",
+      alias: "d",
+      type: String,
+      desk: "starting date for all time historical data. combine with -p all.",
+    },
   ],
   job: (opts: Opts) =>
     Observable.create((o) => {
@@ -165,8 +176,8 @@ export default {
         const currencies = await getCurrencies(opts);
         const countervalues = getCountervalues(opts);
         const format = histoFormatters[opts.format || "default"];
-        const range = asPortfolioRange(opts.period || "month");
-        const dates = opts.latest ? [new Date()] : getDates(range);
+        const startDate = getStartDate(opts);
+        const dates = getDatesWithOpts(opts);
 
         const cvs = await loadCountervalues(initialState, {
           trackingPairs: resolveTrackingPairs(
@@ -174,9 +185,7 @@ export default {
               ([currency, countervalue]) => ({
                 from: currency,
                 to: countervalue,
-                startDate: opts.latest
-                  ? null
-                  : new Date(dates[0] - 24 * 60 * 60 * 1000),
+                startDate,
               })
             )
           ),
@@ -245,4 +254,20 @@ function getCountervalues(opts: Opts): Currency[] {
   return opts.fiats
     ? listFiatCurrencies().map((a) => a)
     : (opts.countervalue || ["USD"]).map(findCurrencyByTicker).filter(Boolean);
+}
+
+function getStartDate(opts: Opts): Date | null {
+  if (!opts.startDate || opts.latest) return null;
+  const date = new Date(opts.startDate);
+  invariant(!isNaN(date), "invalid startDate");
+  return date;
+}
+
+function getDatesWithOpts(opts: Opts): Date[] {
+  const startDate = getStartDate(opts);
+  if (!startDate || opts.latest) return [new Date()];
+
+  const range = asPortfolioRange(opts.period || "month");
+  const count = getPortfolioCountByDate(startDate, range);
+  return getDates(range, count);
 }

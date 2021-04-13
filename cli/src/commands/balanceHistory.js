@@ -1,5 +1,4 @@
 // @flow
-
 import { BigNumber } from "bignumber.js";
 import asciichart from "asciichart";
 import invariant from "invariant";
@@ -8,8 +7,9 @@ import { toBalanceHistoryRaw } from "@ledgerhq/live-common/lib/account";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/types";
 import {
   getBalanceHistory,
-  getRanges,
-} from "@ledgerhq/live-common/lib/portfolio";
+  getPortfolioCount,
+} from "@ledgerhq/live-common/lib/portfolio/v2";
+import { getRanges } from "@ledgerhq/live-common/lib/portfolio/v2/range";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
@@ -21,7 +21,7 @@ const histoFormatters = {
         ({ date, value }) =>
           date.toISOString() +
           " " +
-          formatCurrencyUnit(account.unit, value, {
+          formatCurrencyUnit(account.unit, BigNumber(value), {
             showCode: true,
             disableRounding: true,
           })
@@ -96,10 +96,9 @@ export default {
   ) =>
     scan(opts).pipe(
       map((account) => {
-        const histo = getBalanceHistory(
-          account,
-          asPortfolioRange(opts.period || "month")
-        );
+        const range = asPortfolioRange(opts.period || "month");
+        const count = getPortfolioCount([account], range);
+        const histo = getBalanceHistory(account, range, count);
         const format = histoFormatters[opts.format || "default"];
         return format(histo, account);
       })
