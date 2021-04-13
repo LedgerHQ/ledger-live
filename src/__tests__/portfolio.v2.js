@@ -23,7 +23,7 @@ import {
   getDates,
   getRanges,
 } from "../portfolio/v2/range";
-import type { AccountLike } from "../types";
+import type { AccountLike, Account } from "../types";
 import { setEnv } from "../env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";
@@ -308,15 +308,11 @@ function genAccountBitcoin(id: string = "bitcoin_1") {
   return genAccount(id, { currency: getCryptoCurrencyById("bitcoin") });
 }
 
-async function loadCV(
-  accounts: AccountLike | AccountLike[],
-  cvTicker: string = "USD"
-) {
+async function loadCV(a: Account | Account[], cvTicker: string = "USD") {
   const to = getFiatCurrencyByTicker(cvTicker);
-  const _accounts = Array.isArray(accounts) ? accounts : [accounts];
+  const accounts = Array.isArray(a) ? a : [a];
   const state = await loadCountervalues(initialState, {
-    // $FlowFixMe
-    trackingPairs: inferTrackingPairForAccounts(_accounts, to),
+    trackingPairs: inferTrackingPairForAccounts(accounts, to),
     autofillGaps: true,
   });
   return { state, to };
