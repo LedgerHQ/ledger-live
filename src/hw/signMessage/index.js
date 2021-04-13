@@ -8,14 +8,14 @@ import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import type { Resolver } from "./types";
 import perFamily from "../../generated/hw-signMessage";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { from } from "rxjs";
 import { createAction as createAppAction } from "../actions/app";
 import type { AppRequest, AppState } from "../actions/app";
 import type { Device } from "../actions/types";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
-import type { MessageData } from "./types";
+import type { MessageData, Result } from "./types";
 
 const dispatch: Resolver = (transport, opts) => {
   const { currency, verify } = opts;
@@ -47,12 +47,6 @@ const dispatch: Resolver = (transport, opts) => {
     });
 };
 
-const initialState = {
-  signMessageRequested: null,
-  signMessageError: null,
-  signMessageResult: null,
-};
-
 export type State = {
   ...AppState,
   signMessageRequested: ?MessageData,
@@ -65,8 +59,27 @@ export type Request = {
   message: MessageData,
 };
 
+export type Input = {
+  request: Request,
+  deviceId: string,
+};
+
+export const signMessageExec = ({ request, deviceId }: Input) => {
+  const result: Observable<Result> = withDevice(deviceId)((t) =>
+    from(dispatch(t, request.message))
+  );
+  return result;
+};
+
+const initialState = {
+  signMessageRequested: null,
+  signMessageError: null,
+  signMessageResult: null,
+};
+
 export const createAction = (
-  connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>
+  connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>,
+  signMessage: (Input) => Observable<Result> = signMessageExec
 ) => {
   const useHook = (reduxDevice: ?Device, request: Request): State => {
     const appState: AppState = createAppAction(connectAppExec).useHook(
@@ -78,7 +91,11 @@ export const createAction = (
 
     const { device, opened, inWrongDeviceForAccount, error } = appState;
 
-    const [state, setState] = useState(initialState);
+    const [state, setState] = useState({
+      ...initialState,
+      signMessageRequested: request.message,
+    });
+    const signedFired = useRef();
 
     const sign = useCallback(async () => {
       let result;
@@ -90,15 +107,16 @@ export const createAction = (
         return;
       }
       try {
-        result = await withDevice(device.deviceId)((t) =>
-          from(dispatch(t, request.message))
-        ).toPromise();
+        result = await signMessage({
+          request,
+          deviceId: device.deviceId,
+        }).toPromise();
       } catch (e) {
         if (e.name === "UserRefusedAddress") {
           e.name = "UserRefusedOnDevice";
           e.message = "UserRefusedOnDevice";
         }
-        setState({
+        return setState({
           ...initialState,
           signMessageError: e,
         });
@@ -107,21 +125,25 @@ export const createAction = (
         ...initialState,
         signMessageResult: result?.signature,
       });
-    }, [request.message, device]);
+    }, [device, request]);
 
     useEffect(() => {
       if (!device || !opened || inWrongDeviceForAccount || error) {
-        setState(initialState);
         return;
       }
 
-      setState({
-        ...initialState,
-        signMessageRequested: request.message,
-      });
-
-      sign();
-    }, [device, opened, inWrongDeviceForAccount, error, request.message, sign]);
+      if (state.signMessageRequested && !signedFired.current) {
+        signedFired.current = true;
+        sign();
+      }
+    }, [
+      device,
+      opened,
+      inWrongDeviceForAccount,
+      error,
+      sign,
+      state.signMessageRequested,
+    ]);
 
     return {
       ...appState,

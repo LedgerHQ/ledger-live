@@ -59,7 +59,11 @@ const send: ModeModule = {
       }
 
       if (!t.data) {
-        if (!result.errors.amount && result.amount.eq(0)) {
+        if (
+          !t.allowZeroAmount &&
+          !result.errors.amount &&
+          result.amount.eq(0)
+        ) {
           result.errors.amount = new AmountRequired();
         } else if (
           !result.totalSpent.gt(0) ||
@@ -99,11 +103,68 @@ const send: ModeModule = {
     }
   },
 
-  fillDeviceTransactionConfig({ status: { amount } }, fields) {
+  fillDeviceTransactionConfig({ transaction, status: { amount } }, fields) {
     if (!amount.isZero()) {
       fields.push({
         type: "amount",
         label: "Amount",
+      });
+    }
+    if (transaction.data?.length) {
+      /*
+      TODO: LL-4219
+
+      import uniq from "lodash/uniq";
+      import { findTokenByAddress } from "../../../currencies";
+      import { getAccountCurrency, getAccountUnit } from "../../../account";
+
+      const token = findTokenByAddress(transaction.recipient);
+      // $FlowFixMe (transaction data is not null, you flow)
+      const method = transaction.data.slice(0, 4).toString("hex");
+
+      if (method === "095ea7b3" && token) {
+        fields.push({
+          type: "text",
+          label: "Type",
+          value: `Approve`,
+        });
+        fields.push({
+          type: "text",
+          label: "Amount (1/2)",
+          value: token.ticker,
+        });
+
+        // $FlowFixMe (transaction data is not null, you flow)
+        const amountHex = transaction.data.slice(36, 36 + 32).toString("hex");
+
+        if (uniq(amountHex.split("")) === ["f"]) {
+          fields.push({
+            type: "text",
+            label: "Amount (2/2)",
+            value: "Unlimited " + getAccountCurrency(account).ticker,
+          });
+        } else {
+          const amount = BigNumber(`0x${amountHex}`).dividedBy(
+            BigNumber(10).pow(getAccountUnit(account).magnitude)
+          );
+          fields.push({
+            type: "text",
+            label: "Amount (2/2)",
+            value: amount.toString(),
+          });
+        }
+      } else {
+        fields.push({
+          type: "text",
+          label: "Data",
+          value: `Present`,
+        });
+      }
+      */
+      fields.push({
+        type: "text",
+        label: "Data",
+        value: `Present`,
       });
     }
   },

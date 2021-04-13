@@ -1,6 +1,6 @@
 /* @flow */
 import React, { useEffect, useReducer } from "react";
-import WalletConnect from "@walletconnect/client";
+import WalletConnectClient from "@walletconnect/client";
 import { parseCallRequest } from "./index";
 import type { AccountLike } from "../types";
 
@@ -76,6 +76,7 @@ const ProviderCommon = ({
   isReady,
   saveWCSession,
   getWCSession,
+  WalletConnect = WalletConnectClient,
 }: {
   children: React$Node,
   useAccount: Function,
@@ -85,6 +86,7 @@ const ProviderCommon = ({
   isReady: boolean,
   saveWCSession: Function,
   getWCSession: Function,
+  WalletConnect: Function,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const account = useAccount(state.session.accountId);
@@ -170,15 +172,19 @@ const ProviderCommon = ({
     }
 
     if (state.status !== STATUS.DISCONNECTED) {
+      const disconnectedAccount =
+        state.status === STATUS.CONNECTED ? account : null;
+
       dispatch({
         session: null,
         dappInfo: null,
         error: null,
         connector: null,
+        currentCallRequestId: null,
         status: STATUS.DISCONNECTED,
       });
 
-      onRemoteDisconnected();
+      onRemoteDisconnected(disconnectedAccount);
     }
   };
 

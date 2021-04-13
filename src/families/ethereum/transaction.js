@@ -129,6 +129,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       family: networkInfo.family,
       gasPrice: fromRangeRaw(networkInfo.gasPrice),
     },
+    allowZeroAmount: tr.allowZeroAmount,
   };
 };
 
@@ -151,6 +152,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       family: networkInfo.family,
       gasPrice: toRangeRaw(networkInfo.gasPrice),
     },
+    allowZeroAmount: t.allowZeroAmount,
   };
 };
 
