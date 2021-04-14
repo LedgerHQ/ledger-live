@@ -59,7 +59,8 @@ const UpdateAllModal = ({
 
   const renderAppLine = useCallback(
     ({
-      item: { name, icon, bytes, version: appVersion, installed },
+      item: { name, bytes, version: appVersion, installed },
+      item,
     }: {
       item: App & { installed: ?InstalledItem },
     }) => {
@@ -69,7 +70,7 @@ const UpdateAllModal = ({
 
       return (
         <View style={[styles.appLine, { borderBottomColor: colors.lightFog }]}>
-          <AppIcon icon={icon} />
+          <AppIcon app={item} />
           <LText semiBold style={styles.appName}>
             {name}
           </LText>

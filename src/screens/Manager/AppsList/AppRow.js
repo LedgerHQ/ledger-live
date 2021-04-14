@@ -36,7 +36,7 @@ const AppRow = ({
   setAppUninstallWithDependencies,
   setStorageWarning,
 }: Props) => {
-  const { name, bytes, icon, version: appVersion } = app;
+  const { name, bytes, version: appVersion } = app;
   const { installed, deviceInfo } = state;
 
   const isInstalled = useMemo(() => installed.find(i => i.name === name), [
@@ -68,7 +68,7 @@ const AppRow = ({
           },
         ]}
       >
-        <AppIcon icon={icon} />
+        <AppIcon app={app} />
         <View style={styles.labelContainer}>
           <LText numberOfLines={1} bold>
             {name}

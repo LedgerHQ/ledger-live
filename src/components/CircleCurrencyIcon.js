@@ -2,7 +2,10 @@
 
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
+import {
+  getCryptoCurrencyIcon,
+  getTokenCurrencyIcon,
+} from "@ledgerhq/live-common/lib/reactNative";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies";
 
 import { useTheme } from "@react-navigation/native";
@@ -32,13 +35,15 @@ function CircleCurrencyIcon({ size, currency, color }: Props) {
   const c = ensureContrast("#FFF", backgroundColor);
 
   const ticker = isToken ? currency.ticker[0] : currency.ticker;
-  const MaybeIconComponent = !isToken ? getCryptoCurrencyIcon(currency) : null;
+  const MaybeIconComponent = !isToken
+    ? getCryptoCurrencyIcon(currency)
+    : getTokenCurrencyIcon(currency);
   return (
     <View
       style={[styles.wrapper, { backgroundColor, width: size, height: size }]}
     >
       {MaybeIconComponent ? (
-        <MaybeIconComponent size={size / 2} color={c} />
+        <MaybeIconComponent size={size} color={c} />
       ) : (
         <LText semiBold style={{ color: c, fontSize: size / 2 }}>
           {ticker}
