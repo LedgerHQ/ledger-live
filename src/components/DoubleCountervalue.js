@@ -125,14 +125,18 @@ function DoubleCounterValue({
               })}
             </LText>
           </View>
-          <LText semiBold style={styles.amount} color="grey">
-            <CurrencyUnitValue
-              {...props}
-              currency={currency}
-              unit={counterValueCurrency.units[0]}
-              value={BigNumber(compareCountervalue)}
-            />
-          </LText>
+          {typeof compareCountervalue === "number" ? (
+            <LText semiBold style={styles.amount} color="grey">
+              <CurrencyUnitValue
+                {...props}
+                currency={currency}
+                unit={counterValueCurrency.units[0]}
+                value={BigNumber(compareCountervalue)}
+              />
+            </LText>
+          ) : (
+            <LText style={styles.placeholder}>-</LText>
+          )}
         </View>
       </BottomModal>
     </>
