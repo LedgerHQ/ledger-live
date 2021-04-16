@@ -57,7 +57,6 @@
         </intent-filter>
         <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
       </activity>
-      <activity android:taskAffinity="" android:name="com.facebook.react.devsupport.DevSettingsActivity" />
       <activity android:taskAffinity="" android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
         android:exported="true"/>
     </application>
