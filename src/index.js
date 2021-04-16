@@ -23,11 +23,7 @@ import {
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
-import {
-  useLinking,
-  NavigationContainer,
-  getStateFromPath,
-} from "@react-navigation/native";
+import { useLinking, NavigationContainer } from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -302,18 +298,12 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
 
-  const enabled =
-    hasCompletedOnboarding && wcContext.initDone && !wcContext.session.session;
-
   const { getInitialState } = useLinking(navigationRef, {
     ...linking,
-    getStateFromPath(path, config) {
-      if (!enabled) {
-        // Our current version of react navigation does not support the enable param
-        return null;
-      }
-      return getStateFromPath(path, config);
-    },
+    enabled:
+      hasCompletedOnboarding &&
+      wcContext.initDone &&
+      !wcContext.session.session,
   });
 
   const [isReady, setIsReady] = React.useState(false);
