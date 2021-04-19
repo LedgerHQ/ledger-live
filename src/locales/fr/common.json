@@ -1192,6 +1192,13 @@
         "failText": "Pas d'inquiétude, Ledger est là pour vous guider. Vous allez bientôt vous sentir plus à l'aise en ce qui concerne la sécurité de vos cryptomonnaies. Il ne reste plus qu'une petite étape !",
         "cta": "Étape suivante"
       }
+    },
+    "warning": {
+      "recoveryPhrase": {
+        "title": "Do not use a recovery phrase that you have not generated yourself.",
+        "desc": "Your Ledger hardware wallet’s pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
+        "supportLink": "Contact customer support"
+      }
     }
   },
   "tabs": {
