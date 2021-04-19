@@ -484,8 +484,8 @@
       "description": "Please try again with a better network connection (websocket failed)."
     },
     "WrongDeviceForAccount": {
-      "title": "Sorry, wrong device for {{accountName}}",
-      "description": "The connected device is not associated with the account selected. Please connect the corresponding device."
+      "title": "Something went wrong",
+      "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
     "UnexpectedBootloader": {
       "title": "Sorry, your device must not be in Bootloader mode",

@@ -290,17 +290,15 @@ export function renderAllowOpeningApp({
 export function renderInWrongAppForAccount({
   t,
   onRetry,
-  accountName,
   colors,
   theme,
 }: {
   ...RawProps,
-  accountName: string,
   onRetry?: () => void,
 }) {
   return renderError({
     t,
-    error: new WrongDeviceForAccount(null, { accountName }),
+    error: new WrongDeviceForAccount(),
     onRetry,
     colors,
     theme,
