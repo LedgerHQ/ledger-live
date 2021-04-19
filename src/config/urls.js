@@ -110,4 +110,6 @@ export const urls = {
     "https://support.ledger.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
   bitcoinAddressType:
     "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
+  supportPage:
+    "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
 };
