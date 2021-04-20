@@ -9,7 +9,7 @@ import { runCollapse } from "../../../components/CollapsibleList";
 import LText from "../../../components/LText";
 import ExperimentalIcon from "../../../icons/Experimental";
 
-const { cond, set, Clock, Value, interpolate, eq } = Animated;
+const { cond, set, Clock, Value, interpolateNode, eq } = Animated;
 
 export default function ExperimentalHeader() {
   const { colors } = useTheme();
@@ -34,7 +34,7 @@ export default function ExperimentalHeader() {
   );
 
   // interpolated height from opening anim state for list container
-  const height = interpolate(openingAnim, {
+  const height = interpolateNode(openingAnim, {
     inputRange: [0, 1],
     outputRange: [0, Platform.OS === "ios" ? 70 : 30],
     extrapolate: Extrapolate.CLAMP,

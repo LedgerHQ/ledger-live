@@ -26,7 +26,7 @@ type Props = {
   error: ?Error,
 };
 
-const { call, cond, interpolate, lessThan, useCode } = Animated;
+const { call, cond, interpolateNode, lessThan, useCode } = Animated;
 
 export default function AnimatedTopBar({
   scrollY,
@@ -39,7 +39,7 @@ export default function AnimatedTopBar({
   const { top } = useSafeArea();
   const [isShown, setIsShown] = useState(false);
 
-  const opacity = interpolate(scrollY, {
+  const opacity = interpolateNode(scrollY, {
     inputRange: [90, 150],
     outputRange: [0, 1],
     extrapolate: "clamp",

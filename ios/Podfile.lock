@@ -268,8 +268,8 @@ PODS:
     - React
   - react-native-randombytes (3.6.0):
     - React-Core
-  - react-native-safe-area-context (0.7.3):
-    - React
+  - react-native-safe-area-context (3.2.0):
+    - React-Core
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-udp (3.1.0):
@@ -350,8 +350,8 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.10):
     - React
-  - RNGestureHandler (1.6.0):
-    - React
+  - RNGestureHandler (1.10.3):
+    - React-Core
   - RNKeychain (5.0.0):
     - React
   - RNLibLedgerCore (4.18.8):
@@ -359,8 +359,35 @@ PODS:
     - React
   - RNOS (1.2.6):
     - React
-  - RNReanimated (1.10.1):
+  - RNReanimated (2.1.0):
+    - DoubleConversion
+    - FBLazyVector
+    - FBReactNativeSpec
+    - Folly
+    - glog
+    - RCTRequired
+    - RCTTypeSafety
     - React
+    - React-callinvoker
+    - React-Core
+    - React-Core/DevSupport
+    - React-Core/RCTWebSocket
+    - React-CoreModules
+    - React-cxxreact
+    - React-jsi
+    - React-jsiexecutor
+    - React-jsinspector
+    - React-RCTActionSheet
+    - React-RCTAnimation
+    - React-RCTBlob
+    - React-RCTImage
+    - React-RCTLinking
+    - React-RCTNetwork
+    - React-RCTSettings
+    - React-RCTText
+    - React-RCTVibration
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNScreens (3.1.1):
     - React-Core
   - RNShare (5.1.0):
@@ -640,7 +667,7 @@ SPEC CHECKSUMS:
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: 3bf235d94cc291cf0673ad9fd9eaae82f84ed8a9
   react-native-randombytes: b6677f7d495c27e9ee0dbd77ebc97b3c59173729
-  react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
+  react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-udp: 7823da0f50a80bec14ca4fd77601101f95a68892
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
@@ -660,11 +687,11 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
-  RNGestureHandler: dde546180bf24af0b5f737c8ad04b6f3fa51609a
+  RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: 589a5504ba18b854fb8c2ba6402387b9529da959
   RNLibLedgerCore: 90d02f10a9489d1ec83d59d0b1b4f05617bfe1a0
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNReanimated: c2bb7438b57a3d987bb2e4e6e4bca94787e30b02
+  RNReanimated: 70f662b5232dd5d19ccff581e919a54ea73df51c
   RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
   RNShare: fed99fd743f80ca255903c1da46fc9a6430efab6
   RNSVG: 7e16ddfc6e00d5aa69c9eb83e699bcce5dcb85d4

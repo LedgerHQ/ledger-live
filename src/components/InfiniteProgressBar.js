@@ -3,7 +3,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
-import Animated, { Easing } from "react-native-reanimated";
+import Animated, { EasingNode } from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 
 const {
@@ -15,7 +15,7 @@ const {
   timing,
   Clock,
   Value,
-  interpolate,
+  interpolateNode,
 } = Animated;
 
 const clock = new Clock();
@@ -31,7 +31,7 @@ const runProgression = () => {
   const config = {
     duration: new Value(1000),
     toValue: new Value(1),
-    easing: Easing.inOut(Easing.quad),
+    easing: EasingNode.inOut(EasingNode.quad),
   };
 
   return block([
@@ -74,11 +74,11 @@ const InfiniteProgressBar = ({
 }: Props) => {
   const { colors } = useTheme();
 
-  const scaleX = interpolate(progress, {
+  const scaleX = interpolateNode(progress, {
     inputRange: [0, 0.4, 1],
     outputRange: [0, 0.9, 0],
   });
-  const translateX = interpolate(progress, {
+  const translateX = interpolateNode(progress, {
     inputRange: [0, 0.6, 1],
     outputRange: [-100, 0, 100],
   });
