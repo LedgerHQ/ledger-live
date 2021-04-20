@@ -5,9 +5,9 @@ import type { FeeItems } from "../families/bitcoin/types";
 import { getEstimatedFees } from "./Fees";
 
 export const speeds = {
-  "1": "high",
-  "3": "standard",
-  "6": "low",
+  "1": "fast",
+  "3": "medium",
+  "6": "slow",
 };
 
 export const defaultBlockCount = 3;

@@ -200,6 +200,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       family: tr.networkInfo.family,
       feeItems: fromFeeItemsRaw(tr.networkInfo.feeItems),
     },
+    feesStrategy: tr.feesStrategy,
   };
 };
 
@@ -215,6 +216,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       family: t.networkInfo.family,
       feeItems: toFeeItemsRaw(t.networkInfo.feeItems),
     },
+    feesStrategy: t.feesStrategy,
   };
 };
 

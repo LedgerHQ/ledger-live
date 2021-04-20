@@ -39,6 +39,7 @@ export type InferTransactionsOpts = $Shape<{
   recipient: string[],
   amount: string,
   shuffle: boolean,
+  "fees-strategy": string,
 }>;
 
 export const inferTransactionsOpts = uniqBy(

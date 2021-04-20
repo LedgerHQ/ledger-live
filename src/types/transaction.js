@@ -2,6 +2,7 @@
 
 import type { BigNumber } from "bignumber.js";
 import type { Operation, OperationRaw } from "./operation";
+import type { Unit } from "./currencies";
 import type {
   BitcoinInput,
   BitcoinOutput,
@@ -53,6 +54,7 @@ export type TransactionCommon = {|
   recipient: string,
   useAllAmount?: boolean,
   subAccountId?: ?string,
+  feesStrategy?: "slow" | "medium" | "fast" | null,
 |};
 
 export type TransactionCommonRaw = {|
@@ -60,6 +62,17 @@ export type TransactionCommonRaw = {|
   recipient: string,
   useAllAmount?: boolean,
   subAccountId?: ?string,
+  feesStrategy?: "slow" | "medium" | "fast" | null,
+|};
+
+// User can have 3 differents choice for their fee
+// Most of the time mid is low * 1.25 and high is low * 1.5
+// They are some exception as eth that got his own meter
+export type FeeStrategy = {|
+  amount: BigNumber,
+  displayedAmount?: BigNumber,
+  label: string,
+  unit?: Unit,
 |};
 
 // TransactionStatus is a view of Transaction with general info to be used on the UI and status info.

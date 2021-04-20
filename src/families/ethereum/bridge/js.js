@@ -18,7 +18,7 @@ import { patchOperationWithHash } from "../../../operation";
 import { getCryptoCurrencyById } from "../../../currencies";
 import { apiForCurrency } from "../../../api/Ethereum";
 import { getEstimatedFees } from "../../../api/Fees";
-import type { Transaction } from "../types";
+import type { Transaction, NetworkInfo } from "../types";
 import {
   getGasLimit,
   inferEthereumGasLimitRequest,
@@ -57,6 +57,7 @@ const createTransaction = () => ({
   networkInfo: null,
   feeCustomUnit: getCryptoCurrencyById("ethereum").units[1],
   useAllAmount: false,
+  feesStrategy: "medium",
 });
 
 const updateTransaction = (t, patch) => {
@@ -128,10 +129,19 @@ const getNetworkInfo = (c) =>
     throw e;
   });
 
+const inferGasPrice = (t: Transaction, networkInfo: NetworkInfo) => {
+  return t.feesStrategy === "slow"
+    ? networkInfo.gasPrice.min
+    : t.feesStrategy === "medium"
+    ? networkInfo.gasPrice.initial
+    : t.feesStrategy === "fast"
+    ? networkInfo.gasPrice.max
+    : t.gasPrice || networkInfo.gasPrice.initial;
+};
+
 const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   const networkInfo = t.networkInfo || (await getNetworkInfo(a.currency));
-  const gasPrice = t.gasPrice || networkInfo.gasPrice.initial;
-
+  const gasPrice = inferGasPrice(t, networkInfo);
   if (t.gasPrice !== gasPrice || t.networkInfo !== networkInfo) {
     t = { ...t, networkInfo, gasPrice };
   }

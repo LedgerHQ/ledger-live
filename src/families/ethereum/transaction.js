@@ -130,6 +130,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
       gasPrice: fromRangeRaw(networkInfo.gasPrice),
     },
     allowZeroAmount: tr.allowZeroAmount,
+    feesStrategy: tr.feesStrategy,
   };
 };
 
@@ -153,6 +154,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
       gasPrice: toRangeRaw(networkInfo.gasPrice),
     },
     allowZeroAmount: t.allowZeroAmount,
+    feesStrategy: t.feesStrategy,
   };
 };
 

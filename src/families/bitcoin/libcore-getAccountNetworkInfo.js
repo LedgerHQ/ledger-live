@@ -13,7 +13,7 @@ type Input = {
 
 type Output = Promise<NetworkInfo>;
 
-const speeds = ["high", "standard", "low"];
+const speeds = ["fast", "medium", "slow"];
 
 export function avoidDups(nums: Array<BigNumber>): Array<BigNumber> {
   nums = nums.slice(0);

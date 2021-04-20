@@ -14,7 +14,7 @@ import { LowerThanMinimumRelayFee } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge } from "../../../types/bridge";
 import type { Account } from "../../../types/account";
-import type { Transaction } from "../types";
+import type { Transaction, NetworkInfo } from "../types";
 import { sync } from "../../../libcore/syncAccount";
 import { scanAccounts } from "../../../libcore/scanAccounts";
 import { getAccountNetworkInfo } from "../../../libcore/getAccountNetworkInfo";
@@ -69,6 +69,7 @@ const createTransaction = () => ({
   feePerByte: null,
   networkInfo: null,
   useAllAmount: false,
+  feesStrategy: "medium",
 });
 
 const updateTransaction = (t, patch) => {
@@ -193,6 +194,19 @@ const getTransactionStatus = async (a, t) => {
   });
 };
 
+const inferFeePerByte = (t: Transaction, networkInfo: NetworkInfo) => {
+  if (t.feesStrategy) {
+    const speed = networkInfo.feeItems.items.find(
+      (item) => t.feesStrategy === item.speed
+    );
+    if (!speed) {
+      return networkInfo.feeItems.defaultFeePerByte;
+    }
+    return speed.feePerByte;
+  }
+  return t.feePerByte || networkInfo.feeItems.defaultFeePerByte;
+};
+
 const prepareTransaction = async (
   a: Account,
   t: Transaction
@@ -205,7 +219,8 @@ const prepareTransaction = async (
     networkInfo = await getAccountNetworkInfo(a);
     invariant(networkInfo.family === "bitcoin", "bitcoin networkInfo expected");
   }
-  const feePerByte = t.feePerByte || networkInfo.feeItems.defaultFeePerByte;
+
+  const feePerByte = inferFeePerByte(t, networkInfo);
   if (
     t.networkInfo === networkInfo &&
     (feePerByte === t.feePerByte || feePerByte.eq(t.feePerByte || 0))
