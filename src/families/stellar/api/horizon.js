@@ -1,22 +1,20 @@
 //@flow
 import { BigNumber } from "bignumber.js";
-import StellarSdk from "stellar-sdk";
+import StellarSdk, { AccountRecord, NotFoundError } from "stellar-sdk";
 import { getEnv } from "../../../env";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import type { Account, NetworkInfo, Operation } from "../../../types";
-import type { RawAccount, RawTransaction } from "./horizon.types";
-import { getAccountSpendableBalance, rawOperationToOperation } from "../logic";
+import {
+  getAccountSpendableBalance,
+  rawOperationsToOperations,
+} from "../logic";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
 
 const currency = getCryptoCurrencyById("stellar");
 
-const getServer = () => {
-  const server = new StellarSdk.Server(getEnv("API_STELLAR_HORIZON"));
-
-  return server;
-};
+const server = new StellarSdk.Server(getEnv("API_STELLAR_HORIZON"));
 
 const getFormattedAmount = (amount: BigNumber) => {
   return amount
@@ -28,7 +26,7 @@ export const fetchBaseFee = async (): Promise<number> => {
   let baseFee;
 
   try {
-    baseFee = await getServer().fetchBaseFee();
+    baseFee = await server.fetchBaseFee();
   } catch (e) {
     baseFee = FALLBACK_BASE_FEE;
   }
@@ -43,10 +41,10 @@ export const fetchBaseFee = async (): Promise<number> => {
  * @param {*} addr
  */
 export const fetchAccount = async (addr: string) => {
-  let account: RawAccount = {};
+  let account: typeof AccountRecord = {};
   let balance = {};
   try {
-    account = await getServer().accounts().accountId(addr).call();
+    account = await server.accounts().accountId(addr).call();
     balance = account.balances.find((balance) => {
       return balance.asset_type === "native";
     });
@@ -84,91 +82,58 @@ export const fetchOperations = async (
   addr: string,
   startAt: number = 0
 ): Promise<Operation[]> => {
-  const transactions = await fetchTransactionsList(accountId, addr, startAt);
-  return await fetchOperationList(accountId, addr, transactions);
-};
-
-const fetchTransactionsList = async (
-  accountId: string,
-  addr: string,
-  startAt: number
-): Promise<RawTransaction[]> => {
-  let transactions = {};
-  let mergedTransactions = [];
-
-  try {
-    transactions = await getServer()
-      .transactions()
-      .forAccount(addr)
-      .cursor(startAt)
-      .limit(LIMIT)
-      .call();
-
-    mergedTransactions = transactions.records;
-
-    while (transactions.records.length > 0) {
-      transactions = await transactions.next();
-      mergedTransactions = mergedTransactions.concat(transactions.records);
-    }
-  } catch (e) {
+  if (!addr || !addr.length) {
     return [];
   }
 
-  return mergedTransactions;
-};
-
-const fetchOperationList = async (
-  accountId: string,
-  addr: string,
-  transactions: RawTransaction[]
-): Promise<Operation[]> => {
-  let formattedMergedOp = [];
-
-  for (let i = 0; i < transactions.length; i++) {
-    let operations = await getServer()
+  let operations = [];
+  let rawOperations = [];
+  try {
+    rawOperations = await server
       .operations()
-      .forTransaction(transactions[i].id)
+      .forAccount(addr)
+      .join("transactions")
+      .includeFailed(true)
       .limit(LIMIT)
+      .cursor(startAt)
       .call();
-
-    formattedMergedOp = formattedMergedOp.concat(
-      rawOperationToOperation(
-        operations.records,
-        transactions[i],
-        addr,
-        accountId
-      )
-    );
-
-    while (operations.records.length > 0) {
-      operations = await operations.next();
-
-      formattedMergedOp = formattedMergedOp.concat(
-        rawOperationToOperation(
-          operations.records,
-          transactions[i],
-          addr,
-          accountId
-        )
-      );
+  } catch (e) {
+    if (e instanceof NotFoundError) {
+      return [];
     }
+    throw e;
   }
 
-  return formattedMergedOp;
+  if (!rawOperations || !rawOperations.records.length) {
+    return [];
+  }
+
+  operations = operations.concat(
+    await rawOperationsToOperations(rawOperations.records, addr, accountId)
+  );
+
+  while (rawOperations.records.length > 0) {
+    rawOperations = await rawOperations.next();
+    operations = operations.concat(
+      await rawOperationsToOperations(rawOperations.records, addr, accountId)
+    );
+  }
+
+  return operations;
 };
 
 export const fetchAccountNetworkInfo = async (
   account: Account
 ): Promise<NetworkInfo> => {
   try {
-    const extendedAccount = await getServer()
+    const extendedAccount = await server
       .accounts()
       .accountId(account.freshAddress)
       .call();
 
     const numberOfEntries = extendedAccount.subentry_count;
 
-    const ledger = await getServer()
+    const ledger = await server
       .ledgers()
       .ledger(extendedAccount.last_modified_ledger)
       .call();
@@ -194,13 +159,13 @@ export const fetchAccountNetworkInfo = async (
 };
 
 export const fetchSequence = async (a: Account) => {
-  const extendedAccount = await getServer().loadAccount(a.freshAddress);
+  const extendedAccount = await server.loadAccount(a.freshAddress);
   return BigNumber(extendedAccount.sequence);
 };
 
 export const fetchSigners = async (a: Account) => {
   try {
-    const extendedAccount = await getServer()
+    const extendedAccount = await server
       .accounts()
       .accountId(a.freshAddress)
       .call();
@@ -218,7 +183,7 @@ export const broadcastTransaction = async (
     StellarSdk.Networks.PUBLIC
   );
 
-  const res = await getServer().submitTransaction(transaction, {
+  const res = await server.submitTransaction(transaction, {
     skipMemoRequiredCheck: true,
   });
   return res.hash;
@@ -261,6 +226,10 @@ export const buildTransactionBuilder = (
   });
 };
 
-export const loadAccount = (addr: string) => {
-  return getServer().loadAccount(addr);
+export const loadAccount = async (addr: string) => {
+  if (!addr || !addr.length) {
+    return {};
+  }
+
+  return await server.loadAccount(addr);
 };

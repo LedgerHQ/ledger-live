@@ -1,22 +1,24 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import StellarSdk from "stellar-sdk";
+import StellarSdk, {
+  TransactionRecord,
+  OperationRecord,
+  AccountRecord,
+  NotFoundError,
+} from "stellar-sdk";
+
 import type { CacheRes } from "../../cache";
 import { makeLRUCache } from "../../cache";
 import type { Account, Operation, OperationType } from "../../types";
 
 import { fetchSigners, fetchBaseFee, loadAccount } from "./api";
-import type {
-  RawAccount,
-  RawOperation,
-  RawTransaction,
-} from "./api/horizon.types";
+
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
 
 const currency = getCryptoCurrencyById("stellar");
 
-const getMinimumBalance = (account: RawAccount): BigNumber => {
+const getMinimumBalance = (account: typeof AccountRecord): BigNumber => {
   const baseReserve = 0.5;
   const numberOfEntries = account.subentry_count;
 
@@ -27,7 +29,7 @@ const getMinimumBalance = (account: RawAccount): BigNumber => {
 
 export const getAccountSpendableBalance = async (
   balance: BigNumber,
-  account: RawAccount
+  account: typeof AccountRecord
 ): Promise<BigNumber> => {
   const minimumBalance = getMinimumBalance(account);
   const baseFee = await fetchBaseFee();
@@ -35,7 +37,7 @@ export const getAccountSpendableBalance = async (
 };
 
 export const getOperationType = (
-  operation: RawOperation,
+  operation: typeof OperationRecord,
   addr: string
 ): OperationType => {
   switch (operation.type) {
@@ -72,12 +74,12 @@ const getRecipients = (operation): string[] => {
   }
 };
 
-export const formatOperation = (
-  rawOperation: RawOperation,
-  transaction: RawTransaction,
+export const formatOperation = async (
+  rawOperation: typeof OperationRecord,
   accountId: string,
   addr: string
-): Operation => {
+): Promise<Operation> => {
+  const transaction = await rawOperation.transaction();
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
   const recipients = getRecipients(rawOperation);
@@ -109,8 +111,8 @@ export const formatOperation = (
 };
 
 const getValue = (
-  operation: RawOperation,
-  transaction: RawTransaction,
+  operation: typeof OperationRecord,
+  transaction: typeof TransactionRecord,
   type: OperationType
 ): BigNumber => {
   let value = BigNumber(0);
@@ -208,29 +210,31 @@ export const addressExists = async (address: string): Promise<boolean> => {
   try {
     await loadAccount(address);
   } catch (error) {
-    return false;
+    if (error instanceof NotFoundError) {
+      return false;
+    }
+    throw error;
   }
 
   return true;
 };
 
-export const rawOperationToOperation = (
-  operations: RawOperation[],
-  transaction: RawTransaction,
+export const rawOperationsToOperations = async (
+  operations: typeof OperationRecord[],
   addr: string,
   accountId: string
-): Operation[] => {
-  return operations
-    .filter((operation) => {
-      return (
-        operation.from === addr ||
-        operation.to === addr ||
-        operation.funder === addr ||
-        operation.account === addr ||
-        operation.source_account === addr
-      );
-    })
-    .map((operation) => {
-      return formatOperation(operation, transaction, accountId, addr);
-    });
+): Promise<Operation[]> => {
+  return Promise.all(
+    operations
+      .filter((operation) => {
+        return (
+          operation.from === addr ||
+          operation.to === addr ||
+          operation.funder === addr ||
+          operation.account === addr ||
+          operation.source_account === addr
+        );
+      })
+      .map((operation) => formatOperation(operation, accountId, addr))
+  );
 };
