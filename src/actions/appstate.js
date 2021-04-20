@@ -2,7 +2,7 @@
 
 import { isConnectedSelector } from "../reducers/appstate";
 
-export const syncIsConnected = (isConnected: boolean) => (
+export const syncIsConnected = (isConnected: boolean | null) => (
   dispatch: *,
   getState: *,
 ) => {
