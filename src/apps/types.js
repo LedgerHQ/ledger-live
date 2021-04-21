@@ -20,7 +20,10 @@ export type InstalledItem = {
 };
 
 export type ListAppsEvent =
-  | { type: "device-permission-requested", wording: string }
+  | {
+      type: "device-permission-requested",
+      wording: string,
+    }
   | { type: "device-permission-granted" }
   | { type: "result", result: ListAppsResult };
 

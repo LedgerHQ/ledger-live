@@ -229,6 +229,11 @@ const envDefinitions = {
     desc:
       "enable an experimental version of the portfolio percentage calculation",
   },
+  EXPERIMENTAL_INLINE_INSTALL: {
+    def: false,
+    parser: boolParser,
+    desc: "enable an experimental inline app installation flow",
+  },
   EXPERIMENTAL_SEND_MAX: {
     def: false,
     parser: boolParser,

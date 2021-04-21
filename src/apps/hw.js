@@ -3,13 +3,15 @@
 import Transport from "@ledgerhq/hw-transport";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
-import { Observable, throwError } from "rxjs";
+import { concat, of, empty, from, Observable, throwError } from "rxjs";
+import { mergeMap, map } from "rxjs/operators";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import type { App, DeviceInfo } from "../types/manager";
 import { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
 import { log } from "@ledgerhq/logs";
+import getDeviceInfo from "../hw/getDeviceInfo";
 import {
   listCryptoCurrencies,
   currenciesByMarketcap,
@@ -19,6 +21,8 @@ import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
 import hwListApps from "../hw/listApps";
 import { polyfillApp, polyfillApplication } from "./polyfill";
+import { reducer, isOutOfMemoryState, initState } from "../apps/logic";
+import { runAllWithProgress } from "../apps/runner";
 
 export const execWithTransport = (transport: Transport<*>): Exec => (
   appOp: AppOp,
@@ -30,6 +34,52 @@ export const execWithTransport = (transport: Transport<*>): Exec => (
 };
 
 const appsThatKeepChangingHashes = ["Fido U2F"];
+
+export type StreamAppInstallEvent =
+  | {
+      type: "device-permission-requested",
+      wording: string,
+    }
+  | { type: "listing-apps" }
+  | { type: "device-permission-granted" }
+  | { type: "app-not-installed", appName: string }
+  | { type: "stream-install", progress: number }; // global percentage
+
+export const streamAppInstall = (
+  transport: Transport<*>,
+  appName: string
+): Observable<StreamAppInstallEvent> =>
+  concat(
+    of({ type: "listing-apps" }),
+    from(getDeviceInfo(transport)).pipe(
+      mergeMap((deviceInfo) => listApps(transport, deviceInfo)),
+      mergeMap((e) => {
+        if (
+          e.type === "device-permission-granted" ||
+          e.type === "device-permission-requested"
+        ) {
+          // pass in events we need
+          return of(e);
+        }
+        if (e.type === "result") {
+          // stream install with the result of list apps
+          const state = reducer(initState(e.result), {
+            type: "install",
+            name: appName,
+          });
+          if (isOutOfMemoryState(state)) {
+            // it will not be possible to install so we will fallback to app-not-installed.
+            return of({ type: "app-not-installed", appName });
+          }
+          const exec = execWithTransport(transport);
+          return runAllWithProgress(state, exec).pipe(
+            map((progress) => ({ type: "stream-install", progress }))
+          );
+        }
+        return empty();
+      })
+    )
+  );
 
 export const listApps = (
   transport: Transport<*>,

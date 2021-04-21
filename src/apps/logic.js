@@ -2,6 +2,7 @@
 
 import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
+import invariant from "invariant";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { App } from "../types/manager";
 import type {
@@ -108,6 +109,10 @@ export const reducer = (state: State, action: Action): State => {
           currentProgressSubject: new Subject(),
         };
       } else if (event.type === "runSuccess") {
+        if (state.currentProgressSubject) {
+          state.currentProgressSubject.complete();
+        }
+
         let nextState;
         if (appOp.type === "install") {
           const app = state.apps.find((a) => a.name === appOp.name);
@@ -176,6 +181,10 @@ export const reducer = (state: State, action: Action): State => {
           };
         }
         */
+
+        if (state.currentProgressSubject) {
+          state.currentProgressSubject.complete();
+        }
 
         // any other error stops everything
         return {
@@ -265,13 +274,15 @@ export const reducer = (state: State, action: Action): State => {
         return state;
       }
 
-      const depApp = state.appByName[name];
-      const deps = depApp && depApp.dependencies;
-      const dependentsOfDep =
-        deps && flatMap(deps, (dep) => findDependents(state.appByName, dep));
-      const depsInstalledOutdated =
-        deps &&
-        state.installed.filter((a) => deps.includes(a.name) && !a.updated);
+      const depApp: ?App = state.appByName[name];
+      invariant(depApp, "no such app '%s'", name);
+      const deps = depApp.dependencies;
+      const dependentsOfDep = flatMap(deps, (dep) =>
+        findDependents(state.appByName, dep)
+      );
+      const depsInstalledOutdated = state.installed.filter(
+        (a) => deps.includes(a.name) && !a.updated
+      );
 
       let installList = state.installQueue;
       // installing an app will remove if planned for uninstalling

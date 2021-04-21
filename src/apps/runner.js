@@ -7,6 +7,9 @@ import {
   reduce,
   ignoreElements,
   throttleTime,
+  scan,
+  mergeMap,
+  distinctUntilChanged,
 } from "rxjs/operators";
 import type { Exec, State, AppOp, RunnerEvent } from "./types";
 import { reducer, getActionPlan, getNextAppOp } from "./logic";
@@ -46,6 +49,33 @@ export const runAppOp = (
         }
       })
     )
+  );
+};
+
+export const runAllWithProgress = (
+  state: State,
+  exec: Exec,
+  precision: number = 100
+): Observable<number> => {
+  const total = state.uninstallQueue.length + state.installQueue.length;
+  function globalProgress(s, localProgress) {
+    let p =
+      1 -
+      (s.uninstallQueue.length + s.installQueue.length - localProgress) / total;
+    p = Math.round(p * precision) / precision;
+    return p;
+  }
+  return concat(
+    ...getActionPlan(state).map((appOp) => runAppOp(state, appOp, exec))
+  ).pipe(
+    map((event) => ({ type: "onRunnerEvent", event })),
+    scan(reducer, state),
+    mergeMap((s) => {
+      const { currentProgressSubject } = s;
+      if (!currentProgressSubject) return of(globalProgress(s, 0));
+      return currentProgressSubject.pipe(map((v) => globalProgress(s, v)));
+    }),
+    distinctUntilChanged()
   );
 };
 
