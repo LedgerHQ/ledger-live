@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "19.5.1",
+  "version": "19.6.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "@ledgerhq/hw-transport-node-hid": "5.49.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.49.0",
     "@ledgerhq/ledger-core": "6.11.3",
-    "@ledgerhq/live-common": "^19.5.1",
+    "@ledgerhq/live-common": "^19.6.0",
     "@ledgerhq/logs": "5.49.0",
     "@walletconnect/client": "^1.4.1",
     "asciichart": "^1.5.25",
@@ -59,8 +59,8 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.14",
-    "@babel/core": "^7.13.15",
+    "@babel/cli": "^7.13.16",
+    "@babel/core": "^7.13.16",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-export-default-from": "^7.12.13",
     "@babel/plugin-proposal-export-namespace-from": "^7.12.13",
