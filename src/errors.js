@@ -189,4 +189,8 @@ export const CompoundLowerAllowanceOfActiveAccountError = createCustomErrorClass
   "CompoundLowerAllowanceOfActiveAccountError"
 );
 
+export const FreshAddressIndexInvalid = createCustomErrorClass(
+  "FreshAddressIndexInvalid"
+);
+
 export * from "./families/polkadot/errors";
