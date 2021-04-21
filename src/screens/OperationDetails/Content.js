@@ -38,6 +38,7 @@ import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import DefaultOperationDetailsExtra from "./Extra";
+import DoubleCounterValue from "../../components/DoubleCountervalue";
 
 type HelpLinkProps = {
   event: string,
@@ -163,16 +164,14 @@ export default function Content({
         )}
 
         {hasFailed || amount.isZero() ? null : (
-          <LText semiBold style={styles.counterValue} color="smoke">
-            <CounterValue
-              showCode
-              alwaysShowSign
-              currency={currency}
-              value={amount}
-              date={operation.date}
-              subMagnitude={1}
-            />
-          </LText>
+          <DoubleCounterValue
+            showCode
+            alwaysShowSign
+            currency={currency}
+            value={amount}
+            date={operation.date}
+            subMagnitude={1}
+          />
         )}
 
         <View style={styles.confirmationContainer}>

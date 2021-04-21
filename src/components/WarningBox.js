@@ -10,7 +10,7 @@ import IconHelp from "../icons/Info";
 type Props = {
   children: React$Node,
   onLearnMore?: () => any,
-  learnMoreKey?: String,
+  learnMoreKey?: string,
 };
 
 export default function WarningBox({

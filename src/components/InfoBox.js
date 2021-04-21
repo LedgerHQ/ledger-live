@@ -9,7 +9,7 @@ import IconHelp from "../icons/Info";
 type Props = {
   children: React$Node,
   onLearnMore?: () => any,
-  forceColor: { background: string, text: string, icon: string },
+  forceColor?: { background: string, text: string, icon: string },
 };
 
 export default function InfoBox({
@@ -25,6 +25,7 @@ export default function InfoBox({
     background: background || colors.pillActiveBackground,
     text: text || colors.darkBlue,
     icon: icon || colors.live,
+    learnMore: text || colors.live,
   };
 
   return (
@@ -32,7 +33,7 @@ export default function InfoBox({
       style={[
         styles.root,
         {
-          backgroundColor: colors.pillActiveBackground,
+          backgroundColor: setColor.background,
         },
       ]}
     >
@@ -43,8 +44,7 @@ export default function InfoBox({
         </LText>{" "}
         {onLearnMore && (
           <LText
-            style={styles.learnMore}
-            color="live"
+            style={[styles.learnMore, { color: setColor.learnMore }]}
             fontSize={3}
             onPress={onLearnMore}
           >

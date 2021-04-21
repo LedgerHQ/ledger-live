@@ -41,7 +41,7 @@ const renderAccountSummary = (
 
   const footers = [];
 
-  if (compoundSummary) {
+  if (compoundSummary && account.type === "TokenAccount") {
     footers.push(
       <CompoundSummary
         key="compoundSummary"
@@ -111,6 +111,7 @@ const renderListHeaderTitle = (
         ) : null}
         {items[1] ? (
           <LText style={styles.balanceSubText} color="smoke" semiBold>
+            {/* $FlowFixMe */}
             <CurrencyUnitValue {...items[1]} disableRounding />
           </LText>
         ) : null}
@@ -206,7 +207,10 @@ function ListHeaderComponent({
           onToggle={() => setIsCollapsed(!isCollapsed)}
         />
       ) : null}
-      {compoundSummary ? (
+      {compoundSummary &&
+      account &&
+      account.type === "TokenAccount" &&
+      parentAccount ? (
         <CompoundAccountBodyHeader
           account={account}
           parentAccount={parentAccount}

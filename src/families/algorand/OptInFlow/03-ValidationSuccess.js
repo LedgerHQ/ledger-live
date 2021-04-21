@@ -45,11 +45,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params, navigation]);
 
-  const options = listTokensForCryptoCurrency(account.currency);
-  const token = useMemo(
-    () => options.find(({ id }) => id === transaction.assetId),
-    [options, transaction],
-  );
+  const token = useMemo(() => {
+    const options =
+      account && account.type === "Account"
+        ? listTokensForCryptoCurrency(account.currency)
+        : [];
+    return options.find(({ id }) => id === transaction.assetId);
+  }, [account, transaction]);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -61,13 +63,13 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         title={
           <Trans
             i18nKey={`algorand.optIn.flow.steps.verification.success.title`}
-            values={{ token: token.name }}
+            values={{ token: token?.name }}
           />
         }
         description={
           <Trans
             i18nKey="algorand.optIn.flow.steps.verification.success.text"
-            values={{ token: token.name }}
+            values={{ token: token?.name }}
           />
         }
       />

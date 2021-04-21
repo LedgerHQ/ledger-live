@@ -55,10 +55,7 @@ const Landing = () => {
         </View>
       </ScrollView>
       <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
-        <TouchableWithoutFeedback
-          event="SwapTermsAcceptSwitch"
-          onPress={() => setIsChecked(!isChecked)}
-        >
+        <TouchableWithoutFeedback onPress={() => setIsChecked(!isChecked)}>
           <View style={styles.switchRow}>
             <CheckBox isChecked={isChecked} />
             <LText semiBold style={styles.switchLabel}>

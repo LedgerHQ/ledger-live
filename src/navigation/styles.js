@@ -28,6 +28,7 @@ function Styles() {
   return StyleSheet.create({
     header: {
       ...headerStyle,
+      // $FlowFixMe
       ...headerStyleShadow,
     },
     headerNoShadow: {

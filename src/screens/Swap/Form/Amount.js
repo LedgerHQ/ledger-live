@@ -60,7 +60,7 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
       }),
     [fromCurrency, selectableCurrencies, toCurrency],
   );
-  const [tradeMethod, setTradeMethod] = useState(
+  const [tradeMethod, setTradeMethod] = useState<"fixed" | "float">(
     enabledTradeMethods[0] || "fixed",
   );
 
@@ -76,9 +76,11 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
 
   invariant(transaction, "transaction must be defined");
   const onTradeMethodChange = useCallback(method => {
-    setTradeMethod(method);
-    setRate(null);
-    setRateExpiration(null);
+    if (method === "fixed" || method === "float") {
+      setTradeMethod(method);
+      setRate(null);
+      setRateExpiration(null);
+    }
   }, []);
   const onAmountChange = useCallback(
     amount => {

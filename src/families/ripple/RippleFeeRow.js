@@ -72,7 +72,9 @@ export default function RippleFeeRow({ account, transaction }: Props) {
           </LText>
         </View>
         <LText style={styles.countervalue} color="grey">
-          <CounterValue before="≈ " value={fee} currency={account.currency} />
+          {fee ? (
+            <CounterValue before="≈ " value={fee} currency={account.currency} />
+          ) : null}
         </LText>
       </View>
     </SummaryRow>

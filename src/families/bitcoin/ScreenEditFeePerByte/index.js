@@ -1,6 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -56,21 +56,22 @@ function BitcoinEditFeePerByte({ navigation, route }: Props) {
   );
   const [error, setError] = useState();
 
-  function onChangeCustomFeeRow(feePerByte: BigNumber) {
+  const onChangeCustomFeeRow = useCallback((feePerByte: BigNumber) => {
     setFeePerByte(feePerByte);
     setFocusedItemKey("custom");
     setError(!feePerByte.isGreaterThan(0));
     track("SendChangeCustomFees");
-  }
+  }, []);
 
-  function onChangeFeeRow(feePerByte: ?BigNumber, key: string) {
+  const onChangeFeeRow = useCallback((feePerByte: ?BigNumber, key: string) => {
     setFeePerByte(feePerByte);
     setFocusedItemKey(key);
     setError(undefined);
     Keyboard.dismiss();
-  }
+  }, []);
 
-  function onValidateFees() {
+  const onValidateFees = useCallback(() => {
+    if (!account) return;
     const bridge = getAccountBridge(account);
     Keyboard.dismiss();
 
@@ -78,7 +79,7 @@ function BitcoinEditFeePerByte({ navigation, route }: Props) {
       accountId: account.id,
       transaction: bridge.updateTransaction(transaction, { feePerByte }),
     });
-  }
+  }, [account, feePerByte, navigation, transaction]);
 
   if (!transaction) return null;
 

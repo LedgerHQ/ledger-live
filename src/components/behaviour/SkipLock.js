@@ -5,7 +5,7 @@ import { useIsFocused } from "@react-navigation/native";
 // $FlowFixMe
 export const SkipLockContext = React.createContext((_: boolean) => {});
 
-class SkipLock extends PureComponent<{
+class SkipLockClass extends PureComponent<{
   setEnabled: (enabled: boolean) => void,
   isFocused: boolean,
 }> {
@@ -23,7 +23,7 @@ class SkipLock extends PureComponent<{
     this.report(false);
   }
 
-  report = enabled => {
+  report = (enabled: boolean) => {
     if (this.lastValue !== enabled) {
       this.props.setEnabled(enabled);
       this.lastValue = enabled;
@@ -35,9 +35,11 @@ class SkipLock extends PureComponent<{
   }
 }
 
-export default function(props: any) {
+export default function SkipLock(props: any) {
   const isFocused = useIsFocused();
   const setEnabled = useContext(SkipLockContext);
 
-  return <SkipLock {...props} isFocused={isFocused} setEnabled={setEnabled} />;
+  return (
+    <SkipLockClass {...props} isFocused={isFocused} setEnabled={setEnabled} />
+  );
 }

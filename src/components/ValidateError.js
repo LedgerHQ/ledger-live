@@ -11,7 +11,7 @@ import NeedHelp from "./NeedHelp";
 type Props = {
   error: Error,
   onClose: () => void,
-  onRetry: null | (() => void),
+  onRetry?: () => void,
 };
 
 function ValidateError({ error, onClose, onRetry }: Props) {

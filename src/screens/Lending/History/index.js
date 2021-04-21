@@ -4,6 +4,7 @@ import { SectionList, View, StyleSheet, SafeAreaView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type {
+  Account,
   AccountLikeArray,
   Operation,
 } from "@ledgerhq/live-common/lib/types";
@@ -79,9 +80,10 @@ export default function History() {
             section: *,
           }) => {
             const account = accounts.find(a => a.id === item.accountId);
-            const parentAccount =
+            const parentAccount: ?Account =
               account && account.type !== "Account"
-                ? accounts.find(a => a.id === account.parentId)
+                ? // $FlowFixMe
+                  accounts.find(a => a.id === account.parentId)
                 : null;
 
             if (!account) return null;

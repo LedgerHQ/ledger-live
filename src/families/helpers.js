@@ -6,6 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 export function useFieldByFamily(field: string): ?BigNumber {
+  // $FlowFixMe
   return useRoute().params?.transaction[field];
 }
 
@@ -33,7 +34,7 @@ export function useEditTxFeeByFamily() {
  * @param {*} type - the key to fetch first error from (errors or warnings)
  */
 export function getFirstStatusError(
-  status,
+  status: ?{ errors: *, warnings: * },
   type: "errors" | "warnings" = "errors",
 ): ?Error {
   if (!status || !status[type]) return null;
@@ -47,7 +48,7 @@ export function getFirstStatusError(
  *
  * @param {Object} status - The transaction status
  */
-export function hasStatusError(status): ?Error {
+export function hasStatusError(status: any): ?boolean {
   if (!status || !status.errors) return false;
 
   return !!Object.keys(status.errors).length;

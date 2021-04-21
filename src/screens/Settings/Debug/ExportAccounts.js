@@ -87,12 +87,14 @@ class ExportAccounts extends PureComponent<Props, State> {
   }
 }
 
-export default connect(
+const m: React$ComponentType<{}> = connect(
   createStructuredSelector({
     accounts: accountsSelector,
     settings: exportSettingsSelector,
   }),
 )(ExportAccounts);
+
+export default m;
 
 const styles = StyleSheet.create({
   root: {

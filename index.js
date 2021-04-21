@@ -16,6 +16,8 @@ import Config from "react-native-config";
 import App from "./src";
 import { getEnabled } from "./src/components/HookSentry";
 
+import logReport from "./src/log-report";
+
 if (Config.SENTRY_DSN && !__DEV__) {
   Sentry.config(Config.SENTRY_DSN, {
     handlePromiseRejection: true,
@@ -68,5 +70,7 @@ if (Config.DISABLE_YELLOW_BOX) {
   // $FlowFixMe
   console.disableYellowBox = true; // eslint-disable-line no-console
 }
+
+logReport.logReportInit();
 
 AppRegistry.registerComponent("ledgerlivemobile", () => App);

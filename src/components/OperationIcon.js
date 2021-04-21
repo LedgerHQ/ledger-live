@@ -14,13 +14,16 @@ import { currencySettingsForAccountSelector } from "../reducers/settings";
 
 import perFamilyOperationDetails from "../generated/operationDetails";
 
-type Props = {
-  type: OperationType,
+type OwnProps = {
   size: number,
-  confirmed: boolean,
   operation: Operation,
   account: AccountLike,
   parentAccount: ?Account,
+};
+
+type Props = OwnProps & {
+  type: OperationType,
+  confirmed: boolean,
 };
 
 class OperationIcon extends PureComponent<Props> {
@@ -69,7 +72,7 @@ class OperationIcon extends PureComponent<Props> {
   }
 }
 
-export default connect((state, props) => {
+const m: React$ComponentType<OwnProps> = connect((state, props) => {
   const {
     account,
     parentAccount,
@@ -84,3 +87,5 @@ export default connect((state, props) => {
       currencySettingsForAccountSelector(state, props).confirmationsNb,
   };
 })(OperationIcon);
+
+export default m;

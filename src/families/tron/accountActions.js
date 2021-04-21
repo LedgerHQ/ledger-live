@@ -19,7 +19,7 @@ import LText from "../../components/LText";
 import DateFromNow from "../../components/DateFromNow";
 import { NavigatorName, ScreenName } from "../../const";
 
-const getActions = ({ account, colors }: { account: Account }) => {
+const getActions = ({ account, colors }: { account: Account, colors: * }) => {
   if (!account.tronResources) return null;
 
   const {

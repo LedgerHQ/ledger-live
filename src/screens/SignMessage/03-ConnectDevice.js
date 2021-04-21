@@ -4,10 +4,12 @@ import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { createAction } from "@ledgerhq/live-common/lib/hw/signMessage";
 import type { TypedMessageData } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import type { MessageData } from "@ledgerhq/live-common/lib/hw/signMessage/types";
 import connectApp from "@ledgerhq/live-common/lib/hw/connectApp";
+import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
 import { accountScreenSelector } from "../../reducers/accounts";
 import DeviceAction from "../../components/DeviceAction";
 import { TrackScreen } from "../../analytics";
@@ -33,6 +35,8 @@ export default function ConnectDevice({ route, navigation }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
 
+  const mainAccount = getMainAccount(account, parentAccount);
+
   const onResult = result => {
     if (result.error) {
       navigation.navigate(ScreenName.SignValidationError, {
@@ -52,9 +56,10 @@ export default function ConnectDevice({ route, navigation }: Props) {
       <SafeAreaView style={styles.root}>
         <TrackScreen category={"SignMessage"} name="ConnectDevice" />
         <DeviceAction
+          // $FlowFixMe
           action={action}
           request={{
-            account,
+            account: mainAccount,
             parentAccount,
             message: route.params.message,
           }}

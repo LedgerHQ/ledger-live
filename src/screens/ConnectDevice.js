@@ -87,7 +87,7 @@ export default function ConnectDevice({ route }: Props) {
               tokenCurrency,
             }}
             device={route.params.device}
-            onResult={onResult}
+            renderOnResult={onResult}
           />
         </SafeAreaView>
       ) : null,

@@ -43,9 +43,10 @@ export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account and tron resources required");
+  invariant(account.type === "Account", "not main account");
 
   const bridge = getAccountBridge(account, undefined);
-  const { tronResources } = account;
+  const tronResources = useMemo(() => account.tronResources || null, [account]);
   invariant(tronResources, "Tron resources required");
 
   const { tronPower } = tronResources;

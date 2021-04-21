@@ -14,7 +14,7 @@ import NavigationScrollView from "../../../components/NavigationScrollView";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
 import { TrackScreen } from "../../../analytics";
-import VerifyAddressDisclaimer from "../../../components/VerifyAddressDisclaimer";
+import Alert from "../../../components/Alert";
 
 const forceInset = { bottom: "always" };
 
@@ -83,12 +83,9 @@ export default function DelegationStarted({ navigation, route }: Props) {
           />
         </View>
         <View style={styles.warning}>
-          <VerifyAddressDisclaimer
-            text={
-              <Trans i18nKey="cosmos.delegation.flow.steps.starter.warning.description" />
-            }
-            verified
-          />
+          <Alert type="help">
+            <Trans i18nKey="cosmos.delegation.flow.steps.starter.warning.description" />
+          </Alert>
         </View>
       </NavigationScrollView>
       <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>

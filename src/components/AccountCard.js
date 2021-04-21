@@ -43,6 +43,7 @@ class AccountCard extends PureComponent<Props> {
     const tag =
       account.derivationMode !== undefined &&
       account.derivationMode !== null &&
+      // $FlowFixMe
       getTagDerivationMode(currency, account.derivationMode);
 
     return (

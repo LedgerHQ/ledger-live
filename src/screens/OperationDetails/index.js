@@ -45,7 +45,7 @@ export const BackButton = ({ navigation }: { navigation: * }) => {
   );
 };
 
-export const CloseButton = ({ navigation }: { navigation: Navigation }) => {
+export const CloseButton = ({ navigation }: { navigation: * }) => {
   const { colors } = useTheme();
 
   return (

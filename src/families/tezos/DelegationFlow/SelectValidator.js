@@ -194,6 +194,8 @@ export default function SelectValidator({ navigation, route }: Props) {
     });
   }
 
+  invariant(account, "account is undefined");
+
   const {
     transaction,
     setTransaction,
@@ -211,7 +213,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     };
   });
 
-  invariant(transaction, "transaction is defined");
+  invariant(transaction, "transaction is undefined");
 
   let error = bridgeError || status.errors.recipient;
 

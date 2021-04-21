@@ -45,8 +45,9 @@ type Props = {
 export default function VoteCast({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
+  invariant(account, "account is required");
+  invariant(account.type === "Account", "account must be a main Account");
   const bridge = getAccountBridge(account, undefined);
-
   const { tronResources } = account;
   invariant(tronResources, "tron resources required");
   const { tronPower } = tronResources;
@@ -317,7 +318,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexGrow: 1,
-    fontSize: 16,
     paddingVertical: 8,
 
     marginBottom: 8,

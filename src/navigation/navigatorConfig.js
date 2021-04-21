@@ -21,5 +21,5 @@ export const getStackNavigatorConfig = (c: *, closable: boolean = false) => ({
   headerTitleStyle: {
     color: c.darkBlue,
   },
-  ...(closable ? { headerRight: () => <HeaderRightClose /> } : {}),
+  headerRight: closable ? () => <HeaderRightClose /> : undefined,
 });

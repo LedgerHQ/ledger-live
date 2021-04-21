@@ -21,8 +21,8 @@ const NoAccountsEmptyState = ({
       navigate(
         NavigatorName.AddAccounts,
         selectedCurrency.type === "TokenCurrency"
-          ? { token: selectedCurrency }
-          : { selectedCurrency },
+          ? { token: selectedCurrency, returnToSwap: true }
+          : { currency: selectedCurrency, returnToSwap: true },
       ),
     [navigate, selectedCurrency],
   );
@@ -53,7 +53,7 @@ const NoAccountsEmptyState = ({
       <View style={styles.buttonContainer}>
         <Button
           containerStyle={styles.button}
-          event="ExchangeStartBuyFlow"
+          event="ExchangeStartSwapFlow"
           type="primary"
           title={<Trans i18nKey={"transfer.swap.emptyState.CTAButton"} />}
           onPress={onAddAccount}

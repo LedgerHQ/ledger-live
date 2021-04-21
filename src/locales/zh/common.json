@@ -34,6 +34,7 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "upToDate": "Up to date",
+    "transactionDate": "Transaction date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
     "notAvailable": "Not available",
@@ -49,6 +50,7 @@
     "subaccount_plural": "Subaccounts",
     "forgetDevice": "Remove device",
     "help": "Help",
+    "saveLogs": "Save logs",
     "sync": {
       "ago": "Synchronized {{time}}"
     },
@@ -120,11 +122,11 @@
     },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeTxDecode": {
       "title": "Something went wrong (Error #2)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeInvalidSequence": {
       "title": "Invalid sequence",
@@ -140,7 +142,7 @@
     },
     "CosmosBroadcastCodeUnknownRequest": {
       "title": "Something went wrong (Error #6)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeInvalidAddress": {
       "title": "Invalid address",
@@ -148,7 +150,7 @@
     },
     "CosmosBroadcastCodeInvalidPubKey": {
       "title": "Something went wrong (Error #8)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeUnknownAddress": {
       "title": "Unknown address",
@@ -160,11 +162,11 @@
     },
     "CosmosBroadcastCodeInvalidCoins": {
       "title": "Something went wrong (Error #11)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeOutOfGas": {
       "title": "Something went wrong (Error #12)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeMemoTooLarge": {
       "title": "The Memo field is too long",
@@ -172,19 +174,19 @@
     },
     "CosmosBroadcastCodeInsufficientFee": {
       "title": "Something went wrong (Error #14)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeTooManySignatures": {
       "title": "Something went wrong (Error #15)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeGasOverflow": {
       "title": "Something went wrong (Error #16)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "CosmosBroadcastCodeNoSignatures": {
       "title": "Something went wrong (Error #17)",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "DeviceAppVerifyNotSupported": {
       "title": "Open Manager to update this app",
@@ -200,7 +202,7 @@
     },
     "DeviceNotGenuine": {
       "title": "Device possibly not genuine",
-      "description": "Please contact Ledger Support."
+      "description": "Please save your logs using the button below and provide them to Ledger Support."
     },
     "DeviceNameInvalid": {
       "title": "Please name the device without '{{invalidCharacters}}'."
@@ -243,7 +245,7 @@
     },
     "Error": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please retry or contact Ledger Support if the problem persists."
+      "description": "Something went wrong. Please retry. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "FeeEstimationFailed": {
       "title": "Sorry, fee estimation failed",
@@ -261,11 +263,11 @@
     },
     "GenuineCheckFailed": {
       "title": "Device authentication failed",
-      "description": "Something went wrong. Please try again or contact Ledger Support if the problem persists."
+      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "HardResetFail": {
       "title": "Sorry, could not reset",
-      "description": "Please try again or contact Ledger Support if the problem persists."
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
@@ -286,11 +288,11 @@
     },
     "LedgerAPIErrorWithMessage": {
       "title": "{{message}}",
-      "description": "Please retry or contact Ledger Support if the problem persists."
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "LedgerAPINotAvailable": {
       "title": "Sorry, {{currencyName}} services unavailable",
-      "description": "Please retry or contact Ledger Support if the problem persists."
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "ManagerAPIsFail": {
       "title": "Sorry, Manager services are unavailable",
@@ -341,7 +343,7 @@
     },
     "NoAddressesFound": {
       "title": "Sorry, no account was found",
-      "description": "Something went wrong with the address calculation. Please contact Ledger Support if the problem persists."
+      "description": "Something went wrong with the address calculation. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
@@ -393,15 +395,15 @@
     },
     "TransactionRefusedOnDevice": {
       "title": "Transaction refused on device",
-      "description": "Please retry or contact Ledger Support in case of doubt."
+      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "TransportError": {
       "title": "Something went wrong. Please reconnect your device.",
-      "description": "{{message}}"
+      "description": "{{message}} Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device.",
-      "description": "{{message}}"
+      "description": "{{message}} Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "TronNoFrozenForBandwidth": {
       "title": "No assets to unfreeze",
@@ -459,7 +461,7 @@
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
-      "description": "You rejected the address. Please contact Ledger Support if in doubt."
+      "description": "You rejected the address. If in doubt, please save your logs using the button below and provide them to Ledger Support."
     },
     "UserRefusedDeviceNameChange": {
       "title": "Rename canceled on device",
@@ -467,7 +469,7 @@
     },
     "UserRefusedFirmwareUpdate": {
       "title": "Firmware update canceled on device",
-      "description": "You canceled the firmware update. Please retry or contact Ledger Support."
+      "description": "You canceled the firmware update. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "UserRefusedOnDevice": {
       "title": "Operation canceled on device",
@@ -482,12 +484,12 @@
       "description": "Please try again with a better network connection (websocket failed)."
     },
     "WrongDeviceForAccount": {
-      "title": "Sorry, wrong device for {{accountName}}",
-      "description": "The connected device is not associated with the account selected. Please connect the corresponding device."
+      "title": "Something went wrong",
+      "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
     "UnexpectedBootloader": {
       "title": "Sorry, your device must not be in Bootloader mode",
-      "description": "Please restart your device without touching the buttons when the logo appears. Contact Ledger Support if the problem persists."
+      "description": "Please restart your device without touching the buttons when the logo appears. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "UnavailableTezosOriginatedAccountReceive": {
       "title": "Cannot receive in subaccounts. Please select the parent account.",
@@ -560,7 +562,7 @@
     },
     "generic": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please retry or contact Ledger Support if the problem persists."
+      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     }
   },
   "bluetooth": {
@@ -1190,6 +1192,13 @@
         "failText": "Don’t worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety. Only one quick step left!",
         "cta": "Next step"
       }
+    },
+    "warning": {
+      "recoveryPhrase": {
+        "title": "Do not use a recovery phrase that you have not generated yourself.",
+        "desc": "Your Ledger hardware wallet’s pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
+        "supportLink": "Contact customer support"
+      }
     }
   },
   "tabs": {
@@ -1735,7 +1744,6 @@
       "verified": "Address confirmed. Check again if you copied or scanned it.",
       "verifyAgain": "Check again",
       "noAccount": "No account found",
-      "withoutDevice": "You do not have your device",
       "address": "Address for account",
       "copyAddress": "Copy address",
       "shareAddress": "Share address",
@@ -1774,12 +1782,27 @@
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
       },
+      "payoutModal": {
+        "title": "Payout fees",
+        "description": "Payout fees are not shown on the device and substracted from the amount.",
+        "cta": "Close"
+      },
       "pendingOperation": {
         "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
         "label": "Your Swap ID:",
         "title": "Pending operation",
         "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later.",
         "cta": "See details"
+      },
+      "tradeMethod": {
+        "float": "Floating rate",
+        "floatUnavailable": "Floating rate not supported for this pair",
+        "fixed": "Fixed rate",
+        "fixedUnavailable": "Fixed rate not supported for this pair",
+        "floatDesc": "Your amount could change depending on the market conditions.",
+        "fixedDesc": "Your amount will remain the same irrespective of the changes on the market. Fixed rate updates every 30 seconds",
+        "by": "By",
+        "modalTitle": "Floating or fixed rate?"
       },
       "form": {
         "validate": "Confirm Swap transaction",
@@ -1816,8 +1839,12 @@
           "from": "From",
           "to": "To",
           "send": "Send",
-          "receive": "Receive",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
           "provider": "Provider",
+          "method": "Rate",
           "fees": "Max fees",
           "disclaimer": {
             "title": "Terms and conditions",
@@ -2291,6 +2318,7 @@
     "retry": "Retry",
     "done": "Done",
     "finalCta": "Continue",
+    "finalCtaForSwap": "Go back to Swap",
     "synchronizing": "Synchronizing",
     "synchronizingDesc": "Your accounts are being synchronized. This can take a while...",
     "noAccountToCreate": "Could not create <1><0>{{currencyName}}</></> account. Restart the process and sync your accounts.",
@@ -2319,16 +2347,16 @@
       "title": "Which address type to choose?",
       "subtitle": "Add new account",
       "native_segwit": {
-        "title": "Native Segwit (starting with bc1...)",
+        "title": "Native Segwit",
         "desc": "Best overall. Low fees per transaction, error detection and Lightning Network support. Some wallets/exchanges may need to add support."
       },
       "segwit": {
-        "title": "Segwit (starting with 3...)",
+        "title": "Segwit",
         "desc": "Higher fees per transaction than Native Segwit. Lightning support. Supported by most wallets."
       },
       "legacy": {
-        "title": "Legacy (starting with 1...)",
-        "desc": "Bitcoin’s original address format. Highest fees per transaction. Some wallets/exchanges still only support this type."
+        "title": "Legacy",
+        "desc": "{{currency}}’s original address format. Highest fees per transaction. Some wallets/exchanges still only support this type."
       }
     }
   },
@@ -2366,10 +2394,12 @@
       "title": "Connect via Bluetooth...",
       "label": "Detect your Nano automatically"
     },
-    "deviceNotFoundPairNewDevice": "Pair via Bluetooth",
+    "deviceNotFoundPairNewDevice": "Add new Ledger Nano X",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
     "usb": "... or connect USB cable",
     "usbLabel": "Connect USB cable and enter your PIN Code on your device",
+    "withoutDeviceHeader": "I don't have my device with me",
+    "withoutDevice": "Continue without my device",
     "steps": {
       "connecting": {
         "title": "Connecting {{deviceName}}",
@@ -3104,8 +3134,8 @@
       "oversubscribed": "Oversubscribed ({{nominatorsCount}})",
       "oversubscribedInfo": "Only the top {{maxNominatorRewardedPerValidator}} nominators with the highest bonded amount earn rewards",
       "hasPendingBondOperation": "A bond operation is still pending confirmation",
-      "externalControllerUnsupported": "<0>This stash account is controlled by another account with the address <0><0>{{address}}</0></0></0><1>Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js</1>",
-      "externalStashUnsupported": "<0>This account controls a stash account whose address is <0><0>{{address}}</0></0></0><1>Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js</1>",
+      "externalControllerUnsupported": "This stash account is controlled by another account with the address <0>{{address}}</0>. Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js",
+      "externalStashUnsupported": "This account controls a stash account whose address is <0>{{address}}</0>. Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js",
       "showInactiveNominations": "Show all nominations ({{count}})",
       "hideInactiveNominations": "Show active nominations only",
       "noActiveNominations": "There are no active nominations.",

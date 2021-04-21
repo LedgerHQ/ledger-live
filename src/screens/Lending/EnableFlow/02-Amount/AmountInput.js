@@ -215,7 +215,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     display: "flex",
     flexGrow: 1,
-    fontSize: 16,
     marginBottom: 16,
   },
   availableRight: {

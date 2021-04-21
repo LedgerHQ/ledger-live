@@ -47,7 +47,7 @@ function CurrencyIcon({ size, currency, color, radius, bg }: Props) {
       >
         {TokenIconCurrency ? (
           <TokenIconCurrency
-            size={size * 0.55}
+            size={size}
             color={currencyColor || currency.color}
           />
         ) : (
@@ -75,7 +75,16 @@ function CurrencyIcon({ size, currency, color, radius, bg }: Props) {
       </View>
     );
   }
-  return <IconComponent size={size} color={currencyColor || currency.color} />;
+  return (
+    <View style={[styles.iconContainer, { width: size, height: size }]}>
+      <View style={styles.subIconContainer}>
+        <IconComponent
+          size={size * 1.4} // resizing to compensate for svg integrated padding
+          color={currencyColor || currency.color}
+        />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -87,6 +96,16 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     justifyContent: "center",
     alignItems: "center",
+  },
+  iconContainer: {
+    position: "relative",
+  },
+  subIconContainer: {
+    position: "absolute",
+    top: "-20%",
+    left: "-20%",
+    width: "140%",
+    height: "140%",
   },
 });
 

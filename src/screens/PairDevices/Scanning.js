@@ -12,14 +12,18 @@ import { knownDevicesSelector } from "../../reducers/ble";
 import type { DeviceLike } from "../../reducers/ble";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen } from "../../analytics";
-import DeviceItem from "../../components/DeviceItem";
+import DeviceItem from "../../components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 
-type Props = {
-  knownDevices: DeviceLike[],
+type OwnProps = {
   onSelect: (Device, *) => *,
   onError: Error => *,
   onTimeout: () => *,
+};
+
+type Props = {
+  ...OwnProps,
+  knownDevices: DeviceLike[],
 };
 
 type Device = {
@@ -120,11 +124,13 @@ class Scanning extends Component<Props, State> {
   }
 }
 
-export default connect(
+const m: React$ComponentType<OwnProps> = connect(
   createStructuredSelector({
     knownDevices: knownDevicesSelector,
   }),
 )(Scanning);
+
+export default m;
 
 const styles = StyleSheet.create({
   list: {

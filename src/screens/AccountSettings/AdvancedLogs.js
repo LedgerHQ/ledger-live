@@ -1,4 +1,5 @@
 /* @flow */
+import invariant from "invariant";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -22,12 +23,14 @@ export default function AdvancedLogs({ route }: Props) {
   const { t } = useTranslation();
 
   const usefulData = {
-    xpub: account.xpub || undefined,
-    index: account.index,
-    freshAddressPath: account.freshAddressPath,
-    id: account.id,
-    blockHeight: account.blockHeight,
+    xpub: account?.xpub || undefined,
+    index: account?.index || undefined,
+    freshAddressPath: account?.freshAddressPath || undefined,
+    id: account?.id || undefined,
+    blockHeight: account?.blockHeight || undefined,
   };
+
+  invariant(account?.type === "Account", "account must be a main account");
 
   const readableDate = account.lastSyncDate.toLocaleDateString(localeIds, {
     year: "numeric",

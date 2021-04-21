@@ -47,7 +47,7 @@ const UninstallDependenciesModal = ({
         <View style={styles.depLineTree}>
           <ListTreeLine color={colors.grey} />
         </View>
-        <AppIcon icon={item.icon} size={22} />
+        <AppIcon app={item} size={22} />
         <LText semiBold style={styles.depLineText}>
           {item.name}
         </LText>

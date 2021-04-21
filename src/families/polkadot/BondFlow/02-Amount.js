@@ -316,7 +316,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
-                    disabled={hasErrors || bridgePending}
+                    disabled={!!hasErrors || bridgePending}
                   />
                 </View>
               </View>

@@ -25,12 +25,12 @@ class ReportErrorsRow extends PureComponent<Props> {
     const { reportErrorsEnabled, setReportErrors, ...props } = this.props;
     return (
       <SettingsRow
+        {...props}
         event="ReportErrorsRow"
         title={<Trans i18nKey="settings.display.reportErrors" />}
         desc={<Trans i18nKey="settings.display.reportErrorsDesc" />}
         onPress={null}
         alignedTop
-        {...props}
       >
         <Switch
           style={{ opacity: 0.99 }}
@@ -42,4 +42,9 @@ class ReportErrorsRow extends PureComponent<Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReportErrorsRow);
+const m: React$ComponentType<{}> = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ReportErrorsRow);
+
+export default m;

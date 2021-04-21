@@ -22,6 +22,7 @@ type Props = {
 type RouteParams = {
   currency: CryptoCurrency,
   inline?: boolean,
+  returnToSwap?: boolean,
 };
 
 const action = createAction(connectApp);
@@ -37,10 +38,11 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const onResult = useCallback(
     meta => {
       setDevice();
-      const { currency, inline } = route.params;
+      const { currency, inline, returnToSwap } = route.params;
       const arg = {
         currency,
         inline,
+        returnToSwap,
         ...meta,
       };
       if (inline) {

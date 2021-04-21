@@ -9,6 +9,7 @@ export type Step = {
     meta: Device & Object,
     onDone: () => void,
     onClose?: () => void,
+    colors: *,
   }>,
 
   ErrorFooter?: React$ComponentType<{

@@ -6,7 +6,7 @@ import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
-import InfoBox from "../../../components/InfoBox";
+import Alert from "../../../components/Alert";
 import Button from "../../../components/Button";
 import IconSwap from "../../../icons/Swap";
 import { rgba } from "../../../colors";
@@ -59,12 +59,12 @@ const PendingOperation = () => {
           <Trans i18nKey={"transfer.swap.pendingOperation.description"} />
         </LText>
 
-        <InfoBox>
+        <Alert type="primary">
           <Trans
             i18nKey={"transfer.swap.pendingOperation.disclaimer"}
             values={{ provider }}
           />
-        </InfoBox>
+        </Alert>
       </View>
       <View style={styles.continueWrapper}>
         <Button

@@ -15,7 +15,7 @@ import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import ExternalLink from "../../../components/ExternalLink";
 import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
-import VerifyAddressDisclaimer from "../../../components/VerifyAddressDisclaimer";
+import Alert from "../../../components/Alert";
 import IlluRewards from "../../../icons/images/Rewards";
 import { urls } from "../../../config/urls";
 
@@ -83,10 +83,9 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
           />
         </View>
         <View style={styles.warning}>
-          <VerifyAddressDisclaimer
-            text={<Trans i18nKey="polkadot.bond.steps.starter.warning" />}
-            verified
-          />
+          <Alert type="help">
+            <Trans i18nKey="polkadot.bond.steps.starter.warning" />
+          </Alert>
         </View>
       </ScrollView>
 

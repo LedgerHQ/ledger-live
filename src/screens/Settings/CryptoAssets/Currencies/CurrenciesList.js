@@ -19,7 +19,7 @@ const mapStateToProps = createStructuredSelector({
 });
 
 class CurrenciesList extends PureComponent<Props> {
-  renderItem = ({ item }) => (
+  renderItem = ({ item }: { item: any }) => (
     <SettingsRow
       event="CurrenciesList"
       eventProperties={{ currency: item.id }}
@@ -55,4 +55,6 @@ const styles = StyleSheet.create({
   containerStyle: { paddingTop: 16, paddingBottom: 64 },
 });
 
-export default connect(mapStateToProps)(CurrenciesList);
+const m: React$ComponentType<{}> = connect(mapStateToProps)(CurrenciesList);
+
+export default m;

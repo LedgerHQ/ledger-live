@@ -77,7 +77,7 @@ const Placeholder = ({
     <NavigationScrollView>
       <View style={[styles.noResult]}>
         <View style={styles.placeholderIcon}>
-          <AppIcon icon={parent.icon} size={60} />
+          <AppIcon app={parent} size={60} />
         </View>
         <LText semiBold style={styles.noResultText}>
           <Trans

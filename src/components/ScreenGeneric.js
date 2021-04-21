@@ -3,14 +3,19 @@ import React from "react";
 import { View, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
-type Props = {
+type Props<T> = {
   Header: React$ComponentType<$Shape<T>>,
   children: *,
   onPressHeader?: () => void,
   extraData?: T,
 };
 
-function ScreenGeneric({ children, Header, onPressHeader, extraData }: Props) {
+function ScreenGeneric<T>({
+  children,
+  Header,
+  onPressHeader,
+  extraData,
+}: Props<T>) {
   const { colors } = useTheme();
   return (
     <View style={styles.container}>

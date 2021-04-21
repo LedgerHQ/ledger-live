@@ -16,7 +16,7 @@ type Props = {
 
 type RouteParams = {
   accountId: string,
-  parentId: String,
+  parentId: string,
   deviceId: string,
   transaction: any,
   error: Error,

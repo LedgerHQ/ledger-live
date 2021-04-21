@@ -9,7 +9,7 @@ import BottomModal from "./BottomModal";
 type Props = {
   label: React$Node,
   tooltip: React$Node,
-  color: string,
+  color?: string,
   style?: *,
 };
 

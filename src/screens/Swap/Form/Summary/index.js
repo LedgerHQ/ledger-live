@@ -97,10 +97,13 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
             >
               <IconAD size={14} name="clockcircleo" color={colors.smoke} />
               <View style={{ marginLeft: 9 }}>
-                <CountdownTimer
-                  end={rateExpiration}
-                  callback={onRatesExpired}
-                />
+                {rateExpiration ? (
+                  <CountdownTimer
+                    color={colors.smoke}
+                    end={rateExpiration}
+                    callback={onRatesExpired}
+                  />
+                ) : null}
               </View>
             </View>
           ) : null}

@@ -18,7 +18,7 @@ import { TrackScreen } from "../../analytics";
 import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
-import InfoBox from "../../components/InfoBox";
+import Alert from "../../components/Alert";
 import TranslatedError from "../../components/TranslatedError";
 import SendRowsCustom from "../../components/SendRowsCustom";
 import SendRowsFee from "../../components/SendRowsFee";
@@ -180,14 +180,14 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       <NavigationScrollView style={styles.body}>
         {transaction.useAllAmount && hasNonEmptySubAccounts ? (
           <View style={styles.infoBox}>
-            <InfoBox>
+            <Alert type="primary">
               <Trans
                 i18nKey="send.summary.subaccountsWarning"
                 values={{
                   currency: currency.name,
                 }}
               />
-            </InfoBox>
+            </Alert>
           </View>
         ) : null}
         <SummaryFromSection account={account} parentAccount={parentAccount} />

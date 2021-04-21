@@ -8,7 +8,7 @@ import {
 import { BottomTabView } from "@react-navigation/bottom-tabs";
 import { BehaviorSubject } from "rxjs";
 
-export const lockSubject = new BehaviorSubject(false);
+export const lockSubject = new BehaviorSubject<boolean>(false);
 const actionSubject = new BehaviorSubject();
 
 export function useIsNavLocked(): boolean {
@@ -28,7 +28,10 @@ export function useIsNavLocked(): boolean {
 }
 
 /** use Effect to trigger lock navigation updates and callback to retrieve catched navigation actions */
-export const useLockNavigation = (when, callback = () => {}) => {
+export const useLockNavigation = (
+  when: boolean,
+  callback: (...args: any[]) => void = () => {},
+) => {
   useEffect(() => {
     let sub;
     lockSubject.next(when);

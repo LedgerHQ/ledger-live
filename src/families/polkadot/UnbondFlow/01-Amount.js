@@ -138,7 +138,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
     amount.eq(0) || bridgePending
       ? null
       : getFirstStatusError(status, "errors");
-  const warning = getFirstStatusError(status, "warning");
+  const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
 
   return (
@@ -234,7 +234,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                       />
                     }
                     onPress={onContinue}
-                    disabled={hasErrors || bridgePending}
+                    disabled={!!hasErrors || bridgePending}
                   />
                 </View>
               </View>

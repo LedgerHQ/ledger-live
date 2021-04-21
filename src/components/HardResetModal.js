@@ -24,4 +24,4 @@ function HardResetModal() {
   );
 }
 
-export default memo(HardResetModal);
+export default memo<{}>(HardResetModal);

@@ -56,11 +56,7 @@ export default function SectionSeparator({
     <View style={[styles.root, style]}>
       <View style={lineStyle} />
       {children ? (
-        <View
-          style={noMargin ? null : { ...styles.node, color: colors.lightFog }}
-        >
-          {children}
-        </View>
+        <View style={noMargin ? null : styles.node}>{children}</View>
       ) : null}
       <View style={lineStyle} />
     </View>

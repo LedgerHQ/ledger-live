@@ -22,6 +22,7 @@ const experimentalTypesMap = {
 };
 
 const FeatureRow = ({ feature }: Props) => {
+  // $FlowFixMe
   const { type, ...rest } = feature;
   const Children = experimentalTypesMap[type];
   return (
@@ -39,8 +40,8 @@ const FeatureRow = ({ feature }: Props) => {
         isDefault={
           isEnvDefault(feature.name) || getEnv(feature.name) === undefined
         }
-        value={getEnv(feature.name)}
         {...rest}
+        value={getEnv(feature.name)}
       />
     </SettingsRow>
   );

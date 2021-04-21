@@ -1,4 +1,5 @@
 /* @flow */
+import invariant from "invariant";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
@@ -23,7 +24,7 @@ import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import LText, { getFontStyle } from "../../components/LText";
 import TextInput from "../../components/TextInput";
-import InfoBox from "../../components/InfoBox";
+import Alert from "../../components/Alert";
 import TranslatedError from "../../components/TranslatedError";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
@@ -51,6 +52,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
   const {
     transaction,
     setTransaction,
@@ -85,6 +87,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const onChangeText = useCallback(
     recipient => {
+      if (!account) return;
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(bridge.updateTransaction(transaction, { recipient }));
     },
@@ -95,6 +98,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
 
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
+
+  invariant(account, "account is needed ");
 
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
@@ -110,8 +115,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   }, [setTransaction, account, parentAccount, transaction]);
 
   const onPressContinue = useCallback(async () => {
-    if (!account) return;
-
     navigation.navigate(ScreenName.SendAmount, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
@@ -209,7 +212,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
           <View style={styles.container}>
             {transaction.recipient && !(error || warning) ? (
               <View style={styles.infoBox}>
-                <InfoBox>{t("send.recipient.verifyAddress")}</InfoBox>
+                <Alert type="primary">
+                  {t("send.recipient.verifyAddress")}
+                </Alert>
               </View>
             ) : null}
             <Button

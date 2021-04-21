@@ -23,4 +23,6 @@ function ArchiveAccountRow() {
   );
 }
 
-export default memo(ArchiveAccountRow);
+const m: React$ComponentType<{}> = memo(ArchiveAccountRow);
+
+export default m;

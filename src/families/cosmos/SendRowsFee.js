@@ -50,7 +50,9 @@ export default function CosmosFeeRow({ account, transaction }: Props) {
           ) : null}
         </View>
         <LText style={styles.countervalue} color="grey">
-          <CounterValue before="≈ " value={fees} currency={currency} />
+          {fees ? (
+            <CounterValue before="≈ " value={fees} currency={currency} />
+          ) : null}
         </LText>
       </View>
     </SummaryRow>

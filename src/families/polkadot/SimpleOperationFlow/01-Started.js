@@ -150,7 +150,7 @@ export default function PolkadotSimpleOperationStarted({
               />
             }
             onPress={onContinue}
-            disabled={error || bridgePending}
+            disabled={!!error || bridgePending}
           />
         </View>
       </SafeAreaView>

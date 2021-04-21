@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import manager from "@ledgerhq/live-common/lib/manager";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
@@ -28,6 +29,7 @@ export default function AppInstallButton({
 }: Props) {
   const dispatch = useDispatch();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
+  const canInstall = useMemo(() => manager.canHandleInstall(app), [app]);
 
   const { name } = app;
   const { installed, updateAllQueue } = state;
@@ -59,7 +61,9 @@ export default function AppInstallButton({
 
   return (
     <Button
-      disabled={notEnoughMemoryToInstall || updateAllQueue.length > 0}
+      disabled={
+        !canInstall || notEnoughMemoryToInstall || updateAllQueue.length > 0
+      }
       useTouchable
       type={canUpdate ? "tertiary" : "lightPrimary"}
       outline={!canUpdate}

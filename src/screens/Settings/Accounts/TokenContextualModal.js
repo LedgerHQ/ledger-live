@@ -33,27 +33,26 @@ const hitSlop = {
   bottom: 0,
 };
 
+type OwnProps = {
+  isOpened: boolean,
+  onClose: () => void,
+  account?: TokenAccount,
+};
+
+type Props = {
+  ...OwnProps,
+  parentAccount: Account,
+  blacklistToken: string => void,
+};
+
 const TokenContextualModal = ({
   isOpened,
   onClose,
   account,
   parentAccount,
   blacklistToken,
-}: {
-  isOpened: boolean,
-  onClose: () => void,
-  account: TokenAccount,
-  parentAccount: Account,
-  blacklistToken: string => void,
-}) => {
+}: Props) => {
   const { colors } = useTheme();
-  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const explorerView = mainAccount
-    ? getDefaultExplorerView(mainAccount.currency)
-    : null;
-  const url = explorerView
-    ? getAccountContractExplorer(explorerView, account, parentAccount)
-    : null;
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showContract, setShowContract] = useState(false);
@@ -66,11 +65,20 @@ const TokenContextualModal = ({
   }, [onClose]);
 
   const onBlacklistToken = useCallback(() => {
+    if (!account) return;
     blacklistToken(account.token.id);
     onCloseModal();
   }, [onCloseModal, blacklistToken, account]);
 
   if (!isOpened || !account) return null;
+
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const explorerView = mainAccount
+    ? getDefaultExplorerView(mainAccount.currency)
+    : null;
+  const url = explorerView
+    ? getAccountContractExplorer(explorerView, account, parentAccount)
+    : null;
 
   return (
     <BottomModal
@@ -170,15 +178,15 @@ const mapStateToProps = createStructuredSelector({
   parentAccount: parentAccountSelector,
 });
 
-export default connect(
+const m: React$ComponentType<OwnProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(TokenContextualModal);
 
+export default m;
+
 const styles = StyleSheet.create({
   header: {
-    fontSize: 16,
-    textAlign: "center",
     justifyContent: "center",
     flexDirection: "row",
     borderBottomWidth: 1,

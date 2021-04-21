@@ -13,7 +13,7 @@ type Props = {
   eventProperties?: Object,
   iconFirst?: boolean,
   ltextProps?: *,
-  color: string,
+  color?: string,
 };
 
 const Link = ({

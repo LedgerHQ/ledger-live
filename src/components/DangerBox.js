@@ -9,7 +9,7 @@ import ShieldAlt from "../icons/ShieldAlt";
 type Props = {
   children: React$Node,
   onLearnMore?: () => any,
-  learnMoreKey?: String,
+  learnMoreKey?: string,
 };
 
 export default function WarningBox({

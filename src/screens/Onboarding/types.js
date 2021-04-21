@@ -30,6 +30,8 @@ export type OnboardingContextType = {
   nextWithNavigation: StepNavigateType,
   prevWithNavigation: StepNavigateType,
 
+  syncNavigation: Noop,
+
   // reset to step 0 of current mode
   resetCurrentStep: Noop,
 };
@@ -50,5 +52,5 @@ type OnboardingMode = "full" | "alreadyInitialized" | "restore" | "qr";
 
 export type DeviceNames = "nanoS" | "nanoX" | "blue";
 
-type StepNavigateType = (*) => void;
+type StepNavigateType = (*, *) => void;
 type Noop = any => any;

@@ -115,6 +115,7 @@ export default function SelectAccount({ navigation, route }: Props) {
 
   const renderList = useCallback(
     items => {
+      // $FlowFixMe
       const formatedList = formatSearchResults(items, enhancedAccounts);
       return (
         <FlatList

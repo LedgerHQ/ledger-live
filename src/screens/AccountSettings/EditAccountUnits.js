@@ -1,4 +1,5 @@
 /* @flow */
+import invariant from "invariant";
 import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +21,8 @@ type RouteParams = {
 export default function EditAccountUnits({ navigation, route }: Props) {
   const dispatch = useDispatch();
   const { account } = useSelector(accountScreenSelector(route));
+
+  invariant(account?.type === "Account", "account must be a main account");
 
   const onPressItem = useCallback(
     (item: any) => {

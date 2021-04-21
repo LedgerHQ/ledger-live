@@ -17,7 +17,7 @@ const getFontStyle = ({ bold, semiBold, monospace }: Opts = {}): Res => {
 
 const cache = StyleSheet.create({});
 
-const cachedGetFontStyle = (opts: Opts = {}) => {
+const cachedGetFontStyle = (opts: Opts = {}): Res => {
   const r = getFontStyle(opts);
   const key = `${r.fontFamily}_${r.fontWeight}`;
   if (cache[key]) {

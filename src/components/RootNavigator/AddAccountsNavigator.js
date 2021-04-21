@@ -15,7 +15,7 @@ import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 
 type Route = {
-  params: ?{ currency: *, token?: * },
+  params: ?{ currency: *, token?: *, returnToSwap?: boolean },
 };
 
 const totalSteps = "3";
@@ -25,6 +25,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
   const { t } = useTranslation();
   const currency = route && route.params && route.params.currency;
   const token = route && route.params && route.params.token;
+  const returnToSwap = route && route.params && route.params.returnToSwap;
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [
     colors,
   ]);
@@ -61,7 +62,9 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
       <Stack.Screen
         name={ScreenName.AddAccountsSelectDevice}
         component={AddAccountsSelectDevice}
-        initialParams={currency ? { currency, inline: true } : undefined}
+        initialParams={
+          currency ? { currency, inline: true, returnToSwap } : undefined
+        }
         options={{
           headerTitle: () => (
             <StepHeader

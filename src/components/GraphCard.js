@@ -79,7 +79,7 @@ class GraphCard extends PureComponent<Props, State> {
             getCurrencyColor(getAccountCurrency(accounts[0])),
             colors.background,
           )
-        : undefined;
+        : "";
 
     return (
       <Card bg="card" style={styles.root}>

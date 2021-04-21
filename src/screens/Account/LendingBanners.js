@@ -1,4 +1,5 @@
 /* @flow */
+import invariant from "invariant";
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import type { AccountLike } from "@ledgerhq/live-common/lib/types";
@@ -10,8 +11,7 @@ import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic
 import { useSelector } from "react-redux";
 import { useLocale } from "../../context/Locale";
 import LText from "../../components/LText";
-import InfoBox from "../../components/InfoBox";
-import WarningBox from "../../components/WarningBox";
+import Alert from "../../components/Alert";
 import { discreetModeSelector } from "../../reducers/settings";
 
 type Props = {
@@ -23,8 +23,9 @@ export default function LendingBanners({ account }: Props) {
   const discreet = useSelector(discreetModeSelector);
   const unit = getAccountUnit(account);
 
-  const availableOnCompound =
-    account.type === "TokenAccount" && !!account.compoundBalance;
+  invariant(account.type === "TokenAccount", "account must be a TokenAccount");
+
+  const availableOnCompound = !!account.compoundBalance;
   const compoundCapabilities = availableOnCompound
     ? getAccountCapabilities(account)
     : {};
@@ -73,7 +74,7 @@ export default function LendingBanners({ account }: Props) {
     if (lendingInfoBannerContent) {
       lendingInfoBanner = (
         <View style={styles.bannerBox} key="infoBanner">
-          <InfoBox>{lendingInfoBannerContent}</InfoBox>
+          <Alert type="primary">{lendingInfoBannerContent}</Alert>
         </View>
       );
     }
@@ -93,7 +94,7 @@ export default function LendingBanners({ account }: Props) {
     if (lendingWarningBannerContent) {
       lendingWarningBanner = (
         <View style={styles.bannerBox} key="warningBanner">
-          <WarningBox>{lendingWarningBannerContent}</WarningBox>
+          <Alert type="warning">{lendingWarningBannerContent}</Alert>
         </View>
       );
     }

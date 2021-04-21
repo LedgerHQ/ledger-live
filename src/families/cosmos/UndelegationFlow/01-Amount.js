@@ -45,7 +45,7 @@ function UndelegationAmount({ navigation, route }: Props) {
         mode: "undelegate",
         validators: [
           {
-            address: validator.validatorAddress,
+            address: validator ? validator.validatorAddress : "",
             amount: BigNumber(0),
           },
         ],
@@ -67,6 +67,7 @@ function UndelegationAmount({ navigation, route }: Props) {
     },
   };
 
+  // $FlowFixMe
   return <SelectAmount navigation={navigation} route={newRoute} />;
 }
 

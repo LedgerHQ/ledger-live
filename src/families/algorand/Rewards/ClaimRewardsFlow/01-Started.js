@@ -21,7 +21,7 @@ import { accountScreenSelector } from "../../../../reducers/accounts";
 import NavigationScrollView from "../../../../components/NavigationScrollView";
 import IlluRewards from "../../../../icons/images/Rewards";
 import { TrackScreen } from "../../../../analytics";
-import VerifyAddressDisclaimer from "../../../../components/VerifyAddressDisclaimer";
+import Alert from "../../../../components/Alert";
 import TranslatedError from "../../../../components/TranslatedError";
 
 type RouteParams = {
@@ -94,11 +94,9 @@ export default function DelegationStarted({ navigation, route }: Props) {
           />
         </LText>
         <View style={styles.warning}>
-          <VerifyAddressDisclaimer
-            text={
-              <Trans i18nKey="algorand.claimRewards.flow.steps.starter.warning" />
-            }
-          />
+          <Alert type="help">
+            <Trans i18nKey="algorand.claimRewards.flow.steps.starter.warning" />
+          </Alert>
         </View>
       </NavigationScrollView>
       <View style={[styles.footer, { borderTopColor: colors.lightFog }]}>
