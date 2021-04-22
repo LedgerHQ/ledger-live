@@ -260,7 +260,7 @@ PODS:
     - React
   - react-native-config (0.11.7):
     - React
-  - react-native-fingerprint-scanner (4.0.0):
+  - react-native-fingerprint-scanner (6.0.0):
     - React
   - react-native-locale (0.0.19):
     - React
@@ -663,7 +663,7 @@ SPEC CHECKSUMS:
   react-native-ble-plx: d8dcca81ecc617eda824a4ace85f7ffd55d90c6c
   react-native-camera: 1f4c5be75a037b5573716a01d84ca0390c162954
   react-native-config: 55548054279d92e0e4566ea15a8b9b81028ec342
-  react-native-fingerprint-scanner: 03f3d966edacf2f515e361595b6778d3502db4fb
+  react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-randombytes: b6677f7d495c27e9ee0dbd77ebc97b3c59173729

@@ -120,7 +120,7 @@
     "react-native-crypto": "^2.2.0",
     "react-native-easy-markdown": "^2.0.0",
     "react-native-extra-dimensions-android": "^1.2.5",
-    "react-native-fingerprint-scanner": "^4.0.0",
+    "react-native-fingerprint-scanner": "^6.0.0",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-keychain": "^5.0.0",
     "react-native-level-fs": "^3.0.0",
