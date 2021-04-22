@@ -5,6 +5,7 @@ import { from } from "rxjs";
 import { mergeAll } from "rxjs/operators";
 import { flatMap } from "lodash";
 */
+import { log } from "@ledgerhq/logs";
 import { setup } from "./test-helpers/libcore-setup";
 import { withLibcore, afterLibcoreGC } from "../libcore/access";
 import { delay } from "../promise";
@@ -24,8 +25,7 @@ setup("libcore");
 test("libcore version", async () => {
   const v = await withLibcore((core) => core.LedgerCore.getStringVersion());
   expect(typeof v).toBe("string");
-  // eslint-disable-next-line no-console
-  console.log("libcore version " + v);
+  log("libcoreVersion", v);
 });
 
 const families = Object.keys(dataset);
