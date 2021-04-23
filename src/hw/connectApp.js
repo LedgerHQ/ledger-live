@@ -11,6 +11,7 @@ import {
   DisconnectedDeviceDuringOperation,
   DisconnectedDevice,
 } from "@ledgerhq/errors";
+import type Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { DerivationMode } from "../types";
 import { getCryptoCurrencyById } from "../currencies";
@@ -60,9 +61,9 @@ export type ConnectAppEvent =
   | { type: "opened", app?: AppAndVersion, derivation?: { address: string } }
   | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
 
-const openAppFromDashboard = (
-  transport,
-  appName
+export const openAppFromDashboard = (
+  transport: Transport<*>,
+  appName: string
 ): Observable<ConnectAppEvent> =>
   concat(
     of({ type: "ask-open-app", appName }),
@@ -74,10 +75,7 @@ const openAppFromDashboard = (
             case 0x6984:
             case 0x6807:
               return getEnv("EXPERIMENTAL_INLINE_INSTALL")
-                ? concat(
-                    streamAppInstall(transport, appName),
-                    from(openAppFromDashboard(transport, appName))
-                  )
+                ? streamAppInstall(transport, appName)
                 : of({ type: "app-not-installed", appName });
             case 0x6985:
             case 0x5501:

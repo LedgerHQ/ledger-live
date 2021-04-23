@@ -3,7 +3,7 @@
 import Transport from "@ledgerhq/hw-transport";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
-import { concat, of, empty, from, Observable, throwError } from "rxjs";
+import { concat, of, empty, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import type { App, DeviceInfo } from "../types/manager";
@@ -21,8 +21,15 @@ import ManagerAPI from "../api/Manager";
 import { getEnv } from "../env";
 import hwListApps from "../hw/listApps";
 import { polyfillApp, polyfillApplication } from "./polyfill";
-import { reducer, isOutOfMemoryState, initState } from "../apps/logic";
+import {
+  reducer,
+  isOutOfMemoryState,
+  initState,
+  predictOptimisticState,
+} from "../apps/logic";
 import { runAllWithProgress } from "../apps/runner";
+import { openAppFromDashboard } from "../hw/connectApp";
+import type { ConnectAppEvent } from "../hw/connectApp";
 
 export const execWithTransport = (transport: Transport<*>): Exec => (
   appOp: AppOp,
@@ -48,7 +55,7 @@ export type StreamAppInstallEvent =
 export const streamAppInstall = (
   transport: Transport<*>,
   appName: string
-): Observable<StreamAppInstallEvent> =>
+): Observable<StreamAppInstallEvent | ConnectAppEvent> =>
   concat(
     of({ type: "listing-apps" }),
     from(getDeviceInfo(transport)).pipe(
@@ -67,13 +74,16 @@ export const streamAppInstall = (
             type: "install",
             name: appName,
           });
-          if (isOutOfMemoryState(state)) {
+          if (isOutOfMemoryState(predictOptimisticState(state))) {
             // it will not be possible to install so we will fallback to app-not-installed.
             return of({ type: "app-not-installed", appName });
           }
           const exec = execWithTransport(transport);
-          return runAllWithProgress(state, exec).pipe(
-            map((progress) => ({ type: "stream-install", progress }))
+          return concat(
+            runAllWithProgress(state, exec).pipe(
+              map((progress) => ({ type: "stream-install", progress }))
+            ),
+            defer(() => from(openAppFromDashboard(transport, appName)))
           );
         }
         return empty();
