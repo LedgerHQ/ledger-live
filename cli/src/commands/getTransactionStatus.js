@@ -1,8 +1,7 @@
 // @flow
 
-import { from, defer, concat, empty } from "rxjs";
+import { from, of, concat, empty } from "rxjs";
 import { map, mergeMap, concatMap } from "rxjs/operators";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import {
   toTransactionRaw,
   toTransactionStatusRaw,
@@ -51,17 +50,8 @@ export default {
         from(inferTransactions(account, opts)).pipe(
           mergeMap((inferred) =>
             inferred.reduce(
-              (acc, transaction) =>
-                concat(
-                  acc,
-                  from(
-                    defer(() =>
-                      getAccountBridge(account)
-                        .getTransactionStatus(account, transaction)
-                        .then((status) => ({ transaction, status, account }))
-                    )
-                  )
-                ),
+              (acc, [transaction, status]) =>
+                concat(acc, of({ transaction, status, account })),
               empty()
             )
           ),

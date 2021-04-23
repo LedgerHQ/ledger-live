@@ -1,10 +1,26 @@
 // @flow
 
 import { from, defer, of, concat, empty } from "rxjs";
-import { map, switchMap, concatMap, catchError } from "rxjs/operators";
+import {
+  map,
+  switchMap,
+  mergeMap,
+  concatMap,
+  catchError,
+  tap,
+} from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { toSignOperationEventRaw } from "@ledgerhq/live-common/lib/transaction";
+import {
+  formatOperation,
+  formatAccount,
+  fromOperationRaw,
+} from "@ledgerhq/live-common/lib/account";
+import {
+  toSignOperationEventRaw,
+  formatTransaction,
+  formatTransactionStatus,
+} from "@ledgerhq/live-common/lib/transaction";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";
 import type { InferTransactionsOpts } from "../transaction";
@@ -25,24 +41,42 @@ export default {
       type: Boolean,
       desc: "do not broadcast the transaction",
     },
+    {
+      name: "format",
+      type: String,
+      desc: "default | json | silent",
+    },
   ],
   job: (
     opts: ScanCommonOpts &
       InferTransactionsOpts & {
         "ignore-errors": boolean,
         "disable-broadcast": boolean,
+        format: string,
       }
-  ) =>
-    scan(opts).pipe(
+  ) => {
+    const l =
+      opts.format !== "json" && opts.format !== "silent"
+        ? // eslint-disable-next-line no-console
+          (l) => console.log(l)
+        : (_l) => {};
+    return scan(opts).pipe(
+      tap((account) => {
+        l(`→ FROM ${formatAccount(account, "basic")}`);
+      }),
       switchMap((account) =>
         from(inferTransactions(account, opts)).pipe(
           concatMap((inferred) =>
             inferred.reduce(
-              (acc, t) =>
+              (acc, [t, status]) =>
                 concat(
                   acc,
                   from(
                     defer(() => {
+                      l(`✔️ transaction ${formatTransaction(t, account)}`);
+                      l(
+                        `STATUS ${formatTransactionStatus(t, status, account)}`
+                      );
                       const bridge = getAccountBridge(account);
                       return bridge
                         .signOperation({
@@ -58,11 +92,27 @@ export default {
                             : [
                                 concatMap((e) => {
                                   if (e.type === "signed") {
+                                    l(
+                                      `✔️ has been signed! ${JSON.stringify(
+                                        e.signedOperation
+                                      )}`
+                                    );
                                     return from(
-                                      bridge.broadcast({
-                                        account,
-                                        signedOperation: e.signedOperation,
-                                      })
+                                      bridge
+                                        .broadcast({
+                                          account,
+                                          signedOperation: e.signedOperation,
+                                        })
+                                        .then((op) => {
+                                          l(
+                                            `✔️ broadcasted! optimistic operation: ${formatOperation(
+                                              account
+                                            )(
+                                              fromOperationRaw(op, account.id)
+                                            )}`
+                                          );
+                                          return op;
+                                        })
                                     );
                                   }
                                   return of(e);
@@ -86,8 +136,11 @@ export default {
               empty()
             )
           ),
-          map((obj) => JSON.stringify(obj))
+          mergeMap((obj) =>
+            opts.format !== "json" ? empty() : of(JSON.stringify(obj))
+          )
         )
       )
-    ),
+    );
+  },
 };

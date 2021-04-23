@@ -199,6 +199,7 @@ const exec = async (opts: SwapJobOpts) => {
           case "init-swap-error":
             console.log(e);
             invariant(false, "Something went wrong confirming the swap");
+            // $FlowFixMe
             break;
           case "init-swap-result":
             console.log(e);

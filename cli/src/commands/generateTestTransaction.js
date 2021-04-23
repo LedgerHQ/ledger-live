@@ -53,7 +53,7 @@ export default {
         from(inferTransactions(account, opts)).pipe(
           concatMap((inferred) =>
             inferred.reduce(
-              (acc, t) =>
+              (acc, [t]) =>
                 concat(
                   acc,
                   from(
