@@ -258,8 +258,10 @@ PODS:
     - React
   - react-native-camera/RN (3.19.0):
     - React
-  - react-native-config (0.11.7):
-    - React
+  - react-native-config (1.4.2):
+    - react-native-config/App (= 1.4.2)
+  - react-native-config/App (1.4.2):
+    - React-Core
   - react-native-fingerprint-scanner (6.0.0):
     - React
   - react-native-locale (0.0.19):
@@ -662,7 +664,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-ble-plx: d8dcca81ecc617eda824a4ace85f7ffd55d90c6c
   react-native-camera: 1f4c5be75a037b5573716a01d84ca0390c162954
-  react-native-config: 55548054279d92e0e4566ea15a8b9b81028ec342
+  react-native-config: c98128a72bc2c3a1ca72caec0b021f0fa944aa29
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
@@ -702,6 +704,6 @@ SPEC CHECKSUMS:
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 061b9e687795e795f4623ba88b09dfd804e0bdbe
+PODFILE CHECKSUM: 4dde398e7b77194a58fed8ba66017e54bb973c23
 
 COCOAPODS: 1.8.4
