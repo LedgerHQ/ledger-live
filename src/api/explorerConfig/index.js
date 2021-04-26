@@ -1,24 +1,10 @@
 // @flow
-import type { CryptoCurrencyIds } from "../types";
-import type { EnvName } from "../env";
+import { log } from "@ledgerhq/logs";
+import network from "../../network";
+import type { FullConfig, FullConfigOverrides } from "./types";
+import { asFullConfigOverrides, applyFullConfigOverrides } from "./overrides";
 
-type EndpointConfig = {
-  // define the env name to get the url from. e.g. EXPLORER
-  base: EnvName,
-  // define the version to use with. e.g. v2, v3
-  version: string,
-};
-
-type Config = {
-  // this is the explorer id of a currency. it is called ticker in explorer's side, but it's not like the coin ticker. it's an ID used only by Ledger's explorer
-  id: string,
-  // defines the stable endpoint set up to use
-  stable: EndpointConfig,
-  // if defined, a staging version is available
-  experimental?: EndpointConfig,
-};
-
-export const explorerConfig: { [id: CryptoCurrencyIds]: ?Config } = {
+const initialExplorerConfig: FullConfig = {
   bitcoin: {
     id: "btc",
     stable: {
@@ -64,10 +50,6 @@ export const explorerConfig: { [id: CryptoCurrencyIds]: ?Config } = {
   dash: {
     id: "dash",
     stable: {
-      base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
       base: "EXPLORER",
       version: "v3",
     },
@@ -263,4 +245,46 @@ export const explorerConfig: { [id: CryptoCurrencyIds]: ?Config } = {
       version: "v3",
     },
   },
+};
+
+let explorerConfig: FullConfig = initialExplorerConfig;
+
+export function getExplorerConfig(): FullConfig {
+  return explorerConfig;
+}
+
+// these two function follows the same principle of CurrencyBridge's preload & hydrate
+// and for this current PoC will be only used by the bitcoin family
+// if we want in future to generalize it to all family, we would need to adapt this.
+
+let cacheConfig: ?{ timestamp: number, config: FullConfigOverrides } = null;
+
+export const preload = async (): Promise<?FullConfigOverrides> => {
+  if (cacheConfig && Date.now() - cacheConfig.timestamp < 60 * 1000) {
+    return cacheConfig.config;
+  }
+  const { data } = await network({
+    url: "https://cdn.live.ledger.com/config/explorerConfig.v1.json",
+    method: "GET",
+  });
+  try {
+    const config = asFullConfigOverrides(data);
+    cacheConfig = { timestamp: Date.now(), config };
+    return config;
+  } catch (e) {
+    log("explorerConfig", "failed to load explorerConfig: " + e);
+  }
+};
+
+export const hydrate = (maybeConfig: mixed) => {
+  if (!maybeConfig) return;
+  let safe;
+  try {
+    safe = asFullConfigOverrides(maybeConfig);
+  } catch (e) {
+    log("explorerConfig", "failed to hydrate explorerConfig: " + e);
+  }
+  if (!safe) return;
+  // update explorerConfig with remote config
+  explorerConfig = applyFullConfigOverrides(initialExplorerConfig, safe);
 };

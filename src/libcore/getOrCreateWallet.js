@@ -1,13 +1,11 @@
 // @flow
-
-import { log } from "@ledgerhq/logs";
 import { getLibcoreConfig, getDerivationScheme } from "../derivation";
 import type { CryptoCurrency, DerivationMode } from "../types";
 import { atomicQueue } from "../promise";
 import type { Core, CoreWallet } from "./types";
 import { findCurrencyExplorer } from "../api/Ledger";
 import { getEnv } from "../env";
-import { isNonExistingWalletError } from "./errors";
+import { isAlreadyExistingWalletError } from "./errors";
 
 type F = ({
   core: Core,
@@ -60,14 +58,7 @@ export const getOrCreateWallet: F = atomicQueue(
       );
     }
 
-    log("libcore", "getOrCreateWallet " + walletName);
     try {
-      // check if wallet exists yet
-      wallet = await poolInstance.getWallet(walletName);
-    } catch (err) {
-      if (!isNonExistingWalletError(err)) {
-        throw err;
-      }
       // create it with the config
       const currencyCore = await poolInstance.getCurrency(currency.id);
       wallet = await poolInstance.createWallet(
@@ -76,12 +67,17 @@ export const getOrCreateWallet: F = atomicQueue(
         config
       );
       return wallet;
+    } catch (err) {
+      if (!isAlreadyExistingWalletError(err)) {
+        throw err;
+      }
+      // actually wallet was existing...
+      // we need to sync the config in case it changed
+      await poolInstance.updateWalletConfig(walletName, config);
     }
 
-    // if it existed, we still need to sync again the config in case it changed
-    await poolInstance.updateWalletConfig(walletName, config);
-    // and we need to get wallet again to have this config taken into account
     wallet = await poolInstance.getWallet(walletName);
+
     return wallet;
   },
   ({ walletName }: { walletName: string }) => walletName

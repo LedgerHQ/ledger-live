@@ -3,7 +3,7 @@
 import invariant from "invariant";
 import type { CryptoCurrency } from "../types";
 import { getEnv } from "../env";
-import { explorerConfig } from "./explorerConfig";
+import { getExplorerConfig } from "./explorerConfig";
 
 type LedgerExplorer = {
   version: string,
@@ -14,7 +14,7 @@ type LedgerExplorer = {
 export const findCurrencyExplorer = (
   currency: CryptoCurrency
 ): ?LedgerExplorer => {
-  const config = explorerConfig[currency.id];
+  const config = getExplorerConfig()[currency.id];
   if (!config) return;
   const { id } = config;
   if (getEnv("SATSTACK") && currency.id === "bitcoin") {

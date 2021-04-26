@@ -27,6 +27,7 @@ import { getMinRelayFee } from "../fees";
 import { isChangeOutput, perCoinLogic } from "../transaction";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { requiresSatStackReady } from "../satstack";
+import * as explorerConfigAPI from "../../../api/explorerConfig";
 
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: (account) => {
@@ -235,10 +236,21 @@ const prepareTransaction = async (
   };
 };
 
+const preload = async () => {
+  const explorerConfig = await explorerConfigAPI.preload();
+  return { explorerConfig };
+};
+
+const hydrate = (maybeConfig: mixed) => {
+  if (maybeConfig && maybeConfig.explorerConfig) {
+    explorerConfigAPI.hydrate(maybeConfig.explorerConfig);
+  }
+};
+
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
-  preload: () => Promise.resolve(),
-  hydrate: () => {},
+  preload,
+  hydrate,
 };
 
 const accountBridge: AccountBridge<Transaction> = {

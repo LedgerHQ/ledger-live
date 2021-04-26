@@ -6,7 +6,9 @@ const userHashesPerUserId = (userId: string) => {
   const firmwareSalt = sha256(userId + "|firmwareSalt")
     .toString("hex")
     .slice(0, 6);
-  return { firmwareSalt };
+  const endpointOverrides100 =
+    sha256(userId + "|endpoint").readUInt16BE(0) % 100;
+  return { firmwareSalt, endpointOverrides100 };
 };
 
 let cache;

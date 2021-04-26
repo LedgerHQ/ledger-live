@@ -20,3 +20,7 @@ export function isNonExistingAccountError(error: Error): boolean {
 export function isNonExistingWalletError(error: Error): boolean {
   return error.message.includes("doesn't exist");
 }
+
+export function isAlreadyExistingWalletError(error: Error): boolean {
+  return error.message.includes("already exists");
+}

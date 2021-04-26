@@ -2,6 +2,7 @@
 
 exports[`stable user 1`] = `
 Object {
+  "endpointOverrides100": 20,
   "firmwareSalt": "544d89",
 }
 `;
