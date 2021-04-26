@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "19.6.2",
+  "version": "19.7.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -29,16 +29,16 @@
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
   "dependencies": {
-    "@ledgerhq/cryptoassets": "5.49.0",
-    "@ledgerhq/errors": "5.49.0",
-    "@ledgerhq/hw-app-btc": "^5.49.0",
-    "@ledgerhq/hw-transport-http": "5.49.0",
-    "@ledgerhq/hw-transport-mocker": "5.49.0",
-    "@ledgerhq/hw-transport-node-hid": "5.49.0",
-    "@ledgerhq/hw-transport-node-speculos": "^5.49.0",
+    "@ledgerhq/cryptoassets": "5.50.0",
+    "@ledgerhq/errors": "5.50.0",
+    "@ledgerhq/hw-app-btc": "^5.50.0",
+    "@ledgerhq/hw-transport-http": "5.50.0",
+    "@ledgerhq/hw-transport-mocker": "5.50.0",
+    "@ledgerhq/hw-transport-node-hid": "5.50.0",
+    "@ledgerhq/hw-transport-node-speculos": "^5.50.0",
     "@ledgerhq/ledger-core": "6.11.3",
-    "@ledgerhq/live-common": "^19.6.2",
-    "@ledgerhq/logs": "5.49.0",
+    "@ledgerhq/live-common": "^19.7.0",
+    "@ledgerhq/logs": "5.50.0",
     "@walletconnect/client": "^1.4.1",
     "asciichart": "^1.5.25",
     "bignumber.js": "^9.0.1",
@@ -54,7 +54,7 @@
     "qrloop": "^1.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-redux": "^7.2.3",
+    "react-redux": "^7.2.4",
     "rxjs": "^6.6.7",
     "winston": "^3.3.3"
   },
