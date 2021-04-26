@@ -9,7 +9,7 @@ import {
   getDerivationScheme,
   asDerivationMode,
 } from "./derivation";
-import { decodeAccountId } from "./account";
+import { decodeAccountId, emptyHistoryCache } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
 
 export type AccountData = {
@@ -320,6 +320,7 @@ export const accountDataToAccount = ({
     unit: currency.units[0],
     lastSyncDate: new Date(0),
     creationDate: new Date(),
+    balanceHistoryCache: emptyHistoryCache,
   };
   return account;
 };

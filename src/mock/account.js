@@ -18,7 +18,12 @@ import type {
   TokenCurrency,
 } from "../types";
 import { getOperationAmountNumber } from "../operation";
-import { inferSubOperations, isAccountEmpty } from "../account";
+import {
+  inferSubOperations,
+  isAccountEmpty,
+  emptyHistoryCache,
+  generateHistoryFromOperations,
+} from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 
 import { genHex, genAddress } from "./helpers";
@@ -311,6 +316,7 @@ function genTokenAccount(
     spendableBalance: BigNumber(0),
     creationDate: new Date(),
     swapHistory: [],
+    balanceHistoryCache: emptyHistoryCache,
   };
 
   const operationsSize = rng.nextInt(1, 200);
@@ -328,6 +334,10 @@ function genTokenAccount(
     tokenAccount.operations.length > 0
       ? tokenAccount.operations[tokenAccount.operations.length - 1].date
       : new Date();
+
+  tokenAccount.balanceHistoryCache = generateHistoryFromOperations(
+    tokenAccount
+  );
   return tokenAccount;
 }
 
@@ -386,6 +396,7 @@ export function genAccount(
         fromAmount: BigNumber("1000"),
         toAmount: BigNumber("2000"),
       })),
+    balanceHistoryCache: emptyHistoryCache,
   };
 
   if (currency.id === "cosmos") {
@@ -481,6 +492,8 @@ export function genAccount(
     perFamilyOperation && perFamilyOperation.genAccountEnhanceOperations;
 
   if (genAccountEnhanceOperations) genAccountEnhanceOperations(account, rng);
+
+  account.balanceHistoryCache = generateHistoryFromOperations(account);
 
   return account;
 }

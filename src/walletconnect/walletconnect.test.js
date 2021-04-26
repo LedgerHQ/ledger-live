@@ -7,6 +7,7 @@ import { parseCallRequest } from "./index";
 import type { WCPayloadTransaction } from "./index";
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
 import type { Account } from "../types/account";
+import { emptyHistoryCache } from "../account";
 import { setEnv } from "../env";
 
 describe("walletconnect", () => {
@@ -33,6 +34,7 @@ describe("walletconnect", () => {
     pendingOperations: [],
     lastSyncDate: new Date(),
     swapHistory: [],
+    balanceHistoryCache: emptyHistoryCache,
   };
 
   beforeAll(() => {

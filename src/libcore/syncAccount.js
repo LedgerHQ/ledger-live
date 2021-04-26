@@ -14,7 +14,10 @@ import { withLibcore } from "./access";
 import { buildAccount } from "./buildAccount";
 import { getCoreAccount } from "./getCoreAccount";
 import { remapLibcoreErrors } from "./errors";
-import { shouldRetainPendingOperation } from "../account";
+import {
+  shouldRetainPendingOperation,
+  recalculateAccountBalanceHistories,
+} from "../account";
 import postSyncPatchPerFamily from "../generated/libcore-postSyncPatch";
 import perFamilyPresync from "../generated/presync";
 
@@ -119,28 +122,31 @@ export function sync(
     )
   ).pipe(
     map((syncedAccount) => (initialAccount) =>
-      postSyncPatch(initialAccount, {
-        ...initialAccount,
-        // FIXME, the "patching" logic should be somewhere else, especially that it's also in jsHelpers
-        id: syncedAccount.id,
-        freshAddress: syncedAccount.freshAddress,
-        freshAddressPath: syncedAccount.freshAddressPath,
-        balance: syncedAccount.balance,
-        balanceHistory: syncedAccount.balanceHistory,
-        spendableBalance: syncedAccount.spendableBalance,
-        blockHeight: syncedAccount.blockHeight,
-        lastSyncDate: new Date(),
-        creationDate: syncedAccount.creationDate,
-        operations: syncedAccount.operations,
-        operationsCount: syncedAccount.operations.length,
-        subAccounts: syncedAccount.subAccounts,
-        pendingOperations: initialAccount.pendingOperations.filter((op) =>
-          shouldRetainPendingOperation(syncedAccount, op)
-        ),
-        cosmosResources: syncedAccount.cosmosResources,
-        algorandResources: syncedAccount.algorandResources,
-        bitcoinResources: syncedAccount.bitcoinResources,
-      })
+      recalculateAccountBalanceHistories(
+        postSyncPatch(initialAccount, {
+          ...initialAccount,
+          // FIXME, the "patching" logic should be somewhere else, especially that it's also in jsHelpers
+          id: syncedAccount.id,
+          freshAddress: syncedAccount.freshAddress,
+          freshAddressPath: syncedAccount.freshAddressPath,
+          balance: syncedAccount.balance,
+          balanceHistory: syncedAccount.balanceHistory,
+          spendableBalance: syncedAccount.spendableBalance,
+          blockHeight: syncedAccount.blockHeight,
+          lastSyncDate: new Date(),
+          creationDate: syncedAccount.creationDate,
+          operations: syncedAccount.operations,
+          operationsCount: syncedAccount.operations.length,
+          subAccounts: syncedAccount.subAccounts,
+          pendingOperations: initialAccount.pendingOperations.filter((op) =>
+            shouldRetainPendingOperation(syncedAccount, op)
+          ),
+          cosmosResources: syncedAccount.cosmosResources,
+          algorandResources: syncedAccount.algorandResources,
+          bitcoinResources: syncedAccount.bitcoinResources,
+        }),
+        initialAccount
+      )
     )
   );
 }

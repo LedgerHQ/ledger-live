@@ -9,7 +9,10 @@ import type {
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import { buildOperation } from "../../libcore/buildAccount/buildOperation";
 import { minimalOperationsBuilder } from "../../reconciliation";
-import { shortAddressPreview } from "../../account";
+import {
+  shortAddressPreview,
+  generateHistoryFromOperations,
+} from "../../account";
 
 const OperationOrderKey = {
   date: 0,
@@ -69,7 +72,11 @@ async function buildOriginatedAccount({
         ? operations[operations.length - 1].date
         : new Date(),
     swapHistory,
+    balanceHistoryCache: {},
   };
+  originatedAccount.balanceHistoryCache = generateHistoryFromOperations(
+    originatedAccount
+  );
 
   return originatedAccount;
 }

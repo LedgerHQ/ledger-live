@@ -12,6 +12,7 @@ import type {
   AccountRaw,
   SubAccount,
   SubAccountRaw,
+  BalanceHistoryCache,
   BalanceHistoryRawMap,
 } from "./types";
 import {
@@ -112,6 +113,21 @@ export function minimalOperationsBuilderSync<CO>(
   return state.operations;
 }
 
+const shouldRefreshBalanceHistoryCache = (
+  balanceHistoryCache: BalanceHistoryCache,
+  account: Account
+): boolean => {
+  const oldH = account.balanceHistoryCache.HOUR;
+  const newH = balanceHistoryCache.HOUR;
+  if (oldH.latestDate !== newH.latestDate) return true; // date have changed, need to refresh the array
+  if (oldH.balances.length !== newH.balances.length) return true; // balances length changes (new ops for instance)
+  let length = newH.balances.length;
+  if (length === 0) return false;
+  if (oldH.balances[length - 1] !== newH.balances[length - 1]) return true; // latest datapoint changes.
+  return false;
+};
+
+// FIXME DEPRECATED post portfolio v2
 const shouldRefreshBalanceHistory = (
   balanceHistory: BalanceHistoryRawMap,
   account: Account
@@ -215,6 +231,8 @@ export function patchAccount(
     next.balance = BigNumber(updatedRaw.balance);
     changed = true;
   }
+
+  // DEPRECATED post portfolio v2
   const { balanceHistory } = updatedRaw;
   if (balanceHistory) {
     if (shouldRefreshBalanceHistory(balanceHistory, account)) {
@@ -264,6 +282,14 @@ export function patchAccount(
   if (account.syncHash !== updatedRaw.syncHash) {
     next.syncHash = updatedRaw.syncHash;
     changed = true;
+  }
+
+  const { balanceHistoryCache } = updatedRaw;
+  if (balanceHistoryCache) {
+    if (shouldRefreshBalanceHistoryCache(balanceHistoryCache, account)) {
+      next.balanceHistoryCache = balanceHistoryCache;
+      changed = true;
+    }
   }
 
   if (

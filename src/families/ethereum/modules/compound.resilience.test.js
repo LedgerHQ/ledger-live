@@ -36,7 +36,12 @@ test("if API is down, an account still sync fine", async () => {
   raw.blockHeight = 0;
   raw.lastSyncDate = "";
   raw.creationDate = "";
+  delete raw.balanceHistoryCache;
   delete raw.syncHash;
+  raw.subAccounts = (raw.subAccounts || []).map((a) => {
+    delete a.balanceHistoryCache;
+    return a;
+  });
   raw.operations = raw.operations.map((op) => {
     op.blockHeight = 0;
     op.date = "";

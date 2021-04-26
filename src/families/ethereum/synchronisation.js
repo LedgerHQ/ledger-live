@@ -12,6 +12,7 @@ import {
   decodeTokenAccountId,
   areAllOperationsLoaded,
   inferSubOperations,
+  emptyHistoryCache,
 } from "../../account";
 import {
   findTokenByAddress,
@@ -143,6 +144,7 @@ export const getAccountShape: GetAccountShape = async (
         pendingOperations,
         starred,
         swapHistory,
+        balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
       };
     })
     .filter(Boolean);

@@ -60294,6 +60294,7 @@ Array [
   Array [
     Object {
       "accountId": "js:2:polkadot:12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351121,
       "extra": Object {
         "bondedAmount": "10000000000",
@@ -60315,6 +60316,7 @@ Array [
     },
     Object {
       "accountId": "js:2:polkadot:12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3350887,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60330,12 +60332,12 @@ Array [
       "senders": Array [
         "12JHbw1vnXxqsD6U5yA3u9Kqvp9A7Zi3qM2rhAreZqP5zUmS",
       ],
-      "transactionSequenceNumber": undefined,
       "type": "IN",
       "value": "33000000000",
     },
     Object {
       "accountId": "js:2:polkadot:12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351098,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60357,6 +60359,7 @@ Array [
     },
     Object {
       "accountId": "js:2:polkadot:12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351133,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60380,6 +60383,7 @@ Array [
   Array [
     Object {
       "accountId": "js:2:polkadot:13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351208,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60395,12 +60399,12 @@ Array [
       "senders": Array [
         "15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD",
       ],
-      "transactionSequenceNumber": undefined,
       "type": "IN",
       "value": "5000000000",
     },
     Object {
       "accountId": "js:2:polkadot:13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351098,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60416,12 +60420,12 @@ Array [
       "senders": Array [
         "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV",
       ],
-      "transactionSequenceNumber": undefined,
       "type": "IN",
       "value": "11000000000",
     },
     Object {
       "accountId": "js:2:polkadot:13jAJfhpFkRZj1TSSdFopaiFeKnof2q7g4GNdcxcg8Lvx6QN:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351218,
       "extra": Object {
         "bondedAmount": "10000000000",
@@ -60445,6 +60449,7 @@ Array [
   Array [
     Object {
       "accountId": "js:2:polkadot:15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351197,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60466,6 +60471,7 @@ Array [
     },
     Object {
       "accountId": "js:2:polkadot:15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351208,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60487,6 +60493,7 @@ Array [
     },
     Object {
       "accountId": "js:2:polkadot:15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351167,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60502,12 +60509,12 @@ Array [
       "senders": Array [
         "12JHbw1vnXxqsD6U5yA3u9Kqvp9A7Zi3qM2rhAreZqP5zUmS",
       ],
-      "transactionSequenceNumber": undefined,
       "type": "IN",
       "value": "5000000000",
     },
     Object {
       "accountId": "js:2:polkadot:15oodc5d8DWJodZhTD6qsxxSQRYWhdkWCrwqNHajDirXRrAD:polkadotbip44",
+      "blockHash": undefined,
       "blockHeight": 3351133,
       "extra": Object {
         "palletMethod": "balances.transferKeepAlive",
@@ -60523,7 +60530,6 @@ Array [
       "senders": Array [
         "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV",
       ],
-      "transactionSequenceNumber": undefined,
       "type": "IN",
       "value": "11000000000",
     },

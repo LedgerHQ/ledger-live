@@ -29,6 +29,7 @@ import {
   getAccountUnit,
   getMainAccount,
   encodeTokenAccountId,
+  emptyHistoryCache,
 } from "../../../account";
 import { getOperationsPageSize } from "../../../pagination";
 import {
@@ -394,6 +395,7 @@ const getAccountShape = async (info, syncConfig) => {
         swapHistory: maybeExistingSubAccount
           ? maybeExistingSubAccount.swapHistory
           : [],
+        balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
       };
       return sub;
     })

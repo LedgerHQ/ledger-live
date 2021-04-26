@@ -8,11 +8,11 @@ import {
   formatPerGranularity,
   formatCounterValueDay,
 } from "../helpers";
-import type { CounterValuesAPI, RateMap } from "../types";
+import type { CounterValuesAPI } from "../types";
 
 const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 
-const legacyReverseRate = (from: string, to: string, rateMap: RateMap) => {
+const legacyReverseRate = (from: string, to: string, rateMap: Object) => {
   const r = {};
   const fromC = findCurrencyByTicker(from);
   const toC = findCurrencyByTicker(to);
@@ -42,7 +42,7 @@ const api: CounterValuesAPI = {
     const fromLevel = toLevel[from];
     if (!fromLevel || typeof fromLevel !== "object") return {};
     const [key] = Object.keys(fromLevel);
-    const res: RateMap = legacyReverseRate(from, to, fromLevel[key]);
+    const res: Object = legacyReverseRate(from, to, fromLevel[key]);
     delete res.latest;
     return res;
   },

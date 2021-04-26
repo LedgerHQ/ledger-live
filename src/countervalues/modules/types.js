@@ -1,6 +1,6 @@
 // @flow
 import type { Currency } from "../../types";
-import type { RateGranularity, TrackingPair, RateMap } from "../types";
+import type { RateGranularity, TrackingPair, RateMapRaw } from "../types";
 
 type Pair = { from: Currency, to: Currency };
 
@@ -15,7 +15,7 @@ export type Module = {
 
   handleAPI?: (Pair) => boolean,
 
-  fetchHistorical?: (RateGranularity, TrackingPair) => Promise<RateMap>,
+  fetchHistorical?: (RateGranularity, TrackingPair) => Promise<RateMapRaw>,
 
   fetchLatest?: (pairs: TrackingPair[]) => Promise<Array<?number>>,
 };

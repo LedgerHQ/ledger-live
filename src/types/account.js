@@ -28,12 +28,31 @@ import type {
 } from "./portfolio";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 
+// This is the old cache and now DEPRECATED (pre v2 portfoli)
 export type BalanceHistoryMap = {
   [_: PortfolioRange]: BalanceHistory,
 };
 
 export type BalanceHistoryRawMap = {
   [_: PortfolioRange]: BalanceHistoryRaw,
+};
+
+export type GranularityId = "HOUR" | "DAY" | "WEEK";
+
+// the cache is maintained for as many granularity as we need on Live.
+// it's currently an in memory cache so there is no problem regarding the storage.
+// in future, it could be saved and we can rethink how it's stored (independently of how it's in memory)
+export type BalanceHistoryCache = {
+  [_: GranularityId]: BalanceHistoryDataCache,
+};
+// the way BalanceHistoryDataCache works is:
+// - a "cursor" date which is the "latestDate" representing the latest datapoint date. it's null if it never was loaded or if it's empty.
+// - an array of balances. balances are stored in JSNumber even tho internally calculated with bignumbers because we want very good perf. it shouldn't impact imprecision (which happens when we accumulate values, not when presenting to user)
+// there are as much value in that array as there are historical datapoint for a given account.
+// each time an account will sync, it potentially update it by adding a datapoint and possibility updating the cursor in that case.
+export type BalanceHistoryDataCache = {
+  latestDate: ?number,
+  balances: number[],
 };
 
 // A token belongs to an Account and share the parent account address
@@ -52,7 +71,12 @@ export type TokenAccount = {
   operations: Operation[],
   pendingOperations: Operation[],
   starred: boolean,
+  // DEPRECATED! it will be dropped when switching to Portfolio V2
   balanceHistory?: BalanceHistoryMap,
+  // Cache of balance history that allows a performant portfolio calculation.
+  // currently there are no "raw" version of it because no need to at this stage.
+  // could be in future when pagination is needed.
+  balanceHistoryCache: BalanceHistoryCache,
   // Swap operations linked to this account
   swapHistory: SwapOperation[],
   approvals?: Array<{
@@ -76,7 +100,12 @@ export type ChildAccount = {
   operationsCount: number,
   operations: Operation[],
   pendingOperations: Operation[],
+  // DEPRECATED! it will be dropped when switching to Portfolio V2
   balanceHistory?: BalanceHistoryMap,
+  // Cache of balance history that allows a performant portfolio calculation.
+  // currently there are no "raw" version of it because no need to at this stage.
+  // could be in future when pagination is needed.
+  balanceHistoryCache: BalanceHistoryCache,
   // Swap operations linked to this account
   swapHistory: SwapOperation[],
 };
@@ -191,7 +220,13 @@ export type Account = {
   // balance history represented the balance evolution throughout time, used by chart.
   // This is to be refreshed when necessary (typically in a sync)
   // this is a map PER granularity to allow a fast feedback when user switch them
+  // DEPRECATED! it will be dropped when switching to Portfolio V2
   balanceHistory?: BalanceHistoryMap,
+
+  // Cache of balance history that allows a performant portfolio calculation.
+  // currently there are no "raw" version of it because no need to at this stage.
+  // could be in future when pagination is needed.
+  balanceHistoryCache: BalanceHistoryCache,
 
   // On some blockchain, an account can have resources (gained, delegated, ...)
   bitcoinResources?: BitcoinResources,
@@ -229,6 +264,7 @@ export type TokenAccountRaw = {
   spendableBalance?: string,
   compoundBalance?: string,
   balanceHistory?: BalanceHistoryRawMap,
+  balanceHistoryCache?: BalanceHistoryCache,
   swapHistory?: SwapOperationRaw[],
   approvals?: Array<{
     sender: string,
@@ -250,6 +286,7 @@ export type ChildAccountRaw = {
   pendingOperations: OperationRaw[],
   balance: string,
   balanceHistory?: BalanceHistoryRawMap,
+  balanceHistoryCache?: BalanceHistoryCache,
   swapHistory?: SwapOperationRaw[],
 };
 
@@ -279,6 +316,7 @@ export type AccountRaw = {
   endpointConfig?: ?string,
   subAccounts?: SubAccountRaw[],
   balanceHistory?: BalanceHistoryRawMap,
+  balanceHistoryCache?: BalanceHistoryCache,
   bitcoinResources?: BitcoinResourcesRaw,
   tronResources?: TronResourcesRaw,
   cosmosResources?: CosmosResourcesRaw,

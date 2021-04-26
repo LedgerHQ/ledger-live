@@ -44,6 +44,10 @@ import { inferFamilyFromAccountId } from "./accountId";
 import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
+import {
+  emptyHistoryCache,
+  generateHistoryFromOperations,
+} from "./balanceHistoryCache";
 
 export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
@@ -89,13 +93,22 @@ export const toOperationRaw = (
     subOperations,
     internalOperations,
     extra,
-    ...op
+    id,
+    hash,
+    type,
+    senders,
+    recipients,
+    blockHeight,
+    blockHash,
+    transactionSequenceNumber,
+    accountId,
+    hasFailed,
   }: Operation,
   preserveSubOperation?: boolean
 ): OperationRaw => {
   let e = extra;
   if (e) {
-    const family = inferFamilyFromAccountId(op.accountId);
+    const family = inferFamilyFromAccountId(accountId);
     if (family) {
       const abf = accountByFamily[family];
       if (abf && abf.toOperationExtraRaw) {
@@ -104,13 +117,29 @@ export const toOperationRaw = (
     }
   }
 
-  const copy: OperationRaw = {
-    ...op,
+  const copy: $Exact<OperationRaw> = {
+    id,
+    hash,
+    type,
+    senders,
+    recipients,
+    accountId,
+    blockHash,
+    blockHeight,
     extra: e,
     date: date.toISOString(),
     value: value.toString(),
     fee: fee.toString(),
   };
+
+  if (transactionSequenceNumber !== undefined) {
+    copy.transactionSequenceNumber = transactionSequenceNumber;
+  }
+
+  if (hasFailed !== undefined) {
+    copy.hasFailed = hasFailed;
+  }
+
   if (subOperations && preserveSubOperation) {
     copy.subOperations = subOperations.map((o) => toOperationRaw(o));
   }
@@ -151,7 +180,15 @@ export const fromOperationRaw = (
     extra,
     subOperations,
     internalOperations,
-    ...op
+    id,
+    hash,
+    type,
+    senders,
+    recipients,
+    blockHeight,
+    blockHash,
+    transactionSequenceNumber,
+    hasFailed,
   }: OperationRaw,
   accountId: string,
   subAccounts?: ?(SubAccount[])
@@ -168,16 +205,30 @@ export const fromOperationRaw = (
   }
 
   const res: Operation = {
-    ...op,
+    id,
+    hash,
+    type,
+    senders,
+    recipients,
     accountId,
+    blockHash,
+    blockHeight,
     date: new Date(date),
     value: BigNumber(value),
     fee: BigNumber(fee),
     extra: e || {},
   };
 
+  if (transactionSequenceNumber !== undefined) {
+    res.transactionSequenceNumber = transactionSequenceNumber;
+  }
+
+  if (hasFailed !== undefined) {
+    res.hasFailed = hasFailed;
+  }
+
   if (subAccounts) {
-    res.subOperations = inferSubOperations(op.hash, subAccounts);
+    res.subOperations = inferSubOperations(hash, subAccounts);
   } else if (subOperations) {
     res.subOperations = subOperations.map((o) =>
       fromOperationRaw(o, o.accountId)
@@ -368,12 +419,13 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     spendableBalance,
     compoundBalance,
     balanceHistory,
+    balanceHistoryCache,
     swapHistory,
     approvals,
   } = raw;
   const token = getTokenById(tokenId);
   const convertOperation = (op) => fromOperationRaw(op, id);
-  return {
+  const res = {
     type: "TokenAccount",
     id,
     parentId,
@@ -394,7 +446,10 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     pendingOperations: (pendingOperations || []).map(convertOperation),
     swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
     approvals,
+    balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
   };
+  res.balanceHistoryCache = generateHistoryFromOperations(res);
+  return res;
 }
 
 export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
@@ -410,6 +465,7 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     spendableBalance,
     compoundBalance,
     balanceHistory,
+    balanceHistoryCache,
     swapHistory,
     approvals,
   } = ta;
@@ -425,6 +481,7 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     balanceHistory: balanceHistory
       ? toBalanceHistoryRawMap(balanceHistory)
       : undefined,
+    balanceHistoryCache,
     creationDate: ta.creationDate.toISOString(),
     operationsCount,
     operations: operations.map((o) => toOperationRaw(o)),
@@ -448,11 +505,12 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     balance,
     address,
     balanceHistory,
+    balanceHistoryCache,
     swapHistory,
   } = raw;
   const currency = getCryptoCurrencyById(currencyId);
   const convertOperation = (op) => fromOperationRaw(op, id);
-  return {
+  const res: $Exact<ChildAccount> = {
     type: "ChildAccount",
     id,
     name,
@@ -469,7 +527,11 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
+    balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
   };
+  res.balanceHistoryCache = generateHistoryFromOperations(res);
+
+  return res;
 }
 
 export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
@@ -484,6 +546,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     pendingOperations,
     balance,
     balanceHistory,
+    balanceHistoryCache,
     address,
     creationDate,
     swapHistory,
@@ -501,6 +564,7 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     balanceHistory: balanceHistory
       ? toBalanceHistoryRawMap(balanceHistory)
       : undefined,
+    balanceHistoryCache,
     creationDate: creationDate.toISOString(),
     operations: operations.map((o) => toOperationRaw(o)),
     pendingOperations: pendingOperations.map((o) => toOperationRaw(o)),
@@ -574,6 +638,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     creationDate,
     balance,
     balanceHistory,
+    balanceHistoryCache,
     spendableBalance,
     subAccounts: subAccountsRaw,
     tronResources,
@@ -637,7 +702,9 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     lastSyncDate: new Date(lastSyncDate || 0),
     swapHistory: [],
     syncHash,
+    balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
   };
+  res.balanceHistoryCache = generateHistoryFromOperations(res);
 
   if (typeof used === "undefined") {
     // old account data that didn't had the field yet
@@ -706,6 +773,7 @@ export function toAccountRaw({
   lastSyncDate,
   balance,
   balanceHistory,
+  balanceHistoryCache,
   spendableBalance,
   subAccounts,
   endpointConfig,
@@ -742,6 +810,9 @@ export function toAccountRaw({
   };
   if (balanceHistory) {
     res.balanceHistory = toBalanceHistoryRawMap(balanceHistory);
+  }
+  if (balanceHistoryCache) {
+    res.balanceHistoryCache = balanceHistoryCache;
   }
   if (endpointConfig) {
     res.endpointConfig = endpointConfig;

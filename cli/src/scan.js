@@ -16,6 +16,7 @@ import {
   fromAccountRaw,
   encodeAccountId,
   decodeAccountId,
+  emptyHistoryCache,
 } from "@ledgerhq/live-common/lib/account";
 import { asDerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import {
@@ -378,6 +379,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               operations: [],
               pendingOperations: [],
               swapHistory: [],
+              balanceHistoryCache: emptyHistoryCache,
             };
             return account;
           })

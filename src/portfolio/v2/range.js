@@ -15,6 +15,21 @@ export function getPortfolioRangeConfig(
   return ranges[r];
 }
 
+export const granularities = {
+  WEEK: {
+    increment: weekIncrement,
+    startOf: startOfWeek,
+  },
+  DAY: {
+    increment: dayIncrement,
+    startOf: startOfDay,
+  },
+  HOUR: {
+    increment: hourIncrement,
+    startOf: startOfHour,
+  },
+};
+
 // TODO Protfolio: this would require to introduce Account#olderOperationDate
 const ranges: { [k: PortfolioRange]: PortfolioRangeConfig } = {
   all: {

@@ -31,6 +31,7 @@ import { getMainAccount } from "../../../account";
 import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
+  emptyHistoryCache,
 } from "../../../account";
 import getAddress from "../../../hw/getAddress";
 import { open, close } from "../../../hw";
@@ -432,6 +433,7 @@ const currencyBridge: CurrencyBridge = {
                       lastSyncDate: new Date(),
                       creationDate: new Date(),
                       swapHistory: [],
+                      balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
                     },
                   });
                 }
@@ -484,6 +486,7 @@ const currencyBridge: CurrencyBridge = {
                 lastSyncDate: new Date(),
                 creationDate: new Date(),
                 swapHistory: [],
+                balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
               };
               account.operations = transactions
                 .map(txToOperation(account))

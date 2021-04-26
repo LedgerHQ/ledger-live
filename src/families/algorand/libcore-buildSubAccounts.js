@@ -11,6 +11,7 @@ import { minimalOperationsBuilder } from "../../reconciliation";
 import { buildASAOperation } from "./buildASAOperation";
 import { BigNumber } from "bignumber.js";
 import { findTokenById, listTokensForCryptoCurrency } from "../../currencies";
+import { emptyHistoryCache } from "../../account";
 import { promiseAllBatched } from "../../promise";
 import { extractTokenId, addPrefixToken } from "./tokens";
 
@@ -64,6 +65,7 @@ async function buildAlgorandTokenAccount({
       operations.length > 0
         ? operations[operations.length - 1].date
         : new Date(),
+    balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
   };
 
   return tokenAccount;

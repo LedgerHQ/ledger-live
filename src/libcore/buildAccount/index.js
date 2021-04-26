@@ -8,6 +8,7 @@ import {
   getAccountPlaceholderName,
   getNewAccountPlaceholderName,
   libcoreNoGoBalanceHistory,
+  emptyHistoryCache,
 } from "../../account";
 import type {
   SyncConfig,
@@ -248,6 +249,7 @@ export async function buildAccount({
     lastSyncDate: new Date(),
     creationDate,
     swapHistory,
+    balanceHistoryCache: emptyHistoryCache, // calculated in the syncAccount function
   };
 
   if (subAccounts) {

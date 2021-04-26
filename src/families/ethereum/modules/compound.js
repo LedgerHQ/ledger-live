@@ -24,6 +24,7 @@ import {
   findCompoundToken,
   formatCurrencyUnit,
 } from "../../../currencies";
+import { emptyHistoryCache } from "../../../account";
 import network from "../../../network";
 import { promiseAllBatched } from "../../../promise";
 import { mergeOps } from "../../../bridge/jsHelpers";
@@ -384,6 +385,7 @@ export function prepareTokenAccounts(
             pendingOperations: [],
             starred: false,
             swapHistory: [],
+            balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
           }
         : null
     )

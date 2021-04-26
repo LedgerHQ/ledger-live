@@ -230,6 +230,7 @@ export function testBridge<T>(family: string, data: DatasetTest<T>) {
                       "creationDate",
                       "blockHeight",
                       "balanceHistory",
+                      "balanceHistoryCache",
                     ].concat(FIXME_ignoreAccountFields || [])
                   );
                   return copy;

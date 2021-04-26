@@ -5,6 +5,7 @@ import type {
   AccountLikeArray,
   CryptoCurrency,
   TokenCurrency,
+  GranularityId,
 } from "../../types";
 
 export type BalanceHistoryData = { date: ?Date, value: number };
@@ -18,7 +19,7 @@ export type BalanceHistoryWithCountervalue = {
 
 export type PortfolioRangeConfig = {
   count?: number,
-  granularityId: "HOUR" | "DAY" | "WEEK", // only supported here atm
+  granularityId: GranularityId,
   startOf: (Date) => Date,
   increment: number, // FIXME it should be a Date=>Date
 };

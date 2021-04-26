@@ -1,6 +1,4 @@
 // @flow
-
-import { BigNumber } from "bignumber.js";
 import type {
   AccountLike,
   Account,
@@ -8,10 +6,13 @@ import type {
   CryptoCurrency,
   TokenCurrency,
 } from "../../types";
-import { getOperationAmountNumberWithInternals } from "../../operation";
 import type { CounterValuesState } from "../../countervalues/types";
 import { calculate, calculateMany } from "../../countervalues/logic";
-import { flattenAccounts, getAccountCurrency } from "../../account";
+import {
+  flattenAccounts,
+  getAccountCurrency,
+  getAccountHistoryBalances,
+} from "../../account";
 import { getEnv } from "../../env";
 import type {
   BalanceHistory,
@@ -35,11 +36,14 @@ export function getPortfolioCount(
   if (typeof conf.count === "number") return conf.count;
   if (!accounts.length) return 0;
 
-  const startDate = new Date(
-    Math.min(...accounts.map((a) => a.creationDate.getTime()))
-  );
-
-  return getPortfolioCountByDate(startDate, range);
+  let oldestDate = accounts[0].creationDate;
+  for (let i = 1; i < accounts.length; i++) {
+    const d = accounts[i].creationDate;
+    if (d < oldestDate) {
+      oldestDate = d;
+    }
+  }
+  return getPortfolioCountByDate(oldestDate, range);
 }
 
 export function getPortfolioCountByDate(
@@ -53,34 +57,25 @@ export function getPortfolioCountByDate(
   return count < defaultYearCount ? defaultYearCount : count;
 }
 
-// take back the getBalanceHistory "js"
-// TODO Portfolio: Account#balanceHistory would be DROPPED and replaced in future by another impl. (perf milestone)
 export function getBalanceHistory(
   account: AccountLike,
   range: PortfolioRange,
   count: number
 ): BalanceHistory {
-  const dates = getDates(range, count);
-
+  const conf = getPortfolioRangeConfig(range);
+  const balances = getAccountHistoryBalances(account, conf.granularityId);
   const history = [];
-  let { balance } = account;
-  const operationsLength = account.operations.length;
-  let i = 0; // index of operation
-  history.unshift({ date: dates[dates.length - 1], value: balance.toNumber() });
-  for (let d = dates.length - 2; d >= 0; d--) {
-    const date = dates[d];
-    // accumulate operations after time t
-    while (i < operationsLength && account.operations[i].date > date) {
-      balance = balance.minus(
-        getOperationAmountNumberWithInternals(account.operations[i])
-      );
-      i++;
-    }
-    if (i === operationsLength) {
-      // When there is no more operation, we consider we reached ZERO to avoid invalid assumption that balance was already available.
-      balance = BigNumber(0);
-    }
-    history.unshift({ date, value: BigNumber.max(balance, 0).toNumber() });
+  const now = new Date();
+  history.unshift({
+    date: now,
+    value: account.balance.toNumber(),
+  });
+  let t = new Date(conf.startOf(now) - 1).getTime(); // end of yesterday
+  for (let i = 0; i < count - 1; i++) {
+    history.unshift({
+      date: new Date(t - conf.increment * i),
+      value: balances[balances.length - 1 - i] ?? 0,
+    });
   }
   return history;
 }
@@ -97,7 +92,6 @@ export function getBalanceHistoryWithCountervalue(
   const counterValues = calculateMany(cvState, balanceHistory, {
     from: currency,
     to: cvCurrency,
-    disableRounding: true,
   });
   const history = balanceHistory.map(({ date, value }, i) => ({
     date,

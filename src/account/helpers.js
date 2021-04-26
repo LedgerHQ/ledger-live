@@ -11,6 +11,7 @@ import type {
 } from "../types";
 import { getEnv } from "../env";
 import { encodeTokenAccountId } from "./accountId";
+import { emptyHistoryCache } from "./balanceHistoryCache";
 import { isAccountDelegating } from "../families/tezos/bakers";
 
 // by convention, a main account is the top level account
@@ -107,6 +108,7 @@ export function clearAccount<T: AccountLike>(account: T): T {
   if (account.type === "TokenAccount") {
     return {
       ...account,
+      balanceHistoryCache: emptyHistoryCache,
       operations: [],
       pendingOperations: [],
     };
@@ -115,6 +117,7 @@ export function clearAccount<T: AccountLike>(account: T): T {
   if (account.type === "ChildAccount") {
     return {
       ...account,
+      balanceHistoryCache: emptyHistoryCache,
       operations: [],
       pendingOperations: [],
     };
@@ -122,6 +125,7 @@ export function clearAccount<T: AccountLike>(account: T): T {
 
   const copy = {
     ...account,
+    balanceHistoryCache: emptyHistoryCache,
     tronResources: account.tronResources && {
       ...account.tronResources,
       cacheTransactionInfoById: {},
@@ -229,6 +233,7 @@ export const makeEmptyTokenAccount = (
   pendingOperations: [],
   starred: false,
   swapHistory: [],
+  balanceHistoryCache: emptyHistoryCache,
 });
 
 /**
@@ -264,6 +269,7 @@ export const accountWithMandatoryTokens = (
       pendingOperations: [],
       starred: false,
       swapHistory: [],
+      balanceHistoryCache: emptyHistoryCache,
     }));
 
   if (addition.length === 0) return account;

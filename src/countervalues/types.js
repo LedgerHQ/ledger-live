@@ -26,7 +26,7 @@ export type CounterValuesState = {
 // The goal here is to make a key-value map where the value is not exceeding 2MB for Android to not glitch...
 export type CounterValuesStateRaw = {
   status: CounterValuesStatus,
-  [pairId: string]: RateMap,
+  [pairId: string]: RateMapRaw,
 };
 
 export type RateGranularity = "daily" | "hourly";
@@ -34,11 +34,8 @@ export type RateGranularity = "daily" | "hourly";
 // a rate map is an key value object that contains all rates per date.
 // it can contain both hourly and daily format
 // e.g.: { "latest": 999, "YYYY-MM-DD": daily, "YYYY-MM-DDTHH": hourly,.... }
-export type RateMap = {
-  [dateTime: string]: number,
-  // IDEA with the data we should probably have metadata:
-  // startDate, endDate, path of pairs (e.g. ETH->BTC via Binance, BTC->EUR via kraken)
-};
+export type RateMap = Map<string, number>;
+export type RateMapRaw = { [k: string]: number };
 
 export type TrackingPair = {
   from: Currency,
@@ -50,7 +47,7 @@ export type CounterValuesAPI = {
   fetchHistorical: (
     granularity: RateGranularity,
     pair: TrackingPair
-  ) => Promise<RateMap>,
+  ) => Promise<{ [k: string]: number }>,
 
   fetchLatest: (pairs: TrackingPair[]) => Promise<Array<?number>>,
 
