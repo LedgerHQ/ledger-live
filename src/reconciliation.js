@@ -9,6 +9,7 @@ import type {
   Operation,
   OperationRaw,
   Account,
+  AccountLike,
   AccountRaw,
   SubAccount,
   SubAccountRaw,
@@ -115,7 +116,7 @@ export function minimalOperationsBuilderSync<CO>(
 
 const shouldRefreshBalanceHistoryCache = (
   balanceHistoryCache: BalanceHistoryCache,
-  account: Account
+  account: AccountLike
 ): boolean => {
   const oldH = account.balanceHistoryCache.HOUR;
   const newH = balanceHistoryCache.HOUR;
@@ -430,6 +431,14 @@ export function patchSubAccount(
       !isEqual(updatedRaw.approvals, account.approvals)
     ) {
       next.approvals = updatedRaw.approvals;
+      changed = true;
+    }
+  }
+
+  const { balanceHistoryCache } = updatedRaw;
+  if (balanceHistoryCache) {
+    if (shouldRefreshBalanceHistoryCache(balanceHistoryCache, account)) {
+      next.balanceHistoryCache = balanceHistoryCache;
       changed = true;
     }
   }
