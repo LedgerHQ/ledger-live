@@ -1,7 +1,7 @@
 PODS:
-  - Analytics (4.1.1)
+  - Analytics (4.1.3)
   - boost-for-react-native (1.63.0)
-  - CocoaAsyncSocket (7.6.4)
+  - CocoaAsyncSocket (7.6.5)
   - CocoaLibEvent (1.0.0)
   - djinni_objc (4.18.8)
   - DoubleConversion (1.1.6)
@@ -25,8 +25,8 @@ PODS:
     - OpenSSL-Universal (= 1.0.2.20)
   - Flipper-Glog (0.3.6)
   - Flipper-PeerTalk (0.0.4)
-  - Flipper-RSocket (1.1.0):
-    - Flipper-Folly (~> 2.2)
+  - Flipper-RSocket (1.1.1):
+    - Flipper-Folly (~> 2.3)
   - FlipperKit (0.54.0):
     - FlipperKit/Core (= 0.54.0)
   - FlipperKit/Core (0.54.0):
@@ -250,14 +250,14 @@ PODS:
   - react-native-ble-plx (2.0.1):
     - MultiplatformBleAdapter (= 0.1.6)
     - React
-  - react-native-camera (3.19.0):
-    - React
-    - react-native-camera/RCT (= 3.19.0)
-    - react-native-camera/RN (= 3.19.0)
-  - react-native-camera/RCT (3.19.0):
-    - React
-  - react-native-camera/RN (3.19.0):
-    - React
+  - react-native-camera (3.43.6):
+    - React-Core
+    - react-native-camera/RCT (= 3.43.6)
+    - react-native-camera/RN (= 3.43.6)
+  - react-native-camera/RCT (3.43.6):
+    - React-Core
+  - react-native-camera/RN (3.43.6):
+    - React-Core
   - react-native-config (1.4.2):
     - react-native-config/App (= 1.4.2)
   - react-native-config/App (1.4.2):
@@ -268,18 +268,20 @@ PODS:
     - React
   - react-native-netinfo (6.0.0):
     - React-Core
-  - react-native-randombytes (3.6.0):
+  - react-native-pager-view (5.1.5):
+    - React-Core
+  - react-native-randombytes (3.6.1):
     - React-Core
   - react-native-safe-area-context (3.2.0):
     - React-Core
   - react-native-splash-screen (3.2.0):
     - React
-  - react-native-udp (3.1.0):
+  - react-native-udp (4.1.2):
     - CocoaAsyncSocket
-    - React
+    - React-Core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-webview (11.4.0):
+  - react-native-webview (11.4.3):
     - React-Core
   - React-RCTActionSheet (0.63.4):
     - React-Core/RCTActionSheetHeaders (= 0.63.4)
@@ -354,8 +356,8 @@ PODS:
     - React
   - RNGestureHandler (1.10.3):
     - React-Core
-  - RNKeychain (5.0.0):
-    - React
+  - RNKeychain (7.0.0):
+    - React-Core
   - RNLibLedgerCore (4.18.8):
     - ledger-core-objc
     - React
@@ -392,9 +394,9 @@ PODS:
     - Yoga
   - RNScreens (3.1.1):
     - React-Core
-  - RNShare (5.1.0):
+  - RNShare (5.3.0):
     - React-Core
-  - RNSVG (12.0.3):
+  - RNSVG (12.1.1):
     - React
   - RNVectorIcons (8.1.0):
     - React-Core
@@ -417,7 +419,7 @@ DEPENDENCIES:
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
   - Flipper (~> 0.54.0)
   - Flipper-DoubleConversion (= 1.1.7)
-  - Flipper-Folly (~> 2.2)
+  - Flipper-Folly (= 2.3.0)
   - Flipper-Glog (= 0.3.6)
   - Flipper-PeerTalk (~> 0.0.4)
   - Flipper-RSocket (~> 1.1)
@@ -457,6 +459,7 @@ DEPENDENCIES:
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
   - react-native-locale (from `../node_modules/react-native-locale`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
@@ -561,6 +564,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-locale"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-pager-view:
+    :path: "../node_modules/react-native-pager-view"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
@@ -629,9 +634,9 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
 SPEC CHECKSUMS:
-  Analytics: 952eac761f84ba0a508a4cf691598654073f9e3d
+  Analytics: 4c01e3e19d4be86705bad6581a1c2aa5a15a9d22
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
+  CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
   djinni_objc: 601ff2da81841309d6c6a140b2728211d11a75c3
   DoubleConversion: cde416483dac037923206447da6e1454df403714
@@ -642,7 +647,7 @@ SPEC CHECKSUMS:
   Flipper-Folly: e4493b013c02d9347d5e0cb4d128680239f6c78a
   Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
-  Flipper-RSocket: 64e7431a55835eb953b0bf984ef3b90ae9fdddd7
+  Flipper-RSocket: a3acb8812d6adf127deb0a5edae2793b97e6b641
   FlipperKit: ab353d41aea8aae2ea6daaf813e67496642f3d7d
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
@@ -663,17 +668,18 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-ble-plx: d8dcca81ecc617eda824a4ace85f7ffd55d90c6c
-  react-native-camera: 1f4c5be75a037b5573716a01d84ca0390c162954
+  react-native-camera: 9e55a09596b8c4e41eb7d4cce7c39826990c3cac
   react-native-config: c98128a72bc2c3a1ca72caec0b021f0fa944aa29
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
-  react-native-randombytes: b6677f7d495c27e9ee0dbd77ebc97b3c59173729
+  react-native-pager-view: c0c3833fbf06f3c63fb0ef8c4125bf1363b073d8
+  react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-udp: 7823da0f50a80bec14ca4fd77601101f95a68892
+  react-native-udp: f074c83f072beaf52a97369315372c7dba48fda2
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
-  react-native-webview: 4dfb534e9600b87fe667c5ca4fe09149383218b9
+  react-native-webview: d749ba1348c17c7225391e84ac4a0c1c90c2c8ee
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0
@@ -690,13 +696,13 @@ SPEC CHECKSUMS:
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
-  RNKeychain: 589a5504ba18b854fb8c2ba6402387b9529da959
+  RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 90d02f10a9489d1ec83d59d0b1b4f05617bfe1a0
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: 70f662b5232dd5d19ccff581e919a54ea73df51c
   RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
-  RNShare: fed99fd743f80ca255903c1da46fc9a6430efab6
-  RNSVG: 7e16ddfc6e00d5aa69c9eb83e699bcce5dcb85d4
+  RNShare: 4df87d1791f50a2c7b1d89432fb9bbb7c02a9c9a
+  RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
   SentryReactNative: 07237139c00366ea2e75ae3e5c566e7a71c27a90
@@ -704,6 +710,6 @@ SPEC CHECKSUMS:
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 4dde398e7b77194a58fed8ba66017e54bb973c23
+PODFILE CHECKSUM: d05b0bfbc85c35352d18872d57712fb117525607
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.10.1
