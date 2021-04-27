@@ -62,7 +62,7 @@ describe("Portfolio", () => {
           },
         ];
         const res = getPortfolioCount(accounts, range);
-        expect(res).toBe(489);
+        expect(res).toBe(491);
       });
 
       it("should return at least a year", () => {

@@ -32,7 +32,7 @@ function generateHistoryFromOperationsG(
   // to only use when we do not recalculate the history but we just want to access it
   partial: boolean = false
 ): BalanceHistoryDataCache {
-  const { increment, startOf } = granularities[g];
+  const { increment, startOf, maxDatapoints } = granularities[g];
   const latestDate = startOf(new Date()).getTime();
   let balances = [];
   let { balance } = account;
@@ -40,7 +40,10 @@ function generateHistoryFromOperationsG(
   let date = latestDate;
   const reference = account.balanceHistoryCache[g];
   for (let i = 0; i < operationsLength; ) {
-    if (partial && reference.latestDate && date < reference.latestDate) {
+    if (
+      (partial && reference.latestDate && date < reference.latestDate) ||
+      balances.length > maxDatapoints
+    ) {
       break;
     }
 
