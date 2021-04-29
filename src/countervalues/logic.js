@@ -421,7 +421,7 @@ function generateCache(
         }
       }
     }
-    if (!map.has("latest") && settings.autofillGaps) {
+    if (!map.get("latest") && settings.autofillGaps) {
       map.set("latest", shiftingValue);
     }
   } else {
