@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "19.7.0",
+  "version": "19.7.2",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -37,12 +37,12 @@
     "@ledgerhq/hw-transport-node-hid": "5.50.0",
     "@ledgerhq/hw-transport-node-speculos": "^5.50.0",
     "@ledgerhq/ledger-core": "6.11.3",
-    "@ledgerhq/live-common": "^19.7.1",
+    "@ledgerhq/live-common": "^19.7.2",
     "@ledgerhq/logs": "5.50.0",
     "@walletconnect/client": "^1.4.1",
     "asciichart": "^1.5.25",
     "bignumber.js": "^9.0.1",
-    "bip39": "^3.0.3",
+    "bip39": "^3.0.4",
     "body-parser": "^1.19.0",
     "command-line-args": "^5.1.1",
     "cors": "^2.8.5",
