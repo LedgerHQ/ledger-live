@@ -34,7 +34,7 @@ const buildOptimisticOperation = async (
     accountId: account.id,
     date: new Date(),
     // FIXME: Javascript number may be not precise enough
-    transactionSequenceNumber: transactionSequenceNumber.plus(1).toNumber(),
+    transactionSequenceNumber: transactionSequenceNumber?.plus(1).toNumber(),
     extra: {},
   };
 

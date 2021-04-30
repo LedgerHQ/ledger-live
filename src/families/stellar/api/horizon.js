@@ -1,6 +1,10 @@
 //@flow
 import { BigNumber } from "bignumber.js";
-import StellarSdk, { AccountRecord, NotFoundError } from "stellar-sdk";
+import StellarSdk, {
+  AccountRecord,
+  NotFoundError,
+  NetworkError,
+} from "stellar-sdk";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "../../../env";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
@@ -9,6 +13,7 @@ import {
   getAccountSpendableBalance,
   rawOperationsToOperations,
 } from "../logic";
+import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
@@ -123,9 +128,26 @@ export const fetchOperations = async (
       .cursor(startAt)
       .call();
   } catch (e) {
-    if (e instanceof NotFoundError) {
+    // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
+    // (https://github.com/stellar/js-stellar-sdk/issues/638)
+    const errorMsg = e ? e.toString() : "";
+    if (e instanceof NotFoundError || errorMsg.match(/status code 404/)) {
       return [];
     }
+    if (errorMsg.match(/status code 4[0-9]{2}/)) {
+      return new LedgerAPI4xx();
+    }
+    if (errorMsg.match(/status code 5[0-9]{2}/)) {
+      return new LedgerAPI5xx();
+    }
+    if (
+      e instanceof NetworkError ||
+      errorMsg.match(/ECONNRESET|ECONNREFUSED|ENOTFOUND|EPIPE|ETIMEDOUT/) ||
+      errorMsg.match(/undefined is not an object/)
+    ) {
+      throw new NetworkDown();
+    }
+
     throw e;
   }
 
@@ -184,8 +206,8 @@ export const fetchAccountNetworkInfo = async (
 };
 
 export const fetchSequence = async (a: Account) => {
-  const extendedAccount = await server.loadAccount(a.freshAddress);
-  return BigNumber(extendedAccount.sequence);
+  const extendedAccount = await loadAccount(a.freshAddress);
+  return extendedAccount ? BigNumber(extendedAccount.sequence) : BigNumber(0);
 };
 
 export const fetchSigners = async (a: Account) => {
@@ -253,8 +275,12 @@ export const buildTransactionBuilder = (
 
 export const loadAccount = async (addr: string) => {
   if (!addr || !addr.length) {
-    return {};
+    return null;
   }
 
-  return await server.loadAccount(addr);
+  try {
+    return await server.loadAccount(addr);
+  } catch (e) {
+    return null;
+  }
 };

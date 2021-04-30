@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import StellarSdk from "stellar-sdk";
-import { AmountRequired, FeeNotLoaded } from "@ledgerhq/errors";
+import { AmountRequired, FeeNotLoaded, NetworkDown } from "@ledgerhq/errors";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
 import {
@@ -43,11 +43,13 @@ export const buildTransaction = async (
   if (!amount) throw new AmountRequired();
 
   const source = await loadAccount(account.freshAddress);
+  if (!source) throw new NetworkDown();
+
   const transactionBuilder = buildTransactionBuilder(source, fees);
 
   let operation = null;
 
-  const recipientExists = await addressExists(transaction.recipient); // FIXME: use cache with checkRecipientExist instead?
+  const recipientExists = await addressExists(transaction.recipient); // TODO: use cache with checkRecipientExist instead?
   if (recipientExists) {
     operation = buildPaymentOperation(recipient, amount);
   } else {
