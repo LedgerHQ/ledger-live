@@ -257,7 +257,13 @@ export function getCurrencyPortfolio(
   const portfolios = accounts.map((a) =>
     getBalanceHistoryWithCountervalue(a, range, count, cvState, cvCurrency)
   );
-  const histories = portfolios.map((p) => p.history);
+  let countervalueAvailable = false;
+  const histories = portfolios.map((p) => {
+    if (p.countervalueAvailable) {
+      countervalueAvailable = true;
+    }
+    return p.history;
+  });
   const history = getDates(range, count).map((date, i) => ({
     date,
     value: histories.reduce((sum, h) => sum + h[i]?.value, 0),
@@ -283,8 +289,7 @@ export function getCurrencyPortfolio(
 
   return {
     history,
-    countervalueAvailable:
-      portfolios[portfolios.length - 1].countervalueAvailable,
+    countervalueAvailable,
     accounts,
     range,
     histories,
