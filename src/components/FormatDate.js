@@ -5,12 +5,12 @@ import { format } from "date-fns";
 import compareDate from "../logic/compareDate";
 
 type Props = {
-  date: Date,
+  date: ?Date,
   format?: string,
 };
 
 function FormatDate({ date, format: formatProp = "MMMM d, yyyy" }: Props) {
-  return date.getTime() ? format(date, formatProp) : null;
+  return date && date.getTime() ? format(date, formatProp) : null;
 }
 
 function areEqual(prevProps: Props, nextProps: Props): boolean {

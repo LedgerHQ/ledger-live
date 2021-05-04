@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     margin: 16,
     flexDirection: "column",
     justifyContent: "center",
+    paddingVertical: "40%",
   },
   illustration: { width: "100%", height: 60 },
   body: {

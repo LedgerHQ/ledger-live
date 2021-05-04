@@ -1,7 +1,6 @@
 // @flow
 import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import { BigNumber } from "bignumber.js";
 import type {
   CryptoCurrency,
   TokenCurrency,
@@ -20,8 +19,8 @@ import { ensureContrast } from "../../colors";
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency,
   distribution: number, // % of the total (normalized in 0-1)
-  amount: BigNumber,
-  countervalue: BigNumber, // countervalue of the amount that was calculated based of the rate provided
+  amount: number,
+  countervalue: number, // countervalue of the amount that was calculated based of the rate provided
 };
 
 type Props = {

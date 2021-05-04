@@ -5,46 +5,24 @@ import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import Icon from "react-native-vector-icons/dist/Feather";
 import { useTheme } from "@react-navigation/native";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-
-type Props = {
-  onClose: () => void,
-  gotoExtraInfo: () => void,
-};
+import LText from "./LText";
 
 const forceInset = { bottom: "always" };
 
-const TokenNetworkFeeInfo = ({ gotoExtraInfo, onClose }: Props) => {
+const NetworkFeeInfo = () => {
   const { colors } = useTheme();
   return (
     <SafeAreaView forceInset={forceInset} style={styles.root}>
       <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
-        <Icon name="info" size={24} color={colors.live} />
+        <Icon name="info" size={32} color={colors.live} />
       </View>
       <View style={styles.textWrapper}>
         <LText secondary bold style={styles.textTitle}>
           <Trans i18nKey="send.fees.title" />
         </LText>
         <LText style={styles.textContent} color="smoke">
-          <Trans i18nKey="send.fees.ethTokenNetworkFees" />
+          <Trans i18nKey="send.fees.networkInfo" />
         </LText>
-      </View>
-      <View style={styles.footerContainer}>
-        <Button
-          type="secondary"
-          title={<Trans i18nKey="common.cancel" />}
-          containerStyle={styles.buttonContainer}
-          event="CloseViewTokenNetworkInfo"
-          onPress={onClose}
-        />
-        <Button
-          type="primary"
-          title={<Trans i18nKey="common.learnMore" />}
-          containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
-          event="GoToViewTokenNetworkInfo"
-          onPress={gotoExtraInfo}
-        />
       </View>
     </SafeAreaView>
   );
@@ -76,16 +54,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: "center",
   },
-  footerContainer: {
-    flexDirection: "row",
-  },
-  buttonContainer: {
-    flex: 1,
-    marginTop: 30,
-  },
-  buttonMarginLeft: {
-    marginLeft: 16,
-  },
 });
 
-export default TokenNetworkFeeInfo;
+export default NetworkFeeInfo;

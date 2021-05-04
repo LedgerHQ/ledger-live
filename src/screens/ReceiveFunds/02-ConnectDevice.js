@@ -113,6 +113,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   }
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const currency = getAccountCurrency(account);
   const tokenCurrency =
     account && account.type === "TokenAccount" && account.token;
 
@@ -136,7 +137,11 @@ export default function ConnectDevice({ navigation, route }: Props) {
       ]}
       forceInset={forceInset}
     >
-      <TrackScreen category="ReceiveFunds" name="ConnectDevice" />
+      <TrackScreen
+        category="ReceiveFunds"
+        name="ConnectDevice"
+        currencyName={currency.name}
+      />
       <NavigationScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContainer}

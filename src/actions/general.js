@@ -7,11 +7,11 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/lib/account";
 import {
-  useDistribution as useDistributionCommon,
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useCountervaluesPolling,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-common/lib/countervalues/react";
+import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/lib/portfolio/v2/react";
 import { reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
 import {

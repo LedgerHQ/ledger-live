@@ -1,8 +1,9 @@
 // @flow
 
-import React, { useState, useRef, useCallback } from "react";
-import { StyleSheet, View, Animated, SectionList } from "react-native";
+import React, { useState, useRef, useCallback, useMemo } from "react";
+import { StyleSheet, View, SectionList, FlatList } from "react-native";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
+import Animated, { Value, event } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import {
@@ -40,7 +41,7 @@ import EmptyStateAccount from "./EmptyStateAccount";
 import NoOperationFooter from "../../components/NoOperationFooter";
 import { useScrollToTop } from "../../navigation/utils";
 
-import ListHeaderComponent from "./ListHeaderComponent";
+import { getListHeaderComponents } from "./ListHeaderComponent";
 
 type Props = {
   navigation: any,
@@ -55,6 +56,10 @@ type RouteParams = {
 const AnimatedSectionList = Animated.createAnimatedComponent(SectionList);
 const List = accountSyncRefreshControl(AnimatedSectionList);
 
+const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
+  accountSyncRefreshControl(FlatList),
+);
+
 function renderSectionHeader({ section }: any) {
   return <SectionHeader section={section} />;
 }
@@ -62,6 +67,8 @@ function renderSectionHeader({ section }: any) {
 function keyExtractor(item: Operation) {
   return item.id;
 }
+
+const stickySectionHeight = 56;
 
 export default function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -90,6 +97,7 @@ function AccountScreenInner({
 
   const [opCount, setOpCount] = useState(100);
   const ref = useRef();
+  const scrollY = useRef(new Value(0)).current;
 
   useScrollToTop(ref);
 
@@ -170,49 +178,92 @@ function AccountScreenInner({
       ? makeCompoundSummaryForAccount(account, parentAccount)
       : undefined;
 
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
+  const { listHeaderComponents, stickyHeaderIndices } = useMemo(
+    () =>
+      getListHeaderComponents({
+        account,
+        parentAccount,
+        countervalueAvailable,
+        useCounterValue,
+        range,
+        history,
+        countervalueChange,
+        cryptoChange,
+        counterValueCurrency,
+        onAccountPress,
+        onSwitchAccountCurrency,
+        compoundSummary,
+        isCollapsed,
+        setIsCollapsed,
+      }),
+    [
+      account,
+      compoundSummary,
+      counterValueCurrency,
+      countervalueAvailable,
+      countervalueChange,
+      cryptoChange,
+      history,
+      isCollapsed,
+      onAccountPress,
+      onSwitchAccountCurrency,
+      parentAccount,
+      range,
+      useCounterValue,
+    ],
+  );
+
+  const data = [
+    ...listHeaderComponents,
+    <List
+      ref={ref}
+      sections={sections}
+      style={[styles.sectionList, { backgroundColor: colors.background }]}
+      contentContainerStyle={styles.contentContainer}
+      ListFooterComponent={
+        !completed ? (
+          <LoadingFooter />
+        ) : sections.length === 0 ? (
+          isAccountEmpty(account) ? null : (
+            <NoOperationFooter />
+          )
+        ) : (
+          <NoMoreOperationFooter />
+        )
+      }
+      ListEmptyComponent={ListEmptyComponent}
+      keyExtractor={keyExtractor}
+      renderItem={renderItem}
+      renderSectionHeader={renderSectionHeader}
+      onEndReached={onEndReached}
+      onScroll={event(
+        [
+          {
+            nativeEvent: {
+              contentOffset: { y: scrollY },
+            },
+          },
+        ],
+        { useNativeDriver: true },
+      )}
+      showsVerticalScrollIndicator={false}
+      accountId={account.id}
+      stickySectionHeadersEnabled={false}
+    />,
+  ];
+
   return (
     <View style={[styles.root]}>
       {analytics}
-      <List
-        ref={ref}
-        sections={sections}
-        style={[styles.sectionList, { backgroundColor: colors.background }]}
-        contentContainerStyle={styles.contentContainer}
-        ListFooterComponent={
-          !completed ? (
-            <LoadingFooter />
-          ) : sections.length === 0 ? (
-            isAccountEmpty(account) ? null : (
-              <NoOperationFooter />
-            )
-          ) : (
-            <NoMoreOperationFooter />
-          )
-        }
-        ListHeaderComponent={
-          <ListHeaderComponent
-            account={account}
-            parentAccount={parentAccount}
-            countervalueAvailable={countervalueAvailable}
-            useCounterValue={useCounterValue}
-            range={range}
-            history={history}
-            countervalueChange={countervalueChange}
-            cryptoChange={cryptoChange}
-            counterValueCurrency={counterValueCurrency}
-            onAccountPress={onAccountPress}
-            onSwitchAccountCurrency={onSwitchAccountCurrency}
-            compoundSummary={compoundSummary}
-          />
-        }
-        ListEmptyComponent={ListEmptyComponent}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        renderSectionHeader={renderSectionHeader}
-        onEndReached={onEndReached}
+      <AnimatedFlatListWithRefreshControl
+        style={{ flex: 1, backgroundColor: colors.background }}
+        data={data}
+        renderItem={({ item }) => item}
+        keyExtractor={(item, index) => String(index)}
         showsVerticalScrollIndicator={false}
-        accountId={account.id}
-        stickySectionHeadersEnabled={false}
+        stickyHeaderIndices={stickyHeaderIndices}
       />
     </View>
   );
@@ -239,5 +290,28 @@ const styles = StyleSheet.create({
   contentContainer: {
     paddingBottom: 64,
     flexGrow: 1,
+  },
+  accountFabActions: {
+    width: "100%",
+    height: 56,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+  },
+  stickyContainer: {
+    width: "100%",
+    height: stickySectionHeight,
+    paddingVertical: 8,
+    position: "absolute",
+    left: 0,
+    top: 0,
+    zIndex: -100,
+    opacity: 0,
+  },
+  stickyBg: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    zIndex: 0,
   },
 });

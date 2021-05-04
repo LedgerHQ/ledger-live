@@ -1,2 +1,3 @@
 // @flow
-export default (a: Date, b: Date) => a === b || a.getTime() === b.getTime();
+export default (a: ?Date, b: ?Date) =>
+  Boolean(a === b || (a && b && a.getTime() === b.getTime()));
