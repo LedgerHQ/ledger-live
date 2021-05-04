@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState, memo } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import {
   isAccountEmpty,
@@ -17,7 +17,6 @@ import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Header from "./Header";
-import AccountActions from "./AccountActions";
 import AccountGraphCard from "../../components/AccountGraphCard";
 import Touchable from "../../components/Touchable";
 import TransactionsPendingConfirmationWarning from "../../components/TransactionsPendingConfirmationWarning";
@@ -29,6 +28,7 @@ import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import { normalize } from "../../helpers/normalizeSize";
+import FabActions from "../../components/FabActions";
 
 const renderAccountSummary = (
   account,
@@ -133,9 +133,11 @@ type Props = {
   onAccountPress: () => void,
   onSwitchAccountCurrency: () => void,
   compoundSummary?: ?CompoundAccountSummary,
+  isCollapsed: boolean,
+  setIsCollapsed: (v: boolean) => void,
 };
 
-function ListHeaderComponent({
+export function getListHeaderComponents({
   account,
   parentAccount,
   countervalueAvailable,
@@ -148,9 +150,15 @@ function ListHeaderComponent({
   onAccountPress,
   onSwitchAccountCurrency,
   compoundSummary,
-}: Props) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  if (!account) return null;
+  isCollapsed,
+  setIsCollapsed,
+}: Props): {
+  listHeaderComponents: React$Node[],
+  stickyHeaderIndices?: number[],
+} {
+  if (!account)
+    return { listHeaderComponents: [], stickyHeaderIndices: undefined };
+
   const mainAccount = getMainAccount(account, parentAccount);
 
   const empty = isAccountEmpty(account);
@@ -160,70 +168,87 @@ function ListHeaderComponent({
   const AccountBodyHeader =
     perFamilyAccountBodyHeader[mainAccount.currency.family];
 
-  return (
-    <View style={styles.header}>
-      <Header accountId={account.id} />
+  return {
+    listHeaderComponents: [
+      <Header accountId={account.id} />,
+      ...(!empty && AccountHeader
+        ? [<AccountHeader account={account} parentAccount={parentAccount} />]
+        : []),
 
-      {!empty && AccountHeader ? (
-        <AccountHeader account={account} parentAccount={parentAccount} />
-      ) : null}
+      ...(empty
+        ? []
+        : [
+            <AccountGraphCard
+              account={account}
+              range={range}
+              history={history}
+              useCounterValue={shouldUseCounterValue}
+              valueChange={
+                shouldUseCounterValue ? countervalueChange : cryptoChange
+              }
+              countervalueAvailable={countervalueAvailable}
+              counterValueCurrency={counterValueCurrency}
+              renderTitle={renderListHeaderTitle(
+                account,
+                countervalueAvailable,
+                onSwitchAccountCurrency,
+              )}
+              renderAccountSummary={renderAccountSummary(
+                account,
+                parentAccount,
+                compoundSummary,
+              )}
+            />,
+          ]),
 
-      {empty ? null : (
-        <AccountGraphCard
-          account={account}
-          range={range}
-          history={history}
-          useCounterValue={shouldUseCounterValue}
-          valueChange={
-            shouldUseCounterValue ? countervalueChange : cryptoChange
-          }
-          countervalueAvailable={countervalueAvailable}
-          counterValueCurrency={counterValueCurrency}
-          renderTitle={renderListHeaderTitle(
-            account,
-            countervalueAvailable,
-            onSwitchAccountCurrency,
-          )}
-          renderAccountSummary={renderAccountSummary(
-            account,
-            parentAccount,
-            compoundSummary,
-          )}
-        />
-      )}
-      {empty ? null : (
-        <AccountActions account={account} parentAccount={parentAccount} />
-      )}
+      ...(!empty
+        ? [
+            <View style={[styles.stickySection]}>
+              <FabActions account={account} parentAccount={parentAccount} />
+            </View>,
+          ]
+        : []),
 
-      {!empty && AccountBodyHeader ? (
-        <AccountBodyHeader account={account} parentAccount={parentAccount} />
-      ) : null}
-      {!empty && account.type === "Account" && account.subAccounts ? (
-        <SubAccountsList
-          accountId={account.id}
-          onAccountPress={onAccountPress}
-          parentAccount={account}
-          isCollapsed={isCollapsed}
-          onToggle={() => setIsCollapsed(!isCollapsed)}
-        />
-      ) : null}
-      {compoundSummary &&
+      ...(!empty && AccountBodyHeader
+        ? [
+            <AccountBodyHeader
+              account={account}
+              parentAccount={parentAccount}
+            />,
+          ]
+        : []),
+      ...(!empty && account.type === "Account" && account.subAccounts
+        ? [
+            <SubAccountsList
+              accountId={account.id}
+              onAccountPress={onAccountPress}
+              parentAccount={account}
+              isCollapsed={isCollapsed}
+              onToggle={() => setIsCollapsed(!isCollapsed)}
+            />,
+          ]
+        : []),
+      ...(compoundSummary &&
       account &&
       account.type === "TokenAccount" &&
-      parentAccount ? (
-        <CompoundAccountBodyHeader
-          account={account}
-          parentAccount={parentAccount}
-          compoundSummary={compoundSummary}
-        />
-      ) : null}
-    </View>
-  );
+      parentAccount
+        ? [
+            <CompoundAccountBodyHeader
+              account={account}
+              parentAccount={parentAccount}
+              compoundSummary={compoundSummary}
+            />,
+          ]
+        : []),
+    ],
+    stickyHeaderIndices: empty ? [] : AccountHeader ? [3] : [2],
+  };
 }
 
 const styles = StyleSheet.create({
   header: {
     flexDirection: "column",
+    zIndex: 1000,
   },
   balanceContainer: {
     alignItems: "flex-start",
@@ -240,6 +265,5 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
   },
+  stickySection: { width: "100%", height: 56 },
 });
-
-export default memo<Props>(ListHeaderComponent);

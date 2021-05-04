@@ -1,7 +1,13 @@
 // @flow
 import React, { useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, SectionList, FlatList, SafeAreaView } from "react-native";
+import {
+  StyleSheet,
+  SectionList,
+  FlatList,
+  SafeAreaView,
+  View,
+} from "react-native";
 import Animated from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
@@ -37,6 +43,8 @@ import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import RequireTerms from "../../components/RequireTerms";
 import { useScrollToTop } from "../../navigation/utils";
 
+import FabActions from "../../components/FabActions";
+
 export { default as PortfolioTabIcon } from "./TabIcon";
 
 const AnimatedFlatListWithRefreshControl = createNativeWrapper(
@@ -71,13 +79,13 @@ export default function PortfolioScreen({ navigation }: Props) {
 
   const ListHeaderComponent = useCallback(
     () => (
-      <>
+      <View style={{ marginBottom: -56 }}>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
           showGreeting={!accounts.every(isAccountEmpty)}
         />
-      </>
+      </View>
     ),
     [accounts, counterValueCurrency, portfolio],
   );
@@ -92,6 +100,14 @@ export default function PortfolioScreen({ navigation }: Props) {
     }
 
     return null;
+  }
+
+  function StickyActions() {
+    return accounts.length === 0 ? null : (
+      <View style={styles.stickyActions}>
+        <FabActions />
+      </View>
+    );
   }
 
   function renderItem({
@@ -167,6 +183,7 @@ export default function PortfolioScreen({ navigation }: Props) {
             ? [<Carousel />]
             : []),
           ListHeaderComponent(),
+          StickyActions(),
           <SectionList
             // $FlowFixMe
             sections={sections}
@@ -194,9 +211,17 @@ export default function PortfolioScreen({ navigation }: Props) {
         renderItem={({ item }) => item}
         keyExtractor={(item, index) => String(index)}
         showsVerticalScrollIndicator={false}
-        onScroll={Animated.event([
-          { nativeEvent: { contentOffset: { y: scrollY } } },
-        ])}
+        stickyHeaderIndices={[2]}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: { y: scrollY },
+              },
+            },
+          ],
+          { useNativeDriver: true },
+        )}
       />
       <MigrateAccountsBanner />
     </SafeAreaView>
@@ -218,5 +243,11 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingTop: 16,
     paddingBottom: 64,
+  },
+  stickyActions: {
+    height: 56 * 2,
+    paddingTop: 56,
+    width: "100%",
+    justifyContent: "flex-end",
   },
 });
