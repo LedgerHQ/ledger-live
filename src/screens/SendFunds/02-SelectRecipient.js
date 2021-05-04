@@ -16,6 +16,7 @@ import Icon from "react-native-vector-icons/dist/FontAwesome";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Paste from "../../icons/Paste";
 import { track, TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
@@ -101,6 +102,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   invariant(account, "account is needed ");
 
+  const currency = getAccountCurrency(account);
+
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
     const parent = navigation.dangerouslyGetParent();
@@ -135,7 +138,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
         style={[styles.root, { backgroundColor: colors.background }]}
         forceInset={forceInset}
       >
-        <TrackScreen category="SendFunds" name="SelectRecipient" />
+        <TrackScreen
+          category="SendFunds"
+          name="SelectRecipient"
+          currencyName={currency.name}
+        />
         <SyncSkipUnderPriority priority={100} />
         <SyncOneAccountOnMount priority={100} accountId={account.id} />
         <KeyboardView style={{ flex: 1 }}>

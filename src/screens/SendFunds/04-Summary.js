@@ -176,7 +176,11 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="SendFunds" name="Summary" />
+      <TrackScreen
+        category="SendFunds"
+        name="Summary"
+        currencyName={currency.name}
+      />
       <NavigationScrollView style={styles.body}>
         {transaction.useAllAmount && hasNonEmptySubAccounts ? (
           <View style={styles.infoBox}>

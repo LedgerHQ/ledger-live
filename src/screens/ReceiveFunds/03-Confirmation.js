@@ -179,6 +179,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         name="Confirmation"
         unsafe={unsafe}
         verified={verified}
+        currencyName={currency.name}
       />
       {allowNavigation ? null : (
         <>

@@ -18,6 +18,7 @@ import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -141,10 +142,15 @@ export default function SendAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
+  const currency = getAccountCurrency(account);
 
   return (
     <>
-      <TrackScreen category="SendFunds" name="Amount" />
+      <TrackScreen
+        category="SendFunds"
+        name="Amount"
+        currencyName={currency.name}
+      />
       <SafeAreaView
         style={[styles.root, { backgroundColor: colors.background }]}
         forceInset={forceInset}
