@@ -1,24 +1,19 @@
 /* @flow */
-import invariant from "invariant";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { BigNumber } from "bignumber.js";
 import React, { useState, useCallback } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { Keyboard, StyleSheet, TextInput, View } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
-import { useSelector } from "react-redux";
-import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import { useTheme } from "@react-navigation/native";
-import { i18n } from "../../context/Locale";
+import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
-import { accountScreenSelector } from "../../reducers/accounts";
 
 const forceInset = { bottom: "always" };
 
 const options = {
-  title: i18n.t("send.summary.gasLimit"),
+  title: <Trans i18nKey="send.summary.gasLimit" />,
   headerLeft: null,
 };
 
@@ -26,6 +21,8 @@ type RouteParams = {
   accountId: string,
   transaction: Transaction,
   currentNavigation: string,
+  gasLimit: ?BigNumber,
+  setGasLimit: Function,
 };
 
 type Props = {
@@ -36,29 +33,16 @@ type Props = {
 function EthereumEditGasLimit({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const transaction = route.params?.transaction;
+  const gasLimit = route.params?.gasLimit;
+  const setGasLimit = route.params?.setGasLimit;
 
-  invariant(account && transaction, "account and transaction required");
-
-  const [gasLimit, setGasLimit] = useState(
-    transaction.userGasLimit || transaction.estimatedGasLimit,
-  );
+  const [ownGasLimit, setOwnGasLimit] = useState(gasLimit);
 
   const onValidateText = useCallback(() => {
-    const bridge = getAccountBridge(account, parentAccount);
-
     Keyboard.dismiss();
-    const { currentNavigation } = route.params;
-    navigation.navigate(currentNavigation, {
-      ...route.params,
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
-      transaction: bridge.updateTransaction(transaction, {
-        userGasLimit: BigNumber(gasLimit || 0),
-      }),
-    });
-  }, [account, gasLimit, navigation, parentAccount, route.params, transaction]);
+    navigation.goBack();
+    setGasLimit(BigNumber(ownGasLimit || 0));
+  }, [setGasLimit, ownGasLimit, navigation]);
 
   return (
     <SafeAreaView style={{ flex: 1 }} forceInset={forceInset}>
@@ -73,7 +57,7 @@ function EthereumEditGasLimit({ navigation, route }: Props) {
             keyboardType="numeric"
             returnKeyType="done"
             maxLength={10}
-            onChangeText={setGasLimit}
+            onChangeText={setOwnGasLimit}
             onSubmitEditing={onValidateText}
           />
 

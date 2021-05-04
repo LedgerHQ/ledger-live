@@ -10,8 +10,9 @@ import type {
   Unit,
   AccountLike,
   Account,
-  ValueChange,
+  Currency,
 } from "@ledgerhq/live-common/lib/types";
+import type { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { CompoundAccountSummary } from "@ledgerhq/live-common/lib/compound/types";
 
 import LText from "../../components/LText";
@@ -62,7 +63,7 @@ const renderAccountSummary = (
 };
 
 type HeaderTitleProps = {
-  useCounterValue: boolean,
+  useCounterValue?: boolean,
   cryptoCurrencyUnit: Unit,
   counterValueUnit: Unit,
   item: Item,
@@ -80,13 +81,12 @@ const renderListHeaderTitle = (
 }: HeaderTitleProps) => {
   const items = [
     { unit: cryptoCurrencyUnit, value: item.value },
-    countervalueAvailable && item.countervalue
-      ? { unit: counterValueUnit, value: item.countervalue }
-      : null,
+    // $FlowFixMe
+    { unit: counterValueUnit, value: item.countervalue },
   ];
 
   const shouldUseCounterValue = countervalueAvailable && useCounterValue;
-  if (shouldUseCounterValue && item.countervalue) {
+  if (shouldUseCounterValue) {
     items.reverse();
   }
 
@@ -97,24 +97,20 @@ const renderListHeaderTitle = (
       onPress={countervalueAvailable ? onSwitchAccountCurrency : undefined}
     >
       <View style={styles.balanceContainer}>
-        {items[0] ? (
-          <View style={styles.warningWrapper}>
-            <LText style={styles.balanceText} semiBold>
-              <CurrencyUnitValue
-                {...items[0]}
-                disableRounding
-                joinFragmentsSeparator=" "
-              />
-            </LText>
-            <TransactionsPendingConfirmationWarning maybeAccount={account} />
-          </View>
-        ) : null}
-        {items[1] ? (
-          <LText style={styles.balanceSubText} color="smoke" semiBold>
-            {/* $FlowFixMe */}
-            <CurrencyUnitValue {...items[1]} disableRounding />
+        <View style={styles.warningWrapper}>
+          <LText style={styles.balanceText} semiBold>
+            <CurrencyUnitValue
+              {...items[0]}
+              disableRounding
+              joinFragmentsSeparator=" "
+            />
           </LText>
-        ) : null}
+          <TransactionsPendingConfirmationWarning maybeAccount={account} />
+        </View>
+        <LText style={styles.balanceSubText} color="smoke" semiBold>
+          {/* $FlowFixMe */}
+          <CurrencyUnitValue {...items[1]} disableRounding />
+        </LText>
       </View>
     </Touchable>
   );
@@ -129,7 +125,7 @@ type Props = {
   history: *,
   countervalueChange: ValueChange,
   cryptoChange: ValueChange,
-  counterValueCurrency: Unit,
+  counterValueCurrency: Currency,
   onAccountPress: () => void,
   onSwitchAccountCurrency: () => void,
   compoundSummary?: ?CompoundAccountSummary,
@@ -252,6 +248,7 @@ const styles = StyleSheet.create({
   },
   balanceContainer: {
     alignItems: "flex-start",
+    height: 44,
   },
   balanceText: {
     fontSize: normalize(21),

@@ -1,4 +1,4 @@
 // @flow
-import * as BitcoinEditFeePerByte from "./ScreenEditFeePerByte";
+import * as BitcoinEditCustomFees from "./ScreenEditCustomFees";
 
-export { BitcoinEditFeePerByte };
+export { BitcoinEditCustomFees };

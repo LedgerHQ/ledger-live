@@ -636,7 +636,8 @@
   "graph": {
     "week": "1W",
     "month": "1M",
-    "year": "1Y"
+    "year": "1Y",
+    "all": "ALL"
   },
   "carousel": {
     "title": "Close banner?",
@@ -1243,10 +1244,11 @@
     "mbUnit": "{{size}} Mb"
   },
   "time": {
-    "day": "Day",
-    "week": "Week",
-    "month": "Month",
-    "year": "Year",
+    "day": "1D",
+    "week": "1W",
+    "month": "1M",
+    "year": "1Y",
+    "all": "All",
     "since": {
       "day": "past day",
       "week": "past week",
@@ -2137,6 +2139,9 @@
       "gasPrice": "Gas price",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
+      "fees": "Fees",
+      "validateFees": "Validate Fees",
+      "customizeFees": "Customize Fees",
       "memo": {
         "title": "Memo",
         "type": "Memo type",
@@ -2164,7 +2169,7 @@
       "edit": {
         "title": "Choose unit"
       },
-      "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH."
+      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction",
     },
     "verification": {
       "streaming": {
@@ -2378,7 +2383,11 @@
     },
     "button": {
       "openManager": "Open Manager"
-    }
+    },
+    "installApp": "{{appName}} App installation {{percentage}}",
+    "installAppDescription": "Please wait until the installation is finished",
+    "listApps": "Checking App dependencies",
+    "listAppsDescription": "Please wait while we make sure you have all the required apps"
   },
   "SelectDevice": {
     "title": "Pair new device",

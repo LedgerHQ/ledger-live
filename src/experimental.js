@@ -54,6 +54,13 @@ export const experimentalFeatures: Feature[] = [
     description:
       "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
   },
+  {
+    type: "toggle",
+    name: "EXPERIMENTAL_INLINE_INSTALL",
+    title: "Allow inline app installation",
+    description:
+      "Install a Ledger device application directly within a device flow rather than in the Manager.",
+  },
 ];
 
 const storageKey = "experimentalFlags";

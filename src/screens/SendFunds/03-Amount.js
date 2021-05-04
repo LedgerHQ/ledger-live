@@ -177,13 +177,15 @@ export default function SendAmount({ navigation, route }: Props) {
                     <LText color="grey">
                       <Trans i18nKey="send.amount.available" />
                     </LText>
-                    <LText semiBold color="grey">
-                      <CurrencyUnitValue
-                        showCode
-                        unit={unit}
-                        value={maxSpendable}
-                      />
-                    </LText>
+                    {maxSpendable && (
+                      <LText semiBold color="grey">
+                        <CurrencyUnitValue
+                          showCode
+                          unit={unit}
+                          value={maxSpendable}
+                        />
+                      </LText>
+                    )}
                   </View>
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>

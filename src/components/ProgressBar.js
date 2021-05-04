@@ -25,7 +25,7 @@ function ProgressBar({
     <View
       style={[
         styles.wrapper,
-        { height, backgroundColor: backgroundColor || colors.lightFog },
+        { height, backgroundColor: backgroundColor ?? colors.lightFog },
         style,
       ]}
     >

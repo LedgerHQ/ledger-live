@@ -72,6 +72,9 @@ export default function DeviceAction<R, H, P>({
     initSellRequested,
     initSellResult,
     initSellError,
+    installingApp,
+    progress,
+    listingApps,
   } = status;
 
   if (displayUpgradeWarning && appAndVersion) {
@@ -89,6 +92,19 @@ export default function DeviceAction<R, H, P>({
     return renderRequestQuitApp({
       t,
       device: selectedDevice,
+      colors,
+      theme,
+    });
+  }
+
+  if (installingApp) {
+    const appName = requestOpenApp;
+    return renderLoading({
+      t,
+      description: t("DeviceAction.installApp", {
+        percentage: (progress * 100).toFixed(0) + "%",
+        appName,
+      }),
       colors,
       theme,
     });
@@ -116,7 +132,15 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
-  // FIXME move out of here, this shouldn't be here.
+  if (listingApps) {
+    return renderLoading({
+      t,
+      description: t("DeviceAction.listApps"),
+      colors,
+      theme,
+    });
+  }
+
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     return renderConfirmSwap({ t, device: selectedDevice, colors, theme });
   }

@@ -13,7 +13,7 @@ type Props = {
   currency: Currency,
   // when? if not given: take latest
   date?: Date,
-  value: BigNumber,
+  value: BigNumber | number,
   // display grey placeholder if no value
   withPlaceholder?: boolean,
   placeholderProps?: mixed,
@@ -24,7 +24,7 @@ type Props = {
 };
 
 export default function CounterValue({
-  value,
+  value: valueProp,
   date,
   withPlaceholder,
   placeholderProps,
@@ -32,11 +32,13 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
+  const value =
+    valueProp instanceof BigNumber ? valueProp.toNumber() : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const countervalue = useCalculate({
     from: currency,
     to: counterValueCurrency,
-    value: value.toNumber(),
+    value,
     disableRounding: true,
     date,
   });
@@ -50,7 +52,7 @@ export default function CounterValue({
       {...props}
       currency={currency}
       unit={counterValueCurrency.units[0]}
-      value={BigNumber(countervalue)}
+      value={countervalue}
     />
   );
 

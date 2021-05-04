@@ -3,7 +3,8 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
-import type { Unit, ValueChange } from "@ledgerhq/live-common/lib/types";
+import type { Unit } from "@ledgerhq/live-common/lib/types";
+import type { ValueChange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
@@ -22,36 +23,34 @@ type Props = {
 
 function Delta({ valueChange, percent, unit, style }: Props) {
   const { colors } = useTheme();
-  if (
-    percent &&
-    (!valueChange.percentage || valueChange.percentage.isEqualTo(0))
-  ) {
+  if (percent && (!valueChange.percentage || valueChange.percentage === 0)) {
     return null;
   }
 
   const delta =
     percent && valueChange.percentage
-      ? valueChange.percentage.multipliedBy(100)
+      ? valueChange.percentage * 100
       : valueChange.value;
 
-  if (delta.isNaN()) {
+  if (Number.isNaN(delta)) {
     return null;
   }
 
-  const absDelta = delta.absoluteValue();
+  const absDelta = Math.abs(delta);
 
-  const [color, ArrowIcon, sign] = !delta.isZero()
-    ? delta.isGreaterThan(0)
-      ? [colors.success, IconArrowUp, "+"]
-      : [colors.alert, IconArrowDown, "-"]
-    : [colors.darkBlue, () => null, ""];
+  const [color, ArrowIcon, sign] =
+    delta !== 0
+      ? delta > 0
+        ? [colors.success, IconArrowUp, "+"]
+        : [colors.alert, IconArrowDown, "-"]
+      : [colors.darkBlue, () => null, ""];
 
   return (
     <View style={[styles.root, style]}>
       {percent && ArrowIcon ? <ArrowIcon size={10} color={color} /> : null}
       <View style={percent ? styles.content : null}>
         <LText semiBold style={[styles.text, { color }]}>
-          {unit && !absDelta.isZero() ? (
+          {unit && absDelta !== 0 ? (
             <CurrencyUnitValue
               before={`(${sign}`}
               after={")"}

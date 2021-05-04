@@ -1,5 +1,5 @@
 // @flow
-import * as EthereumEditFee from "./ScreenEditFee";
 import * as EthereumEditGasLimit from "./ScreenEditGasLimit";
+import * as EthereumCustomFees from "./EthereumCustomFees";
 
-export { EthereumEditFee, EthereumEditGasLimit };
+export { EthereumEditGasLimit, EthereumCustomFees };
