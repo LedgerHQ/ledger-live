@@ -29,6 +29,9 @@ export default (finalFirmware: FinalFirmware) => (
             ManagerAPI.getMcus()
               .then((mcus) => mcus.filter(filterMCUForDeviceInfo(deviceInfo)))
               .then((mcus) =>
+                mcus.filter((mcu) => mcu.from_bootloader_version !== "none")
+              )
+              .then((mcus) =>
                 ManagerAPI.findBestMCU(
                   finalFirmware.mcu_versions
                     .map((id) => mcus.find((mcu) => mcu.id === id))
