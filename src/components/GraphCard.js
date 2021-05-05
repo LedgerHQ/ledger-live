@@ -38,7 +38,7 @@ export default function GraphCard({
 }: Props) {
   const [hoveredItem, setHoverItem] = useState<?Item>();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
-  const colors = useTheme();
+  const { colors } = useTheme();
 
   const mapGraphValue = useCallback(d => d.value, []);
   const { countervalueChange } = portfolio;

@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   View,
 } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, { interpolate } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
@@ -79,7 +79,7 @@ export default function PortfolioScreen({ navigation }: Props) {
 
   const ListHeaderComponent = useCallback(
     () => (
-      <View style={{ marginBottom: -56 }}>
+      <View>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
@@ -103,9 +103,23 @@ export default function PortfolioScreen({ navigation }: Props) {
   }
 
   function StickyActions() {
+    const offset = 410;
+    const top = interpolate(scrollY, {
+      inputRange: [offset, offset + 56],
+      outputRange: [0, 56],
+      extrapolate: "clamp",
+    });
+
     return accounts.length === 0 ? null : (
-      <View style={styles.stickyActions}>
-        <FabActions />
+      <View style={[styles.stickyActions]}>
+        <Animated.View
+          style={[
+            styles.styckyActionsInner,
+            { transform: [{ translateY: top }] },
+          ]}
+        >
+          <FabActions />
+        </Animated.View>
       </View>
     );
   }
@@ -238,6 +252,7 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
+    marginTop: -56,
   },
   contentContainer: {
     flexGrow: 1,
@@ -245,9 +260,10 @@ const styles = StyleSheet.create({
     paddingBottom: 64,
   },
   stickyActions: {
-    height: 56 * 2,
-    paddingTop: 56,
+    height: 110,
     width: "100%",
-    justifyContent: "flex-end",
+    alignContent: "flex-start",
+    justifyContent: "flex-start",
   },
+  styckyActionsInner: { height: 56 },
 });

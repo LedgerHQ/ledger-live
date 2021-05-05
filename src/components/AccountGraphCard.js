@@ -61,7 +61,7 @@ export default function AccountGraphCard({
   valueChange,
   renderAccountSummary,
 }: Props) {
-  const colors = useTheme();
+  const { colors } = useTheme();
   const [hoveredItem, setHoverItem] = useState<?Item>();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
   const mapCryptoValue = useCallback(d => d.value, []);
