@@ -2173,7 +2173,7 @@
       "edit": {
         "title": "Choose unit"
       },
-      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction",
+      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction"
     },
     "verification": {
       "streaming": {
