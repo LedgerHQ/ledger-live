@@ -59,6 +59,8 @@
     "installed": "Installed",
     "uninstall": "Uninstall",
     "fromNow": {
+      "seconds": "in one second",
+      "seconds_plural": "in {{time}} seconds",
       "minutes": "in one minute",
       "minutes_plural": "in {{time}} minutes",
       "hours": "in one hour",
@@ -67,6 +69,8 @@
       "days_plural": "in {{time}} days"
     },
     "timeAgo": {
+      "seconds": "one second ago",
+      "seconds_plural": "{{time}} seconds ago",
       "minutes": "one minute ago",
       "minutes_plural": "{{time}} minutes ago",
       "hours": "one hour ago",
