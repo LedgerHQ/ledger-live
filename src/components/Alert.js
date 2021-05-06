@@ -222,7 +222,6 @@ export default function Alert({
       style={[
         styles.root,
         borderColor && styles.withBorder,
-
         {
           backgroundColor,
           borderColor: borderColor || "transparent",
@@ -265,6 +264,7 @@ export default function Alert({
 
 const styles = StyleSheet.create({
   root: {
+    width: "100%",
     flexDirection: "column",
     borderRadius: 4,
     paddingVertical: 16,
