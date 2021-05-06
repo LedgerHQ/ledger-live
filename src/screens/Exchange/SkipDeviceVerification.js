@@ -46,11 +46,9 @@ const SkipDeviceVerification = ({ settleTrade, account }: Props) => {
           {account.freshAddress}
         </LText>
       </View>
-      <View style={styles.warning}>
-        <Alert type="danger">
-          <Trans i18nKey="exchange.buy.skipDeviceVerification.warning" />
-        </Alert>
-      </View>
+      <Alert type="danger">
+        <Trans i18nKey="exchange.buy.skipDeviceVerification.warning" />
+      </Alert>
       <View style={styles.confirmationFooter}>
         <Button
           event="SkipDeviceModalCancel"
@@ -108,9 +106,6 @@ const styles = StyleSheet.create({
   address: {
     fontSize: 14,
     textAlign: "center",
-  },
-  warning: {
-    width: "100%",
   },
   confirmationFooter: {
     flexDirection: "row",

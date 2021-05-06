@@ -59,6 +59,8 @@
     "installed": "Installed",
     "uninstall": "Uninstall",
     "fromNow": {
+      "seconds": "in one second",
+      "seconds_plural": "in {{time}} seconds",
       "minutes": "in one minute",
       "minutes_plural": "in {{time}} minutes",
       "hours": "in one hour",
@@ -67,6 +69,8 @@
       "days_plural": "in {{time}} days"
     },
     "timeAgo": {
+      "seconds": "one second ago",
+      "seconds_plural": "{{time}} seconds ago",
       "minutes": "one minute ago",
       "minutes_plural": "{{time}} minutes ago",
       "hours": "one hour ago",
@@ -2169,7 +2173,7 @@
       "edit": {
         "title": "Choose unit"
       },
-      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction",
+      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction"
     },
     "verification": {
       "streaming": {
