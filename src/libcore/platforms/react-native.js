@@ -203,7 +203,10 @@ export default (arg: { getNativeModule: (id: string) => any }) => {
     if (!error || !error.message) return error;
     const msg = error.message;
 
-    if (msg.includes("Cannot gather enough funds")) {
+    if (
+      msg.includes("Cannot gather enough funds") ||
+      msg.includes("There is no UTXO on this account.")
+    ) {
       return new NotEnoughBalance();
     }
 
