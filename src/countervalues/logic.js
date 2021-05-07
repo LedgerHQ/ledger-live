@@ -357,9 +357,10 @@ export function calculateMany(
 ): Array<?number> {
   const { reverse, disableRounding } = initialQuery;
   const query = aliasPair(initialQuery);
+  const { from, to } = query;
+  if (from === to) return dataPoints.map((d) => d.value);
   const map = lenseRateMap(state, query);
   if (!map) return Array(dataPoints.length).fill(); // undefined array
-  const { from, to } = query;
   const mult = reverse
     ? magFromTo(initialQuery.to, initialQuery.from)
     : magFromTo(initialQuery.from, initialQuery.to);
