@@ -3,11 +3,7 @@ import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import { Observable, from } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import {
-  TransportStatusError,
-  UserRefusedAddress,
-  WrongDeviceForAccount,
-} from "@ledgerhq/errors";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import {
   getSeedIdentifierDerivation,
   getDerivationModesForCurrency,
@@ -280,23 +276,13 @@ export const makeScanAccounts = (
           );
 
           let result = derivationsCache[path];
-          try {
-            if (!result) {
-              result = await getAddress(transport, {
-                currency,
-                path,
-                derivationMode,
-              });
-              derivationsCache[path] = result;
-            }
-          } catch (e) {
-            // feature detect any denying case that could happen
-            if (
-              e instanceof TransportStatusError ||
-              e instanceof UserRefusedAddress
-            ) {
-              log("scanAccounts", "ignore derivationMode=" + derivationMode);
-            }
+          if (!result) {
+            result = await getAddress(transport, {
+              currency,
+              path,
+              derivationMode,
+            });
+            derivationsCache[path] = result;
           }
           if (!result) continue;
 
