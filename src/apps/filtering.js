@@ -30,11 +30,16 @@ type UpdateAwareInstalledApps = {
 
 const searchFilter = (query?: string) => ({ name, currencyId }) => {
   if (!query) return true;
+  // Nb allow for multiple comma separated search terms
+  const queries = query
+    .split(",")
+    .map((t) => t.toLowerCase().trim())
+    .filter(Boolean);
   const currency = currencyId ? getCryptoCurrencyById(currencyId) : null;
   const terms = `${name} ${
     currency ? `${currency.name} ${currency.ticker}` : ""
   }`;
-  return terms.toLowerCase().includes(query.toLowerCase().trim());
+  return queries.some((query) => terms.toLowerCase().includes(query));
 };
 
 const typeFilter = (

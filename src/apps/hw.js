@@ -28,7 +28,6 @@ import {
   predictOptimisticState,
 } from "../apps/logic";
 import { runAllWithProgress } from "../apps/runner";
-import { openAppFromDashboard } from "../hw/connectApp";
 import type { ConnectAppEvent } from "../hw/connectApp";
 
 export const execWithTransport = (transport: Transport<*>): Exec => (
@@ -49,13 +48,18 @@ export type StreamAppInstallEvent =
     }
   | { type: "listing-apps" }
   | { type: "device-permission-granted" }
-  | { type: "app-not-installed", appName: string }
+  | { type: "app-not-installed", appName: string, appNames: string[] }
   | { type: "stream-install", progress: number }; // global percentage
 
-export const streamAppInstall = (
+export const streamAppInstall = ({
+  transport,
+  appNames,
+  onSuccessObs,
+}: {
   transport: Transport<*>,
-  appName: string
-): Observable<StreamAppInstallEvent | ConnectAppEvent> =>
+  appNames: string[],
+  onSuccessObs?: () => Observable<*>,
+}): Observable<StreamAppInstallEvent | ConnectAppEvent> =>
   concat(
     of({ type: "listing-apps" }),
     from(getDeviceInfo(transport)).pipe(
@@ -70,20 +74,31 @@ export const streamAppInstall = (
         }
         if (e.type === "result") {
           // stream install with the result of list apps
-          const state = reducer(initState(e.result), {
-            type: "install",
-            name: appName,
-          });
-          if (isOutOfMemoryState(predictOptimisticState(state))) {
-            // it will not be possible to install so we will fallback to app-not-installed.
-            return of({ type: "app-not-installed", appName });
+          const state = appNames.reduce(
+            (state, name) => reducer(state, { type: "install", name }),
+            initState(e.result)
+          );
+
+          if (
+            isOutOfMemoryState(predictOptimisticState(state)) ||
+            !getEnv("EXPERIMENTAL_INLINE_INSTALL")
+          ) {
+            // In this case we can't install either by lack of storage, or permissions,
+            // we fallback to the error case listing the missing apps.
+            const missingAppNames: string[] = state.installQueue;
+            return of({
+              type: "app-not-installed",
+              appNames: missingAppNames,
+              appName: missingAppNames[0], // TODO remove when LLD/LLM integrate appNames
+            });
           }
+
           const exec = execWithTransport(transport);
           return concat(
             runAllWithProgress(state, exec).pipe(
               map((progress) => ({ type: "stream-install", progress }))
             ),
-            defer(() => from(openAppFromDashboard(transport, appName)))
+            defer(onSuccessObs || empty)
           );
         }
         return empty();

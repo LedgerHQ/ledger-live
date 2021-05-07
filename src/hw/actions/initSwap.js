@@ -2,6 +2,7 @@
 import { Observable, of, concat } from "rxjs";
 import { scan, tap, catchError } from "rxjs/operators";
 import { useEffect, useState } from "react";
+import { getMainAccount } from "../../account";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { InitSwapInput } from "../../exchange/swap/types";
 import type { Action, Device } from "./types";
@@ -115,15 +116,28 @@ export const createAction = (
       state.freezeReduxDevice
     );
 
+    const { exchange, exchangeRate, transaction } = initSwapRequest;
+    const {
+      fromAccount,
+      fromParentAccount,
+      toAccount,
+      toParentAccount,
+    } = exchange;
+    const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+    const maintoAccount = getMainAccount(toAccount, toParentAccount);
     const appState = createAppAction(connectAppExec).useHook(
       reduxDeviceFrozen,
       {
         appName: "Exchange",
+        dependencies: [
+          { account: mainFromAccount },
+          { account: maintoAccount },
+        ],
       }
     );
 
     const { device, opened, error } = appState;
-    const { exchange, exchangeRate, transaction } = initSwapRequest;
+
     const hasError = error || state.error;
 
     useEffect(() => {
