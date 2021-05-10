@@ -74,7 +74,7 @@ describe("cosmos/react", () => {
           hooks.useCosmosMappedDelegations(account, "claimReward")
         );
 
-        expect(result.current.length).toBe(2);
+        expect(result.current.length).toBe(3);
       });
     });
   });
@@ -107,7 +107,7 @@ describe("cosmos/react", () => {
         result.current.setQuery("FRESHATOMS");
       });
 
-      expect(result.current.options.length).toBe(1);
+      expect(result.current.options.length).toBe(0);
     });
 
     it("should return the first delegation as value", async () => {
@@ -204,7 +204,7 @@ function setup(): {
 } {
   setEnv("MOCK", 1);
   setEnv("EXPERIMENTAL_CURRENCIES", "cosmos");
-  const seed = "cosmos-1";
+  const seed = "cosmos-2";
   const currency = getCryptoCurrencyById("cosmos");
   const a = genAccount(seed, { currency });
   const account = genAddingOperationsInAccount(a, 3, seed);

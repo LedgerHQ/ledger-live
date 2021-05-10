@@ -14,7 +14,7 @@ import { genAccount } from "../mock/account";
 
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
-    const account = genAccount("seed_7");
+    const account = genAccount("seed_7", { operationsSize: 20 });
     const res1 = groupAccountOperationsByDay(account, { count: 10 });
     expect(res1.completed).toBe(false);
     expect(res1).toMatchSnapshot();
