@@ -139,6 +139,7 @@ describe("walletconnect", () => {
 
     transaction = await bridge.prepareTransaction(account, transaction);
     delete transaction.networkInfo;
+    delete transaction.gasPrice;
 
     expect(
       await parseCallRequest(account, {
@@ -184,6 +185,7 @@ describe("walletconnect", () => {
 
     transaction = await bridge.prepareTransaction(account, transaction);
     delete transaction.networkInfo;
+    delete transaction.gasPrice;
 
     expect(
       await parseCallRequest(account, {
