@@ -21,7 +21,7 @@ import {
   takeWhile,
 } from "rxjs/operators";
 import isEqual from "lodash/isEqual";
-import { useEffect, useCallback, useState, useMemo } from "react";
+import { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
@@ -476,16 +476,31 @@ export function setDeviceMode(mode: $Keys<typeof implementations>) {
 export const createAction = (
   connectAppExec: (ConnectAppInput) => Observable<ConnectAppEvent>
 ): AppAction => {
-  const connectApp = (device, params) =>
-    !device
-      ? empty()
-      : connectAppExec({
-          modelId: device.modelId,
-          devicePath: device.deviceId,
-          ...params,
-        }).pipe(catchError((error: Error) => of({ type: "error", error })));
-
   const useHook = (device: ?Device, appRequest: AppRequest): AppState => {
+    const dependenciesResolvedRef = useRef(false);
+
+    const connectApp = useCallback(
+      (device, params) =>
+        !device
+          ? empty()
+          : connectAppExec({
+              modelId: device.modelId,
+              devicePath: device.deviceId,
+              ...params,
+              dependencies: dependenciesResolvedRef.current
+                ? undefined
+                : params.dependencies,
+            }).pipe(
+              tap((e) => {
+                if (e.type === "dependencies-resolved") {
+                  dependenciesResolvedRef.current = true;
+                }
+              }),
+              catchError((error: Error) => of({ type: "error", error }))
+            ),
+      []
+    );
+
     // repair modal will interrupt everything and be rendered instead of the background content
     const [state, setState] = useState(() => getInitialState(device));
     const [resetIndex, setResetIndex] = useState(0);
@@ -532,7 +547,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [params, deviceSubject, state.opened, resetIndex]);
+    }, [params, deviceSubject, state.opened, resetIndex, connectApp]);
 
     const onRetry = useCallback(() => {
       setResetIndex((i) => i + 1);

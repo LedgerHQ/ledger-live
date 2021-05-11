@@ -57,6 +57,7 @@ export type ConnectAppEvent =
   | { type: "app-not-installed", appNames: string[], appName: string }
   | { type: "stream-install", progress: number }
   | { type: "listing-apps" }
+  | { type: "dependencies-resolved" }
   | { type: "ask-quit-app" }
   | { type: "ask-open-app", appName: string }
   | { type: "opened", app?: AppAndVersion, derivation?: { address: string } }
@@ -183,7 +184,10 @@ const cmd = ({
                 return streamAppInstall({
                   transport,
                   appNames: [appName, ...dependencies],
-                  onSuccessObs: () => innerSub({ appName }), // NB without deps
+                  onSuccessObs: () => {
+                    o.next({ type: "dependencies-resolved" });
+                    return innerSub({ appName }); // NB without deps
+                  },
                 });
               }
               // we're in dashboard
