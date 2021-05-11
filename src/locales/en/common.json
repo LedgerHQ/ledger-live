@@ -578,7 +578,7 @@
   "location": {
     "required": "Location services required",
     "open": "Open location settings",
-    "disabled": "Ledger Live requires location services to pair your device through Bluethooth.",
+    "disabled": "Ledger Live requires location services to pair your device through Bluetooth.",
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
