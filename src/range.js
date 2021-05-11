@@ -70,8 +70,8 @@ export function inferDynamicRange(
   if (Number.isNaN(step) || step.lte(0)) {
     throw new Error("inferDynamicRange: invalid parameters");
   }
-  const initial = stepping(amount, step, BigNumber.ROUND_HALF_UP);
-  const min = stepping(targetMin, step, BigNumber.ROUND_FLOOR);
+  const initial = stepping(amount, step, BigNumber.ROUND_CEIL);
+  const min = stepping(targetMin, step, BigNumber.ROUND_CEIL);
   const max = stepping(targetMax, step, BigNumber.ROUND_CEIL);
   const steps = max.minus(min).div(step).plus(1).toNumber();
   return { initial, min, max, step, steps };
@@ -99,7 +99,7 @@ function findBestRangeStep(min, max, steps) {
   const mag = Math.log(nonRoundedStep) / log10;
   const magInt = Math.floor(mag);
   const remain = mag - magInt;
-  let step = BigNumber(10).pow(magInt + 1);
+  let step = BigNumber(10).pow(magInt);
   // heuristics
   if (remain < 0.3) step = step.div(5);
   else if (remain < 0.7) step = step.div(2);

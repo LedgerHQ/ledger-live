@@ -7,7 +7,7 @@ import type { FeeStrategy } from "../../types";
 export function useFeesStrategy(t: Transaction): FeeStrategy[] {
   const networkInfo = t.networkInfo;
   invariant(networkInfo, "no network info");
-  const gasLimit = t.estimatedGasLimit ?? getGasLimit(t);
+  const gasLimit = getGasLimit(t);
 
   const strategies = [
     {
