@@ -167,6 +167,19 @@ const scenarios = [
   },
 
   {
+    name: "install an outdated app with dependents",
+    apps: "Bitcoin, Dogecoin",
+    installed: "Bitcoin (outdated), Dogecoin (outdated)",
+    actions: [
+      {
+        dispatch: { type: "install", name: "Bitcoin" },
+        expectPlan: "-Dogecoin, -Bitcoin, +Bitcoin, +Dogecoin",
+        expectInstalled: "Bitcoin, Dogecoin",
+      },
+    ],
+  },
+
+  {
     name: "update all will reinstall the outdated",
     apps: "Bitcoin, Litecoin, Ethereum",
     installed: "Bitcoin (outdated), Litecoin (outdated), Ethereum",

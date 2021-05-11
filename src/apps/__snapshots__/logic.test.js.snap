@@ -222,6 +222,36 @@ Object {
 }
 `;
 
+exports[`Scenario: install an outdated app with dependents 1`] = `
+Object {
+  "apps": Array [
+    Object {
+      "blocks": 10,
+      "bytes": 40960,
+      "currencyId": "bitcoin",
+      "name": "Bitcoin",
+    },
+    Object {
+      "blocks": 1,
+      "bytes": 4096,
+      "currencyId": "dogecoin",
+      "name": "Dogecoin",
+    },
+  ],
+  "appsSpaceBlocks": 60,
+  "appsSpaceBytes": 245760,
+  "freeSpaceBlocks": 49,
+  "freeSpaceBytes": 200704,
+  "osBlocks": 20,
+  "osBytes": 81920,
+  "shouldWarnMemory": false,
+  "totalAppsBlocks": 11,
+  "totalAppsBytes": 45056,
+  "totalBlocks": 80,
+  "totalBytes": 327680,
+}
+`;
+
 exports[`Scenario: install and uninstall an app 1`] = `
 Object {
   "apps": Array [
