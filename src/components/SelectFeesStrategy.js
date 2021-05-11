@@ -49,13 +49,14 @@ const CVWrapper = ({ children }: { children: * }) => (
 export default function SelectFeesStrategy({
   strategies,
   account,
+  parentAccount,
   transaction,
   onStrategySelect,
   onCustomFeesPress,
   forceUnitLabel,
 }: Props) {
   const { colors } = useTheme();
-  const mainAccount = getMainAccount(account, undefined);
+  const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
   const unit = getAccountUnit(account);
   const { feesStrategy } = transaction;
