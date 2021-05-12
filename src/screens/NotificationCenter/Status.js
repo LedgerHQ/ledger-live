@@ -77,6 +77,7 @@ export default function NotificationCenter() {
       ) : null}
       <FlatList
         contentContainerStyle={styles.listContainer}
+        style={{ flex: 1 }}
         data={incidents}
         renderItem={props => (
           <IncidentRow
@@ -124,7 +125,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   border: { borderWidth: 1 },
-  listContainer: { flex: 1, paddingHorizontal: 16 },
+
+  listContainer: { paddingHorizontal: 16 },
   title: { fontSize: 18, marginTop: 23, marginBottom: 8 },
   desc: { fontSize: 13 },
   separator: {
