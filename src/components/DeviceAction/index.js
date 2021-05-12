@@ -178,7 +178,10 @@ export default function DeviceAction<R, H, P>({
   if (!isLoading && error) {
     return renderError({
       t,
+      navigation,
       error,
+      managerAppName:
+        error.name === "UpdateYourApp" ? error.managerAppName : undefined,
       onRetry,
       colors,
       theme,
