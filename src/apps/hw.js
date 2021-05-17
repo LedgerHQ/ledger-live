@@ -79,6 +79,11 @@ export const streamAppInstall = ({
             initState(e.result)
           );
 
+          if (!state.installQueue.length) {
+            // NB nothing to do
+            return defer(onSuccessObs || empty);
+          }
+
           if (
             isOutOfMemoryState(predictOptimisticState(state)) ||
             !getEnv("EXPERIMENTAL_INLINE_INSTALL")
