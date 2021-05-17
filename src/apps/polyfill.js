@@ -38,6 +38,7 @@ listCryptoCurrencies(true, true).forEach((a) => {
   ["ThunderCore", "Ethereum"],
   ["Volta", "Ethereum"],
   ["ZenCash", "Bitcoin"],
+  ["Paraswap", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 
 export const getDependencies = (appName: string): string[] =>
