@@ -1,7 +1,6 @@
 /* @flow */
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import React, { useCallback, useState, useEffect } from "react";
 import {
   View,
@@ -9,29 +8,43 @@ import {
   TouchableWithoutFeedback,
   Switch,
   Keyboard,
+  Linking,
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
+
+import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import { useDebounce } from "@ledgerhq/live-common/lib/hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
-import { accountScreenSelector } from "../../reducers/accounts";
+
 import { ScreenName } from "../../const";
+import { urls } from "../../config/urls";
+import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
+
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import Touchable from "../../components/Touchable";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import RetryButton from "../../components/RetryButton";
 import CancelButton from "../../components/CancelButton";
+import ExternalLink from "../../components/ExternalLink";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
+import InfoModal from "../../modals/Info";
+import type { ModalInfo } from "../../modals/Info";
+import InfoIcon from "../../icons/Info";
+
 import AmountInput from "./AmountInput";
 
 const forceInset = { bottom: "always" };
+
+type ModalInfoName = "maxSpendable";
 
 type Props = {
   navigation: any,
@@ -47,6 +60,12 @@ export default function SendAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [maxSpendable, setMaxSpendable] = useState(null);
+  const {
+    modalInfos,
+    modalInfoName,
+    openInfoModal,
+    closeInfoModal,
+  } = useModalInfo();
 
   const {
     transaction,
@@ -173,20 +192,27 @@ export default function SendAmount({ navigation, route }: Props) {
 
               <View style={styles.bottomWrapper}>
                 <View style={[styles.available]}>
-                  <View style={styles.availableLeft}>
-                    <LText color="grey">
-                      <Trans i18nKey="send.amount.available" />
-                    </LText>
-                    {maxSpendable && (
-                      <LText semiBold color="grey">
-                        <CurrencyUnitValue
-                          showCode
-                          unit={unit}
-                          value={maxSpendable}
-                        />
+                  <Touchable
+                    style={styles.availableLeft}
+                    event={"MaxSpendableInfo"}
+                    onPress={() => openInfoModal("maxSpendable")}
+                  >
+                    <View>
+                      <LText color="grey">
+                        <Trans i18nKey="send.amount.available" />{" "}
+                        <InfoIcon size={12} color="grey" />
                       </LText>
-                    )}
-                  </View>
+                      {maxSpendable && (
+                        <LText semiBold color="grey">
+                          <CurrencyUnitValue
+                            showCode
+                            unit={unit}
+                            value={maxSpendable}
+                          />
+                        </LText>
+                      )}
+                    </View>
+                  </Touchable>
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>
                       <LText style={styles.maxLabel} color="grey">
@@ -223,6 +249,12 @@ export default function SendAmount({ navigation, route }: Props) {
         </KeyboardView>
       </SafeAreaView>
 
+      <InfoModal
+        isOpened={!!modalInfoName}
+        onClose={closeInfoModal}
+        data={modalInfoName ? modalInfos[modalInfoName] : []}
+      />
+
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
@@ -241,6 +273,47 @@ export default function SendAmount({ navigation, route }: Props) {
       />
     </>
   );
+}
+
+function useModalInfo(): {
+  modalInfos: { [key: ModalInfoName]: ModalInfo[] },
+  modalInfoName: ModalInfoName | null,
+  openInfoModal: (infoName: ModalInfoName) => void,
+  closeInfoModal: () => void,
+} {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const [modalInfoName, setModalInfoName] = useState(null);
+
+  const onMaxSpendableLearnMore = useCallback(
+    () => Linking.openURL(urls.maxSpendable),
+    [],
+  );
+
+  return {
+    openInfoModal: (infoName: ModalInfoName) => setModalInfoName(infoName),
+    closeInfoModal: () => setModalInfoName(null),
+    modalInfoName,
+    modalInfos: {
+      maxSpendable: [
+        {
+          title: t("send.info.maxSpendable.title"),
+          description: t("send.info.maxSpendable.description"),
+          footer: (
+            <ExternalLink
+              text={t("common.learnMore")}
+              onPress={onMaxSpendableLearnMore}
+              event="maxSpendableLearnMore"
+              ltextProps={{
+                style: [styles.learnMore, { color: colors.live }],
+              }}
+              color={colors.live}
+            />
+          ),
+        },
+      ],
+    },
+  };
 }
 
 const styles = StyleSheet.create({
@@ -293,5 +366,20 @@ const styles = StyleSheet.create({
   },
   switch: {
     opacity: 0.99,
+  },
+  infoDescriptionWrapper: {
+    flex: 0,
+    flexDirection: "column",
+    alignItems: "center",
+    backgroundColor: "red",
+    width: 100,
+  },
+  infoDescription: {
+    flexShrink: 1,
+    marginBottom: 14,
+  },
+  learnMore: {
+    marginRight: 4,
+    alignSelf: "flex-end",
   },
 });

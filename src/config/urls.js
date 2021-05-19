@@ -112,4 +112,6 @@ export const urls = {
     "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
   supportPage:
     "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
+  maxSpendable:
+    "https://support.ledger.com/hc/en-us/articles/360012960679?utm_source=ledger_live_mobile&utm_medium=self_referral",
 };

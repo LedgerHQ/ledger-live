@@ -15,6 +15,7 @@ export type ModalInfo = {
   description: React$Node,
   Icon?: () => React$Element<React$ElementType>,
   title: React$Node,
+  footer?: React$Node,
 };
 
 export default function InfoModal({ data, isOpened, onClose }: Props) {
@@ -25,7 +26,7 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
       isOpened={isOpened}
       onClose={onClose}
     >
-      {data.map(({ description, Icon, title }, i) => (
+      {data.map(({ description, Icon, title, footer }, i) => (
         <View style={styles.section} key={i}>
           <View style={styles.header}>
             {Icon && (
@@ -38,6 +39,7 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
             </LText>
           </View>
           <LText color="grey">{description}</LText>
+          {footer ? <View style={styles.footer}>{footer}</View> : null}
         </View>
       ))}
     </BottomModal>
@@ -61,5 +63,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+  },
+  footer: {
+    marginTop: 12,
   },
 });
