@@ -12005,17 +12005,17 @@ Object {
       "balanceHistory": undefined,
       "compoundBalance": undefined,
       "creationDate": "2019-06-28T18:48:37.000Z",
-      "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network",
+      "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network_old",
       "operations": Array [
         Object {
-          "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network",
+          "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network_old",
           "blockHash": "0x4aec8ccdca809e5eaf14459a95386abaeed26064309cc10ee957d711be4ea0f5",
           "blockHeight": 8650573,
           "date": "2019-09-30T14:27:24.000Z",
           "extra": Object {},
           "fee": "448476000000000",
           "hash": "0xfbc8c6ff49b9632e6df3a2c8237bc08e3a30150efff93238559a7b0021216a9f",
-          "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network-0xfbc8c6ff49b9632e6df3a2c8237bc08e3a30150efff93238559a7b0021216a9f-OUT",
+          "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network_old-0xfbc8c6ff49b9632e6df3a2c8237bc08e3a30150efff93238559a7b0021216a9f-OUT",
           "recipients": Array [
             "0x667F9BE94a42458cb53A3A66511Dca19b397738d",
           ],
@@ -12027,14 +12027,14 @@ Object {
           "value": "593211090312650650",
         },
         Object {
-          "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network",
+          "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network_old",
           "blockHash": "0x2a4c79d65769f79c49fdaedabab2e121ed38f82fdf3998bac72d7d71f4331e13",
           "blockHeight": 8048049,
           "date": "2019-06-28T18:48:37.000Z",
           "extra": Object {},
           "fee": "314238000000000",
           "hash": "0xa1810588f11edc79a59018814daf9bf9b031d96ed2a988cba104a633f3746f1d",
-          "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network-0xa1810588f11edc79a59018814daf9bf9b031d96ed2a988cba104a633f3746f1d-IN",
+          "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fkyber_network_old-0xa1810588f11edc79a59018814daf9bf9b031d96ed2a988cba104a633f3746f1d-IN",
           "recipients": Array [
             "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
           ],
@@ -12052,7 +12052,7 @@ Object {
       "spendableBalance": "0",
       "starred": false,
       "swapHistory": Array [],
-      "tokenId": "ethereum/erc20/kyber_network",
+      "tokenId": "ethereum/erc20/kyber_network_old",
       "type": "TokenAccountRaw",
     },
     Object {
