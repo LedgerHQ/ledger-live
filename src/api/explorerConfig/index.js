@@ -58,7 +58,7 @@ const initialExplorerConfig: FullConfig = {
     id: "dcr",
     stable: {
       base: "EXPLORER",
-      version: "v2",
+      version: "v3",
     },
   },
   digibyte: {
