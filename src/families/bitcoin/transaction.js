@@ -38,7 +38,7 @@ function bchExplicit(str: string): string {
 }
 
 const bchToCashaddrAddressWithoutPrefix = (recipient) =>
-  bchaddr.toCashAddress(recipient).split(":")[1];
+  recipient ? bchaddr.toCashAddress(recipient).split(":")[1] : recipient;
 
 export type CoinLogic = {
   hasExtraData?: boolean,
