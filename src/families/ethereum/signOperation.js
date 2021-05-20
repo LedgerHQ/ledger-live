@@ -63,33 +63,25 @@ export const signOperation = ({
 
             const eth = new Eth(transport);
 
-            if (cancelled) return;
-
+            // FIXME this part is still required for compound to correctly display info on the device
             const addrs =
               (fillTransactionDataResult &&
                 fillTransactionDataResult.erc20contracts) ||
               [];
             for (const addr of addrs) {
               const tokenInfo = byContractAddress(addr);
-              // if the destination happens to be a contract address of a token, we need to provide to device meta info
               if (tokenInfo) {
                 await eth.provideERC20TokenInformation(tokenInfo);
+                if (cancelled) return;
               }
             }
-
-            const tokenInfo = byContractAddress(to);
-            // if the destination happens to be a contract address of a token, we need to provide to device meta info
-            if (tokenInfo) {
-              await eth.provideERC20TokenInformation(tokenInfo);
-            }
-
-            if (cancelled) return;
 
             o.next({ type: "device-signature-requested" });
             const result = await eth.signTransaction(
               freshAddressPath,
               tx.serialize().toString("hex")
             );
+            if (cancelled) return;
 
             o.next({ type: "device-signature-granted" });
 

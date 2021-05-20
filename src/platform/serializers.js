@@ -1,7 +1,5 @@
 // @flow
-
 import { fromSignedOperationRaw, toSignedOperationRaw } from "../transaction";
-
 import type {
   RawPlatformAccount,
   RawPlatformTransaction,
@@ -16,9 +14,7 @@ import type {
   PlatformBitcoinTransaction,
   PlatformSignedTransaction,
 } from "./types";
-
 import { BigNumber } from "bignumber.js";
-
 export function serializePlatformAccount(
   account: PlatformAccount
 ): RawPlatformAccount {
@@ -33,7 +29,6 @@ export function serializePlatformAccount(
     lastSyncDate: account.lastSyncDate.toString(),
   };
 }
-
 export function deserializePlatformAccount(
   rawAccount: RawPlatformAccount
 ): PlatformAccount {
@@ -48,7 +43,6 @@ export function deserializePlatformAccount(
     lastSyncDate: new Date(rawAccount.lastSyncDate),
   };
 }
-
 export function serializePlatformEthereumTransaction(
   transaction: PlatformEthereumTransaction
 ): RawPlatformEthereumTransaction {
@@ -57,7 +51,7 @@ export function serializePlatformEthereumTransaction(
     amount: transaction.amount.toString(),
     recipient: transaction.recipient,
     nonce: transaction.nonce,
-    data: transaction.data ? transaction.data.toString() : undefined,
+    data: transaction.data ? transaction.data.toString("hex") : undefined,
     gasPrice: transaction.gasPrice
       ? transaction.gasPrice.toString()
       : undefined,
@@ -66,7 +60,6 @@ export function serializePlatformEthereumTransaction(
       : undefined,
   };
 }
-
 export function deserializePlatformEthereumTransaction(
   rawTransaction: RawPlatformEthereumTransaction
 ): PlatformEthereumTransaction {
@@ -75,7 +68,9 @@ export function deserializePlatformEthereumTransaction(
     amount: new BigNumber(rawTransaction.amount),
     recipient: rawTransaction.recipient,
     nonce: rawTransaction.nonce,
-    data: rawTransaction.data ? Buffer.from(rawTransaction.data) : undefined,
+    data: rawTransaction.data
+      ? Buffer.from(rawTransaction.data, "hex")
+      : undefined,
     gasPrice: rawTransaction.gasPrice
       ? new BigNumber(rawTransaction.gasPrice)
       : undefined,
@@ -84,7 +79,6 @@ export function deserializePlatformEthereumTransaction(
       : undefined,
   };
 }
-
 export function serializePlatformBitcoinTransaction(
   transaction: PlatformBitcoinTransaction
 ): RawPlatformBitcoinTransaction {
@@ -97,7 +91,6 @@ export function serializePlatformBitcoinTransaction(
       : undefined,
   };
 }
-
 export function deserializePlatformBitcoinTransaction(
   rawTransaction: RawPlatformBitcoinTransaction
 ): PlatformBitcoinTransaction {
@@ -110,7 +103,6 @@ export function deserializePlatformBitcoinTransaction(
       : undefined,
   };
 }
-
 export function serializePlatformTransaction(
   transaction: PlatformTransaction
 ): RawPlatformTransaction {
@@ -123,7 +115,6 @@ export function serializePlatformTransaction(
       throw new Error(`Can't serialize ${transaction.family} transactions`);
   }
 }
-
 export function deserializePlatformTransaction(
   rawTransaction: RawPlatformTransaction
 ): PlatformTransaction {
@@ -136,13 +127,11 @@ export function deserializePlatformTransaction(
       throw new Error(`Can't deserialize transaction: family not supported`);
   }
 }
-
 export function serializePlatformSignedTransaction(
   signedTransaction: PlatformSignedTransaction
 ): RawPlatformSignedTransaction {
   return toSignedOperationRaw(signedTransaction, true);
 }
-
 export function deserializePlatformSignedTransaction(
   rawSignedTransaction: RawPlatformSignedTransaction,
   accountId: string
