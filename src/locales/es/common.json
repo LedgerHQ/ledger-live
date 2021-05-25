@@ -24,7 +24,7 @@
     "editName": "Editar nombre",
     "close": "Cerrar",
     "confirm": "Confirmar",
-    "poweredBy": "Desarrollado por ",
+    "poweredBy": "Desarrollado por",
     "received": "Recibido",
     "sent": "Enviado",
     "or": "O",
@@ -37,42 +37,42 @@
     "transactionDate": "Fecha de la transacción",
     "outdated": "Desactualizado",
     "satPerByte": "sat/bytes",
-    "notAvailable": "No dispobible",
+    "notAvailable": "No disponible",
     "import": "Importar",
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Agregar",
-    "slow": "slow",
-    "fast": "fast",
+    "slow": "lenta",
+    "fast": "rápida",
     "token": "Token",
     "token_plural": "Tokens",
     "subaccount": "Subcuenta",
     "subaccount_plural": "Subcuentas",
     "forgetDevice": "Quitar dispositivo",
     "help": "Ayuda",
-    "saveLogs": "Save logs",
+    "saveLogs": "Guardar registros",
     "sync": {
-      "ago": "Synchronized {{time}}"
+      "ago": "Sincronizado {{time}}"
     },
-    "update": "Update available",
-    "install": "Install",
-    "installed": "Installed",
-    "uninstall": "Uninstall",
+    "update": "Actualización disponible",
+    "install": "Instalar",
+    "installed": "Instaladas",
+    "uninstall": "Desinstalar",
     "fromNow": {
       "seconds": "in one second",
       "seconds_plural": "in {{time}} seconds",
-      "minutes": "in one minute",
-      "minutes_plural": "in {{time}} minutes",
-      "hours": "in one hour",
-      "hours_plural": "in {{time}} hours",
-      "days": "in one day",
-      "days_plural": "in {{time}} days"
+      "minutes": "en un minuto",
+      "minutes_plural": "en {{time}} minutos",
+      "hours": "en una hora",
+      "hours_plural": "en {{time}} horas",
+      "days": "en un día",
+      "days_plural": "en {{time}} días"
     },
     "timeAgo": {
       "seconds": "one second ago",
       "seconds_plural": "{{time}} seconds ago",
-      "minutes": "one minute ago",
-      "minutes_plural": "{{time}} minutes ago",
+      "minutes": "hace un minuto",
+      "minutes_plural": "hace {{time}} minutos",
       "hours": "one hour ago",
       "hours_plural": "{{time}} hours ago",
       "days": "yesterday",
@@ -578,7 +578,7 @@
   "location": {
     "required": "Location services required",
     "open": "Open location settings",
-    "disabled": "Ledger Live requires location services to pair your device through Bluethooth.",
+    "disabled": "Ledger Live requires location services to pair your device through Bluetooth.",
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
@@ -646,7 +646,7 @@
   "carousel": {
     "title": "Close banner?",
     "description": "We'll inform you of any new announcements.",
-    "confirm": "Confirm",
+    "confirm": "Confirmar",
     "undo": "Undo",
     "banners": {
       "valentine": {
@@ -698,424 +698,424 @@
   "onboarding": {
     "stepWelcome": {
       "title": "Welcome to Ledger",
-      "subtitle": "Safely manage your cryptos from your smartphone.",
-      "start": "Get started",
-      "noDevice": "No device?",
-      "buy": "Buy a {{fullDeviceName}}"
+      "subtitle": "Administra de manera segura tus criptos desde tu smartphone.",
+      "start": "Comenzar",
+      "noDevice": "¿No tienes un dispositivo?",
+      "buy": "Compra un {{fullDeviceName}}"
     },
     "stepLanguage": {
-      "title": "Select your language",
-      "cta": "Continue",
+      "title": "Elige tu idioma",
+      "cta": "Continuar",
       "warning": {
-        "title": "Get started in English",
-        "cta": "Got it!",
-        "desc": "We are introducing additional languages in order to help your onboarding with Ledger. Please be aware that the rest of the Ledger experience is currently only available in English."
+        "title": "Comenzar en inglés",
+        "cta": "¡Entendido!",
+        "desc": "Estamos añadiendo idiomas adicionales para ayudarte a aprender a utilizar Ledger. Por favor, ten en cuenta que actualmente el resto de la experiencia Ledger solo está disponible en inglés."
       }
     },
     "stepSelectDevice": {
-      "title": "What’s your device?",
+      "title": "¿Cuál es tu dispositivo?",
       "nanoS": "Nano S",
       "nanoX": "Nano X",
       "blue": "Blue"
     },
     "stepUseCase": {
-      "title": "Hello!",
-      "or": "Or",
+      "title": "¡Hola!",
+      "or": "O",
       "firstUse": {
-        "title": "First time using this Nano?",
-        "label": "First use",
-        "subTitle": "Set up a new Nano",
-        "desc": "Let’s start and set up your device!"
+        "title": "¿Es la primera vez que utilizas este Nano?",
+        "label": "Primera vez",
+        "subTitle": "Configurar un nuevo Nano",
+        "desc": "¡Comencemos y configuremos tu dispositivo!"
       },
       "devicePairing": {
-        "title": "Already have a recovery phrase?",
-        "label": "Device pairing",
-        "subTitle": "Connect your Nano",
-        "desc": "Your device is already set up? Connect it to the app!"
+        "title": "¿Ya tienes una Frase de recuperación?",
+        "label": "Emparejamiento del dispositivo",
+        "subTitle": "Conecta tu Nano",
+        "desc": "¿Tu dispositivo ya está configurado? ¡Conéctalo a tu aplicación!"
       },
       "desktopSync": {
-        "title": "Already have a recovery phrase?",
-        "label": "Desktop sync",
-        "subTitle": "Sync crypto from your desktop app",
-        "desc": "Already got the desktop app? Sync it to manage your crypto from your smartphone!"
+        "title": "¿Ya tienes una Frase de recuperación?",
+        "label": "Sincronización con PC",
+        "subTitle": "Sincroniza tus criptos desde tu aplicación desktop ",
+        "desc": "¿Ya tienes la aplicación desktop? ¡Sincronízala para administrar tus criptos desde tu smartphone!"
       },
       "restoreDevice": {
-        "label": "Restore device",
-        "subTitle": "Restore your recovery phrase on a new device",
-        "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
+        "label": "Restaurar dispositivo",
+        "subTitle": "Restaura tu Frase de recuperación a un nuevo dispositivo",
+        "desc": "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
       }
     },
     "stepNewDevice": {
-      "cta": "Let’s do this!",
+      "cta": "¡Vamos!",
       "0": {
-        "label": "Basics",
-        "title": "Access your crypto",
-        "desc": "Your crypto assets are stored on the blockchain. You need a private key to access and manage them."
+        "label": "Nociones básicas",
+        "title": "Accede a tus criptos",
+        "desc": "Tus activos cripto se almacenan en la cadena de bloques. Necesitas una clave privada para acceder a ellos y administrarlos."
       },
       "1": {
-        "label": "Basics",
-        "title": "Own your private key",
-        "desc": "Your private key is stored within your Nano and you must be the only one to own it to be in control of your money."
+        "label": "Nociones básicas",
+        "title": "No compartas tu clave privada",
+        "desc": "Tu clave privada se almacena dentro de tu Nano. Debes ser su único propietario para poder mantener el control sobre tu dinero."
       },
       "2": {
-        "label": "Basics",
-        "title": "Stay offline",
-        "desc": "Your Nano works as a \"cold storage\" wallet. This means that it never exposes your private key online, even when using the app."
+        "label": "Nociones básicas",
+        "title": "Mantente sin conexión",
+        "desc": "Tu Nano funciona como una billetera de «almacenamiento en frío». Esto significa que tu clave privada nunca queda expuesta, ni siquiera cuando utilizas la aplicación mientras estás conectado a Internet."
       },
       "3": {
-        "label": "Basics",
-        "title": "Validate transactions",
-        "desc": "Ledger Live allows you to buy, sell, manage, exchange and earn crypto while remaining protected. You will validate every crypto transaction with your Nano."
+        "label": "Nociones básicas",
+        "title": "Validar transacciones",
+        "desc": "Ledger Live te permite comprar, vender, administrar, intercambiar y ganar criptos con seguridad. Deberás validar cada transacción cripto con tu Nano."
       },
       "4": {
-        "label": "Basics",
-        "title": "Let’s set up your Nano!",
-        "desc": "We'll start by setting up your Nano security."
+        "label": "Nociones básicas",
+        "title": "¡Vamos a configurar tu Nano!",
+        "desc": "Empezaremos por configurar la seguridad de tu Nano."
       }
     },
     "stepSetupDevice": {
       "start": {
-        "title": "The best way to get you started:",
+        "title": "La mejor manera de empezar:",
         "bullets": {
           "0": {
-            "label": "Plan 30 minutes and take your time."
+            "label": "Dedícale 30 minutos, tómate tu tiempo."
           },
           "1": {
-            "label": "Grab a pen to write with."
+            "label": "Busca lápiz y papel."
           },
           "2": {
-            "label": "Stay alone, and choose a safe and quiet environment."
+            "label": "Elige un entorno seguro y tranquilo en el que puedas estar a solas."
           }
         },
-        "cta": "OK, I’m ready!",
+        "cta": "De acuerdo, ¡estoy listo/a!",
         "warning": {
-          "title": "Please be careful",
-          "desc": "Make sure you follow the instructions on this app at every step of the process.",
-          "ctaText": "Got it!"
+          "title": "Por favor, ten cuidado",
+          "desc": "Asegúrate de seguir las instrucciones de esta aplicación para cada etapa del proceso.",
+          "ctaText": "¡Entendido!"
         }
       },
       "setup": {
         "bullets": {
           "0": {
-            "title": "Turn on Nano",
+            "title": "Encendido del Nano",
             "nanoX": {
-              "label": "Turn on your device by pressing the black button for 1 second."
+              "label": "Enciende tu dispositivo presionando el botón negro durante 1 segundo."
             },
             "nanoS": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
             "blue": {
-              "label": "Turn on your device by connecting it to the USB port of your phone and pressing the power button."
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono y presionando el botón de encendido."
             }
           },
           "1": {
-            "title": "Browse ",
-            "label": "Learn how to interact with your device by reading the on-screen instructions."
+            "title": "Navegar ",
+            "label": "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
           },
           "2": {
-            "title": "Select “Set up as new device”",
-            "label": "Press both buttons simultaneously to validate the selection."
+            "title": "Selecciona “Set up as new device”",
+            "label": "Presiona ambos botones simultáneamente para validar la selección."
           },
           "3": {
-            "title": "Follow instructions",
-            "label": "Come back here to follow instructions on your PIN code."
+            "title": "Sigue las instrucciones",
+            "label": "Vuelve aquí para seguir las instrucciones con respecto atu código PIN."
           }
         },
-        "cta": "Next step"
+        "cta": "Siguiente paso"
       },
       "pinCode": {
-        "title": "PIN code",
-        "desc": "Your PIN code is the first layer of security. It physically secures access to your Nano and your private keys. Your PIN code must be 4 to 8 digits long.",
-        "checkboxDesc": "I understand that I must choose my PIN code by myself and keep it private.",
-        "cta": "Set up PIN code"
+        "title": "Código PIN",
+        "desc": "Tu código PIN es la primera capa de seguridad. Protege físicamente el acceso a tu Nano y a tus claves privadas. Tu código PIN debe tener entre 4 y 8 dígitos.",
+        "checkboxDesc": "Comprendo que debo elegir mi código PIN por mi cuenta y mantenerlo en secreto.",
+        "cta": "Establecer un código PIN"
       },
       "pinCodeSetup": {
         "bullets": {
           "0": {
-            "title": "Choose PIN code",
-            "label": "Press the left or right button to change digits. Press both buttons to validate a digit. Select <1></1> to confirm your PIN code. Select <2></2> to erase a digit."
+            "title": "Elige un código PIN",
+            "label": "Pulsa el botón izquierdo o derecho para cambiar los dígitos. Presiona ambos botones para validar un dígito. Selecciona <1></1> para confirmar tu código PIN. Selecciona <2></2> para borrar un dígito."
           },
           "1": {
-            "title": "Confirm PIN code",
-            "label": "Enter your PIN code again to confirm it."
+            "title": "Confirmar código PIN",
+            "label": "Ingresa tu código PIN para confirmarlo."
           }
         },
         "infoModal": {
-          "title": "Secure your PIN code",
+          "title": "Protege tu código PIN",
           "bullets": {
             "0": {
-              "label": "Always choose a PIN code by yourself."
+              "label": "Elige siempre por tu cuenta el código PIN."
             },
             "1": {
-              "label": "Always enter your PIN code out of sight."
+              "label": "Ingresa siempre tu código PIN sin que te observen."
             },
             "2": {
-              "label": "You can change your PIN code if needed."
+              "label": "Si es necesario, puedes modificar tu código PIN."
             },
             "3": {
-              "label": "Three wrong PIN code entries in a row will reset the device."
+              "label": "El dispositivo se reiniciará si introduces tres veces seguidas un código PIN incorrecto."
             },
             "4": {
-              "label": "Never use an easy PIN code like 0000, 123456, or 55555555."
+              "label": "Nunca utilices un código PIN sencillo como 0000, 123456, 55555555."
             },
             "5": {
-              "label": "Never share your PIN code with someone else. Not even with Ledger."
+              "label": "Nunca compartas tu código PIN con nadie. Ni siquiera con Ledger."
             },
             "6": {
-              "label": "Never use a PIN code you did not choose yourself."
+              "label": "Nunca utilices un código PIN que no hayas elegido tú personalmente."
             },
             "7": {
-              "label": "Never store your PIN code on a computer or phone."
+              "label": "Nunca almacenes tu código PIN en una PC o un smartphone."
             }
           }
         },
-        "cta": "Next step"
+        "cta": "Siguiente paso"
       },
       "recoveryPhrase": {
-        "title": "Recovery phrase",
-        "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys.",
-        "desc_1": "Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
-        "cta": "Recovery phrase",
-        "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
+        "title": "Frase de recuperación",
+        "desc": "Tu Frase de recuperación es una lista secreta de 24 palabras que genera una copia de respaldo de tus claves privadas.",
+        "desc_1": "Tu Nano genera una Frase de recuperación única. Ledger no conserva copias de la misma.",
+        "cta": "Frase de recuperación",
+        "checkboxDesc": "Comprendo que si pierdo la Frase de recuperación no podré acceder a mis criptos en caso de no tener acceso a mi Nano."
       },
       "recoveryPhraseSetup": {
         "infoModal": {
-          "title": "How does a recovery phrase work?",
-          "desc": "Your recovery phrase works like a unique master key. Your Ledger device uses it to calculate private keys for every crypto asset you own.",
-          "desc_1": "To restore access to your crypto, any wallet can calculate the same private keys from your recovery phrase.",
-          "link": "More about the recovery phrase",
-          "title_1": "What if I lose access to my Nano?",
+          "title": "¿Cómo funciona una Frase de recuperación?",
+          "desc": "Tu Frase de recuperación funciona como una llave maestra única. Tu dispositivo Ledger la utiliza para calcular las claves privadas de cada activo cripto que posees.",
+          "desc_1": "Para restaurar el acceso a tus criptos, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
+          "link": "Más información acerca del funcionamiento de la Frase de recuperación",
+          "title_1": "¿Qué pasa si pierdo el acceso a mi Nano?",
           "bullets": {
             "0": {
-              "label": "Get a new hardware wallet."
+              "label": "Utiliza una billetera de hardware distinta."
             },
             "1": {
-              "label": "Select “Restore recovery phrase on a new device” in the Ledger app."
+              "label": "Selecciona «Restore recovery phrase on a new device» en la aplicación Ledger."
             },
             "2": {
-              "label": "Enter your recovery phrase on your new device to restore access to your crypto."
+              "label": "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus criptos."
             }
           }
         },
         "bullets": {
           "0": {
-            "title": "Take your Recovery sheet",
-            "label": "Grab a blank Recovery sheet, included with your Nano. Please reach out to Ledger Support if the Recovery sheet did not come blank."
+            "title": "Busca tu Hoja de recuperación (Recovery sheet)",
+            "label": "Elige una Hoja de recuperación en blanco, de las incluidas con tu Nano. Si las Hojas de Recuperación incluidas no están en blanco, por favor  ponte en contacto con el servicio de asistencia de Ledger."
           },
           "1": {
-            "title": "Write down all words",
-            "label": "Write Word #1 displayed on your Nano in position 1 of your Recovery sheet. Then press right on your Nano to display Word #2 and write it down in position 2.",
-            "label_1": "Repeat the process for all words while carefully respecting the order and spelling. Press left on your Nano to check for any mistakes."
+            "title": "Escribe todas las palabras",
+            "label": "Escribe la palabra 1 que aparece en la pantalla de tu Nano en la posición 1 de tu Hoja de recuperación. A continuación, presiona el botón derecho de tu Nano para mostrar la palabra 2 y escríbela en la posición 2.",
+            "label_1": "Repite este proceso para todas las palabras, respetando cuidadosamente el orden y la ortografía. Presiona el botón izquierdo de tu Nano para volver a la palabra anterior y comprobar si has cometido algún error."
           },
           "2": {
-            "title": "Confirm your recovery phrase",
-            "label": "Scroll through the words until you find Word #1 by pressing the right button. Validate by pressing both buttons."
+            "title": "Confirma tu Frase de recuperación",
+            "label": "Desplázate por las palabras con el botón derecho hasta que encuentres la palabra 1. Valida presionando ambos botones."
           },
           "3": {
-            "title": "Repeat for all words!"
+            "title": "¡Repite lo mismo con todas las palabras!"
           }
         },
-        "cta": "Confirm recovery phrase",
-        "nextStep": "Next step"
+        "cta": "Confirma tu Frase de recuperación",
+        "nextStep": "Siguiente paso"
       },
       "hideRecoveryPhrase": {
-        "title": "Hide your recovery phrase",
-        "desc": "Your recovery phrase is your last chance to access your crypto if you cannot use your Nano. You must keep it in a safe place.",
+        "title": "Oculta tu Frase de recuperación",
+        "desc": "Tu Frase de recuperación es la única manera de recuperar tus criptos, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
         "bullets": {
           "0": {
-            "label": "Enter these words on a hardware wallet only, never on computers or phones."
+            "label": "Ingresa estas palabras únicamente en una billetera de hardware, no en PCs, ni en smartphones."
           },
           "1": {
-            "label": "Never share your 24 words with anyone, not even with Ledger."
+            "label": "Nunca compartas tus 24 palabras con nadie, ni siquiera con Ledger."
           }
         },
-        "cta": "OK, I’m done!",
+        "cta": "Bien, ¡he terminado!",
         "infoModal": {
-          "label": "Learn how to hide it",
-          "title": "Where should I keep my recovery phrase?",
+          "label": "Aprende cómo ocultarla",
+          "title": "¿Dónde debo guardar mi Frase de recuperación?",
           "bullets": {
             "0": {
-              "label": "<1>NEVER</1> enter it on a computer, phone or any other device. Don't take a picture of it."
+              "label": "<1>NUNCA</1> la introduzcas en una PC, un smartphone o cualquier otro dispositivo. No tomes fotos de la Frase."
             },
             "1": {
-              "label": "<1>NEVER</1> share your 24 words with anyone."
+              "label": "<1>NUNCA</1> compartas tus 24 palabras con nadie."
             },
             "2": {
-              "label": "<1>ALWAYS</1> store it in a secure place, out of sight."
+              "label": "Guárdala <1>EN TODO MOMENTO</1> en un lugar seguro, fuera de la vista."
             },
             "3": {
-              "label": "Ledger will never ask for your recovery phrase."
+              "label": "Ledger nunca te pedirá tu Frase de recuperación."
             },
             "4": {
-              "label": "If any person or application asks for it, assume it is a scam!"
+              "label": "Si alguien (o alguna aplicación) te la pide, ¡asume que tiene fines deshonestos!"
             }
           }
         },
         "warning": {
-          "title": "Now game on!",
-          "desc": "Answer 3 simple questions to avoid common misconceptions about your hardware wallet.",
-          "cta": "Let’s take the quiz"
+          "title": "¡Hora de jugar!",
+          "desc": "Responde a 3 sencillas preguntas para evitar algunos errores comunes acerca de tu billetera de hardware.",
+          "cta": "Resuelve el cuestionario"
         }
       }
     },
     "stepRecoveryPhrase": {
       "importRecoveryPhrase": {
-        "title": "Restore from recovery phrase",
-        "desc": "Restore your Nano from your recovery phrase to restore, replace or back up your Ledger hardware wallet.",
-        "desc_1": "Your Nano will restore your private keys and you will be able to access and manage your crypto.",
-        "cta": "OK, I’m ready!",
+        "title": "Restaurar a partir de Frase de recuperación",
+        "desc": "Restaura tu Nano a partir de tu Frase de recuperación para restaurar, reemplazar o hacer una copia de seguridad de tu billetera de hardware Ledger.",
+        "desc_1": "Tu Nano restaurará tus claves privadas y podrás acceder a tus criptos y administrarlas.",
+        "cta": "De acuerdo, ¡estoy listo/a!",
         "warning": {
-          "title": "We recommend Ledger recovery phrases only",
-          "desc": "Ledger cannot guarantee the security of external recovery phrases. We recommend setting up your Nano as a new device if your recovery phrase was not generated by a Ledger.",
-          "cta": "Got it!"
+          "title": "Recomendamos utilizar únicamente Frases de recuperación generadas por Ledger",
+          "desc": "Ledger no puede garantizar la seguridad de las Frases de recuperación externas a Ledger. Te recomendamos configurar tu Nano como un dispositivo nuevo si tu Frase de recuperación no ha sido generada por Ledger.",
+          "cta": "¡Entendido!"
         },
-        "nextStep": "Next step",
+        "nextStep": "Siguiente paso",
         "bullets": {
           "0": {
-            "title": "Turn on Nano",
+            "title": "Encendido del Nano",
             "nanoX": {
-              "label": "Turn on your device by pressing the black button for 1 second."
+              "label": "Enciende tu dispositivo presionando el botón negro durante 1 segundo."
             },
             "nanoS": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono."
             },
             "blue": {
-              "label": "Turn on your device by connecting it to the USB port of your phone and pressing the power button."
+              "label": "Enciende tu dispositivo conectándolo al puerto USB de tu teléfono y presionando el botón de encendido."
             }
           },
           "1": {
-            "title": "Browse",
-            "label": "Learn how to interact with your device by reading the on-screen instructions."
+            "title": "Navegar",
+            "label": "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
           },
           "2": {
-            "title": "Select “Restore from recovery phrase”",
-            "label": "Press both buttons simultaneously to validate the selection."
+            "title": "Selecciona “Restore from recovery phrase”",
+            "label": "Presiona ambos botones simultáneamente para validar la selección."
           },
           "3": {
-            "title": "Follow instructions",
-            "label": "Come back here to follow instructions on your PIN code."
+            "title": "Sigue las instrucciones",
+            "label": "Vuelve aquí para seguir las instrucciones con respecto atu código PIN."
           }
         }
       },
       "existingRecoveryPhrase": {
-        "title": "Enter your recovery phrase",
-        "paragraph1": "Your recovery phrase is the secret list of words that you backed up when you first set up your wallet.",
-        "paragraph2": "Ledger does not keep a copy of your recovery phrase.",
-        "checkboxDesc": "I understand that if I lose my recovery phrase, I will not be able to access my crypto in case I lose access to my Nano.",
+        "title": "Ingresa tu Frase de recuperación",
+        "paragraph1": "Tu Frase de recuperación es la lista secreta de palabras de la que se guardóuna copia de seguridad cuando se configuró tu billetera por primera vez.",
+        "paragraph2": "Ledger no conserva copias de tu Frase de recuperación.",
+        "checkboxDesc": "Comprendo que, si pierdo mi Frase de recuperación, no podré acceder a mis criptos en caso de que pierda acceso a mi Nano.",
         "bullets": {
           "0": {
-            "title": "Grab your recovery phrase"
+            "title": "Toma tu Frase de recuperación"
           },
           "1": {
-            "title": "Select recovery phrase length",
+            "title": "Selecciona la cantidad de palabras de la Frase de recuperación",
             "label": "Your recovery phrase can have 12, 18 or 24 words. You must enter all words to access your crypto."
           },
           "2": {
-            "title": "Enter Word #1...",
-            "label": "Enter the first letters of Word #1 by selecting them with the right or left button. Press both buttons to validate each letter."
+            "title": "Ingresa la palabra 1...",
+            "label": "Ingresa las primeras letras de la palabra 1, seleccionándolas con el botón derecho o izquierdo. Presiona ambos botones para confirmar cada letra."
           },
           "3": {
-            "title": "Validate Word #1...",
-            "label": "Choose Word #1 from the suggestions. Press both buttons to validate."
+            "title": "Confirma la palabra 1...",
+            "label": "Elige la palabra 1 de entre las sugeridas. Presiona ambos botones para validarla."
           },
           "4": {
-            "title": "Repeat for all words!"
+            "title": "¡Repite lo mismo con todas las palabras!"
           }
         },
-        "nextStep": "Next step"
+        "nextStep": "Siguiente paso"
       }
     },
     "stepPairNew": {
       "nanoX": {
-        "title": "Pair your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
-        "cta": "Let’s pair my Nano"
+        "title": "Emparejar tu Nano",
+        "desc": "Ésta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "cta": "Emparejemos mi Nano"
       },
       "nanoS": {
-        "title": "Connect your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
-        "cta": "Let’s connect my Nano"
+        "title": "Conecta tu Nano",
+        "desc": "Ésta es la primera vez que configuras tu Nano con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "cta": "Vamos a conectar mi Nano"
       },
       "blue": {
-        "title": "Connect your Blue",
-        "desc": "This is the first time you’re setting up your Blue with this phone. Let’s quickly connect your device.",
-        "cta": "Let’s connect my Blue"
+        "title": "Conecta tu Blue",
+        "desc": "Ésta es la primera vez que configuras tu Blue con este teléfono. Conectemos rápidamente tu dispositivo.",
+        "cta": "Vamos a conectar mi Blue"
       },
       "infoModal": {
-        "title": "Where can I find my device name?",
-        "desc": "On your device, select Settings > General > Device name.",
-        "title_1": "How to set up Bluetooth connection?",
-        "title_2": "How do I use my Nano X without Bluetooth?",
-        "desc_1": "Use an <1>OTG-cable</1> to connect your Ledger Nano X to your Android smartphone (iOS not supported). Manage your crypto with Ledger Live mobile or any other compatible (web) app.",
+        "title": "¿Dónde puedo encontrar el nombre de mi dispositivo?",
+        "desc": "En tu dispositivo, selecciona Settings > General > Device name.",
+        "title_1": "¿Cómo configurar una conexión Bluetooth?",
+        "title_2": "¿Cómo utilizo mi Nano X sin Bluetooth?",
+        "desc_1": "Utiliza un <1>cable OTG</1> para conectar tu Ledger Nano X a tu smartphone Android (no compatible con iOS). Administra tus criptos con la aplicación Ledger Live o cualquier otra aplicación (web) compatible.",
         "bullets": {
           "0": {
-            "label": "Make sure Bluetooth is enabled on your smartphone and on your Ledger Nano X. Your Ledger Nano X should be on the Dashboard, its main home screen."
+            "label": "Asegúrate de que el Bluetooth está activado en tu smartphone y en tu Ledger Nano X. Tu Ledger Nano X debe estar en el Dashboard, la ventana de inicio principal."
           },
           "1": {
-            "label": "<1>{{Os}}</1>: Make sure location services are enabled in your phone's settings for Ledger Live. Ledger Live never uses your location information, this is a requirement for Bluetooth on {{Os}}."
+            "label": "<1>{{Os}}</1>: asegúrate de que los servicios de ubicación están activados para Ledger Live en los ajustes de tu teléfono. Ledger Live nunca utiliza la información de tu ubicación, pero se trata de un requisito para Bluetooth en {{Os}}."
           },
           "2": {
-            "label": "If you have a Bluetooth pairing issue, please refer to the following article",
-            "link": "Fix connection issues."
+            "label": "Si tienes algún problema de emparejamiento mediante Bluetooth, por favor consulta el siguiente artículo",
+            "link": "Solucionar problemas de conexión."
           }
         }
       },
       "errorInfoModal": {
-        "title": "Something went wrong?",
-        "title_1": "I have an Android",
-        "title_2": "Update Android version",
-        "desc": "If you're experiencing Bluetooth issues with your Nano X, please remove the pairing and forget Nano X on your phone. Then try the pairing again.",
-        "desc_1": "It may take a while before the Bluetooth pairing request is displayed. Make sure you verify and confirm the pairing code both on your Nano X and on your phone.",
-        "desc_2": "Check in your phone's Bluetooth settings whether the Ledger Nano X is detected. If it not detected, make sure you turn on the Bluetooth on your Ledger Nano X.",
-        "desc_3": "Location services",
-        "desc_4": "If the Ledger Nano X is not detected in your mobile app when trying to pair it, please try the following solution:",
-        "desc_5": "Ledger mobile app asks you to allow location services when it's not enabled yet, but on a few phone models, this is not always properly detected. Please note that Ledger mobile app never uses your location information, this permission is simply required for Bluetooth on Android.",
-        "desc_6": "Some users have reported having fixed their connection issues by updating the Android version running on their phone to a newer one. Please check with your phone manufacturer whether an update is available.",
-        "link": "Learn more",
+        "title": "¿Algo salió mal?",
+        "title_1": "Tengo un Android",
+        "title_2": "Actualiza la versión de Android",
+        "desc": "Si tienes problemas de Bluetooth con tu Nano X, por favor borra ese emparejamiento y olvida el dispositivo Nano X en tu teléfono. A continuación, intenta emparejarlo de nuevo.",
+        "desc_1": "Puede transcurrir algo de tiempo antes de que se muestre la solicitud de emparejamiento de Bluetooth. Asegúrate de verificar y confirmar el código de emparejamiento, tanto en tu Nano X como en tu teléfono.",
+        "desc_2": "Comprueba en los ajustes de Bluetooth de tu teléfono si Ledger Nano X fue detectado. Si no fue detectado, comprueba si está activado el Bluetooth en tu Ledger Nano X.",
+        "desc_3": "Servicios de ubicación",
+        "desc_4": "Si tu aplicación móvil no detecta el Ledger Nano X al intentar emparejarlo, por favor prueba con lo siguiente:",
+        "desc_5": "La aplicación Ledger para móvil te solicita que permitas la activación de los servicios de ubicación si no están ya activados, aunque en algunos modelos de teléfono esto no siempre se detecta correctamente. Por favor, ten en cuenta que la aplicación Ledger para móvil nunca utiliza tu información de ubicación, y que este permiso es necesario simplemente para Bluetooth en Android.",
+        "desc_6": "Algunos usuarios informan que solucionaron sus problemas de conexión actualizando la versión de Android instalada en su teléfono a una más nueva. Por favor, consulta al fabricante de tu teléfono si existe una actualización disponible.",
+        "link": "Conoce más",
         "bullets": {
           "0": {
-            "label": "Navigate to the system options for the Ledger Live app on your Android phone."
+            "label": "Ingresa a las opciones del sistema para la aplicación Ledger Live en tu teléfono Android."
           },
           "1": {
-            "label": "Allow the location to be used."
+            "label": "Permite el uso de los servicios de ubicación."
           },
           "2": {
-            "label": "Return to the mobile app."
+            "label": "Vuelve a la aplicación para móvil."
           },
           "3": {
-            "label": "Check whether your Nano X is detected."
+            "label": "Comprueba si detecta tu Nano X."
           }
         }
       }
     },
     "stepImportAccounts": {
-      "title": "Sync crypto from desktop",
-      "desc": "If you already have your crypto set up in the Ledger desktop app, you can sync them to manage them from your phone.",
-      "cta": "I’m ready to scan",
+      "title": "Sincroniza tus criptos desde la PC",
+      "desc": "Si ya tienes tus criptos configuradas en la aplicación Ledger desktop, puedes sincronizarlas para administrarlas desde tu teléfono.",
+      "cta": "Estoy listo para escanear",
       "bullets": {
         "0": {
-          "label": "On the Desktop app, select <1>Settings > Accounts > Account export</1>."
+          "label": "En tu aplicación desktop, selecciona <1>Settings > Accounts > Account export</1>."
         },
         "1": {
-          "label": "Scan the LiveQR code with your phone."
+          "label": "Escanea el código LiveQR con tu teléfono."
         },
         "2": {
-          "label": "Select the crypto accounts to import."
+          "label": "Selecciona las cuentas de criptos a importar."
         }
       },
       "warning": {
-        "title": "Your desktop and mobile apps must be synced manually.",
-        "desc": "Ledger Live respects your privacy and stores your data locally. If you change accounts and settings on your phone, you will need to do the same on your computer, and vice versa. Your transactions stay synchronized with the blockchain.",
-        "cta": "Got it!"
+        "title": "Es necesario sincronizar manualmente tus aplicaciones desktop y de móvil.",
+        "desc": "Ledger Live respeta tu privacidad y almacena tus datos de manera local. Si cambias las cuentas y la configuración en tu teléfono, deberás hacer lo mismo en tu PC y viceversa. Tus transacciones se mantienen sincronizadas con la cadena de bloques.",
+        "cta": "¡Entendido!"
       }
     },
     "stepSetupPin": {
-      "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
-      "step1-nanoS": "Connect your {{fullDeviceName}} to your phone using an OTG cable.",
+      "step1": "Enciende tu {{fullDeviceName}} y sigue las instrucciones.",
+      "step1-nanoS": "Conecta tu {{fullDeviceName}} a tu teléfono por medio de un cable OTG.",
       "step2": "Press both buttons together to select <1><1>Setup as a new device.</1></1>",
       "step2-restore": "Press both buttons together to select <1><1>Restore from recovery phrase.</1></1>",
       "step3": "Press left or right button to select a digit. Press buttons together to confirm.",
-      "step4prefix": "Select ",
+      "step4prefix": "Seleccionar ",
       "step4suffix1": " to confirm your PIN.",
       "step4suffix2": " to erase last digit.",
       "modal": {
@@ -1146,56 +1146,56 @@
       }
     },
     "stepFinish": {
-      "title": "Your device is ready!",
-      "readOnlyTitle": "All set!",
+      "title": "¡Tu dispositivo está listo!",
+      "readOnlyTitle": "¡Todo listo!",
       "desc": "Install apps on your device and manage your portfolio",
-      "cta": "Open Ledger Live"
+      "cta": "Abrir Ledger Live"
     },
     "quizz": {
-      "label": "Quiz",
+      "label": "Cuestionario",
       "modal": {
-        "success": "Congrats!",
-        "fail": "Incorrect!"
+        "success": "¡Bien hecho!",
+        "fail": "¡Incorrecto!"
       },
       "coins": {
-        "title": "As a Ledger user, my crypto is stored:",
+        "title": "Como usuario de Ledger, mis criptos se almacenan:",
         "answers": {
-          "correct": "On the blockchain",
-          "wrong": "On my Nano"
+          "correct": "En la cadena de bloques",
+          "wrong": "En mi Nano"
         },
         "modal": {
-          "text": "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto.",
-          "cta": "Next question"
+          "text": "Tus criptos siempre se almacenan en la cadena de bloques. Tu billetera de hardware solo contiene tu clave privada, que te da acceso a tus criptos.",
+          "cta": "Siguiente pregunta"
         }
       },
       "recoveryPhrase": {
-        "title": "If my recovery phrase is no longer secret and safe...",
+        "title": "Si mi Frase de recuperación deja de ser secreta o estar protegida...",
         "answers": {
-          "correct": "My crypto is no longer safe and I need to transfer them to a secure place",
-          "wrong": "No problem, Ledger can send me a copy"
+          "correct": "Mis criptos ya no están seguras y debo transferirlas a un lugar seguro",
+          "wrong": "Ningún problema, Ledger me manda una copia"
         },
         "modal": {
-          "text": "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place.",
-          "cta": "Next question"
+          "text": "Cualquier persona que conozca tu Frase de recuperación puede robar tus activos cripto.\nSi la pierdes, debes transferir rápidamente tus criptos a un lugar seguro.",
+          "cta": "Siguiente pregunta"
         }
       },
       "privateKey": {
-        "title": "When I connect my Nano to the Ledger app, my private key is...",
+        "title": "Cuando conecto mi Nano a la aplicación Ledger, mi clave privada...",
         "answers": {
-          "correct": "Still offline",
-          "wrong": "Briefly connected to the internet"
+          "correct": "Sigue sin conectarse a Internet",
+          "wrong": "Se conecta brevemente a Internet"
         },
         "modal": {
-          "text": "Your private key always remains offline in your hardware wallet. Even when connected to your Nano, the Ledger app cannot access your private key. You must physically authorize every transaction on your device.",
-          "cta": "Finish quiz"
+          "text": "Tus claves privadas siempre permanecen sin conexión en tu billetera Nano. Incluso cuando al conectarse a tu billetera Nano, la aplicación de Ledger no puede acceder a tus claves privadas. Siempre tendrás que autorizar físicamente cada transacción en tu dispositivo.",
+          "cta": "Terminar cuestionario"
         }
       },
       "final": {
-        "successTitle": "Already a pro!",
-        "successText": "You are ready to safely manage your crypto. Only one quick step left!",
-        "failTitle": "You will soon become a pro...",
-        "failText": "Don’t worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety. Only one quick step left!",
-        "cta": "Next step"
+        "successTitle": "¡Ya eres un experto!",
+        "successText": "Estás listo/a para administrar de forma segura tus criptos. ¡Solo te queda un breve paso!",
+        "failTitle": "Pronto serás un experto...",
+        "failText": "No te preocupes, Ledger está aquí para guiarte en este proceso. Pronto te sentirás del todo seguro/a acerca de la protección de tus criptos. ¡Solo te queda un breve paso!",
+        "cta": "Siguiente paso"
       }
     },
     "warning": {
@@ -1278,8 +1278,8 @@
   },
   "operations": {
     "types": {
-      "IN": "Received",
-      "OUT": "Sent",
+      "IN": "Recibido",
+      "OUT": "Enviado",
       "CREATE": "Created",
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
@@ -1446,7 +1446,7 @@
         "confirmationDesc": "This has no impact on your crypto assets. Existing accounts can always be added afterwards."
       },
       "archive": {
-        "title": "Archive account",
+        "title": "Archivar cuenta",
         "desc": "This account will be archived."
       },
       "advanced": {
@@ -1668,8 +1668,8 @@
       }
     },
     "help": {
-      "title": "Help",
-      "header": "Help",
+      "title": "Ayuda",
+      "header": "Ayuda",
       "desc": "Learn more about Ledger Live or how to get help.",
       "support": "Ledger Support",
       "supportDesc": "If you have a problem, get help using Ledger Live with your hardware wallet.",
@@ -1715,18 +1715,18 @@
       "notice": {
         "title": "{{currency}} update incomplete",
         "subtitle": "No {{currency}} accounts could be updated using this device.",
-        "cta": "Continue",
+        "cta": "Continuar",
         "ctaNextCurrency": "Continue with {{currency}}"
       },
       "done": {
         "title": "{{currency}} update complete",
         "subtitle": "Congratulations, your {{currency}} accounts were updated successfully.",
-        "cta": "Continue",
+        "cta": "Continuar",
         "ctaNextCurrency": "Continue with {{currency}}",
-        "ctaDone": "Done"
+        "ctaDone": "Listo"
       },
       "error": {
-        "cta": "Retry"
+        "cta": "Reintentar"
       }
     },
     "connectDevice": {
@@ -1743,7 +1743,7 @@
     "receive": {
       "title": "Receive",
       "titleReadOnly": "Unverified address",
-      "headerTitle": "Crypto asset",
+      "headerTitle": "Activo cripto",
       "titleDevice": "Connect device",
       "verifySkipped": "Your receive address was not confirmed on your Ledger device. Please verify your {{accountType}} address to stay secure.",
       "verifyPending": "Please verify that the {{currencyName}} address displayed on your device exactly matches the one displayed on your phone.",
@@ -1760,7 +1760,7 @@
       },
       "readOnly": {
         "title": "Receive",
-        "text": "Please be careful",
+        "text": "Por favor, ten cuidado",
         "desc": "You are about to view an address which was not verified. Verify addresses on your device to stay secure.",
         "verify": "The address of {{accountType}} was not verified. Verify addresses on your device to stay secure."
       }
@@ -1791,7 +1791,7 @@
       "payoutModal": {
         "title": "Payout fees",
         "description": "Payout fees are not shown on the device and substracted from the amount.",
-        "cta": "Close"
+        "cta": "Cerrar"
       },
       "pendingOperation": {
         "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
@@ -1813,7 +1813,7 @@
       "form": {
         "validate": "Confirm Swap transaction",
         "tab": "Exchange",
-        "button": "Continue",
+        "button": "Continuar",
         "from": "From",
         "to": "To",
         "balance": "Balance <0>123</0>",
@@ -1827,19 +1827,19 @@
           "title": "{{appName}} app not installed",
           "desc": "Please go to Manager to install the {{appName}} app.",
           "cta": "Go to Manager",
-          "close": "Close"
+          "close": "Cerrar"
         },
         "noAccounts": {
           "title": "No {{ticker}} to swap",
           "desc": "Your {{currencyName}} accounts have no balance to swap.",
           "addAccountCta": "Add Account",
-          "cta": "Close"
+          "cta": "Cerrar"
         },
         "outdatedApp": {
           "title": "App update available",
           "desc": "You need to update the {{appName}} app.",
           "cta": "Go to Manager",
-          "close": "Close"
+          "close": "Cerrar"
         },
         "summary": {
           "from": "From",
@@ -1857,7 +1857,7 @@
             "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by {{provider}}'s Terms & Conditions.",
             "tos": "Terms & conditions",
             "accept": "Accept",
-            "reject": "Close"
+            "reject": "Cerrar"
           }
         }
       },
@@ -1904,6 +1904,7 @@
     },
     "lending": {
       "title": "Lend crypto",
+      "titleTransferTab": "Lend",
       "actionTitle": "Lend",
       "accountActions": {
         "approve": "Approve",
@@ -1971,7 +1972,7 @@
         "label": "Lend crypto",
         "title": "Lend assets on the Compound Protocol",
         "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger acccount.",
-        "switchLabel": "I have read and agree with the <0><0>Terms of Use</0></0>."
+        "switchLabel": "Confirmo que he leído y acepto las <0><0>Condiciones de Uso</0></0>."
       },
       "info": {
         "title": "Lend crypto",
@@ -2047,7 +2048,7 @@
           "info": "The approval was sent to the network for confirmation. You’ll be able to issue loans once it is confirmed.",
           "extraInfo": "Transactions can take some time to be displayed in an explorer and to be confirmed.",
           "button": {
-            "done": "Close"
+            "done": "Cerrar"
           }
         }
       },
@@ -2068,8 +2069,8 @@
           "info": "You will start earning interest once the network has confirmed the deposit.",
           "extraInfo": "Transactions can take some time to be displayed in an explorer and to be confirmed.",
           "button": {
-            "done": "Done",
-            "cta": "View details"
+            "done": "Listo",
+            "cta": "Ver detalles"
           }
         }
       },
@@ -2085,8 +2086,8 @@
           "success": "Withdrawal sent successfully",
           "info": "Your assets will be available once the network has confirmed the withdrawal.",
           "button": {
-            "done": "Done",
-            "cta": "View details"
+            "done": "Listo",
+            "cta": "Ver detalles"
           }
         }
       }
@@ -2101,7 +2102,7 @@
   },
   "send": {
     "tooMuchUTXOBottomModal": {
-      "cta": "Continue",
+      "cta": "Continuar",
       "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
       "title": "UTXO message"
     },
@@ -2135,7 +2136,7 @@
       "available": "Total available",
       "useMax": "Use max",
       "loadingNetwork": "Loading network fees...",
-      "noRateProvider": "Not available"
+      "noRateProvider": "No disponible"
     },
     "summary": {
       "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
@@ -2168,13 +2169,13 @@
       "fees": "Fees",
       "confirm": "Your account balance will be updated once the network confirms the transaction.",
       "button": {
-        "details": "View details",
-        "retry": "Retry"
+        "details": "Ver detalles",
+        "retry": "Reintentar"
       }
     },
     "fees": {
       "title": "Network fees",
-      "validate": "Confirm",
+      "validate": "Confirmar",
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
       "higherFaster": "Higher gas price means a faster confirmation.",
@@ -2187,6 +2188,12 @@
       "streaming": {
         "accurate": "Loading... ({{percentage}})",
         "inaccurate": "Loading..."
+      }
+    },
+    "info": {
+      "maxSpendable": {
+        "title": "Max spendable amount",
+        "description": "The maximum spendable amount is the total balance in an account that is available to send in a transaction."
       }
     }
   },
@@ -2207,11 +2214,11 @@
         "2": "Freeze and vote securely with your Ledger device."
       },
       "howVotingWorks": "How voting works",
-      "cta": "Continue"
+      "cta": "Continuar"
     },
     "amount": {
       "available": "Total available",
-      "noRateProvider": "Not available",
+      "noRateProvider": "No disponible",
       "infoLabel": "Bandwidth or Energy"
     },
     "validation": {
@@ -2225,7 +2232,7 @@
         "vote": "Vote",
         "voteTimer": "0:{{time}}",
         "later": "I will vote later",
-        "retry": "Retry"
+        "retry": "Reintentar"
       }
     }
   },
@@ -2240,13 +2247,13 @@
     "amount": {
       "title": "Select the type of asset to unfreeze",
       "info": "Unfreezing will decrease your {{resource}} and will cancel all your votes.",
-      "cta": "Continue"
+      "cta": "Continuar"
     },
     "validation": {
       "success": "Your assets were unfrozen successfully",
       "info": "Your {{resource}} points will be decreased and all your votes will be canceled.",
       "button": {
-        "done": "Done",
+        "done": "Listo",
         "cta": "See details"
       }
     }
@@ -2260,7 +2267,7 @@
     "validation": {
       "success": "Your rewards were added to the available balance.",
       "button": {
-        "done": "Done",
+        "done": "Listo",
         "cta": "See details"
       }
     }
@@ -2324,9 +2331,9 @@
     },
     "stopScanning": "Stop scanning",
     "retryScanning": "Retry scanning",
-    "retry": "Retry",
-    "done": "Done",
-    "finalCta": "Continue",
+    "retry": "Reintentar",
+    "done": "Listo",
+    "finalCta": "Continuar",
     "finalCtaForSwap": "Go back to Swap",
     "synchronizing": "Synchronizing",
     "synchronizingDesc": "Your accounts are being synchronized. This can take a while...",
@@ -2381,6 +2388,7 @@
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
     "quitApp": "Quit the application on your device",
     "appNotInstalled": "Please install the {{appName}} app",
+    "appNotInstalled_plural": "Please install the {{appName}} apps",
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."
@@ -2445,7 +2453,7 @@
       "receiveVerify": {
         "title": "Verify address on device",
         "description": "Please verify that the {{currencyName}} address displayed in Ledger Live exactly matches the one displayed on your Ledger device.",
-        "action": "Continue"
+        "action": "Continuar"
       },
       "getDeviceName": {
         "title": "Press both buttons together to enable reading the device name."
@@ -2461,13 +2469,13 @@
   "EditDeviceName": {
     "title": "Rename device",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "action": "Confirm"
+    "action": "Confirmar"
   },
   "PairDevices": {
     "Paired": {
       "title": "Pairing successful",
       "desc": "Your {{productName}} is ready to be used with Ledger Live.",
-      "action": "Continue"
+      "action": "Continuar"
     },
     "Pairing": {
       "step1": "Validate if the code displayed on your phone exactly matches the one displayed on your {{productName}}.",
@@ -2518,7 +2526,7 @@
       "description": "Setup Ledger Live with your Ledger Nano X to install apps, create accounts and make secure transactions wherever you go.",
       "question": "Do you have your Ledger Nano X?",
       "button": "Start Nano X setup",
-      "noDevice": "No device?",
+      "noDevice": "¿No tienes un dispositivo?",
       "buy": "Buy a Ledger Nano X"
     },
     "appList": {
@@ -2539,7 +2547,7 @@
       "description": "Uninstalling apps has no impact on your crypto assets. You can reinstall apps in the App catalog."
     },
     "remove": {
-      "title": "Remove device",
+      "title": "Quitar dispositivo",
       "description": "Are you sure? You can add your {{productName}} again at any time.",
       "button": "Remove"
     },
@@ -2556,7 +2564,7 @@
       "title_plural": "Apps installed successfully, you can now add your accounts",
       "notSupported": "App installed successfully, find out more about the installed apps on our website.",
       "manageAccount": "Add accounts",
-      "learnMore": "Learn more",
+      "learnMore": "Conoce más",
       "later": "Do it later"
     },
     "firmware": {
@@ -2567,7 +2575,7 @@
     }
   },
   "ManagerDevice": {
-    "title": "Device"
+    "title": "Dispositivo"
   },
   "AppAction": {
     "install": {
@@ -2596,7 +2604,7 @@
       "progress": "Updating all...",
       "button": "Update all",
       "version": "New {{version}}",
-      "buttonAction": "Update available",
+      "buttonAction": "Actualización disponible",
       "buttonModal": "Update all apps",
       "loading": "Updating...",
       "titleModal": "Updates available"
@@ -2623,10 +2631,10 @@
       "not_installed": "Not installed",
       "supported": "Live supported",
       "updatable": "Updatable",
-      "apply": "Apply"
+      "apply": "Aplicar"
     },
     "sort": {
-      "title": "Sort by",
+      "title": "Ordenar por",
       "default": "Default",
       "name_asc": "Name A-Z",
       "name_desc": "Name Z-A",
@@ -2638,7 +2646,7 @@
     "subtitle": "Genuine"
   },
   "RemoveRow": {
-    "title": "Remove device"
+    "title": "Quitar dispositivo"
   },
   "FirmwareVersionRow": {
     "title": "Firmware version",
@@ -2717,7 +2725,7 @@
             "title": "Congratulations! You earned {{amount}}. Continue to claim your rewards.",
             "howItWorks": "How rewards work",
             "warning": "You will be prompted to generate an empty transaction to your account. This will add your current rewards to your balance at the minimal cost of the transaction fees.",
-            "cta": "Continue"
+            "cta": "Continuar"
           },
           "verification": {
             "success": {
@@ -2752,7 +2760,7 @@
             "success": {
               "title": "{{token}} asset successfully added!",
               "text": "You can now receive and send {{token}} assets on your Algorand account.",
-              "cta": "View details"
+              "cta": "Ver detalles"
             },
             "pending": {
               "title": "Broadcasting transaction..."
@@ -2817,12 +2825,12 @@
             "warning": {
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
-            "cta": "Continue"
+            "cta": "Continuar"
           },
           "validator": {
             "validators": "Validators",
             "myDelegations": "My delegations",
-            "cta": "Continue",
+            "cta": "Continuar",
             "estYield": "Est. yield: {{amount}}",
             "totalAvailable": "Total available: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
@@ -2834,13 +2842,13 @@
             "allAssetsUsed": "All assets used",
             "minAmount": "Minimum amount: <0>{{min}}</0>",
             "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
-            "cta": "Continue"
+            "cta": "Continuar"
           },
           "verification": {
             "success": {
               "title": "You have successfully delegated your assets",
               "text": "Your account balance will be updated once the network confirms the transaction.",
-              "cta": "View details"
+              "cta": "Ver detalles"
             },
             "pending": {
               "title": "Broadcasting transaction..."
@@ -2874,7 +2882,7 @@
           "validator": {
             "validators": "Validators",
             "myDelegations": "My delegations",
-            "cta": "Continue",
+            "cta": "Continuar",
             "estYield": "Est. yield: {{amount}}",
             "totalAvailable": "Total available: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
@@ -2887,7 +2895,7 @@
             "success": {
               "title": "You have successfully redelegated your assets",
               "text": "Your account balance will be updated when the network confirms the transaction.",
-              "cta": "View details"
+              "cta": "Ver detalles"
             },
             "pending": {
               "title": "Broadcasting transaction..."
@@ -2914,7 +2922,7 @@
             "success": {
               "title": "You have successfully undelegated your assets",
               "text": "Your account balance will be updated when the network confirms the transaction.",
-              "cta": "View details"
+              "cta": "Ver detalles"
             },
             "pending": {
               "title": "Broadcasting transaction..."
@@ -2945,14 +2953,14 @@
             "compoundOrCashIn": "Compound or Cash in?",
             "claimRewardTooltip": "Rewards will be added to the available balance",
             "claimRewardCompoundTooltip": "Rewards will be added to the delegated amount",
-            "cta": "Continue"
+            "cta": "Continuar"
           },
           "verification": {
             "success": {
               "title": "You have successfully claimed your rewards. They were added to your available balance.",
               "titleCompound": "Your rewards were delegated to the same validator.",
               "text": "Your account balance will be updated when the network confirms the transaction.",
-              "cta": "View details"
+              "cta": "Ver detalles"
             },
             "pending": {
               "title": "Broadcasting transaction..."
@@ -3025,7 +3033,7 @@
               "ledger": "Delegate securely with your Ledger device."
             },
             "button": {
-              "cta": "Continue"
+              "cta": "Continuar"
             }
           }
         }
@@ -3349,7 +3357,7 @@
     "yieldInfos": "Yield rates are provided by",
     "termsAndPrivacy": "I have read and I accept the <1>Ledger Live Terms of Use</1> and <3>Privacy Policy</3>.",
     "delegation": "Delegation",
-    "viewDetails": "View details",
+    "viewDetails": "Ver detalles",
     "validator": "Validator",
     "validatorAddress": "Validator address",
     "delegatedAccount": "Delegated account",
@@ -3445,9 +3453,9 @@
   "Terms": {
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
-    "switchLabelPrivacy": "I have read and agree with the <1>Privacy Policy</1>",
+    "switchLabelPrivacy": "Confirmo que he leído y acepto la <1> Política de Privacidad</1>",
     "switchLabel": "I have read and agree with the <1>Terms of Service</1>",
-    "cta": "Enter Ledger App"
+    "cta": "Entra en la App Ledger"
   },
   "exchange": {
     "buy": {
@@ -3464,8 +3472,8 @@
         "CTAButton": "Add account"
       },
       "skipDeviceVerification": {
-        "confirm": "Confirm",
-        "cancel": "Cancel",
+        "confirm": "Confirmar",
+        "cancel": "Cancelar",
         "address": "Address for {{currency}} account",
         "warning": "Your address was not confirmed on your Ledger device. Please verify it for security"
       }
@@ -3509,8 +3517,8 @@
     "warning": "Sharing receive addresses from dApp is not secure. Always use Ledger Live when sharing your address to receive funds.",
     "isconnecting": "is connecting, please wait...",
     "disconnect": "Disconnect",
-    "retry": "Retry",
-    "close": "Close",
+    "retry": "Reintentar",
+    "close": "Cerrar",
     "message": "Message",
     "messageHash": "Message Hash",
     "domainHash": "Domain Hash",
