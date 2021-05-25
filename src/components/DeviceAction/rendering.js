@@ -21,7 +21,7 @@ import Circle from "../Circle";
 import { MANAGER_TABS } from "../../screens/Manager/Manager";
 
 type RawProps = {
-  t: (key: string, options?: { [key: string]: string }) => string,
+  t: (key: string, options?: { [key: string]: string | number }) => string,
   colors?: *,
   theme?: "light" | "dark",
 };
@@ -51,23 +51,33 @@ export function renderRequestQuitApp({
 export function renderRequiresAppInstallation({
   t,
   navigation,
-  appName,
+  appNames,
 }: {
   ...RawProps,
   navigation: any,
-  appName: string,
+  appNames: string[],
 }) {
+  const appNamesCSV = appNames.join(", ");
+
   return (
     <View style={styles.wrapper}>
       <LText style={styles.text} semiBold>
-        {t("DeviceAction.appNotInstalled", { appName })}
+        {t("DeviceAction.appNotInstalled", {
+          appName: appNamesCSV,
+          count: appNames.length,
+        })}
       </LText>
       <View style={styles.actionContainer}>
         <Button
           event="DeviceActionRequiresAppInstallationOpenManager"
           type="primary"
           title={t("DeviceAction.button.openManager")}
-          onPress={() => navigation.navigate(NavigatorName.Manager)}
+          onPress={() =>
+            navigation.navigate(NavigatorName.Manager, {
+              screen: ScreenName.Manager,
+              params: { searchQuery: appNamesCSV },
+            })
+          }
           containerStyle={styles.button}
         />
       </View>

@@ -137,6 +137,7 @@ const Confirmation = ({
                 key={"initSwap"}
                 action={swapAction}
                 device={deviceMeta.device}
+                onError={onError}
                 request={{
                   exchange,
                   exchangeRate,

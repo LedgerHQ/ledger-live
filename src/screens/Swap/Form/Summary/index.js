@@ -12,6 +12,7 @@ import DisclaimerModal from "../DisclaimerModal";
 import Button from "../../../../components/Button";
 import Confirmation from "../../Confirmation";
 import SummaryBody from "./SummaryBody";
+import Connect from "../../Connect";
 import { ScreenName } from "../../../../const";
 import CountdownTimer from "../../../../components/CountdownTimer";
 import { Track, TrackScreen } from "../../../../analytics";
@@ -31,17 +32,18 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
     exchangeRate,
     transaction,
     status,
-    deviceMeta,
     rateExpiration,
   } = route.params;
 
   const { colors } = useTheme();
 
   const [confirmed, setConfirmed] = useState(false);
+  const [deviceMeta, setDeviceMeta] = useState();
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
   const reset = useCallback(() => {
     setConfirmed(false);
     setAcceptedDisclaimer(false);
+    setDeviceMeta(null);
   }, [setAcceptedDisclaimer, setConfirmed]);
 
   const onRatesExpired = useCallback(() => {
@@ -53,20 +55,33 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
     }
   }, [exchangeRate.tradeMethod, navigation, reset]);
 
+  const showDeviceConnect = confirmed && acceptedDisclaimer && !deviceMeta;
+  const padding = showDeviceConnect ? 0 : 16;
+
   return status && transaction ? (
     <SafeAreaView
-      style={[styles.root, { backgroundColor: colors.background }]}
+      style={[
+        styles.root,
+        {
+          backgroundColor: colors.background,
+          padding,
+        },
+      ]}
       forceInset={forceInset}
     >
       <TrackScreen category="Swap" name="Summary" />
-      <SummaryBody
-        exchange={exchange}
-        exchangeRate={exchangeRate}
-        status={status}
-      />
+      {!showDeviceConnect ? (
+        <SummaryBody
+          exchange={exchange}
+          exchangeRate={exchangeRate}
+          status={status}
+        />
+      ) : (
+        <Connect setResult={setDeviceMeta} />
+      )}
 
       {confirmed ? (
-        acceptedDisclaimer ? (
+        acceptedDisclaimer && deviceMeta ? (
           <>
             <Track onUpdate event={"SwapAcceptedSummaryDisclaimer"} />
             <Confirmation
@@ -82,14 +97,14 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
               onCancel={reset}
             />
           </>
-        ) : (
+        ) : !acceptedDisclaimer ? (
           <DisclaimerModal
             provider={exchangeRate.provider}
             onContinue={() => setAcceptedDisclaimer(true)}
             onClose={() => setConfirmed(false)}
           />
-        )
-      ) : (
+        ) : null
+      ) : !showDeviceConnect ? (
         <View style={styles.buttonWrapper}>
           {exchangeRate.tradeMethod === "fixed" ? (
             <View
@@ -116,7 +131,7 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
             containerStyle={styles.button}
           />
         </View>
-      )}
+      ) : null}
     </SafeAreaView>
   ) : null;
 };

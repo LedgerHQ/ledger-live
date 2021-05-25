@@ -13,9 +13,11 @@ export default function StepHeader({ title, subtitle }: Props) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
       <View style={styles.root}>
-        <LText style={styles.subtitle} color="grey">
-          {subtitle}
-        </LText>
+        {subtitle ? (
+          <LText style={styles.subtitle} color="grey">
+            {subtitle}
+          </LText>
+        ) : null}
         <LText semiBold secondary numberOfLines={1} style={styles.title}>
           {title}
         </LText>
@@ -27,12 +29,12 @@ export default function StepHeader({ title, subtitle }: Props) {
 const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
+    justifyContent: "center",
     flex: 1,
     paddingVertical: 5,
   },
   title: {
     textAlign: "center",
-    flexGrow: 1,
     fontSize: 16,
   },
   subtitle: {

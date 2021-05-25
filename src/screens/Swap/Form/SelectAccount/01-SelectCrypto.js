@@ -42,12 +42,7 @@ const renderEmptyList = () => (
 );
 
 export default function SwapFormSelectCrypto({ route, navigation }: Props) {
-  const {
-    exchange,
-    selectableCurrencies,
-    currenciesStatus,
-    target,
-  } = route.params;
+  const { exchange, selectableCurrencies, target } = route.params;
 
   const { colors } = useTheme();
 
@@ -66,46 +61,38 @@ export default function SwapFormSelectCrypto({ route, navigation }: Props) {
   const clearBadSelection = useCallback(() => setBadSelection(null), [
     setBadSelection,
   ]);
-  const isCurrencyOK = (status, target) =>
-    !status || status === "ok" || (target === "to" && status === "noAccounts");
 
   const onPressItem = useCallback(
     (currencyOrToken: CryptoCurrency | TokenCurrency) => {
-      const status = currenciesStatus[currencyOrToken.id];
+      if (target === "from") {
+        // NB Clear toAccount only if it will collide with the selected currency
+        const toAccount =
+          exchange.toAccount &&
+          getAccountCurrency(exchange.toAccount).id === currencyOrToken.id
+            ? undefined
+            : exchange.toAccount;
 
-      if (isCurrencyOK(status, target)) {
-        if (target === "from") {
-          // NB Clear toAccount only if it will collide with the selected currency
-          const toAccount =
-            exchange.toAccount &&
-            getAccountCurrency(exchange.toAccount).id === currencyOrToken.id
-              ? undefined
-              : exchange.toAccount;
-
-          navigation.navigate(ScreenName.SwapFormSelectAccount, {
-            exchange: {
-              ...exchange,
-              fromAccount: null,
-              toAccount,
-            },
-            selectedCurrency: currencyOrToken,
-            target,
-          });
-        } else {
-          navigation.navigate(ScreenName.SwapFormSelectAccount, {
-            exchange: {
-              ...exchange,
-              toAccount: null,
-            },
-            selectedCurrency: currencyOrToken,
-            target,
-          });
-        }
+        navigation.navigate(ScreenName.SwapFormSelectAccount, {
+          exchange: {
+            ...exchange,
+            fromAccount: null,
+            toAccount,
+          },
+          selectedCurrency: currencyOrToken,
+          target,
+        });
       } else {
-        setBadSelection({ status, currency: currencyOrToken });
+        navigation.navigate(ScreenName.SwapFormSelectAccount, {
+          exchange: {
+            ...exchange,
+            toAccount: null,
+          },
+          selectedCurrency: currencyOrToken,
+          target,
+        });
       }
     },
-    [currenciesStatus, exchange, navigation, target],
+    [exchange, navigation, target],
   );
 
   const renderList = useCallback(
@@ -113,22 +100,15 @@ export default function SwapFormSelectCrypto({ route, navigation }: Props) {
       <FlatList
         contentContainerStyle={styles.list}
         data={items}
-        renderItem={({ item }) => {
-          const status = currenciesStatus[item.id];
-          return (
-            <CurrencyRow
-              isOK={isCurrencyOK(status, target)}
-              currency={item}
-              onPress={onPressItem}
-            />
-          );
-        }}
+        renderItem={({ item }) => (
+          <CurrencyRow isOK currency={item} onPress={onPressItem} />
+        )}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
       />
     ),
-    [currenciesStatus, onPressItem, target],
+    [onPressItem],
   );
 
   return (
