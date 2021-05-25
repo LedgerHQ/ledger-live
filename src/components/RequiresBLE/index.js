@@ -3,7 +3,7 @@
 // otherwise render an error
 
 import React, { Component } from "react";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import RequiresLocationOnAndroid from "./RequiresLocationOnAndroid";
 import BluetoothDisabled from "./BluetoothDisabled";
