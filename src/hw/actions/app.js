@@ -550,6 +550,8 @@ export const createAction = (
     }, [params, deviceSubject, state.opened, resetIndex, connectApp]);
 
     const onRetry = useCallback(() => {
+      // After an error we can't guarantee dependencies are resolved
+      dependenciesResolvedRef.current = false;
       setResetIndex((i) => i + 1);
       setState(getInitialState(device));
     }, [device]);
