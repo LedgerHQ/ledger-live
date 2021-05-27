@@ -1,4 +1,20 @@
 // @flow
+import type { DeviceModelId } from "@ledgerhq/devices";
+import type { DeviceModelInfo } from "../../types/manager";
+export type AnnouncementDeviceFilter = {
+  modelIds?: DeviceModelId[],
+  versions?: string[],
+  apps?: string[],
+};
+
+export type AnnnouncementPlatformsFilter =
+  | "desktop" // == windows || mac || linux
+  | "mobile" // == android || ios
+  | "android"
+  | "ios"
+  | "mac"
+  | "windows"
+  | "linux";
 
 type AnnouncementBase = {
   uuid: string, // unique id defining the announcement
@@ -11,6 +27,8 @@ type AnnouncementBase = {
   utm_campaign?: string, // optional UTM id for tracking purposes.
   languages?: string[], // optional language targeting.
   currencies?: string[], // optional per currency account ownership targeting.
+  device?: AnnouncementDeviceFilter, // optional firmware targeting
+  platforms?: AnnnouncementPlatformsFilter[], // optional platform targeting
 };
 
 export type AnnouncementContent = {
@@ -37,6 +55,8 @@ export type AnnouncementsUserSettings = {
   language: string,
   currencies: string[],
   getDate: () => Date,
+  lastSeenDevice?: DeviceModelInfo,
+  platform?: string,
 };
 
 export type AnnouncementsApi = {

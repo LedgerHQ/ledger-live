@@ -17,35 +17,98 @@ export function localizeAnnouncements(
   }));
 }
 
+const platformFilters = {
+  desktop: ["desktop", "mac", "windows", "linux"],
+  mobile: ["mobile", "android", "ios"],
+  mac: ["mac", "desktop"],
+  linux: ["linux", "desktop"],
+  windows: ["windows", "desktop"],
+  ios: ["ios", "mobile"],
+  android: ["android", "mobile"],
+};
+
 export function filterAnnouncements(
   announcements: Announcement[],
   context: AnnouncementsUserSettings
 ): Announcement[] {
-  const { language, currencies, getDate } = context;
+  const {
+    language,
+    currencies: contextCurrencies,
+    getDate,
+    lastSeenDevice,
+    platform: contextPlatform,
+  } = context;
 
   const date = getDate();
 
-  return announcements.filter((announcement) => {
-    if (announcement.languages && !announcement.languages.includes(language)) {
-      return false;
-    }
+  return announcements.filter(
+    ({
+      currencies,
+      languages,
+      published_at,
+      expired_at,
+      device,
+      platforms,
+    }) => {
+      if (languages && !languages.includes(language)) {
+        return false;
+      }
 
-    if (
-      announcement.currencies &&
-      !announcement.currencies.some((c) => currencies.includes(c))
-    ) {
-      return false;
-    }
+      if (
+        currencies &&
+        !currencies.some((c) => contextCurrencies.includes(c))
+      ) {
+        return false;
+      }
 
-    const publishedAt = new Date(announcement.published_at);
-    if (publishedAt > date) {
-      return false;
-    }
+      // filter out by device info
+      if (device && lastSeenDevice) {
+        const { modelIds, versions, apps } = device;
+        if (
+          modelIds &&
+          modelIds.length &&
+          !modelIds.includes(lastSeenDevice.modelId)
+        )
+          return false;
 
-    if (announcement.expired_at && new Date(announcement.expired_at) < date) {
-      return false;
-    }
+        if (
+          versions &&
+          versions.length &&
+          !versions.includes(lastSeenDevice.deviceInfo.version)
+        )
+          return false;
 
-    return true;
-  });
+        if (
+          apps &&
+          apps.length &&
+          !lastSeenDevice.apps.some(({ name }) => apps.includes(name))
+        )
+          return false;
+      }
+
+      // filter out by platform
+      if (
+        platforms &&
+        platforms.length > 0 &&
+        contextPlatform &&
+        !platforms.some(
+          (p) =>
+            platformFilters[p] && platformFilters[p].includes(contextPlatform)
+        )
+      ) {
+        return false;
+      }
+
+      const publishedAt = new Date(published_at);
+      if (publishedAt > date) {
+        return false;
+      }
+
+      if (expired_at && new Date(expired_at) < date) {
+        return false;
+      }
+
+      return true;
+    }
+  );
 }
