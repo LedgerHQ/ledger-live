@@ -239,10 +239,6 @@
       "title": "Vérification automatique indisponible : vérifiez l'adresse attentivement.",
       "description": null
     },
-    "EnpointConfig": {
-      "title": "Invalid endpoint",
-      "description": "Please enter a valid endpoint."
-    },
     "Touch ID Error": {
       "title": "Biometric authentication failed",
       "description": "Veuillez utiliser votre mot de passe ou réinitialiser l'appli."
