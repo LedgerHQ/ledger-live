@@ -17,6 +17,7 @@ import BellIcon from "../../icons/Bell";
 import { NavigatorName, ScreenName } from "../../const";
 import { scrollToTop } from "../../navigation/utils";
 import LText from "../../components/LText";
+import Warning from "../../icons/WarningOutline";
 
 type Props = {
   showDistribution?: boolean,
@@ -43,11 +44,17 @@ export default function PortfolioHeader({
     navigation.navigate(NavigatorName.NotificationCenter);
   }, [navigation]);
 
+  const onStatusErrorButtonPress = useCallback(() => {
+    navigation.navigate(NavigatorName.NotificationCenter, {
+      screen: ScreenName.NotificationCenterStatus,
+    });
+  }, [navigation]);
+
   const isUpToDate = useSelector(isUpToDateSelector);
   const networkError = useSelector(networkErrorSelector);
   const { pending, error } = useGlobalSyncState();
 
-  const notificationsCount = allIds.length - seenIds.length + incidents.length;
+  const notificationsCount = allIds.length - seenIds.length;
 
   const content =
     pending && !isUpToDate ? (
@@ -100,6 +107,13 @@ export default function PortfolioHeader({
           <BellIcon size={18} color={colors.grey} />
         </Touchable>
       </View>
+      {incidents.length > 0 && (
+        <View style={[styles.distributionButton, styles.marginLeft]}>
+          <Touchable onPress={onStatusErrorButtonPress}>
+            <Warning size={22} color={colors.orange} />
+          </Touchable>
+        </View>
+      )}
     </View>
   );
 }
