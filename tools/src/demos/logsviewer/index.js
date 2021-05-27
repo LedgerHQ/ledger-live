@@ -72,6 +72,20 @@ const Header = ({ logs, logsMeta, onFiles }: *) => {
     [logs]
   );
   const apdus = apdusLogs.map((l) => l.message).join("\n");
+  const experimentalEnvs = useMemo(
+    () =>
+      logsMeta
+        ? Object.keys(logsMeta.env)
+            .map((key) => {
+              if (key.includes("EXPERIMENTAL")) {
+                return { key, value: logsMeta.env[key] };
+              }
+              return null;
+            })
+            .filter((env) => !!env && !!env.value)
+        : [],
+    [logsMeta]
+  );
   const href = useMemo(() => "data:text/plain;base64," + btoa(apdus), [apdus]);
   const onChange = (e: *) => onFiles(e.target.files);
   const errors = logs.filter((l) => l.error);
@@ -200,6 +214,25 @@ const Header = ({ logs, logsMeta, onFiles }: *) => {
           </ul>
         </details>
       </HeaderRow>
+
+      {experimentalEnvs.length ? (
+        <HeaderRow>
+          <details>
+            <summary>
+              <strong>experimental envs ({experimentalEnvs.length})</strong>
+            </summary>
+            <ul>
+              {experimentalEnvs.map((env, i) => (
+                <li key={i}>
+                  <pre>
+                    <code>{`${env.key}: ${env.value}`}</code>
+                  </pre>
+                </li>
+              ))}
+            </ul>
+          </details>
+        </HeaderRow>
+      ) : null}
     </HeaderWrapper>
   );
 };
