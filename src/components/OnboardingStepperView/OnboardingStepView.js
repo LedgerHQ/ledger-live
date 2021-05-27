@@ -42,6 +42,7 @@ export type InfoStepViewProps = {
   },
   ctaWarningCheckbox?: { desc: React$Node },
   children?: React$Node,
+  ctaEvent?: string,
   isActive?: boolean,
 };
 
@@ -54,6 +55,7 @@ export function InfoStepView({
   lottieStyle,
   bullets,
   ctaText,
+  ctaEvent = "Proceed",
   ctaWarningModal,
   ctaWarningCheckbox,
   children,
@@ -217,6 +219,7 @@ export function InfoStepView({
             onPress={
               isDisabled ? () => {} : ctaWarningModal ? onOpenInfoModal : onNext
             }
+            testID={isDisabled ? undefined : ctaEvent}
           >
             <LText
               semiBold

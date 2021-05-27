@@ -90,6 +90,7 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
             <Touchable
               event={item.event}
               eventProperties={{ deviceId: deviceModelId }}
+              testID={`${item.event}|${deviceModelId}`}
               onPress={() => next(item)}
               style={[styles.button, { backgroundColor: colors.lightLive }]}
             >

@@ -5,6 +5,7 @@ import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet
 import Animated, { Easing } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 import { interpolatePath } from "react-native-redash/lib/module/v1";
+import Config from "react-native-config";
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -27,8 +28,9 @@ const {
 } = Animated;
 
 const clock = new Clock();
-
 const runProgression = () => {
+  if (Config.MOCK) return undefined;
+
   const state = {
     finished: new Value(0),
     position: new Value(0),

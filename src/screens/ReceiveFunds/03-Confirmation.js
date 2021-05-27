@@ -43,7 +43,7 @@ import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
-import { rejectionOp } from "../../components/DebugRejectSwitch";
+import { rejectionOp } from "../../logic/debugReject";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
 

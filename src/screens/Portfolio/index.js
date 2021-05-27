@@ -236,6 +236,9 @@ export default function PortfolioScreen({ navigation }: Props) {
           ],
           { useNativeDriver: true },
         )}
+        testID={
+          accounts.length ? "PortfolioAccountsList" : "PortfolioEmptyAccount"
+        }
       />
       <MigrateAccountsBanner />
     </SafeAreaView>

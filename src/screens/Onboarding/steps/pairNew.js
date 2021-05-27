@@ -153,6 +153,7 @@ export default function OnboardingStepPairNew({ navigation, route }: Props) {
         ctaText: (
           <Trans i18nKey={`onboarding.stepPairNew.${deviceModelId}.cta`} />
         ),
+        ctaEvent: "OnboardingStemPairNewContinue",
       },
       type: "primary",
       id: "pairNew_1",

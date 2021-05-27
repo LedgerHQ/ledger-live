@@ -1,5 +1,5 @@
 /* @flow */
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import LText from "./LText";
 import FormatDay from "./FormatDay";
@@ -10,20 +10,12 @@ type Props = {
   },
 };
 
-export default class SectionHeader extends Component<Props> {
-  render() {
-    const { section } = this.props;
-    return (
-      <LText
-        numberOfLines={1}
-        semiBold
-        color="grey"
-        style={styles.sectionHeader}
-      >
-        <FormatDay day={section.day} />
-      </LText>
-    );
-  }
+export default function SectionHeader({ section }: Props) {
+  return (
+    <LText numberOfLines={1} semiBold color="grey" style={styles.sectionHeader}>
+      <FormatDay day={section.day} />
+    </LText>
+  );
 }
 
 const styles = StyleSheet.create({
