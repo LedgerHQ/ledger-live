@@ -655,23 +655,27 @@
       },
       "academy": {
         "title": "Ledger Academy",
-        "description": "Everything you need to know about crypto"
+        "description": "Everything you need to\nknow about crypto"
       },
       "stakeCosmos": {
         "title": "Stake COSMOS",
         "description": "Delegate your ATOM earn rewards today."
       },
+      "polkastake": {
+        "title": "POLKADOT STAKING",
+        "description": "Stake, secure and\nmanage your DOT with\nLedger Live"
+      },
       "backupPack": {
         "title": "Back-up pack",
-        "description": "Secure your assets with a Nano X and Nano S."
+        "description": "A Nano X and a Nano S\nfor optimal protection"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
-        "description": "Buy cryptocurrencies from Ledger Live."
+        "description": "Buy crypto on\nLedger Live"
       },
       "swap": {
         "title": "Swap crypto",
-        "description": "Securely exchange one crypto for another."
+        "description": "Securely exchange one\ncrypto for another"
       },
       "algorand": {
         "title": "Algorand",
