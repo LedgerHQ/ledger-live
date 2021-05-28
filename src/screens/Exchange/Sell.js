@@ -11,6 +11,7 @@ import TrackScreen from "../../analytics/TrackScreen";
 import LText from "../../components/LText";
 import ExchangeIcon from "../../icons/Exchange";
 import Button from "../../components/Button";
+import PoweredByCoinify from "./PoweredByCoinify";
 
 const forceInset = { bottom: "always" };
 
@@ -53,6 +54,7 @@ export default function Buy() {
           />
         </View>
       </View>
+      <PoweredByCoinify />
     </SafeAreaView>
   );
 }

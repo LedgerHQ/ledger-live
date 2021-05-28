@@ -1,13 +1,15 @@
 // @flow
-import React, { useState } from "react";
-import { StyleSheet, Platform } from "react-native";
+import React, { useState, useCallback } from "react";
+import { StyleSheet, TouchableOpacity, Platform } from "react-native";
 import Animated, { Extrapolate } from "react-native-reanimated";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import Config from "react-native-config";
 import useExperimental from "./useExperimental";
 import { runCollapse } from "../../../components/CollapsibleList";
 import LText from "../../../components/LText";
 import ExperimentalIcon from "../../../icons/Experimental";
+import { rejections } from "../../../logic/debugReject";
 
 const { cond, set, Clock, Value, interpolateNode, eq } = Animated;
 
@@ -17,20 +19,24 @@ export default function ExperimentalHeader() {
 
   const clock = new Clock();
   // animation Open state
-  const [openState] = useState(new Value(0));
+  const [openState] = useState(new Value(Config.MOCK ? 1 : 0));
   // animation opening anim node
   const openingAnim = cond(
-    eq(isExperimental, true),
-    [
-      // opening
-      set(openState, runCollapse(clock, openState, 1)),
-      openState,
-    ],
-    [
-      // closing
-      set(openState, runCollapse(clock, openState, 0)),
-      openState,
-    ],
+    !Config.MOCK,
+    cond(
+      eq(isExperimental, true),
+      [
+        // opening
+        set(openState, runCollapse(clock, openState, 1)),
+        openState,
+      ],
+      [
+        // closing
+        set(openState, runCollapse(clock, openState, 0)),
+        openState,
+      ],
+    ),
+    openState,
   );
 
   // interpolated height from opening anim state for list container
@@ -39,6 +45,10 @@ export default function ExperimentalHeader() {
     outputRange: [0, Platform.OS === "ios" ? 70 : 30],
     extrapolate: Extrapolate.CLAMP,
   });
+
+  const onPressMock = useCallback(() => {
+    rejections.next();
+  }, []);
 
   return (
     <Animated.View
@@ -50,10 +60,22 @@ export default function ExperimentalHeader() {
           { opacity: openingAnim, backgroundColor: colors.lightLiveBg },
         ]}
       >
-        <ExperimentalIcon size={16} color={colors.live} />
-        <LText bold style={styles.label}>
-          <Trans i18nKey="settings.experimental.title" />
-        </LText>
+        {isExperimental && (
+          <>
+            <ExperimentalIcon size={16} color={colors.live} />
+            <LText bold style={styles.label}>
+              <Trans i18nKey="settings.experimental.title" />
+            </LText>
+          </>
+        )}
+
+        {Config.MOCK && (
+          <TouchableOpacity onPress={onPressMock}>
+            <LText bold style={styles.label}>
+              MOCK
+            </LText>
+          </TouchableOpacity>
+        )}
       </Animated.View>
     </Animated.View>
   );

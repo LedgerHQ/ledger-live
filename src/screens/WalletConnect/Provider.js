@@ -32,6 +32,7 @@ const Provider = ({ children }: { children: React$Node }) => {
   });
 
   return (
+    // $FlowFixMe
     <ProviderCommon
       onMessage={(wcCallRequest, account) => {
         if (

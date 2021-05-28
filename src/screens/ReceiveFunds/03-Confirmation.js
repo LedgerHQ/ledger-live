@@ -43,7 +43,7 @@ import { urls } from "../../config/urls";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import SkipLock from "../../components/behaviour/SkipLock";
 import logger from "../../logger";
-import { rejectionOp } from "../../components/DebugRejectSwitch";
+import { rejectionOp } from "../../logic/debugReject";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import GenericErrorView from "../../components/GenericErrorView";
 
@@ -66,7 +66,7 @@ type RouteParams = {
 };
 
 export default function ReceiveConfirmation({ navigation, route }: Props) {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -179,6 +179,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         name="Confirmation"
         unsafe={unsafe}
         verified={verified}
+        currencyName={currency.name}
       />
       {allowNavigation ? null : (
         <>
@@ -198,7 +199,11 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
               </View>
             ) : (
               <View
-                style={[styles.qrWrapper, { borderColor: colors.lightFog }]}
+                style={[
+                  styles.qrWrapper,
+                  { borderColor: colors.lightFog },
+                  dark ? { backgroundColor: "white" } : {},
+                ]}
               >
                 <QRCode
                   size={QRSize}

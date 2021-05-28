@@ -5,7 +5,6 @@ import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { getCurrenciesWithStatus } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import type { CurrenciesStatus } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import type {
   Exchange,
@@ -38,7 +37,6 @@ import SectionSeparator, {
 import CurrencyIcon from "../../../components/CurrencyIcon";
 import LText from "../../../components/LText";
 import Button from "../../../components/Button";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
 import { flattenedSwapSupportedCurrenciesSelector } from "../../../reducers/settings";
 import { TrackScreen } from "../../../analytics";
 
@@ -54,7 +52,6 @@ export type SwapRouteParams = {
   providers: any,
   installedApps: any,
   target: "from" | "to",
-  deviceMeta: DeviceMeta,
   rateExpiration?: Date,
 };
 
@@ -63,36 +60,21 @@ export type DeviceMeta = {
   device: Device,
   deviceInfo: DeviceInfo,
 };
+
 const Form = ({
   providers,
-  deviceMeta,
   defaultAccount,
   defaultParentAccount,
 }: {
   providers: any,
-  deviceMeta: DeviceMeta,
   defaultAccount: ?AccountLike,
   defaultParentAccount: ?Account,
 }) => {
   const { colors } = useTheme();
   const { navigate } = useNavigation();
-  const { result } = deviceMeta;
-  const { installed: installedApps } = result;
   const route = useRoute();
-  const accounts = useSelector(flattenAccountsSelector);
   const flattenedCurrencies = useSelector(
     flattenedSwapSupportedCurrenciesSelector,
-  );
-
-  const currenciesStatus = useMemo(
-    () =>
-      getCurrenciesWithStatus({
-        // $FlowFixMe
-        accounts,
-        installedApps,
-        selectableCurrencies: flattenedCurrencies,
-      }),
-    [accounts, installedApps, flattenedCurrencies],
   );
 
   const exchange = useMemo(
@@ -116,28 +98,18 @@ const Form = ({
       navigate(ScreenName.SwapFormSelectCrypto, {
         target,
         providers,
-        installedApps,
         exchange: exchange || {},
         selectableCurrencies: flattenedCurrencies,
-        currenciesStatus,
       });
     },
-    [
-      navigate,
-      providers,
-      installedApps,
-      exchange,
-      flattenedCurrencies,
-      currenciesStatus,
-    ],
+    [navigate, providers, exchange, flattenedCurrencies],
   );
 
   const onContinue = useCallback(() => {
     navigate(ScreenName.SwapFormAmount, {
       ...route.params,
-      deviceMeta,
     });
-  }, [navigate, deviceMeta, route.params]);
+  }, [navigate, route.params]);
 
   const canContinue = useMemo(() => {
     if (!exchange) return false;

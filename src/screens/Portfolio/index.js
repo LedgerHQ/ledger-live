@@ -1,8 +1,14 @@
 // @flow
 import React, { useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, SectionList, FlatList, SafeAreaView } from "react-native";
-import Animated from "react-native-reanimated";
+import {
+  StyleSheet,
+  SectionList,
+  FlatList,
+  SafeAreaView,
+  View,
+} from "react-native";
+import Animated, { interpolateNode } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
@@ -36,6 +42,8 @@ import NoOperationFooter from "../../components/NoOperationFooter";
 import MigrateAccountsBanner from "../MigrateAccounts/Banner";
 import RequireTerms from "../../components/RequireTerms";
 import { useScrollToTop } from "../../navigation/utils";
+
+import FabActions from "../../components/FabActions";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -71,13 +79,13 @@ export default function PortfolioScreen({ navigation }: Props) {
 
   const ListHeaderComponent = useCallback(
     () => (
-      <>
+      <View>
         <GraphCardContainer
           counterValueCurrency={counterValueCurrency}
           portfolio={portfolio}
           showGreeting={!accounts.every(isAccountEmpty)}
         />
-      </>
+      </View>
     ),
     [accounts, counterValueCurrency, portfolio],
   );
@@ -92,6 +100,28 @@ export default function PortfolioScreen({ navigation }: Props) {
     }
 
     return null;
+  }
+
+  function StickyActions() {
+    const offset = 410;
+    const top = interpolateNode(scrollY, {
+      inputRange: [offset, offset + 56],
+      outputRange: [0, 56],
+      extrapolate: "clamp",
+    });
+
+    return accounts.length === 0 ? null : (
+      <View style={[styles.stickyActions]}>
+        <Animated.View
+          style={[
+            styles.styckyActionsInner,
+            { transform: [{ translateY: top }] },
+          ]}
+        >
+          <FabActions />
+        </Animated.View>
+      </View>
+    );
   }
 
   function renderItem({
@@ -167,6 +197,7 @@ export default function PortfolioScreen({ navigation }: Props) {
             ? [<Carousel />]
             : []),
           ListHeaderComponent(),
+          StickyActions(),
           <SectionList
             // $FlowFixMe
             sections={sections}
@@ -194,9 +225,20 @@ export default function PortfolioScreen({ navigation }: Props) {
         renderItem={({ item }) => item}
         keyExtractor={(item, index) => String(index)}
         showsVerticalScrollIndicator={false}
-        onScroll={Animated.event([
-          { nativeEvent: { contentOffset: { y: scrollY } } },
-        ])}
+        stickyHeaderIndices={[2]}
+        onScroll={Animated.event(
+          [
+            {
+              nativeEvent: {
+                contentOffset: { y: scrollY },
+              },
+            },
+          ],
+          { useNativeDriver: true },
+        )}
+        testID={
+          accounts.length ? "PortfolioAccountsList" : "PortfolioEmptyAccount"
+        }
       />
       <MigrateAccountsBanner />
     </SafeAreaView>
@@ -213,10 +255,18 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
+    marginTop: -56,
   },
   contentContainer: {
     flexGrow: 1,
     paddingTop: 16,
     paddingBottom: 64,
   },
+  stickyActions: {
+    height: 110,
+    width: "100%",
+    alignContent: "flex-start",
+    justifyContent: "flex-start",
+  },
+  styckyActionsInner: { height: 56 },
 });

@@ -10,10 +10,10 @@ import type {
   Account,
   Currency,
   Operation,
-  PortfolioRange,
   Unit,
 } from "@ledgerhq/live-common/lib/types";
 import { isCountervalueEnabled } from "@ledgerhq/live-common/lib/countervalues/modules";
+import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import React, { PureComponent, useMemo } from "react";
 import { StyleSheet, View, SectionList } from "react-native";
 import { useRoute, useTheme } from "@react-navigation/native";
@@ -23,10 +23,10 @@ import SafeAreaView from "react-native-safe-area-view";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import { switchCountervalueFirst } from "../../actions/settings";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import type { Item } from "../../components/Graph/types";
 import LText from "../../components/LText";
 import Touchable from "../../components/Touchable";
 import AssetGraphCard from "../../components/AssetGraphCard";
+import type { RenderTitle } from "../../components/AssetGraphCard";
 import { useCurrencyPortfolio } from "../../actions/portfolio";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import LoadingFooter from "../../components/LoadingFooter";
@@ -42,7 +42,6 @@ import {
   selectedTimeRangeSelector,
 } from "../../reducers/settings";
 
-// $FlowFixMe
 const List = globalSyncRefreshControl(SectionList);
 
 type Props = {
@@ -82,24 +81,18 @@ class Asset extends PureComponent<AssetProps, any> {
     opCount: 50,
   };
 
-  renderListHeaderTitle = ({
+  renderListHeaderTitle: RenderTitle = ({
     useCounterValue,
     cryptoCurrencyUnit,
     counterValueUnit,
     item,
-  }: {
-    useCounterValue: boolean,
-    cryptoCurrencyUnit: Unit,
-    counterValueUnit: Unit,
-    item: Item,
   }) => {
     const { switchCountervalueFirst, currency } = this.props;
     const countervalueAvailable = isCountervalueEnabled(currency);
     const items = [
       { unit: cryptoCurrencyUnit, value: item.value },
-      countervalueAvailable && item.countervalue
-        ? { unit: counterValueUnit, value: item.countervalue }
-        : null,
+      // $FlowFixMe
+      { unit: counterValueUnit, value: item.countervalue },
     ];
     const shouldUseCounterValue = countervalueAvailable && useCounterValue;
     if (shouldUseCounterValue && item.countervalue) {
@@ -113,17 +106,13 @@ class Asset extends PureComponent<AssetProps, any> {
         onPress={countervalueAvailable ? switchCountervalueFirst : undefined}
       >
         <View style={styles.balanceContainer}>
-          {items[0] ? (
-            <LText style={styles.balanceText} semiBold>
-              <CurrencyUnitValue {...items[0]} joinFragmentsSeparator=" " />
-            </LText>
-          ) : null}
-          {items[1] ? (
-            <LText style={styles.balanceSubText} semiBold color="smoke">
-              {/* $FlowFixMe */}
-              <CurrencyUnitValue {...items[1]} />
-            </LText>
-          ) : null}
+          <LText style={styles.balanceText} semiBold>
+            <CurrencyUnitValue {...items[0]} joinFragmentsSeparator=" " />
+          </LText>
+          <LText style={styles.balanceSubText} semiBold color="smoke">
+            {/* $FlowFixMe */}
+            <CurrencyUnitValue {...items[1]} />
+          </LText>
         </View>
       </Touchable>
     );
@@ -309,5 +298,6 @@ const styles = StyleSheet.create({
   balanceContainer: {
     marginLeft: 16,
     alignItems: "flex-start",
+    height: 44,
   },
 });

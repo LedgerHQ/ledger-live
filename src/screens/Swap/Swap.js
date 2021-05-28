@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { getProviders } from "@ledgerhq/live-common/lib/exchange/swap";
 import { SwapNoAvailableProviders } from "@ledgerhq/live-common/lib/errors";
@@ -16,11 +16,9 @@ import {
   swapProvidersSelector,
 } from "../../reducers/settings";
 import { setSwapProviders } from "../../actions/settings";
-import MissingOrOutdatedSwapApp from "./MissingOrOutdatedSwapApp";
 import Landing from "./Landing";
 import NotAvailable from "./NotAvailable";
 import Form from "./Form";
-import Connect from "./Connect";
 
 const Swap = ({
   defaultAccount,
@@ -34,7 +32,6 @@ const Swap = ({
   const providers = useSelector(swapProvidersSelector);
   const hasAcceptedSwapKYC = useSelector(hasAcceptedSwapKYCSelector);
   const [hasUpToDateProviders, setHasUpToDateProviders] = useState(false);
-  const [deviceMeta, setDeviceMeta] = useState();
 
   useEffect(() => {
     if (hasAcceptedSwapKYC) {
@@ -51,17 +48,6 @@ const Swap = ({
     }
   }, [dispatch, hasAcceptedSwapKYC]);
 
-  const onSetResult = useCallback(
-    data => {
-      if (!data) return;
-      setDeviceMeta(data);
-    },
-    [setDeviceMeta],
-  );
-
-  const exchangeApp = deviceMeta?.result?.installed.find(
-    a => a.name === "Exchange",
-  );
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       {!hasAcceptedSwapKYC ? (
@@ -72,20 +58,13 @@ const Swap = ({
         </View>
       ) : !providers?.length ? (
         <NotAvailable />
-      ) : !deviceMeta?.result?.installed ? (
-        <Connect setResult={onSetResult} />
-      ) : !exchangeApp ? (
-        <MissingOrOutdatedSwapApp />
-      ) : !exchangeApp.updated ? (
-        <MissingOrOutdatedSwapApp outdated />
-      ) : deviceMeta ? (
+      ) : (
         <Form
-          deviceMeta={deviceMeta}
           providers={providers}
           defaultAccount={defaultAccount}
           defaultParentAccount={defaultParentAccount}
         />
-      ) : null}
+      )}
     </SafeAreaView>
   );
 };

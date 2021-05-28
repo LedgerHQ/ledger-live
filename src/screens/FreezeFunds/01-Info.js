@@ -51,8 +51,8 @@ export default function FreezeInfo({ navigation, route }: Props) {
           <Trans i18nKey="freeze.info.description" />
         </LText>
         <BulletList
-          style={{ paddingHorizontal: 16 }}
-          itemContainerStyle={{ height: 48 }}
+          style={styles.bulletList}
+          itemContainerStyle={styles.bulletItemContainer}
           Bullet={BulletGreenCheck}
           list={[
             <Trans i18nKey="freeze.info.steps.0" />,
@@ -119,6 +119,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 16,
     paddingHorizontal: 32,
+  },
+  bulletList: {
+    paddingHorizontal: 16,
+  },
+  bulletItemContainer: {
+    minHeight: 48,
   },
   bulletItem: {
     fontSize: 14,

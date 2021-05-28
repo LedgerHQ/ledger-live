@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, AccountLike } from "@ledgerhq/live-common/lib/types";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/ethereum/types";
+import { BigNumber } from "bignumber.js";
 import type { RouteParams } from "../../screens/SendFunds/04-Summary";
 import LText from "../../components/LText";
 import { ScreenName } from "../../const";
@@ -15,6 +16,8 @@ type Props = {
   parentAccount: ?Account,
   transaction: Transaction,
   route: { params: RouteParams },
+  gasLimit: ?BigNumber,
+  setGasLimit: Function,
 };
 
 export default function EthereumGasLimit({
@@ -22,6 +25,8 @@ export default function EthereumGasLimit({
   parentAccount,
   transaction,
   route,
+  gasLimit,
+  setGasLimit,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -33,17 +38,26 @@ export default function EthereumGasLimit({
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
+      setGasLimit,
+      gasLimit,
     });
   }, [navigation, route.params, account.id, parentAccount, transaction]);
 
-  const gasLimit = transaction.userGasLimit || transaction.estimatedGasLimit;
-
   return (
-    <View>
-      <SummaryRow title={t("send.summary.gasLimit")} info="info">
+    <View style={styles.root}>
+      <SummaryRow
+        title={
+          <LText semiBold style={styles.title}>
+            {t("send.summary.gasLimit")}
+          </LText>
+        }
+        info="info"
+      >
         <View style={styles.gasLimitContainer}>
           {gasLimit && (
-            <LText style={styles.gasLimitText}>{gasLimit.toString()}</LText>
+            <LText semiBold style={styles.gasLimitText}>
+              {gasLimit.toString()}
+            </LText>
           )}
           <LText
             style={[
@@ -61,6 +75,12 @@ export default function EthereumGasLimit({
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 20,
+  },
   link: {
     textDecorationStyle: "solid",
     textDecorationLine: "underline",

@@ -7,7 +7,11 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import {
+  useNavigation,
+  useTheme,
+  useIsFocused,
+} from "@react-navigation/native";
 import Animated from "react-native-reanimated";
 
 import Styles from "../navigation/styles";
@@ -91,6 +95,7 @@ export default function AnimatedHeaderView({
   }, []);
 
   const [scrollY] = useState(new Animated.Value(0));
+  const isFocused = useIsFocused();
 
   const event = Animated.event([
     { nativeEvent: { contentOffset: { y: scrollY } } },
@@ -161,7 +166,8 @@ export default function AnimatedHeaderView({
         <Animated.ScrollView
           onScroll={event}
           scrollEventThrottle={10}
-          contentContainerStyle={[styles.scrollArea]}
+          contentContainerStyle={styles.scrollArea}
+          testID={isFocused ? "ScrollView" : undefined}
         >
           {children}
         </Animated.ScrollView>

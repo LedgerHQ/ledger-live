@@ -2,7 +2,8 @@
 import React from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
-import type { Portfolio, Currency } from "@ledgerhq/live-common/lib/types";
+import type { Currency } from "@ledgerhq/live-common/lib/types";
+import type { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { currenciesSelector } from "../../reducers/accounts";
 import CurrencyDownStatusAlert from "../../components/CurrencyDownStatusAlert";
 import GraphCard from "../../components/GraphCard";
@@ -19,9 +20,8 @@ const GraphCardContainer = ({
 }) => {
   const currencies = useSelector(currenciesSelector);
 
-  const showDistribution = portfolio.balanceHistory[
-    portfolio.balanceHistory.length - 1
-  ].value.gt(0);
+  const showDistribution =
+    portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value > 0;
   return (
     <View>
       <Header

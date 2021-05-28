@@ -13,7 +13,6 @@ const supportedCurrenciesIds = {
     "litecoin",
     "dogecoin",
     "bitcoin_cash",
-    "dash",
     "stellar",
     "ethereum/erc20/usd_tether__erc20_",
     "ethereum/erc20/celsius",

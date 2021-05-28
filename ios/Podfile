@@ -27,5 +27,28 @@ target 'ledgerlivemobile' do
   use_flipper!({ 'Flipper-Folly' => '2.3.0' })
   post_install do |installer|
     flipper_post_install(installer)
+    # workaround for Xcode 12.5: https://stackoverflow.com/a/67302297
+    xcode_version = `system_profiler SPDeveloperToolsDataType | grep Xcode`
+      .split('Xcode: ')[1]
+      .split(' ')[0]
+    if xcode_version == '12.5'
+      find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h",
+          "atomic_notify_one(state)", "folly::atomic_notify_one(state)")
+      find_and_replace("Pods/Flipper-Folly/folly/synchronization/DistributedMutex-inl.h",
+        "atomic_wait_until(&state, previous | data, deadline)", "folly::atomic_wait_until(&state, previous | data, deadline)")
+    end
   end
+end
+
+def find_and_replace(dir, findstr, replacestr)
+  Dir[dir].each do |name|
+    text = File.read(name)
+    replace = text.gsub(findstr,replacestr)
+    if text != replace
+      puts "Fix: " + name
+      File.open(name, "w") { |file| file.puts replace }
+      STDOUT.flush
+    end
+  end
+  Dir[dir + '*/'].each(&method(:find_and_replace))
 end

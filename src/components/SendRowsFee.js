@@ -12,17 +12,20 @@ export default ({
   parentAccount,
   navigation,
   route,
+  setTransaction,
 }: {
   transaction: any,
   account: AccountLike,
   parentAccount: ?Account,
   navigation: any,
   route: { params: RouteParams },
+  setTransaction: Function,
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const C = perFamily[mainAccount.currency.family];
   return C ? (
     <C
+      setTransaction={setTransaction}
       transaction={transaction}
       account={account}
       parentAccount={parentAccount}

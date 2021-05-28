@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     borderRadius: 4,
+    marginBottom: 16,
   },
   text: {
     fontSize: 13,

@@ -3,70 +3,101 @@
 import React, { useState, memo, useCallback } from "react";
 import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import map from "lodash/map";
 import Swiper from "react-native-swiper";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { urls } from "../../config/urls";
 import { setCarouselVisibility } from "../../actions/settings";
 import { carouselVisibilitySelector } from "../../reducers/settings";
-import LedgerAcademy from "./slides/LedgerAcademy";
-import Valentine from "./slides/Valentine";
 import Card from "../Card";
 import LText from "../LText";
 import Button from "../Button";
-import BuyCrypto from "./slides/BuyCrypto";
-// import BackupPack from "./slides/BackupPack";
-// import BlackFriday from "./slides/BlackFriday";
-// import Sell from "./slides/Sell";
-// import Vote from "./slides/Vote";
-// import Lending from "./slides/Lending";
-import Swap from "./slides/Swap";
 import IconClose from "../../icons/Close";
+import Slide from "./Slide";
 
-export const getDefaultSlides = () => [
-  // {
-  //   id: "blackfriday",
-  //   Component: () => <BlackFriday />,
-  //   start: new Date("1 Nov 2020 00:01:00 PST"),
-  //   end: new Date("30 Nov 2020 23:59:00 PST"),
-  // },
+const SLIDES = [
   {
-    id: "valentine",
-    Component: () => <Valentine />,
-    start: new Date("2 Feb 2021 00:01:00 PST"),
-    end: new Date("15 Feb 2021 23:59:00 PST"),
+    url: urls.banners.ledgerAcademy,
+    name: "LedgerAcademy",
+    title: <Trans i18nKey={`carousel.banners.academy.title`} />,
+    description: <Trans i18nKey={`carousel.banners.academy.description`} />,
+    image: require("../../images/banners/academy.png"),
+    position: {
+      bottom: 0,
+      right: 0,
+      width: 146,
+      height: 93,
+    },
   },
   {
-    id: "swap",
-    Component: () => <Swap />,
+    url: "ledgerlive://buy",
+    name: "buyCrypto",
+    title: <Trans i18nKey={`carousel.banners.buyCrypto.title`} />,
+    description: <Trans i18nKey={`carousel.banners.buyCrypto.description`} />,
+    image: require("../../images/banners/buycrypto.png"),
+    position: {
+      bottom: 0,
+      right: 0,
+      width: 146,
+      height: 93,
+    },
   },
   {
-    id: "academy",
-    Component: () => <LedgerAcademy />,
+    url: "ledgerlive://swap",
+    name: "Swap",
+    title: <Trans i18nKey={`carousel.banners.swap.title`} />,
+    description: <Trans i18nKey={`carousel.banners.swap.description`} />,
+    image: require("../../images/banners/swap.png"),
+    position: {
+      bottom: 0,
+      right: 0,
+      width: 127,
+      height: 100,
+    },
   },
   {
-    id: "buyCrypto",
-    Component: () => <BuyCrypto />,
+    url: urls.banners.backupPack,
+    name: "BackupPack",
+    title: <Trans i18nKey={`carousel.banners.backupPack.title`} />,
+    description: <Trans i18nKey={`carousel.banners.backupPack.description`} />,
+    image: require("../../images/banners/backuppack.png"),
+    position: {
+      bottom: 0,
+      right: 0,
+      width: 146,
+      height: 93,
+    },
   },
-  // {
-  //   id: "backupPack",
-  //   Component: () => <BackupPack />,
-  // },
-  /*
   {
-    id: "Lending",
-    Component: () => <Lending />,
+    url: urls.banners.polkaStake,
+    name: "PolkaStake",
+    title: <Trans i18nKey={`carousel.banners.polkastake.title`} />,
+    description: <Trans i18nKey={`carousel.banners.polkastake.description`} />,
+    image: require("../../images/banners/polkastake.png"),
+    position: {
+      bottom: -25,
+      right: 24,
+      width: 100,
+      height: 121,
+    },
   },
-  */
-  // TODO enable when ready
-  // {
-  //   id: "sell",
-  //   Component: () => <Sell />,
-  // },
-  // {
-  //   id: "vote",
-  //   Component: () => <Vote />,
-  // },
 ];
+
+export const getDefaultSlides = () =>
+  map(SLIDES, slide => ({
+    id: slide.name,
+    Component: () => (
+      <Slide
+        url={slide.url}
+        name={slide.name}
+        title={slide.title}
+        description={slide.description}
+        image={slide.image}
+        position={slide.position}
+      />
+    ),
+  }));
 
 const hitSlop = {
   top: 16,
@@ -75,7 +106,7 @@ const hitSlop = {
   bottom: 16,
 };
 
-export const CAROUSEL_NONCE: number = 3;
+export const CAROUSEL_NONCE: number = 4;
 
 const Carousel = () => {
   const { colors } = useTheme();

@@ -38,6 +38,7 @@ import Clock from "../../../icons/Clock";
 import Edit from "../../../icons/Edit";
 import Check from "../../../icons/Check";
 import Warning from "../../../icons/Warning";
+import WarningOutline from "../../../icons/WarningOutline";
 import EyeCrossed from "../../../icons/EyeCrossed";
 import Close from "../../../icons/Close";
 import Flower from "../../../icons/Flower";
@@ -45,6 +46,7 @@ import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
 import NanoDeviceCancelIcon from "../../../icons/NanoDeviceCancelIcon";
 import NanoDeviceCheckIcon from "../../../icons/NanoDeviceCheckIcon";
+import RecoveryPhraseWarning from "./RecoveryPhraseWarning";
 
 import { urls } from "../../../config/urls";
 
@@ -77,6 +79,19 @@ const lottieAnimations = {
     style: {},
   },
 };
+
+const recoveryWarningInfoModalProps = [
+  {
+    Icon: WarningOutline,
+    iconColor: "orange",
+    title: <Trans i18nKey="onboarding.warning.recoveryPhrase.title" />,
+    desc: <Trans i18nKey="onboarding.warning.recoveryPhrase.desc" />,
+    link: {
+      label: <Trans i18nKey="onboarding.warning.recoveryPhrase.supportLink" />,
+      url: urls.supportPage,
+    },
+  },
+];
 
 const pinCodeInfoModalProps = [
   {
@@ -321,6 +336,7 @@ const pairNewErrorInfoModalProps = [
 ];
 
 export const infoModalScenes = {
+  recoveryWarningInfoModalProps,
   pinCodeInfoModalProps,
   recoveryPhraseInfoModalProps,
   hideRecoveryPhraseInfoModalProps,
@@ -615,6 +631,7 @@ const getRecoveryPhraseScenes = (deviceModelId: string) => [
       title: (
         <Trans i18nKey="onboarding.stepRecoveryPhrase.importRecoveryPhrase.title" />
       ),
+      warning: <RecoveryPhraseWarning />,
       descs: [
         <Trans i18nKey="onboarding.stepRecoveryPhrase.importRecoveryPhrase.desc" />,
         <Trans i18nKey="onboarding.stepRecoveryPhrase.importRecoveryPhrase.desc_1" />,

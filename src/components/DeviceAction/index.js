@@ -27,6 +27,7 @@ import SkipLock from "../behaviour/SkipLock";
 
 type Props<R, H, P> = {
   onResult?: (payload: *) => Promise<void> | void,
+  onError?: (payload: *) => Promise<void> | void,
   renderOnResult?: (payload: P) => React$Node,
   action: Action<R, H, P>,
   request?: R,
@@ -38,6 +39,7 @@ export default function DeviceAction<R, H, P>({
   request = null,
   device: selectedDevice,
   onResult,
+  onError,
   renderOnResult,
 }: Props<R, H, P>) {
   const { colors, dark } = useTheme();
@@ -72,6 +74,9 @@ export default function DeviceAction<R, H, P>({
     initSellRequested,
     initSellResult,
     initSellError,
+    installingApp,
+    progress,
+    listingApps,
   } = status;
 
   if (displayUpgradeWarning && appAndVersion) {
@@ -94,12 +99,27 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
+  if (installingApp) {
+    const appName = requestOpenApp;
+    return renderLoading({
+      t,
+      description: t("DeviceAction.installApp", {
+        percentage: (progress * 100).toFixed(0) + "%",
+        appName,
+      }),
+      colors,
+      theme,
+    });
+  }
+
   if (requiresAppInstallation) {
-    const { appName } = requiresAppInstallation;
+    const { appName, appNames: maybeAppNames } = requiresAppInstallation;
+    const appNames = maybeAppNames?.length ? maybeAppNames : [appName];
+
     return renderRequiresAppInstallation({
       t,
       navigation,
-      appName,
+      appNames,
       colors,
       theme,
     });
@@ -116,7 +136,15 @@ export default function DeviceAction<R, H, P>({
     });
   }
 
-  // FIXME move out of here, this shouldn't be here.
+  if (listingApps) {
+    return renderLoading({
+      t,
+      description: t("DeviceAction.listApps"),
+      colors,
+      theme,
+    });
+  }
+
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     return renderConfirmSwap({ t, device: selectedDevice, colors, theme });
   }
@@ -152,9 +180,13 @@ export default function DeviceAction<R, H, P>({
   }
 
   if (!isLoading && error) {
+    onError && onError(error);
     return renderError({
       t,
+      navigation,
       error,
+      managerAppName:
+        error.name === "UpdateYourApp" ? error.managerAppName : undefined,
       onRetry,
       colors,
       theme,

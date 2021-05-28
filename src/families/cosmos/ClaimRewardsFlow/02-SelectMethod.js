@@ -158,7 +158,10 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     "";
   const mode = transaction.mode ? transaction.mode : "";
 
-  const error = status.errors && Object.keys(status.errors).length > 0;
+  const error =
+    status.errors &&
+    Object.keys(status.errors).length > 0 &&
+    Object.values(status.errors)[0];
 
   const warning =
     status.warnings &&
@@ -214,7 +217,17 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
       </View>
       <View style={[styles.footer, { backgroundColor: colors.background }]}>
         <View style={styles.warningSection}>
-          {warning && warning instanceof Error ? (
+          {error && error instanceof Error ? (
+            <LText
+              selectable
+              secondary
+              semiBold
+              style={styles.warning}
+              color="alert"
+            >
+              <TranslatedError error={error} />
+            </LText>
+          ) : warning && warning instanceof Error ? (
             <LText
               selectable
               secondary
@@ -227,7 +240,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
           ) : null}
         </View>
         <Button
-          disabled={error}
+          disabled={error instanceof Error}
           event="Cosmos ClaimRewardsAmountContinueBtn"
           onPress={onNext}
           title={<Trans i18nKey="cosmos.claimRewards.flow.steps.method.cta" />}

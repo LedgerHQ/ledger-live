@@ -13,14 +13,15 @@ import Spinning from "../Spinning";
 import BigSpinner from "../../icons/BigSpinner";
 import { lighten } from "../../colors";
 import Button from "../Button";
-import { NavigatorName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import Animation from "../Animation";
 import getDeviceAnimation from "./getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
+import { MANAGER_TABS } from "../../screens/Manager/Manager";
 
 type RawProps = {
-  t: (key: string, options?: { [key: string]: string }) => string,
+  t: (key: string, options?: { [key: string]: string | number }) => string,
   colors?: *,
   theme?: "light" | "dark",
 };
@@ -50,23 +51,33 @@ export function renderRequestQuitApp({
 export function renderRequiresAppInstallation({
   t,
   navigation,
-  appName,
+  appNames,
 }: {
   ...RawProps,
   navigation: any,
-  appName: string,
+  appNames: string[],
 }) {
+  const appNamesCSV = appNames.join(", ");
+
   return (
     <View style={styles.wrapper}>
       <LText style={styles.text} semiBold>
-        {t("DeviceAction.appNotInstalled", { appName })}
+        {t("DeviceAction.appNotInstalled", {
+          appName: appNamesCSV,
+          count: appNames.length,
+        })}
       </LText>
       <View style={styles.actionContainer}>
         <Button
           event="DeviceActionRequiresAppInstallationOpenManager"
           type="primary"
           title={t("DeviceAction.button.openManager")}
-          onPress={() => navigation.navigate(NavigatorName.Manager)}
+          onPress={() =>
+            navigation.navigate(NavigatorName.Manager, {
+              screen: ScreenName.Manager,
+              params: { searchQuery: appNamesCSV },
+            })
+          }
           containerStyle={styles.button}
         />
       </View>
@@ -290,17 +301,15 @@ export function renderAllowOpeningApp({
 export function renderInWrongAppForAccount({
   t,
   onRetry,
-  accountName,
   colors,
   theme,
 }: {
   ...RawProps,
-  accountName: string,
   onRetry?: () => void,
 }) {
   return renderError({
     t,
-    error: new WrongDeviceForAccount(null, { accountName }),
+    error: new WrongDeviceForAccount(),
     onRetry,
     colors,
     theme,
@@ -311,25 +320,46 @@ export function renderError({
   t,
   error,
   onRetry,
+  managerAppName,
+  navigation,
 }: {
   ...RawProps,
+  navigation?: any,
   error: Error,
   onRetry?: () => void,
+  managerAppName?: string,
 }) {
+  const onPress = () => {
+    if (managerAppName && navigation) {
+      navigation.navigate(NavigatorName.Manager, {
+        screen: ScreenName.Manager,
+        params: {
+          tab: MANAGER_TABS.INSTALLED_APPS,
+          updateModalOpened: true,
+        },
+      });
+    } else if (onRetry) {
+      onRetry();
+    }
+  };
   return (
     <View style={styles.wrapper}>
       <GenericErrorView error={error} withDescription withIcon />
-      {onRetry && (
+      {onRetry || managerAppName ? (
         <View style={styles.actionContainer}>
           <Button
             event="DeviceActionErrorRetry"
             type="primary"
-            title={t("common.retry")}
-            onPress={onRetry}
+            title={
+              managerAppName
+                ? t("DeviceAction.button.openManager")
+                : t("common.retry")
+            }
+            onPress={onPress}
             containerStyle={styles.button}
           />
         </View>
-      )}
+      ) : null}
     </View>
   );
 }

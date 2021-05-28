@@ -1,5 +1,5 @@
 // @flow
-import type { BigNumber } from "bignumber.js";
+import { BigNumber } from "bignumber.js";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import type { Unit } from "@ledgerhq/live-common/lib/types";
 
@@ -9,7 +9,7 @@ import { discreetModeSelector } from "../reducers/settings";
 
 type Props = {
   unit: Unit,
-  value: ?BigNumber,
+  value: BigNumber | number,
   showCode?: boolean,
   alwaysShowSign?: boolean,
   before?: string,
@@ -20,7 +20,7 @@ type Props = {
 
 export default function CurrencyUnitValue({
   unit,
-  value,
+  value: valueProp,
   showCode = true,
   alwaysShowSign,
   before = "",
@@ -30,6 +30,8 @@ export default function CurrencyUnitValue({
 }: Props) {
   const { locale } = useLocale();
   const discreet = useSelector(discreetModeSelector);
+  const value =
+    valueProp instanceof BigNumber ? valueProp : BigNumber(valueProp);
 
   return (
     before +

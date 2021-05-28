@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
 import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
 import { ScreenName } from "../../const";
@@ -31,6 +32,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const wcContext = useContext(_wcContext);
+  const currency = account ? getAccountCurrency(account) : null;
 
   useEffect(() => {
     if (!account) return;
@@ -73,7 +75,11 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="SendFunds" name="ValidationSuccess" />
+      <TrackScreen
+        category="SendFunds"
+        name="ValidationSuccess"
+        currencyName={currency?.name}
+      />
       <PreventNativeBack />
       <ValidateSuccess onClose={onClose} onViewDetails={goToOperationDetails} />
     </View>

@@ -2,6 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { View, InteractionManager } from "react-native";
+import Config from "react-native-config";
 import Confetti1 from "../../icons/confetti/confetti1";
 import Confetti2 from "../../icons/confetti/confetti2";
 import Confetti3 from "../../icons/confetti/confetti3";
@@ -32,6 +33,7 @@ class ConfettiParty extends PureComponent<*, { confetti: Array<Object> }> {
   handler: *;
 
   componentDidMount() {
+    if (Config.MOCK) return;
     this.handler = InteractionManager.runAfterInteractions(() => {
       this.emitConfetti();
     });

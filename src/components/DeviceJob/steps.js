@@ -19,7 +19,7 @@ import editDeviceNameTransport from "@ledgerhq/live-common/lib/hw/editDeviceName
 import BluetoothScanning from "../BluetoothScanning";
 import DeviceNanoAction from "../DeviceNanoAction";
 import RoundedCurrencyIcon from "../RoundedCurrencyIcon";
-import { rejectionOp } from "../DebugRejectSwitch";
+import { rejectionOp } from "../../logic/debugReject";
 
 import type { Step } from "./types";
 import { RenderStep } from "./StepRenders";

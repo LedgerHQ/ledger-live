@@ -1,20 +1,16 @@
 // @flow
-
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
-import React, { PureComponent } from "react";
-import { compose } from "redux";
-import { connect } from "react-redux";
+import React, { useState, useCallback } from "react";
 import { View, StyleSheet, Platform } from "react-native";
-import { Trans } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import type { Currency, Unit } from "@ledgerhq/live-common/lib/types";
 import type {
   Portfolio,
-  Currency,
-  Unit,
-} from "@ledgerhq/live-common/lib/types";
-import type { ValueChange } from "@ledgerhq/live-common/lib/types/portfolio";
+  ValueChange,
+} from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { getCurrencyColor } from "@ledgerhq/live-common/lib/currencies/color";
-import { withTheme, ensureContrast } from "../colors";
-import { setSelectedTimeRange } from "../actions/settings";
+import { ensureContrast } from "../colors";
+import { useTimeRange } from "../actions/settings";
 import getWindowDimensions from "../logic/getWindowDimensions";
 import Delta from "./Delta";
 import FormatDate from "./FormatDate";
@@ -28,159 +24,134 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import Placeholder from "./Placeholder";
 import DiscreetModeButton from "./DiscreetModeButton";
 
-const mapDispatchToProps = {
-  setSelectedTimeRange,
-};
-
 type Props = {
   portfolio: Portfolio,
-  setSelectedTimeRange: string => void,
   counterValueCurrency: Currency,
   useCounterValue?: boolean,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
-  colors: *,
 };
 
-type State = {
-  hoveredItem: ?Item,
-};
+export default function GraphCard({
+  portfolio,
+  renderTitle,
+  counterValueCurrency,
+}: Props) {
+  const [hoveredItem, setHoverItem] = useState<?Item>();
+  const [, setTimeRange, timeRangeItems] = useTimeRange();
+  const { colors } = useTheme();
 
-class GraphCard extends PureComponent<Props, State> {
-  state = {
-    hoveredItem: null,
-  };
+  const mapGraphValue = useCallback(d => d.value, []);
+  const { countervalueChange } = portfolio;
 
-  timeRangeItems = [
-    { key: "week", label: <Trans i18nKey="common:time.week" /> },
-    { key: "month", label: <Trans i18nKey="common:time.month" /> },
-    { key: "year", label: <Trans i18nKey="common:time.year" /> },
-  ];
+  const range = portfolio.range;
+  const isAvailable = portfolio.balanceAvailable;
+  const accounts = portfolio.accounts;
+  const balanceHistory = portfolio.balanceHistory;
 
-  onTimeRangeChange = item => this.props.setSelectedTimeRange(item.key);
+  const graphColor =
+    accounts.length === 1
+      ? ensureContrast(
+          getCurrencyColor(getAccountCurrency(accounts[0])),
+          colors.background,
+        )
+      : "";
 
-  onItemHover = hoveredItem => this.setState({ hoveredItem });
-
-  mapGraphValue = d => d.value.toNumber();
-
-  render() {
-    const { portfolio, renderTitle, counterValueCurrency, colors } = this.props;
-
-    const { countervalueChange } = portfolio;
-    const { hoveredItem } = this.state;
-
-    const range = portfolio.range;
-    const isAvailable = portfolio.balanceAvailable;
-    const accounts = portfolio.accounts;
-    const balanceHistory = portfolio.balanceHistory;
-
-    const graphColor =
-      accounts.length === 1
-        ? ensureContrast(
-            getCurrencyColor(getAccountCurrency(accounts[0])),
-            colors.background,
-          )
-        : "";
-
-    return (
-      <Card bg="card" style={styles.root}>
-        <GraphCardHeader
-          valueChange={countervalueChange}
-          isLoading={!isAvailable}
-          hoveredItem={hoveredItem}
-          to={balanceHistory[balanceHistory.length - 1]}
-          unit={counterValueCurrency.units[0]}
-          renderTitle={renderTitle}
+  return (
+    <Card bg="card" style={styles.root}>
+      <GraphCardHeader
+        valueChange={countervalueChange}
+        isLoading={!isAvailable}
+        hoveredItem={hoveredItem}
+        to={balanceHistory[balanceHistory.length - 1]}
+        unit={counterValueCurrency.units[0]}
+        renderTitle={renderTitle}
+      />
+      <Graph
+        isInteractive={isAvailable}
+        isLoading={!isAvailable}
+        height={100}
+        width={getWindowDimensions().width - 32}
+        color={isAvailable ? graphColor : colors.grey}
+        data={balanceHistory}
+        onItemHover={setHoverItem}
+        mapValue={mapGraphValue}
+      />
+      <View style={styles.pillsContainer}>
+        <Pills
+          isDisabled={!isAvailable}
+          value={range}
+          onChange={setTimeRange}
+          // $FlowFixMe
+          items={timeRangeItems}
         />
-        <Graph
-          isInteractive={isAvailable}
-          isLoading={!isAvailable}
-          height={100}
-          width={getWindowDimensions().width - 32}
-          color={isAvailable ? graphColor : colors.grey}
-          data={balanceHistory}
-          onItemHover={this.onItemHover}
-          mapValue={this.mapGraphValue}
-        />
-        <View style={styles.pillsContainer}>
-          <Pills
-            isDisabled={!isAvailable}
-            value={range}
-            onChange={this.onTimeRangeChange}
-            items={this.timeRangeItems}
-          />
-        </View>
-      </Card>
-    );
-  }
+      </View>
+    </Card>
+  );
 }
 
-class GraphCardHeader extends PureComponent<{
+function GraphCardHeader({
+  unit,
+  valueChange,
+  hoveredItem,
+  renderTitle,
+  isLoading,
+  to,
+}: {
   isLoading: boolean,
   valueChange: ValueChange,
   unit: Unit,
   to: Item,
   hoveredItem: ?Item,
   renderTitle?: ({ counterValueUnit: Unit, item: Item }) => React$Node,
-}> {
-  render() {
-    const {
-      unit,
-      valueChange,
-      hoveredItem,
-      renderTitle,
-      isLoading,
-      to,
-    } = this.props;
+}) {
+  const item = hoveredItem || to;
 
-    const item = hoveredItem || to;
-
-    return (
-      <View style={styles.graphHeader}>
-        <View style={styles.graphHeaderBalance}>
-          <View style={styles.balanceTextContainer}>
-            <View style={styles.warningWrapper}>
-              {isLoading ? (
-                <Placeholder width={228} containerHeight={27} />
-              ) : renderTitle ? (
-                renderTitle({ counterValueUnit: unit, item })
-              ) : (
-                <LText semiBold style={styles.balanceText}>
-                  <CurrencyUnitValue unit={unit} value={item.value} />
-                </LText>
-              )}
-              <TransactionsPendingConfirmationWarning />
-            </View>
-          </View>
-          <View style={styles.subtitleContainer}>
+  return (
+    <View style={styles.graphHeader}>
+      <View style={styles.graphHeaderBalance}>
+        <View style={styles.balanceTextContainer}>
+          <View style={styles.warningWrapper}>
             {isLoading ? (
-              <>
-                <Placeholder
-                  width={50}
-                  containerHeight={19}
-                  style={{ marginRight: 10 }}
-                />
-                <Placeholder width={50} containerHeight={19} />
-              </>
-            ) : hoveredItem ? (
-              <LText style={styles.delta}>
-                <FormatDate date={hoveredItem.date} />
-              </LText>
+              <Placeholder width={228} containerHeight={27} />
+            ) : renderTitle ? (
+              renderTitle({ counterValueUnit: unit, item })
             ) : (
-              <View style={styles.delta}>
-                <Delta
-                  percent
-                  valueChange={valueChange}
-                  style={styles.deltaPercent}
-                />
-                <Delta valueChange={valueChange} unit={unit} />
-              </View>
+              <LText semiBold style={styles.balanceText}>
+                <CurrencyUnitValue unit={unit} value={item.value} />
+              </LText>
             )}
+            <TransactionsPendingConfirmationWarning />
           </View>
         </View>
-        <DiscreetModeButton />
+        <View style={styles.subtitleContainer}>
+          {isLoading ? (
+            <>
+              <Placeholder
+                width={50}
+                containerHeight={19}
+                style={{ marginRight: 10 }}
+              />
+              <Placeholder width={50} containerHeight={19} />
+            </>
+          ) : hoveredItem ? (
+            <LText style={styles.delta}>
+              <FormatDate date={hoveredItem.date} />
+            </LText>
+          ) : (
+            <View style={styles.delta}>
+              <Delta
+                percent
+                valueChange={valueChange}
+                style={styles.deltaPercent}
+              />
+              <Delta valueChange={valueChange} unit={unit} />
+            </View>
+          )}
+        </View>
       </View>
-    );
-  }
+      <DiscreetModeButton />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -241,5 +212,3 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
 });
-
-export default compose(withTheme, connect(null, mapDispatchToProps))(GraphCard);

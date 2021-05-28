@@ -16,6 +16,7 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { useTheme } from "@react-navigation/native";
+import { getTagDerivationMode } from "@ledgerhq/live-common/lib/derivation";
 import { ScreenName } from "../../const";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -95,6 +96,11 @@ const AccountRow = ({
 
   const underlayColor = useMemo(() => rgba(colors.darkBlue, 0.05), [colors]);
 
+  const tag =
+    account.derivationMode !== undefined &&
+    account.derivationMode !== null &&
+    getTagDerivationMode(account.currency, account.derivationMode);
+
   return (
     <View style={styles.root}>
       <View
@@ -124,11 +130,27 @@ const AccountRow = ({
                 <LText
                   semiBold
                   numberOfLines={1}
-                  style={styles.accountNameText}
+                  style={[
+                    styles.accountNameText,
+                    tag ? styles.accountNameTextWithTag : {},
+                  ]}
                   color="darkBlue"
                 >
                   {account.name}
                 </LText>
+
+                {tag && (
+                  <View
+                    style={[
+                      styles.badgeContainer,
+                      { borderColor: colors.grey },
+                    ]}
+                  >
+                    <LText semiBold style={styles.badgeLabel} color="grey">
+                      {tag}
+                    </LText>
+                  </View>
+                )}
 
                 <AccountSyncStatus
                   {...syncState}
@@ -364,4 +386,17 @@ const styles = StyleSheet.create({
     width: TICK_W,
     height: TICK_H,
   },
+  accountNameTextWithTag: {
+    marginBottom: 3,
+  },
+  badgeContainer: {
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    borderRadius: 4,
+    borderWidth: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  badgeLabel: { fontSize: 8, textTransform: "uppercase", letterSpacing: 1 },
 });

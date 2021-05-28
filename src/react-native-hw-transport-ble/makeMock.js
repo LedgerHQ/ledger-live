@@ -1,10 +1,11 @@
 // @flow
 
 import Transport from "@ledgerhq/hw-transport";
-import { from, Observable } from "rxjs";
-import { delay } from "@ledgerhq/live-common/lib/promise";
+import { from } from "rxjs";
+import { take, first, filter } from "rxjs/operators";
 import type { ApduMock } from "../logic/createAPDUMock";
-import { hookRejections, rejectionOp } from "../components/DebugRejectSwitch";
+import { hookRejections } from "../logic/debugReject";
+import { e2eBridgeSubject } from "../../e2e/engine/bridge/client";
 
 export type DeviceMock = {
   id: string,
@@ -39,47 +40,29 @@ export default (opts: Opts) => {
     static setLogLevel = (_param: string) => {};
 
     static listen(observer: *) {
-      // $FlowFixMe
-      return Observable.create(observer => {
-        let timeout;
-
-        const unsubscribe = () => {
-          clearTimeout(timeout);
-        };
-
-        timeout = setTimeout(() => {
+      return e2eBridgeSubject
+        .pipe(
+          filter(msg => msg.type === "add"),
+          take(3),
+        )
+        .subscribe(msg => {
           observer.next({
-            type: "add",
-            descriptor: createTransportDeviceMock("mock_1", "Nano X de David"),
+            type: msg.type,
+            descriptor: createTransportDeviceMock(
+              msg.payload.id,
+              msg.payload.name,
+            ),
           });
-          timeout = setTimeout(() => {
-            observer.next({
-              type: "add",
-              descriptor: createTransportDeviceMock(
-                "mock_2",
-                "Nano X de Arnaud",
-              ),
-            });
-            timeout = setTimeout(() => {
-              observer.next({
-                type: "add",
-                descriptor: createTransportDeviceMock(
-                  "mock_3",
-                  "Nano X de Didier Duchmol",
-                ),
-              });
-            }, 2000);
-          }, 1000);
-        }, 500);
-
-        return unsubscribe;
-      })
-        .pipe(rejectionOp())
-        .subscribe(observer);
+        });
     }
 
     static async open(device: *) {
-      await hookRejections(delay(1000));
+      await e2eBridgeSubject
+        .pipe(
+          filter(msg => msg.type === "open"),
+          first(),
+        )
+        .toPromise();
       return new BluetoothTransportMock(
         typeof device === "string"
           ? createTransportDeviceMock(device, "")

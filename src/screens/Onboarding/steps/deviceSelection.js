@@ -36,6 +36,7 @@ function OnboardingStepDeviceSelection({ navigation }: *) {
           key={deviceId + index}
           event="Onboarding Device - Selection"
           eventProperties={{ deviceId }}
+          testID={`Onboarding Device - Selection|${deviceId}`}
           style={[styles.deviceButton, { backgroundColor: colors.lightLive }]}
           onPress={() => next(deviceId)}
         >
