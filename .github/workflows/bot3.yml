@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 12.x
       - name: pull docker image
-        run: docker pull ledgerhq/speculos
+        run: docker pull ghcr.io/ledgerhq/speculos
       - name: Install linux deps
         run: sudo apt-get install -y libusb-1.0-0-dev jq
       - name: Get yarn cache
