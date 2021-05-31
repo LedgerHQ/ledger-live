@@ -117,6 +117,14 @@ export const withDevice = (deviceId: string) => <T>(
           delete needsCleanup[identifyTransport(transport)];
           await transport.send(0, 0, 0, 0).catch(() => {});
         }
+
+        if (
+          transport.requestConnectionPriority &&
+          typeof transport.requestConnectionPriority === "function"
+        ) {
+          await transport.requestConnectionPriority("High");
+        }
+
         return transport;
       })
       .catch((e) => {
