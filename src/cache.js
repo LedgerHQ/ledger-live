@@ -7,6 +7,7 @@ export type CacheRes<A, T> = {
   force: (...args: A) => Promise<T>,
   hydrate: (string, T) => void,
   clear: (string) => void,
+  reset: () => void,
 };
 
 export const makeLRUCache = <A: Array<*>, T>(
@@ -43,6 +44,9 @@ export const makeLRUCache = <A: Array<*>, T>(
   };
   result.clear = (key: string) => {
     cache.del(key);
+  };
+  result.reset = () => {
+    cache.reset();
   };
   return result;
 };
