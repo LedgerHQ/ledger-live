@@ -75,7 +75,7 @@ PODS:
   - lottie-react-native (4.0.2):
     - lottie-ios (~> 3.1.8)
     - React-Core
-  - MultiplatformBleAdapter (0.1.6)
+  - MultiplatformBleAdapter (0.1.7)
   - OpenSSL-Universal (1.0.2.20):
     - OpenSSL-Universal/Static (= 1.0.2.20)
   - OpenSSL-Universal/Static (1.0.2.20)
@@ -247,16 +247,16 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-ble-plx (2.0.1):
-    - MultiplatformBleAdapter (= 0.1.6)
+  - react-native-ble-plx (2.0.2):
+    - MultiplatformBleAdapter (= 0.1.7)
     - React
-  - react-native-camera (3.43.6):
+  - react-native-camera (3.44.0):
     - React-Core
-    - react-native-camera/RCT (= 3.43.6)
-    - react-native-camera/RN (= 3.43.6)
-  - react-native-camera/RCT (3.43.6):
+    - react-native-camera/RCT (= 3.44.0)
+    - react-native-camera/RN (= 3.44.0)
+  - react-native-camera/RCT (3.44.0):
     - React-Core
-  - react-native-camera/RN (3.43.6):
+  - react-native-camera/RN (3.44.0):
     - React-Core
   - react-native-config (1.4.2):
     - react-native-config/App (= 1.4.2)
@@ -268,7 +268,7 @@ PODS:
     - React
   - react-native-netinfo (6.0.0):
     - React-Core
-  - react-native-pager-view (5.1.5):
+  - react-native-pager-view (5.1.10):
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -281,7 +281,7 @@ PODS:
     - React-Core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-webview (11.4.3):
+  - react-native-webview (11.6.2):
     - React-Core
   - React-RCTActionSheet (0.63.4):
     - React-Core/RCTActionSheetHeaders (= 0.63.4)
@@ -343,16 +343,16 @@ PODS:
     - React-Core (= 0.63.4)
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
-  - ReactNativeART (1.1.2):
+  - ReactNativeART (1.2.0):
     - React
-  - RNAnalytics (1.4.3):
+  - RNAnalytics (1.4.8):
     - Analytics
     - React-Core
   - RNCAsyncStorage (1.12.1):
     - React-Core
   - RNCClipboard (1.5.1):
     - React-Core
-  - RNCMaskedView (0.1.10):
+  - RNCMaskedView (0.1.11):
     - React
   - RNGestureHandler (1.10.3):
     - React-Core
@@ -363,7 +363,7 @@ PODS:
     - React
   - RNOS (1.2.6):
     - React
-  - RNReanimated (2.1.0):
+  - RNReanimated (2.2.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -392,9 +392,10 @@ PODS:
     - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.1.1):
+  - RNScreens (3.3.0):
     - React-Core
-  - RNShare (5.3.0):
+    - React-RCTImage
+  - RNShare (6.2.0):
     - React-Core
   - RNSVG (12.1.1):
     - React
@@ -656,7 +657,7 @@ SPEC CHECKSUMS:
   ledger-core-objc: cc0290f7cf787ddf1d6a8f8e086acf55f24523a4
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   lottie-react-native: 4dff8fe8d10ddef9e7880e770080f4a56121397e
-  MultiplatformBleAdapter: 652f47ecd7f5036756517cf66833210709a72eab
+  MultiplatformBleAdapter: 975cfb2a333b2c42b7a11628bd100ccb61872da2
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   PasscodeAuth: 667f2bfb0e78f652c11db4793d8077c189ce300e
   RCTRequired: 082f10cd3f905d6c124597fd1c14f6f2655ff65e
@@ -669,19 +670,19 @@ SPEC CHECKSUMS:
   React-jsi: a0418934cf48f25b485631deb27c64dc40fb4c31
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
-  react-native-ble-plx: d8dcca81ecc617eda824a4ace85f7ffd55d90c6c
-  react-native-camera: 9e55a09596b8c4e41eb7d4cce7c39826990c3cac
+  react-native-ble-plx: caac53ee98151ec81198239d591c203809a1ed6e
+  react-native-camera: e46c64f0d1212124c915bf83ee9b855ac6d35164
   react-native-config: c98128a72bc2c3a1ca72caec0b021f0fa944aa29
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
-  react-native-pager-view: c0c3833fbf06f3c63fb0ef8c4125bf1363b073d8
+  react-native-pager-view: 967d50ce0f1b72e434a2d9f3b739ddbf7d5bbf83
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-udp: f074c83f072beaf52a97369315372c7dba48fda2
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
-  react-native-webview: d749ba1348c17c7225391e84ac4a0c1c90c2c8ee
+  react-native-webview: 193d233c29eacce1f42ca2637dab7ba79c25a6de
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
   React-RCTBlob: a97d378b527740cc667e03ebfa183a75231ab0f0
@@ -692,18 +693,18 @@ SPEC CHECKSUMS:
   React-RCTText: 5c51df3f08cb9dedc6e790161195d12bac06101c
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
-  ReactNativeART: c580fba2f7d188d8fa4418ce78db8130654ed10f
-  RNAnalytics: 43a09152058061b4096eb6cb806093e7b772b1e5
+  ReactNativeART: 78edc68dd4a1e675338cd0cd113319cf3a65f2ab
+  RNAnalytics: 6dd7878949062f49add396def34a2203d22d48f4
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
-  RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
+  RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNReanimated: 70f662b5232dd5d19ccff581e919a54ea73df51c
-  RNScreens: bd1523c3bde7069b8e958e5a16e1fc7722ad0bdd
-  RNShare: 4df87d1791f50a2c7b1d89432fb9bbb7c02a9c9a
+  RNReanimated: d9da990fc90123f4ffbfdda93d00fc15174863a8
+  RNScreens: bf59f17fbf001f1025243eeed5f19419d3c11ef2
+  RNShare: 32ded9b8603fddf8f8eed42014e7ea7a4b0b8bf0
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   Sentry: 4e8a17b61ddd116f89536cc81d567fdee1ebca96
