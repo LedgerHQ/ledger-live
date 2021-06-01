@@ -73,7 +73,7 @@ function OnboardingStepWelcome({ navigation }: *) {
             animY,
             loop({
               duration: 10000,
-              easing: Easing.inOut(EasingNode.ease),
+              easing: EasingNode.inOut(EasingNode.ease),
               clock: clockY,
               boomerang: true,
             }),
@@ -93,7 +93,7 @@ function OnboardingStepWelcome({ navigation }: *) {
             animX,
             loop({
               duration: 8000,
-              easing: Easing.inOut(EasingNode.ease),
+              easing: EasingNode.inOut(EasingNode.ease),
               clock: clockX,
               boomerang: true,
             }),
