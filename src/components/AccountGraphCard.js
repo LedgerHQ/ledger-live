@@ -64,7 +64,7 @@ export default function AccountGraphCard({
   const { colors } = useTheme();
   const [hoveredItem, setHoverItem] = useState<?Item>();
   const [, setTimeRange, timeRangeItems] = useTimeRange();
-  const mapCryptoValue = useCallback(d => d.value, []);
+  const mapCryptoValue = useCallback(d => d.value || 0, []);
   const mapCounterValue = useCallback(
     d => (d.countervalue ? d.countervalue : 0),
     [],
