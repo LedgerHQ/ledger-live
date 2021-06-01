@@ -198,7 +198,7 @@
     "prettier": "^1.19.1",
     "react-native-debugger-open": "^0.3.25",
     "rn-nodeify": "^10.2.0",
-    "ws": "^7.3.0",
+    "ws": "^7.4.6",
     "yarn-deduplicate": "^2.1.1"
   },
   "react-native": {
