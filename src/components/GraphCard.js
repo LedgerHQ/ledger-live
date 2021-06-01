@@ -40,7 +40,7 @@ export default function GraphCard({
   const [, setTimeRange, timeRangeItems] = useTimeRange();
   const { colors } = useTheme();
 
-  const mapGraphValue = useCallback(d => d.value, []);
+  const mapGraphValue = useCallback(d => d.value || 0, []);
   const { countervalueChange } = portfolio;
 
   const range = portfolio.range;

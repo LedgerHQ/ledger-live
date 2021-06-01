@@ -1,2 +1,2 @@
 *             @ledgerhq/ledger-live-maintainer
-src/*.js      @ledgerhq/live-squad-yellow @ledgerhq/live-squad-blue
+src/**        @ledgerhq/live-squad-yellow @ledgerhq/live-squad-blue

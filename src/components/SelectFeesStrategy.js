@@ -58,7 +58,7 @@ export default function SelectFeesStrategy({
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
-  const unit = getAccountUnit(account);
+  const unit = getAccountUnit(mainAccount);
   const { feesStrategy } = transaction;
 
   const [isNetworkFeeHelpOpened, setNetworkFeeHelpOpened] = useState(false);
