@@ -45,8 +45,6 @@ export const useAppsRunner = (
   return [state, dispatch];
 };
 
-// FIXME code of these hooks will later be improved (some performance can be better)
-
 export function useNotEnoughMemoryToInstall(state: State, name: string) {
   return useMemo(
     () =>
@@ -54,17 +52,6 @@ export function useNotEnoughMemoryToInstall(state: State, name: string) {
         predictOptimisticState(reducer(state, { type: "install", name }))
       ),
     [name, state]
-  );
-}
-
-export function useNotEnoughMemoryToInstallWithOptimisticState(
-  optimisticState: State,
-  name: string
-) {
-  return useMemo(
-    () =>
-      isOutOfMemoryState(reducer(optimisticState, { type: "install", name })),
-    [name, optimisticState]
   );
 }
 
