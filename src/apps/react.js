@@ -57,6 +57,17 @@ export function useNotEnoughMemoryToInstall(state: State, name: string) {
   );
 }
 
+export function useNotEnoughMemoryToInstallWithOptimisticState(
+  optimisticState: State,
+  name: string
+) {
+  return useMemo(
+    () =>
+      isOutOfMemoryState(reducer(optimisticState, { type: "install", name })),
+    [name, optimisticState]
+  );
+}
+
 type AppsSections = {
   catalog: App[],
   device: App[],

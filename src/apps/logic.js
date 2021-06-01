@@ -480,10 +480,12 @@ export const getNextAppOp = (state: State): ?AppOp => {
 };
 
 // resolve the State to predict when all queued ops are done
-export const predictOptimisticState = (state: State): State =>
-  getActionPlan(state)
+export const predictOptimisticState = (state: State): State => {
+  const s = { ...state, currentProgressSubject: null };
+  return getActionPlan(s)
     .map((appOp) => ({
       type: "onRunnerEvent",
       event: { type: "runSuccess", appOp },
     }))
-    .reduce(reducer, state);
+    .reduce(reducer, s);
+};
