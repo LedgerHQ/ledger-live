@@ -16,6 +16,7 @@ type Props = {
   setAppInstallWithDependencies: ({ app: App, dependencies: App[] }) => void,
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
+  optimisticState: State,
 };
 
 const { height } = getWindowDimensions();
@@ -32,6 +33,7 @@ const AppsList = ({
   setAppUninstallWithDependencies,
   setStorageWarning,
   isInstalledView,
+  optimisticState,
 }: Props) => {
   const viewHeight = active ? "auto" : height - 267;
   const { colors } = useTheme();
@@ -48,6 +50,7 @@ const AppsList = ({
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,
+      optimisticState,
     }),
     [
       state,
@@ -57,6 +60,7 @@ const AppsList = ({
       setAppInstallWithDependencies,
       setAppUninstallWithDependencies,
       setStorageWarning,
+      optimisticState,
     ],
   );
 

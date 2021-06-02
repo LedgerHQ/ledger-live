@@ -147,7 +147,7 @@ function PairDevicesInner({ navigation, route }: Props) {
           if (unmounted.current) return;
 
           const name =
-            (await getDeviceName(transport)) ?? device.deviceName ?? "";
+            (await getDeviceName(transport)) || device.deviceName || "";
           if (unmounted.current) return;
 
           dispatchRedux(
@@ -161,7 +161,7 @@ function PairDevicesInner({ navigation, route }: Props) {
           );
 
           if (unmounted.current) return;
-          dispatch({ type: "paired" });
+          dispatch({ type: "paired", skipCheck: false });
         } finally {
           transport.close();
           await TransportBLE.disconnect(device.deviceId).catch(() => {});
@@ -185,7 +185,7 @@ function PairDevicesInner({ navigation, route }: Props) {
           name: name ?? device.deviceName ?? "",
         }),
       );
-      dispatch({ type: "paired" });
+      dispatch({ type: "paired", skipCheck: true });
     } else {
       dispatch({ type: "scanning" });
     }
@@ -268,7 +268,12 @@ function reducer(state, action) {
     case "allowManager":
       return { ...state, genuineAskedOnDevice: action.payload };
     case "paired":
-      return { ...state, status: "paired", error: null, skipCheck: true };
+      return {
+        ...state,
+        status: "paired",
+        error: null,
+        skipCheck: action.skipCheck,
+      };
     case "scanning":
       return { ...state, status: "scanning", error: null, device: null };
     default:

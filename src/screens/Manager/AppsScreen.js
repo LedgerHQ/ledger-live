@@ -53,6 +53,7 @@ type Props = {
   searchQuery?: string,
   updateModalOpened?: boolean,
   tab: ManagerTab,
+  optimisticState: State,
 };
 
 const AppsScreen = ({
@@ -70,6 +71,7 @@ const AppsScreen = ({
   searchQuery,
   updateModalOpened,
   tab,
+  optimisticState,
 }: Props) => {
   const distribution = distribute(state);
   const listRef = useRef();
@@ -184,6 +186,7 @@ const AppsScreen = ({
             setAppInstallWithDependencies={setAppInstallWithDependencies}
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
             setStorageWarning={setStorageWarning}
+            optimisticState={optimisticState}
           />
         );
       case managerTabs.INSTALLED_APPS:
@@ -232,6 +235,7 @@ const AppsScreen = ({
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               setStorageWarning={setStorageWarning}
+              optimisticState={optimisticState}
             />
           </>
         );
@@ -316,6 +320,7 @@ const AppsScreen = ({
             setAppUninstallWithDependencies={setAppUninstallWithDependencies}
             navigation={navigation}
             searchQuery={searchQuery}
+            optimisticState={optimisticState}
           />
           <View
             style={[
@@ -358,6 +363,7 @@ const AppsScreen = ({
               setAppInstallWithDependencies={setAppInstallWithDependencies}
               setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               navigation={navigation}
+              optimisticState={optimisticState}
             />
           </Animated.View>
         )}

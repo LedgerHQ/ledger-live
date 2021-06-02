@@ -11,6 +11,7 @@ import type {
   Exchange,
   ExchangeRate,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/transaction";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/lib/hw/actions/initSwap";
 import initSwap from "@ledgerhq/live-common/lib/exchange/swap/initSwap";
@@ -126,6 +127,7 @@ const Confirmation = ({
       preventBackdropClick
       onClose={onCancel}
     >
+      <SyncSkipUnderPriority priority={100} />
       <ModalBottomAction
         footer={
           <View style={styles.footerContainer}>

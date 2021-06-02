@@ -2,6 +2,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import { useTheme } from "@react-navigation/native";
 import DeviceAction from "./DeviceAction";
 import BottomModal from "./BottomModal";
@@ -54,6 +55,7 @@ export default function DeviceActionModal({
           }
         />
       )}
+      {device && <SyncSkipUnderPriority priority={100} />}
       <Touchable
         event="DeviceActionModalClose"
         style={styles.close}
