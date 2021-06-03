@@ -63,10 +63,18 @@ export default function AddAccountsTokenCurrencyDisclaimer({
     } else {
       // set parentCurrency in already opened add account flow and continue
       navigation.navigate(ScreenName.AddAccountsSelectDevice, {
+        ...route.params,
         currency: parentCurrency,
       });
     }
-  }, [parentTokenAccount, onClose, navigation, token, parentCurrency]);
+  }, [
+    parentTokenAccount,
+    onClose,
+    navigation,
+    token,
+    route.params,
+    parentCurrency,
+  ]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

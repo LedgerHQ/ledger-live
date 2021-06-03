@@ -63,6 +63,8 @@ type RouteParams = {
   modelId: DeviceModelId,
   wired: boolean,
   device?: Device,
+  onSuccess?: (address?: string) => void,
+  onError?: () => void,
 };
 
 export default function ReceiveConfirmation({ navigation, route }: Props) {
@@ -77,6 +79,8 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   const [zoom, setZoom] = useState(false);
   const [allowNavigation, setAllowNavigation] = useState(true);
   const sub = useRef();
+
+  const { onSuccess, onError } = route.params;
 
   const verifyOnDevice = useCallback(
     async (device: Device): Promise<void> => {
@@ -94,6 +98,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
         complete: () => {
           setVerified(true);
           setAllowNavigation(true);
+          onSuccess && onSuccess(mainAccount.freshAddress);
         },
         error: error => {
           if (error && error.name !== "UserRefusedAddress") {
@@ -102,10 +107,11 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           setError(error);
           setIsModalOpened(true);
           setAllowNavigation(true);
+          onError && onError();
         },
       });
     },
-    [account, parentAccount],
+    [account, onError, onSuccess, parentAccount],
   );
 
   function onRetry(): void {

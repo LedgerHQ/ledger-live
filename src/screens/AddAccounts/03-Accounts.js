@@ -73,6 +73,7 @@ type RouteParams = {
   device: Device,
   inline?: boolean,
   returnToSwap?: boolean,
+  onSuccess?: () => void,
 };
 
 type OwnProps = {};
@@ -266,13 +267,20 @@ function AddAccountsAccounts({
     if (inline) {
       navigation.goBack();
     } else if (navigation.replace) {
-      navigation.replace(ScreenName.AddAccountsSuccess, { currency });
+      const { onSuccess } = route.params;
+      if (onSuccess) onSuccess();
+      else
+        navigation.replace(ScreenName.AddAccountsSuccess, {
+          ...route.params,
+          currency,
+        });
     }
   }, [
     currency,
     inline,
     navigation,
     replaceAccounts,
+    route.params,
     scannedAccounts,
     selectedIds,
   ]);

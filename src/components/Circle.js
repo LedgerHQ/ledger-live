@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 type Props = {
   bg?: string,
   size: number,
-  children: *,
+  children?: *,
   crop?: boolean,
   style?: *,
 };

@@ -23,7 +23,8 @@ export default ({
 }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const C = perFamily[mainAccount.currency.family];
-  return C ? (
+  // FIXME: looks like a hack, need to find how to handle networkInfo properly
+  return C && transaction?.networkInfo ? (
     <C
       setTransaction={setTransaction}
       transaction={transaction}

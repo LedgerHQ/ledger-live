@@ -32,6 +32,7 @@ const IconPlus = () => {
 
 export default function AddAccountsSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
+
   const primaryCTA = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts);
   }, [navigation]);

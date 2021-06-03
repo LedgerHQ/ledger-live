@@ -22,6 +22,7 @@ type RouteParams = {
   accountId: string,
   transaction: Transaction,
   status: TransactionStatus,
+  appName?: string,
 };
 
 export default function SelectDevice({ navigation, route }: Props) {

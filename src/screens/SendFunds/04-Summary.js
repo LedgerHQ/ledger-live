@@ -12,7 +12,6 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -50,8 +49,7 @@ export type RouteParams = {
   nextNavigation?: string,
   overrideAmountLabel?: string,
   hideTotal?: boolean,
-  customGasPrice?: BigNumber,
-  customGasLimit?: BigNumber,
+  appName?: string,
 };
 
 const defaultParams = {
@@ -67,6 +65,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
   };
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
   const {
     transaction,
     setTransaction,
@@ -156,7 +155,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
 
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
-      screen: ScreenName.Exchange,
+      screen: ScreenName.ExchangeProviders,
       params: {
         accountId: account && account.id,
         parentId: parentAccount && parentAccount.id,

@@ -4,10 +4,12 @@ import { StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { useSelector } from "react-redux";
+import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { inferDynamicRange } from "@ledgerhq/live-common/lib/range";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { Trans } from "react-i18next";
+import { getGasLimit } from "@ledgerhq/live-common/lib/families/ethereum/transaction";
+
 import { accountScreenSelector } from "../../reducers/accounts";
 import EditFeeUnitEthereum from "./EditFeeUnitEthereum";
 import SectionSeparator from "../../components/SectionSeparator";
@@ -32,7 +34,7 @@ let lastNetworkGasPrice; // local cache of last value to prevent extra blinks
 export default function EthereumCustomFees({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const { transaction, customGasLimit, customGasPrice } = route.params;
+  const { transaction } = route.params;
 
   invariant(transaction.family === "ethereum", "not ethereum family");
   invariant(account, "no account found");
@@ -44,12 +46,10 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
   }
   const range = networkGasPrice || lastNetworkGasPrice || fallbackGasPrice;
   const [gasPrice, setGasPrice] = useState(
-    customGasPrice || transaction.gasPrice || range.initial,
+    transaction.gasPrice || range.initial,
   );
 
-  const [gasLimit, setGasLimit] = useState(
-    customGasLimit || transaction.userGasLimit || transaction.estimatedGasLimit,
-  );
+  const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
 
   const onValidate = useCallback(() => {
     const bridge = getAccountBridge(account, parentAccount);
@@ -59,8 +59,6 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
       ...route.params,
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
-      customGasLimit: gasLimit,
-      customGasPrice: gasPrice,
       transaction: bridge.updateTransaction(transaction, {
         userGasLimit: BigNumber(gasLimit || 0),
         gasPrice,
