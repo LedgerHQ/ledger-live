@@ -2,7 +2,7 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { StyleSheet, View, SafeAreaView } from "react-native";
-import { Trans } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 
@@ -14,10 +14,10 @@ import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTran
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
+import Alert from "../../../components/Alert";
 import Button from "../../../components/Button";
 import LText from "../../../components/LText";
 import TranslatedError from "../../../components/TranslatedError";
-import Info from "../../../icons/Info";
 
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
@@ -45,6 +45,7 @@ export default function PolkadotSimpleOperationStarted({
   route,
 }: Props) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   const { mode } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
@@ -87,6 +88,10 @@ export default function PolkadotSimpleOperationStarted({
   const error = getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
 
+  const infoTranslated = t(`polkadot.simpleOperation.modes.${mode}.info`, {
+    defaultValue: "",
+  });
+
   return (
     <>
       <SafeAreaView
@@ -105,19 +110,9 @@ export default function PolkadotSimpleOperationStarted({
                 i18nKey={`polkadot.simpleOperation.modes.${mode}.description`}
               />
             </LText>
-            <View style={styles.info}>
-              <Info size={22} color={colors.live} />
-              <LText
-                semiBold
-                style={[styles.text, styles.infoText]}
-                color="live"
-                numberOfLines={3}
-              >
-                <Trans
-                  i18nKey={`polkadot.simpleOperation.modes.${mode}.info`}
-                />
-              </LText>
-            </View>
+            {infoTranslated ? (
+              <Alert type="primary">{infoTranslated}</Alert>
+            ) : null}
           </View>
         </View>
         <View style={styles.footer}>
@@ -181,6 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    width: "100%",
   },
   title: {
     fontSize: 22,
