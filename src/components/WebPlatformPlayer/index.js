@@ -392,7 +392,6 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
         automaticallyAdjustContentInsets={false}
         scrollEnabled={true}
         style={styles.webview}
-        androidHardwareAccelerationDisabled
       />
     </SafeAreaView>
   );
