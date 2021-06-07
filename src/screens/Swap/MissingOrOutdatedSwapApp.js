@@ -4,12 +4,13 @@ import { Trans } from "react-i18next";
 import SafeAreaView from "react-native-safe-area-view";
 import { StyleSheet, View } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
+
 import { ScreenName, NavigatorName } from "../../const";
-import { MANAGER_TABS } from "../Manager/Manager";
 import Button from "../../components/Button";
 import LText from "../../components/LText";
-import AppIcon from "../Manager/AppsList/AppIcon";
 import { TrackScreen } from "../../analytics";
+import { MANAGER_TABS } from "../Manager/Manager";
+import AppIcon from "../Manager/AppsList/AppIcon";
 
 const MissingOrOutdatedSwapApp = ({
   outdated = false,

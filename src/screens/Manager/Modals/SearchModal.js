@@ -156,6 +156,7 @@ type Props = {
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   navigation: *,
   searchQuery?: string,
+  optimisticState: State,
 };
 
 export default ({
@@ -168,6 +169,7 @@ export default ({
   setAppUninstallWithDependencies,
   navigation,
   searchQuery,
+  optimisticState,
 }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -270,9 +272,10 @@ export default ({
         animation={false}
         setAppInstallWithDependencies={closeSearchModal}
         setAppUninstallWithDependencies={closeSearchModal}
+        optimisticState={optimisticState}
       />
     ),
-    [state, dispatch, isInstalledView, closeSearchModal],
+    [state, dispatch, isInstalledView, closeSearchModal, optimisticState],
   );
   const keyExtractor = useCallback((d: App) => String(d.id) + "SEARCH", []);
 

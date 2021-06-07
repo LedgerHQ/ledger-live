@@ -651,27 +651,27 @@
       },
       "academy": {
         "title": "Ledger Academy",
-        "description": "Everything you need to\nknow about crypto"
+        "description": "Tout ce qu'il faut savoir sur les cryptos"
       },
       "stakeCosmos": {
         "title": "Stake COSMOS",
         "description": "Delegate your ATOM earn rewards today."
       },
       "polkastake": {
-        "title": "POLKADOT STAKING",
-        "description": "Stake, secure and\nmanage your DOT with\nLedger Live"
+        "title": "STAKING DE POLKADOT",
+        "description": "Stakez, sécurisez et gérez vos DOT grâce à Ledger Live"
       },
       "backupPack": {
         "title": "Back-up pack",
-        "description": "A Nano X and a Nano S\nfor optimal protection"
+        "description": "Une protection optimale avec un Nano X et un Nano S"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
-        "description": "Buy crypto on\nLedger Live"
+        "description": "Achetez des cryptos sur Ledger Live"
       },
       "swap": {
         "title": "Swap crypto",
-        "description": "Securely exchange one\ncrypto for another"
+        "description": "Échangez en toute sécurité une crypto contre une autre"
       },
       "algorand": {
         "title": "Algorand",
@@ -746,7 +746,6 @@
       }
     },
     "stepNewDevice": {
-      "cta": "C'est parti !",
       "0": {
         "label": "Les bases",
         "title": "Accédez à vos cryptos",
@@ -771,7 +770,8 @@
         "label": "Les bases",
         "title": "Configurons votre Nano !",
         "desc": "Commençons par configurer les paramètres de sécurité de votre Nano."
-      }
+      },
+      "cta": "C'est parti !"
     },
     "stepSetupDevice": {
       "start": {
@@ -1766,10 +1766,34 @@
       }
     },
     "exchange": {
-      "title": "Achat / Vente"
+      "title": "Achat / Vente",
+      "providers": {
+        "title": "Choisir un prestataire pour acheter des cryptos",
+        "whatIsSwap": "Qu'est-ce que l'Achat ?",
+        "cta": "Continuer",
+        "coinify": {
+          "bullets": [
+            "Disponible dans plus de 130 pays",
+            "EUR, USD, GBP et 32 autres",
+            "Virements SEPA et Faster Payments",
+            "Virements bancaires locaux aux USA",
+            "Cartes de crédit et de débit"
+          ]
+        },
+        "wyre": {
+          "bullets": [
+            "Compte bancaire 🇺🇸 uniquement",
+            "Prise en charge du dollar américain uniquement",
+            "Plus de 20 cryptos prises en charge",
+            "Virement ACH",
+            "Pas de cartes de crédit ou de débit"
+          ]
+        }
+      }
     },
     "swap": {
       "title": "Swap",
+      "paraswap": "ParaSwap",
       "selectDevice": "Select your device",
       "broadcasting": "Broadcasting swap",
       "loadingFees": "Loading network fees...",
@@ -1778,6 +1802,25 @@
         "title": "Welcome to Swap",
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
+      },
+      "providers": {
+        "title": "Choisir un prestataire pour acheter des cryptos",
+        "whatIsSwap": "Qu'est-ce que le Swap ?",
+        "cta": "Continuer",
+        "changelly": {
+          "bullets": [
+            "BTC, ETH, USDT et plus de 50 autres",
+            "Multidevises",
+            "Centralisé"
+          ]
+        },
+        "paraswap": {
+          "bullets": [
+            "Connectez-vous à plus de 30 DEX (Uniswap, SushiSwap,...)",
+            "Ethereum et jetons ERC-20",
+            "Décentralisé et sans confiance"
+          ]
+        }
       },
       "main": {
         "header": "Swap"
@@ -1900,6 +1943,9 @@
           "title": "Your previous swaps will appear here",
           "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
         }
+      },
+      "platform": {
+        "tab": "Plateforme"
       }
     },
     "lending": {
@@ -1975,7 +2021,6 @@
         "switchLabel": "I have read and agree with the <0><0>Terms of Use</0></0>."
       },
       "info": {
-        "title": "Lend crypto",
         "1": {
           "label": "Step 1/3",
           "title": "Approving an account allows the protocol to process future loans.",
@@ -1991,11 +2036,12 @@
           "title": "Withdraw assets at any time.",
           "description": "You can withdraw your assets and earned interest at any time, partially or entirely, directly from your Ledger account.",
           "cta": "Lend now"
-        }
+        },
+        "title": "Lend crypto"
       },
       "noTokenAccount": {
         "info": {
-          "title": "You don’t have a {{ name }} account.",
+          "title": "Vous n'avez pas de compte {{ name }}.",
           "description": "In order to deposit funds and lend crypto you need a {{ name }} account. Please Receive funds on your Ethereum address."
         },
         "buttons": {
@@ -2197,6 +2243,16 @@
       }
     }
   },
+  "requestAccount": {
+    "stepperHeader": {
+      "selectCrypto": "Sélectionner une crypto",
+      "selectAccount": "Sélectionner un compte",
+      "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+    },
+    "selectAccount": {
+      "addAccount": "Ajouter un compte en {{currency}}"
+    }
+  },
   "freeze": {
     "stepperHeader": {
       "info": "Earn rewards",
@@ -2388,7 +2444,7 @@
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
     "quitApp": "Quit the application on your device",
     "appNotInstalled": "Please install the {{appName}} app",
-    "appNotInstalled_plural": "Please install the {{appName}} apps",
+    "appNotInstalled_plural": "Installez les applis {{appName}}",
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."
@@ -3317,8 +3373,7 @@
       "modes": {
         "withdrawUnbonded": {
           "title": "Withdraw unbonded",
-          "description": "After the 28-day unbonding period you can withdraw unbonded assets.",
-          "info": "You can then withdraw unbonded assets to your available balance."
+          "description": "Withdraw unbonded assets to your available balance."
         },
         "chill": {
           "title": "Clear nominations",

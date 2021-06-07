@@ -38,13 +38,8 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const onResult = useCallback(
     meta => {
       setDevice();
-      const { currency, inline, returnToSwap } = route.params;
-      const arg = {
-        currency,
-        inline,
-        returnToSwap,
-        ...meta,
-      };
+      const { inline } = route.params;
+      const arg = { ...route.params, ...meta };
       if (inline) {
         navigation.replace(ScreenName.AddAccountsAccounts, arg);
       } else {

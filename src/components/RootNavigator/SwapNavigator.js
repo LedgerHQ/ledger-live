@@ -5,18 +5,20 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
-import SwapSummary from "../../screens/Swap/Form/Summary";
-import SwapError from "../../screens/Swap/Form/Error";
-import SwapFormAmount from "../../screens/Swap/Form/Amount";
+import SwapSummary from "../../screens/Swap/FormOrHistory/Form/Summary";
+import SwapError from "../../screens/Swap/FormOrHistory/Form/Error";
+import SwapFormAmount from "../../screens/Swap/FormOrHistory/Form/Amount";
+import SwapProviders from "../../screens/Swap";
 import SwapFormOrHistory from "../../screens/Swap/FormOrHistory";
-import SwapOperationDetails from "../../screens/Swap/OperationDetails";
+import SwapOperationDetails from "../../screens/Swap/FormOrHistory/OperationDetails";
 import { BackButton } from "../../screens/OperationDetails";
-import SwapPendingOperation from "../../screens/Swap/Form/PendingOperation";
-import SwapFormSelectCrypto from "../../screens/Swap/Form/SelectAccount/01-SelectCrypto";
-import SwapFormSelectAccount from "../../screens/Swap/Form/SelectAccount/02-SelectAccount";
+import SwapPendingOperation from "../../screens/Swap/FormOrHistory/Form/PendingOperation";
+import SwapFormSelectCrypto from "../../screens/Swap/FormOrHistory/Form/SelectAccount/01-SelectCrypto";
+import SwapFormSelectAccount from "../../screens/Swap/FormOrHistory/Form/SelectAccount/02-SelectAccount";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import StepHeader from "../StepHeader";
 import styles from "../../navigation/styles";
+import StepHeader from "../StepHeader";
+import WebPlatformPlayer from "../WebPlatformPlayer";
 
 export default function SwapNavigator() {
   const { t } = useTranslation();
@@ -28,13 +30,27 @@ export default function SwapNavigator() {
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
       <Stack.Screen
+        name={ScreenName.SwapProviders}
+        component={SwapProviders}
+        options={{
+          headerStyle: styles.headerNoShadow,
+          title: t("transfer.swap.landing.header"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.SwapDapp}
+        component={WebPlatformPlayer}
+        options={({ route }) => ({
+          headerStyle: styles.headerNoShadow,
+          title: route.params.manifest?.name,
+        })}
+      />
+      <Stack.Screen
         name={ScreenName.SwapFormOrHistory}
         component={SwapFormOrHistory}
         options={{
           headerStyle: styles.headerNoShadow,
-          headerTitle: () => (
-            <StepHeader title={t("transfer.swap.landing.header")} />
-          ),
+          title: t("transfer.swap.landing.header"),
         }}
       />
       <Stack.Screen

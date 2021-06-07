@@ -149,25 +149,32 @@ type SignTransactionArgs = {
   parentAccount: ?Account,
 };
 
+export const broadcastSignedTx = async (
+  account: AccountLike,
+  parentAccount: ?Account,
+  signedOperation: SignedOperation,
+): Promise<Operation> => {
+  invariant(account, "account not present");
+  const mainAccount = getMainAccount(account, parentAccount);
+  const bridge = getAccountBridge(account, parentAccount);
+
+  if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+    return Promise.resolve(signedOperation.operation);
+  }
+
+  return execAndWaitAtLeast(3000, () =>
+    bridge.broadcast({
+      account: mainAccount,
+      signedOperation,
+    }),
+  );
+};
+
 // TODO move to live-common
 function useBroadcast({ account, parentAccount }: SignTransactionArgs) {
   return useCallback(
-    async (signedOperation: SignedOperation): Promise<Operation> => {
-      invariant(account, "account not present");
-      const mainAccount = getMainAccount(account, parentAccount);
-      const bridge = getAccountBridge(account, parentAccount);
-
-      if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        return Promise.resolve(signedOperation.operation);
-      }
-
-      return execAndWaitAtLeast(3000, () =>
-        bridge.broadcast({
-          account: mainAccount,
-          signedOperation,
-        }),
-      );
-    },
+    async (signedOperation: SignedOperation): Promise<Operation> =>
+      broadcastSignedTx(account, parentAccount, signedOperation),
     [account, parentAccount],
   );
 }
@@ -223,5 +230,42 @@ export function useSignedTxHandler({
       }
     },
     [navigation, route, broadcast, mainAccount, dispatch],
+  );
+}
+
+export function useSignedTxHandlerWithoutBroadcast({
+  onSuccess,
+}: {
+  onSuccess: (signedOp: *) => void,
+}) {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  return useCallback(
+    // TODO: fix type error
+    // $FlowFixMe
+    async ({ signedOperation, transactionSignError }) => {
+      try {
+        if (transactionSignError) {
+          throw transactionSignError;
+        }
+
+        onSuccess({ signedOperation });
+      } catch (error) {
+        if (
+          !(
+            error instanceof UserRefusedOnDevice ||
+            error instanceof TransactionRefusedOnDevice
+          )
+        ) {
+          logger.critical(error);
+        }
+        navigation.replace(
+          route.name.replace("ConnectDevice", "ValidationError"),
+          { ...route.params, error },
+        );
+      }
+    },
+    [onSuccess, navigation, route.name, route.params],
   );
 }

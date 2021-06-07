@@ -52,13 +52,14 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const onSwap = useCallback(
     () =>
       onNavigate(NavigatorName.Swap, {
-        screen: ScreenName.Swap,
+        screen: ScreenName.SwapProviders,
       }),
     [onNavigate],
   );
-  const onExchange = useCallback(() => onNavigate(ScreenName.Exchange), [
-    onNavigate,
-  ]);
+  const onExchange = useCallback(
+    () => onNavigate(ScreenName.ExchangeProviders),
+    [onNavigate],
+  );
   const onLending = useCallback(
     () =>
       onNavigate(NavigatorName.Lending, {

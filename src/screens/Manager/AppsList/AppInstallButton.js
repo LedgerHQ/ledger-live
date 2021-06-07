@@ -7,10 +7,12 @@ import manager from "@ledgerhq/live-common/lib/manager";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/lib/apps/react";
+import { useTheme } from "@react-navigation/native";
 import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
 import { installAppFirstTime } from "../../../actions/settings";
 
-import Button from "../../../components/Button";
+import LText from "../../../components/LText";
+import Touchable from "../../../components/Touchable";
 
 type Props = {
   app: App,
@@ -27,6 +29,7 @@ export default function AppInstallButton({
   notEnoughMemoryToInstall,
   setAppInstallWithDependencies,
 }: Props) {
+  const { colors } = useTheme();
   const dispatch = useDispatch();
   const hasInstalledAnyApp = useSelector(hasInstalledAnyAppSelector);
   const canInstall = useMemo(() => manager.canHandleInstall(app), [app]);
@@ -41,7 +44,13 @@ export default function AppInstallButton({
 
   const needsDependencies = useAppInstallNeedsDeps(state, app);
 
+  const disabled = useMemo(
+    () => !canInstall || notEnoughMemoryToInstall || updateAllQueue.length > 0,
+    [canInstall, notEnoughMemoryToInstall, updateAllQueue.length],
+  );
+
   const installApp = useCallback(() => {
+    if (disabled) return;
     if (needsDependencies && setAppInstallWithDependencies) {
       setAppInstallWithDependencies(needsDependencies);
     } else {
@@ -51,6 +60,7 @@ export default function AppInstallButton({
       dispatch(installAppFirstTime(true));
     }
   }, [
+    disabled,
     dispatch,
     dispatchProps,
     name,
@@ -60,20 +70,23 @@ export default function AppInstallButton({
   ]);
 
   return (
-    <Button
-      disabled={
-        !canInstall || notEnoughMemoryToInstall || updateAllQueue.length > 0
-      }
-      useTouchable
-      type={canUpdate ? "tertiary" : "lightPrimary"}
-      outline={!canUpdate}
-      title={<Trans i18nKey={canUpdate ? "common.update" : "common.install"} />}
-      containerStyle={styles.appButton}
-      titleStyle={styles.appStateText}
+    <Touchable
+      style={[
+        styles.appButton,
+        { backgroundColor: disabled ? colors.lightFog : colors.lightLive },
+      ]}
       onPress={installApp}
       event="ManagerAppInstall"
       eventProperties={{ appName: name }}
-    />
+    >
+      <LText
+        semiBold
+        style={styles.appStateText}
+        color={disabled ? "grey" : "live"}
+      >
+        <Trans i18nKey={canUpdate ? "common.update" : "common.install"} />
+      </LText>
+    </Touchable>
   );
 }
 
@@ -87,5 +100,10 @@ const styles = StyleSheet.create({
     height: 38,
     paddingHorizontal: 10,
     paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 4,
+    overflow: "hidden",
+    backgroundColor: "red",
   },
 });

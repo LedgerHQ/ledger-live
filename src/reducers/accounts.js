@@ -151,6 +151,33 @@ export const cryptoCurrenciesSelector = createSelector(
 );
 
 // $FlowFixMe
+export const accountsByCryptoCurrencySelector = createSelector(
+  accountsSelector,
+  (_, { currencies }) => currencies,
+  (accounts, currencies): Account[] =>
+    currencies && currencies.length
+      ? accounts.filter(a => currencies.includes(a.currency.id))
+      : accounts,
+);
+
+export const accountsByCryptoCurrencyScreenSelector = (
+  currency: CryptoCurrency,
+) => (state: any) => {
+  if (!currency) return [];
+  return accountsByCryptoCurrencySelector(state, { currencies: [currency.id] });
+};
+
+// $FlowFixMe
+export const accountCryptoCurrenciesSelector = createSelector(
+  cryptoCurrenciesSelector,
+  (_, { currencies }) => currencies,
+  (cryptoCurrencies, currencies) =>
+    currencies && currencies.length
+      ? cryptoCurrencies.filter(c => currencies.includes(c.id))
+      : cryptoCurrencies,
+);
+
+// $FlowFixMe
 export const accountSelector = createSelector(
   accountsSelector,
   (_, { accountId }) => accountId,

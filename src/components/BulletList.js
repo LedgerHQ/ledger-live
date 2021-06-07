@@ -105,6 +105,11 @@ export function BulletGreenCheck() {
   );
 }
 
+export function BulletSmallDot() {
+  const { colors } = useTheme();
+  return <Circle size={4} bg={colors.live} />;
+}
+
 class BulletList extends PureComponent<{
   list: *,
   animated?: boolean,

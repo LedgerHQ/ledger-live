@@ -36,6 +36,9 @@ type RouteParams = {
   accountId: string,
   transaction: Transaction,
   status: TransactionStatus,
+  appName?: string,
+  onSuccess?: (payload: *) => void,
+  onError?: (error: *) => void,
 };
 
 export default function ConnectDevice({ route }: Props) {
@@ -43,6 +46,8 @@ export default function ConnectDevice({ route }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
+
+  const { appName, onSuccess, onError } = route.params;
 
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -67,6 +72,15 @@ export default function ConnectDevice({ route }: Props) {
     [handleTx, t],
   );
 
+  const extraProps = onSuccess
+    ? {
+        onResult: onSuccess,
+        onError,
+      }
+    : {
+        renderOnResult: onResult,
+      };
+
   return useMemo(
     () =>
       transaction ? (
@@ -82,12 +96,13 @@ export default function ConnectDevice({ route }: Props) {
             request={{
               account,
               parentAccount,
+              appName,
               transaction,
               status,
               tokenCurrency,
             }}
             device={route.params.device}
-            renderOnResult={onResult}
+            {...extraProps}
           />
         </SafeAreaView>
       ) : null,

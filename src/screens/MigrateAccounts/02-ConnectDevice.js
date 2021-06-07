@@ -25,6 +25,7 @@ type Props = {
 
 type RouteParams = {
   currency: Currency,
+  appName?: string,
 };
 
 export default function ConnectDevice({ navigation, route }: Props) {
@@ -64,6 +65,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         onResult={onResult}
         onClose={onClose}
         request={{ currency: route.params.currency }}
+        appName={route.params.appName}
       />
     </SafeAreaView>
   );

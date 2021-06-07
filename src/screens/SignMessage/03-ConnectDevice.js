@@ -28,6 +28,7 @@ type Props = {
 type RouteParams = {
   device: Device,
   accountId: string,
+  appName?: string,
   message: TypedMessageData | MessageData,
 };
 
@@ -61,6 +62,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
           request={{
             account: mainAccount,
             parentAccount,
+            appName: route.params.appName,
             message: route.params.message,
           }}
           device={route.params.device}

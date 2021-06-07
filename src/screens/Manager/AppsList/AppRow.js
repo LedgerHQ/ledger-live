@@ -25,6 +25,7 @@ type Props = {
   setAppUninstallWithDependencies: ({ dependents: App[], app: App }) => void,
   setStorageWarning: () => void,
   managerTabs: *,
+  optimisticState: State,
 };
 
 const AppRow = ({
@@ -35,6 +36,7 @@ const AppRow = ({
   setAppInstallWithDependencies,
   setAppUninstallWithDependencies,
   setStorageWarning,
+  optimisticState,
 }: Props) => {
   const { name, bytes, version: appVersion } = app;
   const { installed, deviceInfo } = state;
@@ -48,7 +50,10 @@ const AppRow = ({
   const availableVersion =
     (isInstalled && isInstalled.availableVersion) || appVersion;
 
-  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(state, name);
+  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(
+    optimisticState,
+    name,
+  );
 
   const onSizePress = useCallback(() => setStorageWarning(name), [
     setStorageWarning,

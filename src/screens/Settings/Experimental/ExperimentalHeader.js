@@ -13,9 +13,8 @@ import { rejections } from "../../../logic/debugReject";
 
 const { cond, set, Clock, Value, interpolateNode, eq } = Animated;
 
-export default function ExperimentalHeader() {
+function ExperimentalHeader({ isExperimental }: { isExperimental: boolean }) {
   const { colors } = useTheme();
-  const isExperimental = useExperimental();
 
   const clock = new Clock();
   // animation Open state
@@ -79,6 +78,14 @@ export default function ExperimentalHeader() {
       </Animated.View>
     </Animated.View>
   );
+}
+
+export default function ExpHeader() {
+  const isExperimental = useExperimental();
+
+  return isExperimental ? (
+    <ExperimentalHeader isExperimental={isExperimental} />
+  ) : null;
 }
 
 const styles = StyleSheet.create({

@@ -2,7 +2,7 @@
 
 // This will be converted into string enum once TypeScript is supported in this project.
 export const ScreenName = {
-  /* eslint sort-keys: ["error", "asc", {"caseSensitive": false}] */
+  /* eslint-disable sort-keys */
   AboutSettings: "AboutSettings",
   Account: "Account",
   AccountCurrencySettings: "AccountCurrencySettings",
@@ -55,6 +55,8 @@ export const ScreenName = {
   EthereumCustomFees: "EthereumCustomFees",
   EthereumEditGasLimit: "EthereumEditGasLimit",
   Exchange: "Exchange",
+  ExchangeProviders: "ExchangeProviders",
+  ExchangeDapp: "ExchangeDapp",
   ExchangeBuy: "ExchangeBuy",
   ExchangeCoinifyWidget: "ExchangeCoinifyWidget",
   ExchangeConnectDevice: "ExchangeConnectDevice",
@@ -118,11 +120,12 @@ export const ScreenName = {
   SignValidationSuccess: "SignValidationSuccess",
   StellarEditMemoType: "StellarEditMemoType",
   StellarEditMemoValue: "StellarEditMemoValue",
-  Swap: "Swap",
+  SwapProviders: "SwapProviders",
   SwapError: "SwapError",
+  SwapDapp: "SwapDapp",
+  SwapFormOrHistory: "SwapFormOrHistory",
   SwapForm: "SwapForm",
   SwapFormAmount: "SwapFormAmount",
-  SwapFormOrHistory: "SwapFormOrHistory",
   SwapFormSelectAccount: "SwapFormSelectAccount",
   SwapFormSelectCrypto: "SwapFormSelectCrypto",
   SwapHistory: "SwapHistory",
@@ -144,7 +147,7 @@ export const ScreenName = {
   VoteValidation: "VoteValidation",
   VoteValidationError: "VoteValidationError",
   VoteValidationSuccess: "VoteValidationSuccess",
-  /* eslint-disable sort-keys */
+
   CosmosEditMemo: "CosmosEditMemo",
   CosmosDelegationStarted: "CosmosDelegationStarted",
   CosmosDelegationValidator: "CosmosDelegationValidator",
@@ -281,6 +284,16 @@ export const ScreenName = {
 
   NotificationCenterNews: "NotificationCenterNews",
   NotificationCenterStatus: "NotificationCenterStatus",
+
+  SignTransactionSummary: "SignTransactionSummary",
+  SignTransactionSelectDevice: "SignTransactionSelectDevice",
+  SignTransactionConnectDevice: "SignTransactionConnectDevice",
+  SignTransactionValidationError: "SignTransactionValidationError",
+
+  RequestAccountsSelectCrypto: "RequestAccountsSelectCrypto",
+  RequestAccountsSelectAccount: "RequestAccountsSelectAccount",
+
+  VerifyAccount: "VerifyAccount",
 };
 
 export const NavigatorName = {
@@ -291,6 +304,7 @@ export const NavigatorName = {
   AccountSettings: "AccountSettings",
   AddAccounts: "AddAccounts",
   Exchange: "Exchange",
+  ExchangeProviders: "ExchangeProviders",
   ExchangeBuyFlow: "ExchangeBuyFlow",
   ExchangeSellFlow: "ExchangeSellFlow",
   Base: "Base",
@@ -325,6 +339,9 @@ export const NavigatorName = {
   LendingSupplyFlow: "LendingSupplyFlow",
   LendingWithdrawFlow: "LendingWithdrawFlow",
   /* eslint-disable sort-keys */
+  SignTransaction: "SignTransaction",
+  RequestAccount: "RequestAccount",
+  RequestAccountsAddAccounts: "RequestAccountsAddAccounts",
 
   // Polkadot
   PolkadotBondFlow: "PolkadotBondFlow",

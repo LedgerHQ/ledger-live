@@ -9,7 +9,6 @@ import TrackScreen from "../analytics/TrackScreen";
 import StyledStatusBar from "./StyledStatusBar";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import getWindowDimensions from "../logic/getWindowDimensions";
-import ExperimentalHeader from "../screens/Settings/Experimental/ExperimentalHeader";
 
 let isModalOpenedref = false;
 
@@ -83,7 +82,6 @@ const BottomModal = ({
         hideModalContentWhileAnimating
         style={[styles.root, propStyles || {}]}
       >
-        <ExperimentalHeader />
         <View
           style={[
             styles.modal,
