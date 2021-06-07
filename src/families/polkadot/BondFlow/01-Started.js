@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   bulletItemContainer: {
-    height: 48,
+    minHeight: 48,
   },
   bulletItem: {
     fontSize: 14,

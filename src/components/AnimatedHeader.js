@@ -7,7 +7,11 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import {
+  useNavigation,
+  useTheme,
+  useIsFocused,
+} from "@react-navigation/native";
 import Animated from "react-native-reanimated";
 
 import Styles from "../navigation/styles";
@@ -16,7 +20,7 @@ import { normalize, width } from "../helpers/normalizeSize";
 import ArrowLeft from "../icons/ArrowLeft";
 import Close from "../icons/Close";
 
-const { interpolate, Extrapolate } = Animated;
+const { interpolateNode, Extrapolate } = Animated;
 
 const hitSlop = {
   bottom: 10,
@@ -91,6 +95,7 @@ export default function AnimatedHeaderView({
   }, []);
 
   const [scrollY] = useState(new Animated.Value(0));
+  const isFocused = useIsFocused();
 
   const event = Animated.event([
     { nativeEvent: { contentOffset: { y: scrollY } } },
@@ -99,18 +104,18 @@ export default function AnimatedHeaderView({
     },
   ]);
 
-  const translateY = interpolate(scrollY, {
+  const translateY = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [0, -50],
     extrapolate: Extrapolate.CLAMP,
   });
-  const translateX = interpolate(scrollY, {
+  const translateX = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [0, -5],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const scale = interpolate(scrollY, {
+  const scale = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [1, 0.8],
     extrapolate: Extrapolate.CLAMP,
@@ -161,7 +166,8 @@ export default function AnimatedHeaderView({
         <Animated.ScrollView
           onScroll={event}
           scrollEventThrottle={10}
-          contentContainerStyle={[styles.scrollArea]}
+          contentContainerStyle={styles.scrollArea}
+          testID={isFocused ? "ScrollView" : undefined}
         >
           {children}
         </Animated.ScrollView>

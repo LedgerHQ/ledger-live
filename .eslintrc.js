@@ -8,7 +8,7 @@ module.exports = {
       },
     },
   },
-  plugins: ["prettier"],
+  plugins: ["prettier", "detox"],
   rules: {
     "no-console": [
       "error",
@@ -57,6 +57,11 @@ module.exports = {
     "react/destructuring-assignment": 0,
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    // for importing detox
+    "import/no-extraneous-dependencies": [
+      "error",
+      { devDependencies: ["e2e/**"] },
+    ],
 
     // New rules from default RN 0.61 ruleset
     // that were triggered in our codebase

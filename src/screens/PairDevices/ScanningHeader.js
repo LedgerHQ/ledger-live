@@ -3,6 +3,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
+import Config from "react-native-config";
 import { getDeviceModel } from "@ledgerhq/devices";
 import LText from "../../components/LText";
 import BluetoothScanning from "../../components/BluetoothScanning";
@@ -13,7 +14,7 @@ class ScanningHeader extends PureComponent<Props> {
   render() {
     return (
       <View style={styles.root}>
-        <BluetoothScanning isAnimated />
+        <BluetoothScanning isAnimated={!Config.MOCK} />
         <View style={styles.TitleContainer}>
           <LText secondary semiBold style={styles.TitleText}>
             <Trans

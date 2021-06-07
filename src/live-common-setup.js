@@ -1,7 +1,7 @@
 // @flow
 import Config from "react-native-config";
-import { Observable } from "rxjs/Observable";
-import { map } from "rxjs/operators/map";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import { listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";

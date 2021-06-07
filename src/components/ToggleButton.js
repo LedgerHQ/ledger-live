@@ -1,7 +1,7 @@
 // @flow
 import React, { useCallback, useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import Animated, { Easing } from "react-native-reanimated";
+import Animated, { EasingNode } from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 
@@ -14,7 +14,7 @@ const {
   timing,
   Clock,
   Value,
-  interpolate,
+  interpolateNode,
 } = Animated;
 
 /**
@@ -34,7 +34,7 @@ const runTranslate = (clock, value, dest) => {
   const config = {
     duration: new Value(150),
     toValue: new Value(1),
-    easing: Easing.inOut(Easing.quad),
+    easing: EasingNode.inOut(EasingNode.quad),
   };
 
   return block([
@@ -95,7 +95,7 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
   ]);
 
   // interpolated height from opening anim state for list container
-  const left = interpolate(openingAnim, {
+  const left = interpolateNode(openingAnim, {
     inputRange: [0, options.length - 1],
     outputRange: [0, ((options.length - 1) * width) / options.length],
   });

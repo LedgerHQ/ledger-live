@@ -19,6 +19,7 @@ import Animation from "../Animation";
 export type InfoStepViewProps = {
   trackPage?: string,
   title?: React$Node,
+  warning?: React$Node,
   descs?: React$Node[],
   image?: number,
   lottie?: number,
@@ -41,17 +42,20 @@ export type InfoStepViewProps = {
   },
   ctaWarningCheckbox?: { desc: React$Node },
   children?: React$Node,
+  ctaEvent?: string,
   isActive?: boolean,
 };
 
 export function InfoStepView({
   title,
+  warning,
   descs,
   image,
   lottie,
   lottieStyle,
   bullets,
   ctaText,
+  ctaEvent = "Proceed",
   ctaWarningModal,
   ctaWarningCheckbox,
   children,
@@ -112,6 +116,7 @@ export function InfoStepView({
                   {title}
                 </LText>
               )}
+              {warning}
               {descs &&
                 descs.map((d, i) => (
                   <LText
@@ -214,6 +219,7 @@ export function InfoStepView({
             onPress={
               isDisabled ? () => {} : ctaWarningModal ? onOpenInfoModal : onNext
             }
+            testID={isDisabled ? undefined : ctaEvent}
           >
             <LText
               semiBold

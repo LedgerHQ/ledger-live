@@ -52,6 +52,7 @@ export default function MainNavigator({
           tabBarIcon: (props: any) => (
             <TabIcon Icon={AccountsIcon} i18nKey="tabs.accounts" {...props} />
           ),
+          tabBarTestID: "TabBarAccounts",
         }}
       />
       <Tab.Screen
@@ -67,6 +68,7 @@ export default function MainNavigator({
         component={ManagerNavigator}
         options={{
           tabBarIcon: (props: any) => <ManagerTabIcon {...props} />,
+          tabBarTestID: "TabBarManager",
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {

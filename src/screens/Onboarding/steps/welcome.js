@@ -13,12 +13,13 @@ import { Trans } from "react-i18next";
 import { useClock, loop } from "react-native-redash/lib/module/v1";
 import Animated, {
   set,
-  interpolate,
+  interpolateNode,
   Extrapolate,
   useCode,
-  Easing,
+  EasingNode,
   multiply,
 } from "react-native-reanimated";
+import Config from "react-native-config";
 import { useTheme } from "@react-navigation/native";
 import Touchable from "../../../components/Touchable";
 import LText from "../../../components/LText";
@@ -67,15 +68,17 @@ function OnboardingStepWelcome({ navigation }: *) {
 
   useCode(
     () =>
-      set(
-        animY,
-        loop({
-          duration: 10000,
-          easing: Easing.inOut(Easing.ease),
-          clock: clockY,
-          boomerang: true,
-        }),
-      ),
+      !Config.MOCK
+        ? set(
+            animY,
+            loop({
+              duration: 10000,
+              easing: EasingNode.inOut(EasingNode.ease),
+              clock: clockY,
+              boomerang: true,
+            }),
+          )
+        : undefined,
     [],
   );
 
@@ -85,43 +88,45 @@ function OnboardingStepWelcome({ navigation }: *) {
 
   useCode(
     () =>
-      set(
-        animX,
-        loop({
-          duration: 8000,
-          easing: Easing.inOut(Easing.ease),
-          clock: clockX,
-          boomerang: true,
-        }),
-      ),
+      !Config.MOCK
+        ? set(
+            animX,
+            loop({
+              duration: 8000,
+              easing: EasingNode.inOut(EasingNode.ease),
+              clock: clockX,
+              boomerang: true,
+            }),
+          )
+        : undefined,
     [],
   );
 
-  const translateY = interpolate(animX, {
+  const translateY = interpolateNode(animX, {
     inputRange: [0, 1],
     outputRange: [-25, 5],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const translateX = interpolate(animY, {
+  const translateX = interpolateNode(animY, {
     inputRange: [0, 1],
     outputRange: [-10, 10],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const translateY1 = interpolate(multiply(animX, -1), {
+  const translateY1 = interpolateNode(multiply(animX, -1), {
     inputRange: [0, 1],
     outputRange: [-10, 15],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const translateX2 = interpolate(animY, {
+  const translateX2 = interpolateNode(animY, {
     inputRange: [0, 1],
     outputRange: [-5, 5],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const translateY2 = interpolate(animX, {
+  const translateY2 = interpolateNode(animX, {
     inputRange: [0, 1],
     outputRange: [15, -20],
     extrapolate: Extrapolate.CLAMP,

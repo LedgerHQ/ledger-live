@@ -59,6 +59,7 @@ function DeviceItem({
       withArrow={withArrow}
       onPress={onPress}
       event="DeviceItemEnter"
+      testID={`DeviceItemEnter ${deviceMeta.deviceName ?? ""}`}
       onMore={onMore}
       disabled={disabled}
       icon={

@@ -19,8 +19,6 @@ target 'ledgerlivemobile' do
   pod 'ledger-core-objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
   pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
 
-  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
-
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
     # Pods for testing
@@ -30,22 +28,21 @@ target 'ledgerlivemobile' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  use_flipper!()
-
+  use_flipper!({ 'Flipper' => '0.87.0' })
   post_install do |installer|
-    react_native_post_install(installer)
-
-    installer.pods_project.targets.each do |target|
-      if target.name == 'react-native-config'
-        phase = target.project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
-        phase.shell_script = "cd ../../"\
-                             " && RNC_ROOT=./node_modules/react-native-config/"\
-                             " && export SYMROOT=$RNC_ROOT/ios/ReactNativeConfig"\
-                             " && ruby $RNC_ROOT/ios/ReactNativeConfig/BuildDotenvConfig.ruby"
-        target.build_phases << phase
-        target.build_phases.move(phase,0)
-      end
-    end
-
+    flipper_post_install(installer)
   end
+end
+
+def find_and_replace(dir, findstr, replacestr)
+  Dir[dir].each do |name|
+    text = File.read(name)
+    replace = text.gsub(findstr,replacestr)
+    if text != replace
+      puts "Fix: " + name
+      File.open(name, "w") { |file| file.puts replace }
+      STDOUT.flush
+    end
+  end
+  Dir[dir + '*/'].each(&method(:find_and_replace))
 end

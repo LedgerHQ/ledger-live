@@ -19,6 +19,11 @@ export default (arg: {
     address: string,
     chainCode: string,
   }>,
+  getAppAndVersion: () => Promise<{
+    name: string,
+    version: string,
+    flags: number,
+  }>,
 }): ApduMock => {
   async function exchange(input: Buffer) {
     await delay(100);
@@ -73,6 +78,23 @@ export default (arg: {
         } catch (e) {
           return genericErrorResponse;
         }
+      }
+      case "b001": {
+        // get app and version
+        const data = await arg.getAppAndVersion();
+        const name = Buffer.from(data.name, "ascii");
+        const version = Buffer.from(data.version, "ascii");
+        const flags = Buffer.from([data.flags]);
+        return Buffer.concat([
+          Buffer.from([1]),
+          Buffer.from([name.length]),
+          name,
+          Buffer.from([version.length]),
+          version,
+          Buffer.from([flags.length]),
+          flags,
+          successResponse,
+        ]);
       }
       default:
         return successResponse;

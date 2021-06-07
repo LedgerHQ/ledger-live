@@ -4,6 +4,7 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import LottieView from "lottie-react-native";
+import Config from "react-native-config";
 import { getDeviceModel } from "@ledgerhq/devices";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import BulletList from "../../components/BulletList";
@@ -18,7 +19,7 @@ class PendingPairing extends PureComponent<*> {
         <LottieView
           style={styles.anim}
           source={require("../../animations/pairing.json")}
-          autoPlay
+          autoPlay={!Config.MOCK}
           loop
         />
         <View style={styles.list}>

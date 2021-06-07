@@ -12,6 +12,7 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
+import { BigNumber } from "bignumber.js";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName, NavigatorName } from "../../const";
 import { TrackScreen } from "../../analytics";
@@ -49,6 +50,8 @@ export type RouteParams = {
   nextNavigation?: string,
   overrideAmountLabel?: string,
   hideTotal?: boolean,
+  customGasPrice?: BigNumber,
+  customGasLimit?: BigNumber,
 };
 
 const defaultParams = {
@@ -176,7 +179,11 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
-      <TrackScreen category="SendFunds" name="Summary" />
+      <TrackScreen
+        category="SendFunds"
+        name="Summary"
+        currencyName={currency.name}
+      />
       <NavigationScrollView style={styles.body}>
         {transaction.useAllAmount && hasNonEmptySubAccounts ? (
           <View style={styles.infoBox}>
@@ -213,6 +220,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
           overrideAmountLabel={overrideAmountLabel}
         />
         <SendRowsFee
+          setTransaction={setTransaction}
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}

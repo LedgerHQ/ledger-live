@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import connectManager from "@ledgerhq/live-common/lib/hw/connectManager";
@@ -15,6 +15,16 @@ const action = createAction(connectManager);
 
 const Connect = ({ setResult }: { setResult: (result: any) => void }) => {
   const [device, setDevice] = useState(null);
+  const [result, setLocalResult] = useState();
+
+  const onModalHide = useCallback(() => {
+    if (result) {
+      // Nb need this in order to wait for the first modal to hide
+      // see https://github.com/react-native-modal/react-native-modal#i-cant-show-multiple-modals-one-after-another
+      setResult(result);
+    }
+  }, [result, setResult]);
+
   const { colors } = useTheme();
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -25,8 +35,9 @@ const Connect = ({ setResult }: { setResult: (result: any) => void }) => {
       <SelectDevice onSelect={setDevice} autoSelectOnAdd />
       <DeviceActionModal
         onClose={setDevice}
-        device={device}
-        onResult={setResult}
+        onModalHide={onModalHide}
+        device={result ? null : device}
+        onResult={setLocalResult}
         action={action}
         request={null}
       />

@@ -1,6 +1,11 @@
 // @flow
+import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
+import { selectedTimeRangeSelector } from "../reducers/settings";
 
 export type CurrencySettings = {
   confirmationsNb: number,
@@ -166,3 +171,29 @@ export const setLanguage = (payload: string) => ({
   type: "SETTINGS_SET_LANGUAGE",
   payload,
 });
+
+type PortfolioRangeOption = {
+  key: PortfolioRange,
+  value: string,
+  label: string,
+};
+
+export function useTimeRange() {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const val = useSelector(selectedTimeRangeSelector);
+  const setter = useCallback(
+    (_range: PortfolioRange | PortfolioRangeOption) => {
+      const range = typeof _range === "string" ? _range : _range.key;
+      dispatch(setSelectedTimeRange(range));
+    },
+    [dispatch],
+  );
+  const ranges: PortfolioRange[] = ["day", "week", "month", "year", "all"];
+  const options = ranges.map<PortfolioRangeOption>(key => ({
+    key,
+    value: t(`common:time.${key}`),
+    label: t(`common:time.${key}`),
+  }));
+  return [val, setter, options];
+}

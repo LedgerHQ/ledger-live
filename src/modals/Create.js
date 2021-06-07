@@ -95,7 +95,7 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
       />
       <BottomModalChoice
         event="TransferLending"
-        title={t("transfer.lending.title")}
+        title={t("transfer.lending.titleTransferTab")}
         Icon={IconLending}
         onPress={accountsCount > 0 && !readOnlyModeEnabled ? onLending : null}
       />

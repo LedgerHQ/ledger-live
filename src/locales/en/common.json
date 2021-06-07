@@ -59,6 +59,8 @@
     "installed": "Installed",
     "uninstall": "Uninstall",
     "fromNow": {
+      "seconds": "in one second",
+      "seconds_plural": "in {{time}} seconds",
       "minutes": "in one minute",
       "minutes_plural": "in {{time}} minutes",
       "hours": "in one hour",
@@ -67,6 +69,8 @@
       "days_plural": "in {{time}} days"
     },
     "timeAgo": {
+      "seconds": "one second ago",
+      "seconds_plural": "{{time}} seconds ago",
       "minutes": "one minute ago",
       "minutes_plural": "{{time}} minutes ago",
       "hours": "one hour ago",
@@ -234,10 +238,6 @@
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address.",
       "description": null
-    },
-    "EnpointConfig": {
-      "title": "Invalid endpoint",
-      "description": "Please enter a valid endpoint."
     },
     "Touch ID Error": {
       "title": "Biometric authentication failed",
@@ -484,8 +484,8 @@
       "description": "Please try again with a better network connection (websocket failed)."
     },
     "WrongDeviceForAccount": {
-      "title": "Sorry, wrong device for {{accountName}}",
-      "description": "The connected device is not associated with the account selected. Please connect the corresponding device."
+      "title": "Something went wrong",
+      "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
     "UnexpectedBootloader": {
       "title": "Sorry, your device must not be in Bootloader mode",
@@ -574,7 +574,7 @@
   "location": {
     "required": "Location services required",
     "open": "Open location settings",
-    "disabled": "Ledger Live requires location services to pair your device through Bluethooth.",
+    "disabled": "Ledger Live requires location services to pair your device through Bluetooth.",
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
@@ -636,7 +636,8 @@
   "graph": {
     "week": "1W",
     "month": "1M",
-    "year": "1Y"
+    "year": "1Y",
+    "all": "ALL"
   },
   "carousel": {
     "title": "Close banner?",
@@ -650,23 +651,27 @@
       },
       "academy": {
         "title": "Ledger Academy",
-        "description": "Everything you need to know about crypto"
+        "description": "Everything you need to\nknow about crypto"
       },
       "stakeCosmos": {
         "title": "Stake COSMOS",
         "description": "Delegate your ATOM earn rewards today."
       },
+      "polkastake": {
+        "title": "POLKADOT STAKING",
+        "description": "Stake, secure and\nmanage your DOT with\nLedger Live"
+      },
       "backupPack": {
         "title": "Back-up pack",
-        "description": "Secure your assets with a Nano X and Nano S."
+        "description": "A Nano X and a Nano S\nfor optimal protection"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
-        "description": "Buy cryptocurrencies from Ledger Live."
+        "description": "Buy crypto on\nLedger Live"
       },
       "swap": {
         "title": "Swap crypto",
-        "description": "Securely exchange one crypto for another."
+        "description": "Securely exchange one\ncrypto for another"
       },
       "algorand": {
         "title": "Algorand",
@@ -1184,6 +1189,13 @@
         "failText": "Don’t worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety. Only one quick step left!",
         "cta": "Next step"
       }
+    },
+    "warning": {
+      "recoveryPhrase": {
+        "title": "Do not use a recovery phrase that you have not generated yourself.",
+        "desc": "Your Ledger hardware wallet’s pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
+        "supportLink": "Contact customer support"
+      }
     }
   },
   "tabs": {
@@ -1236,10 +1248,11 @@
     "mbUnit": "{{size}} Mb"
   },
   "time": {
-    "day": "Day",
-    "week": "Week",
-    "month": "Month",
-    "year": "Year",
+    "day": "1D",
+    "week": "1W",
+    "month": "1M",
+    "year": "1Y",
+    "all": "All",
     "since": {
       "day": "past day",
       "week": "past week",
@@ -1883,6 +1896,7 @@
     },
     "lending": {
       "title": "Lend crypto",
+      "titleTransferTab": "Lend",
       "actionTitle": "Lend",
       "accountActions": {
         "approve": "Approve",
@@ -1973,7 +1987,7 @@
       },
       "noTokenAccount": {
         "info": {
-          "title": "You don’t have {{ name }} account.",
+          "title": "You don’t have a {{ name }} account.",
           "description": "In order to deposit funds and lend crypto you need a {{ name }} account. Please Receive funds on your Ethereum address."
         },
         "buttons": {
@@ -2130,6 +2144,9 @@
       "gasPrice": "Gas price",
       "maxFees": "Max fees",
       "validateGasLimit": "Validate gas limit",
+      "fees": "Fees",
+      "validateFees": "Validate Fees",
+      "customizeFees": "Customize Fees",
       "memo": {
         "title": "Memo",
         "type": "Memo type",
@@ -2157,12 +2174,18 @@
       "edit": {
         "title": "Choose unit"
       },
-      "ethTokenNetworkFees": "Network fees for ERC20 token operations are paid in ETH."
+      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction"
     },
     "verification": {
       "streaming": {
         "accurate": "Loading... ({{percentage}})",
         "inaccurate": "Loading..."
+      }
+    },
+    "info": {
+      "maxSpendable": {
+        "title": "Max spendable amount",
+        "description": "The maximum spendable amount is the total balance in an account that is available to send in a transaction."
       }
     }
   },
@@ -2357,6 +2380,7 @@
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to the Manager to update it.",
     "quitApp": "Quit the application on your device",
     "appNotInstalled": "Please install the {{appName}} app",
+    "appNotInstalled_plural": "Please install the {{appName}} apps",
     "verifyAddress": {
       "title": "Verify address on device",
       "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."
@@ -2371,7 +2395,11 @@
     },
     "button": {
       "openManager": "Open Manager"
-    }
+    },
+    "installApp": "{{appName}} App installation {{percentage}}",
+    "installAppDescription": "Please wait until the installation is finished",
+    "listApps": "Checking App dependencies",
+    "listAppsDescription": "Please wait while we make sure you have all the required apps"
   },
   "SelectDevice": {
     "title": "Pair new device",

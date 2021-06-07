@@ -3,6 +3,7 @@ import "../shim";
 import "./polyfill";
 import "./live-common-setup";
 import "./implement-react-native-libcore";
+import "../e2e/e2e-bridge-setup";
 import "react-native-gesture-handler";
 import React, {
   Component,
@@ -23,16 +24,11 @@ import {
 import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
-import {
-  useLinking,
-  NavigationContainer,
-  getStateFromPath,
-} from "@react-navigation/native";
+import { useLinking, NavigationContainer } from "@react-navigation/native";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/lib/sanityChecks";
-import _ from "lodash";
 import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/react";
 import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 
@@ -58,7 +54,6 @@ import AnalyticsConsole from "./components/AnalyticsConsole";
 import ThemeDebug from "./components/ThemeDebug";
 import { BridgeSyncProvider } from "./bridge/BridgeSyncContext";
 import useDBSaveEffect from "./components/DBSave";
-import DebugRejectSwitch from "./components/DebugRejectSwitch";
 import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
@@ -180,59 +175,39 @@ function App({ importDataString }: AppProps) {
 
       <RootNavigator importDataString={importDataString} />
 
-      <DebugRejectSwitch />
-
       <AnalyticsConsole />
       <ThemeDebug />
     </View>
   );
 }
 
-/*
-Monkey patching Linking in order to transform wc: schemes to ledgerlive schemes in order
-to play correctly with react navigation.
-*/
-
-const fixURL = url => {
-  let NEWurl = url;
-  if (url && url.substr(0, 3) === "wc:") {
-    NEWurl = `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
+function getProxyURL(url: ?string) {
+  if (typeof url === "string" && url.substr(0, 3) === "wc:") {
+    return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
-  return NEWurl;
-};
 
-const OGgetInitialURL = Linking.getInitialURL.bind(Linking);
-// $FlowFixMe
-Linking.getInitialURL = () => OGgetInitialURL().then(fixURL);
-
-const NEWcallbacks = [];
-const OGcallbacks = [];
-const OGaddEventListener = Linking.addEventListener.bind(Linking);
-const OGremoveEventListener = Linking.removeEventListener.bind(Linking);
-// $FlowFixMe
-Linking.addEventListener = (evt, OGcallback) => {
-  let NEWcallback = OGcallback;
-  if (evt === "url") {
-    NEWcallback = ({ url }) => OGcallback({ url: fixURL(url) });
-    OGcallbacks.push(OGcallback);
-    NEWcallbacks.push(NEWcallback);
-  }
-  return OGaddEventListener(evt, NEWcallback);
-};
-// $FlowFixMe
-Linking.removeEventListener = (evt, OGcallback) => {
-  let NEWcallback = OGcallback;
-  if (evt === "url") {
-    const index = _.findLastIndex(OGcallbacks, OGcallback);
-    NEWcallback = NEWcallbacks[index];
-    _.pull(NEWcallbacks, NEWcallback);
-    _.pull(OGcallbacks, OGcallback);
-  }
-  return OGremoveEventListener(evt, NEWcallback);
-};
+  return url;
+}
 
 // DeepLinking
-const linking = {
+const linkingOptions = {
+  async getInitialURL() {
+    const url = await Linking.getInitialURL();
+    return getProxyURL(url);
+  },
+  subscribe(listener) {
+    function onReceiveURL({ url: _url }: { url: string }) {
+      const url = getProxyURL(_url);
+      listener(url);
+    }
+
+    Linking.addEventListener("url", onReceiveURL);
+
+    return () => {
+      // Clean up the event listeners
+      Linking.removeEventListener("url", onReceiveURL);
+    };
+  },
   prefixes: ["ledgerlive://"],
   config: {
     [NavigatorName.Base]: {
@@ -270,6 +245,15 @@ const linking = {
             [ScreenName.ReceiveSelectAccount]: "receive",
           },
         },
+        [NavigatorName.Swap]: {
+          screens: {
+            /**
+             * @params ?currency: string
+             * ie: "ledgerhq://receive?currency=bitcoin" will open the prefilled search account in the receive flow
+             */
+            [ScreenName.Swap]: "swap",
+          },
+        },
         [NavigatorName.SendFunds]: {
           screens: {
             /**
@@ -302,18 +286,12 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const wcContext = useContext(_wcContext);
 
-  const enabled =
-    hasCompletedOnboarding && wcContext.initDone && !wcContext.session.session;
-
   const { getInitialState } = useLinking(navigationRef, {
-    ...linking,
-    getStateFromPath(path, config) {
-      if (!enabled) {
-        // Our current version of react navigation does not support the enable param
-        return null;
-      }
-      return getStateFromPath(path, config);
-    },
+    ...linkingOptions,
+    enabled:
+      hasCompletedOnboarding &&
+      wcContext.initDone &&
+      !wcContext.session.session,
   });
 
   const [isReady, setIsReady] = React.useState(false);

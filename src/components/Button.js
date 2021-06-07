@@ -1,6 +1,12 @@
 /* @flow */
 
-import React, { useEffect, useState, useCallback, memo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  memo,
+  useContext,
+} from "react";
 import { RectButton } from "react-native-gesture-handler";
 import {
   StyleSheet,
@@ -10,7 +16,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useIsFocused } from "@react-navigation/native";
+import Config from "react-native-config";
 import LText from "./LText";
 import ButtonUseTouchable from "../context/ButtonUseTouchable";
 import { track } from "../analytics";
@@ -53,18 +60,29 @@ export type BaseButtonProps = {
   event?: string,
   eventProperties?: Object,
   size?: number,
+  testID?: string,
   pending?: boolean,
 };
 
 type Props = BaseButtonProps & {
   useTouchable: boolean,
+  colors: *,
+  isFocused: boolean,
 };
 
-const ButtonWrapped = (props: BaseButtonProps) => (
-  <ButtonUseTouchable.Consumer>
-    {useTouchable => <Button {...props} useTouchable={useTouchable} />}
-  </ButtonUseTouchable.Consumer>
-);
+function ButtonWrapped(props: BaseButtonProps) {
+  const { colors } = useTheme();
+  const isFocused = useIsFocused();
+  const useTouchable = useContext(ButtonUseTouchable);
+  return (
+    <Button
+      {...props}
+      useTouchable={useTouchable}
+      colors={colors}
+      isFocused={isFocused}
+    />
+  );
+}
 
 function Button({
   // required props
@@ -217,18 +235,22 @@ function Button({
 
   const titleSliderStyle = [
     styles.slider,
-    {
-      opacity: titleOpacity,
-      transform: [{ translateY: titleSliderOffset }],
-    },
+    !Config.MOCK
+      ? {
+          opacity: titleOpacity,
+          transform: [{ translateY: titleSliderOffset }],
+        }
+      : undefined,
   ];
 
   const spinnerSliderStyle = [
     styles.spinnerSlider,
-    {
-      opacity: anim,
-      transform: [{ translateY: spinnerSliderOffset }],
-    },
+    !Config.MOCK
+      ? {
+          opacity: anim,
+          transform: [{ translateY: spinnerSliderOffset }],
+        }
+      : undefined,
   ];
 
   const Container = useTouchable
@@ -238,6 +260,18 @@ function Button({
     : RectButton;
   const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
 
+  function getTestID() {
+    if (isDisabled || !otherProps.isFocused) return undefined;
+    if (otherProps.testID) return otherProps.testID;
+
+    switch (type) {
+      case "primary":
+        return "Proceed";
+      default:
+        return otherProps.event;
+    }
+  }
+
   return (
     // $FlowFixMe
     <Container
@@ -245,6 +279,7 @@ function Button({
       style={mainContainerStyle}
       {...containerSpecificProps}
       {...otherProps}
+      testID={getTestID()}
     >
       {needsBorder ? <View style={borderStyle} /> : null}
 
@@ -269,7 +304,10 @@ function Button({
       </Animated.View>
 
       <Animated.View style={spinnerSliderStyle}>
-        <ActivityIndicator color={theme.disabledTitle.color} />
+        <ActivityIndicator
+          color={theme.disabledTitle.color}
+          animating={!Config.MOCK}
+        />
       </Animated.View>
     </Container>
   );

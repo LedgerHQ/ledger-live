@@ -12,6 +12,7 @@ import restoreDevice from "../assets/restoreDevice.png";
 import Touchable from "../../../components/Touchable";
 import AnimatedHeaderView from "../../../components/AnimatedHeader";
 import { ScreenName } from "../../../const";
+import RecoveryPhraseWarning from "../shared/RecoveryPhraseWarning";
 
 type Props = {
   navigation: *,
@@ -27,6 +28,7 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
     },
     [navigation, route],
   );
+
   const useCases = useMemo(
     () =>
       Platform.OS === "ios" && deviceModelId !== "nanoX"
@@ -36,6 +38,7 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
               route: ScreenName.OnboardingImportAccounts,
               image: desktopSync,
               event: "Onboarding - Setup Import Accounts",
+              showRecoveryWarning: true,
             },
           ]
         : [
@@ -51,6 +54,7 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
               next: ScreenName.OnboardingFinish,
               event: "Onboarding - Connect",
               key: "devicePairing",
+              showRecoveryWarning: true,
             },
             {
               route: ScreenName.OnboardingImportAccounts,
@@ -82,9 +86,11 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
                 <Trans i18nKey={`onboarding.stepUseCase.${item.key}.title`} />
               </LText>
             )}
+            {item.showRecoveryWarning && <RecoveryPhraseWarning />}
             <Touchable
               event={item.event}
               eventProperties={{ deviceId: deviceModelId }}
+              testID={`${item.event}|${deviceModelId}`}
               onPress={() => next(item)}
               style={[styles.button, { backgroundColor: colors.lightLive }]}
             >

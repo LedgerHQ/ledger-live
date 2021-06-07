@@ -17,6 +17,7 @@ type Props = {
   onPress?: () => any,
   onMore?: () => any,
   primary?: boolean,
+  testID?: string,
 };
 
 function Item({
@@ -29,13 +30,18 @@ function Item({
   title,
   description,
   withArrow,
+  testID,
 }: Props) {
   const { colors } = useTheme();
 
   return (
     <View style={styles.outer}>
       <View style={styles.inner}>
-        <Touchable event={event} onPress={disabled ? undefined : onPress}>
+        <Touchable
+          event={event}
+          onPress={disabled ? undefined : onPress}
+          testID={testID}
+        >
           <View
             style={[
               styles.root,

@@ -25,6 +25,7 @@ export default function AddAccount() {
       event="OpenAddAccountModal"
       style={{ marginHorizontal: 16 }}
       onPress={openAddModal}
+      testID="OpenAddAccountModal"
     >
       <Icon name="plus" color={colors.grey} size={20} />
       <AddAccountsModal
