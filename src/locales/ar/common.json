@@ -1,55 +1,55 @@
 {
   "common": {
     "cancel": "إلغاء",
-    "apply": "Apply",
-    "back": "Back",
-    "delete": "Delete",
+    "apply": "تطبيق",
+    "back": "عودة",
+    "delete": "حذف",
     "paste": "Paste",
     "yes": "نعم",
-    "no": "No",
+    "no": "لا",
     "gotit": "Got it",
-    "continue": "Continue",
-    "retry": "Retry",
-    "done": "Done",
-    "sortBy": "Sort by",
-    "signOut": "Sign out",
-    "search": "Search",
-    "contactUs": "Contact Ledger Support",
-    "device": "Device",
-    "cryptoAsset": "Crypto asset",
-    "skip": "Skip",
-    "noCryptoFound": "No crypto assets found",
-    "needHelp": "Do you need help?",
-    "edit": "Edit",
-    "editName": "Edit name",
-    "close": "Close",
-    "confirm": "Confirm",
+    "continue": "متابعة",
+    "retry": "إعادة المحاولة",
+    "done": "تم",
+    "sortBy": "الفرز حسب",
+    "signOut": "تسجيل الخروج",
+    "search": "بحث",
+    "contactUs": "الاتصال بدعم ليدجر",
+    "device": "الجهاز",
+    "cryptoAsset": "أصل مشفر",
+    "skip": "تخطي",
+    "noCryptoFound": "لم يتم العثور على أي أصول مشفرة",
+    "needHelp": "هل تحتاج إلى مساعدة؟",
+    "edit": "تعديل",
+    "editName": "تعديل الاسم",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
     "poweredBy": "Powered by ",
-    "received": "Received",
-    "sent": "Sent",
+    "received": "تم الإستلام",
+    "sent": "مُرسل",
     "or": "OR",
-    "rename": "Rename",
-    "learnMore": "Learn more",
-    "viewDetails": "View details",
-    "today": "Today",
-    "yesterday": "Yesterday",
+    "rename": "إعادة تسمية",
+    "learnMore": "معرفة المزيد",
+    "viewDetails": "عرض التفاصيل",
+    "today": "اليوم",
+    "yesterday": "أمس",
     "upToDate": "Up to date",
     "transactionDate": "Transaction date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
-    "notAvailable": "Not available",
+    "notAvailable": "غير متاح",
     "import": "Import",
-    "bluetooth": "Bluetooth",
+    "bluetooth": "بلوتوث",
     "usb": "USB",
-    "add": "Add",
-    "slow": "slow",
-    "fast": "fast",
-    "token": "Token",
-    "token_plural": "Tokens",
+    "add": "أضف",
+    "slow": "بطىء",
+    "fast": "سريع",
+    "token": "رمز",
+    "token_plural": "رموز",
     "subaccount": "Subaccount",
     "subaccount_plural": "Subaccounts",
-    "forgetDevice": "Remove device",
-    "help": "Help",
+    "forgetDevice": "إزالة الجهاز",
+    "help": "مساعدة",
     "saveLogs": "Save logs",
     "sync": {
       "ago": "Synchronized {{time}}"
@@ -59,14 +59,14 @@
     "installed": "Installed",
     "uninstall": "Uninstall",
     "fromNow": {
-      "seconds": "in one second",
-      "seconds_plural": "in {{time}} seconds",
-      "minutes": "in one minute",
-      "minutes_plural": "in {{time}} minutes",
-      "hours": "in one hour",
-      "hours_plural": "in {{time}} hours",
-      "days": "in one day",
-      "days_plural": "in {{time}} days"
+      "seconds": "خلال ثانية واحدة",
+      "seconds_plural": "خلال {{time}} ثواني",
+      "minutes": "خلال دقيقة واحدة",
+      "minutes_plural": "خلال {{time}} دقائق",
+      "hours": "خلال ساعة واحدة",
+      "hours_plural": "خلال {{time}} ساعات",
+      "days": "خلال يوم واحد",
+      "days_plural": "خلال {{time}} أيام"
     },
     "timeAgo": {
       "seconds": "one second ago",
@@ -75,7 +75,7 @@
       "minutes_plural": "{{time}} minutes ago",
       "hours": "one hour ago",
       "hours_plural": "{{time}} hours ago",
-      "days": "yesterday",
+      "days": "أمس",
       "days_plural": "{{time}} days ago"
     },
     "seeMore": "See more",
@@ -103,18 +103,18 @@
       "description": "Please open the {{managerAppName}} app on your device."
     },
     "CantOpenDevice": {
-      "title": "Sorry, connection failed",
+      "title": "عذراً، فشل الاتصال",
       "description": "Your Ledger device must be unlocked and in range to use Bluetooth."
     },
     "CantScanQRCode": {
-      "title": "Could not scan this QR code: auto-verification not supported by this address."
+      "title": "تعذر إجراء المسح الضوئي لرمز QR: التحقق التلقائي غير معتمد لهذا العنوان."
     },
     "ConnectAppTimeout": {
-      "title": "Sorry, no device found",
+      "title": "عفوًا، لم يتم العثور على أي جهاز",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
     },
     "ConnectManagerTimeout": {
-      "title": "Sorry, Manager connection failed",
+      "title": "عذرًا، فشل الاتصال بالمدير",
       "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
     },
     "ClaimRewardsFeesWarning": {
@@ -122,19 +122,19 @@
       "description": ""
     },
     "CompoundLowerAllowanceOfActiveAccountError": {
-      "title": "You cannot reduce the amount approved while having an active deposit."
+      "title": "لا يمكنك تقليل المبلغ الموافق عليه عند وجود إيداع نشط."
     },
     "CosmosBroadcastCodeInternal": {
       "title": "Something went wrong (Error #1)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeTxDecode": {
       "title": "Something went wrong (Error #2)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeInvalidSequence": {
       "title": "Invalid sequence",
-      "description": "Please try again."
+      "description": "يرجى إعادة المحاولة."
     },
     "CosmosBroadcastCodeUnauthorized": {
       "title": "Unauthorized signature",
@@ -142,23 +142,23 @@
     },
     "CosmosBroadcastCodeInsufficientFunds": {
       "title": "Insufficient funds",
-      "description": "Please make sure the account has enough funds."
+      "description": "يرجى التأكد من وجود أرصدة مالية كافية في الحساب."
     },
     "CosmosBroadcastCodeUnknownRequest": {
       "title": "Something went wrong (Error #6)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeInvalidAddress": {
-      "title": "Invalid address",
-      "description": "Please check the address and try again."
+      "title": "عنوان غير صحيح",
+      "description": "يرجى التحقق من العنوان والمحاولة مرة أخرى."
     },
     "CosmosBroadcastCodeInvalidPubKey": {
       "title": "Something went wrong (Error #8)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeUnknownAddress": {
-      "title": "Unknown address",
-      "description": "Please check the address and try again."
+      "title": "عنوان غير معروف",
+      "description": "يرجى التحقق من العنوان والمحاولة مرة أخرى."
     },
     "CosmosBroadcastCodeInsufficientCoins": {
       "title": "Insufficient funds",
@@ -166,11 +166,11 @@
     },
     "CosmosBroadcastCodeInvalidCoins": {
       "title": "Something went wrong (Error #11)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeOutOfGas": {
       "title": "Something went wrong (Error #12)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeMemoTooLarge": {
       "title": "The Memo field is too long",
@@ -178,65 +178,65 @@
     },
     "CosmosBroadcastCodeInsufficientFee": {
       "title": "Something went wrong (Error #14)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeTooManySignatures": {
       "title": "Something went wrong (Error #15)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeGasOverflow": {
       "title": "Something went wrong (Error #16)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "CosmosBroadcastCodeNoSignatures": {
       "title": "Something went wrong (Error #17)",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "DeviceAppVerifyNotSupported": {
       "title": "Open Manager to update this app",
       "description": "The app verification is not supported."
     },
     "DeviceGenuineSocketEarlyClose": {
-      "title": "Sorry, try again (genuine-close)",
+      "title": "عفوًا، أعد المحاولة مرة أخرى (genuine-close)",
       "description": null
     },
     "DeviceHalted": {
-      "title": "Please restart your Ledger device and retry",
+      "title": "يرجى إعادة تشغيل جهاز ليدجر الخاص بك وإعادة المحاولة",
       "description": "An unexpected error occurred. Please try again."
     },
     "DeviceNotGenuine": {
-      "title": "Device possibly not genuine",
-      "description": "Please save your logs using the button below and provide them to Ledger Support."
+      "title": "من الوارد ألا يكون الجهاز أصليًا",
+      "description": "يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "DeviceNameInvalid": {
-      "title": "Please name the device without '{{invalidCharacters}}'."
+      "title": "يرجى تسمية الجهاز دون استخدام  '{{invalidCharacters}}'."
     },
     "DeviceOnDashboardExpected": {
       "title": "Device not on Dashboard",
       "description": "Please return to the Dashboard on your device."
     },
     "DeviceSocketFail": {
-      "title": "Sorry, connection failed",
-      "description": "Please try again."
+      "title": "عذراً، فشل الاتصال",
+      "description": "يرجى إعادة المحاولة."
     },
     "DeviceSocketNoBulkStatus": {
       "title": "The connection failed",
-      "description": "Please try again."
+      "description": "يرجى إعادة المحاولة."
     },
     "DeviceSocketNoHandler": {
-      "title": "Sorry, connection failed",
-      "description": "Please try again."
+      "title": "عذرًا، فشل الاتصال",
+      "description": "يرجى إعادة المحاولة."
     },
     "DisconnectedDevice": {
-      "title": "Sorry, it looks like your device was disconnected",
-      "description": "Please reconnect and try again."
+      "title": "عذراً، يبدو أنه قد انقطع الاتصال عن جهازك",
+      "description": "يرجى إعادة الاتصال و المحاولة مرة أخرى."
     },
     "DisconnectedDeviceDuringOperation": {
-      "title": "Sorry, it looks like your device was disconnected",
-      "description": "Please reconnect and try again."
+      "title": "عذراً، يبدو أنه قد انقطع الاتصال عن جهازك",
+      "description": "يرجى إعادة الاتصال و المحاولة مرة أخرى."
     },
     "ETHAddressNonEIP": {
-      "title": "Auto-verification not available: carefully verify the address.",
+      "title": "التحقق التلقائي غير متاح: تحقق بعناية من العنوان.",
       "description": null
     },
     "Touch ID Error": {
@@ -245,7 +245,7 @@
     },
     "Error": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please retry. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "حدث خطأ ما. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "FeeEstimationFailed": {
       "title": "Sorry, fee estimation failed",
@@ -262,15 +262,15 @@
       "description": "Please use the Manager to uninstall all apps then check if a firmware update is available before reinstalling them."
     },
     "GenuineCheckFailed": {
-      "title": "Device authentication failed",
-      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "فشل توثيق الجهاز",
+      "description": "حدث خطأ ما. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "HardResetFail": {
       "title": "Sorry, could not reset",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "InvalidAddress": {
-      "title": "This is not a valid {{currencyName}} address"
+      "title": "هذا ليس عنوان {{currencyName}} صحيح"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts must not be the same."
@@ -280,19 +280,19 @@
     },
     "LatestMCUInstalledError": {
       "title": "Sorry, there's nothing to update",
-      "description": "Please contact Ledger Support if you cannot use your device."
+      "description": "الرجاء الاتصال بدعم ليدجر إذا كنت لا تستطيع استخدام جهازك."
     },
     "LedgerAPIError": {
-      "title": "Sorry, try again (API HTTP {{status}})",
+      "title": "عذراً، أعد المحاولة مرة أخرى (API HTTP {{status}})",
       "description": "Unsuccessful calls to the Ledger API server. Please try again."
     },
     "LedgerAPIErrorWithMessage": {
       "title": "{{message}}",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "LedgerAPINotAvailable": {
       "title": "Sorry, {{currencyName}} services unavailable",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "ManagerAPIsFail": {
       "title": "Sorry, Manager services are unavailable",
@@ -307,11 +307,11 @@
       "description": "Please install the latest Bitcoin and Ethereum apps first."
     },
     "ManagerDeviceLocked": {
-      "title": "Your device is locked",
+      "title": "جهازك مقفل",
       "description": "Please unlock it."
     },
     "ManagerNotEnoughSpace": {
-      "title": "Not enough storage left",
+      "title": "لم يتبقى مساحة تخزين كافية",
       "info": "Please uninstall some apps to free up space for the {{app}} app.",
       "description": "Uninstalling apps has no impact on your assets."
     },
@@ -329,12 +329,12 @@
       "update": {
         "title": "App update in progress",
         "description": "Quitting the Manager will terminate update.",
-        "stay": "Continue update"
+        "stay": "متابعة التحديث"
       },
       "quit": "Quit Manager"
     },
     "ManagerUninstallBTCDep": {
-      "title": "Sorry, this app is needed",
+      "title": "عفوًا، هذا التطبيق مطلوب",
       "description": "Uninstall the Bitcoin or Ethereum app last."
     },
     "NetworkDown": {
@@ -342,12 +342,12 @@
       "description": "Please check your internet connection."
     },
     "NoAddressesFound": {
-      "title": "Sorry, no account was found",
-      "description": "Something went wrong with the address calculation. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "عفوًا، لم يتم العثور على أي حساب",
+      "description": "حدث خطأ ما في حساب العنوان. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient funds",
-      "description": "Please make sure the account has enough funds."
+      "description": "يرجى التأكد من وجود أرصدة مالية كافية في الحساب."
     },
     "NotEnoughGas": {
       "title": "Insufficient ETH for network fee",
@@ -360,7 +360,7 @@
       "title": "Insufficient balance in the parent account"
     },
     "NotEnoughSpendableBalance": {
-      "title": "Balance cannot be below {{minimumAmount}}"
+      "title": "لا يمكن للحساب أن يقل عن {{minimumAmount}}"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
       "title": "Minimum of {{minimalAmount}} needed to activate recipient address"
@@ -371,11 +371,11 @@
     },
     "PasswordIncorrect": {
       "title": "Incorrect password",
-      "description": "Please try again."
+      "description": "يرجى إعادة المحاولة."
     },
     "PasswordsDontMatch": {
       "title": "Password does not match",
-      "description": "Please try again."
+      "description": "يرجى إعادة المحاولة."
     },
     "SelectExchangesLoadError": {
       "title": "Unable to load",
@@ -387,23 +387,23 @@
     },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
-      "description": "Please try again."
+      "description": "يرجى إعادة المحاولة."
     },
     "TimeoutTagged": {
       "title": "Sorry, server took too long to respond ({{tag}})",
       "description": "Timeout occurred."
     },
     "TransactionRefusedOnDevice": {
-      "title": "Transaction refused on device",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "تم رفض المعاملة على الجهاز",
+      "description": "يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "TransportError": {
-      "title": "Something went wrong. Please reconnect your device.",
-      "description": "{{message}} Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "حدث خطأ ما. يُرجى إعادة الاتصال بالجهاز.",
+      "description": "{{message}} يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "TransportStatusError": {
-      "title": "Something went wrong. Please reconnect your device.",
-      "description": "{{message}} Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "حدث خطأ ما. يُرجى إعادة الاتصال بالجهاز.",
+      "description": "{{message}} يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "TronNoFrozenForBandwidth": {
       "title": "No assets to unfreeze",
@@ -432,14 +432,14 @@
       "title": "There is no reward to be claimed"
     },
     "TronInvalidFreezeAmount": {
-      "title": "Amount to freeze cannot be smaller than 1"
+      "title": "مبلغ التجميد لا يمكن أن يكون أصغر من 1"
     },
     "TronSendTrc20ToNewAccountForbidden": {
       "title": "Sending TRC20 to the new account will not activate it",
       "description": "To activate it, first send either TRX or TRC10 to the account. Then it can receive TRC20."
     },
     "TronUnexpectedFees": {
-      "title": "Additional fees may apply"
+      "title": "يمكن تطبيق رسوم إضافية"
     },
     "TronNotEnoughTronPower": {
       "title": "Not enough votes available"
@@ -449,38 +449,38 @@
       "description": "Transactions must be signed within 30 seconds. Please try again."
     },
     "TronNotEnoughEnergy": {
-      "title": "Not enough Energy to send this token"
+      "title": "لم تتبقى طاقة كافية لإرسال هذا الرمز"
     },
     "UpdateYourApp": {
       "title": "App update needed",
       "description": "Please uninstall then reinstall the {{managerAppName}} app in the Manager."
     },
     "UserRefusedAllowManager": {
-      "title": "Manager disabled on device",
-      "description": "Please enable the Manager on your device, then try again."
+      "title": "تم تعطيل المدير على الجهاز",
+      "description": "يرجى تمكين المدير على جهازك، ثم حاول مرة أخرى."
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
-      "description": "You rejected the address. If in doubt, please save your logs using the button below and provide them to Ledger Support."
+      "description": "قمت برفض العنوان. في حالة الشك، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     },
     "UserRefusedDeviceNameChange": {
-      "title": "Rename canceled on device",
-      "description": "You canceled the rename. Please try again."
+      "title": "تم إلغاء إعادة التسمية على الجهاز",
+      "description": "قمت بإلغاء إعادة التسمية. يرجى المحاولة مرة أخرى."
     },
     "UserRefusedFirmwareUpdate": {
       "title": "Firmware update canceled on device",
       "description": "You canceled the firmware update. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "UserRefusedOnDevice": {
-      "title": "Operation canceled on device",
-      "description": "You rejected the operation on the device."
+      "title": "تم إلغاء العملية على الجهاز",
+      "description": "قمت برفض العملية على الجهاز."
     },
     "WebsocketConnectionError": {
-      "title": "Sorry, connection failed",
+      "title": "عذراً، فشل الاتصال",
       "description": "Please try again with a better network connection (websocket error)."
     },
     "WebsocketConnectionFailed": {
-      "title": "Sorry, connection failed",
+      "title": "عذراً، فشل الاتصال",
       "description": "Please try again with a better network connection (websocket failed)."
     },
     "WrongDeviceForAccount": {
@@ -488,8 +488,8 @@
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
     "UnexpectedBootloader": {
-      "title": "Sorry, your device must not be in Bootloader mode",
-      "description": "Please restart your device without touching the buttons when the logo appears. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "عذراً، يجب ألا يكون جهازك في وضع Bootloader",
+      "description": "يرجى إعادة تشغيل جهازك دون لمس الأزرار عند ظهور الشعار. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ السجلات الخاصة بك باستخدام الزر أدناه وتقديمها إلى قسم دعم ليدجر."
     },
     "UnavailableTezosOriginatedAccountReceive": {
       "title": "Cannot receive in subaccounts. Please select the parent account.",
@@ -521,10 +521,10 @@
       "description": "The Stratis blockchain evolved and may no longer work correctly. Support for the original Stratis blockchain will be maintained until 16 October 2021."
     },
     "SwapExchangeRateAmountTooLow": {
-      "title": "Amount must be higher than {{minAmountFromFormatted}}"
+      "title": "يجب أن يزيد المبلغ عن {{minAmountFromFormatted}}"
     },
     "SwapExchangeRateAmountTooHigh": {
-      "title": "Amount must be lower than {{maxAmountFromFormatted}}"
+      "title": "يجب أن يقل المبلغ عن {{maxAmountFromFormatted}}"
     },
     "SwapGenericAPIError": {
       "title": "Exchange rate expired",
@@ -562,7 +562,7 @@
     },
     "generic": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "حدث خطأ ما. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
     }
   },
   "bluetooth": {
@@ -574,7 +574,7 @@
   "location": {
     "required": "Location services required",
     "open": "Open location settings",
-    "disabled": "Ledger Live requires location services to pair your device through Bluetooth.",
+    "disabled": "يتطلب ليدجر لايف خدمات الموقع لإقران جهازك عبر خاصية البلوتوث.",
     "noInfos": "Ledger does not access your location information."
   },
   "permissions": {
@@ -583,37 +583,37 @@
   "fees": {
     "speed": {
       "high": "High",
-      "standard": "Standard",
+      "standard": "اعتيادية",
       "low": "Low",
-      "custom": "Custom",
+      "custom": "مُخصّص",
       "blockCount": "{{blockCount}} blocks"
     }
   },
   "signout": {
-    "confirm": "Are you sure you want to sign out?",
-    "disclaimer": "All account data will be removed from your phone.",
-    "action": "Sign me out"
+    "confirm": "هل أنت متأكد أنك تريد الخروج؟",
+    "disclaimer": "ستتم إزالة جميع بيانات الحساب من هاتفك.",
+    "action": "تسجيل خروجي"
   },
   "auth": {
     "failed": {
       "biometrics": {
         "title": "{{biometricsType}} unlock failed",
-        "description": "Enter your password to continue",
+        "description": "أدخل كلمة المرور الخاصة بك للمتابعة",
         "authenticate": "Please authenticate with the Ledger Live app"
       },
       "denied": "Auth Security was not enabled because your phone failed to authenticate.",
       "title": "Authentication failed",
       "buttons": {
-        "tryAgain": "Try again",
+        "tryAgain": "أعد المحاولة",
         "reset": "Reset"
       }
     },
     "unlock": {
       "biometricsTitle": "Please authenticate with the Ledger Live app",
-      "title": "Welcome back",
-      "desc": "Enter your password to continue",
+      "title": "مرحباً بك مجددًا",
+      "desc": "أدخل كلمة المرور الخاصة بك للمتابعة",
       "inputPlaceholder": "Type your password",
-      "login": "Log in",
+      "login": "تسجيل دخول",
       "forgotPassword": "I lost my password"
     },
     "addPassword": {
@@ -621,8 +621,8 @@
       "title": "Password Lock"
     },
     "confirmPassword": {
-      "title": "Confirm Password",
-      "placeholder": "Confirm your password"
+      "title": "تأكيد كلمة المرور",
+      "placeholder": "تأكيد كلمة المرور الخاصة بك"
     },
     "enableBiometrics": {
       "title": "{{biometricsType}}",
@@ -640,14 +640,14 @@
     "all": "ALL"
   },
   "carousel": {
-    "title": "Close banner?",
+    "title": "إغلاق الشعار؟",
     "description": "We'll inform you of any new announcements.",
-    "confirm": "Confirm",
+    "confirm": "تأكيد",
     "undo": "Undo",
     "banners": {
       "valentine": {
-        "title": "Valentine’s day",
-        "description": "Reduced fees on Buy and Sell"
+        "title": "عيد الحب",
+        "description": "تخفيض الرسوم على الشراء والبيع"
       },
       "academy": {
         "title": "Ledger Academy",
@@ -655,7 +655,7 @@
       },
       "stakeCosmos": {
         "title": "Stake COSMOS",
-        "description": "Delegate your ATOM earn rewards today."
+        "description": "قم بتفويض مكاسب مكافآت ATOM اليوم."
       },
       "polkastake": {
         "title": "POLKADOT STAKING",
@@ -670,7 +670,7 @@
         "description": "Buy crypto on\nLedger Live"
       },
       "swap": {
-        "title": "Swap crypto",
+        "title": "مبادلة العملات المشفرة",
         "description": "Securely exchange one\ncrypto for another"
       },
       "algorand": {
@@ -679,14 +679,14 @@
       },
       "sell": {
         "title": "Sell crypto",
-        "description": "Sell Bitcoin directly from Ledger Live."
+        "description": "بيع بيتكوين مباشرة من ليدجر لايف."
       },
       "vote": {
         "title": "Vote with your ledger",
         "description": "Vote directly from your Ledger Wallet."
       },
       "lending": {
-        "title": "Lend crypto",
+        "title": "إقراض العملات المشفرة",
         "description": "Lend asset on the Compound Protocol"
       },
       "blackfriday": {
@@ -700,12 +700,12 @@
       "title": "Welcome to Ledger",
       "subtitle": "Safely manage your cryptos from your smartphone.",
       "start": "Get started",
-      "noDevice": "No device?",
-      "buy": "Buy a {{fullDeviceName}}"
+      "noDevice": "ليس لديك جهاز؟",
+      "buy": "اشتري {{fullDeviceName}}"
     },
     "stepLanguage": {
       "title": "Select your language",
-      "cta": "Continue",
+      "cta": "متابعة",
       "warning": {
         "title": "Get started in English",
         "cta": "Got it!",
@@ -713,7 +713,7 @@
       }
     },
     "stepSelectDevice": {
-      "title": "What’s your device?",
+      "title": "ما نوع جهازك؟",
       "nanoS": "Nano S",
       "nanoX": "Nano X",
       "blue": "Blue"
@@ -725,23 +725,23 @@
         "title": "First time using this Nano?",
         "label": "First use",
         "subTitle": "Set up a new Nano",
-        "desc": "Let’s start and set up your device!"
+        "desc": "لنبدأ ونقوم بإعداد جهازك!"
       },
       "devicePairing": {
-        "title": "Already have a recovery phrase?",
-        "label": "Device pairing",
+        "title": "لديك بالفعل عبارة استرداد؟",
+        "label": "إقران الجهاز",
         "subTitle": "Connect your Nano",
-        "desc": "Your device is already set up? Connect it to the app!"
+        "desc": "تم إعداد جهازك بالفعل؟ قم بتوصيله بالتطبيق!"
       },
       "desktopSync": {
-        "title": "Already have a recovery phrase?",
+        "title": "لديك بالفعل عبارة استرداد؟",
         "label": "Desktop sync",
         "subTitle": "Sync crypto from your desktop app",
         "desc": "Already got the desktop app? Sync it to manage your crypto from your smartphone!"
       },
       "restoreDevice": {
-        "label": "Restore device",
-        "subTitle": "Restore your recovery phrase on a new device",
+        "label": "استعادة الجهاز",
+        "subTitle": "استعادة عبارة الاسترداد الخاصة بك على جهاز جديد",
         "desc": "Use an existing recovery phrase to restore your private keys on a new Nano!"
       }
     },
@@ -749,7 +749,7 @@
       "0": {
         "label": "Basics",
         "title": "Access your crypto",
-        "desc": "Your crypto assets are stored on the blockchain. You need a private key to access and manage them."
+        "desc": "يتم تخزين الأصول المشفرة الخاصة بك على البلوك تشين. أنت بحاجة إلى مفتاح خاص للوصول إليها وإدارتها."
       },
       "1": {
         "label": "Basics",
@@ -787,7 +787,7 @@
             "label": "Stay alone, and choose a safe and quiet environment."
           }
         },
-        "cta": "OK, I’m ready!",
+        "cta": "حسنًا، أنا مستعد!",
         "warning": {
           "title": "Please be careful",
           "desc": "Make sure you follow the instructions on this app at every step of the process.",
@@ -799,21 +799,21 @@
           "0": {
             "title": "Turn on Nano",
             "nanoX": {
-              "label": "Turn on your device by pressing the black button for 1 second."
+              "label": "قم بتشغيل جهازك بالضغط على الزر الأسود لمدة ثانية واحدة."
             },
             "nanoS": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك."
             },
             "blue": {
-              "label": "Turn on your device by connecting it to the USB port of your phone and pressing the power button."
+              "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك والضغط على زر الطاقة."
             }
           },
           "1": {
             "title": "Browse ",
-            "label": "Learn how to interact with your device by reading the on-screen instructions."
+            "label": "تعرف على كيفية التفاعل مع جهازك من خلال قراءة التعليمات التي تظهر على الشاشة."
           },
           "2": {
-            "title": "Select “Set up as new device”",
+            "title": "اختار \"إعداد كجهاز جديد\"",
             "label": "Press both buttons simultaneously to validate the selection."
           },
           "3": {
@@ -853,7 +853,7 @@
               "label": "You can change your PIN code if needed."
             },
             "3": {
-              "label": "Three wrong PIN code entries in a row will reset the device."
+              "label": "إدخال رمز ال PIN بشكل غير صحيح لثلاث مرات متتالية سوف يعيد تشغيل الجهاز."
             },
             "4": {
               "label": "Never use an easy PIN code like 0000, 123456, or 55555555."
@@ -872,28 +872,28 @@
         "cta": "Next step"
       },
       "recoveryPhrase": {
-        "title": "Recovery phrase",
+        "title": "عبارة الاسترداد",
         "desc": "Your recovery phrase is a secret list of 24 words that backs up your private keys.",
         "desc_1": "Your Nano generates a unique recovery phrase. Ledger does not keep a copy of it.",
-        "cta": "Recovery phrase",
+        "cta": "عبارة الاسترداد",
         "checkboxDesc": "I understand that if I lose this recovery phrase, I will not be able to access my crypto in case I lose access to my Nano."
       },
       "recoveryPhraseSetup": {
         "infoModal": {
-          "title": "How does a recovery phrase work?",
-          "desc": "Your recovery phrase works like a unique master key. Your Ledger device uses it to calculate private keys for every crypto asset you own.",
+          "title": "كيف تعمل عبارة الاسترداد؟",
+          "desc": "عبارة الاسترداد الخاصة بك تعمل كمفتاح رئيسي فريد؛ حيث يستخدمها جهاز لديجر (Ledger) الخاص بك لحساب المفاتيح الخاصة لكل أصل مشفر تملكه.",
           "desc_1": "To restore access to your crypto, any wallet can calculate the same private keys from your recovery phrase.",
           "link": "More about the recovery phrase",
           "title_1": "What if I lose access to my Nano?",
           "bullets": {
             "0": {
-              "label": "Get a new hardware wallet."
+              "label": "احصل على محفظة أجهزة جديدة."
             },
             "1": {
-              "label": "Select “Restore recovery phrase on a new device” in the Ledger app."
+              "label": "اختار \"استعادة عبارة الاسترداد على جهاز جديد\" في تطبيق ليدجر (Ledger)."
             },
             "2": {
-              "label": "Enter your recovery phrase on your new device to restore access to your crypto."
+              "label": "أدخل عبارة الاسترداد على جهازك الجديد لاستعادة الوصول إلى أصولك المشفرة."
             }
           }
         },
@@ -908,18 +908,18 @@
             "label_1": "Repeat the process for all words while carefully respecting the order and spelling. Press left on your Nano to check for any mistakes."
           },
           "2": {
-            "title": "Confirm your recovery phrase",
+            "title": "تأكيد عبارة الاسترداد الخاصة بك",
             "label": "Scroll through the words until you find Word #1 by pressing the right button. Validate by pressing both buttons."
           },
           "3": {
             "title": "Repeat for all words!"
           }
         },
-        "cta": "Confirm recovery phrase",
-        "nextStep": "Next step"
+        "cta": "تأكيد عبارة الاسترداد",
+        "nextStep": "الخطوة التالية"
       },
       "hideRecoveryPhrase": {
-        "title": "Hide your recovery phrase",
+        "title": "إخفاء عبارة الاسترداد الخاصة بك",
         "desc": "Your recovery phrase is your last chance to access your crypto if you cannot use your Nano. You must keep it in a safe place.",
         "bullets": {
           "0": {
@@ -929,13 +929,13 @@
             "label": "Never share your 24 words with anyone, not even with Ledger."
           }
         },
-        "cta": "OK, I’m done!",
+        "cta": "حسنًا، لقد انتهيت!",
         "infoModal": {
           "label": "Learn how to hide it",
-          "title": "Where should I keep my recovery phrase?",
+          "title": "أين ينبغي أن أحتفظ بعبارة الاسترداد الخاصة بي؟",
           "bullets": {
             "0": {
-              "label": "<1>NEVER</1> enter it on a computer, phone or any other device. Don't take a picture of it."
+              "label": "امتنع <1>نهائيًا</1> عن إدخالها على جهاز كمبيوتر أو هاتف أو أي جهاز آخر. لا تقم بتصويرها."
             },
             "1": {
               "label": "<1>NEVER</1> share your 24 words with anyone."
@@ -963,29 +963,29 @@
         "title": "Restore from recovery phrase",
         "desc": "Restore your Nano from your recovery phrase to restore, replace or back up your Ledger hardware wallet.",
         "desc_1": "Your Nano will restore your private keys and you will be able to access and manage your crypto.",
-        "cta": "OK, I’m ready!",
+        "cta": "حسنًا، أنا مستعد!",
         "warning": {
           "title": "We recommend Ledger recovery phrases only",
-          "desc": "Ledger cannot guarantee the security of external recovery phrases. We recommend setting up your Nano as a new device if your recovery phrase was not generated by a Ledger.",
+          "desc": "لا يضمن ليدجر أمان عبارات الاسترداد الخارجية. نحن نوصي بإعداد جهاز Nano الخاص بك كجهاز جديد إذا لم يتم إنشاء عبارة الاسترداد الخاصة بك بواسطة ليدجر.",
           "cta": "Got it!"
         },
-        "nextStep": "Next step",
+        "nextStep": "الخطوة التالية",
         "bullets": {
           "0": {
             "title": "Turn on Nano",
             "nanoX": {
-              "label": "Turn on your device by pressing the black button for 1 second."
+              "label": "قم بتشغيل جهازك بالضغط على الزر الأسود لمدة ثانية واحدة."
             },
             "nanoS": {
-              "label": "Turn on your device by connecting it to the USB port of your phone."
+              "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك."
             },
             "blue": {
-              "label": "Turn on your device by connecting it to the USB port of your phone and pressing the power button."
+              "label": "قم بتشغيل جهازك عن طريق توصيله بمنفذ ال USB بهاتفك والضغط على زر الطاقة."
             }
           },
           "1": {
-            "title": "Browse",
-            "label": "Learn how to interact with your device by reading the on-screen instructions."
+            "title": "تصفح",
+            "label": "تعرف على كيفية التفاعل مع جهازك من خلال قراءة التعليمات التي تظهر على الشاشة."
           },
           "2": {
             "title": "Select “Restore from recovery phrase”",
@@ -998,7 +998,7 @@
         }
       },
       "existingRecoveryPhrase": {
-        "title": "Enter your recovery phrase",
+        "title": "أدخل عبارة الاسترداد الخاصة بك",
         "paragraph1": "Your recovery phrase is the secret list of words that you backed up when you first set up your wallet.",
         "paragraph2": "Ledger does not keep a copy of your recovery phrase.",
         "checkboxDesc": "I understand that if I lose my recovery phrase, I will not be able to access my crypto in case I lose access to my Nano.",
@@ -1022,28 +1022,28 @@
             "title": "Repeat for all words!"
           }
         },
-        "nextStep": "Next step"
+        "nextStep": "الخطوة التالية"
       }
     },
     "stepPairNew": {
       "nanoX": {
         "title": "Pair your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly pair your device.",
+        "desc": "هذه هي المرة الأولى التي تستخدم فيها هذا الهاتف لإعداد Nano الخاص بك. لنقوم بإقران جهازك سريعاً.",
         "cta": "Let’s pair my Nano"
       },
       "nanoS": {
         "title": "Connect your Nano",
-        "desc": "This is the first time you’re setting up your Nano with this phone. Let’s quickly connect your device.",
+        "desc": "هذه هي المرة الأولى التي تستخدم فيها هذا الهاتف لإعداد Nano الخاص بك. لنقوم بتوصيل جهازك سريعاً.",
         "cta": "Let’s connect my Nano"
       },
       "blue": {
         "title": "Connect your Blue",
-        "desc": "This is the first time you’re setting up your Blue with this phone. Let’s quickly connect your device.",
+        "desc": "هذه هي المرة الأولى التي تستخدم فيها هذا الهاتف لإعداد Blue الخاص بك. لنقوم بتوصيل جهازك سريعاً.",
         "cta": "Let’s connect my Blue"
       },
       "infoModal": {
-        "title": "Where can I find my device name?",
-        "desc": "On your device, select Settings > General > Device name.",
+        "title": "أين يمكنني العثور على اسم جهازي؟",
+        "desc": "على جهازك، اختار الإعدادات> عام > اسم الجهاز.",
         "title_1": "How to set up Bluetooth connection?",
         "title_2": "How do I use my Nano X without Bluetooth?",
         "desc_1": "Use an <1>OTG-cable</1> to connect your Ledger Nano X to your Android smartphone (iOS not supported). Manage your crypto with Ledger Live mobile or any other compatible (web) app.",
@@ -1071,7 +1071,7 @@
         "desc_4": "If the Ledger Nano X is not detected in your mobile app when trying to pair it, please try the following solution:",
         "desc_5": "Ledger mobile app asks you to allow location services when it's not enabled yet, but on a few phone models, this is not always properly detected. Please note that Ledger mobile app never uses your location information, this permission is simply required for Bluetooth on Android.",
         "desc_6": "Some users have reported having fixed their connection issues by updating the Android version running on their phone to a newer one. Please check with your phone manufacturer whether an update is available.",
-        "link": "Learn more",
+        "link": "معرفة المزيد",
         "bullets": {
           "0": {
             "label": "Navigate to the system options for the Ledger Live app on your Android phone."
@@ -1091,7 +1091,7 @@
     "stepImportAccounts": {
       "title": "Sync crypto from desktop",
       "desc": "If you already have your crypto set up in the Ledger desktop app, you can sync them to manage them from your phone.",
-      "cta": "I’m ready to scan",
+      "cta": "أنا مستعد لإجراء المسح الضوئي",
       "bullets": {
         "0": {
           "label": "On the Desktop app, select <1>Settings > Accounts > Account export</1>."
@@ -1110,9 +1110,9 @@
       }
     },
     "stepSetupPin": {
-      "step1": "Turn on your {{fullDeviceName}} and follow the instructions.",
-      "step1-nanoS": "Connect your {{fullDeviceName}} to your phone using an OTG cable.",
-      "step2": "Press both buttons together to select <1><1>Setup as a new device.</1></1>",
+      "step1": "قم بتشغيل {{fullDeviceName}} واتبع التعليمات.",
+      "step1-nanoS": "قم بتوصيل {{fullDeviceName}} بهاتفك باستخدام كابل OTG.",
+      "step2": "اضغط على الزرين معًا لإختيار <1><1>الإعداد كجهاز جديد.</1></1>",
       "step2-restore": "Press both buttons together to select <1><1>Restore from recovery phrase.</1></1>",
       "step3": "Press left or right button to select a digit. Press buttons together to confirm.",
       "step4prefix": "Select ",
@@ -1121,18 +1121,18 @@
       "modal": {
         "step1": "Always choose <1><1>your own</1></1> PIN",
         "step2": "Use 8 digits for greater security",
-        "step3": "Never use a device with a PIN or recovery phrase already setup"
+        "step3": "لا تستخدم أبدًا جهازًا به رمز PIN أو عبارة استرداد تم إعدادها بالفعل"
       }
     },
     "stepWriteRecovery": {
       "step1": "Write <1><1>Word #1</1></1> in entry 1 on a blank Recovery sheet",
-      "step2": "Press the right button and continue to write down all 24 words.",
+      "step2": "اضغط على الزر الأيمن واستمر في تدوين كل الكلمات الأربع والعشرين (24).",
       "step3": "Confirm each word of your recovery phrase: select it then confirm it by pressing both buttons together.",
       "modal": {
         "step1": "Store your 24-word recovery phrase in a safe place, out of sight.",
         "step2": "Make sure you are the only person to have the recovery phrase.",
-        "step3": "Ledger does not save your recovery phrase.",
-        "step4": "Never use a device with a recovery phrase or PIN already setup."
+        "step3": "لا يحفظ ليدجر عبارة الاسترداد الخاصة بك.",
+        "step4": "لا تستخدم أبدًا جهازًا به عبارة استرداد أو رمز PIN مُعد بالفعل."
       }
     },
     "stepPassword": {
@@ -1142,11 +1142,11 @@
       "modal": {
         "step1": "Keep your password safe. Do not share it.",
         "step2": "Keep your password safe. Losing it means resetting Ledger Live and loading the accounts again.",
-        "step3": "Resetting Ledger Live has no impact on your crypto assets."
+        "step3": "إعادة تعيين ليدجر لايف (Ledger Live) ليس له تأثير على الأصول المشفرة الخاصة بك."
       }
     },
     "stepFinish": {
-      "title": "Your device is ready!",
+      "title": "جهازك مستعد!",
       "readOnlyTitle": "All set!",
       "desc": "Install apps on your device and manage your portfolio",
       "cta": "Open Ledger Live"
@@ -1155,17 +1155,17 @@
       "label": "Quiz",
       "modal": {
         "success": "Congrats!",
-        "fail": "Incorrect!"
+        "fail": "غير صحيح!"
       },
       "coins": {
         "title": "As a Ledger user, my crypto is stored:",
         "answers": {
           "correct": "On the blockchain",
-          "wrong": "On my Nano"
+          "wrong": "على جهاز نانو الخاص بي"
         },
         "modal": {
           "text": "Your crypto is always stored on the blockchain. Your hardware wallet only holds your private key, which gives you access to your crypto.",
-          "cta": "Next question"
+          "cta": "السؤال التالي"
         }
       },
       "recoveryPhrase": {
@@ -1175,7 +1175,7 @@
           "wrong": "No problem, Ledger can send me a copy"
         },
         "modal": {
-          "text": "Anyone who knows your recovery phrase can steal your crypto assets. \nIf you lose it, you must quickly transfer your crypto to a secure place.",
+          "text": "يمكن لأي شخص يعرف عبارة الاسترداد الخاصة بك أن يقوم بسرقة الأصول المشفرة الخاصة بك.\nإذا فقدت هذه العبارة، يجب عليك نقل أصولك المشفرة بسرعة إلى مكان آمن.",
           "cta": "Next question"
         }
       },
@@ -1191,26 +1191,26 @@
         }
       },
       "final": {
-        "successTitle": "Already a pro!",
+        "successTitle": "أصبحت محترفًا بالفعل!",
         "successText": "You are ready to safely manage your crypto. Only one quick step left!",
-        "failTitle": "You will soon become a pro...",
+        "failTitle": "ستصبح محترفًا قريبًا...",
         "failText": "Don’t worry, Ledger is here to guide you through your journey. You will soon feel extra comfortable about your crypto safety. Only one quick step left!",
-        "cta": "Next step"
+        "cta": "الخطوة التالية"
       }
     },
     "warning": {
       "recoveryPhrase": {
         "title": "Do not use a recovery phrase that you have not generated yourself.",
         "desc": "Your Ledger hardware wallet’s pin code and recovery phrase should be initialized by you and only you. If you have received a device with a pre-existing seed word or an already initialized pin code do not use the product and contact our customer support.",
-        "supportLink": "Contact customer support"
+        "supportLink": "الاتصال بقسم دعم ليدجر"
       }
     }
   },
   "tabs": {
     "portfolio": "Portfolio",
-    "accounts": "Accounts",
+    "accounts": "الحسابات",
     "transfer": "Transfer",
-    "manager": "Manager",
+    "manager": "المدير",
     "settings": "Settings",
     "nanoX": "Nano X"
   },
@@ -1220,13 +1220,13 @@
     "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
     "greeting": {
-      "morning": "Good morning",
-      "evening": "Good evening",
-      "afternoon": "Good afternoon"
+      "morning": "صباح الخير",
+      "evening": "مساء الخير",
+      "afternoon": "مساء الخير"
     },
     "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
-      "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
+      "desc": "لم يتم تأكيد بعض المعاملات بعد. ستظهر هذه في رصيدك ويمكن استخدامها بعد تأكيدها."
     },
     "summary": "Here is the summary of your account",
     "summary_plural": "Your {{count}} accounts are synchronized.",
@@ -1236,24 +1236,24 @@
       "noAccountsTitle": "You don't have any accounts…",
       "noAccountsDesc": "Please add accounts to your Portfolio.",
       "buttons": {
-        "import": "Add account",
+        "import": "إضافة حساب",
         "manager": "Install apps",
         "managerSecondary": "Install apps on my device"
       }
     },
     "noOpState": {
       "title": "No operations yet?",
-      "desc": "Simply send crypto assets to your receiving address and wait for the app to sync."
+      "desc": "ببساطة إرسل الأصول المشفرة إلى عنوان الاستلام الخاص بك وانتظر حتى يقوم التطبيق بالمزامنة."
     }
   },
   "addAccountsModal": {
-    "ctaAdd": "Add accounts",
+    "ctaAdd": "إضافة حساب",
     "ctaImport": "Import Desktop accounts"
   },
   "byteSize": {
-    "bytes": "{{size}} bytes",
-    "kbUnit": "{{size}} Kb",
-    "mbUnit": "{{size}} Mb"
+    "bytes": "{{size}} بايت",
+    "kbUnit": "{{size}} كيلوبايت",
+    "mbUnit": "{{size}} ميجابايت"
   },
   "time": {
     "day": "1D",
@@ -1278,7 +1278,7 @@
   },
   "operations": {
     "types": {
-      "IN": "Received",
+      "IN": "تم الإستلام",
       "OUT": "Sent",
       "CREATE": "Created",
       "REVEAL": "Revealed",
@@ -1289,10 +1289,10 @@
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
       "REWARD": "Claimed reward",
-      "FEES": "Fees",
+      "FEES": "الرسوم",
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
-      "CLOSE_ACCOUNT": "Close account",
+      "CLOSE_ACCOUNT": "إغلاق الحساب",
       "SUPPLY": "Deposited",
       "REDEEM": "Withdrawn",
       "APPROVE": "Enabled",
@@ -1307,14 +1307,14 @@
   },
   "operationDetails": {
     "title": "Operation details",
-    "account": "Account",
-    "date": "Date",
-    "confirmed": "Confirmed",
-    "notConfirmed": "Not confirmed",
+    "account": "الحساب",
+    "date": "التاريخ",
+    "confirmed": "تم التأكيد",
+    "notConfirmed": "لم يتم التأكيد",
     "failed": "Failed",
     "fees": "Network fees",
     "noFees": "No fee",
-    "from": "From ({{count}})",
+    "from": "من ({{count}})",
     "to": "To ({{count}})",
     "identifier": "Transaction ID",
     "viewOperation": "View in explorer",
@@ -1333,35 +1333,35 @@
     "details": "{{ currency }} details",
     "extra": {
       "resource": "Resource",
-      "frozenAmount": "Frozen amount",
-      "unfreezeAmount": "Unfreeze amount",
-      "address": "Address",
+      "frozenAmount": "المبلغ المجمد",
+      "unfreezeAmount": "إزالة تجميد المبلغ",
+      "address": "عنوان",
       "votes": "Votes ({{number}})",
       "votesAddress": "<0>{{votes}}</0> to <2>{{name}}</2>",
       "validators": "Validators",
-      "delegated": "Delegated ({{amount}})",
+      "delegated": "تفويض ({{amount}})",
       "delegatedTo": "Delegated to",
-      "delegatedAmount": "Delegated amount",
-      "redelegated": "Redelegated ({{amount}})",
+      "delegatedAmount": "المبلغ المفوض",
+      "redelegated": "إعادة تفويض ({{amount}})",
       "redelegatedFrom": "Redelegated from",
       "redelegatedTo": "Redelegated to",
-      "redelegatedAmount": "Redelegated amount",
-      "undelegated": "Undelegated ({{amount}})",
+      "redelegatedAmount": "المبلغ المعاد تفويضه",
+      "undelegated": "غير مفوّض ({{amount}})",
       "undelegatedFrom": "Undelegated from",
-      "undelegatedAmount": "Undelegated amount",
-      "rewardFrom": "Reward from",
-      "rewardAmount": "Amount collected",
+      "undelegatedAmount": "المبلغ غير مفوّض",
+      "rewardFrom": "مكافأة من",
+      "rewardAmount": "المبلغ المحصل",
       "memo": "Memo",
       "assetId": "Asset ID",
       "rewards": "Earned rewards",
-      "bondedAmount": "Bonded Amount",
-      "unbondedAmount": "Unbonded Amount",
-      "withdrawUnbondedAmount": "Withdraw Unbonded Amount",
+      "bondedAmount": "المبلغ المقيد",
+      "unbondedAmount": "المبلغ الغير مقيد",
+      "withdrawUnbondedAmount": "سحب المبلغ الغير مقيد",
       "palletMethod": "Method",
-      "transferAmount": "Transfer Amount",
+      "transferAmount": "مبلغ التحويل",
       "validatorsCount": "Validators ({{number}})"
     },
-    "multipleAddresses": "Why multiple addresses?"
+    "multipleAddresses": "لماذا عناوين متعددة؟"
   },
   "operationList": {
     "noOperations": "No Operations",
@@ -1370,21 +1370,21 @@
   "selectableAccountsList": {
     "deselectAll": "Deselect all",
     "selectAll": "Select all",
-    "tokenCount": "+1 token",
-    "tokenCount_plural": "+{{count}} tokens",
+    "tokenCount": "+1 رمز",
+    "tokenCount_plural": "+ {{count}} من الرموز",
     "subaccountCount": "+1 subaccount",
     "subaccountCount_plural": "+{{count}} subaccounts"
   },
   "account": {
     "tokens": {
-      "contractAddress": "Contract address",
+      "contractAddress": "عنوان العَقد",
       "viewInExplorer": "View in explorer",
-      "seeMore": "Display more Tokens",
-      "seeLess": "Display fewer Tokens",
-      "addTokens": "Add token",
+      "seeMore": "عرض المزيد من الرموز",
+      "seeLess": "عرض عدد أقل من الرموز",
+      "addTokens": "إضافة رمز",
       "howTo": "To add token accounts, you need to <0>receive funds</0> using your <1>{{currency}} address</1>.",
       "algorand": {
-        "contractAddress": "Contract address",
+        "contractAddress": "عنوان العَقد",
         "viewInExplorer": "View in explorer",
         "seeMore": "See more ASA",
         "seeLess": "See less ASA",
@@ -1398,32 +1398,32 @@
       "seeMore": "See more subaccounts",
       "seeLess": "See fewer subaccounts"
     },
-    "send": "Send",
+    "send": "إرسال",
     "receive": "Receive",
-    "buy": "Buy",
+    "buy": "شراء",
     "walletconnect": "WalletConnect",
-    "sell": "Sell",
-    "swap": "Swap",
+    "sell": "بيع",
+    "swap": "مبادلة",
     "manage": "Manage",
     "lastOperations": "Last operations",
     "emptyState": {
-      "title": "No crypto assets yet?",
+      "title": "لا توجد أصول مشفرة بعد؟",
       "desc": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving.",
       "descWithBuy": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
       "descToken": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> tokens</5>",
       "buttons": {
         "receiveFunds": "Receive",
-        "buyCrypto": "Buy"
+        "buyCrypto": "شراء"
       }
     },
     "settings": {
       "header": "Account settings",
-      "title": "Edit account",
-      "advancedLogs": "Advanced logs",
+      "title": "تعديل الحساب",
+      "advancedLogs": "سجلات متقدمة",
       "accountName": {
-        "title": "Account name",
-        "desc": "Description of the account",
-        "placeholder": "Account name"
+        "title": "اسم الحساب",
+        "desc": "وصف الحساب",
+        "placeholder": "اسم الحساب"
       },
       "accountUnits": {
         "title": "Edit units"
@@ -1436,21 +1436,21 @@
         "title": "Currency"
       },
       "endpointConfig": {
-        "title": "Node",
-        "desc": "The API node to use"
+        "title": "عقدة",
+        "desc": "عقدة API المراد استخدامها"
       },
       "delete": {
         "title": "Remove account from the Portfolio",
-        "desc": "Stored data will be removed.",
-        "confirmationTitle": "Are you sure?",
-        "confirmationDesc": "This has no impact on your crypto assets. Existing accounts can always be added afterwards."
+        "desc": "ستتم إزالة البيانات المخزنة.",
+        "confirmationTitle": "هل أنت متأكد؟",
+        "confirmationDesc": "لن يؤثر ذلك على الأصول المشفرة الخاصة بك. من الممكن دائمًا إضافة الحسابات الموجودة فيما بعد."
       },
       "archive": {
         "title": "Archive account",
         "desc": "This account will be archived."
       },
       "advanced": {
-        "title": "Advanced logs",
+        "title": "سجلات متقدمة",
         "desc": ""
       }
     },
@@ -1465,9 +1465,9 @@
       },
       "result": {
         "title": "Import accounts",
-        "newAccounts": "New accounts",
-        "updatedAccounts": "Updated accounts",
-        "empty": "Add a new account",
+        "newAccounts": "الحسابات الجديدة",
+        "updatedAccounts": "الحسابات المحدثة",
+        "empty": "إضافة حساب جديد",
         "descEmpty": "<0><0>No accounts</0></0> were found. Please try again or go back to Setup",
         "alreadyImported": "Already imported",
         "noAccounts": "Nothing to import",
@@ -1483,7 +1483,7 @@
       }
     },
     "availableBalance": "Available balance",
-    "totalSupplied": "Amount deposited",
+    "totalSupplied": "المبلغ المودع",
     "tronFrozen": "Frozen",
     "bandwidth": "Bandwidth",
     "energy": "Energy",
@@ -1506,7 +1506,7 @@
     }
   },
   "accounts": {
-    "title": "Accounts",
+    "title": "حسابات",
     "importNotification": {
       "message": "Your accounts were imported successfully!"
     },
@@ -1515,17 +1515,17 @@
       "upToDate": "Synchronized",
       "error": "Error",
       "queued": "Awaiting",
-      "showTokens": "Show {{length}} token",
-      "showTokens_plural": "Show {{length}} tokens",
-      "showSubAccounts": "Show {{length}} subaccount",
-      "showSubAccounts_plural": "Show {{length}} subaccounts",
+      "showTokens": "عرض رمز {{length}}",
+      "showTokens_plural": "عرض رموز {{length}}",
+      "showSubAccounts": "عرض حساب فرعي {{length}}",
+      "showSubAccounts_plural": "عرض حسابات فرعية {{length}}",
       "hideTokens": "Hide token",
       "hideTokens_plural": "Hide tokens",
       "hideSubAccounts": "Hide subaccount",
       "hideSubAccounts_plural": "Hide subaccounts",
       "algorand": {
-        "showTokens": "Show {{length}} ASA",
-        "showTokens_plural": "Show {{length}} ASA",
+        "showTokens": "عرض {{length}}‏ ASA",
+        "showTokens_plural": "عرض {{length}}‏ ASA",
         "hideTokens": "Hide ASA",
         "hideTokens_plural": "Hide ASA"
       }
@@ -1542,23 +1542,23 @@
   "help": {
     "gettingStarted": {
       "title": "Getting started",
-      "desc": "Start here"
+      "desc": "ابدأ هنا"
     },
     "helpCenter": {
-      "title": "Ledger Support",
-      "desc": "Get help"
+      "title": "دعم ليدجر",
+      "desc": "الحصول على المساعدة"
     },
     "ledgerAcademy": {
-      "title": "Ledger Academy",
+      "title": "أكاديمية ليدجر",
       "desc": "Learn about crypto"
     },
     "facebook": {
-      "title": "Facebook",
-      "desc": "Like our page"
+      "title": "فيس بوك",
+      "desc": "ضع إعجاب على صفحتنا"
     },
     "twitter": {
-      "title": "Twitter",
-      "desc": "Follow us"
+      "title": "تويتر",
+      "desc": "تابعنا"
     },
     "github": {
       "title": "Github",
@@ -1597,7 +1597,7 @@
       "reportErrors": "Bug reports",
       "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
       "developerMode": "Developer mode",
-      "developerModeDesc": "Show developer apps in the Manager and enable Testnet apps.",
+      "developerModeDesc": "اعرض تطبيقات المطور في المدير وقم بتمكين تطبيقات Testnet.",
       "analytics": "Analytics",
       "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
       "analyticsModal": {
@@ -1628,28 +1628,28 @@
       "header": "Currencies",
       "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
       "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin.",
-      "confirmationNb": "Number of confirmations",
+      "confirmationNb": "عدد التأكيدات",
       "confirmationNbDesc": "Set the number of network confirmations for transactions to be approved.",
       "currencySettingsTitle": "{{currencyName}} Settings",
       "placeholder": "No settings for this asset"
     },
     "accounts": {
-      "header": "Accounts",
-      "title": "Accounts",
+      "header": "حسابات",
+      "title": "حسابات",
       "desc": "Manage assets display in the app.",
       "hideTokenCTA": "Hide token",
-      "showContractCTA": "Show contract",
+      "showContractCTA": "عرض العقد",
       "blacklistedTokens": "Hidden token list",
       "blacklistedTokensDesc": "You can hide tokens by going to the accounts list then long-pressing on the token and selecting 'Hide token'.",
       "blacklistedTokensModal": {
         "title": "Hide token",
-        "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can show them again using <3>Settings > Accounts</3>.",
+        "desc": "سيخفي هذا الإجراء جميع حسابات <1><0>{tokenName}</0></1>، ويمكنك إظهارها مرة أخرى باستخدام <3>الإعدادات > الحسابات</3>.",
         "confirm": "Hide token"
       },
       "cryptoAssets": {
-        "header": "Crypto assets",
-        "title": "Crypto assets",
-        "desc": "Select a crypto assets to edit its settings."
+        "header": "الأصول المشفرة",
+        "title": "الأصول المشفرة",
+        "desc": "اختار أحد الأصول المشفرة لتعديل إعداداتها."
       }
     },
     "about": {
@@ -1668,16 +1668,16 @@
       }
     },
     "help": {
-      "title": "Help",
-      "header": "Help",
-      "desc": "Learn more about Ledger Live or how to get help.",
-      "support": "Ledger Support",
+      "title": "مساعدة",
+      "header": "مساعدة",
+      "desc": "تعرف أكثر على ليدجر لايف أو كيفية الحصول على المساعدة.",
+      "support": "دعم ليدجر",
       "supportDesc": "If you have a problem, get help using Ledger Live with your hardware wallet.",
-      "configureDevice": "Set up a device",
-      "configureDeviceDesc": "Set up as a new device or restore an existing device. Accounts and settings are preserved.",
+      "configureDevice": "إعداد جهاز",
+      "configureDeviceDesc": "إعداد كجهاز جديد أو استعادة جهاز موجود. يتم الاحتفاظ بالحسابات والإعدادات.",
       "clearCache": "Clear cache",
       "clearCacheDesc": "The transactions on the network will be scanned and your accounts will be recalculated.",
-      "clearCacheModal": "Are you sure?",
+      "clearCacheModal": "هل أنت متأكد؟",
       "clearCacheModalDesc": "A fresh and complete scan of transactions on the network will be done. Account histories will be rebuilt and balances will be recalculated.",
       "clearCacheButton": "Clear",
       "exportLogs": "Export logs",
@@ -1704,7 +1704,7 @@
       "currency": "1 {{currency}} account needs to be updated",
       "currency_plural": "{{count}} {{currency}} accounts need to be updated",
       "start": "Start update",
-      "continue": "Continue update"
+      "continue": "متابعة التحديث"
     },
     "progress": {
       "headerTitle": "Updating accounts",
@@ -1715,22 +1715,22 @@
       "notice": {
         "title": "{{currency}} update incomplete",
         "subtitle": "No {{currency}} accounts could be updated using this device.",
-        "cta": "Continue",
-        "ctaNextCurrency": "Continue with {{currency}}"
+        "cta": "متابعة",
+        "ctaNextCurrency": "المتابعة مع {{currency}}"
       },
       "done": {
         "title": "{{currency}} update complete",
         "subtitle": "Congratulations, your {{currency}} accounts were updated successfully.",
-        "cta": "Continue",
-        "ctaNextCurrency": "Continue with {{currency}}",
-        "ctaDone": "Done"
+        "cta": "متابعة",
+        "ctaNextCurrency": "المتابعة مع {{currency}}",
+        "ctaDone": "تم"
       },
       "error": {
-        "cta": "Retry"
+        "cta": "إعادة المحاولة"
       }
     },
     "connectDevice": {
-      "headerTitle": "Connect device"
+      "headerTitle": "توصيل الجهاز"
     }
   },
   "transfer": {
@@ -1743,8 +1743,8 @@
     "receive": {
       "title": "Receive",
       "titleReadOnly": "Unverified address",
-      "headerTitle": "Crypto asset",
-      "titleDevice": "Connect device",
+      "headerTitle": "أصل مشفر",
+      "titleDevice": "توصيل الجهاز",
       "verifySkipped": "Your receive address was not confirmed on your Ledger device. Please verify your {{accountType}} address to stay secure.",
       "verifyPending": "Please verify that the {{currencyName}} address displayed on your device exactly matches the one displayed on your phone.",
       "verified": "Address confirmed. Check again if you copied or scanned it.",
@@ -1756,7 +1756,7 @@
       "addressCopied": "Address copied!",
       "notSynced": {
         "text": "Synchronizing",
-        "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
+        "desc": "قد يستغرق هذا بعض الوقت إذا كان لديك العديد من المعاملات أو إذا كان اتصالك بالإنترنت بطيئاً."
       },
       "readOnly": {
         "title": "Receive",
@@ -1770,7 +1770,7 @@
       "providers": {
         "title": "Choose a provider to buy crypto",
         "whatIsSwap": "What is Buy?",
-        "cta": "Continue",
+        "cta": "متابعة",
         "coinify": {
           "bullets": [
             "Available in 130+ countries",
@@ -1792,38 +1792,38 @@
       }
     },
     "swap": {
-      "title": "Swap",
+      "title": "مبادلة",
       "paraswap": "Paraswap",
-      "selectDevice": "Select your device",
+      "selectDevice": "اختار جهازك",
       "broadcasting": "Broadcasting swap",
       "loadingFees": "Loading network fees...",
       "landing": {
-        "header": "Swap",
-        "title": "Welcome to Swap",
-        "whatIsSwap": "What is Swap?",
+        "header": "مبادلة",
+        "title": "مرحبًا بك في المبادلة",
+        "whatIsSwap": "ما هي المبادلة؟",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
       },
       "providers": {
         "title": "Choose a provider to swap your crypto",
         "whatIsSwap": "What is Swap?",
-        "cta": "Continue",
+        "cta": "متابعة",
         "changelly": {
           "bullets": [
             "BTC, ETH, USDT and 50+ others",
             "Multi-currency",
-            "Centralized"
+            "مركزي"
           ]
         },
         "paraswap": {
           "bullets": [
             "Connect to 30+ DEXs (Uniswap, SushiSwap,...)",
             "Ethereum & ERC20 tokens",
-            "Decentralized & Trustless"
+            "لا مركزي و بدون ثقة"
           ]
         }
       },
       "main": {
-        "header": "Swap"
+        "header": "مبادلة"
       },
       "kyc": {
         "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes."
@@ -1833,11 +1833,11 @@
       },
       "payoutModal": {
         "title": "Payout fees",
-        "description": "Payout fees are not shown on the device and substracted from the amount.",
-        "cta": "Close"
+        "description": "لا تعرض رسوم الدفع على الجهاز ويتم خصمها من المبلغ.",
+        "cta": "إغلاق"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped crypto assets.",
+        "description": "لقد تم إرسال عملية المبادلة الخاصة بك إلى الشبكة لتأكيدها. قد يستغرق ذلك مدة تصل إلى ساعة قبل استلام الأصول المشفرة الخاصة بك التي تمت مبادلتها.",
         "label": "Your Swap ID:",
         "title": "Pending operation",
         "disclaimer": "Please take note of your Swap ID number in case you’d need assistance from {{provider}} later.",
@@ -1848,20 +1848,20 @@
         "floatUnavailable": "Floating rate not supported for this pair",
         "fixed": "Fixed rate",
         "fixedUnavailable": "Fixed rate not supported for this pair",
-        "floatDesc": "Your amount could change depending on the market conditions.",
-        "fixedDesc": "Your amount will remain the same irrespective of the changes on the market. Fixed rate updates every 30 seconds",
+        "floatDesc": "قد يتغير المبلغ الخاص بك تبعًا لظروف السوق.",
+        "fixedDesc": "سيظل المبلغ الخاص بك كما هو بغض النظر عن التغييرات في السوق. يتم تحديث السعر الثابت كل 30 ثانية",
         "by": "By",
         "modalTitle": "Floating or fixed rate?"
       },
       "form": {
         "validate": "Confirm Swap transaction",
         "tab": "Exchange",
-        "button": "Continue",
-        "from": "From",
+        "button": "متابعة",
+        "from": "من",
         "to": "To",
         "balance": "Balance <0>123</0>",
-        "fromAccount": "Select account",
-        "toAccount": "Select account",
+        "fromAccount": "اختيار الحساب",
+        "toAccount": "اختيار الحساب",
         "amount": {
           "useMax": "Use max",
           "available": "Total available"
@@ -1870,28 +1870,28 @@
           "title": "{{appName}} app not installed",
           "desc": "Please go to Manager to install the {{appName}} app.",
           "cta": "Go to Manager",
-          "close": "Close"
+          "close": "إغلاق"
         },
         "noAccounts": {
           "title": "No {{ticker}} to swap",
           "desc": "Your {{currencyName}} accounts have no balance to swap.",
-          "addAccountCta": "Add Account",
-          "cta": "Close"
+          "addAccountCta": "إنشاء حساب",
+          "cta": "إغلاق"
         },
         "outdatedApp": {
           "title": "App update available",
           "desc": "You need to update the {{appName}} app.",
           "cta": "Go to Manager",
-          "close": "Close"
+          "close": "إغلاق"
         },
         "summary": {
-          "from": "From",
+          "from": "من",
           "to": "To",
           "send": "Send",
           "payoutNetworkFees": "Payout fees",
-          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-          "receive": "Amount",
-          "receiveFloat": "Amount to receive before service fees",
+          "payoutNetworkFeesTooltip": "هذا المبلغ لن يظهر على جهازك",
+          "receive": "المبلغ",
+          "receiveFloat": "المبلغ المراد استلامه قبل رسوم الخدمة",
           "provider": "Provider",
           "method": "Rate",
           "fees": "Max fees",
@@ -1900,18 +1900,18 @@
             "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by {{provider}}'s Terms & Conditions.",
             "tos": "Terms & conditions",
             "accept": "Accept",
-            "reject": "Close"
+            "reject": "إغلاق"
           }
         }
       },
       "operationDetails": {
-        "swapId": "Swap ID",
+        "swapId": "معرّف المبادلة",
         "provider": "Provider",
         "date": "Date",
-        "from": "From",
-        "fromAmount": "Amount sent",
+        "from": "من",
+        "fromAmount": "المبلغ المرسل",
         "to": "To",
-        "toAmount": "Amount to receive",
+        "toAmount": "المبلغ المراد استلامه",
         "statusTooltips": {
           "expired": "Please contact the swap provider with your swap ID for more information.",
           "refunded": "Please contact the swap provider with your swap ID for more information.",
@@ -1933,14 +1933,14 @@
       "emptyState": {
         "title": "No {{currency}} account",
         "description": "You need to add an account before swapping {{currency}}",
-        "CTAButton": "Add account"
+        "CTAButton": "إضافة حساب"
       },
       "history": {
         "tab": "History",
         "exportButton": "Export operations",
-        "exportFilename": "Swap operations",
+        "exportFilename": "عمليات المبادلة",
         "empty": {
-          "title": "Your previous swaps will appear here",
+          "title": "ستظهر مبادلاتك السابقة هنا",
           "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
         }
       },
@@ -1949,9 +1949,9 @@
       }
     },
     "lending": {
-      "title": "Lend crypto",
-      "titleTransferTab": "Lend",
-      "actionTitle": "Lend",
+      "title": "إقراض العملات المشفرة",
+      "titleTransferTab": "إقراض",
+      "actionTitle": "إقراض",
       "accountActions": {
         "approve": "Approve",
         "supply": "Supply",
@@ -1962,8 +1962,8 @@
         "description": "Due to congestion on the Ethereum network, you may experience high fees when issuing transactions."
       },
       "account": {
-        "amountSupplied": "Amount deposited",
-        "amountSuppliedTooltip": "Amount lent to the network",
+        "amountSupplied": "المبلغ المودع",
+        "amountSuppliedTooltip": "المبلغ الذي تم إقراضه للشبكة",
         "currencyAPY": "Currency APY",
         "currencyAPYTooltip": "Yearly return rate of a deposit that’s continuously compounded",
         "accruedInterests": "Interest balance",
@@ -1971,26 +1971,26 @@
         "interestEarned": "Interest earned",
         "interestEarnedTooltip": "Interest you have earned after withdrawal",
         "openLoans": "Open loans",
-        "closedLoans": "Closed loans"
+        "closedLoans": "القروض المغلقة"
       },
       "banners": {
-        "needApproval": "You need to approve this account before being able to lend assets.",
-        "fullyApproved": "You have fully approved this account. You can reduce the amount at a fee.",
-        "approvedCanReduce": "You have approved <0>{{value}}</0> on this account. You can reduce the amount at a fee.",
+        "needApproval": "يتعين عليك الموافقة على هذا الحساب قبل أن تكون قادراً على إقراض الأصول.",
+        "fullyApproved": "لقد وافقت بالكامل على هذا الحساب. يمكنك تخفيض المبلغ مقابل رسوم.",
+        "approvedCanReduce": "لقد وافقت على <0>{{value}}</0> على هذا الحساب. يمكنك تخفيض المبلغ مقابل رسوم.",
         "approvedButNotEnough": "You have approved <0>{{value}}</0> on this account.",
         "approving": "You can deposit assets once the account approval is confirmed.",
-        "notEnough": "You must increase the limit approved on your account to lend."
+        "notEnough": "يتعيّن عليك زيادة الحد الأقصى الموافق عليه في حسابك للإقراض."
       },
-      "howDoesLendingWork": "How does lending works",
+      "howDoesLendingWork": "كيف يعمل الإقراض",
       "dashboard": {
         "tabTitle": "Dashboard",
-        "assetsTitle": "Assets to lend",
+        "assetsTitle": "أصول للإقراض",
         "accountsTitle": "Approved accounts",
         "emptySateDescription": "You can lend assets directly from your Ethereum accounts and earn interest.",
         "apy": "{{value}} APY",
         "activeAccount": {
-          "account": "Account",
-          "amountSupplied": "Amount deposited",
+          "account": "حساب",
+          "amountSupplied": "المبلغ المودع",
           "interestEarned": "Interest earned",
           "status": "Account status",
           "EARNING": "Earning",
@@ -2000,22 +2000,22 @@
           "approve": "Approve",
           "supply": "Supply",
           "withdraw": "Withdraw",
-          "amountRedeemed": "Amount withdrawn",
+          "amountRedeemed": "المبلغ المسحوب",
           "endDate": "End date"
         }
       },
       "closedLoans": {
-        "tabTitle": "Closed loans",
+        "tabTitle": "القروض المغلقة",
         "description": "View all your withdrawn loans and the interest you have earned.",
-        "cta": "Lend asset"
+        "cta": "إقراض أصل"
       },
       "history": {
         "tabTitle": "History",
         "description": "View the history of all your loan transactions.",
-        "cta": "Lend asset"
+        "cta": "إقراض أصل"
       },
       "terms": {
-        "label": "Lend crypto",
+        "label": "إقراض العملات المشفرة",
         "title": "Lend assets on the Compound Protocol",
         "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger acccount.",
         "switchLabel": "I have read and agree with the <0><0>Terms of Use</0></0>."
@@ -2035,14 +2035,14 @@
           "label": "Step 3/3",
           "title": "Withdraw assets at any time.",
           "description": "You can withdraw your assets and earned interest at any time, partially or entirely, directly from your Ledger account.",
-          "cta": "Lend now"
+          "cta": "إقراض الآن"
         },
-        "title": "Lend crypto"
+        "title": "إقراض العملات المشفرة"
       },
       "noTokenAccount": {
         "info": {
-          "title": "You don’t have a {{ name }} account.",
-          "description": "In order to deposit funds and lend crypto you need a {{ name }} account. Please Receive funds on your Ethereum address."
+          "title": "ليس لديك حساب {{ name }}.",
+          "description": "لإيداع الأموال وإقراض العملات المشفرة، فأنت بحاجة إلى حساب {{ name }}. يرجى تلقي الأموال على عنوان إيثيروم الخاص بك."
         },
         "buttons": {
           "receive": "Receive {{ name }}",
@@ -2052,39 +2052,39 @@
       "enable": {
         "info": {
           "title": "This account is not approved",
-          "description": "You need to approve an account before being able to lend this asset.",
-          "cta": "Approve Account"
+          "description": "تحتاج إلى الموافقة على حساب قبل أن تتمكن من إقراض هذا الأصل.",
+          "cta": "الموافقة على الحساب"
         },
         "stepperHeader": {
-          "selectAccount": "Choose an account",
+          "selectAccount": "اختر حسابًا",
           "enable": "Approve",
-          "advanced": "Advanced",
-          "amount": "Enter amount",
+          "advanced": "متقدم",
+          "amount": "أدخل المبلغ",
           "summary": "Summary",
-          "selectDevice": "Select Device",
-          "connectDevice": "Connect Device",
+          "selectDevice": "اختار جهاز",
+          "connectDevice": "توصيل الجهاز",
           "stepRange": "Step {{currentStep}} of {{totalSteps}}"
         },
         "selectAccount": {
-          "enabledAccountsAmount": "You have {{number}} account that approved {{amount}}",
-          "enabledAccountsAmount_plural": "You have {{number}} accounts that approved {{amount}}",
-          "enabledAccountsNoLimit": "You have {{number}} account that approved an unlimited amount of {{ currency }}",
-          "enabledAccountsNoLimit_plural": "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
-          "noEnabledAccounts": "You need to approve an account before you can lend."
+          "enabledAccountsAmount": "لديك {{number}} حساب وافق على {{amount}}",
+          "enabledAccountsAmount_plural": "لديك {{number}} حسابات وافقت على {{amount}}",
+          "enabledAccountsNoLimit": "لديك {{number}} حساب قام بالموافقة علي كمية غير محدودة من {{ currency }}",
+          "enabledAccountsNoLimit_plural": "لديك {{number}} الحسابات قامت بالموافقة علي كمية غير محدودة من {{ currency }}",
+          "noEnabledAccounts": "تحتاج إلى الموافقة على حساب قبل أن تتمكن من الإقراض."
         },
         "enable": {
           "summary": "<0>I grant the </0><1>{{contractName}}</1><0> smart contract access to my </0><1>{{accountName}}</1><0> account for a </0><1>{{amount}}</1><0> amount</0>",
-          "limit": "limited {{amount}}",
-          "noLimit": "no limit {{assetName}}",
+          "limit": "{{amount}} محدودة",
+          "noLimit": "{{assetName}} غير محدود",
           "contractName": "Compound {{currencyName}}",
-          "advanced": "Advanced"
+          "advanced": "متقدم"
         },
         "advanced": {
-          "amountLabel": "Amount to approve",
-          "amountLabelTooltip": "This limits the amount available to the smart contract.",
-          "limit": "Limit",
-          "limited": "Limited",
-          "noLimit": "No Limit"
+          "amountLabel": "المبلغ المطلوب الموافقة عليه",
+          "amountLabelTooltip": "هذا يحد من المبلغ المتاح للعقد الذكي.",
+          "limit": "الحد",
+          "limited": "محدود",
+          "noLimit": "بدون حد"
         },
         "amount": {
           "totalAvailable": "Total available"
@@ -2094,7 +2094,7 @@
           "info": "The approval was sent to the network for confirmation. You’ll be able to issue loans once it is confirmed.",
           "extraInfo": "Transactions can take some time to be displayed in an explorer and to be confirmed.",
           "button": {
-            "done": "Close"
+            "done": "إغلاق"
           }
         }
       },
@@ -2102,8 +2102,8 @@
         "stepperHeader": {
           "amount": "Supply",
           "summary": "Summary",
-          "selectDevice": "Select Device",
-          "connectDevice": "Connect Device",
+          "selectDevice": "اختار جهاز",
+          "connectDevice": "توصيل الجهاز",
           "stepRange": "Step {{currentStep}} of {{totalSteps}}"
         },
         "amount": {
@@ -2115,8 +2115,8 @@
           "info": "You will start earning interest once the network has confirmed the deposit.",
           "extraInfo": "Transactions can take some time to be displayed in an explorer and to be confirmed.",
           "button": {
-            "done": "Done",
-            "cta": "View details"
+            "done": "تم",
+            "cta": "عرض التفاصيل"
           }
         }
       },
@@ -2124,16 +2124,16 @@
         "stepperHeader": {
           "amount": "Withdraw",
           "summary": "Summary",
-          "selectDevice": "Select Device",
-          "connectDevice": "Connect Device",
+          "selectDevice": "اختار جهاز",
+          "connectDevice": "توصيل الجهاز",
           "stepRange": "Step {{currentStep}} of {{totalSteps}}"
         },
         "validation": {
           "success": "Withdrawal sent successfully",
           "info": "Your assets will be available once the network has confirmed the withdrawal.",
           "button": {
-            "done": "Done",
-            "cta": "View details"
+            "done": "تم",
+            "cta": "عرض التفاصيل"
           }
         }
       }
@@ -2144,15 +2144,15 @@
     "loading": "Sync"
   },
   "scanning": {
-    "loading": "Searching devices..."
+    "loading": "جاري بحث الأجهزة..."
   },
   "send": {
     "tooMuchUTXOBottomModal": {
-      "cta": "Continue",
+      "cta": "متابعة",
       "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
       "title": "UTXO message"
     },
-    "highFeeModal": "Be careful, network fees are greater than <1>10%</1> of the amount. Do you want to continue?",
+    "highFeeModal": "كن حذرًا، رسوم الشبكة تتعدى <1>10%</1> من المبلغ. هل تريد المتابعة؟",
     "scan": {
       "title": "Scan QR code",
       "descBottom": "Please center the QR code inside the square.",
@@ -2165,17 +2165,17 @@
     },
     "stepperHeader": {
       "selectAccount": "Account to debit",
-      "recipientAddress": "Recipient address",
-      "selectAmount": "Amount",
+      "recipientAddress": "عنوان المستلم",
+      "selectAmount": "المبلغ",
       "summary": "Summary",
-      "selectDevice": "Select device",
-      "connectDevice": "Connect device",
+      "selectDevice": "اختار جهاز",
+      "connectDevice": "توصيل الجهاز",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "recipient": {
       "scan": "Scan QR code",
-      "enterAddress": "Enter address",
-      "input": "Enter address",
+      "enterAddress": "أدخل العنوان",
+      "input": "أدخل العنوان",
       "verifyAddress": "Please verify the address matches the one shared by the recipient."
     },
     "amount": {
@@ -2189,18 +2189,18 @@
       "tag": "Tag (Optional)",
       "validateTag": "Validate tag",
       "total": "Total",
-      "amount": "Amount",
-      "from": "From",
+      "amount": "المبلغ",
+      "from": "من",
       "to": "To",
       "infoTotalTitle": "Total debit",
-      "infoTotalDesc": "Includes transaction amount and the selected network fees",
-      "gasLimit": "Gas limit",
+      "infoTotalDesc": "يشمل مبلغ المعاملة ورسوم الشبكة المحددة",
+      "gasLimit": "حد الغاز",
       "gasPrice": "Gas price",
       "maxFees": "Max fees",
-      "validateGasLimit": "Validate gas limit",
+      "validateGasLimit": "التحقق من حد الغاز",
       "fees": "Fees",
       "validateFees": "Validate Fees",
-      "customizeFees": "Customize Fees",
+      "customizeFees": "تخصيص الرسوم",
       "memo": {
         "title": "Memo",
         "type": "Memo type",
@@ -2211,24 +2211,24 @@
     "validation": {
       "message": "On your device, confirm the transaction to sign it securely.",
       "sent": "Transaction sent",
-      "amount": "Amount",
+      "amount": "المبلغ",
       "fees": "Fees",
-      "confirm": "Your account balance will be updated once the network confirms the transaction.",
+      "confirm": "سيتم تحديث رصيد حسابك بمجرد تأكيد الشبكة للمعاملة.",
       "button": {
-        "details": "View details",
-        "retry": "Retry"
+        "details": "عرض التفاصيل",
+        "retry": "إعادة المحاولة"
       }
     },
     "fees": {
       "title": "Network fees",
-      "validate": "Confirm",
+      "validate": "تأكيد",
       "required": "Fees are required",
       "chooseGas": "Choose a gas price",
       "higherFaster": "Higher gas price means a faster confirmation.",
       "edit": {
         "title": "Choose unit"
       },
-      "networkInfo": "Choose the amount of network fees to include in the transaction. The amount of fees affects the processing speed of the transaction"
+      "networkInfo": "اختر مبلغ رسوم الشبكة المراد تضمينها في المعاملة. يؤثر مبلغ الرسوم على السرعة التي تتم بها المعاملة"
     },
     "verification": {
       "streaming": {
@@ -2238,8 +2238,8 @@
     },
     "info": {
       "maxSpendable": {
-        "title": "Max spendable amount",
-        "description": "The maximum spendable amount is the total balance in an account that is available to send in a transaction."
+        "title": "المبلغ الأقصى القابل للإنفاق",
+        "description": "الحد الأقصى للمبلغ القابل للإنفاق هو إجمالي الرصيد المتاح في الحساب لإرسال المعاملة."
       }
     }
   },
@@ -2250,7 +2250,7 @@
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "selectAccount": {
-      "addAccount": "Add {{currency}} account"
+      "addAccount": "أضف حساب {{currency}}"
     }
   },
   "freeze": {
@@ -2258,8 +2258,8 @@
       "info": "Earn rewards",
       "selectAmount": "Freeze",
       "summary": "Summary",
-      "selectDevice": "Select device",
-      "connectDevice": "Connect device",
+      "selectDevice": "اختار جهاز",
+      "connectDevice": "توصيل الجهاز",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "info": {
@@ -2270,7 +2270,7 @@
         "2": "Freeze and vote securely with your Ledger device."
       },
       "howVotingWorks": "How voting works",
-      "cta": "Continue"
+      "cta": "متابعة"
     },
     "amount": {
       "available": "Total available",
@@ -2280,7 +2280,7 @@
     "validation": {
       "message": "Always verify that your device displays the address exactly as it was originally given to you.",
       "success": "Assets frozen",
-      "amount": "Amount",
+      "amount": "المبلغ",
       "info": "You will start earning {{resource}} once the network has confirmed the freeze. You can shortly vote for Super Representatives to also earn rewards.",
       "button": {
         "pending": "Transaction is being validated.",
@@ -2288,7 +2288,7 @@
         "vote": "Vote",
         "voteTimer": "0:{{time}}",
         "later": "I will vote later",
-        "retry": "Retry"
+        "retry": "إعادة المحاولة"
       }
     }
   },
@@ -2296,34 +2296,34 @@
     "stepperHeader": {
       "selectAmount": "Unfreeze",
       "summary": "Summary",
-      "selectDevice": "Select device",
-      "connectDevice": "Connect device",
+      "selectDevice": "اختار جهاز",
+      "connectDevice": "توصيل الجهاز",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "amount": {
       "title": "Select the type of asset to unfreeze",
       "info": "Unfreezing will decrease your {{resource}} and will cancel all your votes.",
-      "cta": "Continue"
+      "cta": "متابعة"
     },
     "validation": {
       "success": "Your assets were unfrozen successfully",
       "info": "Your {{resource}} points will be decreased and all your votes will be canceled.",
       "button": {
-        "done": "Done",
+        "done": "تم",
         "cta": "See details"
       }
     }
   },
   "claimReward": {
     "stepperHeader": {
-      "selectDevice": "Select device",
-      "connectDevice": "Connect device",
+      "selectDevice": "اختار جهاز",
+      "connectDevice": "توصيل الجهاز",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "validation": {
       "success": "Your rewards were added to the available balance.",
       "button": {
-        "done": "Done",
+        "done": "تم",
         "cta": "See details"
       }
     }
@@ -2332,14 +2332,14 @@
     "stepperHeader": {
       "selectValidator": "Cast votes",
       "castVote": "My votes",
-      "selectDevice": "Select device",
-      "connectDevice": "Connect device",
+      "selectDevice": "اختار جهاز",
+      "connectDevice": "توصيل الجهاز",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "selectValidator": {},
     "castVotes": {
       "ranking": "Ranking: <0>{{rank}}</0>",
-      "nbOfVotes": "Number of votes {{amount}}",
+      "nbOfVotes": "عدد الأصوات {{amount}}",
       "percentage": "Percentage",
       "estYield": "Est. yield",
       "addMoreVotes": "Add more votes",
@@ -2362,16 +2362,16 @@
       "segwit_or_native_segwit": "Segwit or Native segwit?"
     },
     "quitConfirmation": {
-      "title": "Cancel add account",
-      "desc": "Are you sure you want to cancel adding accounts?"
+      "title": "إلغاء إضافة حساب",
+      "desc": "هل أنت متأكد أنك تريد إلغاء إضافة حسابات؟"
     },
-    "imported": "Accounts added successfully",
+    "imported": "تمت إضافة الحسابات بنجاح",
     "sections": {
       "importable": {
         "title": "Add existing account"
       },
       "creatable": {
-        "title": "Add new account"
+        "title": "إضافة حساب جديد"
       },
       "imported": {
         "title": "Accounts already in the Portfolio ({{length}})"
@@ -2382,15 +2382,15 @@
     },
     "success": {
       "desc": "View your accounts or add other accounts",
-      "secondaryCTA": "Add other accounts",
+      "secondaryCTA": "إضافة حسابات أخرى",
       "cta": "Go to Accounts"
     },
-    "stopScanning": "Stop scanning",
-    "retryScanning": "Retry scanning",
-    "retry": "Retry",
-    "done": "Done",
-    "finalCta": "Continue",
-    "finalCtaForSwap": "Go back to Swap",
+    "stopScanning": "إيقاف المسح الضوئي",
+    "retryScanning": "إعادة محاولة المسح الضوئي",
+    "retry": "إعادة المحاولة",
+    "done": "تم",
+    "finalCta": "متابعة",
+    "finalCtaForSwap": "رجوع إلى المبادلة",
     "synchronizing": "Synchronizing",
     "synchronizingDesc": "Your accounts are being synchronized. This can take a while...",
     "noAccountToCreate": "Could not create <1><0>{{currencyName}}</></> account. Restart the process and sync your accounts.",
@@ -2417,7 +2417,7 @@
     "showMoreChainType": "More address types",
     "addressTypeInfo": {
       "title": "Which address type to choose?",
-      "subtitle": "Add new account",
+      "subtitle": "إضافة حساب جديد",
       "native_segwit": {
         "title": "Native Segwit",
         "desc": "Best overall. Low fees per transaction, error detection and Lightning Network support. Some wallets/exchanges may need to add support."
@@ -2447,7 +2447,7 @@
     "appNotInstalled_plural": "Please install the {{appName}} apps",
     "verifyAddress": {
       "title": "Verify address on device",
-      "description": "Please verify that the {{currencyName}} address to be shown in Ledger Live matches the one on your Ledger device."
+      "description": "يرجى التحقق من أن العنوان {{currencyName}} الذي سيتم عرضه في ليدجر لايف يطابق العنوان الموجود على جهاز ليدجر الخاص بك."
     },
     "confirmSwap": {
       "title": "Confirm swap operation on device",
@@ -2473,13 +2473,13 @@
     },
     "deviceNotFoundPairNewDevice": "Add new Ledger Nano X",
     "headerDescription": "Please make sure your {{productName}} is unlocked with Bluetooth enabled",
-    "usb": "... or connect USB cable",
-    "usbLabel": "Connect USB cable and enter your PIN Code on your device",
+    "usb": "... أو قم بالتوصيل عبر كابل USB",
+    "usbLabel": "قم بتوصيل كابل USB وأدخل رمز الPIN على جهازك",
     "withoutDeviceHeader": "I don't have my device with me",
-    "withoutDevice": "Continue without my device",
+    "withoutDevice": "المتابعة بدون جهازي",
     "steps": {
       "connecting": {
-        "title": "Connecting {{deviceName}}",
+        "title": "جاري توصيل {{deviceName}}",
         "description": {
           "ble": "Please make sure your {{productName}} is unlocked and within range",
           "usb": "Please make sure your {{productName}} is unlocked"
@@ -2509,7 +2509,7 @@
       "receiveVerify": {
         "title": "Verify address on device",
         "description": "Please verify that the {{currencyName}} address displayed in Ledger Live exactly matches the one displayed on your Ledger device.",
-        "action": "Continue"
+        "action": "متابعة"
       },
       "getDeviceName": {
         "title": "Press both buttons together to enable reading the device name."
@@ -2525,13 +2525,13 @@
   "EditDeviceName": {
     "title": "Rename device",
     "charactersRemaining": "{{remainingCount}} characters remaining",
-    "action": "Confirm"
+    "action": "تأكيد"
   },
   "PairDevices": {
     "Paired": {
       "title": "Pairing successful",
       "desc": "Your {{productName}} is ready to be used with Ledger Live.",
-      "action": "Continue"
+      "action": "متابعة"
     },
     "Pairing": {
       "step1": "Validate if the code displayed on your phone exactly matches the one displayed on your {{productName}}.",
@@ -2569,7 +2569,7 @@
   "manager": {
     "tabTitle": "Device Manager",
     "title": "Manager",
-    "connect": "Select your device",
+    "connect": "اختار جهازك",
     "appsCatalog": "App catalog",
     "installedApps": "Installed apps",
     "noAppNeededForToken": "Install {{appName}} app for {{tokenName}}",
@@ -2589,7 +2589,7 @@
       "title": "App catalog",
       "loading": "Loading apps...",
       "noApps": "No apps found",
-      "searchAppsCatalog": "Search app in catalogue...",
+      "searchAppsCatalog": "ابحث عن التطبيق في القائمة...",
       "searchAppsInstalled": "Search installed apps...",
       "noAppsInstalled": "No apps installed on your device",
       "noAppsDescription": "Go to the App catalog to install apps",
@@ -2619,7 +2619,7 @@
       "title": "App installed successfully, you can now add your {{app}} accounts",
       "title_plural": "Apps installed successfully, you can now add your accounts",
       "notSupported": "App installed successfully, find out more about the installed apps on our website.",
-      "manageAccount": "Add accounts",
+      "manageAccount": "إضافة حساب",
       "learnMore": "Learn more",
       "later": "Do it later"
     },
@@ -2675,22 +2675,22 @@
       },
       "dependency": {
         "title": "Uninstall {{app}} and related apps?",
-        "showAll": "Show apps to uninstall",
+        "showAll": "عرض التطبيقات المراد إلغاء تثبيتها",
         "description": "Apps on your device that need the {{app}} app will be uninstalled too."
       },
       "continueUninstall": "Uninstall {{app}} and other apps"
     },
     "filter": {
-      "title": "Show",
+      "title": "عرض",
       "all": "All",
       "installed": "Apps",
       "not_installed": "Not installed",
       "supported": "Live supported",
       "updatable": "Updatable",
-      "apply": "Apply"
+      "apply": "تطبيق"
     },
     "sort": {
-      "title": "Sort by",
+      "title": "الفرز حسب",
       "default": "Default",
       "name_asc": "Name A-Z",
       "name_desc": "Name Z-A",
@@ -2730,8 +2730,8 @@
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
     "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",
-    "introDescription2": "This has no impact on your crypto assets.",
-    "action": "Continue update"
+    "introDescription2": "ليس لذلك أي تأثير على الأصول المشفرة الخاصة بك.",
+    "action": "متابعة التحديث"
   },
   "FirmwareUpdateCheckId": {
     "title": "Identifier",
@@ -2739,8 +2739,8 @@
   },
   "FirmwareUpdateMCU": {
     "title": "Restart device",
-    "desc1": "Disconnect your device from your computer.",
-    "desc2": "Press and hold the left button, connect the USB cable then release the button when the Bootloader screen appears."
+    "desc1": "افصل جهازك عن جهاز الكمبيوتر الخاص بك.",
+    "desc2": "اضغط و استمر في الضغط على الزر الأيسر، وقم بتوصيل كبل الUSB ثم قم بتحرير الزر عندما تظهر شاشة Bootloader."
   },
   "FirmwareUpdateConfirmation": {
     "title": "Firmware updated",
@@ -2761,7 +2761,7 @@
       "stepperHeader": {
         "info": "Earn rewards",
         "starter": "Rewards",
-        "connectDevice": "Connect device",
+        "connectDevice": "توصيل الجهاز",
         "verification": "Verification",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
@@ -2778,10 +2778,10 @@
             "cta": "Receive Algo"
           },
           "starter": {
-            "title": "Congratulations! You earned {{amount}}. Continue to claim your rewards.",
+            "title": "تهانينا! لقد كسبت {{amount}}. قم بالمتابعة للمطالبة بمكافآتك.",
             "howItWorks": "How rewards work",
             "warning": "You will be prompted to generate an empty transaction to your account. This will add your current rewards to your balance at the minimal cost of the transaction fees.",
-            "cta": "Continue"
+            "cta": "متابعة"
           },
           "verification": {
             "success": {
@@ -2800,7 +2800,7 @@
     "optIn": {
       "stepperHeader": {
         "selectToken": "Add ASA (Asset)",
-        "connectDevice": "Connect device",
+        "connectDevice": "توصيل الجهاز",
         "verification": "Verification",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
@@ -2816,7 +2816,7 @@
             "success": {
               "title": "{{token}} asset successfully added!",
               "text": "You can now receive and send {{token}} assets on your Algorand account.",
-              "cta": "View details"
+              "cta": "عرض التفاصيل"
             },
             "pending": {
               "title": "Broadcasting transaction..."
@@ -2831,7 +2831,7 @@
     "info": {
       "available": {
         "title": "ATOM available",
-        "description": "This amount is disposable."
+        "description": "هذا المبلغ قابل للتصرف."
       },
       "delegated": {
         "title": "Delegated assets",
@@ -2850,9 +2850,9 @@
       "delegationEarn": "You can earn ATOM rewards by delegating your assets.",
       "info": "How Delegation works",
       "claimRewards": "Claim rewards",
-      "claimAvailableRewards": "Claim {{amount}}",
+      "claimAvailableRewards": "المطالبة ب {{amount}}",
       "header": "Delegation(s)",
-      "Amount": "Amount",
+      "Amount": "المبلغ",
       "noRewards": "No rewards available",
       "delegate": "Delegate",
       "undelegate": "Undelegate",
@@ -2862,11 +2862,11 @@
       "stepperHeader": {
         "starter": "Earn rewards",
         "validator": "Delegate assets",
-        "amountSubTitle": "Amount to delegate",
+        "amountSubTitle": "المبلغ المراد تفويضه",
         "summary": "Summary",
         "verification": "Verification",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
@@ -2881,35 +2881,35 @@
             "warning": {
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
             },
-            "cta": "Continue"
+            "cta": "متابعة"
           },
           "validator": {
             "validators": "Validators",
             "myDelegations": "My delegations",
-            "cta": "Continue",
+            "cta": "متابعة",
             "estYield": "Est. yield: {{amount}}",
-            "totalAvailable": "Total available: <0>{{amount}}</0>",
+            "totalAvailable": "الإجمالي المتاح: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
-            "noResultsFound": "No validator found for <0>{{search}}</0>",
-            "currentAmount": "(+ <0>{{amount}}</0>)"
+            "noResultsFound": "لم يتم العثور على مدقق لـ <0>{{search}}</0>",
+            "currentAmount": "(+<0>{{amount}}</0>)"
           },
           "amount": {
-            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
+            "assetsRemaining": "الأصول المتبقية: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
-            "minAmount": "Minimum amount: <0>{{min}}</0>",
-            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
-            "cta": "Continue"
+            "minAmount": "الحد الأدنى للمبلغ: <0>{{min}}</0>",
+            "incorrectAmount": "الحد الأقصى للمبلغ: <0>{{max}}</0>",
+            "cta": "متابعة"
           },
           "verification": {
             "success": {
               "title": "You have successfully delegated your assets",
-              "text": "Your account balance will be updated once the network confirms the transaction.",
-              "cta": "View details"
+              "text": "سيتم تحديث رصيد حسابك بمجرد تأكيد الشبكة للمعاملة.",
+              "cta": "عرض التفاصيل"
             },
             "pending": {
               "title": "Broadcasting transaction..."
             },
-            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            "broadcastError": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
           }
         }
       },
@@ -2926,11 +2926,11 @@
       "estYield": "est. yield",
       "stepperHeader": {
         "validator": "Choose new validator",
-        "amountSubTitle": "Amount to redelegate",
-        "amountTitle": "{{from}} → {{to}}",
+        "amountSubTitle": "المبلغ المراد إعادة تفويضه",
+        "amountTitle": "{{from}} ← {{to}}",
         "summary": "Summary",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
@@ -2938,35 +2938,35 @@
           "validator": {
             "validators": "Validators",
             "myDelegations": "My delegations",
-            "cta": "Continue",
+            "cta": "متابعة",
             "estYield": "Est. yield: {{amount}}",
             "totalAvailable": "Total available: <0>{{amount}}</0>",
             "allAssetsUsed": "All assets used",
-            "noResultsFound": "No validator found for <0>{{search}}</0>"
+            "noResultsFound": "لم يتم العثور على مدقق لـ <0>{{search}}</0>"
           },
           "amount": {
-            "newRedelegatedBalance": "New total for <0>{{name}}</0> after operation: <0>{{amount}}</0>"
+            "newRedelegatedBalance": "الإجمالي الجديد لـ <0>{{name}}</0> بعد العملية: <0>{{amount}}</0>"
           },
           "verification": {
             "success": {
               "title": "You have successfully redelegated your assets",
-              "text": "Your account balance will be updated when the network confirms the transaction.",
-              "cta": "View details"
+              "text": "سيتم تحديث رصيد حسابك عندما تؤكد الشبكة المعاملة.",
+              "cta": "عرض التفاصيل"
             },
             "pending": {
               "title": "Broadcasting transaction..."
             },
-            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            "broadcastError": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
           }
         }
       }
     },
     "undelegation": {
       "stepperHeader": {
-        "amountSubTitle": "Amount to undelegate",
+        "amountSubTitle": "المبلغ المراد إلغاء تفويضه",
         "summary": "Summary",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
@@ -2977,13 +2977,13 @@
           "verification": {
             "success": {
               "title": "You have successfully undelegated your assets",
-              "text": "Your account balance will be updated when the network confirms the transaction.",
-              "cta": "View details"
+              "text": "سيتم تحديث رصيد حسابك عندما تؤكد الشبكة المعاملة.",
+              "cta": "عرض التفاصيل"
             },
             "pending": {
               "title": "Broadcasting transaction..."
             },
-            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            "broadcastError": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
           }
         }
       }
@@ -2993,8 +2993,8 @@
         "validator": "Select reward to collect",
         "method": "Claim rewards",
         "summary": "Summary",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "flow": {
@@ -3008,20 +3008,20 @@
             "claimRewardCompoundInfo": "They will be claimed now and automatically delegated to the same validator.",
             "compoundOrCashIn": "Compound or Cash in?",
             "claimRewardTooltip": "Rewards will be added to the available balance",
-            "claimRewardCompoundTooltip": "Rewards will be added to the delegated amount",
-            "cta": "Continue"
+            "claimRewardCompoundTooltip": "سيتم إضافة المكافآت إلى المبلغ المفوض",
+            "cta": "متابعة"
           },
           "verification": {
             "success": {
               "title": "You have successfully claimed your rewards. They were added to your available balance.",
               "titleCompound": "Your rewards were delegated to the same validator.",
-              "text": "Your account balance will be updated when the network confirms the transaction.",
-              "cta": "View details"
+              "text": "سيتم تحديث رصيد حسابك عندما تؤكد الشبكة المعاملة.",
+              "cta": "عرض التفاصيل"
             },
             "pending": {
               "title": "Broadcasting transaction..."
             },
-            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            "broadcastError": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
           }
         }
       }
@@ -3041,7 +3041,7 @@
       "startEarning": "Earn rewards",
       "title": "Claim rewards",
       "header": "Votes ({{total}})",
-      "Amount": "Amount",
+      "Amount": "المبلغ",
       "noRewards": "No rewards available",
       "votes": {
         "title": "Votes",
@@ -3089,7 +3089,7 @@
               "ledger": "Delegate securely with your Ledger device."
             },
             "button": {
-              "cta": "Continue"
+              "cta": "متابعة"
             }
           }
         }
@@ -3113,7 +3113,7 @@
     "info": {
       "available": {
         "title": "TRX available",
-        "description": "This amount is disposable."
+        "description": "هذا المبلغ قابل للتصرف."
       },
       "frozen": {
         "title": "Frozen",
@@ -3162,7 +3162,7 @@
     "info": {
       "available": {
         "title": "DOT available",
-        "description": "This amount can be sent anytime."
+        "description": "يمكن إرسال هذا المبلغ في أي وقت."
       },
       "locked": {
         "title": "Bonded assets",
@@ -3193,7 +3193,7 @@
       "chill": "Clear nominations",
       "status": "Status",
       "totalStake": "Total Stake",
-      "amount": "Bonded Amount",
+      "amount": "المبلغ المقيد",
       "commission": "Commission",
       "active": "Active",
       "activeInfo": "This validator is elected and is collecting rewards on your bonded assets.",
@@ -3213,11 +3213,11 @@
       "hasPendingBondOperation": "A bond operation is still pending confirmation",
       "externalControllerUnsupported": "This stash account is controlled by another account with the address <0>{{address}}</0>. Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js",
       "externalStashUnsupported": "This account controls a stash account whose address is <0>{{address}}</0>. Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js",
-      "showInactiveNominations": "Show all nominations ({{count}})",
-      "hideInactiveNominations": "Show active nominations only",
+      "showInactiveNominations": "عرض كل الترشيحات ({{count}})",
+      "hideInactiveNominations": "عرض الترشيحات النشطة فقط",
       "noActiveNominations": "There are no active nominations.",
-      "showAllUnlockings": "Show all unbonding amounts ({{count}})",
-      "hideAllUnlockings": "Hide unbonding amounts"
+      "showAllUnlockings": "عرض كل مبالغ إلغاء التقيد ({{count}})",
+      "hideAllUnlockings": "إخفاء مبالغ إلغاء التقيد"
     },
     "unlockings": {
       "header": "Unbonding",
@@ -3228,15 +3228,15 @@
       "title": "Manage assets",
       "bond": {
         "title": "Bond",
-        "description": "To earn rewards, first bond an amount. Then you must nominate your validator(s)."
+        "description": "لكسب المكافآت، قم أولاً بتقيد مبلغ. ثم يجب عليك ترشيح مدقق (مدققين) لك."
       },
       "unbond": {
         "title": "Unbond",
-        "description": "To make a bonded amount available again, first you need to unbond it. You can withdraw it after the 28-day unbonding period."
+        "description": "لإتاحة مبلغ مقيد مرة أخرى، سيكون عليك إلغاء تقيده أولاً. يمكنك سحبه بعد انقضاء فترة إلغاء التقيد الممتدة لفترة 28 يومًا."
       },
       "withdrawUnbonded": {
         "title": "Withdraw Unbonded",
-        "description": "To retrieve an unbonded amount back to the available balance, you need to withdraw it manually."
+        "description": "لإرجاع مبلغ تم إلغاء تقيده إلى الرصيد المتاح، سيكون عليك سحبه يدويًا."
       },
       "nominate": {
         "title": "Nominate",
@@ -3250,8 +3250,8 @@
     "nominate": {
       "stepperHeader": {
         "validators": "Validators to nominate",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
@@ -3259,7 +3259,7 @@
           "myNominations": "My nominations",
           "electedValidators": "Elected validators",
           "waitingValidators": "Unelected validators",
-          "noResultsFound": "No validators found for <0>{{search}}</0>",
+          "noResultsFound": "لم يتم العثور على مدققين لـ <0>{{search}}</0>",
           "selected": "{{selected}} out of {{total}} selected",
           "notValidatorsRemoved": "You have nominated {{count}} addresses who are no longer validators. They will automatically be removed from your nominate transaction.",
           "maybeChill": "Clear nominations instead"
@@ -3285,9 +3285,9 @@
       },
       "stepperHeader": {
         "starter": "Earn rewards",
-        "amount": "Amount to bond",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "amount": "المبلغ المراد تقيده",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
@@ -3311,13 +3311,13 @@
         "validation": {
           "success": {
             "title": "Assets successfully bonded",
-            "description": "You can nominate validators once the network has confirmed the transaction.",
-            "descriptionNominate": "You will be able to nominate validators once the network has confirmed your transaction.",
+            "description": "يمكنك ترشيح المدققين فور أن تؤكد الشبكة على المعاملة.",
+            "descriptionNominate": "سوف تتمكن من ترشيح المدققين فور أن تؤكد الشبكة على معاملتك.",
             "nominate": "Nominate",
             "later": "Nominate later"
           },
           "pending": {
-            "title": "Transaction awaiting confirmation",
+            "title": "المعاملة في انتظار التأكيد",
             "description": "You have to wait a moment before nominating"
           }
         }
@@ -3325,9 +3325,9 @@
     },
     "rebond": {
       "stepperHeader": {
-        "amount": "Amount to rebond",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "amount": "المبلغ المراد إعادة تقيده",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
@@ -3336,21 +3336,21 @@
           "maxLabel": "Max"
         },
         "confirm": {
-          "info": "Rebonded assets are immediately added to the bonded amount."
+          "info": "تتم إضافة الأصول المعاد قيدها على الفور إلى المبلغ المقيد."
         },
         "validation": {
           "success": {
             "title": "Assets successfully rebonded",
-            "description": "Your account balance will update once the network has confirmed the transaction."
+            "description": "سيتم تحديث رصيد حسابك فور أن تؤكد الشبكة على المعاملة."
           }
         }
       }
     },
     "unbond": {
       "stepperHeader": {
-        "amount": "Amount to unbond",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "amount": "المبلغ المراد إلغاء تقيده",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
@@ -3373,8 +3373,7 @@
       "modes": {
         "withdrawUnbonded": {
           "title": "Withdraw unbonded",
-          "description": "After the 28-day unbonding period you can withdraw unbonded assets.",
-          "info": "You can then withdraw unbonded assets to your available balance."
+          "description": "Withdraw unbonded assets to your available balance."
         },
         "chill": {
           "title": "Clear nominations",
@@ -3384,8 +3383,8 @@
       },
       "stepperHeader": {
         "info": "Info",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
+        "selectDevice": "اختار جهاز",
+        "connectDevice": "توصيل الجهاز",
         "stepRange": "Step {{currentStep}} of {{totalSteps}}"
       },
       "steps": {
@@ -3400,20 +3399,20 @@
   },
   "delegation": {
     "overdelegated": "Overdelegated",
-    "delegationSendWarnDesc": "The amount to be sent will be deducted from your delegated account.",
+    "delegationSendWarnDesc": "سيتم خصم المبلغ المراد إرساله من حسابك المفوض.",
     "delegationReceiveWarnDesc": "The amount received in a delegated account will be added to the total staked amount. Choose another account if you want to avoid this.",
     "iDelegateMy": "I delegate my",
     "undelegateMy": "Undelegate my",
     "warnUndelegation": "Your account will be undelegated.",
     "warnDelegation": "Delegating your voting rights does not guarantee any rewards from your validator.",
     "to": "to",
-    "from": "from",
+    "from": "من",
     "forAnEstYield": "for an est. yield of",
     "yieldPerYear": "{{yield}} / Year",
     "yieldInfos": "Yield rates are provided by",
     "termsAndPrivacy": "I have read and I accept the <1>Ledger Live Terms of Use</1> and <3>Privacy Policy</3>.",
     "delegation": "Delegation",
-    "viewDetails": "View details",
+    "viewDetails": "عرض التفاصيل",
     "validator": "Validator",
     "validatorAddress": "Validator address",
     "delegatedAccount": "Delegated account",
@@ -3458,14 +3457,14 @@
   },
   "ValidateOnDevice": {
     "title": {
-      "send": "Please confirm the operation on your {{productName}} to send it",
-      "freeze": "On your device, please confirm to finalize the operation",
-      "unfreeze": "On your device, please confirm to finalize the operation",
-      "claimReward": "On your device, please confirm to finalize the operation",
-      "vote": "On your device, please confirm to finalize the operation",
-      "delegate": "On your device, please confirm to finalize the operation",
-      "redelegate": "On your device, please confirm to finalize the operation",
-      "undelegate": "On your device, please confirm to finalize the operation"
+      "send": "يرجى تأكيد العملية على {{productName}} الخاص بك لإرسالها",
+      "freeze": "يرجى التأكيد على جهازك لإنهاء العملية",
+      "unfreeze": "يرجى التأكيد على جهازك لإنهاء العملية",
+      "claimReward": "يرجى التأكيد على جهازك لإنهاء العملية",
+      "vote": "يرجى التأكيد على جهازك لإنهاء العملية",
+      "delegate": "يرجى التأكيد على جهازك لإنهاء العملية",
+      "redelegate": "يرجى التأكيد على جهازك لإنهاء العملية",
+      "undelegate": "يرجى التأكيد على جهازك لإنهاء العملية"
     },
     "warning": "Always verify the address displayed your device exactly matches the one given to you by the {{recipientWording}}",
     "recipientWording": {
@@ -3495,15 +3494,15 @@
       },
       "lending": "Verify the operation details on your device before sending it."
     },
-    "amount": "Amount",
-    "account": "Account",
-    "from": "From",
+    "amount": "المبلغ",
+    "account": "الحساب",
+    "from": "من",
     "to": "To",
-    "redelegationAmount": "Redelegated amount",
+    "redelegationAmount": "المبلغ المعاد تفويضه",
     "gas": "Gas",
     "validatorAddress": "Validator address",
-    "rewardAmount": "Reward amount",
-    "undelegatedAmount": "Undelegated amount",
+    "rewardAmount": "مبلغ المكافأة",
+    "undelegatedAmount": "المبلغ غير المفوض",
     "memo": "Memo"
   },
   "Terms": {
@@ -3517,35 +3516,35 @@
     "buy": {
       "tabTitle": "Buy",
       "selectCurrency": "Select a currency",
-      "selectAccount": "Select an account",
-      "connectDevice": "Connect your device",
+      "selectAccount": "اختيار حساب",
+      "connectDevice": "توصيل جهازك",
       "title": "Buy crypto via our partner",
-      "description": "Purchase crypto assets via Coinify and receive them directly in your Ledger account.",
+      "description": "قم بشراء الأصول المشفرة من خلال Coinify واستلمها مباشرة في حساب ليدجر (Ledger) الخاص بك.",
       "CTAButton": "Buy now",
       "emptyState": {
         "title": "No {{currency}} account",
         "description": "Please add an account before buying {{currency}}.",
-        "CTAButton": "Add account"
+        "CTAButton": "إضافة حساب"
       },
       "skipDeviceVerification": {
-        "confirm": "Confirm",
-        "cancel": "Cancel",
+        "confirm": "تأكيد",
+        "cancel": "إلغاء",
         "address": "Address for {{currency}} account",
-        "warning": "Your address was not confirmed on your Ledger device. Please verify it for security"
+        "warning": "لم يتم تأكيد عنوانك على جهاز ليدجر الخاص بك. يرجى التحقق منه حرصاً على الأمان"
       }
     },
     "sell": {
       "tabTitle": "Sell",
       "selectCurrency": "Select a currency",
-      "selectAccount": "Select an account",
-      "connectDevice": "Connect your device",
+      "selectAccount": "اختيار حساب",
+      "connectDevice": "توصيل جهازك",
       "title": "Sell crypto via our partner",
-      "description": "Sell crypto assets directly from your Ledger account via Coinify and receive fiat in your bank account.",
+      "description": "قم ببيع الأصول المشفرة مباشرة من حساب ليدجر (Ledger) الخاص بك عبر Coinify واستلم نقودًا فعلية في حسابك المصرفي.",
       "CTAButton": "Sell now",
       "emptyState": {
         "title": "No {{currency}} account",
         "description": "You need to add an account before you can sell {{currency}}.",
-        "CTAButton": "Add account"
+        "CTAButton": "إضافة حساب"
       }
     },
     "history": {
@@ -3555,11 +3554,11 @@
   "banner": {
     "exchangeBuyCrypto": {
       "title": "BUY CRYPTO",
-      "description": "Purchase crypto assets via Coinify and receive them directly in your Ledger account."
+      "description": "قم بشراء الأصول المشفرة من خلال Coinify واستلمها مباشرة في حساب ليدجر (Ledger) الخاص بك."
     },
     "swap": {
-      "title": "SWAP CRYPTO",
-      "description": "Swap crypto assets directly from your Ledger accounts with our partner."
+      "title": "مبادلة العملات المشفرة",
+      "description": "قم بمقايضة الأصول المشفرة مباشرةً من حسابات ليدجر الخاصة بك مع شريكنا."
     }
   },
   "walletconnect": {
@@ -3567,33 +3566,33 @@
     "reject": "Reject",
     "connect": "Connect",
     "connected": "Connected",
-    "disconnected": "Disconnected",
+    "disconnected": "تم قطع الاتصال",
     "warningdisconnected": "There is a connection problem between the dApp, WalletConnect and Ledger Live. Wait a few moments or relaunch the connection",
     "info": "You can now access the {{name}} dApp on your desktop.",
     "warning": "Sharing receive addresses from dApp is not secure. Always use Ledger Live when sharing your address to receive funds.",
     "isconnecting": "is connecting, please wait...",
-    "disconnect": "Disconnect",
-    "retry": "Retry",
-    "close": "Close",
+    "disconnect": "قطع الاتصال",
+    "retry": "إعادة المحاولة",
+    "close": "إغلاق",
     "message": "Message",
     "messageHash": "Message Hash",
     "domainHash": "Domain Hash",
     "stringHash": "Hash",
-    "from": "From",
+    "from": "من",
     "successTitle": "Message signed",
     "successDescription": "You have signed the message received from a third party application",
     "stepperHeader": {
       "summary": "Summary",
-      "selectDevice": "Select Device",
-      "connectDevice": "Connect Device",
+      "selectDevice": "اختار جهاز",
+      "connectDevice": "توصيل الجهاز",
       "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "stepVerification": {
-      "action": "Please confirm the operation on your device",
-      "accountName": "Account name"
+      "action": "يرجى تأكيد العملية على جهازك",
+      "accountName": "اسم الحساب"
     },
-    "deeplinkingTitle": "Select an Ethereum account",
-    "addAccount": "Add new account"
+    "deeplinkingTitle": "اختيار حساب إيثريوم",
+    "addAccount": "إضافة حساب جديد"
   },
   "notificationCenter": {
     "title": "Notification center",
