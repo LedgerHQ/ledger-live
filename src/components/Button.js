@@ -72,10 +72,10 @@ type Props = BaseButtonProps & {
 
 function ButtonWrapped(props: BaseButtonProps) {
   const { colors } = useTheme();
-  const isFocused = useIsFocused();
+  const isFocused = useIsFocused(); // @Warning be careful not to import the wrapped button outside of navigation context
   const useTouchable = useContext(ButtonUseTouchable);
   return (
-    <Button
+    <BaseButton
       {...props}
       useTouchable={useTouchable}
       colors={colors}
@@ -84,7 +84,7 @@ function ButtonWrapped(props: BaseButtonProps) {
   );
 }
 
-function Button({
+export function BaseButton({
   // required props
   title,
   onPress,
