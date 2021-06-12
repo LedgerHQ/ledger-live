@@ -125,11 +125,11 @@
       "title": "您不能在有活动存款时减少已批准的金额。"
     },
     "CosmosBroadcastCodeInternal": {
-      "title": "出了点问题 (错误 #1)",
+      "title": "出了点问题 (Error #1)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeTxDecode": {
-      "title": "出了点问题 (错误 #2)",
+      "title": "出了点问题 (Error #2)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeInvalidSequence": {
@@ -145,7 +145,7 @@
       "description": "请确保账户有足够的资金。"
     },
     "CosmosBroadcastCodeUnknownRequest": {
-      "title": "出了点问题 (错误 #6)",
+      "title": "出了点问题 (Error #6)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeInvalidAddress": {
@@ -153,7 +153,7 @@
       "description": "请检查地址，然后重试。"
     },
     "CosmosBroadcastCodeInvalidPubKey": {
-      "title": "出了点问题 (错误 #8)",
+      "title": "出了点问题 (Error #8)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeUnknownAddress": {
@@ -165,11 +165,11 @@
       "description": "请增加账户上的资金。"
     },
     "CosmosBroadcastCodeInvalidCoins": {
-      "title": "出了点问题 (错误 #11)",
+      "title": "出了点问题 (Error #11)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeOutOfGas": {
-      "title": "出了点问题 (错误 #12)",
+      "title": "出了点问题 (Error #12)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeMemoTooLarge": {
@@ -177,19 +177,19 @@
       "description": "请缩减 Memo 文本大小并再次尝试。"
     },
     "CosmosBroadcastCodeInsufficientFee": {
-      "title": "出了点问题 (错误 #14)",
+      "title": "出了点问题 (Error #14)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeTooManySignatures": {
-      "title": "出了点问题 (错误 #15)",
+      "title": "出了点问题 (Error #15)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeGasOverflow": {
-      "title": "出了点问题 (错误 #16)",
+      "title": "出了点问题 (Error #16)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "CosmosBroadcastCodeNoSignatures": {
-      "title": "出了点问题 (错误 #17)",
+      "title": "出了点问题 (Error #17)",
       "description": "请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "DeviceAppVerifyNotSupported": {
@@ -456,7 +456,7 @@
       "description": "请通过管理器卸载并重新安装 {{managerAppName}} 应用程序。"
     },
     "UserRefusedAllowManager": {
-      "title": "设备端管理器已禁用",
+      "title": "Manager（管理器）已被在设备上禁用",
       "description": "请在您的设备上启用管理器，然后重试。"
     },
     "UserRefusedAddress": {
@@ -500,7 +500,7 @@
       "description": "由于近期 Babylon 更新而引入的变化，此功能将在稍后阶段被添加。"
     },
     "RecommendUndelegation": {
-      "title": "请在清空帐户之前解除委托"
+      "title": "请在清空账户之前将其解除委托"
     },
     "RecommendSubAccountsToEmpty": {
       "title": "请先清空所有子账户"
@@ -813,7 +813,7 @@
             "label": "阅读屏幕上的说明，了解如何使用您的设备。"
           },
           "2": {
-            "title": "选择 “设置为新设备”",
+            "title": "选择 “Set up as new device” (设置为新设备)",
             "label": "同时按下两个按钮以激活该选项。"
           },
           "3": {
@@ -873,7 +873,7 @@
       },
       "recoveryPhrase": {
         "title": "恢复短语",
-        "desc": "您的恢复短语是备份您私人密钥的一个24词组成的秘密列表。",
+        "desc": "您的恢复短语是备份您私人密钥的一个 24 words (二十四个助记词) 组成的秘密列表。",
         "desc_1": "Nano 为您生成一个独有的恢复短语。Ledger 不会保存其副本。",
         "cta": "恢复短语",
         "checkboxDesc": "我明白：如果我丢失了自己的恢复短语，那么一旦我的 Nano 无法使用，也就意味着我无法访问自己的加密资产。"
@@ -890,7 +890,7 @@
               "label": "获得一个新的硬件钱包。"
             },
             "1": {
-              "label": "在 Ledger 应用程序中选择“在新设备上还原恢复短语”"
+              "label": "在 Ledger 应用程序中选择 “Restore recovery phrase on a new device” (在新设备上还原恢复短语)"
             },
             "2": {
               "label": "在您的新设备上输入您的恢复短语从而恢复对您加密资产的访问。"
@@ -904,12 +904,12 @@
           },
           "1": {
             "title": "写下所有的恢复词",
-            "label": "在恢复表的位置 1 写下 Nano 上显示的第 1 个词。然后在您的 Nano 设备上按右键显示第 2 个词，并将其写在位置 2。",
-            "label_1": "重复该操作，确保按正确的顺序和拼写将所有的词写下来。按 Nano 上的左键，核对以防出错。"
+            "label": "在恢复表的位置 1 写下 Nano 上显示的 Word #1 第一个词。然后在您的 Nano 设备上按右键显示 Word #2 第二个词，并将其写在位置 2。",
+            "label_1": "重复该操作，确保按正确的顺序和拼写将所有的助记词写下来。按 Nano 上的左键，核对以防出错。"
           },
           "2": {
             "title": "确认您的恢复短语",
-            "label": "按右边按钮，让光标滚动并移到第 1 个词上。核对后同时按下两个按钮进行确认。"
+            "label": "按右边按钮，让光标滚动并移到 Word #1 第一个词上。核对后同时按下两个按钮进行确认。"
           },
           "3": {
             "title": "重复操作以确认所有单词！"
@@ -926,7 +926,7 @@
             "label": "仅可在硬件钱包上输入这些词，永远不要在电脑或手机上输入。"
           },
           "1": {
-            "label": "永远不要将您的 24 个助记词告诉别人，Ledger 也不例外。"
+            "label": "永远不要将您的 24 words (二十四个助记词) 告诉别人，Ledger 也不例外。"
           }
         },
         "cta": "好的，我完成了！",
@@ -938,7 +938,7 @@
               "label": "<1>切勿</1>在电脑、手机或其他设备上保存您的恢复短语。也不要以图片形式保存。"
             },
             "1": {
-              "label": "<1>切勿</1>将您的 24 个助记词告诉任何人。"
+              "label": "<1>切勿</1>将您的 24 words (二十四个助记词) 告诉任何人。"
             },
             "2": {
               "label": "<1>总是</1>将其保管在隐秘、安全的地方。"
@@ -962,7 +962,7 @@
       "importRecoveryPhrase": {
         "title": "通过恢复短语进行还原",
         "desc": "使用恢复短语还原您的 Nano，从而还原、更换或备份您的 Ledger 硬件钱包。",
-        "desc_1": "Nano 将会还原您的私钥，从而令您访问并管理自己的加密资产。",
+        "desc_1": "Nano 将会还原您的私钥，从而令您能够访问并管理自己的加密资产。",
         "cta": "好的，我一切就绪！",
         "warning": {
           "title": "我们只推荐您使用 Ledger 恢复短语",
@@ -988,7 +988,7 @@
             "label": "阅读屏幕上的说明以了解如何使用您的设备。"
           },
           "2": {
-            "title": "选择“通过恢复短语进行还原”",
+            "title": "选择 “Restore from recovery phrase” (通过恢复短语进行还原)",
             "label": "同时按下两个按钮以激活该选项。"
           },
           "3": {
@@ -1008,14 +1008,14 @@
           },
           "1": {
             "title": "选择恢复短语的长度",
-            "label": "恢复短语可能拥有 12、18 或 24 个词。您必须输入所有的词才能访问您的加密资产。"
+            "label": "您的恢复短语可以有 12、18 或 24 words (个助记词) 。您必须输入所有的词才能访问您的加密资产。"
           },
           "2": {
-            "title": "输入第 1 个词……",
-            "label": "使用左边或右边的按钮，输入第一个词 Word #1 的首字母。选中字母后，同时按下两个按钮确认，依次验证每个字母。"
+            "title": "输入 Word #1 第一个词……",
+            "label": "使用左边或右边的按钮，输入 Word #1 第一个词的首字母。选中字母后，同时按下两个按钮确认，依次验证每个字母。"
           },
           "3": {
-            "title": "确认第 1 个词……",
+            "title": "确认 Word #1 第一个词……",
             "label": "从提示中选中 Word #1 第一个词。同时按下两个按钮予以确认。"
           },
           "4": {
@@ -1043,7 +1043,7 @@
       },
       "infoModal": {
         "title": "在哪里可以找到我的设备名？",
-        "desc": "在您的设备上，选择设置 > 通用 > 设备名。",
+        "desc": "在您的设备上，选择 \"Settings > General > Device name\" (设置 > 通用 > 设备名)。",
         "title_1": "如何设置蓝牙连接？",
         "title_2": "如何在没有蓝牙的情况下使用我的 Nano X？",
         "desc_1": "使用 <1> OTG-数据线</1> 将您的 Ledger Nano X 连接到您的 Android 安卓智能手机上 (不支持 iOS 系统)。使用 Ledger Live 手机版或其他兼容的 (web 网络) 应用程序来管理您的加密资产。",
@@ -1112,8 +1112,8 @@
     "stepSetupPin": {
       "step1": "启动您的 {{fullDeviceName}} 并按照说明操作。",
       "step1-nanoS": "使用 OTG 数据线来将您的 {{fullDeviceName}} 连接到您的手机上。",
-      "step2": "同时按下两个按钮，以选择 <1><1>设置为新设备。</1></1>",
-      "step2-restore": "同时按下两个按钮，以选择 <1><1>通过恢复短语进行还原。</1></1>",
+      "step2": "同时按下两个按钮，以选择 <1><1>Setup as a new device.</1></1> (设置为新设备)",
+      "step2-restore": "同时按下两个按钮以选择 <1><1>Restore from recovery phrase.</1></1> (通过恢复短语进行还原)",
       "step3": "按左边或右边的按钮以选择数位。同时按下两个按钮以确认。",
       "step4prefix": "选取",
       "step4suffix1": " 确认您的 PIN 识别密码。",
@@ -1125,8 +1125,8 @@
       }
     },
     "stepWriteRecovery": {
-      "step1": "在空白恢复表的第 1 栏写下 Word #1 <1><1> 第 1 个词 </1></1>",
-      "step2": "按右边按钮继续，写下所有的 24 个词。",
+      "step1": "在空白恢复表的第 1 栏写下 <1><1>Word #1</1></1> 第一个词",
+      "step2": "按右边按钮继续，写下所有的 24 words (二十四个助记词) 。",
       "step3": "确认您恢复短语中的每一个词：选中后，同时按下两个按钮对其进行确认。",
       "modal": {
         "step1": "将您的 24 词恢复短语存放在安全、隐秘的地方。",
@@ -1232,7 +1232,7 @@
     "summary_plural": "您的 {{count}} 账户已同步。",
     "emptyState": {
       "noAppsTitle": "在我的设备上安装应用程序",
-      "noAppsDesc": "在 Ledger Live 上添加账户之前，请先安装相关应用程序。前往管理器安装应用程序。",
+      "noAppsDesc": "在 Ledger Live 上添加账户之前，请先安装相关应用程序。前往 Manager（管理器）安装应用程序。",
       "noAccountsTitle": "您没有任何账户…",
       "noAccountsDesc": "请添加账户到您的资产组合。",
       "buttons": {
@@ -2029,7 +2029,7 @@
         "2": {
           "label": "步骤 2/3",
           "title": "存入资产以赚取利息。",
-          "description": "一旦账户获得批准，您可以选择想要贷出的资产数额，并向该协议发出一个交易。交易一经确认，利息便即刻累积。"
+          "description": "一旦账户获得批准，您可以选择想要贷出的资产数额，并向该协议发出一个交易。交易一经确认，立即累计利息。"
         },
         "3": {
           "label": "步骤 3/3",
@@ -2197,7 +2197,7 @@
       "gasLimit": "Gas 限值",
       "gasPrice": "Gas 价格",
       "maxFees": "最大费用",
-      "validateGasLimit": "验证 Gas 限值",
+      "validateGasLimit": "验证 gas 限值",
       "fees": "费用",
       "validateFees": "验证费用",
       "customizeFees": "自定义费用",
@@ -2224,7 +2224,7 @@
       "validate": "确认",
       "required": "需要费用",
       "chooseGas": "选择 gas 价格",
-      "higherFaster": "较高的 gas 矿工费价格意味着更加快速地确认。",
+      "higherFaster": "较高的 gas （矿工费）价格意味着更加快速地确认。",
       "edit": {
         "title": "选择单位"
       },
@@ -2486,7 +2486,7 @@
         }
       },
       "genuineCheck": {
-        "title": "在您的 {{productName}} 上开启 Ledger 管理器"
+        "title": "在您的 {{productName}} 上开启 Ledger Manager（管理器）"
       },
       "genuineCheckPending": {
         "title": "正在检查该设备是否为正版……"
@@ -2539,7 +2539,7 @@
     },
     "GenuineCheck": {
       "title": "设备验证查验",
-      "accept": "请勿关闭您的 Nano X。确保允许 <1> Ledger 管理器</1> 运行。"
+      "accept": "请勿关闭您的 Nano X。确保允许 <1>Ledger Manager</1>（管理器）运行。"
     },
     "ScanningHeader": {
       "title": "正在寻找设备",
@@ -2772,7 +2772,7 @@
             "steps": {
               "0": "想要接收奖励，至少要有 1 Algo 的余额。",
               "1": "通过增加账户的余额来增加奖励。",
-              "2": "通过该账户进行一次交易，从而申领奖励。"
+              "2": "通过该账户进行一笔交易，从而申领奖励。"
             },
             "howItWorks": "奖励机制如何运作",
             "cta": "接收 Algo"
@@ -2879,7 +2879,7 @@
               "2": "使用您的 Ledger 设备安全地进行委托。"
             },
             "warning": {
-              "description": "请明智地选择验证器：如果验证器表现不当，您可能会不可挽回地损失部分委托资产。"
+              "description": "请明智地选择验证器：如果验证器表现不当，您可能会不可挽回地损失部分已委托资产。"
             },
             "cta": "继续"
           },
@@ -3244,7 +3244,7 @@
       },
       "chill": {
         "title": "清除提名",
-        "description": "删除所有的提名对象。您将停止赚取奖励。而您绑定的金额依旧会处于绑定状态。"
+        "description": "删除所有的提名对象。您将停止赚取奖励。而您绑定的数额依旧会处于绑定状态。"
       }
     },
     "nominate": {
@@ -3299,7 +3299,7 @@
             "经过 28 天的解绑期后，资产将会再次可用"
           ],
           "help": "提名机制如何运作",
-          "warning": "请明智地选择验证器：如果验证器表现不当，您可能会不可挽回地损失部分委托资产。"
+          "warning": "请明智地选择验证器：如果验证器表现不当，您可能会不可挽回地损失部分已绑定资产。"
         },
         "amount": {
           "availableLabel": "可用",
@@ -3499,7 +3499,7 @@
     "from": "来自",
     "to": "到",
     "redelegationAmount": "已重新委托数额",
-    "gas": "Gas 矿工费",
+    "gas": "Gas",
     "validatorAddress": "验证器地址",
     "rewardAmount": "奖励金额",
     "undelegatedAmount": "已解除委托金额",
