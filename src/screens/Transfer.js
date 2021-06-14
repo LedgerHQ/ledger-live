@@ -1,7 +1,8 @@
 /* @flow */
 import React, { useState } from "react";
+import { StyleSheet } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import Touchable from "../components/Touchable";
-import TabIcon from "../components/TabIcon";
 import CreateModal from "../modals/Create";
 import TransferIcon from "../icons/Transfer";
 import { lockSubject } from "../components/RootNavigator/CustomBlockRouterNavigator";
@@ -13,14 +14,10 @@ const hitSlop = {
   bottom: 25,
 };
 
-type Props = {
-  tintColor: string,
-  navigation: any,
-};
-
 export default () => null;
 
-export function TransferTabIcon(props: Props) {
+export function TransferTabIcon() {
+  const { colors } = useTheme();
   const [isModalOpened, setIsModalOpened] = useState(false);
 
   function openModal() {
@@ -38,11 +35,21 @@ export function TransferTabIcon(props: Props) {
         disabled={lockSubject.getValue()}
         hitSlop={hitSlop}
         onPress={openModal}
+        style={[styles.root, { backgroundColor: colors.live }]}
       >
-        {/* $FlowFixMe */}
-        <TabIcon Icon={TransferIcon} i18nKey="tabs.transfer" {...props} />
+        <TransferIcon size={20} color={"#FFF"} />
       </Touchable>
       <CreateModal isOpened={isModalOpened} onClose={onModalClose} />
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    borderRadius: 39,
+    height: 39,
+    width: 39,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

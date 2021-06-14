@@ -30,6 +30,7 @@ export default function MainNavigator({
           {
             borderTopColor: colors.lightFog,
             backgroundColor: colors.card,
+            height: 52,
           },
           hideTabNavigation ? { display: "none" } : {},
         ],
