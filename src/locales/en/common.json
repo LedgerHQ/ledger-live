@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Manager disabled on device",
-      "description": "Please enable the Manager on your device, then try again."
+      "description": "Please allow the Manager on your device, then try again."
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
