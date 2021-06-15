@@ -18,7 +18,7 @@ import type { Privacy } from "../../reducers/settings";
 import { withReboot } from "../Reboot";
 import LText from "../../components/LText";
 import TranslatedError from "../../components/TranslatedError";
-import Button from "../../components/Button";
+import { BaseButton } from "../../components/Button";
 import PoweredByLedger from "../../screens/Settings/PoweredByLedger";
 import BottomModal from "../../components/BottomModal";
 import HardResetModal from "../../components/HardResetModal";
@@ -79,10 +79,11 @@ class FormFooter extends PureComponent<*> {
       onSubmit,
       passwordError,
       onPress,
+      colors,
     } = this.props;
     return inputFocused ? (
       <TouchableWithoutFeedback>
-        <Button
+        <BaseButton
           event="SubmitUnlock"
           title={<Trans i18nKey="auth.unlock.login" />}
           type="primary"
@@ -90,6 +91,9 @@ class FormFooter extends PureComponent<*> {
           containerStyle={styles.buttonContainer}
           titleStyle={styles.buttonTitle}
           disabled={passwordError || passwordEmpty}
+          isFocused
+          useTouchable
+          colors={colors}
         />
       </TouchableWithoutFeedback>
     ) : (
@@ -239,6 +243,7 @@ class AuthScreen extends PureComponent<Props, State> {
                 passwordError={passwordError}
                 passwordEmpty={!this.state.password}
                 onPress={this.onPress}
+                colors={colors}
               />
             </View>
 
