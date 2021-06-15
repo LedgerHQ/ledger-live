@@ -71,10 +71,41 @@ describe("walletconnect", () => {
         currency: getCryptoCurrencyById("ethereum"),
         derivationMode: "",
         message: "My email is john@doe.com - 1537836206101",
+        rawMessage:
+          "0x4d7920656d61696c206973206a6f686e40646f652e636f6d202d2031353337383336323036313031",
         path: "44'/60'/0'/0/0",
         hashes: {
           stringHash:
             "0x4a15deb26c7084592efc4a5e5dbadfa43ea596391461421145705a1f86494ddd",
+        },
+      },
+      type: "message",
+    });
+  });
+
+  test("should parse eth_sign payloads", async () => {
+    expect(
+      await parseCallRequest(account, {
+        id: "1606134269395933",
+        jsonrpc: "2.0",
+        method: "eth_sign",
+        params: [
+          "0xe44F9E113Fbd671Bf697d5a1cf1716E1a8c3F35b",
+          "0xbfe79ce1b9258204beff46707c50b88a11e02feda203f7f269ab3cf0520fa62f",
+        ],
+      })
+    ).toMatchObject({
+      data: {
+        currency: getCryptoCurrencyById("ethereum"),
+        derivationMode: "",
+        message:
+          "0xbfe79ce1b9258204beff46707c50b88a11e02feda203f7f269ab3cf0520fa62f",
+        rawMessage:
+          "0xbfe79ce1b9258204beff46707c50b88a11e02feda203f7f269ab3cf0520fa62f",
+        path: "44'/60'/0'/0/0",
+        hashes: {
+          stringHash:
+            "0x8e7d1635f8457e4ee06862eedde10b668d6e746962af6ba54807fb99493fc5cb",
         },
       },
       type: "message",

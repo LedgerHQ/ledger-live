@@ -18,6 +18,7 @@ export type MessageData = {
   verify?: boolean,
   derivationMode: DerivationMode,
   message: string,
+  rawMessage: string,
 };
 
 export type Resolver = (Transport<*>, MessageData) => Promise<Result>;
