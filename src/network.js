@@ -1,10 +1,99 @@
 // @flow
 import invariant from "invariant";
 import axios from "axios";
+import type { $AxiosError, $AxiosXHR, AxiosXHRConfig } from "axios";
 import { log } from "@ledgerhq/logs";
 import { NetworkDown, LedgerAPI5xx, LedgerAPI4xx } from "@ledgerhq/errors";
 import { retry } from "./promise";
 import { getEnv } from "./env";
+
+type Metadata = { startTime: number };
+type ExtendedXHRConfig = AxiosXHRConfig<any> & { metadata?: Metadata };
+
+export const requestInterceptor = (
+  request: AxiosXHRConfig<any>
+): ExtendedXHRConfig => {
+  const { url, method = "", data } = request;
+  log("network", `${method} ${url}`, { data });
+
+  const req: ExtendedXHRConfig = request;
+
+  req.metadata = {
+    startTime: Date.now(),
+  };
+
+  return req;
+};
+
+export const responseInterceptor = (
+  response: {
+    config: ExtendedXHRConfig,
+  } & $AxiosXHR<any>
+) => {
+  const { url, method = "", metadata = {} } = response.config;
+  const { startTime = 0 } = metadata;
+
+  log(
+    "network-success",
+    `${response.status} ${method} ${url} (${(Date.now() - startTime).toFixed(
+      0
+    )}ms)`,
+    getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : undefined
+  );
+
+  return response;
+};
+
+export const errorInterceptor = (
+  error: {
+    config: ExtendedXHRConfig,
+  } & $AxiosError<any>
+) => {
+  const { url, method = "", metadata = {} } = error.config;
+  const { startTime = 0 } = metadata;
+
+  let errorToThrow;
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    const { data, status } = error.response;
+    let msg;
+    try {
+      if (data && typeof data === "string") {
+        msg = extractErrorMessage(data);
+      } else if (data && typeof data === "object") {
+        msg = getErrorMessage(data);
+      }
+    } catch (e) {
+      log("warn", "can't parse server result " + String(e));
+    }
+
+    if (msg) {
+      errorToThrow = makeError(msg, status, url, method);
+    } else {
+      errorToThrow = makeError(`API HTTP ${status}`, status, url, method);
+    }
+    log(
+      "network-error",
+      `${status} ${method} ${url} (${(Date.now() - startTime).toFixed(0)}ms): ${
+        errorToThrow.message
+      }`,
+      getEnv("DEBUG_HTTP_RESPONSE") ? { data: data } : {}
+    );
+    throw errorToThrow;
+  } else if (error.request) {
+    log(
+      "network-down",
+      `DOWN ${method} ${url} (${(Date.now() - startTime).toFixed(0)}ms)`
+    );
+    throw new NetworkDown();
+  }
+  throw error;
+};
+
+axios.interceptors.request.use(requestInterceptor);
+
+axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
 const makeError = (msg, status, url, method) => {
   const obj = {
@@ -24,70 +113,28 @@ const getErrorMessage = (data: Object): ?string => {
 };
 
 const extractErrorMessage = (raw: string): ?string => {
-  try {
-    let data = JSON.parse(raw);
-    if (data && Array.isArray(data)) data = data[0];
-    let msg = getErrorMessage(data);
+  let data = JSON.parse(raw);
+  if (data && Array.isArray(data)) data = data[0];
+  let msg = getErrorMessage(data);
 
-    if (typeof msg === "string") {
-      const m = msg.match(/^JsDefined\((.*)\)$/);
-      const innerPart = m ? m[1] : msg;
-      try {
-        const r = JSON.parse(innerPart);
-        let message = r.message;
-        if (typeof message === "object") {
-          message = message.message;
-        }
-        if (typeof message === "string") {
-          msg = message;
-        }
-      } catch (e) {
-        log("warn", "can't parse server result " + String(e));
-      }
-      return msg ? String(msg) : null;
+  if (typeof msg === "string") {
+    const m = msg.match(/^JsDefined\((.*)\)$/);
+    const innerPart = m ? m[1] : msg;
+
+    const r = JSON.parse(innerPart);
+    let message = r.message;
+    if (typeof message === "object") {
+      message = message.message;
     }
-  } catch (e) {
-    log("warn", "can't parse server result " + String(e));
+    if (typeof message === "string") {
+      msg = message;
+    }
+
+    return msg ? String(msg) : null;
   }
+
   return null;
 };
-
-const userFriendlyError = <A>(p: Promise<A>, meta): Promise<A> =>
-  p.catch((error) => {
-    const { url, method, startTime } = meta;
-    let errorToThrow;
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      const { data, status } = error.response;
-      let msg;
-      if (data && typeof data === "string") {
-        msg = extractErrorMessage(data);
-      } else if (data && typeof data === "object") {
-        msg = getErrorMessage(data);
-      }
-      if (msg) {
-        errorToThrow = makeError(msg, status, url, method);
-      } else {
-        errorToThrow = makeError(`API HTTP ${status}`, status, url, method);
-      }
-      log(
-        "network-error",
-        `${status} ${method} ${url} (${(Date.now() - startTime).toFixed(
-          0
-        )}ms): ${errorToThrow.message}`,
-        getEnv("DEBUG_HTTP_RESPONSE") ? { data } : {}
-      );
-      throw errorToThrow;
-    } else if (error.request) {
-      log(
-        "network-down",
-        `DOWN ${method} ${url} (${(Date.now() - startTime).toFixed(0)}ms)`
-      );
-      throw new NetworkDown();
-    }
-    throw error;
-  });
 
 const implementation = (arg: Object): Promise<*> => {
   invariant(typeof arg === "object", "network takes an object as parameter");
@@ -104,28 +151,8 @@ const implementation = (arg: Object): Promise<*> => {
     // $FlowFixMe
     promise = axios(arg);
   }
-  const meta = {
-    url: arg.url,
-    method: arg.method,
-    data: arg.data,
-    startTime: Date.now(),
-  };
 
-  log("network", `${meta.method} ${meta.url}`, { data: arg.data });
-
-  return userFriendlyError(
-    promise.then((response) => {
-      log(
-        "network-success",
-        `${response.status} ${meta.method} ${meta.url} (${(
-          Date.now() - meta.startTime
-        ).toFixed(0)}ms)`,
-        getEnv("DEBUG_HTTP_RESPONSE") ? { data: response.data } : undefined
-      );
-      return response;
-    }),
-    meta
-  );
+  return promise;
 };
 
 export default implementation;
