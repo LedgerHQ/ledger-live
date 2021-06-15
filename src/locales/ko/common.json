@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Manager disabled on device",
-      "description": "Please enable the Manager on your device, then try again."
+      "description": "Please allow the Manager on your device, then try again."
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
@@ -3597,13 +3597,13 @@
   "notificationCenter": {
     "title": "Notification center",
     "announcement": "Announcement",
-    "liveStatus": "Ledger live status",
+    "liveStatus": "Ledger Live status",
     "news": {
       "title": "News",
       "titleCount": "News ({{count}})",
       "emptyState": {
         "title": "No news for the moment",
-        "desc": "You will find here all the news related to Ledger and Ledger live"
+        "desc": "You will find here all the news related to Ledger and Ledger Live"
       }
     },
     "status": {

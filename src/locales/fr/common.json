@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Gestionnaire désactivé sur l'appareil",
-      "description": "Activez le \"Manager\" (Gestionnaire) sur votre appareil et réessayez."
+      "description": "Please allow the Manager on your device, then try again."
     },
     "UserRefusedAddress": {
       "title": "Adresse de bénéficiaire rejetée",
@@ -3597,13 +3597,13 @@
   "notificationCenter": {
     "title": "Fil d'informations",
     "announcement": "Annonces",
-    "liveStatus": "Statut de Ledger Live",
+    "liveStatus": "Ledger Live status",
     "news": {
       "title": "Actualités",
       "titleCount": "Actualités ({{count}})",
       "emptyState": {
         "title": "Aucune actualité pour l'instant",
-        "desc": "Vous trouverez ici toutes les actualités relatives à Ledger et Ledger Live."
+        "desc": "You will find here all the news related to Ledger and Ledger Live"
       }
     },
     "status": {

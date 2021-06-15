@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Manager deshabilitado en el dispositivo",
-      "description": "Habilita Manager en el dispositivo e inténtalo de nuevo."
+      "description": "Please allow the Manager on your device, then try again."
     },
     "UserRefusedAddress": {
       "title": "Dirección de recepción rechazada.",
@@ -3597,13 +3597,13 @@
   "notificationCenter": {
     "title": "Centro de notificaciones",
     "announcement": "Anuncio",
-    "liveStatus": "Estado de Ledger Live",
+    "liveStatus": "Ledger Live status",
     "news": {
       "title": "Noticias",
       "titleCount": "Noticias ({{count}})",
       "emptyState": {
         "title": "No hay noticias por el momento",
-        "desc": "Aquí encontrarás las noticias relacionadas con Ledger o Ledger Live"
+        "desc": "You will find here all the news related to Ledger and Ledger Live"
       }
     },
     "status": {

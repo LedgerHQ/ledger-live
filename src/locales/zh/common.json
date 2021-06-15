@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Manager（管理器）已被在设备上禁用",
-      "description": "请在您的设备上启用管理器，然后重试。"
+      "description": "Please allow the Manager on your device, then try again."
     },
     "UserRefusedAddress": {
       "title": "接收地址被拒",
@@ -3597,13 +3597,13 @@
   "notificationCenter": {
     "title": "通知中心",
     "announcement": "公告",
-    "liveStatus": "Ledger live 状态",
+    "liveStatus": "Ledger Live 状态",
     "news": {
       "title": "新闻",
       "titleCount": "新闻 ({{count}})",
       "emptyState": {
         "title": "目前没有新闻",
-        "desc": "您将在这里找到与 Ledger 和 Ledger Live 相关的所有新闻"
+        "desc": "你将在这里找到所有与 Ledger 和 Ledger Live 有关的新闻"
       }
     },
     "status": {

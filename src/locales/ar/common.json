@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "تم تعطيل المدير (Manager) على الجهاز",
-      "description": "يرجى تمكين المدير (Manager) على جهازك، ثم حاول مرة أخرى."
+      "description": "Please allow the Manager on your device, then try again."
     },
     "UserRefusedAddress": {
       "title": "تم رفض عنوان الاستقبال",
@@ -3597,13 +3597,13 @@
   "notificationCenter": {
     "title": "مركز الإشعارات",
     "announcement": "إعلان",
-    "liveStatus": "حالة Ledger Live",
+    "liveStatus": "Ledger Live status",
     "news": {
       "title": "أخبار",
       "titleCount": "أخبار ({{count}})",
       "emptyState": {
         "title": "لا توجد أخبار حاليًا",
-        "desc": "ستجد هنا جميع الأخبار المتعلقة بنظام Ledger وLedger Live"
+        "desc": "You will find here all the news related to Ledger and Ledger Live"
       }
     },
     "status": {
