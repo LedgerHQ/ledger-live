@@ -3,6 +3,7 @@ import React, { useCallback } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Ionicons";
+import type { IoniconsGlyphs } from "react-native-vector-icons/dist/Ionicons";
 
 import type { MappedSwapOperation } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import {
@@ -49,7 +50,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           </LText>
         </View>
         <View style={styles.arrow}>
-          <Icon name={"ios-arrow-round-forward"} size={30} color={colors.fog} />
+          <Icon name={"ios-arrow-forward"} size={30} color={colors.fog} />
         </View>
         <View style={[styles.accountWrapper, { alignItems: "flex-end" }]}>
           <LText numberOfLines={1} semiBold style={styles.name}>
