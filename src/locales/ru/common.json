@@ -398,11 +398,11 @@
       "description": "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, пожалуйста, сохраните логи и отправьте их в Поддержку Ledger."
     },
     "TransportError": {
-      "title": "Что-то пошло не так. Повторно подключите устройство.",
+      "title": "Что-то пошло не так. Подключите устройство заново.",
       "description": "{{message}} Пожалуйста, попробуйте ещё раз. Если проблема не уходит, пожалуйста, сохраните логи и отправьте их в Поддержку Ledger."
     },
     "TransportStatusError": {
-      "title": "Произошла ошибка. Подключите устройство ещё раз.",
+      "title": "Что-то пошло не так. Подключите устройство заново.",
       "description": "{{message}} Пожалуйста, попробуйте ещё раз. Если проблема не уходит, пожалуйста, сохраните логи и отправьте их в Поддержку Ledger."
     },
     "TronNoFrozenForBandwidth": {
@@ -813,8 +813,8 @@
             "label": "Узнайте как взаимодействовать с устройством по инструкциям на экране."
           },
           "2": {
-            "title": "Выберите \"Set up as a new device\" (Настроить как новое устройство)",
-            "label": "Для подтверждения выбора нажмите обе кнопки одновременно."
+            "title": "Настраиваем как новое устройство",
+            "label": "Выберите пункт \"Set up as a new device\" (Настроить как новое устройство). Для подтверждения выбора нажмите обе кнопки одновременно."
           },
           "3": {
             "title": "Следуйте инструкциям",
@@ -1290,8 +1290,8 @@
       "UNFREEZE": "Разморожено",
       "REWARD": "Запрошенное вознаграждение",
       "FEES": "Комиссии",
-      "OPT_IN": "Opt in",
-      "OPT_OUT": "Opt out",
+      "OPT_IN": "Включить",
+      "OPT_OUT": "Отключить",
       "CLOSE_ACCOUNT": "Закрыть счёт",
       "SUPPLY": "Депонировано",
       "REDEEM": "Выведено",
@@ -1299,7 +1299,7 @@
       "BOND": "Заблокировать",
       "UNBOND": "Разблокировать",
       "REWARD_PAYOUT": "Вознаграждение",
-      "SLASH": "Slash",
+      "SLASH": "Штраф",
       "WITHDRAW_UNBONDED": "Вывод разблокированных средств",
       "NOMINATE": "Голосование",
       "CHILL": "Очистить голоса"
@@ -1332,7 +1332,7 @@
     },
     "details": "{{ currency }}: сведения",
     "extra": {
-      "resource": "Resource",
+      "resource": "Ресурс",
       "frozenAmount": "Замороженная сумма",
       "unfreezeAmount": "Сумма для разморозки",
       "address": "Адрес",
@@ -1437,7 +1437,7 @@
       },
       "endpointConfig": {
         "title": "Нода (узел)",
-        "desc": "The API node to use"
+        "desc": "Используемый узел API"
       },
       "delete": {
         "title": "Удалить счёт из Портфеля",
@@ -1576,7 +1576,7 @@
       "title": "Общие",
       "desc": "Настройка общих параметров Ledger Live.",
       "carousel": "Карусель",
-      "carouselDesc": "Показывать портфель в форате карусели",
+      "carouselDesc": "Показывать Портфель в формате карусели",
       "language": "Язык интерфейса",
       "languageDesc": "Выберите язык интерфейса в Ledger Live.",
       "password": "Блокировка паролем",
@@ -1592,7 +1592,7 @@
       "counterValueDesc": "Выберите валюту для отображения состояния счёта и операций.",
       "exchange": "Источник обменных курсов",
       "exchangeDesc": "Выбор поставщика обменного курса Биткойна к {{fiat}}",
-      "stock": "Индекс регионального рынка",
+      "stock": "Индикатор регионального рынка",
       "stockDesc": "Выберите «Западный», чтобы рост рыночной стоимости отображался синим цветом, либо «Восточный», чтобы рост рыночной стоимости отображался красным цветом.",
       "reportErrors": "Отчёты об ошибках",
       "reportErrorsDesc": "Отправлять сообщения об ошибках компании Ledger автоматически для их последующего исправления.",
@@ -1626,10 +1626,10 @@
     },
     "currencies": {
       "header": "Валюты",
-      "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
-      "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin.",
+      "rateProvider": "Источник курса ({{currencyTicker}} → BTC)",
+      "rateProviderDesc": "Выберите поставщика котировок {{currencyTicker}}/BTC.",
       "confirmationNb": "Количество подтверждений",
-      "confirmationNbDesc": "Set the number of network confirmations for transactions to be approved.",
+      "confirmationNbDesc": "Количество подтверждений в сети, после которого транзакция будет считаться подтверждённой.",
       "currencySettingsTitle": "Настройки {{currencyName}}",
       "placeholder": "Нет настроек для выбранного актива"
     },
@@ -1640,10 +1640,10 @@
       "hideTokenCTA": "Скрыть токен",
       "showContractCTA": "Показать контракт",
       "blacklistedTokens": "Скрыть список токенов",
-      "blacklistedTokensDesc": "You can hide tokens by going to the accounts list then long-pressing on the token and selecting 'Hide token'.",
+      "blacklistedTokensDesc": "Чтобы скрыть токены, перейдите к списку токенов, нажмите по названию и удерживайте, а затем выберите «Скрыть токен».",
       "blacklistedTokensModal": {
         "title": "Скрыть токен",
-        "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can show them again using <3>Settings > Accounts</3>.",
+        "desc": "Это действие скроет все токены <1><0>{tokenName}</0></1>. Вы можете снова отобразить их в разделе <3>Настройки > Счета</3>.",
         "confirm": "Скрыть токен"
       },
       "cryptoAssets": {
@@ -1655,7 +1655,7 @@
     "about": {
       "title": "О программе",
       "desc": "Сведения о приложении, условия и положения, политика конфиденциальности.",
-      "appDescription": "With Ledger Live, Secure, Buy, Sell, Exchange, Grow and Manage your crypto. All-in-one place.",
+      "appDescription": "Ledger Live — это единая платформа для безопасной покупки, продажи, обмена, наращивания и использования криптовалюты.",
       "appVersion": "Версия",
       "termsConditions": "Условия и положения",
       "termsConditionsDesc": "Используя приложение Ledger Live, вы принимаете наши условия и положения.",
@@ -1795,7 +1795,7 @@
       "title": "Обмен",
       "paraswap": "ParaSwap",
       "selectDevice": "Выберите устройство",
-      "broadcasting": "Broadcasting swap",
+      "broadcasting": "Трансляция обмена криптоактивов",
       "loadingFees": "Загружаем комиссию сети...",
       "landing": {
         "header": "Обмен криптоактивов",
@@ -1833,7 +1833,7 @@
       },
       "payoutModal": {
         "title": "Комиссия за выплату",
-        "description": "Payout fees are not shown on the device and substracted from the amount.",
+        "description": "Комиссии за выплаты не отображаются на устройстве и вычитаются из суммы.",
         "cta": "Закрыть"
       },
       "pendingOperation": {
@@ -1850,7 +1850,7 @@
         "fixedUnavailable": "Для этой пары фиксированный курс не поддерживается",
         "floatDesc": "Сумма может измениться в зависимости от состояния рынка.",
         "fixedDesc": "Сумма останется неизменной, независимо от состояния рынка. Фиксированный курс обновляется каждые 30 сек",
-        "by": "By",
+        "by": "посредством",
         "modalTitle": "Плавающий или фиксированный курс?"
       },
       "form": {
@@ -1941,7 +1941,7 @@
         "exportFilename": "Экспортировать историю обменов",
         "empty": {
           "title": "Здесь будет показана история обменных операций",
-          "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
+          "desc": "Вы ещё ничего не меняли, либо приложение Ledger Live было сброшено."
         }
       },
       "platform": {
@@ -1966,7 +1966,7 @@
         "amountSuppliedTooltip": "Сумма, кредитованная в сеть",
         "currencyAPY": "Доходность валюты за год",
         "currencyAPYTooltip": "Годовая процентная доходность депозита с постоянной капитализацией",
-        "accruedInterests": "Interest balance",
+        "accruedInterests": "Начисленные проценты",
         "accruedInterestsTooltip": "Доход с вашего займа",
         "interestEarned": "Начисленная прибыль",
         "interestEarnedTooltip": "Полученный доход после вывода средств",
@@ -1978,8 +1978,8 @@
         "fullyApproved": "Этот счёт полностью утвержден. Сумму можно уменьшить за дополнительную плату.",
         "approvedCanReduce": "Вы одобрили <0>{{value}}</0> для данного счёта. Сумму можно уменьшить с дополнительной комиссией.",
         "approvedButNotEnough": "Вы одобрили <0>{{value}}</0> для данного счёта.",
-        "approving": "You can deposit assets once the account approval is confirmed.",
-        "notEnough": "You must increase the limit approved on your account to lend."
+        "approving": "Активы можно депонировать активы после того, как счёт будет утверждён.",
+        "notEnough": "Для кредитования необходимо увеличить утверждённый лимит для счёта."
       },
       "howDoesLendingWork": "Как работает кредитование",
       "dashboard": {
@@ -2164,7 +2164,7 @@
       }
     },
     "stepperHeader": {
-      "selectAccount": "Account to debit",
+      "selectAccount": "Счёт для пополнения",
       "recipientAddress": "Адрес получателя",
       "selectAmount": "Сумма",
       "summary": "Сводка",
@@ -2185,14 +2185,14 @@
       "noRateProvider": "Недоступно"
     },
     "summary": {
-      "subaccountsWarning": "Чтобы отправлять токены с этого счета, вам нужно пополнить его за {{ currency }}",
+      "subaccountsWarning": "Чтобы отправлять токены с этого счёта, вам нужно пополнить его за {{ currency }}",
       "tag": "Тег (опционально)",
       "validateTag": "Подтвердить тег",
       "total": "Итого",
       "amount": "Сумма",
       "from": "Откуда",
       "to": "Куда",
-      "infoTotalTitle": "Total debit",
+      "infoTotalTitle": "Всего внесено",
       "infoTotalDesc": "Включает сумму транзакции и комиссию выбранной сети",
       "gasLimit": "Лимит газа",
       "gasPrice": "Цена газа",
@@ -2238,7 +2238,7 @@
     },
     "info": {
       "maxSpendable": {
-        "title": "Максимальная сумма трат",
+        "title": "Макс. можно потратить",
         "description": "Макс. расходуемая сумма — это баланс средств на счету, которые можно отправить."
       }
     }
@@ -2284,7 +2284,7 @@
       "info": "Начисление {{resource}} начнётся после подтверждения заморозки сетью. Скоро вы сможете голосовать за суперпредставителей, чтобы получать вознаграждения.",
       "button": {
         "pending": "Выполняется подтверждение транзакции.",
-        "pendingDesc": "Please wait a moment before voting.",
+        "pendingDesc": "Подождите немного, прежде чем голосовать.",
         "vote": "Голосовать",
         "voteTimer": "0:{{time}}",
         "later": "Я проголосую позже",
@@ -3006,7 +3006,7 @@
             "claimRewardCompound": "Compound",
             "claimRewardInfo": "Они будут получены прямо сейчас и добавлены к доступным средствам.",
             "claimRewardCompoundInfo": "Они будут получены прямо сейчас и автоматически делегированы тому же валидатору.",
-            "compoundOrCashIn": "Compound or Cash in?",
+            "compoundOrCashIn": "Капитализировать или снять вознаграждение?",
             "claimRewardTooltip": "Вознаграждения будут добавлены к вашим доступным средствам",
             "claimRewardCompoundTooltip": "Вознаграждения будут добавлены к делегированной сумме",
             "cta": "Продолжить"
@@ -3060,7 +3060,7 @@
       "flow": {
         "started": {
           "title": "Голосовать",
-          "srOrCandidate": "SR or Candidate?",
+          "srOrCandidate": "Суперпредставитель или кандидат?",
           "description": "Отдайте голоса за одного или нескольких суперпредставителей, чтобы начать получать вознаграждения.",
           "button": {
             "continue": "Отдать голоса"
@@ -3158,7 +3158,7 @@
     "lockedBalance": "Заблокированная сумма",
     "unlockingBalance": "Разблокируем средства",
     "unlockedBalance": "Разблокированная сумма",
-    "networkFees": "Поскольку комиссия устанавливается протоколом Polkadot автоматически, из будет невозможно просмотреть на устройстве",
+    "networkFees": "Поскольку комиссия устанавливается протоколом Polkadot автоматически, её невозможно будет просмотреть на устройстве",
     "info": {
       "available": {
         "title": "Доступные токены DOT",
@@ -3166,7 +3166,7 @@
       },
       "locked": {
         "title": "Заблокированные средства",
-        "description": "Чтобы получать вознаграждения, вы должны заблокировать активы для назначения валидаторов."
+        "description": "Чтобы получать вознаграждения, вы должны заблокировать активы до назначения валидаторов."
       },
       "unlocking": {
         "title": "Разблокировка активов",
@@ -3211,8 +3211,8 @@
       "oversubscribed": "Превышение лимита голосов ({{nominatorsCount}})",
       "oversubscribedInfo": "Вознаграждения получают только лучшие номинаторы {{maxNominatorRewardedPerValidator}} с наибольшей заблокированной суммой",
       "hasPendingBondOperation": "Блокировка средств ожидает подтверждения",
-      "externalControllerUnsupported": "This stash account is controlled by another account with the address <0>{{address}}</0>. Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js",
-      "externalStashUnsupported": "This account controls a stash account whose address is <0>{{address}}</0>. Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js",
+      "externalControllerUnsupported": "Этот скрытый счёт контролируется другим счётом с адресом <0>{{address}}</0>. Операции по стейкингу на отдельных скрытых счетах не поддерживаются в Ledger Live. Воспользуйтесь альтернативным кошельком, например Polkadot.js",
+      "externalStashUnsupported": "Этот счёт отвечает за скрытый счёт с адресом <0>{{address}}</0>. Операции по стейкингу на отдельных скрытых счетах не поддерживаются в Ledger Live. Воспользуйтесь альтернативным кошельком, например Polkadot.js",
       "showInactiveNominations": "Показать всех номинаторов ({{count}})",
       "hideInactiveNominations": "Показать только активных номинаторов",
       "noActiveNominations": "Нет активных номинаторов.",
@@ -3280,7 +3280,7 @@
         "staked": "Заблокированная сумма",
         "stakedDescription": "Вознаграждения зачислены на счёт с заблокированными средствами для получения дальнейшего вознаграждения.",
         "optionTitle": "Примечание",
-        "optionDescription": "Once set, the option is fixed for the lifetime of this bond. If you change your mind, please read ",
+        "optionDescription": "После установки выбор фиксируется на весь срок действия блокировки. Если вы передумаете, прочтите ",
         "clickableLink": "здесь."
       },
       "stepperHeader": {
