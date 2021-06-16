@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Gestionnaire désactivé sur l'appareil",
-      "description": "Please allow the Manager on your device, then try again."
+      "description": "Activez le Gestionnaire (\"Manager\") sur votre appareil et réessayez."
     },
     "UserRefusedAddress": {
       "title": "Adresse de bénéficiaire rejetée",
@@ -3576,7 +3576,7 @@
     "close": "Fermer",
     "message": "Message ",
     "messageHash": "Hachage du message",
-    "domainHash": "Hachage de domaine",
+    "domainHash": "Hachage du domaine",
     "stringHash": "Hachage ",
     "from": "De",
     "successTitle": "Message signé",
@@ -3597,13 +3597,13 @@
   "notificationCenter": {
     "title": "Fil d'informations",
     "announcement": "Annonces",
-    "liveStatus": "Ledger Live status",
+    "liveStatus": "Statut de Ledger Live",
     "news": {
       "title": "Actualités",
       "titleCount": "Actualités ({{count}})",
       "emptyState": {
         "title": "Aucune actualité pour l'instant",
-        "desc": "You will find here all the news related to Ledger and Ledger Live"
+        "desc": "Vous trouverez ici toutes les actualités relatives à Ledger et Ledger Live."
       }
     },
     "status": {
