@@ -4,6 +4,7 @@ import { View, StyleSheet } from "react-native";
 
 import Share from "react-native-share";
 import { Trans } from "react-i18next";
+import VersionNumber from "react-native-version-number";
 import LText from "./LText";
 import ErrorIcon from "./ErrorIcon";
 import TranslatedError from "./TranslatedError";
@@ -12,6 +13,7 @@ import logger from "../logger";
 import logReport from "../log-report";
 import Button from "./Button";
 import DownloadFileIcon from "../icons/DownloadFile";
+import cleanBuildVersion from "../logic/cleanBuildVersion";
 
 class GenericErrorView extends PureComponent<{
   error: Error,
@@ -30,14 +32,19 @@ class GenericErrorView extends PureComponent<{
 
   onExport = async () => {
     const logs = logReport.getLogs();
-    const message = logs.map(log => JSON.stringify(log)).join("\n");
-    const base64 = Buffer.from(message).toString("base64");
+    const base64 = Buffer.from(JSON.stringify(logs)).toString("base64");
+    const { appVersion, buildVersion } = VersionNumber;
+    const version = `${appVersion || ""}-(${cleanBuildVersion(buildVersion) ||
+      ""})`;
+    const date = new Date().toISOString().split("T")[0];
+
+    const humanReadableName = `ledger-live-mob-${version}-${date}-logs`;
 
     const options = {
       failOnCancel: false,
       saveToFiles: true,
       type: "application/json",
-      filename: "logs",
+      filename: humanReadableName,
       url: `data:application/json;base64,${base64}`,
     };
 
