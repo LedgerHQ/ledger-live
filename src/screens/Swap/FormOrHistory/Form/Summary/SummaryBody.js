@@ -20,7 +20,6 @@ import {
 
 import LText from "../../../../../components/LText";
 import CurrencyUnitValue from "../../../../../components/CurrencyUnitValue";
-import InfoModal from "../../../../../components/InfoModal";
 import SectionSeparator, {
   ArrowDownCircle,
 } from "../../../../../components/SectionSeparator";
@@ -41,11 +40,9 @@ const SummaryBody = ({
   const { fromAccount, toAccount } = exchange;
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
-  const { magnitudeAwareRate, payoutNetworkFees } = exchangeRate;
+  const { magnitudeAwareRate, toAmount } = exchangeRate;
   const { amount } = status;
-  const [payoutFeesDrawerVisibility, setPayoutFeesDrawerVisibility] = useState(
-    false,
-  );
+
   const openProvider = useCallback(() => {
     Linking.openURL(urls.swap.providers[exchangeRate.provider].main);
   }, [exchangeRate.provider]);
@@ -104,47 +101,17 @@ const SummaryBody = ({
       </View>
       <View style={styles.row}>
         <LText primary style={styles.label} color="smoke">
-          <Trans
-            i18nKey={
-              exchangeRate.tradeMethod === "fixed"
-                ? "transfer.swap.form.summary.receive"
-                : "transfer.swap.form.summary.receiveFloat"
-            }
-          />
+          <Trans i18nKey={"transfer.swap.form.summary.receive"} />
         </LText>
         <LText tertiary style={styles.value2}>
           <CurrencyUnitValue
             disableRounding
             showCode
             unit={getAccountUnit(toAccount)}
-            value={amount.times(magnitudeAwareRate)}
+            value={toAmount}
           />
         </LText>
       </View>
-      {exchangeRate.tradeMethod === "float" ? (
-        <View style={styles.row}>
-          <TouchableOpacity
-            onPress={() => setPayoutFeesDrawerVisibility(true)}
-            style={{ flexDirection: "row", alignItems: "center" }}
-          >
-            <LText
-              style={{ ...styles.label, flex: 0, marginRight: 4 }}
-              color="smoke"
-            >
-              <Trans i18nKey="transfer.swap.form.summary.payoutNetworkFees" />
-            </LText>
-            <Icon size={13} color={colors.smoke} name={"info-circle"} />
-          </TouchableOpacity>
-          <LText tertiary style={styles.value2}>
-            <CurrencyUnitValue
-              disableRounding
-              showCode
-              unit={getAccountUnit(toAccount)}
-              value={BigNumber(payoutNetworkFees || 0)}
-            />
-          </LText>
-        </View>
-      ) : null}
       <View style={[styles.rate, { backgroundColor: colors.lightFog }]}>
         <View style={[styles.row, { marginBottom: 0 }]}>
           <LText primary style={styles.label} color="smoke">
@@ -171,13 +138,6 @@ const SummaryBody = ({
           </LText>
         </View>
       </View>
-      <InfoModal
-        isOpened={payoutFeesDrawerVisibility}
-        title={<Trans i18nKey={"transfer.swap.payoutModal.title"} />}
-        desc={<Trans i18nKey={"transfer.swap.payoutModal.description"} />}
-        confirmLabel={<Trans i18nKey={"transfer.swap.payoutModal.cta"} />}
-        onClose={() => setPayoutFeesDrawerVisibility(false)}
-      />
     </>
   );
 };
