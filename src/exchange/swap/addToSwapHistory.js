@@ -35,10 +35,7 @@ export default ({
       ? operation.subOperations[0].id
       : operation.id;
 
-  // Nb deduct the payoutnetworkfees if they are present
-  const toAmount = transaction.amount
-    .times(exchangeRate.magnitudeAwareRate)
-    .minus(exchangeRate.payoutNetworkFees || 0);
+  const toAmount = transaction.amount.times(exchangeRate.magnitudeAwareRate);
 
   const swapOperation: SwapOperation = {
     status: "pending",
