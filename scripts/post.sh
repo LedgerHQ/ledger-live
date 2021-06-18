@@ -31,6 +31,15 @@ fi
 bundle install
 
 if [ "$(uname)" == "Darwin" ]; then
+  # Workaround: https://github.com/facebook/react-native/issues/31193
+  (
+    cd nnode_modules/react-native/scripts
+    echo "- switch to relative paths in react_native_pods.rb "
+    sed -i '' -e "s/File[.]join[(]__dir__, \"[.][.]\"[)]/\"..\/..\/node_modules\/react-native\"/" react_native_pods.rb
+    sed -i '' -e "s/#{File[.]join[(]__dir__, \"generate-specs.sh\"[)]}/..\/..\/node_modules\/react-native\/scripts\/generate-specs.sh/" react_native_pods.rb
+    sed -i '' -e "s/spec[.]prepare_command = \"#/spec.prepare_command = \"cd ..\/.. \&\& #/" react_native_pods.rb
+  )
+
   cd ios && bundle exec pod install --deployment --repo-update
 
   if [ $? -ne 0 ]; then
