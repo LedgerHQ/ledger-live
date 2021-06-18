@@ -30,10 +30,23 @@ if ! [ -x "$(command -v bundle)" ]; then
 fi
 bundle install
 
+# Workaround: https://github.com/facebook/react-native/issues/31193
+(
+  echo "Fixing RN 0.64.x bugs:"
+  cd node_modules/react-native/scripts
+  echo "- unset PREFIX in find-node.sh"
+  if [ `cat find-node.sh | grep 'unset PREFIX' | wc -l` -lt 1 ]; then
+    cp find-node.sh tmp
+    head -n 1 tmp >find-node.sh
+    echo "unset PREFIX" >>find-node.sh
+    tail -n +2 tmp >>find-node.sh
+    rm tmp
+  fi
+)
+
 if [ "$(uname)" == "Darwin" ]; then
-  # Workaround: https://github.com/facebook/react-native/issues/31193
   (
-    cd nnode_modules/react-native/scripts
+    cd node_modules/react-native/scripts
     echo "- switch to relative paths in react_native_pods.rb "
     sed -i '' -e "s/File[.]join[(]__dir__, \"[.][.]\"[)]/\"..\/..\/node_modules\/react-native\"/" react_native_pods.rb
     sed -i '' -e "s/#{File[.]join[(]__dir__, \"generate-specs.sh\"[)]}/..\/..\/node_modules\/react-native\/scripts\/generate-specs.sh/" react_native_pods.rb
