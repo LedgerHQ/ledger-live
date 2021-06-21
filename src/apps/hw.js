@@ -84,10 +84,7 @@ export const streamAppInstall = ({
             return defer(onSuccessObs || empty);
           }
 
-          if (
-            isOutOfMemoryState(predictOptimisticState(state)) ||
-            !getEnv("EXPERIMENTAL_INLINE_INSTALL")
-          ) {
+          if (isOutOfMemoryState(predictOptimisticState(state))) {
             // In this case we can't install either by lack of storage, or permissions,
             // we fallback to the error case listing the missing apps.
             const missingAppNames: string[] = state.installQueue;

@@ -24,7 +24,7 @@ import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
 import { mustUpgrade } from "../apps";
-import { getEnv } from "../env";
+
 export type RequiresDerivation = {|
   currencyId: string,
   path: string,
@@ -76,18 +76,12 @@ export const openAppFromDashboard = (
           switch (e.statusCode) {
             case 0x6984:
             case 0x6807:
-              return getEnv("EXPERIMENTAL_INLINE_INSTALL")
-                ? streamAppInstall({
-                    transport,
-                    appNames: [appName],
-                    onSuccessObs: () =>
-                      from(openAppFromDashboard(transport, appName)),
-                  })
-                : of({
-                    type: "app-not-installed",
-                    appName,
-                    appNames: [appName],
-                  });
+              return streamAppInstall({
+                transport,
+                appNames: [appName],
+                onSuccessObs: () =>
+                  from(openAppFromDashboard(transport, appName)),
+              });
             case 0x6985:
             case 0x5501:
               return throwError(new UserRefusedOnDevice());
