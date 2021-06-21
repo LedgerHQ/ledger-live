@@ -1,6 +1,6 @@
 // @flow
 
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { log } from "@ledgerhq/logs";
 import WS from "isomorphic-ws";
 import { Observable, Subject } from "rxjs";
@@ -26,7 +26,7 @@ const ALLOW_MANAGER_DELAY = 500;
  * Returns an Observable of the final result
  */
 export const createDeviceSocket = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   {
     url,
     unresponsiveExpectedDuringBulk,

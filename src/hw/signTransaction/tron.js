@@ -1,11 +1,11 @@
 // @flow
 import Trx from "@ledgerhq/hw-app-trx";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "../../types";
 
 export default async (
   currency: CryptoCurrency,
-  transport: Transport<*>,
+  transport: typeof Transport,
   path: string,
   txArg: Object
 ) => {

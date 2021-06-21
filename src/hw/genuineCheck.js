@@ -9,7 +9,7 @@ import ManagerAPI from "../api/Manager";
 import { getProviderId } from "../manager";
 
 export default (
-  transport: Transport<*>,
+  transport: typeof Transport,
   deviceInfo: DeviceInfo
 ): Observable<SocketEvent> =>
   from(

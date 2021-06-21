@@ -1,11 +1,11 @@
 // @flow
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type { Observable } from "rxjs";
 import type { OsuFirmware } from "../types/manager";
 import ManagerAPI from "../api/Manager";
 
 export default (
-  transport: Transport<*>,
+  transport: typeof Transport,
   targetId: string | number,
   firmware: OsuFirmware
 ): Observable<*> => {

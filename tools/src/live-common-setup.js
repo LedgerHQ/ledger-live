@@ -82,7 +82,7 @@ registerTransportModule({
       const existingDevice = webusbDevices[id];
       return existingDevice
         ? TransportWebUSB.open(existingDevice)
-        : TransportWebUSB.create();
+        : typeof TransportWebUSB.create();
     }
     return null;
   },
@@ -116,7 +116,7 @@ registerTransportModule({
       const existingDevice = webbleDevices[id];
       return existingDevice
         ? TransportWebBLE.open(existingDevice)
-        : TransportWebBLE.create();
+        : typeof TransportWebBLE.create();
     }
     return null;
   },

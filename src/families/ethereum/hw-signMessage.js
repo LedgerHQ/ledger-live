@@ -1,14 +1,14 @@
 // @flow
 
 import Eth from "@ledgerhq/hw-app-eth";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { TypedDataUtils } from "eth-sig-util";
 import { bufferToHex } from "ethereumjs-util";
 import type { MessageData, Result } from "../../hw/signMessage/types";
 import type { TypedMessageData, TypedMessage } from "./types";
 
 type EthResolver = (
-  Transport<*>,
+  typeof Transport,
   MessageData | TypedMessageData
 ) => Promise<Result>;
 

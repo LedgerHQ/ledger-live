@@ -1,6 +1,6 @@
 // @flow
 
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "../../types";
 
 import ripple from "./ripple";
@@ -10,7 +10,7 @@ import tron from "./tron";
 
 type Resolver = (
   currency: CryptoCurrency,
-  transport: Transport<*>,
+  transport: typeof Transport,
   path: string,
   transaction: *
 ) => Promise<string>;

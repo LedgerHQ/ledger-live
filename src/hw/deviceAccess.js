@@ -2,7 +2,7 @@
 
 import { Observable, throwError, timer } from "rxjs";
 import { retryWhen, mergeMap, catchError } from "rxjs/operators";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import {
   WrongDeviceForAccount,
   WrongAppForCurrency,
@@ -75,14 +75,14 @@ const needsCleanup = {};
 
 // when a series of APDUs are interrupted, this is called
 // so we don't forget to cleanup on the next withDevice
-export const cancelDeviceAction = (transport: Transport<*>) => {
+export const cancelDeviceAction = (transport: typeof Transport) => {
   needsCleanup[identifyTransport(transport)] = true;
 };
 
 const deviceQueues = {};
 
 export const withDevice = (deviceId: string) => <T>(
-  job: (t: Transport<*>) => Observable<T>
+  job: (t: typeof Transport) => Observable<T>
 ): Observable<T> =>
   Observable.create((o) => {
     let unsubscribed;
@@ -188,7 +188,7 @@ export const retryWhileErrors = (acceptError: (Error) => boolean) => (
   );
 
 export const withDevicePolling = (deviceId: string) => <T>(
-  job: (Transport<*>) => Observable<T>,
+  job: (typeof Transport) => Observable<T>,
   acceptError: (Error) => boolean = genericCanRetryOnError
 ): Observable<T> =>
   // $FlowFixMe

@@ -7,7 +7,7 @@ import type { Account, CryptoCurrency } from "../types";
 import { isSegwitDerivationMode } from "../derivation";
 
 export default async (
-  transport: Transport<*>,
+  transport: typeof Transport,
   account: Account,
   currency: CryptoCurrency,
   devicePath: string

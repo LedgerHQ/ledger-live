@@ -1,5 +1,5 @@
 // @flow
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type { DeviceInfo, FinalFirmware } from "../types/manager";
 import { Observable, from, concat, of } from "rxjs";
 import { mergeMap } from "rxjs/operators";
@@ -30,7 +30,7 @@ export const fetchNextFirmware = (
     )
   );
 
-export default (transport: Transport<*>): Observable<*> =>
+export default (transport: typeof Transport): Observable<*> =>
   from(getDeviceInfo(transport)).pipe(
     mergeMap((deviceInfo) =>
       fetchNextFirmware(deviceInfo).pipe(

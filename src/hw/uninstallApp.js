@@ -2,12 +2,12 @@
 import { ignoreElements, catchError } from "rxjs/operators";
 import { Observable, throwError } from "rxjs";
 import { ManagerAppDepUninstallRequired } from "@ledgerhq/errors";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type { App, ApplicationVersion } from "../types/manager";
 import ManagerAPI from "../api/Manager";
 
 export default function uninstallApp(
-  transport: Transport<*>,
+  transport: typeof Transport,
   targetId: string | number,
   app: ApplicationVersion | App
 ): Observable<*> {

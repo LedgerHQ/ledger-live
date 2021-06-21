@@ -1,5 +1,5 @@
 // @flow
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { TransportStatusError } from "@ledgerhq/hw-transport";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import invariant from "invariant";
@@ -28,7 +28,7 @@ type SellInput = {
 };
 
 export default async (
-  transport: Transport<*>,
+  transport: typeof Transport,
   input: SellInput
 ): Promise<SellRequestEvent> => {
   const {

@@ -1,6 +1,6 @@
 // @flow
 
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
 import { getAddressFromScriptHash, getScriptHashFromPublicKey } from "./crypto";
 
@@ -10,9 +10,9 @@ import { getAddressFromScriptHash, getScriptHashFromPublicKey } from "./crypto";
  * @example
  */
 export default class Neo {
-  transport: Transport<any>;
+  transport: typeof Transport;
 
-  constructor(transport: Transport<any>) {
+  constructor(transport: typeof Transport) {
     this.transport = transport;
     transport.decorateAppAPIMethods(this, ["getAddress"], "NEO");
   }

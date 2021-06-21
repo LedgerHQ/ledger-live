@@ -11,7 +11,7 @@ import {
   DisconnectedDeviceDuringOperation,
   DisconnectedDevice,
 } from "@ledgerhq/errors";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { DerivationMode } from "../types";
 import { getCryptoCurrencyById } from "../currencies";
@@ -64,7 +64,7 @@ export type ConnectAppEvent =
   | { type: "display-upgrade-warning", displayUpgradeWarning: boolean };
 
 export const openAppFromDashboard = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   appName: string
 ): Observable<ConnectAppEvent> =>
   concat(

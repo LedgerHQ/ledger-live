@@ -39,7 +39,7 @@ import type { Core, CoreWallet } from "./types";
 async function scanNextAccount(props: {
   core: Core,
   wallet: CoreWallet,
-  transport: Transport<*>,
+  transport: typeof Transport,
   currency: CryptoCurrency,
   accountIndex: number,
   onAccountScanned: (Account) => *,

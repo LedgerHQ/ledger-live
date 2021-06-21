@@ -6,7 +6,7 @@ import {
   TransportStatusError,
 } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import getVersion from "./getVersion";
 import getAppAndVersion from "./getAppAndVersion";
 import type { DeviceInfo } from "../types/manager";
@@ -17,7 +17,7 @@ const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 
 export default async function getDeviceInfo(
-  transport: Transport<*>
+  transport: typeof Transport
 ): Promise<DeviceInfo> {
   const probablyOnDashboard = await getAppAndVersion(transport)
     .then(({ name }) => isDashboardName(name))

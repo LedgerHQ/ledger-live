@@ -192,7 +192,7 @@ function deviceActionAcceptBitcoin({
   transport,
   event,
 }: {
-  transport: Transport<*> & { button: (string) => void },
+  transport: typeof Transport & { button: (string) => void },
   event: { type: string, text: string },
 }) {
   if (event.text.startsWith("Accept")) {

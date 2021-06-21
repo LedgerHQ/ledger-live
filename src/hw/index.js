@@ -4,7 +4,7 @@ import { empty, merge } from "rxjs";
 import type { Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
 
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 
 type Discovery = Observable<{
   type: "add" | "remove",
@@ -20,9 +20,9 @@ export type TransportModule = {
   // you can typically prefix it with `something|` that identify it globally
   // returns falsy if the transport module can't handle this id
   // here, open means we want to START doing something with the transport
-  open: (id: string) => ?Promise<Transport<*>>,
+  open: (id: string) => ?Promise<typeof Transport>,
   // here, close means we want to STOP doing something with the transport
-  close?: (transport: Transport<*>, id: string) => ?Promise<void>,
+  close?: (transport: typeof Transport, id: string) => ?Promise<void>,
   // disconnect/interrupt a device connection globally
   // returns falsy if the transport module can't handle this id
   disconnect: (id: string) => ?Promise<void>,
@@ -61,7 +61,7 @@ export const discoverDevices = (
   );
 };
 
-export const open = (deviceId: string): Promise<Transport<*>> => {
+export const open = (deviceId: string): Promise<typeof Transport> => {
   for (let i = 0; i < modules.length; i++) {
     const m = modules[i];
     const p = m.open(deviceId);
@@ -71,7 +71,7 @@ export const open = (deviceId: string): Promise<Transport<*>> => {
 };
 
 export const close = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   deviceId: string
 ): Promise<void> => {
   for (let i = 0; i < modules.length; i++) {

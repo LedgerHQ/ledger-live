@@ -6,7 +6,7 @@ import type { DeviceInfo, SocketEvent } from "../types/manager";
 import genuineCheck from "./genuineCheck";
 
 export default (
-  transport: Transport<*>,
+  transport: typeof Transport,
   deviceInfo: DeviceInfo
 ): Observable<SocketEvent> =>
   deviceInfo.isOSU || deviceInfo.managerAllowed

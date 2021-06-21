@@ -3,7 +3,7 @@ import { GetAppAndVersionUnsupportedFormat } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 
 export default async (
-  transport: Transport<*>
+  transport: typeof Transport
 ): Promise<{ name: string, version: string, flags: number }> => {
   const r = await transport.send(0xb0, 0x01, 0x00, 0x00);
   let i = 0;

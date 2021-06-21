@@ -1,6 +1,6 @@
 // @flow
 import { BigNumber } from "bignumber.js";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import type {
   Account,
   AccountBridge,
@@ -32,7 +32,7 @@ export type DeviceActionArg<T, S> = {
   account: Account,
   transaction: T,
   status: TransactionStatus,
-  transport: Transport<*> & { button: (string) => void },
+  transport: typeof Transport & { button: (string) => void },
   event: DeviceActionEvent,
   state: S,
 };

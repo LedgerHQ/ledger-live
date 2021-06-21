@@ -5,8 +5,8 @@ _live-common_ libraries centralizes Ledger hardware wallet device logic via expo
 Most of these functions share one of these signature:
 
 ```js
-(Transport<*>, ...) => Promise<...>
-(Transport<*>, ...) => Observable<...>
+(Transport, ...) => Promise<...>
+(Transport, ...) => Observable<...>
 ```
 
 They take a [Transport](https://github.com/LedgerHQ/ledgerjs) (a communication layer), potentially some parameters, will run logic with the device transport and will eventually return a result (it's asynchronous).
@@ -15,7 +15,7 @@ They take a [Transport](https://github.com/LedgerHQ/ledgerjs) (a communication l
 
 Many ways to communicate with our device exists as shown by the many implementations we have in [ledgerjs](https://github.com/LedgerHQ/ledgerjs).
 
-To faciliate this fact, _live-common_ unifies a modular and multi-transport system that allows to register some "transport modules" using `registerTransportModule` (typically in your `live-common-setup.js`). When you need to access a transport, you can use the generic `open(id)` function OR if you need a race condition protection, you can use `withDevice(id)(job)` where `job` is a `(t: Transport<*>) => Observable<T>`.
+To faciliate this fact, _live-common_ unifies a modular and multi-transport system that allows to register some "transport modules" using `registerTransportModule` (typically in your `live-common-setup.js`). When you need to access a transport, you can use the generic `open(id)` function OR if you need a race condition protection, you can use `withDevice(id)(job)` where `job` is a `(t: typeof Transport) => Observable<T>`.
 
 This is on userland to glue everything together, for instance:
 
@@ -72,7 +72,7 @@ registerTransportModule({
       const existingDevice = webusbDevices[id];
       return existingDevice
         ? TransportWebUSB.open(existingDevice)
-        : TransportWebUSB.create();
+        : typeof TransportWebUSB.create();
     }
     return null;
   }

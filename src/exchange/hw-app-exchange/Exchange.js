@@ -1,5 +1,5 @@
 // @flow
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
 import { TransportStatusError } from "@ledgerhq/errors";
 import invariant from "invariant";
@@ -34,7 +34,7 @@ const maybeThrowProtocolError = (result: Buffer): void => {
 };
 
 export default class Exchange {
-  transport: Transport<*>;
+  transport: typeof Transport;
   transactionType: TransactionType;
   transactionRate: TransactionRate;
   allowedStatuses: Array<number> = [
@@ -51,7 +51,7 @@ export default class Exchange {
   ];
 
   constructor(
-    transport: Transport<*>,
+    transport: typeof Transport,
     transactionType: TransactionType,
     transactionRate?: TransactionRate
   ) {

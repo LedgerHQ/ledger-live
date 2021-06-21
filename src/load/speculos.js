@@ -47,7 +47,7 @@ export async function createSpeculosDevice(
   },
   maxRetry: number = 3
 ): Promise<{
-  transport: SpeculosTransport,
+  transport: typeof SpeculosTransport,
   id: string,
 }> {
   const {

@@ -14,7 +14,7 @@ export class DerivationsCache {
 type F = ({
   core: Core,
   wallet: CoreWallet,
-  transport: Transport<*>,
+  transport: typeof Transport,
   currency: CryptoCurrency,
   index: number,
   derivationMode: DerivationMode,

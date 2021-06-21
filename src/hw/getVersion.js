@@ -13,7 +13,7 @@ export type FirmwareInfo = {
  * Retrieve targetId and firmware version from device
  */
 export default async function getVersion(
-  transport: Transport<*>
+  transport: typeof Transport
 ): Promise<FirmwareInfo> {
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00);
   const byteArray = [...res];

@@ -12,7 +12,7 @@ Here is the gist of executing a genuine check:
 import { createDeviceSocket } from "@ledgerhq/live-common/lib/api/socket";
 
 const genuineCheck = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   { targetId, perso }: { targetId: number, perso: string } // these info are returned in getDeviceInfo
 ): Observable<boolean> =>
   createDeviceSocket(transport, {
@@ -37,7 +37,7 @@ genuineCheck(hidTransport, meta).subscribe(
 ## `createDeviceSocket` signature
 
 ```js
-(Transport<*>, { url: string }) => Observable<SocketEvent>
+(Transport, { url: string }) => Observable<SocketEvent>
 ```
 
 It creates a transport (that is coming from [`ledgerjs`](https://github.com/ledgerhq/ledgerjs)) and open a secure channel to the given wss:// URL. It returns an Observable of `SocketEvent` which can be one of these:

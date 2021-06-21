@@ -1,8 +1,8 @@
 // @flow
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 
 // TODO make it observable style
-export default async (transport: Transport<*>) => {
+export default async (transport: typeof Transport) => {
   const payload = await transport.send(0xe0, 0xde, 0, 0);
 
   const apps = [];

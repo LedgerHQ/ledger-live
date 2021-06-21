@@ -15,7 +15,7 @@ import {
   FirmwareNotRecognized,
   TransportStatusError,
 } from "@ledgerhq/errors";
-import type Transport from "@ledgerhq/hw-transport";
+import Transport from "@ledgerhq/hw-transport";
 import { throwError, Observable } from "rxjs";
 import { catchError, map } from "rxjs/operators";
 import { version as livecommonversion } from "../../package.json";
@@ -301,7 +301,7 @@ const getDeviceVersion: (
 );
 
 const install = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   context: string,
   params: *,
   unresponsiveExpectedDuringBulk?: boolean
@@ -320,7 +320,7 @@ const install = (
 };
 
 const genuineCheck = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   { targetId, perso }: { targetId: *, perso: * }
 ): Observable<SocketEvent> => {
   if (getEnv("MOCK")) {
@@ -347,7 +347,7 @@ export type ListInstalledAppsEvent =
   | { type: "result", payload: Array<{ hash: string, name: string }> };
 
 const listInstalledApps = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   { targetId, perso }: { targetId: *, perso: * }
 ): Observable<ListInstalledAppsEvent> => {
   if (getEnv("MOCK")) {
@@ -388,7 +388,7 @@ const listInstalledApps = (
 };
 
 const installMcu = (
-  transport: Transport<*>,
+  transport: typeof Transport,
   context: string,
   { targetId, version }: { targetId: *, version: * }
 ): Observable<*> => {
