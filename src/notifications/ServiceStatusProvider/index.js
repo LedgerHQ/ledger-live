@@ -1,14 +1,15 @@
 // @flow
 
 import React, { createContext, useContext, useMemo, useCallback } from "react";
-import type { State } from "./types";
-import networkApi from "./api";
+import type { State, ServiceStatusApi } from "./types";
+import defaultNetworkApi from "./api";
 import { useMachine } from "@xstate/react";
 import { serviceStatusMachine } from "./machine";
 
 type Props = {
   children: React$Node,
   autoUpdateDelay: number,
+  networkApi?: ServiceStatusApi,
 };
 
 type API = {
@@ -23,7 +24,11 @@ export function useServiceStatus(): StatusContextType {
   return useContext(ServiceStatusContext);
 }
 
-export const ServiceStatusProvider = ({ children, autoUpdateDelay }: Props) => {
+export const ServiceStatusProvider = ({
+  children,
+  autoUpdateDelay,
+  networkApi = defaultNetworkApi,
+}: Props) => {
   const fetchData = useCallback(async () => {
     const serviceStatusSummary = await networkApi.fetchStatusSummary();
 

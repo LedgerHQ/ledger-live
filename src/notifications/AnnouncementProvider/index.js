@@ -3,9 +3,14 @@
 import React, { createContext, useMemo, useCallback, useContext } from "react";
 import differenceBy from "lodash/differenceBy";
 import { useMachine } from "@xstate/react";
-import type { Announcement, AnnouncementsUserSettings, State } from "./types";
+import type {
+  Announcement,
+  AnnouncementsUserSettings,
+  State,
+  AnnouncementsApi,
+} from "./types";
 import { localizeAnnouncements, filterAnnouncements } from "./logic";
-import fetchApi from "./api";
+import defaultFetchApi from "./api";
 import { announcementMachine } from "./machine";
 
 type Props = {
@@ -24,6 +29,7 @@ type Props = {
   autoUpdateDelay: number,
   onNewAnnouncement?: (Announcement) => void,
   onAnnouncementRead?: (Announcement) => void,
+  fetchApi?: AnnouncementsApi,
 };
 
 type API = {
@@ -47,6 +53,7 @@ export const AnnouncementProvider = ({
   autoUpdateDelay,
   onNewAnnouncement,
   onAnnouncementRead,
+  fetchApi = defaultFetchApi,
 }: Props) => {
   const fetchData = useCallback(
     async ({ allIds, cache }) => {
