@@ -1837,10 +1837,10 @@
         "cta": "Закрыть"
       },
       "pendingOperation": {
-        "description": "Операция обмена отправлена в сеть для подтверждения. Может пройти около часа, прежде чем вы получите конвертированные криптоактивы.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
         "label": "ID обмена:",
-        "title": "Операция в ожидании",
-        "disclaimer": "Сохраните ID обмена на случай, если потребуется помощь от {{provider}}.",
+        "title": "Swap broadcast successfully ",
+        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
         "cta": "Подробности"
       },
       "tradeMethod": {
@@ -1937,6 +1937,7 @@
       },
       "history": {
         "tab": "История",
+        "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "Экспортировать историю транзакций",
         "exportFilename": "Экспортировать историю обменов",
         "empty": {

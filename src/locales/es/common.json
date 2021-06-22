@@ -1837,10 +1837,10 @@
         "cta": "Cerrar"
       },
       "pendingOperation": {
-        "description": "La operación de permuta ha sido enviada a la red para su confirmación. Puede transcurrir hasta una hora antes de que se reciban los activos cripto permutados.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
         "label": "Tu ID de Permuta:",
-        "title": "Operación pendiente",
-        "disclaimer": "Toma nota del número de ID de permuta, en caso de que necesites ayuda de {{provider}} más tarde.",
+        "title": "Swap broadcast successfully ",
+        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
         "cta": "Ver detalles"
       },
       "tradeMethod": {
@@ -1937,6 +1937,7 @@
       },
       "history": {
         "tab": "Historial",
+        "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "Operaciones de exportación",
         "exportFilename": "Operaciones de permuta",
         "empty": {

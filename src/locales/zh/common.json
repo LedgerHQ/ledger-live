@@ -1837,10 +1837,10 @@
         "cta": "关闭"
       },
       "pendingOperation": {
-        "description": "您的 Swap 掉期交易操作已经发送到网络上确认。最多一个小时后，您就可以收到被掉期交易的加密资产。",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
         "label": "您的 Swap ID：",
-        "title": "待处理操作",
-        "disclaimer": "请记下您的 Swap ID 掉期号码，以便今后有需要时从 {{provider}} 处获得帮助。",
+        "title": "Swap broadcast successfully ",
+        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
         "cta": "查看详情"
       },
       "tradeMethod": {
@@ -1937,6 +1937,7 @@
       },
       "history": {
         "tab": "历史记录",
+        "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "导出操作",
         "exportFilename": "Swap 掉期交易操作",
         "empty": {

@@ -1046,7 +1046,7 @@
         "desc": "على جهازك، اختار الإعدادات> عام > اسم الجهاز (Settings > General > Device name).",
         "title_1": "كيفية إعداد اتصال البلوتوث؟",
         "title_2": "كيف يمكنني استخدام جهاز Nano X الخاص بي بدون خاصية البلوتوث؟",
-        "desc_1": "استخدم <1>كبل</1> OTG لتوصيل ليدجر Nano X بهاتفك الذكي الذي يعمل بنظام Android (iOS غير مدعوم). قم بإدارة أصولك المشفرة باستخدام تطبيق ليدجر لايف للجوّال أو أي تطبيق (ويب) آخر متوافق.",
+        "desc_1": "استخدم <1>كبل</1> OTG لتوصيل ليدجر Nano X بهاتفك الذكي الذي يعمل بنظام Android (iOS غير مدعوم). قم بإدارة أصولك المشفرة باستخدام تطبيق Ledger Live للجوّال أو أي تطبيق (ويب) آخر متوافق.",
         "bullets": {
           "0": {
             "label": "تأكد من تمكين خاصية البلوتوث على هاتفك الذكي وعلى جهاز ليدجر Nano X الخاص بك. يجب أن يكون جهاز ليدجر Nano X الخاص بك على لوحة المعلومات، شاشته الرئيسية."
@@ -1837,10 +1837,10 @@
         "cta": "إغلاق"
       },
       "pendingOperation": {
-        "description": "لقد تم إرسال عملية المبادلة الخاصة بك إلى الشبكة لتأكيدها. قد يستغرق ذلك مدة تصل إلى ساعة قبل استلام الأصول المشفرة الخاصة بك التي تمت مبادلتها.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
         "label": "معرّف التبادل الخاص بك:",
-        "title": "عملية معلقة",
-        "disclaimer": "يرجى حفظ معرّف التبادل الخاص بك في حال كنت بحاجة إلى مساعدة من {{provider}} لاحقًا.",
+        "title": "Swap broadcast successfully ",
+        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
         "cta": "رؤية التفاصيل"
       },
       "tradeMethod": {
@@ -1937,6 +1937,7 @@
       },
       "history": {
         "tab": "السجل",
+        "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
         "exportButton": "تصدير العمليات",
         "exportFilename": "عمليات المبادلة",
         "empty": {
