@@ -16,6 +16,7 @@ export const requestInterceptor = (
   const { url, method = "", data } = request;
   log("network", `${method} ${url}`, { data });
 
+  // $FlowFixMe (LLD side)
   const req: ExtendedXHRConfig = request;
 
   req.metadata = {
@@ -93,6 +94,7 @@ export const errorInterceptor = (
 
 axios.interceptors.request.use(requestInterceptor);
 
+// $FlowFixMe LLD raise issues here
 axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
 const makeError = (msg, status, url, method) => {
