@@ -58,6 +58,9 @@
       "cli/",
       "test-helpers/"
     ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@polkadot)"
+    ],
     "moduleDirectories": [
       "node_modules",
       "cli/node_modules"
