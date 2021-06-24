@@ -10,6 +10,11 @@ import type {
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
 import {
+  makeCompoundSummaryForAccount,
+  getAccountCapabilities,
+} from "@ledgerhq/live-common/lib/compound/logic";
+
+import {
   addAccounts,
   canBeMigrated,
   flattenAccounts,
@@ -258,5 +263,26 @@ export const subAccountByCurrencyOrderedScreenSelector = (route: any) => (
   if (!currency) return [];
   return subAccountByCurrencyOrderedSelector(state, { currency });
 };
+
+export const hasLendEnabledAccountsSelector: OutputSelector<
+  State,
+  void,
+  boolean,
+> = createSelector(flattenAccountsSelector, accounts =>
+  accounts.some(account => {
+    if (!account || account.type !== "TokenAccount") return false;
+
+    // check if account already has lending enabled
+    const summary =
+      account.type === "TokenAccount" &&
+      makeCompoundSummaryForAccount(account, undefined);
+
+    const capabilities = summary
+      ? account.type === "TokenAccount" && getAccountCapabilities(account)
+      : null;
+
+    return !!capabilities;
+  }),
+);
 
 export default handleActions(handlers, initialState);

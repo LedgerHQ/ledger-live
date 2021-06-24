@@ -18,6 +18,7 @@ import WalletConnect from "../../../icons/WalletConnect";
 import Exchange from "../../../icons/Exchange";
 import IconSend from "../../../icons/Send";
 import IconReceive from "../../../icons/Receive";
+import useCompoundAccountEnabled from "../../Lending/shared/useCompoundAccountEnabled";
 
 type Props = {
   account: AccountLike,
@@ -37,8 +38,7 @@ export default function useActions({ account, parentAccount, colors }: Props) {
 
   const accountId = account.id;
 
-  const availableOnCompound =
-    account.type === "TokenAccount" && !!account.compoundBalance;
+  const availableOnCompound = useCompoundAccountEnabled(account, parentAccount);
 
   const canBeSold = isCurrencySupported(currency, "sell");
 
