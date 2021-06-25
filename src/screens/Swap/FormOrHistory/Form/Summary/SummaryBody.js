@@ -1,11 +1,8 @@
 // @flow
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/dist/FontAwesome";
 import { Trans } from "react-i18next";
-
-import { BigNumber } from "bignumber.js";
 
 import type { TransactionStatus } from "@ledgerhq/live-common/lib/types";
 import type {
@@ -40,7 +37,7 @@ const SummaryBody = ({
   const { fromAccount, toAccount } = exchange;
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
-  const { magnitudeAwareRate, toAmount } = exchangeRate;
+  const { toAmount } = exchangeRate;
   const { amount } = status;
 
   const openProvider = useCallback(() => {
