@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": ">=14"
+  },
   "name": "ledgerlivemobile",
   "version": "2.29.1",
   "private": true,
