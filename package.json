@@ -61,6 +61,9 @@
       "cli/",
       "test-helpers/"
     ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@polkadot|@babel/runtime/helpers/esm/)"
+    ],
     "moduleDirectories": [
       "node_modules",
       "cli/node_modules"
