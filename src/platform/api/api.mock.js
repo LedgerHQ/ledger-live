@@ -6,7 +6,7 @@ const manifest: AppManifest[] = [
     id: "paraswap",
     name: "ParaSwap",
     url:
-      "https://ledger-live-platform-apps.vercel.app/app/dapp-browser?url=https%3A%2F%2Fparaswap.io%2F%3Fembed%3Dtrue%26referrer%3Dledger1&nanoApp=Paraswap&dappName=paraswap",
+      "https://ledger-live-platform-apps.vercel.app/app/dapp-browser?url=https%3A%2F%2Fparaswap.io%2F%3Fembed%3Dtrue%26referrer%3Dledger2&nanoApp=Paraswap&dappName=paraswap",
     homepageUrl: "https://paraswap.io",
     supportUrl: "https://paraswap.io",
     icon: "https://cdn.live.ledger.com/icons/platform/paraswap.png",
