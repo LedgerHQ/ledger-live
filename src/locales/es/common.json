@@ -1837,10 +1837,10 @@
         "cta": "Cerrar"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
+        "description": "Tu operación de permuta ha sido enviada a la red para su confirmación. Puede transcurrir hasta una hora antes de que recibas tus {{targetCurrency}}.",
         "label": "Tu ID de Permuta:",
-        "title": "Swap broadcast successfully ",
-        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
+        "title": "Transmisión exitosa de permuta",
+        "disclaimer": "Toma nota del número de ID de permuta, en caso de que necesites ayuda del Soporte de {{provider}} más adelante.",
         "cta": "Ver detalles"
       },
       "tradeMethod": {
@@ -1937,7 +1937,7 @@
       },
       "history": {
         "tab": "Historial",
-        "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
+        "disclaimer": "Tus transacciones de permuta en Mobile no están sincronizadas con Ledger Live Desktop",
         "exportButton": "Operaciones de exportación",
         "exportFilename": "Operaciones de permuta",
         "empty": {
@@ -3598,13 +3598,13 @@
   "notificationCenter": {
     "title": "Centro de notificaciones",
     "announcement": "Anuncio",
-    "liveStatus": "Ledger Live status",
+    "liveStatus": "Estado de Ledger Live",
     "news": {
       "title": "Noticias",
       "titleCount": "Noticias ({{count}})",
       "emptyState": {
         "title": "No hay noticias por el momento",
-        "desc": "You will find here all the news related to Ledger and Ledger Live"
+        "desc": "Aquí encontrarás las noticias relacionadas con Ledger y Ledger Live"
       }
     },
     "status": {

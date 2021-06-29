@@ -1837,10 +1837,10 @@
         "cta": "Fermer"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
+        "description": "Votre opération de Swap a été envoyée au réseau pour confirmation. Cela peut prendre jusqu'à une heure avant que vous ne receviez vos {{targetCurrency}}.",
         "label": "Identifiant de votre Swap :",
-        "title": "Swap broadcast successfully ",
-        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
+        "title": "Swap bien diffusé ",
+        "disclaimer": "Notez bien l'identifiant de votre Swap au cas où vous auriez besoin de contacter l'assistance de {{provider}}.",
         "cta": "Voir les détails"
       },
       "tradeMethod": {

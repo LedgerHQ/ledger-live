@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Диспетчер был отклонён на устройстве",
-      "description": "Please allow the Manager on your device, then try again."
+      "description": "Пожалуйста, разрешите использование Диспетчера на устройстве, а затем повторите попытку."
     },
     "UserRefusedAddress": {
       "title": "Адрес получателя отклонён",
@@ -1837,10 +1837,10 @@
         "cta": "Закрыть"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
+        "description": "Операция обмена отправлена в сеть для подтверждения. Может пройти около часа, прежде чем вы получите ваши {{targetCurrency}}.",
         "label": "ID обмена:",
-        "title": "Swap broadcast successfully ",
-        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
+        "title": "Обмен успешно транслирован в сеть ",
+        "disclaimer": "Сохраните ID обмена на случай, если в дальнейшем потребуется помощь от {{provider}}.",
         "cta": "Подробности"
       },
       "tradeMethod": {
@@ -1937,7 +1937,7 @@
       },
       "history": {
         "tab": "История",
-        "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
+        "disclaimer": "Ваши обмены на мобильном устройстве не синхронизированы с настольным приложением Ledger Live",
         "exportButton": "Экспортировать историю транзакций",
         "exportFilename": "Экспортировать историю обменов",
         "empty": {
@@ -3570,7 +3570,7 @@
     "disconnected": "Отключено",
     "warningdisconnected": "Проблема с подключением между dApp, WalletConnect и Ledger Live. Подождите несколько секунд или попробуйте подключиться заново",
     "info": "Теперь dApp {{name}} доступно в настольном приложении.",
-    "warning": "Совместное использование адресов, полученных в dApp, несёт риск безопасности. Обязательно используйте Ledger Live при отправке адреса для получения средств.",
+    "warning": "Совместное использование адресов, полученных в dApp, несёт риск для безопасности. Обязательно используйте Ledger Live при отправке адреса для получения средств.",
     "isconnecting": "подключается. Пожалуйста, подождите...",
     "disconnect": "Отключить",
     "retry": "Повторить",
@@ -3598,13 +3598,13 @@
   "notificationCenter": {
     "title": "Центр уведомлений",
     "announcement": "Объявление",
-    "liveStatus": "Ledger Live status",
+    "liveStatus": "Состояние Ledger Live",
     "news": {
       "title": "Новости",
       "titleCount": "Новостей: {{count}}",
       "emptyState": {
         "title": "На данный момент новостей нет",
-        "desc": "You will find here all the news related to Ledger and Ledger Live"
+        "desc": "Здесь вы найдёте все новости о Ledger и Ledger Live"
       }
     },
     "status": {

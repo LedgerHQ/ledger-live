@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Manager（管理器）已被在设备上禁用",
-      "description": "Please allow the Manager on your device, then try again."
+      "description": "请在您的设备上启用管理器，然后重试。"
     },
     "UserRefusedAddress": {
       "title": "接收地址被拒",
@@ -1837,10 +1837,10 @@
         "cta": "关闭"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
+        "description": "您的 Swap 掉期交易操作已经发送到网络上确认。最多一个小时后，您就可以收到您的 {{targetCurrency}}。",
         "label": "您的 Swap ID：",
-        "title": "Swap broadcast successfully ",
-        "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
+        "title": "掉期交易播送成功 ",
+        "disclaimer": "请记下您的 Swap ID 掉期交易号码，以便今后有需要时从 {{provider}} 处获得帮助。",
         "cta": "查看详情"
       },
       "tradeMethod": {
@@ -1937,7 +1937,7 @@
       },
       "history": {
         "tab": "历史记录",
-        "disclaimer": "Your swap mobile transactions are not synchronized with Ledger Live Desktop",
+        "disclaimer": "您的 swap 掉期手机交易没有与 Ledger Live 桌面应用程序同步",
         "exportButton": "导出操作",
         "exportFilename": "Swap 掉期交易操作",
         "empty": {
