@@ -11,6 +11,7 @@ import type {
 import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
 
 import { useTheme } from "@react-navigation/native";
+import { track } from "../../analytics/segment";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 
@@ -25,9 +26,13 @@ const forceInset = { bottom: "always" };
 
 const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
   const { colors } = useTheme();
+
+  const currencyId = account ? account.token.name : token ? token.name : "";
+
   const viewInExplorer = useCallback(() => {
     if (url) {
       Linking.openURL(url);
+      track("ViewInExplorer", { currencyId });
       onClose();
     }
   }, [onClose, url]);
