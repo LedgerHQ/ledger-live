@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Gestionnaire désactivé sur l'appareil",
-      "description": "Activez le \"Manager\" (Gestionnaire) sur votre appareil et réessayez."
+      "description": "Activez le Gestionnaire (\"Manager\") sur votre appareil et réessayez."
     },
     "UserRefusedAddress": {
       "title": "Adresse de bénéficiaire rejetée",
@@ -1837,10 +1837,10 @@
         "cta": "Fermer"
       },
       "pendingOperation": {
-        "description": "Votre opération de Swap a été envoyée au réseau pour confirmation. Cela peut prendre jusqu'à une heure avant que vous ne receviez vos crypto-actifs échangés.",
+        "description": "Votre opération de Swap a été envoyée au réseau pour confirmation. Cela peut prendre jusqu'à une heure avant que vous ne receviez vos {{targetCurrency}}.",
         "label": "Identifiant de votre Swap :",
-        "title": "Opération en attente",
-        "disclaimer": "Notez bien l'identifiant de votre Swap au cas où vous auriez besoin de l'aide de {{provider}} ultérieurement.",
+        "title": "Swap bien diffusé ",
+        "disclaimer": "Notez bien l'identifiant de votre Swap au cas où vous auriez besoin de contacter l'assistance de {{provider}}.",
         "cta": "Voir les détails"
       },
       "tradeMethod": {
@@ -1937,6 +1937,7 @@
       },
       "history": {
         "tab": "Historique",
+        "disclaimer": "Vos transactions Swap sur Ledger Live mobile ne sont pas synchronisées avec Ledger Live ordinateur.",
         "exportButton": "Exporter les opérations",
         "exportFilename": "Opérations de Swap",
         "empty": {
@@ -3576,7 +3577,7 @@
     "close": "Fermer",
     "message": "Message ",
     "messageHash": "Hachage du message",
-    "domainHash": "Hachage de domaine",
+    "domainHash": "Hachage du domaine",
     "stringHash": "Hachage ",
     "from": "De",
     "successTitle": "Message signé",

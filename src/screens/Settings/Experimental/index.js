@@ -29,6 +29,7 @@ export default function ExperimentalSettings() {
             </View>
             {experimentalFeatures.map(feat =>
               !feat.shadow || (feat.shadow && !isEnvDefault(feat.name)) ? (
+                // $FlowFixMe
                 <FeatureRow key={feat.name} feature={feat} />
               ) : null,
             )}

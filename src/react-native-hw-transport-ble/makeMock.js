@@ -28,7 +28,7 @@ export default (opts: Opts) => {
     ...opts,
   };
 
-  return class BluetoothTransportMock extends Transport<DeviceMock | string> {
+  return class BluetoothTransportMock extends Transport {
     static isSupported = (): Promise<boolean> => Promise.resolve(true);
 
     static observeState = (o: *) => observeState.subscribe(o);

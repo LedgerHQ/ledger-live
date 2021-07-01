@@ -9,7 +9,8 @@ import { ScreenName } from "../../../../const";
 import LText from "../../../../components/LText";
 import Alert from "../../../../components/Alert";
 import Button from "../../../../components/Button";
-import IconSwap from "../../../../icons/Swap";
+import IconCheck from "../../../../icons/Check";
+import IconClock from "../../../../icons/Clock";
 import { rgba } from "../../../../colors";
 
 const forceInset = { bottom: "always" };
@@ -25,7 +26,7 @@ const PendingOperation = () => {
     });
   }, [navigation]);
 
-  const { swapId, provider } = route.params;
+  const { swapId, provider, targetCurrency } = route.params;
 
   return (
     <SafeAreaView
@@ -33,39 +34,54 @@ const PendingOperation = () => {
       forceInset={forceInset}
     >
       <View style={styles.wrapper}>
-        <View
-          style={[
-            styles.iconWrapper,
-            { backgroundColor: rgba(colors.live, 0.1) },
-          ]}
-        >
-          <IconSwap color={colors.live} size={20} />
-        </View>
-        <LText secondary style={styles.title}>
-          <Trans i18nKey={"transfer.swap.pendingOperation.title"} />
-        </LText>
-        <View style={styles.swapIDWrapper}>
-          <LText style={styles.swapLabel} color="grey">
-            <Trans i18nKey={"transfer.swap.pendingOperation.label"} />
-          </LText>
-          <LText
-            selectable
-            tertiary
-            style={[styles.swapID, { backgroundColor: colors.lightFog }]}
+        <View style={styles.content}>
+          <View
+            style={[
+              styles.iconWrapper,
+              { backgroundColor: rgba(colors.success, 0.1) },
+            ]}
           >
-            {swapId}
+            <IconCheck color={colors.success} size={20} />
+            <View
+              style={[
+                styles.wrapperClock,
+                { backgroundColor: colors.background },
+              ]}
+            >
+              <IconClock color={colors.grey} size={14} />
+            </View>
+          </View>
+          <LText secondary style={styles.title}>
+            <Trans i18nKey={"transfer.swap.pendingOperation.title"} />
+          </LText>
+          <LText style={styles.description} color="grey">
+            <Trans
+              i18nKey={"transfer.swap.pendingOperation.description"}
+              values={{ targetCurrency }}
+            />
           </LText>
         </View>
-        <LText style={styles.description} color="grey">
-          <Trans i18nKey={"transfer.swap.pendingOperation.description"} />
-        </LText>
 
-        <Alert type="primary">
-          <Trans
-            i18nKey={"transfer.swap.pendingOperation.disclaimer"}
-            values={{ provider }}
-          />
-        </Alert>
+        <View style={styles.disclaimer}>
+          <Alert
+            type="help"
+            vertical
+            bottom={
+              <LText
+                selectable
+                semiBold
+                style={[styles.swapID, { backgroundColor: colors.lightFog }]}
+              >
+                {swapId}
+              </LText>
+            }
+          >
+            <Trans
+              i18nKey={"transfer.swap.pendingOperation.disclaimer"}
+              values={{ provider }}
+            />
+          </Alert>
+        </View>
       </View>
       <View style={styles.continueWrapper}>
         <Button
@@ -85,6 +101,16 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingTop: 32,
   },
+  wrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  content: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
   iconWrapper: {
     height: 50,
     width: 50,
@@ -94,20 +120,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  wrapper: {
-    alignItems: "center",
-    justifyContent: "center",
-    flex: 1,
+  wrapperClock: {
+    borderRadius: 16,
+    position: "absolute",
+    bottom: -2,
+    right: -2,
+    padding: 2,
   },
   title: {
     fontSize: 18,
     lineHeight: 22,
     marginBottom: 16,
   },
+  disclaimer: {
+    marginTop: "auto",
+    marginBottom: 32,
+  },
   swapIDWrapper: {
-    alignItems: "center",
-    flexDirection: "row",
-    marginBottom: 12,
+    backgroundColor: "red",
+    flexGrow: 0,
   },
   swapLabel: {
     fontSize: 14,
@@ -115,9 +146,10 @@ const styles = StyleSheet.create({
   },
   swapID: {
     borderRadius: 4,
-    padding: 4,
+    overflow: "hidden",
     paddingHorizontal: 8,
-    marginLeft: 8,
+    paddingVertical: 4,
+    alignSelf: "center",
   },
   description: {
     fontSize: 13,

@@ -23,6 +23,7 @@ import addToSwapHistory from "@ledgerhq/live-common/lib/exchange/swap/addToSwapH
 import {
   addPendingOperation,
   getMainAccount,
+  getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 
 import { renderLoading } from "../../../components/DeviceAction/rendering";
@@ -56,7 +57,7 @@ const Confirmation = ({
   deviceMeta,
   status,
 }: Props) => {
-  const { fromAccount, fromParentAccount } = exchange;
+  const { fromAccount, fromParentAccount, toAccount } = exchange;
   const [swapData, setSwapData] = useState(null);
   const [signedOperation, setSignedOperation] = useState(null);
   const dispatch = useDispatch();
@@ -68,6 +69,7 @@ const Confirmation = ({
     fromAccount && fromAccount.type === "TokenAccount"
       ? fromAccount.token
       : null;
+  const targetCurrency = getAccountCurrency(toAccount);
   const navigation = useNavigation();
 
   const onComplete = useCallback(
@@ -93,6 +95,7 @@ const Confirmation = ({
       navigation.replace(ScreenName.SwapPendingOperation, {
         swapId,
         provider: exchangeRate.provider,
+        targetCurrency: targetCurrency.name,
       });
     },
     [
@@ -103,6 +106,7 @@ const Confirmation = ({
       fromParentAccount,
       navigation,
       transaction,
+      targetCurrency,
     ],
   );
 

@@ -457,7 +457,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Manager deshabilitado en el dispositivo",
-      "description": "Habilita Manager en el dispositivo e inténtalo de nuevo."
+      "description": "Please allow the Manager on your device, then try again."
     },
     "UserRefusedAddress": {
       "title": "Dirección de recepción rechazada.",
@@ -1837,10 +1837,10 @@
         "cta": "Cerrar"
       },
       "pendingOperation": {
-        "description": "La operación de permuta ha sido enviada a la red para su confirmación. Puede transcurrir hasta una hora antes de que se reciban los activos cripto permutados.",
+        "description": "Tu operación de permuta ha sido enviada a la red para su confirmación. Puede transcurrir hasta una hora antes de que recibas tus {{targetCurrency}}.",
         "label": "Tu ID de Permuta:",
-        "title": "Operación pendiente",
-        "disclaimer": "Toma nota del número de ID de permuta, en caso de que necesites ayuda de {{provider}} más tarde.",
+        "title": "Transmisión exitosa de permuta",
+        "disclaimer": "Toma nota del número de ID de permuta, en caso de que necesites ayuda del Soporte de {{provider}} más adelante.",
         "cta": "Ver detalles"
       },
       "tradeMethod": {
@@ -1937,6 +1937,7 @@
       },
       "history": {
         "tab": "Historial",
+        "disclaimer": "Tus transacciones de permuta en Mobile no están sincronizadas con Ledger Live Desktop",
         "exportButton": "Operaciones de exportación",
         "exportFilename": "Operaciones de permuta",
         "empty": {
@@ -3603,7 +3604,7 @@
       "titleCount": "Noticias ({{count}})",
       "emptyState": {
         "title": "No hay noticias por el momento",
-        "desc": "Aquí encontrarás las noticias relacionadas con Ledger o Ledger Live"
+        "desc": "Aquí encontrarás las noticias relacionadas con Ledger y Ledger Live"
       }
     },
     "status": {
