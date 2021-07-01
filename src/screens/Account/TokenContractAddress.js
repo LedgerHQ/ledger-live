@@ -11,7 +11,6 @@ import type {
 import { shortAddressPreview } from "@ledgerhq/live-common/lib/account/helpers";
 
 import { useTheme } from "@react-navigation/native";
-import { track } from "../../analytics/segment";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 
@@ -32,7 +31,6 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
   const viewInExplorer = useCallback(() => {
     if (url) {
       Linking.openURL(url);
-      track("ViewInExplorer", { currencyId });
       onClose();
     }
   }, [onClose, url]);
@@ -70,6 +68,9 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
           containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
           event="GoToViewContractInExplorer"
           onPress={viewInExplorer}
+          eventProperties={{
+            currencyId,
+          }}
         />
       </View>
     </SafeAreaView>
