@@ -9,6 +9,10 @@ const initialExplorerConfig: FullConfig = {
     id: "btc",
     stable: {
       base: "EXPLORER",
+      version: "v2",
+    },
+    experimental: {
+      base: "EXPLORER",
       version: "v3",
     },
   },
