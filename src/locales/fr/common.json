@@ -30,6 +30,7 @@
     "or": "OU",
     "rename": "Renommer",
     "learnMore": "En savoir plus",
+    "checkItOut": "Jeter un œil",
     "viewDetails": "Voir les détails",
     "today": "Aujourd'hui",
     "yesterday": "Hier",
@@ -1212,6 +1213,7 @@
     "transfer": "Transfert",
     "manager": "Gestionnaire",
     "settings": "Paramètres",
+    "platform": "Parcourir",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1766,34 +1768,10 @@
       }
     },
     "exchange": {
-      "title": "Acheter / Vendre",
-      "providers": {
-        "title": "Choisir un prestataire pour acheter des cryptos",
-        "whatIsSwap": "Qu'est-ce que l'Achat ?",
-        "cta": "Continuer",
-        "coinify": {
-          "bullets": [
-            "Disponible dans plus de 130 pays",
-            "EUR, USD, GBP et 32 autres",
-            "Virements SEPA et Faster Payments",
-            "Virements bancaires locaux aux USA",
-            "Cartes de crédit et de débit"
-          ]
-        },
-        "wyre": {
-          "bullets": [
-            "Compte bancaire uniquement",
-            "Prise en charge du dollar américain uniquement",
-            "Plus de 20 cryptos prises en charge",
-            "Virement ACH",
-            "Pas de cartes de crédit ou de débit"
-          ]
-        }
-      }
+      "title": "Acheter / Vendre"
     },
     "swap": {
       "title": "Swap",
-      "paraswap": "ParaSwap",
       "selectDevice": "Sélectionnez votre appareil.",
       "broadcasting": "Swap en cours",
       "loadingFees": "Chargement des frais de réseau…",
@@ -1802,25 +1780,6 @@
         "title": "Bienvenue dans le Swap",
         "whatIsSwap": "Qu'est-ce que le Swap ?",
         "disclaimer": "Échangez des cryptos directement à partir de votre appareil Ledger. Ce service n'est pas disponible dans certains pays, y compris aux États-Unis."
-      },
-      "providers": {
-        "title": "Choisir un prestataire pour échanger des cryptos",
-        "whatIsSwap": "Qu'est-ce que le Swap ?",
-        "cta": "Continuer",
-        "changelly": {
-          "bullets": [
-            "BTC, ETH, USDT et plus de 50 autres",
-            "Multidevises",
-            "Centralisé"
-          ]
-        },
-        "paraswap": {
-          "bullets": [
-            "Connectez-vous à plus de 30 DEX (Uniswap, SushiSwap, etc.)",
-            "Ethereum et jetons ERC-20",
-            "Décentralisé et sans confiance"
-          ]
-        }
       },
       "main": {
         "header": "Swap"
@@ -1862,6 +1821,7 @@
         "balance": "Solde <0>123</0>",
         "fromAccount": "Sélectionnez un compte.",
         "toAccount": "Sélectionnez un compte.",
+        "paraswapCTA": "Vous cherchez ParaSwap ? Il se trouve maintenant dans l'onglet Parcourir.",
         "amount": {
           "useMax": "Choisir le maximum",
           "available": "Total disponible"
@@ -1944,9 +1904,6 @@
           "title": "Vos échanges antérieurs apparaîtront ici.",
           "desc": "Vous n'avez pas encore effectué de Swaps ou Ledger Live a été réinitialisé depuis votre dernier Swap."
         }
-      },
-      "platform": {
-        "tab": "Plateforme"
       }
     },
     "lending": {
@@ -3615,6 +3572,28 @@
       },
       "error": {
         "title": "L'application Ledger Live rencontre des problèmes."
+      }
+    }
+  },
+  "platform": {
+    "catalog": {
+      "title": "Catalogue d'applications Live",
+      "branch": {
+        "soon": "À découvrir prochainement",
+        "experimental": "Expérimental",
+        "debug": "Débugger"
+      },
+      "banner": {
+        "title": "Découvrez le catalogue d'applications Live",
+        "description": "Nous mettons tout en œuvre pour vous permettre d'accéder au monde de la DeFi, des NFT et bien plus encore. En toute sécurité depuis Ledger Live !"
+      },
+      "pollCTA": {
+        "title": "Sondage",
+        "description": "Quel service aimeriez-vous voir dans Ledger Live ?"
+      },
+      "developerCTA": {
+        "title": "Pour les développeurs",
+        "description": "Toutes les informations dont vous avez besoin pour intégrer vos applications dans Ledger Live."
       }
     }
   }

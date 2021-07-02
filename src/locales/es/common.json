@@ -30,6 +30,7 @@
     "or": "O",
     "rename": "Renombrar",
     "learnMore": "Conoce más",
+    "checkItOut": "Échale un vistazo",
     "viewDetails": "Ver detalles",
     "today": "Hoy",
     "yesterday": "Ayer",
@@ -457,7 +458,7 @@
     },
     "UserRefusedAllowManager": {
       "title": "Manager deshabilitado en el dispositivo",
-      "description": "Please allow the Manager on your device, then try again."
+      "description": "Habilita Manager en tu dispositivo e inténtalo de nuevo."
     },
     "UserRefusedAddress": {
       "title": "Dirección de recepción rechazada.",
@@ -1212,6 +1213,7 @@
     "transfer": "Transferir",
     "manager": "Manager",
     "settings": "Ajustes",
+    "platform": "Navegar",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1766,34 +1768,10 @@
       }
     },
     "exchange": {
-      "title": "Comprar / Vender",
-      "providers": {
-        "title": "Elige un proveedor para comprar criptomonedas",
-        "whatIsSwap": "¿Qué es comprar?",
-        "cta": "Continuar",
-        "coinify": {
-          "bullets": [
-            "Disponible en más de 130 países",
-            "EUR, USD, GBP y otras 32",
-            "Pagos más rápidos y SEPA",
-            "Transferencias bancarias locales en Estados Unidos",
-            "Tarjetas de crédito y débito"
-          ]
-        },
-        "wyre": {
-          "bullets": [
-            "Sólo cuenta bancaria de Estados Unidos",
-            "Sólo compatible con USD",
-            "Compatible con más de 20 criptomonedas",
-            "Transferencia ACH",
-            "Sin tarjetas de débito o crédito"
-          ]
-        }
-      }
+      "title": "Comprar / Vender"
     },
     "swap": {
       "title": "Permutar",
-      "paraswap": "Paraswap",
       "selectDevice": "Selecciona tu dispositivo",
       "broadcasting": "Transmitiendo la permuta",
       "loadingFees": "Cargando tarifas de red...",
@@ -1802,25 +1780,6 @@
         "title": "Bienvenido a Permutar",
         "whatIsSwap": "¿Qué es la permuta?",
         "disclaimer": "Intercambia criptos directamente desde tu dispositivo Ledger. Este servicio no está disponible en algunos países, entre ellos, Estados Unidos."
-      },
-      "providers": {
-        "title": "Elige un proveedor para permutar criptomonedas",
-        "whatIsSwap": "¿Qué es la permuta?",
-        "cta": "Continuar",
-        "changelly": {
-          "bullets": [
-            "BTC, ETH, USDT y más de 50 otras",
-            "Multidivisa",
-            "Centralizado"
-          ]
-        },
-        "paraswap": {
-          "bullets": [
-            "Conectar a más de 30 DEXs (Uniswap, SushiSwap,...)",
-            "Tokens Ethereum y ERC20",
-            "Descentralizado y sin requerir confianza"
-          ]
-        }
       },
       "main": {
         "header": "Permutar"
@@ -1862,6 +1821,7 @@
         "balance": "Saldo <0>123</0>",
         "fromAccount": "Seleccionar cuenta",
         "toAccount": "Seleccionar cuenta",
+        "paraswapCTA": "¿Buscas Paraswap? ¡Está en a la pestaña Navegar!",
         "amount": {
           "useMax": "Utilizar máx",
           "available": "Total disponible"
@@ -1944,9 +1904,6 @@
           "title": "Tus permutas anteriores aparecerán aquí",
           "desc": "No has hecho ninguna permuta todavía o Ledger Live ha sido restablecido en el interín."
         }
-      },
-      "platform": {
-        "tab": "Plataforma"
       }
     },
     "lending": {
@@ -3615,6 +3572,28 @@
       },
       "error": {
         "title": "Ledger Live está experimentando problemas"
+      }
+    }
+  },
+  "platform": {
+    "catalog": {
+      "title": "Catálogo de aplicaciones de Live",
+      "branch": {
+        "soon": "próximamente",
+        "experimental": "experimental",
+        "debug": "depuración"
+      },
+      "banner": {
+        "title": "Descubre nuestro catálogo de aplicaciones de Live",
+        "description": "Estamos trabajando duro para brindarte acceso seguro al mundo de las DeFi, los NFT y más, ¡directamente desde Ledger Live!"
+      },
+      "pollCTA": {
+        "title": "Encuesta",
+        "description": "¿Qué servicio quieres ver en Ledger Live?"
+      },
+      "developerCTA": {
+        "title": "Para desarrolladores",
+        "description": "Toda la información que necesitas para integrar tus aplicaciones en Ledger Live."
       }
     }
   }

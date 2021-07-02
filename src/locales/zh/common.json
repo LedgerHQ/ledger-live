@@ -30,6 +30,7 @@
     "or": "或者",
     "rename": "重命名",
     "learnMore": "了解更多",
+    "checkItOut": "一探究竟",
     "viewDetails": "查看详情",
     "today": "今天",
     "yesterday": "昨天",
@@ -1212,6 +1213,7 @@
     "transfer": "转移",
     "manager": "管理器",
     "settings": "设置",
+    "platform": "浏览",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1766,34 +1768,10 @@
       }
     },
     "exchange": {
-      "title": "买入 / 卖出",
-      "providers": {
-        "title": "选择一个购买加密货币的供应商",
-        "whatIsSwap": "什么是购买？",
-        "cta": "继续",
-        "coinify": {
-          "bullets": [
-            "在 130 多个国家可用",
-            "欧元、美元、英镑以及其它32种",
-            "SEPA 与 快速付款",
-            "美国本地电汇",
-            "信用卡和借记卡"
-          ]
-        },
-        "wyre": {
-          "bullets": [
-            "仅美国银行账户",
-            "仅支持美元",
-            "已支持20余种加密货币",
-            "ACH 转账",
-            "无信用卡和借记卡"
-          ]
-        }
-      }
+      "title": "买入 / 卖出"
     },
     "swap": {
       "title": "Swap",
-      "paraswap": "ParaSwap",
       "selectDevice": "选择您的设备",
       "broadcasting": "正在播送掉期交易",
       "loadingFees": "正在加载网络费用...",
@@ -1802,25 +1780,6 @@
         "title": "欢迎使用 Swap",
         "whatIsSwap": "什么是 Swap？",
         "disclaimer": "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
-      },
-      "providers": {
-        "title": "选择一个提供方来进行加密资产的掉期交易",
-        "whatIsSwap": "什么是 Swap？",
-        "cta": "继续",
-        "changelly": {
-          "bullets": [
-            "比特币、以太币、泰达币以及50余个其他币种",
-            "多币种",
-            "中心化的"
-          ]
-        },
-        "paraswap": {
-          "bullets": [
-            "连接到 30 + DEXs (Uniswap, SushiSwap,...)",
-            "以太坊 和 ERC20 代币",
-            "去中心化与无需信任"
-          ]
-        }
       },
       "main": {
         "header": "Swap"
@@ -1862,6 +1821,7 @@
         "balance": "余额 <0>123</0>",
         "fromAccount": "选择账户",
         "toAccount": "选择账户",
+        "paraswapCTA": "寻找 Paraswap？它已被移动到 Browse（浏览）选项卡。",
         "amount": {
           "useMax": "使用最大值",
           "available": "可用总额"
@@ -1944,9 +1904,6 @@
           "title": "您之前的掉期交易会出现在这里",
           "desc": "要么您还未进行过任何掉期交易，亦或 Ledger Live 在此期间被重置了 。"
         }
-      },
-      "platform": {
-        "tab": "平台"
       }
     },
     "lending": {
@@ -3615,6 +3572,28 @@
       },
       "error": {
         "title": "Ledger Live 正遇到问题"
+      }
+    }
+  },
+  "platform": {
+    "catalog": {
+      "title": "Live 应用目录",
+      "branch": {
+        "soon": "敬请期待",
+        "experimental": "实验性的",
+        "debug": "除错"
+      },
+      "banner": {
+        "title": "探索我们的 Live 应用目录",
+        "description": "我们正努力使您能够访问 DeFi, NFT 以及更广的世界，就在 Ledger Live! 里面，安全地，进行访问。"
+      },
+      "pollCTA": {
+        "title": "调查",
+        "description": "您想要在 Ledger Live 中看到哪种服务？"
+      },
+      "developerCTA": {
+        "title": "面向开发者",
+        "description": "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。"
       }
     }
   }

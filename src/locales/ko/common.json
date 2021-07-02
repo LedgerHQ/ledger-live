@@ -30,6 +30,7 @@
     "or": "OR",
     "rename": "Rename",
     "learnMore": "Learn more",
+    "checkItOut": "Check it out",
     "viewDetails": "View details",
     "today": "Today",
     "yesterday": "Yesterday",
@@ -1212,6 +1213,7 @@
     "transfer": "Transfer",
     "manager": "Manager",
     "settings": "Settings",
+    "platform": "Browse",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1766,34 +1768,10 @@
       }
     },
     "exchange": {
-      "title": "Buy / Sell",
-      "providers": {
-        "title": "Choose a provider to buy crypto",
-        "whatIsSwap": "What is Buy?",
-        "cta": "Continue",
-        "coinify": {
-          "bullets": [
-            "Available in 130+ countries",
-            "EUR, USD, GBP and 32 others",
-            "SEPA & Faster Payments",
-            "Local US wire transfers",
-            "Credit and debit cards"
-          ]
-        },
-        "wyre": {
-          "bullets": [
-            "Only 🇺🇸 bank account",
-            "USD support only",
-            "20+ crypto supported",
-            "ACH transfer",
-            "No credit & debit cards"
-          ]
-        }
-      }
+      "title": "Buy / Sell"
     },
     "swap": {
       "title": "Swap",
-      "paraswap": "Paraswap",
       "selectDevice": "Select your device",
       "broadcasting": "Broadcasting swap",
       "loadingFees": "Loading network fees...",
@@ -1802,25 +1780,6 @@
         "title": "Welcome to Swap",
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
-      },
-      "providers": {
-        "title": "Choose a provider to swap your crypto",
-        "whatIsSwap": "What is Swap?",
-        "cta": "Continue",
-        "changelly": {
-          "bullets": [
-            "BTC, ETH, USDT and 50+ others",
-            "Multi-currency",
-            "Centralized"
-          ]
-        },
-        "paraswap": {
-          "bullets": [
-            "Connect to 30+ DEXs (Uniswap, SushiSwap,...)",
-            "Ethereum & ERC20 tokens",
-            "Decentralized & Trustless"
-          ]
-        }
       },
       "main": {
         "header": "Swap"
@@ -1862,6 +1821,7 @@
         "balance": "Balance <0>123</0>",
         "fromAccount": "Select account",
         "toAccount": "Select account",
+        "paraswapCTA": "Looking for Paraswap? It has been moved to the Browse tab!",
         "amount": {
           "useMax": "Use max",
           "available": "Total available"
@@ -1944,9 +1904,6 @@
           "title": "Your previous swaps will appear here",
           "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
         }
-      },
-      "platform": {
-        "tab": "Platform"
       }
     },
     "lending": {
@@ -3615,6 +3572,28 @@
       },
       "error": {
         "title": "Ledger Live is experiencing issues"
+      }
+    }
+  },
+  "platform": {
+    "catalog": {
+      "title": "Live Apps Catalog",
+      "branch": {
+        "soon": "coming soon",
+        "experimental": "experimental",
+        "debug": "debug"
+      },
+      "banner": {
+        "title": "Discover our Live Apps Catalog",
+        "description": "We're working hard to bring you access to the world of DeFi, NFTs and more, securely, right inside Ledger Live!"
+      },
+      "pollCTA": {
+        "title": "Poll",
+        "description": "Which service do you want to see in Ledger Live?"
+      },
+      "developerCTA": {
+        "title": "For Developers",
+        "description": "All the information you need to integrate your applications on Ledger Live."
       }
     }
   }
