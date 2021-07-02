@@ -6,10 +6,10 @@ import Portfolio, { PortfolioTabIcon } from "../../screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../../screens/Transfer";
 import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
-import SettingsNavigator from "./SettingsNavigator";
+import PlatformNavigator from "./PlatformNavigator";
 import TabIcon from "../TabIcon";
 import AccountsIcon from "../../icons/Accounts";
-import SettingsIcon from "../../icons/Settings";
+import AppsIcon from "../../icons/Apps";
 
 import Tab from "./CustomBlockRouterNavigator";
 
@@ -65,6 +65,17 @@ export default function MainNavigator({
         }}
       />
       <Tab.Screen
+        name={NavigatorName.Platform}
+        component={PlatformNavigator}
+        options={{
+          headerShown: false,
+          unmountOnBlur: true,
+          tabBarIcon: (props: any) => (
+            <TabIcon Icon={AppsIcon} i18nKey="tabs.platform" {...props} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name={NavigatorName.Manager}
         component={ManagerNavigator}
         options={{
@@ -87,16 +98,6 @@ export default function MainNavigator({
             });
           },
         })}
-      />
-      <Tab.Screen
-        name={NavigatorName.Settings}
-        component={SettingsNavigator}
-        options={{
-          unmountOnBlur: true,
-          tabBarIcon: (props: any) => (
-            <TabIcon Icon={SettingsIcon} i18nKey="tabs.settings" {...props} />
-          ),
-        }}
       />
     </Tab.Navigator>
   );
