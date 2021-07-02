@@ -300,6 +300,10 @@ const linking = {
          * ie: "ledgerhq://buy" -> will redirect to the main exchange page
          */
         [NavigatorName.Exchange]: "buy",
+        /**
+         * ie: "ledgerhq://swap" -> will redirect to the main swap page
+         */
+        [NavigatorName.Swap]: "swap",
       },
     },
   },

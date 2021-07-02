@@ -5,6 +5,7 @@ import { StyleSheet, FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/lib/currencies";
 import { useRefreshAccountsOrdering } from "../../actions/general";
 import { accountsSelector } from "../../reducers/accounts";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
@@ -41,17 +42,20 @@ export default function Accounts({ navigation, route }: Props) {
   useEffect(() => {
     if (params) {
       if (params.currency) {
-        const account = accounts.find(
-          ({ currency }) => currency.family === params.currency,
+        const currency = findCryptoCurrencyByKeyword(
+          params.currency.toUpperCase(),
         );
+        if (currency) {
+          const account = accounts.find(acc => acc.currency.id === currency.id);
 
-        if (account) {
-          // reset params so when we come back the redirection doesn't loop
-          navigation.setParams({ ...params, currency: undefined });
-          navigation.navigate(ScreenName.Account, {
-            accountId: account.id,
-            isForwardedFromAccounts: true,
-          });
+          if (account) {
+            // reset params so when we come back the redirection doesn't loop
+            navigation.setParams({ ...params, currency: undefined });
+            navigation.navigate(ScreenName.Account, {
+              accountId: account.id,
+              isForwardedFromAccounts: true,
+            });
+          }
         }
       }
     }

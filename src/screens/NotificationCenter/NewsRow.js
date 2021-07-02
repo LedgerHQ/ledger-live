@@ -9,6 +9,7 @@ import LText from "../../components/LText";
 import Info from "../../icons/Info";
 import Warning from "../../icons/WarningOutline";
 import ExternalLink from "../../components/ExternalLink";
+import { useDeepLinkHandler } from "../../navigation/useDeepLinking";
 
 type Props = {
   item: Announcement,
@@ -34,6 +35,7 @@ export default function NewsRow({
   const { content, uuid, level, icon, utm_campaign: utmCampaign } = item;
   const { title, text, link } = content;
   const [hasBeenRead] = useState(!isUnread);
+  const { handler } = useDeepLinkHandler();
 
   const iconColors = {
     info: colors.live,
@@ -51,8 +53,13 @@ export default function NewsRow({
     const url = new URL(link.href);
     url.searchParams.set("utm_medium", "announcement");
     if (utmCampaign) url.searchParams.set("utm_campaign", utmCampaign);
-    Linking.openURL(url.href);
-  }, [link, utmCampaign]);
+
+    const isDeepLink = url.protocol === "ledgerlive:";
+
+    if (isDeepLink) {
+      handler(url.href);
+    } else Linking.openURL(url.href);
+  }, [handler, link.href, utmCampaign]);
 
   return (
     <View
