@@ -250,7 +250,6 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    marginTop: -56,
   },
   contentContainer: {
     flexGrow: 1,
