@@ -155,7 +155,7 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
 
   const onBuyEth = useCallback(() => {
     navigation.navigate(NavigatorName.Exchange, {
-      screen: ScreenName.ExchangeProviders,
+      screen: ScreenName.ExchangeBuy,
       params: {
         accountId: account && account.id,
         parentId: parentAccount && parentAccount.id,

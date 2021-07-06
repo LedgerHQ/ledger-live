@@ -96,6 +96,10 @@ export const urls = {
     polkaStake:
       "https://www.ledger.com/staking-polkadot?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
   },
+  platform: {
+    developerPage:
+      "https://developers.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=catalog",
+  },
   compound:
     "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compound",
   compoundTnC:

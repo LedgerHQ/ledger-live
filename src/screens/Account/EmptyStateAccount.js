@@ -39,7 +39,7 @@ class EmptyStateAccount extends PureComponent<{
   goToBuyCrypto = () => {
     const { navigation, account, parentAccount } = this.props;
     navigation.navigate(NavigatorName.Exchange, {
-      screen: ScreenName.ExchangeProviders,
+      screen: ScreenName.ExchangeBuy,
       params: {
         accountId: account.id,
         parentId: parentAccount && parentAccount.id,

@@ -13,7 +13,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import Share from "react-native-share";
 import { useTheme } from "@react-navigation/native";
 
@@ -27,6 +27,7 @@ import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import { flattenAccountsSelector } from "../../../../reducers/accounts";
 import LText from "../../../../components/LText";
 import Button from "../../../../components/Button";
+import Alert from "../../../../components/Alert";
 import logger from "../../../../logger";
 import DownloadFileIcon from "../../../../icons/DownloadFile";
 import { TrackScreen } from "../../../../analytics";
@@ -122,6 +123,21 @@ const History = () => {
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="Swap" name="History" />
+      {sections.length ? (
+        <View
+          style={[
+            styles.alertWrapper,
+            {
+              backgroundColor: colors.white,
+              borderColor: colors.lightFog,
+            },
+          ]}
+        >
+          <Alert type="primary" horizontal>
+            <Trans i18nKey="transfer.swap.history.disclaimer" />
+          </Alert>
+        </View>
+      ) : null}
       <AnimatedSectionList
         ref={ref}
         sections={sections}
@@ -181,6 +197,10 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 16,
+  },
+  alertWrapper: {
+    padding: 20,
+    borderBottomWidth: 1,
   },
 });
 

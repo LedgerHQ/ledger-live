@@ -74,6 +74,7 @@ type Props = {
   children?: React$Node,
   footer?: React$Node,
   style?: *,
+  titleStyle?: *,
 };
 
 export default function AnimatedHeaderView({
@@ -85,6 +86,7 @@ export default function AnimatedHeaderView({
   children,
   footer,
   style,
+  titleStyle,
 }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
@@ -111,7 +113,7 @@ export default function AnimatedHeaderView({
   });
   const translateX = interpolate(scrollY, {
     inputRange: [0, 76],
-    outputRange: [0, -5],
+    outputRange: [0, hasBackButton ? -5 : -40],
     extrapolate: Extrapolate.CLAMP,
   });
 
@@ -157,7 +159,7 @@ export default function AnimatedHeaderView({
           ]}
           onLayout={onLayoutText}
         >
-          <LText bold style={[styles.title]} numberOfLines={4}>
+          <LText bold style={[styles.title, titleStyle]} numberOfLines={4}>
             {title}
           </LText>
         </Animated.View>
@@ -181,7 +183,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  topHeader: { flexDirection: "row", alignContent: "center" },
+  topHeader: { flexDirection: "row", alignContent: "center", height: 50 },
   spacer: { flex: 1 },
   header: {
     ...Styles.headerNoShadow,
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   title: {
-    fontSize: normalize(32),
+    fontSize: normalize(34),
     lineHeight: 45,
   },
   buttons: {

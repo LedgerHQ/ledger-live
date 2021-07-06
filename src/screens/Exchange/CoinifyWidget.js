@@ -26,7 +26,7 @@ const action = createAction(connectApp);
 
 type CoinifyWidgetConfig = {
   primaryColor?: string,
-  partnerId: number,
+  partnerId: string,
   cryptoCurrencies?: string | null,
   address?: string | null,
   targetPage: string,

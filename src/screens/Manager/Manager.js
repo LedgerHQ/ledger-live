@@ -15,6 +15,7 @@ import AppDependenciesModal from "./Modals/AppDependenciesModal";
 import UninstallDependenciesModal from "./Modals/UninstallDependenciesModal";
 import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
 import { defaultNavigationOptions } from "../../navigation/navigatorConfig";
+import { setLastSeenDeviceInfo } from "../../actions/settings";
 
 export const MANAGER_TABS = {
   CATALOG: "CATALOG",
@@ -92,6 +93,16 @@ const Manager = ({
       gestureEnabled: !blockNavigation,
     });
   }, [navigation, blockNavigation]);
+
+  // Save last seen device
+  useEffect(() => {
+    const dmi = {
+      modelId: device.modelId,
+      deviceInfo,
+      apps: state.installed.map(({ name, version }) => ({ name, version })),
+    };
+    dispatch(setLastSeenDeviceInfo(dmi));
+  }, [device, state.installed, deviceInfo, dispatch]);
 
   /**
    * Resets the navigation params in order to unlock navigation

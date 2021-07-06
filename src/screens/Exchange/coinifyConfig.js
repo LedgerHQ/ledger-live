@@ -30,11 +30,11 @@ export const getSupportedCurrencies = (mode: "buy" | "sell" = "buy") =>
 const config = {
   sandbox: {
     url: "https://trade-ui.sandbox.coinify.com/widget",
-    partnerId: 104,
+    partnerId: "191f0c7f-076d-459f-bf2d-833465bfadc2",
   },
   production: {
     url: "https://trade-ui.coinify.com/widget",
-    partnerId: 119,
+    partnerId: "191f0c7f-076d-459f-bf2d-833465bfadc2",
   },
 };
 

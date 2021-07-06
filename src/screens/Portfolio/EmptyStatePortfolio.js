@@ -115,14 +115,16 @@ const styles = StyleSheet.create({
   },
 
   help: {
-    margin: 16,
+    marginHorizontal: 16,
     marginBottom: 0,
     alignSelf: "flex-end",
   },
 
   body: {
+    marginTop: 32,
     alignItems: "center",
   },
+
   primaryCTA: {
     marginBottom: 16,
   },

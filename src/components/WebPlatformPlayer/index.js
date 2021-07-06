@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
+
 import { WebView } from "react-native-webview";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Color from "color";
@@ -27,6 +28,7 @@ import {
   listCryptoCurrencies,
   findCryptoCurrencyById,
 } from "@ledgerhq/live-common/lib/currencies/index";
+import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 
 import type { RawPlatformTransaction } from "@ledgerhq/live-common/lib/platform/rawTypes";
 import { useJSONRPCServer } from "@ledgerhq/live-common/lib/platform/JSONRPCServer";
@@ -44,10 +46,10 @@ import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
 
-import type { Manifest } from "./type";
+import * as tracking from "./tracking";
 
 type Props = {
-  manifest: Manifest,
+  manifest: AppManifest,
 };
 
 const ReloadButton = ({
@@ -70,8 +72,7 @@ const ReloadButton = ({
   );
 };
 
-const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
-  const manifest = route.params.manifest;
+const WebPlatformPlayer = ({ manifest }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = useSelector(accountsSelector);
   const currencies = useMemo(() => listCryptoCurrencies(), []);
@@ -79,6 +80,16 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
 
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
+
+  const uri = useMemo(() => {
+    const url = new URL(manifest.url);
+
+    url.searchParams.set("backgroundColor", new Color(theme.colors.card).hex());
+    url.searchParams.set("textColor", new Color(theme.colors.text).hex());
+    url.searchParams.set("loadDate", loadDate.valueOf().toString());
+
+    return url;
+  }, [manifest.url, loadDate, theme]);
 
   const navigation = useNavigation();
 
@@ -107,6 +118,8 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
       allowAddAccount?: boolean,
     }) =>
       new Promise((resolve, reject) => {
+        tracking.platformRequestAccountRequested(manifest);
+
         // handle no curencies selected case
         const cryptoCurrencies =
           currencyIds.length > 0 ? currencyIds : currencies.map(({ id }) => id);
@@ -118,6 +131,7 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
 
         // @TODO replace with correct error
         if (foundAccounts.length <= 0 && !allowAddAccount) {
+          tracking.platformRequestAccountFail(manifest);
           reject(new Error("No accounts found matching request"));
           return;
         }
@@ -146,6 +160,7 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
         if (currenciesDiff.length === 1) {
           const currency = findCryptoCurrencyById(currenciesDiff[0]);
           if (!currency) {
+            tracking.platformRequestAccountFail(manifest);
             // @TODO replace with correct error
             reject(new Error("Currency not found"));
             return;
@@ -156,11 +171,16 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
               currencies: currenciesDiff,
               currency,
               allowAddAccount,
-              onSuccess: account =>
+              onSuccess: account => {
+                tracking.platformRequestAccountSuccess(manifest);
                 resolve(
                   serializePlatformAccount(accountToPlatformAccount(account)),
-                ),
-              onError: reject,
+                );
+              },
+              onError: error => {
+                tracking.platformRequestAccountFail(manifest);
+                reject(error);
+              },
             },
           });
         } else {
@@ -169,40 +189,54 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
             params: {
               currencies: currenciesDiff,
               allowAddAccount,
-              onSuccess: account =>
+              onSuccess: account => {
+                tracking.platformRequestAccountSuccess(manifest);
                 resolve(
                   serializePlatformAccount(accountToPlatformAccount(account)),
-                ),
-              onError: reject,
+                );
+              },
+              onError: error => {
+                tracking.platformRequestAccountFail(manifest);
+                reject(error);
+              },
             },
           });
         }
       }),
-    [accounts, currencies, navigation],
+    [manifest, accounts, currencies, navigation],
   );
 
   const receiveOnAccount = useCallback(
     ({ accountId }: { accountId: string }) => {
+      tracking.platformReceiveRequested(manifest);
       const account = accounts.find(account => account.id === accountId);
 
       return new Promise((resolve, reject) => {
         if (!account) {
+          tracking.platformReceiveFail(manifest);
           reject();
           return;
         }
 
         navigation.navigate(ScreenName.VerifyAccount, {
           account,
-          onSuccess: account => resolve(account.freshAddress),
-          onClose: () => reject(new Error("User cancelled")),
+          onSuccess: account => {
+            tracking.platformReceiveSuccess(manifest);
+            resolve(account.freshAddress);
+          },
+          onClose: () => {
+            tracking.platformReceiveFail(manifest);
+            reject(new Error("User cancelled"));
+          },
           onError: e => {
+            tracking.platformReceiveFail(manifest);
             // @TODO put in correct error text maybe
             reject(e);
           },
         });
       });
     },
-    [accounts, navigation],
+    [manifest, accounts, navigation],
   );
 
   const signTransaction = useCallback(
@@ -223,10 +257,12 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
         if (!transaction) {
+          tracking.platformSignTransactionFail(manifest);
           reject(new Error("Transaction required"));
           return;
         }
         if (!account) {
+          tracking.platformSignTransactionFail(manifest);
           reject(new Error("Account required"));
           return;
         }
@@ -254,19 +290,25 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
             accountId,
             appName: params.useApp,
             onSuccess: ({ signedOperation, transactionSignError }) => {
-              if (transactionSignError) reject(transactionSignError);
-              else {
+              if (transactionSignError) {
+                tracking.platformSignTransactionFail(manifest);
+                reject(transactionSignError);
+              } else {
+                tracking.platformSignTransactionSuccess(manifest);
                 resolve(signedOperation);
                 const n = navigation.dangerouslyGetParent() || navigation;
                 n.dangerouslyGetParent().pop();
               }
             },
-            onError: reject,
+            onError: error => {
+              tracking.platformSignTransactionFail(manifest);
+              reject(error);
+            },
           },
         });
       });
     },
-    [accounts, navigation],
+    [manifest, accounts, navigation],
   );
 
   const broadcastTransaction = useCallback(
@@ -282,23 +324,31 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
       return new Promise((resolve, reject) => {
         // @TODO replace with correct error
         if (!signedTransaction) {
+          tracking.platformBroadcastFail(manifest);
           reject(new Error("Transaction required"));
           return;
         }
         if (!account) {
+          tracking.platformBroadcastFail(manifest);
           reject(new Error("Account required"));
           return;
         }
 
         if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
           broadcastSignedTx(account, null, signedTransaction).then(
-            op => resolve(op.hash),
-            reject,
+            op => {
+              tracking.platformBroadcastSuccess(manifest);
+              resolve(op.hash);
+            },
+            error => {
+              tracking.platformBroadcastFail(manifest);
+              reject(error);
+            },
           );
         }
       });
     },
-    [accounts],
+    [manifest, accounts],
   );
 
   const handlers = useMemo(
@@ -324,7 +374,9 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
     (request: JSONRPCRequest) => {
       targetRef?.current?.postMessage(
         JSON.stringify(request),
-        manifest.url.origin,
+        typeof manifest.url === "string"
+          ? manifest.url
+          : manifest.url?.origin ?? "",
       );
     },
     [manifest],
@@ -344,13 +396,21 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
   );
 
   const handleLoad = useCallback(() => {
-    setWidgetLoaded(true);
-  }, []);
+    if (!widgetLoaded) {
+      tracking.platformLoadSuccess(manifest);
+      setWidgetLoaded(true);
+    }
+  }, [manifest, widgetLoaded]);
 
   const handleReload = useCallback(() => {
+    tracking.platformReload(manifest);
     setLoadDate(Date.now());
     setWidgetLoaded(false);
-  }, []);
+  }, [manifest]);
+
+  const handleError = useCallback(() => {
+    tracking.platformLoadFail(manifest);
+  }, [manifest]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -360,15 +420,9 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
     });
   }, [navigation, widgetLoaded, handleReload]);
 
-  const uri = useMemo(() => {
-    const url = new URL(manifest.url.toString());
-
-    url.searchParams.set("backgroundColor", new Color(theme.colors.card).hex());
-    url.searchParams.set("textColor", new Color(theme.colors.text).hex());
-    url.searchParams.set("loadDate", loadDate.valueOf().toString());
-
-    return url;
-  }, [manifest.url, loadDate, theme]);
+  useEffect(() => {
+    tracking.platformLoad(manifest);
+  }, [manifest]);
 
   return (
     <SafeAreaView style={[styles.root]}>
@@ -380,13 +434,14 @@ const WebPlatformPlayer = ({ route }: { route: { params: Props } }) => {
             <ActivityIndicator size="large" />
           </View>
         )}
-        originWhitelist={["https://*"]}
+        originWhitelist={manifest.domains}
         allowsInlineMediaPlayback
         source={{
           uri: uri.toString(),
         }}
         onLoad={handleLoad}
         onMessage={handleMessage}
+        onError={handleError}
         mediaPlaybackRequiresUserAction={false}
         scalesPageToFitmediaPlaybackRequiresUserAction
         automaticallyAdjustContentInsets={false}

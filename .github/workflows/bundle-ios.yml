@@ -3,13 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       owner:
-        description: 'Owner?'
+        description: "Owner?"
         required: true
-        default: 'LedgerHQ'
+        default: "LedgerHQ"
       branch:
-        description: 'Branch?'
+        description: "Branch?"
         required: true
-        default: 'develop'
+        default: "develop"
 
 jobs:
   bundle-ipa:
@@ -38,7 +38,7 @@ jobs:
           repository: ${{github.event.inputs.owner}}/ledger-live-mobile
       - uses: actions/setup-node@main
         with:
-          node-version: 12.x
+          node-version: 14.x
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"

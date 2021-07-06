@@ -24,6 +24,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
+import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import type { OutputSelector } from "reselect";
 import uniq from "lodash/uniq";
 
@@ -96,6 +97,7 @@ export type SettingsState = {
   carouselVisibility: number,
   discreetMode: boolean,
   language: string,
+  lastSeenDevice: ?DeviceModelInfo,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -124,6 +126,7 @@ export const INITIAL_STATE: SettingsState = {
   carouselVisibility: 0,
   discreetMode: false,
   language: "en",
+  lastSeenDevice: null,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -313,6 +316,13 @@ const handlers: Object = {
   SETTINGS_SET_LANGUAGE: (state: SettingsState, { payload }) => ({
     ...state,
     language: payload,
+  }),
+  LAST_SEEN_DEVICE_INFO: (
+    state: SettingsState,
+    { payload: dmi }: { payload: DeviceModelInfo },
+  ) => ({
+    ...state,
+    lastSeenDevice: dmi,
   }),
 };
 
@@ -514,3 +524,6 @@ export const themeSelector = (state: State) => state.settings.theme;
 export const osThemeSelector = (state: State) => state.settings.osTheme;
 
 export const languageSelector = (state: State) => state.settings.language;
+
+export const lastSeenDeviceSelector = (state: State) =>
+  state.settings.lastSeenDevice;

@@ -5,6 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { Sentry } from "react-native-sentry";
 
 import Button from "../components/Button";
+import GenericErrorView from "../components/GenericErrorView";
 
 class DebugBLE extends Component<
   {
@@ -12,10 +13,12 @@ class DebugBLE extends Component<
   },
   {
     renderCrash: boolean,
+    renderErrorModal: boolean,
   },
 > {
   state = {
     renderCrash: false,
+    renderErrorModal: false,
   };
 
   jsCrash = () => {
@@ -27,9 +30,10 @@ class DebugBLE extends Component<
   };
 
   displayRenderCrash = () => this.setState({ renderCrash: true });
+  displayErrorModal = () => this.setState({ renderErrorModal: true });
 
   render() {
-    const { renderCrash } = this.state;
+    const { renderCrash, renderErrorModal } = this.state;
     return (
       <View style={styles.root}>
         <Button
@@ -49,26 +53,40 @@ class DebugBLE extends Component<
         <Button
           event="DebugCrashRender"
           type="primary"
-          title="Render crashing component"
+          title="Render unhandled error"
           onPress={this.displayRenderCrash}
           containerStyle={styles.buttonStyle}
         />
+        <Button
+          event="DebugCrashRender"
+          type="primary"
+          title="Render handled error component"
+          onPress={this.displayErrorModal}
+          containerStyle={styles.buttonStyle}
+        />
         {renderCrash && <CrashingComponent />}
+        {renderErrorModal && <CrashingComponent handled />}
       </View>
     );
   }
 }
 
-const CrashingComponent = () => {
-  throw new Error("DEBUG renderCrash");
+const CrashingComponent = ({ handled }: { handled?: boolean }) => {
+  const error = new Error("DEBUG render crash error");
+  if (handled) {
+    return <GenericErrorView error={error} />;
+  }
+
+  throw error;
 };
 
 const styles = StyleSheet.create({
   root: {
     padding: 16,
+    flex: 1,
   },
   buttonStyle: {
-    marginBottom: 16,
+    marginBottom: 8,
   },
 });
 

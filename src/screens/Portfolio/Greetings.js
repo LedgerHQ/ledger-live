@@ -53,6 +53,7 @@ class Greetings extends PureComponent<{
 const styles = StyleSheet.create({
   root: {
     marginHorizontal: 16,
+    justifyContent: "center",
   },
   title: {
     fontSize: 16,

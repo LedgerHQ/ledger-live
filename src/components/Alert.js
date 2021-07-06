@@ -1,10 +1,19 @@
 // @flow
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, Text, Linking } from "react-native";
+import {
+  TouchableOpacity,
+  StyleSheet,
+  View,
+  Text,
+  Linking,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import { rgba } from "../colors";
+import { dismissBanner } from "../actions/settings";
+import { dismissedBannersSelector } from "../reducers/settings";
 
 import IconInfo from "../icons/Info";
 import IconCheckCircle from "../icons/CheckCircle";
@@ -19,6 +28,13 @@ const HORIZONTAL_ICON_SIZE = 16;
 const BIG_ICON_SIZE = 32;
 const VERTICAL_ICON_SIZE = 32;
 
+const hitSlop = {
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+};
+
 type AlertType =
   | "primary"
   | "secondary"
@@ -32,6 +48,7 @@ type AlertType =
   | "update";
 
 type Props = {
+  id?: string,
   type: AlertType,
   children: React$Node,
   left?: React$Node,
@@ -39,6 +56,7 @@ type Props = {
   title?: string,
   vertical?: boolean,
   noIcon?: boolean,
+  closeable?: boolean,
   onLearnMore?: () => any,
   learnMoreKey?: string,
   learnMoreUrl?: string,
@@ -168,6 +186,7 @@ function useAlertStyle(type: AlertType, vertical?: boolean) {
 }
 
 export default function Alert({
+  id,
   type = "secondary",
   children: description,
   left,
@@ -175,11 +194,15 @@ export default function Alert({
   title,
   vertical,
   noIcon,
+  closeable = false,
   onLearnMore,
   learnMoreUrl,
   learnMoreKey,
   learnMoreIsInternal = false,
 }: Props) {
+  const dismissedBanners = useSelector(dismissedBannersSelector);
+  const dispatch = useDispatch();
+
   const {
     backgroundColor,
     textColor,
@@ -217,48 +240,72 @@ export default function Alert({
     </Text>
   );
 
-  return (
-    <View
-      style={[
-        styles.root,
-        borderColor && styles.withBorder,
-        {
-          backgroundColor,
-          borderColor: borderColor || "transparent",
-        },
-      ]}
-    >
-      <View style={[styles.container, vertical && styles.vertical]}>
-        {left || (!noIcon && icon) ? (
-          <View style={vertical ? styles.topContainer : styles.leftContainer}>
-            {left || icon}
-          </View>
-        ) : null}
+  const onDismiss = useCallback(() => {
+    if (id) {
+      dispatch(dismissBanner(id));
+    }
+  }, [id, dispatch]);
 
-        <View style={vertical ? styles.verticalContent : styles.content}>
-          {title ? (
-            <LText
-              semiBold
-              style={[
-                vertical && styles.textCentered,
-                {
-                  color: textColor,
-                },
-              ]}
-            >
-              {title}
-            </LText>
+  const isDismissed = useMemo(() => dismissedBanners.includes(id), [
+    dismissedBanners,
+    id,
+  ]);
+
+  return (
+    !isDismissed && (
+      <View
+        style={[
+          styles.root,
+          borderColor && styles.withBorder,
+          {
+            backgroundColor,
+            borderColor: borderColor || "transparent",
+          },
+        ]}
+      >
+        <View style={[styles.container, vertical && styles.vertical]}>
+          {left || (!noIcon && icon) ? (
+            <View style={vertical ? styles.topContainer : styles.leftContainer}>
+              {left || icon}
+            </View>
           ) : null}
-          <Text style={[vertical && styles.textCentered, { color: textColor }]}>
-            <LText style={[{ color: textColor }]} fontSize={3}>
-              {description}
-            </LText>
-            {learnMore}
-          </Text>
+
+          <View style={vertical ? styles.verticalContent : styles.content}>
+            {title ? (
+              <LText
+                semiBold
+                style={[
+                  vertical && styles.textCentered,
+                  {
+                    color: textColor,
+                  },
+                ]}
+              >
+                {title}
+              </LText>
+            ) : null}
+            <Text
+              style={[vertical && styles.textCentered, { color: textColor }]}
+            >
+              <LText style={[{ color: textColor }]} fontSize={3}>
+                {description}
+              </LText>
+              {learnMore}
+            </Text>
+          </View>
+          {closeable && (
+            <TouchableOpacity
+              hitSlop={hitSlop}
+              style={{ ...styles.container, ...styles.closeContainer }}
+              onPress={onDismiss}
+            >
+              <IconCloseCircle color={textColor} />
+            </TouchableOpacity>
+          )}
         </View>
+        {bottom ? <View style={styles.bottomContainer}>{bottom}</View> : null}
       </View>
-      {bottom ? <View style={styles.bottomContainer}>{bottom}</View> : null}
-    </View>
+    )
   );
 }
 
@@ -305,5 +352,10 @@ const styles = StyleSheet.create({
   learnMore: {
     textDecorationLine: "underline",
     marginTop: 8,
+  },
+  closeContainer: {
+    position: "absolute",
+    top: "-20%",
+    right: "-3%",
   },
 });

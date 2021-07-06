@@ -14,7 +14,7 @@ type Props = {
 export default function TabIcon({ Icon, i18nKey, color, focused }: Props) {
   return (
     <View style={styles.root}>
-      <Icon size={18} color={color} />
+      <Icon size={20} color={color} />
       <LText
         numberOfLines={1}
         semiBold={!focused}
@@ -33,11 +33,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: 4,
+    paddingTop: 8,
   },
   text: {
-    fontSize: 12,
+    fontSize: 10,
+    lineHeight: 12,
     textAlign: "center",
-    marginTop: 6,
+    paddingVertical: 6,
   },
 });

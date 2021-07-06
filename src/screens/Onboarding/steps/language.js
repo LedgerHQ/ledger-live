@@ -21,10 +21,25 @@ import ConfirmationModal from "../../../components/ConfirmationModal";
 import Warning from "../../../icons/Warning";
 
 const languages = {
+  de: "Deutsch",
+  el: "Ελληνικά",
   en: "English",
-  fr: "Français",
   es: "Español",
-  ru: "Pусский",
+  fi: "suomi",
+  fr: "Français",
+  hu: "magyar",
+  it: "italiano",
+  ja: "日本語",
+  ko: "한국어",
+  nl: "Nederlands",
+  no: "Norsk",
+  pl: "polski",
+  pt: "português",
+  ru: "Русский",
+  sr: "српски",
+  sv: "svenska",
+  tr: "Türkçe",
+  zh: "简体中文",
 };
 
 function OnboardingStepLanguage({ navigation }: *) {

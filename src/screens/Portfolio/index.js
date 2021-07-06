@@ -1,5 +1,5 @@
 // @flow
-import React, { useRef, useState, useCallback } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import {
   StyleSheet,
@@ -35,6 +35,7 @@ import GraphCardContainer from "./GraphCardContainer";
 import Carousel from "../../components/Carousel";
 import StickyHeader from "./StickyHeader";
 import EmptyStatePortfolio from "./EmptyStatePortfolio";
+import Header from "./Header";
 import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
 import TrackScreen from "../../analytics/TrackScreen";
 import NoOpStatePortfolio from "./NoOpStatePortfolio";
@@ -76,19 +77,6 @@ export default function PortfolioScreen({ navigation }: Props) {
   function keyExtractor(item: Operation) {
     return item.id;
   }
-
-  const ListHeaderComponent = useCallback(
-    () => (
-      <View>
-        <GraphCardContainer
-          counterValueCurrency={counterValueCurrency}
-          portfolio={portfolio}
-          showGreeting={!accounts.every(isAccountEmpty)}
-        />
-      </View>
-    ),
-    [accounts, counterValueCurrency, portfolio],
-  );
 
   function ListEmptyComponent() {
     if (accounts.length === 0) {
@@ -165,8 +153,10 @@ export default function PortfolioScreen({ navigation }: Props) {
     withSubAccounts: true,
   });
 
-  const showingPlaceholder =
-    accounts.length === 0 || accounts.every(isAccountEmpty);
+  const areAccountsEmpty = useMemo(() => accounts.every(isAccountEmpty), [
+    accounts,
+  ]);
+  const showingPlaceholder = accounts.length === 0 || areAccountsEmpty;
 
   return (
     <SafeAreaView
@@ -190,13 +180,18 @@ export default function PortfolioScreen({ navigation }: Props) {
 
       <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
+      {areAccountsEmpty && <Header nbAccounts={portfolio.accounts.length} />}
+
       <AnimatedFlatListWithRefreshControl
         ref={ref}
         data={[
-          ...(accounts.length > 0 && !accounts.every(isAccountEmpty)
-            ? [<Carousel />]
-            : []),
-          ListHeaderComponent(),
+          accounts.length > 0 && !areAccountsEmpty ? <Carousel /> : null,
+          <GraphCardContainer
+            counterValueCurrency={counterValueCurrency}
+            portfolio={portfolio}
+            showGreeting={!areAccountsEmpty}
+            showGraphCard={!areAccountsEmpty}
+          />,
           StickyActions(),
           <SectionList
             // $FlowFixMe
@@ -255,7 +250,6 @@ const styles = StyleSheet.create({
   },
   list: {
     flex: 1,
-    marginTop: -56,
   },
   contentContainer: {
     flexGrow: 1,

@@ -87,7 +87,7 @@ export default function Settings({ navigation }: Props) {
           icon={<Atom size={16} color={colors.live} />}
           onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         />
-        {debugVisible ? (
+        {debugVisible || __DEV__ ? (
           <SettingsCard
             title="Debug"
             desc="Use at your own risk – Developer tools"

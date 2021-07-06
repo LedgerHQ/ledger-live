@@ -142,7 +142,7 @@ function FabActions({ account, parentAccount }: Props) {
             navigationParams: [
               NavigatorName.Swap,
               {
-                screen: ScreenName.SwapProviders,
+                screen: ScreenName.SwapFormOrHistory,
               },
             ],
           },
