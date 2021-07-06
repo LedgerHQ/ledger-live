@@ -1,4 +1,6 @@
 // @flow
+import { BigNumber } from "bignumber.js";
+
 import { TypeRegistry, ModulesWithCalls } from "@polkadot/types";
 
 import { makeLRUCache } from "../../cache";
@@ -13,6 +15,7 @@ import {
   getRegistry as apiGetRegistry,
   getTransactionParams as apiGetTransactionParams,
   paymentInfo as apiPaymentInfo,
+  getMinimumBondBalance as apiGetMinimumBondBalance,
 } from "./api";
 
 /**
@@ -159,5 +162,24 @@ export const isElectionClosed: CacheRes<Array<void>, boolean> = makeLRUCache(
   () => "",
   {
     maxAge: 60 * 1000, // 1 minute
+  }
+);
+
+/**
+ * Cache the getMinimumBondBalance to avoid too many calls
+ *
+ * @async
+ *
+ * @returns {Promise<BigNumber>} consts
+ */
+export const getMinimumBondBalance: CacheRes<
+  Array<void>,
+  BigNumber
+> = makeLRUCache(
+  async (): Promise<BigNumber> => apiGetMinimumBondBalance(),
+  () => "polkadot",
+  {
+    max: 1, // Store only one object since we only have polkadot.
+    maxAge: 60 * 60 * 1000, // 1 hour
   }
 );

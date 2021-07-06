@@ -4,9 +4,9 @@ import { decodeAddress } from "@polkadot/util-crypto";
 import type { Account, OperationType } from "../../types";
 
 import type { Transaction } from "./types";
+import { getCurrentPolkadotPreloadData } from "./preload";
 
 export const EXISTENTIAL_DEPOSIT = BigNumber(10000000000);
-export const MINIMUM_BOND_AMOUNT = BigNumber(10000000000);
 export const MAX_NOMINATIONS = 16;
 export const MAX_UNLOCKINGS = 32;
 export const PRELOAD_MAX_AGE = 60 * 1000;
@@ -86,17 +86,33 @@ export const canBond = (a: Account): boolean => {
 };
 
 /**
- * Get the minimum bond amount required to rebond
+ * Get the minimum bond amount required to bond/rebond
  *
  * @param {Account} a
  */
-export const getMinimalLockedBalance = (a: Account): BigNumber => {
-  const remainingActiveLockedBalance = calculateMaxUnbond(a);
+export const getMinimumAmountToBond = (
+  a: Account,
+  minimumBondBalance: ?BigNumber
+): BigNumber => {
+  const currentlyBondedBalance = calculateMaxUnbond(a);
 
-  if (remainingActiveLockedBalance.lt(MINIMUM_BOND_AMOUNT)) {
-    return MINIMUM_BOND_AMOUNT.minus(remainingActiveLockedBalance);
+  if (minimumBondBalance && currentlyBondedBalance.lt(minimumBondBalance)) {
+    return minimumBondBalance.minus(currentlyBondedBalance);
   }
   return BigNumber(0);
+};
+
+/**
+ * Return true if the account has at least the current minimum bonded balance required by the network
+ *
+ * @param {Account} a
+ */
+export const hasMinimumBondBalance = (a: Account): boolean => {
+  const { minimumBondBalance } = getCurrentPolkadotPreloadData();
+  return (
+    !a.polkadotResources ||
+    a.polkadotResources.lockedBalance.gte(BigNumber(minimumBondBalance))
+  );
 };
 
 /**
