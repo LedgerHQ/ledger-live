@@ -1821,7 +1821,7 @@
         "balance": "Balance <0>123</0>",
         "fromAccount": "Select account",
         "toAccount": "Select account",
-        "paraswapCTA": "Looking for Paraswap? It has been moved to the Browse tab!",
+        "paraswapCTA": "Looking for Paraswap? It has been moved to the Discover tab!",
         "amount": {
           "useMax": "Use max",
           "available": "Total available"
