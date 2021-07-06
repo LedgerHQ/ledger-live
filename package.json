@@ -23,10 +23,10 @@
     "jest": "rimraf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
     "test": "yarn jest",
     "ci-lint": "yarn lint && yarn flow",
-    "ci-test-common": "cross-env EXPERIMENTAL_EXPLORERS=1 yarn test --ci --updateSnapshot && git diff --exit-code src",
+    "ci-test-common": "env-cmd -f ./.ci.env yarn test --ci --updateSnapshot && git diff --exit-code src",
     "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
     "ci-test-cli": "cd cli && yarn test",
-    "ci-test-bot": "cross-env EXPERIMENTAL_EXPLORERS=1 yarn jest --testMatch '**/*.bot.js'"
+    "ci-test-bot": "env-cmd -f ./.ci.env yarn jest --testMatch '**/*.bot.js'"
   },
   "files": [
     "lib",
@@ -152,6 +152,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
     "benchmark": "^2.1.4",
+    "env-cmd": "*",
     "cross-env": "^7.0.3",
     "eslint": "^7.25.0",
     "eslint-config-airbnb": "^18.2.1",
