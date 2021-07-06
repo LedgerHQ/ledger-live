@@ -482,6 +482,7 @@ const dataset: DatasetTest<Transaction> = {
             },
           ],
         },
+        // TODO: Write a setController test
         {
           raw: {
             id: `js:2:polkadot:${ACCOUNT_CONTROLLER}:polkadotbip44`,

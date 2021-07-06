@@ -27,7 +27,7 @@ export function shouldUpgrade(
 const appVersionsRequired = {
   Cosmos: ">= 2.14",
   Algorand: ">= 1.2.9",
-  Polkadot: ">= 7.30.0",
+  Polkadot: ">= 7.9050.0",
 };
 
 export function mustUpgrade(

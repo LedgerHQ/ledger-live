@@ -38,6 +38,9 @@ export const getOperationType = (
     case "withdrawUnbonded":
       return "WITHDRAW_UNBONDED";
 
+    case "setController":
+      return "SET_CONTROLLER";
+
     case "payoutStakers":
       return "FEES";
 

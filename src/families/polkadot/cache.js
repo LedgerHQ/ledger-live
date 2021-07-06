@@ -50,6 +50,8 @@ const hashTransactionParams = (
       return `${prefix}_${t.numSlashingSpans ?? "0"}`;
     case "chill":
       return `${prefix}`;
+    case "setController":
+      return `${prefix}`;
     case "claimReward":
       return `${prefix}_${t.era || "0"}`;
     default:

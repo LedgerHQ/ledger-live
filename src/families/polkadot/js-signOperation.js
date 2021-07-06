@@ -23,6 +23,7 @@ const MODE_TO_TYPE = {
   withdrawUnbonded: "WITHDRAW_UNBONDED",
   nominate: "NOMINATE",
   chill: "CHILL",
+  setController: "SET_CONTROLLER",
   claimReward: "REWARD_PAYOUT",
   default: "FEES",
 };
@@ -36,6 +37,7 @@ const MODE_TO_PALLET_METHOD = {
   withdrawUnbonded: "staking.withdrawUnbonded",
   nominate: "staking.nominate",
   chill: "staking.chill",
+  setController: "staking.setController",
   claimReward: "staking.payoutStakers",
 };
 
