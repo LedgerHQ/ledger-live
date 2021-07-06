@@ -91,7 +91,7 @@ export default function OperationDetails({ route }: Props) {
           />
         </View>
       </NavigationScrollView>
-      <Footer url={url} urlWhatIsThis={urlWhatIsThis} />
+      <Footer url={url} urlWhatIsThis={urlWhatIsThis} account={mainAccount} />
     </SafeAreaView>
   );
 }
