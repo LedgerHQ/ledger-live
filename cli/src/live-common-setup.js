@@ -4,6 +4,11 @@ export * from "./live-common-setup-base";
 
 import React from "react";
 import { connect } from "react-redux";
+import invariant from "invariant";
+import {
+  createTransportReplayer,
+  RecordStore,
+} from "@ledgerhq/hw-transport-mocker";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
@@ -32,6 +37,37 @@ import implementLibcore from "@ledgerhq/live-common/lib/libcore/platforms/nodejs
 implementLibcore({
   lib: () => require("@ledgerhq/ledger-core"), // eslint-disable-line global-require
   dbPath: process.env.LIBCORE_DB_PATH || "./dbdata",
+});
+
+let idCounter = 0;
+const mockTransports = {};
+const recordStores = {};
+
+export function releaseMockDevice(id: string) {
+  const store = recordStores[id];
+  invariant(store, "MockDevice does not exist (%s)", id);
+  store.ensureQueueEmpty();
+  delete recordStores[id];
+  delete mockTransports[id];
+}
+
+export function mockDeviceWithAPDUs(apdus: string) {
+  const id = `mock:${++idCounter}`;
+  const store = RecordStore.fromString(apdus);
+  recordStores[id] = store;
+  mockTransports[id] = createTransportReplayer(store);
+  return id;
+}
+
+registerTransportModule({
+  id: "mock",
+  open: (id) => {
+    if (id in mockTransports) {
+      const Tr = mockTransports[id];
+      return Tr.open();
+    }
+  },
+  disconnect: () => Promise.resolve(),
 });
 
 if (process.env.DEVICE_PROXY_URL) {
