@@ -1,4 +1,5 @@
 src/data/icons
+src/data/flags
 
 src/libcore/types/*.js
 src/families/*/types.js
