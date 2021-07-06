@@ -35,7 +35,6 @@ export type Transaction = {|
   // add here all transaction-specific fields if you implement other modes than "send"
 |};
 
-
 export type TransactionRaw = {|
   ...TransactionCommonRaw,
   family: "crypto_org",
@@ -44,12 +43,10 @@ export type TransactionRaw = {|
   // also the transaction fields as raw JSON data
 |};
 
-export type CryptoOrgPreloadData = {|
-|};
+export type CryptoOrgPreloadData = {||};
 
 export type NetworkInfo = {};
 
 export type NetworkInfoRaw = {};
-
 
 export const reflect = (_declare: *) => {};
