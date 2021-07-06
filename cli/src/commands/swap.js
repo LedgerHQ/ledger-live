@@ -24,18 +24,30 @@ type SwapJobOpts = ScanCommonOpts & {
   amount: string,
   useAllAmount: boolean,
   useFloat: boolean,
+  wyreUserId?: string,
   _unknown: any,
   deviceId: string,
   tokenId: string,
 };
 
 const exec = async (opts: SwapJobOpts) => {
-  const { amount, useAllAmount, tokenId, useFloat, deviceId = "" } = opts;
+  const {
+    amount,
+    useAllAmount,
+    tokenId,
+    useFloat,
+    wyreUserId = "",
+    deviceId = "",
+  } = opts;
   invariant(
     amount || useAllAmount,
     `✖ amount in satoshis is needed or --useAllAmount `
   );
   invariant(opts._unknown, `✖ second account information is missing`);
+  invariant(
+    !wyreUserId || wyreUserId.length === 14,
+    "Provider wyre user id is not valid"
+  );
 
   //Remove suffix from arguments before passing them to sync.
   const secondAccountOpts: ScanCommonOpts & {
@@ -169,11 +181,24 @@ const exec = async (opts: SwapJobOpts) => {
     toParentAccount,
   };
 
-  const exchangeRates = await getExchangeRates(exchange, transaction);
-
-  const exchangeRate = exchangeRates.find(
-    (er) => er.tradeMethod === (useFloat ? "float" : "fixed")
+  const exchangeRates = await getExchangeRates(
+    exchange,
+    transaction,
+    wyreUserId
   );
+
+  console.log({ exchangeRates });
+
+  const exchangeRate = exchangeRates.find((er) => {
+    if (
+      er.tradeMethod === (useFloat ? "float" : "fixed") &&
+      (!wyreUserId || er.provider === "wyre")
+    ) {
+      return true;
+    }
+    return false;
+  });
+
   invariant(exchangeRate, `✖ No valid rate available`);
   console.log(
     `Using first ${useFloat ? "float" : "fixed"} rate:\n`,
@@ -189,6 +214,7 @@ const exec = async (opts: SwapJobOpts) => {
     exchangeRate,
     transaction,
     deviceId,
+    userId: wyreUserId,
   })
     .pipe(
       tap((e) => {
@@ -258,6 +284,12 @@ export default {
       alias: "u",
       type: Boolean,
       desc: "Attempt to send all using the emulated max amount calculation",
+    },
+    {
+      name: "wyreUserId",
+      alias: "w",
+      type: String,
+      desc: "If provided, will attempt to use Wyre provider with given userId",
     },
     {
       name: "tokenId",

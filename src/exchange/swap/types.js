@@ -12,6 +12,25 @@ import type {
   TransactionRaw,
 } from "../../types";
 
+/// v3 changes here, move me to another folder soon
+export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
+export type KYCStatus = { id: string, status: ValidKYCStatus };
+export type GetKYCStatus = (string, string) => Promise<KYCStatus>;
+export type SubmitKYC = (string, KYCData) => Promise<KYCStatus>;
+
+export type KYCData = {
+  firstName: string,
+  lastName: string,
+  residenceAddress: {
+    street1: string,
+    street2: string,
+    city: string,
+    state: string,
+    country: string,
+    postalCode: string,
+  },
+};
+///
 export type Exchange = {
   fromParentAccount: ?Account,
   fromAccount: AccountLike,
@@ -51,15 +70,22 @@ export type ExchangeRateRaw = {
   providerURL?: ?string,
 };
 
-export type AvailableProvider = {
+export type AvailableProviderV2 = {
   provider: string,
   supportedCurrencies: string[],
 };
+export type AvailableProviderV3 = {
+  provider: string,
+  pairs: Array<{ from: string, to: string, tradeMethod: string }>,
+};
+
+export type AvailableProvider = AvailableProviderV2 | AvailableProviderV3;
 
 export type GetExchangeRates = (
   Exchange,
   Transaction
 ) => Promise<ExchangeRate[]>;
+
 export type GetProviders = () => Promise<AvailableProvider[]>;
 
 export type InitSwapResult = {
@@ -165,6 +191,7 @@ export type InitSwapInput = {
   exchangeRate: ExchangeRate,
   transaction: Transaction,
   deviceId: string,
+  userId?: string, // Nb for kyc purposes
 };
 
 export type InitSwapInputRaw = {
@@ -172,4 +199,5 @@ export type InitSwapInputRaw = {
   exchangeRate: ExchangeRateRaw,
   transaction: TransactionRaw,
   deviceId: string,
+  userId?: string,
 };

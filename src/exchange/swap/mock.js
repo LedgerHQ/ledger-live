@@ -16,6 +16,7 @@ import {
   SwapExchangeRateAmountTooHigh,
 } from "../../errors";
 import { Observable, of } from "rxjs";
+import { getSwapAPIBaseURL } from "./";
 
 export const mockGetExchangeRates = async (
   exchange: Exchange,
@@ -104,35 +105,57 @@ export const mockInitSwap = (
 export const mockGetProviders: GetProviders = async () => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
+  const usesV3 = getSwapAPIBaseURL().endsWith("v3");
 
-  return [
-    {
-      provider: "changelly",
-      supportedCurrencies: [
-        "bitcoin",
-        "litecoin",
-        "ethereum",
-        "tron",
-        "ethereum/erc20/omg",
-        "ethereum/erc20/0x_project",
-        "ethereum/erc20/augur",
-      ],
-      tradeMethod: "fixed",
-    },
-    {
-      provider: "changelly",
-      supportedCurrencies: [
-        "bitcoin",
-        "litecoin",
-        "ethereum",
-        "tron",
-        "ethereum/erc20/omg",
-        "ethereum/erc20/0x_project",
-        "ethereum/erc20/augur",
-      ],
-      tradeMethod: "float",
-    },
-  ];
+  return usesV3
+    ? [
+        {
+          provider: "changelly",
+          pairs: [
+            { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
+            { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
+            { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
+            { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+          ],
+        },
+        {
+          provider: "wyre",
+          pairs: [
+            { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
+            { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
+            { from: "ethereum", to: "bitcoin", tradeMethod: "float" },
+            { from: "ethereum", to: "bitcoin", tradeMethod: "fixed" },
+          ],
+        },
+      ]
+    : [
+        {
+          provider: "changelly",
+          supportedCurrencies: [
+            "bitcoin",
+            "litecoin",
+            "ethereum",
+            "tron",
+            "ethereum/erc20/omg",
+            "ethereum/erc20/0x_project",
+            "ethereum/erc20/augur",
+          ],
+          tradeMethod: "fixed",
+        },
+        {
+          provider: "changelly",
+          supportedCurrencies: [
+            "bitcoin",
+            "litecoin",
+            "ethereum",
+            "tron",
+            "ethereum/erc20/omg",
+            "ethereum/erc20/0x_project",
+            "ethereum/erc20/augur",
+          ],
+          tradeMethod: "float",
+        },
+      ];
 };
 
 export const mockGetStatus: GetMultipleStatus = async (statusList) => {
