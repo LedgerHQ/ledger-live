@@ -186,6 +186,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "enable a proxy to use instead of a physical device",
   },
+  DEVICE_PROXY_MODEL: {
+    def: "nanoS",
+    parser: stringParser,
+    desc: "allow to override the default model of a proxied device",
+  },
   DISABLE_TRANSACTION_BROADCAST: {
     def: false,
     parser: boolParser,
