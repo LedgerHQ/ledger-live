@@ -29,8 +29,8 @@ export type CryptoOrgResourcesRaw = {|
 
 export type Transaction = {|
   ...TransactionCommon,
-  mode: string,
   family: "crypto_org",
+  mode: string,
   fees: ?BigNumber,
   // add here all transaction-specific fields if you implement other modes than "send"
 |};
@@ -45,8 +45,13 @@ export type TransactionRaw = {|
 
 export type CryptoOrgPreloadData = {||};
 
-export type NetworkInfo = {};
+export type NetworkInfo = {|
+  family: "crypto_org",
+|};
 
-export type NetworkInfoRaw = {};
+export type NetworkInfoRaw = {|
+  family: "crypto_org",
+|};
+
 
 export const reflect = (_declare: *) => {};

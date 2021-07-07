@@ -188,7 +188,7 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "text",
         label: "Controller",
-        value: account.freshAddress,
+        value: mainAccount.freshAddress,
       });
       break;
 
