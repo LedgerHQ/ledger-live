@@ -22,7 +22,7 @@ const instances = {};
 /**
  * Get CroClient
  */
-export async function getClient(currencyId) {
+export async function getClient(currencyId: *) {
   if (instances[currencyId]) {
     return instances[currencyId];
   }

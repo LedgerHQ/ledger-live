@@ -10,7 +10,7 @@ const getTransactionAmount = (a: Account, t: Transaction) => {
   switch (t.mode) {
     case "send":
       if (t.useAllAmount) {
-        const amountMinusFee = t.amount.minus(t.fees);
+        const amountMinusFee = t.amount.minus(t.fees || 0);
         return new croSdk.Coin(amountMinusFee.toString(), Units.BASE);
       } else {
         return new croSdk.Coin(t.amount.toString(), Units.BASE);
@@ -37,7 +37,7 @@ export const buildTransaction = async (
     a.currency.id
   );
   const rawTx = new croSdk.RawTransaction();
-  rawTx.setFee(new croSdk.Coin(t.fees.toString(), Units.BASE));
+  rawTx.setFee(new croSdk.Coin((t.fees || 0).toString(), Units.BASE));
 
   const msgSend = new croSdk.bank.MsgSend({
     fromAddress: address,

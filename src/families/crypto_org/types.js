@@ -31,7 +31,7 @@ export type Transaction = {|
   ...TransactionCommon,
   mode: string,
   family: "crypto_org",
-  fees: BigNumber,
+  fees: ?BigNumber,
   // add here all transaction-specific fields if you implement other modes than "send"
 |};
 
@@ -39,7 +39,7 @@ export type TransactionRaw = {|
   ...TransactionCommonRaw,
   family: "crypto_org",
   mode: string,
-  fees: string,
+  fees: ?string,
   // also the transaction fields as raw JSON data
 |};
 

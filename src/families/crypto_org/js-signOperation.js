@@ -69,6 +69,7 @@ function convertASN1toBase64(signature) {
   const newSigR = padZero(sigR, 32);
   const newSigS = padZero(sigS, 32);
 
+  // $FlowFixMe please fix types here.
   const signatureFormatted = Buffer.concat([newSigR, newSigS]);
   if (signatureFormatted.length !== 64) {
     throw new CryptoOrgSignatureSize();
