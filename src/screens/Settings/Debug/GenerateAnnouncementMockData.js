@@ -3,9 +3,9 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
 import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
+import { useTheme } from "@react-navigation/native";
 import { addMockAnnouncement } from "./__mocks__/announcements";
 
-import { useTheme } from "@react-navigation/native";
 import SettingsRow from "../../../components/SettingsRow";
 import BottomModal from "../../../components/BottomModal";
 import TextInput from "../../../components/TextInput";
