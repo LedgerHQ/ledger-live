@@ -76,6 +76,7 @@ export type AppRequest = {
   account?: ?Account,
   tokenCurrency?: ?TokenCurrency,
   dependencies?: AppRequest[],
+  requireLatestFirmware?: boolean,
 };
 
 export type AppResult = {|
@@ -299,10 +300,9 @@ function inferCommandParams(appRequest: AppRequest) {
   let derivationMode;
   let derivationPath;
 
-  let appName = appRequest.appName;
-  const account = appRequest.account;
-  let currency = appRequest.currency;
-  let dependencies = appRequest.dependencies;
+  const { account } = appRequest;
+  let { appName, currency, dependencies, requireLatestFirmware } = appRequest;
+
   if (!currency && account) {
     currency = account.currency;
   }
@@ -317,7 +317,7 @@ function inferCommandParams(appRequest: AppRequest) {
   }
 
   if (!currency) {
-    return { appName, dependencies };
+    return { appName, dependencies, requireLatestFirmware };
   }
 
   let extra;
@@ -341,6 +341,7 @@ function inferCommandParams(appRequest: AppRequest) {
   return {
     appName,
     dependencies,
+    requireLatestFirmware,
     requiresDerivation: {
       derivationMode,
       path: derivationPath,
@@ -478,6 +479,7 @@ export const createAction = (
 ): AppAction => {
   const useHook = (device: ?Device, appRequest: AppRequest): AppState => {
     const dependenciesResolvedRef = useRef(false);
+    const latestFirmwareResolvedRef = useRef(false);
 
     const connectApp = useCallback(
       (device, params) =>
@@ -490,10 +492,15 @@ export const createAction = (
               dependencies: dependenciesResolvedRef.current
                 ? undefined
                 : params.dependencies,
+              requireLatestFirmware: latestFirmwareResolvedRef.current
+                ? undefined
+                : params.requireLatestFirmware,
             }).pipe(
               tap((e) => {
                 if (e.type === "dependencies-resolved") {
                   dependenciesResolvedRef.current = true;
+                } else if (e.type === "latest-firmware-resolved") {
+                  latestFirmwareResolvedRef.current = true;
                 }
               }),
               catchError((error: Error) => of({ type: "error", error }))

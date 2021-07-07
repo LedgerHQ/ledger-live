@@ -1,7 +1,8 @@
 // @flow
 
+import semver from "semver";
 import { Observable, concat, from, of, throwError, defer } from "rxjs";
-import { concatMap, map, catchError, delay } from "rxjs/operators";
+import { mergeMap, concatMap, map, catchError, delay } from "rxjs/operators";
 import {
   TransportStatusError,
   FirmwareOrAppUpdateRequired,
@@ -14,16 +15,20 @@ import {
 import Transport from "@ledgerhq/hw-transport";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { DerivationMode } from "../types";
+import type { DeviceInfo, FirmwareUpdateContext } from "../types/manager";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";
 import { withDevice } from "./deviceAccess";
 import { streamAppInstall } from "../apps/hw";
 import { isDashboardName } from "./isDashboardName";
 import getAppAndVersion from "./getAppAndVersion";
+import getDeviceInfo from "./getDeviceInfo";
 import getAddress from "./getAddress";
 import openApp from "./openApp";
 import quitApp from "./quitApp";
+import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
+import manager from "../manager";
 
 export type RequiresDerivation = {|
   currencyId: string,
@@ -38,6 +43,7 @@ export type Input = {
   appName: string,
   requiresDerivation?: RequiresDerivation,
   dependencies?: string[],
+  requireLatestFirmware?: boolean,
 };
 
 export type AppAndVersion = {
@@ -58,6 +64,7 @@ export type ConnectAppEvent =
   | { type: "stream-install", progress: number }
   | { type: "listing-apps" }
   | { type: "dependencies-resolved" }
+  | { type: "latest-firmware-resolved" }
   | { type: "ask-quit-app" }
   | { type: "ask-open-app", appName: string }
   | { type: "opened", app?: AppAndVersion, derivation?: { address: string } }
@@ -160,6 +167,7 @@ const cmd = ({
   appName,
   requiresDerivation,
   dependencies,
+  requireLatestFirmware,
 }: Input): Observable<ConnectAppEvent> =>
   withDevice(devicePath)((transport) =>
     Observable.create((o) => {
@@ -167,12 +175,45 @@ const cmd = ({
         .pipe(delay(1000))
         .subscribe((e) => o.next(e));
 
-      const innerSub = ({ appName, dependencies }: any) =>
+      const innerSub = ({
+        appName,
+        dependencies,
+        requireLatestFirmware,
+      }: any) =>
         defer(() => from(getAppAndVersion(transport))).pipe(
           concatMap((appAndVersion): Observable<ConnectAppEvent> => {
             timeoutSub.unsubscribe();
 
             if (isDashboardName(appAndVersion.name)) {
+              // check if we meet minimum fw
+              if (requireLatestFirmware) {
+                return from(getDeviceInfo(transport)).pipe(
+                  mergeMap((deviceInfo: DeviceInfo) =>
+                    from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
+                      mergeMap((latest: ?FirmwareUpdateContext) => {
+                        if (
+                          !latest ||
+                          semver.eq(deviceInfo.version, latest.final.version)
+                        ) {
+                          o.next({ type: "latest-firmware-resolved" });
+                          return innerSub({ appName }); // NB without the fw version check
+                        } else {
+                          return throwError(
+                            new LatestFirmwareVersionRequired(
+                              "LatestFirmwareVersionRequired",
+                              {
+                                latest: latest.final.version,
+                                current: deviceInfo.version,
+                              }
+                            )
+                          );
+                        }
+                      })
+                    )
+                  )
+                );
+              }
+
               // check if we meet dependencies
               if (dependencies?.length) {
                 return streamAppInstall({
@@ -188,7 +229,12 @@ const cmd = ({
               return openAppFromDashboard(transport, appName);
             }
 
-            if (dependencies?.length || appAndVersion.name !== appName) {
+            // in order to check the fw version, install deps, we need dashboard
+            if (
+              dependencies?.length ||
+              requireLatestFirmware ||
+              appAndVersion.name !== appName
+            ) {
               return attemptToQuitApp(transport, appAndVersion);
             }
 
@@ -242,7 +288,11 @@ const cmd = ({
             return throwError(e);
           })
         );
-      const sub = innerSub({ appName, dependencies }).subscribe(o);
+      const sub = innerSub({
+        appName,
+        dependencies,
+        requireLatestFirmware,
+      }).subscribe(o);
 
       return () => {
         timeoutSub.unsubscribe();
