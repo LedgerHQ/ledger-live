@@ -3,16 +3,20 @@ import React, { memo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import type { Account } from "@ledgerhq/live-common/lib/types/account";
 import ExternalLink from "../../icons/ExternalLink";
 import Button from "../../components/Button";
 
 type Props = {
   url: ?string,
   urlWhatIsThis: ?string,
+  account: Account,
 };
 
-function Footer({ url, urlWhatIsThis }: Props) {
+function Footer({ url, urlWhatIsThis, account }: Props) {
   const { colors } = useTheme();
+
+  const currencyId = account.currency.name;
   return (
     <View
       style={[
@@ -35,6 +39,9 @@ function Footer({ url, urlWhatIsThis }: Props) {
           type="primary"
           title={<Trans i18nKey="operationDetails.viewInExplorer" />}
           onPress={() => Linking.openURL(url)}
+          eventProperties={{
+            currencyId,
+          }}
         />
       ) : null}
     </View>

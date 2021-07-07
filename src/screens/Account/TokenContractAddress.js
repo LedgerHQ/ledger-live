@@ -25,6 +25,9 @@ const forceInset = { bottom: "always" };
 
 const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
   const { colors } = useTheme();
+
+  const currencyId = account ? account.token.name : token ? token.name : "";
+
   const viewInExplorer = useCallback(() => {
     if (url) {
       Linking.openURL(url);
@@ -65,6 +68,9 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
           containerStyle={[styles.buttonContainer, styles.buttonMarginLeft]}
           event="GoToViewContractInExplorer"
           onPress={viewInExplorer}
+          eventProperties={{
+            currencyId,
+          }}
         />
       </View>
     </SafeAreaView>
