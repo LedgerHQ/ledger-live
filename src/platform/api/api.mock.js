@@ -111,7 +111,8 @@ const manifest: AppManifest[] = [
   {
     id: "rainbow",
     name: "Rainbow.me",
-    url: "https://ledger-live-platform-apps.vercel.app/app/web-browser?url=https%3A%2F%2Frainbow.me%2F%7Baccount.address%7D&currencies=ethereum&webAppName=Rainbow.me",
+    url:
+      "https://ledger-live-platform-apps.vercel.app/app/web-browser?url=https%3A%2F%2Frainbow.me%2F%7Baccount.address%7D&currencies=ethereum&webAppName=Rainbow.me",
     homepageUrl: "https://rainbow.me",
     icon: "https://cdn.live.ledger.com/icons/platform/rainbow.png",
     platform: "all",

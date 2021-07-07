@@ -6,6 +6,9 @@ import {
   fromAccountRaw,
 } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
+import { setPlatformVersion } from "../../platform/version";
+
+setPlatformVersion("0.0.1");
 
 setSupportedCurrencies(["ethereum"]);
 

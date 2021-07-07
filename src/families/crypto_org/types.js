@@ -53,5 +53,4 @@ export type NetworkInfoRaw = {|
   family: "crypto_org",
 |};
 
-
 export const reflect = (_declare: *) => {};

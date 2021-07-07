@@ -5,6 +5,9 @@ import { deviceInfo155, mockListAppsResult } from "./mock";
 import type { FilterOptions, SortOptions } from "./filtering";
 import { sortFilterApps } from "./filtering";
 import { setSupportedCurrencies } from "../currencies/support";
+import { setPlatformVersion } from "../platform/version";
+
+setPlatformVersion("0.0.1");
 
 type FilteringScenario = {
   name: string,

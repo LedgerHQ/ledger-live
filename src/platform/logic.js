@@ -3,7 +3,7 @@
 import semver from "semver";
 
 import type { AppManifest, AppPlatform, AppBranch } from "./types";
-import { PLATFORM_VERSION } from "./constants";
+import { getPlatformVersion } from "./version";
 
 export function translateContent(content: any, locale: string = "en") {
   if (!content || typeof content !== "object") return content;
@@ -12,7 +12,10 @@ export function translateContent(content: any, locale: string = "en") {
 }
 
 export function isSupported(manifest: AppManifest) {
-  return semver.satisfies(semver.coerce(PLATFORM_VERSION), manifest.apiVersion);
+  return semver.satisfies(
+    semver.coerce(getPlatformVersion()),
+    manifest.apiVersion
+  );
 }
 
 export function matchBranches(manifest: AppManifest, branches: AppBranch[]) {
