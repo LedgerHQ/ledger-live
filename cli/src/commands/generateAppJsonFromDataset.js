@@ -8,8 +8,11 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/lib/currencies";
+import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 import datasets from "@ledgerhq/live-common/lib/generated/test-dataset";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "../live-common-setup";
+
+setPlatformVersion("0.0.1");
 
 setSupportedCurrencies([
   "bitcoin",
