@@ -396,16 +396,9 @@ export function prepareTokenAccounts(
   return subAccounts.concat(implicitCTokenAccounts);
 }
 
-const ctokenToGeneratedTokenOpMapping: {
-  [_: OperationType]: ?OperationType,
-} = {
+const cdaiToDaiOpMapping: { [_: OperationType]: ?OperationType } = {
   IN: "SUPPLY",
   OUT: "REDEEM",
-};
-
-const ctokenToTokenOpMapping: { [_: OperationType]: ?OperationType } = {
-  IN: "OUT",
-  OUT: "IN",
 };
 
 export async function digestTokenAccounts(
@@ -476,39 +469,30 @@ export async function digestTokenAccounts(
         // operations, C* to * conversions with the historical rates
         // cIN => SUPPLY
         // cOUT => REDEEM
-        const blockNumberSet = new Set();
-        ctokenAccount.operations.forEach(({ blockHeight }) => {
-          if (typeof blockHeight !== "number") return;
-          blockNumberSet.add(blockHeight);
-        });
-        const rates = await fetchHistoricalRates(ctoken, [...blockNumberSet]);
+        const rates = await fetchHistoricalRates(
+          ctoken,
+          ctokenAccount.operations.map((op) => op.date)
+        );
 
-        const newOps = [];
-        ctokenAccount.operations.forEach((ctokenOp, i) => {
-          const { rate } = rates[i];
-          const type = ctokenToGeneratedTokenOpMapping[ctokenOp.type];
-          const tokenOpType = ctokenToTokenOpMapping[ctokenOp.type];
-          if (!type || !tokenOpType) return;
-
-          const matchingTokenOp = a.operations.find(
-            (tokenOp) =>
-              tokenOp.id === `${a.id}-${ctokenOp.hash}-${tokenOpType}`
-          );
-          if (!matchingTokenOp) return;
-
-          const newOp = {
-            ...ctokenOp,
-            id: `${a.id}-${ctokenOp.hash}-${type}`,
-            type,
-            value: matchingTokenOp.value,
-            accountId: a.id,
-            extra: {
-              compoundValue: ctokenOp.value.toString(10),
-              rate: rate.toString(10),
-            },
-          };
-          newOps.push(newOp);
-        });
+        const newOps = ctokenAccount.operations
+          .map((op, i) => {
+            const { rate } = rates[i];
+            const value = op.value.times(rate).integerValue();
+            const type = cdaiToDaiOpMapping[op.type];
+            if (!type) return;
+            return {
+              ...op,
+              id: `${a.id}-${op.hash}-${type}`,
+              type,
+              value,
+              accountId: a.id,
+              extra: {
+                compoundValue: op.value.toString(10),
+                rate: rate.toString(10),
+              },
+            };
+          })
+          .filter(Boolean);
 
         // TODO: for perf, we can be a slightly more conservative and keep refs as much as possible to not have a ref changes above
 
@@ -597,11 +581,11 @@ type HistoRate = {
 
 async function fetchHistoricalRates(
   token,
-  blockNumbers: number[]
+  dates: Date[]
 ): Promise<HistoRate[]> {
-  const all = await promiseAllBatched(3, blockNumbers, async (blockNumber) => {
+  const all = await promiseAllBatched(3, dates, async (date) => {
     const { data } = await fetch("/ctoken", {
-      block_number: blockNumber,
+      block_timestamp: Math.round(date.getTime() / 1000),
       addresses: [token.contractAddress],
     });
     const cToken = data.cToken.find(
