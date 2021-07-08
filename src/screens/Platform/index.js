@@ -14,6 +14,7 @@ import { urls } from "../../config/urls";
 import { ScreenName } from "../../const";
 import IconCode from "../../icons/Code";
 
+import CatalogTwitterBanner from "./CatalogTwitterBanner";
 import CatalogBanner from "./CatalogBanner";
 import CatalogCTA from "./CatalogCTA";
 import AppCard from "./AppCard";
@@ -65,6 +66,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
       <TrackScreen category="Platform" name="Catalog" />
       <ScrollView style={styles.wrapper}>
         <CatalogBanner />
+        <CatalogTwitterBanner />
         {apps.map(manifest => (
           <AppCard
             key={manifest.id}
