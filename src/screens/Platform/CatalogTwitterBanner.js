@@ -11,6 +11,7 @@ import {
   Linking,
 } from "react-native";
 
+import { urls } from "../../config/urls";
 import IconClose from "../../icons/Close";
 import LText from "../../components/LText";
 import IconTwitter from "../../icons/Twitter";
@@ -22,7 +23,7 @@ const CatalogTwitterBanner = () => {
   const [isDismiss, dismiss] = useBanner("CatalogTwitterBanner");
 
   const sendTweet = useCallback(() => {
-    const twitterURL = new URL("https://twitter.com/intent/tweet");
+    const twitterURL = new URL(urls.banners.twitterIntent);
     twitterURL.searchParams.set(
       "text",
       t("platform.catalog.twitterBanner.tweetText"),
