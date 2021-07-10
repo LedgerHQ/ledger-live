@@ -88,7 +88,7 @@ const manifest: AppManifest[] = [
     id: "zerion",
     name: "Zerion",
     url:
-      "https://ledger-live-platform-apps.vercel.app/app/dapp-browser?dappName=Zerion&nanoApp=Paraswap&url=https%3A%2F%2Ffeature-ledger-dapp-browser-2605-mzkrvfnv6a-ue.a.run.app%3Fembed%3Dledgerdappbrowser",
+      "https://ledger-live-platform-apps.vercel.app/app/dapp-browser?dappName=Zerion&nanoApp=Paraswap&url=https%3A%2F%2Fapp.zerion.io%2F%3Fembed%3Dledgerdappbrowser",
     homepageUrl: "https://zerion.io/",
     icon: "https://cdn.live.ledger.com/icons/platform/zerion.png",
     platform: "all",
