@@ -3585,7 +3585,11 @@
       },
       "banner": {
         "title": "Исследуйте наш Каталог приложений",
-        "description": "Откройте для себя новый мир криптовалют. Единый безопасный доступ ко всем нашим сервисам – DeFi приложения, NFT, и многое другое."
+        "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
+      },
+      "twitterBanner": {
+        "description": "Tell us what's the next service you want to see with the hashtag",
+        "tweetText": "The next Ledger App should be..."
       },
       "pollCTA": {
         "title": "Опрос",
