@@ -3585,7 +3585,11 @@
       },
       "banner": {
         "title": "Discover our Live Catalog",
-        "description": "Unlock a new world of crypto possibilities. One secure access to all our smart services – DeFi apps, NFTs and more to come."
+        "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
+      },
+      "twitterBanner":  {
+        "description": "Tell us what's the next service you want to see with the hashtag",
+        "tweetText": "The next Ledger App should be..."
       },
       "pollCTA": {
         "title": "Poll",
