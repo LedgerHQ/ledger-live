@@ -99,10 +99,10 @@ const manifest: AppManifest[] = [
     currencies: ["ethereum"],
     content: {
       shortDescription: {
-        en: "Manage your entire Ethereum DeFi portfolio from one place.",
+        en: "The smart way to manage your DeFi portfolio.",
       },
       description: {
-        en: "Manage your entire Ethereum DeFi portfolio from one place.",
+        en: "The smart way to manage your DeFi portfolio.",
       },
     },
     permissions: [],
