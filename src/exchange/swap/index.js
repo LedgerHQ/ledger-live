@@ -9,6 +9,21 @@ import getKYCStatus from "./getKYCStatus";
 import submitKYC from "./submitKYC";
 import initSwap from "./initSwap";
 import { getEnv } from "../../env";
+import {
+  JSONRPCResponseError,
+  JSONDecodeError,
+  NoIPHeaderError,
+  CurrencyNotSupportedError,
+  CurrencyDisabledError,
+  CurrencyDisabledAsInputError,
+  CurrencyDisabledAsOutputError,
+  CurrencyNotSupportedByProviderError,
+  TradeMethodNotSupportedError,
+  UnexpectedError,
+  NotImplementedError,
+  ValidationError,
+  AccessDeniedError,
+} from "../../errors";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -117,7 +132,28 @@ const USStates = {
 
 const countries = {
   US: "United States",
-  ES: "Spain", // FIXME remove before merging
+};
+
+const swapBackendErrorCodes = {
+  "100": JSONRPCResponseError,
+  "101": JSONDecodeError,
+  "200": NoIPHeaderError,
+  "300": CurrencyNotSupportedError,
+  "301": CurrencyDisabledError,
+  "302": CurrencyDisabledAsInputError,
+  "303": CurrencyDisabledAsOutputError,
+  "304": CurrencyNotSupportedByProviderError,
+  "400": TradeMethodNotSupportedError,
+  "500": UnexpectedError,
+  "600": NotImplementedError,
+  "700": ValidationError,
+  "701": AccessDeniedError,
+};
+
+export const getSwapAPIError = (errorCode: number, errorMessage?: string) => {
+  if (errorCode in swapBackendErrorCodes)
+    return new swapBackendErrorCodes[errorCode](errorMessage);
+  return new Error(errorMessage);
 };
 
 export {

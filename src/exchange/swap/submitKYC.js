@@ -3,30 +3,31 @@
 import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
 import type { KYCData, SubmitKYC } from "./types";
-import { SwapCheckKYCStatusFailed, SwapSubmitKYCFailed } from "../../errors";
+import { ValidationError } from "../../errors";
 
 export const submitKYC: SubmitKYC = async (provider: string, data: KYCData) => {
-  const res = await network({
-    method: "POST",
-    url: `${getSwapAPIBaseURL()}/provider/${provider}/user`,
-    data,
-  });
+  try {
+    const res = await network({
+      method: "POST",
+      url: `${getSwapAPIBaseURL()}/provider/${provider}/user`,
+      data,
+    });
 
-  if (res.data?.code) {
-    // Wyre KYC errors get mapped to {code, message}
-    return new SwapSubmitKYCFailed(res.data.message);
+    const { id, status } = res.data;
+
+    return {
+      id,
+      status,
+    };
+  } catch (error) {
+    // Nb this is the best we have, no _per field_ validation but rather
+    // error handling at the top level.
+
+    // TODO detect KYC specs changed to throw specific error
+    return {
+      error: new ValidationError(error.message),
+    };
   }
-
-  if (!res.data?.status) {
-    return new SwapCheckKYCStatusFailed();
-  }
-
-  const { id, status } = res.data;
-
-  return {
-    id,
-    status,
-  };
 };
 
 export default submitKYC;

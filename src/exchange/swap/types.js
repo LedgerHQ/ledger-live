@@ -16,7 +16,10 @@ import type {
 export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
 export type KYCStatus = { id: string, status: ValidKYCStatus };
 export type GetKYCStatus = (string, string) => Promise<KYCStatus>;
-export type SubmitKYC = (string, KYCData) => Promise<KYCStatus>;
+export type SubmitKYC = (
+  string,
+  KYCData
+) => Promise<KYCStatus | { error: Error }>;
 
 export type KYCData = {
   firstName: string,

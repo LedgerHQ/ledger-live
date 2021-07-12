@@ -7,7 +7,7 @@ import type { Unit } from "../../types";
 import { formatCurrencyUnit } from "../../currencies";
 import { mockGetExchangeRates } from "./mock";
 import network from "../../network";
-import { getSwapAPIBaseURL } from "./";
+import { getSwapAPIError, getSwapAPIBaseURL } from "./";
 import { getEnv } from "../../env";
 import { BigNumber } from "bignumber.js";
 import {
@@ -109,17 +109,24 @@ const inferError = (
     minAmountFrom: string,
     maxAmountFrom: string,
     errorCode?: number,
+    errorMessage?: string,
   }
 ): ?Error => {
   const tenPowMagnitude = BigNumber(10).pow(unitFrom.magnitude);
-  const { amountTo, minAmountFrom, maxAmountFrom, errorCode } = responseData;
+  const {
+    amountTo,
+    minAmountFrom,
+    maxAmountFrom,
+    errorCode,
+    errorMessage,
+  } = responseData;
 
   if (!amountTo) {
     // We are in an error case regardless of api version.
     if (errorCode) {
-      // TODO Do we have consistent errorCodes for providers?
-      return new Error(`Generic Swap API error with code [${errorCode}]`);
+      return getSwapAPIError(errorCode, errorMessage);
     }
+
     // For out of range errors we will have a min/max pairing
     if (minAmountFrom) {
       const isTooSmall = BigNumber(apiAmount).lte(minAmountFrom);
