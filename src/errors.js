@@ -193,6 +193,36 @@ export const SwapGenericAPIError = createCustomErrorClass(
   "SwapGenericAPIError"
 );
 
+export const JSONRPCResponseError = createCustomErrorClass(
+  "JSONRPCResponseError"
+);
+export const JSONDecodeError = createCustomErrorClass("JSONDecodeError");
+export const NoIPHeaderError = createCustomErrorClass("NoIPHeaderError");
+export const CurrencyNotSupportedError = createCustomErrorClass(
+  "CurrencyNotSupportedError"
+);
+export const CurrencyDisabledError = createCustomErrorClass(
+  "CurrencyDisabledError"
+);
+export const CurrencyDisabledAsInputError = createCustomErrorClass(
+  "CurrencyDisabledAsInputError"
+);
+export const CurrencyDisabledAsOutputError = createCustomErrorClass(
+  "CurrencyDisabledAsOutputError"
+);
+export const CurrencyNotSupportedByProviderError = createCustomErrorClass(
+  "CurrencyNotSupportedByProviderError"
+);
+export const TradeMethodNotSupportedError = createCustomErrorClass(
+  "TradeMethodNotSupportedError"
+);
+export const UnexpectedError = createCustomErrorClass("UnexpectedError");
+export const NotImplementedError = createCustomErrorClass(
+  "NotImplementedError"
+);
+export const ValidationError = createCustomErrorClass("ValidationError");
+export const AccessDeniedError = createCustomErrorClass("AccessDeniedError");
+
 export const AlgorandASANotOptInInRecipient = createCustomErrorClass(
   "AlgorandASANotOptInInRecipient"
 );

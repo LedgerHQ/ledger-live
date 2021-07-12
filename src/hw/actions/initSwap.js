@@ -37,6 +37,7 @@ type InitSwapRequest = {
   exchangeRate: ExchangeRate,
   transaction: Transaction,
   userId?: string,
+  requireLatestFirmware?: boolean,
 };
 
 type Result =
@@ -117,7 +118,14 @@ export const createAction = (
       state.freezeReduxDevice
     );
 
-    const { exchange, exchangeRate, transaction, userId } = initSwapRequest;
+    const {
+      exchange,
+      exchangeRate,
+      transaction,
+      userId,
+      requireLatestFirmware,
+    } = initSwapRequest;
+
     const {
       fromAccount,
       fromParentAccount,
@@ -134,6 +142,7 @@ export const createAction = (
           { account: mainFromAccount },
           { account: maintoAccount },
         ],
+        requireLatestFirmware,
       }
     );
 
