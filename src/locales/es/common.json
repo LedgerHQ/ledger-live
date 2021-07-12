@@ -3585,7 +3585,11 @@
       },
       "banner": {
         "title": "Descubre nuestro catálogo de Live",
-        "description": "Descubre un nuevo mundo de posibilidades cripto. Un acceso seguro a todos nuestros servicios inteligentes – aplicaciones DeFi, NFTs y mucho más."
+        "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
+      },
+      "twitterBanner": {
+        "description": "Tell us what's the next service you want to see with the hashtag",
+        "tweetText": "The next Ledger App should be..."
       },
       "pollCTA": {
         "title": "Encuesta",
