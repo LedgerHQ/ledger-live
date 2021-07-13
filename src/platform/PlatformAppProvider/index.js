@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import type { PlatformAppContextType, Props, State } from "./types";
 import api from "./api";
-import { mergeManigestLists } from "./helpers";
+import { mergeManifestLists } from "./helpers";
 
 //$FlowFixMe
 const PlatformAppContext = createContext<PlatformAppContextType>({});
@@ -30,8 +30,8 @@ export function usePlatformApp(): PlatformAppContextType {
 }
 
 export function PlatformAppProvider({
-  autoUpdateDelay = AUTO_UPDATE_DEFAULT_DELAY,
-  extraManifests = [],
+  autoUpdateDelay,
+  extraManifests,
   children,
 }: Props) {
   const [state, setState] = useState<State>(initialState);
@@ -44,7 +44,7 @@ export function PlatformAppProvider({
       }));
       const manifests = await api.fetchManifest();
       const allManifests = extraManifests
-        ? mergeManigestLists(manifests, extraManifests)
+        ? mergeManifestLists(manifests, extraManifests)
         : manifests;
       setState((previousState) => ({
         ...previousState,
@@ -71,7 +71,12 @@ export function PlatformAppProvider({
   }, [updateData]);
 
   useEffect(() => {
-    const intervalInstance = setInterval(updateData, autoUpdateDelay);
+    const intervalInstance = setInterval(
+      updateData,
+      autoUpdateDelay !== undefined
+        ? autoUpdateDelay
+        : AUTO_UPDATE_DEFAULT_DELAY
+    );
     return () => clearInterval(intervalInstance);
   }, [autoUpdateDelay, updateData]);
 
