@@ -205,7 +205,7 @@ const OperationDetails = ({ route }: Props) => {
           </LText>
         </View>
       </ScrollView>
-      {url ? <Footer url={url} /> : null}
+      {url ? <Footer url={url} account={fromAccount} /> : null}
     </View>
   );
 };

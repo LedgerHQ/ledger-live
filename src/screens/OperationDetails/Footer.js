@@ -4,6 +4,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/live-common/lib/types/account";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import ExternalLink from "../../icons/ExternalLink";
 import Button from "../../components/Button";
 
@@ -16,7 +17,7 @@ type Props = {
 function Footer({ url, urlWhatIsThis, account }: Props) {
   const { colors } = useTheme();
 
-  const currencyId = account.currency.name;
+  const currencyId = getAccountCurrency(account).name;
   return (
     <View
       style={[

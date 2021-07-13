@@ -8,6 +8,7 @@ import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/lib/promise";
 import { setEnv } from "@ledgerhq/live-common/lib/env";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/lib/currencies";
+import { setPlatformVersion } from "@ledgerhq/live-common/lib/platform/version";
 import { registerTransportModule } from "@ledgerhq/live-common/lib/hw";
 import type { TransportModule } from "@ledgerhq/live-common/lib/hw";
 import { setDeviceMode } from "@ledgerhq/live-common/lib/hw/actions/app";
@@ -15,6 +16,8 @@ import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
 
 setDeviceMode("polling");
+
+setPlatformVersion("0.0.1");
 
 setSupportedCurrencies([
   "bitcoin",
