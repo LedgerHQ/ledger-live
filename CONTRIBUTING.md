@@ -7,7 +7,7 @@ This repository hosts `@ledgerhq/live-common` JavaScript library which centraliz
 ## JavaScript styleguide
 
 * ES6+ features.
-* [prettier](https://prettier.io/) for formatting convention. You can run `npm prettier`.
+* [prettier](https://prettier.io/) for formatting convention. You can run `yarn prettier`.
 * ESLint is used to enhance code quality. Check with `yarn lint`.
 * Flowtype is currently getting used to typecheck the library, but we are currently migrating to TypeScript.
 
