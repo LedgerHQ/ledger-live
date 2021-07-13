@@ -3585,11 +3585,11 @@
       },
       "banner": {
         "title": "探索我们的 Live 目录",
-        "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
+        "description": "解锁一个加密可能性的新世界。一个能安全访问我们所有的服务 — Defi、NFTs 以及更多的未来功能。"
       },
       "twitterBanner": {
-        "description": "Tell us what's the next service you want to see with the hashtag",
-        "tweetText": "The next Ledger App should be..."
+        "description": "告诉我们下一个您想要看到的带有哈希标签的服务",
+        "tweetText": "下一个 Ledger 应用应该是..."
       },
       "pollCTA": {
         "title": "调查",

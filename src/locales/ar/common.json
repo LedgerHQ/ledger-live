@@ -3585,11 +3585,11 @@
       },
       "banner": {
         "title": "اكتشف كتالوج التطبيقات الحية",
-        "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
+        "description": "افتح عالم جديد من إمكانيات التشفير. الوصول الآمن إلى جميع الخدمات من مكان واحد - تطبيقات DeFi وNFTs والمزيد قادم."
       },
       "twitterBanner": {
-        "description": "Tell us what's the next service you want to see with the hashtag",
-        "tweetText": "The next Ledger App should be..."
+        "description": "أخبرنا ما الخدمة التالية التي تريد رؤيتها باستخدام علامة المربع (الهاشتاج)",
+        "tweetText": "تطبيق ليدجر القادم يجب أن يكون..."
       },
       "pollCTA": {
         "title": "استطلاع",
