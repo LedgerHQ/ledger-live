@@ -106,7 +106,7 @@ const manifest: AppManifest[] = [
       },
     },
     permissions: [],
-    domains: [],
+    domains: ["https://*"],
   },
   {
     id: "rainbow",
@@ -130,7 +130,7 @@ const manifest: AppManifest[] = [
       },
     },
     permissions: [],
-    domains: [],
+    domains: ["https://*"],
   },
   {
     id: "aave",
