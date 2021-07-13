@@ -1,71 +1,41 @@
 # Contributing
 
-Thanks for considering contributing to Ledger Live!
+:+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
 
+This repository hosts `@ledgerhq/live-common` JavaScript library which centralize the business logic work of Ledger Live.
 
-## Opening issues
+## JavaScript styleguide
 
-If you find a bug, please feel free to [open an issue](https://github.com/ledgerhq/ledger-live-common/issues).
+* ES6+ features.
+* [prettier](https://prettier.io/) for formatting convention. You can run `npm prettier`.
+* ESLint is used to enhance code quality. Check with `yarn lint`.
+* Flowtype is currently getting used to typecheck the library, but we are currently migrating to TypeScript.
 
-If you taking the time to mention a problem, even a seemingly minor one, it is greatly appreciated, and a totally valid contribution to this project. Thank you!
+> NB. for the 3 points above, the best is to have integration of Prettier,
+> ESlint, Flowtype in your text editor (there are plugin for most editors).
 
-## Fixing bugs
+## Expectations
 
-We love pull requests. Here’s a quick guide:
+As documented in the PR template, there are two very important points we require contributors to focus on:
 
-1. [Fork this repository](https://github.com/ledgerhq/ledger-live-common/fork) and then clone it locally:
+### Changes have no impact
 
-  ```bash
-  git clone https://github.com/ledgerhq/ledger-live-common
-  ```
+**The impact of your changes must be made as limited as possible.**
 
-2. Create a topic branch for your changes:
+As we want to have the ability to merge things quickly and have small iterations, this can only work if your changes are non-breaking which means they do not require any extra modification in user land side (Ledger Live Desktop, Ledger Live Mobile) **to still make the library works the same way**.
 
-  ```bash
-  git checkout -b fix-for-that-thing
-  ```
-3. Commit a failing test for the bug:
+Of course you may introduce new features for the UI side, it just should not affect the existing work / only affect it in a way that the result of this is "acceptable" and "stable" (e.g. a bugfix is a change, but it's the purpose of the bugfix to fix it).
 
-  ```bash
-  git commit -am "Adds a failing test to demonstrate that thing"
-  ```
+There are always exception to break this rule, when you do break it however, you need to carefully document it in the PR so we can report that documentation back in the release notes and organise the work load. The complexity of that PR will however be defacto higher and harder with less guarantee to merge.
 
-4. Commit a fix that makes the test pass:
+We want to avoid locked situation where we can't merge your work because it's too impacting on userland but you still need that work merged to test against your changes on LLD/LLM.
 
-  ```bash
-  git commit -am "Adds a fix for that thing!"
-  ```
+Here are a few tips:
 
-5. Run the tests:
-
-  ```bash
-  npm test
-  ```
-
-6. If everything looks good, push to your fork:
-
-  ```bash
-  git push origin fix-for-that-thing
-  ```
-
-7. [Submit a pull request.](https://help.github.com/articles/creating-a-pull-request)
-
-## Features and expectation of ledger-live-common project
-
-ledger-live-common is the common ground for [Ledger Live desktop](https://github.com/LedgerHQ/ledger-live-desktop) and [Ledger Live mobile](https://github.com/LedgerHQ/ledger-live-mobile).
-
-It contains most of its core business logic.
-
-**We try to do as less breaking changes as possible**. What we mean by breaking changes, it means any changes in live-common that would need the userland (Ledger Live Desktop, Ledger Live Mobile) to also change codes to keep making that live-common version to work should be avoided.
-Adding new features are ok, but they need to be made as much as possible "not changing" when the userland still uses the old API.
-
-Here are a few guidelines:
-- if you have a completely new rework of an existing stack, it may be wise to have a `v2/` folder, specifically when there is a risk in it.
+- When you have a new feature that need changes in the existing work, introduce a new environment variable in `env.js` that will allow you to implement a code branching
+- When you have a completely new rework of an existing feature, feel free to make a `v2` folder where the new logic will leave. The existing work will be not impacted and considered a "v1" in which you can also start documentation a **deprecation path** (use JS comments, it will be on maintainer side to organize the deprecation and planning the sunset)
 - when adding new methods, fields, it should be ok as long as you don't change the main interface. You can ship things "silently" without userland to use it yet.
-- Libraries upgrade are the only exception here.
 
-## Expectation of PR information
+### Changes must have test coverage
 
-- the impact of each PR needs to be explicitly written.
-- code need to be covered by tests. (unit tests, dataset tests or bot tests)
-- document everything that userland need to do to upgrade to your changes (if relevant)
+As we allow to be very flexible at merging things quickly in live-common, we also expect you to deliver unit tests with the features you deliver or improve the tests when you fix a bug.
