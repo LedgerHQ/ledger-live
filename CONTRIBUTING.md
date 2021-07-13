@@ -36,6 +36,6 @@ Here are a few tips:
 - When you have a completely new rework of an existing feature, feel free to make a `v2` folder where the new logic will leave. The existing work will be not impacted and considered a "v1" in which you can also start documentation a **deprecation path** (use JS comments, it will be on maintainer side to organize the deprecation and planning the sunset)
 - when adding new methods, fields, it should be ok as long as you don't change the main interface. You can ship things "silently" without userland to use it yet.
 
-### Changes must have test coverage
+### Changes must have test coverage and pass the CI
 
 As we allow to be very flexible at merging things quickly in live-common, we also expect you to deliver unit tests with the features you deliver or improve the tests when you fix a bug.
