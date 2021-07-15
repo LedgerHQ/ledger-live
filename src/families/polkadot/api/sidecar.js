@@ -4,8 +4,8 @@ import querystring from "querystring";
 
 import { TypeRegistry, ModulesWithCalls } from "@polkadot/types";
 import { getSpecTypes } from "@polkadot/types-known";
-import { Metadata } from "@polkadot/metadata";
-import { expandMetadata } from "@polkadot/metadata/decorate";
+import { Metadata } from "@polkadot/types/metadata";
+import { expandMetadata } from "@polkadot/types/metadata/decorate";
 
 import { makeLRUCache } from "../../../cache";
 import type { CacheRes } from "../../../cache";
