@@ -57,7 +57,7 @@
     },
     "update": "Actualización disponible",
     "install": "Instalar",
-    "installed": "Instaladas",
+    "installed": "Instalada",
     "uninstall": "Desinstalar",
     "fromNow": {
       "seconds": "en un segundo",
@@ -708,7 +708,7 @@
       "title": "Elige tu idioma",
       "cta": "Continuar",
       "warning": {
-        "title": "Comenzar en inglés",
+        "title": "Comenzar en español",
         "cta": "¡Entendido!",
         "desc": "Estamos añadiendo idiomas adicionales para ayudarte a aprender a utilizar Ledger. Ten en cuenta que actualmente el resto de la experiencia Ledger solo está disponible en inglés."
       }
@@ -1095,7 +1095,7 @@
       "cta": "Estoy listo para escanear",
       "bullets": {
         "0": {
-          "label": "En tu aplicación Desktop, selecciona <1>Configuración> Cuentas > Exportar cuentas”</1>."
+          "label": "On the Desktop app, select <1>Settings > Accounts > Account export</1>."
         },
         "1": {
           "label": "Escanea el código LiveQR con tu teléfono."
@@ -1213,7 +1213,7 @@
     "transfer": "Transferir",
     "manager": "Manager",
     "settings": "Ajustes",
-    "platform": "Descubrir",
+    "platform": "Discover",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1578,7 +1578,7 @@
       "title": "General",
       "desc": "Configura los ajustes generales de Ledger Live.",
       "carousel": "Visibilidad del carrusel",
-      "carouselDesc": "Habilita la visibilidad del carrusel en el Portfolio",
+      "carouselDesc": "Muestra u oculta el carrusel en el Portfolio",
       "language": "Idioma",
       "languageDesc": "Configura el idioma de Ledger Live.",
       "password": "Bloqueo por contraseña",
@@ -1623,8 +1623,8 @@
         "bullet1": "ID de aplicación único anónimo",
         "bullet2": "Versión de Ledger Live, región del SO, idioma y región"
       },
-      "hideEmptyTokenAccounts": "Ocultar cuentas de token vacías",
-      "hideEmptyTokenAccountsDesc": "Oculta cuentas de token vacías en la página Cuentas."
+      "hideEmptyTokenAccounts": "Hide empty token accounts",
+      "hideEmptyTokenAccountsDesc": "Ocultar cuentas de tokens sin saldo en la página de Cuentas."
     },
     "currencies": {
       "header": "Divisas",
@@ -1645,7 +1645,7 @@
       "blacklistedTokensDesc": "Puedes ocultar los tokens ingresando la lista de cuentas, haciendo luego un toque prolongado sobre el token y seleccionando “Ocultar Token”.",
       "blacklistedTokensModal": {
         "title": "Ocultar token",
-        "desc": "Esta acción ocultará todas las cuentas de <1><0>{tokenName}</0></1>, puedes mostrarlas de nuevo desde <3>Configuración > Cuentas</3>.",
+        "desc": "Esta acción ocultará todas las cuentas <1><0>{tokenName}</0></1>, puedes mostrarlas de nuevo mediante <3>Ajustes > Cuentas</3>.",
         "confirm": "Ocultar token"
       },
       "cryptoAssets": {
@@ -1692,7 +1692,7 @@
     "experimental": {
       "title": "Funciones experimentales",
       "desc": "Prueba las funciones experimentales y dinos qué te parecen.",
-      "disclaimer": "Estas son características experimentales que proporcionamos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Pueden cambiar, deteriorarse o ser eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad."
+      "disclaimer": "Estas son funciones experimentales que ofrecemos “tal como están” para que nuestra comunidad de expertos tecnológicos las pruebe. Es posible que cambien, se deterioren o sean eliminadas en cualquier momento. Al habilitarlas, aceptas usarlas bajo tu responsabilidad."
     }
   },
   "migrateAccounts": {
@@ -1821,7 +1821,7 @@
         "balance": "Saldo <0>123</0>",
         "fromAccount": "Seleccionar cuenta",
         "toAccount": "Seleccionar cuenta",
-        "paraswapCTA": "¿Buscas Paraswap? ¡Está en a la pestaña Descubrir!",
+        "paraswapCTA": "¿Buscas Paraswap? ¡Está en a la pestaña Discover!",
         "amount": {
           "useMax": "Utilizar máx",
           "available": "Total disponible"
@@ -1898,7 +1898,7 @@
       "history": {
         "tab": "Historial",
         "disclaimer": "Tus transacciones de permuta en Mobile no están sincronizadas con Ledger Live Desktop",
-        "exportButton": "Operaciones de exportación",
+        "exportButton": "Exportar operaciones",
         "exportFilename": "Operaciones de permuta",
         "empty": {
           "title": "Tus permutas anteriores aparecerán aquí",
@@ -2643,7 +2643,7 @@
       "all": "Todas",
       "installed": "Aplicaciones",
       "not_installed": "No instaladas",
-      "supported": "Compatible con Live",
+      "supported": "Compatibles con Live",
       "updatable": "Actualizable",
       "apply": "Aplicar"
     },
@@ -3468,7 +3468,7 @@
     "read": "Leer los Términos de uso",
     "switchLabelPrivacy": "Confirmo que he leído y acepto la <1> Política de Privacidad</1>",
     "switchLabel": "He leído y acepto los <1>Términos del servicio</1>",
-    "cta": "Entra en la App Ledger"
+    "cta": "Entrar en la App Ledger"
   },
   "exchange": {
     "buy": {
