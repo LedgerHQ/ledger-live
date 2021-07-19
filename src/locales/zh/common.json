@@ -874,10 +874,10 @@
       },
       "recoveryPhrase": {
         "title": "恢复短语",
-        "desc": "您的恢复短语是备份您私人密钥的一个 24 words (二十四个助记词) 组成的秘密列表。",
+        "desc": "您的恢复短语（recovery phrase）是备份您私人密钥的一个 24 words (二十四个助记词) 组成的秘密列表。",
         "desc_1": "Nano 为您生成一个独有的恢复短语。Ledger 不会保存其副本。",
         "cta": "恢复短语",
-        "checkboxDesc": "我明白：如果我丢失了自己的恢复短语，那么一旦我的 Nano 无法使用，也就意味着我无法访问自己的加密资产。"
+        "checkboxDesc": "我明白：如果我丢失了自己的恢复短语，那么一旦我的 Nano 无法使用，也就意味着我将无法访问自己的加密资产。"
       },
       "recoveryPhraseSetup": {
         "infoModal": {
@@ -1976,7 +1976,7 @@
         "label": "贷出加密货币",
         "title": "按照 Compound 复利协议借出资产",
         "description": "Compound 复利协议允许您在以太坊网络上贷出或借入资产。您可以直接通过您的 Ledger 账户贷出资产并赚取利息。",
-        "switchLabel": "我已阅读并同意该 <0><0>使用条款</0></0>。"
+        "switchLabel": "我已阅读并同意 <0><0>使用条款</0></0>。"
       },
       "info": {
         "1": {
@@ -3466,7 +3466,7 @@
   "Terms": {
     "title": "使用条款",
     "read": "阅读使用条款",
-    "switchLabelPrivacy": "我已经阅读并同意该<1>隐私政策</1>",
+    "switchLabelPrivacy": "我已阅读并同意 <1>隐私政策</1>",
     "switchLabel": "我已阅读并同意 <1>服务条款</1>",
     "cta": "进入 Ledger 应用程序"
   },
@@ -3585,7 +3585,7 @@
       },
       "banner": {
         "title": "探索我们的 Live 目录",
-        "description": "解锁一个加密可能性的新世界。一个能安全访问我们所有的服务 — Defi、NFTs 以及更多的未来功能。"
+        "description": "解锁一个充满加密可能性的新世界。一个能够让您安全地访问包含 DeFi 应用、NFT 在内的所有的智能服务。"
       },
       "twitterBanner": {
         "description": "告诉我们下一个您想要看到的带有哈希标签的服务",
@@ -3597,7 +3597,7 @@
       },
       "developerCTA": {
         "title": "面向开发者",
-        "description": "您所需要的将您的应用程序整合到 Ledger Live 的全部信息。"
+        "description": "在这里您能找到您所需要的、能将您的应用程序整合到 Ledger Live 的全部信息。"
       }
     }
   }
