@@ -156,6 +156,7 @@ export type Application = {
 export type App = {
   id: Id,
   name: string,
+  displayName: string,
   version: string,
   currencyId: ?string,
   description: ?string,

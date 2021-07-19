@@ -36,7 +36,7 @@ export const ServiceStatusProvider = ({
       incidents: serviceStatusSummary.incidents,
       updateTime: Date.now(),
     };
-  }, []);
+  }, [networkApi]);
 
   const [state, send] = useMachine(serviceStatusMachine, {
     services: {

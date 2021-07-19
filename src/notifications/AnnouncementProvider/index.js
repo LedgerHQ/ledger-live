@@ -85,7 +85,7 @@ export const AnnouncementProvider = ({
         updateTime: Date.now(),
       };
     },
-    [context, onNewAnnouncement]
+    [context, onNewAnnouncement, fetchApi]
   );
 
   const emitNewAnnouncement = useCallback(
