@@ -1,4 +1,5 @@
 // @flow
+import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
 import {
@@ -20,12 +21,16 @@ import type {
 } from "@ledgerhq/live-common/lib/families/polkadot/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/lib/currencies";
 import {
   getDefaultExplorerView,
   getAddressExplorer,
 } from "@ledgerhq/live-common/lib/explorers";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
-import { MAX_NOMINATIONS } from "@ledgerhq/live-common/lib/families/polkadot/logic";
+import {
+  MAX_NOMINATIONS,
+  hasMinimumBondBalance,
+} from "@ledgerhq/live-common/lib/families/polkadot/logic";
 import { PolkadotValidatorsRequired } from "@ledgerhq/live-common/lib/families/polkadot/errors";
 import {
   usePolkadotPreloadData,
@@ -130,7 +135,22 @@ function NominateSelectValidator({ navigation, route }: Props) {
     [polkadotResources.nominations],
   );
 
-  const { staking, validators: polkadotValidators } = usePolkadotPreloadData();
+  const preloaded = usePolkadotPreloadData();
+  const { staking, validators: polkadotValidators } = preloaded;
+  const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
+
+  const hasMinBondBalance = hasMinimumBondBalance(mainAccount);
+  const minBondBalance = formatCurrencyUnit(
+    mainAccount.unit,
+    minimumBondBalance,
+    {
+      disableRounding: true,
+      alwaysShowSign: false,
+      showCode: true,
+      discreet: false,
+    },
+  );
+
   const maxNominatorRewardedPerValidator =
     staking?.maxNominatorRewardedPerValidator || 300;
 
@@ -297,6 +317,14 @@ function NominateSelectValidator({ navigation, route }: Props) {
         }
         data={drawerInfo}
       />
+      {!hasMinBondBalance ? (
+        <Alert type="warning">
+          <Trans
+            i18nKey="polkadot.bondedBalanceBelowMinimum"
+            values={{ minimumBondBalance: minBondBalance }}
+          />
+        </Alert>
+      ) : null}
       {nonValidators.length ? (
         <Alert type="warning">
           <Trans

@@ -1,29 +1,37 @@
 // @flow
 
+import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "@react-navigation/native";
+
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 
 import type { Account } from "@ledgerhq/live-common/lib/types";
+import { hasMinimumBondBalance } from "@ledgerhq/live-common/lib/families/polkadot/logic";
 
-import invariant from "invariant";
-import { useTheme } from "@react-navigation/native";
-import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
+import InfoModal from "../../modals/Info";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
 import BondedIcon from "../../icons/LinkIcon";
 import UnbondingIcon from "../../icons/Clock";
 import Unbonded from "../../icons/Undelegate";
+import WarningIcon from "../../icons/Warning";
 
 type Props = {
   account: Account,
 };
 
-type InfoName = "available" | "locked" | "unlocking" | "unlocked";
+type InfoName =
+  | "available"
+  | "locked"
+  | "unlocking"
+  | "unlocked"
+  | "minBondWarning";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { colors } = useTheme();
@@ -58,6 +66,8 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const lockedBalance = _lockedBalance.minus(_unlockingBalance);
   const unlockingBalance = _unlockingBalance.minus(unlockedBalance);
 
+  const hasMinBondBalance = hasMinimumBondBalance(account);
+
   return (
     <ScrollView
       horizontal
@@ -83,8 +93,11 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       />
       {lockedBalance.gt(0) && (
         <InfoItem
+          warning={!hasMinBondBalance}
           title={t("polkadot.lockedBalance")}
-          onPress={onPressInfoCreator("locked")}
+          onPress={onPressInfoCreator(
+            hasMinBondBalance ? "locked" : "minBondWarning",
+          )}
           value={
             <CurrencyUnitValue
               unit={unit}
@@ -175,6 +188,13 @@ function useInfo(): { [key: InfoName]: ModalInfo[] } {
         Icon: () => <Unbonded color={colors.darkBlue} size={18} />,
         title: t("polkadot.info.unlocked.title"),
         description: t("polkadot.info.unlocked.description"),
+      },
+    ],
+    minBondWarning: [
+      {
+        Icon: () => <WarningIcon color={colors.orange} size={18} />,
+        title: t("polkadot.info.minBondWarning.title"),
+        description: t("polkadot.info.minBondWarning.description"),
       },
     ],
   };

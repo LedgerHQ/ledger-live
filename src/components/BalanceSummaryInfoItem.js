@@ -8,24 +8,32 @@ type Props = {
   onPress: () => void,
   title: React$Node,
   value: React$Node,
+  warning: ?boolean,
 };
 
 export default function BalanceSummaryInfoItem({
   onPress,
   title,
   value,
+  warning = false,
 }: Props) {
   const { colors } = useTheme();
+  const warningStyle = warning && {
+    color: colors.orange,
+  };
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={[styles.wrapper, { backgroundColor: colors.card }]}
+      style={[warningStyle, styles.wrapper, { backgroundColor: colors.card }]}
     >
-      <View style={styles.balanceLabelContainer}>
-        <LText style={styles.balanceLabel}>{title}</LText>
-        {onPress && <Info size={12} color={colors.grey} />}
+      <View style={[warningStyle, styles.balanceLabelContainer]}>
+        <LText style={[warningStyle, styles.balanceLabel]}>{title}</LText>
+        {onPress && (
+          <Info size={12} color={warningStyle ? colors.orange : colors.grey} />
+        )}
       </View>
-      <LText semiBold style={styles.balance} color="grey">
+      <LText semiBold style={[warningStyle, styles.balance]} color="grey">
         {value}
       </LText>
     </TouchableOpacity>
