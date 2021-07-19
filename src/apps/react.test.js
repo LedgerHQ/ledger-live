@@ -162,3 +162,53 @@ test("Apps hooks - useAppsSections - Correct number of installed apps with query
   );
   expect(result.current.device.length).toBe(1);
 });
+
+const mockedStateWithInstallQueue = {
+  ...initState(
+    mockListAppsResult(
+      "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash",
+      "Litecoin (outdated), Ethereum, Ethereum Classic",
+      deviceInfo155
+    )
+  ),
+  installQueue: ["Bitcoin", "Dogecoin"],
+};
+
+test('Apps hooks - useAppsSections - Sort "device" category apps with installing apps first', () => {
+  const options = {
+    query: "",
+    appFilter: "all",
+    sort: { type: "name", order: "desc" },
+  };
+  const { result: vanillaResult } = renderHook(() =>
+    useAppsSections(mockedState, options)
+  );
+  const { result: installQueueResult } = renderHook(() =>
+    useAppsSections(mockedStateWithInstallQueue, options)
+  );
+  // "catalog" and "update" categories should be similar with/without install queue
+  expect(vanillaResult.current.catalog).toMatchObject(
+    installQueueResult.current.catalog
+  );
+  expect(vanillaResult.current.update).toMatchObject(
+    installQueueResult.current.update
+  );
+  // "device" category should be sorted differently
+  expect(vanillaResult.current.device.map((elt) => elt.name)).toMatchObject([
+    // Installed apps
+    "Ethereum",
+    "Litecoin",
+    "Ethereum Classic",
+  ]);
+  expect(
+    installQueueResult.current.device.map((elt) => elt.name)
+  ).toMatchObject([
+    // Apps being installed
+    "Bitcoin",
+    "Dogecoin",
+    // Installed apps
+    "Ethereum",
+    "Litecoin",
+    "Ethereum Classic",
+  ]);
+});
