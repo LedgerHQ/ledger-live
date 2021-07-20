@@ -550,10 +550,13 @@
       "title": "确保您留有足够的余额，以便缴纳未来的交易费"
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "余额不能少于 1 DOT。发送最大值以清空账户"
+      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
     },
     "PolkadotBondMinimumAmount": {
-      "title": "您必须绑定至少 1 DOT"
+      "title": "You must bond at least {{minimumBondAmount}}."
+    },
+    "PolkadotBondMinimumAmountWarning": {
+      "title": "You bonded balance should be at least {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding": {
       "title": "您已超过了解绑限额"
@@ -3117,6 +3120,7 @@
     "unlockingBalance": "正在解绑余额",
     "unlockedBalance": "已解绑余额",
     "networkFees": "网络费用由 Polkadot 波卡共识协议自动设定，您无法在自己的设备上查看它们。",
+    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
     "info": {
       "available": {
         "title": "DOT 可用",
@@ -3137,6 +3141,10 @@
       "electionOpen": {
         "title": "正在推选验证器",
         "description": "正在推选新的验证器。因此，最多 15 分钟后方可进行权益质押操作。"
+      },
+      "minBondWarning": {
+        "title": "Not enough bonded",
+        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
       }
     },
     "nomination": {

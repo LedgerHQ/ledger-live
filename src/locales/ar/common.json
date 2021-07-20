@@ -550,10 +550,13 @@
       "title": "تأكد من وجود رصيد كافٍ متبقٍ لتغطية رسوم المعاملات المستقبلية"
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "لا يمكن أن يقل الرصيد عن 1 DOT. قم بإرسال الحد الأقصى لتفريغ الحساب"
+      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
     },
     "PolkadotBondMinimumAmount": {
-      "title": "يجب عليك تقيد 1 DOT على الأقل"
+      "title": "You must bond at least {{minimumBondAmount}}."
+    },
+    "PolkadotBondMinimumAmountWarning": {
+      "title": "You bonded balance should be at least {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding": {
       "title": "لقد تجاوزت الحد المسموح به لإلغاء التقيد"
@@ -3117,6 +3120,7 @@
     "unlockingBalance": "الرصيد الذي يتم إلغاء تقيده",
     "unlockedBalance": "الرصيد الغير مقيد",
     "networkFees": "يتم تعيين رسوم الشبكة تلقائيًا عن طريق بروتوكول إجماع Polkadot، لن تتمكن من مراجعتها على جهازك",
+    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
     "info": {
       "available": {
         "title": "DOT متاح",
@@ -3137,6 +3141,10 @@
       "electionOpen": {
         "title": "جاري انتخاب المدققين",
         "description": "يجري حاليًا انتخاب مدققين جدد. ولذلك، لن تكون عمليات الرهن متاحة لمدة 15 دقيقة بحد أقصى."
+      },
+      "minBondWarning": {
+        "title": "Not enough bonded",
+        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
       }
     },
     "nomination": {
