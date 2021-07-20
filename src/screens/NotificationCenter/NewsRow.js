@@ -59,7 +59,7 @@ export default function NewsRow({
     if (isDeepLink) {
       handler(url.href);
     } else Linking.openURL(url.href);
-  }, [handler, link.href, utmCampaign]);
+  }, [handler, link?.href, utmCampaign]);
 
   return (
     <View
