@@ -221,11 +221,16 @@ const legacyDerivations: $Shape<CryptoCurrencyConfig<DerivationMode[]>> = {
   bitcoin_cash: [],
   bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
-  ethereum: ["ethM", "ethMM"],
-  ethereum_classic: ["ethM", "etcM", "ethMM"],
+  ethereum_classic: ["etcM"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
+};
+
+const legacyDerivationsPerFamily: $Shape<
+  CryptoCurrencyConfig<DerivationMode[]>
+> = {
+  ethereum: ["ethM", "ethMM"],
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
@@ -411,10 +416,13 @@ export const getSeedIdentifierDerivation = (
 export const getDerivationModesForCurrency = (
   currency: CryptoCurrency
 ): DerivationMode[] => {
-  const all =
-    currency.id in legacyDerivations
-      ? legacyDerivations[currency.id].slice(0)
-      : [];
+  let all = [];
+  if (currency.family in legacyDerivationsPerFamily) {
+    all = all.concat(legacyDerivationsPerFamily[currency.family]);
+  }
+  if (currency.id in legacyDerivations) {
+    all = all.concat(legacyDerivations[currency.id]);
+  }
   if (currency.forkedFrom) {
     all.push("unsplit");
     if (currency.supportsSegwit) {

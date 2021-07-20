@@ -50,7 +50,11 @@ export const getDependents = (appName: string): string[] =>
 
 export const polyfillApplication = (app: Application): Application => {
   const crypto = listCryptoCurrencies(true, true).find(
-    (crypto) => app.name.toLowerCase() === crypto.managerAppName.toLowerCase()
+    (crypto) =>
+      app.name.toLowerCase() === crypto.managerAppName.toLowerCase() &&
+      (crypto.managerAppName !== "Ethereum" ||
+        // if it's ethereum, we have a specific case that we must only allow the Ethereum app
+        app.name === "Ethereum")
   );
   let o = app;
   if (crypto && !app.currencyId) {

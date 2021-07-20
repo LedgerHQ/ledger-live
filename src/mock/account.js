@@ -54,7 +54,7 @@ const hardcodedMarketcap = [
   "bitcoin_cash",
   "litecoin",
   "ethereum/erc20/usd_tether__erc20_",
-  "bnb",
+  "bsc",
   "eos",
   "stellar",
   "monero",
