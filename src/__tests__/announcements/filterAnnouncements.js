@@ -5,10 +5,13 @@ import {
   localizeAnnouncements,
 } from "../../notifications/AnnouncementProvider/logic";
 import api from "../test-helpers/announcements";
+import packageJSON from "../../../package.json";
 
 timemachine.config({
   dateString: "February 22, 2021 13:12:59",
 });
+
+jest.mock("../../../package.json");
 
 let rawAnnouncements;
 let announcements;
@@ -573,6 +576,170 @@ describe("filterAnnouncements", () => {
 
           expect(filtered).toStrictEqual(expected);
         });
+      });
+    });
+  });
+
+  describe("appVersion filters", () => {
+    beforeAll(() => {
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
+    });
+
+    afterAll(() => {
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
+    });
+
+    const context = {
+      language: "en",
+      currencies: ["bitcoin", "cosmos"],
+      getDate: () => new Date(),
+      appVersion: "2.41.2",
+    };
+
+    beforeEach(() => {
+      const appVersionsData = [["<=2.42.0", ">=3"], [], ["=2.41.3"]];
+      const rawAnnouncementsVersioned = rawAnnouncements.map(
+        (announcement, index) => ({
+          ...announcement,
+          appVersions: appVersionsData[index],
+        })
+      );
+
+      announcements = localizeAnnouncements(rawAnnouncementsVersioned, context);
+    });
+
+    describe("with context.appVersion = '2.41.2'", () => {
+      it("should return all matching announcements", () => {
+        const filtered = filterAnnouncements(announcements, context);
+        const expected = [
+          {
+            uuid: "announcement-id-a",
+            level: "info",
+            icon: "warning",
+            content: {
+              title: "Incoming cosmos fork",
+              text:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh felis, pom id...",
+              link: {
+                href: "https://ledger.com/there-is/an/incoming-cosmos-fork",
+                label: "Click here for more information on upcoming fork",
+              },
+            },
+            contextual: [],
+            published_at: "2019-09-29T00:00:00.000Z",
+            expired_at: "2021-03-06T00:00:00.000Z",
+            utm_campaign: "promo_feb2021",
+            currencies: ["cosmos"],
+            appVersions: ["<=2.42.0", ">=3"],
+          },
+          {
+            uuid: "announcement-id-b",
+            level: "info",
+            icon: "info",
+            content: {
+              title: "Incoming cosmos fork",
+              text:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh felis, pom id...",
+              link: {
+                href: "https://ledger.com/there-is/an/incoming-cosmos-fork",
+                label: "Click here for more information on upcoming fork",
+              },
+            },
+            contextual: [],
+            languages: ["en"],
+            published_at: "2019-10-31T00:00:00.000Z",
+            expired_at: "2021-04-06T00:00:00.000Z",
+            appVersions: [],
+          },
+        ];
+
+        expect(filtered).toStrictEqual(expected);
+      });
+    });
+  });
+
+  describe("liveCommonVersions filters", () => {
+    beforeAll(() => {
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
+      packageJSON.version = "12.41.2";
+    });
+
+    afterAll(() => {
+      timemachine.config({
+        dateString: "February 22, 2021 13:12:59",
+      });
+    });
+
+    const context = {
+      language: "en",
+      currencies: ["bitcoin", "cosmos"],
+      getDate: () => new Date(),
+    };
+
+    beforeEach(() => {
+      const liveCommonVersionsData = [["<=12.42.0", ">=13"], [], ["=12.41.3"]];
+      const rawAnnouncementsVersioned = rawAnnouncements.map(
+        (announcement, index) => ({
+          ...announcement,
+          liveCommonVersions: liveCommonVersionsData[index],
+        })
+      );
+
+      announcements = localizeAnnouncements(rawAnnouncementsVersioned, context);
+    });
+
+    describe("with current live-common version set to '12.41.2'", () => {
+      it("should return all matching announcements", () => {
+        const filtered = filterAnnouncements(announcements, context);
+        const expected = [
+          {
+            uuid: "announcement-id-a",
+            level: "info",
+            icon: "warning",
+            content: {
+              title: "Incoming cosmos fork",
+              text:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh felis, pom id...",
+              link: {
+                href: "https://ledger.com/there-is/an/incoming-cosmos-fork",
+                label: "Click here for more information on upcoming fork",
+              },
+            },
+            contextual: [],
+            published_at: "2019-09-29T00:00:00.000Z",
+            expired_at: "2021-03-06T00:00:00.000Z",
+            utm_campaign: "promo_feb2021",
+            currencies: ["cosmos"],
+            liveCommonVersions: ["<=12.42.0", ">=13"],
+          },
+          {
+            uuid: "announcement-id-b",
+            level: "info",
+            icon: "info",
+            content: {
+              title: "Incoming cosmos fork",
+              text:
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh felis, pom id...",
+              link: {
+                href: "https://ledger.com/there-is/an/incoming-cosmos-fork",
+                label: "Click here for more information on upcoming fork",
+              },
+            },
+            contextual: [],
+            languages: ["en"],
+            published_at: "2019-10-31T00:00:00.000Z",
+            expired_at: "2021-04-06T00:00:00.000Z",
+            liveCommonVersions: [],
+          },
+        ];
+
+        expect(filtered).toStrictEqual(expected);
       });
     });
   });
