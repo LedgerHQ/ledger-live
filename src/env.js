@@ -264,6 +264,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable an experimental implementation of USB support",
   },
+  EXPERIMENTAL_SWAP: {
+    def: false,
+    parser: boolParser,
+    desc: "enable an experimental swap interface",
+  },
   EXPLORER: {
     def: "https://explorers.api.live.ledger.com",
     parser: stringParser,
