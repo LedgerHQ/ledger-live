@@ -45,6 +45,7 @@ import swap from "./commands/swap";
 import sync from "./commands/sync";
 import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
+import user from "./commands/user";
 import validRecipient from "./commands/validRecipient";
 import version from "./commands/version";
 import walletconnect from "./commands/walletconnect";
@@ -97,6 +98,7 @@ export default {
   sync,
   testDetectOpCollision,
   testGetTrustedInputFromTxHash,
+  user,
   validRecipient,
   version,
   walletconnect,
