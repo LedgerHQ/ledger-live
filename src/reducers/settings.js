@@ -66,6 +66,7 @@ export type Privacy = {
 const colorScheme = Appearance.getColorScheme();
 
 export type Theme = "light" | "dark" | "dusk";
+export type LastSeenDevice = DeviceModelInfo & { id?: string, name?: string };
 
 export type SettingsState = {
   counterValue: string,
@@ -97,7 +98,7 @@ export type SettingsState = {
   carouselVisibility: number,
   discreetMode: boolean,
   language: string,
-  lastSeenDevice: ?DeviceModelInfo,
+  lastSeenDevice: ?LastSeenDevice,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -319,7 +320,7 @@ const handlers: Object = {
   }),
   LAST_SEEN_DEVICE_INFO: (
     state: SettingsState,
-    { payload: dmi }: { payload: DeviceModelInfo },
+    { payload: dmi }: { payload: LastSeenDevice },
   ) => ({
     ...state,
     lastSeenDevice: dmi,

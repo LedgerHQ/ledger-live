@@ -369,10 +369,12 @@ export function renderConnectYourDevice({
   unresponsive,
   device,
   theme,
+  extraContent,
 }: {
   ...RawProps,
   unresponsive: boolean,
   device: Device,
+  extraContent?: React$Node,
 }) {
   return (
     <View style={styles.wrapper}>
@@ -390,7 +392,12 @@ export function renderConnectYourDevice({
           })}
         />
       </View>
-      <LText style={styles.text} semiBold>
+      {device.deviceName && (
+        <LText style={[styles.text, styles.connectDeviceName]} semiBold>
+          {device.deviceName}
+        </LText>
+      )}
+      <LText style={[styles.text, styles.connectDeviceLabel]} semiBold>
         {t(
           unresponsive
             ? "DeviceAction.unlockDevice"
@@ -399,6 +406,7 @@ export function renderConnectYourDevice({
             : "DeviceAction.turnOnAndUnlockDevice",
         )}
       </LText>
+      {extraContent}
     </View>
   );
 }
@@ -526,6 +534,13 @@ const styles = StyleSheet.create({
   },
   connectDeviceContainer: {
     height: 100,
+  },
+  connectDeviceName: {
+    marginBottom: 8,
+    fontSize: 15,
+  },
+  connectDeviceLabel: {
+    fontSize: 20,
   },
   verifyAddress: {
     height: 72,
