@@ -72,7 +72,7 @@ export default function EditFeeUnitEthereum({
   const { gasPrice: serverGas } = networkInfo;
 
   return (
-    <View style={styles.root}>
+    <View>
       <View style={[styles.sliderContainer, { backgroundColor: colors.card }]}>
         <View style={styles.gasPriceHeader}>
           <LText style={styles.gasPriceLabel} semiBold>
@@ -111,9 +111,6 @@ export default function EditFeeUnitEthereum({
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   sliderContainer: {
     paddingLeft: 0,
   },
