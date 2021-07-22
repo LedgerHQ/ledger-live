@@ -62,7 +62,10 @@ function OperationDetailsExtra({
       const value = formatCurrencyUnit(
         account.unit,
         BigNumber(extra.frozenAmount),
-        { showCode: true, discreet },
+        {
+          showCode: true,
+          discreet,
+        },
       );
       return (
         <Section
@@ -75,7 +78,10 @@ function OperationDetailsExtra({
       const value = formatCurrencyUnit(
         account.unit,
         BigNumber(extra.unfreezeAmount),
-        { showCode: true, discreet },
+        {
+          showCode: true,
+          discreet,
+        },
       );
       return (
         <Section

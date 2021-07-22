@@ -13,12 +13,14 @@ type Props = BottomModalProps & {
   error: ?Error,
   onClose?: () => void,
   footerButtons?: React$Node,
+  hasExportLogButton?: boolean,
 };
 
 function GenericErrorBottomModal({
   error,
   onClose,
   footerButtons,
+  hasExportLogButton,
   ...otherProps
 }: Props) {
   const { colors } = useTheme();
@@ -31,7 +33,10 @@ function GenericErrorBottomModal({
     >
       {error ? (
         <View style={styles.root}>
-          <GenericErrorView error={error} />
+          <GenericErrorView
+            error={error}
+            hasExportLogButton={hasExportLogButton}
+          />
           {footerButtons ? (
             <View style={styles.buttonsContainer}>{footerButtons}</View>
           ) : null}

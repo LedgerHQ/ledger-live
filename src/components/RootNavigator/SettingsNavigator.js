@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import BenchmarkQRStream from "../../screens/BenchmarkQRStream";
+import DebugSwap from "../../screens/DebugSwap";
 import DebugBLE from "../../screens/DebugBLE";
 import DebugBLEBenchmark from "../../screens/DebugBLEBenchmark";
 import DebugCrash from "../../screens/DebugCrash";
@@ -143,6 +144,13 @@ export default function SettingsNavigator() {
         component={DebugExport}
         options={{
           title: "Export Accounts",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugSwap}
+        component={DebugSwap}
+        options={{
+          title: "Debug Swap",
         }}
       />
       <Stack.Screen

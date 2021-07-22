@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
-import type { AvailableProvider } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import { selectedTimeRangeSelector } from "../reducers/settings";
 
@@ -70,11 +69,6 @@ export const setReportErrors = (reportErrorsEnabled: boolean) => ({
 export const setAnalytics = (analyticsEnabled: boolean) => ({
   type: "SETTINGS_SET_ANALYTICS",
   analyticsEnabled,
-});
-
-export const setHasAcceptedSwapKYC = (hasAcceptedSwapKYC: boolean) => ({
-  type: "SETTINGS_SET_HAS_ACCEPTED_SWAP_KYC",
-  hasAcceptedSwapKYC,
 });
 
 export const setReadOnlyMode = (enabled: boolean) => ({
@@ -148,11 +142,6 @@ export const setAvailableUpdate = (enabled: boolean) => ({
   enabled,
 });
 
-export const setSwapProviders = (swapProviders?: AvailableProvider[]) => ({
-  type: "SETTINGS_SET_SWAP_PROVIDERS",
-  swapProviders,
-});
-
 export const setTheme = (payload: Theme) => ({
   type: "SETTINGS_SET_THEME",
   payload,
@@ -171,6 +160,27 @@ export const setDiscreetMode = (payload: boolean) => ({
 export const setLanguage = (payload: string) => ({
   type: "SETTINGS_SET_LANGUAGE",
   payload,
+});
+
+export const setSwapSelectableCurrencies = (
+  selectableCurrencies: string[],
+) => ({
+  type: "SET_SWAP_SELECTABLE_CURRENCIES",
+  payload: selectableCurrencies,
+});
+
+export const setSwapKYCStatus = (payload: {
+  provider: string,
+  id?: string,
+  status?: string,
+}) => ({
+  type: "SET_SWAP_KYC",
+  payload,
+});
+
+export const swapAcceptProvider = (providerId: string) => ({
+  type: "ACCEPT_SWAP_PROVIDER",
+  payload: providerId,
 });
 
 export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) => ({
