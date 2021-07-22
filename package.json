@@ -64,7 +64,7 @@
     "@ledgerhq/hw-app-xrp": "6.2.0",
     "@ledgerhq/hw-transport": "6.2.0",
     "@ledgerhq/hw-transport-http": "6.2.0",
-    "@ledgerhq/live-common": "^20.7.0",
+    "@ledgerhq/live-common": "^20.8.0",
     "@ledgerhq/logs": "6.2.0",
     "@ledgerhq/react-native-hid": "6.2.0",
     "@ledgerhq/react-native-hw-transport-ble": "6.2.0",
@@ -114,6 +114,7 @@
     "path-browserify": "1.0.1",
     "prando": "^5.1.2",
     "process": "^0.11.0",
+    "punycode": "^1.2.4",
     "qrloop": "^1.2.0",
     "querystring": "^0.2.0",
     "querystring-es3": "~0.2.0",
@@ -175,8 +176,7 @@
     "tty-browserify": "0.0.1",
     "url": "^0.11.0",
     "uuid": "^7.0.2",
-    "vm-browserify": "1.1.2",
-    "punycode": "^1.2.4"
+    "vm-browserify": "1.1.2"
   },
   "devDependencies": {
     "@actions/core": "^1.2.6",
