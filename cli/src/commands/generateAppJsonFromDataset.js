@@ -17,6 +17,7 @@ setPlatformVersion("0.0.1");
 setSupportedCurrencies([
   "bitcoin",
   "ethereum",
+  "bsc",
   "ripple",
   "bitcoin_cash",
   "litecoin",

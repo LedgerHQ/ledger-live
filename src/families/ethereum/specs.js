@@ -367,7 +367,53 @@ const ethereumRopsten: AppSpec<Transaction> = {
   mutations: ethereumBasicMutations({ maxAccount: 8 }),
 };
 
+const bsc: AppSpec<Transaction> = {
+  name: "BSC",
+  currency: getCryptoCurrencyById("bsc"),
+  appQuery: {
+    model: "nanoS",
+    appName: "Binance Smart Chain",
+  },
+  testTimeout: 2 * 60 * 1000,
+  transactionCheck: ({ maxSpendable }) => {
+    invariant(
+      maxSpendable.gt(
+        parseCurrencyUnit(getCryptoCurrencyById("bsc").units[0], "0.005")
+      ),
+      "balance is too low"
+    );
+  },
+  mutations: ethereumBasicMutations({ maxAccount: 8 }).concat([
+    {
+      name: "move some BEP20",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        const bep20Account = sample(
+          (account.subAccounts || []).filter((a) => a.balance.gt(0))
+        );
+        invariant(bep20Account, "no bep20 account");
+        const sibling = pickSiblings(siblings, 3);
+        const recipient = sibling.freshAddress;
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            { recipient, subAccountId: bep20Account.id },
+            Math.random() < 0.5
+              ? { useAllAmount: true }
+              : {
+                  amount: bep20Account.balance
+                    .times(Math.random())
+                    .integerValue(),
+                },
+          ],
+        };
+      },
+    },
+  ]),
+};
+
 export default {
+  bsc,
   ethereum,
   ethereumClassic,
   ethereumRopsten,

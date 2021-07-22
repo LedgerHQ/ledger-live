@@ -273,7 +273,12 @@ export async function bot({ currency, mutation }: Arg = {}) {
     }
 
     const successSpecNames = results
-      .filter((r) => (r.mutations || []).every((m) => !m.error))
+      .filter(
+        (r) =>
+          r.mutations &&
+          r.mutations.length > 0 &&
+          r.mutations.every((m) => !m.error)
+      )
       .map(({ spec }) => spec.name);
 
     if (successSpecNames && successSpecNames.length) {

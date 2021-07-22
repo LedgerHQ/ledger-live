@@ -25,6 +25,7 @@ window.getEnv = getEnv;
 setSupportedCurrencies([
   "bitcoin",
   "ethereum",
+  "bsc",
   "ripple",
   "bitcoin_cash",
   "litecoin",

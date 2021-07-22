@@ -41,6 +41,7 @@ import satstackStatus from "./commands/satstackStatus";
 import scanDescriptors from "./commands/scanDescriptors";
 import send from "./commands/send";
 import signMessage from "./commands/signMessage";
+import speculosList from "./commands/speculosList";
 import swap from "./commands/swap";
 import sync from "./commands/sync";
 import testDetectOpCollision from "./commands/testDetectOpCollision";
@@ -94,6 +95,7 @@ export default {
   scanDescriptors,
   send,
   signMessage,
+  speculosList,
   swap,
   sync,
   testDetectOpCollision,
