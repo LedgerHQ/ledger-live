@@ -1594,7 +1594,7 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "password": "Password lock",
       "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
-      "counterValue": "Countervalue",
+      "counterValue": "Preferred currency",
       "theme": "Theme",
       "themeDesc": "Set the app UI theme",
       "themes": {
@@ -3660,7 +3660,7 @@
         "title": "Discover our Live Catalog",
         "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
       },
-      "twitterBanner":  {
+      "twitterBanner": {
         "description": "Tell us what's the next service you want to see with the hashtag",
         "tweetText": "The next Ledger App should be..."
       },
