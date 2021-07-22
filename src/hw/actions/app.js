@@ -559,6 +559,7 @@ export const createAction = (
     const onRetry = useCallback(() => {
       // After an error we can't guarantee dependencies are resolved
       dependenciesResolvedRef.current = false;
+      latestFirmwareResolvedRef.current = false;
       setResetIndex((i) => i + 1);
       setState(getInitialState(device));
     }, [device]);
