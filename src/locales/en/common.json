@@ -262,6 +262,10 @@
       "title": "Firmware or app update needed",
       "description": "Please use the Manager to uninstall all apps then check if a firmware update is available before reinstalling them."
     },
+    "LatestFirmwareVersionRequired": {
+      "title": "Device update required on desktop",
+      "description": "Please update your Nano X firmware on Ledger Live Desktop"
+    },
     "GenuineCheckFailed": {
       "title": "Device authentication failed",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -499,6 +503,10 @@
     "UnavailableTezosOriginatedAccountSend": {
       "title": "Cannot send from subaccounts yet",
       "description": "This feature will be added at a later stage due to changes recently introduced by the Babylon update."
+    },
+    "AccessDeniedError": {
+      "title": "Ledger Live needs an update",
+      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre",
     },
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
@@ -1586,7 +1594,7 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "password": "Password lock",
       "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
-      "counterValue": "Countervalue",
+      "counterValue": "Preferred currency",
       "theme": "Theme",
       "themeDesc": "Set the app UI theme",
       "themes": {
@@ -1784,11 +1792,68 @@
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
       },
+      "unauthorizedRates": {
+        "cta": "Reset verification",
+        "banner": "Reset your KYC and update Live to swap with Wyre.",
+        "bannerCTA": "Reset KYC"
+      },
       "main": {
         "header": "Swap"
       },
       "kyc": {
-        "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes."
+        "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes.",
+        "cta": "Continue",
+        "wyre": {
+          "title": "Complete your KYC",
+          "subtitle": "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our Privacy Policy",
+          "pending": {
+            "cta": "Continue",
+            "title": "KYC submitted for approval",
+            "subtitle": "Your KYC has been submitted and is pending approval.",
+            "link": "Learn more about KYC"
+          },
+          "approved": {
+            "cta": "Continue",
+            "title": "KYC approved!",
+            "subtitle": "Your KYC has been submitted and has been approved.",
+            "link": "Learn more about KYC"
+          },
+          "closed": {
+            "cta": "Reset KYC",
+            "title": "KYC application rejected",
+            "subtitle": "Wyre rejected the data you provided for KYC purposes",
+            "link": "Learn more about KYC"
+          },
+          "form": {
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "street1": "Street Address Line 1",
+            "street2": "Street Address Line 2",
+            "city": "City",
+            "state": "State",
+            "country": "Country",
+            "postalCode": "Zip Code",
+            "dateOfBirth": "Date of birth",
+
+            "firstNamePlaceholder": "Enter your first name",
+            "lastNamePlaceholder": "Enter your last name",
+            "street1Placeholder": "Eg. 13, Maple street",
+            "street2Placeholder": "Eg. 13, Maple street",
+            "cityPlaceholder": "Eg. San José",
+            "postalCodePlaceholder": "Enter your 5 digit Zip code",
+            "statePlaceholder": "Select your state",
+            "dateOfBirthPlaceholder": "YYYY-MM-DD",
+
+            "firstNameError": "Enter your first name to continue",
+            "lastNameError": "Enter your last name to continue",
+            "street1Error": "Enter your address",
+            "cityError": "Enter the city you live in the USA",
+            "stateError": "Select your state to continue",
+            "postalCodeError": "Enter a valid US ZIP code",
+            "dateOfBirthError": "Enter your date of birth"
+          }
+        },
+        "states": "Select your state"
       },
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
@@ -3595,7 +3660,7 @@
         "title": "Discover our Live Catalog",
         "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
       },
-      "twitterBanner":  {
+      "twitterBanner": {
         "description": "Tell us what's the next service you want to see with the hashtag",
         "tweetText": "The next Ledger App should be..."
       },

@@ -2,11 +2,11 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 
+import Config from "react-native-config";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-
+import { useDispatch, useSelector } from "react-redux";
 import {
   getAccountUnit,
   getAccountCurrency,
@@ -16,10 +16,12 @@ import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/lib/currencies";
 import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
-import { getEnabledTradeMethods } from "@ledgerhq/live-common/lib/exchange/swap/logic";
+import { AccessDeniedError } from "@ledgerhq/live-common/lib/errors";
+import { getEnabledTradingMethods } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import { getExchangeRates } from "@ledgerhq/live-common/lib/exchange/swap";
-
-import { swapSupportedCurrenciesSelector } from "../../../../reducers/settings";
+import { swapKYCSelector } from "../../../../reducers/settings";
+import { setSwapKYCStatus } from "../../../../actions/settings";
+import type { SwapRouteParams } from ".";
 import KeyboardView from "../../../../components/KeyboardView";
 import LText from "../../../../components/LText";
 import getFontStyle from "../../../../components/LText/getFontStyle";
@@ -29,11 +31,11 @@ import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
 import TranslatedError from "../../../../components/TranslatedError";
 import Button from "../../../../components/Button";
 import ToggleButton from "../../../../components/ToggleButton";
+import Alert from "../../../../components/Alert";
 import Switch from "../../../../components/Switch";
+import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
 import { ScreenName } from "../../../../const";
-
 import Rate from "./Rate";
-import type { SwapRouteParams } from ".";
 
 type Props = {
   navigation: any,
@@ -43,26 +45,43 @@ type Props = {
 };
 
 const SwapFormAmount = ({ navigation, route }: Props) => {
-  const { exchange } = route.params;
+  const { exchange, providers, provider } = route.params;
   const { fromAccount, fromParentAccount, toAccount } = exchange;
+
+  const swapKYC = useSelector(swapKYCSelector);
+  const dispatch = useDispatch();
+  const providerKYC = swapKYC[provider];
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const fromUnit = getAccountUnit(fromAccount);
   const toUnit = getAccountUnit(toAccount);
   const [error, setError] = useState(null);
   const [rate, setRate] = useState(null);
+  const [
+    dismissedUnauthorizedRatesModal,
+    setDismissedUnauthorizedRatesModal,
+  ] = useState(false);
+  const [showUnauthorizedRates, setShowUnauthorizedRates] = useState(false);
   const [rateExpiration, setRateExpiration] = useState(null);
   const [useAllAmount, setUseAllAmount] = useState(false);
   const [maxSpendable, setMaxSpendable] = useState(BigNumber(0));
-  const selectableCurrencies = useSelector(swapSupportedCurrenciesSelector);
+
+  const onResetKYC = useCallback(() => {
+    dispatch(setSwapKYCStatus({ provider: "wyre" }));
+    navigation.replace(ScreenName.Swap);
+    setDismissedUnauthorizedRatesModal(true);
+    setShowUnauthorizedRates(false);
+  }, [dispatch, navigation]);
+
   const enabledTradeMethods = useMemo(
     () =>
-      getEnabledTradeMethods({
-        selectableCurrencies,
+      getEnabledTradingMethods({
+        providers,
+        provider,
         fromCurrency,
         toCurrency,
       }),
-    [fromCurrency, selectableCurrencies, toCurrency],
+    [fromCurrency, provider, providers, toCurrency],
   );
   const [tradeMethod, setTradeMethod] = useState<"fixed" | "float">(
     enabledTradeMethods[0] || "fixed",
@@ -134,13 +153,20 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
 
   useEffect(() => {
     let ignore = false;
+    const KYCUserId = Config.SWAP_OVERRIDE_KYC_USER_ID || providerKYC?.id;
     async function getRates() {
       try {
-        const rates = await getExchangeRates(exchange, transaction);
+        // $FlowFixMe No idea how to pass this
+        const rates = await getExchangeRates(exchange, transaction, KYCUserId);
         if (ignore) return;
-        let rate = rates.find(rate => rate.tradeMethod === tradeMethod);
-        rate = rate || rates.find(rate => !rate.tradeMethod); // Fixme, we need the trademethod even on error
+        const rate = rates.find(
+          rate =>
+            rate.tradeMethod === tradeMethod && rate.provider === provider,
+        );
         if (rate?.error) {
+          if (rate?.error && rate.error instanceof AccessDeniedError) {
+            setShowUnauthorizedRates(true);
+          }
           setError(rate.error);
         } else {
           setRate(rate); // FIXME when we have multiple providers this will not be enough
@@ -158,7 +184,17 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
     return () => {
       ignore = true;
     };
-  }, [exchange, fromAccount, toAccount, error, transaction, tradeMethod, rate]);
+  }, [
+    exchange,
+    fromAccount,
+    toAccount,
+    error,
+    transaction,
+    tradeMethod,
+    rate,
+    providerKYC?.id,
+    provider,
+  ]);
 
   const onContinue = useCallback(() => {
     navigation.navigate(ScreenName.SwapSummary, {
@@ -218,6 +254,16 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
 
   return (
     <KeyboardView style={styles.container}>
+      {dismissedUnauthorizedRatesModal ? (
+        <Alert
+          type="error"
+          learnMoreIsInternals
+          learnMoreKey={"transfer.swap.unauthorizedRates.bannerCTA"}
+          onLearnMore={onResetKYC}
+        >
+          <Trans i18nKey="transfer.swap.unauthorizedRates.banner" />
+        </Alert>
+      ) : null}
       <View style={styles.toggleWrapper}>
         <ToggleButton
           value={tradeMethod}
@@ -319,6 +365,28 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
             onPress={onContinue}
           />
         </View>
+        {showUnauthorizedRates ? (
+          <GenericErrorBottomModal
+            error={error}
+            hasExportLogButton={false}
+            onClose={() => {
+              setShowUnauthorizedRates(false);
+              setDismissedUnauthorizedRatesModal(true);
+            }}
+            footerButtons={
+              <View style={{ width: "100%" }}>
+                <Button
+                  flex={1}
+                  type="primary"
+                  title={
+                    <Trans i18nKey="transfer.swap.unauthorizedRates.cta" />
+                  }
+                  onPress={onResetKYC}
+                />
+              </View>
+            }
+          />
+        ) : null}
       </View>
     </KeyboardView>
   );
@@ -400,6 +468,31 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     display: "flex",
     marginBottom: 16,
+  },
+
+  title: {
+    paddingVertical: 20,
+    paddingHorizontal: 40,
+    lineHeight: 26,
+    fontSize: 16,
+
+    textAlign: "center",
+  },
+  subtitle: {
+    marginTop: -20,
+    paddingBottom: 20,
+    paddingHorizontal: 40,
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: "center",
+  },
+
+  modal: {
+    paddingTop: 40,
+    flexDirection: "column",
+    alignItems: "center",
+    minHeight: 280,
+    paddingHorizontal: 20,
   },
 });
 
