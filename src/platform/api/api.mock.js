@@ -53,6 +53,30 @@ const manifest: AppManifest[] = [
     domains: ["https://*"],
   },
   {
+    id: "lido",
+    name: "Lido",
+    url:
+      "https://ledger-live-platform-apps.vercel.app/app/dapp-browser?dappName=Lido&nanoApp=Lido&url=https%3A%2F%2Fstake.lido.fi%2F%3Fref%3D0x558247e365be655f9144e1a0140D793984372Ef3%26embed%3Dtrue",
+    homepageUrl: "https://lido.fi/",
+    icon: "https://cdn.live.ledger.com/icons/platform/lido.png",
+    platform: "all",
+    apiVersion: "0.0.1",
+    manifestVersion: "1",
+    branch: "stable",
+    categories: ["staking", "defi"],
+    currencies: ["ethereum"],
+    content: {
+      shortDescription: {
+        en: "Stake your ETH with Lido to earn daily staking rewards.",
+      },
+      description: {
+        en: "Stake your ETH with Lido to earn daily staking rewards.",
+      },
+    },
+    permissions: [],
+    domains: ["https://*"],
+  },
+  {
     id: "wyre_buy",
     name: "Wyre",
     url: "https://ledger-live-platform-apps.vercel.app/app/wyre",
@@ -225,29 +249,6 @@ const manifest: AppManifest[] = [
       },
       description: {
         en: "Exchange crypto via a Defi/DEX aggregator on Ethereum.",
-      },
-    },
-    permissions: [],
-    domains: [],
-  },
-  {
-    id: "lido",
-    name: "Lido",
-    url: "",
-    homepageUrl: "https://lido.fi/",
-    icon: "https://cdn.live.ledger.com/icons/platform/lido.png",
-    platform: "all",
-    apiVersion: "0.0.1",
-    manifestVersion: "1",
-    branch: "soon",
-    categories: ["staking", "defi"],
-    currencies: ["ethereum"],
-    content: {
-      shortDescription: {
-        en: "Stake any amount of Eth to Eth2 and earn daily staking rewards.",
-      },
-      description: {
-        en: "Stake any amount of Eth to Eth2 and earn daily staking rewards.",
       },
     },
     permissions: [],
