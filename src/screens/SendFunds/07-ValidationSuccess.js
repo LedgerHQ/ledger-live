@@ -11,8 +11,11 @@ import { ScreenName } from "../../const";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 import {
+  // $FlowFixMe
   context as _wcContext,
+  // $FlowFixMe
   setCurrentCallRequestResult,
+  // $FlowFixMe
   STATUS,
 } from "../WalletConnect/Provider";
 
