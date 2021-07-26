@@ -550,13 +550,13 @@
       "title": "Убедитесь, что вашего баланса достаточно, чтобы покрыть потенциальные комиссии"
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
+      "title": "Баланс не может быть ниже {{minimumBalance}}. Отправьте макс. количество, чтобы аннулировать счёт."
     },
     "PolkadotBondMinimumAmount": {
-      "title": "You must bond at least {{minimumBondAmount}}."
+      "title": "Вы должны заблокировать не менее {{minimumBondAmount}}."
     },
     "PolkadotBondMinimumAmountWarning": {
-      "title": "You bonded balance should be at least {{minimumBondBalance}}."
+      "title": "Заблокированных средств должно быть не менее {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding": {
       "title": "Вы превысили лимит по разблокировке"
@@ -1580,8 +1580,8 @@
     "display": {
       "title": "Общие",
       "desc": "Настройка общих параметров Ledger Live.",
-      "carousel": "Карусель",
-      "carouselDesc": "Показывать Портфель в формате карусели",
+      "carousel": "Карусель событий",
+      "carouselDesc": "Показывать карусель событий на странице Портфеля",
       "language": "Язык интерфейса",
       "languageDesc": "Выберите язык интерфейса в Ledger Live.",
       "password": "Блокировка паролем",
@@ -2367,7 +2367,7 @@
       "trc10": {
         "title": "Добавить токен",
         "disclaimer": "{{tokenName}} – это токен TRC10.\nПолучать токены можно непосредственно на счёт в сети Tron.",
-        "learnMore": "Подробнее о TRC20"
+        "learnMore": "Подробнее о TRC10"
       },
       "trc20": {
         "title": "Добавить токен",
@@ -3120,7 +3120,7 @@
     "unlockingBalance": "Разблокируем средства",
     "unlockedBalance": "Разблокированная сумма",
     "networkFees": "Поскольку комиссия устанавливается протоколом Polkadot автоматически, её невозможно будет просмотреть на устройстве",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "У вас не хватает заблокированных средств (мин. {{minimumBondBalance}}). Ваши назначения могут быть отозваны.",
     "info": {
       "available": {
         "title": "Доступные токены DOT",
@@ -3143,8 +3143,8 @@
         "description": "Сейчас идёт подбор новых валидаторов. Следовательно, операции в стейкинга доступны не более 15 минут."
       },
       "minBondWarning": {
-        "title": "Not enough bonded",
-        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
+        "title": "Недостаточно заблокированных средств",
+        "description": "У вас не хватает заблокированных средств, чтобы назначать валидаторов. Ваши назначения могут быть отозваны."
       }
     },
     "nomination": {

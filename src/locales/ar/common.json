@@ -550,13 +550,13 @@
       "title": "تأكد من وجود رصيد كافٍ متبقٍ لتغطية رسوم المعاملات المستقبلية"
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
+      "title": "لا يمكن أن يقل الرصيد عن {{minimumBalance}}. قم بإرسال الحد الأقصى لتفريغ الحساب."
     },
     "PolkadotBondMinimumAmount": {
-      "title": "You must bond at least {{minimumBondAmount}}."
+      "title": "يجب عليك تقييد مبلغ لا يقل عن {{minimumBondAmount}}."
     },
     "PolkadotBondMinimumAmountWarning": {
-      "title": "You bonded balance should be at least {{minimumBondBalance}}."
+      "title": "ينبغي ألا يقل رصيدك المقيّد عن {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding": {
       "title": "لقد تجاوزت الحد المسموح به لإلغاء التقيد"
@@ -3120,7 +3120,7 @@
     "unlockingBalance": "الرصيد الذي يتم إلغاء تقيده",
     "unlockedBalance": "الرصيد الغير مقيد",
     "networkFees": "يتم تعيين رسوم الشبكة تلقائيًا عن طريق بروتوكول إجماع Polkadot، لن تتمكن من مراجعتها على جهازك",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "رصيدك المقيد يقل عن الحد الأدنى الحالي البالغ {{minimumBondBalance}}. ترشيحاتك معرضة للحذف.",
     "info": {
       "available": {
         "title": "DOT متاح",
@@ -3143,8 +3143,8 @@
         "description": "يجري حاليًا انتخاب مدققين جدد. ولذلك، لن تكون عمليات الرهن متاحة لمدة 15 دقيقة بحد أقصى."
       },
       "minBondWarning": {
-        "title": "Not enough bonded",
-        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
+        "title": "المبلغ المقيد غير كافٍ",
+        "description": "رصيدك المقيد يقل عن الحد الأدنى الحالي المسموح به للترشيح. ترشيحاتك معرضة للحذف."
       }
     },
     "nomination": {

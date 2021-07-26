@@ -550,13 +550,13 @@
       "title": "确保您留有足够的余额，以便缴纳未来的交易费"
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
+      "title": "余额不能少于 {{minimumBalance}}。发送最大值以清空账户"
     },
     "PolkadotBondMinimumAmount": {
-      "title": "You must bond at least {{minimumBondAmount}}."
+      "title": "您必须至少绑定 {{minimumBondAmount}}。"
     },
     "PolkadotBondMinimumAmountWarning": {
-      "title": "You bonded balance should be at least {{minimumBondBalance}}."
+      "title": "您的已绑定余额不能少于 {{minimumBondBalance}}。"
     },
     "PolkadotMaxUnbonding": {
       "title": "您已超过了解绑限额"
@@ -1120,7 +1120,7 @@
       "step2-restore": "同时按下两个按钮以选择 <1><1>Restore from recovery phrase.</1></1> (通过恢复短语进行还原)",
       "step3": "按左边或右边的按钮以选择数位。同时按下两个按钮以确认。",
       "step4prefix": "选取",
-      "step4suffix1": " 确认您的 PIN 识别密码。",
+      "step4suffix1": "确认您的 PIN 识别密码。",
       "step4suffix2": "删除末位数字。",
       "modal": {
         "step1": "总是 <1><1>亲自</1></1> 选择自己的 PIN 识别密码",
@@ -3120,7 +3120,7 @@
     "unlockingBalance": "正在解绑余额",
     "unlockedBalance": "已解绑余额",
     "networkFees": "网络费用由 Polkadot 波卡共识协议自动设定，您无法在自己的设备上查看它们。",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "您的已绑定余额低于 {{minimumBondBalance}} 的最低额度。您的提名有被移除的风险。",
     "info": {
       "available": {
         "title": "DOT 可用",
@@ -3143,8 +3143,8 @@
         "description": "正在推选新的验证器。因此，最多 15 分钟后方可进行权益质押操作。"
       },
       "minBondWarning": {
-        "title": "Not enough bonded",
-        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
+        "title": "已绑定余额不足",
+        "description": "您的已绑定余额低于提名所需的最低额度。您的提名有被移除的风险。"
       }
     },
     "nomination": {
