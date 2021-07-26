@@ -82,6 +82,10 @@ export const urls = {
         main: "https://changelly.com/",
         tos: "https://changelly.com/terms-of-use",
       },
+      wyre: {
+        main: "https://support.sendwyre.com/hc/en-us/requests/new",
+        tos: "https://www.sendwyre.com/user-agreement/",
+      },
     },
   },
   // Banners

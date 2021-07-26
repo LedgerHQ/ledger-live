@@ -19,14 +19,23 @@ const PendingOperation = () => {
   const { colors } = useTheme();
   const navigation = useNavigation();
   const route = useRoute();
+  const {
+    swapId,
+    provider,
+    targetCurrency,
+    operation,
+    fromAccount,
+    fromParentAccount,
+  } = route.params;
 
   const onComplete = useCallback(() => {
-    navigation.navigate(ScreenName.SwapFormOrHistory, {
-      screen: ScreenName.SwapHistory,
+    navigation.navigate(ScreenName.OperationDetails, {
+      accountId: fromAccount.id,
+      parentId: fromParentAccount && fromParentAccount.id,
+      operation,
+      key: operation.id,
     });
-  }, [navigation]);
-
-  const { swapId, provider, targetCurrency } = route.params;
+  }, [fromAccount.id, fromParentAccount, navigation, operation]);
 
   return (
     <SafeAreaView

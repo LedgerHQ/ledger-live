@@ -3,7 +3,6 @@
 import React, { useCallback, useMemo } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/dist/Ionicons";
 
@@ -22,6 +21,7 @@ import type {
   ExchangeRate,
 } from "@ledgerhq/live-common/lib/exchange/swap/types";
 import type { CurrenciesStatus } from "@ledgerhq/live-common/lib/exchange/swap/logic";
+import { getSupportedCurrencies } from "@ledgerhq/live-common/lib/exchange/swap/logic";
 import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
@@ -40,7 +40,6 @@ import SectionSeparator, {
 import CurrencyIcon from "../../../../components/CurrencyIcon";
 import LText from "../../../../components/LText";
 import Button from "../../../../components/Button";
-import { flattenedSwapSupportedCurrenciesSelector } from "../../../../reducers/settings";
 import { TrackScreen } from "../../../../analytics";
 
 type SelectAccountFlowTarget = "from" | "to";
@@ -53,6 +52,7 @@ export type SwapRouteParams = {
   status?: TransactionStatus,
   selectedCurrency: CryptoCurrency | TokenCurrency,
   providers: any,
+  provider: any,
   installedApps: any,
   target: "from" | "to",
   rateExpiration?: Date,
@@ -66,10 +66,12 @@ export type DeviceMeta = {
 
 const Form = ({
   providers,
+  provider,
   defaultAccount,
   defaultParentAccount,
 }: {
   providers: any,
+  provider: any,
   defaultAccount: ?AccountLike,
   defaultParentAccount: ?Account,
 }) => {
@@ -77,9 +79,7 @@ const Form = ({
   const { colors } = useTheme();
   const { navigate } = useNavigation();
   const route = useRoute();
-  const flattenedCurrencies = useSelector(
-    flattenedSwapSupportedCurrenciesSelector,
-  );
+  const selectableCurrencies = getSupportedCurrencies({ providers, provider });
 
   const exchange = useMemo(
     () =>
@@ -95,25 +95,26 @@ const Form = ({
   const fromCurrency = fromAccount ? getAccountCurrency(fromAccount) : null;
   const toCurrency = toAccount ? getAccountCurrency(toAccount) : null;
 
-  // FIXME it's dangerous to assume all pairs are compatible in at least one tradeMethod
-  // this will not scale well
   const startSelectAccountFlow = useCallback(
     (target: SelectAccountFlowTarget) => {
       navigate(ScreenName.SwapFormSelectCrypto, {
         target,
         providers,
+        provider,
         exchange: exchange || {},
-        selectableCurrencies: flattenedCurrencies,
+        selectableCurrencies,
       });
     },
-    [navigate, providers, exchange, flattenedCurrencies],
+    [navigate, providers, provider, exchange, selectableCurrencies],
   );
 
   const onContinue = useCallback(() => {
     navigate(ScreenName.SwapFormAmount, {
       ...route.params,
+      providers,
+      provider,
     });
-  }, [navigate, route.params]);
+  }, [navigate, provider, providers, route.params]);
 
   const onParaswapCta = useCallback(() => {
     navigate(ScreenName.PlatformApp, {

@@ -12,7 +12,7 @@ import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import { isCurrencySupported } from "../screens/Exchange/coinifyConfig";
 
 import {
-  flattenedSwapSupportedCurrenciesSelector,
+  swapSelectableCurrenciesSelector,
   readOnlyModeEnabledSelector,
 } from "../reducers/settings";
 import { accountsCountSelector } from "../reducers/accounts";
@@ -38,7 +38,7 @@ function FabAccountActions({ account, parentAccount }: FabAccountActionsProps) {
 
   const currency = getAccountCurrency(account);
   const availableOnSwap = useSelector(state =>
-    flattenedSwapSupportedCurrenciesSelector(state),
+    swapSelectableCurrenciesSelector(state),
   );
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
@@ -69,13 +69,13 @@ function FabAccountActions({ account, parentAccount }: FabAccountActionsProps) {
           },
         ]
       : []),
-    ...(availableOnSwap.includes(currency)
+    ...(availableOnSwap.includes(currency.id)
       ? [
           {
             navigationParams: [
               NavigatorName.Swap,
               {
-                screen: ScreenName.SwapFormOrHistory,
+                screen: ScreenName.Swap,
                 params: {
                   defaultAccount: account,
                   defaultParentAccount: parentAccount,
@@ -142,7 +142,7 @@ function FabActions({ account, parentAccount }: Props) {
             navigationParams: [
               NavigatorName.Swap,
               {
-                screen: ScreenName.SwapFormOrHistory,
+                screen: ScreenName.Swap,
               },
             ],
           },

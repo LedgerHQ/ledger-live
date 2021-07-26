@@ -57,11 +57,11 @@ export default <Item>(opts: Opts<Item>) => {
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<{
-    selectedKey: string,
+    selectedKey?: string,
     items: Item[],
     onValueChange: (Item, *) => void,
     navigation: any,
-    cancelNavigateBack: ?boolean,
+    cancelNavigateBack?: boolean,
   }> {
     onPress = (item: Item) => {
       const { navigation, onValueChange, cancelNavigateBack } = this.props;

@@ -72,7 +72,6 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
     parentAccount,
     route.params,
     transaction,
-    gasLimit,
     gasPrice,
   ]);
 
@@ -89,7 +88,10 @@ export default function EthereumCustomFees({ navigation, route }: Props) {
         }}
       />
 
-      <SectionSeparator lineColor={colors.fog} />
+      <SectionSeparator
+        style={styles.sectionSeparator}
+        lineColor={colors.fog}
+      />
 
       <View style={styles.container}>
         <EthereumGasLimit
@@ -124,9 +126,11 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   container: {
-    flex: 4,
+    flex: 1,
   },
-
+  sectionSeparator: {
+    marginTop: 16,
+  },
   accountContainer: {
     flex: 1,
     flexDirection: "row",

@@ -550,10 +550,13 @@
       "title": "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "Le solde ne peut pas être inférieur à 1 DOT. Choisissez Max pour vider le compte."
+      "title": "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
     },
     "PolkadotBondMinimumAmount": {
-      "title": "Vous devez lier au moins 1 DOT."
+      "title": "Vous devez lier au moins {{minimumBondAmount}}."
+    },
+    "PolkadotBondMinimumAmountWarning": {
+      "title": "Votre solde lié doit être d'au moins {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding": {
       "title": "Vous avez dépassé la limite autorisée pour l'arrêt de liaison."
@@ -811,7 +814,7 @@
           },
           "1": {
             "title": "Naviguer",
-            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. Utilisez les boutons gauche et droit pour naviguer."
+            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. "
           },
           "2": {
             "title": "Choisir \"Set up as new device\"",
@@ -986,7 +989,7 @@
           },
           "1": {
             "title": "Naviguer",
-            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. Utilisez les boutons gauche et droit pour naviguer."
+            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. "
           },
           "2": {
             "title": "Choisir \"Restore from recovery phrase\"",
@@ -1587,9 +1590,9 @@
       "theme": "Thème",
       "themeDesc": "Définissez le thème de l'interface utilisateur",
       "themes": {
-        "dark": "Dark",
-        "dusk": "Dusk",
-        "light": "Light"
+        "dark": "Sombre",
+        "dusk": "Crépuscule",
+        "light": "Clair"
       },
       "counterValueDesc": "Choisissez la devise dans laquelle afficher votre solde et vos opérations.",
       "exchange": "Fournisseur du taux de change",
@@ -3117,6 +3120,7 @@
     "unlockingBalance": "Solde en fin de liaison",
     "unlockedBalance": "Solde délié",
     "networkFees": "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
+    "bondedBalanceBelowMinimum": "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d'être supprimées.",
     "info": {
       "available": {
         "title": "DOT disponible",
@@ -3137,6 +3141,10 @@
       "electionOpen": {
         "title": "Élection des validateurs en cours",
         "description": "L'élection de nouveaux validateurs est en cours. Les opérations de staking sont donc indisponibles pendant 15 minutes."
+      },
+      "minBondWarning": {
+        "title": "Solde lié insuffisant",
+        "description": "Votre solde lié est inférieur au minimum requis pour faire des nominations. Vos nominations risquent d'être supprimées."
       }
     },
     "nomination": {
