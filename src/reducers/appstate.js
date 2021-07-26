@@ -6,11 +6,11 @@ import { NetworkDown } from "@ledgerhq/errors";
 import type { State } from ".";
 
 export type AsyncState = {
-  isConnected: boolean,
+  isConnected: boolean | null,
 };
 
 export type AppState = {
-  isConnected: boolean,
+  isConnected: boolean | null,
 };
 
 const initialState: AppState = {
@@ -20,7 +20,7 @@ const initialState: AppState = {
 const handlers: Object = {
   SYNC_IS_CONNECTED: (
     state: AppState,
-    { isConnected }: { isConnected: boolean },
+    { isConnected }: { isConnected: boolean | null },
   ) => ({
     isConnected,
   }),

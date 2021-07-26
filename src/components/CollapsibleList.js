@@ -5,7 +5,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
 } from "react-native";
-import Animated, { Easing } from "react-native-reanimated";
+import Animated, { EasingNode } from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
 import Chevron from "../icons/Chevron";
@@ -19,7 +19,7 @@ const {
   timing,
   Clock,
   Value,
-  interpolate,
+  interpolateNode,
   eq,
 } = Animated;
 
@@ -40,7 +40,7 @@ export const runCollapse = (clock, value, dest) => {
   const config = {
     duration: new Value(200),
     toValue: new Value(1),
-    easing: Easing.inOut(Easing.quad),
+    easing: EasingNode.inOut(EasingNode.quad),
   };
 
   return block([
@@ -114,13 +114,13 @@ const CollapsibleList = ({
   );
 
   // interpolated height from opening anim state for list container
-  const height = interpolate(openingAnim, {
+  const height = interpolateNode(openingAnim, {
     inputRange: [0, 1],
     outputRange: [itemHeight, 61 + itemHeight * data.length],
   });
 
   // interpolated rotation from opening anim state for chevron icon
-  const rotateZ = interpolate(openingAnim, {
+  const rotateZ = interpolateNode(openingAnim, {
     inputRange: [0, 1],
     outputRange: [-Math.PI / 2, 0],
   });

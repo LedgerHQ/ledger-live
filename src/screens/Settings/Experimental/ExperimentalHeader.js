@@ -11,7 +11,7 @@ import LText from "../../../components/LText";
 import ExperimentalIcon from "../../../icons/Experimental";
 import { rejections } from "../../../logic/debugReject";
 
-const { cond, set, Clock, Value, interpolate, eq } = Animated;
+const { cond, set, Clock, Value, interpolateNode, eq } = Animated;
 
 function ExperimentalHeader({ isExperimental }: { isExperimental: boolean }) {
   const { colors } = useTheme();
@@ -39,7 +39,7 @@ function ExperimentalHeader({ isExperimental }: { isExperimental: boolean }) {
   );
 
   // interpolated height from opening anim state for list container
-  const height = interpolate(openingAnim, {
+  const height = interpolateNode(openingAnim, {
     inputRange: [0, 1],
     outputRange: [0, Platform.OS === "ios" ? 70 : 30],
     extrapolate: Extrapolate.CLAMP,

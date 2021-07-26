@@ -8,7 +8,7 @@ import {
   SafeAreaView,
   View,
 } from "react-native";
-import Animated, { interpolate } from "react-native-reanimated";
+import Animated, { interpolateNode } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import type { SectionBase } from "react-native/Libraries/Lists/SectionList";
 import type { Operation } from "@ledgerhq/live-common/lib/types";
@@ -92,7 +92,7 @@ export default function PortfolioScreen({ navigation }: Props) {
 
   function StickyActions() {
     const offset = 410;
-    const top = interpolate(scrollY, {
+    const top = interpolateNode(scrollY, {
       inputRange: [offset, offset + 56],
       outputRange: [0, 56],
       extrapolate: "clamp",
