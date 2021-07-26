@@ -20,6 +20,7 @@ type Props = {
   onModalHide?: () => void,
   onResult?: $PropertyType<React$ElementProps<typeof DeviceAction>, "onResult">,
   renderOnResult?: (p: any) => React$Node,
+  onSelectDeviceLink?: () => void,
 };
 
 export default function DeviceActionModal({
@@ -30,6 +31,7 @@ export default function DeviceActionModal({
   onResult,
   renderOnResult,
   onModalHide,
+  onSelectDeviceLink,
 }: Props) {
   const { colors } = useTheme();
   return (
@@ -50,6 +52,7 @@ export default function DeviceActionModal({
                 onClose={onClose}
                 onResult={onResult}
                 renderOnResult={renderOnResult}
+                onSelectDeviceLink={onSelectDeviceLink}
               />
             </View>
           }

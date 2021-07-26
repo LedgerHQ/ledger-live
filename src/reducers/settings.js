@@ -20,6 +20,7 @@ import type {
   AccountLike,
   TokenCurrency,
 } from "@ledgerhq/live-common/lib/types";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
 import Config from "react-native-config";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
@@ -66,8 +67,6 @@ export type Privacy = {
 const colorScheme = Appearance.getColorScheme();
 
 export type Theme = "light" | "dark" | "dusk";
-export type LastSeenDevice = DeviceModelInfo & { id?: string, name?: string };
-
 export type SettingsState = {
   counterValue: string,
   counterValueExchange: ?string,
@@ -98,7 +97,8 @@ export type SettingsState = {
   carouselVisibility: number,
   discreetMode: boolean,
   language: string,
-  lastSeenDevice: ?LastSeenDevice,
+  lastSeenDevice: ?DeviceModelInfo,
+  lastConnectedDevice: ?Device,
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -128,6 +128,7 @@ export const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   language: "en",
   lastSeenDevice: null,
+  lastConnectedDevice: null,
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -320,10 +321,17 @@ const handlers: Object = {
   }),
   LAST_SEEN_DEVICE_INFO: (
     state: SettingsState,
-    { payload: dmi }: { payload: LastSeenDevice },
+    { payload: dmi }: { payload: DeviceModelInfo },
   ) => ({
     ...state,
     lastSeenDevice: dmi,
+  }),
+  SET_LAST_CONNECTED_DEVICE: (
+    state: SettingsState,
+    { payload: lastConnectedDevice }: { payload: Device },
+  ) => ({
+    ...state,
+    lastConnectedDevice,
   }),
 };
 
@@ -528,3 +536,6 @@ export const languageSelector = (state: State) => state.settings.language;
 
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
+
+export const lastConnectedDeviceSelector = (state: State) =>
+  state.settings.lastConnectedDevice;

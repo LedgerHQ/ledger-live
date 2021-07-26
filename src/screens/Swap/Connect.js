@@ -10,6 +10,7 @@ import SelectDevice from "../../components/SelectDevice";
 import DeviceActionModal from "../../components/DeviceActionModal";
 import LText from "../../components/LText";
 import { TrackScreen } from "../../analytics";
+import SkipSelectDevice from "../SkipSelectDevice";
 
 const action = createAction(connectManager);
 
@@ -32,6 +33,7 @@ const Connect = ({ setResult }: { setResult: (result: any) => void }) => {
       <LText semiBold style={styles.selectDevice}>
         <Trans i18nKey={"transfer.swap.selectDevice"} />
       </LText>
+      <SkipSelectDevice onResult={setDevice} />
       <SelectDevice onSelect={setDevice} autoSelectOnAdd />
       <DeviceActionModal
         onClose={setDevice}
@@ -40,6 +42,7 @@ const Connect = ({ setResult }: { setResult: (result: any) => void }) => {
         onResult={setLocalResult}
         action={action}
         request={null}
+        onSelectDeviceLink={() => setDevice()}
       />
     </View>
   );

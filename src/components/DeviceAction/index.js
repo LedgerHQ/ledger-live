@@ -32,7 +32,7 @@ type Props<R, H, P> = {
   action: Action<R, H, P>,
   request?: R,
   device: Device,
-  connectDeviceExtraContent?: React$Node,
+  onSelectDeviceLink?: () => void,
 };
 
 export default function DeviceAction<R, H, P>({
@@ -42,7 +42,7 @@ export default function DeviceAction<R, H, P>({
   onResult,
   onError,
   renderOnResult,
-  connectDeviceExtraContent,
+  onSelectDeviceLink,
 }: Props<R, H, P>) {
   const { colors, dark } = useTheme();
   const theme = dark ? "dark" : "light";
@@ -202,7 +202,7 @@ export default function DeviceAction<R, H, P>({
       unresponsive,
       colors,
       theme,
-      extraContent: connectDeviceExtraContent,
+      onSelectDeviceLink,
     });
   }
 

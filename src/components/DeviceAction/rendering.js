@@ -19,6 +19,7 @@ import getDeviceAnimation from "./getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../screens/Manager/Manager";
+import ExternalLink from "../ExternalLink";
 
 type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string,
@@ -369,12 +370,12 @@ export function renderConnectYourDevice({
   unresponsive,
   device,
   theme,
-  extraContent,
+  onSelectDeviceLink,
 }: {
   ...RawProps,
   unresponsive: boolean,
   device: Device,
-  extraContent?: React$Node,
+  onSelectDeviceLink?: () => void,
 }) {
   return (
     <View style={styles.wrapper}>
@@ -406,7 +407,15 @@ export function renderConnectYourDevice({
             : "DeviceAction.turnOnAndUnlockDevice",
         )}
       </LText>
-      {extraContent}
+      {onSelectDeviceLink ? (
+        <View style={styles.connectDeviceExtraContentWrapper}>
+          <ExternalLink
+            text={"Use another device"}
+            onPress={onSelectDeviceLink}
+            event={""}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }
@@ -544,5 +553,8 @@ const styles = StyleSheet.create({
   },
   verifyAddress: {
     height: 72,
+  },
+  connectDeviceExtraContentWrapper: {
+    marginTop: 36,
   },
 });

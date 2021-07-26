@@ -1,6 +1,6 @@
 // @flow
 import invariant from "invariant";
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
@@ -39,10 +39,17 @@ type RouteParams = {
   onError: (error: Error) => void,
 };
 
-function ConnectDevice({ route }: Props) {
+function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
+
+  const navigateToSelectDevice = useCallback(() => {
+    navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
+      ...route.params,
+      forceSelectDevice: true,
+    });
+  }, [navigation, route.name, route.params]);
 
   const { appName, onSuccess } = route.params;
 
@@ -78,6 +85,7 @@ function ConnectDevice({ route }: Props) {
         }}
         device={route.params.device}
         onResult={handleTx}
+        onSelectDeviceLink={navigateToSelectDevice}
       />
     </SafeAreaView>
   ) : null;

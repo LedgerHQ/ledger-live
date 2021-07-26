@@ -1,6 +1,6 @@
 // @flow
 import invariant from "invariant";
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
@@ -38,6 +38,13 @@ export default function ConnectDevice({ route, navigation }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
 
+  const navigateToSelectDevice = useCallback(() => {
+    navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
+      ...route.params,
+      forceSelectDevice: true,
+    });
+  }, [navigation, route]);
+
   const onResult = result => {
     if (result.error) {
       navigation.navigate(ScreenName.SignValidationError, {
@@ -66,6 +73,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
             message: route.params.message,
           }}
           device={route.params.device}
+          onSelectDeviceLink={navigateToSelectDevice}
           onResult={onResult}
         />
       </SafeAreaView>

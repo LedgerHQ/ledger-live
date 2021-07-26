@@ -1,10 +1,11 @@
 // @flow
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
+
 import { getMainAccount } from "@ledgerhq/live-common/lib/account";
 import type {
   Transaction,
@@ -17,7 +18,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/lib/bridge/useBridgeTran
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "../reducers/accounts";
 import DeviceAction from "../components/DeviceAction";
-import ExternalLink from "../components/ExternalLink";
 import { renderLoading } from "../components/DeviceAction/rendering";
 import { useSignedTxHandler } from "../logic/screenTransactionHooks";
 import { TrackScreen } from "../analytics";
@@ -75,10 +75,10 @@ export default function ConnectDevice({ route, navigation }: Props) {
   );
 
   const navigateToSelectDevice = useCallback(() => {
-    navigation.navigate(
-      route.name.replace("ConnectDevice", "SelectDevice"),
-      route.params,
-    );
+    navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
+      ...route.params,
+      forceSelectDevice: true,
+    });
   }, [navigation, route]);
 
   const extraProps = onSuccess
@@ -111,17 +111,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
               tokenCurrency,
             }}
             device={route.params.device}
-            connectDeviceExtraContent={
-              route.params.selectDeviceLink && (
-                <View style={styles.connectDeviceExtraContentWrapper}>
-                  <ExternalLink
-                    text={"Use another device"}
-                    onPress={navigateToSelectDevice}
-                    event={""}
-                  />
-                </View>
-              )
-            }
+            onSelectDeviceLink={navigateToSelectDevice}
             {...extraProps}
           />
         </SafeAreaView>
@@ -136,8 +126,5 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     padding: 16,
-  },
-  connectDeviceExtraContentWrapper: {
-    marginTop: 36,
   },
 });
