@@ -506,7 +506,7 @@
     },
     "AccessDeniedError": {
       "title": "Ledger Live needs an update",
-      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre",
+      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre"
     },
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
