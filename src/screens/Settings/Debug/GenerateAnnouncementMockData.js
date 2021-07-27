@@ -31,6 +31,8 @@ export default function AddMockAnnouncementButton({
 
   const [announcementLink, setAnnouncementLink] = useState();
   const [notifPlatform, setNotifPlatform] = useState("");
+  const [notifAppVersions, setNotifAppVersions] = useState("");
+  const [notifLiveCommonVersions, setNotifLiveCommonVersions] = useState("");
   const [notifCurrencies, setNotifCurrencies] = useState("");
   const [notifDeviceVersion, setNotifDeviceVersion] = useState("");
   const [notifDeviceModelId, setNotifDeviceModelId] = useState("");
@@ -44,6 +46,8 @@ export default function AddMockAnnouncementButton({
     const params = {
       currencies: formatInputValue(notifCurrencies),
       platforms: formatInputValue(notifPlatform),
+      appVersions: formatInputValue(notifAppVersions),
+      liveCommonVersions: formatInputValue(notifLiveCommonVersions),
       languages: formatInputValue(notifLanguages),
     };
 
@@ -86,6 +90,8 @@ export default function AddMockAnnouncementButton({
     notifDeviceVersion,
     notifLanguages,
     notifPlatform,
+    notifAppVersions,
+    notifLiveCommonVersions,
     onClose,
     updateCache,
   ]);
@@ -131,6 +137,20 @@ export default function AddMockAnnouncementButton({
           placeholder="languages separated by ','"
           value={notifLanguages}
           onChangeText={setNotifLanguages}
+        />
+
+        <TextInput
+          style={styles.textInput}
+          placeholder="app versions separated by ','"
+          value={notifAppVersions}
+          onChangeText={setNotifAppVersions}
+        />
+
+        <TextInput
+          style={styles.textInput}
+          placeholder="live-common versions separated by ','"
+          value={notifLiveCommonVersions}
+          onChangeText={setNotifLiveCommonVersions}
         />
 
         <TextInput
