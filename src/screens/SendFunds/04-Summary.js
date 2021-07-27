@@ -5,7 +5,6 @@ import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import Config from "react-native-config";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import {
   getMainAccount,
@@ -33,7 +32,6 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import Info from "../../icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
-import { lastSeenDeviceSelector } from "../../reducers/settings";
 
 const forceInset = { bottom: "always" };
 
@@ -56,8 +54,7 @@ export type RouteParams = {
 
 const defaultParams = {
   currentNavigation: ScreenName.SendSummary,
-  // nextNavigation: ScreenName.SendSelectDevice,
-  nextNavigation: ScreenName.SendConnectDevice,
+  nextNavigation: ScreenName.SendSelectDevice,
 };
 
 function SendSummary({ navigation, route: initialRoute }: Props) {
@@ -68,7 +65,6 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
   };
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
   const {
     transaction,
@@ -91,32 +87,13 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
   const [utxoWarningPassed, setUtxoWarningPassed] = useState(false);
 
   const navigateToNext = useCallback(() => {
-    const navigationTarget = lastSeenDevice
-      ? nextNavigation
-      : nextNavigation.replace("ConnectDevice", "SelectDevice");
-    const device = lastSeenDevice && {
-      deviceId: lastSeenDevice.id,
-      deviceName: lastSeenDevice.name,
-      modelId: lastSeenDevice.modelId,
-      wired: lastSeenDevice.id?.startsWith("httpdebug|")
-        ? Config.FALLBACK_DEVICE_WIRED === "YES"
-        : lastSeenDevice.id?.startsWith("usb|"),
-    };
-    navigation.navigate(navigationTarget, {
+    navigation.navigate(nextNavigation, {
       ...route.params,
       transaction,
       status,
-      device,
       selectDeviceLink: true,
     });
-  }, [
-    navigation,
-    nextNavigation,
-    route.params,
-    transaction,
-    status,
-    lastSeenDevice,
-  ]);
+  }, [navigation, nextNavigation, route.params, transaction, status]);
 
   useEffect(() => {
     if (!continuing) {
