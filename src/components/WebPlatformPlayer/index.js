@@ -297,7 +297,7 @@ const WebPlatformPlayer = ({ manifest }: Props) => {
                 tracking.platformSignTransactionSuccess(manifest);
                 resolve(signedOperation);
                 const n = navigation.dangerouslyGetParent() || navigation;
-                n.dangerouslyGetParent().pop();
+                n.pop();
               }
             },
             onError: error => {
