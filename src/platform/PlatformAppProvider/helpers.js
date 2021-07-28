@@ -26,7 +26,7 @@ function matchBranches(filterParams: FilterParams, manifest: AppManifest) {
 function matchPlatform(filterParams: FilterParams, manifest: AppManifest) {
   return (
     !filterParams.platform ||
-    filterParams.platform === "all" ||
+    manifest.platform === "all" ||
     filterParams.platform === manifest.platform
   );
 }

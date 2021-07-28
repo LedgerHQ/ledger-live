@@ -1,5 +1,6 @@
 // @flow
-import type { AppManifest, PlatformApi } from "../../types";
+import type { AppManifest } from "../../types";
+import type { PlatformApi } from "../types";
 
 const manifest: AppManifest[] = [
   {

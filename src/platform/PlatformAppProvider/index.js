@@ -10,14 +10,14 @@ import React, {
 } from "react";
 import type { PlatformAppContextType, Props, State } from "./types";
 import api from "./api";
-import { mergeManifestLists } from "./helpers";
+import type { AppManifest } from "../types";
 
 //$FlowFixMe
 const PlatformAppContext = createContext<PlatformAppContextType>({});
 
 const initialState: State = {
-  manifests: [],
-  manifestById: {},
+  localManifests: new Map(),
+  remoteManifests: new Map(),
   isLoading: false,
   lastUpdateTime: undefined,
   error: undefined,
@@ -31,10 +31,31 @@ export function usePlatformApp(): PlatformAppContextType {
 
 export function PlatformAppProvider({
   autoUpdateDelay,
-  extraManifests,
+  platformAppsServerURL,
   children,
 }: Props) {
   const [state, setState] = useState<State>(initialState);
+
+  const addLocalManifest = useCallback((manifest: AppManifest) => {
+    setState((previousState) => ({
+      ...previousState,
+      localManifests: new Map(previousState.localManifests).set(
+        manifest.id,
+        manifest
+      ),
+    }));
+  }, []);
+
+  const removeLocalManifest = useCallback((id: string) => {
+    setState((previousState) => {
+      const newLocalManifests = new Map(previousState.localManifests);
+      newLocalManifests.delete(id);
+      return {
+        ...previousState,
+        localManifests: newLocalManifests,
+      };
+    });
+  }, []);
 
   const updateData = useCallback(async () => {
     try {
@@ -42,17 +63,17 @@ export function PlatformAppProvider({
         ...previousState,
         isLoading: true,
       }));
-      const manifests = await api.fetchManifest();
-      const allManifests = extraManifests
-        ? mergeManifestLists(manifests, extraManifests)
-        : manifests;
+
+      const remoteManifestList = await api.fetchManifest(platformAppsServerURL);
+      const remoteManifests = new Map();
+      for (let i = 0; i < remoteManifestList.length; i++) {
+        const currentManifest = remoteManifestList[i];
+        remoteManifests.set(currentManifest.id, currentManifest);
+      }
+
       setState((previousState) => ({
         ...previousState,
-        manifests: allManifests,
-        manifestById: allManifests.reduce((acc, manifest) => {
-          acc[manifest.id] = manifest;
-          return acc;
-        }, {}),
+        remoteManifests,
         isLoading: false,
         lastUpdateTime: Date.now(),
         error: undefined,
@@ -64,7 +85,7 @@ export function PlatformAppProvider({
         error,
       }));
     }
-  }, [extraManifests]);
+  }, [platformAppsServerURL]);
 
   useEffect(() => {
     updateData();
@@ -80,13 +101,19 @@ export function PlatformAppProvider({
     return () => clearInterval(intervalInstance);
   }, [autoUpdateDelay, updateData]);
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    const manifests = new Map([
+      ...state.remoteManifests,
+      ...state.localManifests,
+    ]);
+    return {
       ...state,
+      manifests,
       updateData,
-    }),
-    [state, updateData]
-  );
+      addLocalManifest,
+      removeLocalManifest,
+    };
+  }, [state, updateData, removeLocalManifest, addLocalManifest]);
 
   return (
     <PlatformAppContext.Provider value={value}>
