@@ -3,11 +3,14 @@
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
 import IconAD from "react-native-vector-icons/dist/AntDesign";
 import { SwapGenericAPIError } from "@ledgerhq/live-common/lib/errors";
 import { useTheme } from "@react-navigation/native";
 
+import { swapAcceptedProvidersSelector } from "../../../../../reducers/settings";
+import { swapAcceptProvider } from "../../../../../actions/settings";
 import Connect from "../../../Connect";
 import Button from "../../../../../components/Button";
 import { ScreenName } from "../../../../../const";
@@ -39,14 +42,18 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
 
   const { colors } = useTheme();
 
+  const dispatch = useDispatch();
   const [confirmed, setConfirmed] = useState(false);
   const [deviceMeta, setDeviceMeta] = useState();
-  const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false);
+  const swapAcceptedproviders = useSelector(swapAcceptedProvidersSelector);
+  const alreadyAcceptedTerms = (swapAcceptedproviders || []).includes(
+    exchangeRate.provider,
+  );
+
   const reset = useCallback(() => {
     setConfirmed(false);
-    setAcceptedDisclaimer(false);
     setDeviceMeta(null);
-  }, [setAcceptedDisclaimer, setConfirmed]);
+  }, [setConfirmed]);
 
   const onRatesExpired = useCallback(() => {
     if (exchangeRate.tradeMethod === "fixed") {
@@ -57,7 +64,7 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
     }
   }, [exchangeRate.tradeMethod, navigation, reset]);
 
-  const showDeviceConnect = confirmed && acceptedDisclaimer && !deviceMeta;
+  const showDeviceConnect = confirmed && alreadyAcceptedTerms && !deviceMeta;
   const padding = showDeviceConnect ? 0 : 16;
 
   return status && transaction ? (
@@ -83,7 +90,7 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
       )}
 
       {confirmed ? (
-        acceptedDisclaimer && deviceMeta ? (
+        alreadyAcceptedTerms && deviceMeta ? (
           <>
             <Track onUpdate event={"SwapAcceptedSummaryDisclaimer"} />
             <Confirmation
@@ -99,10 +106,12 @@ const SwapFormSummary = ({ navigation, route }: Props) => {
               onCancel={reset}
             />
           </>
-        ) : !acceptedDisclaimer ? (
+        ) : !alreadyAcceptedTerms ? (
           <DisclaimerModal
             provider={exchangeRate.provider}
-            onContinue={() => setAcceptedDisclaimer(true)}
+            onContinue={() =>
+              dispatch(swapAcceptProvider(exchangeRate.provider))
+            }
             onClose={() => setConfirmed(false)}
           />
         ) : null

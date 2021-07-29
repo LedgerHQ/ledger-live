@@ -79,6 +79,7 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
+  - InputMask (6.1.0)
   - ledger-core-objc (4.19.1):
     - djinni_objc
   - libevent (2.1.12)
@@ -281,6 +282,10 @@ PODS:
     - React
   - react-native-splash-screen (3.2.0):
     - React
+  - react-native-text-input-mask (3.1.4):
+    - InputMask (~> 6.1.0)
+    - React-Core
+    - React-RCTText
   - react-native-udp (3.1.0):
     - CocoaAsyncSocket
     - React
@@ -441,6 +446,7 @@ DEPENDENCIES:
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
+  - react-native-text-input-mask (from `../node_modules/react-native-text-input-mask`)
   - react-native-udp (from `../node_modules/react-native-udp`)
   - react-native-version-number (from `../node_modules/react-native-version-number`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -484,6 +490,7 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - Flipper-RSocket
     - FlipperKit
+    - InputMask
     - libevent
     - MultiplatformBleAdapter
     - OpenSSL-Universal
@@ -549,6 +556,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-splash-screen:
     :path: "../node_modules/react-native-splash-screen"
+  react-native-text-input-mask:
+    :path: "../node_modules/react-native-text-input-mask"
   react-native-udp:
     :path: "../node_modules/react-native-udp"
   react-native-version-number:
@@ -627,6 +636,7 @@ SPEC CHECKSUMS:
   FlipperKit: 651f50a42eb95c01b3e89a60996dd6aded529eeb
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
+  InputMask: 71d291dc54d2deaeac6512afb6ec2304228c0bb7
   ledger-core-objc: cc0290f7cf787ddf1d6a8f8e086acf55f24523a4
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
@@ -653,6 +663,7 @@ SPEC CHECKSUMS:
   react-native-randombytes: b6677f7d495c27e9ee0dbd77ebc97b3c59173729
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
+  react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-udp: 7823da0f50a80bec14ca4fd77601101f95a68892
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
   react-native-webview: 6b7950628616679d81bdd75747e50cf6de9b5a5f
@@ -686,6 +697,6 @@ SPEC CHECKSUMS:
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: d8997d1a32660d75be1c15cc8beeb761f88af0ef
+PODFILE CHECKSUM: 7bd032c2ed070a76785aa4ab7f1e1a36ce466333
 
 COCOAPODS: 1.10.1

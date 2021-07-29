@@ -88,6 +88,10 @@ export default function DebugSettings({ navigation: { navigate } }: any) {
         onPress={() => navigate(ScreenName.DebugDevices)}
       />
       <SettingsRow
+        title="Debug Swap"
+        onPress={() => navigate(ScreenName.DebugSwap)}
+      />
+      <SettingsRow
         title="Export accounts (LiveQR)"
         onPress={() => navigate(ScreenName.DebugExport)}
       />
