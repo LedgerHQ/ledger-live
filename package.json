@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "ledgerlivemobile",
-  "version": "2.31.2",
+  "version": "2.32.0",
   "private": true,
   "scripts": {
     "postinstall": "./scripts/post.sh",
