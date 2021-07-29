@@ -50,6 +50,7 @@ import * as tracking from "./tracking";
 
 type Props = {
   manifest: AppManifest,
+  inputs?: Object,
 };
 
 const ReloadButton = ({
@@ -72,7 +73,7 @@ const ReloadButton = ({
   );
 };
 
-const WebPlatformPlayer = ({ manifest }: Props) => {
+const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = useSelector(accountsSelector);
   const currencies = useMemo(() => listCryptoCurrencies(), []);
@@ -84,12 +85,20 @@ const WebPlatformPlayer = ({ manifest }: Props) => {
   const uri = useMemo(() => {
     const url = new URL(manifest.url);
 
+    if (inputs) {
+      for (const key in inputs) {
+        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
+          url.searchParams.set(key, inputs[key]);
+        }
+      }
+    }
+
     url.searchParams.set("backgroundColor", new Color(theme.colors.card).hex());
     url.searchParams.set("textColor", new Color(theme.colors.text).hex());
     url.searchParams.set("loadDate", loadDate.valueOf().toString());
 
     return url;
-  }, [manifest.url, loadDate, theme]);
+  }, [manifest.url, loadDate, theme, inputs]);
 
   const navigation = useNavigation();
 

@@ -4,8 +4,8 @@ import React, { useMemo, useCallback, useState } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
-import { useCatalog } from "@ledgerhq/live-common/lib/platform/CatalogProvider";
+import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
 
@@ -36,16 +36,17 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const { params: routeParams } = route;
   const { colors } = useTheme();
   const navigation = useNavigation();
-  const appBranches = useMemo(() => {
-    const branches = ["stable", "soon", "experimental"];
 
-    // TODO: add experimental setting
+  const { manifests } = usePlatformApp();
 
-    if (getEnv("PLATFORM_DEBUG")) {
-      branches.push("debug");
-    }
+  const filteredManifests = useMemo(() => {
+    const branches = ["stable", "soon"];
 
-    return branches;
+    return filterPlatformApps(Array.from(manifests.values()), {
+      version: "0.0.1",
+      platform: "mobile",
+      branches,
+    });
   }, []);
 
   // Disclaimer State
@@ -54,8 +55,6 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const [disclaimerDisabled, setDisclaimerDisabled] = useBanner(
     DAPP_DISCLAIMER_ID,
   );
-
-  const { apps } = useCatalog("mobile", appBranches);
 
   const handlePressCard = useCallback(
     (manifest: AppManifest) => {
@@ -105,7 +104,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
       <ScrollView style={styles.wrapper}>
         <CatalogBanner />
         <CatalogTwitterBanner />
-        {apps.map(manifest => (
+        {filteredManifests.map(manifest => (
           <AppCard
             key={manifest.id}
             manifest={manifest}
