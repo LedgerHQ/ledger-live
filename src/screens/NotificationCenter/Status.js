@@ -74,7 +74,20 @@ export default function NotificationCenter() {
             <Trans i18nKey="notificationCenter.status.error.title" />
           </LText>
         </View>
-      ) : null}
+      ) : (
+        <View style={styles.container}>
+          <CheckCircle size={42} color={colors.success} />
+          <LText bold style={styles.title}>
+            <Trans i18nKey="notificationCenter.status.ok.title" />
+          </LText>
+          <LText bold style={[styles.desc]}>
+            <Trans i18nKey="notificationCenter.status.ok.desc">
+              <LText color="grey" />
+              <LText semiBold color="live" onPress={onHelpPageRedirect} />
+            </Trans>
+          </LText>
+        </View>
+      )}
       <FlatList
         contentContainerStyle={styles.listContainer}
         style={{ flex: 1 }}
@@ -91,20 +104,6 @@ export default function NotificationCenter() {
             style={[styles.separator, { backgroundColor: colors.lightFog }]}
           />
         )}
-        ListEmptyComponent={
-          <View style={styles.container}>
-            <CheckCircle size={42} color={colors.success} />
-            <LText bold style={styles.title}>
-              <Trans i18nKey="notificationCenter.status.ok.title" />
-            </LText>
-            <LText bold style={[styles.desc]}>
-              <Trans i18nKey="notificationCenter.status.ok.desc">
-                <LText color="grey" />
-                <LText semiBold color="live" onPress={onHelpPageRedirect} />
-              </Trans>
-            </LText>
-          </View>
-        }
       />
     </SafeAreaView>
   );
@@ -114,8 +113,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, paddingTop: 16 },
   container: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   incidentContainer: {

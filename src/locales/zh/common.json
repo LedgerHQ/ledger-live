@@ -262,6 +262,10 @@
       "title": "需要更新固件或应用程序",
       "description": "请使用管理器卸载所有的应用程序，且在重新安装应用程序之前检查是否有可用的固件更新。"
     },
+    "LatestFirmwareVersionRequired": {
+      "title": "桌面程序需要设备更新",
+      "description": "请在 Ledger Live 桌面程序上更新您的 Nano X 固件"
+    },
     "GenuineCheckFailed": {
       "title": "设备验证失败",
       "description": "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -500,6 +504,10 @@
       "title": "尚无法从子账户发送",
       "description": "由于近期 Babylon 更新而引入的变化，此功能将在稍后阶段被添加。"
     },
+    "AccessDeniedError": {
+      "title": "Ledger Live 需要更新",
+      "description": "请将 Ledger Live 更新到最新版本，然后重新验证您的身份，以便使用 Wyre 进行掉期交易"
+    },
     "RecommendUndelegation": {
       "title": "请在清空账户之前将其解除委托"
     },
@@ -550,13 +558,13 @@
       "title": "确保您留有足够的余额，以便缴纳未来的交易费"
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
+      "title": "余额不能少于 {{minimumBalance}}。发送最大值以清空账户"
     },
     "PolkadotBondMinimumAmount": {
-      "title": "You must bond at least {{minimumBondAmount}}."
+      "title": "您必须至少绑定 {{minimumBondAmount}}。"
     },
     "PolkadotBondMinimumAmountWarning": {
-      "title": "You bonded balance should be at least {{minimumBondBalance}}."
+      "title": "您的已绑定余额不能少于 {{minimumBondBalance}}。"
     },
     "PolkadotMaxUnbonding": {
       "title": "您已超过了解绑限额"
@@ -1120,7 +1128,7 @@
       "step2-restore": "同时按下两个按钮以选择 <1><1>Restore from recovery phrase.</1></1> (通过恢复短语进行还原)",
       "step3": "按左边或右边的按钮以选择数位。同时按下两个按钮以确认。",
       "step4prefix": "选取",
-      "step4suffix1": " 确认您的 PIN 识别密码。",
+      "step4suffix1": "确认您的 PIN 识别密码。",
       "step4suffix2": "删除末位数字。",
       "modal": {
         "step1": "总是 <1><1>亲自</1></1> 选择自己的 PIN 识别密码",
@@ -1586,7 +1594,7 @@
       "languageDesc": "设置 Ledger Live 显示的语言。",
       "password": "密码锁",
       "passwordDesc": "设置一个密码来保护您手机上的 Ledger Live 数据。",
-      "counterValue": "对价",
+      "counterValue": "首选币种",
       "theme": "主题",
       "themeDesc": "设置用户界面主题",
       "themes": {
@@ -1784,11 +1792,66 @@
         "whatIsSwap": "什么是 Swap？",
         "disclaimer": "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
       },
+      "unauthorizedRates": {
+        "cta": "重置验证信息",
+        "banner": "请重置您的 KYC 并更新 Live 以便使用 Wyre 进行掉期交易.",
+        "bannerCTA": "重置 KYC"
+      },
       "main": {
         "header": "Swap"
       },
       "kyc": {
-        "disclaimer": "我确认：出于合规目的，我的位置数据将会分享给第三方。"
+        "disclaimer": "我确认：出于合规目的，我的位置数据将会分享给第三方。",
+        "cta": "继续",
+        "wyre": {
+          "title": "完成您的 KYC",
+          "subtitle": "出于 KYC 目的，LEDGER 需要收集并转移您的信息到 WYRE。如需了解更多信息，请查看我们的隐私政策",
+          "pending": {
+            "cta": "继续",
+            "title": "KYC 已被提交以供审批",
+            "subtitle": "您的 KYC 已被提交，正在等待批准。",
+            "link": "了解关于 KYC 的更多详情"
+          },
+          "approved": {
+            "cta": "继续",
+            "title": "KYC 已批准！",
+            "subtitle": "您的 KYC 已被提交并已获得批准。",
+            "link": "了解关于 KYC 的更多详情"
+          },
+          "closed": {
+            "cta": "重置 KYC",
+            "title": "KYC 申请被拒绝",
+            "subtitle": "出于 KYC 原因，Wyre 拒绝了您提供的数据",
+            "link": "了解关于 KYC 的更多详情"
+          },
+          "form": {
+            "firstName": "名字",
+            "lastName": "姓氏",
+            "street1": "街道地址栏 1",
+            "street2": "街道地址栏 2",
+            "city": "城市",
+            "state": "州",
+            "country": "国家",
+            "postalCode": "邮编",
+            "dateOfBirth": "出生日期",
+            "firstNamePlaceholder": "输入您的名字",
+            "lastNamePlaceholder": "输入您的姓氏",
+            "street1Placeholder": "例如：枫树街 13 号",
+            "street2Placeholder": "例如：枫树街 13 号",
+            "cityPlaceholder": "例如：圣何塞（San José）",
+            "postalCodePlaceholder": "输入您的 5 位数邮政编码",
+            "statePlaceholder": "选择您所在的州",
+            "dateOfBirthPlaceholder": "年-月-日",
+            "firstNameError": "输入您的名字以继续",
+            "lastNameError": "输入您的姓氏以继续",
+            "street1Error": "输入您的地址",
+            "cityError": "输入您在美国的居住城市",
+            "stateError": "选择您所在的州以继续",
+            "postalCodeError": "输入一个有效的美国邮政编码",
+            "dateOfBirthError": "输入您的出生日期"
+          }
+        },
+        "states": "选择您所在的州"
       },
       "notAvailable": {
         "title": "服务暂时不可用，或在您的国家不可用"
@@ -3120,7 +3183,7 @@
     "unlockingBalance": "正在解绑余额",
     "unlockedBalance": "已解绑余额",
     "networkFees": "网络费用由 Polkadot 波卡共识协议自动设定，您无法在自己的设备上查看它们。",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "您的已绑定余额低于 {{minimumBondBalance}} 的最低额度。您的提名有被移除的风险。",
     "info": {
       "available": {
         "title": "DOT 可用",
@@ -3143,8 +3206,8 @@
         "description": "正在推选新的验证器。因此，最多 15 分钟后方可进行权益质押操作。"
       },
       "minBondWarning": {
-        "title": "Not enough bonded",
-        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
+        "title": "已绑定余额不足",
+        "description": "您的已绑定余额低于提名所需的最低额度。您的提名有被移除的风险。"
       }
     },
     "nomination": {
@@ -3607,6 +3670,13 @@
         "title": "面向开发者",
         "description": "在这里您能找到您所需要的、能将您的应用程序整合到 Ledger Live 的全部信息。"
       }
+    },
+    "disclaimer": {
+      "title": "外部应用程序",
+      "description": "您即将被重定向到一个不是由 Ledger 操作的应用程序。",
+      "legalAdvice": "此应用程序并不由 Ledger 操作。Ledger 对此类应用所造成的任何资金损失或服务质量不负责任。\n\n始终确保仔细验证您设备上所显示的信息。",
+      "checkbox": "不要再次提醒我。",
+      "CTA": "继续"
     }
   }
 }

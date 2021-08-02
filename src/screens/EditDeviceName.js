@@ -210,6 +210,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   footer: {
+    flex: 1,
     flexDirection: "column",
     padding: 20,
   },
