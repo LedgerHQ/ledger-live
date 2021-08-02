@@ -3,7 +3,7 @@
     "node": ">=14"
   },
   "name": "ledgerlivemobile",
-  "version": "2.31.1",
+  "version": "2.32.0",
   "private": true,
   "scripts": {
     "postinstall": "./scripts/post.sh",
@@ -66,7 +66,7 @@
     "@ledgerhq/hw-transport-http": "6.3.0",
     "@ledgerhq/live-common": "20.11.0-typescript.0",
     "@ledgerhq/logs": "6.2.0",
-    "@ledgerhq/react-native-hid": "6.3.1",
+    "@ledgerhq/react-native-hid": "6.3.0",
     "@ledgerhq/react-native-hw-transport-ble": "6.3.0",
     "@ledgerhq/react-native-ledger-core": "4.19.1",
     "@ledgerhq/react-native-passcode-auth": "^2.1.0",
