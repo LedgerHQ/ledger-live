@@ -369,7 +369,14 @@ class LogsViewer extends Component<*, *> {
       }
       var reader = new FileReader();
       reader.onload = (e) => {
-        const logs = JSON.parse(e.target.result).map((l, index) => ({
+        const txt = e.target.result;
+        let obj;
+        try {
+          obj = JSON.parse(txt);
+        } catch (e) {
+          obj = txt.split(/\s+/g).map(str => JSON.parse(str));
+        }
+        const logs = obj.map((l, index) => ({
           index,
           ...l,
         }));
