@@ -374,7 +374,10 @@ class LogsViewer extends Component<*, *> {
         try {
           obj = JSON.parse(txt);
         } catch (e) {
-          obj = txt.split(/\s+/g).map(str => JSON.parse(str));
+          obj = txt
+            .split(/\n/g)
+            .filter(Boolean)
+            .map((str) => JSON.parse(str));
         }
         const logs = obj.map((l, index) => ({
           index,
