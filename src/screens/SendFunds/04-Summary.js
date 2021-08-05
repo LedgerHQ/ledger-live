@@ -32,6 +32,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import Info from "../../icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
+import { isCurrencySupported } from "../Exchange/coinifyConfig";
 
 const forceInset = { bottom: "always" };
 
@@ -252,13 +253,15 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
           <TranslatedError error={transactionError} />
         </LText>
         {error && error instanceof NotEnoughGas ? (
-          <Button
-            event="SummaryBuyEth"
-            type="primary"
-            title={<Trans i18nKey="common.buyEth" />}
-            containerStyle={styles.continueButton}
-            onPress={onBuyEth}
-          />
+          isCurrencySupported(mainAccount.currency) && (
+            <Button
+              event="SummaryBuyEth"
+              type="primary"
+              title={<Trans i18nKey="common.buyEth" />}
+              containerStyle={styles.continueButton}
+              onPress={onBuyEth}
+            />
+          )
         ) : (
           <Button
             event="SummaryContinue"
