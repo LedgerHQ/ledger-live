@@ -33,7 +33,8 @@ import { useCountervaluesExport } from "@ledgerhq/live-common/lib/countervalues/
 import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 
 import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
-import PlatformCatalogProvider from "@ledgerhq/live-common/lib/platform/CatalogProvider";
+import { PlatformAppProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
+import { getProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/providers";
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
@@ -404,7 +405,9 @@ export default class Root extends Component<
                 <HookSentry />
                 <HookAnalytics store={store} />
                 <WalletConnectProvider>
-                  <PlatformCatalogProvider>
+                  <PlatformAppProvider
+                    platformAppsServerURL={getProvider("production").url}
+                  >
                     <DeepLinkingNavigator>
                       <SafeAreaProvider>
                         <StyledStatusBar />
@@ -435,7 +438,7 @@ export default class Root extends Component<
                         </AuthPass>
                       </SafeAreaProvider>
                     </DeepLinkingNavigator>
-                  </PlatformCatalogProvider>
+                  </PlatformAppProvider>
                 </WalletConnectProvider>
               </>
             ) : (

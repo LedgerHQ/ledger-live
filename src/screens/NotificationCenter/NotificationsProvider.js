@@ -6,6 +6,7 @@ import { AnnouncementProvider } from "@ledgerhq/live-common/lib/notifications/An
 import { ServiceStatusProvider } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider/index";
 import type { Announcement } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider/types";
+import VersionNumber from "react-native-version-number";
 import { getNotifications, saveNotifications } from "../../db";
 import { useLocale } from "../../context/Locale";
 import { cryptoCurrenciesSelector } from "../../reducers/accounts";
@@ -31,6 +32,7 @@ export default function NotificationsProvider({ children }: Props) {
     getDate: () => new Date(),
     lastSeenDevice: lastSeenDevice || undefined,
     platform: Platform.OS,
+    appVersion: VersionNumber.appVersion ?? undefined,
   };
 
   const onLoad = useCallback(

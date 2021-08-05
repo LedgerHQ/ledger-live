@@ -262,6 +262,10 @@
       "title": "Mise à jour du micrologiciel ou de l'application nécessaire",
       "description": "Utilisez le Gestionnaire pour désinstaller toutes les applications. Vérifiez ensuite si une mise à jour du micrologiciel est disponible avant de les réinstaller."
     },
+    "LatestFirmwareVersionRequired": {
+      "title": "Mise à jour requise sur l'ordinateur",
+      "description": "Mettez à jour le micrologiciel de votre Nano X sur Ledger Live ordinateur."
+    },
     "GenuineCheckFailed": {
       "title": "Échec de la vérification de l'authenticité",
       "description": "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l'Assistance Ledger."
@@ -500,6 +504,10 @@
       "title": "Impossible d'envoyer depuis des sous-comptes pour l'instant",
       "description": "Cette fonctionnalité sera ajoutée ultérieurement suite aux changements introduits par la mise à jour Babylon."
     },
+    "AccessDeniedError": {
+      "title": "Mise à jour de Ledger Live nécessaire",
+      "description": "Veuillez mettre à jour Ledger Live et vérifier à nouveau votre identité pour échanger avec Wyre"
+    },
     "RecommendUndelegation": {
       "title": "Interrompez la délégation du compte avant de le vider."
     },
@@ -550,13 +558,13 @@
       "title": "Assurez-vous que votre solde disponible est suffisant pour couvrir les frais de transaction."
     },
     "PolkadotDoMaxSendInstead": {
-      "title": "Balance cannot be below {{minimumBalance}}. Send max to empty account."
+      "title": "Le solde ne peut pas être inférieur à {{minimumBalance}}. Pour vider : Max."
     },
     "PolkadotBondMinimumAmount": {
-      "title": "You must bond at least {{minimumBondAmount}}."
+      "title": "Vous devez lier au moins {{minimumBondAmount}}."
     },
     "PolkadotBondMinimumAmountWarning": {
-      "title": "You bonded balance should be at least {{minimumBondBalance}}."
+      "title": "Votre solde lié doit être d'au moins {{minimumBondBalance}}."
     },
     "PolkadotMaxUnbonding": {
       "title": "Vous avez dépassé la limite autorisée pour l'arrêt de liaison."
@@ -814,7 +822,7 @@
           },
           "1": {
             "title": "Naviguer",
-            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. Utilisez les boutons gauche et droit pour naviguer."
+            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. "
           },
           "2": {
             "title": "Choisir \"Set up as new device\"",
@@ -989,7 +997,7 @@
           },
           "1": {
             "title": "Naviguer",
-            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. Utilisez les boutons gauche et droit pour naviguer."
+            "label": "Apprenez à interagir avec votre appareil. Lisez les instructions à l'écran. "
           },
           "2": {
             "title": "Choisir \"Restore from recovery phrase\"",
@@ -1586,13 +1594,13 @@
       "languageDesc": "Choisissez la langue d'affichage de Ledger Live.",
       "password": "Verrouillage par mot de passe",
       "passwordDesc": "Définissez un mot de passe pour protéger vos données Ledger Live sur votre téléphone.",
-      "counterValue": "Devise de contrepartie",
+      "counterValue": "Devise préférée",
       "theme": "Thème",
       "themeDesc": "Définissez le thème de l'interface utilisateur",
       "themes": {
-        "dark": "Dark",
-        "dusk": "Dusk",
-        "light": "Light"
+        "dark": "Sombre",
+        "dusk": "Crépuscule",
+        "light": "Clair"
       },
       "counterValueDesc": "Choisissez la devise dans laquelle afficher votre solde et vos opérations.",
       "exchange": "Fournisseur du taux de change",
@@ -1784,11 +1792,66 @@
         "whatIsSwap": "Qu'est-ce que le Swap ?",
         "disclaimer": "Échangez des cryptos directement à partir de votre appareil Ledger. Ce service n'est pas disponible dans certains pays, y compris aux États-Unis."
       },
+      "unauthorizedRates": {
+        "cta": "Réinitialiser la vérification",
+        "banner": "Réinitialisez le processus et mettez à jour Ledger Live.",
+        "bannerCTA": "Réinitialiser la vérification"
+      },
       "main": {
         "header": "Swap"
       },
       "kyc": {
-        "disclaimer": "J'accepte que mes données de localisation soient partagées avec des tiers à des fins de conformité."
+        "disclaimer": "J'accepte que mes données de localisation soient partagées avec des tiers à des fins de conformité.",
+        "cta": "Continuer",
+        "wyre": {
+          "title": "Finir sa vérification",
+          "subtitle": "LEDGER recueille vos données pour WYRE et les lui transfère pour réaliser votre vérification d'identité. Consultez notre Politique de confidentialité.",
+          "pending": {
+            "cta": "Continuer",
+            "title": "Vérification soumise pour validation",
+            "subtitle": "Votre vérification a été envoyée et est en attente de validation.",
+            "link": "En savoir plus"
+          },
+          "approved": {
+            "cta": "Continuer",
+            "title": "Vérification d'identité approuvée",
+            "subtitle": "Votre vérification a été envoyée et a été validée.",
+            "link": "En savoir plus"
+          },
+          "closed": {
+            "cta": "Réinitialiser la vérification",
+            "title": "Demande de vérification refusée",
+            "subtitle": "Wyre a refusé les données que vous avez fournies",
+            "link": "En savoir plus"
+          },
+          "form": {
+            "firstName": "Prénom",
+            "lastName": "Nom de famille",
+            "street1": "Adresse postale ligne 1",
+            "street2": "Adresse postale ligne 2",
+            "city": "Ville",
+            "state": "État–région",
+            "country": "Pays",
+            "postalCode": "Code postal",
+            "dateOfBirth": "Date de naissance",
+            "firstNamePlaceholder": "Saisissez votre prénom",
+            "lastNamePlaceholder": "Saisissez votre nom",
+            "street1Placeholder": "Ex : 13 rue Rosa Parks",
+            "street2Placeholder": "Ex : 13 rue Rosa Parks",
+            "cityPlaceholder": "Ex : Abbeville",
+            "postalCodePlaceholder": "Saisissez votre code postal",
+            "statePlaceholder": "Sélectionnez votre État",
+            "dateOfBirthPlaceholder": "AAAA-MM-JJ",
+            "firstNameError": "Entrez votre prénom pour continuer.",
+            "lastNameError": "Entrez votre nom pour continuer.",
+            "street1Error": "Entrez votre adresse.",
+            "cityError": "Entrez la ville où vous habitez.",
+            "stateError": "Choisissez votre État pour continuer",
+            "postalCodeError": "Saisissez un code postal valide.",
+            "dateOfBirthError": "Entrez votre date de naissance."
+          }
+        },
+        "states": "Sélectionnez votre État"
       },
       "notAvailable": {
         "title": "Service temporairement indisponible ou non disponible dans votre pays"
@@ -3120,7 +3183,7 @@
     "unlockingBalance": "Solde en fin de liaison",
     "unlockedBalance": "Solde délié",
     "networkFees": "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d'être supprimées.",
     "info": {
       "available": {
         "title": "DOT disponible",
@@ -3143,8 +3206,8 @@
         "description": "L'élection de nouveaux validateurs est en cours. Les opérations de staking sont donc indisponibles pendant 15 minutes."
       },
       "minBondWarning": {
-        "title": "Not enough bonded",
-        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
+        "title": "Solde lié insuffisant",
+        "description": "Votre solde lié est inférieur au minimum requis pour faire des nominations. Vos nominations risquent d'être supprimées."
       }
     },
     "nomination": {
@@ -3607,6 +3670,13 @@
         "title": "Pour les développeurs",
         "description": "Toutes les informations dont vous avez besoin pour intégrer vos applications dans Ledger Live."
       }
+    },
+    "disclaimer": {
+      "title": "Application externe",
+      "description": "Vous allez être redirigé(e) vers une application non exploitée par Ledger.",
+      "legalAdvice": "Cette application n'est pas exploitée par Ledger. Ledger ne saurait être tenu responsable de toute perte de fonds ou qualité de service due à cette application.\n\nVérifiez toujours les informations affichées sur votre appareil.",
+      "checkbox": "Ne plus me le rappeler.",
+      "CTA": "Continuer"
     }
   }
 }
