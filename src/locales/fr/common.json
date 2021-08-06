@@ -194,8 +194,8 @@
       "description": "Enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l'Assistance Ledger."
     },
     "DeviceAppVerifyNotSupported": {
-      "title": "Ouvrez le Gestionnaire pour mettre cette application à jour.",
-      "description": "Vérification de l'application non prise en charge"
+      "title": "Ouvrez le Gestionnaire pour mettre cette app à jour.",
+      "description": "Vérification de l'app non prise en charge"
     },
     "DeviceGenuineSocketEarlyClose": {
       "title": "Veuillez réessayer (genuine-close).",
@@ -242,7 +242,7 @@
     },
     "Touch ID Error": {
       "title": "Échec de l'authentification biométrique",
-      "description": "Utilisez votre mot de passe ou réinitialisez l'application."
+      "description": "Utilisez votre mot de passe ou réinitialisez l'app."
     },
     "Error": {
       "title": "{{message}}",
@@ -259,8 +259,8 @@
       "title": "Des frais sont requis."
     },
     "FirmwareOrAppUpdateRequired": {
-      "title": "Mise à jour du micrologiciel ou de l'application nécessaire",
-      "description": "Utilisez le Gestionnaire pour désinstaller toutes les applications. Vérifiez ensuite si une mise à jour du micrologiciel est disponible avant de les réinstaller."
+      "title": "Mise à jour du micrologiciel ou de l'app nécessaire",
+      "description": "Désinstallez toutes les apps dans le Gestionnaire. Vérifiez ensuite si une mise à jour du micrologiciel est disponible avant de les réinstaller."
     },
     "LatestFirmwareVersionRequired": {
       "title": "Mise à jour requise sur l'ordinateur",
@@ -304,12 +304,12 @@
       "description": "Vérifiez le statut du réseau."
     },
     "ManagerAppAlreadyInstalled": {
-      "title": "Cette application est déjà installée.",
-      "description": "Merci de vérifier les applications déjà installées sur votre appareil."
+      "title": "Cette app est déjà installée.",
+      "description": "Merci de vérifier les apps déjà installées sur votre appareil."
     },
     "ManagerAppRelyOnBTC": {
-      "title": "Applications Bitcoin et Ethereum nécessaires",
-      "description": "Installez d'abord les dernières applications Bitcoin et Ethereum."
+      "title": "Apps Bitcoin et Ethereum nécessaires",
+      "description": "Installez d'abord les dernières apps Bitcoin et Ethereum."
     },
     "ManagerDeviceLocked": {
       "title": "Appareil verrouillé",
@@ -317,30 +317,30 @@
     },
     "ManagerNotEnoughSpace": {
       "title": "Espace de stockage insuffisant",
-      "info": "Merci de désinstaller certaines applications pour libérer de l'espace pour l'application {{app}}.",
-      "description": "Désinstaller des applications n'a pas d'effet sur vos actifs."
+      "info": "Désinstallez certaines apps pour libérer de l'espace pour l'app {{app}}.",
+      "description": "Désinstaller des apps n'a pas d'effet sur vos actifs."
     },
     "ManagerQuitPage": {
       "install": {
-        "title": "Installation de l'application en cours",
+        "title": "Installation de l'app en cours",
         "description": "Quitter le Gestionnaire mettra fin à l'installation.",
         "stay": "Poursuivre l'installation"
       },
       "uninstall": {
-        "title": "Désinstallation de l'application en cours",
+        "title": "Désinstallation de l'app en cours",
         "description": "Quitter le Gestionnaire mettra fin à la désinstallation.",
         "stay": "Poursuivre la désinstallation"
       },
       "update": {
-        "title": "Mise à jour de l'application en cours",
+        "title": "Mise à jour de l'app en cours",
         "description": "Quitter le Gestionnaire mettra fin à la mise à jour.",
         "stay": "Continuer la mise à jour"
       },
       "quit": "Quitter le Gestionnaire"
     },
     "ManagerUninstallBTCDep": {
-      "title": "Cette application est nécessaire.",
-      "description": "Désinstallez les applications Bitcoin ou Ethereum en dernier."
+      "title": "Cette app est nécessaire.",
+      "description": "Désinstallez les apps Bitcoin ou Ethereum en dernier."
     },
     "NetworkDown": {
       "title": "Internet ne semble pas fonctionner.",
@@ -457,8 +457,8 @@
       "title": "Vous n'avez pas assez d'Énergie pour envoyer ce jeton."
     },
     "UpdateYourApp": {
-      "title": "Mise à jour de l'application nécessaire",
-      "description": "Merci de désinstaller puis réinstaller l'application {{managerAppName}} dans le Gestionnaire."
+      "title": "Mise à jour de l'app nécessaire",
+      "description": "Désinstallez puis réinstallez l'app {{managerAppName}} dans le Gestionnaire."
     },
     "UserRefusedAllowManager": {
       "title": "Gestionnaire désactivé sur l'appareil",
@@ -611,7 +611,7 @@
       "biometrics": {
         "title": "Échec du déverrouillage {{biometricsType}}",
         "description": "Insérez votre mot de passe pour continuer",
-        "authenticate": "Authentifiez-vous avec l'application Ledger Live."
+        "authenticate": "Authentifiez-vous avec l'app Ledger Live."
       },
       "denied": "Auth Security n'a pas été activé car votre téléphone n'a pas pu s'authentifier.",
       "title": "Échec de l'authentification",
@@ -621,7 +621,7 @@
       }
     },
     "unlock": {
-      "biometricsTitle": "Authentifiez-vous avec l'application Ledger Live.",
+      "biometricsTitle": "Authentifiez-vous avec l'app Ledger Live.",
       "title": "Bienvenue",
       "desc": "Entrez votre mot de passe pour continuer.",
       "inputPlaceholder": "Saisissez votre mot de passe.",
@@ -642,7 +642,7 @@
     }
   },
   "reset": {
-    "description": "Merci de désinstaller puis réinstaller l'application sur votre téléphone pour supprimer les données de Ledger Live, y compris de comptes et paramètres.",
+    "description": "Merci de désinstaller puis réinstaller l'app sur votre téléphone pour supprimer les données de Ledger Live, y compris de comptes et paramètres.",
     "button": "Réinitialiser"
   },
   "graph": {
@@ -743,7 +743,7 @@
         "title": "Vous avez déjà une phrase de récupération ?",
         "label": "Couplage de l'appareil",
         "subTitle": "Connecter le Nano",
-        "desc": "Si votre Nano est déjà configuré, connectez-le à l'application."
+        "desc": "Si votre Nano est déjà configuré, connectez-le à l'app."
       },
       "desktopSync": {
         "title": "Vous avez déjà une phrase de récupération ?",
@@ -902,7 +902,7 @@
               "label": "Achetez un nouveau wallet physique."
             },
             "1": {
-              "label": "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans l'application Ledger."
+              "label": "Sélectionnez \"Restaurer une phrase de récupération sur un nouvel appareil\" dans l'app Ledger."
             },
             "2": {
               "label": "Entrez votre phrase de récupération sur votre nouvel appareil pour récupérer l'accès à vos cryptos."
@@ -1058,7 +1058,7 @@
         "desc": "Sur votre appareil, sélectionnez Settings > General > Device Name (Paramètres > Général > Nom de l'appareil).",
         "title_1": "Comment configurer la connexion Bluetooth ?",
         "title_2": "Comment utiliser mon Nano X sans le Bluetooth ?",
-        "desc_1": "Utilisez un <1>câble OTG</1> pour connecter votre Ledger Nano X à votre smartphone Android (iOS non pris en charge). Gérez vos cryptos avec l'application mobile Ledger Live ou toute autre application (Web) compatible.",
+        "desc_1": "Utilisez un <1>câble OTG</1> pour connecter votre Ledger Nano X à votre smartphone Android (iOS non pris en charge). Gérez vos cryptos avec l'app mobile Ledger Live ou toute autre app (Web) compatible.",
         "bullets": {
           "0": {
             "label": "Assurez-vous que le Bluetooth est activé sur votre smartphone et sur votre Ledger Nano X. Le tableau de bord (écran d'accueil) doit être ouvert sur votre Nano X."
@@ -1080,19 +1080,19 @@
         "desc_1": "La demande de couplage Bluetooth peut prendre du temps à s'afficher. Vérifiez et confirmez le code de couplage à la fois sur votre Nano X et votre téléphone.",
         "desc_2": "Vérifiez dans les paramètres Bluetooth de votre téléphone que le Nano X est détecté. S'il n'est pas détecté, assurez-vous d'avoir bien activé le Bluetooth sur votre Nano X.",
         "desc_3": "Localisation",
-        "desc_4": "Si le Nano X n'est pas détecté dans votre application mobile lorsque vous tentez de le coupler, essayez ceci :",
-        "desc_5": "L'application mobile Ledger vous demande d'autoriser l'accès à la localisation si ce n'est pas déjà fait. Sur quelques modèles de téléphone, cela n'est pas toujours bien détecté. L'application mobile Ledger n'utilise jamais vos informations de localisation. Le Bluetooth requiert simplement cette autorisation sur Android.",
+        "desc_4": "Si le Nano X n'est pas détecté dans votre app mobile lorsque vous tentez de le coupler, essayez ceci :",
+        "desc_5": "L'app mobile Ledger vous demande d'autoriser l'accès à la localisation si ce n'est pas déjà fait. Sur quelques modèles de téléphone, cela n'est pas toujours bien détecté. L'app mobile Ledger n'utilise jamais vos informations de localisation. Le Bluetooth requiert simplement cette autorisation sur Android.",
         "desc_6": "Certains utilisateurs ont signalé avoir réglé leurs problèmes de connexion en mettant à jour la version d'Android de leur téléphone. Vérifiez auprès du fabricant de votre téléphone si une mise à jour est disponible.",
         "link": "En savoir plus",
         "bullets": {
           "0": {
-            "label": "Dans les Paramètres de votre téléphone Android, appuyez sur l'application Ledger Live."
+            "label": "Dans les Paramètres de votre téléphone Android, appuyez sur l'app Ledger Live."
           },
           "1": {
             "label": "Autorisez l'accès à la localisation."
           },
           "2": {
-            "label": "Ouvrez l'application Ledger Live."
+            "label": "Ouvrez l'app Ledger Live."
           },
           "3": {
             "label": "Vérifiez si votre Nano X est bien détecté."
@@ -1102,7 +1102,7 @@
     },
     "stepImportAccounts": {
       "title": "Synchroniser ses cryptos depuis un ordinateur",
-      "desc": "Si vous gérez déjà vos cryptos dans l'application Ledger Live ordinateur, vous pouvez synchroniser pour les gérer sur votre téléphone.",
+      "desc": "Si vous gérez déjà vos cryptos dans Ledger Live ordinateur, vous pouvez synchroniser pour les gérer sur votre téléphone.",
       "cta": "Je suis prêt(e) à scanner",
       "bullets": {
         "0": {
@@ -1160,7 +1160,7 @@
     "stepFinish": {
       "title": "Votre appareil est prêt.",
       "readOnlyTitle": "Et voilà !",
-      "desc": "Installez des applications sur votre appareil et gérez votre portefeuille.",
+      "desc": "Installez des apps sur votre appareil et gérez votre portefeuille.",
       "cta": "Ouvrir Ledger Live"
     },
     "quizz": {
@@ -1192,13 +1192,13 @@
         }
       },
       "privateKey": {
-        "title": "Lorsque je connecte mon Nano à l'application Ledger Live, ma clé privée est :",
+        "title": "Lorsque je connecte mon Nano à l'app Ledger Live, ma clé privée est :",
         "answers": {
           "correct": "Toujours hors ligne",
           "wrong": "Brièvement connectée à Internet"
         },
         "modal": {
-          "text": "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l'application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil.",
+          "text": "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l'app Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil.",
           "cta": "Finir le quiz"
         }
       },
@@ -1244,19 +1244,19 @@
     "summary": "Voici le récapitulatif de votre compte",
     "summary_plural": "Vos {{count}} comptes sont synchronisés.",
     "emptyState": {
-      "noAppsTitle": "Installer une application sur mon appareil",
-      "noAppsDesc": "Installez des applications sur votre appareil avant d'ajouter des comptes dans Ledger Live. Allez dans le Gestionnaire pour installer des applications.",
+      "noAppsTitle": "Installer une app sur mon appareil",
+      "noAppsDesc": "Installez des apps sur votre appareil avant d'ajouter des comptes dans Ledger Live. Allez dans le Gestionnaire pour installer des apps.",
       "noAccountsTitle": "Vous n'avez aucun compte.",
       "noAccountsDesc": "Ajoutez des comptes à votre Portefeuille.",
       "buttons": {
         "import": "Ajouter un compte",
-        "manager": "Installer des applications",
-        "managerSecondary": "Installer des applications sur mon wallet"
+        "manager": "Installer des apps",
+        "managerSecondary": "Installer des apps sur mon wallet"
       }
     },
     "noOpState": {
       "title": "Pas encore d'opérations ?",
-      "desc": "Il vous suffit d'envoyer des crypto-actifs à votre adresse bénéficiaire et d'attendre que l'application se synchronise."
+      "desc": "Il vous suffit d'envoyer des crypto-actifs à votre adresse bénéficiaire et d'attendre que l'app se synchronise."
     }
   },
   "addAccountsModal": {
@@ -1273,7 +1273,7 @@
     "week": "1S",
     "month": "1M",
     "year": "1A",
-    "all": "Tout",
+    "all": "TOUT",
     "since": {
       "day": "hier",
       "week": "semaine dernière",
@@ -1421,9 +1421,9 @@
     "lastOperations": "Dernières opérations",
     "emptyState": {
       "title": "Vous n'avez pas encore de crypto-actifs ?",
-      "desc": "Assurez-vous que l'application <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
-      "descWithBuy": "Assurez-vous que l'application <1><0>{{managerAppName}}</0></1> est installée pour acheter ou recevoir des <3><0>{{currencyTicker}}</0></3>.",
-      "descToken": "Assurez-vous que l'application <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{currencyTicker}}</0></3> et des jetons <5><0>{{tokenType}}</0></5>.",
+      "desc": "Assurez-vous que l'app <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
+      "descWithBuy": "Assurez-vous que l'app <1><0>{{managerAppName}}</0></1> est installée pour acheter ou recevoir des <3><0>{{currencyTicker}}</0></3>.",
+      "descToken": "Assurez-vous que l'app <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{currencyTicker}}</0></3> et des jetons <5><0>{{tokenType}}</0></5>.",
       "buttons": {
         "receiveFunds": "Recevoir",
         "buyCrypto": "Acheter"
@@ -1485,7 +1485,7 @@
         "alreadyImported": "Déjà importé",
         "noAccounts": "Rien à importer",
         "unsupported": "Non pris en charge",
-        "settings": "Paramètres de l'application",
+        "settings": "Paramètres de l'app",
         "includeGeneralSettings": "Importer les paramètres de Ledger Live ordinateur"
       },
       "fallback": {
@@ -1610,18 +1610,18 @@
       "reportErrors": "Rapports de bugs",
       "reportErrorsDesc": "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
       "developerMode": "Mode développeur",
-      "developerModeDesc": "Afficher les applications développeur dans le Gestionnaire et autoriser les applications Testnet.",
+      "developerModeDesc": "Afficher les apps développeur dans le Gestionnaire et autoriser les apps Testnet.",
       "analytics": "Statistiques",
       "analyticsDesc": "Autoriser les statistiques pour aider Ledger à améliorer l'expérience utilisateur",
       "analyticsModal": {
         "title": "Partager les statistiques",
         "desc": "Autorisez les statistiques pour aider Ledger à améliorer l'expérience utilisateur.",
         "bullet0": "Clics",
-        "bullet1": "Visites de pages dans l'application",
+        "bullet1": "Pages visitées dans l'app",
         "bullet2": "Redirection vers une page Internet",
         "bullet3": "Actions : envoyer, recevoir, verrouiller, etc.",
         "bullet4": "Défilement en bas de page",
-        "bullet5": "Version, installation et désinstallation de l'application",
+        "bullet5": "Version, installation et désinstallation de l'app",
         "bullet6": "Nombre de comptes, cryptos et opérations",
         "bullet7": "Durée des sessions globale et par page",
         "bullet8": "Type d'appareil Ledger et micrologiciel"
@@ -1649,7 +1649,7 @@
     "accounts": {
       "header": "Comptes",
       "title": "Comptes",
-      "desc": "Gérer l'affichage des actifs dans l'application.",
+      "desc": "Gérer l'affichage des actifs dans l'app.",
       "hideTokenCTA": "Masquer le jeton",
       "showContractCTA": "Afficher le contrat",
       "blacklistedTokens": "Liste de jetons masqués",
@@ -1667,7 +1667,7 @@
     },
     "about": {
       "title": "À propos",
-      "desc": "Informations, Conditions d'utilisation et Politique de confidentialité de l'application",
+      "desc": "Informations, Conditions d'utilisation et Politique de confidentialité de l'app",
       "appDescription": "Protégez, achetez, vendez, échangez, faites fructifier et gérez vos cryptos avec Ledger Live. Votre plateforme tout-en-un.",
       "appVersion": "Version",
       "termsConditions": "Conditions d'utilisation",
@@ -1675,7 +1675,7 @@
       "privacyPolicy": "Politique de confidentialité",
       "privacyPolicyDesc": "Découvrez les données personnelles que nous collectons, à quelles fins et comment nous les utilisons.",
       "liveReview": {
-        "title": "Noter l'application",
+        "title": "Noter l'app.",
         "ios": "Donnez votre avis dans l'App Store",
         "android": "Donnez votre avis dans le Google Play Store"
       }
@@ -1696,7 +1696,7 @@
       "exportLogs": "Exporter les logs",
       "exportLogsDesc": "L'exportation des logs de Ledger Live peut aider à résoudre les problèmes.",
       "hardReset": "Réinitialiser Ledger Live",
-      "hardResetDesc": "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l'historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une application Ledger Live vierge.",
+      "hardResetDesc": "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l'historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
       "repairDevice": "Réparer votre appareil Ledger",
       "repairDeviceDesc": "En cas de problème lors de la mise à jour de votre appareil (reprise des mises à jour impossible), essayez cela pour réparer votre appareil."
     },
@@ -1893,8 +1893,8 @@
           "available": "Total disponible"
         },
         "noApp": {
-          "title": "Application {{appName}} non installée",
-          "desc": "Allez dans le Gestionnaire pour installer l'application {{appName}}.",
+          "title": "App {{appName}} non installée",
+          "desc": "Allez dans le Gestionnaire pour installer l'app {{appName}}.",
           "cta": "Aller dans le Gestionnaire",
           "close": "Fermer"
         },
@@ -1905,8 +1905,8 @@
           "cta": "Fermer"
         },
         "outdatedApp": {
-          "title": "Mise à jour de l'application disponible",
-          "desc": "Vous devez mettre à jour l'application {{appName}}.",
+          "title": "Mise à jour de l'app disponible",
+          "desc": "Vous devez mettre à jour l'app {{appName}}.",
           "cta": "Aller dans le Gestionnaire",
           "close": "Fermer"
         },
@@ -1947,13 +1947,13 @@
         }
       },
       "missingApp": {
-        "title": "Installez l'application Exchange sur votre appareil.",
-        "description": "Allez dans le Gestionnaire et installez l'application Exchange pour échanger des actifs.",
+        "title": "Installez l'app Exchange sur votre appareil.",
+        "description": "Installez l'app Exchange dans le Gestionnaire pour échanger des actifs.",
         "button": "Aller dans le Gestionnaire"
       },
       "outdatedApp": {
-        "title": "Merci de mettre à jour l'application Exchange sur votre appareil.",
-        "description": "Allez dans le Gestionnaire et mettez à jour l'application Exchange pour échanger des actifs.",
+        "title": "Merci de mettre à jour l'app Exchange sur votre appareil.",
+        "description": "Mettez à jour l'application Exchange dans le Gestionnaire pour échanger des actifs.",
         "button": "Aller dans le Gestionnaire"
       },
       "emptyState": {
@@ -2017,7 +2017,7 @@
           "amountSupplied": "Montant déposé",
           "interestEarned": "Intérêts gagnés",
           "status": "Statut du compte",
-          "EARNING": "Gains",
+          "EARNING": "GAINS EN COURS",
           "ENABLING": "Approbation",
           "INACTIVE": "Inactif",
           "SUPPLYING": "Dépôt en cours",
@@ -2457,18 +2457,18 @@
     }
   },
   "DeviceAction": {
-    "allowAppPermission": "Ouvrez l'application {{wording}} sur votre appareil.",
+    "allowAppPermission": "Ouvrez l'app {{wording}} sur votre appareil.",
     "allowAppPermissionSubtitleToken": "pour gérer vos jetons {{token}}",
     "allowManagerPermission": "Autoriser {{wording}} sur l'appareil",
     "loading": "Chargement...",
     "turnOnAndUnlockDevice": "Allumez et déverrouillez votre appareil.",
     "connectAndUnlockDevice": "Connectez et déverrouillez votre appareil.",
     "unlockDevice": "Déverrouillez votre appareil.",
-    "outdated": "Version de l'application obsolète",
-    "outdatedDesc": "Une mise à jour importante est disponible pour l'application {{appName}} sur votre appareil. Merci d'aller dans le Gestionnaire pour mettre à jour.",
+    "outdated": "Version de l'app obsolète",
+    "outdatedDesc": "Une mise à jour importante est disponible pour l'app {{appName}} sur votre appareil. Merci d'aller dans le Gestionnaire pour mettre à jour.",
     "quitApp": "Quittez l'application sur votre appareil.",
-    "appNotInstalled": "Merci d'installer l'application {{appName}}",
-    "appNotInstalled_plural": "Merci d'installer les applications {{appName}}.",
+    "appNotInstalled": "Merci d'installer l'app {{appName}}",
+    "appNotInstalled_plural": "Merci d'installer les apps {{appName}}.",
     "verifyAddress": {
       "title": "Vérifier l'adresse sur l'appareil",
       "description": "Merci de vérifier que l'adresse {{currencyName}} affichée sur Ledger Live correspond à celle indiquée sur votre appareil."
@@ -2484,10 +2484,10 @@
     "button": {
       "openManager": "Ouvrir le Gestionnaire"
     },
-    "installApp": "Installation de l'application {{appName}} {{percentage}}",
+    "installApp": "Installation de l'app {{appName}} {{percentage}}",
     "installAppDescription": "Merci d'attendre la fin de l'installation.",
-    "listApps": "Vérification en cours des dépendances des applications",
-    "listAppsDescription": "Merci de patienter pendant que nous nous assurons que vous avez toutes les applications requises."
+    "listApps": "Vérification en cours des dépendances des apps",
+    "listAppsDescription": "Patientez pendant que nous vérifions que vous avez toutes les apps requises."
   },
   "SelectDevice": {
     "title": "Coupler un nouvel appareil",
@@ -2519,7 +2519,7 @@
         "title": "Retourner sur le tableau de bord (écran d'accueil) du {{productName}}"
       },
       "currencyApp": {
-        "title": "Ouvrez l'application {{managerAppName}} sur votre {{productName}}.",
+        "title": "Ouvrez l'app {{managerAppName}} sur votre {{productName}}.",
         "description": "",
         "footer": {
           "appInstalled": "Application non installée.",
@@ -2527,7 +2527,7 @@
         }
       },
       "accountApp": {
-        "title": "Ouvrez l'application {{managerAppName}} sur votre {{productName}}.",
+        "title": "Ouvrez l'app {{managerAppName}} sur votre {{productName}}.",
         "description": ""
       },
       "receiveVerify": {
@@ -2594,37 +2594,37 @@
     "tabTitle": "Gestionnaire de l'appareil",
     "title": "Gestionnaire",
     "connect": "Sélectionnez votre appareil",
-    "appsCatalog": "Catalogue d'applications",
-    "installedApps": "Applications installées",
-    "noAppNeededForToken": "Installer l'application {{appName}} pour {{tokenName}}",
-    "tokenAppDisclaimer": "{{tokenName}} est un jeton {{tokenType}} qui utilise l'application {{appName}}. Pour gérer {{tokenName}}, <1>installez l'application {{appName}}</1> et envoyez les jetons <3>sur votre compte {{appName}}</3>.",
-    "tokenAppDisclaimerInstalled": "{{tokenName}} est un jeton {{tokenType}} qui utilise l'application {{appName}}. Pour gérer {{tokenName}}, <1>ouvrez l'application {{appName}}</1> et envoyez les jetons <3>sur votre compte {{appName}}</3>.",
+    "appsCatalog": "Catalogue d'apps",
+    "installedApps": "Apps installées",
+    "noAppNeededForToken": "Installer l'app {{appName}} pour {{tokenName}}",
+    "tokenAppDisclaimer": "{{tokenName}} est un jeton {{tokenType}} qui utilise l'app {{appName}}. Pour gérer {{tokenName}}, <1>installez l'app {{appName}}</1> et envoyez les jetons <3>sur votre compte {{appName}}</3>.",
+    "tokenAppDisclaimerInstalled": "{{tokenName}} est un jeton {{tokenType}} qui utilise l'app {{appName}}. Pour gérer {{tokenName}}, <1>ouvrez l'app {{appName}}</1> et envoyez les jetons <3>sur votre compte {{appName}}</3>.",
     "goToAccounts": "Accéder aux Comptes",
-    "intallParentApp": "Installer l'application {{appName}}",
+    "intallParentApp": "Installer l'app {{appName}}",
     "readOnly": {
       "title": "Nano X",
-      "description": "Configurez Ledger Live avec votre Nano X pour installer des applications, créer des comptes et effectuer des transactions sécurisées où que vous soyez.",
+      "description": "Configurez Ledger Live avec votre Nano X pour installer des apps, créer des comptes et effectuer des transactions sécurisées.",
       "question": "Avez-vous votre Nano X ?",
       "button": "Commencer à configurer mon Nano X",
       "noDevice": "Pas encore de wallet Ledger ?",
       "buy": "Achetez un Ledger Nano X"
     },
     "appList": {
-      "title": "Catalogue d'applications",
-      "loading": "Chargement des applications...",
-      "noApps": "Aucune application trouvée",
-      "searchAppsCatalog": "Rechercher une application dans le catalogue",
-      "searchAppsInstalled": "Rechercher les applications installées...",
-      "noAppsInstalled": "Aucune application installée sur votre appareil",
-      "noAppsDescription": "Aller dans le catalogue pour installer des applications",
+      "title": "Catalogue d'apps",
+      "loading": "Chargement des apps...",
+      "noApps": "Aucune app trouvée",
+      "searchAppsCatalog": "Rechercher dans le Catalogue",
+      "searchAppsInstalled": "Rechercher les apps installées",
+      "noAppsInstalled": "Aucune app installée sur votre appareil",
+      "noAppsDescription": "Aller dans le catalogue pour installer des apps",
       "noResultsFound": "Aucun résultat",
       "noResultsDesc": "Merci de vérifier l'orthographe et réessayer",
       "versionNew": "(NOUVELLE {{newVersion}})"
     },
     "uninstall": {
       "title": "Tout désinstaller",
-      "subtitle": "Désinstaller toutes les applications ?",
-      "description": "Désinstaller des applications n'a pas d'effet sur vos crypto-actifs. Vous pouvez réinstaller vos applications depuis le catalogue d'applications."
+      "subtitle": "Désinstaller toutes les apps ?",
+      "description": "Désinstaller des apps n'a pas d'effet sur vos crypto-actifs. Vous pouvez réinstaller vos apps dans le Catalogue."
     },
     "remove": {
       "title": "Retirer l'appareil",
@@ -2635,14 +2635,14 @@
       "title": "Stockage",
       "used": "utilisés",
       "genuine": "Votre appareil est authentique.",
-      "appsInstalled": "<0>{{number}}</0> application installée",
-      "appsInstalled_plural": "<0>{{number}}</0> applications installées",
+      "appsInstalled": "<0>{{number}}</0> app installée",
+      "appsInstalled_plural": "<0>{{number}}</0> apps installées",
       "storageAvailable": "disponibles"
     },
     "installSuccess": {
-      "title": "Application bien installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
-      "title_plural": "Applications bien installées. Vous pouvez maintenant ajouter vos comptes {{app}}.",
-      "notSupported": "Application bien installée. Pour plus d'informations sur les applications installées, consultez notre site Internet.",
+      "title": "App bien installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
+      "title_plural": "Apps bien installées. Vous pouvez ajouter vos comptes.",
+      "notSupported": "App bien installée. Pour plus d'informations sur les apps installées, consultez notre site Internet.",
       "manageAccount": "Ajouter des comptes",
       "learnMore": "En savoir plus",
       "later": "Plus tard"
@@ -2661,7 +2661,7 @@
     "install": {
       "loading": {
         "title": "Installation de {{appName}}",
-        "desc": "Merci de patienter pendant l'installation de l'application {{appName}}",
+        "desc": "Merci de patienter pendant l'installation de l'app {{appName}}",
         "button": "Installation...",
         "button_plural": "Installation... {{progressPercentage}} %"
       },
@@ -2670,22 +2670,22 @@
         "accounts": "Accéder aux Comptes"
       },
       "dependency": {
-        "title": "Application {{dependency}} requise",
-        "description_one": "L'application {{dependency}} sera également installée car elle est requise pour l'application {{app}}.",
-        "description_two": "Merci d'appuyer sur Continuer pour installer les applications {{app}} et {{dependency}}."
+        "title": "App {{dependency}} requise",
+        "description_one": "L'app {{dependency}} sera également installée car elle est requise pour l'app {{app}}.",
+        "description_two": "Appuyez sur Continuer pour installer les apps {{app}} et {{dependency}}."
       },
-      "continueInstall": "Installer les applications"
+      "continueInstall": "Installer les apps"
     },
     "update": {
-      "title": "{{number}} mise à jour d'application ",
-      "title_plural": "{{number}} mises à jour d'applications",
+      "title": "{{number}} mise à jour d'app",
+      "title_plural": "{{number}} mises à jour d'apps",
       "step": "Étape {{step}} de la mise à jour :",
       "updateWarn": "Ne sortez pas du Gestionnaire pendant la mise à jour.",
       "progress": "Mises à jour...",
       "button": "Tout mettre à jour",
       "version": "Nouvelle {{version}}",
       "buttonAction": "Mise à jour disponible",
-      "buttonModal": "Mettre à jour toutes les applications",
+      "buttonModal": "Mettre à jour toutes les apps",
       "loading": "Mise à jour...",
       "titleModal": "Mises à jours disponibles"
     },
@@ -2698,11 +2698,11 @@
         "title": "{{appName}} a bien été désinstallée sur votre {{productName}}."
       },
       "dependency": {
-        "title": "Désinstaller {{app}} et les applications associées ?",
-        "showAll": "Afficher les applications à désinstaller",
-        "description": "Les applications de votre appareil qui ont besoin de l'application {{app}} seront également désinstallées."
+        "title": "Désinstaller {{app}} et les apps associées ?",
+        "showAll": "Afficher les apps à désinstaller",
+        "description": "Les apps de votre appareil qui ont besoin de l'app {{app}} seront aussi désinstallées."
       },
-      "continueUninstall": "Désinstaller {{app}} et les autres applications"
+      "continueUninstall": "Désinstaller {{app}} et les autres apps"
     },
     "filter": {
       "title": "Afficher",
@@ -2753,7 +2753,7 @@
   },
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "Vous êtes sur le point d'installer la <1><0>version {{version}} du micrologiciel</0></1>.",
-    "introDescription1": "Toutes les applications sur votre appareil seront supprimées. Vous pouvez réinstaller vos applications après la mise à jour du micrologiciel.",
+    "introDescription1": "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2": "Cela n'a pas d'effet sur vos crypto-actifs.",
     "action": "Continuer la mise à jour"
   },
@@ -2768,7 +2768,7 @@
   },
   "FirmwareUpdateConfirmation": {
     "title": "Micrologiciel mis à jour",
-    "description": "Accédez au Gestionnaire pour réinstaller vos applications sur votre appareil."
+    "description": "Accédez au Gestionnaire pour réinstaller vos apps sur votre appareil."
   },
   "RepairDevice": {
     "title": "Réparer",
@@ -3638,17 +3638,17 @@
     "status": {
       "title": "Statut",
       "ok": {
-        "title": "L'application Ledger Live fonctionne correctement.",
+        "title": "Ledger Live fonctionne correctement.",
         "desc": "<0>Des difficultés ? Visitez notre </0><1>page d'aide</1>"
       },
       "error": {
-        "title": "L'application Ledger Live rencontre des problèmes."
+        "title": "Ledger Live rencontre des problèmes."
       }
     }
   },
   "platform": {
     "catalog": {
-      "title": "Catalogue d'applications Live",
+      "title": "Catalogue d'apps Live",
       "branch": {
         "soon": "À découvrir prochainement",
         "experimental": "Expérimental",
@@ -3659,7 +3659,7 @@
         "description": "Embarquez vers un nouvel univers de cryptos. Bénéficiez d'un accès sécurisé à une multitude de services : la DeFi, les NFT et bien plus encore."
       },
       "twitterBanner": {
-        "description": "Indiquez-nous le service que vous souhaiteriez vraiment voir avec le hashtag",
+        "description": "Indiquez-nous le service que vous rêvez de voir avec le hashtag",
         "tweetText": "La prochaine application devrait être..."
       },
       "pollCTA": {
@@ -3668,7 +3668,7 @@
       },
       "developerCTA": {
         "title": "Pour les développeurs",
-        "description": "Toutes les informations dont vous avez besoin pour intégrer vos applications dans Ledger Live."
+        "description": "Toutes les informations dont vous avez besoin pour intégrer vos apps dans Ledger Live."
       }
     },
     "disclaimer": {
