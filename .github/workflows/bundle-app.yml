@@ -17,10 +17,6 @@ jobs:
         uses: styfle/cancel-workflow-action@0.4.0
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6 # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - uses: ledgerhq/actions/check-member@v2.0.0
         with:
           username: ${{ github.actor }}
@@ -30,13 +26,17 @@ jobs:
         with:
           ref: ${{github.event.pull_request.head.ref}}
           repository: ${{github.event.pull_request.head.repo.full_name}}
-      - uses: actions/setup-node@main
-        with:
-          node-version: 14.x
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
+      - uses: actions/setup-node@main
+        with:
+          node-version: 14.x
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: install dependencies
         run: yarn --frozen-lockfile
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
