@@ -25,6 +25,8 @@ node_modules/warning/.*
 .*/TcpServer.js
 .*/core-js/.*
 
+.*/fixtures/fail20.json
+
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
 .*/node_modules/react-native
