@@ -5,14 +5,14 @@ cd $(dirname $0)
 cd ../src
 
 gen() {
-  for d in commands/*.js; do
+  for d in commands/*.ts; do
     path=${d%.*}
     name=${path#*/}
     echo 'import '$name' from "./'$path'";'
   done
   echo ''
   echo 'export default {'
-  for d in commands/*.js; do
+  for d in commands/*.ts; do
     path=${d%.*}
     name=${path#*/}
     echo '  '$name','
@@ -20,4 +20,4 @@ gen() {
   echo '};'
 }
 
-gen > commands-index.js
+gen > commands-index.ts

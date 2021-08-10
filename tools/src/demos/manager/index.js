@@ -211,7 +211,7 @@ const successInstallIcon = (
     height="10"
     viewBox="0 0 12 10"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+   
   >
     <path
       d="M1.09094 5.00002L4.36367 8.27275L10.9091 1.72729"
@@ -229,7 +229,7 @@ const updateIcon = (
     height="16"
     viewBox="0 0 14 16"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+   
   >
     <path
       d="M12.7276 5.22282C11.6962 3.0998 9.51914 1.63635 7.00029 1.63635C4.15088 1.63635 1.73887 3.5091 0.927979 6.0909M1.27301 10.7772C2.30438 12.9002 4.48143 14.3636 7.00029 14.3636C9.84969 14.3636 12.2617 12.4909 13.0726 9.90908"
@@ -261,7 +261,7 @@ const installIcon = (
     height="16"
     viewBox="0 0 14 16"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+   
   >
     <path
       d="M7 1.63637V14.3636M7 14.3636L10.5 10.8636M7 14.3636L3.5 10.8636"
@@ -424,7 +424,7 @@ const dangerIcon = (
     height="23"
     viewBox="0 0 24 23"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+   
   >
     <path
       d="M8.94948 4.34368L2.51426 15.7841C1.20188 18.1172 2.88788 21 5.56477 21H18.4352C21.1121 21 22.7981 18.1172 21.4857 15.7841L15.0505 4.34368C13.7124 1.9649 10.2875 1.9649 8.94948 4.34368Z"
@@ -449,7 +449,7 @@ const trashIcon = (
     height="18"
     viewBox="0 0 16 18"
     fill="none"
-    xmlns="http://www.w3.org/2000/svg"
+   
   >
     <path
       fill-rule="evenodd"

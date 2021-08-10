@@ -4,30 +4,30 @@ set -e
 cd $(dirname $0)
 
 targets="\
-customAddressValidation.js \
-hw-getAddress.js \
-hw-signMessage.js \
-libcore-buildOperation.js \
-libcore-buildSubAccounts.js \
-libcore-getFeesForTransaction.js \
-libcore-postSyncPatch.js \
-libcore-postBuildAccount.js \
-libcore-getAccountNetworkInfo.js \
-libcore-mergeOperations.js \
-transaction.js \
-bridge/js.js \
-bridge/libcore.js \
-bridge/mock.js \
-cli-transaction.js \
-specs.js \
-speculos-deviceActions.js \
-deviceTransactionConfig.js \
-test-dataset.js \
-test-specifics.js \
-mock.js \
-account.js \
-exchange.js \
-presync.js \
+customAddressValidation.ts \
+hw-getAddress.ts \
+hw-signMessage.ts \
+libcore-buildOperation.ts \
+libcore-buildSubAccounts.ts \
+libcore-getFeesForTransaction.ts \
+libcore-postSyncPatch.ts \
+libcore-postBuildAccount.ts \
+libcore-getAccountNetworkInfo.ts \
+libcore-mergeOperations.ts \
+transaction.ts \
+bridge/js.ts \
+bridge/libcore.ts \
+bridge/mock.ts \
+cli-transaction.ts \
+specs.ts \
+speculos-deviceActions.ts \
+deviceTransactionConfig.ts \
+test-dataset.ts \
+test-specifics.ts \
+mock.ts \
+account.ts \
+exchange.ts \
+presync.ts \
 "
 
 withoutNetworkInfo=("algorand polkadot")
@@ -40,7 +40,6 @@ mkdir generated/bridge
 
 genTarget () {
   t=$1
-  echo '// @flow'
   for family in $families; do
     if [ -f $family/$t ]; then
       echo -n 'import '$family' from "'
@@ -50,7 +49,9 @@ genTarget () {
         echo -n '../'
       done
       IFS=$OIFS
-      echo -n 'families/'$family/$t'";'
+      # echo -n 'families/'$family/$t'";'
+      str='families/'$family/$t'";'
+      echo "${str/.ts/}"
       echo
     fi
   done
@@ -75,8 +76,8 @@ done
 
 for t in $targets; do
   out=../generated/$t
-  if [[ "$out" != *.js ]]; then
-    out=$out.js
+  if [[ "$out" != *.ts ]]; then
+    out=$out.ts
   fi
   genTarget $t > $out
 done
@@ -85,17 +86,17 @@ done
 
 genDeviceTransactionConfig () {
   for family in $families; do
-    if [ -f $family/deviceTransactionConfig.js ]; then
-      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.js"; then
-        echo 'import type { ExtraDeviceTransactionField as ExtraDeviceTransactionField_'$family' } from "../families/'$family'/deviceTransactionConfig";'
+    if [ -f $family/deviceTransactionConfig.ts ]; then
+      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.ts"; then
+        echo 'import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_'$family' } from "../families/'$family'/deviceTransactionConfig";'
       fi
     fi
   done
 
   echo 'export type ExtraDeviceTransactionField ='
   for family in $families; do
-    if [ -f $family/deviceTransactionConfig.js ]; then
-      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.js"; then
+    if [ -f $family/deviceTransactionConfig.ts ]; then
+      if grep -q "export type ExtraDeviceTransactionField" "$family/deviceTransactionConfig.ts"; then
         echo '| ExtraDeviceTransactionField_'$family
       fi
     fi
@@ -103,18 +104,17 @@ genDeviceTransactionConfig () {
 }
 
 genTypesFile () {
-  echo '// @flow'
   for family in $families; do
     echo 'import { reflect as '$family'Reflect } from "../families/'$family'/types";'
-    echo 'import type { CoreStatics as CoreStatics_'$family' } from "../families/'$family'/types";'
-    echo 'import type { CoreAccountSpecifics as CoreAccountSpecifics_'$family' } from "../families/'$family'/types";'
-    echo 'import type { CoreOperationSpecifics as CoreOperationSpecifics_'$family' } from "../families/'$family'/types";'
-    echo 'import type { CoreCurrencySpecifics as CoreCurrencySpecifics_'$family' } from "../families/'$family'/types";'
-    echo 'import type { Transaction as '$family'Transaction } from "../families/'$family'/types";'
-    echo 'import type { TransactionRaw as '$family'TransactionRaw } from "../families/'$family'/types";'
+    echo 'import { CoreStatics as CoreStatics_'$family' } from "../families/'$family'/types";'
+    echo 'import { CoreAccountSpecifics as CoreAccountSpecifics_'$family' } from "../families/'$family'/types";'
+    echo 'import { CoreOperationSpecifics as CoreOperationSpecifics_'$family' } from "../families/'$family'/types";'
+    echo 'import { CoreCurrencySpecifics as CoreCurrencySpecifics_'$family' } from "../families/'$family'/types";'
+    echo 'import { Transaction as '$family'Transaction } from "../families/'$family'/types";'
+    echo 'import { TransactionRaw as '$family'TransactionRaw } from "../families/'$family'/types";'
     if [[ ! " ${withoutNetworkInfo[@]} " =~ " ${family} " ]]; then
-      echo 'import type { NetworkInfo as '$family'NetworkInfo } from "../families/'$family'/types";'
-      echo 'import type { NetworkInfoRaw as '$family'NetworkInfoRaw } from "../families/'$family'/types";'
+      echo 'import { NetworkInfo as '$family'NetworkInfo } from "../families/'$family'/types";'
+      echo 'import { NetworkInfoRaw as '$family'NetworkInfoRaw } from "../families/'$family'/types";'
     fi
   done
   echo
@@ -154,13 +154,13 @@ genTypesFile () {
     echo '  | '$family'NetworkInfoRaw'
     fi
   done
-  echo 'export const reflectSpecifics = (declare: *) => ['
+  echo 'export const reflectSpecifics = (declare: any): Array<{ OperationMethods: Record<string, unknown>, AccountMethods: Record<string, unknown> }> => ['
   for family in $families; do
     echo '  '$family'Reflect(declare),'
   done
-  echo '];'
+  echo '] as Array<{ OperationMethods: Record<string, unknown>, AccountMethods: Record<string, unknown> }>;'
 }
 
-genTypesFile > ../generated/types.js
+genTypesFile > ../generated/types.ts
 
-genDeviceTransactionConfig >> ../generated/deviceTransactionConfig.js
+genDeviceTransactionConfig >> ../generated/deviceTransactionConfig.ts

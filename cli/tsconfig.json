@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "module": "CommonJS",
-    "outDir": "lib",
-    "rootDir": "src",
-    "strict": true,
-    "target": "ES2015",
+    "rootDir": ".",
+    "outDir": "lib", // if out path for a file is same as its src path, nothing will be emitted
+    "resolveJsonModule": true,
+    "composite": true // required on the dependency project for references to work
   },
-  "include": ["src"]
+  "files": [
+    // by whitelisting the files to include, TS won't automatically
+    "package.json" // include all source below root, which is the default.
+  ]
 }

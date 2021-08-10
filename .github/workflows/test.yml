@@ -36,9 +36,7 @@ jobs:
       - name: Setup Tests
         run: yarn ci-setup-cli
       - name: Deps versions
-        run: |
-          yarn flow --version
-          yarn jest --version
+        run: yarn jest --version
       - name: Lint
         run: yarn ci-lint
         if: runner.os != 'Windows'

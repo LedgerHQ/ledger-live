@@ -8,70 +8,34 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live-common"
   },
-  "version": "20.11.0",
+  "version": "20.11.0-typescript.3",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "scripts": {
-    "flow-typed": "flow-typed install -s",
-    "build": "./scripts/build.sh",
     "prepare": "yarn build",
-    "watch": "node scripts/buildReactIcons.js && node scripts/buildReactFlags.js  && BABEL_ENV=cjs babel -wsd lib src & flow-copy-source -wv src lib",
+    "build": "bash ./scripts/build-ts.sh",
+    "watch": "bash ./scripts/watch-ts.sh",
     "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
     "prettier": "prettier --write 'src/**/*.?s' 'cli/src/**/*.?s'",
     "lint": "eslint src",
-    "flow": "flow src",
     "jest": "rimraf libcoredb && mkdir libcoredb && cross-env TZ=America/New_York jest",
     "test": "yarn jest",
-    "ci-lint": "yarn lint && yarn flow",
+    "ci-lint": "yarn lint",
     "ci-test-common": "env-cmd -f ./.ci.env yarn test --ci --updateSnapshot && git diff --exit-code src",
     "ci-setup-cli": "yalc publish && cd cli && yalc add @ledgerhq/live-common && yarn && yarn build && yarn link",
     "ci-test-cli": "cd cli && yarn test",
-    "ci-test-bot": "env-cmd -f ./.ci.env yarn jest --testMatch '**/*.bot.js'"
+    "ci-test-bot": "env-cmd -f ./.ci.env yarn jest --testMatch '**/*.bot.ts'"
   },
   "files": [
     "lib",
     "src",
-    "flow",
     "react.js",
-    "reactNative.js",
-    ".flowconfig"
+    "reactNative.js"
   ],
-  "jest": {
-    "testEnvironment": "node",
-    "coverageDirectory": "./coverage/",
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "clover"
-    ],
-    "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "src/__tests__"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/benchmark/.*",
-      "<rootDir>/cli/.yalc/.*"
-    ],
-    "testPathIgnorePatterns": [
-      "benchmark/",
-      "tools/",
-      "mobile-test-app/",
-      "lib/",
-      ".yalc",
-      "cli/",
-      "test-helpers/"
-    ],
-    "transformIgnorePatterns": [
-      "/node_modules/(?!@polkadot|@babel/runtime/helpers/esm/)"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "cli/node_modules"
-    ]
-  },
   "peerDependencies": {
-    "react": "16",
-    "react-dom": "16",
+    "react": ">=16",
+    "react-dom": ">=16",
     "react-redux": "7"
   },
   "dependencies": {
@@ -113,13 +77,14 @@
     "ethereumjs-common": "^1.5.2",
     "ethereumjs-tx": "^2.1.2",
     "ethereumjs-util": "^7.1.0",
-    "expect": "^26.6.2",
+    "expect": "^27.0.6",
     "invariant": "^2.2.2",
     "isomorphic-ws": "^4.0.1",
     "json-rpc-2.0": "^0.2.18",
     "lodash": "^4.17.21",
     "lru-cache": "5.1.1",
     "numeral": "^2.0.6",
+    "performance-now": "^2.1.0",
     "prando": "^6.0.1",
     "redux": "^4.1.0",
     "reselect": "^4.0.0",
@@ -138,43 +103,34 @@
     "xstate": "^4.23.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.13.16",
-    "@babel/core": "^7.13.16",
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/plugin-proposal-export-default-from": "^7.12.13",
-    "@babel/plugin-proposal-export-namespace-from": "^7.12.13",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-syntax-import-meta": "^7.10.4",
-    "@babel/preset-env": "^7.13.15",
-    "@babel/preset-flow": "^7.13.13",
-    "@babel/preset-react": "^7.13.13",
     "@svgr/core": "^5.5.0",
     "@testing-library/react-hooks": "^4.0.1",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.6.3",
+    "@types/jest": "^26.0.24",
+    "@types/node": "14.17.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
     "benchmark": "^2.1.4",
     "cross-env": "^7.0.3",
     "env-cmd": "*",
     "eslint": "^7.31.0",
     "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-prettier": "^7.2.0",
-    "eslint-plugin-flowtype": "^5.8.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "flow-bin": "^0.133.0",
-    "flow-copy-source": "^2.0.9",
-    "flow-typed": "^2.6.2",
     "glob": "^7.1.7",
-    "jest": "^26.6.3",
-    "prettier": "2.0.x",
+    "jest": "^27.0.6",
+    "prettier": "2.3.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-redux": "7.2.4",
     "react-test-renderer": "^17.0.2",
     "rimraf": "^3.0.2",
-    "timemachine": "^0.3.2"
+    "timemachine": "^0.3.2",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
   }
 }

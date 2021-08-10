@@ -1,4 +1,5 @@
 module.exports = {
+  parser: "@typescript-eslint/parser",
   settings: {
     react: { version: "16" },
   },
@@ -10,24 +11,20 @@ module.exports = {
   },
   extends: [
     "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:flowtype/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
     "prettier",
-    "prettier/react",
   ],
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
   },
-  parser: "babel-eslint",
-  plugins: ["flowtype", "react-hooks", "prettier"],
+  plugins: ["@typescript-eslint", "react", "react-hooks", "prettier"],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "linebreak-style": ["error", "unix"],
     semi: ["error", "always"],
-    "no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-    "flowtype/generic-spacing": 0,
-    "flowtype/space-after-type-colon": 0,
+    "no-unused-vars": "off",
     "import/prefer-default-export": 0,
     "no-plusplus": 0,
     "no-underscore-dangle": 0,
@@ -47,5 +44,9 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "prettier/prettier": "error",
+    "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
   },
 };

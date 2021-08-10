@@ -1,21 +1,16 @@
 /* eslint-disable no-console */
 
-// @ts-ignore
 import { deserializeError } from "@ledgerhq/errors";
 import { from } from "rxjs";
 import commandLineArgs from "command-line-args";
-// @ts-ignore
 import { closeAllDevices } from "./live-common-setup";
-// @ts-ignore
 import commandsMain from "./commands-index";
 // TODO cli-transaction.js => cli.js
-// @ts-ignore
 import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
 
 const commands = {
   ...Object.values(perFamily)
-    // @ts-ignore
-    .map((m) => typeof m === "object" && m && m.commands)
+    .map((m: any) => typeof m === "object" && m && m.commands)
     .reduce((acc, c) => ({ ...acc, ...c }), {}),
   ...commandsMain,
 };

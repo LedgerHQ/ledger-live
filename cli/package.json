@@ -15,15 +15,14 @@
   ],
   "scripts": {
     "prepare": "./scripts/gen.sh && yarn build",
-    "build": "babel --ignore __tests__ -s -d lib src --extensions '.js,.ts'",
-    "prepublishOnly": "rm -rf lib && babel --ignore __tests__ -d lib src --extensions '.js,.ts'",
-    "watch": "babel -wsd lib src --extensions '.js,.ts'",
-    "flow": "flow",
+    "build": "tsc --project src/tsconfig.json",
+    "prepublishOnly": "rm -rf lib && tsc",
+    "watch": "tsc --watch",
     "test-e2e": "./scripts/tests.sh",
     "test": "yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",
     "createTest": "./scripts/createTest.sh",
-    "type-check": "flow && tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "peerDependencies": {
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
@@ -34,10 +33,11 @@
     "@ledgerhq/hw-app-btc": "6.3.0",
     "@ledgerhq/hw-transport-http": "6.3.0",
     "@ledgerhq/hw-transport-mocker": "6.3.0",
+    "@ledgerhq/hw-transport-node-ble": "^6.3.0",
     "@ledgerhq/hw-transport-node-hid": "6.3.0",
     "@ledgerhq/hw-transport-node-speculos": "6.3.0",
     "@ledgerhq/ledger-core": "6.13.0",
-    "@ledgerhq/live-common": "^20.11.0",
+    "@ledgerhq/live-common": "^20.11.0-typescript.1",
     "@ledgerhq/logs": "6.2.0",
     "@walletconnect/client": "^1.5.2",
     "asciichart": "^1.5.25",
@@ -47,8 +47,6 @@
     "command-line-args": "^5.2.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "flow-bin": "0.120.1",
-    "flow-typed": "^3.2.1",
     "lodash.product": "^18.9.19",
     "qrcode-terminal": "^0.12.0",
     "qrloop": "^1.2.0",
@@ -59,18 +57,10 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.5",
-    "@babel/core": "^7.14.6",
-    "@babel/plugin-proposal-class-properties": "^7.14.5",
-    "@babel/plugin-proposal-export-default-from": "^7.14.5",
-    "@babel/plugin-proposal-export-namespace-from": "^7.14.5",
-    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-syntax-import-meta": "^7.10.4",
-    "@babel/preset-env": "^7.14.7",
-    "@babel/preset-flow": "^7.14.5",
-    "@babel/preset-typescript": "^7.14.5",
     "@types/command-line-args": "^5.0.1",
-    "ts-node": "^9.1.1",
+    "@types/lodash": "^4.14.172",
+    "@types/node": "^14.17.1",
+    "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   }
 }
