@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "20.10.1",
+  "version": "21.1.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
   "scripts": {
     "prepare": "./scripts/gen.sh && yarn build",
     "build": "tsc --project src/tsconfig.json",
-    "prepublishOnly": "rm -rf lib && tsc",
+    "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
     "watch": "tsc --watch",
     "test-e2e": "./scripts/tests.sh",
     "test": "yarn run test-e2e",
@@ -37,9 +37,9 @@
     "@ledgerhq/hw-transport-node-hid": "6.3.0",
     "@ledgerhq/hw-transport-node-speculos": "6.3.0",
     "@ledgerhq/ledger-core": "6.13.0",
-    "@ledgerhq/live-common": "^20.11.0-typescript.1",
+    "@ledgerhq/live-common": "^21.1.0",
     "@ledgerhq/logs": "6.2.0",
-    "@walletconnect/client": "^1.5.2",
+    "@walletconnect/client": "^1.5.4",
     "asciichart": "^1.5.25",
     "bignumber.js": "^9.0.1",
     "bip39": "^3.0.4",
@@ -57,10 +57,10 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@types/command-line-args": "^5.0.1",
+    "@types/command-line-args": "^5.2.0",
     "@types/lodash": "^4.14.172",
     "@types/node": "^14.17.1",
-    "ts-node": "^10.1.0",
+    "ts-node": "^10.2.0",
     "typescript": "^4.3.5"
   }
 }
