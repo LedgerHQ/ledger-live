@@ -5,6 +5,7 @@ import Clipboard from "@react-native-community/clipboard";
 import Scanner from "../../components/Scanner";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
+// $FlowFixMe
 import { connect, context, STATUS } from "./Provider";
 
 type Props = {

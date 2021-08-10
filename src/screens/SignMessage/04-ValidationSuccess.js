@@ -9,7 +9,9 @@ import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
 import {
+  // $FlowFixMe
   context as _wcContext,
+  // $FlowFixMe
   setCurrentCallRequestResult,
 } from "../WalletConnect/Provider";
 

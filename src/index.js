@@ -65,6 +65,7 @@ import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 import WalletConnectProvider, {
+  // $FlowFixMe
   context as _wcContext,
 } from "./screens/WalletConnect/Provider";
 import HookAnalytics from "./analytics/HookAnalytics";

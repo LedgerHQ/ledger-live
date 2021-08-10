@@ -8,7 +8,9 @@ import { TrackScreen } from "../../analytics";
 import ValidateError from "../../components/ValidateError";
 import { urls } from "../../config/urls";
 import {
+  // $FlowFixMe
   context as _wcContext,
+  // $FlowFixMe
   setCurrentCallRequestError,
 } from "../WalletConnect/Provider";
 
