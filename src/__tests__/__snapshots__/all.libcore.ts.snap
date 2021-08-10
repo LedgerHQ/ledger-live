@@ -17623,7 +17623,7 @@ Array [
     Object {
       "accountId": "libcore:1:decred:dpubZF3VHvPkY4B7sdkfyEF3V576DCn9Wb9Jh43HKCDFio3B4zLCKcXP1H6VqnKusFToCxErE1j1JoAgDQBVR4wvMVucS3SW6GVaYsknndcLwqA:",
       "blockHash": null,
-      "blockHeight": 578033,
+      "blockHeight": undefined,
       "extra": Object {},
       "fee": "2112",
       "hash": "bc58e554945dd232ec61112c3858d7a667db9359d1bf3d803c6e60a766f1e404",
