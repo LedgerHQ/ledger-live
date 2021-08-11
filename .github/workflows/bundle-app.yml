@@ -41,7 +41,7 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
-        run: yarn --frozen-lockfile
+        run: yarn --frozen-lockfile --network-timeout 100000
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: version
       - name: set beta name
