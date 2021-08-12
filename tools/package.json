@@ -33,7 +33,8 @@
     "rxjs": "^6.6.7",
     "styled-components": "^4.4.0",
     "timeago.js": "^4.0.2",
-    "victory": "^34.3.12"
+    "victory": "^34.3.12",
+    "webpack": "4.42"
   },
   "scripts": {
     "start": "HTTS=true react-app-rewired start",
