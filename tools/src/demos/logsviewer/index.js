@@ -71,6 +71,14 @@ const Header = ({ logs, logsMeta, onFiles }: *) => {
         }, []),
     [logs]
   );
+  const txSummaryLogs = useMemo(
+    () =>
+      logs
+        .slice(0)
+        .reverse()
+        .filter((l) => l.type === "transaction-summary"),
+    [logs]
+  );
   const apdus = apdusLogs.map((l) => l.message).join("\n");
   const experimentalEnvs = useMemo(
     () =>
@@ -214,6 +222,39 @@ const Header = ({ logs, logsMeta, onFiles }: *) => {
           </ul>
         </details>
       </HeaderRow>
+
+      {txSummaryLogs.length === 0 ? null : (
+        <HeaderRow>
+          <details>
+            <summary>
+              <strong>{txSummaryLogs.length} transaction events</strong>
+            </summary>
+            <ul>
+              {txSummaryLogs.map(
+                (
+                  {
+                    type,
+                    level,
+                    pname,
+                    message,
+                    timestamp,
+                    index: _index,
+                    ...rest
+                  },
+                  i
+                ) => (
+                  <li key={i}>
+                    <pre>{message}</pre>
+                    {Object.keys(rest).length > 0 ? (
+                      <ObjectInspector data={rest} />
+                    ) : null}
+                  </li>
+                )
+              )}
+            </ul>
+          </details>
+        </HeaderRow>
+      )}
 
       {experimentalEnvs.length ? (
         <HeaderRow>
