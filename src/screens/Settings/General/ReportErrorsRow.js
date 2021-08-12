@@ -1,50 +1,33 @@
 /* @flow */
-import React, { PureComponent } from "react";
-import { Trans } from "react-i18next";
-import { connect } from "react-redux";
-import { createStructuredSelector } from "reselect";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import SettingsRow from "../../../components/SettingsRow";
 import { setReportErrors } from "../../../actions/settings";
 import { reportErrorsEnabledSelector } from "../../../reducers/settings";
 import Switch from "../../../components/Switch";
 
-type Props = {
-  reportErrorsEnabled: boolean,
-  setReportErrors: boolean => void,
+const ReportErrorsRow = () => {
+  const { t } = useTranslation();
+
+  const reportErrorsEnabled = useSelector(reportErrorsEnabledSelector);
+  const dispatch = useDispatch();
+
+  return (
+    <SettingsRow
+      event="ReportErrorsRow"
+      title={t("settings.display.reportErrors")}
+      desc={t("settings.display.reportErrorsDesc")}
+      onPress={null}
+      alignedTop
+    >
+      <Switch
+        style={{ opacity: 0.99 }}
+        value={reportErrorsEnabled}
+        onValueChange={value => dispatch(setReportErrors(value))}
+      />
+    </SettingsRow>
+  );
 };
-const mapStateToProps = createStructuredSelector({
-  reportErrorsEnabled: reportErrorsEnabledSelector,
-});
 
-const mapDispatchToProps = {
-  setReportErrors,
-};
-
-class ReportErrorsRow extends PureComponent<Props> {
-  render() {
-    const { reportErrorsEnabled, setReportErrors, ...props } = this.props;
-    return (
-      <SettingsRow
-        {...props}
-        event="ReportErrorsRow"
-        title={<Trans i18nKey="settings.display.reportErrors" />}
-        desc={<Trans i18nKey="settings.display.reportErrorsDesc" />}
-        onPress={null}
-        alignedTop
-      >
-        <Switch
-          style={{ opacity: 0.99 }}
-          value={reportErrorsEnabled}
-          onValueChange={setReportErrors}
-        />
-      </SettingsRow>
-    );
-  }
-}
-
-const m: React$ComponentType<{}> = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ReportErrorsRow);
-
-export default m;
+export default ReportErrorsRow;

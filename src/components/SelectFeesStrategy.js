@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import {
   getMainAccount,
   getAccountUnit,
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 import { useTheme } from "@react-navigation/native";
+
 import type {
   Account,
   AccountLike,
@@ -55,6 +56,8 @@ export default function SelectFeesStrategy({
   onCustomFeesPress,
   forceUnitLabel,
 }: Props) {
+  const { t } = useTranslation();
+
   const { colors } = useTheme();
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
@@ -99,7 +102,7 @@ export default function SelectFeesStrategy({
             isChecked={feesStrategy === item.label}
           />
           <LText semiBold style={styles.feeLabel}>
-            {item.label}
+            {t(`common.${item.label}`)}
           </LText>
         </View>
         <View style={styles.feesAmountContainer}>
@@ -142,7 +145,7 @@ export default function SelectFeesStrategy({
         <SectionSeparator lineColor={colors.lightFog} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
-          title={<Trans i18nKey="send.summary.fees" />}
+          title={t("send.summary.fees")}
           additionalInfo={
             <View>
               <Info size={12} color={colors.grey} />
@@ -168,7 +171,7 @@ export default function SelectFeesStrategy({
           onPress={onCustomFeesPress}
         >
           <LText semiBold color="live">
-            <Trans i18nKey="send.summary.customizeFees" />
+            {t("send.summary.customizeFees")}
           </LText>
         </TouchableOpacity>
       </View>

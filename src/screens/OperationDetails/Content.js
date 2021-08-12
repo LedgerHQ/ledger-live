@@ -353,13 +353,7 @@ export default function Content({
       <View style={sectionStyles.wrapper}>
         <DataList
           data={uniqueSenders}
-          title={
-            <Trans
-              i18nKey="operationDetails.from"
-              count={uniqueSenders.length}
-              values={{ count: uniqueSenders.length }}
-            />
-          }
+          title={<Trans i18nKey="operationDetails.from" />}
           titleStyle={sectionStyles.title}
         />
       </View>
@@ -368,13 +362,7 @@ export default function Content({
         <View style={sectionStyles.wrapper}>
           <DataList
             data={uniqueRecipients}
-            title={
-              <Trans
-                i18nKey="operationDetails.to"
-                count={uniqueRecipients.length}
-                values={{ count: uniqueRecipients.length }}
-              />
-            }
+            title={<Trans i18nKey="operationDetails.to" />}
             rightComp={
               uniqueRecipients.length > 1 ? (
                 <View style={{ marginLeft: "auto" }}>

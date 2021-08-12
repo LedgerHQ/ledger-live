@@ -2,7 +2,7 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { themeSelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
@@ -13,12 +13,13 @@ import { setTheme } from "../../../actions/settings";
 import Check from "../../../icons/Check";
 
 export default function ThemeSettingsRow() {
-  const theme = useSelector(themeSelector);
+  const { t } = useTranslation();
+  const currentTheme = useSelector(themeSelector);
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const selectTheme = t => () => {
-    dispatch(setTheme(t));
+  const selectTheme = theme => () => {
+    dispatch(setTheme(theme));
   };
 
   const onClose = useCallback(() => setIsOpen(false), []);
@@ -26,33 +27,35 @@ export default function ThemeSettingsRow() {
   return (
     <>
       <SettingsRow
-        title={<Trans i18nKey="settings.display.theme" />}
-        desc={<Trans i18nKey="settings.display.themeDesc" />}
+        title={t("settings.display.theme")}
+        desc={t("settings.display.themeDesc")}
         arrowRight
         onPress={() => setIsOpen(true)}
         alignedTop
       >
         <LText semiBold color="grey">
-          <Trans i18nKey={`settings.display.themes.${theme}`} />
+          {t(`settings.display.themes.${currentTheme}`)}
         </LText>
       </SettingsRow>
       <BottomModal isOpened={isOpen} onClose={onClose}>
         <View style={styles.modal}>
-          {["light", "dusk", "dark"].map((t, i) => (
+          {["light", "dusk", "dark"].map((theme, i) => (
             <Touchable
               event="ThemeSettingsRow"
-              eventProperties={{ theme: t }}
-              key={t + i}
-              onPress={selectTheme(t)}
+              eventProperties={{ theme }}
+              key={theme + i}
+              onPress={selectTheme(theme)}
               style={[styles.button]}
             >
               <LText
-                {...(theme === t ? { semiBold: true } : {})}
+                {...(currentTheme === theme ? { semiBold: true } : {})}
                 style={[styles.buttonLabel]}
               >
-                {t}
+                {t(`settings.display.themes.${theme}`)}
               </LText>
-              {theme === t && <Check size={16} color={colors.live} />}
+              {currentTheme === theme && (
+                <Check size={16} color={colors.live} />
+              )}
             </Touchable>
           ))}
         </View>
