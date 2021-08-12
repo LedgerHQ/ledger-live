@@ -5,7 +5,12 @@ import { u8aConcat } from "@polkadot/util";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import type { Transaction } from "./types";
-import type { Account, Operation, SignOperationEvent } from "../../types";
+import type {
+  Account,
+  Operation,
+  OperationType,
+  SignOperationEvent,
+} from "../../types";
 import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
 import { buildTransaction } from "./js-buildTransaction";
@@ -77,7 +82,8 @@ const buildOptimisticOperation = (
   transaction: Transaction,
   fee: BigNumber
 ): Operation => {
-  const type = MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default;
+  const type = (MODE_TO_TYPE[transaction.mode] ??
+    MODE_TO_TYPE.default) as OperationType;
   const value =
     type === "OUT"
       ? new BigNumber(transaction.amount).plus(fee)

@@ -13,6 +13,16 @@ export type RewardDestinationType =
   | "Account"
   | "Controller";
 export type PolkadotNominationStatus = "active" | "inactive" | "waiting" | null;
+export type PolkadotOperationMode =
+  | "send"
+  | "bond"
+  | "unbond"
+  | "rebond"
+  | "withdrawUnbonded"
+  | "setController"
+  | "nominate"
+  | "chill"
+  | "claimReward";
 export type PolkadotNomination = {
   address: string;
   value: BigNumber;
@@ -54,7 +64,7 @@ export type PolkadotResourcesRaw = {
   numSlashingSpans: number;
 };
 export type Transaction = TransactionCommon & {
-  mode: string;
+  mode: PolkadotOperationMode;
   family: "polkadot";
   fees: BigNumber | null | undefined;
   validators: string[] | null | undefined;
@@ -64,7 +74,7 @@ export type Transaction = TransactionCommon & {
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: "polkadot";
-  mode: string;
+  mode: PolkadotOperationMode;
   fees: string | null | undefined;
   validators: string[] | null | undefined;
   era: string | null | undefined;
