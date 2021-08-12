@@ -2,11 +2,13 @@ import bs58check from "bs58check";
 import { BigNumber } from "bignumber.js";
 import get from "lodash/get";
 import { log } from "@ledgerhq/logs";
+import { extractBandwidthInfo } from "../../api/Tron";
 import type {
   Transaction,
   TronOperationMode,
   TrongridTxInfo,
   TrongridExtraTxInfo,
+  TronResources,
 } from "./types";
 import type { Account, Operation, OperationType } from "../../types";
 
@@ -322,4 +324,23 @@ export const txInfoToOperation = (
   }
 
   return undefined;
+};
+
+export const defaultTronResources: TronResources = {
+  frozen: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
+  delegatedFrozen: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
+  votes: [],
+  tronPower: 0,
+  energy: new BigNumber(0),
+  bandwidth: extractBandwidthInfo(null),
+  unwithdrawnReward: new BigNumber(0),
+  lastWithdrawnRewardDate: undefined,
+  lastVotedDate: undefined,
+  cacheTransactionInfoById: {},
 };

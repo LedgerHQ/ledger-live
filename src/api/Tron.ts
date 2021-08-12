@@ -22,6 +22,7 @@ import {
   formatTrongridTxResponse,
   formatTrongridTrc20TxResponse,
   hexToAscii,
+  defaultTronResources,
 } from "../families/tron/utils";
 import { log } from "@ledgerhq/logs";
 import { TronTransactionExpired } from "../errors";
@@ -475,11 +476,21 @@ export const extractBandwidthInfo = (
     gainedLimit: new BigNumber(0),
   };
 };
-export const getTronResources = async (
+
+export function getTronResources(): Promise<TronResources>;
+export function getTronResources(
   acc: Record<string, any>,
   txs: TrongridTxInfo[],
   cacheTransactionInfoById: Record<string, TronTransactionInfo>
-): Promise<TronResources> => {
+): Promise<TronResources>;
+export async function getTronResources(
+  acc?: Record<string, any>,
+  txs?: TrongridTxInfo[],
+  cacheTransactionInfoById: Record<string, TronTransactionInfo> = {}
+): Promise<TronResources> {
+  if (!acc) {
+    return defaultTronResources;
+  }
   const frozenBandwidth = get(acc, "frozen[0]", undefined);
   const frozenEnergy = get(
     acc,
@@ -547,8 +558,8 @@ export const getTronResources = async (
     const lastOp = txs.find(({ type }) => type === "VoteWitnessContract");
     return lastOp ? lastOp.date : null;
   };
+  const lastVotedDate = txs ? getLastVotedDate(txs) : undefined;
 
-  const lastVotedDate = getLastVotedDate(txs);
   return {
     energy,
     bandwidth,
@@ -561,7 +572,8 @@ export const getTronResources = async (
     lastVotedDate,
     cacheTransactionInfoById,
   };
-};
+}
+
 export const getUnwithdrawnReward = async (
   addr: string
 ): Promise<BigNumber> => {

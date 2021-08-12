@@ -1,7 +1,19 @@
+import BigNumber from "bignumber.js";
 import { setSupportedCurrencies } from "../../currencies";
 import { setPlatformVersion } from "../../platform/version";
 
 jest.setTimeout(180000);
+
+expect.extend({
+  toBeBigNumber(value) {
+    const pass = BigNumber.isBigNumber(value);
+    const message = pass
+      ? () => `${value} is a BigNumber`
+      : () => `${value} is not a BigNumber`;
+
+    return { message, pass };
+  },
+});
 
 setPlatformVersion("0.0.1");
 

@@ -1,10 +1,19 @@
+import sumBy from "lodash/sumBy";
+import { syncAccount } from "../../__tests__/test-helpers/bridge";
+import dataset from "../../families/tron/test-dataset";
+import { getAccountBridge } from "../../bridge";
+import type { Account } from "../../types";
+import {
+  fromAccountRaw,
+  decodeAccountId,
+  encodeAccountId,
+} from "../../account";
 import {
   fetchTronAccountTxs,
   getAccountName,
   getBrokerage,
   getTronSuperRepresentativeData,
 } from "../../api/Tron";
-import sumBy from "lodash/sumBy";
 
 export default (): void => {
   describe("tron super representative data", () => {
@@ -67,5 +76,60 @@ export default (): void => {
       );
       expect(hasUnsupportedTxs).toEqual([]);
     });
+  });
+
+  describe("tron accounts", () => {
+    const { accounts: accountsRaw = [] } = dataset?.currencies?.tron;
+    const { implementations = [] } = dataset;
+
+    const accounts = accountsRaw.reduce((acc, account) => {
+      const accountsWithImplem = implementations.map((impl) =>
+        fromAccountRaw({
+          ...account.raw,
+          id: encodeAccountId({
+            ...decodeAccountId(account.raw.id),
+            type: impl,
+          }),
+        })
+      );
+
+      return acc.concat(accountsWithImplem);
+    }, [] as Account[]);
+
+    test.each(accounts)(
+      "accounts should always have tronResources",
+      async (account) => {
+        const bridge = getAccountBridge(account, null);
+        const { tronResources = {} } = await syncAccount(bridge, account);
+
+        expect(tronResources).toEqual(
+          expect.objectContaining({
+            votes: expect.any(Array),
+            tronPower: expect.any(Number),
+            energy: expect.toBeBigNumber(),
+            bandwidth: {
+              freeUsed: expect.toBeBigNumber(),
+              freeLimit: expect.toBeBigNumber(),
+              gainedUsed: expect.toBeBigNumber(),
+              gainedLimit: expect.toBeBigNumber(),
+            },
+            unwithdrawnReward: expect.toBeBigNumber(),
+            cacheTransactionInfoById: expect.any(Object),
+          })
+        );
+        expect([
+          "bandwidth",
+          "cacheTransactionInfoById",
+          "delegatedFrozen",
+          "energy",
+          "frozen",
+          "lastVotedDate",
+          "lastWithdrawnRewardDate",
+          "tronPower",
+          "unwithdrawnReward",
+          "votes",
+        ]).toEqual(expect.arrayContaining(Object.keys(tronResources)));
+      }
+    );
   });
 };

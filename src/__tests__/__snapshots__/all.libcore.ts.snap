@@ -39579,6 +39579,20 @@ Array [
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
+    "tronResources": Object {
+      "delegatedFrozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "frozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
+      "lastVotedDate": undefined,
+      "lastWithdrawnRewardDate": undefined,
+      "tronPower": 0,
+      "votes": Array [],
+    },
     "unitMagnitude": 6,
     "used": false,
   },

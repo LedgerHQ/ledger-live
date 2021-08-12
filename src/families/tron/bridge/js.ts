@@ -308,9 +308,12 @@ const getAccountShape = async (info, syncConfig) => {
   const tronAcc = await fetchTronAccount(info.address);
 
   if (tronAcc.length === 0) {
+    const defaultTronResources = await getTronResources();
+
     return {
       blockHeight,
       balance: new BigNumber(0),
+      tronResources: defaultTronResources,
     };
   }
 
