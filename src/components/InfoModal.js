@@ -16,7 +16,7 @@ import { rgba } from "../colors";
 
 type BulletItem = {
   key: string,
-  val: React$Element<*>,
+  val: React$Node,
 };
 
 type InfoModalProps = ModalProps & {

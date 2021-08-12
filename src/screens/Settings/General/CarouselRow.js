@@ -1,6 +1,6 @@
 /* @flow */
 import React, { useCallback } from "react";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import SettingsRow from "../../../components/SettingsRow";
 import { carouselVisibilitySelector } from "../../../reducers/settings";
@@ -9,6 +9,8 @@ import { CAROUSEL_NONCE } from "../../../components/Carousel";
 import Switch from "../../../components/Switch";
 
 const CarouselRow = () => {
+  const { t } = useTranslation();
+
   const dispatch = useDispatch();
   const carouselVisibility = useSelector(carouselVisibilitySelector);
   const onSetCarouselVisibility = useCallback(
@@ -19,8 +21,8 @@ const CarouselRow = () => {
   return (
     <SettingsRow
       event="CarouselToggleRow"
-      title={<Trans i18nKey="settings.display.carousel" />}
-      desc={<Trans i18nKey="settings.display.carouselDesc" />}
+      title={t("settings.display.carousel")}
+      desc={t("settings.display.carouselDesc")}
       onPress={null}
       alignedTop
     >

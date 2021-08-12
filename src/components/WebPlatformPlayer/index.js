@@ -45,6 +45,8 @@ import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
+import InfoIcon from "../../icons/Info";
+import InfoPanel from "./InfoPanel";
 
 import * as tracking from "./tracking";
 
@@ -73,6 +75,30 @@ const ReloadButton = ({
   );
 };
 
+const InfoPanelButton = ({
+  loading,
+  setIsInfoPanelOpened,
+}: {
+  loading: boolean,
+  setIsInfoPanelOpened: (isInfoPanelOpened: boolean) => void,
+}) => {
+  const { colors } = useTheme();
+
+  const onPress = () => {
+    setIsInfoPanelOpened(true);
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.buttons}
+      disabled={loading}
+      onPress={onPress}
+    >
+      <InfoIcon size={18} color={colors.grey} />
+    </TouchableOpacity>
+  );
+};
+
 const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = useSelector(accountsSelector);
@@ -81,6 +107,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
+  const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
   const uri = useMemo(() => {
     const url = new URL(manifest.url);
@@ -424,10 +451,18 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
+        <View style={styles.headerRight}>
+          <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
+          <InfoPanelButton
+            onReload={handleReload}
+            loading={!widgetLoaded}
+            isInfoPanelOpened={isInfoPanelOpened}
+            setIsInfoPanelOpened={setIsInfoPanelOpened}
+          />
+        </View>
       ),
     });
-  }, [navigation, widgetLoaded, handleReload]);
+  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened]);
 
   useEffect(() => {
     tracking.platformLoad(manifest);
@@ -435,6 +470,14 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   return (
     <SafeAreaView style={[styles.root]}>
+      <InfoPanel
+        name={manifest.name}
+        icon={manifest.icon}
+        url={manifest.homepageUrl}
+        description={manifest.content.description}
+        isOpened={isInfoPanelOpened}
+        setIsOpened={setIsInfoPanelOpened}
+      />
       <WebView
         ref={targetRef}
         startInLoadingState={true}
@@ -465,6 +508,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  headerRight: {
+    display: "flex",
+    flexDirection: "row",
+    paddingRight: 8,
+  },
   center: {
     flex: 1,
     flexDirection: "column",
@@ -485,7 +533,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   buttons: {
-    padding: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
   },
 });
 
