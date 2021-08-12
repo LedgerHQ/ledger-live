@@ -44,6 +44,7 @@
     "usb": "USB",
     "add": "أضف",
     "slow": "بطيء",
+    "medium": "medium",
     "fast": "سريع",
     "token": "رمز",
     "token_plural": "رموز",
@@ -1327,8 +1328,8 @@
     "failed": "فشلت",
     "fees": "رسوم الشبكة",
     "noFees": "لا توجد رسوم",
-    "from": "من",
-    "to": "إلى",
+    "from": "From",
+    "to": "To",
     "identifier": "معرف المعاملة",
     "viewOperation": "عرض في المتصفح",
     "whatIsThis": "ما هذه العملية؟",
@@ -1923,7 +1924,7 @@
           "fees": "الحد الأقصى للرسوم",
           "disclaimer": {
             "title": "الأحكام والشروط",
-            "desc": "بالضغط على \"أقبل\"، أسلم وأقبل بأن هذه الخدمة تدار حصريًا من قبل شروط وأحكام {{provider}}.",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
             "tos": "الشروط والأحكام",
             "accept": "قبول",
             "reject": "إغلاق"
@@ -3677,6 +3678,11 @@
       "legalAdvice": "لا يتم تشغيل هذا التطبيق من قِبل Ledger. إن Ledger غير مسؤول عن أي خسارة للأموال أو عن جودة الخدمة لمثل هذا التطبيق.\n\nدائمًا تأكد من التحقق بعناية من المعلومات المعروضة على جهازك.",
       "checkbox": "لاتذكرني مرة أخرى.",
       "CTA": "متابعة"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
+      }
     }
   }
 }

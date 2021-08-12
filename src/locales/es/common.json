@@ -44,6 +44,7 @@
     "usb": "USB",
     "add": "Agregar",
     "slow": "lenta",
+    "medium": "medium",
     "fast": "rápida",
     "token": "Token",
     "token_plural": "Tokens",
@@ -1327,8 +1328,8 @@
     "failed": "Fallida",
     "fees": "Tarifas de red",
     "noFees": "Sin tarifas",
-    "from": "De",
-    "to": "A",
+    "from": "From",
+    "to": "To",
     "identifier": "ID de la transacción",
     "viewOperation": "Ver en el explorador",
     "whatIsThis": "¿Qué es esta operación?",
@@ -1923,7 +1924,7 @@
           "fees": "Tarifas máx",
           "disclaimer": {
             "title": "Términos y condiciones",
-            "desc": "Al hacer clic en “Aceptar”, reconozco y acepto que este servicio se rige exclusivamente por los Términos y Condiciones de {{provider}}.",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
             "tos": "Términos y Condiciones",
             "accept": "Aceptar",
             "reject": "Cerrar"
@@ -3677,6 +3678,11 @@
       "legalAdvice": "Esta aplicación no es operada por Ledger. Ledger no será responsable de ninguna pérdida de fondos o de calidad de servicio con respecto a dicha aplicación.\n\nSiempre asegúrate de verificar cuidadosamente la información que se muestra en tu dispositivo.",
       "checkbox": "No recordarme de nuevo.",
       "CTA": "Continuar"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
+      }
     }
   }
 }

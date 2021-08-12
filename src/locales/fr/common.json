@@ -44,6 +44,7 @@
     "usb": "USB",
     "add": "Ajouter",
     "slow": "Lent",
+    "medium": "medium",
     "fast": "Rapide",
     "token": "Jeton",
     "token_plural": "Jetons",
@@ -57,7 +58,7 @@
     },
     "update": "Mise à jour disponible",
     "install": "Installer",
-    "installed": "Installé",
+    "installed": "Installée",
     "uninstall": "Désinstaller",
     "fromNow": {
       "seconds": "dans une seconde",
@@ -972,7 +973,7 @@
     },
     "stepRecoveryPhrase": {
       "importRecoveryPhrase": {
-        "title": "Restaurer à partir d'une phrase de récupération",
+        "title": "Avec une phrase de récupération",
         "desc": "Utilisez votre phrase de récupération afin de restaurer, remplacer ou sauvegarder votre wallet physique Ledger.",
         "desc_1": "Votre Nano va restaurer vos clés privées pour vous permettre d'accéder à vos cryptos et de les gérer.",
         "cta": "Je suis prêt(e)",
@@ -1330,11 +1331,11 @@
     "from": "De",
     "to": "À",
     "identifier": "Identifiant de la transaction",
-    "viewOperation": "Afficher dans l'explorateur",
+    "viewOperation": "Dans l'explorateur",
     "whatIsThis": "À quoi correspond cette opération ?",
     "seeAll": "Tout afficher",
     "seeLess": "Afficher moins",
-    "viewInExplorer": "Afficher dans l'explorateur",
+    "viewInExplorer": "Dans l'explorateur",
     "sending": "Envoi en cours…",
     "receiving": "Réception en cours…",
     "tokenOperations": "Opérations de jetons",
@@ -1391,14 +1392,14 @@
   "account": {
     "tokens": {
       "contractAddress": "Adresse du contrat",
-      "viewInExplorer": "Afficher dans l'explorateur",
+      "viewInExplorer": "Dans l'explorateur",
       "seeMore": "Afficher plus de jetons",
       "seeLess": "Afficher moins de jetons",
-      "addTokens": "Ajouter un jeton",
+      "addTokens": "Jeton",
       "howTo": "Pour ajouter des comptes de jetons, vous devez <0>recevoir des fonds</0> avec votre <1>adresse {{currency}}</1>.",
       "algorand": {
         "contractAddress": "Adresse du contrat",
-        "viewInExplorer": "Afficher dans l'explorateur",
+        "viewInExplorer": "Dans l'explorateur",
         "seeMore": "Voir plus d'ASA",
         "seeLess": "Voir moins d'ASA",
         "addTokens": "Ajouter des ASA",
@@ -1598,9 +1599,9 @@
       "theme": "Thème",
       "themeDesc": "Définissez le thème de l'interface utilisateur",
       "themes": {
-        "dark": "Sombre",
-        "dusk": "Crépuscule",
-        "light": "Clair"
+        "dark": "Dark",
+        "dusk": "Dusk",
+        "light": "Light"
       },
       "counterValueDesc": "Choisissez la devise dans laquelle afficher votre solde et vos opérations.",
       "exchange": "Fournisseur du taux de change",
@@ -1675,7 +1676,7 @@
       "privacyPolicy": "Politique de confidentialité",
       "privacyPolicyDesc": "Découvrez les données personnelles que nous collectons, à quelles fins et comment nous les utilisons.",
       "liveReview": {
-        "title": "Noter l'app.",
+        "title": "Noter l'app",
         "ios": "Donnez votre avis dans l'App Store",
         "android": "Donnez votre avis dans le Google Play Store"
       }
@@ -1687,7 +1688,7 @@
       "support": "Assistance Ledger",
       "supportDesc": "En cas de problème, bénéficiez d'une aide pour utiliser Ledger Live avec votre wallet physique.",
       "configureDevice": "Configurer un appareil",
-      "configureDeviceDesc": "Configurez un nouvel appareil ou restaurer un appareil existant. Vos comptes et paramètres sont conservés.",
+      "configureDeviceDesc": "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés.",
       "clearCache": "Vider le cache",
       "clearCacheDesc": "Les transactions sur le réseau seront analysées et vos comptes seront recalculés.",
       "clearCacheModal": "Êtes-vous sûr(e) ?",
@@ -1759,7 +1760,7 @@
       "headerTitle": "Crypto-actif",
       "titleDevice": "Connecter l'appareil",
       "verifySkipped": "Votre adresse de bénéficiaire n'a pas été confirmée sur votre appareil Ledger. Merci de vérifier votre adresse {{accountType}} pour une sécurité optimale.",
-      "verifyPending": "Merci de vérifier que l'adresse {{currencyName}} affichée sur votre appareil est identique à celle indiquée sur votre téléphone.",
+      "verifyPending": "Vérifiez que l'adresse {{currencyName}} affichée sur votre appareil est identique à celle indiquée sur votre téléphone.",
       "verified": "Adresse confirmée. Si vous l'aviez copiée ou scannée, revérifiez.",
       "verifyAgain": "Revérifier",
       "noAccount": "Aucun compte trouvé",
@@ -1923,7 +1924,7 @@
           "fees": "Frais maximaux",
           "disclaimer": {
             "title": "Conditions d'utilisation",
-            "desc": "En choisissant Accepter, je reconnais et j'accepte que ce service soit exclusivement soumis aux Conditions d'utilisation de {{provider}}.",
+            "desc": "En choisissant Accepter, je reconnais et accepte que ce service soit exclusivement soumis aux Conditions d'utilisation de <0>{{provider}}</0>.",
             "tos": "Conditions d'utilisation",
             "accept": "Accepter",
             "reject": "Fermer"
@@ -2041,8 +2042,8 @@
       "terms": {
         "label": "Prêter des cryptos",
         "title": "Prêter des actifs sur le protocole Compound",
-        "description": "Le protocole Compound vous permet de prêter et d'emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des intérêts directement depuis votre compte Ledger.",
-        "switchLabel": "J'ai lu et j'accepte les <0><0>Conditions d'utilisation</0></0>."
+        "description": "Le protocole Compound vous permet de prêter et d'emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des intérêts directement depuis votre compte Ledger Live.",
+        "switchLabel": "J'ai lu et accepte les <0><0>Conditions d'utilisation</0></0>."
       },
       "info": {
         "1": {
@@ -2058,7 +2059,7 @@
         "3": {
           "label": "Étape 3/3",
           "title": "Retirer des actifs à tout moment",
-          "description": "Vous pouvez retirer vos actifs et les intérêts perçus en partie ou totalité à tout moment depuis votre compte Ledger.",
+          "description": "Vous pouvez retirer vos actifs et les intérêts perçus en partie ou totalité à tout moment depuis votre compte Ledger Live.",
           "cta": "Prêter maintenant"
         },
         "title": "Prêter des cryptos"
@@ -2471,7 +2472,7 @@
     "appNotInstalled_plural": "Merci d'installer les apps {{appName}}.",
     "verifyAddress": {
       "title": "Vérifier l'adresse sur l'appareil",
-      "description": "Merci de vérifier que l'adresse {{currencyName}} affichée sur Ledger Live correspond à celle indiquée sur votre appareil."
+      "description": "Vérifiez que l'adresse {{currencyName}} affichée sur Ledger Live correspond à celle indiquée sur votre appareil."
     },
     "confirmSwap": {
       "title": "Confirmer l'opération de swap sur l'appareil",
@@ -2532,7 +2533,7 @@
       },
       "receiveVerify": {
         "title": "Vérifier l'adresse sur l'appareil",
-        "description": "Merci de vérifier que l'adresse {{currencyName}} affichée sur Ledger Live est identique à celle indiquée sur votre appareil Ledger.",
+        "description": "Vérifiez que l'adresse {{currencyName}} affichée sur Ledger Live est identique à celle indiquée sur votre appareil Ledger.",
         "action": "Continuer"
       },
       "getDeviceName": {
@@ -2619,7 +2620,7 @@
       "noAppsDescription": "Aller dans le catalogue pour installer des apps",
       "noResultsFound": "Aucun résultat",
       "noResultsDesc": "Merci de vérifier l'orthographe et réessayer",
-      "versionNew": "(NOUVELLE {{newVersion}})"
+      "versionNew": "(NOUV. {{newVersion}})"
     },
     "uninstall": {
       "title": "Tout désinstaller",
@@ -2681,13 +2682,13 @@
       "title_plural": "{{number}} mises à jour d'apps",
       "step": "Étape {{step}} de la mise à jour :",
       "updateWarn": "Ne sortez pas du Gestionnaire pendant la mise à jour.",
-      "progress": "Mises à jour...",
+      "progress": "En cours...",
       "button": "Tout mettre à jour",
       "version": "Nouvelle {{version}}",
       "buttonAction": "Mise à jour disponible",
       "buttonModal": "Mettre à jour toutes les apps",
       "loading": "Mise à jour...",
-      "titleModal": "Mises à jours disponibles"
+      "titleModal": "Mises à jour disponibles"
     },
     "uninstall": {
       "loading": {
@@ -3439,7 +3440,7 @@
     "forAnEstYield": "pour un rendement estimé de",
     "yieldPerYear": "{{yield}} / An",
     "yieldInfos": "Les taux de rendement sont fournis par",
-    "termsAndPrivacy": "J'ai lu et j'accepte les <1>Conditions d'utilisation de Ledger Live</1> et la <3>Politique de confidentialité</3>.",
+    "termsAndPrivacy": "J'ai lu et accepte les <1>Conditions d'utilisation de Ledger Live</1> et la <3>Politique de confidentialité</3>.",
     "delegation": "Délégation",
     "viewDetails": "Voir les détails",
     "validator": "Validateur",
@@ -3537,8 +3538,8 @@
   "Terms": {
     "title": "Conditions d'utilisation",
     "read": "Lire les Conditions d'utilisation",
-    "switchLabelPrivacy": "J'ai lu et j'accepte la <1>Politique de confidentialité</1>.",
-    "switchLabel": "J'ai lu et j'accepte les <1>Conditions d'utilisation</1>.",
+    "switchLabelPrivacy": "J'ai lu et accepte la <1>Politique de confidentialité</1>.",
+    "switchLabel": "J'ai lu et accepte les <1>Conditions d'utilisation</1>.",
     "cta": "Entrer dans Ledger Live"
   },
   "exchange": {
@@ -3548,7 +3549,7 @@
       "selectAccount": "Sélectionner un compte",
       "connectDevice": "Connecter l'appareil",
       "title": "Acheter des cryptos via notre partenaire",
-      "description": "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger.",
+      "description": "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger Live.",
       "CTAButton": "Acheter maintenant",
       "emptyState": {
         "title": "Aucun compte {{currency}}",
@@ -3568,7 +3569,7 @@
       "selectAccount": "Sélectionner un compte",
       "connectDevice": "Connecter votre appareil",
       "title": "Vendre des cryptos via notre partenaire",
-      "description": "Vendez des crypto-actifs directement depuis votre compte Ledger via Coinify et recevez des monnaies fiduciaires sur votre compte bancaire.",
+      "description": "Vendez des crypto-actifs directement depuis votre compte Ledger Live via Coinify et recevez des monnaies fiduciaires sur votre compte bancaire.",
       "CTAButton": "Vendre maintenant",
       "emptyState": {
         "title": "Aucun compte {{currency}}",
@@ -3583,11 +3584,11 @@
   "banner": {
     "exchangeBuyCrypto": {
       "title": "ACHETER DES CRYPTOS",
-      "description": "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger."
+      "description": "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger Live."
     },
     "swap": {
       "title": "ÉCHANGER DES CRYPTOS",
-      "description": "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre partenaire."
+      "description": "Échangez des crypto-actifs directement depuis vos comptes Ledger Live avec notre partenaire."
     }
   },
   "walletconnect": {
@@ -3675,8 +3676,13 @@
       "title": "Application externe",
       "description": "Vous allez être redirigé(e) vers une application non exploitée par Ledger.",
       "legalAdvice": "Cette application n'est pas exploitée par Ledger. Ledger ne saurait être tenu responsable de toute perte de fonds ou qualité de service due à cette application.\n\nVérifiez toujours les informations affichées sur votre appareil.",
-      "checkbox": "Ne plus me le rappeler.",
+      "checkbox": "Ne plus me le rappeler",
       "CTA": "Continuer"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "Site"
+      }
     }
   }
 }

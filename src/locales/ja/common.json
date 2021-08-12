@@ -44,6 +44,7 @@
     "usb": "USB",
     "add": "Add",
     "slow": "slow",
+    "medium": "medium",
     "fast": "fast",
     "token": "Token",
     "token_plural": "Tokens",
@@ -1923,7 +1924,7 @@
           "fees": "Max fees",
           "disclaimer": {
             "title": "Terms and conditions",
-            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by {{provider}}'s Terms & Conditions.",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
             "tos": "Terms & conditions",
             "accept": "Accept",
             "reject": "Close"
@@ -3677,6 +3678,11 @@
       "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
       "checkbox": "Do not remind me again.",
       "CTA": "Continue"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
+      }
     }
   }
 }

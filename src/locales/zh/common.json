@@ -44,6 +44,7 @@
     "usb": "USB",
     "add": "添加",
     "slow": "慢",
+    "medium": "medium",
     "fast": "快",
     "token": "代币",
     "token_plural": "代币",
@@ -1327,8 +1328,8 @@
     "failed": "已失败",
     "fees": "网络费用",
     "noFees": "无费用",
-    "from": "来自",
-    "to": "到",
+    "from": "From",
+    "to": "To",
     "identifier": "交易 ID",
     "viewOperation": "在浏览器中查看",
     "whatIsThis": "这是什么操作？",
@@ -1923,7 +1924,7 @@
           "fees": "最大费用",
           "disclaimer": {
             "title": "条款和条件",
-            "desc": "点击“接受”后，就意味着我认可并接受该服务仅受 {{provider}} 的条款和条件的制约。",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
             "tos": "条款和条件",
             "accept": "接受",
             "reject": "关闭"
@@ -3677,6 +3678,11 @@
       "legalAdvice": "此应用程序并不由 Ledger 操作。Ledger 对此类应用所造成的任何资金损失或服务质量不负责任。\n\n始终确保仔细验证您设备上所显示的信息。",
       "checkbox": "不要再次提醒我。",
       "CTA": "继续"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
+      }
     }
   }
 }
