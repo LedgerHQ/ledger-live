@@ -14,7 +14,7 @@ export interface CryptoOrgAccountTransaction {
   success: boolean;
   code: number;
   log: string;
-  fee: CryptoOrgAmount;
+  fee: CryptoOrgAmount[];
   feePayer: string;
   feeGranter: string;
   gasWanted: number;
@@ -25,7 +25,7 @@ export interface CryptoOrgAccountTransaction {
 }
 export interface CryptoOrgAmount {
   denom: string;
-  amount: number;
+  amount: string;
 }
 export interface CryptoOrgMsgSendContent {
   amount: CryptoOrgAmount[];

@@ -19,7 +19,7 @@ const estimateMaxSpendable = async ({
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
   const fees = await getEstimatedFees();
-  return a.spendableBalance.minus(fees);
+  return BigNumber.max(0, a.spendableBalance.minus(fees));
 };
 
 export default estimateMaxSpendable;

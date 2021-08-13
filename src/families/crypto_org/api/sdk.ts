@@ -154,7 +154,7 @@ function convertSendTransactionToOperation(
   return {
     id: encodeOperationId(accountId, messageSendContent.txHash, type),
     accountId,
-    fee: new BigNumber(transaction.fee.amount),
+    fee: new BigNumber(getCroAmount(transaction.fee, currencyId)),
     value: getOperationValue(messageSendContent, currencyId),
     type,
     hash: messageSendContent.txHash,

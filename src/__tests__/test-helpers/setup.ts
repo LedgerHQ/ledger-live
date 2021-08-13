@@ -51,4 +51,6 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "cosmos_testnet",
+  "crypto_org_croeseid",
+  "crypto_org",
 ]);
