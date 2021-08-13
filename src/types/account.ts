@@ -20,6 +20,10 @@ import type {
   PolkadotResourcesRaw,
 } from "../families/polkadot/types";
 import type {
+  ElrondResources,
+  ElrondResourcesRaw,
+} from "../families/elrond/types";
+import type {
   CryptoOrgResources,
   CryptoOrgResourcesRaw,
 } from "../families/crypto_org/types";
@@ -199,6 +203,7 @@ export type Account = {
   cosmosResources?: CosmosResources;
   algorandResources?: AlgorandResources;
   polkadotResources?: PolkadotResources;
+  elrondResources?: ElrondResources;
   cryptoOrgResources?: CryptoOrgResources;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
@@ -284,9 +289,10 @@ export type AccountRaw = {
   cosmosResources?: CosmosResourcesRaw;
   algorandResources?: AlgorandResourcesRaw;
   polkadotResources?: PolkadotResourcesRaw;
+  elrondResources?: ElrondResourcesRaw;
+  cryptoOrgResources?: CryptoOrgResourcesRaw;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
-  cryptoOrgResources?: CryptoOrgResourcesRaw;
 };
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
 export type AccountRawLike = AccountRaw | SubAccountRaw;

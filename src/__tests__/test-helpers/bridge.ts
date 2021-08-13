@@ -557,7 +557,7 @@ export function testBridge<T extends Transaction>(
           async function expectStability(account, t) {
             const t2 = await bridge.prepareTransaction(account, t);
             const t3 = await bridge.prepareTransaction(account, t2);
-            expect(t2).toBe(t3);
+            expect(t2).toStrictEqual(t3);
           }
 
           makeTest("ref stability on empty transaction", async () => {

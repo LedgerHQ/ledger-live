@@ -80,6 +80,11 @@ const envDefinitions = {
     def: "https://polkadot-sidecar.coin.ledger.com",
     desc: "Polkadot Sidecar API url",
   },
+  ELROND_API_ENDPOINT: {
+    parser: stringParser,
+    def: "https://api.elrond.com",
+    desc: "Elrond API url",
+  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",

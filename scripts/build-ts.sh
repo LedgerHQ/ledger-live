@@ -2,7 +2,7 @@
 
 set -e
 
-rm -rf lib src/data/icons/react*
+rm -rf lib src/data/icons/react* src/data/flags/react*
 bash ./scripts/sync-families-dispatch.sh
 node scripts/buildReactIcons.js
 node scripts/buildReactFlags.js

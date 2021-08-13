@@ -18,6 +18,7 @@ setSupportedCurrencies([
   "litecoin",
   "dash",
   "ethereum_classic",
+  "elrond",
   "tezos",
   "qtum",
   "zcash",

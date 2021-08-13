@@ -21,6 +21,7 @@ setSupportedCurrencies([
   "bitcoin",
   "ethereum",
   "bsc",
+  "elrond",
   "ripple",
   "bitcoin_cash",
   "litecoin",

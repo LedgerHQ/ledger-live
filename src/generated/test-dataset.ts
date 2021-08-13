@@ -4,6 +4,8 @@ import bitcoin from "../families/bitcoin/test-dataset";
 
 import cosmos from "../families/cosmos/test-dataset";
 
+import elrond from "../families/elrond/test-dataset";
+
 import ethereum from "../families/ethereum/test-dataset";
 
 import polkadot from "../families/polkadot/test-dataset";
@@ -21,6 +23,7 @@ export default {
   algorand,
   bitcoin,
   cosmos,
+  elrond,
   ethereum,
   polkadot,
   ripple,

@@ -6,6 +6,8 @@ import cosmos from "../families/cosmos/transaction";
 
 import crypto_org from "../families/crypto_org/transaction";
 
+import elrond from "../families/elrond/transaction";
+
 import ethereum from "../families/ethereum/transaction";
 
 import neo from "../families/neo/transaction";
@@ -26,6 +28,7 @@ export default {
   bitcoin,
   cosmos,
   crypto_org,
+  elrond,
   ethereum,
   neo,
   polkadot,

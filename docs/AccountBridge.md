@@ -202,7 +202,7 @@ In other words _(and in a Jest test that we actually have)_ this should be expec
 async function expectStability(account, t) {
   const t2 = await bridge.prepareTransaction(account, t);
   const t3 = await bridge.prepareTransaction(account, t2);
-  expect(t2).toBe(t3); // t2 === t3
+  expect(t2).toStrictEqual(t3); // t2 === t3
 }
 ```
 
