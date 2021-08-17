@@ -2,7 +2,7 @@
   "common": {
     "cancel": "Cancelar",
     "apply": "Aplicar",
-    "seeAll": "See all",
+    "seeAll": "Ver todo",
     "back": "Atrás",
     "delete": "Borrar",
     "paste": "Pegar",
@@ -45,7 +45,7 @@
     "usb": "USB",
     "add": "Agregar",
     "slow": "lenta",
-    "medium": "medium",
+    "medium": "medio",
     "fast": "rápida",
     "token": "Token",
     "token_plural": "Tokens",
@@ -421,7 +421,7 @@
       "description": "No tienes activos de Energía para descongelar."
     },
     "TronUnfreezeNotExpired": {
-      "title": "Unfreeze is not available yet",
+      "title": "El descongelamiento todavía no está disponible",
       "description": "Espera 3 días a partir de tu última operación de congelación."
     },
     "TronVoteRequired": {
@@ -1234,7 +1234,7 @@
     "syncError": "Error de sincronización",
     "syncFailed": "La sincronización ha fallado",
     "syncPending": "Sincronizando...",
-    "transactions": "Transactions",
+    "transactions": "Transacciones",
     "greeting": {
       "morning": "Buenos días",
       "evening": "Buenas noches",
@@ -1316,10 +1316,10 @@
       "UNBOND": "Desvincular",
       "REWARD_PAYOUT": "Recompensa",
       "SLASH": "Penalización",
-      "WITHDRAW_UNBONDED": "Withdrawal",
+      "WITHDRAW_UNBONDED": "Retiro",
       "NOMINATE": "Nominación",
       "CHILL": "Borrar nominaciones",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "Definir controlador"
     }
   },
   "operationDetails": {
@@ -1331,8 +1331,8 @@
     "failed": "Fallida",
     "fees": "Tarifas de red",
     "noFees": "Sin tarifas",
-    "from": "From",
-    "to": "To",
+    "from": "De",
+    "to": "A",
     "identifier": "ID de la transacción",
     "viewOperation": "Ver en el explorador",
     "whatIsThis": "¿Qué es esta operación?",
@@ -1927,7 +1927,7 @@
           "fees": "Tarifas máx",
           "disclaimer": {
             "title": "Términos y condiciones",
-            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
+            "desc": "Al hacer clic en “Aceptar”, reconozco y acepto que este servicio se rige exclusivamente por los Términos y Condiciones de <0>{{provider}}</0>.",
             "tos": "Términos y Condiciones",
             "accept": "Aceptar",
             "reject": "Cerrar"
