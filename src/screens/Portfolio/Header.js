@@ -12,7 +12,6 @@ import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import Touchable from "../../components/Touchable";
 import Greetings from "./Greetings";
-import IconPie from "../../icons/Pie";
 import BellIcon from "../../icons/Bell";
 import SettingsIcon from "../../icons/Settings";
 import { NavigatorName, ScreenName } from "../../const";
@@ -21,25 +20,16 @@ import LText from "../../components/LText";
 import Warning from "../../icons/WarningOutline";
 
 type Props = {
-  showDistribution?: boolean,
   nbAccounts: number,
   showGreeting?: boolean,
 };
 
-export default function PortfolioHeader({
-  nbAccounts,
-  showGreeting,
-  showDistribution,
-}: Props) {
+export default function PortfolioHeader({ nbAccounts, showGreeting }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
   const { allIds, seenIds } = useAnnouncements();
   const { incidents } = useServiceStatus();
-
-  const onDistributionButtonPress = useCallback(() => {
-    navigation.navigate(ScreenName.Distribution);
-  }, [navigation]);
 
   const onNotificationButtonPress = useCallback(() => {
     navigation.navigate(NavigatorName.NotificationCenter);
@@ -79,16 +69,6 @@ export default function PortfolioHeader({
       <TouchableWithoutFeedback onPress={scrollToTop}>
         <View style={styles.content}>{content}</View>
       </TouchableWithoutFeedback>
-      {showDistribution && (
-        <View style={[styles.distributionButton]}>
-          <Touchable
-            event="DistributionCTA"
-            onPress={onDistributionButtonPress}
-          >
-            <IconPie size={18} color={colors.grey} />
-          </Touchable>
-        </View>
-      )}
       <View style={[styles.distributionButton, styles.marginLeft]}>
         <Touchable onPress={onNotificationButtonPress}>
           {notificationsCount > 0 && (

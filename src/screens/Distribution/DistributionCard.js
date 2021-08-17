@@ -141,5 +141,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
   },
-  barValue: {},
 });

@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
+    "seeAll": "See all",
     "back": "Back",
     "delete": "Delete",
     "paste": "Paste",
@@ -1233,6 +1234,7 @@
     "syncError": "Sync error",
     "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
+    "transactions": "Transactions",
     "greeting": {
       "morning": "Good morning",
       "evening": "Good evening",
