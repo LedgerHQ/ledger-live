@@ -2,6 +2,7 @@
   "common": {
     "cancel": "إلغاء",
     "apply": "تطبيق",
+    "seeAll": "See all",
     "back": "عودة",
     "delete": "حذف",
     "paste": "لصق",
@@ -1233,6 +1234,7 @@
     "syncError": "خطأ في المزامنة",
     "syncFailed": "فشلت المزامنة",
     "syncPending": "تتم المزامنة...",
+    "transactions": "Transactions",
     "greeting": {
       "morning": "صباح الخير",
       "evening": "مساء الخير",

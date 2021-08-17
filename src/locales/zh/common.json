@@ -2,6 +2,7 @@
   "common": {
     "cancel": "取消",
     "apply": "应用",
+    "seeAll": "See all",
     "back": "返回",
     "delete": "删除",
     "paste": "粘贴",
@@ -1233,6 +1234,7 @@
     "syncError": "同步错误",
     "syncFailed": "同步失败",
     "syncPending": "正在同步...",
+    "transactions": "Transactions",
     "greeting": {
       "morning": "早上好",
       "evening": "晚上好",

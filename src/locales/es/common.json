@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancelar",
     "apply": "Aplicar",
+    "seeAll": "See all",
     "back": "Atrás",
     "delete": "Borrar",
     "paste": "Pegar",
@@ -420,7 +421,7 @@
       "description": "No tienes activos de Energía para descongelar."
     },
     "TronUnfreezeNotExpired": {
-      "title": "La descongelación todavía no está disponible",
+      "title": "Unfreeze is not available yet",
       "description": "Espera 3 días a partir de tu última operación de congelación."
     },
     "TronVoteRequired": {
@@ -1233,6 +1234,7 @@
     "syncError": "Error de sincronización",
     "syncFailed": "La sincronización ha fallado",
     "syncPending": "Sincronizando...",
+    "transactions": "Transactions",
     "greeting": {
       "morning": "Buenos días",
       "evening": "Buenas noches",
@@ -2460,7 +2462,7 @@
   "DeviceAction": {
     "allowAppPermission": "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken": "para administrar los tokens {{token}}",
-    "allowManagerPermission": "Permite {{wording}} en tu dispositivo",
+    "allowManagerPermission": "Permite (Allow) {{wording}} en tu dispositivo",
     "loading": "Cargando...",
     "turnOnAndUnlockDevice": "Enciende y desbloquea tu dispositivo",
     "connectAndUnlockDevice": "Conecta y desbloquea tu dispositivo",

@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Annuler",
     "apply": "Appliquer",
+    "seeAll": "Tout",
     "back": "Retour",
     "delete": "Effacer",
     "paste": "Coller",
@@ -44,10 +45,10 @@
     "usb": "USB",
     "add": "Ajouter",
     "slow": "Lent",
-    "medium": "medium",
+    "medium": "Moyens",
     "fast": "Rapide",
-    "token": "Jeton",
-    "token_plural": "Jetons",
+    "token": "Token",
+    "token_plural": "Tokens",
     "subaccount": "Sous-compte",
     "subaccount_plural": "Sous-comptes",
     "forgetDevice": "Retirer l'appareil",
@@ -124,7 +125,7 @@
       "description": ""
     },
     "CompoundLowerAllowanceOfActiveAccountError": {
-      "title": "Vous ne pouvez pas diminuer le montant approuvé quand un dépôt est actif."
+      "title": "Vous ne pouvez pas diminuer le montant approuvé sur un dépôt actif."
     },
     "CosmosBroadcastCodeInternal": {
       "title": "Une erreur est survenue (Erreur #1).",
@@ -357,7 +358,7 @@
     },
     "NotEnoughGas": {
       "title": "ETH insuffisants pour couvrir les frais de réseau",
-      "description": "Envoyez des ETH sur votre compte pour régler vos transactions de jetons ERC-20."
+      "description": "Envoyez des ETH sur votre compte pour régler vos transactions de tokens ERC-20."
     },
     "NotEnoughBalanceToDelegate": {
       "title": "Solde insuffisant pour déléguer"
@@ -455,7 +456,7 @@
       "description": "Les transactions doivent être signées dans les 30 secondes. Veuillez réessayer."
     },
     "TronNotEnoughEnergy": {
-      "title": "Vous n'avez pas assez d'Énergie pour envoyer ce jeton."
+      "title": "Vous n'avez pas assez d'Énergie pour envoyer ce token."
     },
     "UpdateYourApp": {
       "title": "Mise à jour de l'app nécessaire",
@@ -1233,6 +1234,7 @@
     "syncError": "Erreur de synchronisation",
     "syncFailed": "Échec de la synchronisation",
     "syncPending": "Synchronisation...",
+    "transactions": "Transactions",
     "greeting": {
       "morning": "Bonjour",
       "evening": "Bonsoir",
@@ -1338,11 +1340,11 @@
     "viewInExplorer": "Dans l'explorateur",
     "sending": "Envoi en cours…",
     "receiving": "Réception en cours…",
-    "tokenOperations": "Opérations de jetons",
+    "tokenOperations": "Opérations de tokens",
     "subAccountOperations": "Opérations du sous-compte",
     "internalOperations": "Opérations internes",
     "tokenModal": {
-      "desc": "Cette opération est liée aux opérations de jetons suivantes"
+      "desc": "Cette opération est liée aux opérations de tokens suivantes"
     },
     "details": "Détails sur {{ currency }}",
     "extra": {
@@ -1384,8 +1386,8 @@
   "selectableAccountsList": {
     "deselectAll": "Tout désélectionner",
     "selectAll": "Tout sélectionner",
-    "tokenCount": "+1 jeton",
-    "tokenCount_plural": "+{{count}} jetons",
+    "tokenCount": "+1 token",
+    "tokenCount_plural": "+{{count}} tokens",
     "subaccountCount": "+1 sous-compte",
     "subaccountCount_plural": "+{{count}} sous-comptes"
   },
@@ -1393,10 +1395,10 @@
     "tokens": {
       "contractAddress": "Adresse du contrat",
       "viewInExplorer": "Dans l'explorateur",
-      "seeMore": "Afficher plus de jetons",
-      "seeLess": "Afficher moins de jetons",
-      "addTokens": "Jeton",
-      "howTo": "Pour ajouter des comptes de jetons, vous devez <0>recevoir des fonds</0> avec votre <1>adresse {{currency}}</1>.",
+      "seeMore": "Afficher plus de tokens",
+      "seeLess": "Afficher moins de tokens",
+      "addTokens": "Token",
+      "howTo": "Pour ajouter des comptes de tokens, vous devez <0>recevoir des fonds</0> avec votre <1>adresse {{currency}}</1>.",
       "algorand": {
         "contractAddress": "Adresse du contrat",
         "viewInExplorer": "Dans l'explorateur",
@@ -1424,7 +1426,7 @@
       "title": "Vous n'avez pas encore de crypto-actifs ?",
       "desc": "Assurez-vous que l'app <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
       "descWithBuy": "Assurez-vous que l'app <1><0>{{managerAppName}}</0></1> est installée pour acheter ou recevoir des <3><0>{{currencyTicker}}</0></3>.",
-      "descToken": "Assurez-vous que l'app <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{currencyTicker}}</0></3> et des jetons <5><0>{{tokenType}}</0></5>.",
+      "descToken": "Assurez-vous que l'app <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{currencyTicker}}</0></3> et des tokens <5><0>{{tokenType}}</0></5>.",
       "buttons": {
         "receiveFunds": "Recevoir",
         "buyCrypto": "Acheter"
@@ -1529,12 +1531,12 @@
       "upToDate": "Synchronisé",
       "error": "Erreur",
       "queued": "En attente",
-      "showTokens": "Afficher {{length}} jeton",
-      "showTokens_plural": "Afficher {{length}} jetons",
+      "showTokens": "Afficher {{length}} token",
+      "showTokens_plural": "Afficher {{length}} tokens",
       "showSubAccounts": "Afficher {{length}} sous-compte",
       "showSubAccounts_plural": "Afficher {{length}} sous-comptes",
-      "hideTokens": "Masquer le jeton",
-      "hideTokens_plural": "Masquer les jetons",
+      "hideTokens": "Masquer le token",
+      "hideTokens_plural": "Masquer les tokens",
       "hideSubAccounts": "Masquer le sous-compte",
       "hideSubAccounts_plural": "Masquer les sous-comptes",
       "algorand": {
@@ -1568,19 +1570,19 @@
     },
     "facebook": {
       "title": "Facebook",
-      "desc": "Likez notre page"
+      "desc": "Liker notre page"
     },
     "twitter": {
       "title": "Twitter",
-      "desc": "Suivez-nous"
+      "desc": "Nous suivre"
     },
     "github": {
       "title": "GitHub",
-      "desc": "Examinez notre code"
+      "desc": "Examiner notre code"
     },
     "status": {
       "title": "Statut de Ledger",
-      "desc": "Vérifiez l'état de notre système"
+      "desc": "Vérifier l'état de notre système"
     }
   },
   "settings": {
@@ -1635,8 +1637,8 @@
         "bullet1": "Identifiant unique et anonyme de l'application",
         "bullet2": "Version, région du système, langue et région de Ledger Live"
       },
-      "hideEmptyTokenAccounts": "Masquer les comptes de jetons vides",
-      "hideEmptyTokenAccountsDesc": "Cacher les comptes de jetons vides sur la page Comptes."
+      "hideEmptyTokenAccounts": "Masquer les comptes de tokens vides",
+      "hideEmptyTokenAccountsDesc": "Cacher les comptes de tokens vides sur la page Comptes."
     },
     "currencies": {
       "header": "Devises",
@@ -1651,14 +1653,14 @@
       "header": "Comptes",
       "title": "Comptes",
       "desc": "Gérer l'affichage des actifs dans l'app.",
-      "hideTokenCTA": "Masquer le jeton",
+      "hideTokenCTA": "Masquer le token",
       "showContractCTA": "Afficher le contrat",
-      "blacklistedTokens": "Liste de jetons masqués",
-      "blacklistedTokensDesc": "Vous pouvez masquer des jetons en vous rendant sur l'onglet Comptes, en faisant un appui long sur le jeton et choisissant Cacher le jeton.",
+      "blacklistedTokens": "Liste de tokens masqués",
+      "blacklistedTokensDesc": "Vous pouvez masquer des tokens en vous rendant sur l'onglet Comptes, en faisant un appui long sur le token et choisissant Cacher le token.",
       "blacklistedTokensModal": {
-        "title": "Masquer le jeton",
+        "title": "Masquer le token",
         "desc": "Cette action masquera tous les comptes de <1><0>{tokenName}</0></1>. Vous pouvez restaurer leur visibilité dans <3>Paramètres > Comptes</3>.",
-        "confirm": "Masquer le jeton"
+        "confirm": "Masquer le token"
       },
       "cryptoAssets": {
         "header": "Crypto-actifs",
@@ -2210,7 +2212,7 @@
       "noRateProvider": "Indisponible"
     },
     "summary": {
-      "subaccountsWarning": "Vous devez recharger ce compte avec des {{ currency }} afin d'envoyer les jetons de ce compte.",
+      "subaccountsWarning": "Vous devez recharger ce compte avec des {{ currency }} afin d'envoyer les tokens de ce compte.",
       "tag": "Tag (Facultatif)",
       "validateTag": "Valider le tag",
       "total": "Total",
@@ -2421,21 +2423,21 @@
     "noAccountToCreate": "Impossible de créer le compte <1><0>{{currencyName}}</></>. Merci de recommencer et synchroniser vos comptes.",
     "cantCreateAccount": "Impossible d'ajouter un nouveau compte avant de recevoir des actifs sur votre compte <1><0>{{accountName}}</></>.",
     "tokens": {
-      "title": "Ajouter un jeton",
+      "title": "Ajouter un token",
       "createParentCurrencyAccount": "Ajouter un compte {{parrentCurrencyName}}",
       "erc20": {
-        "title": "Ajouter un jeton",
-        "disclaimer": "{{tokenName}} est un jeton ERC-20.\nVous pouvez recevoir des jetons directement sur un compte Ethereum.",
+        "title": "Ajouter un token",
+        "disclaimer": "{{tokenName}} est un token ERC-20.\nVous pouvez recevoir des tokens directement sur un compte Ethereum.",
         "learnMore": "En savoir plus sur les ERC-20"
       },
       "trc10": {
-        "title": "Ajouter un jeton",
-        "disclaimer": "{{tokenName}} est un jeton TRC-10.\nVous pouvez recevoir des jetons directement sur un compte TRON.",
+        "title": "Ajouter un token",
+        "disclaimer": "{{tokenName}} est un token TRC-10.\nVous pouvez recevoir des jetons directement sur un compte TRON.",
         "learnMore": "En savoir plus sur les TRC-10"
       },
       "trc20": {
-        "title": "Ajouter un jeton",
-        "disclaimer": "{{tokenName}} est un jeton TRC-20.\nVous pouvez recevoir des jetons directement sur un compte TRON.",
+        "title": "Ajouter un token",
+        "disclaimer": "{{tokenName}} est un token TRC-20.\nVous pouvez recevoir des tokens directement sur un compte TRON.",
         "learnMore": "En savoir plus sur les TRC-20"
       }
     },
@@ -2459,7 +2461,7 @@
   },
   "DeviceAction": {
     "allowAppPermission": "Ouvrez l'app {{wording}} sur votre appareil.",
-    "allowAppPermissionSubtitleToken": "pour gérer vos jetons {{token}}",
+    "allowAppPermissionSubtitleToken": "pour gérer vos tokens {{token}}",
     "allowManagerPermission": "Autoriser {{wording}} sur l'appareil",
     "loading": "Chargement...",
     "turnOnAndUnlockDevice": "Allumez et déverrouillez votre appareil.",
@@ -2598,8 +2600,8 @@
     "appsCatalog": "Catalogue d'apps",
     "installedApps": "Apps installées",
     "noAppNeededForToken": "Installer l'app {{appName}} pour {{tokenName}}",
-    "tokenAppDisclaimer": "{{tokenName}} est un jeton {{tokenType}} qui utilise l'app {{appName}}. Pour gérer {{tokenName}}, <1>installez l'app {{appName}}</1> et envoyez les jetons <3>sur votre compte {{appName}}</3>.",
-    "tokenAppDisclaimerInstalled": "{{tokenName}} est un jeton {{tokenType}} qui utilise l'app {{appName}}. Pour gérer {{tokenName}}, <1>ouvrez l'app {{appName}}</1> et envoyez les jetons <3>sur votre compte {{appName}}</3>.",
+    "tokenAppDisclaimer": "{{tokenName}} est un token {{tokenType}} qui utilise l'app {{appName}}. Pour gérer {{tokenName}}, <1>installez l'app {{appName}}</1> et envoyez les tokens <3>sur votre compte {{appName}}</3>.",
+    "tokenAppDisclaimerInstalled": "{{tokenName}} est un token {{tokenType}} qui utilise l'app {{appName}}. Pour gérer {{tokenName}}, <1>ouvrez l'app {{appName}}</1> et envoyez les tokens <3>sur votre compte {{appName}}</3>.",
     "goToAccounts": "Accéder aux Comptes",
     "intallParentApp": "Installer l'app {{appName}}",
     "readOnly": {
@@ -3162,7 +3164,7 @@
       },
       "candidates": {
         "title": "Candidats",
-        "description": "127 personnes élues par le vote de la communauté des détenteurs de jetons. Les votes sont mis à jour toutes les 6 heures."
+        "description": "127 personnes élues par le vote de la communauté des détenteurs de tokens. Les votes sont mis à jour toutes les 6 heures."
       }
     }
   },
@@ -3514,7 +3516,7 @@
     "name": "Nom",
     "votes": "Votes",
     "infoWording": {
-      "freeze": "Les jetons gelés sont verrouillés pendant 3 jours.",
+      "freeze": "Les tokens gelés sont verrouillés pendant 3 jours.",
       "unfreeze": "Vos points {{resource}} seront diminués et tous vos votes seront annulés.",
       "claimReward": "Les récompenses peuvent être demandées toutes les 24 heures.",
       "cosmos": {
