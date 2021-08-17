@@ -5,20 +5,25 @@ import eip55 from "eip55";
 import { BigNumber } from "bignumber.js";
 import type { ModeModule } from "../types";
 import { AmountRequired } from "@ledgerhq/errors";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { inferTokenAccount, validateRecipient } from "../transaction";
-import { getAccountCurrency, getAccountUnit } from "../../../account";
 import {
-  findTokenByAddress,
-  findTokenById,
-  formatCurrencyUnit,
-} from "../../../currencies";
+  getAccountCurrency,
+  getAccountUnit,
+  getMainAccount,
+} from "../../../account";
+import { findTokenById, formatCurrencyUnit } from "../../../currencies";
 import { getAccountCapabilities } from "../../../compound/logic";
 import { CompoundLowerAllowanceOfActiveAccountError } from "../../../errors";
 import { DeviceTransactionField } from "../../../transaction";
+
 const infinite = new BigNumber(2).pow(256).minus(1);
 
-function contractField(transaction) {
-  const recipientToken = findTokenByAddress(transaction.recipient);
+function contractField(transaction, currency) {
+  const recipientToken = findTokenByAddressInCurrency(
+    transaction.recipient,
+    currency.id
+  );
   const maybeCompoundToken = findTokenById(recipientToken?.compoundFor || "");
   return {
     type: "text",
@@ -101,7 +106,7 @@ const erc20approve: ModeModule = {
     };
   },
 
-  fillDeviceTransactionConfig({ transaction, account }, fields) {
+  fillDeviceTransactionConfig({ transaction, account, parentAccount }, fields) {
     fields.push({
       type: "text",
       label: "Type",
@@ -122,7 +127,12 @@ const erc20approve: ModeModule = {
       });
     }
 
-    fields.push(contractField(transaction) as DeviceTransactionField);
+    fields.push(
+      contractField(
+        transaction,
+        getMainAccount(account, parentAccount).currency
+      ) as DeviceTransactionField
+    );
   },
 
   fillOptimisticOperation(_account, _transaction, operation) {

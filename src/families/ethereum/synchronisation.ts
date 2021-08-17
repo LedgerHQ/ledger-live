@@ -13,13 +13,11 @@ import {
   inferSubOperations,
   emptyHistoryCache,
 } from "../../account";
-import {
-  findTokenByAddress,
-  listTokensForCryptoCurrency,
-} from "../../currencies";
+import { listTokensForCryptoCurrency } from "../../currencies";
 import type { Operation, TokenAccount, Account } from "../../types";
 import { API, apiForCurrency, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 export const getAccountShape: GetAccountShape = async (
   infoInput,
   { blacklistedTokenIds }
@@ -177,7 +175,7 @@ const safeEncodeEIP55 = (addr) => {
 
 // in case of a SELF send, 2 ops are returned.
 const txToOps =
-  ({ address, id }) =>
+  ({ address, id, currency }) =>
   (tx: Tx): Operation[] => {
     // workaround bugs in our explorer that don't treat partial/optimistic operation really well
     if (!tx.gas_used) return [];
@@ -249,7 +247,10 @@ const txToOps =
             return [];
           }
 
-          const token = findTokenByAddress(event.contract);
+          const token = findTokenByAddressInCurrency(
+            event.contract,
+            currency.id
+          );
           if (!token) return [];
           const accountId = encodeTokenAccountId(id, token);
           const value = event.count;
