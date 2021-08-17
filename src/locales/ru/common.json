@@ -1316,9 +1316,10 @@
       "UNBOND": "Разблокировать",
       "REWARD_PAYOUT": "Вознаграждение",
       "SLASH": "Штраф",
-      "WITHDRAW_UNBONDED": "Вывод разблокированных средств",
+      "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "Голосование",
-      "CHILL": "Очистить голоса"
+      "CHILL": "Очистить голоса",
+      "SET_CONTROLLER": "Set controller"
     }
   },
   "operationDetails": {
@@ -3223,6 +3224,7 @@
       "header": "Назначения",
       "nominate": "Назначить",
       "chill": "Отменить назначения",
+      "setController": "Change controller",
       "status": "Состояние",
       "totalStake": "Общая доля",
       "amount": "Заблокированная сумма",
@@ -3243,8 +3245,8 @@
       "oversubscribed": "Превышение лимита голосов ({{nominatorsCount}})",
       "oversubscribedInfo": "Вознаграждения получают только ТОП-{{maxNominatorRewardedPerValidator}} номинатора(-ов) с наибольшей заблокированной суммой",
       "hasPendingBondOperation": "Блокировка средств ожидает подтверждения",
-      "externalControllerUnsupported": "Этот скрытый счёт контролируется другим счётом с адресом <0>{{address}}</0>. Операции по стейкингу на отдельных скрытых счетах не поддерживаются в Ledger Live. Воспользуйтесь альтернативным кошельком, например Polkadot.js",
-      "externalStashUnsupported": "Этот счёт отвечает за скрытый счёт с адресом <0>{{address}}</0>. Операции по стейкингу на отдельных скрытых счетах не поддерживаются в Ledger Live. Воспользуйтесь альтернативным кошельком, например Polkadot.js",
+      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
+      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
       "showInactiveNominations": "Показать всех номинаторов ({{count}})",
       "hideInactiveNominations": "Показать только активных номинаторов",
       "noActiveNominations": "Нет активных номинаторов.",
@@ -3411,6 +3413,11 @@
           "title": "Отменить назначения",
           "description": "Это действие отменяет все назначения и останавливает получение вознаграждений.",
           "info": "Блокированные активы останутся заблокированными. Если их разблокировать, доступ к ним будет восстановлен только спустя 28 дней."
+        },
+        "setController": {
+          "title": "Change Controller",
+          "description": "Set your Ledger account as its own controller",
+          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
         }
       },
       "stepperHeader": {
