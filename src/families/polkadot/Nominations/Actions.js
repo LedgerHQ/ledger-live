@@ -47,6 +47,18 @@ export function NominateAction({ onPress, electionOpen, disabled }: Props) {
   );
 }
 
+export function SetControllerAction({ onPress }: Props) {
+  const { t } = useTranslation();
+
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <LText semiBold color={"live"}>
+        {t("polkadot.nomination.setController")}
+      </LText>
+    </TouchableOpacity>
+  );
+}
+
 export function RebondAction({ onPress, disabled }: Props) {
   const { t } = useTranslation();
 
