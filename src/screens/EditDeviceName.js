@@ -20,7 +20,7 @@ import DeviceJob from "../components/DeviceJob";
 import { saveBleDeviceName } from "../actions/ble";
 import { withTheme } from "../colors";
 
-const MAX_DEVICE_NAME = 32;
+const MAX_DEVICE_NAME = 20;
 
 const forceInset = { bottom: "always" };
 
