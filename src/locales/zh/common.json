@@ -1316,9 +1316,10 @@
       "UNBOND": "解绑",
       "REWARD_PAYOUT": "奖励",
       "SLASH": "Slash 削减惩罚机制",
-      "WITHDRAW_UNBONDED": "提取已解绑资产",
+      "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "提名",
-      "CHILL": "清除提名"
+      "CHILL": "清除提名",
+      "SET_CONTROLLER": "Set controller"
     }
   },
   "operationDetails": {
@@ -3223,6 +3224,7 @@
       "header": "提名名单",
       "nominate": "提名",
       "chill": "清除提名",
+      "setController": "Change controller",
       "status": "状态",
       "totalStake": "质押总额",
       "amount": "已绑定数额",
@@ -3243,8 +3245,8 @@
       "oversubscribed": "超额订购 ({{nominatorsCount}})",
       "oversubscribedInfo": "只有绑定数额最高的顶层 {{maxNominatorRewardedPerValidator}} 提名者才可赚取奖励",
       "hasPendingBondOperation": "绑定操作仍在等待确认",
-      "externalControllerUnsupported": "该存储账户由地址为 <0>{{address}}</0> 的另一账户所控制。如果相关账户由另一账户控制，Ledger Live 则不支持此类账户的权益质押操作。请使用 Polkadot.js 之类的替代性钱包",
-      "externalStashUnsupported": "该账户控制着一个地址为 <0>{{address}}</0> 的存储账户。Ledger Live 不支持在一个单独的存储账户上的权益质押操作。请使用 Polkadot.js 之类的替代性钱包",
+      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
+      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
       "showInactiveNominations": "显示所有提名 ({{count}})",
       "hideInactiveNominations": "仅显示活跃状态的提名",
       "noActiveNominations": "没有活跃状态的提名。",
@@ -3411,6 +3413,11 @@
           "title": "清除提名",
           "description": "清除所有提名并停止赚取奖励。",
           "info": "已绑定的资产将会保持绑定状态。若您将其解绑，那么它们将在 28 天后可用。"
+        },
+        "setController": {
+          "title": "Change Controller",
+          "description": "Set your Ledger account as its own controller",
+          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
         }
       },
       "stepperHeader": {
