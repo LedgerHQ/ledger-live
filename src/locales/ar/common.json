@@ -1316,9 +1316,10 @@
       "UNBOND": "إلغاء التقيد",
       "REWARD_PAYOUT": "مُكافأة",
       "SLASH": "تغريم",
-      "WITHDRAW_UNBONDED": "سحب الأصول الغير مقيدة",
+      "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "ترشيح",
-      "CHILL": "مسح الترشيحات"
+      "CHILL": "مسح الترشيحات",
+      "SET_CONTROLLER": "Set controller"
     }
   },
   "operationDetails": {
@@ -3223,6 +3224,7 @@
       "header": "الترشيحات",
       "nominate": "ترشيح",
       "chill": "حذف الترشيحات",
+      "setController": "Change controller",
       "status": "الحالة",
       "totalStake": "إجمالي الرهن",
       "amount": "المبلغ المقيد",
@@ -3243,8 +3245,8 @@
       "oversubscribed": "({{nominatorsCount}}) تجاوز حد الاشتراك",
       "oversubscribedInfo": "أعلى {{maxNominatorRewardedPerValidator}} مرشحين مع أعلى مبلغ مقيد فقط هم من يحصلون على مكافآت",
       "hasPendingBondOperation": "لا تزال عملية التقيد في انتظار التأكيد",
-      "externalControllerUnsupported": "حساب التخزين هذا يخضع لسيطرة حساب آخر عنوانه <0>{{address}}</0>. عمليات الرهن على الحسابات الخاضعة لسيطرة حساب مختلف غير معتمدة في ليدجر لايف (Ledger Live). يرجى استخدام محفظة مختلفة مثل Polkadot.js",
-      "externalStashUnsupported": "هذا الحساب يتحكم في حساب تخزين عنوانه <0>{{address}}</0>. عمليات الرهن على حسابات تخزين منفصلة غير مدعومة في ليدجر لايف (Ledger Live). يرجى استخدام محفظة بديلة مثل Polkadot.js",
+      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
+      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
       "showInactiveNominations": "عرض كل الترشيحات ({{count}})",
       "hideInactiveNominations": "عرض الترشيحات النشطة فقط",
       "noActiveNominations": "لا توجد ترشيحات مفعلة.",
@@ -3411,6 +3413,11 @@
           "title": "حذف الترشيحات",
           "description": "يقوم بحذف جميع الترشيحات وإيقاف كسب المكافآت.",
           "info": "ستظل الأصول المقيدة على حالتها. إذا قمت بإلغاء تقيدها، فسوف تصبح متاحة بعد فترة 28 يومًا."
+        },
+        "setController": {
+          "title": "Change Controller",
+          "description": "Set your Ledger account as its own controller",
+          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
         }
       },
       "stepperHeader": {
