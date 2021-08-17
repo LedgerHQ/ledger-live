@@ -1316,10 +1316,10 @@
       "UNBOND": "Délié",
       "REWARD_PAYOUT": "Récompense",
       "SLASH": "Slashé",
-      "WITHDRAW_UNBONDED": "Withdrawal",
+      "WITHDRAW_UNBONDED": "Retrait",
       "NOMINATE": "Nomination",
       "CHILL": "Enlever les nominations",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "Définir contrôleur"
     }
   },
   "operationDetails": {
@@ -3224,7 +3224,7 @@
       "header": "Nominations",
       "nominate": "Nommer",
       "chill": "Enlever les nominations",
-      "setController": "Change controller",
+      "setController": "Changer contrôleur",
       "status": "Statut",
       "totalStake": "Stake total",
       "amount": "Montant lié",
@@ -3245,8 +3245,8 @@
       "oversubscribed": "Trop de nominateurs ({{nominatorsCount}})",
       "oversubscribedInfo": "Seuls les {{maxNominatorRewardedPerValidator}} nominateurs ayant le montant lié le plus élevé gagnent des récompenses.",
       "hasPendingBondOperation": "Une opération de liaison est toujours en attente de confirmation.",
-      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
-      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
+      "externalControllerUnsupported": "Ce compte stash est contrôlé par un compte distinct dont l'adresse est <0>{{controllerAddress}}</0>. Pour staker via Ledger Live, définissez ce compte stash comme son propre contrôleur.",
+      "externalStashUnsupported": "Ce compte est le contrôleur d'un compte stash distinct dont l'adresse est <0>{{stashAddress}}</0>. Pour staker via Ledger Live, définissez votre compte stash comme son propre contrôleur.",
       "showInactiveNominations": "Afficher toutes les nominations ({{count}})",
       "hideInactiveNominations": "Afficher uniquement les nominations actives",
       "noActiveNominations": "Il n'y a aucune nomination active.",
@@ -3415,9 +3415,9 @@
           "info": "Les actifs liés restent liés. Si vous les déliez, ils seront disponibles après 28 jours."
         },
         "setController": {
-          "title": "Change Controller",
-          "description": "Set your Ledger account as its own controller",
-          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
+          "title": "Changer Contrôleur",
+          "description": "Définissez votre compte Ledger Live comme son propre contrôleur.",
+          "info": "Ledger Live ne prend pas en charge les opérations de comptes stash et contrôleur distincts."
         }
       },
       "stepperHeader": {
