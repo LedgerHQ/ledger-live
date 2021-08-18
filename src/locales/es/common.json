@@ -1319,7 +1319,7 @@
       "WITHDRAW_UNBONDED": "Retiro",
       "NOMINATE": "Nominación",
       "CHILL": "Borrar nominaciones",
-      "SET_CONTROLLER": "Definir controlador"
+      "SET_CONTROLLER": "Definir controladora"
     }
   },
   "operationDetails": {
@@ -3224,7 +3224,7 @@
       "header": "Nominaciones",
       "nominate": "Nominar",
       "chill": "Borrar nominaciones",
-      "setController": "Change controller",
+      "setController": "Cambiar controladora",
       "status": "Estado",
       "totalStake": "Participación total",
       "amount": "Importe vinculado",
@@ -3245,8 +3245,8 @@
       "oversubscribed": "Sobresuscrito ({{nominatorsCount}})",
       "oversubscribedInfo": "Solo los nominadores principales {{maxNominatorRewardedPerValidator}} con el mayor importe vinculado reciben recompensas",
       "hasPendingBondOperation": "Aún existe una operación de vinculación pendiente de confirmación",
-      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
-      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
+      "externalControllerUnsupported": "Esta cuenta de almacenamiento está controlada por una cuenta distinta cuya dirección es <0>{{controllerAddress}}</0>. Para participar tokens mediante Ledger Live, debes definir a esta cuenta de almacenamiento como su propia controladora.",
+      "externalStashUnsupported": "Esta cuenta es la controladora de una cuenta de almacenamiento distinta cuya dirección es <0>{{stashAddress}}</0>. Para participar tokens mediante Ledger Live, debes definir a tu cuenta de almacenamiento como su propia controladora.",
       "showInactiveNominations": "Mostrar todas las nominaciones ({{count}})",
       "hideInactiveNominations": "Mostrar solo las nominaciones activas",
       "noActiveNominations": "No hay nominaciones activas.",
@@ -3415,9 +3415,9 @@
           "info": "Los activos vinculados seguirán estando vinculados. Si los desvinculas, estarán disponibles después de 28 días."
         },
         "setController": {
-          "title": "Change Controller",
-          "description": "Set your Ledger account as its own controller",
-          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
+          "title": "Cambiar controladora",
+          "description": "Define a tu cuenta de Ledger como su propio controladora",
+          "info": "Ledger Live no es compatible con operaciones de cuentas de almacenamiento que son distintas a sus cuentas controladoras."
         }
       },
       "stepperHeader": {
@@ -3690,7 +3690,7 @@
     },
     "webPlatformPlayer": {
       "infoPanel": {
-        "website": "website"
+        "website": "sitio web"
       }
     }
   }
