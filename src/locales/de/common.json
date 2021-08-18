@@ -2118,8 +2118,8 @@
           "totalAvailable": "verfügbare Gesamtsumme"
         },
         "validation": {
-          "success": "Operation sent successfully",
-          "info": "The approval was sent to the network for confirmation. You’ll be able to issue loans once it is confirmed.",
+          "success": "Aktion erfolgreich durchgeführt",
+          "info": "Die Freigabe wurde zur Bestätigung an das Netzwerk gesendet. Sobald sie bestätigt ist, können Sie Kredite vergeben.",
           "extraInfo": "Transactions can take some time to be displayed in an explorer and to be confirmed.",
           "button": {
             "done": "Close"
