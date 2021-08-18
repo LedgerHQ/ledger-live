@@ -2,7 +2,7 @@
   "common": {
     "cancel": "取消",
     "apply": "应用",
-    "seeAll": "See all",
+    "seeAll": "显示全部",
     "back": "返回",
     "delete": "删除",
     "paste": "粘贴",
@@ -45,7 +45,7 @@
     "usb": "USB",
     "add": "添加",
     "slow": "慢",
-    "medium": "medium",
+    "medium": "中",
     "fast": "快",
     "token": "代币",
     "token_plural": "代币",
@@ -1234,7 +1234,7 @@
     "syncError": "同步错误",
     "syncFailed": "同步失败",
     "syncPending": "正在同步...",
-    "transactions": "Transactions",
+    "transactions": "交易数目",
     "greeting": {
       "morning": "早上好",
       "evening": "晚上好",
@@ -1316,10 +1316,10 @@
       "UNBOND": "解绑",
       "REWARD_PAYOUT": "奖励",
       "SLASH": "Slash 削减惩罚机制",
-      "WITHDRAW_UNBONDED": "Withdrawal",
+      "WITHDRAW_UNBONDED": "提取",
       "NOMINATE": "提名",
       "CHILL": "清除提名",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "设置控制器"
     }
   },
   "operationDetails": {
@@ -1331,8 +1331,8 @@
     "failed": "已失败",
     "fees": "网络费用",
     "noFees": "无费用",
-    "from": "From",
-    "to": "To",
+    "from": "来自",
+    "to": "发往",
     "identifier": "交易 ID",
     "viewOperation": "在浏览器中查看",
     "whatIsThis": "这是什么操作？",
@@ -1927,7 +1927,7 @@
           "fees": "最大费用",
           "disclaimer": {
             "title": "条款和条件",
-            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
+            "desc": "点击“接受”后，就意味着我认可并接受该服务仅受 <0>{{provider}}</0> 的条款和条件的制约。",
             "tos": "条款和条件",
             "accept": "接受",
             "reject": "关闭"
@@ -3224,7 +3224,7 @@
       "header": "提名名单",
       "nominate": "提名",
       "chill": "清除提名",
-      "setController": "Change controller",
+      "setController": "更改控制器",
       "status": "状态",
       "totalStake": "质押总额",
       "amount": "已绑定数额",
@@ -3245,8 +3245,8 @@
       "oversubscribed": "超额订购 ({{nominatorsCount}})",
       "oversubscribedInfo": "只有绑定数额最高的顶层 {{maxNominatorRewardedPerValidator}} 提名者才可赚取奖励",
       "hasPendingBondOperation": "绑定操作仍在等待确认",
-      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
-      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
+      "externalControllerUnsupported": "此存储账户由地址为 <0>{{controllerAddress}}</0> 的单独账户控制。要使用 Ledger Live 进行质押，您必须将此存储账户设置为其自己的控制器。",
+      "externalStashUnsupported": "此账户是地址为 <0>{{stashAddress}}</0> 的单独存储账户的控制者。 要使用 Ledger Live 进行质押，您必须将您的存储账户设置为其自己的控制器。",
       "showInactiveNominations": "显示所有提名 ({{count}})",
       "hideInactiveNominations": "仅显示活跃状态的提名",
       "noActiveNominations": "没有活跃状态的提名。",
@@ -3415,9 +3415,9 @@
           "info": "已绑定的资产将会保持绑定状态。若您将其解绑，那么它们将在 28 天后可用。"
         },
         "setController": {
-          "title": "Change Controller",
-          "description": "Set your Ledger account as its own controller",
-          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
+          "title": "更改控制器",
+          "description": "将您的 Ledger 账户设置为其自己的控制器",
+          "info": "Ledger Live 不支持对单独的存储和控制器账户进行操作。"
         }
       },
       "stepperHeader": {
@@ -3690,7 +3690,7 @@
     },
     "webPlatformPlayer": {
       "infoPanel": {
-        "website": "website"
+        "website": "网站"
       }
     }
   }
