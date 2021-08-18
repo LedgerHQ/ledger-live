@@ -1903,8 +1903,8 @@
           "close": "关闭"
         },
         "noAccounts": {
-          "title": "没有可掉期交易的 {{ticker}}",
-          "desc": "您的 {{currencyName}} 账户没有余额可掉期交易。",
+          "title": "没有可交换的 {{ticker}}",
+          "desc": "您的 {{currencyName}} 账户没有余额可 swap 交换。",
           "addAccountCta": "添加账户",
           "cta": "关闭"
         },
