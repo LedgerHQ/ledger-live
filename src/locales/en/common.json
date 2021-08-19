@@ -1234,18 +1234,10 @@
     "syncError": "Sync error",
     "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
-    "transactions": "Transactions",
-    "greeting": {
-      "morning": "Good morning",
-      "evening": "Good evening",
-      "afternoon": "Good afternoon"
-    },
     "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
-    "summary": "Here is the summary of your account",
-    "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {
       "noAppsTitle": "Install an app on my device",
       "noAppsDesc": "Install apps on your device before adding accounts in Ledger Live. Go to the Manager to install apps.",

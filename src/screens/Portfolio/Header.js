@@ -11,7 +11,6 @@ import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import Touchable from "../../components/Touchable";
-import Greetings from "./Greetings";
 import BellIcon from "../../icons/Bell";
 import SettingsIcon from "../../icons/Settings";
 import { NavigatorName, ScreenName } from "../../const";
@@ -19,12 +18,17 @@ import { scrollToTop } from "../../navigation/utils";
 import LText from "../../components/LText";
 import Warning from "../../icons/WarningOutline";
 
-type Props = {
-  nbAccounts: number,
-  showGreeting?: boolean,
+type HeaderInformationProps = { isLoading: boolean, error?: Error | null };
+const HeaderInformation = ({ isLoading, error }: HeaderInformationProps) => {
+  if (error)
+    return <HeaderErrorTitle withDescription withDetail error={error} />;
+
+  if (isLoading) return <HeaderSynchronizing />;
+
+  return null;
 };
 
-export default function PortfolioHeader({ nbAccounts, showGreeting }: Props) {
+export default function PortfolioHeader() {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -51,23 +55,15 @@ export default function PortfolioHeader({ nbAccounts, showGreeting }: Props) {
 
   const notificationsCount = allIds.length - seenIds.length;
 
-  const content =
-    pending && !isUpToDate ? (
-      <HeaderSynchronizing />
-    ) : error ? (
-      <HeaderErrorTitle
-        withDescription
-        withDetail
-        error={networkError || error}
-      />
-    ) : showGreeting ? (
-      <Greetings nbAccounts={nbAccounts} />
-    ) : null;
-
   return (
     <View style={styles.wrapper}>
       <TouchableWithoutFeedback onPress={scrollToTop}>
-        <View style={styles.content}>{content}</View>
+        <View style={styles.content}>
+          <HeaderInformation
+            isLoading={pending && !isUpToDate}
+            error={networkError || error}
+          />
+        </View>
       </TouchableWithoutFeedback>
       <View style={[styles.distributionButton, styles.marginLeft]}>
         <Touchable onPress={onNotificationButtonPress}>

@@ -183,7 +183,7 @@ export default function PortfolioScreen({ navigation }: Props) {
 
       <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
-      {areAccountsEmpty && <Header nbAccounts={portfolio.accounts.length} />}
+      {areAccountsEmpty && <Header />}
 
       <AnimatedFlatListWithRefreshControl
         ref={ref}
