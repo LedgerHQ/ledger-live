@@ -2676,98 +2676,98 @@
       "dependency": {
         "title": "{{dependency}} App wird benötigt",
         "description_one": "Die {{dependency}} -App wird ebenfalls installiert, da die {{app}} -App sie verwendet.",
-        "description_two": "Please press Continue to install the {{app}} and {{dependency}} apps."
+        "description_two": "Bitte klicken Sie auf Weiter um die {{app}} und {{dependency}} Apps zu installieren."
       },
-      "continueInstall": "Install apps"
+      "continueInstall": "Apps installieren"
     },
     "update": {
-      "title": "{{number}} app update",
-      "title_plural": "{{number}} app updates",
-      "step": "Update step {{step}}:",
-      "updateWarn": "Do not quit the Manager during the update.",
-      "progress": "Updating all...",
-      "button": "Update all",
-      "version": "New {{version}}",
-      "buttonAction": "Update available",
-      "buttonModal": "Update all apps",
-      "loading": "Updating...",
-      "titleModal": "Updates available"
+      "title": "{{number}} App-Update",
+      "title_plural": "{{number}} App-Updates",
+      "step": "Aktualisiere Schritt {{step}}:",
+      "updateWarn": "Beenden Sie den Manager nicht während des Updates.",
+      "progress": "Aktualisiere alle...",
+      "button": "Alle aktualisieren",
+      "version": "Neu {{version}}",
+      "buttonAction": "Update verfügbar",
+      "buttonModal": "Alle Apps aktualisieren",
+      "loading": "Aktualisiere...",
+      "titleModal": "Updates verfügbar"
     },
     "uninstall": {
       "loading": {
-        "title": "Uninstalling {{appName}}",
-        "button": "Uninstalling..."
+        "title": "Deinstalliere {{appName}}",
+        "button": "Deinstallieren ..."
       },
       "done": {
-        "title": "Successfully uninstalled {{appName}} on your {{productName}}"
+        "title": "{{appName}} auf Ihrem {{productName}} erfolgreich deinstalliert"
       },
       "dependency": {
-        "title": "Uninstall {{app}} and related apps?",
-        "showAll": "Show apps to uninstall",
-        "description": "Apps on your device that need the {{app}} app will be uninstalled too."
+        "title": "{{app}} und verwandte Apps deinstallieren?",
+        "showAll": "Zu deinstallierende Apps anzeigen",
+        "description": "Apps auf Ihrem Gerät, die die {{app}}-App benötigen, werden ebenfalls deinstalliert."
       },
-      "continueUninstall": "Uninstall {{app}} and other apps"
+      "continueUninstall": "{{app}} und andere Apps deinstallieren"
     },
     "filter": {
-      "title": "Show",
-      "all": "All",
+      "title": "Anzeigen",
+      "all": "Alle",
       "installed": "Apps",
-      "not_installed": "Not installed",
-      "supported": "Live supported",
-      "updatable": "Updatable",
-      "apply": "Apply"
+      "not_installed": "Nicht installiert",
+      "supported": "Live unterstützt",
+      "updatable": "Aktualisierbar",
+      "apply": "Anwenden"
     },
     "sort": {
-      "title": "Sort by",
-      "default": "Default",
-      "name_asc": "Name A-Z",
-      "name_desc": "Name Z-A",
-      "marketcap_desc": "Market cap"
+      "title": "Sortieren nach",
+      "default": "Standard",
+      "name_asc": "Name A - Z",
+      "name_desc": "Name Z - A",
+      "marketcap_desc": "Marktkapitalisierung"
     }
   },
   "AuthenticityRow": {
-    "title": "Authentication",
-    "subtitle": "Genuine"
+    "title": "Authentifizierung",
+    "subtitle": "Echt"
   },
   "RemoveRow": {
-    "title": "Remove device"
+    "title": "Gerät entfernen"
   },
   "FirmwareVersionRow": {
-    "title": "Firmware version",
+    "title": "Firmware-Version",
     "subtitle": "Firmware {{version}}"
   },
   "FirmwareUpdateRow": {
-    "title": "Firmware version {{version}} available",
-    "subtitle": "Please use Ledger Live Desktop to update",
+    "title": "Firmware-Version {{version}} verfügbar",
+    "subtitle": "Bitte verwenden Sie Ledger Live Desktop zum Aktualisieren",
     "action": "Update"
   },
   "FirmwareUpdate": {
-    "title": "Update firmware",
+    "title": "Firmware aktualisieren",
     "Installing": {
       "title": "{{stepName}}...",
-      "subtitle": "If requested on your device, please enter your PIN to finish the process."
+      "subtitle": "Wenn Sie auf Ihrem Gerät dazu aufgefordert werden, geben Sie bitte Ihre PIN ein, um den Vorgang abzuschließen."
     },
     "steps": {
-      "osu": "Installing OSU",
-      "flash-mcu": "MCU updating",
-      "flash-bootloader": "Bootloader updating",
-      "flash": "Flashing your device",
-      "firmware": "Firmware updating"
+      "osu": "Installation der OSU",
+      "flash-mcu": "MCU-Aktualisierung",
+      "flash-bootloader": "Bootloader-Aktualisierung",
+      "flash": "Flashen Ihres Geräts",
+      "firmware": "Firmware aktualisiert"
     }
   },
   "FirmwareUpdateReleaseNotes": {
-    "introTitle": "You are about to install <1><0>firmware version {{version}}.</0></1>",
-    "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",
-    "introDescription2": "This has no impact on your crypto assets.",
-    "action": "Continue update"
+    "introTitle": "Sie sind dabei, die <1><0>Firmware-Version {{version}} zu installieren.</0></1>",
+    "introDescription1": "Bitte beachten Sie, dass alle Apps auf Ihrem Gerät gelöscht werden. Sie können Ihre Apps nach dem Firmware-Update neu installieren.",
+    "introDescription2": "Dies hat keinen Einfluss auf Ihr Krypto-Vermögen.",
+    "action": "Update fortsetzen"
   },
   "FirmwareUpdateCheckId": {
-    "title": "Identifier",
-    "description": "Please press both buttons together on your {{fullDeviceName}} if it displays the same identifier:"
+    "title": "Kennung",
+    "description": "Bitte drücken Sie beide Tasten gleichzeitig auf Ihrem {{fullDeviceName}}, wenn es die gleiche Kennung anzeigt:"
   },
   "FirmwareUpdateMCU": {
-    "title": "Restart device",
-    "desc1": "Disconnect your device from your computer.",
+    "title": "Gerät neu starten",
+    "desc1": "Trennen Sie Ihr Gerät von Ihrem Computer.",
     "desc2": "Press and hold the left button, connect the USB cable then release the button when the Bootloader screen appears."
   },
   "FirmwareUpdateConfirmation": {
@@ -2877,34 +2877,34 @@
     "delegation": {
       "delegationEarn": "You can earn ATOM rewards by delegating your assets.",
       "info": "How Delegation works",
-      "claimRewards": "Claim rewards",
-      "claimAvailableRewards": "Claim {{amount}}",
-      "header": "Delegation(s)",
-      "Amount": "Amount",
-      "noRewards": "No rewards available",
-      "delegate": "Delegate",
-      "undelegate": "Undelegate",
-      "redelegate": "Redelegate",
-      "reward": "Claim rewards",
-      "estYield": "Est. yield",
+      "claimRewards": "Prämien beanspruchen",
+      "claimAvailableRewards": "Anspruch {{amount}}",
+      "header": "Delegierung(en)",
+      "Amount": "Betrag",
+      "noRewards": "Keine Prämien verfügbar",
+      "delegate": "Delegieren",
+      "undelegate": "Delegierung aufheben",
+      "redelegate": "Erneut delegieren",
+      "reward": "Prämien beanspruchen",
+      "estYield": "Geschätzter Ertrag",
       "stepperHeader": {
-        "starter": "Earn rewards",
-        "validator": "Delegate assets",
-        "amountSubTitle": "Amount to delegate",
-        "summary": "Summary",
-        "verification": "Verification",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
-        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+        "starter": "Prämien verdienen",
+        "validator": "Delegierte Vermögenswerte",
+        "amountSubTitle": "Zu delegierender Betrag",
+        "summary": "Zusammenfassung",
+        "verification": "Verifizierung",
+        "selectDevice": "Gerät wählen",
+        "connectDevice": "Gerät verbinden",
+        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
       },
       "flow": {
         "steps": {
           "starter": {
-            "description": "Delegate your ATOM to earn rewards securely, keeping control of your assets.",
+            "description": "Delegieren Sie Ihr ATOM, um sicher Prämien zu verdienen und behalten Sie die Kontrolle über Ihr Vermögen.",
             "steps": {
-              "0": "Delegated assets remain yours.",
-              "1": "You will have to wait 21 days for the undelegation to complete.",
-              "2": "Delegate securely with your Ledger device."
+              "0": "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
+              "1": "Sie müssen 21 Tage warten, bis die Delegierung vollständig beendet ist.",
+              "2": "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
             },
             "warning": {
               "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
