@@ -3509,8 +3509,8 @@
     "recipientWording": {
       "send": "Vergewissern Sie sich immer, dass die auf Ihrem Gerät angezeigte Adresse genau mit der Adresse übereinstimmt, die Ihnen der Empfänger mitgeteilt hat",
       "delegate": "Vergewissern Sie sich immer, dass Ihr Gerät die Adresse genau so anzeigt, wie sie vom Validator bereitgestellt wird",
-      "undelegate": "Always verify that your device displays the address exactly as provided by the validator",
-      "freeze": "Always verify that your device displays the address exactly as provided",
+      "undelegate": "Vergewissern Sie sich immer, dass Ihr Gerät die Adresse genau so anzeigt, wie sie vom Validator bereitgestellt wird",
+      "freeze": "Vergewissern Sie sich immer, dass Ihr Gerät die Adresse genau wie angegeben anzeigt",
       "unfreeze": "Always verify that your device displays the address exactly as provided",
       "claimReward": "Always verify that your device displays the address exactly as provided",
       "vote": "Always verify that your device displays the address exactly as provided",
@@ -3583,48 +3583,48 @@
       "emptyState": {
         "title": "No {{currency}} account",
         "description": "You need to add an account before you can sell {{currency}}.",
-        "CTAButton": "Add account"
+        "CTAButton": "Konto hinzufügen"
       }
     },
     "history": {
-      "tabTitle": "History"
+      "tabTitle": "Verlauf"
     }
   },
   "banner": {
     "exchangeBuyCrypto": {
-      "title": "BUY CRYPTO",
-      "description": "Purchase crypto assets via Coinify and receive them directly in your Ledger account."
+      "title": "KRYPTO KAUFEN",
+      "description": "Kaufen Sie Krypto-Vermögenswerte über Coinify und erhalten Sie diese direkt auf Ihr Ledger-Konto"
     },
     "swap": {
-      "title": "SWAP CRYPTO",
-      "description": "Swap crypto assets directly from your Ledger accounts with our partner."
+      "title": "KRYPTO TAUSCHEN",
+      "description": "Tauschen Sie Krypto-Vermögenswerte direkt von Ihren Ledger-Konten mit unserem Partner."
     }
   },
   "walletconnect": {
-    "disclaimer": "Wants to connect to the following Ethereum account through your wallet :",
-    "reject": "Reject",
-    "connect": "Connect",
-    "connected": "Connected",
-    "disconnected": "Disconnected",
-    "warningdisconnected": "There is a connection problem between the dApp, WalletConnect and Ledger Live. Wait a few moments or relaunch the connection",
-    "info": "You can now access the {{name}} dApp on your desktop.",
-    "warning": "Sharing receive addresses from dApp is not secure. Always use Ledger Live when sharing your address to receive funds.",
-    "isconnecting": "is connecting, please wait...",
-    "disconnect": "Disconnect",
-    "retry": "Retry",
-    "close": "Close",
-    "message": "Message",
-    "messageHash": "Message Hash",
-    "domainHash": "Domain Hash",
+    "disclaimer": "Möchte sich mit dem folgenden Ethereum-Konto über Ihre Wallet verbinden:",
+    "reject": "Ablehnen",
+    "connect": "Verbinden",
+    "connected": "Verbunden",
+    "disconnected": "Getrennt",
+    "warningdisconnected": "Es besteht ein Verbindungsproblem zwischen dApp, WalletConnect und Ledger Live. Warten Sie ein paar Augenblicke oder starten Sie die Verbindung neu",
+    "info": "Sie können jetzt auf die dApp {{name}} auf Ihrem Desktop zugreifen.",
+    "warning": "Empfangsadressen von dApp zu teilen ist nicht sicher. Benutzen immer Ledger Live wenn Sie Ihre Adresse teilen, um Geld zu erhalten.",
+    "isconnecting": "wird verbunden, bitte warten ...",
+    "disconnect": "Trennen",
+    "retry": "Erneut versuchen",
+    "close": "Schließen",
+    "message": "Nachricht",
+    "messageHash": "Nachrichten-Hash",
+    "domainHash": "Domain-Hash",
     "stringHash": "Hash",
-    "from": "From",
-    "successTitle": "Message signed",
-    "successDescription": "You have signed the message received from a third party application",
+    "from": "Von",
+    "successTitle": "Nachricht signiert",
+    "successDescription": "Sie haben die von einer Drittanwendung empfangene Nachricht signiert",
     "stepperHeader": {
-      "summary": "Summary",
-      "selectDevice": "Select Device",
-      "connectDevice": "Connect Device",
-      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      "summary": "Zusammenfassung",
+      "selectDevice": "Gerät auswählen",
+      "connectDevice": "Gerät verbinden",
+      "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
     },
     "stepVerification": {
       "action": "Please confirm the operation on your device",
