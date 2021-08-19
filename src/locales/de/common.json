@@ -3314,22 +3314,22 @@
         "staked": "Gebundenes Guthaben",
         "stakedDescription": "Prämien werden Ihrem Guthaben gutgeschrieben, so dass Sie mehr Geld verdienen können.",
         "optionTitle": "Hinweis",
-        "optionDescription": "Once set, the option is fixed for the lifetime of this bond. If you change your mind, please read ",
-        "clickableLink": "here."
+        "optionDescription": "Einmal eingestellt, ist die Option für die gesamte Laufzeit dieser Anleihe festgelegt. Wenn Sie Ihre Meinung ändern, lesen Sie bitte ",
+        "clickableLink": "hier."
       },
       "stepperHeader": {
-        "starter": "Earn rewards",
-        "amount": "Amount to bond",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
-        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+        "starter": "Prämien verdienen",
+        "amount": "Betrag für Bindung",
+        "selectDevice": "Gerät wählen",
+        "connectDevice": "Gerät verbinden",
+        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
       },
       "steps": {
         "starter": {
-          "description": "You may earn rewards by bonding your assets and then nominate your validators.",
+          "description": "Sie können Prämien verdienen, indem Sie Ihr Vermögen binden und dann Ihre Validatoren nominieren.",
           "bullet": [
-            "You keep ownership of bonded assets",
-            "Nominate using your Ledger device",
+            "Sie behalten das Eigentum an gebundenen Vermögenswerten",
+            "Nominieren Sie mit Ihrem Ledger-Gerät",
             "Assets will be available again, 28 days after unbonding"
           ],
           "help": "How nominations work",
@@ -3446,69 +3446,69 @@
     "warnDelegation": "Delegating your voting rights does not guarantee any rewards from your validator.",
     "to": "to",
     "from": "from",
-    "forAnEstYield": "for an est. yield of",
-    "yieldPerYear": "{{yield}} / Year",
-    "yieldInfos": "Yield rates are provided by",
-    "termsAndPrivacy": "I have read and I accept the <1>Ledger Live Terms of Use</1> and <3>Privacy Policy</3>.",
-    "delegation": "Delegation",
-    "viewDetails": "View details",
+    "forAnEstYield": "für einen geschätzte Ertrag von",
+    "yieldPerYear": "{{yield}} / Jahr",
+    "yieldInfos": "Die Ertragsätze werden bereitgestellt von",
+    "termsAndPrivacy": "Ich habe die <1>Nutzungsbedingungen von Ledger Live</1> und <3>Datenschutzbestimmungen</3> gelesen und akzeptiere diese.",
+    "delegation": "Delegierung",
+    "viewDetails": "Details anzeigen",
     "validator": "Validator",
-    "validatorAddress": "Validator address",
-    "delegatedAccount": "Delegated account",
-    "duration": "Duration",
-    "transactionID": "Transaction ID",
-    "receive": "Receive more",
-    "changeValidator": "Change validator",
-    "endDelegation": "End delegation",
-    "durationForDays0": "Just now",
-    "durationForDays": "For a day",
-    "durationForDays_plural": "For {{count}} days",
-    "durationDays0": "Just now",
-    "durationDays": "1 day",
-    "durationDays_plural": "{{count}} days",
-    "selectValidatorTitle": "Select validator",
+    "validatorAddress": "Validator-Adresse",
+    "delegatedAccount": "Delegiertes Konto",
+    "duration": "Dauer",
+    "transactionID": "Transaktions-ID",
+    "receive": "Erhalten Sie mehr",
+    "changeValidator": "Validator ändern",
+    "endDelegation": "Delegierung beenden",
+    "durationForDays0": "Jetzt gerade",
+    "durationForDays": "Für einen Tag",
+    "durationForDays_plural": "Für {{count}} Tage",
+    "durationDays0": "Jetzt gerade",
+    "durationDays": "1 Tag",
+    "durationDays_plural": "{{count}} Tage",
+    "selectValidatorTitle": "Validator auswählen",
     "started": {
-      "title": "Earn rewards",
-      "description": "Delegate your Tezos account to a third-party validator to earn rewards securely, keeping control of your assets.",
+      "title": "Prämien verdienen",
+      "description": "Delegieren Sie Ihr Tezos-Konto an einen Drittpartei Validator, um sicher Prämien zu verdienen und die Kontrolle über Ihr Vermögen zu behalten.",
       "steps": {
-        "0": "Delegated accounts remain yours.",
-        "1": "You can manage your assets at all times.",
-        "2": "Delegate securely with your Ledger device."
+        "0": "Delegierte Konten bleiben in Ihrem Besitz.",
+        "1": "Sie können Ihre Vermögenswerte jederzeit verwalten.",
+        "2": "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
       },
-      "cta": "Delegate to earn rewards"
+      "cta": "Delegieren, um Prämien zu verdienen"
     },
     "broadcastSuccessTitle": {
-      "delegate": "Delegation sent",
-      "undelegate": "Operation sent"
+      "delegate": "Delegierung gesendet",
+      "undelegate": "Aktion gesendet"
     },
     "broadcastSuccessDescription": {
-      "delegate": "Delegation transaction broadcasted successfully. You should earn your first rewards in around 40 days, depending on the validator.",
-      "undelegate": "Your account delegation will end when the operation is confirmed. You can delegate your account again at any time."
+      "delegate": "Die Delegierungstransaktion wurde erfolgreich übertragen. Sie sollten Ihre ersten Prämien innerhalb von etwa 40 Tagen verdienen, je nach Validator.",
+      "undelegate": "Ihre Kontodelegierung endet, sobald der Vorgang bestätigt ist. Sie können Ihr Konto jederzeit erneut delegieren."
     },
-    "summaryTitle": "Summary",
-    "goToAccount": "Go to Accounts",
-    "howDelegationWorks": "How delegation works",
+    "summaryTitle": "Zusammenfassung",
+    "goToAccount": "Zu Konten gehen",
+    "howDelegationWorks": "Wie funktioniert die Delegierung",
     "actions": {
-      "redelegate": "Redelegate",
-      "collectRewards": "Collect rewards",
-      "undelegate": "Undelegate"
+      "redelegate": "Erneut delegieren",
+      "collectRewards": "Prämien einsammeln",
+      "undelegate": "Delegierung aufheben"
     }
   },
   "ValidateOnDevice": {
     "title": {
-      "send": "Please confirm the operation on your {{productName}} to send it",
-      "freeze": "On your device, please confirm to finalize the operation",
-      "unfreeze": "On your device, please confirm to finalize the operation",
-      "claimReward": "On your device, please confirm to finalize the operation",
-      "vote": "On your device, please confirm to finalize the operation",
-      "delegate": "On your device, please confirm to finalize the operation",
-      "redelegate": "On your device, please confirm to finalize the operation",
-      "undelegate": "On your device, please confirm to finalize the operation"
+      "send": "Bitte bestätigen Sie den Vorgang auf Ihrem {{productName}}, um ihn zu senden",
+      "freeze": "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "unfreeze": "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "claimReward": "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "vote": "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "delegate": "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "redelegate": "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "undelegate": "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen"
     },
-    "warning": "Always verify the address displayed your device exactly matches the one given to you by the {{recipientWording}}",
+    "warning": "Vergewissern Sie sich immer, dass die auf Ihrem Gerät angezeigte Adresse genau mit der Adresse übereinstimmt, die von {{recipientWording}} mitgeteilt wurde",
     "recipientWording": {
-      "send": "Always verify the address displayed your device exactly matches the one given to you by the recipient",
-      "delegate": "Always verify that your device displays the address exactly as provided by the validator",
+      "send": "Vergewissern Sie sich immer, dass die auf Ihrem Gerät angezeigte Adresse genau mit der Adresse übereinstimmt, die Ihnen der Empfänger mitgeteilt hat",
+      "delegate": "Vergewissern Sie sich immer, dass Ihr Gerät die Adresse genau so anzeigt, wie sie vom Validator bereitgestellt wird",
       "undelegate": "Always verify that your device displays the address exactly as provided by the validator",
       "freeze": "Always verify that your device displays the address exactly as provided",
       "unfreeze": "Always verify that your device displays the address exactly as provided",
