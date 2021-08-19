@@ -2907,53 +2907,53 @@
               "2": "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
             },
             "warning": {
-              "description": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately."
+              "description": "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer übertragenen Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält."
             },
-            "cta": "Continue"
+            "cta": "Weiter"
           },
           "validator": {
-            "validators": "Validators",
-            "myDelegations": "My delegations",
-            "cta": "Continue",
-            "estYield": "Est. yield: {{amount}}",
-            "totalAvailable": "Total available: <0>{{amount}}</0>",
-            "allAssetsUsed": "All assets used",
-            "noResultsFound": "No validator found for <0>{{search}}</0>",
+            "validators": "Validatoren",
+            "myDelegations": "Meine Delegierungen",
+            "cta": "Weiter",
+            "estYield": "Geschätzter Ertrag {{amount}}",
+            "totalAvailable": "Insgesamt verfügbar: <0>{{amount}}</0>",
+            "allAssetsUsed": "Alle verwendeten Vermögenswerte",
+            "noResultsFound": "Kein Validator für <0>{{search}}</0> gefunden",
             "currentAmount": "(+ <0>{{amount}}</0>)"
           },
           "amount": {
-            "assetsRemaining": "Assets remaining: <0>{{amount}}</0>",
-            "allAssetsUsed": "All assets used",
-            "minAmount": "Minimum amount: <0>{{min}}</0>",
-            "incorrectAmount": "Maximum amount: <0>{{max}}</0>",
-            "cta": "Continue"
+            "assetsRemaining": "Verbleibende Vermögenswerte: <0>{{amount}}</0>",
+            "allAssetsUsed": "Alle verwendeten Vermögenswerte",
+            "minAmount": "Mindestbetrag: <0>{{min}}</0>",
+            "incorrectAmount": "Maximaler Betrag: <0>{{max}}</0>",
+            "cta": "Weiter"
           },
           "verification": {
             "success": {
-              "title": "You have successfully delegated your assets",
-              "text": "Your account balance will be updated once the network confirms the transaction.",
-              "cta": "View details"
+              "title": "Sie haben Ihre Vermögenswerte erfolgreich delegiert",
+              "text": "Ihr Kontostand wird aktualisiert, sobald das Netzwerk die Transaktion bestätigt.",
+              "cta": "Details anzeigen"
             },
             "pending": {
-              "title": "Broadcasting transaction..."
+              "title": "Übermittlung der Transaktion..."
             },
-            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
           }
         }
       },
       "drawer": {
         "status": "Status",
-        "rewards": "Rewards",
-        "active": "Active",
-        "inactive": "Inactive",
-        "completionDate": "Completion date",
-        "redelegatedFrom": "Redelegated from"
+        "rewards": "Prämien",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "completionDate": "Datum der Fertigstellung",
+        "redelegatedFrom": "Erneut delegiert von"
       }
     },
     "redelegation": {
-      "estYield": "est. yield",
+      "estYield": "geschätzter Ertrag",
       "stepperHeader": {
-        "validator": "Choose new validator",
+        "validator": "Neuen Validator auswählen",
         "amountSubTitle": "Amount to redelegate",
         "amountTitle": "{{from}} → {{to}}",
         "summary": "Summary",
@@ -3047,9 +3047,9 @@
               "cta": "View details"
             },
             "pending": {
-              "title": "Broadcasting transaction..."
+              "title": "Übermittlung der Transaktion..."
             },
-            "broadcastError": "Your transaction may have failed. Please wait a moment then check the transaction history before trying again."
+            "broadcastError": "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
           }
         }
       }
@@ -3057,49 +3057,49 @@
   },
   "tezos": {
     "AccountHeader": {
-      "title": "You can earn rewards by delegating your account",
-      "btn": "Earn rewards"
+      "title": "Sie können Prämien verdienen, indem Sie Ihr Konto delegieren",
+      "btn": "Prämien verdienen"
     }
   },
   "tron": {
     "voting": {
-      "earnRewars": "Earn rewards",
-      "delegationEarn": "You can now earn rewards by freezing and voting.",
-      "howItWorks": "How voting works",
-      "startEarning": "Earn rewards",
-      "title": "Claim rewards",
-      "header": "Votes ({{total}})",
-      "Amount": "Amount",
-      "noRewards": "No rewards available",
+      "earnRewars": "Prämien verdienen",
+      "delegationEarn": "Sie können jetzt durch Sperren und Abstimmen Prämien verdienen.",
+      "howItWorks": "Wie die Abstimmung funktioniert",
+      "startEarning": "Prämien verdienen",
+      "title": "Prämien beanspruchen",
+      "header": "Abstimmungen ({{total}})",
+      "Amount": "Betrag",
+      "noRewards": "Keine Prämien verfügbar",
       "votes": {
-        "title": "Votes",
-        "description": "Cast your votes for one or more Representatives to start earning rewards.",
-        "cta": "Vote"
+        "title": "Abstimmungen",
+        "description": "Geben Sie Ihre Stimme für einen oder mehrere Repräsentanten ab und beginnen Sie mit dem Verdienen von Prämien.",
+        "cta": "Abstimmen"
       },
       "rewards": {
-        "title": "Voting rewards",
-        "button": "Claim"
+        "title": "Prämien für Abstimmungen",
+        "button": "Beanspruchen"
       },
-      "manageVotes": "Manage votes",
+      "manageVotes": "Stimmen verwalten",
       "remainingVotes": {
-        "title": "You still have votes remaining",
-        "description": "Cast your remaining votes to earn more rewards."
+        "title": "Sie haben noch Stimmen übrig",
+        "description": "Geben Sie Ihre verbleibenden Stimmen ab, um weitere Prämien zu verdienen."
       },
       "flow": {
         "started": {
-          "title": "Vote",
-          "srOrCandidate": "SR or Candidate?",
-          "description": "Vote for one or more Super Representatives to start earning rewards.",
+          "title": "Abstimmen",
+          "srOrCandidate": "SR oder Kandidat?",
+          "description": "Wählen Sie einen oder mehrere Super-Repräsentanten, um Prämien zu verdienen.",
           "button": {
-            "continue": "Cast votes"
+            "continue": "Stimmen abgeben"
           }
         },
         "selectValidator": {
           "sections": {
             "title": {
-              "selected": "Selected",
-              "superRepresentatives": "Super Representatives",
-              "candidates": "Candidates"
+              "selected": "Ausgewählte",
+              "superRepresentatives": "Super-Repräsentanten",
+              "candidates": "Kandidaten"
             }
           }
         }
@@ -3109,55 +3109,55 @@
       "flow": {
         "steps": {
           "starter": {
-            "title": "Earn rewards",
-            "description": "Delegate TRX to a third party candidate to earn rewards. Click on continue to freeze assets and vote.",
+            "title": "Prämien verdienen",
+            "description": "Delegieren Sie TRX an einen Drittpartei-Kandidaten um Prämien zu erhalten. Klicken Sie auf Weiter, um Vermögenswerte zu sperren und zu wählen.",
             "bullet": {
-              "delegate": "Delegated assets remain yours.",
-              "access": "You can access your assets 3 days after freezing.",
-              "ledger": "Delegate securely with your Ledger device."
+              "delegate": "Übertragene Vermögenswerte bleiben in Ihrem Besitz.",
+              "access": "Sie können 3 Tage nach dem Sperren auf Ihr Vermögen zugreifen.",
+              "ledger": "Übertragen Sie sicher mit Ihrem Ledger-Gerät."
             },
             "button": {
-              "cta": "Continue"
+              "cta": "Weiter"
             }
           }
         }
       }
     },
     "manage": {
-      "title": "Manage Tron Power",
+      "title": "Verwalten von Tron Power",
       "freeze": {
-        "title": "Freeze",
-        "description": "Freeze TRX to earn Bandwidth or Energy. You can also vote for Super Representatives."
+        "title": "Sperren",
+        "description": "Sperren Sie TRX, um Bandbreite oder Energie zu verdienen. Sie können auch für Super-Repräsentanten stimmen."
       },
       "unfreeze": {
-        "title": "Unfreeze",
-        "description": "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards."
+        "title": "Entsperren",
+        "description": "Entsperren Sie TRX, um sie wieder Ihrem verfügbaren Guthaben hinzuzufügen. Sie werden keine Prämien mehr verdienen."
       },
       "vote": {
-        "title": "Vote",
-        "description": "Cast votes for Super Representatives to earn rewards."
+        "title": "Abstimmen",
+        "description": "Geben Sie Stimmen für Super-Repräsentanten ab, um Prämien zu verdienen."
       }
     },
     "info": {
       "available": {
-        "title": "TRX available",
-        "description": "This amount is disposable."
+        "title": "TRX verfügbar",
+        "description": "Dieser Betrag ist frei verfügbar."
       },
       "frozen": {
-        "title": "Frozen",
-        "description": "Frozen assets are used for Tron voting. This is your total number of votes."
+        "title": "Gesperrt",
+        "description": "Gesperrte Vermögenswerte werden für Tron-Abstimmungen verwendet. Dies ist Ihre Gesamtanzahl der Stimmen."
       },
       "bandwidth": {
-        "title": "Bandwidth",
-        "description": "Bandwidth points are used to make transactions instead of paying TRX network fees. Choose Bandwidth to increase your daily free transactions."
+        "title": "Bandbreite",
+        "description": "Bandbreiten-Punkte werden verwendet, um Transaktionen durchzuführen, anstatt TRX-Netzwerkgebühren zu bezahlen. Wählen Sie Bandbreite, um Ihre täglichen, kostenlosen Transaktionen zu erhöhen."
       },
       "energy": {
-        "title": "Energy",
-        "description": "Energy points are required to execute smart contracts. If you don't run smart contracts, there is no need to have rewards in Energy points."
+        "title": "Energie",
+        "description": "Energiepunkte werden benötigt, um Smart Contracts auszuführen. Wenn Sie keine Smart Contracts ausführen, besteht keine Notwendigkeit, Prämien in Energiepunkten zu haben."
       },
       "claimRewards": {
-        "title": "Voting rewards",
-        "description": "The TRX generated as rewards during block production can be claimed every 24 hours."
+        "title": "Prämien für Abstimmungen",
+        "description": "Die TRX, die während der Blockproduktion als Prämien generiert werden, können alle 24 Stunden eingefordert werden."
       },
       "superRepresentative": {
         "title": "Super Representatives (SR)",
@@ -3243,77 +3243,77 @@
       "nominatorsCount": "{{nominatorsCount}} nominators",
       "nominatorsInfo": "This validator is currently elected by {{count}} nominators.",
       "oversubscribed": "Oversubscribed ({{nominatorsCount}})",
-      "oversubscribedInfo": "Only the top {{maxNominatorRewardedPerValidator}} nominators with the highest bonded amount earn rewards",
-      "hasPendingBondOperation": "A bond operation is still pending confirmation",
+      "oversubscribedInfo": "Nur die besten {{maxNominatorRewardedPerValidator}} Nominatoren mit dem höchsten gebundenen Betrag erhalten Prämien",
+      "hasPendingBondOperation": "Eine Anleiheoperation ist noch nicht bestätigt",
       "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
       "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
-      "showInactiveNominations": "Show all nominations ({{count}})",
-      "hideInactiveNominations": "Show active nominations only",
-      "noActiveNominations": "There are no active nominations.",
-      "showAllUnlockings": "Show all unbonding amounts ({{count}})",
-      "hideAllUnlockings": "Hide unbonding amounts"
+      "showInactiveNominations": "Alle Nominierungen anzeigen ({{count}})",
+      "hideInactiveNominations": "Nur aktive Nominierungen anzeigen",
+      "noActiveNominations": "Es sind keine aktiven Nominierungen vorhanden.",
+      "showAllUnlockings": "Alle ungebundenen Beträge anzeigen ({{count}})",
+      "hideAllUnlockings": "Ungebundene Beträge ausblenden"
     },
     "unlockings": {
-      "header": "Unbonding",
-      "withdrawUnbonded": "Withdraw Unbonded",
-      "rebond": "Rebond"
+      "header": "Entbinden",
+      "withdrawUnbonded": "Ungebundenen Betrag abheben",
+      "rebond": "Erneut binden"
     },
     "manage": {
-      "title": "Manage assets",
+      "title": "Vermögenswerte verwalten",
       "bond": {
-        "title": "Bond",
-        "description": "To earn rewards, first bond an amount. Then you must nominate your validator(s)."
+        "title": "Binden",
+        "description": "Um Prämien zu verdienen, binden Sie zunächst einen Betrag. Dann müssen Sie Ihre(n) Validator(en) nominieren."
       },
       "unbond": {
-        "title": "Unbond",
-        "description": "To make a bonded amount available again, first you need to unbond it. You can withdraw it after the 28-day unbonding period."
+        "title": "Entbinden",
+        "description": "Um einen gebundenen Betrag wieder verfügbar zu machen, müssen Sie ihn zunächst entbinden. Sie können ihn nach der 28-tägigen Entbindungsfrist abheben."
       },
       "withdrawUnbonded": {
-        "title": "Withdraw Unbonded",
-        "description": "To retrieve an unbonded amount back to the available balance, you need to withdraw it manually."
+        "title": "Ungebundenen Betrag abheben",
+        "description": "Um einen nicht gebundenen Betrag wieder auf das verfügbare Guthaben zurück zu holen, müssen Sie ihn manuell abheben."
       },
       "nominate": {
-        "title": "Nominate",
-        "description": "Choose up to 16 validators. Ensure nominations are Active to earn rewards."
+        "title": "Nominieren",
+        "description": "Wählen Sie bis zu 16 Validatoren. Stellen Sie sicher, dass Nominierungen aktiv sind, um Prämien zu verdienen."
       },
       "chill": {
-        "title": "Clear nominations",
-        "description": "Remove all nominations. You will stop earning rewards. Your bonded amount remains bonded."
+        "title": "Nominierungen löschen",
+        "description": "Entfernen Sie alle Nominierungen. Sie werden keine Prämien mehr verdienen. Ihr gebundener Betrag bleibt gebunden."
       }
     },
     "nominate": {
       "stepperHeader": {
-        "validators": "Validators to nominate",
-        "selectDevice": "Select device",
-        "connectDevice": "Connect device",
-        "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+        "validators": "Zu nominierende Validatoren",
+        "selectDevice": "Gerät wählen",
+        "connectDevice": "Gerät verbinden",
+        "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
       },
       "steps": {
         "validators": {
-          "myNominations": "My nominations",
-          "electedValidators": "Elected validators",
-          "waitingValidators": "Unelected validators",
-          "noResultsFound": "No validators found for <0>{{search}}</0>",
-          "selected": "{{selected}} out of {{total}} selected",
-          "notValidatorsRemoved": "You have nominated {{count}} addresses who are no longer validators. They will automatically be removed from your nominate transaction.",
-          "maybeChill": "Clear nominations instead"
+          "myNominations": "Meine Nominierungen",
+          "electedValidators": "Gewählte Validatoren",
+          "waitingValidators": "Nicht gewählte Validatoren",
+          "noResultsFound": "Keine Validatoren für <0>{{search}}</0> gefunden",
+          "selected": "{{selected}} von {{total}} ausgewählt",
+          "notValidatorsRemoved": "Sie haben {{count}} Adressen nominiert, die keine Validatoren mehr sind. Sie werden automatisch von Ihrer nominierten Transaktion entfernt.",
+          "maybeChill": "Stattdessen Nominierungen löschen"
         },
         "validation": {
           "success": {
-            "title": "You have successfully nominated validators",
-            "description": "You will start earning rewards when your assets are bonded to your elected validator(s)."
+            "title": "Sie haben erfolgreich Validatoren nominiert",
+            "description": "Sie beginnen, Prämien zu verdienen, wenn Ihr Vermögen an den/die gewählten Validator(en) gebunden ist."
           }
         }
       }
     },
     "bond": {
       "rewardDestination": {
-        "label": "Reward Destination",
-        "stash": "Available balance",
-        "stashDescription": "Rewards are credited to your available balance.",
-        "staked": "Bonded balance",
-        "stakedDescription": "Rewards are credited to your bonded balance for compound earning.",
-        "optionTitle": "Note",
+        "label": "Prämienziel",
+        "stash": "Verfügbares Guthaben",
+        "stashDescription": "Die Prämien werden Ihrem verfügbaren Guthaben gutgeschrieben.",
+        "staked": "Gebundenes Guthaben",
+        "stakedDescription": "Prämien werden Ihrem Guthaben gutgeschrieben, so dass Sie mehr Geld verdienen können.",
+        "optionTitle": "Hinweis",
         "optionDescription": "Once set, the option is fixed for the lifetime of this bond. If you change your mind, please read ",
         "clickableLink": "here."
       },
