@@ -2003,83 +2003,83 @@
       },
       "banners": {
         "needApproval": "Sie müssen dieses Konto genehmigen, bevor Sie Vermögenswerte ausleihen können.",
-        "fullyApproved": "You have fully approved this account. You can reduce the amount at a fee.",
-        "approvedCanReduce": "You have approved <0>{{value}}</0> on this account. You can reduce the amount at a fee.",
-        "approvedButNotEnough": "You have approved <0>{{value}}</0> on this account.",
-        "approving": "You can deposit assets once the account approval is confirmed.",
-        "notEnough": "You must increase the limit approved on your account to lend."
+        "fullyApproved": "Sie haben dieses Konto vollständig freigegeben. Sie können den Betrag gegen eine Gebühr reduzieren.",
+        "approvedCanReduce": "Sie haben <0>{{value}}</0> auf diesem Konto freigegeben. Sie können den Betrag gegen eine Gebühr reduzieren.",
+        "approvedButNotEnough": "Sie haben <0>{{value}}</0> auf diesem Konto freigegeben.",
+        "approving": "Sie können Vermögenswerte einzahlen, sobald die Kontofreigabe bestätigt ist.",
+        "notEnough": "Sie müssen das auf Ihrem Konto freigegebene Limit für das Ausleihen erhöhen."
       },
-      "howDoesLendingWork": "How does lending works",
+      "howDoesLendingWork": "Wie funktioniert das Ausleihen?",
       "dashboard": {
         "tabTitle": "Dashboard",
-        "assetsTitle": "Assets to lend",
-        "accountsTitle": "Approved accounts",
-        "emptySateDescription": "You can lend assets directly from your Ethereum accounts and earn interest.",
+        "assetsTitle": "Zu verleihende Vermögenswerte",
+        "accountsTitle": "Genehmigte Konten",
+        "emptySateDescription": "Sie können Vermögenswerte direkt von Ihren Ethereum-Konten verleihen und Zinsen erhalten.",
         "apy": "{{value}} APY",
         "activeAccount": {
-          "account": "Account",
-          "amountSupplied": "Amount deposited",
-          "interestEarned": "Interest earned",
-          "status": "Account status",
-          "EARNING": "Earning",
-          "ENABLING": "Approving",
-          "INACTIVE": "Inactive",
-          "SUPPLYING": "Supplying",
-          "approve": "Approve",
-          "supply": "Supply",
-          "withdraw": "Withdraw",
-          "amountRedeemed": "Amount withdrawn",
-          "endDate": "End date"
+          "account": "Konto",
+          "amountSupplied": "Eingezahlter Betrag",
+          "interestEarned": "Zinserträge",
+          "status": "Konto-Status",
+          "EARNING": "Verdienen",
+          "ENABLING": "Genehmigung",
+          "INACTIVE": "Inaktiv",
+          "SUPPLYING": "Bereitstellen",
+          "approve": "Genehmigen",
+          "supply": "Bereitstellung",
+          "withdraw": "Abheben",
+          "amountRedeemed": "Abgehobener Betrag",
+          "endDate": "Enddatum"
         }
       },
       "closedLoans": {
-        "tabTitle": "Closed loans",
-        "description": "View all your withdrawn loans and the interest you have earned.",
-        "cta": "Lend asset"
+        "tabTitle": "Abgeschlossene Kredite",
+        "description": "Sehen Sie alle Ihre abgehobenen Kredite und die Zinsen, die Sie verdient haben.",
+        "cta": "Vermögenswert verleihen"
       },
       "history": {
-        "tabTitle": "History",
-        "description": "View the history of all your loan transactions.",
-        "cta": "Lend asset"
+        "tabTitle": "Verlauf",
+        "description": "Sehen Sie sich den Verlauf all Ihrer Kredittransaktionen an.",
+        "cta": "Vermögenswert verleihen"
       },
       "terms": {
-        "label": "Lend crypto",
-        "title": "Lend assets on the Compound Protocol",
-        "description": "The Compound protocol allows you to lend and borrow assets on the Ethereum network. You can lend assets and earn interest directly from your Ledger acccount.",
-        "switchLabel": "I have read and agree with the <0><0>Terms of Use</0></0>."
+        "label": "Krypto leihen",
+        "title": "Verleihen von Vermögenswerten über das Compound-Protokoll",
+        "description": "Das Compound-Protokoll ermöglicht es Ihnen, Vermögenswerte im Ethereum-Netzwerk zu leihen und zu verleihen. Sie können Vermögenswerte verleihen und Zinsen direkt von Ihrem Ledger-Konto erhalten.",
+        "switchLabel": "Ich habe die <0><0>Nutzungsbedingungen</0></0> gelesen und bin damit einverstanden."
       },
       "info": {
         "1": {
-          "label": "Step 1/3",
-          "title": "Approving an account allows the protocol to process future loans.",
-          "description": "You need to authorize the Compound smart contract to transfer up to a certain amount of assets to the protocol. Enabling an account gives permission to the protocol to process future loans."
+          "label": "Schritt 1/3",
+          "title": "Die Freigabe eines Kontos ermöglicht dem Protokoll die Bearbeitung zukünftiger Kredite.",
+          "description": "Sie müssen den Compound-Smart-Contract autorisieren, bis zu einer bestimmten Menge Vermögenswerten an das Protokoll zu übertragen. Das Aktivieren eines Kontos gibt dem Protokoll die Erlaubnis, zukünftige Kredite zu verarbeiten."
         },
         "2": {
-          "label": "Step 2/3",
-          "title": "Deposit assets to earn interest.",
-          "description": "Once an account is approved, you can select the amount of assets you want to lend and issue a transaction to the protocol. Interest accrue immediately after the transaction is confirmed."
+          "label": "Schritt 2/3",
+          "title": "Hinterlegen Sie Vermögenswerte, um Zinsen zu erhalten.",
+          "description": "Sobald ein Konto freigegeben ist, können Sie den Betrag der zu verleihenden Vermögenswerte auswählen und eine Transaktion an das Protokoll ausgeben. Die Zinsen fallen sofort an, nachdem die Transaktion bestätigt wurde."
         },
         "3": {
-          "label": "Step 3/3",
-          "title": "Withdraw assets at any time.",
-          "description": "You can withdraw your assets and earned interest at any time, partially or entirely, directly from your Ledger account.",
-          "cta": "Lend now"
+          "label": "Schritt 3/3",
+          "title": "Vermögenswerte jederzeit abheben.",
+          "description": "Sie können Ihr Vermögen und die erwirtschafteten Zinsen jederzeit ganz oder teilweise direkt von Ihrem Ledger-Konto abheben.",
+          "cta": "Jetzt leihen"
         },
-        "title": "Lend crypto"
+        "title": "Krypto leihen"
       },
       "noTokenAccount": {
         "info": {
-          "title": "You don’t have a {{ name }} account.",
-          "description": "In order to deposit funds and lend crypto you need a {{ name }} account. Please Receive funds on your Ethereum address."
+          "title": "Sie haben kein {{ name }}-Konto.",
+          "description": "Um Geld einzuzahlen und Krypto zu verleihen, benötigen Sie ein {{ name }} Konto. Bitte empfangen Sie Zahlungen auf Ihrer Ethereum-Adresse."
         },
         "buttons": {
-          "receive": "Receive {{ name }}",
-          "buy": "Buy {{ name }}"
+          "receive": "{{ Name }} empfangen",
+          "buy": "{{ name }} kaufen"
         }
       },
       "enable": {
         "info": {
-          "title": "This account is not approved",
+          "title": "Dieses Konto wurde nicht bestätigt",
           "description": "Sie müssen dieses Konto freigeben, bevor Sie Vermögenswerte ausleihen/verleihen können.",
           "cta": "Konto freigeben"
         },
@@ -2161,22 +2161,22 @@
           "info": "Ihr Guthaben ist verfügbar, sobald das Netzwerk die Abhebung bestätigt hat.",
           "button": {
             "done": "Fertig",
-            "cta": "View details"
+            "cta": "Details anzeigen"
           }
         }
       }
     }
   },
   "sync": {
-    "error": "Sync Error",
+    "error": "Fehler beim Synchronisieren",
     "loading": "Sync"
   },
   "scanning": {
-    "loading": "Searching devices..."
+    "loading": "Geräte werden gesucht..."
   },
   "send": {
     "tooMuchUTXOBottomModal": {
-      "cta": "Continue",
+      "cta": "Weiter",
       "description": "This transaction may take long to verify and sign because the account has a significant number of coins.",
       "title": "UTXO message"
     },
