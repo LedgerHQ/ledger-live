@@ -31,7 +31,7 @@
     "or": "ODER",
     "rename": "Umbenennen",
     "learnMore": "Mehr erfahren",
-    "checkItOut": "Check it out",
+    "checkItOut": "Mehr erfahren",
     "viewDetails": "Details anzeigen",
     "today": "Heute",
     "yesterday": "Gestern",
@@ -67,7 +67,7 @@
       "minutes": "in einer Minute",
       "minutes_plural": "in {{time}} Minuten",
       "hours": "in einer Stunde",
-      "hours_plural": "in {{time}} hours",
+      "hours_plural": "in {{time}} Stunden",
       "days": "in einem Tag",
       "days_plural": "in {{time}} Tagen"
     },
@@ -77,7 +77,7 @@
       "minutes": "vor einer Minute",
       "minutes_plural": "Vor {{time}} Minuten",
       "hours": "vor einer Stunde",
-      "hours_plural": "{{time}} hours ago",
+      "hours_plural": "vor {{time}} Stunden",
       "days": "Gestern",
       "days_plural": "vor {{time}} Tagen"
     },
@@ -248,104 +248,104 @@
     },
     "Error": {
       "title": "{{message}}",
-      "description": "Something went wrong. Please retry. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
     "FeeEstimationFailed": {
-      "title": "Sorry, fee estimation failed",
-      "description": "Try setting the fee manually (status: {{status}})."
+      "title": "Sorry, Gebührenschätzung fehlgeschlagen",
+      "description": "Versuchen Sie, die Gebühr manuell einzustellen (Status: {{Status}})."
     },
     "FeeNotLoaded": {
-      "title": "Could not load fee rates"
+      "title": "Gebührensätze konnten nicht geladen werden"
     },
     "FeeRequired": {
-      "title": "Fees are required"
+      "title": "Gebühren sind erforderlich"
     },
     "FirmwareOrAppUpdateRequired": {
-      "title": "Firmware or app update needed",
-      "description": "Please use the Manager to uninstall all apps then check if a firmware update is available before reinstalling them."
+      "title": "Firmware- oder App-Update erforderlich",
+      "description": "Bitte verwenden Sie den Manager, um alle Apps zu deinstallieren und prüfen Sie dann, ob ein Firmware-Update verfügbar ist, bevor Sie sie neu installieren."
     },
     "LatestFirmwareVersionRequired": {
       "title": "Device update required on desktop",
       "description": "Please update your Nano X firmware on Ledger Live Desktop"
     },
     "GenuineCheckFailed": {
-      "title": "Device authentication failed",
-      "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "Geräteauthentifizierung fehlgeschlagen",
+      "description": "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
     "HardResetFail": {
-      "title": "Sorry, could not reset",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
+      "description": "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
     "InvalidAddress": {
-      "title": "This is not a valid {{currencyName}} address"
+      "title": "Dies ist keine gültige {{currencyName}} Adresse"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
-      "title": "Destination and source accounts must not be the same."
+      "title": "Ziel- und Quellkonto dürfen nicht identisch sein."
     },
     "InvalidRecipient": {
-      "title": "Invalid recipient"
+      "title": "Ungültiger Empfänger"
     },
     "LatestMCUInstalledError": {
-      "title": "Sorry, there's nothing to update",
-      "description": "Please contact Ledger Support if you cannot use your device."
+      "title": "Entschuldigung, es gibt nichts zu aktualisieren",
+      "description": "Bitte kontaktieren Sie den Ledger-Support, wenn Sie Ihr Gerät nicht verwenden können."
     },
     "LedgerAPIError": {
-      "title": "Sorry, try again (API HTTP {{status}})",
-      "description": "Unsuccessful calls to the Ledger API server. Please try again."
+      "title": "Entschuldigung, versuchen Sie es erneut (API HTTP {{status}})",
+      "description": "Erfolglose Aufrufe des Ledger-API-Servers. Bitte versuchen Sie es erneut."
     },
     "LedgerAPIErrorWithMessage": {
       "title": "{{message}}",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "description": "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
     "LedgerAPINotAvailable": {
-      "title": "Sorry, {{currencyName}} services unavailable",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "Sorry, {{currencyName}}-Dienste nicht verfügbar",
+      "description": "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
     "ManagerAPIsFail": {
-      "title": "Sorry, Manager services are unavailable",
-      "description": "Please check the network status."
+      "title": "Entschuldigung, die Manager-Dienste sind nicht verfügbar",
+      "description": "Bitte überprüfen Sie den Netzwerkstatus."
     },
     "ManagerAppAlreadyInstalled": {
-      "title": "Sorry, that's already installed",
-      "description": "Please check which apps are already installed on your device."
+      "title": "Entschuldigung, das ist bereits installiert",
+      "description": "Bitte prüfen Sie, welche Apps bereits auf Ihrem Gerät installiert sind."
     },
     "ManagerAppRelyOnBTC": {
-      "title": "Bitcoin and Ethereum apps needed",
-      "description": "Please install the latest Bitcoin and Ethereum apps first."
+      "title": "Bitcoin und Ethereum Apps benötigt",
+      "description": "Bitte installieren Sie zuerst die neuesten Bitcoin- und Ethereum-Apps."
     },
     "ManagerDeviceLocked": {
-      "title": "Your device is locked",
-      "description": "Please unlock it."
+      "title": "Ihr Gerät ist gesperrt",
+      "description": "Bitte entsperren Sie es."
     },
     "ManagerNotEnoughSpace": {
-      "title": "Not enough storage left",
-      "info": "Please uninstall some apps to free up space for the {{app}} app.",
-      "description": "Uninstalling apps has no impact on your assets."
+      "title": "Nicht genug Speicherplatz vorhanden",
+      "info": "Bitte deinstallieren Sie einige Apps, um Platz für die {{app}} App freizugeben.",
+      "description": "Die Deinstallation von Apps hat keinen Einfluss auf Ihre Vermögenswerte."
     },
     "ManagerQuitPage": {
       "install": {
-        "title": "App installation in progress",
-        "description": "Quitting the Manager will terminate installation.",
-        "stay": "Continue installation"
+        "title": "App-Installation im Gange",
+        "description": "Wenn Sie den Manager beenden, wird die Installation abgebrochen.",
+        "stay": "Installation fortsetzen"
       },
       "uninstall": {
-        "title": "App uninstall in progress",
-        "description": "Quitting the Manager will terminate uninstallation.",
-        "stay": "Continue uninstallation"
+        "title": "App Deinstallation läuft",
+        "description": "Wenn Sie den Manager beenden, wird die Deinstallation abgebrochen.",
+        "stay": "Deinstallation fortsetzen"
       },
       "update": {
-        "title": "App update in progress",
-        "description": "Quitting the Manager will terminate update.",
-        "stay": "Continue update"
+        "title": "App-Update in Arbeit",
+        "description": "Wenn Sie den Manager beenden, wird das Update beendet.",
+        "stay": "Update fortsetzen"
       },
-      "quit": "Quit Manager"
+      "quit": "Manager schließen"
     },
     "ManagerUninstallBTCDep": {
-      "title": "Sorry, this app is needed",
-      "description": "Uninstall the Bitcoin or Ethereum app last."
+      "title": "Entschuldigung, diese App wird benötigt",
+      "description": "Deinstallieren Sie die Bitcoin- oder Ethereum-App zuletzt."
     },
     "NetworkDown": {
-      "title": "Sorry, internet seems to be down",
+      "title": "Entschuldigung, das Internet scheint ausgefallen zu sein",
       "description": "Bitte überprüfen Sie Ihre Internetverbindung."
     },
     "NoAddressesFound": {
@@ -1340,14 +1340,14 @@
     "seeLess": "Weniger anzeigen",
     "viewInExplorer": "Ansicht im Explorer",
     "sending": "Senden ...",
-    "receiving": "Receiving...",
-    "tokenOperations": "Token operations",
-    "subAccountOperations": "Subaccount operations",
-    "internalOperations": "Internal operations",
+    "receiving": "Empfangen ...",
+    "tokenOperations": "Token-Aktionen",
+    "subAccountOperations": "Unterkonto-Aktionen",
+    "internalOperations": "Interne Aktionen",
     "tokenModal": {
-      "desc": "This operation is related to the following token operations"
+      "desc": "Diese Aktion ist mit den folgenden Token-Aktionen verbunden"
     },
-    "details": "{{ currency }} details",
+    "details": "{{ currency }} Details",
     "extra": {
       "resource": "Ressource",
       "frozenAmount": "Gesperrter Betrag",
@@ -1376,7 +1376,7 @@
       "withdrawUnbondedAmount": "Ungebundenen Betrag abheben",
       "palletMethod": "Methode",
       "transferAmount": "Betrag übertragen",
-      "validatorsCount": "Validators ({{number}})"
+      "validatorsCount": "Validatoren ({{number}})"
     },
     "multipleAddresses": "Warum mehrere Adressen?"
   },
@@ -1390,7 +1390,7 @@
     "tokenCount": "+1 Token",
     "tokenCount_plural": "+{{count}} Token",
     "subaccountCount": "+1 Unterkonto",
-    "subaccountCount_plural": "+{{count}} subaccounts"
+    "subaccountCount_plural": "+{{count}} Unterkonten"
   },
   "account": {
     "tokens": {
@@ -1412,80 +1412,80 @@
       }
     },
     "subaccounts": {
-      "seeMore": "See more subaccounts",
-      "seeLess": "See fewer subaccounts"
+      "seeMore": "Weitere Unterkonten anzeigen",
+      "seeLess": "Weniger Unterkonten anzeigen"
     },
-    "send": "Send",
-    "receive": "Receive",
-    "buy": "Buy",
+    "send": "Senden",
+    "receive": "Empfangen",
+    "buy": "Kaufen",
     "walletconnect": "WalletConnect",
-    "sell": "Sell",
-    "swap": "Swap",
-    "manage": "Manage",
-    "lastOperations": "Last operations",
+    "sell": "Verkaufen",
+    "swap": "Tauschen",
+    "manage": "Verwalten",
+    "lastOperations": "Letzte Aktionen",
     "emptyState": {
-      "title": "No crypto assets yet?",
-      "desc": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving.",
-      "descWithBuy": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed so you can buy or receive <3><0>{{currencyTicker}}</0></3>",
-      "descToken": "Make sure the <1><0>{{managerAppName}}</0></1> app is installed and start receiving <3><0>{{currencyTicker}}</0></3> and <5><0>{{tokenType}}</0> tokens</5>",
+      "title": "Noch keine Krypto-Vermögenswerte?",
+      "desc": "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang.",
+      "descWithBuy": "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1> App installiert ist, damit Sie <3><0>{{currencyTicker}}</0></3> kaufen oder empfangen können",
+      "descToken": "Stellen Sie sicher, dass die <1><0>{{managerAppName}}</0></1>-App installiert ist und beginnen Sie mit dem Empfang von <3><0>{{currencyTicker}}</0></3> und <5><0>{{tokenType}}</0>-Tokens</5>",
       "buttons": {
-        "receiveFunds": "Receive",
-        "buyCrypto": "Buy"
+        "receiveFunds": "Empfangen",
+        "buyCrypto": "Kaufen"
       }
     },
     "settings": {
-      "header": "Account settings",
-      "title": "Edit account",
-      "advancedLogs": "Advanced logs",
+      "header": "Konto-Einstellungen",
+      "title": "Konto bearbeiten",
+      "advancedLogs": "Erweiterte Protokolle",
       "accountName": {
-        "title": "Account name",
-        "desc": "Description of the account",
-        "placeholder": "Account name"
+        "title": "Kontoname",
+        "desc": "Beschreibung des Kontos",
+        "placeholder": "Kontoname"
       },
       "accountUnits": {
-        "title": "Edit units"
+        "title": "Einheiten bearbeiten"
       },
       "unit": {
-        "title": "Unit",
-        "desc": "Choose the unit to be displayed."
+        "title": "Einheit",
+        "desc": "Wählen Sie die Einheit, die angezeigt werden soll."
       },
       "currency": {
-        "title": "Currency"
+        "title": "Währung"
       },
       "endpointConfig": {
         "title": "Node",
-        "desc": "The API node to use"
+        "desc": "Der zu verwendende API Knoten"
       },
       "delete": {
-        "title": "Remove account from the Portfolio",
-        "desc": "Stored data will be removed.",
-        "confirmationTitle": "Are you sure?",
-        "confirmationDesc": "This has no impact on your crypto assets. Existing accounts can always be added afterwards."
+        "title": "Konto aus dem Portfolio entfernen",
+        "desc": "Die gespeicherten Daten werden entfernt.",
+        "confirmationTitle": "Sind Sie sicher?",
+        "confirmationDesc": "Dies hat keinen Einfluss auf Ihr Krypto-Vermögen. Bestehende Konten können jederzeit nachträglich hinzugefügt werden."
       },
       "archive": {
-        "title": "Archive account",
-        "desc": "This account will be archived."
+        "title": "Archiv-Konto",
+        "desc": "Dieses Konto wird archiviert."
       },
       "advanced": {
-        "title": "Advanced logs",
+        "title": "Erweiterte Protokolle",
         "desc": ""
       }
     },
     "import": {
       "scan": {
-        "title": "Scan LiveQR code",
+        "title": "LiveQR-Code scannen",
         "descTop": {
-          "line1": "In Ledger Live Desktop, go to",
-          "line2": "Settings > Accounts > Export accounts > Export"
+          "line1": "Gehen Sie in Ledger Live Desktop zu",
+          "line2": "Einstellungen > Konten > Konten exportieren > Exportieren"
         },
-        "descBottom": "Please put the LiveQR code within the square."
+        "descBottom": "Halten Sie den LiveQR-Code innerhalb des Quadrats."
       },
       "result": {
-        "title": "Import accounts",
-        "newAccounts": "New accounts",
-        "updatedAccounts": "Updated accounts",
-        "empty": "Add a new account",
-        "descEmpty": "<0><0>No accounts</0></0> were found. Please try again or go back to Setup",
+        "title": "Konten importieren",
+        "newAccounts": "Neue Konten",
+        "updatedAccounts": "Aktualisierte Konten",
+        "empty": "Neues Konto hinzufügen",
+        "descEmpty": "<0><0>Keine Konten</0></0> gefunden. Bitte versuchen Sie es erneut oder gehen Sie zurück zum Setup",
         "alreadyImported": "Bereits importiert",
         "noAccounts": "Nichts zu importieren",
         "unsupported": "Nicht unterstützt",
@@ -1588,65 +1588,65 @@
   },
   "settings": {
     "header": "Einstellungen",
-    "resources": "Ledger resources",
+    "resources": "Ledger-Ressourcen",
     "display": {
-      "title": "General",
-      "desc": "Configure general Ledger Live settings.",
-      "carousel": "Carousel visibility",
-      "carouselDesc": "Enable visibility of the carousel on Portfolio",
-      "language": "Display language",
-      "languageDesc": "Set the language displayed in Ledger Live.",
-      "password": "Password lock",
-      "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
+      "title": "Allgemeines",
+      "desc": "Konfigurieren Sie die allgemeinen Ledger-Live-Einstellungen.",
+      "carousel": "Karussell-Sichtbarkeit",
+      "carouselDesc": "Aktivieren Sie die Sichtbarkeit des Karussells auf Portfolio",
+      "language": "Sprache",
+      "languageDesc": "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
+      "password": "Passwort-Sperre",
+      "passwordDesc": "Legen Sie ein Passwort fest, um die Ledger Live-Daten auf Ihrem Telefon zu schützen.",
       "counterValue": "Preferred currency",
-      "theme": "Theme",
-      "themeDesc": "Set the app UI theme",
+      "theme": "Thema",
+      "themeDesc": "App-UI-Thema festlegen",
       "themes": {
-        "dark": "Dark",
-        "dusk": "Dusk",
-        "light": "Light"
+        "dark": "Dunkel",
+        "dusk": "Mittel",
+        "light": "Hell"
       },
-      "counterValueDesc": "Choose the currency for balances and operations.",
-      "exchange": "Rate provider",
-      "exchangeDesc": "Set provider of exchange rate from Bitcoin to {{fiat}}",
-      "stock": "Regional market indicator",
-      "stockDesc": "Choose Western to display market increases in green or Eastern to display them in red.",
-      "reportErrors": "Bug reports",
-      "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
-      "developerMode": "Developer mode",
-      "developerModeDesc": "Show developer apps in the Manager and enable Testnet apps.",
-      "analytics": "Analytics",
-      "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
+      "counterValueDesc": "Wählen Sie die Währung für Salden und Aktionen.",
+      "exchange": "Anbieter bewerten",
+      "exchangeDesc": "Anbieter des Wechselkurses von Bitcoin zu {{fiat}} einstellen",
+      "stock": "Regionaler Marktindikator",
+      "stockDesc": "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen.",
+      "reportErrors": "Fehlerberichte",
+      "reportErrorsDesc": "Berichte automatisch versenden, um Ledger bei der Verbesserung seiner Produkte zu unterstützen.",
+      "developerMode": "Entwickler-Modus",
+      "developerModeDesc": "Zeigen Sie Entwickler-Apps im Manager an und aktivieren Sie Testnet-Apps.",
+      "analytics": "Analyse",
+      "analyticsDesc": "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen.",
       "analyticsModal": {
-        "title": "Share analytics",
-        "desc": "Enable analytics to help Ledger improve user experience",
-        "bullet0": "Clicks",
-        "bullet1": "In-app page visits",
-        "bullet2": "Redirect to webpage",
-        "bullet3": "Actions: send, receive, lock, etc",
-        "bullet4": "End of page scroll",
-        "bullet5": "App (un)installation and version",
-        "bullet6": "Number of accounts, currencies and operations",
-        "bullet7": "Overall and page session duration",
-        "bullet8": "Ledger device type and firmware"
+        "title": "Analysen teilen",
+        "desc": "Aktivieren Sie Analysen, um Ledger bei der Verbesserung der Benutzerfreundlichkeit zu helfen",
+        "bullet0": "Klicks",
+        "bullet1": "In-App-Seitenbesuche",
+        "bullet2": "Zur Webseite umleiten",
+        "bullet3": "Aktionen: Senden, Empfangen, Sperren, etc.",
+        "bullet4": "zum Ende der Seite blättern",
+        "bullet5": "App-(De-)Installation und Version",
+        "bullet6": "Anzahl der Konten, Währungen und Aktionen",
+        "bullet7": "Gesamt- und Seiten-Sitzungsdauer",
+        "bullet8": "Ledger-Gerätetyp und -Firmware"
       },
-      "technicalData": "Technical data",
-      "technicalDataDesc": "Ledger will automatically collect anonymized technical data to improve user experience.",
+      "technicalData": "Technische Daten",
+      "technicalDataDesc": "Ledger sammelt automatisch anonymisierte technische Daten, um die Benutzerfreundlichkeit zu verbessern.",
       "technicalDataModal": {
-        "title": "Technical data",
-        "desc": "Ledger will automatically collect anonymized technical data to improve user experience.",
-        "bullet1": "Anonymous unique application ID",
-        "bullet2": "Ledger Live version, OS region, language and region"
+        "title": "Technische Daten",
+        "desc": "Ledger sammelt automatisch anonymisierte technische Daten, um die Benutzerfreundlichkeit zu verbessern.",
+        "bullet1": "Anonyme, einzigartige Anwendungs-ID",
+        "bullet2": "Ledger Live-Version, OS-Region, Sprache und Region"
       },
-      "hideEmptyTokenAccounts": "Hide empty token accounts",
-      "hideEmptyTokenAccountsDesc": "Hide empty token accounts on the Accounts page."
+      "hideEmptyTokenAccounts": "Leere Token-Konten ausblenden",
+      "hideEmptyTokenAccountsDesc": "Leere Token-Konten auf der Seite Konten ausblenden."
     },
     "currencies": {
-      "header": "Currencies",
-      "rateProvider": "Rate Provider ({{currencyTicker}}→BTC)",
-      "rateProviderDesc": "Choose the provider of the rate between {{currencyTicker}} and Bitcoin.",
-      "confirmationNb": "Number of confirmations",
-      "confirmationNbDesc": "Set the number of network confirmations for transactions to be approved.",
+      "header": "Währungen",
+      "rateProvider": "Anbieter bewerten ({{currencyTicker}}→ BTC)",
+      "rateProviderDesc": "Wählen Sie den Anbieter des Preises zwischen {{currencyTicker}} und Bitcoin.",
+      "confirmationNb": "Anzahl der Bestätigungen",
+      "confirmationNbDesc": "Legen Sie die Anzahl der Netzwerkbestätigungen für zu genehmigende Transaktionen fest.",
       "currencySettingsTitle": "{{currencyName}} Settings",
       "placeholder": "Keine Einstellungen für diesen Vermögenswert"
     },
@@ -1920,7 +1920,7 @@
           "send": "Send",
           "payoutNetworkFees": "Payout fees",
           "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
-          "receive": "Amount",
+          "receive": "Betrag",
           "receiveFloat": "Zu erhaltender Betrag vor Servicegebühren",
           "provider": "Provider",
           "method": "Kurs",
@@ -1999,10 +1999,10 @@
         "interestEarned": "Zinserträge",
         "interestEarnedTooltip": "Zinsen, die Sie nach der Abhebung verdient haben",
         "openLoans": "Offene Kredite",
-        "closedLoans": "Closed loans"
+        "closedLoans": "Abgeschlossene Kredite"
       },
       "banners": {
-        "needApproval": "You need to approve this account before being able to lend assets.",
+        "needApproval": "Sie müssen dieses Konto genehmigen, bevor Sie Vermögenswerte ausleihen können.",
         "fullyApproved": "You have fully approved this account. You can reduce the amount at a fee.",
         "approvedCanReduce": "You have approved <0>{{value}}</0> on this account. You can reduce the amount at a fee.",
         "approvedButNotEnough": "You have approved <0>{{value}}</0> on this account.",
@@ -3627,58 +3627,58 @@
       "stepRange": "Schritt {{currentStep}} von {{totalSteps}}"
     },
     "stepVerification": {
-      "action": "Please confirm the operation on your device",
-      "accountName": "Account name"
+      "action": "Bitte bestätigen Sie den Vorgang auf Ihrem Gerät",
+      "accountName": "Kontoname"
     },
-    "deeplinkingTitle": "Select an Ethereum account",
-    "addAccount": "Add new account"
+    "deeplinkingTitle": "Wählen Sie ein Ethereum-Konto",
+    "addAccount": "Neues Konto hinzufügen"
   },
   "notificationCenter": {
-    "title": "Notification center",
-    "announcement": "Announcement",
-    "liveStatus": "Ledger Live status",
+    "title": "Benachrichtigungszentrale",
+    "announcement": "Ankündigung",
+    "liveStatus": "Ledger Live Status",
     "news": {
       "title": "News",
-      "titleCount": "News ({{count}})",
+      "titleCount": "Neuigkeiten ({{count}})",
       "emptyState": {
-        "title": "No news for the moment",
-        "desc": "You will find here all the news related to Ledger and Ledger Live"
+        "title": "Im Moment keine Neuigkeiten",
+        "desc": "Hier finden Sie alle Neuigkeiten rund um Ledger und Ledger Live"
       }
     },
     "status": {
       "title": "Status",
       "ok": {
-        "title": "Ledger Live is up and running",
-        "desc": "<0>Having trouble? Go on our </0><1>help page</1>"
+        "title": "Ledger Live ist eingerichtet und läuft",
+        "desc": "<0>Haben Sie Probleme? Gehen Sie auf unsere </0><1>Hilfe-Seite</1>"
       },
       "error": {
-        "title": "Ledger Live is experiencing issues"
+        "title": "Bei Ledger Live treten Probleme auf"
       }
     }
   },
   "platform": {
     "catalog": {
-      "title": "Live Apps Catalog",
+      "title": "Live-Apps-Katalog",
       "branch": {
-        "soon": "coming soon",
-        "experimental": "experimental",
-        "debug": "debug"
+        "soon": "demnächst",
+        "experimental": "experimentell",
+        "debug": "debuggen"
       },
       "banner": {
-        "title": "Discover our Live Catalog",
-        "description": "Unlock a new world of crypto possibilities. One secure access to all services – DeFi, NFTs and more to come."
+        "title": "Entdecken Sie unseren Live-Katalog",
+        "description": "Tauchen Sie ein in eine neue Welt der Krypto-Möglichkeiten. Ein sicherer Zugang zu allen Diensten - DeFi, NFTs und vieles mehr werden Sie begeistern."
       },
       "twitterBanner": {
-        "description": "Tell us what's the next service you want to see with the hashtag",
-        "tweetText": "The next Ledger App should be..."
+        "description": "Sagen Sie uns, welchen Service Sie sich als nächstes wünschen, mit dem Hashtag",
+        "tweetText": "Die nächste Ledger App sollte ..."
       },
       "pollCTA": {
-        "title": "Poll",
-        "description": "Which service do you want to see in Ledger Live?"
+        "title": "Umfrage",
+        "description": "Welchen Service möchten Sie in Ledger Live sehen?"
       },
       "developerCTA": {
-        "title": "For Developers",
-        "description": "All the information you need to integrate your applications on Ledger Live."
+        "title": "Für Entwickler",
+        "description": "Alle Informationen, die Sie benötigen, um Ihre Anwendungen in Ledger Live zu integrieren."
       }
     },
     "disclaimer": {
