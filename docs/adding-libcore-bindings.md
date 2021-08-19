@@ -33,13 +33,13 @@ The tradeoff to this idea to abstract lib-ledger-core is we need to maintain our
 
 The wrapping are done for each platform (nodejs and react-native) and are implemented in `src/libcore/platforms/*`.
 
-It works by reading some static declaration done in `src/libcore/types.js` as well as each family specific types in `src/families/*/types.js` and rebuilding an API with it (proxying each methods into the actual bindings).
+It works by reading some static declaration done in `src/libcore/types.ts` as well as each family specific types in `src/families/*/types.ts` and rebuilding an API with it (proxying each methods into the actual bindings).
 
 ### What you need to do to add a new libcore methods or classes?
 
 First of all, the way we can see the libcore API is by looking into this generated pseudo-types: [ledgercore_doc.js](https://github.com/LedgerHQ/lib-ledger-core-node-bindings/blob/master/src/ledgercore_doc.js).
 
-Now, there are two categories of API to add: it's a coin specifics or it's not. If it's a coin specific you will have to modify the bindings of `src/families/<family>/types.js` (see Bitcoin family for example). If it's not, it's done in `src/libcore/types.js`.
+Now, there are two categories of API to add: it's a coin specifics or it's not. If it's a coin specific you will have to modify the bindings of `src/families/<family>/types.ts` (see Bitcoin family for example). If it's not, it's done in `src/libcore/types/index.ts`.
 
 Now, for each of them there are two things you need to essentially do to make the methods/classes available to live-common:
 
@@ -82,7 +82,7 @@ declare class CoreWallet {
 }
 ```
 
-Well, that's exactly the FlowType what we have defined in `libcore/types/index.js`!
+Well, that's exactly the FlowType what we have defined in `libcore/types/index.ts`!
 
 Now, that we did the FlowType part, we also need to define the methods in the CoreWallet class:
 

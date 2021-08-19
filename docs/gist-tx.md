@@ -29,7 +29,7 @@ const {
 } = require("@ledgerhq/live-common/lib/bridge");
 
 // our small example is a script that takes 3 params.
-// example: node send.js bitcoin bc1abc..def 0.001
+// example: node send.ts bitcoin bc1abc..def 0.001
 if (!process.argv[4]) {
   console.log(`Usage: currencyId recipient amount`);
   process.exit(1);

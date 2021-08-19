@@ -6,7 +6,7 @@ CurrencyBridge offers a generic abstraction (for all crypto currencies) to add a
 
 ![](currency-bridge-flow.png)
 
-**[types](../src/types/bridge.js)**
+**[types](../src/types/bridge.ts)**
 
 ```js
 export interface CurrencyBridge {
@@ -49,7 +49,7 @@ This technically will derivate addresses/xpubs with the device and iterate on pa
 
 - `currency`: [CryptoCurrency](./currency.md). The crypto currency to start accounts on.
 - `deviceId`: string. identify a [device](./hw.md) to use for scanning accounts.
-- `syncConfig`: [SyncConfig](../src/types/pagination.js). Configure user specifics like pagination,...
+- `syncConfig`: [SyncConfig](../src/types/pagination.ts). Configure user specifics like pagination,...
 - `scheme`: ?[DerivationMode](./derivation.md). Optionally filter a specific mode to filter.
 
 It emits an observable of `ScanAccountEvent`, which at the moment is only one event:

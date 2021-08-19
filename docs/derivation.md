@@ -64,21 +64,21 @@ It can be very challenging to reconciliate the real world mistakes back into a w
 
 **When we integrate a new coin, we will always to try to converge the existing approaches to the most common used paradigm and will always prefer BIP 44 when possible.** Sometimes we support more than one, for instance when we integrated Tezos there where both tezbox and galleon that had different _default_ derivation, we found a way to scan for both.
 
-All exceptions are written in [src/derivation.js](../src/derivation.js).
+All exceptions are written in [src/derivation.ts](../src/derivation.ts).
 
 ## DerivationMode ?
 
-derivation.js exposes a type called `DerivationMode`. It's essentially an enum string of all possible derivation schemes.
+derivation.ts exposes a type called `DerivationMode`. It's essentially an enum string of all possible derivation schemes.
 
 By convention we use `""` to describe the legacy 44 purpose. (it's essentially the "default"). Otherwise we have `"segwit"` and `"native_segwit"`, but many more.
 
 The DerivationMode is used for many things and is part of the Account information. (it's contained in the account `id`)
 
-Most of the functions that are exposed by derivation.js will take a DerivationMode in parameter.
+Most of the functions that are exposed by derivation.ts will take a DerivationMode in parameter.
 
 ## getDerivationModesForCurrency
 
-The starting point of derivation.js is essentially `getDerivationModesForCurrency`. This function is used by the `bridge.scanAccounts` logic to know where to derive accounts. It gives for a given crypto currency the array of "DerivationMode" to scan for.
+The starting point of derivation.ts is essentially `getDerivationModesForCurrency`. This function is used by the `bridge.scanAccounts` logic to know where to derive accounts. It gives for a given crypto currency the array of "DerivationMode" to scan for.
 
 So for instance, for Bitcoin we described there were 3 classical cases, that function would just return `[ "", "segwit", "native_segwit" ]`.
 
