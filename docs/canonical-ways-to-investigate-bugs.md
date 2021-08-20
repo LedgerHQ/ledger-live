@@ -281,7 +281,7 @@ Problems can appear at the beginning of the Send flow, typically when inputting 
 
 We have in live-common a "TransactionStatus" concept which virtually checks everything is good to broadcast the transaction. The error is likely to be contained in that.
 
-An easy way to try that is to use `ledger-live getTransactionStatus`. The parameters it takes correspond to the Send form fields. Each family can add more field parameter (see the `families/*/cli-transaction.js` definition or `ledger-live help`)
+An easy way to try that is to use `ledger-live getTransactionStatus`. The parameters it takes correspond to the Send form fields. Each family can add more field parameter (see the `families/*/cli-transaction.ts` definition or `ledger-live help`)
 
 It also takes the same parameter of a sync, so an --xpub can be used (if not provided, we use a connected Ledger device):
 

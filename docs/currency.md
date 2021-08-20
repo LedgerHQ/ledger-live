@@ -5,7 +5,7 @@ They all share similar concepts but have specifics.
 
 ## The types
 
-The types are defined in [types/currencies](../src/types/currencies.js).
+The types are defined in [types/currencies](../src/types/currencies.ts).
 
 live-common exposes 3 different types: `CryptoCurrency`, `TokenCurrency` and `FiatCurrency`.
 It also exposes a union type `Currency` that is either of these 3 types. _Make sure you use the correct type, sometimes you want the union type Currency, sometimes you are really in the context of a CryptoCurrency_.
@@ -77,7 +77,7 @@ We don't want showAllDigits for currencies because they generally have a lot of 
 
 At the opposite, it is commonly wanted that for popular fiats like EUR we will always display `EUR 42.10` and never `EUR 42.1`.
 
-In live-common, our formatter is implemented by [`formatCurrencyUnit`](../src/currencies/formatCurrencyUnit.js) which takes a BigNumber value and a Unit (and many other options available).
+In live-common, our formatter is implemented by [`formatCurrencyUnit`](../src/currencies/formatCurrencyUnit.ts) which takes a BigNumber value and a Unit (and many other options available).
 
 ### CryptoCurrency specific fields
 

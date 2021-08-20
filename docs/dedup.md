@@ -68,6 +68,6 @@ One of the typically library that used to like multiple instance itself is React
 
 This means two instances of the `C` library exist in your bundle. Not only does it make it heavier but can also create subtle but painful bugs in applications.
 
-Typically imagine you get an instance of `Foo` from the library `C` via using `B`. Now, on the userland, if you do a code `foo instanceof Foo` where foo comes from `B->C` and `Foo` is the class from `C`, it would obviously be false. If you dedup it will be true, like it should be. You can imagine the kind of vicious bugs this creates, that's why we have `sanityChecks.js` to detect this problem ahead of time.
+Typically imagine you get an instance of `Foo` from the library `C` via using `B`. Now, on the userland, if you do a code `foo instanceof Foo` where foo comes from `B->C` and `Foo` is the class from `C`, it would obviously be false. If you dedup it will be true, like it should be. You can imagine the kind of vicious bugs this creates, that's why we have `sanityChecks.ts` to detect this problem ahead of time.
 
 This is the cause of a few production bugs in the past of Ledger Live like bad remapping of errors: We really don't want `@ledgerhq/errors` to be duplicated because we use such `instanceof` code.

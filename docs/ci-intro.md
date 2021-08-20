@@ -31,25 +31,25 @@ The folder will have this kind of structure:
 ```
 .
 ├── bridge
-│   ├── js.js          # if relevant
-│   ├── libcore.js     # if relevant
-│   └── mock.js
-├── cli-transaction.js # for the CLI
-├── hw-getAddress.js
-├── hw-signMessage.js  # if possible
-├── transaction.js # transaction specific fields
-├── types.js # family specific types
+│   ├── js.ts          # if relevant
+│   ├── libcore.ts     # if relevant
+│   └── mock.ts
+├── cli-transaction.ts # for the CLI
+├── hw-getAddress.ts
+├── hw-signMessage.ts  # if possible
+├── transaction.ts # transaction specific fields
+├── types.ts # family specific types
 # if libcore is used
-├── libcore-buildOperation.js
-├── libcore-buildSubAccounts.js # if this concept even exists
-├── libcore-buildTransaction.js
-├── libcore-getAccountNetworkInfo.js
-├── libcore-getFeesForTransaction.js
-├── libcore-hw-signTransaction.js
-├── libcore-signAndBroadcast.js
+├── libcore-buildOperation.ts
+├── libcore-buildSubAccounts.ts # if this concept even exists
+├── libcore-buildTransaction.ts
+├── libcore-getAccountNetworkInfo.ts
+├── libcore-getFeesForTransaction.ts
+├── libcore-hw-signTransaction.ts
+├── libcore-signAndBroadcast.ts
 # for tests
-├── test-dataset.js
-└── test-specifics.js
+├── test-dataset.ts
+└── test-specifics.ts
 ```
 
 most of these file are optional and you will typically see when a file implementation is missing when testing.

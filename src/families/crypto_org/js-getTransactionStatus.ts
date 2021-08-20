@@ -38,7 +38,7 @@ const getTransactionStatus = async (
     errors.amount = new NotEnoughBalance();
   }
 
-  if (!t.amount.gt(0)) {
+  if (!amount.gt(0)) {
     errors.amount = new AmountRequired();
   }
 

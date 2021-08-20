@@ -24,7 +24,7 @@ Most of the time, a transaction yield of one operation. But in some blockchains 
 
 ## The types
 
-In live-common, there are currently 3 types of accounts that are defined in [types/account](../src/types/account.js):
+In live-common, there are currently 3 types of accounts that are defined in [types/account](../src/types/account.ts):
 
 - `Account` which is a top level account associated to a `CryptoCurrency`.
 - `TokenAccount` which is a nested level account, **inside** an Account and that is associated to a `TokenCurrency`.
@@ -181,7 +181,7 @@ Typically, BigNumber will be serialized to a decimal string.
 
 This indirection also allows us the flexibility to ease backward compatibility: **we must guarantee that existing raw objects from 6 months ago are stilled supported** to avoid having a complex migration system. The convention is to never change a field name and each time we introduce fields, we make them optional (`field?: T`) in order to support the absence of it, which typically would be "defaulted" during the conversion back to the main types allowing us to forget about this problem and sometimes do breaking change in the main model (in respect of not breaking the raw version).
 
-From user perspective, you don't need to worry about them and live-common offers utility to convert them in [`account/serialization`](../src/account/serialization.js).
+From user perspective, you don't need to worry about them and live-common offers utility to convert them in [`account/serialization`](../src/account/serialization.ts).
 
 ## The account logic
 

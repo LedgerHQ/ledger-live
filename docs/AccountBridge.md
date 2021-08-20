@@ -9,7 +9,7 @@ It is designed for the end user frontend interface and is agnostic of the way it
 
 ![](account-bridge-flow.png)
 
-**[types](../src/types/bridge.js)**
+**[types](../src/types/bridge.ts)**
 
 ```js
 export interface AccountBridge<T: Transaction> {
@@ -89,7 +89,7 @@ sync(
 
 The first parameter `initialAccount` is the account object as the frontend knows it. It will be used to determine what needs to be refreshed in the most minimal way possible (sync tries to preserve object references).
 
-The second parameter allows to configure the synchronization (similarly to `CurrencyBridge#scanAccounts`). See [SyncConfig](../src/types/pagination.js).
+The second parameter allows to configure the synchronization (similarly to `CurrencyBridge#scanAccounts`). See [SyncConfig](../src/types/pagination.ts).
 
 **The returned value is an `Observable` of updater function (`Account=>Account`). Let's dig a bit in this concept:**
 
@@ -135,7 +135,7 @@ type TransactionCommon = {|
 But then, each family will enhance it:
 
 ```js
-// bitcoin/types.js
+// bitcoin/types.ts
 type TezosTransaction = {|
   ...TransactionCommon,
   family: "bitcoin",
@@ -143,7 +143,7 @@ type TezosTransaction = {|
   networkInfo: ?BitcoinNetworkInfo,
 |};
 
-// tezos/types.js
+// tezos/types.ts
 type TezosOperationMode = "send" | "delegate" | "undelegate";
 type TezosTransaction = {|
   ...TransactionCommon,
