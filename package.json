@@ -47,7 +47,10 @@
     "sync-locales": "./scripts/sync-locales.sh",
     "pod": "cd ios && bundle exec pod install --repo-update",
     "hack-for-ios-simulator": "cd node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks && mv universal real_universal && cp -R x86 universal",
-    "test-deep-links": "ws --spa ./deep-links-test-page.html"
+    "test-deep-links": "ws --spa ./deep-links-test-page.html",
+    "ui:start": "cd uilib && yarn start",
+    "ui:build": "cd uilib && yarn build",
+    "ui:storybook": "cd uilib && yarn storybook"
   },
   "jest": {
     "preset": "react-native",
