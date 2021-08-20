@@ -13,7 +13,7 @@ import {
   encodeURIScheme,
   sanitizeValueString,
 } from "../currencies";
-import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
+import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
 test("erc20 are all consistent with those on ledgerjs side", () => {
   const normalList = listTokens();
@@ -28,7 +28,10 @@ test("erc20 are all consistent with those on ledgerjs side", () => {
     }
 
     if (token.tokenType === "erc20") {
-      const tokenData = byContractAddress(token.contractAddress);
+      const tokenData = byContractAddressAndChainId(
+        token.contractAddress,
+        token.parentCurrency.ethereumLikeInfo?.chainId || 0
+      );
 
       if (!tokenData) {
         throw new Error(token.name + " not available in ledgerjs data");

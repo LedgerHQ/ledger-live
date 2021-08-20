@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import Eth from "@ledgerhq/hw-app-eth";
-import { byContractAddress } from "@ledgerhq/hw-app-eth/erc20";
+import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
 import type { Transaction } from "./types";
 import type { Operation, Account, SignOperationEvent } from "../../types";
 import { getGasLimit, buildEthereumTx } from "./transaction";
@@ -68,7 +68,10 @@ export const signOperation = ({
                 [];
 
               for (const addr of addrs) {
-                const tokenInfo = byContractAddress(addr);
+                const tokenInfo = byContractAddressAndChainId(
+                  addr,
+                  account.currency.ethereumLikeInfo?.chainId || 0
+                );
 
                 if (tokenInfo) {
                   await eth.provideERC20TokenInformation(tokenInfo);
