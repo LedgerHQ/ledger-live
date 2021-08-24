@@ -54,6 +54,16 @@ export const experimentalFeatures: Feature[] = [
     description:
       "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
   },
+  ...(__DEV__
+    ? [
+        {
+          type: "toggle",
+          name: "EXPERIMENTAL_SWAP",
+          title: "New SWAP interface ",
+          description: "Use the new experimental swap interface",
+        },
+      ]
+    : []),
 ];
 
 const storageKey = "experimentalFlags";
