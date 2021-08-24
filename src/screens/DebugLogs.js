@@ -2,11 +2,10 @@
 import React, { useEffect, useCallback, useState } from "react";
 import { listen } from "@ledgerhq/logs";
 import { ScrollView, View, StyleSheet } from "react-native";
-import Share from "react-native-share";
-import logger from "../logger";
 import logReport from "../log-report";
 import Button from "../components/Button";
 import LText from "../components/LText";
+import useExportLogs from "../components/useExportLogs";
 
 export default function DebugLogs() {
   const [logs, setLogs] = useState([]);
@@ -16,31 +15,10 @@ export default function DebugLogs() {
   );
 
   useEffect(() => listen(prependToLogs), [prependToLogs]);
-  const onExport = async () => {
-    const message = JSON.stringify(logs);
-    const base64 = Buffer.from(message).toString("base64");
-
-    const options = {
-      failOnCancel: false,
-      saveToFiles: true,
-      type: "application/json",
-      filename: "logs",
-      url: `data:application/json;base64,${base64}`,
-    };
-
-    try {
-      await Share.open(options);
-    } catch (err) {
-      // `failOnCancel: false` is not enough to prevent throwing on cancel apparently ¯\_(ツ)_/¯
-      if (err.error.code !== "ECANCELLED500") {
-        logger.critical(err);
-      }
-    }
-  };
+  const onExport = useExportLogs();
 
   const onDisplayLatestLogs = () => {
-    const logs = logReport.getLogs();
-    alert(logs.map(log => JSON.stringify(log)).join("\n"));
+    setLogs(logReport.getLogs());
   };
 
   return (
