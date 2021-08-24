@@ -6,7 +6,7 @@ rm -rf lib src/data/icons/react*
 bash ./scripts/sync-families-dispatch.sh
 node scripts/buildReactIcons.js
 
-yarn tsc --watch
+yarn tsc --project src/tsconfig.json --watch
 
 # (
 #     cd ../../flow-support
