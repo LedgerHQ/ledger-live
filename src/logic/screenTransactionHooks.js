@@ -4,6 +4,7 @@ import { concat, of, from } from "rxjs";
 import { concatMap, filter } from "rxjs/operators";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
+import { log } from "@ledgerhq/logs";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import type {
   Account,
@@ -14,7 +15,12 @@ import type {
 } from "@ledgerhq/live-common/lib/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/lib/account/helpers";
-import { addPendingOperation } from "@ledgerhq/live-common/lib/account";
+import {
+  addPendingOperation,
+  formatOperation,
+  formatAccount,
+} from "@ledgerhq/live-common/lib/account";
+import { formatTransaction } from "@ledgerhq/live-common/lib/transaction";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/lib/promise";
 import { getEnv } from "@ledgerhq/live-common/lib/env";
@@ -65,6 +71,12 @@ export const useSignWithDevice = ({
 
     setSigning(true);
 
+    log("transaction-summary", `→ FROM ${formatAccount(mainAccount, "basic")}`);
+    log(
+      "transaction-summary",
+      `✔️ transaction ${formatTransaction(transaction, mainAccount)}`,
+    );
+
     subscription.current = bridge
       .signOperation({ account: mainAccount, transaction, deviceId })
       .pipe(
@@ -89,10 +101,20 @@ export const useSignWithDevice = ({
         next: e => {
           switch (e.type) {
             case "signed":
+              log(
+                "transaction-summary",
+                `✔️ has been signed! ${JSON.stringify(e.signedOperation)}`,
+              );
               setSigned(true);
               break;
 
             case "broadcasted":
+              log(
+                "transaction-summary",
+                `✔️ broadcasted! optimistic operation: ${formatOperation(
+                  mainAccount,
+                )(e.operation)}`,
+              );
               navigation.replace(context + "ValidationSuccess", {
                 ...route.params,
                 result: e.operation,
@@ -163,10 +185,20 @@ export const broadcastSignedTx = async (
   }
 
   return execAndWaitAtLeast(3000, () =>
-    bridge.broadcast({
-      account: mainAccount,
-      signedOperation,
-    }),
+    bridge
+      .broadcast({
+        account: mainAccount,
+        signedOperation,
+      })
+      .then(op => {
+        log(
+          "transaction-summary",
+          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
+            op,
+          )}`,
+        );
+        return op;
+      }),
   );
 };
 
@@ -202,6 +234,14 @@ export function useSignedTxHandler({
         }
 
         const operation = await broadcast(signedOperation);
+
+        log(
+          "transaction-summary",
+          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
+            operation,
+          )}`,
+        );
+
         navigation.replace(
           route.name.replace("ConnectDevice", "ValidationSuccess"),
           {
