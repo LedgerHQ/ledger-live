@@ -66,7 +66,7 @@
     "@ledgerhq/hw-app-xrp": "6.3.0",
     "@ledgerhq/hw-transport": "6.3.0",
     "@ledgerhq/hw-transport-http": "6.3.0",
-    "@ledgerhq/live-common": "^21.2.2",
+    "@ledgerhq/live-common": "^21.3.0",
     "@ledgerhq/logs": "6.2.0",
     "@ledgerhq/react-native-hid": "6.3.0",
     "@ledgerhq/react-native-hw-transport-ble": "6.3.0",
@@ -181,7 +181,7 @@
     "vm-browserify": "1.1.2"
   },
   "devDependencies": {
-    "@actions/core": "^1.2.6",
+    "@actions/core": "^1.5.0",
     "@babel/core": "^7.13.10",
     "@babel/runtime": "^7.13.10",
     "@react-native-community/eslint-config": "^1.1.0",
