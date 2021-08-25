@@ -3547,7 +3547,6 @@
   "Terms": {
     "title": "使用条款",
     "read": "阅读使用条款",
-    "switchLabelPrivacy": "我已阅读并同意 <1>隐私政策</1>",
     "switchLabel": "我已阅读并同意 <1>服务条款</1>",
     "cta": "进入 Ledger 应用程序"
   },

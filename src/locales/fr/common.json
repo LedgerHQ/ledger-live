@@ -3547,8 +3547,7 @@
   "Terms": {
     "title": "Conditions d'utilisation",
     "read": "Lire les Conditions d'utilisation",
-    "switchLabelPrivacy": "J'ai lu et accepte la <1>Politique de confidentialité</1>.",
-    "switchLabel": "J'ai lu et accepte les <1>Conditions d'utilisation</1>.",
+    "switchLabel": "J'ai lu et j'accepte les <1>Conditions d'utilisation</1>.",
     "cta": "Entrer dans Ledger Live"
   },
   "exchange": {

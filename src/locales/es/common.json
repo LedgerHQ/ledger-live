@@ -3547,7 +3547,6 @@
   "Terms": {
     "title": "Términos de uso",
     "read": "Leer los Términos de uso",
-    "switchLabelPrivacy": "Confirmo que he leído y acepto la <1> Política de Privacidad</1>",
     "switchLabel": "He leído y acepto los <1>Términos del servicio</1>",
     "cta": "Entrar en la App Ledger"
   },

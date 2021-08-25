@@ -5,7 +5,17 @@ export const urls = {
     "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=faq",
   contact:
     "https://support.ledger.com/hc/en-us/requests/new?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=contact",
-  terms: "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.md",
+  terms: {
+    en: "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.md",
+    fr:
+      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.fr.md",
+    es:
+      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.es.md",
+    zh:
+      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.zh.md",
+    ru:
+      "https://github.com/LedgerHQ/ledger-live-mobile/blob/master/TERMS.ru.md",
+  },
   privacyPolicy: {
     en:
       "https://shop.ledger.com/pages/privacy-policy?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=privacy",

@@ -3541,9 +3541,10 @@
   "Terms": {
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
-    "switchLabelPrivacy": "I have read and agree with the <1>Privacy Policy</1>",
     "switchLabel": "I have read and agree with the <1>Terms of Service</1>",
-    "cta": "Enter Ledger App"
+    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "cta": "Enter Ledger App",
+    "service": "Terms of service"
   },
   "exchange": {
     "buy": {

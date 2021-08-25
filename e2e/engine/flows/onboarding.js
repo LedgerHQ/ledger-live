@@ -17,7 +17,6 @@ function getStarted() {
 function acceptTerms() {
   it("should check terms and policy", async () => {
     await $tap("TermsAcceptSwitch");
-    await $tap("TermsAcceptSwitchPrivacy");
   });
 
   it("should enter Ledger App", async () => {
