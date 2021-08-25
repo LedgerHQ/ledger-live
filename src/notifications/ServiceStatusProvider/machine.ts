@@ -5,6 +5,7 @@ const initialState: State = {
   error: null,
   lastUpdateTime: null,
   isLoading: false,
+  context: { tickers: [] },
 };
 export const serviceStatusMachine = Machine({
   id: "serviceStatus",

@@ -1,3 +1,8 @@
+type Component = {
+  id: string;
+  name: string;
+};
+
 export type Incident = {
   created_at: string;
   id: string;
@@ -10,6 +15,7 @@ export type Incident = {
   shortlink: string | null | undefined;
   status: string;
   updated_at: string | null | undefined;
+  components?: Component[];
 };
 export type IncidentUpdate = {
   body: string;
@@ -19,16 +25,22 @@ export type IncidentUpdate = {
   incident_id?: string;
   status?: string;
   updated_at?: string;
+  context?: ServiceStatusUserSettings;
 };
 export type State = {
   incidents: Incident[];
   isLoading: boolean;
   lastUpdateTime: number | null | undefined;
   error: Error | null | undefined;
+  context?: ServiceStatusUserSettings;
 };
 export type ServiceStatusSummary = {
   incidents: Incident[] | null | undefined;
 };
 export type ServiceStatusApi = {
   fetchStatusSummary: () => Promise<ServiceStatusSummary>;
+};
+
+export type ServiceStatusUserSettings = {
+  tickers: string[];
 };
