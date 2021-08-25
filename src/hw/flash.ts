@@ -1,6 +1,6 @@
 import { log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
-import { Observable, from, of, concat, empty } from "rxjs";
+import { Observable, from, of, concat, EMPTY } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../api/Manager";
 import { getProviderId } from "../manager/provider";
@@ -38,7 +38,7 @@ export default (finalFirmware: FinalFirmware) =>
             )
         ).pipe(
           mergeMap((mcuVersion: (McuVersion | null | undefined) | string) => {
-            if (!mcuVersion) return empty();
+            if (!mcuVersion) return EMPTY;
             let version;
             let isMCU = false;
 

@@ -1,10 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
-export type FirmwareInfo = {
-  targetId: number;
-  seVersion: string;
-  flags: Buffer;
-  mcuVersion: string;
-};
+import { FirmwareInfo } from "../types/manager";
+
 /**
  * Retrieve targetId and firmware version from device
  */
@@ -13,44 +9,85 @@ export default async function getVersion(
   transport: Transport
 ): Promise<FirmwareInfo> {
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00);
-  const byteArray = [...res];
-  const data = byteArray.slice(0, byteArray.length - 2);
-  const targetIdStr = Buffer.from(data.slice(0, 4));
-  const targetId = targetIdStr.readUIntBE(0, 4);
-  const seVersionLength = data[4];
-  const seVersion = Buffer.from(data.slice(5, 5 + seVersionLength)).toString();
-  const flagsLength = data[5 + seVersionLength];
-  const flags = Buffer.from(
-    data.slice(5 + seVersionLength + 1, 5 + seVersionLength + 1 + flagsLength)
-  );
-  const mcuVersionLength = data[5 + seVersionLength + 1 + flagsLength];
-  let mcuVersion: Buffer | string = Buffer.from(
-    data.slice(
-      7 + seVersionLength + flagsLength,
-      7 + seVersionLength + flagsLength + mcuVersionLength
-    )
-  );
+  const data = res.slice(0, res.length - 2);
+  let i = 0;
 
-  if (mcuVersion[mcuVersion.length - 1] === 0) {
-    mcuVersion = mcuVersion.slice(0, mcuVersion.length - 1);
+  // parse the target id of either BL or SE
+  const targetId = data.readUIntBE(0, 4);
+  i += 4;
+
+  // parse the version of either BL or SE
+  const rawVersionLength = data[i++];
+  let rawVersion = data.slice(i, i + rawVersionLength).toString();
+  i += rawVersionLength;
+
+  // flags. gives information about manager allowed in SE mode.
+  const flagsLength = data[i++];
+  let flags = data.slice(i, i + flagsLength);
+  i += flagsLength;
+
+  if (!rawVersionLength) {
+    // To support old firmware like bootloader of 1.3.1
+    rawVersion = "0.0.0";
+    flags = Buffer.allocUnsafeSlow(0);
   }
 
-  mcuVersion = mcuVersion.toString();
+  let mcuVersion = "";
+  let mcuBlVersion: string | undefined;
+  let seVersion: string | undefined;
+  let mcuTargetId: number | undefined;
+  let seTargetId: number | undefined;
 
-  if (!seVersionLength) {
-    // To support old firmware like bootloader of 1.3.1
-    return {
-      targetId,
-      seVersion: "0.0.0",
-      flags: Buffer.allocUnsafeSlow(0),
-      mcuVersion: "",
-    };
+  const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
+
+  if (isBootloader) {
+    mcuBlVersion = rawVersion;
+    mcuTargetId = targetId;
+
+    if (i < data.length) {
+      // se part 1
+      const part1Length = data[i++];
+      const part1 = data.slice(i, i + part1Length);
+      i += part1Length;
+
+      // at this time, this is how we branch old & new format
+      if (part1Length >= 5) {
+        seVersion = part1.toString();
+        // se part 2
+        const part2Length = data[i++];
+        const part2 = data.slice(i, i + part2Length);
+        i += flagsLength;
+        seTargetId = part2.readUIntBE(0, 4);
+      } else {
+        seTargetId = part1.readUIntBE(0, 4);
+      }
+    }
+  } else {
+    seVersion = rawVersion;
+    seTargetId = targetId;
+
+    // if SE: mcu version
+    const mcuVersionLength = data[i++];
+    let mcuVersionBuf: Buffer = Buffer.from(
+      data.slice(i, i + mcuVersionLength)
+    );
+    i += mcuVersionLength;
+
+    if (mcuVersionBuf[mcuVersionBuf.length - 1] === 0) {
+      mcuVersionBuf = mcuVersionBuf.slice(0, mcuVersionBuf.length - 1);
+    }
+    mcuVersion = mcuVersionBuf.toString();
   }
 
   return {
+    isBootloader,
+    rawVersion,
     targetId,
     seVersion,
-    flags,
     mcuVersion,
+    mcuBlVersion,
+    mcuTargetId,
+    seTargetId,
+    flags,
   };
 }

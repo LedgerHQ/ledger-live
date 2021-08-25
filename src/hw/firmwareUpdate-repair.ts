@@ -1,7 +1,15 @@
 import { log } from "@ledgerhq/logs";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
-import { concatMap, delay, filter, map, throttleTime } from "rxjs/operators";
+import {
+  concatMap,
+  delay,
+  filter,
+  map,
+  mergeMap,
+  throttleTime,
+} from "rxjs/operators";
+import semver from "semver";
 import ManagerAPI from "../api/Manager";
 import { withDevicePolling, withDevice } from "./deviceAccess";
 import { getProviderId } from "../manager/provider";
@@ -12,6 +20,7 @@ import {
   followDeviceRepair,
   followDeviceUpdate,
 } from "../deviceWordings";
+import { DeviceVersion, FinalFirmware } from "../types/manager";
 const wait2s = of({
   type: "wait",
 }).pipe(delay(2000));
@@ -37,6 +46,11 @@ export const repairChoices = [
     forceMCU: "0.9",
   },
 ];
+
+const filterMCUForDeviceInfo = (deviceInfo) => {
+  const provider = getProviderId(deviceInfo);
+  return (mcu) => mcu.providers.includes(provider);
+};
 
 const repair = (
   deviceId: string,
@@ -105,14 +119,103 @@ const repair = (
           default:
             return from(mcusPromise).pipe(
               concatMap((mcus) => {
-                const next = ManagerAPI.findBestMCU(
-                  ManagerAPI.compatibleMCUForDeviceInfo(
-                    mcus,
-                    deviceInfo,
-                    getProviderId(deviceInfo)
-                  )
-                );
-                if (next) return installMcu(next.name);
+                let next;
+                const { seVersion, seTargetId, mcuBlVersion } = deviceInfo;
+
+                // This is a special case where a user with LNX version >= 2.0.0
+                // comes back with a broken updated device. We need to be able
+                // to patch MCU or Bootloader if needed
+                if (seVersion && seTargetId) {
+                  log(
+                    "hw",
+                    "firmwareUpdate-repair seVersion and seTargetId found",
+                    { seVersion, seTargetId }
+                  );
+                  const validMcusForDeviceInfo = mcus
+                    .filter(filterMCUForDeviceInfo(deviceInfo))
+                    .filter((mcu) => mcu.from_bootloader_version !== "none");
+
+                  log("hw", "firmwareUpdate-repair valid mcus for device", {
+                    validMcusForDeviceInfo,
+                  });
+
+                  return from(
+                    ManagerAPI.getDeviceVersion(
+                      seTargetId,
+                      getProviderId(deviceInfo)
+                    )
+                  ).pipe(
+                    mergeMap((deviceVersion: DeviceVersion) =>
+                      from(
+                        ManagerAPI.getCurrentFirmware({
+                          deviceId: deviceVersion.id,
+                          version: seVersion,
+                          provider: getProviderId(deviceInfo),
+                        })
+                      )
+                    ),
+                    mergeMap((finalFirmware: FinalFirmware) => {
+                      log("hw", "firmwareUpdate-repair got final firmware", {
+                        finalFirmware,
+                      });
+
+                      const mcu = ManagerAPI.findBestMCU(
+                        finalFirmware.mcu_versions
+                          .map((id) =>
+                            validMcusForDeviceInfo.find((mcu) => mcu.id === id)
+                          )
+                          .filter(Boolean)
+                      );
+
+                      log("hw", "firmwareUpdate-repair got mcu", { mcu });
+
+                      if (!mcu) return EMPTY;
+                      const expectedBootloaderVersion = semver.coerce(
+                        mcu.from_bootloader_version
+                      ).version;
+                      const currentBootloaderVersion =
+                        semver.coerce(mcuBlVersion).version;
+
+                      log("hw", "firmwareUpdate-repair bootloader versions", {
+                        currentBootloaderVersion,
+                        expectedBootloaderVersion,
+                      });
+
+                      if (
+                        expectedBootloaderVersion === currentBootloaderVersion
+                      ) {
+                        next = mcu;
+                        log(
+                          "hw",
+                          "firmwareUpdate-repair bootloader versions are the same",
+                          { next }
+                        );
+                      } else {
+                        next = {
+                          name: mcu.from_bootloader_version,
+                        };
+                        log(
+                          "hw",
+                          "firmwareUpdate-repair bootloader versions are different",
+                          { next }
+                        );
+                      }
+
+                      return installMcu(next.name);
+                    })
+                  );
+                } else {
+                  next = ManagerAPI.findBestMCU(
+                    ManagerAPI.compatibleMCUForDeviceInfo(
+                      mcus,
+                      deviceInfo,
+                      getProviderId(deviceInfo)
+                    )
+                  );
+
+                  if (next) return installMcu(next.name);
+                }
+
                 return EMPTY;
               })
             );

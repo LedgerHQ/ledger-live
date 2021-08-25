@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { Observable, from, of, empty, concat, throwError } from "rxjs";
+import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
 import {
   concatMap,
   delay,
@@ -41,43 +41,44 @@ const main = (
 
   const waitForBootloader = withDeviceInfo.pipe(
     concatMap((deviceInfo) =>
-      deviceInfo.isBootloader ? empty() : concat(wait2s, waitForBootloader)
+      deviceInfo.isBootloader ? EMPTY : concat(wait2s, waitForBootloader)
     )
   );
   const potentialAutoFlash = withDeviceInfo.pipe(
     concatMap((deviceInfo) =>
       deviceInfo.isOSU
-        ? empty()
-        : withDevice(deviceId)((transport) =>
-            Observable.create((o) => {
-              const timeout = setTimeout(() => {
-                log("firmware", "potentialAutoFlash timeout");
-                o.complete();
-              }, 20000);
+        ? EMPTY
+        : withDevice(deviceId)(
+            (transport) =>
+              new Observable((o) => {
+                const timeout = setTimeout(() => {
+                  log("firmware", "potentialAutoFlash timeout");
+                  o.complete();
+                }, 20000);
 
-              const disconnect = () => {
-                log("firmware", "potentialAutoFlash disconnect");
-                o.complete();
-              };
+                const disconnect = () => {
+                  log("firmware", "potentialAutoFlash disconnect");
+                  o.complete();
+                };
 
-              transport.on("disconnect", disconnect);
-              return () => {
-                clearTimeout(timeout);
-                transport.off("disconnect", disconnect);
-              };
-            })
+                transport.on("disconnect", disconnect);
+                return () => {
+                  clearTimeout(timeout);
+                  transport.off("disconnect", disconnect);
+                };
+              })
           )
     )
   );
   const bootloaderLoop = withDeviceInfo.pipe(
     concatMap((deviceInfo) =>
       !deviceInfo.isBootloader
-        ? empty()
+        ? EMPTY
         : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop)
     )
   );
   const finalStep = !withFinal
-    ? empty()
+    ? EMPTY
     : withDeviceInfo.pipe(
         concatMap((deviceInfo) =>
           !deviceInfo.isOSU

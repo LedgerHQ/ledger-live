@@ -25,6 +25,11 @@ export type DeviceInfo = {
   providerName: string | null | undefined;
   managerAllowed: boolean;
   pinValidated: boolean;
+  // more precised raw versions
+  seVersion?: string;
+  mcuBlVersion?: string;
+  mcuTargetId?: number;
+  seTargetId?: number;
 };
 export type DeviceModelInfo = {
   modelId: DeviceModelId;
@@ -62,10 +67,15 @@ export type McuVersion = {
   date_last_modified: string;
 };
 export type FirmwareInfo = {
-  targetId: Id;
-  seVersion: string;
-  flags: string;
-  mcuVersion: string;
+  isBootloader: boolean;
+  rawVersion: string; // if SE seVersion, if BL blVersion
+  targetId: number; // if SE seTargetId, if BL mcuTargetId
+  seVersion?: string;
+  mcuVersion: string; // NB historically not undefined. but will be ""
+  mcuBlVersion?: string;
+  mcuTargetId?: number;
+  seTargetId?: number;
+  flags: Buffer;
 };
 type BaseFirmware = {
   id: Id;

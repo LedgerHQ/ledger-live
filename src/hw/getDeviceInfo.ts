@@ -38,14 +38,22 @@ export default async function getDeviceInfo(
   }
 
   const res = await getVersion(transport);
-  const { seVersion } = res;
-  const { targetId, mcuVersion, flags } = res;
-  const isOSU = seVersion.includes("-osu");
-  const version = seVersion.replace("-osu", "");
-  const m = seVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
+  const {
+    isBootloader,
+    rawVersion,
+    targetId,
+    seVersion,
+    seTargetId,
+    mcuBlVersion,
+    mcuVersion,
+    mcuTargetId,
+    flags,
+  } = res;
+  const isOSU = rawVersion.includes("-osu");
+  const version = rawVersion.replace("-osu", "");
+  const m = rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
   const [, majMin, , , postDash] = m || [];
   const providerName = PROVIDERS[postDash] ? postDash : null;
-  const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
   const flag = flags.length > 0 ? flags[0] : 0;
   const managerAllowed = !!(flag & ManagerAllowedFlag);
   const pinValidated = !!(flag & PinValidatedFlag);
@@ -60,9 +68,13 @@ export default async function getDeviceInfo(
   return {
     version,
     mcuVersion,
+    seVersion,
+    mcuBlVersion,
     majMin,
     providerName: providerName || null,
     targetId,
+    seTargetId,
+    mcuTargetId,
     isOSU,
     isBootloader,
     managerAllowed,
