@@ -20,7 +20,7 @@ export default {
     contrast: "hsla(0, 0%, 100%, 1)",
   },
   grey: {
-    border: "hsla(0, 0%, 90%, 1)",
+    border: "hsla(0, 0%, 91%, 1)",
   },
   feedback: {
     error: "hsla(359, 84%, 63%, 1)",

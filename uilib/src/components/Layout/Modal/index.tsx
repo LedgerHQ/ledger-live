@@ -8,7 +8,7 @@ import Close from "@ui/icons/Close";
 
 const { width, height } = sizes;
 
-type Props = {
+export type ModalProps = {
   isOpen?: boolean;
   onClose?: () => void;
   style?: Record<string, unknown>;
@@ -49,7 +49,7 @@ export default function Modal({
   style,
   children,
   ...rest
-}: Partial<Props>): React.ReactElement {
+}: Partial<ModalProps>): React.ReactElement {
   const backDropProps = preventBackdropClick
     ? {}
     : {
