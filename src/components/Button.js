@@ -6,6 +6,7 @@ import React, {
   useCallback,
   memo,
   useContext,
+  useMemo,
 } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import {
@@ -268,9 +269,16 @@ export function BaseButton({
       case "primary":
         return "Proceed";
       default:
-        return otherProps.event;
+        return event;
     }
   }
+  const testID = useMemo(getTestID, [
+    isDisabled,
+    otherProps.isFocused,
+    otherProps.testID,
+    event,
+    type,
+  ]);
 
   return (
     // $FlowFixMe
@@ -279,7 +287,7 @@ export function BaseButton({
       style={mainContainerStyle}
       {...containerSpecificProps}
       {...otherProps}
-      testID={getTestID()}
+      testID={testID}
     >
       {needsBorder ? <View style={borderStyle} /> : null}
 
