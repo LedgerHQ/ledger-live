@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
+    "seeAll": "See all",
     "back": "Back",
     "delete": "Delete",
     "paste": "Paste",
@@ -44,6 +45,7 @@
     "usb": "USB",
     "add": "Add",
     "slow": "slow",
+    "medium": "medium",
     "fast": "fast",
     "token": "Token",
     "token_plural": "Tokens",
@@ -261,6 +263,10 @@
     "FirmwareOrAppUpdateRequired": {
       "title": "Firmware or app update needed",
       "description": "Please use the Manager to uninstall all apps then check if a firmware update is available before reinstalling them."
+    },
+    "LatestFirmwareVersionRequired": {
+      "title": "Device update required on desktop",
+      "description": "Please update your Nano X firmware on Ledger Live Desktop"
     },
     "GenuineCheckFailed": {
       "title": "Device authentication failed",
@@ -499,6 +505,10 @@
     "UnavailableTezosOriginatedAccountSend": {
       "title": "Cannot send from subaccounts yet",
       "description": "This feature will be added at a later stage due to changes recently introduced by the Babylon update."
+    },
+    "AccessDeniedError": {
+      "title": "Ledger Live needs an update",
+      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre"
     },
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
@@ -1224,6 +1234,7 @@
     "syncError": "Sync error",
     "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
+    "transactions": "Transactions",
     "greeting": {
       "morning": "Good morning",
       "evening": "Good evening",
@@ -1305,9 +1316,10 @@
       "UNBOND": "Unbond",
       "REWARD_PAYOUT": "Reward",
       "SLASH": "Slash",
-      "WITHDRAW_UNBONDED": "Unbonded Withdrawal",
+      "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "Nomination",
-      "CHILL": "Clear nominations"
+      "CHILL": "Clear nominations",
+      "SET_CONTROLLER": "Set controller"
     }
   },
   "operationDetails": {
@@ -1319,8 +1331,8 @@
     "failed": "Failed",
     "fees": "Network fees",
     "noFees": "No fee",
-    "from": "From ({{count}})",
-    "to": "To ({{count}})",
+    "from": "From",
+    "to": "To",
     "identifier": "Transaction ID",
     "viewOperation": "View in explorer",
     "whatIsThis": "What is this operation?",
@@ -1586,7 +1598,7 @@
       "languageDesc": "Set the language displayed in Ledger Live.",
       "password": "Password lock",
       "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
-      "counterValue": "Countervalue",
+      "counterValue": "Preferred currency",
       "theme": "Theme",
       "themeDesc": "Set the app UI theme",
       "themes": {
@@ -1784,11 +1796,66 @@
         "whatIsSwap": "What is Swap?",
         "disclaimer": "Exchange crypto directly from your Ledger device. This service is not available in some countries, including the US."
       },
+      "unauthorizedRates": {
+        "cta": "Reset verification",
+        "banner": "Reset your KYC and update Live to swap with Wyre.",
+        "bannerCTA": "Reset KYC"
+      },
       "main": {
         "header": "Swap"
       },
       "kyc": {
-        "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes."
+        "disclaimer": "I acknowledge that my location data will be shared with third parties for compliance purposes.",
+        "cta": "Continue",
+        "wyre": {
+          "title": "Complete your KYC",
+          "subtitle": "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our Privacy Policy",
+          "pending": {
+            "cta": "Continue",
+            "title": "KYC submitted for approval",
+            "subtitle": "Your KYC has been submitted and is pending approval.",
+            "link": "Learn more about KYC"
+          },
+          "approved": {
+            "cta": "Continue",
+            "title": "KYC approved!",
+            "subtitle": "Your KYC has been submitted and has been approved.",
+            "link": "Learn more about KYC"
+          },
+          "closed": {
+            "cta": "Reset KYC",
+            "title": "KYC application rejected",
+            "subtitle": "Wyre rejected the data you provided for KYC purposes",
+            "link": "Learn more about KYC"
+          },
+          "form": {
+            "firstName": "First Name",
+            "lastName": "Last Name",
+            "street1": "Street Address Line 1",
+            "street2": "Street Address Line 2",
+            "city": "City",
+            "state": "State",
+            "country": "Country",
+            "postalCode": "Zip Code",
+            "dateOfBirth": "Date of birth",
+            "firstNamePlaceholder": "Enter your first name",
+            "lastNamePlaceholder": "Enter your last name",
+            "street1Placeholder": "Eg. 13, Maple street",
+            "street2Placeholder": "Eg. 13, Maple street",
+            "cityPlaceholder": "Eg. San José",
+            "postalCodePlaceholder": "Enter your 5 digit Zip code",
+            "statePlaceholder": "Select your state",
+            "dateOfBirthPlaceholder": "YYYY-MM-DD",
+            "firstNameError": "Enter your first name to continue",
+            "lastNameError": "Enter your last name to continue",
+            "street1Error": "Enter your address",
+            "cityError": "Enter the city you live in the USA",
+            "stateError": "Select your state to continue",
+            "postalCodeError": "Enter a valid US ZIP code",
+            "dateOfBirthError": "Enter your date of birth"
+          }
+        },
+        "states": "Select your state"
       },
       "notAvailable": {
         "title": "Service temporarily unavailable, or not available in your country"
@@ -1860,7 +1927,7 @@
           "fees": "Max fees",
           "disclaimer": {
             "title": "Terms and conditions",
-            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by {{provider}}'s Terms & Conditions.",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
             "tos": "Terms & conditions",
             "accept": "Accept",
             "reject": "Close"
@@ -3157,6 +3224,7 @@
       "header": "Nominations",
       "nominate": "Nominate",
       "chill": "Clear nominations",
+      "setController": "Change controller",
       "status": "Status",
       "totalStake": "Total Stake",
       "amount": "Bonded Amount",
@@ -3177,8 +3245,8 @@
       "oversubscribed": "Oversubscribed ({{nominatorsCount}})",
       "oversubscribedInfo": "Only the top {{maxNominatorRewardedPerValidator}} nominators with the highest bonded amount earn rewards",
       "hasPendingBondOperation": "A bond operation is still pending confirmation",
-      "externalControllerUnsupported": "This stash account is controlled by another account with the address <0>{{address}}</0>. Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js",
-      "externalStashUnsupported": "This account controls a stash account whose address is <0>{{address}}</0>. Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js",
+      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
+      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
       "showInactiveNominations": "Show all nominations ({{count}})",
       "hideInactiveNominations": "Show active nominations only",
       "noActiveNominations": "There are no active nominations.",
@@ -3345,6 +3413,11 @@
           "title": "Clear nominations",
           "description": "Clears all nominations and stops earning rewards.",
           "info": "Bonded assets will remain bonded. If you unbond them, they will be available after 28 days."
+        },
+        "setController": {
+          "title": "Change Controller",
+          "description": "Set your Ledger account as its own controller",
+          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
         }
       },
       "stepperHeader": {
@@ -3474,7 +3547,6 @@
   "Terms": {
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
-    "switchLabelPrivacy": "I have read and agree with the <1>Privacy Policy</1>",
     "switchLabel": "I have read and agree with the <1>Terms of Service</1>",
     "cta": "Enter Ledger App"
   },
@@ -3606,6 +3678,18 @@
       "developerCTA": {
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live."
+      }
+    },
+    "disclaimer": {
+      "title": "External Application",
+      "description": "You are about to be redirected to an application not operated by Ledger.",
+      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "checkbox": "Do not remind me again.",
+      "CTA": "Continue"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
       }
     }
   }

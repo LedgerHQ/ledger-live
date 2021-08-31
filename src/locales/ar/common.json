@@ -2,6 +2,7 @@
   "common": {
     "cancel": "إلغاء",
     "apply": "تطبيق",
+    "seeAll": "See all",
     "back": "عودة",
     "delete": "حذف",
     "paste": "لصق",
@@ -44,6 +45,7 @@
     "usb": "USB",
     "add": "أضف",
     "slow": "بطيء",
+    "medium": "medium",
     "fast": "سريع",
     "token": "رمز",
     "token_plural": "رموز",
@@ -261,6 +263,10 @@
     "FirmwareOrAppUpdateRequired": {
       "title": "يلزم تحديث البرنامج الثابت أو للتطبيق",
       "description": "يرجى استخدام المدير لإلغاء تثبيت جميع التطبيقات، ثم تحقق مما إذا كان تحديث البرنامج الثابت متاحًا قبل إعادة تثبيتهم مرة أخرى."
+    },
+    "LatestFirmwareVersionRequired": {
+      "title": "تحديث الجهاز مطلوب على سطح المكتب",
+      "description": "الرجاء تحديث البرنامج الثابت لNano X الخاص بك على تطبيق Ledger Live لسطح المكتب"
     },
     "GenuineCheckFailed": {
       "title": "فشل توثيق الجهاز",
@@ -499,6 +505,10 @@
     "UnavailableTezosOriginatedAccountSend": {
       "title": "لا يمكن الإرسال من الحسابات الفرعية بعد",
       "description": "ستتم إضافة هذه الميزة في مرحلة لاحقة بسبب التغييرات التي يتم تقديمها من خلال تحديث Babylon."
+    },
+    "AccessDeniedError": {
+      "title": "يحتاج Ledger Live إلى تحديث",
+      "description": "يرجى تحديث Ledger Live إلى أحدث إصدار، وأعد التحقق من هويتك للتبادل مع Wyre"
     },
     "RecommendUndelegation": {
       "title": "يرجى إلغاء تفويض الحساب قبل إفراغه"
@@ -1224,6 +1234,7 @@
     "syncError": "خطأ في المزامنة",
     "syncFailed": "فشلت المزامنة",
     "syncPending": "تتم المزامنة...",
+    "transactions": "Transactions",
     "greeting": {
       "morning": "صباح الخير",
       "evening": "مساء الخير",
@@ -1305,9 +1316,10 @@
       "UNBOND": "إلغاء التقيد",
       "REWARD_PAYOUT": "مُكافأة",
       "SLASH": "تغريم",
-      "WITHDRAW_UNBONDED": "سحب الأصول الغير مقيدة",
+      "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "ترشيح",
-      "CHILL": "مسح الترشيحات"
+      "CHILL": "مسح الترشيحات",
+      "SET_CONTROLLER": "Set controller"
     }
   },
   "operationDetails": {
@@ -1319,8 +1331,8 @@
     "failed": "فشلت",
     "fees": "رسوم الشبكة",
     "noFees": "لا توجد رسوم",
-    "from": "من ({{count}})",
-    "to": "إلى ({{count}})",
+    "from": "From",
+    "to": "To",
     "identifier": "معرف المعاملة",
     "viewOperation": "عرض في المتصفح",
     "whatIsThis": "ما هذه العملية؟",
@@ -1586,7 +1598,7 @@
       "languageDesc": "قم بتعيين اللغة المستخدمة في Ledger Live.",
       "password": "قفل كلمة المرور",
       "passwordDesc": "قم بتعيين كلمة مرور لحماية بيانات Ledger Live على هاتفك.",
-      "counterValue": "القيمة المقابلة",
+      "counterValue": "العملة المفضلة",
       "theme": "السمة",
       "themeDesc": "قم بتعيين السمة لواجهة مستخدم التطبيق",
       "themes": {
@@ -1784,11 +1796,66 @@
         "whatIsSwap": "ما هي المبادلة؟",
         "disclaimer": "بادل الأصول المشفرة مباشرةً من جهاز ليدجر الخاص بك. هذه الخدمة غير متوفرة في بعض البلدان، بما فيها الولايات المتحدة."
       },
+      "unauthorizedRates": {
+        "cta": "إعادة تعيين التحقق",
+        "banner": "أعد تعيين بيانات التحقق من الهوية الخاصة بك وقم بتحديث Ledger Live للتبادل مع Wyre.",
+        "bannerCTA": "إعادة تعيين بيانات التحقق من الهوية"
+      },
       "main": {
         "header": "مبادلة"
       },
       "kyc": {
-        "disclaimer": "أقر بأنه ستتم مشاركة بيانات الموقع الخاصة بي مع أطراف خارجية لأغراض الامتثال."
+        "disclaimer": "أقر بأنه ستتم مشاركة بيانات الموقع الخاصة بي مع أطراف خارجية لأغراض الامتثال.",
+        "cta": "متابعة",
+        "wyre": {
+          "title": "أكمل بيانات التحقق من الهوية الخاصة بك",
+          "subtitle": "يتم جمع معلوماتك من قبل LEDGER بالنيابة عن WYRE كما يتم نقل هذه المعلومات إليها لأغراض التحقق من هوية العميل. للتعرف على مزيد من المعلومات، يرجى مراجعة سياسة الخصوصية الخاصة بنا",
+          "pending": {
+            "cta": "متابعة",
+            "title": "تم ارسال بيانات التحقق من الهوية لاعتمادها",
+            "subtitle": "تم ارسال بيانات التحقق من الهوية الخاصة بك وبانتظار اعتمادها.",
+            "link": "معرفة المزيد عن KYC (التحقق من الهوية)"
+          },
+          "approved": {
+            "cta": "متابعة",
+            "title": "تم اعتماد بيانات التحقق من الهوية!",
+            "subtitle": "تم ارسال بيانات التحقق من الهوية الخاصة بك وتم اعتمادها.",
+            "link": "معرفة المزيد عن KYC (التحقق من الهوية)"
+          },
+          "closed": {
+            "cta": "إعادة تعيين KYC (التحقق من الهوية)",
+            "title": "تم رفض طلب KYC (التحقق من الهوية)",
+            "subtitle": "رفضت Wyre البيانات التي قدمتها للتحقق من هوية العميل",
+            "link": "معرفة المزيد عن KYC (التحقق من الهوية)"
+          },
+          "form": {
+            "firstName": "الاسم الأول",
+            "lastName": "اسم العائلة",
+            "street1": "عنوان الشارع، السطر 1",
+            "street2": "عنوان الشارع، السطر 2",
+            "city": "المدينة",
+            "state": "الولاية/المحافظة",
+            "country": "البلد",
+            "postalCode": "الرمز البريدي",
+            "dateOfBirth": "تاريخ الميلاد",
+            "firstNamePlaceholder": "أدخل اسمك الأول",
+            "lastNamePlaceholder": "أدخل اسم العائلة",
+            "street1Placeholder": "مثال: ‎13 شارع مابل",
+            "street2Placeholder": "مثال: ‎13 شارع مابل",
+            "cityPlaceholder": "مثل: سان خوسيه",
+            "postalCodePlaceholder": "أدخل رمزك البريدي المكوّن من 5 أرقام",
+            "statePlaceholder": "اختار الولاية/المحافظة",
+            "dateOfBirthPlaceholder": "السنة/الشهر/اليوم",
+            "firstNameError": "أدخل اسمك الأول للمتابعة",
+            "lastNameError": "أدخل اسم العائلة للمتابعة",
+            "street1Error": "أدخل عنوانك",
+            "cityError": "أدخل المدينة التي تعيش بها في الولايات المتحدة الأمريكية",
+            "stateError": "اختار الولاية/المحافظة الخاصة بك للمتابعة",
+            "postalCodeError": "أدخل رمزًا بريديًا صالحًا في الولايات المتحدة الأمريكية",
+            "dateOfBirthError": "أدخل تاريخ ميلادك"
+          }
+        },
+        "states": "اختار الولاية/المحافظة"
       },
       "notAvailable": {
         "title": "الخدمة غير متوفرة مؤقتًا أو غير متوفرة في بلدك"
@@ -1860,7 +1927,7 @@
           "fees": "الحد الأقصى للرسوم",
           "disclaimer": {
             "title": "الأحكام والشروط",
-            "desc": "بالضغط على \"أقبل\"، أسلم وأقبل بأن هذه الخدمة تدار حصريًا من قبل شروط وأحكام {{provider}}.",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
             "tos": "الشروط والأحكام",
             "accept": "قبول",
             "reject": "إغلاق"
@@ -3157,6 +3224,7 @@
       "header": "الترشيحات",
       "nominate": "ترشيح",
       "chill": "حذف الترشيحات",
+      "setController": "Change controller",
       "status": "الحالة",
       "totalStake": "إجمالي الرهن",
       "amount": "المبلغ المقيد",
@@ -3177,8 +3245,8 @@
       "oversubscribed": "({{nominatorsCount}}) تجاوز حد الاشتراك",
       "oversubscribedInfo": "أعلى {{maxNominatorRewardedPerValidator}} مرشحين مع أعلى مبلغ مقيد فقط هم من يحصلون على مكافآت",
       "hasPendingBondOperation": "لا تزال عملية التقيد في انتظار التأكيد",
-      "externalControllerUnsupported": "حساب التخزين هذا يخضع لسيطرة حساب آخر عنوانه <0>{{address}}</0>. عمليات الرهن على الحسابات الخاضعة لسيطرة حساب مختلف غير معتمدة في ليدجر لايف (Ledger Live). يرجى استخدام محفظة مختلفة مثل Polkadot.js",
-      "externalStashUnsupported": "هذا الحساب يتحكم في حساب تخزين عنوانه <0>{{address}}</0>. عمليات الرهن على حسابات تخزين منفصلة غير مدعومة في ليدجر لايف (Ledger Live). يرجى استخدام محفظة بديلة مثل Polkadot.js",
+      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
+      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
       "showInactiveNominations": "عرض كل الترشيحات ({{count}})",
       "hideInactiveNominations": "عرض الترشيحات النشطة فقط",
       "noActiveNominations": "لا توجد ترشيحات مفعلة.",
@@ -3345,6 +3413,11 @@
           "title": "حذف الترشيحات",
           "description": "يقوم بحذف جميع الترشيحات وإيقاف كسب المكافآت.",
           "info": "ستظل الأصول المقيدة على حالتها. إذا قمت بإلغاء تقيدها، فسوف تصبح متاحة بعد فترة 28 يومًا."
+        },
+        "setController": {
+          "title": "Change Controller",
+          "description": "Set your Ledger account as its own controller",
+          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
         }
       },
       "stepperHeader": {
@@ -3474,7 +3547,6 @@
   "Terms": {
     "title": "شروط الاستخدام",
     "read": "قراءة شروط الاستخدام",
-    "switchLabelPrivacy": "لقد قرأت ووافقت على <1>سياسة الخصوصية</1>",
     "switchLabel": "لقد قرأت ووافقت على <1>شروط الخدمة</1>",
     "cta": "دخول تطبيق Ledger"
   },
@@ -3606,6 +3678,18 @@
       "developerCTA": {
         "title": "للمبرمجين",
         "description": "جميع المعلومات التي تحتاج إليها لدمج تطبيقاتك على Ledger Live."
+      }
+    },
+    "disclaimer": {
+      "title": "تطبيق خارجي",
+      "description": "أنت على وشك أن تتم إعادة توجيهك إلى تطبيق لا يتم تشغيله من قِبل Ledger.",
+      "legalAdvice": "لا يتم تشغيل هذا التطبيق من قِبل Ledger. إن Ledger غير مسؤول عن أي خسارة للأموال أو عن جودة الخدمة لمثل هذا التطبيق.\n\nدائمًا تأكد من التحقق بعناية من المعلومات المعروضة على جهازك.",
+      "checkbox": "لاتذكرني مرة أخرى.",
+      "CTA": "متابعة"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
       }
     }
   }

@@ -39,7 +39,9 @@ const DisclaimerModal = ({
         <Trans
           i18nKey={"transfer.swap.form.summary.disclaimer.desc"}
           values={{ provider }}
-        />
+        >
+          <LText style={styles.capitalize} color="smoke" />
+        </Trans>
       </LText>
       <ExternalLink
         text={<Trans i18nKey="transfer.swap.form.summary.disclaimer.tos" />}
@@ -95,6 +97,7 @@ const styles = StyleSheet.create({
   firstButton: {
     marginTop: 24,
   },
+  capitalize: { textTransform: "capitalize" },
 });
 
 export default DisclaimerModal;

@@ -2,6 +2,7 @@
   "common": {
     "cancel": "取消",
     "apply": "应用",
+    "seeAll": "显示全部",
     "back": "返回",
     "delete": "删除",
     "paste": "粘贴",
@@ -24,7 +25,7 @@
     "editName": "编辑名称",
     "close": "关闭",
     "confirm": "确认",
-    "poweredBy": "技术支持源自",
+    "poweredBy": "技术支持来自 ",
     "received": "已收到",
     "sent": "已发送",
     "or": "或者",
@@ -44,6 +45,7 @@
     "usb": "USB",
     "add": "添加",
     "slow": "慢",
+    "medium": "中",
     "fast": "快",
     "token": "代币",
     "token_plural": "代币",
@@ -261,6 +263,10 @@
     "FirmwareOrAppUpdateRequired": {
       "title": "需要更新固件或应用程序",
       "description": "请使用管理器卸载所有的应用程序，且在重新安装应用程序之前检查是否有可用的固件更新。"
+    },
+    "LatestFirmwareVersionRequired": {
+      "title": "桌面程序需要设备更新",
+      "description": "请在 Ledger Live 桌面程序上更新您的 Nano X 固件"
     },
     "GenuineCheckFailed": {
       "title": "设备验证失败",
@@ -500,6 +506,10 @@
       "title": "尚无法从子账户发送",
       "description": "由于近期 Babylon 更新而引入的变化，此功能将在稍后阶段被添加。"
     },
+    "AccessDeniedError": {
+      "title": "Ledger Live 需要更新",
+      "description": "请将 Ledger Live 更新到最新版本，然后重新验证您的身份，以便使用 Wyre 进行掉期交易"
+    },
     "RecommendUndelegation": {
       "title": "请在清空账户之前将其解除委托"
     },
@@ -529,7 +539,7 @@
     },
     "SwapGenericAPIError": {
       "title": "汇率过期",
-      "description": "您必须在计时结束之前确认掉期交易。汇率的有效期有限。"
+      "description": "您必须在计时结束之前确认 swap 交换。汇率的有效期有限。"
     },
     "PolkadotElectionClosed": {
       "title": "必须关闭验证器选举"
@@ -674,7 +684,7 @@
         "description": "通过 Ledger Live 购买加密货币"
       },
       "swap": {
-        "title": "Swap 掉期交易加密货币",
+        "title": "Swap 交换加密货币",
         "description": "安全地在加密货币\n之间进行交易"
       },
       "algorand": {
@@ -930,7 +940,7 @@
             "label": "仅可在硬件钱包上输入这些词，永远不要在电脑或手机上输入。"
           },
           "1": {
-            "label": "永远不要将您的 24 words (二十四个助记词) 告诉别人，Ledger 也不例外。"
+            "label": "永远不要将您的 24 words (二十四个助记词) 告诉别人，即使是对 Ledger 也不能例外。"
           }
         },
         "cta": "好的，我完成了！",
@@ -1153,7 +1163,7 @@
       "title": "您的设备已准备就绪！",
       "readOnlyTitle": "一切就绪！",
       "desc": "在您的设备上安装应用程序并管理您的资产组合",
-      "cta": "打开 Ledger Live"
+      "cta": "打开 Ledger Live 应用程序"
     },
     "quizz": {
       "label": "小测试",
@@ -1190,7 +1200,7 @@
           "wrong": "已短暂连接到网络"
         },
         "modal": {
-          "text": "您私钥会一直在您的硬件钱包中保持离线状态。即便将硬件钱包连接到 Ledger 应用程序上，Ledger 应用程序也无法获取您的私钥。您必须在您的设备上手动授权每一笔交易。",
+          "text": "您的私钥会一直在您的硬件钱包中保持离线状态。即便将硬件钱包连接到 Ledger 应用程序上，Ledger 应用程序也无法获取您的私钥。您必须在您的设备上手动授权每一笔交易。",
           "cta": "完成测验"
         }
       },
@@ -1224,6 +1234,7 @@
     "syncError": "同步错误",
     "syncFailed": "同步失败",
     "syncPending": "正在同步...",
+    "transactions": "交易数目",
     "greeting": {
       "morning": "早上好",
       "evening": "晚上好",
@@ -1305,9 +1316,10 @@
       "UNBOND": "解绑",
       "REWARD_PAYOUT": "奖励",
       "SLASH": "Slash 削减惩罚机制",
-      "WITHDRAW_UNBONDED": "提取已解绑资产",
+      "WITHDRAW_UNBONDED": "提取",
       "NOMINATE": "提名",
-      "CHILL": "清除提名"
+      "CHILL": "清除提名",
+      "SET_CONTROLLER": "设置控制器"
     }
   },
   "operationDetails": {
@@ -1319,8 +1331,8 @@
     "failed": "已失败",
     "fees": "网络费用",
     "noFees": "无费用",
-    "from": "来自 ({{count}})",
-    "to": "到 ({{count}})",
+    "from": "来自",
+    "to": "发往",
     "identifier": "交易 ID",
     "viewOperation": "在浏览器中查看",
     "whatIsThis": "这是什么操作？",
@@ -1408,7 +1420,7 @@
     "buy": "买入",
     "walletconnect": "WalletConnect",
     "sell": "卖出",
-    "swap": "Swap",
+    "swap": "Swap 交换",
     "manage": "管理",
     "lastOperations": "最后操作",
     "emptyState": {
@@ -1586,7 +1598,7 @@
       "languageDesc": "设置 Ledger Live 显示的语言。",
       "password": "密码锁",
       "passwordDesc": "设置一个密码来保护您手机上的 Ledger Live 数据。",
-      "counterValue": "对价",
+      "counterValue": "首选币种",
       "theme": "主题",
       "themeDesc": "设置用户界面主题",
       "themes": {
@@ -1774,21 +1786,76 @@
       "title": "买入 / 卖出"
     },
     "swap": {
-      "title": "Swap",
+      "title": "Swap 交换",
       "selectDevice": "选择您的设备",
-      "broadcasting": "正在播送掉期交易",
+      "broadcasting": "正在播送 swap 交换",
       "loadingFees": "正在加载网络费用...",
       "landing": {
-        "header": "Swap",
-        "title": "欢迎使用 Swap",
-        "whatIsSwap": "什么是 Swap？",
+        "header": "Swap 交换",
+        "title": "欢迎使用 Swap 交换",
+        "whatIsSwap": "什么是 Swap 交换？",
         "disclaimer": "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
       },
+      "unauthorizedRates": {
+        "cta": "重置验证信息",
+        "banner": "请重置您的 KYC 并更新 Live 以便使用 Wyre 进行 swap 交换。",
+        "bannerCTA": "重置 KYC"
+      },
       "main": {
-        "header": "Swap"
+        "header": "Swap 交换"
       },
       "kyc": {
-        "disclaimer": "我确认：出于合规目的，我的位置数据将会分享给第三方。"
+        "disclaimer": "我确认：出于合规目的，我的位置数据将会分享给第三方。",
+        "cta": "继续",
+        "wyre": {
+          "title": "完成您的 KYC",
+          "subtitle": "出于 KYC 目的，LEDGER 需要收集并转移您的信息到 WYRE。如需了解更多信息，请查看我们的隐私政策",
+          "pending": {
+            "cta": "继续",
+            "title": "KYC 已被提交以供审批",
+            "subtitle": "您的 KYC 已被提交，正在等待批准。",
+            "link": "了解关于 KYC 的更多详情"
+          },
+          "approved": {
+            "cta": "继续",
+            "title": "KYC 已批准！",
+            "subtitle": "您的 KYC 已被提交并已获得批准。",
+            "link": "了解关于 KYC 的更多详情"
+          },
+          "closed": {
+            "cta": "重置 KYC",
+            "title": "KYC 申请被拒绝",
+            "subtitle": "出于 KYC 原因，Wyre 拒绝了您提供的数据",
+            "link": "了解关于 KYC 的更多详情"
+          },
+          "form": {
+            "firstName": "名字",
+            "lastName": "姓氏",
+            "street1": "街道地址栏 1",
+            "street2": "街道地址栏 2",
+            "city": "城市",
+            "state": "州",
+            "country": "国家",
+            "postalCode": "邮编",
+            "dateOfBirth": "出生日期",
+            "firstNamePlaceholder": "输入您的名字",
+            "lastNamePlaceholder": "输入您的姓氏",
+            "street1Placeholder": "例如：枫树街 13 号",
+            "street2Placeholder": "例如：枫树街 13 号",
+            "cityPlaceholder": "例如：圣何塞（San José）",
+            "postalCodePlaceholder": "输入您的 5 位数邮政编码",
+            "statePlaceholder": "选择您所在的州",
+            "dateOfBirthPlaceholder": "年-月-日",
+            "firstNameError": "输入您的名字以继续",
+            "lastNameError": "输入您的姓氏以继续",
+            "street1Error": "输入您的地址",
+            "cityError": "输入您在美国的居住城市",
+            "stateError": "选择您所在的州以继续",
+            "postalCodeError": "输入一个有效的美国邮政编码",
+            "dateOfBirthError": "输入您的出生日期"
+          }
+        },
+        "states": "选择您所在的州"
       },
       "notAvailable": {
         "title": "服务暂时不可用，或在您的国家不可用"
@@ -1799,10 +1866,10 @@
         "cta": "关闭"
       },
       "pendingOperation": {
-        "description": "您的 Swap 掉期交易操作已经发送到网络上确认。最多一个小时后，您就可以收到您的 {{targetCurrency}}。",
+        "description": "您的 Swap 交换操作已经发送到网络上确认。最多一个小时后，您就可以收到您的 {{targetCurrency}}。",
         "label": "您的 Swap ID：",
-        "title": "掉期交易播送成功 ",
-        "disclaimer": "请记下您的 Swap ID 掉期交易号码，以便今后有需要时从 {{provider}} 处获得帮助。",
+        "title": "Swap 交换播送成功 ",
+        "disclaimer": "请记下您的 Swap ID 交换代码，以便今后有需要时从 {{provider}} 处获得帮助。",
         "cta": "查看详情"
       },
       "tradeMethod": {
@@ -1816,7 +1883,7 @@
         "modalTitle": "浮动或固定费率？"
       },
       "form": {
-        "validate": "确认 Swap 掉期交易",
+        "validate": "确认 Swap 交换交易",
         "tab": "兑换",
         "button": "继续",
         "from": "来自",
@@ -1836,8 +1903,8 @@
           "close": "关闭"
         },
         "noAccounts": {
-          "title": "没有可掉期交易的 {{ticker}}",
-          "desc": "您的 {{currencyName}} 账户没有余额可掉期交易。",
+          "title": "没有可交换的 {{ticker}}",
+          "desc": "您的 {{currencyName}} 账户没有余额可 swap 交换。",
           "addAccountCta": "添加账户",
           "cta": "关闭"
         },
@@ -1860,7 +1927,7 @@
           "fees": "最大费用",
           "disclaimer": {
             "title": "条款和条件",
-            "desc": "点击“接受”后，就意味着我认可并接受该服务仅受 {{provider}} 的条款和条件的制约。",
+            "desc": "点击“接受”后，就意味着我认可并接受该服务仅受 <0>{{provider}}</0> 的条款和条件的制约。",
             "tos": "条款和条件",
             "accept": "接受",
             "reject": "关闭"
@@ -1876,10 +1943,10 @@
         "to": "到",
         "toAmount": "待收数额",
         "statusTooltips": {
-          "expired": "请使用您的 Swap ID 掉期号码联系掉期服务提供方以了解更多详情。",
-          "refunded": "请使用您的 Swap ID 掉期号码联系掉期服务提供方以了解更多详情。",
+          "expired": "请使用您的 Swap ID 交换代码联系交换服务提供方以了解更多详情。",
+          "refunded": "请使用您的 Swap ID 交换代码联系交换服务提供方以了解更多详情。",
           "pending": "请稍候片刻，掉期交易提供方正在处理该交易。",
-          "onhold": "请使用您的 Swap ID 联系掉期服务提供方以解决这一情况。",
+          "onhold": "请使用您的 Swap ID 联系交换服务提供方以解决这一情况。",
           "finished": "您的掉期交易已成功完成"
         }
       },
@@ -1900,9 +1967,9 @@
       },
       "history": {
         "tab": "历史记录",
-        "disclaimer": "您的 swap 掉期手机交易没有与 Ledger Live 桌面应用程序同步",
+        "disclaimer": "您的 swap 交换手机交易没有与 Ledger Live 桌面应用程序同步",
         "exportButton": "导出操作",
-        "exportFilename": "Swap 掉期交易操作",
+        "exportFilename": "Swap 交换操作",
         "empty": {
           "title": "您之前的掉期交易会出现在这里",
           "desc": "要么您还未进行过任何掉期交易，亦或 Ledger Live 在此期间被重置了 。"
@@ -2351,7 +2418,7 @@
     "retry": "重试",
     "done": "完成",
     "finalCta": "继续",
-    "finalCtaForSwap": "返回到 Swap 掉期交易",
+    "finalCtaForSwap": "返回到 Swap 交换",
     "synchronizing": "正在同步",
     "synchronizingDesc": "您的账户正在同步。请耐心等候……",
     "noAccountToCreate": "无法创建 <1><0>{{currencyName}}</></> 账户。重新开始该流程并同步您的账户。",
@@ -2412,7 +2479,7 @@
     },
     "confirmSwap": {
       "title": "在设备上确认掉期交易操作",
-      "alert": "发送之前请验证 Swap 掉期交易详情。地址会被安全地交换因此您不必对其进行验证。"
+      "alert": "发送之前请验证 Swap 交换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
     "confirmSell": {
       "title": "在设备上确认卖出操作",
@@ -3157,6 +3224,7 @@
       "header": "提名名单",
       "nominate": "提名",
       "chill": "清除提名",
+      "setController": "更改控制器",
       "status": "状态",
       "totalStake": "质押总额",
       "amount": "已绑定数额",
@@ -3177,8 +3245,8 @@
       "oversubscribed": "超额订购 ({{nominatorsCount}})",
       "oversubscribedInfo": "只有绑定数额最高的顶层 {{maxNominatorRewardedPerValidator}} 提名者才可赚取奖励",
       "hasPendingBondOperation": "绑定操作仍在等待确认",
-      "externalControllerUnsupported": "该存储账户由地址为 <0>{{address}}</0> 的另一账户所控制。如果相关账户由另一账户控制，Ledger Live 则不支持此类账户的权益质押操作。请使用 Polkadot.js 之类的替代性钱包",
-      "externalStashUnsupported": "该账户控制着一个地址为 <0>{{address}}</0> 的存储账户。Ledger Live 不支持在一个单独的存储账户上的权益质押操作。请使用 Polkadot.js 之类的替代性钱包",
+      "externalControllerUnsupported": "此存储账户由地址为 <0>{{controllerAddress}}</0> 的单独账户控制。要使用 Ledger Live 进行质押，您必须将此存储账户设置为其自己的控制器。",
+      "externalStashUnsupported": "此账户是地址为 <0>{{stashAddress}}</0> 的单独存储账户的控制者。 要使用 Ledger Live 进行质押，您必须将您的存储账户设置为其自己的控制器。",
       "showInactiveNominations": "显示所有提名 ({{count}})",
       "hideInactiveNominations": "仅显示活跃状态的提名",
       "noActiveNominations": "没有活跃状态的提名。",
@@ -3345,6 +3413,11 @@
           "title": "清除提名",
           "description": "清除所有提名并停止赚取奖励。",
           "info": "已绑定的资产将会保持绑定状态。若您将其解绑，那么它们将在 28 天后可用。"
+        },
+        "setController": {
+          "title": "更改控制器",
+          "description": "将您的 Ledger 账户设置为其自己的控制器",
+          "info": "Ledger Live 不支持对单独的存储和控制器账户进行操作。"
         }
       },
       "stepperHeader": {
@@ -3474,7 +3547,6 @@
   "Terms": {
     "title": "使用条款",
     "read": "阅读使用条款",
-    "switchLabelPrivacy": "我已阅读并同意 <1>隐私政策</1>",
     "switchLabel": "我已阅读并同意 <1>服务条款</1>",
     "cta": "进入 Ledger 应用程序"
   },
@@ -3524,7 +3596,7 @@
     },
     "swap": {
       "title": "掉期交易加密资产",
-      "description": "从您的 Ledger 账户中与我们的合作伙伴直接对加密资产进行 Swap 掉期交易。"
+      "description": "从您的 Ledger 账户中与我们的合作伙伴直接对加密资产进行 Swap 交换。"
     }
   },
   "walletconnect": {
@@ -3606,6 +3678,18 @@
       "developerCTA": {
         "title": "面向开发者",
         "description": "在这里您能找到您所需要的、能将您的应用程序整合到 Ledger Live 的全部信息。"
+      }
+    },
+    "disclaimer": {
+      "title": "外部应用程序",
+      "description": "您即将被重定向到一个不是由 Ledger 操作的应用程序。",
+      "legalAdvice": "此应用程序并不由 Ledger 操作。Ledger 对此类应用所造成的任何资金损失或服务质量不负责任。\n\n始终确保仔细验证您设备上所显示的信息。",
+      "checkbox": "不要再次提醒我。",
+      "CTA": "继续"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "网站"
       }
     }
   }

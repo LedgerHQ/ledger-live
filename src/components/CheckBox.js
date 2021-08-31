@@ -10,6 +10,7 @@ type Props = {
   isChecked: boolean,
   onChange?: boolean => void,
   disabled?: boolean,
+  iconCheckSize?: number,
   style?: *,
 };
 
@@ -20,7 +21,13 @@ const checkBoxHitSlop = {
   bottom: 16,
 };
 
-function CheckBox({ isChecked, disabled, onChange, style }: Props) {
+function CheckBox({
+  isChecked,
+  disabled,
+  onChange,
+  iconCheckSize = 16,
+  style,
+}: Props) {
   const { colors } = useTheme();
   const onPress = useCallback(() => {
     if (!onChange) return;
@@ -28,7 +35,10 @@ function CheckBox({ isChecked, disabled, onChange, style }: Props) {
   }, [isChecked, onChange]);
 
   const body = (
-    <IconCheck size={16} color={!isChecked ? "transparent" : "white"} />
+    <IconCheck
+      size={iconCheckSize}
+      color={!isChecked ? "transparent" : "white"}
+    />
   );
 
   const commonProps = {

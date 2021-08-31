@@ -7,6 +7,28 @@ import LText from "../../../components/LText";
 import { NavigatorName, ScreenName } from "../../../const";
 import { useLocale } from "../../../context/Locale";
 
+export const languageLabels = {
+  de: "Deutsch",
+  el: "Ελληνικά",
+  en: "English",
+  es: "Español",
+  fi: "suomi",
+  fr: "Français",
+  hu: "magyar",
+  it: "italiano",
+  ja: "日本語",
+  ko: "한국어",
+  nl: "Nederlands",
+  no: "Norsk",
+  pl: "polski",
+  pt: "português",
+  ru: "Русский",
+  sr: "српски",
+  sv: "svenska",
+  tr: "Türkçe",
+  zh: "简体中文",
+};
+
 export default function LanguageSettingsRow() {
   const { locale } = useLocale();
   const { navigate } = useNavigation();
@@ -29,7 +51,7 @@ export default function LanguageSettingsRow() {
       alignedTop
     >
       <LText semiBold color="grey">
-        {locale}
+        {languageLabels[locale] || locale}
       </LText>
     </SettingsRow>
   );

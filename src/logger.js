@@ -8,6 +8,8 @@ export default {
   critical: (e: Error) => {
     if (Config.DEBUG_ERROR) console.error(e);
     else console.log(e);
-    Sentry.captureException(e);
+    if (e instanceof Error) {
+      Sentry.captureException(e);
+    }
   },
 };

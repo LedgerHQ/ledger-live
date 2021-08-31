@@ -12,6 +12,7 @@ import ExperimentalIcon from "../../../icons/Experimental";
 import { rejections } from "../../../logic/debugReject";
 
 const { cond, set, Clock, Value, interpolate, eq } = Animated;
+export const HEIGHT = Platform.OS === "ios" ? 70 : 30;
 
 function ExperimentalHeader({ isExperimental }: { isExperimental: boolean }) {
   const { colors } = useTheme();
@@ -41,7 +42,7 @@ function ExperimentalHeader({ isExperimental }: { isExperimental: boolean }) {
   // interpolated height from opening anim state for list container
   const height = interpolate(openingAnim, {
     inputRange: [0, 1],
-    outputRange: [0, Platform.OS === "ios" ? 70 : 30],
+    outputRange: [0, HEIGHT],
     extrapolate: Extrapolate.CLAMP,
   });
 

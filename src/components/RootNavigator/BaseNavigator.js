@@ -56,6 +56,7 @@ import HeaderRightClose from "../HeaderRightClose";
 import StepHeader from "../StepHeader";
 import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
 import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
+import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
@@ -324,6 +325,14 @@ export default function BaseNavigator() {
         component={Asset}
         options={{
           headerTitle: () => <HeaderTitle />,
+          headerRight: null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.PortfolioOperationHistory}
+        component={PortfolioHistory}
+        options={{
+          headerTitle: t("portfolio.transactions"),
           headerRight: null,
         }}
       />

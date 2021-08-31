@@ -14,6 +14,8 @@ type Props = {
   iconFirst?: boolean,
   ltextProps?: *,
   color?: string,
+  style?: *,
+  fontSize?: number,
 };
 
 const Link = ({
@@ -23,6 +25,8 @@ const Link = ({
   eventProperties,
   ltextProps,
   color,
+  style,
+  fontSize = 12,
 }: Props) => {
   const { colors } = useTheme();
   const c = color || colors.live;
@@ -31,12 +35,16 @@ const Link = ({
       event={event}
       eventProperties={eventProperties}
       onPress={onPress}
-      style={styles.root}
+      style={[styles.root, style]}
     >
-      <LText semiBold style={[styles.text, { color: c }]} {...ltextProps}>
+      <LText
+        semiBold
+        style={[styles.text, { fontSize, color: c }]}
+        {...ltextProps}
+      >
         {text}
       </LText>
-      <ExternalLink size={14} color={c} />
+      <ExternalLink size={fontSize + 2} color={c} />
     </Touchable>
   );
 };
@@ -48,7 +56,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   text: {
-    fontSize: 12,
     lineHeight: 18,
     paddingRight: 8,
   },

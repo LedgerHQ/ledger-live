@@ -45,11 +45,14 @@ import { NavigatorName, ScreenName } from "../../const";
 import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
 import { accountsSelector } from "../../reducers/accounts";
 import UpdateIcon from "../../icons/Update";
+import InfoIcon from "../../icons/Info";
+import InfoPanel from "./InfoPanel";
 
 import * as tracking from "./tracking";
 
 type Props = {
   manifest: AppManifest,
+  inputs?: Object,
 };
 
 const ReloadButton = ({
@@ -72,7 +75,31 @@ const ReloadButton = ({
   );
 };
 
-const WebPlatformPlayer = ({ manifest }: Props) => {
+const InfoPanelButton = ({
+  loading,
+  setIsInfoPanelOpened,
+}: {
+  loading: boolean,
+  setIsInfoPanelOpened: (isInfoPanelOpened: boolean) => void,
+}) => {
+  const { colors } = useTheme();
+
+  const onPress = () => {
+    setIsInfoPanelOpened(true);
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.buttons}
+      disabled={loading}
+      onPress={onPress}
+    >
+      <InfoIcon size={18} color={colors.grey} />
+    </TouchableOpacity>
+  );
+};
+
+const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
   const targetRef: { current: null | WebView } = useRef(null);
   const accounts = useSelector(accountsSelector);
   const currencies = useMemo(() => listCryptoCurrencies(), []);
@@ -80,16 +107,25 @@ const WebPlatformPlayer = ({ manifest }: Props) => {
 
   const [loadDate, setLoadDate] = useState(Date.now());
   const [widgetLoaded, setWidgetLoaded] = useState(false);
+  const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
 
   const uri = useMemo(() => {
     const url = new URL(manifest.url);
+
+    if (inputs) {
+      for (const key in inputs) {
+        if (Object.prototype.hasOwnProperty.call(inputs, key)) {
+          url.searchParams.set(key, inputs[key]);
+        }
+      }
+    }
 
     url.searchParams.set("backgroundColor", new Color(theme.colors.card).hex());
     url.searchParams.set("textColor", new Color(theme.colors.text).hex());
     url.searchParams.set("loadDate", loadDate.valueOf().toString());
 
     return url;
-  }, [manifest.url, loadDate, theme]);
+  }, [manifest.url, loadDate, theme, inputs]);
 
   const navigation = useNavigation();
 
@@ -297,7 +333,7 @@ const WebPlatformPlayer = ({ manifest }: Props) => {
                 tracking.platformSignTransactionSuccess(manifest);
                 resolve(signedOperation);
                 const n = navigation.dangerouslyGetParent() || navigation;
-                n.dangerouslyGetParent().pop();
+                n.pop();
               }
             },
             onError: error => {
@@ -415,10 +451,18 @@ const WebPlatformPlayer = ({ manifest }: Props) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
+        <View style={styles.headerRight}>
+          <ReloadButton onReload={handleReload} loading={!widgetLoaded} />
+          <InfoPanelButton
+            onReload={handleReload}
+            loading={!widgetLoaded}
+            isInfoPanelOpened={isInfoPanelOpened}
+            setIsInfoPanelOpened={setIsInfoPanelOpened}
+          />
+        </View>
       ),
     });
-  }, [navigation, widgetLoaded, handleReload]);
+  }, [navigation, widgetLoaded, handleReload, isInfoPanelOpened]);
 
   useEffect(() => {
     tracking.platformLoad(manifest);
@@ -426,6 +470,14 @@ const WebPlatformPlayer = ({ manifest }: Props) => {
 
   return (
     <SafeAreaView style={[styles.root]}>
+      <InfoPanel
+        name={manifest.name}
+        icon={manifest.icon}
+        url={manifest.homepageUrl}
+        description={manifest.content.description}
+        isOpened={isInfoPanelOpened}
+        setIsOpened={setIsInfoPanelOpened}
+      />
       <WebView
         ref={targetRef}
         startInLoadingState={true}
@@ -456,6 +508,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+  headerRight: {
+    display: "flex",
+    flexDirection: "row",
+    paddingRight: 8,
+  },
   center: {
     flex: 1,
     flexDirection: "column",
@@ -476,7 +533,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   buttons: {
-    padding: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
   },
 });
 

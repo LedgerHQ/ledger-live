@@ -11,28 +11,17 @@ import Header from "./Header";
 const GraphCardContainer = ({
   portfolio,
   showGraphCard,
-  showGreeting,
   counterValueCurrency,
 }: {
   portfolio: Portfolio,
-  showGreeting: boolean,
   showGraphCard: boolean,
   counterValueCurrency: Currency,
 }) => {
   const currencies = useSelector(currenciesSelector);
 
-  const showDistribution =
-    portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value > 0;
-
   return (
     <>
-      {showGraphCard && (
-        <Header
-          nbAccounts={portfolio.accounts.length}
-          showGreeting={showGreeting}
-          showDistribution={showDistribution}
-        />
-      )}
+      {showGraphCard && <Header />}
 
       <CurrencyDownStatusAlert currencies={currencies} />
 

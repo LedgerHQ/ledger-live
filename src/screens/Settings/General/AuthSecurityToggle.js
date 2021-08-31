@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { NavigatorName } from "../../../const";
 import { privacySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
@@ -10,23 +10,24 @@ import BiometricsRow from "./BiometricsRow";
 import Switch from "../../../components/Switch";
 
 export default function AuthSecurityToggle() {
+  const { t } = useTranslation();
+
   const privacy = useSelector(privacySelector);
   const { navigate } = useNavigation();
 
-  function onValueChange(authSecurityEnabled: boolean): void {
-    if (authSecurityEnabled) {
-      navigate(NavigatorName.PasswordAddFlow);
-    } else {
-      navigate(NavigatorName.PasswordModifyFlow);
-    }
-  }
+  const onValueChange = (authSecurityEnabled: boolean): void =>
+    navigate(
+      authSecurityEnabled
+        ? NavigatorName.PasswordAddFlow
+        : NavigatorName.PasswordModifyFlow,
+    );
 
   return (
     <>
       <SettingsRow
         event="AuthSecurityToggle"
-        title={<Trans i18nKey="settings.display.password" />}
-        desc={<Trans i18nKey="settings.display.passwordDesc" />}
+        title={t("settings.display.password")}
+        desc={t("settings.display.passwordDesc")}
         alignedTop
       >
         <Switch

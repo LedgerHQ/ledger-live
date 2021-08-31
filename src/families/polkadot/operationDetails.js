@@ -34,6 +34,7 @@ import WithdrawUnbondedIcon from "../../icons/Coins";
 import RewardIcon from "../../icons/ClaimReward";
 import NominateIcon from "../../icons/Vote";
 import ChillIcon from "../../icons/VoteNay";
+import SetControllerIcon from "../../icons/Manager";
 
 import OperationStatusWrapper from "../../icons/OperationStatusIcon/Wrapper";
 
@@ -431,6 +432,7 @@ const operationStatusIcon = {
   BOND: createOperationIcon(BondIcon),
   UNBOND: createOperationIcon(UnbondIcon),
   CHILL: createOperationIcon(ChillIcon),
+  SET_CONTROLLER: createOperationIcon(SetControllerIcon),
   NOMINATE: createOperationIcon(NominateIcon),
   WITHDRAW_UNBONDED: createOperationIcon(WithdrawUnbondedIcon),
   REWARD_PAYOUT: createOperationIcon(RewardIcon),

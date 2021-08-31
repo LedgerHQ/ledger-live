@@ -24,7 +24,7 @@ import SendRowsFee from "../SendRowsFee";
 
 type RouteParams = {
   transaction: Transaction,
-  mode: "chill" | "withdrawUnbonded",
+  mode: "chill" | "withdrawUnbonded" | "setController",
 };
 
 type Props = {

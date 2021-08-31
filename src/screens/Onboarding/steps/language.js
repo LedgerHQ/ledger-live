@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -17,8 +17,6 @@ import LText from "../../../components/LText";
 import CheckBox from "../../../components/CheckBox";
 import { useLocale } from "../../../context/Locale";
 import { supportedLocales } from "../../../languages";
-import ConfirmationModal from "../../../components/ConfirmationModal";
-import Warning from "../../../icons/Warning";
 
 const languages = {
   de: "Deutsch",
@@ -49,22 +47,12 @@ function OnboardingStepLanguage({ navigation }: *) {
   }, [navigation]);
   const { locale: currentLocale } = useLocale();
 
-  const [isInfoModalOpen, setInfoModalOpen] = useState("");
-
-  const onCloseInfoModal = useCallback(() => setInfoModalOpen(""), []);
-  const onConfirmInfo = useCallback(() => {
-    onCloseInfoModal();
-    next();
-  }, [onCloseInfoModal, next]);
-
   const changeLanguage = useCallback(
     l => {
       i18next.changeLanguage(l);
-      if (l !== "en") {
-        setInfoModalOpen(l);
-      }
+      next();
     },
-    [setInfoModalOpen],
+    [next],
   );
 
   return (
@@ -100,22 +88,6 @@ function OnboardingStepLanguage({ navigation }: *) {
           title={<Trans i18nKey="onboarding.stepLanguage.cta" />}
         />
       </View>
-      <ConfirmationModal
-        isOpened={!!isInfoModalOpen}
-        onClose={onCloseInfoModal}
-        onConfirm={onConfirmInfo}
-        confirmationTitle={
-          <Trans i18nKey="onboarding.stepLanguage.warning.title" />
-        }
-        confirmationDesc={
-          <Trans i18nKey="onboarding.stepLanguage.warning.desc" />
-        }
-        Icon={Warning}
-        confirmButtonText={
-          <Trans i18nKey="onboarding.stepLanguage.warning.cta" />
-        }
-        hideRejectButton
-      />
     </SafeAreaView>
   );
 }

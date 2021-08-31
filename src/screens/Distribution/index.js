@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import type { AssetsDistribution } from "@ledgerhq/live-common/lib/portfolio/v2/types";
-import { useTheme } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { ScreenName } from "../../const";
 import TrackScreen from "../../analytics/TrackScreen";
 import DistributionCard from "./DistributionCard";
@@ -25,28 +25,25 @@ import { useDistribution } from "../../actions/general";
 
 const forceInset = { bottom: "always" };
 
-type Props = {
-  navigation: any,
+type ListProps = {
+  highlight?: number,
+  setHighlight: Function,
+  flatListRef: Function,
+  distribution: any,
 };
 
-export default function Distribution({ navigation }: Props) {
-  const { colors } = useTheme();
-  const distribution = useDistribution();
-
-  const [highlight, setHighlight] = useState(-1);
-  const flatListRef = useRef();
-
-  const onHighlightChange = useCallback(index => {
-    setHighlight(index);
-    if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({ index }, true);
-    }
-  }, []);
+export const DistributionList = ({
+  highlight,
+  setHighlight,
+  flatListRef,
+  distribution,
+}: ListProps) => {
+  const navigation = useNavigation();
 
   const renderItem = useCallback(
     ({ item, index }: { item: DistributionItem, index: number }) => (
       <TouchableOpacity
-        onPress={() => onHighlightChange(index)}
+        onPress={() => setHighlight(index, item)}
         onLongPress={() =>
           navigation.navigate(ScreenName.Asset, {
             currency: item.currency,
@@ -56,8 +53,34 @@ export default function Distribution({ navigation }: Props) {
         <DistributionCard item={item} highlighting={index === highlight} />
       </TouchableOpacity>
     ),
-    [onHighlightChange, navigation, highlight],
+    [setHighlight, navigation, highlight],
   );
+
+  return (
+    <FlatList
+      // $FlowFixMe
+      ref={flatListRef}
+      data={distribution.list}
+      renderItem={renderItem}
+      keyExtractor={item => item.currency.id}
+      contentContainerStyle={styles.root}
+    />
+  );
+};
+
+export default function Distribution() {
+  const { colors } = useTheme();
+  const distribution = useDistribution();
+
+  const [highlight, setHighlight] = useState(-1);
+  const flatListRef = useRef();
+
+  const onHeaderHighlightChange = useCallback(index => {
+    setHighlight(index);
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({ index }, true);
+    }
+  }, []);
 
   return (
     <SafeAreaView
@@ -68,15 +91,13 @@ export default function Distribution({ navigation }: Props) {
       <Header
         distribution={distribution}
         highlight={highlight}
-        onHighlightChange={onHighlightChange}
+        onHighlightChange={onHeaderHighlightChange}
       />
-      <FlatList
-        // $FlowFixMe
-        ref={flatListRef}
-        data={distribution.list}
-        renderItem={renderItem}
-        keyExtractor={item => item.currency.id}
-        contentContainerStyle={styles.root}
+      <DistributionList
+        flatListRef={flatListRef}
+        highlight={highlight}
+        distribution={distribution}
+        setHighlight={setHighlight}
       />
     </SafeAreaView>
   );

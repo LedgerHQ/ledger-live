@@ -2,7 +2,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { counterValueCurrencySelector } from "../../../reducers/settings";
 import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
@@ -12,11 +12,13 @@ export default function CountervalueSettingsRow() {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const { navigate } = useNavigation();
 
+  const { t } = useTranslation();
+
   return (
     <SettingsRow
       event="CountervalueSettingsRow"
-      title={<Trans i18nKey="settings.display.counterValue" />}
-      desc={<Trans i18nKey="settings.display.counterValueDesc" />}
+      title={t("settings.display.counterValue")}
+      desc={t("settings.display.counterValueDesc")}
       arrowRight
       onPress={() => navigate(ScreenName.CountervalueSettings)}
       alignedTop

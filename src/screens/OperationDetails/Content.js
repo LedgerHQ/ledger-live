@@ -76,15 +76,16 @@ export default function Content({
   const [isModalOpened, setIsModalOpened] = useState(false);
 
   const onPress = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts);
-    // setTimeout is the way to make sure that it navigates to accounts screen first
-    // then stack account screen on top
-    setTimeout(() =>
-      navigation.navigate(ScreenName.Account, {
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.Account,
+      initial: false,
+      // Set to false so it still adds `Accounts` as the previous route in the stack history
+      // even if you're targeting another navigation stack from your current one
+      params: {
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
-      }),
-    );
+        parentId: parentAccount?.id,
+      },
+    });
   }, [account.id, navigation, parentAccount]);
 
   const onPressInfo = useCallback(() => {
@@ -353,13 +354,7 @@ export default function Content({
       <View style={sectionStyles.wrapper}>
         <DataList
           data={uniqueSenders}
-          title={
-            <Trans
-              i18nKey="operationDetails.from"
-              count={uniqueSenders.length}
-              values={{ count: uniqueSenders.length }}
-            />
-          }
+          title={<Trans i18nKey="operationDetails.from" />}
           titleStyle={sectionStyles.title}
         />
       </View>
@@ -368,13 +363,7 @@ export default function Content({
         <View style={sectionStyles.wrapper}>
           <DataList
             data={uniqueRecipients}
-            title={
-              <Trans
-                i18nKey="operationDetails.to"
-                count={uniqueRecipients.length}
-                values={{ count: uniqueRecipients.length }}
-              />
-            }
+            title={<Trans i18nKey="operationDetails.to" />}
             rightComp={
               uniqueRecipients.length > 1 ? (
                 <View style={{ marginLeft: "auto" }}>

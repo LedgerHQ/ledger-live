@@ -9,6 +9,7 @@ import {
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
+import ManagerAppIcon from "../../../images/managerAppIcon.png";
 
 type Props = {
   app?: App,
@@ -47,6 +48,7 @@ function AppIcon({ size = 38, app, icon: defaultIcon = "" }: Props) {
     <Image
       source={{ uri }}
       style={{ width: size, height: size }}
+      defaultSource={ManagerAppIcon}
       fadeDuration={0}
     />
   ) : null;

@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancel",
     "apply": "Apply",
+    "seeAll": "See all",
     "back": "Back",
     "delete": "Delete",
     "paste": "Paste",
@@ -43,8 +44,6 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "slow": "slow",
-    "fast": "fast",
     "token": "Token",
     "token_plural": "Tokens",
     "subaccount": "Subaccount",
@@ -506,7 +505,7 @@
     },
     "AccessDeniedError": {
       "title": "Ledger Live needs an update",
-      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre",
+      "description": "Please update Ledger Live to the latest version, and re verify your identity to swap with wyre"
     },
     "RecommendUndelegation": {
       "title": "Please undelegate the account before emptying it"
@@ -597,6 +596,9 @@
       "high": "High",
       "standard": "Standard",
       "low": "Low",
+      "slow": "slow",
+      "medium": "medium",
+      "fast": "fast",
       "custom": "Custom",
       "blockCount": "{{blockCount}} blocks"
     }
@@ -1232,17 +1234,10 @@
     "syncError": "Sync error",
     "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
-    "greeting": {
-      "morning": "Good morning",
-      "evening": "Good evening",
-      "afternoon": "Good afternoon"
-    },
     "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
-    "summary": "Here is the summary of your account",
-    "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {
       "noAppsTitle": "Install an app on my device",
       "noAppsDesc": "Install apps on your device before adding accounts in Ledger Live. Go to the Manager to install apps.",
@@ -1313,9 +1308,10 @@
       "UNBOND": "Unbond",
       "REWARD_PAYOUT": "Reward",
       "SLASH": "Slash",
-      "WITHDRAW_UNBONDED": "Unbonded Withdrawal",
+      "WITHDRAW_UNBONDED": "Withdrawal",
       "NOMINATE": "Nomination",
-      "CHILL": "Clear nominations"
+      "CHILL": "Clear nominations",
+      "SET_CONTROLLER": "Set controller"
     }
   },
   "operationDetails": {
@@ -1327,8 +1323,8 @@
     "failed": "Failed",
     "fees": "Network fees",
     "noFees": "No fee",
-    "from": "From ({{count}})",
-    "to": "To ({{count}})",
+    "from": "From",
+    "to": "To",
     "identifier": "Transaction ID",
     "viewOperation": "View in explorer",
     "whatIsThis": "What is this operation?",
@@ -1693,8 +1689,8 @@
       "clearCacheModal": "Are you sure?",
       "clearCacheModalDesc": "A fresh and complete scan of transactions on the network will be done. Account histories will be rebuilt and balances will be recalculated.",
       "clearCacheButton": "Clear",
-      "exportLogs": "Export logs",
-      "exportLogsDesc": "Exporting Ledger Live logs may help troubleshooting.",
+      "exportLogs": "Save logs",
+      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",
       "hardResetDesc": "This has no impact on your assets. Erases all data in Ledger Live, including account data, transaction histories and settings. Use your Ledger device to reload and manage your crypto assets on an empty Ledger Live.",
       "repairDevice": "Repair your Ledger device",
@@ -1925,7 +1921,7 @@
           "fees": "Max fees",
           "disclaimer": {
             "title": "Terms and conditions",
-            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by {{provider}}'s Terms & Conditions.",
+            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
             "tos": "Terms & conditions",
             "accept": "Accept",
             "reject": "Close"
@@ -3222,6 +3218,7 @@
       "header": "Nominations",
       "nominate": "Nominate",
       "chill": "Clear nominations",
+      "setController": "Change controller",
       "status": "Status",
       "totalStake": "Total Stake",
       "amount": "Bonded Amount",
@@ -3242,8 +3239,8 @@
       "oversubscribed": "Oversubscribed ({{nominatorsCount}})",
       "oversubscribedInfo": "Only the top {{maxNominatorRewardedPerValidator}} nominators with the highest bonded amount earn rewards",
       "hasPendingBondOperation": "A bond operation is still pending confirmation",
-      "externalControllerUnsupported": "This stash account is controlled by another account with the address <0>{{address}}</0>. Staking operations on accounts that are controlled by a different account are not supported in Ledger Live. Please use an alternative wallet such as Polkadot.js",
-      "externalStashUnsupported": "This account controls a stash account whose address is <0>{{address}}</0>. Staking operations on separate stash accounts are not supported in Ledger Live. Please use an alternative wallet like Polkadot.js",
+      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
+      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
       "showInactiveNominations": "Show all nominations ({{count}})",
       "hideInactiveNominations": "Show active nominations only",
       "noActiveNominations": "There are no active nominations.",
@@ -3410,6 +3407,11 @@
           "title": "Clear nominations",
           "description": "Clears all nominations and stops earning rewards.",
           "info": "Bonded assets will remain bonded. If you unbond them, they will be available after 28 days."
+        },
+        "setController": {
+          "title": "Change Controller",
+          "description": "Set your Ledger account as its own controller",
+          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
         }
       },
       "stepperHeader": {
@@ -3539,9 +3541,10 @@
   "Terms": {
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
-    "switchLabelPrivacy": "I have read and agree with the <1>Privacy Policy</1>",
     "switchLabel": "I have read and agree with the <1>Terms of Service</1>",
-    "cta": "Enter Ledger App"
+    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "cta": "Enter Ledger App",
+    "service": "Terms of service"
   },
   "exchange": {
     "buy": {
@@ -3671,6 +3674,18 @@
       "developerCTA": {
         "title": "For Developers",
         "description": "All the information you need to integrate your applications on Ledger Live."
+      }
+    },
+    "disclaimer": {
+      "title": "External Application",
+      "description": "You are about to be redirected to an application not operated by Ledger.",
+      "legalAdvice": "This application is not operated by Ledger. Ledger is not responsible for any loss of funds or quality of service of such application.\n\nAlways make sure to carefully verify the information displayed on your device.",
+      "checkbox": "Do not remind me again.",
+      "CTA": "Continue"
+    },
+    "webPlatformPlayer": {
+      "infoPanel": {
+        "website": "website"
       }
     }
   }

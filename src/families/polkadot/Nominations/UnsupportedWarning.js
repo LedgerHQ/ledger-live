@@ -18,7 +18,7 @@ export const ExternalControllerUnsupportedWarning = ({
     <Trans
       i18nKey="polkadot.nomination.externalControllerUnsupported"
       values={{
-        address: address
+        controllerAddress: address
           ? [address.substr(0, 5), address.substr(-5)].join("...")
           : null,
       }}
@@ -38,7 +38,7 @@ export const ExternalStashUnsupportedWarning = ({
     <Trans
       i18nKey="polkadot.nomination.externalStashUnsupported"
       values={{
-        address: address
+        stashAddress: address
           ? [address.substr(0, 5), address.substr(-5)].join("...")
           : null,
       }}

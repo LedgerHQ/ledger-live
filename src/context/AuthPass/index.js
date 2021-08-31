@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
-import { AppState } from "react-native";
+import { StyleSheet, View, AppState } from "react-native";
 import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
@@ -134,9 +134,10 @@ class AuthPass extends PureComponent<Props, State> {
   render() {
     const { children, privacy } = this.props;
     const { isLocked, biometricsError, setEnabled, authModalOpen } = this.state;
+    let lockScreen = null;
     if (isLocked && privacy) {
-      return (
-        <>
+      lockScreen = (
+        <View style={styles.container}>
           <AuthScreen
             biometricsError={biometricsError}
             privacy={privacy}
@@ -148,16 +149,28 @@ class AuthPass extends PureComponent<Props, State> {
             onSuccess={this.onSuccess}
             onError={this.onError}
           />
-        </>
+        </View>
       );
     }
     return (
       <SkipLockContext.Provider value={setEnabled}>
+        {lockScreen}
         {children}
       </SkipLockContext.Provider>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    zIndex: 10,
+  },
+});
 
 // $FlowFixMe
 const m: React$AbstractComponent<OwnProps> = compose(

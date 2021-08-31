@@ -9,11 +9,17 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 import {
+  // $FlowFixMe
   context,
+  // $FlowFixMe
   STATUS,
+  // $FlowFixMe
   setCurrentCallRequestError,
+  // $FlowFixMe
   disconnect,
+  // $FlowFixMe
   connect,
+  // $FlowFixMe
   approveSession,
 } from "./Provider";
 import Spinning from "../../components/Spinning";

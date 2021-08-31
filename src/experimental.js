@@ -35,6 +35,14 @@ export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
+    name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
+    title: "Tezos JS impl",
+    description: "Tezos JS impl",
+    valueOn: "tezos",
+    valueOff: "",
+  },
+  {
+    type: "toggle",
     name: "MANAGER_DEV_MODE",
     title: "Developer mode",
     description: "Show developer and testnet apps in the Manager.",
@@ -54,6 +62,16 @@ export const experimentalFeatures: Feature[] = [
     description:
       "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
   },
+  ...(__DEV__
+    ? [
+        {
+          type: "toggle",
+          name: "EXPERIMENTAL_SWAP",
+          title: "New SWAP interface ",
+          description: "Use the new experimental swap interface",
+        },
+      ]
+    : []),
 ];
 
 const storageKey = "experimentalFlags";

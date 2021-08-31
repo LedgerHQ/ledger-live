@@ -84,7 +84,7 @@ const SwapFormAmount = ({ navigation, route }: Props) => {
     [fromCurrency, provider, providers, toCurrency],
   );
   const [tradeMethod, setTradeMethod] = useState<"fixed" | "float">(
-    enabledTradeMethods[0] || "fixed",
+    enabledTradeMethods[0] || "float",
   );
 
   const {
