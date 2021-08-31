@@ -13,6 +13,7 @@ import LText from "./LText";
 import InfoIcon from "../icons/Info";
 import BottomModal from "./BottomModal";
 import { localeIds } from "../languages";
+import Circle from "./Circle";
 
 type Props = {
   // wich market to query
@@ -68,8 +69,29 @@ function DoubleCounterValue({
   const onClose = useCallback(() => setIsOpened(false), []);
   const onOpen = useCallback(() => setIsOpened(true), []);
 
+  const [placeholderModalOpened, setPlaceholderModalOpened] = useState(false);
+  const openModal = useCallback(() => setPlaceholderModalOpened(true), []);
+  const closeModal = useCallback(() => setPlaceholderModalOpened(false), []);
+
   if (typeof countervalue !== "number") {
-    return withPlaceholder ? <LText style={styles.placeholder}>-</LText> : null;
+    return withPlaceholder ? (
+      <TouchableOpacity style={styles.placeholderButton} onPress={openModal}>
+        <LText style={styles.placeholderLabel}>-</LText>
+        <BottomModal
+          isOpened={placeholderModalOpened}
+          onClose={closeModal}
+          style={[styles.modal]}
+        >
+          <Circle bg={colors.lightLive} size={70}>
+            <InfoIcon size={30} color={colors.live} />
+          </Circle>
+
+          <LText style={styles.modalTitle} semiBold>
+            <Trans i18nKey="errors.countervaluesUnavailable.title" />
+          </LText>
+        </BottomModal>
+      </TouchableOpacity>
+    ) : null;
   }
 
   const inner = (
@@ -164,6 +186,19 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     alignItems: "center",
   },
+  modalTitle: {
+    marginVertical: 24,
+    fontSize: 14,
+    lineHeight: 21,
+    textAlign: "center",
+  },
+  placeholderButton: {
+    width: 24,
+    height: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  placeholderLabel: { fontSize: 16 },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
