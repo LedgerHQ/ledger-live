@@ -56,7 +56,7 @@ export function filterServiceStatusIncidents(
 
 // filter out service status incidents by given currencies or fallback on context currencies
 export function useFilteredServiceStatus(
-  filters: ServiceStatusUserSettings = { tickers: [] }
+  filters?: ServiceStatusUserSettings
 ): StatusContextType {
   const stateData = useContext(ServiceStatusContext);
   const { incidents, context } = stateData;
@@ -64,9 +64,9 @@ export function useFilteredServiceStatus(
   const filteredIncidents = useMemo(() => {
     return filterServiceStatusIncidents(
       incidents,
-      filters.tickers || context?.tickers
+      filters?.tickers || context?.tickers
     );
-  }, [incidents, context, filters.tickers]);
+  }, [incidents, context, filters?.tickers]);
 
   return { ...stateData, incidents: filteredIncidents };
 }
