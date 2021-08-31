@@ -1,6 +1,6 @@
 // @flow
 import invariant from "invariant";
-import React, { memo, useCallback } from "react";
+import React, { memo } from "react";
 import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import SafeAreaView from "react-native-safe-area-view";
@@ -18,6 +18,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import DeviceAction from "../../components/DeviceAction";
 import { TrackScreen } from "../../analytics";
 import { useSignedTxHandlerWithoutBroadcast } from "../../logic/screenTransactionHooks";
+import { navigateToSelectDevice } from "../ConnectDevice";
 
 const action = createAction(connectApp);
 
@@ -43,13 +44,6 @@ function ConnectDevice({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-
-  const navigateToSelectDevice = useCallback(() => {
-    navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
-      ...route.params,
-      forceSelectDevice: true,
-    });
-  }, [navigation, route.name, route.params]);
 
   const { appName, onSuccess } = route.params;
 
@@ -85,7 +79,7 @@ function ConnectDevice({ navigation, route }: Props) {
         }}
         device={route.params.device}
         onResult={handleTx}
-        onSelectDeviceLink={navigateToSelectDevice}
+        onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
       />
     </SafeAreaView>
   ) : null;

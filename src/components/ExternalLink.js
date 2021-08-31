@@ -9,7 +9,7 @@ import ExternalLink from "../icons/ExternalLink";
 type Props = {
   text: React$Node,
   onPress?: () => void | Promise<void>,
-  event: string,
+  event?: string,
   eventProperties?: Object,
   iconFirst?: boolean,
   ltextProps?: *,

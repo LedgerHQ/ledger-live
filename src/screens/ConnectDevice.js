@@ -43,6 +43,12 @@ type RouteParams = {
   onError?: (error: *) => void,
 };
 
+export const navigateToSelectDevice = (navigation: any, route: any) =>
+  navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
+    ...route.params,
+    forceSelectDevice: true,
+  });
+
 export default function ConnectDevice({ route, navigation }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -74,13 +80,6 @@ export default function ConnectDevice({ route, navigation }: Props) {
     [handleTx, t],
   );
 
-  const navigateToSelectDevice = useCallback(() => {
-    navigation.navigate(route.name.replace("ConnectDevice", "SelectDevice"), {
-      ...route.params,
-      forceSelectDevice: true,
-    });
-  }, [navigation, route]);
-
   const extraProps = onSuccess
     ? {
         onResult: onSuccess,
@@ -111,7 +110,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
               tokenCurrency,
             }}
             device={route.params.device}
-            onSelectDeviceLink={navigateToSelectDevice}
+            onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
             {...extraProps}
           />
         </SafeAreaView>

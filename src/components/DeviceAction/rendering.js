@@ -412,7 +412,6 @@ export function renderConnectYourDevice({
           <ExternalLink
             text={"Use another device"}
             onPress={onSelectDeviceLink}
-            event={""}
           />
         </View>
       ) : null}
