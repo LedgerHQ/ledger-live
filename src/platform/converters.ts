@@ -1,5 +1,12 @@
-import type { Account, CryptoCurrency } from "../types";
-import type { PlatformAccount, PlatformCurrency } from "./types";
+import byFamily from "../generated/platformAdapter";
+
+import type { Account, CryptoCurrency, Transaction } from "../types";
+import type {
+  PlatformAccount,
+  PlatformCurrency,
+  PlatformTransaction,
+} from "./types";
+
 export function accountToPlatformAccount(account: Account): PlatformAccount {
   return {
     id: account.id,
@@ -29,3 +36,23 @@ export function currencyToPlatformCurrency(
     })),
   };
 }
+
+export const getPlatformTransactionSignFlowInfos = (
+  platformTx: PlatformTransaction
+): {
+  canEditFees: boolean;
+  hasFeesProvided: boolean;
+  liveTx: Partial<Transaction>;
+} => {
+  const family = byFamily[platformTx.family];
+
+  if (family) {
+    return family.getPlatformTransactionSignFlowInfos(platformTx);
+  }
+
+  return {
+    canEditFees: false,
+    liveTx: { ...platformTx } as Partial<Transaction>,
+    hasFeesProvided: false,
+  };
+};

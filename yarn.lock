@@ -1315,10 +1315,10 @@
     "@ledgerhq/errors" "^6.2.0"
     events "^3.3.0"
 
-"@ledgerhq/live-app-sdk@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-app-sdk/-/live-app-sdk-0.1.1.tgz#637966823bb1976154f08104b26ec9ce2b17d6b4"
-  integrity sha512-c5WRBBSa8K2zrEiiKleBdNvR3XEmA2FgXAAuhi24DUJSdWINfO0SQVlQQTWexRZgiyYZaMsWGHJqQcXJQRxkDQ==
+"@ledgerhq/live-app-sdk@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-app-sdk/-/live-app-sdk-0.2.0.tgz#d50ca7ddd07eeeb564728a1998bf0fb154533315"
+  integrity sha512-OwyEu/Ue/D/mw/Fgc4HrXm4jlzD43r7nfLXC913U+YprPapUcT9e6cc28xIEYXnJqY0GVV/ISdP7ODGfJC21Xg==
   dependencies:
     bignumber.js "^9.0.1"
     json-rpc-2.0 "^0.2.16"

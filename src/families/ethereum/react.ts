@@ -1,12 +1,11 @@
-import invariant from "invariant";
 import { getGasLimit } from "./transaction";
 import type { Transaction } from "./types";
 import type { FeeStrategy } from "../../types";
 export function useFeesStrategy(t: Transaction): FeeStrategy[] {
   const networkInfo = t.networkInfo;
-  invariant(networkInfo, "no network info");
-  // FIXME remove invariant and throw error
+
   if (!networkInfo) return [];
+
   const gasLimit = getGasLimit(t);
   const strategies = [
     {

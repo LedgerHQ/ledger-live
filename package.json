@@ -56,7 +56,7 @@
     "@ledgerhq/hw-transport": "6.3.0",
     "@ledgerhq/hw-transport-mocker": "6.3.0",
     "@ledgerhq/hw-transport-node-speculos": "6.3.0",
-    "@ledgerhq/live-app-sdk": "^0.1.1",
+    "@ledgerhq/live-app-sdk": "^0.2.0",
     "@ledgerhq/logs": "6.2.0",
     "@polkadot/types": "5.5.1",
     "@polkadot/types-known": "5.5.1",

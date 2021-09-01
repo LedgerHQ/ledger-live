@@ -28,6 +28,7 @@ mock.ts \
 account.ts \
 exchange.ts \
 presync.ts \
+platformAdapter.ts \
 "
 
 withoutNetworkInfo=("algorand polkadot")

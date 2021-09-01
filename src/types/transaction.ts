@@ -68,14 +68,14 @@ export type TransactionCommon = {
   recipient: string;
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
-  feesStrategy?: "slow" | "medium" | "fast" | null;
+  feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;
 };
 export type TransactionCommonRaw = {
   amount: string;
   recipient: string;
   useAllAmount?: boolean;
   subAccountId?: string | null | undefined;
-  feesStrategy?: "slow" | "medium" | "fast" | null;
+  feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;
 };
 // User can have 3 differents choice for their fee
 // Most of the time mid is low * 1.25 and high is low * 1.5
