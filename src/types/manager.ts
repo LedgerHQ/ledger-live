@@ -103,6 +103,7 @@ export type FinalFirmware = BaseFirmware & {
   mcu_versions: Array<Id>;
   application_versions: Array<Id>;
   bytes?: number;
+  updateAvailable?: FirmwareUpdateContext | null | undefined;
 };
 export type FirmwareUpdateContext = {
   osu: OsuFirmware;

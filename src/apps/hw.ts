@@ -5,7 +5,7 @@ import { concat, of, EMPTY, from, Observable, throwError, defer } from "rxjs";
 import { mergeMap, map } from "rxjs/operators";
 import type { Exec, AppOp, ListAppsEvent, ListAppsResult } from "./types";
 import type { App, DeviceInfo } from "../types/manager";
-import { getProviderId } from "../manager";
+import manager, { getProviderId } from "../manager";
 import installApp from "../hw/installApp";
 import uninstallApp from "../hw/uninstallApp";
 import { log } from "@ledgerhq/logs";
@@ -208,6 +208,17 @@ export const listApps = (
         })
       );
 
+      const latestFirmwareForDeviceP =
+        manager.getLatestFirmwareForDevice(deviceInfo);
+
+      const firmwareP = Promise.all([
+        firmwareDataP,
+        latestFirmwareForDeviceP,
+      ]).then(([firmwareData, updateAvailable]) => ({
+        ...firmwareData,
+        updateAvailable,
+      }));
+
       const applicationsByDeviceP = Promise.all([
         deviceVersionP,
         firmwareDataP,
@@ -229,7 +240,7 @@ export const listApps = (
         installedP,
         ManagerAPI.listApps().then((apps) => apps.map(polyfillApplication)),
         applicationsByDeviceP,
-        firmwareDataP,
+        firmwareP,
         currenciesByMarketcap(
           listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)
         ),

@@ -2,6 +2,7 @@ import { $Shape } from "utility-types";
 import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
 import invariant from "invariant";
+import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
 import type { App } from "../types/manager";
 import type {
@@ -16,6 +17,7 @@ import {
   findCryptoCurrencyById,
   isCurrencySupported,
 } from "../currencies";
+import { LatestFirmwareVersionRequired } from "../errors";
 
 export const initState = (
   {
@@ -286,6 +288,24 @@ export const reducer = (state: State, action: Action): State => {
       }
 
       const depApp: App | null | undefined = state.appByName[name];
+
+      // No app found but fw update is available
+      if (
+        !depApp &&
+        semver.lt(
+          state.deviceInfo.version,
+          state.firmware?.updateAvailable?.final?.version
+        )
+      ) {
+        throw new LatestFirmwareVersionRequired(
+          "LatestFirmwareVersionRequired",
+          {
+            current: state.deviceInfo.version,
+            latest: state.firmware?.updateAvailable?.final?.version,
+          }
+        );
+      }
+
       invariant(depApp, "no such app '%s'", name);
       const deps = depApp.dependencies;
       const dependentsOfDep = flatMap(deps, (dep) =>
@@ -372,8 +392,6 @@ export const reducer = (state: State, action: Action): State => {
       return { ...state, currentError: null, installQueue, uninstallQueue };
     }
   }
-
-  return state;
 };
 const defaultConfig = {
   warnMemoryRatio: 0.1,
