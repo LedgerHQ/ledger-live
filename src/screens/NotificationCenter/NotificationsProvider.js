@@ -6,6 +6,7 @@ import { AnnouncementProvider } from "@ledgerhq/live-common/lib/notifications/An
 import { ServiceStatusProvider } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider/index";
 import type { Announcement } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider/types";
+import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import VersionNumber from "react-native-version-number";
 import Config from "react-native-config";
 import { getNotifications, saveNotifications } from "../../db";
@@ -30,9 +31,16 @@ type Props = {
 
 export default function NotificationsProvider({ children }: Props) {
   const { locale } = useLocale();
-  const c = useSelector(cryptoCurrenciesSelector);
+  const currenciesRaw: CryptoCurrency[] = useSelector(cryptoCurrenciesSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const currencies = c.map(({ family }) => family);
+
+  const { currencies, tickers } = currenciesRaw.reduce(
+    ({ currencies, tickers }, { id, ticker }) => ({
+      currencies: [...currencies, id],
+      tickers: [...tickers, ticker],
+    }),
+    { currencies: [], tickers: [] },
+  );
   // $FlowFixMe until live-common is bumped
   const { pushToast } = useToasts();
   const initDateRef = useRef();
@@ -131,6 +139,7 @@ export default function NotificationsProvider({ children }: Props) {
       fetchApi={notificationsApi}
     >
       <ServiceStatusProvider
+        context={{ tickers }}
         autoUpdateDelay={60000}
         networkApi={serviceStatusApi}
       >

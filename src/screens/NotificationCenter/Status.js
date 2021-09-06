@@ -10,7 +10,7 @@ import {
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 
-import { useServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
 import type { Incident } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider/types";
 import CheckCircle from "../../icons/CheckCircle";
 import Warning from "../../icons/WarningOutline";
@@ -58,7 +58,7 @@ const IncidentRow = ({ item, style }: Props) => {
 };
 
 export default function NotificationCenter() {
-  const { incidents } = useServiceStatus();
+  const { incidents } = useFilteredServiceStatus();
   const { colors } = useTheme();
 
   const onHelpPageRedirect = useCallback(() => {
