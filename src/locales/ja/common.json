@@ -44,9 +44,6 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "slow": "slow",
-    "medium": "medium",
-    "fast": "fast",
     "token": "Token",
     "token_plural": "Tokens",
     "subaccount": "Subaccount",
@@ -86,6 +83,9 @@
     "buyEth": "Buy Ethereum"
   },
   "errors": {
+    "countervaluesUnavailable": {
+      "title": "We're not able to provide a countervalue for this asset at the moment"
+    },
     "AccountAwaitingSendPendingOperations": {
       "title": "There is a pending operation for this account",
       "description": "Please wait for the operation to go through."
@@ -599,6 +599,9 @@
       "high": "High",
       "standard": "Standard",
       "low": "Low",
+      "slow": "slow",
+      "medium": "medium",
+      "fast": "fast",
       "custom": "Custom",
       "blockCount": "{{blockCount}} blocks"
     }
@@ -1234,18 +1237,10 @@
     "syncError": "Sync error",
     "syncFailed": "Synchronization failed",
     "syncPending": "Synchronizing...",
-    "transactions": "Transactions",
-    "greeting": {
-      "morning": "Good morning",
-      "evening": "Good evening",
-      "afternoon": "Good afternoon"
-    },
     "transactionsPendingConfirmation": {
       "title": "Unsynchronized balance",
       "desc": "Some transactions are not confirmed yet. These will be reflected in your balance and useable after being confirmed."
     },
-    "summary": "Here is the summary of your account",
-    "summary_plural": "Your {{count}} accounts are synchronized.",
     "emptyState": {
       "noAppsTitle": "Install an app on my device",
       "noAppsDesc": "Install apps on your device before adding accounts in Ledger Live. Go to the Manager to install apps.",
@@ -1697,8 +1692,8 @@
       "clearCacheModal": "Are you sure?",
       "clearCacheModalDesc": "A fresh and complete scan of transactions on the network will be done. Account histories will be rebuilt and balances will be recalculated.",
       "clearCacheButton": "Clear",
-      "exportLogs": "Export logs",
-      "exportLogsDesc": "Exporting Ledger Live logs may help troubleshooting.",
+      "exportLogs": "Save logs",
+      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "hardReset": "Reset Ledger Live",
       "hardResetDesc": "This has no impact on your assets. Erases all data in Ledger Live, including account data, transaction histories and settings. Use your Ledger device to reload and manage your crypto assets on an empty Ledger Live.",
       "repairDevice": "Repair your Ledger device",
@@ -3548,7 +3543,9 @@
     "title": "Terms of Use",
     "read": "Read the Terms of Use",
     "switchLabel": "I have read and agree with the <1>Terms of Service</1>",
-    "cta": "Enter Ledger App"
+    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "cta": "Enter Ledger App",
+    "service": "Terms of service"
   },
   "exchange": {
     "buy": {

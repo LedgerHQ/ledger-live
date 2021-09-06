@@ -44,16 +44,13 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Ajouter",
-    "slow": "Lent",
-    "medium": "Moyens",
-    "fast": "Rapide",
     "token": "Token",
     "token_plural": "Tokens",
     "subaccount": "Sous-compte",
     "subaccount_plural": "Sous-comptes",
     "forgetDevice": "Retirer l'appareil",
     "help": "Aide",
-    "saveLogs": "Sauvegarder les logs",
+    "saveLogs": "Enregistrer les logs",
     "sync": {
       "ago": "Synchronisé {{time}}"
     },
@@ -86,6 +83,9 @@
     "buyEth": "Acheter de l'Ethereum"
   },
   "errors": {
+    "countervaluesUnavailable": {
+      "title": "Actuellement impossible d'afficher une devise de contrepartie pour cet actif"
+    },
     "AccountAwaitingSendPendingOperations": {
       "title": "Une opération est en attente pour ce compte.",
       "description": "Merci d'attendre que l'opération soit terminée."
@@ -345,8 +345,8 @@
       "description": "Désinstallez les apps Bitcoin ou Ethereum en dernier."
     },
     "NetworkDown": {
-      "title": "Internet ne semble pas fonctionner.",
-      "description": "Veuillez vérifier votre connexion Internet."
+      "title": "Pas de connexion Internet",
+      "description": "Vérifiez votre connexion Internet."
     },
     "NoAddressesFound": {
       "title": "Aucun compte trouvé",
@@ -599,6 +599,9 @@
       "high": "Élevée",
       "standard": "Normale",
       "low": "Basse",
+      "slow": "Lent",
+      "medium": "Moyens",
+      "fast": "Rapide",
       "custom": "Personnalisée",
       "blockCount": "{{blockCount}} blocs"
     }
@@ -1234,18 +1237,10 @@
     "syncError": "Erreur de synchronisation",
     "syncFailed": "Échec de la synchronisation",
     "syncPending": "Synchronisation...",
-    "transactions": "Transactions",
-    "greeting": {
-      "morning": "Bonjour",
-      "evening": "Bonsoir",
-      "afternoon": "Bonjour"
-    },
     "transactionsPendingConfirmation": {
       "title": "Solde non synchronisé",
       "desc": "Certaines transactions ne sont pas encore confirmées. Elles apparaîtront dans votre solde et seront disponibles une fois confirmées."
     },
-    "summary": "Voici le récapitulatif de votre compte",
-    "summary_plural": "Vos {{count}} comptes sont synchronisés.",
     "emptyState": {
       "noAppsTitle": "Installer une app sur mon appareil",
       "noAppsDesc": "Installez des apps sur votre appareil avant d'ajouter des comptes dans Ledger Live. Allez dans le Gestionnaire pour installer des apps.",
@@ -1559,11 +1554,11 @@
   "help": {
     "gettingStarted": {
       "title": "Premiers pas",
-      "desc": "Commencez ici"
+      "desc": "Commencer ici"
     },
     "helpCenter": {
       "title": "Assistance Ledger",
-      "desc": "Obtenez de l'aide"
+      "desc": "Obtenir de l'aide"
     },
     "ledgerAcademy": {
       "title": "Ledger Academy",
@@ -1697,8 +1692,8 @@
       "clearCacheModal": "Êtes-vous sûr(e) ?",
       "clearCacheModalDesc": "Une nouvelle analyse complète des transactions sur le réseau sera effectuée. L'historique des comptes sera reconstruit et les soldes seront recalculés.",
       "clearCacheButton": "Effacer",
-      "exportLogs": "Exporter les logs",
-      "exportLogsDesc": "L'exportation des logs de Ledger Live peut aider à résoudre les problèmes.",
+      "exportLogs": "Enregistrer les logs",
+      "exportLogsDesc": "Sauvegarder les logs de Ledger Live peut être nécessaire à des fins de dépannage.",
       "hardReset": "Réinitialiser Ledger Live",
       "hardResetDesc": "Sans effet sur vos actifs. Toutes les données de Ledger Live, y compris les données de comptes, l'historique de vos transactions et paramètres seront effacées. Utilisez votre appareil Ledger pour recharger et gérer vos crypto-actifs dans une app Ledger Live vierge.",
       "repairDevice": "Réparer votre appareil Ledger",
@@ -2496,12 +2491,12 @@
   "SelectDevice": {
     "title": "Coupler un nouvel appareil",
     "bluetooth": {
-      "title": "Se connecter en Bluetooth",
+      "title": "Connexion via Bluetooth",
       "label": "Détectez automatiquement votre Nano."
     },
     "deviceNotFoundPairNewDevice": "Ajouter un nouveau Nano X",
     "headerDescription": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé.",
-    "usb": "Se connecter avec un câble USB",
+    "usb": "Connexion avec un câble USB",
     "usbLabel": "Connectez votre câble USB et entrez votre code PIN sur votre appareil.",
     "withoutDeviceHeader": "Je n'ai pas mon appareil.",
     "withoutDevice": "Continuer sans mon appareil",
@@ -2618,7 +2613,7 @@
       "loading": "Chargement des apps...",
       "noApps": "Aucune app trouvée",
       "searchAppsCatalog": "Rechercher dans le Catalogue",
-      "searchAppsInstalled": "Rechercher les apps installées",
+      "searchAppsInstalled": "Rechercher des apps installées",
       "noAppsInstalled": "Aucune app installée sur votre appareil",
       "noAppsDescription": "Aller dans le catalogue pour installer des apps",
       "noResultsFound": "Aucun résultat",
@@ -3547,8 +3542,10 @@
   "Terms": {
     "title": "Conditions d'utilisation",
     "read": "Lire les Conditions d'utilisation",
-    "switchLabel": "J'ai lu et j'accepte les <1>Conditions d'utilisation</1>.",
-    "cta": "Entrer dans Ledger Live"
+    "switchLabel": "J'ai lu et accepte les <1>Conditions d'utilisation</1>.",
+    "switchLabelFull": "J'ai lu et accepte les Conditions d'utilisation et la Politique de confidentialité",
+    "cta": "Entrer dans Ledger Live",
+    "service": "Conditions d'utilisation"
   },
   "exchange": {
     "buy": {

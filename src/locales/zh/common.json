@@ -44,9 +44,6 @@
     "bluetooth": "蓝牙",
     "usb": "USB",
     "add": "添加",
-    "slow": "慢",
-    "medium": "中",
-    "fast": "快",
     "token": "代币",
     "token_plural": "代币",
     "subaccount": "子账户",
@@ -86,6 +83,9 @@
     "buyEth": "购买以太坊"
   },
   "errors": {
+    "countervaluesUnavailable": {
+      "title": "We're not able to provide a countervalue for this asset at the moment"
+    },
     "AccountAwaitingSendPendingOperations": {
       "title": "此账户有一个待处理的操作",
       "description": "请等待操作完成。"
@@ -599,6 +599,9 @@
       "high": "高",
       "standard": "标准",
       "low": "低",
+      "slow": "slow",
+      "medium": "medium",
+      "fast": "fast",
       "custom": "自定义",
       "blockCount": "{{blockCount}}个区块"
     }
@@ -1234,18 +1237,10 @@
     "syncError": "同步错误",
     "syncFailed": "同步失败",
     "syncPending": "正在同步...",
-    "transactions": "交易数目",
-    "greeting": {
-      "morning": "早上好",
-      "evening": "晚上好",
-      "afternoon": "下午好"
-    },
     "transactionsPendingConfirmation": {
       "title": "非同步的余额",
       "desc": "有些交易尚未确认。这些交易将反映在您的余额中，并在确认后可用。"
     },
-    "summary": "这是您的账户概览",
-    "summary_plural": "您的 {{count}} 账户已同步。",
     "emptyState": {
       "noAppsTitle": "在我的设备上安装应用程序",
       "noAppsDesc": "在 Ledger Live 上添加账户之前，请先安装相关应用程序。前往 Manager（管理器）安装应用程序。",
@@ -1697,8 +1692,8 @@
       "clearCacheModal": "您确定吗？",
       "clearCacheModalDesc": "会重新对网络上的交易进行完整扫描。会重建账户历史记录、重新计算账户余额。",
       "clearCacheButton": "清除",
-      "exportLogs": "导出日志",
-      "exportLogsDesc": "导出 Ledger Live 日志或许有助于解决问题。",
+      "exportLogs": "Save logs",
+      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "hardReset": "重置 Ledger Live",
       "hardResetDesc": "重置不会影响您的资产。清除 Ledger Live 中的所有数据，包括账户数据、交易历史记录和设置信息。使用您的 Ledger 设备，在清空的 Ledger Live 上重新加载并管理您的加密资产。",
       "repairDevice": "修复您的 Ledger 设备",
@@ -3548,7 +3543,9 @@
     "title": "使用条款",
     "read": "阅读使用条款",
     "switchLabel": "我已阅读并同意 <1>服务条款</1>",
-    "cta": "进入 Ledger 应用程序"
+    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "cta": "进入 Ledger 应用程序",
+    "service": "Terms of service"
   },
   "exchange": {
     "buy": {

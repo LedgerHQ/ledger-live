@@ -4,7 +4,7 @@
     "apply": "Aplicar",
     "seeAll": "Ver todo",
     "back": "Atrás",
-    "delete": "Borrar",
+    "delete": "Eliminar",
     "paste": "Pegar",
     "yes": "Sí",
     "no": "No",
@@ -44,9 +44,6 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Agregar",
-    "slow": "lenta",
-    "medium": "medio",
-    "fast": "rápida",
     "token": "Token",
     "token_plural": "Tokens",
     "subaccount": "Subcuenta",
@@ -86,6 +83,9 @@
     "buyEth": "Comprar Ethereum"
   },
   "errors": {
+    "countervaluesUnavailable": {
+      "title": "We're not able to provide a countervalue for this asset at the moment"
+    },
     "AccountAwaitingSendPendingOperations": {
       "title": "Hay una operación pendiente para esta cuenta",
       "description": "Espera a que finalice la operación."
@@ -208,7 +208,7 @@
       "description": "Se produjo un error inesperado. Inténtalo de nuevo."
     },
     "DeviceNotGenuine": {
-      "title": "Es posible que el dispositivo no sea original",
+      "title": "Es posible que el dispositivo no sea auténtico",
       "description": "Guarda tus registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
     "DeviceNameInvalid": {
@@ -599,6 +599,9 @@
       "high": "Alta",
       "standard": "Estándar",
       "low": "Baja",
+      "slow": "slow",
+      "medium": "medium",
+      "fast": "fast",
       "custom": "Personalizado",
       "blockCount": "{{blockCount}} bloques"
     }
@@ -1234,18 +1237,10 @@
     "syncError": "Error de sincronización",
     "syncFailed": "La sincronización ha fallado",
     "syncPending": "Sincronizando...",
-    "transactions": "Transacciones",
-    "greeting": {
-      "morning": "Buenos días",
-      "evening": "Buenas noches",
-      "afternoon": "Buenas tardes"
-    },
     "transactionsPendingConfirmation": {
       "title": "Saldo no sincronizado",
       "desc": "Algunas transacciones aún no están confirmadas. Las mismas se reflejarán en tu saldo y quedarán disponibles después de ser confirmadas."
     },
-    "summary": "Aquí tienes el resumen de tu cuenta",
-    "summary_plural": "Tus {{count}} cuentas están sincronizadas.",
     "emptyState": {
       "noAppsTitle": "Instalar una aplicación en mi dispositivo",
       "noAppsDesc": "Instala las aplicaciones en tu dispositivo antes de agregar cuentas en Ledger Live. Ingresa a Manager para instalar las aplicaciones.",
@@ -1697,8 +1692,8 @@
       "clearCacheModal": "¿Deseas continuar?",
       "clearCacheModalDesc": "Se realizará un nuevo y completo análisis de las transacciones en la red. Se reconstruirán los historiales de las cuentas y se volverán a calcular los saldos.",
       "clearCacheButton": "Borrar",
-      "exportLogs": "Exportar registros",
-      "exportLogsDesc": "Exportar los registros de Ledger Live puede ayudar a solucionar problemas.",
+      "exportLogs": "Save logs",
+      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "hardReset": "Restablecer Ledger Live",
       "hardResetDesc": "Esto no tiene ningún impacto sobre tus activos. Borra todos los datos de Ledger Live, incluidos los datos de cuentas, historial de transacciones y ajustes. Utiliza tu dispositivo Ledger para volver a cargar y administrar tus activos cripto a un Ledger Live vacío.",
       "repairDevice": "Repara tu dispositivo Ledger",
@@ -2517,7 +2512,7 @@
         "title": "Habilita Ledger Manager en tu {{productName}}"
       },
       "genuineCheckPending": {
-        "title": "Comprobando si el dispositivo es original..."
+        "title": "Comprobando si el dispositivo es auténtico..."
       },
       "dashboard": {
         "title": "Vuelve al Dashboard en tu {{productName}}"
@@ -2581,7 +2576,7 @@
     "alreadyPaired": "Ya emparejado"
   },
   "DeviceItemSummary": {
-    "genuine": "Tu dispositivo es original",
+    "genuine": "Tu dispositivo es auténtico",
     "genuineFailed": "La autenticación del dispositivo <1><0>ha fallado</0></1>"
   },
   "DeviceNameRow": {
@@ -2638,7 +2633,7 @@
     "storage": {
       "title": "Almacenamiento",
       "used": "Utilizado",
-      "genuine": "Tu dispositivo es original",
+      "genuine": "Tu dispositivo es auténtico",
       "appsInstalled": "<0>{{number}}</0> aplicación instalada",
       "appsInstalled_plural": "<0>{{number}}</0> aplicaciones instaladas",
       "storageAvailable": "disponible"
@@ -2727,7 +2722,7 @@
   },
   "AuthenticityRow": {
     "title": "Autenticación",
-    "subtitle": "Original"
+    "subtitle": "Genuine"
   },
   "RemoveRow": {
     "title": "Quitar dispositivo"
@@ -3548,7 +3543,9 @@
     "title": "Términos de uso",
     "read": "Leer los Términos de uso",
     "switchLabel": "He leído y acepto los <1>Términos del servicio</1>",
-    "cta": "Entrar en la App Ledger"
+    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "cta": "Entrar en la App Ledger",
+    "service": "Terms of service"
   },
   "exchange": {
     "buy": {

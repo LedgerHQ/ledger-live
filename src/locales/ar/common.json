@@ -2,7 +2,7 @@
   "common": {
     "cancel": "إلغاء",
     "apply": "تطبيق",
-    "seeAll": "See all",
+    "seeAll": "رؤية الكل",
     "back": "عودة",
     "delete": "حذف",
     "paste": "لصق",
@@ -44,9 +44,6 @@
     "bluetooth": "بلوتوث",
     "usb": "USB",
     "add": "أضف",
-    "slow": "بطيء",
-    "medium": "medium",
-    "fast": "سريع",
     "token": "رمز",
     "token_plural": "رموز",
     "subaccount": "حساب فرعي",
@@ -86,6 +83,9 @@
     "buyEth": "شراء إثيريوم"
   },
   "errors": {
+    "countervaluesUnavailable": {
+      "title": "We're not able to provide a countervalue for this asset at the moment"
+    },
     "AccountAwaitingSendPendingOperations": {
       "title": "هناك عملية معلقة لهذا الحساب",
       "description": "يرجى الانتظار حتى تكتمل العملية."
@@ -599,6 +599,9 @@
       "high": "مرتفعة",
       "standard": "اعتيادية",
       "low": "منخفضة",
+      "slow": "بطيء",
+      "medium": "متوسط",
+      "fast": "سريع",
       "custom": "مُخصّص",
       "blockCount": "{{blockCount}} كتل"
     }
@@ -855,10 +858,10 @@
           }
         },
         "infoModal": {
-          "title": "تأمين رمز الPIN الخاص بك",
+          "title": "قم بتأمين رمز الPIN الخاص بك",
           "bullets": {
             "0": {
-              "label": "اختار دائمًا رمز الPIN بنفسك."
+              "label": "احرص دائمًا على اختيار رمز الPIN بنفسك."
             },
             "1": {
               "label": "قم دائمًا بإدخال رمز الPIN الخاص بك بعيدًا عن الأنظار."
@@ -876,7 +879,7 @@
               "label": "امتنع نهائيًا عن مشاركة رمز الPIN مع أي شخص آخر. ولا حتى مع Ledger."
             },
             "6": {
-              "label": "لا تستخدم أبدًا رمز PIN لم تختره بنفسك."
+              "label": "امتنع نهائيًا عن استخدام رمز PIN لم تقم باختياره بنفسك."
             },
             "7": {
               "label": "لا تقم أبدًا بتخزين رمز الPIN الخاص بك على جهاز كمبيوتر أو هاتف."
@@ -1133,7 +1136,7 @@
       "step4suffix1": " لتأكيد رقم التعريف الشخصي PIN الخاص بك.",
       "step4suffix2": " لمحو الرقم الأخير.",
       "modal": {
-        "step1": "دائمًا اختار <1><1>بنفسك</1></1> رمز الPIN",
+        "step1": "احرص دائمًا أن تختار <1><1>بنفسك</1></1> رمز الPIN",
         "step2": "استخدم 8 أرقام للمزيد من الأمان",
         "step3": "لا تستخدم أبدًا جهازًا به رمز PIN أو عبارة استرداد تم إعدادها بالفعل"
       }
@@ -1234,18 +1237,10 @@
     "syncError": "خطأ في المزامنة",
     "syncFailed": "فشلت المزامنة",
     "syncPending": "تتم المزامنة...",
-    "transactions": "Transactions",
-    "greeting": {
-      "morning": "صباح الخير",
-      "evening": "مساء الخير",
-      "afternoon": "مساء الخير"
-    },
     "transactionsPendingConfirmation": {
       "title": "رصيد غير متزامن",
       "desc": "لم يتم تأكيد بعض المعاملات بعد. ستظهر هذه في رصيدك ويمكن استخدامها بعد تأكيدها."
     },
-    "summary": "إليك ملخص لحساباتك",
-    "summary_plural": "تمت مزامنة حساباتك ({{count}}).",
     "emptyState": {
       "noAppsTitle": "تثبيت تطبيق على جهازي",
       "noAppsDesc": "قم بتثبيت التطبيقات على جهازك قبل إضافة حسابات في Ledger Live. انتقل إلى المدير لتثبيت التطبيقات.",
@@ -1316,10 +1311,10 @@
       "UNBOND": "إلغاء التقيد",
       "REWARD_PAYOUT": "مُكافأة",
       "SLASH": "تغريم",
-      "WITHDRAW_UNBONDED": "Withdrawal",
+      "WITHDRAW_UNBONDED": "سحب",
       "NOMINATE": "ترشيح",
       "CHILL": "مسح الترشيحات",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "إعداد وحدة التحكم"
     }
   },
   "operationDetails": {
@@ -1331,8 +1326,8 @@
     "failed": "فشلت",
     "fees": "رسوم الشبكة",
     "noFees": "لا توجد رسوم",
-    "from": "From",
-    "to": "To",
+    "from": "من",
+    "to": "إلى",
     "identifier": "معرف المعاملة",
     "viewOperation": "عرض في المتصفح",
     "whatIsThis": "ما هذه العملية؟",
@@ -1613,8 +1608,8 @@
       "stockDesc": "اختر \"غربي\" لعرض زيادات السوق باللون الأخضر أو ​​\"شرقي\" لعرضها باللون الأحمر.",
       "reportErrors": "تقارير الخلل",
       "reportErrorsDesc": "إرسال التقارير تلقائيًا لمساعدة ليدجر في تحسين منتجاتها.",
-      "developerMode": "وضع المطور",
-      "developerModeDesc": "اعرض تطبيقات المطور في المدير وقم بتمكين تطبيقات Testnet.",
+      "developerMode": "وضع المطوّر",
+      "developerModeDesc": "اعرض تطبيقات المطوّر في المدير وقم بتمكين تطبيقات Testnet.",
       "analytics": "التحليلات",
       "analyticsDesc": "قم بتمكين التحليلات لمساعدة ليدجر على تحسين تجربة المستخدم.",
       "analyticsModal": {
@@ -1697,8 +1692,8 @@
       "clearCacheModal": "هل أنت متأكد؟",
       "clearCacheModalDesc": "سيتم إجراء فحص جديد وكامل للمعاملات على الشبكة. كما سيتم إعادة بناء سجلات الحسابات وإعادة حساب الأرصدة.",
       "clearCacheButton": "حذف",
-      "exportLogs": "تصدير السجلات",
-      "exportLogsDesc": "قد يساعد تصدير سجلات Ledger Live في استكشاف الأخطاء وإصلاحها.",
+      "exportLogs": "Save logs",
+      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "hardReset": "إعادة تعيين Ledger Live",
       "hardResetDesc": "ليس لهذا الأمر أي تأثير على الأصول الخاصة بك. فهو يمحو جميع البيانات في Ledger Live، بما في ذلك بيانات الحساب والإعدادات وسجلات المعاملات. استخدم جهاز ليدجر الخاص بك لإعادة تحميل وإدارة الأصول المشفرة الخاصة بك على Ledger Live فارغ.",
       "repairDevice": "إصلاح جهاز ليدجر الخاص بك",
@@ -1927,7 +1922,7 @@
           "fees": "الحد الأقصى للرسوم",
           "disclaimer": {
             "title": "الأحكام والشروط",
-            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
+            "desc": "بالضغط على \"أقبل\"، أقر وأقبل بأن هذه الخدمة تدار حصريًا من قبل شروط وأحكام <0>{{provider}}</0>.",
             "tos": "الشروط والأحكام",
             "accept": "قبول",
             "reject": "إغلاق"
@@ -3224,7 +3219,7 @@
       "header": "الترشيحات",
       "nominate": "ترشيح",
       "chill": "حذف الترشيحات",
-      "setController": "Change controller",
+      "setController": "تغيير وحدة التحكم",
       "status": "الحالة",
       "totalStake": "إجمالي الرهن",
       "amount": "المبلغ المقيد",
@@ -3245,8 +3240,8 @@
       "oversubscribed": "({{nominatorsCount}}) تجاوز حد الاشتراك",
       "oversubscribedInfo": "أعلى {{maxNominatorRewardedPerValidator}} مرشحين مع أعلى مبلغ مقيد فقط هم من يحصلون على مكافآت",
       "hasPendingBondOperation": "لا تزال عملية التقيد في انتظار التأكيد",
-      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
-      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
+      "externalControllerUnsupported": "يتم التحكم في حساب التخزين هذا بواسطة حساب منفصل بعنوان <0>{{controllerAddress}}</0>. للتخزين مع Ledger Live، يجب عليك تعيين حساب التخزين هذا على أنه وحدة التحكم الخاصة به.",
+      "externalStashUnsupported": "هذا الحساب هو وحدة تحكم حساب تخزين منفصل بعنوان <0>{{stashAddress}}</0>. للتخزين مع Ledger Live، يجب عليك تعيين حساب التخزين الخاص بك على أنه وحدة التحكم الخاصة به.",
       "showInactiveNominations": "عرض كل الترشيحات ({{count}})",
       "hideInactiveNominations": "عرض الترشيحات النشطة فقط",
       "noActiveNominations": "لا توجد ترشيحات مفعلة.",
@@ -3415,9 +3410,9 @@
           "info": "ستظل الأصول المقيدة على حالتها. إذا قمت بإلغاء تقيدها، فسوف تصبح متاحة بعد فترة 28 يومًا."
         },
         "setController": {
-          "title": "Change Controller",
-          "description": "Set your Ledger account as its own controller",
-          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
+          "title": "تغيير وحدة التحكم",
+          "description": "قم تعيين حسابك في Ledger كوحدة التحكم خاصة به",
+          "info": "لا يدعم Ledger Live العمليات على حسابات التخزين و حسابات وحدة التحكم المنفصلة."
         }
       },
       "stepperHeader": {
@@ -3548,7 +3543,9 @@
     "title": "شروط الاستخدام",
     "read": "قراءة شروط الاستخدام",
     "switchLabel": "لقد قرأت ووافقت على <1>شروط الخدمة</1>",
-    "cta": "دخول تطبيق Ledger"
+    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "cta": "دخول تطبيق Ledger",
+    "service": "Terms of service"
   },
   "exchange": {
     "buy": {
@@ -3676,7 +3673,7 @@
         "description": "ما الخدمة التي تريد رؤيتها في Ledger Live؟"
       },
       "developerCTA": {
-        "title": "للمبرمجين",
+        "title": "للمطوّرين",
         "description": "جميع المعلومات التي تحتاج إليها لدمج تطبيقاتك على Ledger Live."
       }
     },
@@ -3689,7 +3686,7 @@
     },
     "webPlatformPlayer": {
       "infoPanel": {
-        "website": "website"
+        "website": "الموقع الإلكتروني"
       }
     }
   }

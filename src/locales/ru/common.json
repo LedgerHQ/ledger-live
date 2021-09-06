@@ -44,16 +44,13 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Добавить",
-    "slow": "медленно",
-    "medium": "средняя",
-    "fast": "быстро",
     "token": "Токен",
     "token_plural": "Токены",
     "subaccount": "Субсчёт",
     "subaccount_plural": "Субсчета",
     "forgetDevice": "Удалить устройство",
     "help": "Помощь",
-    "saveLogs": "Сохранить лог-файл",
+    "saveLogs": "Сохранить логи",
     "sync": {
       "ago": "Синхронизировано {{time}}"
     },
@@ -86,6 +83,9 @@
     "buyEth": "Купить Эфириум"
   },
   "errors": {
+    "countervaluesUnavailable": {
+      "title": "We're not able to provide a countervalue for this asset at the moment"
+    },
     "AccountAwaitingSendPendingOperations": {
       "title": "На этом счёте имеется операция в ожидании",
       "description": "Дождитесь завершения операции."
@@ -599,6 +599,9 @@
       "high": "Высокая",
       "standard": "Стандартная",
       "low": "Низкая",
+      "slow": "медленно",
+      "medium": "средне",
+      "fast": "быстро",
       "custom": "Пользовательская",
       "blockCount": "Количество блоков: {{blockCount}}"
     }
@@ -827,7 +830,7 @@
             "label": "Узнайте как взаимодействовать с устройством по инструкциям на экране."
           },
           "2": {
-            "title": "Настраиваем как новое устройство",
+            "title": "Выберите \"Настроить как новое устройство\"",
             "label": "Выберите пункт \"Set up as a new device\" (Настроить как новое устройство). Для подтверждения выбора нажмите обе кнопки одновременно."
           },
           "3": {
@@ -1216,7 +1219,7 @@
       "recoveryPhrase": {
         "title": "Не используйте фразу восстановления, которую кто-то создал за вас.",
         "desc": "Вы должны самостоятельно создать ПИН-код и получить фразу восстановления для вашего аппаратного кошелька Ledger. Если вы получили устройство с уже установленной фразой восстановления или ПИН-кодом, не пользуйтесь им и свяжитесь с нашей службой поддержки.",
-        "supportLink": "Обратитесь в Поддержку"
+        "supportLink": "Связаться с Поддержкой"
       }
     }
   },
@@ -1234,18 +1237,10 @@
     "syncError": "Ошибка синхронизации",
     "syncFailed": "Сбой синхронизации",
     "syncPending": "Синхронизируем...",
-    "transactions": "Транзакции",
-    "greeting": {
-      "morning": "Доброе утро",
-      "evening": "Добрый вечер",
-      "afternoon": "Добрый день"
-    },
     "transactionsPendingConfirmation": {
       "title": "Несинхронизированный баланс",
       "desc": "Некоторые транзакции ещё не подтверждены. Они будут отражены на вашем балансе и доступны для использования после подтверждения."
     },
-    "summary": "Вот сводная информация о вашем счёте",
-    "summary_plural": "Ваши счета в количестве {{count}} синхронизированы.",
     "emptyState": {
       "noAppsTitle": "Установить приложение на моё устройство",
       "noAppsDesc": "Установите приложения на устройство перед тем, как добавить счета в Ledger Live. Для установки приложений перейдите в Диспетчер.",
@@ -1316,10 +1311,10 @@
       "UNBOND": "Разблокировать",
       "REWARD_PAYOUT": "Вознаграждение",
       "SLASH": "Штраф",
-      "WITHDRAW_UNBONDED": "Withdrawal",
+      "WITHDRAW_UNBONDED": "Вывод разблок. средств",
       "NOMINATE": "Голосование",
       "CHILL": "Очистить голоса",
-      "SET_CONTROLLER": "Set controller"
+      "SET_CONTROLLER": "Назначить контроллера"
     }
   },
   "operationDetails": {
@@ -1697,8 +1692,8 @@
       "clearCacheModal": "Вы уверены?",
       "clearCacheModalDesc": "Мы повторим полное сканирование транзакций в сети. История будет восстановлена, а средства на балансе будут пересчитаны.",
       "clearCacheButton": "Очистить",
-      "exportLogs": "Экспортировать логи",
-      "exportLogsDesc": "Экспорт логов Ledger Live может помочь в устранении неполадок.",
+      "exportLogs": "Сохранить логи",
+      "exportLogsDesc": "Сохранённые логи Ledger Live могут потребоваться для устранения неполадок.",
       "hardReset": "Сбросить Ledger Live до исходного состояния",
       "hardResetDesc": "Это действие не затрагивает активы и позволяет удалить все данные в Ledger Live, включая данные счетов, историю транзакций и настройки. Используйте устройство Ledger для перезагрузки криптоактивов и управления ими в Ledger Live с исходными настройками.",
       "repairDevice": "Исправить неполадки на устройстве Ledger",
@@ -3224,7 +3219,7 @@
       "header": "Назначения",
       "nominate": "Назначить",
       "chill": "Отменить назначения",
-      "setController": "Change controller",
+      "setController": "Сменить контроллера",
       "status": "Состояние",
       "totalStake": "Общая доля",
       "amount": "Заблокированная сумма",
@@ -3245,8 +3240,8 @@
       "oversubscribed": "Превышение лимита голосов ({{nominatorsCount}})",
       "oversubscribedInfo": "Вознаграждения получают только ТОП-{{maxNominatorRewardedPerValidator}} номинатора(-ов) с наибольшей заблокированной суммой",
       "hasPendingBondOperation": "Блокировка средств ожидает подтверждения",
-      "externalControllerUnsupported": "This stash account is controlled by a separate account whose address is <0>{{controllerAddress}}</0>. To stake with Ledger Live, you must set this stash account as its own controller.",
-      "externalStashUnsupported": "This account is the controller of a separate stash account whose address is <0>{{stashAddress}}</0>. To stake with Ledger Live, you must set your stash account as its own controller.",
+      "externalControllerUnsupported": "Этот stash-счёт контролируется отдельным счётом с адресом <0>{{controllerAddress}}</0>. Чтобы стейкировать средства в Ledger Live, вам нужно назначить stash-счёт в качестве самостоятельного контроллера.",
+      "externalStashUnsupported": "Этот счёт контролируется отдельным счётом с адресом <0>{{stashAddress}}</0>. Чтобы стейкировать средства в Ledger Live, вам нужно назначить этот stash-счёт в качестве самостоятельного контроллера.",
       "showInactiveNominations": "Показать всех номинаторов ({{count}})",
       "hideInactiveNominations": "Показать только активных номинаторов",
       "noActiveNominations": "Нет активных номинаторов.",
@@ -3415,9 +3410,9 @@
           "info": "Блокированные активы останутся заблокированными. Если их разблокировать, доступ к ним будет восстановлен только спустя 28 дней."
         },
         "setController": {
-          "title": "Change Controller",
-          "description": "Set your Ledger account as its own controller",
-          "info": "Ledger Live doesn't support operations on separate stash and controller accounts."
+          "title": "Сменить контроллера",
+          "description": "Назначить этот счёт в Ledger в качестве самостоятельного контроллера",
+          "info": "Ledger Live не поддерживает операции на отдельных stash-счетах и счетах контроллеров."
         }
       },
       "stepperHeader": {
@@ -3548,7 +3543,9 @@
     "title": "Условия использования",
     "read": "Прочитать Условия использования",
     "switchLabel": "Я прочитал(-а) и принимаю <1>Условия использования</1>",
-    "cta": "Перейти в приложение Ledger"
+    "switchLabelFull": "Я прочитал(-а) и соглашаюсь с Условиями использования и Политикой конфиденциальности",
+    "cta": "Перейти в приложение Ledger",
+    "service": "Условия использования"
   },
   "exchange": {
     "buy": {
