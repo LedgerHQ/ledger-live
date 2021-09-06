@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, memo, useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { CommonActions } from "@react-navigation/native";
 import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
@@ -53,6 +54,7 @@ const Manager = ({
 }: Props) => {
   const { deviceId, deviceName, modelId } = device;
   const [state, dispatch] = useApps(result, deviceId);
+  const reduxDispatch = useDispatch();
 
   const { apps, currentError, installQueue, uninstallQueue } = state;
   const blockNavigation = installQueue.length + uninstallQueue.length > 0;
@@ -99,10 +101,13 @@ const Manager = ({
     const dmi = {
       modelId: device.modelId,
       deviceInfo,
-      apps: state.installed.map(({ name, version }) => ({ name, version })),
+      appsInstalled: state.installed.map(({ name, version }) => ({
+        name,
+        version,
+      })),
     };
-    dispatch(setLastSeenDeviceInfo(dmi));
-  }, [device, state.installed, deviceInfo, dispatch]);
+    reduxDispatch(setLastSeenDeviceInfo(dmi));
+  }, [device, state.installed, deviceInfo, reduxDispatch]);
 
   /**
    * Resets the navigation params in order to unlock navigation
