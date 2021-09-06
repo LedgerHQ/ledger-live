@@ -262,6 +262,7 @@ export function BaseButton({
   const containerSpecificProps = useTouchable ? {} : { enabled: !isDisabled };
 
   function getTestID() {
+    // $FlowFixMe
     if (isDisabled || !otherProps.isFocused) return undefined;
     if (otherProps.testID) return otherProps.testID;
 
