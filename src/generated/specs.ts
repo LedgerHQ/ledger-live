@@ -6,6 +6,8 @@ import cosmos from "../families/cosmos/specs";
 
 import crypto_org from "../families/crypto_org/specs";
 
+import elrond from "../families/elrond/specs";
+
 import ethereum from "../families/ethereum/specs";
 
 import polkadot from "../families/polkadot/specs";
@@ -22,6 +24,7 @@ export default {
   bitcoin,
   cosmos,
   crypto_org,
+  elrond,
   ethereum,
   polkadot,
   ripple,

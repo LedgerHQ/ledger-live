@@ -73,7 +73,7 @@ function transactionToOperation(
     hash: transaction.txHash ?? "",
     blockHash: transaction.blockHash,
     blockHeight: transaction.blockHeight,
-    date: new Date(transaction.timestamp ?? 0 * 1000),
+    date: new Date(transaction.timestamp ? transaction.timestamp * 1000 : 0),
     extra: {},
     senders: [transaction.sender ?? ""],
     recipients: transaction.receiver ? [transaction.receiver] : [],
