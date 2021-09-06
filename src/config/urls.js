@@ -38,14 +38,14 @@ export const urls = {
   feesPolkadot:
     "https://support.ledger.com/hc/en-us/articles/360016289919?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=dot_fees",
   verifyTransactionDetails:
-    "https://support.ledger.com/hc/en-us/articles/360006444193?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tx_device_check",
+    "https://support.ledger.com/hc/en-us/articles/4404389453841-Receive-crypto-assets?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=tx_device_check",
   erc20:
-    "https://support.ledger.com/hc/en-us/articles/115005197845-Manage-ERC20-tokens?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_erc20",
+    "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_erc20",
   errors: {
     PairingFailed:
       "https://support.ledger.com/hc/en-us/articles/360025864773?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
     SyncError:
-      "https://support.ledger.com/hc/en-us/articles/360012109220?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_syncerror",
+      "https://support.ledger.com/hc/en-us/articles/360012207759-Solve-a-synchronization-error?support=true",
     LedgerAPIErrorWithMessage:
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     StratisDown2021Warning:
@@ -117,19 +117,18 @@ export const urls = {
       "https://developers.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=catalog",
   },
   compound:
-    "https://support.ledger.com/hc/en-us/articles/360017215099?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compound",
+    "https://support.ledger.com/hc/en-us/articles/4404389208721-Lend-crypto-assets-with-Ledger-Live?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compound",
   compoundTnC:
     "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTnC",
   approvedOperation:
-    "https://support.ledger.com/hc/en-us/articles/115005307809-Track-your-transaction?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTX",
+    "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTX",
   recoveryPhraseInfo:
     "https://www.ledger.com/academy/crypto/what-is-a-recovery-phrase",
   fixConnectionIssues:
     "https://support.ledger.com/hc/en-us/articles/360025864773",
   otgCable:
     "https://support.ledger.com/hc/en-us/articles/115005463729-OTG-Kit-adapters-for-your-Ledger-devices",
-  ledgerStatus:
-    "https://support.ledger.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral",
+  ledgerStatus: "https://status.ledger.com/",
   bitcoinAddressType:
     "https://www.ledger.com/academy/difference-between-segwit-and-native-segwit",
   supportPage:
