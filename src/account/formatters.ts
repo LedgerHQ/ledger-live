@@ -41,9 +41,9 @@ const formatOp = (
             .slice(0, 2)
             .join(":")}`;
     extra += familySpecific(op, unit);
-    const head = `${(spaces + amount).padEnd(20)} ${op.type.padEnd(
-      11
-    )}${extra}`;
+    const head = `${(spaces + amount).padEnd(20)} ${(
+      (op.hasFailed ? "❌" : "") + op.type
+    ).padEnd(11)}${extra}`;
     const sub = (op.subOperations || [])
       .concat(op.internalOperations || [])
       .map((subop) => format(subop, level + 1))
@@ -164,7 +164,40 @@ const stats = (account) => {
   };
 };
 
-export const accountFormatters: Record<string, (arg0: Account) => any> = {
+// this is developped for debug purpose in order to compare with balance APIs
+const operationBalanceHistoryBackwards = (account) => {
+  let acc = account.balance;
+  return JSON.stringify(
+    account.operations
+      .map((op) => {
+        const { blockHeight } = op;
+        const date = op.date.toISOString();
+        const balance = acc.toNumber();
+        acc = acc.minus(getOperationAmountNumberWithInternals(op));
+        return { blockHeight, date, balance };
+      })
+      .reverse()
+  );
+};
+const operationBalanceHistory = (account) => {
+  let acc = new BigNumber(0);
+  return JSON.stringify(
+    account.operations
+      .slice(0)
+      .reverse()
+      .map((op) => {
+        acc = acc.plus(getOperationAmountNumberWithInternals(op));
+        const { blockHeight } = op;
+        const date = op.date.toISOString();
+        const balance = acc.toNumber();
+        return { blockHeight, date, balance };
+      })
+  );
+};
+
+export const accountFormatters: { [_: string]: (Account) => any } = {
+  operationBalanceHistoryBackwards,
+  operationBalanceHistory,
   json: (account) => JSON.stringify(toAccountRaw(account)),
   head: (account) => cliFormat(account, "head"),
   default: (account) => cliFormat(account),

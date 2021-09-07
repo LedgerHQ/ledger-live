@@ -52,6 +52,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     fees: tr.fees ? new BigNumber(tr.fees) : null,
     gasLimit: tr.gasLimit ? new BigNumber(tr.gasLimit) : null,
     storageLimit: tr.storageLimit ? new BigNumber(tr.storageLimit) : null,
+    taquitoError: tr.taquitoError,
   };
 };
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
@@ -68,6 +69,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     fees: t.fees ? t.fees.toString() : null,
     gasLimit: t.gasLimit ? t.gasLimit.toString() : null,
     storageLimit: t.storageLimit ? t.storageLimit.toString() : null,
+    taquitoError: t.taquitoError,
   };
 };
 export default {

@@ -10,6 +10,20 @@ import type {
   TransactionCommonRaw,
 } from "../../types/transaction";
 
+export type TezosResources = {
+  revealed: boolean;
+  publicKey: string;
+  counter: number;
+};
+
+export type TezosResourcesRaw = {
+  revealed: boolean;
+  publicKey: string;
+  counter: number;
+};
+
+// WILL BE DROPPED =>
+
 export const tezosOperationTag = {
   OPERATION_TAG_NONE: 0,
   OPERATION_TAG_NONE1: 1,
@@ -122,6 +136,7 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber | null | undefined;
   gasLimit: BigNumber | null | undefined;
   storageLimit: BigNumber | null | undefined;
+  taquitoError: string | null | undefined;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: "tezos";
@@ -130,6 +145,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees: string | null | undefined;
   gasLimit: string | null | undefined;
   storageLimit: string | null | undefined;
+  taquitoError: string | null | undefined;
 };
 export const reflect = (declare: (arg0: string, arg1: Spec) => void) => {
   declare("TezosLikeAddress", {

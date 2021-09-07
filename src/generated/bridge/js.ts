@@ -12,6 +12,8 @@ import ripple from "../../families/ripple/bridge/js";
 
 import stellar from "../../families/stellar/bridge/js";
 
+import tezos from "../../families/tezos/bridge/js";
+
 import tron from "../../families/tron/bridge/js";
 
 
@@ -23,5 +25,6 @@ export default {
   polkadot,
   ripple,
   stellar,
+  tezos,
   tron,
 };

@@ -24,6 +24,7 @@ import {
   fromBalanceHistoryRawMap,
   fromAlgorandResourcesRaw,
   fromPolkadotResourcesRaw,
+  fromTezosResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
 } from "./account";
@@ -346,6 +347,14 @@ export function patchAccount(
     next.polkadotResources = fromPolkadotResourcesRaw(
       updatedRaw.polkadotResources
     );
+    changed = true;
+  }
+
+  if (
+    updatedRaw.tezosResources &&
+    account.tezosResources !== updatedRaw.tezosResources
+  ) {
+    next.tezosResources = fromTezosResourcesRaw(updatedRaw.tezosResources);
     changed = true;
   }
 

@@ -80,6 +80,7 @@ const dataset: DatasetTest<Transaction> = {
                 fees: "3075",
                 gasLimit: "10600",
                 storageLimit: "300",
+                taquitoError: null,
               }),
               expectedStatus: (account) => ({
                 errors: {},

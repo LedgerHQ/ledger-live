@@ -42,6 +42,7 @@ export type GetAccountShape = (
     address: string;
     id: string;
     initialAccount?: Account;
+    rest?: any;
   },
   arg1: SyncConfig
 ) => Promise<Partial<Account>>;
@@ -173,7 +174,7 @@ export const makeScanAccounts =
       // return mergeMap(addressesObservable, address => fetchAccount(address))
       async function stepAccount(
         index,
-        { address, path: freshAddressPath },
+        { address, path: freshAddressPath, ...rest },
         derivationMode,
         seedIdentifier
       ): Promise<Account | null | undefined> {
@@ -184,6 +185,7 @@ export const makeScanAccounts =
             currency,
             id: accountId,
             address,
+            rest,
           },
           syncConfig
         );

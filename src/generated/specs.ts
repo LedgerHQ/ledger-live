@@ -16,6 +16,8 @@ import ripple from "../families/ripple/specs";
 
 import stellar from "../families/stellar/specs";
 
+import tezos from "../families/tezos/specs";
+
 import tron from "../families/tron/specs";
 
 
@@ -29,5 +31,6 @@ export default {
   polkadot,
   ripple,
   stellar,
+  tezos,
   tron,
 };

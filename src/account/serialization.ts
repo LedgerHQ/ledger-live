@@ -35,6 +35,10 @@ import {
   fromPolkadotResourcesRaw,
 } from "../families/polkadot/serialization";
 import {
+  toTezosResourcesRaw,
+  fromTezosResourcesRaw,
+} from "../families/tezos/serialization";
+import {
   toElrondResourcesRaw,
   fromElrondResourcesRaw,
 } from "../families/elrond/serialization";
@@ -59,6 +63,7 @@ export { toCosmosResourcesRaw, fromCosmosResourcesRaw };
 export { toAlgorandResourcesRaw, fromAlgorandResourcesRaw };
 export { toBitcoinResourcesRaw, fromBitcoinResourcesRaw };
 export { toPolkadotResourcesRaw, fromPolkadotResourcesRaw };
+export { toTezosResourcesRaw, fromTezosResourcesRaw };
 export { toElrondResourcesRaw, fromElrondResourcesRaw };
 export { toCryptoOrgResourcesRaw, fromCryptoOrgResourcesRaw };
 
@@ -664,6 +669,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     subAccounts: subAccountsRaw,
     tronResources,
     cosmosResources,
+    tezosResources,
     bitcoinResources,
     swapHistory,
     algorandResources,
@@ -758,6 +764,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.cosmosResources = fromCosmosResourcesRaw(cosmosResources);
   }
 
+  if (tezosResources) {
+    res.tezosResources = fromTezosResourcesRaw(tezosResources);
+  }
+
   if (bitcoinResources) {
     res.bitcoinResources = fromBitcoinResourcesRaw(bitcoinResources);
   }
@@ -817,6 +827,7 @@ export function toAccountRaw({
   tronResources,
   cosmosResources,
   bitcoinResources,
+  tezosResources,
   swapHistory,
   algorandResources,
   syncHash,
@@ -874,6 +885,10 @@ export function toAccountRaw({
 
   if (cosmosResources) {
     res.cosmosResources = toCosmosResourcesRaw(cosmosResources);
+  }
+
+  if (tezosResources) {
+    res.tezosResources = toTezosResourcesRaw(tezosResources);
   }
 
   if (bitcoinResources) {

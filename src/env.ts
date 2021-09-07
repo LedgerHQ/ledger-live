@@ -105,6 +105,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger explorer API for tezos",
   },
+  API_TEZOS_TZKT_API: {
+    def: "http://51.210.220.222:5000",
+    parser: stringParser,
+    desc: "tzkt.io explorer",
+  },
   API_TEZOS_NODE: {
     def: "https://xtz-node.api.live.ledger.com",
     parser: stringParser,

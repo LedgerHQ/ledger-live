@@ -16,6 +16,8 @@ import ripple from "../families/ripple/speculos-deviceActions";
 
 import stellar from "../families/stellar/speculos-deviceActions";
 
+import tezos from "../families/tezos/speculos-deviceActions";
+
 import tron from "../families/tron/speculos-deviceActions";
 
 
@@ -29,5 +31,6 @@ export default {
   polkadot,
   ripple,
   stellar,
+  tezos,
   tron,
 };
