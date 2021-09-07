@@ -3,7 +3,11 @@ import {
   ManagerAppDepInstallRequired,
   ManagerAppDepUninstallRequired,
 } from "@ledgerhq/errors";
-import { getDependencies, getDependents } from "./polyfill";
+import {
+  getDependencies,
+  getDependents,
+  whitelistDependencies,
+} from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
 import type { App, DeviceInfo, FinalFirmware } from "../types/manager";
@@ -92,7 +96,9 @@ export function mockListAppsResult(
     .map((a) => a.trim())
     .filter(Boolean)
     .map((name, i) => {
-      const dependencies = getDependencies(name);
+      const dependencies = whitelistDependencies.includes(name)
+        ? []
+        : getDependencies(name);
       const currency = findCryptoCurrency((c) => c.managerAppName === name);
       const indexOfMarketCap = currency
         ? tickersByMarketCap.indexOf(currency.ticker)

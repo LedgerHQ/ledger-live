@@ -13,7 +13,7 @@ import { AppType, SortOptions } from "./filtering";
 
 const mockedState = initState(
   mockListAppsResult(
-    "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash",
+    "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
     "Litecoin (outdated), Ethereum, Ethereum Classic",
     deviceInfo155
   )
@@ -24,6 +24,12 @@ test("Apps hooks - useAppInstallNeedsDeps - Expect dep apps", () => {
   );
   expect(result?.current.dependencies.length).toBe(1);
   expect(result?.current.dependencies[0].name).toBe("Bitcoin");
+});
+test("Apps hooks - useAppInstallNeedsDeps - Expect Decred to not depend on bitcoin", () => {
+  const { result = <any>{} } = renderHook(() =>
+    useAppInstallNeedsDeps(mockedState, mockedState.appByName["Decred"])
+  );
+  expect(result.current).toBe(null);
 });
 test("Apps hooks - useAppInstallNeedsDeps - Expect no dep apps", () => {
   const { result } = renderHook(() =>
@@ -136,7 +142,7 @@ test("Apps hooks - useAppsSections - Correct number of catalog apps", () => {
       },
     })
   );
-  expect(result.current.catalog.length).toBe(7);
+  expect(result.current.catalog.length).toBe(8);
 });
 test("Apps hooks - useAppsSections - Correct number of catalog apps with query", () => {
   const { result } = renderHook(() =>
@@ -168,7 +174,7 @@ test("Apps hooks - useAppsSections - Correct number of installed apps with query
 const mockedStateWithInstallQueue = {
   ...initState(
     mockListAppsResult(
-      "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash",
+      "Bitcoin, Ethereum, Litecoin, Dogecoin, Ethereum Classic, XRP, Bitcoin Cash, Decred",
       "Litecoin (outdated), Ethereum, Ethereum Classic",
       deviceInfo155
     )
