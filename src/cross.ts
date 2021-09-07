@@ -14,6 +14,7 @@ export type AccountData = {
   id: string;
   currencyId: string;
   freshAddress?: string;
+  virtualAddress?: string;
   seedIdentifier: string;
   derivationMode: string;
   // we are unsafe at this stage, validation is done later
@@ -267,6 +268,7 @@ export function accountToAccountData({
   seedIdentifier,
   derivationMode,
   freshAddress,
+  virtualAddress,
   currency,
   index,
   balance,
@@ -277,6 +279,7 @@ export function accountToAccountData({
     seedIdentifier,
     derivationMode,
     freshAddress,
+    virtualAddress,
     currencyId: currency.id,
     index,
     balance: balance.toString(),
@@ -289,6 +292,7 @@ export const accountDataToAccount = ({
   id,
   currencyId,
   freshAddress: inputFreshAddress,
+  virtualAddress,
   name,
   index,
   balance,
@@ -344,6 +348,7 @@ export const accountDataToAccount = ({
     used: false,
     currency,
     index,
+    virtualAddress,
     freshAddress,
     freshAddressPath,
     swapHistory: [],

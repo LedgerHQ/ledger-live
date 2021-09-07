@@ -14,6 +14,8 @@ import ethereum from "../families/ethereum/hw-getAddress";
 
 import filecoin from "../families/filecoin/hw-getAddress";
 
+import hedera from "../families/hedera/hw-getAddress";
+
 import neo from "../families/neo/hw-getAddress";
 
 import polkadot from "../families/polkadot/hw-getAddress";
@@ -38,6 +40,7 @@ export default {
   elrond,
   ethereum,
   filecoin,
+  hedera,
   neo,
   polkadot,
   ripple,

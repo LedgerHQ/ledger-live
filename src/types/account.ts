@@ -134,6 +134,9 @@ export type Account = {
   // the iterated number to derive the account in a given derivationMode config
   // in context of bip44, it would be the account field of bip44 ( m/purpose'/cointype'/account' )
   index: number;
+  // a "virtual" address is a non-verified address
+  // setting this triggers the receive flow to show a warning that it can't verify the address
+  virtualAddress?: string;
   // next receive address. to be used to display to user.
   // (deprecated - corresponds to freshAddresses[0].address)
   freshAddress: string;
@@ -270,6 +273,7 @@ export type AccountRaw = {
   xpub?: string;
   derivationMode: DerivationMode;
   index: number;
+  virtualAddress?: string;
   freshAddress: string;
   freshAddressPath: string;
   freshAddresses: Address[];
