@@ -84,7 +84,7 @@
   },
   "errors": {
     "countervaluesUnavailable": {
-      "title": "We're not able to provide a countervalue for this asset at the moment"
+      "title": "В данный момент мы не можем предоставить эквивалент для этого актива"
     },
     "AccountAwaitingSendPendingOperations": {
       "title": "На этом счёте имеется операция в ожидании",
@@ -2748,6 +2748,11 @@
       "flash-bootloader": "Обновление Bootloader",
       "flash": "Перепрошивка устройства",
       "firmware": "Обновляем прошивку"
+    },
+    "newVersion": "Доступна версия прошивки {{version}}",
+    "drawerUpdate": {
+      "title": "Обновление прошивки",
+      "description": "Обновите прошивку Nano, подключив кошелёк к настольному приложению Ledger Live"
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3444,7 +3449,7 @@
     "forAnEstYield": "для ориент. дохода",
     "yieldPerYear": "{{yield}} в год",
     "yieldInfos": "Ставки доходности предоставлены",
-    "termsAndPrivacy": "Я прочитал(-а) и принимаю <1>Условия использования Ledger Live</1> и <3>Политику конфиденциальности</3>.",
+    "termsAndPrivacy": "Я прочитал(-а) и принимаю <1>Условия использования</1> и <3>Политику конфиденциальности</3> Ledger Live.",
     "delegation": "Делегирование",
     "viewDetails": "Подробнее",
     "validator": "Валидатор",

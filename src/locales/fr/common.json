@@ -2748,6 +2748,11 @@
       "flash-bootloader": "Mise à jour du Bootloader",
       "flash": "Mise à jour du micrologiciel de votre appareil",
       "firmware": "Mise à jour du micrologiciel"
+    },
+    "newVersion": "Mise à jour {{version}} du micrologiciel disponible",
+    "drawerUpdate": {
+      "title": "Mise à jour micrologiciel",
+      "description": "Mettez à jour le micrologiciel de votre Ledger Nano en le connectant à Ledger Live ordinateur"
     }
   },
   "FirmwareUpdateReleaseNotes": {
