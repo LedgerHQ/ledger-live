@@ -2,11 +2,8 @@ import memoize from "lodash/memoize";
 import invariant from "invariant";
 import type { CryptoCurrency, DerivationMode, TokenCurrency } from "../types";
 import { asDerivationMode } from "../derivation";
-import {
-  getCryptoCurrencyById,
-  findTokenById,
-  findTokenByAddress,
-} from "../currencies";
+import { getCryptoCurrencyById, findTokenById } from "../currencies";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 export type AccountIdParams = {
   type: string;
   version: string;
@@ -51,8 +48,11 @@ export function decodeTokenAccountId(id: string): {
 } {
   const [accountId, tokenId] = id.split("+");
   const decodedTokenId = decodeURIComponent(tokenId);
-  const token =
-    findTokenByAddress(decodedTokenId) || findTokenById(decodedTokenId);
+  let token = findTokenById(decodedTokenId);
+  if (!token) {
+    const { currencyId } = decodeAccountId(accountId);
+    token = findTokenByAddressInCurrency(decodedTokenId, currencyId);
+  }
   return {
     accountId,
     token,
