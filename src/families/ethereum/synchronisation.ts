@@ -304,7 +304,7 @@ const txToOps =
         id: `${id}-${hash}-${type}`,
         hash,
         type,
-        value: hasFailed ? new BigNumber(0) : value.plus(fee),
+        value: hasFailed ? new BigNumber(fee) : value.plus(fee),
         fee,
         blockHeight,
         blockHash,
