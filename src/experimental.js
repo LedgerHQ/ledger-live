@@ -33,14 +33,14 @@ export type FeatureInteger = {
 export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger);
 
 export const experimentalFeatures: Feature[] = [
-  {
+  /* {
     type: "toggle",
     name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
     title: "Tezos JS impl",
     description: "Tezos JS impl",
     valueOn: "tezos",
     valueOff: "",
-  },
+  }, */
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
