@@ -47,7 +47,7 @@ export default () => {
             core,
             currency
           );
-        } catch (e) {
+        } catch (e: any) {
           expect(e.message).toBe("no validators");
         }
       });
@@ -148,7 +148,7 @@ export default () => {
             core,
             currency
           );
-        } catch (e) {
+        } catch (e: any) {
           expect(e.message).toBe("source validator is empty");
         }
       });

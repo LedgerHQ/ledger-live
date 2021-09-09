@@ -102,7 +102,7 @@ const reducer = (s: State, a): State => {
         }
 
         return { ...initial, account, parentAccount, transaction: t };
-      } catch (e) {
+      } catch (e: any) {
         return { ...initial, account, parentAccount, errorAccount: e };
       }
     }

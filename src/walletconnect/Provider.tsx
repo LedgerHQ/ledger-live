@@ -196,7 +196,7 @@ const ProviderCommon = ({
 
     try {
       wcCallRequest = await parseCallRequest(account, payload);
-    } catch (e) {
+    } catch (e: any) {
       state.connector.rejectRequest({
         id: payload.id,
         error: {

@@ -72,7 +72,7 @@ async function scanNextAccount(props: {
 
   try {
     coreAccount = await wallet.getAccount(accountIndex);
-  } catch (err) {
+  } catch (err: any) {
     if (!isNonExistingAccountError(err)) {
       throw err;
     }

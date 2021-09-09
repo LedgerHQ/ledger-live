@@ -29,7 +29,7 @@ export const getOrCreateAccount: F = atomicQueue(
 
     try {
       coreAccount = await coreWallet.getAccount(index);
-    } catch (err) {
+    } catch (err: any) {
       if (!isNonExistingAccountError(err)) {
         throw err;
       }

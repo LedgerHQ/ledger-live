@@ -201,7 +201,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
             };
           })
           .filter(Boolean);
-      } catch (e) {
+      } catch (e: any) {
         if (e.status === 404) {
           return [];
         }

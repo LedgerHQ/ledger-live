@@ -234,7 +234,7 @@ function useSyncQueue({
             next();
           },
         });
-      } catch (error) {
+      } catch (error: any) {
         setAccountSyncState(accountId, {
           pending: false,
           error,

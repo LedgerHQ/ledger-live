@@ -199,7 +199,7 @@ export default (arg: {
           res = await network(param);
           const urlConnection = createHttpConnection(res, null);
           r.complete(urlConnection, null);
-        } catch (err) {
+        } catch (err: any) {
           const libcoreError = {
             code: lib.ERROR_CODE.HTTP_ERROR,
             message: JSON.stringify(
@@ -258,7 +258,7 @@ export default (arg: {
     const instanciateWalletPool = (): CoreWalletPool => {
       try {
         fs.mkdirSync(dbPath);
-      } catch (err) {
+      } catch (err: any) {
         if (err.code !== "EEXIST") {
           throw err;
         }
@@ -588,7 +588,7 @@ export default (arg: {
     if (typeof e === "string") {
       try {
         return parseError(e);
-      } catch (e2) {
+      } catch (e2: any) {
         return e2;
       }
     }

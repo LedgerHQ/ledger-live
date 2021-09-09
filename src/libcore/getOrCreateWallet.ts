@@ -74,7 +74,7 @@ export const getOrCreateWallet: F = atomicQueue(
         config
       );
       return wallet;
-    } catch (err) {
+    } catch (err: any) {
       if (!isAlreadyExistingWalletError(err)) {
         throw err;
       }

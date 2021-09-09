@@ -74,7 +74,7 @@ export const getAccount = async (addr: string, currencyId: string) => {
       url: `${crypto_org_indexer}/api/v1/accounts/${addr}`,
     });
     data = response.data;
-  } catch (error) {
+  } catch (error: any) {
     if (error?.status !== 404) {
       throw error;
     }

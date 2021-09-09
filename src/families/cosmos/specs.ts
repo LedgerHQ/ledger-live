@@ -331,7 +331,9 @@ const cosmos: AppSpec<Transaction> = {
         invariant(cosmosResources, "cosmos");
         const delegation = sample(
           (cosmosResources as CosmosResources).delegations.filter(
-            (d) => canClaimRewards(account, d) && d.pendingRewards.gt(2000)
+            // FIXME
+            // (d) => canClaimRewards(account, d) && d.pendingRewards.gt(2000)
+            (d) => d.pendingRewards.gt(2000)
           )
         );
         invariant(delegation, "no delegation to claim");

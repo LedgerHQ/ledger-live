@@ -129,7 +129,7 @@ export const fetchOperations = async (
       .limit(LIMIT)
       .cursor(startAt)
       .call();
-  } catch (e) {
+  } catch (e: any) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
     // (https://github.com/stellar/js-stellar-sdk/issues/638)
     const errorMsg = e ? e.toString() : "";

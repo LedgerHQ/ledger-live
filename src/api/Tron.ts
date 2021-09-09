@@ -326,7 +326,7 @@ export const validateAddress = async (address: string): Promise<boolean> => {
       address: decode58Check(address),
     });
     return result.result || false;
-  } catch (e) {
+  } catch (e: any) {
     // FIXME we should not silent errors!
     log("tron-error", "validateAddress fails with " + e.message, {
       address,

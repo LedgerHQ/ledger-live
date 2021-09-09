@@ -212,7 +212,7 @@ export const createDeviceSocket = (
               url,
             });
         }
-      } catch (err) {
+      } catch (err: any) {
         deviceError = err;
         log("socket-message-error", err.message);
         o.error(err);

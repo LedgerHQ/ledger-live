@@ -175,7 +175,7 @@ const signOperation = ({
             expirationDate: null,
           },
         });
-      } catch (e) {
+      } catch (e: any) {
         if (e && e.name === "RippledError" && e.data.resultMessage) {
           throw new Error(e.data.resultMessage);
         }

@@ -221,7 +221,7 @@ export async function runWithAppSpec<T extends Transaction>(
     accounts = await promiseAllBatched(5, accounts, syncAccount);
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
-  } catch (e) {
+  } catch (e: any) {
     appReport.fatalError = e;
     log("engine", `spec ${spec.name} failed with ${String(e)}`);
   } finally {
@@ -307,7 +307,7 @@ export async function runOnAccount<T extends Transaction>({
           // $FlowFixMe what the hell
           updates: r.updates,
         });
-      } catch (error) {
+      } catch (error: any) {
         unavailableMutationReasons.push({
           mutation,
           error,
@@ -491,7 +491,7 @@ export async function runOnAccount<T extends Transaction>({
       "engine",
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
     );
-  } catch (error) {
+  } catch (error: any) {
     log("mutation-error", spec.name + ": " + String(error));
     report.error = error;
   }

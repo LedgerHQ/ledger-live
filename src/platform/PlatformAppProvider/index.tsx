@@ -73,7 +73,7 @@ export function PlatformAppProvider({
         lastUpdateTime: Date.now(),
         error: undefined,
       }));
-    } catch (error) {
+    } catch (error: any) {
       setState((previousState) => ({
         ...previousState,
         isLoading: false,

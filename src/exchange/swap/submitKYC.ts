@@ -17,7 +17,7 @@ export const submitKYC: SubmitKYC = async (provider: string, data: KYCData) => {
       id,
       status,
     };
-  } catch (error) {
+  } catch (error: any) {
     // Nb this is the best we have, no _per field_ validation but rather
     // error handling at the top level.
 

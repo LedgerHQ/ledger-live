@@ -113,7 +113,7 @@ export const createAction = (
           request,
           deviceId: device.deviceId,
         }).toPromise();
-      } catch (e) {
+      } catch (e: any) {
         if (e.name === "UserRefusedAddress") {
           e.name = "UserRefusedOnDevice";
           e.message = "UserRefusedOnDevice";
