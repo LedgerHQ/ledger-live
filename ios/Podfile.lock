@@ -274,8 +274,8 @@ PODS:
     - React
   - react-native-locale (0.0.19):
     - React
-  - react-native-netinfo (5.5.1):
-    - React
+  - react-native-netinfo (6.0.2):
+    - React-Core
   - react-native-randombytes (3.6.0):
     - React-Core
   - react-native-safe-area-context (0.7.3):
@@ -659,7 +659,7 @@ SPEC CHECKSUMS:
   react-native-config: 55548054279d92e0e4566ea15a8b9b81028ec342
   react-native-fingerprint-scanner: 03f3d966edacf2f515e361595b6778d3502db4fb
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
-  react-native-netinfo: 3bf235d94cc291cf0673ad9fd9eaae82f84ed8a9
+  react-native-netinfo: 92e6e4476eb8bf6fc2d7c0a6ca0a1406f663d73a
   react-native-randombytes: b6677f7d495c27e9ee0dbd77ebc97b3c59173729
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
