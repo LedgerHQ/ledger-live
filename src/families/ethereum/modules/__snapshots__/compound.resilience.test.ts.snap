@@ -2,7 +2,7 @@
 
 exports[`if API is down, an account still sync fine 1`] = `
 Object {
-  "balance": "2092658623260253",
+  "balance": "0",
   "blockHeight": 0,
   "creationDate": "",
   "currencyId": "ethereum",
@@ -15,6 +15,47 @@ Object {
   "lastSyncDate": "",
   "name": "Ethereum legacy xpub6Bem...JyAdpYZy",
   "operations": Array [
+    Object {
+      "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
+      "blockHash": "0x3d995e1931a059b0acb13a1595d4c6668b4c5ca384de8823c4a72c828507e984",
+      "blockHeight": 0,
+      "date": "",
+      "extra": Object {},
+      "fee": "2110500000000000",
+      "hasFailed": false,
+      "hash": "0x12bcdadf67b905eb6955b4c435f78b8c4eb4fb3a8c8bc16305331474b2897174",
+      "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:-0x12bcdadf67b905eb6955b4c435f78b8c4eb4fb3a8c8bc16305331474b2897174-OUT",
+      "internalOperations": Array [],
+      "recipients": Array [
+        "0x17733CAb76d9A2112576443F21735789733B1ca3",
+      ],
+      "senders": Array [
+        "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
+      ],
+      "transactionSequenceNumber": 225,
+      "type": "OUT",
+      "value": "102193757957260253",
+    },
+    Object {
+      "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
+      "blockHash": "0x912d8feccc2c943daa396ec2a20f6149d2bfeef3828fc9f47ee98b3151b5d4f9",
+      "blockHeight": 0,
+      "date": "",
+      "extra": Object {},
+      "fee": "1903135989909000",
+      "hash": "0xa54eb928a2f7e522517133f22ebdc2b599d130e86f0118658a7884a7df9265cc",
+      "id": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:-0xa54eb928a2f7e522517133f22ebdc2b599d130e86f0118658a7884a7df9265cc-IN",
+      "internalOperations": Array [],
+      "recipients": Array [
+        "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
+      ],
+      "senders": Array [
+        "0x86D3E894b5CDb6a80affFd35eD348868fb98DD3f",
+      ],
+      "transactionSequenceNumber": 67292,
+      "type": "IN",
+      "value": "100101099334000000",
+    },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
       "blockHash": "0x2f43388babd05ea277497a0afd03d61324ad4b2b5d1e603470d29951e987e279",
@@ -157,7 +198,7 @@ Object {
       ],
       "transactionSequenceNumber": 221,
       "type": "FEES",
-      "value": "0",
+      "value": "72825000000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
@@ -797,7 +838,7 @@ Object {
       ],
       "transactionSequenceNumber": 201,
       "type": "FEES",
-      "value": "0",
+      "value": "359040000000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
@@ -1399,7 +1440,7 @@ Object {
       ],
       "transactionSequenceNumber": 179,
       "type": "FEES",
-      "value": "0",
+      "value": "79359000000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
@@ -2720,7 +2761,7 @@ Object {
       ],
       "transactionSequenceNumber": 138,
       "type": "FEES",
-      "value": "0",
+      "value": "239390000000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
@@ -5741,7 +5782,7 @@ Object {
       ],
       "transactionSequenceNumber": 57,
       "type": "FEES",
-      "value": "0",
+      "value": "679610000000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
@@ -6937,7 +6978,7 @@ Object {
       ],
       "transactionSequenceNumber": 21,
       "type": "FEES",
-      "value": "0",
+      "value": "758734820000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:",
@@ -7601,10 +7642,10 @@ Object {
       "value": "331419644025820000",
     },
   ],
-  "operationsCount": 365,
+  "operationsCount": 367,
   "pendingOperations": Array [],
   "seedIdentifier": "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
-  "spendableBalance": "2092658623260253",
+  "spendableBalance": "0",
   "starred": false,
   "subAccounts": Array [
     Object {
