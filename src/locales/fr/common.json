@@ -589,7 +589,7 @@
     "required": "Localisation requise",
     "open": "Ouvrir les paramètres de localisation",
     "disabled": "Ledger Live a besoin de la localisation pour coupler votre appareil en Bluetooth.",
-    "noInfos": "Ledger n'utilise pas vos données de localisation."
+    "noInfos": "Ledger n'enregistre pas vos données de localisation."
   },
   "permissions": {
     "open": "Ouvrir les autorisations des applications"
