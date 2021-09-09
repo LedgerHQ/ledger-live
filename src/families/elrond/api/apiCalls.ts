@@ -3,6 +3,7 @@ import {
   HASH_TRANSACTION,
   RAW_TRANSACTION,
   METACHAIN_SHARD,
+  TRANSACTIONS_SIZE,
 } from "../constants";
 export default class ElrondApi {
   private API_URL: string;
@@ -102,14 +103,30 @@ export default class ElrondApi {
   }
 
   async getHistory(addr: string, startAt: number) {
-    const { data: transactions } = await network({
+    const { data: transactionsCount } = await network({
       method: "GET",
-      url: `${this.API_URL}/transactions?condition=should&sender=${addr}&receiver=${addr}&after=${startAt}`,
+      url: `${this.API_URL}/transactions/count?condition=should&sender=${addr}&receiver=${addr}&after=${startAt}`,
     });
-    if (!transactions.length) return transactions; //Account does not have any transactions
+
+    let allTransactions: any[] = [];
+    let from = 0;
+    while (from <= transactionsCount) {
+      const { data: transactions } = await network({
+        method: "GET",
+        url: `${this.API_URL}/transactions?condition=should&sender=${addr}&receiver=${addr}&after=${startAt}&from=${from}&size=${TRANSACTIONS_SIZE}`,
+      });
+
+      allTransactions = [...allTransactions, ...transactions];
+
+      from = from + TRANSACTIONS_SIZE;
+    }
+
+    if (!allTransactions.length) {
+      return allTransactions; //Account does not have any transactions
+    }
 
     return Promise.all(
-      transactions.map(async (transaction) => {
+      allTransactions.map(async (transaction) => {
         const { blockHeight, blockHash } = await this.getConfirmedTransaction(
           transaction.txHash
         );

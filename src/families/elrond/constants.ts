@@ -7,3 +7,4 @@ export const RAW_TRANSACTION = {
   options: 0,
 };
 export const METACHAIN_SHARD = 4294967295;
+export const TRANSACTIONS_SIZE = 10000;
