@@ -15,7 +15,10 @@ import logger from "../../logger";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { GENUINE_CHECK_TIMEOUT } from "../../constants";
 import { addKnownDevice } from "../../actions/ble";
-import { installAppFirstTime } from "../../actions/settings";
+import {
+  installAppFirstTime,
+  setLastSeenDeviceInfo,
+} from "../../actions/settings";
 import { hasCompletedOnboardingSelector } from "../../reducers/settings";
 import type { DeviceLike } from "../../reducers/ble";
 import RequiresBLE from "../../components/RequiresBLE";
@@ -157,6 +160,14 @@ function PairDevicesInner({ navigation, route }: Props) {
               deviceInfo,
               appsInstalled,
               modelId: deviceMeta?.modelId,
+            }),
+          );
+
+          dispatchRedux(
+            setLastSeenDeviceInfo({
+              modelId: device.modelId,
+              deviceInfo,
+              appsInstalled,
             }),
           );
 

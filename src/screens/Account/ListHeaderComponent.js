@@ -30,6 +30,7 @@ import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
 import perFamilyAccountBalanceSummaryFooter from "../../generated/AccountBalanceSummaryFooter";
 import { normalize } from "../../helpers/normalizeSize";
 import FabActions from "../../components/FabActions";
+import { NoCountervaluePlaceholder } from "../../components/CounterValue.js";
 
 const renderAccountSummary = (
   account,
@@ -109,7 +110,11 @@ const renderListHeaderTitle = (
         </View>
         <LText style={styles.balanceSubText} color="smoke" semiBold>
           {/* $FlowFixMe */}
-          <CurrencyUnitValue {...items[1]} disableRounding />
+          {typeof items[1]?.value === "number" ? (
+            <CurrencyUnitValue {...items[1]} disableRounding />
+          ) : (
+            <NoCountervaluePlaceholder />
+          )}
         </LText>
       </View>
     </Touchable>
