@@ -5,6 +5,7 @@ import {
   InvalidAddress,
   FeeNotLoaded,
   InvalidAddressBecauseDestinationIsAlsoSource,
+  FeeTooHigh,
 } from "@ledgerhq/errors";
 import type { Account, TransactionStatus } from "../../types";
 import type { Transaction } from "./types";
@@ -40,6 +41,10 @@ const getTransactionStatus = async (
 
   if (totalSpent.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
+  }
+
+  if (amount.div(10).lt(estimatedFees)) {
+    warnings.feeTooHigh = new FeeTooHigh();
   }
 
   return Promise.resolve({
