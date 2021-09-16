@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "21.4.1",
+  "version": "21.4.2",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "@ledgerhq/hw-transport-node-hid": "6.6.0",
     "@ledgerhq/hw-transport-node-speculos": "6.3.0",
     "@ledgerhq/ledger-core": "6.13.0",
-    "@ledgerhq/live-common": "^21.4.1",
+    "@ledgerhq/live-common": "^21.4.2",
     "@ledgerhq/logs": "6.2.0",
     "@walletconnect/client": "^1.6.5",
     "asciichart": "^1.5.25",
