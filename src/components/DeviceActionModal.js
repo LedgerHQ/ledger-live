@@ -4,11 +4,13 @@ import { View, StyleSheet } from "react-native";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import { useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import DeviceAction from "./DeviceAction";
 import BottomModal from "./BottomModal";
 import ModalBottomAction from "./ModalBottomAction";
 import Close from "../icons/Close";
 import Touchable from "./Touchable";
+import InfoBox from "./InfoBox";
 
 type Props = {
   // TODO: fix action type
@@ -32,6 +34,7 @@ export default function DeviceActionModal({
   onModalHide,
 }: Props) {
   const { colors } = useTheme();
+  const { t } = useTranslation();
   return (
     <BottomModal
       id="DeviceActionModal"
@@ -42,15 +45,20 @@ export default function DeviceActionModal({
       {device && (
         <ModalBottomAction
           footer={
-            <View style={styles.footerContainer}>
-              <DeviceAction
-                action={action}
-                device={device}
-                request={request}
-                onClose={onClose}
-                onResult={onResult}
-                renderOnResult={renderOnResult}
-              />
+            <View style={styles.footerContainerContainer}>
+              <View style={styles.footerContainer}>
+                <DeviceAction
+                  action={action}
+                  device={device}
+                  request={request}
+                  onClose={onClose}
+                  onResult={onResult}
+                  renderOnResult={renderOnResult}
+                />
+              </View>
+              <InfoBox forceColor={{ text: colors.live }}>
+                {t("DeviceAction.stayInTheAppPlz")}
+              </InfoBox>
             </View>
           }
         />
@@ -70,6 +78,7 @@ export default function DeviceActionModal({
 const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: "row",
+    marginBottom: 10,
   },
   close: {
     position: "absolute",
