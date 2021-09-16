@@ -149,7 +149,7 @@ export const createAction = (
     const hasError = error || state.error;
     useEffect(() => {
       if (!opened || !device) {
-        setState({ ...initialState, isLoading: !hasError });
+        setState({ ...initialState, isLoading: !!device });
         return;
       }
 
@@ -175,7 +175,7 @@ export const createAction = (
               error,
             })
           ),
-          scan(reducer, initialState)
+          scan(reducer, { ...initialState, isLoading: !hasError })
         )
         .subscribe(setState);
       return () => {
