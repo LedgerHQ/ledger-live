@@ -30,7 +30,7 @@
     "sent": "Enviado",
     "or": "O",
     "rename": "Renombrar",
-    "learnMore": "Conoce más",
+    "learnMore": "Más información",
     "checkItOut": "Échale un vistazo",
     "viewDetails": "Ver detalles",
     "today": "Hoy",
@@ -679,7 +679,7 @@
         "description": "Protege, gestiona y participa con tus DOT con \nLedger Live"
       },
       "backupPack": {
-        "title": "Paquete de copia de respaldo",
+        "title": "Back-up pack",
         "description": "Protección óptima con un Nano X y un Nano S"
       },
       "buyCrypto": {
@@ -1088,7 +1088,7 @@
         "desc_4": "Si tu aplicación Mobile no detecta el Ledger Nano X al intentar emparejarlo, por favor prueba con lo siguiente:",
         "desc_5": "La aplicación Ledger Mobile te solicita que permitas la activación de los servicios de ubicación si no están ya activados, aunque en algunos modelos de teléfono esto no siempre se detecta correctamente. Por favor, ten en cuenta que la aplicación Ledger Mobile nunca utiliza tu información de ubicación, y que este permiso es necesario simplemente para Bluetooth en Android.",
         "desc_6": "Algunos usuarios informan que solucionaron sus problemas de conexión actualizando la versión de Android instalada en su teléfono a una más nueva. Por favor, consulta al fabricante de tu teléfono si existe una actualización disponible.",
-        "link": "Conoce más",
+        "link": "Más información",
         "bullets": {
           "0": {
             "label": "Ingresa a las opciones del sistema de la aplicación Ledger Live en tu teléfono Android."
@@ -1674,15 +1674,15 @@
       "privacyPolicy": "Política de privacidad",
       "privacyPolicyDesc": "Examina qué datos personales se recopilan, por qué y cómo se utilizan.",
       "liveReview": {
-        "title": "¡Reseña la aplicación!",
-        "ios": "Reseñar en App Store",
-        "android": "Reseñar en Google Play Store"
+        "title": "¡Califica la aplicación!",
+        "ios": "Calificar en App Store",
+        "android": "Calificar en Google Play Store"
       }
     },
     "help": {
       "title": "Ayuda",
       "header": "Ayuda",
-      "desc": "Aprende más sobre Ledger Live o cómo obtener ayuda.",
+      "desc": "Learn more about Ledger Live or how to get help.",
       "support": "Soporte de Ledger",
       "supportDesc": "Si tienes un problema, obtén ayuda mediante Ledger Live usando tu billetera de hardware.",
       "configureDevice": "Configurar un dispositivo",
@@ -1809,19 +1809,19 @@
             "cta": "Continuar",
             "title": "KYC enviado para su aprobación",
             "subtitle": "Tu KYC ha sido enviado y está en espera de aprobación.",
-            "link": "Conocer más sobre KYC"
+            "link": "Learn more about KYC"
           },
           "approved": {
             "cta": "Continuar",
             "title": "¡KYC aprobado!",
             "subtitle": "Tu KYC ha sido enviado y ha sido aprobado.",
-            "link": "Conocer más sobre KYC"
+            "link": "Learn more about KYC"
           },
           "closed": {
             "cta": "Restablecer KYC",
             "title": "Solicitud de KYC rechazada",
             "subtitle": "Wyre ha rechazado los datos que has proporcionado para fines de KYC",
-            "link": "Conocer más sobre KYC"
+            "link": "Learn more about KYC"
           },
           "form": {
             "firstName": "Nombre",
@@ -2424,17 +2424,17 @@
       "erc20": {
         "title": "Agregar token",
         "disclaimer": "{{tokenName}} es un Token ERC20.\nPuedes recibir tokens directamente en una cuenta de Ethereum.",
-        "learnMore": "Aprender más acerca de ERC20"
+        "learnMore": "Más información acerca de ERC20"
       },
       "trc10": {
         "title": "Agregar token",
         "disclaimer": "{{tokenName}} es un Token TRC10.\nPuedes recibir tokens directamente en una cuenta de Tron.",
-        "learnMore": "Aprender más acerca de TRC10"
+        "learnMore": "Más información acerca de TRC10"
       },
       "trc20": {
         "title": "Agregar token",
         "disclaimer": "{{tokenName}} es un Token TRC20.\nPuedes recibir tokens directamente en una cuenta de Tron.",
-        "learnMore": "Aprender más acerca de TRC20"
+        "learnMore": "Más información acerca de TRC20"
       }
     },
     "showMoreChainType": "Más tipos de direcciones",
@@ -2643,7 +2643,7 @@
       "title_plural": "Aplicación instalada correctamente. Ya puedes agregar tus cuentas",
       "notSupported": "Aplicación instalada correctamente, descubre más información sobre las aplicaciones instaladas en nuestro sitio web.",
       "manageAccount": "Agregar cuentas",
-      "learnMore": "Conoce más",
+      "learnMore": "Más información",
       "later": "Recordar después"
     },
     "firmware": {
