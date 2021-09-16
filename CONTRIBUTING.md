@@ -16,6 +16,8 @@ This repository hosts `@ledgerhq/live-common` JavaScript library which centraliz
 
 ## Expectations
 
+PR that are not ready to get merged will be kept as "Draft PR".
+
 As documented in the PR template, there are two very important points we require contributors to focus on:
 
 ### Changes have no impact
