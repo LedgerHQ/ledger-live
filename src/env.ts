@@ -156,7 +156,7 @@ const envDefinitions = {
     desc: "location of the crypto.org indexer API",
   },
   CRYPTO_ORG_TESTNET_INDEXER: {
-    def: "https://crypto.org/explorer/croeseid3",
+    def: "https://crypto.org/explorer/croeseid4",
     parser: stringParser,
     desc: "location of the crypto.org indexer testnet API",
   },
@@ -166,7 +166,7 @@ const envDefinitions = {
     desc: "location of the crypto.org indexer API",
   },
   CRYPTO_ORG_TESTNET_RPC_URL: {
-    def: "https://testnet-croeseid-3.crypto.org:26657",
+    def: "https://testnet-croeseid-4.crypto.org:26657",
     parser: stringParser,
     desc: "location of the crypto.org chain testnet node",
   },
