@@ -13,6 +13,7 @@ import Animated, {
   useCode,
   Easing,
 } from "react-native-reanimated";
+import { useTranslation } from "react-i18next";
 import { useClock, timing } from "react-native-redash/lib/module/v1";
 import type { ToastData } from "@ledgerhq/live-common/lib/notifications/ToastProvider/types";
 import { useTheme } from "@react-navigation/native";
@@ -33,8 +34,9 @@ const AnimatedTouchableOpacity = Animated.createAnimatedComponent(
 
 type Props = {
   toast: ToastData,
+  cta?: string,
   onPress: (toast: ToastData) => void,
-  onClose: (toast: ToastData) => void,
+  onClose?: (toast: ToastData) => void,
 };
 
 const icons = {
@@ -42,9 +44,9 @@ const icons = {
   warning: Warning,
 };
 
-export default function Snackbar({ toast, onPress, onClose }: Props) {
+export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
   const [anim] = useState(new Animated.Value(0));
-
+  const { t } = useTranslation();
   const clock = useClock();
   const [closed, setIsClosed] = useState(false);
 
@@ -65,7 +67,7 @@ export default function Snackbar({ toast, onPress, onClose }: Props) {
 
   const handleClose = useCallback(() => {
     setIsClosed(true);
-    setTimeout(() => onClose(toast), 1000);
+    setTimeout(() => onClose && onClose(toast), 1000);
   }, [onClose, toast]);
 
   const handleOnPress = useCallback(() => {
@@ -128,19 +130,34 @@ export default function Snackbar({ toast, onPress, onClose }: Props) {
           {Icon && <Icon size={17} color={iconColor} />}
         </View>
         <View style={styles.rightSection}>
-          <LText bold style={styles.subTitle} color="grey">
-            {type}
-          </LText>
-          <LText
-            semiBold
-            style={[styles.title, { color: colors.snackBarColor }]}
-          >
-            {title}
-          </LText>
+          {type && (
+            <LText bold style={styles.subTitle} color="grey">
+              {type}
+            </LText>
+          )}
+          <View style={styles.horizontal}>
+            <LText
+              semiBold
+              style={[styles.title, { color: colors.snackBarColor }]}
+            >
+              {title}
+            </LText>
+            {cta && (
+              <LText
+                fontSize={3}
+                style={[{ color: colors.live }, styles.cta]}
+                onPress={handleOnPress}
+              >
+                {cta}
+              </LText>
+            )}
+          </View>
         </View>
-        <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-          <Close size={16} color={colors.snackBarColor} />
-        </TouchableOpacity>
+        {onClose && (
+          <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+            <Close size={16} color={colors.snackBarColor} />
+          </TouchableOpacity>
+        )}
       </View>
     </AnimatedTouchableOpacity>
   );
@@ -155,7 +172,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingRight: 36,
   },
   leftSection: { width: 18, marginRight: 14 },
   rightSection: {
@@ -174,5 +190,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 4,
     right: 4,
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  cta: {
+    textDecorationLine: "underline",
   },
 });

@@ -3641,6 +3641,10 @@
     "title": "Notification center",
     "announcement": "Announcement",
     "liveStatus": "Ledger Live status",
+    "groupedToast": {
+      "text": "You have {{count}} unread notifications",
+      "cta": "See details"
+    },
     "news": {
       "title": "News",
       "titleCount": "News ({{count}})",

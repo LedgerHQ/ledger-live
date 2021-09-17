@@ -1,6 +1,8 @@
 // @flow
 import React, { useCallback } from "react";
-import { StyleSheet, FlatList, Platform } from "react-native";
+import { View, StyleSheet, FlatList, Platform } from "react-native";
+import { useTranslation } from "react-i18next";
+import { v4 as uuid } from "uuid";
 
 import { useToasts } from "@ledgerhq/live-common/lib/notifications/ToastProvider/index";
 import type { ToastData } from "@ledgerhq/live-common/lib/notifications/ToastProvider/types";
@@ -14,10 +16,11 @@ import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
 export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { dismissToast, toasts } = useToasts();
+  const { t } = useTranslation();
 
   const navigate = useCallback(
     (toast: ToastData) => {
-      if (toast.type === "announcement") {
+      if (toast.type === "announcement" || !toast.type) {
         toasts.forEach(({ id }) => dismissToast(id));
         RootNavigation.navigate(NavigatorName.NotificationCenter, {
           screen: ScreenName.NotificationCenterNews,
@@ -32,10 +35,19 @@ export default function SnackbarContainer() {
     [dismissToast],
   );
 
-  return hasCompletedOnboarding && toasts && toasts.length ? (
+  const groupedSnackbarsItems = {
+    id: uuid(),
+    title: t("notificationCenter.groupedToast.text", { count: toasts?.length }),
+    icon: "info",
+  };
+
+  return hasCompletedOnboarding &&
+    toasts &&
+    toasts.length &&
+    toasts.length === 1 ? (
     <FlatList
       style={styles.root}
-      data={toasts.slice(Math.max(0, toasts.length - 3))}
+      data={[toasts[0]]} // NB in case we change our minds about the max
       keyExtractor={item => item.id}
       renderItem={({ item }) => (
         <Snackbar
@@ -45,6 +57,14 @@ export default function SnackbarContainer() {
         />
       )}
     />
+  ) : toasts.length && toasts.length > 1 ? (
+    <View style={styles.root}>
+      <Snackbar
+        toast={groupedSnackbarsItems}
+        cta={t("notificationCenter.groupedToast.cta")}
+        onPress={navigate}
+      />
+    </View>
   ) : null;
 }
 
