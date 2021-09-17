@@ -97,6 +97,7 @@ artifacts/
 #CI
 **/vendor/**
 .bundle/
+**/*.jks
 
 
 
