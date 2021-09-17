@@ -2456,6 +2456,7 @@
     }
   },
   "DeviceAction": {
+    "stayInTheAppPlz": "Stay in the app and keep your Nano X nearby",
     "allowAppPermission": "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken": "管理个人 {{token}} 代币",
     "allowManagerPermission": "允许 {{wording}} 在您的设备上运行",

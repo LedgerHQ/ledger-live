@@ -2456,6 +2456,7 @@
     }
   },
   "DeviceAction": {
+    "stayInTheAppPlz": "Restez dans l'app et gardez votre Nano X en main.",
     "allowAppPermission": "Ouvrez l'app {{wording}} sur votre appareil.",
     "allowAppPermissionSubtitleToken": "pour gérer vos tokens {{token}}",
     "allowManagerPermission": "Autoriser {{wording}} sur l'appareil",

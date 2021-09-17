@@ -2456,6 +2456,7 @@
     }
   },
   "DeviceAction": {
+    "stayInTheAppPlz": "Stay in the app and keep your Nano X nearby",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow {{wording}} on your device",
