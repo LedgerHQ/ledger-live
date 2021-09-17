@@ -4,6 +4,8 @@ import bitcoin from "../families/bitcoin/deviceTransactionConfig";
 
 import cosmos from "../families/cosmos/deviceTransactionConfig";
 
+import elrond from "../families/elrond/deviceTransactionConfig";
+
 import ethereum from "../families/ethereum/deviceTransactionConfig";
 
 import polkadot from "../families/polkadot/deviceTransactionConfig";
@@ -21,6 +23,7 @@ export default {
   algorand,
   bitcoin,
   cosmos,
+  elrond,
   ethereum,
   polkadot,
   ripple,
