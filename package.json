@@ -11,14 +11,11 @@
     "start": "react-native start",
     "ios": "react-native run-ios",
     "android": "react-native run-android --appIdSuffix=debug",
-
     "detox": "./node_modules/.bin/detox",
     "e2e:build": "yarn detox build",
     "e2e:test": "yarn detox test",
-
     "prebeta": "bundle install",
     "beta": "bundle exec fastlane beta --env production",
-
     "ios:staging": "ENVFILE=.env.staging react-native run-ios --configuration Staging",
     "preios:local:adhoc": "bundle install",
     "ios:local:adhoc": "bundle exec fastlane ios local_adhoc --env adhoc",
@@ -28,14 +25,12 @@
     "ios:ci:testflight": "bundle exec fastlane ios ci_testflight --env production",
     "preios:ci:adhoc": "bundle install",
     "ios:ci:adhoc": "bundle exec fastlane ios ci_adhoc --env adhoc",
-
     "preandroid:local:apk": "bundle install",
     "android:local:apk": "bundle exec fastlane android apk",
     "preandroid:local:beta": "bundle install",
     "android:local:beta": "bundle exec fastlane android local_beta --env production",
     "preandroid:ci:playstore": "bundle install",
     "android:ci:playstore": "bundle exec fastlane android ci_playstore --env production",
-
     "android:staging": "cd android && ./gradlew assembleStagingRelease",
     "android:install": "./scripts/install-and-run-apk.sh",
     "android:clean": "$ANDROID_HOME/platform-tools/adb shell pm clear com.ledger.live",
@@ -43,7 +38,6 @@
     "android:release": "./scripts/android-release.sh",
     "mock-android": "yarn android:mock && yarn android:install",
     "staging-android": "yarn android:staging && yarn android:install",
-
     "prettier": "prettier --write \"src/**/*.js\"",
     "lint": "eslint src",
     "flow": "flow",
@@ -52,7 +46,6 @@
     "sync-locales": "./scripts/sync-locales.sh",
     "hack-for-ios-simulator": "cd node_modules/@ledgerhq/react-native-ledger-core/ios/Frameworks && mv universal real_universal && cp -R x86 universal",
     "test-deep-links": "ws --spa ./deep-links-test-page.html",
-
     "ui:start": "cd uilib && yarn start",
     "ui:build": "cd uilib && yarn build",
     "ui:storybook": "cd uilib && yarn storybook"
@@ -68,11 +61,11 @@
     "@ledgerhq/devices": "6.7.0",
     "@ledgerhq/errors": "6.2.0",
     "@ledgerhq/hw-app-btc": "6.7.0",
-    "@ledgerhq/hw-app-eth": "6.7.0",
+    "@ledgerhq/hw-app-eth": "6.8.0",
     "@ledgerhq/hw-app-xrp": "6.7.0",
     "@ledgerhq/hw-transport": "6.7.0",
     "@ledgerhq/hw-transport-http": "6.7.0",
-    "@ledgerhq/live-common": "21.5.0",
+    "@ledgerhq/live-common": "21.5.1",
     "@ledgerhq/logs": "6.2.0",
     "@ledgerhq/react-native-hid": "6.7.0",
     "@ledgerhq/react-native-hw-transport-ble": "6.7.0",

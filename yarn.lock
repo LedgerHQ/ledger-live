@@ -1711,10 +1711,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@6.7.0", "@ledgerhq/cryptoassets@^6.7.0":
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.7.0.tgz#1f8b83c06a0595a685000b5777c8cfb72caf8d2e"
-  integrity sha512-7yOBVTD2xBLki3NFwFeNNQe/ipKQGAHVLfs5VOc73VWv+cDlJnpddWTO+tJ8KAYsvc1uVfosUYdFj97A9EeBJw==
+"@ledgerhq/cryptoassets@6.8.0", "@ledgerhq/cryptoassets@^6.8.0":
+  version "6.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.8.0.tgz#86529b3413cf84d09b667b39f1ca0592a0ec1488"
+  integrity sha512-0YUdUYgE5JcIsofZ5yvD11bg+ndKs8Ct/iHQzapdeRTS8GZ2EpIwBjfiOXE4cljQYgK8E1yAuo7LG1Pgvo1DEw==
   dependencies:
     invariant "2"
 
@@ -1779,12 +1779,12 @@
     "@ledgerhq/hw-transport" "^6.7.0"
     bip32-path "^0.4.2"
 
-"@ledgerhq/hw-app-eth@6.7.0":
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.7.0.tgz#6d87686359494a589f73b6091f8642b05d160a15"
-  integrity sha512-ejSW9k2aZhOehW9ZnI1RK6P3PBV7XNhvVcl5zZCYqgKGQVY+p3isMr9+xfsMySKADVYEeQT6BRWibCKawJdxFw==
+"@ledgerhq/hw-app-eth@6.8.0":
+  version "6.8.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.8.0.tgz#cc2882e54a355e6eb440e50535cd33cafe7ff0f4"
+  integrity sha512-v57djyhdAvqkcv9NPrRLfMKUfNl6Ss3YOGby5xA28eHLrScriI/nDQMPChqgnMh3m9zM5wPJTxUqD7R2Rmw40Q==
   dependencies:
-    "@ledgerhq/cryptoassets" "^6.7.0"
+    "@ledgerhq/cryptoassets" "^6.8.0"
     "@ledgerhq/errors" "^6.2.0"
     "@ledgerhq/hw-transport" "^6.7.0"
     "@ledgerhq/logs" "^6.2.0"
@@ -1892,20 +1892,20 @@
     bignumber.js "^9.0.1"
     json-rpc-2.0 "^0.2.16"
 
-"@ledgerhq/live-common@21.5.0":
-  version "21.5.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-21.5.0.tgz#c6bf094934bb98e0913bb533d82d1562453618ca"
-  integrity sha512-+iO8WEQA46DlPg3LVRn0Y6t4rPo7ISVq/Se1+wWQD5jTnnqR6OEyg/v6Zx1b5t89na8iuHQ1un/yNos8MBDDtA==
+"@ledgerhq/live-common@21.5.1":
+  version "21.5.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-21.5.1.tgz#525adb4376a9fb8a95dd3d8859951068093e47b6"
+  integrity sha512-Ub1RK6Is8OPCxWPAWTiI/74W+QQRR0E9nQ0G2615HEwOkvZKMS4tSKv6tsYTbwqWNhwF5Tw78sXKysX1GvTtpQ==
   dependencies:
     "@crypto-com/chain-jslib" "0.0.19"
     "@ledgerhq/compressjs" "1.3.2"
-    "@ledgerhq/cryptoassets" "6.7.0"
+    "@ledgerhq/cryptoassets" "6.8.0"
     "@ledgerhq/devices" "6.7.0"
     "@ledgerhq/errors" "6.2.0"
     "@ledgerhq/hw-app-algorand" "6.7.0"
     "@ledgerhq/hw-app-btc" "6.7.0"
     "@ledgerhq/hw-app-cosmos" "6.7.0"
-    "@ledgerhq/hw-app-eth" "6.7.0"
+    "@ledgerhq/hw-app-eth" "6.8.0"
     "@ledgerhq/hw-app-polkadot" "6.7.0"
     "@ledgerhq/hw-app-str" "6.7.0"
     "@ledgerhq/hw-app-tezos" "6.7.0"
@@ -1958,7 +1958,7 @@
     secp256k1 "^4.0.2"
     semver "^7.3.5"
     sha.js "^2.4.11"
-    stellar-sdk "^8.2.5"
+    stellar-sdk "^8.3.0"
     triple-beam "^1.3.0"
     winston "^3.3.3"
     xstate "^4.25.0"
@@ -12497,10 +12497,10 @@ stealthy-require@^1.1.1:
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
 
-stellar-base@^5.3.2:
-  version "5.3.2"
-  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-5.3.2.tgz#12b944cab10030687dfc443fa2f5ac735e7cb64e"
-  integrity sha512-KZizceCz15oqwKdNRMfHtBGsCBv4Xea1kOUxgMqQ0TU/HFUg3Vu78rzTZsRWdU7qrG48yJWdwm8R1dWjVL+LRw==
+stellar-base@^6.0.3:
+  version "6.0.3"
+  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-6.0.3.tgz#14ac70ee74a974142fb2509b01649f9b3bb5cf3f"
+  integrity sha512-3xQo7VU2u84CQZ4ZxOk+TVXAUuMkwNbWzMcUSEcYja5i5CRX1RK1ivP9pn/VENIsLgu5tWhQeBMt3WHOo1ryBw==
   dependencies:
     base32.js "^0.1.0"
     bignumber.js "^4.0.0"
@@ -12512,10 +12512,10 @@ stellar-base@^5.3.2:
   optionalDependencies:
     sodium-native "^2.3.0"
 
-stellar-sdk@^8.2.5:
-  version "8.2.5"
-  resolved "https://registry.yarnpkg.com/stellar-sdk/-/stellar-sdk-8.2.5.tgz#3f6b8f87749f2bfe29a3cf6370f8650f3550cadf"
-  integrity sha512-w10LVJE/0Ug5ymw7IR4mibNtHWZNJcaIlMEdyUIgMwCnrxYKPT6VSUCCRHYEemAR2fDzi2ZOKql1mxq2sMOV8Q==
+stellar-sdk@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/stellar-sdk/-/stellar-sdk-8.3.0.tgz#35e108ca10ae92a89a6e10f713cd073738a1ace2"
+  integrity sha512-yaeyoCjNE3OqOKktOGxPd2OqcE7vWx/5suPgmcDAqdjLLZgMw6o5W6jd0UyjpKmUQX3P0cXrMZLYJg+G/2qy+w==
   dependencies:
     "@types/eventsource" "^1.1.2"
     "@types/node" ">= 8"
@@ -12528,7 +12528,7 @@ stellar-sdk@^8.2.5:
     eventsource "^1.0.7"
     lodash "^4.17.11"
     randombytes "^2.1.0"
-    stellar-base "^5.3.2"
+    stellar-base "^6.0.3"
     toml "^2.3.0"
     tslib "^1.10.0"
     urijs "^1.19.1"
