@@ -3639,6 +3639,10 @@
     "title": "通知中心",
     "announcement": "公告",
     "liveStatus": "Ledger Live 状态",
+    "groupedToast": {
+      "text": "You have {{count}} unread notifications",
+      "cta": "See details"
+    },
     "news": {
       "title": "新闻",
       "titleCount": "新闻 ({{count}})",

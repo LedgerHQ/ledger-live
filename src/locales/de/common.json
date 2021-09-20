@@ -3639,6 +3639,10 @@
     "title": "Benachrichtigungszentrale",
     "announcement": "Ankündigung",
     "liveStatus": "Ledger Live Status",
+    "groupedToast": {
+      "text": "You have {{count}} unread notifications",
+      "cta": "See details"
+    },
     "news": {
       "title": "Neuigkeiten",
       "titleCount": "Neuigkeiten ({{count}})",
