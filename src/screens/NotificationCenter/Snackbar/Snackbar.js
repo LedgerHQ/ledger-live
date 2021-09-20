@@ -46,7 +46,6 @@ const icons = {
 
 export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
   const [anim] = useState(new Animated.Value(0));
-  const { t } = useTranslation();
   const clock = useClock();
   const [closed, setIsClosed] = useState(false);
 
