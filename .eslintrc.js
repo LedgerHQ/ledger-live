@@ -48,5 +48,6 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-namespace": ["error", { allowDeclarations: true }],
+    "@typescript-eslint/no-explicit-any": 0,
   },
 };
