@@ -2456,6 +2456,7 @@
     }
   },
   "DeviceAction": {
+    "stayInTheAppPlz": "Restez dans l'app et gardez votre Nano X en main.",
     "allowAppPermission": "Ouvrez l'app {{wording}} sur votre appareil.",
     "allowAppPermissionSubtitleToken": "pour gérer vos tokens {{token}}",
     "allowManagerPermission": "Autoriser {{wording}} sur l'appareil",
@@ -3638,6 +3639,10 @@
     "title": "Fil d'informations",
     "announcement": "Annonces",
     "liveStatus": "Statut de Ledger Live",
+    "groupedToast": {
+      "text": "You have {{count}} unread notifications",
+      "cta": "See details"
+    },
     "news": {
       "title": "Actualités",
       "titleCount": "Actualités ({{count}})",

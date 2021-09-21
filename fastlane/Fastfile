@@ -27,17 +27,10 @@ package = load_json(json_path: "./package.json")
 lane :beta do |options|
   ensure_git_status_clean
 
-  # Makes sure Android Keystore File is set for release
-  # as we need to sign Android app (which can still complete even without signing)
-  if (ENV["ANDROID_KEYSTORE_FILE"] == nil)
-    puts "You need to set an ANDROID_KEYSTORE_FILE env variable to sign Android app"
-    next
-  end
-
   system "yarn --frozen-lockfile --network-timeout 100000"
 
   Fastlane::LaneManager.cruise_lane('ios', 'ci_testflight', nil, 'production')
-  Fastlane::LaneManager.cruise_lane('android', 'beta', nil)
+  Fastlane::LaneManager.cruise_lane('android', 'ci_playstore', nil, 'production')
 
 end
 
@@ -68,15 +61,11 @@ platform :ios do
     build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
     commit_version_bump(
       message: "Bump iOS version to v#{package["version"]}-#{build_number}",
-			xcodeproj: XCODE_PROJECT
+      xcodeproj: XCODE_PROJECT
     )
     add_git_tag(
       tag: "ios-v#{package["version"]}-#{build_number}"
     )
-
-    # push_to_git_remote(
-    #   remote: options.fetch(:remote,  "origin")
-    # )
   end
 
   desc "private: setup ci for iOS build"
@@ -98,7 +87,7 @@ platform :ios do
     )
   end
 
-	desc "buid for deployment (app-store or ad-hoc)"
+  desc "buid for deployment (app-store or ad-hoc)"
   private_lane :build do |options|
     export_options_method = (options[:adhoc] ? "ad-hoc" : "app-store")
     code_sign_identity = "iPhone Distribution"
@@ -139,8 +128,6 @@ platform :ios do
       )
     end
 
-
-
     update_code_signing_settings(
       use_automatic_signing: false,
       path: XCODE_PROJECT,
@@ -166,7 +153,7 @@ platform :ios do
     )
   end
 
-	desc "upload to Testflight (only to be run after an app-store build)"
+  desc "upload to Testflight (only to be run after an app-store build)"
   private_lane :upload do
     pilot(
       skip_submission: true,
@@ -177,7 +164,7 @@ platform :ios do
   end
 
   # ============================= END PRIVATE =============================
-	# ============================= LOCAL BUILD =============================
+  # ============================= LOCAL BUILD =============================
 
   desc "rebuild and push to TestFlight without bumping version or tagging"
   lane :clean_beta do
@@ -191,32 +178,32 @@ platform :ios do
     clean_beta
   end
 
-	desc "build adhoc version"
-	lane :local_adhoc do
-		build(adhoc: true)
-	end
+  desc "build adhoc version"
+  lane :local_adhoc do
+    build(adhoc: true)
+  end
 
-	# =========================== END LOCAL BUILD ============================
-  # =============================== CI BUILD ===============================
+  # =========================== END LOCAL BUILD ===========================
+  # ============================== CI BUILD ===============================
 
   desc "ci: create testflight version"
   lane :ci_testflight do |options|
-		prepare_ios_beta
+    prepare_ios_beta
     setup_ios_ci
-		build(ci: true)
+    build(ci: true)
     upload
   end
 
   desc "ci: create adhoc version"
   lane :ci_adhoc do |options|
     setup_ios_ci
-		build(
+    build(
       adhoc: true,
       ci: true
     )
   end
 
-  # =============================== CI BUILD ===============================
+  # ============================ END CI BUILD =============================
 end
 
 platform :android do
@@ -225,31 +212,14 @@ platform :android do
     set_version_name
   end
 
+  # =============================== PRIVATE ===============================
+
   desc "private: set version name from package.json"
   private_lane :set_version_name do
     version_name = package["version"]
     android_set_version_name(
       gradle_file: 'android/app/build.gradle',
       version_name: version_name,
-    )
-  end
-
-  desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
-  private_lane :build do |options|
-    type = options.fetch(:type, "Release")
-
-    gradle(task: "clean", project_dir: 'android/')
-    gradle(
-      task: "assemble",
-      build_type: type,
-      print_command: false,
-      properties: {
-        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
-        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
-        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
-        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
-      },
-      project_dir: 'android/'
     )
   end
 
@@ -269,25 +239,43 @@ platform :android do
       message: "Bump android version to v#{package["version"]}-#{version_code}"
     )
     add_git_tag(
-      tag: "android-v#{package["version"]}-#{version_code}",
-      sign: true
-    )
-    push_to_git_remote(
-      remote: options.fetch(:remote,  "origin")
+      tag: "android-v#{package["version"]}-#{version_code}"
     )
   end
 
-  desc "build APK (can be uploaded to Play Store)"
-  lane :apk do
-    build(type: "Release")
+  desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
+  private_lane :build do |options|
+    type = options.fetch(:type, "Release")
+
+    gradle(task: "clean", project_dir: 'android/')
+    gradle(
+      task: "bundle",
+      build_type: type,
+      print_command: false,
+      properties: {
+        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
+        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
+      },
+      project_dir: 'android/'
+    )
   end
 
   desc "upload to Play Store"
-  lane :upload do
+  private_lane :upload do
     upload_to_play_store(
       track: 'internal',
       package_name: 'com.ledger.live'
     )
+  end
+
+  # ============================= END PRIVATE =============================
+  # ============================= LOCAL BUILD =============================
+
+  desc "build APK (can be uploaded to Play Store)"
+  lane :apk do
+    build(type: "Release")
   end
 
   desc "rebuild and upload beta to Google Play Store without bumping version or tagging"
@@ -297,10 +285,20 @@ platform :android do
   end
 
   desc "build and upload beta to Google Play Store"
-  lane :beta do |options|
-    prepare_android_internal(
-      remote: options.fetch(:remote, "origin")
-    )
+  lane :local_beta do |options|
+    prepare_android_internal
     clean_beta
   end
+
+  # =========================== END LOCAL BUILD ===========================
+  # ============================== CI BUILD ===============================
+
+  desc "build APK and send to Google Play Store"
+  lane :ci_playstore do
+    prepare_android_internal
+    build(type: "Release")
+    upload
+  end
+
+  # ============================ END CI BUILD =============================
 end
