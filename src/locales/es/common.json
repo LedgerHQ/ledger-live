@@ -2,8 +2,9 @@
   "common": {
     "cancel": "Cancelar",
     "apply": "Aplicar",
+    "seeAll": "Ver todo",
     "back": "Atrás",
-    "delete": "Borrar",
+    "delete": "Eliminar",
     "paste": "Pegar",
     "yes": "Sí",
     "no": "No",
@@ -29,7 +30,7 @@
     "sent": "Enviado",
     "or": "O",
     "rename": "Renombrar",
-    "learnMore": "Conoce más",
+    "learnMore": "Más información",
     "checkItOut": "Échale un vistazo",
     "viewDetails": "Ver detalles",
     "today": "Hoy",
@@ -43,9 +44,6 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Agregar",
-    "slow": "lenta",
-    "medium": "medium",
-    "fast": "rápida",
     "token": "Token",
     "token_plural": "Tokens",
     "subaccount": "Subcuenta",
@@ -85,6 +83,9 @@
     "buyEth": "Comprar Ethereum"
   },
   "errors": {
+    "countervaluesUnavailable": {
+      "title": "We're not able to provide a countervalue for this asset at the moment"
+    },
     "AccountAwaitingSendPendingOperations": {
       "title": "Hay una operación pendiente para esta cuenta",
       "description": "Espera a que finalice la operación."
@@ -207,7 +208,7 @@
       "description": "Se produjo un error inesperado. Inténtalo de nuevo."
     },
     "DeviceNotGenuine": {
-      "title": "Es posible que el dispositivo no sea original",
+      "title": "Es posible que el dispositivo no sea auténtico",
       "description": "Guarda tus registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
     "DeviceNameInvalid": {
@@ -420,7 +421,7 @@
       "description": "No tienes activos de Energía para descongelar."
     },
     "TronUnfreezeNotExpired": {
-      "title": "La descongelación todavía no está disponible",
+      "title": "El descongelamiento todavía no está disponible",
       "description": "Espera 3 días a partir de tu última operación de congelación."
     },
     "TronVoteRequired": {
@@ -598,6 +599,9 @@
       "high": "Alta",
       "standard": "Estándar",
       "low": "Baja",
+      "slow": "slow",
+      "medium": "medium",
+      "fast": "fast",
       "custom": "Personalizado",
       "blockCount": "{{blockCount}} bloques"
     }
@@ -675,7 +679,7 @@
         "description": "Protege, gestiona y participa con tus DOT con \nLedger Live"
       },
       "backupPack": {
-        "title": "Paquete de copia de respaldo",
+        "title": "Back-up pack",
         "description": "Protección óptima con un Nano X y un Nano S"
       },
       "buyCrypto": {
@@ -1084,7 +1088,7 @@
         "desc_4": "Si tu aplicación Mobile no detecta el Ledger Nano X al intentar emparejarlo, por favor prueba con lo siguiente:",
         "desc_5": "La aplicación Ledger Mobile te solicita que permitas la activación de los servicios de ubicación si no están ya activados, aunque en algunos modelos de teléfono esto no siempre se detecta correctamente. Por favor, ten en cuenta que la aplicación Ledger Mobile nunca utiliza tu información de ubicación, y que este permiso es necesario simplemente para Bluetooth en Android.",
         "desc_6": "Algunos usuarios informan que solucionaron sus problemas de conexión actualizando la versión de Android instalada en su teléfono a una más nueva. Por favor, consulta al fabricante de tu teléfono si existe una actualización disponible.",
-        "link": "Conoce más",
+        "link": "Más información",
         "bullets": {
           "0": {
             "label": "Ingresa a las opciones del sistema de la aplicación Ledger Live en tu teléfono Android."
@@ -1233,17 +1237,10 @@
     "syncError": "Error de sincronización",
     "syncFailed": "La sincronización ha fallado",
     "syncPending": "Sincronizando...",
-    "greeting": {
-      "morning": "Buenos días",
-      "evening": "Buenas noches",
-      "afternoon": "Buenas tardes"
-    },
     "transactionsPendingConfirmation": {
       "title": "Saldo no sincronizado",
       "desc": "Algunas transacciones aún no están confirmadas. Las mismas se reflejarán en tu saldo y quedarán disponibles después de ser confirmadas."
     },
-    "summary": "Aquí tienes el resumen de tu cuenta",
-    "summary_plural": "Tus {{count}} cuentas están sincronizadas.",
     "emptyState": {
       "noAppsTitle": "Instalar una aplicación en mi dispositivo",
       "noAppsDesc": "Instala las aplicaciones en tu dispositivo antes de agregar cuentas en Ledger Live. Ingresa a Manager para instalar las aplicaciones.",
@@ -1314,9 +1311,10 @@
       "UNBOND": "Desvincular",
       "REWARD_PAYOUT": "Recompensa",
       "SLASH": "Penalización",
-      "WITHDRAW_UNBONDED": "Retiro desvinculado",
+      "WITHDRAW_UNBONDED": "Retiro",
       "NOMINATE": "Nominación",
-      "CHILL": "Borrar nominaciones"
+      "CHILL": "Borrar nominaciones",
+      "SET_CONTROLLER": "Definir controladora"
     }
   },
   "operationDetails": {
@@ -1328,8 +1326,8 @@
     "failed": "Fallida",
     "fees": "Tarifas de red",
     "noFees": "Sin tarifas",
-    "from": "From",
-    "to": "To",
+    "from": "De",
+    "to": "A",
     "identifier": "ID de la transacción",
     "viewOperation": "Ver en el explorador",
     "whatIsThis": "¿Qué es esta operación?",
@@ -1676,15 +1674,15 @@
       "privacyPolicy": "Política de privacidad",
       "privacyPolicyDesc": "Examina qué datos personales se recopilan, por qué y cómo se utilizan.",
       "liveReview": {
-        "title": "¡Reseña la aplicación!",
-        "ios": "Reseñar en App Store",
-        "android": "Reseñar en Google Play Store"
+        "title": "¡Califica la aplicación!",
+        "ios": "Calificar en App Store",
+        "android": "Calificar en Google Play Store"
       }
     },
     "help": {
       "title": "Ayuda",
       "header": "Ayuda",
-      "desc": "Aprende más sobre Ledger Live o cómo obtener ayuda.",
+      "desc": "Learn more about Ledger Live or how to get help.",
       "support": "Soporte de Ledger",
       "supportDesc": "Si tienes un problema, obtén ayuda mediante Ledger Live usando tu billetera de hardware.",
       "configureDevice": "Configurar un dispositivo",
@@ -1694,8 +1692,8 @@
       "clearCacheModal": "¿Deseas continuar?",
       "clearCacheModalDesc": "Se realizará un nuevo y completo análisis de las transacciones en la red. Se reconstruirán los historiales de las cuentas y se volverán a calcular los saldos.",
       "clearCacheButton": "Borrar",
-      "exportLogs": "Exportar registros",
-      "exportLogsDesc": "Exportar los registros de Ledger Live puede ayudar a solucionar problemas.",
+      "exportLogs": "Save logs",
+      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
       "hardReset": "Restablecer Ledger Live",
       "hardResetDesc": "Esto no tiene ningún impacto sobre tus activos. Borra todos los datos de Ledger Live, incluidos los datos de cuentas, historial de transacciones y ajustes. Utiliza tu dispositivo Ledger para volver a cargar y administrar tus activos cripto a un Ledger Live vacío.",
       "repairDevice": "Repara tu dispositivo Ledger",
@@ -1811,19 +1809,19 @@
             "cta": "Continuar",
             "title": "KYC enviado para su aprobación",
             "subtitle": "Tu KYC ha sido enviado y está en espera de aprobación.",
-            "link": "Conocer más sobre KYC"
+            "link": "Learn more about KYC"
           },
           "approved": {
             "cta": "Continuar",
             "title": "¡KYC aprobado!",
             "subtitle": "Tu KYC ha sido enviado y ha sido aprobado.",
-            "link": "Conocer más sobre KYC"
+            "link": "Learn more about KYC"
           },
           "closed": {
             "cta": "Restablecer KYC",
             "title": "Solicitud de KYC rechazada",
             "subtitle": "Wyre ha rechazado los datos que has proporcionado para fines de KYC",
-            "link": "Conocer más sobre KYC"
+            "link": "Learn more about KYC"
           },
           "form": {
             "firstName": "Nombre",
@@ -1924,7 +1922,7 @@
           "fees": "Tarifas máx",
           "disclaimer": {
             "title": "Términos y condiciones",
-            "desc": "By clicking “Accept”,  I acknowledge and accept that this service is exclusively governed by <0>{{provider}}</0>'s Terms & Conditions.",
+            "desc": "Al hacer clic en “Aceptar”, reconozco y acepto que este servicio se rige exclusivamente por los Términos y Condiciones de <0>{{provider}}</0>.",
             "tos": "Términos y Condiciones",
             "accept": "Aceptar",
             "reject": "Cerrar"
@@ -2426,17 +2424,17 @@
       "erc20": {
         "title": "Agregar token",
         "disclaimer": "{{tokenName}} es un Token ERC20.\nPuedes recibir tokens directamente en una cuenta de Ethereum.",
-        "learnMore": "Aprender más acerca de ERC20"
+        "learnMore": "Más información acerca de ERC20"
       },
       "trc10": {
         "title": "Agregar token",
         "disclaimer": "{{tokenName}} es un Token TRC10.\nPuedes recibir tokens directamente en una cuenta de Tron.",
-        "learnMore": "Aprender más acerca de TRC10"
+        "learnMore": "Más información acerca de TRC10"
       },
       "trc20": {
         "title": "Agregar token",
         "disclaimer": "{{tokenName}} es un Token TRC20.\nPuedes recibir tokens directamente en una cuenta de Tron.",
-        "learnMore": "Aprender más acerca de TRC20"
+        "learnMore": "Más información acerca de TRC20"
       }
     },
     "showMoreChainType": "Más tipos de direcciones",
@@ -2458,9 +2456,10 @@
     }
   },
   "DeviceAction": {
+    "stayInTheAppPlz": "Stay in the app and keep your Nano X nearby",
     "allowAppPermission": "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken": "para administrar los tokens {{token}}",
-    "allowManagerPermission": "Permite {{wording}} en tu dispositivo",
+    "allowManagerPermission": "Permite (Allow) {{wording}} en tu dispositivo",
     "loading": "Cargando...",
     "turnOnAndUnlockDevice": "Enciende y desbloquea tu dispositivo",
     "connectAndUnlockDevice": "Conecta y desbloquea tu dispositivo",
@@ -2514,7 +2513,7 @@
         "title": "Habilita Ledger Manager en tu {{productName}}"
       },
       "genuineCheckPending": {
-        "title": "Comprobando si el dispositivo es original..."
+        "title": "Comprobando si el dispositivo es auténtico..."
       },
       "dashboard": {
         "title": "Vuelve al Dashboard en tu {{productName}}"
@@ -2578,7 +2577,7 @@
     "alreadyPaired": "Ya emparejado"
   },
   "DeviceItemSummary": {
-    "genuine": "Tu dispositivo es original",
+    "genuine": "Tu dispositivo es auténtico",
     "genuineFailed": "La autenticación del dispositivo <1><0>ha fallado</0></1>"
   },
   "DeviceNameRow": {
@@ -2635,7 +2634,7 @@
     "storage": {
       "title": "Almacenamiento",
       "used": "Utilizado",
-      "genuine": "Tu dispositivo es original",
+      "genuine": "Tu dispositivo es auténtico",
       "appsInstalled": "<0>{{number}}</0> aplicación instalada",
       "appsInstalled_plural": "<0>{{number}}</0> aplicaciones instaladas",
       "storageAvailable": "disponible"
@@ -2645,7 +2644,7 @@
       "title_plural": "Aplicación instalada correctamente. Ya puedes agregar tus cuentas",
       "notSupported": "Aplicación instalada correctamente, descubre más información sobre las aplicaciones instaladas en nuestro sitio web.",
       "manageAccount": "Agregar cuentas",
-      "learnMore": "Conoce más",
+      "learnMore": "Más información",
       "later": "Recordar después"
     },
     "firmware": {
@@ -2724,7 +2723,7 @@
   },
   "AuthenticityRow": {
     "title": "Autenticación",
-    "subtitle": "Original"
+    "subtitle": "Genuine"
   },
   "RemoveRow": {
     "title": "Quitar dispositivo"
@@ -2750,6 +2749,11 @@
       "flash-bootloader": "Actualizando Bootloader ",
       "flash": "Flashing a tu dispositivo",
       "firmware": "Actualización del firmware"
+    },
+    "newVersion": "Update Firmware to {{version}} is available",
+    "drawerUpdate": {
+      "title": "Firmware Update",
+      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3221,6 +3225,7 @@
       "header": "Nominaciones",
       "nominate": "Nominar",
       "chill": "Borrar nominaciones",
+      "setController": "Cambiar controladora",
       "status": "Estado",
       "totalStake": "Participación total",
       "amount": "Importe vinculado",
@@ -3241,8 +3246,8 @@
       "oversubscribed": "Sobresuscrito ({{nominatorsCount}})",
       "oversubscribedInfo": "Solo los nominadores principales {{maxNominatorRewardedPerValidator}} con el mayor importe vinculado reciben recompensas",
       "hasPendingBondOperation": "Aún existe una operación de vinculación pendiente de confirmación",
-      "externalControllerUnsupported": "Esta cuenta de reserva está controlada por otra cuenta con la dirección <0>{{address}}</0>. Las operaciones de participación en las cuentas que están controladas por una cuenta distinta no son compatibles con Ledger Live. Utiliza una billetera alternativa como Polkadot.js",
-      "externalStashUnsupported": "Esta cuenta controla una cuenta de reserva cuya dirección es <0>{{address}}</0>. Las operaciones de participación en las cuentas de reserva independientes no son compatibles con Ledger Live. Utiliza una billetera alternativa como Polkadot.js",
+      "externalControllerUnsupported": "Esta cuenta de almacenamiento está controlada por una cuenta distinta cuya dirección es <0>{{controllerAddress}}</0>. Para participar tokens mediante Ledger Live, debes definir a esta cuenta de almacenamiento como su propia controladora.",
+      "externalStashUnsupported": "Esta cuenta es la controladora de una cuenta de almacenamiento distinta cuya dirección es <0>{{stashAddress}}</0>. Para participar tokens mediante Ledger Live, debes definir a tu cuenta de almacenamiento como su propia controladora.",
       "showInactiveNominations": "Mostrar todas las nominaciones ({{count}})",
       "hideInactiveNominations": "Mostrar solo las nominaciones activas",
       "noActiveNominations": "No hay nominaciones activas.",
@@ -3409,6 +3414,11 @@
           "title": "Borrar nominaciones",
           "description": "Borra todas las nominaciones y no permite recibir recompensas.",
           "info": "Los activos vinculados seguirán estando vinculados. Si los desvinculas, estarán disponibles después de 28 días."
+        },
+        "setController": {
+          "title": "Cambiar controladora",
+          "description": "Define a tu cuenta de Ledger como su propio controladora",
+          "info": "Ledger Live no es compatible con operaciones de cuentas de almacenamiento que son distintas a sus cuentas controladoras."
         }
       },
       "stepperHeader": {
@@ -3538,9 +3548,10 @@
   "Terms": {
     "title": "Términos de uso",
     "read": "Leer los Términos de uso",
-    "switchLabelPrivacy": "Confirmo que he leído y acepto la <1> Política de Privacidad</1>",
     "switchLabel": "He leído y acepto los <1>Términos del servicio</1>",
-    "cta": "Entrar en la App Ledger"
+    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "cta": "Entrar en la App Ledger",
+    "service": "Terms of service"
   },
   "exchange": {
     "buy": {
@@ -3628,6 +3639,10 @@
     "title": "Centro de notificaciones",
     "announcement": "Anuncio",
     "liveStatus": "Estado de Ledger Live",
+    "groupedToast": {
+      "text": "You have {{count}} unread notifications",
+      "cta": "See details"
+    },
     "news": {
       "title": "Noticias",
       "titleCount": "Noticias ({{count}})",
@@ -3681,7 +3696,7 @@
     },
     "webPlatformPlayer": {
       "infoPanel": {
-        "website": "website"
+        "website": "sitio web"
       }
     }
   }

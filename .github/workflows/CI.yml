@@ -47,3 +47,6 @@ jobs:
 
       - name: flow
         run: yarn flow
+
+      - name: crowdin protect
+        run: yarn global add jsonlint && jsonlint src/locales/en/common.json

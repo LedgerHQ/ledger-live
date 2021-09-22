@@ -1,6 +1,8 @@
 // @flow
-import React, { PureComponent } from "react";
+import React from "react";
 import { KeyboardAvoidingView, Platform, NativeModules } from "react-native";
+import { HEIGHT as ExperimentalHeaderHeight } from "../screens/Settings/Experimental/ExperimentalHeader";
+import useExperimental from "../screens/Settings/Experimental/useExperimental";
 
 const { DeviceInfo } = NativeModules;
 
@@ -9,19 +11,13 @@ type Props = {
   children: React$Node,
 };
 
-class KeyboardView extends PureComponent<Props> {
-  static defaultProps = {
-    style: {
-      flex: 1,
-    },
-  };
-
-  render(): React$Node {
-    const { style, children } = this.props;
+const KeyboardView = React.memo<Props>(
+  ({ style = { flex: 1 }, children }: *) => {
+    const isExperimental = useExperimental();
     let behavior;
-    let keyboardVerticalOffset = 0;
+    let keyboardVerticalOffset = isExperimental ? ExperimentalHeaderHeight : 0;
     if (Platform.OS === "ios") {
-      keyboardVerticalOffset = DeviceInfo.isIPhoneX_deprecated ? 88 : 64;
+      keyboardVerticalOffset += DeviceInfo.isIPhoneX_deprecated ? 88 : 64;
       behavior = "padding";
     }
 
@@ -35,7 +31,7 @@ class KeyboardView extends PureComponent<Props> {
         {children}
       </KeyboardAvoidingView>
     );
-  }
-}
+  },
+);
 
 export default KeyboardView;

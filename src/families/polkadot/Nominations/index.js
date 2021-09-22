@@ -32,7 +32,7 @@ import Alert from "../../../components/Alert";
 
 import CollapsibleList from "../components/CollapsibleList";
 import NominationDrawer from "../components/NominationDrawer";
-import { NominateAction, RebondAction } from "./Actions";
+import { NominateAction, RebondAction, SetControllerAction } from "./Actions";
 import { getDrawerInfo } from "./drawerInfo";
 import NominationRow from "./NominationRow";
 import UnlockingRow from "./UnlockingRow";
@@ -146,6 +146,16 @@ export default function Nominations({ account }: Props) {
     onNavigate({
       route: NavigatorName.PolkadotNominateFlow,
       screen: ScreenName.PolkadotNominateSelectValidators,
+    });
+  }, [onNavigate]);
+
+  const onSetController = useCallback(() => {
+    onNavigate({
+      route: NavigatorName.PolkadotSimpleOperationFlow,
+      screen: ScreenName.PolkadotSimpleOperationStarted,
+      params: {
+        mode: "setController",
+      },
     });
   }, [onNavigate]);
 
@@ -269,6 +279,16 @@ export default function Nominations({ account }: Props) {
   if (hasExternalController(account)) {
     return (
       <View style={styles.root}>
+        <AccountSectionLabel
+          name={t("polkadot.nomination.header")}
+          RightComponent={
+            <SetControllerAction
+              disabled={electionOpen}
+              electionOpen={electionOpen}
+              onPress={onSetController}
+            />
+          }
+        />
         <ExternalControllerUnsupportedWarning
           address={polkadotResources?.controller}
           onOpenExplorer={onOpenExplorer}
@@ -279,6 +299,7 @@ export default function Nominations({ account }: Props) {
   if (hasExternalStash(account)) {
     return (
       <View style={styles.root}>
+        <AccountSectionLabel name={t("polkadot.nomination.header")} />
         <ExternalStashUnsupportedWarning
           address={polkadotResources?.stash}
           onOpenExplorer={onOpenExplorer}

@@ -78,6 +78,7 @@ import NotificationsProvider from "./screens/NotificationCenter/NotificationsPro
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme, setTheme } from "./actions/settings";
+import FirmwareUpdateBanner from "./components/FirmwareUpdateBanner";
 
 const themes = {
   light: lightTheme,
@@ -218,23 +219,33 @@ const linkingOptions = {
       screens: {
         /**
          * @params ?uri: string
-         * ie: "ledgerhq://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
+         * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
          */
         [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
         [NavigatorName.Main]: {
-          /**
-           * ie: "ledgerhq://portfolio" -> will redirect to the portfolio
-           */
           initialRouteName: ScreenName.Portfolio,
           screens: {
+            /**
+             * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
+             */
             [ScreenName.Portfolio]: "portfolio",
             [NavigatorName.Accounts]: {
               screens: {
                 /**
                  * @params ?currency: string
-                 * ie: "ledgerhq://account?currency=bitcoin" will open the first bitcoin account
+                 * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
                  */
                 [ScreenName.Accounts]: "account",
+              },
+            },
+            [NavigatorName.Platform]: {
+              screens: {
+                /**
+                 * @params ?platform: string
+                 * ie: "ledgerlive://discover" will open the catalog
+                 * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+                 */
+                [ScreenName.PlatformCatalog]: "discover/:platform?",
               },
             },
           },
@@ -243,7 +254,7 @@ const linkingOptions = {
           screens: {
             /**
              * @params ?currency: string
-             * ie: "ledgerhq://receive?currency=bitcoin" will open the prefilled search account in the receive flow
+             * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
              */
             [ScreenName.ReceiveSelectAccount]: "receive",
           },
@@ -252,7 +263,7 @@ const linkingOptions = {
           screens: {
             /**
              * @params ?currency: string
-             * ie: "ledgerhq://receive?currency=bitcoin" will open the prefilled search account in the receive flow
+             * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
              */
             [ScreenName.Swap]: "swap",
           },
@@ -261,7 +272,7 @@ const linkingOptions = {
           screens: {
             /**
              * @params ?currency: string
-             * ie: "ledgerhq://send?currency=bitcoin" will open the prefilled search account in the send flow
+             * ie: "ledgerlive://send?currency=bitcoin" will open the prefilled search account in the send flow
              */
             [ScreenName.SendFundsMain]: "send",
           },
@@ -270,19 +281,33 @@ const linkingOptions = {
           screens: {
             /**
              * @params currency: string
-             * ie: "ledgerhq://buy/bitcoin" -> will redirect to the prefilled search currency in the buy crypto flow
+             * ie: "ledgerlive://buy/bitcoin" -> will redirect to the prefilled search currency in the buy crypto flow
              */
             [ScreenName.ExchangeSelectCurrency]: "buy/:currency",
           },
         },
         /**
-         * ie: "ledgerhq://buy" -> will redirect to the main exchange page
+         * ie: "ledgerlive://buy" -> will redirect to the main exchange page
          */
         [NavigatorName.Exchange]: "buy",
         /**
-         * ie: "ledgerhq://swap" -> will redirect to the main swap page
+         * ie: "ledgerlive://swap" -> will redirect to the main swap page
          */
         [NavigatorName.Swap]: "swap",
+        [NavigatorName.Settings]: {
+          initialRouteName: [ScreenName.Settings],
+          screens: {
+            /**
+             * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
+             */
+            [ScreenName.Settings]: "settings",
+            [ScreenName.GeneralSettings]: "settings/general",
+            [ScreenName.AccountsSettings]: "settings/accounts",
+            [ScreenName.AboutSettings]: "settings/about",
+            [ScreenName.HelpSettings]: "settings/help",
+            [ScreenName.ExperimentalSettings]: "settings/experimental",
+          },
+        },
       },
     },
   },
@@ -421,6 +446,7 @@ export default class Root extends Component<
                                 >
                                   <ButtonUseTouchable.Provider value={true}>
                                     <OnboardingContextProvider>
+                                      <FirmwareUpdateBanner />
                                       <ToastProvider>
                                         <NotificationsProvider>
                                           <SnackbarContainer />

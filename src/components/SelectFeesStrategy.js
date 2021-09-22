@@ -102,7 +102,7 @@ export default function SelectFeesStrategy({
             isChecked={feesStrategy === item.label}
           />
           <LText semiBold style={styles.feeLabel}>
-            {t(`common.${item.label}`)}
+            {t(`fees.speed.${item.label}`)}
           </LText>
         </View>
         <View style={styles.feesAmountContainer}>

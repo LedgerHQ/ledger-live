@@ -5,14 +5,12 @@ import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useGlobalSyncState } from "@ledgerhq/live-common/lib/bridge/react";
 import { useAnnouncements } from "@ledgerhq/live-common/lib/notifications/AnnouncementProvider";
-import { useServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
+import { useFilteredServiceStatus } from "@ledgerhq/live-common/lib/notifications/ServiceStatusProvider";
 import { isUpToDateSelector } from "../../reducers/accounts";
 import { networkErrorSelector } from "../../reducers/appstate";
 import HeaderErrorTitle from "../../components/HeaderErrorTitle";
 import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import Touchable from "../../components/Touchable";
-import Greetings from "./Greetings";
-import IconPie from "../../icons/Pie";
 import BellIcon from "../../icons/Bell";
 import SettingsIcon from "../../icons/Settings";
 import { NavigatorName, ScreenName } from "../../const";
@@ -20,26 +18,22 @@ import { scrollToTop } from "../../navigation/utils";
 import LText from "../../components/LText";
 import Warning from "../../icons/WarningOutline";
 
-type Props = {
-  showDistribution?: boolean,
-  nbAccounts: number,
-  showGreeting?: boolean,
+type HeaderInformationProps = { isLoading: boolean, error?: Error | null };
+const HeaderInformation = ({ isLoading, error }: HeaderInformationProps) => {
+  if (error)
+    return <HeaderErrorTitle withDescription withDetail error={error} />;
+
+  if (isLoading) return <HeaderSynchronizing />;
+
+  return null;
 };
 
-export default function PortfolioHeader({
-  nbAccounts,
-  showGreeting,
-  showDistribution,
-}: Props) {
+export default function PortfolioHeader() {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
   const { allIds, seenIds } = useAnnouncements();
-  const { incidents } = useServiceStatus();
-
-  const onDistributionButtonPress = useCallback(() => {
-    navigation.navigate(ScreenName.Distribution);
-  }, [navigation]);
+  const { incidents } = useFilteredServiceStatus();
 
   const onNotificationButtonPress = useCallback(() => {
     navigation.navigate(NavigatorName.NotificationCenter);
@@ -61,34 +55,16 @@ export default function PortfolioHeader({
 
   const notificationsCount = allIds.length - seenIds.length;
 
-  const content =
-    pending && !isUpToDate ? (
-      <HeaderSynchronizing />
-    ) : error ? (
-      <HeaderErrorTitle
-        withDescription
-        withDetail
-        error={networkError || error}
-      />
-    ) : showGreeting ? (
-      <Greetings nbAccounts={nbAccounts} />
-    ) : null;
-
   return (
     <View style={styles.wrapper}>
       <TouchableWithoutFeedback onPress={scrollToTop}>
-        <View style={styles.content}>{content}</View>
-      </TouchableWithoutFeedback>
-      {showDistribution && (
-        <View style={[styles.distributionButton]}>
-          <Touchable
-            event="DistributionCTA"
-            onPress={onDistributionButtonPress}
-          >
-            <IconPie size={18} color={colors.grey} />
-          </Touchable>
+        <View style={styles.content}>
+          <HeaderInformation
+            isLoading={pending && !isUpToDate}
+            error={networkError || error}
+          />
         </View>
-      )}
+      </TouchableWithoutFeedback>
       <View style={[styles.distributionButton, styles.marginLeft]}>
         <Touchable onPress={onNotificationButtonPress}>
           {notificationsCount > 0 && (
