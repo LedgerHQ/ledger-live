@@ -272,11 +272,11 @@ PLATFORMS
   x86_64-darwin-20
 
 DEPENDENCIES
-  cocoapods (= 1.10.2)
+  cocoapods
   dotenv
   fastlane
   fastlane-plugin-load_json
   fastlane-plugin-versioning_android
 
 BUNDLED WITH
-   2.2.20
+   2.2.27

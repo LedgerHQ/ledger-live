@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-native-ble-plx/react-native-ble-plx.podspec b/node_modules/react-native-ble-plx/react-native-ble-plx.podspec
+index def210f..3879e2e 100644
+--- a/node_modules/react-native-ble-plx/react-native-ble-plx.podspec
++++ b/node_modules/react-native-ble-plx/react-native-ble-plx.podspec
+@@ -17,5 +17,5 @@ Pod::Spec.new do |s|
+   s.compiler_flags = '-DMULTIPLATFORM_BLE_ADAPTER'
+ 
+   s.dependency 'React'
+-  s.dependency 'MultiplatformBleAdapter', '0.1.7'
++  s.dependency 'MultiplatformBleAdapter', '0.1.9'
+ end
+\ No newline at end of file
