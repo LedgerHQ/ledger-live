@@ -1,7 +1,7 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '12.0'
+platform :ios, '11.0'
 
 target 'ledgerlivemobile' do
   config = use_native_modules!
@@ -35,10 +35,11 @@ target 'ledgerlivemobile' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  use_flipper!({ 'Flipper' => '0.110.0' })
+  use_flipper!()
+  # use_flipper!()
 
   post_install do |installer|
-    flipper_post_install(installer)
+    react_native_post_install(installer)
     # installer.pods_project.targets.each do |target|
     #   target.build_configurations.each do |config|
     #    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
