@@ -272,7 +272,7 @@ PLATFORMS
   x86_64-darwin-20
 
 DEPENDENCIES
-  cocoapods
+  cocoapods (= 1.10.2)
   dotenv
   fastlane
   fastlane-plugin-load_json
