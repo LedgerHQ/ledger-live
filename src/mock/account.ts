@@ -293,7 +293,7 @@ type GenAccountOptions = {
   swapHistorySize?: number;
 };
 
-function genTokenAccount(
+export function genTokenAccount(
   index: number,
   account: Account,
   token: TokenCurrency
@@ -340,7 +340,7 @@ export function genAccount(
 ): Account {
   const rng = new Prando(id);
   const currency = opts.currency || rng.nextArrayItem(currencies);
-  const operationsSize = opts.operationsSize || rng.nextInt(1, 200);
+  const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(

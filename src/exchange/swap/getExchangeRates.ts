@@ -1,7 +1,7 @@
 import type { Exchange, GetExchangeRates } from "./types";
 import type { Transaction } from "../../types";
 import { getAccountCurrency, getAccountUnit } from "../../account";
-import type { Unit } from "../../types";
+import type { Unit, TokenCurrency, CryptoCurrency } from "../../types";
 import { formatCurrencyUnit } from "../../currencies";
 import { mockGetExchangeRates } from "./mock";
 import network from "../../network";
@@ -16,16 +16,19 @@ import {
 const getExchangeRates: GetExchangeRates = async (
   exchange: Exchange,
   transaction: Transaction,
-  userId?: string // TODO remove when wyre doesn't require this for rates
+  userId?: string, // TODO remove when wyre doesn't require this for rates
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null
 ) => {
-  if (getEnv("MOCK")) return mockGetExchangeRates(exchange, transaction);
+  if (getEnv("MOCK"))
+    return mockGetExchangeRates(exchange, transaction, currencyTo);
 
   // Rely on the api base to determine the version logic
   const usesV3 = getSwapAPIBaseURL().endsWith("v3");
   const from = getAccountCurrency(exchange.fromAccount).id;
   const unitFrom = getAccountUnit(exchange.fromAccount);
-  const unitTo = getAccountUnit(exchange.toAccount);
-  const to = getAccountCurrency(exchange.toAccount).id;
+  const unitTo =
+    (currencyTo && currencyTo.units[0]) ?? getAccountUnit(exchange.toAccount);
+  const to = (currencyTo ?? getAccountCurrency(exchange.toAccount)).id;
   const amountFrom = transaction.amount;
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);
