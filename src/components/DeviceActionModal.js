@@ -45,7 +45,7 @@ export default function DeviceActionModal({
       {device && (
         <ModalBottomAction
           footer={
-            <View style={styles.footerContainerContainer}>
+            <View>
               <View style={styles.footerContainer}>
                 <DeviceAction
                   action={action}
