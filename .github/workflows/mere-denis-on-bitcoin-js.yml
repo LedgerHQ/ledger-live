@@ -40,7 +40,6 @@ jobs:
       - name: BOT
         env:
           SHOW_LEGACY_NEW_ACCOUNT: "1"
-          DEBUG_HTTP_RESPONSE: "1"
           SEED: ${{ secrets.SEED1 }}
           VERBOSE_FILE: bot-tests.txt
           GITHUB_SHA: ${GITHUB_SHA}
