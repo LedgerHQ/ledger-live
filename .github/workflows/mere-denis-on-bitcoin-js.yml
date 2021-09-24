@@ -1,0 +1,65 @@
+name: Bot 'Mère Denis' on BitcoinJS
+on:
+  schedule:
+    - cron: "0 6,12 * * 1-5"
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: bitcoin-js
+      - name: Retrieving coin apps
+        uses: actions/checkout@v2
+        with:
+          repository: LedgerHQ/coin-apps
+          token: ${{ secrets.PAT }}
+          path: coin-apps
+      - uses: actions/setup-node@master
+        with:
+          node-version: 14.x
+      - name: pull docker image
+        run: docker pull ghcr.io/ledgerhq/speculos
+      - name: Install linux deps
+        run: sudo apt-get install -y libusb-1.0-0-dev jq
+      - name: Get yarn cache
+        id: yarn-cache
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: |
+          yarn global add yalc
+          yarn --frozen-lockfile
+          yarn ci-setup-cli
+      - name: BOT
+        env:
+          SHOW_LEGACY_NEW_ACCOUNT: "1"
+          DEBUG_HTTP_RESPONSE: "1"
+          SEED: ${{ secrets.SEED1 }}
+          VERBOSE_FILE: bot-tests.txt
+          GITHUB_SHA: ${GITHUB_SHA}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_WORKFLOW: ${{ github.workflow }}
+          SLACK_API_TOKEN: ${{ secrets.SLACK_API_TOKEN }}
+          SLACK_CHANNEL: live-ft-bitcoin-js
+          BOT_FILTER_FAMILY: bitcoin
+          EXPERIMENTAL_EXPLORERS: true
+          EXPERIMENTAL_CURRENCIES_JS_BRIDGE: bitcoin,bitcoin_cash,bsc,litecoin,dash,qtum,zcash,bitcoin_gold,stratis,dogecoin,digibyte,komodo,pivx,zencash,vertcoin,peercoin,viacoin,stakenet,stealthcoin,decred,bitcoin_testnet,tezos
+        run: COINAPPS=$PWD/coin-apps yarn ci-test-bot
+        timeout-minutes: 220
+      - name: Run coverage
+        if: failure() || success()
+        run: CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }} npx codecov
+      - name: upload logs
+        if: failure() || success()
+        uses: actions/upload-artifact@v1
+        with:
+          name: bot-tests.txt
+          path: bot-tests.txt
