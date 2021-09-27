@@ -62,6 +62,15 @@ export const experimentalFeatures: Feature[] = [
     description:
       "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature.",
   },
+  {
+    type: "toggle",
+    name: "LEDGER_COUNTERVALUES_API",
+    title: "Experimental countervalues API",
+    description:
+      "This may cause the countervalues displayed for your accounts to become incorrect.",
+    valueOn: "https://countervalues.live.ledger.com",
+    valueOff: "https://countervalues-experimental.live.ledger.com",
+  },
   ...(__DEV__
     ? [
         {
