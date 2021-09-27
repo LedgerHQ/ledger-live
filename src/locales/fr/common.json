@@ -3640,8 +3640,8 @@
     "announcement": "Annonces",
     "liveStatus": "Statut de Ledger Live",
     "groupedToast": {
-      "text": "You have {{count}} unread notifications",
-      "cta": "See details"
+      "text": "Vous avez {{count}} notifications non lues.",
+      "cta": "Voir les détails"
     },
     "news": {
       "title": "Actualités",
