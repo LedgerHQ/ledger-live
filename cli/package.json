@@ -1,6 +1,6 @@
 {
   "name": "ledger-live",
-  "version": "21.5.1",
+  "version": "21.7.0",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
     "@ledgerhq/hw-transport-node-ble": "5.7.0"
   },
   "dependencies": {
-    "@ledgerhq/cryptoassets": "6.8.0",
+    "@ledgerhq/cryptoassets": "6.8.1",
     "@ledgerhq/errors": "6.2.0",
     "@ledgerhq/hw-app-btc": "6.7.0",
     "@ledgerhq/hw-transport-http": "6.7.0",
@@ -37,7 +37,7 @@
     "@ledgerhq/hw-transport-node-hid": "6.7.0",
     "@ledgerhq/hw-transport-node-speculos": "6.7.0",
     "@ledgerhq/ledger-core": "6.13.0",
-    "@ledgerhq/live-common": "^21.5.1",
+    "@ledgerhq/live-common": "^21.7.0",
     "@ledgerhq/logs": "6.2.0",
     "@walletconnect/client": "^1.6.5",
     "asciichart": "^1.5.25",
@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@types/command-line-args": "^5.2.0",
-    "@types/lodash": "^4.14.173",
+    "@types/lodash": "^4.14.174",
     "@types/node": "^14.17.1",
     "ts-node": "^10.2.1",
     "typescript": "^4.3.5"
