@@ -82,7 +82,7 @@ const envDefinitions = {
   },
   ELROND_API_ENDPOINT: {
     parser: stringParser,
-    def: "https://api.elrond.com",
+    def: "https://elrond.coin.ledger.com",
     desc: "Elrond API url",
   },
   API_STELLAR_HORIZON: {
