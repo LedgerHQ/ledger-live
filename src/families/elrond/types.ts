@@ -36,6 +36,8 @@ export type Transaction = TransactionCommon & {
   nonce?: number;
   status?: string;
   fee?: BigNumber;
+  round?: number;
+  miniBlockHash?: string;
 };
 
 /**

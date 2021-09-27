@@ -121,44 +121,16 @@ export default class ElrondApi {
       from = from + TRANSACTIONS_SIZE;
     }
 
-    if (!allTransactions.length) {
-      return allTransactions; //Account does not have any transactions
-    }
-
-    return Promise.all(
-      allTransactions.map(async (transaction) => {
-        const { blockHeight, blockHash } = await this.getConfirmedTransaction(
-          transaction.txHash
-        );
-        return { ...transaction, blockHash, blockHeight };
-      })
-    );
+    return allTransactions;
   }
 
   async getBlockchainBlockHeight() {
     const {
-      data: [{ nonce: blockHeight }],
+      data: [{ round: blockHeight }],
     } = await network({
       method: "GET",
-      url: `${this.API_URL}/blocks?shard=${METACHAIN_SHARD}&fields=nonce`,
+      url: `${this.API_URL}/blocks?shard=${METACHAIN_SHARD}&fields=round`,
     });
     return blockHeight;
-  }
-
-  async getConfirmedTransaction(txHash: string) {
-    const {
-      data: {
-        data: {
-          transaction: { hyperblockNonce, blockHash },
-        },
-      },
-    } = await network({
-      method: "GET",
-      url: `${this.API_URL}/transaction/${txHash}`,
-    });
-    return {
-      blockHeight: hyperblockNonce,
-      blockHash,
-    };
   }
 }
