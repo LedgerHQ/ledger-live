@@ -7,7 +7,7 @@ import CenterView from "../../CenterView";
 
 storiesOf("Navigation", module)
   .addDecorator(withKnobs)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add("SlideIndicator", () => (
     <SlideIndicator
       slidesLength={number("slidesLength", 3, { min: 1, max: 7 })}

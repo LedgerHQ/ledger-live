@@ -10,19 +10,19 @@ const FlexStory = () => {
     "Align items",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],
     "flex-start",
-    "Layout",
+    "Layout"
   );
   const flexDirection = select(
     "Direction",
     ["row", "row-reverse", "column", "column-reverse"],
     "column",
-    "Layout",
+    "Layout"
   );
   const justifyContent = select(
     "Justify Content",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],
     "flex-start",
-    "Layout",
+    "Layout"
   );
   const background = text("Background", "", "Layout");
   const flexBasis = text("FlexBasis", "", "Layout");
@@ -56,19 +56,19 @@ const FlexStoryTwo = () => {
     "AlignItems",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],
     "flex-start",
-    "Layout",
+    "Layout"
   );
   const flexDirection = select(
     "FlexDirection",
     ["row", "row-reverse", "column", "column-reverse"],
     "column",
-    "Layout",
+    "Layout"
   );
   const justifyContent = select(
     "JustifyContent",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],
     "flex-start",
-    "Layout",
+    "Layout"
   );
   const background = text("Background", "", "Layout");
   const flexBasis = text("FlexBasis", "", "Layout");
