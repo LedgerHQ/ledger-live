@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import { fromTransactionRaw } from "./transaction";
 import type { Transaction } from "./types";
-// import ethereumScanAccounts1 from "./datasets/ethereum.scanAccounts.1";
+import ethereumScanAccounts1 from "./datasets/ethereum.scanAccounts.1";
 import ethereum_classic from "./datasets/ethereum_classic";
 import { syncAccount } from "../../__tests__/test-helpers/bridge";
 export const ethereum1: AccountRaw = {
@@ -39,8 +39,7 @@ const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "js"],
   currencies: {
     ethereum: {
-      scanAccounts: [], // FIXME https://ledgerhq.atlassian.net/browse/LL-6445
-      // scanAccounts: [ethereumScanAccounts1],
+      scanAccounts: [ethereumScanAccounts1],
       accounts: [
         {
           implementations: ["js"],
