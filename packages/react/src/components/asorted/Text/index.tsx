@@ -43,7 +43,8 @@ type TextTypes =
   | "tiny"
   | "subTitle"
   | "navigation"
-  | "tag";
+  | "tag"
+  | "paragraph";
 
 export interface TextProps {
   fontFamily?: string;
@@ -79,7 +80,7 @@ interface BaseTextProps {
   textTransform?: string;
 }
 
-const Base = styled.span.attrs((p: BaseTextProps & SpaceProps) => ({
+export const Base = styled.span.attrs((p: BaseTextProps & SpaceProps) => ({
   color: p.color || "palette.neutral.c100",
   className: `${p.type ? `ll-text_${p.type} ` : ""}`,
 }))<BaseTextProps>`
@@ -95,7 +96,11 @@ const Base = styled.span.attrs((p: BaseTextProps & SpaceProps) => ({
   ${(p) => (p.textTransform ? `text-transform: ${p.textTransform};` : "")}
 `;
 
-const Text = ({ children, bracket, ...props }: TextProps & SpaceProps) => {
+const Text = ({
+  children,
+  bracket,
+  ...props
+}: TextProps & SpaceProps & React.ComponentProps<typeof Base>) => {
   return bracket ? (
     <Base {...props}>
       <BracketLeft className="ll-text_bracket" />
