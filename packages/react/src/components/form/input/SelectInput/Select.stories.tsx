@@ -2,10 +2,12 @@ import React from "react";
 import SelectInput, { Props } from "./index";
 import Text from "@components/asorted/Text";
 import Flex from "@components/layout/Flex";
+import SearchMedium from "@assets/icons/SearchMedium";
 import { Option } from "./Option";
 import { VirtualMenuList } from "./VirtualMenuList";
 import { ValueContainer } from "./ValueContainer";
 import { OptionProps, ValueContainerProps } from "react-select";
+import { useTheme } from "styled-components";
 
 export default {
   title: "Form/Input/SelectInput",
@@ -226,19 +228,22 @@ export const Minimal = (args: Props): React.ReactNode => {
 
 export const SideRenders = (args: Props): React.ReactNode => {
   const [value, setValue] = React.useState(null);
+  const theme = useTheme();
 
   return (
     <SelectInput
       options={options}
       value={value}
       onChange={setValue}
-      renderLeft={() => (
-        <Text mr={4} ff="Inter|SemiBold" fontSize={4}>
-          #Left
-        </Text>
+      renderLeft={(props) => (
+        <Flex mr={3}>
+          <SearchMedium
+            color={props.isDisabled ? "currentColor" : theme["colors"].palette.neutral.c70}
+          />
+        </Flex>
       )}
       renderRight={() => (
-        <Text mr={4} ff="Inter|SemiBold" fontSize={4}>
+        <Text mr={4} ff="Inter|SemiBold" fontSize={4} color="inherit">
           #Right
         </Text>
       )}
