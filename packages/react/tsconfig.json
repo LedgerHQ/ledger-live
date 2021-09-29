@@ -5,16 +5,15 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react",
-    "tsx": "react",
     "lib": ["es6", "dom"],
-    "moduleResolution": "Node",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"],
       "@ui/*": ["src/*"],
+      "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@styles/*": ["src/styles/*"]
     },
