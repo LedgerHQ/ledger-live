@@ -141,7 +141,6 @@ export default function SubAccountsList({
             <ReceiveButton accountId={accountId} />
           ) : (
             <Button
-              containerStyle={{ width: 120 }}
               type="lightSecondary"
               event="AccountReceiveToken"
               title={<Trans i18nKey="account.tokens.addTokens" />}
