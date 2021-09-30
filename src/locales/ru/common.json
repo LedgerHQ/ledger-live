@@ -1220,6 +1220,13 @@
         "title": "Не используйте фразу восстановления, которую кто-то создал за вас.",
         "desc": "Вы должны самостоятельно создать ПИН-код и получить фразу восстановления для вашего аппаратного кошелька Ledger. Если вы получили устройство с уже установленной фразой восстановления или ПИН-кодом, не пользуйтесь им и свяжитесь с нашей службой поддержки.",
         "supportLink": "Связаться с Поддержкой"
+      },
+      "seed": {
+        "title": "Please check the box contents",
+        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
+        "warning": "Only use a recovery phrase that your device displayed when it was set up",
+        "continueCTA": "Continue",
+        "contactSupportCTA": "Contact support"
       }
     }
   },

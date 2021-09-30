@@ -1220,6 +1220,13 @@
         "title": "N'utilisez jamais une phrase de récupération que vous n'avez pas générée vous-même.",
         "desc": "Vous devez être la seule personne à configurer le code PIN et la phrase de récupération de votre wallet Ledger. Si vous avez reçu un appareil avec une phrase de récupération déjà existante ou un code PIN déjà configuré, n'utilisez pas l'appareil et contactez l'Assistance Ledger.",
         "supportLink": "Contacter l'Assistance"
+      },
+      "seed": {
+        "title": "Please check the box contents",
+        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
+        "warning": "Only use a recovery phrase that your device displayed when it was set up",
+        "continueCTA": "Continue",
+        "contactSupportCTA": "Contact support"
       }
     }
   },
