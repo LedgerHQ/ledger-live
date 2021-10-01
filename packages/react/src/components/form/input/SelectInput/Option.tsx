@@ -1,10 +1,13 @@
 import React from "react";
-import { components, Styles, OptionProps } from "react-select";
+import { components, Styles, OptionProps, OptionTypeBase } from "react-select";
 import styled from "styled-components";
 import { Base as Text } from "@components/asorted/Text";
 
-export const getStyles: Styles<any, any>["option"] = function getStyles(provided) {
-  return {
+export function getStyles<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(): Styles<T, M>["option"] {
+  return (provided) => ({
     ...provided,
     display: "flex",
     alignItems: "center",
@@ -15,8 +18,8 @@ export const getStyles: Styles<any, any>["option"] = function getStyles(provided
     boxShadow: "none",
     border: "none",
     ":active": undefined,
-  };
-};
+  });
+}
 
 const Wrapper = styled(Text).attrs({ as: "div" })<{
   disabled: boolean;
@@ -70,11 +73,21 @@ const Wrapper = styled(Text).attrs({ as: "div" })<{
   }};
 `;
 
-type ExtraProps = {
+export type ExtraProps<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+> = {
   /* A render function to customize the contents. */
-  render?: (props: React.PropsWithChildren<OptionProps<any, any>>) => React.ReactNode;
+  render?: (props: React.PropsWithChildren<OptionProps<T, M>>) => React.ReactNode;
 };
-export function Option(props: OptionProps<any, any> & ExtraProps) {
+export type Props<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+> = OptionProps<T, M> & ExtraProps<T, M>;
+export function Option<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(props: Props<T, M>): JSX.Element {
   const { render, children, ...innerProps } = props;
 
   return (

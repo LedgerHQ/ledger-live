@@ -1,12 +1,12 @@
 import React from "react";
-import SelectInput, { Props } from "./index";
+import { OptionProps, OptionTypeBase, ValueContainerProps } from "react-select";
 import Text from "@components/asorted/Text";
 import Flex from "@components/layout/Flex";
 import SearchMedium from "@assets/icons/SearchMedium";
+import SelectInput, { Props } from "./index";
 import { Option } from "./Option";
 import { VirtualMenuList } from "./VirtualMenuList";
 import { ValueContainer } from "./ValueContainer";
-import { OptionProps, ValueContainerProps } from "react-select";
 import { useTheme } from "styled-components";
 
 export default {
@@ -180,8 +180,10 @@ const cssColors = [
   "yellowgreen",
 ];
 
+type SelectItem = { label: string; value: string };
+
 const colorOptions = cssColors.map((color) => ({ label: color, value: color }));
-const ColorOption = (props: OptionProps<any, any>) => {
+const ColorOption = (props: OptionProps<SelectItem, false>) => {
   return (
     <Option
       {...props}
@@ -194,7 +196,7 @@ const ColorOption = (props: OptionProps<any, any>) => {
     />
   );
 };
-const ColorValueContainer = (props: ValueContainerProps<any, any>) => {
+const ColorValueContainer = (props: ValueContainerProps<SelectItem, false>) => {
   return (
     <ValueContainer
       render={({ children }) => <div style={{ textTransform: "capitalize" }}>{children}</div>}
@@ -203,7 +205,7 @@ const ColorValueContainer = (props: ValueContainerProps<any, any>) => {
   );
 };
 export const Default = (args: Props): React.ReactNode => {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = React.useState<SelectItem>();
 
   return (
     <SelectInput
@@ -252,7 +254,7 @@ export const SideRenders = (args: Props): React.ReactNode => {
   );
 };
 
-const CustomOption = (props: OptionProps<any, any>) => {
+const CustomOption = (props: OptionProps<SelectItem, false>) => {
   return (
     <Option
       {...props}

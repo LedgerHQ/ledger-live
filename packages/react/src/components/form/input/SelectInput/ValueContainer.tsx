@@ -1,19 +1,28 @@
 import React from "react";
-import { components, Styles, ValueContainerProps } from "react-select";
+import { components, Styles, ValueContainerProps, OptionTypeBase } from "react-select";
 import Text from "@components/asorted/Text";
 
-export const getStyles: Styles<any, any>["valueContainer"] = function getStyles(provided) {
-  return {
+export function getStyles<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(): Styles<T, M>["valueContainer"] {
+  return (provided) => ({
     ...provided,
     padding: 0,
-  };
-};
+  });
+}
 
-type ExtraProps = {
+type ExtraProps<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+> = {
   /* A render function to customize the contents. */
-  render?: (props: React.PropsWithChildren<ValueContainerProps<any, any>>) => React.ReactNode;
+  render?: (props: React.PropsWithChildren<ValueContainerProps<T, M>>) => React.ReactNode;
 };
-export function ValueContainer(props: ValueContainerProps<any, any> & ExtraProps) {
+export function ValueContainer<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(props: ValueContainerProps<T, M> & ExtraProps<T, M>): JSX.Element {
   const color = props.selectProps.isDisabled ? "palette.neutral.c60" : "palette.neutral.c100";
   return (
     <components.ValueContainer {...props}>

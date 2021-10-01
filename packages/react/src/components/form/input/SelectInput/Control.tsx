@@ -1,10 +1,13 @@
 import React from "react";
-import { components, Styles, ControlProps } from "react-select";
+import { components, Styles, ControlProps, OptionTypeBase } from "react-select";
 import styled from "styled-components";
 import { InputContainer } from "../BaseInput";
 
-export const getStyles: Styles<any, any>["control"] = function getStyles(provided) {
-  return {
+export function getStyles<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(): Styles<T, M>["control"] {
+  return (provided) => ({
     ...provided,
     display: "flex",
     alignItems: "center",
@@ -13,14 +16,17 @@ export const getStyles: Styles<any, any>["control"] = function getStyles(provide
     boxShadow: "none",
     borderRadius: "inherit",
     background: "transparent",
-  };
-};
+  });
+}
 
 const Container = styled(InputContainer)`
   padding: 0 ${(p) => p.theme.space[7]}px;
 `;
 
-export function Control(props: ControlProps<any, any>) {
+export function Control<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(props: ControlProps<T, M>): JSX.Element {
   const {
     isFocused,
     selectProps: { isDisabled, error, renderLeft },

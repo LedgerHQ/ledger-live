@@ -1,5 +1,5 @@
 import React, { memo, useMemo, useRef, useEffect } from "react";
-import { components, MenuListComponentProps } from "react-select";
+import { components, MenuListComponentProps, OptionTypeBase } from "react-select";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
 
 export type RowProps = React.PropsWithChildren<{ style: React.CSSProperties }>;
@@ -7,7 +7,10 @@ export const VirtualRow = memo(({ style, children }: RowProps) => (
   <div style={style}>{children}</div>
 ));
 
-export function VirtualMenuList(props: MenuListComponentProps<any, any>) {
+export function VirtualMenuList<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(props: MenuListComponentProps<T, M>): React.ReactElement {
   const {
     children,
     options,
@@ -29,7 +32,9 @@ export function VirtualMenuList(props: MenuListComponentProps<any, any>) {
     () =>
       Array.isArray(children)
         ? Math.max(
-            children.findIndex(({ props: { isFocused } }: any) => isFocused),
+            children.findIndex(
+              (child: React.ReactNode) => React.isValidElement(child) && child.props.isFocused,
+            ),
             0,
           )
         : 0,
@@ -40,17 +45,17 @@ export function VirtualMenuList(props: MenuListComponentProps<any, any>) {
     listRef.current?.scrollToItem(focusedIndex);
   }, [focusedIndex]);
 
-  if (!children || !Array.isArray(children)) return null;
+  if (!children || !Array.isArray(children)) return <></>;
 
   if (childrenLength === 0 && noOptionsMessage) {
-    return <components.NoOptionsMessage {...(props as any)} />;
+    return <components.NoOptionsMessage {...{ ...props, innerProps: {} }} />;
   }
 
   children.length &&
-    children.map((key: any) => {
-      delete key.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
-      delete key.props.innerProps.onMouseOver;
-      return null;
+    children.forEach((node: React.ReactNode) => {
+      if (!node || !React.isValidElement(node)) return;
+      delete node.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
+      delete node.props.innerProps.onMouseOver;
     });
 
   return (
@@ -66,7 +71,7 @@ export function VirtualMenuList(props: MenuListComponentProps<any, any>) {
       }
     >
       <List
-        ref={listRef as any}
+        ref={listRef as React.LegacyRef<FixedSizeList>}
         width="100%"
         height={minHeight}
         overscanCount={50}
@@ -74,11 +79,7 @@ export function VirtualMenuList(props: MenuListComponentProps<any, any>) {
         itemSize={rowHeight}
         initialScrollOffset={initialOffset}
       >
-        {({ index, style }) => (
-          <VirtualRow style={style} index={index}>
-            {children[index]}
-          </VirtualRow>
-        )}
+        {({ index, style }) => <VirtualRow style={style}>{children[index]}</VirtualRow>}
       </List>
     </div>
   );

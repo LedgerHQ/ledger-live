@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from "react";
-import Select, { Props as SelectProps, Styles } from "react-select";
+import Select, { Props as SelectProps, OptionTypeBase, Styles } from "react-select";
 import { DefaultTheme, useTheme } from "styled-components";
 import * as DropdownIndicatorModule from "./DropdownIndicator";
 import * as ValueContainerModule from "./ValueContainer";
@@ -9,24 +9,35 @@ import * as OptionModule from "./Option";
 import { IndicatorsContainer } from "./IndicatorsContainer";
 import { InputErrorContainer } from "../BaseInput";
 
-export type SelfProps = {
+export type SelfProps<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+> = {
   /* An error which will be displayed below the component and will change the style. */
   error?: string;
   /* A component which will be rendered on the left side of the select. */
-  renderLeft?: (props: Props) => React.ReactNode;
+  renderLeft?: (props: Props<T, M>) => React.ReactNode;
   /* A component which will be rendered on the right side of the select, before the indicators. */
-  renderRight?: (props: Props) => React.ReactNode;
+  renderRight?: (props: Props<T, M>) => React.ReactNode;
   /* This value is used to calculate the height of the menu list when dealing with virtual lists. */
   rowHeight?: number;
 };
-export type Props = SelectProps & SelfProps;
+export type Props<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+> = SelectProps<T, M> & SelfProps<T, M>;
 
-const stylesFn = (theme: DefaultTheme): Styles<any, any> => ({
-  control: ControlModule.getStyles,
-  valueContainer: ValueContainerModule.getStyles,
-  dropdownIndicator: DropdownIndicatorModule.getStyles,
+const stylesFn = <
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(
+  theme: DefaultTheme,
+): Styles<T, M> => ({
+  control: ControlModule.getStyles(),
+  valueContainer: ValueContainerModule.getStyles(),
+  dropdownIndicator: DropdownIndicatorModule.getStyles(),
   menuList: MenuListModule.getStyles(theme),
-  option: OptionModule.getStyles,
+  option: OptionModule.getStyles(),
   placeholder: (provided) => ({
     ...provided,
     color: theme.colors.palette.neutral.c60,
@@ -43,9 +54,12 @@ const stylesFn = (theme: DefaultTheme): Styles<any, any> => ({
   }),
 });
 
-function SelectInput({ error, rowHeight = 48, ...props }: Props) {
+function SelectInput<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>({ error, rowHeight = 48, ...props }: Props<T, M>): JSX.Element {
   const theme = useTheme();
-  const styles = useMemo(() => stylesFn(theme), [theme]);
+  const styles = useMemo(() => stylesFn<T, M>(theme), [theme]);
   const { isDisabled, components = {} } = props;
 
   return (
@@ -75,4 +89,4 @@ function SelectInput({ error, rowHeight = 48, ...props }: Props) {
   );
 }
 
-export default memo(SelectInput);
+export default memo(SelectInput) as typeof SelectInput;

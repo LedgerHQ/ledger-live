@@ -1,17 +1,23 @@
 import React from "react";
-import { components, Styles, IndicatorProps } from "react-select";
+import { components, Styles, IndicatorProps, OptionTypeBase } from "react-select";
 import { useTheme } from "styled-components";
 import Text from "@components/asorted/Text";
 import { ChevronBottomMedium, ChevronTopMedium } from "@assets/icons";
 
-export const getStyles: Styles<any, any>["dropdownIndicator"] = function getStyles(provided) {
-  return {
+export function getStyles<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(): Styles<T, M>["dropdownIndicator"] {
+  return (provided) => ({
     ...provided,
     padding: 0,
-  };
-};
+  });
+}
 
-export function DropdownIndicator(props: IndicatorProps<any, any>) {
+export function DropdownIndicator<
+  T extends OptionTypeBase = { label: string; value: string },
+  M extends boolean = false,
+>(props: IndicatorProps<T, M>): JSX.Element {
   const theme = useTheme();
   const { isDisabled } = props.selectProps;
 
