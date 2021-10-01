@@ -7,7 +7,5 @@ import IconBox from "../../../src/components/Icon/IconBox";
 
 storiesOf("Icon", module)
   .addDecorator(withKnobs)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
-  .add("IconBox", () => (
-    <IconBox Icon={Info} />
-  ));
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
+  .add("IconBox", () => <IconBox Icon={Info} />);

@@ -71,7 +71,6 @@
   line-height: 12.1px;
   font-weight: 600;
 }
-
 .ll-text_bracket {
   display: inline-block;
   height: 1.1em;
@@ -79,10 +78,14 @@
   transform: translateY(0.2em);
   margin: 0;
 }
-
 .ll-text_small3 {
   font-family: Inter, Arial;
   font-size: 10px;
   line-height: 12.1px;
+  font-weight: 500;
+}
+.ll-text_paragraph {
+  font-family: Inter, Arial;
+  font-size: 13px;
   font-weight: 500;
 }

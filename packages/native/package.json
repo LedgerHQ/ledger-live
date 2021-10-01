@@ -13,7 +13,9 @@
     "prettier": "prettier --write \"src/**/*.(ts|tsx)\"",
     "build": "tsc -p tsconfig.build.json",
     "icons:generate": "node scripts/buildReactIcons",
-    "posticons:generate": "eslint src/assets/icons --ext .js,.jsx,.ts,.tsx --fix --quiet"
+    "posticons:generate": "eslint src/assets/icons --ext .js,.jsx,.ts,.tsx --fix --quiet",
+    "storybook:lint": "eslint storybook/stories --ext .ts,.tsx,.js,.jsx --fix",
+    "storybook:prettier": "prettier --write \"storybook/stories/**/*.(ts|tsx)\""
   },
   "dependencies": {
     "@react-navigation/native": "^5.9.4",

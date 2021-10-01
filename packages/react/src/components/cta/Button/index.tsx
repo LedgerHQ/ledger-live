@@ -7,10 +7,22 @@ import ChevronBottom from "@ui/assets/icons/ChevronBottomRegular";
 
 type ButtonTypes = "primary" | "secondary";
 
-interface Props {
+interface BaseProps {
+  Icon?: React.ComponentType<any>;
+  ff?: string;
+  color?: string;
+  fontSize?: number;
+  type?: ButtonTypes;
+  iconPosition?: "right" | "left";
+  iconButton?: boolean;
+  disabled?: boolean;
+  theme: DefaultTheme;
+}
+
+export interface ButtonProps extends BaseProps {
   Icon?: React.ComponentType<any>;
   children?: React.ReactNode;
-  onClick: () => void;
+  onClick: (event?: React.SyntheticEvent<HTMLButtonElement>) => void;
   ff?: string;
   color?: string;
   fontSize?: number;
@@ -25,18 +37,6 @@ const IconContainer = styled.div<{
   margin-${(p) => (p.iconPosition === "left" ? "right" : "left")}: ${(p) => p.theme.space[4]}px;
   padding-top: 0.2em;
 `;
-
-interface BaseProps {
-  Icon?: React.ComponentType<any>;
-  ff?: string;
-  color?: string;
-  fontSize?: number;
-  type?: ButtonTypes;
-  iconPosition?: "right" | "left";
-  iconButton?: boolean;
-  disabled?: boolean;
-  theme: DefaultTheme;
-}
 
 export const Base = styled.button.attrs((p: BaseProps) => ({
   ff: "Inter|SemiBold",
@@ -136,7 +136,7 @@ const Button = ({
   children,
   onClick,
   ...props
-}: Props) => {
+}: ButtonProps) => {
   return (
     // @ts-expect-error FIXME type button conflict
     <Base {...props} iconButton={!(Icon == null) && !children} onClick={onClick}>

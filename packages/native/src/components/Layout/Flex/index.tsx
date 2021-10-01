@@ -5,7 +5,7 @@ import { background, flexbox, space } from "styled-system";
 
 // Nb Expose style props as you need them instead of allowing for all to be passed directly.
 // ref: https://styled-system.com/table
-interface FlexBoxProps extends SpacingProps {
+export interface FlexBoxProps extends SpacingProps {
   alignItems?: "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
   flexBasis?: string;
   flexDirection?: "row" | "row-reverse" | "column" | "column-reverse";
