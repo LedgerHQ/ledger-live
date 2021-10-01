@@ -4,4 +4,5 @@
 
 - ElrondTeam: `elrond` coin family integration
 - thomas-nguy: `crypto_org` coin family integration
+- konoart: `solana` coin family integration
 - Zondax: `filecoin` coin family integration
