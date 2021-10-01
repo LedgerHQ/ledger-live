@@ -28,12 +28,14 @@ const TooltipStory = () => {
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
       Icon={Info}
-      iconColor={'red'}
+      iconColor={"red"}
     >
-        <>
-            <Text>Exemple children</Text>
-            <Button type={"primary"}><Text>button</Text></Button>
-        </>
+      <>
+        <Text>Exemple children</Text>
+        <Button type={"primary"}>
+          <Text>button</Text>
+        </Button>
+      </>
     </Tooltip>
   );
 };

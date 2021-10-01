@@ -37,5 +37,5 @@ const ScrollContainerStory = () => (
 
 storiesOf("Layout", module)
   .addDecorator(withKnobs)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add("ScrollContainer", ScrollContainerStory);
