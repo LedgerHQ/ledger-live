@@ -4,7 +4,7 @@ import FlexBox from "@ui/components/layout/Flex";
 import Text from "@ui/components/asorted/Text";
 import { rgba } from "@ui/styles/helpers";
 
-type CommonProps = InputHTMLAttributes<HTMLInputElement> & {
+export type CommonProps = InputHTMLAttributes<HTMLInputElement> & {
   disabled?: boolean;
   error?: string;
 };
@@ -15,7 +15,7 @@ export type InputProps = CommonProps & {
   renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
 };
 
-const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolean }>`
+export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolean }>`
   display: flex;
   background: ${(p) => p.theme.colors.palette.neutral.c00};
   height: 48px;
@@ -56,7 +56,7 @@ const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolean }>`
     `};
 `;
 
-const BaseInput = styled.input<Partial<CommonProps> & { focus?: boolean }>`
+export const BaseInput = styled.input<Partial<CommonProps> & { focus?: boolean }>`
   height: 100%;
   width: 100%;
   border: 0;
@@ -87,7 +87,7 @@ const BaseInput = styled.input<Partial<CommonProps> & { focus?: boolean }>`
   }
 `;
 
-const InputErrorContainer = styled(Text).attrs(() => ({ type: "small3" }))`
+export const InputErrorContainer = styled(Text).attrs(() => ({ type: "small3" }))`
   color: ${(p) => p.theme.colors.palette.error.c100};
   margin-left: 12px;
 `;
