@@ -1,4 +1,4 @@
-name: React Package CI
+name: Native Package CI
 
 defaults:
   run:
@@ -9,12 +9,12 @@ on:
     branches:
       - main
     paths:
-      - packages/native
+      - "packages/native/**"
   pull_request:
     branches:
       - main
     paths:
-      - packages/native
+      - "packages/native/**"
   workflow_dispatch:
 
 jobs:

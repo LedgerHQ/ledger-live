@@ -9,12 +9,12 @@ on:
     branches:
       - main
     paths:
-      - packages/react
+      - "packages/react/**"
   pull_request:
     branches:
       - main
     paths:
-      - packages/react
+      - "packages/react/**"
   workflow_dispatch:
 
 jobs:
