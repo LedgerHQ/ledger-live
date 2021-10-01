@@ -13,15 +13,20 @@ import {
 import BracketRight from "@ui/icons/BracketLeft";
 import BracketLeft from "@ui/icons/BracketRight";
 import { getColor } from "@ui/styles";
-import getTextStyle, { TextTypes } from "./getTextStyle";
+import {
+  FontWeightTypes,
+  getFontWeightStyle,
+  getTextStyle,
+  TextTypes,
+} from "./getTextStyle";
 
 type Props = {
   type: TextTypes;
+  fontWeight?: FontWeightTypes;
   fontFamily?: string;
   fontSize?: number | string;
   textAlign?: string;
   color?: string;
-  fontWeight?: string;
   mt?: number | string;
   mb?: number | string;
   ml?: number | string;
@@ -40,6 +45,7 @@ const Base = styled.Text<Props>`
   ${space};
   ${letterSpacing};
   ${(p) => getTextStyle(p)}
+  ${(p) => getFontWeightStyle(p)}
   justify-content: center;
   align-items: center;
 `;
@@ -70,24 +76,10 @@ const BracketText = ({
   );
 };
 
-const Text = ({
-  children,
-  bracket,
-  color = "palette.neutral.c100",
-  ...props
-}: Props) => {
-  if (bracket)
-    return (
-      <BracketText {...props} color={color}>
-        {children}
-      </BracketText>
-    );
+const Text = ({ children, bracket, ...props }: Props) => {
+  if (bracket) return <BracketText {...props}>{children}</BracketText>;
 
-  return (
-    <Base {...props} color={color}>
-      {children}
-    </Base>
-  );
+  return <Base {...props}>{children}</Base>;
 };
 
 export default Text;

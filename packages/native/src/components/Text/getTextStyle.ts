@@ -5,14 +5,17 @@ export type TextTypes =
   | "highlight"
   | "emphasis"
   | "body"
-  | "cta"
   | "link"
   | "tiny"
   | "subTitle"
   | "navigation"
-  | "tag";
+  | "tag"
+  | "large"
+  | "paragraph";
 
-export default function getTextStyle({
+export type FontWeightTypes = "medium" | "semibold" | "bold";
+
+export function getTextStyle({
   type,
   bracket,
 }: {
@@ -48,6 +51,7 @@ export default function getTextStyle({
         lineHeight: 24,
         paddingTop: bracket ? 5 : 0,
       };
+    case "large":
     case "highlight":
       return {
         fontFamily: "Inter",
@@ -63,10 +67,10 @@ export default function getTextStyle({
     case "body":
       return {
         fontFamily: "Inter",
-        fontSize: 13,
-        lineHeight: 20,
+        fontSize: 14,
+        lineHeight: 16.94,
       };
-    case "cta":
+    case "paragraph":
       return {
         fontFamily: "Inter",
         fontSize: 13,
@@ -112,6 +116,30 @@ export default function getTextStyle({
         fontFamily: "Inter",
         fontSize: 13,
         lineHeight: 20,
+      };
+  }
+}
+
+export function getFontWeightStyle({
+  fontWeight,
+}: {
+  fontWeight?: FontWeightTypes;
+}): {
+  fontWeight: number;
+} {
+  switch (fontWeight) {
+    case "semibold":
+      return {
+        fontWeight: 600,
+      };
+    case "bold":
+      return {
+        fontWeight: 700,
+      };
+    case "medium":
+    default:
+      return {
+        fontWeight: 500,
       };
   }
 }
