@@ -4,7 +4,9 @@ import type {
   ExchangeRate,
   GetMultipleStatus,
   GetProviders,
+  KYCStatus,
   SwapRequestEvent,
+  ValidKYCStatus,
 } from "./types";
 import { getAccountUnit } from "../../account";
 import type { Transaction, TokenCurrency, CryptoCurrency } from "../../types";
@@ -175,4 +177,13 @@ export const mockGetStatus: GetMultipleStatus = async (statusList) => {
   //Fake delay to show loading UI
   await new Promise((r) => setTimeout(r, 800));
   return statusList.map((s) => ({ ...s, status: "finished" }));
+};
+
+export const mockGetKYCStatus = async (
+  id: string,
+  status: ValidKYCStatus
+): Promise<KYCStatus> => {
+  //Fake delay to show the pending state in the UI
+  await new Promise((r) => setTimeout(r, 2000));
+  return { id, status };
 };

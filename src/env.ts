@@ -366,6 +366,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the app into a MOCK mode for test purpose, the value will be used as a seed for the rng. Avoid falsy values.",
   },
+  MOCK_SWAP_KYC: {
+    def: "",
+    parser: stringParser,
+    desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
+  },
   OPERATION_ADDRESSES_LIMIT: {
     def: 100,
     parser: intParser,

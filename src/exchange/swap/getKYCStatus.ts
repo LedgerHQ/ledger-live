@@ -2,11 +2,15 @@ import network from "../../network";
 import { getSwapAPIBaseURL } from "./";
 import type { GetKYCStatus } from "./types";
 import { SwapCheckKYCStatusFailed } from "../../errors";
+import { getEnv } from "../../env";
+import { mockGetKYCStatus } from "./mock";
 export const getKYCStatus: GetKYCStatus = async (
   provider: string,
   id: string
 ) => {
-  //if (getEnv("MOCK")) return mockGetKYCStatus(id); // TODO implement
+  const mockedStatus = getEnv("MOCK_SWAP_KYC");
+  if (mockedStatus) return mockGetKYCStatus(id, mockedStatus);
+
   const res = await network({
     method: "GET",
     url: `${getSwapAPIBaseURL()}/provider/${provider}/user/${id}`,
