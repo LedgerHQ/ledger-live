@@ -8,3 +8,8 @@ import "./Navigation/SlideIndicator/SlideIndicator.stories";
 import "./Icon/IconBox.stories";
 import "./Icon/AssetsIcons.stories";
 import "./Loader/Loader.stories";
+import "./Form/Input/BaseInput.stories";
+import "./Form/Input/LegendInput.stories";
+import "./Form/Input/SearchInput.stories";
+import "./Form/Input/QrCodeInput.stories";
+import "./Form/Input/NumberInput.stories";
