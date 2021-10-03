@@ -17,7 +17,7 @@ const get = (object: Record<string, any>, path: string | string[]): unknown => {
   return p.reduce(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     (dive: Record<string, any>, key: string) => dive && dive[key],
-    object,
+    object
   );
 };
 

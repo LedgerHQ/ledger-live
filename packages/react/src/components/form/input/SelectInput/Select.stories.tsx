@@ -1,5 +1,5 @@
 import React from "react";
-import { OptionProps, OptionTypeBase, ValueContainerProps } from "react-select";
+import { OptionProps, ValueContainerProps } from "react-select";
 import Text from "@components/asorted/Text";
 import Flex from "@components/layout/Flex";
 import SearchMedium from "@assets/icons/SearchMedium";

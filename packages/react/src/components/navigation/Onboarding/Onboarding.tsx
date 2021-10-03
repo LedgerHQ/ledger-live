@@ -9,7 +9,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Bar = styled.div<{on?: boolean; fill: string | number;}>`
+const Bar = styled.div<{ on?: boolean; fill: string | number }>`
   transition: all 600ms linear;
   height: 4px;
   border-radius: 2px;
