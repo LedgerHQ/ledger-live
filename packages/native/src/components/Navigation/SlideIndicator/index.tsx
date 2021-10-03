@@ -49,14 +49,14 @@ function SlideIndicator({
 }: Props): React.ReactElement {
   const slidesArray = useMemo(
     () => new Array(slidesLength).fill(0),
-    [slidesLength],
+    [slidesLength]
   );
 
   const activeSize = useMemo(
     () =>
       (Math.max(0, Math.min(slidesLength - 1, activeIndex)) + 1) * (6 + 12) -
       12,
-    [activeIndex, slidesLength],
+    [activeIndex, slidesLength]
   );
 
   const animatedStyles = useAnimatedStyle(() => ({

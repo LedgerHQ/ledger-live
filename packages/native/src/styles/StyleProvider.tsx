@@ -24,7 +24,7 @@ const StyleProvider = ({
         palette: palettes[selectedPalette],
       },
     }),
-    [selectedPalette],
+    [selectedPalette]
   );
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;

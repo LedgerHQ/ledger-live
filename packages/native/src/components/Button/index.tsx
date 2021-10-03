@@ -122,7 +122,7 @@ const Button = (props: Props): React.ReactElement => {
 };
 
 export const PromisableButton = (
-  props: Props & { onPress: () => Promise<any> },
+  props: Props & { onPress: () => Promise<any> }
 ): React.ReactElement => {
   const { Icon, children, onPress, disabled = false } = props;
 
