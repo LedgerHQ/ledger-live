@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled, { css, DefaultTheme } from "styled-components";
+import styled, { css } from "styled-components";
 import { fontSize, color } from "styled-system";
 import fontFamily from "@styles/styled/fontFamily";
 import { fontSizes } from "@styles/theme";
@@ -16,7 +16,6 @@ interface BaseProps {
   iconPosition?: "right" | "left";
   iconButton?: boolean;
   disabled?: boolean;
-  theme: DefaultTheme;
 }
 
 export interface ButtonProps extends BaseProps {
@@ -63,8 +62,9 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
   max-width: 100%;
   position: relative;
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};
-  ${(p: BaseProps) => {
-    switch (p.type) {
+  ${(p) => {
+    const type: string = p.type || "default"; // workarround for typescript undefined vs string comparison but maybe rework this switch instead
+    switch (type) {
       case "primary":
         return p.disabled
           ? `
@@ -136,7 +136,7 @@ const Button = ({
   children,
   onClick,
   ...props
-}: ButtonProps) => {
+}: ButtonProps): React.ReactElement => {
   return (
     // @ts-expect-error FIXME type button conflict
     <Base {...props} iconButton={!(Icon == null) && !children} onClick={onClick}>
@@ -167,7 +167,7 @@ export const ExpandButton = function ExpandButton({
 }: {
   onToggle?: (arg0: boolean) => void;
   onClick?: (arg0: React.SyntheticEvent<HTMLButtonElement>) => void;
-}) {
+}): React.ReactElement {
   const [expanded, setExpanded] = useState(false);
   return (
     <StyledExpandButton

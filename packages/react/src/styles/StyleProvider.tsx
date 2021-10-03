@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
-import { DefaultTheme, ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import { defaultTheme, palettes, GlobalStyle } from ".";
 import type { ThemeNames } from "./palettes";
+import { Theme } from "./theme";
 
 interface Props {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const StyleProvider = ({ children, selectedPalette }: Props): React.ReactElement => {
-  const theme: DefaultTheme = useMemo(
+  const theme: Theme = useMemo(
     () => ({
       ...defaultTheme,
       colors: { ...defaultTheme.colors, palette: palettes[selectedPalette] },

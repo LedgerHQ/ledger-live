@@ -1,6 +1,6 @@
 import Color from "color";
 
-import { colors, fontFamilies } from "./theme";
+import { fontFamilies } from "./theme";
 
 export const rgba = (c: string, a: number): string => Color(c).alpha(a).rgb().toString();
 
@@ -24,18 +24,3 @@ export const ff = (v: string): any => {
     fontStyle: style,
   };
 };
-
-export function getMarketColor({
-  marketIndicator,
-  isNegative,
-}: {
-  marketIndicator: string;
-  isNegative: boolean;
-}): string {
-  if (isNegative) {
-    // @ts-expect-error FIXME
-    return colors[`marketDown_${marketIndicator}`];
-  }
-  // @ts-expect-error FIXME
-  return colors[`marketUp_${marketIndicator}`];
-}
