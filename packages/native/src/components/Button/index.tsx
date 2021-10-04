@@ -8,10 +8,11 @@ import {
 } from "react-native";
 import {
   buttonIconSize,
+  buttonSizeStyle,
   buttonSizeTextType,
   getButtonColorStyle,
-  getButtonSizeStyle,
 } from "@components/Button/getButtonStyle";
+import { color, border } from "styled-system";
 
 export type ButtonProps = TouchableOpacityProps & {
   Icon?: React.ComponentType<{ size: number; color: string }>;
@@ -36,12 +37,15 @@ const IconContainer = styled.View<{
       : `margin-left: 10px;`}
 `;
 
-// FixMe: It should be better to simply use react-native "Pressable" but it f*ck typescript for unknown reason
-export const Base = styled(TouchableOpacity)<
+export const Base = styled(TouchableOpacity).attrs<ButtonProps>((p) => ({
+  ...getButtonColorStyle(p.theme.colors, p).button,
+}))<
   {
     iconButton?: boolean;
   } & ButtonProps
 >`
+  ${color};
+  ${border};
   border-radius: ${(p) => p.theme.space[6]}px;
   height: ${(p) => p.theme.space[6]}px;
   padding: 0 ${(p) => p.theme.space[4]}px;
@@ -53,8 +57,7 @@ export const Base = styled(TouchableOpacity)<
   align-content: center;
   overflow: hidden;
   position: relative;
-  ${(p) => getButtonColorStyle(p.theme.colors, p).button}
-  ${(p) => getButtonSizeStyle(p)}
+  ${(p) => buttonSizeStyle[p.size || "medium"]}
 
   ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[6]}px;` : "")}
 `;
@@ -119,20 +122,16 @@ const ButtonContainer = (
 };
 
 const Button = (props: ButtonProps): React.ReactElement => {
-  const [pressed, setPressed] = React.useState(false);
   const { Icon, children, type = "main", size = "medium" } = props;
   return (
     <Base
       {...props}
-      pressed={pressed}
       type={type}
       size={size}
       iconButton={Icon && !children}
-      onPressIn={() => setPressed(true)}
-      onPressOut={() => setPressed(false)}
-      activeOpacity={1}
+      activeOpacity={0.5}
     >
-      <ButtonContainer {...props} pressed={pressed} type={type} size={size} />
+      <ButtonContainer {...props} type={type} size={size} />
     </Base>
   );
 };
