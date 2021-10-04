@@ -1,29 +1,30 @@
 // import original module declarations
 import "styled-components";
-import { Theme } from "./theme";
-
+import type { Palette } from "./palettes";
 // and extend them!
 declare module "styled-components" {
-  export interface DefaultTheme extends Theme {
+  export interface DefaultTheme {
     sizes: {
       topBarHeight: number;
       sideBarWidth: number;
-      side: {
-        big: {
-          width: number;
+      drawer: {
+        side: {
+          big: {
+            width: number;
+          };
+          small: {
+            width: number;
+          };
         };
-        small: {
-          width: number;
-        };
-      };
-      popin: {
-        min: {
-          height: number;
-          width: number;
-        };
-        max: {
-          height: number;
-          width: number;
+        popin: {
+          min: {
+            height: number;
+            width: number;
+          };
+          max: {
+            height: number;
+            width: number;
+          };
         };
       };
     };
@@ -33,7 +34,7 @@ declare module "styled-components" {
     space: number[];
     shadows: string[];
     colors: {
-      [key: string]: string | any;
+      palette: Palette;
     };
     animations: Record<string, (props: never) => any>;
     transition: (property?: string) => any;

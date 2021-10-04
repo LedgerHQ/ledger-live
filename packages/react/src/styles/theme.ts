@@ -1,5 +1,5 @@
-import { keyframes, css } from "styled-components";
-import type { Palette } from "./palettes";
+import { keyframes, css, DefaultTheme } from "styled-components";
+import palettes, { Palette } from "./palettes";
 export const space = [
   0, 2, 4, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76,
 ];
@@ -7,14 +7,6 @@ export const fontSizes = [8, 9, 10, 12, 13, 16, 18, 22, 32];
 export const radii = [0, 4];
 export const shadows = ["0 4px 8px 0 rgba(0, 0, 0, 0.03)"];
 export const zIndexes = [-1, 0, 1, 9, 10, 90, 100, 900, 1000];
-
-export const colors = {
-  // NB should we even keep arbitrary colors? There's market trend colors referrences in helpers.ts
-  marketUp_eastern: "#ea2e49",
-  marketUp_western: "#66be54",
-  marketDown_eastern: "#6490f1",
-  marketDown_western: "#ea2e49",
-};
 
 // Those fonts are now defined in global.css, this is just a mapping for styled-system
 export const fontFamilies = {
@@ -125,7 +117,7 @@ const overflow = {
     overflow-x: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.palette.text.shade30};
+      --track-color: ${(p) => p.theme.colors.palette.neutral.c30};
     }
   `,
   y: css`
@@ -133,7 +125,7 @@ const overflow = {
     overflow-y: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.palette.text.shade30};
+      --track-color: ${(p) => p.theme.colors.palette.neutral.c30};
     }
   `,
   yAuto: css`
@@ -141,14 +133,14 @@ const overflow = {
     overflow-y: auto;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.palette.text.shade30};
+      --track-color: ${(p) => p.theme.colors.palette.neutral.c30};
     }
   `,
   xy: css`
     overflow: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.palette.text.shade30};
+      --track-color: ${(p) => p.theme.colors.palette.neutral.c30};
     }
   `,
   trackSize: 12,
@@ -157,7 +149,7 @@ interface Font {
   weight: number;
   style: string;
 }
-export interface Theme {
+export interface Theme extends DefaultTheme {
   sizes: {
     topBarHeight: number;
     sideBarWidth: number;
@@ -188,8 +180,7 @@ export interface Theme {
   space: number[];
   shadows: string[];
   colors: {
-    [key: string]: string | any;
-    palette?: Palette;
+    palette: Palette;
   };
   animations: Record<string, (props: never) => any>;
   transition: (property?: string) => any;
@@ -226,7 +217,9 @@ const theme: Theme = {
   fontSizes,
   space,
   shadows,
-  colors,
+  colors: {
+    palette: palettes.light,
+  },
   animations,
   overflow,
   transition,
