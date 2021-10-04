@@ -3,7 +3,7 @@ import ReactNativeModal from "react-native-modal";
 import styled from "styled-components/native";
 
 import sizes from "@ui/helpers/getDeviceSize";
-import Button from "@ui/components/Button";
+import Button from "@ui/components/cta/Button";
 import Close from "@ui/icons/Close";
 
 const { width, height } = sizes;

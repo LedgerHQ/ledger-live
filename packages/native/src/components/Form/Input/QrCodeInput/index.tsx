@@ -2,7 +2,7 @@ import React from "react";
 import Input, { InputProps } from "@components/Form/Input/BaseInput";
 import FlexBox from "@ui/components/Layout/Flex";
 import QrCodeMedium from "@ui/assets/icons/QrCodeMedium";
-import styled from "styled-components";
+import styled from "styled-components/native";
 import { GestureResponderEvent, TouchableOpacity } from "react-native";
 
 const QrCodeButton = styled(TouchableOpacity)`

@@ -11,7 +11,7 @@ import {
   buttonSizeStyle,
   buttonSizeTextType,
   getButtonColorStyle,
-} from "@components/Button/getButtonStyle";
+} from "@components/cta/Button/getButtonStyle";
 import { color, border } from "styled-system";
 
 export type ButtonProps = TouchableOpacityProps & {

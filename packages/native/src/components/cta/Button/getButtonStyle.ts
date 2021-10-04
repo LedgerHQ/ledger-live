@@ -1,5 +1,5 @@
 import { Theme } from "@ui/styles/theme";
-import { ButtonProps } from "@components/Button/index";
+import { ButtonProps } from "@components/cta/Button/index";
 import { TextTypes } from "@components/Text/getTextStyle";
 
 const buttonColors: {

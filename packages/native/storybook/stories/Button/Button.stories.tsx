@@ -3,7 +3,7 @@ import { storiesOf } from "@storybook/react-native";
 import { withKnobs, select, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import React from "react";
-import Button, { PromisableButton } from "@components/Button";
+import Button, { PromisableButton } from "@components/cta/Button";
 import Info from "@ui/icons/Info";
 import CenterView from "../CenterView";
 

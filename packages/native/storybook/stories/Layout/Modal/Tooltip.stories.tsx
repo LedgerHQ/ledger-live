@@ -5,7 +5,7 @@ import { action } from "@storybook/addon-actions";
 import Tooltip from "@components/Layout/Modal/Tooltip";
 import Text from "@components/Text";
 import CenterView from "../../CenterView";
-import Button from "@components/Button";
+import Button from "@components/cta/Button";
 import Info from "@ui/icons/Info";
 
 const TooltipStory = () => {
@@ -32,7 +32,7 @@ const TooltipStory = () => {
     >
       <>
         <Text>Exemple children</Text>
-        <Button type={"primary"}>
+        <Button>
           <Text>button</Text>
         </Button>
       </>
