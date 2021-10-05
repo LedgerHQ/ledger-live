@@ -3,7 +3,9 @@ import styled from "styled-components";
 import gapsSystem from "@ui/styles/system/gaps";
 import { space } from "styled-system";
 
-const FlexBox = styled.div<FlexboxProps & SpaceProps>`
+const FlexBox = styled.div<
+  FlexboxProps & SpaceProps & { rowGap?: number | string; columnGap?: number | string }
+>`
   display: flex;
   ${flexbox};
   ${space}
