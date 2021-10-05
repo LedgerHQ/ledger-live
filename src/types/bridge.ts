@@ -33,6 +33,20 @@ export type DeviceId = string;
 export type PreloadStrategy = Partial<{
   preloadMaxAge: number;
 }>;
+
+export type BroadcastArg0 = {
+  account: Account;
+  signedOperation: SignedOperation;
+};
+export type SignOperationArg0<T> = {
+  account: Account;
+  transaction: T;
+  deviceId: DeviceId;
+};
+export type SignOperationFnSignature<T> = (
+  arg0: SignOperationArg0<T>
+) => Observable<SignOperationEvent>;
+export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
 // Abstraction related to a currency
 export interface CurrencyBridge {
   // Preload data required for the bridges to work. (e.g. tokens, delegators,...)
@@ -105,17 +119,10 @@ export interface AccountBridge<T extends Transaction> {
   // finalizing a transaction by signing it with the ledger device
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted
-  signOperation(arg0: {
-    account: Account;
-    transaction: T;
-    deviceId: DeviceId;
-  }): Observable<SignOperationEvent>;
+  signOperation: SignOperationFnSignature<T>;
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
-  broadcast(arg0: {
-    account: Account;
-    signedOperation: SignedOperation;
-  }): Promise<Operation>;
+  broadcast: BroadcastFnSignature;
 }
 type ExpectFn = (...args: Array<any>) => any;
 export type CurrenciesData<T extends Transaction> = {

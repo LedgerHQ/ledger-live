@@ -50,6 +50,7 @@ setSupportedCurrencies([
   "ethereum_ropsten",
   "tron",
   "stellar",
+  "filecoin",
 ]);
 
 const webusbDevices = {};

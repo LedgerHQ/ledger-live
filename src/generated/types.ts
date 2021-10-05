@@ -50,6 +50,15 @@ import { Transaction as ethereumTransaction } from "../families/ethereum/types";
 import { TransactionRaw as ethereumTransactionRaw } from "../families/ethereum/types";
 import { NetworkInfo as ethereumNetworkInfo } from "../families/ethereum/types";
 import { NetworkInfoRaw as ethereumNetworkInfoRaw } from "../families/ethereum/types";
+import { reflect as filecoinReflect } from "../families/filecoin/types";
+import { CoreStatics as CoreStatics_filecoin } from "../families/filecoin/types";
+import { CoreAccountSpecifics as CoreAccountSpecifics_filecoin } from "../families/filecoin/types";
+import { CoreOperationSpecifics as CoreOperationSpecifics_filecoin } from "../families/filecoin/types";
+import { CoreCurrencySpecifics as CoreCurrencySpecifics_filecoin } from "../families/filecoin/types";
+import { Transaction as filecoinTransaction } from "../families/filecoin/types";
+import { TransactionRaw as filecoinTransactionRaw } from "../families/filecoin/types";
+import { NetworkInfo as filecoinNetworkInfo } from "../families/filecoin/types";
+import { NetworkInfoRaw as filecoinNetworkInfoRaw } from "../families/filecoin/types";
 import { reflect as neoReflect } from "../families/neo/types";
 import { CoreStatics as CoreStatics_neo } from "../families/neo/types";
 import { CoreAccountSpecifics as CoreAccountSpecifics_neo } from "../families/neo/types";
@@ -110,6 +119,7 @@ export type SpecificStatics = {}
 & CoreStatics_crypto_org
 & CoreStatics_elrond
 & CoreStatics_ethereum
+& CoreStatics_filecoin
 & CoreStatics_neo
 & CoreStatics_polkadot
 & CoreStatics_ripple
@@ -123,6 +133,7 @@ export type CoreAccountSpecifics = {}
 & CoreAccountSpecifics_crypto_org
 & CoreAccountSpecifics_elrond
 & CoreAccountSpecifics_ethereum
+& CoreAccountSpecifics_filecoin
 & CoreAccountSpecifics_neo
 & CoreAccountSpecifics_polkadot
 & CoreAccountSpecifics_ripple
@@ -136,6 +147,7 @@ export type CoreOperationSpecifics = {}
 & CoreOperationSpecifics_crypto_org
 & CoreOperationSpecifics_elrond
 & CoreOperationSpecifics_ethereum
+& CoreOperationSpecifics_filecoin
 & CoreOperationSpecifics_neo
 & CoreOperationSpecifics_polkadot
 & CoreOperationSpecifics_ripple
@@ -149,6 +161,7 @@ export type CoreCurrencySpecifics = {}
 & CoreCurrencySpecifics_crypto_org
 & CoreCurrencySpecifics_elrond
 & CoreCurrencySpecifics_ethereum
+& CoreCurrencySpecifics_filecoin
 & CoreCurrencySpecifics_neo
 & CoreCurrencySpecifics_polkadot
 & CoreCurrencySpecifics_ripple
@@ -162,6 +175,7 @@ export type Transaction =
   | crypto_orgTransaction
   | elrondTransaction
   | ethereumTransaction
+  | filecoinTransaction
   | neoTransaction
   | polkadotTransaction
   | rippleTransaction
@@ -175,6 +189,7 @@ export type TransactionRaw =
   | crypto_orgTransactionRaw
   | elrondTransactionRaw
   | ethereumTransactionRaw
+  | filecoinTransactionRaw
   | neoTransactionRaw
   | polkadotTransactionRaw
   | rippleTransactionRaw
@@ -187,6 +202,7 @@ export type NetworkInfo =
   | crypto_orgNetworkInfo
   | elrondNetworkInfo
   | ethereumNetworkInfo
+  | filecoinNetworkInfo
   | neoNetworkInfo
   | rippleNetworkInfo
   | stellarNetworkInfo
@@ -198,6 +214,7 @@ export type NetworkInfoRaw =
   | crypto_orgNetworkInfoRaw
   | elrondNetworkInfoRaw
   | ethereumNetworkInfoRaw
+  | filecoinNetworkInfoRaw
   | neoNetworkInfoRaw
   | rippleNetworkInfoRaw
   | stellarNetworkInfoRaw
@@ -210,6 +227,7 @@ export const reflectSpecifics = (declare: any): Array<{ OperationMethods: Record
   crypto_orgReflect(declare),
   elrondReflect(declare),
   ethereumReflect(declare),
+  filecoinReflect(declare),
   neoReflect(declare),
   polkadotReflect(declare),
   rippleReflect(declare),

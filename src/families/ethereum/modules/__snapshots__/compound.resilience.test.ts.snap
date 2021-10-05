@@ -12833,7 +12833,7 @@ Object {
           ],
           "transactionSequenceNumber": 217,
           "type": "OUT",
-          "value": "1e+21",
+          "value": "1000000000000000000000",
         },
         Object {
           "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fdacx_token",
@@ -12890,7 +12890,7 @@ Object {
           ],
           "transactionSequenceNumber": 21,
           "type": "IN",
-          "value": "1.234e+21",
+          "value": "1234000000000000000000",
         },
       ],
       "operationsCount": 4,

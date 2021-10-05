@@ -53,4 +53,5 @@ setSupportedCurrencies([
   "cosmos_testnet",
   "crypto_org_croeseid",
   "crypto_org",
+  "filecoin",
 ]);

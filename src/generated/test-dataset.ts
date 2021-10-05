@@ -10,6 +10,8 @@ import elrond from "../families/elrond/test-dataset";
 
 import ethereum from "../families/ethereum/test-dataset";
 
+import filecoin from "../families/filecoin/test-dataset";
+
 import polkadot from "../families/polkadot/test-dataset";
 
 import ripple from "../families/ripple/test-dataset";
@@ -28,6 +30,7 @@ export default {
   crypto_org,
   elrond,
   ethereum,
+  filecoin,
   polkadot,
   ripple,
   stellar,

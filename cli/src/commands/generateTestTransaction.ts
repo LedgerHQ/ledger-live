@@ -25,7 +25,7 @@ const toJS = (obj) => {
     }
 
     if (BigNumber.isBigNumber(obj)) {
-      return `BigNumber("${obj.toString()}")`;
+      return `BigNumber("${obj.toFixed()}")`;
     }
 
     const keys = Object.keys(obj);

@@ -114,7 +114,7 @@ Array [
         Array [
           "7a608bb52ba2aaaae648eee7ce53d51ea571a801404af5c87867b70268e55bd0",
           1,
-          607679,
+          undefined,
           "bc1qtc9gkextz267qgaupcmqpz9hl64nwqn6y4t0qk",
           undefined,
           "2717",
@@ -18299,13 +18299,13 @@ Array [
   },
   Object {
     "approvals": undefined,
-    "balance": "5049501190708492",
+    "balance": "5053665033725912",
     "compoundBalance": undefined,
     "id": "js:2:ethereum:0x6b3493FE181EA283e0335e5D8D768e2122bC6c18:+ethereum%2Ferc20%2Fsteth",
     "operationsCount": 3,
     "parentId": "js:2:ethereum:0x6b3493FE181EA283e0335e5D8D768e2122bC6c18:",
     "pendingOperations": Array [],
-    "spendableBalance": "5049501190708492",
+    "spendableBalance": "5053665033725912",
     "starred": false,
     "swapHistory": Array [],
     "tokenId": "ethereum/erc20/steth",
@@ -31737,7 +31737,7 @@ Array [
       ],
       "transactionSequenceNumber": 217,
       "type": "OUT",
-      "value": "1e+21",
+      "value": "1000000000000000000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fdacx_token",
@@ -31773,7 +31773,7 @@ Array [
       ],
       "transactionSequenceNumber": 21,
       "type": "IN",
-      "value": "1.234e+21",
+      "value": "1234000000000000000000",
     },
     Object {
       "accountId": "js:2:ethereum:0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5:+ethereum%2Ferc20%2Fdacx_token",
@@ -46703,6 +46703,94 @@ Array [
       "value": "186271990000000000",
     },
   ],
+  Array [],
+]
+`;
+
+exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
+Array [
+  Object {
+    "balance": "1000000000000000000000",
+    "currencyId": "filecoin",
+    "derivationMode": "filecoin",
+    "freshAddress": "f1zx43cf6qb6rd5e4okl7lexnjumxe5toqj6vtr3i",
+    "freshAddressPath": "44'/461'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "f1zx43cf6qb6rd5e4okl7lexnjumxe5toqj6vtr3i",
+        "derivationPath": "44'/461'/0'/0/0",
+      },
+    ],
+    "id": "js:2:filecoin:f1zx43cf6qb6rd5e4okl7lexnjumxe5toqj6vtr3i:filecoin",
+    "index": 0,
+    "name": "filecoin 1",
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "041e10b3a453db1e7324cd37e78820d7d150c13ba3bf784be204c91afe495816a19a836e85cb89b0e4ff36d06a71a9ca02947de79e16e66dacc645e46dcdf7d909",
+    "spendableBalance": "1000000000000000000000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": true,
+  },
+  Object {
+    "balance": "1000000000000000000000",
+    "currencyId": "filecoin",
+    "derivationMode": "",
+    "freshAddress": "f1zx43cf6qb6rd5e4okl7lexnjumxe5toqj6vtr3i",
+    "freshAddressPath": "44'/461'/0'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "f1zx43cf6qb6rd5e4okl7lexnjumxe5toqj6vtr3i",
+        "derivationPath": "44'/461'/0'/0/0",
+      },
+    ],
+    "id": "js:2:filecoin:f1zx43cf6qb6rd5e4okl7lexnjumxe5toqj6vtr3i:",
+    "index": 0,
+    "name": "filecoin 1",
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "041e10b3a453db1e7324cd37e78820d7d150c13ba3bf784be204c91afe495816a19a836e85cb89b0e4ff36d06a71a9ca02947de79e16e66dacc645e46dcdf7d909",
+    "spendableBalance": "1000000000000000000000",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": true,
+  },
+  Object {
+    "balance": "0",
+    "currencyId": "filecoin",
+    "derivationMode": "",
+    "freshAddress": "f1wpbijm5jliu6ai5inpfwdbhoxsxw5vfegsd6lyq",
+    "freshAddressPath": "44'/461'/1'/0/0",
+    "freshAddresses": Array [
+      Object {
+        "address": "f1wpbijm5jliu6ai5inpfwdbhoxsxw5vfegsd6lyq",
+        "derivationPath": "44'/461'/1'/0/0",
+      },
+    ],
+    "id": "js:2:filecoin:f1wpbijm5jliu6ai5inpfwdbhoxsxw5vfegsd6lyq:",
+    "index": 1,
+    "name": "filecoin 2",
+    "operationsCount": 0,
+    "pendingOperations": Array [],
+    "seedIdentifier": "041e10b3a453db1e7324cd37e78820d7d150c13ba3bf784be204c91afe495816a19a836e85cb89b0e4ff36d06a71a9ca02947de79e16e66dacc645e46dcdf7d909",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": Array [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": false,
+  },
+]
+`;
+
+exports[`filecoin currency bridge scanAccounts filecoin seed 1 2`] = `
+Array [
+  Array [],
+  Array [],
   Array [],
 ]
 `;

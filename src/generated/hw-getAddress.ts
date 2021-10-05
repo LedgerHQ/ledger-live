@@ -10,6 +10,8 @@ import elrond from "../families/elrond/hw-getAddress";
 
 import ethereum from "../families/ethereum/hw-getAddress";
 
+import filecoin from "../families/filecoin/hw-getAddress";
+
 import neo from "../families/neo/hw-getAddress";
 
 import polkadot from "../families/polkadot/hw-getAddress";
@@ -30,6 +32,7 @@ export default {
   crypto_org,
   elrond,
   ethereum,
+  filecoin,
   neo,
   polkadot,
   ripple,

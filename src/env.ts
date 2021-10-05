@@ -70,6 +70,11 @@ const envDefinitions = {
     def: "wss://xrplcluster.com",
     desc: "XRP Ledger full history open WebSocket endpoint",
   },
+  API_FILECOIN_ENDPOINT: {
+    parser: stringParser,
+    def: "https://live.ledger.dev.zondax.net/blockchain/filecoin", // FIXME Filecoin - Set the correct value for ledger proxy
+    desc: "Filecoin API url",
+  },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
     def: "https://polkadot.coin.ledger.com",
@@ -505,6 +510,11 @@ const envDefinitions = {
     def: 1,
     parser: intParser,
     desc: "version used for the platform api",
+  },
+  DEVELOPMENT_MODE: {
+    def: false,
+    parser: boolParser,
+    desc: "flag to indicate if the app is running on development environment",
   },
 };
 

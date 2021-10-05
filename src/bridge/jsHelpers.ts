@@ -36,14 +36,17 @@ import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
 import { open, close } from "../hw";
 import { withDevice } from "../hw/deviceAccess";
+
+export type GetAccountShapeArg0 = {
+  currency: CryptoCurrency;
+  address: string;
+  id: string;
+  initialAccount?: Account;
+  rest?: any;
+};
+
 export type GetAccountShape = (
-  arg0: {
-    currency: CryptoCurrency;
-    address: string;
-    id: string;
-    initialAccount?: Account;
-    rest?: any;
-  },
+  arg0: GetAccountShapeArg0,
   arg1: SyncConfig
 ) => Promise<Partial<Account>>;
 type AccountUpdater = (arg0: Account) => Account;
@@ -288,8 +291,19 @@ export const makeScanAccounts =
             const stopAt = isIterableDerivationMode(derivationMode) ? 255 : 1;
             const startsAt = getDerivationModeStartsAt(derivationMode);
 
+            log(
+              "debug",
+              `start scanning account process. MandatoryEmptyAccountSkip ${mandatoryEmptyAccountSkip} / StartsAt: ${startsAt} - StopAt: ${stopAt}`
+            );
+
             for (let index = startsAt; index < stopAt; index++) {
-              if (finished) break;
+              log("debug", `start to scan a new account. Index: ${index}`);
+
+              if (finished) {
+                log("debug", `new account scanning process has been finished`);
+                break;
+              }
+
               if (!derivationModeSupportsIndex(derivationMode, index)) continue;
               const freshAddressPath = runDerivationScheme(
                 derivationScheme,
@@ -339,6 +353,10 @@ export const makeScanAccounts =
                   });
 
               if (account.used || showNewAccount) {
+                log(
+                  "debug",
+                  `Emit 'discovered' event for a new account found. AccountUsed: ${account.used} - showNewAccount: ${showNewAccount}`
+                );
                 o.next({
                   type: "discovered",
                   account,

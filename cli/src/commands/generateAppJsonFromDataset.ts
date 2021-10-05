@@ -46,6 +46,7 @@ setSupportedCurrencies([
   "cosmos",
   "algorand",
   "polkadot",
+  "filecoin",
 ]);
 const defaultSyncConfig = {
   paginationConfig: {},
