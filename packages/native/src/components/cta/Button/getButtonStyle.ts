@@ -1,30 +1,31 @@
 import { Theme } from "@ui/styles/theme";
 import { ButtonProps } from "@components/cta/Button/index";
-import { TextTypes } from "@components/Text/getTextStyle";
 
-const buttonColors: {
+export function getButtonColors(colors: Theme["colors"]): {
   [index: string]: {
     primaryColor: string;
     secondaryColor: string;
   };
-} = {
-  disabled: {
-    primaryColor: "palette.neutral.c50",
-    secondaryColor: "palette.neutral.c30",
-  },
-  main: {
-    primaryColor: "palette.neutral.c00",
-    secondaryColor: "palette.neutral.c100",
-  },
-  error: {
-    primaryColor: "palette.neutral.c00",
-    secondaryColor: "palette.error.c100",
-  },
-  color: {
-    primaryColor: "palette.neutral.c00",
-    secondaryColor: "palette.primary.c80",
-  },
-};
+} {
+  return {
+    disabled: {
+      primaryColor: colors.palette.neutral.c50,
+      secondaryColor: colors.palette.neutral.c30,
+    },
+    main: {
+      primaryColor: colors.palette.neutral.c00,
+      secondaryColor: colors.palette.neutral.c100,
+    },
+    error: {
+      primaryColor: colors.palette.neutral.c00,
+      secondaryColor: colors.palette.error.c100,
+    },
+    color: {
+      primaryColor: colors.palette.neutral.c00,
+      secondaryColor: colors.palette.primary.c80,
+    },
+  };
+}
 
 export function getButtonColorStyle(
   colors: Theme["colors"],
@@ -40,8 +41,9 @@ export function getButtonColorStyle(
   };
 } {
   const { outline, type = "main", disabled } = props;
+
   const { primaryColor, secondaryColor } =
-    buttonColors[disabled ? "disabled" : type];
+    getButtonColors(colors)[disabled ? "disabled" : type];
 
   if (outline) {
     return {
@@ -80,16 +82,4 @@ export const buttonSizeStyle: {
     padding: "0 28px",
     height: "56px",
   },
-};
-
-export const buttonSizeTextType: { [index: string]: TextTypes } = {
-  small: "paragraph",
-  medium: "body",
-  large: "large",
-};
-
-export const buttonIconSize: { [index: string]: number } = {
-  small: 16,
-  medium: 18,
-  large: 20,
 };

@@ -7,12 +7,11 @@ import {
   TouchableOpacityProps,
 } from "react-native";
 import {
-  buttonIconSize,
   buttonSizeStyle,
-  buttonSizeTextType,
   getButtonColorStyle,
 } from "@components/cta/Button/getButtonStyle";
 import { color, border } from "styled-system";
+import { ctaIconSize, ctaTextType } from "@components/cta/getCtaStyle";
 
 export type ButtonProps = TouchableOpacityProps & {
   Icon?: React.ComponentType<{ size: number; color: string }>;
@@ -100,7 +99,7 @@ const ButtonContainer = (
     <Container hide={hide}>
       {iconPosition === "right" && children ? (
         <Text
-          type={buttonSizeTextType[size]}
+          type={ctaTextType[size]}
           fontWeight={"semibold"}
           color={text.color}
         >
@@ -109,7 +108,7 @@ const ButtonContainer = (
       ) : null}
       {Icon ? (
         <IconContainer iconButton={!children} iconPosition={iconPosition}>
-          <Icon size={buttonIconSize[size]} color={text.color} />
+          <Icon size={ctaIconSize[size]} color={text.color} />
         </IconContainer>
       ) : null}
       {iconPosition === "left" && children ? (
