@@ -62,11 +62,11 @@ export const Item = {
     ${space}
   `,
   Current: styled.div.attrs({
-    backgroundColor: "palette.primary.c160",
+    backgroundColor: "palette.primary.c90",
   })<ColorProps>`
-    width: ${(p) => p.theme.space[3]}px;
-    height: ${(p) => p.theme.space[3]}px;
-    border-radius: ${(p) => p.theme.space[3]}px;
+    width: 6px;
+    height: 6px;
+    border-radius: 6px;
     ${color}
   `,
   Pending: styled.div.attrs({
@@ -97,7 +97,7 @@ const BaseSeparator = styled.div<{ inactive?: boolean }>`
   flex: 1;
   position: relative;
   overflow-x: hidden;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c90};
+  background-color: ${(p) => p.theme.colors.palette.neutral.c40};
   height: 1px;
   top: ${(p) => p.theme.space[5]}px;
 
@@ -143,7 +143,7 @@ const stepContentsByState = {
   ),
   completed: (
     <Item.Container
-      color="palette.primary.c160"
+      color="palette.primary.c90"
       backgroundColor="palette.primary.c20"
       borderRadius="8px"
     >
@@ -153,7 +153,7 @@ const stepContentsByState = {
   errored: (
     <Item.Container
       color="palette.error.c100"
-      backgroundColor="palette.warning.c10"
+      backgroundColor="palette.warning.c30"
       borderRadius="8px"
     >
       <Item.Errored />

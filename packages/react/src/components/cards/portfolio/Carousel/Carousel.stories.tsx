@@ -1,8 +1,7 @@
 import React from "react";
 import { useArgs } from "@storybook/client-api";
-
-import Carousel from "./";
-import image from "../../../../assets/images/sampleSlide.png";
+import Carousel, { Props as CarouselProps } from "./";
+import image from "@assets/images/sampleSlide.png";
 export default {
   title: "Cards/Portfolio/Carousel",
   argTypes: {
@@ -37,7 +36,7 @@ export default {
   },
 };
 
-const Template = (args: any) => {
+const Template = (args: CarouselProps) => {
   const queue = [
     {
       title: "NEW PRODUCT 1",
@@ -72,7 +71,7 @@ const Template = (args: any) => {
       isDismissed: true,
     });
 
-  return <Carousel queue={queue} onDismiss={onDismiss} {...args} />;
+  return <Carousel {...args} queue={queue} onDismiss={onDismiss} />;
 };
 
 export const Default = Template.bind({});

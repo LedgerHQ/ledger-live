@@ -38,15 +38,15 @@ const stylesFn = <
   dropdownIndicator: DropdownIndicatorModule.getStyles(),
   menuList: MenuListModule.getStyles(theme),
   option: OptionModule.getStyles(),
-  placeholder: (provided: any) => ({
+  placeholder: (provided) => ({
     ...provided,
     color: theme.colors.palette.neutral.c60,
   }),
-  singleValue: (provided: any) => ({
+  singleValue: (provided) => ({
     ...provided,
     color: "inherit",
   }),
-  menu: (provided: any) => ({
+  menu: (provided) => ({
     ...provided,
     border: 0,
     boxShadow: "none",

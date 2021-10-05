@@ -10,7 +10,7 @@ export type CommonProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export type InputProps = CommonProps & {
-  onChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
 };
@@ -28,8 +28,8 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
     p.focus &&
     !p.error &&
     css`
-      border: 1px solid ${p.theme.colors.palette.primary.c140};
-      box-shadow: 0 0 0 4px ${rgba(p.theme.colors.palette.primary.c100, 0.48)};
+      border: 1px solid ${p.theme.colors.palette.primary.c80};
+      box-shadow: 0 0 0 4px ${rgba(p.theme.colors.palette.primary.c60, 0.48)};
     `};
 
   ${(p) =>
@@ -44,7 +44,7 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
     !p.disabled &&
     css`
       &:hover {
-        border: ${!p.disabled && `1px solid ${p.theme.colors.palette.primary.c140}`};
+        border: ${!p.disabled && `1px solid ${p.theme.colors.palette.primary.c80}`};
       }
     `};
 
@@ -61,7 +61,7 @@ export const BaseInput = styled.input<Partial<CommonProps> & { focus?: boolean }
   width: 100%;
   border: 0;
   caret-color: ${(p) =>
-    p.error ? p.theme.colors.palette.error.c100 : p.theme.colors.palette.primary.c140};
+    p.error ? p.theme.colors.palette.error.c100 : p.theme.colors.palette.primary.c80};
   background: none;
   outline: none;
   cursor: ${(p) => (p.disabled ? "not-allowed" : "text")};

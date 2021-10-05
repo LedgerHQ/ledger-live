@@ -6,6 +6,7 @@ import type { ItemType } from "./Item";
 import SideBarContext from "@ui/components/navigation/sideBar";
 import Text from "@ui/components/asorted/Text";
 import Flex from "@ui/components/layout/Flex";
+import { StoryTemplate } from "@ui/helpers";
 
 export default {
   title: "Navigation/SideBar/Item",
@@ -54,11 +55,11 @@ const Template = (args: ItemType) => (
   </Flex>
 );
 
-export const Default = Template.bind({});
-export const Hover = Template.bind({});
-export const Focus = Template.bind({});
-export const Active = Template.bind({});
-export const Disable = Template.bind({});
+export const Default: StoryTemplate<ItemType> = Template.bind({});
+export const Hover: StoryTemplate<ItemType> = Template.bind({});
+export const Focus: StoryTemplate<ItemType> = Template.bind({});
+export const Active: StoryTemplate<ItemType> = Template.bind({});
+export const Disable: StoryTemplate<ItemType> = Template.bind({});
 
 Default.args = {
   label: "accounts",

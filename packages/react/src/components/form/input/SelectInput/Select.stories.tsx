@@ -205,7 +205,7 @@ const ColorValueContainer = (props: ValueContainerProps<SelectItem, false>) => {
   );
 };
 export const Default = (args: Props): React.ReactNode => {
-  const [value, setValue] = React.useState<SelectItem>();
+  const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
     <SelectInput
@@ -223,13 +223,13 @@ export const Default = (args: Props): React.ReactNode => {
 };
 
 export const Minimal = (args: Props): React.ReactNode => {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return <SelectInput options={options} value={value} onChange={setValue} {...args} />;
 };
 
 export const SideRenders = (args: Props): React.ReactNode => {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = React.useState<SelectItem | null>(null);
   const theme = useTheme();
 
   return (
@@ -275,7 +275,7 @@ const CustomOption = (props: OptionProps<SelectItem, false>) => {
   );
 };
 export const CustomOptions = (args: Props): React.ReactNode => {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = React.useState<SelectItem | null>();
 
   return (
     <SelectInput
@@ -289,7 +289,7 @@ export const CustomOptions = (args: Props): React.ReactNode => {
 };
 
 export const DisabledOption = (args: Props): React.ReactNode => {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
     <SelectInput
@@ -304,7 +304,7 @@ export const DisabledOption = (args: Props): React.ReactNode => {
 
 const hugeOptions = new Array(10000).fill(0).map((_, i) => ({ label: "" + i, value: "" + i }));
 export const VirtualList = (args: Props): React.ReactNode => {
-  const [value, setValue] = React.useState(null);
+  const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
     <SelectInput

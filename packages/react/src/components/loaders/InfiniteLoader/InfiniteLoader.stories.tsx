@@ -1,4 +1,6 @@
+import React from "react";
 import InfiniteLoader from "./index";
+
 export default {
   title: "Loaders/InfiniteLoader",
   component: InfiniteLoader,

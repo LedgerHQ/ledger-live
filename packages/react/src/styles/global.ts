@@ -11,60 +11,60 @@ export const GlobalStyle = createGlobalStyle`
     font-family: Inter;
     font-size: 100%;
   }
-  
+
   @font-face {
     font-family: "Inter";
     src: url("./assets/fonts/inter/Inter-ExtraLight-BETA.woff2") format("woff2");
     font-weight: 100;
     font-style: normal;
   }
-  
+
   @font-face {
     font-family: "Inter";
     src: url("./assets/fonts/inter/Inter-Light-BETA.woff2") format("woff2");
     font-weight: 300;
     font-style: normal;
   }
-  
+
   @font-face {
     font-family: "Inter";
     src: url("./assets/fonts/inter/Inter-Regular.woff2") format("woff2");
     font-weight: 400;
     font-style: normal;
   }
-  
+
   @font-face {
     font-family: "Inter";
     src: url("./assets/fonts/inter/Inter-Medium.woff2") format("woff2");
     font-weight: 500;
     font-style: normal;
   }
-  
+
   @font-face {
     font-family: "Inter";
     src: url("./assets/fonts/inter/Inter-SemiBold.woff2") format("woff2");
     font-weight: 600;
     font-style: normal;
   }
-  
+
   @font-face {
     font-family: "Inter";
     src: url("./assets/fonts/inter/Inter-ExtraBold.woff2") format("woff2");
     font-weight: 900;
     font-style: normal;
   }
-  
+
   @font-face {
     font-family: "Alpha";
     src: url("./assets/fonts/alpha/HMAlphaMono-Medium.woff2") format("woff2");
     font-weight: 500;
     font-style: normal;
-  }  
-  
+  }
+
   .spectron-run canvas:not(.visible-for-spectron) {
     visibility: hidden;
   }
-  
+
   #react-root {
     display: flex;
     flex-direction: column;
@@ -132,23 +132,23 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   ::selection {
-    background: ${(p) => rgba(p.theme.colors.palette.primary.c180, 0.1)};
+    background: ${(p) => rgba(p.theme.colors.palette.primary.c100, 0.1)};
   }
 
 
   --track-color: rgba(0,0,0,0);
 
-  ::-webkit-scrollbar              { 
+  ::-webkit-scrollbar              {
     width: ${(p) => p.theme.overflow.trackSize}px;
     height: ${(p) => p.theme.overflow.trackSize}px;
     background-color: rgba(0,0,0,0);
   }
-  ::-webkit-scrollbar-button       { 
+  ::-webkit-scrollbar-button       {
     opacity: 0;
     height: 0;
     width: 0;
   }
-  ::-webkit-scrollbar-track        { 
+  ::-webkit-scrollbar-track        {
     background-color: rgba(0,0,0,0);
   }
   ::-webkit-scrollbar-thumb        {
@@ -156,7 +156,7 @@ export const GlobalStyle = createGlobalStyle`
     border: 2px solid rgba(0,0,0,0);
     border-radius: ${(p) => p.theme.overflow.trackSize}px;
   }
-  ::-webkit-scrollbar-corner { 
+  ::-webkit-scrollbar-corner {
     opacity: 0;
   }
 `;

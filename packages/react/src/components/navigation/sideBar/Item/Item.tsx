@@ -27,7 +27,7 @@ const ItemWrapper = styled.li`
   /** HOVER VARIANT **/
   &:hover {
     --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c160};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c90};
     --ll-sidebar-item-background-color: unset;
   }
 
@@ -40,7 +40,7 @@ const ItemWrapper = styled.li`
   /** ACTIVE VARIANT **/
   &[data-active] {
     --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c160};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c90};
     --ll-sidebar-item-background-color: ${(props) => props.theme.colors.palette.primary.c20};
   }
 
