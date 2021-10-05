@@ -75,6 +75,7 @@ export default class Touchable extends Component<
     return (
       // $FlowFixMe
       <TouchableOpacity
+        delayPressIn={50}
         onPress={this.onPress}
         disabled={disabled}
         hitSlop={defaultHitSlop}

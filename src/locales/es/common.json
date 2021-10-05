@@ -1220,6 +1220,13 @@
         "title": "No utilices una frase de recuperación que no hayas generado tú mismo.",
         "desc": "Tú y solo tú debes inicializar el código PIN y la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una palabra semilla existente o un código PIN ya inicializado, no utilices el producto y ponte en contacto con el Soporte.",
         "supportLink": "Ponte en contacto con Soporte"
+      },
+      "seed": {
+        "title": "Please check the box contents",
+        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
+        "warning": "Only use a recovery phrase that your device displayed when it was set up",
+        "continueCTA": "Continue",
+        "contactSupportCTA": "Contact support"
       }
     }
   },

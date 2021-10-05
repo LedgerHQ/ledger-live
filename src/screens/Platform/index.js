@@ -26,6 +26,7 @@ import AnimatedHeaderView from "../../components/AnimatedHeader";
 type RouteParams = {
   defaultAccount: ?AccountLike,
   defaultParentAccount: ?Account,
+  platform?: ?string,
 };
 
 type DisclaimerOpts = $Diff<DisclaimerProps, { isOpened: boolean }> | null;
@@ -33,7 +34,7 @@ type DisclaimerOpts = $Diff<DisclaimerProps, { isOpened: boolean }> | null;
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
 const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
-  const { params: routeParams } = route;
+  const { platform, ...routeParams } = route.params ?? {};
   const { colors } = useTheme();
   const navigation = useNavigation();
 
@@ -83,6 +84,19 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const handleDeveloperCTAPress = useCallback(() => {
     Linking.openURL(urls.platform.developerPage);
   }, []);
+
+  // platform can be predefined when coming from a deeplink
+  if (platform) {
+    const manifest = filteredManifests.find(m => m.id === platform);
+
+    if (manifest) {
+      navigation.navigate(ScreenName.PlatformApp, {
+        ...routeParams,
+        platform: manifest.id,
+        name: manifest.name,
+      });
+    }
+  }
 
   return (
     <AnimatedHeaderView

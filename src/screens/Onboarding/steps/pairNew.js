@@ -19,6 +19,7 @@ import {
 import OnboardingStepperView from "../../../components/OnboardingStepperView";
 import ArrowRight from "../../../icons/ArrowRight";
 import LText from "../../../components/LText";
+import SeedWarning from "../shared/SeedWarning";
 
 import pairYourNano from "../assets/pairYourNano.png";
 import plugYourNano from "../assets/plugNanoS.png";
@@ -92,12 +93,13 @@ type Props = {
     params: {
       deviceModelId: "nanoS" | "nanoX" | "blue",
       next: string,
+      showSeedWarning?: boolean,
     },
   },
 };
 
 export default function OnboardingStepPairNew({ navigation, route }: Props) {
-  const { deviceModelId, next } = route.params;
+  const { deviceModelId, next, showSeedWarning } = route.params;
   const dispatch = useDispatch();
   const [device, setDevice] = useState<?Device>();
 
@@ -202,11 +204,14 @@ export default function OnboardingStepPairNew({ navigation, route }: Props) {
   ];
 
   return (
-    <OnboardingStepperView
-      scenes={scenes}
-      navigation={navigation}
-      route={route}
-      onFinish={onNext}
-    />
+    <>
+      <OnboardingStepperView
+        scenes={scenes}
+        navigation={navigation}
+        route={route}
+        onFinish={onNext}
+      />
+      {showSeedWarning ? <SeedWarning deviceModelId={deviceModelId} /> : null}
+    </>
   );
 }

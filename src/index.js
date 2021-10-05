@@ -246,11 +246,11 @@ const linking = {
          */
         [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
         [NavigatorName.Main]: {
-          /**
-           * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
-           */
           initialRouteName: ScreenName.Portfolio,
           screens: {
+            /**
+             * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
+             */
             [ScreenName.Portfolio]: "portfolio",
             [NavigatorName.Accounts]: {
               screens: {
@@ -259,6 +259,16 @@ const linking = {
                  * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
                  */
                 [ScreenName.Accounts]: "account",
+              },
+            },
+            [NavigatorName.Platform]: {
+              screens: {
+                /**
+                 * @params ?platform: string
+                 * ie: "ledgerlive://discover" will open the catalog
+                 * ie: "ledgerlive://discover/paraswap?theme=light" will open the catalog and the paraswap dapp with a light theme as parameter
+                 */
+                [ScreenName.PlatformCatalog]: "discover/:platform?",
               },
             },
           },

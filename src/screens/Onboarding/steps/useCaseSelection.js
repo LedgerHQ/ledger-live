@@ -12,7 +12,6 @@ import restoreDevice from "../assets/restoreDevice.png";
 import Touchable from "../../../components/Touchable";
 import AnimatedHeaderView from "../../../components/AnimatedHeader";
 import { ScreenName } from "../../../const";
-import RecoveryPhraseWarning from "../shared/RecoveryPhraseWarning";
 
 type Props = {
   navigation: *,
@@ -24,7 +23,11 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
   const { deviceModelId } = route.params;
   const next = useCallback(
     ({ route: r, next }: { route: string, next?: string }) => {
-      navigation.navigate(r, { ...route.params, next });
+      const showSeedWarning = [
+        ScreenName.OnboardingRecoveryPhrase,
+        ScreenName.OnboardingPairNew,
+      ].includes(r);
+      navigation.navigate(r, { ...route.params, next, showSeedWarning });
     },
     [navigation, route],
   );
@@ -86,7 +89,6 @@ function OnboardingStepUseCaseSelection({ navigation, route }: Props) {
                 <Trans i18nKey={`onboarding.stepUseCase.${item.key}.title`} />
               </LText>
             )}
-            {item.showRecoveryWarning && <RecoveryPhraseWarning />}
             <Touchable
               event={item.event}
               eventProperties={{ deviceId: deviceModelId }}

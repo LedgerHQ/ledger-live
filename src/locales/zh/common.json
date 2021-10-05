@@ -1220,6 +1220,13 @@
         "title": "请勿使用非您本人生成的恢复短语。",
         "desc": "您的 Ledger 硬件钱包的 PIN 识别密码和恢复短语应该由您本人单独完成初始化操作。如果您收到的设备含有一个已经存在的种子词或一个已经初始化的 PIN 识别密码，那么请勿使用该产品，并请联系我们的客服。",
         "supportLink": "联系客服"
+      },
+      "seed": {
+        "title": "Please check the box contents",
+        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
+        "warning": "Only use a recovery phrase that your device displayed when it was set up",
+        "continueCTA": "Continue",
+        "contactSupportCTA": "Contact support"
       }
     }
   },
