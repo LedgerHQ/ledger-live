@@ -55,17 +55,17 @@ const Wrapper = styled(Text).attrs({ as: "div" })<{
       color: ${theme.colors.palette.neutral.c80};
       &:hover {
         color: ${theme.colors.palette.neutral.c100};
-        background: ${theme.colors.palette.primary.c05};
+        background: ${theme.colors.palette.primary.c10};
       }
       &:active {
         color: ${theme.colors.palette.neutral.c100};
-        background: ${theme.colors.palette.primary.c40};
+        background: ${theme.colors.palette.primary.c30};
       }
       ${
         focus
           ? `&:not(:active) {
           color: ${theme.colors.palette.neutral.c100};
-          background: ${theme.colors.palette.primary.c05};
+          background: ${theme.colors.palette.primary.c10};
         }`
           : ""
       }
