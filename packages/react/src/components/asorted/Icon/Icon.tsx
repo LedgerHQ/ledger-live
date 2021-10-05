@@ -1,10 +1,10 @@
 import * as icons from "../../../assets/icons";
 import React from "react";
 
-type Props = {
+export type Props = {
   name: string;
-  size: number;
-  weight: "Regular" | "Thin" | "Light" | "Medium" | "UltraLight";
+  size?: number;
+  weight?: "Regular" | "Thin" | "Light" | "Medium" | "UltraLight";
   color?: string;
 };
 
@@ -15,7 +15,7 @@ export const iconNames = Array.from(
       .replace(/(.+)(Ultra)+$/g, "$1");
     if (!set.has(key)) set.add(key);
     return set;
-  }, new Set()),
+  }, new Set<string>()),
 );
 
 const Icon = ({
@@ -23,7 +23,7 @@ const Icon = ({
   size = 16,
   color = "currentColor",
   weight = "Regular",
-}: Props): React.ReactNode => {
+}: Props): JSX.Element | null => {
   const maybeIconName = `${name}${weight}`;
   if (maybeIconName in icons) {
     // @ts-expect-error FIXME I don't know how to make you happy ts

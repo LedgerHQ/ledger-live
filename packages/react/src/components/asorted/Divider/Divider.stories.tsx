@@ -14,7 +14,7 @@ export default {
   argTypes: {},
 };
 
-const Template = (args) => (
+const Template = (args: React.ComponentProps<typeof Divider>) => (
   <StyledWrapper>
     <Text>
       {

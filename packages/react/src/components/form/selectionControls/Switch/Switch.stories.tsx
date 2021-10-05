@@ -2,6 +2,7 @@ import React from "react";
 import Switch from "./index";
 import type { SwitchProps } from "./Switch";
 import { useArgs } from "@storybook/client-api";
+import { StoryTemplate } from "@ui/helpers";
 
 export default {
   title: "Form/SelectionControls/Switch",
@@ -48,8 +49,8 @@ const Template = (args: SwitchProps) => {
   return <Switch {...args} onChange={handleChange} />;
 };
 
-export const Default = Template.bind({});
-export const Reversed = Template.bind({});
+export const Default: StoryTemplate<SwitchProps> = Template.bind({});
+export const Reversed: StoryTemplate<SwitchProps> = Template.bind({});
 
 Default.args = {
   checked: false,

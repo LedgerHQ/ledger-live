@@ -31,17 +31,16 @@ export const NumberInputDefault = ({
 }: InputProps & { max: number; min: number }): JSX.Element => {
   const [value, setValue] = React.useState(24.42);
 
-  const onChange = (e) => {
-    let value = e.target.value;
-    if (value) {
-      value = parseFloat(e.target.value);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value) {
+      let value = parseFloat(e.target.value);
       if (value > max) value = max;
       if (value < min) value = min;
+      setValue(value);
     }
-    setValue(value);
   };
 
-  const onPercentClick = (percent) => {
+  const onPercentClick = (percent: number) => {
     setValue(max * percent);
   };
 
@@ -52,7 +51,6 @@ export const NumberInputDefault = ({
       onChange={onChange}
       onPercentClick={onPercentClick}
       placeholder={"Placeholder"}
-      price={"#Price"}
       max={max}
       min={min}
     />

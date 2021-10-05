@@ -4,11 +4,11 @@ import Side from "@ui/components/layout/drawer/Side/Side";
 import TransitionSlide from "@ui/components/transitions/TransitionSlide";
 import { useSide } from "./Provider";
 
-interface SideProps {
+export interface SideProps {
   onBack?: () => void;
 }
 
-export const SideWrapper = (props: SideProps) => {
+export const SideWrapper = (props: SideProps): JSX.Element => {
   // Nb Note that it's not a real queue and we need to handle where we go from each _slide_
   const { state, setSide } = useSide();
   const [queue, setQueue] = useState<
