@@ -16,6 +16,8 @@ import {
 } from "../../api/Tron";
 
 export default (): void => {
+  return; // FIXME LL-7611
+
   describe("tron super representative data", () => {
     test("max is undefined", async () => {
       const srData = await getTronSuperRepresentativeData(undefined);
