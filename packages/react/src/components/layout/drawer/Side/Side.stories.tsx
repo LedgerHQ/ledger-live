@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from "react";
 import styled from "styled-components";
 import Button from "@ui/components/cta/Button";
-import Side from "./index";
+import Side, { SideProps } from "./index";
 import SideProvider, { setSide } from "./Provider";
 import { lipsum } from "../../../../helpers";
 
@@ -65,6 +65,7 @@ const components = {
   DummySubContentLvl1,
   DummySubContentLvl2,
 };
+
 export default {
   title: "Layout/Drawer/Side",
   component: Side,
@@ -99,7 +100,7 @@ export default {
   },
 };
 
-const Template = (args) => {
+const Template = (args: SideProps & { isOpen: boolean }) => {
   const onClose = useCallback(() => setSide(null), []);
   const onOpen = useCallback(() => setSide(components.DummyContent), []);
 
@@ -110,9 +111,7 @@ const Template = (args) => {
 
   return (
     <SideProvider>
-      <Side {...args} onClose={onClose}>
-        {args.children}
-      </Side>
+      <Side {...args} />
     </SideProvider>
   );
 };

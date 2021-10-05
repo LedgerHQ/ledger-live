@@ -3,6 +3,7 @@ import { useArgs } from "@storybook/client-api";
 
 import Toggle from "./index";
 import type { ToggleProps } from "./index";
+import { StoryTemplate } from "@ui/helpers";
 
 export default {
   title: "cta/Toggle",
@@ -30,7 +31,7 @@ const Template = (args: ToggleProps) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default: StoryTemplate<ToggleProps> = Template.bind({});
 Default.args = {
   children: "Max",
   checked: true,

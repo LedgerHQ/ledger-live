@@ -56,7 +56,7 @@ const Label = styled(Text).attrs({ type: "body", fontWeight: "500" })`
 
 const Container = styled.div`
   --ll-checkbox-color: unset;
-  color: var(--ll-checkbox-color, ${(props) => props.theme.colors.palette.primary.c160});
+  color: var(--ll-checkbox-color, ${(props) => props.theme.colors.palette.primary.c90});
 
   display: inline-flex;
   column-gap: ${(p) => p.theme.space[5]}px;
@@ -64,7 +64,7 @@ const Container = styled.div`
   cursor: pointer;
 
   &[data-variant="default"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.palette.primary.c160};
+    --ll-checkbox-color: ${(props) => props.theme.colors.palette.primary.c90};
   }
 
   &[data-variant="success"] {

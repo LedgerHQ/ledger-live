@@ -2,6 +2,7 @@ import React from "react";
 import Checkbox from "./index";
 import type { CheckboxProps } from "./Checkbox";
 import { useArgs } from "@storybook/client-api";
+import { StoryTemplate } from "@ui/helpers";
 
 export default {
   title: "Form/SelectionControls/Checkbox",
@@ -21,7 +22,7 @@ export default {
     },
     variant: {
       type: "text",
-      description: "default | success | error",
+      description: "default | success | error",
       required: false,
       control: false,
     },
@@ -43,9 +44,9 @@ const Template = (args: CheckboxProps) => {
   return <Checkbox {...args} onChange={handleChange} />;
 };
 
-export const Default = Template.bind({});
-export const Success = Template.bind({});
-export const Error = Template.bind({});
+export const Default: StoryTemplate<CheckboxProps> = Template.bind({});
+export const Success: StoryTemplate<CheckboxProps> = Template.bind({});
+export const Error: StoryTemplate<CheckboxProps> = Template.bind({});
 
 Default.args = {
   isChecked: false,

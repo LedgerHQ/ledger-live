@@ -1,3 +1,4 @@
+import React from "react";
 import Alert, { AlertProps } from "./index";
 export default {
   title: "Messages/Alerts",

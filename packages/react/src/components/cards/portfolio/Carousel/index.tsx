@@ -6,7 +6,7 @@ import TransitionSlide from "@ui/components/transitions/TransitionSlide";
 import Button from "@ui/components/cta/Button";
 import Text from "@ui/components/asorted/Text";
 import Flex from "@ui/components/layout/Flex";
-import Slide from "@ui/components/cards/portfolio/Carousel/Slide";
+import Slide, { Props as SlideProps } from "@ui/components/cards/portfolio/Carousel/Slide";
 
 import IconLeft from "@ui/assets/icons/ArrowLeftMedium";
 import IconRight from "@ui/assets/icons/ArrowRightMedium";
@@ -93,9 +93,9 @@ const DismissWrapper = styled.div`
   row-gap: ${(p) => p.theme.space[7]}px;
 `;
 
-type Props = {
+export type Props = {
   timeout?: number;
-  queue: [];
+  queue: SlideProps[];
   isDismissed: boolean;
   onDismiss: () => void;
 };

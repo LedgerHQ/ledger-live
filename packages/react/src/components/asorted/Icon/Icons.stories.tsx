@@ -1,5 +1,5 @@
 import React from "react";
-import Icon, { iconNames } from "@ui/components/asorted/Icon";
+import Icon, { iconNames, Props as IconProps } from "@ui/components/asorted/Icon";
 
 const Story = {
   title: "Asorted/Icons",
@@ -40,7 +40,7 @@ const Story = {
 };
 export default Story;
 
-const ListTemplate = (args) => (
+const ListTemplate = (args: IconProps) => (
   <div>
     {iconNames.map((name) => (
       <span title={name}>
@@ -49,7 +49,7 @@ const ListTemplate = (args) => (
     ))}
   </div>
 );
-const IconTemplate = (args) => <Icon {...args} />;
+const IconTemplate = (args: IconProps) => <Icon {...args} />;
 
 export const List = ListTemplate.bind({});
 export const SingleIcon = IconTemplate.bind({});

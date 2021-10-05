@@ -2,10 +2,9 @@ import React from "react";
 import Input, { InputProps, InputRenderRightContainer } from "@components/form/input/BaseInput";
 import Text from "@ui/components/asorted/Text";
 
-export default function LegendInput({
-  legend,
-  ...inputProps
-}: InputProps & { legend: string }): JSX.Element {
+export type Props = InputProps & { legend: string };
+
+export default function LegendInput({ legend, ...inputProps }: Props): JSX.Element {
   return (
     <Input
       {...inputProps}

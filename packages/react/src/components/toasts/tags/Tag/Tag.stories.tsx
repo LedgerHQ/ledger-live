@@ -1,3 +1,4 @@
+import { StoryTemplate } from "@ui/helpers";
 import React from "react";
 import Tag, { Props } from "./index";
 
@@ -19,10 +20,14 @@ export default {
   },
 };
 
-const Template = (args: Props): JSX.Element => <Tag {...args}>{args.children}</Tag>;
+const Template: StoryTemplate<Props> = (args: Props): JSX.Element => (
+  <Tag {...args}>{args.children}</Tag>
+);
+
 const defaultArgs = {
   active: true,
   children: "Label",
+  type: "",
 };
 
 export const Plain = Template.bind({});

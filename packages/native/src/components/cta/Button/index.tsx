@@ -112,7 +112,11 @@ const ButtonContainer = (
         </IconContainer>
       ) : null}
       {iconPosition === "left" && children ? (
-        <Text type="body" fontWeight={"semibold"} color={text.color}>
+        <Text
+          type={ctaTextType[size]}
+          fontWeight={"semibold"}
+          color={text.color}
+        >
           {children}
         </Text>
       ) : null}

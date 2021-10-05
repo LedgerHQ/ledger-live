@@ -16,11 +16,11 @@ const Wrapper = styled(Flex)<{ image?: string }>`
   background-position: right 60px bottom;
 `;
 
-type Props = {
+export type Props = {
   onClick: () => void;
   title: string;
   description: string;
-  image: any;
+  image?: string;
 };
 
 const Slide = ({ title, description, image, onClick }: Props): React.ReactElement => {
