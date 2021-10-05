@@ -6,17 +6,21 @@ import React from "react";
 import Link from "@components/cta/Link";
 import Info from "@ui/icons/Info";
 import CenterView from "../CenterView";
-import { View } from "react-native";
+import FlexBox from "@ui/components/Layout/Flex";
 
 storiesOf("Link", module)
   .addDecorator(withKnobs)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add("regular", () => (
-    <View
+    <FlexBox
       style={{
-        backgroundColor: boolean("reversed", false) ? "black" : "white",
         padding: 20,
       }}
+      backgroundColor={
+        boolean("reversed", false)
+          ? "palette.neutral.c100"
+          : "palette.neutral.c00"
+      }
     >
       <Link
         type={select("type", ["main", "shade", "color", undefined], undefined)}
@@ -33,5 +37,5 @@ storiesOf("Link", module)
       >
         {text("label", "Ledger")}
       </Link>
-    </View>
+    </FlexBox>
   ));
