@@ -1,10 +1,10 @@
 import dark from "./dark.json";
 import light from "./light.json";
 
-type DarkPalette = typeof dark;
-type LightPalette = typeof light;
+export type ThemeNames = "dark" | "light";
+export type Palette = typeof dark | typeof light;
 
-const palettes: { dark: DarkPalette; light: LightPalette } = {
+const palettes: { dark: Palette; light: Palette } = {
   dark,
   light,
 };
