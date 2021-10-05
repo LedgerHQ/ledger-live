@@ -1,4 +1,6 @@
+import React from "react";
 import ProgressLoader from "./index";
+
 export default {
   title: "Loaders/ProgressLoader",
   component: ProgressLoader,

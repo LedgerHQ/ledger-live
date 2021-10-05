@@ -1,3 +1,4 @@
+import { StoryTemplate } from "@ui/helpers";
 import React from "react";
 import Onboarding from "./index";
 import type { OnboardingProps } from "./Onboarding";
@@ -24,7 +25,7 @@ const Template = (args: OnboardingProps) => {
   return <Onboarding steps={args.steps} currentIndex={args.currentIndex} />;
 };
 
-export const Default = Template.bind({});
+export const Default: StoryTemplate<OnboardingProps> = Template.bind({});
 
 Default.args = {
   steps: [

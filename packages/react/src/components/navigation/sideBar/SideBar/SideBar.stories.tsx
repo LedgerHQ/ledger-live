@@ -13,6 +13,7 @@ import LendIcon from "@ui/assets/icons/LendMedium";
 import NanoFoldedIcon from "@ui/assets/icons/NanoFoldedMedium";
 
 import { useArgs } from "@storybook/client-api";
+import { StoryTemplate } from "@ui/helpers";
 
 export default {
   title: "Navigation/SideBar/SideBar",
@@ -67,7 +68,7 @@ const Template = (args: SideBarProps) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default: StoryTemplate<SideBarProps> = Template.bind({});
 Default.args = {
   onToggle: action("toggle sidebar"),
   isExpanded: true,

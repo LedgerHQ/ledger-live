@@ -19,7 +19,7 @@ export default {
 export const QrCodeInputDefault = (args: InputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
-  const onChange = (e: React.FormEvent<HTMLInputElement>) => setValue(e.target.value);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
 
   return <QrCodeInput {...args} value={value} onChange={onChange} placeholder={"Placeholder"} />;
 };

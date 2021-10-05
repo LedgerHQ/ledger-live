@@ -10,7 +10,7 @@ export type CommonProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export type InputProps = CommonProps & {
-  onChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
 };

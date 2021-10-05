@@ -19,17 +19,17 @@ export default {
 export const Default = (args: InputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
-  const onChange = (e: React.FormEvent<HTMLInputElement>) => setValue(e.target.value);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
 
   return <Input {...args} value={value} onChange={onChange} placeholder={"Placeholder"} />;
 };
 
 export const RenderSideExemple = (): JSX.Element => {
   const [disabled, setDisabled] = useState(false);
-  const [error, setError] = React.useState(false);
+  const [error, setError] = React.useState("");
   const [value, setValue] = React.useState("test@ledger.fr");
 
-  const onChange = (e: React.FormEvent<HTMLInputElement>) => setValue(e.target.value);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
 
   const renderLeft = (
     <InputRenderLeftContainer>
@@ -38,7 +38,7 @@ export const RenderSideExemple = (): JSX.Element => {
       </Button>
     </InputRenderLeftContainer>
   );
-  const renderRight = (props) => {
+  const renderRight = (props: { disabled: boolean }) => {
     return (
       <InputRenderRightContainer>
         <Button
