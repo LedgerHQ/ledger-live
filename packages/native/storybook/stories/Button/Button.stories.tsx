@@ -3,7 +3,7 @@ import { storiesOf } from "@storybook/react-native";
 import { withKnobs, select, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import React from "react";
-import Button, { PromisableButton } from "@components/Button";
+import Button, { PromisableButton } from "@components/cta/Button";
 import Info from "@ui/icons/Info";
 import CenterView from "../CenterView";
 
@@ -14,10 +14,12 @@ storiesOf("Button", module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add("regular", () => (
     <Button
-      type={select("type", ["primary", "secondary", undefined], undefined)}
+      type={select("type", ["main", "error", "color", undefined], undefined)}
+      size={select("size", ["small", "medium", "large", undefined], undefined)}
       iconPosition={select("iconPosition", ["right", "left"], "right")}
       Icon={select("Icon", [Info, undefined], undefined)}
       disabled={boolean("disabled", false)}
+      outline={boolean("outline", false)}
       onPress={action("onPress")}
     >
       {text("label", "Ledger")}

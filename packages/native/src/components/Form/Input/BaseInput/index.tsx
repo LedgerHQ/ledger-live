@@ -35,7 +35,7 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
     p.focus &&
     !p.error &&
     css`
-      border: 1px solid ${p.theme.colors.palette.primary.c140};
+      border: 1px solid ${p.theme.colors.palette.primary.c80};
     `};
 
   ${(p) =>
@@ -54,7 +54,7 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
 `;
 
 const BaseInput = styled.TextInput.attrs((p) => ({
-  selectionColor: p.theme.colors.palette.primary.c140,
+  selectionColor: p.theme.colors.palette.primary.c80,
 }))<Partial<CommonProps> & { focus?: boolean }>`
   height: 100%;
   width: 100%;

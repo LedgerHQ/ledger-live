@@ -1,7 +1,7 @@
 import { storiesOf } from "@storybook/react-native";
 import { boolean, text, withKnobs } from "@storybook/addon-knobs";
 import React, { useState } from "react";
-import Button from "@components/Button";
+import Button from "@components/cta/Button";
 import CenterView from "../../CenterView";
 import Input, {
   InputRenderLeftContainer,
@@ -33,16 +33,13 @@ const BaseInputRenderSideExempleStory = () => {
 
   const renderLeft = (
     <InputRenderLeftContainer>
-      <Button type={"primary"} onPress={() => setDisabled(!disabled)}>
-        disable
-      </Button>
+      <Button onPress={() => setDisabled(!disabled)}>disable</Button>
     </InputRenderLeftContainer>
   );
   const renderRight = (props) => {
     return (
       <InputRenderRightContainer>
         <Button
-          type={"secondary"}
           onPress={() => setError(error ? "" : "Error message")}
           disabled={props.disabled}
         >
