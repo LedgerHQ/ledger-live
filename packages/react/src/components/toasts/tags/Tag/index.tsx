@@ -18,9 +18,9 @@ function getColor({ type, active }: Props) {
   switch (type) {
     case "opacity":
     case "outlined":
-      return "palette.primary.c160";
+      return "palette.primary.c90";
     default:
-      return active ? "palette.neutral.c00" : "palette.primary.c160";
+      return active ? "palette.neutral.c00" : "palette.primary.c90";
   }
 }
 function getBgColor({ type, active }: Props) {
@@ -30,13 +30,13 @@ function getBgColor({ type, active }: Props) {
     case "outlined":
       return;
     default:
-      return active ? "palette.primary.c160" : undefined;
+      return active ? "palette.primary.c90" : undefined;
   }
 }
 
 function getBorderColor({ type, active }: Props) {
   if (type === "outlined" && active) {
-    return "palette.primary.c160";
+    return "palette.primary.c90";
   }
 }
 

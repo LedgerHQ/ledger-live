@@ -32,7 +32,7 @@ const Label = styled(Text).attrs({ type: "body", fontWeight: "500" })`
 
   /* CHECKED VARIANT */
   ${Input}:checked ~ & {
-    color: ${(props) => props.theme.colors.palette.primary.c160};
+    color: ${(props) => props.theme.colors.palette.primary.c90};
   }
 `;
 
@@ -84,7 +84,7 @@ const Switcher = styled.div`
 
   /* CHECKED VARIANT */
   ${Input}:checked ~ & {
-    background: ${(props) => props.theme.colors.palette.primary.c160};
+    background: ${(props) => props.theme.colors.palette.primary.c90};
 
     &:before {
       transform: translateX(calc(var(--ll-switch-width) / 2));

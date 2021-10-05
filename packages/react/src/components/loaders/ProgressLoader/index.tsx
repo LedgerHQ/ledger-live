@@ -34,12 +34,12 @@ const StyledCircleBackground = styled(StyledCircle).attrs((props) => ({
 }))``;
 
 const StyledCircleFront = styled(StyledCircle).attrs((props) => ({
-  stroke: props.theme.colors.palette.primary.c100,
+  stroke: props.theme.colors.palette.primary.c60,
 }))``;
 
 const StyledCenteredText = styled(Text).attrs({
   type: "cta",
-  color: "palette.primary.c140",
+  color: "palette.primary.c80",
 })`
   position: absolute;
   top: 50%;
