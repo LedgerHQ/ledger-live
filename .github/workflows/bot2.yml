@@ -38,6 +38,7 @@ jobs:
           yarn ci-setup-cli
       - name: BOT
         env:
+          EXPERIMENTAL_CURRENCIES_JS_BRIDGE: "tezos"
           EXPLORER_BETA: https://explorers.api-01.live.ledger-stg.com
           EXPERIMENTAL_EXPLORERS: true
           SEED: ${{ secrets.SEED2 }}

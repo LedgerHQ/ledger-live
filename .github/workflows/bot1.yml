@@ -40,6 +40,7 @@ jobs:
           yarn ci-setup-cli
       - name: BOT
         env:
+          EXPERIMENTAL_CURRENCIES_JS_BRIDGE: "tezos"
           BOT_TIMEOUT_SCAN_ACCOUNTS: 3600000
           SEED: ${{ secrets.SEED1 }}
           VERBOSE_FILE: bot-tests.txt

@@ -11,10 +11,27 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       button: "Rr",
     },
     {
+      title: "Withdraw",
+      button: "Rr",
+    },
+    {
+      title: "Delegate",
+      button: "Rr",
+      expectedValue: ({ transaction }) => {
+        return transaction.mode === "undelegate"
+          ? "None"
+          : transaction.recipient;
+      },
+    },
+    {
+      title: "Delegate Name",
+      button: "Rr",
+    },
+    {
       title: "Confirm",
       button: "Rr",
-      expectedValue: () => {
-        return "Transaction";
+      expectedValue: ({ transaction }) => {
+        return transaction.mode === "send" ? "Transaction" : "Delegation";
       },
     },
     {
@@ -52,11 +69,12 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
     {
       title: "Storage Limit",
       button: "Rr",
+      expectedValue: ({ transaction }) =>
+        transaction.storageLimit?.toString() || "",
     },
     {
       title: "Reject",
       button: "Rr",
-      expectedValue: () => "257",
     },
     {
       title: "Accept",
