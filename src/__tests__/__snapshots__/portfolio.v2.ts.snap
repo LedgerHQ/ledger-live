@@ -1774,6 +1774,7 @@ Object {
         },
       },
       "bitcoinResources": Object {
+        "walletAccount": Object {},
         "utxos": Array [],
       },
       "blockHeight": 132858,
@@ -4110,6 +4111,7 @@ Object {
         },
       },
       "bitcoinResources": Object {
+        "walletAccount": Object {},
         "utxos": Array [],
       },
       "blockHeight": 132858,
@@ -4745,6 +4747,7 @@ Object {
         },
       },
       "bitcoinResources": Object {
+        "walletAccount": Object {},
         "utxos": Array [],
       },
       "blockHeight": 132858,
