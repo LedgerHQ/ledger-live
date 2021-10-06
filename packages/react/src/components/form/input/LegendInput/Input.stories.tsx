@@ -2,7 +2,7 @@ import React from "react";
 import LegendInput, { Props as LegendInputProps } from "./index";
 
 export default {
-  title: "Form/Input/LegendInput",
+  title: "Form/Input/Legend",
   argTypes: {
     disabled: {
       type: "boolean",
@@ -19,7 +19,7 @@ export default {
   },
 };
 
-export const LegendInputDefault = (args: LegendInputProps): JSX.Element => {
+export const Legend = (args: LegendInputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);

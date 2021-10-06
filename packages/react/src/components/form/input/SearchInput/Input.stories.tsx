@@ -3,7 +3,7 @@ import SearchInput from "./index";
 import { InputProps } from "../BaseInput";
 
 export default {
-  title: "Form/Input/SearchInput",
+  title: "Form/Input/Search",
   argTypes: {
     disabled: {
       type: "boolean",
@@ -16,7 +16,7 @@ export default {
   },
 };
 
-export const SearchInputDefault = (args: InputProps): JSX.Element => {
+export const Search = (args: InputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);

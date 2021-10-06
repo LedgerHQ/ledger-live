@@ -1,18 +1,21 @@
 import styled, { css } from "styled-components";
+import { typography, TypographyProps } from "styled-system";
 import React, { InputHTMLAttributes } from "react";
 import FlexBox from "@ui/components/layout/Flex";
 import Text from "@ui/components/asorted/Text";
 import { rgba } from "@ui/styles/helpers";
 
-export type CommonProps = InputHTMLAttributes<HTMLInputElement> & {
-  disabled?: boolean;
-  error?: string;
-};
+export type CommonProps = InputHTMLAttributes<HTMLInputElement> &
+  TypographyProps & {
+    disabled?: boolean;
+    error?: string;
+  };
 
 export type InputProps = CommonProps & {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
+  unwrapped?: boolean;
 };
 
 export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolean }>`
@@ -56,7 +59,7 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
     `};
 `;
 
-export const BaseInput = styled.input<Partial<CommonProps> & { focus?: boolean }>`
+export const BaseInput = styled.input<Partial<CommonProps> & { focus?: boolean } & TypographyProps>`
   height: 100%;
   width: 100%;
   border: 0;
@@ -85,6 +88,8 @@ export const BaseInput = styled.input<Partial<CommonProps> & { focus?: boolean }
   &[type="number"] {
     -moz-appearance: textfield;
   }
+
+  ${typography}
 `;
 
 export const InputErrorContainer = styled(Text).attrs(() => ({ type: "small3" }))`
@@ -103,8 +108,44 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
 }))``;
 
 export default function Input(props: InputProps): JSX.Element {
-  const { value, disabled, error, onChange, renderLeft, renderRight, ...htmlInputProps } = props;
+  const {
+    value,
+    disabled,
+    error,
+    onChange,
+    renderLeft,
+    renderRight,
+    unwrapped,
+    ...htmlInputProps
+  } = props;
   const [focus, setFocus] = React.useState(false);
+
+  const innerContent = (
+    <FlexBox alignItems="stretch" style={{ height: "100%" }}>
+      {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
+      <BaseInput
+        {...htmlInputProps}
+        disabled={disabled}
+        error={error}
+        onChange={onChange}
+        value={value}
+        onFocus={(event) => {
+          setFocus(true);
+          htmlInputProps.onFocus && htmlInputProps.onFocus(event);
+        }}
+        onBlur={(event) => {
+          setFocus(false);
+          htmlInputProps.onBlur && htmlInputProps.onBlur(event);
+        }}
+        className={"ll-text_body"}
+      />
+      {typeof renderRight === "function" ? renderRight(props) : renderRight}
+    </FlexBox>
+  );
+
+  if (unwrapped) {
+    return innerContent;
+  }
 
   return (
     <div>
