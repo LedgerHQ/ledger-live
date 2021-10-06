@@ -53,6 +53,7 @@ function DropdownIndicatorsContainer() {
 
 export default function Dropdown(props: Props): JSX.Element {
   const theme = useTheme();
+  const { styles, ...rest } = props;
 
   return (
     <SelectInput
@@ -70,8 +71,17 @@ export default function Dropdown(props: Props): JSX.Element {
           transform: undefined,
         }),
         input: () => ({ display: "none" }),
+        menu: (provided) => ({
+          ...provided,
+          border: 0,
+          boxShadow: "none",
+          background: "none",
+          width: "auto",
+          minWidth: "200px",
+        }),
+        ...styles,
       }}
-      {...props}
+      {...rest}
       components={{
         Control: DropdownControl,
         ValueContainer: DropdownValueContainer,
