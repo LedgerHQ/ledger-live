@@ -4,7 +4,7 @@ import Onboarding from "./index";
 import type { OnboardingProps } from "./Onboarding";
 
 export default {
-  title: "Navigation/Onboarding",
+  title: "Navigation/Progress/Onboarding",
   component: Onboarding,
   argTypes: {
     steps: { control: false },

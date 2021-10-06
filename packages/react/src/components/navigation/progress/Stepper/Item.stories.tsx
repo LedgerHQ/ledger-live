@@ -1,8 +1,8 @@
 import React from "react";
-import { Step, StepProps } from "@components/navigation/progressBars/stepper/ProgressSteps";
+import { Step, StepProps } from "./index";
 
 export default {
-  title: "Navigation/ProgressBars/Stepper/SidePanel/Item",
+  title: "Navigation/Progress/Stepper/Item",
   component: Step,
 };
 

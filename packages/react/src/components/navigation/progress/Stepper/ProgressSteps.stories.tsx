@@ -1,8 +1,8 @@
 import React from "react";
-import ProgressSteps, { Props } from "@components/navigation/progressBars/stepper/ProgressSteps";
+import ProgressSteps, { Props } from "./index";
 
 export default {
-  title: "Navigation/ProgressBars/Stepper/SidePanel/Stepper",
+  title: "Navigation/Progress/Stepper",
   component: ProgressSteps,
   argTypes: {
     activeIndex: {
