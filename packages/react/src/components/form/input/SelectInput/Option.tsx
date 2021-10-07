@@ -35,7 +35,7 @@ const Wrapper = styled(Text).attrs({ as: "div" })<{
     const { theme, selected, focus, disabled } = props;
     if (selected) {
       return `
-        color: ${theme.colors.palette.neutral.c60};
+        color: ${theme.colors.palette.primary.c90};
         background: ${theme.colors.palette.primary.c20};
       `;
     }

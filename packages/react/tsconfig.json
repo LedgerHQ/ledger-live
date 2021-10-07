@@ -12,10 +12,10 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["src/*"],
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
-      "@styles/*": ["src/styles/*"]
+      "@styles/*": ["src/styles/*"],
+      "@ui/*": ["src/*"]
     },
     "skipLibCheck": true,
     "declaration": true,
