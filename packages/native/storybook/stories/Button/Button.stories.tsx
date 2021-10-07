@@ -14,7 +14,11 @@ storiesOf("Button", module)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add("regular", () => (
     <Button
-      type={select("type", ["main", "error", "color", undefined], undefined)}
+      type={select(
+        "type",
+        ["main", "error", "shade", "color", undefined],
+        undefined
+      )}
       size={select("size", ["small", "medium", "large", undefined], undefined)}
       iconPosition={select("iconPosition", ["right", "left"], "right")}
       Icon={select("Icon", [Info, undefined], undefined)}
