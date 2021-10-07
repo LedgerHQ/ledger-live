@@ -1,4 +1,3 @@
-import { FocusEvent } from "hoist-non-react-statics/node_modules/@types/react";
 import React, { useCallback } from "react";
 import styled from "styled-components";
 import { DefaultTheme } from "styled-components/native";
