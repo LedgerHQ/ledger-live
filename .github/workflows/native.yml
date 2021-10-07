@@ -31,4 +31,4 @@ jobs:
       - name: Linter
         run: yarn lint
       - name: Typecheck
-        run: yarn tsc --noEmit
+        run: yarn typecheck

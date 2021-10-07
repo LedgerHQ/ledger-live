@@ -22,6 +22,7 @@
     "rootDir": "./src",
     "outDir": "./lib"
   },
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

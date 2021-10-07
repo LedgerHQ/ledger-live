@@ -1,0 +1,10 @@
+{
+  "private": "true",
+  "devDependencies": {
+    "husky": "^7.0.2",
+    "lint-staged": "^11.2.0"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  }
+}
