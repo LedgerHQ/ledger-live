@@ -26,7 +26,10 @@ test("if API is down, an account still sync fine", async () => {
   const synced = await bridge
     .sync(account, {
       paginationConfig: {},
-      blacklistedTokenIds: ["ethereum/erc20/ampleforth"],
+      blacklistedTokenIds: [
+        "ethereum/erc20/ampleforth",
+        "ethereum/erc20/steth",
+      ],
     })
     .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
     .toPromise();

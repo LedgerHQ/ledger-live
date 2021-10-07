@@ -50,7 +50,7 @@ setSupportedCurrencies([
 ]);
 const defaultSyncConfig = {
   paginationConfig: {},
-  blacklistedTokenIds: ["ethereum/erc20/ampleforth"],
+  blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
 };
 const excluded = [
   "algorand",

@@ -56,7 +56,7 @@ function expectBalanceIsOpsSum(a) {
 
 const defaultSyncConfig = {
   paginationConfig: {},
-  blacklistedTokenIds: ["ethereum/erc20/ampleforth"],
+  blacklistedTokenIds: ["ethereum/erc20/ampleforth", "ethereum/erc20/steth"],
 };
 export function syncAccount<T extends Transaction>(
   bridge: AccountBridge<T>,
