@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import styled from "styled-components";
-import { DefaultTheme } from "styled-components/native";
+import { DefaultTheme } from "styled-components";
 import { InputContainer, InputErrorContainer } from "../BaseInput";
 
 type Callbacks = {
