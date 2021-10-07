@@ -6,7 +6,7 @@ import { Base as Text } from "@components/asorted/Text";
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->(): Styles<T, M>["option"] {
+>(): NonNullable<Styles<T, M>["option"]> {
   return (provided) => ({
     ...provided,
     display: "flex",

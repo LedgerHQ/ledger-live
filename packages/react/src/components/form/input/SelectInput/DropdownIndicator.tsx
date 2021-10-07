@@ -7,7 +7,7 @@ import { ChevronBottomMedium, ChevronTopMedium } from "@assets/icons";
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->(): Styles<T, M>["dropdownIndicator"] {
+>(): NonNullable<Styles<T, M>["dropdownIndicator"]> {
   return (provided) => ({
     ...provided,
     padding: 0,
