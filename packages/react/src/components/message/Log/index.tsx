@@ -3,9 +3,9 @@ import styled from "styled-components";
 
 import Text from "@ui/components/asorted/Text";
 import { BracketRight, BracketLeft } from "./Brackets";
-import FlexBox, { FlexProps } from "@ui/components/layout/Flex";
+import FlexBox, { FlexBoxProps } from "@ui/components/layout/Flex";
 
-export type Props = React.PropsWithChildren<FlexProps>;
+export type Props = React.PropsWithChildren<FlexBoxProps>;
 
 const Container = styled(FlexBox)`
   justify-content: center;

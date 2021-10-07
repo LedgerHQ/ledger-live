@@ -5,7 +5,7 @@ import { DefaultTheme } from "styled-components";
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->(theme: DefaultTheme): Styles<T, M>["menuList"] {
+>(theme: DefaultTheme): NonNullable<Styles<T, M>["menuList"]> {
   return (provided) => ({
     ...provided,
     display: "flex",

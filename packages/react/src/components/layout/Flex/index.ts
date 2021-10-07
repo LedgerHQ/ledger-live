@@ -1,13 +1,21 @@
-import { flexbox, SpaceProps, FlexboxProps, compose, PositionProps } from "styled-system";
+import {
+  flexbox,
+  SpaceProps,
+  FlexboxProps as FlexProps,
+  compose,
+  PositionProps,
+} from "styled-system";
 import styled from "styled-components";
 import gapsSystem from "@ui/styles/system/gaps";
 import { space, position } from "styled-system";
 
-export interface FlexProps extends FlexboxProps, SpaceProps, PositionProps {}
+export type FlexBoxProps = FlexProps &
+  SpaceProps &
+  PositionProps & { columnGap?: string | number; rowGap?: string | number };
 
-const FlexBox = styled.div<FlexProps>`
+const FlexBox = styled.div<FlexBoxProps>`
   display: flex;
-  ${flexbox};
+  ${flexbox}
   ${space}
   ${position}
   ${compose(gapsSystem, flexbox)}

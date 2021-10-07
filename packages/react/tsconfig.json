@@ -12,16 +12,17 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["src/*"],
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
-      "@styles/*": ["src/styles/*"]
+      "@styles/*": ["src/styles/*"],
+      "@ui/*": ["src/*"]
     },
     "skipLibCheck": true,
     "declaration": true,
     "rootDir": "./src",
     "outDir": "./lib"
   },
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

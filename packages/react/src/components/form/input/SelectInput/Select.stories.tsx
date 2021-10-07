@@ -10,7 +10,7 @@ import { ValueContainer } from "./ValueContainer";
 import { useTheme } from "styled-components";
 
 export default {
-  title: "Form/Input/SelectInput",
+  title: "Form/Input/Select",
   component: SelectInput,
   argTypes: {
     value: { table: { disable: true } },
