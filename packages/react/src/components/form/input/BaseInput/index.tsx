@@ -120,8 +120,8 @@ export default function Input(props: InputProps): JSX.Element {
   } = props;
   const [focus, setFocus] = React.useState(false);
 
-  const innerContent = (
-    <FlexBox alignItems="stretch" style={{ height: "100%" }}>
+  const inner = (
+    <>
       {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
       <BaseInput
         {...htmlInputProps}
@@ -140,28 +140,21 @@ export default function Input(props: InputProps): JSX.Element {
         className={"ll-text_body"}
       />
       {typeof renderRight === "function" ? renderRight(props) : renderRight}
-    </FlexBox>
+    </>
   );
 
   if (unwrapped) {
-    return innerContent;
+    return (
+      <FlexBox alignItems="stretch" style={{ height: "100%" }}>
+        {inner}
+      </FlexBox>
+    );
   }
 
   return (
     <div>
       <InputContainer disabled={disabled} focus={focus} error={error}>
-        {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
-        <BaseInput
-          {...htmlInputProps}
-          disabled={disabled}
-          error={error}
-          onChange={onChange}
-          value={value}
-          onFocus={() => setFocus(true)}
-          onBlur={() => setFocus(false)}
-          className={"ll-text_body"}
-        />
-        {typeof renderRight === "function" ? renderRight(props) : renderRight}
+        {inner}
       </InputContainer>
       {error && !disabled && <InputErrorContainer>{error}</InputErrorContainer>}
     </div>
