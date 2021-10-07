@@ -3,7 +3,7 @@ import QrCodeInput from "./index";
 import { InputProps } from "../BaseInput";
 
 export default {
-  title: "Form/Input/QrCodeInput",
+  title: "Form/Input/Qrcode",
   argTypes: {
     disabled: {
       type: "boolean",
@@ -16,7 +16,7 @@ export default {
   },
 };
 
-export const QrCodeInputDefault = (args: InputProps): JSX.Element => {
+export const Qrcode = (args: InputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
