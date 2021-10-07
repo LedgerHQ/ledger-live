@@ -1,12 +1,15 @@
-import { flexbox, SpaceProps, FlexboxProps, compose } from "styled-system";
+import { flexbox, SpaceProps, FlexboxProps, compose, PositionProps } from "styled-system";
 import styled from "styled-components";
 import gapsSystem from "@ui/styles/system/gaps";
-import { space } from "styled-system";
+import { space, position } from "styled-system";
 
-const FlexBox = styled.div<FlexboxProps & SpaceProps>`
+export interface FlexProps extends FlexboxProps, SpaceProps, PositionProps {}
+
+const FlexBox = styled.div<FlexProps>`
   display: flex;
   ${flexbox};
   ${space}
+  ${position}
   ${compose(gapsSystem, flexbox)}
 `;
 

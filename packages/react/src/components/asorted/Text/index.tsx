@@ -13,7 +13,6 @@ import {
 } from "styled-system";
 import fontFamily from "@ui/styles/styled/fontFamily";
 import "./Text.css";
-import { BracketRight, BracketLeft } from "./Brackets";
 
 const uppercase = system({
   uppercase: {
@@ -64,23 +63,19 @@ export interface TextProps {
   children: React.ReactNode;
 }
 
-interface BaseTextProps {
+interface BaseTextProps extends SpaceProps {
   fontFamily?: string;
   ff?: FontFamilies;
   fontSize?: number | string;
   textAlign?: string;
   color?: string;
   fontWeight?: string;
-  mt?: number | string;
-  mb?: number | string;
-  ml?: number | string;
-  mr?: number | string;
   lineHeight?: string;
   type?: TextTypes;
   textTransform?: string;
 }
 
-export const Base = styled.span.attrs((p: BaseTextProps & SpaceProps) => ({
+const Text = styled.span.attrs((p: BaseTextProps) => ({
   color: p.color || "palette.neutral.c100",
   className: `${p.type ? `ll-text_${p.type} ` : ""}`,
 }))<BaseTextProps>`
@@ -95,21 +90,5 @@ export const Base = styled.span.attrs((p: BaseTextProps & SpaceProps) => ({
   ${letterSpacing};
   ${(p) => (p.textTransform ? `text-transform: ${p.textTransform};` : "")}
 `;
-
-const Text = ({
-  children,
-  bracket,
-  ...props
-}: TextProps & SpaceProps & React.ComponentProps<typeof Base>) => {
-  return bracket ? (
-    <Base {...props}>
-      <BracketLeft className="ll-text_bracket" />
-      {children}
-      <BracketRight className="ll-text_bracket" />
-    </Base>
-  ) : (
-    <Base {...props}>{children}</Base>
-  );
-};
 
 export default Text;

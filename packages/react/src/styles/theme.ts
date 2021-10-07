@@ -1,8 +1,13 @@
 import { keyframes, css, DefaultTheme } from "styled-components";
 import palettes, { Palette } from "./palettes";
+
+/* space indexes:
+  0, 1, 2, 3, 4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
+ */
 export const space = [
   0, 2, 4, 8, 10, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76,
 ];
+
 export const fontSizes = [8, 9, 10, 12, 13, 16, 18, 22, 32];
 export const radii = [0, 4];
 export const shadows = ["0 4px 8px 0 rgba(0, 0, 0, 0.03)"];
