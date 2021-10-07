@@ -1,7 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
 import { rgba } from "./helpers";
-import { radii } from "./theme";
 import reset from "./reset";
 
 export const GlobalStyle = createGlobalStyle`
@@ -75,66 +74,9 @@ export const GlobalStyle = createGlobalStyle`
     background-color: ${(p) => p.theme.colors.palette.neutral.c00};
   }
 
-  .tippy-content {
-    padding: 0 !important;
-  }
-
-  .tippy-tooltip.ledger-theme {
-    background-color: ${(p) => p.theme.colors.palette.neutral.c100};
-    color: ${(p) => p.theme.colors.palette.neutral.c00};
-    border-radius: ${radii[1]}px;
-  }
-
-  .tippy-box {
-    background-color: transparent;
-  }
-
-  .tippy-box[data-theme~='ledger'] > .tippy-svg-arrow {
-    fill: ${(p) => p.theme.colors.palette.neutral.c100};
-  }
-
-  .tippy-box[data-theme~='ledger'].bg-alertRed > .tippy-svg-arrow {
-    fill: ${(p) => p.theme.colors.palette.error.c100};
-  }
-
-  .tippy-box[data-theme~='ledger'].bg-palette-background-default > .tippy-svg-arrow {
-    fill: ${(p) => p.theme.colors.palette.neutral.c00};
-  }
-
-  .tippy-box[data-theme~='ledger'].bg-palette-background-paper > .tippy-svg-arrow {
-    fill: ${(p) => p.theme.colors.palette.neutral.c00};
-  }
-
-  .tippy-tooltip.ledger-theme .tippy-svg-arrow {
-    fill: ${(p) => p.theme.colors.palette.neutral.c100};
-  }
-
-  .tippy-tooltip[data-placement^=bottom]>.tippy-svg-arrow {
-    top: -6px;
-  }
-
-  .tippy-popper.ledger-theme .tippy-roundarrow {
-    fill: ${(p) => p.theme.colors.palette.neutral.c100};
-  }
-
-  .select__control:hover, .select__control-is-focused {
-    border-color: ${(p) => p.theme.colors.palette.neutral.c60};
-  }
-
-  .select__single-value {
-    color: inherit !important;
-    right: 0;
-    left: 15px;
-  }
-
-  .select__placeholder {
-    color ${(p) => p.theme.colors.palette.neutral.c40} !important;
-  }
-
   ::selection {
     background: ${(p) => rgba(p.theme.colors.palette.primary.c100, 0.1)};
   }
-
 
   --track-color: rgba(0,0,0,0);
 
@@ -158,5 +100,93 @@ export const GlobalStyle = createGlobalStyle`
   }
   ::-webkit-scrollbar-corner {
     opacity: 0;
+  }
+
+  .tippy-box[data-animation=fade][data-state=hidden] {
+    opacity: 0
+  }
+
+  [data-tippy-root] {
+    max-width: calc(100vw - 10px)
+  }
+
+  .tippy-box {
+    position: relative;
+    background-color: ${(p) => p.theme.colors.palette.neutral.c100};
+    color: ${(p) => p.theme.colors.palette.neutral.c00};
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+    outline: 0;
+    transition-property: transform, visibility, opacity
+  }
+
+  .tippy-box[data-placement^=top]>.tippy-arrow {
+    bottom: 0
+  }
+
+  .tippy-box[data-placement^=top]>.tippy-arrow:before {
+    bottom: -4px;
+    left: 0;
+    border-width: 10px 10px 0;
+    border-top-color: initial;
+    transform-origin: center top
+  }
+
+  .tippy-box[data-placement^=bottom]>.tippy-arrow {
+    top: 0
+  }
+
+  .tippy-box[data-placement^=bottom]>.tippy-arrow:before {
+    top: -4px;
+    left: 0;
+    border-width: 0 10px 10px;
+    border-bottom-color: initial;
+    transform-origin: center bottom
+  }
+
+  .tippy-box[data-placement^=left]>.tippy-arrow {
+    right: 0
+  }
+
+  .tippy-box[data-placement^=left]>.tippy-arrow:before {
+    border-width: 10px 0 10px 10px;
+    border-left-color: initial;
+    right: -4px;
+    transform-origin: center left
+  }
+
+  .tippy-box[data-placement^=right]>.tippy-arrow {
+    left: 0
+  }
+
+  .tippy-box[data-placement^=right]>.tippy-arrow:before {
+    left: -4px;
+    border-width: 10px 10px 10px 0;
+    border-right-color: initial;
+    transform-origin: center right
+  }
+
+  .tippy-box[data-inertia][data-state=visible] {
+    transition-timing-function: cubic-bezier(.54, 1.5, .38, 1.11)
+  }
+
+  .tippy-arrow {
+    width: 16px;
+    height: 16px;
+    color: ${(p) => p.theme.colors.palette.neutral.c100};
+  }
+
+  .tippy-arrow:before {
+    content: "";
+    position: absolute;
+    border-color: transparent;
+    border-style: solid
+  }
+
+  .tippy-content {
+    position: relative;
+    padding: 8px 10px;
+    z-index: 1
   }
 `;
