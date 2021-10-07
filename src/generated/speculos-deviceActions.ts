@@ -10,6 +10,8 @@ import elrond from "../families/elrond/speculos-deviceActions";
 
 import ethereum from "../families/ethereum/speculos-deviceActions";
 
+import filecoin from "../families/filecoin/speculos-deviceActions";
+
 import polkadot from "../families/polkadot/speculos-deviceActions";
 
 import ripple from "../families/ripple/speculos-deviceActions";
@@ -28,6 +30,7 @@ export default {
   crypto_org,
   elrond,
   ethereum,
+  filecoin,
   polkadot,
   ripple,
   stellar,

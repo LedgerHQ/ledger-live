@@ -10,6 +10,8 @@ import elrond from "../families/elrond/specs";
 
 import ethereum from "../families/ethereum/specs";
 
+import filecoin from "../families/filecoin/specs";
+
 import polkadot from "../families/polkadot/specs";
 
 import ripple from "../families/ripple/specs";
@@ -28,6 +30,7 @@ export default {
   crypto_org,
   elrond,
   ethereum,
+  filecoin,
   polkadot,
   ripple,
   stellar,
