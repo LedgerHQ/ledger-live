@@ -1222,11 +1222,11 @@
         "supportLink": "Связаться с Поддержкой"
       },
       "seed": {
-        "title": "Please check the box contents",
-        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
-        "warning": "Only use a recovery phrase that your device displayed when it was set up",
-        "continueCTA": "Continue",
-        "contactSupportCTA": "Contact support"
+        "title": "Проверьте содержимое упаковки",
+        "desc": "Если {{deviceName}} при включении запрашивает ПИН-код и/или на нём уже была создана фраза восстановления, то использовать такое устройство небезопасно. Свяжитесь с Поддержкой Ledger.",
+        "warning": "Используйте только ту фразу восстановления, которое устройство сгенерировало при первичной настройке.",
+        "continueCTA": "Продолжить",
+        "contactSupportCTA": "Связаться с Поддержкой"
       }
     }
   },
