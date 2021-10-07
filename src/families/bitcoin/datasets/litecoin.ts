@@ -50,8 +50,8 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {},
-            //  estimatedFees: BigNumber("5694"),
-            amount: new BigNumber("200000"), //  totalSpent: BigNumber("205694")
+            //  estimatedFees: new BigNumber("5694"),
+            amount: new BigNumber("200000"), //  totalSpent: new BigNumber("205694")
           },
         },
         {
@@ -73,8 +73,8 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {},
-            //  estimatedFees: BigNumber("5694"),
-            amount: new BigNumber("147200"), //  totalSpent: BigNumber("152894")
+            //  estimatedFees: new BigNumber("5694"),
+            amount: new BigNumber("147200"), //  totalSpent: new BigNumber("152894")
           },
         },
         {
@@ -96,8 +96,8 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             errors: {},
             warnings: {},
-            //  estimatedFees: BigNumber("5694"),
-            amount: new BigNumber("205273"), //  totalSpent: BigNumber("210967")
+            //  estimatedFees: new BigNumber("5694"),
+            amount: new BigNumber("205273"), //  totalSpent: new BigNumber("210967")
           },
         },
       ],

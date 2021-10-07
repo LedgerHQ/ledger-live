@@ -3,7 +3,7 @@ set -e
 
 ledger-live libcoreReset
 
-ledger-live sync -c bitcoin --xpub xpub6BosfCnifzxcFwrSzQiqu2DBVTshkCXacvNsWGYJVVhhawA7d4R5WSWGFNbi8Aw6ZRc1brxMyWMzG3DSSSSoekkudhUd9yLb6qx39T9nMdj -f summary
+ledger-live sync -c cosmos --id cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4 -f summary
 
 ledger-live libcoreReset
 

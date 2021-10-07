@@ -12,12 +12,12 @@
 | Dogecoin | DOGE | https://explorers.api.live.ledger.com/blockchain/v2/doge | https://explorers.api.live.ledger.com/blockchain/v3/doge |
 | Ethereum | ETH | https://explorers.api.live.ledger.com/blockchain/v3/eth | N/A |
 | Ethereum Classic | ETC | https://explorers.api.live.ledger.com/blockchain/v3/etc | N/A |
-| Komodo | KMD | https://explorers.api.live.ledger.com/blockchain/v2/kmd | N/A |
+| Komodo | KMD | https://explorers.api.live.ledger.com/blockchain/v2/kmd | https://explorers.api.live.ledger.com/blockchain/v3/kmd |
 | Litecoin | LTC | https://explorers.api.live.ledger.com/blockchain/v3/ltc | N/A |
 | Peercoin | PPC | https://explorers.api.live.ledger.com/blockchain/v2/ppc | https://explorers.api.live.ledger.com/blockchain/v3/ppc |
 | PivX | PIVX | https://explorers.api.live.ledger.com/blockchain/v2/pivx | https://explorers.api.live.ledger.com/blockchain/v3/pivx |
 | Qtum | QTUM | https://explorers.api.live.ledger.com/blockchain/v2/qtum | https://explorers.api.live.ledger.com/blockchain/v3/qtum |
-| Stakenet | XSN | https://explorers.api.live.ledger.com/blockchain/v2/xsn | N/A |
+| Stakenet | XSN | https://explorers.api.live.ledger.com/blockchain/v2/xsn | https://explorers.api.live.ledger.com/blockchain/v3/xsn |
 | Stratis | STRAT | https://explorers.api.live.ledger.com/blockchain/v2/strat | N/A |
 | Stealth | XST | https://explorers.api.live.ledger.com/blockchain/v2/xst | N/A |
 | Vertcoin | VTC | https://explorers.api.live.ledger.com/blockchain/v2/vtc | https://explorers.api.live.ledger.com/blockchain/v3/vtc |

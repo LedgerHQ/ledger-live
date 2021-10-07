@@ -7,6 +7,8 @@ import type {
   BitcoinOutputRaw,
   BitcoinOutput,
 } from "./types";
+import wallet from "./wallet-btc";
+
 export function toBitcoinInputRaw({
   address,
   value,
@@ -41,6 +43,7 @@ export function toBitcoinOutputRaw({
   path,
   value,
   rbf,
+  isChange,
 }: BitcoinOutput): BitcoinOutputRaw {
   return [
     hash,
@@ -50,6 +53,7 @@ export function toBitcoinOutputRaw({
     path,
     value.toString(),
     rbf ? 1 : 0,
+    isChange ? 1 : 0,
   ];
 }
 export function fromBitcoinOutputRaw([
@@ -60,6 +64,7 @@ export function fromBitcoinOutputRaw([
   path,
   value,
   rbf,
+  isChange,
 ]: BitcoinOutputRaw): BitcoinOutput {
   return {
     hash,
@@ -69,6 +74,7 @@ export function fromBitcoinOutputRaw([
     path: path || undefined,
     value: new BigNumber(value),
     rbf: !!rbf,
+    isChange: !!isChange,
   };
 }
 export function toBitcoinResourcesRaw(
@@ -76,6 +82,8 @@ export function toBitcoinResourcesRaw(
 ): BitcoinResourcesRaw {
   return {
     utxos: r.utxos.map(toBitcoinOutputRaw),
+    walletAccount:
+      r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
   };
 }
 export function fromBitcoinResourcesRaw(
@@ -83,5 +91,8 @@ export function fromBitcoinResourcesRaw(
 ): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
+    walletAccount:
+      r.walletAccount &&
+      wallet.importFromSerializedAccountSync(r.walletAccount),
   };
 }

@@ -27,7 +27,8 @@ function sameAccountIdentity(a: Account, b: Account) {
     a.id === b.id ||
     (a.freshAddress
       ? a.currency === b.currency && a.freshAddress === b.freshAddress
-      : false)
+      : false) ||
+    (a.xpub ? a.currency === b.currency && a.xpub === b.xpub : false)
   );
 }
 

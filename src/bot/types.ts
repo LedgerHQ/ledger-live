@@ -74,18 +74,28 @@ export type MutationSpec<T extends Transaction> = {
   // Implement a test that runs after the operation is applied to the account
   test?: (arg0: TransactionTestInput<T>) => void;
 };
+
 export type AppSpec<T extends Transaction> = {
+  // allows to disable completely spec from running
   disabled?: boolean;
+  // an arbitrary name to identify the bot spec
   name: string;
+  // which crypto currency will the bot scan accounts with
   currency: CryptoCurrency;
-  dependency?: string;
+  // how much time in ms does the test need to wait the operation to appear
   testTimeout?: number;
+  // if define, will run the mutations {multipleRuns} times in order to cover 2 txs in the same run and detect possible issues at the "second tx time"
+  multipleRuns?: number;
+  // if the nano app depends on an app, name of this app
+  dependency?: string;
+  // a query to select one nano app. the most up to date version is selected when fields aren't set.
   appQuery: {
     model?: DeviceModelId;
     appName?: string;
     firmware?: string;
     appVersion?: string;
   };
+  // all the possible scenarios of these spec to consider doing transactions with
   mutations: MutationSpec<T>[];
   // can implement generic invariants for a mutation transaction to be possible
   transactionCheck?: (arg: TransactionArg<T>) => void;

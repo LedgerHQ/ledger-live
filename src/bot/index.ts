@@ -28,10 +28,11 @@ import {
 import { getPortfolio } from "../portfolio";
 type Arg = Partial<{
   currency: string;
+  family: string;
   mutation: string;
 }>;
 const usd = getFiatCurrencyByTicker("USD");
-export async function bot({ currency, mutation }: Arg = {}) {
+export async function bot({ currency, family, mutation }: Arg = {}) {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const libcoreVersion = await withLibcore((core) =>
@@ -43,9 +44,13 @@ export async function bot({ currency, mutation }: Arg = {}) {
   const maybeCurrency = currency
     ? findCryptoCurrencyByKeyword(currency)
     : undefined;
+  const maybeFilterOnlyFamily = family;
 
   for (const family in allSpecs) {
     const familySpecs = allSpecs[family];
+    if (maybeFilterOnlyFamily && maybeFilterOnlyFamily !== family) {
+      continue;
+    }
 
     for (const key in familySpecs) {
       let spec = familySpecs[key];
@@ -70,7 +75,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
   }
 
   const results: Array<SpecReport<any>> = await promiseAllBatched(
-    6,
+    getEnv("BOT_MAX_CONCURRENT"),
     specs,
     (spec) => {
       const logs: string[] = [];
@@ -255,27 +260,6 @@ export async function bot({ currency, mutation }: Arg = {}) {
       body += "</details>\n\n";
     }
 
-    const failureSpecNames = results
-      .filter((r) => (r.mutations || []).some((m) => m.error))
-      .map(({ spec }) => spec.name);
-
-    if (failureSpecNames && failureSpecNames.length) {
-      slackBody += `:nogo: _${failureSpecNames.join(", ")}_\n`;
-    }
-
-    const successSpecNames = results
-      .filter(
-        (r) =>
-          r.mutations &&
-          r.mutations.length > 0 &&
-          r.mutations.every((m) => !m.error)
-      )
-      .map(({ spec }) => spec.name);
-
-    if (successSpecNames && successSpecNames.length) {
-      slackBody += `:go: _${successSpecNames.join(", ")}_\n`;
-    }
-
     if (errorCases.length) {
       body += "<details>\n";
       body += `<summary>${errorCases.length} mutation errors</summary>\n\n`;
@@ -426,7 +410,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
         body,
       },
     });
-    const { SLACK_API_TOKEN } = process.env;
+    const { SLACK_API_TOKEN, SLACK_CHANNEL } = process.env;
 
     if (SLACK_API_TOKEN && githubComment) {
       const text = `${String(GITHUB_WORKFLOW)}: ${title} (<${
@@ -440,7 +424,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
         },
         data: {
           text,
-          channel: "ledger-live-bot",
+          channel: SLACK_CHANNEL || "ledger-live-bot",
         },
       });
     }
@@ -465,6 +449,7 @@ export async function bot({ currency, mutation }: Arg = {}) {
       if (c.mutation) txt += `/${c.mutation.name}`;
       txt += ` got ${String(c.error)}\n`;
     });
-    throw new Error(txt);
+    // throw new Error(txt);
+    console.error(txt);
   }
 }

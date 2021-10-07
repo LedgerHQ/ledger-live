@@ -10,8 +10,7 @@ import { pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec } from "../../bot/types";
 import { LowerThanMinimumRelayFee } from "../../errors";
-import { getMinRelayFee } from "./fees";
-import { isChangeOutput, getUTXOStatus } from "./transaction";
+import { getMinRelayFee, getUTXOStatus, isChangeOutput } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 type Arg = Partial<{
   minimalAmount: BigNumber;
@@ -51,11 +50,11 @@ const genericTest = ({
   status,
   accountBeforeTransaction,
 }) => {
-  // workaround for buggy explorer behavior (nodes desync)
   invariant(
-    Date.now() - operation.date > 20000,
-    "operation time to be older than 20s"
+    Date.now() - operation.date < 1000000,
+    "operation time to be recent"
   );
+
   // balance move
   expect(account.balance.toString()).toBe(
     accountBeforeTransaction.balance.minus(operation.value).toString()
@@ -81,8 +80,8 @@ const genericTest = ({
         ? operation.senders
         : txInputs.map((t) => t.address).filter(Boolean),
       recipients: txOutputs
-        .filter((o) => !isChangeOutput(o))
-        .map((t) => t.address)
+        .filter((o) => o.address && !o.isChange && !isChangeOutput(o))
+        .map((o) => o.address)
         .filter(Boolean),
     })
   );
@@ -271,6 +270,7 @@ const bitcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
 };
 const bitcoinTestnet: AppSpec<Transaction> = {
+  multipleRuns: 3,
   name: "Bitcoin Testnet",
   currency: getCryptoCurrencyById("bitcoin_testnet"),
   dependency: "Bitcoin",
@@ -365,17 +365,6 @@ const stakenet: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "XSN",
-  },
-  test: genericTest,
-  mutations: bitcoinLikeMutations(),
-};
-const stratis: AppSpec<Transaction> = {
-  name: "Stratis",
-  currency: getCryptoCurrencyById("stratis"),
-  dependency: "Bitcoin",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Stratis",
   },
   test: genericTest,
   mutations: bitcoinLikeMutations(),
@@ -518,22 +507,7 @@ const litecoin: AppSpec<Transaction> = {
     ),
   }),
 };
-const stealthcoin: AppSpec<Transaction> = {
-  name: "Stealth",
-  currency: getCryptoCurrencyById("stealthcoin"),
-  dependency: "Bitcoin",
-  appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Stealth",
-  },
-  test: genericTest,
-  mutations: bitcoinLikeMutations({
-    minimalAmount: parseCurrencyUnit(
-      getCryptoCurrencyById("stealthcoin").units[0],
-      "0.1"
-    ),
-  }),
-};
+
 export default {
   bitcoin,
   bitcoinTestnet,
@@ -548,8 +522,6 @@ export default {
   pivx,
   qtum,
   stakenet,
-  stealthcoin,
-  stratis,
   vertcoin,
   viacoin,
   zcash,

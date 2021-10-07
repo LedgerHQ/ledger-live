@@ -8,6 +8,7 @@ export const ConnectManagerTimeout = createCustomErrorClass(
 export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
   "GetAppAndVersionUnsupportedFormat"
 );
+export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
 
 export const LatestFirmwareVersionRequired = createCustomErrorClass(
   "LatestFirmwareVersionRequired"

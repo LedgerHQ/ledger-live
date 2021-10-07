@@ -1,10 +1,11 @@
 import type { Account } from "../../types";
+import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 
 const getAccountShape: GetAccountShape = async (info) => {
-  const { id, address, initialAccount } = info;
+  const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length
     ? (oldOperations[0].blockHeight || 0) + 1
@@ -23,10 +24,17 @@ const getAccountShape: GetAccountShape = async (info) => {
     nominations,
     numSlashingSpans,
   } = await getAccount(address);
-  const newOperations = await getOperations(id, address, startAt);
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
+  const newOperations = await getOperations(accountId, address, startAt);
   const operations = mergeOps(oldOperations, newOperations);
   const shape = {
-    id,
+    id: accountId,
     balance,
     spendableBalance,
     operationsCount: operations.length,

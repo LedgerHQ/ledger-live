@@ -2,7 +2,7 @@ import type { Account } from "../../types";
 import type { BitcoinOutput, BitcoinInput } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { getEnv } from "../../env";
-import { perCoinLogic } from "./transaction";
+import { perCoinLogic } from "./logic";
 
 const sortUTXO = (a, b) => b.value.minus(a.value).toNumber();
 
@@ -31,6 +31,7 @@ export function formatOutput(account: Account, o: BitcoinOutput): string {
     }).padEnd(12),
     o.address,
     o.path,
+    o.isChange ? "(change)" : "",
     o.rbf ? "rbf" : "",
     o.hash,
     `@${o.outputIndex} (${

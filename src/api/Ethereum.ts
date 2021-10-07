@@ -2,7 +2,7 @@ import URL from "url";
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
-import JSONBigNumber from "../JSONBigNumber";
+import JSONBigNumber from "@ledgerhq/json-bignumber";
 import type { CryptoCurrency } from "../types";
 import type { EthereumGasLimitRequest } from "../families/ethereum/types";
 import network from "../network";

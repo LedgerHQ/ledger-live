@@ -177,51 +177,68 @@ export async function runWithAppSpec<T extends Transaction>(
       return appReport;
     }
 
-    const mutationsCount = {};
+    let mutationsCount = {};
     // we sequentially iterate on the initial account set to perform mutations
     const length = accounts.length;
 
-    for (let i = 0; i < length; i++) {
-      log("engine", `spec ${spec.name} sync all accounts`);
-      // resync all accounts (necessary between mutations)
-      t = now();
-      accounts = await promiseAllBatched(5, accounts, syncAccount);
-      appReport.accountsAfter = accounts;
-      const syncAllAccountsTime = now() - t;
-      const account = accounts[i];
-      const report = await runOnAccount({
-        appCandidate,
-        spec,
-        device,
-        account,
-        accounts,
-        mutationsCount,
-        syncAllAccountsTime,
-        preloadedData,
-      });
-      // eslint-disable-next-line no-console
-      console.log(formatReportForConsole(report));
-      mutationReports.push(report);
-      appReport.mutations = mutationReports;
-
-      if (
-        report.error ||
-        (report.latestSignOperationEvent &&
-          report.latestSignOperationEvent.type === "device-signature-requested")
-      ) {
+    const totalTries = spec.multipleRuns || 1;
+    for (let j = 0; j < totalTries; j++) {
+      for (let i = 0; i < length; i++) {
         log(
           "engine",
-          `spec ${spec.name} is recreating the device because deviceAction didn't finished`
+          `spec ${spec.name} sync all accounts (try ${j} run ${i})`
         );
-        await releaseSpeculosDevice(device.id);
-        device = await createSpeculosDevice(deviceParams);
+        // resync all accounts (necessary between mutations)
+        t = now();
+        accounts = await promiseAllBatched(
+          getEnv("SYNC_MAX_CONCURRENT"),
+          accounts,
+          syncAccount
+        );
+        appReport.accountsAfter = accounts;
+        const syncAllAccountsTime = now() - t;
+        const account = accounts[i];
+        const report = await runOnAccount({
+          appCandidate,
+          spec,
+          device,
+          account,
+          accounts,
+          mutationsCount,
+          syncAllAccountsTime,
+          preloadedData,
+        });
+        // eslint-disable-next-line no-console
+        console.log(formatReportForConsole(report));
+        mutationReports.push(report);
+        appReport.mutations = mutationReports;
+
+        if (
+          report.error ||
+          (report.latestSignOperationEvent &&
+            report.latestSignOperationEvent.type ===
+              "device-signature-requested")
+        ) {
+          log(
+            "engine",
+            `spec ${spec.name} is recreating the device because deviceAction didn't finished`
+          );
+          await releaseSpeculosDevice(device.id);
+          device = await createSpeculosDevice(deviceParams);
+        }
       }
+      mutationsCount = {};
     }
 
-    accounts = await promiseAllBatched(5, accounts, syncAccount);
+    accounts = await promiseAllBatched(
+      getEnv("SYNC_MAX_CONCURRENT"),
+      accounts,
+      syncAccount
+    );
     appReport.mutations = mutationReports;
     appReport.accountsAfter = accounts;
   } catch (e: any) {
+    console.error(e);
     appReport.fatalError = e;
     log("engine", `spec ${spec.name} failed with ${String(e)}`);
   } finally {
@@ -308,6 +325,7 @@ export async function runOnAccount<T extends Transaction>({
           updates: r.updates,
         });
       } catch (error: any) {
+        console.error(error);
         unavailableMutationReasons.push({
           mutation,
           error,
@@ -554,7 +572,7 @@ export function autoSignTransaction<T extends Transaction>({
                 recentEvents.map((e) => JSON.stringify(e)).join("\n")
             )
           );
-        }, 20 * 1000);
+        }, 60 * 1000);
         sub = transport.automationEvents.subscribe({
           next: (event) => {
             recentEvents.push(event);

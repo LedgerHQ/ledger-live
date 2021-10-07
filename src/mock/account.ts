@@ -412,6 +412,7 @@ export function genAccount(
   if (currency.family === "bitcoin") {
     account.bitcoinResources = {
       utxos: [],
+      walletAccount: undefined,
     };
   }
 

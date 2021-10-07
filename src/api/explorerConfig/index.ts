@@ -35,6 +35,7 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
+  // FIXME Doesn't seem supported, should we remove?
   clubcoin: {
     id: "club",
     stable: {
@@ -78,6 +79,7 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
+  // FIXME Doesn't seem supported, should we remove?
   hcash: {
     id: "hsr",
     stable: {
@@ -91,12 +93,10 @@ const initialExplorerConfig: FullConfig = {
       base: "EXPLORER",
       version: "v2",
     },
-    /*
     experimental: {
       base: "EXPLORER",
       version: "v3",
     },
-    */
   },
   litecoin: {
     id: "ltc",
@@ -127,6 +127,7 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
+  // FIXME Doesn't seem supported, should we remove?
   poswallet: {
     id: "posw",
     stable: {
@@ -150,6 +151,10 @@ const initialExplorerConfig: FullConfig = {
     stable: {
       base: "EXPLORER",
       version: "v2",
+    },
+    experimental: {
+      base: "EXPLORER",
+      version: "v3",
     },
   },
   stratis: {

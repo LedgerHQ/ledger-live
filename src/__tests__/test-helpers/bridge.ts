@@ -627,7 +627,7 @@ export function testBridge<T extends Transaction>(
               const account = await getSynced();
               const t = { ...bridge.createTransaction(account) };
               const status = await bridge.getTransactionStatus(account, t);
-              expect(status.errors.recipient).toEqual(new RecipientRequired());
+              expect(status.errors.recipient).toBeInstanceOf(RecipientRequired);
             }
           );
           makeTest("invalid recipient have a recipientError", async () => {
@@ -637,7 +637,7 @@ export function testBridge<T extends Transaction>(
               recipient: "invalidADDRESS",
             };
             const status = await bridge.getTransactionStatus(account, t);
-            expect(status.errors.recipient).toEqual(new InvalidAddress());
+            expect(status.errors.recipient).toBeInstanceOf(InvalidAddress);
           });
           const accountDataTest = accountData.test;
 

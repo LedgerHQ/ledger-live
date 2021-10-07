@@ -1,10 +1,11 @@
 import type { Account } from "../../types";
+import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 
 const getAccountShape: GetAccountShape = async (info) => {
-  const { id, address, initialAccount, currency } = info;
+  const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const {
     blockHeight,
@@ -14,19 +15,36 @@ const getAccountShape: GetAccountShape = async (info) => {
     unbondingBalance,
     commissions,
   } = await getAccount(address, currency.id);
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
   // Merge new operations with the previously synced ones
   let startAt = 0;
   let maxIteration = 20;
   let operations = oldOperations;
-  let newOperations = await getOperations(id, address, startAt++, currency.id);
+  let newOperations = await getOperations(
+    accountId,
+    address,
+    startAt++,
+    currency.id
+  );
 
   do {
     operations = mergeOps(operations, newOperations);
-    newOperations = await getOperations(id, address, startAt++, currency.id);
+    newOperations = await getOperations(
+      accountId,
+      address,
+      startAt++,
+      currency.id
+    );
   } while (--maxIteration && newOperations.length != 0);
 
   const shape = {
-    id,
+    id: accountId,
     balance,
     spendableBalance: balance,
     operationsCount: operations.length,

@@ -26,6 +26,7 @@ const accounts: Account[] = [
     xpub: "xpub6DACJs4ZgE67HEu53j2osRtw51wfJybJ88ccVQnHpmjqr9XJfMYXn6Fxt3u772FonuWfqYUrb9Z9wxe2S9pTzxGDiQZDk1cMPiDH2S5HjYa",
     bitcoinResources: {
       utxos: [],
+      walletAccount: undefined,
     },
     swapHistory: [
       {
@@ -88,6 +89,7 @@ const accounts: Account[] = [
     xpub: "Ltub2Zx1tbqWB7AbC4fb7aWgsuyXBm2qt97gzG5av4PHAjdAhvdZQFHS7nmcScgtAvpgcGAkVQQvR9BXwu54ny6Yqwst4KQAnyD1Yx6VezNf1S8",
     bitcoinResources: {
       utxos: [],
+      walletAccount: undefined,
     },
     swapHistory: [
       {

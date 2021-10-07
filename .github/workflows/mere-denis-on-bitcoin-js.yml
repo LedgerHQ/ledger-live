@@ -39,6 +39,7 @@ jobs:
           yarn ci-setup-cli
       - name: BOT
         env:
+          BOT_TIMEOUT_SCAN_ACCOUNTS: "3600000"
           SHOW_LEGACY_NEW_ACCOUNT: "1"
           SEED: ${{ secrets.SEED1 }}
           VERBOSE_FILE: bot-tests.txt

@@ -1,6 +1,6 @@
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
-import * as bech32 from "bech32";
+import { bech32 } from "bech32";
 
 /**
  * The human-readable-part of the bech32 addresses.

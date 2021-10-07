@@ -36,6 +36,7 @@ const postBuildAccount = async ({
   let bitcoinResources: BitcoinResources = {
     ...account.bitcoinResources,
     utxos,
+    walletAccount: undefined,
   };
 
   if (perCoin) {

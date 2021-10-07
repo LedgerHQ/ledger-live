@@ -44,12 +44,10 @@ export const responseInterceptor = (
   return response;
 };
 
-export const errorInterceptor = (
-  error: {
-    config: ExtendedXHRConfig;
-  } & AxiosError<any>
-) => {
-  const { url, method = "", metadata } = error.config;
+export const errorInterceptor = (error: AxiosError<any>) => {
+  const config = error?.response?.config as ExtendedXHRConfig | null;
+  if (!config) throw error;
+  const { url, method = "", metadata } = config;
   const { startTime = 0 } = metadata || {};
 
   let errorToThrow;
@@ -110,9 +108,12 @@ const makeError = (msg, status, url, method) => {
 const getErrorMessage = (
   data: Record<string, any>
 ): string | null | undefined => {
-  return (
-    data.cause || data.error_message || data.error || data.message || data.msg
-  );
+  if (!data) return "";
+  if (typeof data === "string") return data;
+  if (data.errors) {
+    return getErrorMessage(data.errors[0]);
+  }
+  return data.message || data.error_message || data.error || data.msg;
 };
 
 const extractErrorMessage = (raw: string): string | undefined => {

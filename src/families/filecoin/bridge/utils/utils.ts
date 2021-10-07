@@ -10,13 +10,14 @@ import {
   GetAccountShapeArg0,
 } from "../../../../bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
+import { encodeAccountId } from "../../../../account";
 import flatMap from "lodash/flatMap";
 import { Transaction } from "../../types";
 
 export const getUnit = () => getCryptoCurrencyById("filecoin").units[0];
 
 export const mapTxToOps =
-  ({ id, address }: GetAccountShapeArg0) =>
+  (id, { address }: GetAccountShapeArg0) =>
   (tx: TransactionResponse): Operation[] => {
     const { to, from, hash, timestamp, amount } = tx;
     const ops: Operation[] = [];
@@ -107,17 +108,25 @@ export const getTxToBroadcast = (
 };
 
 export const getAccountShape: GetAccountShape = async (info) => {
-  const { address } = info;
+  const { address, currency } = info;
+
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode: "",
+  });
 
   const blockHeight = await fetchBlockHeight();
   const balance = await fetchBalances(address);
   const txs = await fetchTxs(address);
 
   const result = {
+    id: accountId,
     balance: new BigNumber(balance.total_balance),
     spendableBalance: new BigNumber(balance.spendable_balance),
-
-    operations: flatMap(txs, mapTxToOps(info)),
+    operations: flatMap(txs, mapTxToOps(accountId, info)),
     blockHeight: blockHeight.current_block_identifier.index,
   };
 

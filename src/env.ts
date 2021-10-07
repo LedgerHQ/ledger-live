@@ -451,6 +451,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "maximum limit to synchronize accounts concurrently to limit overload",
   },
+  BOT_MAX_CONCURRENT: {
+    def: 4,
+    parser: intParser,
+    desc: "maximum limit to run bot spec in parallel",
+  },
   USER_ID: {
     def: "",
     parser: stringParser,

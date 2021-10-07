@@ -156,14 +156,18 @@ const shouldRefreshBalanceHistory = (
   );
 };
 
-function shouldRefreshBitcoinResources(updatedRaw, account) {
+function shouldRefreshBitcoinResources(
+  updatedRaw: AccountRaw,
+  account: Account
+) {
   if (!updatedRaw.bitcoinResources) return false;
-  if (account.bitcoinResources === updatedRaw.bitcoinResources) return false;
   if (!account.bitcoinResources) return true;
   if (updatedRaw.blockHeight !== account.blockHeight) return true;
   if (updatedRaw.operations.length !== account.operations.length) return true;
   const { bitcoinResources: existing } = account;
   const { bitcoinResources: raw } = updatedRaw;
+  // FIXME Need more typing in wallet-btc to have a meaningful comparison
+  //if (!isEqual(raw.walletAccount?.xpub?.data, existing.walletAccount?.xpub?.data)) return true;
   return raw.utxos.length !== existing.utxos.length;
 }
 

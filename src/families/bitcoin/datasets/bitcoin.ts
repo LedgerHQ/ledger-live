@@ -50,8 +50,8 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("999"),
             // FIXME fee are reloaded?
-            // estimatedFees: BigNumber("250"),
-            // totalSpent: BigNumber("1249"),
+            // estimatedFees: new BigNumber("250"),
+            // totalSpent: new BigNumber("1249"),
             errors: {},
             warnings: {
               // feeTooHigh: new FeeTooHigh()
@@ -76,8 +76,8 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("998"),
             // FIXME fee are reloaded?
-            // estimatedFees: BigNumber("250"),
-            // totalSpent: BigNumber("1248"),
+            // estimatedFees: new BigNumber("250"),
+            // totalSpent: new BigNumber("1248"),
             errors: {},
             warnings: {
               // feeTooHigh: new FeeTooHigh()
@@ -102,8 +102,8 @@ const dataset: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("997"),
             // FIXME fee are reloaded?
-            // estimatedFees: BigNumber("250"),
-            // totalSpent: BigNumber("1247"),
+            // estimatedFees: new BigNumber("250"),
+            // totalSpent: new BigNumber("1247"),
             errors: {},
             warnings: {
               // feeTooHigh: new FeeTooHigh(),

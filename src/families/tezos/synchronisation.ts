@@ -2,6 +2,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
+import { encodeAccountId } from "../../account";
 import { mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { encodeOperationId } from "../../operation";
@@ -38,7 +39,14 @@ function restorePublicKey(
 }
 
 export const getAccountShape: GetAccountShape = async (infoInput) => {
-  const { address, initialAccount, rest } = infoInput;
+  const { address, initialAccount, rest, currency, derivationMode } = infoInput;
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
 
   const initialStableOperations = initialAccount
     ? initialAccount.operations
@@ -64,6 +72,7 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
 
   if (apiAccount.type === "empty") {
     return {
+      id: accountId,
       blockHeight,
       lastSyncDate: new Date(),
     };
@@ -87,11 +96,14 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
   const balance = new BigNumber(apiAccount.balance);
   const subAccounts = [];
 
-  const newOps: any[] = apiOperations.map(txToOp(infoInput)).filter(Boolean);
+  const newOps: any[] = apiOperations
+    .map(txToOp({ address, accountId }))
+    .filter(Boolean);
 
   const operations = mergeOps(initialStableOperations, newOps);
 
   const accountShape = {
+    id: accountId,
     operations,
     balance,
     subAccounts,
@@ -105,7 +117,7 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
 };
 
 const txToOp =
-  ({ address, id: accountId }) =>
+  ({ address, accountId }) =>
   (tx: APIOperation): Operation | null | undefined => {
     let type;
     let maybeValue;
