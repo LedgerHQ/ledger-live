@@ -3,7 +3,7 @@ import NumberInput from "./index";
 import { InputProps } from "../BaseInput";
 
 export default {
-  title: "Form/Input/NumberInput",
+  title: "Form/Input/Number",
   argTypes: {
     disabled: {
       type: "boolean",
@@ -24,7 +24,7 @@ export default {
   },
 };
 
-export const NumberInputDefault = ({
+export const Number = ({
   min,
   max,
   ...otherArgs

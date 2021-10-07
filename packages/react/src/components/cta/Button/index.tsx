@@ -7,8 +7,8 @@ import ChevronBottom from "@ui/assets/icons/ChevronBottomRegular";
 
 type ButtonTypes = "primary" | "secondary";
 
-interface BaseProps {
-  Icon?: React.ComponentType<any>;
+interface BaseProps<I = any> {
+  Icon?: React.ComponentType<I>;
   ff?: string;
   color?: string;
   fontSize?: number;
@@ -18,8 +18,8 @@ interface BaseProps {
   disabled?: boolean;
 }
 
-export interface ButtonProps extends BaseProps {
-  Icon?: React.ComponentType<any>;
+export interface ButtonProps<I = any> extends BaseProps<I> {
+  Icon?: React.ComponentType<I>;
   children?: React.ReactNode;
   onClick: (event?: React.SyntheticEvent<HTMLButtonElement>) => void;
   ff?: string;
@@ -151,7 +151,7 @@ const Button = ({
   );
 };
 
-const StyledExpandButton: any = styled(Button).attrs((props) => ({
+const StyledExpandButton = styled(Button).attrs((props) => ({
   Icon: props.Icon != null || ChevronBottom,
   iconPosition: props.iconPosition || "right",
 }))<BaseProps & { expanded: boolean }>`

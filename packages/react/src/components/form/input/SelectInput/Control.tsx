@@ -6,7 +6,7 @@ import { InputContainer } from "../BaseInput";
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->(): Styles<T, M>["control"] {
+>(): NonNullable<Styles<T, M>["control"]> {
   return (provided) => ({
     ...provided,
     display: "flex",

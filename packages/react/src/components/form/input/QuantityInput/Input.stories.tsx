@@ -3,7 +3,7 @@ import QuantityInput from "./index";
 import { InputProps } from "../BaseInput";
 
 export default {
-  title: "Form/Input/QuantityInput",
+  title: "Form/Input/Quantity",
   argTypes: {
     disabled: {
       type: "boolean",
@@ -24,7 +24,7 @@ export default {
   },
 };
 
-export const QuantityInputDefault = ({
+export const Quantity = ({
   min,
   max,
   ...otherArgs

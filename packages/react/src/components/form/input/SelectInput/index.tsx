@@ -21,6 +21,8 @@ export type SelfProps<
   renderRight?: (props: Props<T, M>) => React.ReactNode;
   /* This value is used to calculate the height of the menu list when dealing with virtual lists. */
   rowHeight?: number;
+  /* Removes all wrappers when rendering the element. */
+  unwrapped?: boolean;
 };
 export type Props<
   T extends OptionTypeBase = { label: string; value: string },
@@ -38,6 +40,10 @@ const stylesFn = <
   dropdownIndicator: DropdownIndicatorModule.getStyles(),
   menuList: MenuListModule.getStyles(theme),
   option: OptionModule.getStyles(),
+  input: (provided) => ({
+    ...provided,
+    color: theme.colors.palette.neutral.c100,
+  }),
   placeholder: (provided) => ({
     ...provided,
     color: theme.colors.palette.neutral.c60,
@@ -57,33 +63,39 @@ const stylesFn = <
 function SelectInput<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->({ error, rowHeight = 48, ...props }: Props<T, M>): JSX.Element {
+>({ error, rowHeight = 48, unwrapped, ...props }: Props<T, M>): JSX.Element {
   const theme = useTheme();
   const styles = useMemo(() => stylesFn<T, M>(theme), [theme]);
   const { isDisabled, components = {} } = props;
 
+  const innerContent = (
+    <Select
+      {...props}
+      error={error}
+      styles={{
+        ...styles,
+        ...props.styles,
+      }}
+      classNamePrefix="react-select"
+      rowHeight={rowHeight}
+      components={{
+        Control: ControlModule.Control,
+        ValueContainer: ValueContainerModule.ValueContainer,
+        IndicatorsContainer,
+        DropdownIndicator: DropdownIndicatorModule.DropdownIndicator,
+        MenuList: MenuListModule.MenuList,
+        Option: OptionModule.Option,
+        IndicatorSeparator: null,
+        ...components,
+      }}
+    />
+  );
+
+  if (unwrapped) return innerContent;
+
   return (
     <div>
-      <Select
-        {...props}
-        error={error}
-        styles={{
-          ...styles,
-          ...props.styles,
-        }}
-        classNamePrefix="react-select"
-        rowHeight={rowHeight}
-        components={{
-          Control: ControlModule.Control,
-          ValueContainer: ValueContainerModule.ValueContainer,
-          IndicatorsContainer,
-          DropdownIndicator: DropdownIndicatorModule.DropdownIndicator,
-          MenuList: MenuListModule.MenuList,
-          Option: OptionModule.Option,
-          IndicatorSeparator: null,
-          ...components,
-        }}
-      />
+      {innerContent}
       {error && !isDisabled && <InputErrorContainer fontSize={3}>{error}</InputErrorContainer>}
     </div>
   );

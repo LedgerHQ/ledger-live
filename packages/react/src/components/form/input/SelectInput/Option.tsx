@@ -6,7 +6,7 @@ import { Base as Text } from "@components/asorted/Text";
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->(): Styles<T, M>["option"] {
+>(): NonNullable<Styles<T, M>["option"]> {
   return (provided) => ({
     ...provided,
     display: "flex",
@@ -35,7 +35,7 @@ const Wrapper = styled(Text).attrs({ as: "div" })<{
     const { theme, selected, focus, disabled } = props;
     if (selected) {
       return `
-        color: ${theme.colors.palette.neutral.c60};
+        color: ${theme.colors.palette.primary.c90};
         background: ${theme.colors.palette.primary.c20};
       `;
     }

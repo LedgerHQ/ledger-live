@@ -3,7 +3,7 @@ import Button from "@ui/components/cta/Button";
 import Input, { InputProps, InputRenderLeftContainer, InputRenderRightContainer } from "./index";
 
 export default {
-  title: "Form/Input",
+  title: "Form/Input/Base",
   argTypes: {
     disabled: {
       type: "boolean",
@@ -16,7 +16,7 @@ export default {
   },
 };
 
-export const Default = (args: InputProps): JSX.Element => {
+export const Base = (args: InputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
