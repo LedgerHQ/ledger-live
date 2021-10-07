@@ -53,7 +53,7 @@
     "c100": "hsla(359, 84%, 63%, 1)"
   },
   "environment": {
-    "background": "hsla(0, 100%, 50%, 1)",
+    "background": "hsla(0, 0%, 100%, 1)",
     "overlay": "hsla(0, 0%, 0%, 0,7)"
   }
 }
