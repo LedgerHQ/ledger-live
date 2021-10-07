@@ -38,7 +38,7 @@ function DropdownValueContainer<T extends OptionTypeBase = { label: string; valu
           <Text ff="Inter|SemiBold" fontSize={3} mr={2}>
             <FlexBox>{props.children}</FlexBox>
           </Text>
-          <FlexBox alignItems="center" color="palette.neutral.c100">
+          <FlexBox alignItems="center">
             <ChevronIcon size={12} />
           </FlexBox>
         </FlexBox>

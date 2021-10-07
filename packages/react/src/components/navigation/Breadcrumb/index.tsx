@@ -3,6 +3,7 @@ import styled, { useTheme } from "styled-components";
 import Flex from "@components/layout/Flex";
 import Text from "@components/asorted/Text";
 import Dropdown from "@components/form/selectDialogs/Dropdown";
+import * as ControlModule from "@components/form/input/SelectInput/Control";
 
 export type Props = { segments: Segment[]; onChange: (values: string[]) => void }; //React.PropsWithChildren<unknown>;
 export type Element = {
@@ -54,16 +55,19 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
               value={segment.value}
               onChange={(elt) => elt && onChange([...values, elt.value])}
               styles={{
+                control: (provided, state) => ({
+                  ...ControlModule.getStyles()(provided, state),
+                  cursor: "pointer",
+                }),
                 singleValue: (provided) => ({
                   ...provided,
-                  color: theme.colors.palette.neutral.c80,
                   margin: 0,
                   top: undefined,
                   position: undefined,
                   overflow: undefined,
                   maxWidth: undefined,
                   transform: undefined,
-                  cursor: "pointer",
+                  color: theme.colors.palette.neutral.c80,
                   ":hover": {
                     color: theme.colors.palette.neutral.c100,
                     textDecoration: "underline",
