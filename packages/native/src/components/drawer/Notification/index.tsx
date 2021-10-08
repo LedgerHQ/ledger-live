@@ -52,9 +52,9 @@ export default function Notification({
   return (
     <NotificationContainer variant={variant}>
       <FlexBox>
-        <Icon size={20} color={color || textColor} />
+        <Icon size={18} color={color || textColor} />
       </FlexBox>
-      <FlexBox ml={20} flexShrink={1}>
+      <FlexBox ml={16} flexShrink={1}>
         <Text
           type={"body"}
           fontWeight={"medium"}
