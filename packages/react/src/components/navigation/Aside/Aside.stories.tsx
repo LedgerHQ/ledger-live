@@ -4,6 +4,7 @@ import FlexBox from "@components/layout/Flex";
 import { LifeRingMedium } from "@assets/icons";
 import AsideComponent, { Props } from "./index";
 import { nanoIllustration, keyboardIllustration } from "./stories.helper";
+import Log from "@components/message/Log";
 
 export default {
   title: "Navigation/Aside",
@@ -18,11 +19,7 @@ export default {
 };
 
 export function Aside(args: Props): JSX.Element {
-  const header = (
-    <Text ff="Alpha|Medium" fontSize={7} textAlign="center" bracket>
-      Header
-    </Text>
-  );
+  const header = <Log>Header</Log>;
 
   const footer = (
     <FlexBox flexDirection="column" rowGap={3}>
