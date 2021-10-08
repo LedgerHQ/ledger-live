@@ -67,3 +67,6 @@ packages/react/storybook-static/\*
 # IDE
 
 .vscode/\*
+
+# Typescript incremental mode artifacts
+*.tsbuildinfo
