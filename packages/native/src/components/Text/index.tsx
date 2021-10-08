@@ -21,7 +21,7 @@ import {
 } from "./getTextStyle";
 
 type Props = {
-  type: TextTypes;
+  type?: TextTypes;
   fontWeight?: FontWeightTypes;
   fontFamily?: string;
   fontSize?: number | string;

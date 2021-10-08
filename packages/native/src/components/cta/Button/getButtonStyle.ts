@@ -5,6 +5,7 @@ export function getButtonColors(colors: Theme["colors"]): {
   [index: string]: {
     primaryColor: string;
     secondaryColor: string;
+    tertiaryColor?: string;
   };
 } {
   return {
@@ -15,6 +16,11 @@ export function getButtonColors(colors: Theme["colors"]): {
     main: {
       primaryColor: colors.palette.neutral.c00,
       secondaryColor: colors.palette.neutral.c100,
+    },
+    shade: {
+      primaryColor: colors.palette.neutral.c00,
+      secondaryColor: colors.palette.neutral.c100,
+      tertiaryColor: colors.palette.neutral.c40,
     },
     error: {
       primaryColor: colors.palette.neutral.c00,
@@ -42,7 +48,7 @@ export function getButtonColorStyle(
 } {
   const { outline, type = "main", disabled } = props;
 
-  const { primaryColor, secondaryColor } =
+  const { primaryColor, secondaryColor, tertiaryColor } =
     getButtonColors(colors)[disabled ? "disabled" : type];
 
   if (outline) {
@@ -50,7 +56,7 @@ export function getButtonColorStyle(
       text: { color: disabled ? primaryColor : secondaryColor },
       button: {
         backgroundColor: "transparent",
-        borderColor: disabled ? primaryColor : secondaryColor,
+        borderColor: disabled ? primaryColor : tertiaryColor ?? secondaryColor,
         borderWidth: 1,
       },
     };

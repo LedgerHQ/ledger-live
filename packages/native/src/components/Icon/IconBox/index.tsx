@@ -2,7 +2,7 @@ import React from "react";
 import styled, { useTheme } from "styled-components/native";
 
 type Props = {
-  Icon: React.ComponentType<{ size: number; color?: string }>;
+  Icon: (props: { size?: number; color?: string }) => React.ReactElement;
   color?: string;
 };
 
@@ -21,7 +21,7 @@ export default function IconBox({ Icon, color }: Props): React.ReactElement {
   const { colors } = useTheme();
   return (
     <IconContainer>
-      <Icon size={18} color={color || colors.palette.neutral.c100} />
+      <Icon size={24} color={color || colors.palette.neutral.c100} />
     </IconContainer>
   );
 }

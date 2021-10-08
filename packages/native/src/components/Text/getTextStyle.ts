@@ -19,7 +19,7 @@ export function getTextStyle({
   type,
   bracket,
 }: {
-  type: TextTypes;
+  type?: TextTypes;
   bracket?: boolean;
 }): {
   fontFamily: string;
