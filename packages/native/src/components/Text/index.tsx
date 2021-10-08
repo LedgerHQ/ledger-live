@@ -19,6 +19,7 @@ import {
   getTextStyle,
   TextTypes,
 } from "./getTextStyle";
+import { TextProps } from "react-native";
 
 type Props = {
   type?: TextTypes;
@@ -34,7 +35,7 @@ type Props = {
   lineHeight?: string;
   bracket?: boolean;
   children: React.ReactNode;
-};
+} & TextProps;
 
 const Base = styled.Text<Props>`
   ${lineHeight};
