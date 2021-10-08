@@ -23,8 +23,6 @@ const getAccountCreator = (currencyId: string) => {
 describe("usePickDefaultAccount", () => {
   const getEthAccount = getAccountCreator("ethereum");
   const getBtcAccount = getAccountCreator("bitcoin");
-  const getPolkadotAccount = getAccountCreator("polkadot");
-  const getCosmosAccount = getAccountCreator("cosmos");
   const setFromAccount = jest.fn();
 
   beforeEach(() => {
@@ -58,6 +56,7 @@ describe("usePickDefaultAccount", () => {
 
   test("returns an ethereum account when it's available", () => {
     const ethAccount = getEthAccount();
+    ethAccount.balance = new BigNumber(1);
 
     const accounts: Account[] = [ethAccount, getBtcAccount()];
 
@@ -69,12 +68,14 @@ describe("usePickDefaultAccount", () => {
     expect(setFromAccount).toHaveBeenCalledWith(ethAccount);
   });
 
-  test("returns the first ethereum account when all of the enabled accounts have the same balance", () => {
+  test("returns the first marketcap account when all of the enabled accounts have the same balance", () => {
     const ethAccount = getEthAccount();
+    const btcAccount = getBtcAccount();
+    btcAccount.balance = new BigNumber(1);
 
     const accounts: Account[] = [
       ethAccount,
-      getBtcAccount(),
+      btcAccount,
       getEthAccount(),
       { ...getEthAccount(), disabled: true },
     ];
@@ -84,21 +85,30 @@ describe("usePickDefaultAccount", () => {
     );
 
     expect(setFromAccount).toHaveBeenCalledTimes(1);
-    expect(setFromAccount).toHaveBeenCalledWith(ethAccount);
+    expect(setFromAccount).toHaveBeenCalledWith(btcAccount);
   });
 
   test("returns the ethereum enabled account with the highest balance", () => {
     const ethAccount = getEthAccount();
     const ethAccount2 = getEthAccount();
+    const ethAccount3 = getEthAccount();
+    const ethAccount4 = getEthAccount();
+    const ethAccount5 = getEthAccount();
 
-    ethAccount.amount = new BigNumber(1000);
-    ethAccount2.amount = new BigNumber(0);
+    ethAccount.balance = new BigNumber(0.2);
+    ethAccount2.balance = new BigNumber(0);
+    ethAccount3.balance = new BigNumber(0.001);
+    ethAccount4.balance = new BigNumber(0.0001);
+    ethAccount5.balance = new BigNumber(0.0006);
 
     const accounts: Account[] = [
       { ...getEthAccount(), disabled: true },
       ethAccount,
       getBtcAccount(),
       ethAccount2,
+      ethAccount3,
+      ethAccount4,
+      ethAccount5,
     ];
 
     renderHook(() =>
@@ -109,29 +119,12 @@ describe("usePickDefaultAccount", () => {
     expect(setFromAccount).toHaveBeenCalledWith(ethAccount);
   });
 
-  test("returns the first bitcoin account when no ethereum accounts are passed/enabled and all btc accounts have the same balance", () => {
-    const BtcAccount = getBtcAccount();
-
-    const accounts: Account[] = [
-      { ...getEthAccount(), disabled: true },
-      BtcAccount,
-      getBtcAccount(),
-    ];
-
-    renderHook(() =>
-      usePickDefaultAccount(accounts, undefined, setFromAccount)
-    );
-
-    expect(setFromAccount).toHaveBeenCalledTimes(1);
-    expect(setFromAccount).toHaveBeenCalledWith(BtcAccount);
-  });
-
-  test("returns the bitcoin enabled account with the highest balance when no ETH accounts are passed", () => {
+  test("returns the highest bitcoin account when no ethereum accounts are passed/enabled and all btc accounts have the same balance", () => {
     const btcAccount = getBtcAccount();
     const btcAccount2 = getBtcAccount();
 
-    btcAccount.amount = new BigNumber(1000);
-    btcAccount2.amount = new BigNumber(0);
+    btcAccount.balance = new BigNumber(0.2);
+    btcAccount2.balance = new BigNumber(0.001);
 
     const accounts: Account[] = [
       { ...getEthAccount(), disabled: true },
@@ -145,23 +138,5 @@ describe("usePickDefaultAccount", () => {
 
     expect(setFromAccount).toHaveBeenCalledTimes(1);
     expect(setFromAccount).toHaveBeenCalledWith(btcAccount);
-  });
-
-  test("returns the first enabled account when no ethereum/bitcoin accounts are passed", () => {
-    const dotAccount = getPolkadotAccount();
-
-    const accounts: Account[] = [
-      { ...getCosmosAccount(), disabled: true },
-      dotAccount,
-      getPolkadotAccount(),
-      getCosmosAccount(),
-    ];
-
-    renderHook(() =>
-      usePickDefaultAccount(accounts, undefined, setFromAccount)
-    );
-
-    expect(setFromAccount).toHaveBeenCalledTimes(1);
-    expect(setFromAccount).toHaveBeenCalledWith(dotAccount);
   });
 });

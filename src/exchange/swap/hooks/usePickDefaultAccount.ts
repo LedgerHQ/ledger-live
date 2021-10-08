@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 import { Account, TokenAccount } from "../../../types";
+import { useCurrenciesByMarketcap } from "../../../currencies/sortByMarketcap";
+import { listCryptoCurrencies, listTokens } from "../../../currencies";
+import { getAccountCurrency } from "../../../account";
 
 // Pick a default source account if none are selected.
 export const usePickDefaultAccount = (
@@ -7,41 +10,26 @@ export const usePickDefaultAccount = (
   fromAccount: Account | TokenAccount | null | undefined,
   setFromAccount: (account: Account | TokenAccount) => void
 ): void => {
+  const list = [...listCryptoCurrencies(), ...listTokens()];
+  const allCurrencies = useCurrenciesByMarketcap(list);
+
   useEffect(() => {
-    if (!fromAccount) {
-      const possibleDefaults = accounts.reduce<
-        [
-          Account | TokenAccount | undefined | null,
-          Account | TokenAccount | undefined | null,
-          Account | TokenAccount | undefined | null
-        ]
-      >(
-        (acc, account) => {
-          if (account.disabled) return acc;
-          if (
-            // eventually needs a type guard because the "currency" property does not exist in TokenAccount
-            account["currency"]?.id === "ethereum" &&
-            (acc[0]?.balance ?? -1) < account.balance
-          ) {
-            acc[0] = account;
-          }
-          if (
-            // eventually needs a type guard because the "currency" property does not exist in TokenAccount
-            account["currency"]?.id === "bitcoin" &&
-            (acc[1]?.balance ?? -1) < account.balance
-          ) {
-            acc[1] = account;
-          }
-          const maxFundsAccount = acc[2];
-          if (!maxFundsAccount || maxFundsAccount.balance < account.balance) {
-            acc[2] = account;
-          }
-          return acc;
-        },
-        [null, null, null]
-      );
-      const defaultAccount = possibleDefaults.find(Boolean);
-      defaultAccount && setFromAccount(defaultAccount);
+    if (!fromAccount && allCurrencies.length > 0) {
+      const defaultAccount: Account | TokenAccount | undefined = allCurrencies
+        .map(({ id }) =>
+          accounts
+            .filter(
+              (acc) =>
+                getAccountCurrency(acc)?.id === id &&
+                acc.balance.gt(0) &&
+                !acc.disabled
+            )
+            .sort((a, b) => b.balance.minus(a.balance).toNumber())
+        )
+        .flat(1)
+        .find(Boolean);
+
+      if (defaultAccount) setFromAccount(defaultAccount);
     }
-  }, [accounts, fromAccount, setFromAccount]);
+  }, [accounts, allCurrencies, fromAccount, setFromAccount]);
 };
