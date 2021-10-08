@@ -29,7 +29,7 @@ export const Header = (args: Props): JSX.Element => {
 
   return (
     <HeaderComponent {...args} left={left} right={right} alignItems="center">
-      <Text bracket ff="Alpha|Medium" textTransform="uppercase">
+      <Text ff="Alpha|Medium" textTransform="uppercase">
         Ledger
       </Text>
     </HeaderComponent>

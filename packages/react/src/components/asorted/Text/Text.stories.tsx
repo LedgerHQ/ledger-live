@@ -49,9 +49,6 @@ export default {
     content: {
       type: "text",
     },
-    bracket: {
-      type: "boolean",
-    },
   },
 };
 
