@@ -68,7 +68,7 @@ export function getTextStyle({
       return {
         fontFamily: "Inter",
         fontSize: 14,
-        lineHeight: 16.94,
+        lineHeight: 20,
       };
     case "paragraph":
       return {
