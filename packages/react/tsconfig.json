@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -18,10 +19,10 @@
       "@ui/*": ["src/*"]
     },
     "skipLibCheck": true,
-    "declaration": true,
     "rootDir": "./src",
     "outDir": "./lib"
   },
+  "files": ["src/styles/palettes/light.json", "src/styles/palettes/dark.json"],
   "include": ["src/**/*"],
   "exclude": [
     "node_modules",
