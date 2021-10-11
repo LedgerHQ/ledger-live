@@ -69,6 +69,7 @@ test("sort by marketcap", () => {
     "stealthcoin",
     "ethereum/erc20/hydro_protocol",
     "ethereum/erc20/xensor",
+    "ethereum/erc20/xstable.protocol",
   ]);
 });
 test("can format a currency unit", () => {
