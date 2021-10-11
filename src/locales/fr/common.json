@@ -1222,7 +1222,7 @@
         "supportLink": "Contacter l'Assistance"
       },
       "seed": {
-        "title": "Vérifier le contenu de la boîte",
+        "title": "Vérifier le contenu de votre coffret",
         "desc": "Si votre {{deviceName}} est livré avec un code PIN ou une phrase de récupération, l'utiliser présente un risque. Contactez l'Assistance Ledger.",
         "warning": "Utilisez uniquement la phrase de récupération affichée par votre appareil lors de sa configuration.",
         "continueCTA": "Continuer",
