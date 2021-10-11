@@ -42,7 +42,6 @@ type TextTypes =
   | "tiny"
   | "subTitle"
   | "navigation"
-  | "tag"
   | "paragraph";
 
 export interface TextProps {

@@ -9,6 +9,7 @@ import {
   space,
   lineHeight,
   letterSpacing,
+  border,
 } from "styled-system";
 import BracketRight from "@ui/icons/BracketLeft";
 import BracketLeft from "@ui/icons/BracketRight";
@@ -45,6 +46,7 @@ const Base = styled.Text<Props>`
   ${fontWeight};
   ${space};
   ${letterSpacing};
+  ${border};
   ${(p) => getTextStyle(p)}
   ${(p) => getFontWeightStyle(p)}
   justify-content: center;
