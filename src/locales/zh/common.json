@@ -84,7 +84,7 @@
   },
   "errors": {
     "countervaluesUnavailable": {
-      "title": "We're not able to provide a countervalue for this asset at the moment"
+      "title": "我们目前无法为此资产提供对价"
     },
     "AccountAwaitingSendPendingOperations": {
       "title": "此账户有一个待处理的操作",
@@ -539,7 +539,7 @@
     },
     "SwapGenericAPIError": {
       "title": "汇率过期",
-      "description": "您必须在计时结束之前确认 swap 交换。汇率的有效期有限。"
+      "description": "您必须在计时结束之前确认 swap 互换。汇率的有效期有限。"
     },
     "PolkadotElectionClosed": {
       "title": "必须关闭验证器选举"
@@ -599,9 +599,9 @@
       "high": "高",
       "standard": "标准",
       "low": "低",
-      "slow": "slow",
-      "medium": "medium",
-      "fast": "fast",
+      "slow": "慢",
+      "medium": "中",
+      "fast": "快",
       "custom": "自定义",
       "blockCount": "{{blockCount}}个区块"
     }
@@ -687,7 +687,7 @@
         "description": "通过 Ledger Live 购买加密货币"
       },
       "swap": {
-        "title": "Swap 交换加密货币",
+        "title": "Swap 互换加密货币",
         "description": "安全地在加密货币\n之间进行交易"
       },
       "algorand": {
@@ -1222,11 +1222,11 @@
         "supportLink": "联系客服"
       },
       "seed": {
-        "title": "Please check the box contents",
-        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
-        "warning": "Only use a recovery phrase that your device displayed when it was set up",
-        "continueCTA": "Continue",
-        "contactSupportCTA": "Contact support"
+        "title": "请检查框内容",
+        "desc": "如果您的 {{deviceName}} 已带有PIN识别码或恢复短语，使用它是不安全的，您应该联系 Ledger 客服。",
+        "warning": "仅使用您设备设置时显示的恢复词",
+        "continueCTA": "继续",
+        "contactSupportCTA": "联系客服"
       }
     }
   },
@@ -1422,7 +1422,7 @@
     "buy": "买入",
     "walletconnect": "WalletConnect",
     "sell": "卖出",
-    "swap": "Swap 交换",
+    "swap": "Swap 互换",
     "manage": "管理",
     "lastOperations": "最后操作",
     "emptyState": {
@@ -1699,8 +1699,8 @@
       "clearCacheModal": "您确定吗？",
       "clearCacheModalDesc": "会重新对网络上的交易进行完整扫描。会重建账户历史记录、重新计算账户余额。",
       "clearCacheButton": "清除",
-      "exportLogs": "Save logs",
-      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
+      "exportLogs": "保存日志",
+      "exportLogsDesc": "出于排除故障目的所需，可能需要保存 Ledger Live 日志。",
       "hardReset": "重置 Ledger Live",
       "hardResetDesc": "重置不会影响您的资产。清除 Ledger Live 中的所有数据，包括账户数据、交易历史记录和设置信息。使用您的 Ledger 设备，在清空的 Ledger Live 上重新加载并管理您的加密资产。",
       "repairDevice": "修复您的 Ledger 设备",
@@ -1788,23 +1788,23 @@
       "title": "买入 / 卖出"
     },
     "swap": {
-      "title": "Swap 交换",
+      "title": "Swap 互换",
       "selectDevice": "选择您的设备",
-      "broadcasting": "正在播送 swap 交换",
+      "broadcasting": "正在播送 swap 互换",
       "loadingFees": "正在加载网络费用...",
       "landing": {
-        "header": "Swap 交换",
-        "title": "欢迎使用 Swap 交换",
-        "whatIsSwap": "什么是 Swap 交换？",
+        "header": "Swap 互换",
+        "title": "欢迎使用 Swap 互换",
+        "whatIsSwap": "什么是 Swap 互换？",
         "disclaimer": "通过您的 Ledger 设备直接兑换加密货币。该服务在一些国家（包括美国）不可用。"
       },
       "unauthorizedRates": {
         "cta": "重置验证信息",
-        "banner": "请重置您的 KYC 并更新 Live 以便使用 Wyre 进行 swap 交换。",
+        "banner": "请重置您的 KYC 并更新 Live 以便使用 Wyre 进行 swap 互换。",
         "bannerCTA": "重置 KYC"
       },
       "main": {
-        "header": "Swap 交换"
+        "header": "Swap 互换"
       },
       "kyc": {
         "disclaimer": "我确认：出于合规目的，我的位置数据将会分享给第三方。",
@@ -1868,10 +1868,10 @@
         "cta": "关闭"
       },
       "pendingOperation": {
-        "description": "您的 Swap 交换操作已经发送到网络上确认。最多一个小时后，您就可以收到您的 {{targetCurrency}}。",
+        "description": "您的 Swap 互换操作已经发送到网络上确认。最多一个小时后，您就可以收到您的 {{targetCurrency}}。",
         "label": "您的 Swap ID：",
-        "title": "Swap 交换播送成功 ",
-        "disclaimer": "请记下您的 Swap ID 交换代码，以便今后有需要时从 {{provider}} 处获得帮助。",
+        "title": "Swap 互换播送成功 ",
+        "disclaimer": "请记下您的 Swap ID 互换代码，以便今后有需要时从 {{provider}} 处获得帮助。",
         "cta": "查看详情"
       },
       "tradeMethod": {
@@ -1885,7 +1885,7 @@
         "modalTitle": "浮动或固定费率？"
       },
       "form": {
-        "validate": "确认 Swap 交换交易",
+        "validate": "确认 Swap 互换交易",
         "tab": "兑换",
         "button": "继续",
         "from": "来自",
@@ -1905,8 +1905,8 @@
           "close": "关闭"
         },
         "noAccounts": {
-          "title": "没有可交换的 {{ticker}}",
-          "desc": "您的 {{currencyName}} 账户没有余额可 swap 交换。",
+          "title": "没有可互换的 {{ticker}}",
+          "desc": "您的 {{currencyName}} 账户没有余额可 swap 互换。",
           "addAccountCta": "添加账户",
           "cta": "关闭"
         },
@@ -1945,10 +1945,10 @@
         "to": "到",
         "toAmount": "待收数额",
         "statusTooltips": {
-          "expired": "请使用您的 Swap ID 交换代码联系交换服务提供方以了解更多详情。",
-          "refunded": "请使用您的 Swap ID 交换代码联系交换服务提供方以了解更多详情。",
+          "expired": "请使用您的 Swap ID 互换代码联系交换服务提供方以了解更多详情。",
+          "refunded": "请使用您的 Swap ID 互换代码联系交换服务提供方以了解更多详情。",
           "pending": "请稍候片刻，掉期交易提供方正在处理该交易。",
-          "onhold": "请使用您的 Swap ID 联系交换服务提供方以解决这一情况。",
+          "onhold": "请使用您的 Swap ID 联系互换服务提供方以解决这一情况。",
           "finished": "您的掉期交易已成功完成"
         }
       },
@@ -1969,9 +1969,9 @@
       },
       "history": {
         "tab": "历史记录",
-        "disclaimer": "您的 swap 交换手机交易没有与 Ledger Live 桌面应用程序同步",
+        "disclaimer": "您的 swap 互换手机交易没有与 Ledger Live 桌面应用程序同步",
         "exportButton": "导出操作",
-        "exportFilename": "Swap 交换操作",
+        "exportFilename": "Swap 互换操作",
         "empty": {
           "title": "您之前的掉期交易会出现在这里",
           "desc": "要么您还未进行过任何掉期交易，亦或 Ledger Live 在此期间被重置了 。"
@@ -2420,7 +2420,7 @@
     "retry": "重试",
     "done": "完成",
     "finalCta": "继续",
-    "finalCtaForSwap": "返回到 Swap 交换",
+    "finalCtaForSwap": "返回到 Swap 互换",
     "synchronizing": "正在同步",
     "synchronizingDesc": "您的账户正在同步。请耐心等候……",
     "noAccountToCreate": "无法创建 <1><0>{{currencyName}}</></> 账户。重新开始该流程并同步您的账户。",
@@ -2463,7 +2463,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the app and keep your Nano X nearby",
+    "stayInTheAppPlz": "停留在应用中，并将你的 Nano X 保持在附近。",
     "allowAppPermission": "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken": "管理个人 {{token}} 代币",
     "allowManagerPermission": "允许 {{wording}} 在您的设备上运行",
@@ -2482,7 +2482,7 @@
     },
     "confirmSwap": {
       "title": "在设备上确认掉期交易操作",
-      "alert": "发送之前请验证 Swap 交换详情。地址会被安全地交换因此您不必对其进行验证。"
+      "alert": "发送之前请验证 Swap 互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
     "confirmSell": {
       "title": "在设备上确认卖出操作",
@@ -2757,10 +2757,10 @@
       "flash": "正在刷机",
       "firmware": "固件正在更新"
     },
-    "newVersion": "Update Firmware to {{version}} is available",
+    "newVersion": "更新固件到 {{version}} 是可用的",
     "drawerUpdate": {
-      "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "title": "固件更新",
+      "description": "将您的 Ledger Nano 固件连接到桌面上的 Ledger Live 应用程序以更新"
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3556,9 +3556,9 @@
     "title": "使用条款",
     "read": "阅读使用条款",
     "switchLabel": "我已阅读并同意 <1>服务条款</1>",
-    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "switchLabelFull": "我已阅读并接受服务条款和隐私政策",
     "cta": "进入 Ledger 应用程序",
-    "service": "Terms of service"
+    "service": "服务条款"
   },
   "exchange": {
     "buy": {
@@ -3606,7 +3606,7 @@
     },
     "swap": {
       "title": "掉期交易加密资产",
-      "description": "从您的 Ledger 账户中与我们的合作伙伴直接对加密资产进行 Swap 交换。"
+      "description": "从您的 Ledger 账户中与我们的合作伙伴直接对加密资产进行 Swap 互换。"
     }
   },
   "walletconnect": {
@@ -3647,8 +3647,8 @@
     "announcement": "公告",
     "liveStatus": "Ledger Live 状态",
     "groupedToast": {
-      "text": "You have {{count}} unread notifications",
-      "cta": "See details"
+      "text": "您有 {{count}} 个未读通知",
+      "cta": "查看详情"
     },
     "news": {
       "title": "新闻",
