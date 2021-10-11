@@ -1220,6 +1220,13 @@
         "title": "لا تستخدم عبارة استرداد لم تقم بإنشائها بنفسك.",
         "desc": "ينبغي أن تقوم بنفسك وبنفسك فقط ببدء إنشاء رمز الPIN وعبارة الاسترداد بمحفظة ليدجر للأجهزة الخاصة بك. إذا تلقيت جهازًا به الكلمة الأولية موجودة مسبقًا أو رمز الPIN مهيأً بالفعل، فلا تستخدم المنتج واتصل بدعم العملاء لدينا.",
         "supportLink": "الاتصال بقسم دعم ليدجر"
+      },
+      "seed": {
+        "title": "Please check the box contents",
+        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
+        "warning": "Only use a recovery phrase that your device displayed when it was set up",
+        "continueCTA": "Continue",
+        "contactSupportCTA": "Contact support"
       }
     }
   },

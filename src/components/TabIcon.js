@@ -1,7 +1,7 @@
 /* @flow */
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import LText from "./LText";
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
 };
 
 export default function TabIcon({ Icon, i18nKey, color, focused }: Props) {
+  const { t } = useTranslation();
   return (
     <View style={styles.root}>
       <Icon size={20} color={color} />
@@ -22,7 +23,7 @@ export default function TabIcon({ Icon, i18nKey, color, focused }: Props) {
         secondary
         style={[styles.text, { color }]}
       >
-        <Trans i18nKey={i18nKey} />
+        {t(i18nKey)}
       </LText>
     </View>
   );

@@ -105,6 +105,9 @@ It's recommended to use [react-native-debugger](https://github.com/jhen0409/reac
 
 Keep in mind that doing so will run your Javascript code on a Chromium JS engine ([V8](https://v8.dev/)) on your computer, instead of iOS' system JS engine (JavaScript Core), or our bundled JS engine (JSC for now, soon to be replaced with [Hermes](https://github.com/facebook/hermes)) on Android.
 
+### End to end testing
+
+Refer to the e2e specific [README.md](e2e/README.md)
 ### Native code
 
 #### XCode / Android studio
