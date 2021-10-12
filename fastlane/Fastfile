@@ -128,6 +128,12 @@ platform :ios do
       )
     end
 
+    update_info_plist(
+      xcodeproj: XCODE_PROJECT,
+      plist_path: "ledgerlivemobile/Info.plist",
+      display_name: ENV["APP_NAME"],
+    )
+
     update_code_signing_settings(
       use_automatic_signing: false,
       path: XCODE_PROJECT,
@@ -246,10 +252,11 @@ platform :android do
   desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
   private_lane :build do |options|
     type = options.fetch(:type, "Release")
+    task = options[:apk] ? "assemble" : "bundle"
 
     gradle(task: "clean", project_dir: 'android/')
     gradle(
-      task: "bundle",
+      task: task,
       build_type: type,
       print_command: false,
       properties: {

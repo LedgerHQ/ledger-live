@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = "30.0.2"
-        minSdkVersion = 21
+        minSdkVersion = 24
         compileSdkVersion = 30
         targetSdkVersion = 30
         ndkVersion = "20.1.5948944"
@@ -13,6 +13,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.2.1")
@@ -46,6 +47,7 @@ allprojects {
         maven {
             url "$rootDir/../node_modules/detox/Detox-android"
         }
+        jcenter()
     }
 }
 
@@ -61,7 +63,7 @@ subprojects {
         if (project.hasProperty("android")) {
             android {
                 compileSdkVersion 29
-                buildToolsVersion '29.0.3'
+                buildToolsVersion '30.0.2'
 
                 compileOptions {
                     sourceCompatibility 1.8

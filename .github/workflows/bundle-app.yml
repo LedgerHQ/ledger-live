@@ -57,23 +57,8 @@ jobs:
           bundle exec fastlane android apk --env production
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: post-version
-      - name: upload Android app 1/4
+      - name: upload Android app
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ steps.post-version.outputs.version }}-arm64-v8a-android.apk
-          path: android/app/build/outputs/apk/release/app-arm64-v8a-release.apk
-      - name: upload Android app 2/4
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ steps.post-version.outputs.version }}-armeabi-v7a-android.apk
-          path: android/app/build/outputs/apk/release/app-armeabi-v7a-release.apk
-      - name: upload Android app 3/4
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ steps.post-version.outputs.version }}-x86_64-android.apk
-          path: android/app/build/outputs/apk/release/app-x86_64-release.apk
-      - name: upload Android app 4/4
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ steps.post-version.outputs.version }}-x86-android.apk
-          path: android/app/build/outputs/apk/release/app-x86-release.apk
+          name: ${{ steps.post-version.outputs.version }}-release.aab
+          path: android/app/build/outputs/bundle/release/app-release.aab

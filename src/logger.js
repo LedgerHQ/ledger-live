@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 // @flow
-import { Sentry } from "react-native-sentry";
+import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 // for now we have the bare minimum
 
