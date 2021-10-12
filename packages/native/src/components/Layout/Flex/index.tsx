@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import { SpacingProps } from "@components/Layout/types";
-import { background, color, flexbox, space } from "styled-system";
+import { background, color, flexbox, layout, space } from "styled-system";
 
 // Nb Expose style props as you need them instead of allowing for all to be passed directly.
 // ref: https://styled-system.com/table
@@ -27,6 +27,7 @@ const FlexBox = styled.View<FlexBoxProps>`
   ${space};
   ${background};
   ${color};
+  ${layout};
 `;
 
 export default FlexBox;
