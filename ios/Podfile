@@ -26,7 +26,7 @@ target 'ledgerlivemobile' do
   # TODO: remove this once MultiPlatformBleAdapter gets released to 0.1.9
   # https://github.com/dotintent/MultiPlatformBleAdapter/issues/79
   # https://github.com/dotintent/MultiPlatformBleAdapter/pull/80
-  pod 'MultiplatformBleAdapter', :git => 'https://github.com/below/MultiPlatformBleAdapter', :tag => '0.1.9'
+  pod 'MultiplatformBleAdapter', :git => 'https://github.com/dotintent/MultiPlatformBleAdapter', :tag => '0.1.9'
 
   target 'ledgerlivemobileTests' do
     inherit! :search_paths

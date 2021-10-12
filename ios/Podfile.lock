@@ -400,7 +400,7 @@ DEPENDENCIES:
   - "ledger-core-objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - lottie-ios (from `../node_modules/lottie-ios`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
-  - MultiplatformBleAdapter (from `https://github.com/below/MultiPlatformBleAdapter`, tag `0.1.9`)
+  - MultiplatformBleAdapter (from `https://github.com/dotintent/MultiPlatformBleAdapter`, tag `0.1.9`)
   - "PasscodeAuth (from `../node_modules/@ledgerhq/react-native-passcode-auth`)"
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -486,7 +486,7 @@ EXTERNAL SOURCES:
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
   MultiplatformBleAdapter:
-    :git: https://github.com/below/MultiPlatformBleAdapter
+    :git: https://github.com/dotintent/MultiPlatformBleAdapter
     :tag: 0.1.9
   PasscodeAuth:
     :path: "../node_modules/@ledgerhq/react-native-passcode-auth"
@@ -601,7 +601,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   MultiplatformBleAdapter:
-    :git: https://github.com/below/MultiPlatformBleAdapter
+    :git: https://github.com/dotintent/MultiPlatformBleAdapter
     :tag: 0.1.9
 
 SPEC CHECKSUMS:
@@ -676,6 +676,6 @@ SPEC CHECKSUMS:
   TcpSockets: 4ef55305239923b343ed0a378b1fac188b1373b0
   Yoga: aa0cb45287ebe1004c02a13f279c55a95f1572f4
 
-PODFILE CHECKSUM: 4c92c677f6d836992371d367afd6f3b0fd87c18a
+PODFILE CHECKSUM: 6bafa1f95d6a1de4a7b73838eaaaddd966d9c224
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.11.2

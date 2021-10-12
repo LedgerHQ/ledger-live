@@ -39,9 +39,6 @@ if [ "$(uname)" == "Darwin" ]; then
     sed -i '' -e "s/spec[.]prepare_command = \"#/spec.prepare_command = \"cd ..\/.. \&\& #/" react_native_pods.rb
   )
 
-  # Fix for react-native-ble-plx on iOS 15
-  git apply $(pwd)/patches/react-native-ble-plx+2.0.2.patch
-
   cd ios && bundle exec pod install --deployment --repo-update
 
   if [ $? -ne 0 ]; then

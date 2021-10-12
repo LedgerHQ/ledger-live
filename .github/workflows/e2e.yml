@@ -1,5 +1,12 @@
 name: e2e test
-on: [push, pull_request]
+on:
+  pull_request:
+    branches:
+      - "*"
+  push:
+    branches:
+      - develop
+      - master
 
 jobs:
   ios:
