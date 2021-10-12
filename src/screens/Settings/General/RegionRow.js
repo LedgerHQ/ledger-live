@@ -7,6 +7,7 @@ import SettingsRow from "../../../components/SettingsRow";
 import LText from "../../../components/LText";
 import { ScreenName } from "../../../const";
 import { localeSelector } from "../../../reducers/settings";
+import regionsByKey from "./regions.json";
 
 export default function LanguageSettingsRow() {
   const locale = useSelector(localeSelector);
@@ -21,9 +22,7 @@ export default function LanguageSettingsRow() {
       alignedTop
     >
       <LText semiBold color="grey">
-        {locale}
-        {/* TODO: put static list of regions somewhere or import from some global var (Intl or sth) */}
-        {/* TODO: then display the displayname here */}
+        {regionsByKey[locale].regionDisplayName} ({locale})
       </LText>
     </SettingsRow>
   );

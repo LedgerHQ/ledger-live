@@ -1,35 +1,20 @@
 /* @flow */
 import { connect } from "react-redux";
+import _ from "lodash";
 import { setLocale } from "../../../actions/settings";
 import { localeSelector } from "../../../reducers/settings";
 import type { State } from "../../../reducers";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
-
-export const regionByKeys = {
-  // TODO: replace this by the full list of regions
-  de: "Deutsch",
-  el: "Ελληνικά",
-  en: "English",
-  es: "Español",
-  fi: "suomi",
-  fr: "Français",
-  hu: "magyar",
-  it: "italiano",
-  ja: "日本語",
-  ko: "한국어",
-  nl: "Nederlands",
-  no: "Norsk",
-  pl: "polski",
-  pt: "português",
-  ru: "Русский",
-  sr: "српски",
-  sv: "svenska",
-  tr: "Türkçe",
-  zh: "简体中文",
-};
+import regionByKeys from "./regions.json";
 
 const items = Object.keys(regionByKeys)
-  .map(key => ({ value: key, label: regionByKeys[key] }))
+  .map(key => {
+    const { languageDisplayName, regionDisplayName } = regionByKeys[key];
+    const label = `${_.upperFirst(regionDisplayName)} (${_.upperFirst(
+      languageDisplayName,
+    )})`;
+    return { value: key, label };
+  })
   .sort((a, b) => a.label.localeCompare(b.label));
 
 const mapStateToProps = (state: State) => ({
