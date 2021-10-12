@@ -15,10 +15,8 @@ const getAccountShape: GetAccountShape = async (info) => {
   });
   const oldOperations = initialAccount?.operations || [];
   // Needed for incremental synchronisation
-  const startAt =
-    oldOperations.length && oldOperations[0].blockHeight
-      ? (new Date(oldOperations[0].date).getTime() / 1000 || 0) + 1
-      : 0;
+  const startAt = 0;
+
   // get the current account balance state depending your api implementation
   const { blockHeight, balance, nonce } = await getAccount(address);
   // Merge new operations with the previously synced ones

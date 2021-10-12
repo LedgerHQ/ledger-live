@@ -33,13 +33,13 @@ const elrond: CurrenciesData<Transaction> = {
         derivationMode: "",
         index: 0,
         freshAddress: `${TEST_ADDRESS}`,
-        freshAddressPath: "44'/508'/0'/0/0'",
+        freshAddressPath: "44'/508'/0'/0'/0'",
         freshAddresses: [],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
         currencyId: "elrond",
-        unitMagnitude: 10,
+        unitMagnitude: 18,
         lastSyncDate: "",
         balance: "299569965",
       },
@@ -103,7 +103,7 @@ const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     // FIXME: temporarily disabled until a solution is found for an inconstency between two sync
-    // elrond,
+    elrond,
   },
 };
 
