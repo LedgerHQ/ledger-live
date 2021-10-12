@@ -162,6 +162,11 @@ export const setLanguage = (payload: string) => ({
   payload,
 });
 
+export const setLocale = (payload: string) => ({
+  type: "SETTINGS_SET_LOCALE",
+  payload,
+});
+
 export const setSwapSelectableCurrencies = (
   selectableCurrencies: string[],
 ) => ({

@@ -87,6 +87,7 @@ export type SettingsState = {
   carouselVisibility: number,
   discreetMode: boolean,
   language: string,
+  locale: string,
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -120,6 +121,7 @@ export const INITIAL_STATE: SettingsState = {
   carouselVisibility: 0,
   discreetMode: false,
   language: getDefaultLanguageLocale(),
+  locale: "en",
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -304,6 +306,10 @@ const handlers: Object = {
   SETTINGS_SET_LANGUAGE: (state: SettingsState, { payload }) => ({
     ...state,
     language: payload,
+  }),
+  SETTINGS_SET_LOCALE: (state: SettingsState, { payload }) => ({
+    ...state,
+    locale: payload,
   }),
   SET_SWAP_SELECTABLE_CURRENCIES: (state: SettingsState, { payload }) => ({
     ...state,
@@ -496,6 +502,8 @@ export const osThemeSelector = (state: State) => state.settings.osTheme;
 
 export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
+
+export const localeSelector = (state: State) => state.settings.locale;
 
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
