@@ -9,17 +9,16 @@ import { Trans } from "react-i18next";
 import { getAccountCapabilities } from "@ledgerhq/live-common/lib/compound/logic";
 
 import { useSelector } from "react-redux";
-import { useLocale } from "../../context/Locale";
 import LText from "../../components/LText";
 import Alert from "../../components/Alert";
-import { discreetModeSelector } from "../../reducers/settings";
+import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 type Props = {
   account: AccountLike,
 };
 
 export default function LendingBanners({ account }: Props) {
-  const { locale } = useLocale();
+  const locale = useSelector(localeSelector);
   const discreet = useSelector(discreetModeSelector);
   const unit = getAccountUnit(account);
 
