@@ -62,7 +62,7 @@ subprojects {
         if (project.hasProperty("android")) {
             android {
                 compileSdkVersion 29
-                buildToolsVersion '29.0.3'
+                buildToolsVersion '30.0.2'
 
                 compileOptions {
                     sourceCompatibility 1.8

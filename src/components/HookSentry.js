@@ -5,7 +5,7 @@ import { createStructuredSelector } from "reselect";
 import { reportErrorsEnabledSelector } from "../reducers/settings";
 
 let enabled = false;
-export const getEnabled = () => enabled;
+export const getEnabled = (): boolean => enabled;
 
 class HookSentry extends PureComponent<{ enabled: boolean }> {
   componentDidUpdate() {

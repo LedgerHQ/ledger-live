@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 import { v4 as uuid } from "uuid";
-import { Sentry } from "react-native-sentry";
+import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
 import analytics from "@segment/analytics-react-native";
@@ -91,7 +91,7 @@ export const stop = () => {
   storeInstance = null;
 };
 
-export const trackSubject = new ReplaySubject<{
+export const trackSubject: any = new ReplaySubject<{
   event: string,
   properties: ?Object,
 }>(10);
@@ -101,7 +101,7 @@ export const track = (
   properties: ?Object,
   mandatory: ?boolean,
 ) => {
-  Sentry.captureBreadcrumb({
+  Sentry.addBreadcrumb({
     message: event,
     category: "track",
     data: properties,
@@ -133,7 +133,7 @@ export const screen = (
   properties: ?Object,
 ) => {
   const title = `Page ${category + (name ? ` ${name}` : "")}`;
-  Sentry.captureBreadcrumb({
+  Sentry.addBreadcrumb({
     message: title,
     category: "screen",
     data: properties,
