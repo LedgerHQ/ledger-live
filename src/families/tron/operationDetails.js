@@ -26,7 +26,7 @@ import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import CounterValue from "../../components/CounterValue";
 import DelegationInfo from "../../components/DelegationInfo";
 import Section from "../../screens/OperationDetails/Section";
-import { discreetModeSelector } from "../../reducers/settings";
+import { discreetModeSelector, localeSelector } from "../../reducers/settings";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
@@ -50,6 +50,7 @@ function OperationDetailsExtra({
 }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
+  const locale = useSelector(localeSelector);
 
   switch (type) {
     case "VOTE": {
@@ -65,6 +66,7 @@ function OperationDetailsExtra({
         {
           showCode: true,
           discreet,
+          locale,
         },
       );
       return (
@@ -81,6 +83,7 @@ function OperationDetailsExtra({
         {
           showCode: true,
           discreet,
+          locale,
         },
       );
       return (
