@@ -17,4 +17,5 @@ import "./Form/Input/SearchInput.stories";
 import "./Form/Input/QrCodeInput.stories";
 import "./Form/Input/NumberInput.stories";
 import "./Link/Link.stories";
+import "./Tag/Badge.stories";
 import "./message/Alert/Alert.stories";
