@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/live-common/lib/account/helpers";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CurrencyIcon from "../../../components/CurrencyIcon";
@@ -16,8 +17,8 @@ import CounterValue from "../../../components/CounterValue";
 import DelegationDrawer from "../../../components/DelegationDrawer";
 import Circle from "../../../components/Circle";
 import Compound, { compoundColor } from "../../../icons/Compound";
-import { useLocale } from "../../../context/Locale";
 import { rgba } from "../../../colors";
+import { localeSelector } from "../../../reducers/settings";
 
 type RowProps = {
   item: ClosedLoanHistory,
@@ -43,7 +44,7 @@ export default function ClosedLoansRow({ item }: RowProps) {
   const onOpenDrawer = useCallback(() => setIsOpened(true), []);
   const onCloseDrawer = useCallback(() => setIsOpened(false), []);
 
-  const { locale } = useLocale();
+  const locale = useSelector(localeSelector);
 
   const data = useMemo(
     () => [

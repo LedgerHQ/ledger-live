@@ -8,6 +8,7 @@ import { accountScreenSelector } from "../../reducers/accounts";
 import LText from "../../components/LText";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import { localeIds } from "../../languages";
+import { localeSelector } from "../../reducers/settings";
 
 type Props = {
   navigation: any,
@@ -19,6 +20,7 @@ type RouteParams = {
 };
 
 export default function AdvancedLogs({ route }: Props) {
+  const locale = useSelector(localeSelector);
   const { account } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
 
@@ -32,7 +34,8 @@ export default function AdvancedLogs({ route }: Props) {
 
   invariant(account?.type === "Account", "account must be a main account");
 
-  const readableDate = account.lastSyncDate.toLocaleDateString(localeIds, {
+  const locales = [locale, ...localeIds];
+  const readableDate = account.lastSyncDate.toLocaleDateString(locales, {
     year: "numeric",
     month: "long",
     day: "numeric",

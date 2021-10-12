@@ -33,7 +33,10 @@ import Touchable from "../../components/Touchable";
 import { urls } from "../../config/urls";
 import Info from "../../icons/Info";
 import ExternalLink from "../../icons/ExternalLink";
-import { currencySettingsForAccountSelector } from "../../reducers/settings";
+import {
+  currencySettingsForAccountSelector,
+  localeSelector,
+} from "../../reducers/settings";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
@@ -75,6 +78,8 @@ export default function Content({
   const { colors } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const locale = useSelector(localeSelector);
+  const locales = [locale, ...localeIds];
   const [isModalOpened, setIsModalOpened] = useState(false);
   const { status, metadata } = useNftMetadata(
     operation.contract,
@@ -311,7 +316,7 @@ export default function Content({
 
       <Section
         title={t("operationDetails.date")}
-        value={operation.date.toLocaleDateString(localeIds, {
+        value={operation.date.toLocaleDateString(locales, {
           year: "numeric",
           month: "long",
           day: "numeric",
