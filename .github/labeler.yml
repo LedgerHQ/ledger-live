@@ -1,0 +1,4 @@
+react:
+  - any: ["packages/react/**/*"]
+native:
+  - any: ["packages/native/**/*"]
