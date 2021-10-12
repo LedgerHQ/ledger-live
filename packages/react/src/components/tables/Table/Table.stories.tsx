@@ -4,6 +4,7 @@ import FlexBox from "@components/layout/Flex";
 import Table, { ExtraRowContainer, Rows, Column, Props } from "./index";
 import { balance, BalanceElement, accounts, Account } from "./stories.helper";
 import Text from "@components/asorted/Text";
+import { useTheme } from "styled-components";
 
 export default {
   title: "Tables/Table",
@@ -40,6 +41,7 @@ function SubAccounts({
   account: Account;
   columns: Column<Account>[];
 }): JSX.Element | null {
+  const theme = useTheme();
   const [expanded, setExpanded] = useState(false);
   const { subAccounts } = account;
   if (!subAccounts) return null;
@@ -51,7 +53,21 @@ function SubAccounts({
           data={subAccounts}
           columns={columns}
           render={({ columnIndex, children }) =>
-            columnIndex === 0 ? <FlexBox pl={10}>{children}</FlexBox> : children
+            columnIndex === 0 ? (
+              <FlexBox alignItems="center" justifyContent="flex-end">
+                <div
+                  style={{
+                    width: "1px",
+                    height: "2em",
+                    marginRight: `${theme.space[6]}px`,
+                    borderLeft: `1px solid ${theme.colors.palette.neutral.c40}`,
+                  }}
+                />
+                {children}
+              </FlexBox>
+            ) : (
+              children
+            )
           }
         />
       )}

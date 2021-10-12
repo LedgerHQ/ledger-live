@@ -169,11 +169,12 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
   ],
   columns: [
     {
-      layout: "min-content",
+      layout: "64px",
       render: ({ elt }: CellProps<Account>): JSX.Element =>
         elt.currency.abbrev === "BTC" ? svgBtc : elt.currency.abbrev === "ETH" ? svgEth : svgUsdt,
     },
     TextColumn({
+      layout: "2fr",
       title: (elt) => elt.name,
       subtitle: (elt) => elt.currency.name,
     }),
@@ -184,12 +185,15 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
       }),
     }),
     TextColumn({
+      layout: "1fr",
       subtitle: (elt) => elt.currency.abbrev,
     }),
     TextColumn({
+      layout: "1fr",
       title: (elt) => elt.amount,
     }),
     TextColumn({
+      layout: "1fr",
       subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
       subtitleProps: (elt) => ({
         color: elt.evolution < 0 ? "palette.error.c100" : "palette.success.c100",
