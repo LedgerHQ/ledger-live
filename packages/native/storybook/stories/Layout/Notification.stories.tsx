@@ -11,7 +11,7 @@ storiesOf("Layout", module)
   .addDecorator(withKnobs)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .add("Drawer/Notification", () => (
-    <FlexBox p={20}>
+    <FlexBox p={20} width={"100%"}>
       <Notification
         Icon={Info}
         variant={select("variant", ["primary", "secondary"], "primary")}
@@ -25,7 +25,7 @@ storiesOf("Layout", module)
     </FlexBox>
   ))
   .add("Drawer/Notification/News", () => (
-    <FlexBox p={20}>
+    <FlexBox p={20} width={"100%"}>
       <Notification
         Icon={Info}
         variant={select("variant", ["primary", "secondary"], "primary")}
