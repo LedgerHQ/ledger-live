@@ -240,7 +240,7 @@ PODS:
     - React
   - react-native-netinfo (6.0.2):
     - React-Core
-  - react-native-pager-view (5.4.4):
+  - react-native-pager-view (5.4.7):
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -257,7 +257,7 @@ PODS:
     - React-Core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-webview (11.13.0):
+  - react-native-webview (11.14.0):
     - React-Core
   - React-perflogger (0.65.1)
   - React-RCTActionSheet (0.65.1):
@@ -372,7 +372,7 @@ PODS:
     - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.7.2):
+  - RNScreens (3.8.0):
     - React-Core
     - React-RCTImage
   - RNSentry (3.1.1):
@@ -637,14 +637,14 @@ SPEC CHECKSUMS:
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
   react-native-netinfo: 92e6e4476eb8bf6fc2d7c0a6ca0a1406f663d73a
-  react-native-pager-view: 5ab4d0b4b44d89f77310cb3eb8129745f274ce55
+  react-native-pager-view: 741e7606ee2f6e399fc7da777f5519454a4b38c5
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-udp: f0fbf5386c45af5523dc143a86afe2cbf29f764e
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
-  react-native-webview: 133a6a5149f963259646e710b4545c67ef35d7c9
+  react-native-webview: d70bc760daaa0e2667dec569b93014882565819c
   React-perflogger: fd28ee1f2b5b150b00043f0301d96bd417fdc339
   React-RCTActionSheet: 7f3fa0855c346aa5d7c60f9ced16e067db6d29fa
   React-RCTAnimation: 2119a18ee26159004b001bc56404ca5dbaae6077
@@ -667,7 +667,7 @@ SPEC CHECKSUMS:
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: ad24db8af24e3fe1b5c462785bc3db8d5baae2ee
-  RNScreens: 0591543e343c7444ea1756b6265d81a4295922c9
+  RNScreens: 6e1ea5787989f92b0671049b808aef64fa1ef98c
   RNSentry: 49abc89b0190b4c8afe0fa5d065f98e36cb53233
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
