@@ -9,6 +9,7 @@ import ReportErrorsRow from "./ReportErrorsRow";
 import AnalyticsRow from "./AnalyticsRow";
 import CarouselRow from "./CarouselRow";
 import LanguageRow from "./LanguageRow";
+import RegionRow from "./RegionRow";
 import NavigationScrollView from "../../../components/NavigationScrollView";
 
 export default function GeneralSettings() {
@@ -17,6 +18,7 @@ export default function GeneralSettings() {
       <TrackScreen category="Settings" name="General" />
       <CountervalueSettingsRow />
       <LanguageRow />
+      <RegionRow />
       <ThemeSettingsRow />
       <AuthSecurityToggle />
       <ReportErrorsRow />

@@ -1645,6 +1645,8 @@
       "carouselDesc": "Enable visibility of the carousel on Portfolio",
       "language": "Display language",
       "languageDesc": "Set the language displayed in Ledger Live.",
+      "region": "Region",
+      "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "password": "Password lock",
       "passwordDesc": "Set a password to protect Ledger Live data on your phone.",
       "counterValue": "Preferred currency",
