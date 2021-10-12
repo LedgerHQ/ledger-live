@@ -4,14 +4,12 @@ import { useSelector } from "react-redux";
 
 import compareDate from "../logic/compareDate";
 import { localeSelector } from "../reducers/settings";
-import { getDateFnsLocale } from "../helpers/dateFnsLocales";
 
 type Props = {
   date: ?Date,
-  format?: string,
 };
 
-function FormatDate({ date, format: formatProp = "MMMM d, yyyy" }: Props) {
+function FormatDate({ date }: Props) {
   const locale = useSelector(localeSelector);
 
   return date && date.getTime()
@@ -21,11 +19,6 @@ function FormatDate({ date, format: formatProp = "MMMM d, yyyy" }: Props) {
         day: "numeric",
       }).format(date)
     : null;
-
-  // const dateFnsLocale = getDateFnsLocale(locale);
-  // return date && date.getTime()
-  //   ? format(date, formatProp, { locale: dateFnsLocale })
-  //   : null;
 }
 
 function areEqual(prevProps: Props, nextProps: Props): boolean {
