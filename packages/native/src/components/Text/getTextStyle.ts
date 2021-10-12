@@ -95,21 +95,12 @@ export function getTextStyle({
         fontFamily: "Inter",
         fontSize: 12,
         lineHeight: 14.52,
-        fontWeight: 600,
       };
     case "subTitle":
       return {
         fontFamily: "Inter",
         fontSize: 11,
         lineHeight: 13.31,
-        fontWeight: 600,
-      };
-    case "tag":
-      return {
-        fontFamily: "Inter",
-        fontSize: 10,
-        lineHeight: 12.1,
-        fontWeight: 600,
       };
     default:
       return {
