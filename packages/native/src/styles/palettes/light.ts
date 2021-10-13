@@ -51,8 +51,11 @@ export default {
     c80: "hsla(359, 84%, 70%, 1)",
     c100: "hsla(359, 84%, 63%, 1)",
   },
-  environment: {
-    background: "hsla(0, 0%, 100%, 1)",
+  constant: {
     overlay: "hsla(0, 0%, 0%, 0.7)",
+    white: "hsla(0, 0%, 100%, 1)",
+  },
+  background: {
+    main: "hsla(0, 0%, 100%, 1)",
   },
 };

@@ -28,7 +28,7 @@ export type BaseModalProps = {
 } & ModalProps;
 
 const Container = styled.View`
-  background-color: ${(p) => p.theme.colors.palette.environment.background};
+  background-color: ${(p) => p.theme.colors.palette.background.main};
   width: 100%;
   padding: 16px;
   min-height: 350px;
