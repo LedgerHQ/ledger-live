@@ -45,9 +45,9 @@ export const Base = styled(TouchableOpacity).attrs<ButtonProps>((p) => ({
 >`
   ${color};
   ${border};
-  border-radius: ${(p) => p.theme.space[6]}px;
-  height: ${(p) => p.theme.space[6]}px;
-  padding: 0 ${(p) => p.theme.space[4]}px;
+  border-radius: ${(p) => p.theme.space[10]}px;
+  height: ${(p) => p.theme.space[10]}px;
+  padding: 0 ${(p) => p.theme.space[7]}px;
   flex-direction: row;
   border-style: solid;
   text-align: center;
@@ -58,7 +58,7 @@ export const Base = styled(TouchableOpacity).attrs<ButtonProps>((p) => ({
   position: relative;
   ${(p) => buttonSizeStyle[p.size || "medium"]}
 
-  ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[6]}px;` : "")}
+  ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : "")}
 `;
 
 const Container = styled.View<{

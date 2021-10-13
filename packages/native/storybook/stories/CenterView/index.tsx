@@ -13,10 +13,10 @@ const Main = styled.View`
 `;
 
 const ThemeButton = styled.TouchableOpacity`
-  width: ${(p) => p.theme.space[6]}px;
-  height: ${(p) => p.theme.space[6]}px;
-  border-top-left-radius: ${(p) => p.theme.space[6]};
-  border-bottom-left-radius: ${(p) => p.theme.space[6]};
+  width: ${(p) => p.theme.space[10]}px;
+  height: ${(p) => p.theme.space[10]}px;
+  border-top-left-radius: ${(p) => p.theme.space[10]};
+  border-bottom-left-radius: ${(p) => p.theme.space[10]};
   background-color: ${(p) => p.theme.colors.palette.neutral.c100};
   justify-content: center;
   align-items: center;
