@@ -16,7 +16,8 @@
     "paths": {
       "@ui/*": ["src/*"],
       "@components/*": ["src/components/*"],
-      "@styles/*": ["src/styles/*"]
+      "@styles/*": ["src/styles/*"],
+      "@assets/*": ["src/assets/*"]
     },
     "skipLibCheck": true,
     "rootDir": "./src",
