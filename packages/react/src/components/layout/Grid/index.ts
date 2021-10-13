@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { grid, GridProps } from "styled-system";
 
-interface Props {
-  columns: string;
-  rows: string;
+export interface Props extends GridProps {
+  columns: number | string;
+  rows?: number | string;
 }
 
 function getColumns(props: Props) {
@@ -16,7 +16,7 @@ function getRows(props: Props) {
   return !rows ? "initial" : rows === "none" ? rows : `repeat(${rows}, minmax(0, 1fr));`;
 }
 
-const Grid = styled.div<Props & GridProps>`
+const Grid = styled.div<Props>`
   display: grid;
   grid-template-columns: ${getColumns};
   grid-template-rows: ${getRows};

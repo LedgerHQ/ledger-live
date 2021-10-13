@@ -10,6 +10,8 @@ import {
   letterSpacing,
   system,
   SpaceProps,
+  layout,
+  LayoutProps,
 } from "styled-system";
 import fontFamily from "@ui/styles/styled/fontFamily";
 import "./Text.css";
@@ -63,7 +65,7 @@ export interface TextProps {
   children: React.ReactNode;
 }
 
-interface BaseTextProps extends SpaceProps {
+export interface BaseTextProps extends SpaceProps, LayoutProps {
   fontFamily?: string;
   ff?: FontFamilies;
   fontSize?: number | string;
@@ -73,6 +75,7 @@ interface BaseTextProps extends SpaceProps {
   lineHeight?: string;
   type?: TextTypes;
   textTransform?: string;
+  textOverflow?: string;
 }
 
 const Text = styled.span.attrs((p: BaseTextProps) => ({
@@ -88,6 +91,10 @@ const Text = styled.span.attrs((p: BaseTextProps) => ({
   ${fontWeight};
   ${space};
   ${letterSpacing};
+  ${layout}
+  ${system({
+    textOverflow: true,
+  })}
   ${(p) => (p.textTransform ? `text-transform: ${p.textTransform};` : "")}
 `;
 

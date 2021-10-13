@@ -164,10 +164,10 @@ export const ExpandButton = function ExpandButton({
   onToggle,
   onClick,
   ...props
-}: {
+}: React.PropsWithChildren<{
   onToggle?: (arg0: boolean) => void;
   onClick?: (arg0: React.SyntheticEvent<HTMLButtonElement>) => void;
-}): React.ReactElement {
+}>): React.ReactElement {
   const [expanded, setExpanded] = useState(false);
   return (
     <StyledExpandButton
