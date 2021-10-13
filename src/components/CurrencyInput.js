@@ -121,8 +121,8 @@ class CurrencyInput extends PureComponent<Props, State> {
   };
 
   handleChange = (v: string) => {
-    const { onChange, unit, value } = this.props;
-    const r = sanitizeValueString(unit, v);
+    const { onChange, unit, value, locale } = this.props;
+    const r = sanitizeValueString(unit, v, locale);
     const satoshiValue = BigNumber(r.value);
 
     if (!value || !value.isEqualTo(satoshiValue)) {
