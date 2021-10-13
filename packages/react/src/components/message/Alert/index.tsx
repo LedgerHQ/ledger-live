@@ -47,7 +47,7 @@ const StyledAlertContainer = styled.div<{ type?: AlertType }>`
     }
   }}
 
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
   padding: 16px;
   display: flex;
   align-items: center;

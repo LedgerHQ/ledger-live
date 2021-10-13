@@ -14,7 +14,7 @@ const IconContainer = styled.View`
   justify-content: center;
   border-width: 1px;
   border-color: ${(p) => p.theme.colors.palette.neutral.c40};
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
 export default function IconBox({ Icon, color }: Props): React.ReactElement {

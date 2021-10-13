@@ -29,7 +29,7 @@ const Wrapper = styled(Text).attrs({ as: "div" })<{
   height: 48px;
   display: flex;
   padding: 0 ${(p) => p.theme.space[5]}px;
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
   ${(p) => (!p.disabled ? "cursor: pointer;" : "")}
   ${(props) => {
     const { theme, selected, focus, disabled } = props;

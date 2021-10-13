@@ -47,7 +47,7 @@ const TagContainer = styled.div.attrs((props: Props) => ({
 }))<Props & BorderProps & SpaceProps & ColorProps>`
   display: inline-flex;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
   ${border}
   ${space}
   ${color}

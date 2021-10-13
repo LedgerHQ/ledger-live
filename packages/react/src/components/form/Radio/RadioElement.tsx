@@ -17,7 +17,7 @@ const Input = styled.input`
   appearance: none;
   width: var(--ledger-ui-checkbox-size);
   height: var(--ledger-ui-checkbox-size);
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
   border: 1px solid var(--ledger-ui-checkbox-color);
   cursor: pointer;
 

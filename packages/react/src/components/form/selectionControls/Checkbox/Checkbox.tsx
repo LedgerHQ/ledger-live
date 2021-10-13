@@ -10,7 +10,7 @@ const CheckMarkIcon = encodeURIComponent(renderToStaticMarkup(<Icon />));
 const Input = styled.input`
   background-color: transparent;
 
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
   position: relative;
 
   width: ${(p) => p.theme.space[7]}px;

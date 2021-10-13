@@ -114,7 +114,7 @@ export const GlobalStyle = createGlobalStyle`
     position: relative;
     background-color: ${(p) => p.theme.colors.palette.neutral.c100};
     color: ${(p) => p.theme.colors.palette.neutral.c00};
-    border-radius: 4px;
+    border-radius: ${(p) => `${p.theme.radii[1]}px`};
     font-size: 14px;
     line-height: 1.4;
     outline: 0;

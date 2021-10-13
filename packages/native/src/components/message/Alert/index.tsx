@@ -48,7 +48,7 @@ const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>(
   })
 )<Partial<AlertProps>>`
   width: 100%;
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
   padding: 16px;
   flex-direction: row;
   align-items: center;

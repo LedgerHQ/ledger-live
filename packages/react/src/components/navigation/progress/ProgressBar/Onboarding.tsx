@@ -25,7 +25,7 @@ const Handler = styled.div`
   transition: all 600ms linear;
   padding: 4px;
   background: ${(p) => p.theme.colors.palette.neutral.c100};
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
 
   display: flex;
   align-items: center;

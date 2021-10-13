@@ -30,7 +30,7 @@ const NotificationContainer = styled.View<Partial<Props>>`
     p.variant === "primary"
       ? p.theme.colors.palette.primary.c90
       : "transparent"};
-  border-radius: 4px;
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
 export default function Notification({
