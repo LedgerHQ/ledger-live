@@ -16,6 +16,8 @@ import {
 } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
+import { useSelector } from "react-redux";
+import { localeSelector } from "../../reducers/settings";
 
 const styles = StyleSheet.create({
   infoText: {
@@ -77,7 +79,7 @@ const TronResourceField = ({ transaction }: { transaction: Transaction }) => {
 function TronVotesField({ transaction }: { transaction: Transaction }) {
   invariant(transaction.family === "tron", "tron transaction");
   const { t } = useTranslation();
-
+  const locale = useSelector(localeSelector);
   const { votes } = transaction;
 
   const sp = useTronSuperRepresentatives();
@@ -95,7 +97,7 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
         <ValidatorField
           address={address}
           name={validator?.name ?? address}
-          amount={voteCount.toString()}
+          amount={voteCount.toLocaleString(locale)}
         />
       ))}
     </>

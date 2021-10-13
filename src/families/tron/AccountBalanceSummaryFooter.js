@@ -2,8 +2,10 @@
 
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/lib/currencies";
+import { toLocaleString } from "@ledgerhq/live-common/lib/currencies/BigNumberToLocaleString";
 import { getAccountUnit } from "@ledgerhq/live-common/lib/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/lib/reactNative";
 
@@ -11,6 +13,7 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
+import BigNumber from "bignumber.js";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import FreezeIcon from "../../icons/Freeze";
@@ -18,6 +21,7 @@ import BandwidthIcon from "../../icons/Bandwidth";
 import EnergyIcon from "../../icons/Energy";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import InfoItem from "../../components/BalanceSummaryInfoItem";
+import { localeSelector } from "../../reducers/settings";
 
 type Props = {
   account: Account,
@@ -28,6 +32,7 @@ type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const locale = useSelector(localeSelector);
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useInfoCandidates();
 
@@ -88,12 +93,20 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       <InfoItem
         title={t("account.bandwidth")}
         onPress={onPressInfoCreator("bandwidth")}
-        value={formattedBandwidth.toString() || "–"}
+        value={
+          formattedBandwidth.isZero()
+            ? "-"
+            : toLocaleString(formattedBandwidth, locale)
+        }
       />
       <InfoItem
         title={t("account.energy")}
         onPress={onPressInfoCreator("energy")}
-        value={formattedEnergy.toString() || "-"}
+        value={
+          formattedEnergy.isZero()
+            ? "-"
+            : toLocaleString(formattedEnergy, locale)
+        }
       />
     </ScrollView>
   );

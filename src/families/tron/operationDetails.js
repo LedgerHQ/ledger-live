@@ -109,6 +109,7 @@ function OperationDetailsVotes({
 }: OperationsDetailsVotesProps) {
   const { t } = useTranslation();
   const sp = useTronSuperRepresentatives();
+  const locale = useSelector(localeSelector);
   const formattedVotes = formatVotes(votes, sp);
 
   const redirectAddressCreator = useCallback(
@@ -132,7 +133,7 @@ function OperationDetailsVotes({
             key={address + i}
             address={address}
             name={validator?.name ?? address}
-            formattedAmount={voteCount.toString()}
+            formattedAmount={voteCount.toLocaleString(locale)}
             onPress={redirectAddressCreator(address)}
           />
         ))}
