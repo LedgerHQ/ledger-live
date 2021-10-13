@@ -9,9 +9,10 @@ import { ScreenName } from "../../../const";
 import { localeSelector } from "../../../reducers/settings";
 import regionsByKey from "./regions.json";
 
-export default function LanguageSettingsRow() {
+export default function RegionRow() {
   const locale = useSelector(localeSelector);
   const { navigate } = useNavigation();
+  const region = regionsByKey[locale];
   return (
     <SettingsRow
       event="LanguageSettingsRow"
@@ -22,7 +23,7 @@ export default function LanguageSettingsRow() {
       alignedTop
     >
       <LText semiBold color="grey">
-        {regionsByKey[locale].regionDisplayName} ({locale})
+        {region ? `${region.regionDisplayName} (${locale})` : locale}
       </LText>
     </SettingsRow>
   );
