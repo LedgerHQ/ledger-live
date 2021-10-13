@@ -13,11 +13,7 @@ function FormatDate({ date }: Props) {
   const locale = useSelector(localeSelector);
 
   return date && date.getTime()
-    ? new Intl.DateTimeFormat(locale, {
-        month: "long",
-        year: "numeric",
-        day: "numeric",
-      }).format(date)
+    ? new Intl.DateTimeFormat(locale).format(date)
     : null;
 }
 

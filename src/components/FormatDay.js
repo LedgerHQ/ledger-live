@@ -12,10 +12,11 @@ type Props = {
 };
 
 class FormatDay extends Component<Props> {
-  shouldComponentUpdate({ day: nextDay }: Props) {
-    const { day } = this.props;
+  shouldComponentUpdate({ day: nextDay, locale: nextLocale }: Props) {
+    const { day, locale } = this.props;
     const isSameDay = compareDate(day, nextDay);
-    return !isSameDay;
+    const isSameLocale = locale === nextLocale;
+    return !isSameDay || !isSameLocale;
   }
 
   render(): React$Node {
@@ -27,11 +28,8 @@ class FormatDay extends Component<Props> {
         : dayDiff === 1
         ? ` - ${i18next.t("common.yesterday")}`
         : "";
-    const formattedDate = new Intl.DateTimeFormat(locale, {
-      month: "long",
-      year: "numeric",
-      day: "numeric",
-    }).format(day);
+
+    const formattedDate = new Intl.DateTimeFormat(locale).format(day);
     return `${formattedDate}${suffix}`;
   }
 }
