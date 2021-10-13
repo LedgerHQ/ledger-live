@@ -1,5 +1,5 @@
 import React from "react";
-import { Svg, Circle, G, Rect } from "react-native-svg";
+import { Svg, Circle, G } from "react-native-svg";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 
@@ -10,59 +10,56 @@ type Props = {
   // function triggered when pressing the loader
   onPress?: () => void;
 
-  // Display the square in the middle of the loader
-  displayCancelIcon?: boolean;
+  // Display an icon in the middle
+  Icon?: typeof React.Component;
 };
 
 const radius = 25;
 const strokeWidth = 2;
 const normalizedRadius = radius - strokeWidth / 2;
 const circumference = normalizedRadius * 2 * Math.PI;
+const iconSize = radius * 0.88;
+const iconOffset = radius - iconSize / 2;
 
 const ProgressLoader = ({
   progress = 0,
   onPress,
-  displayCancelIcon = true,
+  Icon,
 }: Props): React.ReactElement => {
   const { colors } = useTheme();
   const backgroundColor = colors.palette.primary.c20;
-  const progressColor = colors.palette.primary.c160;
+  const progressColor = colors.palette.primary.c90;
 
   const strokeDashoffset = circumference - progress * circumference;
   return (
     <TouchableOpacity disabled={!onPress} onPress={onPress}>
-      <Svg width="50" height="50">
+      <Svg width={radius * 2} height={radius * 2}>
         <Circle
-          cx={25}
-          cy={25}
-          r={23}
+          cx={radius}
+          cy={radius}
+          r={radius * 0.92}
           fill="transparent"
           stroke={backgroundColor}
           strokeDashoffset={0}
           strokeWidth={strokeWidth}
         />
-        <G transform={{ rotation: -90, originX: 25, originY: 25 }}>
+        <G transform={`rotate(-90) translate(-${radius * 2}, 0)`}>
           <Circle
-            cx={25}
-            cy={25}
-            r={23}
+            cx={radius}
+            cy={radius}
+            r={radius * 0.92}
             fill="transparent"
             stroke={progressColor}
             strokeWidth={strokeWidth}
-            strokeDasharray={circumference + " " + circumference}
+            strokeDasharray={`${circumference} ${circumference}`}
             strokeDashoffset={strokeDashoffset}
           />
         </G>
-        {displayCancelIcon && (
-          <Rect
-            fill={progressColor}
-            height="10"
-            width="10"
-            y="20"
-            x="20"
-            rx="1"
-          />
-        )}
+        {Icon ? (
+          <G transform={`translate(${iconOffset}, ${iconOffset})`}>
+            <Icon color={progressColor} size={iconSize} />
+          </G>
+        ) : null}
       </Svg>
     </TouchableOpacity>
   );

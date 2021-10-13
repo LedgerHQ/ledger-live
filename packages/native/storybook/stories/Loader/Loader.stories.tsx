@@ -1,8 +1,10 @@
 import React from "react";
 import { storiesOf } from "@storybook/react-native";
-import { withKnobs, number, boolean } from "@storybook/addon-knobs";
+import { withKnobs, number } from "@storybook/addon-knobs";
+import { action } from "@storybook/addon-actions";
 import Loader from "@components/Loader";
 import CenterView from "../CenterView";
+import Icon from "@ui/assets/icons/StarSolidMedium";
 
 storiesOf("Loader", module)
   .addDecorator(withKnobs)
@@ -10,9 +12,7 @@ storiesOf("Loader", module)
   .add("default", () => (
     <Loader
       progress={number("progress", 0.2)}
-      onPress={
-        boolean("clickable", true) ? () => console.log("click") : undefined
-      }
-      displayCancelIcon={boolean("displayCancelIcon", true)}
-    ></Loader>
+      onPress={action("onPress")}
+      Icon={Icon}
+    />
   ));
