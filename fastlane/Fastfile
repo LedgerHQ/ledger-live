@@ -142,21 +142,26 @@ platform :ios do
       profile_name: MY_PROFILE
     )
 
-    gym(
-      scheme: PROJECT_NAME,
-      workspace: XCODE_WORKSPACE,
-      silent: true,
-      xcargs: `#{settings_to_override} -UseNewBuildSystem=YES`,
-      output_directory: OUTPUT_DIRECTORY,
-      output_name: "#{PROJECT_NAME}.ipa",
-      export_options: {
-        method: export_options_method,
-        signingStyle: "manual",
-        provisioningProfiles: {
-            MY_APP_ID => MY_PROFILE
+    begin
+      gym(
+        scheme: PROJECT_NAME,
+        workspace: XCODE_WORKSPACE,
+        silent: true,
+        xcargs: `#{settings_to_override} -UseNewBuildSystem=YES`,
+        output_directory: OUTPUT_DIRECTORY,
+        output_name: "#{PROJECT_NAME}.ipa",
+        export_options: {
+          method: export_options_method,
+          signingStyle: "manual",
+          provisioningProfiles: {
+              MY_APP_ID => MY_PROFILE
+          }
         }
-      }
-    )
+      )
+    rescue => ex
+      p 'GYM ERROR!!!'
+      sh "tail ~/Library/Logs/gym/ledgerlivemobile-ledgerlivemobile.log | grep 'WHERE ARE WE?'"
+    end
   end
 
   desc "upload to Testflight (only to be run after an app-store build)"
