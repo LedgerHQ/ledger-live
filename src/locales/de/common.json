@@ -94,6 +94,10 @@
       "title": "Ein Kontoname wird benötigt",
       "description": "Bitte geben Sie einen Kontonamen ein."
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "Das Empfängerkonto hat sich nicht für den gewählten ASA entschieden."
     },

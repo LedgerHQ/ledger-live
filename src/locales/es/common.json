@@ -94,6 +94,10 @@
       "title": "Es necesario un nombre de cuenta",
       "description": "Ingresa un nombre de cuenta."
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "La cuenta de recepción no ha adherido al ASA seleccionado."
     },
@@ -600,8 +604,8 @@
       "standard": "Estándar",
       "low": "Baja",
       "slow": "slow",
-      "medium": "medium",
-      "fast": "fast",
+      "medium": "media",
+      "fast": "rápida",
       "custom": "Personalizado",
       "blockCount": "{{blockCount}} bloques"
     }
@@ -1222,11 +1226,11 @@
         "supportLink": "Ponte en contacto con Soporte"
       },
       "seed": {
-        "title": "Please check the box contents",
-        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
-        "warning": "Only use a recovery phrase that your device displayed when it was set up",
-        "continueCTA": "Continue",
-        "contactSupportCTA": "Contact support"
+        "title": "Por favor, verifica los contenidos de la caja",
+        "desc": "Si tu {{deviceName}} ya tiene un código PIN o una frase de recuperación, no es seguro usarlo y deberías ponerte en contacto con el Soporte de Ledger.",
+        "warning": "Usa solo la frase de recuperación que haya generado tu dispositivo al configurarlo por primera vez",
+        "continueCTA": "Continuar",
+        "contactSupportCTA": "Ponte en contacto con Soporte"
       }
     }
   },
@@ -1689,7 +1693,7 @@
     "help": {
       "title": "Ayuda",
       "header": "Ayuda",
-      "desc": "Learn more about Ledger Live or how to get help.",
+      "desc": "Más información sobre Ledger Live o cómo obtener ayuda.",
       "support": "Soporte de Ledger",
       "supportDesc": "Si tienes un problema, obtén ayuda mediante Ledger Live usando tu billetera de hardware.",
       "configureDevice": "Configurar un dispositivo",
@@ -1699,8 +1703,8 @@
       "clearCacheModal": "¿Deseas continuar?",
       "clearCacheModalDesc": "Se realizará un nuevo y completo análisis de las transacciones en la red. Se reconstruirán los historiales de las cuentas y se volverán a calcular los saldos.",
       "clearCacheButton": "Borrar",
-      "exportLogs": "Save logs",
-      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
+      "exportLogs": "Guardar registros",
+      "exportLogsDesc": "Puede ser necesario guardar los registros de Ledger Live para solucionar problemas.",
       "hardReset": "Restablecer Ledger Live",
       "hardResetDesc": "Esto no tiene ningún impacto sobre tus activos. Borra todos los datos de Ledger Live, incluidos los datos de cuentas, historial de transacciones y ajustes. Utiliza tu dispositivo Ledger para volver a cargar y administrar tus activos cripto a un Ledger Live vacío.",
       "repairDevice": "Repara tu dispositivo Ledger",
@@ -1816,19 +1820,19 @@
             "cta": "Continuar",
             "title": "KYC enviado para su aprobación",
             "subtitle": "Tu KYC ha sido enviado y está en espera de aprobación.",
-            "link": "Learn more about KYC"
+            "link": "Más información sobre KYC"
           },
           "approved": {
             "cta": "Continuar",
             "title": "¡KYC aprobado!",
             "subtitle": "Tu KYC ha sido enviado y ha sido aprobado.",
-            "link": "Learn more about KYC"
+            "link": "Más información sobre KYC"
           },
           "closed": {
             "cta": "Restablecer KYC",
             "title": "Solicitud de KYC rechazada",
             "subtitle": "Wyre ha rechazado los datos que has proporcionado para fines de KYC",
-            "link": "Learn more about KYC"
+            "link": "Más información sobre KYC"
           },
           "form": {
             "firstName": "Nombre",
@@ -2730,7 +2734,7 @@
   },
   "AuthenticityRow": {
     "title": "Autenticación",
-    "subtitle": "Genuine"
+    "subtitle": "Auténtico"
   },
   "RemoveRow": {
     "title": "Quitar dispositivo"

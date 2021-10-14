@@ -94,6 +94,10 @@
       "title": "اسم الحساب مطلوب",
       "description": "يرجى إدخال اسم الحساب."
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "حساب المستلم لم ينضم إلى ASA الذي تم اختياره."
     },
