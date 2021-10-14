@@ -270,11 +270,20 @@ platform :android do
   end
 
   desc "upload to Play Store"
-  private_lane :upload do
-    upload_to_play_store(
-      track: 'internal',
-      package_name: 'com.ledger.live'
-    )
+  private_lane :upload do |options|
+    if(options[:ci])
+      upload_to_play_store(
+        track: 'internal',
+        package_name: 'com.ledger.live',
+        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
+      )
+    else
+      upload_to_play_store(
+        track: 'internal',
+        package_name: 'com.ledger.live',
+        json_key: ENV["ANDROID_SERVICE_KEY_PATH"]
+      )
+    end
   end
 
   # ============================= END PRIVATE =============================
@@ -304,7 +313,7 @@ platform :android do
   lane :ci_playstore do
     prepare_android_internal
     build(type: "Release")
-    upload
+    upload(ci: true)
   end
 
   # ============================ END CI BUILD =============================
