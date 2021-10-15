@@ -1,0 +1,43 @@
+{
+  "name": "@ledgerhq/icons-ui",
+  "main": "node_modules/expo/AppEntry.js",
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "eslint src --ext .ts,.tsx,.js,.jsx --cache",
+    "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix --cache",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "prettier": "prettier --write \"src/**/*.(ts|tsx)\"",
+    "build": "node scripts/buildReactIcons"
+  },
+  "dependencies": {
+    "react": "17.0.1",
+    "react-native-svg": "12.1.1",
+    "styled-components": "^5.3.0",
+    "styled-system": "^5.1.5"
+  },
+  "devDependencies": {
+    "@svgr/core": "^5.5.0",
+    "@svgr/plugin-jsx": "^5.5.0",
+    "@svgr/plugin-svgo": "^5.5.0",
+    "@types/color": "^3.0.2",
+    "@types/react": "^17.0.25",
+    "@types/react-native": "^0.65.2",
+    "@types/react-test-renderer": "^17.0.1",
+    "@types/styled-components-react-native": "^5.1.1",
+    "@types/styled-system": "^5.1.12",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
+    "camelcase": "^6.2.0",
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-find-rules": "^3.6.1",
+    "eslint-import-resolver-typescript": "^2.4.0",
+    "eslint-plugin-detox": "^1.0.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "typescript": "^4.3.5"
+  }
+}
