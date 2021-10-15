@@ -516,11 +516,6 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
-  DEVELOPMENT_MODE: {
-    def: false,
-    parser: boolParser,
-    desc: "flag to indicate if the app is running on development environment",
-  },
 };
 
 const getDefinition = (name: string): EnvDef<any> | null | undefined =>
