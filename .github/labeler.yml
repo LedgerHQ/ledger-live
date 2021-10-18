@@ -6,3 +6,5 @@ icons:
   - any: ["packages/icons/**/*"]
 shared:
   - any: ["packages/shared/**/*"]
+core:
+  - any: [".github/**/*", ".husky/**/*"]
