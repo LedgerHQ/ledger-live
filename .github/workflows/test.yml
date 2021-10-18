@@ -59,8 +59,8 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v2
         with:
-          name: snapshots-${{ runner.os }}
-          path: src/__tests__/__snapshots__/
+          name: snapshots-src-${{ runner.os }}
+          path: src/
       - name: upload logs
         if: failure() || success()
         uses: actions/upload-artifact@v2
