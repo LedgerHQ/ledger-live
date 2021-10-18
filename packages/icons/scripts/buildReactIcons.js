@@ -105,8 +105,8 @@ const convert = (svg, options, componentName, outputFile) => {
 
 glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
   // Create file stubs
-  fs.writeFileSync(`${reactDir}/index.js`, "", "utf-8");
-  fs.writeFileSync(`${nativeDir}/index.js`, "", "utf-8");
+  fs.writeFileSync(`${reactDir}/index.ts`, "", "utf-8");
+  fs.writeFileSync(`${nativeDir}/index.ts`, "", "utf-8");
 
   fs.writeFileSync(`${reactDir}/StyledSvg.ts`, reactSvgStyledComponent, "utf-8");
   fs.writeFileSync(`${nativeDir}/StyledSvg.ts`, reactNativeSvgStyledComponent, "utf-8");
@@ -123,7 +123,8 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
 
     const exportString = `export { default as ${name} } from "./${name}";\n`;
 
-    fs.appendFileSync(`${reactDir}/index.js`, exportString, "utf-8");
+    fs.appendFileSync(`${reactDir}/index.ts`, exportString, "utf-8");
+    fs.appendFileSync(`${nativeDir}/index.ts`, exportString, "utf-8");
 
     const svg = fs.readFileSync(icon, "utf-8");
     const options = {
