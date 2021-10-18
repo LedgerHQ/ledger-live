@@ -1416,6 +1416,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@ledgerhq/ui-shared@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ui-shared/-/ui-shared-0.1.1.tgz#1abef15219adf8edc525dd7d169b93f3c22e01e7"
+  integrity sha512-ZQf4LDy5mNI55Y6XBa/K1C/n4zhb+z6sb12Tu8t5JFQG94rOqPPHtuVt4C2Yq7ft7U8dIlU4qIUhjlhSxF6H3A==
+
 "@mdx-js/loader@^1.6.22":
   version "1.6.22"
   resolved "https://registry.yarnpkg.com/@mdx-js/loader/-/loader-1.6.22.tgz#d9e8fe7f8185ff13c9c8639c048b123e30d322c4"

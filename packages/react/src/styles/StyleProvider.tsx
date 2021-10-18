@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { ThemeProvider } from "styled-components";
-import { defaultTheme, palettes, GlobalStyle } from ".";
-import type { ThemeNames } from "./palettes";
+import { defaultTheme, GlobalStyle } from ".";
+import { ThemeNames, palettes } from "@ledgerhq/ui-shared";
 import { Theme } from "./theme";
 
 interface Props {
