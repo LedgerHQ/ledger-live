@@ -1,8 +1,8 @@
 import React from "react";
 import styled, { useTheme } from "styled-components";
 
-import Flex from "@ui/components/layout/Flex";
-import Text from "@ui/components/asorted/Text";
+import Flex from "../components/layout/Flex";
+import Text from "../components/asorted/Text";
 
 export default {
   title: "Particles",

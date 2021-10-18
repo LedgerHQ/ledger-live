@@ -1,10 +1,10 @@
 import React, { memo } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
-import CheckAlone from "@ui/assets/icons/CheckAloneMedium";
-import CloseMedium from "@ui/assets/icons/CloseMedium";
-import Text from "@components/asorted/Text";
-import Flex from "@components/layout/Flex";
+import CheckAlone from "../../../../assets/icons/CheckAloneMedium";
+import CloseMedium from "../../../../assets/icons/CloseMedium";
+import Text from "../../../asorted/Text";
+import Flex from "../../../layout/Flex";
 
 export interface Props {
   /**

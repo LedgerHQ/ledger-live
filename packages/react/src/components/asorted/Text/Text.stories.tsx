@@ -1,5 +1,5 @@
 import React from "react";
-import Text, { TextProps } from "@ui/components/asorted/Text";
+import Text, { TextProps } from "./index";
 export default {
   title: "Asorted/Typography/Text",
   component: Text,

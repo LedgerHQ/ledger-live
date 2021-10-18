@@ -1,7 +1,7 @@
 import React from "react";
 import BadgeComponent, { Props } from "./Badge";
-import Icon from "@components/asorted/Icon";
-import FlexBox from "@ui/components/layout/Flex";
+import Icon from "../../asorted/Icon";
+import FlexBox from "../../layout/Flex";
 
 export default {
   title: "Messages/Notifications/Badge",

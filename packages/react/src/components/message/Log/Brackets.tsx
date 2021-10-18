@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import FlexBox from "@ui/components/layout/Flex";
+import FlexBox from "../../layout/Flex";
 
 const SvgTop = styled.svg`
   position: absolute;

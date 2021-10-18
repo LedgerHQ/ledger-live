@@ -1,9 +1,9 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import Text from "@ui/components/asorted/Text";
-import ShieldSecurityMedium from "@ui/assets/icons/ShieldSecurityMedium";
-import CircledCrossMedium from "@ui/assets/icons/CircledCrossMedium";
-import CircledAlertMedium from "@ui/assets/icons/CircledAlertMedium";
+import Text from "../../asorted/Text";
+import ShieldSecurityMedium from "../../../assets/icons/ShieldSecurityMedium";
+import CircledCrossMedium from "../../../assets/icons/CircledCrossMedium";
+import CircledAlertMedium from "../../../assets/icons/CircledAlertMedium";
 
 type AlertType = "info" | "warning" | "error";
 

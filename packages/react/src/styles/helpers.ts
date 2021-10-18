@@ -11,7 +11,7 @@ export const lighten = (c: string, a: number): string => Color(c).lighten(a).toS
 export const mix = (c: string, b: string, a: number): string =>
   Color(c).mix(Color(b), a).toString();
 
-export const ff = (v: string): any => {
+export const ff = (v: string) => {
   const [font, type = "Regular"] = v.split("|");
   // @ts-expect-error FIXME
   const { style, weight } = fontFamilies[font][type];

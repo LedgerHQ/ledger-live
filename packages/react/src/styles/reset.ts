@@ -1,4 +1,5 @@
-export default `* {
+export default `
+* {
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
   margin: 0;
@@ -53,13 +54,6 @@ em {
   background: transparent !important;
   transition: opacity 0.2s ease-in-out !important;
   z-index: 20 !important;
-}
-
-.tippy-tooltip {
-  padding: 0;
-}
-.tippy-tooltip .tippy-content {
-  background: transparent;
 }
 
 .currentTicker {

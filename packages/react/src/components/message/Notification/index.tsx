@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { color, ColorProps } from "styled-system";
-import FlexBox from "@components/layout/Flex";
-import Text from "@components/asorted/Text";
-import Icon from "@components/asorted/Icon";
+import FlexBox from "../../layout/Flex";
+import Text from "../../asorted/Text";
+import Icon from "../../asorted/Icon";
 import Badge from "./Badge";
 
 export type Props = {

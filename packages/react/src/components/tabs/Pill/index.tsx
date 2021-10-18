@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { border, BorderProps } from "styled-system";
-import Flex from "@components/layout/Flex";
+import Flex from "../../layout/Flex";
 
 export type Props = React.PropsWithChildren<{
   /**

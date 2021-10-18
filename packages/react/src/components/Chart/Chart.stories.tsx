@@ -1,10 +1,10 @@
 import React from "react";
+import styled, { useTheme } from "styled-components";
 
 import Chart from "./index";
 import type { Props as ChartPreviewProps } from "./index";
-import Flex from "@ui/components/layout/Flex";
-import Button from "@ui/components/cta/Button";
-import styled, { useTheme } from "styled-components";
+import Flex from "../layout/Flex";
+import Button from "../cta/Button";
 import type { Item } from "./types";
 
 function getRandomChartDate() {

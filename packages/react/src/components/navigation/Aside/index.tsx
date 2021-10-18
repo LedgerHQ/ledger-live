@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { color, layout, typography, ColorProps, LayoutProps, TypographyProps } from "styled-system";
-import FlexBox from "@components/layout/Flex";
+import FlexBox from "../../layout/Flex";
 
 export type Props = React.PropsWithChildren<{
   /* Header which will be displayed at the top of the Aside. */

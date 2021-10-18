@@ -1,9 +1,9 @@
 import React from "react";
 
+import Text from "../../asorted/Text";
+import Flex from "../../layout/Flex";
 import Radio from "./index";
-import Text from "@components/asorted/Text";
 import type { RadioElementProps } from "./RadioElement";
-import Flex from "@components/layout/Flex";
 
 export default {
   title: "Form/Radio",

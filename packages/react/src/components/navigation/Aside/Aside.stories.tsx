@@ -1,10 +1,11 @@
 import React from "react";
-import Text from "@components/asorted/Text";
-import FlexBox from "@components/layout/Flex";
-import { LifeRingMedium } from "@assets/icons";
+
+import Text from "../../asorted/Text";
+import FlexBox from "../../layout/Flex";
+import Log from "../../message/Log";
+import { LifeRingMedium } from "../../../assets/icons";
 import AsideComponent, { Props } from "./index";
 import { nanoIllustration, keyboardIllustration } from "./stories.helper";
-import Log from "@components/message/Log";
 
 export default {
   title: "Navigation/Aside",
