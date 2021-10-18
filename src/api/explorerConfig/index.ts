@@ -28,10 +28,6 @@ const initialExplorerConfig: FullConfig = {
     id: "btg",
     stable: {
       base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
-      base: "EXPLORER",
       version: "v3",
     },
   },
@@ -60,10 +56,6 @@ const initialExplorerConfig: FullConfig = {
   digibyte: {
     id: "dgb",
     stable: {
-      base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
       base: "EXPLORER",
       version: "v3",
     },
@@ -109,20 +101,12 @@ const initialExplorerConfig: FullConfig = {
     id: "ppc",
     stable: {
       base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
-      base: "EXPLORER",
       version: "v3",
     },
   },
   pivx: {
     id: "pivx",
     stable: {
-      base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
       base: "EXPLORER",
       version: "v3",
     },
@@ -138,10 +122,6 @@ const initialExplorerConfig: FullConfig = {
   qtum: {
     id: "qtum",
     stable: {
-      base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
       base: "EXPLORER",
       version: "v3",
     },
@@ -175,20 +155,12 @@ const initialExplorerConfig: FullConfig = {
     id: "vtc",
     stable: {
       base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
-      base: "EXPLORER",
       version: "v3",
     },
   },
   viacoin: {
     id: "via",
     stable: {
-      base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
       base: "EXPLORER",
       version: "v3",
     },
@@ -197,20 +169,12 @@ const initialExplorerConfig: FullConfig = {
     id: "zec",
     stable: {
       base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
-      base: "EXPLORER",
       version: "v3",
     },
   },
   zencash: {
     id: "zen",
     stable: {
-      base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
       base: "EXPLORER",
       version: "v3",
     },
