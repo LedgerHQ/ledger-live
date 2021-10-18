@@ -4,24 +4,24 @@
 |--|--|--|--|
 | Bitcoin | BTC | https://explorers.api.live.ledger.com/blockchain/v3/btc | N/A |
 | Bitcoin Cash | BCH | https://explorers.api.live.ledger.com/blockchain/v2/abc | N/A |
-| Bitcoin Gold | BTG | https://explorers.api.live.ledger.com/blockchain/v2/btg | https://explorers.api.live.ledger.com/blockchain/v3/btg |
+| Bitcoin Gold | BTG | https://explorers.api.live.ledger.com/blockchain/v3/btg | N/A |
 | Binance Smart Chain | BNB | https://explorers.api.live.ledger.com/blockchain/v3/bnb | N/A |
 | Dash | DASH | https://explorers.api.live.ledger.com/blockchain/v3/dash | N/A |
 | Decred | DCR | https://explorers.api.live.ledger.com/blockchain/v3/dcr | N/A |
-| DigiByte | DGB | https://explorers.api.live.ledger.com/blockchain/v2/dgb | https://explorers.api.live.ledger.com/blockchain/v3/dgb |
+| DigiByte | DGB | https://explorers.api.live.ledger.com/blockchain/v3/dgb | N/A |
 | Dogecoin | DOGE | https://explorers.api.live.ledger.com/blockchain/v2/doge | https://explorers.api.live.ledger.com/blockchain/v3/doge |
 | Ethereum | ETH | https://explorers.api.live.ledger.com/blockchain/v3/eth | N/A |
 | Ethereum Classic | ETC | https://explorers.api.live.ledger.com/blockchain/v3/etc | N/A |
 | Komodo | KMD | https://explorers.api.live.ledger.com/blockchain/v2/kmd | https://explorers.api.live.ledger.com/blockchain/v3/kmd |
 | Litecoin | LTC | https://explorers.api.live.ledger.com/blockchain/v3/ltc | N/A |
-| Peercoin | PPC | https://explorers.api.live.ledger.com/blockchain/v2/ppc | https://explorers.api.live.ledger.com/blockchain/v3/ppc |
-| PivX | PIVX | https://explorers.api.live.ledger.com/blockchain/v2/pivx | https://explorers.api.live.ledger.com/blockchain/v3/pivx |
-| Qtum | QTUM | https://explorers.api.live.ledger.com/blockchain/v2/qtum | https://explorers.api.live.ledger.com/blockchain/v3/qtum |
+| Peercoin | PPC | https://explorers.api.live.ledger.com/blockchain/v3/ppc | N/A |
+| PivX | PIVX | https://explorers.api.live.ledger.com/blockchain/v3/pivx | N/A |
+| Qtum | QTUM | https://explorers.api.live.ledger.com/blockchain/v3/qtum | N/A |
 | Stakenet | XSN | https://explorers.api.live.ledger.com/blockchain/v2/xsn | https://explorers.api.live.ledger.com/blockchain/v3/xsn |
 | Stratis | STRAT | https://explorers.api.live.ledger.com/blockchain/v2/strat | N/A |
 | Stealth | XST | https://explorers.api.live.ledger.com/blockchain/v2/xst | N/A |
-| Vertcoin | VTC | https://explorers.api.live.ledger.com/blockchain/v2/vtc | https://explorers.api.live.ledger.com/blockchain/v3/vtc |
-| Viacoin | VIA | https://explorers.api.live.ledger.com/blockchain/v2/via | https://explorers.api.live.ledger.com/blockchain/v3/via |
-| Zcash | ZEC | https://explorers.api.live.ledger.com/blockchain/v2/zec | https://explorers.api.live.ledger.com/blockchain/v3/zec |
-| Horizen | ZEN | https://explorers.api.live.ledger.com/blockchain/v2/zen | https://explorers.api.live.ledger.com/blockchain/v3/zen |
+| Vertcoin | VTC | https://explorers.api.live.ledger.com/blockchain/v3/vtc | N/A |
+| Viacoin | VIA | https://explorers.api.live.ledger.com/blockchain/v3/via | N/A |
+| Zcash | ZEC | https://explorers.api.live.ledger.com/blockchain/v3/zec | N/A |
+| Horizen | ZEN | https://explorers.api.live.ledger.com/blockchain/v3/zen | N/A |
 
