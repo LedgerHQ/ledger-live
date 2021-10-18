@@ -19,7 +19,7 @@ import { system } from "styled-system";
 
 export default styled("svg")(
   system({
-    fontSize: {
+    fill: {
       property: "fill",
       scale: "colors",
     }
@@ -35,7 +35,7 @@ import Svg from "react-native-svg";
 
 export default styled(Svg)(
   system({
-    fontSize: {
+    fill: {
       property: 'fill',
       scale: 'colors',
     }
