@@ -70,3 +70,7 @@ packages/react/storybook-static/\*
 
 # Typescript incremental mode artifacts
 *.tsbuildinfo
+
+# Icons build
+packages/icons/react
+packages/icons/native
