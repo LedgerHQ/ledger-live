@@ -1,5 +1,5 @@
 {
-  "name": "@ledger-hq/ui-shared",
+  "name": "@ledgerhq/ui-shared",
   "version": "0.1.0",
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
   "main": "dist/index.js",
