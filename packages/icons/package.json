@@ -8,14 +8,21 @@
     "native"
   ],
   "scripts": {
-    "build": "rimraf react native && node scripts/buildReactIcons",
+    "build": "rimraf react native src/react src/native && node scripts/buildReactIcons && tsc",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
+    "@types/react": "^17.0.30",
+    "@types/react-dom": "^17.0.9",
+    "@types/styled-components": "^5.1.15",
+    "@types/styled-components-react-native": "^5.1.1",
+    "@types/styled-system": "^5.1.13",
     "camelcase": "^6.2.0",
     "glob": "^7.2.0",
-    "rimraf": "^3.0.2"
+    "react-native-svg": "^12.1.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.4"
   }
 }

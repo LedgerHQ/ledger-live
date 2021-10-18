@@ -4,7 +4,7 @@ const glob = require("glob");
 const camelcase = require("camelcase");
 const svgr = require("@svgr/core").default;
 
-const rootDir = path.join(__dirname, "..");
+const rootDir = path.join(__dirname, "..", "src");
 const reactDir = path.join(rootDir, "react");
 const nativeDir = path.join(rootDir, "native");
 
@@ -17,18 +17,17 @@ if (!fs.existsSync(nativeDir)) {
 }
 
 const reactSvgStyledComponent = `
-import styled from "styled-components/native";
+import styled from "styled-components";
 import { system } from "styled-system";
 
-export default styled("svg")(
-  system({
+export default styled.svg\`
+  \${system({
     fill: {
       property: "fill",
       scale: "colors",
     }
-  })
-);
-
+  })}
+\`;
 `;
 
 const reactNativeSvgStyledComponent = `
@@ -36,15 +35,14 @@ import styled from "styled-components/native";
 import { system } from "styled-system";
 import Svg from "react-native-svg";
 
-export default styled(Svg)(
-  system({
+export default styled(Svg)\`
+  \${system({
     fill: {
-      property: 'fill',
-      scale: 'colors',
+      property: "fill",
+      scale: "colors",
     }
-  })
-);
-
+  })}
+\`;
 `;
 
 // Component template

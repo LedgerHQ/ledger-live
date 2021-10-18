@@ -73,4 +73,6 @@ packages/react/storybook-static/\*
 
 # Icons build
 packages/icons/react
+packages/icons/src/react
+packages/icons/src/native
 packages/icons/native
