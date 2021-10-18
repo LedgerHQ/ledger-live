@@ -1,14 +1,13 @@
 import React, { useState, useCallback } from "react";
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs, text, button } from "@storybook/addon-knobs";
+import { storiesOf } from "../../storiesOf";
+import { text, button } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import BaseModal from "../../../../src/components/Layout/Modal/BaseModal";
 import Text from "@components/Text";
-import CenterView from "../../CenterView";
 import TrashMedium from "@ui/assets/icons/TrashMedium";
 import IconBox from "../../../../src/components/Icon/IconBox";
 
-const ModalStory = () => {
+export const ModalStory = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const openModal = useCallback(() => {
@@ -34,7 +33,4 @@ const ModalStory = () => {
   );
 };
 
-storiesOf("Layout", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Modal", () => <ModalStory />);
+storiesOf((story) => story("Layout", module).add("Modal", ModalStory));

@@ -1,11 +1,10 @@
 import React from "react";
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs, select, text, number } from "@storybook/addon-knobs";
+import { storiesOf } from "../storiesOf";
+import { select, text, number } from "@storybook/addon-knobs";
 import Flex from "@components/Layout/Flex";
 import Text from "@components/Text";
-import CenterView from "../CenterView";
 
-const FlexStory = () => {
+export const FlexStory = () => {
   const alignItems = select(
     "Align items",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],
@@ -104,8 +103,8 @@ const FlexStoryTwo = () => {
   );
 };
 
-storiesOf("Layout", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Flex One", () => <FlexStory />)
-  .add("Flex Two", () => <FlexStoryTwo />);
+storiesOf((story) =>
+  story("Layout", module)
+    .add("Flex One", () => <FlexStory />)
+    .add("Flex Two", () => <FlexStoryTwo />)
+);

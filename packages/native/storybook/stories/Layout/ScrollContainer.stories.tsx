@@ -1,12 +1,11 @@
 import React from "react";
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs, boolean } from "@storybook/addon-knobs";
+import { storiesOf } from "../storiesOf";
+import { boolean } from "@storybook/addon-knobs";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
-import CenterView from "../CenterView";
 import { View } from "react-native";
 import { action } from "@storybook/addon-actions";
 
-const Element = ({ isEven = false }: { isEven?: boolean }) => (
+export const Element = ({ isEven = false }: { isEven?: boolean }) => (
   <View
     style={{
       backgroundColor: isEven ? "orange" : "blue",
@@ -21,7 +20,7 @@ const Element = ({ isEven = false }: { isEven?: boolean }) => (
  ** value once the configuration will be fix to allow using
  ** hooks from our stories
  */
-const ScrollContainerStory = () => (
+export const ScrollContainerStory = () => (
   <ScrollContainer
     contentContainerStyle={{ flex: 1 }}
     horizontal={boolean("Horizontal", false)}
@@ -35,7 +34,6 @@ const ScrollContainerStory = () => (
   </ScrollContainer>
 );
 
-storiesOf("Layout", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("ScrollContainer", ScrollContainerStory);
+storiesOf((story) =>
+  story("Layout", module).add("ScrollContainer", ScrollContainerStory)
+);

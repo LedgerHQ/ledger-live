@@ -1,11 +1,8 @@
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs } from "@storybook/addon-knobs";
+import { storiesOf } from "../storiesOf";
 import React from "react";
 import Info from "@ui/assets/icons/InfoMedium";
-import CenterView from "../CenterView";
 import IconBox from "../../../src/components/Icon/IconBox";
 
-storiesOf("Icon", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("IconBox", () => <IconBox Icon={Info} />);
+export const IconBoxSample = () => <IconBox Icon={Info} />;
+
+storiesOf((story) => story("Icon", module).add("IconBox", IconBoxSample));

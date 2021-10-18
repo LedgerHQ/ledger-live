@@ -1,14 +1,12 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs } from "@storybook/addon-knobs";
+import { storiesOf } from "../storiesOf";
 import { useTheme } from "styled-components/native";
 
 import Text from "@components/Text";
 import Flex from "@components/Layout/Flex";
-import CenterView from "../CenterView";
 
-const SpacingStory = () => {
+export const SpacingStory = () => {
   const theme = useTheme();
   const [, ...space] = theme.space;
 
@@ -34,7 +32,4 @@ const SpacingStory = () => {
   );
 };
 
-storiesOf("Particles", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Spacing", () => <SpacingStory />);
+storiesOf((story) => story("Particles", module).add("Spacing", SpacingStory));

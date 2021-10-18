@@ -1,11 +1,10 @@
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs, boolean, text } from "@storybook/addon-knobs";
+import { storiesOf } from "../storiesOf";
+import { boolean, text } from "@storybook/addon-knobs";
 
 import React, { useState } from "react";
 import Switch from "@components/Form/Switch";
-import CenterView from "../CenterView";
 
-const SwitchStory = () => {
+export const SwitchStory = () => {
   const [checked, setChecked] = useState(false);
 
   const handleChange = () => setChecked((prev) => !prev);
@@ -20,7 +19,4 @@ const SwitchStory = () => {
   );
 };
 
-storiesOf("Form", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Switch", () => <SwitchStory />);
+storiesOf((story) => story("Form", module).add("Switch", SwitchStory));

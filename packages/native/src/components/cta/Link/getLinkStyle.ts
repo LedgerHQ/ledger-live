@@ -1,6 +1,8 @@
 import { Theme } from "@ui/styles/theme";
 
-export function getLinkColors(colors: Theme["colors"]): {
+export function getLinkColors(
+  colors: Theme["colors"]
+): {
   [index: string]: {
     disabled: string;
     main: string;

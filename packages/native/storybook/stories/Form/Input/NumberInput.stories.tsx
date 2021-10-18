@@ -1,7 +1,5 @@
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs } from "@storybook/addon-knobs";
+import { storiesOf } from "../../storiesOf";
 import React from "react";
-import CenterView from "../../CenterView";
 import { InputProps } from "../../../../src/components/Form/Input/BaseInput";
 import NumberInput from "../../../../src/components/Form/Input/NumberInput";
 
@@ -40,7 +38,6 @@ const NumberInputStory = ({
   );
 };
 
-storiesOf("Form", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Input/NumberInput", () => <NumberInputStory />);
+storiesOf((story) =>
+  story("Form/Input", module).add("NumberInput", NumberInputStory)
+);

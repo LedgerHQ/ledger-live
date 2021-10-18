@@ -47,10 +47,9 @@ function SlideIndicator({
   activeIndex = 0,
   onChange,
 }: Props): React.ReactElement {
-  const slidesArray = useMemo(
-    () => new Array(slidesLength).fill(0),
-    [slidesLength]
-  );
+  const slidesArray = useMemo(() => new Array(slidesLength).fill(0), [
+    slidesLength,
+  ]);
 
   const activeSize = useMemo(
     () =>

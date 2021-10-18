@@ -1,3 +1,4 @@
+import React from "react";
 import {
   getStorybookUI,
   configure,
@@ -5,6 +6,7 @@ import {
 } from "@storybook/react-native";
 import { withKnobs } from "@storybook/addon-knobs";
 import "./rn-addons";
+import CenterView from "./stories/CenterView";
 
 const ledgerTheme = {
   backgroundColor: "hsla(0, 0%, 96%, 1)",
@@ -18,6 +20,11 @@ const ledgerTheme = {
 
 // enables knobs for all stories
 addDecorator(withKnobs);
+addDecorator((Story) => (
+  <CenterView waitFonts>
+    <Story />
+  </CenterView>
+));
 
 // import stories
 configure(() => {

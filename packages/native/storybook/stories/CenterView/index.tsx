@@ -32,13 +32,15 @@ const Icon = styled.Text`
 `;
 
 export default function CenterView({
+  waitFonts,
   children,
 }: {
+  waitFonts?: boolean;
   children: React.ReactNode;
 }) {
   const [isLight, setIsLight] = useState(true);
   return (
-    <FontProvider>
+    <FontProvider waitUntilLoaded={waitFonts}>
       <StyleProvider selectedPalette={isLight ? "light" : "dark"}>
         <ThemeButton onPress={() => setIsLight(!isLight)}>
           <Icon>🖌️</Icon>

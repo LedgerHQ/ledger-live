@@ -1,7 +1,13 @@
 import React from "react";
 import { useFonts } from "expo-font";
 
-export default ({ children }: { children: React.ReactNode }) => {
+export default ({
+  waitUntilLoaded,
+  children,
+}: {
+  waitUntilLoaded?: boolean;
+  children: React.ReactNode;
+}) => {
   const [fontsLoaded] = useFonts({
     Inter_medium: require("../../assets/fonts/inter/Inter-Medium.otf"),
     Inter_semibold: require("../../assets/fonts/inter/Inter-SemiBold.otf"),
@@ -9,7 +15,7 @@ export default ({ children }: { children: React.ReactNode }) => {
     Alpha_medium: require("../../assets/fonts/alpha/HMAlphaMono-Medium.otf"),
   });
 
-  if (!fontsLoaded) {
+  if (waitUntilLoaded && !fontsLoaded) {
     return null;
   }
 
