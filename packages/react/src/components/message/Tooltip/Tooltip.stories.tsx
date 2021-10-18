@@ -1,6 +1,7 @@
-import Text from "@ui/components/asorted/Text";
-import FlexBox from "@ui/components/layout/Flex";
 import React from "react";
+
+import Text from "../../asorted/Text";
+import FlexBox from "../../layout/Flex";
 import TooltipComponent, { Props } from "./index";
 
 export default {

@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import styled from "styled-components";
 
-import Text from "@ui/components/asorted/Text";
+import Text from "../../asorted/Text";
+import FlexBox, { FlexBoxProps } from "../../layout/Flex";
 import { BracketRight, BracketLeft } from "./Brackets";
-import FlexBox, { FlexBoxProps } from "@ui/components/layout/Flex";
 
 export type Props = React.PropsWithChildren<FlexBoxProps>;
 

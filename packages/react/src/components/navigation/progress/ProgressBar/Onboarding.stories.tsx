@@ -1,5 +1,6 @@
-import { StoryTemplate } from "@ui/helpers";
 import React from "react";
+
+import { StoryTemplate } from "../../../helpers";
 import Onboarding from "./index";
 import type { OnboardingProps } from "./Onboarding";
 

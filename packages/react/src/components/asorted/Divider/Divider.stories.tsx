@@ -1,7 +1,7 @@
 import React from "react";
 import Divider from "./index";
-import Text from "@ui/components/asorted/Text";
-import Flex from "@ui/components/layout/Flex";
+import Text from "../Text";
+import Flex from "../../layout/Flex";
 import styled from "styled-components";
 
 const StyledWrapper = styled(Flex).attrs({ flexDirection: "column" })`

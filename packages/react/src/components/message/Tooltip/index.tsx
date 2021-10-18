@@ -1,6 +1,6 @@
 import React from "react";
 import Tippy, { TippyProps } from "@tippyjs/react";
-import Text from "@ui/components/asorted/Text";
+import Text from "../../asorted/Text";
 
 type Placement =
   | "top"

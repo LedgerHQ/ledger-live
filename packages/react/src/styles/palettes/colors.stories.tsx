@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import Text from "@ui/components/asorted/Text";
-import Flex from "@ui/components/layout/Flex";
+import Text from "../../components/asorted/Text";
+import Flex from "../../components/layout/Flex";
+import type { Palette } from "../../styles/palettes/index";
 import theme from "./light.json";
-import type { Palette } from "@ui/styles/palettes/index";
 
 export default { title: "Particles" };
 

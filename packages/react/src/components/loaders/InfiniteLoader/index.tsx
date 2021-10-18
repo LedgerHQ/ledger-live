@@ -1,5 +1,5 @@
 import styled, { keyframes } from "styled-components";
-import InfiniteLoaderImage from "@ui/assets/images/infiniteLoader.png";
+import image from "./image";
 
 const rotate = keyframes`
   0% {
@@ -12,7 +12,7 @@ const rotate = keyframes`
 
 const InfiniteLoader = styled.img.attrs({
   alt: "loading...",
-  src: InfiniteLoaderImage,
+  src: `data:image/png;base64,${image}`,
   width: "28",
   height: "28",
 })`

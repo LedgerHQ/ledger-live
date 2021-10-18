@@ -1,19 +1,19 @@
 import React from "react";
+import { useArgs } from "@storybook/client-api";
+
 import SideBar from "./SideBar";
 import type { SideBarProps } from "./SideBar";
 import { action } from "@storybook/addon-actions";
-import PortfolioIcon from "@ui/assets/icons/PortfolioMedium";
-import WalletIcon from "@ui/assets/icons/WalletMedium";
-import ManagerIcon from "@ui/assets/icons/ManagerMedium";
-import ArrowTopIcon from "@ui/assets/icons/ArrowTopMedium";
-import ArrowBottomIcon from "@ui/assets/icons/ArrowBottomMedium";
-import BuyCryptoAltIcon from "@ui/assets/icons/BuyCryptoAltMedium";
-import BuyCryptoIcon from "@ui/assets/icons/BuyCryptoMedium";
-import LendIcon from "@ui/assets/icons/LendMedium";
-import NanoFoldedIcon from "@ui/assets/icons/NanoFoldedMedium";
-
-import { useArgs } from "@storybook/client-api";
-import { StoryTemplate } from "@ui/helpers";
+import PortfolioIcon from "../../../../assets/icons/PortfolioMedium";
+import WalletIcon from "../../../../assets/icons/WalletMedium";
+import ManagerIcon from "../../../../assets/icons/ManagerMedium";
+import ArrowTopIcon from "../../../../assets/icons/ArrowTopMedium";
+import ArrowBottomIcon from "../../../../assets/icons/ArrowBottomMedium";
+import BuyCryptoAltIcon from "../../../../assets/icons/BuyCryptoAltMedium";
+import BuyCryptoIcon from "../../../../assets/icons/BuyCryptoMedium";
+import LendIcon from "../../../../assets/icons/LendMedium";
+import NanoFoldedIcon from "../../../../assets/icons/NanoFoldedMedium";
+import { StoryTemplate } from "../../../helpers";
 
 export default {
   title: "Navigation/SideBar/SideBar",

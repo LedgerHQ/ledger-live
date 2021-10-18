@@ -4,10 +4,11 @@ import {
   FlexboxProps as FlexProps,
   compose,
   PositionProps,
+  space,
+  position,
 } from "styled-system";
 import styled from "styled-components";
-import gapsSystem from "@ui/styles/system/gaps";
-import { space, position } from "styled-system";
+import gapsSystem from "../../../styles/system/gaps";
 
 export type FlexBoxProps = FlexProps &
   SpaceProps &

@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import ArrowLeftIcon from "@ui/assets/icons/ArrowLeftMedium";
-import ArrowRightIcon from "@ui/assets/icons/ArrowRightMedium";
-import TransitionInOut from "@ui/components/transitions/TransitionInOut";
-import SideBarContext from "@ui/components/navigation/sideBar";
+import ArrowLeftIcon from "../../../../assets/icons/ArrowLeftMedium";
+import ArrowRightIcon from "../../../../assets/icons/ArrowRightMedium";
+import TransitionInOut from "../../../transitions/TransitionInOut";
+import SideBarContext from "../../../navigation/sideBar";
 
 const ToggleButtonContainer = styled(TransitionInOut)`
   --ll-side-bar-toggle-button-size: ${(p) => p.theme.space[10]}px;

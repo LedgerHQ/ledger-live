@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
-import Text from "@components/asorted/Text";
-import FlexBox from "@components/layout/Flex";
+
+import Text from "../../asorted/Text";
+import FlexBox from "../../layout/Flex";
 import BreadcrumbComponent, { Props } from "./index";
 
 export default {

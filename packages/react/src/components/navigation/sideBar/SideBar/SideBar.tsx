@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from "react";
-import SideBarContext from "@ui/components/navigation/sideBar";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
-import Flex from "@ui/components/layout/Flex";
-import Item from "@ui/components/navigation/sideBar/Item";
-import Logo from "@ui/components/navigation/sideBar/Logo";
-import Toggle from "@ui/components/navigation/sideBar/Toggle";
+import SideBarContext from "../../../navigation/sideBar";
+import Flex from "../../../layout/Flex";
+import Item from "../../../navigation/sideBar/Item";
+import Logo from "../../../navigation/sideBar/Logo";
+import Toggle from "../../../navigation/sideBar/Toggle";
 
 const Nav = styled(Flex)`
   position: relative;

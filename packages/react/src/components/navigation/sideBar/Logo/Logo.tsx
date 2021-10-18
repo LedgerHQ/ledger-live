@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import LedgerLiveIconLarge from "@ui/assets/icons/logos/LedgerLiveRegular";
-import LedgerIconSmall from "@ui/assets/icons/logos/LedgerLiveAltRegular";
-import SideBarContext from "@ui/components/navigation/sideBar";
-import TransitionInOut from "@ui/components/transitions/TransitionInOut";
+import LedgerLiveIconLarge from "../../../../assets/icons/logos/LedgerLiveRegular";
+import LedgerIconSmall from "../../../../assets/icons/logos/LedgerLiveAltRegular";
+import SideBarContext from "../../../navigation/sideBar";
+import TransitionInOut from "../../../transitions/TransitionInOut";
 
 const Container = styled.div`
   display: flex;
