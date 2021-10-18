@@ -12,12 +12,6 @@
     "strict": true,
     "target": "esnext",
     "baseUrl": ".",
-    "paths": {
-      "@assets/*": ["src/assets/*"],
-      "@components/*": ["src/components/*"],
-      "@styles/*": ["src/styles/*"],
-      "@ui/*": ["src/*"]
-    },
     "skipLibCheck": true,
     "rootDir": "./src",
     "outDir": "./lib"

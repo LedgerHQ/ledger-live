@@ -1,16 +1,18 @@
 import React from "react";
 import styled from "styled-components";
-import { grid, color, space } from "styled-system";
+import { grid, GridProps, color, ColorProps, space, SpaceProps } from "styled-system";
 import Grid from "./index";
-import Text from "@ui/components/asorted/Text";
+import Text from "../../asorted/Text";
+
 // Just a stylable div used as a base grid element for the purpose of this story.
-const Cell = styled.div<any>`
+const Cell = styled.div<ColorProps & SpaceProps & GridProps>`
   // Make the div semi-opaque to show grid composition.
   opacity: 0.7;
   ${color}
   ${space}
   ${grid}
 `;
+
 export default {
   title: "Layout/Grid",
   component: Grid,

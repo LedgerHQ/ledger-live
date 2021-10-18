@@ -2,3 +2,9 @@ react:
   - any: ["packages/react/**/*"]
 native:
   - any: ["packages/native/**/*"]
+icons:
+  - any: ["packages/icons/**/*"]
+shared:
+  - any: ["packages/shared/**/*"]
+core:
+  - any: [".github/**/*", ".husky/**/*"]

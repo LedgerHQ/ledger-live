@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
-import type { ButtonProps } from "@ui/components/cta/Button";
-import Button from "@ui/components/cta/Button";
+import type { ButtonProps } from "../Button";
+import Button from "../Button";
 
 export interface ToggleProps extends Omit<ButtonProps, "type"> {
   checked?: boolean;

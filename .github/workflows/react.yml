@@ -1,4 +1,4 @@
-name: React Package CI
+name: React Build
 
 defaults:
   run:

@@ -3,7 +3,7 @@ import { useArgs } from "@storybook/client-api";
 
 import Toggle from "./index";
 import type { ToggleProps } from "./index";
-import { StoryTemplate } from "@ui/helpers";
+import { StoryTemplate } from "./../../helpers";
 
 export default {
   title: "cta/Toggle",

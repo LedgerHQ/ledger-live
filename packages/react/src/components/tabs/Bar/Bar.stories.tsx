@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import BarTabs, { Props } from "@components/tabs/Bar";
-import Text from "@components/asorted/Text";
+
+import BarTabs, { Props } from "./index";
+import Text from "../../asorted/Text";
 
 export default {
   title: "Tabs/Graph",

@@ -1,5 +1,5 @@
-import FlexBox from "@ui/components/layout/Flex";
 import React from "react";
+import FlexBox from "../../layout/Flex";
 
 export type Props = {
   /* Content displayed on the left side of the header. */

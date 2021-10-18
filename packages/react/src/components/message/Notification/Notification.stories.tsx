@@ -1,6 +1,7 @@
 import React from "react";
-import Icon from "@components/asorted/Icon";
-import FlexBox from "@components/layout/Flex";
+
+import Icon from "../../asorted/Icon";
+import FlexBox from "../../layout/Flex";
 import Notification, { Props } from "./index";
 
 export default {

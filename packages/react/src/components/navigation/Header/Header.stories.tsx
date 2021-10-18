@@ -1,8 +1,9 @@
-import Icon from "@ui/components/asorted/Icon";
-import Text from "@ui/components/asorted/Text";
-import FlexBox from "@ui/components/layout/Flex";
-import React from "react";
 import HeaderComponent, { Props } from "./index";
+
+import Icon from "../../asorted/Icon";
+import Text from "../../asorted/Text";
+import FlexBox from "../../layout/Flex";
+import React from "react";
 
 export default {
   title: "Navigation/Header",

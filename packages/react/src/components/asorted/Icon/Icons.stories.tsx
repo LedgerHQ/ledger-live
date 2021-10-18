@@ -1,5 +1,5 @@
 import React from "react";
-import Icon, { iconNames, Props as IconProps } from "@ui/components/asorted/Icon";
+import Icon, { iconNames, Props as IconProps } from "./Icon";
 
 const Story = {
   title: "Asorted/Icons",

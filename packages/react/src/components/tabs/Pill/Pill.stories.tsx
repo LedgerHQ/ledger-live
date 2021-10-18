@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import PillTabs, { Props } from "@components/tabs/Pill";
-import Text from "@components/asorted/Text";
-import Icon from "@components/asorted/Icon";
+
+import PillTabs, { Props } from "./index";
+import Text from "../../asorted/Text";
+import Icon from "../../asorted/Icon";
 
 export default {
   title: "Tabs/View",

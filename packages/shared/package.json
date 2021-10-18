@@ -1,6 +1,6 @@
 {
-  "name": "@ledger-hq/ui-shared",
-  "version": "0.1.0",
+  "name": "@ledgerhq/ui-shared",
+  "version": "0.1.1",
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,7 @@
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "license": "MIT",
   "files": [
-    "./dist"
+    "dist"
   ],
   "scripts": {
     "build": "tsc",

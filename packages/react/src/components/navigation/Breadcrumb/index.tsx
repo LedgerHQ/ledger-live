@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import styled, { useTheme } from "styled-components";
-import Flex from "@components/layout/Flex";
-import Text from "@components/asorted/Text";
-import Dropdown from "@components/form/selectDialogs/Dropdown";
-import * as ControlModule from "@components/form/input/SelectInput/Control";
+import Flex from "../../layout/Flex";
+import Text from "../../asorted/Text";
+import Dropdown from "../../form/Dropdown";
+import * as ControlModule from "../../form/SelectInput/Control";
 
 export type Props = { segments: Segment[]; onChange: (values: string[]) => void }; //React.PropsWithChildren<unknown>;
 export type Element = {

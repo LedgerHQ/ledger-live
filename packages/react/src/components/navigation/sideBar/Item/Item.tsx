@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
-import SideBarContext from "@ui/components/navigation/sideBar";
-import Text from "@ui/components/asorted/Text";
-import TransitionInOut from "@ui/components/transitions/TransitionInOut";
+import SideBarContext from "../index";
+import Text from "../../../asorted/Text";
+import TransitionInOut from "../../../transitions/TransitionInOut";
 
 const ItemWrapper = styled.li`
   /** DEFAULT VARIANT **/

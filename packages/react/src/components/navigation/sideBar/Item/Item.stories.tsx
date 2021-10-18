@@ -1,12 +1,13 @@
 import React from "react";
-import Item from "@ui/components/navigation/sideBar/Item";
 import { action } from "@storybook/addon-actions";
-import WalletIcon from "@ui/assets/icons/WalletMedium";
+
+import { StoryTemplate } from "../../../helpers";
+import WalletIcon from "../../../../assets/icons/WalletMedium";
+import Text from "../../../asorted/Text";
+import Flex from "../../../layout/Flex";
+import SideBarContext from "..";
+import Item from "./Item";
 import type { ItemType } from "./Item";
-import SideBarContext from "@ui/components/navigation/sideBar";
-import Text from "@ui/components/asorted/Text";
-import Flex from "@ui/components/layout/Flex";
-import { StoryTemplate } from "@ui/helpers";
 
 export default {
   title: "Navigation/SideBar/Item",

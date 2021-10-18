@@ -1,41 +1,14 @@
 import React from "react";
-import LiveStyleSheetManager from "../src/styles/LiveStyleSheetManager";
-import { ThemeProvider } from "styled-components";
-import { defaultTheme, GlobalStyle } from "../src/styles";
-import { palettes, ThemeNames } from "@ledgerhq/ui-shared";
-
-type Props = {
-  children: React.ReactNode;
-  selectedPalette: ThemeNames;
-};
-
-const StyleProvider = ({ children, selectedPalette }: Props) => {
-  const theme = {
-    ...defaultTheme,
-    colors: {
-      ...defaultTheme.colors,
-      palette: palettes[selectedPalette],
-    },
-  };
-
-  return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      {children}
-    </ThemeProvider>
-  );
-};
+import { StyleProvider } from "../src/styles";
 
 export const decorators = [
   (Story, { globals }) => {
     const backgrounds = globals?.backgrounds ?? {};
     const theme = backgrounds?.value === "#1C1D1F" ? "dark" : "light";
     return (
-      <LiveStyleSheetManager>
-        <StyleProvider selectedPalette={theme}>
-          <Story />
-        </StyleProvider>
-      </LiveStyleSheetManager>
+      <StyleProvider fontsPath="assets/fonts" selectedPalette={theme}>
+        <Story />
+      </StyleProvider>
     );
   },
 ];
