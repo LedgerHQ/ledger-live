@@ -71,8 +71,5 @@ packages/react/storybook-static/\*
 # Typescript incremental mode artifacts
 *.tsbuildinfo
 
-
-
-
 # Build
 dist/
