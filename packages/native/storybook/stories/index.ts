@@ -16,6 +16,7 @@ import "./Form/Input/LegendInput.stories";
 import "./Form/Input/SearchInput.stories";
 import "./Form/Input/QrCodeInput.stories";
 import "./Form/Input/NumberInput.stories";
+import "./Form/Switch/Switch.stories";
 import "./Link/Link.stories";
 import "./Form/Switch.stories";
 import "./Tag/Badge.stories";
