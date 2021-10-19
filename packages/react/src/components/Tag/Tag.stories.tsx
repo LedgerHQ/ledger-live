@@ -4,7 +4,7 @@ import { StoryTemplate } from "../helpers";
 import Tag, { Props } from "./index";
 
 export default {
-  title: "Toasts/Tag",
+  title: "Tags/Tag",
   component: Tag,
   argTypes: {
     active: {
