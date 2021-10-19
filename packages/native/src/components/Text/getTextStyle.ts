@@ -6,9 +6,8 @@ export type TextTypes =
   | "emphasis"
   | "body"
   | "link"
-  | "tiny"
   | "subTitle"
-  | "navigation"
+  | "small"
   | "tag"
   | "large"
   | "paragraph";
@@ -84,13 +83,7 @@ export function getTextStyle({
         lineHeight: 16,
         textDecoration: "underline",
       };
-    case "tiny":
-      return {
-        fontFamily: "Inter",
-        fontSize: 12,
-        lineHeight: 16,
-      };
-    case "navigation":
+    case "small":
       return {
         fontFamily: "Inter",
         fontSize: 12,

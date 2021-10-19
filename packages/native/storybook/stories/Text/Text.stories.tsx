@@ -21,9 +21,8 @@ storiesOf("Text", module)
           "body",
           "cta",
           "link",
-          "tiny",
           "subTitle",
-          "navigation",
+          "small",
           "tag",
         ],
         "h1"

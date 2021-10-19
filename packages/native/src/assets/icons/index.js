@@ -240,6 +240,7 @@ export { default as ArrowRightMedium } from "./ArrowRightMedium";
 export { default as ArrowToBottomMedium } from "./ArrowToBottomMedium";
 export { default as ArrowTopMedium } from "./ArrowTopMedium";
 export { default as ArrowUpMedium } from "./ArrowUpMedium";
+export { default as ArrowsHMedium } from "./ArrowsHMedium";
 export { default as BandwithMedium } from "./BandwithMedium";
 export { default as BarChartMedium } from "./BarChartMedium";
 export { default as BatteryHalfMedium } from "./BatteryHalfMedium";
