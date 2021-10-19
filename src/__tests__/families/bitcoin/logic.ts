@@ -21,8 +21,6 @@ describe("Test isValidRecipient", () => {
     t("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4", "bitcoin_testnet", false));
   test("Success on valid address", () =>
     t("bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4", "bitcoin", true));
-  test("Success on valid qtum address", () =>
-    t("xCREYTgvdk3XzFNpdXkj35fZX4hJK2Ckpd", "qtum", true));
   test("Fail on invalid qtum address", () =>
     t("xCREYTgvdk3XzFNpdXkj35fZX4hJK2Ckpe", "qtum", false));
   test("Fail on invalid bch address", () =>
