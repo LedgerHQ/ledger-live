@@ -120,6 +120,7 @@ const asResultAccount = (unsafe: Record<string, any>): AccountData => {
     name,
     index,
     balance,
+    hederaResources,
   } = unsafe;
 
   if (typeof id !== "string") {
@@ -162,6 +163,10 @@ const asResultAccount = (unsafe: Record<string, any>): AccountData => {
 
   if (typeof freshAddress === "string" && freshAddress) {
     o.freshAddress = freshAddress;
+  }
+
+  if (typeof hederaResources === "object" && hederaResources) {
+    o.hederaResources = hederaResources;
   }
 
   return o;
