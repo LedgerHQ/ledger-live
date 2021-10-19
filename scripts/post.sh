@@ -15,6 +15,10 @@ rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
 
 rn-nodeify --hack
 
+# issue: https://github.com/WalletConnect/walletconnect-monorepo/issues/595
+# manually shim
+sed -i 's/require("crypto")/require("react-native-crypto")/g' node_modules/@walletconnect/randombytes/dist/cjs/node/index.js
+
 # Create the dev .env file with APP_NAME if it doesn't exist
 if ! [ -f .env ]; then
   echo 'APP_NAME="LL [DEV]"' >.env
