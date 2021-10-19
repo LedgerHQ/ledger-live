@@ -49,6 +49,10 @@ import {
   fromCryptoOrgResourcesRaw,
 } from "../families/crypto_org/serialization";
 import {
+  toHederaResourcesRaw,
+  fromHederaResourcesRaw,
+} from "../families/hedera/serialization";
+import {
   getCryptoCurrencyById,
   getTokenById,
   findTokenById,
@@ -679,7 +683,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     xpub,
     starred,
     used,
-    virtualAddress,
     freshAddress,
     freshAddressPath,
     freshAddresses,
@@ -709,6 +712,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     elrondResources,
     cryptoOrgResources,
     nfts,
+    hederaResources,
   } = rawAccount;
   const subAccounts =
     subAccountsRaw &&
@@ -740,7 +744,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     seedIdentifier,
     derivationMode,
     index,
-    virtualAddress,
     freshAddress,
     freshAddressPath,
     freshAddresses: freshAddresses || [
@@ -830,6 +833,10 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     res.cryptoOrgResources = fromCryptoOrgResourcesRaw(cryptoOrgResources);
   }
 
+  if (hederaResources) {
+    res.hederaResources = fromHederaResourcesRaw(hederaResources);
+  }
+
   return res;
 }
 export function toAccountRaw({
@@ -841,7 +848,6 @@ export function toAccountRaw({
   used,
   derivationMode,
   index,
-  virtualAddress,
   freshAddress,
   freshAddressPath,
   freshAddresses,
@@ -870,6 +876,7 @@ export function toAccountRaw({
   elrondResources,
   cryptoOrgResources,
   nfts,
+  hederaResources,
 }: Account): AccountRaw {
   const res: AccountRaw = {
     id,
@@ -879,7 +886,6 @@ export function toAccountRaw({
     used,
     derivationMode,
     index,
-    virtualAddress,
     freshAddress,
     freshAddressPath,
     freshAddresses,
@@ -939,6 +945,10 @@ export function toAccountRaw({
 
   if (algorandResources) {
     res.algorandResources = toAlgorandResourcesRaw(algorandResources);
+  }
+
+  if (hederaResources) {
+    res.hederaResources = toHederaResourcesRaw(hederaResources);
   }
 
   if (polkadotResources) {

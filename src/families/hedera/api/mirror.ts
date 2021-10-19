@@ -3,8 +3,8 @@ import network from "../../../network";
 import URL from "url";
 import { getAccountBalance } from "./network";
 import { Operation, OperationType } from "../../../types";
-import { serializeSignedTransaction } from "@ledgerhq/live-app-sdk";
 import { encodeOperationId } from "../../../operation";
+import { AccountId } from "@hashgraph/sdk";
 
 const fetch = (path, query = {}) =>
   network({
@@ -16,7 +16,7 @@ const fetch = (path, query = {}) =>
   });
 
 export interface Account {
-  accountId: string;
+  accountId: AccountId;
   balance: BigNumber;
 }
 
@@ -29,7 +29,7 @@ export async function getAccountsForPublicKey(publicKey: string): Promise<Accoun
     let accountBalance = await getAccountBalance(raw.account);
 
     accounts.push({
-      accountId: raw.account,
+      accountId: AccountId.fromString(raw.account),
       balance: accountBalance.balance,
     });
   }
@@ -49,9 +49,9 @@ interface HederaMirrorTransfer {
   amount: number;
 }
 
-export async function getOperationsForAccount(ledgerAccountId: string, address: string, atMost: number): Promise<Operation[]> {
+export async function getOperationsForAccount(ledgerAccountId: string, accountId: AccountId, atMost: number): Promise<Operation[]> {
   let operations: Operation[] = [];
-
+  let address = accountId.toString();
   let r = await fetch("/transactions", { "account.id": address });
   let rawOperations = r.data.transactions as HederaMirrorTransaction[];
 

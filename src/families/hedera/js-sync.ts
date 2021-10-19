@@ -10,7 +10,7 @@ export default function sync(
   return new Observable((o) => {
     void async function () {
       try {
-        let accountBalance = await getAccountBalance(initialAccount.seedIdentifier);
+        let accountBalance = await getAccountBalance(initialAccount.hederaResources!.accountId);
 
         let atMostOperations = syncConfig.paginationConfig.operationsPerAccountId?.[initialAccount.id] 
           ?? syncConfig.paginationConfig.operations 
@@ -18,7 +18,7 @@ export default function sync(
 
         let operations = await getOperationsForAccount(
           initialAccount.id, 
-          initialAccount.seedIdentifier, 
+          initialAccount.hederaResources!.accountId!, 
           atMostOperations
         );
 

@@ -47,7 +47,11 @@ export default function receive(
           );
         }
 
-        o.next({ address: account.seedIdentifier, path: account.freshAddressPath });
+        o.next({ 
+          address: account.hederaResources!.accountId.toString(), 
+          path: account.freshAddressPath,
+        });
+
         o.complete();
       } catch (err) {
         o.error(err);

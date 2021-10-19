@@ -3,6 +3,7 @@ import * as hedera from "@hashgraph/sdk";
 import { Account } from "../../../types";
 import { Transaction } from "../types";
 import { calculateAmount } from "../utils";
+import { AccountId } from "@hashgraph/sdk";
 
 export function broadcastTransaction(transaction: hedera.Transaction): Promise<hedera.TransactionResponse> {
   return transaction.execute(getClient());
@@ -14,10 +15,11 @@ export function buildUnsignedTransaction({ account, transaction }: {
 }): hedera.TransferTransaction {
   let { amount } = calculateAmount({ account, transaction });
   let hbarAmount = hedera.Hbar.fromTinybars(amount);
+  let accountId = account.hederaResources!.accountId;
 
   return new hedera.TransferTransaction()
-    .setTransactionId(hedera.TransactionId.generate(account.seedIdentifier))
-    .addHbarTransfer(account.seedIdentifier, hbarAmount.negated())
+    .setTransactionId(hedera.TransactionId.generate(accountId))
+    .addHbarTransfer(accountId, hbarAmount.negated())
     .addHbarTransfer(transaction.recipient, hbarAmount)
     .freezeWith(getClient());
 }
@@ -26,7 +28,7 @@ export interface AccountBalance {
   balance: BigNumber;
 }
 
-export async function getAccountBalance(accountId: string): Promise<AccountBalance> {
+export async function getAccountBalance(accountId: AccountId): Promise<AccountBalance> {
   let accountBalance = await new hedera.AccountBalanceQuery({ accountId }).execute(getClient());
 
   return {

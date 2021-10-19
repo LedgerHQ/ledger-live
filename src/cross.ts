@@ -9,18 +9,24 @@ import {
 } from "./derivation";
 import { decodeAccountId, emptyHistoryCache } from "./account";
 import { getCryptoCurrencyById } from "./currencies";
+import type { HederaResourcesRaw } from "./families/hedera/types";
+import {
+  toHederaResourcesRaw,
+  fromHederaResourcesRaw,
+} from "./families/hedera/serialization";
 
 export type AccountData = {
   id: string;
   currencyId: string;
   freshAddress?: string;
-  virtualAddress?: string;
   seedIdentifier: string;
   derivationMode: string;
   // we are unsafe at this stage, validation is done later
   name: string;
   index: number;
   balance: string;
+  // chain-specific resources
+  hederaResources?: HederaResourcesRaw;
 };
 
 export type CryptoSettings = {
@@ -268,22 +274,27 @@ export function accountToAccountData({
   seedIdentifier,
   derivationMode,
   freshAddress,
-  virtualAddress,
   currency,
   index,
   balance,
+  hederaResources,
 }: Account): AccountData {
-  return {
+  const res: AccountData = {
     id,
     name,
     seedIdentifier,
     derivationMode,
     freshAddress,
-    virtualAddress,
     currencyId: currency.id,
     index,
     balance: balance.toString(),
   };
+
+  if (hederaResources) {
+    res.hederaResources = toHederaResourcesRaw(hederaResources);
+  }
+
+  return res;
 }
 // reverse the account data to an account.
 // this restore the essential data of an account and the result of the fields
@@ -292,12 +303,12 @@ export const accountDataToAccount = ({
   id,
   currencyId,
   freshAddress: inputFreshAddress,
-  virtualAddress,
   name,
   index,
   balance,
   derivationMode: derivationModeStr,
   seedIdentifier,
+  hederaResources,
 }: AccountData): Account => {
   const { type, xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
 
@@ -348,7 +359,6 @@ export const accountDataToAccount = ({
     used: false,
     currency,
     index,
-    virtualAddress,
     freshAddress,
     freshAddressPath,
     swapHistory: [],
@@ -365,5 +375,10 @@ export const accountDataToAccount = ({
     creationDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
   };
+
+  if (hederaResources) {
+    account.hederaResources = fromHederaResourcesRaw(hederaResources);
+  }
+
   return account;
 };

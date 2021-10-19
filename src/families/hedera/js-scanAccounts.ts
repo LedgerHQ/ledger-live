@@ -74,10 +74,9 @@ export default function scanAccounts({
             type: "discovered", account: {
               type: "Account",
               id: `js:2:${currency.id}:${account.accountId}:${derivationMode}`,
-              seedIdentifier: account.accountId,
+              seedIdentifier: res.publicKey,
               derivationMode,
               index,
-              virtualAddress: account.accountId,
               // NOTE: we send the publicKey through as the "address"
               //       this is the only way to pass several hard-coded "is this the right device" checks
               freshAddress: res.publicKey,
@@ -107,6 +106,9 @@ export default function scanAccounts({
               lastSyncDate: new Date(),
               blockHeight: 10,
               balanceHistoryCache: emptyHistoryCache,
+              hederaResources: {
+                accountId: account.accountId,
+              },
             } as Account
           });
 

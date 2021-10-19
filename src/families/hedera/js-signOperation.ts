@@ -77,7 +77,7 @@ function buildOptimisticOperation({ account, transaction }: {
     fee: estimatedFees,
     blockHash: null,
     blockHeight: null,
-    senders: [account.seedIdentifier],
+    senders: [account.hederaResources!.accountId.toString()],
     recipients: [AccountId.fromString(transaction.recipient).toString()],
     accountId: account.id,
     date: new Date(),

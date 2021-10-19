@@ -32,6 +32,10 @@ import type {
   CryptoOrgResourcesRaw,
 } from "../families/crypto_org/types";
 import type {
+  HederaResources,
+  HederaResourcesRaw,
+} from "../families/hedera/types";
+import type {
   BalanceHistory,
   BalanceHistoryRaw,
   PortfolioRange,
@@ -134,9 +138,6 @@ export type Account = {
   // the iterated number to derive the account in a given derivationMode config
   // in context of bip44, it would be the account field of bip44 ( m/purpose'/cointype'/account' )
   index: number;
-  // a "virtual" address is a non-verified address
-  // setting this triggers the receive flow to show a warning that it can't verify the address
-  virtualAddress?: string;
   // next receive address. to be used to display to user.
   // (deprecated - corresponds to freshAddresses[0].address)
   freshAddress: string;
@@ -214,6 +215,7 @@ export type Account = {
   tezosResources?: TezosResources;
   elrondResources?: ElrondResources;
   cryptoOrgResources?: CryptoOrgResources;
+  hederaResources?: HederaResources;
   // Swap operations linked to this account
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
@@ -273,7 +275,6 @@ export type AccountRaw = {
   xpub?: string;
   derivationMode: DerivationMode;
   index: number;
-  virtualAddress?: string;
   freshAddress: string;
   freshAddressPath: string;
   freshAddresses: Address[];
@@ -304,6 +305,7 @@ export type AccountRaw = {
   elrondResources?: ElrondResourcesRaw;
   tezosResources?: TezosResourcesRaw;
   cryptoOrgResources?: CryptoOrgResourcesRaw;
+  hederaResources?: HederaResourcesRaw;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
   nfts?: NFTRaw[];
