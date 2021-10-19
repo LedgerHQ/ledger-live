@@ -5,12 +5,15 @@ import { getAccountBalance } from "./network";
 import { Operation, OperationType } from "../../../types";
 import { encodeOperationId } from "../../../operation";
 import { AccountId } from "@hashgraph/sdk";
+import { getEnv } from "../../../env";
+
+const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
 const fetch = (path, query = {}) =>
   network({
     type: "get",
     url: URL.format({
-      pathname: `https://mainnet-public.mirrornode.hedera.com/api/v1${path}`,
+      pathname: `${getMirrorApiUrl()}/api/v1${path}`,
       query,
     }),
   });

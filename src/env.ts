@@ -135,6 +135,11 @@ const envDefinitions = {
     def: "https://solana.coin.ledger.com",
     desc: "proxy url for solana API",
   },
+  API_HEDERA_MIRROR: {
+    def: "https://mainnet-public.mirrornode.hedera.com",
+    parser: stringParser,
+    desc: "mirror node API for Hedera",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
