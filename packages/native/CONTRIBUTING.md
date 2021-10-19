@@ -32,7 +32,7 @@ To bypass the hook, add the `--no-verify` option when using git.
 
 - Export your components and make them consumable from the root.
 
-The components should be importable from `@ledgerhq/react-ui`, so do not forget to add export statements
+The components should be importable from `@ledgerhq/native-ui`, so do not forget to add export statements
 in the `src/components/index.ts` file.
 
 - Export required typescript types.
@@ -41,13 +41,9 @@ Types should also be importable (but not from root because of name conflicts!).
 
 - If you are creating a new component you should write a related [storybook](https://https://storybook.js.org/) story.
 
-- Avoid non-standard imports in the code (`.png`, `.svg`…).
-
-The library is agnostic, it does not make any assumptions on the consumer setup and will not force the use of any kind of non-standard bundler.
+We use the [`storiesOf` legacy syntax](https://github.com/storybookjs/storybook/blob/next/lib/core/docs/storiesOf.md) and [knobs](https://storybook.js.org/addons/storybook-addon-knobs-color-options) because the native storybook is behind in terms of releases compared to the regular one.
 
 - Avoid installing new packages unless necessary.
-
-To keep the dependencies short and the size small.
 
 ## Maintenance
 

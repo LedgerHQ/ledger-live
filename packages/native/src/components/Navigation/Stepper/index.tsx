@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { space, SpaceProps, color, ColorProps } from "styled-system";
-import Text from "@components/Text";
-import CheckAlone from "@ui/assets/icons/CheckAloneMedium";
-import CloseMedium from "@ui/assets/icons/CloseMedium";
+import Text from "../../Text";
+import CheckAlone from "../../../assets/icons/CheckAloneMedium";
+import CloseMedium from "../../../assets/icons/CloseMedium";
 import Animated, {
   useAnimatedStyle,
   withTiming,

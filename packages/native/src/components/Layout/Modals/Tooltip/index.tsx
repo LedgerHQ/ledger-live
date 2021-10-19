@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
-
-import { BaseModalProps } from "@components/Layout/Modal/BaseModal";
 import { TouchableOpacity } from "react-native";
-import BottomDrawer from "@components/Layout/Modal/BottomDrawer";
+
+import { BaseModalProps } from "../BaseModal";
+import BottomDrawer from "../BottomDrawer";
 
 export default function Tooltip({
   children,

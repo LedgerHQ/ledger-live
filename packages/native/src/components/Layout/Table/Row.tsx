@@ -1,6 +1,6 @@
 import React from "react";
-import FlexBox, { FlexBoxProps } from "@components/Layout/Flex";
-import IconBox from "@ui/components/Icon/IconBox";
+import FlexBox, { Props as FlexBoxProps } from "../Flex";
+import IconBox from "../../Icon/IconBox";
 
 interface Props extends FlexBoxProps {
   Icon: (props: { size?: number }) => React.ReactElement;

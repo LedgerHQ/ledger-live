@@ -1,7 +1,7 @@
 import React from "react";
 import { storiesOf } from "../../storiesOf";
 import { text } from "@storybook/addon-knobs";
-import Tooltip from "@components/Layout/Modal/Tooltip";
+import Tooltip from "@components/Layout/Modals/Tooltip";
 import Text from "@components/Text";
 import WarningLight from "@ui/assets/icons/WarningLight";
 

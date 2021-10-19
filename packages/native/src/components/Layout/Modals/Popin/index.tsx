@@ -1,11 +1,11 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import styled from "styled-components/native";
 
-import BaseModal, { BaseModalProps } from "@components/Layout/Modal/BaseModal";
-import Text from "@components/Text";
-import IconBox from "@components/Icon/IconBox";
-import Button, { ButtonProps } from "@components/cta/Button";
-import { StyleSheet } from "react-native";
+import BaseModal, { BaseModalProps } from "../BaseModal";
+import Text from "../../../Text";
+import IconBox from "../../../Icon/IconBox";
+import Button, { ButtonProps } from "../../../cta/Button";
 
 const FooterButtonsContainer = styled.View`
   display: flex;

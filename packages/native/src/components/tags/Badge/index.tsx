@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
-import Text from "@components/Text";
+import Text from "../../Text";
 
 type BadgeType = "main" | "primary";
 

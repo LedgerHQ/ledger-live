@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import styled, { useTheme } from "styled-components/native";
-import Text from "@components/Text";
+import { color, border, space, SpaceProps } from "styled-system";
 import {
   ActivityIndicator,
   TouchableOpacity,
@@ -9,9 +9,9 @@ import {
 import {
   buttonSizeStyle,
   getButtonColorStyle,
-} from "@components/cta/Button/getButtonStyle";
-import { color, border, space, SpaceProps } from "styled-system";
-import { ctaIconSize, ctaTextType } from "@components/cta/getCtaStyle";
+} from "../../cta/Button/getButtonStyle";
+import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
+import Text from "../../Text";
 
 export type ButtonProps = TouchableOpacityProps &
   SpaceProps & {

@@ -1,8 +1,8 @@
 import React from "react";
 import { Switch as NativeSwitch } from "react-native";
 import { useTheme } from "styled-components/native";
-import Text from "@components/Text";
-import Flex from "@components/Layout/Flex";
+import Text from "../../Text";
+import Flex from "../../Layout/Flex";
 
 type SwitchProps = {
   checked: boolean;

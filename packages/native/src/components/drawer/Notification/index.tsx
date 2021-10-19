@@ -1,13 +1,13 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import FlexBox from "@components/Layout/Flex";
+import FlexBox from "../../Layout/Flex";
 import {
   TextProps,
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
-import Text from "@components/Text";
-import CloseMedium from "@ui/assets/icons/CloseMedium";
+import Text from "../../Text";
+import CloseMedium from "../../../assets/icons/CloseMedium";
 
 type Props = {
   Icon: React.ComponentType<{ size: number; color?: string }>;

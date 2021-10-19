@@ -1,9 +1,9 @@
 import React from "react";
 import { Pressable } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-import Text from "@components/Text";
-import Flex from "@components/Layout/Flex";
-import CheckAlone from "@assets/icons/CheckAloneMedium";
+import Text from "../../Text";
+import Flex from "../../Layout/Flex";
+import CheckAlone from "../../../assets/icons/CheckAloneMedium";
 
 type CheckboxProps = {
   checked: boolean;

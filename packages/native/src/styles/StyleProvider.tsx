@@ -1,6 +1,5 @@
-import React, { useMemo, ComponentType } from "react";
+import React, { useMemo } from "react";
 import { ThemeProvider } from "styled-components/native";
-import { StyledComponent } from "styled-components";
 import defaultTheme from "./theme";
 import { palettes, ThemeNames } from "@ledgerhq/ui-shared";
 import { Theme } from "./theme";
@@ -10,9 +9,21 @@ type Props = {
   selectedPalette: ThemeNames;
 };
 
-export type ThemedComponent<T> = StyledComponent<ComponentType<T>, Theme, any>;
+declare module "styled-components" {
+  export interface DefaultTheme extends Theme {
+    sizes: {
+      topBarHeight: number;
+      sideBarWidth: number;
+    };
+    radii: number[];
+    fontSizes: number[];
+    space: number[];
+    colors: Record<string, any>;
+    zIndexes: number[];
+  }
+}
 
-const StyleProvider = ({
+export const StyleProvider = ({
   children,
   selectedPalette,
 }: Props): React.ReactElement => {
@@ -29,5 +40,3 @@ const StyleProvider = ({
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };
-
-export default StyleProvider;

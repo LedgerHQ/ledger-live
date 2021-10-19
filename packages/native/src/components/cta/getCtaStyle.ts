@@ -1,4 +1,4 @@
-import { TextTypes } from "@components/Text/getTextStyle";
+import { TextTypes } from "../Text/getTextStyle";
 
 export const ctaTextType: { [index: string]: TextTypes } = {
   small: "paragraph",
