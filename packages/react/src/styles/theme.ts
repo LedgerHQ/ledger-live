@@ -1,5 +1,5 @@
 import { keyframes, css, DefaultTheme } from "styled-components";
-import palettes, { Palette } from "./palettes";
+import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
 
 /* space indexes:
   0, 1, 2, 3, 4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
@@ -185,7 +185,7 @@ export interface Theme extends DefaultTheme {
   space: number[];
   shadows: string[];
   colors: {
-    palette: Palette;
+    palette: ColorPalette;
   };
   animations: Record<string, (props: never) => any>;
   transition: (property?: string) => any;

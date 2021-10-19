@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
 import Text from "../../components/asorted/Text";
 import Flex from "../../components/layout/Flex";
-import type { Palette } from "../../styles/palettes/index";
-import theme from "./light.json";
+import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
 
 export default { title: "Particles" };
 
-const ColorArea = styled.div<{ type: keyof Palette; shade: string }>`
+const ColorArea = styled.div<{ type: keyof ColorPalette; shade: string }>`
   width: 200px;
   aspect-ratio: 1;
   background-color: ${(p) => {
@@ -35,14 +33,18 @@ const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <ColorArea type={type as keyof Palette} shade={shade} onClick={() => onClick(type, shade)} />
+      <ColorArea
+        type={type as keyof ColorPalette}
+        shade={shade}
+        onClick={() => onClick(type, shade)}
+      />
       <Text type="tiny">{isHovered ? value : shade}</Text>
     </Flex>
   );
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const { type: _, ...palette } = theme;
+const { type: _, ...palette } = palettes.light;
 
 export const Colors = (): JSX.Element => (
   <Flex flexDirection="column" rowGap="2rem">
