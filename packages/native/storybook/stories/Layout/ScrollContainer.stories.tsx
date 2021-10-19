@@ -5,7 +5,7 @@ import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
 import { View } from "react-native";
 import { action } from "@storybook/addon-actions";
 
-export const Element = ({ isEven = false }: { isEven?: boolean }) => (
+const Element = ({ isEven = false }: { isEven?: boolean }) => (
   <View
     style={{
       backgroundColor: isEven ? "orange" : "blue",
@@ -20,7 +20,7 @@ export const Element = ({ isEven = false }: { isEven?: boolean }) => (
  ** value once the configuration will be fix to allow using
  ** hooks from our stories
  */
-export const ScrollContainerStory = () => (
+const ScrollContainerStory = () => (
   <ScrollContainer
     contentContainerStyle={{ flex: 1 }}
     horizontal={boolean("Horizontal", false)}

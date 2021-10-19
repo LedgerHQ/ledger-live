@@ -2,7 +2,7 @@ import { storiesOf } from "../../storiesOf";
 import React from "react";
 import SearchInput from "../../../../src/components/Form/Input/SearchInput";
 
-export const SearchInputStory = (): JSX.Element => {
+const SearchInputStory = (): JSX.Element => {
   const [value, setValue] = React.useState("");
 
   const onChange = (value) => setValue(value);

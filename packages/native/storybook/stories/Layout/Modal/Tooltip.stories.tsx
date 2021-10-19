@@ -5,7 +5,7 @@ import Tooltip from "@components/Layout/Modal/Tooltip";
 import Text from "@components/Text";
 import WarningLight from "@ui/assets/icons/WarningLight";
 
-export const TooltipStory = () => {
+const TooltipStory = () => {
   return (
     <Tooltip
       title={text("title", "title")}

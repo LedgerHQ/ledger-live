@@ -6,7 +6,7 @@ import Notification from "@components/drawer/Notification";
 import { action } from "@storybook/addon-actions";
 import FlexBox from "@components/Layout/Flex";
 
-export const NotificationSample = () => (
+const NotificationSample = () => (
   <FlexBox p={20} width={"100%"}>
     <Notification
       Icon={Info}
@@ -21,7 +21,7 @@ export const NotificationSample = () => (
   </FlexBox>
 );
 
-export const NotificationNews = () => (
+const NotificationNews = () => (
   <FlexBox p={20} width={"100%"}>
     <Notification
       Icon={Info}

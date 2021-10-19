@@ -7,7 +7,7 @@ import DevicesMedium from "@ui/assets/icons/DevicesMedium";
 
 import { View } from "react-native";
 
-export const IconSample = () => (
+const IconSample = () => (
   <View>
     <BedMedium color={"blue"} />
     <AppleMedium color={"blue"} />

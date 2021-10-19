@@ -7,7 +7,7 @@ import Input, {
   InputRenderRightContainer,
 } from "@components/Form/Input/BaseInput";
 
-export const BaseInputStory = () => {
+const BaseInputStory = () => {
   const [value, setValue] = useState("");
 
   const onChangeText = (value) => setValue(value);
@@ -23,7 +23,7 @@ export const BaseInputStory = () => {
   );
 };
 
-export const BaseInputRenderSideExempleStory = () => {
+const BaseInputRenderSideExempleStory = () => {
   const [value, setValue] = useState("test@ledger.fr");
   const [disabled, setDisabled] = useState(false);
   const [error, setError] = React.useState(false);

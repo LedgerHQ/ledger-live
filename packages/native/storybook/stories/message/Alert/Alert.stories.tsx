@@ -5,7 +5,7 @@ import { select, boolean } from "@storybook/addon-knobs";
 import Alert from "@components/message/Alert";
 import FlexBox from "@components/Layout/Flex";
 
-export const AlertSample = () => (
+const AlertSample = () => (
   <FlexBox p={20} width={1}>
     <Alert
       type={select("type", ["info", "warning", "error", undefined], undefined)}

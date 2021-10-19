@@ -6,7 +6,7 @@ import { useTheme } from "styled-components/native";
 import Text from "@components/Text";
 import Flex from "@components/Layout/Flex";
 
-export const SpacingStory = () => {
+const SpacingStory = () => {
   const theme = useTheme();
   const [, ...space] = theme.space;
 

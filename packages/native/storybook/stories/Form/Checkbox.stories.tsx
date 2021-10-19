@@ -4,7 +4,7 @@ import { boolean, text } from "@storybook/addon-knobs";
 
 import Checkbox from "@components/Form/Checkbox";
 
-export const CheckboxStory = () => {
+const CheckboxStory = () => {
   const [checked, setChecked] = useState(false);
 
   const handleChange = () => setChecked((prev) => !prev);

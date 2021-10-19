@@ -8,7 +8,7 @@ import Info from "@ui/icons/Info";
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const Regular = (): JSX.Element => (
+const Regular = (): JSX.Element => (
   <Button
     type={select(
       "type",
@@ -26,7 +26,7 @@ export const Regular = (): JSX.Element => (
   </Button>
 );
 
-export const Promisable = (): JSX.Element => (
+const Promisable = (): JSX.Element => (
   <PromisableButton
     type={select("type", ["primary", "secondary", undefined], undefined)}
     iconPosition={select("iconPosition", ["right", "left"], "right")}

@@ -4,7 +4,7 @@ import { boolean, text } from "@storybook/addon-knobs";
 import React, { useState } from "react";
 import Switch from "@components/Form/Switch";
 
-export const SwitchStory = () => {
+const SwitchStory = () => {
   const [checked, setChecked] = useState(false);
 
   const handleChange = () => setChecked((prev) => !prev);

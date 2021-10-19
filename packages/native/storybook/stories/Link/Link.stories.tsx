@@ -7,7 +7,7 @@ import Link from "@components/cta/Link";
 import Info from "@ui/icons/Info";
 import FlexBox from "@ui/components/Layout/Flex";
 
-export const Regular = () => (
+const Regular = () => (
   <FlexBox
     style={{
       padding: 20,

@@ -7,7 +7,7 @@ import Text from "@components/Text";
 import TrashMedium from "@ui/assets/icons/TrashMedium";
 import IconBox from "../../../../src/components/Icon/IconBox";
 
-export const ModalStory = () => {
+const ModalStory = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const openModal = useCallback(() => {

@@ -5,7 +5,7 @@ import { action } from "@storybook/addon-actions";
 import Loader from "@components/Loader";
 import Icon from "@ui/assets/icons/StarSolidMedium";
 
-export const LoaderSample = () => (
+const LoaderSample = () => (
   <Loader
     progress={number("progress", 0.2)}
     onPress={action("onPress")}

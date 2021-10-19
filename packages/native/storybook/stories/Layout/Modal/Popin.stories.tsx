@@ -6,7 +6,7 @@ import Popin from "@components/Layout/Modal/Popin";
 import Text from "@components/Text";
 import TrashMedium from "@ui/assets/icons/TrashMedium";
 
-export const PopinStory = () => {
+const PopinStory = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const openModal = useCallback(() => {

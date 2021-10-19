@@ -4,7 +4,7 @@ import { select, text, number } from "@storybook/addon-knobs";
 import Flex from "@components/Layout/Flex";
 import Text from "@components/Text";
 
-export const FlexStory = () => {
+const FlexStory = () => {
   const alignItems = select(
     "Align items",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],

@@ -7,7 +7,7 @@ import Text from "@components/Text";
 import Button from "@components/cta/Button";
 import TrashMedium from "@ui/assets/icons/TrashMedium";
 
-export const BottomDrawerStory = () => {
+const BottomDrawerStory = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const openModal = useCallback(() => {
