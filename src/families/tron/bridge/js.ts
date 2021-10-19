@@ -41,6 +41,7 @@ import {
   getMainAccount,
   encodeTokenAccountId,
   emptyHistoryCache,
+  encodeAccountId,
 } from "../../../account";
 import { getOperationsPageSize } from "../../../pagination";
 import {
@@ -85,6 +86,7 @@ import {
 } from "../../../api/Tron";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import type { GetAccountShapeArg0 } from "../../../bridge/jsHelpers";
 
 const receive = makeAccountBridgeReceive();
 
@@ -303,14 +305,23 @@ const broadcast = async ({
   return operation;
 };
 
-const getAccountShape = async (info, syncConfig) => {
+const getAccountShape = async (info: GetAccountShapeArg0, syncConfig) => {
   const blockHeight = await fetchCurrentBlockHeight();
   const tronAcc = await fetchTronAccount(info.address);
+
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: info.currency.id,
+    xpubOrAddress: info.address,
+    derivationMode: info.derivationMode,
+  });
 
   if (tronAcc.length === 0) {
     const defaultTronResources = await getTronResources();
 
     return {
+      id: accountId,
       blockHeight,
       balance: new BigNumber(0),
       tronResources: defaultTronResources,
@@ -368,7 +379,7 @@ const getAccountShape = async (info, syncConfig) => {
     );
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: Operation[] = compact(
-    parentTxs.map((tx) => txInfoToOperation(info.id, info.address, tx))
+    parentTxs.map((tx) => txInfoToOperation(accountId, info.address, tx))
   );
   const trc10Tokens = get(acc, "assetV2", []).map(({ key, value }) => ({
     type: "trc10",
@@ -392,7 +403,7 @@ const getAccountShape = async (info, syncConfig) => {
       const tokenId = `tron/${type}/${key}`;
       const token = findTokenById(tokenId);
       if (!token || blacklistedTokenIds.includes(tokenId)) return;
-      const id = encodeTokenAccountId(info.id, token);
+      const id = encodeTokenAccountId(accountId, token);
       const tokenTxs = txs.filter((tx) => tx.tokenId === key);
       const operations = compact(
         tokenTxs.map((tx) => txInfoToOperation(id, info.address, tx))
@@ -406,7 +417,7 @@ const getAccountShape = async (info, syncConfig) => {
         type: "TokenAccount",
         id,
         starred: false,
-        parentId: info.id,
+        parentId: accountId,
         token,
         balance,
         spendableBalance: balance,
@@ -434,9 +445,9 @@ const getAccountShape = async (info, syncConfig) => {
     .filter((o) => o.type === "OUT" && o.fee.isGreaterThan(0))
     .map((o) => ({
       ...o,
-      accountId: info.id,
+      accountId,
       value: o.fee,
-      id: `${info.id}-${o.hash}-OUT`,
+      id: `${accountId}-${o.hash}-OUT`,
     }));
   // add them to the parent operations and sort by date desc
   const parentOpsAndSubOutOpsWithFee = parentOperations
@@ -444,6 +455,7 @@ const getAccountShape = async (info, syncConfig) => {
     .sort((a, b) => b.date.valueOf() - a.date.valueOf());
 
   return {
+    id: accountId,
     balance,
     spendableBalance,
     operationsCount: parentOpsAndSubOutOpsWithFee.length,
