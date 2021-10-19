@@ -1,7 +1,6 @@
-import { storiesOf } from "@storybook/react-native";
-import { boolean, number, withKnobs } from "@storybook/addon-knobs";
 import React, { useState } from "react";
-import CenterView from "../../CenterView";
+import { storiesOf } from "../../storiesOf";
+import { boolean, number } from "@storybook/addon-knobs";
 import Slider from "@components/Form/Slider";
 import FlexBox from "@components/Layout/Flex";
 
@@ -24,7 +23,6 @@ const SliderStory = () => {
   );
 };
 
-storiesOf("Form", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Slider", () => <SliderStory />);
+storiesOf((story) =>
+  story("Form", module).add("Slider", () => <SliderStory />)
+);
