@@ -15,8 +15,9 @@ export interface FlexBoxProps extends SpacingProps {
     | "flex-start"
     | "flex-end"
     | "center"
-    | "baseline"
-    | "stretch";
+    | "space-between"
+    | "space-around"
+    | "space-evenly";
   children?: React.ReactNode;
   style?: Record<string, unknown>;
 }

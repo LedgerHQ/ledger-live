@@ -23,4 +23,5 @@ import "./Tag/Badge.stories";
 import "./message/Alert/Alert.stories";
 import "./Particles/Spacing.stories";
 import "./Form/Checkbox.stories";
+import "./Layout/Table.stories";
 import "./Form/Slider/Slider.stories";
