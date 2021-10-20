@@ -13,7 +13,11 @@ export type TextTypes =
 
 export type FontWeightTypes = "medium" | "semibold" | "bold";
 
-export function getTextTypeStyle({ bracket }: { bracket?: boolean }): {
+export function getTextTypeStyle({
+  bracket,
+}: {
+  bracket?: boolean;
+}): {
   [index: string]: {
     fontFamily: string;
     fontSize: number;
