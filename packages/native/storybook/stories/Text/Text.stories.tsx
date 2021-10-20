@@ -16,16 +16,20 @@ storiesOf("Text", module)
           "h1",
           "h2",
           "h3",
-          "highlight",
+          "large",
           "emphasis",
           "body",
-          "cta",
           "link",
           "subTitle",
           "small",
           "tag",
         ],
         "h1"
+      )}
+      fontWeight={select(
+        "fontWeight",
+        ["medium", "semibold", "bold"],
+        "medium"
       )}
       color={select(
         "color",
