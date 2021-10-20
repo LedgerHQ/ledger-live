@@ -121,6 +121,8 @@ npx react-native link
 
 ## Minimal Working Example
 
+[🌍 Hosted here.](https://snack.expo.dev/PG3RFRIAP)
+
 ### Expo
 
 ```js
