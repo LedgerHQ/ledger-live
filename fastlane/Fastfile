@@ -162,6 +162,8 @@ platform :ios do
       xcode_log_path = '~/Library/Logs/gym/ledgerlivemobile-ledgerlivemobile.log'
       p "Xcode build failed. Here's the logs from #{xcode_log_path}"
       sh "cat #{xcode_log_path}"
+
+      raise 'Xcode build failed.'
     end
   end
 
