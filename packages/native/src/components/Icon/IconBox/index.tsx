@@ -4,11 +4,20 @@ import styled, { useTheme } from "styled-components/native";
 type Props = {
   Icon: (props: { size?: number; color?: string }) => React.ReactElement;
   color?: string;
+  boxSize?: number;
+  iconSize?: number;
 };
 
+type IconContainerProps = {
+  size?: number;
+};
+
+const DEFAULT_BOX_SIZE = 56;
+const DEFAULT_ICON_SIZE = 24;
+
 const IconContainer = styled.View`
-  width: 56px;
-  height: 56px;
+  width: ${(p: IconContainerProps) => (p.size ? p.size : DEFAULT_BOX_SIZE)}px;
+  height: ${(p: IconContainerProps) => (p.size ? p.size : DEFAULT_BOX_SIZE)}px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,11 +26,16 @@ const IconContainer = styled.View`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
-export default function IconBox({ Icon, color }: Props): React.ReactElement {
+export default function IconBox({
+  Icon,
+  color,
+  boxSize = DEFAULT_BOX_SIZE,
+  iconSize = DEFAULT_ICON_SIZE,
+}: Props): React.ReactElement {
   const { colors } = useTheme();
   return (
-    <IconContainer>
-      <Icon size={24} color={color || colors.palette.neutral.c100} />
+    <IconContainer size={boxSize}>
+      <Icon size={iconSize} color={color || colors.palette.neutral.c100} />
     </IconContainer>
   );
 }

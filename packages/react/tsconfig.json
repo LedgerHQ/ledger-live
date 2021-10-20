@@ -16,7 +16,6 @@
     "rootDir": "./src",
     "outDir": "./lib"
   },
-  "files": ["src/styles/palettes/light.json", "src/styles/palettes/dark.json"],
   "include": ["src/**/*"],
   "exclude": [
     "node_modules",

@@ -2255,6 +2255,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@ledgerhq/ui-shared@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/ui-shared/-/ui-shared-0.1.1.tgz#1abef15219adf8edc525dd7d169b93f3c22e01e7"
+  integrity sha512-ZQf4LDy5mNI55Y6XBa/K1C/n4zhb+z6sb12Tu8t5JFQG94rOqPPHtuVt4C2Yq7ft7U8dIlU4qIUhjlhSxF6H3A==
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -15720,6 +15725,11 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
+
+rn-range-slider@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/rn-range-slider/-/rn-range-slider-2.1.1.tgz#c469138a3d51a4c79ab53b56d7ba5801e02372b4"
+  integrity sha512-tDfH8G4e/k+waGMMd+HaYTlpOqyh1dd3aWdDmqKo0WGh1BfHB+NXy0X2REyr1ZJDvsrq7WEeFZ+PBTdD6cisbw==
 
 router-ips@^1.0.0:
   version "1.0.0"

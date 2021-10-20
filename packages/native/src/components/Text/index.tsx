@@ -3,23 +3,16 @@ import styled, { useTheme } from "styled-components/native";
 
 import {
   fontSize,
-  fontWeight,
   textAlign,
   color,
   space,
   lineHeight,
-  letterSpacing,
   border,
 } from "styled-system";
 import BracketRight from "@ui/icons/BracketLeft";
 import BracketLeft from "@ui/icons/BracketRight";
 import { getColor } from "@ui/styles";
-import {
-  FontWeightTypes,
-  getFontWeightStyle,
-  getTextStyle,
-  TextTypes,
-} from "./getTextStyle";
+import { FontWeightTypes, getTextStyle, TextTypes } from "./getTextStyle";
 import { TextProps } from "react-native";
 
 type Props = {
@@ -43,12 +36,9 @@ const Base = styled.Text<Props>`
   ${fontSize};
   ${textAlign};
   ${color};
-  ${fontWeight};
   ${space};
-  ${letterSpacing};
   ${border};
   ${(p) => getTextStyle(p)}
-  ${(p) => getFontWeightStyle(p)}
   justify-content: center;
   align-items: center;
 `;

@@ -1,6 +1,6 @@
 // import original module declarations
 import "styled-components";
-import type { Palette } from "./palettes";
+import type { ColorPalette } from "@ledgerhq/ui-shared";
 // and extend them!
 declare module "styled-components" {
   export interface DefaultTheme {
@@ -34,7 +34,7 @@ declare module "styled-components" {
     space: number[];
     shadows: string[];
     colors: {
-      palette: Palette;
+      palette: ColorPalette;
     };
     animations: Record<string, (props: never) => any>;
     transition: (property?: string) => any;

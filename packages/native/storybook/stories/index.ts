@@ -8,6 +8,7 @@ import "./Layout/ScrollContainer.stories";
 import "./Layout/Flex.stories";
 import "./Layout/Notification.stories";
 import "./Navigation/SlideIndicator/SlideIndicator.stories";
+import "./Navigation/Stepper/Stepper.stories";
 import "./Icon/IconBox.stories";
 import "./Icon/AssetsIcons.stories";
 import "./Loader/Loader.stories";
@@ -21,4 +22,6 @@ import "./Form/Switch.stories";
 import "./Tag/Badge.stories";
 import "./message/Alert/Alert.stories";
 import "./Particles/Spacing.stories";
-import "./Form/Checkbox.stories"
+import "./Form/Checkbox.stories";
+import "./Layout/Table.stories";
+import "./Form/Slider/Slider.stories";

@@ -1,6 +1,6 @@
 export const space = [0, 2, 4, 8, 12, 14, 16, 24, 32, 40, 48, 64, 80, 96, 120];
 export const fontSizes = [8, 9, 10, 12, 13, 16, 18, 22, 32];
-export const radii = [0, 4];
+export const radii = [0, 4, 8];
 export const zIndexes = [-1, 0, 1, 9, 10, 90, 100, 900, 1000];
 
 // @Rebrand remove this

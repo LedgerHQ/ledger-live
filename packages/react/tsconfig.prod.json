@@ -2,7 +2,8 @@
   "compilerOptions": {
     "composite": false,
     "incremental": false,
-    "declaration": true
+    "declaration": true,
+    "target": "ES6"
   },
   "extends": "./tsconfig.json",
   "exclude": [

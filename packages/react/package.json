@@ -2,7 +2,7 @@
   "name": "@ledgerhq/react-ui",
   "private": true,
   "description": "Ledger Live - Desktop UI",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
@@ -28,9 +28,10 @@
     "posticons:generate": "eslint src/assets/icons --ext .js,.jsx,.ts,.tsx --fix --quiet",
     "prepare": "cd ../.. && yarn",
     "prerelease": "node scripts/prepareRelease.js",
-    "release": "npm run prerelease && cd lib && npm publish"
+    "release": "yarn publish ./lib --access public"
   },
   "dependencies": {
+    "@ledgerhq/ui-shared": "^0.1.1",
     "@tippyjs/react": "^4.2.5",
     "chart.js": "^3.5.1",
     "chartjs-adapter-moment": "^1.0.0",
