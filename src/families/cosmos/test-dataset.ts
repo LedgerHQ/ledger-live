@@ -1,5 +1,5 @@
 import { BigNumber } from "bignumber.js";
-import type { DatasetTest } from "../../types";
+import type { CurrenciesData, DatasetTest } from "../../types";
 import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
@@ -11,7 +11,7 @@ import invariant from "invariant";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
 // eslint-disable-next-line no-unused-vars
-const cosmos = {
+const cosmos: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
     "cosmosResources.unbondingBalance", // They move once all unbonding are done
     "cosmosResources.pendingRewardsBalance", // They are always movings
@@ -60,11 +60,6 @@ const cosmos = {
         spendableBalance: "2180673",
         blockHeight: 1615299,
         currencyId: "cosmos",
-        unit: {
-          name: "Muon",
-          code: "MUON",
-          magnitude: 6,
-        },
         unitMagnitude: 6,
         operationsCount: 85,
         operations: [],
@@ -117,7 +112,8 @@ const cosmos = {
           }),
           expectedStatus: (account) => {
             const { cosmosResources } = account;
-            invariant(cosmosResources, "Should exist because it's cosmos");
+            if (!cosmosResources)
+              throw new Error("Should exist because it's cosmos");
             const totalSpent = account.balance.minus(
               cosmosResources.unbondingBalance.plus(
                 cosmosResources.delegatedBalance
@@ -147,7 +143,8 @@ const cosmos = {
           }),
           expectedStatus: (account, t) => {
             const { cosmosResources } = account;
-            invariant(cosmosResources, "Should exist because it's cosmos");
+            if (!cosmosResources)
+              throw new Error("Should exist because it's cosmos");
             invariant(t.memo === "test", "Should have a memo");
             const totalSpent = account.balance.minus(
               cosmosResources.unbondingBalance.plus(
@@ -442,7 +439,6 @@ const cosmos = {
         lastSyncDate: "2020-06-11T07:44:10.266Z",
         balance: "1000000",
         spendableBalance: "0",
-        balanceHistory: {},
         xpub: "cosmospub1addwnpepqd3nvwwx39pqqvw88sg409675u6wyt4wtzqyt2t0e9y4629t50cdzftxnvz",
         cosmosResources: {
           delegations: [],
@@ -457,12 +453,10 @@ const cosmos = {
     },
   ],
 };
-const currencies = {
-  cosmos,
-};
 const dataset: DatasetTest<Transaction> = {
   implementations: ["libcore"],
-  // FIXEM: bad any
-  currencies: currencies as any,
+  currencies: {
+    // cosmos, // LL-7872
+  },
 };
 export default dataset;
