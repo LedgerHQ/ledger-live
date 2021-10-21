@@ -1,20 +1,19 @@
 import { View } from "react-native";
-import { storiesOf } from "@storybook/react-native";
+import { storiesOf } from "../storiesOf";
 import { useTheme } from "styled-components/native";
-import { radios, text, withKnobs, boolean } from "@storybook/addon-knobs";
+import { radios, text, boolean } from "@storybook/addon-knobs";
 import React from "react";
-import FlexBox from "@components/Layout/Flex";
-import Row from "@components/Layout/Table/Row";
-import Text from "@components/Text";
-import CenterView from "../CenterView";
-import CircledCheck from "@assets/icons/CircledCheckRegular";
+import FlexBox from "../../../src/components/Layout/Flex";
+import Row from "../../../src/components/Layout/Table/Row";
+import Text from "../../../src/components/Text";
+import CircledCheck from "../../../src/assets/icons/CircledCheckRegular";
 
-const Icon = ({ size }) => (
+const Icon = (props: { size?: number }): React.ReactElement => (
   <View
     style={{
-      height: size,
-      width: size,
-      borderRadius: size,
+      height: props.size,
+      width: props.size,
+      borderRadius: props.size,
       backgroundColor: "orange",
     }}
   />
@@ -38,7 +37,7 @@ const TopLeft = () => {
 const BottomLeft = () => {
   const { colors } = useTheme();
   return (
-    <Text type="navigation" color={colors.palette.neutral.c70}>
+    <Text type="body" color={colors.palette.neutral.c70}>
       {text("bottomLeftText", "Native Segwit", "content")}
     </Text>
   );
@@ -86,11 +85,10 @@ const ARow = () => {
   );
 };
 
-storiesOf("Layout", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Table/Row", () => (
+storiesOf((story) =>
+  story("Layout", module).add("Table/Row", () => (
     <FlexBox flexDirection="column" width={"100%"}>
       <ARow />
     </FlexBox>
-  ));
+  ))
+);

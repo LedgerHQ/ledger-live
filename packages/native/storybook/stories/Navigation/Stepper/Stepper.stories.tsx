@@ -1,13 +1,10 @@
-import { storiesOf } from "@storybook/react-native";
-import { withKnobs, number, array, boolean } from "@storybook/addon-knobs";
+import { storiesOf } from "../../storiesOf";
+import { number, array, boolean } from "@storybook/addon-knobs";
 import React from "react";
-import Stepper from "@components/Navigation/Stepper";
-import CenterView from "../../CenterView";
+import Stepper from "../../../../src/components/Navigation/Stepper";
 
-storiesOf("Navigation", module)
-  .addDecorator(withKnobs)
-  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
-  .add("Stepper", () => (
+storiesOf((story) =>
+  story("Navigation", module).add("Stepper", () => (
     <Stepper
       steps={array("steps", [
         "First step",
@@ -18,4 +15,5 @@ storiesOf("Navigation", module)
       activeIndex={number("activeIndex", 0, { min: 0, max: 6 })}
       errored={boolean("errored", false)}
     />
-  ));
+  ))
+);

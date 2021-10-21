@@ -105,9 +105,7 @@ export default function BaseModal({
       {...rest}
       {...backDropProps}
       isVisible={isOpen}
-      // @ts-expect-error  issue in typing in react-native-modal
       deviceWidth={width}
-      // @ts-expect-error issue in typing in react-native-modal
       deviceHeight={height}
       useNativeDriver
       useNativeDriverForBackdrop

@@ -6,8 +6,8 @@ import {
   textAlign,
   color,
   space,
-  lineHeight,
   border,
+  lineHeight,
 } from "styled-system";
 import BracketRight from "@ui/icons/BracketLeft";
 import BracketLeft from "@ui/icons/BracketRight";
@@ -31,14 +31,16 @@ type Props = {
   children: React.ReactNode;
 } & TextProps;
 
-const Base = styled.Text<Props>`
+const Base = styled.Text.attrs((p: Props) => ({
+  ...getTextStyle(p),
+  color: p.color || "palette.neutral.c100",
+}))<Props>`
   ${lineHeight};
   ${fontSize};
   ${textAlign};
   ${color};
   ${space};
   ${border};
-  ${(p) => getTextStyle(p)}
   justify-content: center;
   align-items: center;
 `;

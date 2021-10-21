@@ -11,6 +11,10 @@ export function getButtonColors(
   };
 } {
   return {
+    default: {
+      primaryColor: colors.palette.neutral.c100,
+      secondaryColor: "rgba(0,0,0,0)",
+    },
     disabled: {
       primaryColor: colors.palette.neutral.c50,
       secondaryColor: colors.palette.neutral.c30,

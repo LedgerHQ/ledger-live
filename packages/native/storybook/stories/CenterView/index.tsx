@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components/native";
 import PropTypes from "prop-types";
-import StyleProvider from "@ui/styles/StyleProvider";
-import FontProvider from "@ui/providers/FontProvider";
+import StyleProvider from "../../../src/styles/StyleProvider";
+import FontProvider from "../../../src/providers/FontProvider";
 
 const Main = styled.View`
   flex: 1;

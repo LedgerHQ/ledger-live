@@ -10,19 +10,20 @@ import {
   buttonSizeStyle,
   getButtonColorStyle,
 } from "@components/cta/Button/getButtonStyle";
-import { color, border } from "styled-system";
+import { color, border, space, SpaceProps } from "styled-system";
 import { ctaIconSize, ctaTextType } from "@components/cta/getCtaStyle";
 
-export type ButtonProps = TouchableOpacityProps & {
-  Icon?: React.ComponentType<{ size: number; color: string }>;
-  type?: "main" | "shade" | "error" | "color";
-  size?: "small" | "medium" | "large";
-  iconPosition?: "right" | "left";
-  outline?: boolean;
-  disabled?: boolean;
-  pressed?: boolean;
-  children?: React.ReactNode;
-};
+export type ButtonProps = TouchableOpacityProps &
+  SpaceProps & {
+    Icon?: React.ComponentType<{ size: number; color: string }>;
+    type?: "main" | "shade" | "error" | "color" | "default";
+    size?: "small" | "medium" | "large";
+    iconPosition?: "right" | "left";
+    outline?: boolean;
+    disabled?: boolean;
+    pressed?: boolean;
+    children?: React.ReactNode;
+  };
 
 const IconContainer = styled.View<{
   iconPosition: "right" | "left";
@@ -45,6 +46,7 @@ export const Base = styled(TouchableOpacity).attrs<ButtonProps>((p) => ({
 >`
   ${color};
   ${border};
+  ${space};
   border-radius: ${(p) => p.theme.space[10]}px;
   height: ${(p) => p.theme.space[10]}px;
   padding: 0 ${(p) => p.theme.space[7]}px;
@@ -125,7 +127,7 @@ const ButtonContainer = (
 };
 
 const Button = (props: ButtonProps): React.ReactElement => {
-  const { Icon, children, type = "main", size = "medium" } = props;
+  const { Icon, children, type = "default", size = "medium" } = props;
   return (
     <Base
       {...props}

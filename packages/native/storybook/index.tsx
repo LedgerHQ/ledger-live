@@ -21,8 +21,8 @@ const ledgerTheme = {
 // enables knobs for all stories
 addDecorator(withKnobs);
 addDecorator((Story) => (
-  <CenterView waitFonts>
-    <Story />
+  <CenterView>
+    <Story/>
   </CenterView>
 ));
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { margin, padding } from "styled-system";
+import { space, SpaceProps } from "styled-system";
 import styled from "styled-components/native";
 import Animated from "react-native-reanimated";
 import type {
@@ -9,22 +9,23 @@ import type {
 } from "react-native";
 
 const ScrollView = styled(Animated.ScrollView)`
-  ${margin};
-  ${padding};
+  ${space};
 `;
 
-type ScrollContainerProps = ScrollViewProps & {
-  children: React.ReactNode;
-  onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
-  horizontal?: boolean;
-};
+type ScrollContainerProps = ScrollViewProps &
+  SpaceProps & {
+    children: React.ReactNode;
+    onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
+    horizontal?: boolean;
+  };
 
 const ScrollContainer = ({
   children,
   onScroll,
   horizontal = false,
+  ...props
 }: ScrollContainerProps): JSX.Element => (
-  <ScrollView onScroll={onScroll} horizontal={horizontal}>
+  <ScrollView {...props} onScroll={onScroll} horizontal={horizontal}>
     {children}
   </ScrollView>
 );
