@@ -125,8 +125,10 @@ export function testBridge<T extends Transaction>(
     const bridge = getCurrencyBridge(currency);
 
     const scanAccounts = async (apdus) => {
-      const deviceId = await mockDeviceWithAPDUs(apdus);
-
+      const deviceId = await mockDeviceWithAPDUs(
+        apdus,
+        currencyData.mockDeviceOptions
+      );
       try {
         const accounts = await bridge
           .scanAccounts({
@@ -141,6 +143,9 @@ export function testBridge<T extends Transaction>(
           )
           .toPromise();
         return implicitMigration(accounts);
+      } catch (e: any) {
+        console.error(e.message);
+        throw e;
       } finally {
         releaseMockDevice(deviceId);
       }

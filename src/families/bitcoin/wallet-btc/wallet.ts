@@ -5,7 +5,6 @@ import BigNumber from "bignumber.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { BufferWriter } from "bitcoinjs-lib/src/bufferutils";
-import * as bitcoin from "bitcoinjs-lib";
 
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
@@ -52,54 +51,8 @@ class BitcoinLikeWallet {
     return this.explorerInstances[id];
   }
 
-  async generateXpub(
-    btc: Btc,
-    currency: Currency,
-    path: string,
-    index: number
-  ): Promise<string> {
-    const parentDerivation = await btc.getWalletPublicKey(`${path}`);
-    const accountDerivation = await btc.getWalletPublicKey(`${path}/${index}'`);
-
-    // parent
-    const publicKeyParentCompressed = utils.compressPublicKey(
-      parentDerivation.publicKey
-    );
-    const publicKeyParentCompressedHex = utils.parseHexString(
-      publicKeyParentCompressed
-    );
-    let result = bitcoin.crypto.sha256(
-      Buffer.from(publicKeyParentCompressedHex)
-    );
-    result = bitcoin.crypto.ripemd160(result);
-    // eslint-disable-next-line no-bitwise
-    const fingerprint =
-      ((result[0] << 24) | (result[1] << 16) | (result[2] << 8) | result[3]) >>>
-      0;
-
-    // account
-    const publicKeyAccountCompressed = utils.compressPublicKey(
-      accountDerivation.publicKey
-    );
-    // eslint-disable-next-line no-bitwise
-    const childnum = (0x80000000 | index) >>> 0;
-
-    const { network } = cryptoFactory(currency);
-    const xpubRaw = utils.createXPUB(
-      3,
-      fingerprint,
-      childnum,
-      accountDerivation.chainCode,
-      publicKeyAccountCompressed,
-      network.bip32.public
-    );
-
-    return utils.encodeBase58Check(xpubRaw);
-  }
-
   async generateAccount(params: {
-    xpub?: string;
-    btc?: Btc;
+    xpub: string;
     path: string;
     index: number;
     currency: Currency;
@@ -113,28 +66,6 @@ class BitcoinLikeWallet {
   }): Promise<Account> {
     const crypto = cryptoFactory(params.currency);
 
-    let { xpub } = params;
-
-    if (!xpub) {
-      // Xpub not provided, generate it using the hwapp
-
-      if (!params.btc) {
-        // hwapp not provided
-        throw new Error("generateAccount need either a hwapp or xpub");
-      }
-
-      xpub = await this.generateXpub(
-        params.btc,
-        params.currency,
-        params.path,
-        params.index
-      );
-    }
-
-    if (!xpub) {
-      throw new Error("Error while generating the xpub");
-    }
-
     const storage = this.accountStorages[params.storage](
       ...params.storageParams
     );
@@ -145,7 +76,7 @@ class BitcoinLikeWallet {
         storage,
         explorer,
         crypto,
-        xpub,
+        xpub: params.xpub,
         derivationMode: params.derivationMode,
       }),
     };
@@ -202,6 +133,7 @@ class BitcoinLikeWallet {
       )
     );
     let balance = new BigNumber(0);
+    log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     utxos.forEach((utxo) => {
       if (
         !excludeUTXOs.find(
@@ -224,6 +156,8 @@ class BitcoinLikeWallet {
         account.xpub.crypto,
         account.xpub.derivationMode
       );
+    log("btcwallet", "estimateAccountMaxSpendable balance", balance);
+    log("btcwallet", "estimateAccountMaxSpendable fees", fees);
     const maxSpendable = balance.minus(fees);
     return maxSpendable.lt(0) ? new BigNumber(0) : maxSpendable;
   }
@@ -251,7 +185,7 @@ class BitcoinLikeWallet {
     amount: BigNumber;
     feePerByte: number;
     utxoPickingStrategy: PickingStrategy;
-    sequence?: number;
+    sequence: number;
   }): Promise<TransactionInfo> {
     const changeAddress = await params.fromAccount.xpub.getNewAddress(1, 1);
     const txInfo = await params.fromAccount.xpub.buildTx({
@@ -287,11 +221,7 @@ class BitcoinLikeWallet {
       btc,
       fromAccount,
       txInfo,
-      lockTime,
-      sigHashType,
-      segwit,
       additionals,
-      expiryHeight,
       onDeviceSignatureRequested,
       onDeviceSignatureGranted,
       onDeviceStreaming,
@@ -327,17 +257,22 @@ class BitcoinLikeWallet {
       null,
     ]);
 
+    const lastOutputIndex = txInfo.outputs.length - 1;
+
     log("hw", `createPaymentTransactionNew`, {
+      inputs,
       associatedKeysets,
       outputScriptHex,
-      lockTime,
-      sigHashType,
-      segwit,
+      ...(params.lockTime && { lockTime: params.lockTime }),
+      ...(params.sigHashType && { sigHashType: params.sigHashType }),
+      ...(params.segwit && { segwit: params.segwit }),
+      // initialTimestamp,
+      ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
+      ...(txInfo.outputs[lastOutputIndex]?.isChange && {
+        changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
+      }),
       additionals: additionals || [],
-      expiryHeight: expiryHeight && expiryHeight.toString("hex"),
     });
-
-    const lastOutputIndex = txInfo.outputs.length - 1;
 
     const tx = await btc.createPaymentTransactionNew({
       inputs,

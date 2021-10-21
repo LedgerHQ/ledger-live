@@ -128,6 +128,7 @@ type ExpectFn = (...args: Array<any>) => any;
 export type CurrenciesData<T extends Transaction> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
+  mockDeviceOptions?: any;
   scanAccounts?: Array<{
     name: string;
     apdus: string;

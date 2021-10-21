@@ -5,6 +5,7 @@ import { Output } from "../storage/types";
 import Xpub from "../xpub";
 import { PickingStrategy } from "./types";
 import * as utils from "../utils";
+import { log } from "@ledgerhq/logs";
 
 export class Merge extends PickingStrategy {
   // eslint-disable-next-line class-methods-use-this
@@ -17,6 +18,7 @@ export class Merge extends PickingStrategy {
     // get the utxos to use as input
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();
+    log("picking strategy", "Merge");
 
     let unspentUtxos = flatten(
       await Promise.all(

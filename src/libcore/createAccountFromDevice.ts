@@ -1,9 +1,8 @@
 import { log } from "@ledgerhq/logs";
-import Transport from "@ledgerhq/hw-transport";
 import type { Core, CoreWallet, CoreAccount } from "./types";
 import type { CryptoCurrency } from "../types";
 import type { DerivationMode } from "../derivation";
-import getAddress from "../hw/getAddress";
+import { GetAddressOptions, Result } from "../hw/getAddress/types";
 
 // In order to not re-query the same path, we use a temporary cache
 export class DerivationsCache {
@@ -19,22 +18,22 @@ export class DerivationsCache {
 type F = (arg0: {
   core: Core;
   wallet: CoreWallet;
-  transport: Transport;
   currency: CryptoCurrency;
   index: number;
   derivationMode: DerivationMode;
   isUnsubscribed: () => boolean;
   derivationsCache: DerivationsCache;
+  getAddress: (opts: GetAddressOptions) => Promise<Result>;
 }) => Promise<CoreAccount | null | undefined>;
 
 export const createAccountFromDevice: F = async ({
   core,
   wallet,
-  transport,
   currency,
   derivationMode,
   isUnsubscribed,
   derivationsCache,
+  getAddress,
 }) => {
   log(
     "libcore",
@@ -66,7 +65,7 @@ export const createAccountFromDevice: F = async ({
         let cache = derivationsCache.store[derivation];
 
         if (!cache) {
-          cache = await getAddress(transport, {
+          cache = await getAddress({
             currency,
             path: derivation,
             derivationMode,

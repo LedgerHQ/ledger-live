@@ -27,6 +27,9 @@ import { isChangeOutput, perCoinLogic } from "../transaction";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import { requiresSatStackReady } from "../satstack";
 import * as explorerConfigAPI from "../../../api/explorerConfig";
+import Btc from "@ledgerhq/hw-app-btc/lib/BtcOld"; // use old implementation of Btc for libcore
+import { getAddressWithBtcInstance } from "../hw-getAddress";
+
 const receive = makeAccountBridgeReceive({
   injectGetAddressParams: (account) => {
     const perCoin = perCoinLogic[account.currency.id];
@@ -260,7 +263,14 @@ const hydrate = (maybeConfig: any) => {
 };
 
 const currencyBridge: CurrencyBridge = {
-  scanAccounts,
+  scanAccounts: (arg) =>
+    scanAccounts({
+      ...arg,
+      getAddressFn: (transport) => {
+        const btc = new Btc(transport);
+        return (opts) => getAddressWithBtcInstance(transport, btc, opts);
+      },
+    }),
   preload,
   hydrate,
 };

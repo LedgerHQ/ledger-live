@@ -6,7 +6,7 @@ import { toOutputScript } from "bitcoinjs-lib/src/address";
 import zec from "zcash-bitcore-lib";
 import bs58check from "bs58check";
 import { DerivationModes } from "../types";
-import { ICrypto, DerivationMode } from "./types";
+import { ICrypto } from "./types";
 import coininfo from "coininfo";
 
 class Zen implements ICrypto {
@@ -37,10 +37,6 @@ class Zen implements ICrypto {
     this.network.dustPolicy = "FIXED";
     this.network.usesTimestampedTransaction = false;
   }
-
-  derivationMode: DerivationMode = {
-    LEGACY: DerivationModes.LEGACY,
-  };
 
   // eslint-disable-next-line
   baddrToTaddr(baddrStr: string) {
@@ -80,7 +76,7 @@ class Zen implements ICrypto {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getDerivationMode(address: string) {
-    return this.derivationMode.LEGACY;
+    return DerivationModes.LEGACY;
   }
 
   toOutputScript(address: string) {

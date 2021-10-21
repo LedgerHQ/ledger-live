@@ -89,6 +89,10 @@ const signOperation = ({
           additionals.push("bech32");
         }
 
+        if (account.derivationMode === "taproot") {
+          additionals.push("bech32m");
+        }
+
         if (perCoin?.getAdditionals) {
           additionals = additionals.concat(
             perCoin.getAdditionals({

@@ -100,6 +100,7 @@ describe.skip("testing xpub segwit transactions", () => {
         feePerByte: 100,
         changeAddress,
         utxoPickingStrategy,
+        sequence: 0,
       });
 
     inputs.forEach((input, i) => {

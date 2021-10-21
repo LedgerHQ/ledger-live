@@ -7,6 +7,7 @@ import type { Account } from "../../types";
 import type { Transaction, UtxoStrategy } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import wallet, { getWalletAccount } from "./wallet-btc";
+import { log } from "@ledgerhq/logs";
 
 const selectUtxoPickingStrategy = (
   walletAccount: WalletAccount,
@@ -45,7 +46,7 @@ export const buildTransaction = async (
     transaction.utxoStrategy.excludeUTXOs,
     transaction.utxoStrategy.pickUnconfirmedRBF
   );
-
+  log("btcwallet", "building transaction", transaction);
   const txInfo = await wallet.buildAccountTx({
     fromAccount: walletAccount,
     dest: transaction.recipient,
@@ -55,5 +56,6 @@ export const buildTransaction = async (
     // Definition of replaceable, per the standard: https://github.com/bitcoin/bips/blob/61ccc84930051e5b4a99926510d0db4a8475a4e6/bip-0125.mediawiki#summary
     sequence: transaction.rbf ? 0 : 0xffffffff,
   });
+  log("btcwallet", "txInfo", txInfo);
   return txInfo;
 };

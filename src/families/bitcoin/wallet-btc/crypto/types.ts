@@ -1,14 +1,6 @@
-import { DerivationModes } from "../types";
-
-// all things derivation
-export interface DerivationMode {
-  [index: string]: DerivationModes;
-}
-
 export interface ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
-  derivationMode: DerivationMode;
   getAddress(
     derivationMode: string,
     xpub: string,

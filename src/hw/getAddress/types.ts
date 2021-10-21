@@ -15,18 +15,10 @@ export type GetAddressOptions = {
   skipAppFailSafeCheck?: boolean;
   askChainCode?: boolean;
   forceFormat?: string;
+  devicePath?: string;
+  segwit?: boolean;
 };
 export type Resolver = (
   arg0: Transport,
-  arg1: {
-    currency: CryptoCurrency;
-    path: string;
-    derivationMode: DerivationMode;
-    verify?: boolean;
-    skipAppFailSafeCheck?: boolean;
-    askChainCode?: boolean;
-    forceFormat?: string;
-    devicePath?: string;
-    segwit?: boolean;
-  }
+  arg1: GetAddressOptions
 ) => Promise<Result>;

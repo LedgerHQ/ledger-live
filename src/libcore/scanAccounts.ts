@@ -33,11 +33,11 @@ import { remapLibcoreErrors, isNonExistingAccountError } from "./errors";
 import { GetAppAndVersionUnsupportedFormat } from "../errors";
 import nativeSegwitAppsVersionsMap from "./nativeSegwitAppsVersionsMap";
 import type { Core, CoreWallet } from "./types";
+import { GetAddressOptions, Result } from "../hw/getAddress/types";
 
 async function scanNextAccount(props: {
   core: Core;
   wallet: CoreWallet;
-  transport: Transport;
   currency: CryptoCurrency;
   accountIndex: number;
   onAccountScanned: (arg0: Account) => any;
@@ -48,12 +48,12 @@ async function scanNextAccount(props: {
   emptyCount?: number;
   syncConfig: SyncConfig;
   derivationsCache: DerivationsCache;
+  getAddr: (opts: GetAddressOptions) => Promise<Result>;
 }) {
   const logId = newSyncLogId();
   const {
     core,
     wallet,
-    transport,
     currency,
     accountIndex,
     onAccountScanned,
@@ -63,6 +63,7 @@ async function scanNextAccount(props: {
     isUnsubscribed,
     syncConfig,
     derivationsCache,
+    getAddr,
   } = props;
   log(
     "libcore",
@@ -81,12 +82,12 @@ async function scanNextAccount(props: {
     coreAccount = await createAccountFromDevice({
       core,
       wallet,
-      transport,
       currency,
       index: accountIndex,
       derivationMode,
       isUnsubscribed,
       derivationsCache,
+      getAddress: getAddr,
     });
   }
 
@@ -138,16 +139,22 @@ async function scanNextAccount(props: {
   }
 }
 
+const libcoreBlacklist = ["taproot"];
+
 export const scanAccounts = ({
   currency,
   deviceId,
   scheme,
   syncConfig,
+  getAddressFn,
 }: {
   currency: CryptoCurrency;
   deviceId: string;
   scheme?: DerivationMode | null | undefined;
   syncConfig: SyncConfig;
+  getAddressFn?: (
+    transport: Transport
+  ) => (opts: GetAddressOptions) => Promise<Result>;
 }): Observable<ScanAccountEvent> =>
   withDevice(deviceId)((transport) =>
     Observable.create((o) => {
@@ -166,6 +173,10 @@ export const scanAccounts = ({
           if (scheme !== undefined) {
             derivationModes = derivationModes.filter((mode) => mode === scheme);
           }
+
+          derivationModes = derivationModes.filter(
+            (m) => !libcoreBlacklist.includes(m)
+          );
 
           for (let i = 0; i < derivationModes.length; i++) {
             const derivationMode = derivationModes[i];
@@ -201,12 +212,12 @@ export const scanAccounts = ({
               }
             }
 
+            const getAddr = getAddressFn
+              ? getAddressFn(transport)
+              : (opts) => getAddress(transport, opts);
+
             try {
-              result = await getAddress(transport, {
-                currency,
-                path,
-                derivationMode,
-              });
+              result = await getAddr({ currency, path, derivationMode });
             } catch (e) {
               // feature detection: some old app will specifically returns this code for segwit case and we ignore it
               // we also feature detect any denying case that could happen
@@ -245,7 +256,6 @@ export const scanAccounts = ({
             await scanNextAccount({
               core,
               wallet,
-              transport,
               currency,
               accountIndex: 0,
               onAccountScanned,
@@ -255,6 +265,7 @@ export const scanAccounts = ({
               isUnsubscribed,
               syncConfig,
               derivationsCache: new DerivationsCache(),
+              getAddr,
             });
           }
 

@@ -59,11 +59,13 @@ export const isValidRecipient = async (params: {
     valid = isValidAddress(params.recipient, <Currency>params.currency.id);
   } catch (e: any) {
     // isValidAddress() will throw Error if c is not an actual Currency
-    return Promise.reject(new InvalidAddress(e.message));
+    valid = false;
   }
   if (!valid) {
     return Promise.reject(
-      new InvalidAddress("Invalid address for currency " + params.currency.name)
+      new InvalidAddress("", {
+        currencyName: params.currency.name,
+      })
     );
   }
   return Promise.resolve(null);

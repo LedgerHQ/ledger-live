@@ -7,7 +7,7 @@ import * as bip32 from "bip32";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import bs58check from "bs58check";
 import { DerivationModes } from "../types";
-import { DerivationMode, ICrypto } from "./types";
+import { ICrypto } from "./types";
 
 export function fallbackValidateAddress(address: string): boolean {
   try {
@@ -27,12 +27,6 @@ export function fallbackValidateAddress(address: string): boolean {
 class Base implements ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
-
-  derivationMode: DerivationMode = {
-    LEGACY: DerivationModes.LEGACY,
-    SEGWIT: DerivationModes.SEGWIT,
-    NATIVE_SEGWIT: DerivationModes.NATIVE_SEGWIT,
-  };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
@@ -85,11 +79,11 @@ class Base implements ICrypto {
     index: number
   ): string {
     switch (derivationMode) {
-      case this.derivationMode.LEGACY:
+      case DerivationModes.LEGACY:
         return this.getLegacyAddress(xpub, account, index);
-      case this.derivationMode.SEGWIT:
+      case DerivationModes.SEGWIT:
         return this.getSegWitAddress(xpub, account, index);
-      case this.derivationMode.NATIVE_SEGWIT:
+      case DerivationModes.NATIVE_SEGWIT:
         return this.getNativeSegWitAddress(xpub, account, index);
       default:
         throw new Error(`Invalid derivation Mode: ${derivationMode}`);
@@ -99,13 +93,13 @@ class Base implements ICrypto {
   // infer address type from its syntax
   getDerivationMode(address: string): DerivationModes {
     if (address.match("^(bc1|tb1).*")) {
-      return this.derivationMode.NATIVE_SEGWIT;
+      return DerivationModes.NATIVE_SEGWIT;
     }
     if (address.match("^(3|2|M).*")) {
-      return this.derivationMode.SEGWIT;
+      return DerivationModes.SEGWIT;
     }
     if (address.match("^(1|n|m|L).*")) {
-      return this.derivationMode.LEGACY;
+      return DerivationModes.LEGACY;
     }
     throw new Error(
       "INVALID ADDRESS: ".concat(address).concat(" is not a valid address")

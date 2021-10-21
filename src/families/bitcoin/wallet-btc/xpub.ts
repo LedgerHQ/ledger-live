@@ -20,6 +20,10 @@ class Xpub extends EventEmitter {
 
   derivationMode: string;
 
+  freshAddress: { [key: string]: string } = {};
+
+  freshAddressIndex: { [key: string]: number } = {};
+
   // https://github.com/bitcoinjs/bitcoinjs-lib/blob/27a840aac4a12338f1e40c54f3759bbd7a559944/src/bufferutils.js#L24
   // only works with number so we need to be sure to pass correct numbers
   OUTPUT_VALUE_MAX: number = Number.MAX_SAFE_INTEGER;
@@ -116,7 +120,12 @@ class Xpub extends EventEmitter {
       account,
       index,
     });
-
+    if (lastTx) {
+      this.freshAddressIndex[account] = Math.max(
+        this.freshAddressIndex[account],
+        index + 1
+      );
+    }
     return !!lastTx;
   }
 
@@ -128,6 +137,13 @@ class Xpub extends EventEmitter {
   }
 
   async syncAccount(account: number) {
+    this.freshAddressIndex[account] = 0;
+    this.freshAddress[account] = this.crypto.getAddress(
+      this.derivationMode,
+      this.xpub,
+      account,
+      0
+    );
     await this.whenSynced("account", account.toString());
 
     this.emitSyncing({
@@ -158,7 +174,12 @@ class Xpub extends EventEmitter {
       account,
       index,
     });
-
+    this.freshAddress[account] = this.crypto.getAddress(
+      this.derivationMode,
+      this.xpub,
+      account,
+      this.freshAddressIndex[account]
+    );
     return index;
   }
 
@@ -252,7 +273,7 @@ class Xpub extends EventEmitter {
     feePerByte: number;
     changeAddress: Address;
     utxoPickingStrategy: PickingStrategy;
-    sequence?: number;
+    sequence: number;
   }): Promise<TransactionInfo> {
     await this.whenSynced("all");
 
@@ -315,10 +336,7 @@ class Xpub extends EventEmitter {
         address: utxo.address,
         output_hash: utxo.output_hash,
         output_index: utxo.output_index,
-        sequence:
-          params.sequence && Number.isInteger(params.sequence)
-            ? params.sequence
-            : null,
+        sequence: params.sequence,
       };
     });
     const associatedDerivations: [number, number][] = unspentUtxoSelected.map(

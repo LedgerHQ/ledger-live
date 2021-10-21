@@ -6,6 +6,7 @@ import Xpub from "../xpub";
 import { PickingStrategy } from "./types";
 import * as utils from "../utils";
 import { DeepFirst } from "./DeepFirst";
+import { log } from "@ledgerhq/logs";
 
 export class CoinSelect extends PickingStrategy {
   // eslint-disable-next-line class-methods-use-this
@@ -18,6 +19,7 @@ export class CoinSelect extends PickingStrategy {
     // get the utxos to use as input
     // from all addresses of the account
     const addresses = await xpub.getXpubAddresses();
+    log("picking strategy", "Coinselect");
 
     const unspentUtxos = flatten(
       await Promise.all(
@@ -30,7 +32,7 @@ export class CoinSelect extends PickingStrategy {
         ).length
     );
     const TOTAL_TRIES = 100000;
-
+    log("picking strategy", "utxos", unspentUtxos);
     // Compute cost of change
     const fixedSize = utils.estimateTxSize(
       0,

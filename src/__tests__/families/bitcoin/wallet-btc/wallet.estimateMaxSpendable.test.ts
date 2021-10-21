@@ -2,14 +2,13 @@ import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
 import BitcoinLikeWallet from "../../../../families/bitcoin/wallet-btc/wallet";
 import * as utils from "../../../../families/bitcoin/wallet-btc/utils";
 import { Account } from "../../../../families/bitcoin/wallet-btc/account";
-import MockBtc from "../../../../mock/Btc";
 
 describe("testing estimateMaxSpendable", () => {
   const wallet = new BitcoinLikeWallet();
   let account: Account;
   it("should generate an account", async () => {
     account = await wallet.generateAccount({
-      btc: new MockBtc(),
+      xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
       path: "44'/0'",
       index: 0,
       currency: "bitcoin",

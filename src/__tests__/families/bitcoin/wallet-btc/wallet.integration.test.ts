@@ -10,7 +10,7 @@ describe("testing wallet", () => {
   let account: Account;
   it("should generate an account", async () => {
     account = await wallet.generateAccount({
-      btc: new MockBtc(),
+      xpub: "xpub6CV2NfQJYxHn7MbSQjQip3JMjTZGUbeoKz5xqkBftSZZPc7ssVPdjKrgh6N8U1zoQDxtSo6jLarYAQahpd35SJoUKokfqf1DZgdJWZhSMqP",
       path: "44'/0'",
       index: 0,
       currency: "bitcoin",
@@ -56,6 +56,7 @@ describe("testing wallet", () => {
       amount: new BigNumber(100000),
       feePerByte: 5,
       utxoPickingStrategy,
+      sequence: 0,
     });
     const tx = await wallet.signAccountTx({
       btc: new MockBtc(),
@@ -79,6 +80,7 @@ describe("testing wallet", () => {
       amount: new BigNumber(100000),
       feePerByte: 5,
       utxoPickingStrategy,
+      sequence: 0,
     });
     const tx = await wallet.signAccountTx({
       btc: new MockBtc(),

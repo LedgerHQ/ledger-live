@@ -26,7 +26,7 @@ import {
   recalculateAccountBalanceHistories,
   encodeAccountId,
 } from "../account";
-import { FreshAddressIndexInvalid } from "../errors";
+import { FreshAddressIndexInvalid, UnsupportedDerivation } from "../errors";
 import type {
   Operation,
   Account,
@@ -37,6 +37,7 @@ import type {
 } from "../types";
 import type { CurrencyBridge, AccountBridge } from "../types/bridge";
 import getAddress from "../hw/getAddress";
+import type { Result, GetAddressOptions } from "../hw/getAddress/types";
 import { open, close } from "../hw";
 import { withDevice } from "../hw/deviceAccess";
 
@@ -183,7 +184,12 @@ export const makeSync =
     });
 
 export const makeScanAccounts =
-  (getAccountShape: GetAccountShape): CurrencyBridge["scanAccounts"] =>
+  (
+    getAccountShape: GetAccountShape,
+    getAddressFn?: (
+      transport: Transport
+    ) => (opts: GetAddressOptions) => Promise<Result>
+  ): CurrencyBridge["scanAccounts"] =>
   ({ currency, deviceId, syncConfig }): Observable<ScanAccountEvent> =>
     Observable.create((o) => {
       let finished = false;
@@ -282,6 +288,9 @@ export const makeScanAccounts =
 
         try {
           transport = await open(deviceId);
+          const getAddr = getAddressFn
+            ? getAddressFn(transport)
+            : (opts) => getAddress(transport, opts);
           const derivationModes = getDerivationModesForCurrency(currency);
 
           for (const derivationMode of derivationModes) {
@@ -294,12 +303,23 @@ export const makeScanAccounts =
             let result = derivationsCache[path];
 
             if (!result) {
-              result = await getAddress(transport, {
-                currency,
-                path,
-                derivationMode,
-              });
-              derivationsCache[path] = result;
+              try {
+                result = await getAddr({
+                  currency,
+                  path,
+                  derivationMode,
+                });
+                derivationsCache[path] = result;
+              } catch (e) {
+                if (e instanceof UnsupportedDerivation) {
+                  log(
+                    "scanAccounts",
+                    "ignore derivationMode=" + derivationMode
+                  );
+                  continue;
+                }
+                throw e;
+              }
             }
 
             if (!result) continue;
@@ -349,7 +369,7 @@ export const makeScanAccounts =
                 });
                 derivationsCache[freshAddressPath] = res;
               }
-
+              log("scanAccounts", "derivationsCache", res);
               const account = await stepAccount(
                 index,
                 res,

@@ -200,7 +200,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
 
     // TODO add a test for failure (at the sync level)
     const client = await this.client.acquire();
-    const res: { txs: TX[] } = (
+    const res = (
       await client.client.get(url, {
         params,
         // some altcoin may have outputs with values > MAX_SAFE_INTEGER
@@ -217,7 +217,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
             return value;
           }),
       })
-    ).data;
+    ).data as { txs: TX[] };
     await this.client.release(client);
 
     this.emit("fetched-address-transaction", { url, params, res });

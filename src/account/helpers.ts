@@ -13,6 +13,8 @@ import { getEnv } from "../env";
 import { encodeTokenAccountId } from "./accountId";
 import { emptyHistoryCache } from "./balanceHistoryCache";
 import { isAccountDelegating } from "../families/tezos/bakers";
+import { initialBitcoinResourcesValue } from "../families/bitcoin/types";
+
 // by convention, a main account is the top level account
 // in case of an Account is the account itself
 // in case of a TokenAccount it's the parentAccount
@@ -128,13 +130,9 @@ export function clearAccount<T extends AccountLike>(account: T): T {
     };
   }
 
-  const copy = {
+  const copy: Account = {
     ...account,
     balanceHistoryCache: emptyHistoryCache,
-    tronResources: (account as Account).tronResources && {
-      ...(account as Account).tronResources,
-      cacheTransactionInfoById: {},
-    },
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],
@@ -142,8 +140,17 @@ export function clearAccount<T extends AccountLike>(account: T): T {
       (account as Account).subAccounts &&
       (account as Account).subAccounts?.map(clearAccount),
   };
+  if (copy.tronResources) {
+    copy.tronResources = {
+      ...copy.tronResources,
+      cacheTransactionInfoById: {},
+    };
+  }
+  if (copy.bitcoinResources) {
+    copy.bitcoinResources = initialBitcoinResourcesValue;
+  }
   delete copy.balanceHistory;
-  return copy;
+  return copy as T;
 }
 export function findSubAccountById(
   account: Account,

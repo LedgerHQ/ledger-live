@@ -270,13 +270,14 @@ const bitcoin: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations(),
 };
 const bitcoinTestnet: AppSpec<Transaction> = {
-  multipleRuns: 3,
+  multipleRuns: 2,
   name: "Bitcoin Testnet",
   currency: getCryptoCurrencyById("bitcoin_testnet"),
   dependency: "Bitcoin",
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Bitcoin Test",
+    // appVersion: "2.0.0-alpha",
   },
   test: genericTest,
   mutations: bitcoinLikeMutations({

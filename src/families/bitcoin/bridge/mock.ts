@@ -74,7 +74,9 @@ const getTransactionStatus = (account, t) => {
   if (!t.recipient) {
     errors.recipient = new RecipientRequired("");
   } else if (isInvalidRecipient(t.recipient)) {
-    errors.recipient = new InvalidAddress("");
+    errors.recipient = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   return Promise.resolve({

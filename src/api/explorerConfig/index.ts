@@ -183,10 +183,6 @@ const initialExplorerConfig: FullConfig = {
     id: "btc_testnet",
     stable: {
       base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
-      base: "EXPLORER",
       version: "v3",
     },
   },

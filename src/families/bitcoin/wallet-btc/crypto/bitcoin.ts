@@ -49,11 +49,7 @@ function fromBech32(address: string): {
   };
 }
 
-function toBech32(
-  data: Buffer,
-  version: number,
-  prefix: string,
-): string {
+function toBech32(data: Buffer, version: number, prefix: string): string {
   const words = bech32.toWords(data);
   words.unshift(version);
 

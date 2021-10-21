@@ -108,6 +108,7 @@ describe.skip("testing xpub legacy transactions", () => {
         feePerByte: 100,
         changeAddress,
         utxoPickingStrategy,
+        sequence: 0,
       });
 
     inputs.forEach((i: InputInfo) => {
@@ -225,6 +226,7 @@ describe.skip("testing xpub legacy transactions", () => {
         feePerByte: 100,
         changeAddress,
         utxoPickingStrategy,
+        sequence: 0,
       });
 
     inputs.forEach((i) => {

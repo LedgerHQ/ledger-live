@@ -74,7 +74,8 @@ export const shouldShowNewAccount = (
   // native segwit being not yet supported everywhere, segwit is always available for creation
   if (
     derivationMode === "segwit" ||
-    (currency.family === "bitcoin" && derivationMode === "native_segwit")
+    (currency.family === "bitcoin" &&
+      (derivationMode === "native_segwit" || derivationMode === "taproot"))
   )
     return true;
   return false;

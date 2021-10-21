@@ -106,7 +106,12 @@ export function estimateTxSize(
   fixedSize += byteSize(inputCount); // Number of inputs
   fixedSize += byteSize(outputCount); // Number of outputs
   fixedSize += 4; // Timelock
-
+  // refer to https://medium.com/coinmonks/on-bitcoin-transaction-sizes-part-2-9445373d17f4
+  // and https://bitcoin.stackexchange.com/questions/96017/what-are-the-sizes-of-single-sig-and-2-of-3-multisig-taproot-inputs
+  if (derivationMode === DerivationModes.TAPROOT) {
+    txSize = fixedSize + 57.5 * inputCount + 43 * outputCount;
+    return Math.ceil(txSize);
+  }
   const isSegwit =
     derivationMode === DerivationModes.NATIVE_SEGWIT ||
     derivationMode === DerivationModes.SEGWIT;
