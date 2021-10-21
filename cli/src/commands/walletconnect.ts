@@ -153,7 +153,7 @@ const start = async (opts: Opts) => {
     try {
       const result = await handleCallRequest(payload);
       approveRequest(payload.id, result);
-    } catch (e) {
+    } catch (e: any) {
       rejectRequest(payload.id, e.message);
     }
   });

@@ -154,7 +154,7 @@ const job = ({
 
           res.sendStatus(200);
           process.exit(0);
-        } catch (e) {
+        } catch (e: any) {
           res.sendStatus(400);
           console.error(e.message);
           process.exit(1);
@@ -192,7 +192,7 @@ const job = ({
             }
           }
         }
-      } catch (e) {
+      } catch (e: any) {
         error = e.toString();
       }
 
@@ -278,7 +278,7 @@ const job = ({
                   type: "opened",
                 })
               );
-            } catch (e) {
+            } catch (e: any) {
               log("proxy", `WS(${index}): open failed! ${e}`);
               ws.send(
                 JSON.stringify({
@@ -313,7 +313,7 @@ const job = ({
                 data: res.toString("hex"),
               })
             );
-          } catch (e) {
+          } catch (e: any) {
             log("proxy", `WS(${index}): ${apduHex} =>`, e);
             if (destroyed) return;
             ws.send(
