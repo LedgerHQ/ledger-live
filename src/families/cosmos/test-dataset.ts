@@ -10,7 +10,8 @@ import { ClaimRewardsFeesWarning } from "../../errors";
 import invariant from "invariant";
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
-// eslint-disable-next-line no-unused-vars
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const cosmos: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
     "cosmosResources.unbondingBalance", // They move once all unbonding are done
