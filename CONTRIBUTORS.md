@@ -6,4 +6,4 @@
 - thomas-nguy: `crypto_org` coin family integration
 - konoart: `solana` coin family integration
 - Zondax: `filecoin` coin family integration
-- cacampbell: `hedera` coin family integration
+- Hedera: `hedera` coin family integration
