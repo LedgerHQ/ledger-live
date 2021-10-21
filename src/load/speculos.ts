@@ -313,9 +313,13 @@ export function appCandidatesMatches(
     (!search.appName ||
       search.appName.replace(/ /g, "").toLowerCase() ===
         appCandidate.appName.replace(/ /g, "").toLowerCase()) &&
-    (!searchFirmware ||
+    ((!searchFirmware && !appCandidate.firmware.includes("rc")) ||
       appCandidate.firmware === searchFirmware ||
-      semverSatisfies(hackBadSemver(appCandidate.firmware), searchFirmware)) &&
+      (searchFirmware &&
+        semverSatisfies(
+          hackBadSemver(appCandidate.firmware),
+          searchFirmware
+        ))) &&
     (!search.appVersion ||
       semverSatisfies(appCandidate.appVersion, search.appVersion))
   );
