@@ -6,8 +6,6 @@ import React from "react";
 import Toggle from "@components/Form/Toggle";
 import CenterView from "../CenterView";
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 storiesOf("Toggle", module)
   .addDecorator(withKnobs)
   .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
