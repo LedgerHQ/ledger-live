@@ -9,6 +9,7 @@ export const TRANSACTION_RATES = {
 export const TRANSACTION_TYPES = {
   SWAP: 0x00,
   SELL: 0x01,
+  FUND: 0x02,
 };
 type TransactionRate = typeof TRANSACTION_RATES[keyof typeof TRANSACTION_RATES];
 type TransactionType = typeof TRANSACTION_TYPES[keyof typeof TRANSACTION_TYPES];

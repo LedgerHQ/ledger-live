@@ -90,7 +90,6 @@ const reducer = (state: State, e: SwapRequestEvent) => {
         isLoading: false,
       };
   }
-
   return state;
 };
 
