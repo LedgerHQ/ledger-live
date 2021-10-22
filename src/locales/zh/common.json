@@ -94,6 +94,10 @@
       "title": "需要一个账户名",
       "description": "请输入账户名。"
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "收币人账户没有选择加入所选的 ASA。"
     },
@@ -508,7 +512,7 @@
     },
     "AccessDeniedError": {
       "title": "Ledger Live 需要更新",
-      "description": "请将 Ledger Live 更新到最新版本，然后重新验证您的身份，以便使用 Wyre 进行掉期交易"
+      "description": "请将 Ledger Live 更新到最新版本，然后重新验证您的身份，以便使用 Wyre 进行 swap 互换"
     },
     "RecommendUndelegation": {
       "title": "请在清空账户之前将其解除委托"
@@ -1947,24 +1951,24 @@
         "statusTooltips": {
           "expired": "请使用您的 Swap ID 互换代码联系交换服务提供方以了解更多详情。",
           "refunded": "请使用您的 Swap ID 互换代码联系交换服务提供方以了解更多详情。",
-          "pending": "请稍候片刻，掉期交易提供方正在处理该交易。",
+          "pending": "请稍候片刻，swap 互换提供方正在处理该交易。",
           "onhold": "请使用您的 Swap ID 联系互换服务提供方以解决这一情况。",
-          "finished": "您的掉期交易已成功完成"
+          "finished": "您的 swap 互换已成功完成"
         }
       },
       "missingApp": {
         "title": "请在您的设备上安装 Exchange 应用程序",
-        "description": "前往管理器并安装 Exchange 应用程序以进行资产的掉期交易",
+        "description": "前往管理器并安装 Exchange 应用程序以进行资产的 swap 互换",
         "button": "前往管理器"
       },
       "outdatedApp": {
         "title": "请更新您设备上的 Exchange 应用程序",
-        "description": "前往管理器并更新 Exchange 应用程序以进行资产的掉期交易",
+        "description": "前往管理器并更新 Exchange 应用程序以进行资产的 swap 互换",
         "button": "前往管理器"
       },
       "emptyState": {
         "title": "没有 {{currency}} 账户",
-        "description": "进行掉期交易 {{currency}} 之前，您需要添加一个账户",
+        "description": "进行 swap 互换 {{currency}} 之前，您需要添加一个账户",
         "CTAButton": "添加账户"
       },
       "history": {
@@ -1973,8 +1977,8 @@
         "exportButton": "导出操作",
         "exportFilename": "Swap 互换操作",
         "empty": {
-          "title": "您之前的掉期交易会出现在这里",
-          "desc": "要么您还未进行过任何掉期交易，亦或 Ledger Live 在此期间被重置了 。"
+          "title": "您之前的 swap 互换会出现在这里",
+          "desc": "要么您还未进行过任何 swap 互换，亦或 Ledger Live 在此期间被重置了 。"
         }
       }
     },
@@ -2481,7 +2485,7 @@
       "description": "请验证这个将要在 Ledger Live 上显示的 {{currencyName}} 地址与您的 Ledger 设备上显示的地址一致。"
     },
     "confirmSwap": {
-      "title": "在设备上确认掉期交易操作",
+      "title": "在设备上确认 swap 互换操作",
       "alert": "发送之前请验证 Swap 互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
     "confirmSell": {
@@ -3605,7 +3609,7 @@
       "description": "通过 Coinify 购买加密资产并直接在您的 Ledger 账户中接收这些资产。"
     },
     "swap": {
-      "title": "掉期交易加密资产",
+      "title": "SWAP 互换加密资产",
       "description": "从您的 Ledger 账户中与我们的合作伙伴直接对加密资产进行 Swap 互换。"
     }
   },

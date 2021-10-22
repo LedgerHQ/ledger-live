@@ -94,6 +94,10 @@
       "title": "Необходимо указать название счёта",
       "description": "Укажите название счёта."
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "В указанном ASA не выбран счёт получателя."
     },
