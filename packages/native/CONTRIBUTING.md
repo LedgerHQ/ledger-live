@@ -30,6 +30,8 @@ To bypass the hook, add the `--no-verify` option when using git.
 
 ### Code practices
 
+- **Avoid native code and dependencies as much as possible. It complicates things on the consumer side.**
+
 - Export your components and make them consumable from the root.
 
 The components should be importable from `@ledgerhq/native-ui`, so do not forget to add export statements
