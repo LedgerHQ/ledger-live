@@ -1,26 +1,38 @@
 import React from "react";
+import { TextProps } from "react-native";
 import styled, { useTheme } from "styled-components/native";
-
 import {
   fontSize,
+  FontSizeProps,
   textAlign,
+  TextAlignProps,
   color,
+  ColorProps,
   space,
-  border,
+  SpaceProps,
   lineHeight,
+  LineHeightProps,
+  border,
+  BorderProps,
 } from "styled-system";
-import BracketRight from "@ui/icons/BracketLeft";
-import BracketLeft from "@ui/icons/BracketRight";
-import { getColor } from "@ui/styles";
-import { FontWeightTypes, getTextStyle, TextTypes } from "./getTextStyle";
-import { TextProps } from "react-native";
 
-type Props = {
+import BracketRight from "../../icons/BracketLeft";
+import BracketLeft from "../../icons/BracketRight";
+import { getColor } from "../../styles";
+import { FontWeightTypes, getTextStyle, TextTypes } from "./getTextStyle";
+
+interface Props
+  extends TextProps,
+    FontSizeProps,
+    TextAlignProps,
+    ColorProps,
+    SpaceProps,
+    LineHeightProps,
+    BorderProps {
   type?: TextTypes;
   fontWeight?: FontWeightTypes;
   fontFamily?: string;
   fontSize?: number | string;
-  textAlign?: string;
   color?: string;
   mt?: number | string;
   mb?: number | string;
@@ -29,7 +41,7 @@ type Props = {
   lineHeight?: string;
   bracket?: boolean;
   children: React.ReactNode;
-} & TextProps;
+}
 
 const Base = styled.Text.attrs((p: Props) => ({
   ...getTextStyle(p),

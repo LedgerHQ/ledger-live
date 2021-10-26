@@ -3,11 +3,11 @@ import ReactNativeModal, { ModalProps } from "react-native-modal";
 import styled, { useTheme } from "styled-components/native";
 import { StyleProp, ViewStyle } from "react-native";
 
-import sizes from "@ui/helpers/getDeviceSize";
-import Link from "@components/cta/Link";
+import sizes from "../../../../helpers/getDeviceSize";
+import Link from "../../../cta/Link";
 import CloseMedium from "../../../../assets/icons/CloseMedium";
-import FlexBox from "@components/Layout/Flex";
-import Text from "@components/Text";
+import FlexBox from "../../../Layout/Flex";
+import Text from "../../../Text";
 
 const { width, height } = sizes;
 

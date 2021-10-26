@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "incremental": false,
+    "declaration": true,
+    "target": "ES6",
+    "noEmit": false,
+    "jsx": "react"
+  }
+}

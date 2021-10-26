@@ -1,6 +1,6 @@
 import React from "react";
-import Text from "@components/Text";
 import styled, { useTheme } from "styled-components/native";
+import Text from "../../Text";
 import ArrowsHMedium from "../../../assets/icons/ArrowsHMedium";
 
 export const MinMaxTextContainer = styled.View`

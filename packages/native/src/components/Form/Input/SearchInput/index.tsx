@@ -1,10 +1,7 @@
 import React from "react";
-import Input, {
-  InputProps,
-  InputRenderLeftContainer,
-} from "@components/Form/Input/BaseInput";
-import SearchMedium from "@ui/assets/icons/SearchMedium";
 import styled from "styled-components/native";
+import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";
+import SearchMedium from "../../../../assets/icons/SearchMedium";
 
 const Icon = styled(SearchMedium).attrs((p) => ({
   color: p.theme.colors.palette.neutral.c70,

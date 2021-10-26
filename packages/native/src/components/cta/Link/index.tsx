@@ -1,9 +1,9 @@
 import React from "react";
-import styled, { useTheme } from "styled-components/native";
-import Text from "@components/Text";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { getLinkColors } from "@components/cta/Link/getLinkStyle";
-import { ctaIconSize, ctaTextType } from "@components/cta/getCtaStyle";
+import styled, { useTheme } from "styled-components/native";
+import Text from "../../Text";
+import { getLinkColors } from "./getLinkStyle";
+import { ctaIconSize, ctaTextType } from "../getCtaStyle";
 
 export type LinkProps = TouchableOpacityProps & {
   Icon?: React.ComponentType<{ size: number; color: string }>;

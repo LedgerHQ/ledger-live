@@ -1,5 +1,5 @@
-import { Theme } from "@ui/styles/theme";
-import { ButtonProps } from "@components/cta/Button/index";
+import { Theme } from "../../../styles/theme";
+import { ButtonProps } from "./index";
 
 export function getButtonColors(
   colors: Theme["colors"]

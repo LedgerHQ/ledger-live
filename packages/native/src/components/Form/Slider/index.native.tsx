@@ -1,6 +1,15 @@
 import React, { useCallback } from "react";
+import styled from "styled-components/native";
 import RnRangeSlider from "rn-range-slider";
-import Text from "@components/Text";
+import Text from "../../Text";
+import {
+  Label,
+  MinMaxTextContainer,
+  Notch,
+  Rail,
+  RailSelected,
+  Thumb,
+} from "./components";
 
 export type SliderProps = {
   step: number;
@@ -10,16 +19,6 @@ export type SliderProps = {
   onChange: (low: number, high: number) => void;
   disabled?: boolean;
 };
-
-import styled from "styled-components/native";
-import {
-  Label,
-  MinMaxTextContainer,
-  Notch,
-  Rail,
-  RailSelected,
-  Thumb,
-} from "@components/Form/Slider/components";
 
 const SliderContainer = styled.View`
   display: flex;

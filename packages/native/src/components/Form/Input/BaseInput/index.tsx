@@ -1,8 +1,8 @@
 import React from "react";
 import { View, TextInputProps } from "react-native";
 import styled, { css } from "styled-components/native";
-import Text from "@components/Text";
-import FlexBox from "@components/Layout/Flex";
+import Text from "../../../Text";
+import FlexBox from "../../../Layout/Flex";
 
 type CommonProps = TextInputProps & {
   disabled?: boolean;

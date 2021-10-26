@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { useFonts } from "expo-font";
 import styled from "styled-components/native";
 import PropTypes from "prop-types";
-import StyleProvider from "../../../src/styles/StyleProvider";
-import FontProvider from "../../../src/providers/FontProvider";
+import { StyleProvider } from "../../../src/styles/StyleProvider";
 
 const Main = styled.View`
   flex: 1;
@@ -31,23 +31,44 @@ const Icon = styled.Text`
   font-size: 15px;
 `;
 
+function FontProvider({
+  waitUntilLoaded,
+  children,
+}: {
+  waitUntilLoaded?: boolean;
+  children: JSX.Element;
+}) {
+  const [fontsLoaded] = useFonts({
+    "HMAlphaMono-Medium": require("../../../src/assets/fonts/alpha/HMAlphaMono-Medium.otf"),
+    "Inter-Medium": require("../../../src/assets/fonts/inter/Inter-Medium.otf"),
+    "Inter-SemiBold": require("../../../src/assets/fonts/inter/Inter-SemiBold.otf"),
+    "Inter-Bold": require("../../../src/assets/fonts/inter/Inter-Bold.otf"),
+  });
+
+  if (waitUntilLoaded && !fontsLoaded) {
+    return null;
+  }
+
+  return children;
+}
+
 export default function CenterView({
   waitFonts,
   children,
 }: {
   waitFonts?: boolean;
   children: React.ReactNode;
-}) {
+}): JSX.Element {
   const [isLight, setIsLight] = useState(true);
   return (
-    <FontProvider waitUntilLoaded={waitFonts}>
-      <StyleProvider selectedPalette={isLight ? "light" : "dark"}>
-        <ThemeButton onPress={() => setIsLight(!isLight)}>
-          <Icon>🖌️</Icon>
-        </ThemeButton>
+    <StyleProvider selectedPalette={isLight ? "light" : "dark"}>
+      <ThemeButton onPress={() => setIsLight(!isLight)}>
+        <Icon>🖌️</Icon>
+      </ThemeButton>
+      <FontProvider waitUntilLoaded={waitFonts}>
         <Main>{children}</Main>
-      </StyleProvider>
-    </FontProvider>
+      </FontProvider>
+    </StyleProvider>
   );
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { storiesOf } from "../../storiesOf";
 import { text, button } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import BaseModal from "../../../../src/components/Layout/Modal/BaseModal";
+import BaseModal from "../../../../src/components/Layout/Modals/BaseModal";
 import Text from "@components/Text";
 import TrashMedium from "@ui/assets/icons/TrashMedium";
 import IconBox from "../../../../src/components/Icon/IconBox";

@@ -1,9 +1,9 @@
 import React from "react";
-import Input, { InputProps } from "@components/Form/Input/BaseInput";
-import FlexBox from "@ui/components/Layout/Flex";
-import Text from "@ui/components/Text";
-import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native";
+import styled from "styled-components/native";
+import Input, { InputProps } from "../BaseInput";
+import FlexBox from "../../../Layout/Flex";
+import Text from "../../../Text";
 
 const PercentButton = styled(TouchableOpacity)<{ active?: boolean }>`
   color: ${(p) =>

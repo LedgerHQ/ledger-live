@@ -1,7 +1,6 @@
 import React from "react";
-
-import BaseModal, { BaseModalProps } from "@components/Layout/Modal/BaseModal";
 import { StyleSheet } from "react-native";
+import BaseModal, { BaseModalProps } from "../BaseModal";
 
 const modalStyleOverrides = StyleSheet.create({
   modal: {

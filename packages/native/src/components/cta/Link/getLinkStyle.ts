@@ -1,4 +1,4 @@
-import { Theme } from "@ui/styles/theme";
+import { Theme } from "../../../styles/theme";
 
 export function getLinkColors(
   colors: Theme["colors"]
