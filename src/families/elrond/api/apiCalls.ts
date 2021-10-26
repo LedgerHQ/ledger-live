@@ -1,7 +1,6 @@
 import network from "../../../network";
 import {
   HASH_TRANSACTION,
-  RAW_TRANSACTION,
   METACHAIN_SHARD,
   TRANSACTIONS_SIZE,
 } from "../constants";
@@ -69,9 +68,8 @@ export default class ElrondApi {
     };
   }
 
-  async submit({ operation, signature, signUsingHash }) {
+  async submit({ operation, signature }) {
     const { chainId, gasLimit, gasPrice } = await this.getNetworkConfig();
-    const transactionType = signUsingHash ? HASH_TRANSACTION : RAW_TRANSACTION;
     const {
       senders: [sender],
       recipients: [receiver],
@@ -94,7 +92,7 @@ export default class ElrondApi {
         gasLimit,
         chainID: chainId,
         signature,
-        ...transactionType,
+        ...HASH_TRANSACTION,
       },
     });
     return {

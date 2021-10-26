@@ -122,7 +122,5 @@ export const getFees = async (unsigned): Promise<BigNumber> => {
 export const broadcastTransaction = async (blob: any) => {
   const { hash } = await api.submit(blob);
   // Transaction hash is likely to be returned
-  return {
-    hash,
-  };
+  return hash;
 };

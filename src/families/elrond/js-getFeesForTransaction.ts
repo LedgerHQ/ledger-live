@@ -13,13 +13,11 @@ import { buildTransaction } from "./js-buildTransaction";
 const getEstimatedFees = async ({
   a,
   t,
-  signUsingHash = true,
 }: {
   a: Account;
   t: Transaction;
-  signUsingHash: boolean | undefined;
 }): Promise<BigNumber> => {
-  const unsigned = await buildTransaction(a, t, signUsingHash);
+  const unsigned = await buildTransaction(a, t);
   return await getFees(JSON.parse(unsigned));
 };
 

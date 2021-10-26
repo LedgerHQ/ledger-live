@@ -28,7 +28,6 @@ const estimateMaxSpendable = async ({
   const fees = await getEstimatedFees({
     a,
     t,
-    signUsingHash: true,
   });
 
   if (fees.gt(a.spendableBalance)) {

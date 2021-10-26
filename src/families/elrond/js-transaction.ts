@@ -46,7 +46,6 @@ export const prepareTransaction = async (a: Account, t: Transaction) => {
   fees = await getEstimatedFees({
     a,
     t,
-    signUsingHash: true,
   });
 
   if (!sameFees(t.fees, fees)) {

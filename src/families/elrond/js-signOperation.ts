@@ -7,13 +7,12 @@ import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
 import Elrond from "./hw-app-elrond";
 import { buildTransaction } from "./js-buildTransaction";
-import { getNonce, compareVersions } from "./logic";
+import { getNonce } from "./logic";
 
 const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
-  fee: BigNumber,
-  signUsingHash: boolean
+  fee: BigNumber
 ): Operation => {
   const type = "OUT";
   const value = new BigNumber(transaction.amount);
@@ -30,9 +29,7 @@ const buildOptimisticOperation = (
     accountId: account.id,
     transactionSequenceNumber: getNonce(account),
     date: new Date(),
-    extra: {
-      signUsingHash,
-    },
+    extra: {},
   };
   return operation;
 };
@@ -60,29 +57,27 @@ const signOperation = ({
 
         const elrond = new Elrond(transport);
         await elrond.setAddress(account.freshAddressPath);
-        const { version } = await elrond.getAppConfiguration();
-        const signUsingHash = compareVersions(version, "1.0.11") >= 0;
-        const unsigned = await buildTransaction(
-          account,
-          transaction,
-          signUsingHash
-        );
+
+        const unsigned = await buildTransaction(account, transaction);
+
         o.next({
           type: "device-signature-requested",
         });
+
         const r = await elrond.signTransaction(
           account.freshAddressPath,
           unsigned,
-          signUsingHash
+          true
         );
+
         o.next({
           type: "device-signature-granted",
         });
+
         const operation = buildOptimisticOperation(
           account,
           transaction,
-          transaction.fees ?? new BigNumber(0),
-          signUsingHash
+          transaction.fees ?? new BigNumber(0)
         );
         o.next({
           type: "signed",

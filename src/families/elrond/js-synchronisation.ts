@@ -32,6 +32,7 @@ const getAccountShape: GetAccountShape = async (info) => {
       nonce,
     },
   };
+
   return { ...shape, operations };
 };
 
