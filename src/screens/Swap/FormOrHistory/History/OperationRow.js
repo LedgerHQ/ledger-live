@@ -49,7 +49,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           </LText>
         </View>
         <View style={styles.arrow}>
-          <Icon name={"ios-arrow-round-forward"} size={30} color={colors.fog} />
+          <Icon name={"ios-arrow-forward"} size={30} color={colors.fog} />
         </View>
         <View style={[styles.accountWrapper, { alignItems: "flex-end" }]}>
           <LText numberOfLines={1} semiBold style={styles.name}>

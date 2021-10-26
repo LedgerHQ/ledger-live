@@ -2,28 +2,35 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "29.0.2"
+        buildToolsVersion = "30.0.2"
         minSdkVersion = 24
-        compileSdkVersion = 29
-        targetSdkVersion = 29
+        compileSdkVersion = 30
+        targetSdkVersion = 30
+        ndkVersion = "20.1.5948944"
         kotlinVersion = "1.4.10"
         androidXCore = "1.6.0"
     }
     repositories {
-        jcenter()
         google()
+        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-
+        classpath("com.android.tools.build:gradle:4.2.1")
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:deprecation"
+        }
     }
 }
 
 allprojects {
     repositories {
+        mavenCentral()
         mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
@@ -33,17 +40,14 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
+
         google()
         jcenter()
         maven { url 'https://www.jitpack.io' }
         maven {
             url "$rootDir/../node_modules/detox/Detox-android"
         }
-    }
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:deprecation"
-        }
+        jcenter()
     }
 }
 
@@ -58,12 +62,13 @@ subprojects {
     afterEvaluate {project ->
         if (project.hasProperty("android")) {
             android {
-                compileSdkVersion 28
-                buildToolsVersion '28.0.3'
+                compileSdkVersion 29
+                buildToolsVersion '30.0.2'
 
                 compileOptions {
                     sourceCompatibility 1.8
                     targetCompatibility 1.8
+                    kotlinVersion = "1.4.10"
                 }
             }
         }

@@ -25,8 +25,13 @@ node_modules/warning/.*
 .*/TcpServer.js
 .*/core-js/.*
 
+
+.*/vendor/bundle/.*
+.*/fixtures/fail*.json
+
 [untyped]
 .*/node_modules/@react-native-community/cli/.*/.*
+.*/node_modules/react-native
 
 ; Creates weird flow erros, ignoring for now
 .*/node_modules/@ledgerhq/react-native-hw-transport-ble/lib/BleTransport.js
@@ -62,10 +67,6 @@ suppress_type=$FlowFixMe
 suppress_type=$FlowFixMeProps
 suppress_type=$FlowFixMeState
 
-suppress_comment=\\(.\\|\n\\)*\\$FlowFixMe\\($\\|[^(]\\|(\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native\\(_ios\\)?_\\(oss\\|fb\\)[a-z,_]*\\)?)\\)
-suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*react_native\\(_ios\\)?_\\(oss\\|fb\\)[a-z,_]*\\)?)\\)?:? #[0-9]+
-suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
-
 [lints]
 sketchy-null-number=warn
 sketchy-null-mixed=warn
@@ -76,7 +77,6 @@ deprecated-type=warn
 unsafe-getters-setters=warn
 unnecessary-invariant=warn
 signature-verification-failure=warn
-deprecated-utility=error
 
 [strict]
 deprecated-type

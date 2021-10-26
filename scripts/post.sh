@@ -15,6 +15,11 @@ rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
 
 rn-nodeify --hack
 
+# issue: https://github.com/WalletConnect/walletconnect-monorepo/issues/595
+# manually shim
+sed -i -- 's/require("crypto")/require("react-native-crypto")/g' node_modules/@walletconnect/randombytes/dist/cjs/node/index.js
+
+
 # Create the dev .env file with APP_NAME if it doesn't exist
 if ! [ -f .env ]; then
   echo 'APP_NAME="LL [DEV]"' >.env
@@ -31,6 +36,14 @@ fi
 bundle install
 
 if [ "$(uname)" == "Darwin" ]; then
+  (
+    cd node_modules/react-native/scripts
+    echo "- switch to relative paths in react_native_pods.rb "
+    sed -i '' -e "s/File[.]join[(]__dir__, \"[.][.]\"[)]/\"..\/..\/node_modules\/react-native\"/" react_native_pods.rb
+    sed -i '' -e "s/#{File[.]join[(]__dir__, \"generate-specs.sh\"[)]}/..\/..\/node_modules\/react-native\/scripts\/generate-specs.sh/" react_native_pods.rb
+    sed -i '' -e "s/spec[.]prepare_command = \"#/spec.prepare_command = \"cd ..\/.. \&\& #/" react_native_pods.rb
+  )
+
   cd ios && bundle exec pod install --deployment --repo-update
 
   if [ $? -ne 0 ]; then

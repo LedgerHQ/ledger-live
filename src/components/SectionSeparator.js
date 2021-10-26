@@ -30,7 +30,7 @@ export const ArrowDownCircle = ({
       ]}
     >
       <Icon
-        name={"ios-arrow-round-down"}
+        name={"ios-arrow-down"}
         size={big ? 32 : size}
         color={colors.live}
       />

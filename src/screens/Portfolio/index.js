@@ -2,7 +2,7 @@
 import React, { useRef, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { StyleSheet, FlatList, SafeAreaView, View } from "react-native";
-import Animated, { interpolate } from "react-native-reanimated";
+import Animated, { interpolateNode } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
@@ -63,7 +63,7 @@ export default function PortfolioScreen({ navigation }: Props) {
 
   const StickyActions = useCallback(() => {
     const offset = 410;
-    const top = interpolate(scrollY, {
+    const top = interpolateNode(scrollY, {
       inputRange: [offset, offset + 56],
       outputRange: [0, 56],
       extrapolate: "clamp",
