@@ -254,7 +254,7 @@ class BitcoinLikeWallet {
       btc.splitTransaction(i.txHex, true),
       i.output_index,
       null,
-      null,
+      i.sequence,
     ]);
 
     const lastOutputIndex = txInfo.outputs.length - 1;

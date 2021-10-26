@@ -369,7 +369,7 @@ export const makeScanAccounts =
                 });
                 derivationsCache[freshAddressPath] = res;
               }
-              log("scanAccounts", "derivationsCache", res);
+
               const account = await stepAccount(
                 index,
                 res,
@@ -377,6 +377,14 @@ export const makeScanAccounts =
                 seedIdentifier,
                 transport
               );
+              // Bitcoin needs to compute the freshAddressPath itself,
+              // so we update it afterwards
+              if (account?.freshAddressPath) {
+                res.address = account.freshAddress;
+                derivationsCache[account.freshAddressPath] = res;
+              }
+              log("scanAccounts", "derivationsCache", res);
+
               log(
                 "scanAccounts",
                 `scanning ${currency.id} at ${freshAddressPath}: ${

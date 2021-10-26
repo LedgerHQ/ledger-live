@@ -342,6 +342,8 @@ const getAccountShape: GetAccountShape = async (info) => {
     spendableBalance: balance,
     operations,
     operationsCount: operations.length,
+    freshAddress: walletAccount.xpub.freshAddress[0],
+    freshAddressPath: `${accountPath}/0/${walletAccount.xpub.freshAddressIndex[0]}`,
     blockHeight,
     bitcoinResources: {
       utxos,
