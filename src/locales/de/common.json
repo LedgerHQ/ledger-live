@@ -3620,7 +3620,7 @@
     "connected": "Verbunden",
     "disconnected": "Getrennt",
     "warningdisconnected": "Es besteht ein Verbindungsproblem zwischen dApp, WalletConnect und Ledger Live. Warten Sie ein paar Augenblicke oder starten Sie die Verbindung neu",
-    "info": "Sie können jetzt auf die dApp {{name}} auf Ihrem Desktop zugreifen.",
+    "info": "You can now access the {{name}} dApp on your web browser.",
     "warning": "Empfangsadressen von dApp zu teilen ist nicht sicher. Benutzen immer Ledger Live wenn Sie Ihre Adresse teilen, um Geld zu erhalten.",
     "isconnecting": "wird verbunden, bitte warten ...",
     "disconnect": "Trennen",

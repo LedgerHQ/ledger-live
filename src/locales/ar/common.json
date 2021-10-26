@@ -3620,7 +3620,7 @@
     "connected": "متصل",
     "disconnected": "تم قطع الاتصال",
     "warningdisconnected": "هناك مشكلة في الاتصال بين dApp وWalletConnect وليدجر لايف (Ledger Live). انتظر بضع لحظات أو أعد تشغيل الاتصال",
-    "info": "يمكنك الآن الوصول إلى تطبيق {{name}} على سطح المكتب.",
+    "info": "You can now access the {{name}} dApp on your web browser.",
     "warning": "مشاركة عناوين التلقي من dApp غير آمنة. استخدم دائمًا Ledger Live عند مشاركة عنوانك لتلقي الأموال.",
     "isconnecting": "يجري الاتصال، يرجى الانتظار...",
     "disconnect": "قطع الاتصال",

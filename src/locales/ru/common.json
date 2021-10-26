@@ -3620,7 +3620,7 @@
     "connected": "Подключено",
     "disconnected": "Отключено",
     "warningdisconnected": "Проблема с подключением между dApp, WalletConnect и Ledger Live. Подождите несколько секунд или попробуйте подключиться заново",
-    "info": "Теперь dApp {{name}} доступно в настольном приложении.",
+    "info": "You can now access the {{name}} dApp on your web browser.",
     "warning": "Совместное использование адресов, полученных в dApp, несёт риск для безопасности. Обязательно используйте Ledger Live при отправке адреса для получения средств.",
     "isconnecting": "подключается. Пожалуйста, подождите...",
     "disconnect": "Отключить",
