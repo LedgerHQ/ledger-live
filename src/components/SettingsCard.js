@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    lineHeight: 17,
+    lineHeight: 19,
     marginBottom: 4,
   },
   desc: {

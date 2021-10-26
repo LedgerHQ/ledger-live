@@ -464,7 +464,6 @@ const styles = StyleSheet.create({
   },
   labelStyleText: {
     fontWeight: "bold",
-    textTransform: "capitalize",
     lineHeight: 19,
     fontSize: 16,
     textAlign: "left",
