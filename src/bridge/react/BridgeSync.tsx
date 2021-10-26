@@ -103,6 +103,7 @@ function useHydrate({ accounts, hydrateCurrency }) {
 }
 
 const lastTimeAnalyticsTrackPerAccountId: Record<string, number> = {};
+const lastTimeSuccessSyncPerAccountId: Record<string, number> = {};
 const nothingState = {
   pending: false,
   error: null,
@@ -160,6 +161,15 @@ function useSyncQueue({
           const account = accounts.find((a) => a.id === accountId);
           if (!account) return;
           const subAccounts: SubAccount[] = account.subAccounts || [];
+
+          if (event === "SyncSuccess") {
+            // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
+            if (lastTimeSuccessSyncPerAccountId[accountId]) {
+              return;
+            }
+            lastTimeSuccessSyncPerAccountId[accountId] = startSyncTime;
+          }
+
           trackAnalytics(event, {
             duration: (Date.now() - startSyncTime) / 1000,
             currencyName: account.currency.name,
