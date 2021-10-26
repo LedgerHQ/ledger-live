@@ -657,7 +657,7 @@ export const getRegistry = async (): Promise<{
   extrinsics: Extrinsics;
 }> => {
   const [material, spec] = await Promise.all([
-    fetchTransactionMaterial(true),
+    getTransactionMaterialWithMetadata(),
     fetchChainSpec(),
   ]);
   const registry: any = new TypeRegistry();
@@ -708,5 +708,24 @@ export const getConstants: CacheRes<
   {
     max: 1, // Store only one constants object since we only have polkadot.
     maxAge: 60 * 60 * 1000, // 1 hour
+  }
+);
+
+/**
+ * Cache the fetchTransactionMaterial(true) to avoid too many calls
+ *
+ * @async
+ *
+ * @returns {Promise<Object>} consts
+ */
+export const getTransactionMaterialWithMetadata: CacheRes<
+  Array<void>,
+  SidecarTransactionMaterial
+> = makeLRUCache(
+  async (): Promise<SidecarTransactionMaterial> =>
+    fetchTransactionMaterial(true),
+  () => "polkadot",
+  {
+    maxAge: 60 * 60 * 1000, // 1 hour - could be Infinity
   }
 );
