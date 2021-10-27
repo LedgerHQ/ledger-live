@@ -6,5 +6,8 @@
   },
   "scripts": {
     "prepare": "husky install"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

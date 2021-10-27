@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Line, defaults } from "react-chartjs-2";
-import type { Props as ChartProps } from "react-chartjs-2/dist/types";
+import { Line, defaults, ChartProps } from "react-chartjs-2";
 import type { ScriptableContext } from "chart.js";
 import Color from "color";
 import { useTheme } from "styled-components";
@@ -8,6 +7,8 @@ import "chartjs-adapter-moment";
 
 import type { Item, timeOptions } from "./types";
 import { fontConfig, valueFormatter } from "./utils";
+
+type LineProps = React.ComponentProps<typeof Line>;
 
 export type Props = Omit<ChartProps, "type" | "data" | "options"> & {
   data: Array<Item>;
@@ -143,7 +144,7 @@ export default ({
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [color, data, valueKey, variant],
-  ) as unknown as ChartProps["data"];
+  ) as unknown as LineProps["data"];
 
   const options: ChartProps["options"] = useMemo(
     () => ({
@@ -163,8 +164,9 @@ export default ({
       scales: config.scales,
     }),
     [config.scales],
-  ) as unknown as ChartProps["options"];
+  ) as unknown as LineProps["options"];
 
   // The redraw is needed to allow the chart to be updated with new value
+  // @ts-expect-error : There are issues with the chartjs typings. In the future, check and improve.
   return <Line data={chartData} options={options} {...chartProps} redraw />;
 };

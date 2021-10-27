@@ -6,7 +6,7 @@
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
   "author": "Ledger Live Team <team-live@ledger.fr>",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.js",
   "files": [
     "components",
     "assets",

@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
   "main": "dist/index.js",
+  "typescriptMain": "index.ts",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/LedgerHQ/ui/",
   "author": "Ledger Live Team <team-live@ledger.fr>",

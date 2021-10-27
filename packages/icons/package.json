@@ -1,7 +1,6 @@
 {
   "name": "@ledgerhq/icons-ui",
   "version": "0.0.1",
-  "main": "react/index.js",
   "license": "MIT",
   "files": [
     "react",
