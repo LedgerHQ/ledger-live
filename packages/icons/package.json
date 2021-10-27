@@ -5,7 +5,8 @@
   "license": "MIT",
   "files": [
     "react",
-    "native"
+    "native",
+    "index.js"
   ],
   "scripts": {
     "build": "npm run clean && node scripts/buildReactIcons && tsc",
