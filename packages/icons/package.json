@@ -1,14 +1,16 @@
 {
   "name": "@ledgerhq/icons-ui",
-  "version": "0.0.1",
+  "description": "Icons used by the Ledger design system.",
+  "version": "0.1.0",
   "license": "MIT",
   "files": [
     "react",
     "native"
   ],
   "scripts": {
-    "build": "rimraf react native src/react src/native && node scripts/buildReactIcons && tsc",
-    "prepublishOnly": "npm run build"
+    "build": "npm run clean && node scripts/buildReactIcons && tsc",
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf react native src/react src/native"
   },
   "devDependencies": {
     "@svgr/core": "^5.5.0",

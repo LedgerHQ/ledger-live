@@ -2,18 +2,19 @@
   "name": "@ledgerhq/ui-shared",
   "version": "0.1.1",
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "typescriptMain": "index.ts",
-  "types": "dist/index.d.ts",
+  "types": "lib/index.d.ts",
   "repository": "https://github.com/LedgerHQ/ui/",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "license": "MIT",
   "files": [
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf lib"
   },
   "devDependencies": {
     "typescript": "^4.4.4"

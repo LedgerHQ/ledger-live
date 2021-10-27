@@ -5,7 +5,11 @@
     "lint-staged": "^11.2.0"
   },
   "scripts": {
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "react": "yarn workspace @ledgerhq/react-ui",
+    "native": "yarn workspace @ledgerhq/native-ui",
+    "shared": "yarn workspace @ledgerhq/ui-shared",
+    "icons": "yarn workspace @ledgerhq/icons-ui"
   },
   "workspaces": [
     "packages/*"

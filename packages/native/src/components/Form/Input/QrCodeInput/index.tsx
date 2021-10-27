@@ -3,7 +3,7 @@ import { GestureResponderEvent, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Input, { InputProps } from "../BaseInput";
 import FlexBox from "../../../Layout/Flex";
-import QrCodeMedium from "../../../../assets/icons/QrCodeMedium";
+import QrCodeMedium from "@ledgerhq/icons-ui/native/QrCodeMedium";
 
 const QrCodeButton = styled(TouchableOpacity)`
   background-color: ${(p) => p.theme.colors.palette.neutral.c100};

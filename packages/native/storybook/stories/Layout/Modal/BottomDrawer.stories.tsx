@@ -5,7 +5,7 @@ import { action } from "@storybook/addon-actions";
 import BottomDrawer from "@components/Layout/Modals/BottomDrawer";
 import Text from "@components/Text";
 import Button from "@components/cta/Button";
-import TrashMedium from "@ui/assets/icons/TrashMedium";
+import { Icons } from "../../../../src/assets";
 
 const BottomDrawerStory = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -26,7 +26,7 @@ const BottomDrawerStory = () => {
       title={text("title", "title")}
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
-      Icon={TrashMedium}
+      Icon={Icons.TrashMedium}
     >
       <>
         <Text>Exemple children</Text>

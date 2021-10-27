@@ -5,7 +5,7 @@ import { StyleProp, ViewStyle } from "react-native";
 
 import sizes from "../../../../helpers/getDeviceSize";
 import Link from "../../../cta/Link";
-import CloseMedium from "../../../../assets/icons/CloseMedium";
+import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
 import FlexBox from "../../../Layout/Flex";
 import Text from "../../../Text";
 

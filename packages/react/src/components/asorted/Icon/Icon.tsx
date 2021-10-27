@@ -1,4 +1,4 @@
-import * as icons from "../../../assets/icons";
+import * as icons from "@ledgerhq/icons-ui/react";
 import React from "react";
 
 export type Props = {

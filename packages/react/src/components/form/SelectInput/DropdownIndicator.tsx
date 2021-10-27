@@ -2,11 +2,11 @@ import React from "react";
 import { components, Styles, IndicatorProps, OptionTypeBase } from "react-select";
 import { useTheme } from "styled-components";
 import Text from "../../asorted/Text";
-import { ChevronBottomMedium, ChevronTopMedium } from "../../../assets/icons";
+import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/react";
 
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },
-  M extends boolean = false,
+  M extends boolean = false
 >(): NonNullable<Styles<T, M>["dropdownIndicator"]> {
   return (provided) => ({
     ...provided,
@@ -16,7 +16,7 @@ export function getStyles<
 
 export function DropdownIndicator<
   T extends OptionTypeBase = { label: string; value: string },
-  M extends boolean = false,
+  M extends boolean = false
 >(props: IndicatorProps<T, M>): JSX.Element {
   const theme = useTheme();
   const { isDisabled } = props.selectProps;

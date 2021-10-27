@@ -1,18 +1,14 @@
+import { View } from "react-native";
 import { storiesOf } from "../storiesOf";
 import React from "react";
-import BedMedium from "@ui/assets/icons/BedMedium";
-import AppleMedium from "@ui/assets/icons/AppleMedium";
-import HelpRegular from "@ui/assets/icons/HelpRegular";
-import DevicesMedium from "@ui/assets/icons/DevicesMedium";
-
-import { View } from "react-native";
+import { Icons } from "../../../src/assets";
 
 const IconSample = () => (
   <View>
-    <BedMedium color={"blue"} />
-    <AppleMedium color={"blue"} />
-    <HelpRegular color={"blue"} />
-    <DevicesMedium color={"blue"} />
+    <Icons.BedMedium color={"blue"} />
+    <Icons.AppleMedium color={"blue"} />
+    <Icons.HelpRegular color={"blue"} />
+    <Icons.DevicesMedium color={"blue"} />
   </View>
 );
 

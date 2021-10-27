@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import FlexBox from "../../layout/Flex";
-import Close from "../../../assets/icons/CloseRegular";
-import ArrowLeft from "../../../assets/icons/ArrowLeftRegular";
+import Close from "@ledgerhq/icons-ui/react/CloseRegular";
+import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
 import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import Text from "../../asorted/Text";
@@ -86,14 +86,12 @@ const Drawer = ({
   setTransitionsEnabled,
   onBack,
 }: DrawerProps) => {
-  const disableChildAnimations = useCallback(
-    () => setTransitionsEnabled(false),
-    [setTransitionsEnabled],
-  );
-  const enableChildAnimations = useCallback(
-    () => setTransitionsEnabled(true),
-    [setTransitionsEnabled],
-  );
+  const disableChildAnimations = useCallback(() => setTransitionsEnabled(false), [
+    setTransitionsEnabled,
+  ]);
+  const enableChildAnimations = useCallback(() => setTransitionsEnabled(true), [
+    setTransitionsEnabled,
+  ]);
   return (
     <TransitionInOut
       in={isOpen}

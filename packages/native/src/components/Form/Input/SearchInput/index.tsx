@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";
-import SearchMedium from "../../../../assets/icons/SearchMedium";
+import SearchMedium from "@ledgerhq/icons-ui/native/SearchMedium";
 
 const Icon = styled(SearchMedium).attrs((p) => ({
   color: p.theme.colors.palette.neutral.c70,

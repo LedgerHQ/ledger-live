@@ -4,7 +4,7 @@ import { OptionProps, ValueContainerProps } from "react-select";
 
 import Text from "../../asorted/Text";
 import Flex from "../../layout/Flex";
-import SearchMedium from "../../../assets/icons/SearchMedium";
+import SearchMedium from "@ledgerhq/icons-ui/react/SearchMedium";
 import SelectInput, { Props } from "./index";
 import { Option } from "./Option";
 import { VirtualMenuList } from "./VirtualMenuList";

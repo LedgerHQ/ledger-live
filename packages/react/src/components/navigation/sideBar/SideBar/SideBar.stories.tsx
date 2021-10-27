@@ -4,15 +4,15 @@ import { useArgs } from "@storybook/client-api";
 import SideBar from "./SideBar";
 import type { SideBarProps } from "./SideBar";
 import { action } from "@storybook/addon-actions";
-import PortfolioIcon from "../../../../assets/icons/PortfolioMedium";
-import WalletIcon from "../../../../assets/icons/WalletMedium";
-import ManagerIcon from "../../../../assets/icons/ManagerMedium";
-import ArrowTopIcon from "../../../../assets/icons/ArrowTopMedium";
-import ArrowBottomIcon from "../../../../assets/icons/ArrowBottomMedium";
-import BuyCryptoAltIcon from "../../../../assets/icons/BuyCryptoAltMedium";
-import BuyCryptoIcon from "../../../../assets/icons/BuyCryptoMedium";
-import LendIcon from "../../../../assets/icons/LendMedium";
-import NanoFoldedIcon from "../../../../assets/icons/NanoFoldedMedium";
+import PortfolioIcon from "@ledgerhq/icons-ui/react/PortfolioMedium";
+import WalletIcon from "@ledgerhq/icons-ui/react/WalletMedium";
+import ManagerIcon from "@ledgerhq/icons-ui/react/ManagerMedium";
+import ArrowTopIcon from "@ledgerhq/icons-ui/react/ArrowTopMedium";
+import ArrowBottomIcon from "@ledgerhq/icons-ui/react/ArrowBottomMedium";
+import BuyCryptoAltIcon from "@ledgerhq/icons-ui/react/BuyCryptoAltMedium";
+import BuyCryptoIcon from "@ledgerhq/icons-ui/react/BuyCryptoMedium";
+import LendIcon from "@ledgerhq/icons-ui/react/LendMedium";
+import NanoFoldedIcon from "@ledgerhq/icons-ui/react/NanoFoldedMedium";
 import { StoryTemplate } from "../../../helpers";
 
 export default {

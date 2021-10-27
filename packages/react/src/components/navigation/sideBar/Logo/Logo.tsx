@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import styled from "styled-components";
 
-import LedgerLiveIconLarge from "../../../../assets/icons/logos/LedgerLiveRegular";
-import LedgerIconSmall from "../../../../assets/icons/logos/LedgerLiveAltRegular";
+import LedgerLiveIconLarge from "../../../../assets/logos/LedgerLiveRegular";
+import LedgerIconSmall from "../../../../assets/logos/LedgerLiveAltRegular";
 import SideBarContext from "../../../navigation/sideBar";
 import TransitionInOut from "../../../transitions/TransitionInOut";
 

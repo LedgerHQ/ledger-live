@@ -8,9 +8,9 @@ import Text from "../../asorted/Text";
 import Flex from "../../layout/Flex";
 import Slide, { Props as SlideProps } from "./Slide";
 
-import IconLeft from "../../../assets/icons/ArrowLeftMedium";
-import IconRight from "../../../assets/icons/ArrowRightMedium";
-import IconClose from "../../../assets/icons/CloseMedium";
+import IconLeft from "@ledgerhq/icons-ui/react/ArrowLeftMedium";
+import IconRight from "@ledgerhq/icons-ui/react/ArrowRightMedium";
+import IconClose from "@ledgerhq/icons-ui/react/CloseMedium";
 
 const CarouselWrapper = styled.div`
   width: 100%;
@@ -119,10 +119,9 @@ const Carousel = ({
   const [index, setIndex] = useState(0);
   const [wantToDismiss, setWantToDismiss] = useState(false);
   const [paused, setPaused] = useState(false);
-  const childFactory = useCallback(
-    (child) => React.cloneElement(child, { direction }),
-    [direction],
-  );
+  const childFactory = useCallback((child) => React.cloneElement(child, { direction }), [
+    direction,
+  ]);
 
   const wrappedSetIndex = useCallback(
     (newIndex) => {

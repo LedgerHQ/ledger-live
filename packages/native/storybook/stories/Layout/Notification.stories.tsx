@@ -1,7 +1,7 @@
 import { storiesOf } from "../storiesOf";
 import { number, select, text } from "@storybook/addon-knobs";
 import React from "react";
-import Info from "../../../src/assets/icons/InfoMedium";
+import { Icons } from "../../../src/assets";
 import Notification from "@components/drawer/Notification";
 import { action } from "@storybook/addon-actions";
 import FlexBox from "@components/Layout/Flex";
@@ -24,7 +24,7 @@ const NotificationSample = () => (
 const NotificationNews = () => (
   <FlexBox p={20} width={"100%"}>
     <Notification
-      Icon={Info}
+      Icon={Icons.InfoMedium}
       variant={select("variant", ["primary", "secondary"], "primary")}
       title={text("title", "Status")}
       subtitle={text("subtitle", "Message")}
