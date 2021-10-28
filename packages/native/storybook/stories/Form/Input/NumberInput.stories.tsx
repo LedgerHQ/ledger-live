@@ -1,34 +1,29 @@
 import { storiesOf } from "../../storiesOf";
 import React from "react";
-import { InputProps } from "../../../../src/components/Form/Input/BaseInput";
 import NumberInput from "../../../../src/components/Form/Input/NumberInput";
+import { number } from "@storybook/addon-knobs";
 
-const NumberInputStory = ({
-  min = 0,
-  max = 349,
-  ...otherArgs
-}: InputProps & { max: number; min: number }): JSX.Element => {
+const NumberInputStory = () => {
   const [value, setValue] = React.useState(24.42);
+  const max = number("max", undefined);
+  const min = number("min", undefined)
 
   // FixMe: Naive implementation, only for story demo
   const onChange = (value) => {
     if (value) {
-      value = parseFloat(value);
-      if (value > max) value = max;
-      if (value < min) value = min;
-      value = value.toString();
+      if (max && value > max) value = max;
+      if (min && value < min) value = min;
     }
     setValue(value);
   };
 
   const onPercentClick = (percent) => {
-    setValue((max * percent).toString());
+    setValue(max * percent);
   };
 
   return (
     <NumberInput
-      {...otherArgs}
-      value={value}
+      value={value.toString()}
       onChangeText={onChange}
       onPercentClick={onPercentClick}
       placeholder={"Placeholder"}
