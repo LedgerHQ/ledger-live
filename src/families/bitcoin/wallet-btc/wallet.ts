@@ -209,6 +209,7 @@ class BitcoinLikeWallet {
     segwit?: boolean;
     additionals?: Array<string>;
     expiryHeight?: Buffer;
+    hasExtraData?: boolean;
     onDeviceSignatureRequested?: () => void;
     onDeviceSignatureGranted?: () => void;
     onDeviceStreaming?: (arg0: {
@@ -221,7 +222,9 @@ class BitcoinLikeWallet {
       btc,
       fromAccount,
       txInfo,
+      segwit,
       additionals,
+      hasExtraData,
       onDeviceSignatureRequested,
       onDeviceSignatureGranted,
       onDeviceStreaming,
@@ -239,7 +242,6 @@ class BitcoinLikeWallet {
       bufferWriter.writeVarSlice(txOut.script);
     });
     const outputScriptHex = buffer.toString("hex");
-
     const associatedKeysets = txInfo.associatedDerivations.map(
       ([account, index]) =>
         `${fromAccount.params.path}/${fromAccount.params.index}'/${account}/${index}`
@@ -250,12 +252,27 @@ class BitcoinLikeWallet {
       string | null | undefined,
       number | null | undefined
     ][];
-    const inputs: Inputs = txInfo.inputs.map((i) => [
-      btc.splitTransaction(i.txHex, true),
-      i.output_index,
-      null,
-      i.sequence,
-    ]);
+    const inputs: Inputs = txInfo.inputs.map((i) => {
+      log("hw", `splitTransaction`, {
+        transactionHex: i.txHex,
+        isSegwitSupported: segwit,
+        hasTimestamp: false,
+        hasExtraData,
+        additionals,
+      });
+      return [
+        btc.splitTransaction(
+          i.txHex,
+          segwit,
+          false, // FIXME hasTimestamp needed for LL-7539
+          hasExtraData,
+          additionals
+        ),
+        i.output_index,
+        null,
+        i.sequence,
+      ];
+    });
 
     const lastOutputIndex = txInfo.outputs.length - 1;
 

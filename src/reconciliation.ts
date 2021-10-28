@@ -168,7 +168,8 @@ function shouldRefreshBitcoinResources(
   const { bitcoinResources: raw } = updatedRaw;
   // FIXME Need more typing in wallet-btc to have a meaningful comparison
   //if (!isEqual(raw.walletAccount?.xpub?.data, existing.walletAccount?.xpub?.data)) return true;
-  return raw.utxos.length !== existing.utxos.length;
+  if (raw.utxos.length !== existing.utxos.length) return true;
+  return !isEqual(raw.utxos, existing.utxos);
 }
 
 export function patchAccount(

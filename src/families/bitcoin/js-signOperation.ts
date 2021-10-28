@@ -105,6 +105,8 @@ const signOperation = ({
           ? Buffer.from([0x00, 0x00, 0x00, 0x00])
           : undefined;
 
+        const hasExtraData = perCoin?.hasExtraData || false;
+
         const signature = await wallet.signAccountTx({
           btc: hwApp,
           fromAccount: walletAccount,
@@ -115,6 +117,7 @@ const signOperation = ({
           //initialTimestamp,
           additionals,
           expiryHeight,
+          hasExtraData,
           onDeviceSignatureGranted: () =>
             o.next({
               type: "device-signature-granted",

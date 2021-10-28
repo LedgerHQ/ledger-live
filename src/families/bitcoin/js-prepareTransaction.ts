@@ -3,13 +3,11 @@ import type { Account } from "../../types";
 import type { Transaction } from "./types";
 import { getAccountNetworkInfo } from "./getAccountNetworkInfo";
 import { inferFeePerByte } from "./logic";
-import { AccountNeedResync } from "../../errors";
 
 const prepareTransaction = async (
   a: Account,
   t: Transaction
 ): Promise<Transaction> => {
-  if (a.id.startsWith("libcore")) throw new AccountNeedResync();
   let networkInfo = t.networkInfo;
 
   if (!networkInfo) {
