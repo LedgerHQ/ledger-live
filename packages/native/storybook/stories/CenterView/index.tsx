@@ -4,11 +4,11 @@ import styled from "styled-components/native";
 import PropTypes from "prop-types";
 import { StyleProvider } from "../../../src/styles/StyleProvider";
 
-const Main = styled.View`
+export const Main = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c00};
+  background-color: ${(p) => p.theme.colors.palette.background.main};
   overflow: hidden;
 `;
 
@@ -31,7 +31,7 @@ const Icon = styled.Text`
   font-size: 15px;
 `;
 
-function FontProvider({
+export function FontProvider({
   waitUntilLoaded,
   children,
 }: {
@@ -52,6 +52,7 @@ function FontProvider({
   return children;
 }
 
+// container for stories hosted on expo
 export default function CenterView({
   waitFonts,
   children,
@@ -63,12 +64,10 @@ export default function CenterView({
 }): JSX.Element {
   const [isLight, setIsLight] = useState(true);
   return (
-    <StyleProvider selectedPalette={theme || isLight ? "light" : "dark"}>
-      {!theme && (
-        <ThemeButton onPress={() => setIsLight(!isLight)}>
-          <Icon>🖌️</Icon>
-        </ThemeButton>
-      )}
+    <StyleProvider selectedPalette={isLight ? "light" : "dark"}>
+      <ThemeButton onPress={() => setIsLight(!isLight)}>
+        <Icon>🖌️</Icon>
+      </ThemeButton>
       <FontProvider waitUntilLoaded={waitFonts}>
         <Main>{children}</Main>
       </FontProvider>
