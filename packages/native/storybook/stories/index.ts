@@ -29,4 +29,4 @@ import "./Layout/ScrollContainerHeader.stories";
 import "./Layout/Table.stories";
 import "./Layout/Collapse/Accordion.stories";
 import "./Form/Slider/Slider.stories";
-import "./Layout/ScrollContainerHeader.stories";
+import "./Chart/Chart.stories";
