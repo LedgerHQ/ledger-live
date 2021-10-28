@@ -1,7 +1,5 @@
 /* eslint-disable no-console */
 
-require("cbor-rn-prereqs");
-
 global.Buffer = require("buffer").Buffer;
 
 if (!console.assert) {
