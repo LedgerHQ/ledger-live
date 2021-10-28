@@ -85,9 +85,9 @@ export type CheckboxProps = {
   isDisabled?: boolean;
   isChecked: boolean;
   variant?: "default" | "success" | "error";
-  label?: string;
+  label?: React.ReactNode;
   name: string;
-  onChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const Checkbox = ({
@@ -98,8 +98,15 @@ const Checkbox = ({
   name,
   onChange,
 }: CheckboxProps): JSX.Element => (
-  <Container data-variant={variant} data-disabled={isDisabled} onChange={onChange}>
-    <Input type="checkbox" name={name} id={name} checked={isChecked} disabled={isDisabled} />
+  <Container data-variant={variant} data-disabled={isDisabled}>
+    <Input
+      type="checkbox"
+      name={name}
+      id={name}
+      checked={isChecked}
+      disabled={isDisabled}
+      onChange={onChange}
+    />
     {label ? (
       <Label forwardedAs="label" htmlFor={name}>
         {label}
