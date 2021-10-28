@@ -32,13 +32,14 @@ interface Props
   type?: TextTypes;
   fontWeight?: FontWeightTypes;
   fontFamily?: string;
-  fontSize?: number | string;
+  fontSize?: number;
   color?: string;
   mt?: number | string;
   mb?: number | string;
   ml?: number | string;
   mr?: number | string;
-  lineHeight?: string;
+  paddingTop?: number;
+  lineHeight?: number;
   bracket?: boolean;
   children: React.ReactNode;
 }
@@ -66,9 +67,10 @@ const T = styled.View`
 const BracketText = ({
   children,
   color = "palette.neutral.c100",
+  lineHeight,
   ...props
 }: Props) => {
-  const { lineHeight: size } = getTextStyle(props);
+  const size = lineHeight || getTextStyle(props).lineHeight;
   const theme = useTheme();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const c: string = theme ? (getColor(theme, color) as string) : "transparent";
