@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { ThemeProvider, useTheme } from "styled-components";
+import { ThemeProvider, useTheme } from "styled-components/native";
 import { defaultTheme } from ".";
 import { ThemeNames, palettes } from "@ledgerhq/ui-shared";
 import { Theme } from "./theme";
