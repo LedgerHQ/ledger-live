@@ -4,7 +4,7 @@ import { text, button } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import BaseModal from "../../../../src/components/Layout/Modals/BaseModal";
 import Text from "@components/Text";
-import TrashMedium from "@ui/assets/icons/TrashMedium";
+import { Icons } from "../../../../src/assets";
 import IconBox from "../../../../src/components/Icon/IconBox";
 
 const ModalStory = () => {
@@ -26,7 +26,7 @@ const ModalStory = () => {
       title={text("title", "title")}
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
-      Icon={<IconBox Icon={TrashMedium} />}
+      Icon={<IconBox Icon={Icons.TrashMedium} />}
     >
       <Text>{text("content", "Ledger")}</Text>
     </BaseModal>

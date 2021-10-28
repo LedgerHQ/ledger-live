@@ -3,7 +3,7 @@ import { Pressable } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
-import CheckAlone from "../../../assets/icons/CheckAloneMedium";
+import CheckAlone from "@ledgerhq/icons-ui/native/CheckAloneMedium";
 
 type CheckboxProps = {
   checked: boolean;

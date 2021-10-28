@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
-import CheckAlone from "../../../../assets/icons/CheckAloneMedium";
-import CloseMedium from "../../../../assets/icons/CloseMedium";
+import CheckAlone from "@ledgerhq/icons-ui/react/CheckAloneMedium";
+import CloseMedium from "@ledgerhq/icons-ui/react/CloseMedium";
 import Text from "../../../asorted/Text";
 import Flex from "../../../layout/Flex";
 

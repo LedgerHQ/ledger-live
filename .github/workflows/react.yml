@@ -27,7 +27,7 @@ jobs:
           cache: yarn
           cache-dependency-path: packages/react/yarn.lock
       - name: Install dependencies
-        run: yarn
+        run: yarn install --focus
       - name: Linter
         run: yarn lint
       - name: Typecheck

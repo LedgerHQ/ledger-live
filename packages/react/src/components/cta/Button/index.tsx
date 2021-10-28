@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import { fontSize, color } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
-import ChevronBottom from "../../../assets/icons/ChevronBottomRegular";
+import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
 
 type ButtonTypes = "main" | "shade" | "error" | "color";
 

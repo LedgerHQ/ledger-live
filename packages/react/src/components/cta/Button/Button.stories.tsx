@@ -1,6 +1,6 @@
 import React from "react";
 import Button, { ExpandButton } from "./index";
-import WalletAdd from "../../../assets/icons/WalletAddRegular";
+import WalletAdd from "@ledgerhq/icons-ui/react/WalletAddRegular";
 import { InvertTheme } from "../../../styles/InvertTheme";
 import Flex from "../../layout/Flex";
 

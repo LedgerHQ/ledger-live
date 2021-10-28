@@ -84,14 +84,8 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
 }))``;
 
 export default function Input(props: InputProps): JSX.Element {
-  const {
-    value,
-    disabled,
-    error,
-    renderLeft,
-    renderRight,
-    ...textInputProps
-  } = props;
+  const { value, disabled, error, renderLeft, renderRight, ...textInputProps } =
+    props;
 
   const [focus, setFocus] = React.useState(false);
 

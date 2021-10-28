@@ -6,7 +6,7 @@
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
   "author": "Ledger Live Team <team-live@ledger.fr>",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "index.js",
   "files": [
     "components",
     "assets",
@@ -19,13 +19,14 @@
   "scripts": {
     "android": "expo start --android",
     "build": "tsc -p tsconfig.prod.json",
-    "build-storybook": "build-storybook -o web-build",
-    "build:web": "build-storybook -o web-build",
+    "build:storybook": "build-storybook -o web-build",
+    "build:icons": "node -e \"process.env['VERCEL_BUILD'] ? process.exit(1) : process.exit(0)\" || (cd ../icons && npm run build)",
+    "build:web": "npm run build:icons && npm run build:storybook",
+    "clean": "rimraf lib",
     "eject": "expo eject",
     "ios": "expo start --ios",
     "lint": "eslint src --ext .ts,.tsx,.js,.jsx --cache",
     "lint:fix": "eslint src --ext .ts,.tsx,.js,.jsx --fix --cache",
-    "prepare": "cd ../.. && yarn",
     "prerelease": "node scripts/prepareRelease.js",
     "release": "yarn publish ./lib --access public",
     "start": "expo start",
@@ -34,6 +35,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@ledgerhq/icons-ui": "^0.1.0",
     "@ledgerhq/ui-shared": "^0.1.1",
     "@types/color": "^3.0.2",
     "@types/react": "^17.0.30",
@@ -52,6 +54,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
+    "@babel/plugin-proposal-export-namespace-from": "^7.14.5",
     "@babel/runtime": "^7.15.4",
     "@expo/webpack-config": "^0.16.3",
     "@react-native-community/eslint-config": "^3.0.1",
@@ -72,7 +75,9 @@
     "babel-loader": "^8.2.2",
     "camelcase": "^6.2.0",
     "eslint": "^7",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "expo": "~42.0.4",
@@ -86,6 +91,7 @@
     "react-dom": "^17.0.2",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-web": "~0.17.5",
+    "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
   },
   "peerDependencies": {

@@ -3,13 +3,13 @@ import { storiesOf } from "../storiesOf";
 import { number } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import Loader from "@components/Loader";
-import Icon from "@ui/assets/icons/StarSolidMedium";
+import { Icons } from "../../../src/assets";
 
 const LoaderSample = () => (
   <Loader
     progress={number("progress", 0.2)}
     onPress={action("onPress")}
-    Icon={Icon}
+    Icon={Icons.StarSolidMedium}
   />
 );
 

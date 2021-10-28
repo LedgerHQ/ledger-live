@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import Button from "../../cta/Button";
-import Close from "../../../assets/icons/CloseRegular";
+import Close from "@ledgerhq/icons-ui/react/CloseRegular";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import TransitionScale from "../../transitions/TransitionScale";
 

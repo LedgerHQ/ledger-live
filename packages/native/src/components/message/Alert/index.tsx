@@ -1,8 +1,8 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
-import ShieldSecurityMedium from "../../../assets/icons/ShieldSecurityMedium";
-import CircledCrossMedium from "../../../assets/icons/CircledCrossMedium";
-import CircledAlertMedium from "../../../assets/icons/CircledAlertMedium";
+import ShieldSecurityMedium from "@ledgerhq/icons-ui/native/ShieldSecurityMedium";
+import CircledCrossMedium from "@ledgerhq/icons-ui/native/CircledCrossMedium";
+import CircledAlertMedium from "@ledgerhq/icons-ui/native/CircledAlertMedium";
 import Text from "../../Text";
 import { getColor } from "../../../styles";
 import FlexBox from "../../Layout/Flex";

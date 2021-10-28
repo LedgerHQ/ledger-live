@@ -1,9 +1,9 @@
 import React from "react";
-import { storiesOf } from "../../storiesOf";
 import { text } from "@storybook/addon-knobs";
+import { storiesOf } from "../../storiesOf";
 import Tooltip from "@components/Layout/Modals/Tooltip";
 import Text from "@components/Text";
-import WarningLight from "@ui/assets/icons/WarningLight";
+import { Icons } from "../../../../src/assets";
 
 const TooltipStory = () => {
   return (
@@ -11,7 +11,7 @@ const TooltipStory = () => {
       title={text("title", "title")}
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
-      Icon={WarningLight}
+      Icon={Icons.WarningLight}
       tooltipContent={
         <>
           <Text>Tooltip323</Text>

@@ -2,7 +2,7 @@ import React from "react";
 import { components, Styles, IndicatorProps, OptionTypeBase } from "react-select";
 import { useTheme } from "styled-components";
 import Text from "../../asorted/Text";
-import { ChevronBottomMedium, ChevronTopMedium } from "../../../assets/icons";
+import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/react";
 
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },

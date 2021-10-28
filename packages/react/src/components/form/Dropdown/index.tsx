@@ -4,7 +4,7 @@ import { useTheme } from "styled-components";
 import SelectInput, { Props as SelectInputProps } from "../../form/SelectInput";
 import Text from "../../asorted/Text";
 import { ValueContainer } from "../../form/SelectInput/ValueContainer";
-import { ChevronBottomMedium, ChevronTopMedium } from "../../../assets/icons";
+import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/react";
 import FlexBox from "../../layout/Flex";
 
 export type Props = SelectInputProps & { label: string };

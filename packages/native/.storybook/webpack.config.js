@@ -11,7 +11,13 @@ module.exports = ({ config }) => {
     "@components": resolve(__dirname, "..", "src", "components"),
     "victory-native": "victory"
   };
-  // config.resolve.extensions = [".ts", ".tsx", ".js", ".json"];
+  config.resolve.extensions = [".ts", ".tsx", ".js", ".json"];
+
+  const babelRule = config.module.rules.find(
+    (rule) => rule.exclude.toString() === "/node_modules/"
+  );
+  if (babelRule)
+    babelRule.exclude = /node_modules\/(?!(@ledgerhq\/ui-shared|victory-native)\/).*/;
 
   return withUnimodules(config, {
     projectRoot: resolve(__dirname, "../"),

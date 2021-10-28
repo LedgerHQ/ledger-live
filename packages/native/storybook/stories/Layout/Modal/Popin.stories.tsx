@@ -4,7 +4,7 @@ import { text, button } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import Popin from "@components/Layout/Modals/Popin";
 import Text from "@components/Text";
-import TrashMedium from "@ui/assets/icons/TrashMedium";
+import { Icons } from "../../../../src/assets";
 
 const PopinStory = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -25,7 +25,7 @@ const PopinStory = () => {
       title={text("title", "title")}
       description={text("description", "Description")}
       subtitle={text("subtitle", "Subtitle")}
-      Icon={TrashMedium}
+      Icon={Icons.TrashMedium}
       iconColor={"red"}
       onLeftButtonPress={action("onLeftButtonPress")}
       onRightButtonPress={action("onRightButtonPress")}

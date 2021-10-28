@@ -1,2 +1,2 @@
-export * as Icons from "./icons";
-export * as Logos from "./icons/logos";
+export * as Icons from "@ledgerhq/icons-ui/native";
+export * as Logos from "./logos";

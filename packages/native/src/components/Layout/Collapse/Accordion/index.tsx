@@ -9,7 +9,7 @@ import Link, { LinkProps } from "../../../cta/Link";
 import {
   ChevronBottomMedium,
   ChevronTopMedium,
-} from "../../../../assets/icons";
+} from "@ledgerhq/icons-ui/native";
 import { View } from "react-native";
 
 type AccordionProps = {
