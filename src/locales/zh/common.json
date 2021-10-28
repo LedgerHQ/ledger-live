@@ -678,13 +678,9 @@
         "title": "权益质押 (Stake) COSMOS",
         "description": "将 ATOM 委托出去，今天就赚取奖励。"
       },
-      "polkastake": {
-        "title": "波卡质押",
-        "description": "通过 Ledger Live\n质押、保护以及\n管理您的 DOT"
-      },
-      "backupPack": {
-        "title": "备份包",
-        "description": "一个 Nano X 和一个 Nano S\n提供的最佳保护"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "购买加密资产",

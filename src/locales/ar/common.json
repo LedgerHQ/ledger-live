@@ -678,13 +678,9 @@
         "title": "رهن COSMOS",
         "description": "قم بتفويض مكاسب مكافآت ATOM اليوم."
       },
-      "polkastake": {
-        "title": "رهن POLKADOT",
-        "description": "ارهن، وأمّن،\nوقم بإدارة DOT مع\nLedger Live"
-      },
-      "backupPack": {
-        "title": "حزمة النسخ الاحتياطي",
-        "description": "Nano X و Nano S\nلتوفير الحماية المثلى"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "شراء العملات المشفرة",

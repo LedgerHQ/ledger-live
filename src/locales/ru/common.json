@@ -678,13 +678,9 @@
         "title": "Стейкинг COSMOS",
         "description": "Делегируйте ATOM и получайте вознаграждения уже сегодня."
       },
-      "polkastake": {
-        "title": "СТЕЙКИНГ POLKADOT",
-        "description": "Безопасно стейкируйте\nи управляйте токенами DOT\nв Ledger Live"
-      },
-      "backupPack": {
-        "title": "Резервный набор",
-        "description": "Nano X и Nano S\nдля оптимальной защиты"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "Покупайте криптовалюту",

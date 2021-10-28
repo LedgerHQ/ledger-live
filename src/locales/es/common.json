@@ -678,13 +678,9 @@
         "title": "Participación con COSMOS",
         "description": "Delega tus recompensas ganadas con ATOM hoy."
       },
-      "polkastake": {
-        "title": "PARTICIPACIÓN CON POLKADOT",
-        "description": "Protege, gestiona y participa con tus DOT con \nLedger Live"
-      },
-      "backupPack": {
-        "title": "Back-up pack",
-        "description": "Protección óptima con un Nano X y un Nano S"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "Comprar cripto",

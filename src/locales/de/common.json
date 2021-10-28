@@ -678,13 +678,9 @@
         "title": "COSMOS staken",
         "description": "Übertragen Sie Ihre verdienten ATOM-Prämien heute."
       },
-      "polkastake": {
-        "title": "POLKADOT STAKING",
-        "description": "Staken, sichern und verwalten Sie Ihre DOT mit Ledger Live"
-      },
-      "backupPack": {
-        "title": "Backup-Paket",
-        "description": "Ein Nano X und ein Nano S \nfür optimalen Schutz"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "Krypto kaufen",
