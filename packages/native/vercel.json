@@ -1,0 +1,8 @@
+{
+  "public": true,
+  "build": {
+    "env": {
+      "VERCEL_BUILD": "1"
+    }
+  }
+}
