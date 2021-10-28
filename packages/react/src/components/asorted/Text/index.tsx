@@ -31,7 +31,7 @@ type FontFamilies =
   | "Inter|Bold"
   | "Inter|ExtraBold"
   | "Alpha|Medium";
-type TextTypes =
+export type TextTypes =
   | "h1"
   | "h2"
   | "h3"
@@ -40,10 +40,12 @@ type TextTypes =
   | "body"
   | "cta"
   | "link"
+  | "small"
   | "tiny"
   | "subTitle"
   | "navigation"
   | "tag"
+  | "large"
   | "paragraph";
 
 export interface TextProps {
