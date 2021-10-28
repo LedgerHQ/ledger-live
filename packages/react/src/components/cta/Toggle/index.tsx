@@ -7,13 +7,13 @@ export interface ToggleProps extends Omit<ButtonProps, "type"> {
 }
 
 enum TypeEnum {
-  ENABLED = "primary",
-  DISABLED = "secondary",
+  ENABLED = "main",
+  DISABLED = "color",
 }
 
 const Toggle = ({ checked = true, ...buttonProps }: ToggleProps) => {
   const type = useMemo(() => (checked ? TypeEnum.ENABLED : TypeEnum.DISABLED), [checked]);
-  return <Button type={type} {...buttonProps} />;
+  return <Button type={type} outline={type === TypeEnum.ENABLED} {...buttonProps} />;
 };
 
 export default Toggle;

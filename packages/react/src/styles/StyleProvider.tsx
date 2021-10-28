@@ -19,6 +19,7 @@ export const StyleProvider = ({
     () => ({
       ...defaultTheme,
       colors: { ...defaultTheme.colors, palette: palettes[selectedPalette] },
+      theme: selectedPalette,
     }),
     [selectedPalette],
   );

@@ -5,28 +5,23 @@ import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import ChevronBottom from "../../../assets/icons/ChevronBottomRegular";
 
-type ButtonTypes = "primary" | "secondary";
+type ButtonTypes = "main" | "shade" | "error" | "color";
 
-interface BaseProps<I = any> {
-  Icon?: React.ComponentType<I>;
+interface BaseProps {
   ff?: string;
   color?: string;
   fontSize?: number;
   type?: ButtonTypes;
+  outline?: boolean;
   iconPosition?: "right" | "left";
   iconButton?: boolean;
   disabled?: boolean;
 }
 
-export interface ButtonProps<I = any> extends BaseProps<I> {
+export interface ButtonProps<I = any> extends BaseProps {
   Icon?: React.ComponentType<I>;
   children?: React.ReactNode;
   onClick: (event?: React.SyntheticEvent<HTMLButtonElement>) => void;
-  ff?: string;
-  color?: string;
-  fontSize?: number;
-  type?: ButtonTypes;
-  iconPosition?: "right" | "left";
   iconSize?: number;
 }
 const IconContainer = styled.div<{
@@ -36,6 +31,96 @@ const IconContainer = styled.div<{
   margin-${(p) => (p.iconPosition === "left" ? "right" : "left")}: ${(p) => p.theme.space[4]}px;
   padding-top: 0.2em;
 `;
+
+const getVariantColors = (p: any) => ({
+  main: {
+    outline: `
+        border-color: ${p.theme.colors.palette.neutral.c100};
+        color: ${p.theme.colors.palette.neutral.c100};
+        background-color: ${p.theme.colors.palette.neutral.c00};          
+        &:hover {
+          background-color: ${p.theme.colors.palette.neutral.c20};
+        }
+        &:active {
+          background-color: ${p.theme.colors.palette.neutral.c30};
+        }
+      `,
+    filled: `
+        color: ${p.theme.colors.palette.neutral.c00};
+        background-color: ${p.theme.colors.palette.neutral.c100};
+        &:hover {
+          background-color: ${p.theme.colors.palette.neutral.c90};
+        }
+      `,
+  },
+  shade: `
+      border-color: ${p.theme.colors.palette.neutral.c40};
+      color: ${p.theme.colors.palette.neutral.c100};
+      background-color: ${p.theme.colors.palette.neutral.c00};
+      &:focus {
+        border-color: ${p.theme.colors.palette.primary.c80};
+      }
+
+      &:hover {
+        background-color: ${p.theme.colors.palette.neutral.c20};
+      }
+
+      &:active {
+        background-color: ${p.theme.colors.palette.neutral.c30};
+      }          
+    `,
+  error: {
+    outline: `
+      border-color: ${p.theme.colors.palette.error.c100};
+      color: ${p.theme.colors.palette.error.c100};
+      background-color: ${p.theme.colors.palette.neutral.c00};
+      &:hover {
+        background-color: ${p.theme.colors.palette.error.c10};
+      }
+      &:active {
+        background-color: ${p.theme.colors.palette.error.c30};
+      }
+    `,
+    filled: `
+      color: ${p.theme.colors.palette.neutral.c00};
+      background-color: ${p.theme.colors.palette.error.c100};
+      &:hover {
+        background-color: ${p.theme.colors.palette.error.c80};
+      }
+    `,
+  },
+  color: {
+    outline: `
+      border-color: ${p.theme.colors.palette.primary.c80};
+      color: ${p.theme.colors.palette.primary.c80};
+      background-color: ${p.theme.colors.palette.neutral.c00};
+      &:hover {
+        background-color: ${p.theme.colors.palette.primary.c10};
+      }
+      &:active {
+        background-color: ${p.theme.colors.palette.primary.c20};
+      }
+    `,
+    filled: `
+      color: ${p.theme.colors.palette.neutral.c00};
+      background-color: ${p.theme.colors.palette.primary.c80};
+      &:hover {
+        background-color: ${p.theme.colors.palette.primary.c70};
+      }
+    `,
+  },
+  disabled: {
+    outline: `
+        border-color: ${p.theme.colors.palette.neutral.c50};
+        color: ${p.theme.colors.palette.neutral.c50};
+        background-color: ${p.theme.colors.palette.neutral.c00};          
+      `,
+    filled: `
+        color: ${p.theme.colors.palette.neutral.c50};
+        background-color: ${p.theme.colors.palette.neutral.c30};
+      `,
+  },
+});
 
 export const Base = styled.button.attrs((p: BaseProps) => ({
   ff: "Inter|SemiBold",
@@ -49,11 +134,12 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
   height: ${(p) => p.theme.space[13]}px;
   line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
   border-style: solid;
-  border-width: 1px;
+  border-width: ${(p) => (p.outline || p.type === "shade" ? 1 : 0)}px;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  padding: 0 2em;
   background-color: transparent;
   border-color: transparent;
   overflow: hidden;
@@ -62,56 +148,36 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
   max-width: 100%;
   position: relative;
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};
+  &:focus {
+    box-shadow: 0 0 0 4px ${(p) => p.theme.colors.palette.primary.c60};
+  }
+
   ${(p) => {
-    const type: string = p.type || "default"; // workarround for typescript undefined vs string comparison but maybe rework this switch instead
+    const variants = getVariantColors(p);
+    if (p.disabled) {
+      return p.outline || p.type === "shade" ? variants.disabled.outline : variants.disabled.filled;
+    }
+
+    const type: ButtonTypes | "default" = p.type ?? ("default" as ButtonTypes | "default");
     switch (type) {
-      case "primary":
-        return p.disabled
-          ? `
-          background-color: ${p.theme.colors.palette.neutral.c90};
-          color: ${p.theme.colors.palette.neutral.c70};
-          padding: 0 2em;
-        `
-          : `
-          background-color: ${p.theme.colors.palette.primary.c60};
-          color: ${p.theme.colors.palette.neutral.c00};
-          padding: 0 2em;
-          &:hover {
-            background-color: ${p.theme.colors.palette.primary.c80};
-            ${
-              p.iconButton
-                ? `box-shadow: 0px 0px 0px 12px ${p.theme.colors.palette.neutral.c90};`
-                : ""
-            }
+      case "main":
+        return p.outline ? variants.main.outline : variants.main.filled;
+      case "shade":
+        return variants.shade;
 
-          }
-        `;
+      case "error":
+        return p.outline ? variants.error.outline : variants.error.filled;
 
-      case "secondary":
-        return p.disabled
-          ? `
-            border-color: ${p.theme.colors.palette.neutral.c90};
-            color: ${p.theme.colors.palette.neutral.c90};
-            padding: 0 2em;
-          `
-          : `
-            border-color: ${p.theme.colors.palette.neutral.c90};
-            padding: 0 2em;
-            &:hover {
-              border-color: ${p.theme.colors.palette.neutral.c100};
-            }
-          `;
+      case "color":
+        return p.outline ? variants.color.outline : variants.color.filled;
 
+      case "default":
       default:
-        return p.disabled
-          ? `
-            color: ${p.theme.colors.palette.neutral.c70};
-          `
-          : `
-            &:hover {
-              text-decoration: underline;
-            }
-          `;
+        return `
+              &:hover {
+                text-decoration: underline;
+              }
+            `;
     }
   }}
   ${(p) =>
@@ -124,7 +190,7 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
           }
         `
       : ""}
-  ${(p) => p.theme.transition()}
+  ${(p) => p.theme.transition(["background-color", "color", "border-color"])}
 `;
 
 const ContentContainer = styled.div``;
@@ -154,7 +220,7 @@ const Button = ({
 const StyledExpandButton = styled(Button).attrs((props) => ({
   Icon: props.Icon != null || ChevronBottom,
   iconPosition: props.iconPosition || "right",
-}))<BaseProps & { expanded: boolean }>`
+}))<{ expanded: boolean }>`
   ${IconContainer} {
     transition: transform 0.25s;
     ${(p) => (p.expanded ? "transform: rotate(180deg)" : "")}

@@ -1,12 +1,15 @@
 import React from "react";
 import Button, { ExpandButton } from "./index";
 import WalletAdd from "../../../assets/icons/WalletAddRegular";
+import { InvertTheme } from "../../../styles/InvertTheme";
+import Flex from "../../layout/Flex";
+
 export default {
   title: "cta/Button",
   component: Button,
   argTypes: {
     type: {
-      options: [undefined, "primary", "secondary"],
+      options: [undefined, "main", "shade", "color", "error"],
       control: {
         type: "radio",
       },
@@ -29,17 +32,37 @@ export default {
     disabled: {
       type: "boolean",
     },
+    outline: {
+      type: "boolean",
+    },
   },
 };
 
 // @ts-expect-error FIXME
-const Template = (args) => <Button {...args}>{args.children}</Button>;
+const Template = (args) => {
+  return <Button {...args}>{args.children || "Regular button"}</Button>;
+};
+
+// @ts-expect-error FIXME
+const TemplateInverted = (args) => {
+  return (
+    <Flex flexDirection="column">
+      <Flex flex="0 0 1" p={4} alignItems="center" bg="palette.background.main">
+        <Button {...args}>{args.children || "Regular button"}</Button>
+      </Flex>
+      <InvertTheme>
+        <Flex flex="0 0 1" p={4} alignItems="center" bg="palette.background.main">
+          <Button {...args}>{args.children || "Inverted button"}</Button>
+        </Flex>
+      </InvertTheme>
+    </Flex>
+  );
+};
 
 export const Default = Template.bind({});
-// @ts-expect-error FIXME
-Default.args = {
-  children: "Label",
-};
+
+export const Inverted = TemplateInverted.bind({});
+
 export const IconButton = Template.bind({});
 // @ts-expect-error FIXME
 IconButton.args = {

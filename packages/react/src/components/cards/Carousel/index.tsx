@@ -165,10 +165,10 @@ const Carousel = ({
             {"This banner will not show up again until there is a new announcement"}
           </Text>
           <Flex>
-            <Button color="palette.neutral.c00" type="secondary" onClick={onDismiss}>
+            <Button color="palette.neutral.c00" type="color" onClick={onDismiss}>
               {"Confirm"}
             </Button>
-            <Button color="palette.neutral.c00" type="primary" onClick={onCancelDismiss}>
+            <Button color="palette.neutral.c00" type="main" outline onClick={onCancelDismiss}>
               {"Show again"}
             </Button>
           </Flex>

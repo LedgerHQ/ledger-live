@@ -42,6 +42,7 @@ const exportedColors = colors;
 export { exportedColors as colors };
 
 export type Theme = {
+  theme: string;
   sizes: {
     topBarHeight: number;
     sideBarWidth: number;
@@ -54,6 +55,7 @@ export type Theme = {
 };
 
 const theme: Theme = {
+  theme: "light",
   sizes: {
     topBarHeight: 58,
     sideBarWidth: 230,

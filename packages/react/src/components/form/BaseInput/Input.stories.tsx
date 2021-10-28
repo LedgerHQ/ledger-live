@@ -33,7 +33,7 @@ export const RenderSideExemple = (): JSX.Element => {
 
   const renderLeft = (
     <InputRenderLeftContainer>
-      <Button type={"secondary"} onClick={() => setDisabled(!disabled)}>
+      <Button type="main" outline onClick={() => setDisabled(!disabled)}>
         disable
       </Button>
     </InputRenderLeftContainer>
@@ -42,7 +42,8 @@ export const RenderSideExemple = (): JSX.Element => {
     return (
       <InputRenderRightContainer>
         <Button
-          type={"secondary"}
+          type="main"
+          outline
           onClick={() => setError(error ? "" : "Error message")}
           /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
           // @ts-ignore

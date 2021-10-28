@@ -89,7 +89,7 @@ export const Default = ({ data: _, ...args }: ChartPreviewProps): JSX.Element =>
       >
         <Chart {...args} data={data} />
       </Flex>
-      <Button type="secondary" onClick={handleClick}>
+      <Button type="main" outline onClick={handleClick}>
         Generate new data
       </Button>
     </Flex>
@@ -123,7 +123,7 @@ export const Small = (args: ChartPreviewProps): JSX.Element => {
           <Chart id="dynamic" variant="small" color={args.color} data={data} />
         </CardChart>
       </Flex>
-      <Button type="secondary" onClick={handleClick}>
+      <Button type="main" outline onClick={handleClick}>
         Generate new data
       </Button>
     </Flex>

@@ -58,8 +58,10 @@ const easings = {
   outQuadratic: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
 };
 
-const transition = (property = "all"): any => css`
-  transition: ${property} ${animationLength} ${easings.outQuadratic};
+const transition = (properties = ["all"]): any => css`
+  transition-property: ${properties.join(",")};
+  transition-duration: ${animationLength};
+  transition-timing-function: ${easings.outQuadratic};
 `;
 
 const fadeIn = keyframes`
@@ -188,11 +190,12 @@ export interface Theme extends DefaultTheme {
     palette: ColorPalette;
   };
   animations: Record<string, (props: never) => any>;
-  transition: (property?: string) => any;
+  transition: (properties?: Array<string>) => any;
   overflow: Record<string, any>;
   zIndexes: number[];
 }
 const theme: Theme = {
+  theme: "light",
   sizes: {
     drawer: {
       side: {

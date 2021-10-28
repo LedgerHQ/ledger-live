@@ -2,7 +2,7 @@ import React, { InputHTMLAttributes } from "react";
 
 import RadioElement from "./RadioElement";
 import Flex from "../../layout/Flex";
-import type { FlexBoxProps } from "../../layout/Flex";
+import { FlexBoxProps } from "../../layout/Flex";
 
 export type RadioProps = {
   currentValue?: InputHTMLAttributes<HTMLInputElement>["value"];

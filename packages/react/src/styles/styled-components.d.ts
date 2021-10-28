@@ -4,6 +4,7 @@ import type { ColorPalette } from "@ledgerhq/ui-shared";
 // and extend them!
 declare module "styled-components" {
   export interface DefaultTheme {
+    theme: string;
     sizes: {
       topBarHeight: number;
       sideBarWidth: number;
@@ -37,7 +38,7 @@ declare module "styled-components" {
       palette: ColorPalette;
     };
     animations: Record<string, (props: never) => any>;
-    transition: (property?: string) => any;
+    transition: (properties?: Array<string>) => any;
     overflow: Record<string, any>;
     zIndexes: number[];
   }
