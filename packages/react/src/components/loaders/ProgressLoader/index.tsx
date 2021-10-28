@@ -38,7 +38,6 @@ const StyledCircleFront = styled(StyledCircle).attrs((props) => ({
 }))``;
 
 const StyledCenteredText = styled(Text).attrs({
-  type: "cta",
   color: "palette.primary.c80",
 })`
   position: absolute;
@@ -90,7 +89,7 @@ export default function ProgressLoader({
 }: Props): JSX.Element {
   return (
     <StyledProgressLoaderContainer>
-      <StyledCenteredText>{progress}%</StyledCenteredText>
+      <StyledCenteredText type="cta">{progress}%</StyledCenteredText>
       <ProgressCircleSvg radius={radius} stroke={stroke} progress={progress} />
     </StyledProgressLoaderContainer>
   );

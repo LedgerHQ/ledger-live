@@ -17,7 +17,7 @@ const Template = () => {
   ];
 
   return sections.map(({ title }) => (
-    <Flex mb="3rem" rowGap="1rem" flexDirection="column">
+    <Flex mb="3rem" rowGap="1rem" flexDirection="column" key={title}>
       <Text type="h2" textTransform="uppercase">
         {title}
       </Text>
@@ -25,6 +25,7 @@ const Template = () => {
         <Radio.Element label="unselected" value="first" variant={title} />
         <Radio.Element label="selected" value="third" variant={title} />
         <Radio.Element label="disabled" value="two" variant={title} disabled />
+        <Radio.Element label="selected and disabled" value="two" variant={title} disabled checked />
       </Radio>
     </Flex>
   ));

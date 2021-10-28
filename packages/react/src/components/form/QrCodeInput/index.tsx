@@ -5,7 +5,6 @@ import QrCodeMedium from "../../../assets/icons/QrCodeMedium";
 import styled from "styled-components";
 
 const QrCodeButton = styled.button`
-  background-color: ${(p) => p.theme.colors.palette.neutral.c100};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,11 +12,16 @@ const QrCodeButton = styled.button`
   height: 32px;
   border-radius: 50%;
   border-width: 0;
-`;
+  color: ${(p) => p.theme.colors.palette.neutral.c00};
+  background-color: ${(p) => p.theme.colors.palette.neutral.c100};
+  cursor: pointer;
 
-const Icon = styled(QrCodeMedium).attrs((p) => ({
-  color: p.theme.colors.palette.neutral.c00,
-}))``;
+  &:disabled {
+    background-color: ${(p) => p.theme.colors.palette.neutral.c30};
+    color: ${(p) => p.theme.colors.palette.neutral.c50};
+    cursor: unset;
+  }
+`;
 
 export default function QrCodeInput({
   onQrCodeClick,
@@ -28,8 +32,8 @@ export default function QrCodeInput({
       {...inputProps}
       renderRight={
         <FlexBox alignItems={"center"} justifyContent={"center"} pr={"8px"}>
-          <QrCodeButton onClick={onQrCodeClick}>
-            <Icon size={"20px"} />
+          <QrCodeButton onClick={onQrCodeClick} disabled={inputProps.disabled}>
+            <QrCodeMedium size="20px" />
           </QrCodeButton>
         </FlexBox>
       }

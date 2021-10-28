@@ -16,6 +16,14 @@ export default {
     columns: { control: false },
     rows: { table: { disable: true } },
   },
+  parameters: {
+    docs: {
+      description: {
+        component:
+          "This is a flexible component that allow us to create any type of table we can imagine. The examples you see here were created to demonstrate how flexible is the component.",
+      },
+    },
+  },
 };
 
 export function Default(args: Props<BalanceElement>): JSX.Element {
@@ -75,8 +83,8 @@ function SubAccounts({
       <ExtraRowContainer gridColumn="1 / -1">
         <FlexBox justifyContent="center" mt={-8}>
           <ExpandButton onToggle={setExpanded}>
-            <Text fontSize={3}>
-              {expanded ? "Hide" : "Show"} token accounts ({subAccounts.length})
+            <Text type="navigation">
+              {expanded ? "Hide" : "Show"} tokens ({subAccounts.length})
             </Text>
           </ExpandButton>
         </FlexBox>

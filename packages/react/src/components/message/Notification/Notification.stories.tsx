@@ -57,34 +57,18 @@ export function Notifications(args: Props & { active: boolean }): JSX.Element {
 
   return (
     <FlexBox flexDirection="column" rowGap={5}>
-      <Notification {...props} backgroundColor="palette.neutral.c30" badge={warningBadge} />
-      <Notification {...props} backgroundColor="palette.primary.c10" badge={infoBadge} />
+      <Notification {...props} badge={warningBadge} hasBackground />
+      <Notification {...props} badge={infoBadge} />
+      <Notification {...props} description={description} badge={warningBadge} hasBackground />
+      <Notification {...props} description={description} badge={infoBadge} />
       <Notification
-        {...props}
-        backgroundColor="palette.neutral.c30"
-        description={description}
-        badge={warningBadge}
-      />
-      <Notification
-        {...props}
-        backgroundColor="palette.primary.c10"
-        description={description}
-        badge={infoBadge}
-      />
-      <Notification
-        backgroundColor="palette.neutral.c30"
         description={description}
         link={link}
         {...props}
         badge={warningBadge}
+        hasBackground
       />
-      <Notification
-        {...props}
-        backgroundColor="palette.primary.c10"
-        description={description}
-        link={link}
-        badge={infoBadge}
-      />
+      <Notification {...props} description={description} link={link} badge={infoBadge} />
     </FlexBox>
   );
 }

@@ -9,7 +9,7 @@ const Main = styled.View`
   justify-content: center;
   align-items: center;
   background-color: ${(p) => p.theme.colors.palette.neutral.c00};
-  overflow: scroll;
+  overflow: hidden;
 `;
 
 const ThemeButton = styled.TouchableOpacity`
@@ -55,16 +55,20 @@ function FontProvider({
 export default function CenterView({
   waitFonts,
   children,
+  theme,
 }: {
   waitFonts?: boolean;
   children: React.ReactNode;
+  theme?: "dark" | "light";
 }): JSX.Element {
   const [isLight, setIsLight] = useState(true);
   return (
-    <StyleProvider selectedPalette={isLight ? "light" : "dark"}>
-      <ThemeButton onPress={() => setIsLight(!isLight)}>
-        <Icon>🖌️</Icon>
-      </ThemeButton>
+    <StyleProvider selectedPalette={theme || isLight ? "light" : "dark"}>
+      {!theme && (
+        <ThemeButton onPress={() => setIsLight(!isLight)}>
+          <Icon>🖌️</Icon>
+        </ThemeButton>
+      )}
       <FontProvider waitUntilLoaded={waitFonts}>
         <Main>{children}</Main>
       </FontProvider>

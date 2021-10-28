@@ -14,6 +14,7 @@ import {
   LayoutProps,
 } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
+import type { Theme } from "../../../styles/theme";
 
 const uppercase = system({
   uppercase: {
@@ -79,10 +80,10 @@ export interface BaseTextProps extends SpaceProps, LayoutProps {
   textOverflow?: string;
 }
 
-const Text = styled.span.attrs((p: BaseTextProps) => ({
-  color: p.color || "palette.neutral.c100",
+const Text = styled.span.attrs((p: BaseTextProps & { theme: Theme }) => ({
+  color: p.color || p.theme.colors.palette.neutral.c100,
   className: `${p.type ? `ll-text_${p.type} ` : ""}`,
-}))<BaseTextProps>`
+}))<BaseTextProps & { theme: Theme }>`
   ${uppercase};
   ${lineHeight};
   ${fontFamily};

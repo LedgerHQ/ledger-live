@@ -11,7 +11,18 @@ const StyledWrapper = styled(Flex).attrs({ flexDirection: "column" })`
 export default {
   title: "Asorted/Divider",
   component: Divider,
-  argTypes: {},
+  argTypes: {
+    variant: {
+      type: "enum",
+      defaultValue: "default",
+      description: "The small variant is used to display a less noticeable separator.",
+      options: ["default", "light"],
+      control: {
+        options: ["default", "light"],
+        control: { type: "select" },
+      },
+    },
+  },
 };
 
 const Template = (args: React.ComponentProps<typeof Divider>) => (

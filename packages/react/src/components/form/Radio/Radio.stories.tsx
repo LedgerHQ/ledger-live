@@ -3,6 +3,7 @@ import { useArgs } from "@storybook/client-api";
 
 import Radio from "./index";
 import type { RadioProps } from "./index";
+import { StoryTemplate } from "./../../helpers";
 
 export default {
   title: "Form/Radio",
@@ -43,8 +44,14 @@ const Template = (args: RadioProps) => {
       <Radio.Element label="Yellow squad" value="yellow" variant="success" />
       <Radio.Element label="Core squad" value="core" variant="error" />
       <Radio.Element label="Orange squad" value="orange" variant="default" disabled />
+      <Radio.Element label="Purple squad" value="purple" variant="default" disabled />
     </Radio>
   );
 };
 
-export const RadioGroup = Template.bind({});
+export const RadioGroup: StoryTemplate<RadioProps> = Template.bind({
+  currentValue: "purple",
+});
+
+// Set the disabled item to be checked on mount
+RadioGroup.args = { currentValue: "purple" };

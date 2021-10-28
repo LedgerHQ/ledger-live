@@ -4,6 +4,7 @@ import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
 import styled from "styled-components";
 
+// TODO: Replace me with a real button as soon as they are designed
 const MaxButton = styled.button<{ active?: boolean }>`
   color: ${(p) =>
     p.active ? p.theme.colors.palette.neutral.c00 : p.theme.colors.palette.neutral.c70};
@@ -14,6 +15,13 @@ const MaxButton = styled.button<{ active?: boolean }>`
   height: 31px;
   padding-left: 13px;
   padding-right: 13px;
+  cursor: pointer;
+
+  &:disabled {
+    color: ${(p) => p.theme.colors.palette.neutral.c50};
+    background-color: ${(p) => (p.active ? p.theme.colors.palette.neutral.c30 : "transparent")};
+    cursor: unset;
+  }
 `;
 
 export default function NumberInput({
@@ -41,7 +49,7 @@ export default function NumberInput({
               active={!!value && !!max && Number(value) === percent * Number(max)}
               disabled={disabled}
             >
-              <Text type={"tiny"} color={"inherit"}>
+              <Text type="cta" color="inherit">
                 {percent * 100}%
               </Text>
             </MaxButton>

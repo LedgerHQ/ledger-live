@@ -88,9 +88,8 @@ export const balance: { data: BalanceElement[]; columns: Column<BalanceElement>[
     IconColumn({
       header: () => <Header>&nbsp;</Header>,
       props: (elt) => ({
-        name: "Star",
-        weight: "Light",
-        color: elt.starred ? "palette.primary.c100" : "palette.neutral.c50",
+        name: "StarSolid",
+        color: elt.starred ? "palette.neutral.c100" : "palette.neutral.c70",
       }),
     }),
   ],
@@ -201,9 +200,8 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
     }),
     IconColumn({
       props: (elt) => ({
-        name: "Star",
-        weight: "Light",
-        color: elt.starred ? "palette.primary.c100" : "palette.neutral.c50",
+        name: "StarSolid",
+        color: elt.starred ? "palette.neutral.c100" : "palette.neutral.c70",
       }),
     }),
   ],

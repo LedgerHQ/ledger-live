@@ -5,8 +5,8 @@ import { rgba } from "../../../styles/helpers";
 import Text from "../../asorted/Text";
 import { RadioContext } from "./index";
 
-const Label = styled(Text).attrs({ type: "paragraph" })`
-  color: var(--ledger-ui-checkbox-color, ${(p) => p.theme.colors.palette.neutral.c80});
+const Label = styled(Text)`
+  color: var(--ledger-ui-checkbox-color, ${(p) => p.theme.colors.palette.neutral.c100});
 `;
 
 const Input = styled.input`
@@ -54,8 +54,8 @@ const Input = styled.input`
 
   &[data-variant="success"] {
     :hover,
-    :checked,
-    :checked + ${Label}, :focus {
+    :checked:not([disabled]),
+    :checked:not([disabled]) + ${Label}, :focus {
       --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.success.c100};
     }
     :focus {
@@ -65,8 +65,8 @@ const Input = styled.input`
 
   &[data-variant="error"] {
     :hover,
-    :checked,
-    :checked + ${Label}, :focus {
+    :checked:not([disabled]),
+    :checked:not([disabled]) + ${Label}, :focus {
       --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.error.c100};
     }
     :focus {
@@ -84,6 +84,7 @@ const Input = styled.input`
 const RadioElement = styled.label.attrs({ tabIndex: -1 })`
   display: inline-flex;
   column-gap: 0.75rem;
+  align-items: center;
 `;
 
 type InputAttributes = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "name">;
@@ -122,7 +123,7 @@ export default ({
         name={context.name}
         {...props}
       />
-      <Label>{label}</Label>
+      <Label type="paragraph">{label}</Label>
     </RadioElement>
   );
 };

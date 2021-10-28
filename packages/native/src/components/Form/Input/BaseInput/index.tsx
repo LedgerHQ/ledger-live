@@ -66,7 +66,7 @@ const BaseInput = styled.TextInput.attrs((p) => ({
   padding-right: 20px;
 `;
 
-const InputErrorContainer = styled(Text).attrs(() => ({ type: "small3" }))`
+const InputErrorContainer = styled(Text)`
   color: ${(p) => p.theme.colors.palette.error.c100};
   margin-left: 12px;
 `;

@@ -9,6 +9,7 @@ module.exports = ({ config }) => {
     "@assets": resolve(__dirname, "..", "src", "assets"),
     "@styles": resolve(__dirname, "..", "src", "styles"),
     "@components": resolve(__dirname, "..", "src", "components"),
+    "victory-native": "victory"
   };
   // config.resolve.extensions = [".ts", ".tsx", ".js", ".json"];
 

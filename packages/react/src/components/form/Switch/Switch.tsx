@@ -23,16 +23,9 @@ const Input = styled.input`
   visibility: hidden;
 `;
 
-const Label = styled(Text).attrs({ type: "body", fontWeight: "500" })`
-  color: currentColor;
-
+const Label = styled(Text)`
   &:first-letter {
     text-transform: uppercase;
-  }
-
-  /* CHECKED VARIANT */
-  ${Input}:checked ~ & {
-    color: ${(props) => props.theme.colors.palette.primary.c90};
   }
 `;
 
@@ -44,7 +37,7 @@ const Switcher = styled.div`
   position: relative;
   display: inline-block;
 
-  background: ${(props) => props.theme.colors.palette.neutral.c90};
+  background: ${(props) => props.theme.colors.palette.neutral.c60};
   border-radius: ${(p) => p.theme.space[6]}px;
   width: var(--ll-switch-width);
   height: var(--ll-switch-height);
@@ -66,7 +59,7 @@ const Switcher = styled.div`
   &:before {
     position: absolute;
     display: block;
-    background: ${(props) => props.theme.colors.palette.neutral.c00};
+    background: ${(props) => props.theme.colors.palette.constant.white};
     border-radius: ${(p) => p.theme.space[12]}px;
 
     width: calc(calc(var(--ll-switch-width) / 2) - var(--ll-switch-padding));
@@ -82,12 +75,28 @@ const Switcher = styled.div`
     --ll-switch-height: ${(p) => p.theme.space[6]}px;
   }
 
+  &:hover {
+    background-color: ${(props) => props.theme.colors.palette.neutral.c70};
+  }
+
+  &:active {
+    background-color: ${(props) => props.theme.colors.palette.neutral.c80};
+  }
+
   /* CHECKED VARIANT */
   ${Input}:checked ~ & {
-    background: ${(props) => props.theme.colors.palette.primary.c90};
+    background: ${(props) => props.theme.colors.palette.primary.c80};
 
     &:before {
       transform: translateX(calc(var(--ll-switch-width) / 2));
+    }
+
+    &:hover {
+      background: ${(props) => props.theme.colors.palette.primary.c90};
+    }
+
+    :active {
+      background: ${(props) => props.theme.colors.palette.primary.c100};
     }
   }
 `;
@@ -131,7 +140,7 @@ const Switch = ({
     >
       <Input type="checkbox" name={name} id={name} disabled={disabled} checked={checked} />
       <Switcher data-size={size} />
-      {label ? <Label>{label}</Label> : null}
+      {label ? <Label type="paragraph">{label}</Label> : null}
     </Container>
   );
 };

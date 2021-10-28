@@ -1,19 +1,19 @@
 import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import Button from "../../cta/Button";
 import FlexBox from "../../layout/Flex";
 import Close from "../../../assets/icons/CloseRegular";
 import ArrowLeft from "../../../assets/icons/ArrowLeftRegular";
 import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";
+import Text from "../../asorted/Text";
 
 const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
   flex-direction: column;
   background-color: ${(p) => p.theme.colors.palette.neutral.c00};
-  padding: ${(p) => p.theme.space[6]}px;
+  padding: ${(p) => p.theme.space[6]}px ${(p) => p.theme.space[12]}px;
 `;
 const Header = styled(FlexBox)`
   display: flex;
@@ -51,9 +51,19 @@ const ScrollWrapper = styled.div`
   overflow: scroll;
   position: relative;
   flex: 1;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 const ButtonPlaceholder = styled.div`
   min-width: ${(p) => p.theme.space[13]}px;
+`;
+const Button = styled.button`
+  background: unset;
+  border: unset;
+  cursor: pointer;
+  color: ${(p) => p.theme.colors.palette.neutral.c100};
 `;
 
 interface DrawerProps {
@@ -100,12 +110,16 @@ const Drawer = ({
             <Container>
               <Header>
                 {onBack != null ? (
-                  <Button Icon={ArrowLeft} iconSize={21} onClick={onBack} />
+                  <Button onClick={onBack}>
+                    <ArrowLeft size={21} />
+                  </Button>
                 ) : (
                   <ButtonPlaceholder />
                 )}
-                {title || <div />}
-                <Button Icon={Close} onClick={onClose} />
+                {<Text>{title}</Text> || <div />}
+                <Button onClick={onClose}>
+                  <Close />
+                </Button>
               </Header>
               <ScrollWrapper>{children}</ScrollWrapper>
             </Container>

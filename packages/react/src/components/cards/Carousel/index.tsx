@@ -41,7 +41,7 @@ const Controllers = styled(Flex)`
 const Bullets = styled.div<{ active?: number }>`
   position: absolute;
   display: flex;
-  left: ${(p) => p.theme.space[8]}px;
+  left: ${(p) => p.theme.space[10]}px;
   bottom: ${(p) => p.theme.space[8]}px;
   column-gap: ${(p) => p.theme.space[2]}px;
   flex-direction: row;
@@ -98,6 +98,9 @@ export type Props = {
   queue: SlideProps[];
   isDismissed: boolean;
   onDismiss: () => void;
+  dismissText?: React.ReactNode;
+  dismissConfirmText?: React.ReactNode;
+  dismissCancelText?: React.ReactNode;
 };
 
 const DEFAULT_TIMEOUT = 7000;
@@ -106,6 +109,9 @@ const Carousel = ({
   queue,
   isDismissed,
   onDismiss,
+  dismissText = "This banner will not show up again until there is a new announcement",
+  dismissConfirmText = "Confirm",
+  dismissCancelText = "Show again",
 }: Props): React.ReactElement | null => {
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
 
@@ -161,15 +167,15 @@ const Carousel = ({
     <CarouselWrapper id={"carousel"} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {wantToDismiss ? (
         <DismissWrapper>
-          <Text color="palette.neutral.c00" ff="Inter|Medium" fontSize={13}>
-            {"This banner will not show up again until there is a new announcement"}
+          <Text color="palette.neutral.c00" type="cta">
+            {dismissText}
           </Text>
           <Flex>
             <Button color="palette.neutral.c00" type="color" onClick={onDismiss}>
-              {"Confirm"}
+              {dismissConfirmText}
             </Button>
             <Button color="palette.neutral.c00" type="main" outline onClick={onCancelDismiss}>
-              {"Show again"}
+              {dismissCancelText}
             </Button>
           </Flex>
         </DismissWrapper>

@@ -5,6 +5,7 @@ import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
 import Icon from "../../asorted/Icon";
 import Badge from "./Badge";
+import type { Theme } from "../../../styles/theme";
 
 export type Props = {
   /* The title to be displayed. */
@@ -17,6 +18,8 @@ export type Props = {
   link?: string;
   /* A callback to perform when clicking on the link. */
   onLinkClick?: (event: React.MouseEvent<HTMLSpanElement>) => void;
+  /* Add the pre-selected background. */
+  hasBackground?: boolean;
 } & ColorProps &
   React.ComponentProps<typeof Container>;
 
@@ -24,7 +27,16 @@ const Container = styled(FlexBox).attrs({
   p: 6,
   columnGap: 8,
   alignItems: "center",
-})`
+})<{ hasBackground?: boolean; theme: Theme }>`
+  --notification-badge-border: ${(p) => {
+    /* Set a CSS variable that will be consumed by the Badge component */
+    return p.hasBackground
+      ? p.theme.colors.palette.neutral.c30
+      : p.theme.colors.palette.background.main;
+  }};
+  background-color: ${(p) =>
+    p.hasBackground ? p.theme.colors.palette.neutral.c30 : "transparent"};
+
   border-radius: 8px;
   ${color}
 `;
@@ -52,10 +64,11 @@ function Notification({
   badge,
   link,
   onLinkClick,
+  hasBackground = false,
   ...containerProps
 }: Props): JSX.Element {
   return (
-    <Container {...containerProps}>
+    <Container {...containerProps} hasBackground={hasBackground}>
       {badge}
       <FlexBox flexDirection="column" rowGap={3} flex="auto">
         <Text ff="Inter|Medium" fontSize={5} color="palette.neutral.c100">

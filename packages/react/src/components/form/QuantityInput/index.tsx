@@ -12,6 +12,21 @@ const MaxButton = styled.button`
   padding-left: 14px;
   padding-right: 14px;
   height: 100%;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: ${(p) => p.theme.colors.palette.neutral.c30};
+    color: ${(p) => p.theme.colors.palette.neutral.c50};
+    cursor: unset;
+  }
+`;
+
+const Legend = styled(Text)`
+  color: ${(p) => p.theme.colors.palette.neutral.c70};
+
+  &[data-disabled="true"] {
+    color: ${(p) => p.theme.colors.palette.neutral.c50};
+  }
 `;
 
 export default function QuantityInput({
@@ -29,12 +44,12 @@ export default function QuantityInput({
       renderRight={
         <FlexBox alignItems={"center"} justifyContent={"center"} pr={"3px"} py={"3px"}>
           {price && (
-            <Text type={"body"} color={"palette.neutral.c70"} pr={"12px"}>
+            <Legend type="body" pr={"12px"} data-disabled={inputProps.disabled}>
               {price}
-            </Text>
+            </Legend>
           )}
-          <MaxButton onClick={onMaxClick}>
-            <Text type={"tiny"} color={"palette.neutral.c00"}>
+          <MaxButton onClick={onMaxClick} disabled={inputProps.disabled}>
+            <Text type="tiny" color="currentColor">
               Max
             </Text>
           </MaxButton>

@@ -1,10 +1,12 @@
 import React from "react";
+import { palettes } from "@ledgerhq/ui-shared";
+
 import { StyleProvider } from "../src/styles";
 
 export const decorators = [
   (Story, { globals }) => {
     const backgrounds = globals?.backgrounds ?? {};
-    const theme = backgrounds?.value === "#1C1D1F" ? "dark" : "light";
+    const theme = backgrounds?.value === palettes.dark.background.main ? "dark" : "light";
     return (
       <StyleProvider fontsPath="assets/fonts" selectedPalette={theme}>
         <Story />
@@ -26,11 +28,11 @@ export const parameters = {
     values: [
       {
         name: "light",
-        value: "#FFFFFF",
+        value: palettes.light.background.main,
       },
       {
         name: "dark",
-        value: "#1C1D1F",
+        value: palettes.dark.background.main,
       },
     ],
   },

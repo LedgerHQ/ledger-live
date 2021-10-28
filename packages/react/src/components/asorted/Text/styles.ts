@@ -135,12 +135,6 @@ export default css`
     font-size: 10px;
     line-height: 12.1px;
   }
-
-  .ll-text_small3 {
-    font-family: Inter, Arial;
-    font-size: 10px;
-    line-height: 12.1px;
-  }
   .ll-text_paragraph {
     font-family: Inter, Arial;
     font-size: 13px;

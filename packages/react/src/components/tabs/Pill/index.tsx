@@ -39,7 +39,7 @@ const Item = styled(Flex).attrs({ flex: 1, justifyContent: "center", alignItems:
   &[data-active="false"] {
     color: ${(p) => p.theme.colors.palette.neutral.c80};
     background-color: ${(p) => p.theme.colors.palette.neutral.c00};
-    border-color: ${(p) => p.theme.colors.palette.neutral.c90};
+    border-color: ${(p) => p.theme.colors.palette.neutral.c40};
   }
   &[data-active="true"] {
     color: ${(p) => p.theme.colors.palette.neutral.c00};

@@ -1,13 +1,17 @@
 import React from "react";
 import CenterView from "../storybook/stories/CenterView";
+import { palettes } from "@ledgerhq/ui-shared";
 
 export const decorators = [
   (Story, { globals }) => {
+    const backgrounds = globals?.backgrounds ?? {};
+    const theme = backgrounds?.value === palettes.dark.background.main ? "dark" : "light";
     return (
       <div
-        style={{ display: "flex", flexDirection: "column", height: "100vh" }}
+        style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}
       >
-        <CenterView>
+        <style> {`body { padding: 0!important;}`}</style>
+        <CenterView theme={theme}>
           <Story />
         </CenterView>
       </div>
@@ -28,11 +32,11 @@ export const parameters = {
     values: [
       {
         name: "light",
-        value: "#FFFFFF",
+        value: palettes.light.background.main,
       },
       {
         name: "dark",
-        value: "#1C1D1F",
+        value: palettes.dark.background.main,
       },
     ],
   },
