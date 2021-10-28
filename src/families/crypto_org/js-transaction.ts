@@ -17,6 +17,7 @@ export const createTransaction = (): Transaction => ({
   recipient: "",
   useAllAmount: false,
   fees: new BigNumber(0),
+  memo: null,
 });
 
 /**
@@ -38,10 +39,16 @@ export const updateTransaction = (
  */
 export const prepareTransaction = async (a: Account, t: Transaction) => {
   let fees = t.fees;
+  let memo = t.memo;
+
   fees = await getEstimatedFees();
 
-  if (!sameFees(t.fees, fees)) {
-    return { ...t, fees };
+  if (t.mode !== "send" && !memo) {
+    memo = "Ledger Live";
+  }
+
+  if (t.memo !== memo || !sameFees(t.fees, fees)) {
+    return { ...t, memo, fees };
   }
 
   return t;

@@ -23,11 +23,13 @@ export type Transaction = TransactionCommon & {
   mode: string;
   family: "crypto_org";
   fees?: BigNumber; // add here all transaction-specific fields if you implement other modes than "send"
+  memo: string | null | undefined;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: "crypto_org";
   mode: string;
   fees?: string; // also the transaction fields as raw JSON data
+  memo: string | null | undefined;
 };
 export type CryptoOrgPreloadData = Record<any, any>;
 export type NetworkInfo = {

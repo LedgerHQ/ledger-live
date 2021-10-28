@@ -45,6 +45,11 @@ export const buildTransaction = async (
     toAddress: t.recipient,
     amount: getTransactionAmount(a, t),
   });
+
+  const { memo } = t;
+  const memoTransaction = memo || "";
+  rawTx.setMemo(memoTransaction);
+
   const signableTx = rawTx
     .appendMessage(msgSend)
     .addSigner({

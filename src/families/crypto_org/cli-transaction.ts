@@ -7,6 +7,11 @@ const options = [
     type: String,
     desc: "mode of transaction: send",
   },
+  {
+    name: "memo",
+    type: String,
+    desc: "add a memo to a transaction",
+  },
 ];
 
 function inferTransactions(
@@ -27,7 +32,12 @@ function inferTransactions(
       if (!account.cryptoOrgResources) throw new Error("unactivated account");
     }
 
-    return { ...transaction, family: "crypto_org", mode: opts.mode || "send" };
+    return {
+      ...transaction,
+      family: "crypto_org",
+      mode: opts.mode || "send",
+      memo: opts.memo,
+    };
   });
 }
 

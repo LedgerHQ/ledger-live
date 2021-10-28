@@ -148,7 +148,8 @@ function convertSendTransactionToOperation(
   addr: string,
   messageSendContent: CryptoOrgMsgSendContent,
   transaction: CryptoOrgAccountTransaction,
-  currencyId: string
+  currencyId: string,
+  memo: string
 ): Operation {
   const type = getOperationType(messageSendContent, addr);
   return {
@@ -164,7 +165,7 @@ function convertSendTransactionToOperation(
     senders: [messageSendContent.fromAddress],
     recipients: [messageSendContent.toAddress],
     hasFailed: !transaction.success,
-    extra: {},
+    extra: { memo },
   };
 }
 
@@ -191,6 +192,8 @@ export const getOperations = async (
 
   for (let i = 0; i < accountTransactions.length; i++) {
     const msgs = accountTransactions[i].messages;
+    const memo = accountTransactions[i].memo;
+    const memoTransaction = memo || "";
 
     for (let j = 0; j < msgs.length; j++) {
       switch (msgs[j].type) {
@@ -202,7 +205,8 @@ export const getOperations = async (
               addr,
               msgSend,
               accountTransactions[i],
-              currencyId
+              currencyId,
+              memoTransaction
             )
           );
           break;
