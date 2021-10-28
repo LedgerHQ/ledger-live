@@ -5,6 +5,7 @@ import { Icons } from "../../../src/assets";
 import Notification from "@components/drawer/Notification";
 import { action } from "@storybook/addon-actions";
 import FlexBox from "@components/Layout/Flex";
+import Info from "../../../src/icons/Info";
 
 const NotificationSample = () => (
   <FlexBox p={20} width={"100%"}>
