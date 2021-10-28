@@ -86,12 +86,14 @@ const Drawer = ({
   setTransitionsEnabled,
   onBack,
 }: DrawerProps) => {
-  const disableChildAnimations = useCallback(() => setTransitionsEnabled(false), [
-    setTransitionsEnabled,
-  ]);
-  const enableChildAnimations = useCallback(() => setTransitionsEnabled(true), [
-    setTransitionsEnabled,
-  ]);
+  const disableChildAnimations = useCallback(
+    () => setTransitionsEnabled(false),
+    [setTransitionsEnabled],
+  );
+  const enableChildAnimations = useCallback(
+    () => setTransitionsEnabled(true),
+    [setTransitionsEnabled],
+  );
   return (
     <TransitionInOut
       in={isOpen}
