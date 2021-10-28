@@ -28,7 +28,7 @@ yarn icons build
 Several aliases to the `yarn workspace` command can be used for convenience.
 
 ```sh
-# yarn workspace @ledgerhq/native-ui
+# yarn workspace @ledgerhq/react-ui
 yarn react
 # yarn workspace @ledgerhq/native-ui
 yarn native
