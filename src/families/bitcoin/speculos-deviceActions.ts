@@ -66,6 +66,10 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       title: "Accept",
       button: "LRlr",
     },
+    {
+      title: "Approve",
+      button: "LRlr",
+    },
   ],
 });
 export default {
