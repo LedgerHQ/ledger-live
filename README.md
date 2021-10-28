@@ -20,7 +20,7 @@ This repo is setup with [`yarn workspaces`](https://classic.yarnpkg.com/en/docs/
 # Running yarn should install and hoist the dependencies for every package.
 yarn
 # Generate the icons.
-yarn workspace @ledgerhq/icons-ui build
+yarn icons build
 ```
 
 ## Usage
