@@ -17,7 +17,7 @@ module.exports = ({ config }) => {
     (rule) => rule.exclude.toString() === "/node_modules/"
   );
   if (babelRule)
-    babelRule.exclude = /node_modules\/(?!(@ledgerhq\/ui-shared)\/).*/;
+    babelRule.exclude = /node_modules\/(?!(@ledgerhq\/ui-shared|victory-native)\/).*/;
 
   return withUnimodules(config, {
     projectRoot: resolve(__dirname, "../"),

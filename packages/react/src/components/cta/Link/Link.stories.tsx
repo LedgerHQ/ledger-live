@@ -1,6 +1,6 @@
 import React from "react";
 import Link, { LinkProps } from "./index";
-import { PlusMedium } from "../../../assets/icons";
+import { PlusMedium } from "@ledgerhq/icons-ui/react";
 
 export default {
   title: "cta/Link",
