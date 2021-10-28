@@ -6,6 +6,9 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - "packages/react/**"
+      - "packages/native/**"
 
 jobs:
   build:
