@@ -1214,10 +1214,10 @@
     js-sha512 "^0.8.0"
     tweetnacl "^1.0.3"
 
-"@ledgerhq/hw-app-btc@6.12.0":
-  version "6.12.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-6.12.0.tgz#ca514a990e19bc4d5ec4237c8a60d36b779c8c4f"
-  integrity sha512-Z3ZHJf2lNrL1qOMhjaM881hD155cwjhWtLd6G+6wmP2uZQfs/WMpHIYduiQzxhaGUSEu8ss6OhPMSCn/vDGn+A==
+"@ledgerhq/hw-app-btc@6.12.1":
+  version "6.12.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-6.12.1.tgz#064ee0b70f726f360b4b2f9c1b1ae1ab55b2f664"
+  integrity sha512-JMBxWfBrps373HCzuLlHk3MCfccxuBZA8sx3rPp8ZH1051Q4wQtduAU9RMsRpuFqOZvkQrpb63dBEdaciEC1Fg==
   dependencies:
     "@ledgerhq/hw-transport" "^6.11.2"
     "@ledgerhq/logs" "^6.10.0"

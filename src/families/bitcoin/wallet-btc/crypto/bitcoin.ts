@@ -188,7 +188,7 @@ class Bitcoin extends Base {
     const schnorrInternalPubkey = ecdsaPubkey.slice(1);
 
     const evenEcdsaPubkey = Buffer.concat([
-      Buffer.of(0x02),
+      Buffer.from([0x02]),
       schnorrInternalPubkey,
     ]);
     const tweak = this.hashTapTweak(schnorrInternalPubkey);
