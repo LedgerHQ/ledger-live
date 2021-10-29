@@ -47,7 +47,6 @@ setSupportedCurrencies([
   "peercoin",
   "viacoin",
   "stakenet",
-  "stealthcoin",
   "bitcoin_testnet",
   "ethereum_ropsten",
   "cosmos_testnet",
