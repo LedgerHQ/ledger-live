@@ -43,7 +43,7 @@ type PairDevicesProps = {
 };
 
 type RouteParams = {
-  onDone?: (deviceId: string) => void,
+  onDone?: (device: Device) => void,
 };
 
 type BleDevice = {
@@ -205,7 +205,7 @@ function PairDevicesInner({ navigation, route }: Props) {
   const onDone = useCallback(
     (device: Device) => {
       navigation.goBack();
-      route.params?.onDone?.(device.deviceId);
+      route.params?.onDone?.(device);
     },
     [navigation, route],
   );
