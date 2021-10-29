@@ -69,6 +69,8 @@ test("sort by marketcap", () => {
     "ethereum/erc20/xstable.protocol",
     "ethereum/erc20/hydro_protocol",
     "ethereum/erc20/xensor",
+    "polygon/erc20/holotoken",
+    "polygon/erc20/zrx",
   ]);
 });
 test("can format a currency unit", () => {
