@@ -206,6 +206,13 @@ const initialExplorerConfig: FullConfig = {
       version: "v3",
     },
   },
+  polygon: {
+    id: "matic",
+    stable: {
+      base: "EXPLORER",
+      version: "v3",
+    },
+  },
 };
 let explorerConfig: FullConfig = initialExplorerConfig;
 export function getExplorerConfig(): FullConfig {

@@ -103,7 +103,7 @@ const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     // FIXME: temporarily disabled until a solution is found for an inconstency between two sync
-    elrond,
+    // elrond, // infra issue
   },
 };
 
