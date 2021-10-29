@@ -94,6 +94,10 @@
       "title": "اسم الحساب مطلوب",
       "description": "يرجى إدخال اسم الحساب."
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "حساب المستلم لم ينضم إلى ASA الذي تم اختياره."
     },
@@ -674,13 +678,9 @@
         "title": "رهن COSMOS",
         "description": "قم بتفويض مكاسب مكافآت ATOM اليوم."
       },
-      "polkastake": {
-        "title": "رهن POLKADOT",
-        "description": "ارهن، وأمّن،\nوقم بإدارة DOT مع\nLedger Live"
-      },
-      "backupPack": {
-        "title": "حزمة النسخ الاحتياطي",
-        "description": "Nano X و Nano S\nلتوفير الحماية المثلى"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "شراء العملات المشفرة",
@@ -3616,7 +3616,7 @@
     "connected": "متصل",
     "disconnected": "تم قطع الاتصال",
     "warningdisconnected": "هناك مشكلة في الاتصال بين dApp وWalletConnect وليدجر لايف (Ledger Live). انتظر بضع لحظات أو أعد تشغيل الاتصال",
-    "info": "يمكنك الآن الوصول إلى تطبيق {{name}} على سطح المكتب.",
+    "info": "You can now access the {{name}} dApp on your web browser.",
     "warning": "مشاركة عناوين التلقي من dApp غير آمنة. استخدم دائمًا Ledger Live عند مشاركة عنوانك لتلقي الأموال.",
     "isconnecting": "يجري الاتصال، يرجى الانتظار...",
     "disconnect": "قطع الاتصال",

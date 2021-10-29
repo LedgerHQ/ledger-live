@@ -8,7 +8,6 @@ import {
   Platform,
 } from "react-native";
 import Animated from "react-native-reanimated";
-import type AnimatedValue from "react-native/Libraries/Animated/src/nodes/AnimatedValue";
 import { useSafeArea } from "react-native-safe-area-context";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
 import type { Portfolio } from "@ledgerhq/live-common/lib/portfolio/v2/types";
@@ -20,14 +19,14 @@ import HeaderSynchronizing from "../../components/HeaderSynchronizing";
 import { scrollToTop } from "../../navigation/utils";
 
 type Props = {
-  scrollY: AnimatedValue,
+  scrollY: typeof Animated.Value,
   portfolio: Portfolio,
   counterValueCurrency: Currency,
   pending: boolean,
   error: ?Error,
 };
 
-const { call, cond, interpolate, lessThan, useCode } = Animated;
+const { call, cond, interpolateNode, lessThan, useCode } = Animated;
 
 export default function AnimatedTopBar({
   scrollY,
@@ -40,7 +39,7 @@ export default function AnimatedTopBar({
   const { top } = useSafeArea();
   const [isShown, setIsShown] = useState(false);
 
-  const opacity = interpolate(scrollY, {
+  const opacity = interpolateNode(scrollY, {
     inputRange: [90, 150],
     outputRange: [0, 1],
     extrapolate: "clamp",

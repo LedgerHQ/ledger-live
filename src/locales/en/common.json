@@ -94,6 +94,10 @@
       "title": "An account name is needed",
       "description": "Please enter an account name."
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "Recipient account has not opted in the selected ASA."
     },
@@ -674,13 +678,9 @@
         "title": "Stake COSMOS",
         "description": "Delegate your ATOM earn rewards today."
       },
-      "polkastake": {
-        "title": "POLKADOT STAKING",
-        "description": "Stake, secure and\nmanage your DOT with\nLedger Live"
-      },
-      "backupPack": {
-        "title": "Back-up pack",
-        "description": "A Nano X and a Nano S\nfor optimal protection"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
@@ -3618,7 +3618,7 @@
     "connected": "Connected",
     "disconnected": "Disconnected",
     "warningdisconnected": "There is a connection problem between the dApp, WalletConnect and Ledger Live. Wait a few moments or relaunch the connection",
-    "info": "You can now access the {{name}} dApp on your desktop.",
+    "info": "You can now access the {{name}} dApp on your web browser.",
     "warning": "Sharing receive addresses from dApp is not secure. Always use Ledger Live when sharing your address to receive funds.",
     "isconnecting": "is connecting, please wait...",
     "disconnect": "Disconnect",

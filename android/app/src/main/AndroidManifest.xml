@@ -4,6 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0.0">
 
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
@@ -58,7 +59,6 @@
         </intent-filter>
         <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/usb_device_filter" />
       </activity>
-      <activity android:taskAffinity="" android:name="com.facebook.react.devsupport.DevSettingsActivity" />
       <activity android:taskAffinity="" android:name="com.facebook.flipper.android.diagnostics.FlipperDiagnosticActivity"
         android:exported="true"/>
     </application>

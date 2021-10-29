@@ -106,6 +106,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
               title={t("common.continue")}
               onPress={onValidateText}
               containerStyle={styles.buttonContainer}
+              disabled={BigNumber(ownSatPerByte || 0).isZero()}
             />
           </View>
         </NavigationScrollView>

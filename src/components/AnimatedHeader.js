@@ -20,7 +20,7 @@ import { normalize, width } from "../helpers/normalizeSize";
 import ArrowLeft from "../icons/ArrowLeft";
 import Close from "../icons/Close";
 
-const { interpolate, Extrapolate } = Animated;
+const { interpolateNode, Extrapolate } = Animated;
 
 const hitSlop = {
   bottom: 10,
@@ -106,18 +106,18 @@ export default function AnimatedHeaderView({
     },
   ]);
 
-  const translateY = interpolate(scrollY, {
+  const translateY = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [0, -50],
     extrapolate: Extrapolate.CLAMP,
   });
-  const translateX = interpolate(scrollY, {
+  const translateX = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [0, hasBackButton ? -5 : -40],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const scale = interpolate(scrollY, {
+  const scale = interpolateNode(scrollY, {
     inputRange: [0, 76],
     outputRange: [1, 0.8],
     extrapolate: Extrapolate.CLAMP,

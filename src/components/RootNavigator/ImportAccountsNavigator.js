@@ -21,7 +21,7 @@ export default function ImportAccountsNavigator() {
     [colors],
   );
   return (
-    <Stack.Navigator screenOptions={stackNavigationConfig}>
+    <Stack.Navigator headerMode="float" screenOptions={stackNavigationConfig}>
       <Stack.Screen
         name={ScreenName.ScanAccounts}
         component={ScanAccounts}

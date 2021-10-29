@@ -1,22 +1,31 @@
+require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '10.0'
+platform :ios, '12.0'
+
+flipperkit_version = '0.111.0'
 
 target 'ledgerlivemobile' do
+  use_expo_modules!
   config = use_native_modules!
 
-  use_react_native!(:path => config["reactNativePath"])
-
-  # Pods for ledgerlivemobile
-  pod 'react-native-ble-plx', :path => '../node_modules/react-native-ble-plx'
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => false
+  )
 
   pod 'djinni_objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
   pod 'ledger-core-objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
   pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
 
-  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
   pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text', :modular_headers => true
+
+  # TODO: remove this once MultiPlatformBleAdapter gets released to 0.1.9
+  # https://github.com/dotintent/MultiPlatformBleAdapter/issues/79
+  # https://github.com/dotintent/MultiPlatformBleAdapter/pull/80
+  pod 'MultiplatformBleAdapter', :git => 'https://github.com/dotintent/MultiPlatformBleAdapter', :tag => '0.1.9'
 
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
@@ -27,21 +36,9 @@ target 'ledgerlivemobile' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
-  use_flipper!({ 'Flipper-Folly' => '2.5.3', 'Flipper' => '0.87.0', 'Flipper-RSocket' => '1.3.1' })
+  # use_flipper!()
+
   post_install do |installer|
-    flipper_post_install(installer)
-
-    installer.pods_project.targets.each do |target|
-      if target.name == 'react-native-config'
-        phase = target.project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
-        phase.shell_script = "cd ../../"\
-                             " && RNC_ROOT=./node_modules/react-native-config/"\
-                             " && export SYMROOT=$RNC_ROOT/ios/ReactNativeConfig"\
-                             " && ruby $RNC_ROOT/ios/ReactNativeConfig/BuildDotenvConfig.ruby"
-        target.build_phases << phase
-        target.build_phases.move(phase,0)
-      end
-    end
-
+    react_native_post_install(installer)
   end
 end

@@ -2,7 +2,7 @@
 
 import React, { Component } from "react";
 import { StyleSheet, View } from "react-native";
-import { Sentry } from "react-native-sentry";
+import * as Sentry from "@sentry/react-native";
 
 import Button from "../components/Button";
 import GenericErrorView from "../components/GenericErrorView";
@@ -16,23 +16,27 @@ class DebugBLE extends Component<
     renderErrorModal: boolean,
   },
 > {
-  state = {
+  state: {
+    renderCrash: boolean,
+    renderErrorModal: boolean,
+  } = {
     renderCrash: false,
     renderErrorModal: false,
   };
 
-  jsCrash = () => {
+  jsCrash: () => Error = () => {
     throw new Error("DEBUG jsCrash");
   };
 
-  nativeCrash = () => {
+  nativeCrash: () => void = () => {
     Sentry.nativeCrash();
   };
 
-  displayRenderCrash = () => this.setState({ renderCrash: true });
-  displayErrorModal = () => this.setState({ renderErrorModal: true });
+  displayRenderCrash: () => void = () => this.setState({ renderCrash: true });
+  displayErrorModal: () => void = () =>
+    this.setState({ renderErrorModal: true });
 
-  render() {
+  render(): any {
     const { renderCrash, renderErrorModal } = this.state;
     return (
       <View style={styles.root}>

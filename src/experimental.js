@@ -36,9 +36,9 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
-    title: "Tezos JS impl",
-    description: "Tezos JS impl",
-    valueOn: "tezos",
+    title: "Experimental JS impl",
+    description: "Use available experimental JS currencies impl",
+    valueOn: "bitcoin,bitcoin_testnet,tezos",
     valueOff: "",
   },
   {

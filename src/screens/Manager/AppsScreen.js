@@ -34,7 +34,7 @@ import AppUpdateAll from "./AppsList/AppUpdateAll";
 
 import InstallProgressBar from "./AppsList/InstallProgressBar";
 
-const { interpolate, Extrapolate } = Animated;
+const { interpolateNode, Extrapolate } = Animated;
 const { width, height } = Dimensions.get("screen");
 const initialLayout = { width, height };
 
@@ -96,7 +96,7 @@ const AppsScreen = ({
 
   const [position] = useState(() => new Animated.Value(0));
 
-  const searchOpacity = interpolate(position, {
+  const searchOpacity = interpolateNode(position, {
     inputRange: [0, 1],
     outputRange: [1, 0],
     extrapolate: Extrapolate.CLAMP,
@@ -464,7 +464,6 @@ const styles = StyleSheet.create({
   },
   labelStyleText: {
     fontWeight: "bold",
-    textTransform: "capitalize",
     lineHeight: 19,
     fontSize: 16,
     textAlign: "left",

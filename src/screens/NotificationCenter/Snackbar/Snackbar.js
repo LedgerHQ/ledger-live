@@ -8,10 +8,10 @@ import {
 } from "react-native";
 import Animated, {
   set,
-  interpolate,
+  interpolateNode,
   Extrapolate,
   useCode,
-  Easing,
+  EasingNode,
 } from "react-native-reanimated";
 import { useClock, timing } from "react-native-redash/lib/module/v1";
 import type { ToastData } from "@ledgerhq/live-common/lib/notifications/ToastProvider/types";
@@ -54,7 +54,7 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
         anim,
         timing({
           duration: 800,
-          easing: Easing.ease,
+          easing: EasingNode.ease,
           clock,
           from: anim,
           to: new Animated.Value(closed ? 0 : 1),
@@ -84,25 +84,25 @@ export default function Snackbar({ toast, cta, onPress, onClose }: Props) {
   const Icon = icon && icons[icon];
   const iconColor = icon && iconColors[icon];
 
-  const maxHeight = interpolate(anim, {
+  const maxHeight = interpolateNode(anim, {
     inputRange: [0, 0.4, 1],
     outputRange: [0, 200, 200],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const translateX = interpolate(anim, {
+  const translateX = interpolateNode(anim, {
     inputRange: [0, 0.6, 1],
     outputRange: [width + 100, width - 100, 0],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const opacity = interpolate(anim, {
+  const opacity = interpolateNode(anim, {
     inputRange: [0, 0.6, 1],
     outputRange: [0, 0, 1],
     extrapolate: Extrapolate.CLAMP,
   });
 
-  const marginBottom = interpolate(anim, {
+  const marginBottom = interpolateNode(anim, {
     inputRange: [0, 0.4, 1],
     outputRange: [0, 16, 16],
     extrapolate: Extrapolate.CLAMP,

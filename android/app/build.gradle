@@ -95,7 +95,6 @@ project.ext.sentryCli = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
-apply from: "../../node_modules/react-native-sentry/sentry.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -135,22 +134,19 @@ def jscFlavor = 'org.webkit:android-jsc-intl:+'
 def enableHermes = project.ext.react.get("enableHermes", false);
 
 android {
+    ndkVersion rootProject.ext.ndkVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "com.ledger.live"
         multiDexEnabled true
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 181
-        versionName "2.33.0"
+        versionCode 4194512
+        versionName "2.34.4"
         resValue "string", "build_config_package", "com.ledger.live"
-        missingDimensionStrategy 'react-native-camera', 'general'
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -196,15 +192,6 @@ android {
         }
     }
 
-    // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // because we used split APKs needing some versioning magic before,
-            // the versionCode has to be bumped to a value higher than anything we previously used
-            4 * 1048576 + defaultConfig.versionCode
-        }
-    }
-
     // As required by https://github.com/react-native-community/jsc-android-buildscripts#for-react-native-version-059
     packagingOptions {
         pickFirst '**/libjsc.so'
@@ -213,13 +200,6 @@ android {
 }
 
 dependencies {
-    implementation (project(':react-native-camera')) {
-        exclude group: "com.google.android.gms"
-        implementation 'com.android.support:exifinterface:27.+'
-        implementation ('com.google.android.gms:play-services-vision:12.0.1') {
-            force = true
-        }
-    }
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
@@ -250,7 +230,7 @@ dependencies {
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
-    from configurations.compile
+    from configurations.implementation
     into 'libs'
 }
 

@@ -60,7 +60,7 @@ class Search extends PureComponent<Props, State> {
   }
 
   formatResults(results: Array<Object>) {
-    this.setState({ results });
+    this.setState({ results: results.map(r => r.item) });
   }
 
   render() {

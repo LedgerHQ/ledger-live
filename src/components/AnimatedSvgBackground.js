@@ -2,7 +2,7 @@
 
 import React, { memo } from "react";
 import type { ViewStyleProp } from "react-native/Libraries/StyleSheet/StyleSheet";
-import Animated, { Easing } from "react-native-reanimated";
+import Animated, { EasingNode } from "react-native-reanimated";
 import Svg, { Path } from "react-native-svg";
 import { interpolatePath } from "react-native-redash/lib/module/v1";
 import Config from "react-native-config";
@@ -41,7 +41,7 @@ const runProgression = () => {
   const config = {
     duration: new Value(20000),
     toValue: new Value(1),
-    easing: Easing.inOut(Easing.quad),
+    easing: EasingNode.inOut(EasingNode.quad),
   };
 
   return block([

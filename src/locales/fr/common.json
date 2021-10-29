@@ -94,6 +94,10 @@
       "title": "Nom de compte requis",
       "description": "Merci d'entrer un nom de compte"
     },
+    "AccountNeedResync": {
+      "title": "Veuillez réessayer",
+      "description": "Le compte n'est plus à jour, synchronisez-le."
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "Le compte bénéficiaire n'a pas activé l'ASA sélectionné."
     },
@@ -674,13 +678,9 @@
         "title": "Staker sur Cosmos",
         "description": "Déléguez vos ATOM pour gagner des récompenses aujourd'hui."
       },
-      "polkastake": {
-        "title": "STAKING DE POLKADOT",
-        "description": "Stakez, sécurisez et gérez vos DOT grâce à Ledger Live."
-      },
-      "backupPack": {
-        "title": "Back-up Pack",
-        "description": "Une protection optimale avec un Nano X et un Nano S."
+      "familyPack": {
+        "title": "Family Pack",
+        "description": "Faites entrer votre famille dans la crypto\navec 3 Ledger Nano S"
       },
       "buyCrypto": {
         "title": "Acheter des cryptos",
@@ -1222,11 +1222,11 @@
         "supportLink": "Contacter l'Assistance"
       },
       "seed": {
-        "title": "Please check the box contents",
-        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
-        "warning": "Only use a recovery phrase that your device displayed when it was set up",
-        "continueCTA": "Continue",
-        "contactSupportCTA": "Contact support"
+        "title": "Vérifier le contenu de votre coffret",
+        "desc": "Si votre {{deviceName}} est livré avec un code PIN ou une phrase de récupération, l'utiliser présente un risque. Contactez l'Assistance Ledger.",
+        "warning": "Utilisez uniquement la phrase de récupération affichée par votre appareil lors de sa configuration.",
+        "continueCTA": "Continuer",
+        "contactSupportCTA": "Contacter l'Assistance"
       }
     }
   },
@@ -3616,7 +3616,7 @@
     "connected": "Connecté",
     "disconnected": "Déconnecté",
     "warningdisconnected": "Il y a un problème de connexion entre la DApp, WalletConnect et Ledger Live. Merci de patienter quelques instants ou de réessayer de vous connecter.",
-    "info": "Vous pouvez maintenant accéder à la DApp {{name}} sur votre ordinateur.",
+    "info": "Vous pouvez accéder à la DApp {{name}} sur votre navigateur.",
     "warning": "Partager des adresses de bénéficiaire par DApp n'est pas sécurisé. Utilisez toujours Ledger Live lorsque vous partagez votre adresse pour recevoir des fonds.",
     "isconnecting": "est en cours de connexion. Merci de patienter.",
     "disconnect": "Déconnecter",

@@ -94,6 +94,10 @@
       "title": "Необходимо указать название счёта",
       "description": "Укажите название счёта."
     },
+    "AccountNeedResync": {
+      "title": "Please try again",
+      "description": "Account is outdated. A synchronisation is needed"
+    },
     "AlgorandASANotOptInInRecipient": {
       "title": "В указанном ASA не выбран счёт получателя."
     },
@@ -674,13 +678,9 @@
         "title": "Стейкинг COSMOS",
         "description": "Делегируйте ATOM и получайте вознаграждения уже сегодня."
       },
-      "polkastake": {
-        "title": "СТЕЙКИНГ POLKADOT",
-        "description": "Безопасно стейкируйте\nи управляйте токенами DOT\nв Ledger Live"
-      },
-      "backupPack": {
-        "title": "Резервный набор",
-        "description": "Nano X и Nano S\nдля оптимальной защиты"
+      "familyPack": {
+        "title": "Family pack",
+        "description": "Get your family into crypto with 3 Nano S"
       },
       "buyCrypto": {
         "title": "Покупайте криптовалюту",
@@ -1222,11 +1222,11 @@
         "supportLink": "Связаться с Поддержкой"
       },
       "seed": {
-        "title": "Please check the box contents",
-        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
-        "warning": "Only use a recovery phrase that your device displayed when it was set up",
-        "continueCTA": "Continue",
-        "contactSupportCTA": "Contact support"
+        "title": "Проверьте содержимое упаковки",
+        "desc": "Если {{deviceName}} при включении запрашивает ПИН-код и/или на нём уже была создана фраза восстановления, то использовать такое устройство небезопасно. Свяжитесь с Поддержкой Ledger.",
+        "warning": "Используйте только ту фразу восстановления, которое устройство сгенерировало при первичной настройке.",
+        "continueCTA": "Продолжить",
+        "contactSupportCTA": "Связаться с Поддержкой"
       }
     }
   },
@@ -3616,7 +3616,7 @@
     "connected": "Подключено",
     "disconnected": "Отключено",
     "warningdisconnected": "Проблема с подключением между dApp, WalletConnect и Ledger Live. Подождите несколько секунд или попробуйте подключиться заново",
-    "info": "Теперь dApp {{name}} доступно в настольном приложении.",
+    "info": "You can now access the {{name}} dApp on your web browser.",
     "warning": "Совместное использование адресов, полученных в dApp, несёт риск для безопасности. Обязательно используйте Ledger Live при отправке адреса для получения средств.",
     "isconnecting": "подключается. Пожалуйста, подождите...",
     "disconnect": "Отключить",
