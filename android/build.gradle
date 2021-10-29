@@ -48,6 +48,9 @@ allprojects {
             url "$rootDir/../node_modules/detox/Detox-android"
         }
         jcenter()
+         maven {
+            url "$rootDir/../node_modules/expo-camera/android/maven"
+        }
     }
 }
 

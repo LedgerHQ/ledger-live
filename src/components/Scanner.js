@@ -1,90 +1,68 @@
 /* @flow */
-import React, { PureComponent } from "react";
-import { StyleSheet, View } from "react-native";
-import { RNCamera } from "react-native-camera";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, View, useNavigation } from "react-native";
+import { Camera } from "expo-camera";
+import { BarCodeScanner } from "expo-barcode-scanner";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
-import FallBackCamera from "./FallbackCamera/Fallback";
+import FallBackCamera from "../screens/ImportAccounts/FallBackCamera";
 import getWindowDimensions from "../logic/getWindowDimensions";
 
 type Props = {
-  screenName?: string,
-  navigation: any,
   onResult: Function,
+  liveQrCode?: boolean,
+  progress?: number,
 };
 
-type State = {
-  width: number,
-  height: number,
-};
+const Scanner = ({ onResult, liveQrCode, progress }: Props) => {
+  const [hasPermission, setHasPermission] = useState(null);
+  const { width, height } = getWindowDimensions();
+  const navigation = useNavigation();
 
-class Scanner extends PureComponent<Props, State> {
-  state = {
-    ...getWindowDimensions(),
-  };
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
 
-  lastData: ?string = null;
-
-  frames: * = null;
-
-  completed: boolean = false;
-
-  onBarCodeRead = ({ data }: { data: string }) => {
-    if (data) {
-      this.props.onResult(data);
-    }
-  };
-
-  setDimensions = () => {
-    const dimensions = getWindowDimensions();
-
-    this.setState(dimensions);
-  };
-
-  render() {
-    const { width, height } = this.state;
-    const { navigation, screenName } = this.props;
-    const cameraRatio = 16 / 9;
-    const cameraDimensions =
-      width > height
-        ? { width, height: width / cameraRatio }
-        : { width: height / cameraRatio, height };
-
-    return (
-      <View style={styles.root} onLayout={this.setDimensions}>
-        <StyledStatusBar barStyle="light-content" />
-        <RNCamera
-          barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
-          onBarCodeRead={this.onBarCodeRead}
-          ratio="16:9"
-          captureAudio={false}
-          style={[styles.camera, cameraDimensions]}
-          notAuthorizedView={
-            <FallBackCamera navigation={navigation} screenName={screenName} />
-          }
-        >
-          {({ status }) =>
-            status === "READY" ? (
-              <CameraScreen width={width} height={height} />
-            ) : null
-          }
-        </RNCamera>
-      </View>
-    );
+  if (hasPermission === null) {
+    return <View />;
   }
-}
+  if (hasPermission === false) {
+    return <FallBackCamera navigation={navigation} />;
+  }
+
+  return (
+    <View style={styles.container}>
+      <StyledStatusBar barStyle="light-content" />
+      <Camera
+        style={styles.camera}
+        type={Camera.Constants.Type.back}
+        ratio="16:9"
+        onBarCodeScanned={({ data }) => onResult(data)}
+        barCodeScannerSettings={{
+          barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+        }}
+      >
+        <CameraScreen
+          liveQrCode={liveQrCode}
+          progress={progress}
+          width={width}
+          height={height}
+        />
+      </Camera>
+    </View>
+  );
+};
 
 export default Scanner;
 
 const styles = StyleSheet.create({
-  root: {
+  container: {
     flex: 1,
-    backgroundColor: "black",
-    alignItems: "center",
-    justifyContent: "center",
   },
   camera: {
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1,
   },
 });

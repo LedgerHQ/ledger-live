@@ -20,6 +20,10 @@
 	<string>2.34.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow $(PRODUCT_NAME) to use the camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow $(PRODUCT_NAME) to use the microphone</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

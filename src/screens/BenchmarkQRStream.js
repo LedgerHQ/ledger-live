@@ -2,7 +2,7 @@
 
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
-import { RNCamera } from "react-native-camera";
+import Scanner from "../components/Scanner";
 import LText from "../components/LText";
 import { rgba, withTheme } from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
@@ -21,14 +21,11 @@ class BenchmarkQRStream extends PureComponent<
   };
 
   count = 0;
-
   dataSize = 0;
-
   previous = "";
-
   end = false;
 
-  onBarCodeRead = ({ data }: { data: string }) => {
+  onBarCodeRead = (data: string) => {
     if (this.previous === data || this.end) return;
     this.previous = data;
     if (data.indexOf("bench:") === 0 || data === "end") {
@@ -54,19 +51,9 @@ class BenchmarkQRStream extends PureComponent<
 
   render() {
     const { colors } = this.props;
-    const { width, height, benchmarks, end } = this.state;
-    const summary = benchmarks.map(b => `${b.dataSize}:${b.count}`).join(" ");
-    const cameraRatio = 16 / 9;
-    const cameraDimensions =
-      width > height
-        ? { width, height: width / cameraRatio }
-        : { width: height / cameraRatio, height };
-    const viewFinderSize = (width > height ? height : width) * (2 / 3);
-    const wrapperStyle =
-      width > height
-        ? { height, alignSelf: "stretch" }
-        : { width, flexGrow: 1 };
+    const { benchmarks, end } = this.state;
 
+    const summary = benchmarks.map(b => `${b.dataSize}:${b.count}`).join(" ");
     if (end) {
       return (
         <View style={styles.resultRoot}>
@@ -84,76 +71,15 @@ class BenchmarkQRStream extends PureComponent<
 
     return (
       <View style={[styles.root, { backgroundColor: colors.darkBlue }]}>
-        <RNCamera
-          barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
-          onBarCodeRead={this.onBarCodeRead}
-          ratio="16:9"
-          captureAudio={false}
-          style={[styles.camera, cameraDimensions]}
-        >
-          {({ status }) =>
-            status === "READY" ? (
-              <View style={wrapperStyle}>
-                <View style={[darkenStyle, styles.centered, styles.topCell]}>
-                  <LText semiBold style={styles.text} color="white">
-                    {"ledger-live-tools.netlify.com/qrstreambenchmark"}
-                  </LText>
-                </View>
-
-                <View style={styles.row}>
-                  <View style={[darkenStyle]} />
-                  <View
-                    style={{ width: viewFinderSize, height: viewFinderSize }}
-                  >
-                    <View style={styles.innerRow}>
-                      <View
-                        style={[
-                          styles.border,
-                          styles.borderLeft,
-                          styles.borderTop,
-                        ]}
-                      />
-                      <View style={styles.border} />
-                      <View
-                        style={[
-                          styles.border,
-                          styles.borderRight,
-                          styles.borderTop,
-                        ]}
-                      />
-                    </View>
-                    <View style={styles.innerRow} />
-                    <View style={styles.innerRow}>
-                      <View
-                        style={[
-                          styles.border,
-                          styles.borderLeft,
-                          styles.borderBottom,
-                        ]}
-                      />
-                      <View style={styles.border} />
-                      <View
-                        style={[
-                          styles.border,
-                          styles.borderRight,
-                          styles.borderBottom,
-                        ]}
-                      />
-                    </View>
-                  </View>
-                  <View style={[darkenStyle]} />
-                </View>
-                <View style={[darkenStyle, styles.centered]}>
-                  <View style={styles.centered}>
-                    <LText semiBold style={styles.text} color="white">
-                      {summary}
-                    </LText>
-                  </View>
-                </View>
-              </View>
-            ) : null
-          }
-        </RNCamera>
+        <Scanner onResult={this.onBarCodeRead} liveQrCode />
+        <View style={[darkenStyle]} />
+        <View style={[darkenStyle, styles.centered]}>
+          <View style={styles.centered}>
+            <LText semiBold style={styles.text} color="white">
+              {summary}
+            </LText>
+          </View>
+        </View>
       </View>
     );
   }
@@ -170,51 +96,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  result: {
-    padding: 20,
-  },
-  camera: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  column: {
-    flexDirection: "column",
-    alignItems: "stretch",
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "stretch",
-  },
-  innerRow: {
-    flexDirection: "row",
-    alignItems: "stretch",
-    flexGrow: 1,
-  },
-  topCell: {
-    paddingTop: 64,
-  },
   darken: {
     flexGrow: 1,
   },
   text: {
     fontSize: 14,
     textAlign: "center",
-  },
-  border: {
-    borderColor: "white",
-    flexGrow: 1,
-  },
-  borderTop: {
-    borderTopWidth: 6,
-  },
-  borderBottom: {
-    borderBottomWidth: 6,
-  },
-  borderLeft: {
-    borderLeftWidth: 6,
-  },
-  borderRight: {
-    borderRightWidth: 6,
   },
   centered: {
     flex: 1,

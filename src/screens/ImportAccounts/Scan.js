@@ -1,7 +1,6 @@
 /* @flow */
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
-import { RNCamera } from "react-native-camera";
 import {
   parseFramesReducer,
   framesToData,
@@ -11,10 +10,8 @@ import {
 import { decode } from "@ledgerhq/live-common/lib/cross";
 
 import { TrackScreen } from "../../analytics";
-import StyledStatusBar from "../../components/StyledStatusBar";
 import { ScreenName } from "../../const";
-import FallBackCamera from "./FallBackCamera";
-import CameraScreen from "../../components/CameraScreen";
+import Scanner from "../../components/Scanner";
 import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { withTheme } from "../../colors";
@@ -56,7 +53,7 @@ class Scan extends PureComponent<
 
   completed: boolean = false;
 
-  onBarCodeRead = ({ data }: { data: string }) => {
+  onBarCodeRead = (data: string) => {
     if (data && data !== this.lastData && !this.completed) {
       this.lastData = data;
       try {
@@ -92,47 +89,14 @@ class Scan extends PureComponent<
     });
   };
 
-  setDimensions = () => {
-    const dimensions = getWindowDimensions();
-
-    this.setState(dimensions);
-  };
-
   render() {
-    const { progress, width, height, error } = this.state;
-    const { navigation, colors } = this.props;
-    const cameraRatio = 16 / 9;
-    const cameraDimensions =
-      width > height
-        ? { width, height: width / cameraRatio }
-        : { width: height / cameraRatio, height };
+    const { progress, error } = this.state;
+    const { colors } = this.props;
 
     return (
-      <View
-        style={[styles.root, { backgroundColor: colors.darkBlue }]}
-        onLayout={this.setDimensions}
-      >
+      <View style={[styles.root, { backgroundColor: colors.darkBlue }]}>
         <TrackScreen category="ImportAccounts" name="Scan" />
-        <StyledStatusBar barStyle="light-content" />
-        <RNCamera
-          barCodeTypes={[RNCamera.Constants.BarCodeType.qr]} // Do not look for barCodes other than QR
-          onBarCodeRead={this.onBarCodeRead}
-          ratio="16:9"
-          captureAudio={false}
-          style={[styles.camera, cameraDimensions]}
-          notAuthorizedView={<FallBackCamera navigation={navigation} />}
-        >
-          {({ status }) =>
-            status === "READY" ? (
-              <CameraScreen
-                liveQrCode
-                width={width}
-                height={height}
-                progress={progress}
-              />
-            ) : null
-          }
-        </RNCamera>
+        <Scanner onResult={this.onBarCodeRead} progress={progress} liveQrCode />
         <GenericErrorBottomModal error={error} onClose={this.onCloseError} />
       </View>
     );

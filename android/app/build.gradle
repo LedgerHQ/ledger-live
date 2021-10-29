@@ -147,7 +147,6 @@ android {
         versionCode 4194512
         versionName "2.34.4"
         resValue "string", "build_config_package", "com.ledger.live"
-        missingDimensionStrategy 'react-native-camera', 'general'
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -201,13 +200,6 @@ android {
 }
 
 dependencies {
-    implementation (project(':react-native-camera')) {
-        exclude group: "com.google.android.gms"
-        implementation 'com.android.support:exifinterface:27.+'
-        implementation ('com.google.android.gms:play-services-vision:12.0.1') {
-            force = true
-        }
-    }
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
