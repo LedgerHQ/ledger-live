@@ -159,7 +159,7 @@ export const Step = memo(function Step({
           <Flex flex="1" />
         )}
       </Item.Spacer>
-      <StepText inactive={inactive} errored={errored} type="navigation">
+      <StepText inactive={inactive} errored={errored} variant="small">
         {label}
       </StepText>
     </Flex>

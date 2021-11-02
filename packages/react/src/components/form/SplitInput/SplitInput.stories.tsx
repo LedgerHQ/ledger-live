@@ -31,10 +31,10 @@ const options = [
 
 const Label = ({ left, right }: { left: string; right: string }) => (
   <FlexBox justifyContent="space-between" mt={8} px={6}>
-    <Text ff="Inter|SemiBold" fontSize={2}>
+    <Text fontWeight="semiBold" variant={"small"}>
       {`<${left} />`}
     </Text>
-    <Text ff="Inter|SemiBold" fontSize={2}>
+    <Text fontWeight="semiBold" variant={"small"}>
       {`<${right} />`}
     </Text>
   </FlexBox>

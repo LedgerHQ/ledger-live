@@ -95,8 +95,8 @@ export function Option<
       disabled={props.isDisabled}
       selected={props.isSelected}
       focus={props.isFocused}
-      ff="Inter|SemiBold"
-      fontSize={3}
+      fontWeight="semiBold"
+      variant={"paragraph"}
     >
       <components.Option {...innerProps}>{render ? render(props) : children}</components.Option>
     </Wrapper>

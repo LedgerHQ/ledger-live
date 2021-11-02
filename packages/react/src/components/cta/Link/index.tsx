@@ -50,7 +50,7 @@ const LinkContainer = (props: LinkProps): React.ReactElement => {
   return (
     <>
       {iconPosition === "right" && children ? (
-        <Text type={ctaTextType[size]} fontWeight={"semibold"} color={"inherit"}>
+        <Text variant={ctaTextType[size]} fontWeight="semiBold" color={"inherit"}>
           {children}
         </Text>
       ) : null}
@@ -60,7 +60,7 @@ const LinkContainer = (props: LinkProps): React.ReactElement => {
         </IconContainer>
       ) : null}
       {iconPosition === "left" && children ? (
-        <Text type={ctaTextType[size]} fontWeight={"semibold"} color={"inherit"}>
+        <Text variant={ctaTextType[size]} fontWeight="semiBold" color={"inherit"}>
           {children}
         </Text>
       ) : null}

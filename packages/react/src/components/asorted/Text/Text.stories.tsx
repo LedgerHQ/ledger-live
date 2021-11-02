@@ -4,44 +4,40 @@ export default {
   title: "Asorted/Typography/Text",
   component: Text,
   argTypes: {
-    type: {
+    variant: {
       options: [
         undefined,
         "h1",
         "h2",
         "h3",
-        "highlight",
-        "emphasis",
+        "h4",
+        "h5",
+        "large",
         "body",
-        "cta",
-        "link",
+        "bodyLineHeight",
+        "paragraph",
+        "paragraphLineHeight",
+        "small",
+        "extraSmall",
         "tiny",
-        "subTitle",
-        "navigation",
-        "tag",
+        "micro",
+        "subtitle",
       ],
       control: {
         type: "radio",
       },
     },
-    ff: {
+    fontWeight: {
       options: [
         undefined,
-        "Alpha|Medium",
-        "Inter|ExtraLight",
-        "Inter|Light",
-        "Inter|Regular",
-        "Inter|Medium",
-        "Inter|SemiBold",
-        "Inter|Bold",
-        "Inter|ExtraBold",
+        "medium",
+        "extraLight",
+        "light",
+        "regular",
+        "semiBold",
+        "bold",
+        "extraBold",
       ],
-      control: {
-        type: "radio",
-      },
-    },
-    fontSize: {
-      options: [undefined, 0, 1, 2, 3, 4, 5, 6, 7, 8],
       control: {
         type: "radio",
       },

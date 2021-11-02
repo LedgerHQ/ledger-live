@@ -83,7 +83,7 @@ function SubAccounts({
       <ExtraRowContainer gridColumn="1 / -1">
         <FlexBox justifyContent="center" mt={-8}>
           <ExpandButton onToggle={setExpanded}>
-            <Text type="navigation">
+            <Text variant={"paragraph"}>
               {expanded ? "Hide" : "Show"} tokens ({subAccounts.length})
             </Text>
           </ExpandButton>

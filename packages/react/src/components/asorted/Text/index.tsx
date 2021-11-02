@@ -14,7 +14,8 @@ import {
   LayoutProps,
 } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
-import type { Theme } from "../../../styles/theme";
+import { TextVariants } from "../../../styles/theme";
+import { textVariantStyle } from "./styles";
 
 const uppercase = system({
   uppercase: {
@@ -32,27 +33,12 @@ type FontFamilies =
   | "Inter|Bold"
   | "Inter|ExtraBold"
   | "Alpha|Medium";
-export type TextTypes =
-  | "h1"
-  | "h2"
-  | "h3"
-  | "highlight"
-  | "emphasis"
-  | "body"
-  | "cta"
-  | "link"
-  | "small"
-  | "tiny"
-  | "subTitle"
-  | "navigation"
-  | "tag"
-  | "large"
-  | "paragraph";
 
 export interface TextProps {
   fontFamily?: string;
   ff?: FontFamilies;
-  fontSize?: number | string;
+  fontSize?: number | string | TextVariants;
+  variant?: TextVariants;
   textAlign?: string;
   textTransform?: string;
   color?: string;
@@ -63,27 +49,30 @@ export interface TextProps {
   mr?: number | string;
   lineHeight?: string;
   bracket?: boolean;
-  type?: TextTypes;
   children: React.ReactNode;
 }
 
 export interface BaseTextProps extends SpaceProps, LayoutProps {
   fontFamily?: string;
   ff?: FontFamilies;
-  fontSize?: number | string;
+  fontSize?: number | string | TextVariants;
+  variant?: TextVariants;
   textAlign?: string;
   color?: string;
   fontWeight?: string;
   lineHeight?: string;
-  type?: TextTypes;
   textTransform?: string;
   textOverflow?: string;
 }
 
-const Text = styled.span.attrs((p: BaseTextProps & { theme: Theme }) => ({
-  color: p.color || p.theme.colors.palette.neutral.c100,
-  className: `${p.type ? `ll-text_${p.type} ` : ""}`,
-}))<BaseTextProps & { theme: Theme }>`
+const Text = styled.span.attrs<BaseTextProps>(
+  ({ variant = "body", fontSize, color }: BaseTextProps) => ({
+    fontSize: fontSize ? fontSize : variant,
+    color: color || "palette.neutral.c100",
+  }),
+)<BaseTextProps>`
+  font-weight: 500;
+  ${(p) => textVariantStyle[p.variant || "body"]}
   ${uppercase};
   ${lineHeight};
   ${fontFamily};

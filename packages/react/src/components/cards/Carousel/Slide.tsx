@@ -26,10 +26,10 @@ export type Props = {
 const Slide = ({ title, description, image, onClick }: Props): React.ReactElement => {
   return (
     <Wrapper key={"key"} image={image} onClick={onClick}>
-      <Text color="palette.neutral.c00" ff="Inter|Regular" fontSize={10}>
+      <Text variant={"tiny"} color="palette.neutral.c00" fontWeight="regular">
         {title}
       </Text>
-      <Text color="palette.neutral.c00" ff="Alpha|Medium" textTransform="uppercase" fontSize={20}>
+      <Text variant={"h5"} color="palette.neutral.c00" textTransform="uppercase">
         {description}
       </Text>
     </Wrapper>

@@ -40,7 +40,7 @@ export const Tooltip = (args: Props): JSX.Element => (
       <div style={{ padding: "5px" }}>
         <Text
           as="div"
-          ff="Inter|SemiBold"
+          fontWeight="semiBold"
           color="palette.neutral.c100"
           style={{ border: "2px solid #AAA", borderRadius: "5px" }}
           p={10}

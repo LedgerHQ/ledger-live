@@ -89,7 +89,7 @@ export default function ProgressLoader({
 }: Props): JSX.Element {
   return (
     <StyledProgressLoaderContainer>
-      <StyledCenteredText type="cta">{progress}%</StyledCenteredText>
+      <StyledCenteredText variant="body">{progress}%</StyledCenteredText>
       <ProgressCircleSvg radius={radius} stroke={stroke} progress={progress} />
     </StyledProgressLoaderContainer>
   );

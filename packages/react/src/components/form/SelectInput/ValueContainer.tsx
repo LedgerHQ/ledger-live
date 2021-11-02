@@ -26,7 +26,7 @@ export function ValueContainer<
   const color = props.selectProps.isDisabled ? "palette.neutral.c60" : "palette.neutral.c100";
   return (
     <components.ValueContainer {...props}>
-      <Text as="div" type="paragraph" color={color}>
+      <Text as="div" variant="paragraph" color={color}>
         {props.render ? props.render(props) : props.children}
       </Text>
     </components.ValueContainer>

@@ -140,7 +140,7 @@ const Switch = ({
     >
       <Input type="checkbox" name={name} id={name} disabled={disabled} checked={checked} />
       <Switcher data-size={size} />
-      {label ? <Label type="paragraph">{label}</Label> : null}
+      {label ? <Label variant="paragraph">{label}</Label> : null}
     </Container>
   );
 };

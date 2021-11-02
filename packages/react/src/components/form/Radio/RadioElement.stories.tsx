@@ -18,7 +18,7 @@ const Template = () => {
 
   return sections.map(({ title }) => (
     <Flex mb="3rem" rowGap="1rem" flexDirection="column" key={title}>
-      <Text type="h2" textTransform="uppercase">
+      <Text variant="h2" textTransform="uppercase">
         {title}
       </Text>
       <Radio currentValue="third" onChange={() => {}} name={title}>

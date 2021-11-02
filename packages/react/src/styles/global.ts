@@ -2,8 +2,8 @@ import { createGlobalStyle } from "styled-components";
 
 import { rgba } from "./helpers";
 import reset from "./reset";
-import textStyles, { fontStyles } from "../components/asorted/Text/styles";
 import tippyStyles from "../components/message/Tooltip/styles";
+import { fontStyles } from "../components/asorted/Text/styles";
 
 export type GlobalStyleProps = { fontsPath?: string };
 
@@ -16,7 +16,6 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
   }
 
   ${(props) => (props.fontsPath ? fontStyles : "")}
-  ${textStyles}
 
   .spectron-run canvas:not(.visible-for-spectron) {
     visibility: hidden;

@@ -17,7 +17,7 @@ function DropdownControl<T, M extends boolean = false>(props: ControlProps<T, M>
 
   return (
     <components.Control {...props}>
-      <Text ff="Inter|SemiBold" fontSize={3} color="palette.neutral.c80" mr={2}>
+      <Text fontWeight="semiBold" variant={"paragraph"} color="palette.neutral.c80" mr={2}>
         {label}
       </Text>
       {children}
@@ -35,7 +35,7 @@ function DropdownValueContainer<T extends OptionTypeBase = { label: string; valu
       {...props}
       render={() => (
         <FlexBox>
-          <Text ff="Inter|SemiBold" fontSize={3} mr={2}>
+          <Text fontWeight="semiBold" variant={"paragraph"} mr={2}>
             <FlexBox>{props.children}</FlexBox>
           </Text>
           <FlexBox alignItems="center">

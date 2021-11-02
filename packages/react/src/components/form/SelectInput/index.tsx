@@ -96,7 +96,9 @@ function SelectInput<
   return (
     <div>
       {innerContent}
-      {error && !isDisabled && <InputErrorContainer fontSize={3}>{error}</InputErrorContainer>}
+      {error && !isDisabled && (
+        <InputErrorContainer variant={"paragraph"}>{error}</InputErrorContainer>
+      )}
     </div>
   );
 }

@@ -33,7 +33,7 @@ const Template = (args: ItemType) => (
       alignItems="flex-Start"
       style={{ width: "fit-content", rowGap: "0.5rem" }}
     >
-      <Text type="h3">Expanded</Text>
+      <Text variant="h3">Expanded</Text>
       <SideBarContext.Provider value={{ isExpanded: true, onToggle: () => {} }}>
         <Item {...args}>
           <WalletIcon />
@@ -46,7 +46,7 @@ const Template = (args: ItemType) => (
       alignItems="flex-Start"
       style={{ width: "fit-content", rowGap: "0.5rem" }}
     >
-      <Text type="h3">Collapsed</Text>
+      <Text variant="h3">Collapsed</Text>
       <SideBarContext.Provider value={{ isExpanded: false, onToggle: () => {} }}>
         <Item {...args}>
           <WalletIcon />

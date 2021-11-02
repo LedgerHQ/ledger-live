@@ -30,7 +30,7 @@ function Log({ children, ...props }: Props): JSX.Element {
     <Container {...props}>
       <BracketLeft />
       <TextContainer flex="1" alignItems="center" justifyContent="center">
-        <Text type="h3" textTransform="uppercase" textAlign="center">
+        <Text variant="h3" textTransform="uppercase" textAlign="center">
           {children}
         </Text>
       </TextContainer>

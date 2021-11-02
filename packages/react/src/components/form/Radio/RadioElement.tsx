@@ -123,7 +123,7 @@ export default ({
         name={context.name}
         {...props}
       />
-      <Label type="paragraph">{label}</Label>
+      <Label variant="paragraph">{label}</Label>
     </RadioElement>
   );
 };

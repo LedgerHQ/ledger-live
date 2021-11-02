@@ -77,8 +77,8 @@ export function TextColumn<T>({
       <FlexBox flexDirection="column">
         {title && (
           <Text
-            ff="Inter|Medium"
-            fontSize={4}
+            fontWeight="medium"
+            variant={"body"}
             textOverflow="ellipsis"
             overflow="hidden"
             color="palette.neutral.c100"
@@ -89,8 +89,8 @@ export function TextColumn<T>({
         )}
         {subtitle && (
           <Text
-            ff="Inter|Medium"
-            fontSize={3}
+            fontWeight="medium"
+            variant={"paragraph"}
             textOverflow="ellipsis"
             overflow="hidden"
             color="palette.neutral.c80"

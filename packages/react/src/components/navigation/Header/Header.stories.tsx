@@ -14,7 +14,7 @@ export const Header = (args: Props): JSX.Element => {
   const left = (
     <FlexBox alignItems="center" style={{ columnGap: "6px" }}>
       <Icon name="ArrowLeft" weight="Medium" />
-      <Text ff="Inter|SemiBold" fontSize={3}>
+      <Text fontWeight="semiBold" variant={"paragraph"}>
         Previous
       </Text>
     </FlexBox>
@@ -30,7 +30,7 @@ export const Header = (args: Props): JSX.Element => {
 
   return (
     <HeaderComponent {...args} left={left} right={right} alignItems="center">
-      <Text ff="Alpha|Medium" textTransform="uppercase">
+      <Text variant={"h3"} textTransform="uppercase">
         Ledger
       </Text>
     </HeaderComponent>

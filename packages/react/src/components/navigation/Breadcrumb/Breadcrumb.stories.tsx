@@ -122,13 +122,13 @@ export const Breadcrumb = (args: Props): JSX.Element => {
     <FlexBox rowGap={3} flexDirection="column">
       <BreadcrumbComponent {...args} segments={segments} onChange={onChange} />
       <hr />
-      <Text ff="Inter|Medium" fontSize={3}>
+      <Text fontWeight="medium" variant={"paragraph"}>
         Current route: /{route}
       </Text>
-      <Text ff="Inter|Medium" fontSize={3}>
+      <Text fontWeight="medium" variant={"paragraph"}>
         Available routes:
       </Text>
-      <Text ff="Inter|Regular" fontSize={3} style={{ cursor: "pointer" }}>
+      <Text fontWeight="regular" variant={"paragraph"} style={{ cursor: "pointer" }}>
         <Routes routes={routes} onClick={setRoute} />
       </Text>
     </FlexBox>

@@ -25,12 +25,12 @@ export function Aside(args: Props): JSX.Element {
   const footer = (
     <FlexBox flexDirection="column" rowGap={3}>
       <FlexBox columnGap={3} alignItems="center">
-        <Text ff="Inter|Medium" fontSize={4}>
+        <Text fontWeight="medium" variant={"body"}>
           Need help?
         </Text>
         <LifeRingMedium size={20} />
       </FlexBox>
-      <Text ff="Inter|Medium" fontSize={3}>
+      <Text fontWeight="medium" variant={"paragraph"}>
         Don’t know what you have to do? Get some help to close this step.
       </Text>
       <div></div>

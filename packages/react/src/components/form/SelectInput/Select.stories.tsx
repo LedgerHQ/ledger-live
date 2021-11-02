@@ -246,7 +246,7 @@ export const SideRenders = (args: Props): React.ReactNode => {
         </Flex>
       )}
       renderRight={() => (
-        <Text mr={4} ff="Inter|SemiBold" fontSize={4} color="inherit">
+        <Text mr={4} fontWeight="semiBold" variant={"body"} color="inherit">
           #Right
         </Text>
       )}
@@ -261,12 +261,12 @@ const CustomOption = (props: OptionProps<SelectItem, false>) => {
       {...props}
       render={({ children }) => (
         <Flex flex={1}>
-          <Text ff="Inter|SemiBold" fontSize={3} mr={4}>
+          <Text fontWeight="semiBold" variant={"paragraph"} mr={4}>
             #Left
           </Text>
           <Flex flex={1} justifyContent="space-between">
             {children}
-            <Text ff="Inter|SemiBold" fontSize={3} color="inherit">
+            <Text fontWeight="semiBold" variant={"paragraph"} color="inherit">
               #Right
             </Text>
           </Flex>

@@ -62,7 +62,7 @@ export default function Tag({ children, ...props }: Props): JSX.Element {
   const textColor = getColor(props);
   return (
     <TagContainer {...props}>
-      <Text type="tag" color={textColor}>
+      <Text variant="tiny" color={textColor}>
         {children}
       </Text>
     </TagContainer>

@@ -84,7 +84,7 @@ function Sample(args: Props) {
       <div style={{ width: "100%" }}>
         <TabsComponent {...args} onTabChange={setActiveIndex} tabs={args.tabs} />
       </div>
-      <Text type="subTitle">Active index: {activeIndex}</Text>
+      <Text variant="subtitle">Active index: {activeIndex}</Text>
       <hr />
     </div>
   );

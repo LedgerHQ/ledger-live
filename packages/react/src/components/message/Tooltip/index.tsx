@@ -33,7 +33,7 @@ export default function Tooltip(props: Props): JSX.Element | null {
       {...rest}
       placement={placement}
       content={
-        <Text ff="Inter|Medium" fontSize={3} color="palette.neutral.c00">
+        <Text fontWeight="medium" variant={"paragraph"} color="palette.neutral.c00">
           {content}
         </Text>
       }

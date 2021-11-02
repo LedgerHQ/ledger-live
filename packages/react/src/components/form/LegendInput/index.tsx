@@ -19,7 +19,7 @@ export default function LegendInput({ legend, ...inputProps }: Props): JSX.Eleme
       {...inputProps}
       renderRight={
         <InputRenderRightContainer>
-          <Legend type="body" data-disabled={inputProps.disabled}>
+          <Legend variant="body" data-disabled={inputProps.disabled}>
             {legend}
           </Legend>
         </InputRenderRightContainer>

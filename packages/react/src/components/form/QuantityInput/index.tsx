@@ -44,12 +44,12 @@ export default function QuantityInput({
       renderRight={
         <FlexBox alignItems={"center"} justifyContent={"center"} pr={"3px"} py={"3px"}>
           {price && (
-            <Legend type="body" pr={"12px"} data-disabled={inputProps.disabled}>
+            <Legend variant="body" pr={"12px"} data-disabled={inputProps.disabled}>
               {price}
             </Legend>
           )}
           <MaxButton onClick={onMaxClick} disabled={inputProps.disabled}>
-            <Text type="tiny" color="currentColor">
+            <Text variant="tiny" color="currentColor">
               Max
             </Text>
           </MaxButton>

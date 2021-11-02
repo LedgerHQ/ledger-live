@@ -24,7 +24,7 @@ function Sample({ children, ...args }: Props) {
           {children}
         </BarTabs>
       </div>
-      <Text type="subTitle">Active index: {activeIndex}</Text>
+      <Text variant="subtitle">Active index: {activeIndex}</Text>
       <hr />
     </div>
   );
@@ -34,7 +34,7 @@ export const Graph = (args: Props): React.ReactNode[] =>
   navItems.reduce<React.ReactNode[]>((acc, _, index) => {
     const labels = [
       navItems.slice(0, index + 1).map((label) => (
-        <Text color="inherit" type="navigation">
+        <Text color="inherit" variant="small">
           {label}
         </Text>
       )),

@@ -8,8 +8,8 @@ function Header({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
   return (
     <Text
-      ff="Inter|SemiBold"
-      fontSize={13}
+      fontWeight="semiBold"
+      variant={"paragraph"}
       style={{ borderBottom: `1px solid ${theme.colors.palette.neutral.c40}` }}
       mx={-4}
       px={4}

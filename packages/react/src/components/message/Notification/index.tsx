@@ -2,8 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import FlexBox, { FlexBoxProps } from "../../layout/Flex";
 import Text from "../../asorted/Text";
-import Icon from "../../asorted/Icon";
 import Badge from "./Badge";
+import Link, { LinkProps } from "../../cta/Link";
+import { ExternalLinkMedium } from "@ledgerhq/icons-ui/react";
 
 interface ContainerProps extends FlexBoxProps {
   /* Add the pre-selected background. */
@@ -20,7 +21,7 @@ export interface Props extends ContainerProps {
   /* An optional link. */
   link?: string;
   /* A callback to perform when clicking on the link. */
-  onLinkClick?: (event: React.MouseEvent<HTMLSpanElement>) => void;
+  onLinkClick?: LinkProps["onClick"];
 }
 
 const Container = styled(FlexBox).attrs<ContainerProps>({
@@ -40,23 +41,6 @@ const Container = styled(FlexBox).attrs<ContainerProps>({
   border-radius: 8px;
 `;
 
-const Link = styled(Text).attrs({
-  ff: "Inter|SemiBold",
-  fontSize: 4,
-  color: "palette.neutral.c100",
-})`
-  display: inline-flex;
-  align-items: center;
-  column-gap: 6px;
-  cursor: pointer;
-
-  :hover,
-  :focus,
-  :active {
-    text-decoration: underline;
-  }
-`;
-
 function Notification({
   title,
   description,
@@ -70,23 +54,20 @@ function Notification({
     <Container hasBackground={hasBackground} {...containerProps}>
       {badge}
       <FlexBox flexDirection="column" rowGap={3} flex="auto">
-        <Text ff="Inter|Medium" fontSize={5} color="palette.neutral.c100">
+        <Text variant={"large"} fontWeight="medium" color="palette.neutral.c100">
           {title}
         </Text>
         {description && (
-          <Text ff="Inter|Medium" fontSize={4} color="palette.neutral.c80">
+          <Text variant={"paragraph"} fontWeight="medium" color="palette.neutral.c80">
             {description}
           </Text>
         )}
         {link && (
-          <Link
-            onClick={(event: React.MouseEvent<HTMLSpanElement>) =>
-              onLinkClick && onLinkClick(event)
-            }
-          >
-            {link}
-            <Icon name="ExternalLink" size={18} />
-          </Link>
+          <FlexBox justifyContent={"flex-start"}>
+            <Link onClick={(event) => onLinkClick && onLinkClick(event)} Icon={ExternalLinkMedium}>
+              {link}
+            </Link>
+          </FlexBox>
         )}
       </FlexBox>
     </Container>

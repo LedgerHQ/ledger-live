@@ -52,7 +52,7 @@ function Hello() {
       <Text color="palette.neutral.c100">
         <Logos.LedgerLiveRegular />
       </Text>
-      <Text type="h1" ff="Alpha|Medium">
+      <Text variant="h1">
         Hello, world!
       </Text>
     </Flex>
@@ -132,7 +132,7 @@ function Root() {
         <Text color="palette.neutral.c100">
           <Logos.LedgerLiveRegular />
         </Text>
-        <Text type="h1" ff="Alpha|Medium">
+        <Text variant="h1">
           Hello, world!
         </Text>
         <Switch

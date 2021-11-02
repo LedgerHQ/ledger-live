@@ -38,7 +38,7 @@ const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
         shade={shade}
         onClick={() => onClick(type, shade)}
       />
-      <Text type="tiny">{isHovered ? value : shade}</Text>
+      <Text variant="tiny">{isHovered ? value : shade}</Text>
     </Flex>
   );
 };
@@ -50,7 +50,7 @@ export const Colors = (): JSX.Element => (
   <Flex flexDirection="column" rowGap="2rem">
     {Object.entries(palette).map(([type, shades]: [string, Array<string>]) => (
       <Flex flexDirection="column" rowGap="1rem">
-        <Text type="h2" textTransform="uppercase">
+        <Text variant="h2" textTransform="uppercase">
           {type}
         </Text>
         <Flex columnGap="0.5rem" rowGap="0.5rem" flexWrap="wrap">

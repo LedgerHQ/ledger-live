@@ -167,7 +167,7 @@ const Carousel = ({
     <CarouselWrapper id={"carousel"} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {wantToDismiss ? (
         <DismissWrapper>
-          <Text color="palette.neutral.c00" type="cta">
+          <Text color="palette.neutral.c00" fontWeight="medium" variant={"paragraph"}>
             {dismissText}
           </Text>
           <Flex>

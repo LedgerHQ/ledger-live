@@ -44,7 +44,7 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
       renderArray.push(
         <>
           {index > 0 ? (
-            <Text ff="Inter|SemiBold" color="palette.neutral.c40" fontSize={3}>
+            <Text fontWeight="semiBold" color="palette.neutral.c40" variant={"paragraph"}>
               /
             </Text>
           ) : null}
