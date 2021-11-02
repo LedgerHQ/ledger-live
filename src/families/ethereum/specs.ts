@@ -493,6 +493,7 @@ const polygon: AppSpec<Transaction> = {
 
 export default {
   bsc,
+  polygon,
   ethereum,
   ethereumClassic,
   ethereumRopsten,
