@@ -65,7 +65,7 @@ const InfoPanel = ({
           semidbold
           style={{
             ...styles.title,
-            color: colors.contrastBackground,
+            color: colors.text,
           }}
         >
           {name}
@@ -75,7 +75,7 @@ const InfoPanel = ({
         style={{
           ...styles.basicFontStyle,
           ...styles.description,
-          color: colors.contrastBackground,
+          color: colors.text,
         }}
       >
         {translateContent(description, settingsLocale)}
