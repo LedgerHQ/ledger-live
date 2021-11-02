@@ -95,8 +95,8 @@
       "description": "Укажите название счёта."
     },
     "AccountNeedResync": {
-      "title": "Please try again",
-      "description": "Account is outdated. A synchronisation is needed"
+      "title": "Попробуйте ещё раз",
+      "description": "Счёт устарел, его необходимо синхронизировать"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "В указанном ASA не выбран счёт получателя."
@@ -679,8 +679,8 @@
         "description": "Делегируйте ATOM и получайте вознаграждения уже сегодня."
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "Семейный набор",
+        "description": "Приобщите ваших родных к криптовалюте набором из 3 Nano S"
       },
       "buyCrypto": {
         "title": "Покупайте криптовалюту",
@@ -3616,7 +3616,7 @@
     "connected": "Подключено",
     "disconnected": "Отключено",
     "warningdisconnected": "Проблема с подключением между dApp, WalletConnect и Ledger Live. Подождите несколько секунд или попробуйте подключиться заново",
-    "info": "You can now access the {{name}} dApp on your web browser.",
+    "info": "Теперь dApp {{name}} доступно в веб-браузере.",
     "warning": "Совместное использование адресов, полученных в dApp, несёт риск для безопасности. Обязательно используйте Ledger Live при отправке адреса для получения средств.",
     "isconnecting": "подключается. Пожалуйста, подождите...",
     "disconnect": "Отключить",
