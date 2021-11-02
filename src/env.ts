@@ -67,7 +67,7 @@ const envDefinitions = {
   },
   API_RIPPLE_WS: {
     parser: stringParser,
-    def: "wss://xrplcluster.com",
+    def: "wss://xrplcluster.com/ledgerlive",
     desc: "XRP Ledger full history open WebSocket endpoint",
   },
   API_FILECOIN_ENDPOINT: {
