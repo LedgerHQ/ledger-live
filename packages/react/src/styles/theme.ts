@@ -1,5 +1,6 @@
-import { keyframes, css, DefaultTheme } from "styled-components";
+import { keyframes, css } from "styled-components";
 import { palettes, ColorPalette } from "@ledgerhq/ui-shared";
+import { DefaultTheme } from "styled-components/native";
 
 /* space indexes:
   0, 1, 2, 3, 4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
@@ -109,7 +110,7 @@ const easings = {
   outQuadratic: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
 };
 
-const transition = (properties = ["all"]): any => css`
+const transition = (properties = ["all"]) => css`
   transition-property: ${properties.join(",")};
   transition-duration: ${animationLength};
   transition-timing-function: ${easings.outQuadratic};
@@ -203,51 +204,55 @@ const overflow = {
   `,
   trackSize: 12,
 };
-interface Font {
-  weight: number;
-  style: string;
-}
 
-export interface Theme extends DefaultTheme {
-  sizes: {
-    topBarHeight: number;
-    sideBarWidth: number;
-    drawer: {
-      side: {
-        big: {
-          width: number;
+declare module "styled-components" {
+  export interface Font {
+    weight: number;
+    style: string;
+  }
+  export interface DefaultTheme {
+    theme: string;
+    animations: typeof animations;
+    transition: typeof transition;
+    overflow: typeof overflow;
+    sizes: {
+      topBarHeight: number;
+      sideBarWidth: number;
+      drawer: {
+        side: {
+          big: {
+            width: number;
+          };
+          small: {
+            width: number;
+          };
         };
-        small: {
-          width: number;
-        };
-      };
-      popin: {
-        min: {
-          height: number;
-          width: number;
-        };
-        max: {
-          height: number;
-          width: number;
+        popin: {
+          min: {
+            height: number;
+            width: number;
+          };
+          max: {
+            height: number;
+            width: number;
+          };
         };
       };
     };
-  };
-  radii: number[];
-  fontFamilies: Record<string, Record<string, Font>>;
-  fontSizes: number[];
-  fontWeights: Record<string, string>;
-  space: number[];
-  shadows: string[];
-  colors: {
-    palette: ColorPalette;
-  };
-  animations: Record<string, (props: never) => any>;
-  transition: (properties?: Array<string>) => any;
-  overflow: Record<string, any>;
-  zIndexes: number[];
+    radii: number[];
+    fontFamilies: Record<string, Record<string, Font>>;
+    fontSizes: number[];
+    space: number[];
+    shadows: string[];
+    colors: {
+      palette: ColorPalette;
+    };
+    fontWeights: Record<string, string>;
+    zIndexes: number[];
+  }
 }
-const theme: Theme = {
+
+const theme: DefaultTheme = {
   theme: "light",
   sizes: {
     drawer: {
@@ -287,4 +292,6 @@ const theme: Theme = {
   transition,
   zIndexes,
 };
+
 export default theme;
+export type Theme = DefaultTheme;

@@ -1,28 +1,31 @@
 import React, { useReducer, useEffect, useCallback, useContext } from "react";
+import type { SideProps } from ".";
 
-interface State {
-  Component: React.ComponentType<any> | null | undefined;
-  props?: any;
+interface State<P extends SideProps = SideProps> {
+  Component: React.ComponentType<P> | null | undefined;
+  props?: P;
   open: boolean;
 }
 // actions
 // it makes them available and current from connector events handlers
-export let setSide: (Component?: any, props?: any) => void = () => {};
+export let setSide: <P extends SideProps = SideProps>(
+  Component?: State<P>["Component"],
+  props?: State<P>["props"],
+) => void = () => {};
 
 // reducer
-const reducer = (state: State, update: State) => {
+const reducer = <P extends SideProps = SideProps>(state: State<P>, update: State<P>) => {
   return { ...state, ...update };
 };
 
 const initialState: State = {
   Component: null,
-  props: null,
   open: false,
 };
 
-interface ContextValue {
-  state: State;
-  setSide: (Component?: React.ComponentType<any>, props?: any) => void;
+interface ContextValue<P extends SideProps = SideProps> {
+  state: State<P>;
+  setSide: (Component?: React.ComponentType<P>, props?: P) => void;
 }
 
 export const context = React.createContext<ContextValue>({
@@ -31,8 +34,7 @@ export const context = React.createContext<ContextValue>({
 });
 
 export const useSide = (): ContextValue => {
-  const sideContext = useContext(context);
-  return sideContext;
+  return useContext(context);
 };
 
 const SideProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {

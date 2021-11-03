@@ -19,7 +19,7 @@ export interface WrapperProps {
   height?: number;
 }
 
-type PopinProps = WrapperProps & {
+export type PopinProps = WrapperProps & {
   isOpen: boolean;
   children: React.ReactNode;
   onClose?: () => void;

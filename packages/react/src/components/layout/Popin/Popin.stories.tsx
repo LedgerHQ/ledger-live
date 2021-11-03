@@ -1,7 +1,7 @@
 import React from "react";
 import { useArgs } from "@storybook/client-api";
 
-import Popin from "./index";
+import Popin, { PopinProps } from "./index";
 import Text from "../../asorted/Text";
 import theme from "../../../styles/theme";
 
@@ -70,7 +70,7 @@ export default {
   },
 };
 
-const Template = (args: any) => {
+const Template = (args: PopinProps) => {
   const [, updateArgs] = useArgs();
 
   /* Allow interactive controls from the story. Thanks to this, triggering onClose

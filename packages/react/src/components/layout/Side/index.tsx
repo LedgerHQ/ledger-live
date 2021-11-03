@@ -12,7 +12,8 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
   // Nb Note that it's not a real queue and we need to handle where we go from each _slide_
   const { state, setSide } = useSide();
   const [queue, setQueue] = useState<
-    Array<{ Component: React.ComponentType<any>; props: any; key: number }>
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Array<{ Component: React.ComponentType | null | undefined; props?: any; key: number }>
   >([]);
   const [direction, setDirection] = useState("left");
   const [transitionsEnabled, setTransitionsEnabled] = useState(false);
@@ -20,11 +21,9 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
   const onClose = useCallback(() => setSide(), [setSide]);
 
   useEffect(() => {
-    // @ts-expect-error FIXME
     setQueue((q) => {
-      if (!state.open) return [];
-      // @ts-expect-error FIXME
-      if (state.Component != null) return q.concat([{ ...state, key: nonce.current++ }]);
+      if (!state.open || !state.Component) return [];
+      return q.concat([{ ...state, key: nonce.current++ }]);
     });
   }, [state]);
 
@@ -46,7 +45,8 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
 
   const wrappedOnBack = useCallback(() => {
     setDirection("right");
-    state?.props?.onBack();
+    const onBack = state?.props?.onBack;
+    onBack && onBack();
   }, [state?.props]);
 
   return (
@@ -60,7 +60,7 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
       <TransitionGroup enter={transitionsEnabled} exit={transitionsEnabled} component={null}>
         {queue.map(({ Component, props, key }) => (
           <TransitionSlide key={key} direction={direction}>
-            <Component {...props} />
+            {Component && <Component {...props} />}
           </TransitionSlide>
         ))}
       </TransitionGroup>

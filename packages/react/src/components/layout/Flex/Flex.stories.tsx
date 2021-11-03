@@ -1,6 +1,7 @@
 import React from "react";
-import Flex from "./index";
+import Flex, { FlexBoxProps } from "./index";
 import styled from "styled-components";
+import { backgroundColor, BackgroundColorProps } from "styled-system";
 export default {
   title: "Layout/Flex",
   component: Flex,
@@ -290,16 +291,16 @@ export default {
  ** you to play with the flexbox properties for children.
  */
 
-const Square = styled.div<any>`
+const Square = styled.div<FlexBoxProps & BackgroundColorProps>`
   width: 25vw;
   height: 25vw;
   padding: 1rem;
   color: white;
   font-weight: 700;
-  ${(props) => props};
+  ${backgroundColor}
 `;
 
-const Template = (args: any) => (
+const Template = (args: FlexBoxProps) => (
   <Flex
     {...args}
     style={{

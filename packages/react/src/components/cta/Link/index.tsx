@@ -5,7 +5,7 @@ import { ctaIconSize, ctaTextType } from "../getCtaStyle";
 import { Text } from "../../asorted";
 
 export type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  Icon?: React.ComponentType<{ size: number; color: string }>;
+  Icon?: React.ComponentType<{ size: number; color?: string }>;
   type?: "main" | "shade" | "color";
   size?: "small" | "medium" | "large";
   iconPosition?: "right" | "left";
