@@ -5,12 +5,11 @@ import { Icons } from "../../../src/assets";
 import Notification from "../../../src/components/drawer/Notification";
 import { action } from "@storybook/addon-actions";
 import FlexBox from "../../../src/components/Layout/Flex";
-import Info from "../../../src/icons/Info";
 
 const NotificationSample = () => (
   <FlexBox p={20} width={"100%"}>
     <Notification
-      Icon={Info}
+      Icon={Icons.InfoMedium}
       variant={select("variant", ["primary", "secondary"], "primary")}
       title={text(
         "title",

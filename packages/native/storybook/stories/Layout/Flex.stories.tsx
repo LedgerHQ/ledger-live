@@ -19,14 +19,22 @@ const FlexStory = () => {
   );
   const justifyContent = select(
     "Justify Content",
-    ["flex-start", "flex-end", "center", "baseline", "stretch"],
+    [
+      "flex-start",
+      "flex-end",
+      "center",
+      "space-around",
+      "space-between",
+      "space-evenly",
+      undefined,
+    ],
     "flex-start",
     "Layout"
   );
   const background = text("Background", "", "Layout");
-  const flexBasis = text("FlexBasis", "", "Layout");
-  const flexGrow = text("FlexGrow", "", "Layout");
-  const flexShrink = text("FlexShrink", "", "Layout");
+  const flexBasis = text("FlexBasis", "auto", "Layout");
+  const flexGrow = number("FlexGrow", 0, undefined, "Layout");
+  const flexShrink = number("FlexShrink", 0, undefined, "Layout");
 
   const p = number("Padding", 0, {}, "Layout");
   const m = number("Margin", 0, {}, "Layout");
@@ -64,15 +72,23 @@ const FlexStoryTwo = () => {
     "Layout"
   );
   const justifyContent = select(
-    "JustifyContent",
-    ["flex-start", "flex-end", "center", "baseline", "stretch"],
+    "Justify Content",
+    [
+      "flex-start",
+      "flex-end",
+      "center",
+      "space-around",
+      "space-between",
+      "space-evenly",
+      undefined,
+    ],
     "flex-start",
     "Layout"
   );
   const background = text("Background", "", "Layout");
-  const flexBasis = text("FlexBasis", "", "Layout");
-  const flexGrow = text("FlexGrow", "", "Layout");
-  const flexShrink = text("FlexShrink", "", "Layout");
+  const flexBasis = text("FlexBasis", "auto", "Layout");
+  const flexGrow = number("FlexGrow", 0, undefined, "Layout");
+  const flexShrink = number("FlexShrink", 0, undefined, "Layout");
 
   const p = number("Padding", 0, {}, "Layout");
   const m = number("Margin", 0, {}, "Layout");

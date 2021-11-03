@@ -11,7 +11,7 @@ type Props = {
   onPress?: () => void;
 
   // Display an icon in the middle
-  Icon?: typeof React.Component;
+  Icon?: React.ComponentType<{ color: string; size: number }>;
 };
 
 const radius = 25;

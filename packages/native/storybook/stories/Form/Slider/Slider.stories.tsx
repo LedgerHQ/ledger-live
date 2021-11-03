@@ -7,7 +7,7 @@ import FlexBox from "../../../../src/components/Layout/Flex";
 const SliderStory = () => {
   const [value, setValue] = useState(35);
 
-  const onChange = (value) => setValue(value);
+  const onChange = (value: number) => setValue(value);
 
   return (
     <FlexBox p={20} width={1}>

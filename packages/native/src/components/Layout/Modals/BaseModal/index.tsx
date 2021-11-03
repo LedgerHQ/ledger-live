@@ -25,7 +25,7 @@ export type BaseModalProps = {
   description?: string;
   subtitle?: string;
   children: React.ReactNode;
-} & ModalProps;
+} & Partial<ModalProps>;
 
 const Container = styled.View`
   background-color: ${(p) => p.theme.colors.palette.background.main};
@@ -89,7 +89,7 @@ export default function BaseModal({
   subtitle,
   children,
   ...rest
-}: Partial<BaseModalProps>): React.ReactElement {
+}: BaseModalProps): React.ReactElement {
   const { colors } = useTheme();
 
   const backDropProps = preventBackdropClick

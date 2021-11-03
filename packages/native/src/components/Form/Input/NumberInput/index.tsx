@@ -32,7 +32,8 @@ export default function NumberInput({
   ...inputProps
 }: InputProps & {
   onPercentClick: (percent: number) => void;
-  max: number;
+  min?: number;
+  max?: number;
 }): JSX.Element {
   return (
     <Input

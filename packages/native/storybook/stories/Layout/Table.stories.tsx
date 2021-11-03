@@ -79,7 +79,7 @@ const ARow = () => {
   ].map((item) => radios(item, { [item]: 1, null: null }, 1, "props"));
   return (
     <Row
-      Icon={hasIcon && Icon}
+      Icon={hasIcon ? Icon : undefined}
       topLeft={hasTopLeft && <TopLeft />}
       bottomLeft={hasBottomLeft && <BottomLeft />}
       topRight={hasTopRight && <TopRight />}

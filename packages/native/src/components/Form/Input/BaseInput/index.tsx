@@ -4,7 +4,7 @@ import styled, { css } from "styled-components/native";
 import Text from "../../../Text";
 import FlexBox from "../../../Layout/Flex";
 
-type CommonProps = TextInputProps & {
+export type CommonProps = TextInputProps & {
   disabled?: boolean;
   error?: string;
 };

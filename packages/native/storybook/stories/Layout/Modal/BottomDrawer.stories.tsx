@@ -28,12 +28,10 @@ const BottomDrawerStory = () => {
       subtitle={text("subtitle", "Subtitle")}
       Icon={Icons.TrashMedium}
     >
-      <>
-        <Text>Exemple children</Text>
-        <Button>
-          <Text>button</Text>
-        </Button>
-      </>
+      <Text>Exemple children</Text>
+      <Button>
+        <Text>button</Text>
+      </Button>
     </BottomDrawer>
   );
 };

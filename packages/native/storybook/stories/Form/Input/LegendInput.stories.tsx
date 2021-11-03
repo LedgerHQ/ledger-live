@@ -6,7 +6,7 @@ import LegendInput from "../../../../src/components/Form/Input/LegendInput";
 const LegendInputStory = (): JSX.Element => {
   const [value, setValue] = React.useState("");
 
-  const onChange = (value) => setValue(value);
+  const onChange = (value: string) => setValue(value);
 
   return (
     <LegendInput

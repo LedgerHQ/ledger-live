@@ -3,7 +3,7 @@ import FlexBox, { Props as FlexBoxProps } from "../Flex";
 import IconBox from "../../Icon/IconBox";
 
 interface Props extends FlexBoxProps {
-  Icon: (props: { size?: number }) => React.ReactElement;
+  Icon?: (props: { size?: number }) => React.ReactElement;
   iconBorder?: boolean;
   topLeft?: React.ReactNode;
   bottomLeft?: React.ReactNode;

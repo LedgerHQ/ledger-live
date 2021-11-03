@@ -56,11 +56,9 @@ export function FontProvider({
 export default function CenterView({
   waitFonts,
   children,
-  theme,
 }: {
   waitFonts?: boolean;
   children: React.ReactNode;
-  theme?: "dark" | "light";
 }): JSX.Element {
   const [isLight, setIsLight] = useState(true);
   return (

@@ -133,7 +133,7 @@ const Button = (props: ButtonProps): React.ReactElement => {
       {...props}
       type={type}
       size={size}
-      iconButton={Icon && !children}
+      iconButton={!!Icon && !children}
       activeOpacity={0.5}
     >
       <ButtonContainer {...props} type={type} size={size} />
@@ -172,7 +172,7 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
       {...props}
       type={type}
       size={size}
-      iconButton={Icon && !children}
+      iconButton={!!Icon && !children}
       disabled={disabled || spinnerOn}
       onPress={onPressHandler}
     >

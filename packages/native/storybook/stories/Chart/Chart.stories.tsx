@@ -35,7 +35,7 @@ const ChartDefault = (): JSX.Element => {
   const theme = useTheme();
 
   return (
-    <Flex alignItems="flex-start" flexDirection="column" rowGap="1rem">
+    <Flex alignItems="flex-start" flexDirection="column">
       <Chart
         color={color("color", theme.colors.palette.primary.c100)}
         tickFormat={text("tickFormat", "MMM")}

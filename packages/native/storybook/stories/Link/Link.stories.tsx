@@ -7,15 +7,15 @@ import Link from "../../../src/components/cta/Link";
 import { InfoMedium } from "@ledgerhq/icons-ui/native";
 
 const Regular = () => (
-    <Link
-      type={select("type", ["main", "shade", "color", undefined], undefined)}
-      size={select("size", ["small", "medium", "large", undefined], undefined)}
-      iconPosition={select("iconPosition", ["right", "left"], "right")}
-      disabled={boolean("disabled", false)}
-      onPress={action("onPress")}
-    >
-      {text("label", "Ledger")}
-    </Link>
+  <Link
+    type={select("type", ["main", "shade", "color", undefined], undefined)}
+    size={select("size", ["small", "medium", "large", undefined], undefined)}
+    iconPosition={select("iconPosition", ["right", "left"], "right")}
+    disabled={boolean("disabled", false)}
+    onPress={action("onPress")}
+  >
+    {text("label", "Ledger")}
+  </Link>
 );
 
 const WithIcon = () => (
@@ -31,5 +31,6 @@ const WithIcon = () => (
   </Link>
 );
 
-
-storiesOf((story) => story("Link", module).add("Regular", Regular).add("Icon link", WithIcon));
+storiesOf((story) =>
+  story("Link", module).add("Regular", Regular).add("Icon link", WithIcon)
+);

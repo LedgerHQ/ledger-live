@@ -8,16 +8,22 @@ import Info from "../../../src/icons/Info";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const iconOptions = {
+  Info,
+  None: undefined,
+};
+const iconSelect = () => iconOptions[select("Icon", ["Info", "None"], "None")];
+
 const Regular = (): JSX.Element => (
   <Button
     type={select(
       "type",
       ["main", "error", "shade", "color", undefined],
-      undefined
+      "main"
     )}
     size={select("size", ["small", "medium", "large", undefined], undefined)}
     iconPosition={select("iconPosition", ["right", "left"], "right")}
-    Icon={select("Icon", [Info, undefined], undefined)}
+    Icon={iconSelect()}
     disabled={boolean("disabled", false)}
     outline={boolean("outline", false)}
     onPress={action("onPress")}
@@ -25,12 +31,15 @@ const Regular = (): JSX.Element => (
     {text("label", "Ledger")}
   </Button>
 );
-
 const Promisable = (): JSX.Element => (
   <PromisableButton
-    type={select("type", ["primary", "secondary", undefined], undefined)}
+    type={select(
+      "type",
+      ["main", "shade", "error", "color", "default", undefined],
+      undefined
+    )}
     iconPosition={select("iconPosition", ["right", "left"], "right")}
-    Icon={select("Icon", [Info, undefined], undefined)}
+    Icon={iconSelect()}
     disabled={boolean("disabled", false)}
     onPress={async () => await delay(3000)}
   >
