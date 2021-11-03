@@ -4,7 +4,7 @@ import SideBarContext from "../index";
 import Text from "../../../asorted/Text";
 import TransitionInOut from "../../../transitions/TransitionInOut";
 
-const ItemWrapper = styled.li`
+const ItemWrapper = styled.li<{ isActive?: boolean; isDisabled?: boolean }>`
   /** DEFAULT VARIANT **/
   --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c80};
   --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.neutral.c80};
@@ -38,20 +38,22 @@ const ItemWrapper = styled.li`
   }
 
   /** ACTIVE VARIANT **/
-  &[data-active] {
-    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c90};
-    --ll-sidebar-item-background-color: ${(props) => props.theme.colors.palette.primary.c20};
-  }
+  ${(props) =>
+    props.isActive
+      ? `--ll-sidebar-item-label-color: ${props.theme.colors.palette.neutral.c100};
+        --ll-sidebar-item-icon-color: ${props.theme.colors.palette.primary.c90};
+        --ll-sidebar-item-background-color: ${props.theme.colors.palette.primary.c20};`
+      : ""}
 
   /** DISABLE VARIANT **/
-  &[data-disable] {
-    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c80};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.neutral.c80};
-    --ll-sidebar-item-background-color: unset;
-    opacity: 0.3;
-    cursor: unset;
-  }
+  ${(props) =>
+    props.isDisabled
+      ? `--ll-sidebar-item-label-color: ${props.theme.colors.palette.neutral.c80};
+        --ll-sidebar-item-icon-color: ${props.theme.colors.palette.neutral.c80};
+        --ll-sidebar-item-background-color: unset;
+        opacity: 0.3;
+        cursor: unset;`
+      : ""}
 `;
 
 export const ItemLabel = styled(Text)`
@@ -81,8 +83,8 @@ const Item = ({ label, children, onClick, isActive, isDisabled }: ItemType): JSX
     <ItemWrapper
       role="button"
       onClick={handleClick}
-      data-active={isActive}
-      data-disable={isDisabled}
+      isActive={isActive}
+      isDisabled={isDisabled}
       tabIndex={0}
     >
       {children}

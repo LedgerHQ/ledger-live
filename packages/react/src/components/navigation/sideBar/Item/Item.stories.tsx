@@ -21,8 +21,8 @@ export default {
     },
     onClick: { control: false },
     children: { control: false },
-    isActive: { control: false },
-    isDisabled: { control: false },
+    isActive: { type: "boolean" },
+    isDisabled: { type: "boolean" },
   },
 };
 
