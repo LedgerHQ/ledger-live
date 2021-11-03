@@ -6,6 +6,8 @@
     "declaration": true,
     "target": "ES6",
     "noEmit": false,
-    "jsx": "react"
+    "jsx": "react",
+    "rootDir": "./src",
+    "outDir": "./lib"
   }
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { number } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import { storiesOf } from "../../storiesOf";
-import SlideIndicator from "@components/Navigation/SlideIndicator";
+import SlideIndicator from "../../../../src/components/Navigation/SlideIndicator";
 
 const SideIndicatorSample = () => (
   <SlideIndicator

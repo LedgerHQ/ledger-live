@@ -2,8 +2,8 @@ import React from "react";
 import { text } from "@storybook/addon-knobs";
 import { storiesOf } from "../../storiesOf";
 import { select, boolean } from "@storybook/addon-knobs";
-import Alert from "@components/message/Alert";
-import FlexBox from "@components/Layout/Flex";
+import Alert from "../../../../src/components/message/Alert";
+import FlexBox from "../../../../src/components/Layout/Flex";
 
 const AlertSample = () => (
   <FlexBox p={20} width={1}>

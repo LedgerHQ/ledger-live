@@ -19,7 +19,9 @@ const ledgerTheme = {
 };
 
 // enables knobs for all stories
-addDecorator((Story) => (
+// (putting any type because bindings are incorrect)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+addDecorator((Story: any) => (
   <CenterView waitFonts>
     <Story />
   </CenterView>

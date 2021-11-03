@@ -1,8 +1,8 @@
 import React from "react";
 import { storiesOf } from "../storiesOf";
 import { select, text, number } from "@storybook/addon-knobs";
-import Flex from "@components/Layout/Flex";
-import Text from "@components/Text";
+import Flex from "../../../src/components/Layout/Flex";
+import Text from "../../../src/components/Text";
 
 const FlexStory = () => {
   const alignItems = select(

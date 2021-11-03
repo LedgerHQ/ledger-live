@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { storiesOf } from "../storiesOf";
 import { boolean, text } from "@storybook/addon-knobs";
 
-import Checkbox from "@components/Form/Checkbox";
+import Checkbox from "../../../src/components/Form/Checkbox";
 
 const CheckboxStory = () => {
   const [checked, setChecked] = useState(false);

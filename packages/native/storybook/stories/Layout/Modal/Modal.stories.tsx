@@ -3,7 +3,7 @@ import { storiesOf } from "../../storiesOf";
 import { text, button } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import BaseModal from "../../../../src/components/Layout/Modals/BaseModal";
-import Text from "@components/Text";
+import Text from "../../../../src/components/Text";
 import { Icons } from "../../../../src/assets";
 import IconBox from "../../../../src/components/Icon/IconBox";
 

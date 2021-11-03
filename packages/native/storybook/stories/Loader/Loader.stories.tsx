@@ -2,7 +2,7 @@ import React from "react";
 import { storiesOf } from "../storiesOf";
 import { number } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import Loader from "@components/Loader";
+import Loader from "../../../src/components/Loader";
 import { Icons } from "../../../src/assets";
 
 const LoaderSample = () => (

@@ -1,11 +1,11 @@
 import { storiesOf } from "../../storiesOf";
 import { boolean, text } from "@storybook/addon-knobs";
 import React, { useState } from "react";
-import Button from "@components/cta/Button";
+import Button from "../../../../src/components/cta/Button";
 import Input, {
   InputRenderLeftContainer,
   InputRenderRightContainer,
-} from "@components/Form/Input/BaseInput";
+} from "../../../../src/components/Form/Input/BaseInput";
 
 const BaseInputStory = () => {
   const [value, setValue] = useState("");

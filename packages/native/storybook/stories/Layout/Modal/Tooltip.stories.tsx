@@ -1,8 +1,8 @@
 import React from "react";
 import { text } from "@storybook/addon-knobs";
 import { storiesOf } from "../../storiesOf";
-import Tooltip from "@components/Layout/Modals/Tooltip";
-import Text from "@components/Text";
+import Tooltip from "../../../../src/components/Layout/Modals/Tooltip";
+import Text from "../../../../src/components/Text";
 import { Icons } from "../../../../src/assets";
 
 const TooltipStory = () => {

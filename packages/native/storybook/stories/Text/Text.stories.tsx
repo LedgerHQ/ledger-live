@@ -2,7 +2,7 @@ import React from "react";
 import { text } from "@storybook/addon-knobs";
 import { storiesOf } from "../storiesOf";
 import { select, boolean } from "@storybook/addon-knobs";
-import Text from "@components/Text";
+import Text from "../../../src/components/Text";
 
 storiesOf((story) =>
   story("Text", module).add("regular", () => (

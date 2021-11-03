@@ -2,9 +2,9 @@ import { storiesOf } from "../storiesOf";
 import { number, select, text } from "@storybook/addon-knobs";
 import React from "react";
 import { Icons } from "../../../src/assets";
-import Notification from "@components/drawer/Notification";
+import Notification from "../../../src/components/drawer/Notification";
 import { action } from "@storybook/addon-actions";
-import FlexBox from "@components/Layout/Flex";
+import FlexBox from "../../../src/components/Layout/Flex";
 import Info from "../../../src/icons/Info";
 
 const NotificationSample = () => (

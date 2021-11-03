@@ -6,10 +6,9 @@
     "isolatedModules": true,
     "strict": true,
     "baseUrl": ".",
-    "rootDir": "./src",
-    "outDir": "./lib"
+    "noEmit": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "storybook/**/*"],
   "exclude": [
     "node_modules",
     "babel.config.js",

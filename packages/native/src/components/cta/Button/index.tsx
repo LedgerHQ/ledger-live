@@ -15,7 +15,7 @@ import Text from "../../Text";
 
 export type ButtonProps = TouchableOpacityProps &
   SpaceProps & {
-    Icon?: React.ComponentType<{ size: number; color: string }>;
+    Icon?: React.ComponentType<{ size: number; color: string }> | null;
     type?: "main" | "shade" | "error" | "color" | "default";
     size?: "small" | "medium" | "large";
     iconPosition?: "right" | "left";

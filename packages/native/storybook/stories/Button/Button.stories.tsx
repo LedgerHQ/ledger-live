@@ -3,10 +3,10 @@ import { storiesOf } from "../storiesOf";
 import { select, boolean } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import React from "react";
-import Button, { PromisableButton } from "@components/cta/Button";
-import Info from "@ui/icons/Info";
+import Button, { PromisableButton } from "../../../src/components/cta/Button";
+import Info from "../../../src/icons/Info";
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const Regular = (): JSX.Element => (
   <Button

@@ -2,8 +2,8 @@ import React, { useState, useCallback } from "react";
 import { storiesOf } from "../../storiesOf";
 import { text, button } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import Popin from "@components/Layout/Modals/Popin";
-import Text from "@components/Text";
+import Popin from "../../../../src/components/Layout/Modals/Popin";
+import Text from "../../../../src/components/Text";
 import { Icons } from "../../../../src/assets";
 
 const PopinStory = () => {

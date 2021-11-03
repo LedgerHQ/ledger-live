@@ -8,12 +8,6 @@ module.exports = function (api) {
         {
           root: ["./src"],
           extensions: [".ios.js", ".android.js", ".js", ".ts", ".tsx", ".json"],
-          alias: {
-            "~": "./src",
-            "@ui": "./src",
-            "@components": "./src/components",
-            "@assets": "./src/assets",
-          },
         },
       ],
       "@babel/plugin-proposal-export-namespace-from",

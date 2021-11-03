@@ -2,9 +2,9 @@ import React, { useState, useCallback } from "react";
 import { storiesOf } from "../../storiesOf";
 import { text, button } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import BottomDrawer from "@components/Layout/Modals/BottomDrawer";
-import Text from "@components/Text";
-import Button from "@components/cta/Button";
+import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer";
+import Text from "../../../../src/components/Text";
+import Button from "../../../../src/components/cta/Button";
 import { Icons } from "../../../../src/assets";
 
 const BottomDrawerStory = () => {

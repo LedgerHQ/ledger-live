@@ -2,7 +2,7 @@ import { storiesOf } from "../storiesOf";
 import { boolean, text } from "@storybook/addon-knobs";
 
 import React, { useState } from "react";
-import Switch from "@components/Form/Switch";
+import Switch from "../../../src/components/Form/Switch";
 
 const SwitchStory = () => {
   const [checked, setChecked] = useState(false);
