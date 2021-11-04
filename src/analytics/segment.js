@@ -14,7 +14,10 @@ import {
   getAndroidVersionCode,
 } from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";
-import { analyticsEnabledSelector } from "../reducers/settings";
+import {
+  analyticsEnabledSelector,
+  languageSelector,
+} from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import type { State } from "../reducers";
 
@@ -28,6 +31,7 @@ const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 const extraProperties = store => {
   const state: State = store.getState();
   const { localeIdentifier, preferredLanguages } = Locale.constants();
+  const language = languageSelector(state);
   const devices = knownDevicesSelector(state);
   const lastDevice = devices[devices.length - 1];
   const deviceInfo = lastDevice
@@ -45,6 +49,7 @@ const extraProperties = store => {
     environment: ANALYTICS_LOGS ? "development" : "production",
     localeIdentifier,
     preferredLanguage: preferredLanguages ? preferredLanguages[0] : null,
+    language,
     platformOS: Platform.OS,
     platformVersion: Platform.Version,
     sessionId,
