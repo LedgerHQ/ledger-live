@@ -4,9 +4,9 @@
 [![npm](https://img.shields.io/npm/v/@ledgerhq/react-ui)](https://www.npmjs.com/package/@ledgerhq/react-ui)
 [![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://ledger-live-ui-react.vercel.app)
 
-#### Design and interface resources
+### Design and interface resources for React
 
-This package contains [React](https://reactjs.org/) components and styles built on top of our design system and used internally at [Ledger](https://www.ledger.com/).
+#### This package contains [React](https://reactjs.org/) components and styles built on top of our design system and used internally at [Ledger](https://www.ledger.com/).
 
 ## Reference
 
@@ -20,7 +20,7 @@ This package contains [React](https://reactjs.org/) components and styles built 
 npm i @ledgerhq/react-ui
 ```
 
-_If the `react` packages are not installed yet:_
+_And if the React packages are not installed:_
 
 ```sh
 npm i react react-dom
