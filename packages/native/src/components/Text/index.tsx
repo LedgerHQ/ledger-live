@@ -19,9 +19,10 @@ import {
 import BracketRight from "../../icons/BracketLeft";
 import BracketLeft from "../../icons/BracketRight";
 import { getColor } from "../../styles";
-import { FontWeightTypes, getTextStyle, TextTypes } from "./getTextStyle";
+import { FontWeightTypes, getTextStyle } from "./getTextStyle";
+import { TextVariants } from "../../styles/theme";
 
-interface Props
+export interface BaseTextProps
   extends TextProps,
     FontSizeProps,
     TextAlignProps,
@@ -29,10 +30,10 @@ interface Props
     SpaceProps,
     LineHeightProps,
     BorderProps {
-  type?: TextTypes;
+  variant?: TextVariants;
   fontWeight?: FontWeightTypes;
   fontFamily?: string;
-  fontSize?: number;
+  fontSize?: number | string | TextVariants;
   color?: string;
   mt?: number | string;
   mb?: number | string;
@@ -44,10 +45,11 @@ interface Props
   children: React.ReactNode;
 }
 
-const Base = styled.Text.attrs((p: Props) => ({
-  ...getTextStyle(p),
+const Base = styled.Text.attrs((p: BaseTextProps) => ({
+  fontSize: p.fontSize ? p.fontSize : p.variant ?? "paragraph",
   color: p.color || "palette.neutral.c100",
-}))<Props>`
+}))<BaseTextProps>`
+  ${(p) => getTextStyle(p)}
   ${lineHeight};
   ${fontSize};
   ${textAlign};
@@ -69,7 +71,7 @@ const BracketText = ({
   color = "palette.neutral.c100",
   lineHeight,
   ...props
-}: Props) => {
+}: BaseTextProps) => {
   const size = lineHeight || getTextStyle(props).lineHeight;
   const theme = useTheme();
   const c: string = theme ? (getColor(theme, color) as string) : "transparent";
@@ -84,7 +86,7 @@ const BracketText = ({
   );
 };
 
-const Text = ({ children, bracket, ...props }: Props) => {
+const Text = ({ children, bracket, ...props }: BaseTextProps) => {
   if (bracket) return <BracketText {...props}>{children}</BracketText>;
 
   return <Base {...props}>{children}</Base>;

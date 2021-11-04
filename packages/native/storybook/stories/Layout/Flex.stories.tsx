@@ -43,9 +43,9 @@ const FlexStory = () => {
       p={p}
       m={m}
     >
-      <Text type="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
-      <Text type="h2">{text("Second text", "dolor sit", "Content")}</Text>
-      <Text type="h3">{text("Third text", "amet", "Content")}</Text>
+      <Text variant="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
+      <Text variant="h2">{text("Second text", "dolor sit", "Content")}</Text>
+      <Text variant="h3">{text("Third text", "amet", "Content")}</Text>
     </Flex>
   );
 };
@@ -90,14 +90,14 @@ const FlexStoryTwo = () => {
         p={p}
         m={m}
       >
-        <Text type="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
-        <Text type="h2">{text("Second text", "dolor sit", "Content")}</Text>
-        <Text type="h3">{text("Third text", "amet", "Content")}</Text>
+        <Text variant="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
+        <Text variant="h2">{text("Second text", "dolor sit", "Content")}</Text>
+        <Text variant="h3">{text("Third text", "amet", "Content")}</Text>
       </Flex>
       <Flex p={4} style={{ borderWidth: 1, borderColor: "red" }}>
-        <Text type="h1">{"I'm not modified"}</Text>
-        <Text type="h2">{"I'm not modified"}</Text>
-        <Text type="h3">{"I'm not modified"}</Text>
+        <Text variant="h1">{"I'm not modified"}</Text>
+        <Text variant="h2">{"I'm not modified"}</Text>
+        <Text variant="h3">{"I'm not modified"}</Text>
       </Flex>
     </>
   );

@@ -44,7 +44,7 @@ const ScrollContainerHeaderStory = () => {
         <Button mr={2} Icon={Icons.ArrowLeftMedium} size="small" />
       }
       TopRightSection={<TopRightSection />}
-      MiddleSection={<Text type="h2">TITLE</Text>}
+      MiddleSection={<Text variant="h2">TITLE</Text>}
       BottomSection={<BottomSection />}
     >
       {Array(20)

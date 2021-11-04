@@ -1,84 +1,60 @@
-export type TextTypes =
-  | "h1"
-  | "h2"
-  | "h3"
-  | "emphasis"
-  | "body"
-  | "link"
-  | "subTitle"
-  | "small"
-  | "tag"
-  | "large"
-  | "paragraph";
+import { TextVariants } from "../../styles/theme";
+import { BaseTextProps } from "./index";
 
-export type FontWeightTypes = "medium" | "semibold" | "bold";
+export type FontWeightTypes = "medium" | "semiBold" | "bold";
 
-export function getTextTypeStyle({ bracket }: { bracket?: boolean }): {
-  [index: string]: {
+export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
+  TextVariants,
+  {
     fontFamily: string;
-    fontSize: number;
-    lineHeight: number;
+    lineHeight?: number;
     paddingTop?: number;
-  };
-} {
+  }
+> {
   return {
     h1: {
       fontFamily: "Alpha",
-      fontSize: 36,
-      lineHeight: 43.2,
+      lineHeight: 32,
       paddingTop: bracket ? 15 : 0,
     },
     h2: {
       fontFamily: "Alpha",
-      fontSize: 28,
-      lineHeight: 33.6,
+      lineHeight: 28,
       paddingTop: bracket ? 10 : 0,
     },
     h3: {
       fontFamily: "Alpha",
-      fontSize: 20,
-      lineHeight: 24,
+      lineHeight: 20,
       paddingTop: bracket ? 5 : 0,
+    },
+    h4: {
+      fontFamily: "Inter",
     },
     large: {
       fontFamily: "Inter",
-      fontSize: 16,
-      lineHeight: 19.36,
-    },
-    emphasis: {
-      fontFamily: "Inter",
-      fontSize: 14,
-      lineHeight: 20,
     },
     body: {
       fontFamily: "Inter",
-      fontSize: 14,
+    },
+    bodyLineHeight: {
+      fontFamily: "Inter",
       lineHeight: 20,
     },
     paragraph: {
       fontFamily: "Inter",
-      fontSize: 13,
-      lineHeight: 15.73,
     },
-    link: {
+    paragraphLineHeight: {
       fontFamily: "Inter",
-      fontSize: 13,
-      lineHeight: 16,
+      lineHeight: 18,
+    },
+    small: {
+      fontFamily: "Inter",
+    },
+    subtitle: {
+      fontFamily: "Inter",
     },
     tiny: {
       fontFamily: "Inter",
-      fontSize: 12,
-      lineHeight: 16,
-    },
-    navigation: {
-      fontFamily: "Inter",
-      fontSize: 12,
-      lineHeight: 14.52,
-    },
-    subTitle: {
-      fontFamily: "Inter",
-      fontSize: 11,
-      lineHeight: 13.31,
     },
   };
 }
@@ -94,12 +70,18 @@ const getConcatenedFontWeightFontFamily: {
     medium: {
       fontFamily: "HMAlphaMono-Medium",
     },
+    semiBold: {
+      fontFamily: "HMAlphaMono-Medium",
+    },
+    bold: {
+      fontFamily: "HMAlphaMono-Medium",
+    },
   },
   Inter: {
     medium: {
       fontFamily: "Inter-Medium",
     },
-    semibold: {
+    semiBold: {
       fontFamily: "Inter-SemiBold",
     },
     bold: {
@@ -109,20 +91,15 @@ const getConcatenedFontWeightFontFamily: {
 };
 
 export function getTextStyle({
-  type = "body",
-  bracket,
+  variant = "paragraph",
+  bracket = false,
   fontWeight = "medium",
-}: {
-  type?: TextTypes;
-  bracket?: boolean;
-  fontWeight?: FontWeightTypes;
-}): {
+}: Partial<BaseTextProps>): {
   fontFamily: string;
-  fontSize: number;
-  lineHeight: number;
+  lineHeight?: number;
   paddingTop?: number;
 } {
-  const style = getTextTypeStyle({ bracket })[type];
+  const style = getTextTypeStyle({ bracket })[variant];
   return {
     ...style,
     ...getConcatenedFontWeightFontFamily[style?.fontFamily ?? "Inter"][

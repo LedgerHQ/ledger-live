@@ -34,7 +34,7 @@ const Switch = ({
       />
       {label ? (
         <Text
-          type="body"
+          variant="body"
           color={
             checked ? colors.palette.primary.c90 : colors.palette.neutral.c100
           }

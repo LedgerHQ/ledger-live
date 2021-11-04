@@ -1,6 +1,6 @@
-import { TextTypes } from "../Text/getTextStyle";
+import { TextVariants } from "../../styles/theme";
 
-export const ctaTextType: { [index: string]: TextTypes } = {
+export const ctaTextType: { [index: string]: TextVariants } = {
   small: "paragraph",
   medium: "body",
   large: "large",

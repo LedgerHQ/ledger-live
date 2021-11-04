@@ -5,7 +5,7 @@ import Badge from "../../../src/components/tags/Badge";
 
 const BadgeSample = () => (
   <Badge
-    variant={select("type", ["main", "primary", undefined], undefined)}
+    badgeVariant={select("type", ["main", "primary", undefined], undefined)}
     active={boolean("active", false)}
   >
     {text("children", "Label")}

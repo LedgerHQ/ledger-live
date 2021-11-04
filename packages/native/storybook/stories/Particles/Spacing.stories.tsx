@@ -17,7 +17,7 @@ const SpacingStory = () => {
     >
       {space.map((value) => (
         <Flex mb={4} width="90%" key={value}>
-          <Text type="subTitle" color={theme.colors.palette.neutral.c100}>
+          <Text variant="subtitle" color={theme.colors.palette.neutral.c100}>
             {value}
           </Text>
           <View

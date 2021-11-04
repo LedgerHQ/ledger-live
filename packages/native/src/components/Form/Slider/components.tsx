@@ -63,7 +63,11 @@ const LabelContainer = styled.View`
 export const Label = ({ children }: { children: React.ReactNode }) => {
   return (
     <LabelContainer>
-      <Text type={"body"} fontWeight={"semibold"} color={"palette.primary.c90"}>
+      <Text
+        variant={"body"}
+        fontWeight={"semiBold"}
+        color={"palette.primary.c90"}
+      >
         {children}
       </Text>
     </LabelContainer>

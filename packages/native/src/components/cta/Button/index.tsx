@@ -101,8 +101,8 @@ const ButtonContainer = (
     <Container hide={hide}>
       {iconPosition === "right" && children ? (
         <Text
-          type={ctaTextType[size]}
-          fontWeight={"semibold"}
+          variant={ctaTextType[size]}
+          fontWeight={"semiBold"}
           color={text.color}
         >
           {children}
@@ -115,8 +115,8 @@ const ButtonContainer = (
       ) : null}
       {iconPosition === "left" && children ? (
         <Text
-          type={ctaTextType[size]}
-          fontWeight={"semibold"}
+          variant={ctaTextType[size]}
+          fontWeight={"semiBold"}
           color={text.color}
         >
           {children}

@@ -27,7 +27,7 @@ const TopLeft = () => {
   } = useTheme();
   return (
     <FlexBox flexDirection="row" flexShrink={1} alignItems="center">
-      <Text color={neutral.c100} type="body" fontWeight="semibold" mr={2}>
+      <Text color={neutral.c100} variant="body" fontWeight="semiBold" mr={2}>
         {text("topLeftText", "Bitcoin 1", "content")}
       </Text>
       <Icons.CircledCheckRegular size={12.5} color={success.c100} />
@@ -37,7 +37,7 @@ const TopLeft = () => {
 const BottomLeft = () => {
   const { colors } = useTheme();
   return (
-    <Text type="body" color={colors.palette.neutral.c70}>
+    <Text variant="body" color={colors.palette.neutral.c70}>
       {text("bottomLeftText", "Native Segwit", "content")}
     </Text>
   );
@@ -46,7 +46,11 @@ const BottomLeft = () => {
 const TopRight = () => {
   const { colors } = useTheme();
   return (
-    <Text color={colors.palette.neutral.c100} type="body" fontWeight="semibold">
+    <Text
+      color={colors.palette.neutral.c100}
+      variant="body"
+      fontWeight="semiBold"
+    >
       {text("topRightText", "1.23456 BTC", "content")}
     </Text>
   );
@@ -56,7 +60,7 @@ const BottomRight = () => {
   const { colors } = useTheme();
   return (
     <Text
-      type="paragraph"
+      variant="paragraph"
       fontWeight="medium"
       color={colors.palette.neutral.c70}
     >
