@@ -16,8 +16,8 @@
   "devDependencies": {
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
-    "@types/react": "^17.0.30",
-    "@types/react-dom": "^17.0.9",
+    "@types/react": "^17.0.34",
+    "@types/react-dom": "^17.0.11",
     "@types/styled-components": "^5.1.15",
     "@types/styled-components-react-native": "^5.1.1",
     "@types/styled-system": "^5.1.13",
