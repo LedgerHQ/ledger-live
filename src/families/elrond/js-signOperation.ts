@@ -15,7 +15,9 @@ const buildOptimisticOperation = (
   fee: BigNumber
 ): Operation => {
   const type = "OUT";
-  const value = new BigNumber(transaction.amount);
+  const value = transaction.useAllAmount
+    ? account.balance.minus(fee)
+    : new BigNumber(transaction.amount);
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",

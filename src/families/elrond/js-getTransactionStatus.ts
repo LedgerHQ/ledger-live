@@ -32,6 +32,10 @@ const getTransactionStatus = async (
   }
 
   const estimatedFees = t.fees || new BigNumber(0);
+  if (estimatedFees.gt(a.balance)) {
+    errors.amount = new NotEnoughBalance();
+  }
+
   const totalSpent = useAllAmount
     ? a.balance
     : new BigNumber(t.amount).plus(estimatedFees);
