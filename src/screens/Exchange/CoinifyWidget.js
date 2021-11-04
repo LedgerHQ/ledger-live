@@ -200,6 +200,10 @@ export default function CoinifyWidget({
                 },
               }),
             );
+            track("Coinify Confirm Buy End", {
+              currencyName: account && getAccountCurrency(account).name,
+              medium: context?.transferIn?.medium,
+            });
           }
           break;
         default:
@@ -255,11 +259,6 @@ export default function CoinifyWidget({
               },
             }),
           );
-          if (confirmed) {
-            track("Coinify Confirm Buy End", {
-              currencyName: getAccountCurrency(account).name,
-            });
-          }
         } else {
           webView.current.postMessage(
             JSON.stringify({
