@@ -72,7 +72,6 @@ const BracketText = ({
 }: Props) => {
   const size = lineHeight || getTextStyle(props).lineHeight;
   const theme = useTheme();
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const c: string = theme ? (getColor(theme, color) as string) : "transparent";
   return (
     <T>

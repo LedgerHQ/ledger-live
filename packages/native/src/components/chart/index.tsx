@@ -94,7 +94,7 @@ const Chart = ({
             <Stop stopColor={hex(color)} stopOpacity="0.11" />
             <Stop
               offset="1"
-              stopColor={hex(theme.colors.palette.neutral.c0)}
+              stopColor={hex(theme.colors.palette.neutral.c00)}
               stopOpacity="0"
             />
           </LinearGradient>

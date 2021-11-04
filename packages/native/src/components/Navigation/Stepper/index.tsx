@@ -174,7 +174,7 @@ function Step({
           </StepIcon.Background>
         );
     }
-  }, [state]);
+  }, [state, colors]);
 
   return (
     <StepView>

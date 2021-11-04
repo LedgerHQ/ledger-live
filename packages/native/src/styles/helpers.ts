@@ -13,18 +13,18 @@ export const lighten = (c: string, a: number): string =>
 export const mix = (c: string, b: string, a: number): string =>
   Color(c).mix(Color(b), a).toString();
 
-const get = (object: Record<string, any>, path: string | string[]): unknown => {
-  let p: string | string[] = path;
-  if (typeof path === "string") p = path.split(".").filter((key) => key.length);
-  // @ts-expect-error FIXME
+const get = (object: unknown, path: string | string[]): unknown => {
+  const p: string[] =
+    typeof path === "string"
+      ? path.split(".").filter((key) => key.length)
+      : path;
   return p.reduce(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    (dive: Record<string, any>, key: string) => dive && dive[key],
+    (dive: unknown, key: string) =>
+      dive && (dive as { [key: string]: unknown })[key],
     object
   );
 };
-
-export const getColor = (p: Record<string, any>, color: string): string => {
+export const getColor = (p: { colors: unknown }, color: string): string => {
   const c = get(p.colors, color) as string;
   return c;
 };

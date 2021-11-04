@@ -10,17 +10,8 @@ type Props = {
 };
 
 declare module "styled-components" {
-  export interface DefaultTheme extends Theme {
-    sizes: {
-      topBarHeight: number;
-      sideBarWidth: number;
-    };
-    radii: number[];
-    fontSizes: number[];
-    space: number[];
-    colors: Record<string, any>;
-    zIndexes: number[];
-  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  export interface DefaultTheme extends Theme {}
 }
 
 export const StyleProvider = ({
