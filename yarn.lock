@@ -2123,10 +2123,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@6.12.0", "@ledgerhq/cryptoassets@^6.12.0":
-  version "6.12.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.12.0.tgz#15717254f5c08f1fb5f76d6805f5ebca5bec8764"
-  integrity sha512-cBRtR0XhB32sveOBN5jruant1D8Me1eF/ycJ0nMYlVu/HoFJ8RznzrSjBmh+r5jIEBQPuOZ3WCF21Z68W+uRNA==
+"@ledgerhq/cryptoassets@6.12.2", "@ledgerhq/cryptoassets@^6.12.2":
+  version "6.12.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.12.2.tgz#e0573358ae498aa639c9eea927f8e4873bcb2916"
+  integrity sha512-Q8ZYe74lWoCqagB1QXt8jBFDqhbKc1IP0/ZYtil2W0PNM+Kv563//LnupmcfkR0uN0czvZrDS/runSx0ASO+JQ==
   dependencies:
     invariant "2"
 
@@ -2198,12 +2198,12 @@
     "@ledgerhq/hw-transport" "^6.11.2"
     bip32-path "^0.4.2"
 
-"@ledgerhq/hw-app-eth@6.12.0":
-  version "6.12.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.12.0.tgz#979b3fac1e96dbf38e961d204cb238e162dbbb49"
-  integrity sha512-inKBUdy1G8TGD2a2XAxwSt2DyTMCKhgJx6bYSdQ+5jVkNLVAM9Ml1JnWl60m0Avz8vqO2n1qqY7olV87gjvw1w==
+"@ledgerhq/hw-app-eth@6.12.2":
+  version "6.12.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.12.2.tgz#053927766da373f51b4d53872a4a3f73e1f33b22"
+  integrity sha512-FDF661Jeo1bR1B9UjKhxjGUDSiA/qQt88j/1edbxQKTHKbvPTLH4m68andeneetS6l+6jc8fX/2IwDpCEQ4mTA==
   dependencies:
-    "@ledgerhq/cryptoassets" "^6.12.0"
+    "@ledgerhq/cryptoassets" "^6.12.2"
     "@ledgerhq/errors" "^6.10.0"
     "@ledgerhq/hw-transport" "^6.11.2"
     "@ledgerhq/logs" "^6.10.0"
@@ -2318,20 +2318,20 @@
     bignumber.js "^9.0.1"
     json-rpc-2.0 "^0.2.16"
 
-"@ledgerhq/live-common@^21.13.0":
-  version "21.13.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-21.13.0.tgz#e2a227c4a6d2388315550f9722c70d5406a7fc05"
-  integrity sha512-auXOEv9CLDL3Gn/mk929sa7P8Un1fQlgis3UDx7kLfw550+oBiTyzc4GIy5qU477OWsqqGrRYJx3N9be177OKw==
+"@ledgerhq/live-common@^21.13.2":
+  version "21.13.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/live-common/-/live-common-21.13.2.tgz#3e9600445eb3cf884eb70256dcfb69b13bb63d8b"
+  integrity sha512-1lMkVixyCHONfCzzwqAJ/XGDjCh3DNQuxCohzBjfWCVIc4EoUHIWoy6wYibjeuwMOqfs7BK92YsXoaEEgPUVcA==
   dependencies:
     "@crypto-com/chain-jslib" "0.0.19"
     "@ledgerhq/compressjs" "1.3.2"
-    "@ledgerhq/cryptoassets" "6.12.0"
+    "@ledgerhq/cryptoassets" "6.12.2"
     "@ledgerhq/devices" "6.11.2"
     "@ledgerhq/errors" "6.10.0"
     "@ledgerhq/hw-app-algorand" "6.11.2"
     "@ledgerhq/hw-app-btc" "6.12.1"
     "@ledgerhq/hw-app-cosmos" "6.11.2"
-    "@ledgerhq/hw-app-eth" "6.12.0"
+    "@ledgerhq/hw-app-eth" "6.12.2"
     "@ledgerhq/hw-app-polkadot" "6.11.2"
     "@ledgerhq/hw-app-str" "6.11.2"
     "@ledgerhq/hw-app-tezos" "6.11.2"
@@ -2343,14 +2343,14 @@
     "@ledgerhq/json-bignumber" "^1.1.0"
     "@ledgerhq/live-app-sdk" "^0.2.0"
     "@ledgerhq/logs" "6.10.0"
-    "@polkadot/types" "6.5.2"
-    "@polkadot/types-known" "6.5.2"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/types-known" "6.6.1"
     "@taquito/ledger-signer" "^10.2.1"
     "@taquito/taquito" "10.2.1"
     "@types/bchaddrjs" "^0.4.0"
     "@types/bs58check" "^2.1.0"
     "@walletconnect/client" "1.6.6"
-    "@xstate/react" "^1.6.1"
+    "@xstate/react" "^1.6.2"
     "@zondax/ledger-filecoin" "^0.11.2"
     async "^3.2.2"
     axios "0.24.0"
@@ -2402,7 +2402,7 @@
     stellar-sdk "^9.0.1"
     triple-beam "^1.3.0"
     winston "^3.3.3"
-    xstate "^4.25.0"
+    xstate "^4.26.0"
     zcash-bitcore-lib "^0.13.20-rc3"
 
 "@ledgerhq/logs@6.10.0", "@ledgerhq/logs@^6.10.0":
@@ -2578,62 +2578,62 @@
   dependencies:
     "@octokit/openapi-types" "^11.2.0"
 
-"@polkadot/networks@7.6.1", "@polkadot/networks@^7.6.1":
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-7.6.1.tgz#d7ca346a3c15b29c9286ccbc67b1438bf9c8130e"
-  integrity sha512-76RdEVy+G14P13oxSe3+VDwFdVYRNVAy7xi9ESJBRZFnQC/TIL2rOeg7Gq5+HP/mkgzG4gL5X30VdE+aKzokpA==
+"@polkadot/networks@7.7.1", "@polkadot/networks@^7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-7.7.1.tgz#de9674a355bd4f68d650e3dd580d717d83ea4161"
+  integrity sha512-ghUA9jd+12lfbKclPIxRQBmvfd1+BoECr5C8t+2rfM5plE+1f1Ucdrpz9wQ362+WNlnP4q1u9yB1zQlFM+K6yQ==
   dependencies:
     "@babel/runtime" "^7.15.4"
 
-"@polkadot/reactnative-identicon@0.86.2":
-  version "0.86.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/reactnative-identicon/-/reactnative-identicon-0.86.2.tgz#dd46614be02012665f0f7bb6a8211397ac5d6d2e"
-  integrity sha512-+2WzY/DAUejY3b7OU5GX03oFJQyhmfCPkRzaow5C2u1Qw7SbeASh4OemGmFk9FNsSc50OOm0gRliuw+g6whfnw==
+"@polkadot/reactnative-identicon@0.86.3":
+  version "0.86.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/reactnative-identicon/-/reactnative-identicon-0.86.3.tgz#fbd59789defde439b016dd93f1638f56e49789c6"
+  integrity sha512-+GB2cTYAExQvJO+aikn4zjeZn1Mno6NzTSsXOlevW2tw0JcQOM7AslSYzm3u8WuSi2bAWRiBsaIP300V/JmGUQ==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/ui-shared" "0.86.2"
-    "@polkadot/util" "^7.6.1"
-    "@polkadot/util-crypto" "^7.6.1"
-    react-native-svg "^12.1.1"
+    "@polkadot/ui-shared" "0.86.3"
+    "@polkadot/util" "^7.7.1"
+    "@polkadot/util-crypto" "^7.7.1"
+    react-native-svg "^12.2.0"
 
-"@polkadot/types-known@6.5.2":
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-known/-/types-known-6.5.2.tgz#a5b3afe7ddf9fc4a87f1b391d6d7058eb4e03ae0"
-  integrity sha512-5mFcsAJDL10pwTRI2ODNYvzeB1pQsSbYakI323BkA9iWxNSDYgHNU9prgEAnbO6VXP31HMX86ZDGhEm/XpGo4A==
+"@polkadot/types-known@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types-known/-/types-known-6.6.1.tgz#9842a47696137e97ad75a21839b1acfe902c23e1"
+  integrity sha512-JKZasgvTU5JkbfyjVpPwyMMStGFWPtVTAE+LPHaQ9fILCCMq8iW+8yGH3wGo77YRUPehorAHIQX4JOV9QL5oIQ==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/networks" "^7.6.1"
-    "@polkadot/types" "6.5.2"
-    "@polkadot/util" "^7.6.1"
+    "@polkadot/networks" "^7.7.1"
+    "@polkadot/types" "6.6.1"
+    "@polkadot/util" "^7.7.1"
 
-"@polkadot/types@6.5.2":
-  version "6.5.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-6.5.2.tgz#76f5fb1b35ae20530554869b9a859811b4048b28"
-  integrity sha512-QDE5SxyW/Veq0IB8zT0RaBJTedmVkxhR8EykwslJiRuHSBz/HZjtEhcnA44c8fdKWKkbURklbX2vlWd7d2w4jQ==
+"@polkadot/types@6.6.1":
+  version "6.6.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types/-/types-6.6.1.tgz#eddc9c5a11637638b03c7cf3eff0eb0770b2db10"
+  integrity sha512-36zLL4OyYnRQWRNBgvxL3o5kLoGmYRZD7+gyQmtagxP5PbRFTkC425UloF42bn6VsRyIU2lAv+2ruXSIzjQYjA==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/util" "^7.6.1"
-    "@polkadot/util-crypto" "^7.6.1"
+    "@polkadot/util" "^7.7.1"
+    "@polkadot/util-crypto" "^7.7.1"
     rxjs "^7.4.0"
 
-"@polkadot/ui-shared@0.86.2":
-  version "0.86.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/ui-shared/-/ui-shared-0.86.2.tgz#0701df7af0fc0f975a44cf3defec9a4a764fa900"
-  integrity sha512-JSY5r34UbocJxrOgO3rr1ge7yM5gJEr2pcZDPJszugX++kDozmifH020zyK92P8kpoGV58r9k5fIkBQ/9vszvg==
+"@polkadot/ui-shared@0.86.3":
+  version "0.86.3"
+  resolved "https://registry.yarnpkg.com/@polkadot/ui-shared/-/ui-shared-0.86.3.tgz#fdf9b6efdc85d5d7b078e318aaf80f5e2ee4a930"
+  integrity sha512-iz0jmjJtAmVnjtHZXflM8I3TaA/Gmzkm9YRAG7VT9g2KtRMSPvkT4EPTpsId9j3bYbr2PS8KthetkdwqNWhZ6w==
   dependencies:
     "@babel/runtime" "^7.15.4"
     color "^3.2.1"
 
-"@polkadot/util-crypto@^7.6.1":
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-7.6.1.tgz#3e40270e9dce7885d92d0992aef9761feb57f2e2"
-  integrity sha512-5lLEfexkYOc73jitwC4K/Ll3JNA8Hdo2aU3GSOkDah8bBpm02djD7ypwfmuWRJw0UDyTgY67g0SXn4frPcQiag==
+"@polkadot/util-crypto@^7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-7.7.1.tgz#6c3b84558d4e971cc0a7190f99e34ce801eb498d"
+  integrity sha512-K269URC/ofbYM1vFSIVLbuRi4Z+9bMdyJQ1k+59+jx0VwYu50l9vzNhFO8WMGoBZ6eDzqQkeWj7usCTKlU9xUw==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/networks" "7.6.1"
-    "@polkadot/util" "7.6.1"
+    "@polkadot/networks" "7.7.1"
+    "@polkadot/util" "7.7.1"
     "@polkadot/wasm-crypto" "^4.2.1"
-    "@polkadot/x-randomvalues" "7.6.1"
+    "@polkadot/x-randomvalues" "7.7.1"
     base-x "^3.0.9"
     base64-js "^1.5.1"
     blakejs "^1.1.1"
@@ -2647,14 +2647,14 @@
     tweetnacl "^1.0.3"
     xxhashjs "^0.2.2"
 
-"@polkadot/util@7.6.1", "@polkadot/util@^7.6.1":
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-7.6.1.tgz#e6988124728fdf053929022827216241dd50a6fa"
-  integrity sha512-96UgzMOxwwsndGHN4aoyPYVRXpHcVpYb4zngFH2O9ma0YxrG2HhhqqoJ5pS0OUlhvcQkVz6T6t+heGFnTkvQxw==
+"@polkadot/util@7.7.1", "@polkadot/util@^7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-7.7.1.tgz#b9c74f8c242669ff8ce26a3101630231914de7c7"
+  integrity sha512-REw11iHZKUm7GeC7Ktx1HguT9y76mbmiVtZJyNXpUTDKmfm6z+SMqs3pOCL/rvzqm+6M3ag6ffRrlzTTgh0HAg==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/x-textdecoder" "7.6.1"
-    "@polkadot/x-textencoder" "7.6.1"
+    "@polkadot/x-textdecoder" "7.7.1"
+    "@polkadot/x-textencoder" "7.7.1"
     "@types/bn.js" "^4.11.6"
     bn.js "^4.12.0"
     camelcase "^6.2.0"
@@ -2683,36 +2683,36 @@
     "@polkadot/wasm-crypto-asmjs" "^4.2.1"
     "@polkadot/wasm-crypto-wasm" "^4.2.1"
 
-"@polkadot/x-global@7.6.1":
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-global/-/x-global-7.6.1.tgz#f43a61d40bfaf2f43f9a4ef39e01a24546768394"
-  integrity sha512-jKPNFHiC0yIc6TfqZtopaqsW3pDun1uh9lp0kcDkfOYozwwN1NVXWLClDBa2C5UiKU/jxA3biYiNZUyZpbV13g==
+"@polkadot/x-global@7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-global/-/x-global-7.7.1.tgz#ab390aa07807d62a7ec0fa2fd6e7c4837524c227"
+  integrity sha512-S7MYqEtcfMgWA64qR09Z8O3zbaRyyW1y2qtvn04dexPesuEPOw2W5+WBHss8UAI/aVxjlG+d2D3OlYUr+IOO9Q==
   dependencies:
     "@babel/runtime" "^7.15.4"
 
-"@polkadot/x-randomvalues@7.6.1":
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-randomvalues/-/x-randomvalues-7.6.1.tgz#0cd143cf976e36f5c9fcf53ba41fd5fffca95c44"
-  integrity sha512-hfSMBeMZTrnuejv/oXp3tMZARTOGyQZ3G0GW44dV2fR2L1+tlLj9VuXgVGgupNBq7AC6eSfE3XhJwCGyH5FhmQ==
+"@polkadot/x-randomvalues@7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-randomvalues/-/x-randomvalues-7.7.1.tgz#37edb6920bac4f6c6c7620f02ef9dd5b43405a5b"
+  integrity sha512-dFhxei2TP3cWepfITDSq6eaBbdsP8TPBQagincqJynt5EaU0pzQ5psMBMJ/rAYy194oEpg0ED16XK/iFdZ42rA==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/x-global" "7.6.1"
+    "@polkadot/x-global" "7.7.1"
 
-"@polkadot/x-textdecoder@7.6.1":
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-7.6.1.tgz#7e80b512f1ddfd01f243dbbe8afc9dab7d0c6c85"
-  integrity sha512-sJtQMMw+jO3CwpOf0t1hrVl3xMw1BOLs/Xjd0v/yhiTAJ1rr6dqvhcnOHkU3a7udqo7G9dXDrnGi1q3efifXPw==
+"@polkadot/x-textdecoder@7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textdecoder/-/x-textdecoder-7.7.1.tgz#bfcf8f8a7ce620ca72a649dd0a322a4476a51a28"
+  integrity sha512-2+kYLVxjdtbuxcIDMdEiBK+GvCs/M8QdKVmTGLTb47PphSeiMKLu8qjy1ygBJeaFeQOZxIj1f8IJ5ICI9TlVcA==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/x-global" "7.6.1"
+    "@polkadot/x-global" "7.7.1"
 
-"@polkadot/x-textencoder@7.6.1":
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-textencoder/-/x-textencoder-7.6.1.tgz#2a2fb4baa13889fbc53b86ce9003de748f0df2aa"
-  integrity sha512-iqOGwXJIzc8rWYLPTYcO09LwA2q4fqwJhLsLCd+p13Z0yDSUvwgq785/2WEQfhSFbMd8HM6udedqrQTpnpIujg==
+"@polkadot/x-textencoder@7.7.1":
+  version "7.7.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/x-textencoder/-/x-textencoder-7.7.1.tgz#7dc5b0165e3b6ad6882904169ad3362487ada92b"
+  integrity sha512-pRTG7F6EYilkbkyxfWOV1LXCVohcVnFPVfPvGydHsDJ3kGZ4n+L9PuJ+t3WKwd6tirEDUIBGe2eNEl/arcWzTw==
   dependencies:
     "@babel/runtime" "^7.15.4"
-    "@polkadot/x-global" "7.6.1"
+    "@polkadot/x-global" "7.7.1"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -2986,55 +2986,63 @@
   resolved "https://registry.yarnpkg.com/@react-native/polyfills/-/polyfills-1.0.0.tgz#05bb0031533598f9458cf65a502b8df0eecae780"
   integrity sha512-0jbp4RxjYopTsIdLl+/Fy2TiwVYHy4mgeu07DG4b/LyM0OS/+lPP5c9sbnt/AMlnF6qz2JRZpPpGw1eMNS6A4w==
 
-"@react-navigation/bottom-tabs@^5.11.11":
-  version "5.11.15"
-  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-5.11.15.tgz#f973625cc32d9c5a4067851f084cb11ccd68fe79"
-  integrity sha512-TBY419W6aN/HZg98xbVp5Bx1HEF5sXuHR5f55W6KMI4k2AvxlwelKD1wbfvEcX2iuQT0YUiiXsACRFUSECYhkw==
+"@react-navigation/bottom-tabs@^6.0.9":
+  version "6.0.9"
+  resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-6.0.9.tgz#916b6a4b495ea8fdcace98dab727064876875d09"
+  integrity sha512-uRoq6Zd7lPNnLqNQkKC28eR62tpqcDeuakZU1sO8N46FtvrcTuNLoIlssrGty3GF7ALBIxCypn4A93t3nbmMrQ==
   dependencies:
+    "@react-navigation/elements" "^1.2.1"
     color "^3.1.3"
-    react-native-iphone-x-helper "^1.3.0"
+    warn-once "^0.1.0"
 
-"@react-navigation/core@^5.16.1":
-  version "5.16.1"
-  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.16.1.tgz#e0d308bd9bbd930114ce55c4151806b6d7907f69"
-  integrity sha512-3AToC7vPNeSNcHFLd1h71L6u34hfXoRAS1CxF9Fc4uC8uOrVqcNvphpeFbE0O9Bw6Zpl0BnMFl7E5gaL3KGzNA==
+"@react-navigation/core@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-6.1.0.tgz#95fbf54d78ad0ed976cb73219f0c0199775a1d26"
+  integrity sha512-LyZqD/ZCXSK9+ES8KiH+0tU+7aL84jUw1N9OxZfEuns/OcnSXKC3sOO+9NQ9XRowB1wLUfJhmqZ8G8rUlg33fQ==
   dependencies:
-    "@react-navigation/routers" "^5.7.4"
+    "@react-navigation/routers" "^6.1.0"
     escape-string-regexp "^4.0.0"
-    nanoid "^3.1.15"
-    query-string "^6.13.6"
+    nanoid "^3.1.23"
+    query-string "^7.0.0"
     react-is "^16.13.0"
 
-"@react-navigation/material-top-tabs@^5.3.15":
-  version "5.3.19"
-  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-5.3.19.tgz#64f3a933f5d7e86e99f3d57d9f0c1e833ffa7e4f"
-  integrity sha512-I7bEF99THxxcY7kCUZ5pPmwXr6kgo6L2sg3P1YJo+CcBWSGvGiHyNbZXNs15HuKRuFvEuueChNV9n8QuKBWbDA==
+"@react-navigation/elements@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@react-navigation/elements/-/elements-1.2.1.tgz#86f19781c6f34a5c9dd25dca99915e0306f477d1"
+  integrity sha512-EnmAbKMsptrliRKf95rdgS6BhMjML+mIns06+G1Vdih6BrEo7/0iytThUv3WBf99AI76dyEq/cqLUwHPiFzXWg==
+
+"@react-navigation/material-top-tabs@^6.0.6":
+  version "6.0.6"
+  resolved "https://registry.yarnpkg.com/@react-navigation/material-top-tabs/-/material-top-tabs-6.0.6.tgz#efabd409e970c76cac4b9c61ac4d9bf735cf6d39"
+  integrity sha512-kbm/0jndRVeGdAgOd4NcDSdSQiYeA7fkctCKbPxe3mT36j9qOqpfHfmd2dbv/VbNCngdTtZ3/+QMxTIViZGy7g==
   dependencies:
     color "^3.1.3"
+    warn-once "^0.1.0"
 
-"@react-navigation/native@^5.9.4":
-  version "5.9.8"
-  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-5.9.8.tgz#ac76ee6390ea7ce807486ca5c38d903e23433a97"
-  integrity sha512-DNbcDHXQPSFDLn51kkVVJjT3V7jJy2GztNYZe/2bEg29mi5QEcHHcpifjMCtyFKntAOWzKlG88UicIQ17UEghg==
+"@react-navigation/native@^6.0.6":
+  version "6.0.6"
+  resolved "https://registry.yarnpkg.com/@react-navigation/native/-/native-6.0.6.tgz#0f2577358d73d7b21ff5b2455f0a2d51b1ad2837"
+  integrity sha512-XzL7YPsaRRQgdCQSXbA8PJWLN2I4lhUUvSFoKQPNO4DS6y8eqZI1V8COPYlJg8+tsetGV5J8jt+jVjWL7h6ZrQ==
   dependencies:
-    "@react-navigation/core" "^5.16.1"
+    "@react-navigation/core" "^6.1.0"
     escape-string-regexp "^4.0.0"
-    nanoid "^3.1.15"
+    nanoid "^3.1.23"
 
-"@react-navigation/routers@^5.7.4":
-  version "5.7.4"
-  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-5.7.4.tgz#8b5460e841a0c64f6c9a5fbc2a1eb832432d4fb0"
-  integrity sha512-0N202XAqsU/FlE53Nmh6GHyMtGm7g6TeC93mrFAFJOqGRKznT0/ail+cYlU6tNcPA9AHzZu1Modw1eoDINSliQ==
+"@react-navigation/routers@^6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@react-navigation/routers/-/routers-6.1.0.tgz#d5682be88f1eb7809527c48f9cd3dedf4f344e40"
+  integrity sha512-8xJL+djIzpFdRW/sGlKojQ06fWgFk1c5jER9501HYJ12LF5DIJFr/tqBI2TJ6bk+y+QFu0nbNyeRC80OjRlmkA==
   dependencies:
-    nanoid "^3.1.15"
+    nanoid "^3.1.23"
 
-"@react-navigation/stack@^5.14.5":
-  version "5.14.9"
-  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-5.14.9.tgz#49c7b9316e6fb456e9766c901e0d607862f0ea7d"
-  integrity sha512-DuvrT9P+Tz8ezZLQYxORZqOGqO+vEufaxlW1hSLw1knLD4jNxkz8TJDXtfKwaz//9gb43UhTNccNM02vm7iPqQ==
+"@react-navigation/stack@^6.0.11":
+  version "6.0.11"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-6.0.11.tgz#9a94089da7a6bb6b41084c2b9e88ef542d41345d"
+  integrity sha512-Osc2mXi0Zh/u92HRCceDqVfVnypTa2sZgYMJDU+vDhHz38negtbCG+cjje6nApSjwC5WTVhYP4OoD5WBSh51+g==
   dependencies:
+    "@react-navigation/elements" "^1.2.1"
     color "^3.1.3"
-    react-native-iphone-x-helper "^1.3.0"
+    warn-once "^0.1.0"
 
 "@segment/analytics-react-native@^1.5.0":
   version "1.5.0"
@@ -3716,10 +3724,10 @@
   resolved "https://registry.yarnpkg.com/@xmldom/xmldom/-/xmldom-0.7.5.tgz#09fa51e356d07d0be200642b0e4f91d8e6dd408d"
   integrity sha512-V3BIhmY36fXZ1OtVcI9W+FxQqxVLsPKcNjWigIaa81dLC9IolJl5Mt4Cvhmr0flUnjSpTdrbMTSbXqYqV5dT6A==
 
-"@xstate/react@^1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@xstate/react/-/react-1.6.1.tgz#7e920520ba54d3c2ade55639761d7ca2c25c4900"
-  integrity sha512-M3b32nGhA0K3N6NrYKAMXx3dgGlLmuZfJU/EsZT04kQyVbWSiT3z7p9rdPisQyaQYFUwdqspQZ68wRNWbUkfVQ==
+"@xstate/react@^1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@xstate/react/-/react-1.6.2.tgz#b6626884da9476ae22880a8c6daeda12be680a05"
+  integrity sha512-G8edXa/pHCoGNDTSJxrlPtUHUszHlCMRvMD84igVZuevEP9ij0pud1FQ0WdCdl6yC++77RCDY+D6v5o1wWtXJQ==
   dependencies:
     use-isomorphic-layout-effect "^1.0.0"
     use-subscription "^1.3.0"
@@ -10872,10 +10880,10 @@ nanoassert@^1.0.0:
   resolved "https://registry.yarnpkg.com/nanoassert/-/nanoassert-1.1.0.tgz#4f3152e09540fde28c76f44b19bbcd1d5a42478d"
   integrity sha1-TzFS4JVA/eKMdvRLGbvNHVpCR40=
 
-nanoid@^3.1.15:
-  version "3.1.29"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.29.tgz#214fb2d7a33e1a5bef4757b779dfaeb6a4e5aeb4"
-  integrity sha512-dW2pUSGZ8ZnCFIlBIA31SV8huOGCHb6OwzVCc7A69rb/a+SgPBwfmLvK5TKQ3INPbRkcI8a/Owo0XbiTNH19wg==
+nanoid@^3.1.23:
+  version "3.1.30"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.30.tgz#63f93cc548d2a113dc5dfbc63bfa09e2b9b64362"
+  integrity sha512-zJpuPDwOv8D2zq2WRoMe1HsfZthVewpel9CAvTfc/2mBD1uUT/agc5f7GHGWXlYkFvi1mVxe4IjvP2HNrop7nQ==
 
 nanomatch@^1.2.9:
   version "1.2.13"
@@ -12010,10 +12018,10 @@ query-string@^5.0.1:
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
 
-query-string@^6.13.6:
-  version "6.14.1"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-6.14.1.tgz#7ac2dca46da7f309449ba0f86b1fd28255b0c86a"
-  integrity sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==
+query-string@^7.0.0:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.0.1.tgz#45bd149cf586aaa582dffc7ec7a8ad97dd02f75d"
+  integrity sha512-uIw3iRvHnk9to1blJCG3BTc+Ro56CBowJXKmNNAm3RulvPBzWLRqKSiiDk+IplJhsydwtuNMHi8UGQFcCLVfkA==
   dependencies:
     decode-uri-component "^0.2.0"
     filter-obj "^1.1.0"
@@ -12087,6 +12095,11 @@ react-devtools-core@^4.6.0:
   dependencies:
     shell-quote "^1.6.1"
     ws "^7"
+
+react-freeze@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-freeze/-/react-freeze-1.0.0.tgz#b21c65fe1783743007c8c9a2952b1c8879a77354"
+  integrity sha512-yQaiOqDmoKqks56LN9MTgY06O0qQHgV4FUrikH357DydArSZHQhl0BJFqGKIZoTqi8JizF9Dxhuk1FIZD6qCaw==
 
 react-i18next@11.12.0:
   version "11.12.0"
@@ -12196,11 +12209,6 @@ react-native-gesture-handler@^1.10.3:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
-react-native-iphone-x-helper@^1.3.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
-  integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
-
 react-native-keychain@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/react-native-keychain/-/react-native-keychain-7.0.0.tgz#11fd559fe86ae89f934b8c75ae228247deed5494"
@@ -12285,7 +12293,7 @@ react-native-redash@^16.0.11:
     normalize-svg-path "^1.0.1"
     parse-svg-path "^0.1.2"
 
-react-native-safe-area-context@^3.2.0:
+react-native-safe-area-context@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.3.2.tgz#9549a2ce580f2374edb05e49d661258d1b8bcaed"
   integrity sha512-yOwiiPJ1rk+/nfK13eafbpW6sKW0jOnsRem2C1LPJjM3tfTof6hlvV5eWHATye3XOpu2cJ7N+HdkUvUDGwFD2Q==
@@ -12304,11 +12312,12 @@ react-native-safe-modules@^1.0.3:
   dependencies:
     dedent "^0.6.0"
 
-react-native-screens@^3.3.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.8.0.tgz#4ec84c55a7b4a4aa9405c812978ca2ba5c0242a4"
-  integrity sha512-lHrnB/elAoMJKv8O12U6BLgeup4lB6ZKJHEOVuG/D72nv/OE9wUusbou6YCB5tp3YbaSpHflPnkFmHA/vCejpw==
+react-native-screens@^3.9.0:
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-3.9.0.tgz#39b79f0e50b9d68ec822d333bc76e7aaee90f3fd"
+  integrity sha512-TP/kASLQ/2iGCz4/n9CHeveKC9urzbfYXFH+1TfBnqaBwjIszhVuadiIOQ0qWKdSs6qnBR2xPTp9U18sNoc34A==
   dependencies:
+    react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
 react-native-share@^6.2.0:
@@ -12336,7 +12345,7 @@ react-native-splash-screen@3.2.0:
   resolved "https://registry.yarnpkg.com/react-native-splash-screen/-/react-native-splash-screen-3.2.0.tgz#d47ec8557b1ba988ee3ea98d01463081b60fff45"
   integrity sha512-Ls9qiNZzW/OLFoI25wfjjAcrf2DZ975hn2vr6U9gyuxi2nooVbzQeFoQS5vQcbCt9QX5NY8ASEEAtlLdIa6KVg==
 
-react-native-svg@12.1.1, react-native-svg@^12.1.1:
+react-native-svg@12.1.1, react-native-svg@^12.1.1, react-native-svg@^12.2.0:
   version "12.1.1"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-12.1.1.tgz#5f292410b8bcc07bbc52b2da7ceb22caf5bcaaee"
   integrity sha512-NIAJ8jCnXGCqGWXkkJ1GTzO4a3Md5at5sagYV8Vh4MXYnL4z5Rh428Wahjhh+LIjx40EE5xM5YtwyJBqOIba2Q==
@@ -12351,7 +12360,7 @@ react-native-swiper@^1.6.0:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-tab-view@^2.16.0:
+react-native-tab-view@2.16.0:
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.16.0.tgz#cae72c7084394bd328fac5fefb86cd966df37a86"
   integrity sha512-ac2DmT7+l13wzIFqtbfXn4wwfgtPoKzWjjZyrK1t+T8sdemuUvD4zIt+UImg03fu3s3VD8Wh/fBrIdcqQyZJWg==
@@ -14970,10 +14979,10 @@ xmldoc@^1.1.2:
   dependencies:
     sax "^1.2.1"
 
-xstate@^4.25.0:
-  version "4.25.0"
-  resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.25.0.tgz#d902ef33137532043f7a88597af8e5e1c7ad6bdf"
-  integrity sha512-qP7lc/ypOuuWME4ArOBnzaCa90TfHkjiqYDmxpiCjPy6FcXstInA2vH6qRVAHbPXRK4KQIYfIEOk1X38P+TldQ==
+xstate@^4.26.0:
+  version "4.26.0"
+  resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.26.0.tgz#aea3c94b6df57729f55d3d2b83ab9d21801ad24e"
+  integrity sha512-l0tfRBhVYM17D6IWT4pVOzzN9kY/5lnPWCe4LXjJ3F9HCrJOPBn6tPRAb9mapSRBS8cOeByJFDCRSNopgaoC5w==
 
 xstream@^11.14.0:
   version "11.14.0"

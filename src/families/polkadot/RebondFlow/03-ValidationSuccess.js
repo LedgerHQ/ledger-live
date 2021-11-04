@@ -32,7 +32,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   invariant(account, "account is required");
 
   const onClose = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {

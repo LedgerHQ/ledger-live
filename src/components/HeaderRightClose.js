@@ -42,8 +42,8 @@ export default function HeaderRightClose({
       return;
     }
 
-    if (navigation.dangerouslyGetParent().pop && preferDismiss) {
-      navigation.dangerouslyGetParent().pop();
+    if (navigation.getParent().pop && preferDismiss) {
+      navigation.getParent().pop();
       return;
     }
 

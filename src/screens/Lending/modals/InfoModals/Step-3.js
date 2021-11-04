@@ -14,7 +14,7 @@ type Props = {
 export default function LendingInfoStep3({ route: { params } }: Props) {
   const navigation = useNavigation();
   const onNext = useCallback(() => {
-    const n = navigation.dangerouslyGetParent() || navigation;
+    const n = navigation.getParent() || navigation;
     n.pop();
     params?.endCallback && params.endCallback();
   }, [navigation, params]);

@@ -50,7 +50,7 @@ class PasswordRemove extends PureComponent<Props, State> {
         await Keychain.resetGenericPassword();
       }
       disablePrivacy();
-      const n = navigation.dangerouslyGetParent();
+      const n = navigation.getParent();
       if (n) n.goBack();
     } catch (error) {
       this.setState({ error, confirmPassword: "" });

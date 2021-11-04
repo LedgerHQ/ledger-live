@@ -46,7 +46,7 @@ function SelectAccount({ navigation, route }: Props) {
   const onSelect = useCallback(
     (account: Account) => {
       onSuccess(account);
-      const n = navigation.dangerouslyGetParent() || navigation;
+      const n = navigation.getParent() || navigation;
       n.pop();
     },
     [navigation, onSuccess],

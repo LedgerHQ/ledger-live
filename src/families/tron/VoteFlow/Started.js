@@ -21,7 +21,7 @@ function VoteStarted({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const onCancel = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   return (

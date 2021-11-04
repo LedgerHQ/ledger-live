@@ -251,7 +251,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
 
   const onGoToChill = useCallback(() => {
     setDrawerValidator();
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
     navigation.navigate(NavigatorName.PolkadotSimpleOperationFlow, {
       screen: ScreenName.PolkadotSimpleOperationStarted,
       params: { mode: "chill", accountId: mainAccount.id },

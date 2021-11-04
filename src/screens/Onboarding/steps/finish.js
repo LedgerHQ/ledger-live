@@ -55,7 +55,7 @@ export default function OnboardingStepFinish({ navigation }: Props) {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    const parentNav = navigation.dangerouslyGetParent();
+    const parentNav = navigation.getParent();
     if (parentNav) {
       parentNav.popToTop();
     }

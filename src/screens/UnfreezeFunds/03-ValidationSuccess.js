@@ -30,7 +30,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const resource = transaction.resource || "";
 
   const onClose = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {

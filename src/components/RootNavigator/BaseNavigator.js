@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import {
   createStackNavigator,
   CardStyleInterpolators,
+  TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -69,7 +70,12 @@ export default function BaseNavigator() {
     [colors],
   );
   return (
-    <Stack.Navigator mode="modal" screenOptions={stackNavigationConfig}>
+    <Stack.Navigator
+      screenOptions={{
+        ...stackNavigationConfig,
+        ...TransitionPresets.ModalTransition,
+      }}
+    >
       <Stack.Screen
         name={NavigatorName.Main}
         component={Main}

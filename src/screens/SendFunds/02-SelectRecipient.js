@@ -106,7 +106,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
-    const parent = navigation.dangerouslyGetParent();
+    const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
 

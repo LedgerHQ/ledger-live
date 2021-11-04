@@ -292,7 +292,7 @@ function AddAccountsAccounts({
 
   const onModalHide = useCallback(() => {
     if (cancelled) {
-      navigation.dangerouslyGetParent().pop();
+      navigation.getParent().pop();
     }
   }, [cancelled, navigation]);
 

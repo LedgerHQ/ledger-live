@@ -21,12 +21,12 @@ export default function ExchangeNavigator() {
 
   return (
     <Tab.Navigator
-      tabBarOptions={{
+      screenOptions={{
         headerStyle: {
           ...styles.headerNoShadow,
           backgroundColor: colors.background,
         },
-        indicatorStyle: {
+        tabBarIndicatorStyle: {
           backgroundColor: colors.live,
         },
       }}

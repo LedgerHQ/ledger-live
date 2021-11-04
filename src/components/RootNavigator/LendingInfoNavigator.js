@@ -19,7 +19,7 @@ const goBackOptions = colors => ({ route: { params }, navigation }) => ({
       // $FlowFixMe
       onPress={() => {
         params?.endCallback && params.endCallback();
-        const n = navigation.dangerouslyGetParent() || navigation;
+        const n = navigation.getParent() || navigation;
         n.canGoBack() && n.goBack();
       }}
       style={styles.buttons}
@@ -38,13 +38,13 @@ export default function LendingInfoNavigator() {
   );
   return (
     <Stack.Navigator
-      headerMode="float"
       screenOptions={({ navigation }) => ({
         ...stackNavigationConfig,
         title: t("transfer.lending.info.title"),
         headerLeft: null,
         headerRight: () => <CloseButton navigation={navigation} />,
         gestureEnabled: false,
+        headerMode: "float",
       })}
     >
       <Stack.Screen

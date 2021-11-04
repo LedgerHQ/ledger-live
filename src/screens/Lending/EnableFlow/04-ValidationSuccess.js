@@ -26,7 +26,7 @@ type RouteParams = {
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    const n = navigation.dangerouslyGetParent() || navigation;
+    const n = navigation.getParent() || navigation;
     n.pop();
   }, [navigation]);
 

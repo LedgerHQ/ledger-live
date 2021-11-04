@@ -130,7 +130,7 @@ export default function AnimatedHeaderView({
       <Animated.View
         style={[
           styles.header,
-          { height: Platform.OS === "ios" ? textHeight : textHeight + 34 },
+          { height: Platform.OS === "ios" ? textHeight : textHeight + 40 },
         ]}
       >
         <View style={styles.topHeader}>

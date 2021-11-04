@@ -68,7 +68,7 @@ class ConfirmPassword extends PureComponent<Props, State> {
         biometricsType,
         biometricsEnabled: false,
       });
-      const n = navigation.dangerouslyGetParent();
+      const n = navigation.getParent();
       if (n) n.goBack();
     } catch (err) {
       // eslint-disable-next-line no-console

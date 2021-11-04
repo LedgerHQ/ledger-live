@@ -20,10 +20,10 @@ export default function ExchangeNavigator() {
   );
   return (
     <Stack.Navigator
-      headerMode="float"
       screenOptions={{
         ...stackNavigationConfig,
         headerRight: () => <AddAccountsHeaderRightClose />,
+        headerMode: "float",
       }}
     >
       <Stack.Screen

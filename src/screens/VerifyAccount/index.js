@@ -58,7 +58,7 @@ export default function VerifyAccount({ navigation, route }: Props) {
   );
 
   const onDone = useCallback(() => {
-    const n = navigation.dangerouslyGetParent();
+    const n = navigation.getParent();
     if (n) {
       n.pop();
     }

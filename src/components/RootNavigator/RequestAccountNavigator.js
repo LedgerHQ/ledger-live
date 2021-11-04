@@ -21,9 +21,9 @@ export default function RequestAccountNavigator() {
 
   return (
     <Stack.Navigator
-      headerMode="float"
       screenOptions={{
         ...stackNavConfig,
+        headerMode: "float",
       }}
     >
       <Stack.Screen

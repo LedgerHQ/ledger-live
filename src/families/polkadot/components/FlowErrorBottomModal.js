@@ -28,7 +28,7 @@ const FlowErrorBottomModal = ({
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
 
   const onBridgeErrorCancel = useCallback(() => {
-    const parent = navigation.dangerouslyGetParent();
+    const parent = navigation.getParent();
     if (parent) parent.goBack();
     setBridgeErr(null);
   }, [navigation]);

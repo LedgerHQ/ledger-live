@@ -82,7 +82,7 @@ export default function SendAmount({ navigation, route }: Props) {
   }, [navigation, route.params, account.id, parentAccount, transaction]);
 
   const onBridgeErrorCancel = useCallback(() => {
-    const parent = navigation.dangerouslyGetParent();
+    const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
 

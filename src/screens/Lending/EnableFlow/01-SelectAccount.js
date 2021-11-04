@@ -71,7 +71,7 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
 
   useEffect(() => {
     if (!filteredAccounts.length) {
-      const n = navigation.dangerouslyGetParent() || navigation;
+      const n = navigation.getParent() || navigation;
       n.replace(NavigatorName.AddAccounts, {
         screen: ScreenName.AddAccountsTokenCurrencyDisclaimer,
         params: { token: currency },
@@ -116,14 +116,14 @@ function LendingEnableSelectAccount({ route, navigation }: Props) {
     [],
   );
   const redirectToEnableFlow = useCallback(() => {
-    const n = navigation.dangerouslyGetParent() || navigation;
+    const n = navigation.getParent() || navigation;
     n.push(ScreenName.LendingEnableAmount, { ...approveInfoModalOpen });
     closeApproveInfoModal();
   }, [approveInfoModalOpen, closeApproveInfoModal, navigation]);
 
   const redirectToSupplyFlow = useCallback(
     params => {
-      const n = navigation.dangerouslyGetParent() || navigation;
+      const n = navigation.getParent() || navigation;
       n.replace(NavigatorName.LendingSupplyFlow, {
         screen: ScreenName.LendingSupplyAmount,
         params,

@@ -23,9 +23,9 @@ export default function LendingNavigator() {
 
   return (
     <Tab.Navigator
-      tabBarOptions={{
+      screenOptions={{
         headerStyle: styles.headerNoShadow,
-        indicatorStyle: {
+        tabBarIndicatorStyle: {
           backgroundColor: colors.live,
         },
       }}
