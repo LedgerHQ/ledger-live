@@ -2000,7 +2000,7 @@
         "accruedInterestsTooltip": "Intérêts produits par vos actifs prêtés",
         "interestEarned": "Intérêts gagnés",
         "interestEarnedTooltip": "Intérêts gagnés suite au retrait",
-        "openLoans": "Prêts ouverts",
+        "openLoans": "Prêts en cours",
         "closedLoans": "Prêts clôturés"
       },
       "banners": {
