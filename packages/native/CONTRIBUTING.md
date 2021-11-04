@@ -62,3 +62,23 @@ yarn prerelease
 # Will publish the package.
 yarn release
 ```
+
+## Local development
+
+If you need to use the locally installed version of this package, you will need to perform the following steps.
+
+```sh
+## From the root of the monorepo:
+
+# Build the icons. This is only needed once.
+yarn icons build
+# Build the native package. Run this every time you update the code.
+yarn native prerelease
+```
+
+```sh
+## From the repository that consumes @ledgerhq/native-ui:
+
+# Replace [path/to/ui] with the relative path to the local ui repo.
+yarn add [path/to/ui]/packages/native/lib
+```
