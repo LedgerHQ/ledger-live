@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           cache: yarn
-          cache-dependency-path: packages/native/yarn.lock
+          cache-dependency-path: yarn.lock
       - name: Install dependencies
         run: yarn install --focus
       - name: Linter
