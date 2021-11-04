@@ -52,7 +52,7 @@ const FirmwareUpdateBanner = () => {
       );
 
       setShowBanner(Boolean(fw));
-      setVersion(fw?.final?.version ?? "");
+      setVersion(fw?.final?.name ?? "");
     }
 
     getLatestFirmwareForDevice();
