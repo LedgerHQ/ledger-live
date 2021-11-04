@@ -1,8 +1,17 @@
 import styled from "styled-components";
-import { grid, GridProps } from "styled-system";
+import {
+  grid,
+  GridProps,
+  space,
+  SpaceProps,
+  position,
+  PositionProps,
+  color,
+  ColorProps,
+} from "styled-system";
 
-export interface Props extends GridProps {
-  columns: number | string;
+export interface Props extends GridProps, SpaceProps, PositionProps, ColorProps {
+  columns?: number | string;
   rows?: number | string;
 }
 
@@ -20,6 +29,9 @@ const Grid = styled.div<Props>`
   display: grid;
   grid-template-columns: ${getColumns};
   grid-template-rows: ${getRows};
-  ${grid}
+  ${grid};
+  ${space};
+  ${position};
+  ${color};
 `;
 export default Grid;

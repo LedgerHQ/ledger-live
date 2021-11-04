@@ -22,7 +22,7 @@ const Icon = ({
   name,
   size = 16,
   color = "currentColor",
-  weight = "Regular",
+  weight = "Medium",
 }: Props): JSX.Element | null => {
   const maybeIconName = `${name}${weight}`;
   if (maybeIconName in icons) {

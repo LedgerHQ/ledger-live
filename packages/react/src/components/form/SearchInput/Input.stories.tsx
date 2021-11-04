@@ -19,7 +19,5 @@ export default {
 export const Search = (args: InputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
-
-  return <SearchInput {...args} value={value} onChange={onChange} placeholder={"Placeholder"} />;
+  return <SearchInput {...args} value={value} onChange={setValue} placeholder={"Placeholder"} />;
 };

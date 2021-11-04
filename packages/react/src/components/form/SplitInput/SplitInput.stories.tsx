@@ -91,9 +91,7 @@ export const Split = (args: Props): React.ReactNode => {
             placeholder="Right"
             textAlign="right"
             unwrapped
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setRightValue1(e.currentTarget.value)
-            }
+            onChange={setRightValue1}
             {...props}
           />
         )}
@@ -121,9 +119,7 @@ export const Split = (args: Props): React.ReactNode => {
             placeholder="Right"
             textAlign="right"
             unwrapped
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setRightValue2(e.currentTarget.value)
-            }
+            onChange={setRightValue2}
             {...props}
           />
         )}
@@ -151,9 +147,7 @@ export const Split = (args: Props): React.ReactNode => {
             placeholder="Right"
             textAlign="right"
             unwrapped
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setRightValue3(e.currentTarget.value)
-            }
+            onChange={setRightValue3}
             {...props}
           />
         )}
@@ -166,9 +160,7 @@ export const Split = (args: Props): React.ReactNode => {
             value={leftValue4}
             placeholder="Left"
             unwrapped
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setLeftValue4(e.currentTarget.value)
-            }
+            onChange={setLeftValue4}
             {...props}
           />
         )}
@@ -178,9 +170,7 @@ export const Split = (args: Props): React.ReactNode => {
             placeholder="Right"
             textAlign="right"
             unwrapped
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setRightValue4(e.currentTarget.value)
-            }
+            onChange={setRightValue4}
             {...props}
           />
         )}

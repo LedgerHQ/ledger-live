@@ -31,9 +31,9 @@ export const Number = ({
 }: InputProps & { max: number; min: number }): JSX.Element => {
   const [value, setValue] = React.useState(24.42);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value) {
-      let value = parseFloat(e.target.value);
+  const onChange = (val: string) => {
+    if (val) {
+      let value = parseFloat(val);
       if (value > max) value = max;
       if (value < min) value = min;
       setValue(value);

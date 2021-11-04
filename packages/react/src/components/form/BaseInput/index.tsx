@@ -1,18 +1,18 @@
 import styled, { css } from "styled-components";
 import { typography, TypographyProps } from "styled-system";
-import React, { InputHTMLAttributes } from "react";
+import React, { InputHTMLAttributes, useCallback } from "react";
 import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
 import { rgba } from "../../../styles/helpers";
 
-export type CommonProps = InputHTMLAttributes<HTMLInputElement> &
+export type CommonProps = Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> &
   TypographyProps & {
     disabled?: boolean;
     error?: string;
   };
 
 export type InputProps = CommonProps & {
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: string) => void;
   renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   unwrapped?: boolean;
@@ -125,6 +125,11 @@ export default function Input(props: InputProps): JSX.Element {
   } = props;
   const [focus, setFocus] = React.useState(false);
 
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+    [onChange],
+  );
+
   const inner = (
     <>
       {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
@@ -132,7 +137,7 @@ export default function Input(props: InputProps): JSX.Element {
         {...htmlInputProps}
         disabled={disabled}
         error={error}
-        onChange={onChange}
+        onChange={handleChange}
         value={value}
         onFocus={(event) => {
           setFocus(true);

@@ -19,17 +19,13 @@ export default {
 export const Base = (args: InputProps): JSX.Element => {
   const [value, setValue] = React.useState("");
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
-
-  return <Input {...args} value={value} onChange={onChange} placeholder={"Placeholder"} />;
+  return <Input {...args} value={value} onChange={setValue} placeholder={"Placeholder"} />;
 };
 
 export const RenderSideExemple = (): JSX.Element => {
   const [disabled, setDisabled] = useState(false);
   const [error, setError] = React.useState("");
   const [value, setValue] = React.useState("test@ledger.fr");
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
 
   const renderLeft = (
     <InputRenderLeftContainer>
@@ -60,7 +56,7 @@ export const RenderSideExemple = (): JSX.Element => {
       value={value}
       disabled={disabled}
       error={error}
-      onChange={onChange}
+      onChange={setValue}
       renderLeft={renderLeft}
       renderRight={renderRight}
       placeholder={"test"}
