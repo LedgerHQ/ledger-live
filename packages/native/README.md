@@ -1,6 +1,8 @@
 # `@ledgerhq/native-ui`
 
-![build](https://github.com/LedgerHQ/ui/actions/workflows/native.yml/badge.svg)
+[![build](https://github.com/LedgerHQ/ui/actions/workflows/native.yml/badge.svg)](https://github.com/LedgerHQ/ui/actions/workflows/native.yml)
+[![npm](https://img.shields.io/npm/v/@ledgerhq/native-ui)](https://www.npmjs.com/package/@ledgerhq/native-ui)
+[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://ledger-live-ui-native.vercel.app)
 
 #### Design and interface resources
 

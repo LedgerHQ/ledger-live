@@ -1,6 +1,8 @@
 # `@ledgerhq/react-ui`
 
-![build](https://github.com/LedgerHQ/ui/actions/workflows/react.yml/badge.svg)
+[![build](https://github.com/LedgerHQ/ui/actions/workflows/react.yml/badge.svg)](https://github.com/LedgerHQ/ui/actions/workflows/react.yml)
+[![npm](https://img.shields.io/npm/v/@ledgerhq/react-ui)](https://www.npmjs.com/package/@ledgerhq/react-ui)
+[![storybook](https://img.shields.io/badge/Storybook-📚-61DBFB)](https://ledger-live-ui-react.vercel.app)
 
 #### Design and interface resources
 
@@ -52,9 +54,7 @@ function Hello() {
       <Text color="palette.neutral.c100">
         <Logos.LedgerLiveRegular />
       </Text>
-      <Text variant="h1">
-        Hello, world!
-      </Text>
+      <Text variant="h1">Hello, world!</Text>
     </Flex>
   );
 }
@@ -132,9 +132,7 @@ function Root() {
         <Text color="palette.neutral.c100">
           <Logos.LedgerLiveRegular />
         </Text>
-        <Text variant="h1">
-          Hello, world!
-        </Text>
+        <Text variant="h1">Hello, world!</Text>
         <Switch
           name="select-theme"
           checked={isLight}
