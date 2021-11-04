@@ -285,12 +285,7 @@ class BitcoinLikeExplorer extends EventEmitter implements IExplorer {
 
     // faster than mapping
     res.txs.forEach((tx) => {
-      if (!tx.block) {
-        return;
-      }
-
       this.hydrateTx(address, tx);
-
       hydratedTxs.push(tx);
     });
 

@@ -27,6 +27,9 @@ export function fallbackValidateAddress(address: string): boolean {
 class Base implements ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
+  protected static publickeyCache = {}; // xpub + account + index to publicKey
+  protected static addressCache = {}; // derivationMode + xpub + account + index to address
+  protected static bech32Cache = {}; // xpub to bech32 interface
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
@@ -37,9 +40,26 @@ class Base implements ICrypto {
   }
 
   protected getPubkeyAt(xpub: string, account: number, index: number): Buffer {
-    return bip32.fromBase58(xpub, this.network).derive(account).derive(index)
-      .publicKey;
+    if (!Base.bech32Cache[xpub]) {
+      Base.bech32Cache[xpub] = bip32.fromBase58(xpub, this.network);
+    }
+    if (Base.publickeyCache[`${xpub}-${account}-${index}`]) {
+      return Base.publickeyCache[`${xpub}-${account}-${index}`];
+    }
+    if (Base.publickeyCache[`${xpub}-${account}`]) {
+      const publicKey =
+        Base.publickeyCache[`${xpub}-${account}`].derive(index).publicKey;
+      Base.publickeyCache[`${xpub}-${account}-${index}`] = publicKey;
+      return publicKey;
+    }
+    Base.publickeyCache[`${xpub}-${account}`] =
+      Base.bech32Cache[xpub].derive(account);
+    const publicKey =
+      Base.publickeyCache[`${xpub}-${account}`].derive(index).publicKey;
+    Base.publickeyCache[`${xpub}-${account}-${index}`] = publicKey;
+    return publicKey;
   }
+
   // derive legacy address at account and index positions
   getLegacyAddress(xpub: string, account: number, index: number): string {
     const { address } = bjs.payments.p2pkh({
@@ -78,16 +98,26 @@ class Base implements ICrypto {
     account: number,
     index: number
   ): string {
+    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
+      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    }
     switch (derivationMode) {
       case DerivationModes.LEGACY:
-        return this.getLegacyAddress(xpub, account, index);
+        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
+          this.getLegacyAddress(xpub, account, index);
+        break;
       case DerivationModes.SEGWIT:
-        return this.getSegWitAddress(xpub, account, index);
+        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
+          this.getSegWitAddress(xpub, account, index);
+        break;
       case DerivationModes.NATIVE_SEGWIT:
-        return this.getNativeSegWitAddress(xpub, account, index);
+        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
+          this.getNativeSegWitAddress(xpub, account, index);
+        break;
       default:
         throw new Error(`Invalid derivation Mode: ${derivationMode}`);
     }
+    return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
   }
 
   // infer address type from its syntax

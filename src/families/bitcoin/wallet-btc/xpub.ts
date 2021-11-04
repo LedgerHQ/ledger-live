@@ -1,6 +1,6 @@
 import { maxBy, range, some } from "lodash";
 import BigNumber from "bignumber.js";
-import { Address, IStorage } from "./storage/types";
+import { TX, Address, IStorage } from "./storage/types";
 import EventEmitter from "./utils/eventemitter";
 import { IExplorer } from "./explorer/types";
 import { ICrypto } from "./crypto/types";
@@ -20,9 +20,9 @@ class Xpub extends EventEmitter {
 
   derivationMode: string;
 
-  freshAddress: { [key: string]: string } = {};
+  freshAddress: string;
 
-  freshAddressIndex: { [key: string]: number } = {};
+  freshAddressIndex: number;
 
   // https://github.com/bitcoinjs/bitcoinjs-lib/blob/27a840aac4a12338f1e40c54f3759bbd7a559944/src/bufferutils.js#L24
   // only works with number so we need to be sure to pass correct numbers
@@ -54,6 +54,8 @@ class Xpub extends EventEmitter {
     this.crypto = crypto;
     this.xpub = xpub;
     this.derivationMode = derivationMode;
+    this.freshAddress = "";
+    this.freshAddressIndex = 0;
   }
 
   async syncAddress(account: number, index: number) {
@@ -78,9 +80,7 @@ class Xpub extends EventEmitter {
 
     // TODO handle eventual reorg case using lastBlock
 
-    let added = 0;
     let total = 0;
-
     try {
       // TODO perf: bad : looping in the tx array
       await this.checkAddressReorg(account, index);
@@ -95,20 +95,7 @@ class Xpub extends EventEmitter {
       if (hasPendings) {
         await this.storage.removePendingTxs({ account, index });
       }
-
-      // eslint-disable-next-line no-cond-assign,no-await-in-loop
-      while (
-        (added = await this.fetchHydrateAndStoreNewTxs(address, account, index))
-      ) {
-        total += added;
-      }
-
-      const pendingTxs = await this.explorer.getPendings({
-        address,
-        account,
-        index,
-      });
-      await this.storage.appendTxs(pendingTxs);
+      total = await this.fetchHydrateAndStoreNewTxs(address, account, index);
     } catch (e) {
       this.emitSyncedFailed(data);
       throw e;
@@ -120,11 +107,8 @@ class Xpub extends EventEmitter {
       account,
       index,
     });
-    if (lastTx) {
-      this.freshAddressIndex[account] = Math.max(
-        this.freshAddressIndex[account],
-        index + 1
-      );
+    if (account === 0 && lastTx) {
+      this.freshAddressIndex = Math.max(this.freshAddressIndex, index + 1);
     }
     return !!lastTx;
   }
@@ -137,13 +121,6 @@ class Xpub extends EventEmitter {
   }
 
   async syncAccount(account: number) {
-    this.freshAddressIndex[account] = 0;
-    this.freshAddress[account] = this.crypto.getAddress(
-      this.derivationMode,
-      this.xpub,
-      account,
-      0
-    );
     await this.whenSynced("account", account.toString());
 
     this.emitSyncing({
@@ -174,26 +151,19 @@ class Xpub extends EventEmitter {
       account,
       index,
     });
-    this.freshAddress[account] = this.crypto.getAddress(
-      this.derivationMode,
-      this.xpub,
-      account,
-      this.freshAddressIndex[account]
-    );
     return index;
   }
 
   // TODO : test fail case + incremental
   async sync() {
     await this.whenSynced("all");
-
     this.emitSyncing({ type: "all" });
-
+    this.freshAddressIndex = 0;
     let account = 0;
-
     try {
       // eslint-disable-next-line no-await-in-loop
-      while (await this.syncAccount(account)) {
+      while (account < 2 && (await this.syncAccount(account))) {
+        // account=0 for receive address; account=1 for change address. No need to handle account>1
         account += 1;
       }
     } catch (e) {
@@ -202,7 +172,12 @@ class Xpub extends EventEmitter {
     }
 
     this.emitSynced({ type: "all", account });
-
+    this.freshAddress = this.crypto.getAddress(
+      this.derivationMode,
+      this.xpub,
+      0,
+      this.freshAddressIndex
+    );
     return account;
   }
 
@@ -440,18 +415,27 @@ class Xpub extends EventEmitter {
     account: number,
     index: number
   ) {
-    const lastTx = await this.storage.getLastTx({
-      account,
-      index,
-      confirmed: true,
-    });
+    let pendingTxs: TX[] = [];
+    let txs: TX[] = [];
+    let inserted = 0;
+    do {
+      const lastTx = await this.storage.getLastTx({
+        account,
+        index,
+        confirmed: true,
+      });
 
-    const txs = await this.explorer.getAddressTxsSinceLastTxBlock(
-      this.txsSyncArraySize,
-      { address, account, index },
-      lastTx
-    );
-    const inserted = await this.storage.appendTxs(txs);
+      txs = await this.explorer.getAddressTxsSinceLastTxBlock(
+        this.txsSyncArraySize,
+        { address, account, index },
+        lastTx
+      );
+      if (pendingTxs.length === 0) {
+        pendingTxs = txs.filter((tx) => !tx.block);
+      }
+      inserted += await this.storage.appendTxs(txs.filter((tx) => tx.block)); // only insert not pending tx
+    } while (txs.length - pendingTxs.length >= this.txsSyncArraySize); // check whether page is full, if not, it is the last page
+    inserted += await this.storage.appendTxs(pendingTxs);
     return inserted;
   }
 
