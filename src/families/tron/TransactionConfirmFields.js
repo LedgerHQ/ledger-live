@@ -2,6 +2,7 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
+import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/types";
 import {
@@ -16,7 +17,6 @@ import {
 } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
-import { useSelector } from "react-redux";
 import { localeSelector } from "../../reducers/settings";
 
 const styles = StyleSheet.create({

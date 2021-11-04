@@ -13,7 +13,6 @@ import type { Account } from "@ledgerhq/live-common/lib/types";
 
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import BigNumber from "bignumber.js";
 import InfoModal from "../../modals/Info";
 import type { ModalInfo } from "../../modals/Info";
 import FreezeIcon from "../../icons/Freeze";
