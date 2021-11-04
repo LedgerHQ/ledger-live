@@ -9,7 +9,8 @@ import {
 } from "@ledgerhq/errors";
 import type { Account, TransactionStatus } from "./../../types";
 import type { Transaction } from "./types";
-import { calculateFees, validateRecipient } from "./cache";
+import { calculateFees, validateRecipient, isTaprootRecipient } from "./cache";
+import { TaprootNotActivated } from "./errors";
 
 const getTransactionStatus = async (
   a: Account,
@@ -29,6 +30,19 @@ const getTransactionStatus = async (
 
   if (recipientWarning) {
     warnings.recipient = recipientWarning;
+  }
+
+  // Safeguard before Taproot activation
+  if (
+    t.recipient &&
+    !errors.recipient &&
+    a.currency.id === "bitcoin" &&
+    a.blockHeight <= 709632
+  ) {
+    const isTaproot = await isTaprootRecipient(a.currency, t.recipient);
+    if (isTaproot) {
+      errors.recipient = new TaprootNotActivated();
+    }
   }
 
   let txInputs;

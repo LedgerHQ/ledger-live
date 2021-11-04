@@ -149,6 +149,10 @@ class Base implements ICrypto {
       (res[0] === this.network.pubKeyHash || res[0] === this.network.scriptHash)
     );
   }
+
+  isTaprootAddress(address: string): boolean {
+    return false;
+  }
 }
 
 export default Base;

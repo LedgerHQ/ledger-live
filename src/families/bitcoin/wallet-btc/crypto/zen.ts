@@ -102,6 +102,11 @@ class Zen implements ICrypto {
       (res[1] === 0x89 || res[1] === 0x96)
     );
   }
+
+  // eslint-disable-next-line class-methods-use-this
+  isTaprootAddress(address: string): boolean {
+    return false;
+  }
 }
 
 export default Zen;

@@ -209,6 +209,19 @@ class Bitcoin extends Base {
     // Create address
     return toBech32(outputSchnorrKey, 1, this.network.bech32);
   }
+
+  isTaprootAddress(address: string): boolean {
+    // This prefix check is to avoid returning false in cases where a valid base58 address also happens
+    // to be a valid bech32(m) string (but invalid segwit address).
+    if (address.toLowerCase().startsWith(`${this.network.bech32}1`)) {
+      try {
+        bjs.address.fromBech32(address);
+      } catch {
+        return true;
+      }
+    }
+    return false;
+  }
 }
 
 export default Bitcoin;

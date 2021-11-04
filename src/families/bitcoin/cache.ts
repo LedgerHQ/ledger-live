@@ -4,6 +4,7 @@ import type { Account, CryptoCurrency } from "./../../types";
 import type { Transaction } from "./types";
 import getFeesForTransaction from "./js-getFeesForTransaction";
 import { isValidRecipient } from "./logic";
+import { Currency, isTaprootAddress } from "./wallet-btc";
 
 const getCacheKeyForCalculateFees = ({
   a,
@@ -41,6 +42,7 @@ export const calculateFees = makeLRUCache(
     maxAge: 5 * 60 * 1000, // 5 minutes
   }
 );
+
 export const validateRecipient: (
   arg0: CryptoCurrency,
   arg1: string | null | undefined
@@ -71,6 +73,16 @@ export const validateRecipient: (
         recipientWarning: null,
       };
     }
+  },
+  (currency, recipient) => `${currency.id}_${recipient || ""}`
+);
+
+export const isTaprootRecipient: (
+  arg0: CryptoCurrency,
+  arg1: string
+) => Promise<boolean> = makeLRUCache(
+  async (currency, recipient) => {
+    return isTaprootAddress(recipient, <Currency>currency.id);
   },
   (currency, recipient) => `${currency.id}_${recipient || ""}`
 );

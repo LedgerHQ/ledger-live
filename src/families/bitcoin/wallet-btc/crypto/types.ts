@@ -11,6 +11,7 @@ export interface ICrypto {
 
   toOutputScript(address: string): Buffer;
   validateAddress(address: string): boolean;
+  isTaprootAddress(address: string): boolean;
 }
 
 export type Currency =

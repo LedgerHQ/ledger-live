@@ -156,3 +156,13 @@ export function isValidAddress(address: string, currency?: Currency) {
   const crypto = cryptoFactory(currency);
   return crypto.validateAddress(address);
 }
+
+export function isTaprootAddress(address: string, currency?: Currency) {
+  if (currency === "bitcoin") {
+    return cryptoFactory("bitcoin").isTaprootAddress(address);
+  } else if (currency === "bitcoin_testnet") {
+    return cryptoFactory("bitcoin_testnet").isTaprootAddress(address);
+  } else {
+    return false;
+  }
+}
