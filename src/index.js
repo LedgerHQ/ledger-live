@@ -250,6 +250,20 @@ const linkingOptions = {
                 },
               },
             },
+            [NavigatorName.Manager]: {
+              screens: {
+                /**
+                 * ie: "ledgerlive://manager" will open the manager
+                 *
+                 * @params ?installApp: string
+                 * ie: "ledgerlive://manager?installApp=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                 *
+                 * * @params ?searchQuery: string
+                 * ie: "ledgerlive://manager?searchQuery=bitcoin" will open the manager with "bitcoin" prefilled in the search input
+                 */
+                [ScreenName.Manager]: "manager",
+              },
+            },
           },
           [NavigatorName.ReceiveFunds]: {
             screens: {

@@ -117,6 +117,14 @@ export function useDeepLinkHandler() {
           break;
         }
 
+        case "manager": {
+          navigate(NavigatorName.Manager, {
+            screen: ScreenName.Manager,
+            params: query,
+          });
+          break;
+        }
+
         case "portfolio":
         default:
           navigate(NavigatorName.Main, { screen: ScreenName.Portfolio });

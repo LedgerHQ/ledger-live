@@ -33,6 +33,12 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://buy/bitcoin` will redirect to buy page with bitcoin accounts search prefilled
 
+- **_manager_** 🠒 Manager page
+
+  `ledgerlive://manager` will redirect to manager page
+
+  `ledgerlive://manager?installApp=bitcoin` will redirect to manager page with "bitcoin" app search prefilled
+
 - **_swap_** 🠒 Swap Crypto Flow
 
   `ledgerlive://swap` will redirect to swap page
