@@ -75,7 +75,7 @@ class ZCash implements ICrypto {
     return zec.Address.isValid(address, "livenet");
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line
   isTaprootAddress(address: string): boolean {
     return false;
   }

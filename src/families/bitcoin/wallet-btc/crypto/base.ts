@@ -150,6 +150,7 @@ class Base implements ICrypto {
     );
   }
 
+  // eslint-disable-next-line
   isTaprootAddress(address: string): boolean {
     return false;
   }

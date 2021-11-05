@@ -103,7 +103,7 @@ class Zen implements ICrypto {
     );
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  // eslint-disable-next-line
   isTaprootAddress(address: string): boolean {
     return false;
   }
