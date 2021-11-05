@@ -3,6 +3,7 @@ import Text, { TextProps } from "./index";
 export default {
   title: "Asorted/Typography/Text",
   component: Text,
+  parameters: { actions: { argTypesRegex: false } },
   argTypes: {
     variant: {
       options: [
