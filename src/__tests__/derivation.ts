@@ -6,7 +6,7 @@ import {
 describe("derivation", () => {
   test("getPreferredNewAccountScheme should return a list of schemes for a given currency", () => {
     const testData = [
-      ["bitcoin", ["native_segwit", "segwit", ""]],
+      ["bitcoin", ["native_segwit", "taproot", "segwit", ""]],
       ["ethereum", null],
       ["cosmos", null],
       ["litecoin", ["native_segwit", "segwit", ""]],
