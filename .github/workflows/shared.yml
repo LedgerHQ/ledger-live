@@ -1,0 +1,32 @@
+name: Shared Build
+
+defaults:
+  run:
+    working-directory: packages/shared
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/shared/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "packages/shared/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Install dependencies
+        run: yarn install --focus
+      - name: Build
+        run: yarn build
