@@ -54,6 +54,14 @@ const ItemWrapper = styled.li`
   }
 `;
 
+const Badge = styled.div`
+  height: ${(p) => p.theme.space[4]}px;
+  width: ${(p) => p.theme.space[4]}px;
+  border-radius: ${(p) => p.theme.radii[2]}px;
+  background-color: ${(p) => p.theme.colors.palette.primary.c80};
+  margin-left: auto;
+`;
+
 export const ItemLabel = styled(Text)`
   display: inline-block;
   color: var(--ll-sidebar-item-label-color);
@@ -67,9 +75,17 @@ export type ItemType = {
   onClick: () => void;
   isActive?: boolean;
   isDisabled?: boolean;
+  displayNotificationBadge?: boolean;
 };
 
-const Item = ({ label, children, onClick, isActive, isDisabled }: ItemType): JSX.Element => {
+const Item = ({
+  label,
+  children,
+  onClick,
+  isActive,
+  isDisabled,
+  displayNotificationBadge,
+}: ItemType): JSX.Element => {
   const { isExpanded } = useContext(SideBarContext);
 
   const handleClick = () => {
@@ -95,6 +111,7 @@ const Item = ({ label, children, onClick, isActive, isDisabled }: ItemType): JSX
       >
         <ItemLabel variant="paragraph">{label}</ItemLabel>
       </TransitionInOut>
+      {displayNotificationBadge && <Badge />}
     </ItemWrapper>
   );
 };
