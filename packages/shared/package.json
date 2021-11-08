@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "build": "tsc && node scripts/transpile",
-    "prepublishOnly": "npm run build && npm run bundle",
+    "prepublishOnly": "npm run build",
     "clean": "rimraf lib"
   },
   "devDependencies": {
