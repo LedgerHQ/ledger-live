@@ -35,8 +35,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@ledgerhq/icons-ui": "^0.1.0",
-    "@ledgerhq/ui-shared": "^0.1.1",
+    "@ledgerhq/icons-ui": "^0.2.0",
+    "@ledgerhq/ui-shared": "^0.1.3",
     "@types/color": "^3.0.2",
     "@types/react": "^17.0.34",
     "@types/react-native": "^0.65.9",
