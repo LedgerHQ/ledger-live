@@ -9,5 +9,6 @@
     "jsx": "react",
     "rootDir": "./src",
     "outDir": "./lib"
-  }
+  },
+  "include": ["src/**/*"]
 }
