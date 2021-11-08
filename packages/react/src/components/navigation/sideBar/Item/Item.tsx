@@ -4,7 +4,7 @@ import SideBarContext from "../index";
 import Text from "../../../asorted/Text";
 import TransitionInOut from "../../../transitions/TransitionInOut";
 
-const ItemWrapper = styled.li<{ isActive?: boolean; isDisabled?: boolean }>`
+const ItemWrapper = styled.li`
   /** DEFAULT VARIANT **/
   --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c80};
   --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.neutral.c80};
