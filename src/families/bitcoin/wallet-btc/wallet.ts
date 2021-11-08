@@ -263,7 +263,7 @@ class BitcoinLikeWallet {
       return [
         btc.splitTransaction(
           i.txHex,
-          segwit,
+          true,
           false, // FIXME hasTimestamp needed for LL-7539
           hasExtraData,
           additionals
