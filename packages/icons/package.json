@@ -8,8 +8,18 @@
     "native",
     "index.js"
   ],
+  "exports": {
+    "./react/": {
+      "require": "./react/cjs/",
+      "default": "./react/"
+    },
+    "./react": {
+      "require": "./react/cjs/index.js",
+      "default": "./react/index.js"
+    }
+  },
   "scripts": {
-    "build": "npm run clean && node scripts/buildReactIcons && tsc",
+    "build": "npm run clean && node scripts/buildReactIcons && tsc && node scripts/transpile",
     "prepublishOnly": "npm run build",
     "clean": "rimraf react native src/react src/native"
   },
@@ -22,9 +32,11 @@
     "@types/styled-components-react-native": "^5.1.1",
     "@types/styled-system": "^5.1.13",
     "camelcase": "^6.2.0",
+    "esbuild": "^0.13.12",
     "glob": "^7.2.0",
     "react-native-svg": "^12.1.1",
     "rimraf": "^3.0.2",
+    "tiny-glob": "^0.2.9",
     "typescript": "^4.4.4"
   }
 }

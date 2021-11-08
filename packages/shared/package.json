@@ -4,6 +4,16 @@
   "description": "Package with the shared assets and code between the React and React Native versions of the Ledger design system",
   "main": "lib/index.js",
   "typescriptMain": "index.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/index.js"
+    },
+    "./": {
+      "require": "./lib/cjs/",
+      "default": "./lib/"
+    }
+  },
   "types": "lib/index.d.ts",
   "repository": "https://github.com/LedgerHQ/ui/",
   "author": "Ledger Live Team <team-live@ledger.fr>",
@@ -12,11 +22,13 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc",
-    "prepublishOnly": "npm run build",
+    "build": "tsc && node scripts/transpile",
+    "prepublishOnly": "npm run build && npm run bundle",
     "clean": "rimraf lib"
   },
   "devDependencies": {
+    "esbuild": "^0.13.12",
+    "tiny-glob": "^0.2.9",
     "typescript": "^4.4.4"
   }
 }

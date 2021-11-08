@@ -10,7 +10,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
-    "target": "esnext",
+    "target": "ESNext",
     "baseUrl": ".",
     "skipLibCheck": true,
     "rootDir": "./src",
