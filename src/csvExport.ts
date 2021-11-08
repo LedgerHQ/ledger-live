@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { Currency, Account, AccountLike, Operation } from "./types";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
-import { flattenOperationWithInternals } from "./operation";
+import { flattenOperationWithInternalsAndNfts } from "./operation";
 import { calculate } from "./countervalues/logic";
 import type { CounterValuesState } from "./countervalues/types";
 
@@ -143,7 +143,8 @@ const accountRows = (
 ): Array<string[]> =>
   account.operations
     .reduce(
-      (ops: Operation[], op) => ops.concat(flattenOperationWithInternals(op)),
+      (ops: Operation[], op) =>
+        ops.concat(flattenOperationWithInternalsAndNfts(op)),
       []
     )
     .map((operation) =>

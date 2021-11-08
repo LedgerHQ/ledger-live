@@ -17,6 +17,16 @@ export function findOperationInAccount(
         if (internalOp.id === operationId) return internalOp;
       }
     }
+
+    if (op.nftOperations) {
+      const nftOps = op.nftOperations;
+
+      for (let j = 0; j < nftOps.length; j++) {
+        const nftOp = nftOps[j];
+
+        if (nftOp.id === operationId) return nftOp;
+      }
+    }
   }
 
   for (let i = 0; i < pendingOperations.length; i++) {
@@ -66,7 +76,9 @@ export function patchOperationWithHash(
   };
 }
 
-export function flattenOperationWithInternals(op: Operation): Operation[] {
+export function flattenOperationWithInternalsAndNfts(
+  op: Operation
+): Operation[] {
   let ops: Operation[] = [];
 
   // ops of type NONE does not appear in lists
@@ -79,6 +91,11 @@ export function flattenOperationWithInternals(op: Operation): Operation[] {
     ops = ops.concat(op.internalOperations);
   }
 
+  // all nfts operations are expanded after the main op
+  if (op.nftOperations) {
+    ops = ops.concat(op.nftOperations);
+  }
+
   return ops;
 }
 
@@ -88,6 +105,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REWARD":
     case "REWARD_PAYOUT":
     case "SUPPLY":
+    case "NFT_IN":
       return op.value;
 
     case "OUT":
@@ -101,6 +119,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "OPT_OUT":
     case "REDEEM":
     case "SLASH":
+    case "NFT_OUT":
       return op.value.negated();
 
     case "FREEZE":
@@ -122,7 +141,7 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
 export function getOperationAmountNumberWithInternals(
   op: Operation
 ): BigNumber {
-  return flattenOperationWithInternals(op).reduce(
+  return flattenOperationWithInternalsAndNfts(op).reduce(
     (amount: BigNumber, op) => amount.plus(getOperationAmountNumber(op)),
     new BigNumber(0)
   );

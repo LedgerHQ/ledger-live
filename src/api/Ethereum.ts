@@ -3,12 +3,14 @@ import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { LedgerAPINotAvailable } from "@ledgerhq/errors";
 import JSONBigNumber from "@ledgerhq/json-bignumber";
-import type { CryptoCurrency } from "../types";
+import type { CryptoCurrency, NFTMetadataResponse } from "../types";
 import type { EthereumGasLimitRequest } from "../families/ethereum/types";
 import network from "../network";
 import { blockchainBaseURL } from "./Ledger";
 import { FeeEstimationFailed } from "../errors";
 import { makeLRUCache } from "../cache";
+import { getEnv } from "../env";
+
 export type Block = {
   height: BigNumber;
 }; // TODO more fields actually
@@ -37,6 +39,22 @@ export type Tx = {
     }>;
     truncated: boolean;
   };
+  erc721_transfer_events?: Array<{
+    contract: string;
+    sender: string;
+    receiver: string;
+    token_id: string;
+  }>;
+  erc1155_transfer_events?: Array<{
+    contract: string;
+    sender: string;
+    operator: string;
+    receiver: string;
+    transfers: Array<{
+      id: string;
+      value: string;
+    }>;
+  }>;
   actions?: Array<{
     from: string;
     to: string;
@@ -59,6 +77,12 @@ export type ERC20BalanceOutput = Array<{
   contract: string;
   balance: BigNumber;
 }>;
+export type NFTMetadataInput = Readonly<
+  Array<{
+    contract: string;
+    tokenId: string;
+  }>
+>;
 export type API = {
   getTransactions: (
     address: string,
@@ -72,6 +96,7 @@ export type API = {
   getAccountNonce: (address: string) => Promise<number>;
   broadcastTransaction: (signedTransaction: string) => Promise<string>;
   getERC20Balances: (input: ERC20BalancesInput) => Promise<ERC20BalanceOutput>;
+  getNFTMetadata: (input: NFTMetadataInput) => Promise<NFTMetadataResponse[]>;
   getAccountBalance: (address: string) => Promise<BigNumber>;
   roughlyEstimateGasLimit: (address: string) => Promise<BigNumber>;
   getERC20ApprovalsPerContract: (
@@ -107,7 +132,10 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
       let { data } = await network({
         method: "GET",
         url: URL.format({
-          pathname: `${baseURL}/addresses/${address}/transactions`,
+          pathname:
+            getEnv("NFT") && currency.ticker === "ETH"
+              ? `https://explorers.api-01.live.ledger-stg.com/blockchain/v3/eth/addresses/${address}/transactions`
+              : `${baseURL}/addresses/${address}/transactions`,
           query: {
             batch_size,
             noinput: true,
@@ -175,6 +203,16 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
         transformResponse: JSONBigNumber.parse,
         data: input,
       });
+      return data;
+    },
+
+    async getNFTMetadata(input) {
+      const { data }: { data: NFTMetadataResponse[] } = await network({
+        method: "POST",
+        url: getEnv("NFT_ETH_METADATA_SERVICE"),
+        data: input,
+      });
+
       return data;
     },
 

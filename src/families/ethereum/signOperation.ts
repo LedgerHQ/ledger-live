@@ -13,6 +13,7 @@ import { getGasLimit, buildEthereumTx } from "./transaction";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
 import { modes } from "./modules";
+import { getEnv } from "../../env";
 export const signOperation = ({
   account,
   deviceId,
@@ -61,6 +62,13 @@ export const signOperation = ({
                 "0x" + (tx.value.toString("hex") || "0")
               );
               const eth = new Eth(transport);
+              if (getEnv("NFT")) {
+                eth.setLoadConfig({
+                  // FIXME drop this after LL-8001
+                  nftExplorerBaseURL:
+                    "https://nft.staging.aws.ledger.fr/v1/ethereum",
+                });
+              }
               // FIXME this part is still required for compound to correctly display info on the device
               const addrs =
                 (fillTransactionDataResult &&

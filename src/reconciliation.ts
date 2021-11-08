@@ -27,6 +27,7 @@ import {
   fromTezosResourcesRaw,
   fromElrondResourcesRaw,
   fromCryptoOrgResourcesRaw,
+  fromNFTRaw,
 } from "./account";
 import consoleWarnExpectToEqual from "./consoleWarnExpectToEqual";
 
@@ -379,6 +380,12 @@ export function patchAccount(
     next.cryptoOrgResources = fromCryptoOrgResourcesRaw(
       updatedRaw.cryptoOrgResources
     );
+    changed = true;
+  }
+
+  const nfts = updatedRaw?.nfts?.map(fromNFTRaw);
+  if (updatedRaw.nfts && !isEqual(account.nfts, nfts)) {
+    next.nfts = nfts;
     changed = true;
   }
 

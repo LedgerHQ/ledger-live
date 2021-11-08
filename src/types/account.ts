@@ -37,6 +37,7 @@ import type {
   PortfolioRange,
 } from "./portfolio";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
+import type { NFT, NFTRaw } from "./nft";
 // This is the old cache and now DEPRECATED (pre v2 portfoli)
 export type BalanceHistoryMap = Partial<Record<PortfolioRange, BalanceHistory>>;
 export type BalanceHistoryRawMap = Record<PortfolioRange, BalanceHistoryRaw>;
@@ -214,6 +215,8 @@ export type Account = {
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
   syncHash?: string;
+  // Array of NFTs computed by diffing NFTOperations
+  nfts?: NFT[];
 };
 export type SubAccount = TokenAccount | ChildAccount;
 export type AccountLike = Account | SubAccount;
@@ -299,6 +302,7 @@ export type AccountRaw = {
   cryptoOrgResources?: CryptoOrgResourcesRaw;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
+  nfts?: NFTRaw[];
 };
 export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
 export type AccountRawLike = AccountRaw | SubAccountRaw;

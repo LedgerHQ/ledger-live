@@ -376,6 +376,17 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
   },
+  NFT: {
+    def: false,
+    parser: boolParser,
+    desc: "synchronizing nfts",
+  },
+  NFT_ETH_METADATA_SERVICE: {
+    // FIXME LL-8001
+    def: "https://nft.staging.aws.ledger.fr/v1/ethereum/1/contracts/tokens/infos",
+    parser: stringParser,
+    desc: "service uri used to get the metadata of an nft",
+  },
   OPERATION_ADDRESSES_LIMIT: {
     def: 100,
     parser: intParser,

@@ -1,6 +1,6 @@
 import type { AccountLikeArray, AccountLike, Operation } from "../types";
 import { flattenAccounts } from "./helpers";
-import { flattenOperationWithInternals } from "../operation";
+import { flattenOperationWithInternalsAndNfts } from "../operation";
 export type DailyOperationsSection = {
   day: Date;
   data: Operation[];
@@ -105,7 +105,7 @@ export function groupAccountsOperationsByDay(
         indexes[bestOpInfo.accountI]++;
       }
 
-      const ops = flattenOperationWithInternals(bestOp);
+      const ops = flattenOperationWithInternalsAndNfts(bestOp);
       return {
         ops,
         date: bestOp.date,
