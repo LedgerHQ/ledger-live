@@ -167,5 +167,5 @@ export const isConfirmedOperation = (
   confirmationsNb: number
 ): boolean =>
   operation.blockHeight
-    ? account.blockHeight - operation.blockHeight > confirmationsNb
+    ? account.blockHeight - operation.blockHeight + 1 > confirmationsNb
     : false;
