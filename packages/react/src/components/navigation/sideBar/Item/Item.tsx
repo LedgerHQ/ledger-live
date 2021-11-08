@@ -38,22 +38,20 @@ const ItemWrapper = styled.li<{ isActive?: boolean; isDisabled?: boolean }>`
   }
 
   /** ACTIVE VARIANT **/
-  ${(props) =>
-    props.isActive
-      ? `--ll-sidebar-item-label-color: ${props.theme.colors.palette.neutral.c100};
-        --ll-sidebar-item-icon-color: ${props.theme.colors.palette.primary.c90};
-        --ll-sidebar-item-background-color: ${props.theme.colors.palette.primary.c20};`
-      : ""}
+  &[data-active="true"] {
+    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c90};
+    --ll-sidebar-item-background-color: ${(props) => props.theme.colors.palette.primary.c20};
+  }
 
   /** DISABLE VARIANT **/
-  ${(props) =>
-    props.isDisabled
-      ? `--ll-sidebar-item-label-color: ${props.theme.colors.palette.neutral.c80};
-        --ll-sidebar-item-icon-color: ${props.theme.colors.palette.neutral.c80};
-        --ll-sidebar-item-background-color: unset;
-        opacity: 0.3;
-        cursor: unset;`
-      : ""}
+  &[data-disable="true"] {
+    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c80};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.neutral.c80};
+    --ll-sidebar-item-background-color: unset;
+    opacity: 0.3;
+    cursor: unset;
+  }
 `;
 
 export const ItemLabel = styled(Text)`
@@ -83,8 +81,8 @@ const Item = ({ label, children, onClick, isActive, isDisabled }: ItemType): JSX
     <ItemWrapper
       role="button"
       onClick={handleClick}
-      isActive={isActive}
-      isDisabled={isDisabled}
+      data-active={isActive}
+      data-disable={isDisabled}
       tabIndex={0}
     >
       {children}
