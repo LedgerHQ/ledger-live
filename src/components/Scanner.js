@@ -1,6 +1,7 @@
 /* @flow */
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, useNavigation } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import StyledStatusBar from "./StyledStatusBar";
