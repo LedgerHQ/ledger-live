@@ -23,6 +23,10 @@
     "prepublishOnly": "npm run build",
     "clean": "rimraf react native src/react src/native"
   },
+  "dependencies": {
+    "@types/styled-components": "^5.1.14",
+    "styled-components": "^5.2.3"
+  },
   "devDependencies": {
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-svgo": "^5.5.0",
