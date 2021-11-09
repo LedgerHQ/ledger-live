@@ -7,7 +7,9 @@
   "scripts": {
     "build": "webpack --node-env=production",
     "dev": "webpack serve",
-    "serve": "http-server dist"
+    "serve": "http-server dist",
+    "clean": "rimraf dist",
+    "clean:full": "rimraf dist node_modules"
   },
   "dependencies": {
     "@ledgerhq/react-ui": "^0.2.0",
@@ -25,6 +27,7 @@
     "html-webpack-plugin": "^5.5.0",
     "http-server": "^14.0.0",
     "react-refresh": "^0.10.0",
+    "rimraf": "^3.0.2",
     "webpack": "^5.62.2",
     "webpack-cli": "^4.9.1",
     "webpack-dev-server": "^4.4.0"

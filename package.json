@@ -1,7 +1,10 @@
 {
   "private": "true",
   "devDependencies": {
+    "@playwright/test": "^1.16.3",
+    "concurrently": "^6.3.0",
     "husky": "^7.0.4",
+    "json": "^11.0.0",
     "lint-staged": "^11.2.6"
   },
   "scripts": {
@@ -9,7 +12,8 @@
     "react": "yarn workspace @ledgerhq/react-ui",
     "native": "yarn workspace @ledgerhq/native-ui",
     "shared": "yarn workspace @ledgerhq/ui-shared",
-    "icons": "yarn workspace @ledgerhq/icons-ui"
+    "icons": "yarn workspace @ledgerhq/icons-ui",
+    "test:react": "node tests/react.script"
   },
   "workspaces": [
     "packages/*"

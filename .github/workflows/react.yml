@@ -1,9 +1,5 @@
 name: React Build
 
-defaults:
-  run:
-    working-directory: packages/react
-
 on:
   push:
     branches:
@@ -27,8 +23,22 @@ jobs:
           cache: yarn
           cache-dependency-path: yarn.lock
       - name: Install dependencies
-        run: yarn install --focus
+        run: yarn --cwd packages/react install --focus
       - name: Linter
-        run: yarn lint
+        run: yarn --cwd packages/react lint
       - name: Typecheck
-        run: yarn typecheck
+        run: yarn --cwd packages/react typecheck
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          cache-dependency-path: yarn.lock
+      - name: Install dependencies
+        run: yarn && yarn playwright install
+      - name: Build packages
+        run: yarn icons build && yarn shared build && yarn react prerelease
+      - name: Run tests
+        run: yarn test:webpack-js

@@ -13,4 +13,6 @@ yarn dev
 yarn build
 # Serve production files.
 yarn serve
+# Clean production files.
+yarn clean
 ```
