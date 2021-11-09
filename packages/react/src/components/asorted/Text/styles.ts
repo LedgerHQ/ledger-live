@@ -3,8 +3,9 @@ import { css } from "styled-components";
 import { TextVariants } from "../../../styles/theme";
 
 const getFontSource = (name: string) => (props: GlobalStyleProps) => {
-  const fontsPath = props.fontsPath || "assets/fonts";
-  return `url("${fontsPath}/${name}.woff2") format("woff2")`;
+  const fontsPath = props.fontsPath ?? "assets/fonts";
+  const fontName = (props.fontMappings && props.fontMappings(name)) || `${name}.woff2`;
+  return `url("${fontsPath}/${fontName}") format("woff2")`;
 };
 
 export const fontStyles = css`

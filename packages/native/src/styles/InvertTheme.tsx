@@ -7,7 +7,6 @@ import { Theme } from "./theme";
 interface Props {
   children: React.ReactNode;
   selectedPalette?: ThemeNames;
-  fontsPath?: string;
 }
 
 export const InvertTheme = ({ children }: Props): React.ReactElement => {

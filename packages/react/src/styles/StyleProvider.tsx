@@ -1,18 +1,18 @@
 import React, { useMemo } from "react";
 import { ThemeProvider } from "styled-components";
-import { defaultTheme, GlobalStyle } from ".";
+import { defaultTheme, GlobalStyle, GlobalStyleProps } from ".";
 import { ThemeNames, palettes } from "@ledgerhq/ui-shared";
 import { Theme } from "./theme";
 
-interface Props {
+interface Props extends GlobalStyleProps {
   children: React.ReactNode;
   selectedPalette?: ThemeNames;
-  fontsPath?: string;
 }
 
 export const StyleProvider = ({
   children,
   fontsPath,
+  fontMappings,
   selectedPalette = "light",
 }: Props): React.ReactElement => {
   const theme: Theme = useMemo(
@@ -25,7 +25,7 @@ export const StyleProvider = ({
   );
   return (
     <ThemeProvider theme={theme}>
-      <GlobalStyle fontsPath={fontsPath} />
+      <GlobalStyle fontsPath={fontsPath} fontMappings={fontMappings} />
       {children}
     </ThemeProvider>
   );

@@ -5,7 +5,10 @@ import reset from "./reset";
 import tippyStyles from "../components/message/Tooltip/styles";
 import { fontStyles } from "../components/asorted/Text/styles";
 
-export type GlobalStyleProps = { fontsPath?: string };
+export type GlobalStyleProps = {
+  fontsPath?: string;
+  fontMappings?: (name: string) => string;
+};
 
 export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
   ${reset};
@@ -15,7 +18,7 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
     font-size: 100%;
   }
 
-  ${(props) => (props.fontsPath ? fontStyles : "")}
+  ${(props) => (typeof props.fontsPath === "string" ? fontStyles : "")}
 
   .spectron-run canvas:not(.visible-for-spectron) {
     visibility: hidden;
