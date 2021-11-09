@@ -41,4 +41,11 @@ jobs:
       - name: Build packages
         run: yarn icons build && yarn shared build && yarn react prerelease
       - name: Run tests
-        run: yarn test:webpack-js
+        run: yarn test:react
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: test-run-data
+          path: |
+            tests/react.spec.js-snapshots/
+            test-results/

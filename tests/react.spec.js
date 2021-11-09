@@ -2,9 +2,9 @@ const { test, expect } = require("@playwright/test");
 
 test("Page loads and runs", async ({ page }) => {
   await page.goto("http://localhost:8080/");
-  const rootElement = page.locator("div#root");
+  const rootElement = page.locator("div#root, div#__next");
   await expect(rootElement).not.toBeEmpty();
-  const flexElement = page.locator("div#root > div");
+  const flexElement = page.locator("div#root > div, div#__next > div");
   await expect(flexElement).toHaveCSS("background-color", "rgb(255, 255, 255)");
   expect(await page.screenshot()).toMatchSnapshot("light.png");
   await page.click("input + div", { timeout: 1000 });
