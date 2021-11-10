@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled, { css, StyledProps } from "styled-components";
-import { fontSize, color, border } from "styled-system";
+import { fontSize, color, border, BordersProps } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
@@ -11,7 +11,6 @@ interface BaseProps extends BordersProps {
   ff?: string;
   color?: string;
   backgroundColor?: string;
-  borderColor?: string;
   fontSize?: number;
   type?: ButtonTypes;
   outline?: boolean;
