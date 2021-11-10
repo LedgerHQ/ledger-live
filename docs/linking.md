@@ -43,6 +43,17 @@ They all are prefixed by **_ledgerlive://_**
 
   `ledgerlive://swap` will redirect to swap page
 
+- **_discover_** 🠒 Live discover catalog
+
+  `ledgerlive://discover` will redirect to discover page
+
+- **_discover/:APP_ID?params..._** 🠒 Live discover catalog
+
+  `ledgerlive://discover/paraswap?accountId=1` will redirect to the discover catalog page of paraswa with a pre-selected first account
+
+        - *APP_ID* => the url param app id
+        - *?params* => the url query params that will be transmitted to the app, you should refer to each apps documentation in order to use them.
+
 **_Testing on android_** in order to test in debug your link run using [**_adb_**](https://developer.android.com/training/app-links/deep-linking#testing-filters)
 
 ```
