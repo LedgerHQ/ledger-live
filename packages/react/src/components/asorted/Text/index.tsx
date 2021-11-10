@@ -48,7 +48,6 @@ export interface TextProps {
   ml?: number | string;
   mr?: number | string;
   lineHeight?: string;
-  bracket?: boolean;
   children: React.ReactNode;
 }
 
