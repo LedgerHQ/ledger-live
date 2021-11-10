@@ -20,7 +20,15 @@
 npm i @ledgerhq/react-ui
 ```
 
-_And if the React packages are not installed:_
+### Peer dependencies
+
+This library uses [styled components](https://styled-components.com/) heavily relies on it being installed separately (to avoid package duplication).
+
+```sh
+npm i styled-components
+```
+
+And (obviously) if React packages are not already installed:
 
 ```sh
 npm i react react-dom

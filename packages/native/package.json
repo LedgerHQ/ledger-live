@@ -48,7 +48,6 @@
     "react-native-reanimated": "~2.2.3",
     "react-native-svg": "12.1.1",
     "rn-range-slider": "^2.1.1",
-    "styled-components": "^5.3.3",
     "styled-system": "^5.1.5",
     "victory-native": "^35.5.5"
   },
@@ -57,7 +56,7 @@
     "react-native": "^0.64.0",
     "react-native-reanimated": "~2.2.3",
     "react-native-svg": "12.1.1",
-    "styled-components": "^5.2.3"
+    "styled-components": "^5.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
@@ -99,6 +98,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-web": "~0.17.5",
     "rimraf": "^3.0.2",
+    "styled-components": "^5.3.3",
     "typescript": "^4.4.4"
   }
 }
