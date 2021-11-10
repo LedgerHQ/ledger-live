@@ -2,6 +2,8 @@ const child_process = require("child_process");
 
 const exampleName = process.argv[2] || "";
 
+const UPDATE_SNAPSHOTS = process.env["UPDATE_SNAPSHOTS"];
+
 const addPackageResolutions = `
   yarn json -I -f ./examples/${exampleName}/package.json -e 'this.resolutions={
     "@ledgerhq/react-ui": "../../packages/react/lib",
@@ -13,7 +15,9 @@ const rollbackPackageResolutions = `
   yarn json -I -f ./examples/${exampleName}/package.json -e 'delete this.resolutions'
 `;
 const prepareExample = `yarn clean:full && yarn && yarn build`;
-const runTest = `yarn concurrently -s=first -k "yarn --cwd examples/${exampleName} serve" "playwright test"`;
+const runTest = `yarn concurrently -s=first -k "yarn --cwd examples/${exampleName} serve" "playwright test ${
+  UPDATE_SNAPSHOTS ? "--update-snapshots" : ""
+}"`;
 
 try {
   child_process.execSync(addPackageResolutions, { stdio: "inherit" });

@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - "packages/react/**"
+      - "examples/**"
   pull_request:
     branches:
       - main
     paths:
       - "packages/react/**"
+      - "examples/**"
   workflow_dispatch:
 
 jobs:
