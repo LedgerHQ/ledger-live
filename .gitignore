@@ -59,3 +59,6 @@ packages/native/web-build
 
 # Typescript incremental mode artifacts
 *.tsbuildinfo
+
+# Playwright test results
+/test-results

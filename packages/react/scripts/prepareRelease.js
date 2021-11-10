@@ -19,10 +19,15 @@ const requiredFiles = [
   "src/assets/fonts",
 ];
 requiredFiles.forEach((filename) => {
-  const suffix = filename.startsWith("src/") ? filename.slice(4) : filename;
+  const fromSrc = filename.startsWith("src/");
+  const suffix = fromSrc ? filename.slice(4) : filename;
   const filePath = path.join(__dirname, "..", filename);
   const destPath = path.join(destination, suffix);
   fs.copySync(filePath, destPath);
+  if (fromSrc) {
+    // also copy to the cjs folder
+    fs.copySync(filePath, path.join(destination, "cjs", suffix));
+  }
 });
 
 // Remove the private, script and dev. deps. fields from the package json file.
