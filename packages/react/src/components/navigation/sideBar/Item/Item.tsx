@@ -3,6 +3,7 @@ import styled from "styled-components";
 import SideBarContext from "../index";
 import Text from "../../../asorted/Text";
 import TransitionInOut from "../../../transitions/TransitionInOut";
+import Flex from "../../../layout/Flex";
 
 const ItemWrapper = styled.li`
   /** DEFAULT VARIANT **/
@@ -54,12 +55,17 @@ const ItemWrapper = styled.li`
   }
 `;
 
-const Badge = styled.div`
+const CollapsedBadgeContainer = styled.div`
+  position: absolute;
+  margin-top: -${(p) => p.theme.space[11]}px;
+  margin-left: ${(p) => p.theme.space[8]}px;
+`;
+
+const DefaultBadge = styled.div`
   height: ${(p) => p.theme.space[4]}px;
   width: ${(p) => p.theme.space[4]}px;
   border-radius: ${(p) => p.theme.radii[2]}px;
   background-color: ${(p) => p.theme.colors.palette.primary.c80};
-  margin-left: auto;
 `;
 
 export const ItemLabel = styled(Text)`
@@ -76,6 +82,7 @@ export type ItemType = {
   isActive?: boolean;
   isDisabled?: boolean;
   displayNotificationBadge?: boolean;
+  customNotificationBadge?: JSX.Element;
 };
 
 const Item = ({
@@ -85,6 +92,7 @@ const Item = ({
   isActive,
   isDisabled,
   displayNotificationBadge,
+  customNotificationBadge,
 }: ItemType): JSX.Element => {
   const { isExpanded } = useContext(SideBarContext);
 
@@ -93,26 +101,44 @@ const Item = ({
     onClick();
   };
 
+  const badge = customNotificationBadge ?? <DefaultBadge />;
+
   return (
-    <ItemWrapper
-      role="button"
-      onClick={handleClick}
-      data-active={isActive}
-      data-disable={isDisabled}
-      tabIndex={0}
-    >
-      {children}
-      <TransitionInOut
-        timeout={300}
-        in={isExpanded}
-        unmountOnExit
-        mountOnEnter
-        style={{ transitionDelay: isExpanded ? "300ms" : 0 }}
+    <>
+      <ItemWrapper
+        role="button"
+        onClick={handleClick}
+        data-active={isActive}
+        data-disable={isDisabled}
+        tabIndex={0}
       >
-        <ItemLabel variant="paragraph">{label}</ItemLabel>
-      </TransitionInOut>
-      {displayNotificationBadge && <Badge />}
-    </ItemWrapper>
+        {children}
+        <CollapsedBadgeContainer>
+          <TransitionInOut
+            unmountOnExit
+            mountOnEnter
+            in={!isExpanded}
+            style={{ transitionDelay: !isExpanded ? "300ms" : 0 }}
+          >
+            {displayNotificationBadge && badge}
+          </TransitionInOut>
+        </CollapsedBadgeContainer>
+        <TransitionInOut
+          timeout={300}
+          in={isExpanded}
+          unmountOnExit
+          mountOnEnter
+          style={{ transitionDelay: isExpanded ? "300ms" : 0, flexGrow: 1 }}
+        >
+          <Flex>
+            <ItemLabel variant="paragraph">{label}</ItemLabel>
+            <Flex alignItems="center" justifyContent="flex-end" flexGrow={1}>
+              {displayNotificationBadge && badge}
+            </Flex>
+          </Flex>
+        </TransitionInOut>
+      </ItemWrapper>
+    </>
   );
 };
 
