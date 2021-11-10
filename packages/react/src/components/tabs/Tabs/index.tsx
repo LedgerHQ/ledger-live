@@ -154,6 +154,7 @@ export default function Tabs(props: Props): JSX.Element {
         left,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
   const onTabClick = (index: number) => {
