@@ -5,6 +5,7 @@ import { PlusMedium } from "@ledgerhq/icons-ui/react";
 export default {
   title: "cta/Link",
   component: Link,
+  parameters: { actions: { argTypesRegex: false } },
   argTypes: {
     type: {
       options: ["main", "shade", "color"],
