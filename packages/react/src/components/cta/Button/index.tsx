@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import styled, { css, StyledProps } from "styled-components";
-import { fontSize, color } from "styled-system";
+import { fontSize, color, border } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
 
 export type ButtonTypes = "main" | "shade" | "error" | "color";
 export type IconPosition = "right" | "left";
-interface BaseProps {
+interface BaseProps extends BordersProps {
   ff?: string;
   color?: string;
+  backgroundColor?: string;
+  borderColor?: string;
   fontSize?: number;
   type?: ButtonTypes;
   outline?: boolean;
@@ -127,21 +129,22 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
   color: p.color ?? "palette.neutral.c100",
   fontSize: p.fontSize ?? 4,
 }))<BaseProps>`
+  background-color: transparent;
+  border-color: transparent;
+  border-radius: ${(p) => p.theme.space[13]}px;
+  border-style: solid;
+  border-width: ${(p) => (p.outline || p.type === "shade" ? 1 : 0)}px;
   ${fontFamily};
   ${fontSize};
   ${color};
-  border-radius: ${(p) => p.theme.space[13]}px;
+  ${border};
   height: ${(p) => p.theme.space[13]}px;
   line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
-  border-style: solid;
-  border-width: ${(p) => (p.outline || p.type === "shade" ? 1 : 0)}px;
   text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0 2em;
-  background-color: transparent;
-  border-color: transparent;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
