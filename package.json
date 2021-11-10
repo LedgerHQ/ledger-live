@@ -13,7 +13,8 @@
     "native": "yarn workspace @ledgerhq/native-ui",
     "shared": "yarn workspace @ledgerhq/ui-shared",
     "icons": "yarn workspace @ledgerhq/icons-ui",
-    "test:react": "node tests/react.script webpack.js && node tests/react.script next.js"
+    "test:react": "node tests/react.script webpack.js && node tests/react.script next.js",
+    "test:react:update-snapshots": "env UPDATE_SNAPSHOTS=1 node tests/react.script webpack.js && env UPDATE_SNAPSHOTS=1 node tests/react.script next.js"
   },
   "workspaces": [
     "packages/*"

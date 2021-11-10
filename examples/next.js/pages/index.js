@@ -8,7 +8,6 @@ export default function Home({ isLight, setPalette }) {
       alignItems="center"
       justifyContent="center"
       rowGap={12}
-      p={12}
       style={{ height: "100vh" }}
       backgroundColor="palette.neutral.c00"
     >
