@@ -4,28 +4,26 @@ import { fontSize, color } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
-import { sharedStyle, SharedStyleProps } from "../../../styles/system/shared";
 
+export type ButtonTypes = "main" | "shade" | "error" | "color";
 export type IconPosition = "right" | "left";
-export type ButtonVariants = "main" | "shade" | "error" | "color";
+interface BaseProps {
+  ff?: string;
+  color?: string;
+  fontSize?: number;
+  type?: ButtonTypes;
+  outline?: boolean;
+  iconPosition?: IconPosition;
+  iconButton?: boolean;
+  disabled?: boolean;
+}
 
-type BaseProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
-  SharedStyleProps & {
-    ff?: string;
-    fontSize?: number;
-    variant?: ButtonVariants;
-    outline?: boolean;
-    iconPosition?: IconPosition;
-    iconButton?: boolean;
-    disabled?: boolean;
-  };
-
-export type ButtonProps = BaseProps & {
+export interface ButtonProps extends BaseProps {
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   children?: React.ReactNode;
   onClick: (event?: React.SyntheticEvent<HTMLButtonElement>) => void;
   iconSize?: number;
-};
+}
 const IconContainer = styled.div<{
   iconPosition: IconPosition;
 }>`
@@ -126,17 +124,17 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
 
 export const Base = styled.button.attrs((p: BaseProps) => ({
   ff: "Inter|SemiBold",
+  color: p.color ?? "palette.neutral.c100",
   fontSize: p.fontSize ?? 4,
 }))<BaseProps>`
-  ${sharedStyle};
   ${fontFamily};
   ${fontSize};
   ${color};
   border-radius: ${(p) => p.theme.space[13]}px;
   height: ${(p) => p.theme.space[13]}px;
-  line-height: ${(p) => p.theme.fontSizes[p.fontSize ?? 4]}px;
+  line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
   border-style: solid;
-  border-width: ${(p) => (p.outline || p.variant === "shade" ? 1 : 0)}px;
+  border-width: ${(p) => (p.outline || p.type === "shade" ? 1 : 0)}px;
   text-align: center;
   display: inline-flex;
   align-items: center;
@@ -157,14 +155,11 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
   ${(p) => {
     const variants = getVariantColors(p);
     if (p.disabled) {
-      return p.outline || p.variant === "shade"
-        ? variants.disabled.outline
-        : variants.disabled.filled;
+      return p.outline || p.type === "shade" ? variants.disabled.outline : variants.disabled.filled;
     }
 
-    const variant: ButtonVariants | "default" =
-      p.variant ?? ("default" as ButtonVariants | "default");
-    switch (variant) {
+    const type: ButtonTypes | "default" = p.type ?? ("default" as ButtonTypes | "default");
+    switch (type) {
       case "main":
         return p.outline ? variants.main.outline : variants.main.filled;
       case "shade":
@@ -209,6 +204,7 @@ const Button = ({
   ...props
 }: ButtonProps): React.ReactElement => {
   return (
+    // @ts-expect-error FIXME type button conflict
     <Base {...props} iconButton={!(Icon == null) && !children} onClick={onClick}>
       {iconPosition === "right" ? <ContentContainer>{children}</ContentContainer> : null}
       {Icon != null ? (

@@ -50,7 +50,7 @@ fontSizes.bodyLineHeight = fontSizes.body;
 fontSizes.paragraphLineHeight = fontSizes.paragraph;
 fontSizes.subtitle = fontSizes.extraSmall;
 
-export const fontWeights = {
+const fontWeights = {
   extraLight: "100",
   light: "300",
   regular: "400",

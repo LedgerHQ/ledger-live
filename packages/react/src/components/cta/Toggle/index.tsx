@@ -13,7 +13,7 @@ enum TypeEnum {
 
 const Toggle = ({ checked = true, ...buttonProps }: ToggleProps) => {
   const type = useMemo(() => (checked ? TypeEnum.ENABLED : TypeEnum.DISABLED), [checked]);
-  return <Button variant={type} outline={type === TypeEnum.ENABLED} {...buttonProps} />;
+  return <Button type={type} outline={type === TypeEnum.ENABLED} {...buttonProps} />;
 };
 
 export default Toggle;

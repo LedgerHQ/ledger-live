@@ -1,6 +1,7 @@
 import React from "react";
 import Flex, { FlexBoxProps } from "./index";
-import { Box } from "../index";
+import styled from "styled-components";
+import { backgroundColor, BackgroundColorProps } from "styled-system";
 export default {
   title: "Layout/Flex",
   component: Flex,
@@ -283,31 +284,35 @@ export default {
       table: { category: "Parent" },
     },
   },
-  parameters: {
-    docs: {
-      description: {
-        component: `The Flex component is a flexbox helper component that lets you write these common css properties more succinctly and inline.
-      
-Like the Box component, it includes all the style props exported by the color, layout, position, and shadow utilities from the [styled-system](https://styled-system.com) library, but also fully includes the flexbox ones.
-      
-[See more about styled-system utilities](https://styled-system.com/api)`,
-      },
-    },
-  },
 };
 /*
  ** Template component creates a sandbox to play with Flexbox properties.
- ** Children Flexbox props are passed to the first Box child, that allow
+ ** Children Flexbox props are passed to the first Square child, that allow
  ** you to play with the flexbox properties for children.
  */
 
+const Square = styled.div<FlexBoxProps & BackgroundColorProps>`
+  width: 25vw;
+  height: 25vw;
+  padding: 1rem;
+  color: white;
+  font-weight: 700;
+  ${backgroundColor}
+`;
+
 const Template = (args: FlexBoxProps) => (
-  <Flex {...args} width={"100vw"} height={"100vh"}>
-    <Box {...args} width={"25vw"} height={"25vh"} backgroundColor="darkslategray">
+  <Flex
+    {...args}
+    style={{
+      width: "100vw",
+      height: "100vh",
+    }}
+  >
+    <Square {...args} backgroundColor="darkslategray">
       Control me with flex children props
-    </Box>
-    <Box width={"25vw"} height={"25vh"} backgroundColor="palette.primary.c100" />
-    <Box width={"25vw"} height={"25vh"} backgroundColor="darkgray" />
+    </Square>
+    <Square backgroundColor="lightslategray" />
+    <Square backgroundColor="darkgray" />
   </Flex>
 );
 
