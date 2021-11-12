@@ -256,10 +256,10 @@ const bitcoinLikeMutations = ({
     test: ({ account }) => {
       expect(
         account.bitcoinResources?.utxos
-          .filter(u => u.blockHeight) // Exclude pending UTXOs
-          .reduce((p,c) => p.plus(c.value), new BigNumber(0))
+          .filter((u) => u.blockHeight) // Exclude pending UTXOs
+          .reduce((p, c) => p.plus(c.value), new BigNumber(0))
           .toString()
-        ).toBe("0");
+      ).toBe("0");
     },
   },
 ];
