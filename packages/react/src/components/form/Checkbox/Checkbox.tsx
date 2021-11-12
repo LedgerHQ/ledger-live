@@ -4,7 +4,11 @@ import Text from "../../asorted/Text";
 import CheckAloneRegular from "@ledgerhq/icons-ui/react/CheckAloneRegular";
 import { renderToStaticMarkup } from "react-dom/server";
 
-const Icon = styled(CheckAloneRegular).attrs({ size: 13, color: "white" })``;
+const Icon = () =>
+  React.cloneElement(CheckAloneRegular({ size: 13, color: "white" }), {
+    // the xmlns attribute is required to properly display the checkbox
+    xmlns: "http://www.w3.org/2000/svg",
+  });
 const CheckMarkIcon = encodeURIComponent(renderToStaticMarkup(<Icon />));
 
 const Input = styled.input`
