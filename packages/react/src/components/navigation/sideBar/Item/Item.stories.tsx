@@ -23,6 +23,7 @@ export default {
     children: { control: false },
     isActive: { type: "boolean" },
     isDisabled: { type: "boolean" },
+    displayNotificationBadge: { type: "boolean" },
   },
 };
 
