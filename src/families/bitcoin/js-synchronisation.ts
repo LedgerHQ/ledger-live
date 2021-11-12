@@ -128,34 +128,20 @@ const mapTxToOperations = (
   // All inputs of a same transaction have the same sequence
   const transactionSequenceNumber =
     (accountInputs.length > 0 && accountInputs[0].sequence) || undefined;
-  const hasSpentNothing = value.eq(0);
+
+  // Change output is the last one
+  const changeOutputIndex = tx.outputs
+    .map((o) => o.output_index)
+    .reduce((p, c) => (p > c ? p : c));
 
   for (const output of tx.outputs) {
     if (output.address) {
       if (accountAddresses.includes(output.address)) {
         accountOutputs.push(output);
-
-        if (changeAddresses.includes(output.address)) {
-          if (
-            (recipients.length === 0 &&
-              output.output_hash ===
-                tx.outputs[tx.outputs.length - 1].output_hash) ||
-            hasSpentNothing
-          ) {
-            recipients.push(
-              syncReplaceAddress
-                ? syncReplaceAddress(output.address)
-                : output.address
-            );
-          }
-        } else {
-          recipients.push(
-            syncReplaceAddress
-              ? syncReplaceAddress(output.address)
-              : output.address
-          );
-        }
-      } else {
+      } else if (
+        !changeAddresses.includes(output.address) ||
+        output.output_index !== changeOutputIndex
+      ) {
         recipients.push(
           syncReplaceAddress
             ? syncReplaceAddress(output.address)
