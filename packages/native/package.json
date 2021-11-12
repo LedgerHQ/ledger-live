@@ -87,7 +87,7 @@
     "eslint-plugin-react-hooks": "^4.2.1-alpha-255221c86-20211103",
     "expo": "~42.0.4",
     "expo-cli": "^4.12.11",
-    "expo-font": "~10.0.3",
+    "expo-font": "~9.2.1",
     "expo-status-bar": "~1.1.0",
     "fs-extra": "^10.0.0",
     "glob": "^7.2.0",
