@@ -35,34 +35,35 @@ const Template = (args: SideBarProps) => {
 
   const handleToggle = () => updateArgs({ isExpanded: !currentArgs.isExpanded });
 
+  const sidebarIconSize = 20;
   return (
     <SideBar {...args} onToggle={handleToggle}>
       <SideBar.Item onClick={action("go to portfolio")} label="portfolio">
-        <PortfolioIcon />
+        <PortfolioIcon size={sidebarIconSize} />
       </SideBar.Item>
       <SideBar.Item onClick={action("go to accounts")} label="accounts" isActive>
-        <WalletIcon />
+        <WalletIcon size={sidebarIconSize} />
       </SideBar.Item>
       <SideBar.Item onClick={action("go to discover")} label="discover" isDisabled>
-        <ManagerIcon />
+        <ManagerIcon size={sidebarIconSize} />
       </SideBar.Item>
       <SideBar.Item onClick={action("go to send")} label="send" isDisabled>
-        <ArrowTopIcon />
+        <ArrowTopIcon size={sidebarIconSize} />
       </SideBar.Item>
       <SideBar.Item onClick={action("go to receive")} label="receive">
-        <ArrowBottomIcon />
+        <ArrowBottomIcon size={sidebarIconSize} />
       </SideBar.Item>
       <SideBar.Item onClick={action("go to buy / Sell")} label="buy / Sell">
-        <BuyCryptoAltIcon />
+        <BuyCryptoAltIcon size={sidebarIconSize} />
       </SideBar.Item>
       <SideBar.Item onClick={action("go to exchange")} label="exchange">
-        <BuyCryptoIcon />
+        <BuyCryptoIcon size={sidebarIconSize} />
       </SideBar.Item>
       <SideBar.Item onClick={action("go to lend")} label="lend">
-        <LendIcon />
+        <LendIcon size={sidebarIconSize} />
       </SideBar.Item>
-      <SideBar.Item onClick={action("go to manager")} label="manager">
-        <NanoFoldedIcon />
+      <SideBar.Item onClick={action("go to manager")} label="manager" displayNotificationBadge>
+        <NanoFoldedIcon size={sidebarIconSize} />
       </SideBar.Item>
     </SideBar>
   );

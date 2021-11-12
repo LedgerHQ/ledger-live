@@ -28,7 +28,7 @@ const ItemWrapper = styled.li`
   /** HOVER VARIANT **/
   &:hover {
     --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c90};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c80};
     --ll-sidebar-item-background-color: unset;
   }
 
@@ -41,7 +41,7 @@ const ItemWrapper = styled.li`
   /** ACTIVE VARIANT **/
   &[data-active="true"] {
     --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c90};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c80};
     --ll-sidebar-item-background-color: ${(props) => props.theme.colors.palette.primary.c20};
   }
 
@@ -52,6 +52,7 @@ const ItemWrapper = styled.li`
     --ll-sidebar-item-background-color: unset;
     opacity: 0.3;
     cursor: unset;
+    pointer-events: none;
   }
 `;
 
@@ -118,23 +119,21 @@ const Item = ({
             unmountOnExit
             mountOnEnter
             in={!isExpanded}
-            style={{ transitionDelay: !isExpanded ? "300ms" : 0 }}
+            style={{ transitionDelay: !isExpanded ? "200ms" : 0 }}
           >
             {displayNotificationBadge && badge}
           </TransitionInOut>
         </CollapsedBadgeContainer>
         <TransitionInOut
-          timeout={300}
+          timeout={200}
           in={isExpanded}
           unmountOnExit
           mountOnEnter
-          style={{ transitionDelay: isExpanded ? "300ms" : 0, flexGrow: 1 }}
+          style={{ transitionDelay: isExpanded ? "200ms" : 0, display: "flex", flex: "1" }}
         >
-          <Flex>
-            <ItemLabel variant="paragraph">{label}</ItemLabel>
-            <Flex alignItems="center" justifyContent="flex-end" flexGrow={1}>
-              {displayNotificationBadge && badge}
-            </Flex>
+          <ItemLabel variant="paragraph">{label}</ItemLabel>
+          <Flex alignItems="center" justifyContent="flex-end" ml={2} flexGrow={1}>
+            {displayNotificationBadge && badge}
           </Flex>
         </TransitionInOut>
       </ItemWrapper>

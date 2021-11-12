@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import styled from "styled-components";
 import SideBarContext from "../../../navigation/sideBar";
@@ -14,9 +14,9 @@ const Nav = styled(Flex)`
   height: 100vh;
   max-width: 14.875rem;
   color: ${(props) => props.theme.colors.palette.neutral.c100};
-  border-right: 1px solid ${(props) => props.theme.colors.palette.neutral.c90};
-  background-color: ${(props) => props.theme.colors.palette.neutral.c00};
-  transition: max-width 300ms;
+  border-right: 1px solid ${(props) => props.theme.colors.palette.neutral.c40};
+  background-color: ${(props) => props.theme.colors.palette.background.main};
+  transition: max-width 200ms;
   will-change: max-width;
 
   &.nav-enter {
@@ -33,6 +33,14 @@ const Nav = styled(Flex)`
   }
 `;
 
+const TransparentMouseZone = styled.div`
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: ${(p) => `${p.theme.space[8]}px`};
+  height: 100%;
+`;
+
 export type SideBarProps = {
   children: Array<JSX.Element>;
   onToggle: () => void;
@@ -45,7 +53,7 @@ const SideBar = ({ children, onToggle, isExpanded = true }: SideBarProps): JSX.E
 
   return (
     <SideBarContext.Provider value={providerValue}>
-      <CSSTransition in={isExpanded} timeout={300} classNames="nav">
+      <CSSTransition in={isExpanded} timeout={200} classNames="nav">
         <Nav
           flexDirection="column"
           justifyContent="flex-start"
@@ -55,6 +63,7 @@ const SideBar = ({ children, onToggle, isExpanded = true }: SideBarProps): JSX.E
           onMouseEnter={() => setToggleDisplayed(true)}
           onMouseLeave={() => setToggleDisplayed(false)}
         >
+          <TransparentMouseZone />
           <Toggle isDisplayed={isToggleDisplayed} />
           <Logo />
           <Flex flexDirection="column" justifyContent="flex-start" alignContent="stretch">
