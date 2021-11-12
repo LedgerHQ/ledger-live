@@ -127,7 +127,7 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
   pr: "16px",
 }))``;
 
-export default function Input(props: InputProps): JSX.Element {
+function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>): JSX.Element {
   const {
     value,
     disabled,
@@ -150,6 +150,7 @@ export default function Input(props: InputProps): JSX.Element {
     <>
       {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
       <BaseInput
+        ref={ref}
         {...htmlInputProps}
         disabled={disabled}
         error={error}
@@ -191,3 +192,5 @@ export default function Input(props: InputProps): JSX.Element {
     </div>
   );
 }
+
+export default React.forwardRef(Input);
