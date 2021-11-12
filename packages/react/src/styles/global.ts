@@ -1,7 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
 import { rgba } from "./helpers";
-import reset from "./reset";
 import tippyStyles from "../components/message/Tooltip/styles";
 import { fontStyles } from "../components/asorted/Text/styles";
 
@@ -11,8 +10,6 @@ export type GlobalStyleProps = {
 };
 
 export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
-  ${reset};
-
   body {
     font-family: Inter;
     font-size: 100%;

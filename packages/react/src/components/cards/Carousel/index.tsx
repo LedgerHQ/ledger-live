@@ -171,10 +171,10 @@ const Carousel = ({
             {dismissText}
           </Text>
           <Flex>
-            <Button color="palette.neutral.c00" type="color" onClick={onDismiss}>
+            <Button color="palette.neutral.c00" variant="color" onClick={onDismiss}>
               {dismissConfirmText}
             </Button>
-            <Button color="palette.neutral.c00" type="main" outline onClick={onCancelDismiss}>
+            <Button color="palette.neutral.c00" variant="main" outline onClick={onCancelDismiss}>
               {dismissCancelText}
             </Button>
           </Flex>

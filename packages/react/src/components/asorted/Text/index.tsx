@@ -1,21 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import {
-  fontSize,
-  fontWeight,
-  textAlign,
-  color,
-  space,
-  lineHeight,
-  letterSpacing,
-  system,
-  SpaceProps,
-  layout,
-  LayoutProps,
-} from "styled-system";
+import { fontSize, fontWeight, textAlign, lineHeight, letterSpacing, system } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
-import { TextVariants } from "../../../styles/theme";
+import { fontWeights, TextVariants } from "../../../styles/theme";
 import { textVariantStyle } from "./styles";
+import { sharedStyle, SharedStyleProps } from "../../../styles/system/shared";
 
 const uppercase = system({
   uppercase: {
@@ -41,47 +30,38 @@ export interface TextProps {
   variant?: TextVariants;
   textAlign?: string;
   textTransform?: string;
-  color?: string;
   fontWeight?: string;
-  mt?: number | string;
-  mb?: number | string;
-  ml?: number | string;
-  mr?: number | string;
   lineHeight?: string;
   children: React.ReactNode;
 }
 
-export interface BaseTextProps extends SpaceProps, LayoutProps {
-  fontFamily?: string;
-  ff?: FontFamilies;
-  fontSize?: number | string | TextVariants;
-  variant?: TextVariants;
-  textAlign?: string;
-  color?: string;
-  fontWeight?: string;
-  lineHeight?: string;
-  textTransform?: string;
-  textOverflow?: string;
-}
+export type BaseTextProps = React.HTMLAttributes<HTMLSpanElement> &
+  SharedStyleProps & {
+    fontFamily?: string;
+    ff?: FontFamilies;
+    fontSize?: number | string | TextVariants;
+    variant?: TextVariants;
+    textAlign?: string;
+    fontWeight?: keyof typeof fontWeights | string;
+    lineHeight?: string;
+    textTransform?: string;
+    textOverflow?: string;
+  };
 
-const Text = styled.span.attrs<BaseTextProps>(
-  ({ variant = "body", fontSize, color }: BaseTextProps) => ({
-    fontSize: fontSize ? fontSize : variant,
-    color: color || "palette.neutral.c100",
-  }),
-)<BaseTextProps>`
+const Text = styled.span.attrs<BaseTextProps>(({ variant = "body", fontSize, color }) => ({
+  fontSize: fontSize ? fontSize : variant,
+  color: color ?? "palette.neutral.c100",
+}))<BaseTextProps>`
   font-weight: 500;
   ${(p) => textVariantStyle[p.variant || "body"]}
+  ${sharedStyle}
   ${uppercase};
   ${lineHeight};
   ${fontFamily};
   ${fontSize};
   ${textAlign};
-  ${color};
   ${fontWeight};
-  ${space};
   ${letterSpacing};
-  ${layout}
   ${system({
     textOverflow: true,
   })}

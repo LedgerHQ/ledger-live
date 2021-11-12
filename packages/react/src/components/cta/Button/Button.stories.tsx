@@ -1,19 +1,25 @@
 import React from "react";
-import Button, { ExpandButton, ExpandButtonProps, ButtonTypes, IconPosition } from "./index";
+import Button, { ExpandButton, ExpandButtonProps, ButtonVariants, IconPosition } from "./index";
 import Text from "../../asorted/Text";
 import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/react/";
 import { InvertTheme } from "../../../styles/InvertTheme";
 import Flex from "../../layout/Flex";
+import { StoryTemplate } from "src/components/helpers";
 
 const iconPositions: IconPosition[] = ["left", "right"];
-const buttonTypes: ButtonTypes[] = ["main", "shade", "color", "error"];
+const buttonVariants: ButtonVariants[] = ["main", "shade", "color", "error"];
 
 export default {
   title: "cta/Button",
   component: Button,
+  parameters: {
+    controls: {
+      include: ["variant", "fontSize", "children", "iconPosition", "disabled", "outline"],
+    },
+  },
   argTypes: {
-    type: {
-      options: [undefined, ...buttonTypes],
+    variant: {
+      options: [undefined, "main", "shade", "color", "error"],
       control: {
         type: "radio",
       },
@@ -42,7 +48,7 @@ export default {
   },
 };
 
-export const Overview = (() => {
+const OverViewTemplate = () => {
   const templateProps = { Icon: PlusMedium, children: "Try me", onClick: () => {} };
   const propsArr = [
     { ...templateProps, Icon: undefined },
@@ -52,12 +58,12 @@ export const Overview = (() => {
   ];
   return (
     <Flex flexDirection="column">
-      {buttonTypes.flatMap((buttonType) =>
+      {buttonVariants.flatMap((buttonType) =>
         [false, true].map((outline) => (
           <Flex flexDirection="row" alignItems="center" columnGap="16px" style={{ height: "70px" }}>
             <div style={{ width: "100px" }}>
               <Text variant="small" color="palette.neutral.c70">
-                type="{buttonType}"<br />
+                variant="{buttonType}"<br />
                 outline={`{${outline.toString()}}`}
                 <br />
               </Text>
@@ -66,7 +72,7 @@ export const Overview = (() => {
               <Flex style={{ minWidth: "280px", columnGap: "16px" }}>
                 {[false, true].map((disabled) => (
                   <Button
-                    type={buttonType}
+                    variant={buttonType}
                     outline={outline}
                     disabled={disabled}
                     {...buttonProps}
@@ -79,11 +85,19 @@ export const Overview = (() => {
       )}
     </Flex>
   );
-}).bind({});
+};
+
+export const Overview: StoryTemplate<ButtonVariants> = OverViewTemplate.bind({});
+
+Overview.parameters = { controls: { disabled: true } };
 
 // @ts-expect-error FIXME
 const Template = (args) => {
-  return <Button {...args}>{args.children || "Regular button"}</Button>;
+  return (
+    <Button {...args} type={"submit"}>
+      {args.children || "Regular button"}
+    </Button>
+  );
 };
 
 // @ts-expect-error FIXME
