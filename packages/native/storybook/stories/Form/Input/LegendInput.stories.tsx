@@ -12,7 +12,7 @@ const LegendInputStory = (): JSX.Element => {
     <LegendInput
       legend={text("label", "Ledger")}
       value={value}
-      onChangeText={onChange}
+      onChange={onChange}
       placeholder={"Placeholder"}
     />
   );

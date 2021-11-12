@@ -24,19 +24,32 @@ const PercentButton = styled(TouchableOpacity)<{ active?: boolean }>`
   align-items: center;
 `;
 
+function serialize(value?: number) {
+  return value ? "" + value : "";
+}
+function deserialize(value: string) {
+  try {
+    return parseFloat(value);
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export default function NumberInput({
   onPercentClick,
   max,
   value,
   disabled,
   ...inputProps
-}: InputProps & {
+}: InputProps<number | undefined> & {
   onPercentClick: (percent: number) => void;
   min?: number;
   max?: number;
 }): JSX.Element {
   return (
     <Input
+      serialize={serialize}
+      deserialize={deserialize}
       {...inputProps}
       value={value}
       disabled={disabled}

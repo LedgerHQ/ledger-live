@@ -10,7 +10,7 @@ const SearchInputStory = (): JSX.Element => {
   return (
     <SearchInput
       value={value}
-      onChangeText={onChange}
+      onChange={onChange}
       placeholder={"Placeholder"}
     />
   );
