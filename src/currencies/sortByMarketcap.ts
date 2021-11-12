@@ -81,7 +81,15 @@ export const getMarketcapTickers: () => Promise<string[]> = makeLRUCache(() =>
 export const useMarketcapTickers = (): string[] | null | undefined => {
   const [tickers, setMarketcapTickers] = useState(marketcapTickersCache);
   useEffect(() => {
-    getMarketcapTickers().then(setMarketcapTickers);
+    let isMounted = true;
+
+    getMarketcapTickers().then((data) => {
+      if (isMounted) setMarketcapTickers(data);
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
   return tickers;
 };
