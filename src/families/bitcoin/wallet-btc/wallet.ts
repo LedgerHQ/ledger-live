@@ -133,6 +133,7 @@ class BitcoinLikeWallet {
       )
     );
     let balance = new BigNumber(0);
+    let availableUtxoCount = 0;
     log("btcwallet", "estimateAccountMaxSpendable utxos", utxos);
     utxos.forEach((utxo) => {
       if (
@@ -144,6 +145,7 @@ class BitcoinLikeWallet {
       ) {
         if ((pickUnconfirmedRBF && utxo.rbf) || utxo.block_height !== null) {
           balance = balance.plus(utxo.value);
+          availableUtxoCount += 1;
         }
       }
     });
@@ -151,7 +153,7 @@ class BitcoinLikeWallet {
     const fees =
       feePerByte *
       utils.estimateTxSize(
-        utxos.length,
+        availableUtxoCount,
         1,
         account.xpub.crypto,
         account.xpub.derivationMode

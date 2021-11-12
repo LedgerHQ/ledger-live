@@ -33,7 +33,7 @@ export class DeepFirst extends PickingStrategy {
 
     unspentUtxos = sortBy(unspentUtxos, "block_height");
     // https://metamug.com/article/security/bitcoin-transaction-fee-satoshi-per-byte.html
-    const txSizeNoInput = utils.estimateTxSize(
+    const txSizeNoInput = utils.accurateTxSize(
       0,
       nbOutputsWithoutChange,
       this.crypto,
@@ -41,12 +41,12 @@ export class DeepFirst extends PickingStrategy {
     );
     let fee = txSizeNoInput * feePerByte;
     const sizePerInput =
-      utils.estimateTxSize(1, 0, this.crypto, this.derivationMode) -
-      utils.estimateTxSize(0, 0, this.crypto, this.derivationMode);
+      utils.accurateTxSize(1, 0, this.crypto, this.derivationMode) -
+      utils.accurateTxSize(0, 0, this.crypto, this.derivationMode);
 
     const sizePerOutput =
-      utils.estimateTxSize(0, 1, this.crypto, this.derivationMode) -
-      utils.estimateTxSize(0, 0, this.crypto, this.derivationMode);
+      utils.accurateTxSize(0, 1, this.crypto, this.derivationMode) -
+      utils.accurateTxSize(0, 0, this.crypto, this.derivationMode);
 
     let total = new BigNumber(0);
     const unspentUtxoSelected: Output[] = [];

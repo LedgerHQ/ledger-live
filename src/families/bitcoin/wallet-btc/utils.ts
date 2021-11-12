@@ -92,7 +92,7 @@ export function byteSize(count: number) {
 }
 
 // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L217
-export function estimateTxSize(
+export function accurateTxSize(
   inputCount: number,
   outputCount: number,
   currency: ICrypto,
@@ -114,7 +114,7 @@ export function estimateTxSize(
   // and https://bitcoinops.org/en/tools/calc-size/
   if (derivationMode === DerivationModes.TAPROOT) {
     txSize = fixedSize + 57.75 * inputCount + 43 * outputCount;
-    return Math.ceil(txSize);
+    return txSize;
   }
   const isSegwit =
     derivationMode === DerivationModes.NATIVE_SEGWIT ||
@@ -131,7 +131,18 @@ export function estimateTxSize(
   } else {
     txSize = fixedSize + 148 * inputCount + 43 * outputCount;
   }
-  return Math.ceil(txSize); // We don't allow floating value
+  return txSize;
+}
+
+export function estimateTxSize(
+  inputCount: number,
+  outputCount: number,
+  currency: ICrypto,
+  derivationMode: string
+) {
+  return Math.ceil(
+    accurateTxSize(inputCount, outputCount, currency, derivationMode)
+  ); // We don't allow floating value
 }
 
 // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L253

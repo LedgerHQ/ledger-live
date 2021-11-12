@@ -34,7 +34,7 @@ export class CoinSelect extends PickingStrategy {
     const TOTAL_TRIES = 100000;
     log("picking strategy", "utxos", unspentUtxos);
     // Compute cost of change
-    const fixedSize = utils.estimateTxSize(
+    const fixedSize = utils.accurateTxSize(
       0,
       0,
       this.crypto,
@@ -42,10 +42,10 @@ export class CoinSelect extends PickingStrategy {
     );
     // Size of only 1 output (without fixed size)
     const oneOutputSize =
-      utils.estimateTxSize(0, 1, this.crypto, this.derivationMode) - fixedSize;
+      utils.accurateTxSize(0, 1, this.crypto, this.derivationMode) - fixedSize;
     // Size 1 signed UTXO (signed input)
     const oneInputSize =
-      utils.estimateTxSize(1, 0, this.crypto, this.derivationMode) - fixedSize;
+      utils.accurateTxSize(1, 0, this.crypto, this.derivationMode) - fixedSize;
 
     // Calculate effective value of outputs
     let currentAvailableValue = 0;

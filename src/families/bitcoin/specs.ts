@@ -254,7 +254,12 @@ const bitcoinLikeMutations = ({
     },
     recoverBadTransactionStatus,
     test: ({ account }) => {
-      expect(account.balance.toString()).toBe("0");
+      expect(
+        account.bitcoinResources?.utxos
+          .filter(u => u.blockHeight) // Exclude pending UTXOs
+          .reduce((p,c) => p.plus(c.value), new BigNumber(0))
+          .toString()
+        ).toBe("0");
     },
   },
 ];
