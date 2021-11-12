@@ -112,7 +112,7 @@ const Checkbox = ({
       onChange={onChange}
     />
     {label ? (
-      <Label forwardedAs="label" htmlFor={name}>
+      <Label as="label" htmlFor={name}>
         {label}
       </Label>
     ) : null}
