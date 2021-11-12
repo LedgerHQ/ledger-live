@@ -1,23 +1,42 @@
 import styled, { css } from "styled-components";
 import { typography, TypographyProps } from "styled-system";
-import React, { InputHTMLAttributes, useCallback } from "react";
+import React, { InputHTMLAttributes, useState, useMemo, useCallback } from "react";
 import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
 import { rgba } from "../../../styles/helpers";
 
-export type CommonProps = Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"> &
+type ValueType = HTMLInputElement["value"];
+
+export type CommonProps = Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> &
   TypographyProps & {
     disabled?: boolean;
     error?: string;
     warning?: string;
   };
 
-export type InputProps = CommonProps & {
-  onChange: (e: string) => void;
+export type InputProps<T = ValueType> = CommonProps & {
+  value: T;
+  onChange: (value: T) => void;
   renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   unwrapped?: boolean;
   containerProps?: InputContainerProps;
+  /**
+   * A function can be provided to serialize a value of any type to a string.
+   *
+   * This can be useful to wrap the `<BaseInput />` component (which expects a string)
+   * and create higher-level components that will automatically perform the input/output
+   * conversion to other types.
+   *
+   * *A serializer function should always be used in conjunction with a deserializer function.*
+   */
+  serialize?: (value: T) => ValueType;
+  /**
+   * A deserializer can be provided to convert the html input value from a string to any other type.
+   *
+   * *A deserializer function should always be used in conjunction with a serializer function.*
+   */
+  deserialize?: (value: ValueType) => T;
 };
 
 export type InputContainerProps = React.ComponentProps<typeof InputContainer>;
@@ -129,7 +148,14 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
   pr: "16px",
 }))``;
 
-function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>): JSX.Element {
+// Yes, this is dirty. If you can figure out a better way please change the code :).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const IDENTITY = (_: any): any => _;
+
+function Input<T = ValueType>(
+  props: InputProps<T>,
+  ref: React.ForwardedRef<HTMLInputElement>,
+): JSX.Element {
   const {
     value,
     disabled,
@@ -140,13 +166,16 @@ function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>): JS
     renderRight,
     unwrapped,
     containerProps,
+    serialize = IDENTITY,
+    deserialize = IDENTITY,
     ...htmlInputProps
   } = props;
-  const [focus, setFocus] = React.useState(false);
+  const [focus, setFocus] = useState(false);
+  const inputValue = useMemo(() => serialize(value), [serialize, value]);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
-    [onChange],
+    (e: React.ChangeEvent<HTMLInputElement>) => onChange(deserialize(e.target.value)),
+    [onChange, deserialize],
   );
 
   const inner = (
@@ -159,7 +188,7 @@ function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>): JS
         error={error}
         warning={warning}
         onChange={handleChange}
-        value={value}
+        value={inputValue}
         onFocus={(event) => {
           setFocus(true);
           htmlInputProps.onFocus && htmlInputProps.onFocus(event);
@@ -202,4 +231,6 @@ function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>): JS
   );
 }
 
-export default React.forwardRef(Input);
+export default React.forwardRef(Input) as <T>(
+  props: InputProps<T> & { ref?: React.ForwardedRef<HTMLInputElement> },
+) => ReturnType<typeof Input>;
