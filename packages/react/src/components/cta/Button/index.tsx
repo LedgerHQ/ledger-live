@@ -5,15 +5,15 @@ import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
 
-type ButtonTypes = "main" | "shade" | "error" | "color";
-
+export type ButtonTypes = "main" | "shade" | "error" | "color";
+export type IconPosition = "right" | "left";
 interface BaseProps {
   ff?: string;
   color?: string;
   fontSize?: number;
   type?: ButtonTypes;
   outline?: boolean;
-  iconPosition?: "right" | "left";
+  iconPosition?: IconPosition;
   iconButton?: boolean;
   disabled?: boolean;
 }
@@ -25,10 +25,10 @@ export interface ButtonProps extends BaseProps {
   iconSize?: number;
 }
 const IconContainer = styled.div<{
-  iconPosition: "right" | "left";
+  iconPosition: IconPosition;
 }>`
   display: inline-block;
-  margin-${(p) => (p.iconPosition === "left" ? "right" : "left")}: ${(p) => p.theme.space[4]}px;
+  ${(p) => `${p.iconPosition === "left" ? "margin-right" : "margin-left"}: ${p.theme.space[4]}px;`}
   padding-top: 0.2em;
 `;
 

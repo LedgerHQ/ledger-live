@@ -1,15 +1,19 @@
 import React from "react";
-import Button, { ExpandButton, ExpandButtonProps } from "./index";
-import WalletAdd from "@ledgerhq/icons-ui/react/WalletAddRegular";
+import Button, { ExpandButton, ExpandButtonProps, ButtonTypes, IconPosition } from "./index";
+import Text from "../../asorted/Text";
+import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/react/";
 import { InvertTheme } from "../../../styles/InvertTheme";
 import Flex from "../../layout/Flex";
+
+const iconPositions: IconPosition[] = ["left", "right"];
+const buttonTypes: ButtonTypes[] = ["main", "shade", "color", "error"];
 
 export default {
   title: "cta/Button",
   component: Button,
   argTypes: {
     type: {
-      options: [undefined, "main", "shade", "color", "error"],
+      options: [undefined, ...buttonTypes],
       control: {
         type: "radio",
       },
@@ -24,7 +28,7 @@ export default {
       type: "text",
     },
     iconPosition: {
-      options: ["right", "left"],
+      options: iconPositions,
       control: {
         type: "radio",
       },
@@ -37,6 +41,45 @@ export default {
     },
   },
 };
+
+export const Overview = (() => {
+  const templateProps = { Icon: PlusMedium, children: "Try me", onClick: () => {} };
+  const propsArr = [
+    { ...templateProps, Icon: undefined },
+    { ...templateProps, iconPosition: iconPositions[0] },
+    { ...templateProps, iconPosition: iconPositions[1] },
+    { ...templateProps, children: "" },
+  ];
+  return (
+    <Flex flexDirection="column">
+      {buttonTypes.flatMap((buttonType) =>
+        [false, true].map((outline) => (
+          <Flex flexDirection="row" alignItems="center" columnGap="16px" style={{ height: "70px" }}>
+            <div style={{ width: "100px" }}>
+              <Text variant="small" color="palette.neutral.c70">
+                type="{buttonType}"<br />
+                outline={`{${outline.toString()}}`}
+                <br />
+              </Text>
+            </div>
+            {propsArr.map((buttonProps) => (
+              <Flex style={{ minWidth: "280px", columnGap: "16px" }}>
+                {[false, true].map((disabled) => (
+                  <Button
+                    type={buttonType}
+                    outline={outline}
+                    disabled={disabled}
+                    {...buttonProps}
+                  />
+                ))}
+              </Flex>
+            ))}
+          </Flex>
+        )),
+      )}
+    </Flex>
+  );
+}).bind({});
 
 // @ts-expect-error FIXME
 const Template = (args) => {
@@ -67,7 +110,7 @@ export const IconButton = Template.bind({});
 // @ts-expect-error FIXME
 IconButton.args = {
   children: "",
-  Icon: WalletAdd,
+  Icon: WalletAddMedium,
   iconPosition: "right",
 };
 
