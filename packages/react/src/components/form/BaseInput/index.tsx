@@ -9,6 +9,7 @@ export type CommonProps = Omit<InputHTMLAttributes<HTMLInputElement>, "onChange"
   TypographyProps & {
     disabled?: boolean;
     error?: string;
+    warning?: string;
   };
 
 export type InputProps = CommonProps & {
@@ -29,6 +30,7 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
   ${(p) =>
     p.focus &&
     !p.error &&
+    !p.warning &&
     css`
       border: 1px solid ${p.theme.colors.palette.primary.c80};
       box-shadow: 0 0 0 4px ${rgba(p.theme.colors.palette.primary.c60, 0.48)};
@@ -43,6 +45,15 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
 
   ${(p) =>
     !p.error &&
+    p.warning &&
+    !p.disabled &&
+    css`
+      border: 1px solid ${p.theme.colors.palette.warning.c80};
+    `};
+
+  ${(p) =>
+    !p.error &&
+    !p.warning &&
     !p.disabled &&
     css`
       &:hover {
@@ -101,6 +112,10 @@ export const InputErrorContainer = styled(Text)`
   color: ${(p) => p.theme.colors.palette.error.c100};
   margin-left: 12px;
 `;
+export const InputWarningContainer = styled(Text)`
+  color: ${(p) => p.theme.colors.palette.warning.c80};
+  margin-left: 12px;
+`;
 
 export const InputRenderLeftContainer = styled(FlexBox).attrs(() => ({
   alignItems: "center",
@@ -117,6 +132,7 @@ export default function Input(props: InputProps): JSX.Element {
     value,
     disabled,
     error,
+    warning,
     onChange,
     renderLeft,
     renderRight,
@@ -137,6 +153,7 @@ export default function Input(props: InputProps): JSX.Element {
         {...htmlInputProps}
         disabled={disabled}
         error={error}
+        warning={warning}
         onChange={handleChange}
         value={value}
         onFocus={(event) => {
@@ -162,10 +179,15 @@ export default function Input(props: InputProps): JSX.Element {
 
   return (
     <div>
-      <InputContainer disabled={disabled} focus={focus} error={error}>
+      <InputContainer disabled={disabled} focus={focus} error={error} warning={warning}>
         {inner}
       </InputContainer>
-      {error && !disabled && <InputErrorContainer variant="small">{error}</InputErrorContainer>}
+      {(error || warning) && !disabled && (
+        <FlexBox flexDirection="column" rowGap={2} mt={2}>
+          {error && <InputErrorContainer variant="small">{error}</InputErrorContainer>}
+          {warning && <InputWarningContainer variant="small">{warning}</InputWarningContainer>}
+        </FlexBox>
+      )}
     </div>
   );
 }

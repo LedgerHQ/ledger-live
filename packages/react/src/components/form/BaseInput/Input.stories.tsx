@@ -13,6 +13,10 @@ export default {
       type: "string",
       defaultValue: undefined,
     },
+    warning: {
+      type: "string",
+      defaultValue: undefined,
+    },
   },
 };
 
