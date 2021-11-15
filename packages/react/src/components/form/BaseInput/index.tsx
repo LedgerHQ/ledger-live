@@ -17,8 +17,10 @@ export type InputProps = CommonProps & {
   renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
   unwrapped?: boolean;
+  containerProps?: InputContainerProps;
 };
 
+export type InputContainerProps = React.ComponentProps<typeof InputContainer>;
 export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolean }>`
   display: flex;
   height: 48px;
@@ -137,6 +139,7 @@ function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>): JS
     renderLeft,
     renderRight,
     unwrapped,
+    containerProps,
     ...htmlInputProps
   } = props;
   const [focus, setFocus] = React.useState(false);
@@ -180,7 +183,13 @@ function Input(props: InputProps, ref: React.ForwardedRef<HTMLInputElement>): JS
 
   return (
     <div>
-      <InputContainer disabled={disabled} focus={focus} error={error} warning={warning}>
+      <InputContainer
+        disabled={disabled}
+        focus={focus}
+        error={error}
+        warning={warning}
+        {...containerProps}
+      >
         {inner}
       </InputContainer>
       {(error || warning) && !disabled && (
