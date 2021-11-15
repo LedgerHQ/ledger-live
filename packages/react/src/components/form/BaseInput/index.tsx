@@ -7,18 +7,19 @@ import { rgba } from "../../../styles/helpers";
 
 type ValueType = HTMLInputElement["value"];
 
-export type CommonProps = Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> &
+export type CommonProps = InputHTMLAttributes<HTMLInputElement> &
   TypographyProps & {
     disabled?: boolean;
     error?: string;
     warning?: string;
   };
 
-export type InputProps<T = ValueType> = CommonProps & {
+export type InputProps<T = ValueType> = Omit<CommonProps, "value" | "onChange"> & {
   value: T;
-  onChange: (value: T) => void;
-  renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
-  renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
+  onChange?: (value: T) => void;
+  onChangeEvent?: InputHTMLAttributes<HTMLInputElement>["onChange"];
+  renderLeft?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  renderRight?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
   unwrapped?: boolean;
   containerProps?: InputContainerProps;
   /**
@@ -162,6 +163,7 @@ function Input<T = ValueType>(
     error,
     warning,
     onChange,
+    onChangeEvent,
     renderLeft,
     renderRight,
     unwrapped,
@@ -174,8 +176,11 @@ function Input<T = ValueType>(
   const inputValue = useMemo(() => serialize(value), [serialize, value]);
 
   const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => onChange(deserialize(e.target.value)),
-    [onChange, deserialize],
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange && onChange(deserialize(e.target.value));
+      onChangeEvent && onChangeEvent(e);
+    },
+    [onChange, onChangeEvent, deserialize],
   );
 
   const inner = (
