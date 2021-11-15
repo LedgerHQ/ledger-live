@@ -2,7 +2,7 @@
   "private": "true",
   "devDependencies": {
     "@playwright/test": "^1.16.3",
-    "concurrently": "^6.3.0",
+    "concurrently": "^6.4.0",
     "husky": "^7.0.4",
     "json": "^11.0.0",
     "lint-staged": "^11.2.6"
