@@ -30,6 +30,7 @@ const networkInfo: NetworkInfoRaw = {
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [
     "bitcoinResources.walletAccount", // it is not "stable"
+    "bitcoinResources.utxos", // TODO: fix ordering
   ],
   scanAccounts: [scanAccounts1],
   accounts: [
