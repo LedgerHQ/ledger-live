@@ -27,6 +27,9 @@ const networkInfo: NetworkInfoRaw = {
   },
 };
 const dataset: CurrenciesData<Transaction> = {
+  FIXME_ignoreAccountFields: [
+    "bitcoinResources.walletAccount", // it is not "stable"
+  ],
   scanAccounts: [scanAccounts1],
   accounts: [
     {

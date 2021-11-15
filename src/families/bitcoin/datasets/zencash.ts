@@ -1,6 +1,9 @@
 import type { CurrenciesData } from "../../../types";
 import type { Transaction } from "../types";
 const dataset: CurrenciesData<Transaction> = {
+  FIXME_ignoreAccountFields: [
+    "bitcoinResources.walletAccount", // it is not "stable"
+  ],
   scanAccounts: [
     {
       name: "zencash seed 1",
