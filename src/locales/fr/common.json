@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "Aucun appareil trouvé",
-      "description": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+      "description": {
+        "ios": {
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+        },
+        "android": {
+          "nanoS": "Assurez-vous que votre {{productName}} est déverrouillé et que le câble est branché.",
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé, avec le Bluetooth activé ou le câble branché."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "Échec de la connexion avec le Gestionnaire",
-      "description": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+      "description": {
+        "ios": {
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+        },
+        "android": {
+          "nanoS": "Assurez-vous que votre {{productName}} est déverrouillé et que le câble est branché.",
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé, avec le Bluetooth activé ou le câble branché."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "Les récompenses sont inférieures aux frais estimés pour les demander.",
@@ -577,6 +593,9 @@
     },
     "PolkadotValidatorsRequired": {
       "title": "Sélectionnez au moins un validateur."
+    },
+    "TaprootNotActivated": {
+      "title": "Taproot n'est pas encore activé sur le mainnet"
     },
     "generic": {
       "title": "{{message}}",

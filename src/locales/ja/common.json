@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "Sorry, no device found",
-      "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "Sorry, Manager connection failed",
-      "description": "Please make sure your {{productName}} is unlocked with Bluetooth enabled."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "The rewards are smaller than the estimated fees to claim them.",
@@ -577,6 +593,9 @@
     },
     "PolkadotValidatorsRequired": {
       "title": "You must select at least one validator"
+    },
+    "TaprootNotActivated": {
+      "title": "Taproot mainnet is not activated yet"
     },
     "generic": {
       "title": "{{message}}",

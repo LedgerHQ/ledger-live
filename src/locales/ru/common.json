@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "К сожалению, устройство не найдено",
-      "description": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+      "description": {
+        "ios": {
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+        },
+        "android": {
+          "nanoS": "Обязательно разблокируйте {{productName}} и подключите при помощи кабеля.",
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и подключён по кабелю, либо на нём включён Bluetooth."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "Извините, не удалось подключиться к Диспетчеру",
-      "description": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+      "description": {
+        "ios": {
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+        },
+        "android": {
+          "nanoS": "Обязательно разблокируйте {{productName}} и подключите при помощи кабеля.",
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и подключён по кабелю, либо на нём включён Bluetooth."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "Размер комиссии превышает размер вознаграждения.",
@@ -577,6 +593,9 @@
     },
     "PolkadotValidatorsRequired": {
       "title": "Вы должны выбрать хотя бы одного валидатора"
+    },
+    "TaprootNotActivated": {
+      "title": "Мейннет Taproot ещё не активирован"
     },
     "generic": {
       "title": "{{message}}",
@@ -1845,7 +1864,7 @@
             "street1Placeholder": "Например: ул. Маяковского 50",
             "street2Placeholder": "Например: ул. Маяковского 50",
             "cityPlaceholder": "Например: Москва",
-            "postalCodePlaceholder": "Введите индекс из 5 цифр",
+            "postalCodePlaceholder": "Укажите индекс",
             "statePlaceholder": "Выберите штат/область",
             "dateOfBirthPlaceholder": "ГГГГ-ММ-ДД",
             "firstNameError": "Укажите имя, чтобы продолжить",

@@ -95,8 +95,8 @@
       "description": "请输入账户名。"
     },
     "AccountNeedResync": {
-      "title": "Please try again",
-      "description": "Account is outdated. A synchronisation is needed"
+      "title": "请重试",
+      "description": "账户已过期。需要同步"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "收币人账户没有选择加入所选的 ASA。"
@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "抱歉，未找到设备",
-      "description": "请确保您的 {{productName}} 已解锁，同时已启用蓝牙。"
+      "description": {
+        "ios": {
+          "nanoX": "请确保您的 {{productName}} 已解锁，同时已启用蓝牙。"
+        },
+        "android": {
+          "nanoS": "请确保您的 {{productName}} 已解锁，并已连接好数据线。",
+          "nanoX": "请确保您的 {{productName}} 已解锁，已连接好数据线或已启用蓝牙。"
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "抱歉，管理器连接失败",
-      "description": "请确保您的 {{productName}} 已解锁，同时已启用蓝牙。"
+      "description": {
+        "ios": {
+          "nanoX": "请确保您的 {{productName}} 已解锁，同时已启用蓝牙。"
+        },
+        "android": {
+          "nanoS": "请确保您的 {{productName}} 已解锁，并已连接好数据线。",
+          "nanoX": "请确保您的 {{productName}} 已解锁，已连接好数据线或已启用蓝牙。"
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "奖励少于领取奖金的估算费用。",
@@ -578,6 +594,9 @@
     "PolkadotValidatorsRequired": {
       "title": "您必须至少选择一个验证器"
     },
+    "TaprootNotActivated": {
+      "title": "Taproot 主网尚未激活"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
@@ -679,8 +698,8 @@
         "description": "将 ATOM 委托出去，今天就赚取奖励。"
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "家庭装",
+        "description": "通过 3 个 Nano S 使全家入门加密"
       },
       "buyCrypto": {
         "title": "购买加密资产",
@@ -3616,7 +3635,7 @@
     "connected": "已连接",
     "disconnected": "已断开连接",
     "warningdisconnected": "在 dApp、WalletConnect 和 Ledger Live 之间出现了连接问题。请稍候片刻或重新发起连接",
-    "info": "You can now access the {{name}} dApp on your web browser.",
+    "info": "您现在可以从您的浏览器上访问 {{name}} dApp 去中心化应用",
     "warning": "通过 dApp（去中心化应用）分享接收地址并不安全。在分享地址以接收资金时，要一直使用 Ledger Live。",
     "isconnecting": "正在连接，请稍候……",
     "disconnect": "断开连接",

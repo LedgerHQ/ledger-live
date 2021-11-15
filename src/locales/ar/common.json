@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "عفوًا، لم يتم العثور على أي جهاز",
-      "description": "يرجى التأكد من إلغاء قفل جهاز {{productName}} الخاص بك مع تمكين خاصية البلوتوث."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "عذرًا، فشل الاتصال بالمدير",
-      "description": "يرجى التأكد من إلغاء قفل جهاز {{productName}} الخاص بك مع تمكين خاصية البلوتوث."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "المكافآت أصغر من الرسوم المقدرة للمطالبة بهم.",
@@ -577,6 +593,9 @@
     },
     "PolkadotValidatorsRequired": {
       "title": "يجب عليك تحديد مدقق واحد على الأقل"
+    },
+    "TaprootNotActivated": {
+      "title": "Taproot mainnet is not activated yet"
     },
     "generic": {
       "title": "{{message}}",
