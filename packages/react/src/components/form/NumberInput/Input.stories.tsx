@@ -28,16 +28,14 @@ export const Number = ({
   min,
   max,
   ...otherArgs
-}: InputProps & { max: number; min: number }): JSX.Element => {
+}: InputProps<number | undefined> & { max: number; min: number }): JSX.Element => {
   const [value, setValue] = React.useState(24.42);
 
-  const onChange = (val: string) => {
-    if (val) {
-      let value = parseFloat(val);
-      if (value > max) value = max;
-      if (value < min) value = min;
-      setValue(value);
-    }
+  const onChange = (value?: number) => {
+    if (!value) return setValue(0);
+    if (value > max) value = max;
+    if (value < min) value = min;
+    setValue(value);
   };
 
   const onPercentClick = (percent: number) => {

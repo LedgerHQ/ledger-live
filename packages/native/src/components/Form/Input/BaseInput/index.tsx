@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useCallback } from "react";
 import { View, TextInputProps, ColorValue } from "react-native";
 import styled, { css } from "styled-components/native";
 import Text from "../../../Text";
@@ -9,9 +9,28 @@ export type CommonProps = TextInputProps & {
   error?: string;
 };
 
-export type InputProps = CommonProps & {
-  renderLeft?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
-  renderRight?: ((props: CommonProps) => React.ReactNode) | React.ReactNode;
+export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
+  renderLeft?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  renderRight?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  value: T;
+  onChange?: (value: T) => void;
+  onChangeEvent?: TextInputProps["onChange"];
+  /**
+   * A function can be provided to serialize a value of any type to a string.
+   *
+   * This can be useful to wrap the `<BaseInput />` component (which expects a string)
+   * and create higher-level components that will automatically perform the input/output
+   * conversion to other types.
+   *
+   * *A serializer function should always be used in conjunction with a deserializer function.*
+   */
+  serialize?: (value: T) => string;
+  /**
+   * A deserializer can be provided to convert the html input value from a string to any other type.
+   *
+   * *A deserializer function should always be used in conjunction with a serializer function.*
+   */
+  deserialize?: (value: string) => T;
 };
 
 const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
@@ -83,9 +102,34 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
   pr: "16px",
 }))``;
 
-export default function Input(props: InputProps): JSX.Element {
-  const { value, disabled, error, renderLeft, renderRight, ...textInputProps } =
-    props;
+// Yes, this is dirty. If you can figure out a better way please change the code :).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const IDENTITY = (_: any): any => _;
+
+export default function Input<T = string>(props: InputProps<T>): JSX.Element {
+  const {
+    value,
+    onChange,
+    onChangeText,
+    onChangeEvent,
+    disabled,
+    error,
+    renderLeft,
+    renderRight,
+    serialize = IDENTITY,
+    deserialize = IDENTITY,
+    ...textInputProps
+  } = props;
+
+  const inputValue = useMemo(() => serialize(value), [serialize, value]);
+
+  const handleChange = useCallback(
+    (value: string) => {
+      onChange && onChange(deserialize(value));
+      onChangeText && onChangeText(value);
+    },
+    [onChange, onChangeText, deserialize]
+  );
 
   const [focus, setFocus] = React.useState(false);
 
@@ -95,10 +139,12 @@ export default function Input(props: InputProps): JSX.Element {
         {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
         <BaseInput
           {...textInputProps}
+          value={inputValue}
+          onChange={onChangeEvent}
+          onChangeText={handleChange}
           editable={!disabled}
           disabled={disabled}
           error={error}
-          value={value}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
         />

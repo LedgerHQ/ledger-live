@@ -24,22 +24,35 @@ const MaxButton = styled.button<{ active?: boolean }>`
   }
 `;
 
+function serialize(value?: number) {
+  return value ? "" + value : "";
+}
+function deserialize(value: string) {
+  try {
+    return parseFloat(value);
+  } catch (error) {
+    return undefined;
+  }
+}
+
 export default function NumberInput({
+  value,
   onPercentClick,
   max,
-  value,
   disabled,
   ...inputProps
-}: InputProps & {
+}: InputProps<number | undefined> & {
   onPercentClick: (percent: number) => void;
 }): JSX.Element {
   return (
     <Input
+      serialize={serialize}
+      deserialize={deserialize}
       {...inputProps}
+      type={"number"}
       value={value}
       max={max}
       disabled={disabled}
-      type={"number"}
       renderRight={
         <FlexBox alignItems={"center"} justifyContent={"center"} py={"3px"} mr={"8px"}>
           {[0.25, 0.5, 0.75, 1].map((percent) => (

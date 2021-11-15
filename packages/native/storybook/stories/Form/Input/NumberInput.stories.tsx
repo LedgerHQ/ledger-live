@@ -5,19 +5,16 @@ import { number } from "@storybook/addon-knobs";
 
 const NumberInputStory = () => {
   const [value, setValue] = React.useState(24.42);
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const max = number("max", undefined as any);
-  const min = number("min", undefined as any);
-  /* esline-enable @typescript-eslint/no-explicit-any */
+  const max = number("max", 349);
+  const min = number("min", 0);
 
   // FixMe: Naive implementation, only for story demo
-  const onChange = (value: string) => {
-    let nb = parseInt(value);
+  const onChange = (nb?: number) => {
     if (nb) {
       if (max && nb > max) nb = max;
       if (min && nb < min) nb = min;
+      setValue(nb);
     }
-    setValue(nb);
   };
 
   const onPercentClick = (percent: number) => {
@@ -26,8 +23,8 @@ const NumberInputStory = () => {
 
   return (
     <NumberInput
-      value={value.toString()}
-      onChangeText={onChange}
+      value={value}
+      onChange={onChange}
       onPercentClick={onPercentClick}
       placeholder={"Placeholder"}
       min={min}

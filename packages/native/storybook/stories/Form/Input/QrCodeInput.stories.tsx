@@ -10,7 +10,7 @@ const QrCodeInputStory = (): JSX.Element => {
   return (
     <QrCodeInput
       value={value}
-      onChangeText={onChange}
+      onChange={onChange}
       placeholder={"Placeholder"}
     />
   );
