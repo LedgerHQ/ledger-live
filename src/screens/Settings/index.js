@@ -11,7 +11,7 @@ import { accountsSelector } from "../../reducers/accounts";
 import SettingsCard from "../../components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
 import Accounts from "../../icons/Accounts";
-import LiveLogoIcon from "../../icons/LiveLogoIcon";
+import LiveLogo from "../../icons/LiveLogo";
 import Atom from "../../icons/Atom";
 import Help from "../../icons/Help";
 import Display from "../../icons/Display";
@@ -72,7 +72,7 @@ export default function Settings({ navigation }: Props) {
         <SettingsCard
           title={t("settings.about.title")}
           desc={t("settings.about.desc")}
-          icon={<LiveLogoIcon size={16} color={colors.live} />}
+          icon={<LiveLogo size={16} color={colors.live} />}
           onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         />
         <SettingsCard

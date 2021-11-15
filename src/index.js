@@ -13,6 +13,7 @@ import React, {
   useEffect,
 } from "react";
 import { connect, useDispatch, useSelector } from "react-redux";
+
 import {
   StyleSheet,
   View,
@@ -35,6 +36,7 @@ import { pairId } from "@ledgerhq/live-common/lib/countervalues/helpers";
 import { ToastProvider } from "@ledgerhq/live-common/lib/notifications/ToastProvider";
 import { PlatformAppProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider";
 import { getProvider } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/providers";
+
 import logger from "./logger";
 import { saveAccounts, saveBle, saveSettings, saveCountervalues } from "./db";
 import {
@@ -458,6 +460,7 @@ export default class Root extends Component<
                                       <ToastProvider>
                                         <NotificationsProvider>
                                           <SnackbarContainer />
+
                                           <App
                                             importDataString={importDataString}
                                           />
