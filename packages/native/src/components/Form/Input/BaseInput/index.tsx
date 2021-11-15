@@ -4,14 +4,17 @@ import styled, { css } from "styled-components/native";
 import Text from "../../../Text";
 import FlexBox from "../../../Layout/Flex";
 
-export type CommonProps<T = string> = Omit<
-  TextInputProps,
-  "value" | "onChange"
-> & {
-  value: T;
-  onChange: (value: T) => void;
+export type CommonProps = TextInputProps & {
   disabled?: boolean;
   error?: string;
+};
+
+export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
+  renderLeft?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  renderRight?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  value: T;
+  onChange?: (value: T) => void;
+  onChangeEvent?: TextInputProps["onChange"];
   /**
    * A function can be provided to serialize a value of any type to a string.
    *
@@ -28,11 +31,6 @@ export type CommonProps<T = string> = Omit<
    * *A deserializer function should always be used in conjunction with a serializer function.*
    */
   deserialize?: (value: string) => T;
-};
-
-export type InputProps<T = string> = CommonProps<T> & {
-  renderLeft?: ((props: CommonProps<T>) => React.ReactNode) | React.ReactNode;
-  renderRight?: ((props: CommonProps<T>) => React.ReactNode) | React.ReactNode;
 };
 
 const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
@@ -113,6 +111,7 @@ export default function Input<T = string>(props: InputProps<T>): JSX.Element {
     value,
     onChange,
     onChangeText,
+    onChangeEvent,
     disabled,
     error,
     renderLeft,
@@ -126,8 +125,8 @@ export default function Input<T = string>(props: InputProps<T>): JSX.Element {
 
   const handleChange = useCallback(
     (value: string) => {
-      onChange(deserialize(value));
-      if (onChangeText) onChangeText(value);
+      onChange && onChange(deserialize(value));
+      onChangeText && onChangeText(value);
     },
     [onChange, onChangeText, deserialize]
   );
@@ -141,6 +140,7 @@ export default function Input<T = string>(props: InputProps<T>): JSX.Element {
         <BaseInput
           {...textInputProps}
           value={inputValue}
+          onChange={onChangeEvent}
           onChangeText={handleChange}
           editable={!disabled}
           disabled={disabled}
