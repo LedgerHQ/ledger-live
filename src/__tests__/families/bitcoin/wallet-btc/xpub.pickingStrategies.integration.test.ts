@@ -3,7 +3,10 @@ import * as bip39 from "bip39";
 import * as bitcoin from "bitcoinjs-lib";
 import coininfo from "coininfo";
 import BigNumber from "bignumber.js";
-import { DerivationModes } from "../../../../families/bitcoin/wallet-btc/types";
+import {
+  DerivationModes,
+  OutputInfo,
+} from "../../../../families/bitcoin/wallet-btc/types";
 import Xpub from "../../../../families/bitcoin/wallet-btc/xpub";
 import BitcoinLikeExplorer from "../../../../families/bitcoin/wallet-btc/explorer";
 import Crypto from "../../../../families/bitcoin/wallet-btc/crypto/bitcoin";
@@ -41,6 +44,17 @@ describe("testing xpub legacy transactions", () => {
     signer,
     xpub,
   };
+
+  function outputs(amount: number): OutputInfo[] {
+    return [
+      {
+        address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
+        isChange: false,
+        script: Buffer.from([]),
+        value: new BigNumber(amount),
+      },
+    ];
+  }
 
   it("merge output strategy should be correct", async () => {
     // Initialize the xpub with 2 txs. So that it has 2 utxo
@@ -134,17 +148,15 @@ describe("testing xpub legacy transactions", () => {
     );
     let res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(10000),
-      0,
-      1
+      outputs(10000),
+      0
     );
     expect(res.unspentUtxos.length).toEqual(1); // only 1 utxo is enough
     expect(Number(res.unspentUtxos[0].value)).toEqual(300000000); // use cheaper utxo first
     res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(500000000),
-      0,
-      1
+      outputs(500000000),
+      0
     );
     expect(res.unspentUtxos.length).toEqual(2); // need 2 utxo
     expect(
@@ -161,17 +173,15 @@ describe("testing xpub legacy transactions", () => {
     );
     let res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(10000),
-      0,
-      1
+      outputs(10000),
+      0
     );
     expect(res.unspentUtxos.length).toEqual(1); // only 1 utxo is enough
     expect(Number(res.unspentUtxos[0].value)).toEqual(5000000000); // use old utxo first
     res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(5200000000),
-      0,
-      1
+      outputs(5200000000),
+      0
     );
     expect(res.unspentUtxos.length).toEqual(2); // need 2 utxo
     expect(
@@ -323,45 +333,40 @@ describe("testing xpub legacy transactions", () => {
     );
     let res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(10000),
-      10,
-      1
+      outputs(10000),
+      10
     );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(100000000);
 
     res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(290000000),
-      10,
-      1
+      outputs(290000000),
+      10
     );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(300000000);
 
     res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(500000000),
-      10,
-      1
+      outputs(500000000),
+      10
     );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(600000000);
 
     res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(800000000),
-      10,
-      1
+      outputs(800000000),
+      10
     );
     expect(res.unspentUtxos.length).toEqual(1);
     expect(Number(res.unspentUtxos[0].value)).toEqual(5000000000);
 
     res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(5000000000),
-      10,
-      1
+      outputs(5000000000),
+      10
     );
     expect(res.unspentUtxos.length).toEqual(2);
     expect(
@@ -370,9 +375,8 @@ describe("testing xpub legacy transactions", () => {
 
     res = await utxoPickingStrategy.selectUnspentUtxosToUse(
       dataset.xpub,
-      new BigNumber(5600000000),
-      10,
-      1
+      outputs(5600000000),
+      10
     );
     expect(res.unspentUtxos.length).toEqual(3);
     expect(

@@ -1,6 +1,8 @@
 import { bech32m, bech32, BechLib } from "bech32";
 import * as utils from "../../../../families/bitcoin/wallet-btc/utils";
 import { Currency } from "../../../../families/bitcoin/wallet-btc/crypto/types";
+import cryptoFactory from "../../../../families/bitcoin/wallet-btc/crypto/factory";
+import { DerivationModes } from "../../../../families/bitcoin/wallet-btc";
 
 function validateAddrs(
   addresses: string[],
@@ -207,4 +209,107 @@ describe("Unit tests for various utils functions", () => {
     validateAddrs(["7i1KkJHUjfw2MrbtXK5DQkhz7zd36st9GG"], "stakenet", false);
     validateAddrs(["S6NMcEfYbavHrP3Uo1wbEUvKhAbKeMugaa"], "stealthcoin", false);
   });
+});
+
+describe("Unit tests for maxTxSize", () => {
+  const btc = cryptoFactory("bitcoin_testnet");
+  it("Empty tx non-segwit", () => {
+    const s = utils.maxTxSizeCeil(0, [], false, btc, DerivationModes.LEGACY);
+    expect(s).toEqual(10);
+  });
+  it("Empty tx segwit", () => {
+    const s = utils.maxTxSizeCeil(
+      0,
+      [],
+      false,
+      btc,
+      DerivationModes.NATIVE_SEGWIT
+    );
+    expect(s).toEqual(11);
+  });
+  it("1 p2wpkh input 1 p2wpkh output", () => {});
+
+  const tr = "tb1pdedptfps5k6hmzars9ks93ejsujh28kw5dhe06gutt9svap40j8qql2dw2";
+  const sh = "2Mv9bnjkBUr1GfCybJc7XmnJ5VG4SAT3shT";
+  const pkh = "mkQiYQGCkCC7Wus3vfhfTDjgJzQK554evn";
+  const wpkh = "tb1qhff3j7euu6t3lv8s5gsy9t5x82wuhfw5z863gj";
+  const p2tr = DerivationModes.TAPROOT;
+  const p2sh = DerivationModes.SEGWIT;
+  const p2pkh = DerivationModes.LEGACY;
+  const p2wpkh = DerivationModes.NATIVE_SEGWIT;
+
+  test.each([
+    // In 148 out 34
+    [0, [], false, p2pkh, 10],
+    [0, [], true, p2pkh, 44],
+    [0, [pkh], false, p2pkh, 44],
+    [0, [pkh], true, p2pkh, 78],
+    [1, [pkh], true, p2pkh, 226],
+    [2, [pkh], true, p2pkh, 374],
+    [1, [wpkh], true, p2pkh, 223],
+    [1, [sh], true, p2pkh, 224],
+    [1, [tr], true, p2pkh, 235],
+
+    // In 68 out 31
+    [0, [], false, p2wpkh, 11],
+    [0, [], true, p2wpkh, 42],
+    [1, [], false, p2wpkh, 79],
+    [1, [], true, p2wpkh, 110],
+    [2, [], true, p2wpkh, 178],
+
+    // In 90 out 32, scriptSig 22
+    [0, [], false, p2sh, 11],
+    [0, [], true, p2sh, 43],
+    [1, [], false, p2sh, 101],
+    [1, [sh], false, p2sh, 133],
+    [2, [sh], false, p2sh, 223],
+
+    // Fixed 10.5 In 57.75 out 43
+    [0, [], false, p2tr, 11],
+    [0, [], true, p2tr, 54],
+    [1, [], true, p2tr, Math.ceil(53.5 + 57.75 * 1)],
+    [2, [], true, p2tr, Math.ceil(53.5 + 57.75 * 2)],
+    [3, [], true, p2tr, Math.ceil(53.5 + 57.75 * 3)],
+
+    // 0xfc=252 inputs
+    [247, [], true, p2tr, Math.ceil(53.5 + 57.75 * 247)],
+    [248, [], true, p2tr, Math.ceil(53.5 + 57.75 * 248)],
+    [249, [], true, p2tr, Math.ceil(53.5 + 57.75 * 249)],
+    [250, [], true, p2tr, Math.ceil(53.5 + 57.75 * 250)],
+    [251, [], true, p2tr, Math.ceil(53.5 + 57.75 * 251)],
+    [252, [], true, p2tr, Math.ceil(53.5 + 57.75 * 252)],
+    // 0xfd=253 inputs will add 2 bytes for >= 0xfd
+    [253, [], true, p2tr, Math.ceil(53.5 + 57.75 * 253 + 2)],
+    [
+      256 * 256 - 1,
+      [],
+      true,
+      p2tr,
+      Math.ceil(53.5 + 57.75 * (256 * 256 - 1) + 2),
+    ],
+    // 0xffff inputs will add 4 bytes
+    [256 * 256, [], true, p2tr, Math.ceil(53.5 + 57.75 * (256 * 256) + 4)],
+
+    // test address with witness version 16 and witness program [0x01, 0x02] => tb1sqypqyuzpgh
+    [
+      2,
+      [tr, sh, pkh, wpkh, "tb1sqypqyuzpgh"],
+      false,
+      p2wpkh,
+      Math.ceil(10.5 + 68 * 2 + 43 + 32 + 34 + 31 + 13),
+    ],
+  ])(
+    "%i, %s, %s, %s => %i",
+    (inputCount, outputAddrs, useChange, derivationMode, exp) => {
+      const s = utils.maxTxSizeCeil(
+        inputCount,
+        outputAddrs,
+        useChange,
+        btc,
+        derivationMode
+      );
+      //const s = utils.estimateTxSize(inputCount, outputAddrs.length + (useChange ? 1 : 0), btc, derivationMode);
+      expect(s).toEqual(exp);
+    }
+  );
 });

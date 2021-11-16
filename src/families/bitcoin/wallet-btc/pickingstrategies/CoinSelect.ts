@@ -7,14 +7,14 @@ import { PickingStrategy } from "./types";
 import * as utils from "../utils";
 import { DeepFirst } from "./DeepFirst";
 import { log } from "@ledgerhq/logs";
+import { OutputInfo } from "..";
 
 export class CoinSelect extends PickingStrategy {
   // eslint-disable-next-line class-methods-use-this
   async selectUnspentUtxosToUse(
     xpub: Xpub,
-    amount: BigNumber,
-    feePerByte: number,
-    nbOutputsWithoutChange: number
+    outputs: OutputInfo[],
+    feePerByte: number
   ) {
     // get the utxos to use as input
     // from all addresses of the account
@@ -34,18 +34,30 @@ export class CoinSelect extends PickingStrategy {
     const TOTAL_TRIES = 100000;
     log("picking strategy", "utxos", unspentUtxos);
     // Compute cost of change
-    const fixedSize = utils.accurateTxSize(
+    const fixedSize = utils.maxTxSize(
       0,
-      0,
+      [],
+      false,
       this.crypto,
       this.derivationMode
     );
+    const outputAddresses = outputs.map((o) => o.address);
     // Size of only 1 output (without fixed size)
     const oneOutputSize =
-      utils.accurateTxSize(0, 1, this.crypto, this.derivationMode) - fixedSize;
+      outputAddresses.length > 0
+        ? utils.maxTxSize(
+            0,
+            [outputAddresses[0]],
+            false,
+            this.crypto,
+            this.derivationMode
+          ) - fixedSize
+        : utils.maxTxSize(0, [], true, this.crypto, this.derivationMode) -
+          fixedSize;
     // Size 1 signed UTXO (signed input)
     const oneInputSize =
-      utils.accurateTxSize(1, 0, this.crypto, this.derivationMode) - fixedSize;
+      utils.maxTxSize(1, [], false, this.crypto, this.derivationMode) -
+      fixedSize;
 
     // Calculate effective value of outputs
     let currentAvailableValue = 0;
@@ -70,12 +82,16 @@ export class CoinSelect extends PickingStrategy {
     // Get no inputs fees
     // At beginning, there are no outputs in tx, so noInputFees are fixed fees
     const notInputFees =
-      feePerByte * (fixedSize + oneOutputSize * nbOutputsWithoutChange);
+      feePerByte * (fixedSize + oneOutputSize * outputs.length);
 
     // Start coin selection algorithm (according to SelectCoinBnb from Bitcoin Core)
     let currentValue = 0;
     const currentSelection: boolean[] = [];
 
+    const amount = outputs.reduce(
+      (sum, output) => sum.plus(output.value),
+      new BigNumber(0)
+    );
     // Actual amount we are targetting
     const actualTarget = notInputFees + amount.toNumber();
 
@@ -102,9 +118,10 @@ export class CoinSelect extends PickingStrategy {
           currentSelectionNeedChangeoutput = true;
           currentWaste =
             feePerByte *
-            utils.estimateTxSize(
+            utils.maxTxSizeCeil(
               nbInput,
-              nbOutputsWithoutChange + 1,
+              outputAddresses,
+              true,
               this.crypto,
               this.derivationMode
             );
@@ -113,9 +130,10 @@ export class CoinSelect extends PickingStrategy {
           currentSelectionNeedChangeoutput = false;
           currentWaste =
             feePerByte *
-              utils.estimateTxSize(
+              utils.maxTxSizeCeil(
                 nbInput,
-                nbOutputsWithoutChange,
+                outputAddresses,
+                false,
                 this.crypto,
                 this.derivationMode
               ) +
@@ -170,11 +188,10 @@ export class CoinSelect extends PickingStrategy {
       }
       const fee =
         feePerByte *
-        utils.estimateTxSize(
+        utils.maxTxSizeCeil(
           unspentUtxoSelected.length,
-          bestSelectionNeedChangeoutput
-            ? nbOutputsWithoutChange + 1
-            : nbOutputsWithoutChange,
+          outputAddresses,
+          bestSelectionNeedChangeoutput,
           this.crypto,
           this.derivationMode
         );
@@ -191,11 +208,6 @@ export class CoinSelect extends PickingStrategy {
       this.derivationMode,
       this.excludedUTXOs
     );
-    return pickingStrategy.selectUnspentUtxosToUse(
-      xpub,
-      amount,
-      feePerByte,
-      nbOutputsWithoutChange
-    );
+    return pickingStrategy.selectUnspentUtxosToUse(xpub, outputs, feePerByte);
   }
 }

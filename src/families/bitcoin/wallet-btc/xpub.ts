@@ -288,9 +288,8 @@ class Xpub extends EventEmitter {
       needChangeoutput,
     } = await params.utxoPickingStrategy.selectUnspentUtxosToUse(
       this,
-      params.amount,
-      params.feePerByte,
-      outputs.length
+      outputs,
+      params.feePerByte
     );
 
     const txHexs = await Promise.all(
@@ -320,9 +319,10 @@ class Xpub extends EventEmitter {
       (utxo, index) => [txs[index].account, txs[index].index]
     );
 
-    const txSize = utils.estimateTxSize(
+    const txSize = utils.maxTxSizeCeil(
       unspentUtxoSelected.length,
-      outputs.length + 1,
+      outputs.map((o) => o.address),
+      true,
       this.crypto,
       this.derivationMode
     );

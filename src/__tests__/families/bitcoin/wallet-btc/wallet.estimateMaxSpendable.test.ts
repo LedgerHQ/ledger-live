@@ -57,9 +57,10 @@ describe("testing estimateMaxSpendable", () => {
     expect(maxSpendable.toNumber()).toEqual(
       balance -
         feesPerByte *
-          utils.estimateTxSize(
+          utils.maxTxSizeCeil(
             2,
-            1,
+            [],
+            true,
             account.xpub.crypto,
             account.xpub.derivationMode
           )

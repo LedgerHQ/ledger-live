@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { OutputInfo } from "..";
 import { ICrypto } from "../crypto/types";
 import { Output } from "../storage/types";
 import Xpub from "../xpub";
@@ -29,9 +30,8 @@ export abstract class PickingStrategy {
 
   abstract selectUnspentUtxosToUse(
     xpub: Xpub,
-    amount: BigNumber,
-    feePerByte: number,
-    nbOutputsWithoutChange: number
+    outputs: OutputInfo[],
+    feePerByte: number
   ): Promise<{
     unspentUtxos: Output[];
     totalValue: BigNumber;

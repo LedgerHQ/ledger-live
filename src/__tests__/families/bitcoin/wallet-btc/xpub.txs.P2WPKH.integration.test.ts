@@ -167,9 +167,10 @@ describe.skip("testing xpub native segwit transactions", () => {
     await xpubs[1].xpub.sync();
 
     expectedFee1 =
-      utils.estimateTxSize(
+      utils.maxTxSizeCeil(
         inputs.length,
-        outputs.length,
+        outputs.map((o) => o.address),
+        false,
         crypto,
         DerivationModes.NATIVE_SEGWIT
       ) * 100;

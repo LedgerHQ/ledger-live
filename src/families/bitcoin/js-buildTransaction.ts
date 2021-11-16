@@ -44,7 +44,8 @@ export const buildTransaction = async (
     walletAccount,
     transaction.feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     transaction.utxoStrategy.excludeUTXOs,
-    transaction.utxoStrategy.pickUnconfirmedRBF
+    transaction.utxoStrategy.pickUnconfirmedRBF,
+    [transaction.recipient]
   );
   log("btcwallet", "building transaction", transaction);
   const txInfo = await wallet.buildAccountTx({
