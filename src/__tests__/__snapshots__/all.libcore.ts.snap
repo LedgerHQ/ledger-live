@@ -4,9 +4,7 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
 Array [
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
     "freshAddress": "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64",
@@ -34,20 +32,7 @@ Array [
   },
   Object {
     "balance": "2717",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "7a608bb52ba2aaaae648eee7ce53d51ea571a801404af5c87867b70268e55bd0",
-          1,
-          607679,
-          "bc1qtc9gkextz267qgaupcmqpz9hl64nwqn6y4t0qk",
-          "",
-          "2717",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
     "freshAddress": "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
@@ -75,9 +60,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "native_segwit",
     "freshAddress": "bc1qnqy7vyp0df7tl90mwz9jwca66t6hef4yj9hl6n",
@@ -105,9 +88,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
     "freshAddress": "34WDB297Z1crydk6CMa1UvUpZ8G4cPXiYE",
@@ -135,9 +116,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
     "freshAddress": "3EyuXJk735CE5oBummZqzzFGN5qSMYLQ9w",
@@ -165,9 +144,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "segwit",
     "freshAddress": "3DUk27bxJm3y7txoPTK4GGBWcyoW6ibGuh",
@@ -195,20 +172,7 @@ Array [
   },
   Object {
     "balance": "2757",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "7dba629e308995d5280f2abe011d4e849cdd1e25e08215d51fbe7df6e53e101d",
-          0,
-          611120,
-          "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
-          "",
-          "2757",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "",
     "freshAddress": "1Ktck8TvjnCUj2jNXexzBXJ2ihNikfCDii",
@@ -236,9 +200,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin",
     "derivationMode": "",
     "freshAddress": "1JepjRPgzuV4hyBTZxftBYqbAaXMygCMRV",
@@ -11279,9 +11241,7 @@ exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
 Array [
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "bitcoin_cash",
     "derivationMode": "",
     "freshAddress": "bitcoincash:qrt2zkjjchuxkmr3f70tc2yppl5pxwr36uuur9lzm9",
@@ -11320,20 +11280,7 @@ exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
 Array [
   Object {
     "balance": "74296",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "15be7ced1e5ad180f6039f0f2d2bc32cca2768d5ecff1432df750a3e42112487",
-          1,
-          1185785,
-          "XmXfxFyN2L7gsfAgVwXs1mMynFpMtkRRiz",
-          "",
-          "74296",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "dash",
     "derivationMode": "",
     "freshAddress": "Xq6jQDPGVMcCoTmEHFbQGGWf53EFNF8SDg",
@@ -11361,20 +11308,7 @@ Array [
   },
   Object {
     "balance": "349548",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "cdd7d96d1a79dbad9fb41e8fa491c583f7a566b8d1c2881ddbe89a4c946db404",
-          1,
-          1185785,
-          "XpZXgYaFBJMCmziymgeF8VpWCgVS8SSZVr",
-          "",
-          "349548",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "dash",
     "derivationMode": "",
     "freshAddress": "Xkp9AXxGDqeZM38V8ko3Eg2TaY9oQVT9oo",
@@ -11402,9 +11336,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "dash",
     "derivationMode": "",
     "freshAddress": "XtNhJXfydhg5bWrhBgDon7rAMqtK2XJ3Jr",
@@ -12380,30 +12312,7 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
 Array [
   Object {
     "balance": "2302647120",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "f1787469b47cff2d19ef764e3f1ff7d4723e87c9548d1172e436dba013252a64",
-          1,
-          10775651,
-          "dgb1qqd5wz29q797etpezl36ly66qk9wvr0tn9lv6w3",
-          "",
-          "99999572",
-          1,
-          0,
-        ],
-        Array [
-          "ae314c86da27e60a918b3d3d5f8d99d8ad5cc84f95adb503f869f7bbe40bbfec",
-          1,
-          10775636,
-          "dgb1q366pvz7s0703eq8v2jutmj37fuu4vadyxp8ln9",
-          "",
-          "2202647548",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "native_segwit",
     "freshAddress": "dgb1qs45s7zq4gn6uygzrthyh067crzphvhwu33a8sl",
@@ -12431,9 +12340,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "native_segwit",
     "freshAddress": "dgb1q6c5jzgduyje29w9lsdwkd52dn3qxpcch87urdm",
@@ -12461,20 +12368,7 @@ Array [
   },
   Object {
     "balance": "565825271",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "d7b9e6b1450b2098fabc6152835d15fd96d78e65107fbd092c6396e0372dd052",
-          1,
-          9935558,
-          "SV8WBvUShys4k2GAj58xUAyS9eCBRcE4tv",
-          "",
-          "565825271",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
     "freshAddress": "Sb4r6mx1WEZGzJvXZVqr17vYQ9yLhmjuSz",
@@ -12502,9 +12396,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
     "freshAddress": "STTqUnTuhXEuVjVsa1rGNrVqweStbcx39e",
@@ -12532,9 +12424,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "segwit",
     "freshAddress": "SR7rLXSrTYjDA7kqP3CmScvkYhWNBE9AH1",
@@ -12562,20 +12452,7 @@ Array [
   },
   Object {
     "balance": "4818737648",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "aa7f5738308da550cd0ef60072386e812e37fda7d43af8ad82f5074d9af9b43a",
-          1,
-          10775584,
-          "DSYMyzYY4isbL3QGAEEkczaiEuaEyCXYqa",
-          "",
-          "4818737648",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "",
     "freshAddress": "DMtVdcKhnbntP1dSYYmSFNg8GK1T8aCwCb",
@@ -12603,9 +12480,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "digibyte",
     "derivationMode": "",
     "freshAddress": "DDqL91AjNtppYSybRcABYjrUtpuwQMVSZR",
@@ -14327,20 +14202,7 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 1`] = `
 Array [
   Object {
     "balance": "4988700000",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "91dfcf917327cdefe23381743ab3ffcd5e83d72972f76eb6e061c94bd590dff8",
-          1,
-          3015735,
-          "DCTZJgCwmkTko41GXvWF4BrutEY5NSr1hC",
-          "",
-          "4988700000",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "dogecoin",
     "derivationMode": "",
     "freshAddress": "DPWV3zLpMWMNyvGzWLzCJsUGNqAqCLd7nk",
@@ -14368,9 +14230,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "dogecoin",
     "derivationMode": "",
     "freshAddress": "DJcmPdxWR9LmVgY4udNS8TnLyeJg5kArpG",
@@ -14398,9 +14258,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "dogecoin",
     "derivationMode": "",
     "freshAddress": "DFL8gp5WQviz3hkqNppKaTAmosmAdLpDUh",
@@ -51385,9 +51243,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 1`] = `
 Array [
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
     "freshAddress": "RPyriQuwaVtfxjG8qhdTCCsV27LDkgvAX9",
@@ -51415,9 +51271,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
     "freshAddress": "RJ4o1mozTbMYxH1MMyJD1DMhbBHNhTosXX",
@@ -51445,20 +51299,7 @@ Array [
   },
   Object {
     "balance": "2745254",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "5dd9621a4b1eeb19339119aa688aea241200aac6c1f267356800dfedfcb22ba7",
-          0,
-          1707053,
-          "RLntoSvw96LS6b6pV5vtVHXyH1zLiVBhVQ",
-          "",
-          "2745254",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
     "freshAddress": "RBLBuovvYmojwhPoLo7GML2KpkqZqu1WEe",
@@ -51486,9 +51327,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "komodo",
     "derivationMode": "",
     "freshAddress": "RBC5h3JZPQXRY2RXhtDkCEMZ89mRKS7Ah6",
@@ -55765,40 +55604,7 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
 Array [
   Object {
     "balance": "2183515",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "f658de54c64a0cb95f3dc381eac15316657e7ba2c293af8451b384a8b344a719",
-          0,
-          1835365,
-          "ltc1qz8p9kd4u2f206wta45365pwq5s46zmutuf7kwg",
-          "",
-          "164785",
-          1,
-          0,
-        ],
-        Array [
-          "9706da9c23e7879a96f3c1d39c540aabcc8d8ec197847884b09b09d89df5a95a",
-          1,
-          1835363,
-          "ltc1q8xnht66efm6v02qwsy26dtlv66ncquw5y5etny",
-          "",
-          "66384",
-          1,
-          0,
-        ],
-        Array [
-          "2eb48dd5220f14daaebf5f2c9ba210005842d2766b2bac9c9254c1f674eae667",
-          1,
-          1835363,
-          "ltc1qmynthzpjrtdwp87anmwqc9mam0wjn0nuskm43r",
-          "",
-          "1952346",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "native_segwit",
     "freshAddress": "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
@@ -55826,9 +55632,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "native_segwit",
     "freshAddress": "ltc1qd2x2x0wf3wgkka87qlm8772tuw6yx6fl9j07ag",
@@ -55856,30 +55660,7 @@ Array [
   },
   Object {
     "balance": "462167",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "2eb48dd5220f14daaebf5f2c9ba210005842d2766b2bac9c9254c1f674eae667",
-          0,
-          1835363,
-          "MSyowFrsqmk9MjgAQerz5HAQjHAcDGM8aV",
-          "",
-          "316752",
-          1,
-          0,
-        ],
-        Array [
-          "f658de54c64a0cb95f3dc381eac15316657e7ba2c293af8451b384a8b344a719",
-          1,
-          1835365,
-          "MNR51AsB1BMQp2qDwLsseL4Fg7CvFrQEAe",
-          "",
-          "145415",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
     "freshAddress": "MGWgRF4qLAHtYhEe6VcQNeQRxVhPd3evHc",
@@ -55907,9 +55688,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
     "freshAddress": "MMqwmFyJixCSt2iKbARzNMPkSbhec8qJ2d",
@@ -55937,9 +55716,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "segwit",
     "freshAddress": "M88iGfkJikQaKy7MafsyXfrRSSvuneFW7K",
@@ -55967,9 +55744,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "",
     "freshAddress": "LLVLXPBzLTHYjF5Q4r6iCEEztCmWecazwP",
@@ -55997,9 +55772,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "litecoin",
     "derivationMode": "",
     "freshAddress": "LSqQsgC8oa3PzzPZZigq7EYrFe6tqA6L6p",
@@ -58137,9 +57910,7 @@ exports[`peercoin currency bridge scanAccounts peercoin seed 1 1`] = `
 Array [
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "peercoin",
     "derivationMode": "",
     "freshAddress": "PHRKwqt8ZWWNdEiqMRpiU1xhUDYjmV7XiX",
@@ -58167,9 +57938,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "peercoin",
     "derivationMode": "",
     "freshAddress": "PCrC3djBR5XMoob4dxp7TtZcaNwahTnBcd",
@@ -58197,9 +57966,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "peercoin",
     "derivationMode": "",
     "freshAddress": "PNWyBf25cbMx9CEjvyxJRtDtg42GAX2wx8",
@@ -58419,9 +58186,7 @@ exports[`pivx currency bridge scanAccounts pivx seed 1 1`] = `
 Array [
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "pivx",
     "derivationMode": "",
     "freshAddress": "DBUbDxkrqF7W4XeTqjt32z2kwc7kCnWWcZ",
@@ -58449,20 +58214,7 @@ Array [
   },
   Object {
     "balance": "25947828",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "b0af09fe7605a9560e18eaa0fc0332b716640310b2428c2bb392fb69d4e78777",
-          1,
-          2115071,
-          "DM1ccD7RCcoUpqZKDaWaY99vmz7NjtaTrv",
-          "",
-          "25947828",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "pivx",
     "derivationMode": "",
     "freshAddress": "DG4Zmw1PyrxZrBFhjtHDyfCxWY4PrP5WZq",
@@ -58490,9 +58242,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "pivx",
     "derivationMode": "",
     "freshAddress": "DEoUabmgN4eJ3XMThHT1ZAPekpVfr1m17F",
@@ -58895,9 +58645,7 @@ exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
 Array [
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "segwit",
     "freshAddress": "MQnGUQsKBDpoFG5uvtai3Z4UWXu9s9P3s3",
@@ -58925,20 +58673,7 @@ Array [
   },
   Object {
     "balance": "7426478",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "ae75b5041f4f42e435fcd23ffab72c3774adaa270c95dc52142f590bc8c5bf35",
-          1,
-          503781,
-          "MMGyCs2TWqDeS5gBAdx3NKnM7HD9wRacEh",
-          "",
-          "7426478",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "segwit",
     "freshAddress": "MFdP4rJefFPFXaZBSxsCGVt2KHNPwHYU8M",
@@ -58966,9 +58701,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "segwit",
     "freshAddress": "MMQq1ibHKKingHDdvjosq2eWz2W8n2bgNH",
@@ -58996,30 +58729,7 @@ Array [
   },
   Object {
     "balance": "36214370",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "57857c9064f9748e95a145750a486928cae3408cc3595e8e6438834a76dcdd63",
-          0,
-          540078,
-          "QhpbXpX5xXavAtKEG97fcbQjNqcGjpMFo4",
-          "",
-          "30000000",
-          1,
-          0,
-        ],
-        Array [
-          "665ad2c31f04fcb02d4a4c8baf4a56378fd6065fa28b2c3b3b19db917b13347f",
-          1,
-          503781,
-          "QguUJmH3SgaDySPgsrMgb45sJGKFtKavmr",
-          "",
-          "6214370",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "",
     "freshAddress": "Qht4N9PNgSTYnXgSNoqfFtotBcXj6qapSQ",
@@ -59047,9 +58757,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "",
     "freshAddress": "QVprz8QrPULXVFvREZo2tpHBdFC7uN6wKm",
@@ -59077,9 +58785,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "qtum",
     "derivationMode": "",
     "freshAddress": "QY61GahhtwSsDg22SJa9q24qiFwNiRhvrt",
@@ -64319,9 +64025,7 @@ exports[`vertcoin currency bridge scanAccounts vertcoin seed 1 1`] = `
 Array [
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "vertcoin_128",
     "freshAddress": "Vx36mGuxsW1cmvx3fMN55Z5UytHKpnE31U",
@@ -64349,9 +64053,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "vertcoin_128_segwit",
     "freshAddress": "33BEXEpmL4ZGBZasUrCFEhdZpxKBe5uTYy",
@@ -64379,20 +64081,7 @@ Array [
   },
   Object {
     "balance": "56611532",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "3e666cd80f1ba022527035b2e3765f0a6eea858220ad83400e6d5f296436d271",
-          0,
-          1239308,
-          "33iMXaJbU4LW1MP2Dz7LJiZg15bzb3Ks89",
-          "",
-          "56611532",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "segwit",
     "freshAddress": "3FiUuTYW5jMbJSwVdgCJTYKNFwai6JX5FD",
@@ -64420,9 +64109,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "segwit",
     "freshAddress": "34TxZRuFCgyMKtFYmwKoRoWVCt1puAH9Xz",
@@ -64450,9 +64137,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "",
     "freshAddress": "VsgCiKyCTMhiTravK6ESeKpg2qETx35wx8",
@@ -64480,9 +64165,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "vertcoin",
     "derivationMode": "",
     "freshAddress": "Vg18CTCzdTXpRQR66voFahDH8LkS6exoxZ",
@@ -65045,20 +64728,7 @@ exports[`viacoin currency bridge scanAccounts viacoin seed 1 1`] = `
 Array [
   Object {
     "balance": "61117791",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "4b8a4a6358f65a17ac2318a5c7caf1205e68b3c3d4f2df0503215f348f3322b5",
-          1,
-          7063679,
-          "EUsEtfAjLFgcNqYctCWcAHsFxNFxpxqtbK",
-          "",
-          "61117791",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "segwit",
     "freshAddress": "ETvLmkNFbgbsdVMez1YaYjTCbB7aNco8Zp",
@@ -65086,9 +64756,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "segwit",
     "freshAddress": "EHAAgFSDMfY4UHsRn6gEJxVhnVLPNNupw4",
@@ -65116,20 +64784,7 @@ Array [
   },
   Object {
     "balance": "43399898",
-    "bitcoinResources": Object {
-      "utxos": Array [
-        Array [
-          "e92d1d9ffa6259419813e29527e9e46eb6096dd0aa90ad7f03afb60a62ea3429",
-          1,
-          7063680,
-          "VgbzMgZSY4Kw37cpXfyQDp1yWLbpyoAVMK",
-          "",
-          "43399898",
-          1,
-          0,
-        ],
-      ],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "",
     "freshAddress": "VfsNF82yMv738budvbxue1ZPLrzyW19z3x",
@@ -65157,9 +64812,7 @@ Array [
   },
   Object {
     "balance": "0",
-    "bitcoinResources": Object {
-      "utxos": Array [],
-    },
+    "bitcoinResources": Object {},
     "currencyId": "viacoin",
     "derivationMode": "",
     "freshAddress": "VkC4KsRTFazUtM2G55NMSTYYqrHpz2dBgd",
