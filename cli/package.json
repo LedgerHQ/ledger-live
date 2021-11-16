@@ -17,7 +17,7 @@
     "prepare": "./scripts/gen.sh && yarn build",
     "build": "tsc --project src/tsconfig.json",
     "prepublishOnly": "rm -rf lib && tsc --project src/tsconfig.json",
-    "watch": "tsc --watch",
+    "watch": "tsc --watch --project src/tsconfig.json",
     "test-e2e": "./scripts/tests.sh",
     "test": "yarn run test-e2e",
     "testOne": "./scripts/testOne.sh",

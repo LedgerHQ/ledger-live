@@ -12,6 +12,15 @@ import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import { getTagDerivationMode } from "../derivation";
 import byFamily from "../generated/account";
+import { nftsByCollections } from "../nft";
+
+const styling = {
+  bold: (str: string) => `\x1b[1m${str}\x1b[22m`,
+  underline: (str: string) => `\x1b[4m${str}\x1b[24m`,
+  cyan: (str: string) => `\x1b[36m${str}\x1b[37m`,
+  magenta: (str: string) => `\x1b[35m${str}\x1b[37m`,
+  reverse: (str: string) => `\x1b[7m${str}\x1b[27m`,
+};
 
 const isSignificantAccount = (acc) =>
   acc.balance.gt(10 ** (getAccountUnit(acc).magnitude - 6));
@@ -80,6 +89,7 @@ const cliFormat = (account, level?: string) => {
     derivationMode,
     index,
     operations,
+    nfts,
   } = account;
   const tag = getTagDerivationMode(account.currency, derivationMode);
   const balance = formatCurrencyUnit(account.unit, account.balance, {
@@ -122,6 +132,39 @@ const cliFormat = (account, level?: string) => {
         maybeDisplaySumOfOpsIssue(ta.operations, ta.balance, getAccountUnit(ta))
     )
     .join("\n");
+
+  if (nfts?.length) {
+    const NFTCollections = nftsByCollections(nfts);
+
+    str += "\n";
+    str += `NFT Collections (${NFTCollections.length}) `;
+    str += "\n";
+
+    str += NFTCollections.map(
+      // nfts are set to any because there not just NFT, we added a metadata prop on the fly
+      // in the first step of the Rxjs flow to avoid having some async code here
+      ({ contract, nfts }: { contract: string; nfts: any[] }) => {
+        const tokenName = nfts?.[0]?.metadata?.tokenName;
+        const { bold, magenta, cyan, reverse } = styling;
+
+        return (
+          `${bold(tokenName ?? "Unknown Collection Name")} (${magenta(
+            contract
+          )}): ` +
+          nfts
+            .map((t) =>
+              t?.metadata?.nftName
+                ? `\n  ${t.amount}x ${reverse(
+                    ` ${t?.metadata?.nftName} `
+                  )} ${cyan("#" + t.tokenId)}`
+                : `\n  ${t.amount}x ${cyan("#" + t.tokenId)}`
+            )
+            .join()
+        );
+      }
+    ).join("\n");
+  }
+
   if (level === "basic") return str;
   str += "\nOPERATIONS (" + operations.length + ")";
   str += operations
