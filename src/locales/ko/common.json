@@ -38,7 +38,7 @@
     "upToDate": "최신",
     "transactionDate": "트랜잭션 날짜",
     "outdated": "오래됨",
-    "satPerByte": "sat/bytes",
+    "satPerByte": "사토시/바이트",
     "notAvailable": "이용할 수 없습니다",
     "import": "가져오기",
     "bluetooth": "블루투스",
@@ -120,11 +120,11 @@
       "title": "죄송하지만 발견된 장치가 없습니다.",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "{{productName}}가 잠금 해제되어 있고 블루투스가 활성화되어 있는지 확인하세요."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
+          "nanoX": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 또는 블루투스가 활성화되어 있는지 확인하세요."
         }
       }
     },
@@ -132,11 +132,11 @@
       "title": "죄송하지만 관리자 연결에 실패했습니다",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "{{productName}}가 잠금 해제되어 있고 블루투스가 활성화되어 있는지 확인하세요."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 확인하세요.",
+          "nanoX": "{{productName}}가 잠금 해제되어 있고 케이블로 연결되어 있는지 또는 블루투스가 활성화되어 있는지 확인하세요."
         }
       }
     },
@@ -595,7 +595,7 @@
       "title": "검증인을 적어도 한 명 이상 선택해야 합니다"
     },
     "TaprootNotActivated": {
-      "title": "Taproot mainnet is not activated yet"
+      "title": "Taproot(탭루트) 메인넷이 아직 활성화되지 않았습니다"
     },
     "generic": {
       "title": "{{message}}",
@@ -698,8 +698,8 @@
         "description": "오늘 ATOM을 위임하고 보상을 받으세요."
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "패밀리 팩",
+        "description": "3개의 Nano S 장치로 가족을 암호화 세계로 초대하세요"
       },
       "buyCrypto": {
         "title": "암호화폐 구매",
@@ -752,7 +752,7 @@
       "title": "어떤 장치를 이용 중인가요?",
       "nanoS": "Nano S",
       "nanoX": "Nano X",
-      "blue": "Blue"
+      "blue": "블루"
     },
     "stepUseCase": {
       "title": "안녕하세요!",
@@ -1352,8 +1352,8 @@
     "failed": "실패함",
     "fees": "네트워크 수수료",
     "noFees": "수수료 없음",
-    "from": "From",
-    "to": "To",
+    "from": "수신",
+    "to": "발신",
     "identifier": "트랜잭션 ID",
     "viewOperation": "탐색기에서 보기",
     "whatIsThis": "어떤 거래인가요?",
@@ -1907,8 +1907,8 @@
         "validate": "스왑 트랜잭션을 검증하세요",
         "tab": "교환",
         "button": "계속",
-        "from": "From",
-        "to": "To",
+        "from": "수신",
+        "to": "발신",
         "balance": "잔금 &lt;0&gt;123&lt;/0&gt;",
         "fromAccount": "계정 선택",
         "toAccount": "계정 선택",
@@ -1936,8 +1936,8 @@
           "close": "닫기"
         },
         "summary": {
-          "from": "From",
-          "to": "To",
+          "from": "수신",
+          "to": "발신",
           "send": "보내기",
           "payoutNetworkFees": "지불금 비용",
           "payoutNetworkFeesTooltip": "이 금액은 장치에 표시되지 않습니다",
@@ -1959,9 +1959,9 @@
         "swapId": "스왑 ID",
         "provider": "공급자",
         "date": "날짜",
-        "from": "From",
+        "from": "수신",
         "fromAmount": "전송된 금액",
-        "to": "To",
+        "to": "발신",
         "toAmount": "수신 금액",
         "statusTooltips": {
           "expired": "자세한 정보를 확인하시려면 스왑 ID를 준비하여 스왑 공급자에게 문의하세요.",
@@ -2239,8 +2239,8 @@
       "validateTag": "태그 검증",
       "total": "총계",
       "amount": "금액",
-      "from": "From",
-      "to": "To",
+      "from": "수신",
+      "to": "발신",
       "infoTotalTitle": "총 인출",
       "infoTotalDesc": "트랜잭션 금액과 선택된 네트워크 수수료가 포함됩니다",
       "gasLimit": "가스 제한",
@@ -3471,8 +3471,8 @@
     "undelegateMy": "다음 사람을 위임 해제합니다",
     "warnUndelegation": "귀하의 계정이 위임 해제됩니다.",
     "warnDelegation": "투표권 위임은 검증인으로부터 어떠한 보상도 보장하지 않습니다.",
-    "to": "to",
-    "from": "from",
+    "to": "발신",
+    "from": "수신",
     "forAnEstYield": "추산 수익",
     "yieldPerYear": "{{yield}}/연",
     "yieldInfos": "다음에 의해 수익율이 제공됨:",
@@ -3562,8 +3562,8 @@
     },
     "amount": "금액",
     "account": "계정",
-    "from": "From",
-    "to": "To",
+    "from": "수신",
+    "to": "발신",
     "redelegationAmount": "재위임된 금액",
     "gas": "가스",
     "validatorAddress": "검증인 주소",
@@ -3645,7 +3645,7 @@
     "messageHash": "메시지 해시",
     "domainHash": "도메인 해시",
     "stringHash": "해시",
-    "from": "From",
+    "from": "수신",
     "successTitle": "서명된 메시지",
     "successDescription": "타사 어플리케이션에서 받은 메시지에 서명했습니다",
     "stepperHeader": {
