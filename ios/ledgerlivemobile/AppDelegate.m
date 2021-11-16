@@ -4,6 +4,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <React/RCTLinkingManager.h>
+#import "RNSplashScreen.h"  // here
 
 /* #ifdef FB_SONARKIT_ENABLED */
 /* #import <FlipperKit/FlipperClient.h> */
@@ -49,13 +50,14 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   [super application:application didFinishLaunchingWithOptions:launchOptions];
+
   return YES;
 }
 
 - (void) showOverlay{
   UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
   UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-  UIImageView *logoView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Blurry"]];
+  UIImageView *logoView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"Blurry_nocache1"]];
   logoView.contentMode = UIViewContentModeScaleAspectFit;
   blurEffectView.frame = [self.window bounds];
   blurEffectView.tag = 12345;

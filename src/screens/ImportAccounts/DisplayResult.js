@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, SectionList } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { HeaderBackButton } from "@react-navigation/stack";
+import { HeaderBackButton } from "@react-navigation/elements";
 import groupBy from "lodash/groupBy";
 import concat from "lodash/concat";
 import { connect } from "react-redux";
