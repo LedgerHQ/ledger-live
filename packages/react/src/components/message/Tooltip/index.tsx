@@ -22,10 +22,10 @@ type Placement =
 
 // Add more props later on if needed.
 // See https://atomiks.github.io/tippyjs/v6/all-props for the full list.
-export type Props = TippyProps & {
-  /* The preferred placement of the tippy. */
+export interface Props extends TippyProps {
+  /** The preferred placement of the tippy. */
   placement?: Placement;
-};
+}
 
 // Tippyjs need the ref to be forwarded to the DOM element wrapping the children.
 // This component has been created to add a wrapping span and use its ref when needed.
