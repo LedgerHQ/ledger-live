@@ -1179,10 +1179,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@6.14.0", "@ledgerhq/cryptoassets@^6.14.0":
-  version "6.14.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.14.0.tgz#736b795e0abf84bce3e3e9c90c1b864e55634cc0"
-  integrity sha512-B6yTpi9oahyEHwOB2CtTDhQSfwPTFBYPTvV2EXmC0rK4WkQ/mItYTAizoRtDd3WGo/2+8jmWKXnHAS0MMflyaQ==
+"@ledgerhq/cryptoassets@6.15.1", "@ledgerhq/cryptoassets@^6.15.1":
+  version "6.15.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.15.1.tgz#824bcf6019191dcf78bac4aafa346ca646573f31"
+  integrity sha512-YOPTAdOtxBke03ApisBgQxKShLmvzV8YU/uF9i6TpDA5hDCyjNbC2MVQkeTA4oOto+foKff9uwcBbminW8d6pA==
   dependencies:
     invariant "2"
 
@@ -1228,10 +1228,10 @@
     js-sha512 "^0.8.0"
     tweetnacl "^1.0.3"
 
-"@ledgerhq/hw-app-btc@6.15.0":
-  version "6.15.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-6.15.0.tgz#71618f9c51a0590d99d8f13d44a1f1d0bad876bd"
-  integrity sha512-+aDzukHbpQoIM9gpU0TtsG3tsRuzXm6HkkkycWuk0fMJv6HGK0kZ2v/hioazQmVoxi1UV6vdO4n7NUFBIO6GBQ==
+"@ledgerhq/hw-app-btc@6.15.1":
+  version "6.15.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-6.15.1.tgz#6e2d451196153e7a619414bd386d829b824226cf"
+  integrity sha512-9qWke/C6YQ9cQAklcdUras+dYzSOGY8UwR/Ce0Je0M/SyfB8iOC15e6LHUVhp73LFOAiSrpKRwbmWGnezbvlLA==
   dependencies:
     "@ledgerhq/hw-transport" "^6.11.2"
     "@ledgerhq/logs" "^6.10.0"
@@ -1254,12 +1254,12 @@
     "@ledgerhq/hw-transport" "^6.11.2"
     bip32-path "^0.4.2"
 
-"@ledgerhq/hw-app-eth@6.15.0":
-  version "6.15.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.15.0.tgz#4378d66b4b5a50cfe3addd57d5b6021209d66836"
-  integrity sha512-wzqJjKD7IK+xO18P5L9yRVnuEp/EJ+745tkkRCcJEkceozTbGFr/ILk5ypjBtm/KRnFOQfq6lrU0X9fCX95O+Q==
+"@ledgerhq/hw-app-eth@6.15.1":
+  version "6.15.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.15.1.tgz#85aabe6680f6eecb7af77d388ca6f0676b73be2c"
+  integrity sha512-7D+L4vO5T5bjzR6JgdaLZ9HGrS4Qd+sEO4y8x/8IOaIU3dBxDCkLasmlsccPDIF/8C5j7mQ2QeQzYGK6vNrCZA==
   dependencies:
-    "@ledgerhq/cryptoassets" "^6.14.0"
+    "@ledgerhq/cryptoassets" "^6.15.1"
     "@ledgerhq/errors" "^6.10.0"
     "@ledgerhq/hw-transport" "^6.11.2"
     "@ledgerhq/logs" "^6.10.0"
@@ -6287,10 +6287,10 @@ requires-port@^1.0.0:
   resolved "https://registry.npmjs.org/requires-port/-/requires-port-1.0.0.tgz"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
 
-reselect@^4.1.2:
-  version "4.1.2"
-  resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.1.2.tgz#7bf642992d143d4f3b0f2dca8aa52018808a1d51"
-  integrity sha512-wg60ebcPOtxcptIUfrr7Jt3h4BR86cCW3R7y4qt65lnNb4yz4QgrXcbSioVsIOYguyz42+XTHIyJ5TEruzkFgQ==
+reselect@^4.1.4:
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.1.4.tgz#66df0aff41b6ee0f51e2cc17cfaf2c1995916f32"
+  integrity sha512-i1LgXw8DKSU5qz1EV0ZIKz4yIUHJ7L3bODh+Da6HmVSm9vdL/hG7IpbgzQ3k2XSirzf8/eI7OMEs81gb1VV2fQ==
 
 resolve-cwd@^3.0.0:
   version "3.0.0"
