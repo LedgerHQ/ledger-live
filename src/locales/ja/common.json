@@ -120,11 +120,11 @@
       "title": "デバイスが見つかりません。",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "{{productName}} のロックが解除済みで、Bluetoothが有効であることを確認してください。"
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "{{productName}} のロックが解除済みで、USBケーブル接続されていることを確認してください。",
+          "nanoX": "{{productName}} のロックが解除済みで、USBケーブルが接続されているかBluetoothが有効であることを確認してください。"
         }
       }
     },
@@ -132,11 +132,11 @@
       "title": "マネージャーの接続に失敗しました。",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "{{productName}} のロックが解除済みで、Bluetoothが有効であることを確認してください。"
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "{{productName}} のロックが解除済みで、USBケーブルが接続されていることを確認してください。",
+          "nanoX": "{{productName}} のロックが解除済みで、USBケーブルが接続されているか、Bluetoothが有効であることを確認してください。"
         }
       }
     },
@@ -595,7 +595,7 @@
       "title": "1人以上のバリデータを選択する必要があります。"
     },
     "TaprootNotActivated": {
-      "title": "Taproot mainnet is not activated yet"
+      "title": "Taproot mainnetは、まだアクティベートされていません。"
     },
     "generic": {
       "title": "{{message}}",
@@ -698,8 +698,8 @@
         "description": "ATOMをデリゲートして、報酬を獲得しましょう。"
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "ファミリーパック",
+        "description": "3つセットのNano Sを、家族とシェアしましょう。"
       },
       "buyCrypto": {
         "title": "暗号資産を購入する",
@@ -710,7 +710,7 @@
         "description": "暗号資産を別の暗号資産に\n安全に取引"
       },
       "algorand": {
-        "title": "Algorand",
+        "title": "アルゴランド",
         "description": "トランザクションごとに、報酬としてALGOを獲得できます。"
       },
       "sell": {
@@ -1316,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "受け取り済み",
+      "NFT_IN": "NFT Received",
       "OUT": "送金済み",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "作成済み",
       "REVEAL": "表示済み",
       "DELEGATE": "デリゲート済み",
@@ -1399,7 +1401,11 @@
       "transferAmount": "送付額",
       "validatorsCount": "バリデータ（{{number}}）"
     },
-    "multipleAddresses": "なぜ複数のアドレスがあるのですか？"
+    "multipleAddresses": "なぜ複数のアドレスがあるのですか？",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "オペレーションはありません。",
@@ -1541,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "デリゲート解除"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -3724,6 +3733,27 @@
       "infoPanel": {
         "website": "ウェブサイト"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }

@@ -1316,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "수신됨",
+      "NFT_IN": "NFT Received",
       "OUT": "전송됨",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "생성됨",
       "REVEAL": "숨김 해제",
       "DELEGATE": "위임됨",
@@ -1399,7 +1401,11 @@
       "transferAmount": "금액 전송",
       "validatorsCount": "검증인 ({{number}})"
     },
-    "multipleAddresses": "왜 주소가 여러 개인가요?"
+    "multipleAddresses": "왜 주소가 여러 개인가요?",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "거래 없음",
@@ -1541,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "위임 해제"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -3724,6 +3733,27 @@
       "infoPanel": {
         "website": "웹사이트"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }

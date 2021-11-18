@@ -1316,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "Reçu",
+      "NFT_IN": "NFT reçu",
       "OUT": "Envoyé",
+      "NFT_OUT": "NFT envoyé",
       "CREATE": "Créé",
       "REVEAL": "Révélé",
       "DELEGATE": "Délégué",
@@ -1399,7 +1401,11 @@
       "transferAmount": "Montant transféré",
       "validatorsCount": "Validateurs ({{number}})"
     },
-    "multipleAddresses": "Pourquoi plusieurs adresses ?"
+    "multipleAddresses": "Pourquoi plusieurs adresses ?",
+    "tokenName": "Nom du token",
+    "collectionContract": "Contrat du token",
+    "tokenId": "Identifiant du token (NFT)",
+    "quantity": "Quantité"
   },
   "operationList": {
     "noOperations": "Aucune opération",
@@ -1541,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "Délégation(s) interrompue(s)"
+    },
+    "nft": {
+      "receiveNft": "Recevoir NFT"
     }
   },
   "accounts": {
@@ -3724,6 +3733,27 @@
       "infoPanel": {
         "website": "Site"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "Voir tous les NFT",
+      "seeFewerNfts": "Voir moins de NFT"
+    },
+    "gallery": {
+      "allNft": "Tous les NFT"
+    },
+    "viewer": {
+      "properties": "Attributs",
+      "description": "Description",
+      "tokenContract": "Adresse du token",
+      "tokenId": "Identifiant du token",
+      "quantity": "Quantité"
+    },
+    "viewerModal": {
+      "viewOn": "Voir sur",
+      "viewInExplorer": "Afficher dans l'explorateur",
+      "txDetails": "Détails de la transaction"
     }
   }
 }

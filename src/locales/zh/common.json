@@ -1316,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "已接收",
+      "NFT_IN": "NFT Received",
       "OUT": "已发送",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "已创建",
       "REVEAL": "已显示",
       "DELEGATE": "已委托",
@@ -1399,7 +1401,11 @@
       "transferAmount": "转移数额",
       "validatorsCount": "验证器 ({{number}})"
     },
-    "multipleAddresses": "为什么有多个地址？"
+    "multipleAddresses": "为什么有多个地址？",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "不作操作",
@@ -1541,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "解除委托"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -3724,6 +3733,27 @@
       "infoPanel": {
         "website": "网站"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }
