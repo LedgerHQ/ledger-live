@@ -1,6 +1,7 @@
 import React, { InputHTMLAttributes } from "react";
 
 import RadioElement from "./RadioElement";
+import RadioListElement from "./RadioListElement";
 import Flex from "../../layout/Flex";
 import { FlexBoxProps } from "../../layout/Flex";
 
@@ -34,5 +35,6 @@ const Radio = ({
 };
 
 Radio.Element = RadioElement;
+Radio.ListElement = RadioListElement;
 
 export default Radio;

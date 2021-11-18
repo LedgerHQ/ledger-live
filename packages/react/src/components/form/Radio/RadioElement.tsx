@@ -94,7 +94,7 @@ export type RadioElementProps = InputAttributes & {
   label: string;
 };
 
-export default ({
+const Element = ({
   label,
   value,
   disabled,
@@ -127,3 +127,7 @@ export default ({
     </RadioElement>
   );
 };
+
+Element.displayName = "Radio.Element"; // For easy identification in the React devtools & in storybook
+
+export default Element;
