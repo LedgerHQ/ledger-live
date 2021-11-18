@@ -67,7 +67,7 @@ export default function PillTabs({
         <Item
           key={index}
           data-active={index === activeIndex}
-          onClick={(_) => {
+          onClick={() => {
             setActiveIndex(index);
             onTabChange && onTabChange(index);
           }}

@@ -1,7 +1,7 @@
 import React from "react";
 
 import { StoryTemplate } from "../helpers";
-import Tag, { Type, Size, Props } from "./index";
+import Tag, { Type, Size, TagProps } from "./index";
 import Text from "../asorted/Text";
 import Flex from "../layout/Flex";
 
@@ -60,7 +60,7 @@ export const Overview = ((): JSX.Element => (
   </Flex>
 )).bind({});
 
-const Template: StoryTemplate<Props> = (args: Props): JSX.Element => (
+const Template: StoryTemplate<TagProps> = (args: TagProps): JSX.Element => (
   <Tag {...args}>{args.children}</Tag>
 );
 

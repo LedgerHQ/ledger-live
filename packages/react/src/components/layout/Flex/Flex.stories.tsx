@@ -283,6 +283,17 @@ export default {
       table: { category: "Parent" },
     },
   },
+  parameters: {
+    docs: {
+      description: {
+        component: `The Flex component is a flexbox helper component that lets you write these common css properties more succinctly and inline.
+      
+Like the Box component, it includes all the style props exported by the color, layout, position, and shadow utilities from the [styled-system](https://styled-system.com) library, but also fully includes the flexbox ones.
+      
+[See more about styled-system utilities](https://styled-system.com/api)`,
+      },
+    },
+  },
 };
 /*
  ** Template component creates a sandbox to play with Flexbox properties.

@@ -1,16 +1,7 @@
-import styled from "styled-components";
-import {
-  grid,
-  GridProps,
-  space,
-  SpaceProps,
-  position,
-  PositionProps,
-  color,
-  ColorProps,
-} from "styled-system";
+import { grid, GridProps } from "styled-system";
+import baseStyled, { BaseStyledProps } from "../../styled";
 
-export interface Props extends GridProps, SpaceProps, PositionProps, ColorProps {
+export interface Props extends GridProps, BaseStyledProps {
   columns?: number | string;
   rows?: number | string;
 }
@@ -25,13 +16,10 @@ function getRows(props: Props) {
   return !rows ? "initial" : rows === "none" ? rows : `repeat(${rows}, minmax(0, 1fr));`;
 }
 
-const Grid = styled.div<Props>`
+const Grid = baseStyled.div<Props>`
   display: grid;
   grid-template-columns: ${getColumns};
   grid-template-rows: ${getRows};
   ${grid};
-  ${space};
-  ${position};
-  ${color};
 `;
 export default Grid;

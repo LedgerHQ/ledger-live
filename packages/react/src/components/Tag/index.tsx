@@ -1,14 +1,15 @@
 import React from "react";
 import { TextVariants } from "src/styles/theme";
-import styled from "styled-components";
-import { border, BorderProps, space, SpaceProps, color, ColorProps } from "styled-system";
+import { border, BorderProps } from "styled-system";
 import Text, { TextProps } from "../asorted/Text";
+import baseStyled, { BaseStyledProps } from "../styled";
 
 export type Size = "large" | "medium" | "small";
 export type Type = "plain" | "opacity" | "outlined" | "outlinedOpacity";
 
-export type Props = React.PropsWithChildren<
-  {
+export type TagProps = BaseStyledProps &
+  BorderProps &
+  React.PropsWithChildren<{
     /**
      * Changes the appearance based on the active state.
      */
@@ -27,11 +28,9 @@ export type Props = React.PropsWithChildren<
     textProps?: TextProps;
 
     disabled?: boolean;
-  } & BorderProps &
-    ColorProps
->;
+  }>;
 
-function getColor({ type, active, disabled }: Props) {
+function getColor({ type, active, disabled }: TagProps) {
   switch (type) {
     case "plain":
       if (disabled) return active ? "palette.neutral.c00" : "palette.neutral.c70";
@@ -41,7 +40,7 @@ function getColor({ type, active, disabled }: Props) {
   }
 }
 
-function getBgColor({ type, active, disabled }: Props) {
+function getBgColor({ type, active, disabled }: TagProps) {
   switch (type) {
     case "plain":
       return active ? (disabled ? "palette.neutral.c70" : "palette.primary.c90") : undefined;
@@ -52,7 +51,7 @@ function getBgColor({ type, active, disabled }: Props) {
   }
 }
 
-function getBorderColor({ type, active, disabled }: Props) {
+function getBorderColor({ type, active, disabled }: TagProps) {
   if (!active) return;
   switch (type) {
     case "outlined":
@@ -62,7 +61,7 @@ function getBorderColor({ type, active, disabled }: Props) {
   }
 }
 
-function getPadding({ size }: Props) {
+function getPadding({ size }: TagProps) {
   switch (size) {
     case "small":
       return "3px 5px";
@@ -74,7 +73,7 @@ function getPadding({ size }: Props) {
   }
 }
 
-function getTextProps({ size }: Props): {
+function getTextProps({ size }: TagProps): {
   variant: TextVariants;
   fontWeight?: string;
   uppercase?: boolean;
@@ -96,22 +95,25 @@ function getTextProps({ size }: Props): {
   }
 }
 
-const TagContainer = styled.div.attrs((props: Props) => ({
+const TagContainer = baseStyled.div.attrs<TagProps, TagProps>((props) => ({
   backgroundColor: props.bg || props.backgroundColor || getBgColor(props),
   color: props.color || getColor(props),
   borderColor: getBorderColor(props),
-}))<Props & BorderProps & SpaceProps & ColorProps>`
+}))`
   display: inline-flex;
   justify-content: center;
   border: 1px solid transparent;
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   padding: ${(p) => getPadding(p)};
   ${border}
-  ${space}
-  ${color}
 `;
 
-export default function Tag({ children, textProps, size = "large", ...props }: Props): JSX.Element {
+export default function Tag({
+  children,
+  textProps,
+  size = "large",
+  ...props
+}: TagProps): JSX.Element {
   const textColor = getColor(props);
   const baseTextProps = getTextProps({ size, ...props });
   return (

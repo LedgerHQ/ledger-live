@@ -3,15 +3,17 @@ import styled from "styled-components";
 import { getLinkColors } from "./getLinkStyle";
 import { ctaIconSize, ctaTextType } from "../getCtaStyle";
 import { Text } from "../../asorted";
+import baseStyled, { BaseStyledProps } from "../../styled";
 
-export type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  Icon?: React.ComponentType<{ size: number; color?: string }>;
-  type?: "main" | "shade" | "color";
-  size?: "small" | "medium" | "large";
-  iconPosition?: "right" | "left";
-  disabled?: boolean;
-  children?: React.ReactNode;
-};
+export type LinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> &
+  BaseStyledProps & {
+    Icon?: React.ComponentType<{ size: number; color?: string }>;
+    type?: "main" | "shade" | "color";
+    size?: "small" | "medium" | "large";
+    iconPosition?: "right" | "left";
+    disabled?: boolean;
+    children?: React.ReactNode;
+  };
 
 const IconContainer = styled.div<{
   iconPosition: "right" | "left";
@@ -24,7 +26,7 @@ const IconContainer = styled.div<{
   justify-content: center;
 `;
 
-export const Base = styled.a<LinkProps>`
+export const Base = baseStyled.a<LinkProps>`
   color: ${({ theme, disabled, type = "main" }) =>
     getLinkColors(theme.colors)[disabled ? "disabled" : type]["default"]};
   cursor: pointer;

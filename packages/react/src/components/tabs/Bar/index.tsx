@@ -45,7 +45,7 @@ export default function BarTabs({ children, onTabChange, initialActiveIndex }: P
         <Item
           key={index}
           active={index === activeIndex}
-          onClick={(_) => {
+          onClick={() => {
             setActiveIndex(index);
             onTabChange && onTabChange(index);
           }}

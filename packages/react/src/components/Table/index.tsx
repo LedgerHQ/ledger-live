@@ -1,28 +1,15 @@
 import React, { memo, useMemo } from "react";
 import styled from "styled-components";
-import {
-  space,
-  color,
-  border,
-  flexbox,
-  SpaceProps,
-  ColorProps,
-  BorderProps,
-  FlexboxProps,
-  gridColumn,
-  GridColumnProps,
-} from "styled-system";
+import { border, BorderProps, gridColumn, GridColumnProps } from "styled-system";
 import Grid, { Props as GridProps } from "../layout/Grid";
 import type { Column } from "./Columns";
+import { BaseStyledProps } from "../styled";
 export type { Column };
 
-export interface ContainerExtraProps extends SpaceProps, ColorProps, BorderProps, FlexboxProps {}
+export interface ContainerExtraProps extends BorderProps, BaseStyledProps {}
 export interface ContainerProps extends ContainerExtraProps, GridProps {}
 export const Container = styled(Grid)<ContainerExtraProps>`
-  ${space}
-  ${color}
   ${border}
-  ${flexbox}
 `;
 
 export const ExtraRowContainer = styled.div<GridColumnProps>`
