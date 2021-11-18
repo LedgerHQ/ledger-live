@@ -63,46 +63,56 @@ export const textVariantStyle: Record<
   TextVariants,
   {
     fontFamily: string;
-    lineHeight?: string;
+    lineHeight?: string | number;
     fontWeight?: number;
+    "text-transform"?: string;
   }
 > = {
   h1: {
     fontFamily: "Alpha",
     fontWeight: 500,
+    "text-transform": "uppercase",
   },
   h2: {
     fontFamily: "Alpha",
     fontWeight: 500,
+    "text-transform": "uppercase",
   },
   h3: {
     fontFamily: "Alpha",
     fontWeight: 500,
+    "text-transform": "uppercase",
   },
   h4: {
-    fontFamily: "Inter",
+    fontFamily: "Alpha",
     fontWeight: 500,
+    "text-transform": "uppercase",
   },
   h5: {
     fontFamily: "Alpha",
     fontWeight: 500,
+    "text-transform": "uppercase",
   },
   large: {
     fontFamily: "Inter",
+  },
+  largeLineHeight: {
+    fontFamily: "Inter",
+    lineHeight: 1.7,
   },
   body: {
     fontFamily: "Inter",
   },
   bodyLineHeight: {
     fontFamily: "Inter",
-    lineHeight: "20px",
+    lineHeight: 1.7,
   },
   paragraph: {
     fontFamily: "Inter",
   },
   paragraphLineHeight: {
     fontFamily: "Inter",
-    lineHeight: "18px",
+    lineHeight: 1.7,
   },
   small: {
     fontFamily: "Inter",
@@ -110,14 +120,15 @@ export const textVariantStyle: Record<
   extraSmall: {
     fontFamily: "Inter",
   },
-  subtitle: {
-    fontFamily: "Inter",
-    fontWeight: 600,
-  },
   tiny: {
     fontFamily: "Inter",
   },
   micro: {
     fontFamily: "Inter",
+  },
+  subtitle: {
+    fontFamily: "Inter",
+    fontWeight: 600,
+    "text-transform": "uppercase",
   },
 };

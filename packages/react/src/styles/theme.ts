@@ -15,6 +15,7 @@ export type TextVariants =
   | "h4"
   | "h5"
   | "large"
+  | "largeLineHeight"
   | "body"
   | "bodyLineHeight"
   | "paragraph"
@@ -46,6 +47,7 @@ export const fontSizes = [8, 10, 11, 12, 13, 14, 16, 20, 24, 28, 32, 36] as Them
   fontSizes.h2,
   fontSizes.h1,
 ] = fontSizes;
+fontSizes.largeLineHeight = fontSizes.large;
 fontSizes.bodyLineHeight = fontSizes.body;
 fontSizes.paragraphLineHeight = fontSizes.paragraph;
 fontSizes.subtitle = fontSizes.extraSmall;
