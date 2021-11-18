@@ -1,0 +1,63 @@
+import React from "react";
+import styled, { css } from "styled-components";
+import Text from "../../asorted/Text";
+import { CheckAloneMedium, CloseMedium, CircledAlertMedium } from "@ledgerhq/icons-ui/react";
+import { Flex } from "../../layout";
+
+type TipType = "success" | "warning" | "error";
+
+export interface TipProps {
+  type?: TipType;
+  label: string;
+}
+
+const icons = {
+  success: <CheckAloneMedium size={16} />,
+  warning: <CircledAlertMedium size={16} />,
+  error: <CloseMedium size={16} />,
+};
+
+const StyledIconContainer = styled.div<{ type?: TipType }>`
+  ${(p) => {
+    switch (p.type) {
+      case "warning":
+        return css`
+          background: ${p.theme.colors.palette.warning.c10};
+          color: ${p.theme.colors.palette.warning.c100};
+        `;
+      case "error":
+        return css`
+          background: ${p.theme.colors.palette.error.c10};
+          color: ${p.theme.colors.palette.error.c100};
+        `;
+      case "success":
+      default:
+        return css`
+          background: ${p.theme.colors.palette.success.c30};
+          color: ${p.theme.colors.palette.success.c100};
+        `;
+    }
+  }}
+
+  border-radius: ${(p) => `${p.theme.radii[1]}px`};
+  margin-right ${(p) => `${p.theme.space[6]}px`};
+  padding: 6px;
+  display: flex;
+  align-items: center;
+`;
+
+export default function Tip({ type, label }: TipProps): JSX.Element {
+  return (
+    <Flex alignItems={"center"}>
+      {type && <StyledIconContainer type={type}>{icons[type]}</StyledIconContainer>}
+      <Text
+        variant={"paragraph"}
+        fontWeight={"medium"}
+        color={"palette.neutral.c100"}
+        flexShrink={1}
+      >
+        {label}
+      </Text>
+    </Flex>
+  );
+}

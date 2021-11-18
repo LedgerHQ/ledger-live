@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import FlexBox from "../../layout/Flex";
+import FlexBox from "../Flex";
 import Close from "@ledgerhq/icons-ui/react/CloseRegular";
 import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
 import TransitionSlide from "../../transitions/TransitionSlide";
@@ -20,7 +20,7 @@ const Header = styled(FlexBox)`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  height: ${(p) => p.theme.space[15]}px;
+  min-height: ${(p) => p.theme.space[15]}px;
 `;
 const Wrapper = styled.div<{
   big?: boolean;
@@ -66,7 +66,7 @@ const Button = styled.button`
   color: ${(p) => p.theme.colors.palette.neutral.c100};
 `;
 
-interface DrawerProps {
+export interface DrawerProps {
   isOpen: boolean;
   children: React.ReactNode;
   title?: React.ReactNode;
@@ -74,17 +74,19 @@ interface DrawerProps {
   small?: boolean;
   onClose: () => void;
   onBack?: () => void;
-  setTransitionsEnabled: (arg0: boolean) => void;
+  setTransitionsEnabled?: (arg0: boolean) => void;
+  hideNavigation?: boolean;
 }
 
-const Drawer = ({
+const DrawerContent = ({
   isOpen,
   title,
   children,
   big,
   onClose,
-  setTransitionsEnabled,
+  setTransitionsEnabled = () => 0,
   onBack,
+  hideNavigation = true,
 }: DrawerProps) => {
   const disableChildAnimations = useCallback(
     () => setTransitionsEnabled(false),
@@ -109,14 +111,22 @@ const Drawer = ({
           <Wrapper big={big}>
             <Container>
               <Header>
-                {onBack != null ? (
-                  <Button onClick={onBack}>
-                    <ArrowLeft size={21} />
-                  </Button>
-                ) : (
-                  <ButtonPlaceholder />
+                {!hideNavigation && (
+                  <>
+                    {onBack != null ? (
+                      <Button onClick={onBack}>
+                        <ArrowLeft size={21} />
+                      </Button>
+                    ) : (
+                      <ButtonPlaceholder />
+                    )}
+                  </>
                 )}
-                {<Text>{title}</Text> || <div />}
+                {(
+                  <Text variant={"h5"} flexShrink={1}>
+                    {title}
+                  </Text>
+                ) || <div />}
                 <Button onClick={onClose}>
                   <Close />
                 </Button>
@@ -130,10 +140,10 @@ const Drawer = ({
   );
 };
 
-const DrawerWrapper = ({ children, ...sideProps }: DrawerProps): React.ReactElement => {
+const Drawer = ({ children, ...sideProps }: DrawerProps): React.ReactElement => {
   const $root = React.useMemo(() => document.querySelector("#ll-side-root"), []);
   if ($root === null) throw new Error("side root cannot be found");
-  return ReactDOM.createPortal(<Drawer {...sideProps}>{children}</Drawer>, $root);
+  return ReactDOM.createPortal(<DrawerContent {...sideProps}>{children}</DrawerContent>, $root);
 };
 
-export default DrawerWrapper;
+export default Drawer;

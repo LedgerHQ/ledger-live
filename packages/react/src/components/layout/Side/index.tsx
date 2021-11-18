@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useEffect, useState } from "react";
 import { TransitionGroup } from "react-transition-group";
-import Side from "./Side";
+import Drawer from "../Drawer";
 import TransitionSlide from "../../transitions/TransitionSlide";
 import { useSide } from "./Provider";
 
@@ -50,12 +50,13 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
   }, [state?.props]);
 
   return (
-    <Side
+    <Drawer
       {...props}
       isOpen={!!state.open}
       onClose={onClose}
       onBack={state?.props?.onBack ? wrappedOnBack : undefined}
       setTransitionsEnabled={setTransitionsEnabled}
+      hideNavigation={false}
     >
       <TransitionGroup enter={transitionsEnabled} exit={transitionsEnabled} component={null}>
         {queue.map(({ Component, props, key }) => (
@@ -64,7 +65,7 @@ export const SideWrapper = (props: SideProps): JSX.Element => {
           </TransitionSlide>
         ))}
       </TransitionGroup>
-    </Side>
+    </Drawer>
   );
 };
 
