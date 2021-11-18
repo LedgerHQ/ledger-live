@@ -1,61 +1,117 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
+import CloseIcon from "@ledgerhq/icons-ui/react/CloseRegular";
+import ArrowLeftIcon from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
+
 import baseStyled, { BaseStyledProps } from "../../styled";
+import Flex from "../../layout/Flex";
+import type { FlexBoxProps } from "../../layout/Flex";
 import Button from "../../cta/Button";
-import Close from "@ledgerhq/icons-ui/react/CloseRegular";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import TransitionScale from "../../transitions/TransitionScale";
 
-export type PopinProps = {
+export interface PopinProps {
+  width?: number;
+  height?: number;
   isOpen: boolean;
   children: React.ReactNode;
+}
+
+export type PopinHeaderProps = BaseStyledProps & {
   onClose?: () => void;
-} & BaseStyledProps;
+  onBack?: () => void;
+  children: React.ReactNode;
+};
 
-const Wrapper = baseStyled.div.attrs<BaseStyledProps, BaseStyledProps>((p) => ({
-  height: p.height || p.theme.sizes.drawer.popin.min.height,
-  width: p.width || p.theme.sizes.drawer.popin.min.width,
-  minHeight: p.theme.sizes.drawer.popin.min.height,
-  minWidth: p.theme.sizes.drawer.popin.min.width,
-  maxHeight: Math.max(Number(p.height) || 0, p.theme.sizes.drawer.popin.max.height),
-  maxWidth: Math.max(Number(p.width) || 0, p.theme.sizes.drawer.popin.max.width),
-  padding: p.padding === undefined ? 6 : p.padding,
+const ICON_SIZE = 20;
+
+const Container = styled(Flex).attrs((p) => ({
   position: "relative",
-}))`
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: space-between;
-  z-index: ${(p) => p.theme.zIndexes[8]};
-  background-color: ${(p) => p.theme.colors.palette.neutral.c50};
+  flexDirection: "column",
+  rowGap: 6,
+  width: "100%",
+  height: "100%",
+  paddingY: p.theme.space[10],
+  paddingX: p.theme.space[12],
+  backgroundColor: p.theme.colors.palette.neutral.c00,
+}))``;
+
+const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
+  flexDirection: "column",
+  alignItems: "stretch",
+  justifyContent: "space-between",
+  height: p.height || `${p.theme.sizes.drawer.popin.max.height}px`,
+  width: p.width || `${p.theme.sizes.drawer.popin.max.width}px`,
+  minHeight: `${p.theme.sizes.drawer.popin.min.height}px`,
+  minWidth: `${p.theme.sizes.drawer.popin.min.width}px`,
+  maxHeight: `${p.theme.sizes.drawer.popin.max.height}px`,
+  maxWidth: `${p.theme.sizes.drawer.popin.max.width}px`,
+  zIndex: p.theme.zIndexes[8],
+}))``;
+
+const Overlay = styled(Flex).attrs((p) => ({
+  justifyContent: "center",
+  alignItems: "center",
+  width: "100vw",
+  height: "100vh",
+  zIndex: p.theme.zIndexes[8],
+  position: "fixed",
+  top: 0,
+  left: 0,
+  backgroundColor: p.theme.colors.palette.neutral.c100a07,
+}))``;
+
+const Header = baseStyled.section`
+  display: grid;
+  grid-template-columns: [icon] ${ICON_SIZE}px [title] 1fr [icon] ${ICON_SIZE}px;
+  column-gap: 12px;
 `;
 
-const Overlay = styled.div`
-  position: fixed;
+const HeaderTitleContainer = styled(Flex).attrs(() => ({
+  justifyContent: "center",
+}))``;
+
+const PopinBody = baseStyled(Flex).attrs({
+  as: "section",
+  flexDirection: "column",
+  flex: 1,
+  overflow: "auto",
+})``;
+
+const PopinFooter = baseStyled(Flex).attrs({ as: "section" })``;
+
+const IconContainer = styled(Button.Unstyled)`
   display: flex;
-  justify-content: center;
   align-items: center;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 999;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c100a07};
-`;
-const CloseButton = styled(Button)`
-  position: absolute;
-  top: ${(p) => p.theme.space[6]}px;
-  right: ${(p) => p.theme.space[6]}px;
 `;
 
-const Popin = ({ isOpen, children, onClose = () => {}, ...props }: PopinProps) => (
+const PopinHeader = ({ children, onClose, onBack, ...props }: PopinHeaderProps) => (
+  <Header {...props}>
+    <Flex>
+      {onBack ? (
+        <IconContainer onClick={onBack}>
+          <ArrowLeftIcon size={ICON_SIZE} color="palette.neutral.c100" />
+        </IconContainer>
+      ) : null}
+    </Flex>
+    <HeaderTitleContainer>{children}</HeaderTitleContainer>
+    <Flex>
+      {onClose ? (
+        <IconContainer onClick={onClose}>
+          <CloseIcon size={ICON_SIZE} color="palette.neutral.c100" />
+        </IconContainer>
+      ) : null}
+    </Flex>
+  </Header>
+);
+
+const Popin = ({ isOpen, children, width, height }: PopinProps) => (
   <TransitionInOut in={isOpen} appear mountOnEnter unmountOnExit>
     <Overlay>
       <TransitionScale in={isOpen} appear>
-        <Wrapper {...props}>
-          <CloseButton Icon={Close} onClick={onClose} />
-          {children}
+        <Wrapper width={width} height={height}>
+          <Container>{children}</Container>
         </Wrapper>
       </TransitionScale>
     </Overlay>
@@ -67,5 +123,9 @@ const PopinWrapper = ({ children, ...popinProps }: PopinProps): React.ReactEleme
   if ($root === null) throw new Error("popin root cannot be found");
   return ReactDOM.createPortal(<Popin {...popinProps}>{children}</Popin>, $root);
 };
+
+PopinWrapper.Header = PopinHeader;
+PopinWrapper.Body = PopinBody;
+PopinWrapper.Footer = PopinFooter;
 
 export default PopinWrapper;

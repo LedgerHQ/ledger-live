@@ -133,6 +133,15 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
   `,
 });
 
+export const ButtonUnstyled = styled.button`
+  all: unset;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+`;
+
 export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   ff: "Inter|SemiBold",
   fontSize: p.fontSize ?? 4,
@@ -253,4 +262,7 @@ export const ExpandButton = function ExpandButton({
     />
   );
 };
+
+Button.Unstyled = ButtonUnstyled;
+
 export default Button;
