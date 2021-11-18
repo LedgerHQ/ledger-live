@@ -23,6 +23,7 @@ import Touchable from "../../components/Touchable";
 import TransactionsPendingConfirmationWarning from "../../components/TransactionsPendingConfirmationWarning";
 import type { Item } from "../../components/Graph/types";
 import SubAccountsList from "./SubAccountsList";
+import NftCollectionsList from "./NftCollectionsList";
 import CompoundSummary from "../Lending/Account/CompoundSummary";
 import CompoundAccountBodyHeader from "../Lending/Account/AccountBodyHeader";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
@@ -134,8 +135,6 @@ type Props = {
   onAccountPress: () => void,
   onSwitchAccountCurrency: () => void,
   compoundSummary?: ?CompoundAccountSummary,
-  isCollapsed: boolean,
-  setIsCollapsed: (v: boolean) => void,
 };
 
 export function getListHeaderComponents({
@@ -151,8 +150,6 @@ export function getListHeaderComponents({
   onAccountPress,
   onSwitchAccountCurrency,
   compoundSummary,
-  isCollapsed,
-  setIsCollapsed,
 }: Props): {
   listHeaderComponents: React$Node[],
   stickyHeaderIndices?: number[],
@@ -224,10 +221,11 @@ export function getListHeaderComponents({
               accountId={account.id}
               onAccountPress={onAccountPress}
               parentAccount={account}
-              isCollapsed={isCollapsed}
-              onToggle={() => setIsCollapsed(!isCollapsed)}
             />,
           ]
+        : []),
+      ...(!empty && account.type === "Account" && account.nfts
+        ? [<NftCollectionsList account={account} />]
         : []),
       ...(compoundSummary &&
       account &&
