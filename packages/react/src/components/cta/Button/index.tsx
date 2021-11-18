@@ -6,15 +6,14 @@ import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
 
-export type ButtonTypes = "main" | "shade" | "error" | "color";
+export type ButtonVariants = "main" | "shade" | "error" | "color";
 export type IconPosition = "right" | "left";
 interface BaseProps extends BaseStyledProps, BordersProps {
   ff?: string;
   color?: string;
   backgroundColor?: string;
   fontSize?: number;
-  // TODO: We need to change "type" to "variant" to ensure there is no conflict with native button type (ex: <button type=submit>)
-  type?: ButtonTypes;
+  variant?: ButtonVariants;
   outline?: boolean;
   iconPosition?: IconPosition;
   iconButton?: boolean;
@@ -150,7 +149,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   border-color: transparent;
   border-radius: ${(p) => p.theme.space[13]}px;
   border-style: solid;
-  border-width: ${(p) => (p.outline || p.type === "shade" ? 1 : 0)}px;
+  border-width: ${(p) => (p.outline || p.variant === "shade" ? 1 : 0)}px;
   ${compose(fontFamily, fontSize, border)};
   height: ${(p) => p.theme.space[13]}px;
   line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
@@ -172,11 +171,14 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   ${(p) => {
     const variants = getVariantColors(p);
     if (p.disabled) {
-      return p.outline || p.type === "shade" ? variants.disabled.outline : variants.disabled.filled;
+      return p.outline || p.variant === "shade"
+        ? variants.disabled.outline
+        : variants.disabled.filled;
     }
 
-    const type: ButtonTypes | "default" = p.type ?? ("default" as ButtonTypes | "default");
-    switch (type) {
+    const variant: ButtonVariants | "default" =
+      p.variant ?? ("default" as ButtonVariants | "default");
+    switch (variant) {
       case "main":
         return p.outline ? variants.main.outline : variants.main.filled;
       case "shade":
@@ -217,7 +219,6 @@ const Button = ({
   ...props
 }: ButtonProps): React.ReactElement => {
   return (
-    // @ts-expect-error FIXME type button conflict
     <Base {...props} iconButton={!(Icon == null) && !children} onClick={onClick}>
       {iconPosition === "right" ? <ContentContainer>{children}</ContentContainer> : null}
       {Icon != null ? (

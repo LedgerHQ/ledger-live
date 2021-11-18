@@ -185,7 +185,7 @@ const Template = (args: PopinProps & playgroundProps) => {
 
   return (
     <>
-      <Button type="shade" onClick={() => updateArgs({ isOpen: true })}>
+      <Button variant="shade" onClick={() => updateArgs({ isOpen: true })}>
         Open the modal
       </Button>
       <Popin {...args}>
@@ -202,7 +202,7 @@ const Template = (args: PopinProps & playgroundProps) => {
         </Popin.Body>
         {args.hasFooter ? (
           <Popin.Footer flexDirection="row-reverse">
-            <Button type="main" onClick={action("next")}>
+            <Button variant="main" onClick={action("next")}>
               Next
             </Button>
           </Popin.Footer>

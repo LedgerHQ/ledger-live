@@ -1,19 +1,19 @@
 import React from "react";
-import Button, { ExpandButton, ExpandButtonProps, ButtonTypes, IconPosition } from "./index";
+import Button, { ExpandButton, ExpandButtonProps, ButtonVariants, IconPosition } from "./index";
 import Text from "../../asorted/Text";
 import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/react/";
 import { InvertTheme } from "../../../styles/InvertTheme";
 import Flex from "../../layout/Flex";
 
 const iconPositions: IconPosition[] = ["left", "right"];
-const buttonTypes: ButtonTypes[] = ["main", "shade", "color", "error"];
+const buttonVariants: ButtonVariants[] = ["main", "shade", "color", "error"];
 
 export default {
   title: "cta/Button",
   component: Button,
   argTypes: {
-    type: {
-      options: [undefined, ...buttonTypes],
+    variant: {
+      options: [undefined, ...buttonVariants],
       control: {
         type: "radio",
       },
@@ -52,7 +52,7 @@ export const Overview = (() => {
   ];
   return (
     <Flex flexDirection="column">
-      {buttonTypes.flatMap((buttonType) =>
+      {buttonVariants.flatMap((buttonType) =>
         [false, true].map((outline) => (
           <Flex flexDirection="row" alignItems="center" height="70px" columnGap={4}>
             <Text variant="small" color="palette.neutral.c70">
@@ -64,7 +64,7 @@ export const Overview = (() => {
               <Flex minWidth="280px" columnGap={4}>
                 {[false, true].map((disabled) => (
                   <Button
-                    type={buttonType}
+                    variant={buttonType}
                     outline={outline}
                     disabled={disabled}
                     {...buttonProps}

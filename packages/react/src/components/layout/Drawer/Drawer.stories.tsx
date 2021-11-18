@@ -44,7 +44,7 @@ const Template = ({ title, big }: DrawerProps) => {
 
   return (
     <div>
-      <Button type={"main"} onClick={() => updateArgs({ isOpen: true })} style={{ flex: 1 }}>
+      <Button variant={"main"} onClick={() => updateArgs({ isOpen: true })} style={{ flex: 1 }}>
         Open
       </Button>
       <Drawer isOpen={isOpen} onClose={() => updateArgs({ isOpen: false })} title={title} big={big}>
@@ -81,7 +81,11 @@ const Template = ({ title, big }: DrawerProps) => {
           </p>
 
           <Flex>
-            <Button type={"main"} onClick={() => updateArgs({ isOpen: false })} style={{ flex: 1 }}>
+            <Button
+              variant={"main"}
+              onClick={() => updateArgs({ isOpen: false })}
+              style={{ flex: 1 }}
+            >
               {"Fermer"}
             </Button>
           </Flex>

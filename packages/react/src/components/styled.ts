@@ -30,7 +30,7 @@ export type BaseStyledProps = SpaceProps &
     maxHeight?: number;
   };
 
-export const baseStyles: InterpolationFunction<any> = compose(
+export const baseStyles: InterpolationFunction<unknown> = compose(
   flexbox,
   space,
   position,
