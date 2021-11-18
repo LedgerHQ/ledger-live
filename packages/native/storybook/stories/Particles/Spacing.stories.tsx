@@ -15,10 +15,13 @@ const SpacingStory = () => {
       contentContainerStyle={{ alignItems: "center", paddingVertical: 20 }}
       style={{ width: "100%" }}
     >
-      {space.map((value) => (
+      {space.map((value, index) => (
         <Flex mb={4} width="90%" key={value}>
-          <Text variant="subtitle" color={theme.colors.palette.neutral.c100}>
+          <Text variant="small" color={theme.colors.palette.neutral.c100}>
             {value}
+            <Text ml={4} variant="small" color="palette.neutral.c70">
+              space[{index + 1}]
+            </Text>
           </Text>
           <View
             style={{

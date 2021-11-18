@@ -35,7 +35,13 @@ export const Spacing = (): JSX.Element => {
     <Flex flexDirection="column" rowGap="24px">
       {space.map((value, index) => (
         <SpaceRow key={value} onClick={() => handleClick(index)}>
-          <Text variant="subtitle" style={{ minWidth: "5ch" }}>{`${value}px`}</Text>
+          <Text variant="small" style={{ minWidth: "5ch" }}>
+            {`${value}px`}
+            <br />
+            <Text variant="small" color="palette.neutral.c70">
+              space[{index + 1}]
+            </Text>
+          </Text>
           <Flex
             flexGrow={1}
             style={{
