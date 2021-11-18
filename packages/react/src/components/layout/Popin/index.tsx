@@ -11,9 +11,7 @@ import Button from "../../cta/Button";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import TransitionScale from "../../transitions/TransitionScale";
 
-export interface PopinProps {
-  width?: number;
-  height?: number;
+export interface PopinProps extends BaseStyledProps {
   isOpen: boolean;
   children: React.ReactNode;
 }
@@ -26,17 +24,6 @@ export type PopinHeaderProps = BaseStyledProps & {
 
 const ICON_SIZE = 20;
 
-const Container = styled(Flex).attrs((p) => ({
-  position: "relative",
-  flexDirection: "column",
-  rowGap: 6,
-  width: "100%",
-  height: "100%",
-  paddingY: p.theme.space[10],
-  paddingX: p.theme.space[12],
-  backgroundColor: p.theme.colors.palette.neutral.c00,
-}))``;
-
 const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
   flexDirection: "column",
   alignItems: "stretch",
@@ -48,6 +35,9 @@ const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
   maxHeight: `${p.theme.sizes.drawer.popin.max.height}px`,
   maxWidth: `${p.theme.sizes.drawer.popin.max.width}px`,
   zIndex: p.theme.zIndexes[8],
+  p: p.p !== undefined ? p.p : p.theme.space[10],
+  rowGap: 6,
+  backgroundColor: p.theme.colors.palette.neutral.c00,
 }))``;
 
 const Overlay = styled(Flex).attrs((p) => ({
@@ -106,12 +96,12 @@ const PopinHeader = ({ children, onClose, onBack, ...props }: PopinHeaderProps) 
   </Header>
 );
 
-const Popin = ({ isOpen, children, width, height }: PopinProps) => (
+const Popin = ({ isOpen, children, width, height, ...props }: PopinProps) => (
   <TransitionInOut in={isOpen} appear mountOnEnter unmountOnExit>
     <Overlay>
       <TransitionScale in={isOpen} appear>
-        <Wrapper width={width} height={height}>
-          <Container>{children}</Container>
+        <Wrapper width={width} height={height} {...props}>
+          {children}
         </Wrapper>
       </TransitionScale>
     </Overlay>
