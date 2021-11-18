@@ -142,7 +142,7 @@ export const ButtonUnstyled = styled.button`
 `;
 
 export const Base = baseStyled.button.attrs((p: BaseProps) => ({
-  ff: "Inter|SemiBold",
+  fontFamily: "Inter",
   fontSize: p.fontSize ?? 4,
 }))<BaseProps>`
   background-color: transparent;
@@ -150,6 +150,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   border-radius: ${(p) => p.theme.space[13]}px;
   border-style: solid;
   border-width: ${(p) => (p.outline || p.variant === "shade" ? 1 : 0)}px;
+  font-weight: 600;
   ${compose(fontFamily, fontSize, border)};
   height: ${(p) => p.theme.space[13]}px;
   line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
