@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import styled, { css, StyledProps } from "styled-components";
-import { fontSize, color, border, BordersProps } from "styled-system";
+import baseStyled, { BaseStyledProps } from "../../styled";
+import { fontSize, border, BordersProps, compose } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
 
 export type ButtonTypes = "main" | "shade" | "error" | "color";
 export type IconPosition = "right" | "left";
-interface BaseProps extends BordersProps {
+interface BaseProps extends BaseStyledProps, BordersProps {
   ff?: string;
   color?: string;
   backgroundColor?: string;
@@ -39,7 +40,7 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
         border-color: ${p.theme.colors.palette.neutral.c100};
         color: ${p.theme.colors.palette.neutral.c100};
         background-color: ${p.theme.colors.palette.neutral.c00};
-        &:hover {
+        &:hover, &:focus {
           background-color: ${p.theme.colors.palette.neutral.c20};
         }
         &:active {
@@ -49,7 +50,7 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
     filled: `
         color: ${p.theme.colors.palette.neutral.c00};
         background-color: ${p.theme.colors.palette.neutral.c100};
-        &:hover {
+        &:hover, &:focus {
           background-color: ${p.theme.colors.palette.neutral.c90};
         }
       `,
@@ -62,7 +63,7 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
         border-color: ${p.theme.colors.palette.primary.c80};
       }
 
-      &:hover {
+      &:hover, &:focus {
         background-color: ${p.theme.colors.palette.neutral.c20};
       }
 
@@ -121,11 +122,17 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
         background-color: ${p.theme.colors.palette.neutral.c30};
       `,
   },
+  default: `
+    color: ${p.theme.colors.palette.neutral.c100};
+    background-color: transparent;
+    &:hover {
+      text-decoration: underline;
+    }
+  `,
 });
 
-export const Base = styled.button.attrs((p: BaseProps) => ({
+export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   ff: "Inter|SemiBold",
-  color: p.color ?? "palette.neutral.c100",
   fontSize: p.fontSize ?? 4,
 }))<BaseProps>`
   background-color: transparent;
@@ -133,10 +140,7 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
   border-radius: ${(p) => p.theme.space[13]}px;
   border-style: solid;
   border-width: ${(p) => (p.outline || p.type === "shade" ? 1 : 0)}px;
-  ${fontFamily};
-  ${fontSize};
-  ${color};
-  ${border};
+  ${compose(fontFamily, fontSize, border)};
   height: ${(p) => p.theme.space[13]}px;
   line-height: ${(p) => p.theme.fontSizes[p.fontSize]}px;
   text-align: center;
@@ -150,7 +154,7 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
   max-width: 100%;
   position: relative;
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};
-  &:focus {
+  &:active {
     box-shadow: 0 0 0 4px ${(p) => p.theme.colors.palette.primary.c60};
   }
 
@@ -175,11 +179,7 @@ export const Base = styled.button.attrs((p: BaseProps) => ({
 
       case "default":
       default:
-        return `
-              &:hover {
-                text-decoration: underline;
-              }
-            `;
+        return variants.default;
     }
   }}
   ${(p) =>

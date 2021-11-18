@@ -54,16 +54,14 @@ export const Overview = (() => {
     <Flex flexDirection="column">
       {buttonTypes.flatMap((buttonType) =>
         [false, true].map((outline) => (
-          <Flex flexDirection="row" alignItems="center" columnGap="16px" style={{ height: "70px" }}>
-            <div style={{ width: "100px" }}>
-              <Text variant="small" color="palette.neutral.c70">
-                type="{buttonType}"<br />
-                outline={`{${outline.toString()}}`}
-                <br />
-              </Text>
-            </div>
+          <Flex flexDirection="row" alignItems="center" height="70px" columnGap={4}>
+            <Text variant="small" color="palette.neutral.c70">
+              type="{buttonType}"<br />
+              outline={`{${outline.toString()}}`}
+              <br />
+            </Text>
             {propsArr.map((buttonProps) => (
-              <Flex style={{ minWidth: "280px", columnGap: "16px" }}>
+              <Flex minWidth="280px" columnGap={4}>
                 {[false, true].map((disabled) => (
                   <Button
                     type={buttonType}

@@ -1,7 +1,7 @@
 import React from "react";
 import Icon, { Props as IconProps } from "../asorted/Icon";
 import FlexBox from "../layout/Flex";
-import Text, { BaseTextProps } from "../asorted/Text";
+import Text, { TextProps } from "../asorted/Text";
 
 export interface CellProps<T> {
   elt: T;
@@ -27,7 +27,7 @@ export function IconColumn<T>({
 }: {
   // An object containing the unerlying <Text /> wrapper props as well as
   // the "name" and "weight" props of the unerlying <Icon />.
-  props: (elt: T) => Pick<IconProps, "name" | "weight"> & BaseTextProps;
+  props: (elt: T) => Pick<IconProps, "name" | "weight"> & TextProps;
   // An optional render function to display the column header.
   header?: HeaderFn;
   // The grid column layout, by default "min-content".
