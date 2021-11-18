@@ -18,6 +18,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      lint_failed: ${{ steps.lint.outcome == 'failure' }}
+      typecheck_failed: ${{ steps.typecheck.outcome == 'failure' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -27,11 +30,17 @@ jobs:
       - name: Install dependencies
         run: yarn --cwd packages/react install --focus
       - name: Linter
+        id: lint
         run: yarn --cwd packages/react lint
       - name: Typecheck
+        id: typecheck
         run: yarn --cwd packages/react typecheck
+
   tests:
     runs-on: ubuntu-latest
+    outputs:
+      build_failed: ${{ steps.build.outcome == 'failure' }}
+      test_failed: ${{ steps.test.outcome == 'failure' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -39,10 +48,12 @@ jobs:
           cache: yarn
           cache-dependency-path: yarn.lock
       - name: Install dependencies
-        run: yarn && yarn playwright install
+        run: yarn
       - name: Build packages
-        run: yarn icons build && yarn shared build && yarn react prerelease
+        id: build
+        run: yarn test:react:setup
       - name: Run tests
+        id: test
         run: yarn test:react
       - name: (On Failure) Upload test data
         uses: actions/upload-artifact@v2
@@ -52,24 +63,67 @@ jobs:
           path: |
             tests/react.spec.js-snapshots/
             test-results/
+
+  comment-bot:
+    needs: [build, tests]
+    if: always() && github.event_name == 'pull_request' && (needs.build.result == 'failure' || needs.tests.result == 'failure')
+    runs-on: ubuntu-latest
+    steps:
       - name: (On Failure) Comment PR
         uses: actions/github-script@v5
-        if: failure() && github.event_name == 'pull_request'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { issue: { number: issue_number }, repo: { owner, repo }, runId } = context;
 
+            const results = [
+              ${{ needs.build.outputs.lint_failed }},
+              ${{ needs.build.outputs.typecheck_failed }},
+              ${{ needs.tests.outputs.build_failed }},
+              ${{ needs.tests.outputs.test_failed }}
+            ]
+
+            const sections = results.map((failed, index) => {
+              switch(index) {
+                case 0:
+                  return !failed ? "#### ✅ - Lint\n" : (
+                    "#### ❌ - Lint\n\n" +
+                    "*Run `yarn react lint:fix` locally to show linting errors and attempt to automatically fix problems.*\n"
+                  )
+                case 1:
+                  return !failed ? "#### ✅ - Typecheck\n" : (
+                    "#### ❌ - Typecheck\n\n" +
+                    "*Run `yarn react typecheck` locally and fix the typescript issues.*\n"
+                  )
+                case 2:
+                  return !failed ? "#### ✅ - Build\n" : (
+                    "#### ❌ - Build\n\n" +
+                    "Something happened while trying to build the test environment.\n\n" +
+                    "*Use the `yarn test:react:setup` command to run the setup process and fix the reported issues.*\n"
+                  )
+                case 3:
+                  return !failed ? "#### ✅ - End To End\n" : (
+                    "#### ❌ - End To End\n\n" +
+                    "*You can use the `yarn test:react` command to run the tests locally - and run `yarn test:react:setup` first if needed.*\n" +
+                    "##### NOTE: If the [visual comparison](https://playwright.dev/docs/test-snapshots) failed and you think that the changes are legitimate, you can download the `test-run-data` artifact at the bottom of the action page and replace the reference snapshots located at `/tests/react.spec.js-snapshots`.\n"
+                  )
+                default:
+                  return "";
+              }
+            }).filter(Boolean);
+
             const comment = `
-            ### 💥 Ouch!
+            ### Run failed! 💥
 
-            **The CI ran into issues while running the end to end tests.**
+            #### \`@ledgerhq/react-ui\`
 
-            Please check the [action page](https://github.com/LedgerHQ/ui/actions/runs/${runId}) to find more details about the test run.
+            #### Please check the [action page](https://github.com/LedgerHQ/ui/actions/runs/${runId}) to find more details including the logs.
 
-            #### 🖼️ If the [visual comparison](https://playwright.dev/docs/test-snapshots) failed and you think that the changes are legitimate:
+            ---
 
-            You can download the \`test-run-data\` artifact at the bottom of the action page and replace the reference snapshots located at \`/tests/react.spec.js-snapshots\`.
+            ### Report:
+
+            ${sections.join("\n")}
             `;
 
             github.rest.issues.createComment({ issue_number, owner, repo, body: comment });

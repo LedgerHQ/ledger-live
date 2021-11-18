@@ -20,6 +20,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      lint_failed: ${{ steps.lint.outcome == 'failure' }}
+      typecheck_failed: ${{ steps.typecheck.outcome == 'failure' }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -29,6 +32,58 @@ jobs:
       - name: Install dependencies
         run: yarn install --focus
       - name: Linter
+        id: lint
         run: yarn lint
       - name: Typecheck
+        id: typecheck
         run: yarn typecheck
+
+  comment-bot:
+    needs: [build]
+    if: always() && github.event_name == 'pull_request' && needs.build.result == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: (On Failure) Comment PR
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { issue: { number: issue_number }, repo: { owner, repo }, runId } = context;
+
+            const results = [
+              ${{ needs.build.outputs.lint_failed }},
+              ${{ needs.build.outputs.typecheck_failed }},
+            ]
+
+            const sections = results.map((failed, index) => {
+              switch(index) {
+                case 0:
+                  return !failed ? "#### ✅ - Lint\n" : (
+                    "#### ❌ - Lint\n\n" +
+                    "*Run `yarn native lint:fix` locally to show linting errors and attempt to automatically fix problems.*\n"
+                  )
+                case 1:
+                  return !failed ? "#### ✅ - Typecheck\n" : (
+                    "#### ❌ - Typecheck\n\n" +
+                    "*Run `yarn native typecheck` locally and fix the typescript issues.*\n"
+                  )
+                default:
+                  return "";
+              }
+            }).filter(Boolean);
+
+            const comment = `
+            ### Run failed! 💥
+
+            #### \`@ledgerhq/native-ui\`
+
+            #### Please check the [action page](https://github.com/LedgerHQ/ui/actions/runs/${runId}) to find more details including the logs.
+
+            ---
+
+            ### Report:
+
+            ${sections.join("\n")}
+            `;
+
+            github.rest.issues.createComment({ issue_number, owner, repo, body: comment });
