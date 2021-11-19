@@ -2,7 +2,7 @@ name: Extract Mere Denis
 on:
   push:
     branches:
-      - *
+      - master
 
 jobs:
   run-bot:
