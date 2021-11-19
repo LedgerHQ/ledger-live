@@ -1,6 +1,6 @@
 # `ui` <br/> [![react storybook](https://img.shields.io/badge/storybook%20📚-react-61DBFB)](https://ledger-live-ui-react.vercel.app) [![native storybook](https://img.shields.io/badge/storybook%20📚-native-9665B7)](https://ledger-live-ui-native.vercel.app)
 
-### Design and interface resources for React and React-Native projects.
+### Design and interface resources for React and React Native projects.
 
 <br/>
 

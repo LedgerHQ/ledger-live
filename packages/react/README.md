@@ -10,7 +10,7 @@
 
 ## Reference
 
-[📚 The storybook is hosted here.](https://ledger-live-ui-react.vercel.app/)
+**[🔗 Storybook](https://ledger-live-ui-react.vercel.app/)**
 
 ## Installation
 
