@@ -71,7 +71,6 @@ export interface DrawerProps {
   children: React.ReactNode;
   title?: React.ReactNode;
   big?: boolean;
-  small?: boolean;
   onClose: () => void;
   onBack?: () => void;
   setTransitionsEnabled?: (arg0: boolean) => void;
