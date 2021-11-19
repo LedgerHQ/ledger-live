@@ -227,7 +227,6 @@ class BitcoinLikeWallet {
       btc,
       fromAccount,
       txInfo,
-      segwit,
       additionals,
       hasExtraData,
       onDeviceSignatureRequested,
@@ -260,7 +259,7 @@ class BitcoinLikeWallet {
     const inputs: Inputs = txInfo.inputs.map((i) => {
       log("hw", `splitTransaction`, {
         transactionHex: i.txHex,
-        isSegwitSupported: segwit,
+        isSegwitSupported: true,
         hasTimestamp: false,
         hasExtraData,
         additionals,

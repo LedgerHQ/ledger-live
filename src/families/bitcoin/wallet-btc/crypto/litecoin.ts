@@ -3,7 +3,7 @@ import * as bip32 from "bip32";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { toOutputScript } from "bitcoinjs-lib/src/address";
-import { bech32 } from "bech32";
+import * as bech32 from "bech32";
 import { DerivationModes } from "../types";
 import { ICrypto } from "./types";
 import Base from "./base";

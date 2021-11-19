@@ -5,6 +5,7 @@ import bchaddr from "bchaddrjs";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { toOutputScript } from "bitcoinjs-lib/src/address";
+import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
 import { ICrypto } from "./types";
 
@@ -60,7 +61,7 @@ class BitcoinCash implements ICrypto {
 
   toOutputScript(address: string) {
     if (!this.validateAddress(address)) {
-      throw new Error("Invalid address");
+      throw new InvalidAddress();
     }
     // TODO find a better way to calculate the script from bch address instead of converting to bitcoin address
     return toOutputScript(bchaddr.toLegacyAddress(address), this.network);

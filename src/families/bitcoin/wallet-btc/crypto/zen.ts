@@ -5,9 +5,10 @@ import { toOutputScript } from "bitcoinjs-lib/src/address";
 // @ts-ignore
 import zec from "zcash-bitcore-lib";
 import bs58check from "bs58check";
+import coininfo from "coininfo";
+import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
 import { ICrypto } from "./types";
-import coininfo from "coininfo";
 
 class Zen implements ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -81,7 +82,7 @@ class Zen implements ICrypto {
 
   toOutputScript(address: string) {
     if (!this.validateAddress(address)) {
-      throw new Error("Invalid address");
+      throw new InvalidAddress();
     }
     // TODO find a better way to calculate the script from zen address instead of converting to bitcoin address
     return toOutputScript(

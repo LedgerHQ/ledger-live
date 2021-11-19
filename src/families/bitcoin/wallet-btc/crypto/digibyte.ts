@@ -1,4 +1,4 @@
-import { bech32 } from "bech32";
+import * as bech32 from "bech32";
 import bs58check from "bs58check";
 import Base from "./base";
 

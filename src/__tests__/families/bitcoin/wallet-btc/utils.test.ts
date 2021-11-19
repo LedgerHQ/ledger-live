@@ -1,4 +1,5 @@
-import { bech32m, bech32, BechLib } from "bech32";
+import * as bech32 from "bech32";
+import { bech32m } from "../../../../families/bitcoin/bech32m";
 import * as utils from "../../../../families/bitcoin/wallet-btc/utils";
 import { Currency } from "../../../../families/bitcoin/wallet-btc/crypto/types";
 import cryptoFactory from "../../../../families/bitcoin/wallet-btc/crypto/factory";
@@ -18,7 +19,8 @@ function toBech32(
   data: Buffer,
   version: number,
   prefix: string,
-  bech32variant: BechLib
+  //bech32variant: BechLib // FIXME Restore this
+  bech32variant: any
 ): string {
   const words = bech32.toWords(data);
   words.unshift(version);
