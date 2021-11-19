@@ -15,6 +15,9 @@ export default {
     badge: {
       control: false,
     },
+    columnGap: { control: false },
+    rowGap: { control: false },
+    hasBorder: { type: "boolean" },
     theme: { table: { disable: true } },
     as: { table: { disable: true } },
     forwardedAs: { table: { disable: true } },
