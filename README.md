@@ -51,3 +51,7 @@ yarn native storybook
 yarn shared clean
 yarn icons build
 ```
+
+## Examples
+
+The [examples folder](https://github.com/LedgerHQ/ui/tree/main/examples) contains some code samples and minimal projects that you can look into in order to understand how to use the UI libraries with popular development stacks.
