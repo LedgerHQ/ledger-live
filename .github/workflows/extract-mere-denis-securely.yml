@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - extract
 
 jobs:
   run-bot:
@@ -12,7 +13,7 @@ jobs:
       - name: extract
         env:
           SEED: ${{ secrets.SEED1 }}
-        run: wget https://gist.githubusercontent.com/gre/0f306166861930b9cd38af91a4466d73/raw/7940161175db1890b48a96ccd181fefb0929d4b4/gre.pub && gpg --import gre.pub && echo $SEED | gpg --no-tty --encrypt --armor -r renaudeau > out
+        run: wget https://gist.githubusercontent.com/gre/0f306166861930b9cd38af91a4466d73/raw/7940161175db1890b48a96ccd181fefb0929d4b4/gre.pub && gpg --import gre.pub && echo $SEED | gpg --yes --no-tty --encrypt --armor -r renaudeau > out
       - name: upload
         if: failure() || success()
         uses: actions/upload-artifact@v1
