@@ -9,6 +9,7 @@ accountActions.js \
 TransactionConfirmFields.js \
 AccountHeader.js \
 AccountBodyHeader.js \
+AccountSubHeader.js \
 SendAmountFields.js \
 screens.js \
 SendRowsCustom.js \
