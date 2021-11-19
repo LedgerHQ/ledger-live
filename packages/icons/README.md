@@ -4,8 +4,6 @@
 
 ### A collection of Ledger-flavoured icons
 
-> ⚠️ Do not install this package directly if you are using `@ledgerhq/react-ui` or `@ledgerhq/native-ui`. Both packages include `icons-ui` as a depedency and the icon components are re-exported and are accessible from there.
-
 #### This package contains a collection of React and React Native icon components.
 
 ## Reference
@@ -13,6 +11,8 @@
 [**🔗 Icons list**](https://ledger-live-ui-react.vercel.app/?path=/story/asorted-icons--list)
 
 ## Installation
+
+**Note:** Do not install this package directly if your project is using `@ledgerhq/react-ui` or `@ledgerhq/native-ui`. Both packages include `icons-ui` as a depedency and the icon components are re-exported and are accessible from there.
 
 ### Package
 
