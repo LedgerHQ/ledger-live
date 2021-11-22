@@ -5,7 +5,10 @@ import { Trans, useTranslation } from "react-i18next";
 import type { Action, State } from "@ledgerhq/live-common/lib/apps";
 import type { App } from "@ledgerhq/live-common/lib/types/manager";
 import { useSortedFilteredApps } from "@ledgerhq/live-common/lib/apps/filtering";
-import { listTokens } from "@ledgerhq/live-common/lib/currencies";
+import {
+  listTokens,
+  isCurrencySupported,
+} from "@ledgerhq/live-common/lib/currencies";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { installAppFirstTime } from "../../../actions/settings";
@@ -23,8 +26,6 @@ import Styles from "../../../navigation/styles";
 import AppRow from "../AppsList/AppRow";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
 import AppIcon from "../AppsList/AppIcon";
-
-const tokens = listTokens();
 
 type PlaceholderProps = {
   query: string,
@@ -44,10 +45,11 @@ const Placeholder = ({
   const { colors } = useTheme();
   const found = useMemo(
     () =>
-      tokens.find(
+      listTokens().find(
         token =>
-          token.name.toLowerCase().includes(query.toLowerCase()) ||
-          token.ticker.toLowerCase().includes(query.toLowerCase()),
+          isCurrencySupported(token.parentCurrency) &&
+          (token.name.toLowerCase().includes(query.toLowerCase()) ||
+            token.ticker.toLowerCase().includes(query.toLowerCase())),
       ),
     [query],
   );

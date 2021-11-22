@@ -39,7 +39,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const isLoading = usePolkadotBondLoading(mainAccount);
 
   const onClose = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   const goToNominate = useCallback(() => {

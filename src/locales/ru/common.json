@@ -95,8 +95,8 @@
       "description": "Укажите название счёта."
     },
     "AccountNeedResync": {
-      "title": "Please try again",
-      "description": "Account is outdated. A synchronisation is needed"
+      "title": "Попробуйте ещё раз",
+      "description": "Счёт устарел, его необходимо синхронизировать"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "В указанном ASA не выбран счёт получателя."
@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "К сожалению, устройство не найдено",
-      "description": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+      "description": {
+        "ios": {
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+        },
+        "android": {
+          "nanoS": "Обязательно разблокируйте {{productName}} и подключите при помощи кабеля.",
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и подключён по кабелю, либо на нём включён Bluetooth."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "Извините, не удалось подключиться к Диспетчеру",
-      "description": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+      "description": {
+        "ios": {
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
+        },
+        "android": {
+          "nanoS": "Обязательно разблокируйте {{productName}} и подключите при помощи кабеля.",
+          "nanoX": "Убедитесь, что {{productName}} разблокирован и подключён по кабелю, либо на нём включён Bluetooth."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "Размер комиссии превышает размер вознаграждения.",
@@ -578,6 +594,9 @@
     "PolkadotValidatorsRequired": {
       "title": "Вы должны выбрать хотя бы одного валидатора"
     },
+    "TaprootNotActivated": {
+      "title": "Мейннет Taproot ещё не активирован"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
@@ -679,8 +698,8 @@
         "description": "Делегируйте ATOM и получайте вознаграждения уже сегодня."
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "Семейный набор",
+        "description": "Приобщите ваших родных к криптовалюте набором из 3 Nano S"
       },
       "buyCrypto": {
         "title": "Покупайте криптовалюту",
@@ -1297,9 +1316,11 @@
   "operations": {
     "types": {
       "IN": "Получено",
+      "NFT_IN": "NFT Received",
       "OUT": "Отправлено",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "Создано",
-      "REVEAL": "Показано",
+      "REVEAL": "Раскрытие адреса",
       "DELEGATE": "Делегировано",
       "UNDELEGATE": "Отозвано",
       "REDELEGATE": "Переделегировано",
@@ -1336,11 +1357,11 @@
     "from": "Откуда",
     "to": "Куда",
     "identifier": "ID транзакции",
-    "viewOperation": "Просмотреть в Обозревателе блоков",
+    "viewOperation": "Посмотреть в Обозревателе",
     "whatIsThis": "Подробнее об этой операции",
     "seeAll": "Просмотреть все",
     "seeLess": "Свернуть",
-    "viewInExplorer": "Просмотреть в Обозревателе блоков",
+    "viewInExplorer": "Посмотреть в Обозревателе",
     "sending": "Идет отправка...",
     "receiving": "Получение...",
     "tokenOperations": "Операции по токену",
@@ -1380,7 +1401,11 @@
       "transferAmount": "Сумма перевода",
       "validatorsCount": "Валидаторов: ({{number}})"
     },
-    "multipleAddresses": "Почему несколько адресов?"
+    "multipleAddresses": "Почему несколько адресов?",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "Нет операций",
@@ -1397,14 +1422,14 @@
   "account": {
     "tokens": {
       "contractAddress": "Адрес контракта",
-      "viewInExplorer": "Просмотреть в Обозревателе блоков",
+      "viewInExplorer": "Посмотреть в Обозревателе",
       "seeMore": "Показать больше токенов",
       "seeLess": "Показать меньше токенов",
       "addTokens": "Добавить токен",
       "howTo": "Чтобы добавить счета для токенов, вам нужно <0>получить средства</0>, используя <1>адрес для {{currency}}</1>.",
       "algorand": {
         "contractAddress": "Адрес контракта",
-        "viewInExplorer": "Просмотреть в Обозревателе блоков",
+        "viewInExplorer": "Посмотреть в Обозревателе",
         "seeMore": "Показать больше ASA",
         "seeLess": "Показать меньше ASA",
         "addTokens": "Добавить ASA",
@@ -1522,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "Отозванные средства"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -1682,8 +1710,8 @@
       "privacyPolicyDesc": "Узнайте, какие персональные данные мы собираем, и ознакомьтесь со способами и целями обработки.",
       "liveReview": {
         "title": "Оценить приложение!",
-        "ios": "Просмотреть в App Store",
-        "android": "Просмотреть в Google Play"
+        "ios": "Посмотреть в App Store",
+        "android": "Посмотреть в Google Play"
       }
     },
     "help": {
@@ -1845,7 +1873,7 @@
             "street1Placeholder": "Например: ул. Маяковского 50",
             "street2Placeholder": "Например: ул. Маяковского 50",
             "cityPlaceholder": "Например: Москва",
-            "postalCodePlaceholder": "Введите индекс из 5 цифр",
+            "postalCodePlaceholder": "Укажите индекс",
             "statePlaceholder": "Выберите штат/область",
             "dateOfBirthPlaceholder": "ГГГГ-ММ-ДД",
             "firstNameError": "Укажите имя, чтобы продолжить",
@@ -1924,7 +1952,7 @@
           "payoutNetworkFeesTooltip": "Эта сумма не будет отображаться на устройстве",
           "receive": "Сумма",
           "receiveFloat": "Сумма к получению до вычета комиссии за обслуживание",
-          "provider": "Поставщик",
+          "provider": "Оператор",
           "method": "Курс",
           "fees": "Макс. комиссия",
           "disclaimer": {
@@ -1938,7 +1966,7 @@
       },
       "operationDetails": {
         "swapId": "ID обмена",
-        "provider": "Поставщик услуг",
+        "provider": "Оператор",
         "date": "Дата",
         "from": "Откуда",
         "fromAmount": "Отправленная сумма",
@@ -1949,7 +1977,7 @@
           "refunded": "Для получения дополнительной информации обратитесь к поставщику услуг обмена и сообщите ID операции.",
           "pending": "Подождите, поставщик услуг обмена обрабатывает транзакцию.",
           "onhold": "Чтобы решить эту проблему, обратитесь к поставщику услуг обмена и сообщите ID операции.",
-          "finished": "Обмен успешно произведён."
+          "finished": "Обмен успешно произведён"
         }
       },
       "missingApp": {
@@ -3014,7 +3042,7 @@
             "success": {
               "title": "Вы успешно отозвали делегированные активы",
               "text": "Баланс обновится после подтверждения транзакции в сети.",
-              "cta": "Просмотреть сведения"
+              "cta": "Посмотреть сведения"
             },
             "pending": {
               "title": "Трансляция транзакции..."
@@ -3616,7 +3644,7 @@
     "connected": "Подключено",
     "disconnected": "Отключено",
     "warningdisconnected": "Проблема с подключением между dApp, WalletConnect и Ledger Live. Подождите несколько секунд или попробуйте подключиться заново",
-    "info": "You can now access the {{name}} dApp on your web browser.",
+    "info": "Теперь dApp {{name}} доступно в веб-браузере.",
     "warning": "Совместное использование адресов, полученных в dApp, несёт риск для безопасности. Обязательно используйте Ledger Live при отправке адреса для получения средств.",
     "isconnecting": "подключается. Пожалуйста, подождите...",
     "disconnect": "Отключить",
@@ -3705,6 +3733,27 @@
       "infoPanel": {
         "website": "сайт"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }

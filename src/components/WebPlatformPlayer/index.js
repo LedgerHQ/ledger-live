@@ -334,7 +334,7 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
               } else {
                 tracking.platformSignTransactionSuccess(manifest);
                 resolve(signedOperation);
-                const n = navigation.dangerouslyGetParent() || navigation;
+                const n = navigation.getParent() || navigation;
                 n.pop();
               }
             },

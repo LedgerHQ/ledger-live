@@ -67,7 +67,7 @@ const AppUpdateAll = ({
             style={[styles.button, { backgroundColor: colors.live }]}
             onPress={updateAll}
             event="ManagerAppUpdateAll"
-            eventProperties={{ appsList }}
+            eventProperties={{ appName: appsList }}
           >
             <LText semiBold style={[styles.buttonText, { color: "#FFF" }]}>
               <Trans i18nKey="AppAction.update.button" />

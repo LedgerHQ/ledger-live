@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "Aucun appareil trouvé",
-      "description": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+      "description": {
+        "ios": {
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+        },
+        "android": {
+          "nanoS": "Assurez-vous que votre {{productName}} est déverrouillé et que le câble est branché.",
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé, avec le Bluetooth activé ou le câble branché."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "Échec de la connexion avec le Gestionnaire",
-      "description": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+      "description": {
+        "ios": {
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
+        },
+        "android": {
+          "nanoS": "Assurez-vous que votre {{productName}} est déverrouillé et que le câble est branché.",
+          "nanoX": "Assurez-vous que votre {{productName}} est déverrouillé, avec le Bluetooth activé ou le câble branché."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "Les récompenses sont inférieures aux frais estimés pour les demander.",
@@ -577,6 +593,9 @@
     },
     "PolkadotValidatorsRequired": {
       "title": "Sélectionnez au moins un validateur."
+    },
+    "TaprootNotActivated": {
+      "title": "Taproot n'est pas encore activé sur le mainnet"
     },
     "generic": {
       "title": "{{message}}",
@@ -1297,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "Reçu",
+      "NFT_IN": "NFT reçu",
       "OUT": "Envoyé",
+      "NFT_OUT": "NFT envoyé",
       "CREATE": "Créé",
       "REVEAL": "Révélé",
       "DELEGATE": "Délégué",
@@ -1380,7 +1401,11 @@
       "transferAmount": "Montant transféré",
       "validatorsCount": "Validateurs ({{number}})"
     },
-    "multipleAddresses": "Pourquoi plusieurs adresses ?"
+    "multipleAddresses": "Pourquoi plusieurs adresses ?",
+    "tokenName": "Nom du token",
+    "collectionContract": "Contrat du token",
+    "tokenId": "Identifiant du token (NFT)",
+    "quantity": "Quantité"
   },
   "operationList": {
     "noOperations": "Aucune opération",
@@ -1522,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "Délégation(s) interrompue(s)"
+    },
+    "nft": {
+      "receiveNft": "Recevoir NFT"
     }
   },
   "accounts": {
@@ -2000,7 +2028,7 @@
         "accruedInterestsTooltip": "Intérêts produits par vos actifs prêtés",
         "interestEarned": "Intérêts gagnés",
         "interestEarnedTooltip": "Intérêts gagnés suite au retrait",
-        "openLoans": "Prêts ouverts",
+        "openLoans": "Prêts en cours",
         "closedLoans": "Prêts clôturés"
       },
       "banners": {
@@ -3705,6 +3733,27 @@
       "infoPanel": {
         "website": "Site"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "Voir tous les NFT",
+      "seeFewerNfts": "Voir moins de NFT"
+    },
+    "gallery": {
+      "allNft": "Tous les NFT"
+    },
+    "viewer": {
+      "properties": "Attributs",
+      "description": "Description",
+      "tokenContract": "Adresse du token",
+      "tokenId": "Identifiant du token",
+      "quantity": "Quantité"
+    },
+    "viewerModal": {
+      "viewOn": "Voir sur",
+      "viewInExplorer": "Afficher dans l'explorateur",
+      "txDetails": "Détails de la transaction"
     }
   }
 }

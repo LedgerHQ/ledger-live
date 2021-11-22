@@ -25,9 +25,9 @@ export default function NotificationCenterNavigator() {
 
   return (
     <Tab.Navigator
-      tabBarOptions={{
+      screenOptions={{
         headerStyle: styles.headerNoShadow,
-        indicatorStyle: {
+        tabBarIndicatorStyle: {
           backgroundColor: colors.live,
         },
       }}

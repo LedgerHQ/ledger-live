@@ -28,7 +28,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   const onClose = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {

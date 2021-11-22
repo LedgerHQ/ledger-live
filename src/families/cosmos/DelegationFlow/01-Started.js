@@ -40,7 +40,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, []);
 
   const onCancel = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   return (

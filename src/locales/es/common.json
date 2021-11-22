@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "No se ha encontrado ningún dispositivo",
-      "description": "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "La conexión con Manager ha fallado",
-      "description": "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "Las recompensas son inferiores a las tarifas estimadas para reclamarlas.",
@@ -577,6 +593,9 @@
     },
     "PolkadotValidatorsRequired": {
       "title": "Debes seleccionar al menos un validador"
+    },
+    "TaprootNotActivated": {
+      "title": "Taproot mainnet is not activated yet"
     },
     "generic": {
       "title": "{{message}}",
@@ -1297,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "Recibido",
+      "NFT_IN": "NFT Received",
       "OUT": "Enviado",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "Creado",
       "REVEAL": "Revelado",
       "DELEGATE": "Delegado",
@@ -1380,7 +1401,11 @@
       "transferAmount": "Transferir importe",
       "validatorsCount": "Validadores ({{number}})"
     },
-    "multipleAddresses": "¿Por qué hay múltiples direcciones?"
+    "multipleAddresses": "¿Por qué hay múltiples direcciones?",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "Sin operaciones",
@@ -1522,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "Desdelegaciones"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -3705,6 +3733,27 @@
       "infoPanel": {
         "website": "sitio web"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }

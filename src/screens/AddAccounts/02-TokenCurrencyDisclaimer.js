@@ -46,7 +46,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   const parentTokenAccount = accountData ? accountData.parentAccount : null;
 
   const onClose = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   // specific cta in case of token accounts

@@ -31,7 +31,7 @@ export default function FirmwareUpdateFailure({ navigation, route }: Props) {
   }, [navigation, route.params]);
 
   const onClose = useCallback(() => {
-    const n = navigation.dangerouslyGetParent();
+    const n = navigation.getParent();
     if (n) n.goBack();
   }, [navigation]);
 

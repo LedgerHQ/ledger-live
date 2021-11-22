@@ -92,7 +92,7 @@ export default function Progress({ navigation, route }: Props) {
         });
       }
     } else {
-      navigation.dangerouslyGetParent().pop();
+      navigation.getParent().pop();
     }
   }, [
     navigation,

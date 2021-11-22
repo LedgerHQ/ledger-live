@@ -52,7 +52,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, []);
 
   const onClose = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {

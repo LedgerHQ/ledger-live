@@ -8,6 +8,10 @@ import Accounts from "../../screens/Accounts";
 import AccountOrder from "../../screens/Accounts/AccountOrder";
 import AddAccount from "../../screens/Accounts/AddAccount";
 import Account from "../../screens/Account";
+import NftCollection from "../../screens/Nft/NftCollection";
+import NftGallery from "../../screens/Nft/NftGallery";
+import NftCollectionHeaderTitle from "../../screens/Nft/NftCollection/NftCollectionHeaderTitle";
+import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeaderTitle";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import AccountHeaderRight from "../../screens/Account/AccountHeaderRight";
 import AccountHeaderTitle from "../../screens/Account/AccountHeaderTitle";
@@ -35,6 +39,20 @@ export default function AccountsNavigator() {
         options={{
           headerTitle: () => <AccountHeaderTitle />,
           headerRight: () => <AccountHeaderRight />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NftCollection}
+        component={NftCollection}
+        options={{
+          headerTitle: () => <NftCollectionHeaderTitle />,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.NftGallery}
+        component={NftGallery}
+        options={{
+          headerTitle: () => <NftGalleryHeaderTitle />,
         }}
       />
     </Stack.Navigator>

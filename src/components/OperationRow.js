@@ -22,6 +22,7 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 
+import OperationRowNftName from "./OperationRowNftName";
 import OperationIcon from "./OperationIcon";
 import { ScreenName } from "../const";
 import OperationRowDate from "./OperationRowDate";
@@ -72,6 +73,11 @@ export default function OperationRow({
     else navigation.navigate(...params);
   }, 300);
 
+  const isNftOperation =
+    ["NFT_IN", "NFT_OUT"].includes(operation.type) &&
+    operation.contract &&
+    operation.tokenId;
+
   const renderAmountCellExtra = useCallback(() => {
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
@@ -108,6 +114,54 @@ export default function OperationRow({
       </Spinning>
     </View>
   );
+
+  const amountRender = useCallback(() => {
+    if (amount.isZero()) {
+      return null;
+    }
+
+    if (isNftOperation) {
+      return (
+        <OperationRowNftName
+          style={[
+            styles.bodyRight,
+            {
+              maxWidth: "50%",
+            },
+          ]}
+          operation={operation}
+        />
+      );
+    }
+
+    return (
+      <View style={styles.bodyRight}>
+        <LText
+          semiBold
+          numberOfLines={1}
+          color={valueColor}
+          style={[styles.bodyRight, styles.topRow]}
+        >
+          <CurrencyUnitValue
+            showCode
+            unit={unit}
+            value={amount}
+            alwaysShowSign
+          />
+        </LText>
+        <CounterValue
+          showCode
+          date={operation.date}
+          currency={currency}
+          value={amount}
+          alwaysShowSign
+          withPlaceholder
+          placeholderProps={placeholderProps}
+          Wrapper={OpCounterValue}
+        />
+      </View>
+    );
+  }, [amount, currency, isNftOperation, operation, unit, valueColor]);
 
   return (
     <View
@@ -165,33 +219,7 @@ export default function OperationRow({
 
           <View style={styles.bodyRight}>{renderAmountCellExtra()}</View>
 
-          {amount.isZero() ? null : (
-            <View style={styles.bodyRight}>
-              <LText
-                semiBold
-                numberOfLines={1}
-                color={valueColor}
-                style={[styles.bodyRight, styles.topRow]}
-              >
-                <CurrencyUnitValue
-                  showCode
-                  unit={unit}
-                  value={amount}
-                  alwaysShowSign
-                />
-              </LText>
-              <CounterValue
-                showCode
-                date={operation.date}
-                currency={currency}
-                value={amount}
-                alwaysShowSign
-                withPlaceholder
-                placeholderProps={placeholderProps}
-                Wrapper={OpCounterValue}
-              />
-            </View>
-          )}
+          {amountRender()}
         </View>
       </TouchableOpacity>
     </View>

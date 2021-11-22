@@ -133,7 +133,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
   }
 
   function onDone(): void {
-    const n = navigation.dangerouslyGetParent();
+    const n = navigation.getParent();
     if (n) {
       n.pop();
     }

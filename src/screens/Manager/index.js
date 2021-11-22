@@ -62,6 +62,7 @@ const RemoveDeviceModal = ({
 type RouteParams = {
   searchQuery?: string,
   tab?: ManagerTab,
+  installApp?: string,
 };
 
 type Props = {
@@ -118,10 +119,14 @@ class ChooseDevice extends Component<
 
   onModalHide = () => {
     const { result } = this.state;
+    const {
+      route: { params = {} },
+    } = this.props;
     result?.result &&
       this.props.navigation.navigate(ScreenName.ManagerMain, {
         ...result,
-        ...this.props.route.params,
+        ...params,
+        searchQuery: params.searchQuery || params.installApp,
       });
   };
 

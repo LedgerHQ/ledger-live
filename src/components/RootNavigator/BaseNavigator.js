@@ -3,6 +3,7 @@ import React, { useMemo } from "react";
 import {
   createStackNavigator,
   CardStyleInterpolators,
+  TransitionPresets,
 } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -48,6 +49,7 @@ import LendingEnableFlowNavigator from "./LendingEnableFlowNavigator";
 import LendingSupplyFlowNavigator from "./LendingSupplyFlowNavigator";
 import LendingWithdrawFlowNavigator from "./LendingWithdrawFlowNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
+import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Account from "../../screens/Account";
 import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
@@ -69,7 +71,12 @@ export default function BaseNavigator() {
     [colors],
   );
   return (
-    <Stack.Navigator mode="modal" screenOptions={stackNavigationConfig}>
+    <Stack.Navigator
+      screenOptions={{
+        ...stackNavigationConfig,
+        ...TransitionPresets.ModalTransition,
+      }}
+    >
       <Stack.Screen
         name={NavigatorName.Main}
         component={Main}
@@ -406,6 +413,15 @@ export default function BaseNavigator() {
           headerLeft: null,
           headerRight: () => <CloseButton navigation={navigation} />,
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        })}
+      />
+      <Stack.Screen
+        name={NavigatorName.NftNavigator}
+        component={NftNavigator}
+        options={({ navigation }) => ({
+          title: null,
+          headerRight: null,
+          headerLeft: () => <CloseButton navigation={navigation} />,
         })}
       />
       {Object.keys(families).map(name => {

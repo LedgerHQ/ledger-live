@@ -22,10 +22,10 @@ export default function ReceiveFundsNavigator() {
   );
   return (
     <Stack.Navigator
-      headerMode="float"
       screenOptions={{
         ...stackNavigationConfig,
         gestureEnabled: Platform.OS === "ios",
+        headerMode: "float",
       }}
     >
       <Stack.Screen

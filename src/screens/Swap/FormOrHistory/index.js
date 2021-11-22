@@ -34,9 +34,9 @@ const SwapFormOrHistory = ({ route }: { route: { params: RouteParams } }) => {
 
   return (
     <Tab.Navigator
-      tabBarOptions={{
+      screenOptions={{
         headerStyle: styles.headerNoShadow,
-        indicatorStyle: {
+        tabBarIndicatorStyle: {
           backgroundColor: colors.live,
         },
       }}

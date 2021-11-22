@@ -154,7 +154,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
 
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
-    const parent = navigation.dangerouslyGetParent();
+    const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
 

@@ -47,7 +47,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
   const onClose = useCallback(() => {
-    navigation.dangerouslyGetParent().pop();
+    navigation.getParent().pop();
   }, [navigation]);
 
   const goToVote = useCallback(() => {

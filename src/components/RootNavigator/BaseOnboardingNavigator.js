@@ -1,6 +1,9 @@
 // @flow
 import React, { useCallback, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
@@ -50,10 +53,10 @@ export default function BaseOnboardingNavigator() {
   );
   return (
     <Stack.Navigator
-      mode="modal"
       screenOptions={{
         ...stackNavigationConfig,
         headerShown: false,
+        ...TransitionPresets.ModalTransition,
       }}
     >
       <Stack.Screen

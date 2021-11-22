@@ -31,7 +31,6 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
   ]);
   return (
     <Stack.Navigator
-      headerMode="float"
       initialRouteName={
         token
           ? ScreenName.AddAccountsTokenCurrencyDisclaimer
@@ -42,6 +41,7 @@ export default function AddAccountsNavigator({ route }: { route: Route }) {
       screenOptions={{
         ...stackNavConfig,
         headerRight: () => <AddAccountsHeaderRightClose />,
+        headerMode: "float",
       }}
     >
       <Stack.Screen

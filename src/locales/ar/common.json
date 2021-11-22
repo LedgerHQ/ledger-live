@@ -118,11 +118,27 @@
     },
     "ConnectAppTimeout": {
       "title": "عفوًا، لم يتم العثور على أي جهاز",
-      "description": "يرجى التأكد من إلغاء قفل جهاز {{productName}} الخاص بك مع تمكين خاصية البلوتوث."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ConnectManagerTimeout": {
       "title": "عذرًا، فشل الاتصال بالمدير",
-      "description": "يرجى التأكد من إلغاء قفل جهاز {{productName}} الخاص بك مع تمكين خاصية البلوتوث."
+      "description": {
+        "ios": {
+          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+        },
+        "android": {
+          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
+          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+        }
+      }
     },
     "ClaimRewardsFeesWarning": {
       "title": "المكافآت أصغر من الرسوم المقدرة للمطالبة بهم.",
@@ -577,6 +593,9 @@
     },
     "PolkadotValidatorsRequired": {
       "title": "يجب عليك تحديد مدقق واحد على الأقل"
+    },
+    "TaprootNotActivated": {
+      "title": "Taproot mainnet is not activated yet"
     },
     "generic": {
       "title": "{{message}}",
@@ -1297,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "تم الاستلام",
+      "NFT_IN": "NFT Received",
       "OUT": "أرسلت",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "تمّ انشاؤه",
       "REVEAL": "كشف",
       "DELEGATE": "تم التفويض",
@@ -1380,7 +1401,11 @@
       "transferAmount": "مبلغ التحويل",
       "validatorsCount": "({{number}}) مدققين"
     },
-    "multipleAddresses": "لماذا عناوين متعددة؟"
+    "multipleAddresses": "لماذا عناوين متعددة؟",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "لا توجد عمليات",
@@ -1522,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "إلغاء التفويض (إلغاء التفويضات)"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -3705,6 +3733,27 @@
       "infoPanel": {
         "website": "الموقع الإلكتروني"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }
