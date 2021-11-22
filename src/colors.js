@@ -91,6 +91,9 @@ export const lightTheme = {
     /** SNACKBAR */
     snackBarBg: "#142533",
     snackBarColor: "#FFF",
+
+    /** SKELETON */
+    skeletonBg: "#E9EAEB",
   },
 };
 
@@ -144,6 +147,9 @@ export const duskTheme = {
     /** SNACKBAR */
     snackBarBg: "#060d12",
     snackBarColor: "#FFF",
+
+    /** SKELETON */
+    skeletonBg: "#303b47",
   },
 };
 

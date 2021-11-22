@@ -87,6 +87,9 @@ export const ScreenName = {
   MigrateAccountsConnectDevice: "MigrateAccountsConnectDevice",
   MigrateAccountsOverview: "MigrateAccountsOverview",
   MigrateAccountsProgress: "MigrateAccountsProgress",
+  NftCollection: "NftCollection",
+  NftGallery: "NftGallery",
+  NftViewer: "NftViewer",
 
   OperationDetails: "OperationDetails",
   PairDevices: "PairDevices",
@@ -326,6 +329,7 @@ export const NavigatorName = {
   Manager: "Manager",
   ManagerStack: "ManagerStack",
   MigrateAccountsFlow: "MigrateAccountsFlow",
+  NftNavigator: "NftNavigator",
   Onboarding: "Onboarding",
   PasswordAddFlow: "PasswordAddFlow",
   PasswordModifyFlow: "PasswordModifyFlow",

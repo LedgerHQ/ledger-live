@@ -81,22 +81,19 @@ type Props = {
   parentAccount: Account,
   onAccountPress: (subAccount: SubAccount) => void,
   accountId: string,
-  isCollapsed: boolean,
-  onToggle: () => void,
 };
 
 export default function SubAccountsList({
   parentAccount,
   onAccountPress,
   accountId,
-  isCollapsed,
-  onToggle,
 }: Props) {
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const { colors } = useTheme();
   const navigation = useNavigation();
   const [account, setAccount] = useState<TokenAccount | typeof undefined>();
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const subAccounts = listSubAccounts(parentAccount);
   const family = parentAccount.currency.family;
   const specific = perFamilySubAccountList[family];
@@ -255,7 +252,7 @@ export default function SubAccountsList({
               size={16}
             />
           )}
-          onPress={onToggle}
+          onPress={() => setIsCollapsed(!isCollapsed)}
           size={13}
         />
       </Card>
@@ -266,7 +263,6 @@ export default function SubAccountsList({
     isToken,
     navigateToReceiveConnectDevice,
     parentAccount.currency.family,
-    onToggle,
     family,
     hasSpecificTokenWording,
     colors,

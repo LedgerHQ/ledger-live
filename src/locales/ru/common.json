@@ -1316,9 +1316,11 @@
   "operations": {
     "types": {
       "IN": "Получено",
+      "NFT_IN": "NFT Received",
       "OUT": "Отправлено",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "Создано",
-      "REVEAL": "Показано",
+      "REVEAL": "Раскрытие адреса",
       "DELEGATE": "Делегировано",
       "UNDELEGATE": "Отозвано",
       "REDELEGATE": "Переделегировано",
@@ -1355,11 +1357,11 @@
     "from": "Откуда",
     "to": "Куда",
     "identifier": "ID транзакции",
-    "viewOperation": "Просмотреть в Обозревателе блоков",
+    "viewOperation": "Посмотреть в Обозревателе",
     "whatIsThis": "Подробнее об этой операции",
     "seeAll": "Просмотреть все",
     "seeLess": "Свернуть",
-    "viewInExplorer": "Просмотреть в Обозревателе блоков",
+    "viewInExplorer": "Посмотреть в Обозревателе",
     "sending": "Идет отправка...",
     "receiving": "Получение...",
     "tokenOperations": "Операции по токену",
@@ -1399,7 +1401,11 @@
       "transferAmount": "Сумма перевода",
       "validatorsCount": "Валидаторов: ({{number}})"
     },
-    "multipleAddresses": "Почему несколько адресов?"
+    "multipleAddresses": "Почему несколько адресов?",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "Нет операций",
@@ -1416,14 +1422,14 @@
   "account": {
     "tokens": {
       "contractAddress": "Адрес контракта",
-      "viewInExplorer": "Просмотреть в Обозревателе блоков",
+      "viewInExplorer": "Посмотреть в Обозревателе",
       "seeMore": "Показать больше токенов",
       "seeLess": "Показать меньше токенов",
       "addTokens": "Добавить токен",
       "howTo": "Чтобы добавить счета для токенов, вам нужно <0>получить средства</0>, используя <1>адрес для {{currency}}</1>.",
       "algorand": {
         "contractAddress": "Адрес контракта",
-        "viewInExplorer": "Просмотреть в Обозревателе блоков",
+        "viewInExplorer": "Посмотреть в Обозревателе",
         "seeMore": "Показать больше ASA",
         "seeLess": "Показать меньше ASA",
         "addTokens": "Добавить ASA",
@@ -1541,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "Отозванные средства"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -1701,8 +1710,8 @@
       "privacyPolicyDesc": "Узнайте, какие персональные данные мы собираем, и ознакомьтесь со способами и целями обработки.",
       "liveReview": {
         "title": "Оценить приложение!",
-        "ios": "Просмотреть в App Store",
-        "android": "Просмотреть в Google Play"
+        "ios": "Посмотреть в App Store",
+        "android": "Посмотреть в Google Play"
       }
     },
     "help": {
@@ -1943,7 +1952,7 @@
           "payoutNetworkFeesTooltip": "Эта сумма не будет отображаться на устройстве",
           "receive": "Сумма",
           "receiveFloat": "Сумма к получению до вычета комиссии за обслуживание",
-          "provider": "Поставщик",
+          "provider": "Оператор",
           "method": "Курс",
           "fees": "Макс. комиссия",
           "disclaimer": {
@@ -1957,7 +1966,7 @@
       },
       "operationDetails": {
         "swapId": "ID обмена",
-        "provider": "Поставщик услуг",
+        "provider": "Оператор",
         "date": "Дата",
         "from": "Откуда",
         "fromAmount": "Отправленная сумма",
@@ -1968,7 +1977,7 @@
           "refunded": "Для получения дополнительной информации обратитесь к поставщику услуг обмена и сообщите ID операции.",
           "pending": "Подождите, поставщик услуг обмена обрабатывает транзакцию.",
           "onhold": "Чтобы решить эту проблему, обратитесь к поставщику услуг обмена и сообщите ID операции.",
-          "finished": "Обмен успешно произведён."
+          "finished": "Обмен успешно произведён"
         }
       },
       "missingApp": {
@@ -3033,7 +3042,7 @@
             "success": {
               "title": "Вы успешно отозвали делегированные активы",
               "text": "Баланс обновится после подтверждения транзакции в сети.",
-              "cta": "Просмотреть сведения"
+              "cta": "Посмотреть сведения"
             },
             "pending": {
               "title": "Трансляция транзакции..."
@@ -3724,6 +3733,27 @@
       "infoPanel": {
         "website": "сайт"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }

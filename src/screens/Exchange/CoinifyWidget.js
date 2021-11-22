@@ -420,5 +420,13 @@ const styles = StyleSheet.create({
     flex: 0,
     width: "100%",
     height: "100%",
+    /**
+     * This is required to prevent a crash when navigating back.
+     * The issue is caused by an incompatibility between the
+     * react-native-webview and react-native-screens packages.
+     * See: https://github.com/react-native-webview/react-native-webview/issues/1069
+     * See: https://github.com/software-mansion/react-native-screens/issues/105
+     */
+    opacity: 0.99,
   },
 });

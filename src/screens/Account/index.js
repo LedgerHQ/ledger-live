@@ -178,8 +178,6 @@ function AccountScreenInner({
       ? makeCompoundSummaryForAccount(account, parentAccount)
       : undefined;
 
-  const [isCollapsed, setIsCollapsed] = useState(true);
-
   const { listHeaderComponents, stickyHeaderIndices } = useMemo(
     () =>
       getListHeaderComponents({
@@ -195,8 +193,6 @@ function AccountScreenInner({
         onAccountPress,
         onSwitchAccountCurrency,
         compoundSummary,
-        isCollapsed,
-        setIsCollapsed,
       }),
     [
       account,
@@ -206,7 +202,6 @@ function AccountScreenInner({
       countervalueChange,
       cryptoChange,
       history,
-      isCollapsed,
       onAccountPress,
       onSwitchAccountCurrency,
       parentAccount,

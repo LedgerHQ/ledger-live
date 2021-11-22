@@ -1316,7 +1316,9 @@
   "operations": {
     "types": {
       "IN": "Alındı",
+      "NFT_IN": "NFT Received",
       "OUT": "Gönderildi",
+      "NFT_OUT": "NFT Sent",
       "CREATE": "Oluşturuldu",
       "REVEAL": "Adres gösterildi",
       "DELEGATE": "Yetki devredildi",
@@ -1399,7 +1401,11 @@
       "transferAmount": "Transfer Tutarı",
       "validatorsCount": "Doğrulayıcılar ({{number}})"
     },
-    "multipleAddresses": "Neden birden fazla adres var?"
+    "multipleAddresses": "Neden birden fazla adres var?",
+    "tokenName": "Token Name",
+    "collectionContract": "Token Contract",
+    "tokenId": "Token (NFT) ID",
+    "quantity": "Quantity"
   },
   "operationList": {
     "noOperations": "İşlem Yok",
@@ -1541,6 +1547,9 @@
     },
     "undelegation": {
       "sectionLabel": "Yetki İptalleri"
+    },
+    "nft": {
+      "receiveNft": "Receive NFT"
     }
   },
   "accounts": {
@@ -3724,6 +3733,27 @@
       "infoPanel": {
         "website": "Web sitesi"
       }
+    }
+  },
+  "nft": {
+    "account": {
+      "seeAllNfts": "See all NFT",
+      "seeFewerNfts": "See fewer NFT"
+    },
+    "gallery": {
+      "allNft": "All NFT"
+    },
+    "viewer": {
+      "properties": "Properties",
+      "description": "Description",
+      "tokenContract": "Token Address",
+      "tokenId": "Token ID",
+      "quantity": "Quantity"
+    },
+    "viewerModal": {
+      "viewOn": "View on",
+      "viewInExplorer": "View in explorer",
+      "txDetails": "Transaction details"
     }
   }
 }

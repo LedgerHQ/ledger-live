@@ -33,7 +33,9 @@ export default ({
 }) => {
   const IconsComponent: { [_: OperationType]: * } = {
     OUT: OperationStatusIconSend,
+    NFT_OUT: OperationStatusIconSend,
     IN: OperationStatusIconReceive,
+    NFT_IN: OperationStatusIconReceive,
     DELEGATE: OperationStatusIconDelegate,
     UNDELEGATE: OperationStatusIconUndelegate,
     REDELEGATE: OperationStatusIconRedelegate,

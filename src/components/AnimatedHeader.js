@@ -1,12 +1,7 @@
 // @flow
 import React, { useState, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  Platform,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useNavigation,
   useTheme,
