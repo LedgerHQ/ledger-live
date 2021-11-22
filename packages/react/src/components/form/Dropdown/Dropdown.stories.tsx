@@ -26,5 +26,13 @@ const options = [
 export const Dropdown = (args: DropdownProps): React.ReactNode => {
   const [value, setValue] = React.useState<typeof options[0] | null>(null);
 
-  return <DropdownComponent options={options} value={value} onChange={setValue} {...args} />;
+  return (
+    <DropdownComponent
+      options={options}
+      value={value}
+      onChange={setValue}
+      menuPortalTarget={document.body}
+      {...args}
+    />
+  );
 };

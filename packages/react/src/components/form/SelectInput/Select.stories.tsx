@@ -9,6 +9,132 @@ import SelectInput, { Props } from "./index";
 import { Option } from "./Option";
 import { VirtualMenuList } from "./VirtualMenuList";
 import { ValueContainer } from "./ValueContainer";
+import { StoryTemplate } from "../../helpers";
+
+const description = `
+### A styled Select Input control
+
+> This component is based on [react-select](https://react-select.com/). Please refer to the [documentation](https://react-select.com/props) for an exhaustive list of available props.
+
+## Usage
+
+\`\`\`jsx
+
+import { SelectInput } from "@ledgerhq/react-ui"
+
+\`\`\`
+
+Basically the component accepts a list of selectable options and a callback.
+
+\`\`\`jsx
+// Minimal working example
+
+const [value, setValue] = React.useState()
+const options = [
+  { value: "chocolate", label: "Chocolate" },
+  { value: "strawberry", label: "Strawberry" },
+  { value: "vanilla", label: "Vanilla" },
+]
+
+<SelectInput
+  options={options}
+  value={value}
+  onChange={setValue}
+/>
+\`\`\`
+
+## Portaling
+
+The opened menu is not rendered inside a portal by default.
+
+- Use the \`menuPortalTarget\` [prop](https://react-select.com/advanced#portaling) to specify a node to root the portal.
+- To specify a custom z-index you will need to override the \`menuPortal\` style.
+
+\`\`\`jsx
+<SelectInput
+  menuPortalTarget={document.body}
+  styles={{ menuPortal: (provided) => ({ ...provided, zIndex: 2 }) }}
+/>
+\`\`\`
+
+## Extending Styles
+
+react-select has built in support for [overriding styles](https://react-select.com/styles#provided-styles-and-state).
+
+#### Using the \`extendStyles\` props
+
+SelectInput contains custom built-in styles to integrate the select control with the rest of the Ledger design.
+
+The \`extendStyles\` prop is a function that will allow you to compose new styles.
+The function argument is a map between the react-select provided styles and additional ones.
+
+\`\`\`jsx
+/*
+  The "styles" argument is an object containing component names as keys and functions as values.
+  These functions take as arguments the styles provided by react-select and return an object of additional styles.
+*/
+const extendStyles = (styles) => ({
+  ...styles,
+  menuPortal: (provided) => {
+    return {
+      // "styles.menuPortal" will exist if SelectInput has custom styles for this component.
+      // Otherwise, use the react-select provided ones.
+      ...((styles.menuPortal && styles.menuPortal(provided)) || { ...provided }),
+      // Then extend the output with your own styles!
+      zIndex: 2,
+    };
+  },
+});
+
+<SelectInput extendStyles={extendStyles} />
+\`\`\`
+
+#### Using the \`styles\` prop
+
+To completely override the SelectInput styles, use the \`style\` prop.
+
+\`\`\`jsx
+// The "provided" argument will only contain the base react-select styles.
+const styles = { menuPortal: (provided) => ({ ...provided, zIndex: 2 }) }
+
+<SelectInput styles={styles} />
+\`\`\`
+
+## Extending Components
+
+react-select has built in support for [extending components](https://react-select.com/components).
+
+To override components use the \`components\` prop:
+
+\`\`\`jsx
+
+<SelectInput components={{ Option: ColorOption, ValueContainer: ColorValueContainer }} />
+
+\`\`\`
+
+If you would like to re-use inner SelectInput components you can import them like so:
+
+\`\`\`jsx
+// Import them as modules
+import * as DropdownIndicatorModule from "@ledgerhq/react-ui/components/form/SelectInput/DropdownIndicator";
+import * as ValueContainerModule from "@ledgerhq/react-ui/components/form/SelectInput/ValueContainer";
+import * as ControlModule from "@ledgerhq/react-ui/components/form/SelectInput/Control";
+import * as MenuListModule from "@ledgerhq/react-ui/components/form/SelectInput/MenuList";
+import * as OptionModule from "@ledgerhq/react-ui/components/form/SelectInput/Option";
+
+// Then each module contains the component definition and the associated style
+const { DropdownIndicator, getStyles } = DropdownIndicatorModule
+
+<SelectInput
+  components={{dropdownIndicator: DropdownIndicator}}
+  styles={{dropdownIndicator: getStyles}}
+/>
+\`\`\`
+
+## Sandbox
+
+The following advanced example showcases how to override components and styles and disable elements.
+`;
 
 export default {
   title: "Form/Input/Select",
@@ -21,6 +147,11 @@ export default {
     isDisabled: { type: "boolean" },
     error: { type: "string" },
     menuIsOpen: { type: "boolean" },
+  },
+  parameters: {
+    docs: {
+      description: { component: description },
+    },
   },
 };
 
@@ -205,7 +336,8 @@ const ColorValueContainer = (props: ValueContainerProps<SelectItem, false>) => {
     />
   );
 };
-export const Default = (args: Props): React.ReactNode => {
+
+export const Default: StoryTemplate<Props> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -218,18 +350,36 @@ export const Default = (args: Props): React.ReactNode => {
       isOptionDisabled={(option) => option.value.startsWith("b")}
       components={{ Option: ColorOption, ValueContainer: ColorValueContainer }}
       renderLeft={(_) => value && <Flex mr={4} p={4} style={{ background: value.value }} />}
+      menuPortalTarget={document.body}
+      styles={{ menuPortal: (provided) => ({ ...provided, zIndex: 2 }) }}
       {...args}
     />
   );
 };
 
-export const Minimal = (args: Props): React.ReactNode => {
+export const Minimal: StoryTemplate<Props> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
-  return <SelectInput options={options} value={value} onChange={setValue} {...args} />;
+  return (
+    <SelectInput
+      options={options}
+      value={value}
+      onChange={setValue}
+      menuPortalTarget={document.body}
+      {...args}
+    />
+  );
 };
 
-export const SideRenders = (args: Props): React.ReactNode => {
+Minimal.parameters = {
+  docs: {
+    description: {
+      story: "This is a minimal working example with only required props.",
+    },
+  },
+};
+
+export const SideRenders: StoryTemplate<Props> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
   const theme = useTheme();
 
@@ -250,9 +400,19 @@ export const SideRenders = (args: Props): React.ReactNode => {
           #Right
         </Text>
       )}
+      menuPortalTarget={document.body}
       {...args}
     />
   );
+};
+
+SideRenders.parameters = {
+  docs: {
+    description: {
+      story:
+        "This example has side renders - a magnifying glass icon on the left and custom label on the right.",
+    },
+  },
 };
 
 const CustomOption = (props: OptionProps<SelectItem, false>) => {
@@ -275,7 +435,7 @@ const CustomOption = (props: OptionProps<SelectItem, false>) => {
     />
   );
 };
-export const CustomOptions = (args: Props): React.ReactNode => {
+export const CustomOptions: StoryTemplate<Props> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>();
 
   return (
@@ -284,12 +444,21 @@ export const CustomOptions = (args: Props): React.ReactNode => {
       value={value}
       onChange={setValue}
       components={{ Option: CustomOption }}
+      menuPortalTarget={document.body}
       {...args}
     />
   );
 };
 
-export const DisabledOption = (args: Props): React.ReactNode => {
+CustomOptions.parameters = {
+  docs: {
+    description: {
+      story: "Here the `Option` component is overriden to display side labels (#Left and #Right).",
+    },
+  },
+};
+
+export const DisabledOption: StoryTemplate<Props> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -298,13 +467,23 @@ export const DisabledOption = (args: Props): React.ReactNode => {
       value={value}
       onChange={setValue}
       isOptionDisabled={(option) => option.value === "lemon"}
+      menuPortalTarget={document.body}
       {...args}
     />
   );
 };
 
+DisabledOption.parameters = {
+  docs: {
+    description: {
+      story:
+        "Using the `isOptionDisabled` prop, options having a value that matches 'lemon' are disabled.",
+    },
+  },
+};
+
 const hugeOptions = new Array(10000).fill(0).map((_, i) => ({ label: "" + i, value: "" + i }));
-export const VirtualList = (args: Props): React.ReactNode => {
+export const VirtualList: StoryTemplate<Props> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -315,7 +494,17 @@ export const VirtualList = (args: Props): React.ReactNode => {
       components={{
         MenuList: VirtualMenuList,
       }}
+      menuPortalTarget={document.body}
       {...args}
     />
   );
+};
+
+VirtualList.parameters = {
+  docs: {
+    description: {
+      story:
+        "This control contains a list of 10_000 elements. It uses the `VirtualMenuList` component to render the list inside a `react-window` wrapper.",
+    },
+  },
 };

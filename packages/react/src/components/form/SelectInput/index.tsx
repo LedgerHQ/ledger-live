@@ -23,6 +23,8 @@ export type SelfProps<
   rowHeight?: number;
   /* Removes all wrappers when rendering the element. */
   unwrapped?: boolean;
+  /* Extends defined styles. */
+  extendStyles?: (styles: Styles<T, M>) => Styles<T, M>;
 };
 export type Props<
   T extends OptionTypeBase = { label: string; value: string },
@@ -63,9 +65,12 @@ const stylesFn = <
 function SelectInput<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->({ error, rowHeight = 48, unwrapped, ...props }: Props<T, M>): JSX.Element {
+>({ error, rowHeight = 48, unwrapped, extendStyles, ...props }: Props<T, M>): JSX.Element {
   const theme = useTheme();
-  const styles = useMemo(() => stylesFn<T, M>(theme), [theme]);
+  const styles = useMemo(
+    () => (extendStyles ? extendStyles(stylesFn<T, M>(theme)) : stylesFn<T, M>(theme)),
+    [theme, extendStyles],
+  );
   const { isDisabled, components = {} } = props;
 
   const innerContent = (
