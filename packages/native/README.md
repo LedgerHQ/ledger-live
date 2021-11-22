@@ -41,12 +41,6 @@ Then, follow the installation instructions for:
 - [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/docs/2.2.0/installation)
 - [react-native-svg](https://github.com/react-native-svg/react-native-svg#installation)
 
-### Recommended Dependencies
-
-```sh
-npm i styled-components
-```
-
 ## Usage
 
 ### Provider
