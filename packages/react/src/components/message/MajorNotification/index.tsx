@@ -17,7 +17,7 @@ export interface Props extends ContainerProps {
 
 const Container = styled(FlexBox).attrs<ContainerProps>({
   p: 8,
-  rowGap: 7,
+  rowGap: 9,
   alignItems: "center",
   flexDirection: "column",
 })<ContainerProps>`

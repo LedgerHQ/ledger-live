@@ -29,6 +29,8 @@ type FontFamilies =
   | "Inter|ExtraBold"
   | "Alpha|Medium";
 
+type WhiteSpace = "normal" | "nowrap" | "pre" | "pre-line" | "pre-wrap";
+
 export interface TextProps extends BaseStyledProps {
   fontFamily?: string;
   ff?: FontFamilies;
@@ -40,6 +42,7 @@ export interface TextProps extends BaseStyledProps {
   textTransform?: string;
   textOverflow?: string;
   uppercase?: boolean;
+  whiteSpace?: WhiteSpace;
 }
 
 const Text = baseStyled.span.attrs<TextProps, TextProps>(
@@ -49,6 +52,7 @@ const Text = baseStyled.span.attrs<TextProps, TextProps>(
   }),
 )`
   font-weight: 500;
+  white-space: ${(props) => props.whiteSpace ?? "normal"};
   ${(p) => textVariantStyle[p.variant || "body"]}
   ${compose(
     uppercase,
