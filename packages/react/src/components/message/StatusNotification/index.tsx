@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import FlexBox, { FlexBoxProps } from "../../layout/Flex";
-import Text from "../../asorted/Text";
+import Log from "../Log/";
 
 interface ContainerProps extends FlexBoxProps {
   /* Add the pre-selected border. */
@@ -27,7 +27,7 @@ const Container = styled(FlexBox).attrs<ContainerProps>({
   border-color: ${(p) => p.theme.colors.palette.neutral.c40};
 `;
 
-function MajorNotification({
+function StatusNotification({
   text,
   badge,
   hasBorder = false,
@@ -36,11 +36,9 @@ function MajorNotification({
   return (
     <Container hasBorder={hasBorder} {...containerProps}>
       {badge}
-      <Text variant={"h5"} ff="Alpha|Medium" fontWeight="medium" color="palette.neutral.c100">
-        {text}
-      </Text>
+      <Log>{text}</Log>
     </Container>
   );
 }
 
-export default MajorNotification;
+export default StatusNotification;
