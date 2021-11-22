@@ -22,7 +22,7 @@ npm i @ledgerhq/native-ui
 
 ### Peer dependencies
 
-This library uses [styled components](https://styled-components.com/) heavily relies on it being installed separately (to avoid package duplication).
+This library uses [styled components](https://styled-components.com/) heavily and relies on it being installed separately (to avoid package duplication).
 
 ```sh
 npm i styled-components
