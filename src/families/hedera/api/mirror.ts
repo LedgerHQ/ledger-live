@@ -74,7 +74,7 @@ export async function getOperationsForAccount(
     let value = new BigNumber(0);
     let type: OperationType = "NONE";
 
-    for (let i = raw.transfers.length; i >= 0; i--) {
+    for (let i = raw.transfers.length - 1; i >= 0; i--) {
       const transfer = raw.transfers[i];
       const amount = new BigNumber(transfer.amount);
       const account = AccountId.fromString(transfer.account);
