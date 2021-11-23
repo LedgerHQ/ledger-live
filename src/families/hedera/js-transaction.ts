@@ -19,7 +19,7 @@ export function createTransaction(account: Account): Transaction {
 
 /**
  * Update a base property of the transaction.
- * 
+ *
  * @returns  {Transaction}
  */
 export function updateTransaction(
@@ -32,10 +32,10 @@ export function updateTransaction(
 /**
  * Gather any more neccessary information for a transaction,
  * potentially from a network.
- * 
- * Hedera has fully client-side transactions and the fee 
+ *
+ * Hedera has fully client-side transactions and the fee
  * is not possible to estimate ahead-of-time.
- * 
+ *
  * @returns  {Transaction}
  */
 export async function prepareTransaction(

@@ -15,16 +15,17 @@ export default async function getTransactionStatus(
   account: Account,
   transaction: Transaction
 ): Promise<TransactionStatus> {
-  let errors: Record<string, Error> = {};
-
+  const errors: Record<string, Error> = {};
 
   if (!transaction.recipient || transaction.recipient.length === 0) {
     errors.recipient = new RecipientRequired("");
   } else {
-    let senderAccountId = hedera.AccountId.fromString(account.seedIdentifier);
+    const senderAccountId = hedera.AccountId.fromString(account.seedIdentifier);
 
     try {
-      let recipientAccountId = hedera.AccountId.fromString(transaction.recipient);
+      const recipientAccountId = hedera.AccountId.fromString(
+        transaction.recipient
+      );
 
       if (senderAccountId.equals(recipientAccountId)) {
         errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource("");
@@ -34,7 +35,10 @@ export default async function getTransactionStatus(
     }
   }
 
-  let { amount, estimatedFees, totalSpent } = calculateAmount({ transaction, account });
+  const { amount, estimatedFees, totalSpent } = calculateAmount({
+    transaction,
+    account,
+  });
 
   if (account.balance.isLessThan(totalSpent)) {
     errors.amount = new NotEnoughBalance("");

@@ -17,10 +17,7 @@ import {
 } from "../../derivation";
 import getAddress from "../../hw/getAddress";
 import BigNumber from "bignumber.js";
-import {
-  getAccountPlaceholderName,
-  emptyHistoryCache,
-} from "../../account";
+import { getAccountPlaceholderName, emptyHistoryCache } from "../../account";
 import { getAccountsForPublicKey } from "./api/mirror";
 import { log } from "@ledgerhq/logs";
 
@@ -39,27 +36,29 @@ export default function scanAccounts({
   syncConfig: SyncConfig;
   preferredNewAccountScheme?: DerivationMode;
 }): Observable<ScanAccountEvent> {
-  var derivationMode = scheme ?? getDerivationModesForCurrency(currency)[0];
+  const derivationMode = scheme ?? getDerivationModesForCurrency(currency)[0];
 
   return new Observable((o) => {
-    void async function () {
+    void (async function () {
       let transport;
 
       try {
-        let derivationScheme = getDerivationScheme({
+        const derivationScheme = getDerivationScheme({
           derivationMode,
           currency,
         });
 
-        let index = 0;
+        const index = 0;
         let cnt = 0;
 
-        let addressPath = runDerivationScheme(derivationScheme, currency, { account: index });
+        const addressPath = runDerivationScheme(derivationScheme, currency, {
+          account: index,
+        });
 
         transport = await open(deviceId);
 
         // NOTE: asking for the address in hedera will return only the public key
-        let res = await getAddress(transport, {
+        const res = await getAddress(transport, {
           currency,
           path: addressPath,
           derivationMode,
@@ -67,11 +66,12 @@ export default function scanAccounts({
 
         // use a mirror node to ask for any accounts that have
         // this public key registered
-        let accounts = await getAccountsForPublicKey(res.publicKey);
+        const accounts = await getAccountsForPublicKey(res.publicKey);
 
-        for (let account of accounts) {
+        for (const account of accounts) {
           o.next({
-            type: "discovered", account: {
+            type: "discovered",
+            account: {
               type: "Account",
               id: `js:2:${currency.id}:${account.accountId}:${derivationMode}`,
               seedIdentifier: res.publicKey,
@@ -85,7 +85,7 @@ export default function scanAccounts({
                 {
                   address: res.publicKey,
                   derivationPath: addressPath,
-                }
+                },
               ],
               name: getAccountPlaceholderName({
                 currency,
@@ -109,7 +109,7 @@ export default function scanAccounts({
               hederaResources: {
                 accountId: account.accountId,
               },
-            } as Account
+            } as Account,
           });
 
           cnt += 1;
@@ -123,6 +123,6 @@ export default function scanAccounts({
           close(transport, deviceId);
         }
       }
-    }();
+    })();
   });
 }

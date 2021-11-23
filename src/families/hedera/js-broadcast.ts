@@ -11,12 +11,17 @@ export default async function broadcast({
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> {
-  let { signature, operation } = signedOperation;
+  const { signature, operation } = signedOperation;
 
   // NOTE: expecting a serialized transaction to be signedOperation.signature (in hex)
-  let hederaTransaction = hedera.Transaction.fromBytes(Buffer.from(signature, "base64"));
+  const hederaTransaction = hedera.Transaction.fromBytes(
+    Buffer.from(signature, "base64")
+  );
 
-  let response = await broadcastTransaction(hederaTransaction);
+  const response = await broadcastTransaction(hederaTransaction);
 
-  return patchOperationWithHash(operation, Buffer.from(response.transactionHash).toString("base64"));
+  return patchOperationWithHash(
+    operation,
+    Buffer.from(response.transactionHash).toString("base64")
+  );
 }

@@ -18,22 +18,29 @@ export default function signOperation({
   deviceId: DeviceId;
 }): Observable<SignOperationEvent> {
   return new Observable((o) => {
-    void async function () {
+    void (async function () {
       let transport;
 
       try {
         transport = await open(deviceId);
 
-        o.next({ 
-          type: "device-signature-requested"
+        o.next({
+          type: "device-signature-requested",
         });
 
-        let hederaTransaction = buildUnsignedTransaction({ account, transaction });
-        let accountPublicKey = PublicKey.fromString(account.freshAddress);
-
-        await hederaTransaction.signWith(accountPublicKey, async (bodyBytes) => {
-          return await (new Hedera(transport)).signTransaction(bodyBytes);
+        const hederaTransaction = buildUnsignedTransaction({
+          account,
+          transaction,
         });
+
+        const accountPublicKey = PublicKey.fromString(account.freshAddress);
+
+        await hederaTransaction.signWith(
+          accountPublicKey,
+          async (bodyBytes) => {
+            return await new Hedera(transport).signTransaction(bodyBytes);
+          }
+        );
 
         o.next({
           type: "device-signature-granted",
@@ -46,7 +53,9 @@ export default function signOperation({
           signedOperation: {
             operation,
             // NOTE: this needs to match the inverse operation in js-broadcast
-            signature: Buffer.from(hederaTransaction.toBytes()).toString("base64"),
+            signature: Buffer.from(hederaTransaction.toBytes()).toString(
+              "base64"
+            ),
             expirationDate: null,
           },
         });
@@ -59,15 +68,18 @@ export default function signOperation({
           close(transport, deviceId);
         }
       }
-    }();
+    })();
   });
 }
 
-function buildOptimisticOperation({ account, transaction }: {
-  account: Account,
-  transaction: Transaction,
+function buildOptimisticOperation({
+  account,
+  transaction,
+}: {
+  account: Account;
+  transaction: Transaction;
 }): Operation {
-  let { amount, estimatedFees } = calculateAmount({ account, transaction });
+  const { amount, estimatedFees } = calculateAmount({ account, transaction });
 
   const operation: Operation = {
     id: `${account.id}--OUT`,
@@ -85,4 +97,4 @@ function buildOptimisticOperation({ account, transaction }: {
   };
 
   return operation;
-};
+}

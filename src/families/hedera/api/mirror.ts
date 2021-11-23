@@ -23,13 +23,15 @@ export interface Account {
   balance: BigNumber;
 }
 
-export async function getAccountsForPublicKey(publicKey: string): Promise<Account[]> {
-  let r = await fetch("/accounts", { "account.publicKey": publicKey });
-  let rawAccounts = r.data.accounts;
-  let accounts: Account[] = [];
+export async function getAccountsForPublicKey(
+  publicKey: string
+): Promise<Account[]> {
+  const r = await fetch("/accounts", { "account.publicKey": publicKey });
+  const rawAccounts = r.data.accounts;
+  const accounts: Account[] = [];
 
-  for (let raw of rawAccounts) {
-    let accountBalance = await getAccountBalance(raw.account);
+  for (const raw of rawAccounts) {
+    const accountBalance = await getAccountBalance(raw.account);
 
     accounts.push({
       accountId: AccountId.fromString(raw.account),
@@ -41,7 +43,7 @@ export async function getAccountsForPublicKey(publicKey: string): Promise<Accoun
 }
 
 interface HederaMirrorTransaction {
-  transfers: HederaMirrorTransfer[],
+  transfers: HederaMirrorTransfer[];
   charged_tx_fee: string;
   transaction_hash: string;
   consensus_timestamp: string;
@@ -52,24 +54,30 @@ interface HederaMirrorTransfer {
   amount: number;
 }
 
-export async function getOperationsForAccount(ledgerAccountId: string, accountId: AccountId, atMost: number): Promise<Operation[]> {
-  let operations: Operation[] = [];
-  let address = accountId.toString();
-  let r = await fetch("/transactions", { "account.id": address });
-  let rawOperations = r.data.transactions as HederaMirrorTransaction[];
+export async function getOperationsForAccount(
+  ledgerAccountId: string,
+  accountId: AccountId,
+  atMost: number
+): Promise<Operation[]> {
+  const operations: Operation[] = [];
+  const address = accountId.toString();
+  const r = await fetch("/transactions", { "account.id": address });
+  const rawOperations = r.data.transactions as HederaMirrorTransaction[];
 
-  for (let raw of rawOperations) {
-    let timestamp = new Date(parseInt(raw.consensus_timestamp.split(".")[0], 10) * 1000);
+  for (const raw of rawOperations) {
+    const timestamp = new Date(
+      parseInt(raw.consensus_timestamp.split(".")[0], 10) * 1000
+    );
+    const senders: string[] = [];
+    const recipients: string[] = [];
+    const fee = new BigNumber(raw.charged_tx_fee);
     let value = new BigNumber(0);
-    let senders: string[] = [];
-    let recipients: string[] = [];
     let type: OperationType = "NONE";
-    let fee = new BigNumber(raw.charged_tx_fee);
 
     for (let i = raw.transfers.length; i >= 0; i--) {
-      let transfer = raw.transfers[i];
-      let amount = new BigNumber(transfer.amount);
-      let account = AccountId.fromString(transfer.account);
+      const transfer = raw.transfers[i];
+      const amount = new BigNumber(transfer.amount);
+      const account = AccountId.fromString(transfer.account);
 
       if (transfer.account === address) {
         if (amount.isNegative()) {

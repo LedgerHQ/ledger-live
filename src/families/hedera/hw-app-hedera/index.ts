@@ -34,13 +34,13 @@ export default class Hedera {
    * @return the public key
    */
   async getPublicKey(path: string): Promise<string> {
-    let bipPath = BIPPath.fromString(path).toPathArray();
-    let serializedPath = this._serializePath(bipPath);
+    const bipPath = BIPPath.fromString(path).toPathArray();
+    const serializedPath = this._serializePath(bipPath);
 
-    let p1 = 0x00;
-    let p2 = 0x00;
+    const p1 = 0x01;
+    const p2 = 0x00;
 
-    let response = await this.transport.send(
+    const response = await this.transport.send(
       CLA,
       INS.GET_PUBLIC_KEY,
       p1,
@@ -48,8 +48,8 @@ export default class Hedera {
       serializedPath
     );
 
-    let returnCodeBytes = response.slice(-2);
-    let returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];
+    const returnCodeBytes = response.slice(-2);
+    const returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];
 
     if (returnCode === STATUS.USER_CANCEL) {
       throw new UserRefusedAddress();
@@ -60,23 +60,23 @@ export default class Hedera {
 
   // TODO: the BOLOS app does not support anything but index #0 for signing transactions
   async signTransaction(transaction: Uint8Array): Promise<Uint8Array> {
-    let payload = Buffer.alloc(4 + transaction.length);
+    const payload = Buffer.alloc(4 + transaction.length);
     payload.writeUInt32LE(0);
     payload.fill(transaction, 4);
 
-    let p1 = 0x00;
-    let p2 = 0x00;
+    const p1 = 0x00;
+    const p2 = 0x00;
 
-    let response = await this.transport.send(
+    const response = await this.transport.send(
       CLA,
       INS.SIGN_TRANSACTION,
       p1,
       p2,
-      payload,
+      payload
     );
 
-    let returnCodeBytes = response.slice(-2);
-    let returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];
+    const returnCodeBytes = response.slice(-2);
+    const returnCode = (returnCodeBytes[0] << 8) | returnCodeBytes[1];
 
     if (returnCode === STATUS.USER_CANCEL) {
       throw new UserRefusedOnDevice();

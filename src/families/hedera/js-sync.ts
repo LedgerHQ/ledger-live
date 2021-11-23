@@ -8,34 +8,42 @@ export default function sync(
   syncConfig: SyncConfig
 ): Observable<(account: Account) => Account> {
   return new Observable((o) => {
-    void async function () {
+    void (async function () {
       try {
-        let accountBalance = await getAccountBalance(initialAccount.hederaResources!.accountId);
+        const accountBalance = await getAccountBalance(
+          initialAccount.hederaResources!.accountId
+        );
 
-        let atMostOperations = syncConfig.paginationConfig.operationsPerAccountId?.[initialAccount.id] 
-          ?? syncConfig.paginationConfig.operations 
-          ?? 50;
+        const atMostOperations =
+          syncConfig.paginationConfig.operationsPerAccountId?.[
+            initialAccount.id
+          ] ??
+          syncConfig.paginationConfig.operations ??
+          50;
 
-        let operations = await getOperationsForAccount(
-          initialAccount.id, 
-          initialAccount.hederaResources!.accountId!, 
+        const operations = await getOperationsForAccount(
+          initialAccount.id,
+          initialAccount.hederaResources!.accountId!,
           atMostOperations
         );
 
-        o.next((acc: Account) => ({
-          ...acc,
+        o.next(
+          (acc: Account) =>
+            ({
+              ...acc,
 
-          balance: accountBalance.balance,
-          spendableBalance: accountBalance.balance,
-          operations,
-          blockHeight: 10,
-          lastSyncDate: new Date(),
-        } as Account));
+              balance: accountBalance.balance,
+              spendableBalance: accountBalance.balance,
+              operations,
+              blockHeight: 10,
+              lastSyncDate: new Date(),
+            } as Account)
+        );
 
         o.complete();
       } catch (err) {
         o.error(err);
       }
-    }();
+    })();
   });
 }

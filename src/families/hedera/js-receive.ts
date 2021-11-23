@@ -25,13 +25,13 @@ export default function receive(
   path: string;
 }> {
   return new Observable((o) => {
-    void async function () {
+    void (async function () {
       let transport;
 
       try {
         transport = await open(deviceId);
 
-        let r = await getAddress(transport, {
+        const r = await getAddress(transport, {
           derivationMode: account.derivationMode,
           currency: account.currency,
           path: account.freshAddressPath,
@@ -47,8 +47,8 @@ export default function receive(
           );
         }
 
-        o.next({ 
-          address: account.hederaResources!.accountId.toString(), 
+        o.next({
+          address: account.hederaResources!.accountId.toString(),
           path: account.freshAddressPath,
         });
 
@@ -60,6 +60,6 @@ export default function receive(
           await close(transport, deviceId);
         }
       }
-    }();
+    })();
   });
 }

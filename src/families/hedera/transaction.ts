@@ -11,7 +11,7 @@ export function formatTransaction(
   transaction: Transaction,
   account: Account
 ): string {
-  let amount = formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+  const amount = formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
     showCode: true,
     disableRounding: true,
   });
