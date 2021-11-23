@@ -114,7 +114,8 @@ export async function getOperationsForAccount(ledgerAccountId: string, accountId
       blockHash: raw.transaction_hash,
       extra: {},
       fee,
-      hash: raw.transaction_hash,
+      // NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
+      hash: raw.transaction_hash.replace(/\//g, "_").replace(/\+/g, "-"),
       recipients,
       senders,
       accountId: ledgerAccountId,
