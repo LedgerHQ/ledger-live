@@ -66,8 +66,10 @@ export async function getOperationsForAccount(ledgerAccountId: string, accountId
     let type: OperationType = "NONE";
     let fee = new BigNumber(raw.charged_tx_fee);
 
-    for (let transfer of raw.transfers) {
+    for (let i = raw.transfers.length; i >= 0; i--) {
+      let transfer = raw.transfers[i];
       let amount = new BigNumber(transfer.amount);
+      let account = AccountId.fromString(transfer.account);
 
       if (transfer.account === address) {
         if (amount.isNegative()) {
@@ -82,7 +84,21 @@ export async function getOperationsForAccount(ledgerAccountId: string, accountId
       if (amount.isNegative()) {
         senders.push(transfer.account);
       } else {
-        recipients.push(transfer.account);
+        if (account.shard.eq(0) && account.realm.eq(0)) {
+          if (account.num.lt(100)) {
+            // account is a node, only add to list if we have none
+            if (recipients.length === 0) {
+              recipients.push(transfer.account);
+            }
+          } else if (account.num.lt(1000)) {
+            // account is a system account that is not a node
+            // do NOT add
+          } else {
+            recipients.push(transfer.account);
+          }
+        } else {
+          recipients.push(transfer.account);
+        }
       }
     }
 
