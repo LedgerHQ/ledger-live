@@ -170,39 +170,39 @@ export function getListHeaderComponents({
   const AccountSubHeader =
     perFamilyAccountSubHeader[mainAccount.currency.family];
 
+  const stickyHeaderIndices = empty ? [] : [4];
+
   return {
     listHeaderComponents: [
       <Header accountId={account.id} />,
-      AccountSubHeader != null && <AccountSubHeader />,
-      ...(!empty && AccountHeader
-        ? [<AccountHeader account={account} parentAccount={parentAccount} />]
-        : []),
+      !!AccountSubHeader && <AccountSubHeader />,
+      !empty && !!AccountHeader && (
+        <AccountHeader account={account} parentAccount={parentAccount} />
+      ),
 
-      ...(empty
-        ? []
-        : [
-            <AccountGraphCard
-              account={account}
-              range={range}
-              history={history}
-              useCounterValue={shouldUseCounterValue}
-              valueChange={
-                shouldUseCounterValue ? countervalueChange : cryptoChange
-              }
-              countervalueAvailable={countervalueAvailable}
-              counterValueCurrency={counterValueCurrency}
-              renderTitle={renderListHeaderTitle(
-                account,
-                countervalueAvailable,
-                onSwitchAccountCurrency,
-              )}
-              renderAccountSummary={renderAccountSummary(
-                account,
-                parentAccount,
-                compoundSummary,
-              )}
-            />,
-          ]),
+      !empty && (
+        <AccountGraphCard
+          account={account}
+          range={range}
+          history={history}
+          useCounterValue={shouldUseCounterValue}
+          valueChange={
+            shouldUseCounterValue ? countervalueChange : cryptoChange
+          }
+          countervalueAvailable={countervalueAvailable}
+          counterValueCurrency={counterValueCurrency}
+          renderTitle={renderListHeaderTitle(
+            account,
+            countervalueAvailable,
+            onSwitchAccountCurrency,
+          )}
+          renderAccountSummary={renderAccountSummary(
+            account,
+            parentAccount,
+            compoundSummary,
+          )}
+        />
+      ),
 
       ...(!empty
         ? [
@@ -245,7 +245,7 @@ export function getListHeaderComponents({
           ]
         : []),
     ],
-    stickyHeaderIndices: empty ? [] : AccountHeader ? [3] : [2],
+    stickyHeaderIndices,
   };
 }
 
