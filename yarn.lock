@@ -1240,10 +1240,10 @@
     "@ledgerhq/hw-transport" "^6.11.2"
     bip32-path "^0.4.2"
 
-"@ledgerhq/hw-app-eth@6.16.1":
-  version "6.16.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.16.1.tgz#b0e1bad42d4069a0e7c04165e47234395ef2eda8"
-  integrity sha512-7tQS+ZS/to88ZPyHZ7yZT5VAxJ38QLU8LxN3DTfMSCZW5cTWMQmPNeeFd5nug3/At43998tFKAJtg5DoHBLv3A==
+"@ledgerhq/hw-app-eth@6.16.2":
+  version "6.16.2"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.16.2.tgz#02b7ade413ef002d2e91a7464b32c0100fffb8fd"
+  integrity sha512-jw/JJbesGFzN9qw6xcM9ePgNT6rp2MvpY05U4P/8e1gms70rjgWmovgIirA752r60F7/c9XfsCV8xV3eFtLrtw==
   dependencies:
     "@ledgerhq/cryptoassets" "^6.16.0"
     "@ledgerhq/errors" "^6.10.0"

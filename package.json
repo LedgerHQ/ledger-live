@@ -50,7 +50,7 @@
     "@ledgerhq/hw-app-algorand": "6.11.2",
     "@ledgerhq/hw-app-btc": "6.15.1",
     "@ledgerhq/hw-app-cosmos": "6.11.2",
-    "@ledgerhq/hw-app-eth": "6.16.1",
+    "@ledgerhq/hw-app-eth": "6.16.2",
     "@ledgerhq/hw-app-polkadot": "6.11.2",
     "@ledgerhq/hw-app-str": "6.11.2",
     "@ledgerhq/hw-app-tezos": "6.11.2",
