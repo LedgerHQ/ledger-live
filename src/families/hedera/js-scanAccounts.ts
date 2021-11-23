@@ -1,4 +1,3 @@
-import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { Observable } from "rxjs";
 import {
   Account,
@@ -12,14 +11,12 @@ import { open, close } from "../../hw";
 import {
   getDerivationModesForCurrency,
   getDerivationScheme,
-  getSeedIdentifierDerivation,
   runDerivationScheme,
 } from "../../derivation";
 import getAddress from "../../hw/getAddress";
 import BigNumber from "bignumber.js";
 import { getAccountPlaceholderName, emptyHistoryCache } from "../../account";
 import { getAccountsForPublicKey } from "./api/mirror";
-import { log } from "@ledgerhq/logs";
 
 export default function scanAccounts({
   currency,

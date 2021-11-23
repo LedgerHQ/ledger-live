@@ -57,7 +57,7 @@ interface HederaMirrorTransfer {
 export async function getOperationsForAccount(
   ledgerAccountId: string,
   accountId: AccountId,
-  atMost: number
+  _atMost: number
 ): Promise<Operation[]> {
   const operations: Operation[] = [];
   const address = accountId.toString();

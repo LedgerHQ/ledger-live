@@ -1,4 +1,3 @@
-import { CurrencyNotSupported } from "@ledgerhq/errors";
 import { Observable } from "rxjs";
 import { Account, DeviceId, Operation, SignOperationEvent } from "../../types";
 import { Transaction } from "./types";

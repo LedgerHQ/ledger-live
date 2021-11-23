@@ -11,10 +11,14 @@ export function formatTransaction(
   transaction: Transaction,
   account: Account
 ): string {
-  const amount = formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
-    showCode: true,
-    disableRounding: true,
-  });
+  const amount = formatCurrencyUnit(
+    getAccountUnit(account),
+    transaction.amount,
+    {
+      showCode: true,
+      disableRounding: true,
+    }
+  );
 
   return `SEND ${amount}\nTO ${transaction.recipient}`;
 }

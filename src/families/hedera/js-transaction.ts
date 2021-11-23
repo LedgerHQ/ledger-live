@@ -1,4 +1,3 @@
-import { CurrencyNotSupported } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import type { Account } from "../../types";
 import type { Transaction } from "./types";
@@ -8,7 +7,7 @@ import type { Transaction } from "./types";
  *
  * @returns {Transaction}
  */
-export function createTransaction(account: Account): Transaction {
+export function createTransaction(_account: Account): Transaction {
   return {
     family: "hedera",
     amount: new BigNumber(0),
