@@ -58,7 +58,12 @@ function Notification({
           {title}
         </Text>
         {description && (
-          <Text variant={"paragraph"} fontWeight="medium" color="palette.neutral.c80">
+          <Text
+            variant={"paragraph"}
+            fontWeight="medium"
+            color="palette.neutral.c80"
+            whiteSpace="pre-wrap"
+          >
             {description}
           </Text>
         )}
