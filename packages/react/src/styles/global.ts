@@ -1,7 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
 import { rgba } from "./helpers";
-import reset from "./reset";
 import tippyStyles from "../components/message/Tooltip/styles";
 import { fontStyles } from "../components/asorted/Text/styles";
 
@@ -11,27 +10,27 @@ export type GlobalStyleProps = {
 };
 
 export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
-  ${reset};
+  html {
+    box-sizing: border-box;
+  }
 
   body {
     font-family: Inter;
     font-size: 100%;
   }
 
-  ${(props) => (typeof props.fontsPath === "string" ? fontStyles : "")}
-
-  .spectron-run canvas:not(.visible-for-spectron) {
-    visibility: hidden;
+  *, *:before, *:after {
+    box-sizing: inherit;
   }
 
-  #react-root {
-    display: flex;
-    flex-direction: column;
-    max-width: 100%;
-    max-height: 100%;
-    width: 100vw;
-    height: 100vh;
-    background-color: ${(p) => p.theme.colors.neutral.c00};
+  * {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    user-select: inherit;
+    cursor: inherit;
+    outline: none;
   }
 
   ::selection {
@@ -40,27 +39,7 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
 
   --track-color: rgba(0,0,0,0);
 
-  ::-webkit-scrollbar              {
-    width: ${(p) => p.theme.overflow.trackSize}px;
-    height: ${(p) => p.theme.overflow.trackSize}px;
-    background-color: rgba(0,0,0,0);
-  }
-  ::-webkit-scrollbar-button       {
-    opacity: 0;
-    height: 0;
-    width: 0;
-  }
-  ::-webkit-scrollbar-track        {
-    background-color: rgba(0,0,0,0);
-  }
-  ::-webkit-scrollbar-thumb        {
-    box-shadow: inset 0 0 0 ${(p) => p.theme.overflow.trackSize}px var(--track-color);
-    border: 2px solid rgba(0,0,0,0);
-    border-radius: ${(p) => p.theme.overflow.trackSize}px;
-  }
-  ::-webkit-scrollbar-corner {
-    opacity: 0;
-  }
+  ${(props) => (typeof props.fontsPath === "string" ? fontStyles : "")}
 
   ${tippyStyles}
 `;
