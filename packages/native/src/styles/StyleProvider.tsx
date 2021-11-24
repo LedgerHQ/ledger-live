@@ -23,6 +23,7 @@ export const StyleProvider = ({
       ...defaultTheme,
       colors: {
         ...defaultTheme.colors,
+        ...palettes[selectedPalette],
         palette: palettes[selectedPalette],
       },
       theme: selectedPalette,

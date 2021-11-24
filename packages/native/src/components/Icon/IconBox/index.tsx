@@ -22,7 +22,7 @@ const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
   border-width: 1px;
-  border-color: ${(p) => p.theme.colors.palette.neutral.c40};
+  border-color: ${(p) => p.theme.colors.neutral.c40};
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
@@ -35,7 +35,7 @@ export default function IconBox({
   const { colors } = useTheme();
   return (
     <IconContainer size={boxSize}>
-      <Icon size={iconSize} color={color || colors.palette.neutral.c100} />
+      <Icon size={iconSize} color={color || colors.neutral.c100} />
     </IconContainer>
   );
 }

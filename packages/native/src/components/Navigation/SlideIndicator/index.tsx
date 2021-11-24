@@ -25,11 +25,11 @@ const Bullet = styled.TouchableOpacity`
   height: 6px;
   border-radius: 6px;
   margin: 0 6px;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c40};
+  background-color: ${(p) => p.theme.colors.neutral.c40};
 `;
 
 const ActiveBullet = styled(Bullet)`
-  background-color: ${(p) => p.theme.colors.palette.neutral.c100};
+  background-color: ${(p) => p.theme.colors.neutral.c100};
   position: absolute;
   top: 0;
   left: 0;

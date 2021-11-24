@@ -31,11 +31,9 @@ function Element<V>({
       <ElementContainer
         p={6}
         mt={first ? 0 : 4}
-        backgroundColor={
-          selected ? "palette.primary.c20" : "palette.neutral.c00"
-        }
+        backgroundColor={selected ? "primary.c20" : "neutral.c00"}
         border="1px solid"
-        borderColor={selected ? "palette.primary.c100" : "palette.neutral.c40"}
+        borderColor={selected ? "primary.c100" : "neutral.c40"}
         borderRadius={1}
       >
         <Text variant="large">{children || value}</Text>

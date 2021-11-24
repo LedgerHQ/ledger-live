@@ -28,7 +28,7 @@ export type BaseModalProps = {
 } & Partial<ModalProps>;
 
 const Container = styled.View`
-  background-color: ${(p) => p.theme.colors.palette.background.main};
+  background-color: ${(p) => p.theme.colors.background.main};
   width: 100%;
   padding: 16px;
   min-height: 350px;
@@ -57,7 +57,7 @@ const StyledTitle = styled(Text).attrs({ variant: "h3" })`
 
 const StyledDescription = styled(Text).attrs({
   variant: "body",
-  color: "palette.neutral.c80",
+  color: "neutral.c80",
 })`
   text-transform: capitalize;
   margin-top: ${(p) => p.theme.space[2]}px;
@@ -65,7 +65,7 @@ const StyledDescription = styled(Text).attrs({
 
 const StyledSubtitle = styled(Text).attrs({
   variant: "subtitle",
-  color: "palette.neutral.c80",
+  color: "neutral.c80",
 })`
   text-transform: uppercase;
   margin-bottom: ${(p) => p.theme.space[2]}px;
@@ -123,7 +123,7 @@ export default function BaseModal({
               {typeof Icon === "function"
                 ? Icon({
                     size: 48,
-                    color: iconColor || colors.palette.neutral.c100,
+                    color: iconColor || colors.neutral.c100,
                   })
                 : Icon}
             </FlexBox>

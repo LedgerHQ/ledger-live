@@ -62,7 +62,7 @@ export const Item = {
     ${space}
   `,
   Current: styled.div.attrs({
-    backgroundColor: "palette.primary.c90",
+    backgroundColor: "primary.c90",
   })<ColorProps>`
     width: 6px;
     height: 6px;
@@ -70,7 +70,7 @@ export const Item = {
     ${color}
   `,
   Pending: styled.div.attrs({
-    backgroundColor: "palette.neutral.c70",
+    backgroundColor: "neutral.c70",
   })<ColorProps>`
     width: ${(p) => p.theme.space[2]}px;
     height: ${(p) => p.theme.space[2]}px;
@@ -84,12 +84,12 @@ export const Item = {
 const StepText = styled(Text)<{ inactive?: boolean; errored?: boolean }>`
   color: ${(p) => {
     if (p.errored) {
-      return p.theme.colors.palette.error.c100;
+      return p.theme.colors.error.c100;
     }
     if (p.inactive) {
-      return p.theme.colors.palette.neutral.c70;
+      return p.theme.colors.neutral.c70;
     }
-    return p.theme.colors.palette.neutral.c100;
+    return p.theme.colors.neutral.c100;
   }};
 `;
 
@@ -97,7 +97,7 @@ const BaseSeparator = styled.div<{ inactive?: boolean }>`
   flex: 1;
   position: relative;
   overflow-x: hidden;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c40};
+  background-color: ${(p) => p.theme.colors.neutral.c40};
   height: 1px;
   top: ${(p) => p.theme.space[5]}px;
 `;
@@ -114,25 +114,17 @@ const stepContentsByState = {
     </Item.Container>
   ),
   current: (
-    <Item.Container backgroundColor="palette.primary.c20" borderRadius="8px">
+    <Item.Container backgroundColor="primary.c20" borderRadius="8px">
       <Item.Current />
     </Item.Container>
   ),
   completed: (
-    <Item.Container
-      color="palette.primary.c90"
-      backgroundColor="palette.primary.c20"
-      borderRadius="8px"
-    >
+    <Item.Container color="primary.c90" backgroundColor="primary.c20" borderRadius="8px">
       <Item.Completed />
     </Item.Container>
   ),
   errored: (
-    <Item.Container
-      color="palette.error.c100"
-      backgroundColor="palette.warning.c30"
-      borderRadius="8px"
-    >
+    <Item.Container color="error.c100" backgroundColor="warning.c30" borderRadius="8px">
       <Item.Errored />
     </Item.Container>
   ),

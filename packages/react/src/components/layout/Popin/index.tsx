@@ -37,7 +37,7 @@ const Wrapper = styled(Flex).attrs<FlexBoxProps>((p) => ({
   zIndex: p.theme.zIndexes[8],
   p: p.p !== undefined ? p.p : p.theme.space[10],
   rowGap: 6,
-  backgroundColor: p.theme.colors.palette.neutral.c00,
+  backgroundColor: p.theme.colors.neutral.c00,
 }))``;
 
 const Overlay = styled(Flex).attrs((p) => ({
@@ -49,7 +49,7 @@ const Overlay = styled(Flex).attrs((p) => ({
   position: "fixed",
   top: 0,
   left: 0,
-  backgroundColor: p.theme.colors.palette.neutral.c100a07,
+  backgroundColor: p.theme.colors.neutral.c100a07,
 }))``;
 
 const Header = baseStyled.section`
@@ -81,7 +81,7 @@ const PopinHeader = ({ children, onClose, onBack, ...props }: PopinHeaderProps) 
     <Flex>
       {onBack ? (
         <IconContainer onClick={onBack}>
-          <ArrowLeftIcon size={ICON_SIZE} color="palette.neutral.c100" />
+          <ArrowLeftIcon size={ICON_SIZE} color="neutral.c100" />
         </IconContainer>
       ) : null}
     </Flex>
@@ -89,7 +89,7 @@ const PopinHeader = ({ children, onClose, onBack, ...props }: PopinHeaderProps) 
     <Flex>
       {onClose ? (
         <IconContainer onClick={onClose}>
-          <CloseIcon size={ICON_SIZE} color="palette.neutral.c100" />
+          <CloseIcon size={ICON_SIZE} color="neutral.c100" />
         </IconContainer>
       ) : null}
     </Flex>

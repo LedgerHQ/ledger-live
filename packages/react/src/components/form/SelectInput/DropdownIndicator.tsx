@@ -22,7 +22,7 @@ export function DropdownIndicator<
   const { isDisabled } = props.selectProps;
 
   const ChevronIcon = props.selectProps.menuIsOpen ? ChevronTopMedium : ChevronBottomMedium;
-  const color = isDisabled ? theme.colors.palette.neutral.c60 : theme.colors.palette.neutral.c100;
+  const color = isDisabled ? theme.colors.neutral.c60 : theme.colors.neutral.c100;
 
   return (
     <components.DropdownIndicator {...props}>

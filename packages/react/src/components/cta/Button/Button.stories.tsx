@@ -55,7 +55,7 @@ export const Overview = (() => {
       {buttonVariants.flatMap((buttonType) =>
         [false, true].map((outline) => (
           <Flex flexDirection="row" alignItems="center" height="70px" columnGap={4}>
-            <Text variant="small" color="palette.neutral.c70">
+            <Text variant="small" color="neutral.c70">
               type="{buttonType}"<br />
               outline={`{${outline.toString()}}`}
               <br />
@@ -88,11 +88,11 @@ const Template = (args) => {
 const TemplateInverted = (args) => {
   return (
     <Flex flexDirection="column">
-      <Flex flex="0 0 1" p={4} alignItems="center" bg="palette.background.main">
+      <Flex flex="0 0 1" p={4} alignItems="center" bg="background.main">
         <Button {...args}>{args.children || "Regular button"}</Button>
       </Flex>
       <InvertTheme>
-        <Flex flex="0 0 1" p={4} alignItems="center" bg="palette.background.main">
+        <Flex flex="0 0 1" p={4} alignItems="center" bg="background.main">
           <Button {...args}>{args.children || "Inverted button"}</Button>
         </Flex>
       </InvertTheme>

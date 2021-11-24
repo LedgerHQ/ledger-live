@@ -13,8 +13,8 @@ export default css`
 
   .tippy-box {
     position: relative;
-    background-color: ${(p: Props) => p.theme.colors.palette.neutral.c100};
-    color: ${(p: Props) => p.theme.colors.palette.neutral.c00};
+    background-color: ${(p: Props) => p.theme.colors.neutral.c100};
+    color: ${(p: Props) => p.theme.colors.neutral.c00};
     border-radius: 4px;
     font-size: 14px;
     line-height: 1.4;
@@ -75,7 +75,7 @@ export default css`
   .tippy-arrow {
     width: 16px;
     height: 16px;
-    color: ${(p: Props) => p.theme.colors.palette.neutral.c100};
+    color: ${(p: Props) => p.theme.colors.neutral.c100};
   }
 
   .tippy-arrow:before {

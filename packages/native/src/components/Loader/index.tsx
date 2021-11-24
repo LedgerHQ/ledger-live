@@ -27,8 +27,8 @@ const ProgressLoader = ({
   Icon,
 }: Props): React.ReactElement => {
   const { colors } = useTheme();
-  const backgroundColor = colors.palette.primary.c20;
-  const progressColor = colors.palette.primary.c90;
+  const backgroundColor = colors.primary.c20;
+  const progressColor = colors.primary.c90;
 
   const strokeDashoffset = circumference - progress * circumference;
   return (

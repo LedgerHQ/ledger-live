@@ -23,21 +23,19 @@ const Switch = ({
     <Flex flexDirection="row" alignItems="center">
       <NativeSwitch
         trackColor={{
-          false: colors.palette.neutral.c50,
-          true: colors.palette.primary.c80,
+          false: colors.neutral.c50,
+          true: colors.primary.c80,
         }}
-        thumbColor={colors.palette.neutral.c00}
+        thumbColor={colors.neutral.c00}
         onValueChange={onChange}
         value={checked}
         disabled={disabled}
-        ios_backgroundColor={colors.palette.neutral.c50}
+        ios_backgroundColor={colors.neutral.c50}
       />
       {label ? (
         <Text
           variant="body"
-          color={
-            checked ? colors.palette.primary.c90 : colors.palette.neutral.c100
-          }
+          color={checked ? colors.primary.c90 : colors.neutral.c100}
           style={{ marginLeft: space[3] }}
         >
           {label}

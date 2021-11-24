@@ -19,11 +19,11 @@ const Square = styled(Flex).attrs({
   width: 18px;
   height: 18px;
   border-radius: 4px;
-  color: ${({ theme }) => theme.colors.palette.neutral.c00};
+  color: ${({ theme }) => theme.colors.neutral.c00};
   ${({ checked, theme }) =>
     checked
-      ? `background-color: ${theme.colors.palette.primary.c90};`
-      : `border: 1px solid ${theme.colors.palette.neutral.c50};`}
+      ? `background-color: ${theme.colors.primary.c90};`
+      : `border: 1px solid ${theme.colors.neutral.c50};`}
 `;
 
 const Checkbox = ({
@@ -38,16 +38,12 @@ const Checkbox = ({
     <Pressable onPress={onChange} disabled={disabled}>
       <Flex flexDirection="row" alignItems="center">
         <Square checked={checked}>
-          {checked ? (
-            <CheckAlone size={13} color={colors.palette.neutral.c00} />
-          ) : null}
+          {checked ? <CheckAlone size={13} color={colors.neutral.c00} /> : null}
         </Square>
         {label ? (
           <Text
             variant="body"
-            color={
-              checked ? colors.palette.primary.c90 : colors.palette.neutral.c100
-            }
+            color={checked ? colors.primary.c90 : colors.neutral.c100}
             style={{ marginLeft: space[2] }}
           >
             {label}

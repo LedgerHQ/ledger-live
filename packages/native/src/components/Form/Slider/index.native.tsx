@@ -55,18 +55,10 @@ const Slider = ({ value, min, max, step, onChange, disabled }: SliderProps) => {
         onValueChanged={onChange}
       />
       <MinMaxTextContainer>
-        <Text
-          variant={"small"}
-          fontWeight={"medium"}
-          color={"palette.neutral.c70"}
-        >
+        <Text variant={"small"} fontWeight={"medium"} color={"neutral.c70"}>
           {min}
         </Text>
-        <Text
-          variant={"small"}
-          fontWeight={"medium"}
-          color={"palette.neutral.c70"}
-        >
+        <Text variant={"small"} fontWeight={"medium"} color={"neutral.c70"}>
           {max}
         </Text>
       </MinMaxTextContainer>

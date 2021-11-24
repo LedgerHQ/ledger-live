@@ -104,8 +104,8 @@ export default ({
 }: Props): JSX.Element => {
   const theme = useTheme();
   const config = useMemo(
-    () => getConfig(variant, { gridColor: theme.colors.palette.neutral.c40, timeOptions }),
-    [variant, theme.colors.palette.neutral.c40, timeOptions],
+    () => getConfig(variant, { gridColor: theme.colors.neutral.c40, timeOptions }),
+    [variant, theme.colors.neutral.c40, timeOptions],
   );
 
   // inject default font configuration at mount

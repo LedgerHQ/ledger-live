@@ -16,7 +16,7 @@ export const ToggleGroupContainer = styled(FlexBox).attrs({
   alignItems: "stretch",
 })`
   width: 100%;
-  border: ${(p) => `1px solid ${p.theme.colors.palette.neutral.c40}`};
+  border: ${(p) => `1px solid ${p.theme.colors.neutral.c40}`};
   border-radius: 35px;
   padding: 4px;
 `;

@@ -19,9 +19,9 @@ export function App({ isLight, setPalette }) {
         justifyContent="center"
         rowGap={12}
         style={{ height: "100vh" }}
-        backgroundColor="palette.neutral.c00"
+        backgroundColor="neutral.c00"
       >
-        <Text color="palette.neutral.c100">
+        <Text color="neutral.c100">
           <Logos.LedgerLiveRegular />
         </Text>
         <Text variant="h1">Hello, world!</Text>

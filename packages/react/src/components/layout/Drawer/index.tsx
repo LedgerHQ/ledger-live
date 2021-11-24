@@ -12,7 +12,7 @@ const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
   flex-direction: column;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c00};
+  background-color: ${(p) => p.theme.colors.neutral.c00};
   padding: ${(p) => p.theme.space[6]}px ${(p) => p.theme.space[12]}px;
 `;
 const Header = styled(FlexBox)`
@@ -45,7 +45,7 @@ const Overlay = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: 999;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c100a07};
+  background-color: ${(p) => p.theme.colors.neutral.c100a07};
 `;
 const ScrollWrapper = styled.div`
   overflow: scroll;
@@ -63,7 +63,7 @@ const Button = styled.button`
   background: unset;
   border: unset;
   cursor: pointer;
-  color: ${(p) => p.theme.colors.palette.neutral.c100};
+  color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
 export interface DrawerProps {

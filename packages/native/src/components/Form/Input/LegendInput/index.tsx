@@ -11,7 +11,7 @@ export default function LegendInput({
       {...inputProps}
       renderRight={
         <InputRenderRightContainer>
-          <Text color={"palette.neutral.c70"} variant="body">
+          <Text color={"neutral.c70"} variant="body">
             {legend}
           </Text>
         </InputRenderRightContainer>

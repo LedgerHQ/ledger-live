@@ -30,19 +30,19 @@ const StyledAlertContainer = styled.div<{ type?: AlertType }>`
     switch (p.type) {
       case "warning":
         return css`
-          background: ${p.theme.colors.palette.warning.c30};
-          color: ${p.theme.colors.palette.warning.c100};
+          background: ${p.theme.colors.warning.c30};
+          color: ${p.theme.colors.warning.c100};
         `;
       case "error":
         return css`
-          background: ${p.theme.colors.palette.error.c30};
-          color: ${p.theme.colors.palette.error.c100};
+          background: ${p.theme.colors.error.c30};
+          color: ${p.theme.colors.error.c100};
         `;
       case "info":
       default:
         return css`
-          background: ${p.theme.colors.palette.primary.c20};
-          color: ${p.theme.colors.palette.primary.c90};
+          background: ${p.theme.colors.primary.c20};
+          color: ${p.theme.colors.primary.c90};
         `;
     }
   }}

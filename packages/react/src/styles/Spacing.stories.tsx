@@ -19,7 +19,7 @@ const SpaceRow = styled(Flex).attrs({
   cursor: pointer;
 
   &:hover {
-    border-color: ${(props) => props.theme.colors.palette.neutral.c40};
+    border-color: ${(props) => props.theme.colors.neutral.c40};
   }
 `;
 
@@ -38,7 +38,7 @@ export const Spacing = (): JSX.Element => {
           <Text variant="small" style={{ minWidth: "5ch" }}>
             {`${value}px`}
             <br />
-            <Text variant="small" color="palette.neutral.c70">
+            <Text variant="small" color="neutral.c70">
               space[{index + 1}]
             </Text>
           </Text>
@@ -46,7 +46,7 @@ export const Spacing = (): JSX.Element => {
             flexGrow={1}
             style={{
               height: value,
-              backgroundColor: theme.colors.palette.primary.c20,
+              backgroundColor: theme.colors.primary.c20,
             }}
           />
         </SpaceRow>

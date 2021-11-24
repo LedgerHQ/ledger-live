@@ -7,8 +7,8 @@ import Flex from "../../../layout/Flex";
 
 const ItemWrapper = styled.li`
   /** DEFAULT VARIANT **/
-  --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c80};
-  --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.neutral.c80};
+  --ll-sidebar-item-label-color: ${(props) => props.theme.colors.neutral.c80};
+  --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.neutral.c80};
   --ll-sidebar-item-background-color: unset;
 
   display: flex;
@@ -27,8 +27,8 @@ const ItemWrapper = styled.li`
 
   /** HOVER VARIANT **/
   &:hover {
-    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c80};
+    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.neutral.c100};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.primary.c80};
     --ll-sidebar-item-background-color: unset;
   }
 
@@ -40,15 +40,15 @@ const ItemWrapper = styled.li`
 
   /** ACTIVE VARIANT **/
   &[data-active="true"] {
-    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c100};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.primary.c80};
-    --ll-sidebar-item-background-color: ${(props) => props.theme.colors.palette.primary.c20};
+    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.neutral.c100};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.primary.c80};
+    --ll-sidebar-item-background-color: ${(props) => props.theme.colors.primary.c20};
   }
 
   /** DISABLE VARIANT **/
   &[data-disable="true"] {
-    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.palette.neutral.c80};
-    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.palette.neutral.c80};
+    --ll-sidebar-item-label-color: ${(props) => props.theme.colors.neutral.c80};
+    --ll-sidebar-item-icon-color: ${(props) => props.theme.colors.neutral.c80};
     --ll-sidebar-item-background-color: unset;
     opacity: 0.3;
     cursor: unset;
@@ -66,7 +66,7 @@ const DefaultBadge = styled.div`
   height: ${(p) => p.theme.space[4]}px;
   width: ${(p) => p.theme.space[4]}px;
   border-radius: ${(p) => p.theme.radii[2]}px;
-  background-color: ${(p) => p.theme.colors.palette.primary.c80};
+  background-color: ${(p) => p.theme.colors.primary.c80};
 `;
 
 export const ItemLabel = styled(Text)`

@@ -27,9 +27,7 @@ const NotificationContainer = styled.View<Partial<Props>>`
   align-items: center;
   padding: 16px;
   background-color: ${(p) =>
-    p.variant === "primary"
-      ? p.theme.colors.palette.primary.c90
-      : "transparent"};
+    p.variant === "primary" ? p.theme.colors.primary.c90 : "transparent"};
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
 `;
 
@@ -45,9 +43,7 @@ export default function Notification({
 }: Props): React.ReactElement {
   const { colors } = useTheme();
   const textColor =
-    variant === "primary"
-      ? colors.palette.neutral.c00
-      : colors.palette.neutral.c100;
+    variant === "primary" ? colors.neutral.c00 : colors.neutral.c100;
 
   return (
     <NotificationContainer variant={variant}>
@@ -69,9 +65,7 @@ export default function Notification({
             fontWeight={"medium"}
             color={
               color ||
-              (variant === "primary"
-                ? colors.palette.neutral.c00
-                : colors.palette.neutral.c80)
+              (variant === "primary" ? colors.neutral.c00 : colors.neutral.c80)
             }
             mt={"2px"}
             mb={"2px"}

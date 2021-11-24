@@ -7,13 +7,9 @@ import Text from "../../../Text";
 
 const PercentButton = styled(TouchableOpacity)<{ active?: boolean }>`
   color: ${(p) =>
-    p.active
-      ? p.theme.colors.palette.neutral.c00
-      : p.theme.colors.palette.neutral.c70};
+    p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c70};
   background-color: ${(p) =>
-    p.active
-      ? p.theme.colors.palette.neutral.c100
-      : p.theme.colors.palette.neutral.c00};
+    p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00};
   border-radius: 100px;
   border-width: 0;
   height: 31px;
@@ -74,7 +70,7 @@ export default function NumberInput({
               >
                 <Text
                   variant={"small"}
-                  color={active ? "palette.neutral.c00" : "palette.neutral.c70"}
+                  color={active ? "neutral.c00" : "neutral.c70"}
                 >
                   {percent * 100}%
                 </Text>

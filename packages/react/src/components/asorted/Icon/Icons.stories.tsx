@@ -25,13 +25,13 @@ const IconContainer = styled(Flex).attrs<{ active?: boolean }>({
   alignItems: "center",
   p: 4,
 })<{ active?: boolean }>`
-  ${(p) => (p.active ? `background-color: ${p.theme.colors.palette.neutral.c20};` : ``)}
+  ${(p) => (p.active ? `background-color: ${p.theme.colors.neutral.c20};` : ``)}
   border-radius: 4px;
   height: 100px;
 `;
 
 const Bold = styled.b`
-  color: ${(p) => p.theme.colors.palette.primary.c80};
+  color: ${(p) => p.theme.colors.primary.c80};
 `;
 
 const Story = {
@@ -75,7 +75,7 @@ export default Story;
 
 const ListTemplate = (args: IconProps) => {
   const theme = useTheme();
-  const color = args.color || theme.colors.palette.neutral.c100;
+  const color = args.color || theme.colors.neutral.c100;
   const [search, setSearch] = useState("");
   const s = search.toLowerCase();
   const regexp = new RegExp(s, "i");
@@ -128,14 +128,14 @@ const ListTemplate = (args: IconProps) => {
 };
 const IconTemplate = (args: IconProps) => {
   const theme = useTheme();
-  const color = args.color || theme.colors.palette.neutral.c100;
+  const color = args.color || theme.colors.neutral.c100;
 
   return <Icon {...args} color={color} />;
 };
 
 const BoxedIconTemplate = (args: IconProps) => {
   const theme = useTheme();
-  const color = args.color || theme.colors.palette.neutral.c100;
+  const color = args.color || theme.colors.neutral.c100;
 
   return (
     <IconBox>

@@ -112,12 +112,7 @@ export const Small = (args: ChartPreviewProps): JSX.Element => {
     <Flex alignItems="flex-start" flexDirection="column" rowGap="1rem">
       <Flex flexWrap="wrap" rowGap="1.5rem" columnGap="2rem">
         <CardChart>
-          <Chart
-            id="static"
-            variant="small"
-            color={theme.colors.palette.primary.c100}
-            data={data}
-          />
+          <Chart id="static" variant="small" color={theme.colors.primary.c100} data={data} />
         </CardChart>
         <CardChart>
           <Chart id="dynamic" variant="small" color={args.color} data={data} />

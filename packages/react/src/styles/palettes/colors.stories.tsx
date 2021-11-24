@@ -12,7 +12,7 @@ const ColorArea = styled.div<{ type: keyof ColorPalette; shade: string }>`
   background-color: ${(p) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    return p.theme.colors.palette[p.type][p.shade];
+    return p.theme.colors[p.type][p.shade];
   }};
   cursor: pointer;
   border-radius: 2px;
@@ -23,7 +23,7 @@ const CardColor = ({ shade, type, value }: CardColorProps): JSX.Element => {
   const [isHovered, setIsHovered] = useState(false);
 
   const onClick = (type: string, shade: string): void => {
-    navigator.clipboard.writeText(`p.theme.colors.palette.${type}.${shade}`);
+    navigator.clipboard.writeText(`p.theme.colors.${type}.${shade}`);
   };
 
   return (

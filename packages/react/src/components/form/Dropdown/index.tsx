@@ -17,7 +17,7 @@ function DropdownControl<T, M extends boolean = false>(props: ControlProps<T, M>
 
   return (
     <components.Control {...props}>
-      <Text fontWeight="semiBold" variant={"paragraph"} color="palette.neutral.c80" mr={2}>
+      <Text fontWeight="semiBold" variant={"paragraph"} color="neutral.c80" mr={2}>
         {label}
       </Text>
       {children}
@@ -62,7 +62,7 @@ export default function Dropdown(props: Props): JSX.Element {
       styles={{
         singleValue: (provided) => ({
           ...provided,
-          color: theme.colors.palette.neutral.c100,
+          color: theme.colors.neutral.c100,
           margin: 0,
           top: undefined,
           position: undefined,

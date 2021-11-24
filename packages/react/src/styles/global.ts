@@ -31,11 +31,11 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
     max-height: 100%;
     width: 100vw;
     height: 100vh;
-    background-color: ${(p) => p.theme.colors.palette.neutral.c00};
+    background-color: ${(p) => p.theme.colors.neutral.c00};
   }
 
   ::selection {
-    background: ${(p) => rgba(p.theme.colors.palette.primary.c100, 0.1)};
+    background: ${(p) => rgba(p.theme.colors.primary.c100, 0.1)};
   }
 
   --track-color: rgba(0,0,0,0);

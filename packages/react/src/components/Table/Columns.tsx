@@ -81,7 +81,7 @@ export function TextColumn<T>({
             variant={"body"}
             textOverflow="ellipsis"
             overflow="hidden"
-            color="palette.neutral.c100"
+            color="neutral.c100"
             {...((titleProps && titleProps(elt)) || {})}
           >
             {title(elt)}
@@ -93,7 +93,7 @@ export function TextColumn<T>({
             variant={"paragraph"}
             textOverflow="ellipsis"
             overflow="hidden"
-            color="palette.neutral.c80"
+            color="neutral.c80"
             {...((subtitleProps && subtitleProps(elt)) || {})}
           >
             {subtitle(elt)}

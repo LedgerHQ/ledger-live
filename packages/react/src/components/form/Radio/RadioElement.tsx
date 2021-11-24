@@ -6,11 +6,11 @@ import Text from "../../asorted/Text";
 import { RadioContext } from "./index";
 
 const Label = styled(Text)`
-  color: var(--ledger-ui-checkbox-color, ${(p) => p.theme.colors.palette.neutral.c100});
+  color: var(--ledger-ui-checkbox-color, ${(p) => p.theme.colors.neutral.c100});
 `;
 
 const Input = styled.input`
-  --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.neutral.c50};
+  --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c50};
   --ledger-ui-checkbox-size: 1.25rem;
 
   position: relative;
@@ -38,17 +38,17 @@ const Input = styled.input`
 
   &[data-variant="default"] {
     :hover {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.primary.c90};
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.primary.c90};
     }
     :active {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.primary.c100};
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.primary.c100};
     }
     :checked,
     :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.primary.c80};
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.primary.c80};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.palette.primary.c60, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.primary.c60, 0.48)};
     }
   }
 
@@ -56,10 +56,10 @@ const Input = styled.input`
     :hover,
     :checked:not([disabled]),
     :checked:not([disabled]) + ${Label}, :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.success.c100};
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.success.c100};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.palette.success.c100, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.success.c100, 0.48)};
     }
   }
 
@@ -67,17 +67,17 @@ const Input = styled.input`
     :hover,
     :checked:not([disabled]),
     :checked:not([disabled]) + ${Label}, :focus {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.error.c100};
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.error.c100};
     }
     :focus {
-      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.palette.error.c100, 0.48)};
+      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.error.c100, 0.48)};
     }
   }
 
   &[data-variant]:disabled {
-    --ledger-ui-checkbox-color: ${(p) => p.theme.colors.palette.neutral.c40};
+    --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c40};
     cursor: unset;
-    background-color: ${(p) => p.theme.colors.palette.neutral.c30};
+    background-color: ${(p) => p.theme.colors.neutral.c30};
   }
 `;
 

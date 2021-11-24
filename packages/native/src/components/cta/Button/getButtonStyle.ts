@@ -10,29 +10,29 @@ export function getButtonColors(colors: Theme["colors"]): {
 } {
   return {
     default: {
-      primaryColor: colors.palette.neutral.c100,
+      primaryColor: colors.neutral.c100,
       secondaryColor: "rgba(0,0,0,0)",
     },
     disabled: {
-      primaryColor: colors.palette.neutral.c50,
-      secondaryColor: colors.palette.neutral.c30,
+      primaryColor: colors.neutral.c50,
+      secondaryColor: colors.neutral.c30,
     },
     main: {
-      primaryColor: colors.palette.neutral.c00,
-      secondaryColor: colors.palette.neutral.c100,
+      primaryColor: colors.neutral.c00,
+      secondaryColor: colors.neutral.c100,
     },
     shade: {
-      primaryColor: colors.palette.neutral.c00,
-      secondaryColor: colors.palette.neutral.c100,
-      tertiaryColor: colors.palette.neutral.c40,
+      primaryColor: colors.neutral.c00,
+      secondaryColor: colors.neutral.c100,
+      tertiaryColor: colors.neutral.c40,
     },
     error: {
-      primaryColor: colors.palette.neutral.c00,
-      secondaryColor: colors.palette.error.c100,
+      primaryColor: colors.neutral.c00,
+      secondaryColor: colors.error.c100,
     },
     color: {
-      primaryColor: colors.palette.neutral.c00,
-      secondaryColor: colors.palette.primary.c80,
+      primaryColor: colors.neutral.c00,
+      secondaryColor: colors.primary.c80,
     },
   };
 }

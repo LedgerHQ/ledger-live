@@ -51,7 +51,12 @@ export type Theme = {
   radii: number[];
   fontSizes: number[];
   space: number[];
-  colors: { palette: ColorPalette };
+  colors: ColorPalette & {
+    /**
+     * @deprecated Do not use the .palette prefix anymore!
+     */
+    palette: ColorPalette;
+  };
   zIndexes: number[];
 };
 
@@ -65,6 +70,7 @@ const theme: Theme = {
   fontSizes,
   space,
   colors: {
+    ...palettes.light,
     palette: palettes.light,
   },
   zIndexes,

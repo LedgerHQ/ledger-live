@@ -23,7 +23,7 @@ export function ValueContainer<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
 >(props: ValueContainerProps<T, M> & ExtraProps<T, M>): JSX.Element {
-  const color = props.selectProps.isDisabled ? "palette.neutral.c60" : "palette.neutral.c100";
+  const color = props.selectProps.isDisabled ? "neutral.c60" : "neutral.c100";
   return (
     <components.ValueContainer {...props}>
       <Text as="div" variant="paragraph" color={color}>

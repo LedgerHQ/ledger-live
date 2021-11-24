@@ -11,7 +11,7 @@ const Wrapper = styled(Flex)<{ image?: string }>`
   padding: ${(p) => p.theme.space[8]}px ${(p) => p.theme.space[10]}px;
   padding-right: 280px; // Nb gives air to not overlap the illustration
   z-index: ${(p) => p.theme.zIndexes[8]};
-  background: url(${(p) => p.image}) no-repeat ${(p) => p.theme.colors.palette.neutral.c100};
+  background: url(${(p) => p.image}) no-repeat ${(p) => p.theme.colors.neutral.c100};
   background-size: contain;
   background-position: right 60px bottom;
 `;
@@ -26,10 +26,10 @@ export type Props = {
 const Slide = ({ title, description, image, onClick }: Props): React.ReactElement => {
   return (
     <Wrapper key={"key"} image={image} onClick={onClick}>
-      <Text variant={"tiny"} color="palette.neutral.c00" fontWeight="regular">
+      <Text variant={"tiny"} color="neutral.c00" fontWeight="regular">
         {title}
       </Text>
-      <Text variant={"h5"} color="palette.neutral.c00" textTransform="uppercase">
+      <Text variant={"h5"} color="neutral.c00" textTransform="uppercase">
         {description}
       </Text>
     </Wrapper>

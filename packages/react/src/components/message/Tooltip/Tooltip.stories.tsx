@@ -80,7 +80,7 @@ export const Tooltip: StoryTemplate<Props> = (args) => (
         <Text
           as="div"
           fontWeight="semiBold"
-          color="palette.neutral.c100"
+          color="neutral.c100"
           style={{ border: "2px solid #AAA", borderRadius: "5px" }}
           p={10}
           textAlign="center"

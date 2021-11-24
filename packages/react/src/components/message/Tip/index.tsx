@@ -22,19 +22,19 @@ const StyledIconContainer = styled.div<{ type?: TipType }>`
     switch (p.type) {
       case "warning":
         return css`
-          background: ${p.theme.colors.palette.warning.c10};
-          color: ${p.theme.colors.palette.warning.c100};
+          background: ${p.theme.colors.warning.c10};
+          color: ${p.theme.colors.warning.c100};
         `;
       case "error":
         return css`
-          background: ${p.theme.colors.palette.error.c10};
-          color: ${p.theme.colors.palette.error.c100};
+          background: ${p.theme.colors.error.c10};
+          color: ${p.theme.colors.error.c100};
         `;
       case "success":
       default:
         return css`
-          background: ${p.theme.colors.palette.success.c30};
-          color: ${p.theme.colors.palette.success.c100};
+          background: ${p.theme.colors.success.c30};
+          color: ${p.theme.colors.success.c100};
         `;
     }
   }}
@@ -50,12 +50,7 @@ export default function Tip({ type, label }: TipProps): JSX.Element {
   return (
     <Flex alignItems={"center"}>
       {type && <StyledIconContainer type={type}>{icons[type]}</StyledIconContainer>}
-      <Text
-        variant={"paragraph"}
-        fontWeight={"medium"}
-        color={"palette.neutral.c100"}
-        flexShrink={1}
-      >
+      <Text variant={"paragraph"} fontWeight={"medium"} color={"neutral.c100"} flexShrink={1}>
         {label}
       </Text>
     </Flex>

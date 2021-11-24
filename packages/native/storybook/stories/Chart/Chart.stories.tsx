@@ -37,7 +37,7 @@ const ChartDefault = (): JSX.Element => {
   return (
     <Flex alignItems="flex-start" flexDirection="column">
       <Chart
-        color={color("color", theme.colors.palette.primary.c100)}
+        color={color("color", theme.colors.primary.c100)}
         tickFormat={text("tickFormat", "MMM")}
         data={generateData()}
       />

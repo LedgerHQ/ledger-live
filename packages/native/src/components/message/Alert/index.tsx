@@ -23,16 +23,16 @@ const icons = {
 
 const alertColors = {
   info: {
-    backgroundColor: "palette.primary.c20",
-    color: "palette.primary.c90",
+    backgroundColor: "primary.c20",
+    color: "primary.c90",
   },
   warning: {
-    backgroundColor: "palette.warning.c30",
-    color: "palette.warning.c100",
+    backgroundColor: "warning.c30",
+    color: "warning.c100",
   },
   error: {
-    backgroundColor: "palette.error.c30",
-    color: "palette.error.c100",
+    backgroundColor: "error.c30",
+    color: "error.c100",
   },
 };
 

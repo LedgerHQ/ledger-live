@@ -20,7 +20,7 @@ const Input = styled.input`
   width: ${(p) => p.theme.space[7]}px;
   height: ${(p) => p.theme.space[7]}px;
   appearance: none;
-  border: 1px solid ${(props) => props.theme.colors.palette.neutral.c90};
+  border: 1px solid ${(props) => props.theme.colors.neutral.c90};
   box-shadow: none;
 
   &:checked {
@@ -46,7 +46,7 @@ const Input = styled.input`
 `;
 
 const Label = styled(Text).attrs({ type: "body", fontWeight: "500" })`
-  color: ${(props) => props.theme.colors.palette.neutral.c80};
+  color: ${(props) => props.theme.colors.neutral.c80};
 
   /* Version when the input is checked */
   ${Input}:checked + & {
@@ -60,7 +60,7 @@ const Label = styled(Text).attrs({ type: "body", fontWeight: "500" })`
 
 const Container = styled.div`
   --ll-checkbox-color: unset;
-  color: var(--ll-checkbox-color, ${(props) => props.theme.colors.palette.primary.c90});
+  color: var(--ll-checkbox-color, ${(props) => props.theme.colors.primary.c90});
 
   display: inline-flex;
   column-gap: ${(p) => p.theme.space[5]}px;
@@ -68,19 +68,19 @@ const Container = styled.div`
   cursor: pointer;
 
   &[data-variant="default"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.palette.primary.c90};
+    --ll-checkbox-color: ${(props) => props.theme.colors.primary.c90};
   }
 
   &[data-variant="success"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.palette.success.c100};
+    --ll-checkbox-color: ${(props) => props.theme.colors.success.c100};
   }
 
   &[data-variant="error"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.palette.error.c100};
+    --ll-checkbox-color: ${(props) => props.theme.colors.error.c100};
   }
 
   &[data-disabled="true"] {
-    --ll-checkbox-color: ${(props) => props.theme.colors.palette.neutral.c80};
+    --ll-checkbox-color: ${(props) => props.theme.colors.neutral.c80};
     cursor: unset;
   }
 `;

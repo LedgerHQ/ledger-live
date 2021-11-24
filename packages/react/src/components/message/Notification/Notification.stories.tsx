@@ -39,8 +39,8 @@ export function Notifications(args: Props & { active: boolean }): JSX.Element {
 
   const warningBadge = (
     <Notification.Badge
-      color="palette.warning.c100"
-      backgroundColor="palette.warning.c10"
+      color="warning.c100"
+      backgroundColor="warning.c10"
       icon={<Icon name="Warning" size={24} />}
       active={args.active}
     />
@@ -48,8 +48,8 @@ export function Notifications(args: Props & { active: boolean }): JSX.Element {
 
   const infoBadge = (
     <Notification.Badge
-      color="palette.primary.c100"
-      backgroundColor="palette.primary.c10"
+      color="primary.c100"
+      backgroundColor="primary.c10"
       icon={<Icon name="Info" size={24} weight="Medium" />}
       active={args.active}
     />

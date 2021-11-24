@@ -18,7 +18,11 @@ export const StyleProvider = ({
   const theme: Theme = useMemo(
     () => ({
       ...defaultTheme,
-      colors: { ...defaultTheme.colors, palette: palettes[selectedPalette] },
+      colors: {
+        ...defaultTheme.colors,
+        ...palettes[selectedPalette],
+        palette: palettes[selectedPalette],
+      },
       theme: selectedPalette,
     }),
     [selectedPalette],

@@ -10,16 +10,16 @@ export function getLinkColors(colors: Theme["colors"]): {
 } {
   return {
     default: {
-      disabled: colors.palette.neutral.c50,
-      main: colors.palette.neutral.c100,
-      color: colors.palette.primary.c80,
-      shade: colors.palette.neutral.c70,
+      disabled: colors.neutral.c50,
+      main: colors.neutral.c100,
+      color: colors.primary.c80,
+      shade: colors.neutral.c70,
     },
     reversed: {
-      disabled: colors.palette.neutral.c80,
-      main: colors.palette.neutral.c00,
-      color: colors.palette.primary.c60,
-      shade: colors.palette.neutral.c50,
+      disabled: colors.neutral.c80,
+      main: colors.neutral.c00,
+      color: colors.primary.c60,
+      shade: colors.neutral.c50,
     },
   };
 }
