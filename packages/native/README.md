@@ -22,21 +22,17 @@ npm i @ledgerhq/native-ui
 
 ### Peer dependencies
 
-This library uses [styled components](https://styled-components.com/) heavily and relies on it being installed separately (to avoid package duplication).
+_This library uses the following packages under the hood and relies on them being installed separately to avoid package duplication._
 
 ```sh
-npm i styled-components
+npm i styled-components react-native-reanimated react-native-svg
 ```
 
-### Required Dependencies
+### Additional setup
 
-**Skip this step if your project is using Expo! ✨**
+**Skip this step if your project is managed by Expo.**
 
-```sh
-npm i react react-native@^0.64.0 react-native-reanimated@~2.2.3 react-native-svg@^12.1.1
-```
-
-Then, follow the installation instructions for:
+Follow the installation instructions for:
 
 - [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/docs/2.2.0/installation)
 - [react-native-svg](https://github.com/react-native-svg/react-native-svg#installation)
