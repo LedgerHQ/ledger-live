@@ -8,16 +8,18 @@ import {
 } from "react-native";
 import Text from "../../Text";
 import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
+import { Flex } from "../../Layout";
 
 type Props = {
-  Icon: React.ComponentType<{ size: number; color?: string }>;
-  color?: string;
+  Icon?: React.ComponentType<{ size: number; color?: string }>;
+  iconColor?: string;
   variant?: "primary" | "secondary";
   title: string;
   subtitle?: string;
   numberOfLines?: TextProps["numberOfLines"];
   onClose?: TouchableOpacityProps["onPress"];
-  onLearnMore?: TouchableOpacityProps["onPress"];
+  linkText?: string;
+  onLinkPress?: TouchableOpacityProps["onPress"];
 };
 
 const NotificationContainer = styled.View<Partial<Props>>`
@@ -25,7 +27,11 @@ const NotificationContainer = styled.View<Partial<Props>>`
   width: 100%;
   flex-direction: row;
   align-items: center;
-  padding: 16px;
+  ${(p) =>
+    p.variant === "primary" &&
+    `
+     padding: 16px;
+  `}
   background-color: ${(p) =>
     p.variant === "primary" ? p.theme.colors.primary.c90 : "transparent"};
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
@@ -33,13 +39,14 @@ const NotificationContainer = styled.View<Partial<Props>>`
 
 export default function Notification({
   Icon,
-  color,
+  iconColor,
   variant = "primary",
   numberOfLines,
   title,
   subtitle,
   onClose,
-  onLearnMore,
+  linkText,
+  onLinkPress,
 }: Props): React.ReactElement {
   const { colors } = useTheme();
   const textColor =
@@ -47,14 +54,16 @@ export default function Notification({
 
   return (
     <NotificationContainer variant={variant}>
-      <FlexBox>
-        <Icon size={18} color={color || textColor} />
-      </FlexBox>
-      <FlexBox ml={16} flexShrink={1}>
+      {Icon && (
+        <FlexBox mr={16}>
+          <Icon size={20} color={iconColor || textColor} />
+        </FlexBox>
+      )}
+      <FlexBox flexShrink={1}>
         <Text
           variant={"body"}
           fontWeight={"medium"}
-          color={color || textColor}
+          color={textColor}
           numberOfLines={numberOfLines}
         >
           {title}
@@ -64,31 +73,29 @@ export default function Notification({
             variant={"body"}
             fontWeight={"medium"}
             color={
-              color ||
-              (variant === "primary" ? colors.neutral.c00 : colors.neutral.c80)
+              variant === "primary"
+                ? colors.neutral.c00
+                : colors.neutral.c80
             }
-            mt={"2px"}
-            mb={"2px"}
+            mt={2}
           >
             {subtitle}
           </Text>
         )}
-        {onLearnMore && (
-          <TouchableOpacity onPress={onLearnMore}>
-            <Text
-              variant={"body"}
-              fontWeight={"semiBold"}
-              color={color || textColor}
-            >
-              Learn more
-            </Text>
-          </TouchableOpacity>
+        {linkText && onLinkPress && (
+          <Flex mt={3}>
+            <TouchableOpacity onPress={onLinkPress}>
+              <Text variant={"body"} fontWeight={"semiBold"} color={textColor}>
+                {linkText}
+              </Text>
+            </TouchableOpacity>
+          </Flex>
         )}
       </FlexBox>
       {onClose && (
         <FlexBox marginLeft={"auto"} pl={16}>
           <TouchableOpacity onPress={onClose}>
-            <CloseMedium size={14} color={color || textColor} />
+            <CloseMedium size={14} color={textColor} />
           </TouchableOpacity>
         </FlexBox>
       )}
