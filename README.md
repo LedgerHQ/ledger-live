@@ -2,8 +2,6 @@
 
 ### Design and interface resources for React and React Native projects.
 
-<br/>
-
 ##### Status: while perfectly useable the libraries are still in alpha state and are subject to breaking changes without notice :fire:.
 
 ## About
