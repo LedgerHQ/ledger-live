@@ -1,7 +1,7 @@
 /* @flow */
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import {
   Keyboard,
@@ -50,6 +50,11 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
 
   const [ownSatPerByte, setOwnSatPerByte] = useState(null);
 
+  const ref = useRef();
+  useEffect(() => {
+    ref.current?.focus();
+  }, []);
+
   const onChange = text => {
     setOwnSatPerByte(text.replace(/\D/g, ""));
   };
@@ -87,6 +92,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
           <View style={styles.inputBox}>
             <TextInput
               autoFocus
+              ref={ref}
               style={[styles.textInputAS, { color: colors.darkBlue }]}
               defaultValue={satPerByte ? satPerByte.toString() : ""}
               keyboardType="numeric"
