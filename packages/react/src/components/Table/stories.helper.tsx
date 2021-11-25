@@ -1,8 +1,9 @@
 import React from "react";
 import { useTheme } from "styled-components";
 import Text from "../asorted/Text";
-import { Column } from "./index";
-import { IconColumn, TextColumn, CellProps } from "./Columns";
+import Table, { Column } from "./index";
+import { CellProps } from "./Columns";
+const { Columns } = Table;
 
 function Header({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
@@ -65,27 +66,27 @@ export const balance: { data: BalanceElement[]; columns: Column<BalanceElement>[
     },
   ],
   columns: [
-    TextColumn({
+    Columns.text({
       header: () => <Header>Currency</Header>,
       title: (elt) => elt.currency,
     }),
-    TextColumn({
+    Columns.text({
       header: () => <Header>Amount</Header>,
       title: (elt) => elt.amount,
       subtitle: (elt) => elt.counterValue,
     }),
-    TextColumn({
+    Columns.text({
       header: () => <Header>Address</Header>,
       subtitle: (elt) => elt.address,
     }),
-    TextColumn({
+    Columns.text({
       header: () => <Header>Evolution</Header>,
       subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
       subtitleProps: (elt) => ({
         color: elt.evolution < 0 ? "error.c100" : "success.c100",
       }),
     }),
-    IconColumn({
+    Columns.icon({
       header: () => <Header>&nbsp;</Header>,
       props: (elt) => ({
         name: "StarSolid",
@@ -172,33 +173,33 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
       render: ({ elt }: CellProps<Account>): JSX.Element =>
         elt.currency.abbrev === "BTC" ? svgBtc : elt.currency.abbrev === "ETH" ? svgEth : svgUsdt,
     },
-    TextColumn({
+    Columns.text({
       layout: "2fr",
       title: (elt) => elt.name,
       subtitle: (elt) => elt.currency.name,
     }),
-    IconColumn({
+    Columns.icon({
       props: (elt) => ({
         name: elt.synchronized ? "CircledCheck" : "Clock",
         color: elt.synchronized ? "success.c100" : "neutral.c80",
       }),
     }),
-    TextColumn({
+    Columns.text({
       layout: "1fr",
       subtitle: (elt) => elt.currency.abbrev,
     }),
-    TextColumn({
+    Columns.text({
       layout: "1fr",
       title: (elt) => elt.amount,
     }),
-    TextColumn({
+    Columns.text({
       layout: "1fr",
       subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
       subtitleProps: (elt) => ({
         color: elt.evolution < 0 ? "error.c100" : "success.c100",
       }),
     }),
-    IconColumn({
+    Columns.icon({
       props: (elt) => ({
         name: "StarSolid",
         color: elt.starred ? "neutral.c100" : "neutral.c70",

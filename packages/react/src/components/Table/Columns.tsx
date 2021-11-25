@@ -2,35 +2,59 @@ import React from "react";
 import Icon, { Props as IconProps } from "../asorted/Icon";
 import FlexBox from "../layout/Flex";
 import Text, { TextProps } from "../asorted/Text";
-
-export interface CellProps<T> {
-  elt: T;
-  rowIndex: number;
-  columnIndex: number;
+export interface Column<T> {
+  /**
+   * A function called to render each cell of the column.
+   */
+  render: (props: CellProps<T>) => React.ReactNode;
+  /**
+   * A valid grid template [value](https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns#values).
+   * This layout is applied to every cell of the column.
+   * Default to "min-content" - the largest minimal content contribution of the grid item.
+   */
+  layout?: string;
+  /**
+   * A function called to render the header cell.
+   * If omitted the rendered header element will be an empty div.
+   */
+  header?: () => React.ReactNode;
 }
 
-type HeaderFn = () => React.ReactNode;
-
-export interface Column<T> {
-  layout?: string;
-  render: (props: CellProps<T>) => React.ReactNode;
-  header?: HeaderFn;
+export interface CellProps<T> {
+  /**
+   * The cell element.
+   */
+  elt: T;
+  /**
+   * The row index.
+   */
+  rowIndex: number;
+  /**
+   * The column index.
+   */
+  columnIndex: number;
 }
 
 /**
  * A column which contains a single icon and that has a fixed width.
  */
-export function IconColumn<T>({
+function iconColumn<T>({
   props,
   header,
   layout,
 }: {
-  // An object containing the unerlying <Text /> wrapper props as well as
-  // the "name" and "weight" props of the unerlying <Icon />.
+  /**
+   * An object containing the unerlying <Text /> wrapper props as well as
+   * the "name" and "weight" props of the unerlying <Icon />.
+   */
   props: (elt: T) => Pick<IconProps, "name" | "weight"> & TextProps;
-  // An optional render function to display the column header.
-  header?: HeaderFn;
-  // The grid column layout, by default "min-content".
+  /**
+   * An optional render function to display the column header.
+   */
+  header?: () => React.ReactNode;
+  /**
+   * The grid column layout, by default "min-content".
+   */
   layout?: string;
 }): Column<T> {
   return {
@@ -38,7 +62,7 @@ export function IconColumn<T>({
     render: ({ elt }) => {
       const { name, weight, ...textProps } = props(elt);
       return (
-        <Text {...textProps} style={{ display: "flex" }}>
+        <Text {...textProps} style={{ display: "flex", alignItems: "center" }}>
           <Icon name={name} weight={weight} />
         </Text>
       );
@@ -46,35 +70,48 @@ export function IconColumn<T>({
     header,
   };
 }
+export { iconColumn as icon };
 
 /**
  * A column that contains a title and a subtitle.
  */
-export function TextColumn<T>({
-  // An optional title.
+function textColumn<T>({
   title,
-  // An optional subtitle.
   subtitle,
-  // An optional render function to display the column header.
   header,
-  // The grid column layout, by default "auto".
   layout,
-  // Optional extra props passed to the title <Text /> wrapper.
   titleProps,
-  // Optional extra props passed to the subtitle <Text /> wrapper.
   subtitleProps,
 }: {
+  /**
+   * An optional title.
+   */
   title?: (elt: T) => React.ReactNode;
+  /**
+   * An optional subtitle.
+   */
   subtitle?: (elt: T) => React.ReactNode;
-  header?: HeaderFn;
+  /**
+   * An optional render function to display the column header.
+   */
+  header?: () => React.ReactNode;
+  /**
+   * The grid column layout, by default "auto".
+   */
   layout?: string;
+  /**
+   * Optional extra props passed to the title <Text /> wrapper.
+   */
   titleProps?: (elt: T) => Partial<React.ComponentProps<typeof Text>>;
+  /**
+   * Optional extra props passed to the subtitle <Text /> wrapper.
+   */
   subtitleProps?: (elt: T) => Partial<React.ComponentProps<typeof Text>>;
 }): Column<T> {
   return {
     layout: layout || "auto",
     render: ({ elt }) => (
-      <FlexBox flexDirection="column">
+      <FlexBox flexDirection="column" justifyContent="center">
         {title && (
           <Text
             fontWeight="medium"
@@ -104,3 +141,4 @@ export function TextColumn<T>({
     header,
   };
 }
+export { textColumn as text };
