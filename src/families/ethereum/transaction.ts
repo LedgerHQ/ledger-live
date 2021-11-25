@@ -86,15 +86,38 @@ export const formatTransaction = (
     (t.subAccountId &&
       (mainAccount.subAccounts || []).find((a) => a.id === t.subAccountId)) ||
     mainAccount;
+
+  const header = (() => {
+    switch (t.mode) {
+      case "erc721.transfer":
+        return `${t.mode.toUpperCase()} Collection: ${t.collection} TokenId: ${
+          t.tokenIds?.[0]
+        }`;
+      case "erc1155.transfer":
+        return (
+          `${t.mode.toUpperCase()} Collection: ${t.collection}` +
+          t.tokenIds
+            ?.map((tokenId, index) => {
+              return `\n  - TokenId: ${tokenId} Quantity: ${
+                t.quantities?.[index]?.toFixed() ?? 0
+              }`;
+            })
+            .join(",")
+        );
+      default:
+        return `${t.mode.toUpperCase()} ${
+          t.useAllAmount
+            ? "MAX"
+            : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+                showCode: true,
+                disableRounding: true,
+              })
+        }`;
+    }
+  })();
+
   return `
-${t.mode.toUpperCase()} ${
-    t.useAllAmount
-      ? "MAX"
-      : formatCurrencyUnit(getAccountUnit(account), t.amount, {
-          showCode: true,
-          disableRounding: true,
-        })
-  }
+${header}
 TO ${t.recipient}
 with gasPrice=${formatCurrencyUnit(
     mainAccount.currency.units[1] || mainAccount.currency.units[0],
@@ -102,6 +125,7 @@ with gasPrice=${formatCurrencyUnit(
   )}
 with gasLimit=${gasLimit.toString()}`;
 };
+
 const defaultGasLimit = new BigNumber(0x5208);
 export const getGasLimit = (t: Transaction): BigNumber =>
   t.userGasLimit || t.estimatedGasLimit || defaultGasLimit;
@@ -127,6 +151,9 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     },
     allowZeroAmount: tr.allowZeroAmount,
     feesStrategy: tr.feesStrategy,
+    tokenIds: tr.tokenIds,
+    collection: tr.collection,
+    quantities: tr.quantities?.map((q) => new BigNumber(q)),
   };
 };
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
@@ -151,6 +178,9 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     },
     allowZeroAmount: t.allowZeroAmount,
     feesStrategy: t.feesStrategy,
+    tokenIds: t.tokenIds,
+    collection: t.collection,
+    quantities: t.quantities?.map((q) => q.toString()),
   };
 };
 

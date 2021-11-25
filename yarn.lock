@@ -1165,10 +1165,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@6.16.0", "@ledgerhq/cryptoassets@^6.16.0":
-  version "6.16.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.16.0.tgz#925901ad2b85d023ece03cd960589f18f1d2c2e0"
-  integrity sha512-25bj8AukPS+paZTAi3btcUhOKrmM6EQKjxx3dhFb5BJziP0HEs7r0CLHUqyOwtiSIUdaWWOgsjw7VJhz8Kqz5Q==
+"@ledgerhq/cryptoassets@6.17.0", "@ledgerhq/cryptoassets@^6.17.0":
+  version "6.17.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.17.0.tgz#cc3963b0ed726efcba976b78185d7f72ea9bedbc"
+  integrity sha512-xvXmS0fCLBOr54/lBF4w4pfWVhmbEcf/Wf45k0Carx4vtSUzMChd/KyAvIuLODNeIBj9lXOK2OqXB0u8wc8p5A==
   dependencies:
     invariant "2"
 
@@ -1214,10 +1214,10 @@
     js-sha512 "^0.8.0"
     tweetnacl "^1.0.3"
 
-"@ledgerhq/hw-app-btc@6.15.1":
-  version "6.15.1"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-6.15.1.tgz#6e2d451196153e7a619414bd386d829b824226cf"
-  integrity sha512-9qWke/C6YQ9cQAklcdUras+dYzSOGY8UwR/Ce0Je0M/SyfB8iOC15e6LHUVhp73LFOAiSrpKRwbmWGnezbvlLA==
+"@ledgerhq/hw-app-btc@6.17.0":
+  version "6.17.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-btc/-/hw-app-btc-6.17.0.tgz#c08090dcd0ad78eb7a2a288735c3bcf8e914a423"
+  integrity sha512-3aFFL1oqn8wd4xccRlBpdDkmNo0K64wr1jg5leGhES5utRLflhTiJhBL3RlHPn4RD3EoFH9X9TuFzrIpJQlHeg==
   dependencies:
     "@ledgerhq/hw-transport" "^6.11.2"
     "@ledgerhq/logs" "^6.10.0"
@@ -1240,12 +1240,12 @@
     "@ledgerhq/hw-transport" "^6.11.2"
     bip32-path "^0.4.2"
 
-"@ledgerhq/hw-app-eth@6.16.2":
-  version "6.16.2"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.16.2.tgz#02b7ade413ef002d2e91a7464b32c0100fffb8fd"
-  integrity sha512-jw/JJbesGFzN9qw6xcM9ePgNT6rp2MvpY05U4P/8e1gms70rjgWmovgIirA752r60F7/c9XfsCV8xV3eFtLrtw==
+"@ledgerhq/hw-app-eth@6.17.0":
+  version "6.17.0"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.17.0.tgz#9f2f7ee18b0fe553277a08d007a8271ec94014ff"
+  integrity sha512-msZD5mU/Ck/2ODKCNPSyMDq3v8FBOI3R3QasDDm7WNfH5H8UVB+mobjExPjmlke+t1GsM864V2EU2/YiLGM/lg==
   dependencies:
-    "@ledgerhq/cryptoassets" "^6.16.0"
+    "@ledgerhq/cryptoassets" "^6.17.0"
     "@ledgerhq/errors" "^6.10.0"
     "@ledgerhq/hw-transport" "^6.11.2"
     "@ledgerhq/logs" "^6.10.0"

@@ -24,6 +24,16 @@ const options = [
     multiple: true,
   },
   {
+    name: "collection",
+    type: String,
+    desc: "determine the collection of an NFT (related to the --tokenId)",
+  },
+  {
+    name: "tokenId",
+    type: String,
+    desc: "determine the tokenId of an NFT (related to the --colection)",
+  },
+  {
     name: "gasPrice",
     type: String,
     desc: "how much gasPrice. default is 2gwei. (example format: 2gwei, 0.000001eth, in wei if no unit precised)",

@@ -45,6 +45,9 @@ export type InferTransactionsOpts = Partial<{
   amount: string;
   shuffle: boolean;
   "fees-strategy": string;
+  collection: string;
+  tokenIds: string;
+  quantities: string;
 }>;
 export const inferTransactionsOpts = uniqBy(
   [
@@ -73,6 +76,21 @@ export const inferTransactionsOpts = uniqBy(
       name: "shuffle",
       type: Boolean,
       desc: "if using multiple token or recipient, order will be randomized",
+    },
+    {
+      name: "collection",
+      type: String,
+      desc: "collection of an NFT (in corelation with --tokenIds)",
+    },
+    {
+      name: "tokenIds",
+      type: String,
+      desc: "tokenId or list of tokenIds of an NFT separated by commas (order is kept in corelation with --quantities)",
+    },
+    {
+      name: "quantities",
+      type: String,
+      desc: "quantity or list of quantity of an ERC1155 NFT separated by commas (order is kept in corelation with --tokenIds)",
     },
   ].concat(
     flatMap(Object.values(perFamily), (m: any) => (m && m.options) || [])
@@ -106,6 +124,16 @@ export async function inferTransactions(
       transaction.amount = transaction.useAllAmount
         ? new BigNumber(0)
         : inferAmount(account, opts.amount || "0");
+
+      // NFT collection and tokenId go by pair
+      if (opts.tokenIds && opts.collection) {
+        transaction.tokenIds = opts.tokenIds.split(",");
+        transaction.collection = opts.collection;
+        transaction.quantities = opts.quantities
+          ?.split(",")
+          ?.map((q) => new BigNumber(q));
+      }
+
       return {
         account,
         transaction,
