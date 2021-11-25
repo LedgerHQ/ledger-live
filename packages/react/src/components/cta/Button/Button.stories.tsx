@@ -4,6 +4,7 @@ import Text from "../../asorted/Text";
 import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/react/";
 import { InvertTheme } from "../../../styles/InvertTheme";
 import Flex from "../../layout/Flex";
+import Grid from "../../layout/Grid";
 
 const iconPositions: IconPosition[] = ["left", "right"];
 const buttonVariants: ButtonVariants[] = ["main", "shade", "color", "error"];
@@ -51,17 +52,16 @@ export const Overview = (() => {
     { ...templateProps, children: "" },
   ];
   return (
-    <Flex flexDirection="column">
+    <Grid columns="none" gridTemplateColumns="max-content repeat(4, 1fr)" columnGap={8} rowGap={8}>
       {buttonVariants.flatMap((buttonType) =>
         [false, true].map((outline) => (
-          <Flex flexDirection="row" alignItems="center" height="70px" columnGap={4}>
+          <>
             <Text variant="small" color="neutral.c70">
               type="{buttonType}"<br />
               outline={`{${outline.toString()}}`}
-              <br />
             </Text>
             {propsArr.map((buttonProps) => (
-              <Flex minWidth="280px" columnGap={4}>
+              <Flex flex={1} columnGap={4}>
                 {[false, true].map((disabled) => (
                   <Button
                     variant={buttonType}
@@ -72,10 +72,10 @@ export const Overview = (() => {
                 ))}
               </Flex>
             ))}
-          </Flex>
+          </>
         )),
       )}
-    </Flex>
+    </Grid>
   );
 }).bind({});
 
