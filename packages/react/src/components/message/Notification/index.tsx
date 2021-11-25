@@ -31,12 +31,9 @@ const Container = styled(FlexBox).attrs<ContainerProps>({
 })<ContainerProps>`
   --notification-badge-border: ${(p) => {
     /* Set a CSS variable that will be consumed by the Badge component */
-    return p.hasBackground
-      ? p.theme.colors.palette.neutral.c30
-      : p.theme.colors.palette.background.main;
+    return p.hasBackground ? p.theme.colors.neutral.c30 : p.theme.colors.background.main;
   }};
-  background-color: ${(p) =>
-    p.hasBackground ? p.theme.colors.palette.neutral.c30 : "transparent"};
+  background-color: ${(p) => (p.hasBackground ? p.theme.colors.neutral.c30 : "transparent")};
 
   border-radius: 8px;
 `;
@@ -54,16 +51,11 @@ function Notification({
     <Container hasBackground={hasBackground} {...containerProps}>
       {badge}
       <FlexBox flexDirection="column" rowGap={3} flex="auto">
-        <Text variant={"large"} fontWeight="medium" color="palette.neutral.c100">
+        <Text variant={"large"} fontWeight="medium" color="neutral.c100">
           {title}
         </Text>
         {description && (
-          <Text
-            variant={"paragraph"}
-            fontWeight="medium"
-            color="palette.neutral.c80"
-            whiteSpace="pre-wrap"
-          >
+          <Text variant={"paragraph"} fontWeight="medium" color="neutral.c80" whiteSpace="pre-wrap">
             {description}
           </Text>
         )}

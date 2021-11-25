@@ -62,7 +62,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 function Hello() {
   return (
     <Flex flexDirection="column" alignItems="center">
-      <Text variant="h1" color="palette.neutral.c100">
+      <Text variant="h1" color="neutral.c100">
         Hello, world!
       </Text>
     </Flex>
@@ -133,7 +133,7 @@ import { useFonts } from "expo-font";
 
 function Logo() {
   const theme = useTheme();
-  return <Logos.LedgerLiveRegular color={theme.colors.palette.neutral.c100} />;
+  return <Logos.LedgerLiveRegular color={theme.colors.neutral.c100} />;
 }
 
 function FontProvider({ children }) {
@@ -163,10 +163,10 @@ export default function App() {
           justifyContent="center"
           alignItems="center"
           flexDirection="column"
-          backgroundColor="palette.neutral.c00"
+          backgroundColor="neutral.c00"
         >
           <Logo />
-          <Text variant="h2" color="palette.neutral.c100" my={10}>
+          <Text variant="h2" color="neutral.c100" my={10}>
             Hello, world!
           </Text>
           <Switch
@@ -190,7 +190,7 @@ import { useTheme } from "styled-components/native";
 
 function Logo() {
   const theme = useTheme();
-  return <Logos.LedgerLiveRegular color={theme.colors.palette.neutral.c100} />;
+  return <Logos.LedgerLiveRegular color={theme.colors.neutral.c100} />;
 }
 
 export default function App() {
@@ -205,10 +205,10 @@ export default function App() {
         justifyContent="center"
         alignItems="center"
         flexDirection="column"
-        backgroundColor="palette.neutral.c00"
+        backgroundColor="neutral.c00"
       >
         <Logo />
-        <Text variant="h2" color="palette.neutral.c100" my={10}>
+        <Text variant="h2" color="neutral.c100" my={10}>
           Hello, world!
         </Text>
         <Switch

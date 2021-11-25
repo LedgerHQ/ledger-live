@@ -12,9 +12,7 @@ export default function SearchInput(props: InputProps): JSX.Element {
       renderLeft={
         <InputRenderLeftContainer>
           <SearchMedium
-            color={
-              props.disabled ? theme.colors.palette.neutral.c50 : theme.colors.palette.neutral.c70
-            }
+            color={props.disabled ? theme.colors.neutral.c50 : theme.colors.neutral.c70}
           />
         </InputRenderLeftContainer>
       }

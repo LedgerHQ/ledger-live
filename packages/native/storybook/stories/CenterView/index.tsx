@@ -8,7 +8,7 @@ export const Main = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${(p) => p.theme.colors.palette.background.main};
+  background-color: ${(p) => p.theme.colors.background.main};
   overflow: hidden;
 `;
 
@@ -17,7 +17,7 @@ const ThemeButton = styled.TouchableOpacity`
   height: ${(p) => p.theme.space[10]}px;
   border-top-left-radius: ${(p) => p.theme.space[10]};
   border-bottom-left-radius: ${(p) => p.theme.space[10]};
-  background-color: ${(p) => p.theme.colors.palette.neutral.c100};
+  background-color: ${(p) => p.theme.colors.neutral.c100};
   justify-content: center;
   align-items: center;
   position: absolute;
@@ -27,7 +27,7 @@ const ThemeButton = styled.TouchableOpacity`
 `;
 
 const Icon = styled.Text`
-  color: ${(p) => p.theme.colors.palette.neutral.c100};
+  color: ${(p) => p.theme.colors.neutral.c100};
   font-size: 15px;
 `;
 

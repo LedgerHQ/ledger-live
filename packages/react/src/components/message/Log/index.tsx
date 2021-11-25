@@ -12,7 +12,7 @@ const Container = styled(FlexBox)`
   flex-wrap: wrap;
   align-items: stretch;
   min-height: ${(p) => p.theme.space[12]}px;
-  color: ${(p) => p.theme.colors.palette.neutral.c100};
+  color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
 const TextContainer = styled(FlexBox).attrs(() => ({

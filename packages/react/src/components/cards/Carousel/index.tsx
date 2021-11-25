@@ -20,7 +20,7 @@ const CarouselWrapper = styled.div`
   cursor: pointer;
   position: relative;
   flex: 1;
-  background: ${(p) => p.theme.colors.palette.neutral.c100};
+  background: ${(p) => p.theme.colors.neutral.c100};
 `;
 
 const Controllers = styled(Flex)`
@@ -29,7 +29,7 @@ const Controllers = styled(Flex)`
   right: ${(p) => p.theme.space[5]}px;
   bottom: ${(p) => p.theme.space[4]}px;
   column-gap: ${(p) => p.theme.space[4]}px;
-  color: ${(p) => p.theme.colors.palette.neutral.c00};
+  color: ${(p) => p.theme.colors.neutral.c00};
 
   > div {
     &:hover {
@@ -50,7 +50,7 @@ const Bullets = styled.div<{ active?: number }>`
     position: relative;
     height: ${(p) => p.theme.space[1]}px;
     width: ${(p) => p.theme.space[8]}px;
-    background: ${(p) => p.theme.colors.palette.neutral.c00};
+    background: ${(p) => p.theme.colors.neutral.c00};
     opacity: 0.5;
     &:hover {
       opacity: 0.75;
@@ -77,7 +77,7 @@ const Close = styled.div`
   position: absolute;
   top: ${(p) => p.theme.space[7]}px;
   right: ${(p) => p.theme.space[5]}px;
-  color: ${(p) => p.theme.colors.palette.neutral.c00};
+  color: ${(p) => p.theme.colors.neutral.c00};
   &:hover {
     opacity: 0.5;
   }
@@ -167,22 +167,18 @@ const Carousel = ({
     <CarouselWrapper id={"carousel"} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       {wantToDismiss ? (
         <DismissWrapper>
-          <Text color="palette.neutral.c00" fontWeight="medium" variant={"paragraph"}>
+          <Text color="neutral.c00" fontWeight="medium" variant={"paragraph"}>
             {dismissText}
           </Text>
           <Flex columnGap={5}>
-            <Button
-              color="palette.neutral.c100"
-              backgroundColor="palette.neutral.c00"
-              onClick={onDismiss}
-            >
+            <Button color="neutral.c100" backgroundColor="neutral.c00" onClick={onDismiss}>
               {dismissConfirmText}
             </Button>
             <Button
               outline
-              color="palette.neutral.c00"
-              backgroundColor="palette.neutral.c100"
-              borderColor="palette.neutral.c00"
+              color="neutral.c00"
+              backgroundColor="neutral.c100"
+              borderColor="neutral.c00"
               onClick={onCancelDismiss}
             >
               {dismissCancelText}

@@ -10,7 +10,7 @@ function Header({ children }: { children: React.ReactNode }) {
     <Text
       fontWeight="semiBold"
       variant={"paragraph"}
-      style={{ borderBottom: `1px solid ${theme.colors.palette.neutral.c40}` }}
+      style={{ borderBottom: `1px solid ${theme.colors.neutral.c40}` }}
       mx={-4}
       px={4}
       pb={8}
@@ -82,14 +82,14 @@ export const balance: { data: BalanceElement[]; columns: Column<BalanceElement>[
       header: () => <Header>Evolution</Header>,
       subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
       subtitleProps: (elt) => ({
-        color: elt.evolution < 0 ? "palette.error.c100" : "palette.success.c100",
+        color: elt.evolution < 0 ? "error.c100" : "success.c100",
       }),
     }),
     IconColumn({
       header: () => <Header>&nbsp;</Header>,
       props: (elt) => ({
         name: "StarSolid",
-        color: elt.starred ? "palette.neutral.c100" : "palette.neutral.c70",
+        color: elt.starred ? "neutral.c100" : "neutral.c70",
       }),
     }),
   ],
@@ -180,7 +180,7 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
     IconColumn({
       props: (elt) => ({
         name: elt.synchronized ? "CircledCheck" : "Clock",
-        color: elt.synchronized ? "palette.success.c100" : "palette.neutral.c80",
+        color: elt.synchronized ? "success.c100" : "neutral.c80",
       }),
     }),
     TextColumn({
@@ -195,13 +195,13 @@ export const accounts: { data: Account[]; columns: Column<Account>[] } = {
       layout: "1fr",
       subtitle: (elt) => (elt.evolution > 0 ? "+" : "") + elt.evolution,
       subtitleProps: (elt) => ({
-        color: elt.evolution < 0 ? "palette.error.c100" : "palette.success.c100",
+        color: elt.evolution < 0 ? "error.c100" : "success.c100",
       }),
     }),
     IconColumn({
       props: (elt) => ({
         name: "StarSolid",
-        color: elt.starred ? "palette.neutral.c100" : "palette.neutral.c70",
+        color: elt.starred ? "neutral.c100" : "neutral.c70",
       }),
     }),
   ],

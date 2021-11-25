@@ -21,13 +21,13 @@ type AnimatedSeparatorProps = {
 const Separator = styled.View<SpaceProps>`
   flex: 1;
   height: 1px;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c40};
+  background-color: ${(p) => p.theme.colors.neutral.c40};
   ${space}
 `;
 
 const SeparatorFilling = Animated.createAnimatedComponent(styled.View`
   height: 100%;
-  background-color: ${(p) => p.theme.colors.palette.neutral.c100};
+  background-color: ${(p) => p.theme.colors.neutral.c100};
 `);
 
 const AnimatedSeparator = ({
@@ -84,13 +84,13 @@ const StepIcon = {
     width: ${(p) => p.theme.space[2]}px;
     height: ${(p) => p.theme.space[2]}px;
     border-radius: ${(p) => p.theme.radii[2]}px;
-    background-color: ${(p) => p.theme.colors.palette.primary.c90};
+    background-color: ${(p) => p.theme.colors.primary.c90};
   `,
   Pending: styled.View`
     width: ${(p) => p.theme.space[1]}px;
     height: ${(p) => p.theme.space[1]}px;
     border-radius: ${(p) => p.theme.space[1]}px;
-    background-color: ${(p) => p.theme.colors.palette.neutral.c70};
+    background-color: ${(p) => p.theme.colors.neutral.c70};
   `,
   Completed: ({ color }: { color: string }): JSX.Element => (
     <CheckAlone size={16} color={color} />
@@ -108,15 +108,15 @@ const StepView = styled.View`
 `;
 
 const ActiveText = styled(Text)`
-  color: ${(p) => p.theme.colors.palette.neutral.c100};
+  color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
 const PendingText = styled(Text)`
-  color: ${(p) => p.theme.colors.palette.neutral.c70};
+  color: ${(p) => p.theme.colors.neutral.c70};
 `;
 
 const ErroredText = styled(Text)`
-  color: ${(p) => p.theme.colors.palette.error.c100};
+  color: ${(p) => p.theme.colors.error.c100};
 `;
 
 type StepState = "CURRENT" | "PENDING" | "COMPLETED" | "ERRORED";
@@ -151,20 +151,20 @@ function Step({
     switch (state) {
       case "COMPLETED":
         return (
-          <StepIcon.Background backgroundColor="palette.primary.c20">
-            <StepIcon.Completed color={colors.palette.primary.c90} />
+          <StepIcon.Background backgroundColor="primary.c20">
+            <StepIcon.Completed color={colors.primary.c90} />
           </StepIcon.Background>
         );
       case "CURRENT":
         return (
-          <StepIcon.Background backgroundColor="palette.primary.c20">
+          <StepIcon.Background backgroundColor="primary.c20">
             <StepIcon.Current />
           </StepIcon.Background>
         );
       case "ERRORED":
         return (
-          <StepIcon.Background backgroundColor="palette.warning.c30">
-            <StepIcon.Errored color={colors.palette.error.c100} />
+          <StepIcon.Background backgroundColor="warning.c30">
+            <StepIcon.Errored color={colors.error.c100} />
           </StepIcon.Background>
         );
       case "PENDING":

@@ -30,11 +30,7 @@ storiesOf((story) =>
         ["medium", "semiBold", "bold"],
         "medium"
       )}
-      color={select(
-        "color",
-        ["palette.primary.c100", "palette.neutral.c100"],
-        "palette.neutral.c100"
-      )}
+      color={select("color", ["primary.c100", "neutral.c100"], "neutral.c100")}
       bracket={boolean("bracket", false)}
     >
       {text("label", "Ledger")}

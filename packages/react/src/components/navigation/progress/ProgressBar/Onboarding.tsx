@@ -17,14 +17,13 @@ const Bar = styled.div<{ on?: boolean; fill: string | number }>`
   border-top-${(p) => (p.on ? "right" : "left")}-radius: 0;
   border-bottom-${(p) => (p.on ? "right" : "left")}-radius: 0;
   flex: ${(p) => p.fill};
-  background: ${(p) =>
-    p.on ? p.theme.colors.palette.neutral.c100 : p.theme.colors.palette.neutral.c40};
+  background: ${(p) => (p.on ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c40)};
 `;
 
 const Handler = styled.div`
   transition: all 600ms linear;
   padding: 4px;
-  background: ${(p) => p.theme.colors.palette.neutral.c100};
+  background: ${(p) => p.theme.colors.neutral.c100};
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
 
   display: flex;
@@ -39,8 +38,8 @@ const Handler = styled.div`
     width: 16px;
     justify-content: center;
     align-items: center;
-    color: ${(p) => p.theme.colors.palette.neutral.c100};
-    background: ${(p) => p.theme.colors.palette.neutral.c00};
+    color: ${(p) => p.theme.colors.neutral.c100};
+    background: ${(p) => p.theme.colors.neutral.c00};
   }
 `;
 
@@ -62,15 +61,10 @@ const Onboarding = ({ steps, currentIndex }: OnboardingProps): JSX.Element => {
     <Container>
       <Bar on fill={fill} />
       <Handler key={currentStep.key}>
-        <Text className="index" color="palette.neutral.c00" fontWeight="medium" variant={"micro"}>
+        <Text className="index" color="neutral.c00" fontWeight="medium" variant={"micro"}>
           {currentIndex + 1}
         </Text>
-        <Text
-          color="palette.neutral.c00"
-          fontWeight="medium"
-          textTransform="uppercase"
-          variant={"micro"}
-        >
+        <Text color="neutral.c00" fontWeight="medium" textTransform="uppercase" variant={"micro"}>
           {currentStep.label}
         </Text>
       </Handler>

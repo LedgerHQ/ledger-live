@@ -15,7 +15,7 @@ import Flex from "../Layout/Flex";
 import type { Item } from "./types";
 
 const Container = styled(Flex)`
-  background-color: ${(p) => p.theme.colors.palette.background.main};
+  background-color: ${(p) => p.theme.colors.background.main};
 `;
 
 const sortByDate = (a: Item, b: Item): -1 | 0 | 1 => {
@@ -60,7 +60,7 @@ const Chart = ({
           crossAxis
           style={{
             grid: {
-              stroke: theme.colors.palette.neutral.c40,
+              stroke: theme.colors.neutral.c40,
               strokeDasharray: "4 4",
             },
             axisLabel: { display: "none" },
@@ -76,11 +76,11 @@ const Chart = ({
           tickFormat={(timestamp) => moment(timestamp).format(tickFormat)}
           style={{
             axis: {
-              stroke: theme.colors.palette.neutral.c40,
+              stroke: theme.colors.neutral.c40,
               strokeDasharray: "4 4",
             },
             tickLabels: {
-              fill: theme.colors.palette.neutral.c80,
+              fill: theme.colors.neutral.c80,
               fontSize: 12,
               lineHeight: 14.52,
             },
@@ -94,7 +94,7 @@ const Chart = ({
             <Stop stopColor={hex(color)} stopOpacity="0.11" />
             <Stop
               offset="1"
-              stopColor={hex(theme.colors.palette.neutral.c00)}
+              stopColor={hex(theme.colors.neutral.c00)}
               stopOpacity="0"
             />
           </LinearGradient>
@@ -124,7 +124,7 @@ const Chart = ({
             data: {
               stroke: color,
               strokeWidth: 3,
-              fill: theme.colors.palette.background.main,
+              fill: theme.colors.background.main,
             },
           }}
           size={5}

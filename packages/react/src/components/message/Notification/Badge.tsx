@@ -10,14 +10,14 @@ const ActiveCircle = styled.div`
   width: 10px;
   border-radius: 9999px;
   box-sizing: content-box;
-  background-color: ${(p) => p.theme.colors.palette.error.c100};
+  background-color: ${(p) => p.theme.colors.error.c100};
 
   border: 2px solid
     var(
       --notification-badge-border,
       ${(p) => {
         /* The CSS variable is dynamically set by the Notification component */
-        return p.theme.colors.palette.background.main;
+        return p.theme.colors.background.main;
       }}
     );
 `;

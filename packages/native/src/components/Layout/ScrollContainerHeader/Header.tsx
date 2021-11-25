@@ -21,7 +21,7 @@ export type HeaderProps = {
 const Container = styled(Flex).attrs({
   paddingHorizontal: 16,
 })`
-  background-color: ${(p) => p.theme.colors.palette.background.main};
+  background-color: ${(p) => p.theme.colors.background.main};
   width: 100%;
 `;
 

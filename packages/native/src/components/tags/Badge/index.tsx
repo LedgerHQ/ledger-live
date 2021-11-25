@@ -22,22 +22,22 @@ const badgesStyle: {
 } = {
   main: {
     default: {
-      color: "palette.neutral.c80",
+      color: "neutral.c80",
       borderWidth: 1,
-      borderColor: "palette.neutral.c40",
+      borderColor: "neutral.c40",
     },
     active: {
-      color: "palette.neutral.c00",
-      backgroundColor: "palette.neutral.c100",
+      color: "neutral.c00",
+      backgroundColor: "neutral.c100",
     },
   },
   primary: {
     default: {
-      color: "palette.primary.c90",
+      color: "primary.c90",
     },
     active: {
-      color: "palette.primary.c90",
-      backgroundColor: "palette.primary.c20",
+      color: "primary.c90",
+      backgroundColor: "primary.c20",
     },
   },
 };

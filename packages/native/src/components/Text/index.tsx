@@ -47,7 +47,7 @@ export interface BaseTextProps
 
 const Base = styled.Text.attrs((p: BaseTextProps) => ({
   fontSize: p.fontSize ? p.fontSize : p.variant ?? "paragraph",
-  color: p.color || "palette.neutral.c100",
+  color: p.color || "neutral.c100",
 }))<BaseTextProps>`
   ${(p) => getTextStyle(p)}
   ${lineHeight};
@@ -68,7 +68,7 @@ const T = styled.View`
 
 const BracketText = ({
   children,
-  color = "palette.neutral.c100",
+  color = "neutral.c100",
   lineHeight,
   ...props
 }: BaseTextProps) => {

@@ -36,7 +36,7 @@ export function Default(args: Props<BalanceElement>): JSX.Element {
         gridRowGap={8}
         gridColumnGap={6}
         borderRadius={8}
-        backgroundColor="palette.neutral.c20"
+        backgroundColor="neutral.c20"
         p={8}
       />
     </>
@@ -69,7 +69,7 @@ function SubAccounts({
                     width: "1px",
                     height: "2em",
                     marginRight: `${theme.space[6]}px`,
-                    borderLeft: `1px solid ${theme.colors.palette.neutral.c40}`,
+                    borderLeft: `1px solid ${theme.colors.neutral.c40}`,
                   }}
                 />
                 {children}
@@ -104,7 +104,7 @@ export function Nested(args: Props<Account>): JSX.Element {
         gridColumnGap={6}
         p={8}
         borderRadius={8}
-        backgroundColor="palette.neutral.c20"
+        backgroundColor="neutral.c20"
         extraRender={(account) =>
           account.subAccounts &&
           account.subAccounts.length > 0 && (

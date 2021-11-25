@@ -48,7 +48,7 @@ export interface TextProps extends BaseStyledProps {
 const Text = baseStyled.span.attrs<TextProps, TextProps>(
   ({ variant = "body", fontSize, color }) => ({
     fontSize: fontSize ? fontSize : variant,
-    color: color || "palette.neutral.c100",
+    color: color || "neutral.c100",
   }),
 )`
   font-weight: 500;

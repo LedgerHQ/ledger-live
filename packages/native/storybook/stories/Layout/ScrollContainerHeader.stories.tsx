@@ -53,7 +53,7 @@ const ScrollContainerHeaderStory = () => {
           <Flex
             height="100px"
             key={i}
-            bg={i % 2 ? "palette.primary.c20" : "palette.neutral.c20"}
+            bg={i % 2 ? "primary.c20" : "neutral.c20"}
           />
         ))}
     </ScrollContainerHeader>

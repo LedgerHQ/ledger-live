@@ -69,11 +69,11 @@ export const Overview = (() => {
         return (
           <Flex flexDirection="row" style={{ height: "100px" }}>
             <div style={{ minWidth: 250 }}>
-              <Text variant="small" color="palette.neutral.c90">
+              <Text variant="small" color="neutral.c90">
                 variant="{variant}"
               </Text>
               <br />
-              <Text variant="tiny" color="palette.neutral.c70">
+              <Text variant="tiny" color="neutral.c70">
                 fontWeights: {JSON.stringify(fontWeightsToShow)}
               </Text>
             </div>

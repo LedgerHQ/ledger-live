@@ -36,7 +36,7 @@ const Icon = ({
 
 export const IconBox = styled.div`
   padding: ${(p) => p.theme.space[6]}px;
-  border: 1px solid ${(p) => p.theme.colors.palette.neutral.c40};
+  border: 1px solid ${(p) => p.theme.colors.neutral.c40};
   border-radius: ${(p) => p.theme.radii[2]}px;
   display: inline-flex;
 `;

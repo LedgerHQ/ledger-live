@@ -89,7 +89,7 @@ function reactNativeTemplate(
 
     ${interfaces}
 
-    function ${componentName} ({ size = 16, color = "palette.neutral.c100" }: Props): JSX.Element {
+    function ${componentName} ({ size = 16, color = "neutral.c100" }: Props): JSX.Element {
       return ${jsx};
     }
 

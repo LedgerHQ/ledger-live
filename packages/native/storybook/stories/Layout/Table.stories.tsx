@@ -37,7 +37,7 @@ const TopLeft = () => {
 const BottomLeft = () => {
   const { colors } = useTheme();
   return (
-    <Text variant="body" color={colors.palette.neutral.c70}>
+    <Text variant="body" color={colors.neutral.c70}>
       {text("bottomLeftText", "Native Segwit", "content")}
     </Text>
   );
@@ -46,11 +46,7 @@ const BottomLeft = () => {
 const TopRight = () => {
   const { colors } = useTheme();
   return (
-    <Text
-      color={colors.palette.neutral.c100}
-      variant="body"
-      fontWeight="semiBold"
-    >
+    <Text color={colors.neutral.c100} variant="body" fontWeight="semiBold">
       {text("topRightText", "1.23456 BTC", "content")}
     </Text>
   );
@@ -59,11 +55,7 @@ const TopRight = () => {
 const BottomRight = () => {
   const { colors } = useTheme();
   return (
-    <Text
-      variant="paragraph"
-      fontWeight="medium"
-      color={colors.palette.neutral.c70}
-    >
+    <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>
       {text("bottomRightText", "$74,590.81", "content")}
     </Text>
   );

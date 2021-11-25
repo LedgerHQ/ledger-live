@@ -37,43 +37,43 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
   display: flex;
   flex-direction: row;
   width: 100%;
-  background: ${(p) => p.theme.colors.palette.neutral.c00};
+  background: ${(p) => p.theme.colors.neutral.c00};
   height: 48px;
-  border: ${(p) => `1px solid ${p.theme.colors.palette.neutral.c40}`};
+  border: ${(p) => `1px solid ${p.theme.colors.neutral.c40}`};
   border-radius: 24px;
-  color: ${(p) => p.theme.colors.palette.neutral.c100};
+  color: ${(p) => p.theme.colors.neutral.c100};
 
   ${(p) =>
     p.disabled &&
     css`
-      color: ${p.theme.colors.palette.neutral.c60};
-      background: ${(p) => p.theme.colors.palette.neutral.c30};
+      color: ${p.theme.colors.neutral.c60};
+      background: ${(p) => p.theme.colors.neutral.c30};
     `};
 
   ${(p) =>
     p.focus &&
     !p.error &&
     css`
-      border: 1px solid ${p.theme.colors.palette.primary.c80};
+      border: 1px solid ${p.theme.colors.primary.c80};
     `};
 
   ${(p) =>
     p.error &&
     !p.disabled &&
     css`
-      border: 1px solid ${p.theme.colors.palette.error.c100};
+      border: 1px solid ${p.theme.colors.error.c100};
     `};
 
   ${(p) =>
     p.disabled &&
     css`
-      color: ${p.theme.colors.palette.neutral.c60};
-      background: ${(p) => p.theme.colors.palette.neutral.c30};
+      color: ${p.theme.colors.neutral.c60};
+      background: ${(p) => p.theme.colors.neutral.c30};
     `};
 `;
 
 const BaseInput = styled.TextInput.attrs((p) => ({
-  selectionColor: p.theme.colors.palette.primary.c80 as ColorValue,
+  selectionColor: p.theme.colors.primary.c80 as ColorValue,
 }))<Partial<CommonProps> & { focus?: boolean }>`
   height: 100%;
   width: 100%;
@@ -86,7 +86,7 @@ const BaseInput = styled.TextInput.attrs((p) => ({
 `;
 
 const InputErrorContainer = styled(Text)`
-  color: ${(p) => p.theme.colors.palette.error.c100};
+  color: ${(p) => p.theme.colors.error.c100};
   margin-left: 12px;
 `;
 

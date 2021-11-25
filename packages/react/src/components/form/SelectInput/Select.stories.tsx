@@ -390,9 +390,7 @@ export const SideRenders: StoryTemplate<Props> = (args) => {
       onChange={setValue}
       renderLeft={(props) => (
         <Flex mr={3}>
-          <SearchMedium
-            color={props.isDisabled ? "currentColor" : theme["colors"].palette.neutral.c70}
-          />
+          <SearchMedium color={props.isDisabled ? "currentColor" : theme.colors.neutral.c70} />
         </Flex>
       )}
       renderRight={() => (

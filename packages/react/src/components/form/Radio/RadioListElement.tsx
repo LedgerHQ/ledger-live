@@ -13,24 +13,23 @@ type ElementState = {
 export const Label = styled(Text)<ElementState>`
   color: ${(p) =>
     p.disabled
-      ? p.theme.colors.palette.neutral.c50
+      ? p.theme.colors.neutral.c50
       : p.checked
-      ? p.theme.colors.palette.primary.c90
-      : p.theme.colors.palette.neutral.c100};
+      ? p.theme.colors.primary.c90
+      : p.theme.colors.neutral.c100};
 `;
 
 const Container = styled(Flex)<ElementState>`
   cursor: ${(p) => (p.disabled ? "" : "pointer")};
   justify-content: center;
   align-items: center;
-  background-color: ${(p) => (p.checked ? p.theme.colors.palette.primary.c20 : "")};
-  border: 1px solid
-    ${(p) => (p.checked ? p.theme.colors.palette.primary.c50 : p.theme.colors.palette.neutral.c40)};
+  background-color: ${(p) => (p.checked ? p.theme.colors.primary.c20 : "")};
+  border: 1px solid ${(p) => (p.checked ? p.theme.colors.primary.c50 : p.theme.colors.neutral.c40)};
   border-radius: ${(p) => `${p.theme.radii[2]}px`};
   padding: ${(p) => p.theme.space[6]}px;
 
   :hover {
-    border-color: ${(p) => (p.disabled || p.checked ? "" : p.theme.colors.palette.primary.c80)};
+    border-color: ${(p) => (p.disabled || p.checked ? "" : p.theme.colors.primary.c80)};
   }
 `;
 
@@ -38,7 +37,7 @@ const Input = styled.input`
   position: relative;
   appearance: none;
   &:focus ~ ${Container} {
-    box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.palette.primary.c60, 0.48)};
+    box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.primary.c60, 0.48)};
   }
 `;
 

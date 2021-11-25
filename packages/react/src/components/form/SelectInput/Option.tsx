@@ -35,37 +35,37 @@ const Wrapper = styled(Text).attrs({ as: "div" })<{
     const { theme, selected, focus, disabled } = props;
     if (selected) {
       return `
-        color: ${theme.colors.palette.primary.c90};
-        background: ${theme.colors.palette.primary.c20};
+        color: ${theme.colors.primary.c90};
+        background: ${theme.colors.primary.c20};
       `;
     }
     if (disabled) {
       return `
-        color: ${theme.colors.palette.neutral.c50};
+        color: ${theme.colors.neutral.c50};
         ${
           focus
             ? `&:not(:active) {
-            background: ${theme.colors.palette.neutral.c20};
+            background: ${theme.colors.neutral.c20};
           }`
             : ""
         }
       `;
     }
     return `
-      color: ${theme.colors.palette.neutral.c80};
+      color: ${theme.colors.neutral.c80};
       &:hover {
-        color: ${theme.colors.palette.neutral.c100};
-        background: ${theme.colors.palette.primary.c10};
+        color: ${theme.colors.neutral.c100};
+        background: ${theme.colors.primary.c10};
       }
       &:active {
-        color: ${theme.colors.palette.neutral.c100};
-        background: ${theme.colors.palette.primary.c30};
+        color: ${theme.colors.neutral.c100};
+        background: ${theme.colors.primary.c30};
       }
       ${
         focus
           ? `&:not(:active) {
-          color: ${theme.colors.palette.neutral.c100};
-          background: ${theme.colors.palette.primary.c10};
+          color: ${theme.colors.neutral.c100};
+          background: ${theme.colors.primary.c10};
         }`
           : ""
       }

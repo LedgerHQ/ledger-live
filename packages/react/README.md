@@ -59,7 +59,7 @@ import { Text, Flex, Logos } from "@ledgerhq/react-ui";
 function Hello() {
   return (
     <Flex flexDirection="column" alignItems="center" rowGap={12} p={12}>
-      <Text color="palette.neutral.c100">
+      <Text color="neutral.c100">
         <Logos.LedgerLiveRegular />
       </Text>
       <Text variant="h1">Hello, world!</Text>
@@ -172,7 +172,7 @@ function Root() {
   return (
     <StyleProvider fontsPath="assets" selectedPalette={palette}>
       <Flex flexDirection="column" alignItems="center" rowGap={12} p={12}>
-        <Text color="palette.neutral.c100">
+        <Text color="neutral.c100">
           <Logos.LedgerLiveRegular />
         </Text>
         <Text variant="h1">Hello, world!</Text>

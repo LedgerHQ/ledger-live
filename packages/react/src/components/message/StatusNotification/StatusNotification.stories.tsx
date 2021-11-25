@@ -27,8 +27,8 @@ export default {
 export function StatusNotifications(args: Props & { active: boolean }): JSX.Element {
   const { ...props } = args;
 
-  const warningBadge = <Icon name="Warning" size={50} color="palette.error.c100" weight="Light" />;
-  const infoBadge = <Icon name="Info" size={50} color="palette.primary.c100" weight="Regular" />;
+  const warningBadge = <Icon name="Warning" size={50} color="error.c100" weight="Light" />;
+  const infoBadge = <Icon name="Info" size={50} color="primary.c100" weight="Regular" />;
 
   return (
     <FlexBox justifyContent="center">

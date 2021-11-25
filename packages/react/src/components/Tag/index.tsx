@@ -33,19 +33,19 @@ export type TagProps = BaseStyledProps &
 function getColor({ type, active, disabled }: TagProps) {
   switch (type) {
     case "plain":
-      if (disabled) return active ? "palette.neutral.c00" : "palette.neutral.c70";
-      return active ? "palette.neutral.c00" : "palette.primary.c90";
+      if (disabled) return active ? "neutral.c00" : "neutral.c70";
+      return active ? "neutral.c00" : "primary.c90";
     default:
-      return disabled ? "palette.neutral.c70" : "palette.primary.c90";
+      return disabled ? "neutral.c70" : "primary.c90";
   }
 }
 
 function getBgColor({ type, active, disabled }: TagProps) {
   switch (type) {
     case "plain":
-      return active ? (disabled ? "palette.neutral.c70" : "palette.primary.c90") : undefined;
+      return active ? (disabled ? "neutral.c70" : "primary.c90") : undefined;
     case "opacity":
-      return active ? (disabled ? "palette.neutral.c30" : "palette.primary.c20") : undefined;
+      return active ? (disabled ? "neutral.c30" : "primary.c20") : undefined;
     default:
       return;
   }
@@ -55,9 +55,9 @@ function getBorderColor({ type, active, disabled }: TagProps) {
   if (!active) return;
   switch (type) {
     case "outlined":
-      return disabled ? "palette.neutral.c70" : "palette.primary.c90";
+      return disabled ? "neutral.c70" : "primary.c90";
     case "outlinedOpacity":
-      return disabled ? "palette.neutral.c40" : "palette.primary.c40";
+      return disabled ? "neutral.c40" : "primary.c40";
   }
 }
 

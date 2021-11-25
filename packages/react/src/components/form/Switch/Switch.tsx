@@ -37,7 +37,7 @@ const Switcher = styled.div`
   position: relative;
   display: inline-block;
 
-  background: ${(props) => props.theme.colors.palette.neutral.c60};
+  background: ${(props) => props.theme.colors.neutral.c60};
   border-radius: ${(p) => p.theme.space[6]}px;
   width: var(--ll-switch-width);
   height: var(--ll-switch-height);
@@ -51,7 +51,7 @@ const Switcher = styled.div`
 
   &:focus {
     outline-style: auto;
-    outline: 1px solid ${(props) => props.theme.colors.palette.neutral.c90};
+    outline: 1px solid ${(props) => props.theme.colors.neutral.c90};
     outline-offset: ${(p) => p.theme.space[1]}px;
   }
 
@@ -59,7 +59,7 @@ const Switcher = styled.div`
   &:before {
     position: absolute;
     display: block;
-    background: ${(props) => props.theme.colors.palette.constant.white};
+    background: ${(props) => props.theme.colors.constant.white};
     border-radius: ${(p) => p.theme.space[12]}px;
 
     width: calc(calc(var(--ll-switch-width) / 2) - var(--ll-switch-padding));
@@ -76,27 +76,27 @@ const Switcher = styled.div`
   }
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.palette.neutral.c70};
+    background-color: ${(props) => props.theme.colors.neutral.c70};
   }
 
   &:active {
-    background-color: ${(props) => props.theme.colors.palette.neutral.c80};
+    background-color: ${(props) => props.theme.colors.neutral.c80};
   }
 
   /* CHECKED VARIANT */
   ${Input}:checked ~ & {
-    background: ${(props) => props.theme.colors.palette.primary.c80};
+    background: ${(props) => props.theme.colors.primary.c80};
 
     &:before {
       transform: translateX(calc(var(--ll-switch-width) / 2));
     }
 
     &:hover {
-      background: ${(props) => props.theme.colors.palette.primary.c90};
+      background: ${(props) => props.theme.colors.primary.c90};
     }
 
     :active {
-      background: ${(props) => props.theme.colors.palette.primary.c100};
+      background: ${(props) => props.theme.colors.primary.c100};
     }
   }
 `;

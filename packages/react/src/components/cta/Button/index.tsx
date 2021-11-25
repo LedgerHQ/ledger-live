@@ -38,93 +38,93 @@ const IconContainer = styled.div<{
 const getVariantColors = (p: StyledProps<BaseProps>) => ({
   main: {
     outline: `
-        border-color: ${p.theme.colors.palette.neutral.c100};
-        color: ${p.theme.colors.palette.neutral.c100};
-        background-color: ${p.theme.colors.palette.neutral.c00};
+        border-color: ${p.theme.colors.neutral.c100};
+        color: ${p.theme.colors.neutral.c100};
+        background-color: ${p.theme.colors.neutral.c00};
         &:hover, &:focus {
-          background-color: ${p.theme.colors.palette.neutral.c20};
+          background-color: ${p.theme.colors.neutral.c20};
         }
         &:active {
-          background-color: ${p.theme.colors.palette.neutral.c30};
+          background-color: ${p.theme.colors.neutral.c30};
         }
       `,
     filled: `
-        color: ${p.theme.colors.palette.neutral.c00};
-        background-color: ${p.theme.colors.palette.neutral.c100};
+        color: ${p.theme.colors.neutral.c00};
+        background-color: ${p.theme.colors.neutral.c100};
         &:hover, &:focus {
-          background-color: ${p.theme.colors.palette.neutral.c90};
+          background-color: ${p.theme.colors.neutral.c90};
         }
       `,
   },
   shade: `
-      border-color: ${p.theme.colors.palette.neutral.c40};
-      color: ${p.theme.colors.palette.neutral.c100};
-      background-color: ${p.theme.colors.palette.neutral.c00};
+      border-color: ${p.theme.colors.neutral.c40};
+      color: ${p.theme.colors.neutral.c100};
+      background-color: ${p.theme.colors.neutral.c00};
       &:focus {
-        border-color: ${p.theme.colors.palette.primary.c80};
+        border-color: ${p.theme.colors.primary.c80};
       }
 
       &:hover, &:focus {
-        background-color: ${p.theme.colors.palette.neutral.c20};
+        background-color: ${p.theme.colors.neutral.c20};
       }
 
       &:active {
-        background-color: ${p.theme.colors.palette.neutral.c30};
+        background-color: ${p.theme.colors.neutral.c30};
       }
     `,
   error: {
     outline: `
-      border-color: ${p.theme.colors.palette.error.c100};
-      color: ${p.theme.colors.palette.error.c100};
-      background-color: ${p.theme.colors.palette.neutral.c00};
+      border-color: ${p.theme.colors.error.c100};
+      color: ${p.theme.colors.error.c100};
+      background-color: ${p.theme.colors.neutral.c00};
       &:hover {
-        background-color: ${p.theme.colors.palette.error.c10};
+        background-color: ${p.theme.colors.error.c10};
       }
       &:active {
-        background-color: ${p.theme.colors.palette.error.c30};
+        background-color: ${p.theme.colors.error.c30};
       }
     `,
     filled: `
-      color: ${p.theme.colors.palette.neutral.c00};
-      background-color: ${p.theme.colors.palette.error.c100};
+      color: ${p.theme.colors.neutral.c00};
+      background-color: ${p.theme.colors.error.c100};
       &:hover {
-        background-color: ${p.theme.colors.palette.error.c80};
+        background-color: ${p.theme.colors.error.c80};
       }
     `,
   },
   color: {
     outline: `
-      border-color: ${p.theme.colors.palette.primary.c80};
-      color: ${p.theme.colors.palette.primary.c80};
-      background-color: ${p.theme.colors.palette.neutral.c00};
+      border-color: ${p.theme.colors.primary.c80};
+      color: ${p.theme.colors.primary.c80};
+      background-color: ${p.theme.colors.neutral.c00};
       &:hover {
-        background-color: ${p.theme.colors.palette.primary.c10};
+        background-color: ${p.theme.colors.primary.c10};
       }
       &:active {
-        background-color: ${p.theme.colors.palette.primary.c20};
+        background-color: ${p.theme.colors.primary.c20};
       }
     `,
     filled: `
-      color: ${p.theme.colors.palette.neutral.c00};
-      background-color: ${p.theme.colors.palette.primary.c80};
+      color: ${p.theme.colors.neutral.c00};
+      background-color: ${p.theme.colors.primary.c80};
       &:hover {
-        background-color: ${p.theme.colors.palette.primary.c70};
+        background-color: ${p.theme.colors.primary.c70};
       }
     `,
   },
   disabled: {
     outline: `
-        border-color: ${p.theme.colors.palette.neutral.c50};
-        color: ${p.theme.colors.palette.neutral.c50};
-        background-color: ${p.theme.colors.palette.neutral.c00};
+        border-color: ${p.theme.colors.neutral.c50};
+        color: ${p.theme.colors.neutral.c50};
+        background-color: ${p.theme.colors.neutral.c00};
       `,
     filled: `
-        color: ${p.theme.colors.palette.neutral.c50};
-        background-color: ${p.theme.colors.palette.neutral.c30};
+        color: ${p.theme.colors.neutral.c50};
+        background-color: ${p.theme.colors.neutral.c30};
       `,
   },
   default: `
-    color: ${p.theme.colors.palette.neutral.c100};
+    color: ${p.theme.colors.neutral.c100};
     background-color: transparent;
     &:hover {
       text-decoration: underline;
@@ -166,7 +166,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   position: relative;
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};
   &:active {
-    box-shadow: 0 0 0 4px ${(p) => p.theme.colors.palette.primary.c60};
+    box-shadow: 0 0 0 4px ${(p) => p.theme.colors.primary.c60};
   }
 
   ${(p) => {

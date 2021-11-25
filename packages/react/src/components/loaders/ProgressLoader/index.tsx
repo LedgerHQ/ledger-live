@@ -30,15 +30,15 @@ const StyledCircle = styled.circle.attrs({
 `;
 
 const StyledCircleBackground = styled(StyledCircle).attrs((props) => ({
-  stroke: props.theme.colors.palette.primary.c20,
+  stroke: props.theme.colors.primary.c20,
 }))``;
 
 const StyledCircleFront = styled(StyledCircle).attrs((props) => ({
-  stroke: props.theme.colors.palette.primary.c60,
+  stroke: props.theme.colors.primary.c60,
 }))``;
 
 const StyledCenteredText = styled(Text).attrs({
-  color: "palette.primary.c80",
+  color: "primary.c80",
 })`
   position: absolute;
   top: 50%;

@@ -19,14 +19,14 @@ export type Segment = Element | Elements;
 const Link = styled(Text).attrs({
   ff: "Inter|SemiBold",
   fontSize: 3,
-  color: "palette.neutral.c80",
+  color: "neutral.c80",
   tabIndex: 0,
 })`
   cursor: pointer;
   :hover,
   :active,
   :focus {
-    color: ${(p) => p.theme.colors.palette.neutral.c100};
+    color: ${(p) => p.theme.colors.neutral.c100};
     text-decoration: underline;
   }
 `;
@@ -44,7 +44,7 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
       renderArray.push(
         <>
           {index > 0 ? (
-            <Text fontWeight="semiBold" color="palette.neutral.c40" variant={"paragraph"}>
+            <Text fontWeight="semiBold" color="neutral.c40" variant={"paragraph"}>
               /
             </Text>
           ) : null}
@@ -67,9 +67,9 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
                   overflow: undefined,
                   maxWidth: undefined,
                   transform: undefined,
-                  color: theme.colors.palette.neutral.c80,
+                  color: theme.colors.neutral.c80,
                   ":hover": {
-                    color: theme.colors.palette.neutral.c100,
+                    color: theme.colors.neutral.c100,
                     textDecoration: "underline",
                   },
                 }),

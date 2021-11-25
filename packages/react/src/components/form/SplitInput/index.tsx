@@ -25,20 +25,20 @@ type DividerProps = {
 };
 function getDividerColor(props: DividerProps) {
   if (props.disabled) {
-    return props.theme?.colors.palette.neutral.c40;
+    return props.theme?.colors.neutral.c40;
   }
   if (props.error) {
-    return props.theme?.colors.palette.error.c100;
+    return props.theme?.colors.error.c100;
   }
   if (props.focus) {
-    return props.theme?.colors.palette.primary.c80;
+    return props.theme?.colors.primary.c80;
   }
 
-  return props.theme?.colors.palette.neutral.c40;
+  return props.theme?.colors.neutral.c40;
 }
 
 function getHoverBolderColor(props: DividerProps) {
-  return props.disabled || props.error ? "inherit" : props.theme?.colors.palette.primary.c80;
+  return props.disabled || props.error ? "inherit" : props.theme?.colors.primary.c80;
 }
 
 const Divider = styled.div<{

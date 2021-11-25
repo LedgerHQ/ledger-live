@@ -44,11 +44,11 @@ const stylesFn = <
   option: OptionModule.getStyles(),
   input: (provided) => ({
     ...provided,
-    color: theme.colors.palette.neutral.c100,
+    color: theme.colors.neutral.c100,
   }),
   placeholder: (provided) => ({
     ...provided,
-    color: theme.colors.palette.neutral.c60,
+    color: theme.colors.neutral.c60,
   }),
   singleValue: (provided) => ({
     ...provided,

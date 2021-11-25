@@ -40,7 +40,7 @@ export const Overview = ((): JSX.Element => (
         {types.map((type) => (
           <Flex flexDirection="row" alignItems="center" mb={5}>
             <div style={{ width: "150px" }}>
-              <Text variant="small" color="palette.neutral.c70">
+              <Text variant="small" color="neutral.c70">
                 type="{type}"
               </Text>
             </div>

@@ -45,19 +45,13 @@ export function Aside(args: Props): JSX.Element {
         footer={footer}
         p={10}
         width="324px"
-        backgroundColor="palette.primary.c60"
+        backgroundColor="primary.c60"
       >
         <FlexBox m={-10}>
           <img src={nanoIllustration} />
         </FlexBox>
       </AsideComponent>
-      <AsideComponent
-        {...args}
-        header={header}
-        p={10}
-        backgroundColor="palette.primary.c60"
-        flex={1}
-      >
+      <AsideComponent {...args} header={header} p={10} backgroundColor="primary.c60" flex={1}>
         <FlexBox justifyContent="center">
           <img src={keyboardIllustration} />
         </FlexBox>
