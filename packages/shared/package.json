@@ -27,8 +27,8 @@
     "clean": "rimraf lib"
   },
   "devDependencies": {
-    "esbuild": "^0.13.13",
+    "esbuild": "^0.13.15",
     "tiny-glob": "^0.2.9",
-    "typescript": "^4.4.4"
+    "typescript": "^4.5.2"
   }
 }
