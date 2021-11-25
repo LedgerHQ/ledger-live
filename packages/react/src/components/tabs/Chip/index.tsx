@@ -25,8 +25,8 @@ const Item = styled(Flex).attrs({
   cursor: pointer;
   padding: 8px 12px 8px 12px;
   border-radius: ${(p) => p.theme.radii[2]}px;
-  color: ${(p) => p.theme.colors.palette.neutral.c100};
-  background-color: ${(p) => (p.active ? p.theme.colors.palette.primary.c30 : "unset")};
+  color: ${(p) => p.theme.colors.neutral.c100};
+  background-color: ${(p) => (p.active ? p.theme.colors.primary.c30 : "unset")};
 `;
 
 export default function BarTabs({ children, onTabChange, initialActiveIndex }: Props): JSX.Element {
