@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, TextInput, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
@@ -11,6 +11,7 @@ import { useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
+import TextInput from "../../components/FocusedTextInput";
 
 const forceInset = { bottom: "always" };
 
