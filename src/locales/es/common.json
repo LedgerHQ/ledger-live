@@ -84,7 +84,7 @@
   },
   "errors": {
     "countervaluesUnavailable": {
-      "title": "We're not able to provide a countervalue for this asset at the moment"
+      "title": "No es posible ofrecer una contraparte para este activo en este momento"
     },
     "AccountAwaitingSendPendingOperations": {
       "title": "Hay una operación pendiente para esta cuenta",
@@ -95,8 +95,8 @@
       "description": "Ingresa un nombre de cuenta."
     },
     "AccountNeedResync": {
-      "title": "Please try again",
-      "description": "Account is outdated. A synchronisation is needed"
+      "title": "Por favor, inténtalo de nuevo",
+      "description": "La cuenta está desactualizada. Es necesaria una nueva sincronización"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "La cuenta de recepción no ha adherido al ASA seleccionado."
@@ -120,11 +120,11 @@
       "title": "No se ha encontrado ningún dispositivo",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "Asegúrate de que tu {{productName}} está desbloqueado y conectado con el cable.",
+          "nanoX": "Asegúrate de que tu {{productName}} esté desbloqueado y conectado con el cable o con el Bluetooth habilitado."
         }
       }
     },
@@ -132,11 +132,11 @@
       "title": "La conexión con Manager ha fallado",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "Asegúrate de que tu {{productName}} está desbloqueado y conectado con el cable.",
+          "nanoX": "Asegúrate de que tu {{productName}} esté desbloqueado y conectado con el cable o con el Bluetooth habilitado."
         }
       }
     },
@@ -595,7 +595,7 @@
       "title": "Debes seleccionar al menos un validador"
     },
     "TaprootNotActivated": {
-      "title": "Taproot mainnet is not activated yet"
+      "title": "La red principal de Tproot no está activada aún"
     },
     "generic": {
       "title": "{{message}}",
@@ -622,7 +622,7 @@
       "high": "Alta",
       "standard": "Estándar",
       "low": "Baja",
-      "slow": "slow",
+      "slow": "lenta",
       "medium": "media",
       "fast": "rápida",
       "custom": "Personalizado",
@@ -698,8 +698,8 @@
         "description": "Delega tus recompensas ganadas con ATOM hoy."
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "Paquete familiar",
+        "description": "Interesa a tu familia y amigos en las criptomonedas con 3 Nano S"
       },
       "buyCrypto": {
         "title": "Comprar cripto",
@@ -1316,9 +1316,9 @@
   "operations": {
     "types": {
       "IN": "Recibido",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "NFT Recibido",
       "OUT": "Enviado",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "NFT Enviado",
       "CREATE": "Creado",
       "REVEAL": "Revelado",
       "DELEGATE": "Delegado",
@@ -1402,10 +1402,10 @@
       "validatorsCount": "Validadores ({{number}})"
     },
     "multipleAddresses": "¿Por qué hay múltiples direcciones?",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "tokenName": "Nombre del token",
+    "collectionContract": "Contrato del token",
+    "tokenId": "ID del token (NFT)",
+    "quantity": "Cantidad"
   },
   "operationList": {
     "noOperations": "Sin operaciones",
@@ -1549,7 +1549,7 @@
       "sectionLabel": "Desdelegaciones"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "Recibir NFT"
     }
   },
   "accounts": {
@@ -2491,7 +2491,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the app and keep your Nano X nearby",
+    "stayInTheAppPlz": "Mantente dentro de la aplicación y con tu Nano X disponible",
     "allowAppPermission": "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken": "para administrar los tokens {{token}}",
     "allowManagerPermission": "Permite (Allow) {{wording}} en tu dispositivo",
@@ -2785,10 +2785,10 @@
       "flash": "Flashing a tu dispositivo",
       "firmware": "Actualización del firmware"
     },
-    "newVersion": "Update Firmware to {{version}} is available",
+    "newVersion": "Actualización disponible del Firmware a la versión {{version}}",
     "drawerUpdate": {
-      "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "title": "Actualización del firmware",
+      "description": "Actualiza tu firmware Ledger Nano conectándolo a la aplicación Ledger Live Desktop"
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3088,6 +3088,20 @@
             "broadcastError": "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
           }
         }
+      }
+    }
+  },
+  "elrond": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Desarrollado por Elrond",
+        "drawerTitle": "Integración con Elrond",
+        "moreInfo": "Más información",
+        "title": "El token Elrond eGold (EGLD) ya está disponible en Ledger Live",
+        "description": "Ahora puedes proteger de forma segura tus tokens eGold (EGLD) y administrarlos a través de Ledger Live.",
+        "description2": "El token eGold (EGLD) de Elrond es nativo de la red Elrond y se utiliza para todo, desde transacciones, participaciones y contratos inteligentes, hasta gobernanza y recompensas de validadores.",
+        "description3": "Estamos trabajando activamente con el equipo de Elrond para agregar más funcionalidades, como la participación, soporte a ESDT (Elrond Standard Digital Token) nativo y más.",
+        "website": "La Blockchain a Escala Internet"
       }
     }
   },
@@ -3584,9 +3598,9 @@
     "title": "Términos de uso",
     "read": "Leer los Términos de uso",
     "switchLabel": "He leído y acepto los <1>Términos del servicio</1>",
-    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "switchLabelFull": "He leído y acepto los Términos del Servicio y la Política de Privacidad",
     "cta": "Entrar en la App Ledger",
-    "service": "Terms of service"
+    "service": "Términos del servicio"
   },
   "exchange": {
     "buy": {
@@ -3644,7 +3658,7 @@
     "connected": "Conectado",
     "disconnected": "Desconectado",
     "warningdisconnected": "Hay un problema de conexión entre la dApp, WalletConnect y Ledger Live. Espera unos momentos o intenta de nuevo la conexión",
-    "info": "You can now access the {{name}} dApp on your web browser.",
+    "info": "Ahora puedes acceder a la dApp {{name}} desde tu navegador web.",
     "warning": "No es seguro compartir direcciones de recepción de dApp. Utiliza siempre Ledger Live para compartir tu dirección para recibir fondos.",
     "isconnecting": "se está conectando, espera...",
     "disconnect": "Desconectar",
@@ -3675,8 +3689,8 @@
     "announcement": "Anuncio",
     "liveStatus": "Estado de Ledger Live",
     "groupedToast": {
-      "text": "You have {{count}} unread notifications",
-      "cta": "See details"
+      "text": "Tienes {{count}} nuevas notificaciones",
+      "cta": "Ver detalles"
     },
     "news": {
       "title": "Noticias",
@@ -3737,23 +3751,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "Ver todos los NFTs",
+      "seeFewerNfts": "Ver menos NFTs"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "Todos los NFTs"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "properties": "Propiedades",
+      "description": "Descripción",
+      "tokenContract": "Dirección del token",
+      "tokenId": "ID del token",
+      "quantity": "Cantidad"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "Ver en",
+      "viewInExplorer": "Ver en el explorador",
+      "txDetails": "Detalles de transacción"
     }
   }
 }
