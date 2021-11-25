@@ -2007,7 +2007,7 @@
       }
     },
     "lending": {
-      "title": "贷出加密货币",
+      "title": "借出加密货币",
       "titleTransferTab": "贷出",
       "actionTitle": "贷出",
       "accountActions": {
