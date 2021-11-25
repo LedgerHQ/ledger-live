@@ -20,7 +20,7 @@ import { Observable, of } from "rxjs";
 import { getSwapAPIBaseURL } from "./";
 
 export const getMockExchangeRate = ({
-  provider = "changelly",
+  provider = "ftx",
   tradeMethod = "fixed",
 }: {
   provider?: string;
@@ -91,7 +91,7 @@ export const mockGetExchangeRates = async (
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
       rateId: "mockedRateId",
-      provider: "changelly",
+      provider: "ftx",
       expirationDate: new Date(),
       tradeMethod: "fixed",
     },
@@ -100,7 +100,7 @@ export const mockGetExchangeRates = async (
       toAmount: amount.times(magnitudeAwareRate),
       magnitudeAwareRate,
       rateId: "mockedRateId",
-      provider: "changelly",
+      provider: "ftx",
       expirationDate: new Date(),
       tradeMethod: "float",
     },
@@ -127,7 +127,7 @@ export const mockGetProviders: GetProviders = async () => {
   return usesV3
     ? [
         {
-          provider: "changelly",
+          provider: "ftx",
           pairs: [
             { from: "bitcoin", to: "ethereum", tradeMethod: "float" },
             { from: "bitcoin", to: "ethereum", tradeMethod: "fixed" },
