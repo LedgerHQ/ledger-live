@@ -112,12 +112,17 @@ const EstimatedFees = ({ account, transaction }: FieldProps) => {
   );
 };
 
-const Warning = (props: FieldProps) => (
-  <>
-    <EstimatedFees {...props} />
-    <Info {...props} />
-  </>
-);
+const Warning = (props: FieldProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <EstimatedFees {...props} />
+      <Info {...props} />
+      <Alert type="secondary">{t("polkadot.networkFees")}</Alert>
+    </>
+  );
+};
 
 const Footer = ({
   transaction,
@@ -125,22 +130,15 @@ const Footer = ({
 }: {
   transaction: Transaction,
   recipientWording: string,
-}) => {
-  const { t } = useTranslation();
-
-  return (
-    <>
+}) => (
+  <>
+    {["send", "nominate"].includes(transaction.mode) ? (
       <View style={styles.container}>
-        <Alert type="secondary">{t("polkadot.networkFees")}</Alert>
+        <Alert type="help">{recipientWording}</Alert>
       </View>
-      {["send", "nominate"].includes(transaction.mode) ? (
-        <View style={styles.container}>
-          <Alert type="help">{recipientWording}</Alert>
-        </View>
-      ) : null}
-    </>
-  );
-};
+    ) : null}
+  </>
+);
 
 const fieldComponents = {
   "polkadot.validators": PolkadotValidatorsField,
