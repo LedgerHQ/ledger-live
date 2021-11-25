@@ -320,7 +320,7 @@ const ColorOption = (props: OptionProps<SelectItem, false>) => {
     <Option
       {...props}
       render={({ children }) => (
-        <Flex flex={1}>
+        <Flex flex={1} py={2} alignItems="center">
           <Flex mr={4} p={4} style={{ background: props.data.value }} />
           <Flex flex={1}>{children}</Flex>
         </Flex>

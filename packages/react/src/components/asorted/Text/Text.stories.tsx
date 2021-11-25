@@ -65,9 +65,8 @@ export const Overview = (() => {
           : mainFontWeights;
         const decorationsToShow: string[] =
           isHeader(variant) || isSubtitle(variant) ? ["none"] : ["none", "underline"];
-        const width = isHeader(variant) ? undefined : "200px";
         return (
-          <Flex flexDirection="row" style={{ height: "100px" }}>
+          <Flex flexDirection="row" columnGap={8} mb={8}>
             <div style={{ minWidth: 250 }}>
               <Text variant="small" color="neutral.c90">
                 variant="{variant}"
@@ -79,7 +78,7 @@ export const Overview = (() => {
             </div>
             {fontWeightsToShow.flatMap((fontWeight) =>
               decorationsToShow.map((textDecorationLine) => (
-                <div style={{ width, marginRight: "100px" }}>
+                <div style={{ flex: 1 }}>
                   <Text variant={variant} fontWeight={fontWeight} style={{ textDecorationLine }}>
                     Lend stablecoins to the Compound protocol...
                   </Text>
