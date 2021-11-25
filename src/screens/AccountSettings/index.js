@@ -3,7 +3,6 @@ import React, { PureComponent } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/live-common/lib/types";
 import { connect } from "react-redux";
-import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { deleteAccount } from "../../actions/accounts";
 import BottomModal from "../../components/BottomModal";
@@ -55,7 +54,7 @@ class AccountSettings extends PureComponent<Props, State> {
   deleteAccount = () => {
     const { account, deleteAccount, navigation } = this.props;
     deleteAccount(account);
-    navigation.navigate(ScreenName.Accounts);
+    navigation.popToTop();
   };
 
   render() {
