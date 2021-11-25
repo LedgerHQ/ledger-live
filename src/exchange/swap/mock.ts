@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type {
+  CheckQuote,
   Exchange,
   ExchangeRate,
   GetMultipleStatus,
@@ -186,4 +187,72 @@ export const mockGetKYCStatus = async (
   //Fake delay to show the pending state in the UI
   await new Promise((r) => setTimeout(r, 2000));
   return { id, status };
+};
+
+const getRandomInt = (max: number) => {
+  return Math.floor(Math.random() * max);
+};
+
+export const mockCheckQuote: CheckQuote = async ({
+  quoteId: _quoteId,
+  bearerToken: _bearerToken,
+}) => {
+  //Fake delay to show the pending state in the UI
+  await new Promise((r) => setTimeout(r, 2000));
+
+  const random = getRandomInt(8);
+
+  switch (random) {
+    case 0:
+      return { code: "OK" };
+
+    case 1:
+      return {
+        code: "KYC_FAILED",
+        error: "KYC Failed",
+        description: "The KYC verification failed",
+      };
+
+    case 2:
+      return {
+        code: "KYC_PENDING",
+        error: "KYC Pending",
+        description: "The KYC is pending",
+      };
+
+    case 3:
+      return {
+        code: "KYC_UNDEFINED",
+        error: "KYC undifined",
+        description: "The KYC is undifined",
+      };
+
+    case 4:
+      return {
+        code: "KYC_UPGRADE_REQUIRED",
+        error: "KYC upgrade requierd",
+        description: "Need to upgrade KYC level",
+      };
+
+    case 5:
+      return {
+        code: "OVER_TRADE_LIMIT",
+        error: "Trade over the limit",
+        description: "You have reached your trade limit",
+      };
+
+    case 6:
+      return {
+        code: "UNKNOW_USER",
+        error: "Unknown user",
+        description: "Provided bearerToken does not match any known user",
+      };
+
+    default:
+      return {
+        code: "UNKNOWN_ERROR",
+        error: "Unknown error",
+        description: "Something unexpected happened",
+      };
+  }
 };

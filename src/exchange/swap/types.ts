@@ -81,6 +81,34 @@ export type AvailableProviderV3 = {
   pairs: Array<{ from: string; to: string; tradeMethod: string }>;
 };
 
+type CheckQuoteOkStatus = {
+  code: "OK";
+};
+
+type ValidCheckQuoteErrorCodes =
+  | "UNKNOW_USER"
+  | "KYC_UNDEFINED"
+  | "KYC_PENDING"
+  | "KYC_FAILED"
+  | "KYC_UPGRADE_REQUIRED"
+  | "OVER_TRADE_LIMIT"
+  | "UNKNOWN_ERROR";
+
+type CheckQuoteErrorStatus = {
+  code: ValidCheckQuoteErrorCodes;
+  error: string;
+  description: string;
+};
+
+type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
+
+export type CheckQuote = ({
+  quoteId,
+  bearerToken,
+}: {
+  quoteId: string;
+  bearerToken: string;
+}) => Promise<CheckQuoteStatus>;
 export type AvailableProvider = AvailableProviderV2 | AvailableProviderV3;
 export type GetExchangeRates = (
   arg0: Exchange,

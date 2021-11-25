@@ -6,6 +6,7 @@ import getCompleteSwapHistory from "./getCompleteSwapHistory";
 import getKYCStatus from "./getKYCStatus";
 import submitKYC from "./submitKYC";
 import initSwap from "./initSwap";
+import checkQuote from "./checkQuote";
 import { getEnv } from "../../env";
 import {
   JSONRPCResponseError,
@@ -168,6 +169,7 @@ export {
   initSwap,
   getKYCStatus,
   submitKYC,
+  checkQuote,
   USStates,
   countries,
 };
