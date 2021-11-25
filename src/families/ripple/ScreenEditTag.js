@@ -1,6 +1,6 @@
 /* @flow */
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
+import { View, StyleSheet } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -15,6 +15,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { ScreenName } from "../../const";
 import { track } from "../../analytics";
+import TextInput from "../../components/FocusedTextInput";
 
 type Props = {
   navigation: any,

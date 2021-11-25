@@ -1,6 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
-import { TextInput, StyleSheet, View, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import { BigNumber } from "bignumber.js";
 
 import {
@@ -14,6 +14,7 @@ import type { Unit } from "@ledgerhq/live-common/lib/types";
 
 import getFontStyle from "./LText/getFontStyle";
 import { withTheme } from "../colors";
+import TextInput from "./FocusedTextInput";
 
 function format(
   unit: Unit,

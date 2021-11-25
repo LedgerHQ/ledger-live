@@ -1316,9 +1316,9 @@
   "operations": {
     "types": {
       "IN": "Alındı",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "NFT Alındı",
       "OUT": "Gönderildi",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "NFT Gönderildi",
       "CREATE": "Oluşturuldu",
       "REVEAL": "Adres gösterildi",
       "DELEGATE": "Yetki devredildi",
@@ -1402,10 +1402,10 @@
       "validatorsCount": "Doğrulayıcılar ({{number}})"
     },
     "multipleAddresses": "Neden birden fazla adres var?",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "tokenName": "Token Adı",
+    "collectionContract": "Token Sözleşmesi",
+    "tokenId": "Token (NFT) Kimliği",
+    "quantity": "Miktar"
   },
   "operationList": {
     "noOperations": "İşlem Yok",
@@ -1549,7 +1549,7 @@
       "sectionLabel": "Yetki İptalleri"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "NFT Al"
     }
   },
   "accounts": {
@@ -3091,6 +3091,20 @@
       }
     }
   },
+  "elrond": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Elrond desteğiyle",
+        "drawerTitle": "Elrond entegrasyonu",
+        "moreInfo": "Daha fazla bilgi",
+        "title": "Elrond eGold (EGLD) token'ı artık Ledger Live'da kullanılabilir",
+        "description": "eGold (EGLD) token'larınızı artık Ledger Live üzerinden gönül rahatlığıyla güvenceye alabilir ve yönetebilirsiniz.",
+        "description2": "Elrond Network'e özgü olan Elrond eGold (EGLD) Token, bu ağ üzerindeki her türlü işlem, staking, akıllı sözleşme, yönetişim ve doğrulayıcı ödülleri için kullanılır.",
+        "description3": "Elrond ekibiyle aktif bir işbirliği gerçekleştirerek staking işlemleri, dahili ESDT (Elrond Standart Dijital Token) desteği ve daha birçok işlevi eklemek için çalışıyoruz.",
+        "website": "İnternet Ölçeğinde Blok Zinciri"
+      }
+    }
+  },
   "tezos": {
     "AccountHeader": {
       "title": "Hesabınızı yetki devretmek için kullanarak ödüller kazanabilirsiniz",
@@ -3737,23 +3751,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "Tüm NFT'leri göster",
+      "seeFewerNfts": "Daha az NFT göster"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "Tüm NFT'ler"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "properties": "Özellikler",
+      "description": "Açıklama",
+      "tokenContract": "Token Adresi",
+      "tokenId": "Token Kimliği",
+      "quantity": "Miktar"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "Şurada görüntüle:",
+      "viewInExplorer": "Tarayıcıda görüntüle",
+      "txDetails": "İşlem ayrıntıları"
     }
   }
 }

@@ -1,7 +1,12 @@
 /* @flow */
 
 import { TextInput as ReactNativeTextInput } from "react-native";
-import React, { PureComponent } from "react";
+import React, {
+  PureComponent,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+} from "react";
 import { useTheme } from "@react-navigation/native";
 
 class TextInput extends PureComponent<*> {
@@ -36,9 +41,15 @@ class TextInput extends PureComponent<*> {
 // $FlowFixMe https://github.com/facebook/flow/pull/5920
 export default React.forwardRef((props, ref) => {
   const { colors, dark } = useTheme();
+  const inputRef = useRef();
+  // allows to still forward ref to parent to call
+  useImperativeHandle(ref, () => inputRef.current);
+  useEffect(() => {
+    props.autoFocus && inputRef.current?.focus();
+  }, [props, ref]);
   return (
     <TextInput
-      innerRef={ref}
+      innerRef={inputRef}
       colors={colors}
       keyboardAppearance={dark ? "dark" : "light"}
       {...props}
