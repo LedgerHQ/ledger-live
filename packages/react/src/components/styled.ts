@@ -22,12 +22,15 @@ export type BaseStyledProps = SpaceProps &
   ColorProps &
   LayoutProps &
   OverflowProps & {
+    /**
+     * The columnGap CSS property sets the size of the gap (gutter) between an element's grid columns.
+     */
     columnGap?: string | number;
+    /**
+     * The rowGap CSS property sets the size of the gap (gutter) between an element's grid rows.
+     */
     rowGap?: string | number;
     color?: string;
-    display?: string;
-    position?: string;
-    maxHeight?: number;
   };
 
 export const baseStyles: InterpolationFunction<unknown> = compose(

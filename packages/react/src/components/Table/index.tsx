@@ -2,64 +2,93 @@ import React, { memo, useMemo } from "react";
 import styled from "styled-components";
 import { border, BorderProps, gridColumn, GridColumnProps } from "styled-system";
 import Grid, { Props as GridProps } from "../layout/Grid";
+import Flex from "../layout/Flex";
+import * as Columns from "./Columns";
 import type { Column } from "./Columns";
 import { BaseStyledProps } from "../styled";
 export type { Column };
 
 export interface ContainerExtraProps extends BorderProps, BaseStyledProps {}
 export interface ContainerProps extends ContainerExtraProps, GridProps {}
-export const Container = styled(Grid)<ContainerExtraProps>`
+const Container = styled(Grid)<ContainerExtraProps>`
   ${border}
 `;
 
-export const ExtraRowContainer = styled.div<GridColumnProps>`
+export const ExtraRowContainer = styled.div.attrs({ gridColumn: "1 / -1" })<GridColumnProps>`
   ${gridColumn}
 `;
 
-export interface Props<T> extends Omit<ContainerProps, "columns" | "color"> {
-  // Table data.
+export type RowContainerProps = { rowIndex: number };
+export const RowContainer = styled(Flex)<RowContainerProps>`
+  display: contents;
+`;
+
+interface CommonProps<T> {
+  /** Table data */
   data: T[];
-  // Columns used to render table cells and headers.
+  /** Columns used to render table cells and headers. */
   columns: Column<T>[];
-  // Renders headers if set to true.
-  withHeaders?: boolean;
-  // An optional rendering function that will get called after each row render.
-  // Can be used to display additional rows and columns dynamically.
+  /**
+   * An optional rendering function that will get called after each row render.
+   * Can be used to display additional rows and columns dynamically.
+   */
   extraRender?: (elt: T, index: number) => React.ReactNode;
+  /**
+   * A render function that can be used to wrap each row of the table inside an custom element.
+   */
+  renderRow?: (rowIndex: number, children: React.ReactNode) => React.ReactNode;
 }
 
-export interface RowProps<T> {
-  data: T[];
-  columns: Column<T>[];
+export interface Props<T> extends CommonProps<T>, Omit<ContainerProps, "columns" | "color"> {
+  /**
+   * Renders headers if set to true.
+   */
+  withHeaders?: boolean;
+}
+
+export interface RowProps<T> extends CommonProps<T> {
   render?: (args: {
     column: Column<T>;
     rowIndex: number;
     columnIndex: number;
     children: React.ReactNode;
   }) => React.ReactNode;
-  extraRender?: (elt: T, index: number) => React.ReactNode;
 }
 
-function RowsComponent<T>({ data, columns, extraRender, render }: RowProps<T>): JSX.Element {
+function RowsComponent<T>({
+  data,
+  columns,
+  render,
+  extraRender,
+  renderRow,
+}: RowProps<T>): JSX.Element {
   return (
     <React.Fragment key="row-component">
-      {data.map((elt, rowIndex) => (
-        <React.Fragment key={`row-component-row-${rowIndex}`}>
-          {columns.map((column, columnIndex) => (
-            <React.Fragment key={`row-component-column-${rowIndex}${columnIndex}`}>
-              {render
-                ? render({
-                    column,
-                    rowIndex,
-                    columnIndex,
-                    children: column.render({ elt, rowIndex, columnIndex }),
-                  })
-                : column.render({ elt, rowIndex, columnIndex })}
-            </React.Fragment>
-          ))}
-          {(extraRender && extraRender(elt, rowIndex)) || null}
-        </React.Fragment>
-      ))}
+      {data.map((elt, rowIndex) => {
+        const row = (
+          <>
+            {columns.map((column, columnIndex) => (
+              <React.Fragment key={`row-component-column-${rowIndex}${columnIndex}`}>
+                {render
+                  ? render({
+                      column,
+                      rowIndex,
+                      columnIndex,
+                      children: column.render({ elt, rowIndex, columnIndex }),
+                    })
+                  : column.render({ elt, rowIndex, columnIndex })}
+              </React.Fragment>
+            ))}
+            {(extraRender && extraRender(elt, rowIndex)) || null}
+          </>
+        );
+
+        if (renderRow) {
+          return renderRow(rowIndex, row);
+        } else {
+          return <React.Fragment key={`row-component-row-${rowIndex}`}>{row}</React.Fragment>;
+        }
+      })}
     </React.Fragment>
   );
 }
@@ -70,6 +99,7 @@ function Table<T>({
   columns,
   withHeaders,
   extraRender,
+  renderRow,
   ...containerProps
 }: Props<T>): JSX.Element {
   const gridTemplateColumns = useMemo(
@@ -102,9 +132,17 @@ function Table<T>({
       {...containerProps}
     >
       {headers}
-      <Rows data={data} columns={columns} extraRender={extraRender} />
+      <Rows data={data} columns={columns} extraRender={extraRender} renderRow={renderRow} />
     </Container>
   );
 }
+Table.Columns = Columns;
+Table.ExtraRowContainer = ExtraRowContainer;
+Table.RowContainer = RowContainer;
 
-export default memo(Table) as typeof Table;
+const memoTable = memo(Table) as unknown as typeof Table;
+memoTable.Columns = Columns;
+memoTable.RowContainer = RowContainer;
+memoTable.ExtraRowContainer = ExtraRowContainer;
+
+export default memoTable;
