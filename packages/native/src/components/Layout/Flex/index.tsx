@@ -11,6 +11,7 @@ import {
   LayoutProps,
   space,
   SpaceProps,
+  border,
 } from "styled-system";
 
 // Nb Expose style props as you need them instead of allowing for all to be passed directly.
@@ -42,6 +43,7 @@ const FlexBox = styled.View<Props>`
   ${background};
   ${color};
   ${layout};
+  ${border};
 `;
 
 export default FlexBox;

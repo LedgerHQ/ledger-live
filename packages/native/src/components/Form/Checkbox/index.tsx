@@ -5,11 +5,13 @@ import Text from "../../Text";
 import Flex from "../../Layout/Flex";
 import CheckAlone from "@ledgerhq/icons-ui/native/CheckAloneMedium";
 
+import type { BaseTextProps } from "../../Text";
+
 type CheckboxProps = {
   checked: boolean;
   onChange?: () => void;
   disabled?: boolean;
-  label?: string;
+  label?: BaseTextProps["children"];
 };
 
 const Square = styled(Flex).attrs({
