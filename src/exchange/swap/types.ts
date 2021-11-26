@@ -100,7 +100,7 @@ type CheckQuoteErrorStatus = {
   description: string;
 };
 
-type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
+export type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
 
 export type CheckQuote = ({
   quoteId,

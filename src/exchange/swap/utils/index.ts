@@ -8,6 +8,7 @@ export const KYC_STATUS = {
   pending: "pending",
   rejected: "closed",
   approved: "approved",
+  upgradeRequierd: "upgradeRequierd",
 };
 
 export type KYCStatus = keyof typeof KYC_STATUS;
