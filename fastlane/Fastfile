@@ -60,7 +60,7 @@ platform :ios do
     bump_build_number
     build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
     commit_version_bump(
-      message: "Bump iOS version to v#{package["version"]}-#{build_number}",
+      message: "Bump iOS version to v#{package["version"]}-#{build_number}#{options[:nightly] ? " (nightly)" : ""}",
       xcodeproj: XCODE_PROJECT
     )
     add_git_tag(
@@ -165,16 +165,51 @@ platform :ios do
 
       raise 'Xcode build failed.'
     end
+    enable_automatic_code_signing(path: XCODE_PROJECT)
   end
 
   desc "upload to Testflight (only to be run after an app-store build)"
-  private_lane :upload do
-    pilot(
-      skip_submission: true,
-      app_identifier: "com.ledger.live",
-      skip_waiting_for_build_processing: true,
-      ipa: IPA_DIRECTORY
-    )
+  private_lane :upload do |options|
+    if (options[:nightly])
+      begin
+        build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+        pilot(
+          skip_submission: false,
+          app_identifier: "com.ledger.live",
+          skip_waiting_for_build_processing: false,
+          ipa: IPA_DIRECTORY,
+          changelog: "Nightly Build v#{package['version']} (#{build_number})",
+          beta_app_review_info: {
+            contact_email: "team-live@ledger.fr",
+            contact_first_name: "Ledger Live",
+            notes: "test nightly builds"
+          }
+        )
+
+        pilot(
+          distribute_only: true,
+          groups: ["External Nightly"],
+          distribute_external: true,
+          app_identifier: "com.ledger.live",
+          app_platform: 'ios',
+          app_version: package["version"],
+          build_number: get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj"),
+          notify_external_testers: true,
+          reject_build_waiting_for_review: !options[:ci]
+        )
+      rescue => e
+        raise unless e.message.include? "Another build is in review"
+
+        UI.important("Another build is already in external beta review. Skipping external beta review submission")
+      end
+    else
+      pilot(
+        skip_submission: true,
+        app_identifier: "com.ledger.live",
+        skip_waiting_for_build_processing: true,
+        ipa: IPA_DIRECTORY
+      )
+    end
   end
 
   # ============================= END PRIVATE =============================
@@ -197,6 +232,13 @@ platform :ios do
     build(adhoc: true)
   end
 
+  desc "build nightly version"
+  lane :local_nightly do
+    prepare_ios_beta(nightly: true)
+    build
+    upload(nightly: true)
+  end
+
   # =========================== END LOCAL BUILD ===========================
   # ============================== CI BUILD ===============================
 
@@ -206,6 +248,17 @@ platform :ios do
     setup_ios_ci
     build(ci: true)
     upload
+  end
+
+  desc "ci: create nightly version"
+  lane :ci_nightly do |options|
+    prepare_ios_beta(nightly: true)
+    setup_ios_ci
+    build(ci: true)
+    upload(
+      nightly: true,
+      ci: true
+    )
   end
 
   desc "ci: create adhoc version"
