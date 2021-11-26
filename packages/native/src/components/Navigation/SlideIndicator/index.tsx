@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import styled from "styled-components/native";
 import Animated, {
+  useDerivedValue,
   useAnimatedStyle,
   Easing,
   withTiming,
@@ -20,15 +21,20 @@ const Container = styled.View`
   position: relative;
 `;
 
-const Bullet = styled.TouchableOpacity`
+const bulletStyle = `
   width: 6px;
   height: 6px;
   border-radius: 6px;
   margin: 0 6px;
+`;
+
+const Bullet = styled.TouchableOpacity`
+  ${bulletStyle}
   background-color: ${(p) => p.theme.colors.neutral.c40};
 `;
 
-const ActiveBullet = styled(Bullet)`
+const ActiveBullet = styled.View.attrs({ pointerEvents: "none" })`
+  ${bulletStyle}
   background-color: ${(p) => p.theme.colors.neutral.c100};
   position: absolute;
   top: 0;
@@ -52,15 +58,15 @@ function SlideIndicator({
     [slidesLength]
   );
 
-  const activeSize = useMemo(
-    () =>
+  const activeSize = useDerivedValue(() => {
+    const size =
       (Math.max(0, Math.min(slidesLength - 1, activeIndex)) + 1) * (6 + 12) -
-      12,
-    [activeIndex, slidesLength]
-  );
+      12;
+    return size;
+  }, [activeIndex, slidesLength]);
 
   const animatedStyles = useAnimatedStyle(() => ({
-    width: withTiming(activeSize, config),
+    width: withTiming(activeSize.value, config),
   }));
 
   return (
