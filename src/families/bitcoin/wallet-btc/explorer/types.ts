@@ -9,6 +9,7 @@ export interface IExplorer {
   getTxHex(txId: string): Promise<string>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getFees(): Promise<any>;
+  getRelayFee(): Promise<number>;
   getCurrentBlock(): Promise<Block | null>;
   getBlockByHeight(height: number): Promise<Block | null>;
   getPendings(address: Address, nbMax?: number): Promise<TX[]>;
