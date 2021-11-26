@@ -1,5 +1,6 @@
 // @flow
 import React, { PureComponent } from "react";
+import { StyleSheet, View, Dimensions } from "react-native";
 import { connect } from "react-redux";
 import { BigNumber } from "bignumber.js";
 
