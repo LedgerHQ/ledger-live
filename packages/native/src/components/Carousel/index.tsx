@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Platform, ScrollView } from "react-native";
+import { Platform, ScrollView, ViewProps } from "react-native";
 import styled from "styled-components/native";
 import { Flex, SlideIndicator } from "../index";
 import type { Props as FlexboxProps } from "../Layout/Flex";
@@ -37,7 +37,7 @@ export type Props = React.PropsWithChildren<{
    * Additional props to pass to the indicators container.
    * This container is a Flex element.
    */
-  slideIndicatorContainerProps?: FlexboxProps;
+  slideIndicatorContainerProps?: FlexboxProps & ViewProps;
 }>;
 
 function Carousel({
@@ -49,7 +49,7 @@ function Carousel({
   children,
 }: Props) {
   const [init, setInit] = useState(false);
-  const [activeIndexState, setActiveIndexState] = useState(activeIndex || 0);
+  const [activeIndexState, setActiveIndexState] = useState(activeIndex);
   const disableTimer = useRef(false);
   const [resetTimer, setResetTimer] = useState({});
   const dimensions = useRef<{
@@ -113,7 +113,7 @@ function Carousel({
     const interval = setInterval(() => {
       if (!disableTimer.current) {
         setActiveIndexState((index) => {
-          const newIndex = (index + 1) % slidesLength;
+          const newIndex = index ? (index + 1) % slidesLength : 0;
           scrollToIndex(newIndex);
           return newIndex;
         });
