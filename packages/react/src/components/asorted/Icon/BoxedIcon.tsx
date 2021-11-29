@@ -54,11 +54,11 @@ export type IconBoxProps = {
   /**
    * Color of the border
    */
-  borderColor: string;
+  borderColor?: string;
   /**
    * Badge color, will be applied to the component provided in the `Badge` prop
    */
-  badgeColor: string;
+  badgeColor?: string;
   /**
    * Badge size, will be applied to the component provided in the `Badge` prop
    */
