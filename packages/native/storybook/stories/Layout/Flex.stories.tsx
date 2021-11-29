@@ -120,7 +120,7 @@ const FlexStoryTwo = () => {
 };
 
 storiesOf((story) =>
-  story("Layout", module)
+  story("Layout/Flex", module)
     .add("Flex One", () => <FlexStory />)
     .add("Flex Two", () => <FlexStoryTwo />)
 );

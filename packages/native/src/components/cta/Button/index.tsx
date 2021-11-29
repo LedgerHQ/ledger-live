@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import styled, { useTheme } from "styled-components/native";
-import { color, border, space, SpaceProps } from "styled-system";
+
 import {
   ActivityIndicator,
   TouchableOpacity,
@@ -12,9 +12,10 @@ import {
 } from "../../cta/Button/getButtonStyle";
 import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
 import Text from "../../Text";
+import baseStyled, { BaseStyledProps } from "../../styled";
 
 export type ButtonProps = TouchableOpacityProps &
-  SpaceProps & {
+  BaseStyledProps & {
     Icon?: React.ComponentType<{ size: number; color: string }> | null;
     type?: "main" | "shade" | "error" | "color" | "default";
     size?: "small" | "medium" | "large";
@@ -37,18 +38,19 @@ const IconContainer = styled.View<{
       : `margin-left: 10px;`}
 `;
 
-export const Base = styled(TouchableOpacity).attrs<ButtonProps>((p) => ({
+export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => ({
   ...getButtonColorStyle(p.theme.colors, p).button,
+  // Avoid conflict with styled-system's size property by nulling size and renaming it
+  size: undefined,
+  sizeVariant: p.size,
 }))<
   {
     iconButton?: boolean;
-  } & ButtonProps
+    sizeVariant?: ButtonProps["size"];
+  } & Omit<ButtonProps, "size">
 >`
-  ${color};
-  ${border};
-  ${space};
+
   border-radius: ${(p) => p.theme.space[10]}px;
-  height: ${(p) => p.theme.space[10]}px;
   padding: 0 ${(p) => p.theme.space[7]}px;
   flex-direction: row;
   border-style: solid;
@@ -58,7 +60,7 @@ export const Base = styled(TouchableOpacity).attrs<ButtonProps>((p) => ({
   align-content: center;
   overflow: hidden;
   position: relative;
-  ${(p) => buttonSizeStyle[p.size || "medium"]}
+  ${(p) => buttonSizeStyle[p.sizeVariant || "medium"]}
 
   ${(p) => (p.iconButton ? `padding: 0; width: ${p.theme.space[10]}px;` : "")}
 `;
@@ -127,29 +129,21 @@ const ButtonContainer = (
 };
 
 const Button = (props: ButtonProps): React.ReactElement => {
-  const { Icon, children, type = "default", size = "medium" } = props;
+  const { Icon, children, type = "default" } = props;
   return (
     <Base
       {...props}
       type={type}
-      size={size}
       iconButton={!!Icon && !children}
       activeOpacity={0.5}
     >
-      <ButtonContainer {...props} type={type} size={size} />
+      <ButtonContainer {...props} type={type} />
     </Base>
   );
 };
 
 export const PromisableButton = (props: ButtonProps): React.ReactElement => {
-  const {
-    Icon,
-    children,
-    onPress,
-    type = "main",
-    size = "medium",
-    disabled = false,
-  } = props;
+  const { Icon, children, onPress, type = "main", disabled = false } = props;
 
   const [spinnerOn, setSpinnerOn] = useState(false);
   const theme = useTheme();
@@ -171,12 +165,11 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
     <Base
       {...props}
       type={type}
-      size={size}
       iconButton={!!Icon && !children}
       disabled={disabled || spinnerOn}
       onPress={onPressHandler}
     >
-      <ButtonContainer {...props} type={type} size={size} hide={spinnerOn} />
+      <ButtonContainer {...props} type={type} hide={spinnerOn} />
       <SpinnerContainer>
         <ActivityIndicator
           color={theme.colors.neutral.c50}
