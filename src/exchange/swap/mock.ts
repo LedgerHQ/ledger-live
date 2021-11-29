@@ -18,6 +18,7 @@ import {
 } from "../../errors";
 import { Observable, of } from "rxjs";
 import { getSwapAPIBaseURL } from "./";
+import { getEnv } from "../../env";
 
 export const getMockExchangeRate = ({
   provider = "ftx",
@@ -189,9 +190,7 @@ export const mockGetKYCStatus = async (
   return { id, status };
 };
 
-const getRandomInt = (max: number) => {
-  return Math.floor(Math.random() * max);
-};
+const mockedCheckQuoteStatusCode = getEnv("MOCK_SWAP_CHECK_QUOTE");
 
 export const mockCheckQuote: CheckQuote = async ({
   quoteId: _quoteId,
@@ -200,50 +199,48 @@ export const mockCheckQuote: CheckQuote = async ({
   //Fake delay to show the pending state in the UI
   await new Promise((r) => setTimeout(r, 2000));
 
-  const random = getRandomInt(8);
+  switch (mockedCheckQuoteStatusCode) {
+    case "OK":
+      return { code: mockedCheckQuoteStatusCode };
 
-  switch (random) {
-    case 0:
-      return { code: "OK" };
-
-    case 1:
+    case "KYC_FAILED":
       return {
-        code: "KYC_FAILED",
+        code: mockedCheckQuoteStatusCode,
         error: "KYC Failed",
         description: "The KYC verification failed",
       };
 
-    case 2:
+    case "KYC_PENDING":
       return {
-        code: "KYC_PENDING",
+        code: mockedCheckQuoteStatusCode,
         error: "KYC Pending",
         description: "The KYC is pending",
       };
 
-    case 3:
+    case "KYC_UNDEFINED":
       return {
-        code: "KYC_UNDEFINED",
+        code: mockedCheckQuoteStatusCode,
         error: "KYC undifined",
         description: "The KYC is undifined",
       };
 
-    case 4:
+    case "KYC_UPGRADE_REQUIRED":
       return {
-        code: "KYC_UPGRADE_REQUIRED",
+        code: mockedCheckQuoteStatusCode,
         error: "KYC upgrade requierd",
         description: "Need to upgrade KYC level",
       };
 
-    case 5:
+    case "OVER_TRADE_LIMIT":
       return {
-        code: "OVER_TRADE_LIMIT",
+        code: mockedCheckQuoteStatusCode,
         error: "Trade over the limit",
         description: "You have reached your trade limit",
       };
 
-    case 6:
+    case "UNKNOW_USER":
       return {
-        code: "UNKNOW_USER",
+        code: mockedCheckQuoteStatusCode,
         error: "Unknown user",
         description: "Provided bearerToken does not match any known user",
       };
