@@ -25,7 +25,7 @@ const Story = {
       type: "enum",
       defaultValue: "Activity",
       description:
-        "[Not a BoxedIcon prop, only for StoryBook example], Icon name. Value is passed to the `Icon` component of this UI library which is then used for the `Icon` prop",
+        "[Not a BoxedIcon prop, only for this Storybook example] - Icon name. Value is passed to the `Icon` component of this UI library which is then used for the `Icon` prop.",
       control: {
         options: iconNames,
         control: {
@@ -37,13 +37,19 @@ const Story = {
       type: "enum",
       defaultValue: "CircledCheckSolid",
       description:
-        "[Not a BoxedIcon prop, only for StoryBook example], Badge icon name. Value is passed to the `Icon` component of this UI library which is then used for the `Badge` prop",
+        "[Not a BoxedIcon prop, only for this Storybook example] - Badge icon name. Value is passed to the `Icon` component of this UI library which is then used for the `Badge` prop.",
       control: {
         options: iconNames,
         control: {
           type: "select",
         },
       },
+    },
+    exampleBadgeEnabled: {
+      type: "boolean",
+      defaultValue: true,
+      description:
+        "[Not a BoxedIcon prop, only for this Storybook example] - Controls whether a `Badge` prop is passed to the `BoxedIcon` component.",
     },
     Badge: {
       control: { options: [], type: "select" },
@@ -84,7 +90,11 @@ const Story = {
 export default Story;
 
 const BoxedIconTemplate = (
-  args: BoxedIconProps & { exampleIconName: string; exampleBadgeName: string },
+  args: BoxedIconProps & {
+    exampleIconName: string;
+    exampleBadgeName: string;
+    exampleBadgeEnabled: boolean;
+  },
 ) => {
   const badgeColor = args.badgeColor;
   const badgeSize = args.badgeSize;
@@ -92,15 +102,17 @@ const BoxedIconTemplate = (
   const iconColor = args.iconColor;
   const IconComp =
     args.Icon || ((props: IconProps) => <ExampleIcon {...props} name={args.exampleIconName} />);
-  const BadgeComp =
-    args.Badge || ((props: BadgeProps) => <ExampleBadge {...props} name={args.exampleBadgeName} />);
+  const BadgeComp = !args.exampleBadgeEnabled
+    ? undefined
+    : args.Badge ||
+      ((props: BadgeProps) => <ExampleBadge {...props} name={args.exampleBadgeName} />);
   const iconSize = args.iconSize;
   const size = args.size;
 
   return (
     <BoxedIconC
       Icon={IconComp}
-      Badge={BadgeComp}
+      {...(args.exampleBadgeEnabled ? { Badge: BadgeComp } : {})}
       badgeColor={badgeColor}
       badgeSize={badgeSize}
       borderColor={borderColor}

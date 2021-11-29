@@ -50,7 +50,7 @@ export type IconBoxProps = {
   /**
    * Component that takes `{size?: number; color?: string}` as props. Will be rendered at the top right with the size provided in `badgeSize` or a default size.
    */
-  Badge: React.ComponentType<BadgeProps> | ((props: BadgeProps) => JSX.Element);
+  Badge?: React.ComponentType<BadgeProps> | ((props: BadgeProps) => JSX.Element);
   /**
    * Color of the border
    */
