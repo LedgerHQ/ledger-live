@@ -352,7 +352,10 @@ platform :android do
 
   desc "build APK (can be uploaded to Play Store)"
   lane :apk do
-    build(type: "Release")
+    build(
+      type: "Release",
+      apk: true
+    )
   end
 
   desc "rebuild and upload beta to Google Play Store without bumping version or tagging"
