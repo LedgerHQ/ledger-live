@@ -14,6 +14,8 @@ import {
   LayoutProps,
   overflow,
   OverflowProps,
+  border,
+  BorderProps,
 } from "styled-system";
 
 export type BaseStyledProps = SpaceProps &
@@ -21,6 +23,7 @@ export type BaseStyledProps = SpaceProps &
   PositionProps &
   ColorProps &
   LayoutProps &
+  BorderProps &
   OverflowProps & {
     /**
      * The columnGap CSS property sets the size of the gap (gutter) between an element's grid columns.
@@ -41,6 +44,7 @@ export const baseStyles: InterpolationFunction<unknown> = compose(
   layout,
   overflow,
   gaps,
+  border,
 );
 
 const proxyStyled = new Proxy(styled, {

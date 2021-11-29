@@ -1,2 +1,4 @@
-export { default, iconNames, IconBox } from "./Icon";
+export { default, iconNames } from "./Icon";
+import BoxedIcon, { IconBox } from "./BoxedIcon";
+export { BoxedIcon, IconBox };
 export type { Props } from "./Icon";

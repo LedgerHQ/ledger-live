@@ -1,6 +1,5 @@
 import * as icons from "@ledgerhq/icons-ui/react";
 import React from "react";
-import styled from "styled-components";
 
 export type Props = {
   name: string;
@@ -33,12 +32,5 @@ const Icon = ({
   }
   return null;
 };
-
-export const IconBox = styled.div`
-  padding: ${(p) => p.theme.space[6]}px;
-  border: 1px solid ${(p) => p.theme.colors.neutral.c40};
-  border-radius: ${(p) => p.theme.radii[2]}px;
-  display: inline-flex;
-`;
 
 export default Icon;
