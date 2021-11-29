@@ -1,15 +1,18 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled, { css, useTheme } from "styled-components";
 import Text from "../../asorted/Text";
+import Flex from "../../layout/Flex";
 import ShieldSecurityMedium from "@ledgerhq/icons-ui/react/ShieldSecurityMedium";
 import CircledCrossMedium from "@ledgerhq/icons-ui/react/CircledCrossMedium";
 import CircledAlertMedium from "@ledgerhq/icons-ui/react/CircledAlertMedium";
+import { DefaultTheme } from "styled-components/native";
 
 type AlertType = "info" | "warning" | "error";
 
 export interface AlertProps {
   type?: AlertType;
-  title: string;
+  title?: string;
+  renderContent?: (props: { color: string }) => JSX.Element;
   showIcon?: boolean;
 }
 
@@ -25,27 +28,36 @@ const icons = {
   error: <CircledCrossMedium size={20} />,
 };
 
+const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) => {
+  switch (type) {
+    case "warning":
+      return {
+        background: theme.colors.warning.c30,
+        color: theme.colors.warning.c100,
+      };
+    case "error":
+      return {
+        background: theme.colors.error.c30,
+        color: theme.colors.error.c100,
+      };
+    case "info":
+    default:
+      return {
+        background: theme.colors.primary.c20,
+        color: theme.colors.primary.c90,
+      };
+  }
+};
+
 const StyledAlertContainer = styled.div<{ type?: AlertType }>`
   ${(p) => {
-    switch (p.type) {
-      case "warning":
-        return css`
-          background: ${p.theme.colors.warning.c30};
-          color: ${p.theme.colors.warning.c100};
-        `;
-      case "error":
-        return css`
-          background: ${p.theme.colors.error.c30};
-          color: ${p.theme.colors.error.c100};
-        `;
-      case "info":
-      default:
-        return css`
-          background: ${p.theme.colors.primary.c20};
-          color: ${p.theme.colors.primary.c90};
-        `;
-    }
+    const { background, color } = getColors({ theme: p.theme, type: p.type });
+    return css`
+      background: ${background};
+      color: ${color};
+    `;
   }}
+  word-break: break-all;
 
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   padding: 16px;
@@ -53,13 +65,29 @@ const StyledAlertContainer = styled.div<{ type?: AlertType }>`
   align-items: center;
 `;
 
-export default function Alert({ type = "info", title, showIcon = true }: AlertProps): JSX.Element {
+const ContentContainer = styled(Flex)`
+  flex-direction: column;
+`;
+
+export default function Alert({
+  type = "info",
+  title,
+  showIcon = true,
+  renderContent,
+}: AlertProps): JSX.Element {
+  const theme = useTheme();
+  const { color } = getColors({ theme, type });
   return (
     <StyledAlertContainer type={type}>
       {showIcon && !!icons[type] && <StyledIconContainer>{icons[type]}</StyledIconContainer>}
-      <Text variant={"body"} color={"inherit"}>
-        {title}
-      </Text>
+      <ContentContainer rowGap="6px">
+        {title && (
+          <Text variant="paragraph" fontWeight="medium" color="inherit">
+            {title}
+          </Text>
+        )}
+        {renderContent && renderContent({ color })}
+      </ContentContainer>
     </StyledAlertContainer>
   );
 }
