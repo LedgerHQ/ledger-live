@@ -73,14 +73,8 @@ const signOperation = ({
 
         const segwit = isSegwitDerivationMode(account.derivationMode);
 
-        // FIXME Call to explorer needed to set timestamp (https://ledgerhq.atlassian.net/browse/LL-7539)
-        // cf. https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/transaction_builders/BitcoinLikeUtxoPicker.cpp#L150-L154
-        /*
-        const hasTimestamp = networkParams.usesTimestampedTransaction;
-        const initialTimestamp = hasTimestamp
-          ? transaction.timestamp
-          : undefined;
-        */
+        const hasTimestamp = currency.id === "peercoin";
+        const initialTimestamp = Math.floor(Date.now() / 1000);
 
         const perCoin = perCoinLogic[currency.id];
         let additionals = [currency.id];
@@ -114,7 +108,8 @@ const signOperation = ({
           lockTime,
           sigHashType,
           segwit,
-          //initialTimestamp,
+          hasTimestamp,
+          initialTimestamp,
           additionals,
           expiryHeight,
           hasExtraData,

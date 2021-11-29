@@ -212,6 +212,8 @@ class BitcoinLikeWallet {
     lockTime?: number;
     sigHashType?: number;
     segwit?: boolean;
+    hasTimestamp?: boolean;
+    initialTimestamp?: number;
     additionals?: Array<string>;
     expiryHeight?: Buffer;
     hasExtraData?: boolean;
@@ -227,6 +229,8 @@ class BitcoinLikeWallet {
       btc,
       fromAccount,
       txInfo,
+      hasTimestamp,
+      initialTimestamp,
       additionals,
       hasExtraData,
       onDeviceSignatureRequested,
@@ -260,7 +264,7 @@ class BitcoinLikeWallet {
       log("hw", `splitTransaction`, {
         transactionHex: i.txHex,
         isSegwitSupported: true,
-        hasTimestamp: false,
+        hasTimestamp,
         hasExtraData,
         additionals,
       });
@@ -268,7 +272,7 @@ class BitcoinLikeWallet {
         btc.splitTransaction(
           i.txHex,
           true,
-          false, // FIXME hasTimestamp needed for LL-7539
+          hasTimestamp,
           hasExtraData,
           additionals
         ),
@@ -287,7 +291,7 @@ class BitcoinLikeWallet {
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
-      // initialTimestamp,
+      initialTimestamp,
       ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
       ...(txInfo.outputs[lastOutputIndex]?.isChange && {
         changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
@@ -302,7 +306,7 @@ class BitcoinLikeWallet {
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
       ...(params.segwit && { segwit: params.segwit }),
-      // initialTimestamp,
+      initialTimestamp,
       ...(params.expiryHeight && { expiryHeight: params.expiryHeight }),
       ...(txInfo.outputs[lastOutputIndex]?.isChange && {
         changePath: `${fromAccount.params.path}/${fromAccount.params.index}'/${txInfo.changeAddress.account}/${txInfo.changeAddress.index}`,
