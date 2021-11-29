@@ -74,7 +74,9 @@ const signOperation = ({
         const segwit = isSegwitDerivationMode(account.derivationMode);
 
         const hasTimestamp = currency.id === "peercoin";
-        const initialTimestamp = Math.floor(Date.now() / 1000);
+        const initialTimestamp = hasTimestamp
+          ? Math.floor(Date.now() / 1000)
+          : undefined;
 
         const perCoin = perCoinLogic[currency.id];
         let additionals = [currency.id];
