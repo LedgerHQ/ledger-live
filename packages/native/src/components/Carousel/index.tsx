@@ -49,7 +49,7 @@ function Carousel({
   children,
 }: Props) {
   const [init, setInit] = useState(false);
-  const [activeIndexState, setActiveIndexState] = useState(activeIndex);
+  const [activeIndexState, setActiveIndexState] = useState(activeIndex || 0);
   const disableTimer = useRef(false);
   const [resetTimer, setResetTimer] = useState({});
   const dimensions = useRef<{
@@ -113,7 +113,7 @@ function Carousel({
     const interval = setInterval(() => {
       if (!disableTimer.current) {
         setActiveIndexState((index) => {
-          const newIndex = index ? (index + 1) % slidesLength : 0;
+          const newIndex = (index + 1) % slidesLength;
           scrollToIndex(newIndex);
           return newIndex;
         });
