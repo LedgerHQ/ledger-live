@@ -10,6 +10,10 @@ const HorizontalScrollView = styled.ScrollView.attrs({ horizontal: true })`
 
 export type Props = React.PropsWithChildren<{
   /**
+   * Forces the selection of a specific item of the carousel.
+   */
+  activeIndex?: number;
+  /**
    * This number in milliseconds will enable automatic scrolling when defined.
    *
    * The Carousel will scroll to the next item after this delay is elapsed,
@@ -37,14 +41,15 @@ export type Props = React.PropsWithChildren<{
 }>;
 
 function Carousel({
+  activeIndex,
   autoDelay,
   containerProps,
   slideIndicatorContainerProps,
   scrollViewProps,
   children,
 }: Props) {
-  const [, setInit] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [init, setInit] = useState(false);
+  const [activeIndexState, setActiveIndexState] = useState(activeIndex);
   const disableTimer = useRef(false);
   const [resetTimer, setResetTimer] = useState({});
   const dimensions = useRef<{
@@ -52,7 +57,7 @@ function Carousel({
     contentHeight: number;
   } | null>(null);
   const slidesLength = React.Children.count(children);
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollView | null>(null);
 
   const fullWidth = 100 * slidesLength;
   const itemWidth = !dimensions.current
@@ -60,16 +65,29 @@ function Carousel({
     : dimensions.current.contentWidth / slidesLength;
 
   const scrollToIndex = useCallback(
-    (index) => {
+    (index, animated = true) => {
       if (scrollRef.current && dimensions.current) {
         scrollRef.current.scrollTo({
           x: itemWidth * index,
-          animated: true,
+          animated,
         });
       }
     },
     [itemWidth]
   );
+
+  useEffect(() => {
+    // On init scroll to the active index prop location - if specified.
+    if (init && activeIndex) scrollToIndex(activeIndex, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [init]);
+
+  useEffect(() => {
+    if (scrollToIndex && typeof activeIndex === "number") {
+      scrollToIndex(activeIndex);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex]);
 
   const onContentSizeChange = useCallback(
     (contentWidth: number, contentHeight: number) => {
@@ -84,7 +102,7 @@ function Carousel({
       const newIndex = Math.abs(
         Math.round((contentOffset.x / contentSize.width) * slidesLength)
       );
-      setActiveIndex(newIndex);
+      setActiveIndexState(newIndex);
     },
     [slidesLength]
   );
@@ -94,8 +112,8 @@ function Carousel({
 
     const interval = setInterval(() => {
       if (!disableTimer.current) {
-        setActiveIndex((index) => {
-          const newIndex = (index + 1) % slidesLength;
+        setActiveIndexState((index) => {
+          const newIndex = index ? (index + 1) % slidesLength : 0;
           scrollToIndex(newIndex);
           return newIndex;
         });
@@ -138,7 +156,7 @@ function Carousel({
       </HorizontalScrollView>
       <Flex my={8} {...slideIndicatorContainerProps}>
         <SlideIndicator
-          activeIndex={activeIndex}
+          activeIndex={activeIndexState || 0}
           onChange={(index) => {
             scrollToIndex(index);
             setResetTimer({});

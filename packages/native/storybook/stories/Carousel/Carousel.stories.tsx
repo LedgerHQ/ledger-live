@@ -1,7 +1,7 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
 import { storiesOf } from "../storiesOf";
-import { Flex, Carousel, Text } from "../../../src";
+import { Flex, Carousel, Text, Button } from "../../../src";
 
 const description = `
 ### A simple responsive carousel.
@@ -109,6 +109,29 @@ const WithProps = (): JSX.Element => {
   );
 };
 
+const Controlled = (): JSX.Element => {
+  const [activeIndex, setActiveIndex] = React.useState(2);
+  return (
+    <>
+      <Carousel activeIndex={activeIndex}>
+        <Item label="primary" />
+        <Item label="neutral" />
+        <Item label="success" />
+        <Item label="warning" />
+        <Item label="error" />
+      </Carousel>
+      <Text variant="h3">Navigate programatically to index</Text>
+      <Flex flexDirection="row">
+        <Button onPress={() => setActiveIndex(0)}>0</Button>
+        <Button onPress={() => setActiveIndex(1)}>1</Button>
+        <Button onPress={() => setActiveIndex(2)}>2</Button>
+        <Button onPress={() => setActiveIndex(3)}>3</Button>
+        <Button onPress={() => setActiveIndex(4)}>4</Button>
+      </Flex>
+    </>
+  );
+};
+
 storiesOf((story) =>
   story("Carousel", module)
     .add("Default", Default, {
@@ -121,4 +144,5 @@ storiesOf((story) =>
     })
     .add("AutoDelay", AutoDelay)
     .add("WithProps", WithProps)
+    .add("Controlled", Controlled)
 );
