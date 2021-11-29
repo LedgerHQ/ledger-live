@@ -92,7 +92,7 @@ const WithProps = (): JSX.Element => {
         backgroundColor: "neutral.c20",
       }}
       scrollViewProps={{
-        borderRadius: 20,
+        style: { borderRadius: 20 },
       }}
       slideIndicatorContainerProps={{
         p: 4,
