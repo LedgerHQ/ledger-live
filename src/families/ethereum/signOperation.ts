@@ -99,19 +99,7 @@ export const signOperation = ({
                 type: "device-signature-granted",
               });
               // Second, we re-set some tx fields from the device signature
-              let v = result.v;
-
-              if (chainId > 0) {
-                // EIP155 support. check/recalc signature v value.
-                const rv = parseInt(v, 16);
-                let cv = chainId * 2 + 35;
-
-                if (rv !== cv && (rv & cv) !== rv) {
-                  cv += 1; // add signature v bit.
-                }
-
-                v = cv.toString(16);
-              }
+              const v = result.v;
 
               tx.v = Buffer.from(v, "hex");
               tx.r = Buffer.from(result.r, "hex");
