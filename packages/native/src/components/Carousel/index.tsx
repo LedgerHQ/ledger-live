@@ -1,5 +1,10 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Platform, ScrollView, ViewProps } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  ViewProps,
+  NativeScrollEvent,
+} from "react-native";
 import styled from "styled-components/native";
 import { Flex, SlideIndicator } from "../index";
 import type { Props as FlexboxProps } from "../Layout/Flex";
@@ -89,23 +94,21 @@ function Carousel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
-  const onContentSizeChange = useCallback(
-    (contentWidth: number, contentHeight: number) => {
-      dimensions.current = { contentWidth, contentHeight };
-      setInit(true);
-    },
-    []
-  );
+  const onContentSizeChange = (contentWidth: number, contentHeight: number) => {
+    dimensions.current = { contentWidth, contentHeight };
+    setInit(true);
+  };
 
-  const onScroll = useCallback(
-    ({ nativeEvent: { contentOffset, contentSize } }) => {
-      const newIndex = Math.abs(
-        Math.round((contentOffset.x / contentSize.width) * slidesLength)
-      );
-      setActiveIndexState(newIndex);
-    },
-    [slidesLength]
-  );
+  const onScroll = ({
+    nativeEvent: { contentOffset, contentSize },
+  }: {
+    nativeEvent: NativeScrollEvent;
+  }) => {
+    const newIndex = Math.abs(
+      Math.round((contentOffset.x / contentSize.width) * slidesLength)
+    );
+    setActiveIndexState(newIndex);
+  };
 
   useEffect(() => {
     if (!autoDelay) return;
@@ -168,4 +171,4 @@ function Carousel({
   );
 }
 
-export default Carousel;
+export default React.memo(Carousel);
