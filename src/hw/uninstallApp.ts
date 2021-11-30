@@ -9,14 +9,19 @@ export default function uninstallApp(
   targetId: string | number,
   app: ApplicationVersion | App
 ): Observable<any> {
-  return ManagerAPI.install(transport, "uninstall-app", {
-    targetId,
-    perso: app.perso,
-    deleteKey: app.delete_key,
-    firmware: app.delete,
-    firmwareKey: app.delete_key,
-    hash: app.hash,
-  }).pipe(
+  return ManagerAPI.install(
+    transport,
+    "uninstall-app",
+    {
+      targetId,
+      perso: app.perso,
+      deleteKey: app.delete_key,
+      firmware: app.delete,
+      firmwareKey: app.delete_key,
+      hash: app.hash,
+    },
+    true
+  ).pipe(
     ignoreElements(),
     catchError((e: Error) => {
       if (!e || !e.message) return throwError(e);

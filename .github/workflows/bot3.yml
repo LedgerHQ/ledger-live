@@ -42,7 +42,6 @@ jobs:
         env:
           EXPERIMENTAL_CURRENCIES_JS_BRIDGE: "tezos"
           SHOW_LEGACY_NEW_ACCOUNT: "1"
-          DEBUG_HTTP_RESPONSE: "1"
           SEED: ${{ secrets.SEED3 }}
           VERBOSE_FILE: bot-tests.txt
           GITHUB_SHA: ${GITHUB_SHA}
