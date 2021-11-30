@@ -7,7 +7,7 @@ export const DEFAULT_ICON_SIZE = 16;
 export const DEFAULT_BADGE_SIZE = 20;
 
 const getTopRightSquareClippedPolygon = (boxSize: number, rectangleSize: number) => {
-  // clipping path that hides top right square of size{rectangleSize}px
+  // clipping path that hides top right square of size `${rectangleSize}px`
   const diff = boxSize - rectangleSize;
   return `polygon(0 0, 0 0, 0 0, ${diff}px 0, ${diff}px ${rectangleSize}px, 100% ${rectangleSize}px, 100% 100%, 100% 100%, 100% 100%, 0 100%, 0 100%, 0 100%)`;
 };
@@ -37,10 +37,6 @@ const BadgeContainer = styled.div<{ badgeSize: number }>`
     right: -${p.badgeSize / 2 - 2}px;`}
 `;
 
-export type BadgeProps = {
-  size?: number;
-  color?: string;
-};
 export type IconProps = {
   size?: number;
   color?: string;
@@ -50,7 +46,7 @@ export type IconBoxProps = {
   /**
    * Component that takes `{size?: number; color?: string}` as props. Will be rendered at the top right with the size provided in `badgeSize` or a default size.
    */
-  Badge?: React.ComponentType<BadgeProps> | ((props: BadgeProps) => JSX.Element);
+  Badge?: React.ComponentType<IconProps> | ((props: IconProps) => JSX.Element);
   /**
    * Color of the border
    */

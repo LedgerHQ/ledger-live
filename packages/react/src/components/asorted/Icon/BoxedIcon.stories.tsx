@@ -1,7 +1,6 @@
 import React from "react";
 import Icon, { iconNames } from "./Icon";
 import BoxedIconC, {
-  BadgeProps,
   BoxedIconProps,
   IconProps,
   DEFAULT_BOX_SIZE,
@@ -10,10 +9,6 @@ import BoxedIconC, {
 } from "./BoxedIcon";
 
 const ExampleIcon = ({ size, color, name }: IconProps & { name: string }) => (
-  <Icon name={name} {...{ size, color }} />
-);
-
-const ExampleBadge = ({ size, color, name }: BadgeProps & { name: string }) => (
   <Icon name={name} {...{ size, color }} />
 );
 
@@ -102,17 +97,15 @@ const BoxedIconTemplate = (
   const iconColor = args.iconColor;
   const IconComp =
     args.Icon || ((props: IconProps) => <ExampleIcon {...props} name={args.exampleIconName} />);
-  const BadgeComp = !args.exampleBadgeEnabled
-    ? undefined
-    : args.Badge ||
-      ((props: BadgeProps) => <ExampleBadge {...props} name={args.exampleBadgeName} />);
+  const BadgeComp =
+    args.Badge || ((props: IconProps) => <ExampleIcon {...props} name={args.exampleBadgeName} />);
   const iconSize = args.iconSize;
   const size = args.size;
 
   return (
     <BoxedIconC
       Icon={IconComp}
-      {...(args.exampleBadgeEnabled ? { Badge: BadgeComp } : {})}
+      Badge={args.exampleBadgeEnabled ? BadgeComp : undefined}
       badgeColor={badgeColor}
       badgeSize={badgeSize}
       borderColor={borderColor}
