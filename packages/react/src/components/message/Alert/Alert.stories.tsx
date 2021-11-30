@@ -32,7 +32,7 @@ export const Default = (args: AlertProps): JSX.Element => {
   return <Alert {...args} />;
 };
 
-export const WithChildren = (args: AlertProps) => {
+export const WithContent = (args: AlertProps) => {
   return (
     <Alert
       {...args}
