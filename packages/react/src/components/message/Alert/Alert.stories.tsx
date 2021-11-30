@@ -25,6 +25,7 @@ export default {
       defaultValue: true,
     },
   },
+  component: Alert,
 };
 
 export const Default = (args: AlertProps): JSX.Element => {
@@ -35,17 +36,14 @@ export const WithChildren = (args: AlertProps) => {
   return (
     <Alert
       {...args}
-      renderContent={({ color }) => (
+      renderContent={({ color, textProps }) => (
         <>
-          <Text color="inherit" variant="paragraph" fontWeight="medium">
-            Some children text
+          <Text color="inherit" {...textProps}>
+            Some additional text that might overflow to the right but doesn't
           </Text>
           <Link
             color={color}
-            textProps={{
-              variant: "paragraph",
-              fontWeight: "medium",
-            }}
+            textProps={textProps}
             alwaysUnderline
             size="small"
             Icon={Icons.ExternalLinkMedium}

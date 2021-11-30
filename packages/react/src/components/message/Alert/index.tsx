@@ -1,6 +1,7 @@
 import React from "react";
 import styled, { css, useTheme } from "styled-components";
 import Text from "../../asorted/Text";
+import { TextVariants } from "../../../styles/theme";
 import Flex from "../../layout/Flex";
 import ShieldSecurityMedium from "@ledgerhq/icons-ui/react/ShieldSecurityMedium";
 import CircledCrossMedium from "@ledgerhq/icons-ui/react/CircledCrossMedium";
@@ -8,11 +9,25 @@ import CircledAlertMedium from "@ledgerhq/icons-ui/react/CircledAlertMedium";
 import { DefaultTheme } from "styled-components/native";
 
 type AlertType = "info" | "warning" | "error";
-
 export interface AlertProps {
+  /**
+   * Affects the colors of the background & text and what icon can be displayed
+   */
   type?: AlertType;
+  /**
+   * Title of the Alert
+   */
   title?: string;
-  renderContent?: (props: { color: string }) => JSX.Element;
+  /**
+   * Method for rendering additional content under the title `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string } }` is passed as props to easily style text elements
+   */
+  renderContent?: (props: {
+    color: string;
+    textProps: { variant?: TextVariants; fontWeight?: string };
+  }) => JSX.Element;
+  /**
+   * Whether or not to display an icon
+   */
   showIcon?: boolean;
 }
 
@@ -57,16 +72,12 @@ const StyledAlertContainer = styled.div<{ type?: AlertType }>`
       color: ${color};
     `;
   }}
-  word-break: break-all;
+  overflow-wrap: break-all;
 
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   padding: 16px;
   display: flex;
   align-items: center;
-`;
-
-const ContentContainer = styled(Flex)`
-  flex-direction: column;
 `;
 
 export default function Alert({
@@ -77,17 +88,21 @@ export default function Alert({
 }: AlertProps): JSX.Element {
   const theme = useTheme();
   const { color } = getColors({ theme, type });
+  const textProps: { variant?: TextVariants; fontWeight?: string } = {
+    variant: "paragraph",
+    fontWeight: "medium",
+  };
   return (
     <StyledAlertContainer type={type}>
       {showIcon && !!icons[type] && <StyledIconContainer>{icons[type]}</StyledIconContainer>}
-      <ContentContainer rowGap="6px">
+      <Flex flexDirection="column" alignItems="flex-start" rowGap="6px">
         {title && (
-          <Text variant="paragraph" fontWeight="medium" color="inherit">
+          <Text {...textProps} color="inherit">
             {title}
           </Text>
         )}
-        {renderContent && renderContent({ color })}
-      </ContentContainer>
+        {renderContent && renderContent({ color, textProps })}
+      </Flex>
     </StyledAlertContainer>
   );
 }
