@@ -254,9 +254,9 @@ PODS:
     - React-jsi (= 0.65.1)
     - React-perflogger (= 0.65.1)
   - React-jsinspector (0.65.1)
-  - react-native-ble-plx (2.0.2):
+  - react-native-ble-plx (2.0.3):
     - MultiplatformBleAdapter (= 0.1.9)
-    - React
+    - React-Core
   - react-native-config (1.4.4):
     - react-native-config/App (= 1.4.4)
   - react-native-config/App (1.4.4):
@@ -453,7 +453,6 @@ DEPENDENCIES:
   - "ledger-core-objc (from `../node_modules/@ledgerhq/react-native-ledger-core`)"
   - lottie-ios (from `../node_modules/lottie-ios`)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
-  - MultiplatformBleAdapter (from `https://github.com/dotintent/MultiPlatformBleAdapter`, tag `0.1.9`)
   - "PasscodeAuth (from `../node_modules/@ledgerhq/react-native-passcode-auth`)"
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -520,6 +519,7 @@ SPEC REPOS:
     - fmt
     - InputMask
     - libwebp
+    - MultiplatformBleAdapter
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
@@ -564,9 +564,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/lottie-ios"
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
-  MultiplatformBleAdapter:
-    :git: https://github.com/dotintent/MultiPlatformBleAdapter
-    :tag: 0.1.9
   PasscodeAuth:
     :path: "../node_modules/@ledgerhq/react-native-passcode-auth"
   RCT-Folly:
@@ -678,11 +675,6 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
-CHECKOUT OPTIONS:
-  MultiplatformBleAdapter:
-    :git: https://github.com/dotintent/MultiPlatformBleAdapter
-    :tag: 0.1.9
-
 SPEC CHECKSUMS:
   Analytics: eefe524436f904b8bb3f8c8c3425280e43b34efc
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
@@ -722,7 +714,7 @@ SPEC CHECKSUMS:
   React-jsi: 12913c841713a15f64eabf5c9ad98592c0ec5940
   React-jsiexecutor: 43f2542aed3c26e42175b339f8d37fe3dd683765
   React-jsinspector: 41e58e5b8e3e0bf061fdf725b03f2144014a8fb0
-  react-native-ble-plx: 5b09a27b9824df10f11f663076335eba6dbb495a
+  react-native-ble-plx: f10240444452dfb2d2a13a0e4f58d7783e92d76e
   react-native-config: 72d948053a442779b3178fddd571e37f118ef606
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
@@ -770,6 +762,6 @@ SPEC CHECKSUMS:
   Yoga: aa0cb45287ebe1004c02a13f279c55a95f1572f4
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 49ad5c5c4dd496763fa6f6253474c645fe68f8fe
+PODFILE CHECKSUM: 397676af9b9385a0e0f9589073ee83f88924a637
 
 COCOAPODS: 1.11.2
