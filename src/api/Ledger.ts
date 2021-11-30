@@ -2,6 +2,7 @@ import invariant from "invariant";
 import type { CryptoCurrency } from "../types";
 import { getEnv } from "../env";
 import { getExplorerConfig } from "./explorerConfig";
+import { shouldUseJS } from "../account/support";
 
 type LedgerExplorer = {
   version: string;
@@ -25,7 +26,15 @@ export const findCurrencyExplorer = (
   }
 
   if (config.experimental && getEnv("EXPERIMENTAL_EXPLORERS")) {
-    const { base, version } = config.experimental;
+    const base = config.experimental.base;
+    let version = config.experimental.version;
+    //V2 explorer for doge and bitcoin cash when libcore is used
+    if (
+      (currency.id === "bitcoin_cash" || currency.id === "doge") &&
+      !shouldUseJS(currency)
+    ) {
+      version = "v2";
+    }
     return {
       endpoint: getEnv(base),
       id,
