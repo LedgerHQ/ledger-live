@@ -72,5 +72,5 @@ jobs:
       - name: upload Android app
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ steps.post-version.outputs.version }}-release.aab
-          path: android/app/build/outputs/bundle/release/app-release.aab
+          name: ${{ steps.post-version.outputs.version }}-release
+          path: android/app/build/outputs/apk/release
