@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { number } from "@storybook/addon-knobs";
-import { action } from "@storybook/addon-actions";
 import { storiesOf } from "../../storiesOf";
 import SlideIndicator from "../../../../src/components/Navigation/SlideIndicator";
 
-const SideIndicatorSample = () => (
-  <SlideIndicator
-    slidesLength={number("slidesLength", 3, { min: 1, max: 7 })}
-    activeIndex={number("activeIndex", 0, { min: 0, max: 6 })}
-    onChange={action("onChange")}
-  />
-);
+const SideIndicatorSample = () => {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  return (
+    <SlideIndicator
+      slidesLength={number("slidesLength", 3, { min: 1 })}
+      activeIndex={activeIndex ?? number("activeIndex", 0, { min: 0 })}
+      onChange={setActiveIndex}
+    />
+  );
+};
 
 storiesOf((story) =>
   story("Navigation", module).add("SlideIndicator", SideIndicatorSample)
