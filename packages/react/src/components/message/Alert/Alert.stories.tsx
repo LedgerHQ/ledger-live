@@ -5,6 +5,7 @@ import Text from "../../asorted/Text";
 import { Icons } from "../../../../src/assets";
 export default {
   title: "Messages/Alerts",
+  component: Alert,
   argTypes: {
     type: {
       options: ["info", "warning", "error"],
@@ -25,7 +26,6 @@ export default {
       defaultValue: true,
     },
   },
-  component: Alert,
 };
 
 export const Default = (args: AlertProps): JSX.Element => {
@@ -39,7 +39,8 @@ export const WithContent = (args: AlertProps) => {
       renderContent={({ color, textProps }) => (
         <>
           <Text color="inherit" {...textProps}>
-            Some additional text that might overflow to the right but doesn't
+            Your xpub is privacy-sensitive data. Use with caution, especially when disclosing to
+            third parties.
           </Text>
           <Link
             color={color}
