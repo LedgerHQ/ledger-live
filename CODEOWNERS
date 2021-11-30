@@ -1,2 +1,7 @@
-*             @ledgerhq/ledger-live-maintainer
-src/          @ledgerhq/live-squad-yellow @ledgerhq/live-squad-blue
+*                                      @ledgerhq/live-hub
+.github                                @ledgerhq/live-devx
+fastlane                               @ledgerhq/live-devx
+src/families                           @ledgerhq/live-blockchain-support
+src/live-common-setup.js               @ledgerhq/live-blockchain-support
+src/components/DeviceAction            @ledgerhq/live-devices
+src/screens/Exchange                   @ledgerhq/live-platform-and-services
