@@ -1,27 +1,24 @@
 import React from "react";
 import { components, Styles, ControlProps, OptionTypeBase } from "react-select";
-import styled from "styled-components";
+import { DefaultTheme } from "styled-components";
 import { InputContainer } from "../BaseInput";
 
 export function getStyles<
   T extends OptionTypeBase = { label: string; value: string },
   M extends boolean = false,
->(): NonNullable<Styles<T, M>["control"]> {
+>(theme: DefaultTheme): NonNullable<Styles<T, M>["control"]> {
   return (provided) => ({
     ...provided,
     display: "flex",
     alignItems: "center",
     width: "100%",
     border: 0,
+    padding: `0px ${theme.space[7]}px`,
     boxShadow: "none",
     borderRadius: "inherit",
     background: "transparent",
   });
 }
-
-const Container = styled(InputContainer)`
-  padding: 0 ${(p) => p.theme.space[7]}px;
-`;
 
 export function Control<
   T extends OptionTypeBase = { label: string; value: string },
@@ -34,11 +31,11 @@ export function Control<
   } = props;
 
   return (
-    <Container disabled={isDisabled} error={error} focus={isFocused}>
+    <InputContainer disabled={isDisabled} error={error} focus={isFocused}>
       <components.Control {...props}>
         {renderLeft ? renderLeft(props) : null}
         {children}
       </components.Control>
-    </Container>
+    </InputContainer>
   );
 }

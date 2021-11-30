@@ -156,10 +156,12 @@ export default {
 };
 
 const options = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "lemon", label: "Lemon" },
-  { value: "vanilla", label: "Vanilla" },
+  // Labels contain muttons spaces (U+2003 character).
+  // Do not replace with a regular space please!
+  { value: "chocolate", label: "🍫 Chocolate" },
+  { value: "strawberry", label: "🍓 Strawberry" },
+  { value: "lemon", label: "🍋 Lemon" },
+  { value: "vanilla", label: "🍦 Vanilla" },
 ];
 
 const cssColors = [

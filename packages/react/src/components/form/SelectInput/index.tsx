@@ -37,7 +37,7 @@ const stylesFn = <
 >(
   theme: DefaultTheme,
 ): Styles<T, M> => ({
-  control: ControlModule.getStyles(),
+  control: ControlModule.getStyles(theme),
   valueContainer: ValueContainerModule.getStyles(),
   dropdownIndicator: DropdownIndicatorModule.getStyles(),
   menuList: MenuListModule.getStyles(theme),
