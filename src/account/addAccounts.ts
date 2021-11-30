@@ -74,7 +74,7 @@ export function groupAddAccounts(
     );
 
     if (existingAccount) {
-      if (!acc.used) {
+      if (!acc.used && !alreadyEmptyAccount) {
         alreadyEmptyAccount = existingAccount;
       }
 
@@ -122,7 +122,8 @@ export function groupAddAccounts(
           ? creatableAccounts.filter(
               (a) =>
                 context.preferredNewAccountSchemes &&
-                context.preferredNewAccountSchemes.includes(a.derivationMode)
+                // Note: we could use a simple preferredNewAccountScheme param
+                a.derivationMode === context.preferredNewAccountSchemes[0]
             )
           : creatableAccounts,
     });
