@@ -1316,9 +1316,9 @@
   "operations": {
     "types": {
       "IN": "수신됨",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "NFT 수령됨",
       "OUT": "전송됨",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "NFT 전송됨",
       "CREATE": "생성됨",
       "REVEAL": "숨김 해제",
       "DELEGATE": "위임됨",
@@ -1402,10 +1402,10 @@
       "validatorsCount": "검증인 ({{number}})"
     },
     "multipleAddresses": "왜 주소가 여러 개인가요?",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "tokenName": "토큰명",
+    "collectionContract": "토큰 계약",
+    "tokenId": "토큰 (NFT) ID",
+    "quantity": "수량"
   },
   "operationList": {
     "noOperations": "거래 없음",
@@ -1549,7 +1549,7 @@
       "sectionLabel": "위임 해제"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "NFT 수령"
     }
   },
   "accounts": {
@@ -3094,14 +3094,14 @@
   "elrond": {
     "account": {
       "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "drawerTitle": "Elrond integration",
-        "moreInfo": "More info",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
+        "cardTitle": "Elrond 제공",
+        "drawerTitle": "Elrond 통합",
+        "moreInfo": "자세한 정보",
+        "title": "이제 Ledger Live에서 Elrond eGold(EGLD) 토큰을 이용할 수 있습니다",
+        "description": "이제 Ledger Live로 eGold(EGLD) 토큰을 안전하게 보관하고 관리할 수 있습니다.",
+        "description2": "Elrond eGold(EGLD) 토큰은 Elrond 네트워크의 네이티브 토큰으로, 트랜잭션, 스테이킹, 스마트 계약, 거버넌스, 검증인 보상 등 모든 분야에 사용됩니다.",
+        "description3": "본사는 스테이킹, 네이티브 ESDT(Elrond 스탠다드 디지털 토큰) 지원 등의 다양한 기능을 추가하기 위해 Ellrond 팀과 활발히 협업 중입니다.",
+        "website": "인터넷 스케일 블록체인"
       }
     }
   },
@@ -3751,23 +3751,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "모든 NFT 보기",
+      "seeFewerNfts": "적은 NFT 보기"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "모든 NFT"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "properties": "속성",
+      "description": "설명",
+      "tokenContract": "토큰 주소",
+      "tokenId": "토큰 ID",
+      "quantity": "수량"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "다음에서 보기:",
+      "viewInExplorer": "탐색기에서 보기",
+      "txDetails": "트랜잭션 세부정보"
     }
   }
 }

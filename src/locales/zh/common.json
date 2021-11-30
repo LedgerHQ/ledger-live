@@ -723,7 +723,7 @@
       },
       "lending": {
         "title": "借出加密货币",
-        "description": "按照复利协议贷出资产"
+        "description": "按照复利协议借出资产"
       },
       "blackfriday": {
         "title": "黑色星期五",
@@ -1316,9 +1316,9 @@
   "operations": {
     "types": {
       "IN": "已接收",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "已收 NFT",
       "OUT": "已发送",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "已发 NFT",
       "CREATE": "已创建",
       "REVEAL": "已显示",
       "DELEGATE": "已委托",
@@ -1402,10 +1402,10 @@
       "validatorsCount": "验证器 ({{number}})"
     },
     "multipleAddresses": "为什么有多个地址？",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "tokenName": "代币名称",
+    "collectionContract": "代币合约",
+    "tokenId": "代币 (NFT) ID",
+    "quantity": "数量"
   },
   "operationList": {
     "noOperations": "不作操作",
@@ -1549,7 +1549,7 @@
       "sectionLabel": "解除委托"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "接收 NFT"
     }
   },
   "accounts": {
@@ -2008,8 +2008,8 @@
     },
     "lending": {
       "title": "借出加密货币",
-      "titleTransferTab": "贷出",
-      "actionTitle": "贷出",
+      "titleTransferTab": "借出",
+      "actionTitle": "借出",
       "accountActions": {
         "approve": "批准",
         "supply": "供应",
@@ -2021,30 +2021,30 @@
       },
       "account": {
         "amountSupplied": "已存数额",
-        "amountSuppliedTooltip": "向网络贷出的数额",
+        "amountSuppliedTooltip": "向网络借出的数额",
         "currencyAPY": "货币的年收益率 APY",
         "currencyAPYTooltip": "存款的年度回报率为连续复利模式",
         "accruedInterests": "利息余额",
-        "accruedInterestsTooltip": "贷出资产产生的利息",
+        "accruedInterestsTooltip": "借出资产产生的利息",
         "interestEarned": "已赚取的利息",
         "interestEarnedTooltip": "提取后您赚取的利息",
         "openLoans": "开放借贷",
         "closedLoans": "已关闭的借贷"
       },
       "banners": {
-        "needApproval": "账户需要获得您的批准才能贷出资产。",
-        "fullyApproved": "该账户完全获得您的批准。您可以根据一定费用来减少贷出金额。",
-        "approvedCanReduce": "您已批准该账户贷出 <0>{{value}}</0>。您可以根据一定费用来减少贷出数额。",
-        "approvedButNotEnough": "您已批准该账户贷出 <0>{{value}}</0>。",
+        "needApproval": "账户需要获得您的批准才能借出资产。",
+        "fullyApproved": "该账户完全获得您的批准。您可以根据一定费用来减少借出数额。",
+        "approvedCanReduce": "您已批准该账户借出 <0>{{value}}</0>。您可以根据一定费用来减少借出数额。",
+        "approvedButNotEnough": "您已批准该账户借出 <0>{{value}}</0>。",
         "approving": "一旦您对该账户的批准得到确认，就可以存入资产。",
-        "notEnough": "您必须提高您账户批准贷出的限额。"
+        "notEnough": "您必须提高您账户批准借出的限额。"
       },
-      "howDoesLendingWork": "贷出模式如何运作",
+      "howDoesLendingWork": "借出模式如何运作",
       "dashboard": {
         "tabTitle": "功能面板",
-        "assetsTitle": "要贷出的资产",
+        "assetsTitle": "要借出的资产",
         "accountsTitle": "已批准的账户",
-        "emptySateDescription": "您可以从您的以太坊账户直接贷出资产并赚取利息。",
+        "emptySateDescription": "您可以从您的以太坊账户直接借出资产并赚取利息。",
         "apy": "{{value}} 年收益率 APY",
         "activeAccount": {
           "account": "账户",
@@ -2065,17 +2065,17 @@
       "closedLoans": {
         "tabTitle": "已关闭的借贷",
         "description": "查看所有已提取的贷款以及所赚取的利息。",
-        "cta": "贷出资产"
+        "cta": "借出资产"
       },
       "history": {
         "tabTitle": "历史记录",
         "description": "查看您所有贷款交易的历史记录。",
-        "cta": "贷出资产"
+        "cta": "借出资产"
       },
       "terms": {
-        "label": "贷出加密货币",
+        "label": "借出加密货币",
         "title": "按照 Compound 复利协议借出资产",
-        "description": "Compound 复利协议允许您在以太坊网络上贷出或借入资产。您可以直接通过您的 Ledger 账户贷出资产并赚取利息。",
+        "description": "Compound 复利协议允许您在以太坊网络上借出或借入资产。您可以直接通过您的 Ledger 账户借出资产并赚取利息。",
         "switchLabel": "我已阅读并同意 <0><0>使用条款</0></0>。"
       },
       "info": {
@@ -2087,20 +2087,20 @@
         "2": {
           "label": "步骤 2/3",
           "title": "存入资产以赚取利息。",
-          "description": "一旦账户获得批准，您可以选择想要贷出的资产数额，并向该协议发出一个交易。交易一经确认，立即累计利息。"
+          "description": "一旦账户获得批准，您可以选择想要借出的资产数额，并向该协议发出一个交易。交易一经确认，立即累计利息。"
         },
         "3": {
           "label": "步骤 3/3",
           "title": "随时提取资产。",
           "description": "您可以直接通过您的 Ledger 账户，部分或全部的，随时提取您的资产以及所赚取的利息。",
-          "cta": "立即贷出"
+          "cta": "立即借出"
         },
-        "title": "贷出加密货币"
+        "title": "借出加密货币"
       },
       "noTokenAccount": {
         "info": {
           "title": "您没有一个 {{ name }} 帐户。",
-          "description": "为了能存入资金并贷出加密资产，您需要一个 {{ name }} 账户。请通过您的以太坊地址接收资金。"
+          "description": "为了能存入资金并借出加密资产，您需要一个 {{ name }} 账户。请通过您的以太坊地址接收资金。"
         },
         "buttons": {
           "receive": "接收 {{ name }}",
@@ -2110,7 +2110,7 @@
       "enable": {
         "info": {
           "title": "该账户未经批准",
-          "description": "账户需要获得您的批准才能贷出该资产。",
+          "description": "账户需要获得您的批准才能借出该资产。",
           "cta": "批准账户"
         },
         "stepperHeader": {
@@ -2128,7 +2128,7 @@
           "enabledAccountsAmount_plural": "您有 {{number}} 个账户已批准 {{amount}}",
           "enabledAccountsNoLimit": "您有 {{number}} 个账户已批准了不限额的 {{ currency }}",
           "enabledAccountsNoLimit_plural": "您有 {{number}} 个账户已批准了不限额的 {{ currency }}",
-          "noEnabledAccounts": "账户获得您的批准后才能贷出资产。"
+          "noEnabledAccounts": "账户获得您的批准后才能借出资产。"
         },
         "enable": {
           "summary": "<0>我允许</0><1>{{contractName}}</1><0>智能合约访问我的</0><1>{{accountName}}</1><0> 账户并获取</0><1>{{amount}}</1><0>数额</0>",
@@ -3094,14 +3094,14 @@
   "elrond": {
     "account": {
       "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "drawerTitle": "Elrond integration",
-        "moreInfo": "More info",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
+        "cardTitle": "由 Elrond 支持",
+        "drawerTitle": "Elrond 集成",
+        "moreInfo": "更多信息",
+        "title": "Elrond eGold (EGLD) 代币现在可以在 Ledger Live 上使用",
+        "description": "你现在可以安全地保护你的 eGold (EGLD) 代币，并通过 Ledger Live 来管理它们。",
+        "description2": "Elrond eGold (EGLD) 代币是 Elrond 网络的原生代币，将用于交易、权益质押、智能合约、治理和验证者奖励等方方面面。",
+        "description3": "我们正在与 Elrond 团队积极合作以增加更多功能，例如权益质押、本地 ESDT (Elrond 标准数字代币) 支持等功能。",
+        "website": "互联网规模的区块链"
       }
     }
   },
@@ -3751,23 +3751,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "查看所有 NFT",
+      "seeFewerNfts": "查看较少的 NFT"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "所有 NFT"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "properties": "属性",
+      "description": "描述",
+      "tokenContract": "代币地址",
+      "tokenId": "代币 ID",
+      "quantity": "数量"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "查看于",
+      "viewInExplorer": "在浏览器中查看",
+      "txDetails": "交易详情"
     }
   }
 }
