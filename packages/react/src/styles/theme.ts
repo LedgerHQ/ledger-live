@@ -62,7 +62,7 @@ const fontWeights = {
   extraBold: "800",
 };
 
-export const radii = [0, 4, 8, 12];
+export const radii = [0, 4, 8, 12, 16, 20];
 export const shadows = ["0 4px 8px 0 rgba(0, 0, 0, 0.03)"];
 export const zIndexes = [-1, 0, 1, 9, 10, 90, 100, 900, 1000];
 
