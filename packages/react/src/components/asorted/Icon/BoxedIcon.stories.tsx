@@ -47,10 +47,10 @@ const Story = {
         "[Not a BoxedIcon prop, only for this Storybook example] - Controls whether a `Badge` prop is passed to the `BoxedIcon` component.",
     },
     Badge: {
-      control: { options: [], type: "select" },
+      control: false,
     },
     Icon: {
-      control: { options: [], type: "select" },
+      control: false,
     },
     iconColor: {
       type: "string",
