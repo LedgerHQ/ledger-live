@@ -23,12 +23,16 @@ const QrCodeButton = styled.button`
   }
 `;
 
-export default function QrCodeInput({
-  onQrCodeClick,
-  ...inputProps
-}: InputProps & { onQrCodeClick?: (e: React.FormEvent<HTMLButtonElement>) => void }): JSX.Element {
+function QrCodeInput(
+  {
+    onQrCodeClick,
+    ...inputProps
+  }: InputProps & { onQrCodeClick?: (e: React.FormEvent<HTMLButtonElement>) => void },
+  ref?: React.ForwardedRef<HTMLInputElement>,
+): JSX.Element {
   return (
     <Input
+      ref={ref}
       {...inputProps}
       renderRight={
         <FlexBox alignItems={"center"} justifyContent={"center"} pr={"8px"}>
@@ -40,3 +44,5 @@ export default function QrCodeInput({
     />
   );
 }
+
+export default React.forwardRef(QrCodeInput);

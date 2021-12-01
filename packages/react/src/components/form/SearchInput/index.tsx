@@ -3,11 +3,12 @@ import { useTheme } from "styled-components";
 import Input, { InputProps, InputRenderLeftContainer } from "../BaseInput";
 import SearchMedium from "@ledgerhq/icons-ui/react/SearchMedium";
 
-export default function SearchInput(props: InputProps): JSX.Element {
+function SearchInput(props: InputProps, ref?: React.ForwardedRef<HTMLInputElement>): JSX.Element {
   const theme = useTheme();
 
   return (
     <Input
+      ref={ref}
       {...props}
       renderLeft={
         <InputRenderLeftContainer>
@@ -19,3 +20,5 @@ export default function SearchInput(props: InputProps): JSX.Element {
     />
   );
 }
+
+export default React.forwardRef(SearchInput);

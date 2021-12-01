@@ -13,9 +13,13 @@ const Legend = styled(Text)`
   }
 `;
 
-export default function LegendInput({ legend, ...inputProps }: Props): JSX.Element {
+function LegendInput(
+  { legend, ...inputProps }: Props,
+  ref?: React.ForwardedRef<HTMLInputElement>,
+): JSX.Element {
   return (
     <Input
+      ref={ref}
       {...inputProps}
       renderRight={
         <InputRenderRightContainer>
@@ -27,3 +31,5 @@ export default function LegendInput({ legend, ...inputProps }: Props): JSX.Eleme
     />
   );
 }
+
+export default React.forwardRef(LegendInput);

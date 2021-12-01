@@ -153,7 +153,7 @@ const IDENTITY = (_: any): any => _;
 
 function Input<T = ValueType>(
   props: InputProps<T>,
-  ref: React.ForwardedRef<HTMLInputElement>,
+  ref?: React.ForwardedRef<HTMLInputElement>,
 ): JSX.Element {
   const {
     value,
