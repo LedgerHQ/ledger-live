@@ -8,7 +8,7 @@ export default {
   parameters: { actions: { argTypesRegex: false } },
   argTypes: {
     Icon: {
-      options: [],
+      control: false,
     },
     type: {
       options: ["main", "shade", "color", undefined],
