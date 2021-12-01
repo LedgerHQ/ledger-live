@@ -1,5 +1,5 @@
 import React from "react";
-import Link, { LinkProps } from "./index";
+import Link, { LinkProps, DEFAULT_ICON_POSITION, DEFAULT_SIZE, DEFAULT_TYPE } from "./index";
 import { PlusMedium } from "@ledgerhq/icons-ui/react";
 
 export default {
@@ -7,14 +7,19 @@ export default {
   component: Link,
   parameters: { actions: { argTypesRegex: false } },
   argTypes: {
+    Icon: {
+      control: false,
+    },
     type: {
-      options: ["main", "shade", "color"],
+      options: ["main", "shade", "color", undefined],
+      defaultValue: DEFAULT_TYPE,
       control: {
         type: "radio",
       },
     },
     size: {
-      options: ["small", "medium", "large"],
+      options: ["small", "medium", "large", undefined],
+      defaultValue: DEFAULT_SIZE,
       control: {
         type: "radio",
       },
@@ -23,12 +28,18 @@ export default {
       type: "text",
     },
     iconPosition: {
-      options: ["right", "left"],
-      control: {
-        type: "radio",
-      },
+      defaultValue: DEFAULT_ICON_POSITION,
+      options: ["left", "right", undefined],
     },
+    textProps: {},
     disabled: {
+      type: "boolean",
+    },
+    color: {
+      type: "string",
+      control: { control: "color" },
+    },
+    alwaysUnderline: {
       type: "boolean",
     },
   },

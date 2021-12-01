@@ -1,15 +1,33 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import Text from "../../asorted/Text";
+import { TextVariants } from "../../../styles/theme";
+import Flex from "../../layout/Flex";
 import ShieldSecurityMedium from "@ledgerhq/icons-ui/react/ShieldSecurityMedium";
 import CircledCrossMedium from "@ledgerhq/icons-ui/react/CircledCrossMedium";
 import CircledAlertMedium from "@ledgerhq/icons-ui/react/CircledAlertMedium";
+import { DefaultTheme } from "styled-components/native";
 
 type AlertType = "info" | "warning" | "error";
-
 export interface AlertProps {
+  /**
+   * Affects the colors of the background & text and what icon can be displayed
+   */
   type?: AlertType;
-  title: string;
+  /**
+   * Title of the Alert
+   */
+  title?: string;
+  /**
+   * Method for rendering additional content under the title `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string } }` is passed as props to easily style text elements
+   */
+  renderContent?: (props: {
+    color: string;
+    textProps: { variant?: TextVariants; fontWeight?: string };
+  }) => JSX.Element;
+  /**
+   * Whether or not to display an icon
+   */
   showIcon?: boolean;
 }
 
@@ -25,41 +43,57 @@ const icons = {
   error: <CircledCrossMedium size={20} />,
 };
 
-const StyledAlertContainer = styled.div<{ type?: AlertType }>`
-  ${(p) => {
-    switch (p.type) {
-      case "warning":
-        return css`
-          background: ${p.theme.colors.warning.c30};
-          color: ${p.theme.colors.warning.c100};
-        `;
-      case "error":
-        return css`
-          background: ${p.theme.colors.error.c30};
-          color: ${p.theme.colors.error.c100};
-        `;
-      case "info":
-      default:
-        return css`
-          background: ${p.theme.colors.primary.c20};
-          color: ${p.theme.colors.primary.c90};
-        `;
-    }
-  }}
+const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) => {
+  switch (type) {
+    case "warning":
+      return {
+        background: theme.colors.warning.c30,
+        color: theme.colors.warning.c100,
+      };
+    case "error":
+      return {
+        background: theme.colors.error.c30,
+        color: theme.colors.error.c100,
+      };
+    case "info":
+    default:
+      return {
+        background: theme.colors.primary.c20,
+        color: theme.colors.primary.c90,
+      };
+  }
+};
 
+const StyledAlertContainer = styled(Flex).attrs(() => ({
+  padding: 6,
+}))<{ background?: string; color?: string }>`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  padding: 16px;
-  display: flex;
   align-items: center;
 `;
 
-export default function Alert({ type = "info", title, showIcon = true }: AlertProps): JSX.Element {
+export default function Alert({
+  type = "info",
+  title,
+  showIcon = true,
+  renderContent,
+}: AlertProps): JSX.Element {
+  const theme = useTheme();
+  const { color, background } = getColors({ theme, type });
+  const textProps: { variant?: TextVariants; fontWeight?: string } = {
+    variant: "paragraph",
+    fontWeight: "medium",
+  };
   return (
-    <StyledAlertContainer type={type}>
+    <StyledAlertContainer color={color} backgroundColor={background}>
       {showIcon && !!icons[type] && <StyledIconContainer>{icons[type]}</StyledIconContainer>}
-      <Text variant={"body"} color={"inherit"}>
-        {title}
-      </Text>
+      <Flex flexDirection="column" alignItems="flex-start" rowGap="6px">
+        {title && (
+          <Text {...textProps} color="inherit">
+            {title}
+          </Text>
+        )}
+        {renderContent && renderContent({ color, textProps })}
+      </Flex>
     </StyledAlertContainer>
   );
 }
