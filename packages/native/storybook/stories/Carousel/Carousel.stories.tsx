@@ -110,23 +110,26 @@ const WithProps = (): JSX.Element => {
 };
 
 const Controlled = (): JSX.Element => {
-  const [activeIndex, setActiveIndex] = React.useState(2);
+  const [forceActiveIndex, setForceActiveIndex] = React.useState(2);
+  const [carouselIndex, setCarouselIndex] = React.useState(2);
+
   return (
     <>
-      <Carousel activeIndex={activeIndex}>
+      <Carousel activeIndex={forceActiveIndex} onChange={setCarouselIndex}>
         <Item label="primary" />
         <Item label="neutral" />
         <Item label="success" />
         <Item label="warning" />
         <Item label="error" />
       </Carousel>
+      <Text variant="h3">Active index: {carouselIndex}</Text>
       <Text variant="h3">Navigate programatically to index</Text>
       <Flex flexDirection="row">
-        <Button onPress={() => setActiveIndex(0)}>0</Button>
-        <Button onPress={() => setActiveIndex(1)}>1</Button>
-        <Button onPress={() => setActiveIndex(2)}>2</Button>
-        <Button onPress={() => setActiveIndex(3)}>3</Button>
-        <Button onPress={() => setActiveIndex(4)}>4</Button>
+        <Button onPress={() => setForceActiveIndex(0)}>0</Button>
+        <Button onPress={() => setForceActiveIndex(1)}>1</Button>
+        <Button onPress={() => setForceActiveIndex(2)}>2</Button>
+        <Button onPress={() => setForceActiveIndex(3)}>3</Button>
+        <Button onPress={() => setForceActiveIndex(4)}>4</Button>
       </Flex>
     </>
   );

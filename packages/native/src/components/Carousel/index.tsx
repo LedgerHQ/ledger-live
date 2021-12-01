@@ -19,6 +19,10 @@ export type Props = React.PropsWithChildren<{
    */
   activeIndex?: number;
   /**
+   * Called when the active carousel index is updated.
+   */
+  onChange?: (index: number) => void;
+  /**
    * This number in milliseconds will enable automatic scrolling when defined.
    *
    * The Carousel will scroll to the next item after this delay is elapsed,
@@ -51,6 +55,7 @@ function Carousel({
   containerProps,
   slideIndicatorContainerProps,
   scrollViewProps,
+  onChange,
   children,
 }: Props) {
   const [init, setInit] = useState(false);
@@ -108,6 +113,7 @@ function Carousel({
       Math.round((contentOffset.x / contentSize.width) * slidesLength)
     );
     setActiveIndexState(newIndex);
+    onChange && onChange(newIndex);
   };
 
   useEffect(() => {
@@ -118,13 +124,14 @@ function Carousel({
         setActiveIndexState((index) => {
           const newIndex = index ? (index + 1) % slidesLength : 0;
           scrollToIndex(newIndex);
+          onChange && onChange(newIndex);
           return newIndex;
         });
       }
     }, autoDelay);
 
     return () => clearInterval(interval);
-  }, [resetTimer, slidesLength, scrollToIndex, autoDelay]);
+  }, [resetTimer, slidesLength, scrollToIndex, onChange, autoDelay]);
 
   return (
     <Flex
