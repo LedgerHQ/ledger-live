@@ -1,5 +1,5 @@
 import React from "react";
-import styled, { css, useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 import Text from "../../asorted/Text";
 import { TextVariants } from "../../../styles/theme";
 import Flex from "../../layout/Flex";
@@ -64,19 +64,10 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
   }
 };
 
-const StyledAlertContainer = styled.div<{ type?: AlertType }>`
-  ${(p) => {
-    const { background, color } = getColors({ theme: p.theme, type: p.type });
-    return css`
-      background: ${background};
-      color: ${color};
-    `;
-  }}
-  overflow-wrap: break-all;
-
+const StyledAlertContainer = styled(Flex).attrs(() => ({
+  padding: 6,
+}))<{ background?: string; color?: string }>`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  padding: 16px;
-  display: flex;
   align-items: center;
 `;
 
@@ -87,13 +78,13 @@ export default function Alert({
   renderContent,
 }: AlertProps): JSX.Element {
   const theme = useTheme();
-  const { color } = getColors({ theme, type });
+  const { color, background } = getColors({ theme, type });
   const textProps: { variant?: TextVariants; fontWeight?: string } = {
     variant: "paragraph",
     fontWeight: "medium",
   };
   return (
-    <StyledAlertContainer type={type}>
+    <StyledAlertContainer color={color} backgroundColor={background}>
       {showIcon && !!icons[type] && <StyledIconContainer>{icons[type]}</StyledIconContainer>}
       <Flex flexDirection="column" alignItems="flex-start" rowGap="6px">
         {title && (
