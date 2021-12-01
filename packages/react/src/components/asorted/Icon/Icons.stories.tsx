@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Icon, { iconNames, Props as IconProps, IconBox } from "./Icon";
+import Icon, { iconNames, Props as IconProps } from "./Icon";
 import { useTheme } from "styled-components";
 import { Text, SearchInput, Flex, Grid } from "../../..";
 
@@ -133,17 +133,5 @@ const IconTemplate = (args: IconProps) => {
   return <Icon {...args} color={color} />;
 };
 
-const BoxedIconTemplate = (args: IconProps) => {
-  const theme = useTheme();
-  const color = args.color || theme.colors.neutral.c100;
-
-  return (
-    <IconBox>
-      <Icon {...args} color={color} />
-    </IconBox>
-  );
-};
-
 export const List = ListTemplate.bind({});
 export const SingleIcon = IconTemplate.bind({});
-export const BoxedIcon = BoxedIconTemplate.bind({});
