@@ -44,7 +44,7 @@ public class MainActivity extends ReactActivity {
                 this.importDataString = extras.getString("importDataString");
             }
         }
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
 
         /**
          * Addresses an inconvenient side-effect of using `password-visible`, that
