@@ -122,7 +122,8 @@ function Carousel({
     const interval = setInterval(() => {
       if (!disableTimer.current) {
         setActiveIndexState((index) => {
-          const newIndex = index ? (index + 1) % slidesLength : 0;
+          const newIndex =
+            typeof index !== "undefined" ? (index + 1) % slidesLength : 0;
           scrollToIndex(newIndex);
           onChange && onChange(newIndex);
           return newIndex;
