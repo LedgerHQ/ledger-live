@@ -1,4 +1,5 @@
 import React from "react";
+import { TextInput } from "react-native";
 import { GestureResponderEvent, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Input, { InputProps } from "../BaseInput";
@@ -20,14 +21,18 @@ const Icon = styled(QrCodeMedium).attrs((p) => ({
   color: p.theme.colors.neutral.c00,
 }))``;
 
-export default function QrCodeInput({
-  onQrCodeClick,
-  ...inputProps
-}: InputProps & {
-  onQrCodeClick?: (event: GestureResponderEvent) => void;
-}): JSX.Element {
+function QrCodeInput(
+  {
+    onQrCodeClick,
+    ...inputProps
+  }: InputProps & {
+    onQrCodeClick?: (event: GestureResponderEvent) => void;
+  },
+  ref?: React.ForwardedRef<TextInput>
+): JSX.Element {
   return (
     <Input
+      ref={ref}
       {...inputProps}
       renderRight={
         <FlexBox alignItems={"center"} justifyContent={"center"} pr={"8px"}>
@@ -39,3 +44,5 @@ export default function QrCodeInput({
     />
   );
 }
+
+export default React.forwardRef(QrCodeInput);

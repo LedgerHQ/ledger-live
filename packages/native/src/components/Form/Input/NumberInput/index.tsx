@@ -1,4 +1,5 @@
 import React from "react";
+import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Input, { InputProps } from "../BaseInput";
@@ -31,19 +32,23 @@ function deserialize(value: string) {
   }
 }
 
-export default function NumberInput({
-  onPercentClick,
-  max,
-  value,
-  disabled,
-  ...inputProps
-}: InputProps<number | undefined> & {
-  onPercentClick: (percent: number) => void;
-  min?: number;
-  max?: number;
-}): JSX.Element {
+function NumberInput(
+  {
+    onPercentClick,
+    max,
+    value,
+    disabled,
+    ...inputProps
+  }: InputProps<number | undefined> & {
+    onPercentClick: (percent: number) => void;
+    min?: number;
+    max?: number;
+  },
+  ref?: React.ForwardedRef<TextInput>
+): JSX.Element {
   return (
     <Input
+      ref={ref}
       serialize={serialize}
       deserialize={deserialize}
       {...inputProps}
@@ -82,3 +87,5 @@ export default function NumberInput({
     />
   );
 }
+
+export default React.forwardRef(NumberInput);

@@ -1,13 +1,15 @@
 import React from "react";
+import { TextInput } from "react-native";
 import Input, { InputProps, InputRenderRightContainer } from "../BaseInput";
 import Text from "../../../Text";
 
-export default function LegendInput({
-  legend,
-  ...inputProps
-}: InputProps & { legend: string }): JSX.Element {
+function LegendInput(
+  { legend, ...inputProps }: InputProps & { legend: string },
+  ref?: React.ForwardedRef<TextInput>
+): JSX.Element {
   return (
     <Input
+      ref={ref}
       {...inputProps}
       renderRight={
         <InputRenderRightContainer>
@@ -19,3 +21,5 @@ export default function LegendInput({
     />
   );
 }
+
+export default React.forwardRef(LegendInput);
