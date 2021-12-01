@@ -33,3 +33,4 @@ import "./Form/Slider/Slider.stories";
 import "./Chart/Chart.stories";
 import "./Form/SelectableList.stories";
 import "./Carousel/Carousel.stories";
+import "./ProgressBar/ProgressBar.stories";
