@@ -29,16 +29,20 @@ const Legend = styled(Text)`
   }
 `;
 
-export default function QuantityInput({
-  onMaxClick,
-  price,
-  ...inputProps
-}: InputProps & {
-  onMaxClick?: (e: React.FormEvent<HTMLButtonElement>) => void;
-  price?: string;
-}): JSX.Element {
+function QuantityInput(
+  {
+    onMaxClick,
+    price,
+    ...inputProps
+  }: InputProps & {
+    onMaxClick?: (e: React.FormEvent<HTMLButtonElement>) => void;
+    price?: string;
+  },
+  ref?: React.ForwardedRef<HTMLInputElement>,
+): JSX.Element {
   return (
     <Input
+      ref={ref}
       {...inputProps}
       type={"number"}
       renderRight={
@@ -58,3 +62,5 @@ export default function QuantityInput({
     />
   );
 }
+
+export default React.forwardRef(QuantityInput);

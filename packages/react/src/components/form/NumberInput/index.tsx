@@ -33,17 +33,21 @@ function deserialize(value: string) {
   }
 }
 
-export default function NumberInput({
-  value,
-  onPercentClick,
-  max,
-  disabled,
-  ...inputProps
-}: InputProps<number | undefined> & {
-  onPercentClick: (percent: number) => void;
-}): JSX.Element {
+function NumberInput(
+  {
+    value,
+    onPercentClick,
+    max,
+    disabled,
+    ...inputProps
+  }: InputProps<number | undefined> & {
+    onPercentClick: (percent: number) => void;
+  },
+  ref?: React.ForwardedRef<HTMLInputElement>,
+): JSX.Element {
   return (
     <Input
+      ref={ref}
       serialize={serialize}
       deserialize={deserialize}
       {...inputProps}
@@ -70,3 +74,5 @@ export default function NumberInput({
     />
   );
 }
+
+export default React.forwardRef(NumberInput);
