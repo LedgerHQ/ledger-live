@@ -1,5 +1,11 @@
 import React, { useMemo, useCallback } from "react";
-import { View, TextInput, TextInputProps, ColorValue } from "react-native";
+import {
+  TextInput,
+  TextInputProps,
+  ColorValue,
+  StyleProp,
+  ViewStyle,
+} from "react-native";
 import styled, { css } from "styled-components/native";
 import Text from "../../../Text";
 import FlexBox from "../../../Layout/Flex";
@@ -10,10 +16,25 @@ export type CommonProps = TextInputProps & {
 };
 
 export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
-  renderLeft?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
-  renderRight?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  /**
+   * The value of the input.
+   */
   value: T;
+  /**
+   * A function that will render some content on the left side of the input.
+   */
+  renderLeft?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  /**
+   * A function that will render some content on the right side of the input.
+   */
+  renderRight?: ((props: InputProps<T>) => React.ReactNode) | React.ReactNode;
+  /**
+   * Triggered when the input value is updated.
+   */
   onChange?: (value: T) => void;
+  /**
+   * Same as onChange but preserves the native event passed as the callback argument.
+   */
   onChangeEvent?: TextInputProps["onChange"];
   /**
    * A function can be provided to serialize a value of any type to a string.
@@ -31,6 +52,10 @@ export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
    * *A deserializer function should always be used in conjunction with a serializer function.*
    */
   deserialize?: (value: string) => T;
+  /**
+   * Additional style for the container element.
+   */
+  containerStyle?: StyleProp<ViewStyle>;
 };
 
 const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
@@ -121,6 +146,7 @@ function Input<T = string>(
     renderRight,
     serialize = IDENTITY,
     deserialize = IDENTITY,
+    containerStyle,
     ...textInputProps
   } = props;
 
@@ -137,7 +163,7 @@ function Input<T = string>(
   const [focus, setFocus] = React.useState(false);
 
   return (
-    <View style={{ display: "flex", width: "100%" }}>
+    <FlexBox width="100%" style={containerStyle ?? undefined}>
       <InputContainer disabled={disabled} focus={focus} error={error}>
         {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
         <BaseInput
@@ -157,7 +183,7 @@ function Input<T = string>(
       {!!error && !disabled && (
         <InputErrorContainer>{error}</InputErrorContainer>
       )}
-    </View>
+    </FlexBox>
   );
 }
 
