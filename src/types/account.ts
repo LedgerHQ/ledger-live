@@ -215,7 +215,7 @@ export type Account = {
   swapHistory: SwapOperation[];
   // Hash used to discard tx history on sync
   syncHash?: string;
-  // Array of NFTs computed by diffing NFTOperations
+  // Array of NFTs computed by diffing NFTOperations ordered from newest to oldest
   nfts?: NFT[];
 };
 export type SubAccount = TokenAccount | ChildAccount;

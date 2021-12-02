@@ -11485,45 +11485,6 @@ Array [
 ]
 `;
 
-exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
-Array [
-  Object {
-    "balance": "0",
-    "bitcoinResources": Object {},
-    "currencyId": "bitcoin_cash",
-    "derivationMode": "",
-    "freshAddress": "bitcoincash:qrt2zkjjchuxkmr3f70tc2yppl5pxwr36uuur9lzm9",
-    "freshAddressPath": "44'/145'/0'/0/0",
-    "freshAddresses": Array [
-      Object {
-        "address": "1LZru3UChDXkw4aYzn5dFdjvNDrKp3MtiA",
-        "derivationPath": "44'/145'/0'/0/0",
-      },
-    ],
-    "id": "js:2:bitcoin_cash:xpub6D7pqJa4V3SFSigcsRaFL2mpfG7469osrMkk4ieR2uk8y1v3nuQUD8W8v36PLWQtVRSggSQM7jLpGNKH7sqCaoPSJEp9wZCVkRnMWoiUUXa:",
-    "index": 0,
-    "name": "Bitcoin Cash 1",
-    "nfts": undefined,
-    "operationsCount": 0,
-    "pendingOperations": Array [],
-    "seedIdentifier": "04884ed3fe628a8487f782f97f38e7a9f014e624f1ea679951cf3a67445ea33fb334f4cc19e6c421b3ef9943d526cd4fbfebacebe8a62cc45db79a33d3ab04bd47",
-    "spendableBalance": "0",
-    "starred": false,
-    "swapHistory": Array [],
-    "syncHash": undefined,
-    "unitMagnitude": 8,
-    "used": false,
-    "xpub": "xpub6D7pqJa4V3SFSigcsRaFL2mpfG7469osrMkk4ieR2uk8y1v3nuQUD8W8v36PLWQtVRSggSQM7jLpGNKH7sqCaoPSJEp9wZCVkRnMWoiUUXa",
-  },
-]
-`;
-
-exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 2`] = `
-Array [
-  Array [],
-]
-`;
-
 exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
 Array [
   Object {

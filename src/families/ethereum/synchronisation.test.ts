@@ -6,6 +6,7 @@ import type { Account, SubAccount } from "../../types";
 import { getAccountBridge } from "../../bridge";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { ethereum1 } from "./test-dataset";
+
 describe("blacklistedTokenIds functionality", () => {
   const account = fromAccountRaw(ethereum1);
   const localCache = {};
