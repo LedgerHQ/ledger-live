@@ -38,6 +38,7 @@ export type Transaction = TransactionCommon & {
   networkInfo: NetworkInfo | null | undefined;
   allowZeroAmount?: boolean;
   collection?: string;
+  collectionName?: string;
   tokenIds?: string[];
   quantities?: BigNumber[];
 };
@@ -54,6 +55,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   allowZeroAmount?: boolean;
   tokenIds?: string[];
   collection?: string;
+  collectionName?: string;
   quantities?: string[];
 };
 export type TypedMessage = {

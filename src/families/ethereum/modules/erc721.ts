@@ -9,10 +9,34 @@ import {
 import { validateRecipient } from "../transaction";
 import type { ModeModule, Transaction } from "../types";
 import type { Account } from "../../../types";
+import { apiForCurrency } from "../../../api/Ethereum";
 
 const notOwnedNft = createCustomErrorClass("NotOwnedNft");
 
 export type Modes = "erc721.transfer";
+
+export async function prepareTransaction(
+  account: Account,
+  transaction: Transaction
+): Promise<Transaction> {
+  let t = transaction;
+  const { collection, collectionName, tokenIds } = transaction;
+  if (collection && tokenIds && typeof collectionName === "undefined") {
+    const api = apiForCurrency(account.currency);
+    const [{ status, result }] = await api.getNFTMetadata([
+      {
+        contract: collection,
+        tokenId: tokenIds[0],
+      },
+    ]);
+    let collectionName = ""; // default value fallback if issue
+    if (status === 200) {
+      collectionName = result?.tokenName || "";
+    }
+    t = { ...t, collectionName };
+  }
+  return Promise.resolve(t);
+}
 
 const erc721Transfer: ModeModule = {
   /**
@@ -52,6 +76,8 @@ const erc721Transfer: ModeModule = {
     }
   },
 
+  prepareTransaction,
+
   /**
    * This will only be used by LLM & LLD, not the HW.
    */
@@ -59,18 +85,30 @@ const erc721Transfer: ModeModule = {
     fields.push({
       type: "text",
       label: "Type",
-      value: `ERC721.transfer`,
+      value: `NFT Transfer`,
     });
 
     fields.push({
       type: "text",
-      label: "Collection",
-      value: input.transaction.collection ?? "",
+      label: "To",
+      value: input.transaction.recipient ?? "",
     });
 
     fields.push({
       type: "text",
-      label: "Token ID",
+      label: "Collection Name",
+      value: input.transaction.collectionName || "",
+    });
+
+    fields.push({
+      type: "address",
+      label: "NFT Address",
+      address: input.transaction.collection ?? "",
+    });
+
+    fields.push({
+      type: "text",
+      label: "NFT ID",
       value: input.transaction.tokenIds?.[0] ?? "",
     });
   },

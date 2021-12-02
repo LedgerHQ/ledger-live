@@ -9,7 +9,7 @@
 | Dash | DASH | https://explorers.api.live.ledger.com/blockchain/v3/dash | N/A |
 | Decred | DCR | https://explorers.api.live.ledger.com/blockchain/v3/dcr | N/A |
 | DigiByte | DGB | https://explorers.api.live.ledger.com/blockchain/v3/dgb | N/A |
-| Dogecoin | DOGE | https://explorers.api.live.ledger.com/blockchain/v2/doge | https://explorers.api.live.ledger.com/blockchain/v3/doge |
+| Dogecoin | DOGE | https://explorers.api.live.ledger.com/blockchain/v3/doge | N/A |
 | Ethereum | ETH | https://explorers.api.live.ledger.com/blockchain/v3/eth | N/A |
 | Ethereum Classic | ETC | https://explorers.api.live.ledger.com/blockchain/v3/etc | N/A |
 | Komodo | KMD | https://explorers.api.live.ledger.com/blockchain/v3/kmd | N/A |

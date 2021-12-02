@@ -9,6 +9,7 @@ import {
 import { validateRecipient } from "../transaction";
 import type { ModeModule, Transaction } from "../types";
 import type { Account } from "../../../types";
+import { prepareTransaction } from "./erc721";
 
 const notOwnedNft = createCustomErrorClass("NotOwnedNft");
 const notEnoughNftOwned = createCustomErrorClass("NotEnoughNftOwned");
@@ -75,25 +76,37 @@ const erc1155Transfer: ModeModule = {
     fields.push({
       type: "text",
       label: "Type",
-      value: `ERC721.transfer`,
+      value: `NFT Transfer`,
     });
 
     fields.push({
       type: "text",
-      label: "Collection",
-      value: input.transaction.collection ?? "",
+      label: "To",
+      value: input.transaction.recipient ?? "",
     });
 
     fields.push({
       type: "text",
-      label: "Token IDs",
-      value: input.transaction.tokenIds?.join(",") ?? "",
+      label: "Collection Name",
+      value: input.transaction.collectionName || "",
     });
 
     fields.push({
       type: "text",
-      label: "Quantities",
-      value: input.transaction.quantities?.join(",") ?? "",
+      label: "Quantity",
+      value: input.transaction.quantities?.[0]?.toFixed() ?? "",
+    });
+
+    fields.push({
+      type: "address",
+      label: "NFT Address",
+      address: input.transaction.collection ?? "",
+    });
+
+    fields.push({
+      type: "text",
+      label: "NFT ID",
+      value: input.transaction.tokenIds?.[0] ?? "",
     });
   },
 
@@ -107,6 +120,8 @@ const erc1155Transfer: ModeModule = {
       approving: true, // workaround to track the status ENABLING
     };
   },
+
+  prepareTransaction,
 };
 
 function serializeTransactionData(
