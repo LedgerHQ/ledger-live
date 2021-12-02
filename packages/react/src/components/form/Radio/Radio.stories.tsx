@@ -52,8 +52,34 @@ const TemplateElement = (args: RadioProps) => {
   );
 };
 
+const TemplateOutlinedElement = (args: RadioProps) => {
+  const [currentArgs, updateArgs] = useArgs();
+  const handleChange: RadioProps["onChange"] = (value) => {
+    // toggle the checked value on click to simulate onChange
+    updateArgs({ currentValue: value });
+    // trigger the storybook action
+    currentArgs.onChange(value);
+  };
+
+  return (
+    <Radio
+      {...args}
+      onChange={handleChange}
+      containerProps={{ flexDirection: "column", rowGap: "20px" }}
+    >
+      <Radio.Element outlined label="Black squad" value="black" variant="main" />
+      <Radio.Element outlined label="Yellow squad" value="yellow" variant="success" />
+      <Radio.Element outlined label="Core squad" value="core" variant="error" />
+    </Radio>
+  );
+};
+
 export const RadioGroup: StoryTemplate<RadioProps> = TemplateElement.bind({
   currentValue: "purple",
+});
+
+export const RadioGroupOutlined: StoryTemplate<RadioProps> = TemplateOutlinedElement.bind({
+  currentValue: "black",
 });
 
 const TemplateListElement = (args: RadioProps) => {

@@ -1,5 +1,5 @@
 import React, { InputHTMLAttributes, useContext, useMemo } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { rgba } from "../../../styles/helpers";
 import Text from "../../asorted/Text";
@@ -56,9 +56,7 @@ const Input = styled.input`
     :hover {
       --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c90};
     }
-    :active {
-      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c100};
-    }
+    :active,
     :checked,
     :focus {
       --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c100};
@@ -97,10 +95,67 @@ const Input = styled.input`
   }
 `;
 
-const RadioElement = styled.label.attrs({ tabIndex: -1 })`
+const outlinedCSS = css`
+  padding: 20px;
+  border: 1px solid ${(p) => p.theme.colors.neutral.c50};
+  border-radius: ${(p) => p.theme.radii[2]}px;
+  &[data-variant="default"] {
+    :hover {
+      border-color: ${(p) => p.theme.colors.primary.c90};
+    }
+    &[data-checked] :active {
+      border-color: ${(p) => p.theme.colors.primary.c100};
+    }
+    :focus {
+      border-color: ${(p) => p.theme.colors.primary.c80};
+    }
+  }
+
+  &[data-variant="main"] {
+    :hover {
+      border-color: ${(p) => p.theme.colors.neutral.c90};
+    }
+    &[data-checked],
+    :active :focus {
+      border-color: ${(p) => p.theme.colors.neutral.c100};
+    }
+  }
+
+  &[data-variant="success"] {
+    &[data-checked]:not([disabled]) {
+      border-color: ${(p) => p.theme.colors.success.c100};
+    }
+    :hover {
+      border-color: ${(p) => p.theme.colors.success.c100};
+    }
+  }
+
+  &[data-variant="error"] {
+    &[data-checked]:not([disabled]) {
+      border-color: ${(p) => p.theme.colors.error.c100};
+    }
+    :hover {
+      border-color: ${(p) => p.theme.colors.error.c100};
+    }
+  }
+
+  &[data-variant]:disabled {
+    border-color: ${(p) => p.theme.colors.neutral.c40};
+    cursor: unset;
+  }
+`;
+
+const RadioElement = styled.label.attrs({ tabIndex: -1 })<{
+  outlined?: boolean;
+}>`
   display: inline-flex;
   column-gap: 0.75rem;
   align-items: center;
+  cursor: pointer;
+  &[data-variant]:disabled {
+    cursor: unset;
+  }
+  ${(p) => p.outlined && outlinedCSS}
 `;
 
 type InputAttributes = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "name">;
@@ -108,12 +163,14 @@ type InputAttributes = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onC
 export type RadioElementProps = InputAttributes & {
   variant?: "default" | "main" | "success" | "error";
   label: string;
+  outlined?: boolean;
 };
 
 const Element = ({
   label,
   value,
   disabled,
+  outlined,
   variant = "default",
   ...props
 }: RadioElementProps): JSX.Element => {
@@ -128,7 +185,11 @@ const Element = ({
   };
 
   return (
-    <RadioElement>
+    <RadioElement
+      data-variant={variant}
+      {...(isChecked ? { "data-checked": true } : {})}
+      outlined={outlined}
+    >
       <Input
         type="radio"
         data-variant={variant}
