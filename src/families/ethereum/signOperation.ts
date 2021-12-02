@@ -57,7 +57,6 @@ export const signOperation = ({
                 nonce
               );
               const to = eip55.encode("0x" + tx.to.toString("hex"));
-              const chainId = tx.getChainId();
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
