@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "Taproot mainnetは、まだアクティベートされていません。"
     },
+    "NotEnoughNftOwned": {
+      "title": "You have exceeded the number of available tokens"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
@@ -2228,7 +2231,10 @@
       "summary": "概要",
       "selectDevice": "デバイスを選択",
       "connectDevice": "デバイスを接続",
-      "stepRange": "ステップ{{currentStep}}/{{totalSteps}}"
+      "stepRange": "ステップ{{currentStep}}/{{totalSteps}}",
+      "quantity": "Quantity",
+      "selectCollection": "Collection",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "QRコードをスキャン",
@@ -2240,7 +2246,8 @@
       "available": "合計利用可能額",
       "useMax": "全額を選択",
       "loadingNetwork": "ネットワーク手数料を読み込み中…",
-      "noRateProvider": "利用不可"
+      "noRateProvider": "利用不可",
+      "quantityAvailable": "Quantity available"
     },
     "summary": {
       "subaccountsWarning": "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
@@ -2264,7 +2271,8 @@
         "type": "Memoの種類",
         "value": "Memoの値"
       },
-      "validateMemo": "Memoの確認"
+      "validateMemo": "Memoの確認",
+      "quantity": "Quantity"
     },
     "validation": {
       "message": "デバイス上で、トランザクションを確認して安全に署名します。",

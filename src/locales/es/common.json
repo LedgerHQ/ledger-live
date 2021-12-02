@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "La red principal de Tproot no está activada aún"
     },
+    "NotEnoughNftOwned": {
+      "title": "You have exceeded the number of available tokens"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
@@ -2228,7 +2231,10 @@
       "summary": "Resumen",
       "selectDevice": "Seleccionar dispositivo",
       "connectDevice": "Conectar dispositivo",
-      "stepRange": "Paso {{currentStep}} de {{totalSteps}}"
+      "stepRange": "Paso {{currentStep}} de {{totalSteps}}",
+      "quantity": "Quantity",
+      "selectCollection": "Collection",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "Escanear código QR",
@@ -2240,7 +2246,8 @@
       "available": "Total disponible",
       "useMax": "Utilizar máx",
       "loadingNetwork": "Cargando tarifas de red...",
-      "noRateProvider": "No disponible"
+      "noRateProvider": "No disponible",
+      "quantityAvailable": "Quantity available"
     },
     "summary": {
       "subaccountsWarning": "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
@@ -2264,7 +2271,8 @@
         "type": "Tipo de Memo",
         "value": "Valor de Memo"
       },
-      "validateMemo": "Validar Memo"
+      "validateMemo": "Validar Memo",
+      "quantity": "Quantity"
     },
     "validation": {
       "message": "En el dispositivo, confirma la transacción para firmarla de forma segura.",

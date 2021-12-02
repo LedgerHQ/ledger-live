@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "Taproot(탭루트) 메인넷이 아직 활성화되지 않았습니다"
     },
+    "NotEnoughNftOwned": {
+      "title": "You have exceeded the number of available tokens"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
@@ -2228,7 +2231,10 @@
       "summary": "요약",
       "selectDevice": "장치 선택",
       "connectDevice": "장치 연결",
-      "stepRange": "{{totalSteps}} 중 {{currentStep}} 단계"
+      "stepRange": "{{totalSteps}} 중 {{currentStep}} 단계",
+      "quantity": "Quantity",
+      "selectCollection": "Collection",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "QR 코드 스캔",
@@ -2240,7 +2246,8 @@
       "available": "총 이용 가능",
       "useMax": "최대치 사용",
       "loadingNetwork": "네트워크 수수료 로딩 중...",
-      "noRateProvider": "이용할 수 없습니다"
+      "noRateProvider": "이용할 수 없습니다",
+      "quantityAvailable": "Quantity available"
     },
     "summary": {
       "subaccountsWarning": "이 계정의 토큰을 보내려면 계정에 {{ currency}}(을)를 다시 채워야 합니다.",
@@ -2264,7 +2271,8 @@
         "type": "메모 유형",
         "value": "메모 가치"
       },
-      "validateMemo": "메모 확인"
+      "validateMemo": "메모 확인",
+      "quantity": "Quantity"
     },
     "validation": {
       "message": "장치에서 트랜잭션을 확인하고 안전하게 서명하세요.",

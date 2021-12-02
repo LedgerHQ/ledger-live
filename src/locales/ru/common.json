@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "Мейннет Taproot ещё не активирован"
     },
+    "NotEnoughNftOwned": {
+      "title": "Вы превысили кол-во доступных токенов"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
@@ -2228,7 +2231,10 @@
       "summary": "Сводка",
       "selectDevice": "Выбор устройства",
       "connectDevice": "Подключение устройства",
-      "stepRange": "Шаг {{currentStep}}/{{totalSteps}}"
+      "stepRange": "Шаг {{currentStep}}/{{totalSteps}}",
+      "quantity": "Кол-во",
+      "selectCollection": "Коллекция",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "Сканировать QR-код",
@@ -2240,7 +2246,8 @@
       "available": "Доступная сумма",
       "useMax": "Вся сумма",
       "loadingNetwork": "Загружаем комиссию сети...",
-      "noRateProvider": "Недоступно"
+      "noRateProvider": "Недоступно",
+      "quantityAvailable": "Доступное количество"
     },
     "summary": {
       "subaccountsWarning": "Чтобы отправлять токены с этого счёта, вам нужно пополнить его за {{ currency }}",
@@ -2264,7 +2271,8 @@
         "type": "Тип примечания",
         "value": "Содержание примечания"
       },
-      "validateMemo": "Подтвердить примечание"
+      "validateMemo": "Подтвердить примечание",
+      "quantity": "Кол-во"
     },
     "validation": {
       "message": "Чтобы безопасно подписать транзакцию, подтвердите её на устройстве.",

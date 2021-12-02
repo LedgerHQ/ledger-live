@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "Taproot n'est pas encore activé sur le mainnet"
     },
+    "NotEnoughNftOwned": {
+      "title": "Nombre de tokens disponibles insuffisant"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l'Assistance Ledger."
@@ -2228,7 +2231,10 @@
       "summary": "Récapitulatif",
       "selectDevice": "Sélectionner l'appareil",
       "connectDevice": "Connecter l'appareil",
-      "stepRange": "Étape {{currentStep}} sur {{totalSteps}}"
+      "stepRange": "Étape {{currentStep}} sur {{totalSteps}}",
+      "quantity": "Quantité",
+      "selectCollection": "Collection",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "Scanner le code QR",
@@ -2240,7 +2246,8 @@
       "available": "Total disponible",
       "useMax": "Choisir le maximum",
       "loadingNetwork": "Chargement des frais de réseau...",
-      "noRateProvider": "Indisponible"
+      "noRateProvider": "Indisponible",
+      "quantityAvailable": "Quantité disponible"
     },
     "summary": {
       "subaccountsWarning": "Vous devez recharger ce compte avec des {{ currency }} afin d'envoyer les tokens de ce compte.",
@@ -2264,7 +2271,8 @@
         "type": "Type de mémo",
         "value": "Valeur du mémo"
       },
-      "validateMemo": "Valider le mémo"
+      "validateMemo": "Valider le mémo",
+      "quantity": "Quantité"
     },
     "validation": {
       "message": "Confirmez la transaction sur votre appareil pour la signer en toute sécurité.",

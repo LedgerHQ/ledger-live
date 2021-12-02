@@ -84,7 +84,7 @@
   },
   "errors": {
     "countervaluesUnavailable": {
-      "title": "We're not able to provide a countervalue for this asset at the moment"
+      "title": "Wir können derzeit keinen Gegenwert für diesen Vermögenswert angeben"
     },
     "AccountAwaitingSendPendingOperations": {
       "title": "Es gibt eine ausstehende Aktion für dieses Konto",
@@ -95,8 +95,8 @@
       "description": "Bitte geben Sie einen Kontonamen ein."
     },
     "AccountNeedResync": {
-      "title": "Please try again",
-      "description": "Account is outdated. A synchronisation is needed"
+      "title": "Bitte versuchen Sie es erneut",
+      "description": "Konto ist veraltet. Eine Synchronisierung ist erforderlich"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "Das Empfängerkonto hat sich nicht für den gewählten ASA entschieden."
@@ -120,11 +120,11 @@
       "title": "Entschuldigung, kein Gerät gefunden",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "Bitte stellen Sie sicher, dass Ihr {{productName}} freigeschaltet und Bluetooth aktiviert ist.",
+          "nanoX": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
         }
       }
     },
@@ -132,11 +132,11 @@
       "title": "Entschuldigung, Manager-Verbindung fehlgeschlagen",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "Bitte stellen Sie sicher, dass Ihr {{productName}} freigeschaltet und Bluetooth aktiviert ist.",
+          "nanoX": "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
         }
       }
     },
@@ -595,7 +595,10 @@
       "title": "Sie müssen mindestens einen Validator auswählen"
     },
     "TaprootNotActivated": {
-      "title": "Taproot mainnet is not activated yet"
+      "title": "Taproot Mainnet ist noch nicht aktiviert"
+    },
+    "NotEnoughNftOwned": {
+      "title": "You have exceeded the number of available tokens"
     },
     "generic": {
       "title": "{{message}}",
@@ -698,8 +701,8 @@
         "description": "Übertragen Sie Ihre verdienten ATOM-Prämien heute."
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "Familien-Paket",
+        "description": "Führen Sie Ihre Familie in Krypto ein mit 3 Nano S"
       },
       "buyCrypto": {
         "title": "Krypto kaufen",
@@ -1241,11 +1244,11 @@
         "supportLink": "Kundendienst kontaktieren"
       },
       "seed": {
-        "title": "Please check the box contents",
-        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
-        "warning": "Only use a recovery phrase that your device displayed when it was set up",
-        "continueCTA": "Continue",
-        "contactSupportCTA": "Contact support"
+        "title": "Bitte überprüfen Sie den Inhalt der Box",
+        "desc": "Wenn Ihr {{deviceName}} mit einem PIN-Code oder Wiederherstellungsphrase geliefert wurde, ist es nicht sicher zu verwenden und Sie sollten sich an den Ledger Support wenden.",
+        "warning": "Verwenden Sie nur eine Wiederherstellungsphrase, die Ihr Gerät angezeigt hat, wenn es eingerichtet wurde",
+        "continueCTA": "Weiter",
+        "contactSupportCTA": "Support kontaktieren"
       }
     }
   },
@@ -1316,9 +1319,9 @@
   "operations": {
     "types": {
       "IN": "Empfangen",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "NFT erhalten",
       "OUT": "Gesendet",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "NFT gesendet",
       "CREATE": "Erstellt",
       "REVEAL": "Aufgedeckt",
       "DELEGATE": "Delegiert",
@@ -1402,10 +1405,10 @@
       "validatorsCount": "Validatoren ({{number}})"
     },
     "multipleAddresses": "Warum mehrere Adressen?",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
+    "tokenName": "Token-Name",
+    "collectionContract": "Token-Vertrag",
     "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "quantity": "Menge"
   },
   "operationList": {
     "noOperations": "Keine Aktionen",
@@ -1549,7 +1552,7 @@
       "sectionLabel": "Aufgehobene Delegierung(en)"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "NFT erhalten"
     }
   },
   "accounts": {
@@ -2228,7 +2231,10 @@
       "summary": "Zusammenfassung",
       "selectDevice": "Gerät wählen",
       "connectDevice": "Gerät verbinden",
-      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}"
+      "stepRange": "Schritt {{aktuellerSchritt}} von {{Gesamtschritte}}",
+      "quantity": "Quantity",
+      "selectCollection": "Collection",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "QR-Code scannen",
@@ -2240,7 +2246,8 @@
       "available": "Verfügbare Gesamtsumme",
       "useMax": "Max. verwenden",
       "loadingNetwork": "Netzwerkgebühren werden geladen...",
-      "noRateProvider": "Nicht verfügbar"
+      "noRateProvider": "Nicht verfügbar",
+      "quantityAvailable": "Quantity available"
     },
     "summary": {
       "subaccountsWarning": "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
@@ -2264,7 +2271,8 @@
         "type": "Memo-Typ",
         "value": "Memo-Wert"
       },
-      "validateMemo": "Memo validieren"
+      "validateMemo": "Memo validieren",
+      "quantity": "Quantity"
     },
     "validation": {
       "message": "Bestätigen Sie die Transaktion auf Ihrem Gerät, um sie sicher zu signieren.",
@@ -2491,7 +2499,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the app and keep your Nano X nearby",
+    "stayInTheAppPlz": "Bleiben Sie in der App und halten Sie Ihren Nano X in der Nähe",
     "allowAppPermission": "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken": "zum Verwalten Ihrer {{token}}-Tokens",
     "allowManagerPermission": "Erlauben Sie {{Wortlaut}} auf Ihrem Gerät",
@@ -2785,10 +2793,10 @@
       "flash": "Flashen Ihres Geräts",
       "firmware": "Firmware aktualisiert"
     },
-    "newVersion": "Update Firmware to {{version}} is available",
+    "newVersion": "Update-Firmware zu {{version}} ist verfügbar",
     "drawerUpdate": {
-      "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "title": "Firmware-Update",
+      "description": "Aktualisieren Sie Ihre Ledger Nano Firmware, indem Sie sie mit der Ledger Live Anwendung auf dem Desktop verbinden"
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3094,14 +3102,14 @@
   "elrond": {
     "account": {
       "subHeader": {
-        "cardTitle": "Powered by Elrond",
-        "drawerTitle": "Elrond integration",
-        "moreInfo": "More info",
-        "title": "Elrond eGold (EGLD) token is now available on Ledger Live",
-        "description": "You can now safely secure your eGold (EGLD) tokens and manage them through Ledger Live.",
-        "description2": "The Elrond eGold (EGLD) Token is native to the Elrond Network and will be used for everything from transactions, staking, smart contracts, governance and validator rewards.",
-        "description3": "We are actively working with the Elrond team to add more functionality, such as staking, native ESDT (Elrond Standard Digital Token) support, and more.",
-        "website": "The Internet Scale Blockchain"
+        "cardTitle": "Betrieben von Elrond",
+        "drawerTitle": "Elrond Integration",
+        "moreInfo": "Mehr Infos",
+        "title": "Elrond eGold (EGLD) Token ist jetzt auf Ledger Live verfügbar",
+        "description": "Sie können jetzt Ihre eGold (EGLD) Token sicher sichern und über Ledger Live verwalten.",
+        "description2": "Der Elrond eGold (EGLD) Token ist nativ im Elrond Netzwerk und wird für alle Transaktionen verwendet staken, intelligente Verträge, Governance und Validator-Belohnungen.",
+        "description3": "Wir arbeiten aktiv mit dem Elrond Team zusammen, um mehr Funktionalitäten wie Staking, native ESDT (Elrond Standard Digital Token) Unterstützung und mehr hinzuzufügen.",
+        "website": "Die Internet Scale Blockchain"
       }
     }
   },
@@ -3598,9 +3606,9 @@
     "title": "Nutzungsbedingungen",
     "read": "Lesen Sie die Nutzungsbedingungen",
     "switchLabel": "Ich habe die <1>Nutzungsbedingungen</1> gelesen und bin damit einverstanden",
-    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "switchLabelFull": "Ich habe die Nutzungsbedingungen und Datenschutzrichtlinien gelesen und akzeptiere sie",
     "cta": "Zur Ledger-App",
-    "service": "Terms of service"
+    "service": "Allgemeine Geschäftsbedingungen"
   },
   "exchange": {
     "buy": {
@@ -3658,7 +3666,7 @@
     "connected": "Verbunden",
     "disconnected": "Getrennt",
     "warningdisconnected": "Es besteht ein Verbindungsproblem zwischen dApp, WalletConnect und Ledger Live. Warten Sie ein paar Augenblicke oder starten Sie die Verbindung neu",
-    "info": "You can now access the {{name}} dApp on your web browser.",
+    "info": "Sie können nun auf die {{name}} dApp in Ihrem Webbrowser zugreifen.",
     "warning": "Empfangsadressen von dApp zu teilen ist nicht sicher. Benutzen immer Ledger Live wenn Sie Ihre Adresse teilen, um Geld zu erhalten.",
     "isconnecting": "wird verbunden, bitte warten ...",
     "disconnect": "Trennen",
@@ -3689,8 +3697,8 @@
     "announcement": "Ankündigung",
     "liveStatus": "Ledger Live Status",
     "groupedToast": {
-      "text": "You have {{count}} unread notifications",
-      "cta": "See details"
+      "text": "Sie haben {{count}} ungelesene Benachrichtigungen",
+      "cta": "Siehe Details"
     },
     "news": {
       "title": "Neuigkeiten",
@@ -3751,23 +3759,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "Alle NFT anzeigen",
+      "seeFewerNfts": "Weniger NFT anzeigen"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "Alle NFT"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
+      "properties": "Eigenschaften",
+      "description": "Beschreibung",
+      "tokenContract": "Token-Adresse",
       "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "quantity": "Menge"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "Ansehen auf",
+      "viewInExplorer": "Im Explorer ansehen",
+      "txDetails": "Transaktionsdetails"
     }
   }
 }

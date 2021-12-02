@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "Taproot mainnet'i henüz etkinleşmedi"
     },
+    "NotEnoughNftOwned": {
+      "title": "Mevcut token miktarını aştınız"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
@@ -1185,7 +1188,7 @@
       "title": "Cihazınız hazır!",
       "readOnlyTitle": "Her şey hazır!",
       "desc": "Cihazınıza uygulamalar yükleyin ve portföyünüzü yönetin",
-      "cta": "Ledger Live'ı Açın"
+      "cta": "Ledger Live'ı Aç"
     },
     "quizz": {
       "label": "Sınav",
@@ -2228,7 +2231,10 @@
       "summary": "Özet",
       "selectDevice": "Cihaz seçin",
       "connectDevice": "Cihazı bağlayın",
-      "stepRange": "Adım {{totalSteps}} / {{currentStep}}"
+      "stepRange": "Adım {{totalSteps}} / {{currentStep}}",
+      "quantity": "Miktar",
+      "selectCollection": "Koleksiyon",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "QR kodunu tarayın",
@@ -2240,7 +2246,8 @@
       "available": "Toplam mevcut",
       "useMax": "Maks. Kullan",
       "loadingNetwork": "Ağ ücretleri yükleniyor...",
-      "noRateProvider": "Mevcut değil"
+      "noRateProvider": "Mevcut değil",
+      "quantityAvailable": "Mevcut miktar"
     },
     "summary": {
       "subaccountsWarning": "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
@@ -2264,7 +2271,8 @@
         "type": "Memo türü",
         "value": "Memo değeri"
       },
-      "validateMemo": "Memo'yu onayla"
+      "validateMemo": "Memo'yu onayla",
+      "quantity": "Miktar"
     },
     "validation": {
       "message": "İşlemi güvenle imzalamak için cihazınızda onaylayın.",

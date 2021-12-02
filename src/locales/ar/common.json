@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "لم يتم تفعيل شبكة Taproot الأساسية بعد"
     },
+    "NotEnoughNftOwned": {
+      "title": "You have exceeded the number of available tokens"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "حدث خطأ ما. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
@@ -2228,7 +2231,10 @@
       "summary": "ملخص",
       "selectDevice": "اختار جهاز",
       "connectDevice": "توصيل الجهاز",
-      "stepRange": "خطوة {{currentStep}} من {{totalSteps}}"
+      "stepRange": "خطوة {{currentStep}} من {{totalSteps}}",
+      "quantity": "Quantity",
+      "selectCollection": "Collection",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "مسح ضوئي لرمز QR",
@@ -2240,7 +2246,8 @@
       "available": "إجمالي المتاح",
       "useMax": "استخدم الحد الأقصى",
       "loadingNetwork": "جاري تحميل رسوم الشبكة...",
-      "noRateProvider": "غير متاح"
+      "noRateProvider": "غير متاح",
+      "quantityAvailable": "Quantity available"
     },
     "summary": {
       "subaccountsWarning": "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن لهذا الحساب",
@@ -2264,7 +2271,8 @@
         "type": "نوع الملاحظة",
         "value": "قيمة الملاحظة"
       },
-      "validateMemo": "تحقق من الملاحظة"
+      "validateMemo": "تحقق من الملاحظة",
+      "quantity": "Quantity"
     },
     "validation": {
       "message": "قم بتأكيد المعاملة على جهازك للتوقيع عليها بشكل آمن.",
