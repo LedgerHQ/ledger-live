@@ -64,10 +64,6 @@ const initialExplorerConfig: FullConfig = {
     id: "doge",
     stable: {
       base: "EXPLORER",
-      version: "v2",
-    },
-    experimental: {
-      base: "EXPLORER",
       version: "v3",
     },
   },
