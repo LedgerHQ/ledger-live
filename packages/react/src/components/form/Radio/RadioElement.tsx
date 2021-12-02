@@ -52,6 +52,22 @@ const Input = styled.input`
     }
   }
 
+  &[data-variant="main"] {
+    :hover {
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c90};
+    }
+    :active {
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c100};
+    }
+    :checked,
+    :focus {
+      --ledger-ui-checkbox-color: ${(p) => p.theme.colors.neutral.c100};
+    }
+    :focus {
+      box-shadow: 0px 0px 0px 4px ${(p) => rgba(p.theme.colors.neutral.c60, 0.48)};
+    }
+  }
+
   &[data-variant="success"] {
     :hover,
     :checked:not([disabled]),
@@ -90,7 +106,7 @@ const RadioElement = styled.label.attrs({ tabIndex: -1 })`
 type InputAttributes = Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "name">;
 
 export type RadioElementProps = InputAttributes & {
-  variant?: "default" | "success" | "error";
+  variant?: "default" | "main" | "success" | "error";
   label: string;
 };
 
