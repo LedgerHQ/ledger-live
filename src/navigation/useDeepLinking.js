@@ -87,7 +87,7 @@ export function useDeepLinkHandler() {
           break;
         case "send":
           navigate(NavigatorName.SendFunds, {
-            screen: ScreenName.SendFundsMain,
+            screen: ScreenName.SendCoin,
             params: { currency },
           });
           break;

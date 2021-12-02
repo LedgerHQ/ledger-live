@@ -25,6 +25,7 @@ import SendRowsFee from "../../components/SendRowsFee";
 import SummaryFromSection from "./SummaryFromSection";
 import SummaryToSection from "./SummaryToSection";
 import SummaryAmountSection from "./SummaryAmountSection";
+import SummaryNft from "./SummaryNft";
 import SummaryTotalSection from "./SummaryTotalSection";
 import SectionSeparator from "../../components/SectionSeparator";
 import AlertTriangle from "../../icons/AlertTriangle";
@@ -77,6 +78,10 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
     account,
     parentAccount,
   }));
+
+  const isNFTSend = ["erc721.transfer", "erc1155.transfer"].includes(
+    transaction.mode,
+  );
 
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
@@ -213,12 +218,16 @@ function SendSummary({ navigation, route: initialRoute }: Props) {
           navigation={navigation}
         />
         <SectionSeparator lineColor={colors.lightFog} />
-        <SummaryAmountSection
-          account={account}
-          parentAccount={parentAccount}
-          amount={amount}
-          overrideAmountLabel={overrideAmountLabel}
-        />
+        {isNFTSend ? (
+          <SummaryNft transaction={transaction} />
+        ) : (
+          <SummaryAmountSection
+            account={account}
+            parentAccount={parentAccount}
+            amount={amount}
+            overrideAmountLabel={overrideAmountLabel}
+          />
+        )}
         <SendRowsFee
           setTransaction={setTransaction}
           account={account}
