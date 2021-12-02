@@ -78,9 +78,7 @@ export const RadioGroup: StoryTemplate<RadioProps> = TemplateElement.bind({
   currentValue: "purple",
 });
 
-export const RadioGroupOutlined: StoryTemplate<RadioProps> = TemplateOutlinedElement.bind({
-  currentValue: "black",
-});
+export const RadioGroupOutlined: StoryTemplate<RadioProps> = TemplateOutlinedElement.bind({});
 
 const TemplateListElement = (args: RadioProps) => {
   const [currentArgs, updateArgs] = useArgs();
