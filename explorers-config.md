@@ -16,6 +16,7 @@
 | Litecoin | LTC | https://explorers.api.live.ledger.com/blockchain/v3/ltc | N/A |
 | Peercoin | PPC | https://explorers.api.live.ledger.com/blockchain/v3/ppc | N/A |
 | PivX | PIVX | https://explorers.api.live.ledger.com/blockchain/v3/pivx | N/A |
+| Polygon | MATIC | https://explorers.api.live.ledger.com/blockchain/v3/matic | N/A |
 | Qtum | QTUM | https://explorers.api.live.ledger.com/blockchain/v3/qtum | N/A |
 | Stakenet | XSN | https://explorers.api.live.ledger.com/blockchain/v3/xsn | N/A |
 | Vertcoin | VTC | https://explorers.api.live.ledger.com/blockchain/v3/vtc | N/A |

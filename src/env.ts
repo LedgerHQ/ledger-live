@@ -381,6 +381,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "synchronizing nfts",
   },
+  NFT_CURRENCIES: {
+    def: "ethereum",
+    parser: stringParser,
+    desc: "set the currencies where NFT is active",
+  },
   NFT_ETH_METADATA_SERVICE: {
     // FIXME LL-8001
     def: "https://nft.staging.aws.ledger.fr/v1/ethereum/1/contracts/tokens/infos",

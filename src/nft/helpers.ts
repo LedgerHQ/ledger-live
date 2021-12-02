@@ -1,6 +1,6 @@
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
-import { NFT, Operation, Transaction } from "../types";
+import { NFT, Operation } from "../types";
 
 type Collection = NFT["collection"];
 
@@ -75,12 +75,4 @@ export const nftsByCollections = (
 
 export const getNftKey = (contract: string, tokenId: string): string => {
   return `${contract}-${tokenId}`;
-};
-
-export const isNftTransaction = (transaction: Transaction): boolean => {
-  if (transaction.family === "ethereum") {
-    return ["erc721.transfer", "erc1155.transfer"].includes(transaction.mode);
-  }
-
-  return false;
 };

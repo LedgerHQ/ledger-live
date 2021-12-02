@@ -13,7 +13,7 @@ import { getGasLimit, buildEthereumTx } from "./transaction";
 import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
 import { modes } from "./modules";
-import { getEnv } from "../../env";
+import { isNFTActive } from "../../nft";
 export const signOperation = ({
   account,
   deviceId,
@@ -61,7 +61,7 @@ export const signOperation = ({
                 "0x" + (tx.value.toString("hex") || "0")
               );
               const eth = new Eth(transport);
-              if (getEnv("NFT")) {
+              if (isNFTActive(account.currency)) {
                 eth.setLoadConfig({
                   // FIXME drop this after LL-8001
                   nftExplorerBaseURL:

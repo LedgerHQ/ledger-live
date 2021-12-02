@@ -150,6 +150,7 @@ export function clearAccount<T extends AccountLike>(account: T): T {
     copy.bitcoinResources = initialBitcoinResourcesValue;
   }
   delete copy.balanceHistory;
+  delete copy.nfts;
   return copy as T;
 }
 export function findSubAccountById(
