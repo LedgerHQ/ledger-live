@@ -43,6 +43,7 @@ const TemplateElement = (args: RadioProps) => {
       containerProps={{ flexDirection: "column", rowGap: "1rem" }}
     >
       <Radio.Element label="Blue squad" value="blue" variant="default" />
+      <Radio.Element label="Black squad" value="black" variant="main" />
       <Radio.Element label="Yellow squad" value="yellow" variant="success" />
       <Radio.Element label="Core squad" value="core" variant="error" />
       <Radio.Element label="Orange squad" value="orange" variant="default" disabled />
