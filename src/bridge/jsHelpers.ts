@@ -134,15 +134,16 @@ export const mergeNfts = (
   const nfts = oldNfts?.slice() ?? [];
   for (let i = 0; i < nfts.length; i++) {
     const nft = nfts[i];
+
     // The NFTs are the same, do don't anything
-    if (!newNftsPerId[nft.id] || isEqual(nft, newNftsPerId[nft.id])) {
-      // NFT already in, deleting it from the newNfts to keep only the un-added ones at the end
-      delete newNftsPerId[nft.id];
-      continue;
+    if (!newNftsPerId[nft.id]) {
+      nfts.splice(i, 1);
+      i--;
+    } else if (!isEqual(nft, newNftsPerId[nft.id])) {
+      // Use the new NFT instead (as a copy cause we're deleting the reference just after)
+      nfts[i] = Object.assign({}, newNftsPerId[nft.id]);
     }
 
-    // Use the new NFT instead (as a copy cause we're deleting the reference just after)
-    nfts[i] = Object.assign({}, newNftsPerId[nft.id]);
     // Delete it from the newNfts to keep only the un-added ones at the end
     delete newNftsPerId[nft.id];
   }

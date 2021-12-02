@@ -24,7 +24,7 @@ export const nftsFromOperations = (ops: Operation[]): NFT[] => {
       const nftKey = contract + nftOp.tokenId!;
       const { tokenId, standard, id } = nftOp;
 
-      const nft = (acc[nftKey] ?? {
+      const nft = (acc[nftKey] || {
         id,
         tokenId: tokenId!,
         amount: new BigNumber(0),

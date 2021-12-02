@@ -15,7 +15,7 @@ import {
 } from "../../account";
 import { listTokensForCryptoCurrency } from "../../currencies";
 import { encodeAccountId } from "../../account";
-import type { Operation, TokenAccount, Account, NFT } from "../../types";
+import type { Operation, TokenAccount, Account } from "../../types";
 import { API, apiForCurrency, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
@@ -82,10 +82,8 @@ export const getAccountShape: GetAccountShape = async (
   let newOps = flatMap(txs, txToOps({ address, id: accountId, currency }));
   // extracting out the sub operations by token account
   const perTokenAccountIdOperations = {};
-  // extracting and concat all nft operations for an account
-  const flatNftOps: Operation[] = [];
   newOps.forEach((op) => {
-    const { subOperations, nftOperations } = op;
+    const { subOperations } = op;
 
     if (subOperations?.length) {
       subOperations.forEach((sop) => {
@@ -95,10 +93,6 @@ export const getAccountShape: GetAccountShape = async (
 
         perTokenAccountIdOperations[sop.accountId].push(sop);
       });
-    }
-
-    if (nftOperations?.length) {
-      nftOperations.forEach((nop) => flatNftOps.push(nop));
     }
   });
   const subAccountsExisting = {};
@@ -173,7 +167,7 @@ export const getAccountShape: GetAccountShape = async (
   const operations = mergeOps(initialStableOperations, newOps);
 
   const nfts = isNFTActive(currency)
-    ? mergeNfts(initialAccount?.nfts, await getNfts(flatNftOps))
+    ? mergeNfts(initialAccount?.nfts, nftsFromOperations(operations))
     : undefined;
 
   const accountShape: Partial<Account> = {
@@ -619,11 +613,6 @@ async function loadERC20Balances(tokenAccounts, address, api) {
       return a;
     })
     .filter(Boolean);
-}
-
-function getNfts(nftOperations: Operation[]): NFT[] {
-  const nfts: NFT[] = nftsFromOperations(nftOperations);
-  return nfts.filter((nft) => nft.amount.gt(0));
 }
 
 const SAFE_REORG_THRESHOLD = 80;
