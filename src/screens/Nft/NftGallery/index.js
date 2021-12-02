@@ -3,15 +3,25 @@
 import React, { useState, useMemo, useCallback, useRef } from "react";
 
 import { useSelector } from "react-redux";
-import { useRoute, useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import Animated, { Value, event } from "react-native-reanimated";
 import { nftsByCollections } from "@ledgerhq/live-common/lib/nft";
 import type { CollectionWithNFT } from "@ledgerhq/live-common/lib/nft";
-import { View, FlatList, SafeAreaView, StyleSheet } from "react-native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import {
+  View,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Platform,
+} from "react-native";
 
 import LoadingFooter from "../../../components/LoadingFooter";
 import { accountSelector } from "../../../reducers/accounts";
 import NftCollectionWithName from "./NftCollectionWithName";
+import { NavigatorName, ScreenName } from "../../../const";
+import Button from "../../../components/Button";
+import SendIcon from "../../../icons/Send";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 12;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -28,6 +38,8 @@ const renderItem = ({ item: collection }) => (
 );
 
 const NftGallery = () => {
+  const navigation = useNavigation();
+  const { t } = useTranslation();
   const { colors } = useTheme();
   const { params } = useRoute();
   const account = useSelector(state =>
@@ -63,6 +75,15 @@ const NftGallery = () => {
     );
   }, [collectionsCount]);
 
+  const goToCollectionSelection = () =>
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendCollection,
+      params: {
+        account,
+        collections,
+      },
+    });
+
   return (
     <SafeAreaView
       style={[
@@ -74,12 +95,25 @@ const NftGallery = () => {
     >
       <CollectionsList
         data={collectionsSlice}
+        contentContainerStyle={styles.collectionsList}
         keyExtractor={(collection: CollectionWithNFT) => collection.contract}
         renderItem={renderItem}
         onEndReached={onEndReached}
         onScroll={onScroll}
         maxToRenderPerBatch={1}
         initialNumToRender={1}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <View style={styles.sendButtonContainer}>
+            <Button
+              type="primary"
+              IconLeft={SendIcon}
+              containerStyle={styles.sendButton}
+              title={t("account.send")}
+              onPress={goToCollectionSelection}
+            />
+          </View>
+        }
         ListFooterComponent={() =>
           collections.length > collectionsCount ? <LoadingFooter /> : null
         }
@@ -92,10 +126,30 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  collectionContainer: {
+  collectionsList: {
     paddingTop: 24,
     paddingBottom: 32,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
+  },
+  sendButtonContainer: {
+    marginBottom: 16,
+    zIndex: 2,
+    ...Platform.select({
+      android: {
+        elevation: 1,
+      },
+      ios: {
+        shadowOpacity: 0.2,
+        shadowRadius: 14,
+        shadowOffset: {
+          height: 6,
+          width: 0,
+        },
+      },
+    }),
+  },
+  sendButton: {
+    borderRadius: 100,
   },
 });
 

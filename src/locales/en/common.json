@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "Taproot mainnet is not activated yet"
     },
+    "NotEnoughNftOwned": {
+      "title": "You have exceeded the number of available tokens"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
@@ -2230,7 +2233,10 @@
       "summary": "Summary",
       "selectDevice": "Select device",
       "connectDevice": "Connect device",
-      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}",
+      "quantity": "Quantity",
+      "selectCollection": "Collection",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "Scan QR code",
@@ -2242,7 +2248,8 @@
       "available": "Total available",
       "useMax": "Use max",
       "loadingNetwork": "Loading network fees...",
-      "noRateProvider": "Not available"
+      "noRateProvider": "Not available",
+      "quantityAvailable": "Quantity available"
     },
     "summary": {
       "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
@@ -2266,7 +2273,8 @@
         "type": "Memo type",
         "value": "Memo value"
       },
-      "validateMemo": "Validate memo"
+      "validateMemo": "Validate memo",
+      "quantity": "Quantity"
     },
     "validation": {
       "message": "On your device, confirm the transaction to sign it securely.",

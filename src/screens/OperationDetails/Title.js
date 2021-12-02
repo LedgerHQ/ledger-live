@@ -8,7 +8,7 @@ import type {
   Currency,
   Unit,
 } from "@ledgerhq/live-common/lib/types";
-import type { BigNumber } from "BigNumber";
+import type { BigNumber } from "bignumber.js";
 
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import DoubleCounterValue from "../../components/DoubleCountervalue";

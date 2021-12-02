@@ -13,17 +13,20 @@ const ImageComponent = ({
   source,
   resizeMode,
   onLoadEnd,
+  onLoad,
 }: {
   style: Object,
   source: { [string]: string },
   resizeMode: string,
   onLoadEnd: () => *,
+  onLoad: () => *,
 }) =>
   Platform.OS === "android" ? (
     <Image
       style={style}
       resizeMode={resizeMode}
       source={source}
+      onLoad={onLoad}
       onLoadEnd={onLoadEnd}
     />
   ) : (
@@ -31,6 +34,7 @@ const ImageComponent = ({
       style={style}
       resizeMode={FastImage.resizeMode[resizeMode]}
       source={source}
+      onLoad={onLoad}
       onLoadEnd={onLoadEnd}
     />
   );
@@ -114,6 +118,11 @@ const NftImage = ({ src, status, style, hackWidth = 90 }: Props) => {
             resizeMode="cover"
             source={{
               uri: hackSrc,
+            }}
+            onLoad={({ nativeEvent }: Image.ImageLoadEvent) => {
+              if (!nativeEvent) {
+                setLoadError(true);
+              }
             }}
             onLoadEnd={startAnimation}
             onError={() => setLoadError(true)}
