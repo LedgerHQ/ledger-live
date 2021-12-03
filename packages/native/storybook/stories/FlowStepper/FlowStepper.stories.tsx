@@ -32,6 +32,92 @@ This component has also been written to be easily animatable as demonstrated in 
 
 import { FlowStepper } from "@ledgerhq/native-ui"
 \`\`\`
+
+## Minimal working example
+
+\`\`\`tsx
+// A nice full screen page with a given color scheme.
+const Item = ({ label }: { label: string }) => (
+  <Flex
+    flex={1}
+    alignItems="center"
+    justifyContent="center"
+    backgroundColor={\`\${label}.c50\`}
+  >
+    <Text variant="h2" style={{ textTransform: "capitalize" }}>
+      {label}
+    </Text>
+  </Flex>
+);
+
+// A header that displays the page index.
+const Header = ({ activeIndex }: { activeIndex: number }) => {
+  return (
+    <Flex
+      height={100}
+      backgroundColor="primary.c80"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Text variant="h2" color="neutral.c00">
+        {activeIndex}
+      </Text>
+    </Flex>
+  );
+};
+
+const Minimal = (): JSX.Element => {
+  const [index, setIndex] = React.useState(0);
+
+  // Updates the active index every second.
+  React.useEffect(() => {
+    const interval = setInterval(() => setIndex((i) => (i + 1) % 5), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  /* Each child represents a separate step of the flow.
+     Only the active step is displayed at a given time. */
+  return (
+    <FlowStepper activeIndex={index} header={Header}>
+      <Item label="primary" />
+      <Item label="neutral" />
+      <Item label="success" />
+      <Item label="warning" />
+      <Item label="error" />
+    </FlowStepper>
+  );
+};
+\`\`\`
+
+## Transitions
+
+Set the \`renderTransition\` and \`transitionDuration\`props to perform transitions on the layout body.
+
+### Presets
+
+The \`Transitions\` import contains two transition presets, \`Transitions.Slide\` and \`Transitions.Fade\`.
+
+\`\`\`tsx
+import { Transitions } from "@ledgerhq/native-ui";
+
+const transitionDuration = 500;
+const renderTransition = ({
+  activeIndex,
+  previousActiveIndex,
+  status,
+  duration,
+  children,
+}: RenderTransitionProps) => (
+  <Transitions.Slide
+    status={status}
+    duration={duration}
+    direction={(previousActiveIndex || 0) < activeIndex ? "left" : "right"}
+    style={[StyleSheet.absoluteFill, { flex: 1 }]}
+  >
+    {children}
+  </Transitions.Slide>
+);
+\`\`\`
 `;
 
 /* Minimal example */
@@ -261,7 +347,7 @@ const BodyItem = ({
   </Flex>
 );
 
-const Complete = (): JSX.Element => {
+const Demo = (): JSX.Element => {
   const [index, setIndex] = React.useState(0);
   return (
     <Flex flex={1} width="100%">
@@ -291,13 +377,13 @@ const Complete = (): JSX.Element => {
 
 storiesOf((story) =>
   story("Navigation/FlowStepper", module)
-    .add("Minimal", Minimal, {
+    .add("Demo", Demo, {
       docs: {
         description: {
           component: description,
         },
       },
     })
-    .add("Complete", Complete)
+    .add("Minimal", Minimal)
     .add("Animated", AnimatedExample)
 );

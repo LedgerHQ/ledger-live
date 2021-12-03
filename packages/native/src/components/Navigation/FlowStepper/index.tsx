@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native";
-// import { Transition, TransitionStatus } from "react-transition-group";
 import Flex from "../../Layout/Flex";
 import ProgressBar from "../../ProgressBar";
 import {
