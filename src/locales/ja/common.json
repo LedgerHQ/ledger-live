@@ -598,7 +598,7 @@
       "title": "Taproot mainnetは、まだアクティベートされていません。"
     },
     "NotEnoughNftOwned": {
-      "title": "You have exceeded the number of available tokens"
+      "title": "利用可能なトークン数を超えています"
     },
     "generic": {
       "title": "{{message}}",
@@ -2232,8 +2232,8 @@
       "selectDevice": "デバイスを選択",
       "connectDevice": "デバイスを接続",
       "stepRange": "ステップ{{currentStep}}/{{totalSteps}}",
-      "quantity": "Quantity",
-      "selectCollection": "Collection",
+      "quantity": "数量",
+      "selectCollection": "コレクション",
       "selectNft": "NFT"
     },
     "recipient": {
@@ -2247,7 +2247,7 @@
       "useMax": "全額を選択",
       "loadingNetwork": "ネットワーク手数料を読み込み中…",
       "noRateProvider": "利用不可",
-      "quantityAvailable": "Quantity available"
+      "quantityAvailable": "利用可能な数量"
     },
     "summary": {
       "subaccountsWarning": "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
@@ -2272,7 +2272,7 @@
         "value": "Memoの値"
       },
       "validateMemo": "Memoの確認",
-      "quantity": "Quantity"
+      "quantity": "数量"
     },
     "validation": {
       "message": "デバイス上で、トランザクションを確認して安全に署名します。",
