@@ -45,7 +45,7 @@ export const nftsFromOperations = (ops: Operation[]): NFT[] => {
       return acc;
     }, {});
 
-  return Object.values(nftsMap);
+  return Object.values(nftsMap).filter((n) => n.amount.gt(0));
 };
 
 export const nftsByCollections = (

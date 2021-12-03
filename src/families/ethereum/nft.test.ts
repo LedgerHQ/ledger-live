@@ -231,6 +231,10 @@ describe("gaspard NFT on ethereum", () => {
     expect(second.nfts).not.toBeFalsy();
     expect(second.nfts).toEqual(account.nfts);
   });
+
+  test("no nft should be on quantity 0 or negative", async () => {
+    expect(account.nfts?.find((n) => !n.amount.gt(0))).toEqual(undefined);
+  });
 });
 
 /*
