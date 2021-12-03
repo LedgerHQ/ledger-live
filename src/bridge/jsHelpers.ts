@@ -69,6 +69,7 @@ export const sameOp = (a: Operation, b: Operation) =>
   (a.id === b.id && // hash, accountId, type are in id
     (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
     (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
+    a.nftOperations?.length === b.nftOperations?.length &&
     sameDate(a.date, b.date) &&
     a.blockHeight === b.blockHeight &&
     isEqual(a.senders, b.senders) &&
