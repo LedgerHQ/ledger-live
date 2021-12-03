@@ -1,6 +1,7 @@
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { NFT, Operation } from "../types";
+import { encodeNftId } from ".";
 
 type Collection = NFT["collection"];
 
@@ -15,23 +16,22 @@ export const nftsFromOperations = (ops: Operation[]): NFT[] => {
     // if ops are Operations get the prop nftOperations, else ops are considered nftOperations already
     .flatMap((op) => (op?.nftOperations?.length ? op.nftOperations : op))
     .reduce((acc: Record<string, NFT>, nftOp: Operation) => {
-      if (!nftOp?.contract) {
+      let { contract } = nftOp;
+      if (!contract) {
         return acc;
       }
 
       // Creating a "token for a contract" unique key
-      const contract = eip55.encode(nftOp.contract!);
-      const nftKey = contract + nftOp.tokenId!;
-      const { tokenId, standard, id } = nftOp;
+      contract = eip55.encode(contract);
+      const { tokenId, standard, accountId } = nftOp;
+      if (!tokenId || !standard) return acc;
+      const id = encodeNftId(accountId, contract, tokenId || "");
 
-      const nft = (acc[nftKey] || {
+      const nft = (acc[id] || {
         id,
-        tokenId: tokenId!,
+        tokenId,
         amount: new BigNumber(0),
-        collection: {
-          contract,
-          standard: standard!,
-        },
+        collection: { contract, standard },
       }) as NFT;
 
       if (nftOp.type === "NFT_IN") {
@@ -40,7 +40,7 @@ export const nftsFromOperations = (ops: Operation[]): NFT[] => {
         nft.amount = nft.amount.minus(nftOp.value);
       }
 
-      acc[nftKey] = nft;
+      acc[id] = nft;
 
       return acc;
     }, {});
