@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn global add yalc codecov
-          yarn --frozen-lockfile
+          yarn --frozen-lockfile --network-timeout 100000
       - name: Setup Tests
         run: yarn ci-setup-cli
       - name: Deps versions
@@ -100,7 +100,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn global add yalc codecov
-          yarn --frozen-lockfile
+          yarn --frozen-lockfile --network-timeout 100000
       - name: Setup Tests
         run: yarn ci-setup-cli
       - name: Deps versions
@@ -143,12 +143,14 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: "2.7.x"
+      - name: kill apt-get
+        run: sudo killall apt-get apt || echo OK
       - name: Install linux deps
         run: sudo apt-get install -y libusb-1.0-0-dev jq
       - name: Install dependencies
         run: |
           yarn global add yalc
-          yarn --frozen-lockfile
+          yarn --frozen-lockfile --network-timeout 100000
           yarn ci-setup-cli
       - name: Run CLI tests
         run: yarn ci-test-cli
@@ -171,7 +173,7 @@ jobs:
       - name: Install dependencies
         run: |
           yarn global add yalc
-          yarn --frozen-lockfile
+          yarn --frozen-lockfile --network-timeout 100000
           yarn ci-setup-cli
       - name: Run CLI tests
         run: yarn ci-test-cli
