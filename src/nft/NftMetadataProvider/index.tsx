@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { Currency, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { API, apiForCurrency } from "../../api/Ethereum";
-import { NFTMetadataResponse } from "../../types";
+import { NFT, NFTMetadataResponse } from "../../types";
 import { getNftKey } from "../helpers";
 import {
   Batch,
@@ -77,14 +77,19 @@ export const metadataCallBatcher = (() => {
   };
 })();
 
-export function useNftMetadata(contract: string, tokenId: string): NFTResource {
+// DEPRECATED, use useNftResource
+export function useNftMetadata(
+  contract: string | undefined,
+  tokenId: string | undefined
+): NFTResource {
   const { cache, loadNFTMetadata } = useContext(NftMetadataContext);
 
-  const key = getNftKey(contract, tokenId);
+  const key = contract && tokenId ? getNftKey(contract, tokenId) : "";
 
   const cachedData = cache[key];
 
   useEffect(() => {
+    if (!contract || !tokenId) return;
     if (!cachedData || isOutdated(cachedData)) {
       loadNFTMetadata(contract, tokenId);
     }
@@ -97,6 +102,10 @@ export function useNftMetadata(contract: string, tokenId: string): NFTResource {
       status: "queued",
     };
   }
+}
+
+export function useNftResource(nft: NFT | undefined): NFTResource {
+  return useNftMetadata(nft?.collection.contract, nft?.tokenId);
 }
 
 export function useNftAPI(): NFTMetadataContextAPI {
