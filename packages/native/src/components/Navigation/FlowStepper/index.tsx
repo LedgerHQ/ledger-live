@@ -4,7 +4,7 @@ import Flex from "../../Layout/Flex";
 import ProgressBar from "../../ProgressBar";
 import {
   TransitionProps,
-  TransitionManager,
+  Transition,
   TransitionStatus,
 } from "../../transitions";
 
@@ -89,7 +89,7 @@ function FlowStepper<ExtraProps>({
           {React.Children.map(children, (child, index) => {
             if (renderTransition && transitionDuration) {
               return (
-                <TransitionManager
+                <Transition
                   in={index === activeIndex}
                   timeout={transitionDuration}
                   mountOnEnter
@@ -106,7 +106,7 @@ function FlowStepper<ExtraProps>({
                       children: child,
                     });
                   }}
-                </TransitionManager>
+                </Transition>
               );
             } else {
               return index === activeIndex ? child : null;
