@@ -118,10 +118,6 @@ const erc721Transfer: ModeModule = {
    */
   fillOptimisticOperation(a, t, op) {
     op.type = "FEES";
-    op.extra = {
-      ...op.extra,
-      approving: true, // workaround to track the status ENABLING
-    };
   },
 };
 
