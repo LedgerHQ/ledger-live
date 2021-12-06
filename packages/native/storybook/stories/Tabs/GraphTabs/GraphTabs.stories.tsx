@@ -1,14 +1,14 @@
 import { storiesOf } from "../../storiesOf";
-import { array } from "@storybook/addon-knobs";
 
 import React, { useState } from "react";
-import NavigationToggleGroup from "../../../../src/components/Navigation/ToggleGroup/NavigationToggleGroup";
+import GraphTabs from "../../../../src/components/Tabs/Graph";
+import { array } from "@storybook/addon-knobs";
 
-const NavigationToggleGroupStory = () => {
+const GraphTabsStory = () => {
   const [activeIndex, changeIndex] = useState(1);
 
   return (
-    <NavigationToggleGroup
+    <GraphTabs
       activeIndex={activeIndex}
       onChange={changeIndex}
       labels={array('labels', new Array(4).fill("").map((_, i) => "Label" + i))}
@@ -17,5 +17,5 @@ const NavigationToggleGroupStory = () => {
 };
 
 storiesOf((story) =>
-  story("Navigation", module).add("NavigationToggleGroup", NavigationToggleGroupStory)
+  story("Tabs", module).add("Graph", GraphTabsStory)
 );
