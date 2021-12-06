@@ -598,7 +598,7 @@
       "title": "Taproot 主网尚未激活"
     },
     "NotEnoughNftOwned": {
-      "title": "You have exceeded the number of available tokens"
+      "title": "您已超过可用代币的数量"
     },
     "generic": {
       "title": "{{message}}",
@@ -2232,8 +2232,8 @@
       "selectDevice": "选择设备",
       "connectDevice": "连接设备",
       "stepRange": "步骤 {{currentStep}} 之 {{totalSteps}}",
-      "quantity": "Quantity",
-      "selectCollection": "Collection",
+      "quantity": "数量",
+      "selectCollection": "收藏",
       "selectNft": "NFT"
     },
     "recipient": {
@@ -2247,7 +2247,7 @@
       "useMax": "使用最大值",
       "loadingNetwork": "正在加载网络费用...",
       "noRateProvider": "不可用",
-      "quantityAvailable": "Quantity available"
+      "quantityAvailable": "可用数量"
     },
     "summary": {
       "subaccountsWarning": "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
@@ -2272,7 +2272,7 @@
         "value": "Memo 价值"
       },
       "validateMemo": "验证 Memo",
-      "quantity": "Quantity"
+      "quantity": "数量"
     },
     "validation": {
       "message": "在您的设备上，确认该交易以安全地将其签署。",

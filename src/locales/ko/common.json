@@ -335,7 +335,7 @@
     },
     "ManagerDeviceLocked": {
       "title": "장치가 잠금 상태입니다",
-      "description": "기기를 잠금 해제하세요"
+      "description": "장치를 잠금 해제하세요"
     },
     "ManagerNotEnoughSpace": {
       "title": "저장 공간이 충분하지 않습니다",
@@ -598,7 +598,7 @@
       "title": "Taproot(탭루트) 메인넷이 아직 활성화되지 않았습니다"
     },
     "NotEnoughNftOwned": {
-      "title": "You have exceeded the number of available tokens"
+      "title": "사용 가능한 토큰 수를 초과했습니다"
     },
     "generic": {
       "title": "{{message}}",
@@ -1723,7 +1723,7 @@
       "desc": "Ledger Live 또는 도움받는 방법에 대해 자세히 알아보세요.",
       "support": "Ledger 지원",
       "supportDesc": "문제가 있다면, 하드웨어 지갑으로 Ledger Live 이용 방법에 관한 도움을 받으세요.",
-      "configureDevice": "기기 설정",
+      "configureDevice": "장치 설정",
       "configureDeviceDesc": "새 장치를 설정거나 기존 장치를 복원합니다. 계정과 설정은 그대로 유지됩니다.",
       "clearCache": "캐시 삭제",
       "clearCacheDesc": "네트워크의 트랜잭션을 스캔하고 사용자 계정을 다시 계산합니다.",
@@ -1820,7 +1820,7 @@
     },
     "swap": {
       "title": "스왑",
-      "selectDevice": "기기 선택",
+      "selectDevice": "장치 선택",
       "broadcasting": "스왑 브로드캐스팅",
       "loadingFees": "네트워크 수수료 로딩...",
       "landing": {
@@ -2205,7 +2205,7 @@
     "loading": "동기화"
   },
   "scanning": {
-    "loading": "기기 검색 중..."
+    "loading": "장치 검색 중..."
   },
   "send": {
     "tooMuchUTXOBottomModal": {
@@ -2232,8 +2232,8 @@
       "selectDevice": "장치 선택",
       "connectDevice": "장치 연결",
       "stepRange": "{{totalSteps}} 중 {{currentStep}} 단계",
-      "quantity": "Quantity",
-      "selectCollection": "Collection",
+      "quantity": "수량",
+      "selectCollection": "컬렉션",
       "selectNft": "NFT"
     },
     "recipient": {
@@ -2247,7 +2247,7 @@
       "useMax": "최대치 사용",
       "loadingNetwork": "네트워크 수수료 로딩 중...",
       "noRateProvider": "이용할 수 없습니다",
-      "quantityAvailable": "Quantity available"
+      "quantityAvailable": "이용 가능한 수량"
     },
     "summary": {
       "subaccountsWarning": "이 계정의 토큰을 보내려면 계정에 {{ currency}}(을)를 다시 채워야 합니다.",
@@ -2272,7 +2272,7 @@
         "value": "메모 가치"
       },
       "validateMemo": "메모 확인",
-      "quantity": "Quantity"
+      "quantity": "수량"
     },
     "validation": {
       "message": "장치에서 트랜잭션을 확인하고 안전하게 서명하세요.",
