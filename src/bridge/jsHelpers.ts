@@ -64,7 +64,7 @@ type AccountUpdater = (arg0: Account) => Account;
 const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
 
 // an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
-export const sameOp = (a: Operation, b: Operation) =>
+export const sameOp = (a: Operation, b: Operation): boolean =>
   a === b ||
   (a.id === b.id && // hash, accountId, type are in id
     (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
