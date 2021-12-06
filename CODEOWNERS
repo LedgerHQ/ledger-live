@@ -6,4 +6,5 @@ fastlane                               @ledgerhq/live-devx
 src/families                           @ledgerhq/live-blockchain-support
 src/live-common-setup.js               @ledgerhq/live-blockchain-support
 src/components/DeviceAction            @ledgerhq/live-devices
+src/screens/Manager                    @ledgerhq/live-devices
 src/screens/Exchange                   @ledgerhq/live-platform-and-services
