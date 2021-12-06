@@ -1,5 +1,4 @@
 import isEqual from "lodash/isEqual";
-import setWith from "lodash/setWith";
 import { BigNumber } from "bignumber.js";
 import { Observable, from } from "rxjs";
 import { log } from "@ledgerhq/logs";
@@ -119,20 +118,15 @@ Operation[] {
   return all;
 }
 
-export const mergeNfts = (
-  oldNfts: NFT[] | undefined,
-  newNfts: NFT[] | undefined
-): NFT[] => {
-  if (!newNfts?.length) return oldNfts ?? [];
-
+export const mergeNfts = (oldNfts: NFT[], newNfts: NFT[]): NFT[] => {
   // Getting a map of id => NFT
-  const newNftsPerId: Record<string, NFT> = (newNfts as NFT[]).reduce(
-    (acc, curr) => setWith(acc, curr.id, curr, Object),
-    {}
-  );
+  const newNftsPerId: Record<string, NFT> = {};
+  newNfts.forEach((n) => {
+    newNftsPerId[n.id] = n;
+  });
 
   // copying the argument to avoid mutating it
-  const nfts = oldNfts?.slice() ?? [];
+  const nfts = oldNfts.slice();
   for (let i = 0; i < nfts.length; i++) {
     const nft = nfts[i];
 
@@ -141,8 +135,8 @@ export const mergeNfts = (
       nfts.splice(i, 1);
       i--;
     } else if (!isEqual(nft, newNftsPerId[nft.id])) {
-      // Use the new NFT instead (as a copy cause we're deleting the reference just after)
-      nfts[i] = Object.assign({}, newNftsPerId[nft.id]);
+      // Use the new NFT instead
+      nfts[i] = newNftsPerId[nft.id];
     }
 
     // Delete it from the newNfts to keep only the un-added ones at the end
