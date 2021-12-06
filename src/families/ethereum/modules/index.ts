@@ -90,6 +90,14 @@ export type ModeModule = {
     arg1: Transaction,
     arg2: Operation
   ) => void;
+
+  /**
+   * hook to resolve a transaction like the prepareTransaction of the bridge
+   */
+  prepareTransaction?: (
+    account: Account,
+    transaction: Transaction
+  ) => Promise<Transaction>;
 };
 export const modes: Record<TransactionMode, ModeModule> = {} as Record<
   TransactionMode,
@@ -137,6 +145,18 @@ export function hydrate(value: unknown, currency: CryptoCurrency): void {
     }
   }
 }
+export const prepareTransaction = (
+  account: Account,
+  transaction: Transaction
+): Promise<Transaction> =>
+  values(modules)
+    // @ts-expect-error some module implement it
+    .map((m) => m.prepareTransaction)
+    .filter(Boolean)
+    .reduce(
+      (p, fn) => p.then((t) => fn(account, t)),
+      Promise.resolve(transaction)
+    );
 export const prepareTokenAccounts = (
   currency: CryptoCurrency,
   subAccounts: TokenAccount[],

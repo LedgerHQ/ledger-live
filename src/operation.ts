@@ -105,7 +105,6 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "REWARD":
     case "REWARD_PAYOUT":
     case "SUPPLY":
-    case "NFT_IN":
       return op.value;
 
     case "OUT":
@@ -119,7 +118,6 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
     case "OPT_OUT":
     case "REDEEM":
     case "SLASH":
-    case "NFT_OUT":
       return op.value.negated();
 
     case "FREEZE":

@@ -384,7 +384,10 @@ export function patchAccount(
   }
 
   const nfts = updatedRaw?.nfts?.map(fromNFTRaw);
-  if (updatedRaw.nfts && !isEqual(account.nfts, nfts)) {
+  if (!updatedRaw.nfts && account.nfts) {
+    delete next.nfts;
+    changed = true;
+  } else if (!isEqual(account.nfts, nfts)) {
     next.nfts = nfts;
     changed = true;
   }

@@ -24,11 +24,16 @@ import {
   estimateGasLimit,
 } from "../transaction";
 import { getAccountShape } from "../synchronisation";
-import { preload, hydrate } from "../modules";
+import {
+  preload,
+  hydrate,
+  prepareTransaction as prepareTransactionModules,
+} from "../modules";
 import { signOperation } from "../signOperation";
 import { modes } from "../modules";
 import postSyncPatch from "../postSyncPatch";
 import { inferDynamicRange } from "../../../range";
+
 const receive = makeAccountBridgeReceive();
 
 const broadcast = async ({
@@ -172,6 +177,8 @@ const prepareTransaction = async (a, t: Transaction): Promise<Transaction> => {
   ) {
     t.estimatedGasLimit = estimatedGasLimit;
   }
+
+  t = await prepareTransactionModules(a, t);
 
   return t;
 };

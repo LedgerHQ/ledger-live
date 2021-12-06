@@ -139,6 +139,7 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
           query: {
             batch_size,
             noinput: true,
+            no_input: true,
             no_token: true,
             block_hash,
           },

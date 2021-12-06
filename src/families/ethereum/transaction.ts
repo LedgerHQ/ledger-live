@@ -90,12 +90,14 @@ export const formatTransaction = (
   const header = (() => {
     switch (t.mode) {
       case "erc721.transfer":
-        return `${t.mode.toUpperCase()} Collection: ${t.collection} TokenId: ${
-          t.tokenIds?.[0]
-        }`;
+        return `${t.mode.toUpperCase()} Collection: ${t.collection} (${
+          t.collectionName || ""
+        }) TokenId: ${t.tokenIds?.[0]}`;
       case "erc1155.transfer":
         return (
-          `${t.mode.toUpperCase()} Collection: ${t.collection}` +
+          `${t.mode.toUpperCase()} Collection: ${t.collection} (${
+            t.collectionName || ""
+          })` +
           t.tokenIds
             ?.map((tokenId, index) => {
               return `\n  - TokenId: ${tokenId} Quantity: ${
@@ -153,6 +155,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     feesStrategy: tr.feesStrategy,
     tokenIds: tr.tokenIds,
     collection: tr.collection,
+    collectionName: tr.collectionName,
     quantities: tr.quantities?.map((q) => new BigNumber(q)),
   };
 };
@@ -180,6 +183,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     feesStrategy: t.feesStrategy,
     tokenIds: t.tokenIds,
     collection: t.collection,
+    collectionName: t.collectionName,
     quantities: t.quantities?.map((q) => q.toString()),
   };
 };

@@ -1,5 +1,4 @@
 import isEqual from "lodash/isEqual";
-import setWith from "lodash/setWith";
 import { BigNumber } from "bignumber.js";
 import { Observable, from } from "rxjs";
 import { log } from "@ledgerhq/logs";
@@ -64,11 +63,12 @@ type AccountUpdater = (arg0: Account) => Account;
 const sameDate = (a, b) => Math.abs(a - b) < 1000 * 60 * 30;
 
 // an operation is relatively immutable, however we saw that sometimes it can temporarily change due to reorg,..
-export const sameOp = (a: Operation, b: Operation) =>
+export const sameOp = (a: Operation, b: Operation): boolean =>
   a === b ||
   (a.id === b.id && // hash, accountId, type are in id
     (a.fee ? a.fee.isEqualTo(b.fee) : a.fee === b.fee) &&
     (a.value ? a.value.isEqualTo(b.value) : a.value === b.value) &&
+    a.nftOperations?.length === b.nftOperations?.length &&
     sameDate(a.date, b.date) &&
     a.blockHeight === b.blockHeight &&
     isEqual(a.senders, b.senders) &&
@@ -118,20 +118,15 @@ Operation[] {
   return all;
 }
 
-export const mergeNfts = (
-  oldNfts: NFT[] | undefined,
-  newNfts: NFT[] | undefined
-): NFT[] => {
-  if (!newNfts?.length) return oldNfts ?? [];
-
+export const mergeNfts = (oldNfts: NFT[], newNfts: NFT[]): NFT[] => {
   // Getting a map of id => NFT
-  const newNftsPerId: Record<string, NFT> = (newNfts as NFT[]).reduce(
-    (acc, curr) => setWith(acc, curr.id, curr, Object),
-    {}
-  );
+  const newNftsPerId: Record<string, NFT> = {};
+  newNfts.forEach((n) => {
+    newNftsPerId[n.id] = n;
+  });
 
   // copying the argument to avoid mutating it
-  const nfts = oldNfts?.slice() ?? [];
+  const nfts = oldNfts.slice();
   for (let i = 0; i < nfts.length; i++) {
     const nft = nfts[i];
 
@@ -140,8 +135,8 @@ export const mergeNfts = (
       nfts.splice(i, 1);
       i--;
     } else if (!isEqual(nft, newNftsPerId[nft.id])) {
-      // Use the new NFT instead (as a copy cause we're deleting the reference just after)
-      nfts[i] = Object.assign({}, newNftsPerId[nft.id]);
+      // Use the new NFT instead
+      nfts[i] = newNftsPerId[nft.id];
     }
 
     // Delete it from the newNfts to keep only the un-added ones at the end

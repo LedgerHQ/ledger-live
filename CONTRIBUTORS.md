@@ -7,3 +7,4 @@
 - konoart: `solana` coin family integration
 - Zondax: `filecoin` coin family integration
 - Hedera: `hedera` coin family integration
+- wa-aal: `cosmos` coin family integration

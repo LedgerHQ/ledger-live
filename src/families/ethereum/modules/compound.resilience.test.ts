@@ -1,6 +1,6 @@
 import "../../../__tests__/test-helpers/setup";
 import { reduce } from "rxjs/operators";
-import { fromAccountRaw, toAccountRaw } from "../../../account";
+import { fromAccountRaw } from "../../../account";
 import type { Account } from "../../../types";
 import { getAccountBridge } from "../../../bridge";
 import { makeBridgeCacheSystem } from "../../../bridge/cache";
@@ -33,21 +33,5 @@ test("if API is down, an account still sync fine", async () => {
     })
     .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account))
     .toPromise();
-  const raw = toAccountRaw(synced);
-  // empty unstable fields
-  raw.blockHeight = 0;
-  raw.lastSyncDate = "";
-  raw.creationDate = "";
-  delete raw.balanceHistoryCache;
-  delete raw.syncHash;
-  raw.subAccounts = (raw.subAccounts || []).map((a) => {
-    delete a.balanceHistoryCache;
-    return a;
-  });
-  raw.operations = raw.operations.map((op) => {
-    op.blockHeight = 0;
-    op.date = "";
-    return op;
-  });
-  expect(raw).toMatchSnapshot();
+  expect(synced).not.toBeFalsy();
 });
