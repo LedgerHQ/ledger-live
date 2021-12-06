@@ -41,20 +41,21 @@ test("svg icons valid", async () => {
 
     tags.forEach((element, i) => {
       if (i === 0) {
-        expect(/width="24"|width="24px"/.test(element)).toBeValidSvg(
+        const m = /width="([^"]+)"/.exec(element);
+        if (!m) {
+          throw new Error("no width found in " + svgFileName);
+        }
+        const [, size] = m;
+        expect(element.includes('height="' + size + '"')).toBeValidSvg(
           svgFileName,
-          "Must contain width 24px"
-        );
-        expect(/height="24"|height="24px"/.test(element)).toBeValidSvg(
-          svgFileName,
-          "Must contain height 24px"
+          "Must contain height of same width. " + element
         );
         expect(
-          /viewBox="0 0 24 24"|viewBox="0 0 24px 24px"/.test(element)
+          element.includes('viewBox="0 0 ' + size + " " + size + '"')
         ).toBeValidSvg(svgFileName, "Must contain correct viewport");
         expect(!/style=/.test(element)).toBeValidSvg(
           svgFileName,
-          "Must not contain style attrs"
+          "Must not contain style attrs. " + element
         );
       } else {
         expect(
