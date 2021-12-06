@@ -5,6 +5,9 @@ import { TransitionProps } from "./types";
 const WEB = Platform.OS === "web";
 
 export interface SlideProps extends TransitionProps {
+  /**
+   * The direction of the slide animation.
+   */
   direction?: "left" | "right";
 }
 

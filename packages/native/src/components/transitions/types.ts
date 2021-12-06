@@ -4,7 +4,7 @@ export type TransitionStatus = "entering" | "entered" | "exiting" | "exited";
 
 export interface TransitionProps {
   /**
-   * The visilibity status.
+   * The status of the transition, either "entered", "entering", "exiting" or "exited".
    */
   status: TransitionStatus;
   /**

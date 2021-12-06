@@ -9,12 +9,24 @@ import {
 } from "../../transitions";
 
 interface InnerProps {
+  /**
+   * The active index.
+   */
   activeIndex: number;
+  /**
+   * The total number of steps.
+   */
   stepsLength: number;
 }
 
 export interface RenderTransitionProps extends InnerProps, TransitionProps {
+  /**
+   * The index of the child.
+   */
   index: number;
+  /**
+   * The previously active index.
+   */
   previousActiveIndex: number | null;
 }
 
