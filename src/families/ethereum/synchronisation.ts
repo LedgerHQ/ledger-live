@@ -167,7 +167,10 @@ export const getAccountShape: GetAccountShape = async (
   const operations = mergeOps(initialStableOperations, newOps);
 
   const nfts = isNFTActive(currency)
-    ? mergeNfts(initialAccount?.nfts || [], nftsFromOperations(operations))
+    ? mergeNfts(
+        initialAccount?.nfts || [],
+        nftsFromOperations(operations).filter((n) => n.amount.gt(0))
+      )
     : undefined;
 
   const accountShape: Partial<Account> = {
