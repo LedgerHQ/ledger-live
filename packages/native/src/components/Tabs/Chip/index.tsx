@@ -11,7 +11,7 @@ const TabBox = styled(TouchableOpacity)<{ isActive: boolean }>`
   padding: ${(p) => p.theme.space[5]}px 0;
   border-radius: 8px;
   background-color: ${(p) =>
-    p.isActive ? p.theme.colors.palette.primary.c20 : "unset"};
+    p.isActive ? p.theme.colors.palette.primary.c20 : "transparent"};
 `;
 
 const StyledTabs = styled(TemplateTabs)``;
