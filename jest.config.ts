@@ -54,6 +54,11 @@ export default {
     "^@polkadot/x-randomvalues$": "@polkadot/x-randomvalues/node.cjs",
     "^@polkadot/x-textdecoder$": "@polkadot/x-textdecoder/node.cjs",
     "^@polkadot/x-textencoder$": "@polkadot/x-textencoder/node.cjs",
+    "^@polkadot/x-bigint/(.*)": "@polkadot/x-bigint/$1.cjs",
+    "^@polkadot/x-bigint$": "@polkadot/x-bigint/index.cjs",
+    "^@polkadot/x-noble-secp256k1$": "@polkadot/x-noble-secp256k1/index.cjs",
+    "^@polkadot/x-noble-hashes/(.*)": "@polkadot/x-noble-hashes/$1.cjs",
+    "^@polkadot/x-noble-hashes$": "@polkadot/x-noble-hashes/index.cjs",
   },
   transformIgnorePatterns: [
     "/node_modules/(?!@polkadot|@babel/runtime/helpers/esm/)",
