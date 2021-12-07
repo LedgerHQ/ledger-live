@@ -16,6 +16,8 @@ import polkadot from "../families/polkadot/cli-transaction";
 
 import ripple from "../families/ripple/cli-transaction";
 
+import solana from "../families/solana/cli-transaction";
+
 import stellar from "../families/stellar/cli-transaction";
 
 import tezos from "../families/tezos/cli-transaction";
@@ -33,6 +35,7 @@ export default {
   filecoin,
   polkadot,
   ripple,
+  solana,
   stellar,
   tezos,
   tron,

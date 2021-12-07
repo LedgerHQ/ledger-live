@@ -16,6 +16,8 @@ import polkadot from "../families/polkadot/specs";
 
 import ripple from "../families/ripple/specs";
 
+import solana from "../families/solana/specs";
+
 import stellar from "../families/stellar/specs";
 
 import tezos from "../families/tezos/specs";
@@ -33,6 +35,7 @@ export default {
   filecoin,
   polkadot,
   ripple,
+  solana,
   stellar,
   tezos,
   tron,

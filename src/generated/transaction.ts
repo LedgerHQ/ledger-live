@@ -18,6 +18,8 @@ import polkadot from "../families/polkadot/transaction";
 
 import ripple from "../families/ripple/transaction";
 
+import solana from "../families/solana/transaction";
+
 import stellar from "../families/stellar/transaction";
 
 import tezos from "../families/tezos/transaction";
@@ -36,6 +38,7 @@ export default {
   neo,
   polkadot,
   ripple,
+  solana,
   stellar,
   tezos,
   tron,

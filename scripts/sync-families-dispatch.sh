@@ -31,7 +31,7 @@ presync.ts \
 platformAdapter.ts \
 "
 
-withoutNetworkInfo=("algorand polkadot")
+withoutNetworkInfo=("algorand polkadot solana")
 
 cd ../src
 
