@@ -116,22 +116,17 @@ export default function OperationRow({
   );
 
   const amountRender = useCallback(() => {
-    if (amount.isZero()) {
-      return null;
-    }
-
     if (isNftOperation) {
       return (
         <OperationRowNftName
-          style={[
-            styles.bodyRight,
-            {
-              maxWidth: "50%",
-            },
-          ]}
+          style={[styles.bodyRight, { maxWidth: "50%" }]}
           operation={operation}
         />
       );
+    }
+
+    if (amount.isZero()) {
+      return null;
     }
 
     return (

@@ -42,10 +42,6 @@ const Title = ({
   const isNegative = amount.isNegative();
   const valueColor = isNegative ? colors.smoke : colors.green;
 
-  if (hasFailed || amount.isZero()) {
-    return null;
-  }
-
   if (isNftOperation) {
     return (
       <>
@@ -66,6 +62,10 @@ const Title = ({
         </LText>
       </>
     );
+  }
+
+  if (hasFailed || amount.isZero()) {
+    return null;
   }
 
   return (
