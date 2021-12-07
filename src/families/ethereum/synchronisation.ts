@@ -444,7 +444,7 @@ const txToOps =
               if (receiving) {
                 const type = "NFT_IN";
                 all.push({
-                  id: `${nftId}-${hash}-${type}-i${i}`,
+                  id: `${nftId}-${hash}-${type}-i${i}_${j}`,
                   senders: [sender],
                   recipients: [receiver],
                   contract,
