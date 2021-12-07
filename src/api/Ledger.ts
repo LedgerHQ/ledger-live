@@ -25,7 +25,17 @@ export const findCurrencyExplorer = (
   }
 
   if (config.experimental && getEnv("EXPERIMENTAL_EXPLORERS")) {
-    const { base, version } = config.experimental;
+    const base = config.experimental.base;
+    let version = config.experimental.version;
+    const CURRENCIES_JS = getEnv("EXPERIMENTAL_CURRENCIES_JS_BRIDGE");
+    let useJS = false;
+    if (CURRENCIES_JS) {
+      useJS = CURRENCIES_JS.split(",").includes(currency.id);
+    }
+    //V2 explorer for doge and bitcoin cash when libcore is used
+    if ((currency.id === "bitcoin_cash" || currency.id === "doge") && !useJS) {
+      version = "v2";
+    }
     return {
       endpoint: getEnv(base),
       id,

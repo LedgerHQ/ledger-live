@@ -12,17 +12,15 @@ const initialExplorerConfig: FullConfig = {
     },
   },
   bitcoin_cash: {
-    id: "abc",
+    id: "bch",
     stable: {
       base: "EXPLORER",
       version: "v2",
     },
-    /*
     experimental: {
       base: "EXPLORER",
       version: "v3",
     },
-    */
   },
   bitcoin_gold: {
     id: "btg",
