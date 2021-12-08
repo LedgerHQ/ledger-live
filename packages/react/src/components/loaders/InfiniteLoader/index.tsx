@@ -10,12 +10,16 @@ const rotate = keyframes`
   }
 `;
 
-const InfiniteLoader = styled.img.attrs({
+export type Props = {
+  size?: number;
+};
+
+const InfiniteLoader = styled.img.attrs(({ size = 28 }: Props) => ({
   alt: "loading...",
   src: `data:image/png;base64,${image}`,
-  width: "28",
-  height: "28",
-})`
+  width: size,
+  height: size,
+}))<Props>`
   animation: ${rotate} 1s linear infinite;
   transition: 100ms linear transform;
 `;
