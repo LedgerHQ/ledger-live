@@ -1,5 +1,5 @@
 import React from "react";
-import ProgressLoader from "./index";
+import ProgressLoader, { Props } from "./index";
 
 export default {
   title: "Loaders/ProgressLoader",
@@ -23,13 +23,44 @@ export default {
       },
       defaultValue: 6,
     },
+    showPercentage: {
+      defaultValue: true,
+      control: {
+        type: "boolean",
+      },
+    },
+    frontStrokeColor: {
+      type: "string",
+      control: {
+        control: "color",
+      },
+    },
+    backgroundStrokeColor: {
+      type: "string",
+      control: {
+        control: "color",
+      },
+    },
+    textColor: {
+      type: "string",
+      control: {
+        control: "color",
+      },
+    },
   },
 };
 
-export const Default = (args: {
-  radius: number;
-  progress: number;
-  stroke: number;
-}): JSX.Element => {
-  return <ProgressLoader radius={args.radius} progress={args.progress} stroke={args.stroke} />;
+export const Default = (args: Props): JSX.Element => {
+  return (
+    <ProgressLoader
+      radius={args.radius}
+      progress={args.progress}
+      stroke={args.stroke}
+      showPercentage={args.showPercentage}
+      frontStrokeColor={args.frontStrokeColor}
+      backgroundStrokeColor={args.backgroundStrokeColor}
+      frontStrokeLinecap={args.frontStrokeLinecap}
+      textColor={args.textColor}
+    />
+  );
 };
