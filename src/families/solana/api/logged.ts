@@ -1,6 +1,12 @@
 import { ChainAPI } from "./chain";
 
-import fs from "fs";
+//import fs from "fs";
+
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+function write(file: string, str: string) {
+  // fs is not available on mobile
+  //fs.appendFileSync(file, str);
+}
 
 export function logged(api: ChainAPI, file: string): ChainAPI {
   const proxy: ChainAPI = new Proxy(api, {
@@ -22,7 +28,7 @@ export function logged(api: ChainAPI, file: string): ChainAPI {
               /{"_bn":(".*?")}/g,
               "new PublicKey(Buffer.from($1, 'hex'))"
             );
-            fs.appendFileSync(file, summaryJson + ",\n");
+            write(file, summaryJson + ",\n");
           };
           if (result instanceof Promise) {
             return result.then((answer) => {
