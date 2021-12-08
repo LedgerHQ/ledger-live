@@ -10,11 +10,7 @@ const BoxStory = () => {
   const background = text("Background", "", "Layout");
 
   return (
-    <Box
-      background={background}
-      p={p}
-      m={m}
-    >
+    <Box background={background} p={p} m={m}>
       <Text variant="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
       <Text variant="h2">{text("Second text", "dolor sit", "Content")}</Text>
       <Text variant="h3">{text("Third text", "amet", "Content")}</Text>
@@ -29,11 +25,7 @@ const BoxStoryTwo = () => {
 
   return (
     <>
-      <Box
-        background={background}
-        p={p}
-        m={m}
-      >
+      <Box background={background} p={p} m={m}>
         <Text variant="h1">{text("First text", "Lorem ipsum", "Content")}</Text>
         <Text variant="h2">{text("Second text", "dolor sit", "Content")}</Text>
         <Text variant="h3">{text("Third text", "amet", "Content")}</Text>

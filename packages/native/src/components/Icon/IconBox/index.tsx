@@ -2,7 +2,9 @@ import React from "react";
 import styled, { useTheme } from "styled-components/native";
 
 type Props = {
-  Icon: (props: { size?: number; color?: string }) => React.ReactElement;
+  Icon:
+    | ((props: { size?: number; color?: string }) => React.ReactElement)
+    | React.ReactNode;
   color?: string;
   boxSize?: number;
   iconSize?: number;
@@ -35,7 +37,11 @@ export default function IconBox({
   const { colors } = useTheme();
   return (
     <IconContainer size={boxSize}>
-      <Icon size={iconSize} color={color || colors.neutral.c100} />
+      {typeof Icon === "function" ? (
+        <Icon size={iconSize} color={color || colors.neutral.c100} />
+      ) : (
+        Icon
+      )}
     </IconContainer>
   );
 }
