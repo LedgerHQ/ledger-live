@@ -58,7 +58,7 @@ export const Overview = (() => {
         [false, true].map((outline, j) => (
           <Fragment key={`${i}:${j}`}>
             <Text variant="small" color="neutral.c70">
-              type="{buttonType}"<br />
+              variant="{buttonType}"<br />
               outline={`{${outline.toString()}}`}
             </Text>
             {propsArr.map((buttonProps) => (
