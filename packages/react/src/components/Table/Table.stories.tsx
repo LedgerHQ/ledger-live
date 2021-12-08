@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import styled, { useTheme } from "styled-components";
 
-import { ExpandButton } from "../cta/Button";
+import Button from "../cta/Button";
 import Flex from "../layout/Flex";
 import Text from "../asorted/Text";
 import Table, { RowContainerProps, Rows, Column, Props } from "./index";
@@ -328,11 +328,11 @@ function SubAccounts({
       )}
       <Table.ExtraRowContainer>
         <Flex justifyContent="center" mt={-8}>
-          <ExpandButton onToggle={setExpanded}>
+          <Button.Expand onToggle={setExpanded}>
             <Text variant={"paragraph"}>
               {expanded ? "Hide" : "Show"} tokens ({subAccounts.length})
             </Text>
-          </ExpandButton>
+          </Button.Expand>
         </Flex>
       </Table.ExtraRowContainer>
     </>

@@ -1,5 +1,5 @@
 import React from "react";
-import Button, { ExpandButton, ExpandButtonProps, ButtonVariants, IconPosition } from "./index";
+import Button, { ButtonExpandProps, ButtonVariants, IconPosition } from "./index";
 import Text from "../../asorted/Text";
 import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/react/";
 import { InvertTheme } from "../../../styles/InvertTheme";
@@ -112,13 +112,13 @@ IconButton.args = {
   iconPosition: "right",
 };
 
-const ExpandTemplate = (args: ExpandButtonProps) => {
+const ExpandTemplate = (args: ButtonExpandProps) => {
   const [show, setShow] = React.useState(false);
   return (
     <>
-      <ExpandButton {...args} onToggle={setShow}>
+      <Button.Expand {...args} onToggle={setShow}>
         {args.children}
-      </ExpandButton>
+      </Button.Expand>
       {show && (
         <div
           style={{

@@ -238,7 +238,7 @@ export type ButtonExpandProps = React.PropsWithChildren<
   }
 >;
 
-const StyledExpandButton = styled(Button).attrs((props) => ({
+const StyledButtonExpand = styled(Button).attrs((props) => ({
   Icon: props.Icon != null || ChevronBottom,
   iconPosition: props.iconPosition || "right",
 }))<{ expanded: boolean }>`
@@ -247,14 +247,14 @@ const StyledExpandButton = styled(Button).attrs((props) => ({
     ${(p) => (p.expanded ? "transform: rotate(180deg)" : "")}
   }
 `;
-export const ExpandButton = function ExpandButton({
+const ButtonExpand = function ButtonExpand({
   onToggle,
   onClick,
   ...props
-}: ExpandButtonProps): React.ReactElement {
+}: ButtonExpandProps): React.ReactElement {
   const [expanded, setExpanded] = useState(false);
   return (
-    <StyledExpandButton
+    <StyledButtonExpand
       {...props}
       expanded={expanded}
       onClick={(event: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -267,5 +267,6 @@ export const ExpandButton = function ExpandButton({
 };
 
 Button.Unstyled = ButtonUnstyled;
+Button.Expand = ButtonExpand;
 
 export default Button;
