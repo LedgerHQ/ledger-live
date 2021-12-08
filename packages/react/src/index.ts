@@ -1,3 +1,3 @@
 export * from "./components";
 export * from "./assets";
-export { StyleProvider } from "./styles";
+export { StyleProvider, InvertTheme } from "./styles";
