@@ -73,9 +73,7 @@ export default function Notification({
             variant={"body"}
             fontWeight={"medium"}
             color={
-              variant === "primary"
-                ? colors.neutral.c00
-                : colors.neutral.c80
+              variant === "primary" ? colors.neutral.c00 : colors.neutral.c80
             }
             mt={2}
           >
