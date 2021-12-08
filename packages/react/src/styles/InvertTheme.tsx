@@ -10,7 +10,7 @@ export const InvertTheme = ({ children }: React.PropsWithChildren<unknown>): Rea
   const newTheme: Theme = useMemo(
     () => ({
       ...defaultTheme,
-      colors: { ...defaultTheme.colors, palette: palettes[revertTheme] },
+      colors: { ...palettes[revertTheme], palette: palettes[revertTheme] },
       theme: revertTheme,
     }),
     [revertTheme],
