@@ -34,7 +34,11 @@ export const ListItem = ({
 }: BaseStyledProps & BaseListItemProps): React.ReactElement => {
   return (
     <ListItemContainer {...props}>
-      {bullet && <Box mr={7}>{bullet}</Box>}
+      {bullet && (
+        <Box mr={7} flexShrink={0}>
+          {bullet}
+        </Box>
+      )}
       <Flex flexDirection={"column"}>
         {title && (
           <Text variant={"body"} fontWeight={"semiBold"} color={"neutral.c100"}>
