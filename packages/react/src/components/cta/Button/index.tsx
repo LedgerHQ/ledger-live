@@ -23,7 +23,7 @@ interface BaseProps extends BaseStyledProps, BordersProps {
 export interface ButtonProps extends BaseProps {
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   children?: React.ReactNode;
-  onClick: (event?: React.SyntheticEvent<HTMLButtonElement>) => void;
+  onClick?: (event: React.SyntheticEvent<HTMLButtonElement>) => void;
   iconSize?: number;
   style?: React.CSSProperties;
 }
@@ -232,10 +232,11 @@ const Button = ({
   );
 };
 
-export type ExpandButtonProps = React.PropsWithChildren<{
-  onToggle?: (arg0: boolean) => void;
-  onClick?: (arg0: React.SyntheticEvent<HTMLButtonElement>) => void;
-}>;
+export type ButtonExpandProps = React.PropsWithChildren<
+  ButtonProps & {
+    onToggle?: (arg0: boolean) => void;
+  }
+>;
 
 const StyledExpandButton = styled(Button).attrs((props) => ({
   Icon: props.Icon != null || ChevronBottom,
