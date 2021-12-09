@@ -104,6 +104,10 @@ const DrawerContent = ({
     }
   }, [onClose, preventBackdropClick]);
 
+  const stopClickPropagation = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
+
   return (
     <TransitionInOut
       in={isOpen}
@@ -116,7 +120,7 @@ const DrawerContent = ({
     >
       <Overlay onClick={handleBackdropClick}>
         <TransitionSlide in={isOpen} fixed reverseExit appear mountOnEnter unmountOnExit>
-          <Wrapper big={big}>
+          <Wrapper big={big} onClick={stopClickPropagation}>
             <Container>
               <Header>
                 {!hideNavigation && (
