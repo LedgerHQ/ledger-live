@@ -141,7 +141,7 @@
       }
     },
     "ClaimRewardsFeesWarning": {
-      "title": "Ödüller, ödülü almak için gereken tahmini ücretlerden daha küçük.",
+      "title": "Ödül miktarı, ödülü almak için gereken tahmini ağ ücretlerinden daha az.",
       "description": ""
     },
     "CompoundLowerAllowanceOfActiveAccountError": {
@@ -848,11 +848,11 @@
             }
           },
           "1": {
-            "title": "Göz At ",
+            "title": "Göz Atın ",
             "label": "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2": {
-            "title": "“Yeni cihaz olarak kur” seçeneğini seçin",
+            "title": "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
             "label": "Seçimi onaylamak için her iki tuşa da aynı anda basın."
           },
           "3": {
@@ -875,7 +875,7 @@
             "label": "Rakamları değiştirmek için sol veya sağ tuşa basın. Bir rakamı onaylamak için her iki tuşa da basın. PIN kodunuzu onaylamak için <1></1> simgesini seçin. Bir rakamı silmek için <2></2> simgesini seçin."
           },
           "1": {
-            "title": "PIN kodunu onayla",
+            "title": "PIN kodunu onaylayın",
             "label": "Onaylamak için PIN kodunuzu tekrar girin."
           }
         },
@@ -1023,7 +1023,7 @@
             }
           },
           "1": {
-            "title": "Göz At",
+            "title": "Göz Atın",
             "label": "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2": {
@@ -1225,15 +1225,15 @@
           "wrong": "Kısa süreliğine internete bağlanır"
         },
         "modal": {
-          "text": "Özel anahtarınız donanım cüzdanınızda her zaman çevrim dışı kalır. Nano'ya bağlandığında bile, Ledger uygulaması özel anahtarınıza erişemez. Cihazınızdaki her işlemi fiziksel olarak onaylamanız gerekir.",
+          "text": "Özel anahtarınız donanım cüzdanınızda her zaman çevrim dışı kalır. Ledger uygulaması Nano'ya bağlandığında bile özel anahtarınıza erişemez. Cihazınızdaki her işlemi fiziksel olarak onaylamanız gerekir.",
           "cta": "Sınavı tamamla"
         }
       },
       "final": {
-        "successTitle": "Gerçek bir profesyonel!",
+        "successTitle": "İşin uzmanı oldunuz bile!",
         "successText": "Kriptolarınızı güvenli bir şekilde yönetmeye hazırsınız. Sadece küçük bir adım kaldı!",
-        "failTitle": "Yakında bir profesyonel olacaksınız...",
-        "failText": "Merak etmeyin, Ledger yolculuğunuz boyunca size rehberlik etmek için burada. Yakında kripto güvenliğiniz hakkında daha rahat olacaksınız. Sadece küçük bir adım kaldı!",
+        "failTitle": "You will soon become a pro...",
+        "failText": "Merak etmeyin! Ledger, yolculuğunuz boyunca size rehberlik etmek için burada. Yakında kripto güvenliğiniz konusunda çok daha rahat hissedeceksiniz. Sadece küçük bir adım kaldı!",
         "cta": "Sonraki adım"
       }
     },
@@ -1246,7 +1246,7 @@
       "seed": {
         "title": "Lütfen kutunun içindekileri kontrol edin",
         "desc": "{{device}} cihazınız bir PIN kodu veya kurtarma anahtarı ile geldiyse, kullanımı güvenli değildir ve Ledger Destek ile iletişime geçmeniz gerekir.",
-        "warning": "Sadece cihazınız kurulduğunda görüntülenen kurtarma ifadesini kullanın",
+        "warning": "Yalnızca kurulum sırasında cihaz ekranında görüntülenmiş olan kurtarma ifadesini kullanın",
         "continueCTA": "Devam",
         "contactSupportCTA": "Destek Al"
       }
@@ -1455,9 +1455,9 @@
     "lastOperations": "Son işlemler",
     "emptyState": {
       "title": "Henüz kripto varlık yok mu?",
-      "desc": "<1><0>{{managerAppName}}</0></1> uygulamasının yüklü olduğundan emin olun ve almaya başlayın.",
+      "desc": "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse hesabınıza varlık almaya başlayabilirsiniz.",
       "descWithBuy": "<3><0>{{currencyTicker}}</0></3> satın alabilmek veya teslim alabilmek için <1><0>{{managerAppName}}</0></1> uygulamasının yüklü olduğundan emin olun",
-      "descToken": "<1><0>{{managerAppName}}</0></1> uygulamasının yüklü olduğundan emin olun ve <3><0>{{currencyTicker}}</0></3> ile <5><0>{{tokenList}}</0> token'larını</5> almaya başlayın",
+      "descToken": "<1><0>{{managerAppName}}</0></1> uygulaması yüklüyse <3><0>{{currencyTicker}}</0></3> ile <5><0>{{tokenType}}</0> token'larını</5> almaya başlayabilirsiniz",
       "buttons": {
         "receiveFunds": "Al",
         "buyCrypto": "Satın Al"
@@ -1487,7 +1487,7 @@
         "desc": "Kullanılacak API düğümü"
       },
       "delete": {
-        "title": "Portföyden hesabı kaldır",
+        "title": "Hesabı portföyden kaldır",
         "desc": "Depolanan veriler kaldırılacaktır.",
         "confirmationTitle": "Emin misiniz?",
         "confirmationDesc": "Bunun kripto varlıklarınız üzerinde hiçbir etkisi yoktur. Mevcut hesaplar daha sonra istenildiğinde eklenebilir."
@@ -1725,14 +1725,14 @@
       "supportDesc": "Bir sorununuz varsa, Ledger Live'ı donanım cüzdanınızla kullanma konusunda yardım alın.",
       "configureDevice": "Cihaz kurulumu",
       "configureDeviceDesc": "Yeni bir cihaz olarak kurun veya mevcut bir cihazı geri yükleyin. Hesaplar ve ayarlar korunur.",
-      "clearCache": "Önbelleği temizle",
+      "clearCache": "Önbelleği temizleyin",
       "clearCacheDesc": "Ağdaki işlemler taranır ve hesaplarınız yeniden hesaplanır.",
       "clearCacheModal": "Emin misiniz?",
       "clearCacheModalDesc": "Ağdaki işlemlerin yeni ve eksiksiz bir taraması yapılacak. Hesap geçmişleri yeniden oluşturulacak ve bakiyeler yeniden hesaplanacaktır.",
       "clearCacheButton": "Temizle",
-      "exportLogs": "Logları kaydet",
+      "exportLogs": "Logları kaydedin",
       "exportLogsDesc": "Ledger Live loglarını kaydetmek sorun giderme amacıyla gerekli olabilir.",
-      "hardReset": "Ledger Live'ı Sıfırla",
+      "hardReset": "Ledger Live'ı sıfırlayın",
       "hardResetDesc": "Bunun varlıklarınız üzerinde bir etkisi yoktur. Hesap verileri, işlem geçmişleri ve ayarlar dahil olmak üzere Ledger Live'daki tüm verileri siler. Boş bir Ledger Live'da kripto varlıklarınızı yeniden yüklemek ve yönetmek için Ledger cihazınızı kullanın.",
       "repairDevice": "Ledger cihazınızı onarın",
       "repairDeviceDesc": "Cihazınızı güncellerken sorun yaşıyor ve güncellemelere devam edemiyorsanız, cihazınızı onarmak için bunu deneyebilirsiniz."
@@ -1800,7 +1800,7 @@
       "verified": "Adres onaylandı. Kopyaladıysanız veya taradıysanız yeniden kontrol edin.",
       "verifyAgain": "Tekrar kontrol et",
       "noAccount": "Hesap bulunamadı",
-      "address": "Hesabın adresi",
+      "address": "Hesap adresi",
       "copyAddress": "Adresi kopyala",
       "shareAddress": "Adresi paylaş",
       "addressCopied": "Adres kopyalandı!",
@@ -3219,7 +3219,7 @@
       },
       "superRepresentative": {
         "title": "Süper Temsilciler (ST)",
-        "description": "Süper Temsilciler, temel işlevleri sağlayarak TRON topluluğunun yönetiminde önemli bir rol oynar; örn. blok oluşturma ve kayıt tutma."
+        "description": "Süper Temsilciler, blok oluşturma ve kayıt tutma gibi temel işlevleri sağlayarak TRON topluluğunun yönetiminde önemli bir rol oynar."
       },
       "candidates": {
         "title": "Adaylar",
@@ -3616,7 +3616,7 @@
       "selectCurrency": "Bir para birimi seçin",
       "selectAccount": "Bir hesap seçin",
       "connectDevice": "Cihazınızı bağlayın",
-      "title": "Ortağımız üzerinden kripto alın",
+      "title": "Ortağımız üzerinden kripto satın alın",
       "description": "Kripto varlıklarını Coinify üzerinden satın alın ve doğrudan Ledger hesabınıza aktarın.",
       "CTAButton": "Şimdi satın al",
       "emptyState": {

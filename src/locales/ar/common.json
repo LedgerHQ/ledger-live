@@ -598,7 +598,7 @@
       "title": "لم يتم تفعيل شبكة Taproot الأساسية بعد"
     },
     "NotEnoughNftOwned": {
-      "title": "You have exceeded the number of available tokens"
+      "title": "لقد تجاوزت عدد رموز التوكن المتاحة"
     },
     "generic": {
       "title": "{{message}}",
@@ -2232,9 +2232,9 @@
       "selectDevice": "اختار جهاز",
       "connectDevice": "توصيل الجهاز",
       "stepRange": "خطوة {{currentStep}} من {{totalSteps}}",
-      "quantity": "Quantity",
-      "selectCollection": "Collection",
-      "selectNft": "NFT"
+      "quantity": "الكمية",
+      "selectCollection": "مجموعة",
+      "selectNft": "NFT (رمز غير قابل للاستبدال)"
     },
     "recipient": {
       "scan": "مسح ضوئي لرمز QR",
@@ -2247,7 +2247,7 @@
       "useMax": "استخدم الحد الأقصى",
       "loadingNetwork": "جاري تحميل رسوم الشبكة...",
       "noRateProvider": "غير متاح",
-      "quantityAvailable": "Quantity available"
+      "quantityAvailable": "الكمية المتاحة"
     },
     "summary": {
       "subaccountsWarning": "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن لهذا الحساب",
@@ -2272,7 +2272,7 @@
         "value": "قيمة الملاحظة"
       },
       "validateMemo": "تحقق من الملاحظة",
-      "quantity": "Quantity"
+      "quantity": "الكمية"
     },
     "validation": {
       "message": "قم بتأكيد المعاملة على جهازك للتوقيع عليها بشكل آمن.",
