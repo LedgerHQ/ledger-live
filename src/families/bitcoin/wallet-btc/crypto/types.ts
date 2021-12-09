@@ -32,4 +32,5 @@ export type Currency =
   | "viacoin"
   | "stakenet"
   | "stealthcoin"
+  | "decred"
   | "bitcoin_testnet";

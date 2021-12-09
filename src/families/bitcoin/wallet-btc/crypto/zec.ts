@@ -9,6 +9,7 @@ import coininfo from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
 import { ICrypto } from "./types";
+import Base from "./base";
 
 class ZCash implements ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,7 +53,13 @@ class ZCash implements ICrypto {
     account: number,
     index: number
   ): string {
-    return this.getLegacyAddress(xpub, account, index);
+    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
+      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    }
+    const address = this.getLegacyAddress(xpub, account, index);
+    Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
+      address;
+    return address;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -15,3 +15,4 @@ export { default as Doge } from "./doge";
 export { default as Qtum } from "./qtum";
 export { default as Vertcoin } from "./vtc";
 export { default as ViaCoin } from "./via";
+export { default as Decred } from "./decred";

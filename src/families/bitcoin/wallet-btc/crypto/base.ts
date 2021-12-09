@@ -28,7 +28,7 @@ class Base implements ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
   protected static publickeyCache = {}; // xpub + account + index to publicKey
-  protected static addressCache = {}; // derivationMode + xpub + account + index to address
+  public static addressCache = {}; // derivationMode + xpub + account + index to address
   protected static bech32Cache = {}; // xpub to bech32 interface
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -238,15 +238,24 @@ class BitcoinLikeWallet {
       onDeviceStreaming,
     } = params;
 
-    const length = txInfo.outputs.reduce((sum, output) => {
+    let length = txInfo.outputs.reduce((sum, output) => {
       return sum + 8 + output.script.length + 1;
     }, 1);
+    // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L478
+    // Decred has a witness and an expiry height
+    if (additionals && additionals.includes("decred")) {
+      length += 2 * txInfo.outputs.length;
+    }
     const buffer = Buffer.allocUnsafe(length);
     const bufferWriter = new BufferWriter(buffer, 0);
     bufferWriter.writeVarInt(txInfo.outputs.length);
     txInfo.outputs.forEach((txOut) => {
       // xpub splits output into smaller outputs than SAFE_MAX_INT anyway
       bufferWriter.writeUInt64(txOut.value.toNumber());
+      if (additionals && additionals.includes("decred")) {
+        bufferWriter.writeVarInt(0);
+        bufferWriter.writeVarInt(0);
+      }
       bufferWriter.writeVarSlice(txOut.script);
     });
     const outputScriptHex = buffer.toString("hex");

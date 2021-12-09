@@ -59,16 +59,26 @@ class Litecoin extends Base implements ICrypto {
     account: number,
     index: number
   ): string {
+    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
+      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    }
+    let address: string;
     switch (derivationMode) {
       case DerivationModes.LEGACY:
-        return this.getLegacyAddress(xpub, account, index);
+        address = this.getLegacyAddress(xpub, account, index);
+        break;
       case DerivationModes.SEGWIT:
-        return this.getSegWitAddress(xpub, account, index);
+        address = this.getSegWitAddress(xpub, account, index);
+        break;
       case DerivationModes.NATIVE_SEGWIT:
-        return this.getNativeSegWitAddress(xpub, account, index);
+        address = this.getNativeSegWitAddress(xpub, account, index);
+        break;
       default:
         throw new Error("Should not be reachable");
     }
+    Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
+      address;
+    return address;
   }
 
   // infer address type from its syntax

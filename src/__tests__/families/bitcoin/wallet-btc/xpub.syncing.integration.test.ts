@@ -217,6 +217,15 @@ describe("xpub integration sync", () => {
       coin: "xst",
       explorerVersion: "v2",
     },
+    {
+      xpub: "dpubZFUiMExUREbqJQVJkfXSs4wjUb1jwVkoofnPK8Mt95j3PanCyq9Mc4aFnWtRZkhci9ZYPVLZybVLMMkS6g1nKBTN4899KJwGeVBvyumvcjW",
+      derivationMode: DerivationModes.LEGACY,
+      addresses: 6,
+      balance: 0,
+      network: coininfo.decred.main.toBitcoinJS(),
+      coin: "dcr",
+      explorerVersion: "v3",
+    },
   ];
 
   walletDatasets.forEach((dataset) =>
@@ -283,6 +292,9 @@ describe("xpub integration sync", () => {
           break;
         case "zen": // zencash
           crypto = new currency.Zen({ network: dataset.network });
+          break;
+        case "dcr": // decred
+          crypto = new currency.Decred({ network: dataset.network });
           break;
         default:
           throw new Error("Should not be reachable");
