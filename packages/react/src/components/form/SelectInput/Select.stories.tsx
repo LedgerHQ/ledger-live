@@ -4,6 +4,7 @@ import { OptionProps, ValueContainerProps } from "react-select";
 
 import Text from "../../asorted/Text";
 import Flex from "../../layout/Flex";
+import Grid from "../../layout/Grid";
 import SearchMedium from "@ledgerhq/icons-ui/react/SearchMedium";
 import SelectInput, { Props } from "./index";
 import { Option } from "./Option";
@@ -324,7 +325,9 @@ const ColorOption = (props: OptionProps<SelectItem, false>) => {
       render={({ children }) => (
         <Flex flex={1} py={2} alignItems="center">
           <Flex mr={4} p={4} style={{ background: props.data.value }} />
-          <Flex flex={1}>{children}</Flex>
+          <Flex flex={1} style={{ textTransform: "capitalize" }}>
+            {children}
+          </Flex>
         </Flex>
       )}
     />
@@ -333,13 +336,17 @@ const ColorOption = (props: OptionProps<SelectItem, false>) => {
 const ColorValueContainer = (props: ValueContainerProps<SelectItem, false>) => {
   return (
     <ValueContainer
-      render={({ children }) => <div style={{ textTransform: "capitalize" }}>{children}</div>}
+      render={({ children }) => (
+        <Grid alignItems="center" style={{ textTransform: "capitalize" }}>
+          {children}
+        </Grid>
+      )}
       {...props}
     />
   );
 };
 
-export const Default: StoryTemplate<Props> = (args) => {
+export const Default: StoryTemplate<Props<SelectItem>> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -359,7 +366,7 @@ export const Default: StoryTemplate<Props> = (args) => {
   );
 };
 
-export const Minimal: StoryTemplate<Props> = (args) => {
+export const Minimal: StoryTemplate<Props<SelectItem>> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -381,7 +388,7 @@ Minimal.parameters = {
   },
 };
 
-export const SideRenders: StoryTemplate<Props> = (args) => {
+export const SideRenders: StoryTemplate<Props<SelectItem>> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
   const theme = useTheme();
 
@@ -420,7 +427,7 @@ const CustomOption = (props: OptionProps<SelectItem, false>) => {
     <Option
       {...props}
       render={({ children }) => (
-        <Flex flex={1}>
+        <Flex flex={1} alignItems="center">
           <Text fontWeight="semiBold" variant={"paragraph"} mr={4}>
             #Left
           </Text>
@@ -435,7 +442,7 @@ const CustomOption = (props: OptionProps<SelectItem, false>) => {
     />
   );
 };
-export const CustomOptions: StoryTemplate<Props> = (args) => {
+export const CustomOptions: StoryTemplate<Props<SelectItem>> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>();
 
   return (
@@ -458,7 +465,7 @@ CustomOptions.parameters = {
   },
 };
 
-export const DisabledOption: StoryTemplate<Props> = (args) => {
+export const DisabledOption: StoryTemplate<Props<SelectItem>> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -483,7 +490,7 @@ DisabledOption.parameters = {
 };
 
 const hugeOptions = new Array(10000).fill(0).map((_, i) => ({ label: "" + i, value: "" + i }));
-export const VirtualList: StoryTemplate<Props> = (args) => {
+export const VirtualList: StoryTemplate<Props<SelectItem>> = (args) => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -507,4 +514,19 @@ VirtualList.parameters = {
         "This control contains a list of 10_000 elements. It uses the `VirtualMenuList` component to render the list inside a `react-window` wrapper.",
     },
   },
+};
+
+export const MultiSelect: StoryTemplate<Props<SelectItem, true>> = (args) => {
+  const [value, setValue] = React.useState<readonly SelectItem[]>([]);
+
+  return (
+    <SelectInput
+      isMulti
+      options={options}
+      value={value}
+      onChange={setValue}
+      menuPortalTarget={document.body}
+      {...args}
+    />
+  );
 };

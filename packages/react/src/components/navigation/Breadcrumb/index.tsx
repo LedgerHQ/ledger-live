@@ -56,7 +56,7 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
               onChange={(elt) => elt && onChange([...values, elt.value])}
               styles={{
                 control: (provided, state) => ({
-                  ...ControlModule.getStyles(theme)(provided, state),
+                  ...ControlModule.getStyles<Element>(theme)(provided, state),
                   cursor: "pointer",
                 }),
                 singleValue: (provided) => ({

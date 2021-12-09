@@ -1,12 +1,14 @@
 import React from "react";
-import { components, Styles, ControlProps, OptionTypeBase } from "react-select";
+import { components, GroupBase, StylesConfig, ControlProps } from "react-select";
 import { DefaultTheme } from "styled-components";
 import { InputContainer } from "../BaseInput";
+import { Props as SelectProps } from "./index";
 
 export function getStyles<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(theme: DefaultTheme): NonNullable<Styles<T, M>["control"]> {
+  G extends GroupBase<O> = GroupBase<O>,
+>(theme: DefaultTheme): NonNullable<StylesConfig<O, M, G>["control"]> {
   return (provided) => ({
     ...provided,
     display: "flex",
@@ -21,14 +23,13 @@ export function getStyles<
 }
 
 export function Control<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(props: ControlProps<T, M>): JSX.Element {
-  const {
-    isFocused,
-    selectProps: { isDisabled, error, renderLeft },
-    children,
-  } = props;
+  G extends GroupBase<O> = GroupBase<O>,
+>(props: ControlProps<O, M, G>): JSX.Element {
+  const { isFocused, selectProps, children } = props;
+
+  const { isDisabled, error, renderLeft } = selectProps as SelectProps<O, M, G>;
 
   return (
     <InputContainer disabled={isDisabled} error={error} focus={isFocused}>

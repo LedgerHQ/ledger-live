@@ -1,12 +1,13 @@
 import React from "react";
-import { components, Styles, OptionProps, OptionTypeBase } from "react-select";
+import { components, GroupBase, StylesConfig, OptionProps } from "react-select";
 import styled from "styled-components";
 import Text from "../../asorted/Text";
 
 export function getStyles<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(): NonNullable<Styles<T, M>["option"]> {
+  G extends GroupBase<O> = GroupBase<O>,
+>(): NonNullable<StylesConfig<O, M, G>["option"]> {
   return (provided) => ({
     ...provided,
     display: "flex",
@@ -74,20 +75,23 @@ const Wrapper = styled(Text).attrs({ as: "div" })<{
 `;
 
 export type ExtraProps<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
+  G extends GroupBase<O> = GroupBase<O>,
 > = {
   /* A render function to customize the contents. */
-  render?: (props: React.PropsWithChildren<OptionProps<T, M>>) => React.ReactNode;
+  render?: (props: React.PropsWithChildren<OptionProps<O, M, G>>) => React.ReactNode;
 };
 export type Props<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
-> = OptionProps<T, M> & ExtraProps<T, M>;
+  G extends GroupBase<O> = GroupBase<O>,
+> = OptionProps<O, M, G> & ExtraProps<O, M, G>;
 export function Option<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(props: Props<T, M>): JSX.Element {
+  G extends GroupBase<O> = GroupBase<O>,
+>(props: Props<O, M, G>): JSX.Element {
   const { render, children, ...innerProps } = props;
 
   return (

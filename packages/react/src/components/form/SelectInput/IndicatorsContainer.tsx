@@ -1,14 +1,14 @@
 import React from "react";
-import { components, IndicatorContainerProps, OptionTypeBase } from "react-select";
+import { components, GroupBase, IndicatorsContainerProps } from "react-select";
 import FlexBox from "../../layout/Flex";
+import { Props as SelectProps } from "./index";
 
 export function IndicatorsContainer<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(props: IndicatorContainerProps<T, M>): JSX.Element {
-  const {
-    selectProps: { renderRight },
-  } = props;
+  G extends GroupBase<O> = GroupBase<O>,
+>(props: IndicatorsContainerProps<O, M, G>): JSX.Element {
+  const { renderRight } = props.selectProps as SelectProps<O, M, G>;
 
   return (
     <FlexBox alignItems="center">

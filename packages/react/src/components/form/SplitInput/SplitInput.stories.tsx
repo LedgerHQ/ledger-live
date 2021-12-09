@@ -1,10 +1,10 @@
 import React from "react";
-import { components, OptionTypeBase } from "react-select";
+import { components, StylesConfig } from "react-select";
 import SplitInput, { Props } from "./index";
 import Input from "../BaseInput";
 import QuantityInput from "../QuantityInput";
 import QrCodeInput from "../QrCodeInput";
-import SelectInput from "../SelectInput";
+import SelectInput, { Props as SelectInputProps } from "../SelectInput";
 import FlexBox from "../../layout/Flex";
 import Text from "../../asorted/Text";
 
@@ -42,7 +42,7 @@ const Label = ({ left, right }: { left: string; right: string }) => (
   </FlexBox>
 );
 
-const selectStyles: React.ComponentProps<typeof SelectInput>["styles"] = {
+const selectStyles: StylesConfig<Option> = {
   container: (provided, state) => ({
     ...provided,
     height: "100%",
@@ -58,12 +58,13 @@ const selectStyles: React.ComponentProps<typeof SelectInput>["styles"] = {
   }),
 };
 
+type Option = typeof options[0];
 export const Split = (args: Props): React.ReactNode => {
-  const [leftValue1, setLeftValue1] = React.useState<OptionTypeBase | null>(null);
+  const [leftValue1, setLeftValue1] = React.useState<Option | null>(null);
   const [rightValue1, setRightValue1] = React.useState<string>("");
-  const [leftValue2, setLeftValue2] = React.useState<OptionTypeBase | null>(null);
+  const [leftValue2, setLeftValue2] = React.useState<Option | null>(null);
   const [rightValue2, setRightValue2] = React.useState<string>("");
-  const [leftValue3, setLeftValue3] = React.useState<OptionTypeBase | null>(null);
+  const [leftValue3, setLeftValue3] = React.useState<Option | null>(null);
   const [rightValue3, setRightValue3] = React.useState<string>("");
   const [leftValue4, setLeftValue4] = React.useState<string>("");
   const [rightValue4, setRightValue4] = React.useState<string>("");
@@ -73,7 +74,7 @@ export const Split = (args: Props): React.ReactNode => {
       <Label left="SelectInput" right="Input" />
       <SplitInput
         {...args}
-        renderLeft={(props) => (
+        renderLeft={(props: SelectInputProps<Option>) => (
           <SelectInput
             value={leftValue1}
             options={options}
@@ -101,7 +102,7 @@ export const Split = (args: Props): React.ReactNode => {
       <Label left="SelectInput" right="QuantityInput" />
       <SplitInput
         {...args}
-        renderLeft={(props) => (
+        renderLeft={(props: SelectInputProps<Option>) => (
           <SelectInput
             value={leftValue2}
             options={options}
@@ -129,7 +130,7 @@ export const Split = (args: Props): React.ReactNode => {
       <Label left="SelectInput" right="QrCodeInput" />
       <SplitInput
         {...args}
-        renderLeft={(props) => (
+        renderLeft={(props: SelectInputProps<Option>) => (
           <SelectInput
             value={leftValue3}
             options={options}
