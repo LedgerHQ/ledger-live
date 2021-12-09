@@ -10,7 +10,8 @@
     "baseUrl": ".",
     "rootDir": "./src",
     "outDir": ".",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noEmit": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "react", "native"]

@@ -19,12 +19,12 @@
     }
   },
   "scripts": {
-    "build": "npm run clean && node scripts/buildReactIcons && tsc && node scripts/transpile",
+    "build": "npm run clean && node scripts/buildReactIcons && tsc --noEmit false && node scripts/transpile",
     "prepublishOnly": "npm run build",
     "clean": "rimraf react native src/react src/native"
   },
   "dependencies": {
-    "@types/styled-components": "^5.1.14",
+    "@types/styled-components": "^5.1.15",
     "styled-components": "^5.2.3"
   },
   "devDependencies": {
