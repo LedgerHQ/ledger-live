@@ -1,10 +1,11 @@
-import React from "react";
-import Button, { ExpandButton, ExpandButtonProps, ButtonVariants, IconPosition } from "./index";
+import React, { Fragment } from "react";
+import Button, { ButtonExpandProps, ButtonProps, ButtonVariants, IconPosition } from "./index";
 import Text from "../../asorted/Text";
 import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/react/";
 import { InvertTheme } from "../../../styles/InvertTheme";
 import Flex from "../../layout/Flex";
 import Grid from "../../layout/Grid";
+import { StoryTemplate } from "../../helpers";
 
 const iconPositions: IconPosition[] = ["left", "right"];
 const buttonVariants: ButtonVariants[] = ["main", "shade", "color", "error"];
@@ -53,11 +54,11 @@ export const Overview = (() => {
   ];
   return (
     <Grid columns="none" gridTemplateColumns="max-content repeat(4, 1fr)" columnGap={8} rowGap={8}>
-      {buttonVariants.flatMap((buttonType) =>
-        [false, true].map((outline) => (
-          <>
+      {buttonVariants.flatMap((buttonType, i) =>
+        [false, true].map((outline, j) => (
+          <Fragment key={`${i}:${j}`}>
             <Text variant="small" color="neutral.c70">
-              type="{buttonType}"<br />
+              variant="{buttonType}"<br />
               outline={`{${outline.toString()}}`}
             </Text>
             {propsArr.map((buttonProps) => (
@@ -72,20 +73,18 @@ export const Overview = (() => {
                 ))}
               </Flex>
             ))}
-          </>
+          </Fragment>
         )),
       )}
     </Grid>
   );
 }).bind({});
 
-// @ts-expect-error FIXME
-const Template = (args) => {
+export const Default: StoryTemplate<ButtonProps> = (args) => {
   return <Button {...args}>{args.children || "Regular button"}</Button>;
 };
 
-// @ts-expect-error FIXME
-const TemplateInverted = (args) => {
+export const Inverted: StoryTemplate<ButtonProps> = (args) => {
   return (
     <Flex flexDirection="column">
       <Flex flex="0 0 1" p={4} alignItems="center" bg="background.main">
@@ -100,25 +99,22 @@ const TemplateInverted = (args) => {
   );
 };
 
-export const Default = Template.bind({});
-
-export const Inverted = TemplateInverted.bind({});
-
-export const IconButton = Template.bind({});
-// @ts-expect-error FIXME
+export const IconButton: StoryTemplate<ButtonProps> = (args) => {
+  return <Button {...args}>{args.children || "Regular button"}</Button>;
+};
 IconButton.args = {
   children: "",
   Icon: WalletAddMedium,
   iconPosition: "right",
 };
 
-const ExpandTemplate = (args: ExpandButtonProps) => {
+export const Expand: StoryTemplate<ButtonProps> = (args: ButtonExpandProps) => {
   const [show, setShow] = React.useState(false);
   return (
     <>
-      <ExpandButton {...args} onToggle={setShow}>
+      <Button.Expand {...args} onToggle={setShow}>
         {args.children}
-      </ExpandButton>
+      </Button.Expand>
       {show && (
         <div
           style={{
@@ -131,9 +127,6 @@ const ExpandTemplate = (args: ExpandButtonProps) => {
     </>
   );
 };
-
-export const Expand = ExpandTemplate.bind({});
-// @ts-expect-error FIXME
 Expand.args = {
   children: "Show all",
 };

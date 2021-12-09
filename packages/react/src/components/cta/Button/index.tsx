@@ -20,10 +20,10 @@ interface BaseProps extends BaseStyledProps, BordersProps {
   disabled?: boolean;
 }
 
-export interface ButtonProps extends BaseProps {
+export interface ButtonProps extends BaseProps, React.RefAttributes<HTMLButtonElement> {
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   children?: React.ReactNode;
-  onClick: (event?: React.SyntheticEvent<HTMLButtonElement>) => void;
+  onClick?: (event: React.SyntheticEvent<HTMLButtonElement>) => void;
   iconSize?: number;
   style?: React.CSSProperties;
 }
@@ -211,16 +211,12 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
 
 const ContentContainer = styled.div``;
 
-const Button = ({
-  Icon,
-  iconPosition = "right",
-  iconSize = 16,
-  children,
-  onClick,
-  ...props
-}: ButtonProps): React.ReactElement => {
+const Button = (
+  { Icon, iconPosition = "right", iconSize = 16, children, onClick, ...props }: ButtonProps,
+  ref?: React.ForwardedRef<HTMLButtonElement>,
+): React.ReactElement => {
   return (
-    <Base {...props} iconButton={!(Icon == null) && !children} onClick={onClick}>
+    <Base {...props} ref={ref} iconButton={!(Icon == null) && !children} onClick={onClick}>
       {iconPosition === "right" ? <ContentContainer>{children}</ContentContainer> : null}
       {Icon != null ? (
         <IconContainer iconPosition={iconPosition}>
@@ -231,13 +227,15 @@ const Button = ({
     </Base>
   );
 };
+const ButtonWithRef = React.forwardRef(Button) as unknown as typeof Button;
 
-export type ExpandButtonProps = React.PropsWithChildren<{
-  onToggle?: (arg0: boolean) => void;
-  onClick?: (arg0: React.SyntheticEvent<HTMLButtonElement>) => void;
-}>;
+export type ButtonExpandProps = React.PropsWithChildren<
+  ButtonProps & {
+    onToggle?: (arg0: boolean) => void;
+  }
+>;
 
-const StyledExpandButton = styled(Button).attrs((props) => ({
+const StyledButtonExpand = styled(ButtonWithRef).attrs((props) => ({
   Icon: props.Icon != null || ChevronBottom,
   iconPosition: props.iconPosition || "right",
 }))<{ expanded: boolean }>`
@@ -246,15 +244,15 @@ const StyledExpandButton = styled(Button).attrs((props) => ({
     ${(p) => (p.expanded ? "transform: rotate(180deg)" : "")}
   }
 `;
-export const ExpandButton = function ExpandButton({
-  onToggle,
-  onClick,
-  ...props
-}: ExpandButtonProps): React.ReactElement {
+export function ButtonExpand(
+  { onToggle, onClick, ...props }: ButtonExpandProps,
+  ref?: React.ForwardedRef<HTMLButtonElement>,
+): React.ReactElement {
   const [expanded, setExpanded] = useState(false);
   return (
-    <StyledExpandButton
+    <StyledButtonExpand
       {...props}
+      ref={ref}
       expanded={expanded}
       onClick={(event: React.SyntheticEvent<HTMLButtonElement>) => {
         setExpanded((expanded) => !expanded);
@@ -263,8 +261,10 @@ export const ExpandButton = function ExpandButton({
       }}
     />
   );
-};
+}
 
 Button.Unstyled = ButtonUnstyled;
-
-export default Button;
+Button.Expand = React.forwardRef(ButtonExpand);
+ButtonWithRef.Unstyled = Button.Unstyled;
+ButtonWithRef.Expand = Button.Expand;
+export default ButtonWithRef;
