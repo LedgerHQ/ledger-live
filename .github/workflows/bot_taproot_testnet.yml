@@ -6,6 +6,7 @@ on:
 jobs:
   start-runner:
     name: "start ec2 instance (Linux)"
+    if: ${{ always() }}
     uses: LedgerHQ/actions/.github/workflows/start-linux-runner.yml@v3.0.1
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
