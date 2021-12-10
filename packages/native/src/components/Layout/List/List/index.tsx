@@ -1,8 +1,7 @@
-import React from "react";
-import styled from "styled-components/native";
+import React, { useCallback } from "react";
 import Text from "../../../Text";
 import { Box, Flex } from "../../index";
-import baseStyled, { BaseStyledProps } from "../../../styled";
+import { BaseStyledProps } from "../../../styled";
 import { FlatList } from "react-native";
 
 export type BaseListItemProps = {
@@ -16,16 +15,6 @@ export type BaseListProps = {
   itemContainerProps?: BaseStyledProps;
 };
 
-const ListContainer = styled.View`
-  display: flex;
-  flex-direction: column;
-`;
-
-const ListItemContainer = baseStyled.View`
-  display: flex;
-  flex-direction: row;
-`;
-
 export const ListItem = ({
   title,
   description,
@@ -33,7 +22,7 @@ export const ListItem = ({
   ...props
 }: BaseStyledProps & BaseListItemProps): React.ReactElement => {
   return (
-    <ListItemContainer {...props}>
+    <Flex flexDirection={"row"} alignItems={"center"} {...props}>
       {bullet && (
         <Box mr={7} flexShrink={0}>
           {bullet}
@@ -51,7 +40,7 @@ export const ListItem = ({
           </Text>
         )}
       </Flex>
-    </ListItemContainer>
+    </Flex>
   );
 };
 
@@ -60,14 +49,16 @@ export default function List({
   itemContainerProps,
   ...props
 }: BaseListProps): React.ReactElement {
+  const renderItem = useCallback(
+    ({ item }: { item: BaseListItemProps }) => (
+      <ListItem {...item} mb={6} pb={2} {...itemContainerProps} />
+    ),
+    [itemContainerProps]
+  );
+
   return (
-    <ListContainer {...props}>
-      <FlatList
-        data={items}
-        renderItem={({ item }) => (
-          <ListItem {...item} mb={6} pb={2} {...itemContainerProps} />
-        )}
-      />
-    </ListContainer>
+    <Flex flexDirection={"column"} {...props}>
+      <FlatList data={items} renderItem={renderItem} />
+    </Flex>
   );
 }

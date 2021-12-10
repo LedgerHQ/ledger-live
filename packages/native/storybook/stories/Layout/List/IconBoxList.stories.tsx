@@ -30,7 +30,7 @@ const IconBoxListStory = () => {
         alignItems: select(
           "Align items",
           ["flex-start", "flex-end", "center", "baseline", "stretch"],
-          undefined,
+          "center",
           "Layout"
         ),
       }}

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import List, { BaseListItemProps, BaseListProps } from "../List";
 import { IconBox } from "../../../Icon";
+import { IconType } from "../../../Icon/type";
 
 export type IconBoxListItemProps = Omit<BaseListItemProps, "bullet"> & {
-  Icon: (props: { size?: number; color?: string }) => React.ReactElement;
+  Icon: IconType;
 };
 
 export type IconBoxListProps = Omit<BaseListProps, "items"> & {
@@ -14,13 +15,13 @@ export default function IconBoxList({
   items,
   ...props
 }: IconBoxListProps): React.ReactElement {
-  return (
-    <List
-      items={items.map((item) => ({
+  const iconBoxItems = useMemo(
+    () =>
+      items.map((item) => ({
         ...item,
         bullet: <IconBox Icon={item.Icon} boxSize={48} iconSize={20} />,
-      }))}
-      {...props}
-    />
+      })),
+    [items]
   );
+  return <List items={iconBoxItems} {...props} />;
 }

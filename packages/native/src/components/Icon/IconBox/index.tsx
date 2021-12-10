@@ -1,10 +1,9 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
+import { IconOrElementType } from "../type";
 
 type Props = {
-  Icon:
-    | ((props: { size?: number; color?: string }) => React.ReactElement)
-    | React.ReactNode;
+  Icon: IconOrElementType;
   color?: string;
   boxSize?: number;
   iconSize?: number;
@@ -37,10 +36,10 @@ export default function IconBox({
   const { colors } = useTheme();
   return (
     <IconContainer size={boxSize}>
-      {typeof Icon === "function" ? (
-        <Icon size={iconSize} color={color || colors.neutral.c100} />
-      ) : (
+      {React.isValidElement(Icon) ? (
         Icon
+      ) : (
+        <Icon size={iconSize} color={color || colors.neutral.c100} />
       )}
     </IconContainer>
   );
