@@ -9,22 +9,36 @@ import CircledAlertMedium from "@ledgerhq/icons-ui/react/CircledAlertMedium";
 import { DefaultTheme } from "styled-components/native";
 
 type AlertType = "info" | "warning" | "error";
+
+type RenderProps = (props: {
+  color: string;
+  textProps: { variant?: TextVariants; fontWeight?: string };
+}) => JSX.Element;
+
 export interface AlertProps {
   /**
-   * Affects the colors of the background & text and what icon can be displayed
+   * Affects the colors of the background & text and what icon can be displayed.
    */
   type?: AlertType;
   /**
-   * Title of the Alert
+   * Title of the Alert.
    */
   title?: string;
   /**
-   * Method for rendering additional content under the title `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string } }` is passed as props to easily style text elements
+   * Method for rendering additional content under the title. `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string } }` is passed as props to easily style text elements.
    */
-  renderContent?: (props: {
-    color: string;
-    textProps: { variant?: TextVariants; fontWeight?: string };
-  }) => JSX.Element;
+  renderContent?: RenderProps;
+
+  /**
+   * Method for rendering additional content to the right. `{ color: string; textProps: { variant?: TextVariants; fontWeight?: string } }` is passed as props to easily style text elements.
+   */
+  renderRight?: RenderProps;
+
+  /**
+   * Additional props to be passed to the top level container (containing icon + content).
+   */
+  containerProps?: Record<string, unknown>;
+
   /**
    * Whether or not to display an icon
    */
@@ -64,9 +78,7 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
   }
 };
 
-const StyledAlertContainer = styled(Flex).attrs(() => ({
-  padding: 6,
-}))<{ background?: string; color?: string }>`
+const StyledAlertContainer = styled(Flex)<{ background?: string; color?: string }>`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   align-items: center;
 `;
@@ -76,6 +88,8 @@ export default function Alert({
   title,
   showIcon = true,
   renderContent,
+  renderRight,
+  containerProps,
 }: AlertProps): JSX.Element {
   const theme = useTheme();
   const { color, background } = getColors({ theme, type });
@@ -84,9 +98,14 @@ export default function Alert({
     fontWeight: "medium",
   };
   return (
-    <StyledAlertContainer color={color} backgroundColor={background}>
+    <StyledAlertContainer
+      color={color}
+      backgroundColor={background}
+      padding={6}
+      {...containerProps}
+    >
       {showIcon && !!icons[type] && <StyledIconContainer>{icons[type]}</StyledIconContainer>}
-      <Flex flexDirection="column" alignItems="flex-start" rowGap="6px">
+      <Flex flexDirection="column" flex={1} alignItems="flex-start" rowGap="6px">
         {title && (
           <Text {...textProps} color="inherit">
             {title}
@@ -94,6 +113,7 @@ export default function Alert({
         )}
         {renderContent && renderContent({ color, textProps })}
       </Flex>
+      <Flex>{renderRight && renderRight({ color, textProps })}</Flex>
     </StyledAlertContainer>
   );
 }

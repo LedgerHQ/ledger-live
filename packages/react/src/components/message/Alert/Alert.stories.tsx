@@ -2,6 +2,7 @@ import React from "react";
 import Alert, { AlertProps } from "./index";
 import Link from "../../cta/Link";
 import Text from "../../asorted/Text";
+import Button from "../../cta/Button";
 import { Icons } from "../../../../src/assets";
 export default {
   title: "Messages/Alerts",
@@ -36,6 +37,7 @@ export const WithContent = (args: AlertProps) => {
   return (
     <Alert
       {...args}
+      containerProps={{ pr: 7 }}
       renderContent={({ color, textProps }) => (
         <>
           <Text color="inherit" {...textProps}>
@@ -53,6 +55,7 @@ export const WithContent = (args: AlertProps) => {
           </Link>
         </>
       )}
+      renderRight={() => <Button variant="color">Click me</Button>}
     />
   );
 };
