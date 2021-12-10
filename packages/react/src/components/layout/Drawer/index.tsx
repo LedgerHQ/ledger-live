@@ -26,16 +26,12 @@ const Footer = styled(FlexBox)`
   padding: ${(p) => p.theme.space[8]}px ${(p) => p.theme.space[12]}px;
 `;
 
-const Wrapper = styled.div<{
+const Wrapper = styled(FlexBox)<{
   big?: boolean;
-  width?: number;
-  height?: number;
-  backgroundColor?: string;
 }>`
   height: 100%;
   width: ${(p) =>
     p.big ? p.theme.sizes.drawer.side.big.width : p.theme.sizes.drawer.side.small.width}px;
-  background-color: ${(p) => p.backgroundColor ?? p.theme.colors.neutral.c00};
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -132,7 +128,11 @@ const DrawerContent = ({
     >
       <Overlay onClick={handleBackdropClick}>
         <TransitionSlide in={isOpen} fixed reverseExit appear mountOnEnter unmountOnExit>
-          <Wrapper big={big} onClick={stopClickPropagation} backgroundColor={backgroundColor}>
+          <Wrapper
+            big={big}
+            onClick={stopClickPropagation}
+            backgroundColor={backgroundColor ?? "neutral.c00"}
+          >
             <Container>
               <Header>
                 {!hideNavigation && (
