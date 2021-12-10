@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import FlexBox from "../Flex";
-import Close from "@ledgerhq/icons-ui/react/CloseRegular";
+import Divider from "../../asorted/Divider";
+import Close from "@ledgerhq/icons-ui/react/CloseMedium";
 import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
 import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";
@@ -14,12 +15,17 @@ const Container = styled(FlexBox)`
   flex-direction: column;
 `;
 const Header = styled(FlexBox)`
-  display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  min-height: ${(p) => p.theme.space[15]}px;
+  padding: ${(p) => p.theme.space[12]}px;
+  padding-bottom: ${(p) => p.theme.space[10]}px;
 `;
+
+const Footer = styled(FlexBox)`
+  align-items: center;
+  padding: ${(p) => p.theme.space[8]}px ${(p) => p.theme.space[12]}px;
+`;
+
 const Wrapper = styled.div<{
   big?: boolean;
   width?: number;
@@ -29,7 +35,6 @@ const Wrapper = styled.div<{
   height: 100%;
   width: ${(p) =>
     p.big ? p.theme.sizes.drawer.side.big.width : p.theme.sizes.drawer.side.small.width}px;
-  padding: ${(p) => p.theme.space[6]}px ${(p) => p.theme.space[12]}px;
   background-color: ${(p) => p.backgroundColor ?? p.theme.colors.neutral.c00};
   display: flex;
   flex-direction: column;
@@ -51,6 +56,8 @@ const Overlay = styled.div`
 const ScrollWrapper = styled.div`
   overflow: scroll;
   position: relative;
+  padding: ${(p) => p.theme.space[12]}px;
+  padding-top: 0px;
   flex: 1;
 
   &::-webkit-scrollbar {
@@ -71,6 +78,7 @@ export interface DrawerProps {
   isOpen: boolean;
   children: React.ReactNode;
   title?: React.ReactNode;
+  footer?: React.ReactNode;
   big?: boolean;
   ignoreBackdropClick?: boolean;
   backgroundColor?: string;
@@ -84,6 +92,7 @@ const DrawerContent = ({
   isOpen,
   title,
   children,
+  footer,
   big,
   onClose,
   backgroundColor,
@@ -138,15 +147,23 @@ const DrawerContent = ({
                   </>
                 )}
                 {(
-                  <Text variant={"h5"} flexShrink={1}>
+                  <Text variant={"h3"} flex={1} textAlign="center">
                     {title}
                   </Text>
                 ) || <div />}
-                <Button onClick={onClose}>
-                  <Close />
-                </Button>
+                <FlexBox alignSelf="flex-start">
+                  <Button onClick={onClose}>
+                    <Close />
+                  </Button>
+                </FlexBox>
               </Header>
               <ScrollWrapper>{children}</ScrollWrapper>
+              {footer && (
+                <>
+                  <Divider variant="light" />
+                  <Footer>{footer}</Footer>
+                </>
+              )}
             </Container>
           </Wrapper>
         </TransitionSlide>
