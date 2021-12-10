@@ -21,8 +21,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      lint_failed: ${{ steps.lint.outcome == 'failure' }}
-      typecheck_failed: ${{ steps.typecheck.outcome == 'failure' }}
+      lint_outcome: ${{ steps.lint.outcome }}
+      typecheck_outcome: ${{ steps.typecheck.outcome }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -51,22 +51,25 @@ jobs:
             const { issue: { number: issue_number }, repo: { owner, repo }, runId } = context;
 
             const results = [
-              ${{ needs.build.outputs.lint_failed }},
-              ${{ needs.build.outputs.typecheck_failed }},
-            ]
+              "${{ needs.build.outputs.lint_outcome }}",
+              "${{ needs.build.outputs.typecheck_outcome }}",
+            ];
 
-            const sections = results.map((failed, index) => {
+            const sections = results.map((outcome, index) => {
+              const failed = outcome === "failure";
+              const success = outcome === "success";
+
               switch(index) {
                 case 0:
-                  return !failed ? "#### ✅ - Lint\n" : (
+                  return success ? "#### ✅ - Lint\n" : failed ? (
                     "#### ❌ - Lint\n\n" +
                     "*Run `yarn native lint:fix` locally to show linting errors and attempt to automatically fix problems.*\n"
-                  )
+                  ) : "#### ❓ - Lint\n"
                 case 1:
-                  return !failed ? "#### ✅ - Typecheck\n" : (
+                  return success ? "#### ✅ - Typecheck\n" : failed ? (
                     "#### ❌ - Typecheck\n\n" +
                     "*Run `yarn native typecheck` locally and fix the typescript issues.*\n"
-                  )
+                  ) : "#### ❓ - Typecheck\n"
                 default:
                   return "";
               }

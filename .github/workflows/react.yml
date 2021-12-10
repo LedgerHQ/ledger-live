@@ -19,8 +19,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      lint_failed: ${{ steps.lint.outcome == 'failure' }}
-      typecheck_failed: ${{ steps.typecheck.outcome == 'failure' }}
+      lint_outcome: ${{ steps.lint.outcome }}
+      typecheck_outcome: ${{ steps.typecheck.outcome }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -39,8 +39,8 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     outputs:
-      build_failed: ${{ steps.build.outcome == 'failure' }}
-      test_failed: ${{ steps.test.outcome == 'failure' }}
+      build_outcome: ${{ steps.build.outcome }}
+      test_outcome: ${{ steps.test.outcome }}
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -77,38 +77,41 @@ jobs:
             const { issue: { number: issue_number }, repo: { owner, repo }, runId } = context;
 
             const results = [
-              ${{ needs.build.outputs.lint_failed }},
-              ${{ needs.build.outputs.typecheck_failed }},
-              ${{ needs.tests.outputs.build_failed }},
-              ${{ needs.tests.outputs.test_failed }}
-            ]
+              "${{ needs.build.outputs.lint_outcome }}",
+              "${{ needs.build.outputs.typecheck_outcome }}",
+              "${{ needs.tests.outputs.build_outcome }}",
+              "${{ needs.tests.outputs.test_outcome }}"
+            ];
 
-            const sections = results.map((failed, index) => {
+            const sections = results.map((outcome, index) => {
+              const failed = outcome === "failure";
+              const success = outcome === "success";
+
               switch(index) {
                 case 0:
-                  return !failed ? "#### ✅ - Lint\n" : (
+                  return success ? "#### ✅ - Lint\n" : failed ? (
                     "#### ❌ - Lint\n\n" +
                     "*Run `yarn react lint:fix` locally to show linting errors and attempt to automatically fix problems.*\n"
-                  )
+                  ) : "#### ❓ - Lint\n"
                 case 1:
-                  return !failed ? "#### ✅ - Typecheck\n" : (
+                  return success ? "#### ✅ - Typecheck\n" : failed ? (
                     "#### ❌ - Typecheck\n\n" +
                     "*Run `yarn react typecheck` locally and fix the typescript issues.*\n"
-                  )
+                  ) : "#### ❓ - Typecheck\n"
                 case 2:
-                  return !failed ? "#### ✅ - Build\n" : (
+                  return success ? "#### ✅ - Build\n" : failed ? (
                     "#### ❌ - Build\n\n" +
                     "Something happened while trying to build the test environment.\n\n" +
                     "*Use the `yarn test:react:setup` command to run the setup process and fix the reported issues.*\n"
-                  )
+                  ) : "#### ❓ - Build\n"
                 case 3:
-                  return !failed ? "#### ✅ - End To End\n" : (
+                  return success ? "#### ✅ - End To End\n" : failed ? (
                     "#### ❌ - End To End\n\n" +
                     "*You can use the `yarn test:react` command to run the tests locally - and run `yarn test:react:setup` first if needed.*\n" +
                     "##### NOTE: If the [visual comparison](https://playwright.dev/docs/test-snapshots) failed and you think that the changes are legitimate, you can download the `test-run-data` artifact at the bottom of the action page and replace the reference snapshots located at `/tests/react.spec.js-snapshots`.\n"
-                  )
+                  ) : "#### ❓ - End To End\n"
                 default:
-                  return "";
+                  return ""
               }
             }).filter(Boolean);
 
