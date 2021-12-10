@@ -106,15 +106,19 @@ export const fontFamilies = {
   },
 };
 
-const animationLength = "0.33s";
+const animationDuration = "0.33s";
 const easings = {
   outQuadratic: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
 };
 
-const transition = (properties = ["all"]) => css`
+const transition = (
+  properties = ["all"],
+  duration = animationDuration,
+  easing = easings.outQuadratic,
+) => css`
   transition-property: ${properties.join(",")};
-  transition-duration: ${animationLength};
-  transition-timing-function: ${easings.outQuadratic};
+  transition-duration: ${duration};
+  transition-timing-function: ${easing};
 `;
 
 const fadeIn = keyframes`
@@ -156,11 +160,11 @@ const fadeInUp = keyframes`
 const animations = {
   fadeIn: () =>
     css`
-      ${fadeIn} ${animationLength} ${easings.outQuadratic} forwards
+      ${fadeIn} ${animationDuration} ${easings.outQuadratic} forwards
     `,
   fadeOut: () =>
     css`
-      ${fadeOut} ${animationLength} ${easings.outQuadratic} forwards
+      ${fadeOut} ${animationDuration} ${easings.outQuadratic} forwards
     `,
   fadeInGrowX: () =>
     css`
@@ -168,7 +172,7 @@ const animations = {
     `,
   fadeInUp: () =>
     css`
-      ${fadeInUp} ${animationLength} ${easings.outQuadratic} forwards
+      ${fadeInUp} ${animationDuration} ${easings.outQuadratic} forwards
     `,
 };
 const overflow = {

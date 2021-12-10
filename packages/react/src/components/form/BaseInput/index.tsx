@@ -55,7 +55,7 @@ export const InputContainer = styled.div<Partial<CommonProps> & { focus?: boolea
     !p.warning &&
     css`
       border: 1px solid ${p.theme.colors.primary.c80};
-      box-shadow: 0 0 0 4px ${rgba(p.theme.colors.primary.c60, 0.48)};
+      box-shadow: 0 0 0 4px ${rgba(p.theme.colors.primary.c60, 0.4)};
     `};
 
   ${(p) =>

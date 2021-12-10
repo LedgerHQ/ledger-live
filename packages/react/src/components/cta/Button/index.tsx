@@ -4,6 +4,7 @@ import baseStyled, { BaseStyledProps } from "../../styled";
 import { fontSize, border, BordersProps, compose } from "styled-system";
 import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
+import { rgba } from "../../../styles/helpers";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
 
 export type ButtonVariants = "main" | "shade" | "error" | "color";
@@ -166,7 +167,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
   position: relative;
   cursor: ${(p) => (p.disabled ? "default" : "pointer")};
   &:active {
-    box-shadow: 0 0 0 4px ${(p) => p.theme.colors.primary.c60};
+    box-shadow: 0 0 0 4px ${(p) => rgba(p.theme.colors.primary.c60, 0.4)};
   }
 
   ${(p) => {
@@ -206,7 +207,7 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
           }
         `
       : ""}
-  ${(p) => p.theme.transition(["background-color", "color", "border-color"])}
+  ${(p) => p.theme.transition(["background-color", "color", "border-color", "box-shadow"], "0.2s")}
 `;
 
 const ContentContainer = styled.div``;
