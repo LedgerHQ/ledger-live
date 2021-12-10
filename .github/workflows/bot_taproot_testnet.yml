@@ -6,14 +6,14 @@ on:
 jobs:
   start-runner:
     name: "start ec2 instance (Linux)"
-    uses: LedgerHQ/ledger-live-common/.github/workflows/start-linux-runner.yml@master
+    uses: LedgerHQ/actions/.github/workflows/start-linux-runner.yml@v3.0.1
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
 
   stop-runner:
     name: "stop ec2 instance (Linux)"
     needs: [start-runner, run-bot]
-    uses: LedgerHQ/ledger-live-common/.github/workflows/stop-linux-runner.yml@master
+    uses: LedgerHQ/actions/.github/workflows/stop-linux-runner.yml@v3.0.1
     if: ${{ always() }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
