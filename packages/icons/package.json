@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "build": "npm run clean && node scripts/buildReactIcons && tsc && node scripts/transpile",
+    "build": "npm run clean && node scripts/buildReactIcons && tsc --noEmit false && node scripts/transpile",
     "prepublishOnly": "npm run build",
     "clean": "rimraf react native src/react src/native"
   },
@@ -32,7 +32,7 @@
     "@svgr/plugin-svgo": "^5.5.0",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
-    "@types/styled-components": "^5.1.15",
+    "@types/styled-components": "^5.1.14",
     "@types/styled-components-react-native": "^5.1.3",
     "@types/styled-system": "^5.1.13",
     "camelcase": "^6.2.1",

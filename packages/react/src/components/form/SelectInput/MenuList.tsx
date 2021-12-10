@@ -1,11 +1,12 @@
 import React from "react";
-import { components, Styles, MenuListComponentProps, OptionTypeBase } from "react-select";
+import { components, GroupBase, StylesConfig, MenuListProps } from "react-select";
 import { DefaultTheme } from "styled-components";
 
 export function getStyles<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(theme: DefaultTheme): NonNullable<Styles<T, M>["menuList"]> {
+  G extends GroupBase<O> = GroupBase<O>,
+>(theme: DefaultTheme): NonNullable<StylesConfig<O, M, G>["menuList"]> {
   return (provided) => ({
     ...provided,
     display: "flex",
@@ -21,8 +22,9 @@ export function getStyles<
 }
 
 export function MenuList<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(props: MenuListComponentProps<T, M>): JSX.Element {
+  G extends GroupBase<O> = GroupBase<O>,
+>(props: MenuListProps<O, M, G>): JSX.Element {
   return <components.MenuList {...props}>{props.children}</components.MenuList>;
 }

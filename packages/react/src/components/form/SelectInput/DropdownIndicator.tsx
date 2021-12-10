@@ -1,13 +1,14 @@
 import React from "react";
-import { components, Styles, IndicatorProps, OptionTypeBase } from "react-select";
+import { components, GroupBase, StylesConfig, DropdownIndicatorProps } from "react-select";
 import { useTheme } from "styled-components";
 import Text from "../../asorted/Text";
 import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/react";
 
 export function getStyles<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(): NonNullable<Styles<T, M>["dropdownIndicator"]> {
+  G extends GroupBase<O> = GroupBase<O>,
+>(): NonNullable<StylesConfig<O, M, G>["dropdownIndicator"]> {
   return (provided) => ({
     ...provided,
     padding: 0,
@@ -15,9 +16,10 @@ export function getStyles<
 }
 
 export function DropdownIndicator<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(props: IndicatorProps<T, M>): JSX.Element {
+  G extends GroupBase<O> = GroupBase<O>,
+>(props: DropdownIndicatorProps<O, M, G>): JSX.Element {
   const theme = useTheme();
   const { isDisabled } = props.selectProps;
 

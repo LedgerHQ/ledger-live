@@ -1,6 +1,7 @@
 import React, { memo, useMemo, useRef, useEffect } from "react";
-import { components, MenuListComponentProps, OptionTypeBase } from "react-select";
+import { components, GroupBase, MenuListProps } from "react-select";
 import { FixedSizeList, FixedSizeList as List } from "react-window";
+import { Props as SelectProps } from "./index";
 
 export type RowProps = React.PropsWithChildren<{ style: React.CSSProperties }>;
 export const VirtualRow = memo(({ style, children }: RowProps) => (
@@ -8,17 +9,12 @@ export const VirtualRow = memo(({ style, children }: RowProps) => (
 ));
 
 export function VirtualMenuList<
-  T extends OptionTypeBase = { label: string; value: string },
+  O = unknown,
   M extends boolean = false,
->(props: MenuListComponentProps<T, M>): React.ReactElement {
-  const {
-    children,
-    options,
-    maxHeight,
-    getValue,
-    getStyles,
-    selectProps: { noOptionsMessage, rowHeight },
-  } = props;
+  G extends GroupBase<O> = GroupBase<O>,
+>(props: MenuListProps<O, M, G>): React.ReactElement {
+  const { children, options, maxHeight, getValue, getStyles, selectProps } = props;
+  const { noOptionsMessage, rowHeight = 0 } = selectProps as SelectProps<O, M, G>;
 
   const listRef = useRef<FixedSizeList>();
   const [value] = getValue();
@@ -60,7 +56,7 @@ export function VirtualMenuList<
 
   return (
     <div
-      style={{ ...menuStyle, maxHeight: "auto" }}
+      style={{ ...(menuStyle as React.CSSProperties), maxHeight: "auto" }}
       onWheelCapture={(e) =>
         /*
           This event causes issues with react-window.
