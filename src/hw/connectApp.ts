@@ -53,6 +53,7 @@ export type ConnectAppEvent =
     }
   | {
       type: "disconnected";
+      expected?: boolean;
     }
   | {
       type: "device-permission-requested";
@@ -144,6 +145,7 @@ const attemptToQuitApp = (
         concatMap(() =>
           of<ConnectAppEvent>({
             type: "disconnected",
+            expected: true,
           })
         ),
         catchError((e) => throwError(e))

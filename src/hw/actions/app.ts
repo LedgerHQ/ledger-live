@@ -2,6 +2,7 @@ import invariant from "invariant";
 import {
   concat,
   of,
+  timer,
   interval,
   Observable,
   throwError,
@@ -11,7 +12,6 @@ import {
 import {
   scan,
   debounce,
-  debounceTime,
   catchError,
   timeout,
   switchMap,
@@ -161,7 +161,7 @@ const reducer = (state: State, e: Event): State => {
       return { ...state, unresponsive: true };
 
     case "disconnected":
-      return getInitialState();
+      return { ...getInitialState(), isLoading: !!e.expected };
 
     case "deviceChange":
       return { ...getInitialState(e.device), device: e.device };
@@ -384,13 +384,14 @@ function inferCommandParams(appRequest: AppRequest) {
   };
 }
 
+const DISCONNECT_DEBOUNCE = 5000;
 const implementations = {
   // in this paradigm, we know that deviceSubject is reflecting the device events
   // so we just trust deviceSubject to reflect the device context (switch between apps, dashboard,...)
   event: ({ deviceSubject, connectApp, params }) =>
     deviceSubject.pipe(
-      // debounce a bit the connect/disconnect event that we don't need
-      debounceTime(1000), // each time there is a device change, we pipe to the command
+      // debounce a bit the disconnect events that we don't need
+      debounce((device) => timer(!device ? DISCONNECT_DEBOUNCE : 0)),
       switchMap((device) =>
         concat(
           of({
@@ -406,7 +407,6 @@ const implementations = {
     Observable.create((o) => {
       const POLLING = 2000;
       const INIT_DEBOUNCE = 5000;
-      const DISCONNECT_DEBOUNCE = 5000;
       const DEVICE_POLLING_TIMEOUT = 20000;
       // this pattern allows to actually support events based (like if deviceSubject emits new device changes) but inside polling paradigm
       let pollingOnDevice;
@@ -486,7 +486,6 @@ const implementations = {
                     device,
                   });
                 }
-
                 o.next(event);
               }
             },
