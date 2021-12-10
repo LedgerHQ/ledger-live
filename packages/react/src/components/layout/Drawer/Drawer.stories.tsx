@@ -27,6 +27,12 @@ export default {
       },
       required: false,
     },
+    backgroundColor: {
+      control: {
+        type: "color",
+        presetColors: ["coral", "tomato", "orange", "blue", "purple"],
+      },
+    },
     big: {
       type: "boolean",
       value: true,
@@ -39,7 +45,7 @@ export default {
   },
 };
 
-const Template = ({ title, big }: DrawerProps) => {
+const Template = ({ title, big, backgroundColor }: DrawerProps) => {
   const [{ isOpen }, updateArgs] = useArgs();
 
   return (
@@ -47,7 +53,13 @@ const Template = ({ title, big }: DrawerProps) => {
       <Button variant={"main"} onClick={() => updateArgs({ isOpen: true })} style={{ flex: 1 }}>
         Open
       </Button>
-      <Drawer isOpen={isOpen} onClose={() => updateArgs({ isOpen: false })} title={title} big={big}>
+      <Drawer
+        isOpen={isOpen}
+        onClose={() => updateArgs({ isOpen: false })}
+        title={title}
+        big={big}
+        backgroundColor={backgroundColor}
+      >
         <Flex flexDirection={"column"}>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed elit mi, tempus sed justo
