@@ -71,7 +71,7 @@ export interface DrawerProps {
   children: React.ReactNode;
   title?: React.ReactNode;
   big?: boolean;
-  preventBackdropClick?: boolean;
+  ignoreBackdropClick?: boolean;
   onClose: () => void;
   onBack?: () => void;
   setTransitionsEnabled?: (arg0: boolean) => void;
@@ -86,7 +86,7 @@ const DrawerContent = ({
   onClose,
   setTransitionsEnabled = () => 0,
   onBack,
-  preventBackdropClick = false,
+  ignoreBackdropClick = false,
   hideNavigation = true,
 }: DrawerProps) => {
   const disableChildAnimations = useCallback(
@@ -99,10 +99,10 @@ const DrawerContent = ({
   );
 
   const handleBackdropClick = useCallback(() => {
-    if (!preventBackdropClick) {
+    if (!ignoreBackdropClick) {
       onClose();
     }
-  }, [onClose, preventBackdropClick]);
+  }, [onClose, ignoreBackdropClick]);
 
   const stopClickPropagation = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();

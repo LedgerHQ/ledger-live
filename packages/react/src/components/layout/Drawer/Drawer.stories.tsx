@@ -36,7 +36,7 @@ export default {
         type: "boolean",
       },
     },
-    preventBackdropClick: {
+    ignoreBackdropClick: {
       type: "boolean",
       value: true,
       description: "Prevent drawer from calling onClose when clicking on the backdrop.",
@@ -48,7 +48,7 @@ export default {
   },
 };
 
-const Template = ({ title, big, preventBackdropClick }: DrawerProps) => {
+const Template = ({ title, big, ignoreBackdropClick }: DrawerProps) => {
   const [{ isOpen }, updateArgs] = useArgs();
 
   return (
@@ -61,7 +61,7 @@ const Template = ({ title, big, preventBackdropClick }: DrawerProps) => {
         onClose={() => updateArgs({ isOpen: false })}
         title={title}
         big={big}
-        preventBackdropClick={preventBackdropClick}
+        ignoreBackdropClick={ignoreBackdropClick}
       >
         <Flex flexDirection={"column"}>
           <p>
