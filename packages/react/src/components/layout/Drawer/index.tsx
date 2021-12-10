@@ -12,8 +12,6 @@ const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
   flex-direction: column;
-  background-color: ${(p) => p.theme.colors.neutral.c00};
-  padding: ${(p) => p.theme.space[6]}px ${(p) => p.theme.space[12]}px;
 `;
 const Header = styled(FlexBox)`
   display: flex;
@@ -26,10 +24,13 @@ const Wrapper = styled.div<{
   big?: boolean;
   width?: number;
   height?: number;
+  backgroundColor?: string;
 }>`
   height: 100%;
   width: ${(p) =>
     p.big ? p.theme.sizes.drawer.side.big.width : p.theme.sizes.drawer.side.small.width}px;
+  padding: ${(p) => p.theme.space[6]}px ${(p) => p.theme.space[12]}px;
+  background-color: ${(p) => p.backgroundColor ?? p.theme.colors.neutral.c00};
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -72,6 +73,7 @@ export interface DrawerProps {
   title?: React.ReactNode;
   big?: boolean;
   ignoreBackdropClick?: boolean;
+  backgroundColor?: string;
   onClose: () => void;
   onBack?: () => void;
   setTransitionsEnabled?: (arg0: boolean) => void;
@@ -84,6 +86,7 @@ const DrawerContent = ({
   children,
   big,
   onClose,
+  backgroundColor,
   setTransitionsEnabled = () => 0,
   onBack,
   ignoreBackdropClick = false,
@@ -120,7 +123,7 @@ const DrawerContent = ({
     >
       <Overlay onClick={handleBackdropClick}>
         <TransitionSlide in={isOpen} fixed reverseExit appear mountOnEnter unmountOnExit>
-          <Wrapper big={big} onClick={stopClickPropagation}>
+          <Wrapper big={big} onClick={stopClickPropagation} backgroundColor={backgroundColor}>
             <Container>
               <Header>
                 {!hideNavigation && (

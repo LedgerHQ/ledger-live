@@ -27,6 +27,12 @@ export default {
       },
       required: false,
     },
+    backgroundColor: {
+      control: {
+        type: "color",
+        presetColors: ["coral", "tomato", "orange", "blue", "purple"],
+      },
+    },
     big: {
       type: "boolean",
       value: true,
@@ -48,7 +54,9 @@ export default {
   },
 };
 
-const Template = ({ title, big, ignoreBackdropClick }: DrawerProps) => {
+
+const Template = ({ title, big, ignoreBackdropClick, backgroundColor }: DrawerProps) => {
+
   const [{ isOpen }, updateArgs] = useArgs();
 
   return (
@@ -62,6 +70,8 @@ const Template = ({ title, big, ignoreBackdropClick }: DrawerProps) => {
         title={title}
         big={big}
         ignoreBackdropClick={ignoreBackdropClick}
+        backgroundColor={backgroundColor}
+
       >
         <Flex flexDirection={"column"}>
           <p>
