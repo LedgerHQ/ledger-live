@@ -37,6 +37,7 @@ export const WithContent = (args: AlertProps) => {
   return (
     <Alert
       {...args}
+      containerProps={{ pr: 7 }}
       renderContent={({ color, textProps }) => (
         <>
           <Text color="inherit" {...textProps}>

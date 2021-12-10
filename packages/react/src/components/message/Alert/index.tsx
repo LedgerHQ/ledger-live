@@ -78,9 +78,7 @@ const getColors = ({ theme, type }: { theme: DefaultTheme; type?: AlertType }) =
   }
 };
 
-const StyledAlertContainer = styled(Flex).attrs(() => ({
-  padding: 6,
-}))<{ background?: string; color?: string }>`
+const StyledAlertContainer = styled(Flex)<{ background?: string; color?: string }>`
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   align-items: center;
 `;
@@ -100,7 +98,12 @@ export default function Alert({
     fontWeight: "medium",
   };
   return (
-    <StyledAlertContainer color={color} backgroundColor={background} {...containerProps}>
+    <StyledAlertContainer
+      color={color}
+      backgroundColor={background}
+      padding={6}
+      {...containerProps}
+    >
       {showIcon && !!icons[type] && <StyledIconContainer>{icons[type]}</StyledIconContainer>}
       <Flex flexDirection="column" flex={1} alignItems="flex-start" rowGap="6px">
         {title && (
