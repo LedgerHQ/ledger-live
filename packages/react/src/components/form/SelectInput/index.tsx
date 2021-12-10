@@ -55,6 +55,23 @@ const stylesFn = <O, M extends boolean, G extends GroupBase<O>>(
     ...provided,
     color: "inherit",
   }),
+  multiValue: (provided) => ({
+    ...provided,
+    backgroundColor: theme.colors.primary.c20,
+    borderRadius: theme.radii[1],
+  }),
+  multiValueLabel: (provided) => ({
+    ...provided,
+    color: theme.colors.neutral.c100,
+  }),
+  multiValueRemove: (provided) => ({
+    ...provided,
+    cursor: "pointer",
+    ":hover": {
+      color: theme.colors.error.c100,
+      backgroundColor: theme.colors.error.c30,
+    },
+  }),
   menu: (provided) => ({
     ...provided,
     border: 0,

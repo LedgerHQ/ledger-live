@@ -29,7 +29,7 @@ export function ValueContainer<
         as="div"
         variant="paragraph"
         color={color}
-        style={{ display: "grid", alignItems: "center" }}
+        style={{ display: "inherit", alignItems: "center" }}
       >
         {props.render ? props.render(props) : props.children}
       </Text>

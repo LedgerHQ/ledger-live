@@ -530,3 +530,11 @@ export const MultiSelect: StoryTemplate<Props<SelectItem, true>> = (args) => {
     />
   );
 };
+
+MultiSelect.parameters = {
+  docs: {
+    description: {
+      story: "A standard selector with multiselection using the `isMulti` prop.",
+    },
+  },
+};
