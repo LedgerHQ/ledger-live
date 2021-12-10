@@ -12,8 +12,6 @@ const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
   flex-direction: column;
-  background-color: ${(p) => p.theme.colors.neutral.c00};
-  padding: ${(p) => p.theme.space[6]}px ${(p) => p.theme.space[12]}px;
 `;
 const Header = styled(FlexBox)`
   display: flex;
@@ -30,6 +28,8 @@ const Wrapper = styled.div<{
   height: 100%;
   width: ${(p) =>
     p.big ? p.theme.sizes.drawer.side.big.width : p.theme.sizes.drawer.side.small.width}px;
+  background-color: ${(p) => p.theme.colors.neutral.c00};
+  padding: ${(p) => p.theme.space[6]}px ${(p) => p.theme.space[12]}px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
