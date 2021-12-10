@@ -332,33 +332,18 @@ platform :android do
 
   desc "upload to Play Store"
   private_lane :upload do |options|
-    if(options[:ci] && options[:nightly])
+    if(options[:ci])
       upload_to_play_store(
-        track: 'Nightly',
+        track: options[:nightly] ? 'Nightly' : "internal",
         package_name: 'com.ledger.live',
         json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
       )
     else
-      if (options[:ci])
-        upload_to_play_store(
-          track: 'internal',
-          package_name: 'com.ledger.live',
-          json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
-        )
-      end
-      if(options[:nightly])
-        upload_to_play_store(
-          track: 'Nightly',
-          package_name: 'com.ledger.live',
-          json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
-        )
-      else
-        upload_to_play_store(
-          track: "internal",
-          package_name: "com.ledger.live",
-          json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
-        )
-      end
+      upload_to_play_store(
+        track: options[:nightly] ? 'Nightly' : "internal",
+        package_name: "com.ledger.live",
+        json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
+      )
     end
   end
 
