@@ -2,7 +2,7 @@ import React from "react";
 import { storiesOf } from "../storiesOf";
 import { number } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
-import Loader from "../../../src/components/Loader";
+import Loader from "../../../src/components/Loader/ProgressLoader";
 import { Icons } from "../../../src/assets";
 
 const LoaderSample = () => (
@@ -13,4 +13,6 @@ const LoaderSample = () => (
   />
 );
 
-storiesOf((story) => story("Loader", module).add("default", LoaderSample));
+storiesOf((story) =>
+  story("Loader", module).add("ProgressLoader", LoaderSample)
+);
