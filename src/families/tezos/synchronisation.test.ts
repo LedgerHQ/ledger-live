@@ -9,8 +9,8 @@ import { makeSync } from "../../bridge/jsHelpers";
 import { getAccountShape } from "./synchronisation";
 
 const accounts = [
-  "tz1cf8diKsP1WoeucTQm1BcVfdyrmaBnL4nC",
-  "tz1ZshTmtorFVkcZ7CpceCAxCn7HBJqTfmpk",
+  //  "tz1cf8diKsP1WoeucTQm1BcVfdyrmaBnL4nC", // FIXME
+  //   "tz1ZshTmtorFVkcZ7CpceCAxCn7HBJqTfmpk", // FIXME
   "tz1ZL36Xw6LJ9RK6tb7QW85o7SVYfFKSMw8c",
   "tz1VacAyLcnHU3pEY3VNNK45F1CvVyTYXA3z",
   "tz1hpWkvAVVgftPy4CW8rD3u6tdVd8g1RU58",
