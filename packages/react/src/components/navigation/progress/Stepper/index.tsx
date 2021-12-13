@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, ReactNode } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
 import CheckAlone from "@ledgerhq/icons-ui/react/CheckAloneMedium";
@@ -6,11 +6,12 @@ import CloseMedium from "@ledgerhq/icons-ui/react/CloseMedium";
 import Text from "../../../asorted/Text";
 import Flex from "../../../layout/Flex";
 
+type Label = string | ReactNode;
 export interface Props {
   /**
    * An array of labels that will determine the progress bar steps.
    */
-  steps: string[];
+  steps: Label[];
   /**
    * Index of the active step, starting at zero and defaulting to 0 if omitted.
    */
@@ -32,7 +33,7 @@ export type StepProps = {
   /**
    * The label to display.
    */
-  label: string;
+  label: Label;
   /**
    * If true, hides the left "separator" bar that bridges the gap between the wider separator and the item.
    */
@@ -151,9 +152,13 @@ export const Step = memo(function Step({
           <Flex flex="1" />
         )}
       </Item.Spacer>
-      <StepText inactive={inactive} errored={errored} variant="small">
-        {label}
-      </StepText>
+      {typeof label === "string" ? (
+        <StepText inactive={inactive} errored={errored} variant="small">
+          {label}
+        </StepText>
+      ) : (
+        label
+      )}
     </Flex>
   );
 });
