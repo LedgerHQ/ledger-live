@@ -32,7 +32,6 @@ const Wrapper = styled(FlexBox)<{
   height: 100%;
   width: ${(p) =>
     p.big ? p.theme.sizes.drawer.side.big.width : p.theme.sizes.drawer.side.small.width}px;
-  display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
