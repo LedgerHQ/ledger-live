@@ -20,7 +20,7 @@ jobs:
   start-runner:
     needs: cancel-previous
     name: "start ec2 instance (Linux)"
-    uses: LedgerHQ/actions/.github/workflows/start-linux-runner.yml@master
+    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
     with:
       instance-type: c5.4xlarge
     secrets:
@@ -29,7 +29,7 @@ jobs:
   stop-runner:
     name: "stop ec2 instance (Linux)"
     needs: [start-runner, bundle-apk]
-    uses: LedgerHQ/actions/.github/workflows/stop-linux-runner.yml@master
+    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
     if: ${{ always() }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
@@ -45,11 +45,6 @@ jobs:
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: ledgerhq/actions/check-member@v2.0.0
-        with:
-          username: ${{ github.actor }}
-          ban: ledgerlive
-        if: github.event_name == 'pull_request'
       - uses: actions/checkout@v2
         with:
           ref: ${{github.event.pull_request.head.ref}}
@@ -90,7 +85,9 @@ jobs:
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: version
       - name: set beta name
-        uses: ./.github/actions/change-product-name
+        uses: ledgerhq/actions/packages/change-product-name@main
+        with:
+          path: ${{ github.workspace }}
       - name: Get short SHA
         id: slug
         run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
