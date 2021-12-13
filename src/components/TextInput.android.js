@@ -1,6 +1,11 @@
 /* @flow */
 
-import React, { PureComponent } from "react";
+import React, {
+  PureComponent,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+} from "react";
 import {
   View,
   TextInput as ReactNativeTextInput,
@@ -157,5 +162,11 @@ const styles = StyleSheet.create({
 // $FlowFixMe https://github.com/facebook/flow/pull/5920
 export default React.forwardRef((props, ref) => {
   const { colors } = useTheme();
-  return <TextInput innerRef={ref} colors={colors} {...props} />;
+  const inputRef = useRef();
+  // allows to still forward ref to parent to call
+  useImperativeHandle(ref, () => inputRef.current);
+  useEffect(() => {
+    props.autoFocus && inputRef.current?.focus();
+  }, [props, ref]);
+  return <TextInput innerRef={inputRef} colors={colors} {...props} />;
 });

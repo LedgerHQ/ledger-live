@@ -335,7 +335,7 @@
     },
     "ManagerDeviceLocked": {
       "title": "장치가 잠금 상태입니다",
-      "description": "기기를 잠금 해제하세요"
+      "description": "장치를 잠금 해제하세요"
     },
     "ManagerNotEnoughSpace": {
       "title": "저장 공간이 충분하지 않습니다",
@@ -596,6 +596,9 @@
     },
     "TaprootNotActivated": {
       "title": "Taproot(탭루트) 메인넷이 아직 활성화되지 않았습니다"
+    },
+    "NotEnoughNftOwned": {
+      "title": "사용 가능한 토큰 수를 초과했습니다"
     },
     "generic": {
       "title": "{{message}}",
@@ -1316,9 +1319,9 @@
   "operations": {
     "types": {
       "IN": "수신됨",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "NFT 수령됨",
       "OUT": "전송됨",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "NFT 전송됨",
       "CREATE": "생성됨",
       "REVEAL": "숨김 해제",
       "DELEGATE": "위임됨",
@@ -1402,10 +1405,10 @@
       "validatorsCount": "검증인 ({{number}})"
     },
     "multipleAddresses": "왜 주소가 여러 개인가요?",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "tokenName": "토큰명",
+    "collectionContract": "토큰 계약",
+    "tokenId": "토큰 (NFT) ID",
+    "quantity": "수량"
   },
   "operationList": {
     "noOperations": "거래 없음",
@@ -1549,7 +1552,7 @@
       "sectionLabel": "위임 해제"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "NFT 수령"
     }
   },
   "accounts": {
@@ -1720,7 +1723,7 @@
       "desc": "Ledger Live 또는 도움받는 방법에 대해 자세히 알아보세요.",
       "support": "Ledger 지원",
       "supportDesc": "문제가 있다면, 하드웨어 지갑으로 Ledger Live 이용 방법에 관한 도움을 받으세요.",
-      "configureDevice": "기기 설정",
+      "configureDevice": "장치 설정",
       "configureDeviceDesc": "새 장치를 설정거나 기존 장치를 복원합니다. 계정과 설정은 그대로 유지됩니다.",
       "clearCache": "캐시 삭제",
       "clearCacheDesc": "네트워크의 트랜잭션을 스캔하고 사용자 계정을 다시 계산합니다.",
@@ -1817,7 +1820,7 @@
     },
     "swap": {
       "title": "스왑",
-      "selectDevice": "기기 선택",
+      "selectDevice": "장치 선택",
       "broadcasting": "스왑 브로드캐스팅",
       "loadingFees": "네트워크 수수료 로딩...",
       "landing": {
@@ -2202,7 +2205,7 @@
     "loading": "동기화"
   },
   "scanning": {
-    "loading": "기기 검색 중..."
+    "loading": "장치 검색 중..."
   },
   "send": {
     "tooMuchUTXOBottomModal": {
@@ -2228,7 +2231,10 @@
       "summary": "요약",
       "selectDevice": "장치 선택",
       "connectDevice": "장치 연결",
-      "stepRange": "{{totalSteps}} 중 {{currentStep}} 단계"
+      "stepRange": "{{totalSteps}} 중 {{currentStep}} 단계",
+      "quantity": "수량",
+      "selectCollection": "컬렉션",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "QR 코드 스캔",
@@ -2240,7 +2246,8 @@
       "available": "총 이용 가능",
       "useMax": "최대치 사용",
       "loadingNetwork": "네트워크 수수료 로딩 중...",
-      "noRateProvider": "이용할 수 없습니다"
+      "noRateProvider": "이용할 수 없습니다",
+      "quantityAvailable": "이용 가능한 수량"
     },
     "summary": {
       "subaccountsWarning": "이 계정의 토큰을 보내려면 계정에 {{ currency}}(을)를 다시 채워야 합니다.",
@@ -2264,7 +2271,8 @@
         "type": "메모 유형",
         "value": "메모 가치"
       },
-      "validateMemo": "메모 확인"
+      "validateMemo": "메모 확인",
+      "quantity": "수량"
     },
     "validation": {
       "message": "장치에서 트랜잭션을 확인하고 안전하게 서명하세요.",
@@ -3091,6 +3099,20 @@
       }
     }
   },
+  "elrond": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Elrond 제공",
+        "drawerTitle": "Elrond 통합",
+        "moreInfo": "자세한 정보",
+        "title": "이제 Ledger Live에서 Elrond eGold(EGLD) 토큰을 이용할 수 있습니다",
+        "description": "이제 Ledger Live로 eGold(EGLD) 토큰을 안전하게 보관하고 관리할 수 있습니다.",
+        "description2": "Elrond eGold(EGLD) 토큰은 Elrond 네트워크의 네이티브 토큰으로, 트랜잭션, 스테이킹, 스마트 계약, 거버넌스, 검증인 보상 등 모든 분야에 사용됩니다.",
+        "description3": "본사는 스테이킹, 네이티브 ESDT(Elrond 스탠다드 디지털 토큰) 지원 등의 다양한 기능을 추가하기 위해 Ellrond 팀과 활발히 협업 중입니다.",
+        "website": "인터넷 스케일 블록체인"
+      }
+    }
+  },
   "tezos": {
     "AccountHeader": {
       "title": "계정을 위임하여 보상을 받을 수 있습니다.",
@@ -3737,23 +3759,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "모든 NFT 보기",
+      "seeFewerNfts": "적은 NFT 보기"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "모든 NFT"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "properties": "속성",
+      "description": "설명",
+      "tokenContract": "토큰 주소",
+      "tokenId": "토큰 ID",
+      "quantity": "수량"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "다음에서 보기:",
+      "viewInExplorer": "탐색기에서 보기",
+      "txDetails": "트랜잭션 세부정보"
     }
   }
 }

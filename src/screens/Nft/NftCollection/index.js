@@ -11,8 +11,8 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useSelector } from "react-redux";
-// import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/lib/account";
 import Animated, { Value, event } from "react-native-reanimated";
 
@@ -25,9 +25,10 @@ import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
 import SectionHeader from "../../../components/SectionHeader";
 import OperationRow from "../../../components/OperationRow";
+import { NavigatorName, ScreenName } from "../../../const";
 import NftCard from "../../../components/Nft/NftCard";
-// import Button from "../../../components/Button";
-// import SendIcon from "../../../icons/Send";
+import Button from "../../../components/Button";
+import SendIcon from "../../../icons/Send";
 
 const MAX_NFT_FIRST_RENDER = 12;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 6;
@@ -52,9 +53,11 @@ const renderOperationSectionHeader = ({ section }: any) => (
 );
 
 const NftCollection = ({ route }: Props) => {
-  // const { t } = useTranslation();
+  const navigation = useNavigation();
+  const { t } = useTranslation();
   const { colors } = useTheme();
   const { params } = route;
+  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const scrollY = useRef(new Value(0)).current;
   const onScroll = () =>
     event(
@@ -74,6 +77,15 @@ const NftCollection = ({ route }: Props) => {
     nftCount,
     params.collection,
   ]);
+  const sendToken = () => {
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendNft,
+      params: {
+        account,
+        collection: params.collection,
+      },
+    });
+  };
 
   const renderNftItem = useCallback(
     ({ item, index }) => (
@@ -102,7 +114,6 @@ const NftCollection = ({ route }: Props) => {
 
   // operations' list related -----
   const [opCount, setOpCount] = useState(100);
-  const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { sections, completed } = groupAccountOperationsByDay(account, {
     count: opCount,
     filterOperation: op =>
@@ -140,15 +151,15 @@ const NftCollection = ({ route }: Props) => {
   }, [setOpCount, opCount]);
 
   const data = [
-    // <View style={styles.buttonContainer}>
-    //   <Button
-    //     type="primary"
-    //     IconLeft={SendIcon}
-    //     containerStyle={styles.button}
-    //     title={t("account.send")}
-    //     onPress={() => {}}
-    //   />
-    // </View>,
+    <View style={styles.buttonContainer}>
+      <Button
+        type="primary"
+        IconLeft={SendIcon}
+        containerStyle={styles.button}
+        title={t("account.send")}
+        onPress={sendToken}
+      />
+    </View>,
     <View style={styles.nftList}>
       <NftList
         data={nfts}

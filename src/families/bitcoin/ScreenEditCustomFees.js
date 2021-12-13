@@ -3,13 +3,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import {
-  Keyboard,
-  StyleSheet,
-  TextInput,
-  View,
-  SafeAreaView,
-} from "react-native";
+import { Keyboard, StyleSheet, View, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 import { useSelector } from "react-redux";
@@ -19,6 +13,7 @@ import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
 import LText from "../../components/LText";
 import { accountScreenSelector } from "../../reducers/accounts";
+import TextInput from "../../components/FocusedTextInput";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,

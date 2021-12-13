@@ -65,7 +65,7 @@ class ScanRecipient extends PureComponent<Props, State> {
     return (
       <Scanner
         navigation={navigation}
-        screenName={ScreenName.SendFundsMain}
+        screenName={ScreenName.SendCoin}
         onResult={this.onResult}
       />
     );

@@ -42,7 +42,7 @@ export default function CreateModal({ isOpened, onClose }: ModalProps) {
   const onSendFunds = useCallback(
     () =>
       onNavigate(NavigatorName.SendFunds, {
-        screen: ScreenName.SendFundsMain,
+        screen: ScreenName.SendCoin,
       }),
     [onNavigate],
   );

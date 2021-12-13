@@ -62,6 +62,12 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     bridgeError,
   } = useBridgeTransaction(() => ({ account, parentAccount }));
 
+  const shouldSkipAmount =
+    transaction.family === "ethereum" && transaction.mode === "erc721.transfer";
+  const isNftSend = ["erc721.transfer", "erc1155.transfer"].includes(
+    transaction.mode,
+  );
+
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
@@ -118,12 +124,36 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   }, [setTransaction, account, parentAccount, transaction]);
 
   const onPressContinue = useCallback(async () => {
-    navigation.navigate(ScreenName.SendAmount, {
+    // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
+    if (shouldSkipAmount) {
+      return navigation.navigate(ScreenName.SendSummary, {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+        transaction,
+      });
+    }
+
+    if (isNftSend) {
+      return navigation.navigate(ScreenName.SendAmountNft, {
+        accountId: account.id,
+        parentId: parentAccount && parentAccount.id,
+        transaction,
+      });
+    }
+
+    return navigation.navigate(ScreenName.SendAmountCoin, {
       accountId: account.id,
       parentId: parentAccount && parentAccount.id,
       transaction,
     });
-  }, [account, parentAccount, navigation, transaction]);
+  }, [
+    shouldSkipAmount,
+    isNftSend,
+    navigation,
+    account,
+    parentAccount,
+    transaction,
+  ]);
 
   const input = React.createRef();
 

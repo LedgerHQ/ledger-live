@@ -597,6 +597,9 @@
     "TaprootNotActivated": {
       "title": "Taproot mainnetは、まだアクティベートされていません。"
     },
+    "NotEnoughNftOwned": {
+      "title": "利用可能なトークン数を超えています"
+    },
     "generic": {
       "title": "{{message}}",
       "description": "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
@@ -1316,9 +1319,9 @@
   "operations": {
     "types": {
       "IN": "受け取り済み",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "NFT受取済み",
       "OUT": "送金済み",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "NFT送付済み",
       "CREATE": "作成済み",
       "REVEAL": "表示済み",
       "DELEGATE": "デリゲート済み",
@@ -1402,10 +1405,10 @@
       "validatorsCount": "バリデータ（{{number}}）"
     },
     "multipleAddresses": "なぜ複数のアドレスがあるのですか？",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "tokenName": "トークン名",
+    "collectionContract": "トークンコントラクト",
+    "tokenId": "トークン（NFT）ID",
+    "quantity": "数量"
   },
   "operationList": {
     "noOperations": "オペレーションはありません。",
@@ -1549,7 +1552,7 @@
       "sectionLabel": "デリゲート解除"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "NFTを受け取る"
     }
   },
   "accounts": {
@@ -2228,7 +2231,10 @@
       "summary": "概要",
       "selectDevice": "デバイスを選択",
       "connectDevice": "デバイスを接続",
-      "stepRange": "ステップ{{currentStep}}/{{totalSteps}}"
+      "stepRange": "ステップ{{currentStep}}/{{totalSteps}}",
+      "quantity": "数量",
+      "selectCollection": "コレクション",
+      "selectNft": "NFT"
     },
     "recipient": {
       "scan": "QRコードをスキャン",
@@ -2240,7 +2246,8 @@
       "available": "合計利用可能額",
       "useMax": "全額を選択",
       "loadingNetwork": "ネットワーク手数料を読み込み中…",
-      "noRateProvider": "利用不可"
+      "noRateProvider": "利用不可",
+      "quantityAvailable": "利用可能な数量"
     },
     "summary": {
       "subaccountsWarning": "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
@@ -2264,7 +2271,8 @@
         "type": "Memoの種類",
         "value": "Memoの値"
       },
-      "validateMemo": "Memoの確認"
+      "validateMemo": "Memoの確認",
+      "quantity": "数量"
     },
     "validation": {
       "message": "デバイス上で、トランザクションを確認して安全に署名します。",
@@ -3091,6 +3099,20 @@
       }
     }
   },
+  "elrond": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "Powered by Elrond",
+        "drawerTitle": "Elrondの統合",
+        "moreInfo": "詳細はこちら",
+        "title": "Ledger Liveは、Elrond eGold（EGLD）トークンに対応しています。",
+        "description": "Ledger Liveで、eGold（EGLD）トークンを安全に保管・管理できるようになりました。",
+        "description2": "Elrond eGold（EGLD）トークンは、Elrond Networkのネイティブトークンであり、トランザクション、ステーキング、スマートコントラクト、ガバナンス、バリデータの報酬など、さまざまな用途に使用されます。",
+        "description3": "LedgerはElrondチームと積極的に協力し、ステーキングやESDT（Elrond Standard Digital Token）のネイティブサポートなどの機能を追加する予定です。",
+        "website": "The Internet Scale Blockchain"
+      }
+    }
+  },
   "tezos": {
     "AccountHeader": {
       "title": "アカウントをデリゲート（委任）することで報酬を得ることができます。",
@@ -3737,23 +3759,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "すべてのNFTを見る",
+      "seeFewerNfts": "少量のNFTを見る"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "すべてのNFT"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "properties": "プロパティ",
+      "description": "説明",
+      "tokenContract": "トークンアドレス",
+      "tokenId": "トークンID",
+      "quantity": "数量"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "表示",
+      "viewInExplorer": "エクスプローラーで表示",
+      "txDetails": "トランザクション詳細"
     }
   }
 }

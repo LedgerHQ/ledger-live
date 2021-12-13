@@ -1,12 +1,7 @@
 // @flow
 import React, { useState, useCallback } from "react";
-import {
-  View,
-  StyleSheet,
-  Platform,
-  SafeAreaView,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useNavigation,
   useTheme,
@@ -14,6 +9,7 @@ import {
 } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
 
+import * as Animatable from "react-native-animatable";
 import Styles from "../navigation/styles";
 import LText from "./LText";
 import { normalize, width } from "../helpers/normalizeSize";
@@ -21,6 +17,8 @@ import ArrowLeft from "../icons/ArrowLeft";
 import Close from "../icons/Close";
 
 const { interpolateNode, Extrapolate } = Animated;
+
+const AnimatedView = Animatable.View;
 
 const hitSlop = {
   bottom: 10,
@@ -91,9 +89,11 @@ export default function AnimatedHeaderView({
   const { colors } = useTheme();
   const navigation = useNavigation();
   const [textHeight, setTextHeight] = useState(250);
+  const [isReady, setReady] = useState(false);
 
   const onLayoutText = useCallback(event => {
     setTextHeight(event.nativeEvent.layout.height);
+    setReady(true);
   }, []);
 
   const [scrollY] = useState(new Animated.Value(0));
@@ -130,7 +130,9 @@ export default function AnimatedHeaderView({
       <Animated.View
         style={[
           styles.header,
-          { height: Platform.OS === "ios" ? textHeight : textHeight + 40 },
+          {
+            height: Platform.OS === "ios" ? textHeight : textHeight + 40,
+          },
         ]}
       >
         <View style={styles.topHeader}>
@@ -164,15 +166,17 @@ export default function AnimatedHeaderView({
           </LText>
         </Animated.View>
       </Animated.View>
-      {children && (
-        <Animated.ScrollView
-          onScroll={event}
-          scrollEventThrottle={10}
-          contentContainerStyle={styles.scrollArea}
-          testID={isFocused ? "ScrollView" : undefined}
-        >
-          {children}
-        </Animated.ScrollView>
+      {children && isReady && (
+        <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+          <Animated.ScrollView
+            onScroll={event}
+            scrollEventThrottle={10}
+            contentContainerStyle={[styles.scrollArea]}
+            testID={isFocused ? "ScrollView" : undefined}
+          >
+            {children}
+          </Animated.ScrollView>
+        </AnimatedView>
       )}
       {footer}
     </SafeAreaView>

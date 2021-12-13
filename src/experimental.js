@@ -37,8 +37,9 @@ export const experimentalFeatures: Feature[] = [
     type: "toggle",
     name: "EXPERIMENTAL_CURRENCIES_JS_BRIDGE",
     title: "Experimental JS impl",
-    description: "Use experimental JS implementation for Tezos",
-    valueOn: "tezos",
+    description:
+      "Use experimental JS implementations for Bitcoin (Taproot) and Tezos",
+    valueOn: "bitcoin,bitcoin_testnet,tezos",
     valueOff: "",
   },
   {
@@ -70,6 +71,15 @@ export const experimentalFeatures: Feature[] = [
       "This may cause the countervalues displayed for your accounts to become incorrect.",
     valueOn: "https://countervalues.live.ledger.com",
     valueOff: "https://countervalues-experimental.live.ledger.com",
+  },
+  {
+    type: "toggle",
+    name: "NFT",
+    title: "NFT management features",
+    description:
+      "Display your Ethereum NFT and their metadata in your accounts. Send Ethereum NFT directly from Ledger Live.",
+    valueOn: true,
+    valueOff: false,
   },
   ...(__DEV__
     ? [

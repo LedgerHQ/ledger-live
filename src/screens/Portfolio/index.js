@@ -1,7 +1,8 @@
 // @flow
 import React, { useRef, useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { StyleSheet, FlatList, SafeAreaView, View } from "react-native";
+import { StyleSheet, FlatList, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { interpolateNode } from "react-native-reanimated";
 import { createNativeWrapper } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";

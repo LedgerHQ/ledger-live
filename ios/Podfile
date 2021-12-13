@@ -22,11 +22,6 @@ target 'ledgerlivemobile' do
 
   pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text', :modular_headers => true
 
-  # TODO: remove this once MultiPlatformBleAdapter gets released to 0.1.9
-  # https://github.com/dotintent/MultiPlatformBleAdapter/issues/79
-  # https://github.com/dotintent/MultiPlatformBleAdapter/pull/80
-  pod 'MultiplatformBleAdapter', :git => 'https://github.com/dotintent/MultiPlatformBleAdapter', :tag => '0.1.9'
-
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
     # Pods for testing

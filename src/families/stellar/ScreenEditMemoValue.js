@@ -1,18 +1,19 @@
 // @flow
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, TextInput, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import SafeAreaView from "react-native-safe-area-view";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import type { Transaction } from "@ledgerhq/live-common/lib/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
 import { accountScreenSelector } from "../../reducers/accounts";
+import TextInput from "../../components/FocusedTextInput";
 
 const forceInset = { bottom: "always" };
 
@@ -28,6 +29,7 @@ type RouteParams = {
 };
 
 function StellarEditMemoValue({ navigation, route }: Props) {
+  const isFocused = useIsFocused();
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
@@ -62,16 +64,18 @@ function StellarEditMemoValue({ navigation, route }: Props) {
           contentContainerStyle={styles.root}
           keyboardShouldPersistTaps="always"
         >
-          <TextInput
-            allowFontScaling={false}
-            autoFocus
-            style={[styles.textInputAS, { color: colors.darkBlue }]}
-            defaultValue={memoValue ? memoValue.toString() : ""}
-            keyboardType="default"
-            returnKeyType="done"
-            onChangeText={onChangeMemoValue}
-            onSubmitEditing={onValidateText}
-          />
+          {isFocused && (
+            <TextInput
+              allowFontScaling={false}
+              autoFocus
+              style={[styles.textInputAS, { color: colors.darkBlue }]}
+              defaultValue={memoValue ? memoValue.toString() : ""}
+              keyboardType="default"
+              returnKeyType="done"
+              onChangeText={onChangeMemoValue}
+              onSubmitEditing={onValidateText}
+            />
+          )}
 
           <View style={styles.flex}>
             <Button

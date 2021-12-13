@@ -84,7 +84,7 @@
   },
   "errors": {
     "countervaluesUnavailable": {
-      "title": "We're not able to provide a countervalue for this asset at the moment"
+      "title": "نحن غير قادرين على توفير قيمة مقابلة لهذا الأصل في الوقت الحالي"
     },
     "AccountAwaitingSendPendingOperations": {
       "title": "هناك عملية معلقة لهذا الحساب",
@@ -95,8 +95,8 @@
       "description": "يرجى إدخال اسم الحساب."
     },
     "AccountNeedResync": {
-      "title": "Please try again",
-      "description": "Account is outdated. A synchronisation is needed"
+      "title": "يرجى إعادة المحاولة مرة أخرى",
+      "description": "الحساب قديم. هناك حاجة إلى التزامن"
     },
     "AlgorandASANotOptInInRecipient": {
       "title": "حساب المستلم لم ينضم إلى ASA الذي تم اختياره."
@@ -120,11 +120,11 @@
       "title": "عفوًا، لم يتم العثور على أي جهاز",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل و أنه تم تمكين البلوتوث."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل.",
+          "nanoX": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل أو أنه تم تمكين البلوتوث."
         }
       }
     },
@@ -132,11 +132,11 @@
       "title": "عذرًا، فشل الاتصال بالمدير",
       "description": {
         "ios": {
-          "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
+          "nanoX": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل و أنه تم تمكين البلوتوث."
         },
         "android": {
-          "nanoS": "Please make sure your {{productName}} is unlocked and connected by cable.",
-          "nanoX": "Please make sure your {{productName}} is unlocked and is connected by cable or has Bluetooth enabled."
+          "nanoS": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل.",
+          "nanoX": "الرجاء التأكد من أن {{productName}} الخاص بك غير مقفل ومتصل بواسطة الكابل أو أنه تم تمكين البلوتوث."
         }
       }
     },
@@ -595,7 +595,10 @@
       "title": "يجب عليك تحديد مدقق واحد على الأقل"
     },
     "TaprootNotActivated": {
-      "title": "Taproot mainnet is not activated yet"
+      "title": "لم يتم تفعيل شبكة Taproot الأساسية بعد"
+    },
+    "NotEnoughNftOwned": {
+      "title": "لقد تجاوزت عدد رموز التوكن المتاحة"
     },
     "generic": {
       "title": "{{message}}",
@@ -698,8 +701,8 @@
         "description": "قم بتفويض مكاسب مكافآت ATOM اليوم."
       },
       "familyPack": {
-        "title": "Family pack",
-        "description": "Get your family into crypto with 3 Nano S"
+        "title": "حزمة العائلة",
+        "description": "عرّف عائلتك وأصدقائك على التشفير مع ثلاثة Nano S"
       },
       "buyCrypto": {
         "title": "شراء العملات المشفرة",
@@ -1241,11 +1244,11 @@
         "supportLink": "الاتصال بقسم دعم ليدجر"
       },
       "seed": {
-        "title": "Please check the box contents",
-        "desc": "If your {{deviceName}} came with a PIN code or recovery phrase, it’s not safe to use and you should contact Ledger Support.",
-        "warning": "Only use a recovery phrase that your device displayed when it was set up",
-        "continueCTA": "Continue",
-        "contactSupportCTA": "Contact support"
+        "title": "الرجاء التحقق من محتويات الصندوق",
+        "desc": "إذا جاء {{deviceName}} الخاص بك مع كود PIN أو عبارة الاسترداد، فإنه ليس من الآمن استخدامه، ويجب عليك التواصل مع دعم Ledger.",
+        "warning": "فقط استخدم عبارة الاسترداد التي عرضها جهازك عند إعداده",
+        "continueCTA": "متابعة",
+        "contactSupportCTA": "التواصل مع الدعم"
       }
     }
   },
@@ -1316,9 +1319,9 @@
   "operations": {
     "types": {
       "IN": "تم الاستلام",
-      "NFT_IN": "NFT Received",
+      "NFT_IN": "تم تلقي الرمز غير قابل للاستبدال (NFT)",
       "OUT": "أرسلت",
-      "NFT_OUT": "NFT Sent",
+      "NFT_OUT": "تم إرسال الرمز غير قابل للاستبدال (NFT)",
       "CREATE": "تمّ انشاؤه",
       "REVEAL": "كشف",
       "DELEGATE": "تم التفويض",
@@ -1402,10 +1405,10 @@
       "validatorsCount": "({{number}}) مدققين"
     },
     "multipleAddresses": "لماذا عناوين متعددة؟",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "tokenName": "اسم رّمز التوكن",
+    "collectionContract": "عقد رّمز التوكن",
+    "tokenId": "مُعرّف (NFT) رمز التوكن",
+    "quantity": "الكمية"
   },
   "operationList": {
     "noOperations": "لا توجد عمليات",
@@ -1549,7 +1552,7 @@
       "sectionLabel": "إلغاء التفويض (إلغاء التفويضات)"
     },
     "nft": {
-      "receiveNft": "Receive NFT"
+      "receiveNft": "قم بتلقي NFT (رموز غير قابلة للاستبدال)"
     }
   },
   "accounts": {
@@ -1727,8 +1730,8 @@
       "clearCacheModal": "هل أنت متأكد؟",
       "clearCacheModalDesc": "سيتم إجراء فحص جديد وكامل للمعاملات على الشبكة. كما سيتم إعادة بناء سجلات الحسابات وإعادة حساب الأرصدة.",
       "clearCacheButton": "حذف",
-      "exportLogs": "Save logs",
-      "exportLogsDesc": "Saving Ledger Live logs may be needed for troubleshooting purposes.",
+      "exportLogs": "حفظ السجلات",
+      "exportLogsDesc": "قد تكون هناك حاجة لحفظ سجلات ليدجر لايف (Ledger Live) لأغراض استكشاف الأخطاء وإصلاحها.",
       "hardReset": "إعادة تعيين Ledger Live",
       "hardResetDesc": "ليس لهذا الأمر أي تأثير على الأصول الخاصة بك. فهو يمحو جميع البيانات في Ledger Live، بما في ذلك بيانات الحساب والإعدادات وسجلات المعاملات. استخدم جهاز ليدجر الخاص بك لإعادة تحميل وإدارة الأصول المشفرة الخاصة بك على Ledger Live فارغ.",
       "repairDevice": "إصلاح جهاز ليدجر الخاص بك",
@@ -2228,7 +2231,10 @@
       "summary": "ملخص",
       "selectDevice": "اختار جهاز",
       "connectDevice": "توصيل الجهاز",
-      "stepRange": "خطوة {{currentStep}} من {{totalSteps}}"
+      "stepRange": "خطوة {{currentStep}} من {{totalSteps}}",
+      "quantity": "الكمية",
+      "selectCollection": "مجموعة",
+      "selectNft": "NFT (رمز غير قابل للاستبدال)"
     },
     "recipient": {
       "scan": "مسح ضوئي لرمز QR",
@@ -2240,7 +2246,8 @@
       "available": "إجمالي المتاح",
       "useMax": "استخدم الحد الأقصى",
       "loadingNetwork": "جاري تحميل رسوم الشبكة...",
-      "noRateProvider": "غير متاح"
+      "noRateProvider": "غير متاح",
+      "quantityAvailable": "الكمية المتاحة"
     },
     "summary": {
       "subaccountsWarning": "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن لهذا الحساب",
@@ -2264,7 +2271,8 @@
         "type": "نوع الملاحظة",
         "value": "قيمة الملاحظة"
       },
-      "validateMemo": "تحقق من الملاحظة"
+      "validateMemo": "تحقق من الملاحظة",
+      "quantity": "الكمية"
     },
     "validation": {
       "message": "قم بتأكيد المعاملة على جهازك للتوقيع عليها بشكل آمن.",
@@ -2491,7 +2499,7 @@
     }
   },
   "DeviceAction": {
-    "stayInTheAppPlz": "Stay in the app and keep your Nano X nearby",
+    "stayInTheAppPlz": "ابق في التطبيق وحافظ على Nano X بالقرب منك",
     "allowAppPermission": "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken": "لإدارة رموز توكن {{token}} الخاصة بك",
     "allowManagerPermission": "السماح بــ {{wording}} على جهازك",
@@ -2785,10 +2793,10 @@
       "flash": "قم بإعادة ضبط نسخة نظام التشغيل على جهازك",
       "firmware": "جاري تحديث البرنامج الثابت"
     },
-    "newVersion": "Update Firmware to {{version}} is available",
+    "newVersion": "تحديث البرنامج الثابت إلى {{version}} متاح",
     "drawerUpdate": {
-      "title": "Firmware Update",
-      "description": "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop"
+      "title": "تحديث البرنامج الثابت",
+      "description": "قم بتحديث برنامج Ledger Nano الثابت عن طريق توصيله إلى تطبيق Ledger Live على سطح المكتب"
     }
   },
   "FirmwareUpdateReleaseNotes": {
@@ -3088,6 +3096,20 @@
             "broadcastError": "يحتمل أن تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
           }
         }
+      }
+    }
+  },
+  "elrond": {
+    "account": {
+      "subHeader": {
+        "cardTitle": "مدعوم من Elrond",
+        "drawerTitle": "دمج Elrond",
+        "moreInfo": "مزيد من المعلومات",
+        "title": "رمز Elrond eGold (EGLD) متاح الآن على Ledger Live",
+        "description": "يمكنك الآن تأمين رموز eGold (EGLD) الخاصة بك بشكل آمن وإدارتها من خلال Ledger Live.",
+        "description2": "إن رمز Elrond eGold (EGLD) هو أصلي لشبكة Elrond وسيتم استخدامه لكل شيء من المعاملات، والتكديس، والعقود الذكية، والحوكمة، ومكافآت المدقق.",
+        "description3": "نحن نعمل بنشاط مع فريق Elrond لإضافة المزيد من الوظائف، مثل التكديس، دعم ESDT الأصلي (رمز Elrond الرقمي القياسي) ، وأكثر من ذلك.",
+        "website": "سلسلة كتل مقياس الإنترنت"
       }
     }
   },
@@ -3584,9 +3606,9 @@
     "title": "شروط الاستخدام",
     "read": "قراءة شروط الاستخدام",
     "switchLabel": "لقد قرأت ووافقت على <1>شروط الخدمة</1>",
-    "switchLabelFull": "I have read and accept the Terms of Service and Privacy Policy",
+    "switchLabelFull": "لقد قرأت وأوافق على شروط الخدمة وسياسة الخصوصية",
     "cta": "دخول تطبيق Ledger",
-    "service": "Terms of service"
+    "service": "شروط الخدمة"
   },
   "exchange": {
     "buy": {
@@ -3644,7 +3666,7 @@
     "connected": "متصل",
     "disconnected": "تم قطع الاتصال",
     "warningdisconnected": "هناك مشكلة في الاتصال بين dApp وWalletConnect وليدجر لايف (Ledger Live). انتظر بضع لحظات أو أعد تشغيل الاتصال",
-    "info": "You can now access the {{name}} dApp on your web browser.",
+    "info": "يمكنك الآن الوصول إلى {{name}} التطبيق اللامركزي (dApp) على متصفح الويب الخاص بك.",
     "warning": "مشاركة عناوين التلقي من dApp غير آمنة. استخدم دائمًا Ledger Live عند مشاركة عنوانك لتلقي الأموال.",
     "isconnecting": "يجري الاتصال، يرجى الانتظار...",
     "disconnect": "قطع الاتصال",
@@ -3675,8 +3697,8 @@
     "announcement": "إعلان",
     "liveStatus": "حالة Ledger Live",
     "groupedToast": {
-      "text": "You have {{count}} unread notifications",
-      "cta": "See details"
+      "text": "لديك {{count}} إشعارات غير مقروءة",
+      "cta": "رؤية التفاصيل"
     },
     "news": {
       "title": "أخبار",
@@ -3737,23 +3759,23 @@
   },
   "nft": {
     "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
+      "seeAllNfts": "مشاهدة جميع NFT (رموز غير قابلة للاستبدال)",
+      "seeFewerNfts": "شاهد  NFT (رموز غير قابلة للاستبدال) أقل"
     },
     "gallery": {
-      "allNft": "All NFT"
+      "allNft": "جميع NFT (رموز غير قابلة للاستبدال)"
     },
     "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenId": "Token ID",
-      "quantity": "Quantity"
+      "properties": "خصائص",
+      "description": "الوصف",
+      "tokenContract": "عنوان رمز التوكن",
+      "tokenId": "مُعرّف رمز التوكن",
+      "quantity": "الكمية"
     },
     "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "txDetails": "Transaction details"
+      "viewOn": "مشاهدة على",
+      "viewInExplorer": "مشاهدة في المتصفح",
+      "txDetails": "تفاصيل المعاملة"
     }
   }
 }

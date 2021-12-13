@@ -56,7 +56,7 @@ type RouteParams = {
   transaction: Transaction,
 };
 
-export default function SendAmount({ navigation, route }: Props) {
+export default function SendAmountCoin({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [maxSpendable, setMaxSpendable] = useState(null);
@@ -228,7 +228,7 @@ export default function SendAmount({ navigation, route }: Props) {
                 </View>
                 <View style={styles.continueWrapper}>
                   <Button
-                    event="SendAmountContinue"
+                    event="SendAmountCoinContinue"
                     type="primary"
                     title={
                       <Trans
