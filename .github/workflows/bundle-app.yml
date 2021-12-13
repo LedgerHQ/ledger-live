@@ -20,14 +20,16 @@ jobs:
   start-runner:
     needs: cancel-previous
     name: "start ec2 instance (Linux)"
-    uses: LedgerHQ/actions/.github/workflows/start-linux-runner.yml@v3.0.1
+    uses: LedgerHQ/actions/.github/workflows/start-linux-runner.yml@master
+    with:
+      instance-type: c5.4xlarge
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
 
   stop-runner:
     name: "stop ec2 instance (Linux)"
     needs: [start-runner, bundle-apk]
-    uses: LedgerHQ/actions/.github/workflows/stop-linux-runner.yml@v3.0.1
+    uses: LedgerHQ/actions/.github/workflows/stop-linux-runner.yml@master
     if: ${{ always() }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
