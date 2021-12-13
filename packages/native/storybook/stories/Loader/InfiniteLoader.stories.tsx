@@ -8,7 +8,7 @@ const description = `
 A simple spinner component with customizable size and color 🎡.
 ## Usage
 \`\`\`js
-import { InfiniteLoader } from "@ledgerhq/react-ui"
+import { InfiniteLoader } from "@ledgerhq/native-ui"
 \`\`\`
 \`\`\`js
 /*
