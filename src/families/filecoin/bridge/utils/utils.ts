@@ -14,27 +14,59 @@ import { encodeAccountId } from "../../../../account";
 import flatMap from "lodash/flatMap";
 import { Transaction } from "../../types";
 
+type TxsById = {
+  [id: string]: {
+    Send: TransactionResponse;
+    Fee?: TransactionResponse;
+  };
+};
+
 export const getUnit = () => getCryptoCurrencyById("filecoin").units[0];
+
+export const processTxs = (
+  txs: TransactionResponse[]
+): TransactionResponse[] => {
+  const txsById = txs.reduce((result: TxsById, currentTx) => {
+    const { hash, type } = currentTx;
+    const txById = result[hash] || {};
+
+    if (type == "Send" || type == "Fee") txById[type] = currentTx;
+
+    result[hash] = txById;
+    return result;
+  }, {});
+
+  const processedTxs: TransactionResponse[] = [];
+  for (const txId in txsById) {
+    const { Fee: feeTx, Send: sendTx } = txsById[txId];
+
+    if (feeTx) sendTx.fee = feeTx.amount.toString();
+
+    processedTxs.push(sendTx);
+  }
+
+  return processedTxs;
+};
 
 export const mapTxToOps =
   (id, { address }: GetAccountShapeArg0) =>
   (tx: TransactionResponse): Operation[] => {
-    const { to, from, hash, timestamp, amount } = tx;
+    const { to, from, hash, timestamp, amount, fee } = tx;
     const ops: Operation[] = [];
     const date = new Date(timestamp * 1000);
     const value = parseCurrencyUnit(getUnit(), amount.toString());
 
     const isSending = address === from;
     const isReceiving = address === to;
-    const fee = new BigNumber(0);
+    const feeToUse = new BigNumber(fee || 0);
 
     if (isSending) {
       ops.push({
         id: `${id}-${hash}-OUT`,
         hash,
         type: "OUT",
-        value: value.plus(fee),
-        fee,
+        value: value.plus(feeToUse),
+        fee: feeToUse,
         blockHeight: tx.height,
         blockHash: null,
         accountId: id,
@@ -51,7 +83,7 @@ export const mapTxToOps =
         hash,
         type: "IN",
         value,
-        fee,
+        fee: feeToUse,
         blockHeight: tx.height,
         blockHash: null,
         accountId: id,
@@ -120,13 +152,13 @@ export const getAccountShape: GetAccountShape = async (info) => {
 
   const blockHeight = await fetchBlockHeight();
   const balance = await fetchBalances(address);
-  const txs = await fetchTxs(address);
+  const rawTxs = await fetchTxs(address);
 
   const result = {
     id: accountId,
     balance: new BigNumber(balance.total_balance),
     spendableBalance: new BigNumber(balance.spendable_balance),
-    operations: flatMap(txs, mapTxToOps(accountId, info)),
+    operations: flatMap(processTxs(rawTxs), mapTxToOps(accountId, info)),
     blockHeight: blockHeight.current_block_identifier.index,
   };
 

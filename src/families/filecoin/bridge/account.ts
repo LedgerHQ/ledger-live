@@ -2,7 +2,6 @@ import {
   AmountRequired,
   FeeNotLoaded,
   InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
@@ -71,8 +70,6 @@ const getTransactionStatus = async (
   const { recipient, amount, gasPremium, gasFeeCap, gasLimit } = t;
 
   if (!recipient) errors.recipient = new RecipientRequired();
-  else if (address === recipient)
-    errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   else if (!validateAddress(recipient).isValid)
     errors.recipient = new InvalidAddress();
   else if (!validateAddress(address).isValid)
