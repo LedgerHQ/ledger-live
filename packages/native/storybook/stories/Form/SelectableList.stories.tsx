@@ -38,10 +38,22 @@ const Story = () => {
   return (
     <Flex alignSelf="stretch" p={4}>
       <SelectableList currentValue={selectedValue} onChange={setSelectedValue}>
-        <SelectableList.Element value="en" Icon={Icons.BedMedium}>English</SelectableList.Element>
-        <SelectableList.Element value="fr" Icon={Icons.NanoXMedium}>French</SelectableList.Element>
-        <SelectableList.Element value="ru" Icon={Icons.NanoXFoldedMedium} disabled={true}>Russian</SelectableList.Element>
-        <SelectableList.Element value="cz" Icon={Icons.BlockchainMedium}>Chinese</SelectableList.Element>
+        <SelectableList.Element value="en" Icon={Icons.BedMedium}>
+          English
+        </SelectableList.Element>
+        <SelectableList.Element value="fr" Icon={Icons.NanoXMedium}>
+          French
+        </SelectableList.Element>
+        <SelectableList.Element
+          value="ru"
+          Icon={Icons.NanoXFoldedMedium}
+          disabled={true}
+        >
+          Russian
+        </SelectableList.Element>
+        <SelectableList.Element value="cz" Icon={Icons.BlockchainMedium}>
+          Chinese
+        </SelectableList.Element>
         <SelectableList.Element value="sp">Spanish</SelectableList.Element>
       </SelectableList>
     </Flex>

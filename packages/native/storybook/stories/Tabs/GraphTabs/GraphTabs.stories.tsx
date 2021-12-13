@@ -11,11 +11,12 @@ const GraphTabsStory = () => {
     <GraphTabs
       activeIndex={activeIndex}
       onChange={changeIndex}
-      labels={array('labels', new Array(4).fill("").map((_, i) => "Label" + i))}
+      labels={array(
+        "labels",
+        new Array(4).fill("").map((_, i) => "Label" + i)
+      )}
     />
   );
 };
 
-storiesOf((story) =>
-  story("Tabs", module).add("Graph", GraphTabsStory)
-);
+storiesOf((story) => story("Tabs", module).add("Graph", GraphTabsStory));
