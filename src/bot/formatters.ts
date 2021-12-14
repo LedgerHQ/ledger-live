@@ -18,6 +18,16 @@ const formatDt = (from, to) => (from && to ? formatTime(to - from) : "?");
 export function formatAppCandidate(appCandidate: AppCandidate) {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
+
+export function formatError(e: any) {
+  if (!e || typeof e !== "object" || e instanceof Error) return String(e);
+  try {
+    return "raw object: " + JSON.stringify(e).slice(0, 400);
+  } catch (_e) {
+    return String(e);
+  }
+}
+
 export function formatReportForConsole<T extends Transaction>({
   syncAllAccountsTime,
   appCandidate,
@@ -137,7 +147,7 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (error) {
-    str += `⚠️ ${String(error)}\n`;
+    str += `⚠️ ${formatError(error)}\n`;
   }
 
   return str;

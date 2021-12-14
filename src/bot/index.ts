@@ -18,7 +18,7 @@ import {
 } from "../currencies";
 import { isAccountEmpty } from "../account";
 import { runWithAppSpec } from "./engine";
-import { formatReportForConsole } from "./formatters";
+import { formatReportForConsole, formatError } from "./formatters";
 import {
   initialState,
   calculate,
@@ -230,7 +230,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
     let subtitle = "";
 
     if (countervaluesError) {
-      subtitle += `> ${String(countervaluesError)}`;
+      subtitle += `> ${formatError(countervaluesError)}`;
     }
 
     let slackBody = "";
@@ -254,8 +254,8 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
       body += `<summary>${specFatals.length} critical spec errors</summary>\n\n`;
       specFatals.forEach(({ spec, fatalError }) => {
         body += `**Spec ${spec.name} failed!**\n`;
-        body += "```\n" + String(fatalError) + "\n```\n\n";
-        slackBody += `❌ *Spec ${spec.name}*: \`${String(fatalError)}\`\n`;
+        body += "```\n" + formatError(fatalError) + "\n```\n\n";
+        slackBody += `❌ *Spec ${spec.name}*: \`${formatError(fatalError)}\`\n`;
       });
       body += "</details>\n\n";
     }
@@ -268,7 +268,7 @@ export async function bot({ currency, family, mutation }: Arg = {}) {
           "```\n" +
           formatReportForConsole(c) +
           "\n" +
-          String(c.error) +
+          formatError(c.error) +
           "\n```\n\n";
       });
       body += "</details>\n\n";

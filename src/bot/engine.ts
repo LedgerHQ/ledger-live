@@ -39,6 +39,7 @@ import {
   formatReportForConsole,
   formatTime,
   formatAppCandidate,
+  formatError,
 } from "./formatters";
 import type {
   AppSpec,
@@ -510,7 +511,8 @@ export async function runOnAccount<T extends Transaction>({
       `spec ${spec.name}/${account.name}/${optimisticOperation.hash} confirmed`
     );
   } catch (error: any) {
-    log("mutation-error", spec.name + ": " + String(error));
+    console.error(error);
+    log("mutation-error", spec.name + ": " + formatError(error));
     report.error = error;
   }
 
