@@ -21,8 +21,8 @@ export const getAccountSpendableBalance = async (
   account: ServerApi.AccountRecord
 ): Promise<BigNumber> => {
   const minimumBalance = getMinimumBalance(account);
-  const baseFee = await fetchBaseFee();
-  return BigNumber.max(balance.minus(minimumBalance).minus(baseFee), 0);
+  const { recommendedFee } = await fetchBaseFee();
+  return BigNumber.max(balance.minus(minimumBalance).minus(recommendedFee), 0);
 };
 
 export const getOperationType = (
@@ -163,6 +163,24 @@ export const checkRecipientExist: CacheRes<
   } // 5 minutes
 );
 
+// TODO: Move to cache.js
+export const checkAcceptAsset: CacheRes<
+  Array<{
+    recipient: string;
+    assetCode: string | undefined;
+    assetIssuer: string | undefined;
+  }>,
+  boolean
+> = makeLRUCache(
+  async ({ recipient, assetCode, assetIssuer }) =>
+    await addressExists(recipient, assetCode, assetIssuer),
+  (extract) => extract.recipient,
+  {
+    max: 300,
+    maxAge: 5 * 60,
+  } // 5 minutes
+);
+
 export const isMemoValid = (memoType: string, memoValue: string): boolean => {
   switch (memoType) {
     case "MEMO_TEXT":
@@ -216,9 +234,25 @@ export const isAddressValid = (address: string): boolean => {
  * to be activated by sending an account creation operation with an amount of at least the base reserve.
  *
  * @param {*} address
+ * @param {*} assetCode
+ * @param {*} assetIssuer
  */
-export const addressExists = async (address: string): Promise<boolean> => {
+// TODO: better function name
+export const addressExists = async (
+  address: string,
+  assetCode?: string,
+  assetIssuer?: string
+): Promise<boolean> => {
   const account = await loadAccount(address);
+
+  // Check if asset is accepted
+  if (Boolean(account) && assetCode && assetIssuer) {
+    const foundAsset = account.balances.find(
+      (b) => b.asset_code === assetCode && b.asset_issuer === assetIssuer
+    );
+    return !!foundAsset;
+  }
+
   return !!account;
 };
 

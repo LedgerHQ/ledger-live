@@ -8,6 +8,7 @@ export {
   broadcastTransaction,
   buildPaymentOperation,
   buildCreateAccountOperation,
+  buildChangeTrustOperation,
   buildTransactionBuilder,
   loadAccount,
 } from "./horizon";

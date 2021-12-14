@@ -14,9 +14,13 @@ import {
 } from "../logic";
 import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
+import type { BalanceAsset } from "../types";
+import { NetworkCongestionLevel } from "../types";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
+const TRESHOLD_LOW = 0.5;
+const TRESHOLD_MEDIUM = 0.75;
 const currency = getCryptoCurrencyById("stellar");
 const server = new StellarSdk.Server(getEnv("API_STELLAR_HORIZON"));
 
@@ -40,21 +44,46 @@ StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {
 });
 
 const getFormattedAmount = (amount: BigNumber) => {
-  return amount
-    .div(new BigNumber(10).pow(currency.units[0].magnitude))
-    .toString(10);
+  // TODO: ??? not sure why we need this conditional, but it is more consistent
+  // with it. Otherwise, some transactions would just freeze on broadcasting at
+  // the very end.
+  const magnitude = currency?.units[0]?.magnitude || 7;
+  return amount.div(new BigNumber(10).pow(magnitude)).toString(10);
 };
 
-export const fetchBaseFee = async (): Promise<number> => {
-  let baseFee;
+export const fetchBaseFee = async (): Promise<{
+  baseFee: number;
+  recommendedFee: number;
+  networkCongestionLevel: NetworkCongestionLevel;
+}> => {
+  const baseFee = StellarSdk.BASE_FEE || FALLBACK_BASE_FEE;
+  let recommendedFee = baseFee;
+  let networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
 
   try {
-    baseFee = await server.fetchBaseFee();
+    const feeStats = await server.feeStats();
+    const ledgerCapacityUsage = feeStats.ledger_capacity_usage;
+    recommendedFee = Number(feeStats.fee_charged.mode);
+
+    if (
+      ledgerCapacityUsage > TRESHOLD_LOW &&
+      ledgerCapacityUsage <= TRESHOLD_MEDIUM
+    ) {
+      networkCongestionLevel = NetworkCongestionLevel.MEDIUM;
+    } else if (ledgerCapacityUsage > TRESHOLD_MEDIUM) {
+      networkCongestionLevel = NetworkCongestionLevel.HIGH;
+    } else {
+      networkCongestionLevel = NetworkCongestionLevel.LOW;
+    }
   } catch (e) {
-    baseFee = FALLBACK_BASE_FEE;
+    // do nothing, will use defaults
   }
 
-  return baseFee;
+  return {
+    baseFee,
+    recommendedFee,
+    networkCongestionLevel,
+  };
 };
 
 /**
@@ -69,14 +98,19 @@ export const fetchAccount = async (
   blockHeight?: number;
   balance: BigNumber;
   spendableBalance: BigNumber;
+  assets: BalanceAsset[];
 }> => {
   let account: typeof AccountRecord = {};
   let balance: Record<string, any> = {};
+  let assets: BalanceAsset[] = [];
 
   try {
     account = await server.accounts().accountId(addr).call();
     balance = account.balances.find((balance) => {
       return balance.asset_type === "native";
+    });
+    assets = account.balances.filter((balance) => {
+      return balance.asset_type !== "native";
     });
   } catch (e) {
     balance.balance = "0";
@@ -96,6 +130,7 @@ export const fetchAccount = async (
     blockHeight: account.sequence ? Number(account.sequence) : undefined,
     balance: formattedBalance,
     spendableBalance,
+    assets,
   };
 };
 
@@ -190,17 +225,20 @@ export const fetchAccountNetworkInfo = async (
     const baseReserve = new BigNumber(
       (ledger.base_reserve_in_stroops * (2 + numberOfEntries)).toString()
     );
-    const fees = new BigNumber(ledger.base_fee_in_stroops.toString());
+    const { recommendedFee, networkCongestionLevel } = await fetchBaseFee();
+
     return {
       family: "stellar",
-      fees,
+      fees: new BigNumber(recommendedFee.toString()),
       baseReserve,
+      networkCongestionLevel,
     };
   } catch (error) {
     return {
       family: "stellar",
       fees: new BigNumber(0),
       baseReserve: new BigNumber(0),
+      networkCongestionLevel: undefined,
     };
   }
 };
@@ -239,13 +277,19 @@ export const broadcastTransaction = async (
 
 export const buildPaymentOperation = (
   destination: string,
-  amount: BigNumber
+  amount: BigNumber,
+  assetCode: string | undefined,
+  assetIssuer: string | undefined
 ): any => {
   const formattedAmount = getFormattedAmount(amount);
+  const asset =
+    assetCode && assetIssuer
+      ? new StellarSdk.Asset(assetCode, assetIssuer)
+      : StellarSdk.Asset.native();
   return StellarSdk.Operation.payment({
     destination: destination,
     amount: formattedAmount,
-    asset: StellarSdk.Asset.native(),
+    asset,
   });
 };
 
@@ -257,6 +301,15 @@ export const buildCreateAccountOperation = (
   return StellarSdk.Operation.createAccount({
     destination: destination,
     startingBalance: formattedAmount,
+  });
+};
+
+export const buildChangeTrustOperation = (
+  assetCode: string,
+  assetIssuer: string
+): any => {
+  return StellarSdk.Operation.changeTrust({
+    asset: new StellarSdk.Asset(assetCode, assetIssuer),
   });
 };
 

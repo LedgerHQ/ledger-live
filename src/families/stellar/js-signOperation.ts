@@ -7,6 +7,7 @@ import { open, close } from "../../hw";
 import type { Transaction } from "./types";
 import { buildTransaction } from "./js-buildTransaction";
 import { fetchSequence } from "./api";
+import { getAmountValue } from "./getAmountValue";
 
 const buildOptimisticOperation = async (
   account: Account,
@@ -14,14 +15,12 @@ const buildOptimisticOperation = async (
 ): Promise<Operation> => {
   const transactionSequenceNumber = await fetchSequence(account);
   const fees = transaction.fees ?? new BigNumber(0);
+
   const operation: Operation = {
     id: `${account.id}--OUT`,
     hash: "",
     type: "OUT",
-    value:
-      transaction.useAllAmount && transaction.networkInfo
-        ? account.balance.minus(transaction.networkInfo.baseReserve).minus(fees)
-        : transaction.amount.plus(fees),
+    value: getAmountValue(account, transaction, fees),
     fee: fees,
     blockHash: null,
     blockHeight: null,

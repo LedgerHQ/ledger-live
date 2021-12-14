@@ -62,6 +62,18 @@ export const StellarMemoRecommended = createCustomErrorClass(
 export const StellarWrongMemoFormat = createCustomErrorClass(
   "StellarWrongMemoFormat"
 );
+export const StellarAssetRequired = createCustomErrorClass(
+  "StellarAssetRequired"
+);
+export const StellarAssetNotAccepted = createCustomErrorClass(
+  "StellarAssetNotAccepted"
+);
+export const StellarAssetNotFound = createCustomErrorClass(
+  "StellarAssetNotFound"
+);
+export const StellarNotEnoughNativeBalance = createCustomErrorClass(
+  "StellarNotEnoughNativeBalance"
+);
 export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
   "AccountAwaitingSendPendingOperations"
 );
