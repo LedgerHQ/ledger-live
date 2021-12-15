@@ -16,6 +16,7 @@ import { NetworkDown, LedgerAPI4xx, LedgerAPI5xx } from "@ledgerhq/errors";
 import { requestInterceptor, responseInterceptor } from "../../../network";
 import type { BalanceAsset } from "../types";
 import { NetworkCongestionLevel } from "../types";
+import { getReservedBalance } from "../helpers/getReservedBalance";
 
 const LIMIT = getEnv("API_STELLAR_HORIZON_FETCH_LIMIT");
 const FALLBACK_BASE_FEE = 100;
@@ -217,14 +218,7 @@ export const fetchAccountNetworkInfo = async (
       .accounts()
       .accountId(account.freshAddress)
       .call();
-    const numberOfEntries = extendedAccount.subentry_count;
-    const ledger = await server
-      .ledgers()
-      .ledger(extendedAccount.last_modified_ledger)
-      .call();
-    const baseReserve = new BigNumber(
-      (ledger.base_reserve_in_stroops * (2 + numberOfEntries)).toString()
-    );
+    const baseReserve = getReservedBalance(extendedAccount);
     const { recommendedFee, networkCongestionLevel } = await fetchBaseFee();
 
     return {

@@ -56,24 +56,6 @@ export const TronTransactionExpired = createCustomErrorClass(
 export const TronNotEnoughEnergy = createCustomErrorClass(
   "TronNotEnoughEnergy"
 );
-export const StellarMemoRecommended = createCustomErrorClass(
-  "StellarMemoRecommended"
-);
-export const StellarWrongMemoFormat = createCustomErrorClass(
-  "StellarWrongMemoFormat"
-);
-export const StellarAssetRequired = createCustomErrorClass(
-  "StellarAssetRequired"
-);
-export const StellarAssetNotAccepted = createCustomErrorClass(
-  "StellarAssetNotAccepted"
-);
-export const StellarAssetNotFound = createCustomErrorClass(
-  "StellarAssetNotFound"
-);
-export const StellarNotEnoughNativeBalance = createCustomErrorClass(
-  "StellarNotEnoughNativeBalance"
-);
 export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
   "AccountAwaitingSendPendingOperations"
 );
@@ -215,3 +197,4 @@ export const UnsupportedDerivation = createCustomErrorClass(
 );
 
 export * from "./families/polkadot/errors";
+export * from "./families/stellar/errors";

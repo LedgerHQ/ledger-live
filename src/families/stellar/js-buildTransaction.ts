@@ -11,7 +11,7 @@ import {
   loadAccount,
 } from "./api";
 import { addressExists } from "./logic";
-import { getAmountValue } from "./getAmountValue";
+import { getAmountValue } from "./helpers/getAmountValue";
 import { StellarAssetRequired } from "../../errors";
 
 /**

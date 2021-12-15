@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "../../types";
-import type { Transaction } from "./types";
+import type { Account } from "../../../types";
+import type { Transaction } from "../types";
 
 export const getAmountValue = (
   account: Account,

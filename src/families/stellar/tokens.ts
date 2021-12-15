@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "../../account";
 import {
   listTokensForCryptoCurrency,
@@ -34,6 +35,13 @@ const buildStellarTokenAccount = ({
     stellarAsset.balance || "0"
   );
 
+  const reservedBalance = new BigNumber(stellarAsset.balance).minus(
+    stellarAsset.buying_liabilities || 0
+  );
+  const spendableBalance = parseCurrencyUnit(
+    token.units[0],
+    reservedBalance.toString()
+  );
   // TODO: get all operations
   const operations: Operation[] = [];
 
@@ -47,7 +55,7 @@ const buildStellarTokenAccount = ({
     operations,
     pendingOperations: [],
     balance,
-    spendableBalance: balance,
+    spendableBalance,
     swapHistory: [],
     creationDate:
       operations.length > 0

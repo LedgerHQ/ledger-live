@@ -6,14 +6,15 @@ import type { Account, Operation, OperationType } from "../../types";
 import { fetchSigners, fetchBaseFee, loadAccount } from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
+import { getReservedBalance } from "./helpers/getReservedBalance";
 
 const currency = getCryptoCurrencyById("stellar");
 
 const getMinimumBalance = (account: ServerApi.AccountRecord): BigNumber => {
-  const baseReserve = 0.5;
-  const numberOfEntries = account.subentry_count;
-  const minimumBalance = (2 + numberOfEntries) * baseReserve;
-  return parseCurrencyUnit(currency.units[0], minimumBalance.toString());
+  return parseCurrencyUnit(
+    currency.units[0],
+    getReservedBalance(account).toString()
+  );
 };
 
 export const getAccountSpendableBalance = async (
