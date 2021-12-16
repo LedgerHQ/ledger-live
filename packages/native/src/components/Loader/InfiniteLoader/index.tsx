@@ -56,7 +56,12 @@ export default function InfiniteLoader({
   }, []);
 
   return (
-    <Animated.View style={[animatedStyles]}>
+    <Animated.View
+      style={[
+        { display: "flex", justifyContent: "center", alignItems: "center" },
+        animatedStyles,
+      ]}
+    >
       <Loader
         size={size}
         stroke={color}

@@ -1,16 +1,18 @@
 import React from "react";
 import { storiesOf } from "../storiesOf";
-import { InfiniteLoader } from "../../../src";
+import { Flex, InfiniteLoader } from "../../../src";
 import { color, number } from "@storybook/addon-knobs";
 
 const description = `
 ### Spinner Component
+
 A simple spinner component with customizable size and color 🎡.
+
 ## Usage
+
 \`\`\`js
 import { InfiniteLoader } from "@ledgerhq/native-ui"
-\`\`\`
-\`\`\`js
+
 /*
   Both color and size are optional.
   Extra props are passed to the child <svg> tag.
@@ -20,10 +22,12 @@ import { InfiniteLoader } from "@ledgerhq/native-ui"
 `;
 
 const InfiniteLoaderSample = () => (
-  <InfiniteLoader
-    size={number("length", 38)}
-    color={color("color", "primary.c50")}
-  />
+  <Flex background={"red"} height={"100px"} flex={1} flexDirection={"row"}>
+    <InfiniteLoader
+      size={number("length", 38)}
+      color={color("color", "primary.c50")}
+    />
+  </Flex>
 );
 
 storiesOf((story) =>
