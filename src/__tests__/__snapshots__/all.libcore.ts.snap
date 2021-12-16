@@ -62008,9 +62008,7 @@ Array [
       "blockHash": "4NSL4VrfWd2eUccMD95dLQsdy5UGz8yhokpfH1et1R2c",
       "blockHeight": 108520722,
       "contract": undefined,
-      "extra": Object {
-        "memo": undefined,
-      },
+      "extra": Object {},
       "fee": "0",
       "hasFailed": false,
       "hash": "25KWBvKtVgKR3yoRmozTY6wmiW8atwrnzAnTXdsms8jqg5aR8GnCDxdJzWXtzMZPvbsE6SUuBkGFXudy2mrcTYna",
@@ -62032,9 +62030,7 @@ Array [
       "blockHash": "9tPbgLaETEenufCt5SzXMuWijgFJj549W9j5cJLbaogn",
       "blockHeight": 108521109,
       "contract": undefined,
-      "extra": Object {
-        "memo": undefined,
-      },
+      "extra": Object {},
       "fee": "5000",
       "hasFailed": false,
       "hash": "A29zPnK1jPr2tGziTnaAvSnadYR2kLCv9sPywj9FJsaEFjtpwmUonspN3WJgz4u6XWmjtVpoFsDrygEnvW51cgk",

@@ -299,9 +299,7 @@ function txToMainAccOperation(
     hasFailed: !!tx.info.err,
     blockHeight: tx.info.slot,
     blockHash: message.recentBlockhash,
-    extra: {
-      memo: tx.info.memo ? dropMemoLengthPrefixIfAny(tx.info.memo) : undefined,
-    },
+    extra: getOpExtra(tx),
     type: opType,
     senders,
     recipients,
@@ -309,6 +307,15 @@ function txToMainAccOperation(
     value: opValue,
     fee: opFee,
   };
+}
+
+function getOpExtra(tx: TransactionDescriptor): Record<string, any> {
+  const extra: Record<string, any> = {};
+  if (tx.info.memo !== null) {
+    extra.memo = dropMemoLengthPrefixIfAny(tx.info.memo);
+  }
+
+  return extra;
 }
 
 function txToTokenAccOperation(
@@ -364,9 +371,7 @@ function txToTokenAccOperation(
     senders,
     value: delta.abs(),
     hasFailed: !!tx.info.err,
-    extra: {
-      memo: tx.info.memo ? dropMemoLengthPrefixIfAny(tx.info.memo) : undefined,
-    },
+    extra: getOpExtra(tx),
     blockHash: tx.parsed.transaction.message.recentBlockhash,
   };
 }

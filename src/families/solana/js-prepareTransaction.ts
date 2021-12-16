@@ -17,7 +17,6 @@ import {
   SolanaMemoIsTooLong,
   SolanaTokenAccountHoldsAnotherToken,
   SolanaRecipientAssociatedTokenAccountWillBeFunded,
-  SolanaNotEnoughBalanceToPayFees,
   SolanaTokenRecipientIsSenderATA,
   SolanaTokenAccounNotInitialized,
 } from "./errors";
@@ -64,11 +63,13 @@ async function deriveCommandDescriptor(
       }
 
       if (model.uiState.memo) {
-        const encoder = new TextEncoder();
-        if (encoder.encode(model.uiState.memo).byteLength > MAX_MEMO_LENGTH) {
+        const memoBytes = Buffer.from(model.uiState.memo, "utf-8");
+        if (memoBytes.byteLength > MAX_MEMO_LENGTH) {
           errors.memo = errors.memo = new SolanaMemoIsTooLong(undefined, {
             maxLength: MAX_MEMO_LENGTH,
           });
+          // LLM expects <transaction> as error key to disable continue button
+          errors.transaction = errors.memo;
         }
       }
 
@@ -102,6 +103,8 @@ const prepareTransaction = async (
 
   if (tx.feeCalculator === undefined) {
     patch.feeCalculator = feeCalculator;
+    // LLM requires this field to be truthy to show fees
+    (patch as any).networkInfo = true;
   }
 
   const txToDeriveFrom = {
@@ -137,7 +140,7 @@ const prepareTransaction = async (
       const totalFees =
         feeCalculator.lamportsPerSignature + (commandDescriptor.fees ?? 0);
       if (mainAccount.balance.lt(totalFees)) {
-        errors.amount = new SolanaNotEnoughBalanceToPayFees();
+        errors.amount = new NotEnoughBalance();
       }
     }
   }

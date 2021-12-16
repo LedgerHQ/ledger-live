@@ -7,6 +7,7 @@ import type {
 } from "../../types";
 import { open, close } from "../../hw";
 import type {
+  Command,
   TokenCreateATACommand,
   TokenTransferCommand,
   Transaction,
@@ -147,9 +148,7 @@ function optimisticOpForTransfer(
     senders: [account.freshAddress],
     recipients: [transaction.recipient],
     value: new BigNumber(command.amount).plus(commons.fee),
-    extra: {
-      memo: command.memo,
-    },
+    extra: getOpExtras(command),
   };
 }
 
@@ -170,9 +169,7 @@ function optimisticOpForTokenTransfer(
     senders: [account.freshAddress],
     recipients: [transaction.recipient],
     value: new BigNumber(command.amount),
-    extra: {
-      memo: command.memo,
-    },
+    extra: getOpExtras(command),
     subOperations: [
       {
         ...optimisticOpcommons(transaction, commandDescriptor),
@@ -182,9 +179,7 @@ function optimisticOpForTokenTransfer(
         senders: [account.freshAddress],
         recipients: [transaction.recipient],
         value: new BigNumber(command.amount),
-        extra: {
-          memo: command.memo,
-        },
+        extra: getOpExtras(command),
       },
     ],
   };
@@ -227,4 +222,21 @@ function optimisticOpcommons(
     date: new Date(),
     extra: {},
   };
+}
+
+function getOpExtras(command: Command): Record<string, any> {
+  const extra: Record<string, any> = {};
+  switch (command.kind) {
+    case "transfer":
+    case "token.transfer":
+      if (command.memo !== undefined) {
+        extra.memo = command.memo;
+      }
+      break;
+    case "token.createATA":
+      break;
+    default:
+      return assertUnreachable(command);
+  }
+  return extra;
 }

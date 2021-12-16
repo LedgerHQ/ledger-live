@@ -4,10 +4,6 @@ export const SolanaAccountNotFunded = createCustomErrorClass(
   "SolanaAccountNotFunded"
 );
 
-export const SolanaNotEnoughBalanceToPayFees = createCustomErrorClass(
-  "SolanaNotEnoughBalanceToPayFees"
-);
-
 export const SolanaRecipientAssociatedTokenAccountWillBeFunded =
   createCustomErrorClass("SolanaAssociatedTokenAccountWillBeFunded");
 

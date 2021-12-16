@@ -110,7 +110,7 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
                 estimatedFees: fees(1),
                 amount: zero,
-                totalSpent: zero,
+                totalSpent: fees(1),
               },
             },
             {
@@ -175,7 +175,7 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
                 estimatedFees: fees(1),
                 amount: testOnChainData.fundedSenderBalance,
-                totalSpent: zero,
+                totalSpent: testOnChainData.fundedSenderBalance.plus(fees(1)),
               },
             },
             {
@@ -204,7 +204,7 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
                 estimatedFees: testOnChainData.fundedSenderBalance.plus(1),
                 amount: zero,
-                totalSpent: zero,
+                totalSpent: testOnChainData.fundedSenderBalance.plus(1),
               },
             },
             {
@@ -226,7 +226,7 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
                 estimatedFees: fees(1),
                 amount: zero,
-                totalSpent: zero,
+                totalSpent: fees(1),
               },
             },
             {
@@ -248,7 +248,7 @@ const dataset: DatasetTest<Transaction> = {
                 warnings: {},
                 estimatedFees: fees(1),
                 amount: new BigNumber(-1),
-                totalSpent: zero,
+                totalSpent: new BigNumber(-1).plus(fees(1)),
               },
             },
             {
@@ -497,7 +497,7 @@ function recipientRequired(): TransactionTestSpec[] {
         warnings: {},
         estimatedFees: fees(1),
         amount: zero,
-        totalSpent: zero,
+        totalSpent: model.kind === "transfer" ? fees(1) : zero,
       },
     };
   });
