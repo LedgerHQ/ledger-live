@@ -115,10 +115,13 @@ const PopinWrapper = ({
   ...popinProps
 }: PopinProps): React.ReactElement => {
   const $root = React.useMemo(
-    () => (menuPortalTarget === undefined ? document.querySelector("body") : menuPortalTarget),
+    () =>
+      menuPortalTarget === undefined && typeof document !== undefined
+        ? document.querySelector("body")
+        : menuPortalTarget,
     [menuPortalTarget],
   );
-  if ($root === null) {
+  if (!$root) {
     return <Popin {...popinProps}>{children}</Popin>;
   } else {
     return ReactDOM.createPortal(<Popin {...popinProps}>{children}</Popin>, $root);

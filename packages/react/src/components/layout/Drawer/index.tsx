@@ -174,10 +174,13 @@ const DrawerContent = ({
 
 const Drawer = ({ children, menuPortalTarget, ...sideProps }: DrawerProps): React.ReactElement => {
   const $root = React.useMemo(
-    () => (menuPortalTarget === undefined ? document.querySelector("body") : menuPortalTarget),
+    () =>
+      menuPortalTarget === undefined && typeof document !== undefined
+        ? document.querySelector("body")
+        : menuPortalTarget,
     [menuPortalTarget],
   );
-  if ($root === null) {
+  if (!$root) {
     return <DrawerContent {...sideProps}>{children}</DrawerContent>;
   } else {
     return ReactDOM.createPortal(<DrawerContent {...sideProps}>{children}</DrawerContent>, $root);
