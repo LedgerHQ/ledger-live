@@ -1,3 +1,5 @@
+import type { HexString } from "@polkadot/util/types";
+
 interface IAt {
   hash: string;
   height: string;
@@ -137,7 +139,7 @@ export interface SidecarTransactionMaterial {
   specName: string;
   specVersion: string;
   txVersion: string;
-  metadata?: string;
+  metadata?: HexString;
 }
 export interface SidecarTransactionBroadcast {
   hash: string;
