@@ -90,104 +90,112 @@ export interface DrawerProps {
   direction?: Direction;
 }
 
-const DrawerContent = ({
-  isOpen,
-  title,
-  children,
-  footer,
-  big,
-  onClose,
-  backgroundColor,
-  setTransitionsEnabled = () => 0,
-  onBack,
-  ignoreBackdropClick = false,
-  hideNavigation = true,
-  direction = Direction.Left,
-}: DrawerProps) => {
-  const disableChildAnimations = useCallback(
-    () => setTransitionsEnabled(false),
-    [setTransitionsEnabled],
-  );
-  const enableChildAnimations = useCallback(
-    () => setTransitionsEnabled(true),
-    [setTransitionsEnabled],
-  );
+const DrawerContent = React.forwardRef(
+  (
+    {
+      isOpen,
+      title,
+      children,
+      footer,
+      big,
+      onClose,
+      backgroundColor,
+      setTransitionsEnabled = () => 0,
+      onBack,
+      ignoreBackdropClick = false,
+      hideNavigation = true,
+      direction = Direction.Left,
+    }: DrawerProps,
+    ref?: React.ForwardedRef<HTMLDivElement>,
+  ) => {
+    const disableChildAnimations = useCallback(
+      () => setTransitionsEnabled(false),
+      [setTransitionsEnabled],
+    );
+    const enableChildAnimations = useCallback(
+      () => setTransitionsEnabled(true),
+      [setTransitionsEnabled],
+    );
 
-  const handleBackdropClick = useCallback(() => {
-    if (!ignoreBackdropClick) {
-      onClose();
-    }
-  }, [onClose, ignoreBackdropClick]);
+    const handleBackdropClick = useCallback(() => {
+      if (!ignoreBackdropClick) {
+        onClose();
+      }
+    }, [onClose, ignoreBackdropClick]);
 
-  const stopClickPropagation = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-  }, []);
+    const stopClickPropagation = useCallback((e: React.MouseEvent) => {
+      e.stopPropagation();
+    }, []);
 
-  return (
-    <TransitionInOut
-      in={isOpen}
-      appear
-      mountOnEnter
-      unmountOnExit
-      onEntering={disableChildAnimations}
-      onEntered={enableChildAnimations}
-      onExiting={disableChildAnimations}
-    >
-      <Overlay direction={direction} onClick={handleBackdropClick}>
-        <TransitionSlide
-          in={isOpen}
-          direction={direction}
-          fixed
-          reverseExit
-          appear
-          mountOnEnter
-          unmountOnExit
-        >
-          <Wrapper
-            big={big}
-            onClick={stopClickPropagation}
-            backgroundColor={backgroundColor ?? "neutral.c00"}
+    return (
+      <TransitionInOut
+        in={isOpen}
+        appear
+        mountOnEnter
+        unmountOnExit
+        onEntering={disableChildAnimations}
+        onEntered={enableChildAnimations}
+        onExiting={disableChildAnimations}
+      >
+        <Overlay direction={direction} onClick={handleBackdropClick} ref={ref}>
+          <TransitionSlide
+            in={isOpen}
+            direction={direction}
+            fixed
+            reverseExit
+            appear
+            mountOnEnter
+            unmountOnExit
           >
-            <Container>
-              <Header>
-                {!hideNavigation && (
+            <Wrapper
+              big={big}
+              onClick={stopClickPropagation}
+              backgroundColor={backgroundColor ?? "neutral.c00"}
+            >
+              <Container>
+                <Header>
+                  {!hideNavigation && (
+                    <>
+                      {onBack != null ? (
+                        <Button onClick={onBack}>
+                          <ArrowLeft size={21} />
+                        </Button>
+                      ) : (
+                        <ButtonPlaceholder />
+                      )}
+                    </>
+                  )}
+                  {(
+                    <Text variant={"h3"} flex={1} textAlign="center">
+                      {title}
+                    </Text>
+                  ) || <div />}
+                  <FlexBox alignSelf="flex-start">
+                    <Button onClick={onClose}>
+                      <Close />
+                    </Button>
+                  </FlexBox>
+                </Header>
+                <ScrollWrapper>{children}</ScrollWrapper>
+                {footer && (
                   <>
-                    {onBack != null ? (
-                      <Button onClick={onBack}>
-                        <ArrowLeft size={21} />
-                      </Button>
-                    ) : (
-                      <ButtonPlaceholder />
-                    )}
+                    <Divider variant="light" />
+                    <Footer>{footer}</Footer>
                   </>
                 )}
-                {(
-                  <Text variant={"h3"} flex={1} textAlign="center">
-                    {title}
-                  </Text>
-                ) || <div />}
-                <FlexBox alignSelf="flex-start">
-                  <Button onClick={onClose}>
-                    <Close />
-                  </Button>
-                </FlexBox>
-              </Header>
-              <ScrollWrapper>{children}</ScrollWrapper>
-              {footer && (
-                <>
-                  <Divider variant="light" />
-                  <Footer>{footer}</Footer>
-                </>
-              )}
-            </Container>
-          </Wrapper>
-        </TransitionSlide>
-      </Overlay>
-    </TransitionInOut>
-  );
-};
+              </Container>
+            </Wrapper>
+          </TransitionSlide>
+        </Overlay>
+      </TransitionInOut>
+    );
+  },
+);
 
-const Drawer = ({ children, menuPortalTarget, ...sideProps }: DrawerProps): React.ReactElement => {
+const Drawer = (
+  { children, menuPortalTarget, ...sideProps }: DrawerProps,
+  ref?: React.ForwardedRef<HTMLDivElement>,
+): React.ReactElement => {
   const $root = React.useMemo(
     () =>
       menuPortalTarget === undefined && typeof document !== undefined
@@ -196,10 +204,19 @@ const Drawer = ({ children, menuPortalTarget, ...sideProps }: DrawerProps): Reac
     [menuPortalTarget],
   );
   if (!$root) {
-    return <DrawerContent {...sideProps}>{children}</DrawerContent>;
+    return (
+      <DrawerContent ref={ref} {...sideProps}>
+        {children}
+      </DrawerContent>
+    );
   } else {
-    return ReactDOM.createPortal(<DrawerContent {...sideProps}>{children}</DrawerContent>, $root);
+    return ReactDOM.createPortal(
+      <DrawerContent ref={ref} {...sideProps}>
+        {children}
+      </DrawerContent>,
+      $root,
+    );
   }
 };
 
-export default Drawer;
+export default React.forwardRef(Drawer);
