@@ -9,6 +9,11 @@ import TransitionSlide from "../../transitions/TransitionSlide";
 import TransitionInOut from "../../transitions/TransitionInOut";
 import Text from "../../asorted/Text";
 
+export enum Direction {
+  Left = "left",
+  Right = "right",
+}
+
 const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
@@ -37,10 +42,10 @@ const Wrapper = styled(FlexBox)<{
   justify-content: space-between;
   z-index: ${(p) => p.theme.zIndexes[8]};
 `;
-const Overlay = styled.div`
+const Overlay = styled.div<{ direction: Direction }>`
   display: flex;
   position: fixed;
-  justify-content: flex-end;
+  justify-content: ${(p) => (p.direction === Direction.Left ? "flex-end" : "flex-start")};
   top: 0;
   left: 0;
   width: 100vw;
@@ -82,6 +87,7 @@ export interface DrawerProps {
   setTransitionsEnabled?: (arg0: boolean) => void;
   hideNavigation?: boolean;
   menuPortalTarget?: Element | null;
+  direction?: Direction;
 }
 
 const DrawerContent = ({
@@ -96,6 +102,7 @@ const DrawerContent = ({
   onBack,
   ignoreBackdropClick = false,
   hideNavigation = true,
+  direction = Direction.Left,
 }: DrawerProps) => {
   const disableChildAnimations = useCallback(
     () => setTransitionsEnabled(false),
@@ -126,8 +133,16 @@ const DrawerContent = ({
       onEntered={enableChildAnimations}
       onExiting={disableChildAnimations}
     >
-      <Overlay onClick={handleBackdropClick}>
-        <TransitionSlide in={isOpen} fixed reverseExit appear mountOnEnter unmountOnExit>
+      <Overlay direction={direction} onClick={handleBackdropClick}>
+        <TransitionSlide
+          in={isOpen}
+          direction={direction}
+          fixed
+          reverseExit
+          appear
+          mountOnEnter
+          unmountOnExit
+        >
           <Wrapper
             big={big}
             onClick={stopClickPropagation}
