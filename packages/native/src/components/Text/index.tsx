@@ -6,15 +6,10 @@ import {
   FontSizeProps,
   textAlign,
   TextAlignProps,
-  color,
-  ColorProps,
-  space,
-  SpaceProps,
   lineHeight,
   LineHeightProps,
-  border,
-  BorderProps,
 } from "styled-system";
+import baseStyled, { BaseStyledProps } from "../styled";
 
 import BracketRight from "../../icons/BracketLeft";
 import BracketLeft from "../../icons/BracketRight";
@@ -24,28 +19,21 @@ import { TextVariants } from "../../styles/theme";
 
 export interface BaseTextProps
   extends TextProps,
+    BaseStyledProps,
     FontSizeProps,
     TextAlignProps,
-    ColorProps,
-    SpaceProps,
-    LineHeightProps,
-    BorderProps {
+    LineHeightProps {
   variant?: TextVariants;
   fontWeight?: FontWeightTypes;
   fontFamily?: string;
   fontSize?: number | string | TextVariants;
   color?: string;
-  mt?: number | string;
-  mb?: number | string;
-  ml?: number | string;
-  mr?: number | string;
-  paddingTop?: number;
   lineHeight?: number;
   bracket?: boolean;
   children: React.ReactNode;
 }
 
-const Base = styled.Text.attrs((p: BaseTextProps) => ({
+const Base = baseStyled.Text.attrs((p: BaseTextProps) => ({
   fontSize: p.fontSize ? p.fontSize : p.variant ?? "paragraph",
   color: p.color || "neutral.c100",
 }))<BaseTextProps>`
@@ -53,9 +41,6 @@ const Base = styled.Text.attrs((p: BaseTextProps) => ({
   ${lineHeight};
   ${fontSize};
   ${textAlign};
-  ${color};
-  ${space};
-  ${border};
   justify-content: center;
   align-items: center;
 `;

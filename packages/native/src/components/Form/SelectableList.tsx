@@ -1,4 +1,4 @@
-import React, { ComponentClass, FunctionComponent } from "react";
+import React, { ComponentType } from "react";
 import { GestureResponderEvent, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Flex from "../Layout/Flex";
@@ -18,12 +18,7 @@ export type ElementProps<V> = React.PropsWithChildren<
     /**
      * A function that will render some content on the right side of the input.
      */
-    renderRight?:
-      | (
-          | ComponentClass<BaseElementProps<V>>
-          | FunctionComponent<BaseElementProps<V>>
-        )
-      | React.ReactElement;
+    renderRight?: ComponentType<BaseElementProps<V>> | React.ReactElement;
   }
 >;
 
@@ -60,11 +55,15 @@ function Element<V>(props: ElementProps<V>) {
             <Icon size={24} color={disabled ? "neutral.c50" : "neutral.c100"} />
           </Flex>
         )}
-        <Text variant="large" color={disabled ? "neutral.c50" : "neutral.c100"}>
+        <Text
+          variant="large"
+          flex={1}
+          color={disabled ? "neutral.c50" : "neutral.c100"}
+        >
           {children || value}
         </Text>
         {RenderRight && (
-          <Flex pl={6} ml={"auto"} flexShrink={0}>
+          <Flex pl={6} flexShrink={0}>
             {React.isValidElement(RenderRight) ? (
               RenderRight
             ) : (
