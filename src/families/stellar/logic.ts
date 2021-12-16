@@ -7,6 +7,7 @@ import { fetchSigners, fetchBaseFee, loadAccount } from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
 import { getReservedBalance } from "./helpers/getReservedBalance";
+import { getBalanceId } from "./helpers/getBalanceId";
 
 const currency = getCryptoCurrencyById("stellar");
 
@@ -164,24 +165,6 @@ export const checkRecipientExist: CacheRes<
   } // 5 minutes
 );
 
-// TODO: Move to cache.js
-export const checkAcceptAsset: CacheRes<
-  Array<{
-    recipient: string;
-    assetCode: string | undefined;
-    assetIssuer: string | undefined;
-  }>,
-  boolean
-> = makeLRUCache(
-  async ({ recipient, assetCode, assetIssuer }) =>
-    await addressExists(recipient, assetCode, assetIssuer),
-  (extract) => extract.recipient,
-  {
-    max: 300,
-    maxAge: 5 * 60,
-  } // 5 minutes
-);
-
 export const isMemoValid = (memoType: string, memoValue: string): boolean => {
   switch (memoType) {
     case "MEMO_TEXT":
@@ -223,6 +206,8 @@ export const isAccountMultiSign = async (account: Account) => {
 export const isAddressValid = (address: string): boolean => {
   if (!address) return false;
 
+  // TODO: support muxed account + federated address
+
   try {
     return StellarSdk.StrKey.isValidEd25519PublicKey(address);
   } catch (err) {
@@ -238,23 +223,27 @@ export const isAddressValid = (address: string): boolean => {
  * @param {*} assetCode
  * @param {*} assetIssuer
  */
-// TODO: better function name
-export const addressExists = async (
-  address: string,
-  assetCode?: string,
-  assetIssuer?: string
-): Promise<boolean> => {
+export const addressExists = async (address: string): Promise<boolean> => {
+  const account = await loadAccount(address);
+  return !!account;
+};
+
+// TODO: could we cache this?
+export const getRecipientAccount = async (
+  address: string
+): Promise<{ id: string; assetIds: string[] } | null> => {
   const account = await loadAccount(address);
 
-  // Check if asset is accepted
-  if (Boolean(account) && assetCode && assetIssuer) {
-    const foundAsset = account.balances.find(
-      (b) => b.asset_code === assetCode && b.asset_issuer === assetIssuer
-    );
-    return !!foundAsset;
+  if (!account) {
+    return null;
   }
 
-  return !!account;
+  return {
+    id: account.id,
+    assetIds: account.balances.reduce((allAssets, balance) => {
+      return [...allAssets, getBalanceId(balance)];
+    }, []),
+  };
 };
 
 export const rawOperationsToOperations = async (

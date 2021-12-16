@@ -318,7 +318,9 @@ export const buildTransactionBuilder = (
   });
 };
 
-export const loadAccount = async (addr: string): Promise<any> => {
+export const loadAccount = async (
+  addr: string
+): Promise<AccountRecord | null> => {
   if (!addr || !addr.length) {
     return null;
   }

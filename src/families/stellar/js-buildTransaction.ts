@@ -10,7 +10,7 @@ import {
   buildChangeTrustOperation,
   loadAccount,
 } from "./api";
-import { addressExists } from "./logic";
+import { getRecipientAccount } from "./logic";
 import { getAmountValue } from "./helpers/getAmountValue";
 import { StellarAssetRequired } from "../../errors";
 
@@ -62,7 +62,8 @@ export const buildTransaction = async (
       throw new AmountRequired();
     }
 
-    const recipientExists = await addressExists(transaction.recipient); // TODO: use cache with checkRecipientExist instead?
+    // TODO: use cache with checkRecipientExist | getRecipientAccount instead?
+    const recipientExists = await getRecipientAccount(transaction.recipient);
 
     if (recipientExists) {
       operation = buildPaymentOperation(

@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import StellarSdk from "stellar-sdk";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -17,6 +18,8 @@ import {
   StellarAssetNotAccepted,
   StellarAssetNotFound,
   StellarNotEnoughNativeBalance,
+  StellarFeeSmallerThanRecommended,
+  StellarNotEnoughNativeBalanceToAddTrustline,
 } from "../../errors";
 import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -24,10 +27,9 @@ import type { Account } from "../../types";
 import type { Transaction } from "./types";
 import {
   isAddressValid,
-  checkRecipientExist,
   isAccountMultiSign,
   isMemoValid,
-  checkAcceptAsset,
+  getRecipientAccount,
 } from "./logic";
 
 const getTransactionStatus = async (
@@ -61,28 +63,61 @@ const getTransactionStatus = async (
   const baseReserve = !t.baseReserve ? new BigNumber(0) : t.baseReserve;
   const isAssetPayment = t.subAccountId && t.assetCode && t.assetIssuer;
   const nativeBalance = a.balance;
-  const nativeAmount = nativeBalance.minus(baseReserve).minus(estimatedFees);
+  const nativeAmountAvailable = nativeBalance
+    .minus(baseReserve)
+    .minus(estimatedFees);
 
   let amount = new BigNumber(0);
   let totalSpent = new BigNumber(0);
 
-  // Check if can cover fees
-  if (!errors.amount && nativeAmount.lt(0)) {
+  // Enough native balance to cover transaction (with required reserve + fees)
+  if (!errors.amount && nativeAmountAvailable.lt(0)) {
     errors.amount = new StellarNotEnoughNativeBalance();
+  }
+
+  // Entered fee is smaller than recommended
+  if (estimatedFees.lt(t.networkInfo?.fees || 0)) {
+    errors.transaction = new StellarFeeSmallerThanRecommended();
   }
 
   // Operation specific checks
   if (t.operationType === "changeTrust") {
-    // TODO: ??? both are set together, might be a better way to handle them
     // Check asset provided
-    if (!t.assetCode) {
-      errors.assetCode = new StellarAssetRequired("");
+    if (!t.assetCode || !t.assetIssuer) {
+      errors.asset = new StellarAssetRequired("");
     }
-    if (!t.assetIssuer) {
-      errors.assetIssuer = new StellarAssetRequired("");
+
+    // Has enough native balance to add new trustline
+    if (nativeAmountAvailable.minus(StellarSdk.BASE_RESERVE).lt(0)) {
+      errors.amount = new StellarNotEnoughNativeBalanceToAddTrustline();
     }
+
+    // TODO: add info
+    // New trustline will add 0.5 XLM to your reserved balance
   } else {
     // Payment
+    // Check recipient address
+    if (!t.recipient) {
+      errors.recipient = new RecipientRequired("");
+    } else if (!isAddressValid(t.recipient)) {
+      errors.recipient = new InvalidAddress("");
+    } else if (a.freshAddress === t.recipient) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    }
+
+    const recipientAccount = t.recipient
+      ? await getRecipientAccount(t.recipient)
+      : null;
+
+    // Check recipient account
+    if (!recipientAccount && !errors.recipient && !warnings.recipient) {
+      if (isAssetPayment) {
+        errors.recipient = destinationNotExistMessage;
+      } else {
+        warnings.recipient = destinationNotExistMessage;
+      }
+    }
+
     // Asset payment
     if (isAssetPayment) {
       const asset = findSubAccountById(a, t.subAccountId || "");
@@ -94,14 +129,10 @@ const getTransactionStatus = async (
 
       // Check recipient account accepts asset
       if (
-        t.recipient &&
+        recipientAccount &&
         !errors.recipient &&
         !warnings.recipient &&
-        !(await checkAcceptAsset({
-          recipient: t.recipient,
-          assetCode: t.assetCode,
-          assetIssuer: t.assetIssuer,
-        }))
+        !recipientAccount.assetIds.includes(`${t.assetCode}:${t.assetIssuer}`)
       ) {
         errors.recipient = new StellarAssetNotAccepted("");
       }
@@ -116,7 +147,8 @@ const getTransactionStatus = async (
       }
     } else {
       // Native payment
-      amount = useAllAmount ? nativeAmount : t.amount || 0;
+      amount = useAllAmount ? nativeAmountAvailable : t.amount || 0;
+      // TODO: ??? do we need to include fee in total?
       totalSpent = useAllAmount
         ? nativeBalance.plus(estimatedFees)
         : t.amount.plus(estimatedFees);
@@ -124,12 +156,8 @@ const getTransactionStatus = async (
       // Need to send at least 1 XLM to create an account
       if (
         !errors.recipient &&
-        t.recipient &&
+        !recipientAccount &&
         !errors.amount &&
-        !(await checkRecipientExist({
-          account: a,
-          recipient: t.recipient,
-        })) &&
         amount.lt(10000000)
       ) {
         errors.amount = destinationNotExistMessage;
@@ -156,32 +184,6 @@ const getTransactionStatus = async (
 
       if (!errors.amount && amount.eq(0)) {
         errors.amount = new AmountRequired();
-      }
-    }
-
-    // Check recipient address
-    if (!t.recipient) {
-      errors.recipient = new RecipientRequired("");
-    } else if (a.freshAddress === t.recipient) {
-      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-    } else if (!isAddressValid(t.recipient)) {
-      errors.recipient = new InvalidAddress("");
-    }
-
-    // Check recipient account
-    if (
-      t.recipient &&
-      !errors.recipient &&
-      !warnings.recipient &&
-      !(await checkRecipientExist({
-        account: a,
-        recipient: t.recipient,
-      }))
-    ) {
-      if (isAssetPayment) {
-        errors.recipient = destinationNotExistMessage;
-      } else {
-        warnings.recipient = destinationNotExistMessage;
       }
     }
   }

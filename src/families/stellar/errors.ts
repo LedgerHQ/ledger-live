@@ -18,3 +18,8 @@ export const StellarAssetNotFound = createCustomErrorClass(
 export const StellarNotEnoughNativeBalance = createCustomErrorClass(
   "StellarNotEnoughNativeBalance"
 );
+export const StellarFeeSmallerThanRecommended = createCustomErrorClass(
+  "StellarFeeSmallerThanRecommended"
+);
+export const StellarNotEnoughNativeBalanceToAddTrustline =
+  createCustomErrorClass("StellarNotEnoughNativeBalanceToAddTrustline");
