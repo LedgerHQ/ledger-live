@@ -14,6 +14,7 @@ import { apiForCurrency } from "../../api/Ethereum";
 import { withDevice } from "../../hw/deviceAccess";
 import { modes } from "./modules";
 import { isNFTActive } from "../../nft";
+import { getEnv } from "../../env";
 export const signOperation = ({
   account,
   deviceId,
@@ -63,9 +64,8 @@ export const signOperation = ({
               const eth = new Eth(transport);
               if (isNFTActive(account.currency)) {
                 eth.setLoadConfig({
-                  // FIXME drop this after LL-8001
                   nftExplorerBaseURL:
-                    "https://nft.staging.aws.ledger.fr/v1/ethereum",
+                    getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum",
                 });
               }
               // FIXME this part is still required for compound to correctly display info on the device

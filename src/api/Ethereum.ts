@@ -210,7 +210,9 @@ export const apiForCurrency = (currency: CryptoCurrency): API => {
     async getNFTMetadata(input) {
       const { data }: { data: NFTMetadataResponse[] } = await network({
         method: "POST",
-        url: getEnv("NFT_ETH_METADATA_SERVICE"),
+        url:
+          getEnv("NFT_ETH_METADATA_SERVICE") +
+          "/v1/ethereum/1/contracts/tokens/infos",
         data: input,
       });
 
