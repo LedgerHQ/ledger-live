@@ -11,10 +11,7 @@ import Flex from "../../../layout/Flex";
  */
 export type StepState = "pending" | "current" | "completed" | "errored";
 
-type LabelType =
-  | string
-  | React.ComponentType<{ state: StepState }>
-  | ((props: { state: StepState }) => JSX.Element);
+type LabelType = string | React.ComponentType<{ state: StepState }>;
 export interface Props {
   /**
    * An array of labels that will determine the progress bar steps.
@@ -144,7 +141,7 @@ const stepContentsByState = {
 export const Step = memo(function Step({
   state,
   label: Label,
-  hideLeftSeparator = true,
+  hideLeftSeparator,
   nextState,
 }: StepProps): JSX.Element {
   const inactive = state === "pending";
