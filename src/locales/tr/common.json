@@ -80,7 +80,7 @@
     },
     "seeMore": "Daha fazla gör",
     "moreInfo": "Daha fazla bilgi",
-    "buyEth": "Ethereum Al"
+    "buyEth": "Ethereum Satın Al"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -705,7 +705,7 @@
         "description": "3 Nano S ile ailenizi kriptoyla tanıştırın"
       },
       "buyCrypto": {
-        "title": "Kripto Al",
+        "title": "Kripto Satın Al",
         "description": "Ledger Live ile\nkripto satın alın"
       },
       "swap": {
@@ -1232,7 +1232,7 @@
       "final": {
         "successTitle": "İşin uzmanı oldunuz bile!",
         "successText": "Kriptolarınızı güvenli bir şekilde yönetmeye hazırsınız. Sadece küçük bir adım kaldı!",
-        "failTitle": "You will soon become a pro...",
+        "failTitle": "İşin uzmanı olmanıza az kaldı...",
         "failText": "Merak etmeyin! Ledger, yolculuğunuz boyunca size rehberlik etmek için burada. Yakında kripto güvenliğiniz konusunda çok daha rahat hissedeceksiniz. Sadece küçük bir adım kaldı!",
         "cta": "Sonraki adım"
       }
@@ -1258,7 +1258,7 @@
     "transfer": "Aktar",
     "manager": "Yönetici",
     "settings": "Ayarlar",
-    "platform": "Keşfedin",
+    "platform": "Keşfet",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1447,7 +1447,7 @@
     },
     "send": "Gönder",
     "receive": "Al",
-    "buy": "Satın Al",
+    "buy": "Satın al",
     "walletconnect": "WalletConnect",
     "sell": "Sat",
     "swap": "Takas",
@@ -2257,7 +2257,7 @@
       "amount": "Tutar",
       "from": "Gönderici",
       "to": "Alıcı",
-      "infoTotalTitle": "Total debit",
+      "infoTotalTitle": "Toplam düşülen",
       "infoTotalDesc": "İşlem miktarını ve seçilen ağın ücretlerini içerir",
       "gasLimit": "Gas limiti",
       "gasPrice": "Gas ücreti",
@@ -2456,7 +2456,7 @@
     "retry": "Tekrar Dene",
     "done": "Tamam",
     "finalCta": "Devam",
-    "finalCtaForSwap": "Swap sayfasına dön",
+    "finalCtaForSwap": "Takas sayfasına dön",
     "synchronizing": "Senkronize ediliyor",
     "synchronizingDesc": "Hesaplarınız senkronize ediliyor. Bu biraz zaman alabilir...",
     "noAccountToCreate": "<1><0>{{currencyName}}</></> hesabı oluşturulamadı. İşlemi yeniden başlatın ve hesaplarınızı senkronize edin.",
@@ -2495,6 +2495,10 @@
       "legacy": {
         "title": "Legacy",
         "desc": "{{currency}} için orijinal adres biçimi. İşlem başına en yüksek ücretler. Bazı cüzdanlar/borsalar hâlâ sadece bu türü destekliyor."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
     }
   },
@@ -2606,7 +2610,7 @@
     },
     "GenuineCheck": {
       "title": "Orijinal cihaz doğrulaması",
-      "accept": "Lütfen Nano X'inizi kapatmayın. <1>Ledger Yöneticisine</1>izin verdiğinizden emin olun."
+      "accept": "Lütfen Nano X'inizi kapatmayın. <1>Ledger Yöneticisine</1> izin verdiğinizden emin olun."
     },
     "ScanningHeader": {
       "title": "Cihazlar aranıyor",
@@ -3612,7 +3616,7 @@
   },
   "exchange": {
     "buy": {
-      "tabTitle": "Al",
+      "tabTitle": "Satın al",
       "selectCurrency": "Bir para birimi seçin",
       "selectAccount": "Bir hesap seçin",
       "connectDevice": "Cihazınızı bağlayın",
@@ -3651,7 +3655,7 @@
   },
   "banner": {
     "exchangeBuyCrypto": {
-      "title": "KRİPTO AL",
+      "title": "KRİPTO SATIN AL",
       "description": "Kripto varlıklarını Coinify üzerinden satın alın ve doğrudan Ledger hesabınıza aktarın."
     },
     "swap": {

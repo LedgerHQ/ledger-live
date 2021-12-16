@@ -618,7 +618,7 @@
     "noInfos": "Ledger n'enregistre pas vos données de localisation."
   },
   "permissions": {
-    "open": "Ouvrir les autorisations des applications"
+    "open": "Ouvrir autorisa. des apps"
   },
   "fees": {
     "speed": {
@@ -626,7 +626,7 @@
       "standard": "Normale",
       "low": "Basse",
       "slow": "Lent",
-      "medium": "Moyens",
+      "medium": "Moyen",
       "fast": "Rapide",
       "custom": "Personnalisée",
       "blockCount": "{{blockCount}} blocs"
@@ -655,7 +655,7 @@
       "biometricsTitle": "Authentifiez-vous avec l'app Ledger Live.",
       "title": "Bienvenue",
       "desc": "Entrez votre mot de passe pour continuer.",
-      "inputPlaceholder": "Saisissez votre mot de passe.",
+      "inputPlaceholder": "Saisissez votre mot de passe",
       "login": "Se connecter",
       "forgotPassword": "Mot de passe oublié"
     },
@@ -1429,7 +1429,7 @@
       "seeMore": "Afficher plus de tokens",
       "seeLess": "Afficher moins de tokens",
       "addTokens": "Token",
-      "howTo": "Pour ajouter des comptes de tokens, vous devez <0>recevoir des fonds</0> avec votre <1>adresse {{currency}}</1>.",
+      "howTo": "Pour ajouter des comptes de tokens, il vous suffit de <0>les recevoir</0> sur votre <1>adresse {{currency}}</1>.",
       "algorand": {
         "contractAddress": "Adresse du contrat",
         "viewInExplorer": "Dans l'explorateur",
@@ -2495,6 +2495,10 @@
       "legacy": {
         "title": "Legacy",
         "desc": "Format d'adresse original de {{currency}}. Frais les plus élevés pour chaque transaction. Certains wallets/échanges ne prennent toujours en charge que les Legacy."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
     }
   },
@@ -2659,7 +2663,7 @@
       "searchAppsCatalog": "Rechercher dans le Catalogue",
       "searchAppsInstalled": "Rechercher des apps installées",
       "noAppsInstalled": "Aucune app installée sur votre appareil",
-      "noAppsDescription": "Aller dans le catalogue pour installer des apps",
+      "noAppsDescription": "Allez dans le Catalogue pour installer des apps.",
       "noResultsFound": "Aucun résultat",
       "noResultsDesc": "Merci de vérifier l'orthographe et réessayer",
       "versionNew": "(NOUV. {{newVersion}})"

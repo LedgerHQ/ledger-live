@@ -2495,6 +2495,10 @@
       "legacy": {
         "title": "Heredado",
         "desc": "Formato de dirección original de {{currency}}. Las tarifas más altas por transacción. Algunas billeteras/exchanges son solo compatibles con este tipo."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
     }
   },

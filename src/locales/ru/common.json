@@ -2495,6 +2495,10 @@
       "legacy": {
         "title": "Legacy",
         "desc": "Оригинальный формат адреса {{currency}}. Самые большие комиссии. Некоторые кошельки/ биржи поддерживают только этот формат."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
     }
   },

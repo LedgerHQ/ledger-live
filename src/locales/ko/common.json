@@ -17,16 +17,16 @@
     "search": "검색",
     "contactUs": "Ledger 지원 부서에 하세요",
     "device": "장치",
-    "cryptoAsset": "암호화 자산",
+    "cryptoAsset": "암호화폐",
     "skip": "건너뛰기",
-    "noCryptoFound": "암호화 자산이 없습니다",
+    "noCryptoFound": "암호화폐가 없습니다",
     "needHelp": "도움이 필요하세요?",
     "edit": "편집",
     "editName": "이름 편집",
     "close": "닫기",
     "confirm": "확인",
     "poweredBy": "제공 ",
-    "received": "수신됨",
+    "received": "수령됨",
     "sent": "전송됨",
     "or": "또는",
     "rename": "이름 변경",
@@ -788,7 +788,7 @@
       "0": {
         "label": "기본",
         "title": "내 암호화폐에 액세스 하세요",
-        "desc": "귀하의 암호화 자산은 블록체인에 저장됩니다. 암호화폐 액세스와 관리에는 개인 키가 필요합니다."
+        "desc": "귀하의 암호화폐는 블록체인에 저장됩니다. 암호화폐 액세스와 관리에는 개인 키가 필요합니다."
       },
       "1": {
         "label": "기본",
@@ -920,7 +920,7 @@
       "recoveryPhraseSetup": {
         "infoModal": {
           "title": "복구 문구는 어떤 원리인가요?",
-          "desc": "복구 문구는 고유의 마스터 키 역할을 합니다. Ledger 장치는 사용자 소유의 모든 암호화 자산에 대한 개인 키를 계산하는 데 복구 문구를 사용합니다.",
+          "desc": "복구 문구는 고유의 마스터 키 역할을 합니다. Ledger 장치는 사용자 소유의 모든 암호화폐에 대한 개인 키를 계산하는 데 복구 문구를 사용합니다.",
           "desc_1": "모든 지갑이 귀하의 복구 문구에서 동일한 개인 키를 산출할 수 있어, 암호화폐에 대한 액세스 권한을 복원할 수 있습니다.",
           "link": "복구 문구에 대해 자세히 알아보기",
           "title_1": "Nano에 대한 액세스 권한을 잃어버리면 어떻게 되나요?",
@@ -1181,7 +1181,7 @@
       "modal": {
         "step1": "패스워드를 안전하게 보관하세요. 타인과 공유하지 마세요.",
         "step2": "패스워드를 안전하게 보관하세요. 패스워드를 분실하면 Ledger Live를 리셋하고 계정을 다시 로드해야 합니다.",
-        "step3": "Ledger Live를 재설정도 사용자의 암호화 자산에는 영향을 주지 않습니다."
+        "step3": "Ledger Live를 재설정도 사용자의 암호화폐에는 영향을 주지 않습니다."
       }
     },
     "stepFinish": {
@@ -1214,7 +1214,7 @@
           "wrong": "Ledger가 제게 복사본을 보내줄 수 있으니 괜찮습니다"
         },
         "modal": {
-          "text": "복구 문구를 알고 있는 사람이라면 누구나 귀하의 암호화 자산을 가져갈 수 있습니다.\n복구 문구를 분실한 경우, 암호화폐를 안전한 장소로 신속하게 전송해야 합니다.",
+          "text": "복구 문구를 알고 있는 사람이라면 누구나 귀하의 암호화폐를 가져갈 수 있습니다.\n복구 문구를 분실한 경우, 암호화폐를 안전한 장소로 신속하게 전송해야 합니다.",
           "cta": "다음 문제"
         }
       },
@@ -1258,7 +1258,7 @@
     "transfer": "전송",
     "manager": "관리자",
     "settings": "설정",
-    "platform": "찾기",
+    "platform": "탐색",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1283,7 +1283,7 @@
     },
     "noOpState": {
       "title": "아직 거래가 없나요?",
-      "desc": "수신 주소로 암호화 자산을 보내고 앱이 동기화를 마칠 때까지 기다리기만 하면 됩니다."
+      "desc": "수령 주소로 암호화폐를 보내고 앱이 동기화를 마칠 때까지 기다리기만 하면 됩니다."
     }
   },
   "addAccountsModal": {
@@ -1318,7 +1318,7 @@
   },
   "operations": {
     "types": {
-      "IN": "수신됨",
+      "IN": "수령됨",
       "NFT_IN": "NFT 수령됨",
       "OUT": "전송됨",
       "NFT_OUT": "NFT 전송됨",
@@ -1454,7 +1454,7 @@
     "manage": "관리",
     "lastOperations": "마지막 거래",
     "emptyState": {
-      "title": "아직 암호화 자산이 없으세요?",
+      "title": "아직 암호화폐가 없으세요?",
       "desc": "&lt;1&gt;&lt;0&gt;{{managerAppName}}&lt;/0&gt;&lt;/1&gt; 앱이 설치되었는지 확인한 뒤 받아보세요.",
       "descWithBuy": "&lt;3&gt;&lt;0&gt;{{currencyTicker}}&lt;/0&gt;&lt;/3&gt;(을)를 구매하거나 받을 수 있도록 &lt;1&gt;&lt;0&gt;{{managerAppName}} 앱을 설치하세요.",
       "descToken": "&lt;1&gt;&lt;0&gt;{{managerAppName}}&lt;/0&gt;&lt;/1&gt; 앱이 설치되었는지 확인하고 &lt;3&gt;&lt;0&gt;{{currencyTicker}}&lt;/0&gt;&lt;/3&gt; 및 &lt;5&gt;&lt;0&gt;{{tokenType}}&lt;/0&gt; 토큰을 받으세요&lt;/5&gt;",
@@ -1490,7 +1490,7 @@
         "title": "포트폴리오에서 계정을 제거하세요",
         "desc": "저장된 데이터가 제거됩니다.",
         "confirmationTitle": "계속 진행할까요?",
-        "confirmationDesc": "귀하의 암호화 자산에는 영향을 주지 않습니다. 기존 계정은 언제든 추가 가능합니다."
+        "confirmationDesc": "귀하의 암호화폐에는 영향을 주지 않습니다. 기존 계정은 언제든 추가 가능합니다."
       },
       "archive": {
         "title": "계정 아카이브",
@@ -1697,20 +1697,20 @@
         "confirm": "토큰 숨기기"
       },
       "cryptoAssets": {
-        "header": "암호화 자산",
-        "title": "암호화 자산",
-        "desc": "암호화 자산을 선택하여 관련 설정을 수정하세요."
+        "header": "암호화폐",
+        "title": "암호화폐",
+        "desc": "암호화폐를 선택하여 관련 설정을 수정하세요."
       }
     },
     "about": {
       "title": "소개",
       "desc": "앱 정보, 이용약관, 개인 정보 보호 정책",
-      "appDescription": "Ledger Live와 함께 귀하의 암호화 자산을 안전하게 성장시키고 관리하며 매수, 매도, 교환하세요. 한 곳에서 이 모든 서비스를 이용하실 수 있습니다.",
+      "appDescription": "Ledger Live와 함께 귀하의 암호화폐를 안전하게 성장시키고 관리하며 매수, 매도, 교환하세요. 한 곳에서 이 모든 서비스를 이용하실 수 있습니다.",
       "appVersion": "버전",
       "termsConditions": "이용약관",
       "termsConditionsDesc": "Ledger Live를 이용함으로써, 귀하는 본사 이용약관을 수락한 것으로 간주됩니다.",
       "privacyPolicy": "개인 정보 보호 정책",
-      "privacyPolicyDesc": "당사가 어떤 개인 데이터를 수집하는지, 수집 이유와 사용처도 살펴보세요.",
+      "privacyPolicyDesc": "당사에서 어떤 개인 데이터를 수집하는지, 수집 이유와 사용처도 살펴보세요.",
       "liveReview": {
         "title": "앱을 평가해 주세요!",
         "ios": "앱 스토어에서 리뷰",
@@ -1733,7 +1733,7 @@
       "exportLogs": "로그 저장",
       "exportLogsDesc": "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
       "hardReset": "Ledger Live 리셋",
-      "hardResetDesc": "귀하의 자산에는 영향을 주지 않습니다. 계정 데이터, 트랜잭션 내역, 설정을 포함하여 Ledger Live의 모든 데이터를 삭제합니다. Ledger 장치를 이용하여 빈 Ledger Live에 암호화 자산을 다시 로드하고 관리합니다.",
+      "hardResetDesc": "귀하의 자산에는 영향을 주지 않습니다. 계정 데이터, 트랜잭션 내역, 설정을 포함하여 Ledger Live의 모든 데이터를 삭제합니다. Ledger 장치를 이용하여 빈 Ledger Live에 암호화폐를 다시 로드하고 관리합니다.",
       "repairDevice": "Ledger 장치 복구",
       "repairDeviceDesc": "장치 업데이트에 문제가 있어 업데이트를 재개할 수 없을 경우, 장치 복구를 위해 시도해 볼 수 있습니다."
     },
@@ -1793,7 +1793,7 @@
     "receive": {
       "title": "수신",
       "titleReadOnly": "미인증 주소",
-      "headerTitle": "암호화 자산",
+      "headerTitle": "암호화폐",
       "titleDevice": "장치 연결",
       "verifySkipped": "귀하의 수신 주소가 Ledger 장치에서 확인되지 않았습니다. 귀하의 {{accountType}} 주소를 인증하여 보안을 하여 유지하세요.",
       "verifyPending": "귀하의 장치에 표시되는 {{currencyName}} 주소가 휴대폰에 표시되는 것과 정확히 일치하는지 확인하세요.",
@@ -1924,7 +1924,7 @@
         "balance": "잔금 &lt;0&gt;123&lt;/0&gt;",
         "fromAccount": "계정 선택",
         "toAccount": "계정 선택",
-        "paraswapCTA": "Paraswap을 찾으세요? 찾기 탭으로 이동했습니다!",
+        "paraswapCTA": "Paraswap을 찾으세요? 탐색 탭으로 이동했습니다!",
         "amount": {
           "useMax": "최대치 사용",
           "available": "총 이용 가능"
@@ -2495,6 +2495,10 @@
       "legacy": {
         "title": "레거시",
         "desc": "{{currency}}의 오리지널 주소 형식. 트랜잭션별 수수료가 가장 높습니다. 여전히 이 유형만을 지원하는 지갑/거래소가 일부 존재합니다."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
       }
     }
   },
@@ -2667,7 +2671,7 @@
     "uninstall": {
       "title": "모두 제거하기",
       "subtitle": "모든 앱을 제거할까요?",
-      "description": "앱을 삭제해도 사용자의 암호화 자산에는 영향을 주지 않습니다. 앱 카탈로그에서 앱을 재설치할 수 있습니다."
+      "description": "앱을 삭제해도 사용자의 암호화폐에는 영향을 주지 않습니다. 앱 카탈로그에서 앱을 재설치할 수 있습니다."
     },
     "remove": {
       "title": "장치 제거",
@@ -2802,7 +2806,7 @@
   "FirmwareUpdateReleaseNotes": {
     "introTitle": "&lt;1&gt;&lt;0&gt;펌웨어 버전{{version}}&lt;/0&gt;&lt;/1&gt;이 곧 설치됩니다.",
     "introDescription1": "장치의 모든 앱이 제거될 것이니 주의하세요. 펌웨어 업데이트 후에 앱을 재설치할 수 있습니다.",
-    "introDescription2": "귀하의 암호화 자산에는 영향을 주지 않습니다.",
+    "introDescription2": "귀하의 암호화폐에는 영향을 주지 않습니다.",
     "action": "계속 업데이트"
   },
   "FirmwareUpdateCheckId": {
@@ -3617,7 +3621,7 @@
       "selectAccount": "계정 선택",
       "connectDevice": "내 장치 연결하기",
       "title": "파트너를 통해 암호화폐 구매",
-      "description": "Coinify를 통해 암호화 자산을 구매하고 Ledger 계정으로 바로 받아보세요.",
+      "description": "Coinify를 통해 암호화폐를 구매하고 Ledger 계정으로 바로 받아보세요.",
       "CTAButton": "지금 구매하기",
       "emptyState": {
         "title": "{{currency}} 계정 없음",
@@ -3652,11 +3656,11 @@
   "banner": {
     "exchangeBuyCrypto": {
       "title": "암호화폐 구매",
-      "description": "Coinify를 통해 암호화 자산을 구매하고 Ledger 계정으로 바로 받아보세요."
+      "description": "Coinify를 통해 암호화폐를 구매하고 Ledger 계정으로 바로 받아보세요."
     },
     "swap": {
       "title": "암호화폐 스왑",
-      "description": "당사 파트너와 함께 귀하의 Ledger 계좌에서 암호화 자산을 바로 교환하세요."
+      "description": "당사 파트너와 함께 귀하의 Ledger 계좌에서 암호화폐를 바로 교환하세요."
     }
   },
   "walletconnect": {
