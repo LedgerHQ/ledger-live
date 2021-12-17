@@ -377,7 +377,7 @@
       "description": "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
     "NotEnoughGas": {
-      "title": "Недостаточно ETH для оплаты комиссии сети",
+      "title": "Parent account balance insufficient for network fees",
       "description": "Пожалуйста, пополните свой счёт ETH для оплаты транзакций в токенах ERC20."
     },
     "NotEnoughBalanceToDelegate": {

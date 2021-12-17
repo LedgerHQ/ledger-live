@@ -377,7 +377,7 @@
       "description": "يرجى التأكد من وجود أرصدة مالية كافية في الحساب."
     },
     "NotEnoughGas": {
-      "title": "رصيد غير كافٍ من ETH لتغطية رسوم الشبكة",
+      "title": "Parent account balance insufficient for network fees",
       "description": "يرجى إرسال بعض الETH إلى حسابك لسداد قيمة معاملات رمز ال ERC20."
     },
     "NotEnoughBalanceToDelegate": {

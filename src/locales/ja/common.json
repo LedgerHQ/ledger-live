@@ -377,7 +377,7 @@
       "description": "アカウントに十分な資金があることを確認してください。"
     },
     "NotEnoughGas": {
-      "title": "ネットワーク手数料に必要なETHが不足しています",
+      "title": "Parent account balance insufficient for network fees",
       "description": "アカウントに、ERC20トークンのトランザクションに十分なETHを送付してください。"
     },
     "NotEnoughBalanceToDelegate": {

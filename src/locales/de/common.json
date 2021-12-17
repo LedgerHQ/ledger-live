@@ -377,7 +377,7 @@
       "description": "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
     "NotEnoughGas": {
-      "title": "Nicht genügend ETH für die Netzwerkgebühr",
+      "title": "Parent account balance insufficient for network fees",
       "description": "Bitte senden Sie einige ETH auf Ihr Konto, um ERC20-Token-Transaktionen zu bezahlen."
     },
     "NotEnoughBalanceToDelegate": {

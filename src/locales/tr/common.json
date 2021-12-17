@@ -377,7 +377,7 @@
       "description": "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughGas": {
-      "title": "Ağ ücreti için yetersiz ETH",
+      "title": "Parent account balance insufficient for network fees",
       "description": "ERC20 token işlemlerini ödemek için lütfen hesabınıza biraz ETH gönderin."
     },
     "NotEnoughBalanceToDelegate": {

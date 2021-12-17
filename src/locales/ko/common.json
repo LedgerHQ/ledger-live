@@ -377,7 +377,7 @@
       "description": "계정에 자금이 충분한지 확인해 주세요."
     },
     "NotEnoughGas": {
-      "title": "ETH가 네트워크 수수료로 부족합니다",
+      "title": "Parent account balance insufficient for network fees",
       "description": "ERC20 토큰 트랜잭션 수수료로 계정에 ETH를 전송하세요."
     },
     "NotEnoughBalanceToDelegate": {

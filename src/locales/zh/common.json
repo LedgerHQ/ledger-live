@@ -377,7 +377,7 @@
       "description": "请确保该账户资金充足。"
     },
     "NotEnoughGas": {
-      "title": "以太币 ETH 不足以支付网络费用",
+      "title": "Parent account balance insufficient for network fees",
       "description": "请向您的账户发送一些以太币 ETH 以支付 ERC20 代币交易。"
     },
     "NotEnoughBalanceToDelegate": {
