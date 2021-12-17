@@ -1,19 +1,18 @@
 import React from "react";
-import styled from "styled-components/native";
+import styled, { useTheme } from "styled-components/native";
+import { PixelRatio } from "react-native";
+import { Rect, ClipPath, Svg, Defs } from "react-native-svg";
 import Flex from "../Layout/Flex";
+import Box from "../Layout/Box";
 
 export const DEFAULT_BOX_SIZE = 40;
 export const DEFAULT_ICON_SIZE = 16;
 export const DEFAULT_BADGE_SIZE = 20;
+const BORDER_RADIUS = 2;
 
-// const getTopRightSquareClippedPolygon = (
-//   boxSize: number,
-//   rectangleSize: number
-// ) => {
-//   // clipping path that hides top right square of size `${rectangleSize}px`
-//   const diff = boxSize - rectangleSize;
-//   return `polygon(0 0, 0 0, 0 0, ${diff}px 0, ${diff}px ${rectangleSize}px, 100% ${rectangleSize}px, 100% 100%, 100% 100%, 100% 100%, 0 100%, 0 100%, 0 100%)`;
-// };
+function getClipRectangleSize(badgeSize: number): number {
+  return (3 / 4) * badgeSize;
+}
 
 const Container = styled(Flex).attrs((p: { size: number }) => ({
   heigth: p.size,
@@ -24,11 +23,11 @@ const Container = styled(Flex).attrs((p: { size: number }) => ({
   overflow: "visible",
 }))<{ size: number }>``;
 
-const IconBoxBackground = styled(Flex)<{ size: number; hasBadge: boolean }>`
+const IconBoxBackground = styled(Flex)<{ size: number }>`
   position: absolute;
   height: ${(p) => p.size}px;
   width: ${(p) => p.size}px;
-  border-radius: ${(p) => p.theme.radii[2]}px;
+  border-radius: ${(p) => p.theme.radii[BORDER_RADIUS]}px;
 `;
 
 const BadgeContainer = styled.View<{ badgeSize: number }>`
@@ -85,6 +84,72 @@ export type BoxedIconProps = IconBoxProps & {
   iconColor?: string;
 };
 
+/** This component is needed to draw a border that is clipped behind the badge icon */
+const IconBoxBackgroundSVG = ({
+  size,
+  borderColor,
+  badgeSize,
+}: {
+  size: number;
+  borderColor: string;
+  badgeSize: number;
+}) => {
+  const { colors, radii } = useTheme();
+  const borderRadius = radii[BORDER_RADIUS];
+  const borderWidth = 1;
+  const paletteStr = borderColor.split(".")[0];
+  // @ts-expect-error idk how to handle this properly pls help
+  const palette = colors[paletteStr];
+  const strokeColor =
+    (palette ? palette[borderColor.split(".")[1]] : borderColor) ||
+    colors.neutral.c40;
+
+  const squareSize = getClipRectangleSize(badgeSize);
+
+  /**
+   * The following adjustments are necessary to have visual consistency
+   *  between RN (native) Views with border and this component
+   */
+  const svgSize = size + borderWidth;
+  const rectSize = size - borderWidth;
+  const rectRadius = borderRadius - borderWidth / 2;
+
+  return (
+    <Box position="absolute" overflow="hidden">
+      <Svg height={svgSize} width={svgSize}>
+        <Defs>
+          <ClipPath id="clip">
+            <Rect
+              x="0"
+              y="0"
+              width={svgSize - squareSize}
+              height={squareSize}
+            />
+            <Rect
+              x="0"
+              y={squareSize}
+              width={"100%"}
+              height={svgSize - squareSize}
+            />
+          </ClipPath>
+        </Defs>
+        <Rect
+          strokeWidth={PixelRatio.roundToNearestPixel(borderWidth)}
+          stroke={strokeColor}
+          x={borderWidth}
+          y={borderWidth}
+          rx={rectRadius}
+          ry={rectRadius}
+          width={rectSize}
+          height={rectSize}
+          fill="transparent"
+          clipPath="url(#clip)"
+        />
+      </Svg>
+    </Box>
+  );
+};
+
 export const IconBox = ({
   Badge,
   size = DEFAULT_BOX_SIZE,
@@ -96,12 +161,19 @@ export const IconBox = ({
   const hasBadge = !!Badge;
   return (
     <Container size={size}>
-      <IconBoxBackground
-        size={size}
-        hasBadge={hasBadge}
-        border="1px solid"
-        borderColor={borderColor}
-      />
+      {hasBadge ? (
+        <IconBoxBackgroundSVG
+          size={size}
+          badgeSize={badgeSize}
+          borderColor={borderColor}
+        />
+      ) : (
+        <IconBoxBackground
+          border="1px solid"
+          size={size}
+          borderColor={borderColor}
+        />
+      )}
       {children}
       {hasBadge && (
         <BadgeContainer badgeSize={badgeSize}>
