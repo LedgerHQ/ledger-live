@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, Fragment } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
 import CheckAlone from "@ledgerhq/icons-ui/react/CheckAloneMedium";
@@ -168,21 +168,21 @@ function getState(activeIndex: number, index: number, errored?: boolean) {
   return "completed";
 }
 
-function ProgressSteps({ steps, activeIndex = 0, errored }: Props) {
+function Stepper({ steps, activeIndex = 0, errored, ...extraProps }: Props) {
   return (
-    <Flex flexWrap="nowrap" justifyContent="space-between">
+    <Flex flexWrap="nowrap" justifyContent="space-between" {...extraProps}>
       {steps.map((step, idx) => {
         const state = getState(activeIndex, idx, errored);
         const nextState = idx < steps.length - 1 ? getState(activeIndex, idx + 1) : undefined;
         return (
-          <>
+          <Fragment key={idx}>
             {idx > 0 && <Separator.Step inactive={state === "pending"} />}
             <Step label={step} state={state} nextState={nextState} hideLeftSeparator={idx === 0} />
-          </>
+          </Fragment>
         );
       })}
     </Flex>
   );
 }
 
-export default memo(ProgressSteps);
+export default memo(Stepper);
