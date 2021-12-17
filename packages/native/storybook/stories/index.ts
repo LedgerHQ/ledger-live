@@ -7,7 +7,6 @@ import "./Layout/Modal/Tooltip.stories";
 import "./Layout/ScrollContainer.stories";
 import "./Layout/Flex.stories";
 import "./Layout/Box.stories";
-import "./Layout/Notification.stories";
 import "./message/Notification/Notification.stories";
 import "./Navigation/SlideIndicator/SlideIndicator.stories";
 import "./Navigation/Stepper/Stepper.stories";
