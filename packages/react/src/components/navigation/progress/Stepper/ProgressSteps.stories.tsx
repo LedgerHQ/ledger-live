@@ -1,5 +1,5 @@
 import React from "react";
-import ProgressSteps, { Props } from "./index";
+import ProgressSteps, { Props, StepText, StepState } from "./index";
 
 export default {
   title: "Navigation/Progress/Stepper",
@@ -16,7 +16,18 @@ export default {
 
 export const Component = (args: Props): JSX.Element => <ProgressSteps {...args} />;
 Component.args = {
-  steps: ["Crypto Asset", "Device", "Accounts", "Confirmation"],
+  steps: [
+    "Crypto Asset",
+    "Device",
+    ({ state }: { state: StepState }) => (
+      <StepText variant="small" state={state} textAlign="center">
+        Accounts
+        <br />
+        (step state: {state})
+      </StepText>
+    ),
+    "Confirmation",
+  ],
   activeIndex: 1,
   errored: false,
 };

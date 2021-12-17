@@ -6,11 +6,20 @@ import CloseMedium from "@ledgerhq/icons-ui/react/CloseMedium";
 import Text from "../../../asorted/Text";
 import Flex from "../../../layout/Flex";
 
+/**
+ * The state of a progress bar step.
+ */
+export type StepState = "pending" | "current" | "completed" | "errored";
+
+type LabelType = string | React.ComponentType<{ state: StepState }>;
 export interface Props {
   /**
    * An array of labels that will determine the progress bar steps.
+   *  A label is either a string or a component that will be rendered with the
+   *  prop `state: "pending" | "current" | "completed" | "errored"`.
+   *  A styled StepText component is exported to allow easy styling of such a custom label.
    */
-  steps: string[];
+  steps: LabelType[];
   /**
    * Index of the active step, starting at zero and defaulting to 0 if omitted.
    */
@@ -20,19 +29,18 @@ export interface Props {
    */
   errored?: boolean;
 }
-/**
- * The state of a progress bar step.
- */
-type StepState = "pending" | "current" | "completed" | "errored";
+
 export type StepProps = {
   /**
    * State of the step.
    */
   state: StepState;
   /**
-   * The label to display.
+   * The label to display. To display more than text, this can be a component that will be rendered with the
+   *  prop `state: "pending" | "current" | "completed" | "errored"`.
+   *  A styled StepText component is exported to allow easy styling of such a custom Label
    */
-  label: string;
+  label: LabelType;
   /**
    * If true, hides the left "separator" bar that bridges the gap between the wider separator and the item.
    */
@@ -81,12 +89,12 @@ export const Item = {
   Errored: (): JSX.Element => <CloseMedium size={16} />,
 };
 
-const StepText = styled(Text)<{ inactive?: boolean; errored?: boolean }>`
+export const StepText = styled(Text)<{ state: StepState }>`
   color: ${(p) => {
-    if (p.errored) {
+    if (p.state === "errored") {
       return p.theme.colors.error.c100;
     }
-    if (p.inactive) {
+    if (p.state === "pending") {
       return p.theme.colors.neutral.c70;
     }
     return p.theme.colors.neutral.c100;
@@ -132,13 +140,12 @@ const stepContentsByState = {
 
 export const Step = memo(function Step({
   state,
-  label,
+  label: Label,
   hideLeftSeparator,
   nextState,
 }: StepProps): JSX.Element {
   const inactive = state === "pending";
-  const nextInactive = nextState === "pending";
-  const errored = state === "errored";
+  const nextInactive = state === "pending";
 
   return (
     <Flex flexDirection="column" alignItems="center">
@@ -151,9 +158,13 @@ export const Step = memo(function Step({
           <Flex flex="1" />
         )}
       </Item.Spacer>
-      <StepText inactive={inactive} errored={errored} variant="small">
-        {label}
-      </StepText>
+      {typeof Label === "string" ? (
+        <StepText state={state} variant="small">
+          {Label}
+        </StepText>
+      ) : (
+        <Label state={state} />
+      )}
     </Flex>
   );
 });
