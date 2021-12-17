@@ -1,32 +1,43 @@
-import React from "react";
+import React, { ComponentType } from "react";
 import { GestureResponderEvent, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Flex from "../Layout/Flex";
 import { Text } from "../index";
 
-export type ElementProps<V> = React.PropsWithChildren<{
+type BaseElementProps<V> = {
   first?: boolean;
   selected?: boolean;
   disabled?: boolean;
   value?: V;
   onPress?: ((event: GestureResponderEvent) => void) | undefined;
   Icon?: (props: { size?: number; color?: string }) => React.ReactElement;
-}>;
+};
+
+export type ElementProps<V> = React.PropsWithChildren<
+  BaseElementProps<V> & {
+    /**
+     * A function that will render some content on the right side of the input.
+     */
+    renderRight?: ComponentType<BaseElementProps<V>> | React.ReactElement;
+  }
+>;
 
 const ElementContainer = styled(Flex).attrs({
   accessible: true,
   accessibilityRole: "radio",
 })``;
 
-function Element<V>({
-  first,
-  value,
-  selected,
-  disabled,
-  onPress,
-  children,
-  Icon,
-}: ElementProps<V>) {
+function Element<V>(props: ElementProps<V>) {
+  const {
+    first,
+    value,
+    selected,
+    disabled,
+    onPress,
+    children,
+    Icon,
+    renderRight: RenderRight,
+  } = props;
   return (
     <TouchableOpacity onPress={onPress} disabled={disabled}>
       <ElementContainer
@@ -40,13 +51,26 @@ function Element<V>({
         alignItems={"center"}
       >
         {Icon && (
-          <Flex mr={6}>
+          <Flex mr={6} flexShrink={0}>
             <Icon size={24} color={disabled ? "neutral.c50" : "neutral.c100"} />
           </Flex>
         )}
-        <Text variant="large" color={disabled ? "neutral.c50" : "neutral.c100"}>
+        <Text
+          variant="large"
+          flex={1}
+          color={disabled ? "neutral.c50" : "neutral.c100"}
+        >
           {children || value}
         </Text>
+        {RenderRight && (
+          <Flex pl={6} flexShrink={0}>
+            {React.isValidElement(RenderRight) ? (
+              RenderRight
+            ) : (
+              <RenderRight {...props} />
+            )}
+          </Flex>
+        )}
       </ElementContainer>
     </TouchableOpacity>
   );

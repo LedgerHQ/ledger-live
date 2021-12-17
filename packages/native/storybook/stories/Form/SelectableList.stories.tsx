@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { storiesOf } from "../storiesOf";
 import { Flex, SelectableList } from "../../../src";
 import { Icons } from "../../../src/assets";
+import { TouchableOpacity } from "react-native";
+import { action } from "@storybook/addon-actions";
 
 const description = `
 ### A styled list of valued and selectable elements.
@@ -41,7 +43,15 @@ const Story = () => {
         <SelectableList.Element value="en" Icon={Icons.BedMedium}>
           English
         </SelectableList.Element>
-        <SelectableList.Element value="fr" Icon={Icons.NanoXMedium}>
+        <SelectableList.Element
+          value="fr"
+          Icon={Icons.NanoXMedium}
+          renderRight={() => (
+            <TouchableOpacity onPress={action("onMore")}>
+              <Icons.OthersMedium size={24} />
+            </TouchableOpacity>
+          )}
+        >
           French
         </SelectableList.Element>
         <SelectableList.Element
