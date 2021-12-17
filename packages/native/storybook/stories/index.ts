@@ -10,6 +10,7 @@ import "./Layout/Box.stories";
 import "./message/Notification/Notification.stories";
 import "./Navigation/SlideIndicator/SlideIndicator.stories";
 import "./Navigation/Stepper/Stepper.stories";
+import "./Icon/BoxedIcon.stories";
 import "./Icon/IconBox.stories";
 import "./Icon/AssetsIcons.stories";
 import "./Loader/Loader.stories";
