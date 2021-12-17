@@ -2498,7 +2498,7 @@
       },
       "taproot": {
         "title": "Taproot",
-        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
+        "desc": "Cette nouvelle mise à niveau du réseau {{currency}} offrira une meilleure confidentialité et des frais moins élevés, mais n'est pas encore prise en charge par tous les échanges et wallets."
       }
     }
   },
