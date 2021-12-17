@@ -81,6 +81,7 @@ export interface DrawerProps {
   onBack?: () => void;
   setTransitionsEnabled?: (arg0: boolean) => void;
   hideNavigation?: boolean;
+  menuPortalTarget?: Element | null;
 }
 
 const DrawerContent = ({
@@ -171,10 +172,19 @@ const DrawerContent = ({
   );
 };
 
-const Drawer = ({ children, ...sideProps }: DrawerProps): React.ReactElement => {
-  const $root = React.useMemo(() => document.querySelector("#ll-side-root"), []);
-  if ($root === null) throw new Error("side root cannot be found");
-  return ReactDOM.createPortal(<DrawerContent {...sideProps}>{children}</DrawerContent>, $root);
+const Drawer = ({ children, menuPortalTarget, ...sideProps }: DrawerProps): React.ReactElement => {
+  const $root = React.useMemo(
+    () =>
+      menuPortalTarget === undefined && typeof document !== undefined
+        ? document.querySelector("body")
+        : menuPortalTarget,
+    [menuPortalTarget],
+  );
+  if (!$root) {
+    return <DrawerContent {...sideProps}>{children}</DrawerContent>;
+  } else {
+    return ReactDOM.createPortal(<DrawerContent {...sideProps}>{children}</DrawerContent>, $root);
+  }
 };
 
 export default Drawer;

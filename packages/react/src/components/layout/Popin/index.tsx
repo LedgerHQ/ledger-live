@@ -14,6 +14,7 @@ import TransitionScale from "../../transitions/TransitionScale";
 export interface PopinProps extends BaseStyledProps {
   isOpen: boolean;
   children: React.ReactNode;
+  menuPortalTarget?: Element | null;
 }
 
 export type PopinHeaderProps = BaseStyledProps & {
@@ -108,10 +109,23 @@ const Popin = ({ isOpen, children, width, height, ...props }: PopinProps) => (
   </TransitionInOut>
 );
 
-const PopinWrapper = ({ children, ...popinProps }: PopinProps): React.ReactElement => {
-  const $root = React.useMemo(() => document.querySelector("#ll-popin-root"), []);
-  if ($root === null) throw new Error("popin root cannot be found");
-  return ReactDOM.createPortal(<Popin {...popinProps}>{children}</Popin>, $root);
+const PopinWrapper = ({
+  children,
+  menuPortalTarget,
+  ...popinProps
+}: PopinProps): React.ReactElement => {
+  const $root = React.useMemo(
+    () =>
+      menuPortalTarget === undefined && typeof document !== undefined
+        ? document.querySelector("body")
+        : menuPortalTarget,
+    [menuPortalTarget],
+  );
+  if (!$root) {
+    return <Popin {...popinProps}>{children}</Popin>;
+  } else {
+    return ReactDOM.createPortal(<Popin {...popinProps}>{children}</Popin>, $root);
+  }
 };
 
 PopinWrapper.Header = PopinHeader;
