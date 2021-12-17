@@ -6,6 +6,10 @@ export const DEFAULT_BOX_SIZE = 40;
 export const DEFAULT_ICON_SIZE = 16;
 export const DEFAULT_BADGE_SIZE = 20;
 
+function getClipRectangleSize(badgeSize: number): number {
+  return (3 / 4) * badgeSize;
+}
+
 const getTopRightSquareClippedPolygon = (boxSize: number, rectangleSize: number) => {
   // clipping path that hides top right square of size `${rectangleSize}px`
   const diff = boxSize - rectangleSize;
@@ -20,12 +24,15 @@ const Container = styled(Flex).attrs((p: { size: number }) => ({
   position: "relative",
 }))<{ size: number }>``;
 
-const IconBoxBackground = styled(Flex)<{ size: number; hasBadge: boolean }>`
+const IconBoxBackground = styled(Flex)<{ size: number; badgeSize: number; hasBadge: boolean }>`
   position: absolute;
   height: ${(p) => p.size}px;
   width: ${(p) => p.size}px;
   ${(p) => {
-    return p.hasBadge && `clip-path: ${getTopRightSquareClippedPolygon(p.size, 15)};`;
+    return (
+      p.hasBadge &&
+      `clip-path: ${getTopRightSquareClippedPolygon(p.size, getClipRectangleSize(p.badgeSize))};`
+    );
   }};
   border-radius: ${(p) => p.theme.radii[2]}px;
 `;
@@ -94,6 +101,7 @@ export const IconBox = ({
     <Container size={size}>
       <IconBoxBackground
         size={size}
+        badgeSize={badgeSize}
         hasBadge={hasBadge}
         border="1px solid"
         borderColor={borderColor}
