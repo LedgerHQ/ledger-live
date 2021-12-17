@@ -54,7 +54,7 @@ export default {
   },
 };
 
-const Template = ({ title, big, ignoreBackdropClick, backgroundColor }: DrawerProps) => {
+const Template = ({ title, big, ignoreBackdropClick, backgroundColor, direction }: DrawerProps) => {
   const [{ isOpen }, updateArgs] = useArgs();
 
   return (
@@ -76,6 +76,7 @@ const Template = ({ title, big, ignoreBackdropClick, backgroundColor }: DrawerPr
         }
         ignoreBackdropClick={ignoreBackdropClick}
         backgroundColor={backgroundColor}
+        direction={direction}
       >
         <Flex flexDirection={"column"}>
           <p>
