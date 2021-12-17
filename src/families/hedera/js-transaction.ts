@@ -25,7 +25,7 @@ export function updateTransaction(
   transaction: Transaction,
   patch: Partial<Transaction>
 ): Transaction {
-  return { ...transaction, ...patch } as unknown as Transaction;
+  return { ...transaction, ...patch };
 }
 
 /**
