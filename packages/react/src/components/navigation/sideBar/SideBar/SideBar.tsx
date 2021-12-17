@@ -12,24 +12,26 @@ const Nav = styled(Flex)`
   padding: ${(p) => `${p.theme.space[19]}px ${p.theme.space[5]}px 0`};
   row-gap: 1.5rem;
   height: 100vh;
-  max-width: 14.875rem;
+  width: 14.875rem;
   color: ${(props) => props.theme.colors.neutral.c100};
   border-right: 1px solid ${(props) => props.theme.colors.neutral.c40};
   background-color: ${(props) => props.theme.colors.background.main};
-  transition: max-width 200ms;
-  will-change: max-width;
+  transition: width 200ms;
+  will-change: width;
+  flex-shrink: 0;
+  z-index: ${(p) => p.theme.zIndexes[2]};
 
   &.nav-enter {
-    max-width: ${(p) => p.theme.space[19]}px;
+    width: ${(p) => p.theme.space[19]}px;
   }
   &.nav-enter-done {
-    max-width: 14.875rem;
+    width: 14.875rem;
   }
   &.nav-exit {
-    max-width: 14.875rem;
+    width: 14.875rem;
   }
   &.nav-exit-done {
-    max-width: ${(p) => `${p.theme.space[19]}px`};
+    width: ${(p) => `${p.theme.space[19]}px`};
   }
 `;
 
