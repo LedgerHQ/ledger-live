@@ -81,6 +81,7 @@ import NotificationsProvider from "./screens/NotificationCenter/NotificationsPro
 import SnackbarContainer from "./screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "./components/NavBarColorHandler";
 import { setOsTheme, setTheme } from "./actions/settings";
+import StyleProvider from "./StyleProvider";
 
 const themes = {
   light: lightTheme,
@@ -396,16 +397,18 @@ const DeepLinkingNavigator = ({ children }: { children: React$Node }) => {
   }
 
   return (
-    <NavigationContainer
-      theme={themes[theme]}
-      linking={linking}
-      ref={navigationRef}
-      onReady={() => {
-        isReadyRef.current = true;
-      }}
-    >
-      {children}
-    </NavigationContainer>
+    <StyleProvider selectedPalette={theme === "light" ? "light" : "dark"}>
+      <NavigationContainer
+        theme={themes[theme]}
+        linking={linking}
+        ref={navigationRef}
+        onReady={() => {
+          isReadyRef.current = true;
+        }}
+      >
+        {children}
+      </NavigationContainer>
+    </StyleProvider>
   );
 };
 
