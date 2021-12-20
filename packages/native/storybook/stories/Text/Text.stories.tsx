@@ -5,7 +5,7 @@ import { select, boolean } from "@storybook/addon-knobs";
 import Text from "../../../src/components/Text";
 
 storiesOf((story) =>
-  story("Text", module).add("regular", () => (
+  story("Text", module).add("Text", () => (
     <Text
       variant={select(
         "variant",
