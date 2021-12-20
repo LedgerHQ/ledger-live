@@ -23,10 +23,12 @@ const buildStellarTokenAccount = ({
   parentAccountId,
   stellarAsset,
   token,
+  operations,
 }: {
   parentAccountId: string;
   stellarAsset: BalanceAsset;
   token: TokenCurrency;
+  operations: Operation[];
 }): TokenAccount => {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
@@ -42,8 +44,6 @@ const buildStellarTokenAccount = ({
     token.units[0],
     reservedBalance.toString()
   );
-  // TODO: get all operations
-  const operations: Operation[] = [];
 
   return {
     type: "TokenAccount",
@@ -70,11 +70,13 @@ export const buildSubAccounts = ({
   accountId,
   assets,
   syncConfig,
+  operations,
 }: {
   currency: CryptoCurrency;
   accountId: string;
   assets: BalanceAsset[];
   syncConfig: SyncConfig;
+  operations: Operation[];
 }): TokenAccount[] | undefined => {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);
@@ -94,6 +96,11 @@ export const buildSubAccounts = ({
           parentAccountId: accountId,
           stellarAsset: asset,
           token,
+          operations: operations.filter(
+            (op) =>
+              op.extra.assetCode === asset.asset_code &&
+              op.extra.assetIssuer === asset.asset_issuer
+          ),
         })
       );
     }

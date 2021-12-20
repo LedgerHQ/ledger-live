@@ -99,11 +99,13 @@ export const formatOperation = async (
     // @ts-expect-error check transaction_successful property
     hasFailed: !rawOperation.transaction_successful,
     blockHash: null,
-    extra: memo
-      ? {
-          memo,
-        }
-      : {},
+    extra: {
+      // @ts-expect-error check transaction_successful property
+      assetCode: rawOperation?.asset_code,
+      // @ts-expect-error check transaction_successful property
+      assetIssuer: rawOperation?.asset_issuer,
+      memo,
+    },
   };
   return operation;
 };
@@ -133,16 +135,12 @@ const getValue = (
     case "payment":
     case "path_payment_strict_send":
     case "path_payment_strict_receive":
-      value =
-        operation.asset_type === "native"
-          ? parseCurrencyUnit(currency.units[0], operation.amount)
-          : new BigNumber(0);
+      return parseCurrencyUnit(currency.units[0], operation.amount);
 
-      if (type === "OUT") {
-        value = value.plus(transaction.fee_charged);
-      }
-
-      return value;
+    // TODO: ??? do we need to include fee in the amount?
+    // if (type === "OUT") {
+    //   value = value.plus(transaction.fee_charged);
+    //
 
     default:
       return type !== "IN" ? new BigNumber(transaction.fee_charged) : value;
@@ -251,6 +249,13 @@ export const rawOperationsToOperations = async (
   addr: string,
   accountId: string
 ): Promise<Operation[]> => {
+  const supportedOperationTypes = [
+    "create_account",
+    "payment",
+    "path_payment_strict_send",
+    "path_payment_strict_receive",
+  ];
+
   return Promise.all(
     operations
       .filter((operation) => {
@@ -266,6 +271,7 @@ export const rawOperationsToOperations = async (
           operation.source_account === addr
         );
       })
+      .filter((operation) => supportedOperationTypes.includes(operation.type))
       .map((operation) => formatOperation(operation, accountId, addr))
   );
 };

@@ -1,12 +1,12 @@
-import type { Account } from "../../types";
+import type { Account, Operation } from "../../types";
 import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
+import { makeScanAccounts, makeSync } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
 import { buildSubAccounts } from "./tokens";
 
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
-  const { address, initialAccount, currency, derivationMode } = info;
+  const { address, currency, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
@@ -14,32 +14,43 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     xpubOrAddress: address,
     derivationMode,
   });
-  const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length
-    ? (oldOperations[0].blockHeight || 0) + 1
-    : 0;
   const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(
     address
   );
-  const newOperations = await fetchOperations(accountId, address, startAt);
-  const operations = mergeOps(oldOperations, newOperations);
+
+  // TODO: ??? How could we optimize this to avoid fetching all data on every
+  // request? Could we save allOperations on the Account object?
+  const allOperations = (await fetchOperations(accountId, address)) || [];
+
+  const nativeOperations: Operation[] = [];
+  const assetOperations: Operation[] = [];
+
+  allOperations.forEach((op) => {
+    if (op?.extra?.assetCode && op?.extra?.assetIssuer) {
+      assetOperations.push(op);
+    } else {
+      nativeOperations.push(op);
+    }
+  });
+
   const subAccounts =
     buildSubAccounts({
       currency,
       accountId,
       assets,
       syncConfig,
+      operations: assetOperations,
     }) || [];
 
   const shape = {
     id: accountId,
     balance,
     spendableBalance,
-    operationsCount: operations.length,
+    operationsCount: nativeOperations.length,
     blockHeight,
     subAccounts,
   };
-  return { ...shape, operations };
+  return { ...shape, operations: nativeOperations };
 };
 
 const postSync = (initial: Account, parent: Account) => {

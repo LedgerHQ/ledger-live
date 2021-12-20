@@ -107,10 +107,10 @@ export const fetchAccount = async (
 
   try {
     account = await server.accounts().accountId(addr).call();
-    balance = account.balances.find((balance) => {
+    balance = account.balances?.find((balance) => {
       return balance.asset_type === "native";
     });
-    assets = account.balances.filter((balance) => {
+    assets = account.balances?.filter((balance) => {
       return balance.asset_type !== "native";
     });
   } catch (e) {
@@ -146,8 +146,7 @@ export const fetchAccount = async (
  */
 export const fetchOperations = async (
   accountId: string,
-  addr: string,
-  startAt = 0
+  addr: string
 ): Promise<Operation[]> => {
   if (!addr || !addr.length) {
     return [];
@@ -163,7 +162,7 @@ export const fetchOperations = async (
       .join("transactions")
       .includeFailed(true)
       .limit(LIMIT)
-      .cursor(startAt)
+      .order("desc")
       .call();
   } catch (e: any) {
     // FIXME: terrible hacks, because Stellar SDK fails to cast network failures to typed errors in react-native...
@@ -210,6 +209,7 @@ export const fetchOperations = async (
 
   return operations;
 };
+
 export const fetchAccountNetworkInfo = async (
   account: Account
 ): Promise<NetworkInfo> => {
