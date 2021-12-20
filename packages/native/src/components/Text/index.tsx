@@ -2,12 +2,14 @@ import React from "react";
 import { TextProps } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import {
+  compose,
   fontSize,
   FontSizeProps,
   textAlign,
   TextAlignProps,
   lineHeight,
   LineHeightProps,
+  system,
 } from "styled-system";
 import baseStyled, { BaseStyledProps } from "../styled";
 
@@ -16,6 +18,19 @@ import BracketLeft from "../../icons/BracketRight";
 import { getColor } from "../../styles";
 import { FontWeightTypes, getTextStyle } from "./getTextStyle";
 import { TextVariants } from "../../styles/theme";
+
+const uppercase = system({
+  uppercase: {
+    property: "textTransform",
+    transform: (value) => (value ? "uppercase" : "none"),
+  },
+});
+
+const textTransform = system({
+  textTransform: {
+    property: "textTransform",
+  },
+});
 
 export interface BaseTextProps
   extends TextProps,
@@ -30,6 +45,8 @@ export interface BaseTextProps
   color?: string;
   lineHeight?: number;
   bracket?: boolean;
+  textTransform?: string;
+  uppercase?: boolean;
   children: React.ReactNode;
 }
 
@@ -38,9 +55,7 @@ const Base = baseStyled.Text.attrs((p: BaseTextProps) => ({
   color: p.color || "neutral.c100",
 }))<BaseTextProps>`
   ${(p) => getTextStyle(p)}
-  ${lineHeight};
-  ${fontSize};
-  ${textAlign};
+  ${compose(lineHeight, fontSize, textAlign, uppercase, textTransform)}
   justify-content: center;
   align-items: center;
 `;
