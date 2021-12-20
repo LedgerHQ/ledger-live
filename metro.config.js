@@ -19,7 +19,7 @@ module.exports = {
     }),
   },
   resolver: {
-    sourceExts: [...defaultSourceExts, 'cjs', "tsx", "ts"],
+    sourceExts: [...defaultSourceExts, 'cjs'],
     resolveRequest: (context, realModuleName, platform, moduleName) => {
       const { resolveRequest: removed, ...restContext} = context;
 
