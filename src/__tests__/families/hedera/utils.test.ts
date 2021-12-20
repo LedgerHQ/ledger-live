@@ -61,7 +61,7 @@ const transaction: Transaction = {
 describe("utils", () => {
   const estimatedFees = new BigNumber("83300");
 
-  test("calculateAmount transaction.useAllAmount = true", () => {
+  test("calculateAmount transaction.useAllAmount = true", async () => {
     transaction.useAllAmount = true;
 
     const amount = account.balance.minus(estimatedFees.multipliedBy(2));
@@ -72,7 +72,7 @@ describe("utils", () => {
       totalSpent,
     };
 
-    const result = calculateAmount({
+    const result = await calculateAmount({
       account,
       transaction,
     });
@@ -80,7 +80,7 @@ describe("utils", () => {
     expect(result).toEqual(data);
   });
 
-  test("calculateAmount transaction.useAllAmount = false", () => {
+  test("calculateAmount transaction.useAllAmount = false", async () => {
     transaction.useAllAmount = false;
 
     const amount = transaction.amount;
@@ -91,7 +91,7 @@ describe("utils", () => {
       totalSpent,
     };
 
-    const result = calculateAmount({
+    const result = await calculateAmount({
       account,
       transaction,
     });
