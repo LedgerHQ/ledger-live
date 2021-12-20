@@ -11,14 +11,14 @@ export function broadcastTransaction(
   return transaction.execute(getClient());
 }
 
-export function buildUnsignedTransaction({
+export async function buildUnsignedTransaction({
   account,
   transaction,
 }: {
   account: Account;
   transaction: Transaction;
-}): hedera.TransferTransaction {
-  const { amount } = calculateAmount({ account, transaction });
+}): Promise<hedera.TransferTransaction> {
+  const { amount } = await calculateAmount({ account, transaction });
   const hbarAmount = hedera.Hbar.fromTinybars(amount);
   const accountId = account.hederaResources!.accountId;
 

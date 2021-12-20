@@ -34,7 +34,7 @@ export default async function getTransactionStatus(
     }
   }
 
-  const { amount, estimatedFees, totalSpent } = calculateAmount({
+  const { amount, estimatedFees, totalSpent } = await calculateAmount({
     transaction,
     account,
   });

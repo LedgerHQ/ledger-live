@@ -1,14 +1,19 @@
+import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import BigNumber from "bignumber.js";
-import { Account } from "../../types";
-import { Transaction } from "./types";
+import type { Account } from "../../types";
+import type { Transaction } from "./types";
 
-export function calculateAmount({
+export async function calculateAmount({
   account,
   transaction,
 }: {
   account: Account;
   transaction: Transaction;
-}): { amount: BigNumber; estimatedFees: BigNumber; totalSpent: BigNumber } {
+}): Promise<{
+  amount: BigNumber;
+  estimatedFees: BigNumber;
+  totalSpent: BigNumber;
+}> {
   // NOTE: Hedera declares stable fees in USD
   //       If we can get the current USD/HBAR price here..
   //       > transfer fee is 0.0001 USD
@@ -18,7 +23,7 @@ export function calculateAmount({
     transaction.useAllAmount == true
       ? // as fees are based on a currency conversion, we stay
         // on the safe side here and double the estimate for "max spendable"
-        account.balance.minus(estimatedFees.multipliedBy(2))
+        await estimateMaxSpendable({ account })
       : transaction.amount;
 
   return {

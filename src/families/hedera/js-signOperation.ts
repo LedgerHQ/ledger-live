@@ -27,7 +27,7 @@ export default function signOperation({
           type: "device-signature-requested",
         });
 
-        const hederaTransaction = buildUnsignedTransaction({
+        const hederaTransaction = await buildUnsignedTransaction({
           account,
           transaction,
         });
@@ -45,7 +45,10 @@ export default function signOperation({
           type: "device-signature-granted",
         });
 
-        const operation = buildOptimisticOperation({ account, transaction });
+        const operation = await buildOptimisticOperation({
+          account,
+          transaction,
+        });
 
         o.next({
           type: "signed",
@@ -71,14 +74,17 @@ export default function signOperation({
   });
 }
 
-function buildOptimisticOperation({
+async function buildOptimisticOperation({
   account,
   transaction,
 }: {
   account: Account;
   transaction: Transaction;
-}): Operation {
-  const { amount, estimatedFees } = calculateAmount({ account, transaction });
+}): Promise<Operation> {
+  const { amount, estimatedFees } = await calculateAmount({
+    account,
+    transaction,
+  });
 
   const operation: Operation = {
     id: `${account.id}--OUT`,
