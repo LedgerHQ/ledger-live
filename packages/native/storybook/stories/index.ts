@@ -1,5 +1,6 @@
 import "./Button/Button.stories";
 import "./Text/Text.stories";
+import "./Text/TextOverview.stories";
 import "./Layout/Modal/Modal.stories";
 import "./Layout/Modal/BottomDrawer.stories";
 import "./Layout/Modal/Popin.stories";

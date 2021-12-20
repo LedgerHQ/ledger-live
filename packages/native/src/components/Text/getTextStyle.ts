@@ -9,6 +9,7 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     fontFamily: string;
     lineHeight?: number;
     paddingTop?: number;
+    textTransform?: string;
   }
 > {
   return {
@@ -16,19 +17,23 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
       fontFamily: "Alpha",
       lineHeight: 32,
       paddingTop: bracket ? 15 : 0,
+      textTransform: "uppercase",
     },
     h2: {
       fontFamily: "Alpha",
       lineHeight: 28,
       paddingTop: bracket ? 10 : 0,
+      textTransform: "uppercase",
     },
     h3: {
       fontFamily: "Alpha",
       lineHeight: 20,
       paddingTop: bracket ? 5 : 0,
+      textTransform: "uppercase",
     },
     h4: {
       fontFamily: "Inter",
+      textTransform: "uppercase",
     },
     large: {
       fontFamily: "Inter",
@@ -52,6 +57,7 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     },
     subtitle: {
       fontFamily: "Inter",
+      textTransform: "uppercase",
     },
     tiny: {
       fontFamily: "Inter",
