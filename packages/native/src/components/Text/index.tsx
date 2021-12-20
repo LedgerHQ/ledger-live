@@ -1,5 +1,5 @@
 import React from "react";
-import { TextProps } from "react-native";
+import { TextProps, TextStyle } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import {
   compose,
@@ -45,7 +45,7 @@ export interface BaseTextProps
   color?: string;
   lineHeight?: number;
   bracket?: boolean;
-  textTransform?: string;
+  textTransform?: TextStyle["textTransform"];
   uppercase?: boolean;
   children: React.ReactNode;
 }
