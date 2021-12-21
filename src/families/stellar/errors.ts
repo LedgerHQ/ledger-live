@@ -23,3 +23,6 @@ export const StellarFeeSmallerThanRecommended = createCustomErrorClass(
 );
 export const StellarNotEnoughNativeBalanceToAddTrustline =
   createCustomErrorClass("StellarNotEnoughNativeBalanceToAddTrustline");
+export const StellarMuxedAccountNotExist = createCustomErrorClass(
+  "StellarMuxedAccountNotExist"
+);

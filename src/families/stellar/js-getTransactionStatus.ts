@@ -20,6 +20,7 @@ import {
   StellarNotEnoughNativeBalance,
   StellarFeeSmallerThanRecommended,
   StellarNotEnoughNativeBalanceToAddTrustline,
+  StellarMuxedAccountNotExist,
 } from "../../errors";
 import { findSubAccountById } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
@@ -105,16 +106,18 @@ const getTransactionStatus = async (
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }
 
-    const recipientAccount = t.recipient
-      ? await getRecipientAccount(t.recipient)
-      : null;
+    const recipientAccount = await getRecipientAccount(t.recipient);
 
     // Check recipient account
-    if (!recipientAccount && !errors.recipient && !warnings.recipient) {
-      if (isAssetPayment) {
-        errors.recipient = destinationNotExistMessage;
+    if (!recipientAccount.id && !errors.recipient && !warnings.recipient) {
+      if (recipientAccount.isMuxedAccount) {
+        errors.recipient = new StellarMuxedAccountNotExist();
       } else {
-        warnings.recipient = destinationNotExistMessage;
+        if (isAssetPayment) {
+          errors.recipient = destinationNotExistMessage;
+        } else {
+          warnings.recipient = destinationNotExistMessage;
+        }
       }
     }
 
@@ -129,7 +132,7 @@ const getTransactionStatus = async (
 
       // Check recipient account accepts asset
       if (
-        recipientAccount &&
+        recipientAccount.id &&
         !errors.recipient &&
         !warnings.recipient &&
         !recipientAccount.assetIds.includes(`${t.assetCode}:${t.assetIssuer}`)
@@ -156,7 +159,7 @@ const getTransactionStatus = async (
       // Need to send at least 1 XLM to create an account
       if (
         !errors.recipient &&
-        !recipientAccount &&
+        !recipientAccount.id &&
         !errors.amount &&
         amount.lt(10000000)
       ) {

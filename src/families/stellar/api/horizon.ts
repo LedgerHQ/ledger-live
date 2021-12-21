@@ -284,6 +284,7 @@ export const buildPaymentOperation = (
     destination: destination,
     amount: formattedAmount,
     asset,
+    withMuxing: true,
   });
 };
 

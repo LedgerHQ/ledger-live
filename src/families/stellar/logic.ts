@@ -63,7 +63,7 @@ const getRecipients = (operation): string[] => {
       return [operation.account];
 
     case "payment":
-      return [operation.to];
+      return [operation.to_muxed || operation.to];
 
     default:
       return [];
@@ -204,10 +204,11 @@ export const isAccountMultiSign = async (account: Account) => {
 export const isAddressValid = (address: string): boolean => {
   if (!address) return false;
 
-  // TODO: support muxed account + federated address
-
   try {
-    return StellarSdk.StrKey.isValidEd25519PublicKey(address);
+    return (
+      StellarSdk.StrKey.isValidEd25519PublicKey(address) ||
+      StellarSdk.StrKey.isValidMed25519PublicKey(address)
+    );
   } catch (err) {
     return false;
   }
@@ -228,16 +229,44 @@ export const addressExists = async (address: string): Promise<boolean> => {
 
 // TODO: could we cache this?
 export const getRecipientAccount = async (
-  address: string
-): Promise<{ id: string; assetIds: string[] } | null> => {
-  const account = await loadAccount(address);
+  address?: string
+): Promise<{
+  id: string | null;
+  isMuxedAccount: boolean;
+  assetIds: string[];
+}> => {
+  if (!address) {
+    return {
+      id: null,
+      isMuxedAccount: false,
+      assetIds: [],
+    };
+  }
+
+  let accountAddress = address;
+
+  const isMuxedAccount = Boolean(
+    StellarSdk.StrKey.isValidMed25519PublicKey(address)
+  );
+
+  if (isMuxedAccount) {
+    const muxedAccount = new StellarSdk.MuxedAccount.fromAddress(address, "0");
+    accountAddress = muxedAccount.baseAccount().accountId();
+  }
+
+  const account = await loadAccount(accountAddress);
 
   if (!account) {
-    return null;
+    return {
+      id: null,
+      isMuxedAccount,
+      assetIds: [],
+    };
   }
 
   return {
     id: account.id,
+    isMuxedAccount,
     assetIds: account.balances.reduce((allAssets, balance) => {
       return [...allAssets, getBalanceId(balance)];
     }, []),
