@@ -28,6 +28,7 @@ Component.args = {
     ),
     "Confirmation",
   ],
-  activeIndex: 1,
+  activeIndex: 0,
   errored: false,
+  disabledIndexes: [1],
 };
