@@ -1,15 +1,14 @@
 import React, { memo, Fragment } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
-import CheckAlone from "@ledgerhq/icons-ui/react/CheckAloneMedium";
-import CloseMedium from "@ledgerhq/icons-ui/react/CloseMedium";
+import { Icons } from "../../../../index";
 import Text from "../../../asorted/Text";
 import Flex from "../../../layout/Flex";
 
 /**
  * The state of a progress bar step.
  */
-export type StepState = "pending" | "current" | "completed" | "errored";
+export type StepState = "pending" | "current" | "completed" | "errored" | "disabled";
 
 type LabelType = string | React.ComponentType<{ state: StepState }>;
 export interface Props {
@@ -28,6 +27,10 @@ export interface Props {
    * If true the current step is considered as a failure.
    */
   errored?: boolean;
+  /**
+   * Steps with indexes contained inside the array will be shown as disabled.
+   */
+  disabledIndexes?: number[];
 }
 
 export type StepProps = {
@@ -37,7 +40,7 @@ export type StepProps = {
   state: StepState;
   /**
    * The label to display. To display more than text, this can be a component that will be rendered with the
-   *  prop `state: "pending" | "current" | "completed" | "errored"`.
+   *  prop `state: "pending" | "current" | "completed" | "errored" | "disabled"`.
    *  A styled StepText component is exported to allow easy styling of such a custom Label
    */
   label: LabelType;
@@ -85,14 +88,18 @@ export const Item = {
     border-radius: ${(p) => p.theme.space[2]}px;
     ${color}
   `,
-  Completed: (): JSX.Element => <CheckAlone size={16} />,
-  Errored: (): JSX.Element => <CloseMedium size={16} />,
+  Completed: (): JSX.Element => <Icons.CheckAloneMedium size={16} />,
+  Disabled: (): JSX.Element => <Icons.CloseMedium size={16} />,
+  Errored: (): JSX.Element => <Icons.CloseMedium size={16} />,
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`
   color: ${(p) => {
     if (p.state === "errored") {
       return p.theme.colors.error.c100;
+    }
+    if (p.state === "disabled") {
+      return p.theme.colors.neutral.c50;
     }
     if (p.state === "pending") {
       return p.theme.colors.neutral.c70;
@@ -136,6 +143,11 @@ const stepContentsByState = {
       <Item.Errored />
     </Item.Container>
   ),
+  disabled: (
+    <Item.Container color="neutral.c50">
+      <Item.Disabled />
+    </Item.Container>
+  ),
 };
 
 export const Step = memo(function Step({
@@ -169,7 +181,10 @@ export const Step = memo(function Step({
   );
 });
 
-function getState(activeIndex: number, index: number, errored?: boolean) {
+function getState(activeIndex: number, index: number, errored?: boolean, disabled?: boolean) {
+  if (disabled) {
+    return "disabled";
+  }
   if (activeIndex < index) {
     return "pending";
   }
@@ -179,11 +194,11 @@ function getState(activeIndex: number, index: number, errored?: boolean) {
   return "completed";
 }
 
-function Stepper({ steps, activeIndex = 0, errored, ...extraProps }: Props) {
+function Stepper({ steps, activeIndex = 0, errored, disabledIndexes, ...extraProps }: Props) {
   return (
     <Flex flexWrap="nowrap" justifyContent="space-between" {...extraProps}>
       {steps.map((step, idx) => {
-        const state = getState(activeIndex, idx, errored);
+        const state = getState(activeIndex, idx, errored, disabledIndexes?.includes(idx));
         const nextState = idx < steps.length - 1 ? getState(activeIndex, idx + 1) : undefined;
         return (
           <Fragment key={idx}>
