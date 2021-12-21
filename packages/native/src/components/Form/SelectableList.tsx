@@ -3,6 +3,7 @@ import { GestureResponderEvent, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Flex from "../Layout/Flex";
 import { Text } from "../index";
+import { IconType } from "../Icon/type";
 
 type BaseElementProps<V> = {
   first?: boolean;
@@ -10,7 +11,7 @@ type BaseElementProps<V> = {
   disabled?: boolean;
   value?: V;
   onPress?: ((event: GestureResponderEvent) => void) | undefined;
-  Icon?: (props: { size?: number; color?: string }) => React.ReactElement;
+  Icon?: IconType;
 };
 
 export type ElementProps<V> = React.PropsWithChildren<
