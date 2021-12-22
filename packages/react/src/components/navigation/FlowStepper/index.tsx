@@ -9,9 +9,13 @@ export type StepProps = {
    */
   label: string;
   /**
-   * A specific index, useful if you want the step to be invisible by specifying negative or floating indexes.
+   * A specific index, can be used to explicitely order steps.
    */
   index?: number;
+  /**
+   * Hides the step from the progress stepper.
+   */
+  hidden?: boolean;
   /**
    * The step contents.
    */
@@ -87,8 +91,9 @@ function FlowStepper<ExtraProps>({
     (acc, child, idx) => {
       const index = (isElement(child) && child.props.index) ?? idx;
       const label = isElement(child) && child.props.label;
+      const hidden = isElement(child) && child.props.hidden;
 
-      if (label) {
+      if (label && !hidden) {
         acc.steps[index] = label;
       }
       if (index === activeIndex) {
