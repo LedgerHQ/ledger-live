@@ -118,14 +118,14 @@ export const Minimal: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
               variant="main"
               outline
               disabled={activeIndex <= 0}
-              onClick={() => updateArgs({ activeIndex: activeIndex - 1 })}
+              onClick={() => updateArgs({ activeIndex: Math.floor(activeIndex) - 1 })}
             >
               Previous
             </Button>
             <Button
               variant="main"
               disabled={activeIndex >= NB_OF_STEPS - 1}
-              onClick={() => updateArgs({ activeIndex: activeIndex + 1 })}
+              onClick={() => updateArgs({ activeIndex: Math.floor(activeIndex) + 1 })}
             >
               Continue
             </Button>
@@ -134,13 +134,23 @@ export const Minimal: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
       )}
       {...rest}
     >
-      {new Array(NB_OF_STEPS).fill(0).map((_, index) => (
-        <FlowStepper.Step label={"Step " + index}>
-          <Text key={index} variant="body">
-            {lipsum}
+      {[
+        ...new Array(NB_OF_STEPS).fill(0).map((_, index) => (
+          <FlowStepper.Step label={"Step " + index}>
+            <Text key={index} variant="body">
+              {lipsum}
+            </Text>
+            <Button mt={2} onClick={() => updateArgs({ activeIndex: 1.5 })}>
+              Navigate to the hidden step.
+            </Button>
+          </FlowStepper.Step>
+        )),
+        <FlowStepper.Step label="Hidden Step" index={1.5}>
+          <Text key="hidden" variant="body">
+            I am hidden.
           </Text>
-        </FlowStepper.Step>
-      ))}
+        </FlowStepper.Step>,
+      ]}
     </FlowStepper>
   );
 };
