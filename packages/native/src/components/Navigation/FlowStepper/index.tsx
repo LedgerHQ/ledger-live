@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import Flex from "../../Layout/Flex";
-import ProgressBar from "../../ProgressBar";
+import ProgressBar, { Props as ProgressBarProps } from "../../ProgressBar";
 import {
   TransitionProps,
   Transition,
@@ -48,6 +48,11 @@ export interface Props<ExtraProps> {
    */
   extraProps?: ExtraProps;
   /**
+   * Additional props to pass to the progressbar component.
+   * This component is a Flex element.
+   */
+  progressBarProps?: ProgressBarProps;
+  /**
    * **Use this prop in combination with `transitionDuration`.**
    *
    * A render function wrapping every children which allows using transitions.
@@ -76,6 +81,7 @@ function FlowStepper<ExtraProps>({
   header,
   footer,
   extraProps,
+  progressBarProps,
   renderTransition,
   transitionDuration = 0,
   children,
@@ -96,7 +102,11 @@ function FlowStepper<ExtraProps>({
         header({ ...extraProps, activeIndex, stepsLength } as InnerProps &
           ExtraProps)}
       <SafeAreaView style={{ flex: 1 }}>
-        <ProgressBar index={activeIndex} length={stepsLength} />
+        <ProgressBar
+          index={activeIndex}
+          length={stepsLength}
+          {...progressBarProps}
+        />
         <Flex flex={1}>
           {React.Children.map(children, (child, index) => {
             if (renderTransition && transitionDuration) {
