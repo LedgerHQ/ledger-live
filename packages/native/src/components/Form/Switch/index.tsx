@@ -36,7 +36,7 @@ const Switch = ({
         <Text
           variant="body"
           color={checked ? colors.primary.c90 : colors.neutral.c100}
-          style={{ marginLeft: space[3] }}
+          style={{ marginLeft: space[3], flexShrink: 1 }}
         >
           {label}
         </Text>
