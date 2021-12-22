@@ -1,9 +1,24 @@
 import React from "react";
+import { isElement } from "react-is";
 import Flex, { FlexBoxProps as FlexProps } from "../../layout/Flex";
 import { Stepper } from "..";
 
 export type StepProps = {
+  /**
+   * The label of the step.
+   */
   label: string;
+  /**
+   * A specific index, can be used to explicitely order steps.
+   */
+  index?: number;
+  /**
+   * Hides the step from the progress stepper.
+   */
+  hidden?: boolean;
+  /**
+   * The step contents.
+   */
   children: React.ReactNode;
 };
 
@@ -69,9 +84,27 @@ function FlowStepper<ExtraProps>({
   renderChildren,
   children,
 }: Props<ExtraProps>) {
-  const steps = React.Children.map(children, (child) => child.props.label);
-  const innerJSX = React.Children.map(children, (child, index) =>
-    index === activeIndex ? child : null,
+  const { steps, innerContents } = React.Children.toArray(children).reduce<{
+    steps: string[];
+    innerContents: React.ReactNode | null;
+  }>(
+    (acc, child, idx) => {
+      const index = (isElement(child) && child.props.index) ?? idx;
+      const label = isElement(child) && child.props.label;
+      const hidden = isElement(child) && child.props.hidden;
+
+      if (label && !hidden) {
+        acc.steps[index] = label;
+      }
+      if (index === activeIndex) {
+        acc.innerContents = child;
+      }
+      return acc;
+    },
+    {
+      steps: [],
+      innerContents: null,
+    },
   );
 
   return (
@@ -83,7 +116,7 @@ function FlowStepper<ExtraProps>({
         <Stepper activeIndex={activeIndex} steps={steps} flex={1} {...extraStepperProps} />
       </Flex>
       <Flex flex={1} flexDirection="column" position="relative">
-        {renderChildren ? renderChildren({ children: innerJSX }) : innerJSX}
+        {renderChildren ? renderChildren({ children: innerContents }) : innerContents}
       </Flex>
       {footer &&
         footer({ ...extraProps, activeIndex, stepsLength: steps.length } as InnerProps &

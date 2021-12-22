@@ -134,13 +134,23 @@ export const Minimal: StoryTemplate<FlowStepperProps<unknown>> = (args) => {
       )}
       {...rest}
     >
-      {new Array(NB_OF_STEPS).fill(0).map((_, index) => (
-        <FlowStepper.Step label={"Step " + index}>
-          <Text key={index} variant="body">
-            {lipsum}
+      {[
+        ...new Array(NB_OF_STEPS).fill(0).map((_, index) => (
+          <FlowStepper.Step label={"Step " + index}>
+            <Text key={index} variant="body">
+              {lipsum}
+            </Text>
+            <Button mt={2} onClick={() => updateArgs({ activeIndex: NB_OF_STEPS })}>
+              Navigate to the hidden step.
+            </Button>
+          </FlowStepper.Step>
+        )),
+        <FlowStepper.Step label="Hidden Step" hidden>
+          <Text key="hidden" variant="body">
+            I am hidden.
           </Text>
-        </FlowStepper.Step>
-      ))}
+        </FlowStepper.Step>,
+      ]}
     </FlowStepper>
   );
 };
