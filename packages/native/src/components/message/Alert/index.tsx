@@ -68,7 +68,9 @@ export default function Alert({
           {icons[type || "info"]({ size: 20, color: textColor })}
         </StyledIconContainer>
       )}
-      <Text color={textColor}>{title}</Text>
+      <Text color={textColor} flexShrink={1}>
+        {title}
+      </Text>
     </StyledAlertContainer>
   );
 }

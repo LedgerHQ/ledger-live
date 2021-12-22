@@ -28,19 +28,25 @@ export const ListItem = ({
           {bullet}
         </Box>
       )}
-      <Flex flexDirection={"column"} flexShrink={1}>
+      <Flex flexDirection={"column"} flexShrink={1} flexWrap={"nowrap"}>
         {title && (
           <Text
             variant={"body"}
             fontWeight={"semiBold"}
             color={"neutral.c100"}
+            flexShrink={1}
             mb={description ? 2 : null}
           >
             {title}
           </Text>
         )}
         {description && (
-          <Text variant={"body"} fontWeight={"medium"} color={"neutral.c80"}>
+          <Text
+            variant={"body"}
+            fontWeight={"medium"}
+            color={"neutral.c80"}
+            flexShrink={1}
+          >
             {description}
           </Text>
         )}
