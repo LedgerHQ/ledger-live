@@ -2,7 +2,7 @@
   "name": "@ledgerhq/react-ui",
   "private": true,
   "description": "Ledger Live - Desktop UI",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
