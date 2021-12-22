@@ -1,5 +1,6 @@
 import React from "react";
 import { isElement } from "react-is";
+import { Props as StepperProps } from "../progress/Stepper";
 import Flex, { FlexBoxProps as FlexProps } from "../../layout/Flex";
 import { Stepper } from "..";
 
@@ -57,7 +58,7 @@ export interface Props<ExtraProps> {
   /**
    * Extra props that are passed to the stepper component.
    */
-  extraStepperProps?: FlexProps;
+  extraStepperProps?: Partial<StepperProps>;
   /**
    * Extra props that are passed to the stepper `Flex` wrapper.
    */

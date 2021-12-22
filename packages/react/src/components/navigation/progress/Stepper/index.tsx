@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
 import { Icons } from "../../../../index";
 import Text from "../../../asorted/Text";
-import Flex from "../../../layout/Flex";
+import Flex, { FlexBoxProps } from "../../../layout/Flex";
 
 /**
  * The state of a progress bar step.
@@ -11,7 +11,7 @@ import Flex from "../../../layout/Flex";
 export type StepState = "pending" | "current" | "completed" | "errored" | "disabled";
 
 type LabelType = string | React.ComponentType<{ state: StepState }>;
-export interface Props {
+export interface Props extends FlexBoxProps {
   /**
    * An array of labels that will determine the progress bar steps.
    *  A label is either a string or a component that will be rendered with the
