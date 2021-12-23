@@ -11,6 +11,8 @@ jobs:
     name: "start ec2 instance (Linux)"
     if: ${{ always() }}
     uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
+    with:
+      instance-type: c5.4xlarge
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
 
