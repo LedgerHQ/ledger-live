@@ -40,7 +40,7 @@ const Overlay = styled.div<{ direction: Direction }>`
   width: 100vw;
   height: 100vh;
   z-index: 999;
-  background-color: ${(p) => p.theme.colors.neutral.c100a07};
+  background-color: ${(p) => p.theme.colors.constant.overlay};
 `;
 const ScrollWrapper = styled(FlexBox)`
   &::-webkit-scrollbar {
