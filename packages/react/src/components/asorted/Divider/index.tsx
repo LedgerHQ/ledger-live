@@ -11,6 +11,6 @@ const Divider = styled.div`
   }
 `;
 
-type Props = { variant: "default" | "light" };
+export type Props = { variant: "default" | "light" };
 
 export default ({ variant = "default" }: Props) => <Divider data-variant={variant} />;
