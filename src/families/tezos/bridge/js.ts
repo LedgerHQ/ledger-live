@@ -109,7 +109,11 @@ const getTransactionStatus = async (
           .lt(thresholdWarning)
       ) {
         if (isAccountDelegating(account)) {
-          warnings.amount = new RecommendUndelegation();
+          if (t.useAllAmount) {
+            errors.amount = new RecommendUndelegation();
+          } else {
+            warnings.amount = new RecommendUndelegation();
+          }
         }
       }
     }
