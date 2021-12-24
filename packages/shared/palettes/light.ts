@@ -56,6 +56,7 @@ export default {
     overlay: "hsla(0, 0%, 0%, 0.7)",
     white: "hsla(0, 0%, 100%, 1)",
     purple: "hsla(248, 100%, 85%, 1)",
+    black: "hsla(0, 0%, 0%, 1)",
   },
   background: {
     main: "hsla(0, 0%, 100%, 1)",
