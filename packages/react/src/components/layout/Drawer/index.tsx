@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
-import FlexBox from "../Flex";
-import Divider from "../../asorted/Divider";
+import FlexBox, { FlexBoxProps } from "../Flex";
+import Divider, { Props as DividerProps } from "../../asorted/Divider";
 import Close from "@ledgerhq/icons-ui/react/CloseMedium";
 import ArrowLeft from "@ledgerhq/icons-ui/react/ArrowLeftRegular";
 import TransitionSlide from "../../transitions/TransitionSlide";
@@ -18,17 +18,6 @@ const Container = styled(FlexBox)`
   width: 100%;
   height: 100%;
   flex-direction: column;
-`;
-const Header = styled(FlexBox)`
-  justify-content: space-between;
-  align-items: center;
-  padding: ${(p) => p.theme.space[12]}px;
-  padding-bottom: ${(p) => p.theme.space[10]}px;
-`;
-
-const Footer = styled(FlexBox)`
-  align-items: center;
-  padding: ${(p) => p.theme.space[8]}px ${(p) => p.theme.space[12]}px;
 `;
 
 const Wrapper = styled(FlexBox)<{
@@ -53,13 +42,7 @@ const Overlay = styled.div<{ direction: Direction }>`
   z-index: 999;
   background-color: ${(p) => p.theme.colors.neutral.c100a07};
 `;
-const ScrollWrapper = styled.div`
-  overflow: scroll;
-  position: relative;
-  padding: ${(p) => p.theme.space[12]}px;
-  padding-top: 0px;
-  flex: 1;
-
+const ScrollWrapper = styled(FlexBox)`
   &::-webkit-scrollbar {
     display: none;
   }
@@ -88,6 +71,10 @@ export interface DrawerProps {
   hideNavigation?: boolean;
   menuPortalTarget?: Element | null;
   direction?: Direction;
+  extraContainerProps?: Partial<FlexBoxProps>;
+  extraHeaderProps?: Partial<FlexBoxProps>;
+  extraFooterProps?: Partial<FlexBoxProps>;
+  extraFooterDividerProps?: Partial<DividerProps>;
 }
 
 const DrawerContent = React.forwardRef(
@@ -102,6 +89,10 @@ const DrawerContent = React.forwardRef(
       backgroundColor,
       setTransitionsEnabled = () => 0,
       onBack,
+      extraContainerProps,
+      extraHeaderProps,
+      extraFooterProps,
+      extraFooterDividerProps,
       ignoreBackdropClick = false,
       hideNavigation = true,
       direction = Direction.Left,
@@ -153,7 +144,13 @@ const DrawerContent = React.forwardRef(
               backgroundColor={backgroundColor ?? "neutral.c00"}
             >
               <Container>
-                <Header>
+                <FlexBox
+                  justifyContent="space-between"
+                  alignItems="center"
+                  p={12}
+                  pb={10}
+                  {...extraHeaderProps}
+                >
                   {!hideNavigation && (
                     <>
                       {onBack != null ? (
@@ -175,12 +172,25 @@ const DrawerContent = React.forwardRef(
                       <Close />
                     </Button>
                   </FlexBox>
-                </Header>
-                <ScrollWrapper>{children}</ScrollWrapper>
+                </FlexBox>
+                <ScrollWrapper
+                  flexDirection="column"
+                  alignItems="stretch"
+                  overflow="scroll"
+                  position="relative"
+                  p={12}
+                  pt={0}
+                  flex={1}
+                  {...extraContainerProps}
+                >
+                  {children}
+                </ScrollWrapper>
                 {footer && (
                   <>
-                    <Divider variant="light" />
-                    <Footer>{footer}</Footer>
+                    <Divider variant="light" {...extraFooterDividerProps} />
+                    <FlexBox alignItems="center" py={8} px={12} {...extraFooterProps}>
+                      {footer}
+                    </FlexBox>
                   </>
                 )}
               </Container>
