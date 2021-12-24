@@ -25,20 +25,11 @@ export default function Row({
   ...props
 }: Props): React.ReactElement {
   return (
-    <FlexBox
-      {...props}
-      flexDirection="row"
-      justifyContent="space-between"
-      p={6}
-    >
+    <FlexBox {...props} flexDirection="row" justifyContent="space-between" p={6}>
       <FlexBox flexDirection="row" flexShrink={1} alignItems="center">
         {Icon &&
           (iconBorder ? (
-            <IconBox
-              Icon={Icon}
-              iconSize={SMALL_ICON_SIZE}
-              boxSize={BOX_SIZE}
-            />
+            <IconBox Icon={Icon} iconSize={SMALL_ICON_SIZE} boxSize={BOX_SIZE} />
           ) : (
             <Icon size={ICON_SIZE} />
           ))}
@@ -52,11 +43,7 @@ export default function Row({
           {bottomLeft}
         </FlexBox>
       </FlexBox>
-      <FlexBox
-        flexDirection="column"
-        justifyContent="space-evenly"
-        alignItems="flex-end"
-      >
+      <FlexBox flexDirection="column" justifyContent="space-evenly" alignItems="flex-end">
         {topRight}
         {bottomRight}
       </FlexBox>

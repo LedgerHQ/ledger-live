@@ -2,11 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import Flex from "../../Layout/Flex";
 import ProgressBar, { Props as ProgressBarProps } from "../../ProgressBar";
-import {
-  TransitionProps,
-  Transition,
-  TransitionStatus,
-} from "../../transitions";
+import { TransitionProps, Transition, TransitionStatus } from "../../transitions";
 
 interface InnerProps {
   /**
@@ -93,20 +89,14 @@ function FlowStepper<ExtraProps>({
     () => () => {
       previousActiveIndex.current = activeIndex;
     },
-    [activeIndex]
+    [activeIndex],
   );
 
   return (
     <Flex flex={1}>
-      {header &&
-        header({ ...extraProps, activeIndex, stepsLength } as InnerProps &
-          ExtraProps)}
+      {header && header({ ...extraProps, activeIndex, stepsLength } as InnerProps & ExtraProps)}
       <SafeAreaView style={{ flex: 1 }}>
-        <ProgressBar
-          index={activeIndex}
-          length={stepsLength}
-          {...progressBarProps}
-        />
+        <ProgressBar index={activeIndex} length={stepsLength} {...progressBarProps} />
         <Flex flex={1}>
           {React.Children.map(children, (child, index) => {
             if (renderTransition && transitionDuration) {
@@ -135,9 +125,7 @@ function FlowStepper<ExtraProps>({
             }
           })}
         </Flex>
-        {footer &&
-          footer({ ...extraProps, activeIndex, stepsLength } as InnerProps &
-            ExtraProps)}
+        {footer && footer({ ...extraProps, activeIndex, stepsLength } as InnerProps & ExtraProps)}
       </SafeAreaView>
     </Flex>
   );

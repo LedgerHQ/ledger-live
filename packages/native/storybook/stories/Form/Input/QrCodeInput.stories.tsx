@@ -7,15 +7,7 @@ const QrCodeInputStory = (): JSX.Element => {
 
   const onChange = (value: string) => setValue(value);
 
-  return (
-    <QrCodeInput
-      value={value}
-      onChange={onChange}
-      placeholder={"Placeholder"}
-    />
-  );
+  return <QrCodeInput value={value} onChange={onChange} placeholder={"Placeholder"} />;
 };
 
-storiesOf((story) =>
-  story("Form/Input", module).add("QrCodeInput", QrCodeInputStory)
-);
+storiesOf((story) => story("Form/Input", module).add("QrCodeInput", QrCodeInputStory));

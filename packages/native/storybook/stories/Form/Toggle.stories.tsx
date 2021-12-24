@@ -10,5 +10,5 @@ storiesOf((story) =>
     <Toggle active={boolean("active", false)} onPress={action("onPress")}>
       {text("label", "Toggle")}
     </Toggle>
-  ))
+  )),
 );

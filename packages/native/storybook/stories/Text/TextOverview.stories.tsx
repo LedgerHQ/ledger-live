@@ -20,15 +20,10 @@ const mainVariants: TextVariants[] = [
 
 const subtitleVariants: TextVariants[] = ["subtitle"];
 
-const variants: TextVariants[] = [
-  ...headerVariants,
-  ...mainVariants,
-  ...subtitleVariants,
-];
+const variants: TextVariants[] = [...headerVariants, ...mainVariants, ...subtitleVariants];
 
-const makeIsInCategory =
-  (variantsArray: TextVariants[]) => (variant: TextVariants) =>
-    variantsArray.includes(variant);
+const makeIsInCategory = (variantsArray: TextVariants[]) => (variant: TextVariants) =>
+  variantsArray.includes(variant);
 const isHeader = makeIsInCategory(headerVariants);
 const isSubtitle = makeIsInCategory(subtitleVariants);
 
@@ -46,9 +41,7 @@ const Overview = () => {
               ? ["semiBold"]
               : mainFontWeights;
             const decorationsToShow: ("none" | "underline")[] =
-              isHeader(variant) || isSubtitle(variant)
-                ? ["none"]
-                : ["none", "underline"];
+              isHeader(variant) || isSubtitle(variant) ? ["none"] : ["none", "underline"];
             return (
               <Flex flexDirection="row" mb={8}>
                 <div style={{ minWidth: 250 }}>
@@ -71,7 +64,7 @@ const Overview = () => {
                         Lend stablecoins to the Compound protocol...
                       </Text>
                     </Flex>
-                  ))
+                  )),
                 )}
               </Flex>
             );

@@ -66,12 +66,7 @@ const T = styled.View`
   align-items: center;
 `;
 
-const BracketText = ({
-  children,
-  color = "neutral.c100",
-  lineHeight,
-  ...props
-}: BaseTextProps) => {
+const BracketText = ({ children, color = "neutral.c100", lineHeight, ...props }: BaseTextProps) => {
   const size = lineHeight || getTextStyle(props).lineHeight;
   const theme = useTheme();
   const c: string = theme ? (getColor(theme, color) as string) : "transparent";

@@ -23,6 +23,4 @@ const SliderStory = () => {
   );
 };
 
-storiesOf((story) =>
-  story("Form", module).add("Slider", () => <SliderStory />)
-);
+storiesOf((story) => story("Form", module).add("Slider", () => <SliderStory />));

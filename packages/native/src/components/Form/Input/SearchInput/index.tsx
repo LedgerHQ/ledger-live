@@ -8,10 +8,7 @@ const Icon = styled(SearchMedium).attrs((p) => ({
   color: p.theme.colors.neutral.c70,
 }))``;
 
-function SearchInput(
-  props: InputProps,
-  ref?: React.ForwardedRef<TextInput>
-): JSX.Element {
+function SearchInput(props: InputProps, ref?: React.ForwardedRef<TextInput>): JSX.Element {
   return (
     <Input
       ref={ref}

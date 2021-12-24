@@ -14,13 +14,7 @@ export interface SlideProps extends TransitionProps {
 /**
  * A slide left/right transition translating its children based on their status and a given direction.
  */
-export function Slide({
-  status,
-  duration,
-  style,
-  direction = "left",
-  children,
-}: SlideProps) {
+export function Slide({ status, duration, style, direction = "left", children }: SlideProps) {
   const [width, setWidth] = useState(Dimensions.get("window").width);
   const styleRef = useRef(new Animated.Value(0)).current;
   const previousStatus = useRef<string | null>(null);
@@ -29,7 +23,7 @@ export function Slide({
     () => () => {
       previousStatus.current = status;
     },
-    [status]
+    [status],
   );
 
   const animateIn = useMemo(
@@ -39,7 +33,7 @@ export function Slide({
         duration,
         useNativeDriver: true,
       }),
-    [duration, styleRef]
+    [duration, styleRef],
   );
 
   const animateOut = useMemo(
@@ -49,7 +43,7 @@ export function Slide({
         duration,
         useNativeDriver: true,
       }),
-    [direction, duration, styleRef]
+    [direction, duration, styleRef],
   );
 
   useEffect(() => {

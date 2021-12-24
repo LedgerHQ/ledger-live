@@ -48,11 +48,7 @@ export default styled(Svg).attrs((props) => ({
 `;
 
 // Component template
-function reactTemplate(
-  { template },
-  _,
-  { imports, interfaces, componentName, __, jsx, exports }
-) {
+function reactTemplate({ template }, _, { imports, interfaces, componentName, __, jsx, exports }) {
   const plugins = ["typescript"];
   const tpl = template.smart({ plugins });
 
@@ -76,7 +72,7 @@ function reactTemplate(
 function reactNativeTemplate(
   { template },
   _,
-  { imports, interfaces, componentName, __, jsx, exports }
+  { imports, interfaces, componentName, __, jsx, exports },
 ) {
   const plugins = ["typescript"];
   const tpl = template.smart({ plugins });
@@ -106,10 +102,7 @@ const convert = (svg, options, componentName, outputFile) => {
         .replace("import Svg,", "import ");
 
       if (!options.native)
-        component = component.replace(
-          /(<\s*\/?\s*)svg(\s*([^>]*)?\s*>)/gi,
-          "$1Svg$2"
-        );
+        component = component.replace(/(<\s*\/?\s*)svg(\s*([^>]*)?\s*>)/gi, "$1Svg$2");
 
       fs.writeFileSync(outputFile, component, "utf-8");
     })
@@ -127,16 +120,8 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
     encoding: "utf-8",
   });
 
-  fs.writeFileSync(
-    `${reactDir}/StyledSvg.ts`,
-    reactSvgStyledComponent,
-    "utf-8"
-  );
-  fs.writeFileSync(
-    `${nativeDir}/StyledSvg.ts`,
-    reactNativeSvgStyledComponent,
-    "utf-8"
-  );
+  fs.writeFileSync(`${reactDir}/StyledSvg.ts`, reactSvgStyledComponent, "utf-8");
+  fs.writeFileSync(`${nativeDir}/StyledSvg.ts`, reactNativeSvgStyledComponent, "utf-8");
 
   // Extract the icon weight
   icons.forEach((icon) => {
@@ -173,14 +158,14 @@ glob(`${rootDir}/svg/**/*.svg`, (err, icons) => {
       svg,
       { ...options, template: reactTemplate },
       { componentName: name },
-      `${reactDir}/${name}.tsx`
+      `${reactDir}/${name}.tsx`,
     );
 
     convert(
       svg,
       { ...options, native: true, template: reactNativeTemplate },
       { componentName: name },
-      `${nativeDir}/${name}.tsx`
+      `${nativeDir}/${name}.tsx`,
     );
   });
 });

@@ -211,10 +211,7 @@ export default function App() {
         <Text variant="h2" color="neutral.c100" my={10}>
           Hello, world!
         </Text>
-        <Switch
-          checked={isLight}
-          onChange={() => setPalette(() => (isLight ? "dark" : "light"))}
-        />
+        <Switch checked={isLight} onChange={() => setPalette(() => (isLight ? "dark" : "light"))} />
       </Flex>
     </StyleProvider>
   );

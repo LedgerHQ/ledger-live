@@ -2,14 +2,7 @@ import React, { useCallback } from "react";
 import styled from "styled-components/native";
 import RnRangeSlider from "rn-range-slider";
 import Text from "../../Text";
-import {
-  Label,
-  MinMaxTextContainer,
-  Notch,
-  Rail,
-  RailSelected,
-  Thumb,
-} from "./components";
+import { Label, MinMaxTextContainer, Notch, Rail, RailSelected, Thumb } from "./components";
 
 export type SliderProps = {
   step: number;

@@ -1,11 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { View } from "react-native";
 import styled from "styled-components/native";
-import Animated, {
-  useAnimatedStyle,
-  interpolate,
-  Extrapolate,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, interpolate, Extrapolate } from "react-native-reanimated";
 
 import Flex from "../Flex";
 
@@ -58,37 +54,35 @@ const Header = ({
   }, []);
 
   const MiddleStyle = useAnimatedStyle(() => {
-    const scaleRatio = middleWidth
-      ? Math.min(topMiddleWidth / middleWidth, 0.9)
-      : 0.7;
+    const scaleRatio = middleWidth ? Math.min(topMiddleWidth / middleWidth, 0.9) : 0.7;
 
     /** scale the animated content to fit in the available space on the top header section */
     const scale = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [1, scaleRatio],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
     /** translate verticaly to the middle of the top header section */
     const translateY = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -topSectionHeight + topSectionHeight / 2],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
     /** offset horizontaly given the scale transformation and potential top left header section */
     const translateX = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -(topSectionWidth - topMiddleWidth) / 2 + topLeftWidth],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
     /** allow for content to move upward as animation is taking place */
     const maxHeight = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [70, 0],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {
@@ -96,13 +90,7 @@ const Header = ({
       transform: [{ translateY }, { translateX }, { scale }],
       justifyContent: "center", // needed to ensure vertical centering of animated content
     };
-  }, [
-    topLeftWidth,
-    topSectionHeight,
-    middleWidth,
-    topMiddleWidth,
-    topSectionWidth,
-  ]);
+  }, [topLeftWidth, topSectionHeight, middleWidth, topMiddleWidth, topSectionWidth]);
 
   return (
     <Container>
@@ -116,10 +104,7 @@ const Header = ({
         <Flex flex={1} onLayout={onLayoutTopMiddle} />
         {TopRightSection}
       </Flex>
-      <Animated.View
-        onLayout={middleWidth ? () => {} : onLayoutMiddle}
-        style={MiddleStyle}
-      >
+      <Animated.View onLayout={middleWidth ? () => {} : onLayoutMiddle} style={MiddleStyle}>
         {MiddleSection}
       </Animated.View>
       {BottomSection ? <Flex>{BottomSection}</Flex> : null}

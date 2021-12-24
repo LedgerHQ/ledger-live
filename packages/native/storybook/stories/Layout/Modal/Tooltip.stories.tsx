@@ -24,6 +24,4 @@ const TooltipStory = () => {
   );
 };
 
-storiesOf((story) =>
-  story("Layout/Modal", module).add("Tooltip", TooltipStory)
-);
+storiesOf((story) => story("Layout/Modal", module).add("Tooltip", TooltipStory));

@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Animated,
-  ScrollView,
-  StyleSheet,
-  ImageSourcePropType,
-  Platform,
-} from "react-native";
+import { Animated, ScrollView, StyleSheet, ImageSourcePropType, Platform } from "react-native";
 import { number } from "@storybook/addon-knobs";
 import { storiesOf } from "../storiesOf";
 import { RenderTransitionProps } from "../../../src/components/Navigation/FlowStepper";
@@ -266,16 +260,8 @@ const renderTransition = ({
 /* Helpers */
 
 const transitionStyles = [StyleSheet.absoluteFill, { flex: 1 }];
-const renderTransitionFade = ({
-  status,
-  duration,
-  children,
-}: RenderTransitionProps) => (
-  <Transitions.Fade
-    status={status}
-    duration={duration}
-    style={transitionStyles}
-  >
+const renderTransitionFade = ({ status, duration, children }: RenderTransitionProps) => (
+  <Transitions.Fade status={status} duration={duration} style={transitionStyles}>
     {children}
   </Transitions.Fade>
 );
@@ -325,7 +311,7 @@ const ImageHeader = ({
         duration: transitionDuration,
         useNativeDriver: true,
       }),
-    [fadeAnim]
+    [fadeAnim],
   );
 
   const fadeOut = React.useMemo(
@@ -335,7 +321,7 @@ const ImageHeader = ({
         duration: transitionDuration,
         useNativeDriver: true,
       }),
-    [fadeAnim]
+    [fadeAnim],
   );
 
   React.useEffect(() => {
@@ -365,13 +351,7 @@ const ImageHeader = ({
           style={{ flex: 1, margin: 30, marginTop: 0, opacity: fadeAnim }}
         />
       ) : (
-        <Flex
-          flex={1}
-          mb={30}
-          mx={8}
-          justifyContent="center"
-          alignItems="center"
-        >
+        <Flex flex={1} mb={30} mx={8} justifyContent="center" alignItems="center">
           <Animated.Image
             source={source}
             resizeMode="contain"
@@ -383,19 +363,8 @@ const ImageHeader = ({
   );
 };
 
-const BodyItem = ({
-  title,
-  onNext,
-}: {
-  title: string;
-  onNext?: () => void;
-}): JSX.Element => (
-  <Flex
-    flex={1}
-    p={8}
-    backgroundColor="neutral.c00"
-    justifyContent="space-between"
-  >
+const BodyItem = ({ title, onNext }: { title: string; onNext?: () => void }): JSX.Element => (
+  <Flex flex={1} p={8} backgroundColor="neutral.c00" justifyContent="space-between">
     <Flex flex={1}>
       <Text variant="h2" style={{ textTransform: "capitalize" }}>
         {title}
@@ -421,9 +390,7 @@ const Demo = (): JSX.Element => {
         header={ImageHeader}
         footer={() => (
           <Flex mb={4} flexDirection="row" justifyContent="center">
-            <Text variant="tiny">
-              Copyright © Ledger SAS. All rights reserved.
-            </Text>
+            <Text variant="tiny">Copyright © Ledger SAS. All rights reserved.</Text>
           </Flex>
         )}
         extraProps={{
@@ -443,12 +410,7 @@ const Demo = (): JSX.Element => {
 /* Minimal example */
 
 const Item = ({ label }: { label: string }) => (
-  <Flex
-    flex={1}
-    alignItems="center"
-    justifyContent="center"
-    backgroundColor={`${label}.c50`}
-  >
+  <Flex flex={1} alignItems="center" justifyContent="center" backgroundColor={`${label}.c50`}>
     <Text variant="h2" style={{ textTransform: "capitalize" }}>
       {label}
     </Text>
@@ -469,12 +431,7 @@ const Header = ({ activeIndex }: { activeIndex: number }) => {
       ? "Five"
       : "";
   return (
-    <Flex
-      height={100}
-      backgroundColor="primary.c80"
-      justifyContent="center"
-      alignItems="center"
-    >
+    <Flex height={100} backgroundColor="primary.c80" justifyContent="center" alignItems="center">
       <Text variant="h2" color="neutral.c00">
         {label}
       </Text>
@@ -569,12 +526,8 @@ const TransitionPreset = (): JSX.Element => {
         </Flex>
       </Flex>
       <Flex flexDirection="row" justifyContent="space-around">
-        <Button onPress={() => setIndex((i) => Math.max(0, (i || 0) - 1))}>
-          -
-        </Button>
-        <Button onPress={() => setIndex((i) => Math.min(4, (i || 0) + 1))}>
-          +
-        </Button>
+        <Button onPress={() => setIndex((i) => Math.max(0, (i || 0) - 1))}>-</Button>
+        <Button onPress={() => setIndex((i) => Math.min(4, (i || 0) + 1))}>+</Button>
       </Flex>
     </Flex>
   );
@@ -680,15 +633,8 @@ const CustomTransition = (): JSX.Element => {
 \`\`\`
 `;
 
-function TransitionComponent({
-  status,
-  duration,
-  style,
-  children,
-}: RenderTransitionProps) {
-  const animateRef = React.useRef(
-    new Animated.Value(status === "entered" ? 1 : 0)
-  ).current;
+function TransitionComponent({ status, duration, style, children }: RenderTransitionProps) {
+  const animateRef = React.useRef(new Animated.Value(status === "entered" ? 1 : 0)).current;
 
   const animateIn = React.useMemo(
     () =>
@@ -697,7 +643,7 @@ function TransitionComponent({
         duration,
         useNativeDriver: true,
       }),
-    [duration, animateRef]
+    [duration, animateRef],
   );
 
   const animateOut = React.useMemo(
@@ -707,7 +653,7 @@ function TransitionComponent({
         duration,
         useNativeDriver: true,
       }),
-    [duration, animateRef]
+    [duration, animateRef],
   );
 
   React.useEffect(() => {
@@ -762,10 +708,7 @@ const CustomTransition = (): JSX.Element => {
       <FlowStepper
         activeIndex={index}
         renderTransition={(props: RenderTransitionProps) => (
-          <TransitionComponent
-            {...props}
-            style={[StyleSheet.absoluteFill, { flex: 1 }]}
-          />
+          <TransitionComponent {...props} style={[StyleSheet.absoluteFill, { flex: 1 }]} />
         )}
         transitionDuration={1000}
       >
@@ -776,12 +719,8 @@ const CustomTransition = (): JSX.Element => {
         <Item label="error" />
       </FlowStepper>
       <Flex flexDirection="row" justifyContent="space-around">
-        <Button onPress={() => setIndex((i) => Math.max(0, (i || 0) - 1))}>
-          -
-        </Button>
-        <Button onPress={() => setIndex((i) => Math.min(4, (i || 0) + 1))}>
-          +
-        </Button>
+        <Button onPress={() => setIndex((i) => Math.max(0, (i || 0) - 1))}>-</Button>
+        <Button onPress={() => setIndex((i) => Math.min(4, (i || 0) + 1))}>+</Button>
       </Flex>
     </Flex>
   );
@@ -816,5 +755,5 @@ storiesOf((story) =>
           story: customTransitionDescription,
         },
       },
-    })
+    }),
 );

@@ -38,8 +38,7 @@ const Default = (): JSX.Element => {
   const [_index, setIndex] = React.useState<number | null>(null);
   const index = _index ?? number("index", 1);
 
-  const add = () =>
-    setIndex((_index) => Math.min((_index ?? index) + 1, length - 1));
+  const add = () => setIndex((_index) => Math.min((_index ?? index) + 1, length - 1));
   const remove = () => setIndex((_index) => Math.max((_index ?? index) - 1, 0));
 
   return (
@@ -47,14 +46,7 @@ const Default = (): JSX.Element => {
       <Flex width={300}>
         <ProgressBar index={index} length={length} />
       </Flex>
-      <Flex
-        mt={8}
-        borderWidth={1}
-        p={8}
-        alignItems="center"
-        borderColor="neutral.c50"
-        width={300}
-      >
+      <Flex mt={8} borderWidth={1} p={8} alignItems="center" borderColor="neutral.c50" width={300}>
         <Text variant="h2" mb={2}>
           Controls
         </Text>
@@ -78,5 +70,5 @@ storiesOf((story) =>
         component: description,
       },
     },
-  })
+  }),
 );

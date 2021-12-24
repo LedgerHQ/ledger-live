@@ -1,8 +1,6 @@
 const path = require("path");
 const monoRepoRoot = path.resolve(__dirname, "..", "..");
-const blockList = new RegExp(
-  `^(${__dirname}/lib/.*|${monoRepoRoot}/packages/react/.*)`
-);
+const blockList = new RegExp(`^(${__dirname}/lib/.*|${monoRepoRoot}/packages/react/.*)`);
 
 module.exports = {
   watchFolders: [monoRepoRoot],

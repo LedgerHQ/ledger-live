@@ -16,8 +16,7 @@ const IconBoxListStory = () => {
         },
         {
           title: "Validate Word #1...",
-          description:
-            "Choose Word #1 from the suggestions. tPress both buttons to validate.",
+          description: "Choose Word #1 from the suggestions. tPress both buttons to validate.",
           Icon: Icons.EyeNoneMedium,
         },
         {
@@ -31,13 +30,11 @@ const IconBoxListStory = () => {
           "Align items",
           ["flex-start", "flex-end", "center", "baseline", "stretch"],
           "center",
-          "Layout"
+          "Layout",
         ),
       }}
     />
   );
 };
 
-storiesOf((story) =>
-  story("Layout/List", module).add("IconBoxList", () => <IconBoxListStory />)
-);
+storiesOf((story) => story("Layout/List", module).add("IconBoxList", () => <IconBoxListStory />));

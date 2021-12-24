@@ -86,5 +86,5 @@ storiesOf((story) =>
     <FlexBox flexDirection="column" width={"100%"}>
       <ARow />
     </FlexBox>
-  ))
+  )),
 );

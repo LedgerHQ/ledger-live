@@ -28,7 +28,7 @@ function QrCodeInput(
   }: InputProps & {
     onQrCodeClick?: (event: GestureResponderEvent) => void;
   },
-  ref?: React.ForwardedRef<TextInput>
+  ref?: React.ForwardedRef<TextInput>,
 ): JSX.Element {
   return (
     <Input

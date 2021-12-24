@@ -28,12 +28,7 @@ const Square = styled(Flex).attrs({
       : `border: 1px solid ${theme.colors.neutral.c50};`}
 `;
 
-const Checkbox = ({
-  checked,
-  onChange,
-  disabled,
-  label,
-}: CheckboxProps): JSX.Element => {
+const Checkbox = ({ checked, onChange, disabled, label }: CheckboxProps): JSX.Element => {
   const { colors, space } = useTheme();
 
   return (

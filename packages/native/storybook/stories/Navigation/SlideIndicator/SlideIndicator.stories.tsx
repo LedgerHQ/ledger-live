@@ -15,6 +15,4 @@ const SideIndicatorSample = () => {
   );
 };
 
-storiesOf((story) =>
-  story("Navigation", module).add("SlideIndicator", SideIndicatorSample)
-);
+storiesOf((story) => story("Navigation", module).add("SlideIndicator", SideIndicatorSample));

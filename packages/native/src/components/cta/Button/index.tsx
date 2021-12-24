@@ -1,15 +1,8 @@
 import React, { useCallback, useState } from "react";
 import styled, { useTheme } from "styled-components/native";
 
-import {
-  ActivityIndicator,
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "react-native";
-import {
-  buttonSizeStyle,
-  getButtonColorStyle,
-} from "../../cta/Button/getButtonStyle";
+import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { buttonSizeStyle, getButtonColorStyle } from "../../cta/Button/getButtonStyle";
 import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
 import Text from "../../Text";
 import baseStyled, { BaseStyledProps } from "../../styled";
@@ -31,11 +24,7 @@ const IconContainer = styled.View<{
   iconButton?: boolean;
 }>`
   ${(p) =>
-    p.iconButton
-      ? ""
-      : p.iconPosition === "left"
-      ? `margin-right: 10px;`
-      : `margin-left: 10px;`}
+    p.iconButton ? "" : p.iconPosition === "left" ? `margin-right: 10px;` : `margin-left: 10px;`}
 `;
 
 export const Base = baseStyled(TouchableOpacity).attrs<ButtonProps>((p) => ({
@@ -87,26 +76,14 @@ const SpinnerContainer = styled.View`
   justify-content: center;
 `;
 
-const ButtonContainer = (
-  props: ButtonProps & { hide?: boolean }
-): React.ReactElement => {
-  const {
-    Icon,
-    iconPosition = "right",
-    children,
-    hide = false,
-    size = "medium",
-  } = props;
+const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactElement => {
+  const { Icon, iconPosition = "right", children, hide = false, size = "medium" } = props;
   const theme = useTheme();
   const { text } = getButtonColorStyle(theme.colors, props);
   return (
     <Container hide={hide}>
       {iconPosition === "right" && children ? (
-        <Text
-          variant={ctaTextType[size]}
-          fontWeight={"semiBold"}
-          color={text.color}
-        >
+        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={text.color}>
           {children}
         </Text>
       ) : null}
@@ -116,11 +93,7 @@ const ButtonContainer = (
         </IconContainer>
       ) : null}
       {iconPosition === "left" && children ? (
-        <Text
-          variant={ctaTextType[size]}
-          fontWeight={"semiBold"}
-          color={text.color}
-        >
+        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={text.color}>
           {children}
         </Text>
       ) : null}
@@ -131,12 +104,7 @@ const ButtonContainer = (
 const Button = (props: ButtonProps): React.ReactElement => {
   const { Icon, children, type = "default" } = props;
   return (
-    <Base
-      {...props}
-      type={type}
-      iconButton={!!Icon && !children}
-      activeOpacity={0.5}
-    >
+    <Base {...props} type={type} iconButton={!!Icon && !children} activeOpacity={0.5}>
       <ButtonContainer {...props} type={type} />
     </Base>
   );
@@ -158,7 +126,7 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
         setSpinnerOn(false);
       }
     },
-    [onPress]
+    [onPress],
   );
 
   return (
@@ -171,10 +139,7 @@ export const PromisableButton = (props: ButtonProps): React.ReactElement => {
     >
       <ButtonContainer {...props} type={type} hide={spinnerOn} />
       <SpinnerContainer>
-        <ActivityIndicator
-          color={theme.colors.neutral.c50}
-          animating={spinnerOn}
-        />
+        <ActivityIndicator color={theme.colors.neutral.c50} animating={spinnerOn} />
       </SpinnerContainer>
     </Base>
   );

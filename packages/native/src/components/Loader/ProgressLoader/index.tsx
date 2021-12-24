@@ -21,11 +21,7 @@ const circumference = normalizedRadius * 2 * Math.PI;
 const iconSize = radius * 0.88;
 const iconOffset = radius - iconSize / 2;
 
-const ProgressLoader = ({
-  progress = 0,
-  onPress,
-  Icon,
-}: Props): React.ReactElement => {
+const ProgressLoader = ({ progress = 0, onPress, Icon }: Props): React.ReactElement => {
   const { colors } = useTheme();
   const backgroundColor = colors.primary.c20;
   const progressColor = colors.primary.c90;

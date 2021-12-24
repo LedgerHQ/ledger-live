@@ -10,17 +10,12 @@ const TabBox = styled(TouchableOpacity)<{ isActive: boolean }>`
   flex: 1;
   padding: ${(p) => p.theme.space[5]}px 0;
   border-radius: 8px;
-  background-color: ${(p) =>
-    p.isActive ? p.theme.colors.palette.primary.c20 : "transparent"};
+  background-color: ${(p) => (p.isActive ? p.theme.colors.palette.primary.c20 : "transparent")};
 `;
 
 const StyledTabs = styled(TemplateTabs)``;
 
-export const ChipTab = ({
-  onPress,
-  isActive,
-  label,
-}: TabItemProps): React.ReactElement => {
+export const ChipTab = ({ onPress, isActive, label }: TabItemProps): React.ReactElement => {
   return (
     <TabBox isActive={isActive} onPress={onPress}>
       <Text

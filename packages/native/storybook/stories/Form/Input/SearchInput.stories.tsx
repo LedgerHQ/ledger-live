@@ -7,15 +7,7 @@ const SearchInputStory = (): JSX.Element => {
 
   const onChange = (value: string) => setValue(value);
 
-  return (
-    <SearchInput
-      value={value}
-      onChange={onChange}
-      placeholder={"Placeholder"}
-    />
-  );
+  return <SearchInput value={value} onChange={onChange} placeholder={"Placeholder"} />;
 };
 
-storiesOf((story) =>
-  story("Form/Input", module).add("SearchInput", SearchInputStory)
-);
+storiesOf((story) => story("Form/Input", module).add("SearchInput", SearchInputStory));

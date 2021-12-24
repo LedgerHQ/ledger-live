@@ -1,10 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import {
-  Platform,
-  ScrollView,
-  ViewProps,
-  NativeScrollEvent,
-} from "react-native";
+import { Platform, ScrollView, ViewProps, NativeScrollEvent } from "react-native";
 import styled from "styled-components/native";
 import { Flex, SlideIndicator } from "../index";
 import type { Props as FlexboxProps } from "../Layout/Flex";
@@ -70,9 +65,7 @@ function Carousel({
   const scrollRef = useRef<ScrollView | null>(null);
 
   const fullWidth = 100 * slidesLength;
-  const itemWidth = !dimensions.current
-    ? 0
-    : dimensions.current.contentWidth / slidesLength;
+  const itemWidth = !dimensions.current ? 0 : dimensions.current.contentWidth / slidesLength;
 
   const scrollToIndex = useCallback(
     (index, animated = true) => {
@@ -83,7 +76,7 @@ function Carousel({
         });
       }
     },
-    [itemWidth]
+    [itemWidth],
   );
 
   useEffect(() => {
@@ -109,9 +102,7 @@ function Carousel({
   }: {
     nativeEvent: NativeScrollEvent;
   }) => {
-    const newIndex = Math.abs(
-      Math.round((contentOffset.x / contentSize.width) * slidesLength)
-    );
+    const newIndex = Math.abs(Math.round((contentOffset.x / contentSize.width) * slidesLength));
     setActiveIndexState(newIndex);
     onChange && onChange(newIndex);
   };
@@ -122,8 +113,7 @@ function Carousel({
     const interval = setInterval(() => {
       if (!disableTimer.current) {
         setActiveIndexState((index) => {
-          const newIndex =
-            typeof index !== "undefined" ? (index + 1) % slidesLength : 0;
+          const newIndex = typeof index !== "undefined" ? (index + 1) % slidesLength : 0;
           scrollToIndex(newIndex);
           onChange && onChange(newIndex);
           return newIndex;
@@ -135,13 +125,7 @@ function Carousel({
   }, [resetTimer, slidesLength, scrollToIndex, onChange, autoDelay]);
 
   return (
-    <Flex
-      flex={1}
-      width="100%"
-      alignItems="center"
-      justifyContent="center"
-      {...containerProps}
-    >
+    <Flex flex={1} width="100%" alignItems="center" justifyContent="center" {...containerProps}>
       <HorizontalScrollView
         ref={scrollRef}
         onScroll={onScroll}

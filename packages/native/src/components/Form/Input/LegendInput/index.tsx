@@ -5,7 +5,7 @@ import Text from "../../../Text";
 
 function LegendInput(
   { legend, ...inputProps }: InputProps & { legend: string },
-  ref?: React.ForwardedRef<TextInput>
+  ref?: React.ForwardedRef<TextInput>,
 ): JSX.Element {
   return (
     <Input

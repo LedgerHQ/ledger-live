@@ -23,10 +23,7 @@ import { InfiniteLoader } from "@ledgerhq/native-ui"
 
 const InfiniteLoaderSample = () => (
   <Flex background={"red"} height={"100px"} flex={1} flexDirection={"row"}>
-    <InfiniteLoader
-      size={number("length", 38)}
-      color={color("color", "primary.c50")}
-    />
+    <InfiniteLoader size={number("length", 38)} color={color("color", "primary.c50")} />
   </Flex>
 );
 
@@ -38,5 +35,5 @@ storiesOf((story) =>
         component: description,
       },
     },
-  })
+  }),
 );

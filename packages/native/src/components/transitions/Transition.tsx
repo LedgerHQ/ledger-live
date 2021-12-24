@@ -55,17 +55,12 @@ export function Transition({
   exit = true,
   children,
 }: Props) {
-  const [status, setStatus] = useState<TransitionStatus>(
-    inValue ? "entered" : "exited"
-  );
+  const [status, setStatus] = useState<TransitionStatus>(inValue ? "entered" : "exited");
   const canMount = useRef(!mountOnEnter);
   canMount.current = canMount.current || inValue;
 
   useEffect(() => {
-    if (
-      (inValue && status === "entered") ||
-      (!inValue && status === "exited")
-    ) {
+    if ((inValue && status === "entered") || (!inValue && status === "exited")) {
       return;
     }
 
@@ -78,9 +73,7 @@ export function Transition({
     }
 
     const timeoutValue =
-      typeof timeout === "number"
-        ? timeout
-        : timeout[inValue ? "enter" : "exit"];
+      typeof timeout === "number" ? timeout : timeout[inValue ? "enter" : "exit"];
     setStatus(inValue ? "entering" : "exiting");
     const timeoutRef = setTimeout(() => {
       setStatus(inValue ? "entered" : "exited");

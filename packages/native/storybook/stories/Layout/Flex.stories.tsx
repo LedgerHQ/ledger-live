@@ -9,13 +9,13 @@ const FlexStory = () => {
     "Align items",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],
     "flex-start",
-    "Layout"
+    "Layout",
   );
   const flexDirection = select(
     "Direction",
     ["row", "row-reverse", "column", "column-reverse"],
     "column",
-    "Layout"
+    "Layout",
   );
   const justifyContent = select(
     "Justify Content",
@@ -29,7 +29,7 @@ const FlexStory = () => {
       undefined,
     ],
     "flex-start",
-    "Layout"
+    "Layout",
   );
   const background = text("Background", "", "Layout");
   const flexBasis = text("FlexBasis", "auto", "Layout");
@@ -63,13 +63,13 @@ const FlexStoryTwo = () => {
     "AlignItems",
     ["flex-start", "flex-end", "center", "baseline", "stretch"],
     "flex-start",
-    "Layout"
+    "Layout",
   );
   const flexDirection = select(
     "FlexDirection",
     ["row", "row-reverse", "column", "column-reverse"],
     "column",
-    "Layout"
+    "Layout",
   );
   const justifyContent = select(
     "Justify Content",
@@ -83,7 +83,7 @@ const FlexStoryTwo = () => {
       undefined,
     ],
     "flex-start",
-    "Layout"
+    "Layout",
   );
   const background = text("Background", "", "Layout");
   const flexBasis = text("FlexBasis", "auto", "Layout");
@@ -122,5 +122,5 @@ const FlexStoryTwo = () => {
 storiesOf((story) =>
   story("Layout/Flex", module)
     .add("Flex One", () => <FlexStory />)
-    .add("Flex Two", () => <FlexStoryTwo />)
+    .add("Flex Two", () => <FlexStoryTwo />),
 );

@@ -15,7 +15,9 @@ export const decorators = [
         <style> {`body { padding: 0!important;}`}</style>
         <StyleProvider selectedPalette={theme}>
           <FontProvider>
-            <Main><Story /></Main>
+            <Main>
+              <Story />
+            </Main>
           </FontProvider>
         </StyleProvider>
       </div>

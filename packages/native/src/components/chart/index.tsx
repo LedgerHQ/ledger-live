@@ -92,11 +92,7 @@ const Chart = ({
         <Defs>
           <LinearGradient id="chartGradient" x1="0.5" x2="0.5" y1="0" y2="1">
             <Stop stopColor={hex(color)} stopOpacity="0.11" />
-            <Stop
-              offset="1"
-              stopColor={hex(theme.colors.neutral.c00)}
-              stopOpacity="0"
-            />
+            <Stop offset="1" stopColor={hex(theme.colors.neutral.c00)} stopOpacity="0" />
           </LinearGradient>
         </Defs>
         <VictoryArea

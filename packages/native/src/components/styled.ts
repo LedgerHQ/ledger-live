@@ -1,7 +1,4 @@
-import styled, {
-  ReactNativeStyledInterface,
-  DefaultTheme,
-} from "styled-components/native";
+import styled, { ReactNativeStyledInterface, DefaultTheme } from "styled-components/native";
 
 import {
   compose,
@@ -48,15 +45,11 @@ export const baseStyles: InterpolationFunction<unknown> = compose(
   layout,
   overflow,
   border,
-  background
+  background,
 );
 
 const proxyStyled = new Proxy(styled, {
-  apply(
-    target: typeof styled,
-    thisArg,
-    argumentsList: Parameters<typeof styled>
-  ) {
+  apply(target: typeof styled, thisArg, argumentsList: Parameters<typeof styled>) {
     return styled(target.apply(thisArg, argumentsList)(baseStyles));
   },
   get(target, property: keyof typeof styled) {

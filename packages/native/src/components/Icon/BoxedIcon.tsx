@@ -101,8 +101,7 @@ const IconBoxBackgroundSVG = ({
   // @ts-expect-error idk how to handle this properly pls help
   const palette = colors[paletteStr];
   const strokeColor =
-    (palette ? palette[borderColor.split(".")[1]] : borderColor) ||
-    colors.neutral.c40;
+    (palette ? palette[borderColor.split(".")[1]] : borderColor) || colors.neutral.c40;
 
   const squareSize = getClipRectangleSize(badgeSize);
 
@@ -119,18 +118,8 @@ const IconBoxBackgroundSVG = ({
       <Svg height={svgSize} width={svgSize}>
         <Defs>
           <ClipPath id="clip">
-            <Rect
-              x="0"
-              y="0"
-              width={svgSize - squareSize}
-              height={squareSize}
-            />
-            <Rect
-              x="0"
-              y={squareSize}
-              width={"100%"}
-              height={svgSize - squareSize}
-            />
+            <Rect x="0" y="0" width={svgSize - squareSize} height={squareSize} />
+            <Rect x="0" y={squareSize} width={"100%"} height={svgSize - squareSize} />
           </ClipPath>
         </Defs>
         <Rect
@@ -162,17 +151,9 @@ export const IconBox = ({
   return (
     <Container size={size}>
       {hasBadge ? (
-        <IconBoxBackgroundSVG
-          size={size}
-          badgeSize={badgeSize}
-          borderColor={borderColor}
-        />
+        <IconBoxBackgroundSVG size={size} badgeSize={badgeSize} borderColor={borderColor} />
       ) : (
-        <IconBoxBackground
-          border="1px solid"
-          size={size}
-          borderColor={borderColor}
-        />
+        <IconBoxBackground border="1px solid" size={size} borderColor={borderColor} />
       )}
       {children}
       {hasBadge && (

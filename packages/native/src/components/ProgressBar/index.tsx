@@ -1,11 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import Flex, { FlexBoxProps } from "../Layout/Flex";
-import Animated, {
-  useDerivedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useDerivedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 
 export interface Props extends FlexBoxProps {
   /**
@@ -28,23 +24,14 @@ const ActiveBar = styled.View`
 const AnimatedBar = Animated.createAnimatedComponent(ActiveBar);
 
 function ProgressBar({ index, length, ...props }: Props) {
-  const width = useDerivedValue(
-    () => Math.round((index / (length - 1)) * 100),
-    [index, length]
-  );
+  const width = useDerivedValue(() => Math.round((index / (length - 1)) * 100), [index, length]);
 
   const animatedStyles = useAnimatedStyle(() => ({
     width: withTiming(`${width.value}%`),
   }));
 
   return (
-    <Flex
-      height={4}
-      width="100%"
-      backgroundColor="neutral.c20"
-      position="relative"
-      {...props}
-    >
+    <Flex height={4} width="100%" backgroundColor="neutral.c20" position="relative" {...props}>
       <AnimatedBar style={[animatedStyles]} />
     </Flex>
   );

@@ -14,10 +14,7 @@ declare module "styled-components" {
   export interface DefaultTheme extends Theme {}
 }
 
-export const StyleProvider = ({
-  children,
-  selectedPalette,
-}: Props): React.ReactElement => {
+export const StyleProvider = ({ children, selectedPalette }: Props): React.ReactElement => {
   const theme: Theme = useMemo(
     () => ({
       ...defaultTheme,
@@ -28,7 +25,7 @@ export const StyleProvider = ({
       },
       theme: selectedPalette,
     }),
-    [selectedPalette]
+    [selectedPalette],
   );
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;

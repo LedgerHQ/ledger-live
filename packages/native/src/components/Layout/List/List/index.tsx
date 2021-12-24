@@ -41,12 +41,7 @@ export const ListItem = ({
           </Text>
         )}
         {description && (
-          <Text
-            variant={"body"}
-            fontWeight={"medium"}
-            color={"neutral.c80"}
-            flexShrink={1}
-          >
+          <Text variant={"body"} fontWeight={"medium"} color={"neutral.c80"} flexShrink={1}>
             {description}
           </Text>
         )}
@@ -64,7 +59,7 @@ export default function List({
     ({ item }: { item: BaseListItemProps }) => (
       <ListItem {...item} mb={6} pb={2} {...itemContainerProps} />
     ),
-    [itemContainerProps]
+    [itemContainerProps],
   );
 
   return (

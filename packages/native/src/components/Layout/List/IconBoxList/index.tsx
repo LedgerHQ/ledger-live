@@ -11,17 +11,14 @@ export type IconBoxListProps = Omit<BaseListProps, "items"> & {
   items: IconBoxListItemProps[];
 };
 
-export default function IconBoxList({
-  items,
-  ...props
-}: IconBoxListProps): React.ReactElement {
+export default function IconBoxList({ items, ...props }: IconBoxListProps): React.ReactElement {
   const iconBoxItems = useMemo(
     () =>
       items.map((item) => ({
         ...item,
         bullet: <IconBox Icon={item.Icon} boxSize={48} iconSize={20} />,
       })),
-    [items]
+    [items],
   );
   return <List items={iconBoxItems} {...props} />;
 }

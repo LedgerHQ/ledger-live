@@ -33,6 +33,4 @@ const NumberInputStory = () => {
   );
 };
 
-storiesOf((story) =>
-  story("Form/Input", module).add("NumberInput", NumberInputStory)
-);
+storiesOf((story) => story("Form/Input", module).add("NumberInput", NumberInputStory));

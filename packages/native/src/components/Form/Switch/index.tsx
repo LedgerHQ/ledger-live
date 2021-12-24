@@ -11,12 +11,7 @@ type SwitchProps = {
   label?: string;
 };
 
-const Switch = ({
-  checked,
-  onChange,
-  disabled,
-  label,
-}: SwitchProps): JSX.Element => {
+const Switch = ({ checked, onChange, disabled, label }: SwitchProps): JSX.Element => {
   const { colors, space } = useTheme();
 
   return (

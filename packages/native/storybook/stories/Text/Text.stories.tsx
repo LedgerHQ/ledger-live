@@ -23,17 +23,13 @@ storiesOf((story) =>
           "subtitle",
           "tiny",
         ],
-        "h1"
+        "h1",
       )}
-      fontWeight={select(
-        "fontWeight",
-        ["medium", "semiBold", "bold"],
-        "medium"
-      )}
+      fontWeight={select("fontWeight", ["medium", "semiBold", "bold"], "medium")}
       color={select("color", ["primary.c100", "neutral.c100"], "neutral.c100")}
       bracket={boolean("bracket", false)}
     >
       {text("label", "Ledger")}
     </Text>
-  ))
+  )),
 );

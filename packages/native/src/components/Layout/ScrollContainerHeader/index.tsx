@@ -1,9 +1,6 @@
 import React from "react";
 import type { ScrollViewProps } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 
 import Header from "./Header";
 import type { HeaderProps } from "./Header";

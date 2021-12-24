@@ -11,10 +11,7 @@ export type NumberedListProps = Omit<BaseListProps, "items"> & {
   items: NumberedListItemProps[];
 };
 
-export default function NumberedList({
-  items,
-  ...props
-}: NumberedListProps): React.ReactElement {
+export default function NumberedList({ items, ...props }: NumberedListProps): React.ReactElement {
   const numberedItems = useMemo(
     () =>
       items.map((item, index) => ({
@@ -22,11 +19,7 @@ export default function NumberedList({
         bullet: (
           <IconBox
             Icon={
-              <Text
-                variant={"body"}
-                fontWeight={"medium"}
-                color={"neutral.c100"}
-              >
+              <Text variant={"body"} fontWeight={"medium"} color={"neutral.c100"}>
                 {item.number ? item.number : index}
               </Text>
             }
@@ -34,7 +27,7 @@ export default function NumberedList({
           />
         ),
       })),
-    [items]
+    [items],
   );
   return <List items={numberedItems} {...props} />;
 }

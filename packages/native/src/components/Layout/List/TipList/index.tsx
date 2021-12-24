@@ -11,10 +11,7 @@ export type TipListProps = Omit<BaseListProps, "items"> & {
   items: TipListItemProps[];
 };
 
-export default function TipList({
-  items,
-  ...props
-}: TipListProps): React.ReactElement {
+export default function TipList({ items, ...props }: TipListProps): React.ReactElement {
   const tipItems = useMemo(
     () =>
       items.map((item) => ({
@@ -25,7 +22,7 @@ export default function TipList({
           <Close size={20} color={"error.c100"} />
         ),
       })),
-    [items]
+    [items],
   );
   return <List items={tipItems} {...props} />;
 }

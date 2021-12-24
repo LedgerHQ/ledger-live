@@ -13,6 +13,4 @@ const LoaderSample = () => (
   />
 );
 
-storiesOf((story) =>
-  story("Loader", module).add("ProgressLoader", LoaderSample)
-);
+storiesOf((story) => story("Loader", module).add("ProgressLoader", LoaderSample));
