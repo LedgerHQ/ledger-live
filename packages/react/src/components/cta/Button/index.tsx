@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import styled, { css, StyledProps } from "styled-components";
 import baseStyled, { BaseStyledProps } from "../../styled";
 import { fontSize, border, BordersProps, compose } from "styled-system";
@@ -6,6 +6,7 @@ import fontFamily from "../../../styles/styled/fontFamily";
 import { fontSizes } from "../../../styles/theme";
 import { rgba } from "../../../styles/helpers";
 import ChevronBottom from "@ledgerhq/icons-ui/react/ChevronBottomRegular";
+import IconComponent from "../../asorted/Icon";
 
 export type ButtonVariants = "main" | "shade" | "error" | "color";
 export type IconPosition = "right" | "left";
@@ -22,6 +23,7 @@ interface BaseProps extends BaseStyledProps, BordersProps {
 }
 
 export interface ButtonProps extends BaseProps, React.RefAttributes<HTMLButtonElement> {
+  iconName?: string;
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   children?: React.ReactNode;
   onClick?: (event: React.SyntheticEvent<HTMLButtonElement>) => void;
@@ -213,17 +215,29 @@ export const Base = baseStyled.button.attrs((p: BaseProps) => ({
 const ContentContainer = styled.div``;
 
 const Button = (
-  { Icon, iconPosition = "right", iconSize = 16, children, onClick, ...props }: ButtonProps,
+  {
+    Icon,
+    iconPosition = "right",
+    iconSize = 16,
+    children,
+    onClick,
+    iconName,
+    ...props
+  }: ButtonProps,
   ref?: React.ForwardedRef<HTMLButtonElement>,
 ): React.ReactElement => {
+  const iconNodeSize = iconSize || fontSizes[props.fontSize ?? 4];
+  const IconNode = useMemo(
+    () =>
+      (iconName && <IconComponent name={iconName} size={iconNodeSize} />) ||
+      (Icon && <Icon size={iconNodeSize} />),
+    [iconName, iconNodeSize, Icon],
+  );
+
   return (
     <Base {...props} ref={ref} iconButton={!(Icon == null) && !children} onClick={onClick}>
       {iconPosition === "right" ? <ContentContainer>{children}</ContentContainer> : null}
-      {Icon != null ? (
-        <IconContainer iconPosition={iconPosition}>
-          <Icon size={iconSize || fontSizes[props.fontSize ?? 4]} />
-        </IconContainer>
-      ) : null}
+      {IconNode && <IconContainer iconPosition={iconPosition}>{IconNode}</IconContainer>}
       {iconPosition === "left" ? <ContentContainer>{children}</ContentContainer> : null}
     </Base>
   );
