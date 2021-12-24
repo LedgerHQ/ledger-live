@@ -41,12 +41,12 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
     outline: `
         border-color: ${p.theme.colors.neutral.c100};
         color: ${p.theme.colors.neutral.c100};
-        background-color: ${p.theme.colors.neutral.c00};
+        background-color: transparent;
         &:hover, &:focus {
-          background-color: ${p.theme.colors.neutral.c20};
+          background-color: ${rgba(p.theme.colors.neutral.c100, 0.03)};
         }
         &:active {
-          background-color: ${p.theme.colors.neutral.c30};
+          background-color: ${rgba(p.theme.colors.neutral.c100, 0.05)};
         }
       `,
     filled: `
@@ -77,12 +77,12 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
     outline: `
       border-color: ${p.theme.colors.error.c100};
       color: ${p.theme.colors.error.c100};
-      background-color: ${p.theme.colors.neutral.c00};
+      background-color: transparent;
       &:hover {
-        background-color: ${p.theme.colors.error.c10};
+        background-color: ${rgba(p.theme.colors.error.c100, 0.02)};
       }
       &:active {
-        background-color: ${p.theme.colors.error.c30};
+        background-color: ${rgba(p.theme.colors.error.c100, 0.05)};
       }
     `,
     filled: `
@@ -97,12 +97,12 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
     outline: `
       border-color: ${p.theme.colors.primary.c80};
       color: ${p.theme.colors.primary.c80};
-      background-color: ${p.theme.colors.neutral.c00};
+      background-color: transparent;
       &:hover {
-        background-color: ${p.theme.colors.primary.c10};
+        background-color: ${rgba(p.theme.colors.primary.c100, 0.02)};
       }
       &:active {
-        background-color: ${p.theme.colors.primary.c20};
+        background-color: ${rgba(p.theme.colors.primary.c100, 0.05)};
       }
     `,
     filled: `
@@ -117,7 +117,7 @@ const getVariantColors = (p: StyledProps<BaseProps>) => ({
     outline: `
         border-color: ${p.theme.colors.neutral.c50};
         color: ${p.theme.colors.neutral.c50};
-        background-color: ${p.theme.colors.neutral.c00};
+        background-color: transparent;
       `,
     filled: `
         color: ${p.theme.colors.neutral.c50};
