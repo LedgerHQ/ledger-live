@@ -16,7 +16,6 @@ const Container = styled(FlexBox)`
   flex-wrap: wrap;
   align-items: stretch;
   min-height: ${(p) => p.theme.space[12]}px;
-  color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
 const TextContainer = styled(FlexBox).attrs(() => ({
@@ -31,10 +30,16 @@ const TextContainer = styled(FlexBox).attrs(() => ({
 
 function Log({ children, extraTextProps, ...props }: Props): JSX.Element {
   return (
-    <Container {...props}>
+    <Container color="neutral.c100" {...props}>
       <BracketLeft />
       <TextContainer flex="1" alignItems="center" justifyContent="center">
-        <Text variant="h3" textTransform="uppercase" textAlign="center" {...extraTextProps}>
+        <Text
+          variant="h3"
+          textTransform="uppercase"
+          textAlign="center"
+          color="inherit"
+          {...extraTextProps}
+        >
           {children}
         </Text>
       </TextContainer>
