@@ -1,11 +1,15 @@
 import React, { memo } from "react";
 import styled from "styled-components";
 
-import Text from "../../asorted/Text";
+import Text, { TextProps } from "../../asorted/Text";
 import FlexBox, { FlexBoxProps } from "../../layout/Flex";
 import { BracketRight, BracketLeft } from "./Brackets";
 
-export type Props = React.PropsWithChildren<FlexBoxProps>;
+export type Props = React.PropsWithChildren<
+  FlexBoxProps & {
+    extraTextProps?: TextProps;
+  }
+>;
 
 const Container = styled(FlexBox)`
   justify-content: center;
@@ -25,12 +29,12 @@ const TextContainer = styled(FlexBox).attrs(() => ({
   }
 `;
 
-function Log({ children, ...props }: Props): JSX.Element {
+function Log({ children, extraTextProps, ...props }: Props): JSX.Element {
   return (
     <Container {...props}>
       <BracketLeft />
       <TextContainer flex="1" alignItems="center" justifyContent="center">
-        <Text variant="h3" textTransform="uppercase" textAlign="center">
+        <Text variant="h3" textTransform="uppercase" textAlign="center" {...extraTextProps}>
           {children}
         </Text>
       </TextContainer>
