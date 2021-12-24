@@ -15,13 +15,13 @@ const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
       button: "Rr",
     },
     {
+      title: "Custom Delegate",
+      button: "Rr",
+    },
+    {
+      // device sometimes know the text of a given delegator, we're not validating the actual text
       title: "Delegate",
       button: "Rr",
-      expectedValue: ({ transaction }) => {
-        return transaction.mode === "undelegate"
-          ? "None"
-          : transaction.recipient;
-      },
     },
     {
       title: "Delegate Name",

@@ -6,7 +6,7 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { getAccountDelegationSync } from "./bakers";
+import { getAccountDelegationSync, isAccountDelegating } from "./bakers";
 import whitelist from "./bakers.whitelist-default";
 
 const maxAccount = 12;
@@ -31,10 +31,11 @@ const tezos: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "TezosWallet",
   },
+  testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
       maxSpendable.gt(
-        parseCurrencyUnit(getCryptoCurrencyById("tezos").units[0], "0.1")
+        parseCurrencyUnit(getCryptoCurrencyById("tezos").units[0], "0.02")
       ),
       "balance is too low"
     );
@@ -69,9 +70,13 @@ const tezos: AppSpec<Transaction> = {
       },
     },
     {
-      name: "send max",
+      name: "send max (non delegating)",
       maxRun: 3,
       transaction: ({ account, siblings, bridge }) => {
+        invariant(
+          !isAccountDelegating(account),
+          "account must not be delegating"
+        );
         const sibling = pickSiblings(siblings, maxAccount);
         const recipient = sibling.freshAddress;
         return {
@@ -85,7 +90,10 @@ const tezos: AppSpec<Transaction> = {
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         expectUnrevealed(account);
-        const recipient = sample(whitelist);
+        const d = getAccountDelegationSync(account);
+        const recipient = sample(
+          d ? whitelist.filter((w) => w !== d.address) : whitelist
+        );
         return {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient, mode: "delegate" }],
@@ -97,7 +105,10 @@ const tezos: AppSpec<Transaction> = {
       maxRun: 1,
       transaction: ({ account, bridge }) => {
         expectRevealed(account);
-        const recipient = sample(whitelist);
+        const d = getAccountDelegationSync(account);
+        const recipient = sample(
+          d ? whitelist.filter((w) => w !== d.address) : whitelist
+        );
         return {
           transaction: bridge.createTransaction(account),
           updates: [{ recipient, mode: "delegate" }],

@@ -136,6 +136,7 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber | null | undefined;
   gasLimit: BigNumber | null | undefined;
   storageLimit: BigNumber | null | undefined;
+  estimatedFees: BigNumber | null | undefined;
   taquitoError: string | null | undefined;
 };
 export type TransactionRaw = TransactionCommonRaw & {
@@ -145,6 +146,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees: string | null | undefined;
   gasLimit: string | null | undefined;
   storageLimit: string | null | undefined;
+  estimatedFees: string | null | undefined;
   taquitoError: string | null | undefined;
 };
 export const reflect = (declare: (arg0: string, arg1: Spec) => void) => {

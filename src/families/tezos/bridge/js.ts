@@ -6,7 +6,6 @@ import {
   NotEnoughBalance,
   NotEnoughBalanceToDelegate,
   FeeTooHigh,
-  NotSupportedLegacyAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecommendUndelegation,
 } from "@ledgerhq/errors";
@@ -45,6 +44,7 @@ const createTransaction: () => Transaction = () => ({
   networkInfo: null,
   useAllAmount: false,
   taquitoError: null,
+  estimatedFees: null,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
@@ -65,7 +65,7 @@ const getTransactionStatus = async (
     recipient?: Error;
   } = {};
 
-  let estimatedFees = new BigNumber(t.fees || 0);
+  const estimatedFees = t.estimatedFees || new BigNumber(0);
 
   const { tezosResources } = account;
   if (!tezosResources) throw new Error("tezosResources is missing");
@@ -88,17 +88,6 @@ const getTransactionStatus = async (
           warnings.recipient = recipientWarning;
         }
       }
-    }
-
-    if (t.recipient.startsWith("KT") && !errors.recipient) {
-      errors.recipient = new NotSupportedLegacyAddress();
-    }
-
-    // no fee / not enough balance already handled by taquitoError
-    if (!tezosResources.revealed) {
-      // FIXME
-      // https://github.com/ecadlabs/taquito/commit/48a11cfaffe4c6bdfa6f04ebbd0b756f4b135865#diff-3b138622526cbaa55605b79011aa411652367136a3e92e43faecc654da3854e7
-      estimatedFees = estimatedFees.plus(374 || DEFAULT_FEE.REVEAL);
     }
 
     if (t.mode === "send") {
@@ -128,13 +117,20 @@ const getTransactionStatus = async (
     log("taquitoerror", String(t.taquitoError));
 
     // remap taquito errors
-    if (t.taquitoError === "proto.010-PtGRANAD.contract.balance_too_low") {
+    if (t.taquitoError.endsWith("balance_too_low")) {
       if (t.mode === "send") {
         errors.amount = new NotEnoughBalance();
       } else {
         errors.amount = new NotEnoughBalanceToDelegate();
       }
+    } else {
+      // unidentified error case
+      errors.amount = new Error(t.taquitoError);
     }
+  }
+
+  if (!errors.amount && account.balance.lte(0)) {
+    errors.amount = new NotEnoughBalance();
   }
 
   const result = {
@@ -154,8 +150,25 @@ const prepareTransaction = async (
   const { tezosResources } = account;
   if (!tezosResources) throw new Error("tezosResources is missing");
 
-  const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
+  if (account.balance.lte(0)) {
+    return Promise.resolve(transaction);
+  }
 
+  // basic check to confirm the transaction is "complete"
+  if (transaction.mode !== "undelegate") {
+    if (!transaction.recipient) {
+      return Promise.resolve(transaction);
+    }
+    const { recipientError } = await validateRecipient(
+      account.currency,
+      transaction.recipient
+    );
+    if (recipientError) {
+      return Promise.resolve(transaction);
+    }
+  }
+
+  const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
   tezos.setProvider({
     signer: {
       publicKeyHash: async () => account.freshAddress,
@@ -165,20 +178,21 @@ const prepareTransaction = async (
     },
   });
 
-  try {
-    if (transaction.useAllAmount) {
-      // taquito does not accept 0, so we do 1
-      // only failing case is when the account precisely has fees + 1. which is
-      // unlikely
-      transaction.amount = new BigNumber(1);
-    }
+  if (transaction.useAllAmount) {
+    // taquito does not accept 0, so we do 1
+    // only failing case is when the account precisely has fees + 1. which is
+    // unlikely
+    transaction.amount = new BigNumber(1);
+  }
 
+  try {
     let out;
     switch (transaction.mode) {
       case "send":
         out = await tezos.estimate.transfer({
+          mutez: true,
           to: transaction.recipient,
-          amount: transaction.amount.div(10 ** 6).toNumber(),
+          amount: transaction.amount.toNumber(),
         });
         break;
       case "delegate":
@@ -193,14 +207,15 @@ const prepareTransaction = async (
         });
         break;
       default:
-        throw "unsuported";
+        throw new Error("unsupported mode=" + transaction.mode);
     }
 
-    transaction.fees = new BigNumber(out.suggestedFeeMutez);
-    transaction.gasLimit = new BigNumber(out.gasLimit);
-    transaction.storageLimit = new BigNumber(out.storageLimit);
-
     if (transaction.useAllAmount) {
+      const totalFees = out.suggestedFeeMutez + out.burnFeeMutez;
+      const maxAmount = account.balance
+        .minus(totalFees + (tezosResources.revealed ? 0 : DEFAULT_FEE.REVEAL))
+        .toNumber();
+      // from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
       const gasBuffer = 500;
@@ -208,15 +223,37 @@ const prepareTransaction = async (
       const increasedFee = (gasBuffer: number, opSize: number) => {
         return gasBuffer * MINIMAL_FEE_PER_GAS_MUTEZ + opSize;
       };
-      transaction.fees = transaction.fees.plus(
-        increasedFee(gasBuffer, Number(out.opSize))
-      );
-      transaction.gasLimit = transaction.gasLimit.plus(gasBuffer);
-      const s = await getTransactionStatus(account, transaction);
-      transaction.amount = account.balance.minus(s.estimatedFees);
+      const incr = increasedFee(gasBuffer, Number(out.opSize));
+      transaction.fees = new BigNumber(out.suggestedFeeMutez + incr);
+      transaction.gasLimit = new BigNumber(out.gasLimit + gasBuffer);
+      transaction.amount = new BigNumber(maxAmount - incr);
+    } else {
+      transaction.fees = new BigNumber(out.suggestedFeeMutez);
+      transaction.gasLimit = new BigNumber(out.gasLimit);
+      transaction.storageLimit = new BigNumber(out.storageLimit);
     }
-  } catch (e: any) {
-    transaction.taquitoError = e.id;
+
+    transaction.storageLimit = new BigNumber(out.storageLimit);
+    transaction.estimatedFees = transaction.fees;
+    if (!tezosResources.revealed) {
+      transaction.estimatedFees = transaction.estimatedFees.plus(
+        DEFAULT_FEE.REVEAL
+      );
+    }
+  } catch (e) {
+    if (typeof e !== "object" || !e) throw e;
+    if ("id" in e) {
+      transaction.taquitoError = (e as { id: string }).id;
+    } else if ("status" in e) {
+      // in case of http 400, log & ignore (more case to handle)
+      log(
+        "taquito-network-error",
+        String((e as { message: string }).message || ""),
+        { transaction }
+      );
+    } else {
+      throw e;
+    }
   }
 
   return transaction;

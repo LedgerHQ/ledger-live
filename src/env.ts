@@ -111,7 +111,7 @@ const envDefinitions = {
     desc: "Ledger explorer API for tezos",
   },
   API_TEZOS_TZKT_API: {
-    def: "http://xtz-tzkt-explorer.api-01.live.ledger-stg.com",
+    def: "https://xtz-tzkt-explorer.api.live.ledger.com",
     parser: stringParser,
     desc: "tzkt.io explorer",
   },

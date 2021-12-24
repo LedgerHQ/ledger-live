@@ -678,7 +678,7 @@ function transactionTest<T>({
   const dt = Date.now().valueOf() - operation.date.valueOf();
   invariant(dt > 0, "operation.date must not be in in future");
   expect(dt).toBeLessThan(timingThreshold);
-  invariant(!operation.hasFailed, "operation must be hasFailed");
+  invariant(!operation.hasFailed, "operation has failed");
   const { blockAvgTime } = account.currency;
 
   if (blockAvgTime && account.blockHeight) {

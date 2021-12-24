@@ -75,6 +75,11 @@ export const getAccountShape: GetAccountShape = async (infoInput) => {
       id: accountId,
       blockHeight,
       lastSyncDate: new Date(),
+      tezosResources: {
+        revealed: false,
+        counter: 0,
+        publicKey: "",
+      },
     };
   }
   invariant(
@@ -232,9 +237,7 @@ const txToOp =
       blockHash,
       accountId,
       date: new Date(timestamp),
-      extra: {
-        id,
-      },
+      extra: { id },
       hasFailed,
     };
   };

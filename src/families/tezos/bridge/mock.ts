@@ -64,6 +64,7 @@ const createTransaction = (): Transaction => ({
   networkInfo: null,
   useAllAmount: false,
   taquitoError: null,
+  estimatedFees: null,
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });

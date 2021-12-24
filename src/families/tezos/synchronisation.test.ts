@@ -9,8 +9,6 @@ import { makeSync } from "../../bridge/jsHelpers";
 import { getAccountShape } from "./synchronisation";
 
 const accounts = [
-  //  "tz1cf8diKsP1WoeucTQm1BcVfdyrmaBnL4nC", // FIXME
-  //   "tz1ZshTmtorFVkcZ7CpceCAxCn7HBJqTfmpk", // FIXME
   "tz1ZL36Xw6LJ9RK6tb7QW85o7SVYfFKSMw8c",
   "tz1VacAyLcnHU3pEY3VNNK45F1CvVyTYXA3z",
   "tz1hpWkvAVVgftPy4CW8rD3u6tdVd8g1RU58",
@@ -24,7 +22,6 @@ const accounts = [
   "tz1PTxfn1fge2tJwGGpW9zNuYf6BseM3GJXt",
   "tz1SBHto1BasGvxojr48r5PFiGb1Wq4cynGY",
   "tz1fAfYNSkgci3ko2xikDtYtcSf1X1YdAKoK",
-  "tz1hobi4RsAeswm9JA7mHB96vqc1eAWRzxDc",
 ];
 
 jest.setTimeout(30 * 1000);
