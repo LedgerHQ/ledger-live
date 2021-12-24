@@ -4,6 +4,7 @@ import { PixelRatio } from "react-native";
 import { Rect, ClipPath, Svg, Defs } from "react-native-svg";
 import Flex from "../Layout/Flex";
 import Box from "../Layout/Box";
+import { IconOrElementType, IconType } from "./type";
 
 export const DEFAULT_BOX_SIZE = 40;
 export const DEFAULT_ICON_SIZE = 16;
@@ -23,11 +24,15 @@ const Container = styled(Flex).attrs((p: { size: number }) => ({
   overflow: "visible",
 }))<{ size: number }>``;
 
-const IconBoxBackground = styled(Flex)<{ size: number }>`
+const IconBoxBackground = styled(Flex)<{
+  size: number;
+  variant?: BoxedIconProps["variant"];
+}>`
   position: absolute;
   height: ${(p) => p.size}px;
   width: ${(p) => p.size}px;
-  border-radius: ${(p) => p.theme.radii[BORDER_RADIUS]}px;
+  border-radius: ${(p) =>
+    p.variant === "circle" ? p.size : p.theme.radii[BORDER_RADIUS]}px;
 `;
 
 const BadgeContainer = styled.View<{ badgeSize: number }>`
@@ -40,16 +45,11 @@ const BadgeContainer = styled.View<{ badgeSize: number }>`
     width: ${p.badgeSize}px;`}
 `;
 
-export type IconProps = {
-  size?: number;
-  color?: string;
-};
-
 export type IconBoxProps = {
   /**
    * Component that takes `{size?: number; color?: string}` as props. Will be rendered at the top right with the size provided in `badgeSize` or a default size.
    */
-  Badge?: React.ComponentType<IconProps>;
+  Badge?: IconType;
   /**
    * Color of the border
    */
@@ -67,13 +67,17 @@ export type IconBoxProps = {
    * Box size for preview
    */
   size?: number;
+  /**
+   * Box variant (box or circled)
+   */
+  variant?: "square" | "circle";
 };
 
 export type BoxedIconProps = IconBoxProps & {
   /**
    * Component that takes `{size?: number; color?: string}` as props. Will be rendered at the top right with the size provided in `iconSize` or a default size.
    */
-  Icon: React.ComponentType<IconProps> | ((props: IconProps) => JSX.Element);
+  Icon: IconOrElementType;
   /**
    * Icon size, will be applied to the component provided in the `Icon` prop
    */
@@ -89,10 +93,12 @@ const IconBoxBackgroundSVG = ({
   size,
   borderColor,
   badgeSize,
+  variant = "square",
 }: {
   size: number;
   borderColor: string;
   badgeSize: number;
+  variant?: BoxedIconProps["variant"];
 }) => {
   const { colors, radii } = useTheme();
   const borderRadius = radii[BORDER_RADIUS];
@@ -112,7 +118,8 @@ const IconBoxBackgroundSVG = ({
    */
   const svgSize = size + borderWidth;
   const rectSize = size - borderWidth;
-  const rectRadius = borderRadius - borderWidth / 2;
+  const rectRadius =
+    variant === "circle" ? size : borderRadius - borderWidth / 2;
 
   return (
     <Box position="absolute" overflow="hidden">
@@ -157,6 +164,7 @@ export const IconBox = ({
   borderColor = "neutral.c40",
   badgeColor,
   badgeSize = DEFAULT_BADGE_SIZE,
+  variant = "square",
 }: IconBoxProps) => {
   const hasBadge = !!Badge;
   return (
@@ -166,12 +174,14 @@ export const IconBox = ({
           size={size}
           badgeSize={badgeSize}
           borderColor={borderColor}
+          variant={variant}
         />
       ) : (
         <IconBoxBackground
           border="1px solid"
           size={size}
           borderColor={borderColor}
+          variant={variant}
         />
       )}
       {children}
@@ -192,7 +202,11 @@ const BoxedIcon = ({
 }: BoxedIconProps) => {
   return (
     <IconBox {...iconBoxProps}>
-      <Icon size={iconSize || DEFAULT_ICON_SIZE} color={iconColor} />
+      {React.isValidElement(Icon) ? (
+        Icon
+      ) : (
+        <Icon size={iconSize || DEFAULT_ICON_SIZE} color={iconColor} />
+      )}
     </IconBox>
   );
 };

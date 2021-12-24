@@ -1,13 +1,19 @@
 import { storiesOf } from "../storiesOf";
 import React from "react";
+import { select } from "@storybook/addon-knobs";
+
 import Flex from "../../../src/components/Layout/Flex";
 import Box from "../../../src/components/Layout/Box";
 import { Icons } from "../../../src/assets";
 import BoxedIcon from "../../../src/components/Icon/BoxedIcon";
+import Text from "../../../src/components/Text";
 
 const BoxedIconStory = () => (
   <Flex flexDirection="column" alignItems="center">
-    <BoxedIcon Icon={Icons.HandshakeMedium} />
+    <BoxedIcon
+      Icon={Icons.HandshakeMedium}
+      variant={select("variant", ["square", "circle"], "square")}
+    />
     <Box height={20} />
     <BoxedIcon
       Icon={Icons.HandshakeMedium}
@@ -30,6 +36,15 @@ const BoxedIconStory = () => (
       Badge={Icons.ClockSolidMedium}
       iconColor="neutral.c50"
       badgeColor="neutral.c70"
+    />
+    <Box height={20} />
+
+    <BoxedIcon
+      Icon={
+        <Text variant={"body"} fontWeight={"medium"} color={"neutral.c80"}>
+          42
+        </Text>
+      }
     />
   </Flex>
 );
