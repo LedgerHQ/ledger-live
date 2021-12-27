@@ -26,7 +26,7 @@ const Container = styled(Flex).attrs((p: { size: number }) => ({
 
 const IconBoxBackground = styled(Flex)<{
   size: number;
-  variant?: BoxedIconProps["variant"];
+  variant?: Variant;
 }>`
   position: absolute;
   height: ${(p) => p.size}px;
@@ -44,6 +44,8 @@ const BadgeContainer = styled.View<{ badgeSize: number }>`
     height: ${p.badgeSize}px;
     width: ${p.badgeSize}px;`}
 `;
+
+export type Variant = "square" | "circle";
 
 export type IconBoxProps = {
   /**
@@ -70,7 +72,7 @@ export type IconBoxProps = {
   /**
    * Box variant (box or circled)
    */
-  variant?: "square" | "circle";
+  variant?: Variant;
 };
 
 export type BoxedIconProps = IconBoxProps & {
@@ -98,7 +100,7 @@ const IconBoxBackgroundSVG = ({
   size: number;
   borderColor: string;
   badgeSize: number;
-  variant?: BoxedIconProps["variant"];
+  variant?: Variant;
 }) => {
   const { colors, radii } = useTheme();
   const borderRadius = radii[BORDER_RADIUS];
