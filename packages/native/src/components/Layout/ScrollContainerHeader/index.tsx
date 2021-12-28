@@ -1,9 +1,6 @@
 import React from "react";
 import { FlatListProps, View } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 
 import Header from "./Header";
 import type { HeaderProps } from "./Header";
@@ -15,10 +12,7 @@ const AnimatedFlatList: any = Animated.createAnimatedComponent(StyledFlatList);
 
 type ScrollContainerHeaderProps = BaseStyledProps &
   Omit<HeaderProps, "currentPositionY"> &
-  Omit<
-    FlatListProps<any>,
-    "onScroll" | "data" | "renderItem" | "stickyHeaderIndices"
-  > & {
+  Omit<FlatListProps<any>, "onScroll" | "data" | "renderItem" | "stickyHeaderIndices"> & {
     children?: React.ReactNode;
     onScroll?: (y: number) => void;
   };
@@ -56,13 +50,9 @@ const ScrollContainerHeader = ({
         />,
         children,
       ]}
-      renderItem={({
-        item,
-        index,
-      }: {
-        item: React.ReactNode;
-        index: number;
-      }) => <View key={index}>{item}</View>}
+      renderItem={({ item, index }: { item: React.ReactNode; index: number }) => (
+        <View key={index}>{item}</View>
+      )}
     ></AnimatedFlatList>
   );
 };

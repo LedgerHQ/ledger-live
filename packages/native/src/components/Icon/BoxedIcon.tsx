@@ -31,8 +31,7 @@ const IconBoxBackground = styled(Flex)<{
   position: absolute;
   height: ${(p) => p.size}px;
   width: ${(p) => p.size}px;
-  border-radius: ${(p) =>
-    p.variant === "circle" ? p.size : p.theme.radii[BORDER_RADIUS]}px;
+  border-radius: ${(p) => (p.variant === "circle" ? p.size : p.theme.radii[BORDER_RADIUS])}px;
 `;
 
 const BadgeContainer = styled.View<{ badgeSize: number }>`
@@ -119,8 +118,7 @@ const IconBoxBackgroundSVG = ({
    */
   const svgSize = size + borderWidth;
   const rectSize = size - borderWidth;
-  const rectRadius =
-    variant === "circle" ? size : borderRadius - borderWidth / 2;
+  const rectRadius = variant === "circle" ? size : borderRadius - borderWidth / 2;
 
   return (
     <Box position="absolute" overflow="hidden">

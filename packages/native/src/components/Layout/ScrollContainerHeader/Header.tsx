@@ -54,16 +54,14 @@ const Header = ({
   }, []);
 
   const TopMiddleStyle = useAnimatedStyle(() => {
-    const scaleRatio = middleWidth
-      ? Math.min(topMiddleWidth / middleWidth, 0.9)
-      : 0.7;
+    const scaleRatio = middleWidth ? Math.min(topMiddleWidth / middleWidth, 0.9) : 0.7;
 
     /** scale the animated content to fit in the available space on the top header section */
     const scale = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [1, scaleRatio],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     /** offset horizontaly given the scale transformation and potential top left header section */
@@ -71,14 +69,14 @@ const Header = ({
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -(topMiddleWidth - topMiddleWidth * scaleRatio) / 2],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     const opacity = interpolate(
       currentPositionY.value,
       [SCROLL_BREAKPOINT - 1, SCROLL_BREAKPOINT + 40],
       [0, 1],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {
@@ -87,13 +85,7 @@ const Header = ({
       opacity,
       justifyContent: "center", // needed to ensure vertical centering of animated content
     };
-  }, [
-    topLeftWidth,
-    topSectionHeight,
-    middleWidth,
-    topMiddleWidth,
-    topSectionWidth,
-  ]);
+  }, [topLeftWidth, topSectionHeight, middleWidth, topMiddleWidth, topSectionWidth]);
 
   const MiddleStyle = useAnimatedStyle(() => {
     const scaleRatio = middleWidth ? Math.min(topMiddleWidth / middleWidth, 0.9) : 0.7;
@@ -117,7 +109,7 @@ const Header = ({
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -(topSectionWidth - topSectionWidth * scaleRatio) / 2 + topLeftWidth],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
     /** allow for content to move upward as animation is taking place */
     const maxHeight = interpolate(
@@ -131,7 +123,7 @@ const Header = ({
       currentPositionY.value,
       [SCROLL_BREAKPOINT - 1, SCROLL_BREAKPOINT + 40],
       [1, 0],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {

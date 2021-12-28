@@ -78,31 +78,16 @@ const SpinnerContainer = styled.View`
   justify-content: center;
 `;
 
-const ButtonContainer = (
-  props: ButtonProps & { hide?: boolean }
-): React.ReactElement => {
-  const {
-    Icon,
-    iconPosition = "right",
-    children,
-    hide = false,
-    size = "medium",
-    iconName,
-  } = props;
+const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactElement => {
+  const { Icon, iconPosition = "right", children, hide = false, size = "medium", iconName } = props;
   const theme = useTheme();
   const { text } = getButtonColorStyle(theme.colors, props);
 
   const IconNode = useMemo(
     () =>
-      (iconName && (
-        <IconComponent
-          name={iconName}
-          size={ctaIconSize[size]}
-          color={text.color}
-        />
-      )) ||
+      (iconName && <IconComponent name={iconName} size={ctaIconSize[size]} color={text.color} />) ||
       (Icon && <Icon size={ctaIconSize[size]} color={text.color} />),
-    [iconName, size, Icon, text.color]
+    [iconName, size, Icon, text.color],
   );
 
   return (

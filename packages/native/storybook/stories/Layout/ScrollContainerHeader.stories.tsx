@@ -13,11 +13,7 @@ import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
 const TopRightSection = ({ debug }: { debug: boolean }) => {
   return (
     <Flex flexDirection="row" border={debug ? "1px solid purple" : "none"}>
-      <Button
-        mx={2}
-        Icon={Icons.PlusMedium}
-        onPress={action("plus icon pressed")}
-      />
+      <Button mx={2} Icon={Icons.PlusMedium} onPress={action("plus icon pressed")} />
       <Button Icon={Icons.CloseMedium} onPress={action("cross icon pressed")} />
     </Flex>
   );
@@ -25,11 +21,7 @@ const TopRightSection = ({ debug }: { debug: boolean }) => {
 
 const BottomSection = ({ debug }: { debug: boolean }) => {
   return (
-    <ScrollContainer
-      mt={4}
-      horizontal
-      border={debug ? "1px solid purple" : "none"}
-    >
+    <ScrollContainer mt={4} horizontal border={debug ? "1px solid purple" : "none"}>
       {Array(12)
         .fill(0)
         .map((_, index) => (
@@ -62,9 +54,7 @@ const ScrollContainerHeaderStory = () => {
           />
         ) : undefined
       }
-      TopRightSection={
-        topRightSection ? <TopRightSection debug={debug} /> : undefined
-      }
+      TopRightSection={topRightSection ? <TopRightSection debug={debug} /> : undefined}
       TopMiddleSection={
         topMiddleSection ? (
           <Flex
@@ -87,19 +77,13 @@ const ScrollContainerHeaderStory = () => {
           <Text variant="h2">TITLE</Text>
         </Flex>
       }
-      BottomSection={
-        bottomSection ? <BottomSection debug={debug} /> : undefined
-      }
+      BottomSection={bottomSection ? <BottomSection debug={debug} /> : undefined}
     >
       <>
         {Array(20)
           .fill(0)
           .map((_, i) => (
-            <Flex
-              height="100px"
-              key={i}
-              bg={i % 2 ? "primary.c20" : "neutral.c20"}
-            />
+            <Flex height="100px" key={i} bg={i % 2 ? "primary.c20" : "neutral.c20"} />
           ))}
       </>
     </ScrollContainerHeader>
