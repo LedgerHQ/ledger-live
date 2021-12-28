@@ -1,15 +1,17 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import styled, { useTheme } from "styled-components/native";
 
 import { ActivityIndicator, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { buttonSizeStyle, getButtonColorStyle } from "../../cta/Button/getButtonStyle";
 import { ctaIconSize, ctaTextType } from "../../cta/getCtaStyle";
 import Text from "../../Text";
+import { Icon as IconComponent } from "../../Icon";
 import baseStyled, { BaseStyledProps } from "../../styled";
 
 export type ButtonProps = TouchableOpacityProps &
   BaseStyledProps & {
     Icon?: React.ComponentType<{ size: number; color: string }> | null;
+    iconName?: string;
     type?: "main" | "shade" | "error" | "color" | "default";
     size?: "small" | "medium" | "large";
     iconPosition?: "right" | "left";
@@ -76,10 +78,33 @@ const SpinnerContainer = styled.View`
   justify-content: center;
 `;
 
-const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactElement => {
-  const { Icon, iconPosition = "right", children, hide = false, size = "medium" } = props;
+const ButtonContainer = (
+  props: ButtonProps & { hide?: boolean }
+): React.ReactElement => {
+  const {
+    Icon,
+    iconPosition = "right",
+    children,
+    hide = false,
+    size = "medium",
+    iconName,
+  } = props;
   const theme = useTheme();
   const { text } = getButtonColorStyle(theme.colors, props);
+
+  const IconNode = useMemo(
+    () =>
+      (iconName && (
+        <IconComponent
+          name={iconName}
+          size={ctaIconSize[size]}
+          color={text.color}
+        />
+      )) ||
+      (Icon && <Icon size={ctaIconSize[size]} color={text.color} />),
+    [iconName, size, Icon, text.color]
+  );
+
   return (
     <Container hide={hide}>
       {iconPosition === "right" && children ? (
@@ -87,11 +112,11 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
           {children}
         </Text>
       ) : null}
-      {Icon ? (
+      {IconNode && (
         <IconContainer iconButton={!children} iconPosition={iconPosition}>
-          <Icon size={ctaIconSize[size]} color={text.color} />
+          {IconNode}
         </IconContainer>
-      ) : null}
+      )}
       {iconPosition === "left" && children ? (
         <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={text.color}>
           {children}

@@ -1,12 +1,24 @@
 import React from "react";
-import type { ScrollViewProps } from "react-native";
-import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
+import { FlatListProps, View } from "react-native";
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from "react-native-reanimated";
 
 import Header from "./Header";
 import type { HeaderProps } from "./Header";
+import baseStyled, { BaseStyledProps } from "../../styled";
 
-type ScrollContainerHeaderProps = Omit<HeaderProps, "currentPositionY"> &
-  Omit<ScrollViewProps, "onScroll"> & {
+const StyledFlatList = baseStyled.FlatList<BaseStyledProps>``;
+
+const AnimatedFlatList: any = Animated.createAnimatedComponent(StyledFlatList);
+
+type ScrollContainerHeaderProps = BaseStyledProps &
+  Omit<HeaderProps, "currentPositionY"> &
+  Omit<
+    FlatListProps<any>,
+    "onScroll" | "data" | "renderItem" | "stickyHeaderIndices"
+  > & {
     children?: React.ReactNode;
     onScroll?: (y: number) => void;
   };
@@ -28,22 +40,30 @@ const ScrollContainerHeader = ({
   });
 
   return (
-    <Animated.ScrollView
+    <AnimatedFlatList
       {...props}
       onScroll={handleScroll}
       scrollEventThrottle={16}
       stickyHeaderIndices={[0]}
-    >
-      <Header
-        TopLeftSection={TopLeftSection}
-        TopRightSection={TopRightSection}
-        TopMiddleSection={TopMiddleSection}
-        MiddleSection={MiddleSection}
-        BottomSection={BottomSection}
-        currentPositionY={currentPositionY}
-      />
-      {children}
-    </Animated.ScrollView>
+      data={[
+        <Header
+          TopLeftSection={TopLeftSection}
+          TopRightSection={TopRightSection}
+          TopMiddleSection={TopMiddleSection}
+          MiddleSection={MiddleSection}
+          BottomSection={BottomSection}
+          currentPositionY={currentPositionY}
+        />,
+        children,
+      ]}
+      renderItem={({
+        item,
+        index,
+      }: {
+        item: React.ReactNode;
+        index: number;
+      }) => <View key={index}>{item}</View>}
+    ></AnimatedFlatList>
   );
 };
 

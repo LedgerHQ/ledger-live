@@ -1,14 +1,15 @@
 import React from "react";
 import { space, SpaceProps } from "styled-system";
-import styled from "styled-components/native";
+import baseStyled, { BaseStyledProps } from "../../styled";
 import Animated from "react-native-reanimated";
 import type { NativeSyntheticEvent, NativeScrollEvent, ScrollViewProps } from "react-native";
 
-const ScrollView = styled(Animated.ScrollView)`
+const ScrollView = baseStyled(Animated.ScrollView)<BaseStyledProps>`
   ${space};
 `;
 
-type ScrollContainerProps = ScrollViewProps &
+type ScrollContainerProps = BaseStyledProps &
+  ScrollViewProps &
   SpaceProps & {
     children: React.ReactNode;
     onScroll?: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
