@@ -193,6 +193,16 @@ export const setLastSeenDeviceInfo = (dmi: DeviceModelInfo) => ({
   payload: dmi,
 });
 
+export const addStarredMarketCoins = (payload: string) => ({
+  type: "ADD_STARRED_MARKET_COINS",
+  payload,
+});
+
+export const removeStarredMarketCoins = (payload: string) => ({
+  type: "REMOVE_STARRED_MARKET_COINS",
+  payload,
+});
+
 type PortfolioRangeOption = {
   key: PortfolioRange,
   value: string,

@@ -1276,7 +1276,8 @@
     "manager": "Manager",
     "settings": "Settings",
     "platform": "Discover",
-    "nanoX": "Nano X"
+    "nanoX": "Nano X",
+    "market": "Market"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -1311,6 +1312,15 @@
     "bytes": "{{size}} bytes",
     "kbUnit": "{{size}} Kb",
     "mbUnit": "{{size}} Mb"
+  },
+  "numberCompact": {
+    "d": "",
+    "K": "k",
+    "M": "m",
+    "B": "bn",
+    "T": "tn",
+    "Q": "qa",
+    "Qn": "qi"
   },
   "time": {
     "day": "1D",

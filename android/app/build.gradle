@@ -87,7 +87,7 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: true,  // clean and rebuild if changing
+    enableHermes: false,  // clean and rebuild if changing
     // bundleInDebug: true, // Uncomment this to debug java without having to deal with JS dev server (metro)
 ]
 project.ext.sentryCli = [
@@ -123,6 +123,8 @@ def enableProguardInReleaseBuilds = false
  * this variant is about 6MiB larger per architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc-intl:+'
+
+def useIntlJsc = true
 
 /**
  * Whether to enable the Hermes VM.

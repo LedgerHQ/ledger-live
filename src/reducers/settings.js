@@ -95,6 +95,7 @@ export type SettingsState = {
     KYC: {},
   },
   lastSeenDevice: ?DeviceModelInfo,
+  starredMarketCoins: string[],
 };
 
 export const INITIAL_STATE: SettingsState = {
@@ -129,6 +130,7 @@ export const INITIAL_STATE: SettingsState = {
     KYC: {},
   },
   lastSeenDevice: null,
+  starredMarketCoins: [],
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -355,6 +357,14 @@ const handlers: Object = {
       ...dmi,
     },
   }),
+  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+    ...state,
+    starredMarketCoins: [...state.starredMarketCoins, payload],
+  }),
+  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
+    ...state,
+    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
 };
 
 const storeSelector = (state: *): SettingsState => state.settings;
@@ -519,3 +529,5 @@ export const swapKYCSelector = (state: Object) => state.settings.swap.KYC;
 
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
+
+export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

@@ -1,6 +1,6 @@
 // @flow
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, Platform, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Platform, TouchableOpacity, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useNavigation,
@@ -74,6 +74,8 @@ type Props = {
   style?: *,
   titleStyle?: *,
 };
+
+const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
 
 export default function AnimatedHeaderView({
   title,
@@ -168,14 +170,14 @@ export default function AnimatedHeaderView({
       </Animated.View>
       {children && isReady && (
         <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-          <Animated.ScrollView
+          <AnimatedFlatList
             onScroll={event}
             scrollEventThrottle={10}
             contentContainerStyle={[styles.scrollArea]}
             testID={isFocused ? "ScrollView" : undefined}
-          >
-            {children}
-          </Animated.ScrollView>
+            data={[children]}
+            renderItem={({ item, index }) => <View key={index}>{item}</View>}
+          />
         </AnimatedView>
       )}
       {footer}
