@@ -117,9 +117,9 @@ export async function getOperationsForAccount(
     operations.push({
       value,
       date: timestamp,
-      blockHeight: 1,
-      // NOTE: not sure what to put here, there are no "blocks" in hedera
-      blockHash: raw.transaction_hash,
+      // NOTE: there are no "blocks" in hedera
+      blockHeight: null,
+      blockHash: null,
       extra: {},
       fee,
       // NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
