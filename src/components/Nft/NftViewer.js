@@ -148,26 +148,26 @@ const NftViewer = ({ route }: Props) => {
       );
     }
 
-    return (
-      <View style={[styles.main]}>
-        <LText semiBold>-</LText>
-      </View>
-    );
+    return null;
   }, [colors, isLoading, metadata]);
 
-  const description = useMemo(
-    () =>
-      isLoading ? (
+  const description = useMemo(() => {
+    if (isLoading) {
+      return (
         <>
           <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
           <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
           <Skeleton style={styles.partDescriptionSkeleton} loading={true} />
         </>
-      ) : (
-        <LText semiBold>{metadata?.description || "-"}</LText>
-      ),
-    [isLoading, metadata],
-  );
+      );
+    }
+
+    if (metadata?.description) {
+      return <LText semiBold>{metadata.description}</LText>;
+    }
+
+    return null;
+  }, [isLoading, metadata]);
 
   return (
     <View>
@@ -220,21 +220,27 @@ const NftViewer = ({ route }: Props) => {
         </View>
 
         {/* This weird thing is because we want a full width scrollView withtout the paddings */}
-        <>
-          <View style={styles.propertiesContainer}>
-            <LText style={styles.sectionTitle}>
-              {t("nft.viewer.properties")}
-            </LText>
-          </View>
-          {properties}
-        </>
+        {properties && (
+          <>
+            <View style={styles.propertiesContainer}>
+              <LText style={styles.sectionTitle}>
+                {t("nft.viewer.properties")}
+              </LText>
+            </View>
+            {properties}
+            <View style={styles.hr} />
+          </>
+        )}
 
         <View style={styles.main}>
-          <View style={styles.hr} />
-
-          <Section title={t("nft.viewer.description")}>{description}</Section>
-
-          <View style={styles.hr} />
+          {description && (
+            <>
+              <Section title={t("nft.viewer.description")}>
+                {description}
+              </Section>
+              <View style={styles.hr} />
+            </>
+          )}
 
           <Section
             title={t("nft.viewer.tokenContract")}
