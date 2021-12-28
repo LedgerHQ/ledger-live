@@ -1,6 +1,5 @@
-import { text } from "@storybook/addon-knobs";
 import { storiesOf } from "../storiesOf";
-import { select, boolean } from "@storybook/addon-knobs";
+import { select, boolean, text } from "@storybook/addon-knobs";
 import { action } from "@storybook/addon-actions";
 import React from "react";
 import Button, { PromisableButton } from "../../../src/components/cta/Button";
@@ -13,6 +12,7 @@ const iconOptions = {
   None: undefined,
 };
 const iconSelect = () => iconOptions[select("Icon", ["Info", "None"], "None")];
+const iconName = () => text("Icon Name", "Info");
 
 const Regular = (): JSX.Element => (
   <Button
@@ -24,6 +24,7 @@ const Regular = (): JSX.Element => (
     size={select("size", ["small", "medium", "large", undefined], undefined)}
     iconPosition={select("iconPosition", ["right", "left"], "right")}
     Icon={iconSelect()}
+    iconName={iconName()}
     disabled={boolean("disabled", false)}
     outline={boolean("outline", false)}
     onPress={action("onPress")}
