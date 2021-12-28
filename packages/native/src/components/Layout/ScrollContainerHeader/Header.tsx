@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import { View } from "react-native";
 import styled from "styled-components/native";
 import Animated, {
   useAnimatedStyle,
@@ -30,6 +29,7 @@ const SCROLL_BREAKPOINT = 80;
 const Header = ({
   TopLeftSection,
   TopRightSection,
+  TopMiddleSection,
   MiddleSection,
   BottomSection,
   currentPositionY,
@@ -57,6 +57,48 @@ const Header = ({
     setMiddleWidth(layout.width);
   }, []);
 
+  const TopMiddleStyle = useAnimatedStyle(() => {
+    const scaleRatio = middleWidth
+      ? Math.min(topMiddleWidth / middleWidth, 0.9)
+      : 0.7;
+
+    /** scale the animated content to fit in the available space on the top header section */
+    const scale = interpolate(
+      currentPositionY.value,
+      [0, SCROLL_BREAKPOINT],
+      [1, scaleRatio],
+      Extrapolate.CLAMP
+    );
+
+    /** offset horizontaly given the scale transformation and potential top left header section */
+    const translateX = interpolate(
+      currentPositionY.value,
+      [0, SCROLL_BREAKPOINT],
+      [0, -(topMiddleWidth - topMiddleWidth * scaleRatio) / 2],
+      Extrapolate.CLAMP
+    );
+
+    const opacity = interpolate(
+      currentPositionY.value,
+      [SCROLL_BREAKPOINT - 1, SCROLL_BREAKPOINT + 40],
+      [0, 1],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      transform: [{ translateX }, { scale }],
+      flex: 1,
+      opacity,
+      justifyContent: "center", // needed to ensure vertical centering of animated content
+    };
+  }, [
+    topLeftWidth,
+    topSectionHeight,
+    middleWidth,
+    topMiddleWidth,
+    topSectionWidth,
+  ]);
+
   const MiddleStyle = useAnimatedStyle(() => {
     const scaleRatio = middleWidth
       ? Math.min(topMiddleWidth / middleWidth, 0.9)
@@ -80,7 +122,7 @@ const Header = ({
     const translateX = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
-      [0, -(topSectionWidth - topMiddleWidth) / 2 + topLeftWidth],
+      [0, -(topSectionWidth - topSectionWidth * scaleRatio) / 2 + topLeftWidth],
       Extrapolate.CLAMP
     );
     /** allow for content to move upward as animation is taking place */
@@ -91,9 +133,17 @@ const Header = ({
       Extrapolate.CLAMP
     );
 
+    const opacity = interpolate(
+      currentPositionY.value,
+      [SCROLL_BREAKPOINT - 1, SCROLL_BREAKPOINT + 40],
+      [1, 0],
+      Extrapolate.CLAMP
+    );
+
     return {
       maxHeight,
       transform: [{ translateY }, { translateX }, { scale }],
+      opacity,
       justifyContent: "center", // needed to ensure vertical centering of animated content
     };
   }, [
@@ -112,8 +162,13 @@ const Header = ({
         alignItems="center"
         onLayout={onLayout}
       >
-        <View onLayout={onLayoutTopLeft}>{TopLeftSection}</View>
-        <Flex flex={1} onLayout={onLayoutTopMiddle} />
+        <Flex onLayout={onLayoutTopLeft}>{TopLeftSection}</Flex>
+        <Animated.View
+          style={[TopMiddleStyle]}
+          onLayout={topMiddleWidth ? () => {} : onLayoutTopMiddle}
+        >
+          {TopMiddleSection || MiddleSection}
+        </Animated.View>
         {TopRightSection}
       </Flex>
       <Animated.View
