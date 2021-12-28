@@ -410,7 +410,7 @@ export function renderConnectYourDevice({
       {onSelectDeviceLink ? (
         <View style={styles.connectDeviceExtraContentWrapper}>
           <ExternalLink
-            text={"Use another device"}
+            text={t("DeviceAction.useAnotherDevice")}
             onPress={onSelectDeviceLink}
           />
         </View>
