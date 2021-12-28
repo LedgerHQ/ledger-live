@@ -31,8 +31,7 @@ const IconBoxBackground = styled(Flex)<{
   position: absolute;
   height: ${(p) => p.size}px;
   width: ${(p) => p.size}px;
-  border-radius: ${(p) =>
-    p.variant === "circle" ? p.size : p.theme.radii[BORDER_RADIUS]}px;
+  border-radius: ${(p) => (p.variant === "circle" ? p.size : p.theme.radii[BORDER_RADIUS])}px;
 `;
 
 const BadgeContainer = styled.View<{ badgeSize: number }>`
@@ -109,8 +108,7 @@ const IconBoxBackgroundSVG = ({
   // @ts-expect-error idk how to handle this properly pls help
   const palette = colors[paletteStr];
   const strokeColor =
-    (palette ? palette[borderColor.split(".")[1]] : borderColor) ||
-    colors.neutral.c40;
+    (palette ? palette[borderColor.split(".")[1]] : borderColor) || colors.neutral.c40;
 
   const squareSize = getClipRectangleSize(badgeSize);
 
@@ -120,26 +118,15 @@ const IconBoxBackgroundSVG = ({
    */
   const svgSize = size + borderWidth;
   const rectSize = size - borderWidth;
-  const rectRadius =
-    variant === "circle" ? size : borderRadius - borderWidth / 2;
+  const rectRadius = variant === "circle" ? size : borderRadius - borderWidth / 2;
 
   return (
     <Box position="absolute" overflow="hidden">
       <Svg height={svgSize} width={svgSize}>
         <Defs>
           <ClipPath id="clip">
-            <Rect
-              x="0"
-              y="0"
-              width={svgSize - squareSize}
-              height={squareSize}
-            />
-            <Rect
-              x="0"
-              y={squareSize}
-              width={"100%"}
-              height={svgSize - squareSize}
-            />
+            <Rect x="0" y="0" width={svgSize - squareSize} height={squareSize} />
+            <Rect x="0" y={squareSize} width={"100%"} height={svgSize - squareSize} />
           </ClipPath>
         </Defs>
         <Rect

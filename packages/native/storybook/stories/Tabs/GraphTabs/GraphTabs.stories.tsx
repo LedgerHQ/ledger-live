@@ -13,7 +13,7 @@ const GraphTabsStory = () => {
       onChange={changeIndex}
       labels={array(
         "labels",
-        new Array(4).fill("").map((_, i) => "Label" + i)
+        new Array(4).fill("").map((_, i) => "Label" + i),
       )}
     />
   );

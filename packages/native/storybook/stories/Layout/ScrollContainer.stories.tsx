@@ -34,6 +34,4 @@ const ScrollContainerStory = () => (
   </ScrollContainer>
 );
 
-storiesOf((story) =>
-  story("Layout", module).add("ScrollContainer", ScrollContainerStory)
-);
+storiesOf((story) => story("Layout", module).add("ScrollContainer", ScrollContainerStory));

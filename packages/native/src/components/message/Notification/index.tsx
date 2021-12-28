@@ -1,11 +1,7 @@
 import React from "react";
 import styled, { useTheme } from "styled-components/native";
 import FlexBox from "../../Layout/Flex";
-import {
-  TextProps,
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from "react-native";
+import { TextProps, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import Text from "../../Text";
 import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
 import { Flex } from "../../Layout";
@@ -49,8 +45,7 @@ export default function Notification({
   onLinkPress,
 }: Props): React.ReactElement {
   const { colors } = useTheme();
-  const textColor =
-    variant === "primary" ? colors.neutral.c00 : colors.neutral.c100;
+  const textColor = variant === "primary" ? colors.neutral.c00 : colors.neutral.c100;
 
   return (
     <NotificationContainer variant={variant}>
@@ -72,9 +67,7 @@ export default function Notification({
           <Text
             variant={"body"}
             fontWeight={"medium"}
-            color={
-              variant === "primary" ? colors.neutral.c00 : colors.neutral.c80
-            }
+            color={variant === "primary" ? colors.neutral.c00 : colors.neutral.c80}
             mt={2}
           >
             {subtitle}

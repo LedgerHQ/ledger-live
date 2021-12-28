@@ -4,12 +4,7 @@ import { space, SpaceProps, color, ColorProps } from "styled-system";
 import Text from "../../Text";
 import CheckAlone from "@ledgerhq/icons-ui/native/CheckAloneMedium";
 import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
-import Animated, {
-  useAnimatedStyle,
-  withTiming,
-  withDelay,
-  Easing,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, withTiming, withDelay, Easing } from "react-native-reanimated";
 
 // #region Separator
 type AnimatedSeparatorProps = {
@@ -42,7 +37,7 @@ const AnimatedSeparator = ({
       withTiming(filled ? "100%" : "0%", {
         duration: duration,
         easing: Easing.linear,
-      })
+      }),
     ),
   }));
 
@@ -92,12 +87,8 @@ const StepIcon = {
     border-radius: ${(p) => p.theme.space[1]}px;
     background-color: ${(p) => p.theme.colors.neutral.c70};
   `,
-  Completed: ({ color }: { color: string }): JSX.Element => (
-    <CheckAlone size={16} color={color} />
-  ),
-  Errored: ({ color }: { color: string }): JSX.Element => (
-    <CloseMedium size={16} color={color} />
-  ),
+  Completed: ({ color }: { color: string }): JSX.Element => <CheckAlone size={16} color={color} />,
+  Errored: ({ color }: { color: string }): JSX.Element => <CloseMedium size={16} color={color} />,
 };
 // #endregion
 
@@ -222,11 +213,7 @@ const Container = styled.View`
   width: 100%;
 `;
 
-function Stepper({
-  steps,
-  activeIndex,
-  errored,
-}: StepperProps): React.ReactElement {
+function Stepper({ steps, activeIndex, errored }: StepperProps): React.ReactElement {
   const { space } = useTheme();
 
   const separatorMarginTop = useMemo(() => Math.floor(space[5] / 2), [space]);

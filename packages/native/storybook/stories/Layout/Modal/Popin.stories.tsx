@@ -37,6 +37,4 @@ const PopinStory = () => {
   );
 };
 
-storiesOf((story) =>
-  story("Layout/Modal", module).add("Popin", () => <PopinStory />)
-);
+storiesOf((story) => story("Layout/Modal", module).add("Popin", () => <PopinStory />));

@@ -42,11 +42,9 @@ const StyledIconContainer = styled.View`
   align-items: center;
 `;
 
-const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>(
-  (p) => ({
-    backgroundColor: alertColors[p.type || "info"].backgroundColor,
-  })
-)<Partial<AlertProps>>`
+const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>((p) => ({
+  backgroundColor: alertColors[p.type || "info"].backgroundColor,
+}))<Partial<AlertProps>>`
   width: 100%;
   border-radius: ${(p) => `${p.theme.radii[1]}px`};
   padding: 16px;
@@ -54,11 +52,7 @@ const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>(
   align-items: center;
 `;
 
-export default function Alert({
-  type = "info",
-  title,
-  showIcon = true,
-}: AlertProps): JSX.Element {
+export default function Alert({ type = "info", title, showIcon = true }: AlertProps): JSX.Element {
   const theme = useTheme();
   const textColor = getColor(theme, alertColors[type || "info"].color);
   return (

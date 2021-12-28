@@ -7,10 +7,8 @@ import FlexBox from "../../../Layout/Flex";
 import Text from "../../../Text";
 
 const PercentButton = styled(TouchableOpacity)<{ active?: boolean }>`
-  color: ${(p) =>
-    p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c70};
-  background-color: ${(p) =>
-    p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00};
+  color: ${(p) => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c70)};
+  background-color: ${(p) => (p.active ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c00)};
   border-radius: 100px;
   border-width: 0;
   height: 31px;
@@ -44,7 +42,7 @@ function NumberInput(
     min?: number;
     max?: number;
   },
-  ref?: React.ForwardedRef<TextInput>
+  ref?: React.ForwardedRef<TextInput>,
 ): JSX.Element {
   return (
     <Input
@@ -64,8 +62,7 @@ function NumberInput(
           flexDirection={"row"}
         >
           {[0.25, 0.5, 0.75, 1].map((percent) => {
-            const active =
-              !!value && !!max && Number(value) === percent * Number(max);
+            const active = !!value && !!max && Number(value) === percent * Number(max);
             return (
               <PercentButton
                 key={percent}
@@ -73,10 +70,7 @@ function NumberInput(
                 active={active}
                 disabled={disabled}
               >
-                <Text
-                  variant={"small"}
-                  color={active ? "neutral.c00" : "neutral.c70"}
-                >
+                <Text variant={"small"} color={active ? "neutral.c00" : "neutral.c70"}>
                   {percent * 100}%
                 </Text>
               </PercentButton>

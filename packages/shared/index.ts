@@ -1,1 +1,1 @@
-export * from './palettes';
+export * from "./palettes";

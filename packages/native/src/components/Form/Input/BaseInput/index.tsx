@@ -1,11 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import {
-  TextInput,
-  TextInputProps,
-  ColorValue,
-  StyleProp,
-  ViewStyle,
-} from "react-native";
+import { TextInput, TextInputProps, ColorValue, StyleProp, ViewStyle } from "react-native";
 import styled, { css } from "styled-components/native";
 import Text from "../../../Text";
 import FlexBox from "../../../Layout/Flex";
@@ -131,10 +125,7 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IDENTITY = (_: any): any => _;
 
-function Input<T = string>(
-  props: InputProps<T>,
-  ref?: React.ForwardedRef<TextInput>
-): JSX.Element {
+function Input<T = string>(props: InputProps<T>, ref?: React.ForwardedRef<TextInput>): JSX.Element {
   const {
     value,
     onChange,
@@ -157,7 +148,7 @@ function Input<T = string>(
       onChange && onChange(deserialize(value));
       onChangeText && onChangeText(value);
     },
-    [onChange, onChangeText, deserialize]
+    [onChange, onChangeText, deserialize],
   );
 
   const [focus, setFocus] = React.useState(false);
@@ -180,13 +171,11 @@ function Input<T = string>(
         />
         {typeof renderRight === "function" ? renderRight(props) : renderRight}
       </InputContainer>
-      {!!error && !disabled && (
-        <InputErrorContainer>{error}</InputErrorContainer>
-      )}
+      {!!error && !disabled && <InputErrorContainer>{error}</InputErrorContainer>}
     </FlexBox>
   );
 }
 
 export default React.forwardRef(Input) as <T>(
-  props: InputProps<T> & { ref?: React.ForwardedRef<TextInput> }
+  props: InputProps<T> & { ref?: React.ForwardedRef<TextInput> },
 ) => ReturnType<typeof Input>;

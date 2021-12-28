@@ -41,10 +41,7 @@ const BaseInputRenderSideExempleStory = () => {
   const renderRight = (props: CommonProps) => {
     return (
       <InputRenderRightContainer>
-        <Button
-          onPress={() => setError(error ? "" : "Error message")}
-          disabled={props.disabled}
-        >
+        <Button onPress={() => setError(error ? "" : "Error message")} disabled={props.disabled}>
           error
         </Button>
       </InputRenderRightContainer>
@@ -84,12 +81,7 @@ const CustomSerializer = (): JSX.Element => {
         deserialize={deserialize}
         placeholder={"Placeholder"}
       />
-      <Flex
-        flexDirection="row"
-        alignItems="baseline"
-        m={8}
-        alignSelf="flex-start"
-      >
+      <Flex flexDirection="row" alignItems="baseline" m={8} alignSelf="flex-start">
         <Text variant="large">Value: </Text>
         <Text>{value}</Text>
       </Flex>
@@ -101,5 +93,5 @@ storiesOf((story) =>
   story("Form/Input/BaseInput", module)
     .add("BaseInput", BaseInputStory)
     .add("RenderSideExemple", BaseInputRenderSideExempleStory)
-    .add("Custom Serializer", CustomSerializer)
+    .add("Custom Serializer", CustomSerializer),
 );

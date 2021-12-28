@@ -17,11 +17,7 @@ const StyledTabs = styled(TemplateTabs)`
   padding: 4px;
 `;
 
-export const GraphTab = ({
-  onPress,
-  isActive,
-  label,
-}: TabItemProps): React.ReactElement => {
+export const GraphTab = ({ onPress, isActive, label }: TabItemProps): React.ReactElement => {
   return (
     <TabBbx onPress={onPress}>
       {isActive ? (

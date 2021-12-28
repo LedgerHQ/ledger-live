@@ -6,9 +6,7 @@ import { TransitionProps } from "./types";
  * A fade-in / fade-out transition changing the opacity of its children based on their status.
  */
 export function Fade({ status, duration, style, children }: TransitionProps) {
-  const fadeAnim = useRef(
-    new Animated.Value(status === "entered" ? 1 : 0)
-  ).current;
+  const fadeAnim = useRef(new Animated.Value(status === "entered" ? 1 : 0)).current;
 
   const fadeIn = useMemo(
     () =>
@@ -17,7 +15,7 @@ export function Fade({ status, duration, style, children }: TransitionProps) {
         duration,
         useNativeDriver: true,
       }),
-    [duration, fadeAnim]
+    [duration, fadeAnim],
   );
 
   const fadeOut = useMemo(
@@ -27,7 +25,7 @@ export function Fade({ status, duration, style, children }: TransitionProps) {
         duration,
         useNativeDriver: true,
       }),
-    [duration, fadeAnim]
+    [duration, fadeAnim],
   );
 
   useEffect(() => {

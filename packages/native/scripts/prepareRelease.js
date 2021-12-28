@@ -11,12 +11,7 @@ fs.removeSync(destination);
 child_process.execSync("npm run build", { stdio: "inherit" });
 
 // Copy files that we want to include in the published package.
-const requiredFiles = [
-  "package.json",
-  "README.md",
-  "LICENSE",
-  "src/assets/fonts",
-];
+const requiredFiles = ["package.json", "README.md", "LICENSE", "src/assets/fonts"];
 requiredFiles.forEach((filename) => {
   const suffix = filename.startsWith("src/") ? filename.slice(4) : filename;
   const filePath = path.join(__dirname, "..", filename);

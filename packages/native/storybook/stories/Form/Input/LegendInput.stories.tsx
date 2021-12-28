@@ -18,6 +18,4 @@ const LegendInputStory = (): JSX.Element => {
   );
 };
 
-storiesOf((story) =>
-  story("Form/Input", module).add("LegendInput", LegendInputStory)
-);
+storiesOf((story) => story("Form/Input", module).add("LegendInput", LegendInputStory));

@@ -9,11 +9,7 @@ type ToggleProps = {
   children: ButtonProps["children"];
 };
 
-export default function Toggle({
-  active = false,
-  children,
-  onPress,
-}: ToggleProps): JSX.Element {
+export default function Toggle({ active = false, children, onPress }: ToggleProps): JSX.Element {
   return (
     <TouchableOpacity onPress={onPress}>
       <Button disabled={!active} type="main">

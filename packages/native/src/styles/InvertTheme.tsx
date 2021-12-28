@@ -18,7 +18,7 @@ export const InvertTheme = ({ children }: Props): React.ReactElement => {
       colors: { ...defaultTheme.colors, palette: palettes[revertTheme] },
       theme: revertTheme,
     }),
-    [revertTheme]
+    [revertTheme],
   );
 
   return <ThemeProvider theme={newTheme}>{children}</ThemeProvider>;

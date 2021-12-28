@@ -31,6 +31,4 @@ const WithIcon = () => (
   </Link>
 );
 
-storiesOf((story) =>
-  story("Link", module).add("Regular", Regular).add("Icon link", WithIcon)
-);
+storiesOf((story) => story("Link", module).add("Regular", Regular).add("Icon link", WithIcon));

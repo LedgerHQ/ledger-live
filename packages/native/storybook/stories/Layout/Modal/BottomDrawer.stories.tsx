@@ -37,5 +37,5 @@ const BottomDrawerStory = () => {
 };
 
 storiesOf((story) =>
-  story("Layout/Modal", module).add("BottomDrawer", () => <BottomDrawerStory />)
+  story("Layout/Modal", module).add("BottomDrawer", () => <BottomDrawerStory />),
 );

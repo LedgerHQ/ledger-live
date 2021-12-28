@@ -56,20 +56,12 @@ function Element<V>(props: ElementProps<V>) {
             <Icon size={24} color={disabled ? "neutral.c50" : "neutral.c100"} />
           </Flex>
         )}
-        <Text
-          variant="large"
-          flex={1}
-          color={disabled ? "neutral.c50" : "neutral.c100"}
-        >
+        <Text variant="large" flex={1} color={disabled ? "neutral.c50" : "neutral.c100"}>
           {children || value}
         </Text>
         {RenderRight && (
           <Flex pl={6} flexShrink={0}>
-            {React.isValidElement(RenderRight) ? (
-              RenderRight
-            ) : (
-              <RenderRight {...props} />
-            )}
+            {React.isValidElement(RenderRight) ? RenderRight : <RenderRight {...props} />}
           </Flex>
         )}
       </ElementContainer>

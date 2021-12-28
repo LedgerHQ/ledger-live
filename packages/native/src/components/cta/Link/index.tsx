@@ -20,11 +20,7 @@ const IconContainer = styled.View<{
   iconLink?: boolean;
 }>`
   ${(p) =>
-    p.iconLink
-      ? ""
-      : p.iconPosition === "left"
-      ? `margin-right: 6px;`
-      : `margin-left: 6px;`}
+    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 6px;` : `margin-left: 6px;`}
 `;
 
 export const Base = styled(TouchableOpacity)`
@@ -46,18 +42,12 @@ const LinkContainer = (props: LinkProps): React.ReactElement => {
   } = props;
   const { colors } = useTheme();
   const colorValue =
-    getLinkColors(colors)[reversed ? "reversed" : "default"][
-      disabled ? "disabled" : type
-    ];
+    getLinkColors(colors)[reversed ? "reversed" : "default"][disabled ? "disabled" : type];
 
   return (
     <>
       {iconPosition === "right" && children ? (
-        <Text
-          variant={ctaTextType[size]}
-          fontWeight={"semiBold"}
-          color={colorValue}
-        >
+        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={colorValue}>
           {children}
         </Text>
       ) : null}
@@ -67,11 +57,7 @@ const LinkContainer = (props: LinkProps): React.ReactElement => {
         </IconContainer>
       ) : null}
       {iconPosition === "left" && children ? (
-        <Text
-          variant={ctaTextType[size]}
-          fontWeight={"semiBold"}
-          color={colorValue}
-        >
+        <Text variant={ctaTextType[size]} fontWeight={"semiBold"} color={colorValue}>
           {children}
         </Text>
       ) : null}

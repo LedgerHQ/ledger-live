@@ -54,11 +54,7 @@ const Story = () => {
         >
           French
         </SelectableList.Element>
-        <SelectableList.Element
-          value="ru"
-          Icon={Icons.NanoXFoldedMedium}
-          disabled={true}
-        >
+        <SelectableList.Element value="ru" Icon={Icons.NanoXFoldedMedium} disabled={true}>
           Russian
         </SelectableList.Element>
         <SelectableList.Element value="cz" Icon={Icons.BlockchainMedium}>
@@ -78,5 +74,5 @@ storiesOf((story) =>
         component: description,
       },
     },
-  })
+  }),
 );

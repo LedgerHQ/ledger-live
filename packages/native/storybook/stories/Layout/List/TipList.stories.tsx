@@ -37,13 +37,11 @@ const TipListStory = () => {
           "Align items",
           ["flex-start", "flex-end", "center", "baseline", "stretch"],
           "center",
-          "Layout"
+          "Layout",
         ),
       }}
     />
   );
 };
 
-storiesOf((story) =>
-  story("Layout/List", module).add("TipList", () => <TipListStory />)
-);
+storiesOf((story) => story("Layout/List", module).add("TipList", () => <TipListStory />));

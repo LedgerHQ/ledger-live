@@ -147,5 +147,5 @@ storiesOf((story) =>
     })
     .add("AutoDelay", AutoDelay)
     .add("WithProps", WithProps)
-    .add("Controlled", Controlled)
+    .add("Controlled", Controlled),
 );

@@ -48,20 +48,11 @@ const config = {
   easing: Easing.bezier(0.5, 0.01, 0, 1),
 };
 
-function SlideIndicator({
-  slidesLength,
-  activeIndex = 0,
-  onChange,
-}: Props): React.ReactElement {
-  const slidesArray = useMemo(
-    () => new Array(slidesLength).fill(0),
-    [slidesLength]
-  );
+function SlideIndicator({ slidesLength, activeIndex = 0, onChange }: Props): React.ReactElement {
+  const slidesArray = useMemo(() => new Array(slidesLength).fill(0), [slidesLength]);
 
   const activeSize = useDerivedValue(() => {
-    const size =
-      (Math.max(0, Math.min(slidesLength - 1, activeIndex)) + 1) * (6 + 12) -
-      12;
+    const size = (Math.max(0, Math.min(slidesLength - 1, activeIndex)) + 1) * (6 + 12) - 12;
     return size;
   }, [activeIndex, slidesLength]);
 

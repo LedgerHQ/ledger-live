@@ -8,7 +8,7 @@ const commonConfig = {
 
 const globEntryPoints = () =>
   Promise.all(
-    ["src/react/**/*.ts", "src/react/**/*.tsx"].map((path) => glob(path))
+    ["src/react/**/*.ts", "src/react/**/*.tsx"].map((path) => glob(path)),
   ).then(([ts, tsx]) => [...ts, ...tsx]);
 
 const commonjs = () =>
@@ -18,7 +18,7 @@ const commonjs = () =>
       entryPoints,
       outdir: "react/cjs",
       format: "cjs",
-    })
+    }),
   );
 
 commonjs().catch((error) => {

@@ -15,7 +15,7 @@ export const iconNames = Array.from(
       .replace(/(.+)(Ultra)+$/g, "$1");
     if (!set.has(key)) set.add(key);
     return set;
-  }, new Set<string>())
+  }, new Set<string>()),
 );
 
 const Icon = ({

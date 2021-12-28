@@ -11,10 +11,7 @@ const NotificationSample = () => (
     <Notification
       Icon={Icons.InfoMedium}
       variant={select("variant", ["primary", "secondary"], "primary")}
-      title={text(
-        "title",
-        "Title about Security information which could be on 2 lines maximum"
-      )}
+      title={text("title", "Title about Security information which could be on 2 lines maximum")}
       numberOfLines={number("numberOfLines", 9, { min: 1, max: 10 })}
       onClose={action("onClose")}
     />
@@ -39,5 +36,5 @@ const NotificationNews = () => (
 storiesOf((story) =>
   story("Messages/Notification", module)
     .add("Notification", NotificationSample)
-    .add("News", NotificationNews)
+    .add("News", NotificationNews),
 );

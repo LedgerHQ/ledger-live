@@ -49,7 +49,7 @@ export default function InfiniteLoader({
         duration: 1000,
         easing: Easing.linear,
       }),
-      -1 //Infinite
+      -1, //Infinite
     );
     return () => cancelAnimation(rotation);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,10 +57,7 @@ export default function InfiniteLoader({
 
   return (
     <Animated.View
-      style={[
-        { display: "flex", justifyContent: "center", alignItems: "center" },
-        animatedStyles,
-      ]}
+      style={[{ display: "flex", justifyContent: "center", alignItems: "center" }, animatedStyles]}
     >
       <Loader
         size={size}

@@ -39,7 +39,7 @@ export function getButtonColors(colors: Theme["colors"]): {
 
 export function getButtonColorStyle(
   colors: Theme["colors"],
-  props: ButtonProps
+  props: ButtonProps,
 ): {
   text: {
     color: string;

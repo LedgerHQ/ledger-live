@@ -25,8 +25,7 @@ const ListStory = () => {
         },
         {
           title: "Validate Word #1...",
-          description:
-            "Choose Word #1 from the suggestions. tPress both buttons to validate.",
+          description: "Choose Word #1 from the suggestions. tPress both buttons to validate.",
         },
         {
           title: "Enter Word #1...",
@@ -38,7 +37,7 @@ const ListStory = () => {
           "Align items",
           ["flex-start", "flex-end", "center", "baseline", "stretch"],
           "center",
-          "Layout"
+          "Layout",
         ),
       }}
     />
@@ -58,8 +57,7 @@ const CustomListStory = () => {
         },
         {
           title: "Validate Word #1...",
-          description:
-            "Choose Word #1 from the suggestions. tPress both buttons to validate.",
+          description: "Choose Word #1 from the suggestions. tPress both buttons to validate.",
           bullet: Check,
         },
         {
@@ -73,7 +71,7 @@ const CustomListStory = () => {
           "Align items",
           ["flex-start", "flex-end", "center", "baseline", "stretch"],
           undefined,
-          "Layout"
+          "Layout",
         ),
       }}
     />
@@ -90,5 +88,5 @@ storiesOf((story) =>
         },
       },
     })
-    .add("Custom bullet list", () => <CustomListStory />)
+    .add("Custom bullet list", () => <CustomListStory />),
 );

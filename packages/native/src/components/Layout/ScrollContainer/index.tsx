@@ -2,11 +2,7 @@ import React from "react";
 import { space, SpaceProps } from "styled-system";
 import baseStyled, { BaseStyledProps } from "../../styled";
 import Animated from "react-native-reanimated";
-import type {
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  ScrollViewProps,
-} from "react-native";
+import type { NativeSyntheticEvent, NativeScrollEvent, ScrollViewProps } from "react-native";
 
 const ScrollView = baseStyled(Animated.ScrollView)<BaseStyledProps>`
   ${space};

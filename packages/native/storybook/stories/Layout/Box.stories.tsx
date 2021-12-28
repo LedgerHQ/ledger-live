@@ -42,5 +42,5 @@ const BoxStoryTwo = () => {
 storiesOf((story) =>
   story("Layout/Box", module)
     .add("Box One", () => <BoxStory />)
-    .add("Box Two", () => <BoxStoryTwo />)
+    .add("Box Two", () => <BoxStoryTwo />),
 );

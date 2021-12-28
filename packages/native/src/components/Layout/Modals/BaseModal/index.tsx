@@ -17,9 +17,7 @@ export type BaseModalProps = {
   modalStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   preventBackdropClick?: boolean;
-  Icon?:
-    | ((props: { size?: number; color?: string }) => React.ReactNode)
-    | React.ReactNode;
+  Icon?: ((props: { size?: number; color?: string }) => React.ReactNode) | React.ReactNode;
   iconColor?: string;
   title?: string;
   description?: string;

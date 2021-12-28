@@ -11,8 +11,7 @@ const NumberedListStory = () => {
           description: "Get a new hardware wallet.",
         },
         {
-          description:
-            "Select “Restore recovery phrase on a new device” on the Ledger app.",
+          description: "Select “Restore recovery phrase on a new device” on the Ledger app.",
           number: 42,
         },
         {
@@ -25,13 +24,11 @@ const NumberedListStory = () => {
           "Align items",
           ["flex-start", "flex-end", "center", "baseline", "stretch"],
           "center",
-          "Layout"
+          "Layout",
         ),
       }}
     />
   );
 };
 
-storiesOf((story) =>
-  story("Layout/List", module).add("NumberedList", () => <NumberedListStory />)
-);
+storiesOf((story) => story("Layout/List", module).add("NumberedList", () => <NumberedListStory />));

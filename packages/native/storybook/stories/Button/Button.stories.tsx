@@ -16,11 +16,7 @@ const iconName = () => text("Icon Name", "Info");
 
 const Regular = (): JSX.Element => (
   <Button
-    type={select(
-      "type",
-      ["main", "error", "shade", "color", undefined],
-      "main"
-    )}
+    type={select("type", ["main", "error", "shade", "color", undefined], "main")}
     size={select("size", ["small", "medium", "large", undefined], undefined)}
     iconPosition={select("iconPosition", ["right", "left"], "right")}
     Icon={iconSelect()}
@@ -34,11 +30,7 @@ const Regular = (): JSX.Element => (
 );
 const Promisable = (): JSX.Element => (
   <PromisableButton
-    type={select(
-      "type",
-      ["main", "shade", "error", "color", "default", undefined],
-      undefined
-    )}
+    type={select("type", ["main", "shade", "error", "color", "default", undefined], undefined)}
     iconPosition={select("iconPosition", ["right", "left"], "right")}
     Icon={iconSelect()}
     disabled={boolean("disabled", false)}
@@ -49,7 +41,5 @@ const Promisable = (): JSX.Element => (
 );
 
 storiesOf((story) =>
-  story("Button", module)
-    .add("Regular", Regular)
-    .add("PromisableButton", Promisable)
+  story("Button", module).add("Regular", Regular).add("PromisableButton", Promisable),
 );

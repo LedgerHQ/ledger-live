@@ -108,8 +108,6 @@ export function getTextStyle({
   const style = getTextTypeStyle({ bracket })[variant];
   return {
     ...style,
-    ...getConcatenedFontWeightFontFamily[style?.fontFamily ?? "Inter"][
-      fontWeight
-    ],
+    ...getConcatenedFontWeightFontFamily[style?.fontFamily ?? "Inter"][fontWeight],
   };
 }

@@ -13,7 +13,7 @@ const commonjs = () =>
       entryPoints,
       outdir: "lib/cjs",
       format: "cjs",
-    })
+    }),
   );
 
 commonjs().catch((error) => {
