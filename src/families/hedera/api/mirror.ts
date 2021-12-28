@@ -26,7 +26,10 @@ export interface Account {
 export async function getAccountsForPublicKey(
   publicKey: string
 ): Promise<Account[]> {
-  const r = await fetch("/accounts", { "account.publicKey": publicKey });
+  const r = await fetch("/accounts", {
+    "account.publicKey": publicKey,
+    balance: false,
+  });
   const rawAccounts = r.data.accounts;
   const accounts: Account[] = [];
 
