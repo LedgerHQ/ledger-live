@@ -60,12 +60,11 @@ class BIP32 {
   hmacSHA512(key, data) {
     return createHmac("sha512", key).update(data).digest();
   }
-  hash160(buffer) {
-    const sha256Hash = createHash("sha256").update(buffer).digest();
-    return createHash("rmd160").update(sha256Hash).digest();
+  hashSHA256(buffer) {
+    return createHash("sha256").update(buffer).digest();
   }
   fingerprint() {
-    return this.hash160(this.pk()).slice(0, 4);
+    return this.hashSHA256(this.pk()).slice(0, 4);
   }
 
   toBase58() {
