@@ -59,6 +59,9 @@ export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => 
       {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "flex-start" } })}
       {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "center" } })}
       {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "flex-end" } })}
+      {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "flex-start" } })}
+      {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "center" } })}
+      {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "flex-end" } })}
     </Flex>
   );
 };
@@ -68,7 +71,7 @@ export default {
   component: DropdownGenericComponent,
   argTypes: {
     label: { type: "string", defaultValue: "Label" },
-    placement: { control: { type: "select" } },
+    placement: { control: { type: "select", defaultValue: "bottom" } },
     closeOnClickOutside: { type: "boolean", defaultValue: true },
     closeOnClickInside: { type: "boolean", defaultValue: false },
     disabled: { type: "boolean", defaultValue: false },

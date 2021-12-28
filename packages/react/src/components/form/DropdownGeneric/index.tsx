@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useFloating, shift } from "@floating-ui/react-dom";
+import { useFloating, getScrollParents, shift, flip } from "@floating-ui/react-dom";
 import styled from "styled-components";
 import { Icons } from "../../../";
 import Flex from "../../layout/Flex";
@@ -35,6 +35,9 @@ const DropdownContainer = styled(Flex).attrs(({ theme }) => {
   box-shadow: 0px 6px 12px rgba(0, 0, 0, ${(p) => (p.theme.colors.type === "light" ? 0.04 : 0.08)});
 `;
 
+export const placements = ["bottom-start", "bottom", "bottom-end"] as const;
+type Placement = typeof placements[number];
+
 export type Props = {
   /**
    * Label of the dropdown button, displayed before the dropdown icon.
@@ -64,7 +67,7 @@ export type Props = {
    * Will automatically adjust to the document to avoid overflowing.
    * Defaults to "bottom".
    */
-  placement?: "bottom-start" | "bottom" | "bottom-end";
+  placement?: Placement;
 };
 
 const DropdownGeneric = ({
@@ -83,14 +86,38 @@ const DropdownGeneric = ({
     if (!disabled) setOpened(!opened);
   }, [opened, disabled]);
 
-  const { x, y, reference, floating, strategy } = useFloating({
-    placement,
-    middleware: [shift()],
-  });
-
   const handleClickInside = useCallback(() => {
     if (closeOnClickInside) setOpened(false);
   }, [setOpened, closeOnClickInside]);
+
+  const { x, y, reference, floating, strategy, update, refs } = useFloating({
+    placement: placements.includes(placement) ? placement : "bottom",
+    middleware: [shift(), flip()],
+  });
+
+  const handleResizeOrScroll = useCallback(() => {
+    if (opened && !disabled) update();
+  }, [opened, disabled, update]);
+
+  useEffect(() => {
+    if (!refs.reference.current || !refs.floating.current) {
+      return;
+    }
+    const parents = [
+      ...getScrollParents(refs.reference.current),
+      ...getScrollParents(refs.floating.current),
+    ];
+    parents.forEach((parent) => {
+      parent.addEventListener("scroll", handleResizeOrScroll);
+      parent.addEventListener("resize", handleResizeOrScroll);
+    });
+    return () => {
+      parents.forEach((parent) => {
+        parent.removeEventListener("scroll", handleResizeOrScroll);
+        parent.removeEventListener("resize", handleResizeOrScroll);
+      });
+    };
+  }, [opened, disabled, refs.reference, refs.floating, handleResizeOrScroll]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -126,9 +153,9 @@ const DropdownGeneric = ({
       </ButtonContainer>
       {opened && !disabled && (
         <DropdownContainer
-          onClick={handleClickInside}
           ref={floating}
           style={{ overflow: "visible", position: strategy, top: y ?? "", left: x ?? "" }}
+          onClick={handleClickInside}
         >
           {children}
         </DropdownContainer>
