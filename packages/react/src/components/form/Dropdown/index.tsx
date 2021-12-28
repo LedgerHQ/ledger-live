@@ -3,8 +3,8 @@ import { components, GroupBase, ControlProps, ValueContainerProps } from "react-
 import { useTheme } from "styled-components";
 import SelectInput, { Props as SelectInputProps } from "../../form/SelectInput";
 import Text from "../../asorted/Text";
+import { Icons } from "../../../";
 import { ValueContainer } from "../../form/SelectInput/ValueContainer";
-import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/react";
 import FlexBox from "../../layout/Flex";
 
 export type Props<O> = SelectInputProps<O, false, GroupBase<O>> & {
@@ -19,7 +19,7 @@ function DropdownControl<O, M extends boolean, G extends GroupBase<O>>(
 
   return (
     <components.Control {...props}>
-      <Text fontWeight="semiBold" variant={"paragraph"} color="neutral.c80" mr={2}>
+      <Text variant="paragraph" fontWeight="medium" color="neutral.c80" mr={2}>
         {label}
       </Text>
       {children}
@@ -28,18 +28,18 @@ function DropdownControl<O, M extends boolean, G extends GroupBase<O>>(
 }
 
 function DropdownValueContainer<O>(props: ValueContainerProps<O, false>) {
-  const ChevronIcon = props.selectProps.menuIsOpen ? ChevronTopMedium : ChevronBottomMedium;
+  const isOpen = props.selectProps.menuIsOpen;
 
   return (
     <ValueContainer
       {...props}
       render={() => (
-        <FlexBox>
-          <Text fontWeight="semiBold" variant={"paragraph"} mr={2}>
+        <FlexBox alignItems="center">
+          <Text variant="paragraph" fontWeight="medium" mr={2}>
             <FlexBox>{props.children}</FlexBox>
           </Text>
-          <FlexBox alignItems="center">
-            <ChevronIcon size={12} />
+          <FlexBox alignItems="center" style={{ transform: isOpen ? "rotate(180deg)" : "" }}>
+            <Icons.DropdownMedium size={20} />
           </FlexBox>
         </FlexBox>
       )}
