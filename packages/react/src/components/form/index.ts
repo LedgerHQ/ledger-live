@@ -1,6 +1,7 @@
 export { default as Input } from "./BaseInput";
 export { default as Checkbox } from "./Checkbox";
 export { default as Dropdown } from "./Dropdown";
+export { default as DropdownGeneric } from "./DropdownGeneric";
 export { default as LegendInput } from "./LegendInput";
 export { default as NumberInput } from "./NumberInput";
 export { default as QrCodeInput } from "./QrCodeInput";
