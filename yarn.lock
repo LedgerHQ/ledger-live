@@ -1979,6 +1979,26 @@
     find-up "^5.0.0"
     js-yaml "^4.1.0"
 
+"@floating-ui/core@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-0.3.0.tgz#3e24b903b40f194f04d20c6d1055f71a4d820984"
+  integrity sha512-AwX5RY1ShJO7bbhP1TaVzUErCPqiFqSZ6fFYKgGwR4emYksPXPnaRIkQczYYpX4snmENt+EIWByzMcK2I7xdww==
+
+"@floating-ui/dom@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-0.1.9.tgz#bf4b42b9ff8e01870ce6f4baf3192d834d44acc0"
+  integrity sha512-XsDE8IvOW+Gz2LrcusurNH+nuCNDdXs5QsxSd0wDfK87Mi1VM3s2SmzaxKSdCGz+T0iPDQjDmextnUFa22w+NA==
+  dependencies:
+    "@floating-ui/core" "^0.3.0"
+
+"@floating-ui/react-dom@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@floating-ui/react-dom/-/react-dom-0.4.0.tgz#3666560336c887a1358088003c6e1b3f350195ae"
+  integrity sha512-ZuXE01jFjpRRxBuPvOSbz/LMZClGTGdGvH8JHYEbD64mYzsv7Cmxqfyo4VA9XFAvlurGrZl74OMRSKCRjitxog==
+  dependencies:
+    "@floating-ui/dom" "^0.1.9"
+    use-isomorphic-layout-effect "^1.1.1"
+
 "@gar/promisify@^1.0.1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.2.tgz#30aa825f11d438671d585bd44e7fd564535fc210"
@@ -17642,7 +17662,7 @@ use-composed-ref@^1.0.0:
   dependencies:
     ts-essentials "^2.0.3"
 
-use-isomorphic-layout-effect@^1.0.0:
+use-isomorphic-layout-effect@^1.0.0, use-isomorphic-layout-effect@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/use-isomorphic-layout-effect/-/use-isomorphic-layout-effect-1.1.1.tgz#7bb6589170cd2987a152042f9084f9effb75c225"
   integrity sha512-L7Evj8FGcwo/wpbv/qvSfrkHFtOpCzvM5yl2KVyDJoylVuSvzphiiasmjgQPttIGBAy2WKiBNR98q8w7PiNgKQ==
