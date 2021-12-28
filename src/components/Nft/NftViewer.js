@@ -245,14 +245,17 @@ const NftViewer = ({ route }: Props) => {
 
           <Section title={t("nft.viewer.tokenId")} value={nft.tokenId} />
 
-          <View style={styles.hr} />
-
-          <TouchableOpacity onPress={closeModal}>
-            <Section
-              title={t("nft.viewer.quantity")}
-              value={nft.amount.toFixed()}
-            />
-          </TouchableOpacity>
+          {collection.standard === "ERC1155" && (
+            <>
+              <View style={styles.hr} />
+              <TouchableOpacity onPress={closeModal}>
+                <Section
+                  title={t("nft.viewer.quantity")}
+                  value={nft.amount.toFixed()}
+                />
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </ScrollView>
       <NftLinksPanel

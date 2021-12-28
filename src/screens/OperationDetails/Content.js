@@ -300,10 +300,12 @@ export default function Content({
             title={t("operationDetails.tokenId")}
             value={operation.tokenId}
           />
-          <Section
-            title={t("operationDetails.quantity")}
-            value={operation.value.toFixed()}
-          />
+          {operation.standard === "ERC1155" && (
+            <Section
+              title={t("operationDetails.quantity")}
+              value={operation.value.toFixed()}
+            />
+          )}
         </>
       ) : null}
 
