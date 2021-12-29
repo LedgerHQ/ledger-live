@@ -67,7 +67,7 @@ export type Props = {
    */
   children: React.ReactNode;
   /**
-   * Horizontal position of the dropdown relative to the dropdown button.
+   * Vertical alignment of the dropdown relative to the dropdown button.
    * Will automatically adjust to the document to avoid overflowing.
    * Defaults to "bottom".
    */
