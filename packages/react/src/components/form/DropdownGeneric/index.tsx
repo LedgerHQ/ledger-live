@@ -92,7 +92,6 @@ const DropdownGeneric = ({
   const divRef = useRef<HTMLDivElement>(null);
 
   const [maxHeight, setMaxHeight] = useState<number>();
-  // const [maxWidth, setMaxWidth] = useState<number>();
 
   const [opened, setOpened] = useState(false);
 
