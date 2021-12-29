@@ -2,8 +2,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFloating, getScrollParents, shift, size, flip } from "@floating-ui/react-dom";
 import styled from "styled-components";
 import { Icons } from "../../../";
+import Flex from "../../layout/Flex";
 import Box from "../../layout/Flex";
 import Text from "../../asorted/Text";
+
+const Container = styled(Box).attrs({
+  marginRight: 3,
+})``;
 
 const ButtonContainer = styled(Box).attrs({
   flexDirection: "row",
@@ -15,11 +20,11 @@ const ButtonContainer = styled(Box).attrs({
   > :last-child {
     /* targeting the dropdown icon */
     ${(p) => p.opened && "transform: rotate(180deg);"}
-    margin: 0px ${(p) => p.theme.space[3]}px;
+    margin-left: ${(p) => p.theme.space[3]}px;
   }
 `;
 
-const DropdownContainer = styled(Box).attrs(({ theme }) => {
+const DropdownContainer = styled(Flex).attrs(({ theme }) => {
   const isLight = theme.colors.type === "light";
   return {
     flexDirection: "column",
@@ -70,9 +75,9 @@ export type Props = {
   /**
    * Controls whether the dropdown will flip its side to keep it in view
    * in case there isn't enough space available. See https://floating-ui.com/docs/flip
-   * Defaults to true.
+   * Defaults to false.
    */
-  flipEnabled?: boolean;
+  flipDisabled?: boolean;
 };
 
 const DropdownGeneric = ({
@@ -81,7 +86,7 @@ const DropdownGeneric = ({
   closeOnClickInside = false,
   disabled = false,
   placement = "bottom",
-  flipEnabled = true,
+  flipDisabled = false,
   children,
 }: Props) => {
   const divRef = useRef<HTMLDivElement>(null);
@@ -103,7 +108,7 @@ const DropdownGeneric = ({
     placement: placements.includes(placement) ? placement : "bottom",
     middleware: [
       shift(),
-      ...(flipEnabled ? [flip()] : []),
+      ...(flipDisabled ? [] : [flip()]),
       size({
         padding: 6,
         apply({ height }) {
@@ -135,7 +140,7 @@ const DropdownGeneric = ({
         parent.removeEventListener("resize", handleResizeOrScroll);
       });
     };
-  }, [flipEnabled, opened, disabled, refs.reference, refs.floating, handleResizeOrScroll]);
+  }, [flipDisabled, refs.reference, refs.floating, handleResizeOrScroll]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -157,7 +162,7 @@ const DropdownGeneric = ({
   const color = disabled ? "neutral.c50" : "neutral.c100";
 
   return (
-    <div ref={divRef}>
+    <Container ref={divRef}>
       <ButtonContainer
         ref={reference}
         onClick={handleClickButton}
@@ -183,7 +188,7 @@ const DropdownGeneric = ({
           {children}
         </DropdownContainer>
       )}
-    </div>
+    </Container>
   );
 };
 

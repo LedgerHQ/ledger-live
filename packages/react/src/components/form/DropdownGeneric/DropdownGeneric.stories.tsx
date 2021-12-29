@@ -96,6 +96,6 @@ export default {
     closeOnClickOutside: { type: "boolean", defaultValue: true },
     closeOnClickInside: { type: "boolean", defaultValue: false },
     disabled: { type: "boolean", defaultValue: false },
-    flipEnabled: { type: "boolean", defaultValue: true },
+    flipDisabled: { type: "boolean", defaultValue: false },
   },
 };
