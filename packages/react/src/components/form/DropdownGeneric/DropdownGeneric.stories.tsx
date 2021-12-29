@@ -16,12 +16,12 @@ const SmallChild = () => (
   >
     <Text variant="small" color="palette.neutral.c60" textAlign="center">
       I'm a simple div with a grey background and no margin passed as children of the dropdown
-      component
+      component.
     </Text>
   </Flex>
 );
 
-const BigChild = () => (
+const BigChild = ({ containerProps }: { containerProps?: Record<string, unknown> }) => (
   <Box
     padding={10}
     flexDirection="column"
@@ -29,10 +29,11 @@ const BigChild = () => (
     backgroundColor="neutral.c30"
     justifyContent="center"
     alignItems="center"
+    {...containerProps}
   >
     <Text maxWidth="200px" variant="small" color="palette.neutral.c60" textAlign="center">
-      If you put content that is bigger than the available space, the dropdown will have a maxHeight
-      and its inner container will scroll
+      If you put content that is bigger than the available space, the dropdown will fill the entire
+      space without overflowing and its inner container will scroll.
     </Text>
     <Box height="100px" width="100px" backgroundColor="lightgreen" />
     <Box height="120px" width="100px" backgroundColor="lightcoral" />
@@ -60,14 +61,23 @@ const BottomPlaceholder = () => (
 const DropdownStoryTemplate = (
   props: Omit<DropdownGenericProps, "children"> & {
     big?: boolean;
+    bigWithMaxHeight?: boolean;
     containerProps: Record<string, unknown>;
   },
 ) => {
-  const { containerProps = {}, big = false, ...rest } = props;
+  const { containerProps = {}, big = false, bigWithMaxHeight = false, ...rest } = props;
   return (
     <Flex flexDirection="column" {...containerProps}>
       <DropdownGenericComponent {...rest}>
-        {big ? <BigChild /> : <SmallChild />}
+        {big ? (
+          bigWithMaxHeight ? (
+            <BigChild containerProps={{ maxHeight: "400px", overflow: "scroll" }} />
+          ) : (
+            <BigChild />
+          )
+        ) : (
+          <SmallChild />
+        )}
       </DropdownGenericComponent>
       <BottomPlaceholder />
     </Flex>
@@ -75,6 +85,8 @@ const DropdownStoryTemplate = (
 };
 
 export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => {
+  const alignItemsPossibilities = ["flex-start", "center", "flex-end"];
+  const containerPropsPossibilities = alignItemsPossibilities.map((alignItems) => ({ alignItems }));
   return (
     <Flex flexDirection="column" rowGap={5}>
       {/**
@@ -82,14 +94,19 @@ export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => 
        * the actual code in "show code" instead of an opaque "DropdownTemplate" component
        *  */}
       <Text variant="h3">Small content:</Text>
-      {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "flex-start" } })}
-      {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "center" } })}
-      {DropdownStoryTemplate({ ...args, containerProps: { alignItems: "flex-end" } })}
+      {containerPropsPossibilities.map((containerProps) =>
+        DropdownStoryTemplate({ ...args, containerProps }),
+      )}
       <Divider variant="light" />
       <Text variant="h3">Big content:</Text>
-      {DropdownStoryTemplate({ ...args, big: true, containerProps: { alignItems: "flex-start" } })}
-      {DropdownStoryTemplate({ ...args, big: true, containerProps: { alignItems: "center" } })}
-      {DropdownStoryTemplate({ ...args, big: true, containerProps: { alignItems: "flex-end" } })}
+      {containerPropsPossibilities.map((containerProps) =>
+        DropdownStoryTemplate({ ...args, big: true, containerProps }),
+      )}
+      <Divider variant="light" />
+      <Text variant="h3">Big content with max height:</Text>
+      {containerPropsPossibilities.map((containerProps) =>
+        DropdownStoryTemplate({ ...args, big: true, bigWithMaxHeight: true, containerProps }),
+      )}
     </Flex>
   );
 };
