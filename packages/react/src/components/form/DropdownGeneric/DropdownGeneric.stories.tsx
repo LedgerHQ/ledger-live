@@ -6,7 +6,14 @@ import DropdownGenericComponent, { Props as DropdownGenericProps } from ".";
 import Divider from "../../asorted/Divider";
 
 const SmallChild = () => (
-  <Flex padding={10} backgroundColor="neutral.c30" justifyContent="center" alignItems="center">
+  <Flex
+    height={200}
+    width={180}
+    padding={10}
+    backgroundColor="neutral.c30"
+    justifyContent="center"
+    alignItems="center"
+  >
     <Text variant="small" color="palette.neutral.c60" textAlign="center">
       I'm a simple div with a grey background and no margin passed as children of the dropdown
       component
