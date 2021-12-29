@@ -27,6 +27,7 @@ const ButtonContainer = styled(Box).attrs({
 const DropdownContainer = styled(Flex).attrs(({ theme }) => {
   const isLight = theme.colors.type === "light";
   return {
+    zIndex: 1,
     flexDirection: "column",
     padding: 3,
     border: `1px solid ${theme.colors.neutral[isLight ? "c20" : "c30"]}`,
