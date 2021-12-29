@@ -35,7 +35,7 @@ const DropdownContainer = styled(Flex).attrs(({ theme }) => {
     color: theme.colors.neutral.c80,
   };
 })`
-  overflow: scroll;
+  overflow-y: auto;
   box-shadow: 0px 6px 12px rgba(0, 0, 0, ${(p) => (p.theme.colors.type === "light" ? 0.04 : 0.08)});
 `;
 
@@ -92,6 +92,7 @@ const DropdownGeneric = ({
   const divRef = useRef<HTMLDivElement>(null);
 
   const [maxHeight, setMaxHeight] = useState<number>();
+  const [maxWidth, setMaxWidth] = useState<number>();
 
   const [opened, setOpened] = useState(false);
 
@@ -110,8 +111,9 @@ const DropdownGeneric = ({
       ...(flipDisabled ? [] : [flip()]),
       size({
         padding: 6,
-        apply({ height }) {
+        apply({ height, width }) {
           setMaxHeight(height);
+          setMaxWidth(width);
         },
       }),
     ],
@@ -181,6 +183,8 @@ const DropdownGeneric = ({
             top: y ?? "",
             left: x ?? "",
             maxHeight: maxHeight ? `${maxHeight}px` : "",
+            maxWidth: maxWidth ? "" : "",
+            // maxWidth: maxWidth ? `${maxWidth}px` : "", /* TODO: fix this */
           }}
           onClick={handleClickInside}
         >
