@@ -229,7 +229,7 @@ export function getListHeaderComponents({
             />,
           ]
         : []),
-      ...(!empty && account.type === "Account" && account.nfts
+      ...(!empty && account.type === "Account" && account.nfts?.length
         ? [<NftCollectionsList account={account} />]
         : []),
       ...(compoundSummary &&
