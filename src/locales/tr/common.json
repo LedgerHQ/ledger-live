@@ -102,7 +102,7 @@
       "title": "Alıcı hesap, seçili ASA'yı onaylamadı."
     },
     "BluetoothRequired": {
-      "title": "Maalesef, Bluetooth devre dışı",
+      "title": "Üzgünüz, Bluetooth devre dışı",
       "description": "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
     },
     "BtcUnmatchedApp": {
@@ -110,14 +110,14 @@
       "description": "Lütfen cihazınızda {{managerAppName}} uygulamasını açın."
     },
     "CantOpenDevice": {
-      "title": "Maalesef, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Ledger cihazınız kilidi açılmış durumda ve Bluetooth kapsama alanı içinde olmalıdır."
     },
     "CantScanQRCode": {
       "title": "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor."
     },
     "ConnectAppTimeout": {
-      "title": "Maalesef, cihaz bulunamadı",
+      "title": "Üzgünüz, cihaz bulunamadı",
       "description": {
         "ios": {
           "nanoX": "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
@@ -271,7 +271,7 @@
       "description": "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
     "FeeEstimationFailed": {
-      "title": "Maalesef, ücret tahmini başarısız oldu",
+      "title": "Üzgünüz, ücret tahmini başarısız oldu",
       "description": "Ücreti manuel olarak ayarlamayı deneyin (durum: {{status}})."
     },
     "FeeNotLoaded": {
@@ -377,7 +377,7 @@
       "description": "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughGas": {
-      "title": "Parent account balance insufficient for network fees",
+      "title": "Ana hesap bakiyesi ağ ücretlerini karşılamak için yetersiz",
       "description": "ERC20 token işlemlerini ödemek için lütfen hesabınıza biraz ETH gönderin."
     },
     "NotEnoughBalanceToDelegate": {
@@ -503,11 +503,11 @@
       "description": "Cihazdaki işlemi reddettiniz."
     },
     "WebsocketConnectionError": {
-      "title": "Maalesef, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Lütfen daha iyi bir ağ bağlantısıyla tekrar deneyin (WebSocket hatası)."
     },
     "WebsocketConnectionFailed": {
-      "title": "Maalesef, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Lütfen daha iyi bir ağ bağlantısıyla tekrar deneyin (WebSocket başarısız oldu)."
     },
     "WrongDeviceForAccount": {
@@ -603,10 +603,19 @@
     "generic": {
       "title": "{{message}}",
       "description": "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "SolanaAccountNotFunded": {
+      "title": "Account not funded"
+    },
+    "SolanaAddressOfEd25519": {
+      "title": "Address off ed25519 curve"
+    },
+    "SolanaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}}"
     }
   },
   "bluetooth": {
-    "required": "Maalesef, Bluetooth devre dışı gibi görünüyor",
+    "required": "Üzgünüz, Bluetooth devre dışı görünüyor",
     "locationRequiredTitle": "Bluetooth LE için konum gerekli",
     "locationRequiredMessage": "Bluetooth LE cihazlarını listelemek için Android'de konum izni gerekli.",
     "checkEnabled": "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin."
@@ -1530,7 +1539,7 @@
       }
     },
     "availableBalance": "Mevcut bakiye",
-    "totalSupplied": "Yatırılan miktar",
+    "totalSupplied": "Yatırılan tutar",
     "tronFrozen": "Dondurulan",
     "bandwidth": "Bant Genişliği",
     "energy": "Enerji",
@@ -2169,7 +2178,7 @@
         },
         "amount": {
           "totalAvailable": "Mevcut bakiye",
-          "placeholderMax": "Maks. Çekim Tutarı"
+          "placeholderMax": "Hepsini Çek"
         },
         "validation": {
           "success": "Yatırım başarıyla gönderildi",
@@ -2498,7 +2507,7 @@
       },
       "taproot": {
         "title": "Taproot",
-        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
+        "desc": "En son {{currency}} ağ güncellemesi. Yaygınlaştığında daha iyi gizlilik ve daha ucuz ağ ücretleri sunacak. Mevcut cüzdan ve borsa desteği hala sınırlı."
       }
     }
   },

@@ -377,7 +377,7 @@
       "description": "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
     "NotEnoughGas": {
-      "title": "Parent account balance insufficient for network fees",
+      "title": "Баланса на основном счету недостаточно для покрытия комиссии сети",
       "description": "Пожалуйста, пополните свой счёт ETH для оплаты транзакций в токенах ERC20."
     },
     "NotEnoughBalanceToDelegate": {
@@ -603,6 +603,15 @@
     "generic": {
       "title": "{{message}}",
       "description": "Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
+    },
+    "SolanaAccountNotFunded": {
+      "title": "Account not funded"
+    },
+    "SolanaAddressOfEd25519": {
+      "title": "Address off ed25519 curve"
+    },
+    "SolanaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}}"
     }
   },
   "bluetooth": {
@@ -803,11 +812,11 @@
       "3": {
         "label": "Знаете ли вы?",
         "title": "Подтверждение операций",
-        "desc": "Приложение Ledger Live позволяет полностью безопасно покупать, продавать, контролировать, обменивать и зарабатывать криптовалюты. Вы должны подтверждать каждую транзакцию в криптовалюте на своём устройстве Nano."
+        "desc": "Ledger Live позволяет полностью безопасно покупать, продавать, контролировать, обменивать и наращивать криптовалюты. Каждая транзакцию вы подтверждаете на своём устройстве Nano."
       },
       "4": {
         "label": "Знаете ли вы?",
-        "title": "Начнём с настройки вашего устройства Nano.",
+        "title": "Давайте настроим ваш Nano",
         "desc": "Сначала мы выставим настройки безопасности Nano."
       },
       "cta": "Начать"
@@ -2498,7 +2507,7 @@
       },
       "taproot": {
         "title": "Taproot",
-        "desc": "Latest {{currency}} network upgrade. Will provide better privacy and cheaper fees once widespread. Still limited support from wallet and exchanges."
+        "desc": "Свежее обновление сети {{currency}}. После широкого распространения пользователи получат больший уровень конфиденциальности и более дешёвую комиссию. Пока что в кошельках и на биржах представлена лишь ограниченная поддержка."
       }
     }
   },
