@@ -6,10 +6,6 @@ import Flex from "../../layout/Flex";
 import Box from "../../layout/Flex";
 import Text from "../../asorted/Text";
 
-const Container = styled(Box).attrs({
-  marginRight: 3,
-})``;
-
 const ButtonContainer = styled(Box).attrs({
   flexDirection: "row",
   width: "auto",
@@ -164,7 +160,7 @@ const DropdownGeneric = ({
   const color = disabled ? "neutral.c50" : "neutral.c100";
 
   return (
-    <Container ref={divRef}>
+    <Box ref={divRef}>
       <ButtonContainer
         ref={reference}
         onClick={handleClickButton}
@@ -192,7 +188,7 @@ const DropdownGeneric = ({
           {children}
         </DropdownContainer>
       )}
-    </Container>
+    </Box>
   );
 };
 
