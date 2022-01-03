@@ -396,47 +396,6 @@ export function genAccount(
     balanceHistoryCache: emptyHistoryCache,
   };
 
-  if (currency.id === "cosmos") {
-    account.cosmosResources = {
-      // TODO variation in these
-      delegations: [],
-      redelegations: [],
-      unbondings: [],
-      delegatedBalance: new BigNumber(0),
-      pendingRewardsBalance: new BigNumber(0),
-      unbondingBalance: new BigNumber(0),
-      withdrawAddress: address,
-    };
-  }
-
-  if (currency.family === "bitcoin") {
-    account.bitcoinResources = {
-      utxos: [],
-      walletAccount: undefined,
-    };
-  }
-
-  if (currency.family === "algorand") {
-    account.algorandResources = {
-      rewards: new BigNumber(0),
-      rewardsAccumulated: new BigNumber(0),
-    };
-  }
-
-  if (currency.family === "polkadot") {
-    account.polkadotResources = {
-      stash: null,
-      controller: null,
-      nonce: 0,
-      lockedBalance: new BigNumber(0),
-      unlockingBalance: new BigNumber(0),
-      unlockedBalance: new BigNumber(0),
-      unlockings: [],
-      nominations: [],
-      numSlashingSpans: 0,
-    };
-  }
-
   if (
     ["ethereum", "ethereum_ropsten", "tron", "algorand"].includes(currency.id)
   ) {
@@ -461,6 +420,47 @@ export function genAccount(
     account.subAccounts = tokens.map((token, i) =>
       genTokenAccount(i, account, token)
     );
+  }
+
+  if (currency.id === "cosmos") {
+    account.cosmosResources = {
+      // TODO variation in these
+      delegations: [],
+      redelegations: [],
+      unbondings: [],
+      delegatedBalance: new BigNumber(0),
+      pendingRewardsBalance: new BigNumber(0),
+      unbondingBalance: new BigNumber(0),
+      withdrawAddress: address,
+    };
+  }
+
+  if (currency.family === "bitcoin") {
+    account.bitcoinResources = {
+      utxos: [],
+      walletAccount: undefined,
+    };
+  }
+
+  if (currency.family === "algorand") {
+    account.algorandResources = {
+      rewards: new BigNumber(0),
+      nbAssets: account.subAccounts?.length ?? 0,
+    };
+  }
+
+  if (currency.family === "polkadot") {
+    account.polkadotResources = {
+      stash: null,
+      controller: null,
+      nonce: 0,
+      lockedBalance: new BigNumber(0),
+      unlockingBalance: new BigNumber(0),
+      unlockedBalance: new BigNumber(0),
+      unlockings: [],
+      nominations: [],
+      numSlashingSpans: 0,
+    };
   }
 
   account.operations = Array(operationsSize)

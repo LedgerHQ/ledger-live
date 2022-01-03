@@ -111,6 +111,7 @@ const cliFormat = (account, level?: string) => {
 
   if (family && family.formatAccountSpecifics) {
     str += family.formatAccountSpecifics(account);
+    str += "\n";
   }
 
   const subAccounts = account.subAccounts || [];

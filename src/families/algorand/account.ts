@@ -46,15 +46,6 @@ function formatAccountSpecifics(account: Account): string {
       ) + " rewards. ";
   }
 
-  if ((algorandResources as AlgorandResources).rewardsAccumulated.gt(0)) {
-    str +=
-      formatCurrencyUnit(
-        unit,
-        (algorandResources as AlgorandResources).rewardsAccumulated,
-        formatConfig
-      ) + " rewardsAccumulated. ";
-  }
-
   return str;
 }
 

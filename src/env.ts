@@ -40,11 +40,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
-  API_ALGORAND_BLOCKCHAIN_EXPLORER_API_KEY: {
-    def: "",
-    parser: stringParser,
-    desc: "Node API key for algorand",
-  },
   API_COSMOS_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://cosmoshub4.coin.ledger.com/",
     parser: stringParser,

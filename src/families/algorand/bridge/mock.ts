@@ -5,7 +5,7 @@ import {
   InvalidAddress,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { Transaction } from "../types";
+import type { AlgorandTransaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "../../../types";
 import {
   scanAccounts,
@@ -20,7 +20,7 @@ const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) => t.fees || new BigNumber(0);
 
-const createTransaction = (): Transaction => ({
+const createTransaction = (): AlgorandTransaction => ({
   family: "algorand",
   mode: "send",
   amount: new BigNumber(0),
@@ -88,7 +88,7 @@ const prepareTransaction = async (a, t) => {
   return t;
 };
 
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: AccountBridge<AlgorandTransaction> = {
   estimateMaxSpendable,
   createTransaction,
   updateTransaction,

@@ -1,7 +1,7 @@
 import Algorand from "@ledgerhq/hw-app-algorand";
 import { makeSignOperation } from "../../libcore/signOperation";
 import buildTransaction from "./libcore-buildTransaction";
-import type { Transaction, CoreAlgorandTransaction } from "./types";
+import type { AlgorandTransaction, CoreAlgorandTransaction } from "./types";
 import type { Operation } from "../../types";
 import { BigNumber } from "bignumber.js";
 
@@ -98,7 +98,7 @@ async function signTransaction({
   };
 }
 
-export default makeSignOperation<Transaction, CoreAlgorandTransaction>({
+export default makeSignOperation<AlgorandTransaction, CoreAlgorandTransaction>({
   buildTransaction,
   signTransaction,
 });

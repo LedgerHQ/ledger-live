@@ -228,8 +228,7 @@ export async function buildAccount({
     used: false,
     balance,
     balanceHistory,
-    spendableBalance: balance,
-    // FIXME need libcore concept
+    spendableBalance: balance, // FIXME need libcore concept
     blockHeight,
     currency,
     unit: currency.units[0],

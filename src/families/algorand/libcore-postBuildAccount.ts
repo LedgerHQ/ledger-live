@@ -5,19 +5,14 @@ import type { AlgorandResources } from "./types";
 import { AlgorandOperationTypeEnum } from "./types";
 
 const getAlgorandResources = async (
-  account: Account,
   coreAccount
 ): Promise<AlgorandResources> => {
   const algorandAccount = await coreAccount.asAlgorandAccount();
   const rewardsBigInt = await algorandAccount.getPendingRewards();
-  const rewardsAccumulatedBigInt = await algorandAccount.getTotalRewards();
   const rewards = await libcoreAmountToBigNumber(rewardsBigInt);
-  const rewardsAccumulated = await libcoreAmountToBigNumber(
-    rewardsAccumulatedBigInt
-  );
   return {
     rewards,
-    rewardsAccumulated,
+    nbAssets: 0, // unused in libcore implem
   };
 };
 
@@ -39,7 +34,7 @@ const postBuildAccount = async ({
   account: Account;
   coreAccount: CoreAccount;
 }): Promise<Account> => {
-  account.algorandResources = await getAlgorandResources(account, coreAccount);
+  account.algorandResources = await getAlgorandResources(coreAccount);
   account.spendableBalance = await getAlgorandSpendableBalance(coreAccount);
   return account;
 };

@@ -1,6 +1,6 @@
 import expect from "expect";
 import invariant from "invariant";
-import type { Transaction } from "./types";
+import type { AlgorandTransaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { isAccountEmpty } from "../../account";
 import { pickSiblings } from "../../bot/specs";
@@ -12,17 +12,8 @@ import { listTokensForCryptoCurrency } from "../../currencies";
 import { extractTokenId } from "./tokens";
 import { DeviceModelId } from "@ledgerhq/devices";
 const currency = getCryptoCurrencyById("algorand");
-// Minimum fees
-const minFees = parseCurrencyUnit(currency.units[0], "0.001");
 // Minimum balance required for a new non-ASA account
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
-
-// Spendable balance for a non-ASA account
-const getSpendableBalance = (maxSpendable) => {
-  maxSpendable = maxSpendable.minus(minFees);
-  invariant(maxSpendable.gt(0), "Spendable balance is too low");
-  return maxSpendable;
-};
 
 // Ensure that, when the recipient corresponds to an empty account,
 // the amount to send is greater or equal to the required minimum
@@ -74,7 +65,7 @@ const getRandomAssetId = (account) => {
   return sample(diff);
 };
 
-const algorand: AppSpec<Transaction> = {
+const algorand: AppSpec<AlgorandTransaction> = {
   name: "Algorand",
   currency,
   appQuery: {
@@ -86,11 +77,11 @@ const algorand: AppSpec<Transaction> = {
       name: "move ~50%",
       maxRun: 2,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        const spendableBalance = getSpendableBalance(maxSpendable);
+        invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
-        const amount = spendableBalance
+        const amount = maxSpendable
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
         checkSendableToEmptyAccount(amount, sibling);
@@ -119,10 +110,10 @@ const algorand: AppSpec<Transaction> = {
       name: "send max",
       maxRun: 1,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        const spendableBalance = getSpendableBalance(maxSpendable);
+        invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const sibling = pickSiblings(siblings, 4);
         // Send the full spendable balance
-        const amount = spendableBalance;
+        const amount = maxSpendable;
         checkSendableToEmptyAccount(amount, sibling);
         return {
           transaction: bridge.createTransaction(account),
@@ -147,7 +138,7 @@ const algorand: AppSpec<Transaction> = {
       name: "send ASA ~50%",
       maxRun: 2,
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gt(minFees), "Spendable balance is too low");
+        invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const subAccount = sample(getAssetsWithBalance(account));
         invariant(
           subAccount && subAccount.type === "TokenAccount",
@@ -161,7 +152,7 @@ const algorand: AppSpec<Transaction> = {
         const amount = subAccount.balance
           .div(1.9 + 0.2 * Math.random())
           .integerValue();
-        const updates: Array<Partial<Transaction>> = [
+        const updates: Array<Partial<AlgorandTransaction>> = [
           {
             mode,
             subAccountId: subAccount.id,
@@ -196,10 +187,13 @@ const algorand: AppSpec<Transaction> = {
       name: "opt-In ASA available",
       maxRun: 1,
       transaction: ({ account, bridge, maxSpendable }) => {
-        // maxSpendable is expected to be greater than 100,000 micro-Algos (+ 1,000 for fees)
+        // maxSpendable is expected to be greater than 100,000 micro-Algos
         // corresponding to the requirement that the main account will have
         // one more ASA after the opt-in; its minimum balance is updated accordingly
-        invariant(maxSpendable.gt(new BigNumber(101000)), "balance is too low");
+        invariant(
+          maxSpendable.gt(new BigNumber(100000)),
+          "Spendable balance is too low"
+        );
         const transaction = bridge.createTransaction(account);
         const mode = "optIn";
         const assetId = getRandomAssetId(account);
@@ -207,7 +201,7 @@ const algorand: AppSpec<Transaction> = {
           ? account.subAccounts.find((a) => a.id.includes(assetId as string))
           : null;
         invariant(!subAccount, "already opt-in");
-        const updates: Array<Partial<Transaction>> = [
+        const updates: Array<Partial<AlgorandTransaction>> = [
           {
             mode,
           },
@@ -241,10 +235,10 @@ const algorand: AppSpec<Transaction> = {
         invariant(rewards && rewards.gt(0), "No pending rewards");
         // Ensure that the rewards can effectively be claimed
         // (fees have to be paid in order to claim the rewards)
-        invariant(maxSpendable.gt(minFees), "Spendable balance is too low");
+        invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const transaction = bridge.createTransaction(account);
         const mode = "claimReward";
-        const updates: Array<Partial<Transaction>> = [
+        const updates: Array<Partial<AlgorandTransaction>> = [
           {
             mode,
           },

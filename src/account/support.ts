@@ -21,6 +21,7 @@ import { getAccountBridge } from "../bridge";
 import jsBridges from "../generated/bridge/js";
 
 const experimentalIntegrations = [
+  "algorand",
   "bitcoin",
   "bsc",
   "bitcoin_cash",

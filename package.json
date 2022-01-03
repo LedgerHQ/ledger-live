@@ -74,6 +74,7 @@
     "@walletconnect/client": "1.7.0",
     "@xstate/react": "^1.6.3",
     "@zondax/ledger-filecoin": "^0.11.2",
+    "algosdk": "1.12.0",
     "async": "^3.2.2",
     "axios": "0.24.0",
     "axios-retry": "^3.2.4",

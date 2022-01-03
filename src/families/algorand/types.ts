@@ -95,34 +95,39 @@ declare class CoreAlgorandOperation {
 }
 
 export type CoreCurrencySpecifics = Record<string, never>;
+
 export type AlgorandResources = {
   rewards: BigNumber;
-  rewardsAccumulated: BigNumber;
+  // Ledger Live only supports a limited list of ASA (defined here https://github.com/LedgerHQ/ledgerjs/blob/master/packages/cryptoassets/data/asa.js)
+  // This is the actual number of ASA opted-in for the Algo account
+  nbAssets: number;
 };
 export type AlgorandResourcesRaw = {
   rewards: string;
-  rewardsAccumulated: string;
+  nbAssets: number;
 };
-export type AlgorandOperationMode = "send" | "optIn" | "claimReward" | "optOut";
+export type AlgorandOperationMode = "send" | "optIn" | "claimReward";
 export type {
   CoreAlgorandOperation,
   CoreAlgorandAccount,
   CoreAlgorandTransaction,
 };
-export type Transaction = TransactionCommon & {
+export type AlgorandTransaction = TransactionCommon & {
   family: "algorand";
   mode: AlgorandOperationMode;
   fees: BigNumber | null | undefined;
   assetId: string | null | undefined;
   memo: string | null | undefined;
 };
-export type TransactionRaw = TransactionCommonRaw & {
+export type AlgorandTransactionRaw = TransactionCommonRaw & {
   family: "algorand";
   mode: AlgorandOperationMode;
   fees: string | null | undefined;
   assetId: string | null | undefined;
   memo: string | null | undefined;
 };
+export type Transaction = AlgorandTransaction;
+export type TransactionRaw = AlgorandTransactionRaw;
 export type AlgorandOperation = Operation & {
   extra: AlgorandExtraTxInfo;
 };

@@ -13,7 +13,7 @@ import {
 import { AlgorandASANotOptInInRecipient } from "../../../errors";
 import { validateRecipient } from "../../../bridge/shared";
 import type { AccountBridge, CurrencyBridge, Account } from "../../../types";
-import type { AlgorandResources, Transaction } from "../types";
+import type { AlgorandResources, AlgorandTransaction } from "../types";
 import { AlgorandOperationTypeEnum } from "../types";
 import { scanAccounts } from "../../../libcore/scanAccounts";
 import { sync } from "../../../libcore/syncAccount";
@@ -34,7 +34,7 @@ const receive = makeAccountBridgeReceive();
 export const calculateFees: CacheRes<
   Array<{
     a: Account;
-    t: Transaction;
+    t: AlgorandTransaction;
   }>,
   {
     estimatedFees: BigNumber;
@@ -72,7 +72,7 @@ const getSpendableMaxForOptIn = async (account) =>
     return spendableBalance;
   });
 
-const createTransaction = (): Transaction => ({
+const createTransaction = (): AlgorandTransaction => ({
   family: "algorand",
   amount: new BigNumber(0),
   fees: null,
@@ -328,7 +328,7 @@ const currencyBridge: CurrencyBridge = {
   hydrate,
   scanAccounts,
 };
-const accountBridge: AccountBridge<Transaction> = {
+const accountBridge: AccountBridge<AlgorandTransaction> = {
   createTransaction,
   updateTransaction,
   prepareTransaction,

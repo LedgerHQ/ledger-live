@@ -6,19 +6,18 @@ import {
   NotEnoughBalanceBecauseDestinationNotCreated,
 } from "@ledgerhq/errors";
 import { AlgorandASANotOptInInRecipient } from "../../errors";
-import type { Transaction } from "./types";
+import type { AlgorandTransaction } from "./types";
 // const notCreatedAlgorandAddress =
 //   "ZBILW5BPM7AQU54YQZICSGS4J7KJ2XV6OC3DFUQ7BB4DVLYKKUEVWDDBGM";
-const dataset: DatasetTest<Transaction> = {
+const dataset: DatasetTest<AlgorandTransaction> = {
   implementations: ["libcore"],
   // test disabled. FIXME ctx LL-5485
   currencies: {} || {
     algorand: {
       FIXME_ignoreAccountFields: [
-        "algorandResources.rewards", // We cant keep track of this since it's always move
-        "algorandResources.rewardsAccumulated", // same
-        "balance", // I think rewards are included
-        "spendableBalance", // same since the rewards are included here
+        "algorandResources.rewards", // We cant keep track of this since it's always moving
+        "balance", // Rewards are included, same as above
+        "spendableBalance", // Same since the rewards are included here too
       ],
       scanAccounts: [
         {

@@ -59,8 +59,6 @@ const extraConfigPerCurrency: Record<string, LibcoreConfig> = {
   algorand: {
     BLOCKCHAIN_EXPLORER_API_ENDPOINT: () =>
       getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT"),
-    BLOCKCHAIN_EXPLORER_API_KEY: () =>
-      getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_KEY"),
   },
 };
 const modes = Object.freeze({

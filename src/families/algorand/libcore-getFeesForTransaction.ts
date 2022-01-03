@@ -1,15 +1,15 @@
 import type { Account } from "../../types";
 import type { Core, CoreCurrency, CoreAccount } from "../../libcore/types";
-import type { Transaction } from "./types";
+import type { AlgorandTransaction } from "./types";
 import buildTransaction from "./libcore-buildTransaction";
 import { BigNumber } from "bignumber.js";
 
-async function cosmos(args: {
+async function algorand(args: {
   account: Account;
   core: Core;
   coreAccount: CoreAccount;
   coreCurrency: CoreCurrency;
-  transaction: Transaction;
+  transaction: AlgorandTransaction;
   isPartial: boolean;
   isCancelled: () => boolean;
 }) {
@@ -22,4 +22,4 @@ async function cosmos(args: {
   };
 }
 
-export default cosmos;
+export default algorand;

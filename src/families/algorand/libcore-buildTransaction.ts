@@ -2,7 +2,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Account } from "../../types";
 import { libcoreAmountToBigNumber } from "../../libcore/buildBigNumber";
 import type { Core, CoreAccount } from "../../libcore/types";
-import type { CoreAlgorandTransaction, Transaction } from "./types";
+import type { CoreAlgorandTransaction, AlgorandTransaction } from "./types";
 import { extractTokenId } from "./tokens";
 
 const setInfo = async (
@@ -64,7 +64,7 @@ export async function algorandBuildTransaction({
   account: Account;
   core: Core;
   coreAccount: CoreAccount;
-  transaction: Transaction;
+  transaction: AlgorandTransaction;
   isPartial: boolean;
   isCancelled: () => boolean;
 }): Promise<CoreAlgorandTransaction | null | undefined> {
