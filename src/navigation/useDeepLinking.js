@@ -25,6 +25,9 @@ function getSettingsScreen(pathname) {
     case "experimental":
       screen = ScreenName.ExperimentalSettings;
       break;
+    case "developer":
+      screen = ScreenName.DeveloperSettings;
+      break;
     default:
       screen = ScreenName.Settings;
   }
