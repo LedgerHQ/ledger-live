@@ -305,6 +305,9 @@ export const ScreenName = {
   RequestAccountsSelectAccount: "RequestAccountsSelectAccount",
 
   VerifyAccount: "VerifyAccount",
+
+  // solana
+  SolanaEditMemo: "SolanaEditMemo",
 };
 
 export const NavigatorName = {

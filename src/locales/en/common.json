@@ -603,6 +603,15 @@
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+    },
+    "SolanaAccountNotFunded": {
+      "title": "Account not funded"
+    },
+    "SolanaAddressOfEd25519": {
+      "title": "Address off ed25519 curve"
+    },
+    "SolanaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}}"
     }
   },
   "bluetooth": {
