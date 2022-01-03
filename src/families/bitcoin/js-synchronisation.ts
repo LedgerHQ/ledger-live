@@ -140,8 +140,9 @@ const mapTxToOperations = (
       if (!accountAddresses.includes(output.address)) {
         // The output doesn't belong to this account
         if (
-          tx.outputs.length === 1 || // The transaction has only 1 output
-          output.output_index < changeOutputIndex // The output isn't the change output
+          accountInputs.length > 0 && // It's a SEND operation
+          (tx.outputs.length === 1 || // The transaction has only 1 output
+            output.output_index < changeOutputIndex) // The output isn't the change output
         ) {
           recipients.push(
             syncReplaceAddress
