@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import type { Account } from "../../../types";
+import { findSubAccountById } from "../../../account";
+import type { Account, TokenAccount } from "../../../types";
 import type { Transaction } from "../types";
 
 export const getAmountValue = (
@@ -9,11 +10,17 @@ export const getAmountValue = (
 ): BigNumber => {
   // Asset
   if (transaction.subAccountId) {
-    return transaction.amount;
+    const asset = findSubAccountById(
+      account,
+      transaction.subAccountId
+    ) as TokenAccount;
+    return transaction.useAllAmount
+      ? new BigNumber(asset.spendableBalance)
+      : transaction.amount;
   }
 
   // Native
   return transaction.useAllAmount && transaction.networkInfo
-    ? account.balance.minus(transaction.networkInfo.baseReserve).minus(fees)
-    : transaction.amount.plus(fees);
+    ? account.spendableBalance.minus(fees)
+    : transaction.amount;
 };

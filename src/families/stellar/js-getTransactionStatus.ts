@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import StellarSdk from "stellar-sdk";
 import {
   AmountRequired,
   NotEnoughBalance,
@@ -32,6 +31,7 @@ import {
   isMemoValid,
   getRecipientAccount,
 } from "./logic";
+import { BASE_RESERVE } from "./api";
 
 const getTransactionStatus = async (
   a: Account,
@@ -41,6 +41,7 @@ const getTransactionStatus = async (
   warnings: Record<string, Error>;
   estimatedFees: BigNumber;
   amount: BigNumber;
+  maxAmount: BigNumber;
   totalSpent: BigNumber;
 }> => {
   const errors: Record<string, Error> = {};
@@ -64,11 +65,10 @@ const getTransactionStatus = async (
   const baseReserve = !t.baseReserve ? new BigNumber(0) : t.baseReserve;
   const isAssetPayment = t.subAccountId && t.assetCode && t.assetIssuer;
   const nativeBalance = a.balance;
-  const nativeAmountAvailable = nativeBalance
-    .minus(baseReserve)
-    .minus(estimatedFees);
+  const nativeAmountAvailable = a.spendableBalance.minus(estimatedFees);
 
   let amount = new BigNumber(0);
+  let maxAmount = new BigNumber(0);
   let totalSpent = new BigNumber(0);
 
   // Enough native balance to cover transaction (with required reserve + fees)
@@ -89,7 +89,7 @@ const getTransactionStatus = async (
     }
 
     // Has enough native balance to add new trustline
-    if (nativeAmountAvailable.minus(StellarSdk.BASE_RESERVE).lt(0)) {
+    if (nativeAmountAvailable.minus(BASE_RESERVE).lt(0)) {
       errors.amount = new StellarNotEnoughNativeBalanceToAddTrustline();
     }
 
@@ -142,7 +142,9 @@ const getTransactionStatus = async (
 
       const assetBalance = asset?.balance || new BigNumber(0);
 
-      amount = useAllAmount ? assetBalance : t.amount;
+      // @ts-expect-error check spendableBalance property
+      maxAmount = asset?.spendableBalance || assetBalance;
+      amount = useAllAmount ? maxAmount : t.amount;
       totalSpent = amount;
 
       if (!errors.amount && amount.gt(assetBalance)) {
@@ -150,10 +152,11 @@ const getTransactionStatus = async (
       }
     } else {
       // Native payment
-      amount = useAllAmount ? nativeAmountAvailable : t.amount || 0;
+      maxAmount = nativeAmountAvailable;
+      amount = useAllAmount ? maxAmount : t.amount || 0;
       // TODO: ??? do we need to include fee in total?
       totalSpent = useAllAmount
-        ? nativeBalance.plus(estimatedFees)
+        ? nativeAmountAvailable
         : t.amount.plus(estimatedFees);
 
       // Need to send at least 1 XLM to create an account
@@ -206,6 +209,7 @@ const getTransactionStatus = async (
     warnings,
     estimatedFees,
     amount,
+    maxAmount,
     totalSpent,
   });
 };

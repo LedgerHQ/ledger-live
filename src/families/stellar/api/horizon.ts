@@ -25,6 +25,10 @@ const TRESHOLD_MEDIUM = 0.75;
 const currency = getCryptoCurrencyById("stellar");
 const server = new StellarSdk.Server(getEnv("API_STELLAR_HORIZON"));
 
+// Constants
+export const BASE_RESERVE = 0.5;
+export const BASE_RESERVE_MIN_COUNT = 2;
+
 StellarSdk.HorizonAxiosClient.interceptors.request.use(requestInterceptor);
 
 StellarSdk.HorizonAxiosClient.interceptors.response.use((response) => {

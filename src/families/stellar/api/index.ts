@@ -11,4 +11,6 @@ export {
   buildChangeTrustOperation,
   buildTransactionBuilder,
   loadAccount,
+  BASE_RESERVE,
+  BASE_RESERVE_MIN_COUNT,
 } from "./horizon";
