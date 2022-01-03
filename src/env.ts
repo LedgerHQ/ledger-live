@@ -506,6 +506,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "enable visibility of debug apps and tools in Platform Catalog",
   },
+  PLATFORM_EXPERIMENTAL_APPS: {
+    def: false,
+    parser: boolParser,
+    desc: "enable visibility of experimental apps and tools in Platform Catalog",
+  },
   PLATFORM_MANIFEST_API_URL: {
     def: "https://cdn.live.ledger.com/platform/apps/v1/data.json",
     parser: stringParser,
