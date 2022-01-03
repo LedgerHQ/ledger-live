@@ -8,6 +8,7 @@ import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppPr
 import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
+import { getEnv } from "@ledgerhq/live-common/lib/env";
 
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -41,7 +42,11 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const { manifests } = usePlatformApp();
 
   const filteredManifests = useMemo(() => {
-    const branches = ["stable", "soon"];
+    const branches = [
+      "stable",
+      "soon",
+      ...(getEnv("PLATFORM_EXPERIMENTAL_APPS") ? ["experimental"] : []),
+    ];
 
     return filterPlatformApps(Array.from(manifests.values()), {
       version: "0.0.1",
