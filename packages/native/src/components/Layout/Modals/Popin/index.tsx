@@ -4,7 +4,6 @@ import styled from "styled-components/native";
 
 import BaseModal, { BaseModalProps } from "../BaseModal";
 import Text from "../../../Text";
-import IconBox from "../../../Icon/IconBox";
 import Button, { ButtonProps } from "../../../cta/Button";
 
 const FooterButtonsContainer = styled.View`
@@ -23,26 +22,19 @@ const modalStyleOverrides = StyleSheet.create({
 
 export default function Popin({
   children,
-  Icon,
-  iconColor,
   leftButtonText = "Cancel",
   rightButtonText = "Delete",
   onLeftButtonPress,
   onRightButtonPress,
   ...restProps
 }: BaseModalProps & {
-  Icon: (props: { size?: number; color?: string }) => React.ReactElement;
   leftButtonText?: string;
   rightButtonText?: string;
   onLeftButtonPress?: ButtonProps["onPress"];
   onRightButtonPress?: ButtonProps["onPress"];
 }): React.ReactElement {
   return (
-    <BaseModal
-      {...restProps}
-      containerStyle={modalStyleOverrides.container}
-      Icon={Icon ? <IconBox Icon={Icon} color={iconColor} /> : null}
-    >
+    <BaseModal {...restProps} containerStyle={modalStyleOverrides.container}>
       {children}
       <FooterButtonsContainer>
         <Button
