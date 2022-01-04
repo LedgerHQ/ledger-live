@@ -2,7 +2,7 @@
 import React from "react";
 import { KeyboardAvoidingView, Platform, NativeModules } from "react-native";
 import { HEIGHT as ExperimentalHeaderHeight } from "../screens/Settings/Experimental/ExperimentalHeader";
-import useExperimental from "../screens/Settings/Experimental/useExperimental";
+import { useExperimental } from "../experimental";
 
 const { DeviceInfo } = NativeModules;
 

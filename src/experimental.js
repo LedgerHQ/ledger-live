@@ -1,4 +1,5 @@
 // @flow
+import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-community/async-storage";
 import { concatMap } from "rxjs/operators";
@@ -169,3 +170,20 @@ export const enabledExperimentalFeatures = (): string[] =>
     .pipe(concatMap(({ name, value }) => saveEnvs(name, value)))
     .subscribe();
 })();
+
+export function useExperimental(): boolean {
+  const [state, setState] = useState(
+    () => enabledExperimentalFeatures().length > 0,
+  );
+
+  useEffect(() => {
+    const sub = changes.subscribe(() => {
+      const newExperimental = enabledExperimentalFeatures().length > 0;
+      setState(newExperimental);
+    });
+
+    return () => sub.unsubscribe();
+  }, []);
+
+  return state;
+}

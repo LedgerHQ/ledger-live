@@ -8,7 +8,7 @@ import { usePlatformApp } from "@ledgerhq/live-common/lib/platform/PlatformAppPr
 import { filterPlatformApps } from "@ledgerhq/live-common/lib/platform/PlatformAppProvider/helpers";
 import type { AccountLike, Account } from "@ledgerhq/live-common/lib/types";
 import type { AppManifest } from "@ledgerhq/live-common/lib/platform/types";
-import { getEnv } from "@ledgerhq/live-common/lib/env";
+import useEnv from "@ledgerhq/live-common/lib/hooks/useEnv";
 
 import { useBanner } from "../../components/banners/hooks";
 import TrackScreen from "../../analytics/TrackScreen";
@@ -40,12 +40,13 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
   const navigation = useNavigation();
 
   const { manifests } = usePlatformApp();
+  const experimental = useEnv("PLATFORM_EXPERIMENTAL_APPS");
 
   const filteredManifests = useMemo(() => {
     const branches = [
       "stable",
       "soon",
-      ...(getEnv("PLATFORM_EXPERIMENTAL_APPS") ? ["experimental"] : []),
+      ...(experimental ? ["experimental"] : []),
     ];
 
     return filterPlatformApps(Array.from(manifests.values()), {
@@ -53,7 +54,7 @@ const PlatformCatalog = ({ route }: { route: { params: RouteParams } }) => {
       platform: "mobile",
       branches,
     });
-  }, [manifests]);
+  }, [manifests, experimental]);
 
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
