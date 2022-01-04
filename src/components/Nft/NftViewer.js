@@ -186,7 +186,7 @@ const NftViewer = ({ route }: Props) => {
             style={[styles.nftName, styles.nftNameSkeleton]}
             loading={isLoading}
           >
-            <LText style={styles.nftName} semiBold>
+            <LText style={styles.nftName} numberOfLines={3} semiBold>
               {metadata?.nftName || "-"}
             </LText>
           </Skeleton>
