@@ -8,6 +8,8 @@ import type { Account, SignOperationEvent } from "../../types";
 import { withDevice } from "../../hw/deviceAccess";
 import { getEnv } from "../../env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { upperModulo } from "../../modulo";
+import BigNumber from "bignumber.js";
 
 export const signOperation = ({
   account,
@@ -53,6 +55,16 @@ export const signOperation = ({
           storageLimit: transaction.storageLimit?.toNumber() || 0,
           gasLimit: transaction.gasLimit?.toNumber() || 0,
         };
+
+        if (["delegate", "undelegate"].includes(transaction.mode)) {
+          // https://ledgerhq.atlassian.net/browse/LL-8821
+          params.gasLimit = upperModulo(
+            transaction.gasLimit || new BigNumber(0),
+            new BigNumber(136),
+            new BigNumber(1000)
+          ).toNumber();
+        }
+
         switch (transaction.mode) {
           case "send":
             res = await tezos.contract.transfer({
