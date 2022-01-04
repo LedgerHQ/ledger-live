@@ -605,13 +605,13 @@
       "description": "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l'Assistance Ledger."
     },
     "SolanaAccountNotFunded": {
-      "title": "Account not funded"
+      "title": "Pas de fonds sur le compte"
     },
     "SolanaAddressOfEd25519": {
-      "title": "Address off ed25519 curve"
+      "title": "Adresse en dehors de la courbe ed25519"
     },
     "SolanaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}}"
+      "title": "Mémo trop long. Longueur maximale : {{maxLength}}"
     }
   },
   "bluetooth": {
