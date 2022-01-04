@@ -43,24 +43,22 @@ export interface Address {
 }
 
 export interface IStorage {
-  appendTxs(txs: TX[]): Promise<number>;
-  getAddressUnspentUtxos(address: Address): Promise<Output[]>;
+  appendTxs(txs: TX[]): number;
+  getAddressUnspentUtxos(address: Address): Output[];
   getLastTx(txFilter: {
     account?: number;
     index?: number;
     address?: string;
     confirmed?: boolean;
-  }): Promise<TX | undefined>;
-  getTx(address: string, hash: string): Promise<TX | undefined>;
+  }): TX | undefined;
+  getTx(address: string, hash: string): TX | undefined;
   getUniquesAddresses(addressesFilter: {
     account?: number;
     index?: number;
-  }): Promise<Address[]>;
-  removeTxs(txsFilter: { account: number; index: number }): Promise<void>;
-  removePendingTxs(txsFilter: {
-    account: number;
-    index: number;
-  }): Promise<void>;
+  }): Address[];
+  removeTxs(txsFilter: { account: number; index: number }): void;
+  removePendingTxs(txsFilter: { account: number; index: number }): void;
+  addAddress(key: string, address: string): void;
   export(): Promise<unknown>;
   load(data: unknown): Promise<void>;
   exportSync(): unknown;

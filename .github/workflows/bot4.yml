@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - bitcoin-js
+      - bitcoin-js-*
 
 jobs:
   start-runner:
