@@ -182,11 +182,14 @@ const prepareTransaction = async (
     },
   });
 
+  const t: Transaction = { ...transaction, taquitoError: null };
+
+  let amount = transaction.amount;
   if (transaction.useAllAmount) {
     // taquito does not accept 0, so we do 1
     // only failing case is when the account precisely has fees + 1. which is
     // unlikely
-    transaction.amount = new BigNumber(1);
+    amount = new BigNumber(1);
   }
 
   try {
@@ -196,7 +199,7 @@ const prepareTransaction = async (
         out = await tezos.estimate.transfer({
           mutez: true,
           to: transaction.recipient,
-          amount: transaction.amount.toNumber(),
+          amount: amount.toNumber(),
         });
         break;
       case "delegate":
@@ -214,7 +217,7 @@ const prepareTransaction = async (
         throw new Error("unsupported mode=" + transaction.mode);
     }
 
-    if (transaction.useAllAmount) {
+    if (t.useAllAmount) {
       const totalFees = out.suggestedFeeMutez + out.burnFeeMutez;
       const maxAmount = account.balance
         .minus(totalFees + (tezosResources.revealed ? 0 : DEFAULT_FEE.REVEAL))
@@ -228,40 +231,58 @@ const prepareTransaction = async (
         return gasBuffer * MINIMAL_FEE_PER_GAS_MUTEZ + opSize;
       };
       const incr = increasedFee(gasBuffer, Number(out.opSize));
-      transaction.fees = new BigNumber(out.suggestedFeeMutez + incr);
-      transaction.gasLimit = new BigNumber(out.gasLimit + gasBuffer);
-      transaction.amount = new BigNumber(maxAmount - incr);
+      t.fees = new BigNumber(out.suggestedFeeMutez + incr);
+      t.gasLimit = new BigNumber(out.gasLimit + gasBuffer);
+      t.amount = new BigNumber(maxAmount - incr);
     } else {
-      transaction.fees = new BigNumber(out.suggestedFeeMutez);
-      transaction.gasLimit = new BigNumber(out.gasLimit);
-      transaction.storageLimit = new BigNumber(out.storageLimit);
+      t.fees = new BigNumber(out.suggestedFeeMutez);
+      t.gasLimit = new BigNumber(out.gasLimit);
+      t.storageLimit = new BigNumber(out.storageLimit);
     }
 
-    transaction.storageLimit = new BigNumber(out.storageLimit);
-    transaction.estimatedFees = transaction.fees;
+    t.storageLimit = new BigNumber(out.storageLimit);
+    t.estimatedFees = t.fees;
     if (!tezosResources.revealed) {
-      transaction.estimatedFees = transaction.estimatedFees.plus(
-        DEFAULT_FEE.REVEAL
-      );
+      t.estimatedFees = t.estimatedFees.plus(DEFAULT_FEE.REVEAL);
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
     if ("id" in e) {
-      transaction.taquitoError = (e as { id: string }).id;
+      t.taquitoError = (e as { id: string }).id;
     } else if ("status" in e) {
       // in case of http 400, log & ignore (more case to handle)
       log(
         "taquito-network-error",
         String((e as { message: string }).message || ""),
-        { transaction }
+        { transaction: t }
       );
     } else {
       throw e;
     }
   }
 
-  return transaction;
+  // nothing changed
+  if (
+    bnEq(t.fees, transaction.fees) &&
+    bnEq(t.fees, transaction.fees) &&
+    bnEq(t.gasLimit, transaction.gasLimit) &&
+    bnEq(t.amount, transaction.amount) &&
+    bnEq(t.storageLimit, transaction.storageLimit) &&
+    bnEq(t.estimatedFees, transaction.estimatedFees) &&
+    t.taquitoError === transaction.taquitoError
+  ) {
+    return transaction;
+  }
+
+  return t;
 };
+
+function bnEq(
+  a: BigNumber | null | undefined,
+  b: BigNumber | null | undefined
+): boolean {
+  return !a && !b ? true : !a || !b ? false : a.eq(b);
+}
 
 const estimateMaxSpendable = async ({
   account,
