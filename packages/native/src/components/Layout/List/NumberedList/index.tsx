@@ -20,7 +20,7 @@ export default function NumberedList({ items, ...props }: NumberedListProps): Re
           <IconBox
             Icon={
               <Text variant={"body"} fontWeight={"medium"} color={"neutral.c100"}>
-                {item.number ? item.number : index}
+                {item.number ?? index + 1}
               </Text>
             }
             boxSize={36}
