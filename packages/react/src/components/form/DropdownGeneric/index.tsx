@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useFloating, getScrollParents, shift, flip } from "@floating-ui/react-dom";
+import { useFloating, getScrollParents, shift, size, flip } from "@floating-ui/react-dom";
 import styled from "styled-components";
 import { Icons } from "../../../";
 import Flex from "../../layout/Flex";
@@ -16,14 +16,14 @@ const ButtonContainer = styled(Box).attrs({
   > :last-child {
     /* targeting the dropdown icon */
     ${(p) => p.opened && "transform: rotate(180deg);"}
-    margin: 0px ${(p) => p.theme.space[3]}px;
+    margin-left: ${(p) => p.theme.space[3]}px;
   }
 `;
 
 const DropdownContainer = styled(Flex).attrs(({ theme }) => {
   const isLight = theme.colors.type === "light";
   return {
-    display: "flex",
+    zIndex: 1,
     flexDirection: "column",
     padding: 3,
     border: `1px solid ${theme.colors.neutral[isLight ? "c20" : "c30"]}`,
@@ -32,6 +32,7 @@ const DropdownContainer = styled(Flex).attrs(({ theme }) => {
     color: theme.colors.neutral.c80,
   };
 })`
+  overflow-y: auto;
   box-shadow: 0px 6px 12px rgba(0, 0, 0, ${(p) => (p.theme.colors.type === "light" ? 0.04 : 0.08)});
 `;
 
@@ -63,11 +64,17 @@ export type Props = {
    */
   children: React.ReactNode;
   /**
-   * Horizontal position of the dropdown relative to the dropdown button.
+   * Vertical alignment of the dropdown relative to the dropdown button.
    * Will automatically adjust to the document to avoid overflowing.
    * Defaults to "bottom".
    */
   placement?: Placement;
+  /**
+   * Controls whether the dropdown will flip its side to keep it in view
+   * in case there isn't enough space available. See https://floating-ui.com/docs/flip
+   * Defaults to false.
+   */
+  flipDisabled?: boolean;
 };
 
 const DropdownGeneric = ({
@@ -76,9 +83,13 @@ const DropdownGeneric = ({
   closeOnClickInside = false,
   disabled = false,
   placement = "bottom",
+  flipDisabled = false,
   children,
 }: Props) => {
   const divRef = useRef<HTMLDivElement>(null);
+
+  const [maxHeight, setMaxHeight] = useState<number>();
+  const [maxWidth, setMaxWidth] = useState<number>();
 
   const [opened, setOpened] = useState(false);
 
@@ -92,7 +103,17 @@ const DropdownGeneric = ({
 
   const { x, y, reference, floating, strategy, update, refs } = useFloating({
     placement: placements.includes(placement) ? placement : "bottom",
-    middleware: [shift(), flip()],
+    middleware: [
+      shift(),
+      ...(flipDisabled ? [] : [flip()]),
+      size({
+        padding: 6,
+        apply({ height, width }) {
+          setMaxHeight(height);
+          setMaxWidth(width);
+        },
+      }),
+    ],
   });
 
   const handleResizeOrScroll = useCallback(() => {
@@ -117,7 +138,7 @@ const DropdownGeneric = ({
         parent.removeEventListener("resize", handleResizeOrScroll);
       });
     };
-  }, [opened, disabled, refs.reference, refs.floating, handleResizeOrScroll]);
+  }, [flipDisabled, refs.reference, refs.floating, handleResizeOrScroll]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -139,7 +160,7 @@ const DropdownGeneric = ({
   const color = disabled ? "neutral.c50" : "neutral.c100";
 
   return (
-    <div ref={divRef}>
+    <Box ref={divRef}>
       <ButtonContainer
         ref={reference}
         onClick={handleClickButton}
@@ -154,13 +175,20 @@ const DropdownGeneric = ({
       {opened && !disabled && (
         <DropdownContainer
           ref={floating}
-          style={{ overflow: "visible", position: strategy, top: y ?? "", left: x ?? "" }}
+          style={{
+            position: strategy,
+            top: y ?? "",
+            left: x ?? "",
+            maxHeight: maxHeight ? `${maxHeight}px` : "",
+            maxWidth: maxWidth ? "" : "",
+            // maxWidth: maxWidth ? `${maxWidth}px` : "", /* TODO: fix this */
+          }}
           onClick={handleClickInside}
         >
           {children}
         </DropdownContainer>
       )}
-    </div>
+    </Box>
   );
 };
 
