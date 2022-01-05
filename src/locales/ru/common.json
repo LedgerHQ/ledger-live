@@ -605,13 +605,13 @@
       "description": "Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
     },
     "SolanaAccountNotFunded": {
-      "title": "Account not funded"
+      "title": "Счёт не пополнен"
     },
     "SolanaAddressOfEd25519": {
-      "title": "Address off ed25519 curve"
+      "title": "Адрес за пределами кривой ed25519"
     },
     "SolanaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}}"
+      "title": "Слишком длинное примечание (Memo). Макс. длина {{maxLength}}"
     }
   },
   "bluetooth": {
