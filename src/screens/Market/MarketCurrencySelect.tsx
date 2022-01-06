@@ -1,6 +1,6 @@
 import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { Flex, Icon, SearchInput, Text } from "@ledgerhq/native-ui";
-import React, { useCallback, memo, useState } from "react";
+import React, { useCallback, memo, useState, useRef, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
@@ -34,6 +34,11 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
     setCounterCurrency,
   } = useMarketData();
   const [search, setSearch] = useState("");
+  const ref = useRef();
+
+  useEffect(() => {
+    if (ref && ref?.current?.focus) ref.current.focus();
+  }, [ref]);
 
   const items = supportedCountervalues
     .filter(({ ticker }) =>
@@ -102,11 +107,13 @@ function MarketCurrencySelect({ navigation }: { navigation: any }) {
   );
 
   return (
-    <Flex px={3} py={2}>
+    <Flex bg="background.main" px={3} py={2}>
       <SearchInput
         placeholder={t("common.search")}
         value={search}
         onChange={setSearch}
+        ref={ref}
+        bg="background.main"
       />
 
       <Search

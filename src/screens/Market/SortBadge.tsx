@@ -12,10 +12,10 @@ import {
 import { useTranslation } from "react-i18next";
 
 export const Badge = styled(Flex).attrs({
-  bg: "neutral.c20",
+  bg: "neutral.c30",
   flexDirection: "row",
   mx: 2,
-  px: 3,
+  px: 4,
   py: 1,
   justifyContent: " center",
   alignItems: "center",

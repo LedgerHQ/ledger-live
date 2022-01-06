@@ -270,7 +270,7 @@ export default function Market({ navigation }: { navigation: any }) {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
       <Flex
         flex={1}
         style={{
@@ -278,6 +278,7 @@ export default function Market({ navigation }: { navigation: any }) {
         }}
       >
         <ScrollContainerHeader
+          bg="background.main"
           TopLeftSection={<BackButton navigation={navigation} />}
           MiddleSection={
             <Flex
