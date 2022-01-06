@@ -1,13 +1,20 @@
 // @flow
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/live-common/lib/types";
-import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react";
+import {
+  useCalculate,
+  useCountervaluesPolling,
+} from "@ledgerhq/live-common/lib/countervalues/react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { counterValueCurrencySelector } from "../reducers/settings";
+import {
+  useTrackingPairs,
+  addExtraSessionTrackingPair,
+} from "../actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import LText from "./LText";
 import Circle from "./Circle";
@@ -67,6 +74,36 @@ export default function CounterValue({
   const value =
     valueProp instanceof BigNumber ? valueProp.toNumber() : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
+
+  const trackingPairs = useTrackingPairs();
+  const cvPolling = useCountervaluesPolling();
+  const hasTrackingPair = useMemo(
+    () =>
+      trackingPairs.some(
+        tp => tp.from === currency && tp.to === counterValueCurrency,
+      ),
+    [counterValueCurrency, currency, trackingPairs],
+  );
+
+  useEffect(() => {
+    let t;
+    if (!hasTrackingPair) {
+      addExtraSessionTrackingPair({ from: currency, to: counterValueCurrency });
+      t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
+    }
+
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, [
+    counterValueCurrency,
+    currency,
+    cvPolling,
+    cvPolling.poll,
+    hasTrackingPair,
+    trackingPairs,
+  ]);
+
   const countervalue = useCalculate({
     from: currency,
     to: counterValueCurrency,

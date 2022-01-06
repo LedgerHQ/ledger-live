@@ -10,9 +10,9 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/lib/account/helpers";
 
-import LText from "../../../../components/LText";
-import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
-import { ScreenName } from "../../../../const";
+import LText from "../../../components/LText";
+import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import { ScreenName } from "../../../const";
 
 import SwapStatusIndicator from "../SwapStatusIndicator";
 

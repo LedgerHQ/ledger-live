@@ -18,6 +18,7 @@ type Props = {
   navigation: any,
   route: { params: RouteParams },
   setTransaction: Function,
+  ...
 };
 
 const getCustomStrategy = transaction => {
@@ -43,6 +44,7 @@ export default function EthereumFeesStrategy({
   setTransaction,
   navigation,
   route,
+  ...props
 }: Props) {
   const defaultStrategies = useFeesStrategy(transaction);
   const [customStrategy, setCustomStrategy] = useState(
@@ -89,6 +91,7 @@ export default function EthereumFeesStrategy({
 
   return (
     <SelectFeesStrategy
+      {...props}
       strategies={strategies}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}

@@ -5,12 +5,12 @@ import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/dist/AntDesign";
 import { useTheme } from "@react-navigation/native";
 
-import Circle from "../../../../components/Circle";
-import BottomModal from "../../../../components/BottomModal";
-import ExternalLink from "../../../../components/ExternalLink";
-import LText from "../../../../components/LText";
-import Button from "../../../../components/Button";
-import { urls } from "../../../../config/urls";
+import Circle from "../../components/Circle";
+import BottomModal from "../../components/BottomModal";
+import ExternalLink from "../../components/ExternalLink";
+import LText from "../../components/LText";
+import Button from "../../components/Button";
+import { urls } from "../../config/urls";
 
 const DisclaimerModal = ({
   onClose,

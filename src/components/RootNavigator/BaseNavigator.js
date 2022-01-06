@@ -63,6 +63,11 @@ import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "../../screens/VerifyAccount";
 import PlatformApp from "../../screens/Platform/App";
 
+import SwapFormSelectAccount from "../../screens/Swap/FormSelection/SelectAccountScreen";
+import SwapFormSelectCurrency from "../../screens/Swap/FormSelection/SelectCurrencyScreen";
+import SwapFormSelectFees from "../../screens/Swap/FormSelection/SelectFeesScreen";
+import SwapFormSelectProviderRate from "../../screens/Swap/FormSelection/SelectProviderRateScreen";
+
 export default function BaseNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -118,7 +123,56 @@ export default function BaseNavigator() {
       <Stack.Screen
         name={NavigatorName.Swap}
         component={SwapNavigator}
-        options={{ headerShown: false }}
+        options={{
+          ...stackNavigationConfig,
+          headerStyle: styles.headerNoShadow,
+          headerLeft: null,
+          title: t("transfer.swap.form.tab"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.SwapV2FormSelectAccount}
+        component={SwapFormSelectAccount}
+        options={({ route }) => ({
+          headerTitle: () => (
+            <StepHeader
+              title={
+                route.params.target === "from"
+                  ? t("transfer.swap.form.from")
+                  : t("transfer.swap.form.to")
+              }
+            />
+          ),
+          headerRight: null,
+        })}
+      />
+      <Stack.Screen
+        name={ScreenName.SwapV2FormSelectCurrency}
+        component={SwapFormSelectCurrency}
+        options={{
+          headerTitle: () => <StepHeader title={t("transfer.swap.form.to")} />,
+          headerRight: null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.SwapFormSelectProviderRate}
+        component={SwapFormSelectProviderRate}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("transfer.swap.form.summary.method")} />
+          ),
+          headerRight: null,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.SwapV2FormSelectFees}
+        component={SwapFormSelectFees}
+        options={{
+          headerTitle: () => (
+            <StepHeader title={t("transfer.swap.form.summary.fees")} />
+          ),
+          headerRight: null,
+        }}
       />
       <Stack.Screen
         name={NavigatorName.Lending}

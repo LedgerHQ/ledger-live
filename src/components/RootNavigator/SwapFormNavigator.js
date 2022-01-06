@@ -1,19 +1,20 @@
 // @flow
+
 import React from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
+
 import type {
   Account,
   AccountLike,
 } from "@ledgerhq/live-common/lib/types/account";
 
-import { ScreenName } from "../../../const";
-import styles from "../../../navigation/styles";
-import LText from "../../../components/LText";
-
-import Form from "./Form";
-import History from "./History";
+import { ScreenName } from "../../const";
+import Swap from "../../screens/Swap";
+import styles from "../../navigation/styles";
+import LText from "../LText";
+import History from "../../screens/Swap/History";
 
 type TabLabelProps = {
   focused: boolean,
@@ -27,16 +28,20 @@ type RouteParams = {
   provider: string,
 };
 
-const SwapFormOrHistory = ({ route }: { route: { params: RouteParams } }) => {
-  const { params: routeParams } = route;
+export default function SwapFormNavigator({
+  route,
+}: {
+  route: { params: RouteParams },
+}) {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const { params: routeParams } = route;
 
   return (
     <Tab.Navigator
-      screenOptions={{
+      tabBarOptions={{
         headerStyle: styles.headerNoShadow,
-        tabBarIndicatorStyle: {
+        indicatorStyle: {
           backgroundColor: colors.live,
         },
       }}
@@ -44,15 +49,16 @@ const SwapFormOrHistory = ({ route }: { route: { params: RouteParams } }) => {
       <Tab.Screen
         name={ScreenName.SwapForm}
         options={{
-          title: t("exchange.buy.tabTitle"),
+          title: t("transfer.swap.form.tab"),
           tabBarLabel: ({ focused, color }: TabLabelProps) => (
+            /** width has to be a little bigger to accomodate the switch in size between semibold to regular */
             <LText style={{ width: "110%", color }} semiBold={focused}>
               {t("transfer.swap.form.tab")}
             </LText>
           ),
         }}
       >
-        {_props => <Form {..._props} {...routeParams} />}
+        {_props => <Swap {..._props} {...routeParams} />}
       </Tab.Screen>
       <Tab.Screen
         name={ScreenName.SwapHistory}
@@ -68,8 +74,6 @@ const SwapFormOrHistory = ({ route }: { route: { params: RouteParams } }) => {
       />
     </Tab.Navigator>
   );
-};
+}
 
 const Tab = createMaterialTopTabNavigator();
-
-export default SwapFormOrHistory;
