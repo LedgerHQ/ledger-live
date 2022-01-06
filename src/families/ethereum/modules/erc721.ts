@@ -119,6 +119,8 @@ const erc721Transfer: ModeModule = {
   fillOptimisticOperation(a, t, op) {
     op.type = "FEES";
   },
+
+  getResolutionConfig: () => ({ nft: true }),
 };
 
 function serializeTransactionData(

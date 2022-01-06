@@ -122,6 +122,8 @@ const erc1155Transfer: ModeModule = {
   },
 
   prepareTransaction,
+
+  getResolutionConfig: () => ({ nft: true }),
 };
 
 function serializeTransactionData(
