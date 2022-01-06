@@ -23,10 +23,11 @@ export async function buildUnsignedTransaction({
   const accountId = account.hederaResources!.accountId;
 
   return new hedera.TransferTransaction()
+    .setNodeAccountIds([new AccountId(3)])
     .setTransactionId(hedera.TransactionId.generate(accountId))
     .addHbarTransfer(accountId, hbarAmount.negated())
     .addHbarTransfer(transaction.recipient, hbarAmount)
-    .freezeWith(getClient());
+    .freeze();
 }
 
 export interface AccountBalance {
