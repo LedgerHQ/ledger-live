@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native";
-import Flex from "../../Layout/Flex";
-import ProgressBar, { Props as ProgressBarProps } from "../../ProgressBar";
+import Flex, { FlexBoxProps } from "../../Layout/Flex";
+import ProgressBar from "../../ProgressBar";
 import { TransitionProps, Transition, TransitionStatus } from "../../transitions";
 
 interface InnerProps {
@@ -47,7 +47,7 @@ export interface Props<ExtraProps> {
    * Additional props to pass to the progressbar component.
    * This component is a Flex element.
    */
-  progressBarProps?: ProgressBarProps;
+  progressBarProps?: FlexBoxProps;
   /**
    * **Use this prop in combination with `transitionDuration`.**
    *
