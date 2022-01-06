@@ -377,7 +377,7 @@
       "description": "请确保该账户资金充足。"
     },
     "NotEnoughGas": {
-      "title": "以太币 ETH 不足以支付网络费用",
+      "title": "父账户余额不足以支付网络费用",
       "description": "请向您的账户发送一些以太币 ETH 以支付 ERC20 代币交易。"
     },
     "NotEnoughBalanceToDelegate": {
@@ -603,6 +603,15 @@
     "generic": {
       "title": "{{message}}",
       "description": "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
+    },
+    "SolanaAccountNotFunded": {
+      "title": "Account not funded"
+    },
+    "SolanaAddressOfEd25519": {
+      "title": "Address off ed25519 curve"
+    },
+    "SolanaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}}"
     }
   },
   "bluetooth": {
@@ -2495,6 +2504,10 @@
       "legacy": {
         "title": "Legacy 地址格式",
         "desc": "{{currency}} 的原始地址格式。每笔交易的费用最高。某些钱包/交易所依旧只支持这种格式。"
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "最新的 {{currency}} 网络升级。一旦普及，将提供更好的隐私和更便宜的费用。钱包和交易所仍然仅提供有限的支持。"
       }
     }
   },

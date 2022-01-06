@@ -80,7 +80,7 @@
     },
     "seeMore": "Daha fazla gör",
     "moreInfo": "Daha fazla bilgi",
-    "buyEth": "Ethereum Al"
+    "buyEth": "Ethereum Satın Al"
   },
   "errors": {
     "countervaluesUnavailable": {
@@ -102,7 +102,7 @@
       "title": "Alıcı hesap, seçili ASA'yı onaylamadı."
     },
     "BluetoothRequired": {
-      "title": "Maalesef, Bluetooth devre dışı",
+      "title": "Üzgünüz, Bluetooth devre dışı",
       "description": "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin. ({{state}} durum)"
     },
     "BtcUnmatchedApp": {
@@ -110,14 +110,14 @@
       "description": "Lütfen cihazınızda {{managerAppName}} uygulamasını açın."
     },
     "CantOpenDevice": {
-      "title": "Maalesef, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Ledger cihazınız kilidi açılmış durumda ve Bluetooth kapsama alanı içinde olmalıdır."
     },
     "CantScanQRCode": {
       "title": "Bu QR kodu taranamadı; otomatik doğrulama bu adres tarafından desteklenmiyor."
     },
     "ConnectAppTimeout": {
-      "title": "Maalesef, cihaz bulunamadı",
+      "title": "Üzgünüz, cihaz bulunamadı",
       "description": {
         "ios": {
           "nanoX": "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
@@ -271,7 +271,7 @@
       "description": "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
     "FeeEstimationFailed": {
-      "title": "Maalesef, ücret tahmini başarısız oldu",
+      "title": "Üzgünüz, ücret tahmini başarısız oldu",
       "description": "Ücreti manuel olarak ayarlamayı deneyin (durum: {{status}})."
     },
     "FeeNotLoaded": {
@@ -377,7 +377,7 @@
       "description": "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughGas": {
-      "title": "Ağ ücreti için yetersiz ETH",
+      "title": "Ana hesap bakiyesi ağ ücretlerini karşılamak için yetersiz",
       "description": "ERC20 token işlemlerini ödemek için lütfen hesabınıza biraz ETH gönderin."
     },
     "NotEnoughBalanceToDelegate": {
@@ -503,11 +503,11 @@
       "description": "Cihazdaki işlemi reddettiniz."
     },
     "WebsocketConnectionError": {
-      "title": "Maalesef, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Lütfen daha iyi bir ağ bağlantısıyla tekrar deneyin (WebSocket hatası)."
     },
     "WebsocketConnectionFailed": {
-      "title": "Maalesef, bağlantı başarısız oldu",
+      "title": "Üzgünüz, bağlantı başarısız",
       "description": "Lütfen daha iyi bir ağ bağlantısıyla tekrar deneyin (WebSocket başarısız oldu)."
     },
     "WrongDeviceForAccount": {
@@ -603,10 +603,19 @@
     "generic": {
       "title": "{{message}}",
       "description": "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+    },
+    "SolanaAccountNotFunded": {
+      "title": "Account not funded"
+    },
+    "SolanaAddressOfEd25519": {
+      "title": "Address off ed25519 curve"
+    },
+    "SolanaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}}"
     }
   },
   "bluetooth": {
-    "required": "Maalesef, Bluetooth devre dışı gibi görünüyor",
+    "required": "Üzgünüz, Bluetooth devre dışı görünüyor",
     "locationRequiredTitle": "Bluetooth LE için konum gerekli",
     "locationRequiredMessage": "Bluetooth LE cihazlarını listelemek için Android'de konum izni gerekli.",
     "checkEnabled": "Lütfen telefon ayarlarınızdan Bluetooth'u etkinleştirin."
@@ -705,7 +714,7 @@
         "description": "3 Nano S ile ailenizi kriptoyla tanıştırın"
       },
       "buyCrypto": {
-        "title": "Kripto Al",
+        "title": "Kripto Satın Al",
         "description": "Ledger Live ile\nkripto satın alın"
       },
       "swap": {
@@ -1232,7 +1241,7 @@
       "final": {
         "successTitle": "İşin uzmanı oldunuz bile!",
         "successText": "Kriptolarınızı güvenli bir şekilde yönetmeye hazırsınız. Sadece küçük bir adım kaldı!",
-        "failTitle": "You will soon become a pro...",
+        "failTitle": "İşin uzmanı olmanıza az kaldı...",
         "failText": "Merak etmeyin! Ledger, yolculuğunuz boyunca size rehberlik etmek için burada. Yakında kripto güvenliğiniz konusunda çok daha rahat hissedeceksiniz. Sadece küçük bir adım kaldı!",
         "cta": "Sonraki adım"
       }
@@ -1258,7 +1267,7 @@
     "transfer": "Aktar",
     "manager": "Yönetici",
     "settings": "Ayarlar",
-    "platform": "Keşfedin",
+    "platform": "Keşfet",
     "nanoX": "Nano X"
   },
   "portfolio": {
@@ -1447,7 +1456,7 @@
     },
     "send": "Gönder",
     "receive": "Al",
-    "buy": "Satın Al",
+    "buy": "Satın al",
     "walletconnect": "WalletConnect",
     "sell": "Sat",
     "swap": "Takas",
@@ -1530,7 +1539,7 @@
       }
     },
     "availableBalance": "Mevcut bakiye",
-    "totalSupplied": "Yatırılan miktar",
+    "totalSupplied": "Yatırılan tutar",
     "tronFrozen": "Dondurulan",
     "bandwidth": "Bant Genişliği",
     "energy": "Enerji",
@@ -2169,7 +2178,7 @@
         },
         "amount": {
           "totalAvailable": "Mevcut bakiye",
-          "placeholderMax": "Maks. Çekim Tutarı"
+          "placeholderMax": "Hepsini Çek"
         },
         "validation": {
           "success": "Yatırım başarıyla gönderildi",
@@ -2257,7 +2266,7 @@
       "amount": "Tutar",
       "from": "Gönderici",
       "to": "Alıcı",
-      "infoTotalTitle": "Total debit",
+      "infoTotalTitle": "Toplam düşülen",
       "infoTotalDesc": "İşlem miktarını ve seçilen ağın ücretlerini içerir",
       "gasLimit": "Gas limiti",
       "gasPrice": "Gas ücreti",
@@ -2456,7 +2465,7 @@
     "retry": "Tekrar Dene",
     "done": "Tamam",
     "finalCta": "Devam",
-    "finalCtaForSwap": "Swap sayfasına dön",
+    "finalCtaForSwap": "Takas sayfasına dön",
     "synchronizing": "Senkronize ediliyor",
     "synchronizingDesc": "Hesaplarınız senkronize ediliyor. Bu biraz zaman alabilir...",
     "noAccountToCreate": "<1><0>{{currencyName}}</></> hesabı oluşturulamadı. İşlemi yeniden başlatın ve hesaplarınızı senkronize edin.",
@@ -2495,6 +2504,10 @@
       "legacy": {
         "title": "Legacy",
         "desc": "{{currency}} için orijinal adres biçimi. İşlem başına en yüksek ücretler. Bazı cüzdanlar/borsalar hâlâ sadece bu türü destekliyor."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "En son {{currency}} ağ güncellemesi. Yaygınlaştığında daha iyi gizlilik ve daha ucuz ağ ücretleri sunacak. Mevcut cüzdan ve borsa desteği hala sınırlı."
       }
     }
   },
@@ -2606,7 +2619,7 @@
     },
     "GenuineCheck": {
       "title": "Orijinal cihaz doğrulaması",
-      "accept": "Lütfen Nano X'inizi kapatmayın. <1>Ledger Yöneticisine</1>izin verdiğinizden emin olun."
+      "accept": "Lütfen Nano X'inizi kapatmayın. <1>Ledger Yöneticisine</1> izin verdiğinizden emin olun."
     },
     "ScanningHeader": {
       "title": "Cihazlar aranıyor",
@@ -3612,7 +3625,7 @@
   },
   "exchange": {
     "buy": {
-      "tabTitle": "Al",
+      "tabTitle": "Satın al",
       "selectCurrency": "Bir para birimi seçin",
       "selectAccount": "Bir hesap seçin",
       "connectDevice": "Cihazınızı bağlayın",
@@ -3651,7 +3664,7 @@
   },
   "banner": {
     "exchangeBuyCrypto": {
-      "title": "KRİPTO AL",
+      "title": "KRİPTO SATIN AL",
       "description": "Kripto varlıklarını Coinify üzerinden satın alın ve doğrudan Ledger hesabınıza aktarın."
     },
     "swap": {

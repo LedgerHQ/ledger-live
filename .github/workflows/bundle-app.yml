@@ -17,10 +17,20 @@ jobs:
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
+  check-org-member:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: ledgerhq/actions/packages/is-org-member@main
+        with:
+          organisation: ledgerhq
+          username: ${{ github.actor }}
+          token: ${{ github.token }}
+
   start-runner:
-    needs: cancel-previous
+    needs: [check-org-member]
+    if: success()
     name: "start ec2 instance (Linux)"
-    uses: LedgerHQ/actions/.github/workflows/start-linux-runner.yml@master
+    uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
     with:
       instance-type: c5.4xlarge
     secrets:
@@ -28,8 +38,8 @@ jobs:
 
   stop-runner:
     name: "stop ec2 instance (Linux)"
-    needs: [start-runner, bundle-apk]
-    uses: LedgerHQ/actions/.github/workflows/stop-linux-runner.yml@master
+    needs: [start-runner, bundle-apk-hosted]
+    uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
     if: ${{ always() }}
     with:
       label: ${{ needs.start-runner.outputs.label }}
@@ -37,19 +47,14 @@ jobs:
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
 
-  bundle-apk:
-    needs: [cancel-previous, start-runner]
+  bundle-apk-hosted:
+    needs: [start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
     steps:
       - name: prepare runner
         run: |
           sudo growpart /dev/nvme0n1 1
           sudo resize2fs /dev/nvme0n1p1
-      - uses: ledgerhq/actions/check-member@v2.0.0
-        with:
-          username: ${{ github.actor }}
-          ban: ledgerlive
-        if: github.event_name == 'pull_request'
       - uses: actions/checkout@v2
         with:
           ref: ${{github.event.pull_request.head.ref}}
@@ -90,7 +95,56 @@ jobs:
       - uses: ledgerhq/actions/get-package-infos@v1.0.0
         id: version
       - name: set beta name
-        uses: ./.github/actions/change-product-name
+        uses: ledgerhq/actions/packages/change-product-name@main
+        with:
+          path: ${{ github.workspace }}
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha8::$(git rev-parse HEAD)"
+      - name: make local version
+        run: yarn version --new-version=${{ steps.version.outputs.clean }}-sha.${{ steps.slug.outputs.sha8 }}
+      - name: build the app
+        env:
+          ANDROID_KEYSTORE_PASS: staging
+          ANDROID_KEY_ALIAS: staging
+          ANDROID_KEY_PASS: staging
+        run: ANDROID_KEYSTORE_FILE="$(pwd)/android/app/staging.kstr" yarn android:local:apk
+      - uses: ledgerhq/actions/get-package-infos@v1.0.0
+        id: post-version
+      - name: upload Android app
+        uses: actions/upload-artifact@v1
+        with:
+          name: ${{ steps.post-version.outputs.version }}-release
+          path: android/app/build/outputs/apk/release
+
+  bundle-apk-guest:
+    needs: [check-org-member]
+    if: failure()
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+      - name: set git user
+        run: |
+          git config user.email "team-live@ledger.fr"
+          git config user.name "Team Live"
+      - uses: actions/setup-node@main
+        with:
+          node-version: 14.x
+          cache: yarn
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - name: install dependencies
+        run: yarn --frozen-lockfile --network-timeout 100000
+      - uses: ledgerhq/actions/get-package-infos@v1.0.0
+        id: version
+      - name: set beta name
+        uses: ledgerhq/actions/packages/change-product-name@main
+        with:
+          path: ${{ github.workspace }}
       - name: Get short SHA
         id: slug
         run: echo "::set-output name=sha8::$(git rev-parse HEAD)"

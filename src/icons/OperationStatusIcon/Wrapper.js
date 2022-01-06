@@ -26,6 +26,7 @@ export default function Wrapper({
     (type: OperationType) => {
       switch (type) {
         case "IN":
+        case "NFT_IN":
           return colors.success;
         case "FREEZE":
           return colors.live;

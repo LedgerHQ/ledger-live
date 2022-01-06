@@ -136,4 +136,7 @@ export const urls = {
   elrond: {
     website: "https://elrond.com",
   },
+  solana: {
+    supportPage: "https://support.ledger.com",
+  },
 };

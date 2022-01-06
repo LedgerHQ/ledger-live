@@ -22,15 +22,15 @@ import updateAccountSwapStatus from "@ledgerhq/live-common/lib/exchange/swap/upd
 import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/lib/exchange/swap/csvExport";
 import { operationStatusList } from "@ledgerhq/live-common/lib/exchange/swap";
 
-import useInterval from "../../../../components/useInterval";
-import { updateAccountWithUpdater } from "../../../../actions/accounts";
-import { flattenAccountsSelector } from "../../../../reducers/accounts";
-import LText from "../../../../components/LText";
-import Button from "../../../../components/Button";
-import Alert from "../../../../components/Alert";
-import logger from "../../../../logger";
-import DownloadFileIcon from "../../../../icons/DownloadFile";
-import { TrackScreen } from "../../../../analytics";
+import useInterval from "../../../components/useInterval";
+import { updateAccountWithUpdater } from "../../../actions/accounts";
+import { flattenAccountsSelector } from "../../../reducers/accounts";
+import LText from "../../../components/LText";
+import Button from "../../../components/Button";
+import Alert from "../../../components/Alert";
+import logger from "../../../logger";
+import DownloadFileIcon from "../../../icons/DownloadFile";
+import { TrackScreen } from "../../../analytics";
 
 import OperationRow from "./OperationRow";
 import EmptyState from "./EmptyState";
@@ -122,7 +122,7 @@ const History = () => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="Swap" name="History" />
+      <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View
           style={[

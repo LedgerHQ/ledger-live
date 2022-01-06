@@ -17,6 +17,7 @@ type Props = {|
   confirmationTitle?: React$Node,
   confirmationDesc?: React$Node,
   Icon?: React$ComponentType<*>,
+  iconColor?: string,
   image?: number,
   confirmButtonText?: React$Node,
   rejectButtonText?: React$Node,
@@ -41,12 +42,16 @@ class ConfirmationModal extends PureComponent<Props> {
       rejectButtonText,
       onConfirm,
       Icon,
+      iconColor,
       image,
       alert,
       hideRejectButton,
       colors,
       ...rest
     } = this.props;
+
+    const iColor = iconColor || colors.live;
+
     return (
       <BottomModal
         id="ConfirmationModal"
@@ -56,10 +61,8 @@ class ConfirmationModal extends PureComponent<Props> {
         {...rest}
       >
         {Icon && (
-          <View
-            style={[styles.icon, { backgroundColor: rgba(colors.live, 0.08) }]}
-          >
-            <Icon size={24} color={colors.live} />
+          <View style={[styles.icon, { backgroundColor: rgba(iColor, 0.08) }]}>
+            <Icon size={24} color={iColor} />
           </View>
         )}
         {image && (

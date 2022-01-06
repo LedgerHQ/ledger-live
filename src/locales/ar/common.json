@@ -377,7 +377,7 @@
       "description": "يرجى التأكد من وجود أرصدة مالية كافية في الحساب."
     },
     "NotEnoughGas": {
-      "title": "رصيد غير كافٍ من ETH لتغطية رسوم الشبكة",
+      "title": "رصيد الحساب الرئيسي غير كاف لرسوم الشبكة",
       "description": "يرجى إرسال بعض الETH إلى حسابك لسداد قيمة معاملات رمز ال ERC20."
     },
     "NotEnoughBalanceToDelegate": {
@@ -603,6 +603,15 @@
     "generic": {
       "title": "{{message}}",
       "description": "حدث خطأ ما. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم ليدجر (Ledger)."
+    },
+    "SolanaAccountNotFunded": {
+      "title": "Account not funded"
+    },
+    "SolanaAddressOfEd25519": {
+      "title": "Address off ed25519 curve"
+    },
+    "SolanaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}}"
     }
   },
   "bluetooth": {
@@ -2495,6 +2504,10 @@
       "legacy": {
         "title": "قديم",
         "desc": "صيغة العنوان الأصلي لعملة {{currency}}. أعلى رسوم لكل معاملة. لا تزال بعض المحافظ/عمليات التبادل تدعم هذا النوع فقط."
+      },
+      "taproot": {
+        "title": "Taproot",
+        "desc": "أحدث ترقية لشبكة {{currency}}. سوف توفر خصوصية أفضل ورسوم أرخص بمجرد انتشارها. لا يزال الدعم محدود من المحفظة ومنصات التداول."
       }
     }
   },

@@ -23,19 +23,19 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account/helpers";
 
-import { flattenAccountsSelector } from "../../../reducers/accounts";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import LText from "../../../components/LText";
-import SectionSeparator from "../../../components/SectionSeparator";
-import TooltipLabel from "../../../components/TooltipLabel";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import { urls } from "../../../config/urls";
-import { localeIds } from "../../../languages";
-import ExternalLink from "../../../icons/ExternalLink";
+import { flattenAccountsSelector } from "../../reducers/accounts";
+import CurrencyUnitValue from "../../components/CurrencyUnitValue";
+import LText from "../../components/LText";
+import SectionSeparator from "../../components/SectionSeparator";
+import TooltipLabel from "../../components/TooltipLabel";
+import CurrencyIcon from "../../components/CurrencyIcon";
+import { urls } from "../../config/urls";
+import { localeIds } from "../../languages";
+import ExternalLink from "../../icons/ExternalLink";
 
 import SwapStatusIndicator, { getStatusColor } from "./SwapStatusIndicator";
 
-import Footer from "../../OperationDetails/Footer";
+import Footer from "../OperationDetails/Footer";
 
 type Props = {
   route: {
@@ -59,17 +59,18 @@ const OperationDetails = ({ route }: Props) => {
   const { colors } = useTheme();
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = accounts.find(a => a.id === swapOperation.fromAccount.id);
-  const swap = fromAccount.swapHistory.find(s => s.swapId === swapId);
+  const swap =
+    fromAccount && fromAccount.swapHistory.find(s => s.swapId === swapId);
   const status = Config.DEBUG_SWAP_STATUS || swap.status;
 
-  const fromCurrency = getAccountCurrency(fromAccount);
-  const toCurrency = getAccountCurrency(toAccount);
+  const fromCurrency = fromAccount && getAccountCurrency(fromAccount);
+  const toCurrency = toAccount && getAccountCurrency(toAccount);
   const statusColorKey = getStatusColor(status, colors, true);
   const dotStyles = { backgroundColor: colors[statusColorKey] };
   const textColorStyles = { color: colors[statusColorKey] };
 
   const url =
-    fromCurrency.type === "CryptoCurrency" &&
+    fromCurrency?.type === "CryptoCurrency" &&
     getTransactionExplorer(
       getDefaultExplorerView(fromCurrency),
       operation.hash,

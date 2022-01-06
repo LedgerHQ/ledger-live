@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -27,23 +27,31 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/lib/account";
 
-import { renderLoading } from "../../../components/DeviceAction/rendering";
-import { ScreenName } from "../../../const";
-import { updateAccountWithUpdater } from "../../../actions/accounts";
-import DeviceAction from "../../../components/DeviceAction";
-import BottomModal from "../../../components/BottomModal";
-import ModalBottomAction from "../../../components/ModalBottomAction";
-import { useBroadcast } from "../../../components/useBroadcast";
-import { swapKYCSelector } from "../../../reducers/settings";
+import type { DeviceInfo } from "@ledgerhq/live-common/lib/types/manager";
+import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
 
-import type { DeviceMeta } from "./Form";
+import { renderLoading } from "../../components/DeviceAction/rendering";
+import { ScreenName } from "../../const";
+import { updateAccountWithUpdater } from "../../actions/accounts";
+import DeviceAction from "../../components/DeviceAction";
+import BottomModal from "../../components/BottomModal";
+import ModalBottomAction from "../../components/ModalBottomAction";
+import { useBroadcast } from "../../components/useBroadcast";
+import { swapKYCSelector } from "../../reducers/settings";
 
 const silentSigningAction = createAction(connectApp);
 const swapAction = initSwapCreateAction(connectApp, initSwap);
 
+export type DeviceMeta = {
+  result: { installed: any },
+  device: Device,
+  deviceInfo: DeviceInfo,
+};
+
 type Props = {
-  exchange: Exchange,
-  exchangeRate: ExchangeRate,
+  swap: Exchange,
+  rate: ExchangeRate,
+  provider: string,
   transaction: Transaction,
   deviceMeta: DeviceMeta,
   onError: (error: Error) => void,
@@ -51,17 +59,32 @@ type Props = {
   status: TransactionStatus,
 };
 const Confirmation = ({
-  exchange,
-  exchangeRate,
+  swap,
+  rate,
+  provider,
   transaction,
   onError,
   onCancel,
   deviceMeta,
   status,
 }: Props) => {
-  const { fromAccount, fromParentAccount, toAccount } = exchange;
+  const {
+    from: { account: fromAccount, parentAccount: fromParentAccount },
+    to: { account: toAccount, parentAccount: toParentAccount },
+  } = swap;
+
+  const exchange = useMemo(
+    () => ({
+      fromAccount,
+      fromParentAccount,
+      toAccount,
+      toParentAccount,
+    }),
+    [fromAccount, fromParentAccount, toAccount, toParentAccount],
+  );
+
   const swapKYC = useSelector(swapKYCSelector);
-  const providerKYC = swapKYC[exchangeRate.provider];
+  const providerKYC = swapKYC[provider];
 
   const [swapData, setSwapData] = useState(null);
   const [signedOperation, setSignedOperation] = useState(null);
@@ -90,7 +113,10 @@ const Confirmation = ({
               account,
               operation,
               transaction,
-              swap: { exchange, exchangeRate },
+              swap: {
+                exchange,
+                exchangeRate: rate,
+              },
               swapId,
             }),
             operation,
@@ -99,7 +125,7 @@ const Confirmation = ({
       );
       navigation.replace(ScreenName.SwapPendingOperation, {
         swapId,
-        provider: exchangeRate.provider,
+        provider: rate.provider,
         targetCurrency: targetCurrency.name,
         operation,
         fromAccount,
@@ -107,14 +133,14 @@ const Confirmation = ({
       });
     },
     [
-      dispatch,
-      exchange,
-      exchangeRate,
       fromAccount,
       fromParentAccount,
+      dispatch,
       navigation,
+      rate,
+      targetCurrency.name,
       transaction,
-      targetCurrency,
+      exchange,
     ],
   );
 
@@ -156,7 +182,7 @@ const Confirmation = ({
                 onError={onError}
                 request={{
                   exchange,
-                  exchangeRate,
+                  exchangeRate: rate,
                   transaction,
                   userId: providerKYC?.id,
                   requireLatestFirmware: true,
