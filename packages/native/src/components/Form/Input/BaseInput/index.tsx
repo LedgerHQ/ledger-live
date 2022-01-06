@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 import { TextInput, TextInputProps, ColorValue, StyleProp, ViewStyle } from "react-native";
 import styled, { css } from "styled-components/native";
 import Text from "../../../Text";
@@ -56,7 +56,7 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
   display: flex;
   flex-direction: row;
   width: 100%;
-  background: ${(p) => p.theme.colors.neutral.c00};
+  background: ${(p) => p.theme.colors.background.main};
   height: 48px;
   border: ${(p) => `1px solid ${p.theme.colors.neutral.c40}`};
   border-radius: 24px;
@@ -93,6 +93,8 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
 
 const BaseInput = styled.TextInput.attrs((p) => ({
   selectionColor: p.theme.colors.primary.c80 as ColorValue,
+  color: p.theme.colors.neutral.c100,
+  placeholderTextColor: p.theme.colors.neutral.c80 as ColorValue,
 }))<Partial<CommonProps> & { focus?: boolean }>`
   height: 100%;
   width: 100%;
@@ -125,7 +127,7 @@ export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const IDENTITY = (_: any): any => _;
 
-function Input<T = string>(props: InputProps<T>, ref?: React.ForwardedRef<TextInput>): JSX.Element {
+function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
   const {
     value,
     onChange,
@@ -138,8 +140,14 @@ function Input<T = string>(props: InputProps<T>, ref?: React.ForwardedRef<TextIn
     serialize = IDENTITY,
     deserialize = IDENTITY,
     containerStyle,
+    autoFocus,
+    onFocus,
+    onBlur,
     ...textInputProps
   } = props;
+
+  const inputRef = useRef<any>();
+  useImperativeHandle(ref, () => inputRef.current, [inputRef]);
 
   const inputValue = useMemo(() => serialize(value), [serialize, value]);
 
@@ -151,6 +159,11 @@ function Input<T = string>(props: InputProps<T>, ref?: React.ForwardedRef<TextIn
     [onChange, onChangeText, deserialize],
   );
 
+  useEffect(() => {
+    if (autoFocus && inputRef && inputRef.current && inputRef.current.focus)
+      inputRef.current.focus();
+  }, [inputRef, autoFocus]);
+
   const [focus, setFocus] = React.useState(false);
 
   return (
@@ -158,7 +171,7 @@ function Input<T = string>(props: InputProps<T>, ref?: React.ForwardedRef<TextIn
       <InputContainer disabled={disabled} focus={focus} error={error}>
         {typeof renderLeft === "function" ? renderLeft(props) : renderLeft}
         <BaseInput
-          ref={ref}
+          ref={inputRef}
           {...textInputProps}
           value={inputValue}
           onChange={onChangeEvent}
@@ -166,8 +179,14 @@ function Input<T = string>(props: InputProps<T>, ref?: React.ForwardedRef<TextIn
           editable={!disabled}
           disabled={disabled}
           error={error}
-          onFocus={() => setFocus(true)}
-          onBlur={() => setFocus(false)}
+          onFocus={(e: any) => {
+            setFocus(true);
+            typeof onFocus === "function" && onFocus(e);
+          }}
+          onBlur={(e: any) => {
+            setFocus(false);
+            typeof onBlur === "function" && onBlur(e);
+          }}
         />
         {typeof renderRight === "function" ? renderRight(props) : renderRight}
       </InputContainer>

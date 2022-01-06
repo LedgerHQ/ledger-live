@@ -28,6 +28,8 @@ import "./Form/Input/NumberInput.stories";
 import "./Link/Link.stories";
 import "./Form/Switch.stories";
 import "./Form/Toggle.stories";
+import "./Tabs/ChipTabs/ChipTabs.stories";
+import "./Tabs/GraphTabs/GraphTabs.stories";
 import "./Tag/Badge.stories";
 import "./message/Alert/Alert.stories";
 import "./Particles/Spacing.stories";
