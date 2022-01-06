@@ -19,14 +19,14 @@ export default async function getTransactionStatus(
   if (!transaction.recipient || transaction.recipient.length === 0) {
     errors.recipient = new RecipientRequired("");
   } else {
-    const senderAccountId = hedera.AccountId.fromString(account.seedIdentifier);
+    const senderAccountId = account.hederaResources?.accountId;
 
     try {
       const recipientAccountId = hedera.AccountId.fromString(
         transaction.recipient
       );
 
-      if (senderAccountId.equals(recipientAccountId)) {
+      if (senderAccountId?.equals(recipientAccountId)) {
         errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource("");
       }
     } catch (err) {
