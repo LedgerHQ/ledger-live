@@ -4,74 +4,21 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { CurrencyData } from "@ledgerhq/live-common/lib/market/types";
 import { Image } from "react-native";
 import { TFunction } from "i18next";
-import CurrencyIcon from "../../components/CurrencyIcon";
+import CircleCurrencyIcon from "../../components/CircleCurrencyIcon";
+import DeltaVariation from "./DeltaVariation";
+import { counterValueFormatter } from "./utils";
 
 const IconContainer = styled(Flex).attrs({
   width: 32,
   height: 32,
   bg: "neutral.c30",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
 })`
   border-radius: 32px;
   overflow: hidden;
 `;
-
-const indexes: [string, number][] = [
-  ["d", 1],
-  ["K", 1000],
-  ["M", 1000000],
-  ["B", 1000000000],
-  ["T", 1000000000000],
-  ["Q", 1000000000000000],
-  ["Qn", 1000000000000000000],
-];
-
-export const counterValueFormatter = ({
-  currency,
-  value,
-  shorten,
-  locale,
-  t,
-}: {
-  currency?: string;
-  value: number;
-  shorten?: boolean;
-  locale: string;
-  t: TFunction;
-}): string => {
-  if (!value) {
-    return "-";
-  }
-
-  if (shorten) {
-    const index = Math.floor(Math.log(value) / Math.log(10) / 3);
-
-    const [i, n] = indexes[index];
-
-    const roundedValue = Math.floor((value / n) * 1000) / 1000;
-
-    const nn = new Intl.NumberFormat(locale, {
-      style: currency ? "currency" : "decimal",
-      currency,
-      notation: shorten ? "compact" : "standard",
-      maximumFractionDigits: 8,
-      maximumSignificantDigits: 8,
-    });
-
-    const number = nn.format(roundedValue);
-
-    const I = t(`numberCompact.${i}`);
-
-    const formattedNumber = number.replace(/([0-9,. ]+)/, `$1 ${I} `);
-
-    return formattedNumber;
-  }
-
-  return new Intl.NumberFormat(locale, {
-    style: currency ? "currency" : "decimal",
-    currency,
-    maximumFractionDigits: 8,
-  }).format(value);
-};
 
 type Props = {
   index: number;
@@ -82,39 +29,100 @@ type Props = {
 };
 
 function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
-  const { internalCurrency, image, name, marketcap, marketcapRank } = item;
+  const {
+    internalCurrency,
+    image,
+    name,
+    marketcap,
+    marketcapRank,
+    price,
+    priceChangePercentage,
+  } = item;
 
   return (
-    <Flex height={72} flexDirection="row" p={3} key={index}>
+    <Flex
+      height={72}
+      flexDirection="row"
+      justifyContent="flex-start"
+      alignItems="center"
+      p={3}
+      key={index}
+    >
       {internalCurrency ? (
-        <CurrencyIcon borderRadius={32} size={32} currency={internalCurrency} />
+        <CircleCurrencyIcon
+          size={32}
+          currency={internalCurrency}
+          color={undefined}
+        />
       ) : (
         image && (
           <IconContainer>
             <Image
               source={{ uri: image }}
               style={{ width: 32, height: 32 }}
-              resizeMode="cover"
+              resizeMode="contain"
             />
           </IconContainer>
         )
       )}
-      <Flex flexDirection="column">
-        <Text variant="paragraph">{name}</Text>
+      <Flex
+        mx="4"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="flex-start"
+      >
+        <Text variant="large" fontWeight="semiBold">
+          {name}
+        </Text>
         <Flex flexDirection="row">
-          <Text variant="small" bg="neutral.c40" borderRadius={2}>
-            {marketcapRank}
+          <Text
+            variant="small"
+            bg="neutral.c40"
+            height="20px"
+            lineHeight="20px"
+            px="2"
+            mr="2"
+            borderRadius={2}
+            fontWeight="semiBold"
+          >
+            {marketcapRank || "-"}
           </Text>
           <Text variant="body" color="neutral.c70">
-            {counterValueFormatter({
-              value: marketcap,
-              shorten: true,
-              currency: counterCurrency,
-              locale,
-              t,
-            })}
+            {marketcap && marketcap > 0
+              ? counterValueFormatter({
+                  value: marketcap,
+                  shorten: true,
+                  currency: counterCurrency,
+                  locale,
+                  t,
+                })
+              : "-"}
           </Text>
         </Flex>
+      </Flex>
+      <Flex
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="flex-end"
+        flex={1}
+      >
+        <Text variant="large" fontWeight="semiBold">
+          {counterValueFormatter({
+            value: price,
+            currency: counterCurrency,
+            locale,
+            t,
+          })}
+        </Text>
+
+        {priceChangePercentage !== null && !isNaN(priceChangePercentage) ? (
+          <DeltaVariation percent value={priceChangePercentage} />
+        ) : (
+          <Text variant="body" height="50px" width="50px" color="neutral.c70">
+            {" "}
+            -
+          </Text>
+        )}
       </Flex>
     </Flex>
   );

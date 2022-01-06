@@ -43,7 +43,7 @@ function CircleCurrencyIcon({ size, currency, color }: Props) {
       style={[styles.wrapper, { backgroundColor, width: size, height: size }]}
     >
       {MaybeIconComponent ? (
-        <MaybeIconComponent size={size} color={c} />
+        <MaybeIconComponent size={size * 0.5} color={c} />
       ) : (
         <LText semiBold style={{ color: c, fontSize: size / 2 }}>
           {ticker}
