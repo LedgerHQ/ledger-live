@@ -192,11 +192,11 @@ function Input<T = ValueType>(
         warning={warning}
         onChange={handleChange}
         value={inputValue}
-        onFocus={(event) => {
+        onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
           setFocus(true);
           htmlInputProps.onFocus && htmlInputProps.onFocus(event);
         }}
-        onBlur={(event) => {
+        onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
           setFocus(false);
           htmlInputProps.onBlur && htmlInputProps.onBlur(event);
         }}

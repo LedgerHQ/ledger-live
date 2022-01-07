@@ -1,5 +1,9 @@
 // @flow
 
+// Injects node.js shims.
+// https://github.com/parshap/node-libs-react-native
+import "node-libs-react-native/globals";
+
 // Fix for crash with `Unsupported top level event type "onGestureHandlerStateChange" dispatched`
 // https://github.com/kmagiera/react-native-gesture-handler/issues/320#issuecomment-443815828
 import "react-native-gesture-handler";

@@ -1,4 +1,3 @@
-// @flow
 import React from "react";
 import { components, GroupBase, ControlProps, ValueContainerProps } from "react-select";
 import { useTheme } from "styled-components";
@@ -7,7 +6,7 @@ import SelectInput, {
 } from "@ledgerhq/react-ui/components/form/SelectInput";
 import Text from "@ledgerhq/react-ui/components/asorted/Text";
 import { ValueContainer } from "@ledgerhq/react-ui/components/form/SelectInput/ValueContainer";
-import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/icons-ui/react";
+import { ChevronBottomMedium, ChevronTopMedium } from "@ledgerhq/react-ui/assets/icons";
 import FlexBox from "@ledgerhq/react-ui/components/layout/Flex";
 
 export type Props<O> = SelectInputProps<O, false, GroupBase<O>> & {

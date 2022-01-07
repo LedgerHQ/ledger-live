@@ -1,5 +1,4 @@
 // @flow
-import "../shim";
 import "./polyfill";
 import "./live-common-setup";
 import "./implement-react-native-libcore";
