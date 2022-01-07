@@ -1,4 +1,7 @@
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 module.exports = [
+  ...(isDevelopment ? [require.resolve("react-refresh/babel")] : []),
   "@babel/plugin-proposal-export-default-from",
   "@babel/plugin-proposal-export-namespace-from",
   "@babel/plugin-syntax-dynamic-import",

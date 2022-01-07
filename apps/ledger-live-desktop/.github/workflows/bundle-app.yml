@@ -17,21 +17,6 @@ jobs:
       - name: Cancel Previous Runs
         run: curl -i -L -X GET 'https://github-actions-live.ledger.tools/api/cancel-previous-run?runId=${{ github.run_id }}&owner=LedgerHQ&repo=ledger-live-desktop&branch=${{ github.event.pull_request.head.ref }}&headSha=${{ github.event.pull_request.head.sha }}'
 
-  check-if-fork:
-    needs: [cancel-previous]
-    runs-on: ubuntu-20.04
-    outputs:
-      forked: ${{ steps.forked.outputs.forked }}
-    steps:
-      - name: echo
-        run: |
-          echo ${{github.event.pull_request.head.repo.full_name }}
-          echo ${{ github.repository }}
-
-      - name: check if we are on a forked repo
-        id: forked
-        run: echo "::set-output name=forked::$(${{github.event.pull_request.head.repo.full_name != github.repository }})"
-
   bundle-macos:
     name: "[macOS] Build"
     runs-on: [ledger-live, macos]
@@ -45,14 +30,14 @@ jobs:
       - uses: actions/setup-node@main
         with:
           node-version: 14.x
-      - name: install yarn
-        run: npm i -g yarn
+      - name: install pnpm
+        run: npm i -g pnpm
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
-        run: JOBS=max yarn --frozen-lockfile --network-timeout 100000
+        run: pnpm i --frozen-lockfile
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: version
         with:
@@ -65,7 +50,7 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
-        run: yarn version --new-version="$VERSION"
+        run: pnpm version --new-version="$VERSION"
       - name: make local version push
         if: github.event_name == 'push'
         env:
@@ -74,7 +59,7 @@ jobs:
       - name: build the app
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-        run: yarn build-ci
+        run: pnpm build-ci
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: post-version
         with:
@@ -97,8 +82,7 @@ jobs:
 
   start-runner:
     name: "[Runner] start ec2 instance"
-    needs: check-if-fork
-    if: ${{ !needs.check-if-fork.outputs.forked && github.actor != 'dependabot[bot]' }}
+    needs: cancel-previous
     uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
     with:
       instance-type: c5.4xlarge
@@ -108,7 +92,7 @@ jobs:
   stop-runner:
     name: "[Runner] stop ec2 instance"
     if: ${{ always() }}
-    needs: [start-runner, bundle-linux-hosted]
+    needs: [start-runner, bundle-linux]
     uses: ledgerhq/actions/.github/workflows/stop-linux-runner.yml@main
     with:
       label: ${{ needs.start-runner.outputs.label }}
@@ -116,7 +100,7 @@ jobs:
     secrets:
       CI_BOT_TOKEN: ${{ secrets.CI_BOT_TOKEN }}
 
-  bundle-linux-hosted:
+  bundle-linux:
     name: "[Linux] Build"
     needs: [start-runner]
     runs-on: ${{ needs.start-runner.outputs.label }}
@@ -137,6 +121,8 @@ jobs:
       - name: install yarn
         if: always()
         run: npm install --global yarn
+      - name: install pnpm
+        run: npm i -g pnpm
       - name: set git user
         run: |
           git config user.email "team-live@ledger.fr"
@@ -146,7 +132,7 @@ jobs:
       - name: install and switch to GCC 5.4
         run: ./tools/g++-5.4/install.sh
       - name: install dependencies
-        run: JOBS=max yarn --frozen-lockfile --network-timeout 100000
+        run: pnpm i --frozen-lockfile
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: version
         with:
@@ -166,63 +152,7 @@ jobs:
           VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
         run: yarn version --new-version="$VERSION"
       - name: build the app
-        run: yarn build-ci
-      - uses: ledgerhq/actions/packages/get-package-infos@main
-        id: post-version
-        with:
-          path: ${{ github.workspace }}
-      - name: upload linux app
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
-          path: dist/${{ steps.post-version.outputs.name }}-${{ steps.post-version.outputs.version }}-linux-x86_64.AppImage
-
-  bundle-linux-guest:
-    name: "[Linux] Build"
-    needs: [check-if-fork]
-    runs-on: ubuntu-20.04
-    if: ${{needs.check-if-fork.outputs.forked || github.actor == 'dependabot[bot]' }}
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
-          persist-credentials: false
-      - uses: actions/setup-node@main
-        if: always()
-        with:
-          node-version: 14.x
-          cache: yarn
-      - name: set git user
-        run: |
-          git config user.email "team-live@ledger.fr"
-          git config user.name "Team Live"
-      - name: install linux dependencies
-        run: sudo apt-get update && sudo apt-get install libudev-dev libusb-1.0-0-dev
-      - name: install and switch to GCC 5.4
-        run: ./tools/g++-5.4/install.sh
-      - name: install dependencies
-        run: JOBS=max yarn --frozen-lockfile --network-timeout 100000
-      - uses: ledgerhq/actions/packages/get-package-infos@main
-        id: version
-        with:
-          path: ${{ github.workspace }}
-      - name: set beta name
-        uses: ledgerhq/actions/packages/change-product-name@main
-        with:
-          path: ${{ github.workspace }}
-      - name: make local version pr
-        if: github.event_name == 'pull_request'
-        env:
-          VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
-        run: yarn version --new-version="$VERSION"
-      - name: make local version push
-        if: github.event_name == 'push'
-        env:
-          VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
-        run: yarn version --new-version="$VERSION"
-      - name: build the app
-        run: yarn build-ci
+        run: pnpm build-ci
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: post-version
         with:
@@ -246,6 +176,8 @@ jobs:
       - uses: actions/setup-node@main
         with:
           node-version: 14.x
+      - name: install pnpm
+        run: npm i -g pnpm
       - uses: actions/setup-python@v2
         with:
           python-version: 2.x
@@ -254,9 +186,7 @@ jobs:
           git config user.email "team-live@ledger.fr"
           git config user.name "Team Live"
       - name: install dependencies
-        env:
-          JOBS: max
-        run: yarn --frozen-lockfile --network-timeout 100000
+        run: pnpm i --frozen-lockfile --unsafe-perm
       - uses: ledgerhq/actions/packages/get-package-infos@main
         id: version
         with:
@@ -274,7 +204,7 @@ jobs:
         if: github.event_name == 'push'
         run: echo "::set-output name=content::${{ steps.version.outputs.clean }}-sha.${{ github.sha }}"
       - name: build the app
-        run: yarn build-ci
+        run: pnpm build-ci
       - name: upload windows
         uses: actions/upload-artifact@v1
         with:

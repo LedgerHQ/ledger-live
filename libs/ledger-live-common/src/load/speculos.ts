@@ -89,9 +89,9 @@ export async function createSpeculosDevice(
     appPath,
     ...(dependency
       ? [
-          "-l",
-          `${dependency}:${`./apps/${model.toLowerCase()}/${firmware}/${dependency}/app_${appVersion}.elf`}`,
-        ]
+        "-l",
+        `${dependency}:${`./apps/${model.toLowerCase()}/${firmware}/${dependency}/app_${appVersion}.elf`}`,
+      ]
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
@@ -304,11 +304,11 @@ export function appCandidatesMatches(
   search: AppSearch
 ): boolean {
   const searchFirmware = search.firmware || defaultFirmware[appCandidate.model];
-  return (
+  return !!(
     (!search.model || search.model === appCandidate.model) &&
     (!search.appName ||
       search.appName.replace(/ /g, "").toLowerCase() ===
-        appCandidate.appName.replace(/ /g, "").toLowerCase()) &&
+      appCandidate.appName.replace(/ /g, "").toLowerCase()) &&
     ((!searchFirmware && !appCandidate.firmware.includes("rc")) ||
       appCandidate.firmware === searchFirmware ||
       (searchFirmware &&
@@ -338,10 +338,10 @@ export const findAppCandidate = (
     log(
       "speculos",
       apps.length +
-        " app candidates (out of " +
-        appCandidates.length +
-        "):\n" +
-        apps.map((a, i) => " [" + i + "] " + formatAppCandidate(a)).join("\n")
+      " app candidates (out of " +
+      appCandidates.length +
+      "):\n" +
+      apps.map((a, i) => " [" + i + "] " + formatAppCandidate(a)).join("\n")
     );
   }
 
@@ -377,10 +377,10 @@ function eatDevice(parts: string[]): {
 
 function parseAppSearch(query: string):
   | {
-      search: AppSearch;
-      appName: string;
-      dependency: string | void;
-    }
+    search: AppSearch;
+    appName: string;
+    dependency: string | void;
+  }
   | null
   | undefined {
   const parts = query.slice(9).split(":");
@@ -432,7 +432,7 @@ export async function createImplicitSpeculos(query: string): Promise<{
       appName: string;
       dependency: string | undefined;
     }
-  >match;
+    >match;
 
   const appCandidate = findAppCandidate(apps, search);
   invariant(appCandidate, "could not find an app that matches '%s'", query);
@@ -442,15 +442,15 @@ export async function createImplicitSpeculos(query: string): Promise<{
   );
   return appCandidate
     ? {
-        device: await createSpeculosDevice({
-          ...appCandidate,
-          coinapps,
-          appName,
-          dependency,
-          seed,
-        }),
-        appCandidate,
-      }
+      device: await createSpeculosDevice({
+        ...appCandidate,
+        coinapps,
+        appName,
+        dependency,
+        seed,
+      }),
+      appCandidate,
+    }
     : null;
 }
 

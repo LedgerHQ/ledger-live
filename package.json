@@ -1,0 +1,58 @@
+{
+  "name": "ledger-live",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "turbo": "^1.0.28"
+  },
+  "scripts": {
+    "lld:dev": "turbo run start --scope=live-desktop",
+    "llm:ios": "turbo run ios --scope=live-mobile",
+    "llm:android": "turbo run android --scope=live-mobile",
+    "build": "turbo run build --ignore=\"./apps/**/*\"",
+    "clean": "git clean -fdX"
+  },
+  "turbo": {
+    "baseBranch": "origin/main",
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "dist/**",
+          "lib/**",
+          "lib-es/**",
+          "build/**"
+        ]
+      },
+      "start": {
+        "cache": false,
+        "dependsOn": [
+          "^build"
+        ]
+      },
+      "ios": {
+        "cache": false,
+        "dependsOn": []
+      },
+      "android": {
+        "cache": false,
+        "dependsOn": []
+      }
+    }
+  },
+  "pnpm": {
+    "overrides": {
+      "stellar-base>sodium-native": "^3.2.1"
+    },
+    "packageExtensions": {
+      "react-native": {
+        "dependencies": {
+          "react-native-codegen": "0.0.7"
+        }
+      }
+    }
+  }
+}
