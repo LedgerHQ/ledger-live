@@ -30,6 +30,7 @@ import { getEnv } from "../../../env";
 import { signOperation } from "../signOperation";
 import { patchOperationWithHash } from "../../../operation";
 import { log } from "@ledgerhq/logs";
+import { InvalidAddressBecauseAlreadyDelegated } from "../../../errors";
 
 const receive = makeAccountBridgeReceive();
 
@@ -127,7 +128,9 @@ const getTransactionStatus = async (
       } else {
         errors.amount = new NotEnoughBalanceToDelegate();
       }
-    } else {
+    } else if (t.taquitoError.endsWith("delegate.unchanged")) {
+      errors.recipient = new InvalidAddressBecauseAlreadyDelegated();
+    } else if (!errors.amount) {
       // unidentified error case
       errors.amount = new Error(t.taquitoError);
     }
