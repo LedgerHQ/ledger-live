@@ -32,6 +32,9 @@
     "bs58check": "^2.1.2",
     "invariant": "^2.2.4"
   },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
   "scripts": {
     "clean": "bash ../../script/clean.sh",
     "build": "bash ../../script/build.sh",

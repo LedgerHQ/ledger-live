@@ -46,7 +46,7 @@ function setupDirtyHackToHandleLibcoreDoubleCallback() {
       ) {
         return;
       }
-      const ExceptionsManager = require("../node_modules/react-native/Libraries/Core/ExceptionsManager.js");
+      const ExceptionsManager = require("react-native/Libraries/Core/ExceptionsManager.js");
       ExceptionsManager.handleException(e, isFatal);
     } catch (ee) {
       console.log("Failed to print error: ", ee.message);
