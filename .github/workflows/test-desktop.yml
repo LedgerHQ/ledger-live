@@ -48,6 +48,8 @@ jobs:
               return "windows"
             }
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
       - uses: pnpm/action-setup@v2.1.0
         with:
           version: latest
