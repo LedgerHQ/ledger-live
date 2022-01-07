@@ -5,13 +5,14 @@ import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import SafeAreaView from "react-native-safe-area-view";
 import { Trans } from "react-i18next";
 
-import { ScreenName } from "../../../../const";
-import LText from "../../../../components/LText";
-import Alert from "../../../../components/Alert";
-import Button from "../../../../components/Button";
-import IconCheck from "../../../../icons/Check";
-import IconClock from "../../../../icons/Clock";
-import { rgba } from "../../../../colors";
+import { getAccountCurrency } from "@ledgerhq/live-common/lib/account";
+import { ScreenName } from "../../const";
+import LText from "../../components/LText";
+import Button from "../../components/Button";
+import IconCheck from "../../icons/Check";
+import IconClock from "../../icons/Clock";
+import { rgba } from "../../colors";
+import { TrackScreen } from "../../analytics";
 
 const forceInset = { bottom: "always" };
 
@@ -28,6 +29,8 @@ const PendingOperation = () => {
     fromParentAccount,
   } = route.params;
 
+  const sourceCurrency = fromAccount && getAccountCurrency(fromAccount);
+
   const onComplete = useCallback(() => {
     navigation.navigate(ScreenName.OperationDetails, {
       accountId: fromAccount.id,
@@ -42,6 +45,13 @@ const PendingOperation = () => {
       style={[styles.root, { backgroundColor: colors.background }]}
       forceInset={forceInset}
     >
+      <TrackScreen
+        category="Swap Form"
+        name="Confirmation Success"
+        providerName={provider}
+        targetCurrency={targetCurrency}
+        sourceCurrency={sourceCurrency?.id}
+      />
       <View style={styles.wrapper}>
         <View style={styles.content}>
           <View
@@ -63,6 +73,29 @@ const PendingOperation = () => {
           <LText secondary style={styles.title}>
             <Trans i18nKey={"transfer.swap.pendingOperation.title"} />
           </LText>
+          <View
+            style={{
+              flexDirection: "row",
+              alignContent: "center",
+              justifyContent: "center",
+            }}
+          >
+            <LText style={styles.swapID} color="grey">
+              <Trans i18nKey={"transfer.swap.pendingOperation.label"} />
+            </LText>
+
+            <LText
+              style={[
+                styles.swapID,
+                {
+                  backgroundColor: colors.fog,
+                },
+              ]}
+              color="darkBlue"
+            >
+              {swapId}
+            </LText>
+          </View>
           <LText style={styles.description} color="grey">
             <Trans
               i18nKey={"transfer.swap.pendingOperation.description"}
@@ -70,29 +103,8 @@ const PendingOperation = () => {
             />
           </LText>
         </View>
-
-        <View style={styles.disclaimer}>
-          <Alert
-            type="help"
-            vertical
-            bottom={
-              <LText
-                selectable
-                semiBold
-                style={[styles.swapID, { backgroundColor: colors.lightFog }]}
-              >
-                {swapId}
-              </LText>
-            }
-          >
-            <Trans
-              i18nKey={"transfer.swap.pendingOperation.disclaimer"}
-              values={{ provider }}
-            />
-          </Alert>
-        </View>
       </View>
-      <View style={styles.continueWrapper}>
+      <View>
         <Button
           event="SwapDone"
           type="primary"
@@ -141,33 +153,22 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     marginBottom: 16,
   },
-  disclaimer: {
-    marginTop: "auto",
-    marginBottom: 32,
-  },
-  swapIDWrapper: {
-    backgroundColor: "red",
-    flexGrow: 0,
-  },
-  swapLabel: {
-    fontSize: 14,
-    lineHeight: 19,
-  },
   swapID: {
+    fontSize: 13,
+    padding: 4,
     borderRadius: 4,
-    overflow: "hidden",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    alignSelf: "center",
+    lineHeight: 18,
+    height: 26,
+    textAlign: "center",
+    marginHorizontal: 4,
   },
   description: {
     fontSize: 13,
     lineHeight: 18,
     textAlign: "center",
     marginHorizontal: 30,
-    marginBottom: 16,
+    marginVertical: 16,
   },
-  continueWrapper: {},
 });
 
 export default PendingOperation;

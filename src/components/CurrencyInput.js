@@ -48,6 +48,7 @@ type Props = {
   style?: *,
   inputStyle?: *,
   colors: *,
+  dynamicFontRatio?: number,
 };
 
 type State = {
@@ -68,6 +69,7 @@ class CurrencyInput extends PureComponent<Props, State> {
     hasWarning: false,
     autoFocus: false,
     editable: true,
+    dynamicFontRatio: 0.75,
   };
 
   state = {
@@ -150,11 +152,12 @@ class CurrencyInput extends PureComponent<Props, State> {
       editable,
       placeholder,
       colors,
+      dynamicFontRatio = 0.75,
     } = this.props;
     const { displayValue } = this.state;
 
     // calculating an approximative font size
-    const screenWidth = Dimensions.get("window").width * 0.75;
+    const screenWidth = Dimensions.get("window").width * dynamicFontRatio;
     const dynamicFontSize = Math.round(
       clamp(
         Math.sqrt((screenWidth * 32) / displayValue.length),

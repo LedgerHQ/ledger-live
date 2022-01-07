@@ -262,6 +262,10 @@
       "title": "Auto-verification not available: carefully verify the address.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "Biometric authentication failed",
       "description": "Please use your password or reset the app."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts must not be the same."
@@ -1820,6 +1827,7 @@
       "copyAddress": "Copy address",
       "shareAddress": "Share address",
       "addressCopied": "Address copied!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
@@ -1861,8 +1869,8 @@
           "subtitle": "Your information is collected by LEDGER on behalf of and transferred to WYRE for KYC purposes. For more information, please check our Privacy Policy",
           "pending": {
             "cta": "Continue",
-            "title": "KYC submitted for approval",
-            "subtitle": "Your KYC has been submitted and is pending approval.",
+            "title": "Your information has been submitted for approval",
+            "subtitle": "It usually takes only a few minutes before you can start swapping",
             "link": "Learn more about KYC"
           },
           "approved": {
@@ -1917,9 +1925,9 @@
         "cta": "Close"
       },
       "pendingOperation": {
-        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your {{targetCurrency}}.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "Your Swap ID:",
-        "title": "Swap broadcast successfully ",
+        "title": "Pending operation",
         "disclaimer": "Take note of your Swap ID number in case you’d need assistance from {{provider}} support.",
         "cta": "See details"
       },
@@ -1939,13 +1947,22 @@
         "button": "Continue",
         "from": "From",
         "to": "To",
+        "source": "Source",
+        "target": "Target account",
+        "noAccount": "You don’t have {{currency}} account",
         "balance": "Balance <0>123</0>",
         "fromAccount": "Select account",
         "toAccount": "Select account",
         "paraswapCTA": "Looking for Paraswap? It has been moved to the Discover tab!",
+        "quote": "Quote",
+        "receive": "Receive",
         "amount": {
           "useMax": "Use max",
           "available": "Total available"
+        },
+        "noAsset": {
+          "title": "You have no asset to swap",
+          "desc": "Buy some and come back to swap"
         },
         "noApp": {
           "title": "{{appName}} app not installed",
@@ -2024,6 +2041,22 @@
         "empty": {
           "title": "Your previous swaps will appear here",
           "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
+          "provider": "Provider",
+          "method": "Rate",
+          "fees": "Fees"
         }
       }
     },

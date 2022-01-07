@@ -1,6 +1,11 @@
 module.exports = {
   root: true,
-  extends: ["@react-native-community", "airbnb", "prettier"],
+  extends: [
+    "@react-native-community",
+    "airbnb",
+    "prettier",
+    "plugin:json/recommended",
+  ],
   settings: {
     "import/resolver": {
       node: {

@@ -203,5 +203,8 @@ export const darkTheme = {
     /** SNACKBAR */
     snackBarBg: "#000000",
     snackBarColor: "#FFF",
+
+    /** SKELETON */
+    skeletonBg: "#2a2d33",
   },
 };
