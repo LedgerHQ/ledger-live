@@ -1,0 +1,18 @@
+--- ios/Pods/Headers/Public/RNAnalytics/RNAnalytics.original.h	2022-01-11 15:18:39.000000000 +0100
++++ ios/Pods/Headers/Public/RNAnalytics/RNAnalytics.new.h	2022-01-11 15:18:56.000000000 +0100
+@@ -6,11 +6,11 @@
+ //  Copyright © 2020 Segment.io, Inc. All rights reserved.
+ //
+ 
+-#if __has_include("RCTBridgeModule.h")
+-#import "RCTBridgeModule.h"
+-#else
++// #if __has_include("RCTBridgeModule.h")
++// #import "RCTBridgeModule.h"
++// #else
+ #import <React/RCTBridgeModule.h>
+-#endif
++// #endif
+ 
+ @interface RNAnalytics: NSObject<RCTBridgeModule>
+ 

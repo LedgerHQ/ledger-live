@@ -20,7 +20,9 @@ import { getCurrencyExplorer } from "../../api/Ledger";
 const minVersionMatch = ">=0.11.1";
 
 function isAcceptedVersion(version: string | null | undefined) {
-  return !!version && semver.satisfies(semver.coerce(version), minVersionMatch);
+  return (
+    !!version && semver.satisfies(semver.coerce(version) || "", minVersionMatch)
+  );
 }
 
 let mockStatus: SatStackStatus = {

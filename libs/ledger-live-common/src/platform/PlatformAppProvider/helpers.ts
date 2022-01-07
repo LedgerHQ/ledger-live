@@ -11,7 +11,10 @@ import { getEnv } from "../../env";
 function matchVersion(filterParams: FilterParams, manifest: AppManifest) {
   return (
     !filterParams.version ||
-    semver.satisfies(semver.coerce(filterParams.version), manifest.apiVersion)
+    semver.satisfies(
+      semver.coerce(filterParams.version) || "",
+      manifest.apiVersion
+    )
   );
 }
 

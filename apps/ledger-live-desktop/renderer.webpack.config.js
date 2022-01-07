@@ -1,6 +1,5 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const babelPlugins = require("./babel.plugins");
 const UnusedWebpackPlugin = require("unused-webpack-plugin");
 const Dotenv = require("dotenv-webpack");
@@ -64,7 +63,6 @@ const babelConfig = {
   ],
   plugins: [
     ...babelPlugins,
-    "react-hot-loader/babel",
     [
       "babel-plugin-styled-components",
       {
@@ -89,7 +87,6 @@ const babelTsConfig = {
   ],
   plugins: [
     ...babelPlugins,
-    "react-hot-loader/babel",
     [
       "babel-plugin-styled-components",
       {
@@ -130,9 +127,6 @@ module.exports = {
       filename: "index.html",
       title: "Ledger Live",
     }),
-    new HardSourceWebpackPlugin({
-      cacheDirectory: path.resolve(__dirname, ".webpack", "cacheRenderer"),
-    }),
     new UnusedWebpackPlugin({
       directories: [path.join(__dirname, "src/renderer")],
       exclude: [
@@ -169,21 +163,21 @@ module.exports = {
       },
       process.env.V3
         ? {
-            test: /\.woff2/,
-            use: [
-              {
-                loader: "file-loader",
-                options: {
-                  name: "[name].[ext]",
-                  outputPath: "assets/fonts/",
-                },
+          test: /\.woff2/,
+          use: [
+            {
+              loader: "file-loader",
+              options: {
+                name: "[name].[ext]",
+                outputPath: "assets/fonts/",
               },
-            ],
-          }
+            },
+          ],
+        }
         : {
-            test: /\.(woff|woff2|eot|ttf|otf)$/i,
-            use: ["file-loader"],
-          },
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          use: ["file-loader"],
+        },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: {
@@ -204,33 +198,52 @@ module.exports = {
   resolve: {
     alias: {
       "~": path.resolve(__dirname, "src"),
+      // See: https://github.com/facebook/react/issues/20235
+      "react/jsx-runtime": require.resolve("react/jsx-runtime.js"),
+      // Alias react-ui and icons-ui peer dependencies to prevent duplicate packages issues.
+      "react": [
+        require.resolve("react"),
+        path.dirname(require.resolve("react"))
+      ],
+      "react-dom": [
+        require.resolve("react-dom"),
+        path.dirname(require.resolve("react-dom"))
+      ],
+      "styled-system": [
+        require.resolve("styled-system"),
+        path.dirname(require.resolve("styled-system"))
+      ],
+      "styled-components": [
+        require.resolve("styled-components"),
+        path.dirname(require.resolve("styled-components"))
+      ],
     },
     ...(process.env.V3
       ? {
-          extensions: [
-            ".v3.tsx",
-            ".v3.ts",
-            ".v3.jsx",
-            ".v3.js",
-            ".tsx",
-            ".ts",
-            ".jsx",
-            ".js",
-            "...",
-          ],
-        }
+        extensions: [
+          ".v3.tsx",
+          ".v3.ts",
+          ".v3.jsx",
+          ".v3.js",
+          ".tsx",
+          ".ts",
+          ".jsx",
+          ".js",
+          "...",
+        ],
+      }
       : {
-          extensions: [
-            ".jsx",
-            ".js",
-            ".v3.tsx",
-            ".v3.ts",
-            ".v3.jsx",
-            ".v3.js",
-            ".tsx",
-            ".ts",
-            "...",
-          ],
-        }),
+        extensions: [
+          ".jsx",
+          ".js",
+          ".v3.tsx",
+          ".v3.ts",
+          ".v3.jsx",
+          ".v3.js",
+          ".tsx",
+          ".ts",
+          "...",
+        ],
+      }),
   },
 };
