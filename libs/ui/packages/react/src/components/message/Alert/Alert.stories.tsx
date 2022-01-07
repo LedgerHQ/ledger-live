@@ -48,7 +48,7 @@ export const WithContent = (args: AlertProps) => {
             color={color}
             textProps={textProps}
             alwaysUnderline
-            size="small"
+            size={"small" as any}
             Icon={Icons.ExternalLinkMedium}
           >
             And a learn more link

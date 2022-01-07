@@ -70,13 +70,6 @@ class WebpackWorker {
     return new Promise((resolve, reject) => {
       const devServer = webpackDevMiddleware(this.compiler, {
         publicPath: this.config.output.publicPath,
-        logger: {
-          debug: this.logger.debug.bind(this.logger),
-          log: this.logger.log.bind(this.logger),
-          info: this.logger.info.bind(this.logger),
-          error: this.logger.error.bind(this.logger),
-          warn: this.logger.warn.bind(this.logger),
-        },
       });
 
       const server = express();

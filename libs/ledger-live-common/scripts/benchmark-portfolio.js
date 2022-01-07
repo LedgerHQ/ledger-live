@@ -12,7 +12,7 @@ var {
   loadCountervalues,
   inferTrackingPairForAccounts,
 } = require("../lib/countervalues/logic");
-var { jsonFromFile } = require("../cli/lib/stream");
+// var { jsonFromFile } = require("../cli/lib/stream");
 
 const cvCurrency = getFiatCurrencyByTicker("USD");
 
