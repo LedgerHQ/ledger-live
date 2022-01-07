@@ -20,7 +20,7 @@
     "cryptoAsset": "Crypto-actif",
     "skip": "Passer",
     "noCryptoFound": "Aucun crypto-actif trouvé",
-    "needHelp": "Besoin d'aide ?",
+    "needHelp": "Besoin d'aide ?",
     "edit": "Modifier",
     "editName": "Modifier le nom",
     "close": "Fermer",
@@ -304,7 +304,7 @@
       "title": "Adresse {{currencyName}} invalide"
     },
     "InvalidAddressBecauseAlreadyDelegated": {
-      "title": "Your account is already delegated to this validator"
+      "title": "Votre compte est déjà délégué à ce validateur"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Les comptes donneur d'ordre et bénéficiaire ne peuvent pas être identiques."
@@ -1757,6 +1757,10 @@
       "title": "Fonctionnalités expérimentales",
       "desc": "Essayez les Fonctionnalités expérimentales et donnez-nous votre avis.",
       "disclaimer": "Il s'agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause."
+    },
+    "developer": {
+      "title": "Développeurs",
+      "desc": "Essayez les fonctionnalités pour développeurs et donnez-nous votre avis."
     }
   },
   "migrateAccounts": {
@@ -1820,7 +1824,7 @@
       "copyAddress": "Copier l'adresse",
       "shareAddress": "Partager l'adresse",
       "addressCopied": "Adresse copiée",
-      "taprootWarning": "Make sure the sender supports taproot",
+      "taprootWarning": "Vérifiez que l'émetteur prend en charge Taproot",
       "notSynced": {
         "text": "Synchronisation",
         "desc": "Cela peut prendre quelques instants si vous avez un grand nombre de transactions ou une connexion Internet lente."

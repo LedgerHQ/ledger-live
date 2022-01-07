@@ -1757,6 +1757,10 @@
       "title": "試験的機能",
       "desc": "試験的機能をお試しになり、フィードバックをお寄せください。",
       "disclaimer": "テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的な機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にした場合、自己責任でこれらの機能を利用することに同意したことになります。"
+    },
+    "developer": {
+      "title": "Developer",
+      "desc": "Try out the Developer features and let us know what you think."
     }
   },
   "migrateAccounts": {
