@@ -277,6 +277,12 @@ platform :android do
 
   before_all do
     set_version_name
+    # Without the .pnpm path expo autolinking script will fail to locate transitive dependencies.
+    ENV["NODE_PATH"] ||= File.expand_path(
+      File.join(
+        File.dirname(__FILE__), "..", "..", "..", "node_modules", ".pnpm", "node_modules"
+      )
+    )
   end
 
   # =============================== PRIVATE ===============================

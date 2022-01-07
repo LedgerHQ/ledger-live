@@ -73,7 +73,7 @@ const Chart = ({
         {/* x-axis */}
         <VictoryAxis
           crossAxis={false}
-          tickFormat={(timestamp) => moment(timestamp).format(tickFormat)}
+          tickFormat={(timestamp: string) => moment(timestamp).format(tickFormat)}
           style={{
             axis: {
               stroke: theme.colors.neutral.c40,

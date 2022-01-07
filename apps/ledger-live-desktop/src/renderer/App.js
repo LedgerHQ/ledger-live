@@ -1,6 +1,5 @@
 // @flow
 import React, { useEffect, useState } from "react";
-import { hot } from "react-hot-loader/root";
 import { Provider, useSelector } from "react-redux";
 import type { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
@@ -113,4 +112,4 @@ const App = ({ store, initialCountervalues }: Props) => {
   );
 };
 
-export default hot(App);
+export default App;

@@ -49,7 +49,7 @@ const CacheAPI = {
     deviceModelId: DeviceModelId
   ) =>
     deviceModelId === "blue" &&
-    semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "2.1.1"),
+    semver.lt(semver.valid(semver.coerce(deviceInfo.version)) || "", "2.1.1"),
   // TO BE CONFIRMED – LL-2564
   firmwareUpdateWillResetSeed: (
     deviceInfo: DeviceInfo,
@@ -57,7 +57,7 @@ const CacheAPI = {
     _firmware: FirmwareUpdateContext
   ) =>
     deviceModelId === "blue" &&
-    semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "2.1.1"),
+    semver.lt(semver.valid(semver.coerce(deviceInfo.version)) || "", "2.1.1"),
   firmwareUpdateWillUninstallApps: (
     _deviceInfo: DeviceInfo,
     _deviceModelId: DeviceModelId
@@ -68,13 +68,13 @@ const CacheAPI = {
     deviceInfo: DeviceInfo
   ): boolean =>
     deviceModel === "nanoS" &&
-    semver.lte(semver.valid(semver.coerce(deviceInfo.version)), "1.4.2"),
+    semver.lte(semver.valid(semver.coerce(deviceInfo.version)) || "", "1.4.2"),
   firmwareUnsupported: (
     deviceModel: DeviceModelId,
     deviceInfo: DeviceInfo
   ): boolean =>
     deviceModel === "nanoS" &&
-    semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "1.3.0"),
+    semver.lt(semver.valid(semver.coerce(deviceInfo.version)) || "", "1.3.0"),
   formatHashName: (
     input: string,
     deviceModel?: DeviceModelId,
@@ -84,13 +84,16 @@ const CacheAPI = {
       deviceModel && deviceInfo
         ? deviceModel === "blue" ||
           (deviceModel === "nanoS" &&
-            semver.lt(semver.valid(semver.coerce(deviceInfo.version)), "1.6.0"))
+            semver.lt(
+              semver.valid(semver.coerce(deviceInfo.version)) || "",
+              "1.6.0"
+            ))
         : true;
     const shouldSplit =
       deviceInfo && deviceModel
         ? (deviceModel === "nanoS" &&
             semver.gte(
-              semver.valid(semver.coerce(deviceInfo.version)),
+              semver.valid(semver.coerce(deviceInfo.version)) || "",
               "1.6.0"
             )) ||
           deviceModel === "nanoX"

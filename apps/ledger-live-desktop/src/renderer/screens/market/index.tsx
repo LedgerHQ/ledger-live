@@ -27,7 +27,6 @@ const SearchContainer = styled(Flex).attrs({ flex: "0.8" })`
   }
 `;
 
-// @ts-expect-error typing issue
 export const Button = styled(BaseButton)<{ big?: boolean }>`
   border-radius: 44px;
 

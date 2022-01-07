@@ -53,7 +53,7 @@ const Text = baseStyled.span.attrs<TextProps, TextProps>(
 )`
   font-weight: 500;
   white-space: ${(props) => props.whiteSpace ?? "normal"};
-  ${(p) => textVariantStyle[p.variant || "body"]}
+  ${(p: TextProps) => textVariantStyle[p.variant || "body"]}
   ${compose(
     uppercase,
     lineHeight,
