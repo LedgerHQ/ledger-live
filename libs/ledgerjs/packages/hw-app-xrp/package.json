@@ -30,6 +30,9 @@
     "@ledgerhq/hw-transport": "^6.27.1",
     "bip32-path": "0.4.2"
   },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
   "scripts": {
     "clean": "bash ../../script/clean.sh",
     "build": "bash ../../script/build.sh",

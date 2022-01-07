@@ -1,6 +1,7 @@
 // @flow
 /* eslint-disable no-console */
 
+import "crypto";
 import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";

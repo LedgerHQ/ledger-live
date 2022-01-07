@@ -1,5 +1,4 @@
 const path = require("path");
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const babelPlugins = require("./babel.plugins");
 const UnusedWebpackPlugin = require("unused-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
@@ -35,7 +34,6 @@ const babelTsConfig = {
   ],
   plugins: [
     ...babelPlugins,
-    "react-hot-loader/babel",
     [
       "babel-plugin-styled-components",
       {
@@ -46,6 +44,7 @@ const babelTsConfig = {
 };
 
 module.exports = {
+  stats: "errors-only",
   target: "electron-main",
   optimization: {
     minimize: false,
@@ -56,9 +55,6 @@ module.exports = {
     filename: "main.bundle.js",
   },
   plugins: [
-    new HardSourceWebpackPlugin({
-      cacheDirectory: path.resolve(__dirname, ".webpack", "cacheMain"),
-    }),
     new UnusedWebpackPlugin({
       directories: [path.join(__dirname, "src/main"), path.join(__dirname, "src/internal")],
       exclude: ["*.test.js", "*.html", "updater/*"],

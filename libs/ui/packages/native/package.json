@@ -6,15 +6,17 @@
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
   "author": "Ledger Live Team <team-live@ledger.fr>",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "lib/*",
+        "lib/*/index"
+      ]
+    }
+  },
   "files": [
-    "components",
-    "assets",
-    "styles",
-    "helpers",
-    "icons",
-    "index.d.ts",
-    "index.js"
+    "lib/**/*"
   ],
   "scripts": {
     "android": "expo start --android",
@@ -27,7 +29,6 @@
     "ios": "expo start --ios",
     "lint": "eslint src storybook --ext .ts,.tsx,.js,.jsx --cache",
     "lint:fix": "eslint src storybook --ext .ts,.tsx,.js,.jsx --fix --cache",
-    "prerelease": "node scripts/prepareRelease.js",
     "release": "yarn publish ./lib --access public",
     "start": "expo start",
     "storybook": "start-storybook -p 6006",
@@ -35,8 +36,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@ledgerhq/icons-ui": "^0.2.4",
-    "@ledgerhq/ui-shared": "^0.1.7",
+    "@ledgerhq/icons-ui": "workspace:^",
+    "@ledgerhq/ui-shared": "workspace:^",
     "@types/color": "^3.0.2",
     "@types/react": "^17.0.37",
     "@types/react-native": "^0.65.9",
