@@ -34,7 +34,8 @@
     },
     "devDependencies": {
         "@ledgerhq/hw-transport-node-speculos": "^6.24.1",
-        "axios": "^0.26.0"
+        "axios": "^0.26.0",
+        "@ledgerhq/hw-transport-mocker": "workspace:^"
     },
     "scripts": {
         "clean": "bash ../../script/clean.sh",
