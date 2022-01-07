@@ -294,7 +294,7 @@ export const reducer = (state: State, action: Action): State => {
         !depApp &&
         semver.lt(
           state.deviceInfo.version,
-          state.firmware?.updateAvailable?.final?.version
+          state.firmware?.updateAvailable?.final?.version || ""
         )
       ) {
         throw new LatestFirmwareVersionRequired(

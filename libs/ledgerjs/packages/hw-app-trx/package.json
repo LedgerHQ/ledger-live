@@ -30,6 +30,9 @@
     "@ledgerhq/errors": "^6.10.0",
     "@ledgerhq/hw-transport": "^6.24.1"
   },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
   "scripts": {
     "clean": "bash ../../script/clean.sh",
     "build": "bash ../../script/build.sh",

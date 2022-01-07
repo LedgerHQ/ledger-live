@@ -167,6 +167,5 @@ export default ({
   ) as unknown as LineProps["options"];
 
   // The redraw is needed to allow the chart to be updated with new value
-  // @ts-expect-error : There are issues with the chartjs typings. In the future, check and improve.
   return <Line data={chartData} options={options} {...chartProps} redraw />;
 };

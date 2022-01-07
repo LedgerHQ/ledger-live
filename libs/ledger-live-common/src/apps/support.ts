@@ -21,7 +21,7 @@ export function shouldUpgrade(
     appName === "Bitcoin"
   ) {
     // https://donjon.ledger.com/lsb/010/
-    return !semver.satisfies(semver.coerce(appVersion), ">= 1.4.0");
+    return !semver.satisfies(semver.coerce(appVersion) || "", ">= 1.4.0");
   }
 
   return false;

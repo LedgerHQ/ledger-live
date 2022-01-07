@@ -1,24 +1,7 @@
 {
-  "private": true,
   "name": "ledger-libs",
+  "private": true,
   "version": "0.0.0",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "preinstall": "node -e \"if (process.env.npm_execpath.indexOf('yarn') === -1) { console.log('\u001b[31mPlease use yarn\u001b[0m'); process.exit(1); }\"",
-    "postinstall": "(cd ./flow-support && yarn)",
-    "prettier": "prettier --write 'packages/*/src/**/*.?s'",
-    "test": "jest",
-    "test-no-git-diff": "git diff --exit-code || exit 1",
-    "doc": "lerna run doc",
-    "lint": "eslint packages/**/src --no-error-on-unmatched-pattern --ext .ts,.tsx -c .eslintrc.json",
-    "build": "lerna run build",
-    "watch": "lerna run --parallel watch",
-    "clean": "rm -rf node_modules packages/*/node_modules/ packages/*/lib",
-    "rebuild": "lerna run clean && lerna run build",
-    "publish": "yarn && lerna run clean && lerna run build && lerna publish --registry=https://registry.npmjs.org/"
-  },
   "devDependencies": {
     "@types/jest": "^27.4.0",
     "@typescript-eslint/eslint-plugin": "^4.33.0",

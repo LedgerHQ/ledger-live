@@ -300,7 +300,7 @@ export type AppSearch = {
 };
 
 function semverSatisfies(a, b) {
-  return semver.satisfies(a, b) || semver.satisfies(semver.coerce(a), b);
+  return semver.satisfies(a, b) || semver.satisfies(semver.coerce(a) || "", b);
 }
 
 export function appCandidatesMatches(
@@ -308,7 +308,7 @@ export function appCandidatesMatches(
   search: AppSearch
 ): boolean {
   const searchFirmware = search.firmware || defaultFirmware[appCandidate.model];
-  return (
+  return !!(
     (!search.model || search.model === appCandidate.model) &&
     (!search.appName ||
       search.appName.replace(/ /g, "").toLowerCase() ===

@@ -1,0 +1,5 @@
+packages:
+  - "apps/*"
+  - "libs/*"
+  - "libs/ledgerjs/packages/*"
+  - "libs/ui/packages/*"
