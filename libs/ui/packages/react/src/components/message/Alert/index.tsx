@@ -1,12 +1,11 @@
 import React from "react";
-import styled, { useTheme } from "styled-components";
+import styled, { useTheme, DefaultTheme } from "styled-components";
 import Text from "../../asorted/Text";
 import { TextVariants } from "../../../styles/theme";
 import Flex from "../../layout/Flex";
 import ShieldSecurityMedium from "@ledgerhq/icons-ui/react/ShieldSecurityMedium";
 import CircledCrossMedium from "@ledgerhq/icons-ui/react/CircledCrossMedium";
 import CircledAlertMedium from "@ledgerhq/icons-ui/react/CircledAlertMedium";
-import { DefaultTheme } from "styled-components/native";
 
 type AlertType = "info" | "warning" | "error";
 
