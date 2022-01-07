@@ -94,7 +94,7 @@ function RowsComponent<T>({
 }
 export const Rows = memo(RowsComponent) as typeof RowsComponent;
 
-function Table<T>({
+export function Table<T>({
   data,
   columns,
   withHeaders,

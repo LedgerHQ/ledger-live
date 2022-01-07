@@ -3,7 +3,7 @@ import type { DeviceModel } from "@ledgerhq/devices";
 import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
-import { Observable, defer, merge, from } from "rxjs";
+import { Observable, Subscription, defer, merge, from } from "rxjs";
 import { share, ignoreElements, first, map, tap } from "rxjs/operators";
 import {
   CantOpenDevice,
@@ -66,11 +66,8 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
     await connectDevice(device);
   }
 
-  const {
-    notifyC,
-    writeC,
-    deviceModel,
-  } = await retrieveServiceAndCharacteristics(device);
+  const { notifyC, writeC, deviceModel } =
+    await retrieveServiceAndCharacteristics(device);
   const [observable, monitoringReady] = monitorCharacteristic(notifyC);
   const notifyObservable = observable.pipe(
     tap((value) => {
@@ -156,7 +153,7 @@ export default class BluetoothTransport extends Transport {
   /**
    * Scan for bluetooth Ledger devices
    */
-  static listen(observer: any) {
+  static listen(observer: any): Subscription {
     log("ble-verbose", "listen...");
     return listen().subscribe(observer);
   }

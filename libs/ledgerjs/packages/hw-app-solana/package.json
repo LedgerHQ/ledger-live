@@ -33,7 +33,8 @@
         "bip32-path": "^0.4.2"
     },
     "devDependencies": {
-        "@ledgerhq/hw-transport-node-speculos": "^6.27.1",
+        "@ledgerhq/hw-transport-node-speculos": "^6.24.1",
+        "@ledgerhq/hw-transport-mocker": "workspace:^",
         "axios": "^0.26.1"
     },
     "scripts": {

@@ -6,7 +6,7 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "jsx": "react",
-    "lib": ["es6", "dom"],
+    "lib": ["es2016", "dom"],
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
@@ -14,7 +14,8 @@
     "baseUrl": ".",
     "skipLibCheck": true,
     "rootDir": "./src",
-    "outDir": "./lib"
+    "outDir": "./lib",
+    "preserveSymlinks": true
   },
   "include": ["src/**/*"],
   "exclude": [

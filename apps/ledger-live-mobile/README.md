@@ -21,8 +21,7 @@ It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nan
 ## Pre-requisites
 
 - Node LTS version
-- Yarn 1.10.1 or above
-- [Full React Native environment setup instructions here, **under "React Native CLI Quickstart" tab**](https://reactnative.dev/docs/environment-setup)
+- Pnpm
 
 ### iOS
 
@@ -39,35 +38,35 @@ It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nan
 
 ## Scripts
 
-### `yarn install`
+### `pnpm install`
 
 install dependencies.
 
-### `yarn start`
+### `pnpm start`
 
 Runs your app in development mode.
 
 Sometimes you may need to reset or clear the React Native packager's cache. To do so, you can pass the `--reset-cache` flag to the start script:
 
 ```
-yarn start -- --reset-cache
+pnpm start -- --reset-cache
 ```
 
-### `yarn test`
+### `pnpm test`
 
-### `yarn run ios`
+### `pnpm run ios`
 
 or `open ios/ledgerlivemobile.xcworkspace`
 
-### `yarn run android`
+### `pnpm run android`
 
 or open `android/` in Android Studio.
 
-### `yarn android:clean`
+### `pnpm android:clean`
 
 Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings
 
-### `yarn android:import importDataString`
+### `pnpm android:import importDataString`
 
 Passing a base64 encoded export string (the export from desktop) will trigger an import activity and allow
 easy data setting for development.
@@ -77,7 +76,6 @@ easy data setting for development.
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively.
 
 [A more exhaustive list of documented environment variables can be found here](https://github.com/LedgerHQ/ledger-live-common/blob/master/src/env.ts).
-
 
 - `DEVICE_PROXY_URL=http://localhost:8435` Use the ledger device over HTTP. Useful for debugging on an emulator. More info about this in the section [Connection via HTTP bridge](#connection-via-http-bridge).
 - `BRIDGESTREAM_DATA=...` Come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning.
@@ -90,13 +88,13 @@ Optional environment variables you can put in `.env`, `.env.production` or `.env
 ### Refresh the flow-typed from flow-typed Github
 
 ```
-yarn sync-flowtyped
+pnpm sync-flowtyped
 ```
 
 ### Refresh the languages (when we add new languages)
 
 ```
-yarn sync-locales
+pnpm sync-locales
 ```
 
 ## Debugging
@@ -107,7 +105,7 @@ It's recommended to use [react-native-debugger](https://github.com/jhen0409/reac
 
 - Get the react-native-debugger app from the [official repo](https://github.com/jhen0409/react-native-debugger)
 - Run it
-- Run Ledger Live Mobile in debug mode (`yarn ios` or `yarn android`)
+- Run Ledger Live Mobile in debug mode (`pnpm ios` or `pnpm android`)
 - Open React Native _Development menu_ (shake gesture)
 - Chose _Enable Remote JS Debugging_
 
@@ -116,6 +114,7 @@ Keep in mind that doing so will run your Javascript code on a Chromium JS engine
 ### End to end testing
 
 Refer to the e2e specific [README.md](e2e/README.md)
+
 ### Native code
 
 #### XCode / Android studio
@@ -138,7 +137,9 @@ React Native integration seems pretty bleeding edge right now, so don't expect e
 ### Working on iOS or Android emulators
 
 #### Connection via HTTP bridge
+
 It is possible to run Ledger Live Mobile on an emulator and connect to a Nano that is plugged in via USB.
+
 - Install the [ledger-live cli](https://github.com/LedgerHQ/ledger-live-common/blob/master/docs/cli.md).
 - Plug in your Nano to your computer.
 - Run `ledger-live proxy`. A server starts and displays variable environments that can be used to build Ledger-Live Mobile. For example:
@@ -148,8 +149,9 @@ It is possible to run Ledger Live Mobile on an emulator and connect to a Nano th
   Nano S proxy started on 192.168.1.14
   ```
 - Either do `export DEVICE_PROXY_URL=the_adress_given_by_the_server` or paste this variable environment in the `.env` file at the root of the project (create it if it doesn't exist)
-- Build & run Ledger Live Mobile `yarn ios` or `yarn android`
+- Build & run Ledger Live Mobile `pnpm ios` or `pnpm android`
 - When prompted to choose a Nano device in Ledger Live Mobile, you will see your Nano available with the adress from above, just select it and it should work normally.
+
 ### Extra Docs 📄
 
 - [Deep Linking 🔗](./docs/linking.md)

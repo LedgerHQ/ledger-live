@@ -1,6 +1,5 @@
 /* eslint-disable import/no-unresolved */
 // @flow
-import "../shim";
 import "./polyfill";
 import "./live-common-setup";
 import "../e2e/e2e-bridge-setup";
