@@ -1817,6 +1817,7 @@
       "copyAddress": "Copy address",
       "shareAddress": "Share address",
       "addressCopied": "Address copied!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
