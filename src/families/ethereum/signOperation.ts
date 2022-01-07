@@ -17,6 +17,7 @@ import { modes } from "./modules";
 import { isNFTActive } from "../../nft";
 import { getEnv } from "../../env";
 import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import { Transaction as EthereumTx } from "@ethereumjs/tx";
 export const signOperation = ({
   account,
   deviceId,
@@ -54,17 +55,16 @@ export const signOperation = ({
                 throw new FeeNotLoaded();
               }
 
-              const { tx, fillTransactionDataResult } = buildEthereumTx(
-                account,
-                transaction,
-                nonce
-              );
-              const to = eip55.encode("0x" + tx.to.toString("hex"));
+              const { ethTxObject, tx, common, fillTransactionDataResult } =
+                buildEthereumTx(account, transaction, nonce);
+              const to = eip55.encode((tx.to || "").toString());
               const value = new BigNumber(
                 "0x" + (tx.value.toString("hex") || "0")
               );
 
               const txHex = tx.serialize().toString("hex");
+
+              log("ethereum", "raw tx unsigned = " + txHex);
 
               const loadConfig: LoadConfig = {};
               if (isNFTActive(account.currency)) {
@@ -106,26 +106,28 @@ export const signOperation = ({
                 }
               }
 
-              o.next({
-                type: "device-signature-requested",
-              });
+              o.next({ type: "device-signature-requested" });
               const result = await eth.signTransaction(
                 freshAddressPath,
                 txHex,
                 resolution
               );
               if (cancelled) return;
-              o.next({
-                type: "device-signature-granted",
-              });
+              o.next({ type: "device-signature-granted" });
               // Second, we re-set some tx fields from the device signature
-              const v = result.v;
+              const v = `0x${result.v}`;
+              const r = `0x${result.r}`;
+              const s = `0x${result.s}`;
 
-              tx.v = Buffer.from(v, "hex");
-              tx.r = Buffer.from(result.r, "hex");
-              tx.s = Buffer.from(result.s, "hex");
+              const signedTx = new EthereumTx(
+                { ...ethTxObject, v, r, s },
+                { common }
+              );
+
               // Generate the signature ready to be broadcasted
-              const signature = `0x${tx.serialize().toString("hex")}`;
+              const signature = `0x${signedTx.serialize().toString("hex")}`;
+              log("ethereum", "raw tx signed = " + txHex);
+
               // build optimistic operation
               const txHash = ""; // resolved at broadcast time
 
