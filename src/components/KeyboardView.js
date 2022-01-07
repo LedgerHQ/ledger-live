@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { HEIGHT as ExperimentalHeaderHeight } from "../screens/Settings/Experimental/ExperimentalHeader";
-import useExperimental from "../screens/Settings/Experimental/useExperimental";
+import { useExperimental } from "../experimental";
 
 const { DeviceInfo } = NativeModules;
 
