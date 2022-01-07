@@ -51,7 +51,11 @@ export const isExchangeSupportedByApp = (
   appVersion: string
 ): boolean => {
   const minVersion = exchangeSupportAppVersions[appName];
-  return valid(minVersion) && valid(appVersion) && gte(appVersion, minVersion);
+  return !!(
+    valid(minVersion) &&
+    valid(appVersion) &&
+    gte(appVersion, minVersion)
+  );
 };
 
 const getCurrencyExchangeConfig = (

@@ -34,6 +34,9 @@
     "js-sha512": "^0.8.0",
     "tweetnacl": "^1.0.3"
   },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^"
+  },
   "scripts": {
     "clean": "bash ../../script/clean.sh",
     "build": "bash ../../script/build.sh",

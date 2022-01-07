@@ -1,0 +1,20 @@
+{
+  "0 debug pnpm:scope": {
+    "selected": 1,
+    "workspacePrefix": "/Users/jelbaz/Code/ledger-live"
+  },
+  "1 error pnpm": {
+    "errno": 2,
+    "code": "ELIFECYCLE",
+    "pkgid": "ledger-live-cli@21.23.0",
+    "stage": "build",
+    "script": "tsc --project src/tsconfig.json",
+    "pkgname": "ledger-live-cli",
+    "err": {
+      "name": "pnpm",
+      "message": "ledger-live-cli@21.23.0 build: `tsc --project src/tsconfig.json`\nExit status 2",
+      "code": "ELIFECYCLE",
+      "stack": "pnpm: ledger-live-cli@21.23.0 build: `tsc --project src/tsconfig.json`\nExit status 2\n    at EventEmitter.<anonymous> (/Users/jelbaz/.fnm/node-versions/v14.17.3/installation/pnpm-global/5/node_modules/.pnpm/pnpm@6.26.0/node_modules/pnpm/dist/pnpm.cjs:105376:20)\n    at EventEmitter.emit (events.js:375:28)\n    at ChildProcess.<anonymous> (/Users/jelbaz/.fnm/node-versions/v14.17.3/installation/pnpm-global/5/node_modules/.pnpm/pnpm@6.26.0/node_modules/pnpm/dist/pnpm.cjs:91963:18)\n    at ChildProcess.emit (events.js:375:28)\n    at maybeClose (internal/child_process.js:1055:16)\n    at Process.ChildProcess._handle.onexit (internal/child_process.js:288:5)"
+    }
+  }
+}

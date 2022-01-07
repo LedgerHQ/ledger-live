@@ -1,49 +1,51 @@
 {
   "name": "@ledgerhq/react-ui",
-  "private": true,
   "description": "Ledger Live - Desktop UI",
   "version": "0.7.5",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": "https://github.com/LedgerHQ/ui",
   "license": "MIT",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "lib/*",
+        "lib/*/index"
+      ]
+    }
+  },
   "exports": {
     ".": {
-      "require": "./cjs/index.js",
-      "default": "./index.js"
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/index.js"
     },
     "./": {
-      "require": "./cjs/",
-      "default": "./"
+      "require": "./lib/cjs/",
+      "default": "./lib/"
     }
   },
   "sideEffects": [
     "*.woff2",
-    "assets/fonts.js"
+    "lib/assets/fonts.js"
   ],
   "files": [
-    "components/**/*",
-    "assets/**/*",
-    "styles/**/*",
-    "index.d.ts",
-    "index.js"
+    "lib/**/*"
   ],
   "scripts": {
     "storybook": "start-storybook -p 6006 -s ./src",
     "build-storybook": "npm run build:icons && npm run build:storybook",
-    "build": "tsc -p tsconfig.prod.json && node scripts/transpile",
+    "build": "tsc -p tsconfig.prod.json && node scripts/transpile && node scripts/postBuild",
+    "watch": "tsc --watch",
     "build:icons": "node -e \"process.env['VERCEL_BUILD'] ? process.exit(1) : process.exit(0)\" || (cd ../icons && npm run build)",
     "build:storybook": "build-storybook -s ./src",
     "clean": "rimraf lib",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix --cache",
-    "typecheck": "tsc --p . --noEmit",
-    "prerelease": "node scripts/prepareRelease.js",
-    "release": "yarn publish ./lib --access public"
+    "typecheck": "tsc --p . --noEmit"
   },
   "dependencies": {
     "@floating-ui/react-dom": "^0.4.0",
-    "@ledgerhq/icons-ui": "^0.2.3",
-    "@ledgerhq/ui-shared": "^0.1.6",
+    "@ledgerhq/icons-ui": "workspace:^",
+    "@ledgerhq/ui-shared": "workspace:^",
     "@tippyjs/react": "^4.2.6",
     "@types/color": "^3.0.2",
     "@types/react": "~17.0.37",

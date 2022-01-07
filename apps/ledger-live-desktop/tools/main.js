@@ -6,6 +6,7 @@ const webpack = require("webpack");
 const yargs = require("yargs");
 const nodeExternals = require("webpack-node-externals");
 const childProcess = require("child_process");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
 const pkg = require("./../package.json");
 
@@ -83,13 +84,15 @@ const buildRendererConfig = (mode, config, argv) => {
 
   const plugins =
     mode === "development"
-      ? [...wpConf.plugins, new webpack.HotModuleReplacementPlugin()]
+      ? [...wpConf.plugins, new ReactRefreshWebpackPlugin(), new webpack.HotModuleReplacementPlugin()]
       : wpConf.plugins;
 
-  const alias =
-    mode === "development"
-      ? { ...wpConf.resolve.alias, "react-dom": "@hot-loader/react-dom" }
-      : wpConf.resolve.alias;
+  // const alias =
+  //   mode === "development"
+  //     ? { ...wpConf.resolve.alias, "react-dom": "@hot-loader/react-dom" }
+  //     : wpConf.resolve.alias;
+
+  const alias = wpConf.resolve.alias;
 
   const module = {
     ...wpConf.module,
@@ -113,7 +116,7 @@ const buildRendererConfig = (mode, config, argv) => {
   return {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
-    devtool: mode === "development" ? "eval-source-map" : "none",
+    devtool: mode === "development" ? "eval-source-map" : undefined,
     entry,
     plugins: [
       ...plugins,
@@ -141,7 +144,7 @@ const buildMainConfig = (mode, config, argv) => {
   return {
     ...wpConf,
     mode: mode === "production" ? "production" : "development",
-    devtool: mode === "development" ? "eval-source-map" : "none",
+    devtool: mode === "development" ? "eval-source-map" : undefined,
     externals: [nodeExternals()],
     node: {
       __dirname: false,
@@ -202,7 +205,13 @@ const build = async argv => {
     rendererWorker.bundle(),
     preloaderWorker.bundle(),
     webviewPreloaderWorker.bundle(),
-  ]);
+  ]).catch(err => {
+    if (err instanceof Error) {
+      throw err;
+    }
+    console.error(err.compilation.errors);
+    throw new Error("Build failed.");
+  });
 };
 
 yargs
