@@ -40,7 +40,9 @@ export default function GlitchText({ text, duration = 800, delay = 500 }: Glitch
       frameT++;
     }, INTERVAL);
 
-    return () => interval && clearInterval(interval);
+    return () => {
+      interval && clearInterval(interval);
+    };
   }, [delay, duration, text]);
 
   return <>{shownText}</>;

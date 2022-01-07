@@ -32,6 +32,7 @@
     "@ledgerhq/cryptoassets": "^6.26.0",
     "@ledgerhq/errors": "^6.10.0",
     "@ledgerhq/hw-transport": "^6.24.1",
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "^6.10.0",
     "axios": "^0.26.0",
     "bignumber.js": "^9.0.2"

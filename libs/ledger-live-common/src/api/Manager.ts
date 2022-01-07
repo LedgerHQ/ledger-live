@@ -191,7 +191,10 @@ const findBestMCU = (compatibleMCU: McuVersion[]): McuVersion | undefined => {
 
   for (let i = 1; i < compatibleMCU.length; i++) {
     if (
-      semver.gt(semver.coerce(compatibleMCU[i].name), semver.coerce(best.name))
+      semver.gt(
+        semver.coerce(compatibleMCU[i].name) || "",
+        semver.coerce(best.name) || ""
+      )
     ) {
       best = compatibleMCU[i];
     }
