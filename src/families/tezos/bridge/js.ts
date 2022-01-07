@@ -71,54 +71,52 @@ const getTransactionStatus = async (
   const { tezosResources } = account;
   if (!tezosResources) throw new Error("tezosResources is missing");
 
-  if (!t.taquitoError) {
-    if (t.mode !== "undelegate") {
-      if (account.freshAddress === t.recipient) {
-        errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
-      } else {
-        const { recipientError, recipientWarning } = await validateRecipient(
-          account.currency,
-          t.recipient
-        );
+  if (t.mode !== "undelegate") {
+    if (account.freshAddress === t.recipient) {
+      errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
+    } else {
+      const { recipientError, recipientWarning } = await validateRecipient(
+        account.currency,
+        t.recipient
+      );
 
-        if (recipientError) {
-          errors.recipient = recipientError;
-        }
+      if (recipientError) {
+        errors.recipient = recipientError;
+      }
 
-        if (recipientWarning) {
-          warnings.recipient = recipientWarning;
+      if (recipientWarning) {
+        warnings.recipient = recipientWarning;
+      }
+    }
+  }
+
+  if (t.mode === "send") {
+    if (!errors.amount && t.amount.eq(0)) {
+      errors.amount = new AmountRequired();
+    } else if (!errors.amount && t.amount.lt(0)) {
+      errors.amount = new NotEnoughBalance();
+    } else if (t.amount.gt(0) && estimatedFees.times(10).gt(t.amount)) {
+      warnings.feeTooHigh = new FeeTooHigh();
+    }
+
+    const thresholdWarning = 0.5 * 10 ** account.currency.units[0].magnitude;
+
+    if (
+      !errors.amount &&
+      account.balance.minus(t.amount).minus(estimatedFees).lt(thresholdWarning)
+    ) {
+      if (isAccountDelegating(account)) {
+        if (t.useAllAmount) {
+          errors.amount = new RecommendUndelegation();
+        } else {
+          warnings.amount = new RecommendUndelegation();
         }
       }
     }
+  }
 
-    if (t.mode === "send") {
-      if (!errors.amount && t.amount.eq(0)) {
-        errors.amount = new AmountRequired();
-      } else if (!errors.amount && t.amount.lt(0)) {
-        errors.amount = new NotEnoughBalance();
-      } else if (t.amount.gt(0) && estimatedFees.times(10).gt(t.amount)) {
-        warnings.feeTooHigh = new FeeTooHigh();
-      }
-
-      const thresholdWarning = 0.5 * 10 ** account.currency.units[0].magnitude;
-
-      if (
-        !errors.amount &&
-        account.balance
-          .minus(t.amount)
-          .minus(estimatedFees)
-          .lt(thresholdWarning)
-      ) {
-        if (isAccountDelegating(account)) {
-          if (t.useAllAmount) {
-            errors.amount = new RecommendUndelegation();
-          } else {
-            warnings.amount = new RecommendUndelegation();
-          }
-        }
-      }
-    }
-  } else {
+  // if we also have taquitoError, we interprete them and they override the previously inferred errors
+  if (t.taquitoError) {
     log("taquitoerror", String(t.taquitoError));
 
     // remap taquito errors
