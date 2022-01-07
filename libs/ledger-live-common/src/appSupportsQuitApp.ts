@@ -153,4 +153,4 @@ export const minAppVersion = {
 };
 export default ({ name, version }: AppAndVersion) =>
   !(name in minAppVersion) ||
-  semver.gte(semver.coerce(version), minAppVersion[name]);
+  semver.gte(semver.coerce(version) || "", minAppVersion[name]);

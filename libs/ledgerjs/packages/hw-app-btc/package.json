@@ -32,12 +32,18 @@
     "bip32-path": "^0.4.2",
     "bitcoinjs-lib": "^5.2.0",
     "bs58": "^4.0.1",
+    "bs58check": "^2.1.2",
     "invariant": "^2.2.4",
     "ripemd160": "2",
     "semver": "^7.3.5",
     "sha.js": "2",
     "tiny-secp256k1": "1.1.6",
     "varuint-bitcoin": "1.1.2"
+  },
+  "devDependencies": {
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "axios": "^0.25.0"
   },
   "scripts": {
     "clean": "bash ../../script/clean.sh",

@@ -1,4 +1,5 @@
 import React from "react";
+// @ts-expect-error Typings…
 import { useArgs } from "@storybook/client-api";
 
 import Button from "../../cta/Button";

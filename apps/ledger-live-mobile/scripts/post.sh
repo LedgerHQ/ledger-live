@@ -4,7 +4,8 @@ cd $(dirname $0)/..
 
 ./scripts/sync-families-dispatch.sh
 
-patch --forward -i scripts/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
+patch -N -i scripts/patches/RCTCoreOperationQuery.java.patch node_modules/@ledgerhq/react-native-ledger-core/android/src/main/java/com/ledger/reactnative/RCTCoreOperationQuery.java
+patch -N -i scripts/patches/RNAnalytics.h.patch node_modules/@segment/analytics-react-native/ios/RNAnalytics/RNAnalytics.h
 
 rm -f 'third-party/glog-0.3.5/test-driver'
 
@@ -12,8 +13,6 @@ rm -f 'third-party/glog-0.3.5/test-driver'
 # Why would anyone bundle an external lib available on CocoaPods anyway?
 # It's been fixed in https://github.com/tradle/react-native-udp/pull/112 but as of today it's not part of any release
 rm -rf "node_modules/react-native-tcp/ios/CocoaAsyncSocket"
-
-rn-nodeify --hack
 
 # issue: https://github.com/WalletConnect/walletconnect-monorepo/issues/595
 # manually shim
@@ -36,22 +35,24 @@ fi
 bundle install
 
 if [ "$(uname)" == "Darwin" ]; then
-  (
-    cd node_modules/react-native/scripts
-    echo "- switch to relative paths in react_native_pods.rb "
-    sed -i '' -e "s/File[.]join[(]__dir__, \"[.][.]\"[)]/\"..\/..\/node_modules\/react-native\"/" react_native_pods.rb
-    sed -i '' -e "s/#{File[.]join[(]__dir__, \"generate-specs.sh\"[)]}/..\/..\/node_modules\/react-native\/scripts\/generate-specs.sh/" react_native_pods.rb
-    sed -i '' -e "s/spec[.]prepare_command = \"#/spec.prepare_command = \"cd ..\/.. \&\& #/" react_native_pods.rb
-  )
+  # (
+  #   cd node_modules/react-native/scripts
+  #   echo "- switch to relative paths in react_native_pods.rb "
+  #   sed -i '' -e "s/File[.]join[(]__dir__, \"[.][.]\"[)]/\"..\/..\/node_modules\/react-native\"/" react_native_pods.rb
+  #   sed -i '' -e "s/#{File[.]join[(]__dir__, \"generate-specs.sh\"[)]}/..\/..\/node_modules\/react-native\/scripts\/generate-specs.sh/" react_native_pods.rb
+  #   sed -i '' -e "s/spec[.]prepare_command = \"#/spec.prepare_command = \"cd ..\/.. \&\& #/" react_native_pods.rb
+  # )
 
-  cd ios && bundle exec pod install --deployment --repo-update
+  (
+    cd ios && bundle exec pod install --deployment --repo-update
+  )
 
   if [ $? -ne 0 ]; then
     echo "
      _________________________________________
     / CocoaPods lockfile is probably out of   \\
     | sync with native dependencies. Don't    |
-    | forget to run \`yarn pod\` after adding   |
+    | forget to run \`pnpm pod\` after adding   |
     | or updating dependencies, and commit    |
     \\ the changes in Podfile.lock.            /
      -----------------------------------------
@@ -73,4 +74,4 @@ fi
 
 # We manually need to run Jetifier for React Native BLE PLX until they switch to AndroidX
 # https://github.com/Polidea/react-native-ble-plx#android-example-setup
-yarn jetify
+pnpm jetify
