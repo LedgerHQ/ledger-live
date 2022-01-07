@@ -1,4 +1,4 @@
-// import * as github from '@actions/github';
+import * as github from "@actions/github";
 import * as core from "@actions/core";
 
 // function checkStatus(result) {
@@ -9,56 +9,29 @@ import * as core from "@actions/core";
 //   process.exit();
 // }
 
-const main = async function (): Promise<void> {
-  core.debug("Decrepated for now");
-  // const username = core.getInput('usename');
-  // const organisation = core.getInput('organisation');
-  // const token = core.getInput('token');
+const main = async function(): Promise<void> {
+  const username = core.getInput("username");
+  const organisation = core.getInput("organisation");
+  const token = core.getInput("token");
+  const octokit = github.getOctokit(token);
 
-  // const octokit = github.getOctokit(token);
+  try {
+    const { data: orgs } = await octokit.rest.orgs.listForUser({
+      username,
+      per_page: 100,
+    });
 
-  // try {
-  //   const { data: orgs } = checkStatus(
-  //     await octokit.rest.orgs.listForUser({
-  //       username,
-  //       per_page: 100,
-  //     })
-  //   );
+    core.info(JSON.stringify(orgs, null, 2));
 
-  //   let members = [];
+    const isMember = orgs.some(
+      ({ login }) => login.toLowerCase() === organisation.toLowerCase()
+    );
 
-  //   const getAllMembers = async (page = 0) => {
-  //     const { data: lhq } = await octokit.rest.orgs.listMembers({
-  //       org: organisation,
-  //       per_page: 100,
-  //       page,
-  //     });
-
-  //     members = members.concat(lhq.map((member) => member.login));
-
-  //     if (!lhq || !lhq.length) {
-  //       return;
-  //     }
-
-  //     page++;
-
-  //     return getAllMembers(page);
-  //   };
-
-  //   await getAllMembers();
-
-  //   const isMember = orgs.some(
-  //     ({ login }) => login.toLowerCase() === organisation.toLowerCase()
-  //   );
-
-  //   if (!isMember) {
-  //     core.setFailed(
-  //       `${username} is not part of the ${organisation} organisation`
-  //     );
-  //   }
-  // } catch (error) {
-  //   core.setFailed('Error fetching informations');
-  // }
+    core.setOutput("is-org-member", isMember);
+  } catch (error) {
+    core.info(JSON.stringify(error, null, 2));
+    core.setFailed("Error fetching informations");
+  }
 };
 
 main();

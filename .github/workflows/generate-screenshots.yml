@@ -1,53 +1,35 @@
 name: Desktop App - Generate Screenshots
 
 on:
-  issue_comment:
-    types: [created]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: The branch to generate screenshots for.
+        required: false
+      number:
+        description: The pull request number.
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        required: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  check-if-fork:
-    runs-on: ubuntu-20.04
-    outputs:
-      forked: ${{ steps.forked.outputs.forked }}
-    steps:
-      - name: check if we are on a forked repo
-        id: forked
-        run: echo "::set-output name=forked::$(${{github.event.issue.pull_request != '' && github.event.issue.pull_request.head.repo.full_name != github.repository || false }})"
-
-  add-reaction:
-    needs: [check-if-fork]
-    name: "[Reaction] 🚀"
-    if: ${{ !needs.check-if-fork.outputs.forked && contains(github.event.comment.body, '/generate-screenshots') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: add reaction to PR
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.reactions.createForIssueComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              comment_id: context.payload.comment.id,
-              content: 'rocket'
-            })
-
-            const body = `
-              [**Generating screenshots…**](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-            `
-
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body,
-            });
+  is-org-member:
+    name: "Check Org Member"
+    uses: ledgerhq/ledger-live/.github/workflows/is-org-member.yml@monorepo-setup
+    with:
+      username: ${{ github.event.inputs.login }}
+      organisation: ledgerhq
+    secrets:
+      token: ${{ secrets.COMMON_READ_ORG }}
 
   generate_screenshots:
-    needs: [add-reaction]
+    needs: [is-org-member]
+    if: ${{ needs.is-org-member.outputs.is-org-member }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
@@ -60,10 +42,14 @@ jobs:
           - ubuntu-latest
           # - macos-latest
           - windows-latest
-
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        if: ${{ github.event.inputs.ref != null }}
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v3
+        if: ${{ !github.event.inputs.ref }}
         with:
           fetch-depth: 0
       - uses: pnpm/action-setup@v2.1.0
@@ -82,7 +68,8 @@ jobs:
           ruby-version: 2.6
           bundler-cache: true
       - name: Checkout PR
-        run: gh pr checkout ${{ github.event.issue.number }}
+        if: ${{ github.event.inputs.number != null && github.event.inputs.ref == null }}
+        run: gh pr checkout ${{ github.event.inputs.number }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Set git user
@@ -94,7 +81,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --frozen-lockfile --unsafe-perm
       - name: Install playwright dependencies
-        run: npx @playwright/test install-deps
+        run: npx playwright install-deps
       - name: Build dependencies
         run: pnpm turbo run ledger-live-desktop#build:testing
       - name: Run playwright tests [Linux => xvfb-run]
