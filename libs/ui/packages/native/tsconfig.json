@@ -6,7 +6,9 @@
     "isolatedModules": true,
     "strict": true,
     "baseUrl": ".",
-    "noEmit": true
+    "noEmit": true,
+    "skipLibCheck": true,
+    "preserveSymlinks": true
   },
   "include": ["src/**/*", "storybook/**/*"],
   "exclude": [

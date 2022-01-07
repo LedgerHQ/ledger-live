@@ -31,7 +31,8 @@
     "@ethersproject/rlp": "^5.5.0",
     "@ledgerhq/cryptoassets": "^6.28.1",
     "@ledgerhq/errors": "^6.10.0",
-    "@ledgerhq/hw-transport": "^6.27.1",
+    "@ledgerhq/hw-transport": "^6.24.1",
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "^6.10.0",
     "axios": "^0.26.1",
     "bignumber.js": "^9.0.2"
