@@ -18,7 +18,7 @@ import vertcoin from "./datasets/vertcoin";
 import viacoin from "./datasets/viacoin";
 // import zcash from "./datasets/zcash";
 const dataset: DatasetTest<Transaction> = {
-  implementations: ["js", "libcore", "mock"],
+  implementations: ["js", "mock"],
   currencies: {
     bitcoin,
     // bitcoin_cash,
