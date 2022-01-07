@@ -50,6 +50,8 @@ const convert = (svg, options, componentName, outputFile) => {
       // @TODO remove this flow comment once TS is the norm here
       // can't do it is babel ast for now sorry about it
       const component = `
+      // @ts-nocheck
+
       ${result.replace("xlinkHref=", "href=")}`;
 
       fs.writeFileSync(outputFile, component, "utf-8");

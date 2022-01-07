@@ -51,7 +51,13 @@ const setupTasks = args => [
   {
     title: "Installing packages",
     task: async () => {
-      await exec("yarn", ["-s", "--frozen-lockfile"]);
+      await exec("pnpm", [
+        "i",
+        "--filter=live-desktop",
+        "--unsafe-perm",
+        "--package-import-method=copy",
+        "--node-linker=hoisted"
+      ]);
     },
   },
 ];
@@ -60,7 +66,7 @@ const buildTasks = args => [
   {
     title: "Compiling assets",
     task: async () => {
-      await exec("yarn", ["build"]);
+      await exec("pnpm", ["run", "build"]);
     },
   },
   {
@@ -68,7 +74,7 @@ const buildTasks = args => [
       ? "Bundling and publishing the electron application"
       : "Bundling the electron application",
     task: async () => {
-      const commands = ["dist:internal"];
+      const commands = ["dist:internal", "--"];
       if (args.dir) commands.push("--dir");
       if (args.publish) {
         commands.push("--publish", "always");
@@ -85,7 +91,8 @@ const buildTasks = args => [
         commands.push("electron-builder-ci.yml");
       }
 
-      await exec("yarn", commands, {
+      // Using npm here because pnpm will refuse to rebuild cached modules.
+      await exec("npm", ["run", ...commands], {
         env: args.publish
           ? {
               SENTRY_URL:

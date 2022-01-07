@@ -1,5 +1,4 @@
 const path = require("path");
-const HardSourceWebpackPlugin = require("hard-source-webpack-plugin");
 const babelPlugins = require("./babel.plugins");
 
 const babelConfig = {
@@ -27,6 +26,7 @@ const babelConfig = {
 };
 
 module.exports = {
+  stats: "errors-only",
   target: "electron-renderer",
   entry: ["./src/webviewPreloader/index.js"],
   output: {
@@ -36,11 +36,7 @@ module.exports = {
   optimization: {
     minimize: false,
   },
-  plugins: [
-    new HardSourceWebpackPlugin({
-      cacheDirectory: path.resolve(__dirname, ".webpack", "cacheWebviewPreloader"),
-    }),
-  ],
+  plugins: [],
   module: {
     rules: [
       {
@@ -68,10 +64,10 @@ module.exports = {
         },
       },
       {
-        type: 'javascript/auto',
+        type: "javascript/auto",
         test: /\.mjs$/,
-        use: []
-      }
+        use: [],
+      },
     ],
   },
   resolve: {

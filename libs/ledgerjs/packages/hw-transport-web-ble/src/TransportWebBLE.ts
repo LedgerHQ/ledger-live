@@ -12,7 +12,7 @@ import type { DeviceModel } from "@ledgerhq/devices";
 import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
 import { log } from "@ledgerhq/logs";
-import { Observable, defer, merge, from } from "rxjs";
+import { Observable, Subscription, defer, merge, from } from "rxjs";
 import { share, ignoreElements, first, map, tap } from "rxjs/operators";
 import type { Device, Characteristic } from "./types";
 import { monitorCharacteristic } from "./monitorCharacteristic";
@@ -175,7 +175,7 @@ export default class BluetoothTransport extends Transport {
    * (available is generic, type is specific)
    * an event is emit once and then each time it changes
    */
-  static observeAvailability = (observer: any) =>
+  static observeAvailability = (observer: any): Subscription =>
     availability().subscribe(observer);
   static list = (): any => Promise.resolve([]);
 

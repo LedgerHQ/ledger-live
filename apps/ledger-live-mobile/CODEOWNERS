@@ -1,5 +1,6 @@
 *                                      @ledgerhq/live-hub
 yarn.lock                              @ledgerhq/ledger-live
+pnpm-lock.yaml                         @ledgerhq/ledger-live
 package.json                           @ledgerhq/ledger-live
 .github                                @ledgerhq/live-devx
 fastlane                               @ledgerhq/live-devx

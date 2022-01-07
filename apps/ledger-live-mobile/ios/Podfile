@@ -1,10 +1,26 @@
-require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+# Use the node resolver because pnpm nests modules.
+def relative_path(module_name)
+  module_pathname = Pathname.new File.dirname(`node --print "require.resolve('#{module_name}/package.json')"`)
+  module_pathname.relative_path_from(Pathname.new File.absolute_path ".")
+end
+
+expo_autolinking = File.join(relative_path("expo"), "scripts/autolinking")
+rct_text = File.join(relative_path("react-native"), "Libraries/Text")
+
+require expo_autolinking
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 platform :ios, '12.0'
 
 flipperkit_version = '0.111.0'
+
+# Without the .pnpm path expo autolinking script will fail to locate transitive dependencies.
+ENV["NODE_PATH"] ||= File.expand_path(
+  File.join(
+    File.dirname(__FILE__), "..", "..", "..", "node_modules", ".pnpm", "node_modules"
+  )
+)
 
 target 'ledgerlivemobile' do
   use_expo_modules!
@@ -16,8 +32,10 @@ target 'ledgerlivemobile' do
     :hermes_enabled => true
   )
 
-  pod 'React-RCTText', :path => '../node_modules/react-native/Libraries/Text', :modular_headers => true
-  
+  pod 'ledger-core-objc', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
+  pod 'RNLibLedgerCore', :path => '../node_modules/@ledgerhq/react-native-ledger-core'
+  pod 'React-RCTText', :path => rct_text, :modular_headers => true
+
   target 'ledgerlivemobileTests' do
     inherit! :search_paths
     # Pods for testing

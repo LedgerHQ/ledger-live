@@ -52,7 +52,10 @@ const proxyStyled = new Proxy(styled, {
     return styled(target.apply(thisArg, argumentsList)(baseStyles));
   },
   get(target, property: keyof typeof styled) {
-    return styled(target[property].apply(styled, [baseStyles]));
+    if (typeof target[property] === "function") {
+      return styled(target[property].apply(styled, [baseStyles]));
+    }
+    return target[property];
   },
 });
 
