@@ -262,6 +262,10 @@
       "title": "التحقق التلقائي غير متاح: تحقق بعناية من العنوان.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "فشل التوثيق البيومتري",
       "description": "يرجى استخدام كلمة مرورك أو إعادة تعيين التطبيق."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "هذا ليس عنوان {{currencyName}} صحيح"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "يجب ألا تكون حسابات الوجهة وحسابات المصدر هي نفسها."
@@ -1813,6 +1820,7 @@
       "copyAddress": "نسخ العنوان",
       "shareAddress": "عنوان المشاركة",
       "addressCopied": "تم نسخ العنوان!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "تتم المزامنة",
         "desc": "قد يستغرق هذا بعض الوقت إذا كان لديك العديد من المعاملات أو إذا كان اتصالك بالإنترنت بطيئاً."
@@ -1854,8 +1862,8 @@
           "subtitle": "يتم جمع معلوماتك من قبل LEDGER بالنيابة عن WYRE كما يتم نقل هذه المعلومات إليها لأغراض التحقق من هوية العميل. للتعرف على مزيد من المعلومات، يرجى مراجعة سياسة الخصوصية الخاصة بنا",
           "pending": {
             "cta": "متابعة",
-            "title": "تم ارسال بيانات التحقق من الهوية لاعتمادها",
-            "subtitle": "تم ارسال بيانات التحقق من الهوية الخاصة بك وبانتظار اعتمادها.",
+            "title": "Your information has been submitted for approval",
+            "subtitle": "It usually takes only a few minutes before you can start swapping",
             "link": "معرفة المزيد عن KYC (التحقق من الهوية)"
           },
           "approved": {
@@ -1908,9 +1916,9 @@
         "cta": "إغلاق"
       },
       "pendingOperation": {
-        "description": "لقد تم إرسال عملية المبادلة الخاصة بك إلى الشبكة لتأكيدها. يمكن أن يستغرق الامر مدة تصل إلى ساعة قبل أن تستلم {{targetCurrency}}.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "معرّف المبادلة الخاص بك:",
-        "title": "تم البث المبادلة بنجاح ",
+        "title": "Pending operation",
         "disclaimer": "قم بحفظ معرّف المبادلة الخاص بك في حال كنت بحاجة إلى مساعدة من دعم {{provider}}.",
         "cta": "رؤية التفاصيل"
       },
@@ -1930,13 +1938,22 @@
         "button": "متابعة",
         "from": "من",
         "to": "إلى",
+        "source": "Source",
+        "target": "Target account",
+        "noAccount": "You don’t have {{currency}} account",
         "balance": "الرصيد <0>123</0>",
         "fromAccount": "اختيار الحساب",
         "toAccount": "اختيار الحساب",
         "paraswapCTA": "تبحث عن Paraswap؟ لقد تم نقله إلى علامة تبويب الاكتشاف!",
+        "quote": "Quote",
+        "receive": "Receive",
         "amount": {
           "useMax": "استخدم الحد الأقصى",
           "available": "إجمالي المتاح"
+        },
+        "noAsset": {
+          "title": "You have no asset to swap",
+          "desc": "Buy some and come back to swap"
         },
         "noApp": {
           "title": "التطبيق {{appName}} غير مثبت",
@@ -2015,6 +2032,22 @@
         "empty": {
           "title": "ستظهر مبادلاتك السابقة هنا",
           "desc": "إما أنك لم تقم بأي مبادلات حتى الآن، أو تمت إعادة تعيين Ledger Live في الوقت الحالي."
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
+          "provider": "Provider",
+          "method": "Rate",
+          "fees": "Fees"
         }
       }
     },

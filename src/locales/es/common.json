@@ -262,6 +262,10 @@
       "title": "Verificación automática no disponible: verifica cuidadosamente la dirección.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "La autenticación biométrica ha fallado",
       "description": "Utiliza tu contraseña o restablece la aplicación."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "Esta no es una dirección de {{currencyName}} válida"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Las cuentas de origen y destino no deben ser las mismas."
@@ -1813,6 +1820,7 @@
       "copyAddress": "Copiar dirección",
       "shareAddress": "Compartir dirección",
       "addressCopied": "¡Dirección copiada!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "Sincronizando",
         "desc": "Esto puede tardar un tiempo si tienes muchas transacciones o una conexión a Internet lenta."
@@ -1854,8 +1862,8 @@
           "subtitle": "LEDGER recopila tu información en nombre de WYRE y la transfiere a este para fines de KYC. Para obtener más información, revisa nuestra Política de Privacidad",
           "pending": {
             "cta": "Continuar",
-            "title": "KYC enviado para su aprobación",
-            "subtitle": "Tu KYC ha sido enviado y está en espera de aprobación.",
+            "title": "Your information has been submitted for approval",
+            "subtitle": "It usually takes only a few minutes before you can start swapping",
             "link": "Más información sobre KYC"
           },
           "approved": {
@@ -1908,9 +1916,9 @@
         "cta": "Cerrar"
       },
       "pendingOperation": {
-        "description": "Tu operación de permuta ha sido enviada a la red para su confirmación. Puede transcurrir hasta una hora antes de que recibas tus {{targetCurrency}}.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "Tu ID de Permuta:",
-        "title": "Transmisión exitosa de permuta",
+        "title": "Pending operation",
         "disclaimer": "Toma nota del número de ID de permuta, en caso de que necesites ayuda del Soporte de {{provider}} más adelante.",
         "cta": "Ver detalles"
       },
@@ -1930,13 +1938,22 @@
         "button": "Continuar",
         "from": "De",
         "to": "A",
+        "source": "Source",
+        "target": "Target account",
+        "noAccount": "You don’t have {{currency}} account",
         "balance": "Saldo <0>123</0>",
         "fromAccount": "Seleccionar cuenta",
         "toAccount": "Seleccionar cuenta",
         "paraswapCTA": "¿Buscas Paraswap? ¡Está en a la pestaña Discover!",
+        "quote": "Quote",
+        "receive": "Receive",
         "amount": {
           "useMax": "Utilizar máx",
           "available": "Total disponible"
+        },
+        "noAsset": {
+          "title": "You have no asset to swap",
+          "desc": "Buy some and come back to swap"
         },
         "noApp": {
           "title": "Aplicación {{appName}} no instalada",
@@ -2015,6 +2032,22 @@
         "empty": {
           "title": "Tus permutas anteriores aparecerán aquí",
           "desc": "No has hecho ninguna permuta todavía o Ledger Live ha sido restablecido en el interín."
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
+          "provider": "Provider",
+          "method": "Rate",
+          "fees": "Fees"
         }
       }
     },

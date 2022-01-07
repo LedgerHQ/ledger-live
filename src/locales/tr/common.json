@@ -262,6 +262,10 @@
       "title": "Otomatik doğrulama mevcut değil; adresi dikkatle doğrulayın.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "İşlem bu cihazda kullanılamıyor",
+      "description": "NFT Gönder özelliği yalnızca Nano X için mevcuttur. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
+    },
     "Touch ID Error": {
       "title": "Biyometrik kimlik doğrulaması başarısız oldu",
       "description": "Lütfen parolanızı kullanın veya uygulamayı sıfırlayın."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "Bu geçerli bir {{currencyName}} adresi değil"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Hedef ve kaynak hesapları aynı olmamalıdır."
@@ -605,13 +612,13 @@
       "description": "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
     },
     "SolanaAccountNotFunded": {
-      "title": "Account not funded"
+      "title": "Hesap fonlanmadı"
     },
     "SolanaAddressOfEd25519": {
-      "title": "Address off ed25519 curve"
+      "title": "Adres ed25519 eğrisi dışında"
     },
     "SolanaMemoIsTooLong": {
-      "title": "Memo is too long. Max length is {{maxLength}}"
+      "title": "Memo çok uzun. Maksimum uzunluk {{maxLength}}"
     }
   },
   "bluetooth": {
@@ -747,7 +754,7 @@
     "stepWelcome": {
       "title": "Ledger'a Hoş Geldiniz",
       "subtitle": "Kriptolarınızı akıllı telefonunuzdan güvenle yönetin.",
-      "start": "Başlangıç",
+      "start": "Hemen başla",
       "noDevice": "Cihazınız yok mu?",
       "buy": "{{fullDeviceName}} satın alın"
     },
@@ -1813,6 +1820,7 @@
       "copyAddress": "Adresi kopyala",
       "shareAddress": "Adresi paylaş",
       "addressCopied": "Adres kopyalandı!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "Senkronize ediliyor",
         "desc": "Çok sayıda işlem yaptıysanız veya internet bağlantınız yavaşsa bu işlem biraz zaman alabilir."
@@ -1854,8 +1862,8 @@
           "subtitle": "Bilgileriniz LEDGER tarafından KYC amacıyla WYRE adına toplanır ve aktarılır. Daha fazla bilgi için lütfen Gizlilik Politikamıza bakın",
           "pending": {
             "cta": "Devam",
-            "title": "KYC onay için gönderildi",
-            "subtitle": "KYC'niz gönderildi ve onay bekliyor.",
+            "title": "Bilgileriniz onaylanmak üzere gönderildi",
+            "subtitle": "Takas yapmaya başlamak için genellikle yalnızca birkaç dakika gerekir",
             "link": "KYC (Müşterinizi Tanıyın) işlemi hakkında daha fazla bilgi alın"
           },
           "approved": {
@@ -1908,9 +1916,9 @@
         "cta": "Kapat"
       },
       "pendingOperation": {
-        "description": "Takas işleminiz onaylanmak üzere ağa gönderildi. {{targetCurrency}} tutarınızı almanız yaklaşık bir saat sürebilir.",
+        "description": "Takas işleminiz onaylanmak üzere ağa gönderildi. Takas ettiğiniz {{targetCurrency}} varlıklarını almanız yaklaşık bir saat sürebilir",
         "label": "Swap ID'si:",
-        "title": "Takas işlemi başarıyla yayınlandı ",
+        "title": "Bekleyen işlem",
         "disclaimer": "{{provider}} desteğine yardıma ihtiyacınız olması durumunda gerekecek olan Takas ID numaranızı not edin.",
         "cta": "Ayrıntıları gör"
       },
@@ -1930,13 +1938,22 @@
         "button": "Devam",
         "from": "Gönderici",
         "to": "Alıcı",
+        "source": "Kaynak",
+        "target": "Hedef hesap",
+        "noAccount": "{{currency}} hesabınız yok",
         "balance": "Bakiye <0>123</0>",
         "fromAccount": "Hesap seç",
         "toAccount": "Hesap seç",
         "paraswapCTA": "Paraswap'ı mı arıyorsunuz? Keşfet sekmesine taşındı!",
+        "quote": "Teklif",
+        "receive": "Al",
         "amount": {
           "useMax": "Maks. Kullan",
           "available": "Toplam mevcut"
+        },
+        "noAsset": {
+          "title": "Takas edecek varlığınız bulunmuyor",
+          "desc": "Önce varlık satın alın ve sonra takas etmeyi deneyin"
         },
         "noApp": {
           "title": "{{appName}} uygulaması yüklü değil",
@@ -2015,6 +2032,22 @@
         "empty": {
           "title": "Önceki takas işlemleriniz burada görünecek",
           "desc": "Ya henüz herhangi bir takas işlemi yapmadınız ya da bu süre zarfında Ledger Live sıfırlandı."
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "Gönderici",
+          "to": "Alıcı",
+          "send": "Gönder",
+          "payoutNetworkFees": "Ödeme ücretleri",
+          "payoutNetworkFeesTooltip": "Bu tutar cihazınızda gösterilmeyecektir",
+          "receive": "Tutar",
+          "receiveFloat": "Hizmet ücretleri hariç alınacak tutar",
+          "provider": "Sağlayıcı",
+          "method": "Kur",
+          "fees": "Ücretler"
         }
       }
     },
