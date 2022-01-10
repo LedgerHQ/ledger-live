@@ -19,6 +19,7 @@ import Circle from "../../../components/Circle";
 import Compound, { compoundColor } from "../../../icons/Compound";
 import { rgba } from "../../../colors";
 import { localeSelector } from "../../../reducers/settings";
+import FormatDate from "../../../components/FormatDate";
 
 type RowProps = {
   item: ClosedLoanHistory,
@@ -88,7 +89,7 @@ export default function ClosedLoansRow({ item }: RowProps) {
         ),
         Component: (
           <LText semiBold>
-            {endDate.toLocaleDateString(locale, { dateStyle: "long" })}
+            <FormatDate date={endDate} />
           </LText>
         ),
       },

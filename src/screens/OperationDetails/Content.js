@@ -44,6 +44,7 @@ import byFamiliesOperationDetails from "../../generated/operationDetails";
 import DefaultOperationDetailsExtra from "./Extra";
 import Skeleton from "../../components/Skeleton";
 import Title from "./Title";
+import FormatDate from "../../components/FormatDate";
 
 type HelpLinkProps = {
   event: string,
@@ -316,13 +317,7 @@ export default function Content({
 
       <Section
         title={t("operationDetails.date")}
-        value={operation.date.toLocaleDateString(locales, {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+        value={<FormatDate withHoursMinutes date={operation.date} />}
       />
 
       {isNegative || operation.fee ? (

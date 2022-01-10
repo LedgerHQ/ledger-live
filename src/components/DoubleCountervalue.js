@@ -7,16 +7,13 @@ import type { Currency } from "@ledgerhq/live-common/lib/types";
 import { useCalculate } from "@ledgerhq/live-common/lib/countervalues/react";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import {
-  counterValueCurrencySelector,
-  localeSelector,
-} from "../reducers/settings";
+import { counterValueCurrencySelector } from "../reducers/settings";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import LText from "./LText";
 import InfoIcon from "../icons/Info";
 import BottomModal from "./BottomModal";
-import { localeIds } from "../languages";
 import Circle from "./Circle";
+import FormatDate from "./FormatDate";
 
 type Props = {
   // wich market to query
@@ -50,8 +47,6 @@ function DoubleCounterValue({
   const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState(false);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const locale = useSelector(localeSelector);
-  const locales = [locale, ...localeIds];
 
   const val = value.toNumber();
 
@@ -120,11 +115,7 @@ function DoubleCounterValue({
               <Trans i18nKey="common.transactionDate" />
             </LText>
             <LText style={styles.subtitle} color="grey">
-              {date.toLocaleDateString(locales, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              <FormatDate date={date} />
             </LText>
           </View>
           <LText semiBold style={styles.amount} color="grey">
@@ -145,11 +136,7 @@ function DoubleCounterValue({
               <Trans i18nKey="common.today" />
             </LText>
             <LText style={styles.subtitle} color="grey">
-              {compareDate.toLocaleDateString(locales, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              <FormatDate date={compareDate} />
             </LText>
           </View>
           {typeof compareCountervalue === "number" ? (
