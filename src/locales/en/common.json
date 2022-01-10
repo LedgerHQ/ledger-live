@@ -3899,7 +3899,9 @@
       "last7d": "Last 7 days"
     },
     "detailsPage": {
-      "priceStatistics": "Price stats",
+      "holding": "Your Holdings",
+      "priceStatistics": "Price Statistics",
+      "price": "Price",
       "tradingVolume": "Trading volume",
       "24hLowHight": "24h Low / 24h High",
       "7dLowHigh": "7d Low / 7d High",
@@ -3911,8 +3913,7 @@
       "circulatingSupply": "Circulating supply",
       "totalSupply": "Total supply",
       "maxSupply": "Max supply",
-      "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live.",
-      "supportedCoinsAndTokens": "Supported coins & Tokens"
+      "assetNotSupportedOnLedgerLive": "This asset is not supported on Ledger Live."
     },
     "range": {
       "1H_label": "1H",

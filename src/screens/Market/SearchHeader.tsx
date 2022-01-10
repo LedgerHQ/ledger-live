@@ -37,7 +37,7 @@ function SearchHeader({ search, refresh, isOpen, onClose }: Props) {
   }, [search]);
 
   const searchInputStyle = useAnimatedStyle(() => {
-    const w = width - 80;
+    const w = width - 32;
     /** offset horizontaly given the scale transformation and potential top left header section */
     const translateX = withTiming(-(animValue.value * (w + 16)), {
       duration: 300,

@@ -8,7 +8,7 @@ import CircleCurrencyIcon from "../../components/CircleCurrencyIcon";
 import DeltaVariation from "./DeltaVariation";
 import { counterValueFormatter } from "./utils";
 
-const IconContainer = styled(Flex).attrs({
+export const IconContainer = styled(Flex).attrs({
   width: 32,
   height: 32,
   bg: "neutral.c30",
@@ -37,6 +37,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
     marketcapRank,
     price,
     priceChangePercentage,
+    isLiveSupported,
   } = item;
 
   return (
@@ -48,7 +49,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
       p={3}
       key={index}
     >
-      {internalCurrency ? (
+      {isLiveSupported && internalCurrency ? (
         <CircleCurrencyIcon
           size={32}
           currency={internalCurrency}

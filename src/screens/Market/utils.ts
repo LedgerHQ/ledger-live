@@ -10,6 +10,31 @@ const indexes: [string, number][] = [
   ["Qn", 1000000000000000000],
 ];
 
+const dateFormatters = {};
+
+const formatters = {};
+
+export const getDateFormatter = (locale: string, interval: string) => {
+  if (!dateFormatters[locale]) {
+    dateFormatters[locale] = {
+      daily: new Intl.DateTimeFormat(locale),
+      hourly: new Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      }),
+      minutely: new Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+        minute: "numeric",
+      }),
+    };
+  }
+
+  return dateFormatters[locale][interval];
+};
+
 export const counterValueFormatter = ({
   currency,
   value,
@@ -27,6 +52,18 @@ export const counterValueFormatter = ({
     return "-";
   }
 
+  if (!formatters[locale]) formatters[locale] = {};
+  if (!formatters[locale]?.[currency]) {
+    formatters[locale][currency] = new Intl.NumberFormat(locale, {
+      style: currency ? "currency" : "decimal",
+      currency,
+      maximumFractionDigits: 8,
+      maximumSignificantDigits: 8,
+    });
+  }
+
+  const formatter = formatters[locale][currency];
+
   if (shorten && t) {
     const sign = value > 0 ? "+" : "-";
     const v = Math.abs(value);
@@ -36,14 +73,7 @@ export const counterValueFormatter = ({
 
     const roundedValue = Math.floor((v / n) * 1000) / 1000;
 
-    const nn = new Intl.NumberFormat(locale, {
-      style: currency ? "currency" : "decimal",
-      currency,
-      maximumFractionDigits: 8,
-      maximumSignificantDigits: 8,
-    });
-
-    const number = nn.format(roundedValue);
+    const number = formatter.format(roundedValue);
 
     const I = t(`numberCompactNotation.${i}`);
 
@@ -52,9 +82,5 @@ export const counterValueFormatter = ({
     return formattedNumber;
   }
 
-  return new Intl.NumberFormat(locale, {
-    style: currency ? "currency" : "decimal",
-    currency,
-    maximumFractionDigits: 8,
-  }).format(value);
+  return formatter.format(value);
 };

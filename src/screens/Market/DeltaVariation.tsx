@@ -6,8 +6,8 @@ type Props = {
   percent?: boolean;
 };
 
-function DeltaVariation({ value, percent }: Props) {
-  const delta = percent && value ? value * 100 : value;
+function DeltaVariation({ value, percent, ...props }: Props) {
+  const delta = value;
 
   if (Number.isNaN(delta)) {
     return null;
@@ -25,8 +25,14 @@ function DeltaVariation({ value, percent }: Props) {
   return (
     <Flex flexDirection="row" alignItems="center">
       {percent && ArrowIcon ? <ArrowIcon size={10} color={color} /> : null}
-      <Text variant="body" ml={2} fontWeight="semiBold" color={color}>
-        {percent ? `${absDelta.toFixed(0)}%` : `${sign}${absDelta}`}
+      <Text
+        variant="body"
+        ml={2}
+        fontWeight="semiBold"
+        color={color}
+        {...props}
+      >
+        {percent ? `${absDelta.toFixed(2)}%` : `${sign}${absDelta}`}
       </Text>
     </Flex>
   );

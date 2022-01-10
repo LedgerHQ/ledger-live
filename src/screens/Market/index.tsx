@@ -12,8 +12,8 @@ import {
 } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
-import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+// import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+// import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
 import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { starredMarketCoinsSelector } from "../../reducers/settings";
@@ -23,18 +23,12 @@ import SortBadge, { Badge } from "./SortBadge";
 import SearchHeader from "./SearchHeader";
 import { ScreenName } from "../../const";
 
-export const Main = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  background-color: ${p => p.theme.colors.background.main};
-  overflow: hidden;
-  width: 100%;
-  padding-top: 50px;
-`;
-
-const BackButton = ({ navigation }: { navigation: any }) => (
-  <Button onPress={() => navigation.goBack()} Icon={Icons.ArrowLeftMedium} />
+export const BackButton = ({ navigation }: { navigation: any }) => (
+  <Button
+    size="large"
+    onPress={() => navigation.goBack()}
+    Icon={Icons.ArrowLeftMedium}
+  />
 );
 
 const BottomSection = ({
@@ -92,7 +86,10 @@ const BottomSection = ({
       {starredMarketCoins.length <= 0 && !starFilterOn ? null : (
         <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
           <Badge>
-            <Icon name="Star" color="neutral.c100" />
+            <Icon
+              name={starFilterOn ? "StarSolid" : "Star"}
+              color="neutral.c100"
+            />
           </Badge>
         </TouchableOpacity>
       )}
@@ -186,6 +183,9 @@ export default function Market({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { locale } = useLocale();
+
+  return null;
+  /** 
   const {
     requestParams,
     refresh,
@@ -194,6 +194,7 @@ export default function Market({ navigation }: { navigation: any }) {
     loadNextPage,
     loading,
     page,
+    selectCurrency,
   } = useMarketData();
 
   const { limit, search } = requestParams;
@@ -207,15 +208,24 @@ export default function Market({ navigation }: { navigation: any }) {
 
   const renderItems = useCallback(
     ({ item, index }) => (
-      <MarketRowItem
-        item={item}
-        index={index}
-        counterCurrency={counterCurrency}
-        locale={locale}
-        t={t}
-      />
+      <TouchableOpacity
+        onPress={() => {
+          selectCurrency(item.id);
+          navigation.navigate(ScreenName.MarketDetail, {
+            currencyId: item.id,
+          });
+        }}
+      >
+        <MarketRowItem
+          item={item}
+          index={index}
+          counterCurrency={counterCurrency}
+          locale={locale}
+          t={t}
+        />
+      </TouchableOpacity>
     ),
-    [counterCurrency, locale, t],
+    [counterCurrency, locale, navigation, selectCurrency, t],
   );
 
   const renderEmptyComponent = useCallback(
@@ -292,7 +302,9 @@ export default function Market({ navigation }: { navigation: any }) {
               <Text variant="h2">{t("market.title")}</Text>
             </Flex>
           }
-          TopRightSection={<Button onPress={openSearch} iconName="Search" />}
+          TopRightSection={
+            <Button size="large" onPress={openSearch} iconName="Search" />
+          }
           BottomSection={
             <BottomSection navigation={navigation} openSearch={openSearch} />
           }
@@ -327,4 +339,5 @@ export default function Market({ navigation }: { navigation: any }) {
       </Flex>
     </SafeAreaView>
   );
+  */
 }
