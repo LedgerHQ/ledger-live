@@ -26,7 +26,10 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const assetOperations: Operation[] = [];
 
   allOperations.forEach((op) => {
-    if (op?.extra?.assetCode && op?.extra?.assetIssuer) {
+    // change_trust operations
+    if (op.type === "OPT_IN" || op.type === "OPT_OUT") {
+      nativeOperations.push(op);
+    } else if (op?.extra?.assetCode && op?.extra?.assetIssuer) {
       assetOperations.push(op);
     } else {
       nativeOperations.push(op);

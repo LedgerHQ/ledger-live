@@ -48,6 +48,13 @@ export const getOperationType = (
     case "path_payment_strict_receive":
       return "IN";
 
+    case "change_trust":
+      if (new BigNumber(operation.limit).eq(0)) {
+        return "OPT_OUT";
+      }
+
+      return "OPT_IN";
+
     default:
       if (operation.source_account === addr) {
         return "OUT";
@@ -283,6 +290,7 @@ export const rawOperationsToOperations = async (
     "payment",
     "path_payment_strict_send",
     "path_payment_strict_receive",
+    "change_trust",
   ];
 
   return Promise.all(
@@ -297,6 +305,8 @@ export const rawOperationsToOperations = async (
           operation.funder === addr ||
           // @ts-expect-error check account property
           operation.account === addr ||
+          // @ts-expect-error check account property
+          operation.trustor === addr ||
           operation.source_account === addr
         );
       })
