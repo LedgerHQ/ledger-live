@@ -60,16 +60,20 @@ interface HederaMirrorTransfer {
 export async function getOperationsForAccount(
   ledgerAccountId: string,
   accountId: AccountId,
-  _atMost: number
+  latestOperationTimestamp: string
 ): Promise<Operation[]> {
   const operations: Operation[] = [];
   const address = accountId.toString();
-  const r = await fetch("/transactions", { "account.id": address });
+  const r = await fetch("/transactions", {
+    "account.id": address,
+    timestamp: `gt:${latestOperationTimestamp}`,
+  });
   const rawOperations = r.data.transactions as HederaMirrorTransaction[];
 
   for (const raw of rawOperations) {
+    const { consensus_timestamp } = raw;
     const timestamp = new Date(
-      parseInt(raw.consensus_timestamp.split(".")[0], 10) * 1000
+      parseInt(consensus_timestamp.split(".")[0], 10) * 1000
     );
     const senders: string[] = [];
     const recipients: string[] = [];
@@ -123,7 +127,7 @@ export async function getOperationsForAccount(
       // NOTE: there are no "blocks" in hedera
       blockHeight: null,
       blockHash: null,
-      extra: {},
+      extra: { consensus_timestamp },
       fee,
       // NOTE: convert from the non-url-safe version of base64 to the url-safe version (that the explorer uses)
       hash: raw.transaction_hash.replace(/\//g, "_").replace(/\+/g, "-"),
