@@ -32,9 +32,7 @@ import Touchable from "../../components/Touchable";
 import { urls } from "../../config/urls";
 import Info from "../../icons/Info";
 import ExternalLink from "../../icons/ExternalLink";
-import {
-  currencySettingsForAccountSelector,
-} from "../../reducers/settings";
+import { currencySettingsForAccountSelector } from "../../reducers/settings";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
