@@ -23,7 +23,6 @@ import {
 } from "@ledgerhq/live-common/lib/account";
 import { useNftMetadata } from "@ledgerhq/live-common/lib/nft";
 import { NavigatorName, ScreenName } from "../../const";
-import { localeIds } from "../../languages";
 import LText from "../../components/LText";
 import OperationIcon from "../../components/OperationIcon";
 import OperationRow from "../../components/OperationRow";
@@ -35,7 +34,6 @@ import Info from "../../icons/Info";
 import ExternalLink from "../../icons/ExternalLink";
 import {
   currencySettingsForAccountSelector,
-  localeSelector,
 } from "../../reducers/settings";
 import DataList from "./DataList";
 import Modal from "./Modal";
@@ -79,8 +77,6 @@ export default function Content({
   const { colors } = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
-  const locales = [locale, ...localeIds];
   const [isModalOpened, setIsModalOpened] = useState(false);
   const { status, metadata } = useNftMetadata(
     operation.contract,
