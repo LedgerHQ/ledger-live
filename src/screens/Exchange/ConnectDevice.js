@@ -36,6 +36,7 @@ type RouteParams = {
   parentId: string,
   title: string,
   account: AccountLike,
+  analyticsPropertyFlow?: string,
 };
 
 export default function ConnectDevice({ navigation, route }: Props) {
@@ -43,7 +44,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<?Device>();
-  const { account } = route.params;
+  const { account, analyticsPropertyFlow } = route.params;
 
   useEffect(() => {
     const readOnlyTitle = "transfer.receive.titleReadOnly";
@@ -122,6 +123,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         onResult={onResult}
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
+        analyticsPropertyFlow={analyticsPropertyFlow}
       />
     </SafeAreaView>
   );

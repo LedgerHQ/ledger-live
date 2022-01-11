@@ -45,6 +45,7 @@ const Connect = ({
         onResult={setLocalResult}
         action={action}
         request={null}
+        analyticsPropertyFlow="swap"
       />
     </View>
   );

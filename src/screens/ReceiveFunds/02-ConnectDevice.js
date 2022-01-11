@@ -161,6 +161,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
         onClose={onClose}
         request={{ account: mainAccount, tokenCurrency }}
         appName={route.params.appName}
+        analyticsPropertyFlow="receive"
       />
     </SafeAreaView>
   );

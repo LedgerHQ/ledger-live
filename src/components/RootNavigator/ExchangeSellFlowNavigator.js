@@ -40,6 +40,7 @@ export default function ExchangeNavigator() {
         name={ScreenName.ExchangeSelectAccount}
         component={ExchangeSelectAccount}
         options={{ title: t("exchange.sell.selectAccount") }}
+        initialParams={{ analyticsPropertyFlow: "sell" }}
       />
       <Stack.Screen
         name={ScreenName.ExchangeCoinifyWidget}
