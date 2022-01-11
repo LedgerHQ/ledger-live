@@ -23,14 +23,17 @@ export default function CustomManifest({
   const onOpen = useCallback(() => {
     const json = JSON.parse(manifest);
 
-    addLocalManifest(json);
+    Array.isArray(json)
+      ? json.map(m => addLocalManifest)
+      : addLocalManifest(json);
+
+    const params = Array.isArray(json)
+      ? { platform: json[0].id, name: json[0].name }
+      : { platform: json.id, name: json.name };
 
     navigation.navigate({
       name: ScreenName.PlatformApp,
-      params: {
-        platform: json.id,
-        name: json.name,
-      },
+      params,
     });
   }, [manifest, addLocalManifest, navigation]);
 
