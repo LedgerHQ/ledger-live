@@ -6,7 +6,7 @@ import {
   NativeModules,
   StatusBar,
 } from "react-native";
-import { useHeaderHeight } from "@react-navigation/elements";
+import { HeaderHeightContext } from "@react-navigation/elements";
 import { HEIGHT as ExperimentalHeaderHeight } from "../screens/Settings/Experimental/ExperimentalHeader";
 import { useExperimental } from "../experimental";
 
@@ -20,7 +20,7 @@ type Props = {
 const KeyboardView = React.memo<Props>(
   ({ style = { flex: 1 }, children }: *) => {
     const isExperimental = useExperimental();
-    const headerHeight = useHeaderHeight();
+    const headerHeight = React.useContext(HeaderHeightContext) || 0;
 
     let behavior;
     let keyboardVerticalOffset = isExperimental ? ExperimentalHeaderHeight : 0;
