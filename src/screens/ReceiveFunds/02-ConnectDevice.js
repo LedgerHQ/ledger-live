@@ -94,8 +94,7 @@ export default function ConnectDevice({ navigation, route }: Props) {
   const onSkipDevice = useCallback(() => {
     if (!account) return;
     navigation.navigate(ScreenName.ReceiveConfirmation, {
-      accountId: account.id,
-      parentId: parentAccount && parentAccount.id,
+      ...route.params,
     });
   }, [account, navigation, parentAccount]);
 
