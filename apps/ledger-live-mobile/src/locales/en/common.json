@@ -2789,6 +2789,10 @@
       "title": "Confirm sell operation on device",
       "alert": "Verify the Sell details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them."
     },
+    "confirmFund": {
+      "title": "Confirm Fund transaction",
+      "alert": "Verify the Fund details on your device before sending it. The addresses are exchanged securely so you don't have to verify them."
+    },
     "button": {
       "openManager": "Open Manager",
       "openOnboarding": "Setup device"

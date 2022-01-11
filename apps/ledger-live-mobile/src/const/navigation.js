@@ -321,6 +321,8 @@ export const ScreenName = {
 
   PlatformCatalog: "PlatformCatalog",
   PlatformApp: "PlatformApp",
+  PlatformStartExchange: "PlatformStartExchange",
+  PlatformCompleteExchange: "PlatformCompleteExchange",
 
   WalletConnectScan: "WalletConnectScan",
   WalletConnectConnect: "WalletConnectConnect",
@@ -389,6 +391,7 @@ export const NavigatorName = {
   PasswordAddFlow: "PasswordAddFlow",
   PasswordModifyFlow: "PasswordModifyFlow",
   Platform: "Platform",
+  PlatformExchange: "PlatformExchange",
   ReceiveFunds: "ReceiveFunds",
   SendFunds: "SendFunds",
   Settings: "Settings",

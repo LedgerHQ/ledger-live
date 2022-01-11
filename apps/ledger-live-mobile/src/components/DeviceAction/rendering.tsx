@@ -473,6 +473,55 @@ export function renderLoading({
   );
 }
 
+export function renderExchange({
+  exchangeType,
+  t,
+  device,
+  theme,
+}: RawProps & {
+  exchangeType: number;
+  device: Device;
+}) {
+  switch (exchangeType) {
+    case 0x00: // swap
+      return <div>{"Confirm swap on your device"}</div>;
+    case 0x01: // sell
+    case 0x02: // fund
+      return renderSecureTransferDeviceConfirmation({
+        exchangeTypeName: exchangeType === 0x01 ? "confirmSell" : "confirmFund",
+        t,
+        device,
+        theme,
+      });
+    default:
+      return <CenteredText>{"Confirm exchange on your device"}</CenteredText>;
+  }
+}
+
+export function renderSecureTransferDeviceConfirmation({
+  t,
+  exchangeTypeName,
+  device,
+  theme,
+}: RawProps & {
+  exchangeTypeName: string;
+  device: Device;
+}) {
+  return (
+    <Wrapper>
+      <AnimationContainer>
+        <Animation
+          source={getDeviceAnimation({ device, key: "validate", theme })}
+        />
+      </AnimationContainer>
+      <TitleText>{t(`DeviceAction.${exchangeTypeName}.title`)}</TitleText>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore}>
+        {t(`DeviceAction.${exchangeTypeName}.alert`)}
+      </Alert>
+    </Wrapper>
+  );
+}
+
 export function LoadingAppInstall({
   analyticsPropertyFlow = "unknown",
   request,
