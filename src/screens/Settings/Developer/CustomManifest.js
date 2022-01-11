@@ -24,7 +24,7 @@ export default function CustomManifest({
     const json = JSON.parse(manifest);
 
     Array.isArray(json)
-      ? json.map(m => addLocalManifest)
+      ? json.map(m => addLocalManifest(m))
       : addLocalManifest(json);
 
     const params = Array.isArray(json)
