@@ -30,7 +30,9 @@ import DebugSettings, {
 } from "../../screens/Settings/Debug";
 import DebugExport from "../../screens/Settings/Debug/ExportAccounts";
 import ExperimentalSettings from "../../screens/Settings/Experimental";
-import DeveloperSettings from "../../screens/Settings/Developer";
+import DeveloperSettings, {
+  DeveloperCustomManifest,
+} from "../../screens/Settings/Developer";
 import RepairDevice from "../../screens/RepairDevice";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import Button from "../Button";
@@ -124,6 +126,13 @@ export default function SettingsNavigator() {
         component={DeveloperSettings}
         options={{
           title: t("settings.developer.title"),
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DeveloperCustomManifest}
+        component={DeveloperCustomManifest}
+        options={{
+          title: t("settings.developer.customManifest.title"),
         }}
       />
       <Stack.Screen

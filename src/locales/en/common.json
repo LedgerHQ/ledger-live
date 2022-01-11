@@ -1760,7 +1760,10 @@
     },
     "developer": {
       "title": "Developer",
-      "desc": "Try out the Developer features and let us know what you think."
+      "desc": "Try out the Developer features and let us know what you think.",
+      "customManifest": {
+        "title": "Load Custom Platform Manifest"
+      }
     }
   },
   "migrateAccounts": {

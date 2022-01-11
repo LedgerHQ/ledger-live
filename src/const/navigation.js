@@ -49,6 +49,7 @@ export const ScreenName = {
   DelegationValidationError: "DelegationValidationError",
   DelegationValidationSuccess: "DelegationValidationSuccess",
   DeveloperSettings: "DeveloperSettings",
+  DeveloperCustomManifest: "DeveloperCustomManifest",
   DisplayResult: "DisplayResult",
   Distribution: "Distribution",
   EditAccountName: "EditAccountName",
