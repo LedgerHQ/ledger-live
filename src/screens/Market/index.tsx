@@ -1,5 +1,8 @@
+/* eslint-disable import/named */
+/* eslint-disable import/no-unresolved */
+
 import React, { useMemo, useCallback, useState } from "react";
-import styled, { useTheme } from "styled-components/native";
+import { useTheme } from "styled-components/native";
 import {
   Flex,
   Button,
@@ -12,8 +15,8 @@ import {
 } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-// import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
-// import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
 import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { starredMarketCoinsSelector } from "../../reducers/settings";
@@ -184,8 +187,6 @@ export default function Market({ navigation }: { navigation: any }) {
   const { colors } = useTheme();
   const { locale } = useLocale();
 
-  return null;
-  /** 
   const {
     requestParams,
     refresh,
@@ -281,12 +282,7 @@ export default function Market({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.main }}>
-      <Flex
-        flex={1}
-        style={{
-          position: "relative",
-        }}
-      >
+      <Flex flex={1} position="relative">
         <ScrollContainerHeader
           bg="background.main"
           TopLeftSection={<BackButton navigation={navigation} />}
@@ -297,7 +293,6 @@ export default function Market({ navigation }: { navigation: any }) {
               justifyContent="flex-start"
               alignItems="center"
               pl={4}
-              style={{ zIndex: 1 }}
             >
               <Text variant="h2">{t("market.title")}</Text>
             </Flex>
@@ -339,5 +334,4 @@ export default function Market({ navigation }: { navigation: any }) {
       </Flex>
     </SafeAreaView>
   );
-  */
 }

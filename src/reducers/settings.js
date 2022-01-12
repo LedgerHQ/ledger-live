@@ -530,4 +530,5 @@ export const swapKYCSelector = (state: Object) => state.settings.swap.KYC;
 export const lastSeenDeviceSelector = (state: State) =>
   state.settings.lastSeenDevice;
 
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+export const starredMarketCoinsSelector = (state: State) =>
+  state.settings.starredMarketCoins;

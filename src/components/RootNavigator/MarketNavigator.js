@@ -1,14 +1,18 @@
+/* eslint-disable import/no-unresolved */
 // @flow
 
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 import { ScreenName } from "../../const";
+// $FlowFixMe
 import MarketList from "../../screens/Market";
+// $FlowFixMe
 import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
+// $FlowFixMe
 import MarketDetail from "../../screens/Market/MarketDetail";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { useTranslation } from "react-i18next";
 
 export default function MarketNavigator() {
   const { colors } = useTheme();

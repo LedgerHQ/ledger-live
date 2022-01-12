@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import React, { useMemo } from "react";
 import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";

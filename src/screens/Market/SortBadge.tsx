@@ -69,7 +69,7 @@ function SortBadge({
 
   return (
     <>
-      <TouchableOpacity onPress={openDrawer}>
+      <TouchableOpacity disabled={disabled} onPress={openDrawer}>
         <Badge>
           <Text mr={2} fontWeight="semiBold" variant="body">
             {label}

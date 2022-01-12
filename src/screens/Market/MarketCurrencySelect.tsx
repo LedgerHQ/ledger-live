@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 import { useMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
 import { Flex, Icon, SearchInput, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, memo, useState, useRef, useEffect } from "react";

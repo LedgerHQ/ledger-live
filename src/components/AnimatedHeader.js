@@ -1,6 +1,12 @@
 // @flow
 import React, { useState, useCallback } from "react";
-import { View, StyleSheet, Platform, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Platform,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useNavigation,

@@ -1,3 +1,7 @@
+/* eslint-disable import/no-named-as-default-member */
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable import/named */
+/* eslint-disable import/no-unresolved */
 import React, { useMemo, useCallback, useState } from "react";
 import { useTheme } from "styled-components/native";
 import {
@@ -7,18 +11,12 @@ import {
   ScrollContainerHeader,
   Icons,
   Icon,
-  Link,
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation, TFunction } from "react-i18next";
-// import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
-// import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
-import {
-  FlatList,
-  Image,
-  RefreshControl,
-  TouchableOpacity,
-} from "react-native";
+import { useSingleCoinMarketData } from "@ledgerhq/live-common/lib/market/MarketDataProvider";
+import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+import { FlatList, Image, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Account } from "@ledgerhq/live-common/lib/types";
 import {
@@ -38,9 +36,7 @@ import {
 } from "../../../actions/settings";
 import MarketStats from "./MarketStats";
 import MarketGraph from "./MarketGraph";
-import accounts, {
-  accountsByCryptoCurrencyScreenSelector,
-} from "../../../reducers/accounts";
+import { accountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
 import AccountRow from "../../Accounts/AccountRow";
 
 export const BackButton = ({ navigation }: { navigation: any }) => (
@@ -77,8 +73,6 @@ export default function MarketDetail({
   navigation: any;
   route: { params: { currencyId: string } };
 }) {
-  return null;
-  /** 
   const { params } = route;
   const { currencyId } = params;
   const { t } = useTranslation();
@@ -132,7 +126,9 @@ export default function MarketDetail({
     interval,
   ]);
 
-  const [hoveredItem, setHoverItem] = useState();
+  const [hoveredItem, setHoverItem] = useState<
+    { date: Date; value: number } | undefined
+  >();
 
   const navigateToBuy = useCallback(
     () =>
@@ -147,6 +143,7 @@ export default function MarketDetail({
 
   const renderAccountItem = useCallback(
     ({ item, index }: { item: Account; index: number }) => (
+      // @ts-expect-error import js issue
       <AccountRow
         navigation={navigation}
         account={item}
@@ -178,6 +175,7 @@ export default function MarketDetail({
             alignItems="center"
           >
             {isLiveSupported && internalCurrency ? (
+              // @ts-expect-error import js issue
               <CircleCurrencyIcon
                 size={32}
                 currency={internalCurrency}
@@ -211,13 +209,14 @@ export default function MarketDetail({
             <Text variant="h1" mb={1}>
               {counterValueFormatter({
                 currency: counterCurrency,
-                value: hoveredItem?.value ? hoveredItem.value : price,
+                value:
+                  hoveredItem && hoveredItem.value ? hoveredItem.value : price,
                 locale,
                 t,
               })}
             </Text>
             <Flex height={20}>
-              {hoveredItem?.date ? (
+              {hoveredItem && hoveredItem.date ? (
                 <Text variant="body" color="neutral.c70">
                   {dateRangeFormatter.format(hoveredItem.date)}
                 </Text>
@@ -282,7 +281,7 @@ export default function MarketDetail({
         ) : (
           <NoCoinSupport t={t} />
         )}
-        {allAccounts && allAccounts.length && isLiveSupported > 0 ? (
+        {allAccounts && allAccounts.length > 0 && isLiveSupported ? (
           <Flex my={16}>
             <Text mx={16} variant="h3">
               {t("market.detailsPage.holding")}
@@ -298,5 +297,4 @@ export default function MarketDetail({
       </ScrollContainerHeader>
     </SafeAreaView>
   );
-  */
 }

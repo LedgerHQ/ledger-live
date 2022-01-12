@@ -1,11 +1,13 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable import/no-named-as-default-member */
 import React, { useMemo, useCallback } from "react";
 import { useTheme } from "styled-components/native";
 import { Flex, GraphTabs, InfiniteLoader } from "@ledgerhq/native-ui";
-// import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
+import { rangeDataTable } from "@ledgerhq/live-common/lib/market/utils/rangeDataTable";
 import * as Animatable from "react-native-animatable";
 import Graph from "../../../components/Graph";
+// @ts-expect-error impot issue
 import getWindowDimensions from "../../../logic/getWindowDimensions";
-import { Item } from "../../../components/Graph/types";
 
 const { width } = getWindowDimensions();
 
@@ -19,15 +21,13 @@ export default function MarketGraph({
   refreshChart,
   chartData,
 }: {
-  setHoverItem: (data: Item) => void;
+  setHoverItem: (data: any) => void;
   chartRequestParams: any;
   loading?: boolean;
   loadingChart?: boolean;
   refreshChart: (request: any) => void;
   chartData: Record<string, number[]>;
 }) {
-  return null;
-  /**
   const { colors } = useTheme();
 
   const isLoading = loading || loadingChart;
@@ -62,6 +62,7 @@ export default function MarketGraph({
       <Flex height={100} alignItems="center" justifyContent="center">
         {data && data.length > 0 ? (
           <Animatable.View animation="fadeIn" duration={400} useNativeDriver>
+            {/** @ts-expect-error import js issue */}
             <Graph
               isInteractive
               isLoading={loadingChart}
@@ -86,5 +87,4 @@ export default function MarketGraph({
       </Flex>
     </Flex>
   );
-   */
 }
