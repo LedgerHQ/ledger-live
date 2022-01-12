@@ -43,7 +43,7 @@ export interface BaseTextProps
   fontFamily?: string;
   fontSize?: number | string | TextVariants;
   color?: string;
-  lineHeight?: number;
+  lineHeight?: number | string;
   bracket?: boolean;
   textTransform?: TextStyle["textTransform"];
   uppercase?: boolean;

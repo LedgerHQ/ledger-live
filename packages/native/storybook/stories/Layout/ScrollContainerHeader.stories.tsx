@@ -38,55 +38,59 @@ const ScrollContainerHeaderStory = () => {
   const topRightSection = boolean("TopRightSection", true);
   const bottomSection = boolean("BottomSection", true);
   const topMiddleSection = boolean("Different TopMiddleSection", false);
+  const stickyHeaderIndices = boolean("StickyHeaderIndex", false);
   const debug = boolean("Debug", false);
   return (
-    <ScrollContainerHeader
-      width="100%"
-      border={debug ? "1px solid red" : "none"}
-      flex={1}
-      TopLeftSection={
-        topLeftSection ? (
-          <Button
-            mr={2}
-            border={debug ? "1px solid purple" : "none"}
-            Icon={Icons.ArrowLeftMedium}
-            size="small"
-          />
-        ) : undefined
-      }
-      TopRightSection={topRightSection ? <TopRightSection debug={debug} /> : undefined}
-      TopMiddleSection={
-        topMiddleSection ? (
+    <Flex flex={1}>
+      <ScrollContainerHeader
+        width="100%"
+        border={debug ? "1px solid red" : "none"}
+        flex={1}
+        TopLeftSection={
+          topLeftSection ? (
+            <Button
+              mr={2}
+              border={debug ? "1px solid purple" : "none"}
+              Icon={Icons.ArrowLeftMedium}
+              size="small"
+            />
+          ) : undefined
+        }
+        TopRightSection={topRightSection ? <TopRightSection debug={debug} /> : undefined}
+        TopMiddleSection={
+          topMiddleSection ? (
+            <Flex
+              height={50}
+              border={debug ? "1px solid green" : "none"}
+              flexDirection="column"
+              justifyContent="center"
+            >
+              <Text variant="h1">TITLE 2</Text>
+            </Flex>
+          ) : undefined
+        }
+        MiddleSection={
           <Flex
             height={50}
-            border={debug ? "1px solid green" : "none"}
+            border={debug ? "1px solid blue" : "none"}
             flexDirection="column"
             justifyContent="center"
           >
-            <Text variant="h1">TITLE 2</Text>
+            <Text variant="h2">TITLE</Text>
           </Flex>
-        ) : undefined
-      }
-      MiddleSection={
-        <Flex
-          height={50}
-          border={debug ? "1px solid blue" : "none"}
-          flexDirection="column"
-          justifyContent="center"
-        >
-          <Text variant="h2">TITLE</Text>
-        </Flex>
-      }
-      BottomSection={bottomSection ? <BottomSection debug={debug} /> : undefined}
-    >
-      <>
+        }
+        BottomSection={bottomSection ? <BottomSection debug={debug} /> : undefined}
+        stickyHeaderIndices={stickyHeaderIndices ? [1, 4] : []}
+      >
         {Array(20)
           .fill(0)
           .map((_, i) => (
-            <Flex height="100px" key={i} bg={i % 2 ? "primary.c20" : "neutral.c20"} />
+            <Flex height="100px" key={i} bg={i % 2 ? "primary.c20" : "neutral.c20"} p={4}>
+              <Text variant="body">{i}</Text>
+            </Flex>
           ))}
-      </>
-    </ScrollContainerHeader>
+      </ScrollContainerHeader>
+    </Flex>
   );
 };
 

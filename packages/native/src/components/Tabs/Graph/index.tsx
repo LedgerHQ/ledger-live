@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components/native";
 import Text from "../../Text";
 import { TouchableOpacity } from "react-native";
-import Button from "../../cta/Button";
 import TemplateTabs, { BaseTabsProps, TabItemProps } from "../TemplateTabs";
 
 const TabBbx = styled(TouchableOpacity)`
@@ -11,21 +10,35 @@ const TabBbx = styled(TouchableOpacity)`
   flex: 1;
 `;
 
+const TabText = styled(Text).attrs({
+  lineHeight: "48px",
+  textAlign: "center",
+  borderRadius: 48,
+  px: 24,
+  height: 48,
+})``;
+
 const StyledTabs = styled(TemplateTabs)`
   border: ${(p) => `1px solid ${p.theme.colors.palette.neutral.c40}`};
   border-radius: 35px;
   padding: 4px;
 `;
 
-export const GraphTab = ({ onPress, isActive, label }: TabItemProps): React.ReactElement => {
+export const GraphTab = ({
+  onPress,
+  isActive,
+  label,
+  activeColor = "neutral.c100",
+  activeBg = "primary.c20",
+}: TabItemProps): React.ReactElement => {
   return (
     <TabBbx onPress={onPress}>
       {isActive ? (
-        <Button type="main">{label}</Button>
-      ) : (
-        <Text lineHeight={36} textAlign={"center"}>
+        <TabText variant="body" bg={activeBg} color={activeColor} fontWeight="semiBold">
           {label}
-        </Text>
+        </TabText>
+      ) : (
+        <TabText variant="body">{label}</TabText>
       )}
     </TabBbx>
   );
