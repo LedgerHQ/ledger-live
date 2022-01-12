@@ -1,66 +1,20 @@
 // @flow
 
 import React from "react";
-import Svg, { Rect, Mask } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 
 type Props = {
   size: number,
   color: string,
 };
 
-const Apps = ({ size = 16, color }: Props) => (
-  <Svg viewBox="0 0 16 16" height={size} width={size} fill="none">
-    <Mask id="path-1-inside-1" fill="white">
-      <Rect x="0.727264" y="0.727295" width="6.54545" height="6.54545" rx="1" />
-    </Mask>
-    <Rect
-      x="0.727264"
-      y="0.727295"
-      width="6.54545"
-      height="6.54545"
-      rx="1"
-      stroke={color}
-      strokeWidth="3"
-      mask="url(#path-1-inside-1)"
-    />
-    <Mask id="path-2-inside-2" fill="white">
-      <Rect x="0.727264" y="8.72729" width="6.54545" height="6.54545" rx="1" />
-    </Mask>
-    <Rect
-      x="0.727264"
-      y="8.72729"
-      width="6.54545"
-      height="6.54545"
-      rx="1"
-      stroke={color}
-      strokeWidth="3"
-      mask="url(#path-2-inside-2)"
-    />
-    <Mask id="path-3-inside-3" fill="white">
-      <Rect x="8.72726" y="0.727295" width="6.54545" height="6.54545" rx="1" />
-    </Mask>
-    <Rect
-      x="8.72726"
-      y="0.727295"
-      width="6.54545"
-      height="6.54545"
-      rx="1"
-      stroke={color}
-      strokeWidth="3"
-      mask="url(#path-3-inside-3)"
-    />
-    <Mask id="path-4-inside-4" fill="white">
-      <Rect x="8.72726" y="8.72729" width="6.54545" height="6.54545" rx="1" />
-    </Mask>
-    <Rect
-      x="8.72726"
-      y="8.72729"
-      width="6.54545"
-      height="6.54545"
-      rx="1"
-      stroke={color}
-      strokeWidth="3"
-      mask="url(#path-4-inside-4)"
+const Apps = ({ size = 20, color = "#142533" }: Props) => (
+  <Svg viewBox="0 0 24 24" height={size} width={size} fill="none">
+    <Path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M2.5 8.5v-6h6v6h-6ZM1 2a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2Zm1.5 17.5v-6h6v6h-6ZM1 13a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-7ZM13.5 2.5v6h6v-6h-6ZM13 1a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1h-7Zm.5 18.5v-6h6v6h-6ZM12 13a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1v-7Z"
+      fill={color}
     />
   </Svg>
 );
