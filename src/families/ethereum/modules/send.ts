@@ -189,6 +189,9 @@ const send: ModeModule = {
       ];
     }
   },
+
+  // This is resolution config is necessary for plugins like Lido and stuff cause they use the send mode
+  getResolutionConfig: () => ({ erc20: true, externalPlugins: true }),
 };
 
 function serializeTransactionData(
