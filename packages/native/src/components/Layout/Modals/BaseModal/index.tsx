@@ -24,7 +24,7 @@ export type BaseModalProps = {
   title?: string;
   description?: string;
   subtitle?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 } & Partial<ModalProps>;
 
 const Container = styled.View`
@@ -59,7 +59,6 @@ const StyledDescription = styled(Text).attrs({
   variant: "body",
   color: "neutral.c80",
 })`
-  text-transform: capitalize;
   margin-top: ${(p) => p.theme.space[2]}px;
 `;
 
@@ -122,12 +121,7 @@ export default function BaseModal({
               {React.isValidElement(Icon) ? (
                 Icon
               ) : (
-                <BoxedIcon
-                  size={64}
-                  Icon={Icon}
-                  iconSize={24}
-                  iconColor={iconColor}
-                />
+                <BoxedIcon size={64} Icon={Icon} iconSize={24} iconColor={iconColor} />
               )}
             </Flex>
           )}
