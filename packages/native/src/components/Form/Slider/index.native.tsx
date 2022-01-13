@@ -17,6 +17,8 @@ export type SliderProps = {
   max: number;
   value: number;
   onChange: (low: number, high: number) => void;
+  onTouchStart?: (low: number, high: number) => void;
+  onTouchEnd?: (low: number, high: number) => void;
   disabled?: boolean;
 };
 
@@ -28,7 +30,16 @@ const SliderContainer = styled.View`
   width: 100%;
 `;
 
-const Slider = ({ value, min, max, step, onChange, disabled }: SliderProps) => {
+const Slider = ({
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  onTouchEnd,
+  onTouchStart,
+  disabled,
+}: SliderProps) => {
   const renderRail = useCallback(() => <Rail />, []);
   const renderRailSelected = useCallback(() => <RailSelected />, []);
   const renderLabel = useCallback((value) => <Label>{value}</Label>, []);
@@ -53,6 +64,8 @@ const Slider = ({ value, min, max, step, onChange, disabled }: SliderProps) => {
         renderLabel={renderLabel}
         renderNotch={renderNotch}
         onValueChanged={onChange}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       />
       <MinMaxTextContainer>
         <Text variant={"small"} fontWeight={"medium"} color={"neutral.c70"}>
