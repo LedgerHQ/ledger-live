@@ -371,6 +371,15 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
   },
+  /**
+   * Note: the mocked cryptoassets config and test partner are signed with the
+   * Ledger test private key
+   */
+  MOCK_EXCHANGE_TEST_CONFIG: {
+    def: false,
+    parser: boolParser,
+    desc: "mock the cryptoassets config and test partner (in the context of app-exchange)",
+  },
   NFT: {
     def: false,
     parser: boolParser,

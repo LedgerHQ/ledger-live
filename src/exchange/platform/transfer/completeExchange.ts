@@ -1,28 +1,30 @@
-import { log } from "@ledgerhq/logs";
-import { from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
+import { from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
-import { delay } from "../../promise";
-import ExchangeTransport from "../hw-app-exchange/Exchange";
-import perFamily from "../../generated/exchange";
-import { getAccountCurrency, getMainAccount } from "../../account";
-import { getAccountBridge } from "../../bridge";
-import { TransactionRefusedOnDevice } from "../../errors";
-import { withDevice } from "../../hw/deviceAccess";
-import { getProviderNameAndSignature } from "./";
-import { getCurrencyExchangeConfig } from "../";
+import { delay } from "../../../promise";
+import ExchangeTransport, {
+  ExchangeTypes,
+} from "../../hw-app-exchange/Exchange";
+import perFamily from "../../../generated/exchange";
+import { getAccountCurrency, getMainAccount } from "../../../account";
+import { getAccountBridge } from "../../../bridge";
+import { TransactionRefusedOnDevice } from "../../../errors";
+import { withDevice } from "../../../hw/deviceAccess";
+import { getCurrencyExchangeConfig } from "../..";
+import { getProvider } from ".";
 
 import type {
-  CompleteExchangeInputSwap,
+  CompleteExchangeInputFund,
+  CompleteExchangeInputSell,
   CompleteExchangeRequestEvent,
-} from "../platform/types";
+} from "../types";
 
 const withDevicePromise = (deviceId, fn) =>
   withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
 
 const completeExchange = (
-  input: CompleteExchangeInputSwap
+  input: CompleteExchangeInputFund | CompleteExchangeInputSell
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
@@ -33,11 +35,10 @@ const completeExchange = (
     binaryPayload,
     signature,
     exchangeType,
-    rateType,
+    rateType, // TODO Pass fixed/float for UI switch ?
   } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
-  const { toAccount, toParentAccount } = exchange;
 
   return new Observable((o) => {
     let unsubscribed = false;
@@ -45,19 +46,20 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async (transport) => {
-        const providerNameAndSignature = getProviderNameAndSignature(provider);
+        const providerNameAndSignature = getProvider(exchangeType, provider);
+
+        if (!providerNameAndSignature)
+          throw new Error("Could not get provider infos");
+
         const exchange = new ExchangeTransport(
           transport,
           exchangeType,
           rateType
         );
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
-        const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
-        const mainPayoutCurrency = getAccountCurrency(payoutAccount);
         const refundCurrency = getAccountCurrency(refundAccount);
-        if (mainPayoutCurrency.type !== "CryptoCurrency")
-          throw new Error("This should be a cryptocurrency");
+
         if (refundCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
 
@@ -65,7 +67,6 @@ const completeExchange = (
           refundAccount,
           transaction
         );
-
         if (unsubscribed) return;
 
         const { errors, estimatedFees } =
@@ -87,25 +88,38 @@ const completeExchange = (
         );
         if (unsubscribed) return;
 
-        const goodSign = <Buffer>(
-          secp256k1.signatureExport(Buffer.from(signature, "hex"))
-        );
+        const bufferSignature = Buffer.from(signature, "hex");
+        /**
+         * For the Fund and Swap flow, the signature sent to the nano needs to
+         * be in DER format, which is not the case for Sell flow. Hence the
+         * ternary.
+         * cf. https://github.com/LedgerHQ/app-exchange/blob/e67848f136dc7227521791b91f608f7cd32e7da7/src/check_tx_signature.c#L14-L32
+         */
+        const goodSign =
+          exchangeType === ExchangeTypes.Sell
+            ? bufferSignature
+            : Buffer.from(secp256k1.signatureExport(bufferSignature));
+
+        if (!goodSign) {
+          throw new Error("Could not check provider signature");
+        }
+
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
         const payoutAddressParameters = await perFamily[
-          mainPayoutCurrency.family
+          refundCurrency.family
         ].getSerializedAddressParameters(
-          payoutAccount.freshAddressPath,
-          payoutAccount.derivationMode,
-          mainPayoutCurrency.id
+          refundAccount.freshAddressPath,
+          refundAccount.derivationMode,
+          refundCurrency.id
         );
         if (unsubscribed) return;
 
         const {
           config: payoutAddressConfig,
           signature: payoutAddressConfigSignature,
-        } = getCurrencyExchangeConfig(mainPayoutCurrency);
+        } = getCurrencyExchangeConfig(refundCurrency);
 
         try {
           await exchange.checkPayoutAddress(
@@ -117,45 +131,10 @@ const completeExchange = (
           // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
-              accountName: payoutAccount.name,
-            });
-          }
-
-          throw e;
-        }
-
-        // Swap specific checks to confirm the refund address is correct.
-        if (unsubscribed) return;
-        const refundAddressParameters = await perFamily[
-          refundCurrency.family
-        ].getSerializedAddressParameters(
-          refundAccount.freshAddressPath,
-          refundAccount.derivationMode,
-          refundCurrency.id
-        );
-        if (unsubscribed) return;
-
-        const {
-          config: refundAddressConfig,
-          signature: refundAddressConfigSignature,
-        } = getCurrencyExchangeConfig(refundCurrency);
-        if (unsubscribed) return;
-
-        try {
-          await exchange.checkRefundAddress(
-            refundAddressConfig,
-            refundAddressConfigSignature,
-            refundAddressParameters.addressParameters
-          );
-          log("exchange", "checkrefund address");
-        } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
-          if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            log("exchange", "transport error");
-            throw new WrongDeviceForAccount(undefined, {
               accountName: refundAccount.name,
             });
           }
+
           throw e;
         }
 
