@@ -540,6 +540,11 @@ const envDefinitions = {
     parser: intParser,
     desc: "version used for the platform api",
   },
+  MARKET_API_URL: {
+    def: "https://proxycg.api.live.ledger.com/api/v3",
+    parser: stringParser,
+    desc: "Market data api",
+  },
 };
 
 const getDefinition = (name: string): EnvDef<any> | null | undefined =>
