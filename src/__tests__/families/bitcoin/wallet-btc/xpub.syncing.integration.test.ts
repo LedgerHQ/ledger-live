@@ -62,6 +62,7 @@ describe("xpub integration sync", () => {
       coin: "dgb",
       explorerVersion: "v3",
     },
+    /*
     {
       xpub: "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz", // 3000ms
       derivationMode: DerivationModes.LEGACY,
@@ -71,6 +72,7 @@ describe("xpub integration sync", () => {
       coin: "btc",
       explorerVersion: "v3",
     },
+    */
     {
       xpub: "xpub6D4waFVPfPCpRvPkQd9A6n65z3hTp6TvkjnBHG5j2MCKytMuadKgfTUHqwRH77GQqCKTTsUXSZzGYxMGpWpJBdYAYVH75x7yMnwJvra1BUJ", // 5400ms
       derivationMode: DerivationModes.LEGACY,
