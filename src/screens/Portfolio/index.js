@@ -34,6 +34,7 @@ import { PortfolioHistoryList } from "./PortfolioHistory";
 
 import FabActions from "../../components/FabActions";
 import LText from "../../components/LText";
+import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -163,53 +164,56 @@ export default function PortfolioScreen({ navigation }: Props) {
   );
 
   return (
-    <SafeAreaView
-      style={[
-        styles.root,
-        {
-          paddingTop: extraStatusBarPadding,
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
-      {!showingPlaceholder ? (
-        <StickyHeader
-          scrollY={scrollY}
-          portfolio={portfolio}
-          counterValueCurrency={counterValueCurrency}
-        />
-      ) : null}
+    <>
+      <FirmwareUpdateBanner />
+      <SafeAreaView
+        style={[
+          styles.root,
+          {
+            paddingTop: extraStatusBarPadding,
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
+        {!showingPlaceholder ? (
+          <StickyHeader
+            scrollY={scrollY}
+            portfolio={portfolio}
+            counterValueCurrency={counterValueCurrency}
+          />
+        ) : null}
 
-      <RequireTerms />
+        <RequireTerms />
 
-      <TrackScreen category="Portfolio" accountsLength={accounts.length} />
+        <TrackScreen category="Portfolio" accountsLength={accounts.length} />
 
-      {areAccountsEmpty && <Header />}
+        {areAccountsEmpty && <Header />}
 
-      <AnimatedFlatListWithRefreshControl
-        ref={ref}
-        data={data}
-        style={styles.inner}
-        renderItem={({ item }) => item}
-        keyExtractor={(item, index) => String(index)}
-        showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={[2]}
-        onScroll={Animated.event(
-          [
-            {
-              nativeEvent: {
-                contentOffset: { y: scrollY },
+        <AnimatedFlatListWithRefreshControl
+          ref={ref}
+          data={data}
+          style={styles.inner}
+          renderItem={({ item }) => item}
+          keyExtractor={(item, index) => String(index)}
+          showsVerticalScrollIndicator={false}
+          stickyHeaderIndices={[2]}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: { y: scrollY },
+                },
               },
-            },
-          ],
-          { useNativeDriver: true },
-        )}
-        testID={
-          accounts.length ? "PortfolioAccountsList" : "PortfolioEmptyAccount"
-        }
-      />
-      <MigrateAccountsBanner />
-    </SafeAreaView>
+            ],
+            { useNativeDriver: true },
+          )}
+          testID={
+            accounts.length ? "PortfolioAccountsList" : "PortfolioEmptyAccount"
+          }
+        />
+        <MigrateAccountsBanner />
+      </SafeAreaView>
+    </>
   );
 }
 
