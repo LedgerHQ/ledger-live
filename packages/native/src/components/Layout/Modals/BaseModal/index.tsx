@@ -1,13 +1,15 @@
 import React from "react";
 import ReactNativeModal, { ModalProps } from "react-native-modal";
-import styled, { useTheme } from "styled-components/native";
+import styled from "styled-components/native";
 import { StyleProp, ViewStyle } from "react-native";
 
 import sizes from "../../../../helpers/getDeviceSize";
 import Link from "../../../cta/Link";
 import CloseMedium from "@ledgerhq/icons-ui/native/CloseMedium";
-import FlexBox from "../../../Layout/Flex";
 import Text from "../../../Text";
+import { IconOrElementType } from "../../../Icon/type";
+import { BoxedIcon } from "../../../Icon";
+import { Flex } from "../../index";
 
 const { width, height } = sizes;
 
@@ -17,12 +19,12 @@ export type BaseModalProps = {
   modalStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   preventBackdropClick?: boolean;
-  Icon?: ((props: { size?: number; color?: string }) => React.ReactNode) | React.ReactNode;
+  Icon?: IconOrElementType;
   iconColor?: string;
   title?: string;
   description?: string;
   subtitle?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 } & Partial<ModalProps>;
 
 const Container = styled.View`
@@ -57,7 +59,6 @@ const StyledDescription = styled(Text).attrs({
   variant: "body",
   color: "neutral.c80",
 })`
-  text-transform: capitalize;
   margin-top: ${(p) => p.theme.space[2]}px;
 `;
 
@@ -66,6 +67,7 @@ const StyledSubtitle = styled(Text).attrs({
   color: "neutral.c80",
 })`
   text-transform: uppercase;
+  text-align: center;
   margin-bottom: ${(p) => p.theme.space[2]}px;
 `;
 
@@ -88,8 +90,6 @@ export default function BaseModal({
   children,
   ...rest
 }: BaseModalProps): React.ReactElement {
-  const { colors } = useTheme();
-
   const backDropProps = preventBackdropClick
     ? {}
     : {
@@ -117,14 +117,13 @@ export default function BaseModal({
         </CloseContainer>
         <HeaderContainer>
           {Icon && (
-            <FlexBox mb={24}>
-              {typeof Icon === "function"
-                ? Icon({
-                    size: 48,
-                    color: iconColor || colors.neutral.c100,
-                  })
-                : Icon}
-            </FlexBox>
+            <Flex mb={7}>
+              {React.isValidElement(Icon) ? (
+                Icon
+              ) : (
+                <BoxedIcon size={64} Icon={Icon} iconSize={24} iconColor={iconColor} />
+              )}
+            </Flex>
           )}
           {subtitle && <StyledSubtitle>{subtitle}</StyledSubtitle>}
           {title && <StyledTitle>{title}</StyledTitle>}
