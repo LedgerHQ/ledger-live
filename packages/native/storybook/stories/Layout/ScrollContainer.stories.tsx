@@ -2,18 +2,9 @@ import React from "react";
 import { storiesOf } from "../storiesOf";
 import { boolean } from "@storybook/addon-knobs";
 import ScrollContainer from "../../../src/components/Layout/ScrollContainer";
-import { View } from "react-native";
 import { action } from "@storybook/addon-actions";
-
-const Element = ({ isEven = false }: { isEven?: boolean }) => (
-  <View
-    style={{
-      backgroundColor: isEven ? "orange" : "blue",
-      width: 200,
-      height: 200,
-    }}
-  />
-);
+import Text from "../../../src/components/Text";
+import Flex from "../../../src/components/Layout/Flex";
 
 /*
  ** TODO: use react-native-reanimated hooks to generate onScroll
@@ -22,14 +13,16 @@ const Element = ({ isEven = false }: { isEven?: boolean }) => (
  */
 const ScrollContainerStory = () => (
   <ScrollContainer
-    contentContainerStyle={{ flex: 1 }}
+    width="100%"
     horizontal={boolean("Horizontal", false)}
     onScroll={action("scroll")}
   >
     {Array(20)
       .fill(0)
       .map((_, i) => (
-        <Element isEven={i % 2 === 0} key={i} />
+        <Flex height="100px" key={i} bg={i % 2 ? "primary.c20" : "neutral.c20"} p={4}>
+          <Text variant="body">{i + 1}</Text>
+        </Flex>
       ))}
   </ScrollContainer>
 );
