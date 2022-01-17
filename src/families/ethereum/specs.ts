@@ -406,6 +406,7 @@ const bsc: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Binance Smart Chain",
   },
+  dependency: "Ethereum",
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
@@ -452,6 +453,7 @@ const polygon: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Polygon",
   },
+  dependency: "Ethereum",
   testTimeout: 2 * 60 * 1000,
   transactionCheck: ({ maxSpendable }) => {
     invariant(
