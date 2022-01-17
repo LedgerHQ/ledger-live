@@ -11,8 +11,9 @@ type AlertType = "info" | "warning" | "error";
 
 export interface AlertProps {
   type?: AlertType;
-  title: string;
+  title?: string;
   showIcon?: boolean;
+  children?: React.ReactNode;
 }
 
 const icons = {
@@ -52,7 +53,12 @@ const StyledAlertContainer = styled(FlexBox).attrs<Partial<AlertProps>>((p) => (
   align-items: center;
 `;
 
-export default function Alert({ type = "info", title, showIcon = true }: AlertProps): JSX.Element {
+export default function Alert({
+  type = "info",
+  title,
+  showIcon = true,
+  children,
+}: AlertProps): JSX.Element {
   const theme = useTheme();
   const textColor = getColor(theme, alertColors[type || "info"].color);
   return (
@@ -62,9 +68,12 @@ export default function Alert({ type = "info", title, showIcon = true }: AlertPr
           {icons[type || "info"]({ size: 20, color: textColor })}
         </StyledIconContainer>
       )}
-      <Text color={textColor} flexShrink={1}>
-        {title}
-      </Text>
+      {title && (
+        <Text color={textColor} flexShrink={1}>
+          {title}
+        </Text>
+      )}
+      {children}
     </StyledAlertContainer>
   );
 }
