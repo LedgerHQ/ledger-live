@@ -66,7 +66,7 @@ test("sort by marketcap", () => {
     "ethereum",
     "ethereum/erc20/0x_project",
     "ethereum/erc20/holotoken",
-    "ethereum/erc20/xstable.protocol",
+    "ethereum/erc20/xstable_protocol",
     "ethereum/erc20/hydro_protocol",
     "ethereum/erc20/xensor",
     "polygon/erc20/holotoken",
