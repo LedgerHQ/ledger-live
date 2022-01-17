@@ -35,7 +35,8 @@ const extraProperties = store => {
   const language = languageSelector(state);
   const devices = knownDevicesSelector(state);
 
-  const lastDevice = lastSeenDeviceSelector(state) || devices[0];
+  const lastDevice =
+    lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
