@@ -21,9 +21,7 @@ export async function calculateAmount({
 
   const amount =
     transaction.useAllAmount == true
-      ? // as fees are based on a currency conversion, we stay
-        // on the safe side here and double the estimate for "max spendable"
-        await estimateMaxSpendable({ account })
+      ? await estimateMaxSpendable({ account })
       : transaction.amount;
 
   return {
