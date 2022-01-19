@@ -4,7 +4,7 @@ PODS:
   - CocoaAsyncSocket (7.6.5)
   - djinni_objc (4.19.1)
   - DoubleConversion (1.1.6)
-  - EXApplication (4.0.0):
+  - EXApplication (4.0.1):
     - ExpoModulesCore
   - EXBarCodeScanner (11.1.2):
     - EXImageLoader
@@ -15,20 +15,20 @@ PODS:
     - ExpoModulesCore
   - EXConstants (12.1.3):
     - ExpoModulesCore
-  - EXErrorRecovery (3.0.3):
+  - EXErrorRecovery (3.0.4):
     - ExpoModulesCore
   - EXFileSystem (13.0.3):
     - ExpoModulesCore
-  - EXFont (10.0.3):
+  - EXFont (10.0.4):
     - ExpoModulesCore
   - EXImageLoader (3.0.0):
     - ExpoModulesCore
     - React-Core
-  - EXKeepAwake (10.0.0):
+  - EXKeepAwake (10.0.1):
     - ExpoModulesCore
-  - Expo (43.0.1):
+  - Expo (43.0.4):
     - ExpoModulesCore
-  - ExpoModulesCore (0.4.6):
+  - ExpoModulesCore (0.4.9):
     - React-Core
   - FBLazyVector (0.65.1)
   - FBReactNativeSpec (0.65.1):
@@ -265,9 +265,9 @@ PODS:
     - React
   - react-native-locale (0.0.19):
     - React
-  - react-native-netinfo (6.0.2):
+  - react-native-netinfo (6.2.1):
     - React-Core
-  - react-native-pager-view (5.4.7):
+  - react-native-pager-view (5.4.9):
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -284,7 +284,7 @@ PODS:
     - React-Core
   - react-native-version-number (0.3.6):
     - React
-  - react-native-webview (11.14.0):
+  - react-native-webview (11.15.0):
     - React-Core
   - React-perflogger (0.65.1)
   - React-RCTActionSheet (0.65.1):
@@ -374,7 +374,7 @@ PODS:
     - React
   - RNOS (1.2.6):
     - React
-  - RNReanimated (2.2.2):
+  - RNReanimated (2.2.4):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -403,12 +403,12 @@ PODS:
     - React-RCTVibration
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.9.0):
+  - RNScreens (3.10.1):
     - React-Core
     - React-RCTImage
-  - RNSentry (3.1.1):
+  - RNSentry (3.2.10):
     - React-Core
-    - Sentry (= 7.3.0)
+    - Sentry (= 7.7.0)
   - RNShare (6.5.0):
     - React-Core
   - RNSVG (12.1.1):
@@ -421,9 +421,9 @@ PODS:
   - SDWebImageWebPCoder (0.8.4):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.10)
-  - Sentry (7.3.0):
-    - Sentry/Core (= 7.3.0)
-  - Sentry/Core (7.3.0)
+  - Sentry (7.7.0):
+    - Sentry/Core (= 7.7.0)
+  - Sentry/Core (7.7.0)
   - TcpSockets (4.0.0):
     - React
   - Yoga (1.14.0)
@@ -681,17 +681,17 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   djinni_objc: 54ab066f337b37aceaba6d020b1e6964eead00ba
   DoubleConversion: 831926d9b8bf8166fd87886c4abab286c2422662
-  EXApplication: 0e15240e4d125b62f1cae48759ffbbd32b9286a6
+  EXApplication: bdc8dc27713235565da1029a34385229f31b8e08
   EXBarCodeScanner: cc450529b9c5e02dd9e2498cc0dddf153f120dfe
   EXCamera: 03d69135ceb6f5f18f37b63eddb63d7643b65c42
   EXConstants: 6d585d93723b18d7a8c283591a335609e3bc153e
-  EXErrorRecovery: ac2622400a32be84604591f70d0efff416e4b9a2
+  EXErrorRecovery: deea88a01d38f8b1c1181b4e1d179b0ba0e4bb5b
   EXFileSystem: 99aac7962c11c680681819dd9cbca24e20e5b1e7
-  EXFont: 2e1c6fe726d008a039db80df95f48b4921b7fe59
+  EXFont: 1fb13af43dc517c01c0ff21a6e32f9f9bf2ea602
   EXImageLoader: 939451be6f7b731aaa6588920b90743f20121a4d
-  EXKeepAwake: 8aa32396a5972d26e75e538603aad0f032396503
-  Expo: cb542da0f7c8565a58231488066262f079eb1831
-  ExpoModulesCore: eea3472f70e921feb4dd24387662cbe0b67c9f8d
+  EXKeepAwake: b571c2ad8323b2fced6e907766e2549f75119471
+  Expo: 363a3f3c60d5a1d4f8badb29a869005487f2d9e4
+  ExpoModulesCore: e41ed0b72daeac74731816ad7997d639f0115a9d
   FBLazyVector: 33c82491102f20ecddb6c6a2c273696ace3191e0
   FBReactNativeSpec: df8f81d2a7541ee6755a047b398a5cb5a72acd0e
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
@@ -718,15 +718,15 @@ SPEC CHECKSUMS:
   react-native-config: 72d948053a442779b3178fddd571e37f118ef606
   react-native-fingerprint-scanner: ac6656f18c8e45a7459302b84da41a44ad96dbbe
   react-native-locale: bd8edf0e51706d469af3e2fa568a8102213a3139
-  react-native-netinfo: 92e6e4476eb8bf6fc2d7c0a6ca0a1406f663d73a
-  react-native-pager-view: 741e7606ee2f6e399fc7da777f5519454a4b38c5
+  react-native-netinfo: 3d3769f0d65de15c83a9bf1346f8be71de5a24bf
+  react-native-pager-view: 3ee7d4c7697fb3ef788346e834a60cca97ed8540
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 584dc04881deb49474363f3be89e4ca0e854c057
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-udp: f0fbf5386c45af5523dc143a86afe2cbf29f764e
   react-native-version-number: b415bbec6a13f2df62bf978e85bc0d699462f37f
-  react-native-webview: d70bc760daaa0e2667dec569b93014882565819c
+  react-native-webview: e89bf2dba26a04cda967814df3ed1be99f291233
   React-perflogger: fd28ee1f2b5b150b00043f0301d96bd417fdc339
   React-RCTActionSheet: 7f3fa0855c346aa5d7c60f9ced16e067db6d29fa
   React-RCTAnimation: 2119a18ee26159004b001bc56404ca5dbaae6077
@@ -749,19 +749,19 @@ SPEC CHECKSUMS:
   RNKeychain: f75b8c8b2f17d3b2aa1f25b4a0ac5b83d947ff8f
   RNLibLedgerCore: 6d8a54abc2dc2ffa38c33fbb70d5247b97a0091e
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNReanimated: ad24db8af24e3fe1b5c462785bc3db8d5baae2ee
-  RNScreens: 4d79118be80f79fa1f4aa131909a1d6e86280af3
-  RNSentry: 49abc89b0190b4c8afe0fa5d065f98e36cb53233
+  RNReanimated: f58d4f027fcea2197b63588138decdf5f8ac5e89
+  RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
+  RNSentry: 04bb48bfdd435f5b218cf363f89e6419e9a2460c
   RNShare: 047d42214f875d731bde73a2b67418638af85ad9
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
   SDWebImageWebPCoder: f93010f3f6c031e2f8fb3081ca4ee6966c539815
-  Sentry: 9a4e621430e2dae4477d791f2f7e905720b6efbf
+  Sentry: e58e062056a061ae1145e22ad3dff6e506bff177
   TcpSockets: 4ef55305239923b343ed0a378b1fac188b1373b0
   Yoga: aa0cb45287ebe1004c02a13f279c55a95f1572f4
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
 PODFILE CHECKSUM: 397676af9b9385a0e0f9589073ee83f88924a637
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.10.1
