@@ -28,6 +28,8 @@ export type TabsProps = BaseTabsProps & {
 };
 
 export const TabsContainer = styled(FlexBox).attrs({
+  // Avoid conflict with styled-system's size property by nulling size and renaming it
+  size: undefined,
   flexDirection: "row",
   alignItems: "stretch",
 })`

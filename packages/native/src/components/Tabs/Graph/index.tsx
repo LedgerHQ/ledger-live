@@ -21,6 +21,8 @@ const TabBox = styled(TouchableOpacity)`
 `;
 
 const TabText = styled(Text).attrs<GraphTabItemProps>((p) => ({
+  // Avoid conflict with styled-system's size property by nulling size and renaming it
+  size: undefined,
   lineHeight: p.size === "medium" ? "36px" : "26px",
   textAlign: "center",
   borderRadius: 48,
