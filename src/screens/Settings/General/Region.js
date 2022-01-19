@@ -1,6 +1,6 @@
 /* @flow */
 import { connect } from "react-redux";
-import _ from "lodash";
+import upperFirst from "lodash/upperFirst";
 import { setLocale } from "../../../actions/settings";
 import { localeSelector } from "../../../reducers/settings";
 import type { State } from "../../../reducers";
@@ -10,7 +10,7 @@ import regionByKeys from "./regions.json";
 const items = Object.keys(regionByKeys)
   .map(key => {
     const { languageDisplayName, regionDisplayName } = regionByKeys[key];
-    const label = `${_.upperFirst(regionDisplayName)} (${_.upperFirst(
+    const label = `${upperFirst(regionDisplayName)} (${upperFirst(
       languageDisplayName,
     )})`;
     return { value: key, label };
