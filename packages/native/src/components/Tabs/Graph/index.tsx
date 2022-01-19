@@ -4,24 +4,34 @@ import Text from "../../Text";
 import { TouchableOpacity } from "react-native";
 import TemplateTabs, { BaseTabsProps, TabItemProps } from "../TemplateTabs";
 
-const TabBbx = styled(TouchableOpacity)`
+type GraphTabSize = "small" | "medium";
+
+type GraphTabsProps = BaseTabsProps & {
+  size?: GraphTabSize;
+};
+
+type GraphTabItemProps = TabItemProps & {
+  size?: GraphTabSize;
+};
+
+const TabBox = styled(TouchableOpacity)`
   text-align: center;
   margin: auto;
   flex: 1;
 `;
 
-const TabText = styled(Text).attrs({
-  lineHeight: "48px",
+const TabText = styled(Text).attrs<GraphTabItemProps>((p) => ({
+  lineHeight: p.size === "medium" ? "36px" : "26px",
   textAlign: "center",
   borderRadius: 48,
-  px: 24,
-  height: 48,
-})``;
+  px: p.theme.space[p.size === "medium" ? 7 : 6],
+  height: p.size === "medium" ? 36 : 26,
+}))``;
 
-const StyledTabs = styled(TemplateTabs)`
+const StyledTabs = styled(TemplateTabs)<GraphTabsProps>`
   border: ${(p) => `1px solid ${p.theme.colors.palette.neutral.c40}`};
   border-radius: 35px;
-  padding: 4px;
+  padding: ${(p) => `${p.theme.space[p.size === "medium" ? 2 : 1]}px`};
 `;
 
 export const GraphTab = ({
@@ -30,21 +40,30 @@ export const GraphTab = ({
   label,
   activeColor = "neutral.c100",
   activeBg = "primary.c20",
-}: TabItemProps): React.ReactElement => {
+  size = "medium",
+}: GraphTabItemProps): React.ReactElement => {
   return (
-    <TabBbx onPress={onPress}>
+    <TabBox onPress={onPress}>
       {isActive ? (
-        <TabText variant="body" bg={activeBg} color={activeColor} fontWeight="semiBold">
+        <TabText
+          variant="small"
+          size={size}
+          bg={activeBg}
+          color={activeColor}
+          fontWeight="semiBold"
+        >
           {label}
         </TabText>
       ) : (
-        <TabText variant="body">{label}</TabText>
+        <TabText variant="small" size={size}>
+          {label}
+        </TabText>
       )}
-    </TabBbx>
+    </TabBox>
   );
 };
 
-const GraphTabs = (props: BaseTabsProps): React.ReactElement => (
+const GraphTabs = (props: GraphTabsProps): React.ReactElement => (
   <StyledTabs {...props} Item={GraphTab} />
 );
 

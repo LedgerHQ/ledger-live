@@ -17,7 +17,7 @@ const GraphTabsStory = () => {
       )}
       activeBg={select(
         "activeBg",
-        ["primary.c20", "primary.c100", "neutral.c20", "success.c50", undefined],
+        ["primary.c20", "primary.c100", "neutral.c20", "success.c50", "neutral.c30", undefined],
         "primary.c20",
       )}
       activeColor={select(
@@ -25,6 +25,7 @@ const GraphTabsStory = () => {
         ["primary.c20", "primary.c100", "neutral.c100", "neutral.c00", "success.c50", undefined],
         "neutral.c100",
       )}
+      size={select("size", ["medium", "small"], "medium")}
     />
   );
 };
