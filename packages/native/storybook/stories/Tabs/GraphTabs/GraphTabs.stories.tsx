@@ -2,7 +2,7 @@ import { storiesOf } from "../../storiesOf";
 
 import React, { useState } from "react";
 import GraphTabs from "../../../../src/components/Tabs/Graph";
-import { array, select } from "@storybook/addon-knobs";
+import { array, select, boolean } from "@storybook/addon-knobs";
 
 const GraphTabsStory = () => {
   const [activeIndex, changeIndex] = useState(1);
@@ -26,6 +26,7 @@ const GraphTabsStory = () => {
         "neutral.c100",
       )}
       size={select("size", ["medium", "small"], "medium")}
+      disabled={boolean("disabled", false)}
     />
   );
 };

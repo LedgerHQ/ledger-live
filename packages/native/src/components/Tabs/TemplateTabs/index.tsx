@@ -4,10 +4,11 @@ import FlexBox from "../../Layout/Flex";
 
 export type BaseTabsProps = {
   labels: string[];
-  activeIndex: number;
+  activeIndex?: number;
   onChange: (newIndex: number) => void;
   activeColor?: string;
   activeBg?: string;
+  disabled?: boolean;
 };
 
 export type TabItemProps = Partial<BaseTabsProps> & {
@@ -17,6 +18,7 @@ export type TabItemProps = Partial<BaseTabsProps> & {
   onPress: () => void;
   activeColor?: string;
   activeBg?: string;
+  disabled?: boolean;
 };
 
 export type TabsProps = BaseTabsProps & {
@@ -33,7 +35,7 @@ export const TabsContainer = styled(FlexBox).attrs({
 `;
 
 const TemplateTabsGroup = (props: TabsProps): React.ReactElement => {
-  const { labels, activeIndex, onChange, Item, activeColor, activeBg } = props;
+  const { labels, activeIndex, onChange, Item } = props;
   return (
     <TabsContainer {...props}>
       {labels.map((label, index) => (
@@ -44,8 +46,6 @@ const TemplateTabsGroup = (props: TabsProps): React.ReactElement => {
           index={index}
           isActive={index === activeIndex}
           onPress={() => onChange(index)}
-          activeColor={activeColor}
-          activeBg={activeBg}
         />
       ))}
     </TabsContainer>

@@ -41,21 +41,22 @@ export const GraphTab = ({
   activeColor = "neutral.c100",
   activeBg = "primary.c20",
   size = "medium",
+  disabled,
 }: GraphTabItemProps): React.ReactElement => {
   return (
-    <TabBox onPress={onPress}>
+    <TabBox onPress={onPress} disabled={disabled}>
       {isActive ? (
         <TabText
           variant="small"
           size={size}
           bg={activeBg}
-          color={activeColor}
+          color={disabled ? "neutral.c70" : activeColor}
           fontWeight="semiBold"
         >
           {label}
         </TabText>
       ) : (
-        <TabText variant="small" size={size} color={"neutral.c90"}>
+        <TabText variant="small" size={size} color={disabled ? "neutral.c70" : "neutral.c90"}>
           {label}
         </TabText>
       )}
