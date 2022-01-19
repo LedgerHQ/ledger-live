@@ -15,7 +15,7 @@ const NativeLocale = {
     full: "EEEE, MMMM d, y",
   },
   localeIdentifier: "en_US",
-  preferredLanguages: ["en", "fr-FR"],
+  preferredLanguages: ["en"],
   quotationBeginDelimiterKey: "“",
   quotationEndDelimiterKey: "”",
 };

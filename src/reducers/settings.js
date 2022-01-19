@@ -22,6 +22,7 @@ import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/type
 import type { DeviceModelInfo } from "@ledgerhq/live-common/lib/types/manager";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import type { State } from ".";
+import { getDefaultLanguageLocale } from "../languages";
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
@@ -118,7 +119,7 @@ export const INITIAL_STATE: SettingsState = {
   osTheme: undefined,
   carouselVisibility: 0,
   discreetMode: false,
-  language: "en",
+  language: getDefaultLanguageLocale(),
   swap: {
     hasAcceptedIPSharing: false,
     acceptedProviders: [],
@@ -490,7 +491,8 @@ export const themeSelector = (state: State) => state.settings.theme;
 
 export const osThemeSelector = (state: State) => state.settings.osTheme;
 
-export const languageSelector = (state: State) => state.settings.language;
+export const languageSelector = (state: State) =>
+  state.settings.language || getDefaultLanguageLocale();
 
 export const swapHasAcceptedIPSharingSelector = (state: State) =>
   state.settings.swap.hasAcceptedIPSharing;
