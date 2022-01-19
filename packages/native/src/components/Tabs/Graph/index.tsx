@@ -55,7 +55,7 @@ export const GraphTab = ({
           {label}
         </TabText>
       ) : (
-        <TabText variant="small" size={size}>
+        <TabText variant="small" size={size} color={"neutral.c90"}>
           {label}
         </TabText>
       )}
