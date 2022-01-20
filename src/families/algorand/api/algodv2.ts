@@ -37,7 +37,6 @@ export const getAccount = async (address: string): Promise<AlgoAccount> => {
   };
 };
 
-// TODO Cache
 export const getTransactionParams =
   async (): Promise<AlgoTransactionParams> => {
     const { data } = await network({
@@ -56,12 +55,13 @@ export const getTransactionParams =
   };
 
 export const broadcastTransaction = async (
-  payload: string
+  payload: Buffer
 ): Promise<string> => {
   const { data }: { data: AlgoTransactionBroadcastResponse } = await network({
     method: "POST",
     url: fullUrl(`/transactions`),
     data: payload,
+    headers: { "Content-Type": "application/x-binary" },
   });
 
   return data.txId;
