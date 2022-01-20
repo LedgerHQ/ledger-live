@@ -23,9 +23,13 @@ jobs:
     outputs:
       forked: ${{ steps.forked.outputs.forked }}
     steps:
+      - name: echo
+        run: |
+          echo ${{ github.event.pull_request.head.repo.full_name }}
+          echo ${{ github.repository }}
       - name: check if we are on a forked repo
         id: forked
-        run: echo "::set-output name=forked::$(${{github.event.pull_request.head.repo.full_name != github.repository}})"
+        run: echo "::set-output name=forked::$(${{ github.event.pull_request.head.repo.full_name != 'ledgerhq/ledger-live-mobile' }})"
 
   start-runner:
     needs: [check-if-fork]
