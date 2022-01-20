@@ -1,6 +1,6 @@
 // @flow
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View, Platform } from "react-native";
+import { StyleSheet, View, Platform, NativeModules } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
@@ -63,9 +63,15 @@ export default function SelectDevice({
   const [devices, setDevices] = useState([]);
 
   const onPairNewDevice = useCallback(() => {
-    navigation.navigate(ScreenName.PairDevices, {
-      onDone: autoSelectOnAdd ? handleOnSelect : null,
-    });
+    NativeModules.BluetoothHelperModule.prompt()
+      .then(() =>
+        navigation.navigate(ScreenName.PairDevices, {
+          onDone: autoSelectOnAdd ? handleOnSelect : null,
+        }),
+      )
+      .catch(() => {
+        /* ignore */
+      });
   }, [autoSelectOnAdd, navigation, handleOnSelect]);
 
   const renderItem = useCallback(
