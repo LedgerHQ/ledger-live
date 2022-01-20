@@ -20,7 +20,6 @@ import { API, apiForCurrency, Tx } from "../../api/Ethereum";
 import { digestTokenAccounts, prepareTokenAccounts } from "./modules";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { encodeNftId, isNFTActive, nftsFromOperations } from "../../nft";
-import { NFT_VERSION } from "./versions";
 
 export const getAccountShape: GetAccountShape = async (
   infoInput,
@@ -40,14 +39,11 @@ export const getAccountShape: GetAccountShape = async (
   const initialStableOperations = initialAccount
     ? stableOperations(initialAccount)
     : [];
-  const shouldNFTBeActive = isNFTActive(currency);
   // fetch transactions, incrementally if possible
   const mostRecentStableOperation = initialStableOperations[0];
   // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
   const syncHash =
     JSON.stringify(blacklistedTokenIds || []) +
-    "_" +
-    shouldNFTBeActive +
     "_" +
     listTokensForCryptoCurrency(currency, {
       withDelisted: true,
@@ -57,8 +53,7 @@ export const getAccountShape: GetAccountShape = async (
     initialAccount &&
     areAllOperationsLoaded(initialAccount) &&
     mostRecentStableOperation &&
-    !outdatedSyncHash &&
-    NFT_VERSION
+    !outdatedSyncHash
       ? mostRecentStableOperation.blockHash
       : undefined;
   const txsP = fetchAllTransactions(api, address, pullFromBlockHash);
