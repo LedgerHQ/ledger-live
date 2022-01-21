@@ -125,15 +125,22 @@ class Bitcoin extends Base {
     account: number,
     index: number
   ): string {
-    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
-      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    if (
+      Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ]
+    ) {
+      return Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ];
     }
     switch (derivationMode) {
       case DerivationModes.TAPROOT:
-        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-          this.getTaprootAddress(xpub, account, index);
+        Base.addressCache[
+          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+        ] = this.getTaprootAddress(xpub, account, index);
         return Base.addressCache[
-          `${derivationMode}-${xpub}-${account}-${index}`
+          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
         ];
       default:
         return super.getAddress(derivationMode, xpub, account, index);
