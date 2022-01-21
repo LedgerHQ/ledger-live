@@ -29,11 +29,11 @@ jobs:
           echo ${{ github.repository }}
       - name: check if we are on a forked repo
         id: forked
-        run: echo "::set-output name=forked::$(${{ github.event.pull_request.head.repo.full_name != 'ledgerhq/ledger-live-mobile' }})"
+        run: echo "::set-output name=forked::$(${{ github.event.pull_request.head.repo.full_name != github.repository }})"
 
   start-runner:
     needs: [check-if-fork]
-    if: ${{ !needs.check-if-fork.outputs.forked }}
+    if: ${{ !needs.check-if-fork.outputs.forked && github.actor != 'dependabot[bot]' }}
     name: "start ec2 instance (Linux)"
     uses: ledgerhq/actions/.github/workflows/start-linux-runner.yml@main
     with:
