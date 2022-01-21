@@ -115,7 +115,7 @@ jobs:
 
   bundle-apk-guest:
     needs: [check-if-fork]
-    if: needs.check-if-fork.outputs.forked
+    if: ${{ needs.check-if-fork.outputs.forked || github.actor == 'dependabot[bot]' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
