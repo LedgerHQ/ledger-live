@@ -11,7 +11,7 @@ import { DerivationModes } from "../types";
 import { ICrypto } from "./types";
 import Base from "./base";
 
-class Zen implements ICrypto {
+class Zen extends Base {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
 

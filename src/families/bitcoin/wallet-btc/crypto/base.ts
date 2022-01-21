@@ -129,30 +129,31 @@ class Base implements ICrypto {
         `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
       ];
     }
+    const res = this.customGetAddress(derivationMode, xpub, account, index);
+    Base.addressCache[
+      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+    ] = res;
+    return res;
+  }
+
+  customGetAddress(
+    derivationMode: string,
+    xpub: string,
+    account: number,
+    index: number
+  ): string {
     switch (derivationMode) {
       case DerivationModes.LEGACY:
-        Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ] = this.getLegacyAddress(xpub, account, index);
-        break;
+        return this.getLegacyAddress(xpub, account, index);
       case DerivationModes.SEGWIT:
-        Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ] = this.getSegWitAddress(xpub, account, index);
-        break;
+        return this.getSegWitAddress(xpub, account, index);
       case DerivationModes.NATIVE_SEGWIT:
-        Base.addressCache[
-          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-        ] = this.getNativeSegWitAddress(xpub, account, index);
-        break;
+        return this.getNativeSegWitAddress(xpub, account, index);
       default:
         throw new Error(`Invalid derivation Mode: ${derivationMode}`);
     }
-    return Base.addressCache[
-      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-    ];
   }
-
+ 
   // infer address type from its syntax
   getDerivationMode(address: string): DerivationModes {
     if (address.match("^(bc1|tb1).*")) {

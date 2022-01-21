@@ -11,7 +11,7 @@ import { DerivationModes } from "../types";
 import { ICrypto } from "./types";
 import Base from "./base";
 
-class ZCash implements ICrypto {
+class ZCash extends Base {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
 

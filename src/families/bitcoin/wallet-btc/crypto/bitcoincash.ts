@@ -41,26 +41,13 @@ class BitcoinCash implements ICrypto {
   }
 
   // get address given an address type
-  getAddress(
+  customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
   ): string {
-    if (
-      Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ]
-    ) {
-      return Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ];
-    }
-    const address = this.getLegacyBitcoinCashAddress(xpub, account, index);
-    Base.addressCache[
-      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-    ] = address;
-    return address;
+    return this.getLegacyBitcoinCashAddress(xpub, account, index);
   }
 
   // infer address type from its syntax
