@@ -42,13 +42,13 @@ class Base implements ICrypto {
   }
 
   protected getPubkeyAt(xpub: string, account: number, index: number): Buffer {
-    if (!Base.bech32Cache[xpub]) {
+    if (!Base.bech32Cache[`${this.network.name}-${xpub}`]) {
       const buffer: Buffer = bs58.decode(xpub);
       const depth: number = buffer[4];
       const i: number = buffer.readUInt32BE(9);
       const chainCode: Buffer = buffer.slice(13, 45);
       const publicKey: Buffer = buffer.slice(45, 78);
-      Base.bech32Cache[xpub] = new BIP32(
+      Base.bech32Cache[`${this.network.name}-${xpub}`] = new BIP32(
         publicKey,
         chainCode,
         this.network,
@@ -56,20 +56,30 @@ class Base implements ICrypto {
         i
       );
     }
-    if (Base.publickeyCache[`${xpub}-${account}-${index}`]) {
-      return Base.publickeyCache[`${xpub}-${account}-${index}`];
+    if (
+      Base.publickeyCache[`${this.network.name}-${xpub}-${account}-${index}`]
+    ) {
+      return Base.publickeyCache[
+        `${this.network.name}-${xpub}-${account}-${index}`
+      ];
     }
-    if (Base.publickeyCache[`${xpub}-${account}`]) {
+    if (Base.publickeyCache[`${this.network.name}-${xpub}-${account}`]) {
       const publicKey =
-        Base.publickeyCache[`${xpub}-${account}`].derive(index).publicKey;
-      Base.publickeyCache[`${xpub}-${account}-${index}`] = publicKey;
+        Base.publickeyCache[`${this.network.name}-${xpub}-${account}`].derive(
+          index
+        ).publicKey;
+      Base.publickeyCache[`${this.network.name}-${xpub}-${account}-${index}`] =
+        publicKey;
       return publicKey;
     }
-    Base.publickeyCache[`${xpub}-${account}`] =
-      Base.bech32Cache[xpub].derive(account);
+    Base.publickeyCache[`${this.network.name}-${xpub}-${account}`] =
+      Base.bech32Cache[`${this.network.name}-${xpub}`].derive(account);
     const publicKey =
-      Base.publickeyCache[`${xpub}-${account}`].derive(index).publicKey;
-    Base.publickeyCache[`${xpub}-${account}-${index}`] = publicKey;
+      Base.publickeyCache[`${this.network.name}-${xpub}-${account}`].derive(
+        index
+      ).publicKey;
+    Base.publickeyCache[`${this.network.name}-${xpub}-${account}-${index}`] =
+      publicKey;
     return publicKey;
   }
 
@@ -110,26 +120,37 @@ class Base implements ICrypto {
     account: number,
     index: number
   ): string {
-    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
-      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    if (
+      Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ]
+    ) {
+      return Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ];
     }
     switch (derivationMode) {
       case DerivationModes.LEGACY:
-        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-          this.getLegacyAddress(xpub, account, index);
+        Base.addressCache[
+          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+        ] = this.getLegacyAddress(xpub, account, index);
         break;
       case DerivationModes.SEGWIT:
-        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-          this.getSegWitAddress(xpub, account, index);
+        Base.addressCache[
+          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+        ] = this.getSegWitAddress(xpub, account, index);
         break;
       case DerivationModes.NATIVE_SEGWIT:
-        Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-          this.getNativeSegWitAddress(xpub, account, index);
+        Base.addressCache[
+          `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+        ] = this.getNativeSegWitAddress(xpub, account, index);
         break;
       default:
         throw new Error(`Invalid derivation Mode: ${derivationMode}`);
     }
-    return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    return Base.addressCache[
+      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+    ];
   }
 
   // infer address type from its syntax

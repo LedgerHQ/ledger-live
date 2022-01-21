@@ -59,8 +59,14 @@ class Litecoin extends Base implements ICrypto {
     account: number,
     index: number
   ): string {
-    if (Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`]) {
-      return Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`];
+    if (
+      Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ]
+    ) {
+      return Base.addressCache[
+        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+      ];
     }
     let address: string;
     switch (derivationMode) {
@@ -76,8 +82,9 @@ class Litecoin extends Base implements ICrypto {
       default:
         throw new Error("Should not be reachable");
     }
-    Base.addressCache[`${derivationMode}-${xpub}-${account}-${index}`] =
-      address;
+    Base.addressCache[
+      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
+    ] = address;
     return address;
   }
 
