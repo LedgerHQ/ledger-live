@@ -1,5 +1,6 @@
 // @flow
 import React from "react";
+import { Platform } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "../../const";
 import Portfolio, { PortfolioTabIcon } from "../../screens/Portfolio";
@@ -7,9 +8,11 @@ import Transfer, { TransferTabIcon } from "../../screens/Transfer";
 import AccountsNavigator from "./AccountsNavigator";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import PlatformNavigator from "./PlatformNavigator";
+import SettingsNavigator from "./SettingsNavigator";
 import TabIcon from "../TabIcon";
 import AccountsIcon from "../../icons/Accounts";
 import AppsIcon from "../../icons/Apps";
+import SettingsIcon from "../../icons/Settings";
 
 import Tab from "./CustomBlockRouterNavigator";
 
@@ -70,17 +73,19 @@ export default function MainNavigator({
           tabBarIcon: (props: any) => <TransferTabIcon {...props} />,
         }}
       />
-      <Tab.Screen
-        name={NavigatorName.Platform}
-        component={PlatformNavigator}
-        options={{
-          headerShown: false,
-          unmountOnBlur: true,
-          tabBarIcon: (props: any) => (
-            <TabIcon Icon={AppsIcon} i18nKey="tabs.platform" {...props} />
-          ),
-        }}
-      />
+      {Platform.OS === "android" ? (
+        <Tab.Screen
+          name={NavigatorName.Platform}
+          component={PlatformNavigator}
+          options={{
+            headerShown: false,
+            unmountOnBlur: true,
+            tabBarIcon: (props: any) => (
+              <TabIcon Icon={AppsIcon} i18nKey="tabs.platform" {...props} />
+            ),
+          }}
+        />
+      ) : null}
       <Tab.Screen
         name={NavigatorName.Manager}
         component={ManagerNavigator}
@@ -105,6 +110,19 @@ export default function MainNavigator({
           },
         })}
       />
+      {Platform.OS === "ios" ? (
+        <Tab.Screen
+          name={NavigatorName.Settings}
+          component={SettingsNavigator}
+          options={{
+            headerShown: false,
+            unmountOnBlur: true,
+            tabBarIcon: (props: any) => (
+              <TabIcon Icon={SettingsIcon} i18nKey="tabs.settings" {...props} />
+            ),
+          }}
+        />
+      ) : null}
     </Tab.Navigator>
   );
 }
