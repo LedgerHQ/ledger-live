@@ -66,9 +66,13 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   const navigateToGallery = useCallback(() => {
-    navigation.navigate(ScreenName.NftGallery, {
-      title: t("nft.gallery.allNft"),
-      accountId: account.id,
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.NftGallery,
+      params: {
+        title: t("nft.gallery.allNft"),
+        accountId: account.id,
+      },
+      initial: false,
     });
   }, [account.id, navigation, t]);
 

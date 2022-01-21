@@ -23,6 +23,7 @@ type Props = {
   onResult?: $PropertyType<React$ElementProps<typeof DeviceAction>, "onResult">,
   renderOnResult?: (p: any) => React$Node,
   onSelectDeviceLink?: () => void,
+  analyticsPropertyFlow?: string,
 };
 
 export default function DeviceActionModal({
@@ -34,6 +35,7 @@ export default function DeviceActionModal({
   renderOnResult,
   onModalHide,
   onSelectDeviceLink,
+  analyticsPropertyFlow,
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -57,6 +59,7 @@ export default function DeviceActionModal({
                   onResult={onResult}
                   renderOnResult={renderOnResult}
                   onSelectDeviceLink={onSelectDeviceLink}
+                  analyticsPropertyFlow={analyticsPropertyFlow}
                 />
               </View>
               <InfoBox forceColor={{ text: colors.live }}>

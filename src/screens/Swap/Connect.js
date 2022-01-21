@@ -48,6 +48,7 @@ const Connect = ({
         action={action}
         request={null}
         onSelectDeviceLink={() => setDevice()}
+        analyticsPropertyFlow="swap"
       />
     </View>
   );

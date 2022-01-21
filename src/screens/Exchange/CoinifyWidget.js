@@ -328,6 +328,7 @@ export default function CoinifyWidget({
                 device={device}
                 request={{ account: mainAccount, tokenCurrency }}
                 onResult={onResult}
+                analyticsPropertyFlow="buy"
               />
             ) : mode === "buy" ? (
               <SkipDeviceVerification

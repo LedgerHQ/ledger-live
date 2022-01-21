@@ -41,6 +41,7 @@ type RouteParams = {
   selectDeviceLink?: boolean,
   onSuccess?: (payload: *) => void,
   onError?: (error: *) => void,
+  analyticsPropertyFlow?: string,
 };
 
 export const navigateToSelectDevice = (navigation: any, route: any) =>
@@ -55,7 +56,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
 
-  const { appName, onSuccess, onError } = route.params;
+  const { appName, onSuccess, onError, analyticsPropertyFlow } = route.params;
 
   const mainAccount = getMainAccount(account, parentAccount);
 
@@ -112,6 +113,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
             device={route.params.device}
             onSelectDeviceLink={() => navigateToSelectDevice(navigation, route)}
             {...extraProps}
+            analyticsPropertyFlow={analyticsPropertyFlow}
           />
         </SafeAreaView>
       ) : null,

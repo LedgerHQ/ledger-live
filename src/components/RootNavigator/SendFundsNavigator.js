@@ -163,6 +163,9 @@ export default function SendFundsNavigator() {
             />
           ),
         }}
+        initialParams={{
+          analyticsPropertyFlow: "send",
+        }}
       />
       <Stack.Screen
         name={ScreenName.SendValidationSuccess}

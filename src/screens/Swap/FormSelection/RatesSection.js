@@ -161,6 +161,7 @@ export default function RatesSection({
           navigation.navigate(ScreenName.SwapForm, {
             swap,
           }),
+        analyticsPropertyFlow: "swap",
       },
     });
   }, [navigation, toCurrency, swap]);

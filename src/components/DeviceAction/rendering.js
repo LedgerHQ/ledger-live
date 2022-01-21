@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/dist/Feather";
 import { WrongDeviceForAccount, UnexpectedBootloader } from "@ledgerhq/errors";
 import type { TokenCurrency } from "@ledgerhq/live-common/lib/types";
 import type { Device } from "@ledgerhq/live-common/lib/hw/actions/types";
+import type { AppRequest } from "@ledgerhq/live-common/lib/hw/actions/app";
 import { urls } from "../../config/urls";
 import LText from "../LText";
 import Alert from "../Alert";
@@ -20,6 +21,7 @@ import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
 import { MANAGER_TABS } from "../../screens/Manager/Manager";
 import ExternalLink from "../ExternalLink";
+import { track } from "../../analytics";
 
 type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string,
@@ -438,6 +440,28 @@ export function renderLoading({
       </LText>
     </View>
   );
+}
+
+export function LoadingAppInstall({
+  analyticsPropertyFlow = "unknown",
+  request,
+  ...props
+}: {
+  ...RawProps,
+  analyticsPropertyFlow: string,
+  description?: string,
+  request?: AppRequest,
+}) {
+  const currency = request?.currency || request?.account?.currency;
+  const appName = request?.appName || currency?.managerAppName;
+  useEffect(() => {
+    const trackingArgs = [
+      "In-line app install",
+      { appName, flow: analyticsPropertyFlow },
+    ];
+    track(...trackingArgs);
+  }, [appName, analyticsPropertyFlow]);
+  return renderLoading(props);
 }
 
 type WarningOutdatedProps = {

@@ -26,6 +26,7 @@ type RouteParams = {
   currency: CryptoCurrency,
   inline?: boolean,
   returnToSwap?: boolean,
+  analyticsPropertyFlow?: string,
 };
 
 const action = createAction(connectApp);
@@ -67,6 +68,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   }, [route.params.currency]);
 
   const currency = route.params.currency;
+  const analyticsPropertyFlow = route.params?.analyticsPropertyFlow;
   return (
     <SafeAreaView
       style={[
@@ -100,6 +102,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
               : currency,
         }}
         onSelectDeviceLink={() => setDevice()}
+        analyticsPropertyFlow={analyticsPropertyFlow || "add account"}
       />
     </SafeAreaView>
   );

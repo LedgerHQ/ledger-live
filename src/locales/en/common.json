@@ -262,6 +262,10 @@
       "title": "Auto-verification not available: carefully verify the address.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "Biometric authentication failed",
       "description": "Please use your password or reset the app."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "This is not a valid {{currencyName}} address"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Destination and source accounts must not be the same."
@@ -1750,6 +1757,13 @@
       "title": "Experimental features",
       "desc": "Try out the Experimental features and let us know what you think.",
       "disclaimer": "These are Experimental features provided on an \"as is\" basis for our community of tech enthusiasts. They may change, break or be removed at any time. By enabling them, you agree to use them at your own risk."
+    },
+    "developer": {
+      "title": "Developer",
+      "desc": "Try out the Developer features and let us know what you think.",
+      "customManifest": {
+        "title": "Load Custom Platform Manifest"
+      }
     }
   },
   "migrateAccounts": {
@@ -1813,6 +1827,7 @@
       "copyAddress": "Copy address",
       "shareAddress": "Share address",
       "addressCopied": "Address copied!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "Synchronizing",
         "desc": "This may take a moment if you have many transactions or if you have a slow internet connection."
@@ -2845,6 +2860,23 @@
     "introDescription1": "Please note that all the apps on your device will be deleted. You can reinstall your apps after the firmware update.",
     "introDescription2": "This has no impact on your crypto assets.",
     "action": "Continue update"
+  },
+  "systemLanguageAvailable": {
+    "title": "Change your app's language?",
+    "description": {
+      "newSupport": "Good news! Our teams have been working hard and Ledger Live now supports {{language}}.",
+      "advice": "You can always change your language back later in the settings."
+    },
+    "switchButton": "Switch to {{language}}",
+    "no": "I prefer not to",
+    "languages": {
+      "en": "English",
+      "fr": "French",
+      "ru": "Russian",
+      "es": "Spanish",
+      "zh": "Chinese",
+      "de": "German"
+    }
   },
   "FirmwareUpdateCheckId": {
     "title": "Identifier",

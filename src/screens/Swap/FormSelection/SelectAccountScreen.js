@@ -133,6 +133,7 @@ export default function SelectAccount({ navigation, route }: Props) {
         onSuccess: () => {
           navigation.navigate(ScreenName.SwapV2FormSelectAccount, route.params);
         },
+        analyticsPropertyFlow: "swap",
       },
     });
   }, [navigation, route.params, selectableCurrencies]);

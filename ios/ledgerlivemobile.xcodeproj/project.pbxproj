@@ -12,6 +12,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */; };
 		2372D3D5180104DBED4E22EE /* libPods-ledgerlivemobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31C4672E151A9F9D4A18DB00 /* libPods-ledgerlivemobile.a */; };
 		2A2FAB56B85E5D2BFF574A32 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BC9C5402323A57C5327727 /* ExpoModulesProvider.swift */; };
 		3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */; };
@@ -56,6 +57,8 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ledgerlivemobile/main.m; sourceTree = "<group>"; };
 		13BEF41FFA9D4B06B1C8A8E1 /* libLottie.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libLottie.a; sourceTree = "<group>"; };
 		148B039A3EDE47A19A6BC6AE /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RCTBluetoothHelperModule.m; path = ledgerlivemobile/RCTBluetoothHelperModule.m; sourceTree = "<group>"; };
+		17F58473269C64870070C475 /* RCTBluetoothHelperModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RCTBluetoothHelperModule.h; path = ledgerlivemobile/RCTBluetoothHelperModule.h; sourceTree = "<group>"; };
 		2402D074219C2E6600276138 /* ledgerlivemobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ledgerlivemobile.entitlements; path = ledgerlivemobile/ledgerlivemobile.entitlements; sourceTree = "<group>"; };
 		2433F86A66DB455E803650A5 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		2B8A443FFF9942B295210CA2 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -162,6 +165,8 @@
 		13B07FAE1A68108700A75B9A /* ledgerlivemobile */ = {
 			isa = PBXGroup;
 			children = (
+				17F58473269C64870070C475 /* RCTBluetoothHelperModule.h */,
+				17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */,
 				2402D074219C2E6600276138 /* ledgerlivemobile.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */,
@@ -618,6 +623,7 @@
 			files = (
 				3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				2A2FAB56B85E5D2BFF574A32 /* ExpoModulesProvider.swift in Sources */,
 			);
@@ -731,7 +737,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 339;
+				CURRENT_PROJECT_VERSION = 343;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = X6LFS5BQKN;
 				ENABLE_BITCODE = NO;
@@ -785,7 +791,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 339;
+				CURRENT_PROJECT_VERSION = 343;
 				DEVELOPMENT_TEAM = X6LFS5BQKN;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -894,7 +900,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 339;
+				CURRENT_PROJECT_VERSION = 343;
 				DEVELOPMENT_TEAM = X6LFS5BQKN;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;

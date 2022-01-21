@@ -262,6 +262,10 @@
       "title": "无法自动验证。请仔细核对该地址。",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "生物特征认证失败",
       "description": "请使用您的密码或重置应用程序。"
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "该{{currencyName}} 地址无效"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "目标账户和源账户不能相同。"
@@ -1750,6 +1757,10 @@
       "title": "实验性功能",
       "desc": "尝试一下实验性功能，让我们知道您的想法。",
       "disclaimer": "这些是我们以“按现状”为基准提供的实验性功能，以供我们的专业爱好者社区测试。这些功能随时可能会更改、中断或删除。启用这些功能，意味着您同意自行承担使用过程中的风险。"
+    },
+    "developer": {
+      "title": "Developer",
+      "desc": "Try out the Developer features and let us know what you think."
     }
   },
   "migrateAccounts": {
@@ -1813,6 +1824,7 @@
       "copyAddress": "复制地址",
       "shareAddress": "分享地址",
       "addressCopied": "地址已复制！",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "正在同步",
         "desc": "如果您有多笔交易或者您的网速偏慢，可能需要多花费一些时间。"
@@ -1854,8 +1866,8 @@
           "subtitle": "出于 KYC 目的，LEDGER 需要收集并转移您的信息到 WYRE。如需了解更多信息，请查看我们的隐私政策",
           "pending": {
             "cta": "继续",
-            "title": "KYC 已被提交以供审批",
-            "subtitle": "您的 KYC 已被提交，正在等待批准。",
+            "title": "Your information has been submitted for approval",
+            "subtitle": "It usually takes only a few minutes before you can start swapping",
             "link": "了解关于 KYC 的更多详情"
           },
           "approved": {
@@ -1908,9 +1920,9 @@
         "cta": "关闭"
       },
       "pendingOperation": {
-        "description": "您的 Swap 互换操作已经发送到网络上确认。最多一个小时后，您就可以收到您的 {{targetCurrency}}。",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "您的 Swap ID：",
-        "title": "Swap 互换播送成功 ",
+        "title": "Pending operation",
         "disclaimer": "请记下您的 Swap ID 互换代码，以便今后有需要时从 {{provider}} 处获得帮助。",
         "cta": "查看详情"
       },
@@ -1930,13 +1942,22 @@
         "button": "继续",
         "from": "来自",
         "to": "到",
+        "source": "Source",
+        "target": "Target account",
+        "noAccount": "You don’t have {{currency}} account",
         "balance": "余额 <0>123</0>",
         "fromAccount": "选择账户",
         "toAccount": "选择账户",
         "paraswapCTA": "寻找 Paraswap？它已被移动到 Discover（发现）选项卡！",
+        "quote": "Quote",
+        "receive": "Receive",
         "amount": {
           "useMax": "使用最大值",
           "available": "可用总额"
+        },
+        "noAsset": {
+          "title": "You have no asset to swap",
+          "desc": "Buy some and come back to swap"
         },
         "noApp": {
           "title": "未安装 {{appName}} 应用程序",
@@ -2015,6 +2036,22 @@
         "empty": {
           "title": "您之前的 swap 互换会出现在这里",
           "desc": "要么您还未进行过任何 swap 互换，亦或 Ledger Live 在此期间被重置了 。"
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
+          "provider": "Provider",
+          "method": "Rate",
+          "fees": "Fees"
         }
       }
     },

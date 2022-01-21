@@ -231,7 +231,7 @@ function PairDevicesInner({ navigation, route }: Props) {
           onTimeout={onTimeout}
         />
       );
-    case "timedout":
+    case "timeout":
       return <ScanningTimeout onRetry={onRetry} />;
     case "pairing":
       return <PendingPairing />;

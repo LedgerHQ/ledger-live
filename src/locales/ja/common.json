@@ -262,6 +262,10 @@
       "title": "自動認証が利用できません：アドレスを慎重に確認してください。",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "生体認証に失敗しました。",
       "description": "パスワードを使用するか、アプリをリセットしてください。"
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "これは有効な{{currencyName}}アドレスではありません。"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "送り元アカウントと送り先アカウントが同じです。"
@@ -1750,6 +1757,10 @@
       "title": "試験的機能",
       "desc": "試験的機能をお試しになり、フィードバックをお寄せください。",
       "disclaimer": "テクノロジーファンのコミュニティ向けに、現状のまま提供される試験的な機能です。これらの機能は随時変更、破損、または削除される可能性があります。このオプションを有効にした場合、自己責任でこれらの機能を利用することに同意したことになります。"
+    },
+    "developer": {
+      "title": "Developer",
+      "desc": "Try out the Developer features and let us know what you think."
     }
   },
   "migrateAccounts": {
@@ -1813,6 +1824,7 @@
       "copyAddress": "アドレスをコピー",
       "shareAddress": "アドレスを共有",
       "addressCopied": "アドレスをコピーしました！",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "同期中",
         "desc": "トランザクションの数が多い場合やインターネット接続が遅い場合、しばらく時間がかかることがあります。"
@@ -1854,8 +1866,8 @@
           "subtitle": "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくはプライバシーポリシーをご確認ください。",
           "pending": {
             "cta": "続行",
-            "title": "KYC（本人確認）が提出されました。",
-            "subtitle": "KYC（本人確認）が提出され、承認待ちの状態です。",
+            "title": "Your information has been submitted for approval",
+            "subtitle": "It usually takes only a few minutes before you can start swapping",
             "link": "KYC（本人確認）についての詳細"
           },
           "approved": {
@@ -1908,9 +1920,9 @@
         "cta": "閉じる"
       },
       "pendingOperation": {
-        "description": "承認のため、スワップ処理がネットワークに送信されました。{{targetCurrency}}を受け取るまでに、最大1時間かかる場合があります。",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "スワップID：",
-        "title": "スワップが正常にブロードキャストされました。 ",
+        "title": "Pending operation",
         "disclaimer": "{{provider}} のサポートが必要な場合に備えて、スワップID番号を控えておいてください。",
         "cta": "詳細を表示"
       },
@@ -1930,13 +1942,22 @@
         "button": "続行",
         "from": "交換元",
         "to": "交換先",
+        "source": "Source",
+        "target": "Target account",
+        "noAccount": "You don’t have {{currency}} account",
         "balance": "残高<0>123</0>",
         "fromAccount": "アカウントを選択",
         "toAccount": "アカウントを選択",
         "paraswapCTA": "Paraswapをお探しですか？この項目は「Discover」タブに移動されました！",
+        "quote": "Quote",
+        "receive": "Receive",
         "amount": {
           "useMax": "全額を選択",
           "available": "合計利用可能額"
+        },
+        "noAsset": {
+          "title": "You have no asset to swap",
+          "desc": "Buy some and come back to swap"
         },
         "noApp": {
           "title": "{{appName}}アプリがインストールされていません。",
@@ -2015,6 +2036,22 @@
         "empty": {
           "title": "過去のスワップがここに表示されます。",
           "desc": "まだスワップを行っていないか、Ledger Liveがリセットされています。"
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
+          "provider": "Provider",
+          "method": "Rate",
+          "fees": "Fees"
         }
       }
     },
@@ -2338,9 +2375,9 @@
       "stepRange": "ステップ{{currentStep}}/{{totalSteps}}"
     },
     "info": {
-      "description": "資産をしっかり管理しつつ、TRXを凍結して安全に報酬を得ることができます。",
+      "description": "資産を完全に所有しながら、TRXを凍結して安全に報酬を獲得しましょう。",
       "steps": {
-        "0": "資産をデリゲートしても、資産の所有者は変わりません。",
+        "0": "デリゲートしても資産の所有者は変わりません。",
         "1": "資産の凍結は3日後に解除できます。",
         "2": "Ledgerデバイスを使って、資産の凍結と投票を安全に行いましょう。"
       },
@@ -2961,7 +2998,7 @@
             "steps": {
               "0": "資産をデリゲートしても、資産の所有者は変わりません。",
               "1": "デリゲート解除が完了するまで、21日待つ必要があります。",
-              "2": "Ledgerデバイスを使って安全にデリゲート（委任）できます。"
+              "2": "Ledgerデバイスで安全にデリゲートする。"
             },
             "warning": {
               "description": "バリデータは慎重に選択してください。良くないバリデータに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。"
@@ -3183,9 +3220,9 @@
             "title": "報酬を獲得する",
             "description": "TRXを第三者の候補者にデリゲートすることで、報酬を獲得できます。資産を凍結して投票を行うには、「続行」をクリックしてください。",
             "bullet": {
-              "delegate": "資産をデリゲートしても、資産の所有者は変わりません。",
+              "delegate": "デリゲートしても資産の所有者は変わりません。",
               "access": "凍結の3日後に資産にアクセスできるようになります。",
-              "ledger": "Ledgerデバイスを使って安全にデリゲート（委任）できます。"
+              "ledger": "Ledgerデバイスで安全にデリゲートする。"
             },
             "button": {
               "cta": "続行"
@@ -3542,9 +3579,9 @@
       "title": "報酬を獲得する",
       "description": "資産をしっかり管理しつつ、Tezosアカウントをサードパーティのバリデータをデリゲートして、安全に報酬を得ることができます。",
       "steps": {
-        "0": "アカウントをデリゲートしても、アカウントの所有者は変わりません。",
+        "0": "デリゲートしてもアカウントの所有者は変わりません。",
         "1": "いつでも、資産を管理することができます。",
-        "2": "Ledgerデバイスを使って安全にデリゲート（委任）できます。"
+        "2": "Ledgerデバイスで安全にデリゲートする。"
       },
       "cta": "デリゲート（委任）して報酬を得る"
     },

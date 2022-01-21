@@ -262,6 +262,10 @@
       "title": "자동 검증이 불가능합니다. 주소를 신중하게 확인해 주세요.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "생체 인증 실패",
       "description": "패스워드를 사용하시거나 앱을 리셋하세요."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "유효한 {{currencyName}} 주소가 아닙니다"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "보낸 계정과 받는 계정이 동일해서는 안 됩니다."
@@ -1750,6 +1757,10 @@
       "title": "실험적 특징",
       "desc": "다양한 실험적 특징을 시험해 보고 의견을 나누어 주세요.",
       "disclaimer": "이는 기술에 대한 관심이 지대한 당사 커뮤니티에 \"있는 그대로\" 제공하는 실험적 기능으로, 언제든지 변경, 중단 또는 제거될 수 있습니다. 기능을 활성화할 경우, 온전히 귀하의 책임 하에 해당 기능을 사용한다는 사실에 동의하게 됩니다."
+    },
+    "developer": {
+      "title": "Developer",
+      "desc": "Try out the Developer features and let us know what you think."
     }
   },
   "migrateAccounts": {
@@ -1813,6 +1824,7 @@
       "copyAddress": "주소 복사",
       "shareAddress": "주소 공유",
       "addressCopied": "주소 복사됨!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "동기화 중",
         "desc": "이는 트랜잭션의 양이 많거나 인터넷 연결이 느린 경우 시간이 걸릴 수 있습니다."
@@ -1854,8 +1866,8 @@
           "subtitle": "Ledger는 고객확인제도를 목적으로 Wyre를 대신하여 수집한 사용자 정보를 Wyre로 전송합니다. 자세한 정보는 개인 정보 보호 정책을 확인하세요",
           "pending": {
             "cta": "계속",
-            "title": "고객확인제도 제출 후 승인 대기 중",
-            "subtitle": "사용자의 고객확인제도가 제출되어 승인 대기 중입니다.",
+            "title": "Your information has been submitted for approval",
+            "subtitle": "It usually takes only a few minutes before you can start swapping",
             "link": "고객확인제도 자세히 알아보기"
           },
           "approved": {
@@ -1908,9 +1920,9 @@
         "cta": "닫기"
       },
       "pendingOperation": {
-        "description": "확인을 위해 귀하의 스왑 거래를 네트워크로 전송했습니다. {{targetCurrency}}(을)를 받기까지 최대 한 시간이 소요될 수 있습니다.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "사용자의 스왑 ID:",
-        "title": "스왑 브로드캐스트가 성공적으로 완료되었습니다 ",
+        "title": "Pending operation",
         "disclaimer": "{{provider}}의 지원이 필요한 경우를 대비하여 스왑 ID를 번호를 기록해 두세요.",
         "cta": "세부사항 확인"
       },
@@ -1930,13 +1942,22 @@
         "button": "계속",
         "from": "수신",
         "to": "발신",
+        "source": "Source",
+        "target": "Target account",
+        "noAccount": "You don’t have {{currency}} account",
         "balance": "잔금 <0>123</0>",
         "fromAccount": "계정 선택",
         "toAccount": "계정 선택",
         "paraswapCTA": "Paraswap을 찾으세요? 탐색 탭으로 이동했습니다!",
+        "quote": "Quote",
+        "receive": "Receive",
         "amount": {
           "useMax": "최대치 사용",
           "available": "총 이용 가능"
+        },
+        "noAsset": {
+          "title": "You have no asset to swap",
+          "desc": "Buy some and come back to swap"
         },
         "noApp": {
           "title": "{{appName}} 앱이 설치되지 않았습니다",
@@ -2015,6 +2036,22 @@
         "empty": {
           "title": "과거 스왑 내역이 여기에 표시됩니다",
           "desc": "아직 스왑을 하지 않았거나 그동안 Ledger Live가 리셋되었습니다."
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
+          "provider": "Provider",
+          "method": "Rate",
+          "fees": "Fees"
         }
       }
     },

@@ -262,6 +262,10 @@
       "title": "Automatische Verifizierung nicht verfügbar: Überprüfen Sie die Adresse sorgfältig.",
       "description": null
     },
+    "EthAppNftNotSupported": {
+      "title": "Operation not available for this device",
+      "description": "Send NFT feature is only available for Nano X. Please visit our customer support platform to know how to send a NFT with a Nano S."
+    },
     "Touch ID Error": {
       "title": "Biometrische Authentifizierung fehlgeschlagen",
       "description": "Bitte verwenden Sie Ihr Passwort oder setzen Sie die App zurück."
@@ -298,6 +302,9 @@
     },
     "InvalidAddress": {
       "title": "Dies ist keine gültige {{currencyName}} Adresse"
+    },
+    "InvalidAddressBecauseAlreadyDelegated": {
+      "title": "Your account is already delegated to this validator"
     },
     "InvalidAddressBecauseDestinationIsAlsoSource": {
       "title": "Ziel- und Quellkonto dürfen nicht identisch sein."
@@ -1750,6 +1757,10 @@
       "title": "Experimentelle Funktionen",
       "desc": "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
       "disclaimer": "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können sich jederzeit ändern, kaputt gehen oder entfernt werden. Wenn Sie sie aktivieren, erklären Sie sich damit einverstanden, diese auf eigenes Risiko zu verwenden."
+    },
+    "developer": {
+      "title": "Developer",
+      "desc": "Try out the Developer features and let us know what you think."
     }
   },
   "migrateAccounts": {
@@ -1813,6 +1824,7 @@
       "copyAddress": "Adresse kopieren",
       "shareAddress": "Adresse teilen",
       "addressCopied": "Adresse kopiert!",
+      "taprootWarning": "Make sure the sender supports taproot",
       "notSynced": {
         "text": "Synchronisieren",
         "desc": "Dies kann einen Moment dauern, wenn Sie viele Transaktionen haben oder eine langsame Internetverbindung."
@@ -1854,8 +1866,8 @@
           "subtitle": "Ihre Daten werden von LEDGER im Auftrag von WYRE gesammelt und zu KYC-Zwecken an WYRE übertragen. Für weitere Informationen lesen Sie bitte unsere Datenschutzrichtlinie",
           "pending": {
             "cta": "Weiter",
-            "title": "KYC zur Genehmigung eingereicht",
-            "subtitle": "Ihr KYC wurde eingereicht und wartet auf die Genehmigung.",
+            "title": "Your information has been submitted for approval",
+            "subtitle": "It usually takes only a few minutes before you can start swapping",
             "link": "Erfahren Sie mehr über KYC"
           },
           "approved": {
@@ -1908,9 +1920,9 @@
         "cta": "Schließen"
       },
       "pendingOperation": {
-        "description": "Ihr Tauschvorgang wurde zur Bestätigung an das Netzwerk gesendet. Es kann bis zu einer Stunde dauern, bis Sie Ihre {{targetCurrency}} erhalten.",
+        "description": "Your Swap operation has been sent to the network for confirmation. It may take up to an hour before you receive your swapped {{targetCurrency}} assets",
         "label": "Ihre Swap-ID:",
-        "title": "Swap Übertragung erfolgreich ",
+        "title": "Pending operation",
         "disclaimer": "Notieren Sie sich Ihre Tausch-ID-Nummer für den Fall, dass Sie Hilfe vom {{provider}} Support benötigen.",
         "cta": "Details ansehen"
       },
@@ -1930,13 +1942,22 @@
         "button": "Weiter",
         "from": "Von",
         "to": "An",
+        "source": "Source",
+        "target": "Target account",
+        "noAccount": "You don’t have {{currency}} account",
         "balance": "Kontostand <0>123</0>",
         "fromAccount": "Konto auswählen",
         "toAccount": "Konto auswählen",
         "paraswapCTA": "Suchen Sie nach Paraswap? Es wurde auf die Registerkarte Entdecken verschoben!",
+        "quote": "Quote",
+        "receive": "Receive",
         "amount": {
           "useMax": "Max. verwenden",
           "available": "Verfügbare Gesamtsumme"
+        },
+        "noAsset": {
+          "title": "You have no asset to swap",
+          "desc": "Buy some and come back to swap"
         },
         "noApp": {
           "title": "{{appName}} App nicht installiert",
@@ -2015,6 +2036,22 @@
         "empty": {
           "title": "Ihre früheren Swaps/Täusche werden hier angezeigt",
           "desc": "Entweder haben Sie noch keine Swaps/Täusche vorgenommen, oder Ledger Live wurde in der Zwischenzeit zurückgesetzt."
+        }
+      }
+    },
+    "swapv2": {
+      "form": {
+        "summary": {
+          "from": "From",
+          "to": "To",
+          "send": "Send",
+          "payoutNetworkFees": "Payout fees",
+          "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
+          "receive": "Amount",
+          "receiveFloat": "Amount to receive before service fees",
+          "provider": "Provider",
+          "method": "Rate",
+          "fees": "Fees"
         }
       }
     },
