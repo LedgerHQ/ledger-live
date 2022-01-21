@@ -48,14 +48,20 @@ export default function SelectDevice({
 
   const handleOnSelect = useCallback(
     deviceInfo => {
-      const { modelId, wired } = deviceInfo;
-      track("Device selection", {
-        modelId,
-        connectionType: wired ? "USB" : "BLE",
-      });
-      // Nb consider a device selection enough to show the fw update banner in portfolio
-      dispatch(setHasConnectedDevice(true));
-      onSelect(deviceInfo);
+      NativeModules.BluetoothHelperModule.prompt()
+        .then(() => {
+          const { modelId, wired } = deviceInfo;
+          track("Device selection", {
+            modelId,
+            connectionType: wired ? "USB" : "BLE",
+          });
+          // Nb consider a device selection enough to show the fw update banner in portfolio
+          dispatch(setHasConnectedDevice(true));
+          onSelect(deviceInfo);
+        })
+        .catch(() => {
+          /* ignore */
+        });
     },
     [dispatch, onSelect],
   );
