@@ -11,12 +11,13 @@ import { ICrypto } from "./types";
 import Base from "./base";
 
 // a mock explorer class that just use js objects
-class BitcoinCash implements ICrypto {
+class BitcoinCash extends Base {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor({ network }: { network: any }) {
+    super({ network });
     this.network = network;
     this.network.dustThreshold = 5430;
     this.network.dustPolicy = "FIXED";
