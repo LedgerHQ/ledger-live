@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Account, TokenAccount } from "../../../types";
 import { useCurrenciesByMarketcap } from "../../../currencies/sortByMarketcap";
 import { listCryptoCurrencies, listTokens } from "../../../currencies";
-import { getAccountCurrency } from "../../../account";
+import { getAvailableAccountsById } from "../utils";
 
 // Pick a default source account if none are selected.
 export const usePickDefaultAccount = (
@@ -17,14 +17,9 @@ export const usePickDefaultAccount = (
     if (!fromAccount && allCurrencies.length > 0) {
       const defaultAccount: Account | TokenAccount | undefined = allCurrencies
         .map(({ id }) =>
-          accounts
-            .filter(
-              (acc) =>
-                getAccountCurrency(acc)?.id === id &&
-                acc.balance.gt(0) &&
-                !acc.disabled
-            )
-            .sort((a, b) => b.balance.minus(a.balance).toNumber())
+          getAvailableAccountsById(id, accounts).filter((account) =>
+            account.balance.gt(0)
+          )
         )
         .flat(1)
         .find(Boolean);

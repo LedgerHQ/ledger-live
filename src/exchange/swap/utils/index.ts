@@ -1,7 +1,8 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/cryptoassets";
 import { makeEmptyTokenAccount } from "../../../account";
-import { Account, SubAccount } from "../../../types";
+import { Account, SubAccount, TokenAccount } from "../../../types";
 import type { ExchangeRate } from "../types";
+import { getAccountCurrency } from "../../../account";
 
 export const KYC_STATUS = {
   pending: "pending",
@@ -65,3 +66,13 @@ export function getAccountTuplesForCurrency(
     }))
     .filter((a) => (hideEmpty ? a.account?.balance.gt(0) : true));
 }
+
+export const getAvailableAccountsById = (
+  id: string,
+  accounts: ((Account | TokenAccount) & { disabled?: boolean })[]
+): ((Account | TokenAccount) & {
+  disabled?: boolean | undefined;
+})[] =>
+  accounts
+    .filter((acc) => getAccountCurrency(acc)?.id === id && !acc.disabled)
+    .sort((a, b) => b.balance.minus(a.balance).toNumber());

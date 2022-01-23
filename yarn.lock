@@ -994,10 +994,10 @@
   dependencies:
     commander "^2.20.0"
 
-"@ledgerhq/cryptoassets@6.23.0", "@ledgerhq/cryptoassets@^6.23.0":
-  version "6.23.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.23.0.tgz#e179c8253fb55c3b7847d367ec75c734d447ed00"
-  integrity sha512-ndZq6arggyspUbgqqHvihvnwyR9woafW1ikIsFZt6yDZrzp/aNjdovkFlLbYdJ1z7K9asMXyURBITA1xoQyBtg==
+"@ledgerhq/cryptoassets@6.23.1", "@ledgerhq/cryptoassets@^6.23.1":
+  version "6.23.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/cryptoassets/-/cryptoassets-6.23.1.tgz#23d6343b73a738ac775693af0fb5308eb42a6dbb"
+  integrity sha512-SNtu7nuXVRH1um3gvYWFCBMfYKhT8qJBNdsYjRWEDhLdWB4atMLiUoBxE/uo+/+0QLGzaJ79hbfOfOH6f12Lyw==
   dependencies:
     invariant "2"
 
@@ -1069,14 +1069,14 @@
     "@ledgerhq/hw-transport" "^6.20.0"
     bip32-path "^0.4.2"
 
-"@ledgerhq/hw-app-eth@6.23.0":
-  version "6.23.0"
-  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.23.0.tgz#b48a539aca11f8dabc5f06906da2d2a1f04cb3e5"
-  integrity sha512-wWNDoHFloyMx1Vpy1rovvT2Ikac+jhxrgG5xMwv/ZKMPbj0a8LIVHaWIFWhCx3bZzyXTG42AGjCnX7JUsh2YzQ==
+"@ledgerhq/hw-app-eth@6.23.1":
+  version "6.23.1"
+  resolved "https://registry.yarnpkg.com/@ledgerhq/hw-app-eth/-/hw-app-eth-6.23.1.tgz#6562f08eebd0e1709a802ed3b22a5a238e779d7c"
+  integrity sha512-2JDAllRHFeFT452n+X9SZSfkwwmrm4CYHVcvFYBSwiKv7+q00zInfBc0zz9gbZh1goNCAPuQymsIlzvV3DK5/w==
   dependencies:
     "@ethersproject/abi" "^5.5.0"
     "@ethersproject/rlp" "^5.5.0"
-    "@ledgerhq/cryptoassets" "^6.23.0"
+    "@ledgerhq/cryptoassets" "^6.23.1"
     "@ledgerhq/errors" "^6.10.0"
     "@ledgerhq/hw-transport" "^6.20.0"
     "@ledgerhq/logs" "^6.10.0"
@@ -1850,10 +1850,10 @@
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
 
-"@types/jest@^27.0.3":
-  version "27.0.3"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-27.0.3.tgz#0cf9dfe9009e467f70a342f0f94ead19842a783a"
-  integrity sha512-cmmwv9t7gBYt7hNKH5Spu7Kuu/DotGa+Ff+JGRKZ4db5eh8PnKS4LuebJ3YLUoyOyIHraTGyULn23YtEAm0VSg==
+"@types/jest@^27.4.0":
+  version "27.4.0"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-27.4.0.tgz#037ab8b872067cae842a320841693080f9cb84ed"
+  integrity sha512-gHl8XuC1RZ8H2j5sHv/JqsaxXkDDM9iDOgu0Wp8sjs4u/snb2PVehyWXJPr+ORA0RPpgw231mnutWI1+0hgjIQ==
   dependencies:
     jest-diff "^27.0.0"
     pretty-format "^27.0.0"
@@ -2315,10 +2315,10 @@ algo-msgpack-with-bigint@^2.1.1:
   resolved "https://registry.yarnpkg.com/algo-msgpack-with-bigint/-/algo-msgpack-with-bigint-2.1.1.tgz#38bb717220525b3ff42232eefdcd9efb9ad405d6"
   integrity sha512-F1tGh056XczEaEAqu7s+hlZUDWwOBT70Eq0lfMpBP2YguSQVyxRbprLq5rELXKQOyOaixTWYhMeMQMzP0U5FoQ==
 
-algosdk@1.12.0:
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/algosdk/-/algosdk-1.12.0.tgz#77e2a22568495210d26ecd1f830e98cc069815b5"
-  integrity sha512-Iqek0AwcCeXLywVg4E8gWWjmuPZ10P7PUmpZrlR71FSNyEtX4Ie+UgrNHWhkYnhyykRU5mjtvD4Hrb2eOepsGA==
+algosdk@1.13.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/algosdk/-/algosdk-1.13.0.tgz#c539050f4623d12f2e994f011b130f08f9291cd9"
+  integrity sha512-0hknXiP3sc/KxRUvoI1d14x2H/hM7LJZ1zA9DmEUX76z508QPgzjxyQag7THHu5rAW0VuzCgWcFlwI0lsTJMoQ==
   dependencies:
     algo-msgpack-with-bigint "^2.1.1"
     buffer "^6.0.2"
@@ -6388,7 +6388,15 @@ ripple-address-codec@^4.0.0, ripple-address-codec@^4.1.1, ripple-address-codec@^
     base-x "3.0.9"
     create-hash "^1.1.2"
 
-ripple-binary-codec@^1.1.3, ripple-binary-codec@^1.2.2:
+ripple-address-codec@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/ripple-address-codec/-/ripple-address-codec-4.2.3.tgz#516675715cd43b71d2fd76c59bd92d0f623c152d"
+  integrity sha512-9Nd0hQmKoJEhSTzYR9kYjKmSWlH6HaVosNVAM7mIIVlzcNlQCPfKXj7CfvXcRiHl3C6XUZj7RFLqzVaPjq2ufA==
+  dependencies:
+    base-x "3.0.9"
+    create-hash "^1.1.2"
+
+ripple-binary-codec@^1.1.3:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/ripple-binary-codec/-/ripple-binary-codec-1.2.2.tgz#f9aa0f43a4dbc7296a990de2b56fa698bc36d6e1"
   integrity sha512-ojFBSkr2qP1th9ynEp1wGNi2n/lhsMRR+geIDh31W/CuKBDMzRHu4xLfGdoJb7L39oQl1v2fbc+6tuBB6+1JMQ==
@@ -6399,6 +6407,18 @@ ripple-binary-codec@^1.1.3, ripple-binary-codec@^1.2.2:
     create-hash "^1.2.0"
     decimal.js "^10.2.0"
     ripple-address-codec "^4.2.2"
+
+ripple-binary-codec@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/ripple-binary-codec/-/ripple-binary-codec-1.3.0.tgz#0c6cf503fb0e12948d538abd198a740bd9d2143a"
+  integrity sha512-hz4nhiekqHbUwIdBOg1PQKsbi+/GwOccHmTTfkIJTTp/p5mlifS+U3Zfz4dVzKhftrXCPympYvLb5QgoIP1AKw==
+  dependencies:
+    assert "^2.0.0"
+    big-integer "^1.6.48"
+    buffer "5.6.0"
+    create-hash "^1.2.0"
+    decimal.js "^10.2.0"
+    ripple-address-codec "^4.2.3"
 
 ripple-bs58@^4.0.0:
   version "4.0.1"
@@ -6700,10 +6720,10 @@ stack-utils@^2.0.3:
   dependencies:
     escape-string-regexp "^2.0.0"
 
-stellar-base@^6.0.6:
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-6.0.6.tgz#2f95ad35ab6901a2fc0d5cb5b483436241b7123c"
-  integrity sha512-v0t9jeP456plMpye8W2vRq2lTvMUvRkskH5GGfqgMTeX+gBAwp7Y67wYphRt2pGQ2NXtxlsgEBSBKWvNxGp76A==
+stellar-base@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/stellar-base/-/stellar-base-7.0.0.tgz#6ebb359fc0a5e8fe6ed855c62de78cbec779b463"
+  integrity sha512-Sfk/u/6HT+8xSQ4HvTI3XgthTS3fhv/ie6Jx4OzLvg81pt09bDDN5YvRbG6v3gZdiRA0pwg2RRz5YS3ph5ePEg==
   dependencies:
     base32.js "^0.1.0"
     bignumber.js "^4.0.0"
@@ -6715,10 +6735,10 @@ stellar-base@^6.0.6:
   optionalDependencies:
     sodium-native "^2.3.0"
 
-stellar-sdk@^9.1.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/stellar-sdk/-/stellar-sdk-9.1.0.tgz#6950a1ca8c268218b9be179c120c23f284ea6f5a"
-  integrity sha512-Y2B/pGM+eEC4Iuf6vGBGD86AdXYHCahuEiTa7kMOSDR/SXv7UQdOcrEpho+ZjTqZP0cYBe9UOTkYiW12Sm3IzQ==
+stellar-sdk@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/stellar-sdk/-/stellar-sdk-10.0.0.tgz#43e171d94772c1038e842c4fe4efce29cce51f37"
+  integrity sha512-WxgPfaWSEohIKrjKAr8I+koZoMKY6xyDlFROJoUHp8BTGEAjMih2By2lmuTBxHRCTLOe740yOK5KKoAC8QngFA==
   dependencies:
     "@types/eventsource" "^1.1.2"
     "@types/node" ">= 8"
@@ -6731,7 +6751,7 @@ stellar-sdk@^9.1.0:
     eventsource "^1.0.7"
     lodash "^4.17.21"
     randombytes "^2.1.0"
-    stellar-base "^6.0.6"
+    stellar-base "^7.0.0"
     toml "^2.3.0"
     tslib "^1.10.0"
     urijs "^1.19.1"
@@ -7050,10 +7070,10 @@ triple-beam@^1.2.0, triple-beam@^1.3.0:
   resolved "https://registry.npmjs.org/triple-beam/-/triple-beam-1.3.0.tgz"
   integrity sha512-XrHUvV5HpdLmIj4uVMxHggLbFSZYIn7HEWsqePZcI50pco+MPqJ50wMGY794X7AOOhxOBAjbkqfAbEe/QMp2Lw==
 
-ts-jest@^27.1.2:
-  version "27.1.2"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-27.1.2.tgz#5991d6eb3fd8e1a8d4b8f6de3ec0a3cc567f3151"
-  integrity sha512-eSOiJOWq6Hhs6Khzk5wKC5sgWIXgXqOCiIl1+3lfnearu58Hj4QpE5tUhQcA3xtZrELbcvAGCsd6HB8OsaVaTA==
+ts-jest@^27.1.3:
+  version "27.1.3"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-27.1.3.tgz#1f723e7e74027c4da92c0ffbd73287e8af2b2957"
+  integrity sha512-6Nlura7s6uM9BVUAoqLH7JHyMXjz8gluryjpPXxr3IxZdAXnU6FhjvVLHFtfd1vsE1p8zD1OJfskkc0jhTSnkA==
   dependencies:
     bs-logger "0.x"
     fast-json-stable-stringify "2.x"
@@ -7469,10 +7489,10 @@ xmlchars@^2.2.0:
   resolved "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-xstate@^4.27.0:
-  version "4.27.0"
-  resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.27.0.tgz#f3c918ac4229bd5e6dec2231e991ba55c6bfa559"
-  integrity sha512-ohOwDM9tViC/zSSmY9261CHblDPqiaAk5vyjVbi69uJv9fGWMzlm0VDQwM2OvC61GKfXVBeuWSMkL7LPUsTpfA==
+xstate@^4.28.0:
+  version "4.28.0"
+  resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.28.0.tgz#e5802638120951793ef7ea5a91e975f86244a73c"
+  integrity sha512-qavuFNzejRZVR75Pmbc7zOuUvVOWoABn6sucHr9M5oWjP3LeJ8A5T9lYfADiaY0o9E6q1T63f6JIhCBgt4XTdw==
 
 xstream@^11.14.0:
   version "11.14.0"

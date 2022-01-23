@@ -272,9 +272,7 @@ class BitcoinLikeWallet {
       if (additionals && additionals.includes("peercoin")) {
         // remove timestamp for new version of peercoin input, refer to https://github.com/peercoin/rfcs/issues/5 and https://github.com/LedgerHQ/ledgerjs/issues/701
         const version = i.txHex.substring(0, 8);
-        if (version !== "01000000" && version !== "02000000") {
-          hasTimestamp = false;
-        }
+        hasTimestamp = version === "01000000" || version === "02000000";
       }
       log("hw", `splitTransaction`, {
         transactionHex: i.txHex,

@@ -153,7 +153,7 @@ class Base implements ICrypto {
         throw new Error(`Invalid derivation Mode: ${derivationMode}`);
     }
   }
- 
+
   // infer address type from its syntax
   getDerivationMode(address: string): DerivationModes {
     if (address.match("^(bc1|tb1).*")) {

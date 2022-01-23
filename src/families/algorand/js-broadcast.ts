@@ -12,6 +12,6 @@ export const broadcast = async ({
   signedOperation: SignedOperation;
 }): Promise<Operation> => {
   const { signature, operation } = signedOperation;
-  const hash = await apiBroadcast(signature);
+  const hash = await apiBroadcast(Buffer.from(signature, "hex"));
   return patchOperationWithHash(operation, hash);
 };
