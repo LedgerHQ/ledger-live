@@ -33,11 +33,7 @@ class BitcoinCash extends Base {
     const node = new bch.HDPublicKey(xpub);
     const child = node.derive(account).derive(index);
     const address = new bch.Address(child.publicKey, bch.Networks.livenet);
-    const addrstr = address.toString().split(":");
-    if (addrstr.length === 2) {
-      return bchaddr.toCashAddress(bchaddr.toLegacyAddress(addrstr[1]));
-    }
-    throw new Error(`Unable to derive cash address for ${address}`);
+    return address.toString();
   }
 
   // get address given an address type

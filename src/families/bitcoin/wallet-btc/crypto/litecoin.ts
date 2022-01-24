@@ -52,39 +52,22 @@ class Litecoin extends Base {
     return String(address);
   }
 
-  getAddress(
+  customGetAddress(
     derivationMode: DerivationModes,
     xpub: string,
     account: number,
     index: number
   ): string {
-    if (
-      Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ]
-    ) {
-      return Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ];
-    }
-    let address: string;
     switch (derivationMode) {
       case DerivationModes.LEGACY:
-        address = this.getLegacyAddress(xpub, account, index);
-        break;
+        return this.getLegacyAddress(xpub, account, index);
       case DerivationModes.SEGWIT:
-        address = this.getSegWitAddress(xpub, account, index);
-        break;
+        return this.getSegWitAddress(xpub, account, index);
       case DerivationModes.NATIVE_SEGWIT:
-        address = this.getNativeSegWitAddress(xpub, account, index);
-        break;
+        return this.getNativeSegWitAddress(xpub, account, index);
       default:
         throw new Error("Should not be reachable");
     }
-    Base.addressCache[
-      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-    ] = address;
-    return address;
   }
 
   // infer address type from its syntax

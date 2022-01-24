@@ -47,26 +47,13 @@ class ZCash extends Base {
     return address.toString();
   }
 
-  getAddress(
+  customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
     index: number
   ): string {
-    if (
-      Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ]
-    ) {
-      return Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ];
-    }
-    const address = this.getLegacyAddress(xpub, account, index);
-    Base.addressCache[
-      `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-    ] = address;
-    return address;
+    return this.getLegacyAddress(xpub, account, index);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
