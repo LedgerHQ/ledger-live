@@ -68,7 +68,7 @@ class Decred extends Base {
   }
 
   // get address given an address type
-  getAddress(
+  customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
