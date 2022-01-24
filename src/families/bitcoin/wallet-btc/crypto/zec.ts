@@ -8,7 +8,6 @@ import bs58check from "bs58check";
 import coininfo from "coininfo";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
-import { ICrypto } from "./types";
 import Base from "./base";
 
 class ZCash extends Base {

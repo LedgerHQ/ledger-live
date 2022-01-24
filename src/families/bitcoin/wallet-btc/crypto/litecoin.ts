@@ -5,7 +5,6 @@ import * as bip32 from "bip32";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import * as bech32 from "bech32";
 import { DerivationModes } from "../types";
-import { ICrypto } from "./types";
 import Base from "./base";
 
 // Todo copy paste from bitcoin.ts. we can merge them later

@@ -7,7 +7,6 @@ import bchaddr from "bchaddrjs";
 import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { DerivationModes } from "../types";
-import { ICrypto } from "./types";
 import Base from "./base";
 
 // a mock explorer class that just use js objects
