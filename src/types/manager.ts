@@ -130,6 +130,7 @@ export type ApplicationVersion = {
   providers: Array<Id>;
   date_creation: string;
   date_last_modified: string;
+  type?: AppType;
   // dependencies: Id[],
   bytes: number | null | undefined;
   warning: string | null | undefined;
@@ -153,6 +154,11 @@ export type Application = {
   sourceURL: string | null | undefined;
   compatibleWalletsJSON: string | null | undefined;
 };
+export enum AppType {
+  APP = "app",
+  PLUGIN = "plugin",
+  TOOL = "tool", // Nb not used for now
+}
 // App is higher level on top of Application and ApplicationVersion
 // with all fields Live needs and in normalized form (but still serializable)
 export type App = {
@@ -185,6 +191,7 @@ export type App = {
   // -1 if coin not in marketcap, otherwise index in the tickers list of https://countervalues.api.live.ledger.com/tickers
   indexOfMarketCap: number;
   isDevTools: boolean;
+  type: AppType;
 };
 export type Category = {
   id: Id;
