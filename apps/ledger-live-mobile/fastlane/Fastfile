@@ -1,0 +1,400 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+#
+fastlane_require 'dotenv'
+
+PROJECT_NAME = "ledgerlivemobile"
+XCODE_PROJECT = "./ios/#{PROJECT_NAME}.xcodeproj"
+XCODE_WORKSPACE = "./ios/#{PROJECT_NAME}.xcworkspace"
+OUTPUT_DIRECTORY = "./ios"
+IPA_DIRECTORY = "#{OUTPUT_DIRECTORY}/#{PROJECT_NAME}.ipa"
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+package = load_json(json_path: "./package.json")
+
+lane :beta do |options|
+  ensure_git_status_clean
+
+  system "yarn --frozen-lockfile --network-timeout 100000"
+
+  Fastlane::LaneManager.cruise_lane('ios', 'ci_testflight', nil, 'production')
+  Fastlane::LaneManager.cruise_lane('android', 'ci_playstore', nil, 'production')
+
+end
+
+platform :ios do
+
+  before_all do
+    set_version_number
+  end
+
+  # =============================== PRIVATE ===============================
+
+  desc "private: set version number from package.json"
+  private_lane :set_version_number do
+    increment_version_number(
+      version_number: package["version"],
+      xcodeproj: XCODE_PROJECT
+    )
+  end
+
+  desc "private: bump build number"
+  private_lane :bump_build_number do
+    increment_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+  end
+
+  desc "private: prepare iOS for beta release"
+  private_lane :prepare_ios_beta do |options|
+    bump_build_number
+    build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+    commit_version_bump(
+      message: "Bump iOS version to v#{package["version"]}-#{build_number}#{options[:nightly] ? " (nightly)" : ""}",
+      xcodeproj: XCODE_PROJECT
+    )
+    add_git_tag(
+      tag: "ios-v#{package["version"]}-#{build_number}"
+    )
+  end
+
+  desc "private: setup ci for iOS build"
+  private_lane :setup_ios_ci do
+    create_keychain(
+      name: ENV["CI_KEYCHAIN_NAME"],
+      password: ENV["CI_KEYCHAIN_PASSWORD"],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: false
+    )
+
+    app_store_connect_api_key(
+      key_id: ENV["APPLECONNECT_API_KEY_ID"],
+      issuer_id: ENV["APPLECONNECT_API_ISSUER_ID"],
+      key_content: ENV["APPLECONNECT_API_KEY_CONTENT"],
+      is_key_content_base64: true
+    )
+  end
+
+  desc "buid for deployment (app-store or ad-hoc)"
+  private_lane :build do |options|
+    export_options_method = (options[:adhoc] ? "ad-hoc" : "app-store")
+    code_sign_identity = "iPhone Distribution"
+    MY_APP_BUNDLE_ID = (options[:adhoc] ? "#{ENV["APP_IDENTIFIER"]}.*" : "#{ENV["APP_IDENTIFIER"]}")
+    MY_APP_ID = (options[:adhoc] ? (ENV["SHA"] == nil ? "#{ENV["APP_IDENTIFIER"]}.#{ENV["SHA"]}" : "#{ENV["APP_IDENTIFIER"]}.local") : "#{ENV["APP_IDENTIFIER"]}")
+    MY_PROFILE = (options[:adhoc] ? "match AdHoc #{MY_APP_BUNDLE_ID}" : "match AppStore #{MY_APP_BUNDLE_ID}")
+    MY_TEAM = ENV["DEVELOPER_TEAM_ID"]
+
+    settings_to_override = {
+      :BUNDLE_IDENTIFIER => MY_APP_ID,
+      :PROVISIONING_PROFILE_SPECIFIER => MY_PROFILE,
+      :DEVELOPMENT_TEAM => MY_TEAM,
+    }
+
+    if (options[:ci])
+      match(
+        app_identifier: MY_APP_BUNDLE_ID,
+        git_url: ENV["GIT_REPO_URL"],
+        type: (options[:adhoc] ? "adhoc" : "appstore"),
+        username: ENV["APPLE_ID"],
+        team_id: ENV["DEVELOPER_TEAM_ID"],
+        keychain_name: ENV["CI_KEYCHAIN_NAME"],
+        keychain_password: ENV["CI_KEYCHAIN_PASSWORD"],
+        git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+        readonly: true,
+        output_path: "./fastlane/certs"
+      )
+    else
+      match(
+        app_identifier: MY_APP_BUNDLE_ID,
+        git_url: ENV["GIT_REPO_URL"],
+        type: (options[:adhoc] ? "adhoc" : "appstore"),
+        username: ENV["APPLE_ID"],
+        team_id: ENV["DEVELOPER_TEAM_ID"],
+        git_basic_authorization: Base64.strict_encode64("#{ENV["GIT_REPO_USER"]}:#{ENV["GH_TOKEN"]}"),
+        readonly: true,
+        output_path: "./fastlane/certs"
+      )
+    end
+
+    update_info_plist(
+      xcodeproj: XCODE_PROJECT,
+      plist_path: "ledgerlivemobile/Info.plist",
+      display_name: ENV["APP_NAME"],
+    )
+
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: XCODE_PROJECT,
+      code_sign_identity: code_sign_identity,
+      bundle_identifier: MY_APP_ID,
+      profile_name: MY_PROFILE
+    )
+
+    begin
+      gym(
+        scheme: PROJECT_NAME,
+        workspace: XCODE_WORKSPACE,
+        silent: true,
+        xcargs: `#{settings_to_override} -UseNewBuildSystem=YES`,
+        output_directory: OUTPUT_DIRECTORY,
+        output_name: "#{PROJECT_NAME}.ipa",
+        export_options: {
+          method: export_options_method,
+          signingStyle: "manual",
+          provisioningProfiles: {
+              MY_APP_ID => MY_PROFILE
+          }
+        },
+      )
+    rescue => e
+      xcode_log_path = '~/Library/Logs/gym/ledgerlivemobile-ledgerlivemobile.log'
+      p "Xcode build failed. Here's the logs from #{xcode_log_path}"
+      sh "cat #{xcode_log_path}"
+
+      raise 'Xcode build failed.'
+    end
+    enable_automatic_code_signing(path: XCODE_PROJECT)
+  end
+
+  desc "upload to Testflight (only to be run after an app-store build)"
+  private_lane :upload do |options|
+    if (options[:nightly])
+      begin
+        build_number = get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj")
+        pilot(
+          skip_submission: false,
+          app_identifier: "com.ledger.live",
+          skip_waiting_for_build_processing: false,
+          ipa: IPA_DIRECTORY,
+          changelog: "Nightly Build v#{package['version']} (#{build_number})",
+          beta_app_review_info: {
+            contact_email: "team-live@ledger.fr",
+            contact_first_name: "Ledger Live",
+            notes: "test nightly builds"
+          }
+        )
+
+        pilot(
+          distribute_only: true,
+          groups: ["External Nightly"],
+          distribute_external: true,
+          app_identifier: "com.ledger.live",
+          app_platform: 'ios',
+          app_version: package["version"],
+          build_number: get_build_number(xcodeproj: "ios/ledgerlivemobile.xcodeproj"),
+          notify_external_testers: true,
+          reject_build_waiting_for_review: !options[:ci]
+        )
+      rescue => e
+        raise unless e.message.include? "Another build is in review"
+
+        UI.important("Another build is already in external beta review. Skipping external beta review submission")
+      end
+    else
+      pilot(
+        skip_submission: true,
+        app_identifier: "com.ledger.live",
+        skip_waiting_for_build_processing: true,
+        ipa: IPA_DIRECTORY
+      )
+    end
+  end
+
+  # ============================= END PRIVATE =============================
+  # ============================= LOCAL BUILD =============================
+
+  desc "rebuild and push to TestFlight without bumping version or tagging"
+  lane :clean_beta do
+    build
+    upload
+  end
+
+  desc "build and push to TestFlight"
+  lane :local_beta do
+    prepare_ios_beta
+    clean_beta
+  end
+
+  desc "build adhoc version"
+  lane :local_adhoc do
+    build(adhoc: true)
+  end
+
+  desc "build nightly version"
+  lane :local_nightly do
+    prepare_ios_beta(nightly: true)
+    build
+    upload(nightly: true)
+  end
+
+  # =========================== END LOCAL BUILD ===========================
+  # ============================== CI BUILD ===============================
+
+  desc "ci: create testflight version"
+  lane :ci_testflight do |options|
+    prepare_ios_beta
+    setup_ios_ci
+    build(ci: true)
+    upload
+  end
+
+  desc "ci: create nightly version"
+  lane :ci_nightly do |options|
+    prepare_ios_beta(nightly: true)
+    setup_ios_ci
+    build(ci: true)
+    upload(
+      nightly: true,
+      ci: true
+    )
+  end
+
+  desc "ci: create adhoc version"
+  lane :ci_adhoc do |options|
+    setup_ios_ci
+    build(
+      adhoc: true,
+      ci: true
+    )
+  end
+
+  # ============================ END CI BUILD =============================
+end
+
+platform :android do
+
+  before_all do
+    set_version_name
+  end
+
+  # =============================== PRIVATE ===============================
+
+  desc "private: set version name from package.json"
+  private_lane :set_version_name do
+    version_name = package["version"]
+    android_set_version_name(
+      gradle_file: 'android/app/build.gradle',
+      version_name: version_name,
+    )
+  end
+
+  desc "private: bump version code"
+  private_lane :bump_version_code do
+    android_set_version_code(gradle_file: 'android/app/build.gradle')
+  end
+
+  desc "private: prepare android for internal"
+  private_lane :prepare_android_internal do |options|
+    bump_version_code
+    version_code = android_get_version_code(gradle_file: 'android/app/build.gradle')
+    git_commit(
+      path: [
+        "android/app/build.gradle"
+      ],
+      message: "Bump android version to v#{package["version"]}-#{version_code}#{options[:nightly] ? " (nightly)" : ""}"
+    )
+    add_git_tag(
+      tag: "android-v#{package["version"]}-#{version_code}"
+    )
+  end
+
+  desc "private: build the app apk for the specified build `type`. Defaults to `Release`"
+  private_lane :build do |options|
+    type = options.fetch(:type, "Release")
+    task = options[:apk] ? "assemble" : "bundle"
+
+    gradle(task: "clean", project_dir: 'android/')
+    gradle(
+      task: task,
+      build_type: type,
+      print_command: false,
+      properties: {
+        "android.injected.signing.store.file" => ENV["ANDROID_KEYSTORE_FILE"],
+        "android.injected.signing.store.password" => ENV["ANDROID_KEYSTORE_PASS"],
+        "android.injected.signing.key.alias" => ENV["ANDROID_KEY_ALIAS"],
+        "android.injected.signing.key.password" => ENV["ANDROID_KEY_PASS"],
+      },
+      project_dir: 'android/'
+    )
+  end
+
+  desc "upload to Play Store"
+  private_lane :upload do |options|
+    if(options[:ci])
+      upload_to_play_store(
+        track: options[:nightly] ? 'Nightly' : "internal",
+        package_name: 'com.ledger.live',
+        json_key_data: ENV["ANDROID_SERVICE_KEY_CONTENT"]
+      )
+    else
+      upload_to_play_store(
+        track: options[:nightly] ? 'Nightly' : "internal",
+        package_name: "com.ledger.live",
+        json_key: ENV["ANDROID_SERVICE_KEY_PATH"],
+      )
+    end
+  end
+
+  # ============================= END PRIVATE =============================
+  # ============================= LOCAL BUILD =============================
+
+  desc "build APK (can be uploaded to Play Store)"
+  lane :apk do
+    build(
+      type: "Release",
+      apk: true
+    )
+  end
+
+  desc "rebuild and upload beta to Google Play Store without bumping version or tagging"
+  lane :clean_beta do
+    build(type: "Release")
+    upload
+  end
+
+  desc "build and upload beta to Google Play Store"
+  lane :local_beta do |options|
+    prepare_android_internal
+    clean_beta
+  end
+
+  desc "build nightly version"
+  lane :local_nightly do
+    prepare_android_internal(nightly: true)
+    build(type: "Release")
+    upload(nightly: true)
+  end
+  # =========================== END LOCAL BUILD ===========================
+  # ============================== CI BUILD ===============================
+
+  desc "build APK and send to Google Play Store"
+  lane :ci_playstore do
+    prepare_android_internal
+    build(type: "Release")
+    upload(ci: true)
+  end
+
+  desc "build nightly version"
+  lane :ci_nightly do
+    prepare_android_internal(nightly: true)
+    build(type: "Release")
+    upload(
+      nightly: true,
+      ci: true
+    )
+  end
+
+  # ============================ END CI BUILD =============================
+end
